@@ -19,6 +19,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.browser.customtabs.CustomTabsClient;
 import androidx.browser.customtabs.CustomTabsIntent;
+import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
@@ -64,8 +65,10 @@ final class UrlLauncher implements UrlLauncherApi {
 
   @Override
   public boolean canLaunchUrl(@NonNull String url) {
-    Intent launchIntent = new Intent(Intent.ACTION_VIEW);
-    launchIntent.setData(Uri.parse(url));
+    Intent launchIntent = intentForUrl(url);
+    if (launchIntent == null) {
+      return false;
+    }
     String componentName = intentResolver.getHandlerComponentName(launchIntent);
     if (BuildConfig.DEBUG) {
       Log.i(TAG, "component name for " + url + " is " + componentName);
@@ -84,10 +87,11 @@ final class UrlLauncher implements UrlLauncherApi {
     ensureActivity();
     assert activity != null;
 
-    Intent launchIntent =
-        new Intent(Intent.ACTION_VIEW)
-            .setData(Uri.parse(url))
-            .putExtra(Browser.EXTRA_HEADERS, extractBundle(headers));
+    Intent launchIntent = intentForUrl(url);
+    if (launchIntent == null) {
+      return false;
+    }
+    launchIntent.putExtra(Browser.EXTRA_HEADERS, extractBundle(headers));
     if (requireNonBrowser && Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
       launchIntent.addFlags(Intent.FLAG_ACTIVITY_REQUIRE_NON_BROWSER);
     }
@@ -98,6 +102,30 @@ final class UrlLauncher implements UrlLauncherApi {
     }
 
     return true;
+  }
+
+  /**
+   * Creates an intent for a URL, parsing Android intent URIs when present.
+   *
+   * <p>Intent URIs may come from untrusted content, so parsed explicit components and selectors are
+   * discarded and the BROWSABLE category is required before resolving or launching them.
+   */
+  private static @Nullable Intent intentForUrl(@NonNull String url) {
+    if (!url.regionMatches(true, 0, "intent:", 0, "intent:".length())) {
+      return new Intent(Intent.ACTION_VIEW).setData(Uri.parse(url));
+    }
+
+    try {
+      // Intent.parseUri expects a lowercase scheme even though URI schemes are case-insensitive.
+      Intent intent =
+          Intent.parseUri("intent:" + url.substring("intent:".length()), Intent.URI_INTENT_SCHEME);
+      intent.addCategory(Intent.CATEGORY_BROWSABLE);
+      intent.setComponent(null);
+      intent.setSelector(null);
+      return intent;
+    } catch (URISyntaxException e) {
+      return null;
+    }
   }
 
   @Override
