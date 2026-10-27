@@ -4,6 +4,10 @@
 
 // ignore_for_file: avoid_print
 
+// Do not remove. This line ensures that this library can be imported on non
+// web platforms.
+// ignore: unused_import
+import 'package:cross_file_web/cross_file_web_safe.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
