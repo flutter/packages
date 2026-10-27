@@ -8,6 +8,8 @@ import 'package:file_selector_platform_interface/file_selector_platform_interfac
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+  CrossFilePlatform.instance = CrossFileTest();
+
   late FakeFileSelector fakePlatformImplementation;
   const initialDirectory = '/home/flutteruser';
   const confirmButtonText = 'Use this profile picture';
@@ -388,14 +390,14 @@ final class FakeFileSelector extends FileSelectorPlatform {
   }
 
   @override
-  Future<XFile?> openFile([OpenDialogOptions options = const OpenDialogOptions()]) async {
+  Future<XFile?> openFile({OpenFileDialogOptions options = const OpenFileDialogOptions()}) async {
     expect(acceptedTypeGroups, options.acceptedTypeGroups);
     expect(initialDirectory, options.initialDirectory);
     return files?[0];
   }
 
   @override
-  Future<List<XFile>> openFiles([OpenDialogOptions options = const OpenDialogOptions()]) async {
+  Future<List<XFile>> openFiles({OpenFilesDialogOptions options = const OpenFilesDialogOptions()}) async {
     expect(acceptedTypeGroups, options.acceptedTypeGroups);
     expect(initialDirectory, options.initialDirectory);
     expect(suggestedName, suggestedName);
@@ -403,9 +405,9 @@ final class FakeFileSelector extends FileSelectorPlatform {
   }
 
   @override
-  Future<FileSaveLocation?> getSaveLocation([
+  Future<FileSaveLocation?> getSaveLocation({
     SaveLocationOptions options = const SaveLocationOptions(),
-  ]) async {
+  }) async {
     expect(options.acceptedTypeGroups, acceptedTypeGroups);
     expect(options.initialDirectory, initialDirectory);
     expect(options.suggestedName, suggestedName);
@@ -421,7 +423,7 @@ final class FakeFileSelector extends FileSelectorPlatform {
   }
 
   @override
-  Future<XDirectory?> getDirectory([FileDialogOptions options = const FileDialogOptions()]) async {
+  Future<XDirectory?> getDirectory({GetDirectoryDialogOptions options = const GetDirectoryDialogOptions()}) async {
     expect(options.initialDirectory, initialDirectory);
     expect(options.confirmButtonText, confirmButtonText);
     expect(options.canCreateDirectories, canCreateDirectories);
@@ -429,9 +431,9 @@ final class FakeFileSelector extends FileSelectorPlatform {
   }
 
   @override
-  Future<List<XDirectory>> getDirectories([
-    FileDialogOptions options = const FileDialogOptions(),
-  ]) async {
+  Future<List<XDirectory>> getDirectories({
+    GetDirectoriesDialogOptions options = const GetDirectoriesDialogOptions(),
+  }) async {
     expect(options.initialDirectory, initialDirectory);
     expect(options.confirmButtonText, confirmButtonText);
     expect(options.canCreateDirectories, canCreateDirectories);

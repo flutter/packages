@@ -21,7 +21,7 @@ base class FileSelectorLinux extends FileSelectorPlatform {
   }
 
   @override
-  Future<XFile?> openFile([OpenDialogOptions options = const OpenDialogOptions()]) async {
+  Future<XFile?> openFile({OpenFileDialogOptions options = const OpenFileDialogOptions()}) async {
     final List<String> paths = await _hostApi.showFileChooser(
       PlatformFileChooserActionType.open,
       PlatformFileChooserOptions(
@@ -35,7 +35,7 @@ base class FileSelectorLinux extends FileSelectorPlatform {
   }
 
   @override
-  Future<List<XFile>> openFiles([OpenDialogOptions options = const OpenDialogOptions()]) async {
+  Future<List<XFile>> openFiles({OpenFilesDialogOptions options = const OpenFilesDialogOptions()}) async {
     final List<String> paths = await _hostApi.showFileChooser(
       PlatformFileChooserActionType.open,
       PlatformFileChooserOptions(
@@ -49,9 +49,9 @@ base class FileSelectorLinux extends FileSelectorPlatform {
   }
 
   @override
-  Future<FileSaveLocation?> getSaveLocation([
+  Future<FileSaveLocation?> getSaveLocation({
     SaveLocationOptions options = const SaveLocationOptions(),
-  ]) async {
+  }) async {
     // TODO(stuartmorgan): Add the selected type group here and return it. See
     // https://github.com/flutter/flutter/issues/107093
     final List<String> paths = await _hostApi.showFileChooser(
@@ -68,7 +68,7 @@ base class FileSelectorLinux extends FileSelectorPlatform {
   }
 
   @override
-  Future<XDirectory?> getDirectory([FileDialogOptions options = const FileDialogOptions()]) async {
+  Future<XDirectory?> getDirectory({GetDirectoryDialogOptions options = const GetDirectoryDialogOptions()}) async {
     final List<String> paths = await _hostApi.showFileChooser(
       PlatformFileChooserActionType.chooseDirectory,
       PlatformFileChooserOptions(
@@ -82,9 +82,9 @@ base class FileSelectorLinux extends FileSelectorPlatform {
   }
 
   @override
-  Future<List<XDirectory>> getDirectories([
-    FileDialogOptions options = const FileDialogOptions(),
-  ]) async {
+  Future<List<XDirectory>> getDirectories({
+    GetDirectoriesDialogOptions options = const GetDirectoriesDialogOptions(),
+  }) async {
     final List<String> paths = await _hostApi.showFileChooser(
       PlatformFileChooserActionType.chooseDirectory,
       PlatformFileChooserOptions(

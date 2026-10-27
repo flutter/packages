@@ -21,7 +21,7 @@ base class FileSelectorWindows extends FileSelectorPlatform {
   }
 
   @override
-  Future<XFile?> openFile([OpenDialogOptions options = const OpenDialogOptions()]) async {
+  Future<XFile?> openFile({OpenFileDialogOptions options = const OpenFileDialogOptions()}) async {
     final FileDialogResult result = await _hostApi.showOpenDialog(
       SelectionOptions(allowedTypes: _typeGroupsFromXTypeGroups(options.acceptedTypeGroups)),
       options.initialDirectory,
@@ -31,7 +31,7 @@ base class FileSelectorWindows extends FileSelectorPlatform {
   }
 
   @override
-  Future<List<XFile>> openFiles([OpenDialogOptions options = const OpenDialogOptions()]) async {
+  Future<List<XFile>> openFiles({OpenFilesDialogOptions options = const OpenFilesDialogOptions()}) async {
     final FileDialogResult result = await _hostApi.showOpenDialog(
       SelectionOptions(
         allowMultiple: true,
@@ -44,9 +44,9 @@ base class FileSelectorWindows extends FileSelectorPlatform {
   }
 
   @override
-  Future<FileSaveLocation?> getSaveLocation([
+  Future<FileSaveLocation?> getSaveLocation({
     SaveLocationOptions options = const SaveLocationOptions(),
-  ]) async {
+  }) async {
     final FileDialogResult result = await _hostApi.showSaveDialog(
       SelectionOptions(allowedTypes: _typeGroupsFromXTypeGroups(options.acceptedTypeGroups)),
       options.initialDirectory,
@@ -63,7 +63,7 @@ base class FileSelectorWindows extends FileSelectorPlatform {
   }
 
   @override
-  Future<XDirectory?> getDirectory([FileDialogOptions options = const FileDialogOptions()]) async {
+  Future<XDirectory?> getDirectory({GetDirectoryDialogOptions options = const GetDirectoryDialogOptions()}) async {
     final FileDialogResult result = await _hostApi.showOpenDialog(
       SelectionOptions(selectFolders: true, allowedTypes: <TypeGroup>[]),
       options.initialDirectory,
@@ -73,9 +73,9 @@ base class FileSelectorWindows extends FileSelectorPlatform {
   }
 
   @override
-  Future<List<XDirectory>> getDirectories([
-    FileDialogOptions options = const FileDialogOptions(),
-  ]) async {
+  Future<List<XDirectory>> getDirectories({
+    GetDirectoriesDialogOptions options = const GetDirectoriesDialogOptions(),
+  }) async {
     final FileDialogResult result = await _hostApi.showOpenDialog(
       SelectionOptions(allowMultiple: true, selectFolders: true, allowedTypes: <TypeGroup>[]),
       options.initialDirectory,

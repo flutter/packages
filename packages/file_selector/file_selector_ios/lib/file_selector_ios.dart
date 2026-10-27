@@ -26,7 +26,7 @@ base class FileSelectorIOS extends FileSelectorPlatform {
   // the file. So this returns a `FileSystemXFile` instead of a
   // `ScopedStorageXFile`. See https://github.com/flutter/flutter/issues/193925
   @override
-  Future<XFile?> openFile([OpenDialogOptions options = const OpenDialogOptions()]) async {
+  Future<XFile?> openFile({OpenFileDialogOptions options = const OpenFileDialogOptions()}) async {
     final List<String> path = await _hostApi.openFile(
       FileSelectorConfig(utis: _allowedUtiListFromTypeGroups(options.acceptedTypeGroups)),
     );
@@ -40,7 +40,7 @@ base class FileSelectorIOS extends FileSelectorPlatform {
   // the file. So this returns a `FileSystemXFile` instead of a
   // `ScopedStorageXFile`. See https://github.com/flutter/flutter/issues/193925
   @override
-  Future<List<XFile>> openFiles([OpenDialogOptions options = const OpenDialogOptions()]) async {
+  Future<List<XFile>> openFiles({OpenFilesDialogOptions options = const OpenFilesDialogOptions()}) async {
     final List<String> pathList = await _hostApi.openFile(
       FileSelectorConfig(
         utis: _allowedUtiListFromTypeGroups(options.acceptedTypeGroups),

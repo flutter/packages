@@ -56,7 +56,7 @@ void main() {
       const group2 = XTypeGroup(extensions: <String>['jpg'], mimeTypes: <String>['image/jpg']);
 
       final XFile? file = await plugin.openFile(
-        const OpenDialogOptions(
+        options: const OpenFileDialogOptions(
           acceptedTypeGroups: <XTypeGroup>[group, group2],
           initialDirectory: 'some/path/',
         ),
@@ -90,7 +90,7 @@ void main() {
       const group2 = XTypeGroup(extensions: <String>['jpg'], mimeTypes: <String>['image/jpg']);
 
       final List<XFile> files = await plugin.openFiles(
-        const OpenDialogOptions(
+        options: const OpenFilesDialogOptions(
           acceptedTypeGroups: <XTypeGroup>[group, group2],
           initialDirectory: 'some/path/',
         ),
@@ -108,7 +108,7 @@ void main() {
     ).thenAnswer((_) => Future<String?>.value('some/path/chosen/'));
 
     final XDirectory? dir = await plugin.getDirectory(
-      const FileDialogOptions(initialDirectory: 'some/path'),
+      options: const GetDirectoryDialogOptions(initialDirectory: 'some/path'),
     );
 
     expect(dir?.uri, 'some/path/chosen/');

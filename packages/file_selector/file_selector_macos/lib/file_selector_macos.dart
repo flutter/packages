@@ -23,7 +23,7 @@ base class FileSelectorMacOS extends FileSelectorPlatform {
   }
 
   @override
-  Future<XFile?> openFile([OpenDialogOptions options = const OpenDialogOptions()]) async {
+  Future<XFile?> openFile({OpenFileDialogOptions options = const OpenFileDialogOptions()}) async {
     final List<String> paths = await _hostApi.displayOpenPanel(
       OpenPanelOptions(
         allowsMultipleSelection: false,
@@ -40,7 +40,7 @@ base class FileSelectorMacOS extends FileSelectorPlatform {
   }
 
   @override
-  Future<List<XFile>> openFiles([OpenDialogOptions options = const OpenDialogOptions()]) async {
+  Future<List<XFile>> openFiles({OpenFilesDialogOptions options = const OpenFilesDialogOptions()}) async {
     final List<String> paths = await _hostApi.displayOpenPanel(
       OpenPanelOptions(
         allowsMultipleSelection: true,
@@ -57,9 +57,9 @@ base class FileSelectorMacOS extends FileSelectorPlatform {
   }
 
   @override
-  Future<FileSaveLocation?> getSaveLocation([
+  Future<FileSaveLocation?> getSaveLocation({
     SaveLocationOptions options = const SaveLocationOptions(),
-  ]) async {
+  }) async {
     final String? uri = await _hostApi.displaySavePanel(
       SavePanelOptions(
         allowedFileTypes: _allowedTypesFromTypeGroups(options.acceptedTypeGroups),
@@ -73,7 +73,7 @@ base class FileSelectorMacOS extends FileSelectorPlatform {
   }
 
   @override
-  Future<XDirectory?> getDirectory([FileDialogOptions options = const FileDialogOptions()]) async {
+  Future<XDirectory?> getDirectory({GetDirectoryDialogOptions options = const GetDirectoryDialogOptions()}) async {
     final List<String> uris = await _hostApi.displayOpenPanel(
       OpenPanelOptions(
         allowsMultipleSelection: false,
@@ -90,9 +90,9 @@ base class FileSelectorMacOS extends FileSelectorPlatform {
   }
 
   @override
-  Future<List<XDirectory>> getDirectories([
-    FileDialogOptions options = const FileDialogOptions(),
-  ]) async {
+  Future<List<XDirectory>> getDirectories({
+    GetDirectoriesDialogOptions options = const GetDirectoriesDialogOptions(),
+  }) async {
     final List<String> uris = await _hostApi.displayOpenPanel(
       OpenPanelOptions(
         allowsMultipleSelection: true,

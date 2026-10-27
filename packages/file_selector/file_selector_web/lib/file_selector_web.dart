@@ -29,31 +29,31 @@ base class FileSelectorWeb extends FileSelectorPlatform {
   }
 
   @override
-  Future<XFile?> openFile([OpenDialogOptions options = const OpenDialogOptions()]) async {
+  Future<XFile?> openFile({OpenFileDialogOptions options = const OpenFileDialogOptions()}) async {
     final List<XFile> files = await _openFiles(options: options);
     return files.isNotEmpty ? files.first : null;
   }
 
   @override
-  Future<List<XFile>> openFiles([OpenDialogOptions options = const OpenDialogOptions()]) async {
+  Future<List<XFile>> openFiles({OpenFilesDialogOptions options = const OpenFilesDialogOptions()}) async {
     return _openFiles(options: options, multiple: true);
   }
 
   @override
-  Future<FileSaveLocation?> getSaveLocation([
+  Future<FileSaveLocation?> getSaveLocation({
     SaveLocationOptions options = const SaveLocationOptions(),
-  ]) async {
+  }) async {
     // This is intended to be passed to XFile, which ignores the path, so
     // provide a non-null dummy value.
     return FileSaveLocation(XFile.scopedStorage(uri: ''));
   }
 
   @override
-  Future<XDirectory?> getDirectory([FileDialogOptions options = const FileDialogOptions()]) async =>
+  Future<XDirectory?> getDirectory({GetDirectoryDialogOptions options = const GetDirectoryDialogOptions()}) async =>
       null;
 
   Future<List<XFile>> _openFiles({
-    OpenDialogOptions options = const OpenDialogOptions(),
+    FileDialogOptions options = const FileDialogOptions(),
     bool multiple = false,
   }) async {
     final String accept = acceptedTypesToString(options.acceptedTypeGroups);

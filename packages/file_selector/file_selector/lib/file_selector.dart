@@ -44,7 +44,7 @@ Future<XFile?> openFile({
   String? confirmButtonText,
 }) {
   return _assertInstanceIsNotNull().openFile(
-    OpenDialogOptions(
+    options: OpenFileDialogOptions(
       acceptedTypeGroups: acceptedTypeGroups,
       initialDirectory: initialDirectory,
       confirmButtonText: confirmButtonText,
@@ -78,7 +78,7 @@ Future<List<XFile>> openFiles({
   String? confirmButtonText,
 }) {
   return _assertInstanceIsNotNull().openFiles(
-    OpenDialogOptions(
+    options: OpenFilesDialogOptions(
       acceptedTypeGroups: acceptedTypeGroups,
       initialDirectory: initialDirectory,
       confirmButtonText: confirmButtonText,
@@ -119,7 +119,7 @@ Future<FileSaveLocation?> getSaveLocation({
   bool? canCreateDirectories,
 }) async {
   return _assertInstanceIsNotNull().getSaveLocation(
-    SaveLocationOptions(
+    options: SaveLocationOptions(
       acceptedTypeGroups: acceptedTypeGroups,
       initialDirectory: initialDirectory,
       suggestedName: suggestedName,
@@ -151,7 +151,7 @@ Future<XDirectory?> getDirectory({
   bool? canCreateDirectories,
 }) async {
   return _assertInstanceIsNotNull().getDirectory(
-    FileDialogOptions(
+    options: GetDirectoryDialogOptions(
       initialDirectory: initialDirectory,
       confirmButtonText: confirmButtonText,
       canCreateDirectories: canCreateDirectories,
@@ -182,7 +182,7 @@ Future<List<XDirectory>> getDirectories({
   bool? canCreateDirectories,
 }) async {
   return _assertInstanceIsNotNull().getDirectories(
-    FileDialogOptions(
+    options: GetDirectoriesDialogOptions(
       initialDirectory: initialDirectory,
       confirmButtonText: confirmButtonText,
       canCreateDirectories: canCreateDirectories,

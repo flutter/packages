@@ -50,7 +50,7 @@ void main() {
       );
 
       await plugin.openFile(
-        const OpenDialogOptions(acceptedTypeGroups: <XTypeGroup>[group, groupTwo]),
+        options: const OpenFileDialogOptions(acceptedTypeGroups: <XTypeGroup>[group, groupTwo]),
       );
 
       // iOS only accepts uniformTypeIdentifiers.
@@ -61,7 +61,7 @@ void main() {
       const group = XTypeGroup(label: 'images', webWildCards: <String>['images/*']);
 
       await expectLater(
-        plugin.openFile(const OpenDialogOptions(acceptedTypeGroups: <XTypeGroup>[group])),
+        plugin.openFile(options: const OpenFileDialogOptions(acceptedTypeGroups: <XTypeGroup>[group])),
         throwsArgumentError,
       );
     });
@@ -75,7 +75,7 @@ void main() {
       const group = XTypeGroup(label: 'text');
 
       await expectLater(
-        plugin.openFile(const OpenDialogOptions(acceptedTypeGroups: <XTypeGroup>[group])),
+        plugin.openFile(options: const OpenFileDialogOptions(acceptedTypeGroups: <XTypeGroup>[group])),
         completes,
       );
       expect(listEquals(api.passedConfig?.utis, <String>['public.data']), isTrue);
@@ -104,7 +104,7 @@ void main() {
       );
 
       await plugin.openFiles(
-        const OpenDialogOptions(acceptedTypeGroups: <XTypeGroup>[group, groupTwo]),
+        options: const OpenFilesDialogOptions(acceptedTypeGroups: <XTypeGroup>[group, groupTwo]),
       );
 
       expect(listEquals(api.passedConfig?.utis, <String>['public.text', 'public.image']), isTrue);
@@ -115,7 +115,7 @@ void main() {
       const group = XTypeGroup(label: 'images', webWildCards: <String>['images/*']);
 
       await expectLater(
-        plugin.openFiles(const OpenDialogOptions(acceptedTypeGroups: <XTypeGroup>[group])),
+        plugin.openFiles(options: const OpenFilesDialogOptions(acceptedTypeGroups: <XTypeGroup>[group])),
         throwsArgumentError,
       );
     });
@@ -129,7 +129,7 @@ void main() {
       const group = XTypeGroup(label: 'text');
 
       await expectLater(
-        plugin.openFiles(const OpenDialogOptions(acceptedTypeGroups: <XTypeGroup>[group])),
+        plugin.openFiles(options: const OpenFilesDialogOptions(acceptedTypeGroups: <XTypeGroup>[group])),
         completes,
       );
       expect(listEquals(api.passedConfig?.utis, <String>['public.data']), isTrue);
