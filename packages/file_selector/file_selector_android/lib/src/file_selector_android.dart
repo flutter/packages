@@ -30,7 +30,9 @@ base class FileSelectorAndroid extends FileSelectorPlatform {
   }
 
   @override
-  Future<List<XFile>> openFiles({OpenFilesDialogOptions options = const OpenFilesDialogOptions()}) async {
+  Future<List<XFile>> openFiles({
+    OpenFilesDialogOptions options = const OpenFilesDialogOptions(),
+  }) async {
     final List<String> files = await _api.openFiles(
       options.initialDirectory,
       _fileTypesFromTypeGroups(options.acceptedTypeGroups),
@@ -39,7 +41,9 @@ base class FileSelectorAndroid extends FileSelectorPlatform {
   }
 
   @override
-  Future<XDirectory?> getDirectory({GetDirectoryDialogOptions options = const GetDirectoryDialogOptions()}) async {
+  Future<XDirectory?> getDirectory({
+    GetDirectoryDialogOptions options = const GetDirectoryDialogOptions(),
+  }) async {
     final String? uri = await _api.getDirectoryPath(options.initialDirectory);
     return uri == null ? null : XDirectory.scopedStorage(uri: uri);
   }

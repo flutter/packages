@@ -35,7 +35,9 @@ base class FileSelectorLinux extends FileSelectorPlatform {
   }
 
   @override
-  Future<List<XFile>> openFiles({OpenFilesDialogOptions options = const OpenFilesDialogOptions()}) async {
+  Future<List<XFile>> openFiles({
+    OpenFilesDialogOptions options = const OpenFilesDialogOptions(),
+  }) async {
     final List<String> paths = await _hostApi.showFileChooser(
       PlatformFileChooserActionType.open,
       PlatformFileChooserOptions(
@@ -68,7 +70,9 @@ base class FileSelectorLinux extends FileSelectorPlatform {
   }
 
   @override
-  Future<XDirectory?> getDirectory({GetDirectoryDialogOptions options = const GetDirectoryDialogOptions()}) async {
+  Future<XDirectory?> getDirectory({
+    GetDirectoryDialogOptions options = const GetDirectoryDialogOptions(),
+  }) async {
     final List<String> paths = await _hostApi.showFileChooser(
       PlatformFileChooserActionType.chooseDirectory,
       PlatformFileChooserOptions(

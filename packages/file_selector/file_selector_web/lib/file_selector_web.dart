@@ -35,7 +35,9 @@ base class FileSelectorWeb extends FileSelectorPlatform {
   }
 
   @override
-  Future<List<XFile>> openFiles({OpenFilesDialogOptions options = const OpenFilesDialogOptions()}) async {
+  Future<List<XFile>> openFiles({
+    OpenFilesDialogOptions options = const OpenFilesDialogOptions(),
+  }) async {
     return _openFiles(options: options, multiple: true);
   }
 
@@ -49,8 +51,9 @@ base class FileSelectorWeb extends FileSelectorPlatform {
   }
 
   @override
-  Future<XDirectory?> getDirectory({GetDirectoryDialogOptions options = const GetDirectoryDialogOptions()}) async =>
-      null;
+  Future<XDirectory?> getDirectory({
+    GetDirectoryDialogOptions options = const GetDirectoryDialogOptions(),
+  }) async => null;
 
   Future<List<XFile>> _openFiles({
     FileDialogOptions options = const FileDialogOptions(),

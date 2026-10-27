@@ -89,7 +89,9 @@ void main() {
       const group = XTypeGroup(label: 'images', webWildCards: <String>['images/*']);
 
       await expectLater(
-        plugin.openFile(options: const OpenFileDialogOptions(acceptedTypeGroups: <XTypeGroup>[group])),
+        plugin.openFile(
+          options: const OpenFileDialogOptions(acceptedTypeGroups: <XTypeGroup>[group]),
+        ),
         throwsArgumentError,
       );
     });
@@ -97,7 +99,9 @@ void main() {
     test('passes a wildcard group correctly', () async {
       const group = XTypeGroup(label: 'any');
 
-      await plugin.openFile(options: const OpenFileDialogOptions(acceptedTypeGroups: <XTypeGroup>[group]));
+      await plugin.openFile(
+        options: const OpenFileDialogOptions(acceptedTypeGroups: <XTypeGroup>[group]),
+      );
 
       expect(api.passedOptions?.allowedFileTypes?[0].extensions, <String>['*']);
     });
@@ -161,7 +165,9 @@ void main() {
       const group = XTypeGroup(label: 'images', webWildCards: <String>['images/*']);
 
       await expectLater(
-        plugin.openFiles(options: const OpenFilesDialogOptions(acceptedTypeGroups: <XTypeGroup>[group])),
+        plugin.openFiles(
+          options: const OpenFilesDialogOptions(acceptedTypeGroups: <XTypeGroup>[group]),
+        ),
         throwsArgumentError,
       );
     });
@@ -169,7 +175,9 @@ void main() {
     test('passes a wildcard group correctly', () async {
       const group = XTypeGroup(label: 'any');
 
-      await plugin.openFiles(options: const OpenFilesDialogOptions(acceptedTypeGroups: <XTypeGroup>[group]));
+      await plugin.openFiles(
+        options: const OpenFilesDialogOptions(acceptedTypeGroups: <XTypeGroup>[group]),
+      );
 
       expect(api.passedOptions?.allowedFileTypes?[0].extensions, <String>['*']);
     });
@@ -230,7 +238,9 @@ void main() {
       const group = XTypeGroup(label: 'images', webWildCards: <String>['images/*']);
 
       await expectLater(
-        plugin.getSaveLocation(options: const SaveLocationOptions(acceptedTypeGroups: <XTypeGroup>[group])),
+        plugin.getSaveLocation(
+          options: const SaveLocationOptions(acceptedTypeGroups: <XTypeGroup>[group]),
+        ),
         throwsArgumentError,
       );
     });
@@ -267,7 +277,9 @@ void main() {
 
     test('passes confirmButtonText correctly', () async {
       const button = 'Select Folder';
-      await plugin.getDirectory(options: const GetDirectoryDialogOptions(confirmButtonText: button));
+      await plugin.getDirectory(
+        options: const GetDirectoryDialogOptions(confirmButtonText: button),
+      );
 
       expect(api.passedOptions?.acceptButtonLabel, button);
     });
@@ -286,14 +298,18 @@ void main() {
 
     test('passes initialDirectory correctly', () async {
       const path = '/example/directory';
-      await plugin.getDirectories(options: const GetDirectoriesDialogOptions(initialDirectory: path));
+      await plugin.getDirectories(
+        options: const GetDirectoriesDialogOptions(initialDirectory: path),
+      );
 
       expect(api.passedOptions?.currentFolderPath, path);
     });
 
     test('passes confirmButtonText correctly', () async {
       const button = 'Select one or mode folders';
-      await plugin.getDirectories(options: const GetDirectoriesDialogOptions(confirmButtonText: button));
+      await plugin.getDirectories(
+        options: const GetDirectoriesDialogOptions(confirmButtonText: button),
+      );
 
       expect(api.passedOptions?.acceptButtonLabel, button);
     });

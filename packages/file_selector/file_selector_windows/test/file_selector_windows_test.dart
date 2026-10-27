@@ -68,7 +68,9 @@ void main() {
     });
 
     test('passes initialDirectory correctly', () async {
-      await plugin.openFile(options: const OpenFileDialogOptions(initialDirectory: '/example/directory'));
+      await plugin.openFile(
+        options: const OpenFileDialogOptions(initialDirectory: '/example/directory'),
+      );
 
       expect(api.passedInitialDirectory, '/example/directory');
     });
@@ -83,7 +85,9 @@ void main() {
       const group = XTypeGroup(label: 'text', mimeTypes: <String>['text/plain']);
 
       await expectLater(
-        plugin.openFile(options: const OpenFileDialogOptions(acceptedTypeGroups: <XTypeGroup>[group])),
+        plugin.openFile(
+          options: const OpenFileDialogOptions(acceptedTypeGroups: <XTypeGroup>[group]),
+        ),
         throwsArgumentError,
       );
     });
@@ -92,7 +96,9 @@ void main() {
       const group = XTypeGroup(label: 'text');
 
       await expectLater(
-        plugin.openFile(options: const OpenFileDialogOptions(acceptedTypeGroups: <XTypeGroup>[group])),
+        plugin.openFile(
+          options: const OpenFileDialogOptions(acceptedTypeGroups: <XTypeGroup>[group]),
+        ),
         completes,
       );
     });
@@ -139,13 +145,17 @@ void main() {
     });
 
     test('passes initialDirectory correctly', () async {
-      await plugin.openFiles(options: const OpenFilesDialogOptions(initialDirectory: '/example/directory'));
+      await plugin.openFiles(
+        options: const OpenFilesDialogOptions(initialDirectory: '/example/directory'),
+      );
 
       expect(api.passedInitialDirectory, '/example/directory');
     });
 
     test('passes confirmButtonText correctly', () async {
-      await plugin.openFiles(options: const OpenFilesDialogOptions(confirmButtonText: 'Open Files'));
+      await plugin.openFiles(
+        options: const OpenFilesDialogOptions(confirmButtonText: 'Open Files'),
+      );
 
       expect(api.passedConfirmButtonText, 'Open Files');
     });
@@ -154,7 +164,9 @@ void main() {
       const group = XTypeGroup(label: 'text', mimeTypes: <String>['text/plain']);
 
       await expectLater(
-        plugin.openFiles(options: const OpenFilesDialogOptions(acceptedTypeGroups: <XTypeGroup>[group])),
+        plugin.openFiles(
+          options: const OpenFilesDialogOptions(acceptedTypeGroups: <XTypeGroup>[group]),
+        ),
         throwsArgumentError,
       );
     });
@@ -163,7 +175,9 @@ void main() {
       const group = XTypeGroup(label: 'text');
 
       await expectLater(
-        plugin.openFiles(options: const OpenFilesDialogOptions(acceptedTypeGroups: <XTypeGroup>[group])),
+        plugin.openFiles(
+          options: const OpenFilesDialogOptions(acceptedTypeGroups: <XTypeGroup>[group]),
+        ),
         completes,
       );
     });
@@ -183,13 +197,17 @@ void main() {
     });
 
     test('passes initialDirectory correctly', () async {
-      await plugin.getDirectory(options: const GetDirectoryDialogOptions(initialDirectory: '/example/directory'));
+      await plugin.getDirectory(
+        options: const GetDirectoryDialogOptions(initialDirectory: '/example/directory'),
+      );
 
       expect(api.passedInitialDirectory, '/example/directory');
     });
 
     test('passes confirmButtonText correctly', () async {
-      await plugin.getDirectory(options: const GetDirectoryDialogOptions(confirmButtonText: 'Open Directory'));
+      await plugin.getDirectory(
+        options: const GetDirectoryDialogOptions(confirmButtonText: 'Open Directory'),
+      );
 
       expect(api.passedConfirmButtonText, 'Open Directory');
     });
@@ -210,13 +228,17 @@ void main() {
     });
 
     test('passes initialDirectory correctly', () async {
-      await plugin.getDirectories(options: const GetDirectoriesDialogOptions(initialDirectory: '/example/directory'));
+      await plugin.getDirectories(
+        options: const GetDirectoriesDialogOptions(initialDirectory: '/example/directory'),
+      );
 
       expect(api.passedInitialDirectory, '/example/directory');
     });
 
     test('passes confirmButtonText correctly', () async {
-      await plugin.getDirectories(options: const GetDirectoriesDialogOptions(confirmButtonText: 'Open Directory'));
+      await plugin.getDirectories(
+        options: const GetDirectoriesDialogOptions(confirmButtonText: 'Open Directory'),
+      );
 
       expect(api.passedConfirmButtonText, 'Open Directory');
     });
@@ -299,7 +321,9 @@ void main() {
     });
 
     test('passes confirmButtonText correctly', () async {
-      await plugin.getSaveLocation(options: const SaveLocationOptions(confirmButtonText: 'Save File'));
+      await plugin.getSaveLocation(
+        options: const SaveLocationOptions(confirmButtonText: 'Save File'),
+      );
 
       expect(api.passedConfirmButtonText, 'Save File');
     });
@@ -308,7 +332,9 @@ void main() {
       const group = XTypeGroup(label: 'text', mimeTypes: <String>['text/plain']);
 
       await expectLater(
-        plugin.getSaveLocation(options: const SaveLocationOptions(acceptedTypeGroups: <XTypeGroup>[group])),
+        plugin.getSaveLocation(
+          options: const SaveLocationOptions(acceptedTypeGroups: <XTypeGroup>[group]),
+        ),
         throwsArgumentError,
       );
     });
@@ -317,7 +343,9 @@ void main() {
       const group = XTypeGroup(label: 'text');
 
       await expectLater(
-        plugin.getSaveLocation(options: const SaveLocationOptions(acceptedTypeGroups: <XTypeGroup>[group])),
+        plugin.getSaveLocation(
+          options: const SaveLocationOptions(acceptedTypeGroups: <XTypeGroup>[group]),
+        ),
         completes,
       );
     });

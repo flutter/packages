@@ -61,7 +61,9 @@ void main() {
       const group = XTypeGroup(label: 'images', webWildCards: <String>['images/*']);
 
       await expectLater(
-        plugin.openFile(options: const OpenFileDialogOptions(acceptedTypeGroups: <XTypeGroup>[group])),
+        plugin.openFile(
+          options: const OpenFileDialogOptions(acceptedTypeGroups: <XTypeGroup>[group]),
+        ),
         throwsArgumentError,
       );
     });
@@ -75,7 +77,9 @@ void main() {
       const group = XTypeGroup(label: 'text');
 
       await expectLater(
-        plugin.openFile(options: const OpenFileDialogOptions(acceptedTypeGroups: <XTypeGroup>[group])),
+        plugin.openFile(
+          options: const OpenFileDialogOptions(acceptedTypeGroups: <XTypeGroup>[group]),
+        ),
         completes,
       );
       expect(listEquals(api.passedConfig?.utis, <String>['public.data']), isTrue);
@@ -115,7 +119,9 @@ void main() {
       const group = XTypeGroup(label: 'images', webWildCards: <String>['images/*']);
 
       await expectLater(
-        plugin.openFiles(options: const OpenFilesDialogOptions(acceptedTypeGroups: <XTypeGroup>[group])),
+        plugin.openFiles(
+          options: const OpenFilesDialogOptions(acceptedTypeGroups: <XTypeGroup>[group]),
+        ),
         throwsArgumentError,
       );
     });
@@ -129,7 +135,9 @@ void main() {
       const group = XTypeGroup(label: 'text');
 
       await expectLater(
-        plugin.openFiles(options: const OpenFilesDialogOptions(acceptedTypeGroups: <XTypeGroup>[group])),
+        plugin.openFiles(
+          options: const OpenFilesDialogOptions(acceptedTypeGroups: <XTypeGroup>[group]),
+        ),
         completes,
       );
       expect(listEquals(api.passedConfig?.utis, <String>['public.data']), isTrue);
