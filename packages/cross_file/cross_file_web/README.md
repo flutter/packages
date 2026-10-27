@@ -18,6 +18,7 @@ Depending on your target platforms, this plugin offers two different entry point
 ### 1. Safe Multiplatform Import (Recommended for Cross-Platform Code)
 If your code runs on multiple platforms (iOS, Android, macOS, Linux, Windows, and Web) but needs to reference web-specific creation parameters or extensions safely, use the safe entry point:
 
+<?code-excerpt "main.dart (web_safe_import)"?>
 ```dart
 import 'package:cross_file_web/cross_file_web_safe.dart';
 ```
@@ -27,6 +28,7 @@ This file uses conditional exports (`dart.library.js_interop`), ensuring your co
 ### 2. Direct Web Import (Web-Only)
 If your code targets **only the web** (or web-specific tests/implementations), you can import the direct implementation:
 
+<?code-excerpt "main.dart (web_import)"?>
 ```dart
 import 'package:cross_file_web/cross_file_web.dart';
 ```
