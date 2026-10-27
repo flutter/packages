@@ -2,9 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-@TestOn('!chrome')
-library;
-
 import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -915,8 +912,8 @@ void main() {
     );
 
     // default last column padding
-    padding = find.widgetWithText(Padding, '6.0');
-    cellContent = find.widgetWithText(Align, '6.0');
+    padding = find.widgetWithText(Padding, '${6.0}');
+    cellContent = find.widgetWithText(Align, '${6.0}');
     expect(
       tester.getRect(cellContent).left - tester.getRect(padding).left,
       defaultColumnSpacing / 2,
@@ -1016,8 +1013,8 @@ void main() {
     );
 
     // custom last column padding
-    padding = find.widgetWithText(Padding, '6.0');
-    cellContent = find.widgetWithText(Align, '6.0');
+    padding = find.widgetWithText(Padding, '${6.0}');
+    cellContent = find.widgetWithText(Align, '${6.0}');
     expect(
       tester.getRect(cellContent).left - tester.getRect(padding).left,
       customColumnSpacing / 2,
@@ -1099,8 +1096,8 @@ void main() {
     );
 
     // default last column padding
-    padding = find.widgetWithText(Padding, '6.0');
-    cellContent = find.widgetWithText(Align, '6.0');
+    padding = find.widgetWithText(Padding, '${6.0}');
+    cellContent = find.widgetWithText(Align, '${6.0}');
     expect(
       tester.getRect(cellContent).left - tester.getRect(padding).left,
       defaultColumnSpacing / 2,
@@ -1186,8 +1183,8 @@ void main() {
     );
 
     // custom last column padding
-    padding = find.widgetWithText(Padding, '6.0');
-    cellContent = find.widgetWithText(Align, '6.0');
+    padding = find.widgetWithText(Padding, '${6.0}');
+    cellContent = find.widgetWithText(Align, '${6.0}');
     expect(
       tester.getRect(cellContent).left - tester.getRect(padding).left,
       customColumnSpacing / 2,
@@ -1603,7 +1600,7 @@ void main() {
         ),
     );
     await gesture.up();
-  });
+  }, skip: kIsWeb); // https://github.com/flutter/flutter/issues/100587
 
   testWidgets('DataTable can render inside an AlertDialog', (WidgetTester tester) async {
     await tester.pumpWidget(

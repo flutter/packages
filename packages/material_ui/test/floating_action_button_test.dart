@@ -5,7 +5,6 @@
 // This file is run as part of a reduced test set in CI on Mac and Windows
 // machines.
 @Tags(<String>['reduced-test-set'])
-@TestOn('!chrome')
 library;
 
 import 'dart:async';
@@ -809,7 +808,7 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 1000));
     await expectLater(find.byKey(key), matchesGoldenFile('floating_action_button_test.clip.png'));
-  });
+  }, skip: kIsWeb); // https://github.com/flutter/flutter/issues/20483
 
   testWidgets('Floating Action Button changes mouse cursor when hovered', (
     WidgetTester tester,
@@ -1353,7 +1352,7 @@ void main() {
         find.byKey(key),
         matchesGoldenFile('floating_action_button_test_m2.clip.png'),
       );
-    });
+    }, skip: kIsWeb); // https://github.com/flutter/flutter/issues/20483
   });
 
   group('feedback', () {
