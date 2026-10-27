@@ -2,6 +2,8 @@
 
 The web implementation of [`cross_file`][1].
 
+<?code-excerpt path-base="example/lib"?>
+
 ## Usage
 
 This package is [endorsed][2], which means you can simply use `cross_file`
