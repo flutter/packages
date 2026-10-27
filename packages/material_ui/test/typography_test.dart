@@ -131,6 +131,18 @@ void main() {
     expect(nonDefaultPropertyNames, <String>['black', 'white', 'englishLike', 'dense', 'tall']);
   });
 
+  test('Default Typography debugFillProperties', () {
+    final builder = DiagnosticPropertiesBuilder();
+    ThemeData.fallback().typography.debugFillProperties(builder);
+
+    final List<String> nonDefaultPropertyNames = builder.properties
+        .where((DiagnosticsNode node) => !node.isFiltered(DiagnosticLevel.info))
+        .map((DiagnosticsNode node) => node.name!)
+        .toList();
+
+    expect(nonDefaultPropertyNames, isEmpty);
+  });
+
   test('Can lerp between different typographies', () {
     final all = <Typography>[
       for (final TargetPlatform platform in TargetPlatform.values)

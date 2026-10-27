@@ -1,0 +1,5 @@
+  changelog: |
+    - Adds `Checkbox.markInsets` and `CheckboxThemeData.markInsets`, which inset the
+      check mark (and the indeterminate dash) within the checkbox without changing the
+      size of the box itself. The mark and its stroke shrink proportionally.
+  version: minor
