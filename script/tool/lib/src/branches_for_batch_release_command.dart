@@ -11,9 +11,11 @@ import 'package:pub_semver/pub_semver.dart';
 import 'package:yaml_edit/yaml_edit.dart';
 
 import 'common/core.dart';
+import 'common/file_utils.dart';
 import 'common/output_utils.dart';
 import 'common/package_command.dart';
 import 'common/repository_package.dart';
+import 'common/version_placeholder.dart';
 
 const int _kExitPackageMalformed = 3;
 const int _kGitFailedToPush = 4;
@@ -211,8 +213,45 @@ class BranchesForBatchReleaseCommand extends PackageCommand {
 
     _updatePubspec(package, releaseInfo.newVersion!);
     _updateChangelog(package, releaseInfo);
-    await _stageAndCommitChanges(git, package, pendingChangelogFiles);
+    final List<File> filesWithPlaceholders = await _replaceVersionPlaceholders(
+      package,
+      releaseInfo.newVersion!,
+    );
+    await _stageAndCommitChanges(
+      git,
+      package,
+      pendingChangelogFiles,
+      additionalFiles: filesWithPlaceholders,
+    );
     await _pushBranch(git, remoteName, branchName);
+  }
+
+  /// Replaces every occurrence of [nextVersionPlaceholder] in the Dart files in
+  /// `lib/` of [package] with [newVersion], returning the list of modified
+  /// files.
+  ///
+  /// This allows contributors to reference the not-yet-known release version
+  /// (e.g., in deprecation messages) before the batch release determines it.
+  Future<List<File>> _replaceVersionPlaceholders(
+    RepositoryPackage package,
+    Version newVersion,
+  ) async {
+    final modifiedFiles = <File>[];
+    for (final (:File file, :String content) in await findVersionPlaceholderFiles(
+      package.directory,
+      getFilesForPackage(package),
+      scope: VersionPlaceholderScope.replaceable,
+    )) {
+      file.writeAsStringSync(content.replaceAll(nextVersionPlaceholder, newVersion.toString()));
+      modifiedFiles.add(file);
+    }
+    if (modifiedFiles.isNotEmpty) {
+      print('  Replaced $nextVersionPlaceholder with $newVersion in:');
+      for (final file in modifiedFiles) {
+        print('    ${relativePosixPath(file, from: package.directory, platformContext: path)}');
+      }
+    }
+    return modifiedFiles;
   }
 
   void _updatePubspec(RepositoryPackage package, Version newVersion) {
@@ -250,8 +289,9 @@ class BranchesForBatchReleaseCommand extends PackageCommand {
   Future<void> _stageAndCommitChanges(
     GitDir git,
     RepositoryPackage package,
-    List<File> pendingChangelogFiles,
-  ) async {
+    List<File> pendingChangelogFiles, {
+    List<File> additionalFiles = const <File>[],
+  }) async {
     final List<String> paths = pendingChangelogFiles.map((File f) => f.path).toList();
     final io.ProcessResult rmResult = await git.runCommand(<String>['rm', ...paths]);
     if (rmResult.exitCode != 0) {
@@ -263,6 +303,7 @@ class BranchesForBatchReleaseCommand extends PackageCommand {
       'add',
       package.pubspecFile.path,
       package.changelogFile.path,
+      ...additionalFiles.map((File f) => f.path),
     ]);
     if (addResult.exitCode != 0) {
       printError('Failed to git add: ${addResult.stderr}');

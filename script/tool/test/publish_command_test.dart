@@ -106,6 +106,42 @@ void main() {
       );
     });
 
+    test('refuses to publish packages containing version placeholders', () async {
+      final RepositoryPackage plugin = createFakePlugin('foo', packagesDir, examples: <String>[]);
+      plugin.libDirectory.childFile('foo.dart').writeAsStringSync('''
+@Deprecated('Deprecated in v{{NEXT_VERSION}}.')
+void foo() {}
+''');
+      plugin.directory.childFile('README.md').writeAsStringSync('Since {{NEXT_VERSION}}.');
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+        commandRunner,
+        <String>['publish', '--packages=foo'],
+        errorHandler: (Error e) {
+          commandError = e;
+        },
+      );
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains(
+            'Refusing to publish a package containing {{NEXT_VERSION}} '
+            'placeholders. Replace them with the release version:\n'
+            '  README.md\n'
+            '  lib/foo.dart',
+          ),
+          contains(
+            'foo:\n'
+            '    unreplaced {{NEXT_VERSION}} placeholder',
+          ),
+        ]),
+      );
+      expect(output, isNot(contains('Publishing...')));
+    });
+
     test("fails immediately if the remote doesn't exist", () async {
       createFakePlugin('foo', packagesDir, examples: <String>[]);
 

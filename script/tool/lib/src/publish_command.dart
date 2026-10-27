@@ -23,6 +23,7 @@ import 'common/package_looping_command.dart';
 import 'common/pub_utils.dart';
 import 'common/pub_version_finder.dart';
 import 'common/repository_package.dart';
+import 'common/version_placeholder.dart';
 
 @immutable
 class _RemoteInfo {
@@ -256,6 +257,10 @@ class PublishCommand extends PackageLoopingCommand {
       return PackageResult.fail(<String>['uncommitted changes']);
     }
 
+    if (!await _checkForVersionPlaceholders(package)) {
+      return PackageResult.fail(<String>['unreplaced $nextVersionPlaceholder placeholder']);
+    }
+
     final bool tagOnly = getBoolArg(_tagForAutoPublishFlag);
     if (!tagOnly) {
       if (!await _publish(package)) {
@@ -409,6 +414,25 @@ Safe to ignore if the package is deleted in this commit.
       );
     }
     return statusOutput.isEmpty;
+  }
+
+  /// Returns false, printing the offending files, if [package] contains any
+  /// [nextVersionPlaceholder]s.
+  Future<bool> _checkForVersionPlaceholders(RepositoryPackage package) async {
+    final List<VersionPlaceholderFile> placeholderFiles = await findVersionPlaceholderFiles(
+      package.directory,
+      getFilesForPackage(package),
+      scope: VersionPlaceholderScope.all,
+    );
+    if (placeholderFiles.isEmpty) {
+      return true;
+    }
+    printError(
+      'Refusing to publish a package containing $nextVersionPlaceholder '
+      'placeholders. Replace them with the release version:\n'
+      '${placeholderFiles.map((VersionPlaceholderFile f) => '  ${getRelativePosixPath(f.file, from: package.directory)}').join('\n')}',
+    );
+    return false;
   }
 
   Future<String?> _verifyRemote(String remote) async {

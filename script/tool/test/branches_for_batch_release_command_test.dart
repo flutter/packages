@@ -593,6 +593,74 @@ A new feature
 - Existing unreleased change
 ''');
     });
+
+    test('replaces version placeholder in package files', () async {
+      final RepositoryPackage package = createTestPackage();
+      addTearDown(() {
+        package.directory.deleteSync(recursive: true);
+      });
+      final File libFile = package.libDirectory.childFile('a_package.dart')
+        ..createSync(recursive: true)
+        ..writeAsStringSync('''
+@Deprecated(
+  'Use bar instead. '
+  'This feature was deprecated in v{{NEXT_VERSION}}.',
+)
+void foo() {}
+''');
+      final File libSubdirectoryFile =
+          package.libDirectory.childDirectory('src').childFile('impl.dart')
+            ..createSync(recursive: true)
+            ..writeAsStringSync('// Since {{NEXT_VERSION}}, and again {{NEXT_VERSION}}.\n');
+      final File exampleFile =
+          package.directory.childDirectory('example').childDirectory('lib').childFile('main.dart')
+            ..createSync(recursive: true)
+            ..writeAsStringSync('// Since {{NEXT_VERSION}}.\n');
+      final File nonDartLibFile = package.libDirectory.childFile('notes.txt')
+        ..writeAsStringSync('{{NEXT_VERSION}}');
+      final File readmeFile = package.directory.childFile('README.md')
+        ..writeAsStringSync('Since {{NEXT_VERSION}}.');
+      final File untouchedFile = package.libDirectory.childFile('other.dart')
+        ..writeAsStringSync('void bar() {}\n');
+      createPendingChangelogFile(package, 'a.yaml', '''
+changelog: Deprecates foo.
+version: minor
+''');
+
+      final List<String> output = await runBatchCommand();
+
+      expect(
+        output,
+        containsAllInOrder(<String>[
+          '  Replaced {{NEXT_VERSION}} with 1.1.0 in:',
+          '    lib/a_package.dart',
+          '    lib/src/impl.dart',
+        ]),
+      );
+      expect(libFile.readAsStringSync(), '''
+@Deprecated(
+  'Use bar instead. '
+  'This feature was deprecated in v1.1.0.',
+)
+void foo() {}
+''');
+      expect(libSubdirectoryFile.readAsStringSync(), '// Since 1.1.0, and again 1.1.0.\n');
+      expect(exampleFile.readAsStringSync(), '// Since {{NEXT_VERSION}}.\n');
+      expect(nonDartLibFile.readAsStringSync(), '{{NEXT_VERSION}}');
+      expect(readmeFile.readAsStringSync(), 'Since {{NEXT_VERSION}}.');
+      expect(untouchedFile.readAsStringSync(), 'void bar() {}\n');
+      expect(
+        gitProcessRunner.recordedCalls,
+        contains(
+          const ProcessCall('git-add', <String>[
+            '/packages/a_package/pubspec.yaml',
+            '/packages/a_package/CHANGELOG.md',
+            '/packages/a_package/lib/a_package.dart',
+            '/packages/a_package/lib/src/impl.dart',
+          ], null),
+        ),
+      );
+    });
   });
 
   group('error handling', () {

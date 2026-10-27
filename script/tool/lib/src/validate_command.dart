@@ -297,6 +297,7 @@ class ValidateCommand extends PackageLoopingCommand {
 
     return validator.validateChangelogAndVersion(
       package,
+      packageFiles: getFilesForPackage(package),
       checkForMissingChanges: getBoolArg(_checkForMissingChanges),
       ignorePlatformInterfaceBreaks: getBoolArg(_ignorePlatformInterfaceBreaks),
     );
