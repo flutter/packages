@@ -157,8 +157,10 @@ void main() {
     final int duration = videoController.value.duration.inMilliseconds;
     await videoController.dispose();
 
-    // Allow a tolerance around the 2s target for timer jitter and frame
-    // quantization (typically 100-200ms on device, with margin for CI load).
+    // Allow a 350ms tolerance around the 2s target to account for timer jitter,
+    // encoder latency, and frame quantization (typically 100-200ms on device,
+    // with extra margin to prevent flakes under heavy CI load).
+    // See https://github.com/flutter/flutter/issues/101785.
     final int delta = (duration - 2000).abs();
     expect(delta, lessThan(350));
     expect(duration, lessThanOrEqualTo(postStopTime));
