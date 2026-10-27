@@ -56,11 +56,13 @@ sealed class WebScopedStorageXFileCreationParams extends PlatformScopedStorageXF
     Uint8List bytes, {
     String? fileName,
     bool autoRevokeObjectUrl = true,
+    @visibleForTesting XFileTestOverrides? testOverrides,
   }) => BlobWebScopedStorageXFileCreationParams(
     fileName != null
         ? File(<JSUint8Array>[bytes.toJS].toJS, fileName)
         : Blob(<JSUint8Array>[bytes.toJS].toJS),
     autoRevokeObjectUrl: autoRevokeObjectUrl,
+    testOverrides: testOverrides,
   );
 
   /// Overrides some functions to allow testing.
