@@ -71,6 +71,10 @@ enum ScriptCategory {
 /// font](https://developer.apple.com/design/human-interface-guidelines/typography/)
 /// fonts as used by Apple on iOS.
 ///
+/// [Typography.material2025] instead uses typeface text themes, such as
+/// [mountainView] and [cupertino], which provide the same fonts without any
+/// color. Their colors are derived from a [ColorScheme].
+///
 /// Four sets of geometry themes are provided: 2014, 2018, 2021, and 2025:
 ///
 ///  * The 2014 themes correspond to the original version of the Material Design
