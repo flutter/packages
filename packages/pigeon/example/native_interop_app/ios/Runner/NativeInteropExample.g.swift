@@ -319,7 +319,9 @@ private class _PigeonFfiCodec {
 }
 
 class NativeInteropExampleApiInstanceTracker {
-  static var instancesOfNativeInteropExampleApi = [String: NativeInteropExampleApiSetup?]()
+  nonisolated(unsafe) static var instancesOfNativeInteropExampleApi = [
+    String: NativeInteropExampleApiSetup?
+  ]()
 }
 
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.

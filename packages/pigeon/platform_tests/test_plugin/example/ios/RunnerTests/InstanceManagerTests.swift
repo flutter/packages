@@ -161,14 +161,19 @@ struct InstanceManagerTests {
   }
 }
 
-class EmptyFinalizerDelegate: ProxyApiTestsPigeonInternalFinalizerDelegate {
+final class EmptyFinalizerDelegate: ProxyApiTestsPigeonInternalFinalizerDelegate {
   func onDeinit(identifier: Int64) {}
 }
 
-class TestFinalizerDelegate: ProxyApiTestsPigeonInternalFinalizerDelegate {
+@MainActor
+final class TestFinalizerDelegate: ProxyApiTestsPigeonInternalFinalizerDelegate {
   var lastHandledIdentifier: Int64?
 
-  func onDeinit(identifier: Int64) {
-    lastHandledIdentifier = identifier
+  nonisolated func onDeinit(identifier: Int64) {
+    // The finalizer calls this on the thread that releases the observed object,
+    // and these tests only release it on the main thread.
+    MainActor.assumeIsolated {
+      lastHandledIdentifier = identifier
+    }
   }
 }

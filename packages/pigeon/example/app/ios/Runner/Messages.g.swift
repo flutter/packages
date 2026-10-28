@@ -7,9 +7,9 @@
 import Foundation
 
 #if os(iOS)
-  import Flutter
+  @preconcurrency import Flutter
 #elseif os(macOS)
-  import FlutterMacOS
+  @preconcurrency import FlutterMacOS
 #else
   #error("Unsupported platform.")
 #endif
@@ -61,6 +61,22 @@ private func wrapError(_ error: Any) -> [Any?] {
     "\(Swift.type(of: error))",
     "Stacktrace: \(Thread.callStackSymbols)",
   ]
+}
+
+/// Allows a `FlutterReply` to be captured by a `Task` or a `@Sendable` closure.
+///
+/// `FlutterReply` isn't annotated as `Sendable`, but Flutter documents that it
+/// can be invoked from any thread.
+private struct PigeonInternalSendableReply: @unchecked Sendable {
+  let reply: FlutterReply
+
+  init(_ reply: @escaping FlutterReply) {
+    self.reply = reply
+  }
+
+  func callAsFunction(_ result: Any?) {
+    reply(result)
+  }
 }
 
 private func createConnectionError(withChannelName channelName: String) -> PigeonError {
@@ -302,16 +318,16 @@ class MessagesPigeonCodec: FlutterStandardMessageCodec, @unchecked Sendable {
 
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
 protocol ExampleHostApi {
-  func getHostLanguage() throws -> String
-  func add(_ a: Int64, to b: Int64) throws -> Int64
-  func sendMessage(message: MessageData) async throws -> Bool
+  @MainActor func getHostLanguage() throws -> String
+  @MainActor func add(_ a: Int64, to b: Int64) throws -> Int64
+  @MainActor func sendMessage(message: MessageData) async throws -> Bool
 }
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
 class ExampleHostApiSetup {
   static var codec: FlutterStandardMessageCodec { MessagesPigeonCodec.shared }
   /// Sets up an instance of `ExampleHostApi` to handle messages through the `binaryMessenger`.
-  static func setUp(
+  @MainActor static func setUp(
     binaryMessenger: FlutterBinaryMessenger, api: ExampleHostApi?, messageChannelSuffix: String = ""
   ) {
     let channelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""
@@ -320,7 +336,7 @@ class ExampleHostApiSetup {
         "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.getHostLanguage\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      getHostLanguageChannel.setMessageHandler { _, reply in
+      @MainActor func handler(_: Any?, reply: @escaping FlutterReply) {
         do {
           let result = try api.getHostLanguage()
           reply(wrapResult(result))
@@ -328,6 +344,7 @@ class ExampleHostApiSetup {
           reply(wrapError(error))
         }
       }
+      getHostLanguageChannel.setMessageHandler(handler)
     } else {
       getHostLanguageChannel.setMessageHandler(nil)
     }
@@ -335,7 +352,7 @@ class ExampleHostApiSetup {
       name: "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.add\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      addChannel.setMessageHandler { message, reply in
+      @MainActor func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let aArg = args[0] as! Int64
         let bArg = args[1] as! Int64
@@ -346,6 +363,7 @@ class ExampleHostApiSetup {
           reply(wrapError(error))
         }
       }
+      addChannel.setMessageHandler(handler)
     } else {
       addChannel.setMessageHandler(nil)
     }
@@ -353,7 +371,8 @@ class ExampleHostApiSetup {
       name: "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.sendMessage\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      sendMessageChannel.setMessageHandler { message, reply in
+      @MainActor func handler(message: Any?, reply: @escaping FlutterReply) {
+        let reply = PigeonInternalSendableReply(reply)
         let args = message as! [Any?]
         let messageArg = args[0] as! MessageData
         Task { @MainActor in
@@ -365,6 +384,7 @@ class ExampleHostApiSetup {
           }
         }
       }
+      sendMessageChannel.setMessageHandler(handler)
     } else {
       sendMessageChannel.setMessageHandler(nil)
     }
@@ -391,24 +411,27 @@ class MessageFlutterApi: MessageFlutterApiProtocol {
         "dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod\(messageChannelSuffix)"
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([aStringArg] as [Any?]) { response in
-        guard let listResponse = response as? [Any?] else {
-          continuation.resume(throwing: createConnectionError(withChannelName: channelName))
-          return
-        }
-        if listResponse.count > 1 {
-          let code: String = listResponse[0] as! String
-          let message: String? = nilOrValue(listResponse[1])
-          let details: String? = nilOrValue(listResponse[2])
-          continuation.resume(throwing: PigeonError(code: code, message: message, details: details))
-        } else if MessagesPigeonInternal.isNullish(listResponse[0]) {
-          continuation.resume(
-            throwing: PigeonError(
-              code: "null-error",
-              message: "Flutter api returned null value for non-null return value.", details: ""))
-        } else {
-          let result = listResponse[0] as! String
-          continuation.resume(returning: result)
+      channel.sendMessage([aStringArg] as [Any?]) { (response: any Sendable) in
+        MainActor.assumeIsolated {
+          guard let listResponse = response as? [Any?] else {
+            continuation.resume(throwing: createConnectionError(withChannelName: channelName))
+            return
+          }
+          if listResponse.count > 1 {
+            let code: String = listResponse[0] as! String
+            let message: String? = nilOrValue(listResponse[1])
+            let details: String? = nilOrValue(listResponse[2])
+            continuation.resume(
+              throwing: PigeonError(code: code, message: message, details: details))
+          } else if MessagesPigeonInternal.isNullish(listResponse[0]) {
+            continuation.resume(
+              throwing: PigeonError(
+                code: "null-error",
+                message: "Flutter api returned null value for non-null return value.", details: ""))
+          } else {
+            let result = listResponse[0] as! String
+            continuation.resume(returning: result)
+          }
         }
       }
     }
