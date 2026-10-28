@@ -518,6 +518,18 @@ abstract class CameraXLibraryPigeonProxyApiRegistrar(val binaryMessenger: Binary
   abstract fun getPigeonApiPreview(): PigeonApiPreview
 
   /**
+   * An implementation of [PigeonApiTransformationInfo] used to add a new Dart instance of
+   * `TransformationInfo` to the Dart `InstanceManager`.
+   */
+  abstract fun getPigeonApiTransformationInfo(): PigeonApiTransformationInfo
+
+  /**
+   * An implementation of [PigeonApiTransformationInfoListener] used to add a new Dart instance of
+   * `TransformationInfoListener` to the Dart `InstanceManager`.
+   */
+  abstract fun getPigeonApiTransformationInfoListener(): PigeonApiTransformationInfoListener
+
+  /**
    * An implementation of [PigeonApiVideoCapture] used to add a new Dart instance of `VideoCapture`
    * to the Dart `InstanceManager`.
    */
@@ -757,6 +769,8 @@ abstract class CameraXLibraryPigeonProxyApiRegistrar(val binaryMessenger: Binary
     PigeonApiDeviceOrientationManager.setUpMessageHandlers(
         binaryMessenger, getPigeonApiDeviceOrientationManager())
     PigeonApiPreview.setUpMessageHandlers(binaryMessenger, getPigeonApiPreview())
+    PigeonApiTransformationInfoListener.setUpMessageHandlers(
+        binaryMessenger, getPigeonApiTransformationInfoListener())
     PigeonApiVideoCapture.setUpMessageHandlers(binaryMessenger, getPigeonApiVideoCapture())
     PigeonApiRecorder.setUpMessageHandlers(binaryMessenger, getPigeonApiRecorder())
     PigeonApiVideoRecordEventListener.setUpMessageHandlers(
@@ -809,6 +823,7 @@ abstract class CameraXLibraryPigeonProxyApiRegistrar(val binaryMessenger: Binary
     PigeonApiSystemServicesManager.setUpMessageHandlers(binaryMessenger, null)
     PigeonApiDeviceOrientationManager.setUpMessageHandlers(binaryMessenger, null)
     PigeonApiPreview.setUpMessageHandlers(binaryMessenger, null)
+    PigeonApiTransformationInfoListener.setUpMessageHandlers(binaryMessenger, null)
     PigeonApiVideoCapture.setUpMessageHandlers(binaryMessenger, null)
     PigeonApiRecorder.setUpMessageHandlers(binaryMessenger, null)
     PigeonApiVideoRecordEventListener.setUpMessageHandlers(binaryMessenger, null)
@@ -984,6 +999,18 @@ private class CameraXLibraryPigeonProxyApiBaseCodec(
       registrar.getPigeonApiPreview().pigeon_newInstance(value) {
         if (it.isFailure) {
           logNewInstanceFailure("Preview", value, it.exceptionOrNull())
+        }
+      }
+    } else if (value is androidx.camera.core.SurfaceRequest.TransformationInfo) {
+      registrar.getPigeonApiTransformationInfo().pigeon_newInstance(value) {
+        if (it.isFailure) {
+          logNewInstanceFailure("TransformationInfo", value, it.exceptionOrNull())
+        }
+      }
+    } else if (value is androidx.camera.core.SurfaceRequest.TransformationInfoListener) {
+      registrar.getPigeonApiTransformationInfoListener().pigeon_newInstance(value) {
+        if (it.isFailure) {
+          logNewInstanceFailure("TransformationInfoListener", value, it.exceptionOrNull())
         }
       }
     } else if (value is androidx.camera.video.VideoCapture<*>) {
@@ -3267,10 +3294,14 @@ abstract class PigeonApiPreview(open val pigeonRegistrar: CameraXLibraryPigeonPr
    * 1. Creates a `SurfaceProvider` using the `SurfaceProducer` provided by the Flutter engine.
    * 2. Sets this method with the created `SurfaceProvider`.
    * 3. Returns the texture id of the `TextureEntry` that provided the `SurfaceProducer`.
+   *
+   * If [transformationInfoListener] is provided, it is set on every `SurfaceRequest` that the
+   * created `SurfaceProvider` receives.
    */
   abstract fun setSurfaceProvider(
       pigeon_instance: androidx.camera.core.Preview,
-      systemServicesManager: SystemServicesManager
+      systemServicesManager: SystemServicesManager,
+      transformationInfoListener: androidx.camera.core.SurfaceRequest.TransformationInfoListener?
   ): Long
 
   /** Releases the `SurfaceProducer` created in `setSurfaceProvider` if one was created. */
@@ -3337,9 +3368,15 @@ abstract class PigeonApiPreview(open val pigeonRegistrar: CameraXLibraryPigeonPr
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as androidx.camera.core.Preview
             val systemServicesManagerArg = args[1] as SystemServicesManager
+            val transformationInfoListenerArg =
+                args[2] as androidx.camera.core.SurfaceRequest.TransformationInfoListener?
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.setSurfaceProvider(pigeon_instanceArg, systemServicesManagerArg))
+                  listOf(
+                      api.setSurfaceProvider(
+                          pigeon_instanceArg,
+                          systemServicesManagerArg,
+                          transformationInfoListenerArg))
                 } catch (exception: Throwable) {
                   CameraXLibraryPigeonUtils.wrapError(exception)
                 }
@@ -3482,6 +3519,187 @@ abstract class PigeonApiPreview(open val pigeonRegistrar: CameraXLibraryPigeonPr
   /** An implementation of [PigeonApiUseCase] used to access callback methods */
   fun pigeon_getPigeonApiUseCase(): PigeonApiUseCase {
     return pigeonRegistrar.getPigeonApiUseCase()
+  }
+}
+/**
+ * Transformation associated with the preview output.
+ *
+ * See
+ * https://developer.android.com/reference/androidx/camera/core/SurfaceRequest.TransformationInfo.
+ */
+@Suppress("UNCHECKED_CAST")
+abstract class PigeonApiTransformationInfo(
+    open val pigeonRegistrar: CameraXLibraryPigeonProxyApiRegistrar
+) {
+  /**
+   * The clockwise rotation in degrees that needs to be applied to the preview buffer to reach the
+   * target rotation of the `Preview`.
+   */
+  abstract fun rotationDegrees(
+      pigeon_instance: androidx.camera.core.SurfaceRequest.TransformationInfo
+  ): Long
+
+  /** Whether or not the `Surface` contains the camera transform. */
+  abstract fun hasCameraTransform(
+      pigeon_instance: androidx.camera.core.SurfaceRequest.TransformationInfo
+  ): Boolean
+
+  /**
+   * Whether or not the buffer should be mirrored across the vertical axis after [rotationDegrees]
+   * is applied.
+   */
+  abstract fun isMirroring(
+      pigeon_instance: androidx.camera.core.SurfaceRequest.TransformationInfo
+  ): Boolean
+
+  @Suppress("LocalVariableName", "FunctionName")
+  /** Creates a Dart instance of TransformationInfo and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(
+      pigeon_instanceArg: androidx.camera.core.SurfaceRequest.TransformationInfo,
+      callback: (Result<Unit>) -> Unit
+  ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+    } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
+      callback(Result.success(Unit))
+    } else {
+      val pigeon_identifierArg =
+          pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+      val rotationDegreesArg = rotationDegrees(pigeon_instanceArg)
+      val hasCameraTransformArg = hasCameraTransform(pigeon_instanceArg)
+      val isMirroringArg = isMirroring(pigeon_instanceArg)
+      val binaryMessenger = pigeonRegistrar.binaryMessenger
+      val codec = pigeonRegistrar.codec
+      val channelName =
+          "dev.flutter.pigeon.camera_android_camerax.TransformationInfo.pigeon_newInstance"
+      val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+      channel.send(
+          listOf(pigeon_identifierArg, rotationDegreesArg, hasCameraTransformArg, isMirroringArg)) {
+            if (it is List<*>) {
+              if (it.size > 1) {
+                callback(
+                    Result.failure(
+                        CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
+              } else {
+                callback(Result.success(Unit))
+              }
+            } else {
+              callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
+            }
+          }
+    }
+  }
+}
+/**
+ * Listener that receives updates of the [TransformationInfo] associated with a preview
+ * `SurfaceRequest`.
+ *
+ * See
+ * https://developer.android.com/reference/androidx/camera/core/SurfaceRequest.TransformationInfoListener.
+ */
+@Suppress("UNCHECKED_CAST")
+abstract class PigeonApiTransformationInfoListener(
+    open val pigeonRegistrar: CameraXLibraryPigeonProxyApiRegistrar
+) {
+  abstract fun pigeon_defaultConstructor():
+      androidx.camera.core.SurfaceRequest.TransformationInfoListener
+
+  companion object {
+    @Suppress("LocalVariableName")
+    fun setUpMessageHandlers(
+        binaryMessenger: BinaryMessenger,
+        api: PigeonApiTransformationInfoListener?
+    ) {
+      val codec = api?.pigeonRegistrar?.codec ?: CameraXLibraryPigeonCodec()
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.camera_android_camerax.TransformationInfoListener.pigeon_defaultConstructor",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_identifierArg = args[0] as Long
+            val wrapped: List<Any?> =
+                try {
+                  api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
+                      api.pigeon_defaultConstructor(), pigeon_identifierArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  CameraXLibraryPigeonUtils.wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+    }
+  }
+
+  @Suppress("LocalVariableName", "FunctionName")
+  /**
+   * Creates a Dart instance of TransformationInfoListener and attaches it to [pigeon_instanceArg].
+   */
+  fun pigeon_newInstance(
+      pigeon_instanceArg: androidx.camera.core.SurfaceRequest.TransformationInfoListener,
+      callback: (Result<Unit>) -> Unit
+  ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+    } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
+      callback(Result.success(Unit))
+    } else {
+      callback(
+          Result.failure(
+              CameraXError(
+                  "new-instance-error",
+                  "Attempting to create a new Dart instance of TransformationInfoListener, but the class has a nonnull callback method.",
+                  "")))
+    }
+  }
+
+  /** Called when the [TransformationInfo] becomes available or is updated. */
+  fun onTransformationInfoUpdate(
+      pigeon_instanceArg: androidx.camera.core.SurfaceRequest.TransformationInfoListener,
+      transformationInfoArg: androidx.camera.core.SurfaceRequest.TransformationInfo,
+      callback: (Result<Unit>) -> Unit
+  ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    } else if (!pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
+      callback(
+          Result.failure(
+              CameraXError(
+                  "missing-instance-error",
+                  "Callback to `TransformationInfoListener.onTransformationInfoUpdate` failed because native instance was not in the instance manager.",
+                  "")))
+      return
+    }
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
+    val channelName =
+        "dev.flutter.pigeon.camera_android_camerax.TransformationInfoListener.onTransformationInfoUpdate"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_instanceArg, transformationInfoArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
+      }
+    }
   }
 }
 /**

@@ -1,3 +1,8 @@
+## 0.7.6+1
+
+* Fixes camera preview rotating 90 degrees when recording video while streaming
+  images.
+
 ## 0.7.6
 
 * Adds support for zero-shutter-lag still image capture via

@@ -398,7 +398,13 @@ abstract class Preview extends UseCase {
   /// 2. Sets this method with the created `SurfaceProvider`.
   /// 3. Returns the texture id of the `TextureEntry` that provided the
   /// `SurfaceProducer`.
-  int setSurfaceProvider(SystemServicesManager systemServicesManager);
+  ///
+  /// If [transformationInfoListener] is provided, it is set on every
+  /// `SurfaceRequest` that the created `SurfaceProvider` receives.
+  int setSurfaceProvider(
+    SystemServicesManager systemServicesManager,
+    TransformationInfoListener? transformationInfoListener,
+  );
 
   /// Releases the `SurfaceProducer` created in `setSurfaceProvider` if one was
   /// created.
@@ -413,6 +419,43 @@ abstract class Preview extends UseCase {
   /// Returns whether or not the preview's surface producer handles correctly
   /// rotating the camera preview automatically.
   bool surfaceProducerHandlesCropAndRotation();
+}
+
+/// Transformation associated with the preview output.
+///
+/// See https://developer.android.com/reference/androidx/camera/core/SurfaceRequest.TransformationInfo.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'androidx.camera.core.SurfaceRequest.TransformationInfo',
+  ),
+)
+abstract class TransformationInfo {
+  /// The clockwise rotation in degrees that needs to be applied to the preview
+  /// buffer to reach the target rotation of the `Preview`.
+  late int rotationDegrees;
+
+  /// Whether or not the `Surface` contains the camera transform.
+  late bool hasCameraTransform;
+
+  /// Whether or not the buffer should be mirrored across the vertical axis
+  /// after [rotationDegrees] is applied.
+  late bool isMirroring;
+}
+
+/// Listener that receives updates of the [TransformationInfo] associated with
+/// a preview `SurfaceRequest`.
+///
+/// See https://developer.android.com/reference/androidx/camera/core/SurfaceRequest.TransformationInfoListener.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'androidx.camera.core.SurfaceRequest.TransformationInfoListener',
+  ),
+)
+abstract class TransformationInfoListener {
+  TransformationInfoListener();
+
+  /// Called when the [TransformationInfo] becomes available or is updated.
+  late void Function(TransformationInfo transformationInfo) onTransformationInfoUpdate;
 }
 
 /// A use case that provides camera stream suitable for video application.
