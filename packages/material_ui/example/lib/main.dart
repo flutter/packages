@@ -248,7 +248,7 @@ class ExampleApp extends StatelessWidget {
     ),
     _Example(
       filepath: 'typography/typography.0.dart',
-      title: 'typography',
+      title: 'Typography',
       builder: (BuildContext context) =>
           const typography_0.TypographyExampleApp(),
     ),
