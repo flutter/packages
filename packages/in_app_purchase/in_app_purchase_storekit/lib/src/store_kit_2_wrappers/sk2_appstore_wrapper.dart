@@ -26,4 +26,11 @@ final class AppStore {
   Future<void> presentOfferCodeRedeemSheet() {
     return hostApi2.presentOfferCodeRedeemSheet();
   }
+
+  /// Dart wrapper for StoreKit2's showManageSubscriptions(in:)
+  /// Presents the App Store sheet that lets users manage their subscriptions.
+  /// https://developer.apple.com/documentation/storekit/appstore/showmanagesubscriptions(in:)
+  Future<void> showManageSubscriptions() {
+    return hostApi2.showManageSubscriptions();
+  }
 }

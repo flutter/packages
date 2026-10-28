@@ -1,6 +1,8 @@
-## NEXT
+## 0.5.3+7
 
-* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+* Updates minimum supported SDK version to Flutter 3.47/Dart 3.13.
+* Updates minimum iOS version to 15.
+* Replaces the `UIDocumentPickerViewController` initializer deprecated in iOS 14.
 
 ## 0.5.3+6
 

@@ -1,3 +1,7 @@
+## 4.5.2
+
+- Adopts shared analyzer helpers from `package:source_helper` `^1.4.0`.
+
 ## 4.5.1
 
 - Migrates examples to `material_ui` package (1.4.0).
