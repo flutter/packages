@@ -59,8 +59,8 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi, HostCa
     flutterSmallApiTwo = FlutterSmallApi(
       binaryMessenger: binaryMessenger, messageChannelSuffix: "suffixTwo")
 
-    let _ = StreamIntsStreamHandler.register(with: binaryMessenger, streamHandler: SendInts())
-    let _ = StreamEventsStreamHandler.register(with: binaryMessenger, streamHandler: SendEvents())
+    StreamIntsStreamHandler.register(with: binaryMessenger, streamHandler: SendInts())
+    StreamEventsStreamHandler.register(with: binaryMessenger, streamHandler: SendEvents())
     // Store one handler to exercise the handler removal codepath, and discard
     // the other to test that the return value can be safely ignored.
     let streamHandlerOne = SendConsistentNumbers(numberToSend: 1)
@@ -69,7 +69,7 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi, HostCa
       instanceName: "1",
       streamHandler: streamHandlerOne)
     streamHandlerOne.onCompleted = { channelOne.setStreamHandler(nil) }
-    let _ = StreamConsistentNumbersStreamHandler.register(
+    StreamConsistentNumbersStreamHandler.register(
       with: binaryMessenger,
       instanceName: "2",
       streamHandler: SendConsistentNumbers(numberToSend: 2))

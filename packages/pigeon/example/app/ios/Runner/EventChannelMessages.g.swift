@@ -338,7 +338,7 @@ class StreamEventsStreamHandler: PigeonEventChannelWrapper<PlatformEvent> {
   /// The returned channel can be stored to allow changing or removing the stream handler.
   /// If the handler will not be changed for the lifetime of the engine associated with the messenger,
   /// the return value can be ignored.
-  static func register(
+  @discardableResult static func register(
     with messenger: FlutterBinaryMessenger,
     instanceName: String = "",
     streamHandler: StreamEventsStreamHandler
