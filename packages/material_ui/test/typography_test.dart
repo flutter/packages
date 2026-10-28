@@ -804,14 +804,28 @@ void main() {
       );
       expect(customTextTheme.textTheme.bodyMedium!.fontFamily, 'Custom');
       expect(customTextTheme.textTheme.bodyMediumEmphasized!.fontFamily, 'Roboto');
+    });
 
-      // ThemeData.fontFamily is applied to every style, including emphasized styles.
-      final customFontFamily = ThemeData(fontFamily: 'Custom');
-      for (final style in <TextStyle?>[
-        ..._baselineStyles(customFontFamily.textTheme),
-        ..._emphasizedStyles(customFontFamily.textTheme),
-      ]) {
-        expect(style!.fontFamily, 'Custom');
+    test('ThemeData fontFamily and fontFamilyFallback apply to emphasized styles', () {
+      const fontFamilyFallback = <String>['CustomFallback1', 'CustomFallback2'];
+      for (final TargetPlatform platform in TargetPlatform.values) {
+        final theme = ThemeData(
+          platform: platform,
+          fontFamily: 'Custom',
+          fontFamilyFallback: fontFamilyFallback,
+        );
+        final List<TextStyle?> baseline = _baselineStyles(theme.textTheme);
+        final List<TextStyle?> emphasized = _emphasizedStyles(theme.textTheme);
+        for (var i = 0; i < baseline.length; i++) {
+          expect(baseline[i]!.fontFamily, 'Custom', reason: '$platform');
+          expect(baseline[i]!.fontFamilyFallback, fontFamilyFallback, reason: '$platform');
+          expect(emphasized[i]!.fontFamily, baseline[i]!.fontFamily, reason: '$platform');
+          expect(
+            emphasized[i]!.fontFamilyFallback,
+            baseline[i]!.fontFamilyFallback,
+            reason: '$platform',
+          );
+        }
       }
     });
   });
