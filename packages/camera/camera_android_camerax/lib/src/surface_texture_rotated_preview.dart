@@ -47,7 +47,7 @@ final class _SurfaceTextureRotatedPreviewState extends State<SurfaceTextureRotat
       // Until a TransformationInfo is received, assume the surface is connected
       // to the camera directly.
       final TransformationInfo? info = transformationInfo;
-      if (info != null && surfaceIsProcessedByCameraX(info)) {
+      if (info != null && !info.hasCameraTransform) {
         // The SurfaceTexture will not apply the camera transform, so the preview
         // needs the same correction as previews backed by an ImageReader.
         return buildUntransformedPreview(
@@ -61,16 +61,11 @@ final class _SurfaceTextureRotatedPreviewState extends State<SurfaceTextureRotat
         );
       }
 
-      // The SurfaceTexture applies the camera transform (the sensor rotation and
-      // the mirroring of front camera previews), so only the display rotation
-      // remains to be corrected. This relies on the Preview using CameraX's
-      // default mirror mode, which the plugin API does not allow changing; see
-      // getRemainingRotationDegrees() in CameraX's PreviewTransformation.
-      //
-      // Rotate the preview according to the current default display rotation,
-      // but subtract out the rotation applied by the CameraPreview widget
-      // (see camera/camera/lib/src/camera_preview.dart) that is not correct
-      // for this plugin.
+      // The SurfaceTexture applies the camera transform (the sensor rotation and,
+      // with CameraX's default mirror mode, front camera mirroring), so only the
+      // display rotation remains to be corrected, minus the rotation applied by
+      // the CameraPreview widget (see camera/camera/lib/src/camera_preview.dart)
+      // that is not correct for this plugin.
       final int rotationCorrection =
           getQuarterTurnsFromSurfaceRotationConstant(defaultDisplayRotation) -
           getPreAppliedQuarterTurnsRotationFromDeviceOrientation(deviceOrientation);

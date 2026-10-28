@@ -378,33 +378,50 @@ void main() {
       );
     });
 
-    test('mirrors across the y-axis in portrait and the x-axis in landscape', () {
-      final TransformationInfo mirroredInfo = _createTransformationInfo(
-        rotationDegrees: 90,
-        isMirroring: true,
-      );
-
-      for (final orientation in <DeviceOrientation>[
-        DeviceOrientation.portraitUp,
-        DeviceOrientation.portraitDown,
-      ]) {
-        final transform =
-            buildPreview(transformationInfo: mirroredInfo, deviceOrientation: orientation).child!
-                as Transform;
-        expect(transform.transform.storage[0], 1, reason: '$orientation');
-        expect(transform.transform.storage[5], -1, reason: '$orientation');
+    test('mirrors across the x-axis when the preview is rotated a quarter or three quarter turn '
+        'in total and across the y-axis otherwise', () {
+      for (final rotationDegrees in <int>[0, 90, 180, 270]) {
+        for (final DeviceOrientation orientation in DeviceOrientation.values) {
+          final transform =
+              buildPreview(
+                    transformationInfo: _createTransformationInfo(
+                      rotationDegrees: rotationDegrees,
+                      isMirroring: true,
+                    ),
+                    deviceOrientation: orientation,
+                  ).child!
+                  as Transform;
+          final rotatedQuarterTurn = rotationDegrees % 180 == 90;
+          final reason = 'rotationDegrees: $rotationDegrees, $orientation';
+          expect(transform.transform.storage[0], rotatedQuarterTurn ? 1 : -1, reason: reason);
+          expect(transform.transform.storage[5], rotatedQuarterTurn ? -1 : 1, reason: reason);
+        }
       }
+    });
 
-      for (final orientation in <DeviceOrientation>[
-        DeviceOrientation.landscapeLeft,
-        DeviceOrientation.landscapeRight,
-      ]) {
+    test('mirrors raw front camera buffers across the x-axis in portrait and the y-axis in '
+        'landscape', () {
+      const displayRotationToOrientation = <int, DeviceOrientation>{
+        Surface.rotation0: DeviceOrientation.portraitUp,
+        Surface.rotation90: DeviceOrientation.landscapeLeft,
+        Surface.rotation180: DeviceOrientation.portraitDown,
+        Surface.rotation270: DeviceOrientation.landscapeRight,
+      };
+      displayRotationToOrientation.forEach((int displayRotation, DeviceOrientation orientation) {
         final transform =
-            buildPreview(transformationInfo: mirroredInfo, deviceOrientation: orientation).child!
+            buildPreview(
+                  cameraIsFrontFacing: true,
+                  sensorOrientationDegrees: 270,
+                  displayRotation: displayRotation,
+                  deviceOrientation: orientation,
+                ).child!
                 as Transform;
-        expect(transform.transform.storage[0], -1, reason: '$orientation');
-        expect(transform.transform.storage[5], 1, reason: '$orientation');
-      }
+        final bool portrait =
+            orientation == DeviceOrientation.portraitUp ||
+            orientation == DeviceOrientation.portraitDown;
+        expect(transform.transform.storage[0], portrait ? 1 : -1, reason: '$orientation');
+        expect(transform.transform.storage[5], portrait ? -1 : 1, reason: '$orientation');
+      });
     });
   });
 }

@@ -1,7 +1,7 @@
 ## 0.7.6+1
 
-* Fixes camera preview rotation when image streaming and video recording are
-  active at the same time by using CameraX's `SurfaceRequest.TransformationInfo`.
+* Fixes camera preview rotating 90 degrees when recording video while streaming
+  images.
 
 ## 0.7.6
 

@@ -1077,9 +1077,9 @@ void main() {
             final transformedPreview = rotatedBox.child! as Transform;
             final Matrix4 transformedPreviewMatrix = transformedPreview.transform;
 
-            // Since the front camera is in landscape mode, we expect the camera
-            // preview to be mirrored across the x-axis.
-            checkXAxisIsMirrored(transformedPreviewMatrix);
+            // Even though the device is in landscape, the buffer is rotated 90 or 270
+            // degrees in total, so the preview is mirrored with scaleY.
+            checkYAxisIsMirrored(transformedPreviewMatrix);
             expect((transformedPreview.child! as Texture).textureId, cameraId);
             expect(
               rotatedBox.quarterTurns,
@@ -1187,9 +1187,9 @@ void main() {
             final transformedPreview = rotatedBox.child! as Transform;
             final Matrix4 transformedPreviewMatrix = transformedPreview.transform;
 
-            // Since the front camera is in landscape mode, we expect the camera
-            // preview to be mirrored across the x-axis.
-            checkXAxisIsMirrored(transformedPreviewMatrix);
+            // Even though the device is in landscape, the buffer is rotated 90 or 270
+            // degrees in total, so the preview is mirrored with scaleY.
+            checkYAxisIsMirrored(transformedPreviewMatrix);
             expect((transformedPreview.child! as Texture).textureId, cameraId);
             expect(
               rotatedBox.quarterTurns,
@@ -1283,9 +1283,9 @@ void main() {
             final transformedPreview = rotatedBox.child! as Transform;
             final Matrix4 transformedPreviewMatrix = transformedPreview.transform;
 
-            // Since the front camera is in landscape mode, we expect the camera
-            // preview to be mirrored across the x-axis.
-            checkXAxisIsMirrored(transformedPreviewMatrix);
+            // Even though the device is in landscape, the buffer is rotated 90 or 270
+            // degrees in total, so the preview is mirrored with scaleY.
+            checkYAxisIsMirrored(transformedPreviewMatrix);
             expect((transformedPreview.child! as Texture).textureId, cameraId);
             expect(
               rotatedBox.quarterTurns,
@@ -1395,9 +1395,9 @@ void main() {
             final transformedPreview = rotatedBox.child! as Transform;
             final Matrix4 transformedPreviewMatrix = transformedPreview.transform;
 
-            // Since the front camera is in landscape mode, we expect the camera
-            // preview to be mirrored across the x-axis.
-            checkXAxisIsMirrored(transformedPreviewMatrix);
+            // Even though the device is in landscape, the buffer is rotated 90 or 270
+            // degrees in total, so the preview is mirrored with scaleY.
+            checkYAxisIsMirrored(transformedPreviewMatrix);
             expect((transformedPreview.child! as Texture).textureId, cameraId);
 
             final int clockwiseQuarterTurns = rotatedBox.quarterTurns + 4;
@@ -1561,9 +1561,15 @@ void main() {
           final transformedPreview = rotatedBox.child! as Transform;
           final Matrix4 transformedPreviewMatrix = transformedPreview.transform;
 
-          // Since the front camera is in landscape mode, we expect the camera
-          // preview to be mirrored across the x-axis.
-          checkXAxisIsMirrored(transformedPreviewMatrix);
+          // The buffer is rotated (270 + clockwiseDefaultDisplayRotation) % 360
+          // degrees in total, so the preview is mirrored with scaleY when that is
+          // 90 or 270 degrees and with scaleX otherwise.
+          if (currentDefaultDisplayRotation == Surface.rotation0 ||
+              currentDefaultDisplayRotation == Surface.rotation180) {
+            checkYAxisIsMirrored(transformedPreviewMatrix);
+          } else {
+            checkXAxisIsMirrored(transformedPreviewMatrix);
+          }
           expect((transformedPreview.child! as Texture).textureId, cameraId);
 
           final int clockwiseQuarterTurns = rotatedBox.quarterTurns < 0
@@ -1660,16 +1666,10 @@ void main() {
           final transformedPreview = rotatedBox.child! as Transform;
           final Matrix4 transformedPreviewMatrix = transformedPreview.transform;
 
-          // When the front camera is in landscape mode, we expect the camera
-          // preview to be mirrored across the x-axis. When the front camera
-          // is in portrait mode, we expect the camera preview to be mirrored
-          // across the y-axis.
-          if (currentDeviceOrientation == DeviceOrientation.landscapeLeft ||
-              currentDeviceOrientation == DeviceOrientation.landscapeRight) {
-            checkXAxisIsMirrored(transformedPreviewMatrix);
-          } else {
-            checkYAxisIsMirrored(transformedPreviewMatrix);
-          }
+          // The buffer is always rotated (90 + 90) % 360 = 180 degrees in total,
+          // regardless of the device orientation, so the preview is mirrored
+          // with scaleX.
+          checkXAxisIsMirrored(transformedPreviewMatrix);
           expect((transformedPreview.child! as Texture).textureId, cameraId);
           final int clockwiseQuarterTurns = rotatedBox.quarterTurns < 0
               ? rotatedBox.quarterTurns + 4
@@ -2306,6 +2306,81 @@ void main() {
       await tester.pumpWidget(const SizedBox());
       await camera.dispose(cameraId);
       await tester.pumpWidget(camera.buildPreview(cameraId));
+      await tester.pump();
+
+      // Falls back to the sensor orientation: 90 - 0 = 90 degrees.
+      expect(tester.widget<RotatedBox>(find.byType(RotatedBox)).quarterTurns, _90DegreesClockwise);
+    });
+
+    testWidgets('updates sent to the listener of a previous preview are ignored', (
+      WidgetTester tester,
+    ) async {
+      const cameraId = 46;
+      final AndroidCameraCameraX camera = await createCameraAndBuildPreview(
+        tester,
+        cameraId: cameraId,
+        handlesCropAndRotation: false,
+        isCameraFrontFacing: false,
+        sensorRotationDegrees: 90,
+        mockDeviceOrientationManager: createMockDeviceOrientationManager(
+          uiOrientation: DeviceOrientation.portraitUp,
+          defaultDisplayRotation: Surface.rotation0,
+        ),
+      );
+      final previousListener = transformationInfoListener;
+
+      await tester.pumpWidget(const SizedBox());
+      await camera.createCameraWithSettings(
+        (await camera.availableCameras()).first,
+        const MediaSettings(),
+      );
+      expect(transformationInfoListener, isNot(same(previousListener)));
+      await tester.pumpWidget(camera.buildPreview(cameraId));
+      await tester.pump();
+
+      previousListener.onTransformationInfoUpdate(
+        previousListener,
+        TransformationInfo.pigeon_detached(
+          rotationDegrees: 0,
+          hasCameraTransform: false,
+          isMirroring: false,
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Still uses the sensor orientation: 90 - 0 = 90 degrees.
+      expect(tester.widget<RotatedBox>(find.byType(RotatedBox)).quarterTurns, _90DegreesClockwise);
+
+      sendTransformationInfo(rotationDegrees: 0, hasCameraTransform: false, isMirroring: false);
+      await tester.pumpAndSettle();
+
+      expect(tester.widget<RotatedBox>(find.byType(RotatedBox)).quarterTurns, _0DegreesClockwise);
+    });
+
+    testWidgets('a preview of a new camera that replaces the preview of a previous camera in the '
+        'widget tree does not use the TransformationInfo of the previous camera', (
+      WidgetTester tester,
+    ) async {
+      final AndroidCameraCameraX camera = await createCameraAndBuildPreview(
+        tester,
+        cameraId: 47,
+        handlesCropAndRotation: false,
+        isCameraFrontFacing: false,
+        sensorRotationDegrees: 90,
+        mockDeviceOrientationManager: createMockDeviceOrientationManager(
+          uiOrientation: DeviceOrientation.portraitUp,
+          defaultDisplayRotation: Surface.rotation0,
+        ),
+      );
+      sendTransformationInfo(rotationDegrees: 0, hasCameraTransform: false, isMirroring: false);
+      await tester.pumpAndSettle();
+      expect(tester.widget<RotatedBox>(find.byType(RotatedBox)).quarterTurns, _0DegreesClockwise);
+
+      await camera.createCameraWithSettings(
+        (await camera.availableCameras()).first,
+        const MediaSettings(),
+      );
+      await tester.pumpWidget(camera.buildPreview(48));
       await tester.pump();
 
       // Falls back to the sensor orientation: 90 - 0 = 90 degrees.
