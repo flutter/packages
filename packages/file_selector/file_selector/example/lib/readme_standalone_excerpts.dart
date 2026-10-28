@@ -43,6 +43,9 @@ class _MyAppState extends State<MyApp> {
       return;
     }
 
+    // TODO(bparrishMines): Change to use the cross platform safe methods to
+    // write to a file once https://github.com/flutter/packages/pull/13133
+    // lands.
     if (result.file case final FileSystemXFile file) {
       final fileData = Uint8List.fromList('Hello World!'.codeUnits);
       await file.writeAsBytes(fileData);
