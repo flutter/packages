@@ -1,3 +1,8 @@
+## 3.27.2
+
+* Restores the minimum iOS version to 13 and minimum macOS version to 10.15.
+* Suppresses `SecTrustGetCertificateAtIndex` deprecation warnings.
+
 ## 3.27.1
 
 * Updates minimum iOS version to 15 and minimum macOS version to 12.

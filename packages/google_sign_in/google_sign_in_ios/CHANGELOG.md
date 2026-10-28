@@ -1,3 +1,7 @@
+## 6.3.9
+
+* Converts the iOS example app and UI tests to Swift.
+
 ## 6.3.8
 
 * Removes the public iOS `handleOpen` helper. On macOS `handleOpen` remains public because it implements `FlutterAppLifecycleDelegate`.
