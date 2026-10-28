@@ -2,6 +2,11 @@
 
 * Adds support for camera image stream on web.
 * Updates minimum `web` package version to 1.0.0.
+
+## 0.3.5+7
+
+* Fixes `availableCameras` failing when a video input device cannot be started, for example
+  a virtual camera without a video source. Such devices are now skipped.
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 
 ## 0.3.5+6
