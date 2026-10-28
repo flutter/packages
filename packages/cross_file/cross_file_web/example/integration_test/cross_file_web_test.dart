@@ -11,6 +11,7 @@ import 'package:cross_file_web/cross_file_web.dart';
 import 'package:cross_file_web/cross_file_web_safe.dart' as web_safe;
 import 'package:cross_file_web/src/web_helpers.dart';
 import 'package:cross_file_web/src/web_scoped_storage_cross_file.dart';
+import 'package:cross_file_web/src/web_scoped_storage_cross_file.dart' as web_safe_file;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:web/web.dart' as html;
@@ -176,6 +177,24 @@ void main() {
 
           final file = WebScopedStorageXFile(
             WebScopedStorageXFileCreationParams.fromBlob(testFile, testOverrides: testOverrides),
+          );
+
+          await file.download();
+
+          final html.Element? container = html.document.querySelector('#$crossFileDomElementId');
+
+          expect(container, isNotNull);
+        });
+
+        testWidgets('creates a DOM container when using safe import', (_) async {
+          final mockAnchor = html.document.createElement('a') as html.HTMLAnchorElement;
+          final testOverrides = XFileTestOverrides(createAnchorElement: (_, _) => mockAnchor);
+
+          final file = web_safe_file.WebScopedStorageXFile(
+            web_safe_file.WebScopedStorageXFileCreationParams.fromBytes(
+              testFileBytes,
+              testOverrides: testOverrides,
+            ),
           );
 
           await file.download();

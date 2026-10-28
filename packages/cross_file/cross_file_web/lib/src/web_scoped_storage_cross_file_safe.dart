@@ -6,7 +6,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
-import 'package:flutter/foundation.dart' show immutable;
+import 'package:flutter/foundation.dart' show immutable, visibleForTesting;
 
 /// Base implementation of [PlatformScopedStorageXFileCreationParams] for web.
 ///
@@ -31,6 +31,8 @@ base class WebScopedStorageXFileCreationParams extends PlatformScopedStorageXFil
   ///
   /// `autoRevokeObjectUrl`: Whether the created object url should be revoked
   /// when this instance is garbage collected. See [URL.revokeObjectURL].
+  ///
+  /// This is a stub for the method in `web_scoped_storage_cross_file.dart`.
   factory WebScopedStorageXFileCreationParams.fromBytes(
     // ignore: avoid_unused_constructor_parameters
     Uint8List bytes, {
@@ -38,6 +40,10 @@ base class WebScopedStorageXFileCreationParams extends PlatformScopedStorageXFil
     String? fileName,
     // ignore: avoid_unused_constructor_parameters
     bool autoRevokeObjectUrl = true,
+    // The type should be a `XFileTestOverrides`. It can't be imported in this
+    // stub without breaking other platforms.
+    // ignore: avoid_unused_constructor_parameters
+    @visibleForTesting dynamic testOverrides,
   }) => const WebScopedStorageXFileCreationParams(uri: '');
 }
 
