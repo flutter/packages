@@ -279,7 +279,7 @@ class Typography with Diagnosticable {
     TextTheme? dense,
     TextTheme? tall,
   }) {
-    assert(platform != null || typeface != null);
+    assert(platform != null || typeface != null, 'Either platform or typeface must be provided.');
     final TextTheme resolvedTypeface = _withEmphasizedFromBaseline(
       typeface ??
           switch (platform!) {

@@ -745,6 +745,75 @@ void main() {
       final m3Theme = ThemeData(typography: Typography.material2021());
       expect(_emphasizedStyles(m3Theme.textTheme), everyElement(isNull));
     });
+
+    test('lerps to and from material2021', () {
+      final m3 = Typography.material2021(colorScheme: lightScheme);
+      final m3e = Typography.material2025(colorScheme: lightScheme);
+
+      for (final t in <double>[0.0, 0.25, 0.5, 0.75, 1.0]) {
+        for (final (Typography a, Typography b) in <(Typography, Typography)>[
+          (m3, m3e),
+          (m3e, m3),
+        ]) {
+          final Typography lerped = Typography.lerp(a, b, t);
+          for (final (TextTheme lerpedTheme, TextTheme m3Theme) in <(TextTheme, TextTheme)>[
+            (lerped.black, m3.black),
+            (lerped.white, m3.white),
+            (lerped.englishLike, m3.englishLike),
+          ]) {
+            // The baseline styles are identical, so they are unchanged by lerping.
+            expect(_baselineStyles(lerpedTheme), _baselineStyles(m3Theme), reason: 't = $t');
+          }
+        }
+      }
+
+      // Emphasized styles animate between null and the material2025 styles.
+      expect(
+        _emphasizedStyles(Typography.lerp(m3, m3e, 1.0).englishLike),
+        _emphasizedStyles(m3e.englishLike),
+      );
+      expect(
+        _emphasizedStyles(Typography.lerp(m3e, m3, 0.0).englishLike),
+        _emphasizedStyles(m3e.englishLike),
+      );
+    });
+
+    test('ThemeData lerps to and from material2021', () {
+      final m3Theme = ThemeData(typography: Typography.material2021());
+      final m3eTheme = ThemeData(typography: Typography.material2025());
+
+      for (final t in <double>[0.0, 0.25, 0.5, 0.75, 1.0]) {
+        final ThemeData lerped = ThemeData.lerp(m3Theme, m3eTheme, t);
+        expect(
+          _baselineStyles(lerped.textTheme),
+          _baselineStyles(m3Theme.textTheme),
+          reason: 't = $t',
+        );
+      }
+      expect(
+        _emphasizedStyles(ThemeData.lerp(m3Theme, m3eTheme, 1.0).textTheme),
+        _emphasizedStyles(m3eTheme.textTheme),
+      );
+    });
+
+    test('ThemeData.textTheme overrides do not apply to emphasized styles', () {
+      // ThemeData merges a custom text theme field by field, so overriding a
+      // baseline style does not change its emphasized variant.
+      final customTextTheme = ThemeData(
+        textTheme: const TextTheme(bodyMedium: TextStyle(fontFamily: 'Custom')),
+      );
+      expect(customTextTheme.textTheme.bodyMedium!.fontFamily, 'Custom');
+      expect(customTextTheme.textTheme.bodyMediumEmphasized!.fontFamily, 'Roboto');
+
+      // ThemeData.fontFamily is applied to every style, including emphasized styles.
+      final customFontFamily = ThemeData(fontFamily: 'Custom');
+      for (final style in <TextStyle?>[
+        ..._baselineStyles(customFontFamily.textTheme),
+        ..._emphasizedStyles(customFontFamily.textTheme),
+      ]) {
+        expect(style!.fontFamily, 'Custom');
+      }
+    });
   });
 }
 
