@@ -2353,6 +2353,10 @@ void main() {
       );
     });
 
+    // Skipped on the web because routes pushed with Navigator.restorablePush
+    // (used by _TimePickerLauncher) are not restorable there: the framework
+    // can't serialize the route builder without PluginUtilities, so the
+    // picker dialog is gone after restartAndRestore.
     group('Time picker - Restoration (${materialType.name})', () {
       testWidgets('Time Picker state restoration test - dial mode', (WidgetTester tester) async {
         TimeOfDay? result;
