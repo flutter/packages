@@ -1225,6 +1225,26 @@ void main() {
       ]);
     });
 
+    testWidgets('on Navigator.pop', (WidgetTester tester) async {
+      final routes = <GoRoute>[
+        GoRoute(
+          path: '/',
+          builder: (_, _) => const DummyScreen(),
+          routes: <RouteBase>[GoRoute(path: 'settings', builder: (_, _) => const DummyScreen())],
+        ),
+      ];
+
+      final GoRouter router = await createRouter(routes, tester, initialLocation: '/settings');
+      final codec = RouteMatchListCodec(router.configuration);
+      log.clear();
+      router.routerDelegate.navigatorKey.currentState!.pop();
+      await tester.pumpAndSettle();
+      expect(log, <Object>[
+        isMethodCall('selectMultiEntryHistory', arguments: null),
+        IsRouteUpdateCall('/', false, codec.encode(router.routerDelegate.currentConfiguration)),
+      ]);
+    });
+
     testWidgets('on pop twice', (WidgetTester tester) async {
       final routes = <GoRoute>[
         GoRoute(
