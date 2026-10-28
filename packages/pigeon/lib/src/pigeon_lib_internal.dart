@@ -94,6 +94,7 @@ class InternalPigeonOptions {
                   options.swiftOptions?.fileSpecificClassNameComponent ??
                   options.fileSpecificClassNameComponent,
               nativeInteropTransport:
+                  // ignore: invalid_use_of_visible_for_testing_member
                   options.nativeInteropTransport ?? NativeInteropTransport.hybrid,
             ),
       kotlinOptions = options.kotlinOut == null
@@ -106,6 +107,7 @@ class InternalPigeonOptions {
                   options.kotlinOptions?.fileSpecificClassNameComponent ??
                   options.fileSpecificClassNameComponent,
               nativeInteropTransport:
+                  // ignore: invalid_use_of_visible_for_testing_member
                   options.nativeInteropTransport ?? NativeInteropTransport.hybrid,
             ),
       cppOptions = (options.cppHeaderOut == null || options.cppSourceOut == null)
@@ -137,6 +139,7 @@ class InternalPigeonOptions {
               jniErrorClassName: options.kotlinOptions?.errorClassName ?? 'FlutterError',
               fileSpecificClassNameComponent: _dartNativeInteropClassNameComponent(options),
               nativeInteropTransport:
+                  // ignore: invalid_use_of_visible_for_testing_member
                   options.nativeInteropTransport ?? NativeInteropTransport.hybrid,
             ),
       copyrightHeader = options.copyrightHeader != null
@@ -435,6 +438,15 @@ void _errorOnSwiftFfiUnsupportedFeatures(
             Error(
               message:
                   'Parameter "wrappedError" in method "${method.name}" in API "${api.name}" conflicts with the error parameter that Swift FFI adds to host API methods. Rename the parameter.',
+            ),
+          );
+        }
+        if (method.isAsynchronous &&
+            method.parameters.any((Parameter parameter) => parameter.name == 'completionHandler')) {
+          errors.add(
+            Error(
+              message:
+                  'Parameter "completionHandler" in asynchronous method "${method.name}" in API "${api.name}" conflicts with the completion handler parameter that Swift FFI adds to asynchronous host API methods. Rename the parameter.',
             ),
           );
         }

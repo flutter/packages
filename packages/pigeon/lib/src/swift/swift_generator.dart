@@ -684,15 +684,19 @@ fileprivate struct ${prefix}PigeonInteropWriter {
     }
   }
 
+  mutating func writeTypedData<T>(_ type: UInt8, _ array: [T], alignment: Int) {
+    writeByte(type)
+    writeSize(array.count)
+    writeAlignment(alignment)
+    array.withUnsafeBytes { bytes.append(contentsOf: \$0) }
+  }
+
   mutating func writeTypedData<T>(_ type: UInt8, _ array: [T]?, alignment: Int) {
     guard let array = array else {
       writeByte(0)
       return
     }
-    writeByte(type)
-    writeSize(array.count)
-    writeAlignment(alignment)
-    array.withUnsafeBytes { bytes.append(contentsOf: \$0) }
+    writeTypedData(type, array, alignment: alignment)
   }
 
   mutating func writeString(_ string: String) {

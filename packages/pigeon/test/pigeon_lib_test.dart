@@ -16,6 +16,8 @@ import 'package:pigeon/src/pigeon_lib_internal.dart';
 import 'package:pigeon/src/swift/swift_generator.dart';
 import 'package:test/test.dart';
 
+import '../tool/benchmark.dart';
+
 class _ValidatorGeneratorAdapter implements GeneratorAdapter {
   _ValidatorGeneratorAdapter(this.sink);
 
@@ -3356,6 +3358,81 @@ abstract class MyFlutterApi {
       expect(hybridConfig, contains("'com.example.MyFlutterApiRegistrar',"));
       expect(hybridConfig, contains("'com.example.MyData',"));
       expect(hybridConfig, contains("'com.example.MyEnum',"));
+    });
+
+    test(
+      'SwiftGeneratorAdapter errors on async HostApi parameter named completionHandler when useFfi is true',
+      () {
+        final root = Root(
+          apis: <Api>[
+            AstHostApi(
+              name: 'Api',
+              methods: <Method>[
+                Method(
+                  name: 'doWork',
+                  isAsynchronous: true,
+                  returnType: const TypeDeclaration.voidDeclaration(),
+                  parameters: <Parameter>[
+                    Parameter(
+                      name: 'completionHandler',
+                      type: const TypeDeclaration(baseName: 'int', isNullable: false),
+                    ),
+                  ],
+                  location: ApiLocation.host,
+                ),
+              ],
+            ),
+          ],
+          classes: <Class>[],
+          enums: <Enum>[],
+        );
+        const adapter = SwiftGeneratorAdapter();
+        final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+          const PigeonOptions(
+            swiftOut: 'darwin/Messages.g.swift',
+            swiftOptions: SwiftOptions(useFfi: true),
+          ),
+        );
+        final List<Error> errors = adapter.validate(options, root);
+        expect(errors, hasLength(1));
+        expect(
+          errors[0].message,
+          contains(
+            'Parameter "completionHandler" in asynchronous method "doWork" in API "Api" '
+            'conflicts with the completion handler parameter that Swift FFI adds',
+          ),
+        );
+      },
+    );
+
+    test('benchmark tool parses output lines and formats comparison table', () {
+      expect(parseBenchmarkLine('unrelated log line'), isNull);
+      final BenchmarkResult? channelResult = parseBenchmarkLine(
+        'I/flutter (1234): PIGEON_BENCHMARK|{"name":"large_class","transport":"channel","median":1250.5,"p90":1500.0,"samples":200}',
+      );
+      final BenchmarkResult? interopResult = parseBenchmarkLine(
+        'flutter: PIGEON_BENCHMARK|{"name":"large_class","transport":"native_interop","median":250.1,"p90":300.25,"samples":200}',
+      );
+      expect(channelResult, isNotNull);
+      expect(channelResult!.name, 'large_class');
+      expect(channelResult.transport, 'channel');
+      expect(channelResult.median, 1250.5);
+      expect(channelResult.p90, 1500.0);
+      expect(channelResult.samples, 200);
+      expect(interopResult, isNotNull);
+
+      final List<String> tableLines = formatBenchmarkTable(<BenchmarkResult>[
+        channelResult,
+        interopResult!,
+      ]);
+      expect(
+        tableLines,
+        equals(<String>[
+          '| Case | Channel median | Native interop median | Native interop p90 | Ratio |',
+          '| :--- | ---: | ---: | ---: | ---: |',
+          '| large_class | 1.25 ms | 250.10 µs | 300.25 µs | 5.00x |',
+        ]),
+      );
     });
   });
 }

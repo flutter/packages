@@ -955,7 +955,7 @@ class ${api.name}Registrar() {
                   .join(', ');
               arguments.add('$codec.encode(listOf<Any?>($encodedNames))');
             }
-            final call = 'bridge.${method.name}(${arguments.join(', ')})';
+            final call = 'this.bridge.${method.name}(${arguments.join(', ')})';
             if (method.returnType.isVoid) {
               indent.writeln(call);
               return;
@@ -1125,7 +1125,7 @@ class ${api.name}Registrar() {
         );
         final String argNames = method.parameters.map((Parameter arg) => arg.name).join(', ');
         indent.addScoped(' {', '}', () {
-          indent.writeScoped('api?.let {', '}', () {
+          indent.writeScoped('this.api?.let {', '}', () {
             indent.writeScoped('try {', '}', () {
               indent.writeln('return it.${method.name}($argNames)');
             }, addTrailingNewline: false);
@@ -1160,7 +1160,7 @@ class ${api.name}Registrar() {
       '}',
       () {
         indent.writeln(
-          'val ${varNamePrefix}api = api ?: error("${api.name} has not been registered")',
+          'val ${varNamePrefix}api = this.api ?: error("${api.name} has not been registered")',
         );
         indent.writeScoped('try {', '}', () {
           if (encodedParameters.isNotEmpty) {

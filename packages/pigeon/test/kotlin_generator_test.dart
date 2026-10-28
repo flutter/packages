@@ -2,8 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:pigeon/pigeon.dart' show NativeInteropTransport, TaskQueueType;
+import 'package:pigeon/pigeon.dart' show TaskQueueType;
 import 'package:pigeon/src/ast.dart';
+import 'package:pigeon/src/generator_tools.dart' show NativeInteropTransport;
 import 'package:pigeon/src/kotlin/kotlin_generator.dart';
 import 'package:test/test.dart';
 
@@ -2217,7 +2218,65 @@ void main() {
           'private class FlutterApiBridgeAdapter(private val bridge: FlutterApiBridge) : FlutterApi {',
         ),
       );
+      expect(code, contains('this.bridge.echoData('));
       expect(code, contains('FooPigeonInteropCodec.encode(listOf<Any?>(data))'));
+    });
+
+    test('qualifies this.api and this.bridge when parameters are named api or bridge', () {
+      const intType = TypeDeclaration(baseName: 'int', isNullable: false);
+      final root = Root(
+        apis: <Api>[
+          AstHostApi(
+            name: 'HostApi',
+            methods: <Method>[
+              Method(
+                name: 'check',
+                location: ApiLocation.host,
+                parameters: <Parameter>[Parameter(name: 'api', type: intType)],
+                returnType: intType,
+              ),
+            ],
+          ),
+          AstFlutterApi(
+            name: 'FlutterApi',
+            methods: <Method>[
+              Method(
+                name: 'notify',
+                location: ApiLocation.flutter,
+                parameters: <Parameter>[Parameter(name: 'bridge', type: intType)],
+                returnType: intType,
+              ),
+            ],
+          ),
+        ],
+        classes: <Class>[],
+        enums: <Enum>[],
+      );
+      for (final NativeInteropTransport transport in NativeInteropTransport.values) {
+        final sink = StringBuffer();
+        const KotlinGenerator().generate(
+          InternalKotlinOptions(
+            errorClassName: 'FooError',
+            kotlinOut: '',
+            useJni: true,
+            fileSpecificClassNameComponent: 'Foo',
+            nativeInteropTransport: transport,
+          ),
+          root,
+          sink,
+          dartPackageName: DEFAULT_PACKAGE_NAME,
+        );
+        final code = sink.toString();
+        if (transport == NativeInteropTransport.hybrid) {
+          expect(
+            code,
+            contains('val pigeonVar_api = this.api ?: error("HostApi has not been registered")'),
+          );
+          expect(code, contains('val pigeonVar_result = this.bridge.notify(bridge)'));
+        } else {
+          expect(code, contains('this.api?.let {'));
+        }
+      }
     });
 
     test('objects transport keeps the object graph registrar', () {

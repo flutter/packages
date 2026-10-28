@@ -2,8 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:pigeon/pigeon.dart' show NativeInteropTransport, TaskQueueType;
+import 'package:pigeon/pigeon.dart' show TaskQueueType;
 import 'package:pigeon/src/ast.dart';
+import 'package:pigeon/src/generator_tools.dart' show NativeInteropTransport;
 import 'package:pigeon/src/swift/swift_generator.dart';
 import 'package:test/test.dart';
 
@@ -2214,11 +2215,65 @@ void main() {
       final code = sink.toString();
       // Swift represents both `List<int>` and `Int64List` as `[Int64]`.
       expect(code, contains('mutating func writeNumbers(_ value: Numbers)'));
+      expect(
+        code,
+        contains('mutating func writeTypedData<T>(_ type: UInt8, _ array: [T], alignment: Int)'),
+      );
+      expect(
+        code,
+        contains('mutating func writeTypedData<T>(_ type: UInt8, _ array: [T]?, alignment: Int)'),
+      );
       expect(code, contains('writeList(value.ints)'));
       expect(code, contains('writeTypedData(10, value.longs, alignment: 8)'));
       expect(code, contains(r'writeList(value.nestedInts) { $0.writeList($1) }'));
       expect(code, contains('ints: read([Int64].self)'));
       expect(code, contains('longs: read([Int64]?.self)'));
+    });
+
+    test('codec encodes custom type tags >= 125 with extended 255 tag byte', () {
+      final classes = List<Class>.generate(
+        127,
+        (int index) => Class(
+          name: 'Class$index',
+          fields: <NamedType>[NamedType(name: 'value', type: intType)],
+        ),
+      );
+      final Class lastClass = classes.last;
+      final lastClassType = TypeDeclaration(
+        baseName: lastClass.name,
+        isNullable: false,
+        associatedClass: lastClass,
+      );
+      final root = Root(
+        apis: <Api>[
+          AstHostApi(
+            name: 'Api',
+            methods: <Method>[
+              Method(
+                name: 'echo',
+                location: ApiLocation.host,
+                parameters: <Parameter>[Parameter(name: 'item', type: lastClassType)],
+                returnType: lastClassType,
+              ),
+            ],
+          ),
+        ],
+        classes: classes,
+        enums: <Enum>[],
+      );
+      final sink = StringBuffer();
+      const SwiftGenerator().generate(
+        const InternalSwiftOptions(swiftOut: '', useFfi: true),
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+      final code = sink.toString();
+      expect(code, contains('writeByte(255)'));
+      expect(code, contains('writeValue(Int64(0))'));
+      expect(code, contains('case 255:'));
+      expect(code, contains('switch read(Int64.self) {'));
+      expect(code, contains('return readClass126()'));
     });
 
     test('objects transport keeps the object graph bridges', () {

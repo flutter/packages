@@ -379,6 +379,7 @@ class PigeonOptions {
   /// `SwiftOptions.useFfi`. Defaults to [NativeInteropTransport.hybrid];
   /// [NativeInteropTransport.objects] is retained for testing, benchmarking,
   /// and future lazy-access support.
+  @visibleForTesting
   final NativeInteropTransport? nativeInteropTransport;
 
   /// Creates a [PigeonOptions] from a Map representation where:
@@ -709,6 +710,7 @@ ${_argParser.usage}''';
       'native_interop_transport',
       help: 'How native interop (JNI and FFI) moves values between Dart and the host platform.',
       allowed: NativeInteropTransport.values.map((NativeInteropTransport t) => t.name),
+      hide: true,
     )
     ..addFlag(
       'ignore_lints',

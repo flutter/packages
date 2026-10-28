@@ -2059,6 +2059,13 @@ return ${generatorOptions.useJni ? 'await ' : ''}$completerVar.future;
     const resultVar = '${varNamePrefix}res';
     final temporaries = <(String, bool)>[];
     final callArguments = <String>[];
+    final List<Parameter> encodedParameters = nativeInteropEncodedParameters(method.parameters);
+    if (encodedParameters.isNotEmpty) {
+      indent.writeln(
+        'final JByteArray $argsVar = _PigeonJniBuffers.encode(<Object?>[${encodedParameters.map((Parameter p) => p.name).join(', ')}]);',
+      );
+      temporaries.add((argsVar, false));
+    }
     for (final Parameter parameter in method.parameters) {
       final TypeDeclaration type = parameter.type;
       if (!isNativeInteropDirectType(type)) {
@@ -2074,7 +2081,7 @@ return ${generatorOptions.useJni ? 'await ' : ''}$completerVar.future;
         callArguments.add(parameter.name);
       } else {
         final _JniType jniType = _JniType.fromTypeDeclaration(type);
-        final local = '$varNamePrefix${parameter.name}';
+        final local = '${varNamePrefix}arg_${parameter.name}';
         indent.writeln(
           'final ${jniType.getJniCallReturnType(true)} $local = ${_dartToJniDirect(parameter.name, type)};',
         );
@@ -2082,12 +2089,7 @@ return ${generatorOptions.useJni ? 'await ' : ''}$completerVar.future;
         callArguments.add(local);
       }
     }
-    final List<Parameter> encodedParameters = nativeInteropEncodedParameters(method.parameters);
     if (encodedParameters.isNotEmpty) {
-      indent.writeln(
-        'final JByteArray $argsVar = _PigeonJniBuffers.encode(<Object?>[${encodedParameters.map((Parameter p) => p.name).join(', ')}]);',
-      );
-      temporaries.add((argsVar, false));
       callArguments.add(argsVar);
     }
     final await = method.isAsynchronous ? 'await ' : '';
@@ -2144,40 +2146,51 @@ return ${generatorOptions.useJni ? 'await ' : ''}$completerVar.future;
     final TypeDeclaration returnType = method.returnType;
     final String entryReturnType;
     if (method.isAsynchronous) {
-      entryReturnType = returnType.isVoid
-          ? 'Future<JObject>'
-          : nativeInteropReturnsBuffer(returnType)
-          ? 'Future<JByteArray?>'
-          : returnType.isEnum
-          ? 'Future<JLong>'
-          : 'Future<${_JniType.fromTypeDeclaration(returnType).getJniCallReturnType(true)}>';
+      if (returnType.isVoid) {
+        entryReturnType = 'Future<JObject>';
+      } else if (nativeInteropReturnsBuffer(returnType)) {
+        entryReturnType = 'Future<JByteArray?>';
+      } else if (returnType.isEnum) {
+        entryReturnType = 'Future<JLong>';
+      } else {
+        entryReturnType =
+            'Future<${_JniType.fromTypeDeclaration(returnType).getJniCallReturnType(true)}>';
+      }
     } else {
-      entryReturnType = returnType.isVoid
-          ? 'void'
-          : nativeInteropReturnsBuffer(returnType)
-          ? 'JByteArray?'
-          : returnType.isEnum
-          ? 'int'
-          : _JniType.fromTypeDeclaration(returnType).getJniCallReturnType(false);
+      if (returnType.isVoid) {
+        entryReturnType = 'void';
+      } else if (nativeInteropReturnsBuffer(returnType)) {
+        entryReturnType = 'JByteArray?';
+      } else if (returnType.isEnum) {
+        entryReturnType = 'int';
+      } else {
+        entryReturnType = _JniType.fromTypeDeclaration(returnType).getJniCallReturnType(false);
+      }
     }
+    final List<Parameter> encodedParameters = nativeInteropEncodedParameters(method.parameters);
     final parameters = <String>[
       for (final (int index, Parameter parameter) in method.parameters.indexed)
         if (isNativeInteropDirectType(parameter.type))
           '${parameter.type.isEnum ? 'int' : _JniType.fromTypeDeclaration(parameter.type).getJniCallReturnType(false, isParameter: true, isAsynchronous: method.isAsynchronous)} ${_getSafeArgumentName(index, parameter)}',
-      if (nativeInteropEncodedParameters(method.parameters).isNotEmpty)
-        'JByteArray $nativeInteropArgsParameterName',
+      if (encodedParameters.isNotEmpty) 'JByteArray $nativeInteropArgsParameterName',
+    ];
+    final jniObjectParameters = <(String, bool)>[
+      for (final (int index, Parameter parameter) in method.parameters.indexed)
+        if (isNativeInteropDirectType(parameter.type) &&
+            !parameter.type.isEnum &&
+            (parameter.type.isNullable || !isPrimitiveType(parameter.type)))
+          (_getSafeArgumentName(index, parameter), parameter.type.isNullable),
+      if (encodedParameters.isNotEmpty) (nativeInteropArgsParameterName, false),
     ];
     indent.newln();
     indent.writeln('@override');
     indent.writeScoped('$entryReturnType $jniMethodName(${parameters.join(', ')}) {', '}', () {
       indent.writeScoped('if (dartApi == null) {', '}', () {
+        for (final (String name, bool isNullable) in jniObjectParameters) {
+          indent.writeln('$name${isNullable ? '?' : ''}.release();');
+        }
         indent.writeln("throw ArgumentError('${api.name} was not registered.');");
       });
-      if (nativeInteropEncodedParameters(method.parameters).isNotEmpty) {
-        indent.writeln(
-          'final List<Object?> $decodedArgsVar = _PigeonJniBuffers.decode($nativeInteropArgsParameterName)! as List<Object?>;',
-        );
-      }
       var encodedIndex = 0;
       final arguments = <String>[];
       for (final (int index, Parameter parameter) in method.parameters.indexed) {
@@ -2186,6 +2199,14 @@ return ${generatorOptions.useJni ? 'await ' : ''}$completerVar.future;
           arguments.add(_castValue('$decodedArgsVar[${encodedIndex++}]', parameter.type));
         } else if (parameter.type.isEnum) {
           arguments.add(_enumFromIndex(argName, parameter.type));
+        } else if (encodedParameters.isNotEmpty &&
+            (parameter.type.isNullable || !isPrimitiveType(parameter.type))) {
+          final convertedVar = '${varNamePrefix}arg_${parameter.name}';
+          final String toDart = _JniType.fromTypeDeclaration(
+            parameter.type,
+          ).getToDartCall(parameter.type, varName: argName);
+          indent.writeln('final ${addGenericTypes(parameter.type)} $convertedVar = $toDart;');
+          arguments.add(convertedVar);
         } else {
           arguments.add(
             _JniType.fromTypeDeclaration(
@@ -2193,6 +2214,11 @@ return ${generatorOptions.useJni ? 'await ' : ''}$completerVar.future;
             ).getToDartCall(parameter.type, varName: argName),
           );
         }
+      }
+      if (encodedParameters.isNotEmpty) {
+        indent.writeln(
+          'final List<Object?> $decodedArgsVar = _PigeonJniBuffers.decode($nativeInteropArgsParameterName)! as List<Object?>;',
+        );
       }
       final methodCall = 'dartApi!.${method.name}(${arguments.join(', ')})';
 
@@ -4386,7 +4412,7 @@ class _JniBindingNamer {
       return 'Uint8List';
     }
     if (type.isEnum) {
-      return type.isNullable ? 'int?' : 'int';
+      return 'int';
     }
     return _jvmTypeKey(type);
   }

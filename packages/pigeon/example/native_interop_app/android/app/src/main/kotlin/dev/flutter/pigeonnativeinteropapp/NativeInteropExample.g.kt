@@ -112,7 +112,7 @@ class NativeInteropExampleApiRegistrar {
   }
 
   fun doSomething() {
-    val pigeonVar_api = api ?: error("NativeInteropExampleApi has not been registered")
+    val pigeonVar_api = this.api ?: error("NativeInteropExampleApi has not been registered")
     try {
       pigeonVar_api.doSomething()
     } catch (e: FlutterError) {
