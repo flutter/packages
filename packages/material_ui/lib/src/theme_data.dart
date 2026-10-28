@@ -597,7 +597,7 @@ class ThemeData with Diagnosticable {
 
     // TYPOGRAPHY & ICONOGRAPHY
     typography ??= useMaterial3
-        ? Typography.material2021(platform: platform, colorScheme: colorScheme)
+        ? Typography.material2025(platform: platform, colorScheme: colorScheme)
         : Typography.material2014(platform: platform);
     TextTheme defaultTextTheme = isDark ? typography.white : typography.black;
     TextTheme defaultPrimaryTextTheme = primaryIsDark ? typography.white : typography.black;
