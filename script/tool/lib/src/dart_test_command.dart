@@ -7,6 +7,7 @@ import 'package:yaml/yaml.dart';
 
 import 'common/core.dart';
 import 'common/file_filters.dart';
+import 'common/file_utils.dart';
 import 'common/output_utils.dart';
 import 'common/package_looping_command.dart';
 import 'common/plugin_utils.dart';
@@ -232,17 +233,17 @@ class DartTestCommand extends PackageLoopingCommand {
   /// Returns the tag to apply for [package] based on `--package-tags`, or null
   /// if none.
   ///
-  /// This checks the package's [RepositoryPackage.displayName], and falls back
-  /// to checking the [RepositoryPackage.displayName] of any enclosing packages
-  /// up the directory tree. This allows tagging an entire plugin (including its
-  /// nested examples) by simply tagging the enclosing package.
+  /// This checks the package's names (see [_packageTagKeys]), and falls back
+  /// to checking the names of any enclosing packages up the directory tree.
+  /// This allows tagging an entire plugin (including its nested examples) by
+  /// simply tagging the enclosing package.
   String? _getTagForPackage(RepositoryPackage package) {
     final Map<String, String>? packageTags = _packageTags;
     if (packageTags != null && packageTags.isNotEmpty) {
-      final candidates = <String>{package.displayName};
+      final candidates = <String>{..._packageTagKeys(package)};
       RepositoryPackage? enclosing = package.getEnclosingPackage();
       while (enclosing != null) {
-        candidates.add(enclosing.displayName);
+        candidates.addAll(_packageTagKeys(enclosing));
         enclosing = enclosing.getEnclosingPackage();
       }
 
@@ -254,6 +255,26 @@ class DartTestCommand extends PackageLoopingCommand {
     }
 
     return null;
+  }
+
+  /// Returns the names that a `--package-tags` entry can use to identify
+  /// [package].
+  ///
+  /// This is the package's path relative to the packages directory that
+  /// contains it (e.g., `foo` or `foo/example`), plus its
+  /// [RepositoryPackage.displayName] for backwards compatibility.
+  ///
+  /// [RepositoryPackage.displayName] alone is not sufficient, since it strips
+  /// everything up to the first `packages` path component, so it includes an
+  /// extra `packages/` prefix when the repository itself is checked out into a
+  /// directory called `packages` (as it is in CI).
+  Set<String> _packageTagKeys(RepositoryPackage package) {
+    return <String>{
+      for (final root in <Directory>[packagesDir, thirdPartyPackagesDir])
+        if (path.isWithin(root.absolute.path, package.directory.absolute.path))
+          relativePosixPath(package.directory, from: root, platformContext: path),
+      package.displayName,
+    };
   }
 
   /// Returns the required test environment, or null if none is specified.
