@@ -1074,6 +1074,7 @@ void main() {
         TargetPlatform.iOS,
         TargetPlatform.macOS,
       }),
+      tags: 'reduced-web-test-set',
     );
   });
 
