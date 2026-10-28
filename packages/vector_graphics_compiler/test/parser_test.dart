@@ -414,6 +414,43 @@ ${[for (var i = 2; i <= 30; i++) '    <pattern id="lvl$i" width="10" height="10"
     ]);
   });
 
+  test('text and tspan with coordinate lists throw an UnimplementedError', () {
+    for (final attributes in <String>['x="10 20 30" y="40"', 'x="10" y="40, 50"']) {
+      expect(
+        () => parseWithoutOptimizers(
+          '<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><text $attributes>ABC</text></svg>',
+        ),
+        throwsA(isA<UnimplementedError>()),
+      );
+    }
+    for (final attributes in <String>['dx="1 2"', 'dy="3,4"']) {
+      expect(
+        () => parseWithoutOptimizers(
+          '<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><text x="10" y="40">ABC<tspan $attributes>DE</tspan></text></svg>',
+        ),
+        throwsA(
+          isA<UnimplementedError>().having(
+            (UnimplementedError e) => e.message,
+            'message',
+            contains('is not supported'),
+          ),
+        ),
+      );
+    }
+  });
+
+  test('text with single coordinates surrounded by whitespace still parses', () {
+    final VectorInstructions instructions = parseWithoutOptimizers('''
+<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg">
+  <text x=" 10 " y="40">ABC</text>
+</svg>
+''');
+
+    expect(instructions.textPositions, const <TextPosition>[
+      TextPosition(x: 10, y: 40, reset: true),
+    ]);
+  });
+
   test('tspan without position does not apply the group transform twice', () {
     final VectorInstructions instructions = parseWithoutOptimizers('''
 <svg width="400" height="100" xmlns="http://www.w3.org/2000/svg">
