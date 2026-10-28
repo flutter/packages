@@ -241,11 +241,14 @@ class DartTestCommand extends PackageLoopingCommand {
   String? _getTagForPackage(RepositoryPackage package) {
     final Map<String, String>? packageTags = _packageTags;
     if (packageTags != null && packageTags.isNotEmpty) {
-      final candidates = <String?>{_packageTagKey(package)};
-      RepositoryPackage? enclosing = package.getEnclosingPackage();
-      while (enclosing != null) {
-        candidates.add(_packageTagKey(enclosing));
-        enclosing = enclosing.getEnclosingPackage();
+      final candidates = <String>{};
+      RepositoryPackage? current = package;
+      while (current != null) {
+        final String? key = _packageTagKey(current);
+        if (key != null) {
+          candidates.add(key);
+        }
+        current = current.getEnclosingPackage();
       }
 
       for (final candidate in candidates) {
