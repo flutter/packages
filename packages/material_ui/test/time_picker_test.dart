@@ -5,7 +5,6 @@
 // This file is run as part of a reduced test set in CI on Mac and Windows
 // machines.
 @Tags(<String>['reduced-test-set'])
-@TestOn('!chrome')
 library;
 
 import 'dart:async';
@@ -2461,7 +2460,7 @@ void main() {
         await finishPicker(tester);
         expect(result, equals(const TimeOfDay(hour: 6, minute: 45)));
       });
-    });
+    }, skip: kIsWeb); // https://github.com/flutter/flutter/issues/33615
 
     group('Time picker - emptyInitialInput (${materialType.name})', () {
       testWidgets('Fields are empty and show correct hints when emptyInitialInput is true', (
