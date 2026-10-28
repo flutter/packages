@@ -1,0 +1,3 @@
+changelog: |
+  - Enforces the Material 3 minimum width for primary tab indicators.
+version: patch
