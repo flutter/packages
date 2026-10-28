@@ -1389,6 +1389,15 @@ class ThemeData with Diagnosticable {
   final TextTheme primaryTextTheme;
 
   /// Text with a color that contrasts with the card and canvas colors.
+  ///
+  /// When a [TextTheme] is passed to the [ThemeData] constructor, it is merged
+  /// field by field with the default text theme from [typography]. Overriding a
+  /// baseline style (such as [TextTheme.bodyMedium]) does not change its
+  /// emphasized variant (such as [TextTheme.bodyMediumEmphasized]), which keeps
+  /// the default typeface. To use a custom font for every style, including the
+  /// emphasized styles, use the `fontFamily` and `fontFamilyFallback`
+  /// constructor parameters, or provide the emphasized styles in the custom
+  /// [TextTheme].
   final TextTheme textTheme;
 
   /// The color and geometry [TextTheme] values used to configure [textTheme].
