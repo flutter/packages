@@ -1570,17 +1570,32 @@ class SvgParser {
     return attributeMap['display'] != 'none' && attributeMap['visibility'] != 'hidden';
   }
 
+  static final RegExp _listSeparator = RegExp(r'[\s,]');
+
+  // Text and tspan can list one coordinate per character, which isn't
+  // supported. Fail with a clear message instead of a FormatException.
+  String? _singleCoordinate(String name, String? raw) {
+    if (raw == null) {
+      return null;
+    }
+    final String trimmed = raw.trim();
+    if (trimmed.contains(_listSeparator)) {
+      throw UnimplementedError('A list of values for "$name" is not supported: "$trimmed"');
+    }
+    return trimmed;
+  }
+
   SvgAttributes _createSvgAttributes(Map<String, String> attributeMap, {Color? currentColor}) {
     final String? id = attributeMap['id'];
     final double? opacity = parseDouble(attributeMap['opacity'])?.clamp(0.0, 1.0);
     final Color? color =
         parseColor(attributeMap['color'], attributeName: 'color', id: id) ?? currentColor;
 
-    final String? rawX = attributeMap['x'];
-    final String? rawY = attributeMap['y'];
+    final String? rawX = _singleCoordinate('x', attributeMap['x']);
+    final String? rawY = _singleCoordinate('y', attributeMap['y']);
 
-    final String? rawDx = attributeMap['dx'];
-    final String? rawDy = attributeMap['dy'];
+    final String? rawDx = _singleCoordinate('dx', attributeMap['dx']);
+    final String? rawDy = _singleCoordinate('dy', attributeMap['dy']);
 
     return SvgAttributes._(
       raw: attributeMap,

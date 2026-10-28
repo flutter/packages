@@ -1,3 +1,7 @@
+## 2.6.1
+
+* Fixes web compilation of apps that import `package:shared_preferences_foundation`, for example to use `SharedPreferencesAsyncFoundationOptions`.
+
 ## 2.6.0
 
 * Updates internal implementation to use Pigeon FFI.

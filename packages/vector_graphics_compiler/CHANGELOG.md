@@ -1,6 +1,11 @@
-## 1.3.3
+## 1.3.4
 
 * Fixes `em` units in text `x`, `y`, `dx` and `dy` being treated as pixels.
+
+## 1.3.3
+
+* Throws an `UnimplementedError` instead of a `FormatException` when `text` or
+  `tspan` has a list of `x`, `y`, `dx` or `dy` values, which isn't supported.
 
 ## 1.3.2
 
