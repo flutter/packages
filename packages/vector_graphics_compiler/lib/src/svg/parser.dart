@@ -2085,11 +2085,23 @@ class SvgAttributes {
   }
 }
 
+/// The unit of a [DoubleOrPercentage].
+enum _DoubleOrPercentageUnit {
+  /// An absolute pixel coordinate.
+  pixels,
+
+  /// A fraction of a bounding dimension.
+  percentage,
+
+  /// A multiple of the font size.
+  em,
+}
+
 /// A value that represents either an absolute pixel coordinate, a percentage
 /// of a bounding dimension, or a multiple of the font size (`em`).
 @immutable
 class DoubleOrPercentage {
-  const DoubleOrPercentage._(this._value, this._isPercentage, {bool isEm = false}) : _isEm = isEm;
+  const DoubleOrPercentage._(this._value, this._unit);
 
   /// Constructs a [DoubleOrPercentage] from a raw SVG attribute string.
   static DoubleOrPercentage? fromString(String? raw) {
@@ -2098,41 +2110,38 @@ class DoubleOrPercentage {
     }
 
     if (isPercentage(raw)) {
-      return DoubleOrPercentage._(parsePercentage(raw), true);
+      return DoubleOrPercentage._(parsePercentage(raw), _DoubleOrPercentageUnit.percentage);
     }
     final String trimmed = raw.trim().toLowerCase();
     final bool isEm = trimmed.endsWith('em') && !trimmed.endsWith('rem');
-    return DoubleOrPercentage._(parseDouble(raw)!, false, isEm: isEm);
+    return DoubleOrPercentage._(
+      parseDouble(trimmed)!,
+      isEm ? _DoubleOrPercentageUnit.em : _DoubleOrPercentageUnit.pixels,
+    );
   }
 
   final double _value;
-  final bool _isPercentage;
-  final bool _isEm;
+  final _DoubleOrPercentageUnit _unit;
 
   /// Calculates the result of applying this dimension within [bound].
   ///
   /// If this is a percentage, it will return a percentage of bound. If this is
-  /// an `em` value, it will return a multiple of [fontSize], which defaults to
-  /// 16. Otherwise, it returns the value of this.
-  double calculate(double bound, {double? fontSize}) {
-    if (_isPercentage) {
-      return _value * bound;
-    }
-    if (_isEm) {
-      return _value * (fontSize ?? 16);
-    }
-    return _value;
+  /// an `em` value, it will return a multiple of [fontSize]. Otherwise, it
+  /// returns the value of this.
+  double calculate(double bound, {double fontSize = kDefaultFontSize}) {
+    return switch (_unit) {
+      _DoubleOrPercentageUnit.pixels => _value,
+      _DoubleOrPercentageUnit.percentage => _value * bound,
+      _DoubleOrPercentageUnit.em => _value * fontSize,
+    };
   }
 
   @override
-  int get hashCode => Object.hash(_value, _isPercentage, _isEm);
+  int get hashCode => Object.hash(_value, _unit);
 
   @override
   bool operator ==(Object other) {
-    return other is DoubleOrPercentage &&
-        other._isPercentage == _isPercentage &&
-        other._isEm == _isEm &&
-        other._value == _value;
+    return other is DoubleOrPercentage && other._unit == _unit && other._value == _value;
   }
 }
 

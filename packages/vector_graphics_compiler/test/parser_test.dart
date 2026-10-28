@@ -478,6 +478,7 @@ ${[for (var i = 2; i <= 30; i++) '    <pattern id="lvl$i" width="10" height="10"
     <text x="1em" y="2em" dx="1em" dy="-1em">inherited</text>
   </g>
   <text x="10" y="10" dy="1em">default</text>
+  <text x="10" y="10" dy="1EM" font-size="10">upper case</text>
 </svg>
 ''');
 
@@ -485,6 +486,7 @@ ${[for (var i = 2; i <= 30; i++) '    <pattern id="lvl$i" width="10" height="10"
       TextPosition(x: 500, y: 250, dy: 200, reset: true),
       TextPosition(x: 20, y: 40, dx: 20, dy: -20, reset: true),
       TextPosition(x: 10, y: 10, dy: 16, reset: true),
+      TextPosition(x: 10, y: 10, dy: 10, reset: true),
     ]);
   });
 
