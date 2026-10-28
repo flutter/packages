@@ -19,7 +19,7 @@ class SaveTextPage extends StatelessWidget {
   Future<void> _saveFile() async {
     final String fileName = _nameController.text;
     final FileSaveLocation? result = await FileSelectorPlatform.instance!.getSaveLocation(
-      options:  SaveLocationOptions(
+      options: SaveLocationOptions(
         suggestedName: fileName,
         acceptedTypeGroups: const <XTypeGroup>[
           XTypeGroup(label: 'Plain text', extensions: <String>['txt']),
