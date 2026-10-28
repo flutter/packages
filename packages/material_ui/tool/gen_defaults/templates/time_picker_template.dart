@@ -8,12 +8,6 @@ import 'template.dart';
 class TimePickerTemplateM3 extends TokenTemplateM3 {
   const TimePickerTemplateM3();
 
-  static const String tokenGroup = 'md.comp.time-picker';
-  static const String hourMinuteComponent = '$tokenGroup.time-selector';
-  static const String dayPeriodComponent = '$tokenGroup.period-selector';
-  static const String dialComponent = '$tokenGroup.clock-dial';
-  static const String variant = '';
-
   @override
   String get name => 'Time Picker';
 
