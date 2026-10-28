@@ -8,46 +8,43 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import io.flutter.plugin.common.BinaryMessenger;
-import java.lang.ref.WeakReference;
 
 final class VideoPlayerEventCallbacks implements VideoPlayerCallbacks {
   private final QueuingEventSink eventSink;
-  private final WeakReference<BinaryMessenger> binaryMessenger;
-  private final String identifier;
+  private final @Nullable PigeonEventChannelRegistration eventChannelRegistration;
 
   static VideoPlayerEventCallbacks bindTo(
       @NonNull BinaryMessenger binaryMessenger, @NonNull String identifier) {
     QueuingEventSink eventSink = new QueuingEventSink();
-    VideoEventsStreamHandler.Companion.register(
-        binaryMessenger,
-        new VideoEventsStreamHandler() {
-          @Override
-          public void onListen(
-              Object arguments, @NonNull PigeonEventSink<PlatformVideoEvent> events) {
-            eventSink.setDelegate(events);
-          }
+    final PigeonEventChannelRegistration registration =
+        VideoEventsStreamHandler.Companion.register(
+            binaryMessenger,
+            new VideoEventsStreamHandler() {
+              @Override
+              public void onListen(
+                  Object arguments, @NonNull PigeonEventSink<PlatformVideoEvent> events) {
+                eventSink.setDelegate(events);
+              }
 
-          @Override
-          public void onCancel(Object arguments) {
-            eventSink.setDelegate(null);
-          }
-        },
-        identifier);
-    return new VideoPlayerEventCallbacks(eventSink, binaryMessenger, identifier);
+              @Override
+              public void onCancel(Object arguments) {
+                eventSink.setDelegate(null);
+              }
+            },
+            identifier);
+    return new VideoPlayerEventCallbacks(eventSink, registration);
   }
 
   @VisibleForTesting
   static VideoPlayerEventCallbacks withSink(@NonNull QueuingEventSink eventSink) {
-    return new VideoPlayerEventCallbacks(eventSink, null, "");
+    return new VideoPlayerEventCallbacks(eventSink, null);
   }
 
   private VideoPlayerEventCallbacks(
       @NonNull QueuingEventSink eventSink,
-      @Nullable BinaryMessenger binaryMessenger,
-      @NonNull String identifier) {
+      @Nullable PigeonEventChannelRegistration eventChannelRegistration) {
     this.eventSink = eventSink;
-    this.binaryMessenger = new WeakReference<>(binaryMessenger);
-    this.identifier = identifier;
+    this.eventChannelRegistration = eventChannelRegistration;
   }
 
   @Override
@@ -84,9 +81,8 @@ final class VideoPlayerEventCallbacks implements VideoPlayerCallbacks {
 
   @Override
   public void onDisposed() {
-    final BinaryMessenger binaryMessenger = this.binaryMessenger.get();
-    if (binaryMessenger != null) {
-      VideoEventsStreamHandler.Companion.register(binaryMessenger, null, identifier);
+    if (eventChannelRegistration != null) {
+      eventChannelRegistration.remove();
     }
   }
 }
