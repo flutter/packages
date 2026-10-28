@@ -14,7 +14,7 @@ class OpenTextPage extends StatelessWidget {
   Future<void> _openTextFile(BuildContext context) async {
     const typeGroup = XTypeGroup(label: 'text', extensions: <String>['txt', 'json']);
     final XFile? file = await FileSelectorPlatform.instance!.openFile(
-      const OpenDialogOptions(acceptedTypeGroups: <XTypeGroup>[typeGroup]),
+      options: const OpenFileDialogOptions(acceptedTypeGroups: <XTypeGroup>[typeGroup]),
     );
     if (file == null) {
       // Operation was canceled by the user.

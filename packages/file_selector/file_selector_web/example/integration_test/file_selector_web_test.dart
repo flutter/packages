@@ -37,7 +37,7 @@ void main() {
         );
 
         final XFile? file = await plugin.openFile(
-          const OpenDialogOptions(acceptedTypeGroups: <XTypeGroup>[typeGroup]),
+          options: const OpenFileDialogOptions(acceptedTypeGroups: <XTypeGroup>[typeGroup]),
         );
 
         expect(file, isNotNull);
@@ -75,7 +75,7 @@ void main() {
         const typeGroup = XTypeGroup(label: 'files', extensions: <String>['.txt']);
 
         final List<XFile> files = await plugin.openFiles(
-          const OpenDialogOptions(acceptedTypeGroups: <XTypeGroup>[typeGroup]),
+          options: const OpenFilesDialogOptions(acceptedTypeGroups: <XTypeGroup>[typeGroup]),
         );
 
         expect(files.length, 2);

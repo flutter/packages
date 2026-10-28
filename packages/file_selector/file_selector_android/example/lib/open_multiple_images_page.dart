@@ -24,7 +24,7 @@ class OpenMultipleImagesPage extends StatelessWidget {
       uniformTypeIdentifiers: <String>['public.png'],
     );
     final List<XFile> files = await FileSelectorPlatform.instance!.openFiles(
-      const OpenDialogOptions(acceptedTypeGroups: <XTypeGroup>[jpgsTypeGroup, pngTypeGroup]),
+      options: const OpenFilesDialogOptions(acceptedTypeGroups: <XTypeGroup>[jpgsTypeGroup, pngTypeGroup]),
     );
     if (files.isEmpty) {
       // Operation was canceled by the user.

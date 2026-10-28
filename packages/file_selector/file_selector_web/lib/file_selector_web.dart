@@ -30,7 +30,14 @@ base class FileSelectorWeb extends FileSelectorPlatform {
 
   @override
   Future<XFile?> openFile({OpenFileDialogOptions options = const OpenFileDialogOptions()}) async {
-    final List<XFile> files = await _openFiles(options: options);
+    final List<XFile> files = await _openFiles(
+      options: OpenFilesDialogOptions(
+        initialDirectory: options.initialDirectory,
+        confirmButtonText: options.confirmButtonText,
+        canCreateDirectories: options.canCreateDirectories,
+        acceptedTypeGroups: options.acceptedTypeGroups,
+      ),
+    );
     return files.isNotEmpty ? files.first : null;
   }
 
@@ -56,7 +63,7 @@ base class FileSelectorWeb extends FileSelectorPlatform {
   }) async => null;
 
   Future<List<XFile>> _openFiles({
-    FileDialogOptions options = const FileDialogOptions(),
+    OpenFilesDialogOptions options = const OpenFilesDialogOptions(),
     bool multiple = false,
   }) async {
     final String accept = acceptedTypesToString(options.acceptedTypeGroups);
