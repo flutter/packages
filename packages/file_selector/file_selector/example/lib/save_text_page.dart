@@ -39,7 +39,9 @@ class SaveTextPage extends StatelessWidget {
 
     final String text = _contentController.text;
     if (kIsWeb) {
-      // TODO(bparrishMines): Use
+      // TODO(bparrishMines): Use `WebScopedStorageXFileCreationParams.fromBytes`
+      // and `WebScopedStorageXFileExtension.download` once
+      // https://github.com/flutter/packages/pull/13395 lands.
       await saveFileWeb(fileName, text);
     } else if (result.file case final FileSystemXFile file) {
       final fileData = Uint8List.fromList(text.codeUnits);
