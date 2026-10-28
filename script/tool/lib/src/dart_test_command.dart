@@ -46,8 +46,9 @@ class DartTestCommand extends PackageLoopingCommand {
     argParser.addOption(
       _packageTagsFlag,
       help:
-          'Path to a YAML file that maps package names to tags to run for that '
-          'package.',
+          'Path to a YAML file that maps packages to tags to run for that '
+          'package. Packages are identified by their path relative to the '
+          'packages directory (e.g., "foo" or "foo/foo_android").',
     );
   }
 
@@ -233,17 +234,17 @@ class DartTestCommand extends PackageLoopingCommand {
   /// Returns the tag to apply for [package] based on `--package-tags`, or null
   /// if none.
   ///
-  /// This checks the package's names (see [_packageTagKeys]), and falls back
-  /// to checking the names of any enclosing packages up the directory tree.
-  /// This allows tagging an entire plugin (including its nested examples) by
-  /// simply tagging the enclosing package.
+  /// This checks the package's [_packageTagKey], and falls back
+  /// to checking the [_packageTagKey] of any enclosing packages
+  /// up the directory tree. This allows tagging an entire plugin (including its
+  /// nested examples) by simply tagging the enclosing package.
   String? _getTagForPackage(RepositoryPackage package) {
     final Map<String, String>? packageTags = _packageTags;
     if (packageTags != null && packageTags.isNotEmpty) {
-      final candidates = <String>{..._packageTagKeys(package)};
+      final candidates = <String?>{_packageTagKey(package)};
       RepositoryPackage? enclosing = package.getEnclosingPackage();
       while (enclosing != null) {
-        candidates.addAll(_packageTagKeys(enclosing));
+        candidates.add(_packageTagKey(enclosing));
         enclosing = enclosing.getEnclosingPackage();
       }
 
@@ -257,24 +258,19 @@ class DartTestCommand extends PackageLoopingCommand {
     return null;
   }
 
-  /// Returns the names that a `--package-tags` entry can use to identify
-  /// [package].
+  /// Returns the key that a `--package-tags` entry uses to identify [package],
+  /// or null if [package] is not in a packages directory.
   ///
-  /// This is the package's path relative to the packages directory that
-  /// contains it (e.g., `foo` or `foo/example`), plus its
-  /// [RepositoryPackage.displayName] for backwards compatibility.
-  ///
-  /// [RepositoryPackage.displayName] alone is not sufficient, since it strips
-  /// everything up to the first `packages` path component, so it includes an
-  /// extra `packages/` prefix when the repository itself is checked out into a
-  /// directory called `packages` (as it is in CI).
-  Set<String> _packageTagKeys(RepositoryPackage package) {
-    return <String>{
-      for (final root in <Directory>[packagesDir, thirdPartyPackagesDir])
-        if (path.isWithin(root.absolute.path, package.directory.absolute.path))
-          relativePosixPath(package.directory, from: root, platformContext: path),
-      package.displayName,
-    };
+  /// The key is the package's path relative to the packages directory that
+  /// contains it, using POSIX separators (e.g., `foo`, `foo/example`, or
+  /// `foo/foo_android`).
+  String? _packageTagKey(RepositoryPackage package) {
+    for (final root in <Directory>[packagesDir, thirdPartyPackagesDir]) {
+      if (path.isWithin(root.absolute.path, package.directory.absolute.path)) {
+        return relativePosixPath(package.directory, from: root, platformContext: path);
+      }
+    }
+    return null;
   }
 
   /// Returns the required test environment, or null if none is specified.
