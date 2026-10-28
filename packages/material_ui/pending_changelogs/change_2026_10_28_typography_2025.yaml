@@ -2,5 +2,5 @@ changelog: |
   - Adds `Typography.material2025`, which provides Material 3 Expressive typography, along with the `Typography.englishLike2025`, `Typography.dense2025`, and `Typography.tall2025` geometry text themes.
   - Adds emphasized text styles to `TextTheme` (e.g. `TextTheme.titleMediumEmphasized`). These are only populated by `Typography.material2025`.
   - Adds the `Typography.mountainView`, `Typography.redmond`, `Typography.helsinki`, `Typography.cupertino`, and `Typography.redwoodCity` text themes, which provide each platform's typeface without color or geometry.
-  - Changes the default `ThemeData.typography` to `Typography.material2025` when `ThemeData.useMaterial3` is true. The baseline text styles are unchanged.
+  - Changes the default `ThemeData.typography` to `Typography.material2025` when `ThemeData.useMaterial3` is true. The baseline text styles have the same values as before, but the default text theme now also includes the emphasized styles, and its `TextStyle.debugLabel`s change (e.g. `englishLike bodyMedium 2025`).
 version: minor

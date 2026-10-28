@@ -1188,7 +1188,7 @@ class ThemeData with Diagnosticable {
   /// | Property        | Material 3 default             | Material 2 default             |
   /// | :-------------- | :----------------------------- | :----------------------------- |
   /// | [colorScheme]   | M3 baseline light color scheme | M2 baseline light color scheme |
-  /// | [typography]    | [Typography.material2021]      | [Typography.material2014]      |
+  /// | [typography]    | [Typography.material2025]      | [Typography.material2014]      |
   /// | [splashFactory] | [InkSparkle]* or [InkRipple]   | [InkSplash]                    |
   ///
   /// \* if the target platform is Android and the app is not
