@@ -13,4 +13,4 @@ export 'src/kotlin/kotlin_generator.dart'
 export 'src/objc/objc_generator.dart' show ObjcOptions;
 export 'src/pigeon_lib.dart';
 export 'src/swift/swift_generator.dart'
-    show SwiftEventChannelOptions, SwiftOptions, SwiftProxyApiOptions;
+    show SwiftAccessLevel, SwiftEventChannelOptions, SwiftOptions, SwiftProxyApiOptions;

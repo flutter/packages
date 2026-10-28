@@ -591,6 +591,11 @@ ${_argParser.usage}''';
     ..addOption('swift_apple_sdk_path', help: 'The path to the apple sdk for Swift generation.')
     ..addOption('swift_apple_sdk_triple', help: 'The apple sdk triple for Swift generation.')
     ..addOption(
+      'swift_access_level',
+      help: 'The access level for generated Swift declarations.',
+      allowed: const <String>['internal', 'package', 'public'],
+    )
+    ..addOption(
       'kotlin_out',
       help: 'Path to generated Kotlin file (.kt).',
       aliases: const <String>['experimental_kotlin_out'],
@@ -734,6 +739,7 @@ ${_argParser.usage}''';
         configDirectory: results['config_dir'] as String?,
         appleSdkPath: results['swift_apple_sdk_path'] as String?,
         appleSdkTriple: results['swift_apple_sdk_triple'] as String?,
+        accessLevel: SwiftAccessLevel.fromName(results['swift_access_level'] as String?),
       ),
       swiftOut: results.wasParsed('swift_out')
           ? (swiftOuts.length == 1 ? swiftOuts.first : swiftOuts)

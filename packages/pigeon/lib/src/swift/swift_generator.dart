@@ -22,6 +22,28 @@ const DocumentCommentSpecification _docCommentSpec = DocumentCommentSpecificatio
 
 const String _overflowClassName = '${classNamePrefix}CodecOverflow';
 
+/// Access level for generated Swift declarations.
+enum SwiftAccessLevel {
+  /// Declarations use Swift's default `internal` visibility.
+  internal,
+
+  /// Declarations use `package` visibility (accessible across modules in the
+  /// same Swift package).
+  package,
+
+  /// Declarations use `public` visibility (and `open` for classes intended for
+  /// subclassing across modules).
+  public;
+
+  /// Parses a [SwiftAccessLevel] from its enum [name], or returns `null` if
+  /// [name] is `null` or does not match a known value.
+  static SwiftAccessLevel? fromName(String? name) {
+    return SwiftAccessLevel.values
+        .where((SwiftAccessLevel value) => value.name == name)
+        .firstOrNull;
+  }
+}
+
 /// Options that control how Swift code will be generated.
 class SwiftOptions {
   /// Creates a [SwiftOptions] object
@@ -36,6 +58,7 @@ class SwiftOptions {
     this.configDirectory,
     this.appleSdkPath,
     this.appleSdkTriple,
+    this.accessLevel,
   });
 
   /// A copyright header that will get prepended to generated code.
@@ -85,9 +108,15 @@ class SwiftOptions {
   /// contains "macosx").
   final String? appleSdkTriple;
 
+  /// The access level applied to generated Swift types and their API surface.
+  ///
+  /// Defaults to [SwiftAccessLevel.internal].
+  final SwiftAccessLevel? accessLevel;
+
   /// Creates a [SwiftOptions] from a Map representation where:
   /// `x = SwiftOptions.fromList(x.toMap())`.
   static SwiftOptions fromList(Map<String, Object> map) {
+    final Object? rawAccessLevel = map['accessLevel'];
     return SwiftOptions(
       copyrightHeader: map['copyrightHeader'] as Iterable<String>?,
       fileSpecificClassNameComponent: map['fileSpecificClassNameComponent'] as String?,
@@ -99,6 +128,9 @@ class SwiftOptions {
       configDirectory: map['configDirectory'] as String?,
       appleSdkPath: map['appleSdkPath'] as String?,
       appleSdkTriple: map['appleSdkTriple'] as String?,
+      accessLevel: rawAccessLevel is SwiftAccessLevel
+          ? rawAccessLevel
+          : SwiftAccessLevel.fromName(rawAccessLevel as String?),
     );
   }
 
@@ -117,6 +149,7 @@ class SwiftOptions {
       if (configDirectory != null) 'configDirectory': configDirectory!,
       if (appleSdkPath != null) 'appleSdkPath': appleSdkPath!,
       if (appleSdkTriple != null) 'appleSdkTriple': appleSdkTriple!,
+      if (accessLevel != null) 'accessLevel': accessLevel!,
     };
     return result;
   }
@@ -144,6 +177,7 @@ class InternalSwiftOptions extends InternalOptions {
     this.configDirectory,
     this.appleSdkPath,
     this.appleSdkTriple,
+    this.accessLevel = SwiftAccessLevel.internal,
   });
 
   /// Creates InternalSwiftOptions from SwiftOptions.
@@ -168,6 +202,7 @@ class InternalSwiftOptions extends InternalOptions {
        configDirectory = options.configDirectory,
        appleSdkPath = options.appleSdkPath,
        appleSdkTriple = options.appleSdkTriple,
+       accessLevel = options.accessLevel ?? SwiftAccessLevel.internal,
        swiftOut = swiftOut ?? swiftOuts?.firstOrNull ?? '',
        swiftOuts = swiftOuts ?? (swiftOut != null ? <String>[swiftOut] : const <String>[]);
 
@@ -222,6 +257,43 @@ class InternalSwiftOptions extends InternalOptions {
   /// `appleSdkPath`, defaulting to `arm64-apple-ios` (or `x86_64-apple-macosx14.0`
   /// if `appleSdkPath` contains "macosx").
   final String? appleSdkTriple;
+
+  /// The access level applied to generated Swift types and their API surface.
+  final SwiftAccessLevel accessLevel;
+
+  /// Trailing-space access modifier prefix for generated declarations (`''`,
+  /// `'package '`, or `'public '`).
+  String get accessModifier => switch (accessLevel) {
+    SwiftAccessLevel.internal => '',
+    SwiftAccessLevel.package => 'package ',
+    SwiftAccessLevel.public => 'public ',
+  };
+
+  /// Class declaration prefix for generated classes intended to be subclassed
+  /// by user code (`'class '` for internal, `'package class '` for package,
+  /// and `'open class '` for public).
+  String get subclassableClassModifier => switch (accessLevel) {
+    SwiftAccessLevel.internal => 'class ',
+    SwiftAccessLevel.package => 'package class ',
+    SwiftAccessLevel.public => 'open class ',
+  };
+
+  /// Function declaration prefix for overridable methods on classes intended
+  /// to be subclassed by user code (`'func '` for internal, `'package func '`
+  /// for package, and `'open func '` for public).
+  String get subclassableFuncModifier => switch (accessLevel) {
+    SwiftAccessLevel.internal => 'func ',
+    SwiftAccessLevel.package => 'package func ',
+    SwiftAccessLevel.public => 'open func ',
+  };
+
+  /// Initializer access prefix on `open` classes (`''` for internal,
+  /// `'package '` for package, and `'public '` for public).
+  String get subclassableInitModifier => switch (accessLevel) {
+    SwiftAccessLevel.internal => '',
+    SwiftAccessLevel.package => 'package ',
+    SwiftAccessLevel.public => 'public ',
+  };
 }
 
 /// Options that control how Swift code will be generated for a specific
@@ -371,7 +443,7 @@ class SwiftGenerator extends StructuredGenerator<InternalSwiftOptions> {
     addDocumentationComments(indent, anEnum.documentationComments, _docCommentSpec);
 
     indent.write(
-      '${generatorOptions.useFfi ? '@objc ' : ''}enum ${anEnum.name}: Int, CaseIterable ',
+      '${generatorOptions.useFfi ? '@objc ' : ''}${generatorOptions.accessModifier}enum ${anEnum.name}: Int, CaseIterable ',
     );
     indent.addScoped('{', '}', () {
       enumerate(anEnum.members, (int index, EnumMember member) {
@@ -659,9 +731,13 @@ private class _PigeonFfiCodec {
     indent.newln();
 
     // Generate Codec
-    indent.write('class $codecName: FlutterStandardMessageCodec, @unchecked Sendable ');
+    indent.write(
+      '${generatorOptions.accessModifier}class $codecName: FlutterStandardMessageCodec, @unchecked Sendable ',
+    );
     indent.addScoped('{', '}', () {
-      indent.writeln('static let shared = $codecName(readerWriter: $readerWriterName())');
+      indent.writeln(
+        '${generatorOptions.accessModifier}static let shared = $codecName(readerWriter: $readerWriterName())',
+      );
     });
     indent.newln();
     if (root.containsEventChannel) {
@@ -675,13 +751,14 @@ private class _PigeonFfiCodec {
   void _writeDataClassSignature(
     Indent indent,
     Class classDefinition, {
+    String accessModifier = '',
     bool private = false,
     bool useFfi = false,
     bool useFfiTypedData = false,
     bool hashable = true,
     bool customStringConvertible = true,
   }) {
-    final privateString = private ? 'private ' : '';
+    final visibilityPrefix = private ? 'private ' : (useFfi ? '' : accessModifier);
     final objcString = useFfi ? '@objc ' : '';
     final bridge = useFfi ? 'Bridge' : '';
     final protocols = <String>[];
@@ -707,12 +784,12 @@ private class _PigeonFfiCodec {
     final extendsString = protocols.isEmpty ? '' : ': ${protocols.join(', ')}';
     if (classDefinition.isSwiftClass || useFfi) {
       indent.write(
-        '$privateString${objcString}class ${classDefinition.name}$bridge$extendsString ',
+        '$visibilityPrefix${objcString}class ${classDefinition.name}$bridge$extendsString ',
       );
     } else if (classDefinition.isSealed) {
-      indent.write('protocol ${classDefinition.name} ');
+      indent.write('${visibilityPrefix}protocol ${classDefinition.name} ');
     } else {
-      indent.write('${privateString}struct ${classDefinition.name}$extendsString ');
+      indent.write('${visibilityPrefix}struct ${classDefinition.name}$extendsString ');
     }
 
     indent.addScoped('{', '', () {
@@ -723,14 +800,28 @@ private class _PigeonFfiCodec {
           indent,
           fields.toList(),
           objcString,
+          accessModifier: visibilityPrefix,
           useFfi: useFfi,
           useFfiTypedData: useFfiTypedData,
         );
+      } else if (!classDefinition.isSealed && visibilityPrefix.isNotEmpty && !private) {
+        if (fields.isEmpty) {
+          indent.writeln('${visibilityPrefix}init() {}');
+        } else {
+          _writeClassInit(
+            indent,
+            fields.toList(),
+            '',
+            accessModifier: visibilityPrefix,
+            useFfiTypedData: useFfiTypedData,
+          );
+        }
       }
 
       for (final field in fields) {
         addDocumentationComments(indent, field.documentationComments, _docCommentSpec);
-        indent.write('${objcString}var ');
+        final fieldAccess = private || useFfi ? '' : visibilityPrefix;
+        indent.write('$fieldAccess${objcString}var ');
         _writeClassField(
           indent,
           field,
@@ -839,7 +930,12 @@ if (wrapped == nil) {
       _docCommentSpec,
       generatorComments: generatedComments,
     );
-    _writeDataClassSignature(indent, classDefinition, useFfiTypedData: generatorOptions.useFfi);
+    _writeDataClassSignature(
+      indent,
+      classDefinition,
+      accessModifier: generatorOptions.accessModifier,
+      useFfiTypedData: generatorOptions.useFfi,
+    );
     indent.writeScoped('', '}', () {
       if (classDefinition.isSealed) {
         return;
@@ -1098,11 +1194,12 @@ if (wrapped == nil) {
     Indent indent,
     List<NamedType> fields,
     String objc, {
+    String accessModifier = '',
     bool useFfi = false,
     bool useFfiTypedData = false,
   }) {
     final override = useFfi && fields.isEmpty ? 'override ' : '';
-    indent.writeScoped('$objc${override}init(', ')', () {
+    indent.writeScoped('$accessModifier$objc${override}init(', ')', () {
       for (var i = 0; i < fields.length; i++) {
         indent.write('');
         _writeClassField(indent, fields[i], useFfi: useFfi, useFfiTypedData: useFfiTypedData);
@@ -1168,7 +1265,7 @@ if (wrapped == nil) {
     required String dartPackageName,
   }) {
     indent.writeScoped(
-      'static func == (lhs: ${classDefinition.name}, rhs: ${classDefinition.name}) -> Bool {',
+      '${generatorOptions.accessModifier}static func == (lhs: ${classDefinition.name}, rhs: ${classDefinition.name}) -> Bool {',
       '}',
       () {
         indent.writeScoped('if Swift.type(of: lhs) != Swift.type(of: rhs) {', '}', () {
@@ -1195,15 +1292,19 @@ if (wrapped == nil) {
     );
 
     indent.newln();
-    indent.writeScoped('func hash(into hasher: inout Hasher) {', '}', () {
-      indent.writeln('hasher.combine("${classDefinition.name}")');
-      final Iterable<NamedType> fields = getFieldsInSerializationOrder(classDefinition);
-      for (final field in fields) {
-        indent.writeln(
-          '${generatorOptions.fileSpecificClassNameComponent ?? ''}PigeonInternal.deepHash(value: ${field.name}, hasher: &hasher)',
-        );
-      }
-    });
+    indent.writeScoped(
+      '${generatorOptions.accessModifier}func hash(into hasher: inout Hasher) {',
+      '}',
+      () {
+        indent.writeln('hasher.combine("${classDefinition.name}")');
+        final Iterable<NamedType> fields = getFieldsInSerializationOrder(classDefinition);
+        for (final field in fields) {
+          indent.writeln(
+            '${generatorOptions.fileSpecificClassNameComponent ?? ''}PigeonInternal.deepHash(value: ${field.name}, hasher: &hasher)',
+          );
+        }
+      },
+    );
   }
 
   /// Writes the `CustomStringConvertible` conformance for a class.
@@ -1317,7 +1418,7 @@ if (wrapped == nil) {
       return;
     }
 
-    indent.addScoped('protocol ${api.name}Protocol {', '}', () {
+    indent.addScoped('${generatorOptions.accessModifier}protocol ${api.name}Protocol {', '}', () {
       for (final Method func in api.methods) {
         addDocumentationComments(indent, func.documentationComments, _docCommentSpec);
         indent.writeln(
@@ -1336,12 +1437,12 @@ if (wrapped == nil) {
       }
     });
 
-    indent.write('class ${api.name}: ${api.name}Protocol ');
+    indent.write('${generatorOptions.accessModifier}class ${api.name}: ${api.name}Protocol ');
     indent.addScoped('{', '}', () {
       indent.writeln('private let binaryMessenger: FlutterBinaryMessenger');
       indent.writeln('private let messageChannelSuffix: String');
       indent.write(
-        'init(binaryMessenger: FlutterBinaryMessenger, messageChannelSuffix: String = "") ',
+        '${generatorOptions.accessModifier}init(binaryMessenger: FlutterBinaryMessenger, messageChannelSuffix: String = "") ',
       );
       indent.addScoped('{', '}', () {
         indent.writeln('self.binaryMessenger = binaryMessenger');
@@ -1350,7 +1451,7 @@ if (wrapped == nil) {
         );
       });
       final String codecName = _getMessageCodecName(generatorOptions);
-      indent.write('var codec: $codecName ');
+      indent.write('${generatorOptions.accessModifier}var codec: $codecName ');
       indent.addScoped('{', '}', () {
         indent.writeln('return $codecName.shared');
       });
@@ -1430,7 +1531,7 @@ if (wrapped == nil) {
     });
 
     indent.newln();
-    indent.write('class ${api.name} ');
+    indent.write('${generatorOptions.accessModifier}class ${api.name} ');
     indent.addScoped('{', '}', () {
       indent.writeln('private let api: ${api.name}Bridge');
       indent.newln();
@@ -1440,7 +1541,7 @@ if (wrapped == nil) {
       });
       indent.newln();
       indent.write(
-        'static func getInstance(name: String = ${_classNamePrefix}PigeonInternal.defaultInstanceName) -> ${api.name}? ',
+        '${generatorOptions.accessModifier}static func getInstance(name: String = ${_classNamePrefix}PigeonInternal.defaultInstanceName) -> ${api.name}? ',
       );
       indent.addScoped('{', '}', () {
         indent.writeln('return ${api.name}Registrar.getInstance(name: name)');
@@ -1456,7 +1557,9 @@ if (wrapped == nil) {
           return '${_getArgumentName(index, param)} ${_getSafeArgumentName(index, param)}: ${_nullSafeSwiftTypeForDartType(param.type, ffiTypedData: true)}';
         }).join(', ');
         final asyncString = method.isAsynchronous ? ' async' : '';
-        indent.write('func ${method.name}($parameters)$asyncString throws$returnTypeString ');
+        indent.write(
+          '${generatorOptions.accessModifier}func ${method.name}($parameters)$asyncString throws$returnTypeString ',
+        );
         indent.addScoped('{', '}', () {
           indent.writeln('let error = $errorClassName()');
           final List<String> params = indexMap(method.parameters, (int index, NamedType param) {
@@ -1517,12 +1620,12 @@ if (wrapped == nil) {
     indent.writeln(
       '$_docCommentPrefix Generated setup class from Pigeon to register implemented ${api.name} classes.',
     );
-    indent.writeScoped('@objc class ${api.name}Setup: NSObject {', '}', () {
+    indent.writeScoped('@objc ${generatorOptions.accessModifier}class ${api.name}Setup: NSObject {', '}', () {
       if (generatorOptions.useFfi) {
         indent.writeln('private var api: ${api.name}?');
         indent.writeln('override init() {}');
         indent.writeScoped(
-          'static func register(api: ${api.name}?, name: String = ${_classNamePrefix}PigeonInternal.defaultInstanceName) {',
+          '${generatorOptions.accessModifier}static func register(api: ${api.name}?, name: String = ${_classNamePrefix}PigeonInternal.defaultInstanceName) {',
           '}',
           () {
             indent.writeScoped('if let api = api {', '}', () {
@@ -1665,7 +1768,7 @@ if (wrapped == nil) {
       generatorComments: generatedComments,
     );
 
-    indent.write('protocol $apiName ');
+    indent.write('${generatorOptions.accessModifier}protocol $apiName ');
     indent.addScoped('{', '}', () {
       for (final Method method in api.methods) {
         addDocumentationComments(indent, method.documentationComments, _docCommentSpec);
@@ -1691,15 +1794,15 @@ if (wrapped == nil) {
     indent.writeln(
       '$_docCommentPrefix Generated setup class from Pigeon to handle messages through the `binaryMessenger`.',
     );
-    indent.writeScoped('class ${apiName}Setup {', '}', () {
+    indent.writeScoped('${generatorOptions.accessModifier}class ${apiName}Setup {', '}', () {
       indent.writeln(
-        'static var codec: FlutterStandardMessageCodec { ${_getMessageCodecName(generatorOptions)}.shared }',
+        '${generatorOptions.accessModifier}static var codec: FlutterStandardMessageCodec { ${_getMessageCodecName(generatorOptions)}.shared }',
       );
       indent.writeln(
         '$_docCommentPrefix Sets up an instance of `$apiName` to handle messages through the `binaryMessenger`.',
       );
       indent.write(
-        'static func setUp(binaryMessenger: FlutterBinaryMessenger, api: $apiName?, messageChannelSuffix: String = "") ',
+        '${generatorOptions.accessModifier}static func setUp(binaryMessenger: FlutterBinaryMessenger, api: $apiName?, messageChannelSuffix: String = "") ',
       );
       indent.addScoped('{', '}', () {
         indent.writeln(
@@ -1844,6 +1947,7 @@ if (wrapped == nil) {
         returnType: const TypeDeclaration.voidDeclaration(),
         channelName: removeStrongReferenceName,
         isAsynchronousCallback: true,
+        includeAccessModifier: false,
         swiftFunction: null,
       );
     });
@@ -2042,8 +2146,12 @@ if (wrapped == nil) {
     );
 
     final swiftApiDelegateName = '${hostProxyApiPrefix}Delegate${api.name}';
-    final type = api.hasMethodsRequiringImplementation() ? 'protocol' : 'open class';
+    final bool isProtocol = api.hasMethodsRequiringImplementation();
+    final type = isProtocol ? '${generatorOptions.accessModifier}protocol' : 'open class';
     indent.writeScoped('$type $swiftApiDelegateName {', '}', () {
+      if (!isProtocol && generatorOptions.subclassableInitModifier.isNotEmpty) {
+        indent.writeln('${generatorOptions.subclassableInitModifier}init() {}');
+      }
       _writeProxyApiConstructorDelegateMethods(
         indent,
         api,
@@ -2070,63 +2178,75 @@ if (wrapped == nil) {
     indent.newln();
 
     final swiftApiProtocolName = '${hostProxyApiPrefix}Protocol${api.name}';
-    indent.writeScoped('protocol $swiftApiProtocolName {', '}', () {
-      _writeProxyApiFlutterMethods(
-        indent,
-        api,
-        generatorOptions: generatorOptions,
-        apiAsTypeDeclaration: apiAsTypeDeclaration,
-        dartPackageName: dartPackageName,
-        writeBody: false,
-      );
-    });
-    indent.newln();
-
-    final swiftApiName = '$hostProxyApiPrefix${api.name}';
-    indent.writeScoped('final class $swiftApiName: $swiftApiProtocolName  {', '}', () {
-      indent.writeln('unowned let pigeonRegistrar: ${proxyApiRegistrarName(generatorOptions)}');
-      indent.writeln('let pigeonDelegate: $swiftApiDelegateName');
-
-      _writeProxyApiInheritedApiMethods(indent, api);
-
-      indent.writeScoped(
-        'init(pigeonRegistrar: ${proxyApiRegistrarName(generatorOptions)}, delegate: $swiftApiDelegateName) {',
-        '}',
-        () {
-          indent.writeln('self.pigeonRegistrar = pigeonRegistrar');
-          indent.writeln('self.pigeonDelegate = delegate');
-        },
-      );
-
-      if (api.hasAnyHostMessageCalls()) {
-        _writeProxyApiMessageHandlerMethod(
+    indent.writeScoped(
+      '${generatorOptions.accessModifier}protocol $swiftApiProtocolName {',
+      '}',
+      () {
+        _writeProxyApiFlutterMethods(
           indent,
           api,
           generatorOptions: generatorOptions,
           apiAsTypeDeclaration: apiAsTypeDeclaration,
-          swiftApiName: swiftApiName,
+          dartPackageName: dartPackageName,
+          writeBody: false,
+        );
+      },
+    );
+    indent.newln();
+
+    final swiftApiName = '$hostProxyApiPrefix${api.name}';
+    indent.writeScoped(
+      '${generatorOptions.accessModifier}final class $swiftApiName: $swiftApiProtocolName  {',
+      '}',
+      () {
+        indent.writeln(
+          '${generatorOptions.accessModifier}unowned let pigeonRegistrar: ${proxyApiRegistrarName(generatorOptions)}',
+        );
+        indent.writeln(
+          '${generatorOptions.accessModifier}let pigeonDelegate: $swiftApiDelegateName',
+        );
+
+        _writeProxyApiInheritedApiMethods(indent, api, generatorOptions: generatorOptions);
+
+        indent.writeScoped(
+          '${generatorOptions.accessModifier}init(pigeonRegistrar: ${proxyApiRegistrarName(generatorOptions)}, delegate: $swiftApiDelegateName) {',
+          '}',
+          () {
+            indent.writeln('self.pigeonRegistrar = pigeonRegistrar');
+            indent.writeln('self.pigeonDelegate = delegate');
+          },
+        );
+
+        if (api.hasAnyHostMessageCalls()) {
+          _writeProxyApiMessageHandlerMethod(
+            indent,
+            api,
+            generatorOptions: generatorOptions,
+            apiAsTypeDeclaration: apiAsTypeDeclaration,
+            swiftApiName: swiftApiName,
+            dartPackageName: dartPackageName,
+          );
+          indent.newln();
+        }
+
+        _writeProxyApiNewInstanceMethod(
+          indent,
+          api,
+          generatorOptions: generatorOptions,
+          apiAsTypeDeclaration: apiAsTypeDeclaration,
+          newInstanceMethodName: '${classMemberNamePrefix}newInstance',
           dartPackageName: dartPackageName,
         );
-        indent.newln();
-      }
 
-      _writeProxyApiNewInstanceMethod(
-        indent,
-        api,
-        generatorOptions: generatorOptions,
-        apiAsTypeDeclaration: apiAsTypeDeclaration,
-        newInstanceMethodName: '${classMemberNamePrefix}newInstance',
-        dartPackageName: dartPackageName,
-      );
-
-      _writeProxyApiFlutterMethods(
-        indent,
-        api,
-        generatorOptions: generatorOptions,
-        apiAsTypeDeclaration: apiAsTypeDeclaration,
-        dartPackageName: dartPackageName,
-      );
-    });
+        _writeProxyApiFlutterMethods(
+          indent,
+          api,
+          generatorOptions: generatorOptions,
+          apiAsTypeDeclaration: apiAsTypeDeclaration,
+          dartPackageName: dartPackageName,
+        );
+      },
+    );
   }
 
   String _castForceUnwrap(String value, TypeDeclaration type, {bool ffiTypedData = false}) {
@@ -2567,15 +2687,21 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
   void _writePigeonInternal(InternalSwiftOptions generatorOptions, Root root, Indent indent) {
     indent.newln();
     final String uniqueComponent = generatorOptions.fileSpecificClassNameComponent ?? '';
-    indent.writeScoped('enum ${uniqueComponent}PigeonInternal {', '}', () {
-      if (generatorOptions.useFfi) {
-        indent.writeln('static let defaultInstanceName = "$defaultNativeInteropInstanceName"');
-      }
-      _writeIsNullish(generatorOptions, indent);
-      if (root.classes.isNotEmpty) {
-        _writeDeepEquals(generatorOptions, indent);
-      }
-    });
+    indent.writeScoped(
+      '${generatorOptions.accessModifier}enum ${uniqueComponent}PigeonInternal {',
+      '}',
+      () {
+        if (generatorOptions.useFfi) {
+          indent.writeln(
+            '${generatorOptions.accessModifier}static let defaultInstanceName = "$defaultNativeInteropInstanceName"',
+          );
+        }
+        _writeIsNullish(generatorOptions, indent);
+        if (root.classes.isNotEmpty) {
+          _writeDeepEquals(generatorOptions, indent);
+        }
+      },
+    );
   }
 
   @override
@@ -2638,30 +2764,33 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
         }
       }''');
     if (api.swiftOptions?.includeSharedClasses ?? true) {
+      final wrapperInit = generatorOptions.subclassableInitModifier.isEmpty
+          ? ''
+          : '\n        ${generatorOptions.subclassableInitModifier}init() {}';
       // TODO(tarrinneal): Prefix these classes to avoid name collisions.
       indent.format('''
 
-      class PigeonEventChannelWrapper<ReturnType> {
-        func onListen(withArguments arguments: Any?, sink: PigeonEventSink<ReturnType>) {}
-        func onCancel(withArguments arguments: Any?) {}
+      ${generatorOptions.subclassableClassModifier}PigeonEventChannelWrapper<ReturnType> {$wrapperInit
+        ${generatorOptions.subclassableFuncModifier}onListen(withArguments arguments: Any?, sink: PigeonEventSink<ReturnType>) {}
+        ${generatorOptions.subclassableFuncModifier}onCancel(withArguments arguments: Any?) {}
       }
 
-      class PigeonEventSink<ReturnType> {
+      ${generatorOptions.accessModifier}class PigeonEventSink<ReturnType> {
         private let sink: FlutterEventSink
 
         init(_ sink: @escaping FlutterEventSink) {
           self.sink = sink
         }
 
-        func success(_ value: ReturnType) {
+        ${generatorOptions.accessModifier}func success(_ value: ReturnType) {
           sink(value)
         }
 
-        func error(code: String, message: String?, details: Any?) {
+        ${generatorOptions.accessModifier}func error(code: String, message: String?, details: Any?) {
           sink(FlutterError(code: code, message: message, details: details))
         }
 
-        func endOfStream() {
+        ${generatorOptions.accessModifier}func endOfStream() {
           sink(FlutterEndOfEventStream)
         }
 
@@ -2670,9 +2799,12 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
     }
     addDocumentationComments(indent, api.documentationComments, _docCommentSpec);
     for (final Method func in api.methods) {
+      final handlerInit = generatorOptions.subclassableInitModifier.isEmpty
+          ? ''
+          : '\n          ${generatorOptions.subclassableInitModifier}override init() {}';
       indent.format('''
-        class ${toUpperCamelCase(func.name)}StreamHandler: PigeonEventChannelWrapper<${_swiftTypeForDartType(func.returnType)}> {
-          static func register(with messenger: FlutterBinaryMessenger,
+        ${generatorOptions.subclassableClassModifier}${toUpperCamelCase(func.name)}StreamHandler: PigeonEventChannelWrapper<${_swiftTypeForDartType(func.returnType)}> {$handlerInit
+          ${generatorOptions.accessModifier}static func register(with messenger: FlutterBinaryMessenger,
                               instanceName: String = "",
                               streamHandler: ${toUpperCamelCase(func.name)}StreamHandler) {
             var channelName = "${makeChannelName(api, func, dartPackageName)}"
@@ -2697,6 +2829,7 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
     required TypeDeclaration returnType,
     bool isAsynchronous = true,
     bool isAsynchronousCallback = false,
+    bool includeAccessModifier = true,
     required String? swiftFunction,
   }) {
     final String methodSignature = _getMethodSignature(
@@ -2707,6 +2840,7 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
       isAsynchronous: isAsynchronous,
       isAsynchronousCallback: isAsynchronousCallback,
       isMainActor: isAsynchronous && !isAsynchronousCallback,
+      accessModifier: includeAccessModifier ? generatorOptions.accessModifier : '',
       swiftFunction: swiftFunction,
       getParameterName: _getSafeArgumentName,
     );
@@ -2983,7 +3117,7 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
   }) {
     final delegateName =
         '${generatorOptions.fileSpecificClassNameComponent ?? ''}${proxyApiClassNamePrefix}ProxyApiDelegate';
-    indent.writeScoped('protocol $delegateName {', '}', () {
+    indent.writeScoped('${generatorOptions.accessModifier}protocol $delegateName {', '}', () {
       for (final api in allProxyApis) {
         final hostApiName = '$hostProxyApiPrefix${api.name}';
         addDocumentationComments(indent, <String>[
@@ -3009,7 +3143,7 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
           final hostApiName = '$hostProxyApiPrefix${api.name}';
           final swiftApiDelegateName = '${hostProxyApiPrefix}Delegate${api.name}';
           indent.format('''
-            func pigeonApi${api.name}(_ registrar: ${proxyApiRegistrarName(generatorOptions)}) -> $hostApiName {
+            ${generatorOptions.accessModifier}func pigeonApi${api.name}(_ registrar: ${proxyApiRegistrarName(generatorOptions)}) -> $hostApiName {
               return $hostApiName(pigeonRegistrar: registrar, delegate: $swiftApiDelegateName())
             }''');
         }
@@ -3020,9 +3154,13 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
     final instanceManagerApiName = '${swiftInstanceManagerClassName(generatorOptions)}Api';
 
     indent.writeScoped('open class ${proxyApiRegistrarName(generatorOptions)} {', '}', () {
-      indent.writeln('let binaryMessenger: FlutterBinaryMessenger');
-      indent.writeln('let apiDelegate: $delegateName');
-      indent.writeln('let instanceManager: ${swiftInstanceManagerClassName(generatorOptions)}');
+      indent.writeln(
+        '${generatorOptions.accessModifier}let binaryMessenger: FlutterBinaryMessenger',
+      );
+      indent.writeln('${generatorOptions.accessModifier}let apiDelegate: $delegateName');
+      indent.writeln(
+        '${generatorOptions.accessModifier}let instanceManager: ${swiftInstanceManagerClassName(generatorOptions)}',
+      );
 
       addDocumentationComments(indent, <String>[
         ' Whether APIs should ignore calling to Dart.',
@@ -3058,7 +3196,7 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
       indent.newln();
 
       indent.format('''
-        init(binaryMessenger: FlutterBinaryMessenger, apiDelegate: $delegateName) {
+        ${generatorOptions.subclassableInitModifier}init(binaryMessenger: FlutterBinaryMessenger, apiDelegate: $delegateName) {
           self.binaryMessenger = binaryMessenger
           self.apiDelegate = apiDelegate
           self.instanceManager = ${swiftInstanceManagerClassName(generatorOptions)}(
@@ -3067,7 +3205,7 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
         }''');
       indent.newln();
 
-      indent.writeScoped('func setUp() {', '}', () {
+      indent.writeScoped('${generatorOptions.accessModifier}func setUp() {', '}', () {
         indent.writeln(
           '$instanceManagerApiName.setUpMessageHandlers(binaryMessenger: binaryMessenger, instanceManager: instanceManager)',
         );
@@ -3080,7 +3218,7 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
         }
       });
 
-      indent.writeScoped('func tearDown() {', '}', () {
+      indent.writeScoped('${generatorOptions.accessModifier}func tearDown() {', '}', () {
         indent.writeln(
           '$instanceManagerApiName.setUpMessageHandlers(binaryMessenger: binaryMessenger, instanceManager: nil)',
         );
@@ -3278,7 +3416,11 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
   // Writes the getters for accessing the implementation of other ProxyApis.
   //
   // These are used for inherited Flutter methods.
-  void _writeProxyApiInheritedApiMethods(Indent indent, AstProxyApi api) {
+  void _writeProxyApiInheritedApiMethods(
+    Indent indent,
+    AstProxyApi api, {
+    required InternalSwiftOptions generatorOptions,
+  }) {
     final inheritedApiNames = <String>{
       if (api.superClass != null) api.superClass!.baseName,
       ...api.interfaces.map((TypeDeclaration type) => type.baseName),
@@ -3287,9 +3429,13 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
       addDocumentationComments(indent, <String>[
         'An implementation of [$name] used to access callback methods',
       ], _docCommentSpec);
-      indent.writeScoped('var pigeonApi$name: $hostProxyApiPrefix$name {', '}', () {
-        indent.writeln('return pigeonRegistrar.apiDelegate.pigeonApi$name(pigeonRegistrar)');
-      });
+      indent.writeScoped(
+        '${generatorOptions.accessModifier}var pigeonApi$name: $hostProxyApiPrefix$name {',
+        '}',
+        () {
+          indent.writeln('return pigeonRegistrar.apiDelegate.pigeonApi$name(pigeonRegistrar)');
+        },
+      );
       indent.newln();
     }
   }
@@ -3524,6 +3670,7 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
       returnType: const TypeDeclaration.voidDeclaration(),
       isAsynchronous: true,
       isAsynchronousCallback: true,
+      accessModifier: generatorOptions.accessModifier,
       errorTypeName: _getErrorClassName(generatorOptions),
     );
     indent.writeScoped('$methodSignature {', '}', () {
@@ -3632,6 +3779,7 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
         returnType: method.returnType,
         isAsynchronous: true,
         isAsynchronousCallback: true,
+        accessModifier: writeBody ? generatorOptions.accessModifier : '',
         errorTypeName: _getErrorClassName(generatorOptions),
         getParameterName: _getSafeArgumentName,
       );
@@ -3692,23 +3840,24 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
 
   void _writePigeonError(InternalSwiftOptions generatorOptions, Indent indent) {
     final objc = generatorOptions.useFfi ? '@objc ' : '';
+    final String access = generatorOptions.accessModifier;
     indent.newln();
     indent.writeln('/// Error class for passing custom error details to Dart side.');
     indent.writeScoped(
-      '${objc}final class ${_getErrorClassName(generatorOptions)}: ${generatorOptions.useFfi ? 'NSObject, ' : ''}Error {',
+      '$objc${access}final class ${_getErrorClassName(generatorOptions)}: ${generatorOptions.useFfi ? 'NSObject, ' : ''}Error {',
       '}',
       () {
-        final declaration = generatorOptions.useFfi ? '${objc}var' : 'let';
+        final declaration = generatorOptions.useFfi ? '$objc${access}var' : '${access}let';
         indent.writeln('$declaration code: String${generatorOptions.useFfi ? '?' : ''}');
         indent.writeln('$declaration message: String?');
         indent.writeln('$declaration details: ${generatorOptions.useFfi ? 'String' : 'Sendable'}?');
         if (generatorOptions.useFfi) {
           indent.newln();
-          indent.writeln('@objc override init() {}');
+          indent.writeln('@objc ${access}override init() {}');
         }
         indent.newln();
         indent.writeScoped(
-          '${objc}init(code: String${generatorOptions.useFfi ? '?' : ''}, message: String?, details: ${generatorOptions.useFfi ? 'String' : 'Sendable'}?) {',
+          '$objc${access}init(code: String${generatorOptions.useFfi ? '?' : ''}, message: String?, details: ${generatorOptions.useFfi ? 'String' : 'Sendable'}?) {',
           '}',
           () {
             indent.writeln('self.code = code');
@@ -3717,7 +3866,7 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
           },
         );
         indent.newln();
-        indent.writeScoped('var localizedDescription: String {', '}', () {
+        indent.writeScoped('${access}var localizedDescription: String {', '}', () {
           indent.writeScoped('return', '', () {
             indent.writeln(
               '"${_getErrorClassName(generatorOptions)}(code: \\(code${generatorOptions.useFfi ? ' ?? "<nil>"' : ''}), message: \\(message ?? "<nil>"), details: \\(details ?? "<nil>"))"',
@@ -4062,6 +4211,7 @@ String _getMethodSignature({
   bool ffiUserApi = false,
   bool isAsynchronousCallback = false,
   bool isMainActor = false,
+  String accessModifier = '',
   String? swiftFunction,
   bool ffiBridgeApi = false,
   _SwiftFunctionComponents? components,
@@ -4127,17 +4277,17 @@ String _getMethodSignature({
   if (isAsynchronous && !isAsynchronousCallback) {
     final mainActorPrefix = isMainActor ? '@MainActor ' : '';
     final returnTypeSuffix = returnType.isVoid ? '' : ' -> $returnTypeString';
-    return '${mainActorPrefix}func ${components.name}($parameterSignature) async throws$returnTypeSuffix';
+    return '$mainActorPrefix${accessModifier}func ${components.name}($parameterSignature) async throws$returnTypeSuffix';
   }
 
   if (isAsynchronous) {
     final completion = 'completion: @escaping (Result<$returnTypeString, $errorTypeName>) -> Void';
     final params = parameters.isEmpty ? completion : '$parameterSignature, $completion';
-    return 'func $methodName($params)';
+    return '${accessModifier}func $methodName($params)';
   }
 
   final returnTypeSuffix = returnType.isVoid ? '' : ' -> $returnTypeString';
-  return 'func $methodName($parameterSignature) throws$returnTypeSuffix';
+  return '${accessModifier}func $methodName($parameterSignature) throws$returnTypeSuffix';
 }
 
 /// A class that represents a Swift function argument.
