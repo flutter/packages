@@ -288,7 +288,7 @@ class _FfiType extends _NativeInteropType<_FfiType> {
     bool forceNullable = false,
   }) {
     if (type.isClass) {
-      return '${type.baseName}NativeInterop.fromFfi($varName)${getForceNonNullSymbol(!type.isNullable)}';
+      return '${_nativeInteropExtensionName(type.baseName)}.fromFfi($varName)${getForceNonNullSymbol(!type.isNullable)}';
     }
     if (type.isEnum && classField) {
       if (type.isNullable) {
@@ -473,7 +473,7 @@ class _JniType extends _NativeInteropType<_JniType> {
   /// Generates a Dart code expression that converts a JNI object representation back to its corresponding Dart value.
   String getToDartCall(TypeDeclaration type, {String varName = '', bool forceConversion = false}) {
     if (type.isClass || type.isEnum) {
-      return '${type.baseName}NativeInterop.fromJni($varName)${getForceNonNullSymbol(!type.isNullable)}';
+      return '${_nativeInteropExtensionName(type.baseName)}.fromJni($varName)${getForceNonNullSymbol(!type.isNullable)}';
     }
     var asType = ' as ${getDartReturnType(true)}';
     var castCall = '';
@@ -707,12 +707,13 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     if (root.containsProxyApi) {
       indent.writeln("import 'package:flutter/widgets.dart' show WidgetsFlutterBinding;");
     }
-    indent.writeln("import 'package:meta/meta.dart' show immutable, protected, visibleForTesting;");
+    indent.writeln(
+      "import 'package:meta/meta.dart' show immutable, ${usesNativeInterop(generatorOptions) ? 'internal, ' : ''}protected, visibleForTesting;",
+    );
     if (usesNativeInterop(generatorOptions)) {
-      final String baseName = path.basename(generatorOptions.dartOut!);
-      final String nativeInteropBaseName = path.basename(
-        getNativeInteropDartPath(generatorOptions.dartOut!),
-      );
+      final String dartOut = generatorOptions.dartOut ?? '$dartPackageName.g.dart';
+      final String baseName = path.basename(dartOut);
+      final String nativeInteropBaseName = path.basename(getNativeInteropDartPath(dartOut));
       indent.writeln(
         "import './$baseName'\n"
         "    if (dart.library.ffi) './$nativeInteropBaseName'\n"
@@ -721,7 +722,11 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     }
   }
 
-  void _writeNativeInteropFileImports(InternalDartOptions generatorOptions, Indent indent) {
+  void _writeNativeInteropFileImports(
+    InternalDartOptions generatorOptions,
+    Indent indent, {
+    required String dartPackageName,
+  }) {
     indent.writeln("import 'dart:async';");
     if (generatorOptions.useFfi) {
       indent.writeln("import 'dart:ffi';");
@@ -748,7 +753,8 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     if (generatorOptions.useFfi) {
       indent.writeln("import 'package:objective_c/objective_c.dart';");
     }
-    final String baseName = path.basename(generatorOptions.dartOut!);
+    final String dartOut = generatorOptions.dartOut ?? '$dartPackageName.g.dart';
+    final String baseName = path.basename(dartOut);
     indent.writeln("import './$baseName';");
     if (generatorOptions.useFfi) {
       indent.writeln(
@@ -842,44 +848,48 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
 
   void _writeNativeInteropEnum(InternalDartOptions generatorOptions, Indent indent, Enum anEnum) {
     indent.newln();
-    indent.writeScoped('extension ${anEnum.name}NativeInterop on ${anEnum.name} {', '}', () {
-      if (generatorOptions.useJni) {
-        final _JniType jniType = _JniType.fromEnum(anEnum);
-        indent.writeScoped('${jniType.jniName} toJni() {', '}', () {
-          indent.writeln('return ${jniType.jniName}.Companion.ofRaw(index)!;');
-        });
-
-        indent.newln();
-        indent.writeScoped(
-          'static ${anEnum.name}? fromJni(${jniType.jniName}? jniEnum) {',
-          '}',
-          () {
-            indent.writeln('return jniEnum == null ? null : ${anEnum.name}.values[jniEnum.raw];');
-          },
-        );
-      }
-      if (generatorOptions.useFfi) {
+    indent.writeScoped(
+      'extension ${_nativeInteropExtensionName(anEnum.name)} on ${anEnum.name} {',
+      '}',
+      () {
         if (generatorOptions.useJni) {
+          final _JniType jniType = _JniType.fromEnum(anEnum);
+          indent.writeScoped('${jniType.jniName} toJni() {', '}', () {
+            indent.writeln('return ${jniType.jniName}.Companion.ofRaw(index)!;');
+          });
+
           indent.newln();
-        }
-        final _FfiType ffiType = _FfiType.fromEnum(anEnum);
-        indent.writeScoped('${ffiType.getFfiName()} toFfi() {', '}', () {
-          indent.writeln('return _PigeonFfiCodec.writeValue<NSNumber>(index);');
-        });
-
-        indent.newln();
-        indent.writeScoped('NSNumber toNSNumber() {', '}', () {
-          indent.writeln('return NSNumber.alloc().initWithLong(index);');
-        });
-
-        indent.newln();
-        indent.writeScoped('static ${anEnum.name}? fromNSNumber(NSNumber? ffiEnum) {', '}', () {
-          indent.writeln(
-            'return ffiEnum == null ? null : ${anEnum.name}.values[ffiEnum.intValue];',
+          indent.writeScoped(
+            'static ${anEnum.name}? fromJni(${jniType.jniName}? jniEnum) {',
+            '}',
+            () {
+              indent.writeln('return jniEnum == null ? null : ${anEnum.name}.values[jniEnum.raw];');
+            },
           );
-        });
-      }
-    });
+        }
+        if (generatorOptions.useFfi) {
+          if (generatorOptions.useJni) {
+            indent.newln();
+          }
+          final _FfiType ffiType = _FfiType.fromEnum(anEnum);
+          indent.writeScoped('${ffiType.getFfiName()} toFfi() {', '}', () {
+            indent.writeln('return _PigeonFfiCodec.writeValue<NSNumber>(index);');
+          });
+
+          indent.newln();
+          indent.writeScoped('NSNumber toNSNumber() {', '}', () {
+            indent.writeln('return NSNumber.alloc().initWithLong(index);');
+          });
+
+          indent.newln();
+          indent.writeScoped('static ${anEnum.name}? fromNSNumber(NSNumber? ffiEnum) {', '}', () {
+            indent.writeln(
+              'return ffiEnum == null ? null : ${anEnum.name}.values[ffiEnum.intValue];',
+            );
+          });
+        }
+      },
+    );
   }
 
   @override
@@ -948,7 +958,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
   ) {
     indent.newln();
     indent.writeScoped(
-      'extension ${classDefinition.name}NativeInterop on ${classDefinition.name} {',
+      'extension ${_nativeInteropExtensionName(classDefinition.name)} on ${classDefinition.name} {',
       '}',
       () {
         if (classDefinition.isSealed) {
@@ -1039,7 +1049,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
           final String childJniName = _JniType.fromClass(child).jniName;
           indent.writeScoped('if (jniClass.isA<$childJniName>($childJniName.type)) {', '}', () {
             indent.writeln(
-              'return ${child.name}NativeInterop.fromJni(jniClass.as($childJniName.type));',
+              'return ${_nativeInteropExtensionName(child.name)}.fromJni(jniClass.as($childJniName.type));',
             );
           });
         }
@@ -1067,7 +1077,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
           final String childFfiName = _FfiType.fromClass(child).getFfiName();
           indent.writeScoped('if ($childFfiName.isA(ffiClass)) {', '}', () {
             indent.writeln(
-              'return ${child.name}NativeInterop.fromFfi($childFfiName.as(ffiClass));',
+              'return ${_nativeInteropExtensionName(child.name)}.fromFfi($childFfiName.as(ffiClass));',
             );
           });
         }
@@ -1345,16 +1355,11 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
   }) {
     final mixin = generatorOptions.useJni ? ' with $_jniBridgePrefix.\$${api.name}' : '';
     indent.writeScoped('final class _${api.name}Registrar$mixin {', '}', () {
-      indent.writeln('${api.name}? dartApi;');
+      indent.writeln('_${api.name}Registrar(this.dartApi);');
       indent.newln();
-      indent.writeScoped('${api.name} register(', ') ', () {
-        indent.writeScoped('${api.name} api, {', '}', () {
-          indent.writeln('String name = defaultInstanceName,');
-        }, nestCount: 0);
-      }, addTrailingNewline: false);
-      indent.addScoped('{', '}', () {
-        indent.writeln('dartApi = api;');
-        indent.newln();
+      indent.writeln('final ${api.name} dartApi;');
+      indent.newln();
+      indent.writeScoped('${api.name} register({String name = defaultInstanceName}) {', '}', () {
         if (generatorOptions.useJni) {
           indent.writeScoped('if (Platform.isAndroid) {', '}', () {
             indent.writeln(
@@ -1381,62 +1386,20 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
                 '});',
                 () {
                   indent.writeScoped('try {', '}', () {
-                    indent.writeScoped('if (dartApi != null) {', '}', () {
-                      final methodCall =
-                          'dartApi!.${method.name}(${indexMap(method.parameters, (int index, Parameter p) {
-                            final _FfiType ffiType = _FfiType.fromTypeDeclaration(p.type);
-                            return ffiType.getToDartCall(p.type, varName: _getSafeArgumentName(index, p), forceNullable: true);
-                          }).join(', ')})';
-                      if (method.isAsynchronous) {
-                        indent.writeScoped('$methodCall.then((response) {', '},', () {
-                          if (method.returnType.isVoid) {
-                            indent.writeln(
-                              '$_ffiBridgePrefix.${_getFfiBlockCallExtensionName(method.returnType)}(completionHandler).call();',
-                            );
-                          } else {
-                            final _FfiType ffiReturnType = _FfiType.fromTypeDeclaration(
-                              method.returnType,
-                            );
-                            String toFfiCall;
-                            if (!method.returnType.isNullable &&
-                                (isPrimitiveType(method.returnType) || method.returnType.isEnum)) {
-                              toFfiCall =
-                                  '_PigeonFfiCodec.writeValue<${ffiReturnType.getFfiName()}>(response)';
-                            } else {
-                              toFfiCall = ffiReturnType.getToFfiCall(
-                                method.returnType,
-                                'response',
-                                ffiReturnType,
-                              );
-                            }
-                            indent.writeln(
-                              '$_ffiBridgePrefix.${_getFfiBlockCallExtensionName(method.returnType)}(completionHandler).call($toFfiCall);',
-                            );
-                          }
-                        });
-                        indent.writeScoped('onError: (Object e) {', '});', () {
-                          indent.writeln('_reportFfiError(errorOut, e);');
-                          if (method.returnType.isVoid) {
-                            indent.writeln(
-                              '$_ffiBridgePrefix.${_getFfiBlockCallExtensionName(method.returnType)}(completionHandler).call();',
-                            );
-                          } else {
-                            indent.writeln(
-                              '$_ffiBridgePrefix.${_getFfiBlockCallExtensionName(method.returnType)}(completionHandler).call(null);',
-                            );
-                          }
-                        });
-                        indent.writeln('return;');
-                      } else {
+                    final methodCall =
+                        'dartApi.${method.name}(${indexMap(method.parameters, (int index, Parameter p) {
+                          final _FfiType ffiType = _FfiType.fromTypeDeclaration(p.type);
+                          return ffiType.getToDartCall(p.type, varName: _getSafeArgumentName(index, p), forceNullable: true);
+                        }).join(', ')})';
+                    if (method.isAsynchronous) {
+                      indent.writeScoped('$methodCall.then((response) {', '},', () {
                         if (method.returnType.isVoid) {
-                          indent.writeln('$methodCall;');
-                          indent.writeln('return;');
+                          indent.writeln(
+                            '$_ffiBridgePrefix.${_getFfiBlockCallExtensionName(method.returnType)}(completionHandler).call();',
+                          );
                         } else {
                           final _FfiType ffiReturnType = _FfiType.fromTypeDeclaration(
                             method.returnType,
-                          );
-                          indent.writeln(
-                            'final ${addGenericTypes(method.returnType)} response = $methodCall;',
                           );
                           String toFfiCall;
                           if (!method.returnType.isNullable &&
@@ -1450,23 +1413,50 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
                               ffiReturnType,
                             );
                           }
-                          indent.writeln('return $toFfiCall;');
+                          indent.writeln(
+                            '$_ffiBridgePrefix.${_getFfiBlockCallExtensionName(method.returnType)}(completionHandler).call($toFfiCall);',
+                          );
                         }
-                      }
-                    }, addTrailingNewline: false);
-                    indent.addScoped(' else {', '}', () {
-                      indent.writeln(
-                        "_reportFfiError(errorOut, 'ArgumentError: ${api.name} was not registered.');",
-                      );
-                      if (method.isAsynchronous) {
-                        indent.writeln(
-                          '$_ffiBridgePrefix.${_getFfiBlockCallExtensionName(method.returnType)}(completionHandler).call(${method.returnType.isVoid ? '' : 'null'});',
+                      });
+                      indent.writeScoped('onError: (Object e) {', '});', () {
+                        indent.writeln('_reportFfiError(errorOut, e);');
+                        if (method.returnType.isVoid) {
+                          indent.writeln(
+                            '$_ffiBridgePrefix.${_getFfiBlockCallExtensionName(method.returnType)}(completionHandler).call();',
+                          );
+                        } else {
+                          indent.writeln(
+                            '$_ffiBridgePrefix.${_getFfiBlockCallExtensionName(method.returnType)}(completionHandler).call(null);',
+                          );
+                        }
+                      });
+                      indent.writeln('return;');
+                    } else {
+                      if (method.returnType.isVoid) {
+                        indent.writeln('$methodCall;');
+                        indent.writeln('return;');
+                      } else {
+                        final _FfiType ffiReturnType = _FfiType.fromTypeDeclaration(
+                          method.returnType,
                         );
+                        indent.writeln(
+                          'final ${addGenericTypes(method.returnType)} response = $methodCall;',
+                        );
+                        String toFfiCall;
+                        if (!method.returnType.isNullable &&
+                            (isPrimitiveType(method.returnType) || method.returnType.isEnum)) {
+                          toFfiCall =
+                              '_PigeonFfiCodec.writeValue<${ffiReturnType.getFfiName()}>(response)';
+                        } else {
+                          toFfiCall = ffiReturnType.getToFfiCall(
+                            method.returnType,
+                            'response',
+                            ffiReturnType,
+                          );
+                        }
+                        indent.writeln('return $toFfiCall;');
                       }
-                      indent.writeln(
-                        'return${(method.isAsynchronous || method.returnType.isVoid) ? '' : ' null'};',
-                      );
-                    });
+                    }
                   }, addTrailingNewline: false);
                   indent.addScoped(' catch (e) {', '}', () {
                     indent.writeln('_reportFfiError(errorOut, e);');
@@ -1494,7 +1484,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
             indent.writeln(');');
           });
         }
-        indent.writeln('return api;');
+        indent.writeln('return dartApi;');
       });
 
       if (generatorOptions.useJni) {
@@ -1517,49 +1507,42 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
           );
           final String jniMethodName = jniNamer.nextApiMethod(method).name;
           indent.writeScoped('$returnType $jniMethodName($params) {', '}', () {
-            indent.writeScoped('if (dartApi != null) {', '} ', () {
-              final methodCall =
-                  'dartApi!.${method.name}(${indexMap(method.parameters, (int index, Parameter p) {
-                    final _JniType jniType = _JniType.fromTypeDeclaration(p.type);
-                    return jniType.getToDartCall(p.type, varName: _getSafeArgumentName(index, p));
-                  }).join(', ')})';
+            final methodCall =
+                'dartApi.${method.name}(${indexMap(method.parameters, (int index, Parameter p) {
+                  final _JniType jniType = _JniType.fromTypeDeclaration(p.type);
+                  return jniType.getToDartCall(p.type, varName: _getSafeArgumentName(index, p));
+                }).join(', ')})';
 
-              if (method.isAsynchronous) {
-                indent.writeScoped('return $methodCall.then((response) {', '});', () {
-                  if (method.returnType.isVoid) {
-                    indent.writeln('return _PigeonJniCodec._kotlinUnit;');
+            if (method.isAsynchronous) {
+              indent.writeScoped('return $methodCall.then((response) {', '});', () {
+                if (method.returnType.isVoid) {
+                  indent.writeln('return _PigeonJniCodec._kotlinUnit;');
+                } else {
+                  String toJniCall;
+                  if (!method.returnType.isNullable && isPrimitiveType(method.returnType)) {
+                    toJniCall = '_PigeonJniCodec.writeValue<${jniReturnType.jniName}>(response)';
                   } else {
-                    String toJniCall;
-                    if (!method.returnType.isNullable && isPrimitiveType(method.returnType)) {
-                      toJniCall = '_PigeonJniCodec.writeValue<${jniReturnType.jniName}>(response)';
-                    } else {
-                      toJniCall = jniReturnType.getToJniCall(
-                        method.returnType,
-                        'response',
-                        jniReturnType,
-                      );
-                    }
-                    indent.writeln('return $toJniCall;');
+                    toJniCall = jniReturnType.getToJniCall(
+                      method.returnType,
+                      'response',
+                      jniReturnType,
+                    );
                   }
-                });
-              } else if (method.returnType.isVoid) {
-                indent.writeln('$methodCall;');
-                indent.writeln('return;');
-              } else {
-                indent.writeln(
-                  'final ${addGenericTypes(method.returnType)} response = $methodCall;',
-                );
-                final String toJniCall = jniReturnType.getToJniCall(
-                  method.returnType,
-                  'response',
-                  jniReturnType,
-                );
-                indent.writeln('return $toJniCall;');
-              }
-            });
-            indent.writeScoped('else {', '}', () {
-              indent.writeln("throw ArgumentError('${api.name} was not registered.');");
-            });
+                  indent.writeln('return $toJniCall;');
+                }
+              });
+            } else if (method.returnType.isVoid) {
+              indent.writeln('$methodCall;');
+              indent.writeln('return;');
+            } else {
+              indent.writeln('final ${addGenericTypes(method.returnType)} response = $methodCall;');
+              final String toJniCall = jniReturnType.getToJniCall(
+                method.returnType,
+                'response',
+                jniReturnType,
+              );
+              indent.writeln('return $toJniCall;');
+            }
           });
         }
       }
@@ -1569,7 +1552,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
 ${api.name} ${classMemberNamePrefix}register_${api.name}(
   ${api.name} api, {
   String name = defaultInstanceName,
-}) => _${api.name}Registrar().register(api, name: name);
+}) => _${api.name}Registrar(api).register(name: name);
 ''');
   }
 
@@ -1597,6 +1580,7 @@ ${api.name} ${classMemberNamePrefix}register_${api.name}(
     indent.newln();
     if (usesNativeInterop(generatorOptions)) {
       indent.format('''
+@internal
 ${api.name} ${classMemberNamePrefix}register_${api.name}(
   ${api.name} api, {
   String name = defaultInstanceName,
@@ -1712,6 +1696,7 @@ final class ${api.name}Registrar {
     final ffiApiRegistrarName = '$_ffiBridgePrefix.${api.name}Setup';
     indent.newln();
     indent.format('''
+@internal
 $dartApiName? ${classMemberNamePrefix}getInstance_${api.name}({
   String channelName = defaultInstanceName,
 }) => $implClassName.getInstance(channelName: channelName);
@@ -2058,6 +2043,7 @@ return ${generatorOptions.useJni ? 'await ' : ''}$completerVar.future;
     final dartApiName = '${api.name}ForNativeInterop';
     indent.newln();
     indent.format('''
+@internal
 $dartApiName? ${classMemberNamePrefix}getInstance_${api.name}({
   String channelName = defaultInstanceName,
 }) {
@@ -2537,7 +2523,7 @@ ${api.name}({
   }) {
     final indent = Indent();
     writeFilePrologue(generatorOptions, root, indent, dartPackageName: dartPackageName);
-    _writeNativeInteropFileImports(generatorOptions, indent);
+    _writeNativeInteropFileImports(generatorOptions, indent, dartPackageName: dartPackageName);
     _writeNativeInteropGeneralUtilities(generatorOptions, root, indent);
     for (final Enum anEnum in root.enums) {
       _writeNativeInteropEnum(generatorOptions, indent, anEnum);
@@ -2774,7 +2760,7 @@ class _PigeonJniCodec {
       return '''
       } else if (value.isA<${jniType.jniName}>(
           ${jniType.jniName}.type)) {
-      return ${jniType.type.baseName}NativeInterop.fromJni(value.as(${jniType.jniName}.type));
+      return ${_nativeInteropExtensionName(jniType.type.baseName)}.fromJni(value.as(${jniType.jniName}.type));
         ''';
     }).join()}
     ${root.enums.map((Enum enumDefinition) {
@@ -2782,7 +2768,7 @@ class _PigeonJniCodec {
       return '''
       } else if (value.isA<${jniType.jniName}>(
           ${jniType.jniName}.type)) {
-      return ${jniType.type.baseName}NativeInterop.fromJni(value.as(${jniType.jniName}.type));
+      return ${_nativeInteropExtensionName(jniType.type.baseName)}.fromJni(value.as(${jniType.jniName}.type));
         ''';
     }).join()}
     } else {
@@ -2901,7 +2887,7 @@ class _PigeonJniCodec {
     for (final Enum anEnum in root.enums) {
       indent.format('''
         case ${typeNum++}:
-          return ${anEnum.name}NativeInterop.fromNSNumber(value.number);''');
+          return ${_nativeInteropExtensionName(anEnum.name)}.fromNSNumber(value.number);''');
     }
     indent.dec(2);
     indent.format('''
@@ -2956,7 +2942,7 @@ class _PigeonFfiCodec {
       }
       ${root.enums.map((Enum enumDefinition) => '''
       else if (type == ${enumDefinition.name}) {
-        return ${enumDefinition.name}NativeInterop.fromNSNumber(numValue);
+        return ${_nativeInteropExtensionName(enumDefinition.name)}.fromNSNumber(numValue);
       }''').join('\n')}
 
       return numValue.longValue;
@@ -2986,7 +2972,7 @@ class _PigeonFfiCodec {
       final _FfiType ffiType = _FfiType.fromClass(dataClass);
       return '''
       } else if (${ffiType.getFfiName()}.isA(value)) {
-        return ${ffiType.type.baseName}NativeInterop.fromFfi(${ffiType.getFfiName()}.as(value));
+        return ${_nativeInteropExtensionName(ffiType.type.baseName)}.fromFfi(${ffiType.getFfiName()}.as(value));
         ''';
     }).join()}
     } else {
@@ -4091,3 +4077,5 @@ String getNativeInteropDartPath(String dartOutPath) {
   }
   return '$dartOutPath.native_interop.dart';
 }
+
+String _nativeInteropExtensionName(String typeName) => '_$classNamePrefix${typeName}NativeInterop';

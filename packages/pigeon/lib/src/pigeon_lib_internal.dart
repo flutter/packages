@@ -550,7 +550,17 @@ class DartGeneratorAdapter implements GeneratorAdapter {
     if (dartOptions == null || !usesNativeInterop(dartOptions)) {
       return <Error>[];
     }
-    return _errorOnNativeInteropReservedMethodNames(root, useJni: dartOptions.useJni);
+    final errors = <Error>[];
+    if (dartOptions.dartOut != null &&
+        (dartOptions.dartOut!.isEmpty || dartOptions.dartOut == 'stdout')) {
+      errors.add(
+        Error(
+          message: 'Native interop requires a file path for dartOut (cannot be empty or "stdout").',
+        ),
+      );
+    }
+    errors.addAll(_errorOnNativeInteropReservedMethodNames(root, useJni: dartOptions.useJni));
+    return errors;
   }
 }
 

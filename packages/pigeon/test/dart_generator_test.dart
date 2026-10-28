@@ -2297,7 +2297,9 @@ name: foobar
     expect(code, contains('if (jniClass.isA<jni_bridge.Circle>(jni_bridge.Circle.type)) {'));
     expect(
       code,
-      contains('return CircleNativeInterop.fromJni(jniClass.as(jni_bridge.Circle.type));'),
+      contains(
+        'return _PigeonInternalCircleNativeInterop.fromJni(jniClass.as(jni_bridge.Circle.type));',
+      ),
     );
     expect(code, contains('ffi_bridge.ShapeBridge toFfi() {'));
     expect(code, contains('final Circle child => child.toFfi(),'));
@@ -2305,7 +2307,9 @@ name: foobar
     expect(code, contains('if (ffi_bridge.CircleBridge.isA(ffiClass)) {'));
     expect(
       code,
-      contains('return CircleNativeInterop.fromFfi(ffi_bridge.CircleBridge.as(ffiClass));'),
+      contains(
+        'return _PigeonInternalCircleNativeInterop.fromFfi(ffi_bridge.CircleBridge.as(ffiClass));',
+      ),
     );
     expect(code, contains('jni_bridge.Circle toJni() {'));
     expect(code, contains('ffi_bridge.CircleBridge toFfi() {'));
@@ -2315,7 +2319,9 @@ name: foobar
     );
     expect(
       code,
-      contains('final Shape pigeonVar_dartTypeRes = ShapeNativeInterop.fromJni(pigeonVar_res)!;'),
+      contains(
+        'final Shape pigeonVar_dartTypeRes = _PigeonInternalShapeNativeInterop.fromJni(pigeonVar_res)!;',
+      ),
     );
   });
 
@@ -2846,9 +2852,15 @@ name: foobar
       expect(code, contains("import 'package:flutter/foundation.dart' show kIsWeb;"));
       expect(code, contains('if (!kIsWeb) {'));
       expect(code, contains('if (!kIsWeb && api != null) {'));
-      expect(code, contains('ApiForNativeInterop? pigeon_getInstance_Api({'));
+      expect(
+        code,
+        contains(
+          "import 'package:meta/meta.dart' show immutable, internal, protected, visibleForTesting;",
+        ),
+      );
+      expect(code, contains('@internal\nApiForNativeInterop? pigeon_getInstance_Api({'));
       expect(code, contains('pigeon_native.pigeon_getInstance_Api(channelName: channelName)'));
-      expect(code, contains('Callbacks pigeon_register_Callbacks('));
+      expect(code, contains('@internal\nCallbacks pigeon_register_Callbacks('));
       expect(code, contains('final class CallbacksRegistrar'));
       expect(code, contains('pigeon_native.pigeon_register_Callbacks(api, name: name)'));
 
@@ -2861,13 +2873,57 @@ name: foobar
       );
       final nativeInteropCode = nativeInteropSink.toString();
       expect(nativeInteropCode, contains("import './foo.g.dart';"));
-      expect(nativeInteropCode, contains('extension DataNativeInterop on Data'));
-      expect(nativeInteropCode, contains('extension MyEnumNativeInterop on MyEnum'));
+      expect(nativeInteropCode, contains('extension _PigeonInternalDataNativeInterop on Data'));
+      expect(nativeInteropCode, contains('extension _PigeonInternalMyEnumNativeInterop on MyEnum'));
       expect(
         nativeInteropCode,
         contains('class _ApiForNativeInterop implements ApiForNativeInterop'),
       );
       expect(nativeInteropCode, contains('final class _CallbacksRegistrar'));
+      expect(nativeInteropCode, contains('_CallbacksRegistrar(this.dartApi);'));
+      expect(nativeInteropCode, contains('final Callbacks dartApi;'));
+      expect(nativeInteropCode, isNot(contains('if (dartApi != null)')));
+
+      // Verify single-platform import isolation in generateNativeInterop.
+      final jniOnlySink = StringBuffer();
+      generator.generateNativeInterop(
+        const InternalDartOptions(
+          ignoreLints: false,
+          useJni: true,
+          jniErrorClassName: 'PigeonError',
+          dartOut: 'lib/foo.g.dart',
+        ),
+        root,
+        jniOnlySink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+      final jniOnlyCode = jniOnlySink.toString();
+      expect(jniOnlyCode, contains("import 'package:jni/jni.dart';"));
+      expect(jniOnlyCode, contains("import './foo.g.jni.dart' as jni_bridge;"));
+      expect(jniOnlyCode, isNot(contains("import 'dart:ffi';")));
+      expect(jniOnlyCode, isNot(contains("import 'package:ffi/ffi.dart';")));
+      expect(jniOnlyCode, isNot(contains("import 'package:objective_c/objective_c.dart';")));
+      expect(jniOnlyCode, isNot(contains('ffi_bridge')));
+
+      final ffiOnlySink = StringBuffer();
+      generator.generateNativeInterop(
+        const InternalDartOptions(
+          ignoreLints: false,
+          useFfi: true,
+          ffiErrorClassName: 'PigeonError',
+          dartOut: 'lib/foo.g.dart',
+        ),
+        root,
+        ffiOnlySink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+      final ffiOnlyCode = ffiOnlySink.toString();
+      expect(ffiOnlyCode, contains("import 'dart:ffi';"));
+      expect(ffiOnlyCode, contains("import 'package:ffi/ffi.dart';"));
+      expect(ffiOnlyCode, contains("import 'package:objective_c/objective_c.dart';"));
+      expect(ffiOnlyCode, contains("import './foo.g.ffi.dart' as ffi_bridge;"));
+      expect(ffiOnlyCode, isNot(contains("import 'package:jni/jni.dart';")));
+      expect(ffiOnlyCode, isNot(contains('jni_bridge')));
     },
   );
 }

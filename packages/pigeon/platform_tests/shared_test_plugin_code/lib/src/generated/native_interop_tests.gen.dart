@@ -12,7 +12,7 @@ import 'dart:typed_data' show Float64List, Int32List, Int64List;
 
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/services.dart';
-import 'package:meta/meta.dart' show immutable, protected, visibleForTesting;
+import 'package:meta/meta.dart' show immutable, internal, protected, visibleForTesting;
 import './native_interop_tests.gen.dart'
     if (dart.library.ffi) './native_interop_tests.native_interop.gen.dart'
     as pigeon_native;
@@ -1268,6 +1268,7 @@ class _PigeonCodec extends StandardMessageCodec {
 
 const String defaultInstanceName = 'PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u';
 
+@internal
 NativeInteropHostIntegrationCoreApiForNativeInterop?
 pigeon_getInstance_NativeInteropHostIntegrationCoreApi({String channelName = defaultInstanceName}) {
   throw UnsupportedError(
@@ -7462,6 +7463,7 @@ class NativeInteropHostIntegrationCoreApi {
   }
 }
 
+@internal
 NativeInteropFlutterIntegrationCoreApi pigeon_register_NativeInteropFlutterIntegrationCoreApi(
   NativeInteropFlutterIntegrationCoreApi api, {
   String name = defaultInstanceName,
@@ -10565,6 +10567,7 @@ abstract class NativeInteropFlutterIntegrationCoreApi {
   }
 }
 
+@internal
 NativeInteropReservedNamesHostApiForNativeInterop?
 pigeon_getInstance_NativeInteropReservedNamesHostApi({String channelName = defaultInstanceName}) {
   throw UnsupportedError(
@@ -11037,6 +11040,7 @@ class NativeInteropReservedNamesHostApi {
   }
 }
 
+@internal
 NativeInteropReservedNamesFlutterApi pigeon_register_NativeInteropReservedNamesFlutterApi(
   NativeInteropReservedNamesFlutterApi api, {
   String name = defaultInstanceName,

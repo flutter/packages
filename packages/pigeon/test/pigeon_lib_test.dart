@@ -3307,6 +3307,27 @@ const String myConst = 'hello ${1 + 2}';
         final companionFile = File(nativeInteropPath);
         expect(companionFile.existsSync(), isTrue);
         expect(companionFile.readAsStringSync(), contains('class _PigeonFfiCodec'));
+
+        // Verify validate rejects 'stdout' and empty dartOut when native interop is enabled.
+        final emptyRoot = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+        expect(
+          adapter.validate(
+            InternalPigeonOptions.fromPigeonOptions(
+              const PigeonOptions(dartOut: 'stdout', swiftOptions: SwiftOptions(useFfi: true)),
+            ),
+            emptyRoot,
+          ),
+          isNotEmpty,
+        );
+        expect(
+          adapter.validate(
+            InternalPigeonOptions.fromPigeonOptions(
+              const PigeonOptions(dartOut: '', swiftOptions: SwiftOptions(useFfi: true)),
+            ),
+            emptyRoot,
+          ),
+          isNotEmpty,
+        );
       } finally {
         dir.deleteSync(recursive: true);
       }

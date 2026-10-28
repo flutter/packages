@@ -64,6 +64,7 @@ class _PigeonCodec extends StandardMessageCodec {
 
 const String defaultInstanceName = 'PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u';
 
+@internal
 NativeInteropExampleApiForNativeInterop? pigeon_getInstance_NativeInteropExampleApi({
   String channelName = defaultInstanceName,
 }) {
