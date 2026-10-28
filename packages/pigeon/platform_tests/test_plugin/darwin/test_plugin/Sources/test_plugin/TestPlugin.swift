@@ -59,20 +59,20 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi, HostCa
     flutterSmallApiTwo = FlutterSmallApi(
       binaryMessenger: binaryMessenger, messageChannelSuffix: "suffixTwo")
 
-    StreamIntsStreamHandler.register(with: binaryMessenger, streamHandler: SendInts())
-    StreamEventsStreamHandler.register(with: binaryMessenger, streamHandler: SendEvents())
-    StreamConsistentNumbersStreamHandler.register(
-      with: binaryMessenger, instanceName: "1",
-      streamHandler: SendConsistentNumbers(numberToSend: 1) {
-        StreamConsistentNumbersStreamHandler.register(
-          with: binaryMessenger, instanceName: "1", streamHandler: nil)
-      })
-    StreamConsistentNumbersStreamHandler.register(
-      with: binaryMessenger, instanceName: "2",
-      streamHandler: SendConsistentNumbers(numberToSend: 2) {
-        StreamConsistentNumbersStreamHandler.register(
-          with: binaryMessenger, instanceName: "2", streamHandler: nil)
-      })
+    let _ = StreamIntsStreamHandler.register(with: binaryMessenger, streamHandler: SendInts())
+    let _ = StreamEventsStreamHandler.register(with: binaryMessenger, streamHandler: SendEvents())
+    // Store one handler to exercise the handler removal codepath, and discard
+    // the other to test that the return value can be safely ignored.
+    let streamHandlerOne = SendConsistentNumbers(numberToSend: 1)
+    let channelOne = StreamConsistentNumbersStreamHandler.register(
+      with: binaryMessenger,
+      instanceName: "1",
+      streamHandler: streamHandlerOne)
+    streamHandlerOne.onCompleted = { channelOne.setStreamHandler(nil) }
+    let _ = StreamConsistentNumbersStreamHandler.register(
+      with: binaryMessenger,
+      instanceName: "2",
+      streamHandler: SendConsistentNumbers(numberToSend: 2))
     proxyApiRegistrar = ProxyApiTestsPigeonProxyApiRegistrar(
       binaryMessenger: binaryMessenger, apiDelegate: ProxyApiDelegate())
     proxyApiRegistrar!.setUp()
@@ -2266,10 +2266,9 @@ class SendEvents: StreamEventsStreamHandler {
 
 class SendConsistentNumbers: StreamConsistentNumbersStreamHandler {
   let numberToSend: Int64
-  let onCompleted: () -> Void
-  init(numberToSend: Int64, onCompleted: @escaping () -> Void) {
+  var onCompleted: (() -> Void)?
+  init(numberToSend: Int64) {
     self.numberToSend = numberToSend
-    self.onCompleted = onCompleted
   }
   var timerActive = false
   var timer: Timer?
@@ -2286,7 +2285,7 @@ class SendConsistentNumbers: StreamConsistentNumbersStreamHandler {
           if count >= 10 {
             sink.endOfStream()
             self.timer?.invalidate()
-            self.onCompleted()
+            self.onCompleted?()
           }
         }
       }

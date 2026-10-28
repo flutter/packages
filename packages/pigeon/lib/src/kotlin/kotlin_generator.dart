@@ -662,12 +662,12 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
       indent.write('${customType.enumeration}.toByte() -> ');
       indent.addScoped('{', '}', () {
         if (customType.type == CustomTypes.customClass) {
-          indent.write('return (readValue(buffer) as? List<Any?>)?.let ');
+          indent.write('(readValue(buffer) as? List<Any?>)?.let ');
           indent.addScoped('{', '}', () {
             indent.writeln('${customType.name}.fromList(it)');
           });
         } else if (customType.type == CustomTypes.customEnum) {
-          indent.write('return (readValue(buffer) as Long?)?.let ');
+          indent.write('(readValue(buffer) as Long?)?.let ');
           indent.addScoped('{', '}', () {
             indent.writeln('${customType.name}.ofRaw(it.toInt())');
           });
@@ -1445,9 +1445,9 @@ class ${api.name}Registrar() {
         }
 
         interface ${generatorOptions.fileSpecificClassNameComponent}PigeonEventChannelWrapper<T> {
-          open fun onListen(p0: Any?, sink: PigeonEventSink<T>) {}
+          fun onListen(p0: Any?, sink: PigeonEventSink<T>) {}
 
-          open fun onCancel(p0: Any?) {}
+          fun onCancel(p0: Any?) {}
         }
         ''');
 
@@ -1471,26 +1471,45 @@ class ${api.name}Registrar() {
     }
     addDocumentationComments(indent, api.documentationComments, _docCommentSpec);
     for (final Method func in api.methods) {
+      final channelClassName = '${toUpperCamelCase(func.name)}EventChannel';
+      final streamHandlerClassName = '${toUpperCamelCase(func.name)}StreamHandler';
       indent.format('''
-        abstract class ${toUpperCamelCase(func.name)}StreamHandler : ${generatorOptions.fileSpecificClassNameComponent}PigeonEventChannelWrapper<${_kotlinTypeForDartType(func.returnType)}> {
-          companion object {
-            private var registeredChannels = mutableMapOf<String, EventChannel>()
+        /** A typed channel for communicating with the Flutter application using asynchronous event streams. */
+        class $channelClassName(messenger: BinaryMessenger, instanceName: String = "") {
+          private val channel: EventChannel
 
-            fun register(messenger: BinaryMessenger, streamHandler: ${toUpperCamelCase(func.name)}StreamHandler?, instanceName: String = "") {
-              var channelName: String = "${makeChannelName(api, func, dartPackageName)}"
-              if (instanceName.isNotEmpty()) {
-                channelName += ".\$instanceName"
-              }
-              val previousChannel = registeredChannels.remove(channelName)
-              if (previousChannel != null) {
-                previousChannel.setStreamHandler(null)
-              }
-              if (streamHandler != null) {
-                val internalStreamHandler = ${generatorOptions.fileSpecificClassNameComponent}PigeonStreamHandler<${_kotlinTypeForDartType(func.returnType)}>(streamHandler)
-                val channel = EventChannel(messenger, channelName, ${generatorOptions.fileSpecificClassNameComponent}$_pigeonMethodCodec)
-                channel.setStreamHandler(internalStreamHandler)
-                registeredChannels[channelName] = channel
-              }
+          init {
+            var channelName = "${makeChannelName(api, func, dartPackageName)}"
+            if (instanceName.isNotEmpty()) {
+              channelName += ".\$instanceName"
+            }
+            channel = EventChannel(messenger, channelName, ${generatorOptions.fileSpecificClassNameComponent}$_pigeonMethodCodec)
+          }
+
+          /**
+           * Sets the stream handler for this channel, replacing any previous handler.
+           *
+           * Pass `null` to remove the event channel registration.
+           */
+          fun setStreamHandler(streamHandler: $streamHandlerClassName?) {
+            val internalHandler = streamHandler?.let { ${generatorOptions.fileSpecificClassNameComponent}PigeonStreamHandler<${_kotlinTypeForDartType(func.returnType)}>(it) }
+            channel.setStreamHandler(internalHandler)
+          }
+        }
+
+        abstract class $streamHandlerClassName : ${generatorOptions.fileSpecificClassNameComponent}PigeonEventChannelWrapper<${_kotlinTypeForDartType(func.returnType)}> {
+          companion object {
+            /**
+             * Creates and returns a new event channel that calls the provided stream handler.
+             *
+             * The returned channel can be stored to allow changing or removing the stream handler.
+             * If the handler will not be changed for the lifetime of the engine associated with the messenger,
+             * the return value can be ignored.
+             */
+            fun register(messenger: BinaryMessenger, streamHandler: $streamHandlerClassName, instanceName: String = ""): $channelClassName {
+              val channel = $channelClassName(messenger, instanceName)
+              channel.setStreamHandler(streamHandler)
+              return channel
             }
           }
 

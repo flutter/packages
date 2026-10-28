@@ -2670,25 +2670,44 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
     }
     addDocumentationComments(indent, api.documentationComments, _docCommentSpec);
     for (final Method func in api.methods) {
+      final channelClassName = '${toUpperCamelCase(func.name)}EventChannel';
+      final streamHandlerClassName = '${toUpperCamelCase(func.name)}StreamHandler';
       indent.format('''
-        class ${toUpperCamelCase(func.name)}StreamHandler: PigeonEventChannelWrapper<${_swiftTypeForDartType(func.returnType)}> {
-          private static var registeredChannels: [String: FlutterEventChannel] = [:]
-          static func register(with messenger: FlutterBinaryMessenger,
-                              instanceName: String = "",
-                              streamHandler: ${toUpperCamelCase(func.name)}StreamHandler?) {
+        /// A typed channel for communicating with the Flutter application using asynchronous event streams.
+        class $channelClassName {
+          private let channel: FlutterEventChannel
+
+          init(messenger: FlutterBinaryMessenger, instanceName: String = "") {
             var channelName = "${makeChannelName(api, func, dartPackageName)}"
             if !instanceName.isEmpty {
               channelName += ".\\(instanceName)"
             }
-            if let previousChannel = registeredChannels.removeValue(forKey: channelName) {
-              previousChannel.setStreamHandler(nil)
-            }
-            if let streamHandler = streamHandler {
-              let internalStreamHandler = PigeonStreamHandler<${_swiftTypeForDartType(func.returnType)}>(wrapper: streamHandler)
-              let channel = FlutterEventChannel(name: channelName, binaryMessenger: messenger, codec: ${_getMethodCodecVarName(generatorOptions)})
-              channel.setStreamHandler(internalStreamHandler)
-              registeredChannels[channelName] = channel
-            }
+            channel = FlutterEventChannel(name: channelName, binaryMessenger: messenger, codec: ${_getMethodCodecVarName(generatorOptions)})
+          }
+
+          /// Sets the stream handler for this channel, replacing any previous handler.
+          /// 
+          /// Pass `nil` to remove the event channel registration.
+          func setStreamHandler(_ streamHandler: $streamHandlerClassName?) {
+            let internalHandler = streamHandler.map({ PigeonStreamHandler<${_swiftTypeForDartType(func.returnType)}>(wrapper: \$0) })
+            channel.setStreamHandler(internalHandler)
+          }
+        }
+
+        class $streamHandlerClassName: PigeonEventChannelWrapper<${_swiftTypeForDartType(func.returnType)}> {
+          /// Creates and returns a new event channel that calls the provided stream handler.
+          /// 
+          /// The returned channel can be stored to allow changing or removing the stream handler.
+          /// If the handler will not be changed for the lifetime of the engine associated with the messenger,
+          /// the return value can be ignored.
+          static func register(
+            with messenger: FlutterBinaryMessenger,
+            instanceName: String = "",
+            streamHandler: $streamHandlerClassName
+          ) -> $channelClassName {
+            let channel = $channelClassName(messenger: messenger, instanceName: instanceName)
+            channel.setStreamHandler(streamHandler)
+            return channel
           }
         }
       ''');
