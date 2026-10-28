@@ -253,29 +253,24 @@ void main() {
   });
 
   group('Pictures decoded after their VectorGraphic is removed', () {
-    // Collects the native pictures created and disposed during a test.
-    (Set<Object>, Set<Object>) trackPictures() {
-      final created = <Object>{};
-      final disposed = <Object>{};
+    // Collects the pictures created during a test.
+    Set<ui.Picture> trackPictures() {
+      final created = <ui.Picture>{};
       void listener(ObjectEvent event) {
-        if (event.object.runtimeType.toString() != '_NativePicture') {
-          return;
-        }
-        if (event is ObjectCreated) {
-          created.add(event.object);
-        } else if (event is ObjectDisposed) {
-          disposed.add(event.object);
+        final Object object = event.object;
+        if (event is ObjectCreated && object is ui.Picture) {
+          created.add(object);
         }
       }
 
       FlutterMemoryAllocations.instance.addListener(listener);
       addTearDown(() => FlutterMemoryAllocations.instance.removeListener(listener));
-      return (created, disposed);
+      return created;
     }
 
     testWidgets('are disposed', (WidgetTester tester) async {
       final loader = CompleterBytesLoader();
-      final (Set<Object> created, Set<Object> disposed) = trackPictures();
+      final Set<ui.Picture> created = trackPictures();
 
       await tester.pumpWidget(VectorGraphic(loader: loader));
       await tester.pumpWidget(const SizedBox());
@@ -283,14 +278,14 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(created, hasLength(1));
-      expect(disposed, containsAll(created));
+      expect(created.single.debugDisposed, isTrue);
     });
 
     testWidgets('are disposed once when every widget sharing the load is removed', (
       WidgetTester tester,
     ) async {
       final loader = CompleterBytesLoader();
-      final (Set<Object> created, Set<Object> disposed) = trackPictures();
+      final Set<ui.Picture> created = trackPictures();
 
       await tester.pumpWidget(
         Column(
@@ -306,7 +301,7 @@ void main() {
 
       expect(tester.takeException(), isNull);
       expect(created, hasLength(1));
-      expect(disposed, containsAll(created));
+      expect(created.single.debugDisposed, isTrue);
     });
 
     testWidgets('stay alive while another widget sharing the load shows them', (
@@ -344,15 +339,15 @@ void main() {
       final first = CompleterBytesLoader();
       final second = CompleterBytesLoader();
 
+      final Set<ui.Picture> created = trackPictures();
       await tester.pumpWidget(VectorGraphic(loader: first));
       await tester.pumpWidget(VectorGraphic(loader: second));
-      final (Set<Object> created, Set<Object> disposed) = trackPictures();
       first.complete();
       await tester.pumpAndSettle();
 
       expect(tester.takeException(), isNull);
       expect(created, hasLength(1));
-      expect(disposed, containsAll(created));
+      expect(created.single.debugDisposed, isTrue);
     });
   });
 }

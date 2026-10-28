@@ -428,8 +428,9 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
       // The widget may have changed, requesting a new vector graphic before
       // this operation could complete.
       if (!mounted || loader != widget.loader) {
-        // Other widgets waiting on the same load resume after this one and may
-        // still use the picture, so only release it once they have.
+        // Other widgets awaiting the same load resume after this one, all in the
+        // same microtask. Defer the release to a later microtask so they can claim
+        // the picture first; otherwise it could be disposed while they still need it.
         scheduleMicrotask(() => _maybeReleasePicture(data));
         return;
       }
