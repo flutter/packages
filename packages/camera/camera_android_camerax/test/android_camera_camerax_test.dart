@@ -3811,6 +3811,112 @@ void main() {
     verify(camera.imageCapture!.setFlashMode(CameraXFlashMode.off));
   });
 
+  group('takePicture only sets ImageCapture flash mode when it would change', () {
+    late AndroidCameraCameraX camera;
+    late MockProcessCameraProvider mockProcessCameraProvider;
+    const cameraId = 77;
+
+    setUp(() {
+      camera = AndroidCameraCameraX();
+      mockProcessCameraProvider = MockProcessCameraProvider();
+
+      // Set directly for test versus calling createCamera.
+      camera.imageCapture = MockImageCapture();
+      camera.cameraControl = MockCameraControl();
+      camera.processCameraProvider = mockProcessCameraProvider;
+
+      // Ignore setting target rotation for this test; tested seprately.
+      camera.captureOrientationLocked = true;
+
+      // Tell plugin to mock call to get systemServicesManager.
+      PigeonOverrides.systemServicesManager_new =
+          ({required void Function(SystemServicesManager, String) onCameraError}) {
+            return MockSystemServicesManager();
+          };
+
+      when(mockProcessCameraProvider.isBound(any)).thenAnswer((_) async => true);
+    });
+
+    test('does not set an unchanged flash mode again', () async {
+      await camera.setFlashMode(cameraId, FlashMode.off);
+      await camera.takePicture(cameraId);
+      await camera.takePicture(cameraId);
+
+      verify(camera.imageCapture!.setFlashMode(CameraXFlashMode.off)).called(1);
+    });
+
+    test('sets the flash mode again after it changes', () async {
+      await camera.setFlashMode(cameraId, FlashMode.off);
+      await camera.takePicture(cameraId);
+      await camera.setFlashMode(cameraId, FlashMode.auto);
+      await camera.takePicture(cameraId);
+      await camera.setFlashMode(cameraId, FlashMode.off);
+      await camera.takePicture(cameraId);
+
+      verify(camera.imageCapture!.setFlashMode(CameraXFlashMode.off)).called(2);
+      verify(camera.imageCapture!.setFlashMode(CameraXFlashMode.auto)).called(1);
+    });
+
+    test('sets the flash mode again on a recreated ImageCapture', () async {
+      final ImageCapture firstImageCapture = camera.imageCapture!;
+      final mockNewImageCapture = MockImageCapture();
+      final mockDeviceOrientationManager = MockDeviceOrientationManager();
+      PigeonOverrides.deviceOrientationManager_new =
+          ({required void Function(DeviceOrientationManager, String) onDeviceOrientationChanged}) {
+            when(
+              mockDeviceOrientationManager.getDefaultDisplayRotation(),
+            ).thenAnswer((_) async => Surface.rotation0);
+            return mockDeviceOrientationManager;
+          };
+      PigeonOverrides.imageCapture_new =
+          ({
+            int? targetRotation,
+            CameraXFlashMode? flashMode,
+            ResolutionSelector? resolutionSelector,
+            int? jpegQuality,
+            bool? zeroShutterLagEnabled,
+          }) {
+            return mockNewImageCapture;
+          };
+
+      await camera.setFlashMode(cameraId, FlashMode.always);
+      await camera.takePicture(cameraId);
+      await camera.setJpegImageQuality(cameraId, 80);
+      await camera.takePicture(cameraId);
+
+      verify(firstImageCapture.setFlashMode(CameraXFlashMode.on)).called(1);
+      verify(mockNewImageCapture.setFlashMode(CameraXFlashMode.on)).called(1);
+    });
+
+    test('sets the flash mode off once after torch mode is enabled', () async {
+      await camera.setFlashMode(cameraId, FlashMode.always);
+      await camera.takePicture(cameraId);
+      await camera.setFlashMode(cameraId, FlashMode.torch);
+      await camera.takePicture(cameraId);
+      await camera.setFlashMode(cameraId, FlashMode.off);
+      await camera.takePicture(cameraId);
+
+      verify(camera.imageCapture!.setFlashMode(CameraXFlashMode.on)).called(1);
+      verify(camera.imageCapture!.setFlashMode(CameraXFlashMode.off)).called(1);
+    });
+
+    test('retries setting the flash mode after it fails', () async {
+      var calls = 0;
+      when(camera.imageCapture!.setFlashMode(CameraXFlashMode.off)).thenAnswer((_) async {
+        calls++;
+        if (calls == 1) {
+          throw PlatformException(code: 'error');
+        }
+      });
+
+      await camera.setFlashMode(cameraId, FlashMode.off);
+      await expectLater(camera.takePicture(cameraId), throwsA(isA<PlatformException>()));
+      await camera.takePicture(cameraId);
+
+      expect(calls, 2);
+    });
+  });
+
   test('setFlashMode configures ImageCapture with expected non-torch flash mode', () async {
     final camera = AndroidCameraCameraX();
     const cameraId = 22;

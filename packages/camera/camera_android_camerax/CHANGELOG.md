@@ -1,3 +1,8 @@
+## 0.7.6+1
+
+* Reduces `takePicture` latency by not setting the `ImageCapture` flash mode
+  again when it has not changed.
+
 ## 0.7.6
 
 * Adds support for zero-shutter-lag still image capture via
