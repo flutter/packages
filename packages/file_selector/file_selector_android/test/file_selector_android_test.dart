@@ -16,12 +16,12 @@ import 'file_selector_android_test.mocks.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  CrossFilePlatform.instance = CrossFileTest();
-
   late FileSelectorAndroid plugin;
   late MockFileSelectorApi mockApi;
 
   setUp(() {
+    CrossFilePlatform.instance = CrossFileTest();
+
     mockApi = MockFileSelectorApi();
     plugin = FileSelectorAndroid(api: mockApi);
   });

@@ -12,12 +12,12 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  CrossFilePlatform.instance = CrossFileTest();
-
   late FakeFileSelectorApi api;
   late FileSelectorLinux plugin;
 
   setUp(() {
+    CrossFilePlatform.instance = CrossFileTest();
+
     api = FakeFileSelectorApi();
     plugin = FileSelectorLinux(api: api);
   });
