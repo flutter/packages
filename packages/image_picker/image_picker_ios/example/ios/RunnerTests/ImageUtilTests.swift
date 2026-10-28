@@ -10,6 +10,10 @@ import UniformTypeIdentifiers
 
 @testable import image_picker_ios
 
+#if canImport(image_picker_ios_objc)
+  @testable import image_picker_ios_objc
+#endif
+
 private let kColorRepresentation3x2BottomLeftYellow = "1 0.776471 0 1"
 private let kColorRepresentation3x2TopLeftRed = "1 0.0666667 0 1"
 private let kColorRepresentation3x2BottomRightCyan = "0 0.772549 1 1"
@@ -110,7 +114,7 @@ struct ImageUtilTests {
 
   @Test func scaledImageShouldBeCorrectRotation() throws {
     let imageURL = try #require(
-      Bundle(for: ImagePickerTestImages.self).url(
+      ImagePickerTestImages.bundle.url(
         forResource: "jpgImageWithRightOrientation", withExtension: "jpg"))
     let imageData = try Data(contentsOf: imageURL)
     let image = try #require(UIImage(data: imageData))

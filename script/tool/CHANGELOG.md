@@ -1,3 +1,7 @@
+## NEXT
+
+* Exempts `test_apps/` from requiring version and changelog changes.
+
 ## 0.14.4+4
 
 * Uses `flutter pub` instead of `dart pub` for non-Flutter packages that depend
