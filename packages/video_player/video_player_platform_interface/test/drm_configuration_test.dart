@@ -31,4 +31,39 @@ void main() {
 
     expect(dataSource.drmConfiguration, same(configuration));
   });
+
+  test('WidevineDrmConfiguration has no license headers by default', () {
+    final configuration = WidevineDrmConfiguration(
+      licenseUri: Uri.parse('https://example.com/license'),
+    );
+
+    expect(configuration.licenseHeaders, isEmpty);
+  });
+
+  test('WidevineDrmConfiguration can be passed on a DataSource', () {
+    final configuration = WidevineDrmConfiguration(
+      licenseUri: Uri.parse('https://example.com/license'),
+      licenseHeaders: const <String, String>{'Authorization': 'token'},
+    );
+    final dataSource = DataSource(
+      sourceType: DataSourceType.network,
+      uri: 'https://example.com/video.mpd',
+      drmConfiguration: configuration,
+    );
+
+    expect(
+      dataSource.drmConfiguration,
+      isA<WidevineDrmConfiguration>()
+          .having(
+            (WidevineDrmConfiguration c) => c.licenseUri,
+            'licenseUri',
+            Uri.parse('https://example.com/license'),
+          )
+          .having(
+            (WidevineDrmConfiguration c) => c.licenseHeaders,
+            'licenseHeaders',
+            <String, String>{'Authorization': 'token'},
+          ),
+    );
+  });
 }

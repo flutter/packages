@@ -8,9 +8,6 @@
 // ignore_for_file: public_member_api_docs
 
 import 'package:video_player/video_player.dart';
-// #docregion widevine
-import 'package:video_player_android/video_player_android.dart';
-// #enddocregion widevine
 // #docregion fairplay
 import 'package:video_player_avfoundation/video_player_avfoundation.dart';
 

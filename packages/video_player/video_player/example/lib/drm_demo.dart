@@ -6,14 +6,14 @@
 
 /// A demo of playing DRM-protected streams.
 ///
-/// The DRM configuration types come from the platform implementation packages
-/// rather than from video_player itself, so this file imports them directly.
+/// `WidevineDrmConfiguration` is exported by video_player, while
+/// `FairPlayDrmConfiguration` is specific to Apple platforms and is imported
+/// from video_player_avfoundation directly.
 library;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
-import 'package:video_player_android/video_player_android.dart';
 import 'package:video_player_avfoundation/video_player_avfoundation.dart';
 
 /// A publicly available Axinom test stream and its license endpoints.

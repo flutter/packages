@@ -515,7 +515,7 @@ data class PlatformVideoViewCreationParams(val playerId: Long) {
 }
 
 /**
- * Pigeon equivalent of video_player_android's WidevineDrmConfiguration.
+ * Pigeon equivalent of the platform interface's WidevineDrmConfiguration.
  *
  * Generated class from Pigeon that represents data sent in messages.
  */

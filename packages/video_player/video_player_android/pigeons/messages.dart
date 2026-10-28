@@ -76,7 +76,7 @@ class PlatformVideoViewCreationParams {
   final int playerId;
 }
 
-/// Pigeon equivalent of video_player_android's WidevineDrmConfiguration.
+/// Pigeon equivalent of the platform interface's WidevineDrmConfiguration.
 class PlatformWidevineDrmConfiguration {
   PlatformWidevineDrmConfiguration({required this.licenseUri, required this.licenseHeaders});
 

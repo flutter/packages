@@ -150,37 +150,36 @@ The relative performance of the different view types may vary by platform, and o
 ### DRM
 
 Network sources can play DRM-protected content by passing a `drmConfiguration`
-to `VideoPlayerController.networkUrl`. DRM systems differ significantly between
-platforms, so the configuration types come from the platform implementation
-packages rather than from `video_player`:
+to `VideoPlayerController.networkUrl`. Each DRM system has its own configuration
+type:
 
 | Platform | DRM system | Configuration | Package |
 | --- | --- | --- | --- |
-| Android | Widevine | `WidevineDrmConfiguration` | [`video_player_android`](https://pub.dev/packages/video_player_android) |
+| Android | Widevine | `WidevineDrmConfiguration` | `video_player` |
 | iOS, macOS | FairPlay | `FairPlayDrmConfiguration` | [`video_player_avfoundation`](https://pub.dev/packages/video_player_avfoundation) |
 
-An app that uses DRM therefore depends on those packages directly, and imports
-the configuration type it needs:
+Widevine is not specific to one platform, so `WidevineDrmConfiguration` is
+exported by `video_player` itself:
 
 <?code-excerpt "readme_excerpts.dart (widevine)"?>
 ```dart
-import 'package:video_player_android/video_player_android.dart';
-// ···
-  final controller = VideoPlayerController.networkUrl(
-    Uri.parse('https://example.com/protected.mpd'),
-    drmConfiguration: WidevineDrmConfiguration(
-      licenseUri: Uri.parse('https://example.com/license'),
-      licenseHeaders: const <String, String>{'Authorization': 'Bearer ...'},
-    ),
-    viewType: VideoViewType.platformView,
-  );
-  await controller.initialize();
-  await controller.play();
+final controller = VideoPlayerController.networkUrl(
+  Uri.parse('https://example.com/protected.mpd'),
+  drmConfiguration: WidevineDrmConfiguration(
+    licenseUri: Uri.parse('https://example.com/license'),
+    licenseHeaders: const <String, String>{'Authorization': 'Bearer ...'},
+  ),
+  viewType: VideoViewType.platformView,
+);
+await controller.initialize();
+await controller.play();
 ```
 
-FairPlay additionally needs the URL of the application certificate, and
-optionally a content ID to use when generating the SPC (by default the content
-ID is derived from the `skd://` key URL in the HLS manifest):
+FairPlay is specific to Apple platforms, so an app that uses it depends on
+`video_player_avfoundation` directly and imports `FairPlayDrmConfiguration`
+from there. FairPlay additionally needs the URL of the application certificate,
+and optionally a content ID to use when generating the SPC (by default the
+content ID is derived from the `skd://` key URL in the HLS manifest):
 
 <?code-excerpt "readme_excerpts.dart (fairplay)"?>
 ```dart

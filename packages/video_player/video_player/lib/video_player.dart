@@ -24,7 +24,8 @@ export 'package:video_player_platform_interface/video_player_platform_interface.
         VideoPlayerOptions,
         VideoPlayerWebOptions,
         VideoPlayerWebOptionsControls,
-        VideoViewType;
+        VideoViewType,
+        WidevineDrmConfiguration;
 
 export 'src/closed_caption_file.dart';
 
@@ -455,13 +456,13 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// for the request to the [dataSource].
   ///
   /// The [drmConfiguration] option allows playing DRM-protected content. It
-  /// takes a platform implementation's subclass of
-  /// [platform_interface.VideoDrmConfiguration], such as
-  /// `WidevineDrmConfiguration` from `video_player_android` or
-  /// `FairPlayDrmConfiguration` from `video_player_avfoundation`, so an
-  /// application that uses DRM depends on those packages directly. Passing a
-  /// configuration that the current platform doesn't support throws an
-  /// [ArgumentError] from [initialize].
+  /// takes a subclass of [platform_interface.VideoDrmConfiguration]:
+  /// [platform_interface.WidevineDrmConfiguration], which this package
+  /// exports, or a platform-specific configuration such as
+  /// `FairPlayDrmConfiguration` from `video_player_avfoundation`, which an
+  /// application imports from that package directly. Passing a configuration
+  /// that the current platform doesn't support throws an [ArgumentError] from
+  /// [initialize].
   ///
   /// DRM-protected video is currently only rendered correctly with
   /// [platform_interface.VideoViewType.platformView]; in texture view mode the
