@@ -15,6 +15,7 @@ import 'text_theme.dart';
 import 'theme_data.dart';
 
 part 'generated/typography_defaults_m3.g.dart';
+part 'generated/typography_defaults_m3e.g.dart';
 
 // Examples can assume:
 // late TargetPlatform platform;
@@ -70,17 +71,24 @@ enum ScriptCategory {
 /// font](https://developer.apple.com/design/human-interface-guidelines/typography/)
 /// fonts as used by Apple on iOS.
 ///
-/// Three sets of geometry themes are provided: 2014, 2018, and 2021. The 2014
-/// themes correspond to the original version of the Material Design spec. The
-/// 2018 themes correspond to the second iteration of the specification and
-/// feature different font sizes, font weights, and letter spacing values. The
-/// 2021 themes correspond to the Material Design 3 specification.
+/// Four sets of geometry themes are provided: 2014, 2018, 2021, and 2025:
 ///
-/// By default, [ThemeData.typography] is `Typography.material2021(platform:
+///  * The 2014 themes correspond to the original version of the Material Design
+///    spec.
+///  * The 2018 themes correspond to the second iteration of the specification
+///    and feature different font sizes, font weights, and letter spacing
+///    values.
+///  * The 2021 themes correspond to the Material Design 3 specification.
+///  * The 2025 themes correspond to the Material Design 3 Expressive
+///    specification and include emphasized variants for each of the 2021 text
+///    styles.
+///
+/// By default, [ThemeData.typography] is `Typography.material2025(platform:
 /// platform, colorScheme: colorScheme)` (or `Typography.material2014(platform:
-/// platform)` when [ThemeData.useMaterial3] is false). To use the 2018 text
-/// theme geometries, specify a value using the [Typography.material2018]
-/// constructor:
+/// platform)` when [ThemeData.useMaterial3] is false). To use a different set
+/// of text theme geometries, specify a value using one of the [Typography]
+/// constructors, such as [Typography.material2021] or
+/// [Typography.material2018]:
 ///
 /// ```dart
 /// typography: Typography.material2018(platform: platform)
@@ -225,18 +233,75 @@ class Typography with Diagnosticable {
       tall ?? tall2021,
     );
 
-    // Ensure they are all uniformly dark or light, with
-    // no color variation based on style as it was in previous
-    // versions of Material Design.
-    final Color dark = colorScheme.brightness == Brightness.light
-        ? colorScheme.onSurface
-        : colorScheme.surface;
-    final Color light = colorScheme.brightness == Brightness.light
-        ? colorScheme.surface
-        : colorScheme.onSurface;
-    return base.copyWith(
-      black: base.black.apply(displayColor: dark, bodyColor: dark, decorationColor: dark),
-      white: base.white.apply(displayColor: light, bodyColor: light, decorationColor: light),
+    final (TextTheme coloredBlack, TextTheme coloredWhite) = _applyM3Colors(
+      base.black,
+      base.white,
+      colorScheme,
+    );
+    return base.copyWith(black: coloredBlack, white: coloredWhite);
+  }
+
+  /// Creates a typography instance using Material 3 Expressive (2025)
+  /// defaults.
+  ///
+  /// In addition to the fifteen baseline text styles, the resulting text
+  /// themes include the emphasized type styles (e.g.
+  /// [TextTheme.titleMediumEmphasized]).
+  ///
+  /// The [typeface] provides the font family, fallback fonts, and text
+  /// decoration for each style, but neither color nor geometry. Each
+  /// emphasized style in [typeface] that is null defaults to its baseline
+  /// style, so that emphasized text uses the same font family as its baseline
+  /// counterpart.
+  ///
+  /// If [typeface] is null, it defaults to the [platform]'s typeface:
+  /// [cupertino] on iOS, [redwoodCity] on macOS, [redmond] on Windows,
+  /// [helsinki] on Linux, and [mountainView] otherwise. If [platform] is null
+  /// then [typeface] must be specified.
+  ///
+  /// Text colors are derived from [colorScheme]. For a light [colorScheme],
+  /// every style in the resulting [Typography.black] uses
+  /// [ColorScheme.onSurface] and every style in [Typography.white] uses
+  /// [ColorScheme.surface]. For a dark [colorScheme], these are reversed. The
+  /// same colors are used for [TextStyle.decorationColor]. Any colors in
+  /// [typeface] are replaced.
+  ///
+  /// The default values for [englishLike], [dense], and [tall] are
+  /// [englishLike2025], [dense2025], and [tall2025].
+  ///
+  /// See also:
+  ///  * <https://m3.material.io/styles/typography>
+  factory Typography.material2025({
+    TargetPlatform? platform = TargetPlatform.android,
+    ColorScheme colorScheme = const ColorScheme.light(),
+    TextTheme? typeface,
+    TextTheme? englishLike,
+    TextTheme? dense,
+    TextTheme? tall,
+  }) {
+    assert(platform != null || typeface != null);
+    final TextTheme resolvedTypeface = _withEmphasizedFromBaseline(
+      typeface ??
+          switch (platform!) {
+            TargetPlatform.iOS => cupertino,
+            TargetPlatform.android || TargetPlatform.fuchsia => mountainView,
+            TargetPlatform.windows => redmond,
+            TargetPlatform.macOS => redwoodCity,
+            TargetPlatform.linux => helsinki,
+          },
+    );
+
+    final (TextTheme black, TextTheme white) = _applyM3Colors(
+      resolvedTypeface,
+      resolvedTypeface,
+      colorScheme,
+    );
+    return Typography._(
+      black,
+      white,
+      englishLike ?? englishLike2025,
+      dense ?? dense2025,
+      tall ?? tall2025,
     );
   }
 
@@ -262,6 +327,74 @@ class Typography with Diagnosticable {
   }
 
   const Typography._(this.black, this.white, this.englishLike, this.dense, this.tall);
+
+  /// Returns [black] and [white] uniformly colored based on [colorScheme], as
+  /// specified by Material 3 onwards.
+  static (TextTheme, TextTheme) _applyM3Colors(
+    TextTheme black,
+    TextTheme white,
+    ColorScheme colorScheme,
+  ) {
+    // Ensure they are all uniformly dark or light, with
+    // no color variation based on style as it was in previous
+    // versions of Material Design.
+    final Color dark = colorScheme.brightness == Brightness.light
+        ? colorScheme.onSurface
+        : colorScheme.surface;
+    final Color light = colorScheme.brightness == Brightness.light
+        ? colorScheme.surface
+        : colorScheme.onSurface;
+    return (
+      black.apply(displayColor: dark, bodyColor: dark, decorationColor: dark),
+      white.apply(displayColor: light, bodyColor: light, decorationColor: light),
+    );
+  }
+
+  /// Returns a copy of [textTheme] where each null emphasized style is
+  /// replaced by its baseline style.
+  ///
+  /// The platform typeface text themes (e.g. [mountainView]) only define
+  /// baseline styles, so this ensures emphasized styles inherit the same font
+  /// family and other non-geometric properties.
+  static TextTheme _withEmphasizedFromBaseline(TextTheme textTheme) {
+    TextStyle? emphasize(TextStyle? emphasized, TextStyle? baseline) {
+      if (emphasized != null || baseline == null) {
+        return emphasized;
+      }
+      final String? debugLabel = baseline.debugLabel;
+      return baseline.copyWith(debugLabel: debugLabel == null ? null : '${debugLabel}Emphasized');
+    }
+
+    return textTheme.copyWith(
+      displayLargeEmphasized: emphasize(textTheme.displayLargeEmphasized, textTheme.displayLarge),
+      displayMediumEmphasized: emphasize(
+        textTheme.displayMediumEmphasized,
+        textTheme.displayMedium,
+      ),
+      displaySmallEmphasized: emphasize(textTheme.displaySmallEmphasized, textTheme.displaySmall),
+      headlineLargeEmphasized: emphasize(
+        textTheme.headlineLargeEmphasized,
+        textTheme.headlineLarge,
+      ),
+      headlineMediumEmphasized: emphasize(
+        textTheme.headlineMediumEmphasized,
+        textTheme.headlineMedium,
+      ),
+      headlineSmallEmphasized: emphasize(
+        textTheme.headlineSmallEmphasized,
+        textTheme.headlineSmall,
+      ),
+      titleLargeEmphasized: emphasize(textTheme.titleLargeEmphasized, textTheme.titleLarge),
+      titleMediumEmphasized: emphasize(textTheme.titleMediumEmphasized, textTheme.titleMedium),
+      titleSmallEmphasized: emphasize(textTheme.titleSmallEmphasized, textTheme.titleSmall),
+      bodyLargeEmphasized: emphasize(textTheme.bodyLargeEmphasized, textTheme.bodyLarge),
+      bodyMediumEmphasized: emphasize(textTheme.bodyMediumEmphasized, textTheme.bodyMedium),
+      bodySmallEmphasized: emphasize(textTheme.bodySmallEmphasized, textTheme.bodySmall),
+      labelLargeEmphasized: emphasize(textTheme.labelLargeEmphasized, textTheme.labelLarge),
+      labelMediumEmphasized: emphasize(textTheme.labelMediumEmphasized, textTheme.labelMedium),
+      labelSmallEmphasized: emphasize(textTheme.labelSmallEmphasized, textTheme.labelSmall),
+    );
+  }
 
   /// A Material Design text theme with dark glyphs.
   ///
@@ -1413,6 +1546,434 @@ class Typography with Diagnosticable {
     ),
   );
 
+  /// A Material Design text theme based on Roboto.
+  ///
+  /// This [TextTheme] provides the font family and text decoration for
+  /// each style, but neither color nor geometry (font size, weight, etc).
+  static const TextTheme mountainView = TextTheme(
+    displayLarge: TextStyle(
+      debugLabel: 'mountainView displayLarge',
+      fontFamily: 'Roboto',
+      decoration: TextDecoration.none,
+    ),
+    displayMedium: TextStyle(
+      debugLabel: 'mountainView displayMedium',
+      fontFamily: 'Roboto',
+      decoration: TextDecoration.none,
+    ),
+    displaySmall: TextStyle(
+      debugLabel: 'mountainView displaySmall',
+      fontFamily: 'Roboto',
+      decoration: TextDecoration.none,
+    ),
+    headlineLarge: TextStyle(
+      debugLabel: 'mountainView headlineLarge',
+      fontFamily: 'Roboto',
+      decoration: TextDecoration.none,
+    ),
+    headlineMedium: TextStyle(
+      debugLabel: 'mountainView headlineMedium',
+      fontFamily: 'Roboto',
+      decoration: TextDecoration.none,
+    ),
+    headlineSmall: TextStyle(
+      debugLabel: 'mountainView headlineSmall',
+      fontFamily: 'Roboto',
+      decoration: TextDecoration.none,
+    ),
+    titleLarge: TextStyle(
+      debugLabel: 'mountainView titleLarge',
+      fontFamily: 'Roboto',
+      decoration: TextDecoration.none,
+    ),
+    titleMedium: TextStyle(
+      debugLabel: 'mountainView titleMedium',
+      fontFamily: 'Roboto',
+      decoration: TextDecoration.none,
+    ),
+    titleSmall: TextStyle(
+      debugLabel: 'mountainView titleSmall',
+      fontFamily: 'Roboto',
+      decoration: TextDecoration.none,
+    ),
+    bodyLarge: TextStyle(
+      debugLabel: 'mountainView bodyLarge',
+      fontFamily: 'Roboto',
+      decoration: TextDecoration.none,
+    ),
+    bodyMedium: TextStyle(
+      debugLabel: 'mountainView bodyMedium',
+      fontFamily: 'Roboto',
+      decoration: TextDecoration.none,
+    ),
+    bodySmall: TextStyle(
+      debugLabel: 'mountainView bodySmall',
+      fontFamily: 'Roboto',
+      decoration: TextDecoration.none,
+    ),
+    labelLarge: TextStyle(
+      debugLabel: 'mountainView labelLarge',
+      fontFamily: 'Roboto',
+      decoration: TextDecoration.none,
+    ),
+    labelMedium: TextStyle(
+      debugLabel: 'mountainView labelMedium',
+      fontFamily: 'Roboto',
+      decoration: TextDecoration.none,
+    ),
+    labelSmall: TextStyle(
+      debugLabel: 'mountainView labelSmall',
+      fontFamily: 'Roboto',
+      decoration: TextDecoration.none,
+    ),
+  );
+
+  /// A Material Design text theme based on Segoe UI.
+  ///
+  /// This [TextTheme] provides the font family and text decoration for
+  /// each style, but neither color nor geometry (font size, weight, etc).
+  static const TextTheme redmond = TextTheme(
+    displayLarge: TextStyle(
+      debugLabel: 'redmond displayLarge',
+      fontFamily: 'Segoe UI',
+      decoration: TextDecoration.none,
+    ),
+    displayMedium: TextStyle(
+      debugLabel: 'redmond displayMedium',
+      fontFamily: 'Segoe UI',
+      decoration: TextDecoration.none,
+    ),
+    displaySmall: TextStyle(
+      debugLabel: 'redmond displaySmall',
+      fontFamily: 'Segoe UI',
+      decoration: TextDecoration.none,
+    ),
+    headlineLarge: TextStyle(
+      debugLabel: 'redmond headlineLarge',
+      fontFamily: 'Segoe UI',
+      decoration: TextDecoration.none,
+    ),
+    headlineMedium: TextStyle(
+      debugLabel: 'redmond headlineMedium',
+      fontFamily: 'Segoe UI',
+      decoration: TextDecoration.none,
+    ),
+    headlineSmall: TextStyle(
+      debugLabel: 'redmond headlineSmall',
+      fontFamily: 'Segoe UI',
+      decoration: TextDecoration.none,
+    ),
+    titleLarge: TextStyle(
+      debugLabel: 'redmond titleLarge',
+      fontFamily: 'Segoe UI',
+      decoration: TextDecoration.none,
+    ),
+    titleMedium: TextStyle(
+      debugLabel: 'redmond titleMedium',
+      fontFamily: 'Segoe UI',
+      decoration: TextDecoration.none,
+    ),
+    titleSmall: TextStyle(
+      debugLabel: 'redmond titleSmall',
+      fontFamily: 'Segoe UI',
+      decoration: TextDecoration.none,
+    ),
+    bodyLarge: TextStyle(
+      debugLabel: 'redmond bodyLarge',
+      fontFamily: 'Segoe UI',
+      decoration: TextDecoration.none,
+    ),
+    bodyMedium: TextStyle(
+      debugLabel: 'redmond bodyMedium',
+      fontFamily: 'Segoe UI',
+      decoration: TextDecoration.none,
+    ),
+    bodySmall: TextStyle(
+      debugLabel: 'redmond bodySmall',
+      fontFamily: 'Segoe UI',
+      decoration: TextDecoration.none,
+    ),
+    labelLarge: TextStyle(
+      debugLabel: 'redmond labelLarge',
+      fontFamily: 'Segoe UI',
+      decoration: TextDecoration.none,
+    ),
+    labelMedium: TextStyle(
+      debugLabel: 'redmond labelMedium',
+      fontFamily: 'Segoe UI',
+      decoration: TextDecoration.none,
+    ),
+    labelSmall: TextStyle(
+      debugLabel: 'redmond labelSmall',
+      fontFamily: 'Segoe UI',
+      decoration: TextDecoration.none,
+    ),
+  );
+
+  /// A Material Design text theme based on Roboto, with fallback fonts that are likely
+  /// (but not guaranteed) to be installed on Linux.
+  ///
+  /// This [TextTheme] provides the font family and text decoration for
+  /// each style, but neither color nor geometry (font size, weight, etc).
+  static const TextTheme helsinki = TextTheme(
+    displayLarge: TextStyle(
+      debugLabel: 'helsinki displayLarge',
+      fontFamily: 'Roboto',
+      fontFamilyFallback: _helsinkiFontFallbacks,
+      decoration: TextDecoration.none,
+    ),
+    displayMedium: TextStyle(
+      debugLabel: 'helsinki displayMedium',
+      fontFamily: 'Roboto',
+      fontFamilyFallback: _helsinkiFontFallbacks,
+      decoration: TextDecoration.none,
+    ),
+    displaySmall: TextStyle(
+      debugLabel: 'helsinki displaySmall',
+      fontFamily: 'Roboto',
+      fontFamilyFallback: _helsinkiFontFallbacks,
+      decoration: TextDecoration.none,
+    ),
+    headlineLarge: TextStyle(
+      debugLabel: 'helsinki headlineLarge',
+      fontFamily: 'Roboto',
+      fontFamilyFallback: _helsinkiFontFallbacks,
+      decoration: TextDecoration.none,
+    ),
+    headlineMedium: TextStyle(
+      debugLabel: 'helsinki headlineMedium',
+      fontFamily: 'Roboto',
+      fontFamilyFallback: _helsinkiFontFallbacks,
+      decoration: TextDecoration.none,
+    ),
+    headlineSmall: TextStyle(
+      debugLabel: 'helsinki headlineSmall',
+      fontFamily: 'Roboto',
+      fontFamilyFallback: _helsinkiFontFallbacks,
+      decoration: TextDecoration.none,
+    ),
+    titleLarge: TextStyle(
+      debugLabel: 'helsinki titleLarge',
+      fontFamily: 'Roboto',
+      fontFamilyFallback: _helsinkiFontFallbacks,
+      decoration: TextDecoration.none,
+    ),
+    titleMedium: TextStyle(
+      debugLabel: 'helsinki titleMedium',
+      fontFamily: 'Roboto',
+      fontFamilyFallback: _helsinkiFontFallbacks,
+      decoration: TextDecoration.none,
+    ),
+    titleSmall: TextStyle(
+      debugLabel: 'helsinki titleSmall',
+      fontFamily: 'Roboto',
+      fontFamilyFallback: _helsinkiFontFallbacks,
+      decoration: TextDecoration.none,
+    ),
+    bodyLarge: TextStyle(
+      debugLabel: 'helsinki bodyLarge',
+      fontFamily: 'Roboto',
+      fontFamilyFallback: _helsinkiFontFallbacks,
+      decoration: TextDecoration.none,
+    ),
+    bodyMedium: TextStyle(
+      debugLabel: 'helsinki bodyMedium',
+      fontFamily: 'Roboto',
+      fontFamilyFallback: _helsinkiFontFallbacks,
+      decoration: TextDecoration.none,
+    ),
+    bodySmall: TextStyle(
+      debugLabel: 'helsinki bodySmall',
+      fontFamily: 'Roboto',
+      fontFamilyFallback: _helsinkiFontFallbacks,
+      decoration: TextDecoration.none,
+    ),
+    labelLarge: TextStyle(
+      debugLabel: 'helsinki labelLarge',
+      fontFamily: 'Roboto',
+      fontFamilyFallback: _helsinkiFontFallbacks,
+      decoration: TextDecoration.none,
+    ),
+    labelMedium: TextStyle(
+      debugLabel: 'helsinki labelMedium',
+      fontFamily: 'Roboto',
+      fontFamilyFallback: _helsinkiFontFallbacks,
+      decoration: TextDecoration.none,
+    ),
+    labelSmall: TextStyle(
+      debugLabel: 'helsinki labelSmall',
+      fontFamily: 'Roboto',
+      fontFamilyFallback: _helsinkiFontFallbacks,
+      decoration: TextDecoration.none,
+    ),
+  );
+
+  /// A Material Design text theme based on San Francisco.
+  ///
+  /// This [TextTheme] provides the font family and text decoration for
+  /// each style, but neither color nor geometry (font size, weight, etc).
+  ///
+  /// This theme uses the iOS version of the font names.
+  static const TextTheme cupertino = TextTheme(
+    displayLarge: TextStyle(
+      debugLabel: 'cupertino displayLarge',
+      fontFamily: 'CupertinoSystemDisplay',
+      decoration: TextDecoration.none,
+    ),
+    displayMedium: TextStyle(
+      debugLabel: 'cupertino displayMedium',
+      fontFamily: 'CupertinoSystemDisplay',
+      decoration: TextDecoration.none,
+    ),
+    displaySmall: TextStyle(
+      debugLabel: 'cupertino displaySmall',
+      fontFamily: 'CupertinoSystemDisplay',
+      decoration: TextDecoration.none,
+    ),
+    headlineLarge: TextStyle(
+      debugLabel: 'cupertino headlineLarge',
+      fontFamily: 'CupertinoSystemDisplay',
+      decoration: TextDecoration.none,
+    ),
+    headlineMedium: TextStyle(
+      debugLabel: 'cupertino headlineMedium',
+      fontFamily: 'CupertinoSystemDisplay',
+      decoration: TextDecoration.none,
+    ),
+    headlineSmall: TextStyle(
+      debugLabel: 'cupertino headlineSmall',
+      fontFamily: 'CupertinoSystemDisplay',
+      decoration: TextDecoration.none,
+    ),
+    titleLarge: TextStyle(
+      debugLabel: 'cupertino titleLarge',
+      fontFamily: 'CupertinoSystemDisplay',
+      decoration: TextDecoration.none,
+    ),
+    titleMedium: TextStyle(
+      debugLabel: 'cupertino titleMedium',
+      fontFamily: 'CupertinoSystemText',
+      decoration: TextDecoration.none,
+    ),
+    titleSmall: TextStyle(
+      debugLabel: 'cupertino titleSmall',
+      fontFamily: 'CupertinoSystemText',
+      decoration: TextDecoration.none,
+    ),
+    bodyLarge: TextStyle(
+      debugLabel: 'cupertino bodyLarge',
+      fontFamily: 'CupertinoSystemText',
+      decoration: TextDecoration.none,
+    ),
+    bodyMedium: TextStyle(
+      debugLabel: 'cupertino bodyMedium',
+      fontFamily: 'CupertinoSystemText',
+      decoration: TextDecoration.none,
+    ),
+    bodySmall: TextStyle(
+      debugLabel: 'cupertino bodySmall',
+      fontFamily: 'CupertinoSystemText',
+      decoration: TextDecoration.none,
+    ),
+    labelLarge: TextStyle(
+      debugLabel: 'cupertino labelLarge',
+      fontFamily: 'CupertinoSystemText',
+      decoration: TextDecoration.none,
+    ),
+    labelMedium: TextStyle(
+      debugLabel: 'cupertino labelMedium',
+      fontFamily: 'CupertinoSystemText',
+      decoration: TextDecoration.none,
+    ),
+    labelSmall: TextStyle(
+      debugLabel: 'cupertino labelSmall',
+      fontFamily: 'CupertinoSystemText',
+      decoration: TextDecoration.none,
+    ),
+  );
+
+  /// A Material Design text theme based on San Francisco.
+  ///
+  /// This [TextTheme] provides the font family and text decoration for
+  /// each style, but neither color nor geometry (font size, weight, etc).
+  static const TextTheme redwoodCity = TextTheme(
+    displayLarge: TextStyle(
+      debugLabel: 'redwoodCity displayLarge',
+      fontFamily: '.AppleSystemUIFont',
+      decoration: TextDecoration.none,
+    ),
+    displayMedium: TextStyle(
+      debugLabel: 'redwoodCity displayMedium',
+      fontFamily: '.AppleSystemUIFont',
+      decoration: TextDecoration.none,
+    ),
+    displaySmall: TextStyle(
+      debugLabel: 'redwoodCity displaySmall',
+      fontFamily: '.AppleSystemUIFont',
+      decoration: TextDecoration.none,
+    ),
+    headlineLarge: TextStyle(
+      debugLabel: 'redwoodCity headlineLarge',
+      fontFamily: '.AppleSystemUIFont',
+      decoration: TextDecoration.none,
+    ),
+    headlineMedium: TextStyle(
+      debugLabel: 'redwoodCity headlineMedium',
+      fontFamily: '.AppleSystemUIFont',
+      decoration: TextDecoration.none,
+    ),
+    headlineSmall: TextStyle(
+      debugLabel: 'redwoodCity headlineSmall',
+      fontFamily: '.AppleSystemUIFont',
+      decoration: TextDecoration.none,
+    ),
+    titleLarge: TextStyle(
+      debugLabel: 'redwoodCity titleLarge',
+      fontFamily: '.AppleSystemUIFont',
+      decoration: TextDecoration.none,
+    ),
+    titleMedium: TextStyle(
+      debugLabel: 'redwoodCity titleMedium',
+      fontFamily: '.AppleSystemUIFont',
+      decoration: TextDecoration.none,
+    ),
+    titleSmall: TextStyle(
+      debugLabel: 'redwoodCity titleSmall',
+      fontFamily: '.AppleSystemUIFont',
+      decoration: TextDecoration.none,
+    ),
+    bodyLarge: TextStyle(
+      debugLabel: 'redwoodCity bodyLarge',
+      fontFamily: '.AppleSystemUIFont',
+      decoration: TextDecoration.none,
+    ),
+    bodyMedium: TextStyle(
+      debugLabel: 'redwoodCity bodyMedium',
+      fontFamily: '.AppleSystemUIFont',
+      decoration: TextDecoration.none,
+    ),
+    bodySmall: TextStyle(
+      debugLabel: 'redwoodCity bodySmall',
+      fontFamily: '.AppleSystemUIFont',
+      decoration: TextDecoration.none,
+    ),
+    labelLarge: TextStyle(
+      debugLabel: 'redwoodCity labelLarge',
+      fontFamily: '.AppleSystemUIFont',
+      decoration: TextDecoration.none,
+    ),
+    labelMedium: TextStyle(
+      debugLabel: 'redwoodCity labelMedium',
+      fontFamily: '.AppleSystemUIFont',
+      decoration: TextDecoration.none,
+    ),
+    labelSmall: TextStyle(
+      debugLabel: 'redwoodCity labelSmall',
+      fontFamily: '.AppleSystemUIFont',
+      decoration: TextDecoration.none,
+    ),
+  );
+
   /// Defines text geometry for `ScriptCategory.englishLike` scripts, such as
   /// English, French, Russian, etc.
   static const TextTheme englishLike2014 = TextTheme(
@@ -2116,4 +2677,26 @@ class Typography with Diagnosticable {
   /// The Material Design 3 specification does not include 'tall' text themes,
   /// so this is just here to be consistent with the API.
   static const TextTheme tall2021 = _M3Typography.tall;
+
+  /// Defines text geometry for `ScriptCategory.englishLike` scripts, such as
+  /// English, French, Russian, etc.
+  ///
+  /// The font sizes, weights, and letter spacings in this version match the
+  /// [Material 3 Expressive specification](https://m3.material.io/styles/typography/overview),
+  /// and include the emphasized type styles (e.g.
+  /// [TextTheme.titleMediumEmphasized]).
+  static const TextTheme englishLike2025 = _M3ETypography.englishLike;
+
+  /// Defines text geometry for dense scripts, such as Chinese, Japanese
+  /// and Korean.
+  ///
+  /// The Material 3 Expressive specification does not include 'dense' text
+  /// themes, so this is just here to be consistent with the API.
+  static const TextTheme dense2025 = _M3ETypography.dense;
+
+  /// Defines text geometry for tall scripts, such as Farsi, Hindi, and Thai.
+  ///
+  /// The Material 3 Expressive specification does not include 'tall' text
+  /// themes, so this is just here to be consistent with the API.
+  static const TextTheme tall2025 = _M3ETypography.tall;
 }

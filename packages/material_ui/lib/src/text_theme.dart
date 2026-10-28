@@ -32,8 +32,12 @@ import 'theme.dart';
 /// ![](https://lh3.googleusercontent.com/Yvngs5mQSjXa_9T4X3JDucO62c5hdZHPDa7qeRH6DsJQvGr_q7EBrTkhkPiQd9OeR1v_Uk38Cjd9nUpP3nevDyHpKWuXSfQ1Gq78bOnBN7sr=s0)
 ///
 /// The Material Design typography scheme was significantly changed in the
-/// current (2021) version of the specification
+/// Material 3 (2021) version of the specification.
 /// ([https://m3.material.io/styles/typography/tokens](https://m3.material.io/styles/typography/tokens)).
+///
+/// The current Material 3 Expressive (2025) version of the specification further
+/// expanded upon the Material 3 (2021) version, with the addition of an
+/// emphasized variant for each of the 2021 text styles.
 ///
 /// The **2021** spec has fifteen text styles:
 ///
@@ -56,6 +60,37 @@ import 'theme.dart';
 /// | labelSmall     | 11.0 |   16.0  | medium  |  0.5     |             |
 ///
 /// ...where "regular" is `FontWeight.w400` and "medium" is `FontWeight.w500`.
+///
+/// The Material 3 Expressive (**2025**) spec adds an emphasized variant for
+/// each of the fifteen 2021 text styles (for example, [titleMediumEmphasized]
+/// for [titleMedium]). Emphasized styles share the size, height and spacing of
+/// their baseline style, but use a heavier weight:
+///
+/// | NAME                     | SIZE |  HEIGHT |  WEIGHT |  SPACING |       |
+/// |--------------------------|------|---------|---------|----------|-------|
+/// | displayLargeEmphasized   | 57.0 |   64.0  | medium  | -0.25    |       |
+/// | displayMediumEmphasized  | 45.0 |   52.0  | medium  |  0.0     |       |
+/// | displaySmallEmphasized   | 36.0 |   44.0  | medium  |  0.0     |       |
+/// | headlineLargeEmphasized  | 32.0 |   40.0  | medium  |  0.0     |       |
+/// | headlineMediumEmphasized | 28.0 |   36.0  | medium  |  0.0     |       |
+/// | headlineSmallEmphasized  | 24.0 |   32.0  | medium  |  0.0     |       |
+/// | titleLargeEmphasized     | 22.0 |   28.0  | medium  |  0.0     |       |
+/// | titleMediumEmphasized    | 16.0 |   24.0  | bold    |  0.15    |       |
+/// | titleSmallEmphasized     | 14.0 |   20.0  | bold    |  0.1     |       |
+/// | bodyLargeEmphasized      | 16.0 |   24.0  | medium  |  0.5     |       |
+/// | bodyMediumEmphasized     | 14.0 |   20.0  | medium  |  0.25    |       |
+/// | bodySmallEmphasized      | 12.0 |   16.0  | medium  |  0.4     |       |
+/// | labelLargeEmphasized     | 14.0 |   20.0  | bold    |  0.1     |       |
+/// | labelMediumEmphasized    | 12.0 |   16.0  | bold    |  0.5     |       |
+/// | labelSmallEmphasized     | 11.0 |   16.0  | bold    |  0.5     |       |
+///
+/// ...where "medium" is `FontWeight.w500` and "bold" is `FontWeight.w700`.
+///
+/// Emphasized styles are intended for bold, selected, or otherwise emphasized
+/// text. They complement the baseline styles, and Material components don't
+/// use them by default. The emphasized styles are only populated when
+/// [ThemeData.typography] is created with [Typography.material2025]; otherwise
+/// they are null.
 ///
 /// The names of the 2018 TextTheme properties match this table from the
 /// [Material Design spec](https://material.io/design/typography/the-type-system.html#type-scale)
@@ -85,16 +120,19 @@ import 'theme.dart';
 /// ...where "light" is `FontWeight.w300`, "regular" is `FontWeight.w400` and
 /// "medium" is `FontWeight.w500`.
 ///
-/// By default, text styles are initialized to match the 2018 Material Design
-/// specification as listed above. To provide backwards compatibility, the 2014
-/// specification is also available.
+/// By default, [ThemeData.typography] is initialized to match the 2025 Material
+/// Design 3 Expressive specification ([Typography.material2025]). This is
+/// equivalent to the 2021 specification for all baseline styles, but also
+/// includes the emphasized text styles by default.
 ///
-/// To explicitly configure a [Theme] for the 2018 sizes, weights, and letter
-/// spacings, you can initialize its [ThemeData.typography] value using
-/// [Typography.material2018]. The [Typography] constructor defaults to this
-/// configuration. To configure a [Theme] for the 2014 sizes, weights, and letter
-/// spacings, initialize its [ThemeData.typography] value using
-/// [Typography.material2014].
+/// To explicitly configure a [Theme] with the 2021 Material Design 3
+/// specification, initialize [ThemeData.typography] using
+/// [Typography.material2021].
+///
+/// To provide backwards compatibility, the 2018 and 2014 specifications are
+/// also available via [Typography.material2018] (which the [Typography.new]
+/// constructor defaults to) and [Typography.material2014] (which
+/// [ThemeData.typography] defaults to when [ThemeData.useMaterial3] is false).
 ///
 /// See also:
 ///
@@ -115,7 +153,7 @@ class TextTheme with Diagnosticable {
   /// If you do decide to create your own text theme, consider using one of
   /// those predefined themes as a starting point for [copyWith] or [apply].
   ///
-  /// The 2018 styles cannot be mixed with the 2021 styles. Only one or the
+  /// The 2018 styles cannot be mixed with the 2021/2025 styles. Only one or the
   /// other is allowed in this constructor. The 2018 styles are deprecated and
   /// will eventually be removed.
   const TextTheme({
@@ -134,6 +172,21 @@ class TextTheme with Diagnosticable {
     this.labelLarge,
     this.labelMedium,
     this.labelSmall,
+    this.displayLargeEmphasized,
+    this.displayMediumEmphasized,
+    this.displaySmallEmphasized,
+    this.headlineLargeEmphasized,
+    this.headlineMediumEmphasized,
+    this.headlineSmallEmphasized,
+    this.titleLargeEmphasized,
+    this.titleMediumEmphasized,
+    this.titleSmallEmphasized,
+    this.bodyLargeEmphasized,
+    this.bodyMediumEmphasized,
+    this.bodySmallEmphasized,
+    this.labelLargeEmphasized,
+    this.labelMediumEmphasized,
+    this.labelSmallEmphasized,
   });
 
   /// Largest of the display styles.
@@ -230,6 +283,156 @@ class TextTheme with Diagnosticable {
   /// content body, like captions.
   final TextStyle? labelSmall;
 
+  /// The emphasized variant of [displayLarge].
+  ///
+  /// Emphasized styles are intended for bold, selected, or otherwise emphasized
+  /// text. They complement the baseline styles, and Material components don't
+  /// use them by default.
+  ///
+  /// This is only provided by default when [ThemeData.typography] is
+  /// [Typography.material2025].
+  final TextStyle? displayLargeEmphasized;
+
+  /// The emphasized variant of [displayMedium].
+  ///
+  /// Emphasized styles are intended for bold, selected, or otherwise emphasized
+  /// text. They complement the baseline styles, and Material components don't
+  /// use them by default.
+  ///
+  /// This is only provided by default when [ThemeData.typography] is
+  /// [Typography.material2025].
+  final TextStyle? displayMediumEmphasized;
+
+  /// The emphasized variant of [displaySmall].
+  ///
+  /// Emphasized styles are intended for bold, selected, or otherwise emphasized
+  /// text. They complement the baseline styles, and Material components don't
+  /// use them by default.
+  ///
+  /// This is only provided by default when [ThemeData.typography] is
+  /// [Typography.material2025].
+  final TextStyle? displaySmallEmphasized;
+
+  /// The emphasized variant of [headlineLarge].
+  ///
+  /// Emphasized styles are intended for bold, selected, or otherwise emphasized
+  /// text. They complement the baseline styles, and Material components don't
+  /// use them by default.
+  ///
+  /// This is only provided by default when [ThemeData.typography] is
+  /// [Typography.material2025].
+  final TextStyle? headlineLargeEmphasized;
+
+  /// The emphasized variant of [headlineMedium].
+  ///
+  /// Emphasized styles are intended for bold, selected, or otherwise emphasized
+  /// text. They complement the baseline styles, and Material components don't
+  /// use them by default.
+  ///
+  /// This is only provided by default when [ThemeData.typography] is
+  /// [Typography.material2025].
+  final TextStyle? headlineMediumEmphasized;
+
+  /// The emphasized variant of [headlineSmall].
+  ///
+  /// Emphasized styles are intended for bold, selected, or otherwise emphasized
+  /// text. They complement the baseline styles, and Material components don't
+  /// use them by default.
+  ///
+  /// This is only provided by default when [ThemeData.typography] is
+  /// [Typography.material2025].
+  final TextStyle? headlineSmallEmphasized;
+
+  /// The emphasized variant of [titleLarge].
+  ///
+  /// Emphasized styles are intended for bold, selected, or otherwise emphasized
+  /// text. They complement the baseline styles, and Material components don't
+  /// use them by default.
+  ///
+  /// This is only provided by default when [ThemeData.typography] is
+  /// [Typography.material2025].
+  final TextStyle? titleLargeEmphasized;
+
+  /// The emphasized variant of [titleMedium].
+  ///
+  /// Emphasized styles are intended for bold, selected, or otherwise emphasized
+  /// text. They complement the baseline styles, and Material components don't
+  /// use them by default.
+  ///
+  /// This is only provided by default when [ThemeData.typography] is
+  /// [Typography.material2025].
+  final TextStyle? titleMediumEmphasized;
+
+  /// The emphasized variant of [titleSmall].
+  ///
+  /// Emphasized styles are intended for bold, selected, or otherwise emphasized
+  /// text. They complement the baseline styles, and Material components don't
+  /// use them by default.
+  ///
+  /// This is only provided by default when [ThemeData.typography] is
+  /// [Typography.material2025].
+  final TextStyle? titleSmallEmphasized;
+
+  /// The emphasized variant of [bodyLarge].
+  ///
+  /// Emphasized styles are intended for bold, selected, or otherwise emphasized
+  /// text. They complement the baseline styles, and Material components don't
+  /// use them by default.
+  ///
+  /// This is only provided by default when [ThemeData.typography] is
+  /// [Typography.material2025].
+  final TextStyle? bodyLargeEmphasized;
+
+  /// The emphasized variant of [bodyMedium].
+  ///
+  /// Emphasized styles are intended for bold, selected, or otherwise emphasized
+  /// text. They complement the baseline styles, and Material components don't
+  /// use them by default.
+  ///
+  /// This is only provided by default when [ThemeData.typography] is
+  /// [Typography.material2025].
+  final TextStyle? bodyMediumEmphasized;
+
+  /// The emphasized variant of [bodySmall].
+  ///
+  /// Emphasized styles are intended for bold, selected, or otherwise emphasized
+  /// text. They complement the baseline styles, and Material components don't
+  /// use them by default.
+  ///
+  /// This is only provided by default when [ThemeData.typography] is
+  /// [Typography.material2025].
+  final TextStyle? bodySmallEmphasized;
+
+  /// The emphasized variant of [labelLarge].
+  ///
+  /// Emphasized styles are intended for bold, selected, or otherwise emphasized
+  /// text. They complement the baseline styles, and Material components don't
+  /// use them by default.
+  ///
+  /// This is only provided by default when [ThemeData.typography] is
+  /// [Typography.material2025].
+  final TextStyle? labelLargeEmphasized;
+
+  /// The emphasized variant of [labelMedium].
+  ///
+  /// Emphasized styles are intended for bold, selected, or otherwise emphasized
+  /// text. They complement the baseline styles, and Material components don't
+  /// use them by default.
+  ///
+  /// This is only provided by default when [ThemeData.typography] is
+  /// [Typography.material2025].
+  final TextStyle? labelMediumEmphasized;
+
+  /// The emphasized variant of [labelSmall].
+  ///
+  /// Emphasized styles are intended for bold, selected, or otherwise emphasized
+  /// text. They complement the baseline styles, and Material components don't
+  /// use them by default.
+  ///
+  /// This is only provided by default when [ThemeData.typography] is
+  /// [Typography.material2025].
+  final TextStyle? labelSmallEmphasized;
+
   /// Creates a copy of this text theme but with the given fields replaced with
   /// the new values.
   ///
@@ -290,6 +493,21 @@ class TextTheme with Diagnosticable {
     TextStyle? labelLarge,
     TextStyle? labelMedium,
     TextStyle? labelSmall,
+    TextStyle? displayLargeEmphasized,
+    TextStyle? displayMediumEmphasized,
+    TextStyle? displaySmallEmphasized,
+    TextStyle? headlineLargeEmphasized,
+    TextStyle? headlineMediumEmphasized,
+    TextStyle? headlineSmallEmphasized,
+    TextStyle? titleLargeEmphasized,
+    TextStyle? titleMediumEmphasized,
+    TextStyle? titleSmallEmphasized,
+    TextStyle? bodyLargeEmphasized,
+    TextStyle? bodyMediumEmphasized,
+    TextStyle? bodySmallEmphasized,
+    TextStyle? labelLargeEmphasized,
+    TextStyle? labelMediumEmphasized,
+    TextStyle? labelSmallEmphasized,
   }) {
     return TextTheme(
       displayLarge: displayLarge ?? this.displayLarge,
@@ -307,6 +525,21 @@ class TextTheme with Diagnosticable {
       labelLarge: labelLarge ?? this.labelLarge,
       labelMedium: labelMedium ?? this.labelMedium,
       labelSmall: labelSmall ?? this.labelSmall,
+      displayLargeEmphasized: displayLargeEmphasized ?? this.displayLargeEmphasized,
+      displayMediumEmphasized: displayMediumEmphasized ?? this.displayMediumEmphasized,
+      displaySmallEmphasized: displaySmallEmphasized ?? this.displaySmallEmphasized,
+      headlineLargeEmphasized: headlineLargeEmphasized ?? this.headlineLargeEmphasized,
+      headlineMediumEmphasized: headlineMediumEmphasized ?? this.headlineMediumEmphasized,
+      headlineSmallEmphasized: headlineSmallEmphasized ?? this.headlineSmallEmphasized,
+      titleLargeEmphasized: titleLargeEmphasized ?? this.titleLargeEmphasized,
+      titleMediumEmphasized: titleMediumEmphasized ?? this.titleMediumEmphasized,
+      titleSmallEmphasized: titleSmallEmphasized ?? this.titleSmallEmphasized,
+      bodyLargeEmphasized: bodyLargeEmphasized ?? this.bodyLargeEmphasized,
+      bodyMediumEmphasized: bodyMediumEmphasized ?? this.bodyMediumEmphasized,
+      bodySmallEmphasized: bodySmallEmphasized ?? this.bodySmallEmphasized,
+      labelLargeEmphasized: labelLargeEmphasized ?? this.labelLargeEmphasized,
+      labelMediumEmphasized: labelMediumEmphasized ?? this.labelMediumEmphasized,
+      labelSmallEmphasized: labelSmallEmphasized ?? this.labelSmallEmphasized,
     );
   }
 
@@ -389,6 +622,24 @@ class TextTheme with Diagnosticable {
       labelLarge: mergeStyles(labelLarge, other.labelLarge),
       labelMedium: mergeStyles(labelMedium, other.labelMedium),
       labelSmall: mergeStyles(labelSmall, other.labelSmall),
+      displayLargeEmphasized: mergeStyles(displayLargeEmphasized, other.displayLargeEmphasized),
+      displayMediumEmphasized: mergeStyles(displayMediumEmphasized, other.displayMediumEmphasized),
+      displaySmallEmphasized: mergeStyles(displaySmallEmphasized, other.displaySmallEmphasized),
+      headlineLargeEmphasized: mergeStyles(headlineLargeEmphasized, other.headlineLargeEmphasized),
+      headlineMediumEmphasized: mergeStyles(
+        headlineMediumEmphasized,
+        other.headlineMediumEmphasized,
+      ),
+      headlineSmallEmphasized: mergeStyles(headlineSmallEmphasized, other.headlineSmallEmphasized),
+      titleLargeEmphasized: mergeStyles(titleLargeEmphasized, other.titleLargeEmphasized),
+      titleMediumEmphasized: mergeStyles(titleMediumEmphasized, other.titleMediumEmphasized),
+      titleSmallEmphasized: mergeStyles(titleSmallEmphasized, other.titleSmallEmphasized),
+      bodyLargeEmphasized: mergeStyles(bodyLargeEmphasized, other.bodyLargeEmphasized),
+      bodyMediumEmphasized: mergeStyles(bodyMediumEmphasized, other.bodyMediumEmphasized),
+      bodySmallEmphasized: mergeStyles(bodySmallEmphasized, other.bodySmallEmphasized),
+      labelLargeEmphasized: mergeStyles(labelLargeEmphasized, other.labelLargeEmphasized),
+      labelMediumEmphasized: mergeStyles(labelMediumEmphasized, other.labelMediumEmphasized),
+      labelSmallEmphasized: mergeStyles(labelSmallEmphasized, other.labelSmallEmphasized),
     );
   }
 
@@ -397,7 +648,9 @@ class TextTheme with Diagnosticable {
   ///
   /// The `displayColor` is applied to [displayLarge], [displayMedium],
   /// [displaySmall], [headlineLarge], [headlineMedium], and [bodySmall]. The
-  /// `bodyColor` is applied to the remaining text styles.
+  /// `bodyColor` is applied to the remaining text styles. Each emphasized
+  /// style (e.g. [displayLargeEmphasized]) receives the same color as its
+  /// baseline style.
   ///
   /// Consider using [Typography.black] or [Typography.white], which implement
   /// the typography styles in the Material Design specification, as a starting
@@ -458,6 +711,21 @@ class TextTheme with Diagnosticable {
       labelLarge: applyTo(labelLarge, bodyColor),
       labelMedium: applyTo(labelMedium, bodyColor),
       labelSmall: applyTo(labelSmall, bodyColor),
+      displayLargeEmphasized: applyTo(displayLargeEmphasized, displayColor),
+      displayMediumEmphasized: applyTo(displayMediumEmphasized, displayColor),
+      displaySmallEmphasized: applyTo(displaySmallEmphasized, displayColor),
+      headlineLargeEmphasized: applyTo(headlineLargeEmphasized, displayColor),
+      headlineMediumEmphasized: applyTo(headlineMediumEmphasized, displayColor),
+      headlineSmallEmphasized: applyTo(headlineSmallEmphasized, bodyColor),
+      titleLargeEmphasized: applyTo(titleLargeEmphasized, bodyColor),
+      titleMediumEmphasized: applyTo(titleMediumEmphasized, bodyColor),
+      titleSmallEmphasized: applyTo(titleSmallEmphasized, bodyColor),
+      bodyLargeEmphasized: applyTo(bodyLargeEmphasized, bodyColor),
+      bodyMediumEmphasized: applyTo(bodyMediumEmphasized, bodyColor),
+      bodySmallEmphasized: applyTo(bodySmallEmphasized, displayColor),
+      labelLargeEmphasized: applyTo(labelLargeEmphasized, bodyColor),
+      labelMediumEmphasized: applyTo(labelMediumEmphasized, bodyColor),
+      labelSmallEmphasized: applyTo(labelSmallEmphasized, bodyColor),
     );
   }
 
@@ -484,6 +752,45 @@ class TextTheme with Diagnosticable {
       labelLarge: TextStyle.lerp(a?.labelLarge, b?.labelLarge, t),
       labelMedium: TextStyle.lerp(a?.labelMedium, b?.labelMedium, t),
       labelSmall: TextStyle.lerp(a?.labelSmall, b?.labelSmall, t),
+      displayLargeEmphasized: TextStyle.lerp(
+        a?.displayLargeEmphasized,
+        b?.displayLargeEmphasized,
+        t,
+      ),
+      displayMediumEmphasized: TextStyle.lerp(
+        a?.displayMediumEmphasized,
+        b?.displayMediumEmphasized,
+        t,
+      ),
+      displaySmallEmphasized: TextStyle.lerp(
+        a?.displaySmallEmphasized,
+        b?.displaySmallEmphasized,
+        t,
+      ),
+      headlineLargeEmphasized: TextStyle.lerp(
+        a?.headlineLargeEmphasized,
+        b?.headlineLargeEmphasized,
+        t,
+      ),
+      headlineMediumEmphasized: TextStyle.lerp(
+        a?.headlineMediumEmphasized,
+        b?.headlineMediumEmphasized,
+        t,
+      ),
+      headlineSmallEmphasized: TextStyle.lerp(
+        a?.headlineSmallEmphasized,
+        b?.headlineSmallEmphasized,
+        t,
+      ),
+      titleLargeEmphasized: TextStyle.lerp(a?.titleLargeEmphasized, b?.titleLargeEmphasized, t),
+      titleMediumEmphasized: TextStyle.lerp(a?.titleMediumEmphasized, b?.titleMediumEmphasized, t),
+      titleSmallEmphasized: TextStyle.lerp(a?.titleSmallEmphasized, b?.titleSmallEmphasized, t),
+      bodyLargeEmphasized: TextStyle.lerp(a?.bodyLargeEmphasized, b?.bodyLargeEmphasized, t),
+      bodyMediumEmphasized: TextStyle.lerp(a?.bodyMediumEmphasized, b?.bodyMediumEmphasized, t),
+      bodySmallEmphasized: TextStyle.lerp(a?.bodySmallEmphasized, b?.bodySmallEmphasized, t),
+      labelLargeEmphasized: TextStyle.lerp(a?.labelLargeEmphasized, b?.labelLargeEmphasized, t),
+      labelMediumEmphasized: TextStyle.lerp(a?.labelMediumEmphasized, b?.labelMediumEmphasized, t),
+      labelSmallEmphasized: TextStyle.lerp(a?.labelSmallEmphasized, b?.labelSmallEmphasized, t),
     );
   }
 
@@ -529,11 +836,26 @@ class TextTheme with Diagnosticable {
         bodySmall == other.bodySmall &&
         labelLarge == other.labelLarge &&
         labelMedium == other.labelMedium &&
-        labelSmall == other.labelSmall;
+        labelSmall == other.labelSmall &&
+        displayLargeEmphasized == other.displayLargeEmphasized &&
+        displayMediumEmphasized == other.displayMediumEmphasized &&
+        displaySmallEmphasized == other.displaySmallEmphasized &&
+        headlineLargeEmphasized == other.headlineLargeEmphasized &&
+        headlineMediumEmphasized == other.headlineMediumEmphasized &&
+        headlineSmallEmphasized == other.headlineSmallEmphasized &&
+        titleLargeEmphasized == other.titleLargeEmphasized &&
+        titleMediumEmphasized == other.titleMediumEmphasized &&
+        titleSmallEmphasized == other.titleSmallEmphasized &&
+        bodyLargeEmphasized == other.bodyLargeEmphasized &&
+        bodyMediumEmphasized == other.bodyMediumEmphasized &&
+        bodySmallEmphasized == other.bodySmallEmphasized &&
+        labelLargeEmphasized == other.labelLargeEmphasized &&
+        labelMediumEmphasized == other.labelMediumEmphasized &&
+        labelSmallEmphasized == other.labelSmallEmphasized;
   }
 
   @override
-  int get hashCode => Object.hash(
+  int get hashCode => Object.hashAll(<Object?>[
     displayLarge,
     displayMedium,
     displaySmall,
@@ -549,7 +871,22 @@ class TextTheme with Diagnosticable {
     labelLarge,
     labelMedium,
     labelSmall,
-  );
+    displayLargeEmphasized,
+    displayMediumEmphasized,
+    displaySmallEmphasized,
+    headlineLargeEmphasized,
+    headlineMediumEmphasized,
+    headlineSmallEmphasized,
+    titleLargeEmphasized,
+    titleMediumEmphasized,
+    titleSmallEmphasized,
+    bodyLargeEmphasized,
+    bodyMediumEmphasized,
+    bodySmallEmphasized,
+    labelLargeEmphasized,
+    labelMediumEmphasized,
+    labelSmallEmphasized,
+  ]);
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
@@ -582,5 +919,24 @@ class TextTheme with Diagnosticable {
     add('labelLarge', labelLarge, defaultTheme.labelLarge);
     add('labelMedium', labelMedium, defaultTheme.labelMedium);
     add('labelSmall', labelSmall, defaultTheme.labelSmall);
+    add('displayLargeEmphasized', displayLargeEmphasized, defaultTheme.displayLargeEmphasized);
+    add('displayMediumEmphasized', displayMediumEmphasized, defaultTheme.displayMediumEmphasized);
+    add('displaySmallEmphasized', displaySmallEmphasized, defaultTheme.displaySmallEmphasized);
+    add('headlineLargeEmphasized', headlineLargeEmphasized, defaultTheme.headlineLargeEmphasized);
+    add(
+      'headlineMediumEmphasized',
+      headlineMediumEmphasized,
+      defaultTheme.headlineMediumEmphasized,
+    );
+    add('headlineSmallEmphasized', headlineSmallEmphasized, defaultTheme.headlineSmallEmphasized);
+    add('titleLargeEmphasized', titleLargeEmphasized, defaultTheme.titleLargeEmphasized);
+    add('titleMediumEmphasized', titleMediumEmphasized, defaultTheme.titleMediumEmphasized);
+    add('titleSmallEmphasized', titleSmallEmphasized, defaultTheme.titleSmallEmphasized);
+    add('bodyLargeEmphasized', bodyLargeEmphasized, defaultTheme.bodyLargeEmphasized);
+    add('bodyMediumEmphasized', bodyMediumEmphasized, defaultTheme.bodyMediumEmphasized);
+    add('bodySmallEmphasized', bodySmallEmphasized, defaultTheme.bodySmallEmphasized);
+    add('labelLargeEmphasized', labelLargeEmphasized, defaultTheme.labelLargeEmphasized);
+    add('labelMediumEmphasized', labelMediumEmphasized, defaultTheme.labelMediumEmphasized);
+    add('labelSmallEmphasized', labelSmallEmphasized, defaultTheme.labelSmallEmphasized);
   }
 }
