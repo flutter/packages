@@ -524,7 +524,7 @@ void main() {
     final Offset labelCenter = tabBarBox.globalToLocal(
       labelBox.localToGlobal(labelBox.size.center(Offset.zero)),
     );
-    final Rect expectedIndicator = Rect.fromLTRB(
+    final expectedIndicator = Rect.fromLTRB(
       labelCenter.dx - 12.0,
       tabBarBox.size.height - 3.0,
       labelCenter.dx + 12.0,
