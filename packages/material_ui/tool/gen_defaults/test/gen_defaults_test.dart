@@ -50,7 +50,6 @@ import '../templates/switch_template.dart';
 import '../templates/tabs_template.dart';
 import '../templates/template.dart';
 import '../templates/text_field_template.dart';
-// import '../templates/time_picker_template.dart';
 import '../templates/time_picker_template.dart';
 import '../templates/typography_template.dart';
 import 'test_fixtures/test_templates.dart';
