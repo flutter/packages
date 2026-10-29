@@ -13,6 +13,15 @@ import UIKit
   @testable import image_picker_ios_objc
 #endif
 
+/// Saves into a directory that does not exist, so writing the file fails.
+private final class UnwritablePhotoAssetUtil: FLTImagePickerPhotoAssetUtil {
+  // Replaces the private +temporaryFilePath: helper, which the save methods call on `self`.
+  @objc(temporaryFilePath:)
+  class func unwritableTemporaryFilePath(_ suffix: String) -> String {
+    "/this/path/does/not/exist/image" + suffix
+  }
+}
+
 @Suite
 struct PhotoAssetUtilTests {
   @Test func getAssetFromImagePickerInfoShouldReturnNilIfNotAvailable() {
@@ -44,21 +53,23 @@ struct PhotoAssetUtilTests {
     #expect(FileManager.default.fileExists(atPath: copied.path))
   }
 
-  @Test func saveImageWithOriginalImageDataNilUsesDefaultJPEG() {
+  @Test func saveImageWithOriginalImageDataNilUsesDefaultJPEG() throws {
     let imageJPG = UIImage(data: ImagePickerTestImages.jpgTestData)!
-    let savedPath = FLTImagePickerPhotoAssetUtil.saveImage(
-      withOriginalImageData: nil, image: imageJPG, maxWidth: nil, maxHeight: nil,
-      imageQuality: nil)
+    let savedPath = try #require(
+      FLTImagePickerPhotoAssetUtil.saveImage(
+        withOriginalImageData: nil, image: imageJPG, maxWidth: nil, maxHeight: nil,
+        imageQuality: nil))
     #expect(URL(fileURLWithPath: savedPath).pathExtension == "jpg")
     try? FileManager.default.removeItem(atPath: savedPath)
   }
 
-  @Test func saveImageWithOriginalImageDataShouldSaveWithTheCorrectExtensionAndMetaData() {
+  @Test func saveImageWithOriginalImageDataShouldSaveWithTheCorrectExtensionAndMetaData() throws {
     let dataJPG = ImagePickerTestImages.jpgTestData
     let imageJPG = UIImage(data: dataJPG)!
-    let savedPathJPG = FLTImagePickerPhotoAssetUtil.saveImage(
-      withOriginalImageData: dataJPG, image: imageJPG, maxWidth: nil, maxHeight: nil,
-      imageQuality: nil)
+    let savedPathJPG = try #require(
+      FLTImagePickerPhotoAssetUtil.saveImage(
+        withOriginalImageData: dataJPG, image: imageJPG, maxWidth: nil, maxHeight: nil,
+        imageQuality: nil))
     defer { try? FileManager.default.removeItem(atPath: savedPathJPG) }
     #expect(URL(string: savedPathJPG)?.pathExtension == "jpg")
 
@@ -72,9 +83,10 @@ struct PhotoAssetUtilTests {
 
     let dataPNG = ImagePickerTestImages.pngTestData
     let imagePNG = UIImage(data: dataPNG)!
-    let savedPathPNG = FLTImagePickerPhotoAssetUtil.saveImage(
-      withOriginalImageData: dataPNG, image: imagePNG, maxWidth: nil, maxHeight: nil,
-      imageQuality: nil)
+    let savedPathPNG = try #require(
+      FLTImagePickerPhotoAssetUtil.saveImage(
+        withOriginalImageData: dataPNG, image: imagePNG, maxWidth: nil, maxHeight: nil,
+        imageQuality: nil))
     defer { try? FileManager.default.removeItem(atPath: savedPathPNG) }
     #expect(URL(string: savedPathPNG)?.pathExtension == "png")
 
@@ -87,10 +99,11 @@ struct PhotoAssetUtilTests {
     )
   }
 
-  @Test func saveImageWithPickerInfoShouldSaveWithDefaultExtension() {
+  @Test func saveImageWithPickerInfoShouldSaveWithDefaultExtension() throws {
     let imageJPG = UIImage(data: ImagePickerTestImages.jpgTestData)!
-    let savedPathJPG = FLTImagePickerPhotoAssetUtil.saveImage(
-      withPickerInfo: nil, image: imageJPG, imageQuality: nil)
+    let savedPathJPG = try #require(
+      FLTImagePickerPhotoAssetUtil.saveImage(
+        withPickerInfo: nil, image: imageJPG, imageQuality: nil))
     defer { try? FileManager.default.removeItem(atPath: savedPathJPG) }
     #expect(
       (savedPathJPG as NSString).substring(from: savedPathJPG.count - 4)
@@ -98,7 +111,7 @@ struct PhotoAssetUtilTests {
     )
   }
 
-  @Test func saveImageWithPickerInfoShouldSaveWithTheCorrectExtensionAndMetaData() {
+  @Test func saveImageWithPickerInfoShouldSaveWithTheCorrectExtensionAndMetaData() throws {
     let dummyInfo: [String: Any] = [
       UIImagePickerController.InfoKey.mediaMetadata.rawValue: [
         kCGImagePropertyExifDictionary as String: [
@@ -107,8 +120,9 @@ struct PhotoAssetUtilTests {
       ]
     ]
     let imageJPG = UIImage(data: ImagePickerTestImages.jpgTestData)!
-    let savedPathJPG = FLTImagePickerPhotoAssetUtil.saveImage(
-      withPickerInfo: dummyInfo, image: imageJPG, imageQuality: nil)
+    let savedPathJPG = try #require(
+      FLTImagePickerPhotoAssetUtil.saveImage(
+        withPickerInfo: dummyInfo, image: imageJPG, imageQuality: nil))
     defer { try? FileManager.default.removeItem(atPath: savedPathJPG) }
     let data = try? Data(contentsOf: URL(fileURLWithPath: savedPathJPG))
     let meta = FLTImagePickerMetaDataUtil.getMetaData(fromImageData: data ?? Data())
@@ -118,15 +132,32 @@ struct PhotoAssetUtilTests {
     #expect(comment == "aNote")
   }
 
+  @Test func createFileReturnsNilWhenWriteFails() throws {
+    let imageJPG = try #require(UIImage(data: ImagePickerTestImages.jpgTestData))
+    let savedPath = UnwritablePhotoAssetUtil.saveImage(
+      withPickerInfo: nil, image: imageJPG, imageQuality: nil)
+    #expect(savedPath == nil)
+  }
+
+  @Test func saveImageWithPickerInfoReturnsNilWhenImageCannotBeEncoded() {
+    // An image with no underlying bitmap cannot be encoded as JPEG, so there is no data to save.
+    let savedPath = FLTImagePickerPhotoAssetUtil.saveImage(
+      withPickerInfo: nil, image: UIImage(), imageQuality: nil)
+    let savedData = savedPath.flatMap { FileManager.default.contents(atPath: $0) }
+    #expect(savedPath == nil, "Returned a path to a \(savedData?.count ?? 0)-byte file.")
+    if let savedPath { try? FileManager.default.removeItem(atPath: savedPath) }
+  }
+
   @Test func saveImageWithOriginalImageDataShouldSaveAsGifAnimation() throws {
     let dataGIF = ImagePickerTestImages.gifTestData
     let imageGIF = UIImage(data: dataGIF)!
     let imageSource = CGImageSourceCreateWithData(dataGIF as CFData, nil)!
     let numberOfFrames = CGImageSourceGetCount(imageSource)
 
-    let savedPathGIF = FLTImagePickerPhotoAssetUtil.saveImage(
-      withOriginalImageData: dataGIF, image: imageGIF, maxWidth: nil, maxHeight: nil,
-      imageQuality: nil)
+    let savedPathGIF = try #require(
+      FLTImagePickerPhotoAssetUtil.saveImage(
+        withOriginalImageData: dataGIF, image: imageGIF, maxWidth: nil, maxHeight: nil,
+        imageQuality: nil))
     defer { try? FileManager.default.removeItem(atPath: savedPathGIF) }
     #expect(URL(string: savedPathGIF)?.pathExtension == "gif")
 
@@ -142,8 +173,10 @@ struct PhotoAssetUtilTests {
     let imageSource = CGImageSourceCreateWithData(dataGIF as CFData, nil)!
     let numberOfFrames = CGImageSourceGetCount(imageSource)
 
-    let savedPathGIF = FLTImagePickerPhotoAssetUtil.saveImage(
-      withOriginalImageData: dataGIF, image: imageGIF, maxWidth: 3, maxHeight: 2, imageQuality: nil)
+    let savedPathGIF = try #require(
+      FLTImagePickerPhotoAssetUtil.saveImage(
+        withOriginalImageData: dataGIF, image: imageGIF, maxWidth: 3, maxHeight: 2,
+        imageQuality: nil))
     defer { try? FileManager.default.removeItem(atPath: savedPathGIF) }
     let newDataGIF = try Data(contentsOf: URL(fileURLWithPath: savedPathGIF))
     let newImage = try #require(UIImage(data: newDataGIF))
@@ -153,5 +186,27 @@ struct PhotoAssetUtilTests {
     let newImageSource = try #require(CGImageSourceCreateWithData(newDataGIF as CFData, nil))
     let newNumberOfFrames = CGImageSourceGetCount(newImageSource)
     #expect(numberOfFrames == newNumberOfFrames)
+  }
+
+  @Test func saveImageWithOriginalImageDataReturnsNilWhenGIFCannotBeSaved() {
+    // Only the GIF header and logical screen descriptor, so there are no frames to write.
+    let truncatedGIF = Data(ImagePickerTestImages.gifTestData.prefix(13))
+    #expect(UIImage(data: truncatedGIF) == nil)
+
+    let savedPath = FLTImagePickerPhotoAssetUtil.saveImage(
+      withOriginalImageData: truncatedGIF, image: nil, maxWidth: nil, maxHeight: nil,
+      imageQuality: nil)
+    let fileExists = savedPath.map { FileManager.default.fileExists(atPath: $0) } ?? false
+    #expect(
+      savedPath == nil,
+      "Returned a path to a file that \(fileExists ? "exists" : "does not exist").")
+    if let savedPath { try? FileManager.default.removeItem(atPath: savedPath) }
+  }
+
+  @Test func saveGIFReturnsNilWhenDestinationCannotBeCreated() {
+    let savedPath = UnwritablePhotoAssetUtil.saveImage(
+      withOriginalImageData: ImagePickerTestImages.gifTestData, image: nil, maxWidth: nil,
+      maxHeight: nil, imageQuality: nil)
+    #expect(savedPath == nil)
   }
 }

@@ -160,6 +160,19 @@ struct PickerSaveImageToPathOperationTests {
     #expect(savedError?.message == "Could not decode image data.")
   }
 
+  @Test func saveImageFailsWhenScaledImageIsEmpty() async throws {
+    // A maxWidth of 0 is accepted by the Dart API but scales the image to nothing, so no image
+    // data can be encoded.
+    let result = try pickerItem(forResource: "jpgImage", ext: "jpg")
+    let (savedPath, savedError) = try await runSaveOperation(
+      result: result, maxWidth: 0, fullMetadata: true)
+    let savedData = savedPath.flatMap { FileManager.default.contents(atPath: $0) }
+    #expect(savedPath == nil, "Returned a path to a \(savedData?.count ?? 0)-byte file.")
+    #expect(savedError?.code == "invalid_image")
+    #expect(savedError?.message == "Could not save the image.")
+    if let savedPath { try? FileManager.default.removeItem(atPath: savedPath) }
+  }
+
   @Test func initWithNilResultReturnsNil() {
     let operation = FLTPHPickerSaveImageToPathOperation(
       result: nil,
