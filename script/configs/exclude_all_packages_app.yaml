@@ -13,6 +13,15 @@
 # on it must be updated to support the new changes.
 # See https://github.com/flutter/flutter/issues/193154
 - cross_file
+- file_selector
+- file_selector_android
+- file_selector_ios
+- file_selector_linux
+- file_selector_macos
+- file_selector_platform_interface
+- file_selector_web
+- file_selector_windows
+
 # This is a permanent entry, as it should never be a direct app dependency.
 - plugin_platform_interface
 # An application cannot depend directly on multiple federated implementations

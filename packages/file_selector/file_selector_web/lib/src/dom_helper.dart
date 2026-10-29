@@ -5,6 +5,7 @@
 import 'dart:async';
 import 'dart:js_interop';
 
+import 'package:cross_file_web/cross_file_web.dart';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:flutter/services.dart';
@@ -67,11 +68,6 @@ class DomHelper {
     return completer.future;
   }
 
-  XFile _convertFileToXFile(File file) => XFile(
-    mimeType: file.type,
-    URL.createObjectURL(file),
-    name: file.name,
-    length: file.size,
-    lastModified: DateTime.fromMillisecondsSinceEpoch(file.lastModified),
-  );
+  XFile _convertFileToXFile(File file) =>
+      ScopedStorageXFile.fromCreationParams(WebScopedStorageXFileCreationParams.fromBlob(file));
 }

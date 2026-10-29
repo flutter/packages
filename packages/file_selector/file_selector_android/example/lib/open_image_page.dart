@@ -7,7 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 /// Screen that allows the user to select an image file using
-/// `openFiles`, then displays the selected images in a gallery dialog.
+/// `openFile`, then displays the selected images in a gallery dialog.
 class OpenImagePage extends StatelessWidget {
   /// Default Constructor
   const OpenImagePage({super.key});
@@ -18,20 +18,21 @@ class OpenImagePage extends StatelessWidget {
       extensions: <String>['jpg', 'png'],
       uniformTypeIdentifiers: <String>['public.image'],
     );
-    final XFile? file = await FileSelectorPlatform.instance.openFile(
-      acceptedTypeGroups: <XTypeGroup>[typeGroup],
+    final XFile? file = await FileSelectorPlatform.instance!.openFile(
+      options: const OpenFileDialogOptions(acceptedTypeGroups: <XTypeGroup>[typeGroup]),
     );
     if (file == null) {
       // Operation was canceled by the user.
       return;
     }
 
+    final String? name = await file.name();
     final Uint8List bytes = await file.readAsBytes();
 
     if (context.mounted) {
       await showDialog<void>(
         context: context,
-        builder: (BuildContext context) => ImageDisplay(file.path, bytes),
+        builder: (BuildContext context) => ImageDisplay(name ?? 'Unknown Filename', bytes),
       );
     }
   }
@@ -62,10 +63,10 @@ class OpenImagePage extends StatelessWidget {
 /// Widget that displays an image in a dialog.
 class ImageDisplay extends StatelessWidget {
   /// Default Constructor.
-  const ImageDisplay(this.filePath, this.bytes, {super.key});
+  const ImageDisplay(this.fileName, this.bytes, {super.key});
 
-  /// The path to the selected file.
-  final String filePath;
+  /// The name of the selected file.
+  final String fileName;
 
   /// The bytes of the selected file.
   final Uint8List bytes;
@@ -73,7 +74,7 @@ class ImageDisplay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(key: const Key('result_image_name'), filePath),
+      title: Text(key: const Key('result_image_name'), fileName),
       content: Image.memory(bytes),
       actions: <Widget>[
         TextButton(

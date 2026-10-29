@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
 import 'package:file_selector_ios/file_selector_ios.dart';
 import 'package:file_selector_ios/src/messages.g.dart';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
@@ -11,6 +12,8 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+
+  CrossFilePlatform.instance = CrossFileTest();
 
   late FakeFileSelectorApi api;
   late FileSelectorIOS plugin;
@@ -46,7 +49,9 @@ void main() {
         webWildCards: <String>['image/*'],
       );
 
-      await plugin.openFile(acceptedTypeGroups: <XTypeGroup>[group, groupTwo]);
+      await plugin.openFile(
+        options: const OpenFileDialogOptions(acceptedTypeGroups: <XTypeGroup>[group, groupTwo]),
+      );
 
       // iOS only accepts uniformTypeIdentifiers.
       expect(listEquals(api.passedConfig?.utis, <String>['public.text', 'public.image']), isTrue);
@@ -56,7 +61,9 @@ void main() {
       const group = XTypeGroup(label: 'images', webWildCards: <String>['images/*']);
 
       await expectLater(
-        plugin.openFile(acceptedTypeGroups: <XTypeGroup>[group]),
+        plugin.openFile(
+          options: const OpenFileDialogOptions(acceptedTypeGroups: <XTypeGroup>[group]),
+        ),
         throwsArgumentError,
       );
     });
@@ -69,7 +76,12 @@ void main() {
     test('correctly handles a wildcard group', () async {
       const group = XTypeGroup(label: 'text');
 
-      await expectLater(plugin.openFile(acceptedTypeGroups: <XTypeGroup>[group]), completes);
+      await expectLater(
+        plugin.openFile(
+          options: const OpenFileDialogOptions(acceptedTypeGroups: <XTypeGroup>[group]),
+        ),
+        completes,
+      );
       expect(listEquals(api.passedConfig?.utis, <String>['public.data']), isTrue);
     });
   });
@@ -95,7 +107,9 @@ void main() {
         webWildCards: <String>['image/*'],
       );
 
-      await plugin.openFiles(acceptedTypeGroups: <XTypeGroup>[group, groupTwo]);
+      await plugin.openFiles(
+        options: const OpenFilesDialogOptions(acceptedTypeGroups: <XTypeGroup>[group, groupTwo]),
+      );
 
       expect(listEquals(api.passedConfig?.utis, <String>['public.text', 'public.image']), isTrue);
       expect(api.passedConfig?.allowMultiSelection, isTrue);
@@ -105,7 +119,9 @@ void main() {
       const group = XTypeGroup(label: 'images', webWildCards: <String>['images/*']);
 
       await expectLater(
-        plugin.openFiles(acceptedTypeGroups: <XTypeGroup>[group]),
+        plugin.openFiles(
+          options: const OpenFilesDialogOptions(acceptedTypeGroups: <XTypeGroup>[group]),
+        ),
         throwsArgumentError,
       );
     });
@@ -118,7 +134,12 @@ void main() {
     test('correctly handles a wildcard group', () async {
       const group = XTypeGroup(label: 'text');
 
-      await expectLater(plugin.openFiles(acceptedTypeGroups: <XTypeGroup>[group]), completes);
+      await expectLater(
+        plugin.openFiles(
+          options: const OpenFilesDialogOptions(acceptedTypeGroups: <XTypeGroup>[group]),
+        ),
+        completes,
+      );
       expect(listEquals(api.passedConfig?.utis, <String>['public.data']), isTrue);
     });
   });
@@ -143,3 +164,5 @@ class FakeFileSelectorApi implements FileSelectorApi {
   // ignore: non_constant_identifier_names
   String get pigeonVar_messageChannelSuffix => '';
 }
+
+final class CrossFileTest extends CrossFilePlatform {}

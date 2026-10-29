@@ -1,5 +1,8 @@
-## NEXT
+## 0.10.0
 
+* **Breaking Changes**
+  * Updates `file_selector_platform_interface` to `3.0.0`.
+  * Updates `web` dependency to `1.0.0`.
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 
 ## 0.9.5

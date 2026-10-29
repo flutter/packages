@@ -1,3 +1,11 @@
+## 0.6.0
+
+* **Breaking Changes**
+  * Updates `file_selector_platform_interface` to `3.0.0`.
+  * Changes `openFile`, `openFiles`, and `getDirectory` to return a content URI. File access
+    now requires a native `ContentProvider` and is provided by using `ScopedStorageXFile` and
+    `ScopedStorageXDirectory`.
+
 ## 0.5.2+12
 
 * Updates Robolectric to 4.17 and adds the JVM arguments it requires for unit tests.

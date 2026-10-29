@@ -13,27 +13,6 @@ import 'package:pigeon/pigeon.dart';
     copyrightHeader: 'pigeons/copyright.txt',
   ),
 )
-enum FileSelectorExceptionCode {
-  securityException, // unused
-  ioException, // unused
-  illegalArgumentException,
-  illegalStateException, //unused
-}
-
-class FileSelectorNativeException {
-  late final FileSelectorExceptionCode fileSelectorExceptionCode;
-  late final String message;
-}
-
-class FileResponse {
-  late final String path;
-  late final String? mimeType;
-  late final String? name;
-  late final int size;
-  late final Uint8List bytes;
-  late final FileSelectorNativeException? fileSelectorNativeException;
-}
-
 class FileTypes {
   late List<String> mimeTypes;
   late List<String> extensions;
@@ -46,12 +25,12 @@ abstract class FileSelectorApi {
   ///
   /// Returns `null` if user cancels the operation.
   @async
-  FileResponse? openFile(String? initialDirectory, FileTypes allowedTypes);
+  String? openFile(String? initialDirectory, FileTypes allowedTypes);
 
   /// Opens a file dialog for loading files and returns a list of file responses
   /// chosen by the user.
   @async
-  List<FileResponse> openFiles(String? initialDirectory, FileTypes allowedTypes);
+  List<String> openFiles(String? initialDirectory, FileTypes allowedTypes);
 
   /// Opens a file dialog for loading directories and returns a directory path.
   ///
