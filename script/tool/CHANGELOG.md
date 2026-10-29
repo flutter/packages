@@ -1,4 +1,4 @@
-## NEXT
+## 0.14.4+4
 
 * Exempts `test_apps/` from requiring version and changelog changes.
 * Fixes `dart-test --package-tags` not matching any packages when the
@@ -10,9 +10,6 @@
   entries, or in files other than Dart files in `lib/`.
 * Updates `publish` to refuse to publish packages containing `{{NEXT_VERSION}}`
   placeholders.
-
-## 0.14.4+4
-
 * Uses `flutter pub` instead of `dart pub` for non-Flutter packages that depend
   on `jni`.
   
