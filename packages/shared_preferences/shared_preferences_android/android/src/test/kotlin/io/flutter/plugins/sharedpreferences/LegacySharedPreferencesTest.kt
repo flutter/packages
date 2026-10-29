@@ -40,6 +40,30 @@ class LegacySharedPreferencesTest {
   }
 
   @Test
+  fun onAttachedToEngine_doesNotEagerlyInitializePreferences(): Unit = runBlocking {
+    val mockContext = Mockito.mock(Context::class.java)
+    val binding = Mockito.mock(FlutterPluginBinding::class.java)
+    Mockito.`when`(binding.applicationContext).thenReturn(mockContext)
+    Mockito.`when`(
+            mockContext.getSharedPreferences(
+                ArgumentMatchers.anyString(), ArgumentMatchers.anyInt()))
+        .thenReturn(FakeSharedPreferences())
+
+    val testPlugin = LegacySharedPreferencesPlugin(ListEncoder())
+    testPlugin.onAttachedToEngine(binding)
+
+    // SharedPreferences should not be fetched during onAttachedToEngine to avoid main-thread disk
+    // I/O.
+    Mockito.verify(mockContext, Mockito.never())
+        .getSharedPreferences(ArgumentMatchers.anyString(), ArgumentMatchers.anyInt())
+
+    // First call to any API method lazily initializes preferences.
+    testPlugin.getAll("", null)
+    Mockito.verify(mockContext, Mockito.times(1))
+        .getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
+  }
+
+  @Test
   fun getAll() = runBlocking {
     assertEquals(0, plugin.getAll("", null).size)
 
