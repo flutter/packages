@@ -166,15 +166,11 @@ abstract class InAppPurchasePlatform extends PlatformInterface {
   /// > On Android, If you do not call [completePurchase] for a transaction on Android, Google Play
   /// > will automatically refund and revoke the purchase after 3 days.
   ///
-  /// The method will throw a [PurchaseException] when the purchase could not be
-  /// finished. Depending on the [PurchaseException.errorCode] the developer
-  /// should try to complete the purchase via this method again, or retry the
-  /// [completePurchase] method at a later time. If the
-  /// [PurchaseException.errorCode] indicates you should not retry there might
-  /// be some issue with the app's code or the configuration of the app in the
-  /// respective store. The developer is responsible to fix this issue. The
-  /// [PurchaseException.message] field might provide more information on what
-  /// went wrong.
+  /// There is no shared exception type for a failed [completePurchase] call, so
+  /// errors are platform specific. On Android the returned future completes with
+  /// a `BillingResultWrapper` from `in_app_purchase_android`, and a failure is
+  /// reported through its `responseCode` instead of being thrown. On iOS and
+  /// macOS a failure reported by StoreKit is thrown as a `PlatformException`.
   Future<void> completePurchase(PurchaseDetails purchase) =>
       throw UnimplementedError('completePurchase() has not been implemented.');
 
