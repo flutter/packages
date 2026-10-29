@@ -16,7 +16,7 @@ import UniformTypeIdentifiers
   @testable import image_picker_ios_objc
 #endif
 
-final class StubViewProvider: NSObject, FIPViewProvider {
+final class StubViewProvider: ViewProvider {
   var viewController: UIViewController?
 
   init(viewController: UIViewController? = nil) {
@@ -24,7 +24,7 @@ final class StubViewProvider: NSObject, FIPViewProvider {
   }
 }
 
-/// Minimal `FlutterPluginRegistrar` so tests can exercise `FIPDefaultViewProvider`.
+/// Minimal `FlutterPluginRegistrar` so tests can exercise `DefaultViewProvider`.
 final class TestFlutterPluginRegistrar: NSObject, FlutterPluginRegistrar {
   var viewController: UIViewController?
 
@@ -153,14 +153,9 @@ final class FakePhotoLibraryPermissionChecker: NSObject, PhotoLibraryPermissionC
 }
 
 /// A `PickerItem` stand-in that does not require constructing a `PHPickerResult`.
-final class FakePickerItem: NSObject, PickerItem {
+struct FakePickerItem: PickerItem {
   let itemProvider: NSItemProvider
   let assetIdentifier: String?
-
-  init(itemProvider: NSItemProvider, assetIdentifier: String?) {
-    self.itemProvider = itemProvider
-    self.assetIdentifier = assetIdentifier
-  }
 }
 
 final class RecordingPHPickerCreator: NSObject, PHPickerCreating {
