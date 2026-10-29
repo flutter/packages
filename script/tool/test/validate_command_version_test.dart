@@ -1748,10 +1748,7 @@ void foo() {}
           output,
           containsAllInOrder(<Matcher>[
             allOf(
-              contains(
-                '{{NEXT_VERSION}} placeholders are only replaced automatically '
-                'in Dart files in lib/.',
-              ),
+              contains('{{NEXT_VERSION}} placeholders are only supported in Dart files in lib/.'),
               contains('README.md'),
               contains('example/lib/main.dart'),
               contains('pending_changelogs/a.yaml'),
@@ -1835,7 +1832,9 @@ packages/package/pubspec.yaml
           output,
           containsAllInOrder(<Matcher>[
             allOf(
-              contains('There are no pending changelog entries'),
+              contains(
+                'Using {{NEXT_VERSION}} is only allowed in PRs with a pending changelog entry.',
+              ),
               contains('  lib/package.dart'),
             ),
             contains('Unreplaced {{NEXT_VERSION}} placeholder.'),
