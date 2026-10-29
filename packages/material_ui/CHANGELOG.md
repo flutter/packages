@@ -1,3 +1,7 @@
+## 1.8.1
+
+- Fixes `showModalBottomSheet(useSafeArea: true)` incorrectly applying opposite sub-screen safe area padding on display-feature sub-screens.
+
 ## 1.8.0
 
 - Adds `RoundedPolygon` and `CornerRounding` for creating rounded polygonal shapes.
