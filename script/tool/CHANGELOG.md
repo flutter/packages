@@ -6,8 +6,8 @@
 * Updates `branches-for-batch-release` to replace `{{NEXT_VERSION}}`
   placeholders in Dart files in `lib/` with the new release version.
 * Updates `validate` to fail if `{{NEXT_VERSION}}` placeholders are present in
-  packages that don't use batch release, or in files other than Dart files in
-  `lib/`.
+  packages that don't use batch release, in packages without pending changelog
+  entries, or in files other than Dart files in `lib/`.
 * Updates `publish` to refuse to publish packages containing `{{NEXT_VERSION}}`
   placeholders.
 

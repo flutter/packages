@@ -1681,6 +1681,10 @@ release:
   batch: true
 ''');
         package.pendingChangelogsDirectory.createSync();
+        package.pendingChangelogsDirectory.childFile('a.yaml').writeAsStringSync('''
+changelog: Deprecates foo.
+version: minor
+''');
         package.libDirectory.childFile('package.dart').writeAsStringSync('''
 @Deprecated('Deprecated in v{{NEXT_VERSION}}.')
 void foo() {}
@@ -1783,7 +1787,7 @@ void foo() {}
         expect(output, containsAllInOrder(<Matcher>[contains('No issues found!')]));
       });
 
-      test('allows version placeholders in lib/ in batch release override PR', () async {
+      test('fails for version placeholders in lib/ in batch release PR', () async {
         final RepositoryPackage package = createFakePackage(
           'package',
           packagesDir,
@@ -1798,6 +1802,70 @@ release:
 ## 1.1.0
 
 * Deprecates foo.
+''');
+        package.libDirectory.childFile('package.dart').writeAsStringSync('''
+@Deprecated('Deprecated in v{{NEXT_VERSION}}.')
+void foo() {}
+''');
+        gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+          FakeProcessInfo(
+            MockProcess(
+              stdout: '''
+packages/package/CHANGELOG.md
+packages/package/pubspec.yaml
+''',
+            ),
+          ),
+        ];
+        gitProcessRunner.mockProcessesForExecutable['git-show'] = <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
+        ];
+
+        Error? commandError;
+        final List<String> output = await runCapturingPrint(
+          runner,
+          <String>['validate', '--base-sha=main', '--pr-labels=override: batch-package'],
+          errorHandler: (Error e) {
+            commandError = e;
+          },
+        );
+
+        expect(commandError, isA<ToolExit>());
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            allOf(
+              contains('There are no pending changelog entries'),
+              contains('  lib/package.dart'),
+            ),
+            contains('Unreplaced {{NEXT_VERSION}} placeholder.'),
+          ]),
+        );
+      });
+
+      test('allows version placeholders in lib/ in batch release sync PR with pending '
+          'changelogs', () async {
+        // The PR syncing a release branch back to main also uses the
+        // override: batch-<package> label, and may contain placeholders added
+        // to main since the release, along with their pending changelogs.
+        final RepositoryPackage package = createFakePackage(
+          'package',
+          packagesDir,
+          version: '1.1.0',
+        );
+        package.ciConfigFile.writeAsStringSync('''
+release:
+  batch: true
+''');
+        package.pendingChangelogsDirectory.createSync();
+        package.pendingChangelogsDirectory.childFile('a.yaml').writeAsStringSync('''
+changelog: Deprecates foo.
+version: minor
+''');
+        package.changelogFile.writeAsStringSync('''
+## 1.1.0
+
+* Adds bar.
 ''');
         package.libDirectory.childFile('package.dart').writeAsStringSync('''
 @Deprecated('Deprecated in v{{NEXT_VERSION}}.')

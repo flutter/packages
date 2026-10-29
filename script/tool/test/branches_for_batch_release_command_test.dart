@@ -660,10 +660,70 @@ void foo() {}
           ], null),
         ),
       );
+      expect(
+        processRunner.recordedCalls,
+        orderedEquals(<ProcessCall>[
+          ProcessCall('dart', const <String>['pub', 'get'], package.path),
+          ProcessCall('dart', const <String>[
+            'format',
+            '/packages/a_package/lib/a_package.dart',
+            '/packages/a_package/lib/src/impl.dart',
+          ], package.path),
+        ]),
+      );
+    });
+
+    test('does not format when there are no version placeholders', () async {
+      final RepositoryPackage package = createTestPackage();
+      addTearDown(() {
+        package.directory.deleteSync(recursive: true);
+      });
+      package.libDirectory.childFile('a_package.dart')
+        ..createSync(recursive: true)
+        ..writeAsStringSync('void foo() {}\n');
+      createPendingChangelogFile(package, 'a.yaml', '''
+changelog: A change.
+version: minor
+''');
+
+      await runBatchCommand();
+
+      expect(processRunner.recordedCalls, isEmpty);
     });
   });
 
   group('error handling', () {
+    test('throws when formatting fails', () async {
+      final RepositoryPackage package = createTestPackage();
+      addTearDown(() {
+        package.directory.deleteSync(recursive: true);
+      });
+      package.libDirectory.childFile('a_package.dart')
+        ..createSync(recursive: true)
+        ..writeAsStringSync('// Since {{NEXT_VERSION}}.\n');
+      createPendingChangelogFile(package, 'a.yaml', '''
+changelog: A change.
+version: minor
+''');
+      processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(), <String>['pub', 'get']),
+        FakeProcessInfo(MockProcess(exitCode: 1, stderr: 'format error'), <String>['format']),
+      ];
+
+      Error? commandError;
+      final List<String> output = await runBatchCommand(
+        errorHandler: (Error e) {
+          commandError = e;
+        },
+      );
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[contains('Failed to format files: format error')]),
+      );
+    });
+
     test('throw when git-checkout fails', () async {
       final RepositoryPackage package = createTestPackage();
       addTearDown(() {

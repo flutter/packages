@@ -14,11 +14,13 @@ import 'common/core.dart';
 import 'common/file_utils.dart';
 import 'common/output_utils.dart';
 import 'common/package_command.dart';
+import 'common/pub_utils.dart';
 import 'common/repository_package.dart';
 import 'common/version_placeholder.dart';
 
 const int _kExitPackageMalformed = 3;
 const int _kGitFailedToPush = 4;
+const int _kFormatFailed = 5;
 
 /// A command to create remote branches with release changes for a single package.
 class BranchesForBatchReleaseCommand extends PackageCommand {
@@ -250,8 +252,31 @@ class BranchesForBatchReleaseCommand extends PackageCommand {
       for (final file in modifiedFiles) {
         print('    ${relativePosixPath(file, from: package.directory, platformContext: path)}');
       }
+      await _formatDartFiles(package, modifiedFiles);
     }
     return modifiedFiles;
+  }
+
+  /// Runs `dart format` on [files] in [package].
+  ///
+  /// Replacing [nextVersionPlaceholder] with a (shorter) version can allow
+  /// lines that were previously split to fit on one line, which would fail the
+  /// format check on the release PR.
+  Future<void> _formatDartFiles(RepositoryPackage package, List<File> files) async {
+    // The formatter's behavior depends on the package's language version, so
+    // make sure it has been resolved.
+    if (!await runPubGet(package, processRunner, platform)) {
+      printError('Unable to fetch dependencies for ${package.displayName}.');
+      throw ToolExit(_kFormatFailed);
+    }
+    final io.ProcessResult formatResult = await processRunner.run('dart', <String>[
+      'format',
+      ...files.map((File f) => f.path),
+    ], workingDir: package.directory);
+    if (formatResult.exitCode != 0) {
+      printError('Failed to format files: ${formatResult.stderr}');
+      throw ToolExit(_kFormatFailed);
+    }
   }
 
   void _updatePubspec(RepositoryPackage package, Version newVersion) {
