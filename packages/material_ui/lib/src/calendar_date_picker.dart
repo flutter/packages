@@ -370,20 +370,20 @@ class _CalendarDatePickerState extends State<CalendarDatePicker> {
 
     final int daysInMonth = widget.calendarDelegate.getDaysInMonth(value.year, value.month);
     final int preferredDay = math.min(_selectedDate?.day ?? 1, daysInMonth);
-    value = widget.calendarDelegate.getDay(value.year, value.month, preferredDay);
+    DateTime effectiveValue = widget.calendarDelegate.getDay(value.year, value.month, preferredDay);
 
-    if (value.isBefore(widget.firstDate)) {
-      value = widget.firstDate;
-    } else if (value.isAfter(widget.lastDate)) {
-      value = widget.lastDate;
+    if (effectiveValue.isBefore(widget.firstDate)) {
+      effectiveValue = widget.firstDate;
+    } else if (effectiveValue.isAfter(widget.lastDate)) {
+      effectiveValue = widget.lastDate;
     }
 
     setState(() {
       _mode = DatePickerMode.day;
-      _handleMonthChanged(value);
+      _handleMonthChanged(effectiveValue);
 
-      if (_isSelectable(value)) {
-        _selectedDate = value;
+      if (_isSelectable(effectiveValue)) {
+        _selectedDate = effectiveValue;
         widget.onDateChanged(_selectedDate!);
       }
     });
@@ -919,15 +919,16 @@ class _MonthPickerState extends State<_MonthPicker> {
   };
 
   int _dayDirectionOffset(TraversalDirection traversalDirection, TextDirection textDirection) {
+    var effectiveTraversalDirection = traversalDirection;
     // Swap left and right if the text direction if RTL
     if (textDirection == TextDirection.rtl) {
       if (traversalDirection == TraversalDirection.left) {
-        traversalDirection = TraversalDirection.right;
+        effectiveTraversalDirection = TraversalDirection.right;
       } else if (traversalDirection == TraversalDirection.right) {
-        traversalDirection = TraversalDirection.left;
+        effectiveTraversalDirection = TraversalDirection.left;
       }
     }
-    return _directionOffset[traversalDirection]!;
+    return _directionOffset[effectiveTraversalDirection]!;
   }
 
   DateTime? _nextDateInDirection(DateTime date, TraversalDirection direction) {
