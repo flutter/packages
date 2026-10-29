@@ -322,6 +322,4 @@
 
 ## 2.2.17
 
-## 2.12.3
-* Converts internal event channel implementation to Swift.
 * Splits from `video_player` as a federated implementation.
