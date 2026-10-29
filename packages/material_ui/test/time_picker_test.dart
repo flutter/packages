@@ -2464,7 +2464,7 @@ void main() {
         await finishPicker(tester);
         expect(result, equals(const TimeOfDay(hour: 6, minute: 45)));
       });
-    }, skip: kIsWeb); // https://github.com/flutter/flutter/issues/33615
+    }, skip: kIsWeb); // [intended] PluginUtilities is not supported on the web.
 
     group('Time picker - emptyInitialInput (${materialType.name})', () {
       testWidgets('Fields are empty and show correct hints when emptyInitialInput is true', (
