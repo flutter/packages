@@ -132,6 +132,10 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// The flash mode currently configured for [imageCapture].
   CameraXFlashMode? _currentFlashMode;
 
+  /// The flash mode last applied to [imageCapture], so that [takePicture]
+  /// only calls `setFlashMode` when it would change.
+  CameraXFlashMode? _appliedFlashMode;
+
   /// Whether or not torch flash mode has been enabled for the [camera].
   @visibleForTesting
   bool torchEnabled = false;
@@ -419,6 +423,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     _flutterSurfaceTextureId = await preview!.setSurfaceProvider(systemServicesManager);
 
     // Configure ImageCapture instance.
+    _appliedFlashMode = null;
     imageCapture = ImageCapture(
       resolutionSelector: _presetResolutionSelector,
       /* use CameraX default target rotation */ targetRotation: await deviceOrientationManager
@@ -1031,13 +1036,13 @@ class AndroidCameraCameraX extends CameraPlatform {
   @override
   Future<XFile> takePicture(int cameraId) async {
     await _bindUseCaseToLifecycle(imageCapture!, cameraId);
-    // Set flash mode.
-    if (_currentFlashMode != null) {
-      await imageCapture!.setFlashMode(_currentFlashMode!);
-    } else if (torchEnabled) {
-      // Ensure any previously set flash modes are unset when torch mode has
-      // been enabled.
-      await imageCapture!.setFlashMode(CameraXFlashMode.off);
+    // Set flash mode. When torch mode has been enabled, ensure any previously
+    // set flash modes are unset.
+    final CameraXFlashMode? flashMode =
+        _currentFlashMode ?? (torchEnabled ? CameraXFlashMode.off : null);
+    if (flashMode != null && flashMode != _appliedFlashMode) {
+      await imageCapture!.setFlashMode(flashMode);
+      _appliedFlashMode = flashMode;
     }
 
     // Set target rotation to the current default CameraX rotation if
@@ -1151,6 +1156,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     // Preserve locked orientation if set, otherwise use default display rotation.
     final int targetRotation =
         _lockedCaptureOrientation ?? await deviceOrientationManager.getDefaultDisplayRotation();
+    _appliedFlashMode = null;
     imageCapture = ImageCapture(
       resolutionSelector: _presetResolutionSelector,
       targetRotation: targetRotation,
