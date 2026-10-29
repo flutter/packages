@@ -239,11 +239,6 @@ class _FfiType extends _NativeInteropType<_FfiType> {
     return _NativeInteropType.fromClass<_FfiType>(classDefinition, _FfiType.new);
   }
 
-  /// Constructs an [_FfiType] representing a user-defined Pigeon [enumDefinition].
-  static _FfiType fromEnum(Enum enumDefinition) {
-    return _NativeInteropType.fromEnum<_FfiType>(enumDefinition, _FfiType.new);
-  }
-
   /// Returns the corresponding Objective-C/FFI class or bridge type name.
   ///
   /// If [withPrefix] is true (default), types defined in the bridge module include the bridge namespace prefix (`$_ffiBridgePrefix.`).
@@ -871,12 +866,6 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
           if (generatorOptions.useJni) {
             indent.newln();
           }
-          final _FfiType ffiType = _FfiType.fromEnum(anEnum);
-          indent.writeScoped('${ffiType.getFfiName()} toFfi() {', '}', () {
-            indent.writeln('return _PigeonFfiCodec.writeValue<NSNumber>(index);');
-          });
-
-          indent.newln();
           indent.writeScoped('NSNumber toNSNumber() {', '}', () {
             indent.writeln('return NSNumber.alloc().initWithLong(index);');
           });

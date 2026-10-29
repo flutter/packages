@@ -1048,10 +1048,6 @@ extension _PigeonInternalNativeInteropAnEnumNativeInterop on NativeInteropAnEnum
     return jniEnum == null ? null : NativeInteropAnEnum.values[jniEnum.raw];
   }
 
-  NSNumber toFfi() {
-    return _PigeonFfiCodec.writeValue<NSNumber>(index);
-  }
-
   NSNumber toNSNumber() {
     return NSNumber.alloc().initWithLong(index);
   }
@@ -1068,10 +1064,6 @@ extension _PigeonInternalNativeInteropAnotherEnumNativeInterop on NativeInteropA
 
   static NativeInteropAnotherEnum? fromJni(jni_bridge.NativeInteropAnotherEnum? jniEnum) {
     return jniEnum == null ? null : NativeInteropAnotherEnum.values[jniEnum.raw];
-  }
-
-  NSNumber toFfi() {
-    return _PigeonFfiCodec.writeValue<NSNumber>(index);
   }
 
   NSNumber toNSNumber() {
