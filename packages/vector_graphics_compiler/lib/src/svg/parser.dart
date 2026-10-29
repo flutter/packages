@@ -2112,12 +2112,10 @@ class DoubleOrPercentage {
     if (isPercentage(raw)) {
       return DoubleOrPercentage._(parsePercentage(raw), _DoubleOrPercentageUnit.percentage);
     }
-    final String trimmed = raw.trim().toLowerCase();
-    final bool isEm = trimmed.endsWith('em') && !trimmed.endsWith('rem');
-    return DoubleOrPercentage._(
-      parseDouble(trimmed)!,
-      isEm ? _DoubleOrPercentageUnit.em : _DoubleOrPercentageUnit.pixels,
-    );
+    if (isEm(raw)) {
+      return DoubleOrPercentage._(parseEm(raw), _DoubleOrPercentageUnit.em);
+    }
+    return DoubleOrPercentage._(parseDouble(raw)!, _DoubleOrPercentageUnit.pixels);
   }
 
   final double _value;
