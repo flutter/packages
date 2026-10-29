@@ -2548,7 +2548,7 @@ void main() {
 
     expect(testWidth, equals(largestWidth));
     expect(widths.indexOf(largestWidth), equals(1));
-  }, skip: isBrowser); // https://github.com/flutter/flutter/issues/39998
+  });
 
   test('showTimeSeparator is only supported in time or dateAndTime mode', () async {
     expect(

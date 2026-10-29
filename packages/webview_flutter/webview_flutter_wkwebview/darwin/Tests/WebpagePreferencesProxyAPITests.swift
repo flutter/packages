@@ -9,6 +9,7 @@ import WebKit
 @testable import webview_flutter_wkwebview
 
 @Suite struct WebpagePreferencesProxyAPITests {
+  @available(iOS 14.0, macOS 11.0, *)
   @MainActor @Test func setAllowsContentJavaScript() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKWebpagePreferences(registrar)

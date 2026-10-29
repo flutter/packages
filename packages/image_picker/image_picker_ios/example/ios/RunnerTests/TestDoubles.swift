@@ -12,7 +12,11 @@ import UniformTypeIdentifiers
 
 @testable import image_picker_ios
 
-final class StubViewProvider: NSObject, FIPViewProvider {
+#if canImport(image_picker_ios_objc)
+  @testable import image_picker_ios_objc
+#endif
+
+final class StubViewProvider: ViewProvider {
   var viewController: UIViewController?
 
   init(viewController: UIViewController? = nil) {
@@ -20,7 +24,7 @@ final class StubViewProvider: NSObject, FIPViewProvider {
   }
 }
 
-/// Minimal `FlutterPluginRegistrar` so tests can exercise `FIPDefaultViewProvider`.
+/// Minimal `FlutterPluginRegistrar` so tests can exercise `DefaultViewProvider`.
 final class TestFlutterPluginRegistrar: NSObject, FlutterPluginRegistrar {
   var viewController: UIViewController?
 
@@ -104,12 +108,12 @@ final class FakeCameraPermissionChecker: NSObject, CameraPermissionChecking {
   /// not-determined → granted/denied can be tested separately.
   var requestAccessGranted = false
 
-  func authorizationStatus(forMediaType mediaType: AVMediaType) -> AVAuthorizationStatus {
+  func authorizationStatus(for mediaType: AVMediaType) -> AVAuthorizationStatus {
     status
   }
 
   func requestAccess(
-    forMediaType mediaType: AVMediaType,
+    for mediaType: AVMediaType,
     completionHandler handler: @escaping @Sendable (Bool) -> Void
   ) {
     requestAccessCallCount += 1
@@ -137,21 +141,16 @@ final class FakePhotoLibraryPermissionChecker: NSObject, PhotoLibraryPermissionC
 }
 
 /// A `PickerItem` stand-in that does not require constructing a `PHPickerResult`.
-final class FakePickerItem: NSObject, PickerItem {
+struct FakePickerItem: PickerItem {
   let itemProvider: NSItemProvider
   let assetIdentifier: String?
-
-  init(itemProvider: NSItemProvider, assetIdentifier: String?) {
-    self.itemProvider = itemProvider
-    self.assetIdentifier = assetIdentifier
-  }
 }
 
 final class RecordingPHPickerCreator: NSObject, PHPickerCreating {
-  private(set) var lastConfiguration: __PHPickerConfiguration?
+  private(set) var lastConfiguration: PHPickerConfiguration?
   var picker = PHPickerViewController(configuration: PHPickerConfiguration())
 
-  func makePicker(configuration: __PHPickerConfiguration) -> PHPickerViewController {
+  func makePicker(configuration: PHPickerConfiguration) -> PHPickerViewController {
     lastConfiguration = configuration
     return picker
   }

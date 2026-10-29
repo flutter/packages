@@ -29,13 +29,17 @@ class LegacySharedPreferencesPlugin
 @VisibleForTesting
 internal constructor(private val listEncoder: SharedPreferencesListEncoder) :
     FlutterPlugin, SharedPreferencesApi {
-  private lateinit var preferences: SharedPreferences
+  private lateinit var context: Context
+  private val preferences: SharedPreferences by lazy {
+    context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
+  }
+
   private val backgroundDispatcher = Dispatchers.IO.limitedParallelism(1)
 
   constructor() : this(ListEncoder())
 
   private fun setUp(context: Context) {
-    preferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
+    this.context = context
     try {
       SharedPreferencesApiRegistrar().register(this)
     } catch (ex: Exception) {

@@ -1,7 +1,11 @@
-## 0.7.6+1
+## 0.7.6+2
 
 * Fixes camera preview rotating 90 degrees when recording video while streaming
   images.
+
+## 0.7.6+1
+
+* Fixes video recording duration discrepancy by waiting for the first recorded frame before completing `startVideoCapturing`, and validates errors on `stopVideoRecording`.
 
 ## 0.7.6
 

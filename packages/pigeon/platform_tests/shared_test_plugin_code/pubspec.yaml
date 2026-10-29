@@ -19,7 +19,7 @@ dependencies:
     sdk: flutter
   integration_test:
     sdk: flutter
-  jni: ^1.1.0
+  jni: ^1.1.1
   meta: ^1.17.0
   mockito: ^5.4.4
   objective_c: ^9.6.2

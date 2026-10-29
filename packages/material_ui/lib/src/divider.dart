@@ -133,7 +133,8 @@ class Divider extends StatelessWidget {
   /// The color to use when painting the line.
   ///
   /// If this is null, then the [DividerThemeData.color] is used. If that is
-  /// also null, then [ThemeData.dividerColor] is used.
+  /// also null, then this defaults to [ColorScheme.outlineVariant], or to
+  /// [ThemeData.dividerColor] if [ThemeData.useMaterial3] is false.
   /// {@endtemplate}
   ///
   /// <callout-box>
@@ -323,10 +324,7 @@ class VerticalDivider extends StatelessWidget {
   /// also null, then this defaults to 0.0.
   final double? endIndent;
 
-  /// The color to use when painting the line.
-  ///
-  /// If this is null, then the [DividerThemeData.color] is used. If that is
-  /// also null, then [ThemeData.dividerColor] is used.
+  /// {@macro material_ui.Divider.color}
   ///
   /// <callout-box>
   ///

@@ -12714,7 +12714,8 @@ void main() {
       // Cursor move doesn't trigger a toolbar initially.
       _expectNoMaterialToolbar();
 
-      await gesture.moveBy(const Offset(100, 0));
+      // Drag into the middle of 'Bonaventure'.
+      await gesture.moveTo(textOffsetToPosition(tester, 30));
       await tester.pump();
 
       // The selection is now moved with the drag.
@@ -12722,8 +12723,8 @@ void main() {
       // Still no toolbar.
       _expectNoMaterialToolbar();
 
-      // The selection is moved on a backwards drag.
-      await gesture.moveBy(const Offset(-200, 0));
+      // The selection is moved on a backwards drag into the middle of 'Peel'.
+      await gesture.moveTo(textOffsetToPosition(tester, 10));
       await tester.pump();
 
       // The selection is now moved with the drag.
@@ -12731,7 +12732,8 @@ void main() {
       // Still no toolbar.
       _expectNoMaterialToolbar();
 
-      await gesture.moveBy(const Offset(-100, 0));
+      // Drag into the middle of 'Atwater'.
+      await gesture.moveTo(textOffsetToPosition(tester, 3));
       await tester.pump();
 
       // The selection is now moved with the drag.
@@ -12750,7 +12752,7 @@ void main() {
     variant: TargetPlatformVariant.all(
       excluding: <TargetPlatform>{TargetPlatform.iOS, TargetPlatform.macOS},
     ),
-    skip: isContextMenuProvidedByPlatform, // [intended] only applies to platforms where we supply the context menu.
+    tags: 'reduced-web-test-set',
   );
 
   testWidgets(

@@ -30,47 +30,51 @@ void main() {
     await testDir.delete(recursive: true);
   });
 
-  final presetExpectedSizes = <ResolutionPreset, Size>{
-    ResolutionPreset.low: const Size(288, 352),
-    ResolutionPreset.medium: const Size(480, 640),
-    ResolutionPreset.high: const Size(720, 1280),
-    ResolutionPreset.veryHigh: const Size(1080, 1920),
-    ResolutionPreset.ultraHigh: const Size(2160, 3840),
-    // Don't bother checking for max here since it could be anything.
-  };
+  // Presets in increasing order of requested resolution. `max` is excluded
+  // since its resolution could be anything.
+  const presets = <ResolutionPreset>[
+    ResolutionPreset.low,
+    ResolutionPreset.medium,
+    ResolutionPreset.high,
+    ResolutionPreset.veryHigh,
+    ResolutionPreset.ultraHigh,
+  ];
 
-  /// Verify that [actual] has dimensions that are at least as large as
-  /// [expectedSize]. Allows for a mismatch in portrait vs landscape. Returns
-  /// whether the dimensions exactly match.
-  bool assertExpectedDimensions(Size expectedSize, Size actual) {
-    expect(actual.shortestSide, lessThanOrEqualTo(expectedSize.shortestSide));
-    expect(actual.longestSide, lessThanOrEqualTo(expectedSize.longestSide));
-    return actual.shortestSide == expectedSize.shortestSide &&
-        actual.longestSide == expectedSize.longestSide;
+  /// Captures with each of [presets] using [capture], and verifies that the
+  /// captured size never decreases as the requested preset increases.
+  ///
+  /// Exact sizes aren't checked because a preset that the device doesn't
+  /// support falls back to a device-specific resolution, which varies across
+  /// hardware. Allows for a mismatch in portrait vs landscape.
+  Future<void> expectNonDecreasingCaptureSizes(
+    CameraDescription cameraDescription,
+    Future<Size> Function(CameraController controller) capture,
+  ) async {
+    ResolutionPreset? previousPreset;
+    Size? previousSize;
+    for (final preset in presets) {
+      final controller = CameraController(cameraDescription, preset);
+      await controller.initialize();
+      final Size size = await capture(controller);
+      await controller.dispose();
+
+      expect(size.isEmpty, isFalse, reason: '${cameraDescription.name} $preset captured $size');
+      if (previousSize != null) {
+        final reason =
+            '${cameraDescription.name}: $preset captured $size, which is smaller '
+            'than $previousSize captured by $previousPreset';
+        expect(size.shortestSide, greaterThanOrEqualTo(previousSize.shortestSide), reason: reason);
+        expect(size.longestSide, greaterThanOrEqualTo(previousSize.longestSide), reason: reason);
+      }
+      previousPreset = preset;
+      previousSize = size;
+    }
   }
 
-  // This tests that the capture is no bigger than the preset, since we have
-  // automatic code to fall back to smaller sizes when we need to. Returns
-  // whether the image is exactly the desired resolution.
-  Future<bool> testCaptureImageResolution(
-    CameraController controller,
-    ResolutionPreset preset,
-  ) async {
-    final Size expectedSize = presetExpectedSizes[preset]!;
-
-    // Take Picture
+  Future<Size> captureImageSize(CameraController controller) async {
     final XFile file = await controller.takePicture();
-
-    // Load picture
-    final fileImage = File(file.path);
-    final Image image = await decodeImageFromList(fileImage.readAsBytesSync());
-
-    // Verify image dimensions are as expected
-    expect(image, isNotNull);
-    return assertExpectedDimensions(
-      expectedSize,
-      Size(image.height.toDouble(), image.width.toDouble()),
-    );
+    final Image image = await decodeImageFromList(File(file.path).readAsBytesSync());
+    return Size(image.width.toDouble(), image.height.toDouble());
   }
 
   testWidgets('Capture specific image resolutions', (WidgetTester tester) async {
@@ -79,47 +83,21 @@ void main() {
       return;
     }
     for (final cameraDescription in cameras) {
-      var previousPresetExactlySupported = true;
-      for (final MapEntry<ResolutionPreset, Size> preset in presetExpectedSizes.entries) {
-        final controller = CameraController(cameraDescription, preset.key);
-        await controller.initialize();
-        final bool presetExactlySupported = await testCaptureImageResolution(
-          controller,
-          preset.key,
-        );
-        assert(
-          !(!previousPresetExactlySupported && presetExactlySupported),
-          'The camera took higher resolution pictures at a lower resolution.',
-        );
-        previousPresetExactlySupported = presetExactlySupported;
-        await controller.dispose();
-      }
+      await expectNonDecreasingCaptureSizes(cameraDescription, captureImageSize);
     }
   });
 
-  // This tests that the capture is no bigger than the preset, since we have
-  // automatic code to fall back to smaller sizes when we need to. Returns
-  // whether the image is exactly the desired resolution.
-  Future<bool> testCaptureVideoResolution(
-    CameraController controller,
-    ResolutionPreset preset,
-  ) async {
-    final Size expectedSize = presetExpectedSizes[preset]!;
-
-    // Take Video
+  Future<Size> captureVideoSize(CameraController controller) async {
+    await controller.prepareForVideoRecording();
     await controller.startVideoRecording();
     await Future<void>.delayed(const Duration(milliseconds: 300));
     final XFile file = await controller.stopVideoRecording();
 
-    // Load video metadata
-    final videoFile = File(file.path);
-    final videoController = VideoPlayerController.file(videoFile);
+    final videoController = VideoPlayerController.file(File(file.path));
     await videoController.initialize();
-    final Size video = videoController.value.size;
-
-    // Verify image dimensions are as expected
-    expect(video, isNotNull);
-    return assertExpectedDimensions(expectedSize, Size(video.height, video.width));
+    final Size size = videoController.value.size;
+    await videoController.dispose();
+    return size;
   }
 
   testWidgets('Capture specific video resolutions', (WidgetTester tester) async {
@@ -128,22 +106,7 @@ void main() {
       return;
     }
     for (final cameraDescription in cameras) {
-      var previousPresetExactlySupported = true;
-      for (final MapEntry<ResolutionPreset, Size> preset in presetExpectedSizes.entries) {
-        final controller = CameraController(cameraDescription, preset.key);
-        await controller.initialize();
-        await controller.prepareForVideoRecording();
-        final bool presetExactlySupported = await testCaptureVideoResolution(
-          controller,
-          preset.key,
-        );
-        assert(
-          !(!previousPresetExactlySupported && presetExactlySupported),
-          'The camera took higher resolution pictures at a lower resolution.',
-        );
-        previousPresetExactlySupported = presetExactlySupported;
-        await controller.dispose();
-      }
+      await expectNonDecreasingCaptureSizes(cameraDescription, captureVideoSize);
     }
   });
 

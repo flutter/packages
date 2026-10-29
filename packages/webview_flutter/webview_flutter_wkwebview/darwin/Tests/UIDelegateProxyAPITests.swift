@@ -33,6 +33,7 @@ import WebKit
     #expect(result == nil)
   }
 
+  @available(iOS 15.0, macOS 12.0, *)
   @MainActor @Test func requestMediaCapturePermission() async throws {
     let api = TestDelegateApi()
     let registrar = TestProxyApiRegistrar()

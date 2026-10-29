@@ -1,3 +1,0 @@
-changelog: |
-  - Adds `enableInlinePrediction` to `TextFormField`.
-version: minor

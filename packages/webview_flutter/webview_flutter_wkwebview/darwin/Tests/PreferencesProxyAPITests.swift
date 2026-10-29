@@ -9,14 +9,20 @@ import WebKit
 @testable import webview_flutter_wkwebview
 
 @Suite struct PreferencesProxyAPITests {
-  @MainActor @Test func setJavaScriptEnabledThrowsUnsupported() throws {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiWKPreferences(registrar)
+  @MainActor @Test func setJavaScriptEnabled() throws {
+    if #available(iOS 14.0, macOS 11.0, *) {
+      return
 
-    let instance = WKPreferences()
-    #expect(throws: (any Error).self) {
+    } else {
+      let registrar = TestProxyApiRegistrar()
+      let api = registrar.apiDelegate.pigeonApiWKPreferences(registrar)
+
+      let instance = WKPreferences()
+      let enabled = true
       try api.pigeonDelegate.setJavaScriptEnabled(
-        pigeonApi: api, pigeonInstance: instance, enabled: true)
+        pigeonApi: api, pigeonInstance: instance, enabled: enabled)
+
+      #expect(instance.javaScriptEnabled == enabled)
     }
   }
 

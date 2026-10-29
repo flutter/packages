@@ -1,3 +1,7 @@
+## 0.4.15
+
+* Exposes `sk2Transaction` on `SK2PurchaseDetails`.
+
 ## 0.4.14+1
 
 * Suppresses deprecation warnings for StoreKit 1 APIs, which are used as

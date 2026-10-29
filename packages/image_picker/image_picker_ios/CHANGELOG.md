@@ -1,3 +1,16 @@
+## 0.8.13+14
+
+* Migrates the view provider from Objective-C to Swift.
+* Migrates the PHPicker save operation from Objective-C to Swift.
+* Migrates image, metadata, and photo-asset utilities from Objective-C to Swift.
+* Keeps animated GIFs looping when the source metadata dictionary is immutable.
+
+## 0.8.13+13
+
+* Splits the iOS implementation into mixed-language Swift Package Manager targets.
+* Migrates the plugin class from Objective-C to Swift.
+* Calls the single-item image and video completions once when more than one path is returned.
+
 ## 0.8.13+12
 
 * Updates minimum supported SDK version to Flutter 3.47/Dart 3.13.
