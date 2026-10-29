@@ -238,7 +238,7 @@ struct ImagePickerPluginTests {
   /// Saves run on a background queue and the result is delivered later on the
   /// main queue, so `confirmation` would return before the callback runs.
   /// `#expect` on that queue is not recorded on this test.
-  private func processPickerItems(
+  private func processPickerResults(
     _ items: [any PickerItem], using plugin: ImagePickerPlugin
   ) async -> (paths: [String]?, error: PigeonError?) {
     let picker = PHPickerViewController(configuration: PHPickerConfiguration())
@@ -260,7 +260,7 @@ struct ImagePickerPluginTests {
   @Test func sendsImageInvalidSourceError() async {
     let plugin = ImagePickerPlugin(viewProvider: StubViewProvider())
     let failItem = FakePickerItem(itemProvider: NSItemProvider(), assetIdentifier: nil)
-    let (paths, error) = await processPickerItems(
+    let (paths, error) = await processPickerResults(
       [failItem, failItem], using: plugin)
     #expect(paths == nil)
     #expect(error?.code == "invalid_source")
@@ -275,7 +275,7 @@ struct ImagePickerPluginTests {
     let tiffItem = FakePickerItem(
       itemProvider: NSItemProvider(contentsOf: tiffURL)!, assetIdentifier: nil)
     let plugin = ImagePickerPlugin(viewProvider: StubViewProvider())
-    let (paths, error) = await processPickerItems(
+    let (paths, error) = await processPickerResults(
       [failItem, tiffItem], using: plugin)
     #expect(paths == nil)
     #expect(error?.code == "invalid_image")
@@ -291,7 +291,7 @@ struct ImagePickerPluginTests {
     let pngItem = FakePickerItem(
       itemProvider: NSItemProvider(contentsOf: pngURL)!, assetIdentifier: nil)
     let plugin = ImagePickerPlugin(viewProvider: StubViewProvider())
-    let (paths, error) = await processPickerItems(
+    let (paths, error) = await processPickerResults(
       [tiffItem, pngItem], using: plugin)
     #expect(paths?.count == 2)
     #expect(error == nil)

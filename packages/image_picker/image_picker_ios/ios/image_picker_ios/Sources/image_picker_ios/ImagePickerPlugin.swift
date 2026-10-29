@@ -487,8 +487,8 @@ public final class ImagePickerPlugin: NSObject, FlutterPlugin, ImagePickerApi,
     saveQueue?.qualityOfService = .userInitiated
 
     let currentCallContext = callContext
-    let maxWidth = currentCallContext?.maxSize?.width.map { NSNumber(value: $0) }
-    let maxHeight = currentCallContext?.maxSize?.height.map { NSNumber(value: $0) }
+    let maxWidth = currentCallContext?.maxSize?.width as NSNumber?
+    let maxHeight = currentCallContext?.maxSize?.height as NSNumber?
     let desiredImageQuality = self.desiredImageQuality(currentCallContext?.imageQuality)
     let requestFullMetadata = currentCallContext?.requestFullMetadata ?? false
     var pathList = [String?](repeating: nil, count: results.count)
@@ -564,8 +564,8 @@ public final class ImagePickerPlugin: NSObject, FlutterPlugin, ImagePickerApi,
       if image == nil {
         image = info[.originalImage] as? UIImage
       }
-      let maxWidth = callContext?.maxSize?.width.map { NSNumber(value: $0) }
-      let maxHeight = callContext?.maxSize?.height.map { NSNumber(value: $0) }
+      let maxWidth = callContext?.maxSize?.width as NSNumber?
+      let maxHeight = callContext?.maxSize?.height as NSNumber?
       let imageQuality = callContext?.imageQuality
       let desiredImageQuality = self.desiredImageQuality(imageQuality)
 
