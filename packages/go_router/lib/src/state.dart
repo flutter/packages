@@ -58,8 +58,8 @@ class GoRouterState {
   ///
   /// This is null when the state is not tied to a single [GoRoute]: the state
   /// passed to the top level `GoRouter.redirect` or `onException` callback,
-  /// the state built for a [ShellRoute] or [StatefulShellRoute] (which have no
-  /// path of their own), and the state used for the error page.
+  /// the state built for a [ShellRoute] or [StatefulShellRoute] (which has no
+  /// path of its own), and the state used for the error page.
   final String? path;
 
   /// The full path to this sub-route, e.g. /family/:fid
