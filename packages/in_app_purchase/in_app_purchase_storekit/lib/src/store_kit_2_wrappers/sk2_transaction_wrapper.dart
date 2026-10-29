@@ -29,6 +29,8 @@ class SK2Transaction {
     this.error,
     this.receiptData,
     this.jsonRepresentation,
+    this.revocationDate,
+    this.revocationReason,
   });
 
   /// The unique identifier for the transaction.
@@ -74,6 +76,20 @@ class SK2Transaction {
 
   /// The json representation of a transaction.
   final String? jsonRepresentation;
+
+  /// The date that the App Store refunded the transaction or revoked it from
+  /// Family Sharing.
+  ///
+  /// Null if the transaction has not been revoked.
+  ///
+  /// Milliseconds since epoch.
+  final String? revocationDate;
+
+  /// The reason that the App Store refunded the transaction or revoked it from
+  /// Family Sharing.
+  ///
+  /// Null if the transaction has not been revoked.
+  final SK2RevocationReason? revocationReason;
 
   /// Wrapper around [Transaction.finish]
   /// https://developer.apple.com/documentation/storekit/transaction/3749694-finish
@@ -122,6 +138,29 @@ class SK2Transaction {
   }
 }
 
+/// Dart wrapper around StoreKit2's [Transaction.RevocationReason](https://developer.apple.com/documentation/storekit/transaction/revocationreason-swift.struct)
+/// The reason that the App Store refunded a transaction or revoked it from
+/// Family Sharing.
+enum SK2RevocationReason {
+  /// A customer canceled the transaction due to an actual or perceived issue
+  /// within the app.
+  developerIssue,
+
+  /// A customer canceled the transaction for another reason.
+  other,
+}
+
+extension on SK2RevocationReasonMessage {
+  SK2RevocationReason convertFromPigeon() {
+    switch (this) {
+      case SK2RevocationReasonMessage.developerIssue:
+        return SK2RevocationReason.developerIssue;
+      case SK2RevocationReasonMessage.other:
+        return SK2RevocationReason.other;
+    }
+  }
+}
+
 extension on SK2TransactionMessage {
   SK2Transaction convertFromPigeon() {
     return SK2Transaction(
@@ -134,6 +173,8 @@ extension on SK2TransactionMessage {
       appAccountToken: appAccountToken,
       receiptData: receiptData,
       jsonRepresentation: jsonRepresentation,
+      revocationDate: _secondsToMillisecondsSinceEpochString(revocationDate),
+      revocationReason: revocationReason?.convertFromPigeon(),
     );
   }
 

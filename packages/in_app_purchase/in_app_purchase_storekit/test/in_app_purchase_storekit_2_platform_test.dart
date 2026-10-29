@@ -773,5 +773,44 @@ void main() {
       expect(transactions.first.productId, 'product_id');
       expect(transactions.first.quantity, 2);
     });
+
+    test('should not expose revocation info for unrevoked transactions', () async {
+      final List<SK2Transaction> transactions = await SK2Transaction.transactions();
+
+      expect(transactions, isNotEmpty);
+      expect(transactions.first.revocationDate, isNull);
+      expect(transactions.first.revocationReason, isNull);
+    });
+
+    test('should expose revocation info for revoked transactions', () async {
+      setInAppPurchaseHostApis(api2: fakeStoreKit2Platform);
+      fakeStoreKit2Platform.transactionsList = <SK2TransactionMessage>[
+        SK2TransactionMessage(
+          id: 123,
+          originalId: 123,
+          productId: 'product_id',
+          purchaseDate: 123123.121,
+          status: SK2PurchaseStatusMessage.purchased,
+          revocationDate: 456456.45,
+          revocationReason: SK2RevocationReasonMessage.developerIssue,
+        ),
+        SK2TransactionMessage(
+          id: 124,
+          originalId: 124,
+          productId: 'product_id',
+          purchaseDate: 123123.121,
+          status: SK2PurchaseStatusMessage.purchased,
+          revocationDate: 456456.45,
+          revocationReason: SK2RevocationReasonMessage.other,
+        ),
+      ];
+
+      final List<SK2Transaction> transactions = await SK2Transaction.transactions();
+
+      expect(transactions, hasLength(2));
+      expect(transactions[0].revocationDate, (456456.45 * 1000).round().toString());
+      expect(transactions[0].revocationReason, SK2RevocationReason.developerIssue);
+      expect(transactions[1].revocationReason, SK2RevocationReason.other);
+    });
   });
 }

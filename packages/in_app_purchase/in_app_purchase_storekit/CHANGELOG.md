@@ -1,3 +1,7 @@
+## 0.4.16
+
+* Adds `revocationDate` and `revocationReason` to `SK2Transaction`.
+
 ## 0.4.15
 
 * Exposes `sk2Transaction` on `SK2PurchaseDetails`.
