@@ -1696,7 +1696,6 @@ final class ${api.name}Registrar {
     final ffiApiRegistrarName = '$_ffiBridgePrefix.${api.name}Setup';
     indent.newln();
     indent.format('''
-@internal
 $dartApiName? ${classMemberNamePrefix}getInstance_${api.name}({
   String channelName = defaultInstanceName,
 }) => $implClassName.getInstance(channelName: channelName);

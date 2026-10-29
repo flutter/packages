@@ -11,7 +11,7 @@ import 'dart:typed_data' show Float64List, Int32List, Int64List;
 
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/services.dart';
-import 'package:meta/meta.dart' show immutable, protected, visibleForTesting;
+import 'package:meta/meta.dart' show immutable, internal, protected, visibleForTesting;
 import './native_interop_example.g.dart'
     if (dart.library.ffi) './native_interop_example.native_interop.g.dart'
     as pigeon_native;
