@@ -1,3 +1,7 @@
+## 1.2.5
+
+* Fixes `<text>` not being drawn when the ambient text direction is RTL.
+
 ## 1.2.4
 
 * Fixes an unhandled exception reported for every asynchronous loading failure,
