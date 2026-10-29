@@ -96,6 +96,9 @@ enum ImagePickerMetaDataUtil {
     guard let image else { return nil }
     if quality != nil && type != .jpeg {
       let suffix = imageTypeSuffix(from: type) ?? ""
+      // TODO: Surface this to Dart so callers can handle an unsupported
+      // compression request. This stays an `NSLog`, matching
+      // `FLTImagePickerMetaDataUtil`, and the image is still returned.
       NSLog(
         "image_picker: compressing is not supported for type %@. Returning the image with original quality",
         suffix)
