@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes a `CupertinoNavigationBarBackButton` assertion that fired when the button was used as a navigation bar's `leading` widget during a page transition.
+version: patch
