@@ -22,7 +22,7 @@ enum ImagePickerImageUtil {
   private static func drawScaledImage(_ imageToScale: UIImage?, width: Double, height: Double)
     -> UIImage?
   {
-    guard let imageToScale, width != 0, height != 0 else {
+    guard let imageToScale, width > 0, height > 0 else {
       return nil
     }
     // The source format can request an unsupported 10-bit integer bitmap context,

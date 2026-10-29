@@ -141,7 +141,6 @@ final class FakePhotoLibraryPermissionChecker: NSObject, PhotoLibraryPermissionC
 }
 
 /// A `PickerItem` stand-in that does not require constructing a `PHPickerResult`.
-@available(iOS 14, *)
 struct FakePickerItem: PickerItem {
   let itemProvider: NSItemProvider
   let assetIdentifier: String?

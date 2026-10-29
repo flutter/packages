@@ -48,7 +48,7 @@ struct PhotoAssetUtilTests {
     try? FileManager.default.removeItem(atPath: savedPath)
   }
 
-  @Test func saveImageWithOriginalImageDataShouldSaveWithTheCorrectExtensionAndMetaData() {
+  @Test func saveImageWithOriginalImageDataShouldSaveWithTheCorrectExtensionAndMetaData() throws {
     let dataJPG = ImagePickerTestImages.jpgTestData
     let imageJPG = UIImage(data: dataJPG)!
     let savedPathJPG = ImagePickerPhotoAssetUtil.saveImageWithOriginalImageData(
@@ -59,10 +59,8 @@ struct PhotoAssetUtilTests {
     let originalMetaDataJPG = ImagePickerMetaDataUtil.getMetaData(fromImageData: dataJPG)
     let newDataJPG = try? Data(contentsOf: URL(fileURLWithPath: savedPathJPG))
     let newMetaDataJPG = ImagePickerMetaDataUtil.getMetaData(fromImageData: newDataJPG ?? Data())
-    #expect(
-      (originalMetaDataJPG?["ProfileName"] as? String)
-        == (newMetaDataJPG?["ProfileName"] as? String)
-    )
+    let originalProfileJPG = try #require(originalMetaDataJPG?["ProfileName"] as? String)
+    #expect(originalProfileJPG == newMetaDataJPG?["ProfileName"] as? String)
 
     let dataPNG = ImagePickerTestImages.pngTestData
     let imagePNG = UIImage(data: dataPNG)!
@@ -74,10 +72,8 @@ struct PhotoAssetUtilTests {
     let originalMetaDataPNG = ImagePickerMetaDataUtil.getMetaData(fromImageData: dataPNG)
     let newDataPNG = try? Data(contentsOf: URL(fileURLWithPath: savedPathPNG))
     let newMetaDataPNG = ImagePickerMetaDataUtil.getMetaData(fromImageData: newDataPNG ?? Data())
-    #expect(
-      (originalMetaDataPNG?["ProfileName"] as? String)
-        == (newMetaDataPNG?["ProfileName"] as? String)
-    )
+    let originalProfilePNG = try #require(originalMetaDataPNG?["ProfileName"] as? String)
+    #expect(originalProfilePNG == newMetaDataPNG?["ProfileName"] as? String)
   }
 
   @Test func saveImageWithPickerInfoShouldSaveWithDefaultExtension() {

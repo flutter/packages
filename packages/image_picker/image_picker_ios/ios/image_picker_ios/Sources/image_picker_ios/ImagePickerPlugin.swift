@@ -616,6 +616,11 @@ public final class ImagePickerPlugin: NSObject, FlutterPlugin, FLTImagePickerApi
   }
 
   /// Validates the provided paths list, then sends it via `callContext.result`.
+  ///
+  /// TODO: `requestImageDataAndOrientation`'s result handler can call this off the
+  /// main queue when full metadata is requested. The picker delegate and the
+  /// PHPicker completion operation run on the main queue. This stays synchronous
+  /// so unit tests can read the callback on the calling thread.
   func sendCallResult(withSavedPathList pathList: [String?]?) {
     guard let callContext else {
       return

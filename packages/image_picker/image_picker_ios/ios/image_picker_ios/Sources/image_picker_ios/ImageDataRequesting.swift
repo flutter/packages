@@ -5,6 +5,14 @@
 import ImageIO
 import Photos
 
+/// Parameters match `PHImageManager.requestImageDataAndOrientation`'s result handler.
+typealias ImageDataHandler = (
+  _ imageData: Data?,
+  _ dataUTI: String?,
+  _ orientation: CGImagePropertyOrientation,
+  _ info: [AnyHashable: Any]?
+) -> Void
+
 /// Requests image bytes for a `PHAsset`.
 ///
 /// This protocol exists to allow injecting an alternate implementation for testing.
@@ -12,8 +20,7 @@ protocol ImageDataRequesting {
   func requestImageDataAndOrientation(
     for asset: PHAsset,
     options: PHImageRequestOptions?,
-    resultHandler:
-      @escaping (Data?, String?, CGImagePropertyOrientation, [AnyHashable: Any]?) -> Void
+    resultHandler: @escaping ImageDataHandler
   )
 }
 
@@ -22,8 +29,7 @@ struct DefaultImageDataRequester: ImageDataRequesting {
   func requestImageDataAndOrientation(
     for asset: PHAsset,
     options: PHImageRequestOptions?,
-    resultHandler:
-      @escaping (Data?, String?, CGImagePropertyOrientation, [AnyHashable: Any]?) -> Void
+    resultHandler: @escaping ImageDataHandler
   ) {
     PHImageManager.default().requestImageDataAndOrientation(
       for: asset, options: options, resultHandler: resultHandler)

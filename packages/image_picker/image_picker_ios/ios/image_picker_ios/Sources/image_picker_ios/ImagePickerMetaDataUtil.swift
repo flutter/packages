@@ -18,6 +18,7 @@ let kImagePickerDefaultSuffix = ".jpg"
 /// Default MIME type used when the original image type cannot be determined.
 let kImagePickerMIMETypeDefault = ImagePickerMIMEType.jpeg
 
+// File signatures: JPEG SOI is 0xFFD8, PNG starts with 0x89, and GIF starts with ASCII "G".
 private let kFirstByteJPEG: UInt8 = 0xFF
 private let kFirstBytePNG: UInt8 = 0x89
 private let kFirstByteGIF: UInt8 = 0x47
