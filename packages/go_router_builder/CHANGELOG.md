@@ -1,3 +1,7 @@
+## 4.5.3
+
+* Detects onExit methods inherited through mixins and base classes.
+
 ## 4.5.2
 
 - Adopts shared analyzer helpers from `package:source_helper` `^1.4.0`.
