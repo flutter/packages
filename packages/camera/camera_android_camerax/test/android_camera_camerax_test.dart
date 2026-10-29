@@ -770,7 +770,12 @@ void main() {
       }
 
       // Test max case.
-      await camera.createCamera(testCameraDescription, ResolutionPreset.max, enableAudio: true);
+      final int maxCameraId = await camera.createCamera(
+        testCameraDescription,
+        ResolutionPreset.max,
+        enableAudio: true,
+      );
+      await camera.initializeCamera(maxCameraId);
 
       expect(
         camera.preview!.resolutionSelector!.resolutionStrategy,
@@ -784,19 +789,13 @@ void main() {
         camera.imageAnalysis!.resolutionSelector!.resolutionStrategy,
         equals(ResolutionStrategy.highestAvailableStrategy),
       );
-      expect(
-        camera.preview!.resolutionSelector!.allowedResolutionMode,
-        ResolutionSelectorAllowedResolutionMode.preferHigherResolutionOverCaptureRate,
-      );
+      expect(camera.preview!.resolutionSelector!.allowedResolutionMode, isNull);
       expect(
         camera.imageCapture!.resolutionSelector!.allowedResolutionMode,
         ResolutionSelectorAllowedResolutionMode.preferHigherResolutionOverCaptureRate,
       );
-      expect(
-        camera.imageAnalysis!.resolutionSelector!.allowedResolutionMode,
-        ResolutionSelectorAllowedResolutionMode.preferHigherResolutionOverCaptureRate,
-      );
-      expect(camera.preview!.resolutionSelector, same(camera.imageCapture!.resolutionSelector));
+      expect(camera.imageAnalysis!.resolutionSelector!.allowedResolutionMode, isNull);
+      expect(camera.preview!.resolutionSelector, same(camera.imageAnalysis!.resolutionSelector));
 
       // Test null case.
       final int flutterSurfaceTextureId = await camera.createCamera(testCameraDescription, null);
@@ -3784,6 +3783,92 @@ void main() {
 
     expect(actualZeroShutterLagEnabled, isTrue);
   });
+
+  for (final zeroShutterLagSupported in <bool>[true, false]) {
+    test(
+      'createCamera with max preset ${zeroShutterLagSupported ? 'does not prefer' : 'prefers'} higher resolution for ImageCapture when zero-shutter-lag was requested on a camera that ${zeroShutterLagSupported ? 'supports' : 'does not support'} it',
+      () async {
+        final camera = AndroidCameraCameraX();
+        const testCameraDescription = CameraDescription(
+          name: '0',
+          lensDirection: CameraLensDirection.back,
+          sensorOrientation: 90,
+        );
+        final mockCamera = MockCamera();
+        final mockProcessCameraProvider = MockProcessCameraProvider();
+        final mockCameraInfo = MockCameraInfo();
+        final mockBackCameraInfo = MockCameraInfo();
+
+        await camera.setZeroShutterLagEnabled(9, true);
+
+        setUpOverridesForTestingUseCaseConfiguration(mockProcessCameraProvider);
+        PigeonOverrides.camera2CameraInfo_from = ({required dynamic cameraInfo}) {
+          final mockCamera2CameraInfo = MockCamera2CameraInfo();
+          when(mockCamera2CameraInfo.getCameraId()).thenAnswer((_) async => '0');
+          return mockCamera2CameraInfo;
+        };
+        when(mockBackCameraInfo.lensFacing).thenReturn(LensFacing.back);
+        when(mockBackCameraInfo.sensorRotationDegrees).thenReturn(90);
+        when(mockBackCameraInfo.isZslSupported()).thenAnswer((_) async => zeroShutterLagSupported);
+        when(
+          mockProcessCameraProvider.getAvailableCameraInfos(),
+        ).thenAnswer((_) async => <MockCameraInfo>[mockBackCameraInfo]);
+        when(
+          mockProcessCameraProvider.bindToLifecycle(any, any),
+        ).thenAnswer((_) async => mockCamera);
+        when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
+        when(mockCameraInfo.getCameraState()).thenAnswer((_) async => MockLiveCameraState());
+        camera.processCameraProvider = mockProcessCameraProvider;
+
+        await camera.availableCameras();
+        await camera.createCamera(testCameraDescription, ResolutionPreset.max);
+
+        expect(
+          camera.imageCapture!.resolutionSelector!.allowedResolutionMode,
+          zeroShutterLagSupported
+              ? isNull
+              : ResolutionSelectorAllowedResolutionMode.preferHigherResolutionOverCaptureRate,
+        );
+      },
+    );
+  }
+
+  test(
+    'setZeroShutterLagEnabled recreates ImageCapture without preferring higher resolution for max preset',
+    () async {
+      final camera = AndroidCameraCameraX();
+      const testCameraDescription = CameraDescription(
+        name: 'cameraName',
+        lensDirection: CameraLensDirection.back,
+        sensorOrientation: 90,
+      );
+      final mockCamera = MockCamera();
+      final mockProcessCameraProvider = MockProcessCameraProvider();
+      final mockCameraInfo = MockCameraInfo();
+
+      setUpOverridesForTestingUseCaseConfiguration(mockProcessCameraProvider);
+      when(mockProcessCameraProvider.bindToLifecycle(any, any)).thenAnswer((_) async => mockCamera);
+      when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
+      when(mockCameraInfo.getCameraState()).thenAnswer((_) async => MockLiveCameraState());
+      when(mockCameraInfo.isZslSupported()).thenAnswer((_) async => true);
+
+      final int cameraId = await camera.createCamera(testCameraDescription, ResolutionPreset.max);
+      camera.cameraInfo = mockCameraInfo;
+      expect(
+        camera.imageCapture!.resolutionSelector!.allowedResolutionMode,
+        ResolutionSelectorAllowedResolutionMode.preferHigherResolutionOverCaptureRate,
+      );
+
+      await camera.setZeroShutterLagEnabled(cameraId, true);
+      expect(camera.imageCapture!.resolutionSelector!.allowedResolutionMode, isNull);
+
+      await camera.setZeroShutterLagEnabled(cameraId, false);
+      expect(
+        camera.imageCapture!.resolutionSelector!.allowedResolutionMode,
+        ResolutionSelectorAllowedResolutionMode.preferHigherResolutionOverCaptureRate,
+      );
+    },
+  );
 
   test('takePicture turns non-torch flash mode off when torch mode enabled', () async {
     final camera = AndroidCameraCameraX();

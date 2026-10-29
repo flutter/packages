@@ -1,3 +1,9 @@
+## 0.7.6+1
+
+* Fixes zero-shutter-lag having no effect with `ResolutionPreset.max`.
+  `ResolutionPreset.max` now prefers higher resolution over capture rate only
+  for still image capture, and not while zero-shutter-lag is enabled.
+
 ## 0.7.6
 
 * Adds support for zero-shutter-lag still image capture via
