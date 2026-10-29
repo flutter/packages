@@ -32,7 +32,7 @@ import 'theme.dart';
 /// ![](https://lh3.googleusercontent.com/Yvngs5mQSjXa_9T4X3JDucO62c5hdZHPDa7qeRH6DsJQvGr_q7EBrTkhkPiQd9OeR1v_Uk38Cjd9nUpP3nevDyHpKWuXSfQ1Gq78bOnBN7sr=s0)
 ///
 /// The Material Design typography scheme was significantly changed in the
-/// Material 3 (2021) version of the specification.
+/// Material 3 (2021) version of the specification
 /// ([https://m3.material.io/styles/typography/tokens](https://m3.material.io/styles/typography/tokens)).
 ///
 /// The current Material 3 Expressive (2025) version of the specification further
