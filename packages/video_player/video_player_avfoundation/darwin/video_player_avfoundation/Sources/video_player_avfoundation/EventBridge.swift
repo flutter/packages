@@ -29,11 +29,11 @@ private enum QueueableEvent {
   private var queuedEvents: [QueueableEvent]? = []
 
   /// The event channel registration, for later unregistering.
-  private var eventChannelRegistration: PigeonEventChannelRegistration?
+  private var eventChannel: VideoEventsEventChannel?
 
   init(messenger: FlutterBinaryMessenger, channelSuffix: String) {
     super.init()
-    eventChannelRegistration = VideoEventsStreamHandler.register(
+    eventChannel = VideoEventsStreamHandler.register(
       with: messenger,
       instanceName: channelSuffix,
       streamHandler: self,
@@ -106,8 +106,8 @@ private enum QueueableEvent {
   }
 
   func videoPlayerWasDisposed() {
-    eventChannelRegistration?.remove()
-    eventChannelRegistration = nil
+    eventChannel?.setStreamHandler(nil)
+    eventChannel = nil
     // Ignore any future events
     eventSink = nil
     queuedEvents = nil

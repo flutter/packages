@@ -11,12 +11,12 @@ import io.flutter.plugin.common.BinaryMessenger;
 
 final class VideoPlayerEventCallbacks implements VideoPlayerCallbacks {
   private final QueuingEventSink eventSink;
-  private final @Nullable PigeonEventChannelRegistration eventChannelRegistration;
+  private final @Nullable VideoEventsEventChannel eventChannel;
 
   static VideoPlayerEventCallbacks bindTo(
       @NonNull BinaryMessenger binaryMessenger, @NonNull String identifier) {
     QueuingEventSink eventSink = new QueuingEventSink();
-    final PigeonEventChannelRegistration registration =
+    final VideoEventsEventChannel eventChannel =
         VideoEventsStreamHandler.Companion.register(
             binaryMessenger,
             new VideoEventsStreamHandler() {
@@ -32,7 +32,7 @@ final class VideoPlayerEventCallbacks implements VideoPlayerCallbacks {
               }
             },
             identifier);
-    return new VideoPlayerEventCallbacks(eventSink, registration);
+    return new VideoPlayerEventCallbacks(eventSink, eventChannel);
   }
 
   @VisibleForTesting
@@ -41,10 +41,9 @@ final class VideoPlayerEventCallbacks implements VideoPlayerCallbacks {
   }
 
   private VideoPlayerEventCallbacks(
-      @NonNull QueuingEventSink eventSink,
-      @Nullable PigeonEventChannelRegistration eventChannelRegistration) {
+      @NonNull QueuingEventSink eventSink, @Nullable VideoEventsEventChannel eventChannel) {
     this.eventSink = eventSink;
-    this.eventChannelRegistration = eventChannelRegistration;
+    this.eventChannel = eventChannel;
   }
 
   @Override
@@ -81,8 +80,8 @@ final class VideoPlayerEventCallbacks implements VideoPlayerCallbacks {
 
   @Override
   public void onDisposed() {
-    if (eventChannelRegistration != null) {
-      eventChannelRegistration.remove();
+    if (eventChannel != null) {
+      eventChannel.setStreamHandler(null);
     }
   }
 }
