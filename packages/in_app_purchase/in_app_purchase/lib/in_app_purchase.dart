@@ -177,10 +177,12 @@ class InAppPurchase implements InAppPurchasePlatformAdditionProvider {
   ///    error indicating a duplicate transaction is pending.
   ///
   /// There is no shared exception type for a failed [completePurchase] call, so
-  /// errors are platform specific. On Android the returned future completes with
-  /// a `BillingResultWrapper` from `in_app_purchase_android`, and a failure is
-  /// reported through its `responseCode` instead of being thrown. On iOS and
-  /// macOS a failure reported by StoreKit is thrown as a `PlatformException`.
+  /// errors are platform specific. On Android a failed acknowledgement is not
+  /// thrown, so the returned `Future<void>` still completes normally. To read
+  /// the result, call `completePurchase` on `InAppPurchaseAndroidPlatform` from
+  /// `in_app_purchase_android` directly, which returns a `BillingResultWrapper`
+  /// whose `responseCode` reports the failure. On iOS and macOS a failure
+  /// reported by StoreKit is thrown as a `PlatformException`.
   Future<void> completePurchase(PurchaseDetails purchase) =>
       InAppPurchasePlatform.instance.completePurchase(purchase);
 
