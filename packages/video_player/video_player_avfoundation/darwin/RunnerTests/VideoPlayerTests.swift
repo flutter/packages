@@ -935,6 +935,41 @@ private let hlsAudioTestURI =
     #expect(!frameDurationIsValid(CMTime.indefinite))
   }
 
+  @Test func apiBridgeHandlesPlayerDestruction() async throws {
+    weak var weakPlayer: VideoPlayer?
+    var apiBridge: VideoPlayerInstanceBridge?
+
+    let videoPlayerPlugin = try createInitializedPlugin(avFactory: StubAVFactory())
+
+    let identifier = try await videoPlayerPlugin.createPlatformViewPlayer(
+      options: CreationOptions(uri: mp4TestURI, httpHeaders: [:]))
+
+    // Simulation a temporary lifetime extension of the bridge, which can happen if an
+    // async Pigeon closure is executing when `dispose()` is called.
+    autoreleasepool {
+      let player = videoPlayerPlugin.playersByIdentifier[identifier]
+      weakPlayer = player
+      apiBridge = player?.hostApiBridge
+
+      player?.dispose()
+    }
+
+    // Wait for the weak pointer to be invalidated, indicating that the player has been deallocated.
+    let checkInterval = 0.1
+    let maxTries = Int64(30 / checkInterval)
+    for _ in 1...maxTries {
+      if weakPlayer == nil {
+        break
+      }
+      try await Task.sleep(nanoseconds: UInt64(checkInterval * 1_000_000_000))
+    }
+
+    #expect(weakPlayer == nil)
+    #expect(apiBridge != nil)
+    // Calling the bridge should return a placeholder value rather than crash.
+    #expect(try apiBridge?.getPosition() == 0)
+  }
+
   // MARK: - Helper Methods
 
   /// Creates a plugin with the given dependencies, and default stubs for any that aren't provided,

@@ -119,13 +119,23 @@ class CameraPlugin extends CameraPlatform {
           /// https://developer.mozilla.org/en-US/docs/Web/API/MediaDeviceInfo/deviceId#browser_compatibility
           .where((web.MediaDeviceInfo device) => device.deviceId.isNotEmpty);
 
+      // The first error of a video input device that could not be started.
+      CameraWebException? videoInputDeviceException;
+
       // Map video input devices to camera descriptions.
       for (final videoInputDevice in videoInputDevices) {
         // Get the video stream for the current video input device
         // to later use for the available video tracks.
-        final web.MediaStream videoStream = await _getVideoStreamForDevice(
-          videoInputDevice.deviceId,
-        );
+        final web.MediaStream videoStream;
+        try {
+          videoStream = await _getVideoStreamForDevice(videoInputDevice.deviceId);
+        } on CameraWebException catch (e) {
+          // Skip a video input device that cannot be started,
+          // e.g. a virtual camera without a video source,
+          // so that the remaining cameras stay available.
+          videoInputDeviceException ??= e;
+          continue;
+        }
 
         // Get all video tracks in the video stream
         // to later extract the lens direction from the first track.
@@ -174,6 +184,12 @@ class CameraPlugin extends CameraPlatform {
           // Ignore as no video tracks exist in the current video input device.
           continue;
         }
+      }
+
+      // Report the error of a video input device that could not be started
+      // if no camera is available.
+      if (cameras.isEmpty && videoInputDeviceException != null) {
+        throw videoInputDeviceException;
       }
 
       return cameras;

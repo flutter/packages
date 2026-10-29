@@ -2745,7 +2745,8 @@ String? checkObjectiveCPubspecVersion(InternalPigeonOptions options) {
 
 /// Checks whether the `jni` dependency constraint in `pubspec.yaml`
 /// matches the `JniVersionCheck(major, minor)` emitted by `jnigen` in the
-/// generated `.jni.dart` file.
+/// generated `.jni.dart` file (and is at least `1.1.1`, which includes the
+/// required Android R8 keep rules).
 ///
 /// Returns a warning message if the constraint allows incompatible versions, or
 /// `null` if the constraint is compatible or cannot be checked.
@@ -2757,6 +2758,7 @@ String? checkJniPubspecVersion(InternalPigeonOptions options) {
     versionCheckName: 'JniVersionCheck',
     packageName: 'jni',
     bindingTypeLabel: 'JNI',
+    minimumVersionFloor: Version(1, 1, 1),
   );
 }
 
@@ -2767,6 +2769,7 @@ String? _checkGeneratedBindingsPubspecVersion({
   required String versionCheckName,
   required String packageName,
   required String bindingTypeLabel,
+  Version? minimumVersionFloor,
 }) {
   final String? dartOutPath = options.dartOptions?.dartOut;
   if (dartOutPath == null || dartOutPath.isEmpty) {
@@ -2797,8 +2800,12 @@ String? _checkGeneratedBindingsPubspecVersion({
 
   final int major = int.parse(match.group(1)!);
   final int minor = int.parse(match.group(2)!);
-  final requiredMinVersion = Version(major, minor, 0);
-  final nextMajorVersion = Version(major + 1, 0, 0);
+  final versionCheckMinVersion = Version(major, minor, 0);
+  final Version requiredMinVersion =
+      (minimumVersionFloor != null && versionCheckMinVersion < minimumVersionFloor)
+      ? minimumVersionFloor
+      : versionCheckMinVersion;
+  final nextMajorVersion = Version(requiredMinVersion.major + 1, 0, 0);
 
   final String? pubspecPath = _findTargetPubspecPath(
     appDirectory: appDirectory,
@@ -2860,9 +2867,9 @@ String? _checkGeneratedBindingsPubspecVersion({
 
     if (!allowsValidVersion || allowsLowerVersion || allowsHigherMajorVersion) {
       return 'Generated $bindingTypeLabel bindings in "${path.basename(bindingsDartFile.path)}" require '
-          'package:$packageName ^$major.$minor.0 (from $versionCheckName($major, $minor)), '
+          'package:$packageName ^$requiredMinVersion (from $versionCheckName($major, $minor)), '
           'but "$pubspecPath" specifies "$packageName: $rawConstraint". '
-          'Consider updating pubspec.yaml to "$packageName: ^$major.$minor.0".';
+          'Consider updating pubspec.yaml to "$packageName: ^$requiredMinVersion".';
     }
   } catch (_) {
     return null;
