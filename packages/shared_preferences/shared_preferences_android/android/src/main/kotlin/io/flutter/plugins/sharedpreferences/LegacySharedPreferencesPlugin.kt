@@ -37,10 +37,8 @@ internal constructor(private val listEncoder: SharedPreferencesListEncoder) :
   private fun setUp(context: Context) {
     preferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
     try {
-      synchronized(attachedPlugins) {
-        attachedPlugins.add(this)
-        SharedPreferencesApiRegistrar().register(this)
-      }
+      attachedPlugins.add(this)
+      SharedPreferencesApiRegistrar().register(this)
     } catch (ex: Exception) {
       Log.e(TAG, "Received exception while setting up SharedPreferencesPlugin", ex)
     }
@@ -51,10 +49,8 @@ internal constructor(private val listEncoder: SharedPreferencesListEncoder) :
   }
 
   override fun onDetachedFromEngine(binding: FlutterPluginBinding) {
-    synchronized(attachedPlugins) {
-      attachedPlugins.remove(this)
-      SharedPreferencesApiRegistrar().register(attachedPlugins.lastOrNull())
-    }
+    attachedPlugins.remove(this)
+    SharedPreferencesApiRegistrar().register(attachedPlugins.lastOrNull())
   }
 
   override suspend fun setBool(key: String, value: Boolean): Boolean =
