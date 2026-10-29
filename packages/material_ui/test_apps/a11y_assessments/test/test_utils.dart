@@ -28,3 +28,24 @@ List<String> descendantSemanticsLabels(SemanticsNode node) {
   });
   return labels;
 }
+
+/// Returns whether any semantics node in the subtree rooted at [finder]
+/// specifies a list/collection.
+bool hasSemanticsList(WidgetTester tester, Finder finder) {
+  bool checkNode(SemanticsNode node) {
+    if ((node.scrollChildCount ?? 0) > 0 || node.indexInParent != null) {
+      return true;
+    }
+    var childHasList = false;
+    node.visitChildren((SemanticsNode child) {
+      if (checkNode(child)) {
+        childHasList = true;
+        return false;
+      }
+      return true;
+    });
+    return childHasList;
+  }
+
+  return checkNode(tester.getSemantics(finder));
+}
