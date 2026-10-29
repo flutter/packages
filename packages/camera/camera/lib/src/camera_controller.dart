@@ -796,6 +796,35 @@ class CameraController extends ValueNotifier<CameraValue> {
     }
   }
 
+  /// Returns whether the selected camera supports zero-shutter-lag capture.
+  ///
+  /// Zero-shutter-lag reduces the latency of [takePicture] by returning a
+  /// recently buffered frame instead of waiting for a new capture.
+  Future<bool> isZeroShutterLagSupported() async {
+    _throwIfNotInitialized('isZeroShutterLagSupported');
+    try {
+      return await CameraPlatform.instance.isZeroShutterLagSupported(_cameraId);
+    } on PlatformException catch (e) {
+      throw CameraException(e.code, e.message);
+    }
+  }
+
+  /// Enables or disables zero-shutter-lag capture for still image capture.
+  ///
+  /// [isZeroShutterLagSupported] must be called first; only call this method
+  /// when it returns `true`.
+  ///
+  /// When enabled, [takePicture] returns a recently buffered frame instead of
+  /// waiting for a new capture, reducing shutter latency.
+  Future<void> setZeroShutterLagEnabled(bool enabled) async {
+    _throwIfNotInitialized('setZeroShutterLagEnabled');
+    try {
+      await CameraPlatform.instance.setZeroShutterLagEnabled(_cameraId, enabled);
+    } on PlatformException catch (e) {
+      throw CameraException(e.code, e.message);
+    }
+  }
+
   /// Sets the flash mode for taking pictures.
   Future<void> setFlashMode(FlashMode mode) async {
     try {

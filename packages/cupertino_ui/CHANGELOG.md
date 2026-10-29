@@ -1,3 +1,7 @@
+## 1.1.4
+
+- Fix CupertinoMagnifier focalPointOffset during in/out animation.
+
 ## 1.1.3
 
 - Fixes `CupertinoPicker` throwing when it is disposed during the tap-to-select animation.
