@@ -14,6 +14,7 @@ import 'package:stream_transform/stream_transform.dart';
 
 import 'camerax_library.dart';
 import 'rotated_preview_delegate.dart';
+import 'rotated_preview_utils.dart' show computePreviewTargetRotation;
 
 /// The Android implementation of [CameraPlatform] that uses the CameraX library.
 class AndroidCameraCameraX extends CameraPlatform {
@@ -103,10 +104,10 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// The most recent [TransformationInfo] of [preview], if any has been received.
   TransformationInfo? _latestTransformationInfo;
 
-  /// The target rotation [preview] was created with, as a [Surface] rotation
-  /// constant.
+  /// The target rotation of [preview], as a [Surface] rotation constant (see
+  /// [computePreviewTargetRotation]).
   ///
-  /// This is never changed after [preview] is created, so the
+  /// This is never changed after [preview] is configured, so the
   /// [TransformationInfo.rotationDegrees] of [preview] is always relative to it.
   late int _previewTargetRotation;
 
@@ -434,7 +435,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     processCameraProvider ??= await ProcessCameraProvider.getInstance();
     unawaited(processCameraProvider!.unbindAll());
 
-    // Configure Preview instance. Its target rotation is set once here and never
+    // Configure Preview instance. Its target rotation is pinned below and never
     // changed, so the preview rotation can be derived from its TransformationInfo
     // (see RotatedPreview).
     _latestTransformationInfo = null;
@@ -471,6 +472,18 @@ class AndroidCameraCameraX extends CameraPlatform {
     // if necessary.
     sensorOrientationDegrees = cameraDescription.sensorOrientation.toDouble();
     _handlesCropAndRotation = await preview!.surfaceProducerHandlesCropAndRotation();
+
+    // Pin the Preview target rotation so that buffers CameraX copies for stream
+    // sharing look the same as buffers from the camera directly. Whether the
+    // surface handles crop and rotation is only known once the surface provider
+    // is set, so this cannot be passed to the Preview constructor.
+    _previewTargetRotation = computePreviewTargetRotation(
+      handlesCropAndRotation: _handlesCropAndRotation,
+      cameraIsFrontFacing: cameraIsFrontFacing,
+      sensorOrientationDegrees: sensorOrientationDegrees.toInt(),
+    );
+    await preview!.setTargetRotation(_previewTargetRotation);
+
     _initialDeviceOrientation = _deserializeDeviceOrientation(
       await deviceOrientationManager.getUiOrientation(),
     );

@@ -28,6 +28,103 @@ void main() {
     Surface.rotation270,
   ];
 
+  group('computePreviewTargetRotation', () {
+    test('returns rotation0 if the surface handles crop and rotation', () {
+      for (final cameraIsFrontFacing in <bool>[true, false]) {
+        for (final sensorOrientationDegrees in <int>[0, 90, 180, 270]) {
+          expect(
+            computePreviewTargetRotation(
+              handlesCropAndRotation: true,
+              cameraIsFrontFacing: cameraIsFrontFacing,
+              sensorOrientationDegrees: sensorOrientationDegrees,
+            ),
+            Surface.rotation0,
+            reason: 'front: $cameraIsFrontFacing, sensor: $sensorOrientationDegrees',
+          );
+        }
+      }
+    });
+
+    test('returns the sensor orientation for back cameras if the surface does not handle crop '
+        'and rotation', () {
+      const expected = <int, int>{
+        0: Surface.rotation0,
+        90: Surface.rotation90,
+        180: Surface.rotation180,
+        270: Surface.rotation270,
+      };
+      expected.forEach((int sensorOrientationDegrees, int targetRotation) {
+        expect(
+          computePreviewTargetRotation(
+            handlesCropAndRotation: false,
+            cameraIsFrontFacing: false,
+            sensorOrientationDegrees: sensorOrientationDegrees,
+          ),
+          targetRotation,
+          reason: 'sensor: $sensorOrientationDegrees',
+        );
+      });
+    });
+
+    test('returns the inverse of the sensor orientation for front cameras if the surface does '
+        'not handle crop and rotation', () {
+      const expected = <int, int>{
+        0: Surface.rotation0,
+        90: Surface.rotation270,
+        180: Surface.rotation180,
+        270: Surface.rotation90,
+      };
+      expected.forEach((int sensorOrientationDegrees, int targetRotation) {
+        expect(
+          computePreviewTargetRotation(
+            handlesCropAndRotation: false,
+            cameraIsFrontFacing: true,
+            sensorOrientationDegrees: sensorOrientationDegrees,
+          ),
+          targetRotation,
+          reason: 'sensor: $sensorOrientationDegrees',
+        );
+      });
+    });
+
+    test('makes a buffer copied by CameraX look like a buffer from the camera directly', () {
+      // CameraX reports the rotation of a copied buffer relative to the target
+      // rotation (sensor - target for back cameras, sensor + target for front
+      // cameras). Without the camera transform, a direct buffer is in sensor
+      // orientation, so the copied buffer matches it if that rotation is 0.
+      for (final cameraIsFrontFacing in <bool>[true, false]) {
+        for (final sensorOrientationDegrees in <int>[0, 90, 180, 270]) {
+          final int targetRotationDegrees =
+              computePreviewTargetRotation(
+                handlesCropAndRotation: false,
+                cameraIsFrontFacing: cameraIsFrontFacing,
+                sensorOrientationDegrees: sensorOrientationDegrees,
+              ) *
+              90;
+          final int relativeRotationDegrees = cameraIsFrontFacing
+              ? (sensorOrientationDegrees + targetRotationDegrees) % 360
+              : (sensorOrientationDegrees - targetRotationDegrees) % 360;
+          expect(
+            relativeRotationDegrees,
+            0,
+            reason: 'front: $cameraIsFrontFacing, sensor: $sensorOrientationDegrees',
+          );
+        }
+      }
+    });
+
+    test('throws for a sensor orientation that is not a multiple of 90', () {
+      expect(
+        () => computePreviewTargetRotation(
+          handlesCropAndRotation: false,
+          cameraIsFrontFacing: false,
+          sensorOrientationDegrees: 45,
+        ),
+        throwsArgumentError,
+      );
+    });
+  });
+
   group('computeUntransformedPreviewRotation', () {
     test('uses the sensor orientation and display rotation when TransformationInfo is null', () {
       // Back cameras: sensor - display.

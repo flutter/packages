@@ -34,6 +34,46 @@ int getPreAppliedQuarterTurnsRotationFromDeviceOrientation(DeviceOrientation ori
   };
 }
 
+/// Returns the [Surface] rotation constant to use as the target rotation of
+/// the camera preview so that a preview buffer copied by CameraX (e.g. for
+/// stream sharing) has the same orientation as a buffer the surface receives
+/// from the camera directly.
+///
+/// CameraX switches between the two kinds of buffers when stream sharing
+/// starts or stops, and the first frames of the new kind can be drawn before
+/// the [TransformationInfo] that describes them reaches Dart. Because the two
+/// kinds look the same with this target rotation, those frames are still
+/// displayed correctly.
+///
+/// A surface that [handlesCropAndRotation] (a `SurfaceTexture`) applies the
+/// camera transform to direct buffers, making them upright in the natural
+/// orientation of the device, so the target rotation is
+/// [Surface.rotation0]. Otherwise (an `ImageReader`), direct buffers are in
+/// the orientation of the camera sensor, so the target rotation is the one for
+/// which CameraX reports a relative rotation of 0 degrees.
+int computePreviewTargetRotation({
+  required bool handlesCropAndRotation,
+  required bool cameraIsFrontFacing,
+  required int sensorOrientationDegrees,
+}) {
+  if (handlesCropAndRotation) {
+    return Surface.rotation0;
+  }
+
+  final int targetRotationDegrees = cameraIsFrontFacing
+      ? (360 - sensorOrientationDegrees) % 360
+      : sensorOrientationDegrees % 360;
+  return switch (targetRotationDegrees) {
+    0 => Surface.rotation0,
+    90 => Surface.rotation90,
+    180 => Surface.rotation180,
+    270 => Surface.rotation270,
+    int() => throw ArgumentError(
+      '$sensorOrientationDegrees is not a multiple of 90, so the preview target rotation cannot be determined.',
+    ),
+  };
+}
+
 /// Returns the clockwise rotation in degrees needed to display a camera
 /// preview buffer upright when the camera transform has not been applied to
 /// it.
