@@ -113,17 +113,17 @@ void main() {
   test('light, dark and fallback constructors support useMaterial3', () {
     final lightTheme = ThemeData();
     expect(lightTheme.useMaterial3, true);
-    expect(lightTheme.typography, Typography.material2021(colorScheme: lightTheme.colorScheme));
+    expect(lightTheme.typography, Typography.material2025(colorScheme: lightTheme.colorScheme));
 
     final darkTheme = ThemeData.dark();
     expect(darkTheme.useMaterial3, true);
-    expect(darkTheme.typography, Typography.material2021(colorScheme: darkTheme.colorScheme));
+    expect(darkTheme.typography, Typography.material2025(colorScheme: darkTheme.colorScheme));
 
     final fallbackTheme = ThemeData();
     expect(fallbackTheme.useMaterial3, true);
     expect(
       fallbackTheme.typography,
-      Typography.material2021(colorScheme: fallbackTheme.colorScheme),
+      Typography.material2025(colorScheme: fallbackTheme.colorScheme),
     );
   });
 
