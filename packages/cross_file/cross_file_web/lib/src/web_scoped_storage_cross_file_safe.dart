@@ -20,7 +20,7 @@ sealed class WebScopedStorageXFileCreationParams extends PlatformScopedStorageXF
   const WebScopedStorageXFileCreationParams({
     required super.uri,
     // ignore: avoid_unused_constructor_parameters
-    @visibleForTesting dynamic testOverrides,
+    @visibleForTesting Object? testOverrides,
   });
 
   /// Constructs a [WebScopedStorageXFileCreationParams] with an object url.
@@ -30,7 +30,7 @@ sealed class WebScopedStorageXFileCreationParams extends PlatformScopedStorageXF
     // ignore: avoid_unused_constructor_parameters
     required String objectUrl,
     // ignore: avoid_unused_constructor_parameters
-    @visibleForTesting dynamic testOverrides,
+    @visibleForTesting Object? testOverrides,
   }) => throw UnsupportedError(
     '`WebScopedStorageXFileCreationParams.fromObjectUrl` is only supported on web.',
   );
@@ -58,10 +58,14 @@ sealed class WebScopedStorageXFileCreationParams extends PlatformScopedStorageXF
     // The type should be a `XFileTestOverrides`. It can't be imported in this
     // stub without breaking other platforms.
     // ignore: avoid_unused_constructor_parameters
-    @visibleForTesting dynamic testOverrides,
+    @visibleForTesting Object? testOverrides,
   }) => throw UnsupportedError(
     '`WebScopedStorageXFileCreationParams.fromBytes` is only supported on web.',
   );
+
+  /// Overrides some functions to allow testing.
+  @visibleForTesting
+  Object? get testOverrides;
 }
 
 /// Provides platform-specific features for [WebScopedStorageXFile].
