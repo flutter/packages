@@ -70,4 +70,19 @@ void main() {
     expect(subDirectory.params.uri, Uri.directory(subDirectoryUri).toString());
     expect(Directory(subDirectoryUri).existsSync(), isTrue);
   });
+
+  test('delete', () async {
+    final Directory tempDir = Directory.systemTemp.createTempSync();
+    final testDir = Directory(path.join(tempDir.path, 'testDir'))..createSync();
+    addTearDown(() => tempDir.deleteSync(recursive: true));
+
+    final dir = PlatformScopedStorageXDirectory(
+      PlatformScopedStorageXDirectoryCreationParams(uri: testDir.uri.toString()),
+    );
+
+    expect(testDir.existsSync(), isTrue);
+    final bool success = await dir.delete(const PlatformDirectoryDeleteParams());
+    expect(success, isTrue);
+    expect(testDir.existsSync(), isFalse);
+  });
 }

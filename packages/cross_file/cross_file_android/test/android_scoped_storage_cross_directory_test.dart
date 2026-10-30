@@ -177,10 +177,10 @@ void main() {
       return mockDocumentFile;
     };
 
-    final file = AndroidScopedStorageXDirectory(
+    final dir = AndroidScopedStorageXDirectory(
       const PlatformScopedStorageXDirectoryCreationParams(uri: uri),
     );
 
-    expect(await file.delete(const PlatformDirectoryDeleteParams()), true);
+    expect(await dir.delete(const PlatformDirectoryDeleteParams()), true);
   });
 }
