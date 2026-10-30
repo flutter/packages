@@ -266,7 +266,7 @@ void main() {
         isFocusable: true,
       ),
     );
-  });
+  }, tags: 'reduced-web-test-set');
 
   testWidgets('EndDrawerButton control test', (WidgetTester tester) async {
     await tester.pumpWidget(
