@@ -51,6 +51,7 @@ class _MyHomePageState extends State<MyHomePage> {
   VideoPlayerController? _controller;
   VideoPlayerController? _toBeDisposed;
   String? _retrieveDataError;
+  RecentMedia? _recentMedia;
 
   final ImagePicker _picker = ImagePicker();
   final TextEditingController maxWidthController = TextEditingController();
@@ -80,6 +81,34 @@ class _MyHomePageState extends State<MyHomePage> {
       await controller.play();
       setState(() {});
     }
+  }
+
+  Future<void> _loadRecentMedia() async {
+    try {
+      final List<RecentMedia> recentMedia = await _picker.getRecentMedia();
+      setState(() {
+        _recentMedia = recentMedia.firstOrNull;
+      });
+    } catch (e) {
+      setState(() {
+        _pickImageError = e;
+      });
+    }
+  }
+
+  Widget _buildRecentMediaIcon() {
+    final RecentMedia? media = _recentMedia;
+    if (media == null) {
+      return const Icon(Icons.history);
+    }
+    return Stack(
+      fit: StackFit.expand,
+      children: <Widget>[
+        Image.file(File(media.thumbnail.path), fit: BoxFit.cover),
+        if (media.type == MediaSelectionType.video)
+          const Center(child: Icon(Icons.play_circle_outline, color: Colors.white)),
+      ],
+    );
   }
 
   Future<void> _onImageButtonPressed(
@@ -400,6 +429,17 @@ class _MyHomePageState extends State<MyHomePage> {
               child: const Icon(Icons.photo_library_outlined),
             ),
           ),
+          if (_picker.supportsRecentMedia())
+            Padding(
+              padding: const EdgeInsets.only(top: 16.0),
+              child: FloatingActionButton(
+                onPressed: _loadRecentMedia,
+                heroTag: 'recentMedia',
+                tooltip: 'Show most recent item',
+                clipBehavior: Clip.antiAlias,
+                child: _buildRecentMediaIcon(),
+              ),
+            ),
           if (_picker.supportsImageSource(ImageSource.camera))
             Padding(
               padding: const EdgeInsets.only(top: 16.0),

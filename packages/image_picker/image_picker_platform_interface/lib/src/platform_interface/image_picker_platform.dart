@@ -341,6 +341,30 @@ abstract class ImagePickerPlatform extends PlatformInterface {
   bool supportsImageSource(ImageSource source) {
     return source == ImageSource.gallery || source == ImageSource.camera;
   }
+
+  /// Returns thumbnails of the most recent items in the device's media
+  /// library, ordered from newest to oldest.
+  ///
+  /// The `options` argument controls how many items are returned, which types
+  /// of media are included, and the target size of the thumbnails. See
+  /// [RecentMediaOptions] for more details.
+  ///
+  /// Implementations may request access to the media library if the user has
+  /// not made a decision yet. If access is denied, returns an empty list. If
+  /// the user granted access to only some items, returns the most recent of
+  /// those items.
+  ///
+  /// Callers should check [supportsRecentMedia] before calling this method.
+  Future<List<RecentMedia>> getRecentMedia({
+    RecentMediaOptions options = const RecentMediaOptions(),
+  }) {
+    throw UnimplementedError('getRecentMedia() has not been implemented.');
+  }
+
+  /// Returns true if the implementation supports [getRecentMedia].
+  ///
+  /// Defaults to false.
+  bool supportsRecentMedia() => false;
 }
 
 /// A base class for an [ImagePickerPlatform] implementation that does not

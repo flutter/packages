@@ -36,6 +36,13 @@ import 'package:image_picker_platform_interface/image_picker_platform_interface.
 
 In addition, `ImagePickerAndroid.useAndroidPhotoPicker` must be set to `true` to use the `limit` functionality. It is implemented based on [`ActivityResultContract`][3], so it can only be ensured to take effect on Android 13 or above. Otherwise, it depends on whether the corresponding system app supports it.
 
+## Recent media
+
+`getRecentMedia` reads the media library directly, so it requires the app to
+declare media permissions in its _AndroidManifest.xml_. See the
+[`image_picker` README][4] for details.
+
 [1]: https://pub.dev/packages/image_picker
 [2]: https://flutter.dev/to/endorsed-federated-plugin
 [3]: https://developer.android.google.cn/reference/kotlin/androidx/activity/result/contract/ActivityResultContracts.PickMultipleVisualMedia
+[4]: https://pub.dev/packages/image_picker#recent-media-thumbnails

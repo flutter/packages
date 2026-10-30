@@ -1,5 +1,6 @@
-## NEXT
+## 1.3.0
 
+* Adds `getRecentMedia` and `supportsRecentMedia` for Android and iOS.
 * Updates README to reflect that the latest version of `image_picker_ios`
   requires iOS 15.
   * Applications built with older versions of Flutter will continue to use
