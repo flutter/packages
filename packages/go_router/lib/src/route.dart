@@ -1433,29 +1433,49 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> with R
   RouteMatchList? _matchListForBranch(int index) =>
       _branchState[route.branches[index].navigatorKey]?.location.value;
 
-  /// Creates a new RouteMatchList that is scoped to the Navigators of the
-  /// current shell route or it's descendants. This involves removing all the
-  /// trailing imperative matches from the RouterMatchList that are targeted at
-  /// any other (often top-level) Navigator.
+  /// Creates a RouteMatchList scoped to the current shell route's Navigators
+  /// and its descendants, removing other matches and their location metadata.
   RouteMatchList _scopedMatchList(RouteMatchList matchList) {
-    return matchList.copyWith(matches: _scopeMatches(matchList.matches));
+    final RouteMatchBase? nextMatch = _findMatchAfterShell(matchList.matches).nextMatch;
+    if (nextMatch == null) {
+      return matchList;
+    }
+
+    final RouteMatchList scopedMatchList = matchList.remove(nextMatch);
+    String scopedLocation = scopedMatchList.uri.path;
+    scopedMatchList.visitRouteMatches((RouteMatchBase match) {
+      if (match is RouteMatch && match is! ImperativeRouteMatch) {
+        scopedLocation = match.matchedLocation;
+      }
+      return true;
+    });
+
+    // matchedLocation retains encoded delimiters, unlike decoded pathParameters.
+    return scopedMatchList.copyWith(uri: matchList.uri.replace(path: scopedLocation));
   }
 
-  List<RouteMatchBase> _scopeMatches(List<RouteMatchBase> matches) {
-    final result = <RouteMatchBase>[];
-    for (final match in matches) {
-      if (match is ShellRouteMatch) {
-        if (match.route == route) {
-          result.add(match);
-          // Discard any other route match after current shell route.
-          break;
-        }
-        result.add(match.copyWith(matches: _scopeMatches(match.matches)));
+  ({bool foundShell, RouteMatchBase? nextMatch}) _findMatchAfterShell(
+    List<RouteMatchBase> matches,
+  ) {
+    for (var index = 0; index < matches.length; index++) {
+      final RouteMatchBase match = matches[index];
+      if (match is! ShellRouteMatch) {
         continue;
       }
-      result.add(match);
+
+      final RouteMatchBase? nextMatch = index + 1 < matches.length ? matches[index + 1] : null;
+      if (match.route == route) {
+        return (foundShell: true, nextMatch: nextMatch);
+      }
+
+      final ({bool foundShell, RouteMatchBase? nextMatch}) nested = _findMatchAfterShell(
+        match.matches,
+      );
+      if (nested.foundShell) {
+        return (foundShell: true, nextMatch: nested.nextMatch ?? nextMatch);
+      }
     }
-    return result;
+    return (foundShell: false, nextMatch: null);
   }
 
   void _updateCurrentBranchStateFromWidget() {
