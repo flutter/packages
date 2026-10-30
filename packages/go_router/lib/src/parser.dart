@@ -137,19 +137,10 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
           ),
           extra: infoState.extra,
         );
-        if (onParserException != null) {
-          // Defer past this still-in-flight initial parse, so a recovery
-          // navigation (e.g. router.go()) made synchronously from
-          // onParserException/onException isn't discarded by the Router's
-          // intent-token churn (same reason as the microtask deferral
-          // below for the onEnter `then` callback).
-          scheduleMicrotask(() {
-            if (context.mounted) {
-              onParserException!(context, blocked);
-            }
-          });
-        }
-        return SynchronousFuture<RouteMatchList>(blocked);
+        final RouteMatchList resolved = onParserException != null
+            ? onParserException!(context, blocked)
+            : blocked;
+        return SynchronousFuture<RouteMatchList>(resolved);
       },
     );
   }

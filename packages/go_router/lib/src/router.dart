@@ -284,14 +284,23 @@ class GoRouter implements RouterConfig<RouteMatchList> {
     final ParserExceptionHandler? parserExceptionHandler;
     if (onException != null) {
       parserExceptionHandler = (BuildContext context, RouteMatchList routeMatchList) {
-        onException(context, configuration.buildTopLevelGoRouterState(routeMatchList), this);
-        // Prefer the current configuration whenever it is valid (non-empty
-        // or an already-installed error configuration), to avoid updating
-        // GoRouterDelegate with the error match list. Fall back to the
-        // error match list only when nothing has committed yet
-        // (e.g., initial deep link blocked by onEnter). This prevents
-        // an assertion failure in GoRouterDelegate.setNewRoutePath
-        // which requires configuration.isNotEmpty || configuration.isError.
+        final GoRouterState state = configuration.buildTopLevelGoRouterState(routeMatchList);
+        if (configuration.topOnEnter == null) {
+          onException(context, state, this);
+        } else {
+          // With onEnter, parser completion crosses an async boundary. Invoking
+          // onException before the parser returns can start a re-entrant
+          // navigation before Flutter's Router captures the outer transaction,
+          // allowing the outer result to overwrite the recovery navigation.
+          scheduleMicrotask(() {
+            if (context.mounted) {
+              onException(context, state, this);
+            }
+          });
+        }
+
+        // Preserve any committed route or error configuration. If none exists,
+        // let the parser's error result establish a valid configuration.
         final RouteMatchList current = routerDelegate.currentConfiguration;
         return current.isNotEmpty || current.isError ? current : routeMatchList;
       };
