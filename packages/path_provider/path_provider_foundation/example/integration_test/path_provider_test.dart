@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:ffi';
 import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
@@ -10,13 +11,14 @@ import 'package:mockito/mockito.dart';
 import 'package:objective_c/objective_c.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider_foundation/src/ffi_bindings.g.dart';
+import 'package:path_provider_foundation/src/foundation_paths.dart';
 import 'package:path_provider_foundation/src/path_provider_foundation_real.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 
 import 'path_provider_test.mocks.dart';
 
 @GenerateNiceMocks(<MockSpec<Object>>[
-  MockSpec<FoundationFFI>(),
+  MockSpec<FoundationPaths>(),
   MockSpec<ObjCObject>(),
   MockSpec<PathProviderPlatformProvider>(),
 ])
@@ -84,6 +86,45 @@ void main() {
     });
   });
 
+  // These tests check what the plain-FFI reader answers against what the
+  // Objective-C bindings answer, in the real runtime.
+  group('FoundationPaths', () {
+    final directories = <NSSearchPathDirectory>[
+      NSSearchPathDirectory.NSApplicationSupportDirectory,
+      NSSearchPathDirectory.NSCachesDirectory,
+      NSSearchPathDirectory.NSDocumentDirectory,
+      NSSearchPathDirectory.NSLibraryDirectory,
+      NSSearchPathDirectory.NSDownloadsDirectory,
+    ];
+
+    for (final directory in directories) {
+      testWidgets('userDirectory matches NSSearchPathForDirectoriesInDomains for $directory', (
+        _,
+      ) async {
+        final foundation = FoundationFFI(
+          DynamicLibrary.open('/System/Library/Frameworks/Foundation.framework/Foundation'),
+        );
+        final NSArray paths = foundation.NSSearchPathForDirectoriesInDomains(
+          directory,
+          NSSearchPathDomainMask.NSUserDomainMask,
+          true,
+        );
+        final ObjCObject? first = paths.firstObject;
+        final String? expected = first == null ? null : NSString.as(first).toDartString();
+
+        expect(const FoundationPaths().userDirectory(directory), expected);
+        expect(expected, isNotEmpty);
+      });
+    }
+
+    testWidgets('mainBundleIdentifier matches NSBundle', (_) async {
+      final String? expected = NSBundle.getMainBundle().bundleIdentifier?.toDartString();
+
+      expect(const FoundationPaths().mainBundleIdentifier, expected);
+      expect(expected, _bundleIdentifier);
+    });
+  });
+
   // This group contains tests that would normally be Dart unit tests in the
   // test/ directory, but can't be because they use Objective-C types (NSURL,
   // NSString, etc.) that aren't available in an actual unit test. For these
@@ -108,20 +149,16 @@ void main() {
     });
 
     testWidgets('getTemporaryPath iOS', (_) async {
-      final mockFfiLib = MockFoundationFFI();
+      final mockPaths = MockFoundationPaths();
       final pathProvider = PathProviderFoundation(
-        ffiLib: mockFfiLib,
+        foundationPaths: mockPaths,
         platform: FakePlatformProvider(isIOS: true),
       );
 
       final String temporaryPath = p.join(testRoot.path, 'temporary', 'path');
       when(
-        mockFfiLib.NSSearchPathForDirectoriesInDomains(
-          NSSearchPathDirectory.NSCachesDirectory,
-          NSSearchPathDomainMask.NSUserDomainMask,
-          true,
-        ),
-      ).thenReturn(_arrayWithString(temporaryPath));
+        mockPaths.userDirectory(NSSearchPathDirectory.NSCachesDirectory),
+      ).thenReturn(temporaryPath);
 
       final String? path = await pathProvider.getTemporaryPath();
 
@@ -129,42 +166,36 @@ void main() {
     });
 
     testWidgets('getTemporaryPath macOS', (_) async {
-      final mockFfiLib = MockFoundationFFI();
+      final mockPaths = MockFoundationPaths();
       final pathProvider = PathProviderFoundation(
-        ffiLib: mockFfiLib,
+        foundationPaths: mockPaths,
         platform: FakePlatformProvider(isMacOS: true),
       );
 
       final String temporaryPath = p.join(testRoot.path, 'temporary', 'path');
       when(
-        mockFfiLib.NSSearchPathForDirectoriesInDomains(
-          NSSearchPathDirectory.NSCachesDirectory,
-          NSSearchPathDomainMask.NSUserDomainMask,
-          true,
-        ),
-      ).thenReturn(_arrayWithString(temporaryPath));
+        mockPaths.userDirectory(NSSearchPathDirectory.NSCachesDirectory),
+      ).thenReturn(temporaryPath);
+
+      when(mockPaths.mainBundleIdentifier).thenReturn(_bundleIdentifier);
 
       final String? path = await pathProvider.getTemporaryPath();
 
       // On macOS, the bundle ID should be appended to the path.
-      expect(path, '$temporaryPath/dev.flutter.plugins.pathProviderExample');
+      expect(path, '$temporaryPath/$_bundleIdentifier');
     });
 
     testWidgets('getApplicationSupportPath iOS', (_) async {
-      final mockFfiLib = MockFoundationFFI();
+      final mockPaths = MockFoundationPaths();
       final pathProvider = PathProviderFoundation(
-        ffiLib: mockFfiLib,
+        foundationPaths: mockPaths,
         platform: FakePlatformProvider(isIOS: true),
       );
 
       final String applicationSupportPath = p.join(testRoot.path, 'application', 'support', 'path');
       when(
-        mockFfiLib.NSSearchPathForDirectoriesInDomains(
-          NSSearchPathDirectory.NSApplicationSupportDirectory,
-          NSSearchPathDomainMask.NSUserDomainMask,
-          true,
-        ),
-      ).thenReturn(_arrayWithString(applicationSupportPath));
+        mockPaths.userDirectory(NSSearchPathDirectory.NSApplicationSupportDirectory),
+      ).thenReturn(applicationSupportPath);
 
       final String? path = await pathProvider.getApplicationSupportPath();
 
@@ -172,42 +203,36 @@ void main() {
     });
 
     testWidgets('getApplicationSupportPath macOS', (_) async {
-      final mockFfiLib = MockFoundationFFI();
+      final mockPaths = MockFoundationPaths();
       final pathProvider = PathProviderFoundation(
-        ffiLib: mockFfiLib,
+        foundationPaths: mockPaths,
         platform: FakePlatformProvider(isMacOS: true),
       );
 
       final String applicationSupportPath = p.join(testRoot.path, 'application', 'support', 'path');
       when(
-        mockFfiLib.NSSearchPathForDirectoriesInDomains(
-          NSSearchPathDirectory.NSApplicationSupportDirectory,
-          NSSearchPathDomainMask.NSUserDomainMask,
-          true,
-        ),
-      ).thenReturn(_arrayWithString(applicationSupportPath));
+        mockPaths.userDirectory(NSSearchPathDirectory.NSApplicationSupportDirectory),
+      ).thenReturn(applicationSupportPath);
+
+      when(mockPaths.mainBundleIdentifier).thenReturn(_bundleIdentifier);
 
       final String? path = await pathProvider.getApplicationSupportPath();
 
       // On macOS, the bundle ID should be appended to the path.
-      expect(path, '$applicationSupportPath/dev.flutter.plugins.pathProviderExample');
+      expect(path, '$applicationSupportPath/$_bundleIdentifier');
     });
 
     testWidgets('getApplicationSupportPath creates the directory if necessary', (_) async {
-      final mockFfiLib = MockFoundationFFI();
+      final mockPaths = MockFoundationPaths();
       final pathProvider = PathProviderFoundation(
-        ffiLib: mockFfiLib,
+        foundationPaths: mockPaths,
         platform: platformVariants.currentValue,
       );
 
       final String applicationSupportPath = p.join(testRoot.path, 'application', 'support', 'path');
       when(
-        mockFfiLib.NSSearchPathForDirectoriesInDomains(
-          NSSearchPathDirectory.NSApplicationSupportDirectory,
-          NSSearchPathDomainMask.NSUserDomainMask,
-          true,
-        ),
-      ).thenReturn(_arrayWithString(applicationSupportPath));
+        mockPaths.userDirectory(NSSearchPathDirectory.NSApplicationSupportDirectory),
+      ).thenReturn(applicationSupportPath);
 
       final String? path = await pathProvider.getApplicationSupportPath();
 
@@ -215,20 +240,16 @@ void main() {
     }, variant: platformVariants);
 
     testWidgets('getLibraryPath', (_) async {
-      final mockFfiLib = MockFoundationFFI();
+      final mockPaths = MockFoundationPaths();
       final pathProvider = PathProviderFoundation(
-        ffiLib: mockFfiLib,
+        foundationPaths: mockPaths,
         platform: platformVariants.currentValue,
       );
 
       final String libraryPath = p.join(testRoot.path, 'library', 'path');
       when(
-        mockFfiLib.NSSearchPathForDirectoriesInDomains(
-          NSSearchPathDirectory.NSLibraryDirectory,
-          NSSearchPathDomainMask.NSUserDomainMask,
-          true,
-        ),
-      ).thenReturn(_arrayWithString(libraryPath));
+        mockPaths.userDirectory(NSSearchPathDirectory.NSLibraryDirectory),
+      ).thenReturn(libraryPath);
 
       final String? path = await pathProvider.getLibraryPath();
 
@@ -236,9 +257,9 @@ void main() {
     }, variant: platformVariants);
 
     testWidgets('getApplicationDocumentsPath', (_) async {
-      final mockFfiLib = MockFoundationFFI();
+      final mockPaths = MockFoundationPaths();
       final pathProvider = PathProviderFoundation(
-        ffiLib: mockFfiLib,
+        foundationPaths: mockPaths,
         platform: platformVariants.currentValue,
       );
 
@@ -249,12 +270,8 @@ void main() {
         'path',
       );
       when(
-        mockFfiLib.NSSearchPathForDirectoriesInDomains(
-          NSSearchPathDirectory.NSDocumentDirectory,
-          NSSearchPathDomainMask.NSUserDomainMask,
-          true,
-        ),
-      ).thenReturn(_arrayWithString(applicationDocumentsPath));
+        mockPaths.userDirectory(NSSearchPathDirectory.NSDocumentDirectory),
+      ).thenReturn(applicationDocumentsPath);
 
       final String? path = await pathProvider.getApplicationDocumentsPath();
 
@@ -262,20 +279,16 @@ void main() {
     }, variant: platformVariants);
 
     testWidgets('getApplicationCachePath iOS', (_) async {
-      final mockFfiLib = MockFoundationFFI();
+      final mockPaths = MockFoundationPaths();
       final pathProvider = PathProviderFoundation(
-        ffiLib: mockFfiLib,
+        foundationPaths: mockPaths,
         platform: FakePlatformProvider(isIOS: true),
       );
 
       final String applicationCachePath = p.join(testRoot.path, 'application', 'cache', 'path');
       when(
-        mockFfiLib.NSSearchPathForDirectoriesInDomains(
-          NSSearchPathDirectory.NSCachesDirectory,
-          NSSearchPathDomainMask.NSUserDomainMask,
-          true,
-        ),
-      ).thenReturn(_arrayWithString(applicationCachePath));
+        mockPaths.userDirectory(NSSearchPathDirectory.NSCachesDirectory),
+      ).thenReturn(applicationCachePath);
 
       final String? path = await pathProvider.getApplicationCachePath();
 
@@ -283,42 +296,36 @@ void main() {
     });
 
     testWidgets('getApplicationCachePath macOS', (_) async {
-      final mockFfiLib = MockFoundationFFI();
+      final mockPaths = MockFoundationPaths();
       final pathProvider = PathProviderFoundation(
-        ffiLib: mockFfiLib,
+        foundationPaths: mockPaths,
         platform: FakePlatformProvider(isMacOS: true),
       );
 
       final String applicationCachePath = p.join(testRoot.path, 'application', 'cache', 'path');
       when(
-        mockFfiLib.NSSearchPathForDirectoriesInDomains(
-          NSSearchPathDirectory.NSCachesDirectory,
-          NSSearchPathDomainMask.NSUserDomainMask,
-          true,
-        ),
-      ).thenReturn(_arrayWithString(applicationCachePath));
+        mockPaths.userDirectory(NSSearchPathDirectory.NSCachesDirectory),
+      ).thenReturn(applicationCachePath);
+
+      when(mockPaths.mainBundleIdentifier).thenReturn(_bundleIdentifier);
 
       final String? path = await pathProvider.getApplicationCachePath();
 
       // On macOS, the bundle ID should be appended to the path.
-      expect(path, '$applicationCachePath/dev.flutter.plugins.pathProviderExample');
+      expect(path, '$applicationCachePath/$_bundleIdentifier');
     });
 
     testWidgets('getApplicationCachePath creates the directory if necessary', (_) async {
-      final mockFfiLib = MockFoundationFFI();
+      final mockPaths = MockFoundationPaths();
       final pathProvider = PathProviderFoundation(
-        ffiLib: mockFfiLib,
+        foundationPaths: mockPaths,
         platform: platformVariants.currentValue,
       );
 
       final String applicationCachePath = p.join(testRoot.path, 'application', 'cache', 'path');
       when(
-        mockFfiLib.NSSearchPathForDirectoriesInDomains(
-          NSSearchPathDirectory.NSCachesDirectory,
-          NSSearchPathDomainMask.NSUserDomainMask,
-          true,
-        ),
-      ).thenReturn(_arrayWithString(applicationCachePath));
+        mockPaths.userDirectory(NSSearchPathDirectory.NSCachesDirectory),
+      ).thenReturn(applicationCachePath);
 
       final String? path = await pathProvider.getApplicationCachePath();
 
@@ -326,20 +333,16 @@ void main() {
     }, variant: platformVariants);
 
     testWidgets('getDownloadsPath', (_) async {
-      final mockFfiLib = MockFoundationFFI();
+      final mockPaths = MockFoundationPaths();
       final pathProvider = PathProviderFoundation(
-        ffiLib: mockFfiLib,
+        foundationPaths: mockPaths,
         platform: platformVariants.currentValue,
       );
 
       final String downloadsPath = p.join(testRoot.path, 'downloads', 'path');
       when(
-        mockFfiLib.NSSearchPathForDirectoriesInDomains(
-          NSSearchPathDirectory.NSDownloadsDirectory,
-          NSSearchPathDomainMask.NSUserDomainMask,
-          true,
-        ),
-      ).thenReturn(_arrayWithString(downloadsPath));
+        mockPaths.userDirectory(NSSearchPathDirectory.NSDownloadsDirectory),
+      ).thenReturn(downloadsPath);
 
       final String? result = await pathProvider.getDownloadsPath();
 
@@ -350,9 +353,7 @@ void main() {
       final String containerPath = p.join(testRoot.path, 'container', 'path');
       final NSURL containerUrl = NSURL.fileURLWithPath(NSString(containerPath));
 
-      final mockFfiLib = MockFoundationFFI();
       final pathProvider = PathProviderFoundation(
-        ffiLib: mockFfiLib,
         containerURLForSecurityApplicationGroupIdentifier: (_) => containerUrl,
         platform: FakePlatformProvider(isIOS: true),
       );
@@ -367,9 +368,7 @@ void main() {
   });
 }
 
-NSArray _arrayWithString(String s) {
-  return NSArray.arrayWithObject(NSString(s));
-}
+const _bundleIdentifier = 'dev.flutter.plugins.pathProviderExample';
 
 /// Verify a file called [name] in [directoryPath] by recreating it with test
 /// contents when necessary.

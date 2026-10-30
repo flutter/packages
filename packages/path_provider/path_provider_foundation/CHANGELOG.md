@@ -1,5 +1,7 @@
-## NEXT
+## 2.6.1
 
+* Fixes the first call to any directory method blocking the calling isolate for several
+  milliseconds, by reading directories through plain FFI calls instead of `package:objective_c`.
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 
 ## 2.6.0
