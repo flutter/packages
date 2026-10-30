@@ -1286,6 +1286,12 @@ class AndroidCameraCameraX extends CameraPlatform {
       // See https://developer.android.com/media/camera/camerax/architecture#combine-use-cases
       // for details.
       await _unbindUseCaseFromLifecycle(imageAnalysis!);
+    } else {
+      // Bind imageAnalysis before videoCapture and before the recording starts.
+      // Binding it during a recording makes CameraX switch the preview and video
+      // to stream sharing mid-recording, which can fail and leave the camera
+      // session broken.
+      await _bindUseCaseToLifecycle(imageAnalysis!, options.cameraId);
     }
 
     await _bindUseCaseToLifecycle(videoCapture!, options.cameraId);
