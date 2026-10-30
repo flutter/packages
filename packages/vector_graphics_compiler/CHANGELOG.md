@@ -1,3 +1,7 @@
+## 1.3.5
+
+* Adds support for SVG filters (`feGaussianBlur`, `feOffset`, `feMerge`, and `feMergeNode`).
+
 ## 1.3.4
 
 * Fixes `em` units in text `x`, `y`, `dx` and `dy` being treated as pixels.

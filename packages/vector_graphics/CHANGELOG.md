@@ -1,3 +1,7 @@
+## 1.2.6
+
+* Adds support for SVG filters (`feGaussianBlur`, `feOffset`, `feMerge`, and `feMergeNode`).
+
 ## 1.2.5
 
 * Fixes a leak of the decoded picture when a `VectorGraphic` is removed before

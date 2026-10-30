@@ -174,4 +174,42 @@ void main() {
 
     expect(instructions.paths.single.fillType, PathFillType.evenOdd);
   });
+
+  test('Does not delete ClipNode when child path or SaveLayerNode is blurred', () {
+    const svgBlurredPath = '''
+<svg viewBox="0 0 100 100">
+  <defs>
+    <filter id="blur"><feGaussianBlur stdDeviation="10"/></filter>
+    <clipPath id="clip"><rect x="10" y="10" width="80" height="80"/></clipPath>
+  </defs>
+  <g clip-path="url(#clip)">
+    <g opacity="0.5">
+      <circle cx="50" cy="50" r="40" fill="red" filter="url(#blur)"/>
+    </g>
+  </g>
+</svg>
+''';
+    final VectorInstructions pathInstructions = parse(svgBlurredPath);
+    expect(
+      pathInstructions.commands.where((DrawCommand c) => c.type == DrawCommandType.clip),
+      hasLength(1),
+    );
+
+    const svgBlurredGroup = '''
+<svg viewBox="0 0 100 100">
+  <defs>
+    <filter id="blur"><feGaussianBlur stdDeviation="10"/></filter>
+    <clipPath id="clip"><rect x="10" y="10" width="80" height="80"/></clipPath>
+  </defs>
+  <g clip-path="url(#clip)" filter="url(#blur)">
+    <circle cx="50" cy="50" r="40" fill="red"/>
+  </g>
+</svg>
+''';
+    final VectorInstructions groupInstructions = parse(svgBlurredGroup);
+    expect(
+      groupInstructions.commands.where((DrawCommand c) => c.type == DrawCommandType.clip),
+      hasLength(1),
+    );
+  });
 }
