@@ -210,16 +210,25 @@ class _AndroidStreamConsumer implements StreamConsumer<List<int>> {
     }
 
     await for (final List<int> data in stream) {
-      await outputStream.write(data is Uint8List ? data : Uint8List.fromList(data));
+      try {
+        await outputStream.write(data is Uint8List ? data : Uint8List.fromList(data));
+      } catch (exception) {
+        await outputStream.close();
+        rethrow;
+      }
     }
 
-    await outputStream.flush();
+    await outputStream.flugsh();
   }
 
   @override
   Future<void> close() async {
     final android.OutputStream? outputStream = await outputStreamFuture;
-    await outputStream?.close();
+    if (outputStream == null) {
+      throw NullOutputStreamException(uri);
+    }
+
+    await outputStream.close();
   }
 }
 

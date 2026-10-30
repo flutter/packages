@@ -354,34 +354,83 @@ void main() {
     verify(mockOutputStream.close()).called(1);
   });
 
-  test('openWrite', () async {
-    const testString = 'Hello, World!';
-    final Uint8List testBytes = utf8.encode(testString);
+  group('openWrite', () {
+    test('openWrite completes normally', () async {
+      const testString = 'Hello, World!';
+      final Uint8List testBytes = utf8.encode(testString);
 
-    final mockDocumentFile = MockDocumentFile();
+      final mockDocumentFile = MockDocumentFile();
 
-    const uri = 'uri';
-    android.PigeonOverrides.documentFile_fromSingleUri = ({required String singleUri}) {
-      expect(singleUri, uri);
-      return mockDocumentFile;
-    };
+      const uri = 'uri';
+      android.PigeonOverrides.documentFile_fromSingleUri = ({required String singleUri}) {
+        expect(singleUri, uri);
+        return mockDocumentFile;
+      };
 
-    final mockOutputStream = MockOutputStream();
-    final mockContentResolver = MockContentResolver();
-    when(mockContentResolver.openOutputStream(uri, 'w')).thenAnswer((_) async => mockOutputStream);
-    android.PigeonOverrides.contentResolver_instance = mockContentResolver;
+      final mockOutputStream = MockOutputStream();
+      final mockContentResolver = MockContentResolver();
+      when(
+        mockContentResolver.openOutputStream(uri, 'w'),
+      ).thenAnswer((_) async => mockOutputStream);
+      android.PigeonOverrides.contentResolver_instance = mockContentResolver;
 
-    final file = AndroidScopedStorageXFile(
-      const PlatformScopedStorageXFileCreationParams(uri: uri),
-    );
+      final file = AndroidScopedStorageXFile(
+        const PlatformScopedStorageXFileCreationParams(uri: uri),
+      );
 
-    final StreamSink<Uint8List> sink = file.openWrite(const PlatformOpenWriteParams());
-    sink.add(testBytes);
-    await sink.close();
+      final StreamSink<Uint8List> sink = file.openWrite(const PlatformOpenWriteParams());
+      sink.add(testBytes);
+      await sink.close();
 
-    verify(mockOutputStream.write(argThat(equals(testBytes)))).called(1);
-    verify(mockOutputStream.flush()).called(1);
-    verify(mockOutputStream.close()).called(1);
+      verify(mockOutputStream.write(argThat(equals(testBytes)))).called(1);
+      verify(mockOutputStream.flush()).called(1);
+      verify(mockOutputStream.close()).called(1);
+    });
+
+    test('openWrite closes OutputStream when _AndroidStreamConsumer.addStream throws', () async {
+      const uri = 'uri';
+      final mockDocumentFile = MockDocumentFile();
+      android.PigeonOverrides.documentFile_fromSingleUri = ({required String singleUri}) {
+        return mockDocumentFile;
+      };
+
+      final mockOutputStream = MockOutputStream();
+      when(mockOutputStream.write(any)).thenThrow(Exception('Disk full'));
+      final mockContentResolver = MockContentResolver();
+      when(
+        mockContentResolver.openOutputStream(uri, 'w'),
+      ).thenAnswer((_) async => mockOutputStream);
+      android.PigeonOverrides.contentResolver_instance = mockContentResolver;
+
+      final file = AndroidScopedStorageXFile(
+        const PlatformScopedStorageXFileCreationParams(uri: uri),
+      );
+
+      final StreamSink<Uint8List> sink = file.openWrite(const PlatformOpenWriteParams());
+      sink.add(Uint8List.fromList(<int>[1, 2, 3]));
+      await expectLater(sink.close(), throwsException);
+
+      verify(mockOutputStream.close()).called(1);
+    });
+
+    test('openWrite throws exception if OutputStream when ', () async {
+      const uri = 'uri';
+      final mockDocumentFile = MockDocumentFile();
+      android.PigeonOverrides.documentFile_fromSingleUri = ({required String singleUri}) {
+        return mockDocumentFile;
+      };
+
+      final mockContentResolver = MockContentResolver();
+      when(mockContentResolver.openOutputStream(uri, 'w')).thenAnswer((_) async => null);
+      android.PigeonOverrides.contentResolver_instance = mockContentResolver;
+
+      final file = AndroidScopedStorageXFile(
+        const PlatformScopedStorageXFileCreationParams(uri: uri),
+      );
+
+      final StreamSink<Uint8List> sink = file.openWrite(const PlatformOpenWriteParams());
+      await expectLater(sink.close(), throwsA(isA<NullOutputStreamException>()));
+    });
   });
 }
 
