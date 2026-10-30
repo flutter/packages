@@ -1004,6 +1004,8 @@ class _IndicatorInkWell extends InkResponse {
          highlightShape: BoxShape.rectangle,
          borderRadius: useMaterial3 ? null : borderRadius,
          customBorder: useMaterial3 ? customBorder : null,
+         // md.comp.navigation-rail.focus.indicator.outline.offset
+         focusRingOffset: -3.0,
        );
 
   final bool useMaterial3;

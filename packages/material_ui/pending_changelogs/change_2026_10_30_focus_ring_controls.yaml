@@ -1,0 +1,3 @@
+changelog: |
+  - When `FocusRingThemeData.visible` is true, `Checkbox`, `Radio`, `Switch`, and `Slider` now also draw the keyboard focus ring: around the radial reaction circle for `Checkbox` and `Radio`, around the track for `Switch`, and around the thumb for `Slider`.
+version: minor

@@ -21,6 +21,7 @@ import 'color_scheme.dart';
 import 'colors.dart';
 import 'constants.dart';
 import 'debug.dart';
+import 'focus_ring_painting.dart';
 import 'material_state.dart';
 import 'shadows.dart';
 import 'switch_theme.dart';
@@ -1111,7 +1112,8 @@ class _MaterialSwitchState extends State<_MaterialSwitch>
               ..thumbShadow = switchConfig.thumbShadow
               ..transitionalThumbSize = switchConfig.transitionalThumbSize
               ..positionController = positionController
-              ..isCupertino = isCupertino,
+              ..isCupertino = isCupertino
+              ..focusRing = FocusRingStyle.maybeOf(context),
           ),
         ),
       ),
@@ -1119,7 +1121,20 @@ class _MaterialSwitchState extends State<_MaterialSwitch>
   }
 }
 
+// md.comp.switch.focus.indicator.offset
+const double _kFocusRingOffset = 2.0;
+
 class _SwitchPainter extends ToggleablePainter {
+  FocusRingStyle? get focusRing => _focusRing;
+  FocusRingStyle? _focusRing;
+  set focusRing(FocusRingStyle? value) {
+    if (_focusRing == value) {
+      return;
+    }
+    _focusRing = value;
+    notifyListeners();
+  }
+
   AnimationController get positionController => _positionController!;
   AnimationController? _positionController;
   set positionController(AnimationController value) {
@@ -1678,6 +1693,16 @@ class _SwitchPainter extends ToggleablePainter {
       thumbSize,
       inset,
     );
+
+    // The keyboard focus ring goes around the track. The Cupertino style
+    // draws its own focus outline in _paintTrackWith.
+    if (isFocused && !isCupertino) {
+      final trackRRect = RRect.fromRectAndRadius(
+        trackPaintOffset & Size(trackWidth, trackHeight),
+        Radius.circular(trackHeight / 2),
+      );
+      focusRing?.paintRRect(canvas, trackRRect, _kFocusRingOffset);
+    }
   }
 
   /// Computes canvas offset for track's upper left corner
