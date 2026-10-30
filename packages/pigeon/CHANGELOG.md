@@ -1,3 +1,7 @@
+## 29.1.1
+
+* Fixes validation of the `pigeon-native-interop-migration` agent skill by renaming the directory, fixing YAML frontmatter, and setting up automated skill validation.
+
 ## 29.1.0
 
 * [kotlin,swift] Adds support for removing event channel handler registration
