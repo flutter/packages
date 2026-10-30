@@ -285,8 +285,12 @@ void CaptureControllerImpl::ResetCaptureController() {
   base_preview_media_type_ = nullptr;
   base_record_media_type_ = nullptr;
   base_photo_media_type_ = nullptr;
+  preview_source_stream_index_ = static_cast<DWORD>(
+      MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_VIDEO_PREVIEW);
+  record_source_stream_index_ = static_cast<DWORD>(
+      MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_VIDEO_RECORD);
   photo_source_stream_index_ =
-      (DWORD)MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_PHOTO;
+      static_cast<DWORD>(MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_PHOTO);
 
   if (dxgi_device_manager_) {
     dxgi_device_manager_->ResetDevice(dx11_device_.Get(),
@@ -505,38 +509,78 @@ HRESULT CaptureControllerImpl::FindBaseMediaTypes() {
   return FindBaseMediaTypesForSource(source.Get());
 }
 
+void CaptureControllerImpl::ResolveSourceStreamIndices(
+    IMFCaptureSource* source) {
+  // Devices that don't support the preferred-stream selectors fail this probe,
+  // typically with MF_E_INVALIDSTREAMNUMBER.
+  ComPtr<IMFMediaType> probe;
+  HRESULT hr = source->GetAvailableDeviceMediaType(preview_source_stream_index_,
+                                                   0, probe.GetAddressOf());
+  if (SUCCEEDED(hr)) {
+    return;
+  }
+
+  DWORD stream_count = 0;
+  if (FAILED(source->GetDeviceStreamCount(&stream_count))) {
+    return;
+  }
+
+  // Prefer a video-preview stream, then video-capture.
+  DWORD video_stream_index = MAXDWORD;
+  for (DWORD i = 0; i < stream_count; i++) {
+    MF_CAPTURE_ENGINE_STREAM_CATEGORY category;
+    if (FAILED(source->GetDeviceStreamCategory(i, &category))) {
+      continue;
+    }
+    if (category == MF_CAPTURE_ENGINE_STREAM_CATEGORY_VIDEO_PREVIEW) {
+      video_stream_index = i;
+      break;
+    }
+    if (category == MF_CAPTURE_ENGINE_STREAM_CATEGORY_VIDEO_CAPTURE &&
+        video_stream_index == MAXDWORD) {
+      video_stream_index = i;
+    }
+  }
+  if (video_stream_index == MAXDWORD) {
+    // No matching stream found.
+    return;
+  }
+
+  // One stream for every role keeps the media types consistent with the sinks.
+  preview_source_stream_index_ = video_stream_index;
+  record_source_stream_index_ = video_stream_index;
+  photo_source_stream_index_ = video_stream_index;
+}
+
 HRESULT CaptureControllerImpl::FindBaseMediaTypesForSource(
     IMFCaptureSource* source) {
   base_preview_media_type_ = nullptr;
   base_record_media_type_ = nullptr;
   base_photo_media_type_ = nullptr;
 
+  ResolveSourceStreamIndices(source);
+
   // Find base media type for previewing.
-  if (!FindBestMediaType(
-          (DWORD)MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_VIDEO_PREVIEW,
-          source, base_preview_media_type_.GetAddressOf(),
-          GetMaxPreviewHeight(), &preview_frame_width_,
-          &preview_frame_height_)) {
+  if (!FindBestMediaType(preview_source_stream_index_, source,
+                         base_preview_media_type_.GetAddressOf(),
+                         GetMaxPreviewHeight(), &preview_frame_width_,
+                         &preview_frame_height_)) {
     return E_FAIL;
   }
 
   // Find base media type for video recording.
-  if (!FindBestMediaType(
-          (DWORD)MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_VIDEO_RECORD,
-          source, base_record_media_type_.GetAddressOf(), GetMaxVideoHeight(),
-          nullptr, nullptr)) {
+  if (!FindBestMediaType(record_source_stream_index_, source,
+                         base_record_media_type_.GetAddressOf(),
+                         GetMaxVideoHeight(), nullptr, nullptr)) {
     return E_FAIL;
   }
 
   // Find base media type for photo capture.
   // Query photo stream first; if unavailable, fall back to record stream.
-  photo_source_stream_index_ =
-      (DWORD)MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_PHOTO;
   if (!FindBestMediaType(photo_source_stream_index_, source,
                          base_photo_media_type_.GetAddressOf(),
                          GetMaxPhotoHeight(), nullptr, nullptr)) {
-    photo_source_stream_index_ =
-        (DWORD)MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_VIDEO_RECORD;
+    photo_source_stream_index_ = record_source_stream_index_;
     if (!FindBestMediaType(photo_source_stream_index_, source,
                            base_photo_media_type_.GetAddressOf(),
                            GetMaxPhotoHeight(), nullptr, nullptr)) {
@@ -616,7 +660,8 @@ void CaptureControllerImpl::StartRecord(const std::string& file_path) {
   // Check MF_CAPTURE_ENGINE_RECORD_STARTED event handling for response
   // process.
   hr = record_handler_->StartRecord(file_path, capture_engine_.Get(),
-                                    base_record_media_type_.Get());
+                                    base_record_media_type_.Get(),
+                                    record_source_stream_index_);
   if (FAILED(hr)) {
     // Destroy record handler on error cases to make sure state is resetted.
     record_handler_ = nullptr;
@@ -679,9 +724,8 @@ void CaptureControllerImpl::StartPreview() {
     }
   }
 
-  hr = source->SetCurrentDeviceMediaType(
-      (DWORD)MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_VIDEO_PREVIEW,
-      base_preview_media_type_.Get());
+  hr = source->SetCurrentDeviceMediaType(preview_source_stream_index_,
+                                         base_preview_media_type_.Get());
   if (FAILED(hr)) {
     return OnPreviewStarted(GetCameraResult(hr),
                             "Failed to set video preview output format");
@@ -702,9 +746,9 @@ void CaptureControllerImpl::StartPreview() {
 
   // Check MF_CAPTURE_ENGINE_PREVIEW_STARTED event handling for response
   // process.
-  hr = preview_handler_->StartPreview(capture_engine_.Get(),
-                                      base_preview_media_type_.Get(),
-                                      capture_engine_callback_handler_.Get());
+  hr = preview_handler_->StartPreview(
+      capture_engine_.Get(), base_preview_media_type_.Get(),
+      capture_engine_callback_handler_.Get(), preview_source_stream_index_);
 
   if (FAILED(hr)) {
     // Destroy preview handler on error cases to make sure state is resetted.

@@ -1,6 +1,11 @@
 ## 0.3.1
- 
+
 * Adds support for separate photo and video resolution presets.
+
+## 0.3.0+1
+
+* Fixes `CameraException(camera_error, Failed to initialize video preview)` on
+  multi-stream USB cameras.
 
 ## 0.3.0
 

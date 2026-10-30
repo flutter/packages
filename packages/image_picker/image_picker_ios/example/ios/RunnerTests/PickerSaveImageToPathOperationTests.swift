@@ -2,11 +2,16 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import Flutter
 import ImageIO
 import Testing
 import UIKit
 
 @testable import image_picker_ios
+
+#if canImport(image_picker_ios_objc)
+  @testable import image_picker_ios_objc
+#endif
 
 @Suite
 struct PickerSaveImageToPathOperationTests {
@@ -39,7 +44,7 @@ struct PickerSaveImageToPathOperationTests {
         continuation: CheckedContinuation<(savedPath: String?, error: FlutterError?)?, Never>
       ) in
       guard
-        let operation = FLTPHPickerSaveImageToPathOperation(
+        let operation = PHPickerSaveImageToPathOperation(
           result: result,
           maxHeight: maxHeight,
           maxWidth: maxWidth,
@@ -157,7 +162,7 @@ struct PickerSaveImageToPathOperationTests {
   }
 
   @Test func initWithNilResultReturnsNil() {
-    let operation = FLTPHPickerSaveImageToPathOperation(
+    let operation = PHPickerSaveImageToPathOperation(
       result: nil,
       maxHeight: 100,
       maxWidth: 100,
@@ -171,7 +176,7 @@ struct PickerSaveImageToPathOperationTests {
     let result = try pickerItem(forResource: "pngImage", ext: "png")
     var savedPathCalled = false
     let operation = try #require(
-      FLTPHPickerSaveImageToPathOperation(
+      PHPickerSaveImageToPathOperation(
         result: result,
         maxHeight: 100,
         maxWidth: 100,
