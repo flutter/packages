@@ -1,3 +1,7 @@
+## 2.6.2
+
+* Updates to Pigeon 29.0.13 and removes manual web conditional FFI export workaround.
+
 ## 2.6.1
 
 * Fixes web compilation of apps that import `package:shared_preferences_foundation`, for example to use `SharedPreferencesAsyncFoundationOptions`.
