@@ -989,50 +989,46 @@ class RouteMatchList with Diagnosticable {
   }
 
   /// Returns a copy of this list where each [ImperativeRouteMatch] adopts the
-  /// completer of the live match with the same [pageKey] in [source].
+  /// live match with the same [pageKey] and URI in [source].
   ///
   /// Decoding an encoded configuration (state restoration, browser
-  /// back/forward, or a `refreshListenable` re-parse) mints a fresh completer
-  /// per imperative match, since the push future cannot be serialized. Carrying
-  /// over the live completer keeps a re-decoded configuration equal to the one
-  /// already on screen, so the no-op fast path holds — no route spuriously
-  /// exits and the in-flight push future is preserved. A [pageKey] is unique
-  /// per push, so it identifies the live match unambiguously.
+  /// back/forward, or a `refreshListenable` re-parse) cannot preserve a push
+  /// completer or the identity of its extra. Carrying over the live match keeps
+  /// a re-decoded configuration equal to the one already on screen, so the
+  /// no-op fast path holds, the route does not spuriously exit, and in-memory
+  /// state is preserved. A [pageKey] is unique per push, while the URI check
+  /// prevents a replacement that reuses a key from matching a different route.
   // TODO(loic-sharma): Remove meta library prefix.
   // https://github.com/flutter/flutter/issues/171410
   @meta.internal
-  RouteMatchList reconcileImperativeCompleters(RouteMatchList source) {
-    final liveCompleters = <ValueKey<String>, Completer<Object?>>{};
+  RouteMatchList reconcileImperativeMatches(RouteMatchList source) {
+    final liveMatches = <ValueKey<String>, ImperativeRouteMatch>{};
     source.visitRouteMatches((RouteMatchBase match) {
       if (match is ImperativeRouteMatch) {
-        liveCompleters[match.pageKey] = match.completer;
+        liveMatches[match.pageKey] = match;
       }
       return true;
     });
-    if (liveCompleters.isEmpty) {
+    if (liveMatches.isEmpty) {
       return this;
     }
-    return copyWith(matches: _reconcileMatches(matches, liveCompleters));
+    return copyWith(matches: _reconcileMatches(matches, liveMatches));
   }
 
   static List<RouteMatchBase> _reconcileMatches(
     List<RouteMatchBase> matches,
-    Map<ValueKey<String>, Completer<Object?>> liveCompleters,
+    Map<ValueKey<String>, ImperativeRouteMatch> liveMatches,
   ) {
     return matches.map<RouteMatchBase>((RouteMatchBase match) {
       if (match is ImperativeRouteMatch) {
-        final Completer<Object?>? live = liveCompleters[match.pageKey];
-        if (live == null || live == match.completer) {
-          return match;
+        final ImperativeRouteMatch? live = liveMatches[match.pageKey];
+        if (live != null && live.matches.uri == match.matches.uri) {
+          return live;
         }
-        return ImperativeRouteMatch(
-          pageKey: match.pageKey,
-          matches: match.matches,
-          completer: live,
-        );
+        return match;
       }
       if (match is ShellRouteMatch) {
-        return match.copyWith(matches: _reconcileMatches(match.matches, liveCompleters));
+        return match.copyWith(matches: _reconcileMatches(match.matches, liveMatches));
       }
       return match;
     }).toList();
@@ -1199,10 +1195,9 @@ class _RouteMatchListDecoder extends Converter<Map<Object?, Object?>, RouteMatch
         final imperativeMatch = ImperativeRouteMatch(
           pageKey: pageKey,
           // The push future cannot be serialized, so decoding mints a fresh
-          // completer. The route information parser swaps in the live completer
-          // by pageKey (reconcileImperativeCompleters) when re-decoding the
-          // current configuration. Across state restoration there is no live
-          // completer to adopt; see
+          // completer. The route information parser swaps in the live match by
+          // pageKey and URI when re-decoding the current configuration. Across
+          // state restoration there is no live match to adopt; see
           // https://github.com/flutter/flutter/issues/128122.
           completer: Completer<Object?>(),
           matches: imperativeMatchList,

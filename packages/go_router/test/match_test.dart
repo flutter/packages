@@ -335,14 +335,25 @@ void main() {
       expect(equivalentPushedNestedMatch.navigatorKey, pushedNestedMatch.navigatorKey);
     });
 
-    test('reconcileImperativeCompleters adopts live completers by pageKey', () async {
-      // A decoded configuration carries fresh completers; reconciling against the
-      // live configuration must make the two lists equal again (completer
-      // included in identity), so the delegate's no-op fast path holds.
+    test('reconcileImperativeMatches adopts the live match by pageKey and URI', () async {
+      final liveExtra = Object();
+      final decodedExtra = Object();
+      final liveMatchList = RouteMatchList(
+        matches: matchList1.matches,
+        uri: matchList1.uri,
+        extra: liveExtra,
+        pathParameters: matchList1.pathParameters,
+      );
+      final decodedMatchList = RouteMatchList(
+        matches: matchList1.matches,
+        uri: matchList1.uri,
+        extra: decodedExtra,
+        pathParameters: matchList1.pathParameters,
+      );
       final live = RouteMatchList(
         matches: <RouteMatchBase>[
           matchList1.matches.first,
-          ImperativeRouteMatch(pageKey: key1, matches: matchList1, completer: completer1),
+          ImperativeRouteMatch(pageKey: key1, matches: liveMatchList, completer: completer1),
         ],
         uri: Uri.parse('/'),
         pathParameters: const <String, String>{},
@@ -350,21 +361,20 @@ void main() {
       final decoded = RouteMatchList(
         matches: <RouteMatchBase>[
           matchList1.matches.first,
-          ImperativeRouteMatch(pageKey: key1, matches: matchList1, completer: completer2),
+          ImperativeRouteMatch(pageKey: key1, matches: decodedMatchList, completer: completer2),
         ],
         uri: Uri.parse('/'),
         pathParameters: const <String, String>{},
       );
 
       expect(decoded == live, isFalse);
-      final RouteMatchList reconciled = decoded.reconcileImperativeCompleters(live);
+      final RouteMatchList reconciled = decoded.reconcileImperativeMatches(live);
       expect(reconciled == live, isTrue);
-      expect((reconciled.matches.last as ImperativeRouteMatch).completer, completer1);
+      expect(reconciled.matches.last, same(live.matches.last));
+      expect((reconciled.matches.last as ImperativeRouteMatch).matches.extra, same(liveExtra));
     });
 
-    test('reconcileImperativeCompleters keeps fresh completer when no live match', () async {
-      // Genuine state restoration (no live imperative match with that pageKey):
-      // the fresh completer is kept as-is.
+    test('reconcileImperativeMatches keeps decoded match when no live match exists', () async {
       final decoded = RouteMatchList(
         matches: <RouteMatchBase>[
           matchList1.matches.first,
@@ -373,8 +383,30 @@ void main() {
         uri: Uri.parse('/'),
         pathParameters: const <String, String>{},
       );
-      final RouteMatchList reconciled = decoded.reconcileImperativeCompleters(RouteMatchList.empty);
-      expect((reconciled.matches.last as ImperativeRouteMatch).completer, completer2);
+      final RouteMatchList reconciled = decoded.reconcileImperativeMatches(RouteMatchList.empty);
+      expect(reconciled.matches.last, same(decoded.matches.last));
+    });
+
+    test('reconcileImperativeMatches keeps decoded match when URI differs', () async {
+      final live = RouteMatchList(
+        matches: <RouteMatchBase>[
+          matchList1.matches.first,
+          ImperativeRouteMatch(pageKey: key1, matches: matchList2, completer: completer1),
+        ],
+        uri: Uri.parse('/'),
+        pathParameters: const <String, String>{},
+      );
+      final decoded = RouteMatchList(
+        matches: <RouteMatchBase>[
+          matchList1.matches.first,
+          ImperativeRouteMatch(pageKey: key1, matches: matchList1, completer: completer2),
+        ],
+        uri: Uri.parse('/'),
+        pathParameters: const <String, String>{},
+      );
+
+      final RouteMatchList reconciled = decoded.reconcileImperativeMatches(live);
+      expect(reconciled.matches.last, same(decoded.matches.last));
     });
   });
 }

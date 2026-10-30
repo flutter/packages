@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -651,6 +652,18 @@ void main() {
     expect(find.byKey(form), findsOneWidget);
   });
 
+  _testPushedExtraSurvivesRefresh('Map extra', extraFactory: () => <String, Object?>{'id': 42});
+  _testPushedExtraSurvivesRefresh('List extra', extraFactory: () => <Object?>['draft', 42]);
+  _testPushedExtraSurvivesRefresh(
+    'custom object extra decoded by extraCodec',
+    extraFactory: () => _IdentityExtra(42),
+    extraCodec: _IdentityExtraCodec(),
+  );
+  _testPushedExtraSurvivesRefresh(
+    'unserializable in-memory extra without extraCodec',
+    extraFactory: () => _UnserializableExtra(42),
+  );
+
   testWidgets('live push completer is preserved across a refreshListenable tick', (
     WidgetTester tester,
   ) async {
@@ -749,4 +762,85 @@ void main() {
     expect(completed, isTrue);
     expect(completedWith, 'done');
   });
+}
+
+void _testPushedExtraSurvivesRefresh(
+  String description, {
+  required Object Function() extraFactory,
+  Codec<Object?, Object?>? extraCodec,
+}) {
+  testWidgets('$description survives a refreshListenable tick on a pushed route', (
+    WidgetTester tester,
+  ) async {
+    var onExitCount = 0;
+    final Object extra = extraFactory();
+    final notifier = ValueNotifier<int>(0);
+    addTearDown(notifier.dispose);
+    final router = GoRouter(
+      initialLocation: '/',
+      extraCodec: extraCodec,
+      refreshListenable: notifier,
+      routes: <GoRoute>[
+        GoRoute(path: '/', builder: (_, _) => const SizedBox.shrink()),
+        GoRoute(
+          path: '/form',
+          builder: (_, _) => const SizedBox.shrink(),
+          onExit: (_, _) {
+            onExitCount++;
+            return true;
+          },
+        ),
+      ],
+    );
+    addTearDown(router.dispose);
+    await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+    final Future<String?> result = router.push<String>('/form', extra: extra);
+    await tester.pumpAndSettle();
+    expect(router.state.extra, same(extra));
+
+    notifier.value++;
+    await tester.pumpAndSettle();
+
+    expect(onExitCount, 0);
+    expect(router.state.extra, same(extra));
+
+    router.pop<String>('saved');
+    await tester.pumpAndSettle();
+    expect(await result, 'saved');
+  });
+}
+
+class _IdentityExtra {
+  _IdentityExtra(this.id);
+
+  final int id;
+}
+
+class _IdentityExtraCodec extends Codec<Object?, Object?> {
+  @override
+  Converter<Object?, Object?> get decoder => const _IdentityExtraDecoder();
+
+  @override
+  Converter<Object?, Object?> get encoder => const _IdentityExtraEncoder();
+}
+
+class _IdentityExtraDecoder extends Converter<Object?, Object?> {
+  const _IdentityExtraDecoder();
+
+  @override
+  Object? convert(Object? input) => input == null ? null : _IdentityExtra(input as int);
+}
+
+class _IdentityExtraEncoder extends Converter<Object?, Object?> {
+  const _IdentityExtraEncoder();
+
+  @override
+  Object? convert(Object? input) => input == null ? null : (input as _IdentityExtra).id;
+}
+
+class _UnserializableExtra {
+  _UnserializableExtra(this.id);
+
+  final int id;
 }
