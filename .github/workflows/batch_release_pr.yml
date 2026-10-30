@@ -105,8 +105,9 @@ jobs:
         cut until the version bump and changelog on
         `${{ needs.create_batch_release_branch.outputs.blocking_branch }}` are on
         `main`. That release is already published, so these changes have to
-        land. If this PR can't be landed as-is, apply the same version bump and
-        changelog to `main` by hand.
+        land. If this PR can't be landed as-is, apply the same version bump,
+        changelog, and `{{NEXT_VERSION}}` placeholder replacements to `main` by
+        hand.
     secrets:
       BOT_TOKEN: ${{ secrets.FLUTTERGITHUBBOT_TOKEN }}
 

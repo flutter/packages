@@ -11,12 +11,16 @@ import 'package:pub_semver/pub_semver.dart';
 import 'package:yaml_edit/yaml_edit.dart';
 
 import 'common/core.dart';
+import 'common/file_utils.dart';
 import 'common/output_utils.dart';
 import 'common/package_command.dart';
+import 'common/pub_utils.dart';
 import 'common/repository_package.dart';
+import 'common/version_placeholder.dart';
 
 const int _kExitPackageMalformed = 3;
 const int _kGitFailedToPush = 4;
+const int _kFormatFailed = 5;
 
 /// A command to create remote branches with release changes for a single package.
 class BranchesForBatchReleaseCommand extends PackageCommand {
@@ -211,8 +215,68 @@ class BranchesForBatchReleaseCommand extends PackageCommand {
 
     _updatePubspec(package, releaseInfo.newVersion!);
     _updateChangelog(package, releaseInfo);
-    await _stageAndCommitChanges(git, package, pendingChangelogFiles);
+    final List<File> filesWithPlaceholders = await _replaceVersionPlaceholders(
+      package,
+      releaseInfo.newVersion!,
+    );
+    await _stageAndCommitChanges(
+      git,
+      package,
+      pendingChangelogFiles,
+      additionalFiles: filesWithPlaceholders,
+    );
     await _pushBranch(git, remoteName, branchName);
+  }
+
+  /// Replaces every occurrence of [nextVersionPlaceholder] in the Dart files in
+  /// `lib/` of [package] with [newVersion], returning the list of modified
+  /// files.
+  ///
+  /// This allows contributors to reference the not-yet-known release version
+  /// (e.g., in deprecation messages) before the batch release determines it.
+  Future<List<File>> _replaceVersionPlaceholders(
+    RepositoryPackage package,
+    Version newVersion,
+  ) async {
+    final modifiedFiles = <File>[];
+    for (final (:File file, :String content) in await findVersionPlaceholderFiles(
+      package.directory,
+      getFilesForPackage(package),
+      scope: VersionPlaceholderScope.replaceable,
+    )) {
+      file.writeAsStringSync(content.replaceAll(nextVersionPlaceholder, newVersion.toString()));
+      modifiedFiles.add(file);
+    }
+    if (modifiedFiles.isNotEmpty) {
+      print('  Replaced $nextVersionPlaceholder with $newVersion in:');
+      for (final file in modifiedFiles) {
+        print('    ${relativePosixPath(file, from: package.directory, platformContext: path)}');
+      }
+      await _formatDartFiles(package, modifiedFiles);
+    }
+    return modifiedFiles;
+  }
+
+  /// Runs `dart format` on [files] in [package].
+  ///
+  /// Replacing [nextVersionPlaceholder] with a (shorter) version can allow
+  /// lines that were previously split to fit on one line, which would fail the
+  /// format check on the release PR.
+  Future<void> _formatDartFiles(RepositoryPackage package, List<File> files) async {
+    // The formatter's behavior depends on the package's language version, so
+    // make sure it has been resolved.
+    if (!await runPubGet(package, processRunner, platform)) {
+      printError('Unable to fetch dependencies for ${package.displayName}.');
+      throw ToolExit(_kFormatFailed);
+    }
+    final io.ProcessResult formatResult = await processRunner.run('dart', <String>[
+      'format',
+      ...files.map((File f) => f.path),
+    ], workingDir: package.directory);
+    if (formatResult.exitCode != 0) {
+      printError('Failed to format files: ${formatResult.stderr}');
+      throw ToolExit(_kFormatFailed);
+    }
   }
 
   void _updatePubspec(RepositoryPackage package, Version newVersion) {
@@ -250,8 +314,9 @@ class BranchesForBatchReleaseCommand extends PackageCommand {
   Future<void> _stageAndCommitChanges(
     GitDir git,
     RepositoryPackage package,
-    List<File> pendingChangelogFiles,
-  ) async {
+    List<File> pendingChangelogFiles, {
+    List<File> additionalFiles = const <File>[],
+  }) async {
     final List<String> paths = pendingChangelogFiles.map((File f) => f.path).toList();
     final io.ProcessResult rmResult = await git.runCommand(<String>['rm', ...paths]);
     if (rmResult.exitCode != 0) {
@@ -263,6 +328,7 @@ class BranchesForBatchReleaseCommand extends PackageCommand {
       'add',
       package.pubspecFile.path,
       package.changelogFile.path,
+      ...additionalFiles.map((File f) => f.path),
     ]);
     if (addResult.exitCode != 0) {
       printError('Failed to git add: ${addResult.stderr}');

@@ -13,6 +13,7 @@ import '../common/git_version_finder.dart';
 import '../common/output_utils.dart';
 import '../common/package_state_utils.dart';
 import '../common/repository_package.dart';
+import '../common/version_placeholder.dart';
 
 /// Categories of version change types.
 enum NextVersionType {
@@ -112,9 +113,13 @@ class VersionAndChangelogValidator {
   /// and match the policy for the files changed, returning a list of resulting
   /// error strings.
   ///
+  /// [packageFiles] should be all of the files in [package], and is used to
+  /// check for version placeholders.
+  ///
   /// If no errors are found, an empty list is returned.
   Future<List<String>> validateChangelogAndVersion(
     RepositoryPackage package, {
+    required Stream<File> packageFiles,
     required bool checkForMissingChanges,
     required bool ignorePlatformInterfaceBreaks,
   }) async {
@@ -157,6 +162,15 @@ class VersionAndChangelogValidator {
         printError('${_indentation}Package does not use batch release but has pending changelogs.');
         errors.add('Package does not use batch release but has pending changelogs.');
       }
+    }
+
+    final String? placeholderError = await _checkForVersionPlaceholders(
+      package,
+      packageFiles,
+      usesBatchRelease: usesBatchRelease,
+    );
+    if (placeholderError != null) {
+      errors.add(placeholderError);
     }
 
     final _CurrentVersionState versionState = await _getVersionState(
@@ -647,6 +661,82 @@ ${_indentation}The first version listed in CHANGELOG.md is $fromChangeLog.
     }
 
     return versionChanged;
+  }
+
+  /// Returns an error string if any of [packageFiles] contain a
+  /// [nextVersionPlaceholder] that won't be replaced automatically, printing
+  /// the offending files.
+  ///
+  /// Placeholders are only replaced by the batch release tooling, and only in
+  /// [VersionPlaceholderScope.replaceable] files, so they are not allowed in
+  /// packages that don't use batch release, in PRs without a pending changelog
+  /// entry, or in any other files.
+  Future<String?> _checkForVersionPlaceholders(
+    RepositoryPackage package,
+    Stream<File> packageFiles, {
+    required bool usesBatchRelease,
+  }) async {
+    final bool hasPendingChangelogs = usesBatchRelease && _hasPendingChangelogs(package);
+    final path.Context fsPath = package.directory.fileSystem.path;
+    final placeholderPaths = <String>[
+      for (final VersionPlaceholderFile f in await findVersionPlaceholderFiles(
+        package.directory,
+        packageFiles,
+        scope: VersionPlaceholderScope.all,
+      ))
+        if (!hasPendingChangelogs ||
+            !VersionPlaceholderScope.replaceable.includes(
+              fsPath.relative(f.file.path, from: package.directory.path),
+              fsPath,
+            ))
+          relativePosixPath(f.file, from: package.directory, platformContext: _path),
+    ];
+    if (placeholderPaths.isEmpty) {
+      return null;
+    }
+    final String reason = _versionPlaceholderErrorMessage(
+      usesBatchRelease: usesBatchRelease,
+      hasPendingChangelogs: hasPendingChangelogs,
+    );
+    printError(
+      '$_indentation$reason\n'
+      '${_indentation}Found $nextVersionPlaceholder in:\n'
+      '${placeholderPaths.map((String p) => '$_indentation  $p').join('\n')}',
+    );
+    return 'Unreplaced $nextVersionPlaceholder placeholder.';
+  }
+
+  /// Returns the explanation for why unreplaced [nextVersionPlaceholder]s are
+  /// not allowed.
+  String _versionPlaceholderErrorMessage({
+    required bool usesBatchRelease,
+    required bool hasPendingChangelogs,
+  }) {
+    if (!usesBatchRelease) {
+      return 'This package does not use batch release, so $nextVersionPlaceholder '
+          'placeholders will not be replaced automatically. Use the actual '
+          'version instead.';
+    } else if (!hasPendingChangelogs) {
+      return 'Using $nextVersionPlaceholder is only allowed in PRs with a '
+          'pending changelog entry. To resolve, create a pending changelog entry '
+          'or remove $nextVersionPlaceholder instead.';
+    } else {
+      return '$nextVersionPlaceholder placeholders are only supported '
+          'in Dart files in lib/.';
+    }
+  }
+
+  /// Returns true if [package] has at least one valid pending changelog entry.
+  ///
+  /// Entries with `version: skip` count, since their placeholders will be
+  /// replaced by the next release that does change the version.
+  bool _hasPendingChangelogs(RepositoryPackage package) {
+    try {
+      return package.getPendingChangelogs().isNotEmpty;
+    } on FormatException {
+      // Invalid pending changelogs are reported separately.
+      return false;
+    }
   }
 
   Future<String> _getRelativePackagePath(RepositoryPackage package) async {

@@ -1,11 +1,15 @@
-## NEXT
+## 0.14.4+4
 
 * Exempts `test_apps/` from requiring version and changelog changes.
 * Fixes `dart-test --package-tags` not matching any packages when the
   repository is checked out into a directory named `packages`, as it is in CI.
-
-## 0.14.4+4
-
+* Updates `branches-for-batch-release` to replace `{{NEXT_VERSION}}`
+  placeholders in Dart files in `lib/` with the new release version.
+* Updates `validate` to fail if `{{NEXT_VERSION}}` placeholders are present in
+  packages that don't use batch release, in packages without pending changelog
+  entries, or in files other than Dart files in `lib/`.
+* Updates `publish` to refuse to publish packages containing `{{NEXT_VERSION}}`
+  placeholders.
 * Uses `flutter pub` instead of `dart pub` for non-Flutter packages that depend
   on `jni`.
   
