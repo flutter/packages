@@ -166,7 +166,7 @@ base class PlatformWriteAsStringParams {
   /// The contents to write to the resource.
   final String contents;
 
-  /// The encoding use to encode [contents].
+  /// The encoding used to encode [contents].
   final Encoding encoding;
 }
 

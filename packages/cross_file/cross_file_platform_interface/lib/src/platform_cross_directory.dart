@@ -120,7 +120,8 @@ base class PlatformListParams {
   const PlatformListParams();
 }
 
-/// Base class for parameters passed to [PlatformXDirectory.create].
+/// Base class for parameters passed to [PlatformXDirectory.createFile] and
+/// [PlatformXDirectory.createDirectory].
 @immutable
 base class PlatformCreateParams {
   /// Constructs a [PlatformCreateParams];

@@ -67,6 +67,8 @@ abstract base class XDirectory extends XEntity {
 
   /// Creates a resource in this container.
   ///
+  /// `name`: Path excluded name of the resource being created.
+  ///
   /// Platforms may throw an exception if there is an error creating the
   /// resource.
   Future<XFile> createFile(String name) async {
@@ -82,9 +84,9 @@ abstract base class XDirectory extends XEntity {
     }
   }
 
-  /// Creates a container in this the container.
+  /// Creates a container in this container.
   ///
-  /// `name`: Path excluded name of the resource being created.
+  /// `name`: Path excluded name of the container being created.
   ///
   /// Platforms may throw an exception if there is an error creating the
   /// container.
