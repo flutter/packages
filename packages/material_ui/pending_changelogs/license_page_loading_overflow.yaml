@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes `LicensePage` overflowing while the licenses load on short screens or with large text.
+version: patch
