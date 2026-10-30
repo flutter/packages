@@ -566,6 +566,86 @@ void main() {
     expect(find.byType(Scrollbar).last, paints..rrect(color: const Color(0xff00ff00)));
   }, variant: TargetPlatformVariant.desktop());
 
+  // Regression test for https://github.com/flutter/flutter/issues/188155.
+  testWidgets('Menu scrollbar does not inherit MediaQuery padding', (WidgetTester tester) async {
+    addTearDown(tester.view.reset);
+    tester.view.devicePixelRatio = 1.0;
+    tester.view.padding = const FakeViewPadding(left: 8.0, top: 16.0, right: 32.0, bottom: 24.0);
+    EdgeInsets? menuItemPadding;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Material(
+          child: MenuAnchor(
+            controller: controller,
+            style: const MenuStyle(
+              maximumSize: WidgetStatePropertyAll<Size>(Size.fromHeight(100.0)),
+            ),
+            menuChildren: <Widget>[
+              Builder(
+                builder: (BuildContext context) {
+                  menuItemPadding = MediaQuery.paddingOf(context);
+                  return MenuItemButton(onPressed: () {}, child: const Text('Item 0'));
+                },
+              ),
+              for (int i = 1; i < 4; i++) MenuItemButton(onPressed: () {}, child: Text('Item $i')),
+            ],
+            builder: (BuildContext context, MenuController controller, Widget? child) {
+              return TextButton(onPressed: controller.open, child: const Text('Open menu'));
+            },
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('Open menu'));
+    await tester.pumpAndSettle();
+
+    final CustomPaint scrollbarPaint = tester.widget<CustomPaint>(
+      find.descendant(
+        of: find.byType(Scrollbar),
+        matching: find.byWidgetPredicate(
+          (Widget widget) => widget is CustomPaint && widget.foregroundPainter is ScrollbarPainter,
+        ),
+      ),
+    );
+    // The scrollbar ignores the view padding, but the menu children still
+    // observe it.
+    final scrollbarPainter = scrollbarPaint.foregroundPainter! as ScrollbarPainter;
+    expect(scrollbarPainter.padding, EdgeInsets.zero);
+    expect(menuItemPadding, const EdgeInsets.fromLTRB(8.0, 16.0, 32.0, 24.0));
+
+    // The menu scrolls all the way to the bottom and the scrollbar thumb
+    // reaches the end of its track instead of stopping short of it.
+    final ScrollableState scrollable = tester.state<ScrollableState>(
+      find.descendant(of: find.byType(Scrollbar), matching: find.byType(Scrollable)),
+    );
+    expect(scrollable.position.maxScrollExtent, greaterThan(0.0));
+    await tester.drag(find.byType(Scrollbar), const Offset(0.0, -200.0));
+    await tester.pumpAndSettle();
+    expect(scrollable.position.pixels, scrollable.position.maxScrollExtent);
+
+    // The thumb is painted at the very end of the track rather than stopping
+    // short of it by the height of the removed bottom padding.
+    final double scrollbarExtent = tester.getSize(find.byType(Scrollbar)).height;
+    expect(
+      find.byType(Scrollbar),
+      paints..something((Symbol method, List<dynamic> arguments) {
+        // The thumb is a rect on Android and a rounded rect elsewhere. The
+        // track shares the same shape but always starts at the top, so only
+        // the thumb is considered here.
+        final Rect? shape = switch (method) {
+          #drawRect => arguments[0] as Rect,
+          #drawRRect => (arguments[0] as RRect).outerRect,
+          _ => null,
+        };
+        return shape != null &&
+            shape.top > 0.0 &&
+            (shape.bottom - scrollbarExtent).abs() < precisionErrorTolerance;
+      }),
+    );
+  });
+
   testWidgets('Focus is returned to previous focus before invoking onPressed', (
     WidgetTester tester,
   ) async {
@@ -4381,6 +4461,51 @@ void main() {
         expect(find.text(allExpected), findsOneWidget);
         expect(find.text(charExpected), findsOneWidget);
       }, variant: TargetPlatformVariant.all());
+
+      testWidgets(
+        'getShortcutLabel formats unlocalized non-Unicode keys',
+        (WidgetTester tester) async {
+          final (String expectedCtrl, String expectedSeparator) = switch (defaultTargetPlatform) {
+            TargetPlatform.android ||
+            TargetPlatform.fuchsia ||
+            TargetPlatform.linux ||
+            TargetPlatform.windows => ('Ctrl', '+'),
+            TargetPlatform.iOS || TargetPlatform.macOS => ('⌃', ' '),
+          };
+
+          await tester.pumpWidget(
+            MaterialApp(
+              home: Material(
+                child: MenuBar(
+                  controller: controller,
+                  children: <Widget>[
+                    SubmenuButton(
+                      menuChildren: <Widget>[
+                        MenuItemButton(
+                          shortcut: const SingleActivator(LogicalKeyboardKey.tab, control: true),
+                          child: Text(TestMenu.subMenu10.label),
+                        ),
+                        MenuItemButton(
+                          shortcut: const SingleActivator(LogicalKeyboardKey.f1, control: true),
+                          child: Text(TestMenu.subMenu11.label),
+                        ),
+                      ],
+                      child: Text(TestMenu.mainMenu0.label),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+          await tester.tap(find.text(TestMenu.mainMenu0.label));
+          await tester.pump();
+
+          expect(find.text('$expectedCtrl${expectedSeparator}Tab'), findsOneWidget);
+          expect(find.text('$expectedCtrl${expectedSeparator}F1'), findsOneWidget);
+        },
+        variant: TargetPlatformVariant.all(),
+        tags: 'reduced-web-test-set',
+      );
     });
 
     group('CheckboxMenuButton', () {

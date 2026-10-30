@@ -12,6 +12,13 @@ class WebpagePreferencesProxyAPIDelegate: PigeonApiDelegateWKWebpagePreferences 
   func setAllowsContentJavaScript(
     pigeonApi: PigeonApiWKWebpagePreferences, pigeonInstance: WKWebpagePreferences, allow: Bool
   ) throws {
-    pigeonInstance.allowsContentJavaScript = allow
+    if #available(iOS 14.0, macOS 11.0, *) {
+      pigeonInstance.allowsContentJavaScript = allow
+    } else {
+      throw (pigeonApi.pigeonRegistrar as! ProxyAPIRegistrar)
+        .createUnsupportedVersionError(
+          method: "WKWebpagePreferences.allowsContentJavaScript",
+          versionRequirements: "iOS 14.0, macOS 11.0")
+    }
   }
 }

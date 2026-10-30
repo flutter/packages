@@ -1,6 +1,20 @@
-## 29.0.11
+## 29.0.14
 
 * Fixes `basePath` resolution when an output or directory path shares a string prefix with `basePath`.
+
+## 29.0.13
+
+* [dart] Separates generated Dart native interop bindings into a conditionally imported companion file (`*.native_interop.g.dart`) so that the main generated Dart file can be imported on Web without pulling in `dart:ffi` or `dart:io`.
+
+## 29.0.12
+
+* [kotlin] Warns after JNI code generation if the `jni` version constraint in `pubspec.yaml` allows versions below `1.1.1`.
+* Updates `jni` dependency to `^1.1.1` and removes manual Kotlin keep rules from native interop guides and migration skill now that `package:jni` includes them.
+
+## 29.0.11
+
+* [swift] Warns after FFI code generation if the `objective_c` version constraint in `pubspec.yaml` does not match the generated `ObjCVersionCheck`.
+* [kotlin] Warns after JNI code generation if the `jni` version constraint in `pubspec.yaml` does not match the generated `JniVersionCheck`.
 
 ## 29.0.10
 
