@@ -19,3 +19,13 @@ struct DefaultPHPickerCreator: PHPickerCreating {
     PHPickerViewController(configuration: configuration)
   }
 }
+
+/// A picked item from PHPicker, wrapping the subset of PHPickerResult used by the plugin.
+@available(iOS 14, *)
+protocol PickerItem {
+  var itemProvider: NSItemProvider { get }
+  var assetIdentifier: String? { get }
+}
+
+@available(iOS 14, *)
+extension PHPickerResult: PickerItem {}
