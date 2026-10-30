@@ -157,7 +157,46 @@ void main() {
     final int duration = videoController.value.duration.inMilliseconds;
     await videoController.dispose();
 
-    expect(duration, lessThan(postStopTime));
+    // Allow a 350ms tolerance around the 2s target to account for timer jitter,
+    // encoder latency, and frame quantization (typically 100-200ms on device,
+    // with extra margin to prevent flakes under heavy CI load).
+    // See https://github.com/flutter/flutter/issues/101785.
+    final int delta = (duration - 2000).abs();
+    expect(delta, lessThan(350));
+    expect(duration, lessThanOrEqualTo(postStopTime));
+    await controller.dispose();
+  });
+
+  testWidgets('Short video recording produces non-empty playable video', (
+    WidgetTester tester,
+  ) async {
+    final List<CameraDescription> cameras = await availableCameras();
+    if (cameras.isEmpty) {
+      return;
+    }
+
+    final controller = CameraController(
+      cameras[0],
+      mediaSettings: const MediaSettings(resolutionPreset: ResolutionPreset.low),
+    );
+    await controller.initialize();
+    await controller.prepareForVideoRecording();
+
+    // A short recording (<300ms) previously caused ERROR_NO_VALID_DATA and 0-byte files
+    // if stop arrived before the first frame was encoded.
+    await controller.startVideoRecording();
+    await Future<void>.delayed(const Duration(milliseconds: 250));
+    final XFile file = await controller.stopVideoRecording();
+
+    final int fileBytes = await file.length();
+    expect(fileBytes, greaterThan(0));
+
+    final videoFile = File(file.path);
+    final videoController = VideoPlayerController.file(videoFile);
+    await videoController.initialize();
+    expect(videoController.value.duration.inMilliseconds, greaterThan(0));
+    await videoController.dispose();
+    await controller.dispose();
   });
 
   testWidgets('Pause and resume video recording', (WidgetTester tester) async {
