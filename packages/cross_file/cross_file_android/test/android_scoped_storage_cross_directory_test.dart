@@ -166,4 +166,21 @@ void main() {
     expect(subDir.params.uri, subDirUri);
     verify(mockDirectory.createDirectory(dirName)).called(1);
   });
+
+  test('delete', () async {
+    final mockDocumentFile = MockDocumentFile();
+    when(mockDocumentFile.delete()).thenAnswer((_) async => true);
+
+    const uri = 'uri';
+    android.PigeonOverrides.documentFile_fromTreeUri = ({required String treeUri}) {
+      expect(treeUri, uri);
+      return mockDocumentFile;
+    };
+
+    final file = AndroidScopedStorageXDirectory(
+      const PlatformScopedStorageXDirectoryCreationParams(uri: uri),
+    );
+
+    expect(await file.delete(const PlatformDirectoryDeleteParams()), true);
+  });
 }
