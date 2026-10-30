@@ -4,6 +4,7 @@
 
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
+import 'package:file/memory.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
 import 'package:flutter_plugin_tools/src/common/plugin_utils.dart';
 import 'package:flutter_plugin_tools/src/dart_test_command.dart';
@@ -798,6 +799,74 @@ a: reduced-web-test-set
           ], getExampleDir(pluginA).path),
           ProcessCall('dart', const <String>['pub', 'get'], packageB.path),
           ProcessCall('dart', const <String>['run', 'test'], packageB.path),
+        ]),
+      );
+    });
+
+    test('package-tags flag matches packages when the repository directory is '
+        'named "packages"', () async {
+      // CI checks the repository out into a directory named "packages", so
+      // package paths look like .../packages/packages/<package>.
+      final fileSystem = MemoryFileSystem();
+      fileSystem.currentDirectory = fileSystem.directory('/b/packages')
+        ..createSync(recursive: true);
+      final Directory nestedPackagesDir = createPackagesDirectory(fileSystem);
+      final nestedProcessRunner = RecordingProcessRunner();
+      final nestedRunner = CommandRunner<void>('test_test', 'Test for $DartTestCommand');
+      nestedRunner.addCommand(
+        DartTestCommand(
+          nestedPackagesDir,
+          processRunner: nestedProcessRunner,
+          platform: mockPlatform,
+          gitDir: createForwardingMockGitDir(
+            packagesDir: nestedPackagesDir,
+            processRunner: RecordingProcessRunner(),
+          ),
+        ),
+      );
+
+      final RepositoryPackage package = createFakePackage(
+        'a',
+        nestedPackagesDir,
+        isFlutter: true,
+        extraFiles: <String>['test/empty_test.dart', 'example/test/empty_test.dart'],
+      );
+      final RepositoryPackage nestedApp = createFakePackage(
+        'nested_app',
+        package.directory.childDirectory('test_apps'),
+        isFlutter: true,
+        examples: <String>[],
+        extraFiles: <String>['test/empty_test.dart'],
+      );
+
+      final File configFile = fileSystem.file('/config.yaml');
+      configFile.writeAsStringSync('''
+a: reduced-web-test-set
+''');
+
+      await runCapturingPrint(nestedRunner, <String>[
+        'dart-test',
+        '--package-tags=${configFile.path}',
+      ]);
+
+      expect(
+        nestedProcessRunner.recordedCalls,
+        orderedEquals(<ProcessCall>[
+          ProcessCall(getFlutterCommand(mockPlatform), const <String>[
+            'test',
+            '--color',
+            '--tags=reduced-web-test-set',
+          ], package.path),
+          ProcessCall(getFlutterCommand(mockPlatform), const <String>[
+            'test',
+            '--color',
+            '--tags=reduced-web-test-set',
+          ], getExampleDir(package).path),
+          ProcessCall(getFlutterCommand(mockPlatform), const <String>[
+            'test',
+            '--color',
+            '--tags=reduced-web-test-set',
+          ], nestedApp.path),
         ]),
       );
     });
