@@ -1096,7 +1096,6 @@ void main() {
         TargetPlatform.android,
         TargetPlatform.fuchsia,
       }),
-      tags: 'reduced-web-test-set',
     );
 
     testWidgets(
@@ -1108,6 +1107,7 @@ void main() {
         TargetPlatform.iOS,
         TargetPlatform.macOS,
       }),
+      tags: 'reduced-web-test-set',
     );
   });
 

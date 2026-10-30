@@ -4676,7 +4676,7 @@ void main() {
         );
 
         semantics.dispose();
-      }, tags: 'reduced-web-test-set');
+      });
 
       testWidgets('MenuItemButton semantics respects label', (WidgetTester tester) async {
         final semantics = SemanticsTester(tester);
@@ -4746,7 +4746,7 @@ void main() {
         );
 
         semantics.dispose();
-      }, tags: 'reduced-web-test-set');
+      });
 
       testWidgets('SubmenuButton expanded/collapsed state', (WidgetTester tester) async {
         final semantics = SemanticsTester(tester);
@@ -4910,7 +4910,7 @@ void main() {
         );
 
         semantics.dispose();
-      }, tags: 'reduced-web-test-set');
+      });
 
       testWidgets('Animated SubmenuButton expanded/collapsed state', (WidgetTester tester) async {
         final semantics = SemanticsTester(tester);
