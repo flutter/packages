@@ -1,7 +1,7 @@
 ## 29.1.0
 
 * [kotlin,swift] Adds support for removing event channel handler registration
-  by passing `null` to the stream handler registration method.
+  via a new event channel object returned from `register`.
 
 ## 29.0.12
 
