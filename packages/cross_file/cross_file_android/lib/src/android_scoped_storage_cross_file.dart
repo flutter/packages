@@ -218,7 +218,7 @@ class _AndroidStreamConsumer implements StreamConsumer<List<int>> {
       }
     }
 
-    await outputStream.flugsh();
+    await outputStream.flush();
   }
 
   @override
