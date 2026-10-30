@@ -426,8 +426,10 @@ class PigeonInstanceManager {
     CameraSize.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     ResolutionInfo.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     CameraIntegerRange.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    RecordingStats.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     VideoRecordEvent.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     VideoRecordEventStart.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    VideoRecordEventStatus.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     VideoRecordEventFinalize.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     MeteringPoint.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     Observer.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
@@ -1367,6 +1369,87 @@ class CameraIntegerRange extends PigeonInternalProxyApiBaseClass {
   }
 }
 
+/// RecordingStats provides recording statistics such as duration and bytes recorded.
+///
+/// See https://developer.android.com/reference/androidx/camera/video/RecordingStats.
+class RecordingStats extends PigeonInternalProxyApiBaseClass {
+  /// Constructs [RecordingStats] without creating the associated native object.
+  ///
+  /// This should only be used by subclasses created by this library or to
+  /// create copies for an [PigeonInstanceManager].
+  @protected
+  RecordingStats.pigeon_detached({
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+    required this.recordedDurationNanos,
+    required this.numBytesRecorded,
+  });
+
+  /// The recorded duration in nanoseconds.
+  final int recordedDurationNanos;
+
+  /// The number of bytes recorded.
+  final int numBytesRecorded;
+
+  static void pigeon_setUpMessageHandlers({
+    bool pigeon_clearHandlers = false,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+    RecordingStats Function(int recordedDurationNanos, int numBytesRecorded)? pigeon_newInstance,
+  }) {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _PigeonInternalProxyApiBaseCodec(
+      pigeon_instanceManager ?? PigeonInstanceManager.instance,
+    );
+    final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
+    {
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.camera_android_camerax.RecordingStats.pigeon_newInstance',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
+      if (pigeon_clearHandlers) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          final List<Object?> args = message! as List<Object?>;
+          final int arg_pigeon_instanceIdentifier = args[0]! as int;
+          final int arg_recordedDurationNanos = args[1]! as int;
+          final int arg_numBytesRecorded = args[2]! as int;
+          try {
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance).addHostCreatedInstance(
+              pigeon_newInstance?.call(arg_recordedDurationNanos, arg_numBytesRecorded) ??
+                  RecordingStats.pigeon_detached(
+                    pigeon_binaryMessenger: pigeon_binaryMessenger,
+                    pigeon_instanceManager: pigeon_instanceManager,
+                    recordedDurationNanos: arg_recordedDurationNanos,
+                    numBytesRecorded: arg_numBytesRecorded,
+                  ),
+              arg_pigeon_instanceIdentifier,
+            );
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
+          }
+        });
+      }
+    }
+  }
+
+  @override
+  RecordingStats pigeon_copy() {
+    return RecordingStats.pigeon_detached(
+      pigeon_binaryMessenger: pigeon_binaryMessenger,
+      pigeon_instanceManager: pigeon_instanceManager,
+      recordedDurationNanos: recordedDurationNanos,
+      numBytesRecorded: numBytesRecorded,
+    );
+  }
+}
+
 /// VideoRecordEvent is used to report video recording events and status.
 ///
 /// See https://developer.android.com/reference/androidx/camera/video/VideoRecordEvent.
@@ -1377,6 +1460,9 @@ class VideoRecordEvent extends PigeonInternalProxyApiBaseClass {
   /// create copies for an [PigeonInstanceManager].
   @protected
   VideoRecordEvent.pigeon_detached({super.pigeon_binaryMessenger, super.pigeon_instanceManager});
+
+  late final _PigeonInternalProxyApiBaseCodec _pigeonVar_codecVideoRecordEvent =
+      _PigeonInternalProxyApiBaseCodec(pigeon_instanceManager);
 
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
@@ -1420,6 +1506,28 @@ class VideoRecordEvent extends PigeonInternalProxyApiBaseClass {
         });
       }
     }
+  }
+
+  /// The recording statistics for this event.
+  Future<RecordingStats> getRecordingStats() async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecVideoRecordEvent;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const pigeonVar_channelName =
+        'dev.flutter.pigeon.camera_android_camerax.VideoRecordEvent.getRecordingStats';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return pigeonVar_replyValue! as RecordingStats;
   }
 
   @override
@@ -1498,6 +1606,73 @@ class VideoRecordEventStart extends VideoRecordEvent {
   }
 }
 
+/// Indicates recording status updates.
+///
+/// See https://developer.android.com/reference/androidx/camera/video/VideoRecordEvent.Status.
+class VideoRecordEventStatus extends VideoRecordEvent {
+  /// Constructs [VideoRecordEventStatus] without creating the associated native object.
+  ///
+  /// This should only be used by subclasses created by this library or to
+  /// create copies for an [PigeonInstanceManager].
+  @protected
+  VideoRecordEventStatus.pigeon_detached({
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+  }) : super.pigeon_detached();
+
+  static void pigeon_setUpMessageHandlers({
+    bool pigeon_clearHandlers = false,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+    VideoRecordEventStatus Function()? pigeon_newInstance,
+  }) {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _PigeonInternalProxyApiBaseCodec(
+      pigeon_instanceManager ?? PigeonInstanceManager.instance,
+    );
+    final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
+    {
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.camera_android_camerax.VideoRecordEventStatus.pigeon_newInstance',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
+      if (pigeon_clearHandlers) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          final List<Object?> args = message! as List<Object?>;
+          final int arg_pigeon_instanceIdentifier = args[0]! as int;
+          try {
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance).addHostCreatedInstance(
+              pigeon_newInstance?.call() ??
+                  VideoRecordEventStatus.pigeon_detached(
+                    pigeon_binaryMessenger: pigeon_binaryMessenger,
+                    pigeon_instanceManager: pigeon_instanceManager,
+                  ),
+              arg_pigeon_instanceIdentifier,
+            );
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
+          }
+        });
+      }
+    }
+  }
+
+  @override
+  VideoRecordEventStatus pigeon_copy() {
+    return VideoRecordEventStatus.pigeon_detached(
+      pigeon_binaryMessenger: pigeon_binaryMessenger,
+      pigeon_instanceManager: pigeon_instanceManager,
+    );
+  }
+}
+
 /// Indicates the finalization of recording.
 ///
 /// See https://developer.android.com/reference/androidx/camera/video/VideoRecordEvent.Finalize.
@@ -1510,13 +1685,25 @@ class VideoRecordEventFinalize extends VideoRecordEvent {
   VideoRecordEventFinalize.pigeon_detached({
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
+    required this.error,
+    required this.hasError,
   }) : super.pigeon_detached();
+
+  /// The error code of the finalization.
+  ///
+  /// See https://developer.android.com/reference/androidx/camera/video/VideoRecordEvent.Finalize#getError().
+  final int error;
+
+  /// Whether the recording finalized with an error.
+  ///
+  /// See https://developer.android.com/reference/androidx/camera/video/VideoRecordEvent.Finalize#hasError().
+  final bool hasError;
 
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-    VideoRecordEventFinalize Function()? pigeon_newInstance,
+    VideoRecordEventFinalize Function(int error, bool hasError)? pigeon_newInstance,
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _PigeonInternalProxyApiBaseCodec(
       pigeon_instanceManager ?? PigeonInstanceManager.instance,
@@ -1534,12 +1721,16 @@ class VideoRecordEventFinalize extends VideoRecordEvent {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           final List<Object?> args = message! as List<Object?>;
           final int arg_pigeon_instanceIdentifier = args[0]! as int;
+          final int arg_error = args[1]! as int;
+          final bool arg_hasError = args[2]! as bool;
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance).addHostCreatedInstance(
-              pigeon_newInstance?.call() ??
+              pigeon_newInstance?.call(arg_error, arg_hasError) ??
                   VideoRecordEventFinalize.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
                     pigeon_instanceManager: pigeon_instanceManager,
+                    error: arg_error,
+                    hasError: arg_hasError,
                   ),
               arg_pigeon_instanceIdentifier,
             );
@@ -1561,6 +1752,8 @@ class VideoRecordEventFinalize extends VideoRecordEvent {
     return VideoRecordEventFinalize.pigeon_detached(
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,
+      error: error,
+      hasError: hasError,
     );
   }
 }

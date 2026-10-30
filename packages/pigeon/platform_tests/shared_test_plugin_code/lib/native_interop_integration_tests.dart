@@ -12,6 +12,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'native_interop_test_types.dart';
 import 'src/generated/native_interop_tests.gen.dart';
+import 'src/generated/native_interop_tests.native_interop.gen.dart';
 
 /// Possible host languages that test can target.
 enum TargetGenerator {
@@ -3053,28 +3054,40 @@ void runPigeonNativeInteropIntegrationTests(TargetGenerator targetGenerator) {
     ) async {
       if (targetGenerator == TargetGenerator.kotlin) {
         expect(
-          NativeInteropAnEnum.fromJni(NativeInteropAnEnum.fortyTwo.toJni()),
+          PigeonInternalNativeInteropAnEnumNativeInterop.fromJni(
+            NativeInteropAnEnum.fortyTwo.toJni(),
+          ),
           NativeInteropAnEnum.fortyTwo,
         );
         expect(
-          NativeInteropAllTypes.fromJni(genericNativeInteropAllTypes.toJni()),
+          PigeonInternalNativeInteropAllTypesNativeInterop.fromJni(
+            genericNativeInteropAllTypes.toJni(),
+          ),
           genericNativeInteropAllTypes,
         );
         expect(
-          NativeInteropAllNullableTypes.fromJni(recursiveNativeInteropAllNullableTypes.toJni()),
+          PigeonInternalNativeInteropAllNullableTypesNativeInterop.fromJni(
+            recursiveNativeInteropAllNullableTypes.toJni(),
+          ),
           recursiveNativeInteropAllNullableTypes,
         );
       } else if (targetGenerator == TargetGenerator.swift) {
         expect(
-          NativeInteropAnEnum.fromNSNumber(NativeInteropAnEnum.fortyTwo.toNSNumber()),
+          PigeonInternalNativeInteropAnEnumNativeInterop.fromNSNumber(
+            NativeInteropAnEnum.fortyTwo.toNSNumber(),
+          ),
           NativeInteropAnEnum.fortyTwo,
         );
         expect(
-          NativeInteropAllTypes.fromFfi(genericNativeInteropAllTypes.toFfi()),
+          PigeonInternalNativeInteropAllTypesNativeInterop.fromFfi(
+            genericNativeInteropAllTypes.toFfi(),
+          ),
           genericNativeInteropAllTypes,
         );
         expect(
-          NativeInteropAllNullableTypes.fromFfi(recursiveNativeInteropAllNullableTypes.toFfi()),
+          PigeonInternalNativeInteropAllNullableTypesNativeInterop.fromFfi(
+            recursiveNativeInteropAllNullableTypes.toFfi(),
+          ),
           recursiveNativeInteropAllNullableTypes,
         );
       }
