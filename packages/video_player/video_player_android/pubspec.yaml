@@ -28,11 +28,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   mockito: ^5.4.4
-  pigeon:
-    git:
-      url: https://github.com/stuartmorgan/packages.git
-      path: packages/pigeon
-      ref: pigeon-event-channel-unregistration
+  pigeon: ^29.1.0
 
 topics:
   - video
