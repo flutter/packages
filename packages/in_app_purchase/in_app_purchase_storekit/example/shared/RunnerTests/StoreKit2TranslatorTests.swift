@@ -113,4 +113,9 @@ final class StoreKit2TranslatorTests: XCTestCase {
     XCTAssertEqual(Product.PurchaseResult.pending.convertToPigeon(), .pending)
     XCTAssertEqual(Product.PurchaseResult.userCancelled.convertToPigeon(), .userCancelled)
   }
+
+  func testPigeonConversionForRevocationReason() {
+    XCTAssertEqual(Transaction.RevocationReason.developerIssue.convertToPigeon, .developerIssue)
+    XCTAssertEqual(Transaction.RevocationReason.other.convertToPigeon, .other)
+  }
 }

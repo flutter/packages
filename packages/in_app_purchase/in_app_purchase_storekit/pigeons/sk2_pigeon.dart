@@ -183,6 +183,8 @@ class SK2TransactionMessage {
     this.receiptData,
     this.jsonRepresentation,
     required this.status,
+    this.revocationDate,
+    this.revocationReason,
   });
   final int id;
   final int originalId;
@@ -198,6 +200,14 @@ class SK2TransactionMessage {
   /// The status of this purchase transaction.
   /// Set by native side to communicate the result state to Dart layer.
   final SK2PurchaseStatusMessage status;
+
+  /// The date that the App Store refunded the transaction or revoked it from
+  /// Family Sharing, in seconds since epoch.
+  final double? revocationDate;
+
+  /// The reason that the App Store refunded the transaction or revoked it from
+  /// Family Sharing.
+  final SK2RevocationReasonMessage? revocationReason;
 }
 
 class SK2ErrorMessage {
@@ -206,6 +216,17 @@ class SK2ErrorMessage {
   final int code;
   final String domain;
   final Map<String, Object>? userInfo;
+}
+
+/// The reason that the App Store refunded a transaction or revoked it from
+/// Family Sharing.
+enum SK2RevocationReasonMessage {
+  /// A customer canceled the transaction due to an actual or perceived issue
+  /// within the app.
+  developerIssue,
+
+  /// A customer canceled the transaction for another reason.
+  other,
 }
 
 enum SK2ProductPurchaseResultMessage { success, unverified, userCancelled, pending }

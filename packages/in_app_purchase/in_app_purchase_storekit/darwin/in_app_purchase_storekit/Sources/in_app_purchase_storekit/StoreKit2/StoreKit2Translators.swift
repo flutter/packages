@@ -210,7 +210,21 @@ extension Transaction {
       appAccountToken: appAccountToken?.uuidString,
       receiptData: receipt,
       jsonRepresentation: String(decoding: jsonRepresentation, as: UTF8.self),
-      status: status
+      status: status,
+      revocationDate: revocationDate.map { $0.timeIntervalSince1970 },
+      revocationReason: revocationReason?.convertToPigeon
     )
+  }
+}
+
+@available(iOS 15.0, macOS 12.0, *)
+extension Transaction.RevocationReason {
+  var convertToPigeon: SK2RevocationReasonMessage {
+    switch self {
+    case .developerIssue:
+      return SK2RevocationReasonMessage.developerIssue
+    default:
+      return SK2RevocationReasonMessage.other
+    }
   }
 }
