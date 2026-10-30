@@ -16,6 +16,22 @@ class _GoRouteDataBuild extends GoRouteData {
   Widget build(BuildContext context, GoRouterState state) => const SizedBox(key: Key('build'));
 }
 
+class _ConditionalRedirectRoute extends GoRouteData {
+  const _ConditionalRedirectRoute();
+
+  @override
+  String? redirect(BuildContext context, GoRouterState state) =>
+      state.uri.path == '/main' ? '/main/home' : null;
+}
+
+class _RelativeConditionalRedirectRoute extends RelativeGoRouteData {
+  const _RelativeConditionalRedirectRoute();
+
+  @override
+  String? redirect(BuildContext context, GoRouterState state) =>
+      state.uri.path == '/main/manage' ? '/main/manage/home' : null;
+}
+
 class _RelativeGoRouteDataBuild extends RelativeGoRouteData {
   const _RelativeGoRouteDataBuild();
 
@@ -243,6 +259,79 @@ String _coder(String? value) => '';
 bool _compare(String a, String b) => true;
 
 void main() {
+  for (final location in <String>['/main', '/main/home']) {
+    testWidgets('Conditional typed parent redirects at $location', (WidgetTester tester) async {
+      final router = GoRouter(
+        initialLocation: location,
+        routes: <RouteBase>[
+          GoRouteData.$route(
+            path: '/main',
+            redirectOnly: true,
+            hasOverriddenOnExit: false,
+            factory: (GoRouterState state) => const _ConditionalRedirectRoute(),
+            routes: <RouteBase>[
+              GoRouteData.$route(
+                path: 'home',
+                factory: (GoRouterState state) => const _GoRouteDataBuild(),
+              ),
+            ],
+          ),
+        ],
+      );
+      addTearDown(router.dispose);
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(find.byKey(const Key('build')), findsOneWidget);
+    });
+  }
+
+  for (final withShells in <bool>[false, true]) {
+    testWidgets('Conditional relative parent redirects with shells: $withShells', (
+      WidgetTester tester,
+    ) async {
+      List<RouteBase> wrapWithShell(List<RouteBase> routes) => withShells
+          ? <RouteBase>[
+              StatefulShellRouteData.$route(
+                factory: (GoRouterState state) => const _StatefulShellRouteDataBuilder(),
+                branches: <StatefulShellBranch>[StatefulShellBranchData.$branch(routes: routes)],
+              ),
+            ]
+          : routes;
+
+      final router = GoRouter(
+        initialLocation: '/main/manage',
+        routes: <RouteBase>[
+          GoRouteData.$route(
+            path: '/main',
+            redirectOnly: true,
+            hasOverriddenOnExit: false,
+            factory: (GoRouterState state) => const _ConditionalRedirectRoute(),
+            routes: wrapWithShell(<RouteBase>[
+              RelativeGoRouteData.$route(
+                path: 'manage',
+                redirectOnly: true,
+                hasOverriddenOnExit: false,
+                factory: (GoRouterState state) => const _RelativeConditionalRedirectRoute(),
+                routes: wrapWithShell(<RouteBase>[
+                  GoRouteData.$route(
+                    path: 'home',
+                    factory: (GoRouterState state) => const _GoRouteDataBuild(),
+                  ),
+                ]),
+              ),
+            ]),
+          ),
+        ],
+      );
+      addTearDown(router.dispose);
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(find.byKey(const Key('build')), findsOneWidget);
+    });
+  }
+
   group('GoRouteData', () {
     testWidgets('It should build the page from the overridden build method', (
       WidgetTester tester,

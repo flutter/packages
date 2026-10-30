@@ -1,3 +1,8 @@
+## 4.5.3
+
+- Fixes conditional redirect-only parent routes throwing when a descendant is matched.
+- Supports conditional redirect-only routes with go_router 18.2.0 or later while preserving generated output with older go_router versions.
+
 ## 4.5.2
 
 - Adopts shared analyzer helpers from `package:source_helper` `^1.4.0`.

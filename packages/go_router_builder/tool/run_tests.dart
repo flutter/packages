@@ -20,8 +20,11 @@ import 'package:pub_semver/pub_semver.dart';
 import 'package:source_gen/source_gen.dart';
 import 'package:test/test.dart';
 
+import 'redirect_only_compatibility_test.dart' as compatibility_tests;
+
 Future<void> main() async {
   final formatter = dart_style.DartFormatter(languageVersion: await _packageVersion());
+  compatibility_tests.main();
   final dir = Directory('test_inputs');
   final List<File> testFiles = dir
       .listSync()
