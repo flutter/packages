@@ -5,6 +5,7 @@
 package io.flutter.plugins.videoplayer;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -224,6 +225,85 @@ public final class TextureVideoPlayerTest {
       assertEquals(1, mockedBuilder.constructed().size());
       ExoPlayer.Builder builderMock = mockedBuilder.constructed().get(0);
       verify(builderMock).setLoadControl(any());
+      player.dispose();
+    }
+  }
+
+  @Test
+  public void create_withForwardBufferDuration_setsLoadControl() {
+    android.content.Context mockContext = mock(android.content.Context.class);
+    VideoPlayerOptions options = new VideoPlayerOptions();
+    options.forwardBufferDurationMs = 15000L;
+
+    try (MockedConstruction<ExoPlayer.Builder> mockedBuilder =
+        mockConstruction(
+            ExoPlayer.Builder.class,
+            (mock, context) -> {
+              when(mock.setLoadControl(any())).thenReturn(mock);
+              when(mock.setTrackSelector(any())).thenReturn(mock);
+              when(mock.setMediaSourceFactory(any())).thenReturn(mock);
+              when(mock.build()).thenReturn(mockExoPlayer);
+            })) {
+
+      TextureVideoPlayer player =
+          TextureVideoPlayer.create(mockContext, mockEvents, mockProducer, fakeVideoAsset, options);
+
+      assertEquals(1, mockedBuilder.constructed().size());
+      ExoPlayer.Builder builderMock = mockedBuilder.constructed().get(0);
+      verify(builderMock).setLoadControl(any());
+      player.dispose();
+    }
+  }
+
+  @Test
+  public void create_withNegativeForwardBufferDuration_throws() {
+    android.content.Context mockContext = mock(android.content.Context.class);
+    VideoPlayerOptions options = new VideoPlayerOptions();
+    options.forwardBufferDurationMs = -1L;
+
+    try (MockedConstruction<ExoPlayer.Builder> mockedBuilder =
+        mockConstruction(
+            ExoPlayer.Builder.class,
+            (mock, context) -> {
+              when(mock.setLoadControl(any())).thenReturn(mock);
+              when(mock.setTrackSelector(any())).thenReturn(mock);
+              when(mock.setMediaSourceFactory(any())).thenReturn(mock);
+              when(mock.build()).thenReturn(mockExoPlayer);
+            })) {
+
+      assertThrows(
+          IllegalArgumentException.class,
+          () ->
+              TextureVideoPlayer.create(
+                  mockContext, mockEvents, mockProducer, fakeVideoAsset, options));
+
+      // The builder is constructed before the invalid option is rejected, and no
+      // LoadControl is installed on it.
+      ExoPlayer.Builder builderMock = mockedBuilder.constructed().get(0);
+      verify(builderMock, never()).setLoadControl(any());
+    }
+  }
+
+  @Test
+  public void create_withoutBufferDurations_doesNotSetLoadControl() {
+    android.content.Context mockContext = mock(android.content.Context.class);
+    VideoPlayerOptions options = new VideoPlayerOptions();
+
+    try (MockedConstruction<ExoPlayer.Builder> mockedBuilder =
+        mockConstruction(
+            ExoPlayer.Builder.class,
+            (mock, context) -> {
+              when(mock.setLoadControl(any())).thenReturn(mock);
+              when(mock.setTrackSelector(any())).thenReturn(mock);
+              when(mock.setMediaSourceFactory(any())).thenReturn(mock);
+              when(mock.build()).thenReturn(mockExoPlayer);
+            })) {
+
+      TextureVideoPlayer player =
+          TextureVideoPlayer.create(mockContext, mockEvents, mockProducer, fakeVideoAsset, options);
+
+      ExoPlayer.Builder builderMock = mockedBuilder.constructed().get(0);
+      verify(builderMock, never()).setLoadControl(any());
       player.dispose();
     }
   }

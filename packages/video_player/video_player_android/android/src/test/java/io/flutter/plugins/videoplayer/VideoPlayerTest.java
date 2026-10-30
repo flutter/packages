@@ -24,7 +24,10 @@ import androidx.media3.common.Player;
 import androidx.media3.common.TrackGroup;
 import androidx.media3.common.TrackSelectionOverride;
 import androidx.media3.common.Tracks;
+import androidx.media3.exoplayer.DefaultLoadControl;
 import androidx.media3.exoplayer.ExoPlayer;
+import androidx.media3.exoplayer.LoadControl;
+import androidx.media3.exoplayer.analytics.PlayerId;
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector;
 import com.google.common.collect.ImmutableList;
 import io.flutter.plugins.videoplayer.platformview.PlatformViewExoPlayerEventListener;
@@ -1120,5 +1123,105 @@ public final class VideoPlayerTest {
     verify(mockTrackSelector).setParameters(mockParameters);
 
     videoPlayer.dispose();
+  }
+
+  @Test
+  public void buildLoadControl_withNoBufferOptions_returnsNull() {
+    assertNull(VideoPlayer.buildLoadControl(new VideoPlayerOptions()));
+  }
+
+  @Test
+  public void buildLoadControl_withZeroDurations_returnsNull() {
+    VideoPlayerOptions options = new VideoPlayerOptions();
+    options.backBufferDurationMs = 0L;
+    options.forwardBufferDurationMs = 0L;
+    assertNull(VideoPlayer.buildLoadControl(options));
+  }
+
+  @Test
+  public void buildLoadControl_withBackBuffer_setsBackBufferDuration() {
+    VideoPlayerOptions options = new VideoPlayerOptions();
+    options.backBufferDurationMs = 20000L;
+
+    LoadControl loadControl = VideoPlayer.buildLoadControl(options);
+
+    assertNotNull(loadControl);
+    assertEquals(20_000_000L, loadControl.getBackBufferDurationUs(PlayerId.UNSET));
+    assertTrue(loadControl.retainBackBufferFromKeyframe(PlayerId.UNSET));
+  }
+
+  @Test
+  public void buildLoadControl_withForwardBufferOnly_leavesBackBufferAtDefault() {
+    VideoPlayerOptions options = new VideoPlayerOptions();
+    options.forwardBufferDurationMs = 15000L;
+
+    LoadControl loadControl = VideoPlayer.buildLoadControl(options);
+
+    assertNotNull(loadControl);
+    assertEquals(
+        DefaultLoadControl.DEFAULT_BACK_BUFFER_DURATION_MS * 1000L,
+        loadControl.getBackBufferDurationUs(PlayerId.UNSET));
+  }
+
+  @Test
+  public void buildLoadControl_withBothBuffers_appliesBoth() {
+    VideoPlayerOptions options = new VideoPlayerOptions();
+    options.backBufferDurationMs = 20000L;
+    options.forwardBufferDurationMs = 15000L;
+
+    LoadControl loadControl = VideoPlayer.buildLoadControl(options);
+
+    assertNotNull(loadControl);
+    assertEquals(20_000_000L, loadControl.getBackBufferDurationUs(PlayerId.UNSET));
+  }
+
+  @Test
+  public void buildLoadControl_withSmallForwardBuffer_clampsPlaybackThresholds() {
+    // A cap below DefaultLoadControl's playback start thresholds would violate its internal
+    // assertions unless those thresholds are clamped down to the cap.
+    VideoPlayerOptions options = new VideoPlayerOptions();
+    options.forwardBufferDurationMs = 500L;
+
+    assertNotNull(VideoPlayer.buildLoadControl(options));
+  }
+
+  @Test
+  public void buildLoadControl_withForwardBufferOfOne_doesNotThrow() {
+    VideoPlayerOptions options = new VideoPlayerOptions();
+    options.forwardBufferDurationMs = 1L;
+
+    assertNotNull(VideoPlayer.buildLoadControl(options));
+  }
+
+  @Test
+  public void buildLoadControl_withOversizedDurations_clampsToIntRange() {
+    VideoPlayerOptions options = new VideoPlayerOptions();
+    options.backBufferDurationMs = Integer.MAX_VALUE + 1L;
+    options.forwardBufferDurationMs = Long.MAX_VALUE;
+
+    LoadControl loadControl = VideoPlayer.buildLoadControl(options);
+
+    assertNotNull(loadControl);
+    assertEquals(Integer.MAX_VALUE * 1000L, loadControl.getBackBufferDurationUs(PlayerId.UNSET));
+  }
+
+  @Test
+  public void buildLoadControl_withNegativeBackBuffer_throws() {
+    VideoPlayerOptions options = new VideoPlayerOptions();
+    options.backBufferDurationMs = -1L;
+
+    IllegalArgumentException exception =
+        assertThrows(IllegalArgumentException.class, () -> VideoPlayer.buildLoadControl(options));
+    assertEquals("backBufferDurationMs must be at least 0", exception.getMessage());
+  }
+
+  @Test
+  public void buildLoadControl_withNegativeForwardBuffer_throws() {
+    VideoPlayerOptions options = new VideoPlayerOptions();
+    options.forwardBufferDurationMs = -1L;
+
+    IllegalArgumentException exception =
+        assertThrows(IllegalArgumentException.class, () -> VideoPlayer.buildLoadControl(options));
+    assertEquals("forwardBufferDurationMs must be at least 0", exception.getMessage());
   }
 }

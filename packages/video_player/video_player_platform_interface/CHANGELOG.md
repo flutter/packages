@@ -1,5 +1,6 @@
-## NEXT
+## 6.10.0
 
+* Adds `forwardBufferDurationMs` to `VideoPlayerOptions` to support capping the forward buffer duration.
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 
 ## 6.9.0
