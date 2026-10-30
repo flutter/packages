@@ -29,4 +29,30 @@ void main() {
 
     expect(await file.readAsString(), 'Hello, World!');
   });
+
+  testWidgets('SecurityScopedDarwinScopedStorageXFile.canWrite returns normally', (_) async {
+    final Directory cacheDir = await getApplicationCacheDirectory();
+
+    final testFile = File(path.join(cacheDir.path, 'test_file.txt'))..createSync();
+    addTearDown(() => testFile.deleteSync());
+
+    final file = PlatformScopedStorageXFile(
+      PlatformScopedStorageXFileCreationParams(uri: testFile.uri.toString()),
+    );
+
+    expect(await file.canWrite(), true);
+  });
+
+  testWidgets('SecurityScopedDarwinScopedStorageXDirectory.canWrite returns normally', (_) async {
+    final Directory cacheDir = await getApplicationCacheDirectory();
+
+    final testDir = Directory(path.join(cacheDir.path, 'testDir'))..createSync();
+    addTearDown(() => testDir.deleteSync());
+
+    final dir = PlatformScopedStorageXDirectory(
+      PlatformScopedStorageXDirectoryCreationParams(uri: testDir.uri.toString()),
+    );
+
+    expect(await dir.canWrite(), true);
+  });
 }
