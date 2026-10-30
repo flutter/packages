@@ -18,10 +18,24 @@ void main() {
     print('---');
   });
 
-  test('Cross Platform safe WebScopedStorageXFileCreationParams creates instance', () {
-    expect(
-      web_safe.WebScopedStorageXFileCreationParams.fromBytes(Uint8List.fromList(<int>[0, 2])),
-      isA<web_safe.WebScopedStorageXFileCreationParams>(),
-    );
-  });
+  test(
+    'Cross Platform safe WebScopedStorageXFileCreationParams.fromObjectUrl throws UnsupportedError',
+    () {
+      expect(
+        () => web_safe.WebScopedStorageXFileCreationParams.fromObjectUrl(objectUrl: ''),
+        throwsA(isA<UnsupportedError>()),
+      );
+    },
+  );
+
+  test(
+    'Cross Platform safe WebScopedStorageXFileCreationParams.fromBytes throws UnsupportedError',
+    () {
+      expect(
+        () =>
+            web_safe.WebScopedStorageXFileCreationParams.fromBytes(Uint8List.fromList(<int>[0, 2])),
+        throwsA(isA<UnsupportedError>()),
+      );
+    },
+  );
 }

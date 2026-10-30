@@ -15,9 +15,25 @@ import 'package:flutter/foundation.dart' show immutable, visibleForTesting;
 /// This class is a stub for the implementation in
 /// `web_scoped_storage_cross_file.dart`.
 @immutable
-base class WebScopedStorageXFileCreationParams extends PlatformScopedStorageXFileCreationParams {
+sealed class WebScopedStorageXFileCreationParams extends PlatformScopedStorageXFileCreationParams {
   /// Constructs a [WebScopedStorageXFileCreationParams].
-  const WebScopedStorageXFileCreationParams._({required super.uri});
+  const WebScopedStorageXFileCreationParams({
+    required super.uri,
+    // ignore: avoid_unused_constructor_parameters
+    @visibleForTesting dynamic testOverrides,
+  });
+
+  /// Constructs a [WebScopedStorageXFileCreationParams] with an object url.
+  ///
+  /// This is a stub for the method in `web_scoped_storage_cross_file.dart`.
+  factory WebScopedStorageXFileCreationParams.fromObjectUrl({
+    // ignore: avoid_unused_constructor_parameters
+    required String objectUrl,
+    // ignore: avoid_unused_constructor_parameters
+    @visibleForTesting dynamic testOverrides,
+  }) => throw UnsupportedError(
+    '`WebScopedStorageXFileCreationParams.fromObjectUrl` is only supported on web.',
+  );
 
   /// Constructs a [WebScopedStorageXFileCreationParams] by creating a [Blob]
   /// from [bytes].
@@ -43,7 +59,9 @@ base class WebScopedStorageXFileCreationParams extends PlatformScopedStorageXFil
     // stub without breaking other platforms.
     // ignore: avoid_unused_constructor_parameters
     @visibleForTesting dynamic testOverrides,
-  }) => const WebScopedStorageXFileCreationParams._(uri: '');
+  }) => throw UnsupportedError(
+    '`WebScopedStorageXFileCreationParams.fromBytes` is only supported on web.',
+  );
 }
 
 /// Provides platform-specific features for [WebScopedStorageXFile].
