@@ -998,6 +998,8 @@ class ListTile extends StatelessWidget {
       autofocus: autofocus,
       enableFeedback: enableFeedback ?? tileTheme.enableFeedback ?? true,
       statesController: statesController,
+      // md.comp.list.focus.indicator.outline.offset
+      focusRingOffset: -3.0,
       child: Semantics(
         button: internalAddSemanticForOnTap && (onTap != null || onLongPress != null),
         selected: selected,

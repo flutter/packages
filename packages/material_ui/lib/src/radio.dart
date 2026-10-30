@@ -16,6 +16,7 @@ import 'color_scheme.dart';
 import 'colors.dart';
 import 'constants.dart';
 import 'debug.dart';
+import 'focus_ring_painting.dart';
 import 'radio_theme.dart';
 import 'theme.dart';
 import 'theme_data.dart';
@@ -764,12 +765,26 @@ class _RadioPaintState extends State<_RadioPaint> {
         ..inactiveBackgroundColor = inactiveBackgroundColor
         ..activeSide = activeSide
         ..inactiveSide = inactiveSide
-        ..innerRadius = innerRadius,
+        ..innerRadius = innerRadius
+        ..focusRing = FocusRingStyle.maybeOf(context),
     );
   }
 }
 
+// md.sys.state.focus-indicator.outer-offset, as for the checkbox.
+const double _kFocusRingOffset = 2.0;
+
 class _RadioPainter extends ToggleablePainter {
+  FocusRingStyle? get focusRing => _focusRing;
+  FocusRingStyle? _focusRing;
+  set focusRing(FocusRingStyle? value) {
+    if (_focusRing == value) {
+      return;
+    }
+    _focusRing = value;
+    notifyListeners();
+  }
+
   Color get inactiveBackgroundColor => _inactiveBackgroundColor!;
   Color? _inactiveBackgroundColor;
   set inactiveBackgroundColor(Color? value) {
@@ -847,6 +862,11 @@ class _RadioPainter extends ToggleablePainter {
         ..style = PaintingStyle.fill
         ..color = Color.lerp(inactiveColor, activeColor, position.value)!;
       canvas.drawCircle(center, innerRadius * position.value, innerCirclePaint);
+    }
+
+    // The keyboard focus ring goes around the radial reaction circle.
+    if (isFocused) {
+      focusRing?.paintCircle(canvas, center, splashRadius, _kFocusRingOffset);
     }
   }
 }
