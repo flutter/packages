@@ -1,3 +1,8 @@
+## 18.1.3
+
+- Fixes `GoRouter.go` not removing routes pushed with `Navigator` when the `GoRoute` pages below them stay.
+  Dialogs and other pageless routes are now closed by every `go`, including browser URL changes.
+
 ## 18.1.2
 
 - Fixes web text fields losing focus when an autocomplete overlay opens inside a shell route.
