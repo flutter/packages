@@ -222,6 +222,26 @@ void main() {
       expect(path, '$applicationSupportPath/$_bundleIdentifier');
     });
 
+    testWidgets('getApplicationSupportPath macOS with a trailing slash', (_) async {
+      final mockPaths = MockFoundationPaths();
+      final pathProvider = PathProviderFoundation(
+        foundationPaths: mockPaths,
+        platform: FakePlatformProvider(isMacOS: true),
+      );
+
+      final String applicationSupportPath = p.join(testRoot.path, 'application', 'support', 'path');
+      when(
+        mockPaths.userDirectory(NSSearchPathDirectory.NSApplicationSupportDirectory),
+      ).thenReturn('$applicationSupportPath/');
+
+      when(mockPaths.mainBundleIdentifier).thenReturn(_bundleIdentifier);
+
+      final String? path = await pathProvider.getApplicationSupportPath();
+
+      // The bundle ID should be appended with a single slash.
+      expect(path, '$applicationSupportPath/$_bundleIdentifier');
+    });
+
     testWidgets('getApplicationSupportPath creates the directory if necessary', (_) async {
       final mockPaths = MockFoundationPaths();
       final pathProvider = PathProviderFoundation(

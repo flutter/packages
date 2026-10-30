@@ -30,7 +30,7 @@ class FoundationPaths {
   /// Returns the path of the current user's folder of the given kind, or `null` if
   /// Foundation lists none.
   ///
-  /// The path is absolute and has no trailing slash. For an iOS app, or a macOS
+  /// The path is absolute, exactly as Foundation returns it. For an iOS app, or a macOS
   /// app with the App Sandbox, it points into the app's own container.
   ///
   /// Does not create the folder, check that it exists, or append the bundle

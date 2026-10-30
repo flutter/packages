@@ -122,8 +122,10 @@ class PathProviderFoundation extends PathProviderPlatform {
           directory == NSSearchPathDirectory.NSCachesDirectory) {
         final String? bundleIdentifier = _foundationPaths.mainBundleIdentifier;
         if (bundleIdentifier != null) {
-          // Foundation's paths have no trailing slash, so a plain join is enough.
-          path = '$path/$bundleIdentifier';
+          // Joined by hand so that package:objective_c is not loaded. A trailing
+          // slash is dropped first, so the result never contains "//".
+          final String folder = path.endsWith('/') ? path.substring(0, path.length - 1) : path;
+          path = '$folder/$bundleIdentifier';
         }
       }
     }
