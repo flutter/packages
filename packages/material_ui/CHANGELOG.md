@@ -1,8 +1,3 @@
-## 1.10.0
-
-- Adds `FocusRingThemeData`, `FocusRingTheme`, and `ThemeData.focusRingTheme` for an opt-in keyboard focus ring, the Material 3 keyboard focus indicator. When `FocusRingThemeData.visible` is true, `InkResponse` and the widgets built on it draw a ring around the keyboard-focused control.
-- Adds `InkResponse.focusRingOffset`. Buttons and chips draw the ring outside their shape, and list tiles, tabs, and navigation destinations draw it inside, following the Material 3 focus indicator tokens.
-
 ## 1.9.0
 
 - Adds a `barFocusNode` parameter to `SearchAnchor.bar` to allow external control over the focus of the underlying `SearchBar`.
