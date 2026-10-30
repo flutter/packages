@@ -263,7 +263,7 @@ final class StubFVPDisplayLinkFactory: DisplayLinkFactory {
   }
 }
 
-final class StubEventListener: VideoEventListener {
+@MainActor final class StubEventListener: VideoEventListener {
   var onInitialized: (() -> Void)?
   private(set) var initializationDuration: Int64 = 0
   private(set) var initializationSize: CGSize = .zero
