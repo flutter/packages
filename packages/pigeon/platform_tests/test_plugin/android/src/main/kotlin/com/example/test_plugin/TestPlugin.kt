@@ -62,9 +62,11 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi, HostCallbackCoreApi {
     StreamIntsStreamHandler.register(binding.binaryMessenger, SendInts)
     // Store one handler to exercise the handler removal codepath, and discard
     // the other to test that the return value can be safely ignored.
+    val streamHandlerOne = SendConsistentNumbers(1)
     eventChannelOne =
         StreamConsistentNumbersStreamHandler.register(
-            binding.binaryMessenger, SendConsistentNumbers(1), "1")
+            binding.binaryMessenger, streamHandlerOne, "1")
+    streamHandlerOne.onCompleted = { eventChannelOne?.setStreamHandler(null) }
     StreamConsistentNumbersStreamHandler.register(
         binding.binaryMessenger, SendConsistentNumbers(2), "2")
   }
@@ -72,7 +74,6 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi, HostCallbackCoreApi {
   override fun onDetachedFromEngine(binding: FlutterPluginBinding) {
     HostIntegrationCoreApi.setUp(binding.binaryMessenger, null)
     HostCallbackCoreApi.setUp(binding.binaryMessenger, null)
-    eventChannelOne?.setStreamHandler(null)
     proxyApiRegistrar?.tearDown()
   }
 
@@ -2331,6 +2332,7 @@ object SendClass : StreamEventsStreamHandler() {
 class SendConsistentNumbers(private val numberToSend: Long) :
     StreamConsistentNumbersStreamHandler() {
   private val handler = Handler(Looper.getMainLooper())
+  var onCompleted: (() -> Unit)? = null
 
   override fun onListen(p0: Any?, sink: PigeonEventSink<Long>) {
     var count = 0
@@ -2339,6 +2341,7 @@ class SendConsistentNumbers(private val numberToSend: Long) :
           override fun run() {
             if (count >= 10) {
               sink.endOfStream()
+              onCompleted?.invoke()
             } else {
               handler.post {
                 sink.success(numberToSend)
