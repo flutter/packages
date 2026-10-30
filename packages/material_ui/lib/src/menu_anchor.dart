@@ -687,6 +687,24 @@ class _MenuAnchorState extends State<MenuAnchor> with SingleTickerProviderStateM
     }
 
     _animationController.forward();
+
+    if (isSubmenu || widget.childFocusNode != null) {
+      return;
+    }
+
+    final FocusScopeNode scope = FocusScope.of(context);
+    final BuildContext? focusedContext = scope.focusedChild?.context;
+    final bool isAnchorFocused = focusedContext != null && _maybeOf(focusedContext)?._root == this;
+    if (isAnchorFocused) {
+      return;
+    }
+
+    final FocusNode? initialFocus = FocusManager.instance.primaryFocus;
+    SchedulerBinding.instance.addPostFrameCallback((Duration _) {
+      if (mounted && !isClosingOrClosed && FocusManager.instance.primaryFocus == initialFocus) {
+        scope.setFirstFocus(_menuScopeNode);
+      }
+    });
   }
 
   void _handleMenuCloseRequest(VoidCallback hideOverlay) {
@@ -3943,15 +3961,15 @@ class _Submenu extends StatelessWidget {
       child: MouseRegion(
         cursor: mouseCursor,
         hitTestBehavior: HitTestBehavior.deferToChild,
-        child: FocusScope(
-          node: anchor._menuScopeNode,
-          skipTraversal: true,
-          child: Actions(
-            actions: <Type, Action<Intent>>{
-              DismissIntent: DismissMenuAction(controller: anchor._menuController),
-            },
-            child: Shortcuts(
-              shortcuts: _kMenuTraversalShortcuts,
+        child: Actions(
+          actions: <Type, Action<Intent>>{
+            DismissIntent: DismissMenuAction(controller: anchor._menuController),
+          },
+          child: Shortcuts(
+            shortcuts: _kMenuTraversalShortcuts,
+            child: FocusScope(
+              node: anchor._menuScopeNode,
+              skipTraversal: true,
               child: FadeTransition(
                 opacity: fadeAnimation,
                 alwaysIncludeSemantics: true,
