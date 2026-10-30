@@ -117,8 +117,61 @@ class BenchmarkServer {
     benchmarkPath,
   ).replace(scheme: 'http', host: 'localhost', port: benchmarkServerPort).toString();
 
+  /// Completes once the in-flight [run] has released Chrome and the HTTP
+  /// server.
+  ///
+  /// `null` while no run is in flight.
+  Completer<void>? _runDone;
+
+  /// Completes when [stop] is called during the in-flight [run].
+  ///
+  /// `null` while no run is in flight.
+  Completer<void>? _stopRequested;
+
   /// Builds and serves the benchmark app, and collects benchmark results.
+  ///
+  /// Throws a [StateError] if a run is already in flight, or if [stop] is
+  /// called before the benchmark finishes.
   Future<BenchmarkResults> run() async {
+    if (_runDone != null) {
+      throw StateError('A benchmark run is already in progress.');
+    }
+    final Completer<void> runDone = _runDone = Completer<void>();
+    final Completer<void> stopRequested = _stopRequested = Completer<void>();
+    try {
+      return await _run(stopRequested);
+    } finally {
+      _runDone = null;
+      _stopRequested = null;
+      runDone.complete();
+    }
+  }
+
+  /// Aborts the in-flight [run], if any.
+  ///
+  /// Kills Chrome, closes the benchmark server, and makes the future returned
+  /// by [run] complete with a [StateError]. Call this from a test's `tearDown`
+  /// to make sure nothing is left running when the test fails or times out.
+  ///
+  /// The returned future completes once the aborted run has released its
+  /// resources. If the benchmark app is still being built, that includes
+  /// waiting for the build to finish. Completes immediately if no run is in
+  /// flight.
+  Future<void> stop() {
+    final Completer<void>? runDone = _runDone;
+    final Completer<void>? stopRequested = _stopRequested;
+    if (runDone == null || stopRequested == null) {
+      return Future<void>.value();
+    }
+    if (!stopRequested.isCompleted) {
+      stopRequested.complete();
+    }
+    return runDone.future;
+  }
+
+  StateError _stoppedError() => StateError('The benchmark was stopped before it finished.');
+
+  Future<BenchmarkResults> _run(Completer<void> stopRequested) async {
     // Reduce logging level. Otherwise, package:webkit_inspection_protocol is way too spammy.
     Logger.root.level = Level.INFO;
 
@@ -149,6 +202,12 @@ class BenchmarkServer {
       io.stderr.writeln(buildResult.stdout);
       io.stderr.writeln(buildResult.stderr);
       throw Exception('Failed to build the benchmark.');
+    }
+
+    // Don't bother serving the app or launching Chrome if `stop` was called
+    // while the app was building.
+    if (stopRequested.isCompleted) {
+      throw _stoppedError();
     }
 
     final profileData = Completer<List<Map<String, dynamic>>>();
@@ -306,20 +365,37 @@ class BenchmarkServer {
       );
 
       print('Launching Chrome.');
-      whenChromeIsReady = Chrome.launch(
-        options,
-        onError: (String error) {
-          if (!profileData.isCompleted) {
-            profileData.completeError(Exception(error));
-          } else {
-            io.stderr.writeln('Chrome error: $error');
-          }
-        },
-        workingDirectory: benchmarkAppDirectory.path,
-      );
+      Future<Chrome> launchChrome() async {
+        final Chrome launchedChrome = await Chrome.launch(
+          options,
+          onError: (String error) {
+            if (!profileData.isCompleted) {
+              profileData.completeError(Exception(error));
+            } else {
+              io.stderr.writeln('Chrome error: $error');
+            }
+          },
+          workingDirectory: benchmarkAppDirectory.path,
+        );
+        chrome = launchedChrome;
+        // `stop` may have been called while Chrome was still launching, in
+        // which case the `finally` block below ran before there was a Chrome
+        // to kill.
+        if (stopRequested.isCompleted) {
+          launchedChrome.stop();
+        }
+        return launchedChrome;
+      }
+
+      whenChromeIsReady = launchChrome();
 
       print('Waiting for the benchmark to report benchmark profile.');
-      final List<Map<String, dynamic>> profiles = await profileData.future;
+      final List<Map<String, dynamic>> profiles = await Future.any(
+        <Future<List<Map<String, dynamic>>>>[
+          profileData.future,
+          stopRequested.future.then((_) => throw _stoppedError()),
+        ],
+      );
 
       print('Received profile data');
       final results = <String, List<BenchmarkScore>>{};
@@ -353,16 +429,23 @@ class BenchmarkServer {
       }
       return BenchmarkResults(results);
     } finally {
-      if (headless) {
-        chrome?.stop();
-      } else {
-        // In non-headless mode wait for the developer to close Chrome
-        // manually. Otherwise, they won't get a chance to debug anything.
-        print(
-          'Benchmark finished. Chrome running in windowed mode. Close '
-          'Chrome manually to continue.',
-        );
-        await chrome?.whenExits;
+      final launchedChrome = chrome;
+      // When `launchedChrome` is null, Chrome either failed to launch or is
+      // still launching. The latter is handled by the `then` callback on
+      // `whenChromeIsReady` above.
+      if (launchedChrome != null) {
+        if (headless || stopRequested.isCompleted) {
+          launchedChrome.stop();
+        } else {
+          // In non-headless mode wait for the developer to close Chrome
+          // manually. Otherwise, they won't get a chance to debug anything.
+          print(
+            'Benchmark finished. Chrome running in windowed mode. Close '
+            'Chrome manually to continue.',
+          );
+          await Future.any(<Future<void>>[launchedChrome.whenExits, stopRequested.future]);
+          launchedChrome.stop();
+        }
       }
       unawaited(server.close());
     }
