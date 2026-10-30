@@ -4,6 +4,7 @@
 
 /// @docImport 'data_table.dart';
 /// @docImport 'elevated_button.dart';
+/// @docImport 'focus_ring_theme.dart';
 /// @docImport 'icon_button.dart';
 /// @docImport 'ink_decoration.dart';
 /// @docImport 'ink_ripple.dart';
@@ -13,7 +14,6 @@ library;
 
 import 'dart:async';
 import 'dart:collection';
-import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
@@ -21,7 +21,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 
 import 'debug.dart';
-import 'focus_ring_theme.dart';
+import 'focus_ring_painting.dart';
 import 'ink_highlight.dart';
 import 'material.dart';
 import 'material_state.dart';
@@ -1518,16 +1518,13 @@ class _InkResponseState extends State<_InkResponseStateWidget>
       ),
     );
 
-    final FocusRingThemeData focusRingTheme = FocusRingTheme.of(context);
-    if (focusRingTheme.visible ?? false) {
-      final double ringWidth = focusRingTheme.width ?? _kDefaultFocusRingWidth;
+    final FocusRingStyle? focusRingStyle = FocusRingStyle.maybeOf(context);
+    if (focusRingStyle != null) {
       result = CustomPaint(
         foregroundPainter: _FocusRingPainter(
           visible: _focusRingVisible,
-          color: focusRingTheme.color ?? theme.colorScheme.secondary,
-          innerColor: focusRingTheme.innerColor ?? theme.colorScheme.onSecondary,
-          width: ringWidth,
-          offset: widget.focusRingOffset ?? -ringWidth,
+          style: focusRingStyle,
+          offset: widget.focusRingOffset ?? -focusRingStyle.width,
           highlightShape: widget.highlightShape,
           radius: widget.radius,
           borderRadius: widget.borderRadius,
@@ -1553,16 +1550,11 @@ class _InkResponseState extends State<_InkResponseStateWidget>
   }
 }
 
-// md.sys.state.focus-indicator.thickness
-const double _kDefaultFocusRingWidth = 3.0;
-
 // Paints the keyboard focus ring along the highlight shape of an InkResponse.
 class _FocusRingPainter extends CustomPainter {
   _FocusRingPainter({
     required this.visible,
-    required this.color,
-    required this.innerColor,
-    required this.width,
+    required this.style,
     required this.offset,
     required this.highlightShape,
     required this.radius,
@@ -1573,9 +1565,7 @@ class _FocusRingPainter extends CustomPainter {
   }) : super(repaint: visible);
 
   final ValueListenable<bool> visible;
-  final Color color;
-  final Color? innerColor;
-  final double width;
+  final FocusRingStyle style;
   final double offset;
   final BoxShape highlightShape;
   final double? radius;
@@ -1590,19 +1580,11 @@ class _FocusRingPainter extends CustomPainter {
       return;
     }
     final Rect rect = rectForSize(size);
-    // The ring spans from `offset` to `offset + width` outside the shape's
-    // edge, so its stroke is centered half a width further out.
-    final double delta = offset + width / 2;
-    final paint = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = width;
-    final Color? inner = innerColor;
-    if (inner != null && inner.a > 0) {
-      // The inner band sits directly inside the ring, one width closer to the
-      // shape.
-      _strokeShape(canvas, rect, delta - width, paint..color = inner);
-    }
-    _strokeShape(canvas, rect, delta, paint..color = color);
+    style.paint(
+      canvas,
+      offset,
+      (Canvas canvas, double delta, Paint paint) => _strokeShape(canvas, rect, delta, paint),
+    );
   }
 
   // Strokes the highlight shape grown by `delta` on every side.
@@ -1621,16 +1603,16 @@ class _FocusRingPainter extends CustomPainter {
     }
     if (border == null) {
       final RRect rrect = (borderRadius ?? BorderRadius.zero).toRRect(rect);
-      canvas.drawRRect(_inflateRRect(rrect, delta), paint);
+      canvas.drawRRect(FocusRingStyle.inflateRRect(rrect, delta), paint);
       return;
     }
     switch (border) {
       case RoundedRectangleBorder(:final BorderRadiusGeometry borderRadius):
         final RRect rrect = borderRadius.resolve(textDirection).toRRect(rect);
-        canvas.drawRRect(_inflateRRect(rrect, delta), paint);
+        canvas.drawRRect(FocusRingStyle.inflateRRect(rrect, delta), paint);
       case StadiumBorder():
         final rrect = RRect.fromRectAndRadius(rect, Radius.circular(rect.shortestSide / 2));
-        canvas.drawRRect(_inflateRRect(rrect, delta), paint);
+        canvas.drawRRect(FocusRingStyle.inflateRRect(rrect, delta), paint);
       case CircleBorder():
         final double ringRadius = rect.shortestSide / 2 + delta;
         canvas.drawCircle(rect.center, ringRadius, paint);
@@ -1642,34 +1624,10 @@ class _FocusRingPainter extends CustomPainter {
     }
   }
 
-  // Grows or shrinks a rounded rectangle by `delta` on every side, keeping the
-  // ring concentric with the shape. Square corners stay square.
-  static RRect _inflateRRect(RRect rrect, double delta) {
-    Radius grow(Radius radius) {
-      if (radius == Radius.zero) {
-        return Radius.zero;
-      }
-      return Radius.elliptical(math.max(0, radius.x + delta), math.max(0, radius.y + delta));
-    }
-
-    return RRect.fromLTRBAndCorners(
-      rrect.left - delta,
-      rrect.top - delta,
-      rrect.right + delta,
-      rrect.bottom + delta,
-      topLeft: grow(rrect.tlRadius),
-      topRight: grow(rrect.trRadius),
-      bottomLeft: grow(rrect.blRadius),
-      bottomRight: grow(rrect.brRadius),
-    );
-  }
-
   @override
   bool shouldRepaint(_FocusRingPainter oldDelegate) {
     return oldDelegate.visible != visible ||
-        oldDelegate.color != color ||
-        oldDelegate.innerColor != innerColor ||
-        oldDelegate.width != width ||
+        oldDelegate.style != style ||
         oldDelegate.offset != offset ||
         oldDelegate.highlightShape != highlightShape ||
         oldDelegate.radius != radius ||
