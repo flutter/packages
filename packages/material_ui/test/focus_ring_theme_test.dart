@@ -281,6 +281,37 @@ void main() {
       );
     });
 
+    testWidgets('Skips bands that would invert on a tiny widget', (WidgetTester tester) async {
+      final focusNode = FocusNode();
+      addTearDown(focusNode.dispose);
+      await tester.pumpWidget(
+        buildApp(
+          focusRingTheme: visibleRing,
+          child: Material(
+            child: InkWell(
+              focusNode: focusNode,
+              onTap: () {},
+              child: const SizedBox(width: 4, height: 4),
+            ),
+          ),
+        ),
+      );
+      focusNode.requestFocus();
+      await tester.pumpAndSettle();
+
+      final RenderBox box = tester.renderObject<RenderBox>(find.byType(InkWell));
+      // The ring, centered 1.5 pixels in, still fits in 4 pixels. The inner
+      // band, centered 4.5 pixels in, would be inverted, so it is skipped.
+      expect(
+        box,
+        paints..rrect(
+          rrect: RRect.fromRectAndRadius((Offset.zero & box.size).deflate(1.5), Radius.zero),
+          style: PaintingStyle.stroke,
+        ),
+      );
+      expect(box, paintsExactlyCountTimes(#drawRRect, 1));
+    });
+
     testWidgets('Ring uses the theme color and width', (WidgetTester tester) async {
       final focusNode = FocusNode();
       addTearDown(focusNode.dispose);

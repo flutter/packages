@@ -1608,17 +1608,20 @@ class _FocusRingPainter extends CustomPainter {
   // Strokes the highlight shape grown by `delta` on every side.
   void _strokeShape(Canvas canvas, Rect rect, double delta, Paint paint) {
     final ShapeBorder? border = customBorder;
-    if (border == null) {
-      switch (highlightShape) {
-        case BoxShape.circle:
-          final double ringRadius = (radius ?? Material.defaultSplashRadius) + delta;
-          if (ringRadius > 0) {
-            canvas.drawCircle(rect.center, ringRadius, paint);
-          }
-        case BoxShape.rectangle:
-          final RRect rrect = (borderRadius ?? BorderRadius.zero).toRRect(rect);
-          canvas.drawRRect(_inflateRRect(rrect, delta), paint);
+    if (border == null && highlightShape == BoxShape.circle) {
+      final double ringRadius = (radius ?? Material.defaultSplashRadius) + delta;
+      if (ringRadius > 0) {
+        canvas.drawCircle(rect.center, ringRadius, paint);
       }
+      return;
+    }
+    // A negative delta on a very small widget would invert the rectangle.
+    if (rect.width + 2 * delta <= 0 || rect.height + 2 * delta <= 0) {
+      return;
+    }
+    if (border == null) {
+      final RRect rrect = (borderRadius ?? BorderRadius.zero).toRRect(rect);
+      canvas.drawRRect(_inflateRRect(rrect, delta), paint);
       return;
     }
     switch (border) {
@@ -1630,9 +1633,7 @@ class _FocusRingPainter extends CustomPainter {
         canvas.drawRRect(_inflateRRect(rrect, delta), paint);
       case CircleBorder():
         final double ringRadius = rect.shortestSide / 2 + delta;
-        if (ringRadius > 0) {
-          canvas.drawCircle(rect.center, ringRadius, paint);
-        }
+        canvas.drawCircle(rect.center, ringRadius, paint);
       default:
         canvas.drawPath(
           border.getOuterPath(rect.inflate(delta), textDirection: textDirection),
