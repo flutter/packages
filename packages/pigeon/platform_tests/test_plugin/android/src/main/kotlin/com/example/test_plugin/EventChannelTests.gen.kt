@@ -728,37 +728,37 @@ private open class EventChannelTestsPigeonCodec : StandardMessageCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
     return when (type) {
       129.toByte() -> {
-        return (readValue(buffer) as Long?)?.let { EventEnum.ofRaw(it.toInt()) }
+        (readValue(buffer) as Long?)?.let { EventEnum.ofRaw(it.toInt()) }
       }
       130.toByte() -> {
-        return (readValue(buffer) as Long?)?.let { AnotherEventEnum.ofRaw(it.toInt()) }
+        (readValue(buffer) as Long?)?.let { AnotherEventEnum.ofRaw(it.toInt()) }
       }
       131.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { EventAllNullableTypes.fromList(it) }
+        (readValue(buffer) as? List<Any?>)?.let { EventAllNullableTypes.fromList(it) }
       }
       132.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { IntEvent.fromList(it) }
+        (readValue(buffer) as? List<Any?>)?.let { IntEvent.fromList(it) }
       }
       133.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { StringEvent.fromList(it) }
+        (readValue(buffer) as? List<Any?>)?.let { StringEvent.fromList(it) }
       }
       134.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { BoolEvent.fromList(it) }
+        (readValue(buffer) as? List<Any?>)?.let { BoolEvent.fromList(it) }
       }
       135.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { DoubleEvent.fromList(it) }
+        (readValue(buffer) as? List<Any?>)?.let { DoubleEvent.fromList(it) }
       }
       136.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { ObjectsEvent.fromList(it) }
+        (readValue(buffer) as? List<Any?>)?.let { ObjectsEvent.fromList(it) }
       }
       137.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { EnumEvent.fromList(it) }
+        (readValue(buffer) as? List<Any?>)?.let { EnumEvent.fromList(it) }
       }
       138.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { ClassEvent.fromList(it) }
+        (readValue(buffer) as? List<Any?>)?.let { ClassEvent.fromList(it) }
       }
       139.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { EmptyEvent.fromList(it) }
+        (readValue(buffer) as? List<Any?>)?.let { EmptyEvent.fromList(it) }
       }
       else -> super.readValueOfType(type, buffer)
     }
@@ -834,9 +834,9 @@ private class EventChannelTestsPigeonStreamHandler<T>(
 }
 
 interface EventChannelTestsPigeonEventChannelWrapper<T> {
-  open fun onListen(p0: Any?, sink: PigeonEventSink<T>) {}
+  fun onListen(p0: Any?, sink: PigeonEventSink<T>) {}
 
-  open fun onCancel(p0: Any?) {}
+  fun onCancel(p0: Any?) {}
 }
 
 class PigeonEventSink<T>(private val sink: EventChannel.EventSink) {
@@ -853,71 +853,157 @@ class PigeonEventSink<T>(private val sink: EventChannel.EventSink) {
   }
 }
 
+/**
+ * A typed channel for communicating with the Flutter application using asynchronous event streams.
+ */
+class StreamIntsEventChannel(messenger: BinaryMessenger, instanceName: String = "") {
+  private val channel: EventChannel
+
+  init {
+    var channelName = "dev.flutter.pigeon.pigeon_integration_tests.EventChannelMethods.streamInts"
+    if (instanceName.isNotEmpty()) {
+      channelName += ".$instanceName"
+    }
+    channel = EventChannel(messenger, channelName, EventChannelTestsPigeonMethodCodec)
+  }
+
+  /**
+   * Sets the stream handler for this channel, replacing any previous handler.
+   *
+   * Pass `null` to remove the event channel registration.
+   */
+  fun setStreamHandler(streamHandler: StreamIntsStreamHandler?) {
+    val internalHandler = streamHandler?.let { EventChannelTestsPigeonStreamHandler<Long>(it) }
+    channel.setStreamHandler(internalHandler)
+  }
+}
+
 abstract class StreamIntsStreamHandler : EventChannelTestsPigeonEventChannelWrapper<Long> {
   companion object {
+    /**
+     * Creates and returns a new event channel that calls the provided stream handler.
+     *
+     * The returned channel can be stored to allow changing or removing the stream handler. If the
+     * handler will not be changed for the lifetime of the engine associated with the messenger, the
+     * return value can be ignored.
+     */
     fun register(
         messenger: BinaryMessenger,
         streamHandler: StreamIntsStreamHandler,
         instanceName: String = ""
-    ) {
-      var channelName: String =
-          "dev.flutter.pigeon.pigeon_integration_tests.EventChannelMethods.streamInts"
-      if (instanceName.isNotEmpty()) {
-        channelName += ".$instanceName"
-      }
-      val internalStreamHandler = EventChannelTestsPigeonStreamHandler<Long>(streamHandler)
-      EventChannel(messenger, channelName, EventChannelTestsPigeonMethodCodec)
-          .setStreamHandler(internalStreamHandler)
+    ): StreamIntsEventChannel {
+      val channel = StreamIntsEventChannel(messenger, instanceName)
+      channel.setStreamHandler(streamHandler)
+      return channel
     }
   }
+
   // Implement methods from EventChannelTestsPigeonEventChannelWrapper
   override fun onListen(p0: Any?, sink: PigeonEventSink<Long>) {}
 
   override fun onCancel(p0: Any?) {}
 }
 
+/**
+ * A typed channel for communicating with the Flutter application using asynchronous event streams.
+ */
+class StreamEventsEventChannel(messenger: BinaryMessenger, instanceName: String = "") {
+  private val channel: EventChannel
+
+  init {
+    var channelName = "dev.flutter.pigeon.pigeon_integration_tests.EventChannelMethods.streamEvents"
+    if (instanceName.isNotEmpty()) {
+      channelName += ".$instanceName"
+    }
+    channel = EventChannel(messenger, channelName, EventChannelTestsPigeonMethodCodec)
+  }
+
+  /**
+   * Sets the stream handler for this channel, replacing any previous handler.
+   *
+   * Pass `null` to remove the event channel registration.
+   */
+  fun setStreamHandler(streamHandler: StreamEventsStreamHandler?) {
+    val internalHandler =
+        streamHandler?.let { EventChannelTestsPigeonStreamHandler<PlatformEvent>(it) }
+    channel.setStreamHandler(internalHandler)
+  }
+}
+
 abstract class StreamEventsStreamHandler :
     EventChannelTestsPigeonEventChannelWrapper<PlatformEvent> {
   companion object {
+    /**
+     * Creates and returns a new event channel that calls the provided stream handler.
+     *
+     * The returned channel can be stored to allow changing or removing the stream handler. If the
+     * handler will not be changed for the lifetime of the engine associated with the messenger, the
+     * return value can be ignored.
+     */
     fun register(
         messenger: BinaryMessenger,
         streamHandler: StreamEventsStreamHandler,
         instanceName: String = ""
-    ) {
-      var channelName: String =
-          "dev.flutter.pigeon.pigeon_integration_tests.EventChannelMethods.streamEvents"
-      if (instanceName.isNotEmpty()) {
-        channelName += ".$instanceName"
-      }
-      val internalStreamHandler = EventChannelTestsPigeonStreamHandler<PlatformEvent>(streamHandler)
-      EventChannel(messenger, channelName, EventChannelTestsPigeonMethodCodec)
-          .setStreamHandler(internalStreamHandler)
+    ): StreamEventsEventChannel {
+      val channel = StreamEventsEventChannel(messenger, instanceName)
+      channel.setStreamHandler(streamHandler)
+      return channel
     }
   }
+
   // Implement methods from EventChannelTestsPigeonEventChannelWrapper
   override fun onListen(p0: Any?, sink: PigeonEventSink<PlatformEvent>) {}
 
   override fun onCancel(p0: Any?) {}
 }
 
+/**
+ * A typed channel for communicating with the Flutter application using asynchronous event streams.
+ */
+class StreamConsistentNumbersEventChannel(messenger: BinaryMessenger, instanceName: String = "") {
+  private val channel: EventChannel
+
+  init {
+    var channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.EventChannelMethods.streamConsistentNumbers"
+    if (instanceName.isNotEmpty()) {
+      channelName += ".$instanceName"
+    }
+    channel = EventChannel(messenger, channelName, EventChannelTestsPigeonMethodCodec)
+  }
+
+  /**
+   * Sets the stream handler for this channel, replacing any previous handler.
+   *
+   * Pass `null` to remove the event channel registration.
+   */
+  fun setStreamHandler(streamHandler: StreamConsistentNumbersStreamHandler?) {
+    val internalHandler = streamHandler?.let { EventChannelTestsPigeonStreamHandler<Long>(it) }
+    channel.setStreamHandler(internalHandler)
+  }
+}
+
 abstract class StreamConsistentNumbersStreamHandler :
     EventChannelTestsPigeonEventChannelWrapper<Long> {
   companion object {
+    /**
+     * Creates and returns a new event channel that calls the provided stream handler.
+     *
+     * The returned channel can be stored to allow changing or removing the stream handler. If the
+     * handler will not be changed for the lifetime of the engine associated with the messenger, the
+     * return value can be ignored.
+     */
     fun register(
         messenger: BinaryMessenger,
         streamHandler: StreamConsistentNumbersStreamHandler,
         instanceName: String = ""
-    ) {
-      var channelName: String =
-          "dev.flutter.pigeon.pigeon_integration_tests.EventChannelMethods.streamConsistentNumbers"
-      if (instanceName.isNotEmpty()) {
-        channelName += ".$instanceName"
-      }
-      val internalStreamHandler = EventChannelTestsPigeonStreamHandler<Long>(streamHandler)
-      EventChannel(messenger, channelName, EventChannelTestsPigeonMethodCodec)
-          .setStreamHandler(internalStreamHandler)
+    ): StreamConsistentNumbersEventChannel {
+      val channel = StreamConsistentNumbersEventChannel(messenger, instanceName)
+      channel.setStreamHandler(streamHandler)
+      return channel
     }
   }
+
   // Implement methods from EventChannelTestsPigeonEventChannelWrapper
   override fun onListen(p0: Any?, sink: PigeonEventSink<Long>) {}
 
