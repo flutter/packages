@@ -1,6 +1,7 @@
 ## NEXT
 
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+* Fixes the `completePurchase` docs, which referred to a `PurchaseException` type that does not exist.
 
 ## 3.3.1
 
