@@ -593,6 +593,7 @@ class NoDefaultCupertinoThemeData {
         other.textTheme == textTheme &&
         other.barBackgroundColor == barBackgroundColor &&
         other.scaffoldBackgroundColor == scaffoldBackgroundColor &&
+        other.selectionHandleColor == selectionHandleColor &&
         other.applyThemeToAll == applyThemeToAll;
   }
 
@@ -604,6 +605,7 @@ class NoDefaultCupertinoThemeData {
     textTheme,
     barBackgroundColor,
     scaffoldBackgroundColor,
+    selectionHandleColor,
     applyThemeToAll,
   );
 }
