@@ -1,6 +1,7 @@
 ## NEXT
 
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+* Decouples from Material and Cupertino imports.
 
 ## 3.1.1
 
