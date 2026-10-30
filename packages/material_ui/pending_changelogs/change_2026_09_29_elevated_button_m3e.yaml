@@ -1,0 +1,4 @@
+changelog: |
+  - Adds Material 3 Expressive support and selectable states for ElevatedButton.
+  - Adds `ElevatedButtonTheme.variantOf`, which returns the closest non-null `ElevatedButtonThemeData.variant`, or `StyleVariant.material3` if none is set.
+version: minor
