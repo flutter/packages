@@ -6,6 +6,7 @@
 
 import 'dart:typed_data';
 
+import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
 import 'package:cross_file_web/cross_file_web_safe.dart' as web_safe;
 import 'package:flutter_test/flutter_test.dart';
 
@@ -38,4 +39,13 @@ void main() {
       );
     },
   );
+
+  test('CrossFileWeb.createPlatformScopedStorageXFile throws UnsupportedError', () {
+    expect(
+      () => web_safe.CrossFileWeb().createPlatformScopedStorageXFile(
+        const PlatformScopedStorageXFileCreationParams(uri: ''),
+      ),
+      throwsA(isA<UnsupportedError>()),
+    );
+  });
 }

@@ -5,6 +5,7 @@
 export 'package:cross_file_platform_interface/cross_file_platform_interface.dart'
     show PlatformScopedStorageXFileCreationParams, PlatformXFileCreationParams;
 
+export 'src/cross_file_web_safe.dart' if (dart.library.js_interop) 'src/cross_file_web.dart';
 export 'src/web_scoped_storage_cross_file_safe.dart'
     if (dart.library.js_interop) 'src/web_scoped_storage_cross_file.dart'
     show WebScopedStorageXFileCreationParams, WebScopedStorageXFileExtension;
