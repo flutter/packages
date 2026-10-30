@@ -152,6 +152,15 @@ class MaterialBanner extends StatefulWidget {
   /// the [MaterialBanner].
   ///
   /// Typically this is a list of [TextButton] widgets.
+  ///
+  /// When a [MaterialBanner] is presented through a [ScaffoldMessenger], it
+  /// persists across routes. If an action callback dismisses the banner using
+  /// [ScaffoldMessenger.of], avoid passing a [BuildContext] from the route that
+  /// created the banner, as that route may be deactivated before the banner is
+  /// dismissed. Instead, either wrap the action widget in a [Builder] so its
+  /// callback uses the banner's own [BuildContext], or capture the
+  /// [ScaffoldMessengerState] before calling
+  /// [ScaffoldMessengerState.showMaterialBanner].
   final List<Widget> actions;
 
   /// The z-coordinate at which to place the material banner.
