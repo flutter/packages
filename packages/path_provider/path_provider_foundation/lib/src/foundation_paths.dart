@@ -37,17 +37,23 @@ class FoundationPaths {
   /// identifier; a caller that needs any of these does it, using
   /// [mainBundleIdentifier] for the last.
   String? userDirectory(NSSearchPathDirectory directory) {
-    // Foundation autoreleases the array. It is read before this method returns,
-    // so it is never retained or released here.
-    final _CFRef paths = _searchPathForDirectories(
-      directory.value,
-      NSSearchPathDomainMask.NSUserDomainMask,
-      true,
-    );
-    if (paths == ffi.nullptr || _arrayCount(paths) == 0) {
-      return null;
+    // Foundation autoreleases the array. On a background isolate, the thread's own
+    // pool drains only when the thread ends, so without this pool every call would
+    // keep its array until then. The path is copied out before the pool frees it.
+    final _CFRef pool = _autoreleasePoolPush();
+    try {
+      final _CFRef paths = _searchPathForDirectories(
+        directory.value,
+        NSSearchPathDomainMask.NSUserDomainMask,
+        true,
+      );
+      if (paths == ffi.nullptr || _arrayCount(paths) == 0) {
+        return null;
+      }
+      return _toDartString(_arrayValueAtIndex(paths, 0));
+    } finally {
+      _autoreleasePoolPop(pool);
     }
-    return _toDartString(_arrayValueAtIndex(paths, 0));
   }
 
   /// The main bundle's identifier, such as `com.example.app`, or `null` if the
@@ -66,9 +72,10 @@ class FoundationPaths {
 
 /// A CoreFoundation object reference.
 ///
-/// None used in this file is owned by it: Foundation autoreleases the array
-/// and the other objects are borrowed from the array or from the bundle, so
-/// nothing is retained or released.
+/// None used in this file is owned by it: Foundation autoreleases the array,
+/// which the pool in [FoundationPaths.userDirectory] frees, and the other
+/// objects are borrowed from the array or from the bundle, so nothing is
+/// retained or released.
 typedef _CFRef = ffi.Pointer<ffi.Void>;
 
 /// `kCFStringEncodingUTF8`, as defined in CoreFoundation's `CFString.h`.
@@ -112,6 +119,9 @@ final ffi.DynamicLibrary _coreFoundation = ffi.DynamicLibrary.open(
   '/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation',
 );
 
+/// The Objective-C runtime, opened on first use. Every app has already loaded it.
+final ffi.DynamicLibrary _objectiveCRuntime = ffi.DynamicLibrary.open('/usr/lib/libobjc.A.dylib');
+
 // Each lookup runs on first use and follows the types of the C headers:
 // `CFIndex` is a signed long, `Boolean` an unsigned char and
 // `CFStringEncoding` an unsigned int.
@@ -149,3 +159,13 @@ final _CFRef Function() _mainBundle = _coreFoundation
 
 final _CFRef Function(_CFRef) _bundleIdentifier = _coreFoundation
     .lookupFunction<_CFRef Function(_CFRef), _CFRef Function(_CFRef)>('CFBundleGetIdentifier');
+
+// The functions the compiler calls for an `@autoreleasepool` block, and the
+// ones `autoReleasePool` in `package:objective_c` calls. They are looked up here
+// so that this file never touches that package.
+
+final _CFRef Function() _autoreleasePoolPush = _objectiveCRuntime
+    .lookupFunction<_CFRef Function(), _CFRef Function()>('objc_autoreleasePoolPush');
+
+final void Function(_CFRef) _autoreleasePoolPop = _objectiveCRuntime
+    .lookupFunction<ffi.Void Function(_CFRef), void Function(_CFRef)>('objc_autoreleasePoolPop');
