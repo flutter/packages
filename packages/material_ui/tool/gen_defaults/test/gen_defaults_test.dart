@@ -32,6 +32,7 @@ import '../templates/icon_button_template.dart' as icon_button;
 import '../templates/input_chip_template.dart';
 import '../templates/input_decorator_template.dart';
 import '../templates/list_tile_template.dart';
+import '../templates/loading_indicator_template.dart';
 import '../templates/menu_template.dart';
 import '../templates/motion_template.dart';
 import '../templates/navigation_bar_template.dart';
@@ -752,6 +753,23 @@ void main() {
         ),
       );
       expect(contents, contains('Color? get selectedColor => _colors.primary;'));
+    });
+
+    test('LoadingIndicatorTemplateM3E emits M3E LoadingIndicator defaults from tokens', () {
+      const template = LoadingIndicatorTemplateM3E();
+      final String contents = _generateContents(template);
+      expect(template.className, '_LoadingIndicatorDefaultsM3E');
+      expect(template.outputFileName, 'loading_indicator_defaults_m3e.g.dart');
+      expect(
+        contents,
+        contains('class _LoadingIndicatorDefaultsM3E extends LoadingIndicatorThemeData'),
+      );
+      expect(contents, contains('containerShape: const StadiumBorder()'));
+      expect(contents, contains('Color? get color => _colors.primary;'));
+      expect(contents, contains('Color? get containedColor => _colors.onPrimaryContainer;'));
+      expect(contents, contains('Color? get containerColor => _colors.primaryContainer;'));
+      expect(contents, contains('Size get containerSize => const Size(48.0, 48.0);'));
+      expect(contents, contains('double get activeIndicatorSize => 38.0;'));
     });
 
     test('MenuTemplateM3 emits M3 Menu defaults from tokens', () {
