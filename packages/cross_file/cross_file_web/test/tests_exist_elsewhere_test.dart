@@ -4,17 +4,24 @@
 
 // ignore_for_file: avoid_print
 
-// Do not remove. This line ensures that this library can be imported on non
-// web platforms.
-// ignore: unused_import
-import 'package:cross_file_web/cross_file_web_safe.dart';
+import 'dart:typed_data';
+
+import 'package:cross_file_web/cross_file_web_safe.dart' as web_safe;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   test('Tell the user where to find the real tests', () {
     print('---');
     print('This package uses integration_test for its tests.');
+    print('This file only includes tests for the cross platform safe file.');
     print('See `example/README.md` for more info.');
     print('---');
+  });
+
+  test('Cross Platform safe WebScopedStorageXFileCreationParams creates instance', () {
+    expect(
+      web_safe.WebScopedStorageXFileCreationParams.fromBytes(Uint8List.fromList(<int>[0, 2])),
+      isA<web_safe.WebScopedStorageXFileCreationParams>(),
+    );
   });
 }
