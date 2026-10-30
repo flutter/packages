@@ -4,6 +4,7 @@
 
 import 'package:a11y_assessments/use_cases/badge.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
 import 'test_utils.dart';
 
@@ -20,4 +21,24 @@ void main() {
     await tester.pumpAndSettle();
     expect(findHeadingLevelOnes, findsOne);
   });
+
+  for (final Brightness brightness in Brightness.values) {
+    testWidgets('badge label meets text contrast guideline in $brightness', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(brightness: brightness),
+          home: Builder(builder: BadgeUseCase().buildWithTitle),
+        ),
+      );
+
+      // The semantics label differs from the rendered text, so the default
+      // text contrast guideline cannot find this label.
+      await expectLater(
+        tester,
+        meetsGuideline(CustomMinimumContrastGuideline(finder: find.text('5'))),
+      );
+    });
+  }
 }
