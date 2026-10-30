@@ -2157,6 +2157,8 @@ class _TabBarState extends State<TabBar> {
             widget.splashBorderRadius ??
             tabBarTheme.splashBorderRadius ??
             _defaults.splashBorderRadius,
+        // md.comp.primary-navigation-tab.focus.indicator.outline.offset
+        focusRingOffset: -3.0,
         child: Padding(
           padding: EdgeInsets.only(bottom: widget.indicatorWeight),
           child: Semantics(

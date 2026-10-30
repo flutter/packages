@@ -1464,6 +1464,8 @@ class _RawChipState extends State<RawChip> with TickerProviderStateMixin<RawChip
         mouseCursor: widget.mouseCursor,
         hoverColor: (widget.color ?? chipTheme.color) == null ? null : Colors.transparent,
         customBorder: resolvedShape,
+        // md.comp.assist-chip.focus.indicator.outline.offset
+        focusRingOffset: 2.0,
         child: AnimatedBuilder(
           animation: Listenable.merge(<Listenable>[selectController, enableController]),
           builder: (BuildContext context, Widget? child) {
