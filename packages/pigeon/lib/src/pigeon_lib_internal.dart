@@ -521,6 +521,23 @@ class DartGeneratorAdapter implements GeneratorAdapter {
 
     const generator = DartGenerator();
     generator.generate(options.dartOptions!, root, sink, dartPackageName: options.dartPackageName);
+    if (usesNativeInterop(options.dartOptions!) &&
+        options.dartOptions!.dartOut != null &&
+        options.dartOptions!.dartOut!.isNotEmpty &&
+        options.dartOptions!.dartOut != 'stdout') {
+      final buffer = StringBuffer();
+      generator.generateNativeInterop(
+        options.dartOptions!,
+        root,
+        buffer,
+        dartPackageName: options.dartPackageName,
+      );
+      _writeToOutput(
+        getNativeInteropDartPath(options.dartOptions!.dartOut!),
+        buffer.toString(),
+        basePath: options.basePath ?? '',
+      );
+    }
   }
 
   @override
@@ -533,7 +550,17 @@ class DartGeneratorAdapter implements GeneratorAdapter {
     if (dartOptions == null || !usesNativeInterop(dartOptions)) {
       return <Error>[];
     }
-    return _errorOnNativeInteropReservedMethodNames(root, useJni: dartOptions.useJni);
+    final errors = <Error>[];
+    if (dartOptions.dartOut != null &&
+        (dartOptions.dartOut!.isEmpty || dartOptions.dartOut == 'stdout')) {
+      errors.add(
+        Error(
+          message: 'Native interop requires a file path for dartOut (cannot be empty or "stdout").',
+        ),
+      );
+    }
+    errors.addAll(_errorOnNativeInteropReservedMethodNames(root, useJni: dartOptions.useJni));
+    return errors;
   }
 }
 
