@@ -165,7 +165,7 @@ final class NullInputStreamException implements Exception {
   /// Constructs a [NullInputStreamException].
   NullInputStreamException(this.uri);
 
-  /// The URI the input stream that was request for.
+  /// The URI for the requested input stream.
   final String uri;
 
   @override
@@ -180,7 +180,7 @@ final class NullOutputStreamException implements Exception {
   /// Constructs a [NullOutputStreamException].
   NullOutputStreamException(this.uri);
 
-  /// The URI the input stream that was request for.
+  /// The URI for the requested output stream.
   final String uri;
 
   @override
