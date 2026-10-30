@@ -2086,22 +2086,30 @@ name: foobar
       classes: <Class>[],
       enums: <Enum>[],
     );
+    const options = InternalDartOptions(
+      ignoreLints: false,
+      useFfi: true,
+      useJni: true,
+      dartOut: 'lib/foo.dart',
+    );
     final sink = StringBuffer();
     const generator = DartGenerator();
-    generator.generate(
-      const InternalDartOptions(
-        ignoreLints: false,
-        useFfi: true,
-        useJni: true,
-        dartOut: 'lib/foo.dart',
-      ),
-      root,
-      sink,
-      dartPackageName: DEFAULT_PACKAGE_NAME,
-    );
+    generator.generate(options, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
     final code = sink.toString();
 
     expect(code, contains('Native Interop is not supported on this platform. Use Api instead.'));
+
+    final nativeInteropSink = StringBuffer();
+    generator.generateNativeInterop(
+      options,
+      root,
+      nativeInteropSink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    expect(
+      nativeInteropSink.toString(),
+      contains('Native Interop is not supported on this platform. Use Api instead.'),
+    );
   });
 
   test('native interop host api unsupported error - createWithNativeInteropApi', () {
@@ -2206,7 +2214,7 @@ name: foobar
     );
     final sink = StringBuffer();
     const generator = DartGenerator();
-    generator.generate(
+    generator.generateNativeInterop(
       const InternalDartOptions(ignoreLints: false, useJni: true, dartOut: 'lib/foo.dart'),
       root,
       sink,
@@ -2254,7 +2262,7 @@ name: foobar
     );
     final sink = StringBuffer();
     const generator = DartGenerator();
-    generator.generate(
+    generator.generateNativeInterop(
       const InternalDartOptions(ignoreLints: false, useJni: true, dartOut: 'lib/foo.dart'),
       root,
       sink,
@@ -2267,6 +2275,80 @@ name: foobar
     expect(code, contains('_jniApi.setter = value;'));
   });
 
+  test('native interop converts sealed classes through their subclasses', () {
+    final sink = StringBuffer();
+    const generator = DartGenerator();
+    generator.generateNativeInterop(
+      const InternalDartOptions(
+        ignoreLints: false,
+        useJni: true,
+        useFfi: true,
+        dartOut: 'lib/foo.dart',
+      ),
+      buildSealedClassRoot(),
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final code = sink.toString();
+
+    expect(code, contains('jni_bridge.Shape toJni() {'));
+    expect(code, contains('final Circle child => child.toJni(),'));
+    expect(code, contains('static Shape? fromJni(jni_bridge.Shape? jniClass) {'));
+    expect(code, contains('if (jniClass.isA<jni_bridge.Circle>(jni_bridge.Circle.type)) {'));
+    expect(
+      code,
+      contains(
+        'return _PigeonInternalCircleNativeInterop.fromJni(jniClass.as(jni_bridge.Circle.type));',
+      ),
+    );
+    expect(code, contains('ffi_bridge.ShapeBridge toFfi() {'));
+    expect(code, contains('final Circle child => child.toFfi(),'));
+    expect(code, contains('static Shape? fromFfi(ffi_bridge.ShapeBridge? ffiClass) {'));
+    expect(code, contains('if (ffi_bridge.CircleBridge.isA(ffiClass)) {'));
+    expect(
+      code,
+      contains(
+        'return _PigeonInternalCircleNativeInterop.fromFfi(ffi_bridge.CircleBridge.as(ffiClass));',
+      ),
+    );
+    expect(code, contains('jni_bridge.Circle toJni() {'));
+    expect(code, contains('ffi_bridge.CircleBridge toFfi() {'));
+    expect(
+      code,
+      contains('final jni_bridge.Shape pigeonVar_res = _jniApi.echoShape(shape.toJni());'),
+    );
+    expect(
+      code,
+      contains(
+        'final Shape pigeonVar_dartTypeRes = _PigeonInternalShapeNativeInterop.fromJni(pigeonVar_res)!;',
+      ),
+    );
+  });
+
+  test('native interop codecs have no branch for sealed classes', () {
+    final sink = StringBuffer();
+    const generator = DartGenerator();
+    generator.generateNativeInterop(
+      const InternalDartOptions(
+        ignoreLints: false,
+        useJni: true,
+        useFfi: true,
+        dartOut: 'lib/foo.dart',
+      ),
+      buildSealedClassRoot(),
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final code = sink.toString();
+
+    expect(code, contains('value.isA<jni_bridge.Circle>('));
+    expect(code, isNot(contains('value.isA<jni_bridge.Shape>(')));
+    expect(code, contains('ffi_bridge.CircleBridge.isA(value)'));
+    expect(code, isNot(contains('ffi_bridge.ShapeBridge.isA(value)')));
+    expect(code, contains('value is Circle)'));
+    expect(code, isNot(contains('value is Shape)')));
+  });
+
   test('ffi toFfi allocates the bridge for a class without fields', () {
     final root = Root(
       apis: <Api>[],
@@ -2275,7 +2357,7 @@ name: foobar
     );
     final sink = StringBuffer();
     const generator = DartGenerator();
-    generator.generate(
+    generator.generateNativeInterop(
       const InternalDartOptions(ignoreLints: false, useFfi: true, dartOut: 'lib/foo.dart'),
       root,
       sink,
@@ -2360,7 +2442,7 @@ name: foobar
     );
     final sink = StringBuffer();
     const generator = DartGenerator();
-    generator.generate(
+    generator.generateNativeInterop(
       const InternalDartOptions(ignoreLints: false, useJni: true, dartOut: 'lib/foo.dart'),
       root,
       sink,
@@ -2435,7 +2517,7 @@ name: foobar
     );
     final sink = StringBuffer();
     const generator = DartGenerator();
-    generator.generate(
+    generator.generateNativeInterop(
       const InternalDartOptions(
         ignoreLints: false,
         useFfi: true,
@@ -2574,7 +2656,7 @@ name: foobar
     );
     final sink = StringBuffer();
     const generator = DartGenerator();
-    generator.generate(
+    generator.generateNativeInterop(
       const InternalDartOptions(
         ignoreLints: false,
         useFfi: true,
@@ -2665,7 +2747,7 @@ name: foobar
     );
     final sink = StringBuffer();
     const generator = DartGenerator();
-    generator.generate(
+    generator.generateNativeInterop(
       const InternalDartOptions(
         ignoreLints: false,
         useFfi: true,
@@ -2687,4 +2769,214 @@ name: foobar
     expect(code, contains('.goToAsyncWithError_completionHandler_'));
     expect(code, contains('DataBridge.alloc().initForKey('));
   });
+
+  test(
+    'main dart output with native interop is web-safe and conditionally imports native interop file',
+    () {
+      expect(getNativeInteropDartPath('lib/src/foo.g.dart'), 'lib/src/foo.native_interop.g.dart');
+      expect(
+        getNativeInteropDartPath('lib/src/foo.gen.dart'),
+        'lib/src/foo.native_interop.gen.dart',
+      );
+      expect(getNativeInteropDartPath('lib/src/foo.dart'), 'lib/src/foo.native_interop.dart');
+
+      const string = TypeDeclaration(baseName: 'String', isNullable: false);
+      final root = Root(
+        apis: <Api>[
+          AstHostApi(
+            name: 'Api',
+            methods: <Method>[
+              Method(
+                name: 'echo',
+                location: ApiLocation.host,
+                parameters: <Parameter>[Parameter(name: 'value', type: string)],
+                returnType: string,
+              ),
+            ],
+          ),
+          AstFlutterApi(
+            name: 'Callbacks',
+            methods: <Method>[
+              Method(
+                name: 'onEvent',
+                location: ApiLocation.flutter,
+                parameters: <Parameter>[Parameter(name: 'value', type: string)],
+                returnType: const TypeDeclaration.voidDeclaration(),
+              ),
+            ],
+          ),
+        ],
+        classes: <Class>[
+          Class(
+            name: 'Data',
+            fields: <NamedType>[NamedType(name: 'value', type: string)],
+          ),
+        ],
+        enums: <Enum>[
+          Enum(
+            name: 'MyEnum',
+            members: <EnumMember>[EnumMember(name: 'one')],
+          ),
+        ],
+      );
+      const options = InternalDartOptions(
+        ignoreLints: false,
+        useFfi: true,
+        useJni: true,
+        ffiErrorClassName: 'PigeonError',
+        jniErrorClassName: 'PigeonError',
+        dartOut: 'lib/foo.g.dart',
+      );
+      final sink = StringBuffer();
+      const generator = DartGenerator();
+      generator.generate(options, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+      final code = sink.toString();
+
+      expect(code, isNot(contains("import 'dart:ffi'")));
+      expect(code, isNot(contains("import 'dart:io'")));
+      expect(code, isNot(contains("import 'package:ffi/ffi.dart'")));
+      expect(code, isNot(contains("import 'package:jni/jni.dart'")));
+      expect(code, isNot(contains("import 'package:objective_c/objective_c.dart'")));
+      expect(code, isNot(contains('ffi_bridge')));
+      expect(code, isNot(contains('jni_bridge')));
+      expect(code, isNot(contains('toJni')));
+      expect(code, isNot(contains('toFfi')));
+      expect(
+        code,
+        contains(
+          "import './foo.g.dart'\n"
+          "    if (dart.library.ffi) './foo.native_interop.g.dart'\n"
+          '    as pigeon_native;',
+        ),
+      );
+      expect(code, contains("import 'package:flutter/foundation.dart' show kIsWeb;"));
+      expect(code, contains('if (!kIsWeb) {'));
+      expect(code, contains('if (!kIsWeb && api != null) {'));
+      expect(
+        code,
+        contains(
+          "import 'package:meta/meta.dart' show immutable, internal, protected, visibleForTesting;",
+        ),
+      );
+      expect(code, contains('@internal\nApiForNativeInterop? pigeon_getInstance_Api({'));
+      expect(code, contains('pigeon_native.pigeon_getInstance_Api(channelName: channelName)'));
+      expect(code, contains('@internal\nCallbacks pigeon_register_Callbacks('));
+      expect(code, contains('final class CallbacksRegistrar'));
+      expect(code, contains('pigeon_native.pigeon_register_Callbacks(api, name: name)'));
+
+      final nativeInteropSink = StringBuffer();
+      generator.generateNativeInterop(
+        options,
+        root,
+        nativeInteropSink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+      final nativeInteropCode = nativeInteropSink.toString();
+      expect(nativeInteropCode, contains("import './foo.g.dart';"));
+      expect(nativeInteropCode, contains('extension _PigeonInternalDataNativeInterop on Data'));
+      expect(nativeInteropCode, contains('extension _PigeonInternalMyEnumNativeInterop on MyEnum'));
+      expect(
+        nativeInteropCode,
+        contains('class _ApiForNativeInterop implements ApiForNativeInterop'),
+      );
+      expect(nativeInteropCode, contains('final class _CallbacksRegistrar'));
+      expect(nativeInteropCode, contains('_CallbacksRegistrar(this.dartApi);'));
+      expect(nativeInteropCode, contains('final Callbacks dartApi;'));
+      expect(nativeInteropCode, isNot(contains('if (dartApi != null)')));
+
+      // Verify single-platform import isolation in generateNativeInterop.
+      final jniOnlySink = StringBuffer();
+      generator.generateNativeInterop(
+        const InternalDartOptions(
+          ignoreLints: false,
+          useJni: true,
+          jniErrorClassName: 'PigeonError',
+          dartOut: 'lib/foo.g.dart',
+        ),
+        root,
+        jniOnlySink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+      final jniOnlyCode = jniOnlySink.toString();
+      expect(jniOnlyCode, contains("import 'package:jni/jni.dart';"));
+      expect(jniOnlyCode, contains("import './foo.g.jni.dart' as jni_bridge;"));
+      expect(jniOnlyCode, isNot(contains("import 'dart:ffi';")));
+      expect(jniOnlyCode, isNot(contains("import 'package:ffi/ffi.dart';")));
+      expect(jniOnlyCode, isNot(contains("import 'package:objective_c/objective_c.dart';")));
+      expect(jniOnlyCode, isNot(contains('ffi_bridge')));
+
+      final ffiOnlySink = StringBuffer();
+      generator.generateNativeInterop(
+        const InternalDartOptions(
+          ignoreLints: false,
+          useFfi: true,
+          ffiErrorClassName: 'PigeonError',
+          dartOut: 'lib/foo.g.dart',
+        ),
+        root,
+        ffiOnlySink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+      final ffiOnlyCode = ffiOnlySink.toString();
+      expect(ffiOnlyCode, contains("import 'dart:ffi';"));
+      expect(ffiOnlyCode, contains("import 'package:ffi/ffi.dart';"));
+      expect(ffiOnlyCode, contains("import 'package:objective_c/objective_c.dart';"));
+      expect(ffiOnlyCode, contains("import './foo.g.ffi.dart' as ffi_bridge;"));
+      expect(ffiOnlyCode, isNot(contains("import 'package:jni/jni.dart';")));
+      expect(ffiOnlyCode, isNot(contains('jni_bridge')));
+    },
+  );
+}
+
+/// Builds a root with a sealed class `Shape`, its subclasses `Circle` (one
+/// field) and `EmptyShape` (no fields), and a host API that echoes `Shape`.
+Root buildSealedClassRoot() {
+  final shape = Class(name: 'Shape', fields: <NamedType>[], isSealed: true);
+  final circle = Class(
+    name: 'Circle',
+    fields: <NamedType>[
+      NamedType(
+        name: 'radius',
+        type: const TypeDeclaration(baseName: 'double', isNullable: false),
+      ),
+    ],
+    superClassName: 'Shape',
+    superClass: shape,
+  );
+  final emptyShape = Class(
+    name: 'EmptyShape',
+    fields: <NamedType>[],
+    superClassName: 'Shape',
+    superClass: shape,
+  );
+  shape.children.addAll(<Class>[circle, emptyShape]);
+  final shapeType = TypeDeclaration(baseName: 'Shape', isNullable: false, associatedClass: shape);
+  final nullableShapeType = TypeDeclaration(
+    baseName: 'Shape',
+    isNullable: true,
+    associatedClass: shape,
+  );
+  return Root(
+    apis: <Api>[
+      AstHostApi(
+        name: 'Api',
+        methods: <Method>[
+          Method(
+            name: 'echoShape',
+            location: ApiLocation.host,
+            parameters: <Parameter>[Parameter(name: 'shape', type: shapeType)],
+            returnType: shapeType,
+          ),
+          Method(
+            name: 'echoNullableShape',
+            location: ApiLocation.host,
+            parameters: <Parameter>[Parameter(name: 'shape', type: nullableShapeType)],
+            returnType: nullableShapeType,
+          ),
+        ],
+      ),
+    ],
+    classes: <Class>[shape, circle, emptyShape],
+    enums: <Enum>[],
+  );
 }

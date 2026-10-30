@@ -8,3 +8,8 @@ const int kMaxReferenceExpansions = 1000;
 /// The error message thrown when the nested reference expansions limit is exceeded.
 const String kMaxReferenceExpansionsErrorMessage =
     'SVG contains too many nested reference expansions (possible Denial of Service exploit).';
+
+/// The font size used for text without a `font-size`.
+///
+/// This is the size of the CSS initial value `medium` in browsers.
+const double kDefaultFontSize = 16;

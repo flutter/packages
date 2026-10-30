@@ -10,6 +10,7 @@ import 'package:shared_preferences_platform_interface/shared_preferences_async_p
 import 'package:shared_preferences_platform_interface/types.dart';
 
 import 'messages_async.g.dart';
+import 'shared_preferences_async_android_options.dart';
 import 'strings.dart';
 
 const String _listPrefix = 'VGhpcyBpcyB0aGUgcHJlZml4IGZvciBhIGxpc3Qu';
@@ -22,14 +23,20 @@ base class SharedPreferencesAsyncAndroid extends SharedPreferencesAsyncPlatform 
   SharedPreferencesAsyncAndroid({
     @visibleForTesting SharedPreferencesAsyncApi? dataStoreApi,
     @visibleForTesting SharedPreferencesAsyncApi? sharedPreferencesApi,
-  }) : _dataStoreApi =
-           dataStoreApi ?? SharedPreferencesAsyncApi(messageChannelSuffix: 'data_store'),
-       _sharedPreferencesApi =
-           sharedPreferencesApi ??
-           SharedPreferencesAsyncApi(messageChannelSuffix: 'shared_preferences');
+  }) : _dataStoreApiOverride = dataStoreApi,
+       _sharedPreferencesApiOverride = sharedPreferencesApi;
 
-  final SharedPreferencesAsyncApi _dataStoreApi;
-  final SharedPreferencesAsyncApi _sharedPreferencesApi;
+  final SharedPreferencesAsyncApi? _dataStoreApiOverride;
+  final SharedPreferencesAsyncApi? _sharedPreferencesApiOverride;
+
+  late final SharedPreferencesAsyncApi _dataStoreApi =
+      _dataStoreApiOverride ??
+      SharedPreferencesAsyncApi.createWithNativeInteropApi(messageChannelSuffix: 'data_store');
+  late final SharedPreferencesAsyncApi _sharedPreferencesApi =
+      _sharedPreferencesApiOverride ??
+      SharedPreferencesAsyncApi.createWithNativeInteropApi(
+        messageChannelSuffix: 'shared_preferences',
+      );
 
   /// Registers this class as the default instance of [SharedPreferencesAsyncPlatform].
   static void registerWith() {
@@ -178,7 +185,8 @@ base class SharedPreferencesAsyncAndroid extends SharedPreferencesAsyncPlatform 
       final T? value = await method();
       return value;
     } on PlatformException catch (e) {
-      if (e.code == 'ClassCastException') {
+      if (e.code == 'ClassCastException' ||
+          (e.stacktrace?.startsWith('java.lang.ClassCastException') ?? false)) {
         throw TypeError();
       } else {
         rethrow;
@@ -214,44 +222,4 @@ base class SharedPreferencesAsyncAndroid extends SharedPreferencesAsyncPlatform 
     });
     return data.cast<String, Object>();
   }
-}
-
-/// Used to identify which Android library should be used on the backend of this call.
-enum SharedPreferencesAndroidBackendLibrary {
-  /// Represents the newer DataStore Preferences library.
-  DataStore,
-
-  /// Represents the older SharedPreferences library.
-  SharedPreferences,
-}
-
-/// Options for the Android specific SharedPreferences plugin.
-class SharedPreferencesAsyncAndroidOptions extends SharedPreferencesOptions {
-  /// Constructor for SharedPreferencesAsyncAndroidOptions.
-  const SharedPreferencesAsyncAndroidOptions({
-    this.backend = SharedPreferencesAndroidBackendLibrary.DataStore,
-    this.originalSharedPreferencesOptions,
-  });
-
-  /// Which backend should be used for this method call.
-  final SharedPreferencesAndroidBackendLibrary backend;
-
-  /// These options define how the `SharedPreferences` backend should behave.
-  ///
-  /// Any options in this field will be ignored unless the backend that is selected
-  /// is `SharedPreferences`.
-  final AndroidSharedPreferencesStoreOptions? originalSharedPreferencesOptions;
-}
-
-/// Options necessary for defining the use of the original `SharedPreferences`
-/// library.
-///
-/// These options are only ever used with the original `SharedPreferences` and
-/// have no purpose when using the default DataStore Preferences.
-class AndroidSharedPreferencesStoreOptions {
-  /// Constructor for AndroidSharedPreferencesStoreOptions.
-  const AndroidSharedPreferencesStoreOptions({this.fileName});
-
-  /// The name of the file in which the preferences are stored.
-  final String? fileName;
 }

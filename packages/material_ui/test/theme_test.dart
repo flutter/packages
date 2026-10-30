@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:cupertino_ui/cupertino_ui.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -225,6 +226,22 @@ void main() {
       equals(ThemeData.localize(ThemeData.fallback(), defaultGeometryThemeM3)),
     );
   });
+
+  testWidgets('Fallback theme updates platform when defaultTargetPlatform changes', (
+    WidgetTester tester,
+  ) async {
+    late BuildContext capturedContext;
+    await tester.pumpWidget(
+      Builder(
+        builder: (BuildContext context) {
+          capturedContext = context;
+          return Container();
+        },
+      ),
+    );
+
+    expect(Theme.of(capturedContext).platform, defaultTargetPlatform);
+  }, variant: TargetPlatformVariant.all());
 
   testWidgets('ThemeData.localize memoizes the result', (WidgetTester tester) async {
     final light = ThemeData();
