@@ -7,7 +7,8 @@
 import 'dart:typed_data';
 
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
-import 'package:cross_file_web/cross_file_web_safe.dart' as web_safe;
+import 'package:cross_file_web/src/cross_file_web_safe.dart' as web_safe;
+import 'package:cross_file_web/src/web_scoped_storage_cross_file_safe.dart' as web_file_safe;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -23,7 +24,7 @@ void main() {
     'Cross Platform safe WebScopedStorageXFileCreationParams.fromObjectUrl throws UnsupportedError',
     () {
       expect(
-        () => web_safe.WebScopedStorageXFileCreationParams.fromObjectUrl(objectUrl: ''),
+        () => web_file_safe.WebScopedStorageXFileCreationParams.fromObjectUrl(objectUrl: ''),
         throwsA(isA<UnsupportedError>()),
       );
     },
@@ -33,8 +34,9 @@ void main() {
     'Cross Platform safe WebScopedStorageXFileCreationParams.fromBytes throws UnsupportedError',
     () {
       expect(
-        () =>
-            web_safe.WebScopedStorageXFileCreationParams.fromBytes(Uint8List.fromList(<int>[0, 2])),
+        () => web_file_safe.WebScopedStorageXFileCreationParams.fromBytes(
+          Uint8List.fromList(<int>[0, 2]),
+        ),
         throwsA(isA<UnsupportedError>()),
       );
     },
