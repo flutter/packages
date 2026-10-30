@@ -73,6 +73,12 @@ class FakeController extends ValueNotifier<CameraValue> implements CameraControl
   ResolutionPreset get resolutionPreset => ResolutionPreset.low;
 
   @override
+  ResolutionPreset? get photoResolutionPreset => null;
+
+  @override
+  ResolutionPreset? get videoResolutionPreset => null;
+
+  @override
   MediaSettings get mediaSettings => const MediaSettings(
     resolutionPreset: ResolutionPreset.low,
     fps: 15,

@@ -148,6 +148,45 @@ TEST(CameraPlugin, CreateHandlerCallsInitCamera) {
   EXPECT_TRUE(result_called);
 }
 
+TEST(CameraPlugin, CreateHandlerPassesSeparateResolutionPresets) {
+  std::unique_ptr<MockTextureRegistrar> texture_registrar_ =
+      std::make_unique<MockTextureRegistrar>();
+  std::unique_ptr<MockBinaryMessenger> messenger_ =
+      std::make_unique<MockBinaryMessenger>();
+  std::unique_ptr<MockCameraFactory> camera_factory_ =
+      std::make_unique<MockCameraFactory>();
+  std::unique_ptr<MockCamera> camera =
+      std::make_unique<MockCamera>(MOCK_DEVICE_ID);
+
+  MockInitCamera(camera.get(), true);
+
+  camera_factory_->pending_camera_ = std::move(camera);
+
+  EXPECT_CALL(*camera_factory_, CreateCamera(MOCK_DEVICE_ID));
+
+  CameraPlugin plugin(texture_registrar_.get(), messenger_.get(),
+                      std::move(camera_factory_));
+
+  bool result_called = false;
+  std::function<void(ErrorOr<int64_t>)> create_result =
+      [&result_called](ErrorOr<int64_t> reply) {
+        EXPECT_FALSE(result_called);
+        result_called = true;
+        EXPECT_FALSE(reply.has_error());
+        EXPECT_EQ(reply.value(), 1);
+      };
+
+  PlatformResolutionPreset photo_preset = PlatformResolutionPreset::kUltraHigh;
+  PlatformResolutionPreset video_preset = PlatformResolutionPreset::kMedium;
+  plugin.Create(
+      MOCK_CAMERA_NAME,
+      PlatformMediaSettings(PlatformResolutionPreset::kLow, &photo_preset,
+                            &video_preset, nullptr, nullptr, nullptr, true),
+      std::move(create_result));
+
+  EXPECT_TRUE(result_called);
+}
+
 TEST(CameraPlugin, CreateHandlerErrorOnInvalidDeviceId) {
   std::unique_ptr<MockTextureRegistrar> texture_registrar_ =
       std::make_unique<MockTextureRegistrar>();
