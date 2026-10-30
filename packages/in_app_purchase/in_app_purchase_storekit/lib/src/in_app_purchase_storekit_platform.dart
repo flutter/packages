@@ -167,6 +167,7 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
           promotionalOffer: _convertPromotionalOffer(purchaseParam.promotionalOffer),
           introductoryOfferEligibilityCompactJWS:
               purchaseParam.introductoryOfferEligibilityCompactJWS,
+          billingPlanType: purchaseParam.billingPlanType,
         );
       } else {
         options = SK2ProductPurchaseOptions(
