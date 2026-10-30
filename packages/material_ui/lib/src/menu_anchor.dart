@@ -687,6 +687,24 @@ class _MenuAnchorState extends State<MenuAnchor> with SingleTickerProviderStateM
     }
 
     _animationController.forward();
+
+    if (isSubmenu || widget.childFocusNode != null) {
+      return;
+    }
+
+    final FocusScopeNode scope = FocusScope.of(context);
+    final BuildContext? focusedContext = scope.focusedChild?.context;
+    final bool isAnchorFocused = focusedContext != null && _maybeOf(focusedContext)?._root == this;
+    if (isAnchorFocused) {
+      return;
+    }
+
+    final FocusNode? initialFocus = FocusManager.instance.primaryFocus;
+    SchedulerBinding.instance.addPostFrameCallback((Duration _) {
+      if (mounted && !isClosingOrClosed && FocusManager.instance.primaryFocus == initialFocus) {
+        scope.setFirstFocus(_menuScopeNode);
+      }
+    });
   }
 
   void _handleMenuCloseRequest(VoidCallback hideOverlay) {
@@ -2622,21 +2640,12 @@ class _LocalizedShortcutLabeler {
         ],
       ];
       String? shortcutTrigger;
-      final int logicalKeyId = trigger.keyId;
       if (_shortcutGraphicEquivalents.containsKey(trigger)) {
         shortcutTrigger = _shortcutGraphicEquivalents[trigger];
       } else {
         // Otherwise, look it up, and if we don't have a translation for it,
         // then fall back to the key label.
-        shortcutTrigger = _getLocalizedName(trigger, localizations);
-        if (shortcutTrigger == null && logicalKeyId & LogicalKeyboardKey.planeMask == 0x0) {
-          // If the trigger is a Unicode-character-producing key, then use the
-          // character.
-          shortcutTrigger = String.fromCharCode(logicalKeyId & LogicalKeyboardKey.valueMask)
-              .toUpperCase();
-        }
-        // Fall back to the key label if all else fails.
-        shortcutTrigger ??= trigger.keyLabel;
+        shortcutTrigger = _getLocalizedName(trigger, localizations) ?? trigger.keyLabel;
       }
       return <String>[
         ...modifiers,
@@ -3952,15 +3961,15 @@ class _Submenu extends StatelessWidget {
       child: MouseRegion(
         cursor: mouseCursor,
         hitTestBehavior: HitTestBehavior.deferToChild,
-        child: FocusScope(
-          node: anchor._menuScopeNode,
-          skipTraversal: true,
-          child: Actions(
-            actions: <Type, Action<Intent>>{
-              DismissIntent: DismissMenuAction(controller: anchor._menuController),
-            },
-            child: Shortcuts(
-              shortcuts: _kMenuTraversalShortcuts,
+        child: Actions(
+          actions: <Type, Action<Intent>>{
+            DismissIntent: DismissMenuAction(controller: anchor._menuController),
+          },
+          child: Shortcuts(
+            shortcuts: _kMenuTraversalShortcuts,
+            child: FocusScope(
+              node: anchor._menuScopeNode,
+              skipTraversal: true,
               child: FadeTransition(
                 opacity: fadeAnimation,
                 alwaysIncludeSemantics: true,
