@@ -19,7 +19,7 @@ import 'scoped_storage/scoped_storage_cross_file.dart';
 /// See also:
 ///
 /// * [FileSystemXDirectory], the `XDirectory` implementation for a local data
-///   resources on the file system.
+///   resource on the file system.
 /// * [ScopedStorageXDirectory], the `XDirectory` implementation for a directory
 ///   (or folder) within a device's scoped storage.
 @immutable
