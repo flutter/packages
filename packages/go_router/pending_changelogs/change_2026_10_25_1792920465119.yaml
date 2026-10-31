@@ -1,0 +1,3 @@
+changelog: |
+  - Saves active branch route state before switching branches.
+version: patch
