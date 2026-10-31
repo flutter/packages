@@ -19,6 +19,84 @@ import './native_interop_example.g.dart';
 import './native_interop_example.g.ffi.dart' as ffi_bridge;
 import './native_interop_example.g.jni.dart' as jni_bridge;
 
+Uint8List? _jByteArrayToDart(JByteArray? array, {bool release = false}) {
+  if (array == null) {
+    return null;
+  }
+  try {
+    final Int8List range = array.getRange(0, array.length);
+    return Uint8List.fromList(range.buffer.asUint8List(range.offsetInBytes, range.length));
+  } finally {
+    if (release) {
+      array.release();
+    }
+  }
+}
+
+Int32List? _jIntArrayToDart(JIntArray? array, {bool release = false}) {
+  if (array == null) {
+    return null;
+  }
+  try {
+    return Int32List.fromList(array.getRange(0, array.length));
+  } finally {
+    if (release) {
+      array.release();
+    }
+  }
+}
+
+Int64List? _jLongArrayToDart(JLongArray? array, {bool release = false}) {
+  if (array == null) {
+    return null;
+  }
+  try {
+    return Int64List.fromList(array.getRange(0, array.length));
+  } finally {
+    if (release) {
+      array.release();
+    }
+  }
+}
+
+Float64List? _jDoubleArrayToDart(JDoubleArray? array, {bool release = false}) {
+  if (array == null) {
+    return null;
+  }
+  try {
+    return Float64List.fromList(array.getRange(0, array.length));
+  } finally {
+    if (release) {
+      array.release();
+    }
+  }
+}
+
+JByteArray _uint8ListToJni(Uint8List value) {
+  final JByteArray array = JByteArray(value.length);
+  array.setRange(0, value.length, Int8List.view(value.buffer, value.offsetInBytes, value.length));
+  return array;
+}
+
+JIntArray _int32ListToJni(Int32List value) {
+  final JIntArray array = JIntArray(value.length);
+  array.setRange(0, value.length, value);
+  return array;
+}
+
+JLongArray _int64ListToJni(Int64List value) {
+  final JLongArray array = JLongArray(value.length);
+  array.setRange(0, value.length, value);
+  return array;
+}
+
+JDoubleArray _float64ListToJni(Float64List value) {
+  final JDoubleArray array = JDoubleArray(value.length);
+  array.setRange(0, value.length, value);
+  return array;
+}
+
+// ignore: unused_element
 class _PigeonJniCodec {
   static JObject get _kotlinUnit {
     final JClass unitClass = JClass.forName('kotlin/Unit');
@@ -29,44 +107,57 @@ class _PigeonJniCodec {
     }
   }
 
+  static final JClass _longClass = JLong.type.jClass;
+  static final JClass _doubleClass = JDouble.type.jClass;
+  static final JClass _stringClass = JString.type.jClass;
+  static final JClass _booleanClass = JBoolean.type.jClass;
+  static final JClass _byteArrayClass = JByteArray.type.jClass;
+  static final JClass _intArrayClass = JIntArray.type.jClass;
+  static final JClass _longArrayClass = JLongArray.type.jClass;
+  static final JClass _doubleArrayClass = JDoubleArray.type.jClass;
+  static final JClass _listClass = JList.type.jClass;
+  static final JClass _mapClass = JMap.type.jClass;
+
   static Object? readValue(JObject? value) {
     if (value == null) {
       return null;
     }
-    if (value.isA<JLong>(JLong.type)) {
-      return value.as(JLong.type).longValue();
-    } else if (value.isA<JDouble>(JDouble.type)) {
-      return value.as(JDouble.type).doubleValue();
-    } else if (value.isA<JString>(JString.type)) {
-      return value.as(JString.type).toDartString();
-    } else if (value.isA<JBoolean>(JBoolean.type)) {
-      return value.as(JBoolean.type).booleanValue();
-    } else if (value.isA<JByteArray>(JByteArray.type)) {
-      final JByteArray array = value.as(JByteArray.type);
-      return Uint8List.fromList(array.getRange(0, array.length).buffer.asUint8List());
-    } else if (value.isA<JIntArray>(JIntArray.type)) {
-      final JIntArray array = value.as(JIntArray.type);
-      return Int32List.fromList(array.getRange(0, array.length));
-    } else if (value.isA<JLongArray>(JLongArray.type)) {
-      final JLongArray array = value.as(JLongArray.type);
-      return Int64List.fromList(array.getRange(0, array.length));
-    } else if (value.isA<JDoubleArray>(JDoubleArray.type)) {
-      final JDoubleArray array = value.as(JDoubleArray.type);
-      return Float64List.fromList(array.getRange(0, array.length));
-    } else if (value.isA<JList<JObject>>(JList.type as JType<JList<JObject>>)) {
-      final List<JObject?> list = value.as(JList.type).asDart();
+    if (value.isInstanceOf(_longClass)) {
+      return (value as JLong).longValue();
+    } else if (value.isInstanceOf(_doubleClass)) {
+      return (value as JDouble).doubleValue();
+    } else if (value.isInstanceOf(_stringClass)) {
+      return (value as JString).toDartString();
+    } else if (value.isInstanceOf(_booleanClass)) {
+      return (value as JBoolean).booleanValue();
+    } else if (value.isInstanceOf(_byteArrayClass)) {
+      return _jByteArrayToDart(value as JByteArray);
+    } else if (value.isInstanceOf(_intArrayClass)) {
+      return _jIntArrayToDart(value as JIntArray);
+    } else if (value.isInstanceOf(_longArrayClass)) {
+      return _jLongArrayToDart(value as JLongArray);
+    } else if (value.isInstanceOf(_doubleArrayClass)) {
+      return _jDoubleArrayToDart(value as JDoubleArray);
+    } else if (value.isInstanceOf(_listClass)) {
+      final List<JObject?> list = (value as JList<JObject?>).asDart();
       final res = <Object?>[];
       // Cache the length before iterating to avoid a JNI hop per iteration.
       final int len = list.length;
       for (int i = 0; i < len; i++) {
-        res.add(readValue(list[i]));
+        final JObject? element = list[i];
+        res.add(readValue(element));
+        element?.release();
       }
       return res;
-    } else if (value.isA<JMap<JObject, JObject>>(JMap.type as JType<JMap<JObject, JObject>>)) {
-      final Map<JObject?, JObject?> map = value.as(JMap.type).asDart();
+    } else if (value.isInstanceOf(_mapClass)) {
+      final Map<JObject?, JObject?> map = (value as JMap<JObject?, JObject?>).asDart();
       final res = <Object?, Object?>{};
       for (final MapEntry<JObject?, JObject?> entry in map.entries) {
-        res[readValue(entry.key)] = readValue(entry.value);
+        final JObject? key = entry.key;
+        final JObject? entryValue = entry.value;
+        res[readValue(key)] = readValue(entryValue);
+        key?.release();
+        entryValue?.release();
       }
       return res;
     } else {
@@ -88,25 +179,13 @@ class _PigeonJniCodec {
     } else if (value is String) {
       return value.toJString() as T;
     } else if (value is Uint8List) {
-      final JByteArray array = JByteArray(value.length);
-      array.setRange(
-        0,
-        value.length,
-        Int8List.view(value.buffer, value.offsetInBytes, value.length),
-      );
-      return array as T;
+      return _uint8ListToJni(value) as T;
     } else if (value is Int32List) {
-      final JIntArray array = JIntArray(value.length);
-      array.setRange(0, value.length, value);
-      return array as T;
+      return _int32ListToJni(value) as T;
     } else if (value is Int64List) {
-      final JLongArray array = JLongArray(value.length);
-      array.setRange(0, value.length, value);
-      return array as T;
+      return _int64ListToJni(value) as T;
     } else if (value is Float64List) {
-      final JDoubleArray array = JDoubleArray(value.length);
-      array.setRange(0, value.length, value);
-      return array as T;
+      return _float64ListToJni(value) as T;
     } else if (value is List<Object>) {
       return value.map<JObject>((e) => writeValue<JObject>(e)).toJList() as T;
     } else if (value is List) {
@@ -138,7 +217,37 @@ class _PigeonJniCodec {
   }
 }
 
+// ignore: unused_element
+class _PigeonJniBuffers {
+  static JByteArray encode(Object? value) {
+    final ByteData data = pigeon_NativeInteropExamplemessageCodec.encodeMessage(value)!;
+    final JByteArray array = JByteArray(data.lengthInBytes);
+    array.setRange(
+      0,
+      data.lengthInBytes,
+      data.buffer.asInt8List(data.offsetInBytes, data.lengthInBytes),
+    );
+    return array;
+  }
+
+  static JByteArray? encodeOrNull(Object? value) {
+    return value == null ? null : encode(value);
+  }
+
+  static Object? decode(JByteArray? array) {
+    final Uint8List? bytes = _jByteArrayToDart(array, release: true);
+    return bytes == null
+        ? null
+        : pigeon_NativeInteropExamplemessageCodec.decodeMessage(ByteData.sublistView(bytes));
+  }
+}
+
+// ignore: unused_element
 class _PigeonFfiCodec {
+  static Object? readTypedData(ffi_bridge.NativeInteropExamplePigeonTypedData? value) {
+    return value == null ? null : _getValueFromPigeonTypedData(value);
+  }
+
   static Object? readValue(ObjCObject? value, [Type? type, Type? type2]) {
     if (value == null || ffi_bridge.NativeInteropExamplePigeonInternalNull.isA(value)) {
       return null;
@@ -231,45 +340,34 @@ class _PigeonFfiCodec {
   }
 }
 
-ffi_bridge.NativeInteropExamplePigeonTypedData _toPigeonTypedData(TypedData value) {
+/// Copies [value] into a buffer that the returned [NSData] owns and frees.
+NSData _typedDataToNSData(TypedData value) {
   final int lengthInBytes = value.lengthInBytes;
-  if (value is Uint8List) {
-    final int length = value.length;
-    final Pointer<Uint8> ptr = calloc<Uint8>(length);
-    ptr.asTypedList(length).setAll(0, value);
-    final NSData nsData = NSData.dataWithBytes(ptr.cast<Void>(), length: lengthInBytes);
-    calloc.free(ptr);
-    return ffi_bridge.NativeInteropExamplePigeonTypedData.alloc().initWithData(nsData, type: 0);
-  } else if (value is Int32List) {
-    final int length = value.length;
-    final Pointer<Int32> ptr = calloc<Int32>(length);
-    ptr.asTypedList(length).setAll(0, value);
-    final NSData nsData = NSData.dataWithBytes(ptr.cast<Void>(), length: lengthInBytes);
-    calloc.free(ptr);
-    return ffi_bridge.NativeInteropExamplePigeonTypedData.alloc().initWithData(nsData, type: 1);
-  } else if (value is Int64List) {
-    final int length = value.length;
-    final Pointer<Int64> ptr = calloc<Int64>(length);
-    ptr.asTypedList(length).setAll(0, value);
-    final NSData nsData = NSData.dataWithBytes(ptr.cast<Void>(), length: lengthInBytes);
-    calloc.free(ptr);
-    return ffi_bridge.NativeInteropExamplePigeonTypedData.alloc().initWithData(nsData, type: 2);
-  } else if (value is Float32List) {
-    final int length = value.length;
-    final Pointer<Float> ptr = calloc<Float>(length);
-    ptr.asTypedList(length).setAll(0, value);
-    final NSData nsData = NSData.dataWithBytes(ptr.cast<Void>(), length: lengthInBytes);
-    calloc.free(ptr);
-    return ffi_bridge.NativeInteropExamplePigeonTypedData.alloc().initWithData(nsData, type: 3);
-  } else if (value is Float64List) {
-    final int length = value.length;
-    final Pointer<Double> ptr = calloc<Double>(length);
-    ptr.asTypedList(length).setAll(0, value);
-    final NSData nsData = NSData.dataWithBytes(ptr.cast<Void>(), length: lengthInBytes);
-    calloc.free(ptr);
-    return ffi_bridge.NativeInteropExamplePigeonTypedData.alloc().initWithData(nsData, type: 4);
-  }
-  throw ArgumentError.value(value);
+  // `malloc(0)` may return null, which `NSData` can't own.
+  final Pointer<Uint8> bytes = malloc<Uint8>(lengthInBytes == 0 ? 1 : lengthInBytes);
+  bytes
+      .asTypedList(lengthInBytes)
+      .setAll(0, value.buffer.asUint8List(value.offsetInBytes, lengthInBytes));
+  return NSData.dataWithBytesNoCopy$1(
+    bytes.cast<Void>(),
+    length: lengthInBytes,
+    freeWhenDone: true,
+  );
+}
+
+ffi_bridge.NativeInteropExamplePigeonTypedData _toPigeonTypedData(TypedData value) {
+  final int type = switch (value) {
+    Uint8List() => 0,
+    Int32List() => 1,
+    Int64List() => 2,
+    Float32List() => 3,
+    Float64List() => 4,
+    _ => throw ArgumentError.value(value),
+  };
+  return ffi_bridge.NativeInteropExamplePigeonTypedData.alloc().initWithData(
+    _typedDataToNSData(value),
+    type: type,
+  );
 }
 
 Object? _getValueFromPigeonTypedData(ffi_bridge.NativeInteropExamplePigeonTypedData value) {
@@ -298,6 +396,41 @@ Object? _getValueFromPigeonTypedData(ffi_bridge.NativeInteropExamplePigeonTypedD
     };
   } finally {
     dataRef.release();
+  }
+}
+
+// ignore: unused_element
+class _PigeonFfiBuffers {
+  static Uint8List? toUint8List(NSData? data) {
+    if (data == null) {
+      return null;
+    }
+    final ObjCObjectRef dataRef = data.object$.ref;
+    try {
+      final int length = data.length;
+      if (length == 0) {
+        return Uint8List(0);
+      }
+      return Uint8List.fromList(data.bytes.cast<Uint8>().asTypedList(length));
+    } finally {
+      dataRef.release();
+    }
+  }
+
+  static NSData encode(Object? value) {
+    final ByteData data = pigeon_NativeInteropExamplemessageCodec.encodeMessage(value)!;
+    return _typedDataToNSData(data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes));
+  }
+
+  static NSData? encodeOrNull(Object? value) {
+    return value == null ? null : encode(value);
+  }
+
+  static Object? decode(NSData? data) {
+    final Uint8List? bytes = toUint8List(data);
+    return bytes == null
+        ? null
+        : pigeon_NativeInteropExamplemessageCodec.decodeMessage(ByteData.sublistView(bytes));
   }
 }
 
@@ -378,9 +511,7 @@ PlatformException _wrapJniException(JThrowable e) {
     return PlatformException(
       code: pigeonError.code.toDartString(),
       message: pigeonError.message?.toDartString(),
-      details: pigeonError.details?.isA<JString>(JString.type) ?? false
-          ? pigeonError.details!.as(JString.type).toDartString()
-          : pigeonError.details,
+      details: _PigeonJniBuffers.decode(pigeonError.details as JByteArray?),
       stacktrace: e.javaStackTrace,
     );
   }
@@ -437,7 +568,8 @@ class _NativeInteropExampleApiForNativeInterop implements NativeInteropExampleAp
   void doSomething() {
     try {
       if (_jniApi != null) {
-        return _jniApi.doSomething();
+        _jniApi.doSomething();
+        return;
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.PigeonError();
         _ffiApi.doSomethingWithWrappedError(pigeonVar_error);

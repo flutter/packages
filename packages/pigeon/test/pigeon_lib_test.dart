@@ -16,6 +16,8 @@ import 'package:pigeon/src/pigeon_lib_internal.dart';
 import 'package:pigeon/src/swift/swift_generator.dart';
 import 'package:test/test.dart';
 
+import '../tool/benchmark.dart';
+
 class _ValidatorGeneratorAdapter implements GeneratorAdapter {
   _ValidatorGeneratorAdapter(this.sink);
 
@@ -183,6 +185,37 @@ void main() {
   test('parse args - app_directory', () {
     final PigeonOptions opts = Pigeon.parseArgs(<String>['--app_directory', './foo/']);
     expect(opts.appDirectory, equals('./foo/'));
+  });
+
+  test('parse args - native_interop_transport', () {
+    final PigeonOptions opts = Pigeon.parseArgs(<String>['--native_interop_transport', 'hybrid']);
+    expect(opts.nativeInteropTransport, NativeInteropTransport.hybrid);
+    expect(Pigeon.parseArgs(<String>[]).nativeInteropTransport, isNull);
+  });
+
+  test('native interop transport round trips through a map', () {
+    const options = PigeonOptions(nativeInteropTransport: NativeInteropTransport.hybrid);
+    expect(options.toMap()['nativeInteropTransport'], 'hybrid');
+    expect(
+      PigeonOptions.fromMap(options.toMap()).nativeInteropTransport,
+      NativeInteropTransport.hybrid,
+    );
+  });
+
+  test('ConfigurePigeon parses the native interop transport', () {
+    const code = '''
+@ConfigurePigeon(PigeonOptions(nativeInteropTransport: NativeInteropTransport.hybrid))
+@HostApi()
+abstract class Api {
+  void doSomething();
+}
+''';
+    final ParseResults results = parseSource(code);
+    expect(results.errors, isEmpty);
+    expect(
+      PigeonOptions.fromMap(results.pigeonOptions!).nativeInteropTransport,
+      NativeInteropTransport.hybrid,
+    );
   });
 
   test('parse args - swift options', () {
@@ -2900,6 +2933,7 @@ dev_dependencies:
       String source, {
       SwiftOptions swiftOptions = const SwiftOptions(useFfi: true),
       KotlinOptions kotlinOptions = const KotlinOptions(useJni: true),
+      NativeInteropTransport? nativeInteropTransport,
     }) {
       final ParseResults results = parseSource(source);
       expect(results.errors, isEmpty);
@@ -2910,6 +2944,7 @@ dev_dependencies:
           swiftOptions: swiftOptions,
           kotlinOut: 'android/Messages.g.kt',
           kotlinOptions: kotlinOptions,
+          nativeInteropTransport: nativeInteropTransport,
         ),
       );
       return adapter.validate(options, results.root);
@@ -3272,6 +3307,135 @@ const String myConst = 'hello ${1 + 2}';
           '';
       final String configPath = getFfigenConfigPath(targetDir, options.input);
       expect(configPath, equals('example/tool/pigeon/messages_ffigen_config.dart'));
+    });
+
+    test('JnigenConfigGenerator binds Registrar and Bridge in hybrid mode', () {
+      final ParseResults parseResult = parseSource('''
+enum MyEnum { one }
+class MyData { int? x; }
+@HostApi()
+abstract class MyHostApi {
+  int ping();
+}
+@FlutterApi()
+abstract class MyFlutterApi {
+  int pong();
+}
+''');
+      expect(parseResult.errors, isEmpty);
+
+      String generateConfig(NativeInteropTransport transport) {
+        final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+          PigeonOptions(
+            input: 'pigeons/messages.dart',
+            dartOut: 'lib/messages.dart',
+            kotlinOut: 'android/src/main/kotlin/com/example/Messages.kt',
+            kotlinOptions: const KotlinOptions(package: 'com.example', useJni: true),
+            nativeInteropTransport: transport,
+          ),
+        );
+        final buffer = StringBuffer();
+        const JnigenConfigGeneratorAdapter().generate(
+          buffer,
+          options,
+          parseResult.root,
+          FileType.na,
+        );
+        return buffer.toString();
+      }
+
+      final String objectsConfig = generateConfig(NativeInteropTransport.objects);
+      expect(objectsConfig, isNot(contains("'com.example.MyHostApi',")));
+      expect(objectsConfig, contains("'com.example.MyHostApiRegistrar',"));
+      expect(objectsConfig, contains("'com.example.MyFlutterApi',"));
+      expect(objectsConfig, isNot(contains("'com.example.MyFlutterApiBridge',")));
+      expect(objectsConfig, contains("'com.example.MyFlutterApiRegistrar',"));
+      expect(objectsConfig, contains("'com.example.MyData',"));
+      expect(objectsConfig, contains("'com.example.MyEnum',"));
+
+      final String hybridConfig = generateConfig(NativeInteropTransport.hybrid);
+      expect(hybridConfig, isNot(contains("'com.example.MyHostApi',")));
+      expect(hybridConfig, contains("'com.example.MyHostApiRegistrar',"));
+      expect(hybridConfig, isNot(contains("'com.example.MyFlutterApi',")));
+      expect(hybridConfig, contains("'com.example.MyFlutterApiBridge',"));
+      expect(hybridConfig, contains("'com.example.MyFlutterApiRegistrar',"));
+      expect(hybridConfig, contains("'com.example.MyData',"));
+      expect(hybridConfig, contains("'com.example.MyEnum',"));
+    });
+
+    test(
+      'SwiftGeneratorAdapter errors on async HostApi parameter named completionHandler when useFfi is true',
+      () {
+        final root = Root(
+          apis: <Api>[
+            AstHostApi(
+              name: 'Api',
+              methods: <Method>[
+                Method(
+                  name: 'doWork',
+                  isAsynchronous: true,
+                  returnType: const TypeDeclaration.voidDeclaration(),
+                  parameters: <Parameter>[
+                    Parameter(
+                      name: 'completionHandler',
+                      type: const TypeDeclaration(baseName: 'int', isNullable: false),
+                    ),
+                  ],
+                  location: ApiLocation.host,
+                ),
+              ],
+            ),
+          ],
+          classes: <Class>[],
+          enums: <Enum>[],
+        );
+        const adapter = SwiftGeneratorAdapter();
+        final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+          const PigeonOptions(
+            swiftOut: 'darwin/Messages.g.swift',
+            swiftOptions: SwiftOptions(useFfi: true),
+          ),
+        );
+        final List<Error> errors = adapter.validate(options, root);
+        expect(errors, hasLength(1));
+        expect(
+          errors[0].message,
+          contains(
+            'Parameter "completionHandler" in asynchronous method "doWork" in API "Api" '
+            'conflicts with the completion handler parameter that Swift FFI adds',
+          ),
+        );
+      },
+    );
+
+    test('benchmark tool parses output lines and formats comparison table', () {
+      expect(parseBenchmarkLine('unrelated log line'), isNull);
+      final BenchmarkResult? channelResult = parseBenchmarkLine(
+        'I/flutter (1234): PIGEON_BENCHMARK|{"name":"large_class","transport":"channel","median":1250.5,"p90":1500.0,"samples":200}',
+      );
+      final BenchmarkResult? interopResult = parseBenchmarkLine(
+        'flutter: PIGEON_BENCHMARK|{"name":"large_class","transport":"native_interop","median":250.1,"p90":300.25,"samples":200}',
+      );
+      expect(channelResult, isNotNull);
+      expect(channelResult!.name, 'large_class');
+      expect(channelResult.transport, 'channel');
+      expect(channelResult.median, 1250.5);
+      expect(channelResult.p90, 1500.0);
+      expect(channelResult.samples, 200);
+      expect(interopResult, isNotNull);
+
+      final List<String> tableLines = formatBenchmarkTable(<BenchmarkResult>[
+        channelResult,
+        interopResult!,
+      ]);
+      expect(
+        tableLines,
+        equals(<String>[
+          '| Case | Channel median | Native interop median | Native interop p90 | Ratio |',
+          '| :--- | ---: | ---: | ---: | ---: |',
+          '| large_class | 1.25 ms | 250.10 µs | 300.25 µs | 5.00x |',
+        ]),
+      );
     });
   });
 
