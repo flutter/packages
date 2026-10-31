@@ -307,10 +307,9 @@ void main() {
       expect(controller.value.isInitialized, true);
       expect(controller.value.position, Duration.zero);
       expect(controller.value.isPlaying, false);
-      // Due to the duration calculation accuracy between platforms,
-      // the milliseconds on Web will be a slightly different from natives.
-      // The audio was made with 44100 Hz, 192 Kbps CBR, and 32 bits.
-      expect(controller.value.duration.inMilliseconds, closeTo(5000, 50));
+      // Media Foundation includes MP3 frame padding in the reported duration.
+      final tolerance = !kIsWeb && Platform.isWindows ? 100 : 50;
+      expect(controller.value.duration.inMilliseconds, closeTo(5000, tolerance));
     });
 
     testWidgets('can be played', (WidgetTester tester) async {
