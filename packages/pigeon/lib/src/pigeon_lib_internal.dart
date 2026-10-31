@@ -2703,14 +2703,14 @@ String? _findTargetPubspecPath({
   String? pubspecPath;
   if (dartOutPath != null && dartOutPath.isNotEmpty) {
     final String fullDartOut =
-        (basePath != null && basePath.isNotEmpty && !dartOutPath.startsWith(basePath))
+        (basePath != null && basePath.isNotEmpty && !isWithinOrEquals(basePath, dartOutPath))
         ? path.join(basePath, dartOutPath)
         : dartOutPath;
     pubspecPath = findPubspecPath(File(fullDartOut).parent);
   }
   if (pubspecPath == null && appDirectory != null && appDirectory.isNotEmpty) {
     final String fullAppDir =
-        (basePath != null && basePath.isNotEmpty && !appDirectory.startsWith(basePath))
+        (basePath != null && basePath.isNotEmpty && !isWithinOrEquals(basePath, appDirectory))
         ? path.join(basePath, appDirectory)
         : appDirectory;
     pubspecPath = findPubspecPath(Directory(fullAppDir));
