@@ -1,5 +1,8 @@
-## NEXT
+## 6.10.0
 
+* Adds `VideoDrmConfiguration` and `DataSource.drmConfiguration` to allow platform
+  implementations to accept DRM configuration for network sources.
+* Adds `WidevineDrmConfiguration` for Widevine-protected content.
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 
 ## 6.9.0
