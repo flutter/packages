@@ -91,6 +91,14 @@ struct PhotoAssetUtilTests {
     #expect(try alpha(of: saved, x: 6, y: 4) == 255)
   }
 
+  @Test func saveImageWithOriginalImageDataShouldKeepATransparentGIFAsGIF() {
+    let data = ImagePickerTestImages.transparentGIFTestData
+    let savedPath = ImagePickerPhotoAssetUtil.saveImageWithOriginalImageData(
+      data, image: UIImage(data: data), maxWidth: nil, maxHeight: nil, imageQuality: nil)
+    defer { try? FileManager.default.removeItem(atPath: savedPath) }
+    #expect(URL(fileURLWithPath: savedPath).pathExtension == "gif")
+  }
+
   @Test func saveImageWithOriginalImageDataShouldStillSaveAnOpaqueWebPAsJPEG() {
     let data = ImagePickerTestImages.opaqueWebPTestData
     let savedPath = ImagePickerPhotoAssetUtil.saveImageWithOriginalImageData(

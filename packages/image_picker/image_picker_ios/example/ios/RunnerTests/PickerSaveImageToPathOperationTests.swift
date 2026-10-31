@@ -102,7 +102,13 @@ struct PickerSaveImageToPathOperationTests {
       item: ImagePickerTestImages.transparentWebPTestData as NSData,
       typeIdentifier: UTType.webP.identifier)
     let result = FakePickerItem(itemProvider: itemProvider, assetIdentifier: nil)
-    try await verifySavingImage(result, fullMetadata: false, extension: "png")
+    let (savedPath, savedError) = try await runSaveOperation(result: result, fullMetadata: false)
+    #expect(savedError == nil)
+    let path = try #require(savedPath)
+    defer { try? FileManager.default.removeItem(atPath: path) }
+    #expect(URL(fileURLWithPath: path).pathExtension == "png")
+    let alphaInfo = try #require(UIImage(contentsOfFile: path)?.cgImage?.alphaInfo)
+    #expect(alphaInfo == .last || alphaInfo == .premultipliedLast)
   }
 
   @Test func saveGIFImage() async throws {

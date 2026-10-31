@@ -15,6 +15,9 @@ enum ImagePickerTestImages {
   /// 16 by 16, lossless: its left half clear and its right half opaque red.
   static let transparentWebPTestData = Data(
     base64Encoded: "UklGRiAAAABXRUJQVlA4TBQAAAAvD8ADEAYxaWL/8r6j/9H/AAjwCw==")!
+  /// 1 by 1, fully transparent.
+  static let transparentGIFTestData = Data(
+    base64Encoded: "R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7")!
   /// 16 by 16, lossy, with no alpha channel.
   static let opaqueWebPTestData = Data(
     base64Encoded:
