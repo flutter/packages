@@ -275,10 +275,10 @@ private open class MessagesPigeonCodec : StandardMessageCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
     return when (type) {
       129.toByte() -> {
-        return (readValue(buffer) as Long?)?.let { Code.ofRaw(it.toInt()) }
+        (readValue(buffer) as Long?)?.let { Code.ofRaw(it.toInt()) }
       }
       130.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { MessageData.fromList(it) }
+        (readValue(buffer) as? List<Any?>)?.let { MessageData.fromList(it) }
       }
       else -> super.readValueOfType(type, buffer)
     }

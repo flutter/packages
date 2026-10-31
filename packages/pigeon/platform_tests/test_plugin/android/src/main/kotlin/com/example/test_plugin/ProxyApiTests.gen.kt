@@ -552,7 +552,7 @@ private open class ProxyApiTestsPigeonCodec : StandardMessageCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
     return when (type) {
       129.toByte() -> {
-        return (readValue(buffer) as Long?)?.let { ProxyApiTestEnum.ofRaw(it.toInt()) }
+        (readValue(buffer) as Long?)?.let { ProxyApiTestEnum.ofRaw(it.toInt()) }
       }
       else -> super.readValueOfType(type, buffer)
     }

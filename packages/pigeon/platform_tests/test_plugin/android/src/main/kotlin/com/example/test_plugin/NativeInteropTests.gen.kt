@@ -1390,55 +1390,45 @@ private open class NativeInteropTestsPigeonCodec : StandardMessageCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
     return when (type) {
       129.toByte() -> {
-        return (readValue(buffer) as Long?)?.let { NativeInteropAnEnum.ofRaw(it.toInt()) }
+        (readValue(buffer) as Long?)?.let { NativeInteropAnEnum.ofRaw(it.toInt()) }
       }
       130.toByte() -> {
-        return (readValue(buffer) as Long?)?.let { NativeInteropAnotherEnum.ofRaw(it.toInt()) }
+        (readValue(buffer) as Long?)?.let { NativeInteropAnotherEnum.ofRaw(it.toInt()) }
       }
       131.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { NativeInteropUnusedClass.fromList(it) }
+        (readValue(buffer) as? List<Any?>)?.let { NativeInteropUnusedClass.fromList(it) }
       }
       132.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { NativeInteropAllTypes.fromList(it) }
+        (readValue(buffer) as? List<Any?>)?.let { NativeInteropAllTypes.fromList(it) }
       }
       133.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          NativeInteropAllNullableTypes.fromList(it)
-        }
+        (readValue(buffer) as? List<Any?>)?.let { NativeInteropAllNullableTypes.fromList(it) }
       }
       134.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
+        (readValue(buffer) as? List<Any?>)?.let {
           NativeInteropAllNullableTypesWithoutRecursion.fromList(it)
         }
       }
       135.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          NativeInteropAllClassesWrapper.fromList(it)
-        }
+        (readValue(buffer) as? List<Any?>)?.let { NativeInteropAllClassesWrapper.fromList(it) }
       }
       136.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          NativeInteropSealedClassWithFields.fromList(it)
-        }
+        (readValue(buffer) as? List<Any?>)?.let { NativeInteropSealedClassWithFields.fromList(it) }
       }
       137.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          NativeInteropEmptySealedClass.fromList(it)
-        }
+        (readValue(buffer) as? List<Any?>)?.let { NativeInteropEmptySealedClass.fromList(it) }
       }
       138.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          NativeInteropSealedClassWrapper.fromList(it)
-        }
+        (readValue(buffer) as? List<Any?>)?.let { NativeInteropSealedClassWrapper.fromList(it) }
       }
       139.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { NativeInteropReservedNames.fromList(it) }
+        (readValue(buffer) as? List<Any?>)?.let { NativeInteropReservedNames.fromList(it) }
       }
       140.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { NativeInteropCircle.fromList(it) }
+        (readValue(buffer) as? List<Any?>)?.let { NativeInteropCircle.fromList(it) }
       }
       141.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { NativeInteropSquare.fromList(it) }
+        (readValue(buffer) as? List<Any?>)?.let { NativeInteropSquare.fromList(it) }
       }
       else -> super.readValueOfType(type, buffer)
     }
