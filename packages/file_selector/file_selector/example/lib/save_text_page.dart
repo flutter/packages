@@ -7,6 +7,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
 
+import 'save_file_helper.dart';
+
 /// Page for showing an example of saving with file_selector
 class SaveTextPage extends StatelessWidget {
   /// Default Constructor
@@ -36,11 +38,15 @@ class SaveTextPage extends StatelessWidget {
     }
 
     final String text = _contentController.text;
-    final fileData = Uint8List.fromList(text.codeUnits);
-    const fileMimeType = 'text/plain';
-    final textFile = XFile.fromData(fileData, mimeType: fileMimeType, name: fileName);
-
-    await textFile.saveTo(result.path);
+    if (kIsWeb) {
+      // TODO(bparrishMines): Use `WebScopedStorageXFileCreationParams.fromBytes`
+      // and `WebScopedStorageXFileExtension.download` once
+      // https://github.com/flutter/packages/pull/13395 lands.
+      await saveFileWeb(fileName, text);
+    } else if (result.file case final FileSystemXFile file) {
+      final fileData = Uint8List.fromList(text.codeUnits);
+      await file.writeAsBytes(fileData);
+    }
   }
 
   @override

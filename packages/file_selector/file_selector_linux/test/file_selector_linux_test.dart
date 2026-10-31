@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
 import 'package:file_selector_linux/file_selector_linux.dart';
 import 'package:file_selector_linux/src/messages.g.dart';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
@@ -10,6 +11,8 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+
+  CrossFilePlatform.instance = CrossFileTest();
 
   late FakeFileSelectorApi api;
   late FileSelectorLinux plugin;
@@ -29,7 +32,8 @@ void main() {
       const path = '/foo/bar';
       api.result = <String>[path];
 
-      expect((await plugin.openFile())?.path, path);
+      final file = (await plugin.openFile())! as FileSystemXFile;
+      expect(file.path, path);
 
       expect(api.passedType, PlatformFileChooserActionType.open);
       expect(api.passedOptions?.selectMultiple, false);
@@ -54,7 +58,9 @@ void main() {
         mimeTypes: <String>['image/jpg'],
       );
 
-      await plugin.openFile(acceptedTypeGroups: <XTypeGroup>[group, groupTwo]);
+      await plugin.openFile(
+        options: const OpenFileDialogOptions(acceptedTypeGroups: <XTypeGroup>[group, groupTwo]),
+      );
 
       expect(api.passedOptions?.allowedFileTypes?[0].label, group.label);
       // Extensions should be converted to *.<extension> format.
@@ -67,14 +73,14 @@ void main() {
 
     test('passes initialDirectory correctly', () async {
       const path = '/example/directory';
-      await plugin.openFile(initialDirectory: path);
+      await plugin.openFile(options: const OpenFileDialogOptions(initialDirectory: path));
 
       expect(api.passedOptions?.currentFolderPath, path);
     });
 
     test('passes confirmButtonText correctly', () async {
       const button = 'Open File';
-      await plugin.openFile(confirmButtonText: button);
+      await plugin.openFile(options: const OpenFileDialogOptions(confirmButtonText: button));
 
       expect(api.passedOptions?.acceptButtonLabel, button);
     });
@@ -83,7 +89,9 @@ void main() {
       const group = XTypeGroup(label: 'images', webWildCards: <String>['images/*']);
 
       await expectLater(
-        plugin.openFile(acceptedTypeGroups: <XTypeGroup>[group]),
+        plugin.openFile(
+          options: const OpenFileDialogOptions(acceptedTypeGroups: <XTypeGroup>[group]),
+        ),
         throwsArgumentError,
       );
     });
@@ -91,7 +99,9 @@ void main() {
     test('passes a wildcard group correctly', () async {
       const group = XTypeGroup(label: 'any');
 
-      await plugin.openFile(acceptedTypeGroups: <XTypeGroup>[group]);
+      await plugin.openFile(
+        options: const OpenFileDialogOptions(acceptedTypeGroups: <XTypeGroup>[group]),
+      );
 
       expect(api.passedOptions?.allowedFileTypes?[0].extensions, <String>['*']);
     });
@@ -104,8 +114,8 @@ void main() {
       final List<XFile> files = await plugin.openFiles();
 
       expect(files.length, 2);
-      expect(files[0].path, api.result[0]);
-      expect(files[1].path, api.result[1]);
+      expect((files[0] as FileSystemXFile).path, api.result[0]);
+      expect((files[1] as FileSystemXFile).path, api.result[1]);
 
       expect(api.passedType, PlatformFileChooserActionType.open);
       expect(api.passedOptions?.selectMultiple, true);
@@ -124,7 +134,9 @@ void main() {
         mimeTypes: <String>['image/jpg'],
       );
 
-      await plugin.openFiles(acceptedTypeGroups: <XTypeGroup>[group, groupTwo]);
+      await plugin.openFiles(
+        options: const OpenFilesDialogOptions(acceptedTypeGroups: <XTypeGroup>[group, groupTwo]),
+      );
 
       expect(api.passedOptions?.allowedFileTypes?[0].label, group.label);
       // Extensions should be converted to *.<extension> format.
@@ -137,14 +149,14 @@ void main() {
 
     test('passes initialDirectory correctly', () async {
       const path = '/example/directory';
-      await plugin.openFiles(initialDirectory: path);
+      await plugin.openFiles(options: const OpenFilesDialogOptions(initialDirectory: path));
 
       expect(api.passedOptions?.currentFolderPath, path);
     });
 
     test('passes confirmButtonText correctly', () async {
       const button = 'Open File';
-      await plugin.openFiles(confirmButtonText: button);
+      await plugin.openFiles(options: const OpenFilesDialogOptions(confirmButtonText: button));
 
       expect(api.passedOptions?.acceptButtonLabel, button);
     });
@@ -153,7 +165,9 @@ void main() {
       const group = XTypeGroup(label: 'images', webWildCards: <String>['images/*']);
 
       await expectLater(
-        plugin.openFiles(acceptedTypeGroups: <XTypeGroup>[group]),
+        plugin.openFiles(
+          options: const OpenFilesDialogOptions(acceptedTypeGroups: <XTypeGroup>[group]),
+        ),
         throwsArgumentError,
       );
     });
@@ -161,7 +175,9 @@ void main() {
     test('passes a wildcard group correctly', () async {
       const group = XTypeGroup(label: 'any');
 
-      await plugin.openFiles(acceptedTypeGroups: <XTypeGroup>[group]);
+      await plugin.openFiles(
+        options: const OpenFilesDialogOptions(acceptedTypeGroups: <XTypeGroup>[group]),
+      );
 
       expect(api.passedOptions?.allowedFileTypes?[0].extensions, <String>['*']);
     });
@@ -172,7 +188,8 @@ void main() {
       const path = '/foo/bar';
       api.result = <String>[path];
 
-      expect((await plugin.getSaveLocation())?.path, path);
+      final file = (await plugin.getSaveLocation())!.file as FileSystemXFile;
+      expect(file.path, path);
 
       expect(api.passedType, PlatformFileChooserActionType.save);
     });
@@ -190,7 +207,9 @@ void main() {
         mimeTypes: <String>['image/jpg'],
       );
 
-      await plugin.getSaveLocation(acceptedTypeGroups: <XTypeGroup>[group, groupTwo]);
+      await plugin.getSaveLocation(
+        options: const SaveLocationOptions(acceptedTypeGroups: <XTypeGroup>[group, groupTwo]),
+      );
 
       expect(api.passedOptions?.allowedFileTypes?[0].label, group.label);
       // Extensions should be converted to *.<extension> format.
@@ -203,14 +222,14 @@ void main() {
 
     test('passes initialDirectory correctly', () async {
       const path = '/example/directory';
-      await plugin.getSaveLocation(options: const SaveDialogOptions(initialDirectory: path));
+      await plugin.getSaveLocation(options: const SaveLocationOptions(initialDirectory: path));
 
       expect(api.passedOptions?.currentFolderPath, path);
     });
 
     test('passes confirmButtonText correctly', () async {
       const button = 'Open File';
-      await plugin.getSaveLocation(options: const SaveDialogOptions(confirmButtonText: button));
+      await plugin.getSaveLocation(options: const SaveLocationOptions(confirmButtonText: button));
 
       expect(api.passedOptions?.acceptButtonLabel, button);
     });
@@ -219,7 +238,9 @@ void main() {
       const group = XTypeGroup(label: 'images', webWildCards: <String>['images/*']);
 
       await expectLater(
-        plugin.getSaveLocation(acceptedTypeGroups: <XTypeGroup>[group]),
+        plugin.getSaveLocation(
+          options: const SaveLocationOptions(acceptedTypeGroups: <XTypeGroup>[group]),
+        ),
         throwsArgumentError,
       );
     });
@@ -227,84 +248,21 @@ void main() {
     test('passes a wildcard group correctly', () async {
       const group = XTypeGroup(label: 'any');
 
-      await plugin.getSaveLocation(acceptedTypeGroups: <XTypeGroup>[group]);
+      await plugin.getSaveLocation(
+        options: const SaveLocationOptions(acceptedTypeGroups: <XTypeGroup>[group]),
+      );
 
       expect(api.passedOptions?.allowedFileTypes?[0].extensions, <String>['*']);
     });
   });
 
-  group('getSavePath (deprecated)', () {
+  group('getDirectory', () {
     test('passes the core flags correctly', () async {
       const path = '/foo/bar';
       api.result = <String>[path];
 
-      expect(await plugin.getSavePath(), path);
-
-      expect(api.passedType, PlatformFileChooserActionType.save);
-    });
-
-    test('passes the accepted type groups correctly', () async {
-      const group = XTypeGroup(
-        label: 'text',
-        extensions: <String>['txt'],
-        mimeTypes: <String>['text/plain'],
-      );
-
-      const groupTwo = XTypeGroup(
-        label: 'image',
-        extensions: <String>['jpg'],
-        mimeTypes: <String>['image/jpg'],
-      );
-
-      await plugin.getSavePath(acceptedTypeGroups: <XTypeGroup>[group, groupTwo]);
-
-      expect(api.passedOptions?.allowedFileTypes?[0].label, group.label);
-      // Extensions should be converted to *.<extension> format.
-      expect(api.passedOptions?.allowedFileTypes?[0].extensions, <String>['*.txt']);
-      expect(api.passedOptions?.allowedFileTypes?[0].mimeTypes, group.mimeTypes);
-      expect(api.passedOptions?.allowedFileTypes?[1].label, groupTwo.label);
-      expect(api.passedOptions?.allowedFileTypes?[1].extensions, <String>['*.jpg']);
-      expect(api.passedOptions?.allowedFileTypes?[1].mimeTypes, groupTwo.mimeTypes);
-    });
-
-    test('passes initialDirectory correctly', () async {
-      const path = '/example/directory';
-      await plugin.getSavePath(initialDirectory: path);
-
-      expect(api.passedOptions?.currentFolderPath, path);
-    });
-
-    test('passes confirmButtonText correctly', () async {
-      const button = 'Open File';
-      await plugin.getSavePath(confirmButtonText: button);
-
-      expect(api.passedOptions?.acceptButtonLabel, button);
-    });
-
-    test('throws for a type group that does not support Linux', () async {
-      const group = XTypeGroup(label: 'images', webWildCards: <String>['images/*']);
-
-      await expectLater(
-        plugin.getSavePath(acceptedTypeGroups: <XTypeGroup>[group]),
-        throwsArgumentError,
-      );
-    });
-
-    test('passes a wildcard group correctly', () async {
-      const group = XTypeGroup(label: 'any');
-
-      await plugin.getSavePath(acceptedTypeGroups: <XTypeGroup>[group]);
-
-      expect(api.passedOptions?.allowedFileTypes?[0].extensions, <String>['*']);
-    });
-  });
-
-  group('getDirectoryPath', () {
-    test('passes the core flags correctly', () async {
-      const path = '/foo/bar';
-      api.result = <String>[path];
-
-      expect(await plugin.getDirectoryPath(), path);
+      final dir = (await plugin.getDirectory())! as FileSystemXDirectory;
+      expect(dir.path, path);
 
       expect(api.passedType, PlatformFileChooserActionType.chooseDirectory);
       expect(api.passedOptions?.selectMultiple, false);
@@ -312,114 +270,52 @@ void main() {
 
     test('passes initialDirectory correctly', () async {
       const path = '/example/directory';
-      await plugin.getDirectoryPath(initialDirectory: path);
+      await plugin.getDirectory(options: const GetDirectoryDialogOptions(initialDirectory: path));
 
       expect(api.passedOptions?.currentFolderPath, path);
     });
 
     test('passes confirmButtonText correctly', () async {
       const button = 'Select Folder';
-      await plugin.getDirectoryPath(confirmButtonText: button);
-
-      expect(api.passedOptions?.acceptButtonLabel, button);
-    });
-  });
-
-  group('getDirectoryPathWithOptions', () {
-    test('passes the core flags correctly', () async {
-      const path = '/foo/bar';
-      api.result = <String>[path];
-
-      expect(await plugin.getDirectoryPathWithOptions(const FileDialogOptions()), path);
-
-      expect(api.passedType, PlatformFileChooserActionType.chooseDirectory);
-      expect(api.passedOptions?.selectMultiple, false);
-    });
-
-    test('passes initialDirectory correctly', () async {
-      const path = '/example/directory';
-      await plugin.getDirectoryPathWithOptions(const FileDialogOptions(initialDirectory: path));
-
-      expect(api.passedOptions?.currentFolderPath, path);
-    });
-
-    test('passes confirmButtonText correctly', () async {
-      const button = 'Select Folder';
-      await plugin.getDirectoryPathWithOptions(const FileDialogOptions(confirmButtonText: button));
-      expect(api.passedOptions?.acceptButtonLabel, button);
-    });
-
-    test('passes canCreateDirectories correctly', () async {
-      await plugin.getDirectoryPathWithOptions(const FileDialogOptions(canCreateDirectories: true));
-      expect(api.passedOptions?.createFolders, true);
-    });
-  });
-
-  group('getDirectoryPaths', () {
-    test('passes the core flags correctly', () async {
-      api.result = <String>['/foo/bar', 'baz'];
-
-      expect(await plugin.getDirectoryPaths(), api.result);
-
-      expect(api.passedType, PlatformFileChooserActionType.chooseDirectory);
-      expect(api.passedOptions?.selectMultiple, true);
-    });
-
-    test('passes initialDirectory correctly', () async {
-      const path = '/example/directory';
-      await plugin.getDirectoryPaths(initialDirectory: path);
-
-      expect(api.passedOptions?.currentFolderPath, path);
-    });
-
-    test('passes confirmButtonText correctly', () async {
-      const button = 'Select one or mode folders';
-      await plugin.getDirectoryPaths(confirmButtonText: button);
-
-      expect(api.passedOptions?.acceptButtonLabel, button);
-    });
-
-    test('passes multiple flag correctly', () async {
-      await plugin.getDirectoryPaths();
-
-      expect(api.passedOptions?.selectMultiple, true);
-    });
-  });
-
-  group('getDirectoryPathsWithOptions', () {
-    test('passes the core flags correctly', () async {
-      api.result = <String>['/foo/bar', 'baz'];
-
-      expect(await plugin.getDirectoryPathsWithOptions(const FileDialogOptions()), api.result);
-
-      expect(api.passedType, PlatformFileChooserActionType.chooseDirectory);
-      expect(api.passedOptions?.selectMultiple, true);
-    });
-
-    test('passes initialDirectory correctly', () async {
-      const path = '/example/directory';
-      await plugin.getDirectoryPathsWithOptions(const FileDialogOptions(initialDirectory: path));
-
-      expect(api.passedOptions?.currentFolderPath, path);
-    });
-
-    test('passes confirmButtonText correctly', () async {
-      const button = 'Select one or mode folders';
-      await plugin.getDirectoryPathsWithOptions(const FileDialogOptions(confirmButtonText: button));
-
-      expect(api.passedOptions?.acceptButtonLabel, button);
-    });
-
-    test('passes canCreateDirectories flag correctly', () async {
-      await plugin.getDirectoryPathsWithOptions(
-        const FileDialogOptions(canCreateDirectories: true),
+      await plugin.getDirectory(
+        options: const GetDirectoryDialogOptions(confirmButtonText: button),
       );
 
-      expect(api.passedOptions?.createFolders, true);
+      expect(api.passedOptions?.acceptButtonLabel, button);
+    });
+  });
+
+  group('getDirectories', () {
+    test('passes the core flags correctly', () async {
+      api.result = <String>['/foo/bar', 'baz'];
+
+      final List<XDirectory> dirs = await plugin.getDirectories();
+      expect(dirs.map((XDirectory dir) => (dir as FileSystemXDirectory).path), api.result);
+
+      expect(api.passedType, PlatformFileChooserActionType.chooseDirectory);
+      expect(api.passedOptions?.selectMultiple, true);
+    });
+
+    test('passes initialDirectory correctly', () async {
+      const path = '/example/directory';
+      await plugin.getDirectories(
+        options: const GetDirectoriesDialogOptions(initialDirectory: path),
+      );
+
+      expect(api.passedOptions?.currentFolderPath, path);
+    });
+
+    test('passes confirmButtonText correctly', () async {
+      const button = 'Select one or mode folders';
+      await plugin.getDirectories(
+        options: const GetDirectoriesDialogOptions(confirmButtonText: button),
+      );
+
+      expect(api.passedOptions?.acceptButtonLabel, button);
     });
 
     test('passes multiple flag correctly', () async {
-      await plugin.getDirectoryPathsWithOptions(const FileDialogOptions());
+      await plugin.getDirectories();
 
       expect(api.passedOptions?.selectMultiple, true);
     });
@@ -450,3 +346,5 @@ class FakeFileSelectorApi implements FileSelectorApi {
   // ignore: non_constant_identifier_names
   String get pigeonVar_messageChannelSuffix => '';
 }
+
+final class CrossFileTest extends CrossFilePlatform {}

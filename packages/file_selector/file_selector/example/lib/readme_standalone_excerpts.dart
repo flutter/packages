@@ -35,6 +35,9 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> saveFile() async {
+    // TODO(bparrishMines): Change to use the cross platform safe methods to
+    // write to a file once https://github.com/flutter/packages/pull/13133
+    // lands.
     // #docregion Save
     const fileName = 'suggested_name.txt';
     final FileSaveLocation? result = await getSaveLocation(suggestedName: fileName);
@@ -43,17 +46,17 @@ class _MyAppState extends State<MyApp> {
       return;
     }
 
-    final fileData = Uint8List.fromList('Hello World!'.codeUnits);
-    const mimeType = 'text/plain';
-    final textFile = XFile.fromData(fileData, mimeType: mimeType, name: fileName);
-    await textFile.saveTo(result.path);
+    if (result.file case final FileSystemXFile file) {
+      final fileData = Uint8List.fromList('Hello World!'.codeUnits);
+      await file.writeAsBytes(fileData);
+    }
     // #enddocregion Save
   }
 
-  Future<void> directoryPath() async {
+  Future<void> directory() async {
     // #docregion GetDirectory
-    final String? directoryPath = await getDirectoryPath();
-    if (directoryPath == null) {
+    final XDirectory? directory = await getDirectory();
+    if (directory == null) {
       // Operation was canceled by the user.
       return;
     }
