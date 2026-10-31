@@ -1,0 +1,3 @@
+changelog: |
+  - Widens the type of `PopupMenuItem.padding` to `EdgeInsetsGeometry`, so that it can be an `EdgeInsetsDirectional`.
+version: minor

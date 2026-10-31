@@ -2058,6 +2058,59 @@ void main() {
     expect(paddingFor('Item 1'), const EdgeInsets.symmetric(horizontal: 16.0));
   });
 
+  testWidgets('PopupMenuItem padding can be directional', (WidgetTester tester) async {
+    // Regression test for https://github.com/flutter/flutter/issues/106866
+    const padding = EdgeInsetsDirectional.only(start: 24.0, end: 8.0);
+    final Key popupMenuButtonKey = UniqueKey();
+
+    for (final TextDirection textDirection in TextDirection.values) {
+      await tester.pumpWidget(
+        MaterialApp(
+          builder: (BuildContext context, Widget? child) {
+            return Directionality(textDirection: textDirection, child: child!);
+          },
+          home: Scaffold(
+            body: Center(
+              child: PopupMenuButton<String>(
+                key: popupMenuButtonKey,
+                child: const Text('button'),
+                onSelected: (String result) {},
+                itemBuilder: (BuildContext context) {
+                  return <PopupMenuEntry<String>>[
+                    const PopupMenuItem<String>(
+                      value: '0',
+                      padding: padding,
+                      child: Text('Item 0'),
+                    ),
+                  ];
+                },
+              ),
+            ),
+          ),
+        ),
+      );
+
+      // Show the menu.
+      await tester.tap(find.byKey(popupMenuButtonKey));
+      await tester.pumpAndSettle();
+
+      final Rect itemRect = tester.getRect(find.widgetWithText(InkWell, 'Item 0'));
+      final Rect textRect = tester.getRect(find.text('Item 0'));
+
+      // The start padding is on the leading side of the reading direction.
+      switch (textDirection) {
+        case TextDirection.ltr:
+          expect(textRect.left - itemRect.left, 24.0, reason: 'textDirection: $textDirection');
+        case TextDirection.rtl:
+          expect(itemRect.right - textRect.right, 24.0, reason: 'textDirection: $textDirection');
+      }
+
+      // Close the menu.
+      await tester.tapAt(Offset.zero);
+      await tester.pumpAndSettle();
+    }
+  });
+
   testWidgets('Material2 - PopupMenuItem default padding', (WidgetTester tester) async {
     final Key popupMenuButtonKey = UniqueKey();
     await tester.pumpWidget(
