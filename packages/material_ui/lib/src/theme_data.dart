@@ -3092,7 +3092,7 @@ class MaterialBasedCupertinoThemeData extends CupertinoThemeData {
   MaterialBasedCupertinoThemeData({required ThemeData materialTheme})
     : this._(
         materialTheme,
-        (materialTheme.cupertinoOverrideTheme ?? const CupertinoThemeData()).noDefault(),
+        materialTheme.cupertinoOverrideTheme?.noDefault() ?? const NoDefaultCupertinoThemeData(),
       );
 
   MaterialBasedCupertinoThemeData._(this._materialTheme, this._cupertinoOverrideTheme)
@@ -3192,14 +3192,17 @@ class CupertinoBasedMaterialThemeData {
   /// Creates a Material theme with a color scheme based off of the colors from
   /// a [CupertinoThemeData].
   CupertinoBasedMaterialThemeData({required CupertinoThemeData themeData})
-    : materialTheme = ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: themeData.primaryColor,
-          brightness: themeData.brightness ?? Brightness.light,
-          primary: themeData.primaryColor,
-          onPrimary: themeData.primaryContrastingColor,
+    : materialTheme = switch (themeData) {
+        MaterialBasedCupertinoThemeData() => themeData._materialTheme,
+        _ => ThemeData(
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: themeData.primaryColor,
+            brightness: themeData.brightness ?? Brightness.light,
+            primary: themeData.primaryColor,
+            onPrimary: themeData.primaryContrastingColor,
+          ),
         ),
-      );
+      };
 
   /// The Material theme data with colors based on an existing [CupertinoThemeData].
   final ThemeData materialTheme;
