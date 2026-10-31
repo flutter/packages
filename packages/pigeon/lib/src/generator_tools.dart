@@ -16,7 +16,7 @@ import 'generator.dart';
 /// The current version of pigeon.
 ///
 /// This must match the version in pubspec.yaml.
-const String pigeonVersion = '29.1.0';
+const String pigeonVersion = '29.1.1';
 
 /// Default plugin package name.
 const String defaultPluginPackageName = 'dev.flutter.pigeon';
@@ -82,6 +82,14 @@ String makeRelative(String targetPath, String fromPath) {
       ? posixPath(path.normalize(fromPath))
       : posixPath(path.normalize(path.absolute(fromPath)));
   return path.posix.relative(absTarget, from: absFrom);
+}
+
+/// Returns true if [child] is the same path as or inside [parent].
+bool isWithinOrEquals(String parent, String child) {
+  final String normalizedParent = posixPath(parent);
+  final String normalizedChild = posixPath(child);
+  return path.posix.equals(normalizedParent, normalizedChild) ||
+      path.posix.isWithin(normalizedParent, normalizedChild);
 }
 
 /// Read all the content from [stdin] to a String.

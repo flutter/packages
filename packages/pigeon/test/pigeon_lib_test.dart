@@ -2709,6 +2709,44 @@ dependency_overrides:
       },
     );
 
+    test(
+      'FfigenConfigGeneratorAdapter and JnigenConfigGeneratorAdapter prepend basePath when output path only shares a string prefix with basePath',
+      () {
+        final root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+
+        final ffiSink = StringBuffer();
+        const ffiAdapter = FfigenConfigGeneratorAdapter();
+        final InternalPigeonOptions ffiOptions = InternalPigeonOptions.fromPigeonOptions(
+          const PigeonOptions(
+            input: 'pigeons/messages.dart',
+            basePath: 'app',
+            dartOut: 'app_bindings/lib/src/messages.g.dart',
+            swiftOut: 'app_darwin/Messages.g.swift',
+            swiftOptions: SwiftOptions(useFfi: true),
+          ),
+        );
+        ffiAdapter.generate(ffiSink, ffiOptions, root, FileType.na);
+        final ffiCode = ffiSink.toString();
+        expect(ffiCode, contains("dartFile: Uri.file('app_bindings/lib/src/messages.g.ffi.dart')"));
+        expect(ffiCode, contains("Uri.file('app_darwin/Messages.g.swift')"));
+
+        final jniSink = StringBuffer();
+        const jniAdapter = JnigenConfigGeneratorAdapter();
+        final InternalPigeonOptions jniOptions = InternalPigeonOptions.fromPigeonOptions(
+          const PigeonOptions(
+            input: 'pigeons/messages.dart',
+            basePath: 'app',
+            dartOut: 'app_bindings/lib/src/messages.g.dart',
+            kotlinOut: 'app_android/Messages.g.kt',
+            kotlinOptions: KotlinOptions(useJni: true),
+          ),
+        );
+        jniAdapter.generate(jniSink, jniOptions, root, FileType.na);
+        final jniCode = jniSink.toString();
+        expect(jniCode, contains("path: Uri.file('app_bindings/lib/src/messages.g.jni.dart')"));
+      },
+    );
+
     test('FfigenConfigGeneratorAdapter only lists the Setup class for host APIs', () {
       final root = Root(
         apis: <Api>[
