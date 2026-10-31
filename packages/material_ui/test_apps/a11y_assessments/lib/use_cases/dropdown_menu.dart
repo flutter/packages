@@ -35,34 +35,48 @@ class _MainWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final String pageTitle = getUseCaseName(DropdownMenuUseCase());
-    return Scaffold(
-      appBar: AppBar(title: Semantics(headingLevel: 1, child: Text('$pageTitle Demo'))),
-      body: ListView(
-        padding: const EdgeInsets.all(24.0),
-        children: <Widget>[
-          Semantics(
-            label: 'Enabled dropdown menu',
-            child: DropdownMenu<String>(
-              key: const Key('enabled dropdown menu'),
-              label: const Text('Fruit'),
-              expandedInsets: EdgeInsets.zero,
-              initialSelection: _kOptions.first,
-              dropdownMenuEntries: _kMenuEntries,
+    final ThemeData theme = Theme.of(context);
+    // Under standard contrast, tertiaryContainer against surfaceContainerLow does
+    // not reach a 3:1 contrast ratio. Medium contrast (contrastLevel: 0.5) is
+    // required to satisfy WCAG 2.1 Success Criterion 1.4.11 (Non-text Contrast).
+    final ThemeData mediumContrastTheme = theme.copyWith(
+      colorScheme: ColorScheme.fromSeed(
+        brightness: theme.brightness,
+        seedColor: const Color(0xff6750a4),
+        contrastLevel: 0.5,
+      ),
+    );
+    return Theme(
+      data: mediumContrastTheme,
+      child: Scaffold(
+        appBar: AppBar(title: Semantics(headingLevel: 1, child: Text('$pageTitle Demo'))),
+        body: ListView(
+          padding: const EdgeInsets.all(24.0),
+          children: <Widget>[
+            Semantics(
+              label: 'Enabled dropdown menu',
+              child: DropdownMenu<String>(
+                key: const Key('enabled dropdown menu'),
+                label: const Text('Fruit'),
+                expandedInsets: EdgeInsets.zero,
+                initialSelection: _kOptions.first,
+                dropdownMenuEntries: _kMenuEntries,
+              ),
             ),
-          ),
-          const SizedBox(height: 24.0),
-          Semantics(
-            label: 'Disabled dropdown menu',
-            child: DropdownMenu<String>(
-              key: const Key('disabled dropdown menu'),
-              label: const Text('Fruit'),
-              expandedInsets: EdgeInsets.zero,
-              enabled: false,
-              initialSelection: _kOptions.first,
-              dropdownMenuEntries: _kMenuEntries,
+            const SizedBox(height: 24.0),
+            Semantics(
+              label: 'Disabled dropdown menu',
+              child: DropdownMenu<String>(
+                key: const Key('disabled dropdown menu'),
+                label: const Text('Fruit'),
+                expandedInsets: EdgeInsets.zero,
+                enabled: false,
+                initialSelection: _kOptions.first,
+                dropdownMenuEntries: _kMenuEntries,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
