@@ -65,6 +65,28 @@ class CameraErrorCode {
     'videoRecordingNotStarted',
   );
 
+  /// The camera has no video track
+  static const CameraErrorCode noVideoTrack = CameraErrorCode._('noVideoTrack');
+
+  /// The track reader has been closed.
+  static const CameraErrorCode videoTrackReaderClosed = CameraErrorCode._('videoTrackReaderClosed');
+
+  /// The video track reader has not been initialized.
+  static const CameraErrorCode videoTrackReaderNotInitialized = CameraErrorCode._(
+    'videoTrackReaderNotInitialized',
+  );
+
+  /// The camera frame dimensions are zero.
+  static const CameraErrorCode cameraFrameDimensionsZero = CameraErrorCode._(
+    'cameraFrameDimensionsZero',
+  );
+
+  /// The camera frame has missing plane layout
+  static const CameraErrorCode unableToCloneFrame = CameraErrorCode._('unableToCloneFrame');
+
+  /// The camera frame has missing plane layout
+  static const CameraErrorCode missingPlaneLayout = CameraErrorCode._('missingPlaneLayout');
+
   /// An unknown camera error.
   static const CameraErrorCode unknown = CameraErrorCode._('cameraUnknown');
 
