@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes `CupertinoButton`, `CupertinoSegmentedControl`, and `CupertinoSlidingSegmentedControl` not reporting a disabled state to assistive technologies, and exposing a tap action while disabled.
+version: patch
