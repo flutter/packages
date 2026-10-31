@@ -1,6 +1,6 @@
 name: video_player_windows
 description: Windows implementation of the video_player plugin using Media Foundation.
-repository: https://github.com/mbfakourii/packages/tree/main/packages/video_player/video_player_windows
+repository: https://github.com/flutter/packages/tree/main/packages/video_player/video_player_windows
 version: 0.1.0
 publish_to: none
 

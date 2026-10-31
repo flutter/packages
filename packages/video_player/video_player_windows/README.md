@@ -9,20 +9,6 @@ The `video_player` package automatically selects this implementation on Windows.
 Applications use `VideoPlayerController` and `VideoPlayer` without manual
 registration.
 
-## Use the local fork
-
-```yaml
-dependencies:
-  video_player:
-    path: ../packages/packages/video_player/video_player
-```
-
-The relative dependency on `video_player_windows` is intentional for this
-unpublished fork. Both packages use `publish_to: none` for local/Git consumption.
-Publishing these packages to pub.dev would require publishing
-the Windows implementation first and replacing the path dependency with its
-published version. This change does not publish either package.
-
 ## Behavior and limitations
 
 - Supports bundled assets, package assets, local files (including Unicode paths),

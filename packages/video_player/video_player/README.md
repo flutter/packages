@@ -14,7 +14,7 @@ A Flutter plugin for iOS, Android, macOS, Windows and Web for playing back video
 
 ## Setup
 
-### Windows (this fork)
+### Windows
 
 Windows playback is provided by the included `video_player_windows` package.
 See its [setup, codec requirements and limitations](../video_player_windows/README.md).

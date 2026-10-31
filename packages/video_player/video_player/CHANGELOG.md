@@ -1,6 +1,6 @@
 ## 2.15.0
 
-* Adds a Windows implementation using Media Foundation in this fork.
+* Adds a Windows implementation using Media Foundation.
 * Supports custom HTTP headers and audio/video track selection on Windows, with
   controller dimensions refreshed after video track changes.
 * Fixes disposal while initialization is still configuring the platform or has
