@@ -5,9 +5,9 @@ and codecs installed with Windows. No third-party playback engine or codec bundl
 is included. Windows 10 or later is required. Windows N editions need the Media
 Feature Pack installed.
 
-This package is part of the `mbfakourii/packages` fork. The fork's `video_player`
-selects it automatically; applications keep using `VideoPlayerController` and
-`VideoPlayer` without manual registration.
+The `video_player` package automatically selects this implementation on Windows.
+Applications use `VideoPlayerController` and `VideoPlayer` without manual
+registration.
 
 ## Use the local fork
 
