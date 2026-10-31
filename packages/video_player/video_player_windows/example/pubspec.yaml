@@ -1,0 +1,28 @@
+name: video_player_windows_example
+description: Demonstrates Media Foundation playback with video_player on Windows.
+publish_to: none
+
+environment:
+  sdk: ^3.12.0
+  flutter: ">=3.44.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  video_player:
+    path: ../../video_player
+  video_player_windows:
+    path: ../
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  integration_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/Butterfly-209.mp4
+    - assets/windows_tracks.mp4
+    - assets/adaptive_streams.json.gz
