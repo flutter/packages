@@ -48,6 +48,57 @@ struct PhotoAssetUtilTests {
     try? FileManager.default.removeItem(atPath: savedPath)
   }
 
+  /// The alpha of the pixel at `x`, `y` of the image, 0 to 255.
+  private func alpha(of image: UIImage, x: Int, y: Int) throws -> UInt8 {
+    let cgImage = try #require(image.cgImage)
+    var pixel: [UInt8] = [0, 0, 0, 0]
+    let context = try #require(
+      CGContext(
+        data: &pixel, width: 1, height: 1, bitsPerComponent: 8, bytesPerRow: 4,
+        space: CGColorSpaceCreateDeviceRGB(),
+        bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue))
+    context.interpolationQuality = .none
+    context.draw(
+      cgImage,
+      in: CGRect(x: -x, y: y + 1 - cgImage.height, width: cgImage.width, height: cgImage.height))
+    return pixel[3]
+  }
+
+  @Test func saveImageWithOriginalImageDataShouldKeepATransparentWebPAsPNG() throws {
+    let data = ImagePickerTestImages.transparentWebPTestData
+    let savedPath = ImagePickerPhotoAssetUtil.saveImageWithOriginalImageData(
+      data, image: UIImage(data: data), maxWidth: nil, maxHeight: nil, imageQuality: nil)
+    defer { try? FileManager.default.removeItem(atPath: savedPath) }
+    #expect(URL(fileURLWithPath: savedPath).pathExtension == "png")
+
+    let saved = try #require(UIImage(contentsOfFile: savedPath))
+    #expect(try alpha(of: saved, x: 2, y: 8) == 0)
+    #expect(try alpha(of: saved, x: 13, y: 8) == 255)
+  }
+
+  @Test func saveImageWithOriginalImageDataShouldKeepAScaledTransparentWebPAsPNG() throws {
+    let data = ImagePickerTestImages.transparentWebPTestData
+    let scaled = ImagePickerImageUtil.scaledImage(
+      UIImage(data: data), maxWidth: 8, maxHeight: nil, isMetadataAvailable: true)
+    let savedPath = ImagePickerPhotoAssetUtil.saveImageWithOriginalImageData(
+      data, image: scaled, maxWidth: 8, maxHeight: nil, imageQuality: nil)
+    defer { try? FileManager.default.removeItem(atPath: savedPath) }
+    #expect(URL(fileURLWithPath: savedPath).pathExtension == "png")
+
+    let saved = try #require(UIImage(contentsOfFile: savedPath))
+    #expect(saved.size.width == 8)
+    #expect(try alpha(of: saved, x: 1, y: 4) == 0)
+    #expect(try alpha(of: saved, x: 6, y: 4) == 255)
+  }
+
+  @Test func saveImageWithOriginalImageDataShouldStillSaveAnOpaqueWebPAsJPEG() {
+    let data = ImagePickerTestImages.opaqueWebPTestData
+    let savedPath = ImagePickerPhotoAssetUtil.saveImageWithOriginalImageData(
+      data, image: UIImage(data: data), maxWidth: nil, maxHeight: nil, imageQuality: nil)
+    defer { try? FileManager.default.removeItem(atPath: savedPath) }
+    #expect(URL(fileURLWithPath: savedPath).pathExtension == "jpg")
+  }
+
   @Test func saveImageWithOriginalImageDataShouldSaveWithTheCorrectExtensionAndMetaData() throws {
     let dataJPG = ImagePickerTestImages.jpgTestData
     let imageJPG = UIImage(data: dataJPG)!

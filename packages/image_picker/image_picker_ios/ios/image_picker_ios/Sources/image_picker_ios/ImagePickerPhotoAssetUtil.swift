@@ -42,8 +42,13 @@ enum ImagePickerPhotoAssetUtil {
     var metaData: [String: Any]?
     if let originalImageData {
       type = ImagePickerMetaDataUtil.getImageMIMEType(fromImageData: originalImageData)
-      suffix = ImagePickerMetaDataUtil.imageTypeSuffix(from: type) ?? kImagePickerDefaultSuffix
       metaData = ImagePickerMetaDataUtil.getMetaData(fromImageData: originalImageData)
+      // Formats that can't be written back are saved as JPEG, which has no alpha channel, so one
+      // with transparency is saved as PNG instead.
+      if type == .other, metaData?[kCGImagePropertyHasAlpha as String] as? Bool == true {
+        type = .png
+      }
+      suffix = ImagePickerMetaDataUtil.imageTypeSuffix(from: type) ?? kImagePickerDefaultSuffix
     }
     if type == .gif, let originalImageData {
       let gifInfo = ImagePickerImageUtil.scaledGIFImage(
