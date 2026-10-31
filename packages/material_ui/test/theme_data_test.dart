@@ -1404,6 +1404,7 @@ void main() {
         style: FilledButton.styleFrom(foregroundColor: Colors.green),
       ),
       floatingActionButtonTheme: const FloatingActionButtonThemeData(backgroundColor: Colors.black),
+      focusRingTheme: const FocusRingThemeData(color: Colors.black),
       iconButtonTheme: IconButtonThemeData(
         style: IconButton.styleFrom(foregroundColor: Colors.pink),
       ),
@@ -1529,6 +1530,7 @@ void main() {
       expansionTileTheme: const ExpansionTileThemeData(backgroundColor: Colors.black),
       filledButtonTheme: const FilledButtonThemeData(),
       floatingActionButtonTheme: const FloatingActionButtonThemeData(backgroundColor: Colors.white),
+      focusRingTheme: const FocusRingThemeData(visible: true, color: Colors.white),
       iconButtonTheme: const IconButtonThemeData(),
       listTileTheme: const ListTileThemeData(),
       menuBarTheme: const MenuBarThemeData(
@@ -1629,6 +1631,7 @@ void main() {
       expansionTileTheme: otherTheme.expansionTileTheme,
       filledButtonTheme: otherTheme.filledButtonTheme,
       floatingActionButtonTheme: otherTheme.floatingActionButtonTheme,
+      focusRingTheme: otherTheme.focusRingTheme,
       iconButtonTheme: otherTheme.iconButtonTheme,
       listTileTheme: otherTheme.listTileTheme,
       menuBarTheme: otherTheme.menuBarTheme,
@@ -1721,6 +1724,7 @@ void main() {
     expect(themeDataCopy.expansionTileTheme, equals(otherTheme.expansionTileTheme));
     expect(themeDataCopy.filledButtonTheme, equals(otherTheme.filledButtonTheme));
     expect(themeDataCopy.floatingActionButtonTheme, equals(otherTheme.floatingActionButtonTheme));
+    expect(themeDataCopy.focusRingTheme, equals(otherTheme.focusRingTheme));
     expect(themeDataCopy.iconButtonTheme, equals(otherTheme.iconButtonTheme));
     expect(themeDataCopy.listTileTheme, equals(otherTheme.listTileTheme));
     expect(themeDataCopy.menuBarTheme, equals(otherTheme.menuBarTheme));
@@ -1869,6 +1873,7 @@ void main() {
       'expansionTileTheme',
       'filledButtonTheme',
       'floatingActionButtonTheme',
+      'focusRingTheme',
       'iconButtonTheme',
       'listTileTheme',
       'menuBarTheme',

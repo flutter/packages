@@ -4,6 +4,7 @@
 
 /// @docImport 'app.dart';
 /// @docImport 'checkbox.dart';
+/// @docImport 'focus_ring_theme.dart';
 /// @docImport 'radio.dart';
 /// @docImport 'switch.dart';
 /// @docImport 'text_theme.dart';
@@ -23,6 +24,7 @@ import 'color_scheme.dart';
 import 'colors.dart';
 import 'constants.dart';
 import 'debug.dart';
+import 'focus_ring_painting.dart';
 import 'material.dart';
 import 'slider_parts.dart';
 import 'slider_theme.dart';
@@ -1038,6 +1040,7 @@ class _SliderState extends State<Slider> with TickerProviderStateMixin {
         hasFocus: _focused,
         hovering: _hovering,
         allowedInteraction: effectiveAllowedInteraction,
+        focusRing: FocusRingStyle.maybeOf(context),
       ),
     );
 
@@ -1106,6 +1109,10 @@ class _SliderState extends State<Slider> with TickerProviderStateMixin {
   }
 }
 
+// md.sys.state.focus-indicator.outer-offset. The slider has no focus indicator
+// token of its own.
+const double _kFocusRingOffset = 2.0;
+
 class _SliderRenderObjectWidget extends LeafRenderObjectWidget {
   const _SliderRenderObjectWidget({
     super.key,
@@ -1125,6 +1132,7 @@ class _SliderRenderObjectWidget extends LeafRenderObjectWidget {
     required this.hasFocus,
     required this.hovering,
     required this.allowedInteraction,
+    required this.focusRing,
   });
 
   final double value;
@@ -1143,6 +1151,7 @@ class _SliderRenderObjectWidget extends LeafRenderObjectWidget {
   final bool hasFocus;
   final bool hovering;
   final SliderInteraction allowedInteraction;
+  final FocusRingStyle? focusRing;
 
   @override
   _RenderSlider createRenderObject(BuildContext context) {
@@ -1166,6 +1175,7 @@ class _SliderRenderObjectWidget extends LeafRenderObjectWidget {
       hovering: hovering,
       gestureSettings: MediaQuery.gestureSettingsOf(context),
       allowedInteraction: allowedInteraction,
+      focusRing: focusRing,
     );
   }
 
@@ -1191,7 +1201,8 @@ class _SliderRenderObjectWidget extends LeafRenderObjectWidget {
       ..hasFocus = hasFocus
       ..hovering = hovering
       ..gestureSettings = MediaQuery.gestureSettingsOf(context)
-      ..allowedInteraction = allowedInteraction;
+      ..allowedInteraction = allowedInteraction
+      ..focusRing = focusRing;
     // Ticker provider cannot change since there's a 1:1 relationship between
     // the _SliderRenderObjectWidget object and the _SliderState object.
   }
@@ -1218,6 +1229,7 @@ class _RenderSlider extends RenderBox with RelayoutWhenSystemFontsChangeMixin {
     required this._hovering,
     required DeviceGestureSettings gestureSettings,
     required this._allowedInteraction,
+    required this._focusRing,
   }) : assert(_value >= 0.0 && _value <= 1.0),
        assert(
          _secondaryTrackValue == null ||
@@ -1464,6 +1476,18 @@ class _RenderSlider extends RenderBox with RelayoutWhenSystemFontsChangeMixin {
     _hasFocus = value;
     _updateForFocus(_hasFocus);
     markNeedsSemanticsUpdate();
+  }
+
+  /// The keyboard focus ring drawn around the thumb while [hasFocus] is true,
+  /// or null when [FocusRingThemeData.visible] is not true.
+  FocusRingStyle? get focusRing => _focusRing;
+  FocusRingStyle? _focusRing;
+  set focusRing(FocusRingStyle? value) {
+    if (value == _focusRing) {
+      return;
+    }
+    _focusRing = value;
+    markNeedsPaint();
   }
 
   /// True if this slider is being hovered over by a pointer.
@@ -1942,6 +1966,19 @@ class _RenderSlider extends RenderBox with RelayoutWhenSystemFontsChangeMixin {
       textScaleFactor: textScaleFactor,
       sizeWithOverflow: screenSize.isEmpty ? size : screenSize,
     );
+
+    // The keyboard focus ring goes around the thumb.
+    final FocusRingStyle? ring = focusRing;
+    if (hasFocus && ring != null) {
+      final Size thumbSize = thumbWidth != null && thumbHeight != null
+          ? Size(thumbWidth, thumbHeight)
+          : _sliderTheme.thumbShape!.getPreferredSize(isInteractive, isDiscrete);
+      final thumbRRect = RRect.fromRectAndRadius(
+        Rect.fromCenter(center: thumbCenter, width: thumbSize.width, height: thumbSize.height),
+        Radius.circular(thumbSize.shortestSide / 2),
+      );
+      ring.paintRRect(context.canvas, thumbRRect, _kFocusRingOffset);
+    }
   }
 
   /// Calculates the local coordinate center of the [Slider] thumb given its

@@ -18,6 +18,7 @@ import 'color_scheme.dart';
 import 'colors.dart';
 import 'constants.dart';
 import 'debug.dart';
+import 'focus_ring_painting.dart';
 import 'theme.dart';
 import 'theme_data.dart';
 
@@ -677,7 +678,8 @@ class _CheckboxState extends State<Checkbox> with TickerProviderStateMixin, Togg
           ..shape = widget.shape ?? checkboxTheme.shape ?? defaults.shape!
           ..activeSide = activeSide
           ..markInsets = markInsets
-          ..inactiveSide = inactiveSide,
+          ..inactiveSide = inactiveSide
+          ..focusRing = FocusRingStyle.maybeOf(context),
       ),
     );
   }
@@ -686,7 +688,20 @@ class _CheckboxState extends State<Checkbox> with TickerProviderStateMixin, Togg
 const double _kEdgeSize = Checkbox.width;
 const double _kStrokeWidth = 2.0;
 
+// md.comp.checkbox.focus.indicator.outline.offset
+const double _kFocusRingOffset = 2.0;
+
 class _CheckboxPainter extends ToggleablePainter {
+  FocusRingStyle? get focusRing => _focusRing;
+  FocusRingStyle? _focusRing;
+  set focusRing(FocusRingStyle? value) {
+    if (_focusRing == value) {
+      return;
+    }
+    _focusRing = value;
+    notifyListeners();
+  }
+
   Color get checkColor => _checkColor!;
   Color? _checkColor;
   set checkColor(Color value) {
@@ -915,6 +930,11 @@ class _CheckboxPainter extends ToggleablePainter {
           _drawDash(canvas, origin, tExpand, strokePaint);
         }
       }
+    }
+
+    // The keyboard focus ring goes around the radial reaction circle.
+    if (isFocused) {
+      focusRing?.paintCircle(canvas, size.center(Offset.zero), splashRadius, _kFocusRingOffset);
     }
   }
 }

@@ -650,7 +650,12 @@ class _IndicatorInkWell extends InkResponse {
     super.customBorder,
     super.onTap,
     super.child,
-  }) : super(containedInkWell: true, highlightColor: Colors.transparent);
+  }) : super(
+         containedInkWell: true,
+         highlightColor: Colors.transparent,
+         // md.comp.navigation-bar.focus.indicator.outline.offset
+         focusRingOffset: -3.0,
+       );
 
   final GlobalKey iconKey;
   final NavigationDestinationLabelBehavior labelBehavior;
