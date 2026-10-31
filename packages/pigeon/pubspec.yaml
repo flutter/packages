@@ -20,7 +20,6 @@ dependencies:
   yaml: ^3.1.1
 
 dev_dependencies:
-  skills_lint: ^0.5.3
   ffi: ^2.2.0
   # When updating ffigen or objective_c, check that _swiftObjcSelectorFirstPiece
   # in lib/src/dart/dart_generator.dart and _swiftFfiReservedFieldNames in
@@ -32,6 +31,7 @@ dev_dependencies:
   # JNIgen's renamer, then update the version linked in its doc comment.
   jnigen: 1.0.1
   objective_c: ^9.6.2
+  skills_lint: ^0.5.3
   swift2objc: 0.3.1
   swiftgen: 0.2.0
   test: ^1.11.1
@@ -41,4 +41,3 @@ topics:
   - interop
   - platform-channels
   - plugin-development
-

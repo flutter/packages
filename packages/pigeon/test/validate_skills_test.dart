@@ -7,8 +7,11 @@ import 'package:test/test.dart';
 
 void main() {
   test('validate skills', () async {
-    final config = await ConfigParser.loadConfig();
+    final Configuration config = await ConfigParser.loadConfig();
+    // validateSkills returns true even if the config has parsing errors, so
+    // check those separately.
     expect(config.parsingErrors, isEmpty);
-    await validateSkills(config: config);
+    final bool isValid = await validateSkills(config: config);
+    expect(isValid, isTrue, reason: 'Skills validation failed. See above for details.');
   });
 }

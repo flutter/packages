@@ -1,6 +1,7 @@
 ## 29.1.1
 
-* Fixes validation of the `pigeon-native-interop-migration` agent skill by renaming the directory, fixing YAML frontmatter, and setting up automated skill validation.
+* Renames the `native-interop-migration` agent skill to
+  `pigeon-native-interop-migration` and adds the required YAML frontmatter.
 
 ## 29.1.0
 
