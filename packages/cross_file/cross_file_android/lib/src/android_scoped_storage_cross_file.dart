@@ -2,7 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 
@@ -67,20 +69,24 @@ base class AndroidScopedStorageXFile extends PlatformScopedStorageXFile {
     if (inputStream case final android.InputStream inputStream) {
       int currentByteIndex = start ?? 0;
 
-      if (currentByteIndex > 0) {
-        await inputStream.skip(currentByteIndex);
-      }
-
-      Uint8List chunk = await inputStream.readBytes(maxByteArrayLen);
-      while (chunk.isNotEmpty && (end == null || currentByteIndex < end)) {
-        if (end == null) {
-          yield chunk;
-        } else {
-          yield Uint8List.sublistView(chunk, 0, min(chunk.length, end - currentByteIndex));
+      try {
+        if (currentByteIndex > 0) {
+          await inputStream.skip(currentByteIndex);
         }
-        currentByteIndex += chunk.length;
 
-        chunk = await inputStream.readBytes(maxByteArrayLen);
+        Uint8List chunk = await inputStream.readBytes(maxByteArrayLen);
+        while (chunk.isNotEmpty && (end == null || currentByteIndex < end)) {
+          if (end == null) {
+            yield chunk;
+          } else {
+            yield Uint8List.sublistView(chunk, 0, min(chunk.length, end - currentByteIndex));
+          }
+          currentByteIndex += chunk.length;
+
+          chunk = await inputStream.readBytes(maxByteArrayLen);
+        }
+      } finally {
+        await inputStream.close();
       }
     } else {
       throw NullInputStreamException(params.uri);
@@ -91,7 +97,11 @@ base class AndroidScopedStorageXFile extends PlatformScopedStorageXFile {
   Future<Uint8List> readAsBytes() async {
     final android.InputStream? inputStream = await _contentResolver.openInputStream(params.uri);
     if (inputStream case final android.InputStream inputStream) {
-      return inputStream.readAllBytes();
+      try {
+        return await inputStream.readAllBytes();
+      } finally {
+        await inputStream.close();
+      }
     }
 
     throw NullInputStreamException(params.uri);
@@ -114,6 +124,37 @@ base class AndroidScopedStorageXFile extends PlatformScopedStorageXFile {
   Future<String?> name() => _documentFile.getName();
 
   @override
+  Future<bool> canWrite() => _documentFile.canWrite();
+
+  @override
+  StreamSink<Uint8List> openWrite(PlatformOpenWriteParams params) {
+    return _IOSinkWrapper(IOSink(_AndroidStreamConsumer(this.params.uri)));
+  }
+
+  @override
+  Future<PlatformXFile> writeAsString(PlatformWriteAsStringParams params) async {
+    final android.OutputStream? outputStream = await _contentResolver.openOutputStream(
+      this.params.uri,
+      'w',
+    );
+
+    if (outputStream == null) {
+      throw NullOutputStreamException(this.params.uri);
+    }
+
+    await Future.wait(<Future<void>>[
+      outputStream.write(Uint8List.fromList(params.encoding.encode(params.contents))),
+      outputStream.flush(),
+      outputStream.close(),
+    ]);
+
+    return this;
+  }
+
+  @override
+  Future<bool> delete(PlatformFileDeleteParams params) => _documentFile.delete();
+
+  @override
   Future<void> dispose() async {
     // Reference to the resource does not need to be released.
   }
@@ -124,7 +165,7 @@ final class NullInputStreamException implements Exception {
   /// Constructs a [NullInputStreamException].
   NullInputStreamException(this.uri);
 
-  /// The URI the input stream that was request for.
+  /// The URI for the requested input stream.
   final String uri;
 
   @override
@@ -132,4 +173,84 @@ final class NullInputStreamException implements Exception {
     return 'NullInputStreamException: Failed to get native InputStream from file with path: $uri. '
         'App may not have permissions to access file.';
   }
+}
+
+/// Error thrown when the native [android.OutputStream] is not accessible.
+final class NullOutputStreamException implements Exception {
+  /// Constructs a [NullOutputStreamException].
+  NullOutputStreamException(this.uri);
+
+  /// The URI for the requested output stream.
+  final String uri;
+
+  @override
+  String toString() {
+    return 'NullOutputStreamException: Failed to get native OutputStream from file with path: $uri. '
+        'App may not have permissions to access file.';
+  }
+}
+
+class _AndroidStreamConsumer implements StreamConsumer<List<int>> {
+  _AndroidStreamConsumer(this.uri);
+
+  final String uri;
+
+  late final android.ContentResolver _contentResolver = android.ContentResolver.instance;
+
+  late final Future<android.OutputStream?> outputStreamFuture = _contentResolver.openOutputStream(
+    uri,
+    'w',
+  );
+
+  @override
+  Future<void> addStream(Stream<List<int>> stream) async {
+    final android.OutputStream? outputStream = await outputStreamFuture;
+    if (outputStream == null) {
+      throw NullOutputStreamException(uri);
+    }
+
+    await for (final List<int> data in stream) {
+      try {
+        await outputStream.write(data is Uint8List ? data : Uint8List.fromList(data));
+      } catch (exception) {
+        await outputStream.close();
+        rethrow;
+      }
+    }
+
+    await outputStream.flush();
+  }
+
+  @override
+  Future<void> close() async {
+    final android.OutputStream? outputStream = await outputStreamFuture;
+    if (outputStream == null) {
+      throw NullOutputStreamException(uri);
+    }
+
+    await outputStream.close();
+  }
+}
+
+// A wrapper is necessary because the `IOSink` returned from File.openWrite
+// can't be casted to a `StreamSink<Uint8List>`.
+class _IOSinkWrapper implements StreamSink<Uint8List> {
+  _IOSinkWrapper(this._ioSink);
+
+  final IOSink _ioSink;
+
+  @override
+  void add(Uint8List event) => _ioSink.add(event);
+
+  @override
+  void addError(Object error, [StackTrace? stackTrace]) => _ioSink.addError(error, stackTrace);
+
+  @override
+  Future<dynamic> addStream(Stream<Uint8List> stream) => _ioSink.addStream(stream);
+
+  @override
+  Future<dynamic> close() => _ioSink.close();
+
+  @override
+  Future<dynamic> get done => _ioSink.done;
 }
