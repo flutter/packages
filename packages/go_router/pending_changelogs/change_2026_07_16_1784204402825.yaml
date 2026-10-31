@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes a spurious `onExit` call and lost `extra` state on a pushed route when `refreshListenable` fires, by carrying over the live imperative match when the current configuration is re-decoded.
+version: patch
