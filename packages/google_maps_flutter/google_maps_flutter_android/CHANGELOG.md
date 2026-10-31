@@ -1,3 +1,7 @@
+## 2.22.0
+
+* Adds support for configuring the color displayed behind unloaded map tiles.
+
 ## 2.21.1
 
 * Updates Robolectric to 4.17 and adds the JVM arguments it requires for unit tests.

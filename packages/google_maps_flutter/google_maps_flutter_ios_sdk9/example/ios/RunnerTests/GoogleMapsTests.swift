@@ -107,6 +107,25 @@ class StubPluginRegistrar: NSObject, FlutterPluginRegistrar {
     #expect(mapView.frameObserverCount == 0)
   }
 
+  @Test func mapViewOptionsUseConfiguredBackgroundColor() {
+    let backgroundColor = PlatformColor(
+      red: 0x12 / 0xFF,
+      green: 0x34 / 0xFF,
+      blue: 0x56 / 0xFF,
+      alpha: 1
+    )
+    let creationParameters = emptyCreationParameters(backgroundColor: backgroundColor)
+
+    let options = GoogleMapController.mapViewOptions(
+      frame: .zero,
+      creationParameters: creationParameters
+    )
+
+    #expect(
+      options.backgroundColor
+        == UIColor(red: 0x12 / 0xFF, green: 0x34 / 0xFF, blue: 0x56 / 0xFF, alpha: 1))
+  }
+
   @Test func handleResultTileDownsamplesWideGamutImages() throws {
     let controller = TileProviderController(
       tileOverlayIdentifier: "test",
@@ -251,7 +270,9 @@ class StubPluginRegistrar: NSObject, FlutterPluginRegistrar {
 
   /// Creates an empty creation parameters object for tests where the values don't matter, just that
   /// there's a valid object to pass in.
-  private func emptyCreationParameters() -> PlatformMapViewCreationParams {
+  private func emptyCreationParameters(
+    backgroundColor: PlatformColor? = nil
+  ) -> PlatformMapViewCreationParams {
     return PlatformMapViewCreationParams(
       initialCameraPosition: PlatformCameraPosition(
         bearing: 0.0,
@@ -277,7 +298,8 @@ class StubPluginRegistrar: NSObject, FlutterPluginRegistrar {
         buildingsEnabled: nil,
         markerType: .marker,
         mapId: nil,
-        style: nil
+        style: nil,
+        backgroundColor: backgroundColor
       ),
       initialCircles: [],
       initialMarkers: [],
@@ -346,7 +368,8 @@ class StubPluginRegistrar: NSObject, FlutterPluginRegistrar {
       buildingsEnabled: nil,
       markerType: .marker,
       mapId: nil,
-      style: nil
+      style: nil,
+      backgroundColor: nil
     )
     controller.interpretMapConfiguration(config)
 

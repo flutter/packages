@@ -41,6 +41,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface FGMGoogleMapController (Test)
 
+/// Creates the immutable options used to initialize a Google map view.
++ (GMSMapViewOptions *)mapViewOptionsWithFrame:(CGRect)frame
+                            creationParameters:
+                                (FGMPlatformMapViewCreationParams *)creationParameters;
+
 /// Initializes a map controller with a concrete map view.
 ///
 /// @param mapView A map view that will be displayed by the controller
