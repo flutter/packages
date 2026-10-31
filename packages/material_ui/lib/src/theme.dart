@@ -141,14 +141,17 @@ class Theme extends StatelessWidget {
       MaterialLocalizations,
     );
     final ScriptCategory category = localizations?.scriptCategory ?? ScriptCategory.englishLike;
-    final InheritedCupertinoTheme? inheritedCupertinoTheme = context
-        .dependOnInheritedWidgetOfExactType<InheritedCupertinoTheme>();
-    final ThemeData theme =
-        inheritedTheme?.theme.data ??
-        (inheritedCupertinoTheme != null
-            ? CupertinoBasedMaterialThemeData(themeData: inheritedCupertinoTheme.theme.data)
-                  .materialTheme
-            : _fallbackTheme);
+    final ThemeData theme;
+    if (inheritedTheme != null) {
+      theme = inheritedTheme.theme.data;
+    } else {
+      final InheritedCupertinoTheme? inheritedCupertinoTheme = context
+          .dependOnInheritedWidgetOfExactType<InheritedCupertinoTheme>();
+      theme = inheritedCupertinoTheme != null
+          ? CupertinoBasedMaterialThemeData(themeData: inheritedCupertinoTheme.theme.data)
+                .materialTheme
+          : _fallbackTheme;
+    }
     return ThemeData.localize(theme, theme.typography.geometryThemeFor(category));
   }
 

@@ -1,0 +1,3 @@
+changelog: |
+  - Avoids looking up `InheritedCupertinoTheme` in `Theme.of` when a Material `Theme` ancestor is present and preserves `MaterialBasedCupertinoThemeData` in `CupertinoBasedMaterialThemeData`, allowing unused `ColorScheme.fromSeed` and `material_color_utilities` code to be tree-shaken.
+version: patch
