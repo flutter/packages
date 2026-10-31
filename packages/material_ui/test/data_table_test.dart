@@ -2509,11 +2509,16 @@ void main() {
 
     expect(cell1, findsOne);
 
-    final SemanticsNode cell1Node = cell1.evaluate().first;
-
-    // The semantics node of cell 1 should not have a transform
-    expect(cell1Node.transform, null);
-    expect(cell1Node.rect, const Rect.fromLTRB(0.0, 0.0, 302.0, 70.0));
+    // The cell's box must match the laid-out cell: below the 56px header row,
+    // 302px wide, 70px tall. The rect is composed from the root of the
+    // semantics tree so the assertion holds regardless of how the table
+    // distributes transforms between its synthesized row and cell nodes and
+    // the cell's own node.
+    // https://github.com/flutter/flutter/issues/171264
+    expect(
+      _semanticsWorldRect(tester, 'Data Cell 1'),
+      const Rect.fromLTRB(0.0, 56.0, 302.0, 126.0),
+    );
 
     semantics.dispose();
   });
@@ -2538,4 +2543,33 @@ void main() {
 
 RenderParagraph _getTextRenderObject(WidgetTester tester, String text) {
   return tester.renderObject(find.text(text));
+}
+
+/// The rect of the semantics node labelled exactly [label], in global logical
+/// coordinates, composed from the root of the semantics tree.
+Rect _semanticsWorldRect(WidgetTester tester, String label) {
+  Rect? deviceRect;
+  void visit(SemanticsNode node, Matrix4 transform) {
+    final Matrix4 matrix = transform.clone();
+    if (node.transform != null) {
+      matrix.multiply(node.transform!);
+    }
+    if (node.label == label) {
+      assert(deviceRect == null, 'More than one semantics node is labelled $label.');
+      deviceRect = MatrixUtils.transformRect(matrix, node.rect);
+    }
+    node.visitChildren((SemanticsNode child) {
+      visit(child, matrix);
+      return true;
+    });
+  }
+
+  visit(tester.binding.pipelineOwner.semanticsOwner!.rootSemanticsNode!, Matrix4.identity());
+  final Rect rect = deviceRect!;
+  return Rect.fromLTWH(
+    rect.left / tester.view.devicePixelRatio,
+    rect.top / tester.view.devicePixelRatio,
+    rect.width / tester.view.devicePixelRatio,
+    rect.height / tester.view.devicePixelRatio,
+  );
 }
