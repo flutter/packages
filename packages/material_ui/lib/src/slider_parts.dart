@@ -396,6 +396,9 @@ class RectangularSliderTrackShape extends SliderTrackShape with BaseSliderTrackS
   }
 }
 
+// A horizontal span of the track, and whether it is wide enough to be painted.
+typedef _TrackSegment = ({bool draw, double left, double right});
+
 /// The default shape of a [Slider]'s track.
 ///
 /// It paints a solid colored rectangle with rounded edges, vertically centered
@@ -463,10 +466,6 @@ class RoundedRectSliderTrackShape extends SliderTrackShape with BaseSliderTrackS
     );
     final activePaint = Paint()..color = activeTrackColorTween.evaluate(enableAnimation)!;
     final inactivePaint = Paint()..color = inactiveTrackColorTween.evaluate(enableAnimation)!;
-    final (Paint leftTrackPaint, Paint rightTrackPaint) = switch (textDirection) {
-      TextDirection.ltr => (activePaint, inactivePaint),
-      TextDirection.rtl => (inactivePaint, activePaint),
-    };
 
     final Rect trackRect = getPreferredRect(
       parentBox: parentBox,
@@ -478,35 +477,48 @@ class RoundedRectSliderTrackShape extends SliderTrackShape with BaseSliderTrackS
     final trackRadius = Radius.circular(trackRect.height / 2);
     final activeTrackRadius = Radius.circular((trackRect.height + additionalActiveTrackHeight) / 2);
     final isLTR = textDirection == TextDirection.ltr;
-    final isRTL = textDirection == TextDirection.rtl;
 
-    final bool drawInactiveTrack =
-        thumbCenter.dx < (trackRect.right - (sliderTheme.trackHeight! / 2));
-    if (drawInactiveTrack) {
-      // Draw the inactive track segment.
+    // Both segments extend past the thumb center by half of the track height.
+    final double halfTrackHeight = sliderTheme.trackHeight! / 2;
+    final _TrackSegment leftTrack = (
+      draw: thumbCenter.dx > trackRect.left + halfTrackHeight,
+      left: trackRect.left,
+      right: thumbCenter.dx + halfTrackHeight,
+    );
+    final _TrackSegment rightTrack = (
+      draw: thumbCenter.dx < trackRect.right - halfTrackHeight,
+      left: thumbCenter.dx - halfTrackHeight,
+      right: trackRect.right,
+    );
+    final (_TrackSegment inactiveTrack, _TrackSegment activeTrack) = isLTR
+        ? (rightTrack, leftTrack)
+        : (leftTrack, rightTrack);
+
+    // The segment painted last has its rounded end drawn on top of the other one,
+    // so paint the inactive segment first to keep the active one on top in both
+    // text directions.
+    if (inactiveTrack.draw) {
       context.canvas.drawRRect(
         RRect.fromLTRBR(
-          thumbCenter.dx - (sliderTheme.trackHeight! / 2),
-          isRTL ? trackRect.top - (additionalActiveTrackHeight / 2) : trackRect.top,
-          trackRect.right,
-          isRTL ? trackRect.bottom + (additionalActiveTrackHeight / 2) : trackRect.bottom,
-          isLTR ? trackRadius : activeTrackRadius,
+          inactiveTrack.left,
+          trackRect.top,
+          inactiveTrack.right,
+          trackRect.bottom,
+          trackRadius,
         ),
-        rightTrackPaint,
+        inactivePaint,
       );
     }
-    final bool drawActiveTrack = thumbCenter.dx > (trackRect.left + (sliderTheme.trackHeight! / 2));
-    if (drawActiveTrack) {
-      // Draw the active track segment.
+    if (activeTrack.draw) {
       context.canvas.drawRRect(
         RRect.fromLTRBR(
-          trackRect.left,
-          isLTR ? trackRect.top - (additionalActiveTrackHeight / 2) : trackRect.top,
-          thumbCenter.dx + (sliderTheme.trackHeight! / 2),
-          isLTR ? trackRect.bottom + (additionalActiveTrackHeight / 2) : trackRect.bottom,
-          isLTR ? activeTrackRadius : trackRadius,
+          activeTrack.left,
+          trackRect.top - (additionalActiveTrackHeight / 2),
+          activeTrack.right,
+          trackRect.bottom + (additionalActiveTrackHeight / 2),
+          activeTrackRadius,
         ),
-        leftTrackPaint,
+        activePaint,
       );
     }
 

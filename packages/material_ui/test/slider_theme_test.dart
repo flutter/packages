@@ -2677,6 +2677,40 @@ void main() {
         );
       },
     );
+
+    testWidgets('Active track is painted on top of the inactive track in RTL', (
+      WidgetTester tester,
+    ) async {
+      // Regression test for https://github.com/flutter/flutter/issues/194278
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Directionality(
+            textDirection: TextDirection.rtl,
+            child: Material(
+              child: Center(
+                child: SliderTheme(
+                  data: const SliderThemeData(trackShape: RoundedRectSliderTrackShape()),
+                  child: Slider(value: 0.5, onChanged: (double value) {}),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      // Both track segments extend past the thumb center by half of the track
+      // height, so the inactive track must be painted first for the rounded end
+      // of the active track not to be covered by it.
+      final MaterialInkController material = Material.of(tester.element(find.byType(Slider)));
+      expect(
+        material,
+        paints
+          // Inactive track.
+          ..rrect(rrect: RRect.fromLTRBR(24.0, 298.0, 402.0, 302.0, const Radius.circular(2.0)))
+          // Active track.
+          ..rrect(rrect: RRect.fromLTRBR(398.0, 297.0, 776.0, 303.0, const Radius.circular(3.0))),
+      );
+    });
   });
 
   testWidgets('Track shape isRounded defaults', (WidgetTester tester) async {
