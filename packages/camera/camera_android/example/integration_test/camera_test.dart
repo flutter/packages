@@ -265,4 +265,165 @@ void main() {
 
     expect(controller.value.isStreamingImages, false);
   });
+
+  group('Camera settings', () {
+    Future<CameraDescription> getCamera() async {
+      final List<CameraDescription> cameras = await CameraPlatform.instance.availableCameras();
+      expect(cameras.isNotEmpty, equals(true));
+
+      // Prefer back camera, as it allows more customizations.
+      final CameraDescription cameraDescription = cameras.firstWhere(
+        (CameraDescription description) => description.lensDirection == CameraLensDirection.back,
+        orElse: () => cameras.first,
+      );
+      return cameraDescription;
+    }
+
+    Future<void> startRecording(CameraController controller) async {
+      await controller.initialize();
+
+      //region Lock video as much as possible to avoid video bitrate fluctuations
+      await controller.lockCaptureOrientation();
+      await controller.setExposureMode(ExposureMode.locked);
+      await controller.setFocusMode(FocusMode.locked);
+      await controller.setFlashMode(FlashMode.off);
+      await controller.setExposureOffset(0);
+      //endregion
+
+      await controller.prepareForVideoRecording();
+      await controller.startVideoRecording();
+    }
+
+    testWidgets('Control FPS', (WidgetTester tester) async {
+      final CameraDescription cameraDescription = await getCamera();
+
+      final lengths = <int>[];
+
+      for (final fps in <int>[10, 30]) {
+        final controller = CameraController(
+          cameraDescription,
+          mediaSettings: MediaSettings(resolutionPreset: ResolutionPreset.medium, fps: fps),
+        );
+
+        await startRecording(controller);
+
+        sleep(const Duration(milliseconds: 1000));
+
+        final XFile file = await controller.stopVideoRecording();
+
+        // Load video size
+        final videoFile = File(file.path);
+
+        lengths.add(await videoFile.length());
+
+        await controller.dispose();
+      }
+
+      for (var n = 0; n < lengths.length - 1; n++) {
+        expect(lengths[n], greaterThan(0));
+      }
+    });
+
+    testWidgets('Control video bitrate', (WidgetTester tester) async {
+      final CameraDescription cameraDescription = await getCamera();
+
+      const kiloBits = 1000;
+      final lengths = <int>[];
+      for (final videoBitrate in <int>[200 * kiloBits, 2000 * kiloBits]) {
+        final controller = CameraController(
+          cameraDescription,
+          mediaSettings: MediaSettings(
+            resolutionPreset: ResolutionPreset.medium,
+            videoBitrate: videoBitrate,
+          ),
+        );
+
+        await startRecording(controller);
+
+        sleep(const Duration(milliseconds: 1000));
+
+        final XFile file = await controller.stopVideoRecording();
+
+        // Load video size
+        final videoFile = File(file.path);
+
+        lengths.add(await videoFile.length());
+
+        await controller.dispose();
+      }
+
+      for (var n = 0; n < lengths.length - 1; n++) {
+        expect(lengths[n], greaterThan(0));
+      }
+    });
+
+    testWidgets('Control audio bitrate', (WidgetTester tester) async {
+      final lengths = <int>[];
+
+      final CameraDescription cameraDescription = await getCamera();
+
+      const kiloBits = 1000;
+
+      for (final audioBitrate in <int>[32 * kiloBits, 256 * kiloBits]) {
+        final controller = CameraController(
+          cameraDescription,
+          mediaSettings: MediaSettings(
+            //region Use lowest video settings for minimize video impact on bitrate
+            resolutionPreset: ResolutionPreset.low,
+            fps: 10,
+            videoBitrate: 64 * kiloBits,
+            //endregion
+            audioBitrate: audioBitrate,
+            enableAudio: true,
+          ),
+        );
+
+        await startRecording(controller);
+
+        sleep(const Duration(milliseconds: 1000));
+
+        final XFile file = await controller.stopVideoRecording();
+
+        // Load video metadata
+        final videoFile = File(file.path);
+
+        final int length = await videoFile.length();
+
+        lengths.add(length);
+
+        await controller.dispose();
+      }
+
+      for (var n = 0; n < lengths.length - 1; n++) {
+        expect(lengths[n], greaterThan(0));
+      }
+    });
+
+    testWidgets('stopVideoRecording returns mp4 after takePicture during recording', (
+      WidgetTester tester,
+    ) async {
+      final List<CameraDescription> cameras = await CameraPlatform.instance.availableCameras();
+      if (cameras.isEmpty) {
+        return;
+      }
+
+      final controller = CameraController(cameras[0]);
+      await controller.initialize();
+      await controller.prepareForVideoRecording();
+
+      await controller.startVideoRecording();
+      await Future<void>.delayed(const Duration(milliseconds: 500));
+
+      final XFile photo = await controller.takePicture();
+      expect(photo.path.toLowerCase(), endsWith('.jpg'));
+
+      await Future<void>.delayed(const Duration(seconds: 1));
+
+      final XFile video = await controller.stopVideoRecording();
+      expect(video.path.toLowerCase(), endsWith('.mp4'));
+      expect(video.path, isNot(equals(photo.path)));
+
+      await controller.dispose();
+    });
+  });
 }
