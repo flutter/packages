@@ -8,6 +8,7 @@ import 'dart:typed_data';
 
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
 import 'package:cross_file_web/cross_file_web.dart';
+import 'package:cross_file_web/cross_file_web_safe.dart' as web_safe;
 import 'package:cross_file_web/src/web_helpers.dart';
 import 'package:cross_file_web/src/web_scoped_storage_cross_file.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -144,6 +145,27 @@ void main() {
       });
     });
 
+    group('Create with bytes with platform safe import', () {
+      testWidgets('Create with bytes and fileName', (_) async {
+        const testName = 'goodbye.txt';
+        final file = PlatformScopedStorageXFile(
+          web_safe.WebScopedStorageXFileCreationParams.fromBytes(testFileBytes, fileName: testName),
+        );
+
+        expect(await file.readAsBytes(), testFileBytes);
+        expect(await file.name(), testName);
+      });
+
+      testWidgets('Create with bytes and no fileName', (_) async {
+        final file = PlatformScopedStorageXFile(
+          web_safe.WebScopedStorageXFileCreationParams.fromBytes(testFileBytes),
+        );
+
+        expect(await file.readAsBytes(), testFileBytes);
+        expect(await file.name(), null);
+      });
+    });
+
     group('download', () {
       const crossFileDomElementId = '__x_file_dom_element';
 
@@ -157,6 +179,24 @@ void main() {
           );
 
           await file.download();
+
+          final html.Element? container = html.document.querySelector('#$crossFileDomElementId');
+
+          expect(container, isNotNull);
+        });
+
+        testWidgets('creates a DOM container when using safe import', (_) async {
+          final mockAnchor = html.document.createElement('a') as html.HTMLAnchorElement;
+          final testOverrides = XFileTestOverrides(createAnchorElement: (_, _) => mockAnchor);
+
+          final file = PlatformScopedStorageXFile(
+            web_safe.WebScopedStorageXFileCreationParams.fromBytes(
+              testFileBytes,
+              testOverrides: testOverrides,
+            ),
+          );
+
+          await (file.extension! as web_safe.WebScopedStorageXFileExtension).download();
 
           final html.Element? container = html.document.querySelector('#$crossFileDomElementId');
 

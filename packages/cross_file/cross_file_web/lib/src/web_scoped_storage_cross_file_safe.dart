@@ -1,0 +1,75 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+import 'dart:typed_data';
+
+import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
+import 'package:flutter/foundation.dart' show immutable, visibleForTesting;
+
+/// Base implementation of [PlatformScopedStorageXFileCreationParams] for web.
+///
+/// This implementation exists to provide access to platform-specific features
+/// that are safe to use when compiling on multiple platforms without a stub.
+///
+/// This class is a stub for the implementation in
+/// `web_scoped_storage_cross_file.dart`.
+@immutable
+sealed class WebScopedStorageXFileCreationParams extends PlatformScopedStorageXFileCreationParams {
+  /// Constructs a [WebScopedStorageXFileCreationParams].
+  const WebScopedStorageXFileCreationParams({
+    required super.uri,
+    // ignore: avoid_unused_constructor_parameters
+    @visibleForTesting Object? testOverrides,
+  });
+
+  /// Constructs a [WebScopedStorageXFileCreationParams] with an object url.
+  ///
+  /// This is a stub for the method in `web_scoped_storage_cross_file.dart`.
+  factory WebScopedStorageXFileCreationParams.fromObjectUrl({
+    // ignore: avoid_unused_constructor_parameters
+    required String objectUrl,
+    // ignore: avoid_unused_constructor_parameters
+    @visibleForTesting Object? testOverrides,
+  }) => throw UnsupportedError(
+    '`WebScopedStorageXFileCreationParams.fromObjectUrl` is only supported on web.',
+  );
+
+  /// Constructs a [WebScopedStorageXFileCreationParams] by creating a [Blob]
+  /// from [bytes].
+  ///
+  /// Creates an Object URL from the [Blob] created from the provided bytes.
+  /// See [URL.createObjectURL].
+  ///
+  /// If a [fileName] is provided, the underlying [Blob] is created as a [File]
+  /// with the [fileName] passed to it.
+  ///
+  /// `autoRevokeObjectUrl`: Whether the created object url should be revoked
+  /// when this instance is garbage collected. See [URL.revokeObjectURL].
+  ///
+  /// This is a stub for the method in `web_scoped_storage_cross_file.dart`.
+  factory WebScopedStorageXFileCreationParams.fromBytes(
+    // ignore: avoid_unused_constructor_parameters
+    Uint8List bytes, {
+    // ignore: avoid_unused_constructor_parameters
+    String? fileName,
+    // ignore: avoid_unused_constructor_parameters
+    bool autoRevokeObjectUrl = true,
+    // The type should be a `XFileTestOverrides`. It can't be imported in this
+    // stub without breaking other platforms.
+    // ignore: avoid_unused_constructor_parameters
+    @visibleForTesting Object? testOverrides,
+  }) => throw UnsupportedError(
+    '`WebScopedStorageXFileCreationParams.fromBytes` is only supported on web.',
+  );
+
+  /// Overrides some functions to allow testing.
+  @visibleForTesting
+  Object? get testOverrides;
+}
+
+/// Provides platform-specific features for [WebScopedStorageXFile].
+mixin WebScopedStorageXFileExtension implements PlatformScopedStorageXFileExtension {
+  /// Attempts to download a [Blob], with [suggestedName] as the filename.
+  Future<void> download([String? suggestedName]);
+}
