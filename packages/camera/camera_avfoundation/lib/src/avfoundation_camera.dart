@@ -90,6 +90,12 @@ class AVFoundationCamera extends CameraPlatform {
         cameraDescription.name,
         PlatformMediaSettings(
           resolutionPreset: _pigeonResolutionPreset(mediaSettings?.resolutionPreset),
+          photoResolutionPreset: _pigeonOptionalResolutionPreset(
+            mediaSettings?.photoResolutionPreset,
+          ),
+          videoResolutionPreset: _pigeonOptionalResolutionPreset(
+            mediaSettings?.videoResolutionPreset,
+          ),
           framesPerSecond: mediaSettings?.fps,
           videoBitrate: mediaSettings?.videoBitrate,
           audioBitrate: mediaSettings?.audioBitrate,
@@ -519,6 +525,14 @@ class AVFoundationCamera extends CameraPlatform {
     // switch as needing an update.
     // ignore: dead_code
     return PlatformResolutionPreset.max;
+  }
+
+  /// Returns an optional [ResolutionPreset]'s Pigeon representation.
+  PlatformResolutionPreset? _pigeonOptionalResolutionPreset(ResolutionPreset? resolutionPreset) {
+    if (resolutionPreset == null) {
+      return null;
+    }
+    return _pigeonResolutionPreset(resolutionPreset);
   }
 
   /// Returns a [VideoStabilizationMode]'s Pigeon representation.
