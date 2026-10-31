@@ -61,16 +61,23 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi, HostCa
 
     StreamIntsStreamHandler.register(with: binaryMessenger, streamHandler: SendInts())
     StreamEventsStreamHandler.register(with: binaryMessenger, streamHandler: SendEvents())
+    // Store one handler to exercise the handler removal codepath, and discard
+    // the other to test that the return value can be safely ignored.
+    let streamHandlerOne = SendConsistentNumbers(numberToSend: 1)
+    let channelOne = StreamConsistentNumbersStreamHandler.register(
+      with: binaryMessenger,
+      instanceName: "1",
+      streamHandler: streamHandlerOne)
+    streamHandlerOne.onCompleted = { channelOne.setStreamHandler(nil) }
     StreamConsistentNumbersStreamHandler.register(
-      with: binaryMessenger, instanceName: "1",
-      streamHandler: SendConsistentNumbers(numberToSend: 1))
-    StreamConsistentNumbersStreamHandler.register(
-      with: binaryMessenger, instanceName: "2",
+      with: binaryMessenger,
+      instanceName: "2",
       streamHandler: SendConsistentNumbers(numberToSend: 2))
     proxyApiRegistrar = ProxyApiTestsPigeonProxyApiRegistrar(
       binaryMessenger: binaryMessenger, apiDelegate: ProxyApiDelegate())
     proxyApiRegistrar!.setUp()
     NativeInteropHostIntegrationCoreApiSetup.register(api: NativeInteropTestsClass())
+    NativeInteropReservedNamesHostApiSetup.register(api: NativeInteropReservedNamesHostApiImpl())
   }
 
   public func detachFromEngine(for registrar: FlutterPluginRegistrar) {
@@ -1204,6 +1211,10 @@ class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
     return everything
   }
 
+  func echoAsync(sealedClass: NativeInteropSealedClass) async throws -> NativeInteropSealedClass {
+    return sealedClass
+  }
+
   func echoAsync(_ everything: NativeInteropAllNullableTypes?) async throws
     -> NativeInteropAllNullableTypes?
   {
@@ -1752,6 +1763,11 @@ class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
     return try flutterApi.echoNativeInteropAllNullableTypes(everything: everything)
   }
 
+  func callFlutterEcho(sealedClass: NativeInteropSealedClass) throws -> NativeInteropSealedClass {
+    let flutterApi = try getNativeInteropFlutterApi()
+    return try flutterApi.echoNativeInteropSealedClass(sealedClass: sealedClass)
+  }
+
   func callFlutterSendMultipleNullableTypes(
     aBool aNullableBool: Bool?, anInt aNullableInt: Int64?, aString aNullableString: String?
   ) throws -> NativeInteropAllNullableTypes {
@@ -1833,6 +1849,24 @@ class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
 
   func echo(_ wrapper: NativeInteropAllClassesWrapper) throws -> NativeInteropAllClassesWrapper {
     return wrapper
+  }
+
+  func echo(sealedClass: NativeInteropSealedClass) throws -> NativeInteropSealedClass {
+    return sealedClass
+  }
+
+  func echoNullable(sealedClass: NativeInteropSealedClass?) throws -> NativeInteropSealedClass? {
+    return sealedClass
+  }
+
+  func echo(sealedClassList: [NativeInteropSealedClass]) throws -> [NativeInteropSealedClass] {
+    return sealedClassList
+  }
+
+  func echo(sealedClassWrapper: NativeInteropSealedClassWrapper) throws
+    -> NativeInteropSealedClassWrapper
+  {
+    return sealedClassWrapper
   }
 
   func echoNullable(_ everything: NativeInteropAllNullableTypesWithoutRecursion?) throws
@@ -2076,6 +2110,83 @@ class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
   }
 }
 
+class NativeInteropReservedNamesHostApiImpl: NativeInteropReservedNamesHostApi {
+  private var storedReference = ""
+
+  func release(value: String) throws -> String {
+    return value
+  }
+
+  func use(value: Int64) throws -> Int64 {
+    return value
+  }
+
+  func type() throws -> String {
+    return "type"
+  }
+
+  func isNull() throws -> Bool {
+    return true
+  }
+
+  func isNullable() throws -> Bool? {
+    return true
+  }
+
+  func isOpen() throws -> Bool {
+    return true
+  }
+
+  func getReference() throws -> String {
+    return storedReference
+  }
+
+  func setReference(value: String) throws {
+    storedReference = value
+  }
+
+  func getDefault() throws -> String {
+    return "default"
+  }
+
+  func getValueAsync() async throws -> String {
+    return "value"
+  }
+
+  func echoReservedNames(names: NativeInteropReservedNames) throws -> NativeInteropReservedNames {
+    return names
+  }
+
+  private func flutterApi() throws -> NativeInteropReservedNamesFlutterApi {
+    guard let flutterApi = NativeInteropReservedNamesFlutterApi.getInstance() else {
+      throw NativeInteropTestsError(
+        code: "not_registered", message: "NativeInteropReservedNamesFlutterApi not registered",
+        details: nil)
+    }
+    return flutterApi
+  }
+
+  func callFlutterRelease(value: String) throws -> String {
+    return try flutterApi().release(value: value)
+  }
+
+  func callFlutterType() throws -> String {
+    return try flutterApi().type()
+  }
+
+  func callFlutterImplementIn(value: String) throws -> String {
+    return try flutterApi().implementIn(value: value)
+  }
+
+  func callFlutterIsNull() throws -> Bool {
+    return try flutterApi().isNull()
+  }
+
+  func callFlutterGetReference() throws -> String {
+    return try flutterApi().getReference()
+  }
+}
+
 public class TestPluginWithSuffix: HostSmallApi {
   public static func register(with registrar: FlutterPluginRegistrar, suffix: String) {
     // Workaround for https://github.com/flutter/flutter/issues/118103.
@@ -2155,6 +2266,7 @@ class SendEvents: StreamEventsStreamHandler {
 
 class SendConsistentNumbers: StreamConsistentNumbersStreamHandler {
   let numberToSend: Int64
+  var onCompleted: (() -> Void)?
   init(numberToSend: Int64) {
     self.numberToSend = numberToSend
   }
@@ -2173,6 +2285,7 @@ class SendConsistentNumbers: StreamConsistentNumbersStreamHandler {
           if count >= 10 {
             sink.endOfStream()
             self.timer?.invalidate()
+            self.onCompleted?()
           }
         }
       }

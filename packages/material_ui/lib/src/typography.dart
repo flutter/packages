@@ -4,7 +4,6 @@
 
 /// @docImport 'material_localizations.dart';
 /// @docImport 'theme.dart';
-/// @docImport 'theme_data.dart';
 library;
 
 import 'package:flutter/foundation.dart';
@@ -13,6 +12,9 @@ import 'package:flutter/painting.dart';
 import 'color_scheme.dart';
 import 'colors.dart';
 import 'text_theme.dart';
+import 'theme_data.dart';
+
+part 'generated/typography_defaults_m3.g.dart';
 
 // Examples can assume:
 // late TargetPlatform platform;
@@ -68,15 +70,16 @@ enum ScriptCategory {
 /// font](https://developer.apple.com/design/human-interface-guidelines/typography/)
 /// fonts as used by Apple on iOS.
 ///
-/// Two sets of geometry themes are provided: 2014 and 2018. The 2014 themes
-/// correspond to the original version of the Material Design spec and are
-/// the defaults. The 2018 themes correspond the second iteration of the
-/// specification and feature different font sizes, font weights, and
-/// letter spacing values.
+/// Three sets of geometry themes are provided: 2014, 2018, and 2021. The 2014
+/// themes correspond to the original version of the Material Design spec. The
+/// 2018 themes correspond to the second iteration of the specification and
+/// feature different font sizes, font weights, and letter spacing values. The
+/// 2021 themes correspond to the Material Design 3 specification.
 ///
-/// By default, [ThemeData.typography] is `Typography.material2014(platform:
-/// platform)` which uses [englishLike2014], [dense2014] and [tall2014]. To use
-/// the 2018 text theme geometries, specify a value using the [Typography.material2018]
+/// By default, [ThemeData.typography] is `Typography.material2021(platform:
+/// platform, colorScheme: colorScheme)` (or `Typography.material2014(platform:
+/// platform)` when [ThemeData.useMaterial3] is false). To use the 2018 text
+/// theme geometries, specify a value using the [Typography.material2018]
 /// constructor:
 ///
 /// ```dart
@@ -161,21 +164,52 @@ class Typography with Diagnosticable {
 
   /// Creates a typography instance using Material Design 3 2021 defaults.
   ///
-  /// If [platform] is [TargetPlatform.iOS] or [TargetPlatform.macOS], the
-  /// default values for [black] and [white] are [blackCupertino] and
-  /// [whiteCupertino] respectively. Otherwise they are [blackMountainView] and
-  /// [whiteMountainView]. If [platform] is null then both [black] and [white]
-  /// must be specified.
+  /// Text colors are derived from [colorScheme]. For a light [colorScheme],
+  /// every style in the resulting [Typography.black] uses
+  /// [ColorScheme.onSurface] and every style in [Typography.white] uses
+  /// [ColorScheme.surface]. For a dark [colorScheme], these are reversed. The
+  /// same colors are used for [TextStyle.decorationColor].
+  ///
+  /// The default values for [black] and [white] depend on [platform]:
+  /// [blackCupertino] and [whiteCupertino] on iOS, [blackRedwoodCity] and
+  /// [whiteRedwoodCity] on macOS, [blackRedmond] and [whiteRedmond] on
+  /// Windows, [blackHelsinki] and [whiteHelsinki] on Linux, and
+  /// [blackMountainView] and [whiteMountainView] otherwise. If [platform] is
+  /// null then both [black] and [white] must be specified.
   ///
   /// The default values for [englishLike], [dense], and [tall] are
   /// [englishLike2021], [dense2021], and [tall2021].
+  ///
+  /// The [black] and [white] parameters are deprecated. Only their non-color
+  /// properties (such as font family) are used. Any [TextStyle.color] or
+  /// [TextStyle.decorationColor] they specify is replaced with a color from
+  /// [colorScheme] as described above. To customize the text theme's colors,
+  /// call [copyWith] on the result:
+  ///
+  /// ```dart
+  /// final Typography base = Typography.material2021(colorScheme: colorScheme);
+  /// final Typography typography = base.copyWith(
+  ///   black: base.black.merge(myBlack),
+  ///   white: base.white.merge(myWhite),
+  /// );
+  /// ```
   ///
   /// See also:
   ///  * <https://m3.material.io/styles/typography>
   factory Typography.material2021({
     TargetPlatform? platform = TargetPlatform.android,
     ColorScheme colorScheme = const ColorScheme.light(),
+    @Deprecated(
+      'Text colors are derived from colorScheme, so colors in this text theme are ignored. '
+      'Use copyWith on the result to customize the black text theme. '
+      'This feature was deprecated after material_ui v1.8.0.',
+    )
     TextTheme? black,
+    @Deprecated(
+      'Text colors are derived from colorScheme, so colors in this text theme are ignored. '
+      'Use copyWith on the result to customize the white text theme. '
+      'This feature was deprecated after material_ui v1.8.0.',
+    )
     TextTheme? white,
     TextTheme? englishLike,
     TextTheme? dense,
@@ -348,7 +382,7 @@ class Typography with Diagnosticable {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    final defaultTypography = Typography.material2014();
+    final Typography defaultTypography = ThemeData.fallback().typography;
     properties.add(
       DiagnosticsProperty<TextTheme>('black', black, defaultValue: defaultTypography.black),
     );
@@ -2083,70 +2117,3 @@ class Typography with Diagnosticable {
   /// so this is just here to be consistent with the API.
   static const TextTheme tall2021 = _M3Typography.tall;
 }
-
-// BEGIN GENERATED TOKEN PROPERTIES - Typography
-
-// Do not edit by hand. The code between the "BEGIN GENERATED" and
-// "END GENERATED" comments are generated from data in the Material
-// Design token database by the script:
-//   dev/tools/gen_defaults/bin/gen_defaults.dart.
-
-// dart format off
-abstract final class _M3Typography {
-  static const TextTheme englishLike = TextTheme(
-    displayLarge: TextStyle(debugLabel: 'englishLike displayLarge 2021', inherit: false, fontSize: 57.0, fontWeight: FontWeight.w400, letterSpacing: -0.25, height: 1.12, textBaseline: TextBaseline.alphabetic, leadingDistribution: TextLeadingDistribution.even),
-    displayMedium: TextStyle(debugLabel: 'englishLike displayMedium 2021', inherit: false, fontSize: 45.0, fontWeight: FontWeight.w400, letterSpacing: 0.0, height: 1.16, textBaseline: TextBaseline.alphabetic, leadingDistribution: TextLeadingDistribution.even),
-    displaySmall: TextStyle(debugLabel: 'englishLike displaySmall 2021', inherit: false, fontSize: 36.0, fontWeight: FontWeight.w400, letterSpacing: 0.0, height: 1.22, textBaseline: TextBaseline.alphabetic, leadingDistribution: TextLeadingDistribution.even),
-    headlineLarge: TextStyle(debugLabel: 'englishLike headlineLarge 2021', inherit: false, fontSize: 32.0, fontWeight: FontWeight.w400, letterSpacing: 0.0, height: 1.25, textBaseline: TextBaseline.alphabetic, leadingDistribution: TextLeadingDistribution.even),
-    headlineMedium: TextStyle(debugLabel: 'englishLike headlineMedium 2021', inherit: false, fontSize: 28.0, fontWeight: FontWeight.w400, letterSpacing: 0.0, height: 1.29, textBaseline: TextBaseline.alphabetic, leadingDistribution: TextLeadingDistribution.even),
-    headlineSmall: TextStyle(debugLabel: 'englishLike headlineSmall 2021', inherit: false, fontSize: 24.0, fontWeight: FontWeight.w400, letterSpacing: 0.0, height: 1.33, textBaseline: TextBaseline.alphabetic, leadingDistribution: TextLeadingDistribution.even),
-    titleLarge: TextStyle(debugLabel: 'englishLike titleLarge 2021', inherit: false, fontSize: 22.0, fontWeight: FontWeight.w400, letterSpacing: 0.0, height: 1.27, textBaseline: TextBaseline.alphabetic, leadingDistribution: TextLeadingDistribution.even),
-    titleMedium: TextStyle(debugLabel: 'englishLike titleMedium 2021', inherit: false, fontSize: 16.0, fontWeight: FontWeight.w500, letterSpacing: 0.15, height: 1.50, textBaseline: TextBaseline.alphabetic, leadingDistribution: TextLeadingDistribution.even),
-    titleSmall: TextStyle(debugLabel: 'englishLike titleSmall 2021', inherit: false, fontSize: 14.0, fontWeight: FontWeight.w500, letterSpacing: 0.1, height: 1.43, textBaseline: TextBaseline.alphabetic, leadingDistribution: TextLeadingDistribution.even),
-    labelLarge: TextStyle(debugLabel: 'englishLike labelLarge 2021', inherit: false, fontSize: 14.0, fontWeight: FontWeight.w500, letterSpacing: 0.1, height: 1.43, textBaseline: TextBaseline.alphabetic, leadingDistribution: TextLeadingDistribution.even),
-    labelMedium: TextStyle(debugLabel: 'englishLike labelMedium 2021', inherit: false, fontSize: 12.0, fontWeight: FontWeight.w500, letterSpacing: 0.5, height: 1.33, textBaseline: TextBaseline.alphabetic, leadingDistribution: TextLeadingDistribution.even),
-    labelSmall: TextStyle(debugLabel: 'englishLike labelSmall 2021', inherit: false, fontSize: 11.0, fontWeight: FontWeight.w500, letterSpacing: 0.5, height: 1.45, textBaseline: TextBaseline.alphabetic, leadingDistribution: TextLeadingDistribution.even),
-    bodyLarge: TextStyle(debugLabel: 'englishLike bodyLarge 2021', inherit: false, fontSize: 16.0, fontWeight: FontWeight.w400, letterSpacing: 0.5, height: 1.50, textBaseline: TextBaseline.alphabetic, leadingDistribution: TextLeadingDistribution.even),
-    bodyMedium: TextStyle(debugLabel: 'englishLike bodyMedium 2021', inherit: false, fontSize: 14.0, fontWeight: FontWeight.w400, letterSpacing: 0.25, height: 1.43, textBaseline: TextBaseline.alphabetic, leadingDistribution: TextLeadingDistribution.even),
-    bodySmall: TextStyle(debugLabel: 'englishLike bodySmall 2021', inherit: false, fontSize: 12.0, fontWeight: FontWeight.w400, letterSpacing: 0.4, height: 1.33, textBaseline: TextBaseline.alphabetic, leadingDistribution: TextLeadingDistribution.even),
-  );
-
-  static const TextTheme dense = TextTheme(
-    displayLarge: TextStyle(debugLabel: 'dense displayLarge 2021', inherit: false, fontSize: 57.0, fontWeight: FontWeight.w400, letterSpacing: -0.25, height: 1.12, textBaseline: TextBaseline.ideographic, leadingDistribution: TextLeadingDistribution.even),
-    displayMedium: TextStyle(debugLabel: 'dense displayMedium 2021', inherit: false, fontSize: 45.0, fontWeight: FontWeight.w400, letterSpacing: 0.0, height: 1.16, textBaseline: TextBaseline.ideographic, leadingDistribution: TextLeadingDistribution.even),
-    displaySmall: TextStyle(debugLabel: 'dense displaySmall 2021', inherit: false, fontSize: 36.0, fontWeight: FontWeight.w400, letterSpacing: 0.0, height: 1.22, textBaseline: TextBaseline.ideographic, leadingDistribution: TextLeadingDistribution.even),
-    headlineLarge: TextStyle(debugLabel: 'dense headlineLarge 2021', inherit: false, fontSize: 32.0, fontWeight: FontWeight.w400, letterSpacing: 0.0, height: 1.25, textBaseline: TextBaseline.ideographic, leadingDistribution: TextLeadingDistribution.even),
-    headlineMedium: TextStyle(debugLabel: 'dense headlineMedium 2021', inherit: false, fontSize: 28.0, fontWeight: FontWeight.w400, letterSpacing: 0.0, height: 1.29, textBaseline: TextBaseline.ideographic, leadingDistribution: TextLeadingDistribution.even),
-    headlineSmall: TextStyle(debugLabel: 'dense headlineSmall 2021', inherit: false, fontSize: 24.0, fontWeight: FontWeight.w400, letterSpacing: 0.0, height: 1.33, textBaseline: TextBaseline.ideographic, leadingDistribution: TextLeadingDistribution.even),
-    titleLarge: TextStyle(debugLabel: 'dense titleLarge 2021', inherit: false, fontSize: 22.0, fontWeight: FontWeight.w400, letterSpacing: 0.0, height: 1.27, textBaseline: TextBaseline.ideographic, leadingDistribution: TextLeadingDistribution.even),
-    titleMedium: TextStyle(debugLabel: 'dense titleMedium 2021', inherit: false, fontSize: 16.0, fontWeight: FontWeight.w500, letterSpacing: 0.15, height: 1.50, textBaseline: TextBaseline.ideographic, leadingDistribution: TextLeadingDistribution.even),
-    titleSmall: TextStyle(debugLabel: 'dense titleSmall 2021', inherit: false, fontSize: 14.0, fontWeight: FontWeight.w500, letterSpacing: 0.1, height: 1.43, textBaseline: TextBaseline.ideographic, leadingDistribution: TextLeadingDistribution.even),
-    labelLarge: TextStyle(debugLabel: 'dense labelLarge 2021', inherit: false, fontSize: 14.0, fontWeight: FontWeight.w500, letterSpacing: 0.1, height: 1.43, textBaseline: TextBaseline.ideographic, leadingDistribution: TextLeadingDistribution.even),
-    labelMedium: TextStyle(debugLabel: 'dense labelMedium 2021', inherit: false, fontSize: 12.0, fontWeight: FontWeight.w500, letterSpacing: 0.5, height: 1.33, textBaseline: TextBaseline.ideographic, leadingDistribution: TextLeadingDistribution.even),
-    labelSmall: TextStyle(debugLabel: 'dense labelSmall 2021', inherit: false, fontSize: 11.0, fontWeight: FontWeight.w500, letterSpacing: 0.5, height: 1.45, textBaseline: TextBaseline.ideographic, leadingDistribution: TextLeadingDistribution.even),
-    bodyLarge: TextStyle(debugLabel: 'dense bodyLarge 2021', inherit: false, fontSize: 16.0, fontWeight: FontWeight.w400, letterSpacing: 0.5, height: 1.50, textBaseline: TextBaseline.ideographic, leadingDistribution: TextLeadingDistribution.even),
-    bodyMedium: TextStyle(debugLabel: 'dense bodyMedium 2021', inherit: false, fontSize: 14.0, fontWeight: FontWeight.w400, letterSpacing: 0.25, height: 1.43, textBaseline: TextBaseline.ideographic, leadingDistribution: TextLeadingDistribution.even),
-    bodySmall: TextStyle(debugLabel: 'dense bodySmall 2021', inherit: false, fontSize: 12.0, fontWeight: FontWeight.w400, letterSpacing: 0.4, height: 1.33, textBaseline: TextBaseline.ideographic, leadingDistribution: TextLeadingDistribution.even),
-  );
-
-  static const TextTheme tall = TextTheme(
-    displayLarge: TextStyle(debugLabel: 'tall displayLarge 2021', inherit: false, fontSize: 57.0, fontWeight: FontWeight.w400, letterSpacing: -0.25, height: 1.12, textBaseline: TextBaseline.alphabetic, leadingDistribution: TextLeadingDistribution.even),
-    displayMedium: TextStyle(debugLabel: 'tall displayMedium 2021', inherit: false, fontSize: 45.0, fontWeight: FontWeight.w400, letterSpacing: 0.0, height: 1.16, textBaseline: TextBaseline.alphabetic, leadingDistribution: TextLeadingDistribution.even),
-    displaySmall: TextStyle(debugLabel: 'tall displaySmall 2021', inherit: false, fontSize: 36.0, fontWeight: FontWeight.w400, letterSpacing: 0.0, height: 1.22, textBaseline: TextBaseline.alphabetic, leadingDistribution: TextLeadingDistribution.even),
-    headlineLarge: TextStyle(debugLabel: 'tall headlineLarge 2021', inherit: false, fontSize: 32.0, fontWeight: FontWeight.w400, letterSpacing: 0.0, height: 1.25, textBaseline: TextBaseline.alphabetic, leadingDistribution: TextLeadingDistribution.even),
-    headlineMedium: TextStyle(debugLabel: 'tall headlineMedium 2021', inherit: false, fontSize: 28.0, fontWeight: FontWeight.w400, letterSpacing: 0.0, height: 1.29, textBaseline: TextBaseline.alphabetic, leadingDistribution: TextLeadingDistribution.even),
-    headlineSmall: TextStyle(debugLabel: 'tall headlineSmall 2021', inherit: false, fontSize: 24.0, fontWeight: FontWeight.w400, letterSpacing: 0.0, height: 1.33, textBaseline: TextBaseline.alphabetic, leadingDistribution: TextLeadingDistribution.even),
-    titleLarge: TextStyle(debugLabel: 'tall titleLarge 2021', inherit: false, fontSize: 22.0, fontWeight: FontWeight.w400, letterSpacing: 0.0, height: 1.27, textBaseline: TextBaseline.alphabetic, leadingDistribution: TextLeadingDistribution.even),
-    titleMedium: TextStyle(debugLabel: 'tall titleMedium 2021', inherit: false, fontSize: 16.0, fontWeight: FontWeight.w500, letterSpacing: 0.15, height: 1.50, textBaseline: TextBaseline.alphabetic, leadingDistribution: TextLeadingDistribution.even),
-    titleSmall: TextStyle(debugLabel: 'tall titleSmall 2021', inherit: false, fontSize: 14.0, fontWeight: FontWeight.w500, letterSpacing: 0.1, height: 1.43, textBaseline: TextBaseline.alphabetic, leadingDistribution: TextLeadingDistribution.even),
-    labelLarge: TextStyle(debugLabel: 'tall labelLarge 2021', inherit: false, fontSize: 14.0, fontWeight: FontWeight.w500, letterSpacing: 0.1, height: 1.43, textBaseline: TextBaseline.alphabetic, leadingDistribution: TextLeadingDistribution.even),
-    labelMedium: TextStyle(debugLabel: 'tall labelMedium 2021', inherit: false, fontSize: 12.0, fontWeight: FontWeight.w500, letterSpacing: 0.5, height: 1.33, textBaseline: TextBaseline.alphabetic, leadingDistribution: TextLeadingDistribution.even),
-    labelSmall: TextStyle(debugLabel: 'tall labelSmall 2021', inherit: false, fontSize: 11.0, fontWeight: FontWeight.w500, letterSpacing: 0.5, height: 1.45, textBaseline: TextBaseline.alphabetic, leadingDistribution: TextLeadingDistribution.even),
-    bodyLarge: TextStyle(debugLabel: 'tall bodyLarge 2021', inherit: false, fontSize: 16.0, fontWeight: FontWeight.w400, letterSpacing: 0.5, height: 1.50, textBaseline: TextBaseline.alphabetic, leadingDistribution: TextLeadingDistribution.even),
-    bodyMedium: TextStyle(debugLabel: 'tall bodyMedium 2021', inherit: false, fontSize: 14.0, fontWeight: FontWeight.w400, letterSpacing: 0.25, height: 1.43, textBaseline: TextBaseline.alphabetic, leadingDistribution: TextLeadingDistribution.even),
-    bodySmall: TextStyle(debugLabel: 'tall bodySmall 2021', inherit: false, fontSize: 12.0, fontWeight: FontWeight.w400, letterSpacing: 0.4, height: 1.33, textBaseline: TextBaseline.alphabetic, leadingDistribution: TextLeadingDistribution.even),
-  );
-}
-// dart format on
-
-// END GENERATED TOKEN PROPERTIES - Typography

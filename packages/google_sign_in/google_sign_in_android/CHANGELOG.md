@@ -1,5 +1,6 @@
-## NEXT
+## 7.2.18
 
+* Converts Java implementation code to Kotlin.
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 
 ## 7.2.17

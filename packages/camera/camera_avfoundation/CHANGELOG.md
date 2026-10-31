@@ -1,3 +1,24 @@
+## 0.11.1
+
+* Adds support for zero-shutter-lag still image capture via
+  `isZeroShutterLagSupported` and `setZeroShutterLagEnabled` (iOS 17+).
+
+## 0.11.0+4
+
+* Fixes a Swift 6 Sendability mismatch in the `CaptureDevice` protocol's `setExposureTargetBias` completion handler.
+
+## 0.11.0+3
+
+* Fixes a crash when switching camera while recording video due to disconnected photo output.
+
+## 0.11.0+2
+
+* Replaces the deprecated `videoOrientation` with `videoRotationAngle` on iOS 17 and later.
+
+## 0.11.0+1
+
+* Removes availability checks for iOS versions below the package minimum iOS 13.
+
 ## 0.11.0
 
 * Adds support for custom video output path in video recording.
