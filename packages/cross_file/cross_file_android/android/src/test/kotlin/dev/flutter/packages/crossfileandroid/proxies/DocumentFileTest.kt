@@ -198,6 +198,7 @@ class DocumentFileTest {
 
     mockStatic(MimeTypeMap::class.java).use { mockedStatic ->
       val mimeTypeMap = mock<MimeTypeMap>()
+      mockedStatic.`when`<MimeTypeMap> { MimeTypeMap.getSingleton() }.thenReturn(mimeTypeMap)
       whenever(mimeTypeMap.getMimeTypeFromExtension("txt")).thenReturn("text/plain")
 
       val instance = mock<DocumentFile>()
