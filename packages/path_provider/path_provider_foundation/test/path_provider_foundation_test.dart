@@ -5,8 +5,6 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:objective_c/src/objective_c_bindings_generated.dart';
-import 'package:path_provider_foundation/src/ffi_bindings.g.dart';
 import 'package:path_provider_foundation/src/path_provider_foundation_real.dart';
 
 // Most tests are in integration_test rather than here, because anything that
@@ -30,25 +28,22 @@ void main() {
     });
 
     test('getExternalCachePaths throws', () async {
-      final pathProvider = PathProviderFoundation(ffiLib: FakeFoundationFFI());
+      final pathProvider = PathProviderFoundation();
       expect(pathProvider.getExternalCachePaths(), throwsA(isUnsupportedError));
     });
 
     test('getExternalStoragePath throws', () async {
-      final pathProvider = PathProviderFoundation(ffiLib: FakeFoundationFFI());
+      final pathProvider = PathProviderFoundation();
       expect(pathProvider.getExternalStoragePath(), throwsA(isUnsupportedError));
     });
 
     test('getExternalStoragePaths throws', () async {
-      final pathProvider = PathProviderFoundation(ffiLib: FakeFoundationFFI());
+      final pathProvider = PathProviderFoundation();
       expect(pathProvider.getExternalStoragePaths(), throwsA(isUnsupportedError));
     });
 
     test('getContainerPath throws on macOS', () async {
-      final pathProvider = PathProviderFoundation(
-        platform: FakePlatformProvider(isMacOS: true),
-        ffiLib: FakeFoundationFFI(),
-      );
+      final pathProvider = PathProviderFoundation(platform: FakePlatformProvider(isMacOS: true));
       expect(
         pathProvider.getContainerPath(appGroupIdentifier: 'group.example.test'),
         throwsA(isUnsupportedError),
@@ -65,16 +60,4 @@ class FakePlatformProvider implements PathProviderPlatformProvider {
 
   @override
   bool isMacOS;
-}
-
-class FakeFoundationFFI implements FoundationFFI {
-  @override
-  // ignore: non_constant_identifier_names
-  NSArray NSSearchPathForDirectoriesInDomains(
-    NSSearchPathDirectory directory,
-    int domainMask,
-    bool expandTilde,
-  ) {
-    throw UnimplementedError();
-  }
 }

@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:ffi' as ffi;
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
@@ -10,22 +9,27 @@ import 'package:objective_c/objective_c.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 
 import 'ffi_bindings.g.dart';
+import 'foundation_paths.dart';
 
 /// The iOS and macOS implementation of [PathProviderPlatform].
 class PathProviderFoundation extends PathProviderPlatform {
-  /// Constructor that accepts a testable PathProviderPlatformProvider.
+  /// Creates the implementation; every argument exists so tests can replace a part of it.
+  ///
+  /// [platform] says which operating system to act as, [foundationPaths] reads the folders from
+  /// Foundation, and [containerURLForSecurityApplicationGroupIdentifier] finds the container of an
+  /// app group.
   PathProviderFoundation({
     @visibleForTesting PathProviderPlatformProvider? platform,
-    @visibleForTesting FoundationFFI? ffiLib,
+    @visibleForTesting FoundationPaths? foundationPaths,
     @visibleForTesting NSURL? Function(NSString)? containerURLForSecurityApplicationGroupIdentifier,
   }) : _platformProvider = platform ?? PathProviderPlatformProvider(),
-       _ffiLib = ffiLib ?? _lib,
+       _foundationPaths = foundationPaths ?? const FoundationPaths(),
        _containerURLForSecurityApplicationGroupIdentifier =
            containerURLForSecurityApplicationGroupIdentifier ??
            _sharedNSFileManagerContainerURLForSecurityApplicationGroupIdentifier;
 
   final PathProviderPlatformProvider _platformProvider;
-  final FoundationFFI _ffiLib;
+  final FoundationPaths _foundationPaths;
   final NSURL? Function(NSString) _containerURLForSecurityApplicationGroupIdentifier;
 
   /// Registers this class as the default instance of [PathProviderPlatform].
@@ -101,8 +105,13 @@ class PathProviderFoundation extends PathProviderPlatform {
     )?.path?.toDartString();
   }
 
+  /// Returns the current user's folder of the given kind, or `null` if there is none.
+  ///
+  /// Reads through [_foundationPaths] and never through `package:objective_c`, because the first
+  /// use of that package opens its native library and blocks the calling isolate for several
+  /// milliseconds.
   String? _getDirectoryPath(NSSearchPathDirectory directory) {
-    NSString? path = _getUserDirectory(directory);
+    String? path = _foundationPaths.userDirectory(directory);
     if (path != null && _platformProvider.isMacOS) {
       // In a non-sandboxed app, these are shared directories where applications
       // are expected to use their bundle ID as a subdirectory. For
@@ -111,25 +120,16 @@ class PathProviderFoundation extends PathProviderPlatform {
       // plugin.
       if (directory == NSSearchPathDirectory.NSApplicationSupportDirectory ||
           directory == NSSearchPathDirectory.NSCachesDirectory) {
-        final NSString? bundleIdentifier = NSBundle.getMainBundle().bundleIdentifier;
+        final String? bundleIdentifier = _foundationPaths.mainBundleIdentifier;
         if (bundleIdentifier != null) {
-          final NSURL basePathURL = NSURL.fileURLWithPath(path);
-          path = basePathURL.URLByAppendingPathComponent(bundleIdentifier)?.path;
+          // Joined by hand so that package:objective_c is not loaded. A trailing
+          // slash is dropped first, so the result never contains "//".
+          final String folder = path.endsWith('/') ? path.substring(0, path.length - 1) : path;
+          path = '$folder/$bundleIdentifier';
         }
       }
     }
-    return path?.toDartString();
-  }
-
-  /// Returns the user-domain directory of the given type.
-  NSString? _getUserDirectory(NSSearchPathDirectory directory) {
-    final NSArray paths = _ffiLib.NSSearchPathForDirectoriesInDomains(
-      directory,
-      NSSearchPathDomainMask.NSUserDomainMask,
-      true,
-    );
-    final ObjCObject? first = paths.firstObject;
-    return first == null ? null : NSString.as(first);
+    return path;
   }
 }
 
@@ -148,12 +148,3 @@ NSURL? _sharedNSFileManagerContainerURLForSecurityApplicationGroupIdentifier(
 ) => NSFileManager.getDefaultManager().containerURLForSecurityApplicationGroupIdentifier(
   groupIdentifier,
 );
-
-final ffi.DynamicLibrary _dylib = () {
-  return ffi.DynamicLibrary.open('/System/Library/Frameworks/Foundation.framework/Foundation');
-}();
-
-/// The bindings to the native functions in [_dylib].
-final FoundationFFI _lib = () {
-  return FoundationFFI(_dylib);
-}();
