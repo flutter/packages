@@ -2111,3 +2111,42 @@ abstract class NativeInteropReservedNamesFlutterApi {
   /// JNIgen doesn't turn interface methods into properties.
   String getReference();
 }
+
+/// A sealed class passed in the call's buffer with the hybrid transport.
+sealed class NativeInteropShape {}
+
+class NativeInteropCircle extends NativeInteropShape {
+  NativeInteropCircle({required this.radius});
+
+  double radius;
+}
+
+class NativeInteropSquare extends NativeInteropShape {
+  NativeInteropSquare({required this.side, this.label});
+
+  double side;
+  String? label;
+}
+
+/// Echoes [NativeInteropShape] sealed class hierarchies.
+@HostApi()
+abstract class NativeInteropSealedClassHostApi {
+  NativeInteropShape echoShape(NativeInteropShape shape);
+
+  NativeInteropShape? echoNullableShape(NativeInteropShape? shape);
+
+  List<NativeInteropShape> echoShapeList(List<NativeInteropShape> shapes);
+
+  Map<String, NativeInteropShape> echoShapeMap(Map<String, NativeInteropShape> shapes);
+
+  @async
+  NativeInteropShape echoAsyncShape(NativeInteropShape shape);
+
+  NativeInteropShape callFlutterEchoShape(NativeInteropShape shape);
+}
+
+/// The Flutter API counterpart of [NativeInteropSealedClassHostApi].
+@FlutterApi()
+abstract class NativeInteropSealedClassFlutterApi {
+  NativeInteropShape echoShape(NativeInteropShape shape);
+}

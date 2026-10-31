@@ -4,6 +4,7 @@
 
 import 'package:pigeon/pigeon.dart' show TaskQueueType;
 import 'package:pigeon/src/ast.dart';
+import 'package:pigeon/src/generator_tools.dart' show NativeInteropTransport;
 import 'package:pigeon/src/kotlin/kotlin_generator.dart';
 import 'package:test/test.dart';
 
@@ -1727,7 +1728,12 @@ void main() {
     String generate({required bool useJni}) {
       final sink = StringBuffer();
       const KotlinGenerator().generate(
-        InternalKotlinOptions(errorClassName: 'FooError', kotlinOut: '', useJni: useJni),
+        InternalKotlinOptions(
+          errorClassName: 'FooError',
+          kotlinOut: '',
+          useJni: useJni,
+          nativeInteropTransport: NativeInteropTransport.objects,
+        ),
         root,
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -1740,7 +1746,12 @@ void main() {
       expect(code, contains('import androidx.annotation.Keep'));
       expect(code, contains('@Keep\nclass FooError ('));
       expect(code, contains('@Keep\nenum class AnEnum('));
-      expect(code, contains('@Keep\n  companion object {\n    fun ofRaw(raw: Int): AnEnum?'));
+      expect(
+        code,
+        contains(
+          '@Keep\n  companion object {\n    private val pigeonValues = values()\n\n    fun ofRaw(raw: Int): AnEnum?',
+        ),
+      );
       expect(code, contains('@Keep\ndata class DataClass ('));
       expect(code, contains('@Keep\ninterface HostApi {'));
       expect(code, contains('@Keep\nclass HostApiRegistrar : HostApi {'));
@@ -2009,12 +2020,12 @@ void main() {
     generator.generate(kotlinOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
     final code = sink.toString();
     expect(code, contains('interface HostApi {'));
-    expect(code, contains('class HostApiRegistrar : HostApi {'));
+    expect(code, contains('class HostApiRegistrar {'));
     expect(code, contains('api: HostApi?,'));
     expect(code, contains('HostApiInstances.remove(name)'));
     expect(
       code,
-      contains('fun registerInstance(api: FlutterApi?, name: String = defaultInstanceName)'),
+      contains('fun registerInstance(api: FlutterApiBridge?, name: String = defaultInstanceName)'),
     );
     expect(code, contains('registeredFlutterApi.remove(name)'));
   });
@@ -2075,5 +2086,211 @@ void main() {
     expect(code, contains('suspend fun doit(): Long?'));
     expect(code, contains('CoroutineScope(Dispatchers.Unconfined).launch'));
     expect(code, isNot(contains('CoroutineScope(Dispatchers.Main).launch')));
+  });
+
+  group('hybrid native interop transport', () {
+    final dataClass = Class(
+      name: 'Data',
+      fields: <NamedType>[
+        NamedType(
+          name: 'value',
+          type: const TypeDeclaration(baseName: 'int', isNullable: false),
+        ),
+      ],
+    );
+    final anEnum = Enum(
+      name: 'Color',
+      members: <EnumMember>[
+        EnumMember(name: 'red'),
+        EnumMember(name: 'green'),
+      ],
+    );
+    final dataType = TypeDeclaration(
+      baseName: 'Data',
+      isNullable: true,
+      associatedClass: dataClass,
+    );
+    final enumType = TypeDeclaration(baseName: 'Color', isNullable: true, associatedEnum: anEnum);
+    const intType = TypeDeclaration(baseName: 'int', isNullable: false);
+
+    List<Method> methods(ApiLocation location) => <Method>[
+      Method(
+        name: 'echoData',
+        location: location,
+        parameters: <Parameter>[
+          Parameter(name: 'count', type: intType),
+          Parameter(name: 'data', type: dataType),
+        ],
+        returnType: dataType,
+      ),
+      Method(
+        name: 'echoColor',
+        location: location,
+        parameters: <Parameter>[Parameter(name: 'color', type: enumType)],
+        returnType: enumType,
+      ),
+      Method(
+        name: 'echoAsyncData',
+        location: location,
+        isAsynchronous: true,
+        parameters: <Parameter>[Parameter(name: 'data', type: dataType)],
+        returnType: dataType,
+      ),
+    ];
+
+    String generate({required bool hybrid}) {
+      final root = Root(
+        apis: <Api>[
+          AstHostApi(name: 'HostApi', methods: methods(ApiLocation.host)),
+          AstFlutterApi(name: 'FlutterApi', methods: methods(ApiLocation.flutter)),
+        ],
+        classes: <Class>[dataClass],
+        enums: <Enum>[anEnum],
+      );
+      final sink = StringBuffer();
+      const KotlinGenerator().generate(
+        InternalKotlinOptions(
+          errorClassName: 'FooError',
+          kotlinOut: '',
+          useJni: true,
+          fileSpecificClassNameComponent: 'Foo',
+          nativeInteropTransport: hybrid
+              ? NativeInteropTransport.hybrid
+              : NativeInteropTransport.objects,
+        ),
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+      return sink.toString();
+    }
+
+    test('generates the codec and the buffer helpers', () {
+      final String code = generate(hybrid: true);
+      expect(code, contains('import io.flutter.plugin.common.StandardMessageCodec'));
+      expect(code, contains('private open class FooPigeonCodec : StandardMessageCodec()'));
+      expect(code, contains('private object FooPigeonInteropCodec : FooPigeonCodec()'));
+    });
+
+    test('host api registrar exposes entry points', () {
+      final String code = generate(hybrid: true);
+      expect(code, contains('class HostApiRegistrar {'));
+      expect(code, contains('fun echoData(count: Long, pigeonVar_args: ByteArray): ByteArray? {'));
+      expect(code, contains('val dataArg = pigeonVar_decodedArgs[0] as Data?'));
+      expect(
+        code,
+        contains(
+          'return FooPigeonInteropCodec.encodeOrNull(pigeonVar_api.echoData(count, dataArg))',
+        ),
+      );
+      expect(code, contains('fun echoColor(color: Long): Long {'));
+      expect(
+        code,
+        contains('pigeonVar_api.echoColor(if (color == -1L) null else Color.ofRaw(color.toInt()))'),
+      );
+      expect(code, contains('suspend fun echoAsyncData(pigeonVar_args: ByteArray): ByteArray? {'));
+    });
+
+    test('host api entry points encode error details', () {
+      final String code = generate(hybrid: true);
+      expect(code, contains('} catch (e: FooError) {'));
+      expect(
+        code,
+        contains(
+          'throw FooError(e.code, e.message, FooPigeonInteropCodec.encodeOrNull(e.details))',
+        ),
+      );
+    });
+
+    test('flutter api is implemented through a buffer bridge', () {
+      final String code = generate(hybrid: true);
+      expect(code, contains('@Keep\ninterface FlutterApiBridge {'));
+      expect(code, contains('fun echoData(count: Long, pigeonVar_args: ByteArray): ByteArray?'));
+      expect(
+        code,
+        contains(
+          'fun registerInstance(api: FlutterApiBridge?, name: String = defaultInstanceName)',
+        ),
+      );
+      expect(
+        code,
+        contains(
+          'private class FlutterApiBridgeAdapter(private val bridge: FlutterApiBridge) : FlutterApi {',
+        ),
+      );
+      expect(code, contains('this.bridge.echoData('));
+      expect(code, contains('FooPigeonInteropCodec.encode(listOf<Any?>(data))'));
+    });
+
+    test('qualifies this.api and this.bridge when parameters are named api or bridge', () {
+      const intType = TypeDeclaration(baseName: 'int', isNullable: false);
+      final root = Root(
+        apis: <Api>[
+          AstHostApi(
+            name: 'HostApi',
+            methods: <Method>[
+              Method(
+                name: 'check',
+                location: ApiLocation.host,
+                parameters: <Parameter>[Parameter(name: 'api', type: intType)],
+                returnType: intType,
+              ),
+            ],
+          ),
+          AstFlutterApi(
+            name: 'FlutterApi',
+            methods: <Method>[
+              Method(
+                name: 'notify',
+                location: ApiLocation.flutter,
+                parameters: <Parameter>[Parameter(name: 'bridge', type: intType)],
+                returnType: intType,
+              ),
+            ],
+          ),
+        ],
+        classes: <Class>[],
+        enums: <Enum>[],
+      );
+      for (final NativeInteropTransport transport in NativeInteropTransport.values) {
+        final sink = StringBuffer();
+        const KotlinGenerator().generate(
+          InternalKotlinOptions(
+            errorClassName: 'FooError',
+            kotlinOut: '',
+            useJni: true,
+            fileSpecificClassNameComponent: 'Foo',
+            nativeInteropTransport: transport,
+          ),
+          root,
+          sink,
+          dartPackageName: DEFAULT_PACKAGE_NAME,
+        );
+        final code = sink.toString();
+        if (transport == NativeInteropTransport.hybrid) {
+          expect(
+            code,
+            contains('val pigeonVar_api = this.api ?: error("HostApi has not been registered")'),
+          );
+          expect(code, contains('val pigeonVar_result = this.bridge.notify(bridge)'));
+        } else {
+          expect(code, contains('this.api?.let {'));
+        }
+      }
+    });
+
+    test('objects transport keeps the object graph registrar', () {
+      final String code = generate(hybrid: false);
+      expect(code, contains('class HostApiRegistrar : HostApi {'));
+      expect(code, isNot(contains('PigeonInteropCodec')));
+      expect(code, isNot(contains('pigeonVar_args')));
+    });
+
+    test('enum ofRaw indexes a cached array', () {
+      final String code = generate(hybrid: false);
+      expect(code, contains('private val pigeonValues = values()'));
+      expect(code, contains('return pigeonValues.getOrNull(raw)'));
+      expect(code, isNot(contains('firstOrNull { it.raw == raw }')));
+    });
   });
 }

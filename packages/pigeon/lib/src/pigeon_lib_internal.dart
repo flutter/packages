@@ -93,6 +93,9 @@ class InternalPigeonOptions {
               fileSpecificClassNameComponent:
                   options.swiftOptions?.fileSpecificClassNameComponent ??
                   options.fileSpecificClassNameComponent,
+              nativeInteropTransport:
+                  // ignore: invalid_use_of_visible_for_testing_member
+                  options.nativeInteropTransport ?? NativeInteropTransport.hybrid,
             ),
       kotlinOptions = options.kotlinOut == null
           ? null
@@ -103,6 +106,9 @@ class InternalPigeonOptions {
               fileSpecificClassNameComponent:
                   options.kotlinOptions?.fileSpecificClassNameComponent ??
                   options.fileSpecificClassNameComponent,
+              nativeInteropTransport:
+                  // ignore: invalid_use_of_visible_for_testing_member
+                  options.nativeInteropTransport ?? NativeInteropTransport.hybrid,
             ),
       cppOptions = (options.cppHeaderOut == null || options.cppSourceOut == null)
           ? null
@@ -132,6 +138,9 @@ class InternalPigeonOptions {
               ffiErrorClassName: options.swiftOptions?.errorClassName ?? 'PigeonError',
               jniErrorClassName: options.kotlinOptions?.errorClassName ?? 'FlutterError',
               fileSpecificClassNameComponent: _dartNativeInteropClassNameComponent(options),
+              nativeInteropTransport:
+                  // ignore: invalid_use_of_visible_for_testing_member
+                  options.nativeInteropTransport ?? NativeInteropTransport.hybrid,
             ),
       copyrightHeader = options.copyrightHeader != null
           ? _lineReader(path.posix.join(options.basePath ?? '', options.copyrightHeader))
@@ -429,6 +438,15 @@ void _errorOnSwiftFfiUnsupportedFeatures(
             Error(
               message:
                   'Parameter "wrappedError" in method "${method.name}" in API "${api.name}" conflicts with the error parameter that Swift FFI adds to host API methods. Rename the parameter.',
+            ),
+          );
+        }
+        if (method.isAsynchronous &&
+            method.parameters.any((Parameter parameter) => parameter.name == 'completionHandler')) {
+          errors.add(
+            Error(
+              message:
+                  'Parameter "completionHandler" in asynchronous method "${method.name}" in API "${api.name}" conflicts with the completion handler parameter that Swift FFI adds to asynchronous host API methods. Rename the parameter.',
             ),
           );
         }
@@ -1834,6 +1852,10 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       return expression.value;
     } else if (expression is dart_ast.SimpleIdentifier) {
       return expression.name;
+    } else if (expression is dart_ast.PrefixedIdentifier) {
+      // Enum values, such as `NativeInteropTransport.hybrid`, are stored by
+      // name.
+      return expression.identifier.name;
     } else if (expression is dart_ast.ListLiteral) {
       final list = <dynamic>[];
       for (final dart_ast.CollectionElement element in expression.elements) {

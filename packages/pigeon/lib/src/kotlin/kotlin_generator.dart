@@ -153,6 +153,7 @@ class InternalKotlinOptions extends InternalOptions {
     this.fileSpecificClassNameComponent,
     this.useGeneratedAnnotation = false,
     this.jniClassPaths,
+    this.nativeInteropTransport = NativeInteropTransport.hybrid,
   });
 
   /// Creates InternalKotlinOptions from KotlinOptions.
@@ -161,6 +162,7 @@ class InternalKotlinOptions extends InternalOptions {
     required this.kotlinOut,
     Iterable<String>? copyrightHeader,
     String? fileSpecificClassNameComponent,
+    this.nativeInteropTransport = NativeInteropTransport.hybrid,
   }) : package = options.package,
        copyrightHeader = options.copyrightHeader ?? copyrightHeader,
        errorClassName = options.errorClassName,
@@ -214,6 +216,12 @@ class InternalKotlinOptions extends InternalOptions {
 
   /// Paths to directories or JAR files containing compiled Kotlin/Java classes.
   final List<String>? jniClassPaths;
+
+  /// How native interop moves values between Dart and Kotlin.
+  final NativeInteropTransport nativeInteropTransport;
+
+  /// Whether JNI calls use the hybrid transport.
+  bool get useJniHybrid => useJni && nativeInteropTransport == NativeInteropTransport.hybrid;
 }
 
 /// Options that control how Kotlin code will be generated for a specific
@@ -290,6 +298,10 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
       indent.writeln('import io.flutter.plugin.common.EventChannel');
       indent.writeln('import io.flutter.plugin.common.MessageCodec');
       indent.writeln('import io.flutter.plugin.common.StandardMethodCodec');
+      indent.writeln('import io.flutter.plugin.common.StandardMessageCodec');
+      indent.writeln('import java.io.ByteArrayOutputStream');
+      indent.writeln('import java.nio.ByteBuffer');
+    } else if (generatorOptions.useJniHybrid) {
       indent.writeln('import io.flutter.plugin.common.StandardMessageCodec');
       indent.writeln('import java.io.ByteArrayOutputStream');
       indent.writeln('import java.nio.ByteBuffer');
@@ -380,9 +392,13 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
       _writeKeepAnnotationForJni(generatorOptions, indent);
       indent.write('companion object ');
       indent.addScoped('{', '}', () {
+        // Raw values are declaration indices, so this indexes a cached copy of
+        // `values()` instead of cloning and scanning the array on every call.
+        indent.writeln('private val pigeonValues = values()');
+        indent.newln();
         indent.write('fun ofRaw(raw: Int): ${anEnum.name}? ');
         indent.addScoped('{', '}', () {
-          indent.writeln('return values().firstOrNull { it.raw == raw }');
+          indent.writeln('return pigeonValues.getOrNull(raw)');
         });
       });
     });
@@ -626,12 +642,9 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
     required String dartPackageName,
   }) {
     if (generatorOptions.useJni &&
+        !generatorOptions.useJniHybrid &&
         !root.containsEventChannel &&
-        !root.containsFlutterApi &&
         !root.containsProxyApi) {
-      return;
-    }
-    if (generatorOptions.useJni && !root.containsEventChannel && !root.containsProxyApi) {
       return;
     }
     final List<EnumeratedType> enumeratedTypes = getEnumeratedTypes(
@@ -730,12 +743,46 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
       });
     });
     indent.newln();
+    if (generatorOptions.useJniHybrid) {
+      _writeInteropCodec(generatorOptions, indent);
+    }
     if (root.containsEventChannel) {
       indent.writeln(
         'val ${generatorOptions.fileSpecificClassNameComponent}$_pigeonMethodCodec = StandardMethodCodec(${generatorOptions.fileSpecificClassNameComponent}$_codecName())',
       );
       indent.newln();
     }
+  }
+
+  /// Writes the object that encodes and decodes the buffers of the hybrid
+  /// native interop transport.
+  void _writeInteropCodec(InternalKotlinOptions generatorOptions, Indent indent) {
+    indent.format('''
+/**
+ * Encodes and decodes the buffers that native interop calls pass to and from
+ * Dart, in the same format as the message codec.
+ */
+private object ${_interopCodecName(generatorOptions)} : ${generatorOptions.fileSpecificClassNameComponent}$_codecName() {
+  fun encode(value: Any?): ByteArray {
+    val stream = ByteArrayOutputStream()
+    writeValue(stream, value)
+    return stream.toByteArray()
+  }
+
+  fun encodeOrNull(value: Any?): ByteArray? {
+    return if (value == null) null else encode(value)
+  }
+
+  fun decode(bytes: ByteArray): Any? {
+    return decodeMessage(ByteBuffer.wrap(bytes))
+  }
+
+  fun decodeArguments(bytes: ByteArray): List<Any?> {
+    return decode(bytes) as List<Any?>
+  }
+}
+''');
+    indent.newln();
   }
 
   void _writeCodecOverflowUtilities(
@@ -810,6 +857,9 @@ if (wrapped == null) {
     AstFlutterApi api, {
     required String dartPackageName,
   }) {
+    final bool hybrid = generatorOptions.useJniHybrid;
+    final bridgeName = '${api.name}Bridge';
+    final adapterName = '${api.name}BridgeAdapter';
     indent.format('''
 /// Map that stores instances
 val registered${api.name}: MutableMap<String, ${api.name}> = mutableMapOf()
@@ -819,9 +869,9 @@ val registered${api.name}: MutableMap<String, ${api.name}> = mutableMapOf()
 class ${api.name}Registrar() {
 
   /// Registers an instance with the given name.
-  fun registerInstance(api: ${api.name}?, name: String = defaultInstanceName) {
+  fun registerInstance(api: ${hybrid ? bridgeName : api.name}?, name: String = defaultInstanceName) {
     if (api != null) {
-      registered${api.name}[name] = api
+      registered${api.name}[name] = ${hybrid ? '$adapterName(api)' : 'api'}
     } else {
       registered${api.name}.remove(name)
     }
@@ -833,7 +883,9 @@ class ${api.name}Registrar() {
   }
 }
 ''');
-    indent.writeln('@Keep');
+    if (!hybrid) {
+      indent.writeln('@Keep');
+    }
     indent.writeScoped('interface ${api.name} {', '}', () {
       for (final Method method in api.methods) {
         _writeMethodDeclaration(
@@ -847,6 +899,84 @@ class ${api.name}Registrar() {
         );
       }
     });
+    if (!hybrid) {
+      return;
+    }
+
+    indent.newln();
+    addDocumentationComments(indent, <String>[
+      ' The interface that Dart implements for [${api.name}].',
+      '',
+      ' Values that the native interop transport passes directly are their own',
+      ' arguments and return values. All other arguments are encoded into one',
+      ' buffer, and other return values are returned in one.',
+    ], _docCommentSpec);
+    indent.writeln('@Keep');
+    indent.writeScoped('interface $bridgeName {', '}', () {
+      for (final Method method in api.methods) {
+        final suspend = method.isAsynchronous ? 'suspend ' : '';
+        indent.writeln(
+          '${suspend}fun ${method.name}(${_hybridEntryPointParameters(method.parameters)})${_hybridEntryPointReturnType(method.returnType)}',
+        );
+      }
+    });
+
+    indent.newln();
+    final String codec = _interopCodecName(generatorOptions);
+    indent.writeScoped(
+      'private class $adapterName(private val bridge: $bridgeName) : ${api.name} {',
+      '}',
+      () {
+        for (final Method method in api.methods) {
+          _writeMethodDeclaration(
+            indent,
+            name: method.name,
+            returnType: method.returnType,
+            parameters: method.parameters,
+            isAsynchronous: method.isAsynchronous,
+            isOverride: true,
+            useJni: true,
+          );
+          indent.addScoped(' {', '}', () {
+            final arguments = <String>[
+              for (final (int index, Parameter parameter) in method.parameters.indexed)
+                if (isNativeInteropDirectType(parameter.type))
+                  _kotlinToHybridDirect(_getArgumentName(index, parameter), parameter.type),
+            ];
+            final List<Parameter> encodedParameters = nativeInteropEncodedParameters(
+              method.parameters,
+            );
+            if (encodedParameters.isNotEmpty) {
+              final String encodedNames = encodedParameters
+                  .map(
+                    (Parameter parameter) =>
+                        _getArgumentName(method.parameters.indexOf(parameter), parameter),
+                  )
+                  .join(', ');
+              arguments.add('$codec.encode(listOf<Any?>($encodedNames))');
+            }
+            final call = 'this.bridge.${method.name}(${arguments.join(', ')})';
+            if (method.returnType.isVoid) {
+              indent.writeln(call);
+              return;
+            }
+            indent.writeln('val ${varNamePrefix}result = $call');
+            if (nativeInteropReturnsBuffer(method.returnType)) {
+              indent.writeln(
+                'val ${varNamePrefix}decoded = if (${varNamePrefix}result == null) null else $codec.decode(${varNamePrefix}result)',
+              );
+              indent.writeln(
+                'return ${_cast(indent, '${varNamePrefix}decoded', type: method.returnType)}',
+              );
+            } else {
+              indent.writeln(
+                'return ${_hybridDirectToKotlin('${varNamePrefix}result', method.returnType)}',
+              );
+            }
+          });
+        }
+      },
+    );
   }
 
   /// Writes the code for a flutter [Api], [api].
@@ -953,8 +1083,9 @@ class ${api.name}Registrar() {
       }
     });
 
+    final bool hybrid = generatorOptions.useJniHybrid;
     indent.writeln('@Keep');
-    indent.writeScoped('class ${api.name}Registrar : ${api.name} {', '}', () {
+    indent.writeScoped('class ${api.name}Registrar${hybrid ? '' : ' : ${api.name}'} {', '}', () {
       indent.writeln('private var api: ${api.name}? = null');
 
       indent.writeScoped('fun register(', '):', () {
@@ -978,6 +1109,10 @@ class ${api.name}Registrar() {
       });
 
       for (final Method method in api.methods) {
+        if (hybrid) {
+          _writeJniHybridHostEntryPoint(generatorOptions, indent, api, method);
+          continue;
+        }
         _writeMethodDeclaration(
           indent,
           name: method.name,
@@ -990,7 +1125,7 @@ class ${api.name}Registrar() {
         );
         final String argNames = method.parameters.map((Parameter arg) => arg.name).join(', ');
         indent.addScoped(' {', '}', () {
-          indent.writeScoped('api?.let {', '}', () {
+          indent.writeScoped('this.api?.let {', '}', () {
             indent.writeScoped('try {', '}', () {
               indent.writeln('return it.${method.name}($argNames)');
             }, addTrailingNewline: false);
@@ -1003,6 +1138,74 @@ class ${api.name}Registrar() {
         });
       }
     });
+  }
+
+  /// Writes the hybrid transport entry point for the host API [method].
+  ///
+  /// Direct values are passed as their own arguments and return values. All
+  /// other arguments are decoded from one buffer, and other return values are
+  /// encoded into one.
+  void _writeJniHybridHostEntryPoint(
+    InternalKotlinOptions generatorOptions,
+    Indent indent,
+    AstHostApi api,
+    Method method,
+  ) {
+    final String codec = _interopCodecName(generatorOptions);
+    final String errorClassName = _getErrorClassName(generatorOptions);
+    final List<Parameter> encodedParameters = nativeInteropEncodedParameters(method.parameters);
+    final suspend = method.isAsynchronous ? 'suspend ' : '';
+    indent.writeScoped(
+      '${suspend}fun ${method.name}(${_hybridEntryPointParameters(method.parameters)})${_hybridEntryPointReturnType(method.returnType)} {',
+      '}',
+      () {
+        indent.writeln(
+          'val ${varNamePrefix}api = this.api ?: error("${api.name} has not been registered")',
+        );
+        indent.writeScoped('try {', '}', () {
+          if (encodedParameters.isNotEmpty) {
+            indent.writeln(
+              'val ${varNamePrefix}decodedArgs = $codec.decodeArguments($nativeInteropArgsParameterName)',
+            );
+          }
+          var encodedIndex = 0;
+          final arguments = <String>[];
+          for (final (int index, Parameter parameter) in method.parameters.indexed) {
+            if (isNativeInteropDirectType(parameter.type)) {
+              arguments.add(
+                _hybridDirectToKotlin(_getArgumentName(index, parameter), parameter.type),
+              );
+            } else {
+              final String argName = _getSafeArgumentName(index, parameter);
+              indent.writeln(
+                'val $argName = ${_cast(indent, '${varNamePrefix}decodedArgs[$encodedIndex]', type: parameter.type)}',
+              );
+              encodedIndex++;
+              arguments.add(argName);
+            }
+          }
+          final call = '${varNamePrefix}api.${method.name}(${arguments.join(', ')})';
+          if (method.returnType.isVoid) {
+            indent.writeln(call);
+          } else if (nativeInteropReturnsBuffer(method.returnType)) {
+            indent.writeln('return $codec.encodeOrNull($call)');
+          } else {
+            indent.writeln('return ${_kotlinToHybridDirect(call, method.returnType)}');
+          }
+        }, addTrailingNewline: false);
+        // Error details are encoded here, so that Dart can decode them with the
+        // same codec as every other value.
+        indent.addScoped(' catch (e: $errorClassName) {', '}', () {
+          indent.writeScoped(
+            'throw $errorClassName(e.code, e.message, $codec.encodeOrNull(e.details)).apply {',
+            '}',
+            () {
+              indent.writeln('stackTrace = e.stackTrace');
+            },
+          );
+        });
+      },
+    );
   }
 
   /// Write the kotlin code that represents a host [Api], [api].
@@ -2799,4 +3002,64 @@ String _cast(Indent indent, String variable, {required TypeDeclaration type}) {
     return variable;
   }
   return '$variable as ${_nullSafeKotlinTypeForDartType(type)}';
+}
+
+/// The name of the object that encodes and decodes the buffers of the hybrid
+/// native interop transport.
+String _interopCodecName(InternalKotlinOptions options) =>
+    '${options.fileSpecificClassNameComponent ?? ''}PigeonInteropCodec';
+
+/// The Kotlin type of a value of [type] that the hybrid native interop
+/// transport passes directly.
+///
+/// Enums are passed as their raw index, with [nativeInteropNullEnumIndex] for
+/// null.
+String _hybridDirectKotlinType(TypeDeclaration type) =>
+    type.isEnum ? 'Long' : _nullSafeKotlinTypeForDartType(type);
+
+/// Converts [value], a direct value of [type] passed by the hybrid native
+/// interop transport, to the type the API uses.
+String _hybridDirectToKotlin(String value, TypeDeclaration type) {
+  if (!type.isEnum) {
+    return value;
+  }
+  final ofRaw = '${type.baseName}.ofRaw($value.toInt())';
+  return type.isNullable
+      ? 'if ($value == ${nativeInteropNullEnumIndex}L) null else $ofRaw'
+      : '$ofRaw!!';
+}
+
+/// Converts [value] of [type] to the direct value that the hybrid native
+/// interop transport passes.
+String _kotlinToHybridDirect(String value, TypeDeclaration type) {
+  if (!type.isEnum) {
+    return value;
+  }
+  return type.isNullable
+      ? '($value?.raw?.toLong() ?: ${nativeInteropNullEnumIndex}L)'
+      : '$value.raw.toLong()';
+}
+
+/// The parameter list of the hybrid native interop entry point for
+/// [parameters].
+String _hybridEntryPointParameters(List<Parameter> parameters) {
+  final signature = <String>[
+    for (final (int index, Parameter parameter) in parameters.indexed)
+      if (isNativeInteropDirectType(parameter.type))
+        '${_getArgumentName(index, parameter)}: ${_hybridDirectKotlinType(parameter.type)}',
+    if (nativeInteropEncodedParameters(parameters).isNotEmpty)
+      '$nativeInteropArgsParameterName: ByteArray',
+  ];
+  return signature.join(', ');
+}
+
+/// The return type suffix of the hybrid native interop entry point for
+/// [returnType], including the leading `: `, or an empty string for `void`.
+String _hybridEntryPointReturnType(TypeDeclaration returnType) {
+  if (returnType.isVoid) {
+    return '';
+  }
+  return nativeInteropReturnsBuffer(returnType)
+      ? ': ByteArray?'
+      : ': ${_hybridDirectKotlinType(returnType)}';
 }
