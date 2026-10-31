@@ -282,6 +282,29 @@ extension InAppPurchasePlugin: InAppPurchase2API {
     }
   }
 
+  /// Wrapper method around StoreKit2's Transaction.currentEntitlements
+  /// https://developer.apple.com/documentation/storekit/transaction/currententitlements
+  func currentEntitlements(
+    completion: @escaping (Result<[SK2TransactionMessage], Error>) -> Void
+  ) {
+    Task {
+      @MainActor in
+      var transactionsMsgs: [SK2TransactionMessage] = []
+      for await verificationResult in Transaction.currentEntitlements {
+        switch verificationResult {
+        case .verified(let transaction):
+          transactionsMsgs.append(
+            transaction.convertToPigeon(
+              receipt: verificationResult.jwsRepresentation, status: .purchased)
+          )
+        case .unverified:
+          break
+        }
+      }
+      completion(.success(transactionsMsgs))
+    }
+  }
+
   func restorePurchases(completion: @escaping (Result<Void, Error>) -> Void) {
     Task { [weak self] in
       guard let self = self else { return }
@@ -322,11 +345,12 @@ extension InAppPurchasePlugin: InAppPurchase2API {
   /// Wrapper method around StoreKit2's finish() method https://developer.apple.com/documentation/storekit/transaction/3749694-finish
   func finish(id: Int64, completion: @escaping (Result<Void, Error>) -> Void) {
     Task {
-      let transaction = try await fetchTransaction(by: UInt64(id))
-      if let transaction = transaction {
+      // Report success when no verified transaction matches, as StoreKit 1
+      // does; a finished consumable is no longer in Transaction.all.
+      if let transaction = await fetchTransaction(by: UInt64(id)) {
         await transaction.finish()
-        completion(.success(Void()))
       }
+      completion(.success(Void()))
     }
   }
 
@@ -405,6 +429,41 @@ extension InAppPurchasePlugin: InAppPurchase2API {
               details: nil
             )))
       }
+    #endif
+  }
+
+  /// Wrapper method around StoreKit2's showManageSubscriptions(in:) method
+  /// https://developer.apple.com/documentation/storekit/appstore/showmanagesubscriptions(in:)
+  /// Presents the App Store sheet that lets the user manage their subscriptions.
+  func showManageSubscriptions(completion: @escaping (Result<Void, Error>) -> Void) {
+    #if os(iOS)
+      Task { @MainActor in
+        guard let windowScene = self.registrar?.viewController?.view.window?.windowScene else {
+          let error = PigeonError(
+            code: "storekit2_missing_key_window_scene",
+            message: "Failed to fetch key window scene",
+            details: "registrar.viewController.view.window.windowScene returned nil."
+          )
+          completion(.failure(error))
+          return
+        }
+        do {
+          try await AppStore.showManageSubscriptions(in: windowScene)
+          completion(.success(()))
+        } catch {
+          completion(.failure(error))
+        }
+      }
+    #elseif os(macOS)
+      // StoreKit does not provide showManageSubscriptions on macOS. Subscriptions are
+      // managed through the App Store app instead.
+      completion(
+        .failure(
+          PigeonError(
+            code: "storekit2_unsupported_platform",
+            message: "Managing subscriptions is not supported on macOS",
+            details: nil
+          )))
     #endif
   }
 
@@ -516,7 +575,7 @@ extension InAppPurchasePlugin: InAppPurchase2API {
   }
 
   /// Helper function to fetch specific transaction
-  func fetchTransaction(by id: UInt64) async throws -> Transaction? {
+  func fetchTransaction(by id: UInt64) async -> Transaction? {
     for await result in Transaction.all {
       switch result {
       case .verified(let transaction):

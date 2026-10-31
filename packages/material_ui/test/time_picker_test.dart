@@ -5,7 +5,6 @@
 // This file is run as part of a reduced test set in CI on Mac and Windows
 // machines.
 @Tags(<String>['reduced-test-set'])
-@TestOn('!chrome')
 library;
 
 import 'dart:async';
@@ -2096,6 +2095,72 @@ void main() {
         expect(result, equals(const TimeOfDay(hour: 9, minute: 12)));
       });
 
+      testWidgets('parses localized digits in input fields', (WidgetTester tester) async {
+        const localizedDigitLocales = <Locale>[
+          Locale('en'),
+          Locale('ar'),
+          Locale('fa'),
+          Locale('bn'),
+          Locale('my'),
+          Locale('th'),
+          Locale('ne'),
+          Locale('fr'),
+          Locale('de'),
+          Locale('pt'),
+        ];
+
+        Future<void> verifyLocale(Locale locale) async {
+          TimeOfDay? result;
+
+          await tester.pumpWidget(
+            MaterialApp(
+              localizationsDelegates: GlobalMaterialLocalizations.delegates,
+              supportedLocales: <Locale>[const Locale('en'), locale],
+              restorationScopeId: 'app',
+              locale: locale,
+              theme: ThemeData(useMaterial3: materialType == MaterialType.material3),
+              home: _TimePickerLauncher(
+                onChanged: (TimeOfDay? time) {
+                  result = time;
+                },
+                emptyInitialInput: false,
+              ),
+            ),
+          );
+
+          // Open the picker.
+          await tester.tap(find.text('X'));
+          await tester.pumpAndSettle();
+
+          // Switch to input mode and read the text fields.
+          await tester.tap(find.byIcon(Icons.keyboard_outlined));
+          await tester.pumpAndSettle();
+
+          final TextField hourField = tester.widget(find.byType(TextField).first);
+          final TextField minuteField = tester.widget(find.byType(TextField).last);
+
+          final String hourText = hourField.controller?.text ?? '';
+          final String minuteText = minuteField.controller?.text ?? '';
+
+          final BuildContext context = tester.element(find.byType(TextField).first);
+
+          const timeOfDay = TimeOfDay(hour: 7, minute: 0);
+          final MaterialLocalizations localizations = MaterialLocalizations.of(context);
+          final String localizedHour = localizations.formatHour(timeOfDay);
+          expect(hourText, equals(localizedHour));
+          final String localizedMinute = localizations.formatMinute(timeOfDay);
+          expect(minuteText, equals(localizedMinute));
+
+          await finishPicker(tester);
+
+          expect(result, equals(timeOfDay));
+        }
+
+        for (final locale in localizedDigitLocales) {
+          await verifyLocale(locale);
+        }
+      });
+
       testWidgets('Toggle to dial mode keeps selected time', (WidgetTester tester) async {
         late TimeOfDay result;
         await startPicker(
@@ -2288,6 +2353,10 @@ void main() {
       );
     });
 
+    // Skipped on the web because routes pushed with Navigator.restorablePush
+    // (used by _TimePickerLauncher) are not restorable there: the framework
+    // can't serialize the route builder without PluginUtilities, so the
+    // picker dialog is gone after restartAndRestore.
     group('Time picker - Restoration (${materialType.name})', () {
       testWidgets('Time Picker state restoration test - dial mode', (WidgetTester tester) async {
         TimeOfDay? result;
@@ -2395,7 +2464,7 @@ void main() {
         await finishPicker(tester);
         expect(result, equals(const TimeOfDay(hour: 6, minute: 45)));
       });
-    });
+    }, skip: kIsWeb); // [intended] PluginUtilities is not supported on the web.
 
     group('Time picker - emptyInitialInput (${materialType.name})', () {
       testWidgets('Fields are empty and show correct hints when emptyInitialInput is true', (

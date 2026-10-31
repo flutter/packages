@@ -1,5 +1,35 @@
-## NEXT
+## 0.4.16
 
+* Adds `SK2Transaction.currentEntitlements()` to query active subscriptions and non-consumable entitlements.
+
+## 0.4.15
+
+* Exposes `sk2Transaction` on `SK2PurchaseDetails`.
+
+## 0.4.14+1
+
+* Suppresses deprecation warnings for StoreKit 1 APIs, which are used as
+  the fallback on iOS < 15 and macOS < 12.
+* Replaces the deprecated `Locale.currencyCode` with `Locale.currency`.
+
+## 0.4.14
+
+* Adds `showManageSubscriptions` to `InAppPurchaseStoreKitPlatformAddition`, which presents the
+  App Store sheet for managing subscriptions. Requires StoreKit 2 and iOS 15+.
+
+## 0.4.13+3
+
+* Removes unused handling of the deprecated `SKDownload` hosted content
+  callbacks.
+
+## 0.4.13+2
+
+* Removes availability checks for iOS and macOS versions below the package minimum (iOS 13 and macOS 10.15).
+
+## 0.4.13+1
+
+* Fixes `completePurchase` never completing with StoreKit 2 when the transaction
+  is not found, such as an already finished consumable.
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 * Fixes lint issues.
 

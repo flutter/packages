@@ -469,7 +469,7 @@ protocol PlatformEvent {
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct IntEvent: PlatformEvent {
+struct IntEvent: PlatformEvent, Hashable, CustomStringConvertible {
   var value: Int64
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
@@ -503,7 +503,7 @@ struct IntEvent: PlatformEvent {
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct StringEvent: PlatformEvent {
+struct StringEvent: PlatformEvent, Hashable, CustomStringConvertible {
   var value: String
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
@@ -537,7 +537,7 @@ struct StringEvent: PlatformEvent {
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct BoolEvent: PlatformEvent {
+struct BoolEvent: PlatformEvent, Hashable, CustomStringConvertible {
   var value: Bool
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
@@ -571,7 +571,7 @@ struct BoolEvent: PlatformEvent {
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct DoubleEvent: PlatformEvent {
+struct DoubleEvent: PlatformEvent, Hashable, CustomStringConvertible {
   var value: Double
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
@@ -605,7 +605,7 @@ struct DoubleEvent: PlatformEvent {
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct ObjectsEvent: PlatformEvent {
+struct ObjectsEvent: PlatformEvent, Hashable, CustomStringConvertible {
   var value: Any
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
@@ -639,7 +639,7 @@ struct ObjectsEvent: PlatformEvent {
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct EnumEvent: PlatformEvent {
+struct EnumEvent: PlatformEvent, Hashable, CustomStringConvertible {
   var value: EventEnum
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
@@ -673,7 +673,7 @@ struct EnumEvent: PlatformEvent {
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct ClassEvent: PlatformEvent {
+struct ClassEvent: PlatformEvent, Hashable, CustomStringConvertible {
   var value: EventAllNullableTypes
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
@@ -707,7 +707,7 @@ struct ClassEvent: PlatformEvent {
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct EmptyEvent: PlatformEvent {
+struct EmptyEvent: PlatformEvent, Hashable, CustomStringConvertible {
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> EmptyEvent? {
@@ -880,54 +880,121 @@ class PigeonEventSink<ReturnType> {
 
 }
 
-class StreamIntsStreamHandler: PigeonEventChannelWrapper<Int64> {
-  static func register(
-    with messenger: FlutterBinaryMessenger,
-    instanceName: String = "",
-    streamHandler: StreamIntsStreamHandler
-  ) {
+/// A typed channel for communicating with the Flutter application using asynchronous event streams.
+class StreamIntsEventChannel {
+  private let channel: FlutterEventChannel
+
+  init(messenger: FlutterBinaryMessenger, instanceName: String = "") {
     var channelName = "dev.flutter.pigeon.pigeon_integration_tests.EventChannelMethods.streamInts"
     if !instanceName.isEmpty {
       channelName += ".\(instanceName)"
     }
-    let internalStreamHandler = PigeonStreamHandler<Int64>(wrapper: streamHandler)
-    let channel = FlutterEventChannel(
+    channel = FlutterEventChannel(
       name: channelName, binaryMessenger: messenger, codec: eventChannelTestsPigeonMethodCodec)
-    channel.setStreamHandler(internalStreamHandler)
+  }
+
+  /// Sets the stream handler for this channel, replacing any previous handler.
+  ///
+  /// Pass `nil` to remove the event channel registration.
+  func setStreamHandler(_ streamHandler: StreamIntsStreamHandler?) {
+    let internalHandler = streamHandler.map({ PigeonStreamHandler<Int64>(wrapper: $0) })
+    channel.setStreamHandler(internalHandler)
   }
 }
 
-class StreamEventsStreamHandler: PigeonEventChannelWrapper<PlatformEvent> {
-  static func register(
+class StreamIntsStreamHandler: PigeonEventChannelWrapper<Int64> {
+  /// Creates and returns a new event channel that calls the provided stream handler.
+  ///
+  /// The returned channel can be stored to allow changing or removing the stream handler.
+  /// If the handler will not be changed for the lifetime of the engine associated with the messenger,
+  /// the return value can be ignored.
+  @discardableResult static func register(
     with messenger: FlutterBinaryMessenger,
     instanceName: String = "",
-    streamHandler: StreamEventsStreamHandler
-  ) {
+    streamHandler: StreamIntsStreamHandler
+  ) -> StreamIntsEventChannel {
+    let channel = StreamIntsEventChannel(messenger: messenger, instanceName: instanceName)
+    channel.setStreamHandler(streamHandler)
+    return channel
+  }
+}
+
+/// A typed channel for communicating with the Flutter application using asynchronous event streams.
+class StreamEventsEventChannel {
+  private let channel: FlutterEventChannel
+
+  init(messenger: FlutterBinaryMessenger, instanceName: String = "") {
     var channelName = "dev.flutter.pigeon.pigeon_integration_tests.EventChannelMethods.streamEvents"
     if !instanceName.isEmpty {
       channelName += ".\(instanceName)"
     }
-    let internalStreamHandler = PigeonStreamHandler<PlatformEvent>(wrapper: streamHandler)
-    let channel = FlutterEventChannel(
+    channel = FlutterEventChannel(
       name: channelName, binaryMessenger: messenger, codec: eventChannelTestsPigeonMethodCodec)
-    channel.setStreamHandler(internalStreamHandler)
+  }
+
+  /// Sets the stream handler for this channel, replacing any previous handler.
+  ///
+  /// Pass `nil` to remove the event channel registration.
+  func setStreamHandler(_ streamHandler: StreamEventsStreamHandler?) {
+    let internalHandler = streamHandler.map({ PigeonStreamHandler<PlatformEvent>(wrapper: $0) })
+    channel.setStreamHandler(internalHandler)
   }
 }
 
-class StreamConsistentNumbersStreamHandler: PigeonEventChannelWrapper<Int64> {
-  static func register(
+class StreamEventsStreamHandler: PigeonEventChannelWrapper<PlatformEvent> {
+  /// Creates and returns a new event channel that calls the provided stream handler.
+  ///
+  /// The returned channel can be stored to allow changing or removing the stream handler.
+  /// If the handler will not be changed for the lifetime of the engine associated with the messenger,
+  /// the return value can be ignored.
+  @discardableResult static func register(
     with messenger: FlutterBinaryMessenger,
     instanceName: String = "",
-    streamHandler: StreamConsistentNumbersStreamHandler
-  ) {
+    streamHandler: StreamEventsStreamHandler
+  ) -> StreamEventsEventChannel {
+    let channel = StreamEventsEventChannel(messenger: messenger, instanceName: instanceName)
+    channel.setStreamHandler(streamHandler)
+    return channel
+  }
+}
+
+/// A typed channel for communicating with the Flutter application using asynchronous event streams.
+class StreamConsistentNumbersEventChannel {
+  private let channel: FlutterEventChannel
+
+  init(messenger: FlutterBinaryMessenger, instanceName: String = "") {
     var channelName =
       "dev.flutter.pigeon.pigeon_integration_tests.EventChannelMethods.streamConsistentNumbers"
     if !instanceName.isEmpty {
       channelName += ".\(instanceName)"
     }
-    let internalStreamHandler = PigeonStreamHandler<Int64>(wrapper: streamHandler)
-    let channel = FlutterEventChannel(
+    channel = FlutterEventChannel(
       name: channelName, binaryMessenger: messenger, codec: eventChannelTestsPigeonMethodCodec)
-    channel.setStreamHandler(internalStreamHandler)
+  }
+
+  /// Sets the stream handler for this channel, replacing any previous handler.
+  ///
+  /// Pass `nil` to remove the event channel registration.
+  func setStreamHandler(_ streamHandler: StreamConsistentNumbersStreamHandler?) {
+    let internalHandler = streamHandler.map({ PigeonStreamHandler<Int64>(wrapper: $0) })
+    channel.setStreamHandler(internalHandler)
+  }
+}
+
+class StreamConsistentNumbersStreamHandler: PigeonEventChannelWrapper<Int64> {
+  /// Creates and returns a new event channel that calls the provided stream handler.
+  ///
+  /// The returned channel can be stored to allow changing or removing the stream handler.
+  /// If the handler will not be changed for the lifetime of the engine associated with the messenger,
+  /// the return value can be ignored.
+  @discardableResult static func register(
+    with messenger: FlutterBinaryMessenger,
+    instanceName: String = "",
+    streamHandler: StreamConsistentNumbersStreamHandler
+  ) -> StreamConsistentNumbersEventChannel {
+    let channel = StreamConsistentNumbersEventChannel(
+      messenger: messenger, instanceName: instanceName)
+    channel.setStreamHandler(streamHandler)
+    return channel
   }
 }

@@ -38,6 +38,7 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi, HostCallbackCoreApi {
   private var flutterSmallApiTwo: FlutterSmallApi? = null
   private var proxyApiRegistrar: ProxyApiRegistrar? = null
   private var niMessageApi: NativeInteropHostIntegrationCoreApiRegistrar? = null
+  private var eventChannelOne: StreamConsistentNumbersEventChannel? = null
 
   override fun onAttachedToEngine(binding: FlutterPluginBinding) {
     HostIntegrationCoreApi.setUp(binding.binaryMessenger, this)
@@ -48,6 +49,7 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi, HostCallbackCoreApi {
     testSuffixApiTwo.setUp(binding, "suffixTwo")
     niMessageApi =
         NativeInteropHostIntegrationCoreApiRegistrar().register(NativeInteropIntegrationTests())
+    NativeInteropReservedNamesHostApiRegistrar().register(NativeInteropReservedNamesHostApiImpl())
     flutterApi = FlutterIntegrationCoreApi(binding.binaryMessenger)
     flutterCallbackApi = FlutterCallbackCoreApi(binding.binaryMessenger)
     flutterSmallApiOne = FlutterSmallApi(binding.binaryMessenger, "suffixOne")
@@ -58,8 +60,13 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi, HostCallbackCoreApi {
 
     StreamEventsStreamHandler.register(binding.binaryMessenger, SendClass)
     StreamIntsStreamHandler.register(binding.binaryMessenger, SendInts)
-    StreamConsistentNumbersStreamHandler.register(
-        binding.binaryMessenger, SendConsistentNumbers(1), "1")
+    // Store one handler to exercise the handler removal codepath, and discard
+    // the other to test that the return value can be safely ignored.
+    val streamHandlerOne = SendConsistentNumbers(1)
+    eventChannelOne =
+        StreamConsistentNumbersStreamHandler.register(
+            binding.binaryMessenger, streamHandlerOne, "1")
+    streamHandlerOne.onCompleted = { eventChannelOne?.setStreamHandler(null) }
     StreamConsistentNumbersStreamHandler.register(
         binding.binaryMessenger, SendConsistentNumbers(2), "2")
   }
@@ -1037,6 +1044,28 @@ class NativeInteropIntegrationTests : NativeInteropHostIntegrationCoreApi {
     return wrapper
   }
 
+  override fun echoSealedClass(sealedClass: NativeInteropSealedClass): NativeInteropSealedClass {
+    return sealedClass
+  }
+
+  override fun echoNullableSealedClass(
+      sealedClass: NativeInteropSealedClass?
+  ): NativeInteropSealedClass? {
+    return sealedClass
+  }
+
+  override fun echoSealedClassList(
+      sealedClassList: List<NativeInteropSealedClass>
+  ): List<NativeInteropSealedClass> {
+    return sealedClassList
+  }
+
+  override fun echoSealedClassWrapper(
+      wrapper: NativeInteropSealedClassWrapper
+  ): NativeInteropSealedClassWrapper {
+    return wrapper
+  }
+
   override fun echoEnum(anEnum: NativeInteropAnEnum): NativeInteropAnEnum {
     return anEnum
   }
@@ -1336,6 +1365,12 @@ class NativeInteropIntegrationTests : NativeInteropHostIntegrationCoreApi {
     return everything
   }
 
+  override suspend fun echoAsyncSealedClass(
+      sealedClass: NativeInteropSealedClass
+  ): NativeInteropSealedClass {
+    return sealedClass
+  }
+
   override suspend fun echoAsyncNullableNativeInteropAllNullableTypes(
       everything: NativeInteropAllNullableTypes?
   ): NativeInteropAllNullableTypes? {
@@ -1462,6 +1497,14 @@ class NativeInteropIntegrationTests : NativeInteropHostIntegrationCoreApi {
     return NativeInteropFlutterIntegrationCoreApiRegistrar()
         .getInstance()!!
         .echoNativeInteropAllNullableTypes(everything)
+  }
+
+  override fun callFlutterEchoSealedClass(
+      sealedClass: NativeInteropSealedClass
+  ): NativeInteropSealedClass {
+    return NativeInteropFlutterIntegrationCoreApiRegistrar()
+        .getInstance()!!
+        .echoNativeInteropSealedClass(sealedClass)
   }
 
   override fun callFlutterSendMultipleNullableTypes(
@@ -2158,6 +2201,78 @@ class NativeInteropIntegrationTests : NativeInteropHostIntegrationCoreApi {
   }
 }
 
+class NativeInteropReservedNamesHostApiImpl : NativeInteropReservedNamesHostApi {
+  private var storedReference = ""
+
+  override fun release(value: String): String {
+    return value
+  }
+
+  override fun use(value: Long): Long {
+    return value
+  }
+
+  override fun type(): String {
+    return "type"
+  }
+
+  override fun isNull(): Boolean {
+    return true
+  }
+
+  override fun isNullable(): Boolean? {
+    return true
+  }
+
+  override fun isOpen(): Boolean {
+    return true
+  }
+
+  override fun getReference(): String {
+    return storedReference
+  }
+
+  override fun setReference(value: String) {
+    storedReference = value
+  }
+
+  override fun getDefault(): String {
+    return "default"
+  }
+
+  override suspend fun getValueAsync(): String {
+    return "value"
+  }
+
+  override fun echoReservedNames(names: NativeInteropReservedNames): NativeInteropReservedNames {
+    return names
+  }
+
+  private fun flutterApi(): NativeInteropReservedNamesFlutterApi {
+    return NativeInteropReservedNamesFlutterApiRegistrar().getInstance()!!
+  }
+
+  override fun callFlutterRelease(value: String): String {
+    return flutterApi().release(value)
+  }
+
+  override fun callFlutterType(): String {
+    return flutterApi().type()
+  }
+
+  override fun callFlutterImplementIn(value: String): String {
+    return flutterApi().implementIn(value)
+  }
+
+  override fun callFlutterIsNull(): Boolean {
+    return flutterApi().isNull()
+  }
+
+  override fun callFlutterGetReference(): String {
+    return flutterApi().getReference()
+  }
+}
+
 object SendInts : StreamIntsStreamHandler() {
   val handler = Handler(Looper.getMainLooper())
 
@@ -2217,6 +2332,7 @@ object SendClass : StreamEventsStreamHandler() {
 class SendConsistentNumbers(private val numberToSend: Long) :
     StreamConsistentNumbersStreamHandler() {
   private val handler = Handler(Looper.getMainLooper())
+  var onCompleted: (() -> Unit)? = null
 
   override fun onListen(p0: Any?, sink: PigeonEventSink<Long>) {
     var count = 0
@@ -2225,6 +2341,7 @@ class SendConsistentNumbers(private val numberToSend: Long) :
           override fun run() {
             if (count >= 10) {
               sink.endOfStream()
+              onCompleted?.invoke()
             } else {
               handler.post {
                 sink.success(numberToSend)
