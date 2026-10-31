@@ -24,4 +24,9 @@ void main() {
     switchWidget = tester.widget(find.byType(Switch).first);
     expect(switchWidget.value, isTrue);
   });
+
+  testWidgets('switch use case content is not a semantic list', (WidgetTester tester) async {
+    await pumpsUseCase(tester, SwitchUseCase());
+    expect(hasSemanticsList(tester, find.byType(ListView)), isFalse);
+  });
 }

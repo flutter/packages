@@ -61,4 +61,17 @@ void main() {
     await tester.pumpAndSettle();
     expect(findHeadingLevelOnes, findsOne);
   });
+
+  testWidgets('text form field use case content is not a semantic list', (
+    WidgetTester tester,
+  ) async {
+    await pumpsUseCase(tester, TextFormFieldUseCase());
+    expect(hasSemanticsList(tester, find.byType(ListView)), isFalse);
+
+    // Submit the form to also verify the status message when rendered.
+    await tester.tap(find.byKey(const Key('submit button')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('status message')), findsOneWidget);
+    expect(hasSemanticsList(tester, find.byType(ListView)), isFalse);
+  });
 }

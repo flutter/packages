@@ -87,6 +87,8 @@ class _MainWidgetState extends State<_MainWidget> {
     return Scaffold(
       appBar: AppBar(title: Semantics(headingLevel: 1, child: Text('$pageTitle Demo'))),
       body: ListView(
+        semanticChildCount: 0,
+        addSemanticIndexes: false,
         children: <Widget>[
           Semantics(
             label: 'Enabled search bar',
