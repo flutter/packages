@@ -1747,15 +1747,21 @@ class _FloatingActionButtonTransitionState extends State<_FloatingActionButtonTr
 /// #### Positioning a [SnackBar]
 ///
 /// A nested Scaffold is sometimes used to show a [SnackBar] above the
-/// [bottomNavigationBar] or elsewhere on screen. Instead, pass a [SnackBar]
-/// configured with [SnackBarBehavior.floating] and a [SnackBar.margin] to
-/// [ScaffoldMessengerState.showSnackBar]; the enclosing Scaffold already
-/// accounts for the [bottomNavigationBar] height.
+/// [bottomNavigationBar] or [persistentFooterButtons]. This isn't necessary:
+/// a single Scaffold already positions SnackBars (both
+/// [SnackBarBehavior.fixed] and [SnackBarBehavior.floating]) above those
+/// slots automatically. Simply call [ScaffoldMessengerState.showSnackBar]
+/// on the enclosing Scaffold.
+///
+/// To show a floating SnackBar above other custom bottom content (for
+/// example, a bottom sheet or a bar placed in [body]), use
+/// [SnackBarBehavior.floating] with [SnackBar.margin] to lift the SnackBar
+/// clear of that content.
 ///
 /// <callout-box>
 ///
-/// Build a floating [SnackBar] with a custom margin so it sits above the
-/// [bottomNavigationBar] without a nested Scaffold.
+/// Show a floating [SnackBar] with a custom bottom margin so it sits above
+/// custom content in [body], without a nested Scaffold.
 ///
 /// {@example /example/lib/scaffold/scaffold.snippet.3.dart#body indent=strip}
 ///

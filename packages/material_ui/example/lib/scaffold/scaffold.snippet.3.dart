@@ -16,15 +16,15 @@ class ScaffoldExample extends StatelessWidget {
         child: TextButton(
           child: const Text('Show'),
           onPressed: () {
+            // #region body
             ScaffoldMessenger.of(context).showSnackBar(
-              // #region body
               const SnackBar(
                 content: Text('Saved'),
                 behavior: SnackBarBehavior.floating,
-                margin: EdgeInsets.fromLTRB(16, 0, 16, 16),
+                margin: EdgeInsets.fromLTRB(16, 0, 16, 72),
               ),
-              // #endregion body
             );
+            // #endregion body
           },
         ),
       ),

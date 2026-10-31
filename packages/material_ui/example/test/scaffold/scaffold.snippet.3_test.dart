@@ -11,9 +11,7 @@ void main() {
   testWidgets('tapping Show presents a floating SnackBar with margin', (
     WidgetTester tester,
   ) async {
-    await tester.pumpWidget(
-      const MaterialApp(home: example.ScaffoldExample()),
-    );
+    await tester.pumpWidget(const MaterialApp(home: example.ScaffoldExample()));
 
     await tester.tap(find.widgetWithText(TextButton, 'Show'));
     await tester.pump();
@@ -22,6 +20,6 @@ void main() {
 
     final SnackBar snackBar = tester.widget<SnackBar>(find.byType(SnackBar));
     expect(snackBar.behavior, SnackBarBehavior.floating);
-    expect(snackBar.margin, const EdgeInsets.fromLTRB(16, 0, 16, 16));
+    expect(snackBar.margin, const EdgeInsets.fromLTRB(16, 0, 16, 72));
   });
 }
