@@ -1,0 +1,3 @@
+changelog: |
+  - Clarifies how to programmatically clear or reset the selection in `DropdownMenu`.
+version: patch
