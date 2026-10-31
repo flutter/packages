@@ -767,6 +767,7 @@ class _DropdownMenuState<T> extends State<DropdownMenu<T>> {
   TextEditingController get _effectiveTextEditingController =>
       widget.controller ?? (_localTextEditingController ??= TextEditingController());
   final FocusNode _internalFocusNode = FocusNode();
+  bool? _focusNodeCanRequestFocus;
   WidgetStatesController? _highlightedItemStatesController;
 
   FocusNode? _localTrailingIconButtonFocusNode;
@@ -776,6 +777,7 @@ class _DropdownMenuState<T> extends State<DropdownMenu<T>> {
   @override
   void initState() {
     super.initState();
+    _focusNodeCanRequestFocus = widget.focusNode?.canRequestFocus;
     _enableSearch = widget.enableSearch;
     filteredEntries = widget.dropdownMenuEntries;
     buttonItemKeys = List<GlobalKey>.generate(filteredEntries.length, (int index) => GlobalKey());
@@ -844,6 +846,17 @@ class _DropdownMenuState<T> extends State<DropdownMenu<T>> {
     }
     if (oldWidget.menuController != widget.menuController) {
       _controller = widget.menuController ?? MenuController();
+    }
+    if (widget.focusNode != oldWidget.focusNode) {
+      _focusNodeCanRequestFocus = widget.focusNode?.canRequestFocus;
+    }
+    if (oldWidget.enabled && !widget.enabled) {
+      _focusNodeCanRequestFocus = widget.focusNode?.canRequestFocus;
+    }
+    if (!oldWidget.enabled && widget.enabled) {
+      if (widget.focusNode != null && _focusNodeCanRequestFocus != null) {
+        widget.focusNode!.canRequestFocus = _focusNodeCanRequestFocus!;
+      }
     }
   }
 
