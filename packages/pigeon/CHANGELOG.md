@@ -1,6 +1,11 @@
-## 29.0.14
+## 29.1.1
 
 * Fixes `basePath` resolution when an output or directory path shares a string prefix with `basePath`.
+
+## 29.1.0
+
+* [kotlin,swift] Adds support for removing event channel handler registration
+  via a new event channel object returned from `register`.
 
 ## 29.0.13
 
