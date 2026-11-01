@@ -899,6 +899,68 @@ void main() {
     expect(MediaQuery.of(innerContext).padding, const EdgeInsets.fromLTRB(0, 0, 0, 50.0));
   });
 
+  testWidgets(
+    'showModalBottomSheet(useSafeArea: true) does not apply safe area from opposite sub-screen',
+    (WidgetTester tester) async {
+      // Regression test for https://github.com/flutter/flutter/issues/195218
+      late BuildContext outerContext;
+
+      // Simulate a foldable device: size 800x600, with a vertical hinge from x=390 to 410.
+      // The device has a safe area on the left edge (padding.left = 40.0), but none on the right edge.
+      const hinge = Rect.fromLTWH(390.0, 0.0, 20.0, 600.0);
+      const displayFeature = DisplayFeature(
+        bounds: hinge,
+        type: DisplayFeatureType.hinge,
+        state: DisplayFeatureState.postureFlat,
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: MediaQuery(
+            data: const MediaQueryData(
+              size: Size(800.0, 600.0),
+              padding: EdgeInsets.only(left: 40.0, top: 20.0),
+              displayFeatures: <DisplayFeature>[displayFeature],
+            ),
+            child: Navigator(
+              onGenerateRoute: (_) {
+                return PageRouteBuilder<void>(
+                  pageBuilder: (BuildContext context, _, _) {
+                    outerContext = context;
+                    return const SizedBox();
+                  },
+                );
+              },
+            ),
+          ),
+        ),
+      );
+
+      // Display on the RIGHT sub-screen (anchorPoint on right half: x > 410).
+      unawaited(
+        showModalBottomSheet<void>(
+          context: outerContext,
+          useSafeArea: true,
+          anchorPoint: const Offset(600.0, 300.0),
+          builder: (BuildContext context) {
+            return const SizedBox(height: 200.0);
+          },
+        ),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
+
+      // The modal bottom sheet on the right sub-screen should span from x=410 to 800.
+      // Its left position must be at x=410, NOT shifted by the left sub-screen's 40px safe area.
+      final Finder sheetFinder = find.byType(BottomSheet);
+      expect(sheetFinder, findsOneWidget);
+      final Rect sheetRect = tester.getRect(sheetFinder);
+      expect(sheetRect.left, 410.0);
+      expect(sheetRect.right, 800.0);
+      expect(sheetRect.width, 390.0);
+    },
+  );
+
   testWidgets('modal BottomSheet has semantics', (WidgetTester tester) async {
     final semantics = SemanticsTester(tester);
     final scaffoldKey = GlobalKey<ScaffoldState>();

@@ -8,6 +8,7 @@
 - Adds `enableTapHandling` to `SearchAnchor`.
 - Adds `dayBuilder` and `weekdayBuilder` callbacks to `CalendarDatePicker`, `DatePickerDialog`, and `showDatePicker`.
 - Adds `CalendarDatePickerDayDetails` and `CalendarDatePickerWeekdayDetails` to provide metadata and default widgets to the builders.
+- Fixes `showModalBottomSheet(useSafeArea: true)` incorrectly applying opposite sub-screen safe area padding on display-feature sub-screens.
 
 ## 1.8.0
 
