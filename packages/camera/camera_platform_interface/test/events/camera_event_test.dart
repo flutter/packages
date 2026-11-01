@@ -452,4 +452,61 @@ void main() {
       expect(event.hashCode, expectedHashCode);
     });
   });
+
+  group('VideoRecordingDurationChangedEvent tests', () {
+    test('Constructor should initialize all properties', () {
+      const event = VideoRecordingDurationChangedEvent(1, Duration(seconds: 5));
+
+      expect(event.cameraId, 1);
+      expect(event.duration, const Duration(seconds: 5));
+    });
+
+    test('fromJson should initialize all properties', () {
+      final event = VideoRecordingDurationChangedEvent.fromJson(const <String, dynamic>{
+        'cameraId': 1,
+        'duration': 5000,
+      });
+
+      expect(event.cameraId, 1);
+      expect(event.duration, const Duration(seconds: 5));
+    });
+
+    test('toJson should return a map with all fields', () {
+      const event = VideoRecordingDurationChangedEvent(1, Duration(seconds: 5));
+
+      final Map<String, dynamic> jsonMap = event.toJson();
+
+      expect(jsonMap.length, 2);
+      expect(jsonMap['cameraId'], 1);
+      expect(jsonMap['duration'], 5000);
+    });
+
+    test('equals should return true if objects are the same', () {
+      const firstEvent = VideoRecordingDurationChangedEvent(1, Duration(seconds: 5));
+      const secondEvent = VideoRecordingDurationChangedEvent(1, Duration(seconds: 5));
+
+      expect(firstEvent == secondEvent, true);
+    });
+
+    test('equals should return false if cameraId is different', () {
+      const firstEvent = VideoRecordingDurationChangedEvent(1, Duration(seconds: 5));
+      const secondEvent = VideoRecordingDurationChangedEvent(2, Duration(seconds: 5));
+
+      expect(firstEvent == secondEvent, false);
+    });
+
+    test('equals should return false if duration is different', () {
+      const firstEvent = VideoRecordingDurationChangedEvent(1, Duration(seconds: 5));
+      const secondEvent = VideoRecordingDurationChangedEvent(1, Duration(seconds: 10));
+
+      expect(firstEvent == secondEvent, false);
+    });
+
+    test('hashCode should match hashCode of all properties', () {
+      const event = VideoRecordingDurationChangedEvent(1, Duration(seconds: 5));
+      final int expectedHashCode = Object.hash(event.cameraId.hashCode, event.duration);
+
+      expect(event.hashCode, expectedHashCode);
+    });
+  });
 }

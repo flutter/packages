@@ -1259,6 +1259,15 @@ void main() {
 
         expect(camera.videoRecordingErrorController.isClosed, isTrue);
       });
+
+      testWidgets('closes the onVideoRecordingDurationChanged stream', (WidgetTester tester) async {
+        final camera = Camera(textureId: textureId, cameraService: cameraService);
+
+        await camera.initialize();
+        await camera.dispose();
+
+        expect(camera.videoRecordingDurationChangedController.isClosed, isTrue);
+      });
     });
 
     group('events', () {
@@ -1389,6 +1398,36 @@ void main() {
 
           expect(await streamQueue.next, equals(errorEvent));
 
+          await streamQueue.cancel();
+        });
+      });
+
+      group('onVideoRecordingDurationChanged', () {
+        testWidgets('emits VideoRecordingDurationChangedEvent while recording', (
+          WidgetTester tester,
+        ) async {
+          final mockMediaRecorder = MockMediaRecorder();
+          final mediaRecorder = createJSInteropWrapper(mockMediaRecorder) as MediaRecorder;
+
+          final camera = Camera(textureId: 1, cameraService: cameraService)
+            ..mediaRecorder = mediaRecorder
+            ..isVideoTypeSupported = ((String type) => type == 'video/webm')
+            ..recordingDurationUpdateInterval = const Duration(milliseconds: 10);
+
+          await camera.initialize();
+          await camera.play();
+
+          final streamQueue = StreamQueue<VideoRecordingDurationChangedEvent>(
+            camera.onVideoRecordingDurationChanged,
+          );
+
+          await camera.startVideoRecording();
+
+          final VideoRecordingDurationChangedEvent event = await streamQueue.next;
+          expect(event.cameraId, equals(1));
+          expect(event.duration, greaterThanOrEqualTo(Duration.zero));
+
+          await camera.dispose();
           await streamQueue.cancel();
         });
       });

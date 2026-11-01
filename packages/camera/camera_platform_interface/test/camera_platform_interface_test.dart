@@ -73,6 +73,17 @@ void main() {
     });
 
     test(
+      'Default implementation of onVideoRecordingDurationChanged() should throw unimplemented error',
+      () {
+        // Arrange
+        final cameraPlatform = ExtendsCameraPlatform();
+
+        // Act & Assert
+        expect(() => cameraPlatform.onVideoRecordingDurationChanged(1), throwsUnimplementedError);
+      },
+    );
+
+    test(
       'Default implementation of onDeviceOrientationChanged() should throw unimplemented error',
       () {
         // Arrange

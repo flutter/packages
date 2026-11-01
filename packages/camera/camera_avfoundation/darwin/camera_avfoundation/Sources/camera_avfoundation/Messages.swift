@@ -1734,6 +1734,9 @@ protocol CameraEventApiProtocol {
   /// This should be used for errors that occur outside of the context of
   /// handling a specific HostApi call, such as during streaming.
   func error(message messageArg: String, completion: @escaping (Result<Void, PigeonError>) -> Void)
+  /// Called when video recording duration updates.
+  func videoRecordingDurationChanged(
+    durationMs durationMsArg: Int64, completion: @escaping (Result<Void, PigeonError>) -> Void)
 }
 class CameraEventApi: CameraEventApiProtocol {
   private let binaryMessenger: FlutterBinaryMessenger
@@ -1780,6 +1783,29 @@ class CameraEventApi: CameraEventApiProtocol {
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([messageArg] as [Any?]) { response in
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
+      } else {
+        completion(.success(()))
+      }
+    }
+  }
+  /// Called when video recording duration updates.
+  func videoRecordingDurationChanged(
+    durationMs durationMsArg: Int64, completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
+    let channelName: String =
+      "dev.flutter.pigeon.camera_avfoundation.CameraEventApi.videoRecordingDurationChanged\(messageChannelSuffix)"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([durationMsArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return

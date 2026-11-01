@@ -1,3 +1,7 @@
+## 0.11.2
+
+* Adds support for `onVideoRecordingDurationChanged`.
+
 ## 0.11.1
 
 * Adds support for zero-shutter-lag still image capture via

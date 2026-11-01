@@ -615,5 +615,50 @@ TEST(Camera, TakePictureReportsAccessDenied) {
   EXPECT_TRUE(result_called);
 }
 
+TEST(Camera, OnRecordDurationChangedSendsEvent) {
+  std::unique_ptr<CameraImpl> camera =
+      std::make_unique<CameraImpl>(MOCK_DEVICE_ID);
+  std::unique_ptr<MockCaptureControllerFactory> capture_controller_factory =
+      std::make_unique<MockCaptureControllerFactory>();
+  std::unique_ptr<MockTextureRegistrar> texture_registrar =
+      std::make_unique<MockTextureRegistrar>();
+  std::unique_ptr<MockBinaryMessenger> binary_messenger =
+      std::make_unique<MockBinaryMessenger>();
+
+  EXPECT_CALL(*capture_controller_factory, CreateCaptureController)
+      .Times(1)
+      .WillOnce([]() {
+        std::unique_ptr<NiceMock<MockCaptureController>> capture_controller =
+            std::make_unique<NiceMock<MockCaptureController>>();
+        EXPECT_CALL(*capture_controller, InitCaptureDevice)
+            .Times(1)
+            .WillOnce(Return(true));
+        return capture_controller;
+      });
+
+  PlatformMediaSettings media_settings(PlatformResolutionPreset::kMax, false);
+  camera->InitCamera(std::move(capture_controller_factory),
+                     texture_registrar.get(), binary_messenger.get(),
+                     media_settings);
+
+  const int64_t texture_id = 12345;
+  camera->OnCreateCaptureEngineSucceeded(texture_id);
+
+  std::string channel_name =
+      "dev.flutter.pigeon.camera_windows.CameraEventApi."
+      "videoRecordingDurationChanged." +
+      std::to_string(texture_id);
+  EXPECT_CALL(*binary_messenger, Send(Eq(channel_name), _, _, _)).Times(1);
+
+  camera->OnRecordDurationChanged(1500);
+
+  // Expect CameraClosing on destruction.
+  std::string closing_channel_name =
+      "dev.flutter.pigeon.camera_windows.CameraEventApi.cameraClosing." +
+      std::to_string(texture_id);
+  EXPECT_CALL(*binary_messenger, Send(Eq(closing_channel_name), _, _, _))
+      .Times(1);
+}
+
 }  // namespace test
 }  // namespace camera_windows

@@ -449,6 +449,9 @@ abstract class CameraEventApi {
   /// Called when a camera error occurs on the native side.
   void error(String errorMessage);
 
+  /// Called when the video recording duration changes on the native side.
+  void videoRecordingDurationChanged(int durationMs);
+
   static void setUp(
     CameraEventApi? api, {
     BinaryMessenger? binaryMessenger,
@@ -492,6 +495,31 @@ abstract class CameraEventApi {
           final String arg_errorMessage = args[0]! as String;
           try {
             api.error(arg_errorMessage);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
+          }
+        });
+      }
+    }
+    {
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.camera_windows.CameraEventApi.videoRecordingDurationChanged$messageChannelSuffix',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
+      if (api == null) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          final List<Object?> args = message! as List<Object?>;
+          final int arg_durationMs = args[0]! as int;
+          try {
+            api.videoRecordingDurationChanged(arg_durationMs);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);

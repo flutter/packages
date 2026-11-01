@@ -87,6 +87,11 @@ class CaptureControllerListener {
   // file_path: Filesystem path of the recorded video file.
   virtual void OnStopRecordSucceeded(const std::string& file_path) = 0;
 
+  // Called by CaptureController when video recording duration updates.
+  //
+  // duration_ms: Current video recording duration in milliseconds.
+  virtual void OnRecordDurationChanged(int64_t duration_ms) = 0;
+
   // Called by CaptureController if stopping the recording fails.
   //
   // result: The kind of result.

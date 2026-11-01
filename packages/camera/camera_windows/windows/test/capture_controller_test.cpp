@@ -1356,6 +1356,60 @@ TEST(CaptureController, StopRecordSuccess) {
   record_sink = nullptr;
 }
 
+TEST(CaptureController, ReportsRecordDurationChanged) {
+  ComPtr<MockCaptureEngine> engine = new MockCaptureEngine();
+  std::unique_ptr<MockCamera> camera =
+      std::make_unique<MockCamera>(MOCK_DEVICE_ID);
+  std::unique_ptr<CaptureControllerImpl> capture_controller =
+      std::make_unique<CaptureControllerImpl>(camera.get());
+  std::unique_ptr<MockTextureRegistrar> texture_registrar =
+      std::make_unique<MockTextureRegistrar>();
+
+  int64_t mock_texture_id = 1234;
+
+  MockInitCaptureController(capture_controller.get(), texture_registrar.get(),
+                            engine.Get(), camera.get(), mock_texture_id);
+
+  ComPtr<MockCaptureSource> capture_source = new MockCaptureSource();
+  MockAvailableMediaTypes(engine.Get(), capture_source.Get(), 1, 1);
+
+  ComPtr<MockCaptureRecordSink> record_sink = new MockCaptureRecordSink();
+  std::string mock_path_to_video = "mock_path_to_video.mp4";
+  MockRecordStart(capture_controller.get(), engine.Get(), record_sink.Get(),
+                  camera.get(), mock_path_to_video);
+
+  // First sample sets the start time (duration 0ms) and reports it.
+  EXPECT_CALL(*camera, OnRecordDurationChanged(Eq(0))).Times(1);
+  capture_controller->UpdateCaptureTime(1000000);
+
+  // Sample after 50ms (< 100ms threshold) should not report duration change.
+  EXPECT_CALL(*camera, OnRecordDurationChanged).Times(0);
+  capture_controller->UpdateCaptureTime(1050000);
+
+  // Sample after 100ms should report duration change.
+  EXPECT_CALL(*camera, OnRecordDurationChanged(Eq(100))).Times(1);
+  capture_controller->UpdateCaptureTime(1100000);
+
+  // Sample after 250ms should report duration change.
+  EXPECT_CALL(*camera, OnRecordDurationChanged(Eq(250))).Times(1);
+  capture_controller->UpdateCaptureTime(1250000);
+
+  // Stop record so destructor does not fail.
+  EXPECT_CALL(*(engine.Get()), StopRecord(true, false))
+      .Times(1)
+      .WillOnce(Return(S_OK));
+  capture_controller->StopRecord();
+
+  EXPECT_CALL(*camera, OnStopRecordSucceeded(Eq(mock_path_to_video))).Times(1);
+  engine->CreateFakeEvent(S_OK, MF_CAPTURE_ENGINE_RECORD_STOPPED);
+
+  capture_controller = nullptr;
+  texture_registrar = nullptr;
+  engine = nullptr;
+  camera = nullptr;
+  record_sink = nullptr;
+}
+
 TEST(CaptureController, ReportsStopRecordError) {
   ComPtr<MockCaptureEngine> engine = new MockCaptureEngine();
   std::unique_ptr<MockCamera> camera =

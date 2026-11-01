@@ -238,6 +238,20 @@ void main() {
         // Clean up
         await streamQueue.cancel();
       });
+
+      test('Should receive video recording duration changed events', () async {
+        final Stream<VideoRecordingDurationChangedEvent> stream = plugin
+            .onVideoRecordingDurationChanged(cameraId);
+        final streamQueue = StreamQueue<VideoRecordingDurationChangedEvent>(stream);
+
+        const duration = Duration(seconds: 2);
+        final event = VideoRecordingDurationChangedEvent(cameraId, duration);
+        plugin.hostCameraHandlers[cameraId]!.videoRecordingDurationChanged(2000);
+
+        expect(await streamQueue.next, event);
+
+        await streamQueue.cancel();
+      });
     });
 
     group('Function Tests', () {

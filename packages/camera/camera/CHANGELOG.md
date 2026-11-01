@@ -1,3 +1,7 @@
+## 0.12.3
+
+* Adds `CameraValue.videoRecordingDuration` to report the current duration of an active video recording.
+
 ## 0.12.2
 
 * Adds `CameraController.isZeroShutterLagSupported` and

@@ -246,6 +246,10 @@ class CameraEventApi {
   void Error(const std::string& error_message,
              std::function<void(void)>&& on_success,
              std::function<void(const FlutterError&)>&& on_error);
+  // Called when the video recording duration changes on the native side.
+  void VideoRecordingDurationChanged(
+      int64_t duration_ms, std::function<void(void)>&& on_success,
+      std::function<void(const FlutterError&)>&& on_error);
 
  private:
   ::flutter::BinaryMessenger* binary_messenger_;

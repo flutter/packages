@@ -1,3 +1,7 @@
+## 0.3.1
+
+* Adds support for `onVideoRecordingDurationChanged`.
+
 ## 0.3.0+1
 
 * Fixes `CameraException(camera_error, Failed to initialize video preview)` on

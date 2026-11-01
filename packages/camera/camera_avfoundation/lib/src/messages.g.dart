@@ -1379,6 +1379,9 @@ abstract class CameraEventApi {
   /// handling a specific HostApi call, such as during streaming.
   void error(String message);
 
+  /// Called when video recording duration updates.
+  void videoRecordingDurationChanged(int durationMs);
+
   static void setUp(
     CameraEventApi? api, {
     BinaryMessenger? binaryMessenger,
@@ -1424,6 +1427,31 @@ abstract class CameraEventApi {
           final String arg_message = args[0]! as String;
           try {
             api.error(arg_message);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
+          }
+        });
+      }
+    }
+    {
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.camera_avfoundation.CameraEventApi.videoRecordingDurationChanged$messageChannelSuffix',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
+      if (api == null) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          final List<Object?> args = message! as List<Object?>;
+          final int arg_durationMs = args[0]! as int;
+          try {
+            api.videoRecordingDurationChanged(arg_durationMs);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
