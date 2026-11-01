@@ -17,6 +17,9 @@ class _DrawerDefaultsM3 extends DrawerThemeData {
   Color? get backgroundColor => Theme.of(context).colorScheme.surfaceContainerLow;
 
   @override
+  Color? get scrimColor => Theme.of(context).colorScheme.scrim.withOpacity(0.32);
+
+  @override
   Color? get surfaceTintColor => Colors.transparent;
 
   @override

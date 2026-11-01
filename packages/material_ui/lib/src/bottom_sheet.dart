@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 /// @docImport 'dart:ui';
+/// @docImport 'theme_data.dart';
 library;
 
 import 'dart:math' as math;
@@ -1346,7 +1347,12 @@ Future<T?> showModalBottomSheet<T>({
       clipBehavior: clipBehavior,
       constraints: constraints,
       isDismissible: isDismissible,
-      modalBarrierColor: barrierColor ?? Theme.of(context).bottomSheetTheme.modalBarrierColor,
+      modalBarrierColor:
+          barrierColor ??
+          Theme.of(context).bottomSheetTheme.modalBarrierColor ??
+          (Theme.of(context).useMaterial3
+              ? _BottomSheetDefaultsM3(context).modalBarrierColor!
+              : Colors.black54),
       enableDrag: enableDrag,
       showDragHandle: showDragHandle,
       settings: routeSettings,
