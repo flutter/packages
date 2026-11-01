@@ -4206,6 +4206,185 @@ void main() {
       );
     });
 
+    // Regression test for https://github.com/flutter/flutter/issues/193771
+    testWidgets('Menu height accounts for a positive alignmentOffset', (WidgetTester tester) async {
+      tester.view.physicalSize = const Size(400, 200);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.reset);
+
+      final controller = MenuController();
+      final anchorKey = UniqueKey();
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                MenuAnchor(
+                  controller: controller,
+                  alignmentOffset: const Offset(0, 8),
+                  menuChildren: List<MenuItemButton>.generate(
+                    3,
+                    (int index) =>
+                        MenuItemButton(onPressed: () {}, child: Text('Item ${index + 1}')),
+                  ),
+                  builder: (BuildContext context, MenuController controller, Widget? child) {
+                    return SizedBox(key: anchorKey, width: 56, height: 56);
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+
+      controller.open();
+      await tester.pumpAndSettle();
+
+      final Rect anchorRect = tester.getRect(find.byKey(anchorKey));
+      final Rect menuRect = tester.getRect(findMenuPanels());
+      expect(menuRect.top, 0.0);
+      expect(menuRect.bottom, anchorRect.top - 8);
+    });
+
+    // Regression test for https://github.com/flutter/flutter/issues/193771
+    testWidgets('Menu height accounts for a negative alignmentOffset', (WidgetTester tester) async {
+      tester.view.physicalSize = const Size(400, 200);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.reset);
+
+      final controller = MenuController();
+      final anchorKey = UniqueKey();
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                MenuAnchor(
+                  controller: controller,
+                  alignmentOffset: const Offset(0, -8),
+                  menuChildren: List<MenuItemButton>.generate(
+                    3,
+                    (int index) =>
+                        MenuItemButton(onPressed: () {}, child: Text('Item ${index + 1}')),
+                  ),
+                  builder: (BuildContext context, MenuController controller, Widget? child) {
+                    return SizedBox(key: anchorKey, width: 56, height: 56);
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+
+      controller.open();
+      await tester.pumpAndSettle();
+
+      final Rect anchorRect = tester.getRect(find.byKey(anchorKey));
+      final Rect menuRect = tester.getRect(findMenuPanels());
+      // A flipped menu mirrors the offset, so it overlaps the anchor by exactly
+      // the requested amount instead of being pinned over the whole anchor.
+      expect(menuRect.top, greaterThanOrEqualTo(0.0));
+      expect(menuRect.bottom, anchorRect.top + 8);
+    });
+
+    // Regression test for https://github.com/flutter/flutter/issues/193771
+    testWidgets('Menu height accounts for alignment', (WidgetTester tester) async {
+      tester.view.physicalSize = const Size(400, 200);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.reset);
+
+      final controller = MenuController();
+      final anchorKey = UniqueKey();
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Column(
+              children: <Widget>[
+                MenuAnchor(
+                  controller: controller,
+                  style: const MenuStyle(alignment: AlignmentDirectional.topStart),
+                  menuChildren: List<MenuItemButton>.generate(
+                    3,
+                    (int index) =>
+                        MenuItemButton(onPressed: () {}, child: Text('Item ${index + 1}')),
+                  ),
+                  builder: (BuildContext context, MenuController controller, Widget? child) {
+                    return SizedBox(key: anchorKey, width: 56, height: 56);
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+
+      controller.open();
+      await tester.pumpAndSettle();
+
+      // The menu is aligned to the top of the anchor, so it has the full height
+      // of the screen to use rather than only the space below the anchor.
+      final Rect menuRect = tester.getRect(findMenuPanels());
+      expect(menuRect.top, tester.getRect(find.byKey(anchorKey)).top);
+      expect(menuRect.height, greaterThan(200 - 56));
+    });
+
+    // Regression test for https://github.com/flutter/flutter/issues/193771
+    testWidgets('Nested submenu keeps its full height', (WidgetTester tester) async {
+      tester.view.physicalSize = const Size(400, 300);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.reset);
+
+      final controller = MenuController();
+
+      Widget buildMenu({required int itemCount}) {
+        return MaterialApp(
+          home: Scaffold(
+            body: Column(
+              children: <Widget>[
+                MenuAnchor(
+                  controller: controller,
+                  menuChildren: <Widget>[
+                    SubmenuButton(
+                      menuChildren: List<MenuItemButton>.generate(
+                        itemCount,
+                        (int index) =>
+                            MenuItemButton(onPressed: () {}, child: Text('Item ${index + 1}')),
+                      ),
+                      child: const Text('Submenu'),
+                    ),
+                  ],
+                  builder: (BuildContext context, MenuController controller, Widget? child) {
+                    return const SizedBox(width: 56, height: 56);
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      }
+
+      await tester.pumpWidget(buildMenu(itemCount: 5));
+
+      controller.open();
+      await tester.pump();
+      await tester.tap(find.text('Submenu'));
+      await tester.pumpAndSettle();
+
+      final Rect submenuButtonRect = tester.getRect(find.widgetWithText(SubmenuButton, 'Submenu'));
+      final Rect submenuRect = tester.getRect(findMenuPanels().last);
+      final double itemsHeight = 5 * tester.getSize(find.byType(MenuItemButton).first).height;
+      // The submenu opens beside its button rather than above or below it, so
+      // the space above and below the button doesn't limit its height.
+      expect(submenuRect.height, greaterThan(300 - submenuButtonRect.bottom));
+      expect(submenuRect.height, greaterThanOrEqualTo(itemsHeight));
+    });
+
     testWidgets(
       'Menu is correctly offset when a LayerLink is provided and alignmentOffset is set',
       (WidgetTester tester) async {
