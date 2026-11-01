@@ -2074,6 +2074,39 @@ void main() {
       );
     },
   );
+
+  testWidgets('ThemeData lazy component themes preserve ==, hashCode, copyWith, and lerp', (
+    WidgetTester tester,
+  ) async {
+    final defaultTheme = ThemeData();
+    final explicitDefaultTheme = ThemeData(
+      appBarTheme: const AppBarThemeData(),
+      cardTheme: const CardThemeData(),
+      datePickerTheme: const DatePickerThemeData(),
+      inputDecorationTheme: const InputDecorationThemeData(),
+      scrollbarTheme: const ScrollbarThemeData(),
+    );
+
+    expect(defaultTheme, equals(explicitDefaultTheme));
+    expect(defaultTheme.hashCode, equals(explicitDefaultTheme.hashCode));
+
+    final ThemeData copiedTheme = defaultTheme.copyWith(
+      datePickerTheme: defaultTheme.datePickerTheme,
+      cardTheme: defaultTheme.cardTheme,
+    );
+    expect(copiedTheme, equals(defaultTheme));
+    expect(copiedTheme.hashCode, equals(defaultTheme.hashCode));
+
+    final customDatePickerTheme = ThemeData(
+      datePickerTheme: const DatePickerThemeData(backgroundColor: Color(0xFFFF0000)),
+    );
+    final ThemeData lerped = ThemeData.lerp(defaultTheme, customDatePickerTheme, 0.5);
+    expect(
+      lerped.datePickerTheme.backgroundColor,
+      equals(Color.lerp(null, const Color(0xFFFF0000), 0.5)),
+    );
+    expect(lerped.cardTheme, equals(const CardThemeData()));
+  });
 }
 
 @immutable

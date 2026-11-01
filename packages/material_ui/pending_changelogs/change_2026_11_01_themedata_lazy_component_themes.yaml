@@ -1,0 +1,3 @@
+changelog: |
+  - Lazily initializes default component theme data in `ThemeData` to allow unused component themes and their `.lerp` methods to be tree-shaken.
+version: patch
