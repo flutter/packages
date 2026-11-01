@@ -898,6 +898,62 @@ void main() {
       expect(api.passedPhotoPickerFlag, true);
     });
   });
+
+  group('#supportsRecentMedia', () {
+    test('returns true', () {
+      expect(picker.supportsRecentMedia(), true);
+    });
+  });
+
+  group('#getRecentMedia', () {
+    test('passes default options', () async {
+      await picker.getRecentMedia();
+
+      final RecentMediaRequest request = api.passedRecentMediaRequest!;
+      expect(request.limit, 1);
+      expect(request.includeImages, true);
+      expect(request.includeVideos, true);
+      expect(request.width, 256);
+      expect(request.height, 256);
+    });
+
+    test('passes custom options', () async {
+      await picker.getRecentMedia(
+        options: const RecentMediaOptions(
+          limit: 5,
+          types: <MediaSelectionType>{MediaSelectionType.video},
+          thumbnailWidth: 100,
+          thumbnailHeight: 200,
+        ),
+      );
+
+      final RecentMediaRequest request = api.passedRecentMediaRequest!;
+      expect(request.limit, 5);
+      expect(request.includeImages, false);
+      expect(request.includeVideos, true);
+      expect(request.width, 100);
+      expect(request.height, 200);
+    });
+
+    test('maps results in order', () async {
+      api.returnValue = <RecentMediaItem>[
+        RecentMediaItem(path: '/video.jpg', kind: RecentMediaKind.video),
+        RecentMediaItem(path: '/image.jpg', kind: RecentMediaKind.image),
+      ];
+
+      final List<RecentMedia> result = await picker.getRecentMedia();
+
+      expect(result.length, 2);
+      expect(result[0].thumbnail.path, '/video.jpg');
+      expect(result[0].type, MediaSelectionType.video);
+      expect(result[1].thumbnail.path, '/image.jpg');
+      expect(result[1].type, MediaSelectionType.image);
+    });
+
+    test('returns an empty list when there are no results', () async {
+      expect(await picker.getRecentMedia(), isEmpty);
+    });
+  });
 }
 
 enum _LastPickType { image, video }
@@ -914,6 +970,7 @@ class _FakeImagePickerApi implements ImagePickerApi {
   bool? passedPhotoPickerFlag;
   int? limit;
   _LastPickType? lastCall;
+  RecentMediaRequest? passedRecentMediaRequest;
 
   @override
   Future<List<String>> pickImages(
@@ -956,6 +1013,12 @@ class _FakeImagePickerApi implements ImagePickerApi {
     passedPhotoPickerFlag = generalOptions.usePhotoPicker;
     limit = generalOptions.limit;
     return returnValue as List<String>? ?? <String>[];
+  }
+
+  @override
+  Future<List<RecentMediaItem>> getRecentMedia(RecentMediaRequest request) async {
+    passedRecentMediaRequest = request;
+    return returnValue as List<RecentMediaItem>? ?? <RecentMediaItem>[];
   }
 
   @override
