@@ -573,6 +573,8 @@ class _ButtonStyleState extends State<ButtonStyleButton> with TickerProviderStat
         highlightColor: Colors.transparent,
         customBorder: resolvedShape!.copyWith(side: resolvedSide),
         statesController: statesController,
+        // md.comp.button.focus.indicator.outline.offset
+        focusRingOffset: 2.0,
         child: result,
       ),
     );
