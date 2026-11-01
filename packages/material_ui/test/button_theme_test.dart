@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -66,6 +67,25 @@ void main() {
     expect(theme.shape, const StadiumBorder());
     expect(theme.alignedDropdown, true);
     expect(theme.colorScheme, const ColorScheme.dark());
+  });
+
+  test('ButtonThemeData equality and hashCode include layoutBehavior', () {
+    const padded = ButtonThemeData();
+    const constrained = ButtonThemeData(layoutBehavior: ButtonBarLayoutBehavior.constrained);
+    expect(padded, isNot(constrained));
+    expect(padded.hashCode, isNot(constrained.hashCode));
+    expect(constrained, const ButtonThemeData(layoutBehavior: ButtonBarLayoutBehavior.constrained));
+  });
+
+  test('ButtonThemeData debugFillProperties includes layoutBehavior', () {
+    const theme = ButtonThemeData(layoutBehavior: ButtonBarLayoutBehavior.constrained);
+    final builder = DiagnosticPropertiesBuilder();
+    theme.debugFillProperties(builder);
+    final List<String> description = builder.properties
+        .where((DiagnosticsNode node) => !node.isFiltered(DiagnosticLevel.info))
+        .map((DiagnosticsNode node) => node.toString())
+        .toList();
+    expect(description, contains('layoutBehavior: constrained'));
   });
 
   testWidgets('ButtonTheme alignedDropdown', (WidgetTester tester) async {

@@ -706,6 +706,7 @@ class ButtonThemeData with Diagnosticable {
     }
     return other is ButtonThemeData &&
         other.textTheme == textTheme &&
+        other.layoutBehavior == layoutBehavior &&
         other.minWidth == minWidth &&
         other.height == height &&
         other.padding == padding &&
@@ -724,6 +725,7 @@ class ButtonThemeData with Diagnosticable {
   @override
   int get hashCode => Object.hash(
     textTheme,
+    layoutBehavior,
     minWidth,
     height,
     padding,
@@ -745,6 +747,13 @@ class ButtonThemeData with Diagnosticable {
     const defaultTheme = ButtonThemeData();
     properties.add(
       EnumProperty<ButtonTextTheme>('textTheme', textTheme, defaultValue: defaultTheme.textTheme),
+    );
+    properties.add(
+      EnumProperty<ButtonBarLayoutBehavior>(
+        'layoutBehavior',
+        layoutBehavior,
+        defaultValue: defaultTheme.layoutBehavior,
+      ),
     );
     properties.add(DoubleProperty('minWidth', minWidth, defaultValue: defaultTheme.minWidth));
     properties.add(DoubleProperty('height', height, defaultValue: defaultTheme.height));
