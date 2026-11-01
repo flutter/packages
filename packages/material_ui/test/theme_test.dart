@@ -10,7 +10,7 @@ import 'package:material_ui/material_ui.dart';
 
 void main() {
   const TextTheme defaultGeometryTheme = Typography.englishLike2014;
-  const TextTheme defaultGeometryThemeM3 = Typography.englishLike2021;
+  const TextTheme defaultGeometryThemeM3 = Typography.englishLike2025;
 
   test('ThemeDataTween control test', () {
     final light = ThemeData();
@@ -273,11 +273,11 @@ void main() {
     expect(m2Theme.typography, Typography.material2014());
   });
 
-  testWidgets('Material3 - ThemeData with null typography uses proper defaults', (
+  testWidgets('Material3 - ThemeData with null typography uses 2025 defaults', (
     WidgetTester tester,
   ) async {
     final m3Theme = ThemeData();
-    expect(m3Theme.typography, Typography.material2021(colorScheme: m3Theme.colorScheme));
+    expect(m3Theme.typography, Typography.material2025(colorScheme: m3Theme.colorScheme));
   });
 
   testWidgets('PopupMenu inherits shadowed app theme', (WidgetTester tester) async {
@@ -670,7 +670,7 @@ void main() {
 
     expect(
       theme.textTheme.displayLarge!.debugLabel,
-      '(englishLike displayLarge 2021).merge((blackMountainView displayLarge).apply)',
+      '(englishLike displayLarge 2025).merge((mountainView displayLarge).apply)',
     );
   });
 
