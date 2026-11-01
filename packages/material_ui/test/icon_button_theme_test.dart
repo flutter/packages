@@ -364,4 +364,250 @@ void main() {
     await tester.pumpAndSettle();
     expect(getOverlayColor(tester), paints..rect(color: overlayColor.withOpacity(0.1)));
   });
+
+  group('IconButtonTheme.variantOf', () {
+    // A square icon button uses a RoundedRectangleBorder in Material 3
+    // Expressive. Material 3 ignores shapeVariant and uses a StadiumBorder.
+    const buttonKey = Key('button');
+    const squareButton = IconButton(
+      key: buttonKey,
+      onPressed: _onPressed,
+      style: ButtonStyle(shapeVariant: ButtonShapeVariant.square),
+      icon: Icon(Icons.add),
+    );
+    const customStyle = ButtonStyle(
+      foregroundColor: WidgetStatePropertyAll<Color>(Color(0xffff0000)),
+    );
+
+    ShapeBorder? buttonShape(WidgetTester tester) {
+      return tester
+          .widget<Material>(
+            find.descendant(of: find.byKey(buttonKey), matching: find.byType(Material)),
+          )
+          .shape;
+    }
+
+    // Builds the square button and reports the variant that applies to it.
+    Widget buttonWithVariant(ValueSetter<StyleVariant> onVariant) {
+      return Builder(
+        builder: (BuildContext context) {
+          onVariant(IconButtonTheme.variantOf(context));
+          return squareButton;
+        },
+      );
+    }
+
+    testWidgets('returns material3 when no theme specifies a variant', (WidgetTester tester) async {
+      StyleVariant? variant;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Center(
+            child: IconButtonTheme(
+              data: const IconButtonThemeData(style: customStyle),
+              child: buttonWithVariant((StyleVariant value) => variant = value),
+            ),
+          ),
+        ),
+      );
+
+      expect(variant, StyleVariant.material3);
+      expect(buttonShape(tester), isA<StadiumBorder>());
+    });
+
+    testWidgets('returns the variant of ThemeData.iconButtonTheme', (WidgetTester tester) async {
+      StyleVariant? variant;
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(
+            iconButtonTheme: const IconButtonThemeData(variant: StyleVariant.material3Expressive),
+          ),
+          home: Center(child: buttonWithVariant((StyleVariant value) => variant = value)),
+        ),
+      );
+
+      expect(variant, StyleVariant.material3Expressive);
+      expect(buttonShape(tester), isA<RoundedRectangleBorder>());
+    });
+
+    testWidgets('a nested IconButtonTheme without a variant inherits it from an IconButtonTheme', (
+      WidgetTester tester,
+    ) async {
+      StyleVariant? variant;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Center(
+            child: IconButtonTheme(
+              data: const IconButtonThemeData(variant: StyleVariant.material3Expressive),
+              child: IconButtonTheme(
+                data: const IconButtonThemeData(style: customStyle),
+                child: buttonWithVariant((StyleVariant value) => variant = value),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      expect(variant, StyleVariant.material3Expressive);
+      expect(buttonShape(tester), isA<RoundedRectangleBorder>());
+    });
+
+    testWidgets('an IconButtonTheme without a variant inherits it from ThemeData.iconButtonTheme', (
+      WidgetTester tester,
+    ) async {
+      StyleVariant? variant;
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(
+            iconButtonTheme: const IconButtonThemeData(variant: StyleVariant.material3Expressive),
+          ),
+          home: Center(
+            child: IconButtonTheme(
+              data: const IconButtonThemeData(style: customStyle),
+              child: buttonWithVariant((StyleVariant value) => variant = value),
+            ),
+          ),
+        ),
+      );
+
+      expect(variant, StyleVariant.material3Expressive);
+      expect(buttonShape(tester), isA<RoundedRectangleBorder>());
+    });
+
+    testWidgets('an explicit variant overrides the variant of the ancestors', (
+      WidgetTester tester,
+    ) async {
+      StyleVariant? variant;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Center(
+            child: IconButtonTheme(
+              data: const IconButtonThemeData(variant: StyleVariant.material3Expressive),
+              child: IconButtonTheme(
+                data: const IconButtonThemeData(
+                  style: customStyle,
+                  variant: StyleVariant.material3,
+                ),
+                child: buttonWithVariant((StyleVariant value) => variant = value),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      expect(variant, StyleVariant.material3);
+      expect(buttonShape(tester), isA<StadiumBorder>());
+    });
+
+    testWidgets('an enclosing IconButtonTheme takes precedence over a closer Theme', (
+      WidgetTester tester,
+    ) async {
+      StyleVariant? variant;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Center(
+            child: IconButtonTheme(
+              data: const IconButtonThemeData(variant: StyleVariant.material3Expressive),
+              child: Theme(
+                data: ThemeData(
+                  iconButtonTheme: const IconButtonThemeData(variant: StyleVariant.material3),
+                ),
+                child: buttonWithVariant((StyleVariant value) => variant = value),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      expect(variant, StyleVariant.material3Expressive);
+      expect(buttonShape(tester), isA<RoundedRectangleBorder>());
+    });
+
+    testWidgets('IconButton is rebuilt when an IconButtonTheme above the closest one changes', (
+      WidgetTester tester,
+    ) async {
+      final variant = ValueNotifier<StyleVariant?>(StyleVariant.material3Expressive);
+      addTearDown(variant.dispose);
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Center(
+            child: ValueListenableBuilder<StyleVariant?>(
+              valueListenable: variant,
+              // The subtree is const, so it is only rebuilt through its
+              // dependency on the outer IconButtonTheme.
+              child: const IconButtonTheme(
+                data: IconButtonThemeData(style: customStyle),
+                child: squareButton,
+              ),
+              builder: (BuildContext context, StyleVariant? value, Widget? child) {
+                return IconButtonTheme(
+                  data: IconButtonThemeData(variant: value),
+                  child: child!,
+                );
+              },
+            ),
+          ),
+        ),
+      );
+      expect(buttonShape(tester), isA<RoundedRectangleBorder>());
+
+      variant.value = StyleVariant.material3;
+      await tester.pumpAndSettle();
+      expect(buttonShape(tester), isA<StadiumBorder>());
+    });
+
+    testWidgets('IconButton in a ListTile uses the inherited variant', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(
+            iconButtonTheme: const IconButtonThemeData(variant: StyleVariant.material3Expressive),
+          ),
+          home: const Material(
+            child: ListTile(title: Text('Title'), trailing: squareButton),
+          ),
+        ),
+      );
+
+      expect(buttonShape(tester), isA<RoundedRectangleBorder>());
+    });
+
+    testWidgets('IconButton in an InputDecorator suffix icon uses the inherited variant', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(
+            iconButtonTheme: const IconButtonThemeData(variant: StyleVariant.material3Expressive),
+          ),
+          home: const Material(
+            child: TextField(decoration: InputDecoration(suffixIcon: squareButton)),
+          ),
+        ),
+      );
+
+      expect(buttonShape(tester), isA<RoundedRectangleBorder>());
+    });
+
+    testWidgets(
+      'IconButton in an AppBar with a custom foregroundColor uses the inherited variant',
+      (WidgetTester tester) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: ThemeData(
+              iconButtonTheme: const IconButtonThemeData(variant: StyleVariant.material3Expressive),
+            ),
+            home: Scaffold(
+              appBar: AppBar(
+                foregroundColor: const Color(0xffff0000),
+                actions: const <Widget>[squareButton],
+              ),
+            ),
+          ),
+        );
+
+        expect(buttonShape(tester), isA<RoundedRectangleBorder>());
+      },
+    );
+  });
 }
+
+void _onPressed() {}
