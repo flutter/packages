@@ -1393,14 +1393,28 @@ class _DayState extends State<_Day> {
           )
         : ShapeDecoration(color: dayBackgroundColor, shape: dayShape);
 
-    Widget dayWidget;
-    if (widget.dayBuilder != null) {
-      dayWidget = Ink(
-        decoration: decoration,
-        child: Center(
-          child: ExcludeSemantics(child: Text(localizations.formatDecimal(widget.day.day))),
+    Widget dayWidget = Ink(
+      decoration: decoration,
+      child: Center(
+        // Scales down only to fit the width.
+        child: OverflowBox(
+          maxHeight: .infinity,
+          child: FittedBox(
+            fit: .scaleDown,
+            child: ExcludeSemantics(
+              child: Text(
+                localizations.formatDecimal(widget.day.day),
+                style: widget.dayBuilder == null
+                    ? dayStyle?.apply(color: dayForegroundColor)
+                    : null,
+                maxLines: 1,
+              ),
+            ),
+          ),
         ),
-      );
+      ),
+    );
+    if (widget.dayBuilder != null) {
       dayWidget = ListenableBuilder(
         listenable: _statesController,
         builder: (BuildContext context, Widget? child) {
@@ -1418,26 +1432,6 @@ class _DayState extends State<_Day> {
       dayWidget = DefaultTextStyle.merge(
         style: dayStyle?.apply(color: dayForegroundColor),
         child: dayWidget,
-      );
-    } else {
-      dayWidget = Ink(
-        decoration: decoration,
-        child: Center(
-          // Scales down only to fit the width.
-          child: OverflowBox(
-            maxHeight: .infinity,
-            child: FittedBox(
-              fit: .scaleDown,
-              child: ExcludeSemantics(
-                child: Text(
-                  localizations.formatDecimal(widget.day.day),
-                  style: dayStyle?.apply(color: dayForegroundColor),
-                  maxLines: 1,
-                ),
-              ),
-            ),
-          ),
-        ),
       );
     }
 

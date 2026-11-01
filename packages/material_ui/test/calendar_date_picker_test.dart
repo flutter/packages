@@ -159,6 +159,34 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
+    testWidgets('Day numbers are not scaled down when only the cell height is tight', (
+      WidgetTester tester,
+    ) async {
+      tester.view.physicalSize = const Size(800, 360);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.reset);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Builder(
+            builder: (BuildContext context) => MediaQuery(
+              data: MediaQuery.of(context).copyWith(textScaler: const TextScaler.linear(1.5)),
+              child: DatePickerDialog(
+                initialDate: DateTime(2016, DateTime.january, 15),
+                firstDate: DateTime(2001),
+                lastDate: DateTime(2031, DateTime.december, 31),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      final Finder dayText = find.text('23');
+      final RenderParagraph paragraph = tester.renderObject(dayText);
+      expect(tester.getRect(dayText).size, paragraph.size);
+      expect(tester.takeException(), isNull);
+    });
+
     testWidgets('Can select a month', (WidgetTester tester) async {
       DateTime? displayedMonth;
       await tester.pumpWidget(
