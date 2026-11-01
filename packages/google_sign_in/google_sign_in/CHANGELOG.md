@@ -5,6 +5,8 @@
   versions of the endorsed platform implementations.
   * Applications built with older versions of Flutter will continue to
     use compatible versions of the platform implementations.
+* Updates README to reflect that the latest version of `google_sign_in_ios`
+  requires iOS 15 and macOS 12.
 
 ## 7.2.0
 
