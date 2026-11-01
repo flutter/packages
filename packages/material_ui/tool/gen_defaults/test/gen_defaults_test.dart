@@ -371,6 +371,29 @@ void main() {
       expect(contents, contains('const MaterialStatePropertyAll<OutlinedBorder>(StadiumBorder())'));
     });
 
+    test('ButtonTemplateM3E emits M3E ElevatedButton defaults from tokens', () {
+      const template = ButtonTemplateM3E('Elevated Button');
+      expect(template.name, 'Elevated Button');
+      expect(template.parentFilePath, 'elevated_button.dart');
+
+      final String contents = _generateContents(template);
+      expect(contents, contains('class _ElevatedButtonDefaultsM3E extends ButtonStyle'));
+      expect(contents, contains('final bool toggleable;'));
+      expect(contents, contains('ButtonSizeVariant get sizeVariant'));
+      expect(contents, contains('ButtonShapeVariant get shapeVariant'));
+      expect(contents, contains('ButtonSizeVariant.xSmall => const Size(64.0, 32.0)'));
+      expect(contents, contains('ButtonSizeVariant.xLarge => 40.0'));
+      expect(contents, contains('static double iconLabelSpace(ButtonSizeVariant sizeVariant)'));
+      expect(
+        contents,
+        contains('ButtonSizeVariant.medium => const EdgeInsets.symmetric(horizontal: 24.0)'),
+      );
+      expect(contents, contains('return _colors.primary;'));
+      expect(contents, contains('return _colors.onPrimary;'));
+      expect(contents, contains('states.contains(WidgetState.selected)'));
+      expect(contents, contains('states.contains(WidgetState.pressed)'));
+    });
+
     test('ButtonTemplateM3 emits M3 FilledButton defaults from tokens', () {
       const template = ButtonTemplateM3('Filled Button');
       expect(template.parentFilePath, 'filled_button.dart');
