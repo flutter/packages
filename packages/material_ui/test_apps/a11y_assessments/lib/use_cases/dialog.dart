@@ -42,7 +42,13 @@ class _MainWidget extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    const Text('This is a typical dialog.'),
+                    // Describes the dialog, so screen readers read the text
+                    // when focus moves to the autofocused OK button.
+                    Semantics(
+                      container: true,
+                      namesRoute: true,
+                      child: const Text('This is a typical dialog.'),
+                    ),
                     const SizedBox(height: 15),
                     Row(
                       children: <Widget>[
