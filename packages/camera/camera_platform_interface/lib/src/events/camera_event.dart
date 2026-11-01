@@ -272,3 +272,38 @@ class VideoRecordedEvent extends CameraEvent {
   @override
   int get hashCode => Object.hash(super.hashCode, file, maxVideoDuration);
 }
+
+/// An event fired periodically while a video is recording to report the current duration.
+class VideoRecordingDurationChangedEvent extends CameraEvent {
+  /// Build a VideoRecordingDurationChangedEvent triggered from the camera with the `cameraId`.
+  ///
+  /// The `duration` represents the current duration of the recorded video.
+  const VideoRecordingDurationChangedEvent(super.cameraId, this.duration);
+
+  /// Converts the supplied [Map] to an instance of the
+  /// [VideoRecordingDurationChangedEvent] class.
+  VideoRecordingDurationChangedEvent.fromJson(Map<String, dynamic> json)
+    : duration = Duration(milliseconds: json['duration']! as int),
+      super(json['cameraId']! as int);
+
+  /// The current duration of the recorded video.
+  final Duration duration;
+
+  /// Converts the [VideoRecordingDurationChangedEvent] instance into a [Map]
+  /// instance that can be serialized to JSON.
+  Map<String, dynamic> toJson() => <String, Object>{
+    'cameraId': cameraId,
+    'duration': duration.inMilliseconds,
+  };
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      super == other &&
+          other is VideoRecordingDurationChangedEvent &&
+          runtimeType == other.runtimeType &&
+          duration == other.duration;
+
+  @override
+  int get hashCode => Object.hash(super.hashCode, duration);
+}

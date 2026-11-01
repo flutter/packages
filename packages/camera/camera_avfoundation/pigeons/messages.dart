@@ -382,4 +382,8 @@ abstract class CameraEventApi {
   /// handling a specific HostApi call, such as during streaming.
   @ObjCSelector('reportError:')
   void error(String message);
+
+  /// Called when video recording duration updates.
+  @ObjCSelector('videoRecordingDurationChanged:')
+  void videoRecordingDurationChanged(int durationMs);
 }

@@ -2086,6 +2086,23 @@ void main() {
   );
 
   test(
+    'onVideoRecordingDurationChanged stream emits duration changed events added to stream within plugin',
+    () async {
+      final camera = AndroidCameraCameraX();
+      const cameraId = 42;
+      const testEvent = VideoRecordingDurationChangedEvent(cameraId, Duration(seconds: 3));
+      final Stream<VideoRecordingDurationChangedEvent> eventStream = camera
+          .onVideoRecordingDurationChanged(cameraId);
+      final streamQueue = StreamQueue<VideoRecordingDurationChangedEvent>(eventStream);
+
+      camera.cameraEventStreamController.add(testEvent);
+
+      expect(await streamQueue.next, equals(testEvent));
+      await streamQueue.cancel();
+    },
+  );
+
+  test(
     'onDeviceOrientationChanged stream emits changes in device orientation detected by system services',
     () async {
       final camera = AndroidCameraCameraX();
@@ -2674,6 +2691,85 @@ void main() {
         );
 
         expect(camera.recording, equals(mockRecording));
+      },
+    );
+
+    test(
+      'startVideoCapturing listens to VideoRecordEventStatus and emits VideoRecordingDurationChangedEvent',
+      () async {
+        final camera = AndroidCameraCameraX();
+        final mockProcessCameraProvider = MockProcessCameraProvider();
+        final mockCamera = MockCamera();
+        final mockCameraInfo = MockCameraInfo();
+        final mockCameraControl = MockCameraControl();
+        final mockCamera2CameraInfo = MockCamera2CameraInfo();
+        final mockRecorder = MockRecorder();
+        final mockVideoCapture = MockVideoCapture();
+        final mockPendingRecording = MockPendingRecording();
+        final mockRecording = MockRecording();
+        final mockImageAnalysis = MockImageAnalysis();
+        const cameraId = 0;
+
+        camera.processCameraProvider = mockProcessCameraProvider;
+        camera.cameraSelector = MockCameraSelector();
+        camera.camera = mockCamera;
+        camera.cameraInfo = mockCameraInfo;
+        camera.cameraControl = mockCameraControl;
+        camera.recorder = mockRecorder;
+        camera.videoCapture = mockVideoCapture;
+        camera.imageAnalysis = mockImageAnalysis;
+        camera.enableRecordingAudio = false;
+
+        PigeonOverrides.camera2CameraInfo_from = ({required dynamic cameraInfo}) =>
+            mockCamera2CameraInfo;
+        PigeonOverrides.videoRecordEventListener_new =
+            ({required void Function(VideoRecordEventListener, VideoRecordEvent) onEvent}) {
+              return VideoRecordEventListener.pigeon_detached(onEvent: onEvent);
+            };
+        PigeonOverrides.cameraCharacteristics_infoSupportedHardwareLevel =
+            MockCameraCharacteristicsKey();
+        when(
+          mockCamera2CameraInfo.getCameraCharacteristic(any),
+        ).thenAnswer((_) async => InfoSupportedHardwareLevel.limited);
+
+        when(mockRecorder.prepareRecording(any)).thenAnswer((_) async => mockPendingRecording);
+        when(
+          mockPendingRecording.withAudioEnabled(any),
+        ).thenAnswer((_) async => mockPendingRecording);
+        when(
+          mockPendingRecording.asPersistentRecording(),
+        ).thenAnswer((_) async => mockPendingRecording);
+        when(mockPendingRecording.start(any)).thenAnswer((_) async => mockRecording);
+        when(mockProcessCameraProvider.isBound(mockVideoCapture)).thenAnswer((_) async => true);
+        when(mockProcessCameraProvider.isBound(mockImageAnalysis)).thenAnswer((_) async => false);
+
+        final mockDataStatus = MockVideoRecordEventStatus();
+        final dataStats = RecordingStats.pigeon_detached(
+          recordedDurationNanos: 50000000,
+          numBytesRecorded: 1024,
+        );
+        when(mockDataStatus.getRecordingStats()).thenAnswer((_) async => dataStats);
+
+        final Stream<VideoRecordingDurationChangedEvent> durationStream =
+            camera.onVideoRecordingDurationChanged(cameraId);
+        final streamQueue = StreamQueue<VideoRecordingDurationChangedEvent>(durationStream);
+
+        scheduleMicrotask(() {
+          AndroidCameraCameraX.videoRecordingEventStreamController.add(
+            VideoRecordEventStart.pigeon_detached(),
+          );
+          AndroidCameraCameraX.videoRecordingEventStreamController.add(mockDataStatus);
+        });
+
+        await camera.startVideoCapturing(
+          const VideoCaptureOptions(cameraId, videoOutputPath: '/test/output/path'),
+        );
+
+        final VideoRecordingDurationChangedEvent durationEvent = await streamQueue.next;
+        expect(durationEvent.cameraId, cameraId);
+        expect(durationEvent.duration, const Duration(microseconds: 50000));
+
+        await streamQueue.cancel();
       },
     );
 

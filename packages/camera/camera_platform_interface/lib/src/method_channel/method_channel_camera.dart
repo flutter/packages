@@ -190,6 +190,11 @@ class MethodChannelCamera extends CameraPlatform {
   }
 
   @override
+  Stream<VideoRecordingDurationChangedEvent> onVideoRecordingDurationChanged(int cameraId) {
+    return _cameraEvents(cameraId).whereType<VideoRecordingDurationChangedEvent>();
+  }
+
+  @override
   Stream<DeviceOrientationChangedEvent> onDeviceOrientationChanged() {
     return deviceEventStreamController.stream.whereType<DeviceOrientationChangedEvent>();
   }
@@ -577,6 +582,14 @@ class MethodChannelCamera extends CameraPlatform {
             arguments['maxVideoDuration'] != null
                 ? Duration(milliseconds: arguments['maxVideoDuration']! as int)
                 : null,
+          ),
+        );
+      case 'video_recording_duration_changed':
+        final Map<String, Object?> arguments = _getArgumentDictionary(call);
+        cameraEventStreamController.add(
+          VideoRecordingDurationChangedEvent(
+            cameraId,
+            Duration(milliseconds: arguments['duration']! as int),
           ),
         );
       case 'error':

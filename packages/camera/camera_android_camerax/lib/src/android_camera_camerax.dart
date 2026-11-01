@@ -110,6 +110,10 @@ class AndroidCameraCameraX extends CameraPlatform {
     videoRecordingEventStreamController.stream,
   );
 
+  /// Subscription to video recording events while a recording is in progress.
+  @visibleForTesting
+  StreamSubscription<VideoRecordEvent>? videoRecordEventSubscription;
+
   late final VideoRecordEventListener _videoRecordingEventListener = VideoRecordEventListener(
     onEvent: (_, VideoRecordEvent event) {
       videoRecordingEventStreamController.add(event);
@@ -531,6 +535,8 @@ class AndroidCameraCameraX extends CameraPlatform {
     await processCameraProvider?.unbindAll();
     await imageAnalysis?.clearAnalyzer();
     await deviceOrientationManager.stopListeningForDeviceOrientationChange();
+    await videoRecordEventSubscription?.cancel();
+    videoRecordEventSubscription = null;
 
     // `processCameraProvider.unbindAll()` implicitly finalizes active recordings natively.
     // Clear the Dart state here to prevent an exception on resume.
@@ -574,6 +580,12 @@ class AndroidCameraCameraX extends CameraPlatform {
   @override
   Stream<VideoRecordedEvent> onVideoRecordedEvent(int cameraId) {
     return _cameraEvents(cameraId).whereType<VideoRecordedEvent>();
+  }
+
+  /// The camera with ID [cameraId] recorded video duration has updated.
+  @override
+  Stream<VideoRecordingDurationChangedEvent> onVideoRecordingDurationChanged(int cameraId) {
+    return _cameraEvents(cameraId).whereType<VideoRecordingDurationChangedEvent>();
   }
 
   /// Locks the capture orientation of camera with ID [cameraId].
@@ -1207,6 +1219,23 @@ class AndroidCameraCameraX extends CameraPlatform {
     videoRecordingEventStreamQueue = StreamQueue<VideoRecordEvent>(
       videoRecordingEventStreamController.stream,
     );
+    unawaited(videoRecordEventSubscription?.cancel());
+    videoRecordEventSubscription = videoRecordingEventStreamController.stream.listen((
+      VideoRecordEvent event,
+    ) async {
+      if (event is VideoRecordEventStatus) {
+        final RecordingStats stats = await event.getRecordingStats();
+        cameraEventStreamController.add(
+          VideoRecordingDurationChangedEvent(
+            options.cameraId,
+            Duration(microseconds: stats.recordedDurationNanos ~/ 1000),
+          ),
+        );
+      } else if (event is VideoRecordEventFinalize) {
+        unawaited(videoRecordEventSubscription?.cancel());
+        videoRecordEventSubscription = null;
+      }
+    });
     final dynamic Function(CameraImageData)? streamCallback = options.streamCallback;
     if (streamCallback == null) {
       // For potential performance improvements, unbind imageAnalysis if not in use.
@@ -1299,6 +1328,8 @@ class AndroidCameraCameraX extends CameraPlatform {
     }
     recording = null;
     pendingRecording = null;
+    await videoRecordEventSubscription?.cancel();
+    videoRecordEventSubscription = null;
 
     if (videoOutputPath == null) {
       // Handle any errors with finalizing video recording.

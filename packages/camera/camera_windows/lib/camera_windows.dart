@@ -154,6 +154,11 @@ class CameraWindows extends CameraPlatform {
   }
 
   @override
+  Stream<VideoRecordingDurationChangedEvent> onVideoRecordingDurationChanged(int cameraId) {
+    return _cameraEvents(cameraId).whereType<VideoRecordingDurationChangedEvent>();
+  }
+
+  @override
   Stream<DeviceOrientationChangedEvent> onDeviceOrientationChanged() {
     // TODO(jokerttu): Implement device orientation detection, https://github.com/flutter/flutter/issues/97540.
     // Force device orientation to landscape as by default camera plugin uses portraitUp orientation.
@@ -390,5 +395,15 @@ class HostCameraMessageHandler implements CameraEventApi {
   @override
   void cameraClosing() {
     streamController.add(CameraClosingEvent(cameraId));
+  }
+
+  @override
+  void videoRecordingDurationChanged(int durationMs) {
+    streamController.add(
+      VideoRecordingDurationChangedEvent(
+        cameraId,
+        Duration(milliseconds: durationMs),
+      ),
+    );
   }
 }

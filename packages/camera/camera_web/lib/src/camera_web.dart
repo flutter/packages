@@ -372,6 +372,11 @@ class CameraPlugin extends CameraPlatform {
   }
 
   @override
+  Stream<VideoRecordingDurationChangedEvent> onVideoRecordingDurationChanged(int cameraId) {
+    return getCamera(cameraId).onVideoRecordingDurationChanged;
+  }
+
+  @override
   Stream<DeviceOrientationChangedEvent> onDeviceOrientationChanged() {
     final web.ScreenOrientation orientation = window.screen.orientation;
 

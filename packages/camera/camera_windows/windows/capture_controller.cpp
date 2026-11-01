@@ -278,6 +278,7 @@ void CaptureControllerImpl::ResetCaptureController() {
   capture_engine_state_ = CaptureEngineState::kNotInitialized;
   preview_frame_width_ = 0;
   preview_frame_height_ = 0;
+  last_reported_duration_ms_ = -1;
   capture_engine_callback_handler_ = nullptr;
   capture_engine_ = nullptr;
   audio_source_ = nullptr;
@@ -610,6 +611,7 @@ void CaptureControllerImpl::StartRecord(const std::string& file_path) {
 
   // Check MF_CAPTURE_ENGINE_RECORD_STARTED event handling for response
   // process.
+  last_reported_duration_ms_ = -1;
   hr = record_handler_->StartRecord(file_path, capture_engine_.Get(),
                                     base_capture_media_type_.Get(),
                                     record_source_stream_index_);
@@ -965,6 +967,18 @@ void CaptureControllerImpl::UpdateCaptureTime(uint64_t capture_time_us) {
     // Informs that first frame is captured successfully and preview has
     // started.
     OnPreviewStarted(CameraResult::kSuccess, "");
+  }
+
+  if (record_handler_ && record_handler_->IsRecording()) {
+    record_handler_->UpdateRecordingTime(capture_time_us);
+    int64_t duration_ms =
+        static_cast<int64_t>(record_handler_->GetRecordedDuration() / 1000);
+    if (duration_ms >= last_reported_duration_ms_ + 100) {
+      last_reported_duration_ms_ = duration_ms;
+      if (capture_controller_listener_) {
+        capture_controller_listener_->OnRecordDurationChanged(duration_ms);
+      }
+    }
   }
 }
 

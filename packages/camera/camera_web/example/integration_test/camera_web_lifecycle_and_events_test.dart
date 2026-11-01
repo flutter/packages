@@ -843,6 +843,28 @@ void main() {
           equals(VideoRecordedEvent(cameraId, capturedVideo, Duration.zero)),
         );
       });
+
+      testWidgets('onVideoRecordingDurationChanged emits a VideoRecordingDurationChangedEvent', (
+        WidgetTester tester,
+      ) async {
+        final camera = MockCamera();
+        final stream = Stream<VideoRecordingDurationChangedEvent>.value(
+          const VideoRecordingDurationChangedEvent(cameraId, Duration(seconds: 1)),
+        );
+        when(camera.onVideoRecordingDurationChanged).thenAnswer((_) => stream);
+
+        // Save the camera in the camera plugin.
+        (CameraPlatform.instance as CameraPlugin).cameras[cameraId] = camera;
+
+        final streamQueue = StreamQueue<VideoRecordingDurationChangedEvent>(
+          CameraPlatform.instance.onVideoRecordingDurationChanged(cameraId),
+        );
+
+        expect(
+          await streamQueue.next,
+          equals(const VideoRecordingDurationChangedEvent(cameraId, Duration(seconds: 1))),
+        );
+      });
     });
   });
 }

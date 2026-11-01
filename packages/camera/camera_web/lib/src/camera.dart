@@ -156,6 +156,23 @@ class Camera {
   final StreamController<VideoRecordedEvent> videoRecorderController =
       StreamController<VideoRecordedEvent>.broadcast();
 
+  /// The stream that emits a [VideoRecordingDurationChangedEvent] when the video recording duration updates.
+  Stream<VideoRecordingDurationChangedEvent> get onVideoRecordingDurationChanged =>
+      videoRecordingDurationChangedController.stream;
+
+  /// The stream controller for the [onVideoRecordingDurationChanged] stream.
+  @visibleForTesting
+  final StreamController<VideoRecordingDurationChangedEvent>
+  videoRecordingDurationChangedController =
+      StreamController<VideoRecordingDurationChangedEvent>.broadcast();
+
+  Stopwatch? _recordingStopwatch;
+  Timer? _recordingDurationTimer;
+
+  /// The interval at which [onVideoRecordingDurationChanged] emits events.
+  @visibleForTesting
+  Duration recordingDurationUpdateInterval = const Duration(milliseconds: 100);
+
   /// Initializes the camera stream displayed in the [videoElement].
   /// Registers the camera view with [textureId] under [_getViewType] type.
   /// Emits the camera default video track on the [onEnded] stream when it ends.
@@ -450,6 +467,16 @@ class Camera {
         });
 
     mediaRecorder!.start();
+
+    _recordingStopwatch = Stopwatch()..start();
+    _recordingDurationTimer?.cancel();
+    _recordingDurationTimer = Timer.periodic(recordingDurationUpdateInterval, (_) {
+      if (_recordingStopwatch != null && _recordingStopwatch!.isRunning) {
+        videoRecordingDurationChangedController.add(
+          VideoRecordingDurationChangedEvent(textureId, _recordingStopwatch!.elapsed),
+        );
+      }
+    });
   }
 
   void _onVideoDataAvailable(web.BlobEvent event) {
@@ -483,6 +510,11 @@ class Camera {
 
     await _onVideoRecordingErrorSubscription?.cancel();
 
+    _recordingStopwatch?.stop();
+    _recordingStopwatch = null;
+    _recordingDurationTimer?.cancel();
+    _recordingDurationTimer = null;
+
     mediaRecorder = null;
     _videoDataAvailableListener = null;
     _videoRecordingStoppedListener = null;
@@ -497,6 +529,7 @@ class Camera {
       throw _videoRecordingNotStartedException;
     }
     mediaRecorder!.pause();
+    _recordingStopwatch?.stop();
   }
 
   /// Resumes the current video recording.
@@ -507,6 +540,7 @@ class Camera {
       throw _videoRecordingNotStartedException;
     }
     mediaRecorder!.resume();
+    _recordingStopwatch?.start();
   }
 
   /// Stops the video recording and returns the captured video file.
@@ -517,6 +551,7 @@ class Camera {
       throw _videoRecordingNotStartedException;
     }
 
+    _recordingStopwatch?.stop();
     mediaRecorder!.stop();
 
     return _videoAvailableCompleter!.future;
@@ -527,6 +562,12 @@ class Camera {
   Future<void> dispose() async {
     // Stop the camera stream.
     stop();
+
+    _recordingStopwatch?.stop();
+    _recordingStopwatch = null;
+    _recordingDurationTimer?.cancel();
+    _recordingDurationTimer = null;
+    await videoRecordingDurationChangedController.close();
 
     await videoRecorderController.close();
     mediaRecorder = null;

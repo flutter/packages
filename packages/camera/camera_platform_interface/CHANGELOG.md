@@ -1,3 +1,7 @@
+## 2.16.0
+
+* Adds `VideoRecordingDurationChangedEvent` and `CameraPlatform.onVideoRecordingDurationChanged` to support reporting the current duration of recorded video.
+
 ## 2.15.0
 
 * Adds `isZeroShutterLagSupported` and `setZeroShutterLagEnabled` for

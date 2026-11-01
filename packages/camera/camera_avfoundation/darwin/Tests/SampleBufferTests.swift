@@ -595,4 +595,31 @@ final class CameraSampleBufferTests: XCTestCase {
     XCTAssertEqual(mockPhotoOutput.maxPhotoDimensions.width, 4032)
     XCTAssertEqual(mockPhotoOutput.maxPhotoDimensions.height, 3024)
   }
+
+  func testDidOutputSampleBuffer_reportsVideoRecordingDuration() {
+    let (camera, _, _, inputMock) = createCamera()
+    inputMock.isReadyForMoreMediaData = true
+    let messenger = MockFlutterBinaryMessenger()
+    camera.dartAPI = CameraEventApi(binaryMessenger: messenger, messageChannelSuffix: "0")
+
+    let startSample = CameraTestUtils.createTestSampleBuffer(
+      timestamp: CMTime(value: 0, timescale: 1000))
+    let secondSample = CameraTestUtils.createTestSampleBuffer(
+      timestamp: CMTime(value: 250, timescale: 1000))
+    let testConnection = CameraTestUtils.createTestConnection(camera.captureVideoOutput.avOutput)
+
+    camera.startVideoRecording(completion: { _ in }, messengerForStreaming: nil)
+
+    // First sample establishes start time.
+    camera.captureOutput(
+      camera.captureVideoOutput.avOutput,
+      didOutput: startSample,
+      from: testConnection)
+
+    // Second sample 250ms later reports duration.
+    camera.captureOutput(
+      camera.captureVideoOutput.avOutput,
+      didOutput: secondSample,
+      from: testConnection)
+  }
 }

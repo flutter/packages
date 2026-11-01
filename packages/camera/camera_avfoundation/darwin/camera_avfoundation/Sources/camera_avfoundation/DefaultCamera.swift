@@ -107,6 +107,10 @@ final class DefaultCamera: NSObject, Camera {
   private var outputForOffsetAdjusting: AVCaptureOutput?
   /// Time of the last appended video sample.
   private var lastAppendedVideoSampleTime = CMTime.invalid
+  /// Presentation time of the first video sample.
+  private var videoRecordingStartTime = CMTime.invalid
+  /// Last reported video recording duration in milliseconds.
+  private var lastReportedRecordingDurationMs: Int64 = -1
 
   /// True when images from the camera are being streamed.
   private(set) var isStreamingImages = false
@@ -611,6 +615,8 @@ final class DefaultCamera: NSObject, Camera {
     recordingTimeOffset = CMTime.zero
     outputForOffsetAdjusting = captureVideoOutput.avOutput
     lastAppendedVideoSampleTime = CMTime.negativeInfinity
+    videoRecordingStartTime = CMTime.invalid
+    lastReportedRecordingDurationMs = -1
     completion(.success(()))
   }
 
@@ -746,6 +752,8 @@ final class DefaultCamera: NSObject, Camera {
     }
 
     isRecording = false
+    videoRecordingStartTime = CMTime.invalid
+    lastReportedRecordingDurationMs = -1
 
     // When `isRecording` is true `startWriting` was already called so `videoWriter.status`
     // is always either `.writing` or `.failed` and `finishWriting` does not throw exceptions so
@@ -1445,6 +1453,7 @@ final class DefaultCamera: NSObject, Camera {
 
       if isFirstVideoSample {
         videoWriter?.startSession(atSourceTime: sampleTime)
+        videoRecordingStartTime = sampleTime
         // fix sample times not being numeric when pause/resume happens before first sample buffer
         // arrives
         // https://github.com/flutter/flutter/issues/132014
@@ -1480,6 +1489,17 @@ final class DefaultCamera: NSObject, Camera {
         if nextSampleTime > lastAppendedVideoSampleTime {
           let _ = videoAdaptor?.append(nextBuffer!, withPresentationTime: nextSampleTime)
           lastAppendedVideoSampleTime = nextSampleTime
+          if CMTIME_IS_NUMERIC(videoRecordingStartTime) {
+            let duration = CMTimeSubtract(nextSampleTime, videoRecordingStartTime)
+            let durationMs = Int64(CMTimeGetSeconds(duration) * 1000)
+            if durationMs >= 0
+              && (durationMs - lastReportedRecordingDurationMs >= 100
+                || lastReportedRecordingDurationMs < 0)
+            {
+              lastReportedRecordingDurationMs = durationMs
+              dartAPI?.videoRecordingDurationChanged(durationMs: durationMs) { _ in }
+            }
+          }
         }
       } else {
         if recordingTimeOffset.value != 0 {

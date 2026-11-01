@@ -160,6 +160,11 @@ class AndroidCamera extends CameraPlatform {
   }
 
   @override
+  Stream<VideoRecordingDurationChangedEvent> onVideoRecordingDurationChanged(int cameraId) {
+    return _cameraEvents(cameraId).whereType<VideoRecordingDurationChangedEvent>();
+  }
+
+  @override
   Stream<DeviceOrientationChangedEvent> onDeviceOrientationChanged() {
     return hostHandler.deviceEventStreamController.stream
         .whereType<DeviceOrientationChangedEvent>();

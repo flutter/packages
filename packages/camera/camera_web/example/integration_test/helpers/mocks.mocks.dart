@@ -458,6 +458,48 @@ class MockCamera extends _i1.Mock implements _i10.Camera {
           as _i5.Stream<_i7.VideoRecordedEvent>);
 
   @override
+  _i5.StreamController<_i7.VideoRecordingDurationChangedEvent>
+  get videoRecordingDurationChangedController =>
+      (super.noSuchMethod(
+            Invocation.getter(#videoRecordingDurationChangedController),
+            returnValue: _FakeStreamController_4<_i7.VideoRecordingDurationChangedEvent>(
+              this,
+              Invocation.getter(#videoRecordingDurationChangedController),
+            ),
+            returnValueForMissingStub:
+                _FakeStreamController_4<_i7.VideoRecordingDurationChangedEvent>(
+                  this,
+                  Invocation.getter(#videoRecordingDurationChangedController),
+                ),
+          )
+          as _i5.StreamController<_i7.VideoRecordingDurationChangedEvent>);
+
+  @override
+  _i5.Stream<_i7.VideoRecordingDurationChangedEvent> get onVideoRecordingDurationChanged =>
+      (super.noSuchMethod(
+            Invocation.getter(#onVideoRecordingDurationChanged),
+            returnValue: _i5.Stream<_i7.VideoRecordingDurationChangedEvent>.empty(),
+            returnValueForMissingStub: _i5.Stream<_i7.VideoRecordingDurationChangedEvent>.empty(),
+          )
+          as _i5.Stream<_i7.VideoRecordingDurationChangedEvent>);
+
+  @override
+  Duration get recordingDurationUpdateInterval =>
+      (super.noSuchMethod(
+            Invocation.getter(#recordingDurationUpdateInterval),
+            returnValue: Duration.zero,
+            returnValueForMissingStub: Duration.zero,
+          )
+          as Duration);
+
+  @override
+  set recordingDurationUpdateInterval(Duration? _recordingDurationUpdateInterval) =>
+      super.noSuchMethod(
+        Invocation.setter(#recordingDurationUpdateInterval, _recordingDurationUpdateInterval),
+        returnValueForMissingStub: null,
+      );
+
+  @override
   _i5.Future<void> initialize() =>
       (super.noSuchMethod(
             Invocation.method(#initialize, []),
