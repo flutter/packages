@@ -1560,4 +1560,150 @@ void main() {
 
     expect(find.text('PAGINATED_ASC'), findsOneWidget);
   });
+
+  group('PaginatedDataTable inside a RawScrollbar', () {
+    // Regression tests for https://github.com/flutter/flutter/issues/175012
+    // The footer's scroll view only guards against overflow, so its scroll
+    // notifications must not reach a scrollbar that wraps the table.
+    const thumbColor = Color(0xFF123456);
+
+    Widget buildTable({ScrollController? controller, bool? primary}) {
+      return PaginatedDataTable(
+        controller: controller,
+        primary: primary,
+        rowsPerPage: 2,
+        availableRowsPerPage: const <int>[2, 4],
+        columns: const <DataColumn>[
+          DataColumn(label: SizedBox(width: 1600.0, child: Text('X'))),
+          DataColumn(label: Text('Y')),
+          DataColumn(label: Text('Z')),
+        ],
+        source: source,
+      );
+    }
+
+    Rect paintedThumb() {
+      late Rect thumb;
+      expect(
+        find.byType(RawScrollbar),
+        paints..something((Symbol method, List<dynamic> arguments) {
+          if (method != #drawRect ||
+              (arguments[1] as Paint).color.toARGB32() != thumbColor.toARGB32()) {
+            return false;
+          }
+          thumb = arguments[0] as Rect;
+          return true;
+        }),
+      );
+      return thumb;
+    }
+
+    // The thumb length the table's own metrics produce.
+    double expectedThumbLength(ScrollPosition table) {
+      final double viewport = table.viewportDimension;
+      return viewport * viewport / (table.maxScrollExtent + viewport);
+    }
+
+    testWidgets('shows the thumb before any interaction and tracks the table', (
+      WidgetTester tester,
+    ) async {
+      final controller = ScrollController();
+      addTearDown(controller.dispose);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Material(
+            child: RawScrollbar(
+              thumbVisibility: true,
+              thumbColor: thumbColor,
+              controller: controller,
+              child: buildTable(controller: controller),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(controller.offset, 0.0);
+      final Rect initialThumb = paintedThumb();
+      expect(initialThumb.left, 0.0);
+      expect(initialThumb.width, moreOrLessEquals(expectedThumbLength(controller.position)));
+
+      // Dragging the table moves the thumb, without changing its length.
+      // The label is wider than the screen, so its center is out of reach.
+      await tester.dragFrom(tester.getTopLeft(find.text('X')), const Offset(-300.0, 0.0));
+      await tester.pumpAndSettle();
+
+      expect(controller.offset, greaterThan(0.0));
+      final Rect scrolledThumb = paintedThumb();
+      expect(scrolledThumb.left, greaterThan(initialThumb.left));
+      expect(scrolledThumb.width, moreOrLessEquals(initialThumb.width));
+    });
+
+    testWidgets('does not move the thumb when an overflowing footer scrolls', (
+      WidgetTester tester,
+    ) async {
+      final controller = ScrollController();
+      addTearDown(controller.dispose);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Material(
+            child: Align(
+              alignment: Alignment.topLeft,
+              child: SizedBox(
+                // Narrow enough for the footer to overflow.
+                width: 200.0,
+                child: RawScrollbar(
+                  thumbVisibility: true,
+                  thumbColor: thumbColor,
+                  controller: controller,
+                  child: buildTable(controller: controller),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final Rect initialThumb = paintedThumb();
+      final ScrollPosition footer = tester
+          .state<ScrollableState>(
+            find.ancestor(of: find.byTooltip('Next page'), matching: find.byType(Scrollable)).first,
+          )
+          .position;
+      expect(footer.maxScrollExtent, greaterThan(0.0));
+
+      footer.jumpTo(footer.maxScrollExtent);
+      await tester.pumpAndSettle();
+
+      expect(paintedThumb(), initialThumb);
+    });
+
+    testWidgets('follows the table when the scrollbar has no controller of its own', (
+      WidgetTester tester,
+    ) async {
+      final controller = ScrollController();
+      addTearDown(controller.dispose);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Material(
+            child: PrimaryScrollController(
+              controller: controller,
+              child: RawScrollbar(
+                thumbVisibility: true,
+                thumbColor: thumbColor,
+                child: buildTable(primary: true),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(paintedThumb().width, moreOrLessEquals(expectedThumbLength(controller.position)));
+    });
+  });
 }
