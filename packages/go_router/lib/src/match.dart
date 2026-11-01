@@ -1034,8 +1034,11 @@ class RouteMatchList with Diagnosticable {
 class RouteMatchListCodec extends Codec<RouteMatchList, Map<Object?, Object?>> {
   /// Creates a new [RouteMatchListCodec] object.
   RouteMatchListCodec(RouteConfiguration configuration)
-    : decoder = _RouteMatchListDecoder(configuration),
+    : _configuration = configuration,
+      decoder = _RouteMatchListDecoder(configuration),
       encoder = _RouteMatchListEncoder(configuration);
+
+  final RouteConfiguration _configuration;
 
   static const String _locationKey = 'location';
   static const String _extraKey = 'state';
@@ -1051,6 +1054,22 @@ class RouteMatchListCodec extends Codec<RouteMatchList, Map<Object?, Object?>> {
 
   @override
   final Converter<Map<Object?, Object?>, RouteMatchList> decoder;
+
+  /// Decodes [encoded] as [decode] does, but a page that [current] shows keeps
+  /// its completer, so the future of its [GoRouter.push] still completes.
+  ///
+  /// A completer cannot be encoded. A page that [current] does not show, such
+  /// as one that state restoration brings back, gets a new one.
+  RouteMatchList decodeOver(Map<Object?, Object?> encoded, RouteMatchList current) {
+    final completers = <ValueKey<String>, Completer<Object?>>{};
+    current.visitRouteMatches((RouteMatchBase match) {
+      if (match is ImperativeRouteMatch) {
+        completers[match.pageKey] = match.completer;
+      }
+      return true;
+    });
+    return _RouteMatchListDecoder(_configuration, completers: completers).convert(encoded);
+  }
 }
 
 class _RouteMatchListEncoder extends Converter<RouteMatchList, Map<Object?, Object?>> {
@@ -1121,9 +1140,12 @@ class _RouteMatchListEncoder extends Converter<RouteMatchList, Map<Object?, Obje
 }
 
 class _RouteMatchListDecoder extends Converter<Map<Object?, Object?>, RouteMatchList> {
-  _RouteMatchListDecoder(this.configuration);
+  _RouteMatchListDecoder(this.configuration, {this.completers = const {}});
 
   final RouteConfiguration configuration;
+
+  /// The completers to keep, by the keys of their pages.
+  final Map<ValueKey<String>, Completer<Object?>> completers;
 
   @override
   RouteMatchList convert(Map<Object?, Object?> input) {
@@ -1150,7 +1172,7 @@ class _RouteMatchListDecoder extends Converter<Map<Object?, Object?>, RouteMatch
           pageKey: pageKey,
           // TODO(chunhtai): Figure out a way to preserve future.
           // https://github.com/flutter/flutter/issues/128122.
-          completer: Completer<Object?>(),
+          completer: completers[pageKey] ?? Completer<Object?>(),
           matches: imperativeMatchList,
         );
         matchList = matchList.push(imperativeMatch);
