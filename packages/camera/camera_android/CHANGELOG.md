@@ -1,7 +1,3 @@
-## 0.10.13
-
-* Adds support for `onVideoRecordingDurationChanged`.
-
 ## 0.10.12+1
 
 * Updates Robolectric to 4.17 and adds the JVM arguments it requires for unit tests.
