@@ -1,0 +1,3 @@
+changelog: |
+  - Apply MenuAnchor reserved padding within the safe area.
+version: patch
