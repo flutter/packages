@@ -1497,7 +1497,9 @@ final class DefaultCamera: NSObject, Camera {
                 || lastReportedRecordingDurationMs < 0)
             {
               lastReportedRecordingDurationMs = durationMs
-              dartAPI?.videoRecordingDurationChanged(durationMs: durationMs) { _ in }
+              ensureToRunOnMainQueue { [weak self] in
+                self?.dartAPI?.videoRecordingDurationChanged(durationMs: durationMs) { _ in }
+              }
             }
           }
         }

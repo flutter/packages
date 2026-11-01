@@ -600,20 +600,33 @@ final class CameraSampleBufferTests: XCTestCase {
     let (camera, _, _, inputMock) = createCamera()
     inputMock.isReadyForMoreMediaData = true
     let messenger = MockFlutterBinaryMessenger()
+    var sentChannels: [String] = []
+    messenger.sendOnChannelStub = { channel, _, callback in
+      sentChannels.append(channel)
+      callback?(nil)
+    }
     camera.dartAPI = CameraEventApi(binaryMessenger: messenger, messageChannelSuffix: "0")
 
     let startSample = CameraTestUtils.createTestSampleBuffer(
       timestamp: CMTime(value: 0, timescale: 1000))
+    let earlySample = CameraTestUtils.createTestSampleBuffer(
+      timestamp: CMTime(value: 50, timescale: 1000))
     let secondSample = CameraTestUtils.createTestSampleBuffer(
       timestamp: CMTime(value: 250, timescale: 1000))
     let testConnection = CameraTestUtils.createTestConnection(camera.captureVideoOutput.avOutput)
 
     camera.startVideoRecording(completion: { _ in }, messengerForStreaming: nil)
 
-    // First sample establishes start time.
+    // First sample establishes start time (duration 0ms) and reports it.
     camera.captureOutput(
       camera.captureVideoOutput.avOutput,
       didOutput: startSample,
+      from: testConnection)
+
+    // Sample after 50ms (< 100ms threshold) should not report duration.
+    camera.captureOutput(
+      camera.captureVideoOutput.avOutput,
+      didOutput: earlySample,
       from: testConnection)
 
     // Second sample 250ms later reports duration.
@@ -621,5 +634,13 @@ final class CameraSampleBufferTests: XCTestCase {
       camera.captureVideoOutput.avOutput,
       didOutput: secondSample,
       from: testConnection)
+
+    waitForQueueRoundTrip(with: DispatchQueue.main)
+    XCTAssertEqual(
+      sentChannels,
+      [
+        "dev.flutter.pigeon.camera_avfoundation.CameraEventApi.videoRecordingDurationChanged.0",
+        "dev.flutter.pigeon.camera_avfoundation.CameraEventApi.videoRecordingDurationChanged.0",
+      ])
   }
 }
