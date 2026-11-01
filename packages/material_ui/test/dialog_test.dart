@@ -1333,7 +1333,7 @@ void main() {
             tester,
             finder: childrenFinder,
             textScaleFactor: textScaleFactor,
-            unscaledValue: 12.0,
+            unscaledValue: 16.0,
           );
           expectLeftEdgePadding(
             tester,
@@ -1403,6 +1403,61 @@ void main() {
         },
       );
     }
+  });
+
+  testWidgets('SimpleDialog options have 24 pixels of top padding without a title', (
+    WidgetTester tester,
+  ) async {
+    const dialog = SimpleDialog(children: <Widget>[SimpleDialogOption(child: Text('Delete'))]);
+
+    for (final useMaterial3 in <bool>[false, true]) {
+      await tester.pumpWidget(
+        _buildAppWithDialog(dialog, theme: ThemeData(useMaterial3: useMaterial3)),
+      );
+      await tester.tap(find.text('X'));
+      await tester.pumpAndSettle();
+
+      final Rect surface = tester.getRect(
+        find.descendant(of: find.byType(Dialog), matching: find.byType(Material)).first,
+      );
+      final Rect option = tester.getRect(find.text('Delete'));
+      expect(option.top - surface.top, 24.0);
+      expect(option.left - surface.left, 24.0);
+      await tester.pumpWidget(const SizedBox.shrink());
+    }
+  });
+
+  testWidgets('SimpleDialog title has 24 pixels of bottom padding without children', (
+    WidgetTester tester,
+  ) async {
+    const dialog = SimpleDialog(title: Text('Options'));
+    await tester.pumpWidget(_buildAppWithDialog(dialog));
+    await tester.tap(find.text('X'));
+    await tester.pumpAndSettle();
+
+    final Rect surface = tester.getRect(
+      find.descendant(of: find.byType(Dialog), matching: find.byType(Material)).first,
+    );
+    final Rect title = tester.getRect(find.text('Options'));
+    expect(surface.bottom - title.bottom, 24.0);
+  });
+
+  testWidgets('SimpleDialog respects explicit padding when its defaults are adaptive', (
+    WidgetTester tester,
+  ) async {
+    const dialog = SimpleDialog(
+      contentPadding: EdgeInsets.fromLTRB(0.0, 12.0, 0.0, 16.0),
+      children: <Widget>[SimpleDialogOption(child: Text('Delete'))],
+    );
+    await tester.pumpWidget(_buildAppWithDialog(dialog));
+    await tester.tap(find.text('X'));
+    await tester.pumpAndSettle();
+
+    final Rect surface = tester.getRect(
+      find.descendant(of: find.byType(Dialog), matching: find.byType(Material)).first,
+    );
+    final Rect option = tester.getRect(find.text('Delete'));
+    expect(option.top - surface.top, 20.0);
   });
 
   testWidgets('Dialogs can set the vertical direction of overflowing actions', (

@@ -1203,10 +1203,10 @@ class SimpleDialog extends StatelessWidget {
   const SimpleDialog({
     super.key,
     this.title,
-    this.titlePadding = const EdgeInsets.fromLTRB(24.0, 24.0, 24.0, 0.0),
+    EdgeInsetsGeometry? titlePadding,
     this.titleTextStyle,
     this.children,
-    this.contentPadding = const EdgeInsets.fromLTRB(0.0, 12.0, 0.0, 16.0),
+    EdgeInsetsGeometry? contentPadding,
     this.contentTextStyle,
     this.backgroundColor,
     this.elevation,
@@ -1218,7 +1218,16 @@ class SimpleDialog extends StatelessWidget {
     this.shape,
     this.alignment,
     this.constraints,
-  });
+  }) : titlePadding =
+           titlePadding ??
+           (title != null && children == null
+               ? const EdgeInsets.all(24.0)
+               : const EdgeInsets.fromLTRB(24.0, 24.0, 24.0, 0.0)),
+       contentPadding =
+           contentPadding ??
+           (title == null && children != null
+               ? const EdgeInsets.fromLTRB(0.0, 16.0, 0.0, 16.0)
+               : const EdgeInsets.fromLTRB(0.0, 12.0, 0.0, 16.0));
 
   /// The (optional) title of the dialog is displayed in a large font at the top
   /// of the dialog.
@@ -1232,6 +1241,7 @@ class SimpleDialog extends StatelessWidget {
   ///
   /// By default, this provides the recommend Material Design padding of 24
   /// pixels around the left, top, and right edges of the title.
+  /// When [children] is null, the bottom padding defaults to 24 pixels as well.
   ///
   /// See [contentPadding] for the conventions regarding padding between the
   /// [title] and the [children].
@@ -1251,16 +1261,14 @@ class SimpleDialog extends StatelessWidget {
 
   /// Padding around the content.
   ///
-  /// By default, this is 12 pixels on the top and 16 pixels on the bottom. This
-  /// is intended to be combined with children that have 24 pixels of padding on
-  /// the left and right, and 8 pixels of padding on the top and bottom, so that
-  /// the content ends up being indented 20 pixels from the title, 24 pixels
-  /// from the bottom, and 24 pixels from the sides.
+  /// By default, this is 12 pixels on the top and 16 pixels on the bottom when
+  /// a title is present. When a title is absent and [children] is provided, the
+  /// top padding is 16 pixels. Combined with the padding of [SimpleDialogOption]
+  /// (8 pixels vertically and 24 horizontally), this results in a 24-pixel
+  /// inset from the top and bottom when there is no title. When a title and
+  /// children are provided, the content is 20 pixels below the title, and 24
+  /// pixels from the bottom and sides.
   ///
-  /// The [SimpleDialogOption] widget uses such padding.
-  ///
-  /// If there is no [title], the [contentPadding] should be adjusted so that
-  /// the top padding ends up being 24 pixels.
   final EdgeInsetsGeometry contentPadding;
 
   /// {@macro material_ui.dialog.backgroundColor}
