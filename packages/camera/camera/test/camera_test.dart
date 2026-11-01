@@ -3774,6 +3774,7 @@ class MockCameraPlatform extends Mock with MockPlatformInterfaceMixin implements
       super.noSuchMethod(
             Invocation.method(#onVideoRecordingDurationChanged, <Object?>[cameraId]),
             returnValue: const Stream<VideoRecordingDurationChangedEvent>.empty(),
+            returnValueForMissingStub: const Stream<VideoRecordingDurationChangedEvent>.empty(),
           )
           as Stream<VideoRecordingDurationChangedEvent>;
 

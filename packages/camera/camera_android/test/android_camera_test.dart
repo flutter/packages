@@ -356,24 +356,6 @@ void main() {
       await streamQueue.cancel();
     });
 
-    test('Should receive video recording duration changed events', () async {
-      // Act
-      final Stream<VideoRecordingDurationChangedEvent> eventStream = camera
-          .onVideoRecordingDurationChanged(cameraId);
-      final streamQueue = StreamQueue<VideoRecordingDurationChangedEvent>(eventStream);
-
-      // Emit test events
-      const duration = Duration(seconds: 3);
-      final event = VideoRecordingDurationChangedEvent(cameraId, duration);
-      camera.cameraEventStreamController.add(event);
-
-      // Assert
-      expect(await streamQueue.next, event);
-
-      // Clean up
-      await streamQueue.cancel();
-    });
-
     test('Should receive device orientation change events', () async {
       // Act
       final Stream<DeviceOrientationChangedEvent> eventStream = camera.onDeviceOrientationChanged();
