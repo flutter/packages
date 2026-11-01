@@ -40,6 +40,22 @@ class UnknownMapIDError extends Error {
   }
 }
 
+/// Platform-specific options for a Google Map on iOS.
+@immutable
+base class GoogleMapsFlutterIOSMapOptions extends PlatformMapOptions {
+  /// Creates iOS map options.
+  const GoogleMapsFlutterIOSMapOptions({
+    this.markerPositionAnimationsEnabled = true,
+    this.markerRotationAnimationsEnabled = true,
+  });
+
+  /// Whether marker position updates should use native iOS implicit animations.
+  final bool markerPositionAnimationsEnabled;
+
+  /// Whether marker rotation updates should use native iOS implicit animations.
+  final bool markerRotationAnimationsEnabled;
+}
+
 /// An implementation of [GoogleMapsFlutterPlatform] for iOS.
 class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
   /// Creates a new Android maps implementation instance.
@@ -212,6 +228,16 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
     return _hostApi(
       mapId,
     ).updateMapConfiguration(_platformMapConfigurationFromMapConfiguration(configuration));
+  }
+
+  @override
+  Future<void> setPlatformOptions(PlatformMapOptions options, {required int mapId}) {
+    if (options is GoogleMapsFlutterIOSMapOptions) {
+      return _hostApi(mapId).setMarkerUpdateAnimationConfiguration(
+        _platformMarkerUpdateAnimationConfigurationFromMapOptions(options),
+      );
+    }
+    return Future<void>.value();
   }
 
   @override
@@ -637,6 +663,16 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
       collisionBehavior: marker is AdvancedMarker
           ? platformMarkerCollisionBehaviorFromMarkerCollisionBehavior(marker.collisionBehavior)
           : null,
+    );
+  }
+
+  static PlatformMarkerUpdateAnimationConfiguration
+  _platformMarkerUpdateAnimationConfigurationFromMapOptions(
+    GoogleMapsFlutterIOSMapOptions options,
+  ) {
+    return PlatformMarkerUpdateAnimationConfiguration(
+      positionAnimationsEnabled: options.markerPositionAnimationsEnabled,
+      rotationAnimationsEnabled: options.markerRotationAnimationsEnabled,
     );
   }
 

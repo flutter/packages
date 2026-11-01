@@ -561,6 +561,12 @@ class MapCallHandler: MapsApi {
     controller?.interpretMapConfiguration(configuration)
   }
 
+  func setMarkerUpdateAnimationConfiguration(
+    configuration: PlatformMarkerUpdateAnimationConfiguration
+  ) {
+    controller?.markersController.setMarkerUpdateAnimationConfiguration(configuration)
+  }
+
   func updateMarkers(
     adding toAdd: [PlatformMarker],
     changing toChange: [PlatformMarker],

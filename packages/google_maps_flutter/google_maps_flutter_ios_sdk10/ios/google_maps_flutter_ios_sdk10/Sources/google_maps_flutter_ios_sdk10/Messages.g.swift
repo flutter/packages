@@ -2582,6 +2582,54 @@ struct PlatformBitmapPinConfig: PlatformBitmap {
   }
 }
 
+/// Controls marker update animation behavior for properties that the native iOS
+/// SDK implicitly animates.
+///
+/// Generated class from Pigeon that represents data sent in messages.
+struct PlatformMarkerUpdateAnimationConfiguration: Hashable, CustomStringConvertible {
+  var positionAnimationsEnabled: Bool
+  var rotationAnimationsEnabled: Bool
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ pigeonVar_list: [Any?]) -> PlatformMarkerUpdateAnimationConfiguration? {
+    let positionAnimationsEnabled = pigeonVar_list[0] as! Bool
+    let rotationAnimationsEnabled = pigeonVar_list[1] as! Bool
+
+    return PlatformMarkerUpdateAnimationConfiguration(
+      positionAnimationsEnabled: positionAnimationsEnabled,
+      rotationAnimationsEnabled: rotationAnimationsEnabled
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      positionAnimationsEnabled,
+      rotationAnimationsEnabled,
+    ]
+  }
+  static func == (
+    lhs: PlatformMarkerUpdateAnimationConfiguration, rhs: PlatformMarkerUpdateAnimationConfiguration
+  ) -> Bool {
+    if Swift.type(of: lhs) != Swift.type(of: rhs) {
+      return false
+    }
+    return MessagesPigeonInternal.deepEquals(
+      lhs.positionAnimationsEnabled, rhs.positionAnimationsEnabled)
+      && MessagesPigeonInternal.deepEquals(
+        lhs.rotationAnimationsEnabled, rhs.rotationAnimationsEnabled)
+  }
+
+  func hash(into hasher: inout Hasher) {
+    hasher.combine("PlatformMarkerUpdateAnimationConfiguration")
+    MessagesPigeonInternal.deepHash(value: positionAnimationsEnabled, hasher: &hasher)
+    MessagesPigeonInternal.deepHash(value: rotationAnimationsEnabled, hasher: &hasher)
+  }
+
+  public var description: String {
+    return
+      "PlatformMarkerUpdateAnimationConfiguration(positionAnimationsEnabled: \(String(describing: positionAnimationsEnabled)), rotationAnimationsEnabled: \(String(describing: rotationAnimationsEnabled)))"
+  }
+}
+
 private class MessagesPigeonCodecReader: FlutterStandardReader {
   override func readValue(ofType type: UInt8) -> Any? {
     switch type {
@@ -2703,6 +2751,8 @@ private class MessagesPigeonCodecReader: FlutterStandardReader {
       return PlatformBitmapBytesMap.fromList(self.readValue() as! [Any?])
     case 175:
       return PlatformBitmapPinConfig.fromList(self.readValue() as! [Any?])
+    case 176:
+      return PlatformMarkerUpdateAnimationConfiguration.fromList(self.readValue() as! [Any?])
     default:
       return super.readValue(ofType: type)
     }
@@ -2852,6 +2902,9 @@ private class MessagesPigeonCodecWriter: FlutterStandardWriter {
     } else if let value = value as? PlatformBitmapPinConfig {
       super.writeByte(175)
       super.writeValue(value.toList())
+    } else if let value = value as? PlatformMarkerUpdateAnimationConfiguration {
+      super.writeByte(176)
+      super.writeValue(value.toList())
     } else {
       super.writeValue(value)
     }
@@ -2885,6 +2938,9 @@ protocol MapsApi {
   /// Only non-null configuration values will result in updates; options with
   /// null values will remain unchanged.
   func updateWithMapConfiguration(_ configuration: PlatformMapConfiguration) throws
+  /// Sets the marker update animation configuration.
+  func setMarkerUpdateAnimationConfiguration(
+    configuration: PlatformMarkerUpdateAnimationConfiguration) throws
   /// Updates the set of circles on the map.
   func updateCircles(
     adding toAdd: [PlatformCircle], changing toChange: [PlatformCircle],
@@ -3003,6 +3059,25 @@ class MapsApiSetup {
       }
     } else {
       updateMapConfigurationChannel.setMessageHandler(nil)
+    }
+    /// Sets the marker update animation configuration.
+    let setMarkerUpdateAnimationConfigurationChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.setMarkerUpdateAnimationConfiguration\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      setMarkerUpdateAnimationConfigurationChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let configurationArg = args[0] as! PlatformMarkerUpdateAnimationConfiguration
+        do {
+          try api.setMarkerUpdateAnimationConfiguration(configuration: configurationArg)
+          reply(wrapResult(nil))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      setMarkerUpdateAnimationConfigurationChannel.setMessageHandler(nil)
     }
     /// Updates the set of circles on the map.
     let updateCirclesChannel = FlutterBasicMessageChannel(
