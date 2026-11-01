@@ -1,3 +1,7 @@
+## 7.2.19
+
+* Use a package-specific resource keep filename to prevent app overrides.
+
 ## 7.2.18
 
 * Converts Java implementation code to Kotlin.
