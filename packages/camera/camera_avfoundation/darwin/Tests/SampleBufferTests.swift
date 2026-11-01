@@ -274,6 +274,38 @@ final class CameraSampleBufferTests: XCTestCase {
     XCTAssertFalse(sampleAppended, "Sample cannot be appended when readyForMoreMediaData is NO.")
   }
 
+  func testDidOutputSampleBufferReportsErrorWhenVideoAppendFails() {
+    let (camera, _, adaptorMock, inputMock) = createCamera()
+    let messenger = MockFlutterBinaryMessenger()
+    let errorExpectation = expectation(description: "Video append error reported")
+    var reportedErrors: [String] = []
+
+    messenger.sendStub = { channel, message, _ in
+      guard channel.hasSuffix(".CameraEventApi.error"), let message else {
+        return
+      }
+      reportedErrors = MessagesPigeonCodec.shared.decode(message) as? [String] ?? []
+      errorExpectation.fulfill()
+    }
+    camera.dartAPI = CameraEventApi(binaryMessenger: messenger)
+
+    let videoSample = CameraTestUtils.createTestSampleBuffer()
+    let testVideoConnection = CameraTestUtils.createTestConnection(
+      camera.captureVideoOutput.avOutput)
+    inputMock.isReadyForMoreMediaData = true
+    adaptorMock.appendStub = { _, _ in false }
+
+    camera.startVideoRecording(completion: { _ in }, messengerForStreaming: nil)
+    camera.captureOutput(
+      camera.captureVideoOutput.avOutput,
+      didOutput: videoSample,
+      from: testVideoConnection)
+
+    waitForExpectations(timeout: 1.0)
+
+    XCTAssertEqual(reportedErrors, ["Unable to write to video input"])
+  }
+
   func testStopVideoRecordingWithCompletionMustCallCompletion() {
     let (camera, writerMock, _, _) = createCamera()
 

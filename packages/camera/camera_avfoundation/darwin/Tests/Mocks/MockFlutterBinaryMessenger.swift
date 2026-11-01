@@ -4,10 +4,11 @@
 
 import Flutter
 
-/// Mocked implementation of `FlutterBinaryMessenger` protocol that exists to allow constructing
-/// a `CameraPlugin` instance for testing. It contains an empty implementation for all protocol
-/// methods.
+/// Mocked implementation of `FlutterBinaryMessenger` that allows constructing a `CameraPlugin`
+/// instance for testing and capturing messages sent through the messenger.
 final class MockFlutterBinaryMessenger: NSObject, FlutterBinaryMessenger {
+  var sendStub: ((String, Data?, FlutterBinaryReply?) -> Void)?
+
   func send(onChannel channel: String, message: Data?) {}
 
   func send(
@@ -15,7 +16,9 @@ final class MockFlutterBinaryMessenger: NSObject, FlutterBinaryMessenger {
       String,
     message:
       Data?, binaryReply callback: FlutterBinaryReply? = nil
-  ) {}
+  ) {
+    sendStub?(channel, message, callback)
+  }
 
   func setMessageHandlerOnChannel(
     _ channel: String,
