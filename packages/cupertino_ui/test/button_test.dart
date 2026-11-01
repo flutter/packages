@@ -367,6 +367,54 @@ void main() {
     handle.dispose();
   });
 
+  testWidgets('Disabled CupertinoButton is semantically disabled and has no tap action', (
+    WidgetTester tester,
+  ) async {
+    final SemanticsHandle handle = tester.ensureSemantics();
+
+    await tester.pumpWidget(
+      boilerplate(child: const CupertinoButton(onPressed: null, child: Text('Delete'))),
+    );
+
+    expect(
+      tester.getSemantics(find.text('Delete')),
+      isSemantics(
+        label: 'Delete',
+        isButton: true,
+        hasEnabledState: true,
+        isEnabled: false,
+        hasTapAction: false,
+      ),
+    );
+
+    handle.dispose();
+  });
+
+  testWidgets('Enabled CupertinoButton is semantically enabled and has a tap action', (
+    WidgetTester tester,
+  ) async {
+    final SemanticsHandle handle = tester.ensureSemantics();
+
+    await tester.pumpWidget(
+      boilerplate(
+        child: CupertinoButton(onPressed: () {}, child: const Text('Delete')),
+      ),
+    );
+
+    expect(
+      tester.getSemantics(find.text('Delete')),
+      isSemantics(
+        label: 'Delete',
+        isButton: true,
+        hasEnabledState: true,
+        isEnabled: true,
+        hasTapAction: true,
+      ),
+    );
+
+    handle.dispose();
+  });
+
   testWidgets('Can specify colors', (WidgetTester tester) async {
     await tester.pumpWidget(
       boilerplate(
