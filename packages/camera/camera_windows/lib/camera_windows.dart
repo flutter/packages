@@ -400,10 +400,7 @@ class HostCameraMessageHandler implements CameraEventApi {
   @override
   void videoRecordingDurationChanged(int durationMs) {
     streamController.add(
-      VideoRecordingDurationChangedEvent(
-        cameraId,
-        Duration(milliseconds: durationMs),
-      ),
+      VideoRecordingDurationChangedEvent(cameraId, Duration(milliseconds: durationMs)),
     );
   }
 }

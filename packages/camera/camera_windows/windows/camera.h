@@ -121,6 +121,7 @@ class CameraImpl : public Camera {
   void OnStopRecordSucceeded(const std::string& file_path) override;
   void OnStopRecordFailed(CameraResult result,
                           const std::string& error) override;
+  void OnRecordDurationChanged(int64_t duration_ms) override;
   void OnTakePictureSucceeded(const std::string& file_path) override;
   void OnTakePictureFailed(CameraResult result,
                            const std::string& error) override;

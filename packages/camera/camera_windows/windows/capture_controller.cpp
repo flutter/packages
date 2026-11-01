@@ -942,6 +942,7 @@ void CaptureControllerImpl::OnRecordStopped(CameraResult result,
     // Destroy record handler on error cases to make sure state is resetted.
     record_handler_ = nullptr;
   }
+  last_reported_duration_ms_ = -1;
 }
 
 // Updates texture handlers buffer with given data.
@@ -973,7 +974,8 @@ void CaptureControllerImpl::UpdateCaptureTime(uint64_t capture_time_us) {
     record_handler_->UpdateRecordingTime(capture_time_us);
     int64_t duration_ms =
         static_cast<int64_t>(record_handler_->GetRecordedDuration() / 1000);
-    if (duration_ms >= last_reported_duration_ms_ + 100) {
+    if (last_reported_duration_ms_ < 0 ||
+        duration_ms - last_reported_duration_ms_ >= 100) {
       last_reported_duration_ms_ = duration_ms;
       if (capture_controller_listener_) {
         capture_controller_listener_->OnRecordDurationChanged(duration_ms);
