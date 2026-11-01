@@ -3589,6 +3589,55 @@ void main() {
       expect(cameraController.value.hasError, isTrue);
       expect(cameraController.value.errorDescription, mockOnCameraErrorEvent.description);
     });
+
+    test(
+      'videoRecordingDuration is updated while recording and reset on stopVideoRecording',
+      () async {
+        final durationStreamController =
+            StreamController<VideoRecordingDurationChangedEvent>.broadcast();
+        when(
+          CameraPlatform.instance.onVideoRecordingDurationChanged(mockInitializeCamera),
+        ).thenAnswer((_) => durationStreamController.stream);
+
+        final cameraController = CameraController(
+          const CameraDescription(
+            name: 'cam',
+            lensDirection: CameraLensDirection.back,
+            sensorOrientation: 90,
+          ),
+          ResolutionPreset.max,
+        );
+        await cameraController.initialize();
+
+        expect(cameraController.value.videoRecordingDuration, Duration.zero);
+
+        await cameraController.startVideoRecording();
+        expect(cameraController.value.videoRecordingDuration, Duration.zero);
+
+        durationStreamController.add(
+          const VideoRecordingDurationChangedEvent(13, Duration(milliseconds: 500)),
+        );
+        await pumpEventQueue();
+        expect(cameraController.value.videoRecordingDuration, const Duration(milliseconds: 500));
+
+        durationStreamController.add(
+          const VideoRecordingDurationChangedEvent(13, Duration(seconds: 2)),
+        );
+        await pumpEventQueue();
+        expect(cameraController.value.videoRecordingDuration, const Duration(seconds: 2));
+
+        await cameraController.stopVideoRecording();
+        expect(cameraController.value.videoRecordingDuration, Duration.zero);
+
+        durationStreamController.add(
+          const VideoRecordingDurationChangedEvent(13, Duration(seconds: 5)),
+        );
+        await pumpEventQueue();
+        expect(cameraController.value.videoRecordingDuration, Duration.zero);
+
+        await durationStreamController.close();
+      },
+    );
   });
 
   group('does not update value after dispose', () {
@@ -3636,6 +3685,37 @@ void main() {
       await pumpEventQueue();
 
       expect(cameraController.value.errorDescription, isNull);
+    });
+
+    test('when a video recording duration event arrives after dispose', () async {
+      final platform = MockControllableErrorCameraPlatform();
+      CameraPlatform.instance = platform;
+
+      final durationStreamController =
+          StreamController<VideoRecordingDurationChangedEvent>.broadcast();
+      when(
+        platform.onVideoRecordingDurationChanged(mockInitializeCamera),
+      ).thenAnswer((_) => durationStreamController.stream);
+
+      final cameraController = CameraController(
+        const CameraDescription(
+          name: 'cam',
+          lensDirection: CameraLensDirection.back,
+          sensorOrientation: 90,
+        ),
+        ResolutionPreset.max,
+      );
+      await cameraController.initialize();
+      await cameraController.startVideoRecording();
+      await cameraController.dispose();
+
+      durationStreamController.add(
+        const VideoRecordingDurationChangedEvent(13, Duration(seconds: 3)),
+      );
+      await pumpEventQueue();
+
+      expect(cameraController.value.videoRecordingDuration, Duration.zero);
+      await durationStreamController.close();
     });
   });
 }
@@ -3688,6 +3768,14 @@ class MockCameraPlatform extends Mock with MockPlatformInterfaceMixin implements
   @override
   Stream<CameraErrorEvent> onCameraError(int cameraId) =>
       Stream<CameraErrorEvent>.value(mockOnCameraErrorEvent);
+
+  @override
+  Stream<VideoRecordingDurationChangedEvent> onVideoRecordingDurationChanged(int? cameraId) =>
+      super.noSuchMethod(
+            Invocation.method(#onVideoRecordingDurationChanged, <Object?>[cameraId]),
+            returnValue: const Stream<VideoRecordingDurationChangedEvent>.empty(),
+          )
+          as Stream<VideoRecordingDurationChangedEvent>;
 
   @override
   Stream<DeviceOrientationChangedEvent> onDeviceOrientationChanged() =>

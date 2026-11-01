@@ -2750,8 +2750,8 @@ void main() {
         );
         when(mockDataStatus.getRecordingStats()).thenAnswer((_) async => dataStats);
 
-        final Stream<VideoRecordingDurationChangedEvent> durationStream =
-            camera.onVideoRecordingDurationChanged(cameraId);
+        final Stream<VideoRecordingDurationChangedEvent> durationStream = camera
+            .onVideoRecordingDurationChanged(cameraId);
         final streamQueue = StreamQueue<VideoRecordingDurationChangedEvent>(durationStream);
 
         scheduleMicrotask(() {

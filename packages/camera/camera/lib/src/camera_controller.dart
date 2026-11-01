@@ -51,6 +51,7 @@ class CameraValue {
     this.isPreviewPaused = false,
     this.previewPauseOrientation,
     this.videoStabilizationMode = VideoStabilizationMode.off,
+    this.videoRecordingDuration = Duration.zero,
   });
 
   /// Creates a new camera controller state for an uninitialized controller.
@@ -70,6 +71,7 @@ class CameraValue {
         isPreviewPaused: false,
         description: description,
         videoStabilizationMode: VideoStabilizationMode.off,
+        videoRecordingDuration: Duration.zero,
       );
 
   /// True after [CameraController.initialize] has completed successfully.
@@ -149,6 +151,11 @@ class CameraValue {
   /// The current video stabilization mode.
   final VideoStabilizationMode videoStabilizationMode;
 
+  /// The current duration of the video recording.
+  ///
+  /// This is [Duration.zero] when the camera is not recording video.
+  final Duration videoRecordingDuration;
+
   /// Creates a modified copy of the object.
   ///
   /// Explicitly specified fields get the specified value, all other fields get
@@ -173,6 +180,7 @@ class CameraValue {
     CameraDescription? description,
     Optional<DeviceOrientation>? previewPauseOrientation,
     VideoStabilizationMode? videoStabilizationMode,
+    Duration? videoRecordingDuration,
   }) {
     return CameraValue(
       isInitialized: isInitialized ?? this.isInitialized,
@@ -200,6 +208,7 @@ class CameraValue {
           ? this.previewPauseOrientation
           : previewPauseOrientation.orNull,
       videoStabilizationMode: videoStabilizationMode ?? this.videoStabilizationMode,
+      videoRecordingDuration: videoRecordingDuration ?? this.videoRecordingDuration,
     );
   }
 
@@ -222,6 +231,7 @@ class CameraValue {
         'isPreviewPaused: $isPreviewPaused, '
         'previewPausedOrientation: $previewPauseOrientation, '
         'videoStabilizationMode: $videoStabilizationMode, '
+        'videoRecordingDuration: $videoRecordingDuration, '
         'description: $description)';
   }
 }
@@ -295,6 +305,7 @@ class CameraController extends ValueNotifier<CameraValue> {
 
   bool _isDisposed = false;
   StreamSubscription<CameraImageData>? _imageStreamSubscription;
+  StreamSubscription<VideoRecordingDurationChangedEvent>? _videoRecordingDurationSubscription;
 
   // A Future awaiting an attempt to initialize (e.g. after `initialize` was
   // just called). If the controller has not been initialized at least once,
@@ -592,6 +603,14 @@ class CameraController extends ValueNotifier<CameraValue> {
           enablePersistentRecording: enablePersistentRecording,
         ),
       );
+      await _videoRecordingDurationSubscription?.cancel();
+      _videoRecordingDurationSubscription = CameraPlatform.instance
+          .onVideoRecordingDurationChanged(_cameraId)
+          .listen((VideoRecordingDurationChangedEvent event) {
+            if (!_isDisposed && value.isRecordingVideo) {
+              value = value.copyWith(videoRecordingDuration: event.duration);
+            }
+          });
       value = value.copyWith(
         isRecordingVideo: true,
         isRecordingPaused: false,
@@ -599,6 +618,7 @@ class CameraController extends ValueNotifier<CameraValue> {
           value.lockedCaptureOrientation ?? value.deviceOrientation,
         ),
         isStreamingImages: onAvailable != null,
+        videoRecordingDuration: Duration.zero,
       );
     } on PlatformException catch (e) {
       throw CameraException(e.code, e.message);
@@ -623,9 +643,12 @@ class CameraController extends ValueNotifier<CameraValue> {
 
     try {
       final XFile file = await CameraPlatform.instance.stopVideoRecording(_cameraId);
+      await _videoRecordingDurationSubscription?.cancel();
+      _videoRecordingDurationSubscription = null;
       value = value.copyWith(
         isRecordingVideo: false,
         recordingOrientation: const Optional<DeviceOrientation>.absent(),
+        videoRecordingDuration: Duration.zero,
       );
       return file;
     } on PlatformException catch (e) {
@@ -1028,6 +1051,8 @@ class CameraController extends ValueNotifier<CameraValue> {
       return;
     }
     unawaited(_deviceOrientationSubscription?.cancel());
+    unawaited(_videoRecordingDurationSubscription?.cancel());
+    _videoRecordingDurationSubscription = null;
     _isDisposed = true;
     super.dispose();
     if (_initializeFuture != null) {
