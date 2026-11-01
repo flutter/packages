@@ -462,7 +462,10 @@ class RefreshIndicatorState extends State<RefreshIndicator>
         } else if (notification.metrics.axisDirection == AxisDirection.up) {
           _dragOffset = _dragOffset! + notification.scrollDelta!;
         }
-        _checkDragOffset(notification.metrics.viewportDimension);
+        _checkDragOffset(
+          notification.metrics.viewportDimension,
+          isDrag: notification.dragDetails != null,
+        );
       }
       if (_status == RefreshIndicatorStatus.armed && notification.dragDetails == null) {
         // On iOS start the refresh when the Scrollable bounces back from the
@@ -482,11 +485,7 @@ class RefreshIndicatorState extends State<RefreshIndicator>
     } else if (notification is ScrollEndNotification) {
       switch (_status) {
         case RefreshIndicatorStatus.armed:
-          if (_positionController.value < 1.0) {
-            _dismiss(RefreshIndicatorStatus.canceled);
-          } else {
-            _show();
-          }
+          _show();
         case RefreshIndicatorStatus.drag:
           _dismiss(RefreshIndicatorStatus.canceled);
         case RefreshIndicatorStatus.canceled:
@@ -532,16 +531,20 @@ class RefreshIndicatorState extends State<RefreshIndicator>
     return true;
   }
 
-  void _checkDragOffset(double containerExtent) {
+  void _checkDragOffset(double containerExtent, {bool isDrag = true}) {
     assert(_status == RefreshIndicatorStatus.drag || _status == RefreshIndicatorStatus.armed);
     double newValue = _dragOffset! / (containerExtent * _kDragContainerExtentPercentage);
-    if (_status == RefreshIndicatorStatus.armed) {
+    if (_status == RefreshIndicatorStatus.armed && !isDrag) {
       newValue = math.max(newValue, 1.0 / _kDragSizeFactorLimit);
     }
     _positionController.value = clampDouble(newValue, 0.0, 1.0); // This triggers various rebuilds.
     if (_status == RefreshIndicatorStatus.drag &&
         _valueColor.value!.alpha == _effectiveValueColor.alpha) {
       _status = RefreshIndicatorStatus.armed;
+      widget.onStatusChange?.call(_status);
+    } else if (_status == RefreshIndicatorStatus.armed &&
+        _valueColor.value!.alpha < _effectiveValueColor.alpha) {
+      _status = RefreshIndicatorStatus.drag;
       widget.onStatusChange?.call(_status);
     }
   }
