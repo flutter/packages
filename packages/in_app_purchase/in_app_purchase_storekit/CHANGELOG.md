@@ -1,6 +1,7 @@
 ## 0.4.16
 
 * Adds `revocationDate` and `revocationReason` to `SK2Transaction`.
+* Adds `SK2Transaction.currentEntitlements()` to query active subscriptions and non-consumable entitlements.
 
 ## 0.4.15
 
