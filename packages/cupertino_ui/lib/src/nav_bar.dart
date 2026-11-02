@@ -1002,6 +1002,7 @@ class CupertinoSliverNavigationBar extends StatefulWidget {
     this.stretch = false,
     this.bottom,
     this.bottomMode,
+    this.animationBehavior = AnimationBehavior.normal,
   }) : assert(
          automaticallyImplyTitle || largeTitle != null,
          'No largeTitle has been provided but automaticallyImplyTitle is also '
@@ -1066,6 +1067,7 @@ class CupertinoSliverNavigationBar extends StatefulWidget {
     this.stretch = false,
     this.bottomMode = NavigationBarBottomMode.automatic,
     this.onSearchableBottomTap,
+    this.animationBehavior = AnimationBehavior.normal,
   }) : assert(
          automaticallyImplyTitle || largeTitle != null,
          'No largeTitle has been provided but automaticallyImplyTitle is also '
@@ -1216,6 +1218,11 @@ class CupertinoSliverNavigationBar extends StatefulWidget {
   /// True if the [CupertinoSliverNavigationBar.search] constructor is used.
   final bool _searchable;
 
+  /// The behavior of the animation relative to the device's clock
+  ///
+  /// Defaults to [AnimationBehavior.normal]
+  final AnimationBehavior animationBehavior;
+
   @override
   State<CupertinoSliverNavigationBar> createState() => _CupertinoSliverNavigationBarState();
 }
@@ -1241,7 +1248,11 @@ class _CupertinoSliverNavigationBarState extends State<CupertinoSliverNavigation
   void initState() {
     super.initState();
     keys = _NavigationBarStaticComponentsKeys();
-    _animationController = AnimationController(vsync: this, duration: _kNavBarSearchDuration);
+    _animationController = AnimationController(
+      vsync: this,
+      duration: _kNavBarSearchDuration,
+      animationBehavior: widget.animationBehavior,
+    );
     _searchAnimation = CurvedAnimation(parent: _animationController, curve: _kNavBarSearchCurve);
   }
 

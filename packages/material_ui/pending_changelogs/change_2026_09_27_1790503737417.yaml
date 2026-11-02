@@ -1,0 +1,3 @@
+changelog: |
+  - Adds animationBehavior parameter to widgets using AnimationController.
+version: minor

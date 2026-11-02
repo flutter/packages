@@ -2177,6 +2177,40 @@ void main() {
     );
     expect(tester.getSize(find.byType(CupertinoAlertDialog)), Size.zero);
   });
+
+  testWidgets('showCupertinoDialog forwards animationBehavior to CupertinoDialogRoute', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      CupertinoApp(
+        home: Center(
+          child: Builder(
+            builder: (BuildContext context) {
+              return CupertinoButton(
+                onPressed: () {
+                  showCupertinoDialog<void>(
+                    context: context,
+                    animationBehavior: AnimationBehavior.preserve,
+                    builder: (BuildContext context) =>
+                        const CupertinoAlertDialog(title: Text('Dialog')),
+                  );
+                },
+                child: const Text('Open'),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('Open'));
+    await tester.pump();
+
+    final ModalRoute<dynamic>? modalRoute = ModalRoute.of(tester.element(find.text('Dialog')));
+    expect(modalRoute, isA<CupertinoDialogRoute<void>>());
+    final dialogRoute = modalRoute! as CupertinoDialogRoute<void>;
+    expect(dialogRoute.animationBehavior, AnimationBehavior.preserve);
+  });
 }
 
 RenderBox findActionButtonRenderBoxByTitle(WidgetTester tester, String title) {

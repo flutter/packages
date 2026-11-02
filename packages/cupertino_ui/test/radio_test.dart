@@ -967,6 +967,26 @@ void main() {
     );
     expect(tester.getSize(find.byType(CupertinoRadio<bool>)), Size.zero);
   });
+
+  testWidgets('CupertinoRadio accepts animationBehavior', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      CupertinoApp(
+        home: Center(
+          child: CupertinoRadio<int>(
+            value: 1,
+            groupValue: 1,
+            onChanged: (int? i) {},
+            animationBehavior: AnimationBehavior.preserve,
+          ),
+        ),
+      ),
+    );
+
+    final CupertinoRadio<int> radio = tester.widget<CupertinoRadio<int>>(
+      find.byType(CupertinoRadio<int>),
+    );
+    expect(radio.animationBehavior, AnimationBehavior.preserve);
+  });
 }
 
 class _RadioMouseCursor extends WidgetStateMouseCursor {

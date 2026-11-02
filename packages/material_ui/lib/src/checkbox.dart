@@ -116,6 +116,7 @@ class Checkbox extends StatefulWidget {
     this.side,
     this.isError = false,
     this.semanticLabel,
+    this.animationBehavior = AnimationBehavior.normal,
     this.markInsets,
   }) : _checkboxType = _CheckboxType.material,
        assert(tristate || value != null);
@@ -157,6 +158,7 @@ class Checkbox extends StatefulWidget {
     this.side,
     this.isError = false,
     this.semanticLabel,
+    this.animationBehavior = AnimationBehavior.normal,
     this.markInsets,
   }) : _checkboxType = _CheckboxType.adaptive,
        assert(tristate || value != null);
@@ -409,6 +411,9 @@ class Checkbox extends StatefulWidget {
   /// {@endtemplate}
   final String? semanticLabel;
 
+  /// {@macro flutter.widgets.AnimationController.animationBehavior}
+  final AnimationBehavior animationBehavior;
+
   /// {@template material_ui.checkbox.markInsets}
   /// The insets applied around the check mark when the checkbox is checked or
   /// in its indeterminate (tristate) state.
@@ -467,6 +472,8 @@ class _CheckboxState extends State<Checkbox> with TickerProviderStateMixin, Togg
     _painter.dispose();
     super.dispose();
   }
+
+  AnimationBehavior get animationBehavior => widget.animationBehavior;
 
   @override
   ValueChanged<bool?>? get onChanged => widget.onChanged;
@@ -531,6 +538,7 @@ class _CheckboxState extends State<Checkbox> with TickerProviderStateMixin, Togg
               side: widget.side,
               shape: widget.shape,
               semanticLabel: widget.semanticLabel,
+              animationBehavior: widget.animationBehavior,
             );
         }
     }

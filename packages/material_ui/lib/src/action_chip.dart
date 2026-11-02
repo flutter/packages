@@ -129,6 +129,7 @@ class ActionChip extends StatelessWidget
     this.avatarBoxConstraints,
     this.chipAnimationStyle,
     this.mouseCursor,
+    this.animationBehavior = AnimationBehavior.normal,
   }) : assert(pressElevation == null || pressElevation >= 0.0),
        assert(elevation == null || elevation >= 0.0),
        _chipVariant = _ChipVariant.flat;
@@ -166,6 +167,7 @@ class ActionChip extends StatelessWidget
     this.avatarBoxConstraints,
     this.chipAnimationStyle,
     this.mouseCursor,
+    this.animationBehavior = AnimationBehavior.normal,
   }) : assert(pressElevation == null || pressElevation >= 0.0),
        assert(elevation == null || elevation >= 0.0),
        _chipVariant = _ChipVariant.elevated;
@@ -221,6 +223,9 @@ class ActionChip extends StatelessWidget
   @override
   final MouseCursor? mouseCursor;
 
+  /// The [AnimationBehavior] of the internal [AnimationController]s.
+  final AnimationBehavior animationBehavior;
+
   @override
   bool get isEnabled => onPressed != null;
 
@@ -260,6 +265,7 @@ class ActionChip extends StatelessWidget
       avatarBoxConstraints: avatarBoxConstraints,
       chipAnimationStyle: chipAnimationStyle,
       mouseCursor: mouseCursor,
+      animationBehavior: animationBehavior,
     );
   }
 }

@@ -44,6 +44,7 @@ class CupertinoActivityIndicator extends StatefulWidget {
     this.color,
     this.animating = true,
     this.radius = _kDefaultIndicatorRadius,
+    this.animationBehavior = AnimationBehavior.normal,
   }) : assert(radius > 0.0),
        progress = 1.0;
 
@@ -58,6 +59,7 @@ class CupertinoActivityIndicator extends StatefulWidget {
     this.color,
     this.radius = _kDefaultIndicatorRadius,
     this.progress = 1.0,
+    this.animationBehavior = AnimationBehavior.normal,
   }) : assert(radius > 0.0),
        assert(progress >= 0.0),
        assert(progress <= 1.0),
@@ -86,6 +88,11 @@ class CupertinoActivityIndicator extends StatefulWidget {
   /// Defaults to one. Must be between zero and one, inclusive.
   final double progress;
 
+  /// The behavior of the animation
+  ///
+  /// Defaults to [AnimationBehavior.normal]
+  final AnimationBehavior animationBehavior;
+
   @override
   State<CupertinoActivityIndicator> createState() => _CupertinoActivityIndicatorState();
 }
@@ -97,7 +104,11 @@ class _CupertinoActivityIndicatorState extends State<CupertinoActivityIndicator>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(duration: const Duration(seconds: 1), vsync: this);
+    _controller = AnimationController(
+      duration: const Duration(seconds: 1),
+      vsync: this,
+      animationBehavior: widget.animationBehavior,
+    );
 
     if (widget.animating) {
       _controller.repeat();
