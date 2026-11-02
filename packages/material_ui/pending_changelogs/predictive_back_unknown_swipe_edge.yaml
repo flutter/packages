@@ -1,0 +1,3 @@
+changelog: |
+  - Handles unknown swipe edges and button-triggered back events in `PredictiveBackPageTransitionsBuilder`.
+version: patch
