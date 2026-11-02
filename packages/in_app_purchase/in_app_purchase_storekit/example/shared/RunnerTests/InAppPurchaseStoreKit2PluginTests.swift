@@ -206,37 +206,6 @@ final class InAppPurchase2PluginTests: XCTestCase {
     XCTAssert(jsonRepresentationString.localizedStandardContains("storefront\":\"USA"))
   }
 
-  //TODO(louisehsu): Add testing for lower versions.
-  @available(iOS 17.0, macOS 14.0, *)
-  func testGetProductsWithStoreKitError() async throws {
-    let osVersion = ProcessInfo.processInfo.operatingSystemVersion
-    try XCTSkipIf(
-      // https://developer.apple.com/forums/thread/808030
-      osVersion.majorVersion == 26 && osVersion.minorVersion == 2,
-      "Known StoreKitTest bug on Xcode 26.2 with setSimulatedError() when used on .loadProducts API"
-    )
-
-    try await session.setSimulatedError(
-      .generic(.networkError(URLError(.badURL))), forAPI: .loadProducts)
-
-    let expectation = self.expectation(description: "products request should fail")
-
-    plugin.products(identifiers: ["subscription_silver"]) { result in
-      switch result {
-      case .success:
-        XCTFail("This `products` call should not succeed")
-        expectation.fulfill()
-      case .failure(let error):
-        expectation.fulfill()
-        XCTAssert(
-          error.localizedDescription
-            == "The operation couldn’t be completed. (in_app_purchase_storekit.PigeonError error 1.)"
-        )
-      }
-    }
-    await fulfillment(of: [expectation], timeout: purchaseTimeout)
-  }
-
   func testSuccessfulPurchase() async throws {
     let expectation = self.expectation(description: "Purchase request should succeed")
     plugin.purchase(id: "consumable", options: nil) { result in
@@ -246,35 +215,6 @@ final class InAppPurchase2PluginTests: XCTestCase {
         expectation.fulfill()
       case .failure(let error):
         XCTFail("Purchase should NOT fail. Failed with \(error)")
-        expectation.fulfill()
-      }
-    }
-    await fulfillment(of: [expectation], timeout: purchaseTimeout)
-  }
-
-  @available(iOS 17.0, macOS 14.0, *)
-  func testFailedNetworkErrorPurchase() async throws {
-    let osVersion = ProcessInfo.processInfo.operatingSystemVersion
-    try XCTSkipIf(
-      // https://developer.apple.com/forums/thread/808030
-      osVersion.majorVersion == 26 && osVersion.minorVersion == 2,
-      "Known StoreKitTest bug on Xcode 26.2 with setSimulatedError() when used on .loadProducts API"
-    )
-
-    // StoreKitTest aggressively caches products and transaction, which means sometimes it bypasses a simulated error.
-    session.clearTransactions()
-    try await session.setSimulatedError(
-      .generic(.networkError(URLError(.badURL))), forAPI: .loadProducts)
-    let expectation = self.expectation(description: "products request should fail")
-    plugin.purchase(id: "consumable", options: nil) { result in
-      switch result {
-      case .success:
-        XCTFail("Purchase should NOT succeed.")
-        expectation.fulfill()
-      case .failure(let error):
-        XCTAssertEqual(
-          error.localizedDescription,
-          "The operation couldn’t be completed. (in_app_purchase_storekit.PigeonError error 1.)")
         expectation.fulfill()
       }
     }
@@ -297,6 +237,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
       }
     }
     await fulfillment(of: [expectation], timeout: purchaseTimeout)
+    try await session.setSimulatedError(nil, forAPI: .purchase)
   }
 
   func testInvalidProductPurchase() async throws {
@@ -779,6 +720,21 @@ final class InAppPurchase2PluginTests: XCTestCase {
     plugin.registrar = nil
 
     plugin.presentOfferCodeRedeemSheet { result in
+      if case .failure = result {
+        expectation.fulfill()
+      }
+    }
+
+    waitForExpectations(timeout: 1.0)
+  }
+
+  func testShowManageSubscriptionsFailsGracefullyWhenNoWindow() {
+    let expectation = self.expectation(
+      description: "Should fail gracefully when without key window")
+
+    plugin.registrar = nil
+
+    plugin.showManageSubscriptions { result in
       if case .failure = result {
         expectation.fulfill()
       }

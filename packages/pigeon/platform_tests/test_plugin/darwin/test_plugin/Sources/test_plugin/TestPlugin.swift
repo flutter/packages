@@ -61,11 +61,17 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi, HostCa
 
     StreamIntsStreamHandler.register(with: binaryMessenger, streamHandler: SendInts())
     StreamEventsStreamHandler.register(with: binaryMessenger, streamHandler: SendEvents())
+    // Store one handler to exercise the handler removal codepath, and discard
+    // the other to test that the return value can be safely ignored.
+    let streamHandlerOne = SendConsistentNumbers(numberToSend: 1)
+    let channelOne = StreamConsistentNumbersStreamHandler.register(
+      with: binaryMessenger,
+      instanceName: "1",
+      streamHandler: streamHandlerOne)
+    streamHandlerOne.onCompleted = { channelOne.setStreamHandler(nil) }
     StreamConsistentNumbersStreamHandler.register(
-      with: binaryMessenger, instanceName: "1",
-      streamHandler: SendConsistentNumbers(numberToSend: 1))
-    StreamConsistentNumbersStreamHandler.register(
-      with: binaryMessenger, instanceName: "2",
+      with: binaryMessenger,
+      instanceName: "2",
       streamHandler: SendConsistentNumbers(numberToSend: 2))
     proxyApiRegistrar = ProxyApiTestsPigeonProxyApiRegistrar(
       binaryMessenger: binaryMessenger, apiDelegate: ProxyApiDelegate())
@@ -1205,6 +1211,10 @@ class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
     return everything
   }
 
+  func echoAsync(sealedClass: NativeInteropSealedClass) async throws -> NativeInteropSealedClass {
+    return sealedClass
+  }
+
   func echoAsync(_ everything: NativeInteropAllNullableTypes?) async throws
     -> NativeInteropAllNullableTypes?
   {
@@ -1753,6 +1763,11 @@ class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
     return try flutterApi.echoNativeInteropAllNullableTypes(everything: everything)
   }
 
+  func callFlutterEcho(sealedClass: NativeInteropSealedClass) throws -> NativeInteropSealedClass {
+    let flutterApi = try getNativeInteropFlutterApi()
+    return try flutterApi.echoNativeInteropSealedClass(sealedClass: sealedClass)
+  }
+
   func callFlutterSendMultipleNullableTypes(
     aBool aNullableBool: Bool?, anInt aNullableInt: Int64?, aString aNullableString: String?
   ) throws -> NativeInteropAllNullableTypes {
@@ -1834,6 +1849,24 @@ class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
 
   func echo(_ wrapper: NativeInteropAllClassesWrapper) throws -> NativeInteropAllClassesWrapper {
     return wrapper
+  }
+
+  func echo(sealedClass: NativeInteropSealedClass) throws -> NativeInteropSealedClass {
+    return sealedClass
+  }
+
+  func echoNullable(sealedClass: NativeInteropSealedClass?) throws -> NativeInteropSealedClass? {
+    return sealedClass
+  }
+
+  func echo(sealedClassList: [NativeInteropSealedClass]) throws -> [NativeInteropSealedClass] {
+    return sealedClassList
+  }
+
+  func echo(sealedClassWrapper: NativeInteropSealedClassWrapper) throws
+    -> NativeInteropSealedClassWrapper
+  {
+    return sealedClassWrapper
   }
 
   func echoNullable(_ everything: NativeInteropAllNullableTypesWithoutRecursion?) throws
@@ -2233,6 +2266,7 @@ class SendEvents: StreamEventsStreamHandler {
 
 class SendConsistentNumbers: StreamConsistentNumbersStreamHandler {
   let numberToSend: Int64
+  var onCompleted: (() -> Void)?
   init(numberToSend: Int64) {
     self.numberToSend = numberToSend
   }
@@ -2251,6 +2285,7 @@ class SendConsistentNumbers: StreamConsistentNumbersStreamHandler {
           if count >= 10 {
             sink.endOfStream()
             self.timer?.invalidate()
+            self.onCompleted?()
           }
         }
       }

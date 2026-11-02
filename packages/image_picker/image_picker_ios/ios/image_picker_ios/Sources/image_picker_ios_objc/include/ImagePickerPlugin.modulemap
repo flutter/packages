@@ -1,0 +1,11 @@
+framework module image_picker_ios {
+  umbrella header "image_picker_ios.h"
+
+  export *
+  module * { export * }
+
+  // CocoaPods compiles the Swift plugin into this module, and an explicit
+  // submodule is not visible there. This header stays in the main module so
+  // ImagePickerPlugin.swift can use the Pigeon API.
+  header "messages.g.h"
+}

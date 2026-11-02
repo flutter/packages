@@ -97,9 +97,6 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, FIAInAppPurchaseAPI {
       shouldAddStorePayment: { [weak self] (payment, product) -> Bool in
         return self?.shouldAddStorePayment(payment: payment, product: product) ?? false
       },
-      updatedDownloads: { [weak self] _ in
-        self?.updatedDownloads()
-      },
       transactionCache: DefaultTransactionCache(cache: FIATransactionCache()))
     #if os(iOS)
       let messenger = registrar.messenger()
@@ -406,10 +403,6 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, FIAInAppPurchaseAPI {
         "product": FIAObjectTranslator.getMapFrom(product),
       ])
     return false
-  }
-
-  public func updatedDownloads() {
-    NSLog("Received an updatedDownloads callback, but downloads are not supported.")
   }
 
   public func supportsStoreKit2WithError(_ error: AutoreleasingUnsafeMutablePointer<FlutterError?>)

@@ -183,11 +183,18 @@ void main() {
         expect(result.first.productID, dummyProductWrapper.id);
         expect(result.first.verificationData.serverVerificationData, 'receiptData');
         expect(result.first.verificationData.localVerificationData, 'jsonRepresentation');
-        expect((result.first as SK2PurchaseDetails).appAccountToken, 'appAccountToken');
-        expect(
-          (result.first as SK2PurchaseDetails).expirationDate,
-          (321321.32 * 1000).round().toString(),
-        );
+        final sk2Details = result.first as SK2PurchaseDetails;
+        expect(sk2Details.appAccountToken, 'appAccountToken');
+        expect(sk2Details.expirationDate, (321321.32 * 1000).round().toString());
+        expect(sk2Details.sk2Transaction, isNotNull);
+        expect(sk2Details.sk2Transaction!.id, '1');
+        expect(sk2Details.sk2Transaction!.originalId, '2');
+        expect(sk2Details.sk2Transaction!.productId, dummyProductWrapper.id);
+        expect(sk2Details.sk2Transaction!.purchaseDate, (123123.121 * 1000).round().toString());
+        expect(sk2Details.sk2Transaction!.expirationDate, (321321.32 * 1000).round().toString());
+        expect(sk2Details.sk2Transaction!.appAccountToken, 'appAccountToken');
+        expect(sk2Details.sk2Transaction!.receiptData, 'receiptData');
+        expect(sk2Details.sk2Transaction!.jsonRepresentation, 'jsonRepresentation');
       },
     );
 
@@ -381,6 +388,7 @@ void main() {
       expect(result.first.productID, dummyProductWrapper.id);
       expect(result.first.status, PurchaseStatus.canceled);
       expect(result.first.pendingCompletePurchase, false);
+      expect((result.first as SK2PurchaseDetails).sk2Transaction, isNull);
     });
 
     test('pending purchase should emit pending status to purchaseStream', () async {
@@ -406,6 +414,7 @@ void main() {
       expect(result.first.productID, dummyProductWrapper.id);
       expect(result.first.status, PurchaseStatus.pending);
       expect(result.first.pendingCompletePurchase, false);
+      expect((result.first as SK2PurchaseDetails).sk2Transaction, isNull);
     });
 
     test('unverified purchase should receive transaction with purchased status', () async {
@@ -468,6 +477,10 @@ void main() {
         expect(actual.status, PurchaseStatus.restored);
         // In storekit 2, restored purchases don't have to finished.
         expect(actual.pendingCompletePurchase, false);
+        final sk2Details = actual as SK2PurchaseDetails;
+        expect(sk2Details.sk2Transaction, isNotNull);
+        expect(sk2Details.sk2Transaction!.id, expected.id.toString());
+        expect(sk2Details.sk2Transaction!.originalId, expected.originalId.toString());
       }
     });
   });
@@ -477,6 +490,13 @@ void main() {
       const expectedCountryCode = 'ABC';
       final String countryCode = await iapStoreKitPlatform.countryCode();
       expect(countryCode, expectedCountryCode);
+    });
+  });
+
+  group('manage subscriptions', () {
+    test('forwards the call to the platform', () async {
+      await InAppPurchaseStoreKitPlatformAddition().showManageSubscriptions();
+      expect(fakeStoreKit2Platform.showManageSubscriptionsCallCount, 1);
     });
   });
 

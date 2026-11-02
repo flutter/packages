@@ -2063,6 +2063,43 @@ void main() {
       expect(find.text('should not reach here'), findsNothing);
     });
 
+    testWidgets('unrelated async errors started during redirect are not wrapped', (
+      WidgetTester tester,
+    ) async {
+      final Object expectedTopError = StateError('top-level background failure');
+      final Object expectedRouteError = StateError('route-level background failure');
+      final caughtErrors = <Object>[];
+
+      await runZonedGuarded<Future<void>>(
+        () async {
+          await createRouter(
+            <RouteBase>[
+              GoRoute(
+                path: '/',
+                builder: (BuildContext context, GoRouterState state) => const HomeScreen(),
+                redirect: (BuildContext context, GoRouterState state) {
+                  Future<void>.error(expectedRouteError);
+                  return null;
+                },
+              ),
+            ],
+            tester,
+            redirect: (BuildContext context, GoRouterState state) {
+              Future<void>.error(expectedTopError);
+              return null;
+            },
+          );
+
+          await tester.pump();
+        },
+        (Object error, StackTrace stackTrace) {
+          caughtErrors.add(error);
+        },
+      );
+
+      expect(caughtErrors, <Object>[expectedTopError, expectedRouteError]);
+    });
+
     testWidgets('context extension methods work in redirects', (WidgetTester tester) async {
       String? capturedNamedLocation;
       final routes = <GoRoute>[
@@ -4739,14 +4776,18 @@ void main() {
     testWidgets(
       'Obsolete branches in StatefulShellRoute are cleaned up after route '
       'configuration change',
-      // TODO(tolo): Temporarily skipped due to a bug that causes test to faiL
-      skip: true,
+      // Reusing explicit keys identifies equivalent branches across configurations.
       (WidgetTester tester) async {
         final rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
         final statefulShellKey = GlobalKey<StatefulNavigationShellState>(debugLabel: 'shell');
+        final branchNavigatorKeys = <String, GlobalKey<NavigatorState>>{
+          'a': GlobalKey<NavigatorState>(debugLabel: 'branch-a'),
+          'b': GlobalKey<NavigatorState>(debugLabel: 'branch-b'),
+          'c': GlobalKey<NavigatorState>(debugLabel: 'branch-c'),
+        };
         StatefulNavigationShell? routeState;
         StatefulShellBranch makeBranch(String name) => StatefulShellBranch(
-          navigatorKey: GlobalKey<NavigatorState>(debugLabel: 'branch-$name'),
+          navigatorKey: branchNavigatorKeys[name],
           preload: true,
           initialLocation: '/$name',
           routes: <GoRoute>[
@@ -4795,6 +4836,9 @@ void main() {
         expect(hasLoadedBranch('a'), isTrue);
         expect(hasLoadedBranch('b'), isTrue);
         expect(hasLoadedBranch('c'), isTrue);
+        final NavigatorState branchAState = branchNavigatorKeys['a']!.currentState!;
+        final NavigatorState branchBState = branchNavigatorKeys['b']!.currentState!;
+        final NavigatorState branchCState = branchNavigatorKeys['c']!.currentState!;
 
         // Unload branch 'c' by changing the route configuration
         config.value = RoutingConfig(routes: createRoutes(false));
@@ -4803,6 +4847,10 @@ void main() {
         expect(hasLoadedBranch('a'), isTrue);
         expect(hasLoadedBranch('b'), isTrue);
         expect(hasLoadedBranch('c'), isFalse);
+        expect(branchNavigatorKeys['a']!.currentState, same(branchAState));
+        expect(branchNavigatorKeys['b']!.currentState, same(branchBState));
+        expect(branchNavigatorKeys['c']!.currentState, isNull);
+        expect(branchCState.mounted, isFalse);
       },
     );
   });
