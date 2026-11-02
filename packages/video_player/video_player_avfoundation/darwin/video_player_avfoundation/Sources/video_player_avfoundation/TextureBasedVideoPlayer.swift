@@ -12,10 +12,6 @@ import AVFoundation
   #error("Unsupported platform.")
 #endif
 
-#if canImport(video_player_avfoundation_objc)
-  import video_player_avfoundation_objc
-#endif
-
 /// A subclass of VideoPlayer that adds functionality related to texture-based view as a way of
 /// displaying the video in the app. It manages the CALayer associated with the Flutter view,
 /// updates frames, and handles display link callbacks.
@@ -60,7 +56,7 @@ class TextureBasedVideoPlayer: VideoPlayer, FlutterTexture {
     frameUpdater: FrameUpdater,
     displayLink: DisplayLink,
     avFactory: WrappedAVObjectFactory,
-    viewProvider: FVPViewProvider
+    viewProvider: ViewProvider
   ) {
     self.frameUpdater = frameUpdater
     self.displayLink = displayLink

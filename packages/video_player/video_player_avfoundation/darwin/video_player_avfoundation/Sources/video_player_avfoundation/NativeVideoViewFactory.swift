@@ -12,10 +12,6 @@ import Foundation
   #error("Unsupported platform.")
 #endif
 
-#if canImport(video_player_avfoundation_objc)
-  import video_player_avfoundation_objc
-#endif
-
 /// A factory class responsible for creating native video views that can be embedded in a
 /// Flutter app.
 final class NativeVideoViewFactory: NSObject, FlutterPlatformViewFactory {

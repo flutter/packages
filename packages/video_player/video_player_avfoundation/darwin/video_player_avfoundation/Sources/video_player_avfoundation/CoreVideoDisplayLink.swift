@@ -2,14 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import CoreVideo
-import Foundation
-
-#if canImport(video_player_avfoundation_objc)
-  import video_player_avfoundation_objc
-#endif
-
 #if os(macOS)
+  import Cocoa
+  import CoreVideo
+
   /// An implementation of DisplayLink using CVDisplayLink.
   // CVDisplayLink is deprecated; this implementation is only used on macOS < 14.0
   // where CADisplayLink is not available.
@@ -20,13 +16,13 @@ import Foundation
     // A dispatch source to move display link callbacks to the main thread.
     private var displayLinkSource: DispatchSourceUserDataAdd
     // The view provider, to get screen information.
-    private var viewProvider: FVPViewProvider
+    private var viewProvider: ViewProvider
 
     /// Initializes a display link that calls the given callback when fired.
     ///
     /// The display link starts paused, so must be started, by setting 'running' to true, before the
     /// callback will fire.
-    init(viewProvider: FVPViewProvider, callback: @escaping () -> Void) {
+    init(viewProvider: ViewProvider, callback: @escaping () -> Void) {
       self.viewProvider = viewProvider
       // Create and start the main-thread dispatch queue to drive frameUpdater.
       let source = DispatchSource.makeUserDataAddSource(queue: .main)

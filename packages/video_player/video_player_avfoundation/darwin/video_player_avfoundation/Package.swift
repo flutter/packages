@@ -22,18 +22,11 @@ let package = Package(
     .target(
       name: "video_player_avfoundation",
       dependencies: [
-        "video_player_avfoundation_objc",
-        .product(name: "FlutterFramework", package: "FlutterFramework"),
+        .product(name: "FlutterFramework", package: "FlutterFramework")
       ],
       resources: [
         .process("Resources")
       ]
-    ),
-    .target(
-      name: "video_player_avfoundation_objc",
-      cSettings: [
-        .headerSearchPath("include/video_player_avfoundation")
-      ]
-    ),
+    )
   ]
 )

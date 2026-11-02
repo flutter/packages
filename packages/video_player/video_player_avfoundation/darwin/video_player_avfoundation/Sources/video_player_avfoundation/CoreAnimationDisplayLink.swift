@@ -5,8 +5,10 @@
 import Foundation
 import QuartzCore
 
-#if canImport(video_player_avfoundation_objc)
-  import video_player_avfoundation_objc
+#if os(macOS)
+  import Cocoa
+#else
+  import UIKit
 #endif
 
 // An implementation of DisplayLink using CADisplayLink.
@@ -19,7 +21,7 @@ class CoreAnimationDisplayLink: DisplayLink {
   ///
   /// The display link starts paused, so must be started, by setting 'running' to true, before the
   /// callback will fire.
-  init(viewProvider: FVPViewProvider, callback: @escaping (() -> Void)) {
+  init(viewProvider: ViewProvider, callback: @escaping (() -> Void)) {
     target = CoreAnimationDisplayLinkTarget(callback: callback)
     let selector = #selector(CoreAnimationDisplayLinkTarget.onDisplayLink(sender:))
     #if os(iOS)

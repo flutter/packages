@@ -5,7 +5,6 @@
 import AVFoundation
 import Testing
 @preconcurrency @testable import video_player_avfoundation
-import video_player_avfoundation_objc
 
 #if os(iOS)
   import Flutter
@@ -975,8 +974,8 @@ private let hlsAudioTestURI =
     displayLinkFactory: DisplayLinkFactory = StubDisplayLinkFactory(),
     binaryMessenger: FlutterBinaryMessenger = StubBinaryMessenger(),
     textureRegistry: FlutterTextureRegistry = TestTextureRegistry(),
-    viewProvider: FVPViewProvider = StubViewProvider(),
-    assetProvider: FVPAssetProvider = StubAssetProvider()
+    viewProvider: ViewProvider = StubViewProvider(),
+    assetProvider: AssetProvider = StubAssetProvider()
   ) throws -> VideoPlayerPlugin {
     let plugin = VideoPlayerPlugin(
       avFactory: avFactory,
