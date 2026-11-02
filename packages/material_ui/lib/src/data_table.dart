@@ -867,6 +867,16 @@ class DataTable extends StatelessWidget {
 
   static const Duration _sortArrowAnimationDuration = Duration(milliseconds: 150);
 
+  /// The duration of the hover and focus highlight animations of a data row.
+  ///
+  /// Every cell of a row has its own [TableRowInkWell], and each of them
+  /// highlights the entire row. Animating those highlights would cross-fade two
+  /// overlapping highlights whenever the pointer or the focus moves between
+  /// cells of the same row, which momentarily dims the row and makes it flicker.
+  ///
+  /// See https://github.com/flutter/flutter/issues/166135.
+  static const Duration _rowHighlightDuration = Duration.zero;
+
   Widget _buildCheckbox({
     required BuildContext context,
     required bool? checked,
@@ -904,6 +914,7 @@ class DataTable extends StatelessWidget {
         onTap: onRowTap,
         overlayColor: overlayColor,
         mouseCursor: rowMouseCursor,
+        hoverDuration: _rowHighlightDuration,
         child: contents,
       );
     }
@@ -1065,6 +1076,7 @@ class DataTable extends StatelessWidget {
         onHover: onRowHover,
         overlayColor: overlayColor,
         mouseCursor: mouseCursor,
+        hoverDuration: _rowHighlightDuration,
         child: label,
       );
     }
@@ -1329,6 +1341,7 @@ class TableRowInkWell extends InkResponse {
     super.onSecondaryTapDown,
     super.overlayColor,
     super.mouseCursor,
+    super.hoverDuration,
   }) : super(containedInkWell: true, highlightShape: BoxShape.rectangle);
 
   @override

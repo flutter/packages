@@ -1,0 +1,4 @@
+changelog: |
+  - Adds the `hoverDuration` parameter to `TableRowInkWell`.
+  - Fixes `DataTable` row hover and focus highlights flickering when moving between cells of the same row.
+version: minor
