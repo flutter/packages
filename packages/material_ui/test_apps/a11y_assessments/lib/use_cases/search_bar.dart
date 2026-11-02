@@ -64,7 +64,9 @@ class _MainWidgetState extends State<_MainWidget> {
     setState(() {
       _statusMessage = 'Searched for "$value"';
     });
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Searched for "$value"')));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Searched for "$value"'), persist: true, showCloseIcon: true),
+    );
   }
 
   Iterable<Widget> _getSuggestions(SearchController controller) {
