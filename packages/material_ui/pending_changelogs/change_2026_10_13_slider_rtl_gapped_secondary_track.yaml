@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes `GappedSliderTrackShape` painting the secondary track with the wrong position and corners in right-to-left layouts.
+version: patch

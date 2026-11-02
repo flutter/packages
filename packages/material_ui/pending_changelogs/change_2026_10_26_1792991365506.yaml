@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes an issue where pressing Escape does not close a MenuAnchor opened by a tap or click.
+version: patch

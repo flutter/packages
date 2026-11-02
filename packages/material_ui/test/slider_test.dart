@@ -5400,7 +5400,11 @@ void main() {
       final Color disabledThumbColor = colorScheme.onSurface.withOpacity(0.38);
       final Color valueIndicatorColor = colorScheme.inverseSurface;
       var value = 0.45;
-      Widget buildApp({int? divisions, bool enabled = true}) {
+      Widget buildApp({
+        int? divisions,
+        bool enabled = true,
+        TextDirection textDirection = TextDirection.ltr,
+      }) {
         final ValueChanged<double>? onChanged = !enabled
             ? null
             : (double d) {
@@ -5408,7 +5412,7 @@ void main() {
               };
         return MaterialApp(
           home: Directionality(
-            textDirection: TextDirection.ltr,
+            textDirection: textDirection,
             child: Material(
               child: Center(
                 child: Theme(
@@ -5465,8 +5469,75 @@ void main() {
               bottomLeft: trackInnerCornerRadius,
             ),
             color: inactiveTrackColor,
+          )
+          // Secondary track.
+          ..rrect(
+            rrect: RRect.fromLTRBAndCorners(
+              368.4,
+              292.0,
+              588.0,
+              308.0,
+              topLeft: trackInnerCornerRadius,
+              topRight: trackOuterCornerRadius,
+              bottomRight: trackOuterCornerRadius,
+              bottomLeft: trackInnerCornerRadius,
+            ),
+            color: secondaryActiveTrackColor,
           ),
       );
+
+      // Test default track shape in RTL. It is the mirror image of the one in LTR,
+      // and the secondary track stops a track gap before the thumb.
+      // Regression test for https://github.com/flutter/flutter/issues/194279
+      await tester.pumpWidget(buildApp(textDirection: TextDirection.rtl));
+      expect(
+        material,
+        paints
+          // Inactive track.
+          ..rrect(
+            rrect: RRect.fromLTRBAndCorners(
+              24.0,
+              292.0,
+              431.6,
+              308.0,
+              topLeft: trackOuterCornerRadius,
+              topRight: trackInnerCornerRadius,
+              bottomRight: trackInnerCornerRadius,
+              bottomLeft: trackOuterCornerRadius,
+            ),
+            color: inactiveTrackColor,
+          )
+          // Active track.
+          ..rrect(
+            rrect: RRect.fromLTRBAndCorners(
+              443.6,
+              292.0,
+              776.0,
+              308.0,
+              topLeft: trackInnerCornerRadius,
+              topRight: trackOuterCornerRadius,
+              bottomRight: trackOuterCornerRadius,
+              bottomLeft: trackInnerCornerRadius,
+            ),
+            color: activeTrackColor,
+          )
+          // Secondary track.
+          ..rrect(
+            rrect: RRect.fromLTRBAndCorners(
+              212.0,
+              292.0,
+              431.6,
+              308.0,
+              topLeft: trackOuterCornerRadius,
+              topRight: trackInnerCornerRadius,
+              bottomRight: trackInnerCornerRadius,
+              bottomLeft: trackOuterCornerRadius,
+            ),
+            color: secondaryActiveTrackColor,
+          ),
+      );
+
+      await tester.pumpWidget(buildApp());
 
       // Test default colors for enabled slider.
       expect(

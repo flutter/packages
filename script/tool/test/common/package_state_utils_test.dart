@@ -134,6 +134,22 @@ void main() {
       expect(state.needsChangelogChange, false);
     });
 
+    test('does not require version or changelog change for test_apps changes', () async {
+      final RepositoryPackage package = createFakePlugin('a_plugin', packagesDir);
+
+      const changedFiles = <String>['packages/a_plugin/test_apps/a_test_app/lib/main.dart'];
+
+      final PackageChangeState state = await checkPackageChangeState(
+        package,
+        changedPaths: changedFiles,
+        relativePackagePath: 'packages/a_plugin/',
+      );
+
+      expect(state.hasChanges, true);
+      expect(state.needsVersionChange, false);
+      expect(state.needsChangelogChange, false);
+    });
+
     test('does not require version or changelog change for AGENTS.md changes', () async {
       final RepositoryPackage package = createFakePlugin('a_plugin', packagesDir);
 

@@ -167,6 +167,23 @@ double parsePercentage(String val, {double multiplier = 1.0}) {
 /// Whether a string should be treated as a percentage (i.e. if it ends with a `'%'`).
 bool isPercentage(String? val) => val?.endsWith('%') ?? false;
 
+/// Parses values in the form of '1.5em' as a multiple of the font size.
+double parseEm(String val) {
+  final String trimmed = val.trim();
+  return double.parse(trimmed.substring(0, trimmed.length - 2));
+}
+
+/// Whether a string should be treated as an `em` value (i.e. if it is a number
+/// followed by `'em'`, in any case).
+bool isEm(String? val) {
+  if (val == null) {
+    return false;
+  }
+  final String trimmed = val.trim();
+  return trimmed.toLowerCase().endsWith('em') &&
+      double.tryParse(trimmed.substring(0, trimmed.length - 2)) != null;
+}
+
 /// Parses value from the form '25%', 0.25 or 25.0 as a double.
 /// Note: Percentage or decimals will be multiplied by the total
 /// view box size, where as doubles will be returned as is.

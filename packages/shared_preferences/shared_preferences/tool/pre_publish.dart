@@ -37,14 +37,13 @@ Future<void> main() async {
     arguments: <String>['pub', 'get'],
   );
   await _runCommand(
-    message: "Running 'build_and_copy' in shared_preferences_tool\n",
-    executable: 'dart',
-    arguments: <String>[
-      'run',
-      'devtools_extensions',
-      'build_and_copy',
-      '--source=.',
-      '--dest=../shared_preferences/extension/devtools',
-    ],
+    message: "Running 'flutter build web' in shared_preferences_tool\n",
+    executable: 'flutter',
+    arguments: <String>['build', 'web', '--release', '--no-tree-shake-icons'],
+  );
+  await _runCommand(
+    message: "Copying built output to 'shared_preferences/extension/devtools/build'\n",
+    executable: 'cp',
+    arguments: <String>['-R', 'build/web/.', '../shared_preferences/extension/devtools/build'],
   );
 }

@@ -1,3 +1,0 @@
-changelog: |
-  - Adds `clipBehavior` to `ShellRoute` and `StatefulShellBranch`, forwarded to the nested `Navigator`.
-version: minor

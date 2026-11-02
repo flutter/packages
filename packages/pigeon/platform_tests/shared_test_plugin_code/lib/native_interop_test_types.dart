@@ -390,3 +390,22 @@ NativeInteropAllClassesWrapper classWrapperMaker() {
     nullableClassMap: allNullableTypesWithoutRecursionMap,
   );
 }
+
+final List<NativeInteropSealedClass> sealedClasses = <NativeInteropSealedClass>[
+  NativeInteropSealedClassWithFields(
+    aString: 'sealed',
+    aNullableInt: regularInt,
+    anEnum: NativeInteropAnEnum.fortyTwo,
+    aClass: genericNativeInteropAllNullableTypesWithoutRecursion,
+  ),
+  NativeInteropSealedClassWithFields(aString: '', anEnum: NativeInteropAnEnum.one),
+  NativeInteropEmptySealedClass(),
+];
+
+NativeInteropSealedClassWrapper sealedClassWrapperMaker() {
+  return NativeInteropSealedClassWrapper(
+    sealedClass: sealedClasses.first,
+    nullableSealedClass: sealedClasses.last,
+    sealedClassList: sealedClasses,
+  );
+}

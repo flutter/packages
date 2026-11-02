@@ -38,6 +38,7 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi, HostCallbackCoreApi {
   private var flutterSmallApiTwo: FlutterSmallApi? = null
   private var proxyApiRegistrar: ProxyApiRegistrar? = null
   private var niMessageApi: NativeInteropHostIntegrationCoreApiRegistrar? = null
+  private var eventChannelOne: StreamConsistentNumbersEventChannel? = null
 
   override fun onAttachedToEngine(binding: FlutterPluginBinding) {
     HostIntegrationCoreApi.setUp(binding.binaryMessenger, this)
@@ -59,8 +60,13 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi, HostCallbackCoreApi {
 
     StreamEventsStreamHandler.register(binding.binaryMessenger, SendClass)
     StreamIntsStreamHandler.register(binding.binaryMessenger, SendInts)
-    StreamConsistentNumbersStreamHandler.register(
-        binding.binaryMessenger, SendConsistentNumbers(1), "1")
+    // Store one handler to exercise the handler removal codepath, and discard
+    // the other to test that the return value can be safely ignored.
+    val streamHandlerOne = SendConsistentNumbers(1)
+    eventChannelOne =
+        StreamConsistentNumbersStreamHandler.register(
+            binding.binaryMessenger, streamHandlerOne, "1")
+    streamHandlerOne.onCompleted = { eventChannelOne?.setStreamHandler(null) }
     StreamConsistentNumbersStreamHandler.register(
         binding.binaryMessenger, SendConsistentNumbers(2), "2")
   }
@@ -1038,6 +1044,28 @@ class NativeInteropIntegrationTests : NativeInteropHostIntegrationCoreApi {
     return wrapper
   }
 
+  override fun echoSealedClass(sealedClass: NativeInteropSealedClass): NativeInteropSealedClass {
+    return sealedClass
+  }
+
+  override fun echoNullableSealedClass(
+      sealedClass: NativeInteropSealedClass?
+  ): NativeInteropSealedClass? {
+    return sealedClass
+  }
+
+  override fun echoSealedClassList(
+      sealedClassList: List<NativeInteropSealedClass>
+  ): List<NativeInteropSealedClass> {
+    return sealedClassList
+  }
+
+  override fun echoSealedClassWrapper(
+      wrapper: NativeInteropSealedClassWrapper
+  ): NativeInteropSealedClassWrapper {
+    return wrapper
+  }
+
   override fun echoEnum(anEnum: NativeInteropAnEnum): NativeInteropAnEnum {
     return anEnum
   }
@@ -1337,6 +1365,12 @@ class NativeInteropIntegrationTests : NativeInteropHostIntegrationCoreApi {
     return everything
   }
 
+  override suspend fun echoAsyncSealedClass(
+      sealedClass: NativeInteropSealedClass
+  ): NativeInteropSealedClass {
+    return sealedClass
+  }
+
   override suspend fun echoAsyncNullableNativeInteropAllNullableTypes(
       everything: NativeInteropAllNullableTypes?
   ): NativeInteropAllNullableTypes? {
@@ -1463,6 +1497,14 @@ class NativeInteropIntegrationTests : NativeInteropHostIntegrationCoreApi {
     return NativeInteropFlutterIntegrationCoreApiRegistrar()
         .getInstance()!!
         .echoNativeInteropAllNullableTypes(everything)
+  }
+
+  override fun callFlutterEchoSealedClass(
+      sealedClass: NativeInteropSealedClass
+  ): NativeInteropSealedClass {
+    return NativeInteropFlutterIntegrationCoreApiRegistrar()
+        .getInstance()!!
+        .echoNativeInteropSealedClass(sealedClass)
   }
 
   override fun callFlutterSendMultipleNullableTypes(
@@ -2290,6 +2332,7 @@ object SendClass : StreamEventsStreamHandler() {
 class SendConsistentNumbers(private val numberToSend: Long) :
     StreamConsistentNumbersStreamHandler() {
   private val handler = Handler(Looper.getMainLooper())
+  var onCompleted: (() -> Unit)? = null
 
   override fun onListen(p0: Any?, sink: PigeonEventSink<Long>) {
     var count = 0
@@ -2298,6 +2341,7 @@ class SendConsistentNumbers(private val numberToSend: Long) :
           override fun run() {
             if (count >= 10) {
               sink.endOfStream()
+              onCompleted?.invoke()
             } else {
               handler.post {
                 sink.success(numberToSend)

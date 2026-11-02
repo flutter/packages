@@ -1,0 +1,3 @@
+changelog: |
+  - Deprecates the `black` and `white` parameters of `Typography.material2021`, and documents that their colors are replaced with colors from the `colorScheme`.
+version: minor

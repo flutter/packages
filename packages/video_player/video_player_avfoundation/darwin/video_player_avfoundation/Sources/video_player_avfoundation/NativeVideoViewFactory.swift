@@ -20,13 +20,13 @@ import Foundation
 /// Flutter app.
 final class NativeVideoViewFactory: NSObject, FlutterPlatformViewFactory {
   private let messenger: FlutterBinaryMessenger
-  private let playerByIdentifierProvider: (Int64) -> FVPVideoPlayer?
+  private let playerByIdentifierProvider: (Int64) -> VideoPlayer?
 
   /// Initializes a new instance of NativeVideoViewFactory with the given messenger and
   /// a block that provides video players associated with their identifiers.
   init(
     messenger: FlutterBinaryMessenger,
-    playerByIdentifierProvider: @escaping (Int64) -> FVPVideoPlayer?
+    playerByIdentifierProvider: @escaping (Int64) -> VideoPlayer?
   ) {
     self.messenger = messenger
     self.playerByIdentifierProvider = playerByIdentifierProvider
@@ -50,9 +50,16 @@ final class NativeVideoViewFactory: NSObject, FlutterPlatformViewFactory {
     }
   #endif
 
-  func createArgsCodec() -> FlutterMessageCodec & NSObjectProtocol {
-    return VideoPlayerPluginMessagesPigeonCodec.shared
-  }
+  // createArgsCodec's return value has different optionality on macOS vs iOS.
+  #if os(macOS)
+    func createArgsCodec() -> (FlutterMessageCodec & NSObjectProtocol)? {
+      return MessagesPigeonCodec.shared
+    }
+  #else
+    func createArgsCodec() -> FlutterMessageCodec & NSObjectProtocol {
+      return MessagesPigeonCodec.shared
+    }
+  #endif
 
   /// Creates a native video view for the given arguments.
   private func createNativeVideoView(

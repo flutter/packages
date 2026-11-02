@@ -27,6 +27,7 @@ class _SearchBarAppState extends State<SearchBarApp> {
         body: Column(
           children: <Widget>[
             SearchAnchor(
+              enableTapHandling: false,
               searchController: controller,
               builder: (BuildContext context, SearchController controller) {
                 return IconButton(

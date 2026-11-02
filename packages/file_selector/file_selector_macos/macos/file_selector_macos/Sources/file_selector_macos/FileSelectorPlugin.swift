@@ -49,8 +49,6 @@ public class FileSelectorPlugin: NSObject, FlutterPlugin, FileSelectorApi {
   private let openDirectoryMethod = "getDirectoryPath"
   private let saveMethod = "getSavePath"
 
-  var forceLegacyTypes = false
-
   public static func register(with registrar: FlutterPluginRegistrar) {
     let instance = FileSelectorPlugin(
       viewProvider: DefaultViewProvider(registrar: registrar),
@@ -105,27 +103,18 @@ public class FileSelectorPlugin: NSObject, FlutterPlugin, FileSelectorApi {
     }
 
     if let acceptedTypes = options.allowedFileTypes {
-      if #available(macOS 11, *), !forceLegacyTypes {
-        var allowedTypes: [UTType] = []
-        allowedTypes.append(contentsOf: acceptedTypes.utis.compactMap({ UTType($0) }))
-        allowedTypes.append(
-          contentsOf: acceptedTypes.extensions.compactMap({
-            UTType.init(filenameExtension: $0)
-          }))
-        allowedTypes.append(
-          contentsOf: acceptedTypes.mimeTypes.compactMap({
-            UTType.init(mimeType: $0)
-          }))
-        if !allowedTypes.isEmpty {
-          panel.allowedContentTypes = allowedTypes
-        }
-      } else {
-        var allowedTypes: [String] = []
-        allowedTypes.append(contentsOf: acceptedTypes.extensions.map({ $0 }))
-        allowedTypes.append(contentsOf: acceptedTypes.utis.map({ $0 }))
-        if !allowedTypes.isEmpty {
-          panel.allowedFileTypes = allowedTypes
-        }
+      var allowedTypes: [UTType] = []
+      allowedTypes.append(contentsOf: acceptedTypes.utis.compactMap({ UTType($0) }))
+      allowedTypes.append(
+        contentsOf: acceptedTypes.extensions.compactMap({
+          UTType.init(filenameExtension: $0)
+        }))
+      allowedTypes.append(
+        contentsOf: acceptedTypes.mimeTypes.compactMap({
+          UTType.init(mimeType: $0)
+        }))
+      if !allowedTypes.isEmpty {
+        panel.allowedContentTypes = allowedTypes
       }
     }
 

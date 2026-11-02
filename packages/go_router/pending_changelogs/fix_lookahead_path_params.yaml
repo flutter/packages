@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes path parameter regex parsing to support nested parentheses, grouping constructs, and lookahead assertions in GoRoute paths.
+version: patch
