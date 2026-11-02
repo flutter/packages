@@ -28,3 +28,18 @@ List<String> descendantSemanticsLabels(SemanticsNode node) {
   });
   return labels;
 }
+
+// Expects the visible snack bar with [text] to stay past its timeout, and to
+// close when its close icon is tapped.
+Future<void> expectSnackBarStaysUntilClosed(WidgetTester tester, String text) async {
+  await tester.pumpAndSettle();
+  expect(find.text(text), findsOneWidget);
+  final SnackBar snackBar = tester.widget<SnackBar>(find.byType(SnackBar));
+  await tester.pump(snackBar.duration * 2);
+  await tester.pumpAndSettle();
+  expect(find.text(text), findsOneWidget);
+
+  await tester.tap(find.descendant(of: find.byType(SnackBar), matching: find.byIcon(Icons.close)));
+  await tester.pumpAndSettle();
+  expect(find.text(text), findsNothing);
+}
