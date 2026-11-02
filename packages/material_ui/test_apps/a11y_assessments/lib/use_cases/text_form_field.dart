@@ -79,9 +79,13 @@ class _MainWidgetState extends State<_MainWidget> {
                   setState(() {
                     _statusMessage = 'Form submitted successfully!';
                   });
-                  ScaffoldMessenger.of(
-                    context,
-                  ).showSnackBar(const SnackBar(content: Text('Form submitted successfully!')));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Form submitted successfully!'),
+                      persist: true,
+                      showCloseIcon: true,
+                    ),
+                  );
                 } else {
                   setState(() {
                     _statusMessage = 'Validation failed';

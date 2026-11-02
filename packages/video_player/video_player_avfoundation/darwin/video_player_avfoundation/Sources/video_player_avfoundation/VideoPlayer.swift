@@ -25,7 +25,7 @@ import CoreMedia
 // is fixed, by making VideoPlayerInstanceApi a @MainActor protocol and returning to
 // having VideoPlayer conform to it.
 class VideoPlayerInstanceBridge: VideoPlayerInstanceApi {
-  private unowned let player: VideoPlayer
+  private weak var player: VideoPlayer?
 
   init(player: VideoPlayer) {
     self.player = player
@@ -33,65 +33,65 @@ class VideoPlayerInstanceBridge: VideoPlayerInstanceApi {
 
   func setLooping(_ looping: Bool) throws {
     MainActor.assumeIsolated {
-      player.setLooping(looping)
+      player?.setLooping(looping)
     }
   }
 
   func setVolume(_ volume: Double) throws {
     MainActor.assumeIsolated {
-      player.setVolume(volume)
+      player?.setVolume(volume)
     }
   }
 
   func setPlaybackSpeed(_ speed: Double) throws {
     MainActor.assumeIsolated {
-      player.setPlaybackSpeed(speed)
+      player?.setPlaybackSpeed(speed)
     }
   }
 
   func play() throws {
     MainActor.assumeIsolated {
-      player.play()
+      player?.play()
     }
   }
 
   func getPosition() throws -> Int64 {
     MainActor.assumeIsolated {
-      return player.getPosition()
+      return player?.getPosition() ?? 0
     }
   }
 
   func seek(to position: Int64) async throws {
-    try await player.seek(to: position)
+    try await player?.seek(to: position)
   }
 
   func pause() throws {
     MainActor.assumeIsolated {
-      player.pause()
+      player?.pause()
     }
   }
 
   func dispose() throws {
     MainActor.assumeIsolated {
-      player.dispose()
+      player?.dispose()
     }
   }
 
   func getAudioTracks() async throws -> [MediaSelectionAudioTrackData] {
-    return try await player.getAudioTracks()
+    return try await player?.getAudioTracks() ?? []
   }
 
   func selectAudioTrack(atIndex trackIndex: Int64) async throws {
-    return try await player.selectAudioTrack(atIndex: trackIndex)
+    try await player?.selectAudioTrack(atIndex: trackIndex)
   }
 
   func getVideoTracks() async throws -> NativeVideoTrackData {
-    return try await player.getVideoTracks()
+    return try await player?.getVideoTracks() ?? NativeVideoTrackData()
   }
 
   func selectVideoTrack(withBitrate bitrate: Int64) throws {
     MainActor.assumeIsolated {
-      player.selectVideoTrack(withBitrate: bitrate)
+      player?.selectVideoTrack(withBitrate: bitrate)
     }
   }
 
@@ -99,7 +99,7 @@ class VideoPlayerInstanceBridge: VideoPlayerInstanceApi {
     throws
   {
     MainActor.assumeIsolated {
-      player.setPreventsDisplaySleepDuringVideoPlayback(preventsDisplaySleepDuringVideoPlayback)
+      player?.setPreventsDisplaySleepDuringVideoPlayback(preventsDisplaySleepDuringVideoPlayback)
     }
   }
 

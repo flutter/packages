@@ -1,3 +1,7 @@
+## 2.5.4
+
+* Fixes eager SharedPreferences fetch in `LegacySharedPreferencesPlugin` executing synchronous disk I/O on Android main thread during startup by deferring the fetch until first use.
+
 ## 2.5.3
 
 * Fixes web compilation of apps that import `package:shared_preferences_android`, for example to use `SharedPreferencesAsyncAndroidOptions`.

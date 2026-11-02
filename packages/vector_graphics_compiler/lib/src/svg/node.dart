@@ -11,6 +11,7 @@ import '../geometry/matrix.dart';
 import '../geometry/path.dart';
 import '../image/image_info.dart';
 import '../paint.dart';
+import 'constants.dart';
 import 'parser.dart' show SvgAttributes;
 import 'visitor.dart';
 
@@ -241,10 +242,11 @@ class TextPositionNode extends ParentNode {
   TextPosition computeTextPosition(Rect bounds, AffineMatrix transform, {TextPosition? parent}) {
     final AffineMatrix computedTransform = concatTransform(transform);
 
-    double? x = attributes.x?.calculate(bounds.width);
-    double? y = attributes.y?.calculate(bounds.height);
-    double? dx = attributes.dx?.calculate(bounds.width);
-    double? dy = attributes.dy?.calculate(bounds.height);
+    final double fontSize = attributes.fontSize ?? kDefaultFontSize;
+    double? x = attributes.x?.calculate(bounds.width, fontSize: fontSize);
+    double? y = attributes.y?.calculate(bounds.height, fontSize: fontSize);
+    double? dx = attributes.dx?.calculate(bounds.width, fontSize: fontSize);
+    double? dy = attributes.dy?.calculate(bounds.height, fontSize: fontSize);
 
     final bool hasXY = x != null && y != null;
     final bool hasDxDy = dx != null && dy != null;
@@ -509,7 +511,7 @@ class TextNode extends AttributedNode {
       attributes.textAnchorMultiplier ?? 0,
       attributes.fontFamily,
       attributes.fontWeight ?? normalFontWeight,
-      attributes.fontSize ?? 16, // default in many browsers
+      attributes.fontSize ?? kDefaultFontSize,
       attributes.textDecoration ?? TextDecoration.none,
       attributes.textDecorationStyle ?? TextDecorationStyle.solid,
       attributes.textDecorationColor ?? Color.opaqueBlack,
