@@ -616,14 +616,14 @@ TEST(Camera, TakePictureReportsAccessDenied) {
 }
 
 TEST(Camera, OnRecordDurationChangedSendsEvent) {
-  std::unique_ptr<CameraImpl> camera =
-      std::make_unique<CameraImpl>(MOCK_DEVICE_ID);
   std::unique_ptr<MockCaptureControllerFactory> capture_controller_factory =
       std::make_unique<MockCaptureControllerFactory>();
   std::unique_ptr<MockTextureRegistrar> texture_registrar =
       std::make_unique<MockTextureRegistrar>();
   std::unique_ptr<MockBinaryMessenger> binary_messenger =
       std::make_unique<MockBinaryMessenger>();
+  std::unique_ptr<CameraImpl> camera =
+      std::make_unique<CameraImpl>(MOCK_DEVICE_ID);
 
   EXPECT_CALL(*capture_controller_factory, CreateCaptureController)
       .Times(1)
@@ -658,6 +658,8 @@ TEST(Camera, OnRecordDurationChangedSendsEvent) {
       std::to_string(texture_id);
   EXPECT_CALL(*binary_messenger, Send(Eq(closing_channel_name), _, _, _))
       .Times(1);
+
+  camera = nullptr;
 }
 
 }  // namespace test
