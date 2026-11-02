@@ -3338,15 +3338,18 @@ const String myConst = 'hello ${1 + 2}';
     },
   );
 
-  test('parseFile locates Dart SDK via cli_util when running as AOT binary', () {
-    final String? currentSdk = cli_util.sdkPath;
-    expect(currentSdk, isNotNull);
+  test('parseFile locates Dart SDK via cli_util', () {
+    expect(cli_util.sdkPath, isNotNull);
     final ParseResults parseResult = runZoned(
       () => parseSource('class Message { String? text; }'),
       zoneValues: <Object, Object>{
-        cli_util.environmentOverridesKey: <String, String>{
+        #environmentOverrides: <String, String>{
           '_DART_RESOLVED_EXECUTABLE': '/nonexistent/bin/pigeon',
-          'DART_SDK': currentSdk!,
+          'DART_SDK': '${cli_util.sdkPath}',
+        },
+        #_environmentOverrides: <String, String>{
+          '_DART_RESOLVED_EXECUTABLE': '/nonexistent/bin/pigeon',
+          'DART_SDK': '${cli_util.sdkPath}',
         },
       },
     );
