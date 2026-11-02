@@ -19,6 +19,8 @@ sealed class WebScopedStorageXFileCreationParams extends PlatformScopedStorageXF
   /// Constructs a [WebScopedStorageXFileCreationParams].
   const WebScopedStorageXFileCreationParams({
     required super.uri,
+    // The type should be a `XFileTestOverrides`. It can't be imported in this
+    // stub without breaking other platforms.
     // ignore: avoid_unused_constructor_parameters
     @visibleForTesting Object? testOverrides,
   });
@@ -29,6 +31,8 @@ sealed class WebScopedStorageXFileCreationParams extends PlatformScopedStorageXF
   factory WebScopedStorageXFileCreationParams.fromObjectUrl({
     // ignore: avoid_unused_constructor_parameters
     required String objectUrl,
+    // The type should be a `XFileTestOverrides`. It can't be imported in this
+    // stub without breaking other platforms.
     // ignore: avoid_unused_constructor_parameters
     @visibleForTesting Object? testOverrides,
   }) => throw UnsupportedError(
