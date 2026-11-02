@@ -2350,6 +2350,7 @@ void main() {
           );
         },
         skip: !kIsWeb, // [intended] Web-specific behavior
+        tags: 'reduced-web-test-set',
       );
     });
 

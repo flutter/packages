@@ -91,5 +91,5 @@ void main() {
       );
       expect(editableText.autofillHints, contains(AutofillHints.email));
     }
-  });
+  }, tags: 'reduced-web-test-set');
 }
