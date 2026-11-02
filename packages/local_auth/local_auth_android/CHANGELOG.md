@@ -1,3 +1,9 @@
+## 2.3.1
+
+* Fixes sticky authentication (`persistAcrossBackgrounding`) completing with a
+  cancellation error instead of prompting again when the app is backgrounded
+  on Android 12+.
+
 ## 2.3.0
 
 * Updates internal platform API from callbacks to `suspend`.
