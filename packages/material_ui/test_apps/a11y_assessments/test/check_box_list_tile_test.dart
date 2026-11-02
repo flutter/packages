@@ -4,6 +4,7 @@
 
 import 'package:a11y_assessments/use_cases/check_box_list_tile.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
 import 'test_utils.dart';
 
@@ -12,6 +13,15 @@ void main() {
     await pumpsUseCase(tester, CheckBoxListTile());
     expect(find.text('a check box list title'), findsOneWidget);
     expect(find.text('a disabled check box list title'), findsOneWidget);
+
+    await tester.tap(find.text('a check box list title'));
+    await tester.pumpAndSettle();
+
+    final List<CheckboxListTile> tiles = tester
+        .widgetList<CheckboxListTile>(find.byType(CheckboxListTile))
+        .toList();
+    expect(tiles[0].value, isTrue);
+    expect(tiles[1].value, isFalse);
   });
 
   testWidgets('check box list has one h1 tag', (WidgetTester tester) async {

@@ -1,5 +1,8 @@
-# Maps package names to test tag selectors for the web dart unit tests.
+# Maps packages to test tag selectors for the web dart unit tests.
 #
-# Packages listed here will only run tests matching the specified tag.
+# Packages are identified by their path relative to the packages directory
+# (e.g., `foo` or `foo/foo_android`). Packages listed here, and any packages
+# nested inside them (such as examples), will only run tests matching the
+# specified tag.
 # Note: Only one tag per package is supported.
 material_ui: reduced-web-test-set

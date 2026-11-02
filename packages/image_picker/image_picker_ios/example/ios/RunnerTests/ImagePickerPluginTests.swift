@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import Flutter
 import Photos
 import PhotosUI
 import Testing
@@ -940,7 +941,7 @@ struct ImagePickerPluginTests {
     let host = UIViewController()
     let registrar = TestFlutterPluginRegistrar()
     registrar.viewController = host
-    let provider = FIPDefaultViewProvider(registrar: registrar)
+    let provider = DefaultViewProvider(registrar: registrar)
     #expect(provider.viewController === host)
   }
 

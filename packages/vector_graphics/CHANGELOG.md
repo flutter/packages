@@ -1,3 +1,8 @@
+## 1.2.5
+
+* Fixes a leak of the decoded picture when a `VectorGraphic` is removed before
+  loading finishes.
+
 ## 1.2.4
 
 * Fixes an unhandled exception reported for every asynchronous loading failure,
