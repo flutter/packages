@@ -1,3 +1,14 @@
+## 1.9.0
+
+- Adds a `barFocusNode` parameter to `SearchAnchor.bar` to allow external control over the focus of the underlying `SearchBar`.
+- Fixes showTimePicker input mode failing to parse localized digits (e.g. Farsi, Arabic, Bengali, Myanmar, Thai, Nepali, French, German, Portuguese locales) by parsing hour/minute via MaterialLocalizations and handling localized leading zeros.
+- Corrects the `Divider.color` and `VerticalDivider.color` documentation to describe the Material 3 fallback (`ColorScheme.outlineVariant`).
+- Fixes `MenuAnchor` scrollbars inheriting system safe-area padding.
+- Fixes unlabeled tap target semantics in `SearchBar`.
+- Adds `enableTapHandling` to `SearchAnchor`.
+- Adds `dayBuilder` and `weekdayBuilder` callbacks to `CalendarDatePicker`, `DatePickerDialog`, and `showDatePicker`.
+- Adds `CalendarDatePickerDayDetails` and `CalendarDatePickerWeekdayDetails` to provide metadata and default widgets to the builders.
+
 ## 1.8.0
 
 - Adds `RoundedPolygon` and `CornerRounding` for creating rounded polygonal shapes.

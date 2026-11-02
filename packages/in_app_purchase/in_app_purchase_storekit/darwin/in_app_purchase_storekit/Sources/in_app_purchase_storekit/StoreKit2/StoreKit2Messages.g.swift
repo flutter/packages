@@ -997,6 +997,8 @@ protocol InAppPurchase2API {
   func transactions(completion: @escaping (Result<[SK2TransactionMessage], Error>) -> Void)
   func unfinishedTransactions(
     completion: @escaping (Result<[SK2TransactionMessage], Error>) -> Void)
+  func currentEntitlements(
+    completion: @escaping (Result<[SK2TransactionMessage], Error>) -> Void)
   func finish(id: Int64, completion: @escaping (Result<Void, Error>) -> Void)
   func startListeningToTransactions() throws
   func stopListeningToTransactions() throws
@@ -1149,6 +1151,24 @@ class InAppPurchase2APISetup {
       }
     } else {
       unfinishedTransactionsChannel.setMessageHandler(nil)
+    }
+    let currentEntitlementsChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.currentEntitlements\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      currentEntitlementsChannel.setMessageHandler { _, reply in
+        api.currentEntitlements { result in
+          switch result {
+          case .success(let res):
+            reply(wrapResult(res))
+          case .failure(let error):
+            reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      currentEntitlementsChannel.setMessageHandler(nil)
     }
     let finishChannel = FlutterBasicMessageChannel(
       name: "dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.finish\(channelSuffix)",
