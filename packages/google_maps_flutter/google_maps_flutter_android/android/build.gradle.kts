@@ -54,7 +54,7 @@ android {
         androidTestImplementation("androidx.test:rules:1.7.0")
         androidTestImplementation("androidx.test.espresso:espresso-core:3.7.0")
         testImplementation("junit:junit:4.13.2")
-        testImplementation("org.mockito:mockito-core:5.23.0")
+        testImplementation("org.mockito:mockito-core:5.24.0")
         testImplementation("org.mockito.kotlin:mockito-kotlin:6.3.0")
         testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.1")
         testImplementation("androidx.test:core:1.7.0")
