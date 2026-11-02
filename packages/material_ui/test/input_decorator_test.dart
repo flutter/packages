@@ -9189,6 +9189,91 @@ void main() {
     expect(getContainerRect(tester).height, defaultContainerHeight);
   });
 
+  group('Min intrinsic height matches the laid out height', () {
+    // Regression tests for https://github.com/flutter/flutter/issues/190536.
+    const decorations = <String, InputDecoration>{
+      'isDense and isCollapsed': InputDecoration(
+        isDense: true,
+        isCollapsed: true,
+        contentPadding: EdgeInsets.zero,
+        border: InputBorder.none,
+        hintText: hintText,
+      ),
+      'isDense with zero content padding': InputDecoration(
+        isDense: true,
+        contentPadding: EdgeInsets.zero,
+        hintText: hintText,
+      ),
+      'isCollapsed': InputDecoration(isCollapsed: true, hintText: hintText),
+      'InputDecoration.collapsed': InputDecoration.collapsed(hintText: hintText),
+    };
+
+    const visualDensities = <String, VisualDensity>{
+      'standard': VisualDensity.standard,
+      'compact': VisualDensity.compact,
+    };
+
+    for (final MapEntry<String, VisualDensity> density in visualDensities.entries) {
+      for (final MapEntry<String, InputDecoration> entry in decorations.entries) {
+        testWidgets('${entry.key} with ${density.key} visual density', (WidgetTester tester) async {
+          await tester.pumpWidget(
+            MaterialApp(
+              theme: ThemeData(visualDensity: density.value),
+              home: Material(
+                child: Center(
+                  child: SizedBox(width: 200.0, child: TextField(decoration: entry.value)),
+                ),
+              ),
+            ),
+          );
+
+          final RenderBox decorator = tester.renderObject(find.byType(InputDecorator));
+          expect(decorator.getMinIntrinsicHeight(200.0), decorator.size.height);
+          expect(decorator.getMaxIntrinsicHeight(200.0), decorator.size.height);
+        });
+      }
+    }
+
+    testWidgets('IntrinsicHeight does not overflow with a dense collapsed TextField', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(visualDensity: VisualDensity.compact),
+          home: const Scaffold(
+            body: IntrinsicHeight(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  Expanded(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Text('Text'),
+                        TextField(
+                          decoration: InputDecoration(
+                            isDense: true,
+                            isCollapsed: true,
+                            contentPadding: EdgeInsets.zero,
+                            border: InputBorder.none,
+                            hintText: hintText,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Text('Right text'),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+
+      expect(tester.takeException(), isNull);
+    });
+  });
+
   group('Intrinsic width', () {
     const EdgeInsetsGeometry padding = EdgeInsetsDirectional.only(end: 24, start: 12);
 
