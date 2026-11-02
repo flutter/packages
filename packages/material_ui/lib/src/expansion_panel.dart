@@ -292,6 +292,19 @@ class ExpansionPanelList extends StatefulWidget {
   /// Defines the [MaterialGap.size] of the [MaterialGap] which is placed
   /// between the [ExpansionPanelList.children] when they're expanded.
   ///
+  /// When set to zero, no [MaterialGap] is inserted between expanded panels
+  /// and dividers are preserved, allowing a flat, divider-separated appearance.
+  ///
+  /// <callout-box>
+  ///
+  /// Here is an example with [materialGapSize] set to zero.
+  ///
+  /// {@macro material_ui.dartpad_guide}
+  ///
+  /// {@example /example/lib/expansion_panel/expansion_panel_list.2.dart#body}
+  ///
+  /// </callout-box>
+  ///
   /// Defaults to `16.0`.
   final double materialGapSize;
 
@@ -392,9 +405,13 @@ class _ExpansionPanelListState extends State<ExpansionPanelList> {
     );
 
     final items = <MergeableMaterialItem>[];
+    final bool shouldInsertMaterialGap = widget.materialGapSize > 0;
 
     for (var index = 0; index < widget.children.length; index += 1) {
-      if (_isChildExpanded(index) && index != 0 && !_isChildExpanded(index - 1)) {
+      if (_isChildExpanded(index) &&
+          index != 0 &&
+          !_isChildExpanded(index - 1) &&
+          shouldInsertMaterialGap) {
         items.add(
           MaterialGap(
             key: _SaltedKey<BuildContext, int>(context, index * 2 - 1),
@@ -483,7 +500,9 @@ class _ExpansionPanelListState extends State<ExpansionPanelList> {
         ),
       );
 
-      if (_isChildExpanded(index) && index != widget.children.length - 1) {
+      if (_isChildExpanded(index) &&
+          index != widget.children.length - 1 &&
+          shouldInsertMaterialGap) {
         items.add(
           MaterialGap(
             key: _SaltedKey<BuildContext, int>(context, index * 2 + 1),
