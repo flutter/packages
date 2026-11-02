@@ -2277,6 +2277,71 @@ ${[for (var i = 2; i <= 30; i++) '    <pattern id="lvl$i" width="10" height="10"
     expect(bounds, contains(const Rect.fromLTWH(50, 50, 50, 50)));
   });
 
+  test('Applies group opacity once around multi-layer filter on ParentNode', () {
+    const svg = '''
+<svg width="140" height="140" viewBox="0 0 140 140" xmlns="http://www.w3.org/2000/svg">
+  <filter id="drop" x="-50%" y="-50%" width="200%" height="200%">
+    <feGaussianBlur in="SourceAlpha" stdDeviation="3" result="blur"/>
+    <feOffset in="blur" dx="10" dy="10" result="shadow"/>
+    <feMerge>
+      <feMergeNode in="shadow"/>
+      <feMergeNode in="SourceGraphic"/>
+    </feMerge>
+  </filter>
+  <g opacity="0.5" filter="url(#drop)">
+    <rect x="20" y="20" width="90" height="90" fill="#DC2626"/>
+  </g>
+</svg>
+''';
+    final VectorInstructions instructions = parseWithoutOptimizers(svg);
+    expect(instructions.paints, const <Paint>[
+      Paint(fill: Fill(color: Color(0x7f000000))),
+      Paint(fill: Fill(color: Color.opaqueBlack), filterBlurX: 3.0, filterBlurY: 3.0),
+      Paint(fill: Fill(color: Color.opaqueBlack)),
+      Paint(fill: Fill(color: Color(0xffdc2626))),
+    ]);
+    expect(instructions.commands, const <DrawCommand>[
+      DrawCommand(DrawCommandType.saveLayer, paintId: 0),
+      DrawCommand(DrawCommandType.saveLayer, paintId: 1),
+      DrawCommand(DrawCommandType.path, objectId: 0, paintId: 2),
+      DrawCommand(DrawCommandType.restore),
+      DrawCommand(DrawCommandType.path, objectId: 1, paintId: 3),
+      DrawCommand(DrawCommandType.restore),
+    ]);
+  });
+
+  test('Fails filter and emits unhandled element error when mixing unsupported primitives', () {
+    const svg = '''
+<svg width="140" height="140" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g filter="url(#filter0_d_1_2)">
+<rect x="20" y="16" width="100" height="100" rx="12" fill="#4F46E5"/>
+</g>
+<defs>
+<filter id="filter0_d_1_2" x="0" y="0" width="140" height="140" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dy="4"/>
+<feGaussianBlur stdDeviation="5"/>
+<feComposite in2="hardAlpha" operator="out"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_1_2"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_1_2" result="shape"/>
+</filter>
+</defs>
+</svg>
+''';
+    expect(
+      () => parseWithoutOptimizers(svg, warningsAsErrors: true),
+      throwsA(isA<UnimplementedError>()),
+    );
+
+    final VectorInstructions instructions = parseWithoutOptimizers(svg);
+    expect(instructions.paints, const <Paint>[Paint(fill: Fill(color: Color(0xff4f46e5)))]);
+    expect(instructions.commands, const <DrawCommand>[
+      DrawCommand(DrawCommandType.path, objectId: 0, paintId: 0),
+    ]);
+  });
+
   test('Preserves radial gradient stop opacity and stroke on SourceAlpha filter', () {
     const svg = '''
 <svg viewBox="0 0 100 100">
