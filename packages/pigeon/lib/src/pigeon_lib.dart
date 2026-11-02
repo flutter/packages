@@ -5,7 +5,6 @@
 // ignore_for_file: avoid_print
 
 import 'dart:io';
-import 'dart:mirrors';
 
 import 'package:analyzer/dart/analysis/analysis_context.dart' show AnalysisContext;
 import 'package:analyzer/dart/analysis/analysis_context_collection.dart'
@@ -778,24 +777,6 @@ ${_argParser.usage}''';
     return opts;
   }
 
-  /// Crawls through the reflection system looking for a configurePigeon method and
-  /// executing it.
-  static void _executeConfigurePigeon(PigeonOptions options) {
-    for (final LibraryMirror library in currentMirrorSystem().libraries.values) {
-      for (final DeclarationMirror declaration in library.declarations.values) {
-        if (declaration is MethodMirror &&
-            MirrorSystem.getName(declaration.simpleName) == 'configurePigeon') {
-          if (declaration.parameters.length == 1 &&
-              declaration.parameters[0].type == reflectClass(PigeonOptions)) {
-            library.invoke(declaration.simpleName, <dynamic>[options]);
-          } else {
-            print("warning: invalid 'configurePigeon' method defined.");
-          }
-        }
-      }
-    }
-  }
-
   /// The 'main' entrypoint used by the command-line tool. [args] are the
   /// command-line arguments. The optional parameter [adapters] allows you to
   /// customize the generators that pigeon will use. The optional parameter
@@ -835,7 +816,6 @@ ${_argParser.usage}''';
           const ObjcGeneratorAdapter(),
           const AstGeneratorAdapter(),
         ];
-    _executeConfigurePigeon(options);
 
     if (options.input == null) {
       print(usage);
