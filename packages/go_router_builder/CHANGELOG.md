@@ -1,6 +1,10 @@
-## 4.5.3
+## 4.5.4
 
 * Detects onExit methods inherited through mixins and base classes.
+
+## 4.5.3
+
+* Widens `package:build` dependency constraint to `>=3.0.0 <6.0.0`.
 
 ## 4.5.2
 
