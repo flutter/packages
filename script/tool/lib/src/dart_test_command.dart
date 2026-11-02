@@ -266,6 +266,9 @@ class DartTestCommand extends PackageLoopingCommand {
           // Change which files are run as tests.
           'paths',
           'filename',
+          // Pulls in another configuration file, which could set any of the
+          // above.
+          'include',
         })) {
       return null;
     }

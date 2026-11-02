@@ -1180,6 +1180,12 @@ presets:
     filename: "*_spec.dart"
 ''',
         ),
+        (
+          'an included configuration file',
+          '''
+include: ../shared_dart_test.yaml
+''',
+        ),
       ]) {
         test('runs all test files with the tag filter when dart_test.yaml uses '
             '$description', () async {
