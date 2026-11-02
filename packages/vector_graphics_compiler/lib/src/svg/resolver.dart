@@ -93,9 +93,20 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
         return _resolveParentNodeForLayer(parentNode, nextTransform, filter.layers.first);
       }
 
+      final Paint? outerSaveLayerPaint = parentNode.createLayerPaint();
       final children = <Node>[];
       for (final SvgFilterLayer layer in filter.layers) {
-        children.add(_resolveParentNodeForLayer(parentNode, nextTransform, layer));
+        children.add(
+          _resolveParentNodeForLayer(
+            parentNode,
+            nextTransform,
+            layer,
+            ignoreSaveLayer: outerSaveLayerPaint != null,
+          ),
+        );
+      }
+      if (outerSaveLayerPaint != null) {
+        return SaveLayerNode(SvgAttributes.empty, paint: outerSaveLayerPaint, children: children);
       }
       return ParentNode(SvgAttributes.empty, children: children);
     }
@@ -106,8 +117,9 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
   Node _resolveParentNodeForLayer(
     ParentNode parentNode,
     AffineMatrix nextTransform,
-    SvgFilterLayer layer,
-  ) {
+    SvgFilterLayer layer, {
+    bool ignoreSaveLayer = false,
+  }) {
     final AffineMatrix layerTransform = (layer.dx == 0 && layer.dy == 0)
         ? nextTransform
         : nextTransform.translated(layer.dx, layer.dy);
@@ -124,10 +136,21 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
     );
 
     try {
-      final Paint? saveLayerPaint = parentNode.createLayerPaint(
-        filterBlurX: hasBlur ? layer.sigmaX * nextTransform.xScale : null,
-        filterBlurY: hasBlur ? layer.sigmaY * nextTransform.yScale : null,
-      );
+      final SvgAttributes effectiveAttributes = ignoreSaveLayer
+          ? parentNode.attributes.forSaveLayer()
+          : parentNode.attributes;
+      final Paint? saveLayerPaint = ignoreSaveLayer
+          ? (hasBlur
+                ? Paint(
+                    filterBlurX: layer.sigmaX * nextTransform.xScale,
+                    filterBlurY: layer.sigmaY * nextTransform.yScale,
+                    fill: const Fill(color: Color.opaqueBlack),
+                  )
+                : null)
+          : parentNode.createLayerPaint(
+              filterBlurX: hasBlur ? layer.sigmaX * nextTransform.xScale : null,
+              filterBlurY: hasBlur ? layer.sigmaY * nextTransform.yScale : null,
+            );
 
       final Node resolved;
       if (saveLayerPaint == null) {
@@ -136,7 +159,7 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
           precalculatedTransform: AffineMatrix.identity,
           children: <Node>[
             for (final Node child in parentNode.children)
-              child.applyAttributes(parentNode.attributes).accept(this, layerTransform),
+              child.applyAttributes(effectiveAttributes).accept(this, layerTransform),
           ],
         );
       } else {
@@ -146,7 +169,7 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
           children: <Node>[
             for (final Node child in parentNode.children)
               child
-                  .applyAttributes(parentNode.attributes.forSaveLayer())
+                  .applyAttributes(effectiveAttributes.forSaveLayer())
                   .accept(this, layerTransform),
           ],
         );

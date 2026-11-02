@@ -167,6 +167,7 @@ class _Elements {
 
     List<String>? currentMergeInputs;
     String? currentMergeResult;
+    var hasUnsupportedPrimitive = false;
 
     for (final XmlEvent event in parserState._readSubtree()) {
       if (event is XmlEndElementEvent) {
@@ -236,8 +237,21 @@ class _Elements {
         } else if (localName == 'feMergeNode') {
           final String input = parserState.attribute('in') ?? lastResult ?? 'SourceGraphic';
           currentMergeInputs?.add(input);
+        } else {
+          if (!event.isSelfClosing) {
+            parserState._discardSubtree();
+          }
+          assert(() {
+            parserState.unhandledElement(event);
+            return true;
+          }());
+          hasUnsupportedPrimitive = true;
         }
       }
+    }
+
+    if (hasUnsupportedPrimitive) {
+      return;
     }
 
     final visiting = <String>{};
@@ -543,9 +557,6 @@ class _Elements {
   }
 
   static void clipPath(SvgParser parserState, bool warningsAsErrors) {
-    if (parserState._currentStartElement?.isSelfClosing ?? false) {
-      return;
-    }
     final String id = parserState.buildUrlIri();
     final pathNodes = <Node>[];
     for (final XmlEvent event in parserState._readSubtree()) {
