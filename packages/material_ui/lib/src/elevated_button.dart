@@ -611,18 +611,25 @@ class _ElevatedButtonWithIconChild extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double defaultFontSize =
-        buttonStyle?.textStyle?.resolve(const <WidgetState>{})?.fontSize ?? 14.0;
-    final double scale =
-        clampDouble(MediaQuery.textScalerOf(context).scale(defaultFontSize) / 14.0, 1.0, 2.0) - 1.0;
     final ElevatedButtonThemeData elevatedButtonTheme = ElevatedButtonTheme.of(context);
     final bool useExpressive =
         Theme.of(context).useMaterial3 &&
         ElevatedButtonTheme.variantOf(context) == StyleVariant.material3Expressive;
-    final ButtonSizeVariant effectiveSize =
-        buttonStyle?.sizeVariant ??
-        elevatedButtonTheme.style?.sizeVariant ??
-        ButtonSizeVariant.small;
+    final double spacing;
+    if (useExpressive) {
+      final ButtonSizeVariant effectiveSize =
+          buttonStyle?.sizeVariant ??
+          elevatedButtonTheme.style?.sizeVariant ??
+          ButtonSizeVariant.small;
+      spacing = _ElevatedButtonDefaultsM3E.iconLabelSpace(effectiveSize);
+    } else {
+      final double defaultFontSize =
+          buttonStyle?.textStyle?.resolve(const <WidgetState>{})?.fontSize ?? 14.0;
+      final double scale =
+          clampDouble(MediaQuery.textScalerOf(context).scale(defaultFontSize) / 14.0, 1.0, 2.0) -
+          1.0;
+      spacing = lerpDouble(8, 4, scale)!;
+    }
     final IconAlignment effectiveIconAlignment =
         iconAlignment ??
         elevatedButtonTheme.style?.iconAlignment ??
@@ -630,9 +637,7 @@ class _ElevatedButtonWithIconChild extends StatelessWidget {
         IconAlignment.start;
     return Row(
       mainAxisSize: MainAxisSize.min,
-      spacing: useExpressive
-          ? _ElevatedButtonDefaultsM3E.iconLabelSpace(effectiveSize)
-          : lerpDouble(8, 4, scale)!,
+      spacing: spacing,
       children: effectiveIconAlignment == IconAlignment.start
           ? <Widget>[icon, Flexible(child: label)]
           : <Widget>[Flexible(child: label), icon],

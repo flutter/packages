@@ -85,21 +85,38 @@ class _ElevatedButtonDefaultsM3E extends ButtonStyle {
   @override
   WidgetStateProperty<Color?>? get overlayColor =>
       WidgetStateProperty.resolveWith((Set<WidgetState> states) {
-        final bool selected = toggleable && states.contains(WidgetState.selected);
+        if (toggleable && states.contains(WidgetState.selected)) {
+          if (states.contains(WidgetState.pressed)) {
+            return _colors.onPrimary.withValues(alpha: 0.1);
+          }
+          if (states.contains(WidgetState.hovered)) {
+            return _colors.onPrimary.withValues(alpha: 0.08);
+          }
+          if (states.contains(WidgetState.focused)) {
+            return _colors.onPrimary.withValues(alpha: 0.1);
+          }
+          return null;
+        }
+        if (toggleable) {
+          if (states.contains(WidgetState.pressed)) {
+            return _colors.primary.withValues(alpha: 0.1);
+          }
+          if (states.contains(WidgetState.hovered)) {
+            return _colors.primary.withValues(alpha: 0.08);
+          }
+          if (states.contains(WidgetState.focused)) {
+            return _colors.primary.withValues(alpha: 0.1);
+          }
+          return null;
+        }
         if (states.contains(WidgetState.pressed)) {
-          return selected
-              ? _colors.onPrimary.withValues(alpha: 0.1)
-              : _colors.primary.withValues(alpha: 0.1);
+          return _colors.primary.withValues(alpha: 0.1);
         }
         if (states.contains(WidgetState.hovered)) {
-          return selected
-              ? _colors.onPrimary.withValues(alpha: 0.08)
-              : _colors.primary.withValues(alpha: 0.08);
+          return _colors.primary.withValues(alpha: 0.08);
         }
         if (states.contains(WidgetState.focused)) {
-          return selected
-              ? _colors.onPrimary.withValues(alpha: 0.1)
-              : _colors.primary.withValues(alpha: 0.1);
+          return _colors.primary.withValues(alpha: 0.1);
         }
         return null;
       });
