@@ -28,9 +28,9 @@ struct PickerSaveImageToPathOperationTests {
   /// are not stored across that boundary.
   private func runSaveOperation(
     result: PickerItem,
-    maxHeight: NSNumber = 100,
-    maxWidth: NSNumber = 100,
-    desiredImageQuality: NSNumber = 100,
+    maxHeight: Double = 100,
+    maxWidth: Double = 100,
+    desiredImageQuality: Double = 100,
     fullMetadata: Bool
   ) async throws -> (savedPath: String?, error: PigeonError?) {
     let outcome = await withCheckedContinuation {

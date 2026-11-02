@@ -517,17 +517,17 @@ struct ImagePickerPluginTests {
 
   @Test func desiredImageQualityClampsOutOfRangeValues() {
     let plugin = ImagePickerPlugin(viewProvider: StubViewProvider())
-    #expect(abs(plugin.desiredImageQuality(-1).doubleValue - 1.0) < 0.0001)
+    #expect(abs(plugin.desiredImageQuality(-1) - 1.0) < 0.0001)
   }
 
   @Test func desiredImageQualityScalesValidPercent() {
     let plugin = ImagePickerPlugin(viewProvider: StubViewProvider())
-    #expect(abs(plugin.desiredImageQuality(50).doubleValue - 0.5) < 0.0001)
+    #expect(abs(plugin.desiredImageQuality(50) - 0.5) < 0.0001)
   }
 
   @Test func desiredImageQualityOver100IsClamped() {
     let plugin = ImagePickerPlugin(viewProvider: StubViewProvider())
-    #expect(abs(plugin.desiredImageQuality(150).doubleValue - 1.0) < 0.0001)
+    #expect(abs(plugin.desiredImageQuality(150) - 1.0) < 0.0001)
   }
 
   @Test func cameraAccessDeniedReturnsError() async {

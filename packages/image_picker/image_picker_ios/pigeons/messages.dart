@@ -48,7 +48,6 @@ class SourceSpecification {
 @HostApi()
 abstract class ImagePickerApi {
   @async
-  @ObjCSelector('pickImageWithSource:maxSize:quality:fullMetadata:')
   String? pickImage(
     SourceSpecification source,
     MaxSize maxSize,
@@ -56,7 +55,6 @@ abstract class ImagePickerApi {
     bool requestFullMetadata,
   );
   @async
-  @ObjCSelector('pickMultiImageWithMaxSize:quality:fullMetadata:limit:')
   List<String> pickMultiImage(
     MaxSize maxSize,
     int? imageQuality,
@@ -64,14 +62,11 @@ abstract class ImagePickerApi {
     int? limit,
   );
   @async
-  @ObjCSelector('pickVideoWithSource:maxDuration:')
   String? pickVideo(SourceSpecification source, int? maxDurationSeconds);
   @async
-  @ObjCSelector('pickMultiVideoWithMaxDuration:limit:')
   List<String> pickMultiVideo(int? maxDurationSeconds, int? limit);
 
   /// Selects images and videos and returns their paths.
   @async
-  @ObjCSelector('pickMediaWithMediaSelectionOptions:')
   List<String> pickMedia(MediaSelectionOptions mediaSelectionOptions);
 }

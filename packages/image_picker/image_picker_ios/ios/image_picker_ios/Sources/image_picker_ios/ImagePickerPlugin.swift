@@ -460,14 +460,14 @@ public final class ImagePickerPlugin: NSObject, FlutterPlugin, ImagePickerApi,
     viewProvider.viewController?.present(imagePickerController, animated: true, completion: nil)
   }
 
-  func desiredImageQuality(_ imageQuality: Int64?) -> NSNumber {
+  func desiredImageQuality(_ imageQuality: Int64?) -> Double {
     guard let imageQuality else {
       return 1
     }
     if imageQuality < 0 || imageQuality > 100 {
       return 1
     }
-    return NSNumber(value: Double(imageQuality) / 100.0)
+    return Double(imageQuality) / 100.0
   }
 
   public func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
@@ -487,8 +487,8 @@ public final class ImagePickerPlugin: NSObject, FlutterPlugin, ImagePickerApi,
     saveQueue?.qualityOfService = .userInitiated
 
     let currentCallContext = callContext
-    let maxWidth = currentCallContext?.maxSize?.width as NSNumber?
-    let maxHeight = currentCallContext?.maxSize?.height as NSNumber?
+    let maxWidth = currentCallContext?.maxSize?.width
+    let maxHeight = currentCallContext?.maxSize?.height
     let desiredImageQuality = self.desiredImageQuality(currentCallContext?.imageQuality)
     let requestFullMetadata = currentCallContext?.requestFullMetadata ?? false
     var pathList = [String?](repeating: nil, count: results.count)
@@ -564,8 +564,8 @@ public final class ImagePickerPlugin: NSObject, FlutterPlugin, ImagePickerApi,
       if image == nil {
         image = info[.originalImage] as? UIImage
       }
-      let maxWidth = callContext?.maxSize?.width as NSNumber?
-      let maxHeight = callContext?.maxSize?.height as NSNumber?
+      let maxWidth = callContext?.maxSize?.width
+      let maxHeight = callContext?.maxSize?.height
       let imageQuality = callContext?.imageQuality
       let desiredImageQuality = self.desiredImageQuality(imageQuality)
 
@@ -607,8 +607,8 @@ public final class ImagePickerPlugin: NSObject, FlutterPlugin, ImagePickerApi,
   }
 
   func saveImage(
-    withOriginalImageData originalImageData: Data?, image: UIImage?, maxWidth: NSNumber?,
-    maxHeight: NSNumber?, imageQuality: NSNumber?
+    withOriginalImageData originalImageData: Data?, image: UIImage?, maxWidth: Double?,
+    maxHeight: Double?, imageQuality: Double?
   ) {
     let savedPath = ImagePickerPhotoAssetUtil.saveImageWithOriginalImageData(
       originalImageData, image: image, maxWidth: maxWidth, maxHeight: maxHeight,
@@ -617,7 +617,7 @@ public final class ImagePickerPlugin: NSObject, FlutterPlugin, ImagePickerApi,
   }
 
   func saveImage(
-    withPickerInfo info: [String: Any]?, image: UIImage, imageQuality: NSNumber?
+    withPickerInfo info: [String: Any]?, image: UIImage, imageQuality: Double?
   ) {
     let savedPath = ImagePickerPhotoAssetUtil.saveImage(
       withPickerInfo: info, image: image, imageQuality: imageQuality)

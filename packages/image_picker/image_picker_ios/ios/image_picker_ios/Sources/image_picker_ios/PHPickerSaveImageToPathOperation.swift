@@ -13,9 +13,9 @@ typealias GetSavedPath = (String?, PigeonError?) -> Void
 @available(iOS 14, *)
 final class PHPickerSaveImageToPathOperation: Operation, @unchecked Sendable {
   private let result: PickerItem
-  private let maxHeight: NSNumber?
-  private let maxWidth: NSNumber?
-  private let desiredImageQuality: NSNumber
+  private let maxHeight: Double?
+  private let maxWidth: Double?
+  private let desiredImageQuality: Double
   private let getSavedPath: GetSavedPath
 
   private var executingState = false
@@ -29,9 +29,9 @@ final class PHPickerSaveImageToPathOperation: Operation, @unchecked Sendable {
 
   init?(
     result: PickerItem?,
-    maxHeight: NSNumber?,
-    maxWidth: NSNumber?,
-    desiredImageQuality: NSNumber,
+    maxHeight: Double?,
+    maxWidth: Double?,
+    desiredImageQuality: Double,
     fullMetadata _: Bool,
     savedPathBlock: @escaping GetSavedPath
   ) {
