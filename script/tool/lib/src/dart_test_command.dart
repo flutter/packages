@@ -48,12 +48,20 @@ class DartTestCommand extends PackageLoopingCommand {
       help:
           'Path to a YAML file that maps packages to tags to run for that '
           'package. Packages are identified by their path relative to the '
-          'packages directory (e.g., "foo" or "foo/foo_android").',
+          'packages directory (e.g., "foo" or "foo/foo_android"). Only test '
+          'files that contain the tag name are run, so the tag must appear '
+          'literally in each test file that uses it, and must not appear in '
+          'non-test Dart files. Tag selector expressions (e.g., "!slow") are '
+          'not supported.',
     );
   }
 
   static const String _platformFlag = 'platform';
   static const String _packageTagsFlag = 'package-tags';
+
+  /// Matches a single tag name, using the same identifier rules as
+  /// `package:test` tag selectors.
+  static final RegExp _tagNamePattern = RegExp(r'^[a-zA-Z_-][a-zA-Z0-9_-]*$');
 
   Map<String, String>? _packageTags;
 
@@ -133,24 +141,64 @@ class DartTestCommand extends PackageLoopingCommand {
     final bool wasm = platform != 'vm' && getBoolArg(kWebWasmFlag);
 
     final String? tag = _getTagForPackage(package);
+    // Passing only the files that can contain tagged tests avoids compiling
+    // and loading every other test file just to discover that it has no
+    // matching tests, which is expensive on web.
+    var testFiles = const <String>[];
+    if (tag != null) {
+      final List<String>? taggedFiles = _testFilesForTag(package, tag);
+      if (taggedFiles != null) {
+        final List<String> nonTestFilesWithTag = _nonTestFilesContainingTag(package, tag);
+        if (nonTestFilesWithTag.isNotEmpty) {
+          printError(
+            'The tag "$tag" appears in the following files, which are not test '
+            'files:\n'
+            '${nonTestFilesWithTag.map((String file) => '  $file').join('\n')}\n'
+            'Tests tagged via a constant or helper defined in these files will '
+            'not be run with --$_packageTagsFlag. Use the tag directly in each '
+            "test file that uses it (e.g., `tags: '$tag'`).",
+          );
+          return PackageResult.fail(nonTestFilesWithTag);
+        }
+        if (taggedFiles.isEmpty) {
+          return PackageResult.skip('No test files contain the requested tag.');
+        }
+        testFiles = taggedFiles;
+      }
+    }
     final int exitCode;
     if (package.requiresFlutter()) {
-      exitCode = await _runFlutterTests(package, platform: platform, wasm: wasm, tag: tag);
+      exitCode = await _runFlutterTests(
+        package,
+        platform: platform,
+        wasm: wasm,
+        tag: tag,
+        testFiles: testFiles,
+      );
     } else {
-      exitCode = await _runDartTests(package, platform: platform, wasm: wasm, tag: tag);
+      exitCode = await _runDartTests(
+        package,
+        platform: platform,
+        wasm: wasm,
+        tag: tag,
+        testFiles: testFiles,
+      );
     }
     if (tag != null && exitCode == _exitNoTestsRan) {
-      return PackageResult.skip('No tests match the requested tag selector.');
+      return PackageResult.skip('No tests match the requested tag.');
     }
     return exitCode == 0 ? PackageResult.success() : PackageResult.fail();
   }
 
   /// Runs the Dart tests for a Flutter package, returning the process exit code.
+  ///
+  /// If [testFiles] is non-empty, only those files are run.
   Future<int> _runFlutterTests(
     RepositoryPackage package, {
     String? platform,
     bool wasm = false,
     String? tag,
+    List<String> testFiles = const <String>[],
   }) async {
     final String experiment = getStringArg(kEnableExperiment);
 
@@ -163,15 +211,19 @@ class DartTestCommand extends PackageLoopingCommand {
       if (platform != null && platform != 'vm') '--platform=$platform',
       if (wasm) '--wasm',
       if (tag != null) '--tags=$tag',
+      ...testFiles,
     ], workingDir: package.directory);
   }
 
   /// Runs the Dart tests for a non-Flutter package, returning the process exit code.
+  ///
+  /// If [testFiles] is non-empty, only those files are run.
   Future<int> _runDartTests(
     RepositoryPackage package, {
     String? platform,
     bool wasm = false,
     String? tag,
+    List<String> testFiles = const <String>[],
   }) async {
     // Unlike `flutter test`, `dart run test` does not automatically get
     // packages
@@ -189,7 +241,79 @@ class DartTestCommand extends PackageLoopingCommand {
       if (platform != null) '--platform=$platform',
       if (wasm) '--compiler=dart2wasm',
       if (tag != null) '--tags=$tag',
+      ...testFiles,
     ], workingDir: package.directory);
+  }
+
+  /// Returns the test files in [package], relative to the package, that could
+  /// contain tests tagged with [tag], or null if they can't be determined.
+  ///
+  /// A file is included if its contents mention [tag] anywhere, so this is a
+  /// superset of the files that actually contain tagged tests; the `--tags`
+  /// filter is still applied when running them. Tests that are tagged without
+  /// the tag name appearing literally in their file (e.g., via a constant
+  /// defined in another file) will not be found.
+  ///
+  /// Returns null if the package's test configuration could cause tests to be
+  /// tagged, or files to be treated as tests, in ways this can't detect, in
+  /// which case all of the package's tests should be run with the tag filter.
+  List<String>? _testFilesForTag(RepositoryPackage package, String tag) {
+    final File testConfig = package.directory.childFile('dart_test.yaml');
+    if (testConfig.existsSync() &&
+        _yamlContainsAnyKey(loadYaml(testConfig.readAsStringSync()), const <String>{
+          // Allows one tag to imply another.
+          'add_tags',
+          // Change which files are run as tests.
+          'paths',
+          'filename',
+        })) {
+      return null;
+    }
+
+    return package.testDirectory
+        .listSync(recursive: true)
+        .whereType<File>()
+        .where((File file) => file.basename.endsWith('_test.dart'))
+        .where((File file) => file.readAsStringSync().contains(tag))
+        .map((File file) => relativePosixPath(file, from: package.directory, platformContext: path))
+        .toList()
+      ..sort();
+  }
+
+  /// Returns the Dart files in [package]'s `lib/` and `test/` directories that
+  /// contain [tag] but aren't test files, relative to the package.
+  ///
+  /// The tag appearing in such a file (e.g., in a shared constant, or in a
+  /// helper that wraps `test`) means that tests may be tagged without the tag
+  /// appearing in their own file, in which case [_testFilesForTag] wouldn't
+  /// select them.
+  List<String> _nonTestFilesContainingTag(RepositoryPackage package, String tag) {
+    return <Directory>[package.libDirectory, package.testDirectory]
+        .where((Directory dir) => dir.existsSync())
+        .expand((Directory dir) => dir.listSync(recursive: true))
+        .whereType<File>()
+        .where((File file) => file.basename.endsWith('.dart'))
+        .where(
+          (File file) =>
+              !(file.basename.endsWith('_test.dart') &&
+                  path.isWithin(package.testDirectory.path, file.path)),
+        )
+        .where((File file) => file.readAsStringSync().contains(tag))
+        .map((File file) => relativePosixPath(file, from: package.directory, platformContext: path))
+        .toList()
+      ..sort();
+  }
+
+  /// Returns true if [node], or any map nested within it, has any of [keys].
+  bool _yamlContainsAnyKey(Object? node, Set<String> keys) {
+    if (node is YamlMap) {
+      return node.keys.any((Object? key) => keys.contains(key)) ||
+          node.values.any((Object? value) => _yamlContainsAnyKey(value, keys));
+    }
+    if (node is YamlList) {
+      return node.any((Object? value) => _yamlContainsAnyKey(value, keys));
+    }
+    return false;
   }
 
   /// Parses the `--package-tags` argument and populates the `_packageTags`
@@ -220,7 +344,19 @@ class DartTestCommand extends PackageLoopingCommand {
         final pkg = entry.key.toString();
         final dynamic val = entry.value;
         if (val != null) {
-          packageTags[pkg] = val.toString();
+          final tag = val.toString();
+          // Test files are selected by searching for the tag's name, which
+          // doesn't work for boolean selector expressions (e.g., `!slow`), so
+          // only allow single tags rather than silently running no tests.
+          if (!_tagNamePattern.hasMatch(tag)) {
+            printError(
+              'The package tags file "$arg" has an invalid tag "$tag" for '
+              'package "$pkg". Only a single tag name is supported, not a tag '
+              'selector expression.',
+            );
+            throw ToolExit(exitInvalidArguments);
+          }
+          packageTags[pkg] = tag;
         }
       }
     } else {

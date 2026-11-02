@@ -5,6 +5,10 @@
   repository is checked out into a directory named `packages`, as it is in CI.
 * Runs `chromedriver` for `drive-examples --run-chromedriver` on an
   OS-assigned port, and waits for it to exit before starting the next example.
+* Makes `dart-test --package-tags` run only the test files that contain the
+  package's tag, rather than loading every test file to filter by tag. Fails
+  if the tag appears in non-test Dart files, and no longer accepts tag selector
+  expressions in the `--package-tags` file.
 
 ## 0.14.4+4
 
