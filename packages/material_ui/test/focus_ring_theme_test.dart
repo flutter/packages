@@ -511,5 +511,261 @@ void main() {
         paints..rrect(style: PaintingStyle.stroke, strokeWidth: 3.0),
       );
     });
+
+    // Whether a call is a 3 pixel ring stroke that reaches outside `bounds`.
+    bool ringReachesOutside(Symbol method, List<dynamic> arguments, Rect bounds) {
+      final Object? last = arguments.isEmpty ? null : arguments.last;
+      if (last is! Paint || last.style != PaintingStyle.stroke || last.strokeWidth != 3.0) {
+        return false;
+      }
+      final Rect? centerline = switch (method) {
+        #drawRRect => (arguments[0] as RRect).outerRect,
+        #drawPath => (arguments[0] as Path).getBounds(),
+        #drawCircle => Rect.fromCircle(
+          center: arguments[0] as Offset,
+          radius: arguments[1] as double,
+        ),
+        _ => null,
+      };
+      if (centerline == null) {
+        return false;
+      }
+      final Rect stroke = centerline.inflate(1.5);
+      const tolerance = 0.01;
+      return stroke.left < bounds.left - tolerance ||
+          stroke.top < bounds.top - tolerance ||
+          stroke.right > bounds.right + tolerance ||
+          stroke.bottom > bounds.bottom + tolerance;
+    }
+
+    // Expects `box` to paint a ring that stays inside its own bounds.
+    void expectRingInside(RenderBox box) {
+      expect(
+        box,
+        paints..something((Symbol method, List<dynamic> arguments) {
+          final Object? last = arguments.isEmpty ? null : arguments.last;
+          return last is Paint && last.style == PaintingStyle.stroke && last.strokeWidth == 3.0;
+        }),
+      );
+      final Rect bounds = Offset.zero & box.size;
+      expect(
+        box,
+        isNot(
+          paints..something(
+            (Symbol method, List<dynamic> arguments) =>
+                ringReachesOutside(method, arguments, bounds),
+          ),
+        ),
+      );
+    }
+
+    testWidgets('Button that clips draws the ring inside its shape', (WidgetTester tester) async {
+      final focusNode = FocusNode();
+      addTearDown(focusNode.dispose);
+      await tester.pumpWidget(
+        buildApp(
+          focusRingTheme: visibleRing,
+          child: TextButton(
+            // A background builder makes the button clip to its shape.
+            style: ButtonStyle(
+              backgroundBuilder: (BuildContext context, Set<WidgetState> states, Widget? child) =>
+                  child!,
+            ),
+            focusNode: focusNode,
+            onPressed: () {},
+            child: const Text('Submit'),
+          ),
+        ),
+      );
+      focusNode.requestFocus();
+      await tester.pumpAndSettle();
+
+      expectRingInside(inkWellBox(tester, find.byType(TextButton)));
+    });
+
+    testWidgets('Chip that clips draws the ring inside its shape', (WidgetTester tester) async {
+      final focusNode = FocusNode();
+      addTearDown(focusNode.dispose);
+      await tester.pumpWidget(
+        buildApp(
+          focusRingTheme: visibleRing,
+          child: ActionChip(
+            clipBehavior: Clip.antiAlias,
+            focusNode: focusNode,
+            onPressed: () {},
+            label: const Text('Chip'),
+          ),
+        ),
+      );
+      focusNode.requestFocus();
+      await tester.pumpAndSettle();
+
+      expectRingInside(inkWellBox(tester, find.byType(ActionChip)));
+    });
+
+    testWidgets('ToggleButtons draw the ring inside each button', (WidgetTester tester) async {
+      final focusNode = FocusNode();
+      addTearDown(focusNode.dispose);
+      final otherFocusNode = FocusNode();
+      addTearDown(otherFocusNode.dispose);
+      await tester.pumpWidget(
+        buildApp(
+          focusRingTheme: visibleRing,
+          child: ToggleButtons(
+            isSelected: const <bool>[false, false],
+            focusNodes: <FocusNode>[focusNode, otherFocusNode],
+            onPressed: (int index) {},
+            children: const <Widget>[Icon(Icons.home), Icon(Icons.business)],
+          ),
+        ),
+      );
+      focusNode.requestFocus();
+      await tester.pumpAndSettle();
+
+      expectRingInside(inkWellBox(tester, find.widgetWithIcon(TextButton, Icons.home)));
+    });
+
+    testWidgets('SegmentedButton draws the ring inside each segment', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        buildApp(
+          focusRingTheme: visibleRing,
+          child: SegmentedButton<int>(
+            segments: const <ButtonSegment<int>>[
+              ButtonSegment<int>(value: 1, label: Text('One')),
+              ButtonSegment<int>(value: 2, label: Text('Two')),
+            ],
+            selected: const <int>{1},
+            onSelectionChanged: (Set<int> selection) {},
+          ),
+        ),
+      );
+      Focus.of(tester.element(find.text('Two'))).requestFocus();
+      await tester.pumpAndSettle();
+
+      expectRingInside(inkWellBox(tester, find.widgetWithText(TextButton, 'Two')));
+    });
+
+    testWidgets('MenuItemButton draws the ring inside its shape', (WidgetTester tester) async {
+      final focusNode = FocusNode();
+      addTearDown(focusNode.dispose);
+      await tester.pumpWidget(
+        buildApp(
+          focusRingTheme: visibleRing,
+          child: MenuItemButton(focusNode: focusNode, onPressed: () {}, child: const Text('Item')),
+        ),
+      );
+      focusNode.requestFocus();
+      await tester.pumpAndSettle();
+
+      expectRingInside(inkWellBox(tester, find.byType(MenuItemButton)));
+    });
+
+    testWidgets('FloatingActionButton draws the ring outside its shape', (
+      WidgetTester tester,
+    ) async {
+      final focusNode = FocusNode();
+      addTearDown(focusNode.dispose);
+      await tester.pumpWidget(
+        buildApp(
+          focusRingTheme: visibleRing,
+          child: FloatingActionButton(
+            focusNode: focusNode,
+            onPressed: () {},
+            child: const Icon(Icons.add),
+          ),
+        ),
+      );
+      focusNode.requestFocus();
+      await tester.pumpAndSettle();
+
+      final RenderBox box = inkWellBox(tester, find.byType(FloatingActionButton));
+      final Rect bounds = Offset.zero & box.size;
+      expect(
+        box,
+        paints..something(
+          (Symbol method, List<dynamic> arguments) => ringReachesOutside(method, arguments, bounds),
+        ),
+      );
+    });
+
+    testWidgets('An oval border gets an oval ring', (WidgetTester tester) async {
+      final focusNode = FocusNode();
+      addTearDown(focusNode.dispose);
+      await tester.pumpWidget(
+        buildApp(
+          focusRingTheme: visibleRing,
+          child: SizedBox(
+            width: 200,
+            height: 40,
+            child: InkWell(
+              focusNode: focusNode,
+              onTap: () {},
+              customBorder: const OvalBorder(),
+              focusRingOffset: 2.0,
+            ),
+          ),
+        ),
+      );
+      focusNode.requestFocus();
+      await tester.pumpAndSettle();
+
+      final RenderBox box = inkWellBox(tester, find.byType(SizedBox).last);
+      expect(box, isNot(paints..circle(style: PaintingStyle.stroke)));
+      // The ring follows the oval, so it passes near the ends of the long axis,
+      // which a circle of the short side's diameter would not reach.
+      expect(
+        box,
+        paints
+          ..path(style: PaintingStyle.stroke, strokeWidth: 3.0)
+          ..path(
+            style: PaintingStyle.stroke,
+            strokeWidth: 3.0,
+            includes: const <Offset>[Offset(100, 20), Offset(5, 20)],
+          ),
+      );
+    });
+
+    testWidgets('A beveled border keeps both bands parallel at the corners', (
+      WidgetTester tester,
+    ) async {
+      final focusNode = FocusNode();
+      addTearDown(focusNode.dispose);
+      await tester.pumpWidget(
+        buildApp(
+          focusRingTheme: visibleRing,
+          child: SizedBox(
+            width: 200,
+            height: 40,
+            child: InkWell(
+              focusNode: focusNode,
+              onTap: () {},
+              customBorder: const BeveledRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10)),
+              ),
+              focusRingOffset: 2.0,
+            ),
+          ),
+        ),
+      );
+      focusNode.requestFocus();
+      await tester.pumpAndSettle();
+
+      // The ring's centerline is 3.5 pixels outside the shape, so its corner
+      // cut is the line x + y = 10 - 3.5 * sqrt(2), about 5.05, in the box's
+      // coordinates. Keeping the bevel's radius at 10 would put the cut at
+      // x + y = 3, and fill the point below.
+      const corner = Offset(1.9, 1.9);
+      expect(
+        inkWellBox(tester, find.byType(SizedBox).last),
+        paints
+          ..path(style: PaintingStyle.stroke, strokeWidth: 3.0)
+          ..path(
+            style: PaintingStyle.stroke,
+            strokeWidth: 3.0,
+            includes: const <Offset>[Offset(100, 20)],
+            excludes: const <Offset>[corner],
+          ),
+      );
+    });
   });
 }
