@@ -1219,28 +1219,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     videoRecordingEventStreamQueue = StreamQueue<VideoRecordEvent>(
       videoRecordingEventStreamController.stream,
     );
-    unawaited(videoRecordEventSubscription?.cancel());
-    Duration maxDuration = Duration.zero;
-    videoRecordEventSubscription = videoRecordingEventStreamController.stream.listen((
-      VideoRecordEvent event,
-    ) async {
-      if (event is VideoRecordEventStatus) {
-        final RecordingStats stats = await event.getRecordingStats();
-        if (videoRecordEventSubscription == null || cameraEventStreamController.isClosed) {
-          return;
-        }
-        final duration = Duration(microseconds: stats.recordedDurationNanos ~/ 1000);
-        if (duration > maxDuration) {
-          maxDuration = duration;
-          cameraEventStreamController.add(
-            VideoRecordingDurationChangedEvent(options.cameraId, duration),
-          );
-        }
-      } else if (event is VideoRecordEventFinalize) {
-        unawaited(videoRecordEventSubscription?.cancel());
-        videoRecordEventSubscription = null;
-      }
-    });
+    _listenForVideoRecordingDurationChanges(options.cameraId);
     final dynamic Function(CameraImageData)? streamCallback = options.streamCallback;
     if (streamCallback == null) {
       // For potential performance improvements, unbind imageAnalysis if not in use.
@@ -1283,6 +1262,29 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     // Wait for video recording to start and for the first frame to be recorded.
     await _waitForRecordingToStart();
+  }
+
+  void _listenForVideoRecordingDurationChanges(int cameraId) {
+    unawaited(videoRecordEventSubscription?.cancel());
+    Duration maxDuration = Duration.zero;
+    videoRecordEventSubscription = videoRecordingEventStreamController.stream.listen((
+      VideoRecordEvent event,
+    ) async {
+      if (event is VideoRecordEventStatus) {
+        final RecordingStats stats = await event.getRecordingStats();
+        if (videoRecordEventSubscription == null || cameraEventStreamController.isClosed) {
+          return;
+        }
+        final duration = Duration(microseconds: stats.recordedDurationNanos ~/ 1000);
+        if (duration > maxDuration) {
+          maxDuration = duration;
+          cameraEventStreamController.add(VideoRecordingDurationChangedEvent(cameraId, duration));
+        }
+      } else if (event is VideoRecordEventFinalize) {
+        unawaited(videoRecordEventSubscription?.cancel());
+        videoRecordEventSubscription = null;
+      }
+    });
   }
 
   /// Waits for the video recording to start and for the first frame to be recorded.
