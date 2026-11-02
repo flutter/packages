@@ -55,7 +55,7 @@ private let hlsAudioTestURI =
 
   @Test func playerForPlatformViewDoesNotRegisterTexture() async throws {
     let textureRegistry = TestTextureRegistry()
-    let stubDisplayLinkFactory = StubFVPDisplayLinkFactory()
+    let stubDisplayLinkFactory = StubDisplayLinkFactory()
     let videoPlayerPlugin = try createInitializedPlugin(
       displayLinkFactory: stubDisplayLinkFactory,
       textureRegistry: textureRegistry)
@@ -67,7 +67,7 @@ private let hlsAudioTestURI =
   }
 
   @Test func seekToWhilePausedStartsDisplayLinkTemporarily() async throws {
-    let stubDisplayLinkFactory = StubFVPDisplayLinkFactory()
+    let stubDisplayLinkFactory = StubDisplayLinkFactory()
     let mockVideoOutput = TestPixelBufferSource()
     let url = hlsTestURI
     // Display link and frame updater wire-up is currently done in VideoPlayerPlugin, so create
@@ -101,7 +101,7 @@ private let hlsAudioTestURI =
   }
 
   @Test func initStartsDisplayLinkTemporarily() async throws {
-    let stubDisplayLinkFactory = StubFVPDisplayLinkFactory()
+    let stubDisplayLinkFactory = StubDisplayLinkFactory()
     let mockVideoOutput = TestPixelBufferSource()
     let url = hlsTestURI
     let videoPlayerPlugin = try createInitializedPlugin(
@@ -128,7 +128,7 @@ private let hlsAudioTestURI =
   }
 
   @Test func seekToWhilePlayingDoesNotStopDisplayLink() async throws {
-    let stubDisplayLinkFactory = StubFVPDisplayLinkFactory()
+    let stubDisplayLinkFactory = StubDisplayLinkFactory()
     let mockVideoOutput = TestPixelBufferSource()
     let url = hlsTestURI
     let videoPlayerPlugin = try createInitializedPlugin(
@@ -158,7 +158,7 @@ private let hlsAudioTestURI =
   }
 
   @Test func pauseWhileWaitingForFrameDoesNotStopDisplayLink() async throws {
-    let stubDisplayLinkFactory = StubFVPDisplayLinkFactory()
+    let stubDisplayLinkFactory = StubDisplayLinkFactory()
     // Display link and frame updater wire-up is currently done in VideoPlayerPlugin, so create
     // the player via the plugin instead of directly to include that logic in the test.
     let videoPlayerPlugin = try createInitializedPlugin(displayLinkFactory: stubDisplayLinkFactory)
@@ -177,7 +177,7 @@ private let hlsAudioTestURI =
   }
 
   @Test func disposeWhilePlayingStopsDisplayLink() async throws {
-    let stubDisplayLinkFactory = StubFVPDisplayLinkFactory()
+    let stubDisplayLinkFactory = StubDisplayLinkFactory()
     let mockVideoOutput = TestPixelBufferSource()
     let videoPlayerPlugin = try createInitializedPlugin(
       avFactory: StubAVFactory(pixelBufferSource: mockVideoOutput),
@@ -513,7 +513,7 @@ private let hlsAudioTestURI =
 
   @Test func playerShouldNotDropEverySecondFrame() async throws {
     let textureRegistry = TestTextureRegistry()
-    let stubDisplayLinkFactory = StubFVPDisplayLinkFactory()
+    let stubDisplayLinkFactory = StubDisplayLinkFactory()
     let mockVideoOutput = TestPixelBufferSource()
     let videoPlayerPlugin = try createInitializedPlugin(
       avFactory: StubAVFactory(pixelBufferSource: mockVideoOutput),
@@ -972,7 +972,7 @@ private let hlsAudioTestURI =
   /// then initializes it.
   private func createInitializedPlugin(
     avFactory: WrappedAVObjectFactory = StubAVFactory(),
-    displayLinkFactory: DisplayLinkFactory = StubFVPDisplayLinkFactory(),
+    displayLinkFactory: DisplayLinkFactory = StubDisplayLinkFactory(),
     binaryMessenger: FlutterBinaryMessenger = StubBinaryMessenger(),
     textureRegistry: FlutterTextureRegistry = TestTextureRegistry(),
     viewProvider: FVPViewProvider = StubViewProvider(),

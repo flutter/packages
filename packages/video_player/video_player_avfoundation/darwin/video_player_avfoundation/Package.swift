@@ -31,18 +31,8 @@ let package = Package(
     ),
     .target(
       name: "video_player_avfoundation_objc",
-      dependencies: [
-        .target(name: "video_player_avfoundation_macos", condition: .when(platforms: [.macOS]))
-      ],
       cSettings: [
         .headerSearchPath("include/video_player_avfoundation")
-      ]
-    ),
-    .target(
-      name: "video_player_avfoundation_macos",
-      cSettings: [
-        .headerSearchPath(
-          "../video_player_avfoundation_objc/include/video_player_avfoundation_objc")
       ]
     ),
   ]

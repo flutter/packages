@@ -243,21 +243,21 @@ final class StubAVFactory: WrappedAVObjectFactory {
   #endif
 }
 
-final class StubFVPDisplayLink: NSObject, FVPDisplayLink {
+final class StubDisplayLink: NSObject, DisplayLink {
   var running: Bool = false
   var duration: CFTimeInterval {
     return 1.0 / 60.0
   }
 }
 
-final class StubFVPDisplayLinkFactory: DisplayLinkFactory {
-  let displayLink = StubFVPDisplayLink()
+final class StubDisplayLinkFactory: DisplayLinkFactory {
+  let displayLink = StubDisplayLink()
   var fireDisplayLink: (() -> Void)?
 
   func displayLink(
     with viewProvider: FVPViewProvider,
     callback: @escaping () -> Void
-  ) -> FVPDisplayLink {
+  ) -> DisplayLink {
     fireDisplayLink = callback
     return displayLink
   }

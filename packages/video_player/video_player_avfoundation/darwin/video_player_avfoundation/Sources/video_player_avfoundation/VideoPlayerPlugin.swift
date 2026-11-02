@@ -21,7 +21,7 @@ protocol DisplayLinkFactory {
   func displayLink(
     with viewProvider: FVPViewProvider,
     callback: @escaping () -> Void
-  ) -> FVPDisplayLink
+  ) -> DisplayLink
 }
 
 /// Non-test implementation of the display link factory.
@@ -29,14 +29,14 @@ final class DefaultDisplayLinkFactory: DisplayLinkFactory {
   func displayLink(
     with viewProvider: FVPViewProvider,
     callback: @escaping () -> Void
-  ) -> FVPDisplayLink {
+  ) -> DisplayLink {
     #if os(iOS)
       return FVPCADisplayLink(viewProvider: viewProvider, callback: callback)
     #elseif os(macOS)
       if #available(macOS 14.0, *) {
-        return FVPCADisplayLink(viewProvider: viewProvider, callback: callback)
+        return CoreAnimationDisplayLink(viewProvider: viewProvider, callback: callback)
       }
-      return FVPCoreVideoDisplayLink(viewProvider: viewProvider, callback: callback)
+      return CoreVideoDisplayLink(viewProvider: viewProvider, callback: callback)
     #endif
   }
 }
@@ -200,7 +200,7 @@ public final class VideoPlayerPlugin: NSObject, FlutterPlugin, AVFoundationVideo
     async throws -> TexturePlayerIds
   {
     let item = try playerItem(with: creationOptions)
-    let frameUpdater = FVPFrameUpdater(registry: textureRegistry)
+    let frameUpdater = FrameUpdater(registry: textureRegistry)
     let displayLink = displayLinkFactory.displayLink(with: viewProvider) {
       frameUpdater.displayLinkFired()
     }
