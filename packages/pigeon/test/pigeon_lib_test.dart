@@ -3339,17 +3339,18 @@ const String myConst = 'hello ${1 + 2}';
   );
 
   test('parseFile locates Dart SDK via cli_util', () {
-    expect(cli_util.sdkPath, isNotNull);
+    String requireSdkPath(String? sdkPath) => sdkPath!;
+    final String currentSdk = requireSdkPath(cli_util.sdkPath);
     final ParseResults parseResult = runZoned(
       () => parseSource('class Message { String? text; }'),
       zoneValues: <Object, Object>{
         #environmentOverrides: <String, String>{
           '_DART_RESOLVED_EXECUTABLE': '/nonexistent/bin/pigeon',
-          'DART_SDK': '${cli_util.sdkPath}',
+          'DART_SDK': currentSdk,
         },
         #_environmentOverrides: <String, String>{
           '_DART_RESOLVED_EXECUTABLE': '/nonexistent/bin/pigeon',
-          'DART_SDK': '${cli_util.sdkPath}',
+          'DART_SDK': currentSdk,
         },
       },
     );
