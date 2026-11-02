@@ -1,0 +1,4 @@
+changelog: |
+  - Fixes `InputDecorator` intrinsic height not matching its laid out height when `isDense` or `isCollapsed` is true.
+version: patch
+
