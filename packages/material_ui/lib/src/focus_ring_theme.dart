@@ -168,3 +168,22 @@ class FocusRingTheme extends InheritedTheme {
   @override
   bool updateShouldNotify(FocusRingTheme oldWidget) => data != oldWidget.data;
 }
+
+/// Makes [InkResponse]s in its subtree draw the keyboard focus ring inside
+/// their shape, ignoring [InkResponse.focusRingOffset].
+///
+/// This is not exported. Composite Material widgets wrap buttons with it when
+/// they clip each button to its shape, so a ring drawn outside the button
+/// would be cut off.
+class FocusRingInsetScope extends InheritedWidget {
+  /// Creates a scope that draws focus rings inside their shape.
+  const FocusRingInsetScope({super.key, required super.child});
+
+  /// Whether `context` is inside a [FocusRingInsetScope].
+  static bool isInset(BuildContext context) {
+    return context.getInheritedWidgetOfExactType<FocusRingInsetScope>() != null;
+  }
+
+  @override
+  bool updateShouldNotify(FocusRingInsetScope oldWidget) => false;
+}

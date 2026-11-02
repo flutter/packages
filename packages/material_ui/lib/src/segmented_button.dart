@@ -22,6 +22,7 @@ import 'button_style_button.dart';
 import 'color_scheme.dart';
 import 'colors.dart';
 import 'constants.dart';
+import 'focus_ring_theme.dart';
 import 'icons.dart';
 import 'ink_well.dart';
 import 'material.dart';
@@ -644,9 +645,11 @@ class SegmentedButtonState<T> extends State<SegmentedButton<T>> {
         child: content,
       );
 
-      final Widget buttonWithTooltip = segment.tooltip != null
-          ? Tooltip(message: segment.tooltip, child: button)
-          : button;
+      // Each segment is painted clipped to the outer border, which would cut
+      // off a focus ring drawn outside the segment.
+      final Widget buttonWithTooltip = FocusRingInsetScope(
+        child: segment.tooltip != null ? Tooltip(message: segment.tooltip, child: button) : button,
+      );
 
       return MergeSemantics(
         child: Semantics(

@@ -4,7 +4,6 @@
 
 /// @docImport 'data_table.dart';
 /// @docImport 'elevated_button.dart';
-/// @docImport 'focus_ring_theme.dart';
 /// @docImport 'icon_button.dart';
 /// @docImport 'ink_decoration.dart';
 /// @docImport 'ink_ripple.dart';
@@ -14,6 +13,7 @@ library;
 
 import 'dart:async';
 import 'dart:collection';
+import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
@@ -22,6 +22,7 @@ import 'package:flutter/widgets.dart';
 
 import 'debug.dart';
 import 'focus_ring_painting.dart';
+import 'focus_ring_theme.dart';
 import 'ink_highlight.dart';
 import 'material.dart';
 import 'material_state.dart';
@@ -1520,17 +1521,22 @@ class _InkResponseState extends State<_InkResponseStateWidget>
 
     final FocusRingStyle? focusRingStyle = FocusRingStyle.maybeOf(context);
     if (focusRingStyle != null) {
+      final double? ringOffset = FocusRingInsetScope.isInset(context)
+          ? null
+          : widget.focusRingOffset;
       result = CustomPaint(
         foregroundPainter: _FocusRingPainter(
           visible: _focusRingVisible,
           style: focusRingStyle,
-          offset: widget.focusRingOffset ?? -focusRingStyle.width,
+          offset: ringOffset ?? -focusRingStyle.width,
           highlightShape: widget.highlightShape,
           radius: widget.radius,
           borderRadius: widget.borderRadius,
           customBorder: widget.customBorder,
           textDirection: Directionality.of(context),
-          rectForSize: _focusRingRect,
+          // A new closure each build, so that a rebuild with a different
+          // getRectCallback repaints the ring.
+          rectForSize: (Size size) => _focusRingRect(size),
         ),
         child: result,
       );
@@ -1613,9 +1619,32 @@ class _FocusRingPainter extends CustomPainter {
       case StadiumBorder():
         final rrect = RRect.fromRectAndRadius(rect, Radius.circular(rect.shortestSide / 2));
         canvas.drawRRect(FocusRingStyle.inflateRRect(rrect, delta), paint);
-      case CircleBorder():
+      case CircleBorder(eccentricity: 0.0):
         final double ringRadius = rect.shortestSide / 2 + delta;
         canvas.drawCircle(rect.center, ringRadius, paint);
+      case BeveledRectangleBorder(:final BorderRadiusGeometry borderRadius):
+        // Moving a 45 degree bevel out by `delta` while the rectangle grows by
+        // `delta` on each side lengthens its corner cut by
+        // `delta * (2 - sqrt(2))`.
+        final double grow = delta * (2 - math.sqrt2);
+        Radius bevel(Radius radius) {
+          if (radius == Radius.zero) {
+            return Radius.zero;
+          }
+          return Radius.elliptical(math.max(0, radius.x + grow), math.max(0, radius.y + grow));
+        }
+        final BorderRadius resolved = borderRadius.resolve(textDirection);
+        canvas.drawPath(
+          BeveledRectangleBorder(
+            borderRadius: BorderRadius.only(
+              topLeft: bevel(resolved.topLeft),
+              topRight: bevel(resolved.topRight),
+              bottomLeft: bevel(resolved.bottomLeft),
+              bottomRight: bevel(resolved.bottomRight),
+            ),
+          ).getOuterPath(rect.inflate(delta), textDirection: textDirection),
+          paint,
+        );
       default:
         canvas.drawPath(
           border.getOuterPath(rect.inflate(delta), textDirection: textDirection),
