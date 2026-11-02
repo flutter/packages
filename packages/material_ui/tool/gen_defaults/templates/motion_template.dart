@@ -108,6 +108,11 @@ class MotionTemplateM3E extends TokenTemplateM3E {
   @override
   String get className => '';
 
+  // The same as SpringDescription.withDampingRatio with a mass of 1.0. That
+  // constructor isn't const, so the generated constants store the result.
+  double _damping(double dampingRatio, double stiffness) =>
+      dampingRatio * 2.0 * math.sqrt(stiffness);
+
   String _springDescriptionTokenString({
     required String tokenName,
     required double dampingRatio,
@@ -117,7 +122,7 @@ class MotionTemplateM3E extends TokenTemplateM3E {
       RegExp('[A-Z]'),
       (Match match) => ' ${match.group(0)!.toLowerCase()}',
     );
-    final double damping = dampingRatio * 2.0 * math.sqrt(stiffness);
+    final double damping = _damping(dampingRatio, stiffness);
     return '''
   /// The $tokenDescription spring in the Material specification.
   ///
@@ -149,19 +154,26 @@ class MotionTemplateM3E extends TokenTemplateM3E {
 ///   color and opacity.
 ///
 /// Most motion should use the default speed. Smaller elements can use the fast
-/// speed, and larger elements can use the slow speed. Material components use
-/// the fast spatial and fast effects springs of the selected scheme.
+/// speed, and larger elements can use the slow speed. In the Material
+/// specification, components use the fast spatial and fast effects springs of
+/// the selected scheme.
 ///
-/// Material spring tokens do not include mass. These constants use unit mass
-/// to convert Material's damping ratio and stiffness tokens to Flutter's
-/// [SpringDescription]. Use them with a `SpringSimulation`, for example through
+/// Material spring tokens define a stiffness and a damping ratio, but no
+/// mass. The Material token named `damping` is the damping ratio (ζ), not
+/// [SpringDescription.damping]. Each constant is the same as
+/// [SpringDescription.withDampingRatio] with a mass of 1.0 and the token's
+/// stiffness and damping ratio, so its damping is
+/// `ratio * 2.0 * sqrt(stiffness)`. For example, [standardDefaultSpatial] has
+/// a damping of `${TokenMotion.springDefaultSpatialDamping} * 2.0 * sqrt(${TokenMotion.springDefaultSpatialStiffness})`, about ${_damping(TokenMotion.springDefaultSpatialDamping, TokenMotion.springDefaultSpatialStiffness).toStringAsFixed(2)}.
+///
+/// Use them with a `SpringSimulation`, for example through
 /// [AnimationController.animateWith].
 ///
 /// See also:
 ///
 /// * [Durations] and [Easing], which are the Material tokens for curve-based
 ///   animations.
-/// * [M3 guidelines: How motion works](https://m3.material.io/styles/motion/overview/how-it-works)
+/// * [M3 guidelines: Motion physics system](https://m3.material.io/styles/motion/overview/how-it-works)
 /// * [M3 guidelines: Spring tokens](https://m3.material.io/styles/motion/overview/specs)
 abstract final class Springs {
 ${_springDescriptionTokenString(tokenName: 'standardDefaultSpatial', dampingRatio: TokenMotion.springDefaultSpatialDamping, stiffness: TokenMotion.springDefaultSpatialStiffness)}

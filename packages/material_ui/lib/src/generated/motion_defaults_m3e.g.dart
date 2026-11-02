@@ -23,19 +23,26 @@ part of '../motion.dart';
 ///   color and opacity.
 ///
 /// Most motion should use the default speed. Smaller elements can use the fast
-/// speed, and larger elements can use the slow speed. Material components use
-/// the fast spatial and fast effects springs of the selected scheme.
+/// speed, and larger elements can use the slow speed. In the Material
+/// specification, components use the fast spatial and fast effects springs of
+/// the selected scheme.
 ///
-/// Material spring tokens do not include mass. These constants use unit mass
-/// to convert Material's damping ratio and stiffness tokens to Flutter's
-/// [SpringDescription]. Use them with a `SpringSimulation`, for example through
+/// Material spring tokens define a stiffness and a damping ratio, but no
+/// mass. The Material token named `damping` is the damping ratio (ζ), not
+/// [SpringDescription.damping]. Each constant is the same as
+/// [SpringDescription.withDampingRatio] with a mass of 1.0 and the token's
+/// stiffness and damping ratio, so its damping is
+/// `ratio * 2.0 * sqrt(stiffness)`. For example, [standardDefaultSpatial] has
+/// a damping of `0.9 * 2.0 * sqrt(700.0)`, about 47.62.
+///
+/// Use them with a `SpringSimulation`, for example through
 /// [AnimationController.animateWith].
 ///
 /// See also:
 ///
 /// * [Durations] and [Easing], which are the Material tokens for curve-based
 ///   animations.
-/// * [M3 guidelines: How motion works](https://m3.material.io/styles/motion/overview/how-it-works)
+/// * [M3 guidelines: Motion physics system](https://m3.material.io/styles/motion/overview/how-it-works)
 /// * [M3 guidelines: Spring tokens](https://m3.material.io/styles/motion/overview/specs)
 abstract final class Springs {
   /// The standard default spatial spring in the Material specification.
