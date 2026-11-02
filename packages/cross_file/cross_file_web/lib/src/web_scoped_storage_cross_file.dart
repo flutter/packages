@@ -41,31 +41,6 @@ sealed class WebScopedStorageXFileCreationParams extends PlatformScopedStorageXF
     testOverrides: testOverrides,
   );
 
-  /// Constructs a [WebScopedStorageXFileCreationParams] by creating a [Blob]
-  /// from [bytes].
-  ///
-  /// Creates an Object URL using the bytes provided the blob. See
-  /// [URL.createObjectURL].
-  ///
-  /// If a `fileName` is provided, the underlying [Blob] is created as a [File]
-  /// with the `fileName` passed to it.
-  ///
-  /// `autoRevokeObjectUrl`: Whether the unique object url obtained created with
-  /// [blob] should be revoked when this instance is garbage collected. See
-  /// [URL.revokeObjectURL].
-  factory WebScopedStorageXFileCreationParams.fromBytes(
-    Uint8List bytes, {
-    String? fileName,
-    bool autoRevokeObjectUrl = true,
-    @visibleForTesting XFileTestOverrides? testOverrides,
-  }) => BlobWebScopedStorageXFileCreationParams(
-    fileName != null
-        ? File(<JSUint8Array>[bytes.toJS].toJS, fileName)
-        : Blob(<JSUint8Array>[bytes.toJS].toJS),
-    autoRevokeObjectUrl: autoRevokeObjectUrl,
-    testOverrides: testOverrides,
-  );
-
   /// Overrides some functions to allow testing.
   @visibleForTesting
   final XFileTestOverrides? testOverrides;

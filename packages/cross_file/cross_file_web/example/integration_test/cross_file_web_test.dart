@@ -144,16 +144,6 @@ void main() {
       });
     });
 
-    testWidgets('Create with bytes', (_) async {
-      const testName = 'goodbye.txt';
-      final file = PlatformScopedStorageXFile(
-        WebScopedStorageXFileCreationParams.fromBytes(testFileBytes, fileName: testName),
-      );
-
-      expect(await file.readAsBytes(), testFileBytes);
-      expect(await file.name(), testName);
-    });
-
     group('download', () {
       const crossFileDomElementId = '__x_file_dom_element';
 
