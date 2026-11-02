@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes `Switch` and `Switch.adaptive` throwing a `LateInitializationError` or a null check error when first painted during their press or toggle animation.
+version: patch
