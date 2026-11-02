@@ -74,6 +74,14 @@ void main() {
 
         expect(await file.exists(), true);
       });
+
+      testWidgets('Create with url with platform safe import', (_) async {
+        final file = PlatformScopedStorageXFile(
+          web_safe.WebScopedStorageXFileCreationParams.fromObjectUrl(objectUrl: testFileUrl),
+        );
+
+        expect(await file.readAsString(), testFileStringContents);
+      });
     });
 
     group('Create with File', () {
