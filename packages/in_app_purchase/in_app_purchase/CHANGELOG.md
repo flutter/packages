@@ -1,5 +1,8 @@
-## NEXT
+## 3.3.2
 
+* Adds a README section on Android subscriptions that return one `ProductDetails` for each base
+  plan and offer.
+* Removes outdated `skuDetails` and `introductoryPricePeriod` references from the README.
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 
 ## 3.3.1

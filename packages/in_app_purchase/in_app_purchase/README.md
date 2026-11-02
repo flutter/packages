@@ -170,6 +170,52 @@ if (response.notFoundIDs.isNotEmpty) {
 final List<ProductDetails> products = response.productDetails;
 ```
 
+#### Subscriptions with base plans and offers on Google Play
+
+On Android, a subscription can have several base plans, and each base plan can have offers, such
+as a free trial. `queryProductDetails` returns one `GooglePlayProductDetails` for each base plan
+and each offer, so the same product ID can appear more than once in `response.productDetails`.
+
+Google Play only returns offers that the user is eligible for, so the number of entries can be
+different for each user. For example, a user who already used a free trial does not get the free
+trial offer. Offers with developer-determined eligibility are always returned.
+
+Use `subscriptionIndex` to read the `SubscriptionOfferDetailsWrapper` of an entry. Its `offerId`
+is `null` for the base plan itself. To buy a specific base plan or offer, pass its entry to
+`PurchaseParam`.
+
+This is an example on how to find the entry for a base plan or one of its offers:
+<?code-excerpt "readme_examples.dart (android-subscription-offers)"?>
+```dart
+import 'package:in_app_purchase_android/billing_client_wrappers.dart';
+import 'package:in_app_purchase_android/in_app_purchase_android.dart';
+
+// ···
+GooglePlayProductDetails? findBasePlanOrOffer(
+  List<ProductDetails> products,
+  String productId,
+  String basePlanId, {
+  String? offerId,
+}) {
+  for (final product in products) {
+    if (product is! GooglePlayProductDetails || product.id != productId) {
+      continue;
+    }
+    final int? index = product.subscriptionIndex;
+    final List<SubscriptionOfferDetailsWrapper>? offers =
+        product.productDetails.subscriptionOfferDetails;
+    if (index == null || offers == null || index >= offers.length) {
+      continue;
+    }
+    final SubscriptionOfferDetailsWrapper offer = offers[index];
+    if (offer.basePlanId == basePlanId && offer.offerId == offerId) {
+      return product;
+    }
+  }
+  return null;
+}
+```
+
 ### Restoring previous purchases
 
 Restored purchases will be emitted on the `InAppPurchase.purchaseStream`, make
@@ -380,9 +426,9 @@ Future<void> showPriceConsent() async {
 The function `_inAppPurchase.queryProductDetails(productIds);` provides a `ProductDetailsResponse` with a
 list of purchasable products of type `List<ProductDetails>`. This `ProductDetails` class is a platform independent class
 containing properties only available on all endorsed platforms. However, in some cases it is necessary to access platform specific properties. The `ProductDetails` instance is of subtype `GooglePlayProductDetails`
-when the platform is Android and `AppStoreProductDetails` on iOS. Accessing the skuDetails (on Android) or the skProduct (on iOS) provides all the information that is available in the original platform objects.
+when the platform is Android and `AppStoreProductDetails` on iOS. Accessing the productDetails (on Android) or the skProduct (on iOS) provides all the information that is available in the original platform objects.
 
-This is an example on how to get the `introductoryPricePeriod` on Android:
+This is an example on how to get the first pricing phase of a subscription on Android:
 <?code-excerpt "readme_examples.dart (android-product-details)"?>
 ```dart
 import 'package:in_app_purchase_android/billing_client_wrappers.dart';
