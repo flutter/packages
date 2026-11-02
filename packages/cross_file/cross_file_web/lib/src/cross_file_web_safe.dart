@@ -5,6 +5,8 @@
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
 
 /// Implementation of [CrossFilePlatform] for web.
+///
+/// This class is a stub for the implementation in `cross_file_web.dart`.
 base class CrossFileWeb extends CrossFilePlatform {
   @override
   PlatformScopedStorageXFile createPlatformScopedStorageXFile(
