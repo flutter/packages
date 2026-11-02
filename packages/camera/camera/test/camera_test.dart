@@ -3638,6 +3638,29 @@ void main() {
         await durationStreamController.close();
       },
     );
+
+    test(
+      'startVideoRecording succeeds if platform does not implement onVideoRecordingDurationChanged',
+      () async {
+        when(
+          CameraPlatform.instance.onVideoRecordingDurationChanged(mockInitializeCamera),
+        ).thenThrow(UnimplementedError('onVideoRecordingDurationChanged() is not implemented.'));
+
+        final cameraController = CameraController(
+          const CameraDescription(
+            name: 'cam',
+            lensDirection: CameraLensDirection.back,
+            sensorOrientation: 90,
+          ),
+          ResolutionPreset.max,
+        );
+        await cameraController.initialize();
+
+        await expectLater(cameraController.startVideoRecording(), completes);
+        expect(cameraController.value.isRecordingVideo, isTrue);
+        expect(cameraController.value.videoRecordingDuration, Duration.zero);
+      },
+    );
   });
 
   group('does not update value after dispose', () {

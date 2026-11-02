@@ -240,6 +240,10 @@ class Camera {
     }
     videoElement.srcObject = null;
     stream = null;
+    _recordingStopwatch?.stop();
+    _recordingStopwatch = null;
+    _recordingDurationTimer?.cancel();
+    _recordingDurationTimer = null;
   }
 
   /// Captures a picture and returns the saved file in a JPEG format.
@@ -462,6 +466,10 @@ class Camera {
     _onVideoRecordingErrorSubscription = mediaRecorderOnErrorProvider
         .forTarget(mediaRecorder)
         .listen((web.Event event) {
+          _recordingStopwatch?.stop();
+          _recordingStopwatch = null;
+          _recordingDurationTimer?.cancel();
+          _recordingDurationTimer = null;
           final error = event as web.ErrorEvent;
           videoRecordingErrorController.add(error);
         });

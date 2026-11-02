@@ -603,14 +603,6 @@ class CameraController extends ValueNotifier<CameraValue> {
           enablePersistentRecording: enablePersistentRecording,
         ),
       );
-      await _videoRecordingDurationSubscription?.cancel();
-      _videoRecordingDurationSubscription = CameraPlatform.instance
-          .onVideoRecordingDurationChanged(_cameraId)
-          .listen((VideoRecordingDurationChangedEvent event) {
-            if (!_isDisposed && value.isRecordingVideo) {
-              value = value.copyWith(videoRecordingDuration: event.duration);
-            }
-          });
       value = value.copyWith(
         isRecordingVideo: true,
         isRecordingPaused: false,
@@ -620,6 +612,18 @@ class CameraController extends ValueNotifier<CameraValue> {
         isStreamingImages: onAvailable != null,
         videoRecordingDuration: Duration.zero,
       );
+      await _videoRecordingDurationSubscription?.cancel();
+      try {
+        _videoRecordingDurationSubscription = CameraPlatform.instance
+            .onVideoRecordingDurationChanged(_cameraId)
+            .listen((VideoRecordingDurationChangedEvent event) {
+              if (!_isDisposed && value.isRecordingVideo) {
+                value = value.copyWith(videoRecordingDuration: event.duration);
+              }
+            });
+      } on UnimplementedError {
+        // Ignore if the platform implementation does not support duration updates.
+      }
     } on PlatformException catch (e) {
       throw CameraException(e.code, e.message);
     }
@@ -643,8 +647,6 @@ class CameraController extends ValueNotifier<CameraValue> {
 
     try {
       final XFile file = await CameraPlatform.instance.stopVideoRecording(_cameraId);
-      await _videoRecordingDurationSubscription?.cancel();
-      _videoRecordingDurationSubscription = null;
       value = value.copyWith(
         isRecordingVideo: false,
         recordingOrientation: const Optional<DeviceOrientation>.absent(),
@@ -653,6 +655,9 @@ class CameraController extends ValueNotifier<CameraValue> {
       return file;
     } on PlatformException catch (e) {
       throw CameraException(e.code, e.message);
+    } finally {
+      await _videoRecordingDurationSubscription?.cancel();
+      _videoRecordingDurationSubscription = null;
     }
   }
 
