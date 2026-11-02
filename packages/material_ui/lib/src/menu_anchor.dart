@@ -627,19 +627,15 @@ class _MenuAnchorState extends State<MenuAnchor> with SingleTickerProviderStateM
     const double forwardFinalItemOffset = 1 - _kMenuItemRelativeFadeInDuration;
     const double reverseFinalItemOffset =
         1 - _kMenuItemRelativeFadeOutDuration - _kMenuItemRelativeFadeOutDelay;
+    final double divisor = (itemCount > 1 ? itemCount - 1 : 1).toDouble();
 
-    double forwardProgress = 0;
-    double reverseProgress = 0;
-    double itemFadeInGap = 0;
-    double itemFadeOutGap = 0;
-    if (itemCount > 1) {
-      // Spread every item evenly across the remaining time after accounting for
-      // the fade in/out durations.
-      itemFadeInGap = forwardFinalItemOffset / (itemCount - 1);
-      itemFadeOutGap = reverseFinalItemOffset / (itemCount - 1);
-    }
-
-    for (final Widget child in widget.menuChildren) {
+    // Spread every item evenly across the remaining time after accounting for
+    // the fade in/out durations. Compute progress from the index so rounding
+    // errors do not accumulate past the final item's interval.
+    for (final (int index, Widget child) in widget.menuChildren.indexed) {
+      final double itemProgress = index / divisor;
+      final double forwardProgress = forwardFinalItemOffset * itemProgress;
+      final double reverseProgress = reverseFinalItemOffset * itemProgress;
       final forwardCurve = Interval(
         forwardProgress,
         forwardProgress + _kMenuItemRelativeFadeInDuration,
@@ -660,8 +656,6 @@ class _MenuAnchorState extends State<MenuAnchor> with SingleTickerProviderStateM
       _menuChildren.add(
         FadeTransition(opacity: animation, alwaysIncludeSemantics: true, child: child),
       );
-      forwardProgress += itemFadeInGap;
-      reverseProgress += itemFadeOutGap;
     }
   }
 

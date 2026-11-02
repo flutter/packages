@@ -5892,6 +5892,31 @@ void main() {
   });
 
   group('Animations', () {
+    testWidgets('Menu animation intervals support 22 items', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Material(
+            child: MenuAnchor(
+              animated: true,
+              controller: controller,
+              menuChildren: List<Widget>.generate(
+                22,
+                (int index) => MenuItemButton(child: Text('Item $index')),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      controller.open();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 50));
+
+      expect(controller.isOpen, isTrue);
+      expect(find.text('Item 21'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
     testWidgets('Animations can be disabled', (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
