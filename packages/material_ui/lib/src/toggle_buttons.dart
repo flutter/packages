@@ -16,6 +16,7 @@ import 'package:flutter/widgets.dart';
 import 'button_style.dart';
 import 'color_scheme.dart';
 import 'constants.dart';
+import 'focus_ring_theme.dart';
 import 'ink_ripple.dart';
 import 'material_state.dart';
 import 'text_button.dart';
@@ -797,45 +798,48 @@ class ToggleButtons extends StatelessWidget {
         verticalDirection: verticalDirection,
         child: ClipRRect(
           borderRadius: clipBorderRadius,
-          child: TextButton(
-            focusNode: focusNodes != null ? focusNodes![index] : null,
-            style: ButtonStyle(
-              backgroundColor: MaterialStatePropertyAll<Color?>(effectiveFillColor),
-              foregroundColor: MaterialStatePropertyAll<Color?>(currentColor),
-              iconSize: const MaterialStatePropertyAll<double>(24.0),
-              iconColor: MaterialStatePropertyAll<Color?>(currentColor),
-              overlayColor: _ToggleButtonDefaultOverlay(
-                selected: onPressed != null && isSelected[index],
-                unselected: onPressed != null && !isSelected[index],
-                colorScheme: theme.colorScheme,
-                disabledColor: disabledColor ?? toggleButtonsTheme.disabledColor,
-                focusColor: focusColor ?? toggleButtonsTheme.focusColor,
-                highlightColor: highlightColor ?? toggleButtonsTheme.highlightColor,
-                hoverColor: hoverColor ?? toggleButtonsTheme.hoverColor,
-                splashColor: splashColor ?? toggleButtonsTheme.splashColor,
+          // The ClipRRect would cut off a focus ring drawn outside the button.
+          child: FocusRingInsetScope(
+            child: TextButton(
+              focusNode: focusNodes != null ? focusNodes![index] : null,
+              style: ButtonStyle(
+                backgroundColor: MaterialStatePropertyAll<Color?>(effectiveFillColor),
+                foregroundColor: MaterialStatePropertyAll<Color?>(currentColor),
+                iconSize: const MaterialStatePropertyAll<double>(24.0),
+                iconColor: MaterialStatePropertyAll<Color?>(currentColor),
+                overlayColor: _ToggleButtonDefaultOverlay(
+                  selected: onPressed != null && isSelected[index],
+                  unselected: onPressed != null && !isSelected[index],
+                  colorScheme: theme.colorScheme,
+                  disabledColor: disabledColor ?? toggleButtonsTheme.disabledColor,
+                  focusColor: focusColor ?? toggleButtonsTheme.focusColor,
+                  highlightColor: highlightColor ?? toggleButtonsTheme.highlightColor,
+                  hoverColor: hoverColor ?? toggleButtonsTheme.hoverColor,
+                  splashColor: splashColor ?? toggleButtonsTheme.splashColor,
+                ),
+                elevation: const MaterialStatePropertyAll<double>(0),
+                textStyle: MaterialStatePropertyAll<TextStyle?>(
+                  currentTextStyle.copyWith(color: currentColor),
+                ),
+                padding: const MaterialStatePropertyAll<EdgeInsetsGeometry>(EdgeInsets.zero),
+                minimumSize: MaterialStatePropertyAll<Size?>(minimumSize),
+                maximumSize: MaterialStatePropertyAll<Size?>(maximumSize),
+                shape: const MaterialStatePropertyAll<OutlinedBorder>(RoundedRectangleBorder()),
+                mouseCursor: MaterialStatePropertyAll<MouseCursor?>(mouseCursor),
+                visualDensity: VisualDensity.standard,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                animationDuration: kThemeChangeDuration,
+                enableFeedback: true,
+                alignment: Alignment.center,
+                splashFactory: InkRipple.splashFactory,
               ),
-              elevation: const MaterialStatePropertyAll<double>(0),
-              textStyle: MaterialStatePropertyAll<TextStyle?>(
-                currentTextStyle.copyWith(color: currentColor),
-              ),
-              padding: const MaterialStatePropertyAll<EdgeInsetsGeometry>(EdgeInsets.zero),
-              minimumSize: MaterialStatePropertyAll<Size?>(minimumSize),
-              maximumSize: MaterialStatePropertyAll<Size?>(maximumSize),
-              shape: const MaterialStatePropertyAll<OutlinedBorder>(RoundedRectangleBorder()),
-              mouseCursor: MaterialStatePropertyAll<MouseCursor?>(mouseCursor),
-              visualDensity: VisualDensity.standard,
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              animationDuration: kThemeChangeDuration,
-              enableFeedback: true,
-              alignment: Alignment.center,
-              splashFactory: InkRipple.splashFactory,
+              onPressed: onPressed != null
+                  ? () {
+                      onPressed!(index);
+                    }
+                  : null,
+              child: children[index],
             ),
-            onPressed: onPressed != null
-                ? () {
-                    onPressed!(index);
-                  }
-                : null,
-            child: children[index],
           ),
         ),
       );

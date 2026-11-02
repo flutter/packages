@@ -1970,7 +1970,10 @@ class _RenderSlider extends RenderBox with RelayoutWhenSystemFontsChangeMixin {
     // The keyboard focus ring goes around the thumb.
     final FocusRingStyle? ring = focusRing;
     if (hasFocus && ring != null) {
-      final Size thumbSize = thumbWidth != null && thumbHeight != null
+      // thumbWidth and thumbHeight describe the handle thumb only. Other thumb
+      // shapes report their own size.
+      final Size thumbSize =
+          thumbWidth != null && thumbHeight != null && _sliderTheme.thumbShape is HandleThumbShape
           ? Size(thumbWidth, thumbHeight)
           : _sliderTheme.thumbShape!.getPreferredSize(isInteractive, isDiscrete);
       final thumbRRect = RRect.fromRectAndRadius(

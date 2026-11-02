@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -153,6 +154,63 @@ void main() {
     await focus(tester, focusNode);
 
     expect(tester.renderObject(find.byType(Slider)), _ringBands(schemeOf(tester)));
+  });
+
+  testWidgets('Slider ring follows a custom thumb shape when year2023 is false', (
+    WidgetTester tester,
+  ) async {
+    final focusNode = FocusNode();
+    addTearDown(focusNode.dispose);
+    await tester.pumpWidget(
+      buildApp(
+        child: SizedBox(
+          width: 300,
+          child: SliderTheme(
+            data: const SliderThemeData(thumbShape: RoundSliderThumbShape()),
+            child: Slider(
+              // ignore: deprecated_member_use
+              year2023: false,
+              focusNode: focusNode,
+              value: 0.5,
+              onChanged: (_) {},
+            ),
+          ),
+        ),
+      ),
+    );
+    await focus(tester, focusNode);
+
+    final ColorScheme scheme = schemeOf(tester);
+    // The round thumb is 20 by 20, not the 4 by 44 handle, so the ring's
+    // centerline is 20 + 2 * 3.5 = 27 pixels across.
+    expect(
+      tester.renderObject(find.byType(Slider)),
+      paints..something((Symbol method, List<dynamic> arguments) {
+        if (!_isRingBand(method, arguments, scheme.secondary)) {
+          return false;
+        }
+        final rrect = arguments[0] as RRect;
+        return rrect.width == 27 && rrect.height == 27;
+      }),
+    );
+  });
+
+  testWidgets('RangeSlider draws the ring around the focused thumb', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      buildApp(
+        child: SizedBox(
+          width: 300,
+          child: RangeSlider(values: const RangeValues(0.2, 0.8), onChanged: (_) {}),
+        ),
+      ),
+    );
+    final ColorScheme scheme = schemeOf(tester);
+    expect(tester.renderObject(find.byType(RangeSlider)), isNot(_ringBands(scheme)));
+
+    await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+    await tester.pumpAndSettle();
+
+    expect(tester.renderObject(find.byType(RangeSlider)), _ringBands(scheme));
   });
 
   testWidgets('Controls draw no ring unless the theme makes it visible', (
