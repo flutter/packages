@@ -538,6 +538,8 @@ class Camera {
     }
     mediaRecorder!.pause();
     _recordingStopwatch?.stop();
+    _recordingDurationTimer?.cancel();
+    _recordingDurationTimer = null;
   }
 
   /// Resumes the current video recording.
@@ -549,6 +551,14 @@ class Camera {
     }
     mediaRecorder!.resume();
     _recordingStopwatch?.start();
+    _recordingDurationTimer?.cancel();
+    _recordingDurationTimer = Timer.periodic(recordingDurationUpdateInterval, (_) {
+      if (_recordingStopwatch != null && _recordingStopwatch!.isRunning) {
+        videoRecordingDurationChangedController.add(
+          VideoRecordingDurationChangedEvent(textureId, _recordingStopwatch!.elapsed),
+        );
+      }
+    });
   }
 
   /// Stops the video recording and returns the captured video file.

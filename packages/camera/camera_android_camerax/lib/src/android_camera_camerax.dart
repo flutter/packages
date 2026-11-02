@@ -1220,17 +1220,20 @@ class AndroidCameraCameraX extends CameraPlatform {
       videoRecordingEventStreamController.stream,
     );
     unawaited(videoRecordEventSubscription?.cancel());
+    Duration maxDuration = Duration.zero;
     videoRecordEventSubscription = videoRecordingEventStreamController.stream.listen((
       VideoRecordEvent event,
     ) async {
       if (event is VideoRecordEventStatus) {
         final RecordingStats stats = await event.getRecordingStats();
-        if (videoRecordEventSubscription != null && !cameraEventStreamController.isClosed) {
+        if (videoRecordEventSubscription == null || cameraEventStreamController.isClosed) {
+          return;
+        }
+        final duration = Duration(microseconds: stats.recordedDurationNanos ~/ 1000);
+        if (duration > maxDuration) {
+          maxDuration = duration;
           cameraEventStreamController.add(
-            VideoRecordingDurationChangedEvent(
-              options.cameraId,
-              Duration(microseconds: stats.recordedDurationNanos ~/ 1000),
-            ),
+            VideoRecordingDurationChangedEvent(options.cameraId, duration),
           );
         }
       } else if (event is VideoRecordEventFinalize) {
