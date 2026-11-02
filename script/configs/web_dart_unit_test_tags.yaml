@@ -10,6 +10,9 @@
 # that uses it, rather than via a constant or helper defined in another file.
 # To help catch this, `dart-test` fails if the tag appears in any non-test Dart
 # file in the package's `lib/` or `test/` directories.
-# Note: Each package supports a single tag name, not a tag selector expression
-# (e.g., `!slow` or `a || b`).
+#
+# Tag selector expressions (e.g., `!slow` or `a || b`) are allowed, but can't
+# be found by searching test files, so every test file in the package is
+# compiled and run with the selector as a filter. This is much slower on web,
+# and should be avoided.
 material_ui: reduced-web-test-set

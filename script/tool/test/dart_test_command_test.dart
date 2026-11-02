@@ -1157,9 +1157,10 @@ a: reduced-web-test-set
         );
       });
 
-      for (final (String description, String testConfig) in <(String, String)>[
+      for (final (String description, String key, String testConfig) in <(String, String, String)>[
         (
           'tag implication',
+          'add_tags',
           '''
 tags:
   other-tag:
@@ -1168,12 +1169,14 @@ tags:
         ),
         (
           'custom test paths',
+          'paths',
           '''
 paths: [test/unit]
 ''',
         ),
         (
           'custom test file names',
+          'filename',
           '''
 presets:
   ci:
@@ -1182,6 +1185,7 @@ presets:
         ),
         (
           'an included configuration file',
+          'include',
           '''
 include: ../shared_dart_test.yaml
 ''',
@@ -1198,7 +1202,7 @@ include: ../shared_dart_test.yaml
           );
           package.directory.childFile('dart_test.yaml').writeAsStringSync(testConfig);
 
-          await runCapturingPrint(runner, <String>[
+          final List<String> output = await runCapturingPrint(runner, <String>[
             'dart-test',
             '--package-tags=${configFile.path}',
           ]);
@@ -1211,6 +1215,15 @@ include: ../shared_dart_test.yaml
                 '--color',
                 '--tags=reduced-web-test-set',
               ], package.path),
+            ]),
+          );
+          expect(
+            output,
+            containsAllInOrder(<Matcher>[
+              contains(
+                'Running all test files with --tags=reduced-web-test-set '
+                'because dart_test.yaml uses "$key"',
+              ),
             ]),
           );
         });
@@ -1256,23 +1269,43 @@ include: ../shared_dart_test.yaml
       'reduced-web-test-set && !flaky',
       '(reduced-web-test-set)',
     ]) {
-      test('package-tags flag fails for tag selector expression "$selector"', () async {
-        createFakePlugin('a', packagesDir, extraFiles: <String>['test/empty_test.dart']);
+      test('package-tags runs all test files with the tag filter for tag '
+          'selector expression "$selector"', () async {
+        final RepositoryPackage plugin = createFakePlugin(
+          'a',
+          packagesDir,
+          extraFiles: <String>['test/untagged_test.dart', 'test/tags.dart'],
+        );
+        // A non-test file containing the tag would fail the run if test files
+        // were being selected, so this also checks that selection is skipped.
+        plugin.testDirectory
+            .childFile('tags.dart')
+            .writeAsStringSync("const String kTag = 'reduced-web-test-set';");
         final File configFile = packagesDir.fileSystem.file('config.yaml');
         configFile.writeAsStringSync("a: '$selector'\n");
 
-        Error? commandError;
         final List<String> output = await runCapturingPrint(runner, <String>[
           'dart-test',
           '--package-tags=${configFile.path}',
-        ], errorHandler: (Error e) => commandError = e);
+        ]);
 
-        expect(commandError, isA<ToolExit>());
-        expect(processRunner.recordedCalls, isEmpty);
+        expect(
+          processRunner.recordedCalls,
+          orderedEquals(<ProcessCall>[
+            ProcessCall(getFlutterCommand(mockPlatform), <String>[
+              'test',
+              '--color',
+              '--tags=$selector',
+            ], plugin.path),
+          ]),
+        );
         expect(
           output,
           containsAllInOrder(<Matcher>[
-            contains('has an invalid tag "$selector" for package "a".'),
+            contains(
+              'Running all test files with --tags=$selector because '
+              '"$selector" is a tag selector expression',
+            ),
           ]),
         );
       });
