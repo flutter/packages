@@ -2046,56 +2046,54 @@ void main() {
     expect(iconColor(), colorScheme.onSurface.withOpacity(0.38));
   });
 
-  testWidgets(
-    'Default IconButton meets a11y contrast guidelines - M3',
-    (WidgetTester tester) async {
-      final focusNode = FocusNode();
+  testWidgets('Default IconButton meets a11y contrast guidelines - M3', (
+    WidgetTester tester,
+  ) async {
+    final focusNode = FocusNode();
 
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: ThemeData.from(colorScheme: const ColorScheme.light()),
-          home: Scaffold(
-            body: Center(
-              child: IconButton(
-                onPressed: () {},
-                focusNode: focusNode,
-                icon: const Icon(Icons.ac_unit),
-              ),
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData.from(colorScheme: const ColorScheme.light()),
+        home: Scaffold(
+          body: Center(
+            child: IconButton(
+              onPressed: () {},
+              focusNode: focusNode,
+              icon: const Icon(Icons.ac_unit),
             ),
           ),
         ),
-      );
+      ),
+    );
 
-      // Default, not disabled.
-      await expectLater(tester, meetsGuideline(textContrastGuideline));
+    // Default, not disabled.
+    await expectLater(tester, meetsGuideline(textContrastGuideline));
 
-      // Focused.
-      focusNode.requestFocus();
-      await tester.pumpAndSettle();
-      await expectLater(tester, meetsGuideline(textContrastGuideline));
+    // Focused.
+    focusNode.requestFocus();
+    await tester.pumpAndSettle();
+    await expectLater(tester, meetsGuideline(textContrastGuideline));
 
-      // Hovered.
-      final Offset center = tester.getCenter(find.byType(IconButton));
-      final TestGesture gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
-      await gesture.addPointer();
-      await gesture.moveTo(center);
-      await tester.pumpAndSettle();
-      await expectLater(tester, meetsGuideline(textContrastGuideline));
+    // Hovered.
+    final Offset center = tester.getCenter(find.byType(IconButton));
+    final TestGesture gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
+    await gesture.addPointer();
+    await gesture.moveTo(center);
+    await tester.pumpAndSettle();
+    await expectLater(tester, meetsGuideline(textContrastGuideline));
 
-      // Highlighted (pressed).
-      await gesture.down(center);
-      await tester.pump(); // Start the splash and highlight animations.
-      await tester.pump(
-        const Duration(milliseconds: 800),
-      ); // Wait for splash and highlight to be well under way.
-      await expectLater(tester, meetsGuideline(textContrastGuideline));
+    // Highlighted (pressed).
+    await gesture.down(center);
+    await tester.pump(); // Start the splash and highlight animations.
+    await tester.pump(
+      const Duration(milliseconds: 800),
+    ); // Wait for splash and highlight to be well under way.
+    await expectLater(tester, meetsGuideline(textContrastGuideline));
 
-      await gesture.removePointer();
+    await gesture.removePointer();
 
-      focusNode.dispose();
-    },
-    skip: isBrowser, // https://github.com/flutter/flutter/issues/44115
-  );
+    focusNode.dispose();
+  });
 
   testWidgets('IconButton uses stateful color for icon color in different states - M3', (
     WidgetTester tester,

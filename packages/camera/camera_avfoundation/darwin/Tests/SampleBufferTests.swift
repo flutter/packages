@@ -539,4 +539,60 @@ final class CameraSampleBufferTests: XCTestCase {
 
     waitForExpectations(timeout: 1.0, handler: nil)
   }
+
+  func testSetDescriptionWhileRecording_reconnectsBothOutputsAndUpdatesMaxPhotoDimensions()
+    throws
+  {
+    guard #available(iOS 16.0, *) else {
+      throw XCTSkip("maxPhotoDimensions requires iOS 16.")
+    }
+
+    let inputMock = MockAssetWriterInput()
+    let configuration = CameraTestUtils.createTestCameraConfiguration()
+    configuration.mediaSettingsWrapper = FakeMediaSettingsAVWrapper(inputMock: inputMock)
+
+    let videoSessionMock = MockCaptureSession()
+    videoSessionMock.canSetSessionPresetStub = { _ in true }
+    configuration.videoCaptureSession = videoSessionMock
+
+    let initialDeviceMock = MockCaptureDevice()
+    let newFormatMock = MockCaptureDeviceFormat()
+    newFormatMock.supportedMaxPhotoDimensions = [
+      CMVideoDimensions(width: 1920, height: 1080),
+      CMVideoDimensions(width: 4032, height: 3024),
+    ]
+    let newDeviceMock = MockCaptureDevice()
+    newDeviceMock.activeFormatStub = { newFormatMock }
+
+    configuration.videoCaptureDeviceFactory = { name in
+      return name == "new_camera" ? newDeviceMock : initialDeviceMock
+    }
+
+    let camera = CameraTestUtils.createTestCamera(configuration)
+    let mockPhotoOutput = MockCapturePhotoOutput()
+    mockPhotoOutput.avOutput = camera.capturePhotoOutput.avOutput
+    camera.capturePhotoOutput = mockPhotoOutput
+
+    camera.startVideoRecording(completion: { _ in }, messengerForStreaming: nil)
+
+    let expectation = self.expectation(description: "setDescriptionWhileRecording completed")
+    camera.setDescriptionWhileRecording("new_camera") { result in
+      let _ = self.assertSuccess(result)
+      expectation.fulfill()
+    }
+
+    waitForExpectations(timeout: 1.0, handler: nil)
+
+    XCTAssertEqual(videoSessionMock.connections.count, 2)
+    XCTAssertTrue(
+      videoSessionMock.connections.contains(where: {
+        $0.output === camera.captureVideoOutput.avOutput
+      }))
+    XCTAssertTrue(
+      videoSessionMock.connections.contains(where: {
+        $0.output === mockPhotoOutput.avOutput
+      }))
+    XCTAssertEqual(mockPhotoOutput.maxPhotoDimensions.width, 4032)
+    XCTAssertEqual(mockPhotoOutput.maxPhotoDimensions.height, 3024)
+  }
 }

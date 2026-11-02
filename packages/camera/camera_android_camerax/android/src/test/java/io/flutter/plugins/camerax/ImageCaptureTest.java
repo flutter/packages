@@ -18,6 +18,8 @@ import android.content.Context;
 import android.os.Looper;
 import android.view.Surface;
 import androidx.annotation.NonNull;
+import androidx.annotation.OptIn;
+import androidx.camera.core.ExperimentalZeroShutterLag;
 import androidx.camera.core.ImageCapture;
 import androidx.camera.core.ImageCaptureException;
 import androidx.camera.core.resolutionselector.ResolutionSelector;
@@ -44,7 +46,7 @@ public class ImageCaptureTest {
     final long targetResolution = Surface.ROTATION_0;
     final ImageCapture imageCapture =
         api.pigeon_defaultConstructor(
-            mockResolutionSelector, targetResolution, CameraXFlashMode.OFF, null);
+            mockResolutionSelector, targetResolution, CameraXFlashMode.OFF, null, null);
 
     assertEquals(imageCapture.getResolutionSelector(), mockResolutionSelector);
     assertEquals(imageCapture.getTargetRotation(), Surface.ROTATION_0);
@@ -60,12 +62,37 @@ public class ImageCaptureTest {
     final long jpegQuality = 75;
     final ImageCapture imageCapture =
         api.pigeon_defaultConstructor(
-            mockResolutionSelector, targetRotation, CameraXFlashMode.OFF, jpegQuality);
+            mockResolutionSelector, targetRotation, CameraXFlashMode.OFF, jpegQuality, null);
 
     assertEquals(imageCapture.getResolutionSelector(), mockResolutionSelector);
     assertEquals(imageCapture.getTargetRotation(), Surface.ROTATION_0);
     assertEquals(imageCapture.getFlashMode(), ImageCapture.FLASH_MODE_OFF);
     assertEquals(imageCapture.getJpegQuality(), 75);
+  }
+
+  @Test
+  @OptIn(markerClass = ExperimentalZeroShutterLag.class)
+  public void pigeon_defaultConstructor_setsZeroShutterLagCaptureModeWhenEnabled() {
+    final PigeonApiImageCapture api = new TestProxyApiRegistrar().getPigeonApiImageCapture();
+
+    final ImageCapture imageCapture =
+        api.pigeon_defaultConstructor(null, null, CameraXFlashMode.OFF, null, true);
+
+    assertEquals(ImageCapture.CAPTURE_MODE_ZERO_SHUTTER_LAG, imageCapture.getCaptureMode());
+  }
+
+  @Test
+  public void pigeon_defaultConstructor_leavesDefaultCaptureModeWhenZeroShutterLagIsNotEnabled() {
+    final PigeonApiImageCapture api = new TestProxyApiRegistrar().getPigeonApiImageCapture();
+
+    assertEquals(
+        ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY,
+        api.pigeon_defaultConstructor(null, null, CameraXFlashMode.OFF, null, false)
+            .getCaptureMode());
+    assertEquals(
+        ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY,
+        api.pigeon_defaultConstructor(null, null, CameraXFlashMode.OFF, null, null)
+            .getCaptureMode());
   }
 
   @Test

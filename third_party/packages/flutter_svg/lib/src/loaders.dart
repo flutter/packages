@@ -385,6 +385,9 @@ class SvgAssetLoader extends SvgLoader<ByteData> {
 
 /// A [BytesLoader] that decodes and parses a UTF-8 encoded SVG string the
 /// network in an isolate and creates a vector_graphics binary representation.
+///
+/// Loading throws an [http.ClientException] if the server responds with a
+/// status code outside the 2xx range.
 class SvgNetworkLoader extends SvgLoader<Uint8List> {
   /// See class doc.
   const SvgNetworkLoader(
@@ -405,12 +408,20 @@ class SvgNetworkLoader extends SvgLoader<Uint8List> {
 
   @override
   Future<Uint8List?> prepareMessage(BuildContext? context) async {
+    // Parse first: a malformed URL then throws before a client exists to leak.
+    final Uri uri = Uri.parse(url);
     final http.Client client = _httpClient ?? http.Client();
-    final http.Response response = await client.get(Uri.parse(url), headers: headers);
-    if (_httpClient == null) {
-      client.close();
+    try {
+      final http.Response response = await client.get(uri, headers: headers);
+      if (response.statusCode < 200 || response.statusCode > 299) {
+        throw http.ClientException('HTTP request failed, statusCode: ${response.statusCode}', uri);
+      }
+      return response.bodyBytes;
+    } finally {
+      if (_httpClient == null) {
+        client.close();
+      }
     }
-    return response.bodyBytes;
   }
 
   @override

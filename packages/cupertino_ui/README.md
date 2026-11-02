@@ -17,7 +17,7 @@ package, which is Flutter's official Material Design library.
 Install the package with the following command:
 
 ```dart
-flutter add cupertino_ui
+flutter pub add cupertino_ui
 ```
 
 See Flutter's main [getting started

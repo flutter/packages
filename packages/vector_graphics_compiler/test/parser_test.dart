@@ -414,6 +414,82 @@ ${[for (var i = 2; i <= 30; i++) '    <pattern id="lvl$i" width="10" height="10"
     ]);
   });
 
+  test('text and tspan with coordinate lists throw an UnimplementedError', () {
+    for (final attributes in <String>['x="10 20 30" y="40"', 'x="10" y="40, 50"']) {
+      expect(
+        () => parseWithoutOptimizers(
+          '<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><text $attributes>ABC</text></svg>',
+        ),
+        throwsA(isA<UnimplementedError>()),
+      );
+    }
+    for (final attributes in <String>['dx="1 2"', 'dy="3,4"']) {
+      expect(
+        () => parseWithoutOptimizers(
+          '<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><text x="10" y="40">ABC<tspan $attributes>DE</tspan></text></svg>',
+        ),
+        throwsA(
+          isA<UnimplementedError>().having(
+            (UnimplementedError e) => e.message,
+            'message',
+            contains('is not supported'),
+          ),
+        ),
+      );
+    }
+  });
+
+  test('text with single coordinates surrounded by whitespace still parses', () {
+    final VectorInstructions instructions = parseWithoutOptimizers('''
+<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg">
+  <text x=" 10 " y="40">ABC</text>
+</svg>
+''');
+
+    expect(instructions.textPositions, const <TextPosition>[
+      TextPosition(x: 10, y: 40, reset: true),
+    ]);
+  });
+
+  test('tspan without position does not apply the group transform twice', () {
+    final VectorInstructions instructions = parseWithoutOptimizers('''
+<svg width="400" height="100" xmlns="http://www.w3.org/2000/svg">
+  <g transform="translate(10,10)">
+    <g transform="translate(10,10)">
+      <text x="15" y="25">bare text</text>
+      <text x="15" y="50"><tspan>text in tspan</tspan></text>
+    </g>
+  </g>
+</svg>
+''');
+
+    expect(instructions.textPositions, const <TextPosition>[
+      TextPosition(x: 35, y: 45, reset: true),
+      TextPosition(x: 35, y: 70, reset: true),
+      TextPosition(),
+    ]);
+  });
+
+  test('em units in text positions are relative to the font size', () {
+    final VectorInstructions instructions = parseWithoutOptimizers('''
+<svg width="1000" height="500" xmlns="http://www.w3.org/2000/svg">
+  <text x="500" y="250" dy=".5em" font-size="400">21</text>
+  <g font-size="20">
+    <text x="1em" y="2em" dx="1em" dy="-1em">inherited</text>
+  </g>
+  <text x="10" y="10" dy="1em">default</text>
+  <text x="10" y="10" dy="1EM" font-size="10">upper case</text>
+</svg>
+''');
+
+    expect(instructions.textPositions, const <TextPosition>[
+      TextPosition(x: 500, y: 250, dy: 200, reset: true),
+      TextPosition(x: 20, y: 40, dx: 20, dy: -20, reset: true),
+      TextPosition(x: 10, y: 10, dy: 16, reset: true),
+      TextPosition(x: 10, y: 10, dy: 10, reset: true),
+    ]);
+  });
+
   test('Non-standard root font-weight="regular" uses initial weight', () {
     final VectorInstructions instructions = parseWithoutOptimizers('''
 <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">

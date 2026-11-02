@@ -10,7 +10,7 @@ dependencies:
   ffi: ^2.2.0
   flutter:
     sdk: flutter
-  jni: ^1.1.0
+  jni: ^1.1.1
   objective_c: ^9.6.2
 
 dev_dependencies:

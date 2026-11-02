@@ -10,7 +10,7 @@ import PackageDescription
 let package = Package(
   name: "file_selector_macos",
   platforms: [
-    .macOS("10.15")
+    .macOS("12.0")
   ],
   products: [
     .library(name: "file-selector-macos", targets: ["file_selector_macos"])

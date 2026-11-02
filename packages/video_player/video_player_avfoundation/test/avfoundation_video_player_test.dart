@@ -7,8 +7,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:video_player_avfoundation/src/video_player_instance_messages.g.dart';
-import 'package:video_player_avfoundation/src/video_player_plugin_messages.g.dart';
+import 'package:video_player_avfoundation/src/messages.g.dart';
 import 'package:video_player_avfoundation/video_player_avfoundation.dart';
 import 'package:video_player_platform_interface/video_player_platform_interface.dart';
 
@@ -64,9 +63,8 @@ void main() {
       final (AVFoundationVideoPlayer player, MockAVFoundationVideoPlayerApi api, _) =
           setUpMockPlayer(playerId: 1, textureId: 101);
       const newPlayerId = 2;
-      when(
-        api.createForTextureView(any),
-      ).thenAnswer((_) async => TexturePlayerIds(playerId: newPlayerId, textureId: 102));
+      when(api.createForTextureView(any))
+          .thenAnswer((_) async => TexturePlayerIds(playerId: newPlayerId, textureId: 102));
 
       const asset = 'someAsset';
       const package = 'somePackage';
@@ -102,9 +100,8 @@ void main() {
       final (AVFoundationVideoPlayer player, MockAVFoundationVideoPlayerApi api, _) =
           setUpMockPlayer(playerId: 1, textureId: 101);
       const newPlayerId = 2;
-      when(
-        api.createForTextureView(any),
-      ).thenAnswer((_) async => TexturePlayerIds(playerId: newPlayerId, textureId: 102));
+      when(api.createForTextureView(any))
+          .thenAnswer((_) async => TexturePlayerIds(playerId: newPlayerId, textureId: 102));
 
       const uri = 'https://example.com';
       final int? playerId = await player.create(
@@ -122,9 +119,8 @@ void main() {
     test('create with network passes headers', () async {
       final (AVFoundationVideoPlayer player, MockAVFoundationVideoPlayerApi api, _) =
           setUpMockPlayer(playerId: 1, textureId: 101);
-      when(
-        api.createForTextureView(any),
-      ).thenAnswer((_) async => TexturePlayerIds(playerId: 2, textureId: 102));
+      when(api.createForTextureView(any))
+          .thenAnswer((_) async => TexturePlayerIds(playerId: 2, textureId: 102));
 
       const headers = <String, String>{'Authorization': 'Bearer token'};
       await player.create(
@@ -143,9 +139,8 @@ void main() {
       final (AVFoundationVideoPlayer player, MockAVFoundationVideoPlayerApi api, _) =
           setUpMockPlayer(playerId: 1, textureId: 101);
       const newPlayerId = 2;
-      when(
-        api.createForTextureView(any),
-      ).thenAnswer((_) async => TexturePlayerIds(playerId: newPlayerId, textureId: 102));
+      when(api.createForTextureView(any))
+          .thenAnswer((_) async => TexturePlayerIds(playerId: newPlayerId, textureId: 102));
 
       const fileUri = 'file:///foo/bar';
       final int? playerId = await player.create(
@@ -162,9 +157,8 @@ void main() {
       final (AVFoundationVideoPlayer player, MockAVFoundationVideoPlayerApi api, _) =
           setUpMockPlayer(playerId: 1, textureId: 101);
       const newPlayerId = 2;
-      when(
-        api.createForTextureView(any),
-      ).thenAnswer((_) async => TexturePlayerIds(playerId: newPlayerId, textureId: 102));
+      when(api.createForTextureView(any))
+          .thenAnswer((_) async => TexturePlayerIds(playerId: newPlayerId, textureId: 102));
 
       const asset = 'someAsset';
       const package = 'somePackage';
@@ -188,9 +182,8 @@ void main() {
       final (AVFoundationVideoPlayer player, MockAVFoundationVideoPlayerApi api, _) =
           setUpMockPlayer(playerId: 1, textureId: 101);
       const newPlayerId = 2;
-      when(
-        api.createForTextureView(any),
-      ).thenAnswer((_) async => TexturePlayerIds(playerId: newPlayerId, textureId: 102));
+      when(api.createForTextureView(any))
+          .thenAnswer((_) async => TexturePlayerIds(playerId: newPlayerId, textureId: 102));
 
       const uri = 'https://example.com';
       final int? playerId = await player.createWithOptions(
@@ -216,9 +209,8 @@ void main() {
       final (AVFoundationVideoPlayer player, MockAVFoundationVideoPlayerApi api, _) =
           setUpMockPlayer(playerId: 1, textureId: 101);
       const newPlayerId = 2;
-      when(
-        api.createForTextureView(any),
-      ).thenAnswer((_) async => TexturePlayerIds(playerId: newPlayerId, textureId: 102));
+      when(api.createForTextureView(any))
+          .thenAnswer((_) async => TexturePlayerIds(playerId: newPlayerId, textureId: 102));
 
       const headers = <String, String>{'Authorization': 'Bearer token'};
       final int? playerId = await player.createWithOptions(
@@ -243,9 +235,8 @@ void main() {
           setUpMockPlayer(playerId: 1);
       const newPlayerId = 2;
       const textureId = 100;
-      when(
-        api.createForTextureView(any),
-      ).thenAnswer((_) async => TexturePlayerIds(playerId: newPlayerId, textureId: textureId));
+      when(api.createForTextureView(any))
+          .thenAnswer((_) async => TexturePlayerIds(playerId: newPlayerId, textureId: textureId));
 
       const fileUri = 'file:///foo/bar';
       final int? playerId = await player.createWithOptions(

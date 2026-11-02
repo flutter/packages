@@ -15,6 +15,82 @@ final class PhotoCaptureTests: XCTestCase {
     return CameraTestUtils.createTestCamera(configuration)
   }
 
+  func testIsZeroShutterLagSupported_returnsValueReportedByPhotoOutput() {
+    let cam = createCam(with: DispatchQueue(label: "capture_session_queue"))
+    let mockOutput = MockCapturePhotoOutput()
+    mockOutput.flutterZeroShutterLagSupported = true
+    cam.capturePhotoOutput = mockOutput
+
+    XCTAssertTrue(cam.isZeroShutterLagSupported())
+
+    mockOutput.flutterZeroShutterLagSupported = false
+    XCTAssertFalse(cam.isZeroShutterLagSupported())
+  }
+
+  func testSetZeroShutterLagEnabled_doesNotEnableOrReconfigureWhenUnsupported() {
+    let configuration = CameraTestUtils.createTestCameraConfiguration()
+    let mockSession = MockCaptureSession()
+    var beginCount = 0
+    mockSession.beginConfigurationStub = { beginCount += 1 }
+    configuration.videoCaptureSession = mockSession
+    let cam = CameraTestUtils.createTestCamera(configuration)
+
+    let mockOutput = MockCapturePhotoOutput()
+    mockOutput.flutterZeroShutterLagSupported = false
+    cam.capturePhotoOutput = mockOutput
+
+    cam.setZeroShutterLagEnabled(true)
+
+    XCTAssertFalse(mockOutput.flutterZeroShutterLagEnabled)
+    XCTAssertEqual(beginCount, 0)
+  }
+
+  func testSetZeroShutterLagEnabled_doesNotReconfigureWhenValueAlreadyMatches() {
+    let configuration = CameraTestUtils.createTestCameraConfiguration()
+    let mockSession = MockCaptureSession()
+    var beginCount = 0
+    mockSession.beginConfigurationStub = { beginCount += 1 }
+    configuration.videoCaptureSession = mockSession
+    let cam = CameraTestUtils.createTestCamera(configuration)
+
+    let mockOutput = MockCapturePhotoOutput()
+    mockOutput.flutterZeroShutterLagSupported = true
+    mockOutput.flutterZeroShutterLagEnabled = true
+    cam.capturePhotoOutput = mockOutput
+
+    cam.setZeroShutterLagEnabled(true)
+
+    XCTAssertTrue(mockOutput.flutterZeroShutterLagEnabled)
+    XCTAssertEqual(beginCount, 0)
+  }
+
+  func testSetZeroShutterLagEnabled_appliesValueAndReconfiguresSession() {
+    let configuration = CameraTestUtils.createTestCameraConfiguration()
+    let mockSession = MockCaptureSession()
+    var beginCount = 0
+    var commitCount = 0
+    mockSession.beginConfigurationStub = { beginCount += 1 }
+    mockSession.commitConfigurationStub = { commitCount += 1 }
+    configuration.videoCaptureSession = mockSession
+    let cam = CameraTestUtils.createTestCamera(configuration)
+
+    let mockOutput = MockCapturePhotoOutput()
+    mockOutput.flutterZeroShutterLagSupported = true
+    cam.capturePhotoOutput = mockOutput
+
+    cam.setZeroShutterLagEnabled(true)
+    XCTAssertTrue(mockOutput.flutterZeroShutterLagEnabled)
+
+    cam.setZeroShutterLagEnabled(false)
+    XCTAssertFalse(mockOutput.flutterZeroShutterLagEnabled)
+
+    // Setting the value it already has must not reconfigure the session.
+    cam.setZeroShutterLagEnabled(false)
+
+    XCTAssertEqual(beginCount, 2)
+    XCTAssertEqual(commitCount, 2)
+  }
+
   func testCaptureToFile_mustReportErrorToResultIfSavePhotoDelegateCompletionsWithError() {
     let errorExpectation = expectation(
       description: "Must send error to result if save photo delegate completes with error.")

@@ -773,6 +773,28 @@ void main() {
     expect(find.text('Error is handled'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets('VectorGraphicsWidget handles an asynchronous error from bytes loader', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      VectorGraphic(
+        loader: const AsyncThrowingBytesLoader(),
+        width: 100,
+        height: 100,
+        errorBuilder: (BuildContext context, Object error, StackTrace stackTrace) {
+          return const Directionality(
+            textDirection: TextDirection.ltr,
+            child: Text('Error is handled'),
+          );
+        },
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Error is handled'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
 }
 
 class TestBundle extends Fake implements AssetBundle {
@@ -845,6 +867,15 @@ class ThrowingBytesLoader extends BytesLoader {
 
   @override
   Future<ByteData> loadBytes(BuildContext? context) {
+    throw UnimplementedError('Test exception');
+  }
+}
+
+class AsyncThrowingBytesLoader extends BytesLoader {
+  const AsyncThrowingBytesLoader();
+
+  @override
+  Future<ByteData> loadBytes(BuildContext? context) async {
     throw UnimplementedError('Test exception');
   }
 }
