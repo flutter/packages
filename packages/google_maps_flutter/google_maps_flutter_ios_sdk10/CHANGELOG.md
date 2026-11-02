@@ -1,3 +1,9 @@
+## 2.19.1
+
+* Fixes corrupted and missing marker icons on maps with many markers created from
+  `BitmapDescriptor.bytes`, by sharing a single `UIImage` between markers that use the same
+  bytes and scaling.
+
 ## 2.19.0
 
 * Adds support for tapping points of interest on the map.
