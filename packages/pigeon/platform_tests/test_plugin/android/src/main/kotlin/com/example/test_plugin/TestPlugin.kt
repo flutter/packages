@@ -38,6 +38,7 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi, HostCallbackCoreApi {
   private var flutterSmallApiTwo: FlutterSmallApi? = null
   private var proxyApiRegistrar: ProxyApiRegistrar? = null
   private var niMessageApi: NativeInteropHostIntegrationCoreApiRegistrar? = null
+  private var eventChannelOne: StreamConsistentNumbersEventChannel? = null
 
   override fun onAttachedToEngine(binding: FlutterPluginBinding) {
     HostIntegrationCoreApi.setUp(binding.binaryMessenger, this)
@@ -59,8 +60,13 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi, HostCallbackCoreApi {
 
     StreamEventsStreamHandler.register(binding.binaryMessenger, SendClass)
     StreamIntsStreamHandler.register(binding.binaryMessenger, SendInts)
-    StreamConsistentNumbersStreamHandler.register(
-        binding.binaryMessenger, SendConsistentNumbers(1), "1")
+    // Store one handler to exercise the handler removal codepath, and discard
+    // the other to test that the return value can be safely ignored.
+    val streamHandlerOne = SendConsistentNumbers(1)
+    eventChannelOne =
+        StreamConsistentNumbersStreamHandler.register(
+            binding.binaryMessenger, streamHandlerOne, "1")
+    streamHandlerOne.onCompleted = { eventChannelOne?.setStreamHandler(null) }
     StreamConsistentNumbersStreamHandler.register(
         binding.binaryMessenger, SendConsistentNumbers(2), "2")
   }
@@ -2326,6 +2332,7 @@ object SendClass : StreamEventsStreamHandler() {
 class SendConsistentNumbers(private val numberToSend: Long) :
     StreamConsistentNumbersStreamHandler() {
   private val handler = Handler(Looper.getMainLooper())
+  var onCompleted: (() -> Unit)? = null
 
   override fun onListen(p0: Any?, sink: PigeonEventSink<Long>) {
     var count = 0
@@ -2334,6 +2341,7 @@ class SendConsistentNumbers(private val numberToSend: Long) :
           override fun run() {
             if (count >= 10) {
               sink.endOfStream()
+              onCompleted?.invoke()
             } else {
               handler.post {
                 sink.success(numberToSend)

@@ -498,3 +498,89 @@ class MockGroundOverlaysController extends _i1.Mock implements _i2.GroundOverlay
     returnValueForMissingStub: null,
   );
 }
+
+/// A class which mocks [MyLocationController].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockMyLocationController extends _i1.Mock implements _i2.MyLocationController {
+  @override
+  set myLocationButton(_i2.MyLocationButton? value) => super.noSuchMethod(
+    Invocation.setter(#myLocationButton, value),
+    returnValueForMissingStub: null,
+  );
+
+  @override
+  void displayAndWatchMyLocation(_i4.Map? map) => super.noSuchMethod(
+    Invocation.method(#displayAndWatchMyLocation, [map]),
+    returnValueForMissingStub: null,
+  );
+
+  @override
+  _i6.Future<void> centerMyCurrentLocation(_i2.GoogleMapController? controller) =>
+      (super.noSuchMethod(
+            Invocation.method(#centerMyCurrentLocation, [controller]),
+            returnValue: _i6.Future<void>.value(),
+            returnValueForMissingStub: _i6.Future<void>.value(),
+          )
+          as _i6.Future<void>);
+
+  @override
+  void addMyLocationButton(_i4.Map? map, _i2.GoogleMapController? controller) => super.noSuchMethod(
+    Invocation.method(#addMyLocationButton, [map, controller]),
+    returnValueForMissingStub: null,
+  );
+
+  @override
+  void removeMyLocationButton(_i4.Map? map) => super.noSuchMethod(
+    Invocation.method(#removeMyLocationButton, [map]),
+    returnValueForMissingStub: null,
+  );
+
+  @override
+  void removeBlueDot() =>
+      super.noSuchMethod(Invocation.method(#removeBlueDot, []), returnValueForMissingStub: null);
+
+  @override
+  void stopWatchingMyLocation() => super.noSuchMethod(
+    Invocation.method(#stopWatchingMyLocation, []),
+    returnValueForMissingStub: null,
+  );
+}
+
+/// A class which mocks [GeolocationApi].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockGeolocationApi extends _i1.Mock implements _i2.GeolocationApi {
+  @override
+  bool get isAvailable =>
+      (super.noSuchMethod(
+            Invocation.getter(#isAvailable),
+            returnValue: false,
+            returnValueForMissingStub: false,
+          )
+          as bool);
+
+  @override
+  int? watchPosition(void Function(double, double)? onSuccess, void Function(dynamic)? onError) =>
+      (super.noSuchMethod(
+            Invocation.method(#watchPosition, [onSuccess, onError]),
+            returnValueForMissingStub: null,
+          )
+          as int?);
+
+  @override
+  void getCurrentPosition(
+    void Function(double, double)? onSuccess,
+    void Function(dynamic)? onError, {
+    int? timeoutMs = 30000,
+  }) => super.noSuchMethod(
+    Invocation.method(#getCurrentPosition, [onSuccess, onError], {#timeoutMs: timeoutMs}),
+    returnValueForMissingStub: null,
+  );
+
+  @override
+  void clearWatch(int? watchId) => super.noSuchMethod(
+    Invocation.method(#clearWatch, [watchId]),
+    returnValueForMissingStub: null,
+  );
+}

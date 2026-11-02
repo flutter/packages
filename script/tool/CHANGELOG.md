@@ -1,6 +1,8 @@
 ## NEXT
 
 * Exempts `test_apps/` from requiring version and changelog changes.
+* Fixes `dart-test --package-tags` not matching any packages when the
+  repository is checked out into a directory named `packages`, as it is in CI.
 
 ## 0.14.4+4
 

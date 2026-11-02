@@ -57,6 +57,9 @@ jobs:
         check-name: 'Linux ci_yaml packages roller'
         repo-token: ${{ secrets.GITHUB_TOKEN }}
         wait-interval: 30 # seconds
+        # Cocoon waits up to 15 minutes for commits to mirror to Git-on-Borg
+        # before registering post-submit LUCI checks.
+        checks-discovery-timeout: 900 # seconds
         allowed-conclusions: success,neutral
         # verbose:true will produce too many logs that hang github actions web UI.
         verbose: false

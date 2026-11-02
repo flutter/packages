@@ -1,3 +1,0 @@
-changelog: |
-  - Adds a `barFocusNode` parameter to `SearchAnchor.bar` to allow external control over the focus of the underlying `SearchBar`.
-version: minor

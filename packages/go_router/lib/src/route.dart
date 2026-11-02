@@ -370,8 +370,7 @@ class GoRoute extends RouteBase {
   /// does not satisfy the regular expression, route matching continues with
   /// other route candidates.
   ///
-  /// The regular expression is interpreted as a Dart [RegExp] pattern and must
-  /// not contain nested parentheses.
+  /// The regular expression is interpreted as a Dart [RegExp] pattern.
   ///
   /// The query parameter are also capture during the route parsing and stored
   /// in [GoRouterState].

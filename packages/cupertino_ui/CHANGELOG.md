@@ -1,3 +1,7 @@
+## 1.1.5
+
+- Fixes the installation command in README.md
+
 ## 1.1.4
 
 - Fix CupertinoMagnifier focalPointOffset during in/out animation.
