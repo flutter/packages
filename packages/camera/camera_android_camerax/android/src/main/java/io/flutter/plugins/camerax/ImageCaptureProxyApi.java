@@ -6,12 +6,14 @@ package io.flutter.plugins.camerax;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.OptIn;
+import androidx.camera.core.ExperimentalZeroShutterLag;
 import androidx.camera.core.ImageCapture;
 import androidx.camera.core.ImageCaptureException;
 import androidx.camera.core.resolutionselector.ResolutionSelector;
+import androidx.core.content.ContextCompat;
 import java.io.File;
 import java.io.IOException;
-import java.util.concurrent.Executors;
 import kotlin.Result;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
@@ -37,14 +39,19 @@ class ImageCaptureProxyApi extends PigeonApiImageCapture {
 
   @NonNull
   @Override
+  @OptIn(markerClass = ExperimentalZeroShutterLag.class)
   public ImageCapture pigeon_defaultConstructor(
       @Nullable ResolutionSelector resolutionSelector,
       @Nullable Long targetRotation,
       @Nullable CameraXFlashMode flashMode,
-      @Nullable Long jpegQuality) {
+      @Nullable Long jpegQuality,
+      @Nullable Boolean zeroShutterLagEnabled) {
     final ImageCapture.Builder builder = new ImageCapture.Builder();
     if (targetRotation != null) {
       builder.setTargetRotation(targetRotation.intValue());
+    }
+    if (Boolean.TRUE.equals(zeroShutterLagEnabled)) {
+      builder.setCaptureMode(ImageCapture.CAPTURE_MODE_ZERO_SHUTTER_LAG);
     }
     if (flashMode != null) {
       // This sets the requested flash mode, but may fail silently.
@@ -106,7 +113,9 @@ class ImageCaptureProxyApi extends PigeonApiImageCapture {
         createOnImageSavedCallback(temporaryCaptureFile, systemServicesManager, callback);
 
     pigeonInstance.takePicture(
-        outputFileOptions, Executors.newSingleThreadExecutor(), onImageSavedCallback);
+        outputFileOptions,
+        ContextCompat.getMainExecutor(getPigeonRegistrar().getContext()),
+        onImageSavedCallback);
   }
 
   @Override

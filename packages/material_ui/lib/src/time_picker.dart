@@ -247,9 +247,8 @@ class _DialTimePickerHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     assert(_debugDialTimePickerEntryMode(context));
-    final TimeOfDayFormat timeOfDayFormat = MaterialLocalizations.of(
-      context,
-    ).timeOfDayFormat(alwaysUse24HourFormat: _TimePickerModel.use24HourFormatOf(context));
+    final TimeOfDayFormat timeOfDayFormat = MaterialLocalizations.of(context)
+        .timeOfDayFormat(alwaysUse24HourFormat: _TimePickerModel.use24HourFormatOf(context));
 
     final _TimePickerDefaults defaultTheme = _TimePickerModel.defaultThemeOf(context);
     final Orientation orientation = _TimePickerModel.orientationOf(context);
@@ -1753,6 +1752,18 @@ class _TimePickerInputState extends State<_TimePickerInput> with RestorationMixi
   late final RestorableTimeOfDay _selectedTime = RestorableTimeOfDay(widget.initialSelectedTime);
   final RestorableBool hourHasError = RestorableBool(false);
   final RestorableBool minuteHasError = RestorableBool(false);
+  Map<String, int>? _cachedNumbers;
+  Locale? _cachedLocale;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final Locale locale = Localizations.localeOf(context);
+    if (_cachedLocale != locale) {
+      _cachedNumbers = null;
+      _cachedLocale = locale;
+    }
+  }
 
   @override
   void dispose() {
@@ -1777,12 +1788,12 @@ class _TimePickerInputState extends State<_TimePickerInput> with RestorationMixi
       return null;
     }
 
-    int? newHour = int.tryParse(value);
+    int? newHour = _tryParseLocalizedNumber(value);
     if (newHour == null) {
       return null;
     }
 
-    if (MediaQuery.alwaysUse24HourFormatOf(context)) {
+    if (_TimePickerModel.hourDialTypeOf(context) != _HourDialType.twelveHour) {
       if (newHour >= 0 && newHour < 24) {
         return newHour;
       }
@@ -1803,7 +1814,7 @@ class _TimePickerInputState extends State<_TimePickerInput> with RestorationMixi
       return null;
     }
 
-    final int? newMinute = int.tryParse(value);
+    final int? newMinute = _tryParseLocalizedNumber(value);
     if (newMinute == null) {
       return null;
     }
@@ -1812,6 +1823,36 @@ class _TimePickerInputState extends State<_TimePickerInput> with RestorationMixi
       return newMinute;
     }
     return null;
+  }
+
+  int? _tryParseLocalizedNumber(String number) {
+    final int? parsedNumber = int.tryParse(number);
+    if (parsedNumber != null) {
+      return parsedNumber;
+    }
+
+    final Map<String, int> cachedNumbers = _cachedNumbers ??= _generateLocalizedNumbers();
+
+    final String trimmedNumber = _removeLeadingZeros(number);
+
+    return cachedNumbers[trimmedNumber];
+  }
+
+  Map<String, int> _generateLocalizedNumbers() {
+    final MaterialLocalizations localizations = MaterialLocalizations.of(context);
+
+    // Supports 0 - 59.
+    final numbers = <String, int>{for (int i = 0; i < 60; i++) localizations.formatDecimal(i): i};
+
+    return numbers;
+  }
+
+  String _removeLeadingZeros(String value) {
+    final String localizedZero = MaterialLocalizations.of(context).formatDecimal(0);
+    while (value.startsWith(localizedZero) && value.length > localizedZero.length) {
+      value = value.substring(localizedZero.length);
+    }
+    return value;
   }
 
   void _handleHourSavedSubmitted(String? value) {
@@ -1834,7 +1875,7 @@ class _TimePickerInputState extends State<_TimePickerInput> with RestorationMixi
   void _handleMinuteSavedSubmitted(String? value) {
     final int? newMinute = _parseMinute(value);
     if (newMinute != null) {
-      _selectedTime.value = TimeOfDay(hour: _selectedTime.value.hour, minute: int.parse(value!));
+      _selectedTime.value = TimeOfDay(hour: _selectedTime.value.hour, minute: newMinute);
       _TimePickerModel.setSelectedTime(context, _selectedTime.value);
       FocusScope.of(context).unfocus();
     }
@@ -1870,9 +1911,8 @@ class _TimePickerInputState extends State<_TimePickerInput> with RestorationMixi
   @override
   Widget build(BuildContext context) {
     assert(debugCheckHasMediaQuery(context));
-    final TimeOfDayFormat timeOfDayFormat = MaterialLocalizations.of(
-      context,
-    ).timeOfDayFormat(alwaysUse24HourFormat: _TimePickerModel.use24HourFormatOf(context));
+    final TimeOfDayFormat timeOfDayFormat = MaterialLocalizations.of(context)
+        .timeOfDayFormat(alwaysUse24HourFormat: _TimePickerModel.use24HourFormatOf(context));
     final use24HourDials = hourFormat(of: timeOfDayFormat) != HourFormat.h;
     final ThemeData theme = Theme.of(context);
     final TimePickerThemeData timePickerTheme = _TimePickerModel.themeOf(context);
@@ -3266,6 +3306,7 @@ class _TimePickerState extends State<_TimePicker> with RestorationMixin {
 ///   typography, and shape of the time picker.
 /// * [DisplayFeatureSubScreen], which documents the specifics of how
 ///   [DisplayFeature]s can split the screen into sub-screens.
+@awaitNotRequired
 Future<TimeOfDay?> showTimePicker({
   required BuildContext context,
   required TimeOfDay initialTime,

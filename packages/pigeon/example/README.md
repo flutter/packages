@@ -27,6 +27,8 @@ needed for your project.
     kotlinOptions: KotlinOptions(),
     javaOut: 'android/app/src/main/java/io/flutter/plugins/Messages.java',
     javaOptions: JavaOptions(),
+    // Note that swiftOut can also be a list to output to separate iOS and macOS
+    // locations if required.
     swiftOut: 'ios/Runner/Messages.g.swift',
     swiftOptions: SwiftOptions(),
     objcHeaderOut: 'macos/Runner/messages.g.h',
@@ -136,12 +138,11 @@ private class PigeonApiImplementation: ExampleHostApi {
     return a + b
   }
 
-  func sendMessage(message: MessageData, completion: @escaping (Result<Bool, Error>) -> Void) {
+  func sendMessage(message: MessageData) async throws -> Bool {
     if message.code == Code.one {
-      completion(.failure(PigeonError(code: "code", message: "message", details: "details")))
-      return
+      throw PigeonError(code: "code", message: "message", details: "details")
     }
-    completion(.success(true))
+    return true
   }
 }
 ```
@@ -161,12 +162,11 @@ private class PigeonApiImplementation : ExampleHostApi {
     return a + b
   }
 
-  override fun sendMessage(message: MessageData, callback: (Result<Boolean>) -> Unit) {
+  override suspend fun sendMessage(message: MessageData): Boolean {
     if (message.code == Code.ONE) {
-      callback(Result.failure(FlutterError("code", "message", "details")))
-      return
+      throw FlutterError("code", "message", "details")
     }
-    callback(Result.success(true))
+    return true
   }
 }
 ```
@@ -285,12 +285,8 @@ private class PigeonFlutterApi {
     flutterAPI = MessageFlutterApi(binaryMessenger: binaryMessenger)
   }
 
-  func callFlutterMethod(
-    aString aStringArg: String?, completion: @escaping (Result<String, PigeonError>) -> Void
-  ) {
-    flutterAPI.flutterMethod(aString: aStringArg) {
-      completion($0)
-    }
+  func callFlutterMethod(aString aStringArg: String?) async throws -> String {
+    return try await flutterAPI.flutterMethod(aString: aStringArg)
   }
 }
 ```
@@ -306,8 +302,8 @@ private class PigeonFlutterApi(binding: FlutterPlugin.FlutterPluginBinding) {
     flutterApi = MessageFlutterApi(binding.binaryMessenger)
   }
 
-  fun callFlutterMethod(aString: String, callback: (Result<String>) -> Unit) {
-    flutterApi!!.flutterMethod(aString) { echo -> callback(echo) }
+  suspend fun callFlutterMethod(aString: String): String {
+    return flutterApi!!.flutterMethod(aString)
   }
 }
 ```

@@ -36,4 +36,19 @@ void main() {
       expect(isRepoLevelNonCodeImpactingFile('lib/main.dart'), isFalse);
     });
   });
+
+  group('isPackageSupportFile', () {
+    test('returns true for known package support files', () {
+      expect(isPackageSupportFile('packages/foo/AUTHORS'), isTrue);
+      expect(isPackageSupportFile('packages/foo/CHANGELOG.md'), isTrue);
+      expect(isPackageSupportFile('packages/foo/CONTRIBUTING.md'), isTrue);
+      expect(isPackageSupportFile('packages/foo/README.md'), isTrue);
+      expect(isPackageSupportFile('packages/foo/AGENTS.md'), isTrue);
+    });
+
+    test('returns false for other files', () {
+      expect(isPackageSupportFile('packages/foo/pubspec.yaml'), isFalse);
+      expect(isPackageSupportFile('packages/foo/lib/main.dart'), isFalse);
+    });
+  });
 }

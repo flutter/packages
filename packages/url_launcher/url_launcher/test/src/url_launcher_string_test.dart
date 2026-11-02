@@ -18,7 +18,7 @@ void main() {
       const urlString = 'https://flutter.dev';
       mock
         ..setCanLaunchExpectations(urlString)
-        ..setResponse(true);
+        ..setLaunchResponse(true);
 
       final bool result = await canLaunchUrlString(urlString);
 
@@ -29,7 +29,7 @@ void main() {
       const urlString = 'https://flutter.dev';
       mock
         ..setCanLaunchExpectations(urlString)
-        ..setResponse(false);
+        ..setLaunchResponse(false);
 
       final bool result = await canLaunchUrlString(urlString);
 
@@ -51,7 +51,7 @@ void main() {
           webOnlyWindowName: null,
           showTitle: false,
         )
-        ..setResponse(true);
+        ..setLaunchResponse(true);
       expect(await launchUrlString(urlString), isTrue);
     });
 
@@ -68,7 +68,7 @@ void main() {
           webOnlyWindowName: null,
           showTitle: false,
         )
-        ..setResponse(true);
+        ..setLaunchResponse(true);
       expect(await launchUrlString(urlString), isTrue);
     });
 
@@ -85,7 +85,7 @@ void main() {
           webOnlyWindowName: null,
           showTitle: false,
         )
-        ..setResponse(true);
+        ..setLaunchResponse(true);
       expect(await launchUrlString(urlString), isTrue);
     });
 
@@ -102,7 +102,7 @@ void main() {
           webOnlyWindowName: null,
           showTitle: false,
         )
-        ..setResponse(true);
+        ..setLaunchResponse(true);
       expect(await launchUrlString(urlString), isTrue);
     });
 
@@ -119,7 +119,7 @@ void main() {
           webOnlyWindowName: null,
           showTitle: false,
         )
-        ..setResponse(true);
+        ..setLaunchResponse(true);
       expect(await launchUrlString(urlString, mode: LaunchMode.inAppWebView), isTrue);
     });
 
@@ -136,7 +136,7 @@ void main() {
           webOnlyWindowName: null,
           showTitle: false,
         )
-        ..setResponse(true);
+        ..setLaunchResponse(true);
       expect(await launchUrlString(urlString, mode: LaunchMode.externalApplication), isTrue);
     });
 
@@ -153,7 +153,7 @@ void main() {
           webOnlyWindowName: null,
           showTitle: false,
         )
-        ..setResponse(true);
+        ..setLaunchResponse(true);
       expect(await launchUrlString(urlString, mode: LaunchMode.inAppBrowserView), isTrue);
     });
 
@@ -170,7 +170,7 @@ void main() {
           webOnlyWindowName: null,
           showTitle: true,
         )
-        ..setResponse(true);
+        ..setLaunchResponse(true);
       expect(
         await launchUrlString(
           urlString,
@@ -194,7 +194,7 @@ void main() {
           webOnlyWindowName: null,
           showTitle: false,
         )
-        ..setResponse(true);
+        ..setLaunchResponse(true);
       expect(
         await launchUrlString(urlString, mode: LaunchMode.externalNonBrowserApplication),
         isTrue,
@@ -214,7 +214,7 @@ void main() {
           webOnlyWindowName: null,
           showTitle: false,
         )
-        ..setResponse(true);
+        ..setLaunchResponse(true);
       expect(
         await launchUrlString(
           urlString,
@@ -238,7 +238,7 @@ void main() {
           webOnlyWindowName: null,
           showTitle: false,
         )
-        ..setResponse(true);
+        ..setLaunchResponse(true);
       expect(
         await launchUrlString(
           urlString,
@@ -262,7 +262,7 @@ void main() {
           webOnlyWindowName: null,
           showTitle: false,
         )
-        ..setResponse(true);
+        ..setLaunchResponse(true);
       expect(
         await launchUrlString(
           urlString,
@@ -295,7 +295,7 @@ void main() {
           webOnlyWindowName: null,
           showTitle: false,
         )
-        ..setResponse(true);
+        ..setLaunchResponse(true);
       expect(await launchUrlString(emailLaunchUrlString), isTrue);
     });
 
@@ -313,7 +313,7 @@ void main() {
           webOnlyWindowName: null,
           showTitle: false,
         )
-        ..setResponse(true);
+        ..setLaunchResponse(true);
       expect(await launchUrlString(urlString), isTrue);
     });
   });

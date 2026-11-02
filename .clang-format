@@ -7,3 +7,5 @@ PointerAlignment: Left
 Language: ObjC
 DerivePointerAlignment: false
 PointerAlignment: Right
+TypenameMacros:
+  - id

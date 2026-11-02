@@ -29,6 +29,8 @@ import 'slider_theme.dart';
 import 'slider_value_indicator_shape.dart';
 import 'theme.dart';
 
+part 'generated/slider_defaults_m3.g.dart';
+
 // Examples can assume:
 // int _dollars = 0;
 // int _duelCommandment = 1;
@@ -430,11 +432,16 @@ class Slider extends StatefulWidget {
   /// If null, the slider is continuous.
   final int? divisions;
 
-  /// A label to show above the slider when the slider is active and
-  /// [SliderThemeData.showValueIndicator] is satisfied.
+  /// A label to show inside the value indicator above the slider's thumb.
   ///
-  /// It is used to display the value of a discrete slider, and it is displayed
-  /// as part of the value indicator shape.
+  /// By default, the label is shown while dragging a discrete slider, where
+  /// [divisions] is non-null. It can also be shown for a continuous slider, where
+  /// [divisions] is null, by setting [showValueIndicator] to
+  /// [ShowValueIndicator.onlyForContinuous], [ShowValueIndicator.onDrag], or
+  /// [ShowValueIndicator.alwaysVisible].
+  ///
+  /// If [showValueIndicator] is null, the ambient
+  /// [SliderThemeData.showValueIndicator] determines when the label is shown.
   ///
   /// The label is rendered using the active [ThemeData]'s [TextTheme.bodyLarge]
   /// text style, with the theme data's [ColorScheme.onPrimary] color. The
@@ -804,6 +811,10 @@ class _SliderState extends State<Slider> with TickerProviderStateMixin {
   double _lerp(double value) {
     assert(value >= 0.0);
     assert(value <= 1.0);
+    final int? divisions = widget.divisions;
+    if (divisions != null) {
+      return widget.min + (value * divisions).round() * (widget.max - widget.min) / divisions;
+    }
     return value * (widget.max - widget.min) + widget.min;
   }
 
@@ -1242,6 +1253,13 @@ class _RenderSlider extends RenderBox with RelayoutWhenSystemFontsChangeMixin {
   // This value is the touch target, 48, multiplied by 3.
   static const double _minPreferredTrackWidth = 144.0;
 
+  // Buffer to account for the internal padding of standard Material value indicator shapes,
+  // preventing them from bleeding off the screen edges.
+  //
+  // The value 64.0 is a heuristic that covers the minimum size of the shape
+  // (padding + minimum label width) at a text scale factor of roughly 2.0.
+  static const double _kValueIndicatorHorizontalBuffer = 64.0;
+
   // Compute the largest width and height needed to paint the slider shapes,
   // other than the track shape. It is assumed that these shapes are vertically
   // centered on the track.
@@ -1533,11 +1551,24 @@ class _RenderSlider extends RenderBox with RelayoutWhenSystemFontsChangeMixin {
 
   void _updateLabelPainter() {
     if (label != null) {
+      // Reserve space for the bubble's internal padding and screen margins.
+      final double safeMaxWidth = math.max(
+        0.0,
+        screenSize.width - _kValueIndicatorHorizontalBuffer,
+      );
+
       _labelPainter
         ..text = TextSpan(style: _sliderTheme.valueIndicatorTextStyle, text: label)
         ..textDirection = textDirection
-        ..textScaleFactor = textScaleFactor
-        ..layout();
+        ..textScaler = TextScaler.linear(textScaleFactor)
+        ..maxLines = 1
+        ..ellipsis =
+            '\u2026' // Standard Unicode ellipsis
+        ..layout(
+          maxWidth: screenSize.width.isFinite && screenSize.width > 0
+              ? safeMaxWidth
+              : double.infinity,
+        );
     } else {
       _labelPainter.text = null;
     }
@@ -2285,118 +2316,3 @@ class _SliderDefaultsM3Year2023 extends SliderThemeData {
   @override
   SliderTickMarkShape? get tickMarkShape => const RoundSliderTickMarkShape();
 }
-
-// BEGIN GENERATED TOKEN PROPERTIES - Slider
-
-// Do not edit by hand. The code between the "BEGIN GENERATED" and
-// "END GENERATED" comments are generated from data in the Material
-// Design token database by the script:
-//   dev/tools/gen_defaults/bin/gen_defaults.dart.
-
-// dart format off
-class _SliderDefaultsM3 extends SliderThemeData {
-  _SliderDefaultsM3(this.context)
-    : super(trackHeight: 16.0);
-
-  final BuildContext context;
-  late final ColorScheme _colors = Theme.of(context).colorScheme;
-
-  @override
-  Color? get activeTrackColor => _colors.primary;
-
-  @override
-  Color? get inactiveTrackColor => _colors.secondaryContainer;
-
-  @override
-  Color? get secondaryActiveTrackColor => _colors.primary.withOpacity(0.54);
-
-  @override
-  Color? get disabledActiveTrackColor => _colors.onSurface.withOpacity(0.38);
-
-  @override
-  Color? get disabledInactiveTrackColor => _colors.onSurface.withOpacity(0.12);
-
-  @override
-  Color? get disabledSecondaryActiveTrackColor => _colors.onSurface.withOpacity(0.38);
-
-  @override
-  Color? get activeTickMarkColor => _colors.onPrimary.withOpacity(1.0);
-
-  @override
-  Color? get inactiveTickMarkColor => _colors.onSecondaryContainer.withOpacity(1.0);
-
-  @override
-  Color? get disabledActiveTickMarkColor => _colors.onInverseSurface;
-
-  @override
-  Color? get disabledInactiveTickMarkColor => _colors.onSurface;
-
-  @override
-  Color? get thumbColor => _colors.primary;
-
-  @override
-  Color? get disabledThumbColor => _colors.onSurface.withOpacity(0.38);
-
-  @override
-  Color? get overlayColor => WidgetStateColor.resolveWith((Set<WidgetState> states) {
-    if (states.contains(WidgetState.dragged)) {
-      return _colors.primary.withOpacity(0.1);
-    }
-    if (states.contains(WidgetState.hovered)) {
-      return _colors.primary.withOpacity(0.08);
-    }
-    if (states.contains(WidgetState.focused)) {
-      return _colors.primary.withOpacity(0.1);
-    }
-
-    return Colors.transparent;
-  });
-
-  @override
-  TextStyle? get valueIndicatorTextStyle => Theme.of(context).textTheme.labelLarge!.copyWith(
-    color: _colors.onInverseSurface,
-  );
-
-  @override
-  Color? get valueIndicatorColor => _colors.inverseSurface;
-
-  @override
-  SliderComponentShape? get valueIndicatorShape => const RoundedRectSliderValueIndicatorShape();
-
-  @override
-  SliderComponentShape? get thumbShape => const HandleThumbShape();
-
-  @override
-  SliderTrackShape? get trackShape => const GappedSliderTrackShape();
-
-  @override
-  SliderComponentShape? get overlayShape => const RoundSliderOverlayShape();
-
-  @override
-  SliderTickMarkShape? get tickMarkShape => const RoundSliderTickMarkShape(tickMarkRadius: 4.0 / 2);
-
-  @override
-  WidgetStateProperty<Size?>? get thumbSize {
-    return WidgetStateProperty.resolveWith((Set<WidgetState> states) {
-      if (states.contains(WidgetState.disabled)) {
-        return const Size(4.0, 44.0);
-      }
-      if (states.contains(WidgetState.hovered)) {
-        return const Size(4.0, 44.0);
-      }
-      if (states.contains(WidgetState.focused)) {
-        return const Size(2.0, 44.0);
-      }
-      if (states.contains(WidgetState.pressed)) {
-        return const Size(2.0, 44.0);
-      }
-      return const Size(4.0, 44.0);
-    });
-  }
-
-  @override
-  double? get trackGap => 6.0;
-}
-// dart format on
-
-// END GENERATED TOKEN PROPERTIES - Slider

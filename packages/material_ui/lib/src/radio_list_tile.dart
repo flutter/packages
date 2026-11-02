@@ -65,21 +65,7 @@ enum _RadioType { material, adaptive }
 ///
 /// <callout-box>
 ///
-// TODO(framework): Add unit tests to this code snippet.
-// https://github.com/flutter/flutter/issues/188530
-///
-/// ```dart
-/// const ColoredBox(
-///   color: Colors.green,
-///   child: Material(
-///     child: RadioListTile<Meridiem>(
-///       tileColor: Colors.red,
-///       title: Text('AM'),
-///       value: Meridiem.am,
-///     ),
-///   ),
-/// )
-/// ```
+/// {@example /example/lib/radio_list_tile/radio_list_tile.snippet.0.dart#body indent=strip}
 ///
 /// </callout-box>
 ///

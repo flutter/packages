@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -76,29 +75,25 @@ void main() {
     },
   );
 
-  testWidgets(
-    'more than three suggestions throws an error',
-    (WidgetTester tester) async {
-      Future<void> pumpToolbar(List<String> suggestions) async {
-        await tester.pumpWidget(
-          MaterialApp(
-            home: Scaffold(
-              body: SpellCheckSuggestionsToolbar(
-                anchor: const Offset(0.0, _kAnchor - _kTestToolbarOverlap),
-                buttonItems: buildSuggestionButtons(suggestions),
-              ),
+  testWidgets('more than three suggestions throws an error', (WidgetTester tester) async {
+    Future<void> pumpToolbar(List<String> suggestions) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SpellCheckSuggestionsToolbar(
+              anchor: const Offset(0.0, _kAnchor - _kTestToolbarOverlap),
+              buttonItems: buildSuggestionButtons(suggestions),
             ),
           ),
-        );
-      }
+        ),
+      );
+    }
 
-      await pumpToolbar(<String>['hello', 'yellow', 'yell']);
-      expect(() async {
-        await pumpToolbar(<String>['hello', 'yellow', 'yell', 'yeller']);
-      }, throwsAssertionError);
-    },
-    skip: kIsWeb, // [intended]
-  );
+    await pumpToolbar(<String>['hello', 'yellow', 'yell']);
+    expect(() async {
+      await pumpToolbar(<String>['hello', 'yellow', 'yell', 'yeller']);
+    }, throwsAssertionError);
+  });
 
   test('buildSuggestionButtons only considers the first three suggestions', () {
     final editableTextState = _FakeEditableTextState(

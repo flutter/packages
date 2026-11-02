@@ -650,7 +650,7 @@ void main() {
     );
 
     await tester.pumpAndSettle();
-  });
+  }, tags: 'reduced-web-test-set');
 
   testWidgets('CheckboxListTile respects fillColor in enabled/disabled states', (
     WidgetTester tester,
@@ -1039,6 +1039,7 @@ void main() {
       await gesture4.up();
       await tester.pumpAndSettle();
     },
+    tags: 'reduced-web-test-set',
   );
 
   testWidgets('CheckboxListTile respects splashRadius', (WidgetTester tester) async {

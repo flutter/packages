@@ -11,16 +11,16 @@ import Testing
 
   @Test func updateCircleSetsVisibilityLast() {
     let circle = PropertyOrderValidatingCircle()
-    FGMCircleController.update(
+    CircleController.update(
       circle,
-      from: FGMPlatformCircle.make(
-        withConsumeTapEvents: false,
-        fill: FGMPlatformColor.make(withRed: 0, green: 0, blue: 0, alpha: 0),
-        stroke: FGMPlatformColor.make(withRed: 0, green: 0, blue: 0, alpha: 0),
+      from: PlatformCircle(
+        consumeTapEvents: false,
+        fillColor: PlatformColor(red: 0, green: 0, blue: 0, alpha: 0),
+        strokeColor: PlatformColor(red: 0, green: 0, blue: 0, alpha: 0),
         visible: true,
         strokeWidth: 0,
         zIndex: 0,
-        center: FGMPlatformLatLng.make(withLatitude: 0, longitude: 0),
+        center: PlatformLatLng(latitude: 0, longitude: 0),
         radius: 10,
         circleId: "circle"
       ),

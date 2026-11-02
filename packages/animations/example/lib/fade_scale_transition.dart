@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:animations/animations.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// The demo page for [FadeScaleTransition].
 class FadeScaleTransitionDemo extends StatefulWidget {

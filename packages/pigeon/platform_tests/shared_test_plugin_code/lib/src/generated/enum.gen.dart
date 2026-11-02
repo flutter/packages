@@ -208,8 +208,8 @@ class EnumApi2Host {
       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
           ? '.$messageChannelSuffix'
           : '';
-  final BinaryMessenger? pigeonVar_binaryMessenger;
 
+  final BinaryMessenger? pigeonVar_binaryMessenger;
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
 
   final String pigeonVar_messageChannelSuffix;

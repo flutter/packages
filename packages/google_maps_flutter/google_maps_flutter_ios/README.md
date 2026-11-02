@@ -5,6 +5,10 @@ The default iOS implementation of [`google_maps_flutter`][1].
 This package will use Google Maps SDK 8.4, 9.x, or 10.x, depending on your
 application's minimum deployment target.
 
+**Note**: This package will not receive new feature updates. All clients are
+encouraged to adopt one of the [SDK-specific implementations](#alternate-implementations).
+For example, `GoogleMap.onPointOfInterestTap` is not supported here.
+
 ## Usage
 
 This package is [endorsed][2], which means you can simply use

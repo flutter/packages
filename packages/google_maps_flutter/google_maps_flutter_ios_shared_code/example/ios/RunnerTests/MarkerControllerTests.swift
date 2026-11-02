@@ -17,14 +17,14 @@ import Testing
     return PartiallyMockedMapView(options: mapViewOptions)
   }
 
-  /// Returns a FGMMarkersController instance instantiated with the given map view.
+  /// Returns a MarkersController instance instantiated with the given map view.
   ///
   /// The mapView should outlive the controller, as the controller keeps a weak reference to it.
   func markersController(
     withMapView mapView: GMSMapView,
-    eventDelegate: NSObject & FGMMapEventDelegate
-  ) -> FGMMarkersController {
-    return FGMMarkersController(
+    eventDelegate: MapEventDelegate
+  ) -> MarkersController {
+    return MarkersController(
       mapView: mapView,
       eventDelegate: eventDelegate,
       clusterManagersController: nil,
@@ -33,8 +33,8 @@ import Testing
     )
   }
 
-  func placeholderBitmap() -> FGMPlatformBitmap {
-    return FGMPlatformBitmap.make(withBitmap: FGMPlatformBitmapDefaultMarker.make(withHue: 0))
+  func placeholderBitmap() -> PlatformBitmap {
+    return PlatformBitmapDefaultMarker(hue: 0)
   }
 
   @Test func setsMarkerNumericProperties() throws {
@@ -47,23 +47,23 @@ import Testing
     let anchorY = 2.718
     let alpha = 0.4
     let rotation = 90.0
-    let zIndex = 3
+    let zIndex: Int64 = 3
     let latitude = 10.0
     let longitude = 20.0
     controller.add([
-      FGMPlatformMarker.make(
-        withAlpha: alpha,
-        anchor: FGMPlatformPoint.makeWith(x: anchorX, y: anchorY),
+      PlatformMarker(
+        alpha: alpha,
+        anchor: PlatformPoint(x: anchorX, y: anchorY),
         consumeTapEvents: true,
         draggable: true,
         flat: true,
         icon: placeholderBitmap(),
-        infoWindow: FGMPlatformInfoWindow.make(
-          withTitle: "info title",
+        infoWindow: PlatformInfoWindow(
+          title: "info title",
           snippet: "info snippet",
-          anchor: FGMPlatformPoint.makeWith(x: 0, y: 0)
+          anchor: PlatformPoint(x: 0, y: 0)
         ),
-        position: FGMPlatformLatLng.make(withLatitude: latitude, longitude: longitude),
+        position: PlatformLatLng(latitude: latitude, longitude: longitude),
         rotation: rotation,
         visible: true,
         zIndex: zIndex,
@@ -73,10 +73,8 @@ import Testing
       )
     ])
 
-    let markerController = try #require(
-      controller.markerIdentifierToController[markerIdentifier] as? FGMMarkerController
-    )
-    let marker = try #require(markerController.marker)
+    let markerController = try #require(controller.markerIdentifierToController[markerIdentifier])
+    let marker = markerController.marker
 
     let delta = 0.0001
     #expect(abs(Double(marker.opacity) - alpha) <= delta)
@@ -95,19 +93,19 @@ import Testing
 
     let markerIdentifier = "marker"
     controller.add([
-      FGMPlatformMarker.make(
-        withAlpha: 1.0,
-        anchor: FGMPlatformPoint.makeWith(x: 0, y: 0),
+      PlatformMarker(
+        alpha: 1.0,
+        anchor: PlatformPoint(x: 0, y: 0),
         consumeTapEvents: false,
         draggable: true,
         flat: false,
         icon: placeholderBitmap(),
-        infoWindow: FGMPlatformInfoWindow.make(
-          withTitle: "info title",
+        infoWindow: PlatformInfoWindow(
+          title: "info title",
           snippet: "info snippet",
-          anchor: FGMPlatformPoint.makeWith(x: 0, y: 0)
+          anchor: PlatformPoint(x: 0, y: 0)
         ),
-        position: FGMPlatformLatLng.make(withLatitude: 0.0, longitude: 0.0),
+        position: PlatformLatLng(latitude: 0.0, longitude: 0.0),
         rotation: 0,
         visible: false,
         zIndex: 0,
@@ -117,10 +115,8 @@ import Testing
       )
     ])
 
-    let markerController = try #require(
-      controller.markerIdentifierToController[markerIdentifier] as? FGMMarkerController
-    )
-    let marker = try #require(markerController.marker)
+    let markerController = try #require(controller.markerIdentifierToController[markerIdentifier])
+    let marker = markerController.marker
 
     #expect(marker.isDraggable)
   }
@@ -134,19 +130,19 @@ import Testing
 
     let markerIdentifier = "marker"
     controller.add([
-      FGMPlatformMarker.make(
-        withAlpha: 1.0,
-        anchor: FGMPlatformPoint.makeWith(x: 0, y: 0),
+      PlatformMarker(
+        alpha: 1.0,
+        anchor: PlatformPoint(x: 0, y: 0),
         consumeTapEvents: false,
         draggable: false,
         flat: true,
         icon: placeholderBitmap(),
-        infoWindow: FGMPlatformInfoWindow.make(
-          withTitle: "info title",
+        infoWindow: PlatformInfoWindow(
+          title: "info title",
           snippet: "info snippet",
-          anchor: FGMPlatformPoint.makeWith(x: 0, y: 0)
+          anchor: PlatformPoint(x: 0, y: 0)
         ),
-        position: FGMPlatformLatLng.make(withLatitude: 0.0, longitude: 0.0),
+        position: PlatformLatLng(latitude: 0.0, longitude: 0.0),
         rotation: 0,
         visible: false,
         zIndex: 0,
@@ -156,10 +152,8 @@ import Testing
       )
     ])
 
-    let markerController = try #require(
-      controller.markerIdentifierToController[markerIdentifier] as? FGMMarkerController
-    )
-    let marker = try #require(markerController.marker)
+    let markerController = try #require(controller.markerIdentifierToController[markerIdentifier])
+    let marker = markerController.marker
 
     #expect(marker.isFlat)
   }
@@ -173,19 +167,19 @@ import Testing
 
     let markerIdentifier = "marker"
     controller.add([
-      FGMPlatformMarker.make(
-        withAlpha: 1.0,
-        anchor: FGMPlatformPoint.makeWith(x: 0, y: 0),
+      PlatformMarker(
+        alpha: 1.0,
+        anchor: PlatformPoint(x: 0, y: 0),
         consumeTapEvents: false,
         draggable: false,
         flat: false,
         icon: placeholderBitmap(),
-        infoWindow: FGMPlatformInfoWindow.make(
-          withTitle: "info title",
+        infoWindow: PlatformInfoWindow(
+          title: "info title",
           snippet: "info snippet",
-          anchor: FGMPlatformPoint.makeWith(x: 0, y: 0)
+          anchor: PlatformPoint(x: 0, y: 0)
         ),
-        position: FGMPlatformLatLng.make(withLatitude: 0.0, longitude: 0.0),
+        position: PlatformLatLng(latitude: 0.0, longitude: 0.0),
         rotation: 0,
         visible: true,
         zIndex: 0,
@@ -195,10 +189,8 @@ import Testing
       )
     ])
 
-    let markerController = try #require(
-      controller.markerIdentifierToController[markerIdentifier] as? FGMMarkerController
-    )
-    let marker = try #require(markerController.marker)
+    let markerController = try #require(controller.markerIdentifierToController[markerIdentifier])
+    let marker = markerController.marker
 
     // Visibility is controlled by being set to a map.
     #expect(marker.map != nil)
@@ -215,19 +207,19 @@ import Testing
     let anchorX = 3.14
     let anchorY = 2.718
     controller.add([
-      FGMPlatformMarker.make(
-        withAlpha: 1.0,
-        anchor: FGMPlatformPoint.makeWith(x: 0, y: 0),
+      PlatformMarker(
+        alpha: 1.0,
+        anchor: PlatformPoint(x: 0, y: 0),
         consumeTapEvents: true,
         draggable: true,
         flat: true,
         icon: placeholderBitmap(),
-        infoWindow: FGMPlatformInfoWindow.make(
-          withTitle: title,
+        infoWindow: PlatformInfoWindow(
+          title: title,
           snippet: snippet,
-          anchor: FGMPlatformPoint.makeWith(x: anchorX, y: anchorY)
+          anchor: PlatformPoint(x: anchorX, y: anchorY)
         ),
-        position: FGMPlatformLatLng.make(withLatitude: 0, longitude: 0),
+        position: PlatformLatLng(latitude: 0, longitude: 0),
         rotation: 0,
         visible: true,
         zIndex: 0,
@@ -237,10 +229,8 @@ import Testing
       )
     ])
 
-    let markerController = try #require(
-      controller.markerIdentifierToController[markerIdentifier] as? FGMMarkerController
-    )
-    let marker = try #require(markerController.marker)
+    let markerController = try #require(controller.markerIdentifierToController[markerIdentifier])
+    let marker = markerController.marker
 
     let delta = 0.0001
     #expect(abs(Double(marker.infoWindowAnchor.x) - anchorX) <= delta)
@@ -251,24 +241,22 @@ import Testing
 
   @Test func updateMarkerSetsVisibilityLast() {
     let marker = PropertyOrderValidatingAdvancedMarker()
-    let collisionBehavior = FGMPlatformMarkerCollisionBehaviorBox(
-      value: .requiredAndHidesOptional
-    )
-    FGMMarkerController.update(
+    let collisionBehavior = PlatformMarkerCollisionBehavior.requiredAndHidesOptional
+    MarkerController.update(
       marker,
-      from: FGMPlatformMarker.make(
-        withAlpha: 1.0,
-        anchor: FGMPlatformPoint.makeWith(x: 0, y: 0),
+      from: PlatformMarker(
+        alpha: 1.0,
+        anchor: PlatformPoint(x: 0, y: 0),
         consumeTapEvents: true,
         draggable: true,
         flat: true,
         icon: placeholderBitmap(),
-        infoWindow: FGMPlatformInfoWindow.make(
-          withTitle: "info title",
+        infoWindow: PlatformInfoWindow(
+          title: "info title",
           snippet: "info snippet",
-          anchor: FGMPlatformPoint.makeWith(x: 0, y: 0)
+          anchor: PlatformPoint(x: 0, y: 0)
         ),
-        position: FGMPlatformLatLng.make(withLatitude: 0, longitude: 0),
+        position: PlatformLatLng(latitude: 0, longitude: 0),
         rotation: 0,
         visible: true,
         zIndex: 0,
@@ -276,7 +264,7 @@ import Testing
         clusterManagerId: nil,
         collisionBehavior: collisionBehavior
       ),
-      with: MarkerControllerTests.mapView(),
+      mapView: MarkerControllerTests.mapView(),
       assetProvider: TestAssetProvider(),
       screenScale: 1,
       usingOpacityForVisibility: false
@@ -285,13 +273,13 @@ import Testing
   }
 
   @Test func assetProviderIsRetained() {
-    var markerController: FGMMarkersController?
+    var markerController: MarkersController?
     weak var weakAssetProvider: TestAssetProvider?
     autoreleasepool {
       let assetProvider = TestAssetProvider()
       weakAssetProvider = assetProvider
 
-      markerController = FGMMarkersController(
+      markerController = MarkersController(
         mapView: MarkerControllerTests.mapView(),
         eventDelegate: TestMapEventHandler(),
         clusterManagersController: nil,

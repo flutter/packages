@@ -19,9 +19,8 @@ import 'package:flutter_test/flutter_test.dart';
 
 RenderBox getRenderSegmentedControl(WidgetTester tester) {
   return tester.allRenderObjects.firstWhere((RenderObject currentObject) {
-        return currentObject.toStringShort().contains('_RenderSegmentedControl');
-      })
-      as RenderBox;
+    return currentObject.toStringShort().contains('_RenderSegmentedControl');
+  }) as RenderBox;
 }
 
 Rect currentUnscaledThumbRect(WidgetTester tester, {bool useGlobalCoordinate = false}) {

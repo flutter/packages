@@ -97,6 +97,18 @@ mixin CupertinoRouteTransitionMixin<T> on PageRoute<T> {
   @protected
   Widget buildContent(BuildContext context);
 
+  /// {@template cupertino_ui.CupertinoRouteTransitionMixin.includeRouteSemantics}
+  /// Whether this route introduces a route scope in the semantics tree.
+  ///
+  /// Defaults to true. When true, screen readers can treat pushes and pops of
+  /// this route as navigation to a new screen and announce the change to users.
+  ///
+  /// Set this to false for routes that update only part of the screen, such as
+  /// tab or shell content in a nested navigator. This prevents screen readers
+  /// from treating the route as a new screen.
+  /// {@endtemplate}
+  bool get includeRouteSemantics => true;
+
   /// {@template cupertino_ui.CupertinoRouteTransitionMixin.title}
   /// A title string for this route.
   ///
@@ -194,6 +206,9 @@ mixin CupertinoRouteTransitionMixin<T> on PageRoute<T> {
     Animation<double> secondaryAnimation,
   ) {
     final Widget child = buildContent(context);
+    if (!includeRouteSemantics) {
+      return child;
+    }
     return Semantics(scopesRoute: true, explicitChildNodes: true, child: child);
   }
 
@@ -309,6 +324,7 @@ class CupertinoPageRoute<T> extends PageRoute<T> with CupertinoRouteTransitionMi
     this.maintainState = true,
     super.fullscreenDialog,
     super.allowSnapshotting = true,
+    this.includeRouteSemantics = true,
     super.barrierDismissible = false,
   }) {
     assert(opaque);
@@ -329,6 +345,10 @@ class CupertinoPageRoute<T> extends PageRoute<T> with CupertinoRouteTransitionMi
 
   @override
   final bool maintainState;
+
+  /// {@macro cupertino_ui.CupertinoRouteTransitionMixin.includeRouteSemantics}
+  @override
+  final bool includeRouteSemantics;
 
   @override
   String get debugLabel => '${super.debugLabel}(${settings.name})';
@@ -363,6 +383,9 @@ class _PageBasedCupertinoPageRoute<T> extends PageRoute<T> with CupertinoRouteTr
   bool get fullscreenDialog => _page.fullscreenDialog;
 
   @override
+  bool get includeRouteSemantics => _page.includeRouteSemantics;
+
+  @override
   String get debugLabel => '${super.debugLabel}(${_page.name})';
 }
 
@@ -390,6 +413,7 @@ class CupertinoPage<T> extends Page<T> {
     this.title,
     this.fullscreenDialog = false,
     this.allowSnapshotting = true,
+    this.includeRouteSemantics = true,
     super.canPop,
     super.onPopInvoked,
     super.key,
@@ -412,6 +436,9 @@ class CupertinoPage<T> extends Page<T> {
 
   /// {@macro flutter.widgets.TransitionRoute.allowSnapshotting}
   final bool allowSnapshotting;
+
+  /// {@macro cupertino_ui.CupertinoRouteTransitionMixin.includeRouteSemantics}
+  final bool includeRouteSemantics;
 
   @override
   Route<T> createRoute(BuildContext context) {
@@ -696,7 +723,6 @@ class _CupertinoFullscreenDialogTransitionState extends State<CupertinoFullscree
 /// detector is associated.
 class _CupertinoBackGestureDetector<T> extends StatefulWidget {
   const _CupertinoBackGestureDetector({
-    super.key,
     required this.enabledCallback,
     required this.onStartPopGesture,
     required this.child,
@@ -1318,6 +1344,7 @@ class CupertinoModalPopupRoute<T> extends PopupRoute<T> {
 ///  * [CupertinoActionSheet], which is the widget usually returned by the
 ///    `builder` argument to [showCupertinoModalPopup].
 ///  * <https://developer.apple.com/design/human-interface-guidelines/ios/views/action-sheets/>
+@awaitNotRequired
 Future<T?> showCupertinoModalPopup<T>({
   required BuildContext context,
   required WidgetBuilder builder,
@@ -1421,6 +1448,7 @@ Widget _buildCupertinoDialogTransitions(
 ///  * [DisplayFeatureSubScreen], which documents the specifics of how
 ///    [DisplayFeature]s can split the screen into sub-screens.
 ///  * <https://developer.apple.com/design/human-interface-guidelines/alerts/>
+@awaitNotRequired
 Future<T?> showCupertinoDialog<T>({
   required BuildContext context,
   required WidgetBuilder builder,

@@ -41,17 +41,8 @@ struct DataClassMethodsTests {
     let binaryMessenger = EchoBinaryMessenger(codec: CoreTestsPigeonCodec.shared)
     let api = FlutterIntegrationCoreApi(binaryMessenger: binaryMessenger)
 
-    await confirmation { confirmed in
-      api.echoNullable(everything) { result in
-        switch result {
-        case .success(let res):
-          #expect(everything == res)
-          confirmed()
-        case .failure(let error):
-          Issue.record("Failed with error: \(error)")
-        }
-      }
-    }
+    let res = try await api.echoNullable(everything)
+    #expect(everything == res)
   }
 
   @Test
@@ -61,17 +52,8 @@ struct DataClassMethodsTests {
     let binaryMessenger = EchoBinaryMessenger(codec: CoreTestsPigeonCodec.shared)
     let api = FlutterIntegrationCoreApi(binaryMessenger: binaryMessenger)
 
-    await confirmation { confirmed in
-      api.echoNullable(everything) { res in
-        switch res {
-        case .success(let res):
-          #expect(everything == res)
-          confirmed()
-        case .failure(let error):
-          Issue.record("Failed with error: \(error)")
-        }
-      }
-    }
+    let res = try await api.echoNullable(everything)
+    #expect(everything == res)
   }
 
   // We validate individual field outputs rather than asserting against a single exact expected string

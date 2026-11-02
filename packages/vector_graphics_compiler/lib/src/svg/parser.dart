@@ -1091,6 +1091,20 @@ class SvgParser {
     }
   }
 
+  /// Parses a `mask-type` attribute value into a [MaskType].
+  MaskType? parseMaskType(String? maskType) {
+    if (maskType == null) {
+      return null;
+    }
+    switch (maskType.trim().toLowerCase()) {
+      case 'alpha':
+        return MaskType.alpha;
+      case 'luminance':
+        return MaskType.luminance;
+    }
+    return null;
+  }
+
   double _parseRawWidthHeight(String raw) {
     if (raw == '100%' || raw == '') {
       return double.infinity;
@@ -1556,17 +1570,32 @@ class SvgParser {
     return attributeMap['display'] != 'none' && attributeMap['visibility'] != 'hidden';
   }
 
+  static final RegExp _listSeparator = RegExp(r'[\s,]');
+
+  // Text and tspan can list one coordinate per character, which isn't
+  // supported. Fail with a clear message instead of a FormatException.
+  String? _singleCoordinate(String name, String? raw) {
+    if (raw == null) {
+      return null;
+    }
+    final String trimmed = raw.trim();
+    if (trimmed.contains(_listSeparator)) {
+      throw UnimplementedError('A list of values for "$name" is not supported: "$trimmed"');
+    }
+    return trimmed;
+  }
+
   SvgAttributes _createSvgAttributes(Map<String, String> attributeMap, {Color? currentColor}) {
     final String? id = attributeMap['id'];
     final double? opacity = parseDouble(attributeMap['opacity'])?.clamp(0.0, 1.0);
     final Color? color =
         parseColor(attributeMap['color'], attributeName: 'color', id: id) ?? currentColor;
 
-    final String? rawX = attributeMap['x'];
-    final String? rawY = attributeMap['y'];
+    final String? rawX = _singleCoordinate('x', attributeMap['x']);
+    final String? rawY = _singleCoordinate('y', attributeMap['y']);
 
-    final String? rawDx = attributeMap['dx'];
-    final String? rawDy = attributeMap['dy'];
+    final String? rawDx = _singleCoordinate('dx', attributeMap['dx']);
+    final String? rawDy = _singleCoordinate('dy', attributeMap['dy']);
 
     return SvgAttributes._(
       raw: attributeMap,
@@ -1597,6 +1626,8 @@ class SvgParser {
         id: id,
       ),
       textAnchorMultiplier: parseTextAnchor(attributeMap['text-anchor']),
+      maskType: parseMaskType(attributeMap['mask-type']),
+      opacity: opacity,
     );
   }
 }
@@ -1778,6 +1809,8 @@ class SvgAttributes {
     this.dy,
     this.width,
     this.height,
+    this.maskType,
+    this.opacity,
   });
 
   /// For use in tests to construct arbitrary attributes.
@@ -1807,6 +1840,8 @@ class SvgAttributes {
     this.dy,
     this.width,
     this.height,
+    this.maskType,
+    this.opacity,
   });
 
   /// The empty set of properties.
@@ -1962,6 +1997,12 @@ class SvgAttributes {
   /// The relative y translation.
   final DoubleOrPercentage? dy;
 
+  /// The `mask-type` attribute.
+  final MaskType? maskType;
+
+  /// The element or group-level `opacity` attribute, clamped to 0.0..1.0.
+  final double? opacity;
+
   /// A copy of these attributes after absorbing a saveLayer.
   ///
   /// Specifically, this will null out `blendMode` and any opacity related
@@ -1992,6 +2033,7 @@ class SvgAttributes {
       y: y,
       width: width,
       height: height,
+      maskType: maskType,
     );
   }
 
@@ -2037,15 +2079,29 @@ class SvgAttributes {
       y: y,
       dx: dx,
       dy: dy,
+      maskType: maskType ?? parent.maskType,
+      opacity: opacity,
     );
   }
 }
 
-/// A value that represents either an absolute pixel coordinate or a percentage
-/// of a bounding dimension.
+/// The unit of a [DoubleOrPercentage].
+enum _DoubleOrPercentageUnit {
+  /// An absolute pixel coordinate.
+  pixels,
+
+  /// A fraction of a bounding dimension.
+  percentage,
+
+  /// A multiple of the font size.
+  em,
+}
+
+/// A value that represents either an absolute pixel coordinate, a percentage
+/// of a bounding dimension, or a multiple of the font size (`em`).
 @immutable
 class DoubleOrPercentage {
-  const DoubleOrPercentage._(this._value, this._isPercentage);
+  const DoubleOrPercentage._(this._value, this._unit);
 
   /// Constructs a [DoubleOrPercentage] from a raw SVG attribute string.
   static DoubleOrPercentage? fromString(String? raw) {
@@ -2054,33 +2110,36 @@ class DoubleOrPercentage {
     }
 
     if (isPercentage(raw)) {
-      return DoubleOrPercentage._(parsePercentage(raw), true);
+      return DoubleOrPercentage._(parsePercentage(raw), _DoubleOrPercentageUnit.percentage);
     }
-    return DoubleOrPercentage._(parseDouble(raw)!, false);
+    if (isEm(raw)) {
+      return DoubleOrPercentage._(parseEm(raw), _DoubleOrPercentageUnit.em);
+    }
+    return DoubleOrPercentage._(parseDouble(raw)!, _DoubleOrPercentageUnit.pixels);
   }
 
   final double _value;
-  final bool _isPercentage;
+  final _DoubleOrPercentageUnit _unit;
 
   /// Calculates the result of applying this dimension within [bound].
   ///
-  /// If this is a percentage, it will return a percentage of bound. Otherwise,
-  /// it returns the value of this.
-  double calculate(double bound) {
-    if (_isPercentage) {
-      return _value * bound;
-    }
-    return _value;
+  /// If this is a percentage, it will return a percentage of bound. If this is
+  /// an `em` value, it will return a multiple of [fontSize]. Otherwise, it
+  /// returns the value of this.
+  double calculate(double bound, {double fontSize = kDefaultFontSize}) {
+    return switch (_unit) {
+      _DoubleOrPercentageUnit.pixels => _value,
+      _DoubleOrPercentageUnit.percentage => _value * bound,
+      _DoubleOrPercentageUnit.em => _value * fontSize,
+    };
   }
 
   @override
-  int get hashCode => Object.hash(_value, _isPercentage);
+  int get hashCode => Object.hash(_value, _unit);
 
   @override
   bool operator ==(Object other) {
-    return other is DoubleOrPercentage &&
-        other._isPercentage == _isPercentage &&
-        other._value == _value;
+    return other is DoubleOrPercentage && other._unit == _unit && other._value == _value;
   }
 }
 

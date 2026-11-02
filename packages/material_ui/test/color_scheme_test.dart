@@ -667,62 +667,57 @@ void main() {
     );
   });
 
-  test(
-    'fromImageProvider() propagates TimeoutException or Failed to render image when image cannot be rendered',
-    () async {
-      final blueSquareBytes = Uint8List.fromList(kBlueSquarePng);
+  test('fromImageProvider() propagates TimeoutException or Failed to render image when image cannot be rendered', () async {
+    final blueSquareBytes = Uint8List.fromList(kBlueSquarePng);
 
-      // Corrupt the image's bytelist so it cannot be read.
-      final Uint8List corruptImage = blueSquareBytes.sublist(5);
-      final ImageProvider image = MemoryImage(corruptImage);
+    // Corrupt the image's bytelist so it cannot be read.
+    final Uint8List corruptImage = blueSquareBytes.sublist(5);
+    final ImageProvider image = MemoryImage(corruptImage);
 
-      expect(
-        () async => ColorScheme.fromImageProvider(provider: image),
-        throwsA(
-          isA<Exception>().having(
-            (Exception e) => e.toString(),
-            'image',
-            anyOf(contains('Failed to render image'), contains('TimeoutException')),
+    expect(
+      () async => ColorScheme.fromImageProvider(provider: image),
+      throwsA(
+        isA<Exception>().having(
+          (Exception e) => e.toString(),
+          'image',
+          anyOf(contains('Failed to render image'), contains('TimeoutException')),
+        ),
+      ),
+    );
+  });
+
+  testWidgets('generated scheme "on" colors meet a11y contrast guidelines', (
+    WidgetTester tester,
+  ) async {
+    final colors = ColorScheme.fromSeed(seedColor: Colors.teal);
+
+    Widget label(String text, Color textColor, Color background) {
+      return Container(
+        color: background,
+        padding: const EdgeInsets.all(8),
+        child: Text(text, style: TextStyle(color: textColor)),
+      );
+    }
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData.from(colorScheme: colors),
+        home: Scaffold(
+          body: Column(
+            children: <Widget>[
+              label('primary', colors.onPrimary, colors.primary),
+              label('secondary', colors.onSecondary, colors.secondary),
+              label('tertiary', colors.onTertiary, colors.tertiary),
+              label('error', colors.onError, colors.error),
+              label('background', colors.onBackground, colors.background),
+              label('surface', colors.onSurface, colors.surface),
+            ],
           ),
         ),
-      );
-    },
-  );
-
-  testWidgets(
-    'generated scheme "on" colors meet a11y contrast guidelines',
-    (WidgetTester tester) async {
-      final colors = ColorScheme.fromSeed(seedColor: Colors.teal);
-
-      Widget label(String text, Color textColor, Color background) {
-        return Container(
-          color: background,
-          padding: const EdgeInsets.all(8),
-          child: Text(text, style: TextStyle(color: textColor)),
-        );
-      }
-
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: ThemeData.from(colorScheme: colors),
-          home: Scaffold(
-            body: Column(
-              children: <Widget>[
-                label('primary', colors.onPrimary, colors.primary),
-                label('secondary', colors.onSecondary, colors.secondary),
-                label('tertiary', colors.onTertiary, colors.tertiary),
-                label('error', colors.onError, colors.error),
-                label('background', colors.onBackground, colors.background),
-                label('surface', colors.onSurface, colors.surface),
-              ],
-            ),
-          ),
-        ),
-      );
-      await expectLater(tester, meetsGuideline(textContrastGuideline));
-    },
-    skip: isBrowser, // https://github.com/flutter/flutter/issues/44115
-  );
+      ),
+    );
+    await expectLater(tester, meetsGuideline(textContrastGuideline));
+  });
 
   testWidgets(
     'Color values in ColorScheme.fromSeed with different variants matches values in DynamicScheme',

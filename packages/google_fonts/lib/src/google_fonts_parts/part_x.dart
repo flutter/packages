@@ -5,7 +5,9 @@
 // found in the LICENSE file.
 
 import 'dart:ui' as ui;
-import 'package:flutter/material.dart';
+
+import 'package:material_ui/material_ui.dart';
+
 import '../google_fonts_base.dart';
 import '../google_fonts_descriptor.dart';
 import '../google_fonts_variant.dart';
@@ -42,14 +44,14 @@ class PartX {
       const GoogleFontsVariant(
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
-      ): GoogleFontsFile(
+      ): const GoogleFontsFile(
         'e93b1f1a41c9c6d924ab92f23c91764b6e6ade7b78e0e568115ff446644699b6',
         38916,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.italic,
-      ): GoogleFontsFile(
+      ): const GoogleFontsFile(
         '94d5da2862ea346a4bb60d377d2593cda0fb55078716b137334b859485c91c34',
         41920,
       ),

@@ -12,7 +12,7 @@ extension Product {
     return SK2ProductMessage(
       id: id,
       displayName: displayName,
-      description: description,
+      localizedDescription: description,
       price: NSDecimalNumber(decimal: price).doubleValue,
       displayPrice: displayPrice,
       type: type.convertToPigeon,
@@ -169,8 +169,14 @@ extension Product.SubscriptionOffer.PaymentMode {
 
 extension Locale {
   var convertToPigeon: SK2PriceLocaleMessage {
+    let code: String
+    if #available(iOS 16.0, macOS 13.0, *) {
+      code = currency?.identifier ?? ""
+    } else {
+      code = currencyCode ?? ""
+    }
     return SK2PriceLocaleMessage(
-      currencyCode: currencyCode ?? "",
+      currencyCode: code,
       currencySymbol: currencySymbol ?? ""
     )
   }

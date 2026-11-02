@@ -11,10 +11,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:video_player/video_player.dart';
 import 'package:video_player_platform_interface/video_player_platform_interface.dart'
-    hide VideoAudioTrack;
+    hide VideoAudioTrack, VideoTrack;
 import 'package:video_player_platform_interface/video_player_platform_interface.dart'
     as platform_interface
-    show VideoAudioTrack;
+    show VideoAudioTrack, VideoTrack;
 
 const String _localhost = 'https://127.0.0.1';
 final Uri _localhostUri = Uri.parse(_localhost);
@@ -88,6 +88,15 @@ class FakeController extends ValueNotifier<VideoPlayerValue> implements VideoPla
 
   @override
   Future<void> setClosedCaptionFile(Future<ClosedCaptionFile>? closedCaptionFile) async {}
+
+  @override
+  Future<List<VideoTrack>> getVideoTracks() async => <VideoTrack>[];
+
+  @override
+  Future<void> selectVideoTrack(VideoTrack? track) async {}
+
+  @override
+  bool isVideoTrackSupportAvailable() => false;
 
   @override
   Future<List<VideoAudioTrack>> getAudioTracks() async {
@@ -663,6 +672,24 @@ void main() {
     });
 
     group('seekTo', () {
+      test('ignores a pending seek result after disposal', () async {
+        final controller = VideoPlayerController.networkUrl(_localhostUri);
+        addTearDown(controller.dispose);
+        await controller.initialize();
+
+        final seekCompleter = Completer<void>();
+        fakeVideoPlayerPlatform.seekCompleter = seekCompleter;
+        final VideoPlayerValue valueBeforeSeek = controller.value;
+        final Future<void> pendingSeek = controller.seekTo(const Duration(milliseconds: 500));
+        expect(fakeVideoPlayerPlatform.calls.last, 'seekTo');
+
+        await controller.dispose();
+        seekCompleter.complete();
+        await pendingSeek;
+
+        expect(controller.value, valueBeforeSeek);
+      });
+
       test('works', () async {
         final controller = VideoPlayerController.networkUrl(_localhostUri);
         addTearDown(controller.dispose);
@@ -1447,6 +1474,28 @@ void main() {
     });
 
     group('Platform callbacks', () {
+      testWidgets('ignores a pending completion seek result after disposal', (
+        WidgetTester tester,
+      ) async {
+        final controller = VideoPlayerController.networkUrl(_localhostUri);
+        addTearDown(controller.dispose);
+        await controller.initialize();
+
+        final seekCompleter = Completer<void>();
+        fakeVideoPlayerPlatform.seekCompleter = seekCompleter;
+        fakeVideoPlayerPlatform.streams[controller.playerId]!.add(
+          VideoEvent(eventType: VideoEventType.completed),
+        );
+        await tester.pump();
+        expect(fakeVideoPlayerPlatform.calls.last, 'seekTo');
+        final VideoPlayerValue valueBeforeDisposal = controller.value;
+
+        await tester.runAsync(controller.dispose);
+        seekCompleter.complete();
+        await tester.pump();
+        expect(controller.value, valueBeforeDisposal);
+      });
+
       testWidgets('playing completed', (WidgetTester tester) async {
         final controller = VideoPlayerController.networkUrl(_localhostUri);
 
@@ -1912,10 +1961,107 @@ void main() {
       await controller.seekTo(const Duration(seconds: 20));
     });
   });
+
+  group('video tracks', () {
+    test('isVideoTrackSupportAvailable returns platform value', () async {
+      final controller = VideoPlayerController.networkUrl(_localhostUri);
+      await controller.initialize();
+
+      expect(controller.isVideoTrackSupportAvailable(), true);
+    });
+
+    test('getVideoTracks returns empty list when not initialized', () async {
+      final controller = VideoPlayerController.networkUrl(_localhostUri);
+
+      final List<VideoTrack> tracks = await controller.getVideoTracks();
+
+      expect(tracks, isEmpty);
+    });
+
+    test('getVideoTracks returns tracks from platform', () async {
+      final controller = VideoPlayerController.networkUrl(_localhostUri);
+      await controller.initialize();
+
+      fakeVideoPlayerPlatform
+          .setVideoTracksForPlayer(controller.playerId, <platform_interface.VideoTrack>[
+            const platform_interface.VideoTrack(
+              id: '0_0',
+              isSelected: true,
+              label: '1080p',
+              bitrate: 5000000,
+              width: 1920,
+              height: 1080,
+            ),
+            const platform_interface.VideoTrack(
+              id: '0_1',
+              isSelected: false,
+              label: '720p',
+              bitrate: 2500000,
+              width: 1280,
+              height: 720,
+            ),
+          ]);
+
+      final List<VideoTrack> tracks = await controller.getVideoTracks();
+
+      expect(tracks.length, 2);
+      expect(tracks[0].id, '0_0');
+      expect(tracks[0].label, '1080p');
+      expect(tracks[0].isSelected, true);
+      expect(tracks[0].bitrate, 5000000);
+      expect(tracks[1].id, '0_1');
+      expect(tracks[1].label, '720p');
+      expect(fakeVideoPlayerPlatform.calls, contains('getVideoTracks'));
+    });
+
+    test('getVideoTracks preserves null labels from platform', () async {
+      final controller = VideoPlayerController.networkUrl(_localhostUri);
+      await controller.initialize();
+
+      fakeVideoPlayerPlatform.setVideoTracksForPlayer(
+        controller.playerId,
+        <platform_interface.VideoTrack>[
+          const platform_interface.VideoTrack(id: '0_0', isSelected: true, bitrate: 5000000),
+        ],
+      );
+
+      final List<VideoTrack> tracks = await controller.getVideoTracks();
+
+      expect(tracks.single.label, isNull);
+    });
+
+    test('selectVideoTrack calls platform with track', () async {
+      final controller = VideoPlayerController.networkUrl(_localhostUri);
+      await controller.initialize();
+
+      const track = VideoTrack(id: '0_1', isSelected: false, label: '720p', bitrate: 2500000);
+      await controller.selectVideoTrack(track);
+
+      expect(fakeVideoPlayerPlatform.calls, contains('selectVideoTrack'));
+    });
+
+    test('selectVideoTrack with null enables auto quality', () async {
+      final controller = VideoPlayerController.networkUrl(_localhostUri);
+      await controller.initialize();
+
+      await controller.selectVideoTrack(null);
+
+      expect(fakeVideoPlayerPlatform.calls, contains('selectVideoTrack'));
+    });
+
+    test('selectVideoTrack does nothing when not initialized', () async {
+      final controller = VideoPlayerController.networkUrl(_localhostUri);
+
+      await controller.selectVideoTrack(null);
+
+      expect(fakeVideoPlayerPlatform.calls, isNot(contains('selectVideoTrack')));
+    });
+  });
 }
 
 class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
   Completer<bool> initialized = Completer<bool>();
+  Completer<void>? seekCompleter;
   List<String> calls = <String>[];
   List<DataSource> dataSources = <DataSource>[];
   List<VideoViewType> viewTypes = <VideoViewType>[];
@@ -2003,6 +2149,7 @@ class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
   @override
   Future<void> seekTo(int playerId, Duration position) async {
     calls.add('seekTo');
+    await seekCompleter?.future;
     _positions[playerId] = position;
   }
 
@@ -2046,6 +2193,29 @@ class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
     }
     calls.add('setWebOptions');
     webOptions[playerId] = options;
+  }
+
+  // Video track selection support
+  final Map<int, List<platform_interface.VideoTrack>> _videoTracks =
+      <int, List<platform_interface.VideoTrack>>{};
+  void setVideoTracksForPlayer(int playerId, List<platform_interface.VideoTrack> tracks) {
+    _videoTracks[playerId] = tracks;
+  }
+
+  @override
+  Future<List<platform_interface.VideoTrack>> getVideoTracks(int playerId) async {
+    calls.add('getVideoTracks');
+    return _videoTracks[playerId] ?? <platform_interface.VideoTrack>[];
+  }
+
+  @override
+  Future<void> selectVideoTrack(int playerId, platform_interface.VideoTrack? track) async {
+    calls.add('selectVideoTrack');
+  }
+
+  @override
+  bool isVideoTrackSupportAvailable() {
+    return true;
   }
 
   @override

@@ -4,10 +4,10 @@
 
 import 'dart:async';
 
-import 'package:dart_skills_lint/dart_skills_lint.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:logging/logging.dart';
+import 'package:skills_lint/skills_lint.dart';
 
 import 'enforce_tracked_skills_prevent_publishing_rule.dart';
 

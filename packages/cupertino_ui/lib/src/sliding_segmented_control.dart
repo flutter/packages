@@ -101,7 +101,7 @@ const Duration _kHighlightAnimationDuration = Duration(milliseconds: 200);
 
 class _Segment<T> extends StatefulWidget {
   const _Segment({
-    required ValueKey<T> key,
+    required ValueKey<T> super.key,
     required this.child,
     required this.pressed,
     required this.highlighted,
@@ -109,7 +109,7 @@ class _Segment<T> extends StatefulWidget {
     required this.enabled,
     required this.segmentLocation,
     required this.isMomentary,
-  }) : super(key: key);
+  });
 
   final Widget child;
 
@@ -238,8 +238,7 @@ class _SegmentState<T> extends State<_Segment<T>> with TickerProviderStateMixin<
 
 // Fadeout the separator when either adjacent segment is highlighted.
 class _SegmentSeparator extends StatefulWidget {
-  const _SegmentSeparator({required ValueKey<int> key, required this.highlighted})
-    : super(key: key);
+  const _SegmentSeparator({required ValueKey<int> super.key, required this.highlighted});
 
   final bool highlighted;
 
@@ -339,6 +338,15 @@ class _SegmentSeparatorState extends State<_SegmentSeparator>
 /// A segmented control may optionally be created with custom colors. The
 /// [thumbColor], [backgroundColor] arguments can be used to override the
 /// segmented control's colors from its defaults.
+///
+/// The default [backgroundColor], [CupertinoColors.tertiarySystemFill], is
+/// intentionally translucent (alpha 0.12 in light mode) to match the native
+/// `UISegmentedControl`
+/// (<https://developer.apple.com/documentation/uikit/uisegmentedcontrol>).
+/// As a result, content placed behind the segmented
+/// control — for example, a [Stack] child beneath it — shows through the
+/// unselected segments. To get an opaque background, pass an opaque [Color]
+/// to [backgroundColor].
 ///
 /// <callout-box>
 ///
@@ -473,8 +481,13 @@ class CupertinoSlidingSegmentedControl<T extends Object> extends StatefulWidget 
 
   /// The color used to paint the rounded rect behind the [children] and the separators.
   ///
-  /// The default value is [CupertinoColors.tertiarySystemFill]. The background
-  /// will not be painted if null is specified.
+  /// The default value is [CupertinoColors.tertiarySystemFill], which is
+  /// translucent (alpha 0.12 in light mode) to match the native
+  /// `UISegmentedControl`
+  /// (<https://developer.apple.com/documentation/uikit/uisegmentedcontrol>).
+  /// Content placed behind the segmented control is
+  /// therefore visible through the unselected segments unless an opaque
+  /// [Color] is supplied here.
   final Color backgroundColor;
 
   /// Determine whether segments have proportional widths based on their content.

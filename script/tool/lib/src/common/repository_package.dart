@@ -74,6 +74,9 @@ class RepositoryPackage {
   /// The test directory containing the package's Dart tests.
   Directory get testDirectory => directory.childDirectory('test');
 
+  /// The test directory containing the tests for the package's dart fixes.
+  Directory get dartFixTestDirectory => directory.childDirectory('test_fixes');
+
   /// The path to the script that is run by the `custom-test` command.
   File get customTestScript => directory.childDirectory('tool').childFile('run_tests.dart');
 
@@ -218,18 +221,30 @@ class RepositoryPackage {
   }
 
   /// True if this package is located within a directory that is ignored
-  /// by the enclosing package's `.pubignore` file.
+  /// by the enclosing package's `.pubignore` file, or by a `.pubignore` file in
+  /// an intermediate directory between the enclosing package and this package.
   bool get isPubIgnored {
     final RepositoryPackage? enclosingPackage = getEnclosingPackage();
     if (enclosingPackage == null) {
       return false;
     }
-    final File pubignoreFile = enclosingPackage.directory.childFile('.pubignore');
-    if (!pubignoreFile.existsSync()) {
-      return false;
-    }
 
-    final String relativePath = p.relative(directory.path, from: enclosingPackage.directory.path);
+    Directory current = directory.parent;
+    while (current.path != current.parent.path) {
+      final File pubignoreFile = current.childFile('.pubignore');
+      if (pubignoreFile.existsSync() && _isPathIgnoredBy(directory, current, pubignoreFile)) {
+        return true;
+      }
+      if (current.path == enclosingPackage.directory.path) {
+        break;
+      }
+      current = current.parent;
+    }
+    return false;
+  }
+
+  bool _isPathIgnoredBy(Directory targetDirectory, Directory baseDirectory, File pubignoreFile) {
+    final String relativePath = p.relative(targetDirectory.path, from: baseDirectory.path);
     final List<String> segments = p.split(relativePath);
     final candidatePaths = <String>[];
     for (var i = 1; i <= segments.length; i++) {
@@ -251,16 +266,26 @@ class RepositoryPackage {
       if (isAnchored) {
         pattern = pattern.substring(1);
       }
+      String? dirPattern;
       if (pattern.endsWith('/')) {
+        // Appending '**' to 'dir/' only matches paths inside the directory (e.g. 'dir/file').
+        // Cache the dirPattern 'dir' to match the directory itself.
+        dirPattern = pattern.substring(0, pattern.length - 1);
         pattern = '$pattern**';
       }
 
       try {
         final globExact = Glob(pattern);
         final Glob? globNested = isAnchored ? null : Glob('**/$pattern');
+        final Glob? globDirExact = dirPattern == null ? null : Glob(dirPattern);
+        final Glob? globDirNested = (dirPattern == null || isAnchored)
+            ? null
+            : Glob('**/$dirPattern');
         for (final candidate in candidatePaths) {
           if (globExact.matches(candidate) ||
-              (globNested != null && globNested.matches(candidate))) {
+              (globNested != null && globNested.matches(candidate)) ||
+              (globDirExact != null && globDirExact.matches(candidate)) ||
+              (globDirNested != null && globDirNested.matches(candidate))) {
             return true;
           }
         }

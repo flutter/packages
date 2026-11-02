@@ -49,16 +49,7 @@ struct MultipleArityTests {
     }
     let api = MultipleArityFlutterApi(binaryMessenger: binaryMessenger)
 
-    await confirmation { confirmed in
-      api.subtract(x: 30, y: 10) { result in
-        switch result {
-        case .success(let res):
-          #expect(res == 20)
-          confirmed()
-        case .failure(let error):
-          Issue.record("Failed with error: \(error)")
-        }
-      }
-    }
+    let res = try await api.subtract(x: 30, y: 10)
+    #expect(res == 20)
   }
 }

@@ -41,32 +41,17 @@ struct RunnerTests {
   func echoStringFromProtocol() async throws {
     let api: FlutterApiFromProtocol = FlutterApiFromProtocol()
     let aString = "aString"
-    await confirmation { confirmed in
-      api.echo(string: aString) { response in
-        switch response {
-        case .success(let res):
-          #expect(aString == res)
-        case .failure(let error):
-          Issue.record("Failed with error: \(error)")
-        }
-        confirmed()
-      }
-    }
+    let res = try await api.echo(string: aString)
+    #expect(aString == res)
   }
 }
 
-class FlutterApiFromProtocol: FlutterSmallApiProtocol {
-  func echo(
-    string aStringArg: String,
-    completion: @escaping (Result<String, test_plugin.PigeonError>) -> Void
-  ) {
-    completion(.success(aStringArg))
+final class FlutterApiFromProtocol: FlutterSmallApiProtocol {
+  func echo(string aStringArg: String) async throws -> String {
+    return aStringArg
   }
 
-  func echo(
-    _ msgArg: test_plugin.TestMessage,
-    completion: @escaping (Result<test_plugin.TestMessage, test_plugin.PigeonError>) -> Void
-  ) {
-    completion(.success(msgArg))
+  func echo(_ msgArg: test_plugin.TestMessage) async throws -> test_plugin.TestMessage {
+    return msgArg
   }
 }

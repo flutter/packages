@@ -385,10 +385,11 @@ void main() {
   ThemeData themeData = ThemeData();
   themeData = ThemeData(bottomAppBarTheme: BottomAppBarTheme(color: Colors.green));
   themeData = ThemeData.raw(bottomAppBarTheme: BottomAppBarTheme(color: Colors.green));
-  themeData = ThemeData.copyWith(bottomAppBarTheme: BottomAppBarTheme(color: Colors.green));
+  themeData = themeData.copyWith(bottomAppBarTheme: BottomAppBarTheme(color: Colors.green));
 
   // Changes made in https://github.com/flutter/flutter/pull/131455
-  ThemeData themeData = ThemeData.copyWith();
+  ThemeData themeData = ThemeData();
+  themeData = themeData.copyWith();
 
   // Changes made in https://github.com/flutter/flutter/pull/155072
   ThemeData themeData = ThemeData();

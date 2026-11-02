@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 /// @docImport 'color_scheme.dart';
+/// @docImport 'range_slider.dart';
 /// @docImport 'slider.dart';
 /// @docImport 'text_theme.dart';
 library;
@@ -1199,14 +1200,14 @@ class GappedSliderTrackShape extends SliderTrackShape with BaseSliderTrackShape 
       } else {
         context.canvas.drawRRect(
           RRect.fromLTRBAndCorners(
-            secondaryOffset.dx - trackGap,
+            secondaryOffset.dx,
             trackRect.top,
-            thumbCenter.dx,
+            thumbCenter.dx - trackGap,
             trackRect.bottom,
-            topLeft: trackInsideCornerRadius,
-            bottomLeft: trackInsideCornerRadius,
-            topRight: trackCornerRadius,
-            bottomRight: trackCornerRadius,
+            topLeft: trackCornerRadius,
+            bottomLeft: trackCornerRadius,
+            topRight: trackInsideCornerRadius,
+            bottomRight: trackInsideCornerRadius,
           ),
           secondaryTrackPaint,
         );

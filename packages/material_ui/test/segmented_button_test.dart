@@ -15,6 +15,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
+import 'finders.dart';
 import 'semantics_tester.dart';
 
 void main() {
@@ -765,8 +766,8 @@ void main() {
     );
 
     expect(find.byType(Tooltip), findsNWidgets(2));
-    expect(find.byTooltip('t2'), findsOneWidget);
-    expect(find.byTooltip('t3'), findsOneWidget);
+    expect(findByTooltip('t2'), findsOneWidget);
+    expect(findByTooltip('t3'), findsOneWidget);
   });
 
   testWidgets('SegmentedButton.styleFrom is applied to the SegmentedButton', (
@@ -1469,11 +1470,12 @@ void main() {
           child: Center(
             child: SegmentedButton<int>(
               style: const ButtonStyle(
-                side:
-                    WidgetStateProperty<BorderSide?>.fromMap(<WidgetStatesConstraint, BorderSide?>{
-                      WidgetState.disabled: BorderSide(color: disabledColor),
-                      WidgetState.any: BorderSide(color: enabledColor),
-                    }),
+                side: WidgetStateProperty<BorderSide?>.fromMap(
+                  <WidgetStatesConstraint, BorderSide?>{
+                    WidgetState.disabled: BorderSide(color: disabledColor),
+                    WidgetState.any: BorderSide(color: enabledColor),
+                  },
+                ),
               ),
               // First segment is enabled, second is disabled.
               segments: const <ButtonSegment<int>>[
@@ -1535,7 +1537,7 @@ void main() {
       RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
       kIsWeb ? SystemMouseCursors.click : SystemMouseCursors.basic,
     );
-  });
+  }, tags: 'reduced-web-test-set');
 
   testWidgets('SegmentedButton has expected mouse cursor when explicitly configured', (
     WidgetTester tester,

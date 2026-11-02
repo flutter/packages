@@ -7,6 +7,7 @@ import 'package:file/file.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
 import 'package:flutter_plugin_tools/src/validate_command.dart';
 import 'package:git/git.dart';
+import 'package:platform/platform.dart';
 import 'package:test/test.dart';
 
 import 'mocks.dart';
@@ -136,11 +137,11 @@ false_secrets:
 void main() {
   group('test pubspec_check_command', () {
     late CommandRunner<void> runner;
-    late MockPlatform mockPlatform;
+    late NativePlatform mockPlatform;
     late Directory packagesDir;
     late Directory repoRoot;
     setUp(() {
-      mockPlatform = MockPlatform();
+      mockPlatform = createMockPlatform();
       final RecordingProcessRunner processRunner;
       final GitDir gitDir;
       (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) = configureBaseCommandMocks(
@@ -2127,11 +2128,11 @@ ${_topicsSection()}
 
   group('test pubspec_check_command on Windows', () {
     late CommandRunner<void> runner;
-    late MockPlatform mockPlatform;
+    late NativePlatform mockPlatform;
     late Directory packagesDir;
 
     setUp(() {
-      mockPlatform = MockPlatform(isWindows: true);
+      mockPlatform = createMockPlatform(isWindows: true);
       final RecordingProcessRunner processRunner;
       final GitDir gitDir;
       (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) = configureBaseCommandMocks(

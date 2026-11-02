@@ -28,9 +28,6 @@ let package = Package(
       ],
       resources: [
         .process("Resources")
-      ],
-      cSettings: [
-        .headerSearchPath("include/google_sign_in_ios")
       ]
     )
   ]

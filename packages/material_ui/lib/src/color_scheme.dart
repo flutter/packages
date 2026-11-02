@@ -2011,7 +2011,8 @@ class ColorScheme with Diagnosticable {
     double contrastLevel,
   ) {
     assert(
-      contrastLevel >= -1.0 && contrastLevel <= 1.0,
+      contrastLevel + precisionErrorTolerance >= -1.0 &&
+          contrastLevel - precisionErrorTolerance <= 1.0,
       'contrastLevel must be between -1.0 and 1.0 inclusive.',
     );
     final isDark = brightness == Brightness.dark;

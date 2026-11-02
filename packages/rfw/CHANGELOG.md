@@ -1,6 +1,12 @@
-## NEXT
+## 2.0.0
+
+* Migrates to material_ui.
+* Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
+
+## 1.1.4
 
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+* Fixes `fontWeight` not being applied in release mode for `Text` and `StrutStyle` widgets.
 
 ## 1.1.3
 

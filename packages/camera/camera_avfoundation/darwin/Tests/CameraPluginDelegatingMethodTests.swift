@@ -273,6 +273,51 @@ final class CameraPluginDelegatingMethodTests: XCTestCase {
     XCTAssertTrue(setJpegImageQualityCalled)
   }
 
+  func testIsZeroShutterLagSupported_returnsValueFromCameraIsZeroShutterLagSupported() {
+    let (cameraPlugin, mockCamera) = createCameraPlugin()
+    let expectation = expectation(description: "Call completed")
+
+    var isZeroShutterLagSupportedCalled = false
+    mockCamera.isZeroShutterLagSupportedStub = {
+      isZeroShutterLagSupportedCalled = true
+      return true
+    }
+
+    cameraPlugin.isZeroShutterLagSupported { result in
+      switch result {
+      case .success(let supported):
+        XCTAssertTrue(supported)
+      case .failure:
+        XCTFail("Unexpected error")
+      }
+      expectation.fulfill()
+    }
+
+    waitForExpectations(timeout: 30, handler: nil)
+
+    XCTAssertTrue(isZeroShutterLagSupportedCalled)
+  }
+
+  func testSetZeroShutterLagEnabled_callsCameraSetZeroShutterLagEnabled() {
+    let (cameraPlugin, mockCamera) = createCameraPlugin()
+    let expectation = expectation(description: "Call completed")
+
+    var setZeroShutterLagEnabledCalled = false
+    mockCamera.setZeroShutterLagEnabledStub = { enabled in
+      XCTAssertTrue(enabled)
+      setZeroShutterLagEnabledCalled = true
+    }
+
+    cameraPlugin.setZeroShutterLagEnabled(enabled: true) { result in
+      let _ = self.assertSuccess(result)
+      expectation.fulfill()
+    }
+
+    waitForExpectations(timeout: 30, handler: nil)
+
+    XCTAssertTrue(setZeroShutterLagEnabledCalled)
+  }
+
   func testStartImageStream_callsCameraStartImageStream() {
     let (cameraPlugin, mockCamera) = createCameraPlugin()
     let expectation = expectation(description: "Call completed")
@@ -317,13 +362,13 @@ final class CameraPluginDelegatingMethodTests: XCTestCase {
     let expectation = expectation(description: "Call completed")
 
     var startVideoRecordingCalled = false
-    mockCamera.startVideoRecordingStub = { completion, messenger in
+    mockCamera.startVideoRecordingStub = { path, completion, messenger in
       XCTAssertNotNil(messenger)
-      completion(.success(()))
       startVideoRecordingCalled = true
+      completion(.success(()))
     }
 
-    cameraPlugin.startVideoRecording(enableStream: true) { result in
+    cameraPlugin.startVideoRecording(enableStream: true, videoOutputPath: nil) { result in
       let _ = self.assertSuccess(result)
       expectation.fulfill()
     }
@@ -338,13 +383,13 @@ final class CameraPluginDelegatingMethodTests: XCTestCase {
     let expectation = expectation(description: "Call completed")
 
     var startVideoRecordingCalled = false
-    mockCamera.startVideoRecordingStub = { completion, messenger in
+    mockCamera.startVideoRecordingStub = { path, completion, messenger in
       XCTAssertNil(messenger)
-      completion(.success(()))
       startVideoRecordingCalled = true
+      completion(.success(()))
     }
 
-    cameraPlugin.startVideoRecording(enableStream: false) { result in
+    cameraPlugin.startVideoRecording(enableStream: false, videoOutputPath: nil) { result in
       let _ = self.assertSuccess(result)
       expectation.fulfill()
     }
@@ -362,8 +407,8 @@ final class CameraPluginDelegatingMethodTests: XCTestCase {
 
     var stopVideoRecordingCalled = false
     mockCamera.stopVideoRecordingStub = { completion in
-      completion(.success(targetPath))
       stopVideoRecordingCalled = true
+      completion(.success(targetPath))
     }
 
     cameraPlugin.stopVideoRecording { result in
@@ -409,8 +454,8 @@ final class CameraPluginDelegatingMethodTests: XCTestCase {
     var setExposurePointCalled = false
     mockCamera.setExposurePointStub = { point, completion in
       XCTAssertEqual(point, targetExposurePoint)
-      completion(.success(()))
       setExposurePointCalled = true
+      completion(.success(()))
     }
 
     cameraPlugin.setExposurePoint(point: targetExposurePoint) { result in
@@ -432,8 +477,8 @@ final class CameraPluginDelegatingMethodTests: XCTestCase {
     var setFlashModeCalled = false
     mockCamera.setFlashModeStub = { mode, completion in
       XCTAssertEqual(mode, targetFlashMode)
-      completion(.success(()))
       setFlashModeCalled = true
+      completion(.success(()))
     }
 
     cameraPlugin.setFlashMode(mode: targetFlashMode) { result in
@@ -455,8 +500,8 @@ final class CameraPluginDelegatingMethodTests: XCTestCase {
     var setFocusPointCalled = false
     mockCamera.setFocusPointStub = { point, completion in
       XCTAssertEqual(point, targetFocusPoint)
-      completion(.success(()))
       setFocusPointCalled = true
+      completion(.success(()))
     }
 
     cameraPlugin.setFocusPoint(point: targetFocusPoint) { result in
@@ -478,8 +523,8 @@ final class CameraPluginDelegatingMethodTests: XCTestCase {
     var setZoomLevelCalled = false
     mockCamera.setZoomLevelStub = { zoom, completion in
       XCTAssertEqual(zoom, targetZoomLevel)
-      completion(.success(()))
       setZoomLevelCalled = true
+      completion(.success(()))
     }
 
     cameraPlugin.setZoomLevel(zoom: targetZoomLevel) { result in
@@ -500,8 +545,8 @@ final class CameraPluginDelegatingMethodTests: XCTestCase {
 
     var captureToFileCalled = false
     mockCamera.captureToFileStub = { completion in
-      completion(.success(targetPath))
       captureToFileCalled = true
+      completion(.success(targetPath))
     }
 
     cameraPlugin.takePicture { result in
@@ -528,8 +573,8 @@ final class CameraPluginDelegatingMethodTests: XCTestCase {
     var setDescriptionWhileRecordingCalled = false
     mockCamera.setDescriptionWhileRecordingStub = { cameraName, completion in
       XCTAssertEqual(cameraName, targetCameraName)
-      completion(.success(()))
       setDescriptionWhileRecordingCalled = true
+      completion(.success(()))
     }
 
     cameraPlugin.updateDescriptionWhileRecording(cameraName: targetCameraName) { result in

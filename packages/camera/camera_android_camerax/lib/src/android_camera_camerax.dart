@@ -11,6 +11,7 @@ import 'package:flutter/foundation.dart' show Uint8List;
 import 'package:flutter/services.dart' show DeviceOrientation, PlatformException;
 import 'package:flutter/widgets.dart' show Texture, Widget, visibleForTesting;
 import 'package:stream_transform/stream_transform.dart';
+
 import 'camerax_library.dart';
 import 'rotated_preview_delegate.dart';
 
@@ -102,10 +103,12 @@ class AndroidCameraCameraX extends CameraPlatform {
   deviceOrientationChangedStreamController =
       StreamController<DeviceOrientationChangedEvent>.broadcast();
 
-  /// Stream queue to pick up finalized viceo recording events in
+  /// Stream queue to pick up finalized video recording events in
   /// [stopVideoRecording].
-  final StreamQueue<VideoRecordEvent> videoRecordingEventStreamQueue =
-      StreamQueue<VideoRecordEvent>(videoRecordingEventStreamController.stream);
+  @visibleForTesting
+  StreamQueue<VideoRecordEvent> videoRecordingEventStreamQueue = StreamQueue<VideoRecordEvent>(
+    videoRecordingEventStreamController.stream,
+  );
 
   late final VideoRecordEventListener _videoRecordingEventListener = VideoRecordEventListener(
     onEvent: (_, VideoRecordEvent event) {
@@ -201,6 +204,14 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// The target rotation set by [lockCaptureOrientation], if any.
   ///
   int? _lockedCaptureOrientation;
+
+  /// Whether zero-shutter-lag capture was requested via
+  /// [setZeroShutterLagEnabled].
+  bool _zeroShutterLagEnabled = false;
+
+  /// The JPEG compression quality requested via [setJpegImageQuality], if
+  /// any.
+  int? _jpegQuality;
 
   /// Whether or not the default rotation for [UseCase]s needs to be set
   /// manually because the capture orientation was previously locked.
@@ -414,6 +425,8 @@ class AndroidCameraCameraX extends CameraPlatform {
       resolutionSelector: _presetResolutionSelector,
       /* use CameraX default target rotation */ targetRotation: await deviceOrientationManager
           .getDefaultDisplayRotation(),
+      jpegQuality: _jpegQuality,
+      zeroShutterLagEnabled: _zeroShutterLagEnabled,
     );
 
     // Configure VideoCapture and Recorder instances.
@@ -751,16 +764,12 @@ class AndroidCameraCameraX extends CameraPlatform {
       );
 
       if (newIndex == null) {
-        cameraErrorStreamController.add(
-          'Setting exposure compensation index was canceled due to the camera being closed or a new request being submitted.',
-        );
-        throw CameraException(
-          setExposureOffsetFailedErrorCode,
-          'Setting exposure compensation index was canceled due to the camera being closed or a new request being submitted.',
-        );
+        // The operation to set exposure was cancelled. Return rounded exposure
+        // compensation index so the UI doesn't revert.
+        return roundedExposureCompensationIndex * exposureOffsetStepSize;
       }
 
-      return newIndex.toDouble();
+      return newIndex * exposureOffsetStepSize;
     } on PlatformException catch (e) {
       cameraErrorStreamController.add(
         e.message ?? 'Setting the camera exposure compensation index failed.',
@@ -1092,19 +1101,63 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// the new instance automatically.
   @override
   Future<void> setJpegImageQuality(int cameraId, int quality) async {
-    // Unbind the current ImageCapture if it exists and is bound.
-    if (imageCapture != null) {
-      await _unbindUseCaseFromLifecycle(imageCapture!);
+    _jpegQuality = quality;
+    await _recreateImageCapture();
+  }
+
+  /// Returns whether the selected camera supports zero-shutter-lag capture.
+  ///
+  /// The default implementation returns `false`.
+  @override
+  Future<bool> isZeroShutterLagSupported(int cameraId) async {
+    return cameraInfo?.isZslSupported() ?? false;
+  }
+
+  /// Enables or disables zero-shutter-lag capture for still image capture.
+  ///
+  /// CameraX only supports setting the capture mode via `ImageCapture.Builder`
+  /// at construction time, so this recreates the `ImageCapture` use case with
+  /// the requested mode. The next call to [takePicture] will bind the new
+  /// instance automatically.
+  ///
+  /// If the selected camera does not support zero-shutter-lag, this only
+  /// records the requested mode and skips recreating the use case.
+  @override
+  Future<void> setZeroShutterLagEnabled(int cameraId, bool enabled) async {
+    _zeroShutterLagEnabled = enabled;
+    if (!await isZeroShutterLagSupported(cameraId)) {
+      return;
+    }
+    await _recreateImageCapture();
+  }
+
+  /// Recreates [imageCapture] from the currently requested settings
+  /// ([_jpegQuality], [_zeroShutterLagEnabled]).
+  ///
+  /// CameraX only supports several `ImageCapture` settings via
+  /// `ImageCapture.Builder` at construction time, so any change to one of
+  /// them requires unbinding and recreating the whole use case. The next
+  /// call to [takePicture] will bind the new instance automatically.
+  ///
+  /// If no camera has been created yet, this only updates the requested
+  /// settings; [createCamera] applies them when the camera is created.
+  Future<void> _recreateImageCapture() async {
+    if (imageCapture == null) {
+      return;
     }
 
-    // Recreate ImageCapture with the requested JPEG quality.
+    // Unbind the current ImageCapture if it exists and is bound.
+    await _unbindUseCaseFromLifecycle(imageCapture!);
+
+    // Recreate ImageCapture with the requested settings.
     // Preserve locked orientation if set, otherwise use default display rotation.
     final int targetRotation =
         _lockedCaptureOrientation ?? await deviceOrientationManager.getDefaultDisplayRotation();
     imageCapture = ImageCapture(
       resolutionSelector: _presetResolutionSelector,
       targetRotation: targetRotation,
-      jpegQuality: quality,
+      jpegQuality: _jpegQuality,
+      zeroShutterLagEnabled: _zeroShutterLagEnabled,
     );
   }
 
@@ -1121,15 +1174,22 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// Returns silently without doing anything if there is currently an active
   /// recording.
   ///
+  /// If [videoOutputPath] is specified, the video will be saved to that path.
+  /// Otherwise, it will be saved to a temporary directory.
+  ///
   /// Note that the preset resolution is used to configure the recording, but
   /// 240p ([ResolutionPreset.low]) is unsupported and will fallback to
   /// configure the recording as the next highest available quality.
   ///
   /// This method is deprecated in favour of [startVideoCapturing].
   @override
-  Future<void> startVideoRecording(int cameraId, {Duration? maxVideoDuration}) async {
+  Future<void> startVideoRecording(
+    int cameraId, {
+    Duration? maxVideoDuration,
+    String? videoOutputPath,
+  }) async {
     // Ignore maxVideoDuration, as it is unimplemented and deprecated.
-    return startVideoCapturing(VideoCaptureOptions(cameraId));
+    return startVideoCapturing(VideoCaptureOptions(cameraId, videoOutputPath: videoOutputPath));
   }
 
   /// Starts a video recording and/or streaming session.
@@ -1143,6 +1203,10 @@ class AndroidCameraCameraX extends CameraPlatform {
       // There is currently an active recording, so do not start a new one.
       return;
     }
+    unawaited(videoRecordingEventStreamQueue.cancel());
+    videoRecordingEventStreamQueue = StreamQueue<VideoRecordEvent>(
+      videoRecordingEventStreamController.stream,
+    );
     final dynamic Function(CameraImageData)? streamCallback = options.streamCallback;
     if (streamCallback == null) {
       // For potential performance improvements, unbind imageAnalysis if not in use.
@@ -1161,7 +1225,8 @@ class AndroidCameraCameraX extends CameraPlatform {
       );
     }
 
-    videoOutputPath = await systemServicesManager.getTempFilePath(videoPrefix, '.mp4');
+    videoOutputPath =
+        options.videoOutputPath ?? await systemServicesManager.getTempFilePath(videoPrefix, '.mp4');
     pendingRecording = await recorder!.prepareRecording(videoOutputPath!);
 
     if (options.enablePersistentRecording) {
@@ -1182,9 +1247,30 @@ class AndroidCameraCameraX extends CameraPlatform {
       onStreamedFrameAvailable(options.cameraId).listen(streamCallback);
     }
 
-    // Wait for video recording to start.
+    // Wait for video recording to start and for the first frame to be recorded.
+    await _waitForRecordingToStart();
+  }
+
+  /// Waits for the video recording to start and for the first frame to be recorded.
+  Future<void> _waitForRecordingToStart() async {
     VideoRecordEvent event = await videoRecordingEventStreamQueue.next;
-    while (event is! VideoRecordEventStart) {
+    while (true) {
+      if (event is VideoRecordEventFinalize) {
+        final int errorCode = event.error;
+        recording = null;
+        pendingRecording = null;
+        await _unbindUseCaseFromLifecycle(videoCapture!);
+        throw CameraException(
+          'videoRecordingFailed',
+          'Video recording finalized before recording started with error code $errorCode.',
+        );
+      }
+      if (event is VideoRecordEventStatus) {
+        final RecordingStats stats = await event.getRecordingStats();
+        if (stats.numBytesRecorded > 0 || stats.recordedDurationNanos > 0) {
+          break;
+        }
+      }
       event = await videoRecordingEventStreamQueue.next;
     }
   }
@@ -1225,6 +1311,15 @@ class AndroidCameraCameraX extends CameraPlatform {
     }
 
     await _unbindUseCaseFromLifecycle(videoCapture!);
+
+    if (event.hasError) {
+      final int errorCode = event.error;
+      throw CameraException(
+        'videoRecordingFailed',
+        'Video recording finalized with error: $errorCode',
+      );
+    }
+
     final videoFile = XFile(videoOutputPath!);
     cameraEventStreamController.add(VideoRecordedEvent(cameraId, videoFile, /* duration */ null));
     return videoFile;
@@ -1769,12 +1864,6 @@ class AndroidCameraCameraX extends CameraPlatform {
       final FocusMeteringResult? result = await cameraControl.startFocusAndMetering(
         currentFocusMeteringAction!,
       );
-
-      if (result == null) {
-        cameraErrorStreamController.add(
-          'Starting focus and metering was canceled due to the camera being closed or a new request being submitted.',
-        );
-      }
 
       return result?.isFocusSuccessful ?? false;
     } on PlatformException catch (e) {

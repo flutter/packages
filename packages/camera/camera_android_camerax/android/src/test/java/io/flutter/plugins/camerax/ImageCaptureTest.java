@@ -5,19 +5,25 @@
 package io.flutter.plugins.camerax;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static org.robolectric.Shadows.shadowOf;
 
 import android.content.Context;
+import android.os.Looper;
 import android.view.Surface;
 import androidx.annotation.NonNull;
+import androidx.annotation.OptIn;
+import androidx.camera.core.ExperimentalZeroShutterLag;
 import androidx.camera.core.ImageCapture;
 import androidx.camera.core.ImageCaptureException;
 import androidx.camera.core.resolutionselector.ResolutionSelector;
+import androidx.test.core.app.ApplicationProvider;
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.Executor;
@@ -26,6 +32,7 @@ import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
 import org.robolectric.RobolectricTestRunner;
 
@@ -39,7 +46,7 @@ public class ImageCaptureTest {
     final long targetResolution = Surface.ROTATION_0;
     final ImageCapture imageCapture =
         api.pigeon_defaultConstructor(
-            mockResolutionSelector, targetResolution, CameraXFlashMode.OFF, null);
+            mockResolutionSelector, targetResolution, CameraXFlashMode.OFF, null, null);
 
     assertEquals(imageCapture.getResolutionSelector(), mockResolutionSelector);
     assertEquals(imageCapture.getTargetRotation(), Surface.ROTATION_0);
@@ -55,12 +62,37 @@ public class ImageCaptureTest {
     final long jpegQuality = 75;
     final ImageCapture imageCapture =
         api.pigeon_defaultConstructor(
-            mockResolutionSelector, targetRotation, CameraXFlashMode.OFF, jpegQuality);
+            mockResolutionSelector, targetRotation, CameraXFlashMode.OFF, jpegQuality, null);
 
     assertEquals(imageCapture.getResolutionSelector(), mockResolutionSelector);
     assertEquals(imageCapture.getTargetRotation(), Surface.ROTATION_0);
     assertEquals(imageCapture.getFlashMode(), ImageCapture.FLASH_MODE_OFF);
     assertEquals(imageCapture.getJpegQuality(), 75);
+  }
+
+  @Test
+  @OptIn(markerClass = ExperimentalZeroShutterLag.class)
+  public void pigeon_defaultConstructor_setsZeroShutterLagCaptureModeWhenEnabled() {
+    final PigeonApiImageCapture api = new TestProxyApiRegistrar().getPigeonApiImageCapture();
+
+    final ImageCapture imageCapture =
+        api.pigeon_defaultConstructor(null, null, CameraXFlashMode.OFF, null, true);
+
+    assertEquals(ImageCapture.CAPTURE_MODE_ZERO_SHUTTER_LAG, imageCapture.getCaptureMode());
+  }
+
+  @Test
+  public void pigeon_defaultConstructor_leavesDefaultCaptureModeWhenZeroShutterLagIsNotEnabled() {
+    final PigeonApiImageCapture api = new TestProxyApiRegistrar().getPigeonApiImageCapture();
+
+    assertEquals(
+        ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY,
+        api.pigeon_defaultConstructor(null, null, CameraXFlashMode.OFF, null, false)
+            .getCaptureMode());
+    assertEquals(
+        ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY,
+        api.pigeon_defaultConstructor(null, null, CameraXFlashMode.OFF, null, null)
+            .getCaptureMode());
   }
 
   @Test
@@ -86,12 +118,40 @@ public class ImageCaptureTest {
   }
 
   @Test
+  public void takePicture_runsCallbackOnTheMainExecutor() {
+    final ProxyApiRegistrar apiRegistrar = new TestProxyApiRegistrar();
+    apiRegistrar.setContext(ApplicationProvider.getApplicationContext());
+
+    final PigeonApiImageCapture api = apiRegistrar.getPigeonApiImageCapture();
+    final ImageCapture instance = mock(ImageCapture.class);
+
+    api.takePicture(
+        instance, mock(SystemServicesManager.class), ResultCompat.asCompatCallback(reply -> null));
+
+    final ArgumentCaptor<Executor> executorCaptor = ArgumentCaptor.forClass(Executor.class);
+    verify(instance)
+        .takePicture(
+            any(ImageCapture.OutputFileOptions.class),
+            executorCaptor.capture(),
+            any(ImageCapture.OnImageSavedCallback.class));
+
+    final Thread[] callbackThread = {null};
+    executorCaptor.getValue().execute(() -> callbackThread[0] = Thread.currentThread());
+    assertNull(callbackThread[0]);
+
+    shadowOf(Looper.getMainLooper()).idle();
+    assertEquals(Looper.getMainLooper().getThread(), callbackThread[0]);
+  }
+
+  @Test
   public void
       takePicture_sendsRequestToTakePictureWithExpectedConfigurationWhenTemporaryFileCanBeCreated() {
     final ProxyApiRegistrar mockApiRegistrar = mock(ProxyApiRegistrar.class);
     final Context mockContext = mock(Context.class);
     final File mockOutputDir = mock(File.class);
     when(mockContext.getCacheDir()).thenReturn(mockOutputDir);
+    when(mockContext.getMainExecutor()).thenReturn(Runnable::run);
+    when(mockContext.getMainLooper()).thenReturn(Looper.getMainLooper());
     when(mockApiRegistrar.getContext()).thenReturn(mockContext);
 
     final String filename = "myFile.jpg";
@@ -194,6 +254,8 @@ public class ImageCaptureTest {
     final File mockOutputDir = mock(File.class);
     final SystemServicesManager mockSystemServicesManager = mock(SystemServicesManager.class);
     when(mockContext.getCacheDir()).thenReturn(mockOutputDir);
+    when(mockContext.getMainExecutor()).thenReturn(Runnable::run);
+    when(mockContext.getMainLooper()).thenReturn(Looper.getMainLooper());
     when(mockApiRegistrar.getContext()).thenReturn(mockContext);
 
     final ImageCaptureException captureException = mock(ImageCaptureException.class);
