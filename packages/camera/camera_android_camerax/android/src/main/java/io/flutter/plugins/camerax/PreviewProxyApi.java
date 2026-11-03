@@ -75,6 +75,10 @@ class PreviewProxyApi extends PigeonApiPreview {
           CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, (Range<Integer>) targetFpsRange);
     }
 
+    // DEBUG (do not commit).
+    android.util.Log.i(
+        "ROTATION_DEBUG",
+        "Preview created, mirroringOff=" + !surfaceProducer.handlesCropAndRotation());
     final Preview preview = builder.build();
     surfaceProducers.put(preview, surfaceProducer);
     return preview;

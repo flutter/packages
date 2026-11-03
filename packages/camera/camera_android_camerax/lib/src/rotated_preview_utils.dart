@@ -201,5 +201,19 @@ Widget buildUntransformedPreview({
         : Transform.scale(scaleX: -1, child: cameraPreview);
   }
 
+  // DEBUG (do not commit).
+  final debugLine =
+      '[ROTATION_DEBUG] build: info=${transformationInfo == null ? 'null' : '${transformationInfo.rotationDegrees}/${transformationInfo.hasCameraTransform}/${transformationInfo.isMirroring}'} '
+      'front=$cameraIsFrontFacing sensor=$sensorOrientationDegrees display=${displayRotation * 90} '
+      'target=${previewTargetRotation * 90} mirroringDisabled=$previewMirroringDisabled '
+      'orientation=${deviceOrientation.name} buffer=$bufferRotationDegrees '
+      'quarterTurns=${(rotationDegrees ~/ 90) % 4} mirror=$shouldMirror';
+  if (debugLine != _lastDebugLine) {
+    _lastDebugLine = debugLine;
+    debugPrint(debugLine);
+  }
+
   return RotatedBox(quarterTurns: rotationDegrees ~/ 90, child: cameraPreview);
 }
+
+String? _lastDebugLine;

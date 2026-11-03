@@ -9,7 +9,7 @@ import 'package:async/async.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/foundation.dart' show Uint8List;
 import 'package:flutter/services.dart' show DeviceOrientation, PlatformException;
-import 'package:flutter/widgets.dart' show Texture, ValueKey, Widget, visibleForTesting;
+import 'package:flutter/widgets.dart' show Texture, ValueKey, Widget, debugPrint, visibleForTesting;
 import 'package:stream_transform/stream_transform.dart';
 
 import 'camerax_library.dart';
@@ -485,6 +485,12 @@ class AndroidCameraCameraX extends CameraPlatform {
       sensorOrientationDegrees: sensorOrientationDegrees.toInt(),
     );
     await preview!.setTargetRotation(_previewTargetRotation);
+    // DEBUG (do not commit).
+    debugPrint(
+      '[ROTATION_DEBUG] createCamera: previewTargetRotation=${_previewTargetRotation * 90} '
+      'displayRotation=${defaultDisplayRotation * 90} handlesCropAndRotation=$_handlesCropAndRotation '
+      'sensor=${sensorOrientationDegrees.toInt()} front=$cameraIsFrontFacing',
+    );
 
     _initialDeviceOrientation = _deserializeDeviceOrientation(
       await deviceOrientationManager.getUiOrientation(),
@@ -638,6 +644,12 @@ class AndroidCameraCameraX extends CameraPlatform {
             if (self == null || !identical(listener, self._transformationInfoListener)) {
               return;
             }
+            // DEBUG (do not commit).
+            debugPrint(
+              '[ROTATION_DEBUG] TransformationInfo: rotationDegrees=${transformationInfo.rotationDegrees} '
+              'hasCameraTransform=${transformationInfo.hasCameraTransform} '
+              'isMirroring=${transformationInfo.isMirroring}',
+            );
             self._latestTransformationInfo = transformationInfo;
             self._transformationInfoStreamController.add(transformationInfo);
           },

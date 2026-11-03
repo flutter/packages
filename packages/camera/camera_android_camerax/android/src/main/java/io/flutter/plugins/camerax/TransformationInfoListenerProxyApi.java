@@ -39,6 +39,8 @@ class TransformationInfoListenerProxyApi extends PigeonApiTransformationInfoList
 
     @Override
     public void onTransformationInfoUpdate(@NonNull TransformationInfo transformationInfo) {
+      // DEBUG (do not commit).
+      android.util.Log.i("ROTATION_DEBUG", "native TransformationInfo: " + transformationInfo);
       api.getPigeonRegistrar()
           .runOnMainThread(
               new ProxyApiRegistrar.FlutterMethodRunnable() {
