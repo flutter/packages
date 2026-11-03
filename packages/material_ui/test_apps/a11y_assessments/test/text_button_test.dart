@@ -33,6 +33,13 @@ void main() {
     expect(find.text('Form submitted'), findsOneWidget);
   });
 
+  testWidgets('submit snackbar stays until closed', (WidgetTester tester) async {
+    await pumpsUseCase(tester, TextButtonUseCase());
+    await tester.enterText(find.byType(TextFormField), 'test text');
+    await tester.tap(find.text('Submit'));
+    await expectSnackBarStaysUntilClosed(tester, 'Form submitted');
+  });
+
   testWidgets('text button demo page has one h1 tag', (WidgetTester tester) async {
     await pumpsUseCase(tester, TextButtonUseCase());
     final Finder findHeadingLevelOnes = find.bySemanticsLabel('TextButton Demo');

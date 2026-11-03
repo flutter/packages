@@ -7202,6 +7202,137 @@ void main() {
 
     handle.dispose();
   });
+
+  // Regression test for https://github.com/flutter/flutter/issues/195059.
+  testWidgets('Escape closes MenuAnchor opened by tap without childFocusNode', (
+    WidgetTester tester,
+  ) async {
+    final outsideFocusNode = FocusNode(debugLabel: 'Outside Focus');
+    addTearDown(outsideFocusNode.dispose);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Column(
+            children: <Widget>[
+              TextButton(
+                focusNode: outsideFocusNode,
+                autofocus: true,
+                onPressed: () {},
+                child: const Text('Outside'),
+              ),
+              MenuAnchor(
+                menuChildren: <Widget>[
+                  MenuItemButton(onPressed: () {}, child: const Text('Item 1')),
+                  MenuItemButton(onPressed: () {}, child: const Text('Item 2')),
+                ],
+                builder: (BuildContext context, MenuController controller, Widget? child) {
+                  return TextButton(
+                    onPressed: () {
+                      if (controller.isOpen) {
+                        controller.close();
+                      } else {
+                        controller.open();
+                      }
+                    },
+                    child: const Text('Open menu'),
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    await tester.pump();
+    expect(outsideFocusNode.hasPrimaryFocus, isTrue);
+
+    await tester.tap(find.text('Open menu'));
+    await tester.pumpAndSettle();
+    expect(find.text('Item 1'), findsOneWidget);
+
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pumpAndSettle();
+    expect(find.text('Item 1'), findsNothing);
+    expect(outsideFocusNode.hasPrimaryFocus, isTrue);
+
+    // Reopen by tap, traverse with arrow key, and close with Escape.
+    await tester.tap(find.text('Open menu'));
+    await tester.pumpAndSettle();
+    expect(find.text('Item 1'), findsOneWidget);
+
+    listenForFocusChanges();
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    await tester.pump();
+    expect(focusedMenu, equals('MenuItemButton(Text("Item 1"))'));
+
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pumpAndSettle();
+    expect(find.text('Item 1'), findsNothing);
+    expect(outsideFocusNode.hasPrimaryFocus, isTrue);
+  });
+
+  // Regression test for https://github.com/flutter/flutter/issues/195059.
+  testWidgets(
+    'Escape closes MenuAnchor opened by tap inside a Dialog before dismissing the Dialog',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Builder(
+              builder: (BuildContext context) {
+                return TextButton(
+                  onPressed: () {
+                    showDialog<void>(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: const Text('Dialog Title'),
+                          content: MenuAnchor(
+                            menuChildren: <Widget>[
+                              MenuItemButton(onPressed: () {}, child: const Text('Menu Item 1')),
+                            ],
+                            builder:
+                                (BuildContext context, MenuController controller, Widget? child) {
+                                  return TextButton(
+                                    onPressed: controller.open,
+                                    child: const Text('Open menu'),
+                                  );
+                                },
+                          ),
+                        );
+                      },
+                    );
+                  },
+                  child: const Text('Show Dialog'),
+                );
+              },
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('Show Dialog'));
+      await tester.pumpAndSettle();
+      expect(find.text('Dialog Title'), findsOneWidget);
+
+      await tester.tap(find.text('Open menu'));
+      await tester.pumpAndSettle();
+      expect(find.text('Menu Item 1'), findsOneWidget);
+
+      // First Escape closes only the MenuAnchor menu, keeping the Dialog open.
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.pumpAndSettle();
+      expect(find.text('Menu Item 1'), findsNothing);
+      expect(find.text('Dialog Title'), findsOneWidget);
+
+      // Second Escape dismisses the Dialog.
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.pumpAndSettle();
+      expect(find.text('Dialog Title'), findsNothing);
+    },
+  );
 }
 
 List<Widget> createTestMenus({

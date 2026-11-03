@@ -20,4 +20,24 @@ void main() {
     await tester.pumpAndSettle();
     expect(findHeadingLevelOnes, findsOne);
   });
+
+  testWidgets('expansion tiles stay reachable at a 320x256 viewport', (WidgetTester tester) async {
+    tester.view.physicalSize = const Size(320, 256);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
+
+    await pumpsUseCase(tester, ExpansionTileUseCase());
+    // A non-scrolling layout overflows at this size and reports it as an error.
+    expect(tester.takeException(), isNull);
+
+    await tester.scrollUntilVisible(find.text('ExpansionTile 3'), 50);
+    await tester.ensureVisible(find.text('ExpansionTile 3'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('ExpansionTile 3'));
+    await tester.pumpAndSettle();
+
+    await tester.ensureVisible(find.text('This is tile number 3'));
+    await tester.pumpAndSettle();
+    expect(find.text('This is tile number 3'), findsOne);
+  });
 }

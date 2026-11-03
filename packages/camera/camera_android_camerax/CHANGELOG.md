@@ -1,7 +1,11 @@
-## 0.7.6+1
+## 0.7.6+2
 
 * Reduces `takePicture` latency by not setting the `ImageCapture` flash mode
   again when it has not changed.
+
+## 0.7.6+1
+
+* Fixes video recording duration discrepancy by waiting for the first recorded frame before completing `startVideoCapturing`, and validates errors on `stopVideoRecording`.
 
 ## 0.7.6
 
