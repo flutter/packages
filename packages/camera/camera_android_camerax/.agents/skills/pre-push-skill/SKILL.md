@@ -103,8 +103,6 @@ Then, move on to the next verification step.
 
 Run the full integration test suite in `example/integration_test` locally
 by following the [run-on-emulator](../run-on-emulator/SKILL.md) skill.
-CI also runs these tests on a physical device (Firebase Test Lab),
-but catching failures locally avoids a slow CI round trip.
 
 - If emulator setup stops on a missing requirement
   (for example, the Android CLI or an AVD), do not work around it.

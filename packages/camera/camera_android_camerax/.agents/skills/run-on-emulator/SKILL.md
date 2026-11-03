@@ -6,21 +6,32 @@ metadata:
 ---
 # Run on Emulator
 
-Run all commands from the `camera_android_camerax` package root.
+Run all commands from the `camera_android_camerax` package root. Every task
+starts with sections 1 and 2, then continues with **3a** to run the
+integration tests or **3b** to run the example app.
 
 ## 1. Should you use an emulator for this?
 
 The emulator's cameras (`virtualscene` on the back shows a 3D room, `emulated`
-on the front shows a test pattern) run the real CameraX stack.
+on the front shows a test pattern) run the real CameraX stack. The examples
+below are not exhaustive.
 
-| Use the emulator for | Do not use the emulator for |
-| --- | --- |
-| Preview rendering and switching cameras | Flash or torch output |
-| Image capture, video recording, and image streaming | Real lens characteristics (optical zoom, focus distance, multiple back cameras, extensions) |
-| Exposure, zoom, and focus/metering calls and their reported ranges | Exact resolution preset sizes (emulated cameras do not support every preset) |
-| Rotation, lifecycle (background/resume), and permission flows | Device-specific sensor orientations, OEM quirks, or performance |
+The emulator can verify, for example:
 
-If the behavior is in the right-hand column, it needs a physical device: tell
+- Preview rendering and switching cameras.
+- Image capture, video recording, and image streaming.
+- Exposure, zoom, and focus/metering calls and their reported ranges.
+- Rotation, lifecycle (background/resume), and permission flows.
+
+It cannot verify behavior that depends on specific hardware, for example:
+
+- Flash or torch output.
+- Real lens characteristics: optical zoom, focus distance, multiple back
+  cameras, or camera extensions.
+- Exact resolution preset sizes (emulated cameras do not support every preset).
+- Device-specific sensor orientations, OEM quirks, or performance.
+
+If the behavior depends on specific hardware, it needs a physical device: tell
 the user, and do not claim it was verified. You may still run the example app
 to check that the change does not crash.
 
@@ -37,7 +48,7 @@ lists commands for some of these.
    the version is older, stop and ask the user to run `android update`.
 2. **Reuse a running emulator:** run `adb devices` (if `adb` is not on the
    PATH, use `"$(android info sdk)/platform-tools/adb"`). If it lists
-   `emulator-<port>    device`, note that serial and skip to section 3 or 4.
+   `emulator-<port>    device`, note that serial and skip to 3a or 3b.
 3. **Pick an AVD:** run `android emulator list`. If it lists none, stop and
    suggest `android emulator create medium_phone`. Otherwise use the AVD the
    user named, or the first one.
@@ -46,18 +57,19 @@ lists commands for some of these.
    and `hw.camera.front` are both `none`, stop: camera tests would pass without
    testing anything. (A missing `hw.camera.back` means `emulated`.)
 5. **Start it:** run `android emulator start --headless <avd>` (omit
-   `--headless` if the user wants to watch). It returns once the emulator has
-   booted. If it fails, stop and suggest `android emulator start --cold <avd>`.
-   Run `adb devices` to get the serial.
+   `--headless` if the user wants to watch) and note the serial it prints. If
+   it fails, stop and suggest `android emulator start --cold <avd>`.
 
 Leave the emulator running for later runs. If you started it, stop it with
 `android emulator stop <serial>` when you are done.
 
-## 3. Run the integration tests
+## 3a. Run the integration tests
 
-1. **Grant permissions first, before every run.** Otherwise the camera
-   permission dialog blocks the tests indefinitely. `flutter test` keeps these
-   grants when it reinstalls the app, but uninstalls the app when it finishes.
+1. **Grant permissions before every test command** (each `flutter test` or
+   `drive-examples` run in step 2). Otherwise the camera permission dialog
+   blocks the tests indefinitely. The test command keeps these grants when it
+   reinstalls the app, but uninstalls the app when it finishes, so the grants
+   do not carry over to the next run.
 
    ```bash
    (cd example && flutter build apk --debug)
@@ -73,14 +85,14 @@ Leave the emulator running for later runs. If you started it, stop it with
      `dart pub global run flutter_plugin_tools drive-examples --android --packages camera_android_camerax`
 
    The full suite takes several minutes, so run it in the background. If it
-   stops making progress, take a screenshot (section 4) to see what is
+   stops making progress, take a screenshot (3b) to see what is
    blocking the app.
 3. **Report** each failing test and its error. Re-run each failure once with
    `--plain-name` to tell flakes (common right after a cold boot) from real
    failures, and report both results. Failures in the resolution preset tests
    are expected on an emulator (see section 1).
 
-## 4. Run the example app
+## 3b. Run the example app
 
 1. **Build, install, and launch it** with permissions granted:
 
@@ -93,8 +105,10 @@ Leave the emulator running for later runs. If you started it, stop it with
    `adb -s <serial> shell pidof io.flutter.plugins.cameraxexample`. If that
    prints nothing, the app crashed; read `adb -s <serial> logcat -d -b crash`.
 2. **Interact with it** using the [android-cli](../android-cli/SKILL.md) skill
-   (`android layout`, `android input`). The example app's camera controls have
-   no text or descriptions, so tap them by class, e.g.
+   (`android layout`, `android input`). Flutter widgets appear in
+   `android layout` through their accessibility semantics, so a widget only has
+   text or a description if it sets one (e.g., a tooltip). The example app's
+   camera controls set neither, so tap them by class, e.g.
    `android input --device=<serial> tap clz=RadioButton --match=first` selects
    the first camera. If a flow needs more than about five taps, write an
    integration test instead. Do not add Flutter Driver to the example app.
@@ -104,8 +118,9 @@ Leave the emulator running for later runs. If you started it, stop it with
    that it is rotated by 90° or 180°, or that a control or error appeared. It
    cannot show aspect ratio, mirroring, cropping, exposure, color, or frame
    rate: assert those in a test, or report them as not verified.
-4. **For rotation bugs**, lock the orientation so results are deterministic,
-   and always restore it afterwards:
+4. **For rotation bugs**, first try to reproduce with auto-rotate as is, since
+   locking can change the behavior. If you need a specific orientation, you
+   can lock it, and always restore it afterwards:
 
    ```bash
    adb -s <serial> shell settings put system accelerometer_rotation 0
