@@ -58,6 +58,11 @@ _julz8q_NativeInteropFlutterIntegrationCoreApiBridge(void) {
   return @protocol(NativeInteropFlutterIntegrationCoreApiBridge);
 }
 
+__attribute__((visibility("default"))) __attribute__((used)) Protocol *
+_julz8q_NativeInteropReservedNamesFlutterApiBridge(void) {
+  return @protocol(NativeInteropReservedNamesFlutterApiBridge);
+}
+
 typedef id (^_ProtocolTrampoline)(void *sel, id arg1, id arg2);
 __attribute__((visibility("default"))) __attribute__((used)) id _julz8q_protocolTrampoline_zi5eed(
     id target, void *sel, id arg1, id arg2) {

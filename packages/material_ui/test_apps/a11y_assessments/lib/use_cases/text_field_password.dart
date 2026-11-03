@@ -32,14 +32,18 @@ class _MainWidget extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Semantics(headingLevel: 1, child: Text('$pageTitle Demo'))),
       body: ListView(
+        semanticChildCount: 0,
+        addSemanticIndexes: false,
         children: const <Widget>[
           TextField(
             key: Key('enabled password'),
+            autofillHints: <String>[AutofillHints.password],
             decoration: InputDecoration(labelText: 'Password'),
             obscureText: true,
           ),
           TextField(
             key: Key('disabled password'),
+            autofillHints: <String>[AutofillHints.password],
             decoration: InputDecoration(labelText: 'Password'),
             enabled: false,
             obscureText: true,

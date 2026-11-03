@@ -465,6 +465,32 @@ void main() {
       ),
     );
   });
+
+  test('MaskType parsing', () {
+    final parser = SvgParser('', const SvgTheme(), 'test_key', true, null);
+    expect(parser.parseMaskType(null), null);
+    expect(parser.parseMaskType(''), null);
+    expect(parser.parseMaskType('alpha'), MaskType.alpha);
+    expect(parser.parseMaskType('ALPHA'), MaskType.alpha);
+    expect(parser.parseMaskType('  alpha  '), MaskType.alpha);
+    expect(parser.parseMaskType('luminance'), MaskType.luminance);
+    expect(parser.parseMaskType('LUMINANCE'), MaskType.luminance);
+    expect(parser.parseMaskType('  luminance  '), MaskType.luminance);
+    expect(parser.parseMaskType('unknown'), null);
+  });
+
+  test('em parsing', () {
+    expect(isEm(null), false);
+    expect(isEm('1'), false);
+    expect(isEm('em'), false);
+    expect(isEm('1rem'), false);
+    expect(isEm('1xem'), false);
+    expect(isEm('1em'), true);
+    expect(isEm('  -.5EM  '), true);
+    expect(parseEm('1em'), 1);
+    expect(parseEm('  -.5EM  '), -0.5);
+    expect(parseEm('1e2em'), 100);
+  });
 }
 
 class TestColorMapper extends ColorMapper {

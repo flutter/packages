@@ -197,7 +197,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
 
 @objc class NativeInteropExamplePigeonInternalNull: NSObject {}
 
-class _PigeonFfiCodec {
+private class _PigeonFfiCodec {
   static func readValue(value: NSObject?, type: String? = nil, type2: String? = nil) -> Any? {
     if NativeInteropExamplePigeonInternal.isNullish(value) {
       return nil
@@ -349,14 +349,15 @@ protocol NativeInteropExampleApi {
   }
   @objc func doSomething(wrappedError: PigeonError) {
     do {
-      return try api!.doSomething()
+      try api!.doSomething()
+      return
     } catch let error as PigeonError {
       wrappedError.code = error.code
       wrappedError.message = error.message
       wrappedError.details = error.details
     } catch let error {
       wrappedError.code = "\(error)"
-      wrappedError.message = "\(type(of: error))"
+      wrappedError.message = "\(Swift.type(of: error))"
       wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
     }
     return

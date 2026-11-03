@@ -150,6 +150,24 @@ public class ImageResizerTest {
   }
 
   @Test
+  public void onResizeImageIfNeeded_whenDownscaling_shouldSubsampleFromOriginalSize() {
+    try (MockedStatic<BitmapFactory> mockBitmapFactory =
+        mockStatic(BitmapFactory.class, Mockito.CALLS_REAL_METHODS)) {
+      // The 12x7 image targets 3x2, so a sample size of 2 still decodes at least the target size.
+      resizer.resizeImageIfNeeded(wideJPG.getPath(), 3.0, null, 100);
+      ArgumentCaptor<BitmapFactory.Options> argument =
+          ArgumentCaptor.forClass(BitmapFactory.Options.class);
+      mockBitmapFactory.verify(
+          () -> BitmapFactory.decodeFile(anyString(), argument.capture()), times(2));
+      assertThat(argument.getAllValues().get(1).inSampleSize, equalTo(2));
+    }
+    SizeFCompat scaledSize =
+        resizer.readFileDimensions(externalDirectory.getPath() + "/scaled_jpgImageWide.jpg");
+    assertThat(scaledSize.getWidth(), equalTo(3.0F));
+    assertThat(scaledSize.getHeight(), equalTo(2.0F));
+  }
+
+  @Test
   public void
       onResizeImageIfNeeded_whenImageIsVertical_WidthIsGreaterThanOriginal_shouldResizeCorrectly() {
     String outputFile = resizer.resizeImageIfNeeded(tallJPG.getPath(), 5.0, 5.0, 100);

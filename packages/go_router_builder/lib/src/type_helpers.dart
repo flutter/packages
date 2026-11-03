@@ -129,7 +129,7 @@ String decodeParameter(
         } else {
           throw InvalidGenerationSourceError(
             'The parameter type '
-            '`${withoutNullability(paramType.getDisplayString())}` not have a well defined CustomParameterCodec decorator.',
+            '`${paramType.toStringNonNullable()}` not have a well defined CustomParameterCodec decorator.',
             element: element,
           );
         }
@@ -150,7 +150,7 @@ String decodeParameter(
 
   throw InvalidGenerationSourceError(
     'The parameter type '
-    '`${withoutNullability(paramType.getDisplayString())}` is not supported. '
+    '`${paramType.toStringNonNullable()}` is not supported. '
     'Consider using @TypedQueryParameter with a custom encoder and decoder.',
     element: element,
   );
@@ -189,7 +189,7 @@ String encodeField(PropertyAccessorElement element, List<ElementAnnotation>? met
         } else {
           throw InvalidGenerationSourceError(
             'The parameter type '
-            '`${withoutNullability(element.type.getDisplayString())}` not have a well defined CustomParameterCodec decorator.',
+            '`${element.type.toStringNonNullable()}` not have a well defined CustomParameterCodec decorator.',
             element: element,
           );
         }
@@ -269,16 +269,6 @@ String _stateValueAccess(FormalParameterElement element, Set<String> pathParamet
   }
 
   return access;
-}
-
-/// Returns `true` if the type string ends with a nullability marker (`?` or `*`)
-bool _isNullableType(String type) {
-  return type.endsWith('?') || type.endsWith('*');
-}
-
-/// Returns the type string without a trailing nullability marker
-String withoutNullability(String type) {
-  return _isNullableType(type) ? type.substring(0, type.length - 1) : type;
 }
 
 String _fieldWithEncoder(String field, String? customEncoder) {
@@ -436,7 +426,7 @@ class _TypeHelperExtensionType extends _TypeHelper {
           '.$enumExtensionHelperName($stateValue) as $castType';
     }
 
-    final String representationTypeName = withoutNullability(representationType.getDisplayString());
+    final String representationTypeName = representationType.toStringNonNullable();
     if (paramType.isNullableType || parameterElement.hasDefaultValue) {
       return "$representationTypeName.tryParse($stateValue ?? '') as $castType";
     } else {
@@ -453,7 +443,7 @@ class _TypeHelperExtensionType extends _TypeHelper {
 
     if (representationType.isEnum) {
       return '${enumMapName(representationType as InterfaceType)}'
-          '[$fieldName${type.ensureNotNull} as ${withoutNullability(representationType.getDisplayString())}]!';
+          '[$fieldName${type.ensureNotNull} as ${representationType.toStringNonNullable()}]!';
     }
 
     return '$fieldName${representationType.ensureNotNull}.toString()';
@@ -686,11 +676,11 @@ class _TypeHelperJson extends _TypeHelperWithHelper {
     if (fromJsonMethod == null ||
         !fromJsonMethod.isPublic ||
         fromJsonMethod.formalParameters.length != 1 ||
-        withoutNullability(fromJsonMethod.formalParameters.first.type.getDisplayString()) !=
+        fromJsonMethod.formalParameters.first.type.toStringNonNullable() !=
             'Map<String, dynamic>') {
       throw InvalidGenerationSourceError(
         'The parameter type '
-        '`${withoutNullability(type.getDisplayString())}` not have a supported fromJson definition.',
+        '`${type.toStringNonNullable()}` not have a supported fromJson definition.',
         element: type.element,
       );
     }
@@ -736,10 +726,10 @@ class _TypeHelperJson extends _TypeHelperWithHelper {
     }
 
     final FormalParameterElement firstParam = parameters[0];
-    if (withoutNullability(firstParam.type.getDisplayString()) != 'Map<String, dynamic>') {
+    if (firstParam.type.toStringNonNullable() != 'Map<String, dynamic>') {
       throw InvalidGenerationSourceError(
         'The parameter type '
-        '`${withoutNullability(type.getDisplayString())}` not have a supported fromJson definition.',
+        '`${type.toStringNonNullable()}` not have a supported fromJson definition.',
         element: type.element,
       );
     }
@@ -757,7 +747,7 @@ class _TypeHelperJson extends _TypeHelperWithHelper {
         functionType.formalParameters[0].type.getDisplayString() != 'Object?') {
       throw InvalidGenerationSourceError(
         'The parameter type '
-        '`${withoutNullability(type.getDisplayString())}` not have a supported fromJson definition.',
+        '`${type.toStringNonNullable()}` not have a supported fromJson definition.',
         element: type.element,
       );
     }
@@ -878,28 +868,3 @@ class NullableDefaultValueError extends InvalidGenerationSourceError {
 const _typedQueryParameterChecker = TypeChecker.fromUrl(
   'package:go_router/src/route_data.dart#TypedQueryParameter',
 );
-
-/// Extension helpers on [ExecutableElement].
-extension ExecutableElementExtension on ExecutableElement {
-  /// Returns the name of `this` qualified with the class name if it's a
-  /// [MethodElement].
-  String get qualifiedName {
-    if (this is TopLevelFunctionElement) {
-      return name!;
-    }
-
-    if (this is MethodElement) {
-      return '${enclosingElement!.name}.$name';
-    }
-
-    if (this is ConstructorElement) {
-      // The default constructor.
-      if ((name?.isEmpty ?? false) || name == 'new') {
-        return enclosingElement!.name!;
-      }
-      return '${enclosingElement!.name}.$name';
-    }
-
-    throw UnsupportedError('Not sure how to support typeof $runtimeType');
-  }
-}

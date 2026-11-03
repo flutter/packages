@@ -2,16 +2,21 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import Flutter
 import ImageIO
 import Testing
 import UIKit
 
 @testable import image_picker_ios
 
+#if canImport(image_picker_ios_objc)
+  @testable import image_picker_ios_objc
+#endif
+
 @Suite
 struct PickerSaveImageToPathOperationTests {
   private var testBundle: Bundle {
-    Bundle(for: ImagePickerTestImages.self)
+    ImagePickerTestImages.bundle
   }
 
   private func pickerItem(forResource name: String, ext: String) throws -> FakePickerItem {
@@ -39,7 +44,7 @@ struct PickerSaveImageToPathOperationTests {
         continuation: CheckedContinuation<(savedPath: String?, error: FlutterError?)?, Never>
       ) in
       guard
-        let operation = FLTPHPickerSaveImageToPathOperation(
+        let operation = PHPickerSaveImageToPathOperation(
           result: result,
           maxHeight: maxHeight,
           maxWidth: maxWidth,
@@ -147,8 +152,17 @@ struct PickerSaveImageToPathOperationTests {
     #expect(savedError?.details as? String == "PHPickerDomain")
   }
 
+  @Test func undecodableImageDataReturnsError() async throws {
+    let itemProvider = StaticDataItemProvider(data: Data("not an image".utf8))
+    let result = FakePickerItem(itemProvider: itemProvider, assetIdentifier: nil)
+    let (savedPath, savedError) = try await runSaveOperation(result: result, fullMetadata: true)
+    #expect(savedPath == nil)
+    #expect(savedError?.code == "invalid_image")
+    #expect(savedError?.message == "Could not decode image data.")
+  }
+
   @Test func initWithNilResultReturnsNil() {
-    let operation = FLTPHPickerSaveImageToPathOperation(
+    let operation = PHPickerSaveImageToPathOperation(
       result: nil,
       maxHeight: 100,
       maxWidth: 100,
@@ -162,7 +176,7 @@ struct PickerSaveImageToPathOperationTests {
     let result = try pickerItem(forResource: "pngImage", ext: "png")
     var savedPathCalled = false
     let operation = try #require(
-      FLTPHPickerSaveImageToPathOperation(
+      PHPickerSaveImageToPathOperation(
         result: result,
         maxHeight: 100,
         maxWidth: 100,

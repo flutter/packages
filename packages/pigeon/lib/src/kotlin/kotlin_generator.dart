@@ -77,6 +77,10 @@ class KotlinOptions {
   ///
   /// This should only ever be set to false if you have another generated
   /// Kotlin file in the same directory.
+  ///
+  /// With [useJni], the other file must also use the same [package] and
+  /// [errorClassName], because the JNIgen bindings expect the error class at
+  /// `<package>.<errorClassName>`.
   final bool includeErrorClass;
 
   /// A String to augment class names to avoid cross file collisions.
@@ -311,6 +315,18 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
     }
   }
 
+  /// Writes `@Keep` if generating for JNI.
+  ///
+  /// The generated Dart code reaches these types and their members by name
+  /// through JNI. Flutter enables R8 for Android release builds by default,
+  /// and without `@Keep` R8 can remove, rename, or merge them, which breaks
+  /// those lookups at runtime.
+  void _writeKeepAnnotationForJni(InternalKotlinOptions generatorOptions, Indent indent) {
+    if (generatorOptions.useJni) {
+      indent.writeln('@Keep');
+    }
+  }
+
   @override
   void writeConstants(
     InternalKotlinOptions generatorOptions,
@@ -346,6 +362,7 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
   }) {
     indent.newln();
     addDocumentationComments(indent, anEnum.documentationComments, _docCommentSpec);
+    _writeKeepAnnotationForJni(generatorOptions, indent);
     indent.write('enum class ${anEnum.name}(val raw: Int) ');
     indent.addScoped('{', '}', () {
       enumerate(anEnum.members, (int index, EnumMember member) {
@@ -360,6 +377,7 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
       });
 
       indent.newln();
+      _writeKeepAnnotationForJni(generatorOptions, indent);
       indent.write('companion object ');
       indent.addScoped('{', '}', () {
         indent.write('fun ofRaw(raw: Int): ${anEnum.name}? ');
@@ -393,6 +411,7 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
       _docCommentSpec,
       generatorComments: generatedMessages,
     );
+    _writeKeepAnnotationForJni(generatorOptions, indent);
     _writeDataClassSignature(indent, classDefinition);
     if (classDefinition.isSealed) {
       return;
@@ -643,12 +662,12 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
       indent.write('${customType.enumeration}.toByte() -> ');
       indent.addScoped('{', '}', () {
         if (customType.type == CustomTypes.customClass) {
-          indent.write('return (readValue(buffer) as? List<Any?>)?.let ');
+          indent.write('(readValue(buffer) as? List<Any?>)?.let ');
           indent.addScoped('{', '}', () {
             indent.writeln('${customType.name}.fromList(it)');
           });
         } else if (customType.type == CustomTypes.customEnum) {
-          indent.write('return (readValue(buffer) as Long?)?.let ');
+          indent.write('(readValue(buffer) as Long?)?.let ');
           indent.addScoped('{', '}', () {
             indent.writeln('${customType.name}.ofRaw(it.toInt())');
           });
@@ -796,6 +815,7 @@ if (wrapped == null) {
 val registered${api.name}: MutableMap<String, ${api.name}> = mutableMapOf()
 
 /// Class that stores instances
+@Keep
 class ${api.name}Registrar() {
 
   /// Registers an instance with the given name.
@@ -813,6 +833,7 @@ class ${api.name}Registrar() {
   }
 }
 ''');
+    indent.writeln('@Keep');
     indent.writeScoped('interface ${api.name} {', '}', () {
       for (final Method method in api.methods) {
         _writeMethodDeclaration(
@@ -1424,9 +1445,9 @@ class ${api.name}Registrar() {
         }
 
         interface ${generatorOptions.fileSpecificClassNameComponent}PigeonEventChannelWrapper<T> {
-          open fun onListen(p0: Any?, sink: PigeonEventSink<T>) {}
+          fun onListen(p0: Any?, sink: PigeonEventSink<T>) {}
 
-          open fun onCancel(p0: Any?) {}
+          fun onCancel(p0: Any?) {}
         }
         ''');
 
@@ -1450,22 +1471,52 @@ class ${api.name}Registrar() {
     }
     addDocumentationComments(indent, api.documentationComments, _docCommentSpec);
     for (final Method func in api.methods) {
+      final channelClassName = '${toUpperCamelCase(func.name)}EventChannel';
+      final streamHandlerClassName = '${toUpperCamelCase(func.name)}StreamHandler';
       indent.format('''
-        abstract class ${toUpperCamelCase(func.name)}StreamHandler : ${generatorOptions.fileSpecificClassNameComponent}PigeonEventChannelWrapper<${_kotlinTypeForDartType(func.returnType)}> {
+        /** A typed channel for communicating with the Flutter application using asynchronous event streams. */
+        class $channelClassName(messenger: BinaryMessenger, instanceName: String = "") {
+          private val channel: EventChannel
+
+          init {
+            var channelName = "${makeChannelName(api, func, dartPackageName)}"
+            if (instanceName.isNotEmpty()) {
+              channelName += ".\$instanceName"
+            }
+            channel = EventChannel(messenger, channelName, ${generatorOptions.fileSpecificClassNameComponent}$_pigeonMethodCodec)
+          }
+
+          /**
+           * Sets the stream handler for this channel, replacing any previous handler.
+           *
+           * Pass `null` to remove the event channel registration.
+           */
+          fun setStreamHandler(streamHandler: $streamHandlerClassName?) {
+            val internalHandler = streamHandler?.let { ${generatorOptions.fileSpecificClassNameComponent}PigeonStreamHandler<${_kotlinTypeForDartType(func.returnType)}>(it) }
+            channel.setStreamHandler(internalHandler)
+          }
+        }
+
+        abstract class $streamHandlerClassName : ${generatorOptions.fileSpecificClassNameComponent}PigeonEventChannelWrapper<${_kotlinTypeForDartType(func.returnType)}> {
           companion object {
-            fun register(messenger: BinaryMessenger, streamHandler: ${toUpperCamelCase(func.name)}StreamHandler, instanceName: String = "") {
-              var channelName: String = "${makeChannelName(api, func, dartPackageName)}"
-              if (instanceName.isNotEmpty()) {
-                channelName += ".\$instanceName"
-              }
-              val internalStreamHandler = ${generatorOptions.fileSpecificClassNameComponent}PigeonStreamHandler<${_kotlinTypeForDartType(func.returnType)}>(streamHandler)
-              EventChannel(messenger, channelName, ${generatorOptions.fileSpecificClassNameComponent}$_pigeonMethodCodec).setStreamHandler(internalStreamHandler)
+            /**
+             * Creates and returns a new event channel that calls the provided stream handler.
+             *
+             * The returned channel can be stored to allow changing or removing the stream handler.
+             * If the handler will not be changed for the lifetime of the engine associated with the messenger,
+             * the return value can be ignored.
+             */
+            fun register(messenger: BinaryMessenger, streamHandler: $streamHandlerClassName, instanceName: String = ""): $channelClassName {
+              val channel = $channelClassName(messenger, instanceName)
+              channel.setStreamHandler(streamHandler)
+              return channel
             }
           }
-        // Implement methods from ${generatorOptions.fileSpecificClassNameComponent}PigeonEventChannelWrapper
-        override fun onListen(p0: Any?, sink: PigeonEventSink<${_kotlinTypeForDartType(func.returnType)}>) {}
 
-        override fun onCancel(p0: Any?) {}
+          // Implement methods from ${generatorOptions.fileSpecificClassNameComponent}PigeonEventChannelWrapper
+          override fun onListen(p0: Any?, sink: PigeonEventSink<${_kotlinTypeForDartType(func.returnType)}>) {}
+
+          override fun onCancel(p0: Any?) {}
         }
       ''');
     }
@@ -1515,6 +1566,7 @@ class ${api.name}Registrar() {
       ' * @property details The error details. Must be a datatype supported by the api codec.',
     );
     indent.writeln(' */');
+    _writeKeepAnnotationForJni(generatorOptions, indent);
     indent.write('class ${_getErrorClassName(generatorOptions)} ');
     indent.addScoped('(', ')', () {
       indent.writeln('val code: String,');

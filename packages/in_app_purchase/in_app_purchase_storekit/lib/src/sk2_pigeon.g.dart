@@ -1070,6 +1070,25 @@ class InAppPurchase2API {
     return (pigeonVar_replyValue! as List<Object?>).cast<SK2TransactionMessage>();
   }
 
+  Future<List<SK2TransactionMessage>> currentEntitlements() async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.currentEntitlements$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return (pigeonVar_replyValue! as List<Object?>).cast<SK2TransactionMessage>();
+  }
+
   Future<void> finish(int id) async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.finish$pigeonVar_messageChannelSuffix';
@@ -1162,6 +1181,20 @@ class InAppPurchase2API {
   Future<void> presentOfferCodeRedeemSheet() async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.presentOfferCodeRedeemSheet$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+  }
+
+  Future<void> showManageSubscriptions() async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.showManageSubscriptions$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
