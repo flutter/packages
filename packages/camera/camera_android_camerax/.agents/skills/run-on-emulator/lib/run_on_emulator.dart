@@ -87,6 +87,7 @@ class RunOptions {
     this.testTimeout = defaultTestTimeout,
     this.stopEmulator = false,
     this.allowNoCamera = false,
+    this.headless = false,
   });
 
   /// Parses command line [args].
@@ -104,6 +105,7 @@ class RunOptions {
       testTimeout: _parseDuration(flags, 'test-timeout', defaultTestTimeout),
       stopEmulator: flags.containsKey('stop-emulator'),
       allowNoCamera: flags.containsKey('allow-no-camera'),
+      headless: flags.containsKey('headless'),
     );
   }
 
@@ -136,6 +138,7 @@ Options:
   --test-timeout=<sec>   Seconds to wait for integration tests (default 1800).
   --stop-emulator        Stop the emulator afterwards if this tool started it.
   --allow-no-camera      Warn instead of failing if the AVD has no camera.
+  --headless             Start the emulator without a window.
   --help                 Show this message.
 
 Exit codes:
@@ -150,7 +153,7 @@ Exit codes:
     'boot-timeout',
     'test-timeout',
   };
-  static const Set<String> _boolFlags = <String>{'stop-emulator', 'allow-no-camera'};
+  static const Set<String> _boolFlags = <String>{'stop-emulator', 'allow-no-camera', 'headless'};
 
   /// The command to run.
   final RunMode mode;
@@ -175,6 +178,9 @@ Exit codes:
 
   /// Whether to continue (with a warning) when the AVD has no camera.
   final bool allowNoCamera;
+
+  /// Whether to start the emulator without a window.
+  final bool headless;
 
   static RunMode _parseMode(List<String> args) {
     final List<String> positional = args.where((String a) => !a.startsWith('--')).toList();
@@ -227,6 +233,12 @@ const String androidCliInstallInstructions = '''
 Install the Android CLI from https://developer.android.com/tools/agents, make
 sure the `android` executable is on your PATH (verify with `which android`),
 then run `android update` to get the latest version.''';
+
+/// The oldest supported Android CLI version.
+///
+/// 1.1 added `--install-options` to `android install`, `--device` to
+/// `android screen capture`, and `android input`, which this skill relies on.
+const String minimumAndroidCliVersion = '1.1.0';
 
 /// Thrown internally to abort a run with a specific exit code.
 class _StepFailure implements Exception {
@@ -346,25 +358,33 @@ class EmulatorRunner {
         'The Android CLI (`android`) is not on the PATH.\n$androidCliInstallInstructions',
       );
     }
-    // The legacy Android SDK also shipped an `android` executable, so verify
-    // that this one actually supports the commands this tool depends on.
-    final ProcessResult help = await _runCommand(<String>['android', 'emulator', '--help']);
-    if (help.exitCode != 0) {
+    // The legacy Android SDK also shipped an `android` executable, which does
+    // not report a version, so this also rejects it.
+    final ProcessResult result = await _runCommand(<String>['android', '--version']);
+    final String version = _stdout(result);
+    final List<int>? parsed = result.exitCode == 0 ? parseVersion(version) : null;
+    if (parsed == null) {
       throw _StepFailure(
         ExitCodes.androidCliMissing,
-        'An `android` executable is on the PATH, but `android emulator --help` failed. '
-        'It may be the legacy Android SDK tool rather than the Android CLI.\n'
+        'An `android` executable is on the PATH, but `android --version` did not report a '
+        'version. It may be the legacy Android SDK tool rather than the Android CLI.\n'
         '$androidCliInstallInstructions',
       );
     }
-    final ProcessResult version = await _runCommand(<String>['android', '--version']);
-    _log('Android CLI is installed (version ${_stdout(version)}).');
+    if (compareVersions(parsed, parseVersion(minimumAndroidCliVersion)!) < 0) {
+      throw _StepFailure(
+        ExitCodes.androidCliMissing,
+        'Android CLI $version is older than the required $minimumAndroidCliVersion. '
+        'Run `android update`, then re-run.',
+      );
+    }
+    _log('Android CLI is installed (version $version).');
   }
 
   Future<String> _resolveAdb() async {
-    final ProcessResult info = await _runCommand(<String>['android', 'info']);
-    final String? sdkPath = info.exitCode == 0 ? _parseKeyValue(_stdout(info), 'sdk', ':') : null;
-    if (sdkPath != null) {
+    final ProcessResult info = await _runCommand(<String>['android', 'info', 'sdk']);
+    final String sdkPath = info.exitCode == 0 ? _stdout(info) : '';
+    if (sdkPath.isNotEmpty) {
       final adbName = _fs.path.separator == r'\' ? 'adb.exe' : 'adb';
       final String candidate = _fs.path.join(sdkPath, 'platform-tools', adbName);
       if (_fs.file(candidate).existsSync()) {
@@ -408,6 +428,7 @@ class EmulatorRunner {
       'android',
       'emulator',
       'start',
+      if (options.headless) '--headless',
       avd,
     ], timeout: options.bootTimeout);
     if (code != 0) {
@@ -581,7 +602,7 @@ class EmulatorRunner {
   // ---------------------------------------------------------------------------
 
   Future<void> _launchApp(String adb, String serial, String exampleDir) async {
-    await _buildAndInstall(adb, serial, exampleDir, 'lib/main.dart', ExitCodes.appFailed);
+    await _buildAndInstall(serial, exampleDir, 'lib/main.dart', ExitCodes.appFailed);
 
     _step('Launching the example app');
     final ProcessResult start = await _runCommand(<String>[
@@ -632,7 +653,7 @@ class EmulatorRunner {
     // tests indefinitely (https://github.com/flutter/flutter/issues/130987).
     // `flutter test` reinstalls the app with `adb install -r`, which preserves
     // runtime permission grants made here.
-    await _buildAndInstall(adb, serial, exampleDir, options.target, ExitCodes.testsFailed);
+    await _buildAndInstall(serial, exampleDir, options.target, ExitCodes.testsFailed);
 
     _step('Running integration tests (${options.target})');
     final int? code = await _stream(
@@ -665,7 +686,6 @@ class EmulatorRunner {
   }
 
   Future<void> _buildAndInstall(
-    String adb,
     String serial,
     String exampleDir,
     String target,
@@ -699,16 +719,14 @@ class EmulatorRunner {
 
     _step('Installing the example app with runtime permissions granted');
     final ProcessResult install = await _runCommand(<String>[
-      adb,
-      '-s',
-      serial,
+      'android',
       'install',
-      '-r',
-      '-t',
-      '-g',
-      apk,
+      '--apks=$apk',
+      '--device=$serial',
+      '--install-options=-g',
     ]);
-    // Some adb versions exit 0 on failure, so also check the output.
+    // The package manager can report a failure without a non-zero exit code,
+    // so also check the output.
     if (install.exitCode != 0 || RegExp('^Failure', multiLine: true).hasMatch(_stdout(install))) {
       throw _StepFailure(
         failureCode,
@@ -796,12 +814,24 @@ Map<String, String> parseIni(String contents) {
   return values;
 }
 
-String? _parseKeyValue(String contents, String key, String separator) {
-  for (final String line in contents.split('\n')) {
-    final String trimmed = line.trim();
-    if (trimmed.startsWith('$key$separator')) {
-      return trimmed.substring(key.length + separator.length).trim();
+/// Parses the leading `major.minor.patch` of [version], or returns `null`.
+List<int>? parseVersion(String version) {
+  final RegExpMatch? match = RegExp(r'^(\d+)\.(\d+)\.(\d+)').firstMatch(version.trim());
+  if (match == null) {
+    return null;
+  }
+  return <int>[for (var i = 1; i <= 3; i++) int.parse(match.group(i)!)];
+}
+
+/// Compares two versions parsed by [parseVersion].
+///
+/// Returns a negative number if [a] is older than [b], zero if they are equal,
+/// and a positive number otherwise.
+int compareVersions(List<int> a, List<int> b) {
+  for (var i = 0; i < 3; i++) {
+    if (a[i] != b[i]) {
+      return a[i] - b[i];
     }
   }
-  return null;
+  return 0;
 }

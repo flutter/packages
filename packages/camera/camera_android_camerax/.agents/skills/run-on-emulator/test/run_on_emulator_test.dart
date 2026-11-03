@@ -150,13 +150,15 @@ void main() {
     fileSystem.file(apk).createSync(recursive: true);
     writeAvdConfig('Pixel_9', 'hw.camera.back=virtualscene\nhw.camera.front=emulated\n');
 
-    processManager.runResponses['android --version'] = () => ok('1.0.15498356\n');
-    processManager.runResponses['android info'] = () => ok('sdk: /sdk\nversion: 1.0\n');
+    processManager.runResponses['android --version'] = () => ok('1.1.16717390\n');
+    processManager.runResponses['android info sdk'] = () => ok('/sdk\n');
     processManager.runResponses['android emulator list'] = () => ok(avdListOutput);
     processManager.runResponses['$adb devices'] = () => ok('List of devices attached\n\n');
     processManager.runResponses['$adb -s $serial shell getprop sys.boot_completed'] = () =>
         ok('1\n');
-    processManager.runResponses['$adb -s $serial install -r -t -g $apk'] = () => ok('Success\n');
+    processManager
+        .runResponses['android install --apks=$apk --device=$serial --install-options=-g'] = () =>
+        ok('Success\n');
     processManager.runResponses['$adb -s $serial shell pidof $exampleAppId'] = () => ok('1234\n');
     processManager.onStart['android emulator start Pixel_9'] = () => markEmulatorRunning('Pixel_9');
   });
@@ -227,6 +229,21 @@ void main() {
       expect(parseAvdList('AVD ID   AVD Name\n\n'), isEmpty);
     });
 
+    test('parseAvdList handles the header-less format from Android CLI 1.1', () {
+      expect(parseAvdList('Pixel_9\nSmall_Phone\n'), <String>['Pixel_9', 'Small_Phone']);
+    });
+
+    test('parseVersion parses major.minor.patch', () {
+      expect(parseVersion('1.1.16717390\n'), <int>[1, 1, 16717390]);
+      expect(parseVersion('The "android" command is deprecated.'), isNull);
+    });
+
+    test('compareVersions orders versions', () {
+      expect(compareVersions(<int>[1, 0, 9], <int>[1, 1, 0]), isNegative);
+      expect(compareVersions(<int>[1, 1, 0], <int>[1, 1, 0]), isZero);
+      expect(compareVersions(<int>[2, 0, 0], <int>[1, 9, 9]), isPositive);
+    });
+
     test('parseIni parses key/value pairs', () {
       expect(parseIni('a=1\nb = two \n#comment\n\n'), <String, String>{'a': '1', 'b': 'two'});
     });
@@ -242,10 +259,18 @@ void main() {
     });
 
     test('fails with androidCliMissing for a legacy android tool', () async {
-      processManager.runResponses['android emulator --help'] = () => fail();
+      processManager.runResponses['android --version'] = () =>
+          ok('The "android" command is deprecated and no longer supported.\n');
 
       expect(await runTool(<String>['check']), ExitCodes.androidCliMissing);
       expect(logged('legacy Android SDK'), isTrue);
+    });
+
+    test('fails with androidCliMissing when the Android CLI is too old', () async {
+      processManager.runResponses['android --version'] = () => ok('1.0.15498356\n');
+
+      expect(await runTool(<String>['check']), ExitCodes.androidCliMissing);
+      expect(logged('Run `android update`'), isTrue);
     });
 
     test('fails with toolMissing when adb cannot be found', () async {
@@ -289,6 +314,14 @@ void main() {
     test('starts the first AVD when none is running', () async {
       expect(await runTool(<String>['emulator']), ExitCodes.success);
       expect(processManager.invocations, contains('android emulator start Pixel_9'));
+    });
+
+    test('--headless starts the emulator without a window', () async {
+      processManager.onStart['android emulator start --headless Pixel_9'] = () =>
+          markEmulatorRunning('Pixel_9');
+
+      expect(await runTool(<String>['emulator', '--headless']), ExitCodes.success);
+      expect(processManager.invocations, contains('android emulator start --headless Pixel_9'));
     });
 
     test('starts the requested AVD instead of an unrelated running one', () async {
@@ -400,7 +433,7 @@ void main() {
         processManager.invocations,
         containsAllInOrder(<String>[
           'flutter build apk --debug --target=lib/main.dart',
-          '$adb -s $serial install -r -t -g $apk',
+          'android install --apks=$apk --device=$serial --install-options=-g',
           '$adb -s $serial shell am start -W -n $exampleAppId/.MainActivity',
           '$adb -s $serial shell pidof $exampleAppId',
         ]),
@@ -414,7 +447,8 @@ void main() {
     });
 
     test('fails with appFailed when adb reports an install failure', () async {
-      processManager.runResponses['$adb -s $serial install -r -t -g $apk'] = () =>
+      processManager
+          .runResponses['android install --apks=$apk --device=$serial --install-options=-g'] = () =>
           ok('Failure [INSTALL_FAILED_INSUFFICIENT_STORAGE]\n');
 
       expect(await runTool(<String>['app']), ExitCodes.appFailed);
@@ -437,7 +471,7 @@ void main() {
         processManager.invocations,
         containsAllInOrder(<String>[
           'flutter build apk --debug --target=$defaultIntegrationTestTarget',
-          '$adb -s $serial install -r -t -g $apk',
+          'android install --apks=$apk --device=$serial --install-options=-g',
           testCommand,
         ]),
       );

@@ -61,21 +61,23 @@ indefinitely).
 
 Each command performs, in order, and stops at the first failure:
 
-1. **Android CLI check**: `android` must be on the PATH and must be the Android
-   CLI (not the legacy SDK tool).
-2. **Tool check**: `adb` (from the SDK reported by `android info`, falling back
-   to the PATH) and, for `app`/`integration-test`, `flutter`.
+1. **Android CLI check**: `android` must be on the PATH, must be the Android
+   CLI (not the legacy SDK tool), and must be at least version 1.1.
+2. **Tool check**: `adb` (from the SDK reported by `android info sdk`, falling
+   back to the PATH) and, for `app`/`integration-test`, `flutter`.
 3. **Emulator**: reuses a running emulator, otherwise starts the first AVD
    from `android emulator list` (or `--avd=<id>`) with
    `android emulator start`, then waits for `sys.boot_completed`. For
    `app`/`integration-test`, the AVD must have at least one camera.
 4. **Run**: builds a debug APK, installs it with all runtime permissions
-   granted (`adb install -g`), then launches the app or runs `flutter test`.
+   granted (`android install --install-options=-g`), then launches the app or
+   runs `flutter test`.
 
 Other options: `--avd=<id>`, `--target=<path relative to example/>`,
 `--boot-timeout=<sec>`, `--test-timeout=<sec>`, `--stop-emulator` (stops the
-emulator afterwards only if the script started it), `--allow-no-camera`.
-Run with `--help` for details.
+emulator afterwards only if the script started it), `--allow-no-camera`,
+`--headless` (starts the emulator without a window; use it when the user does
+not need to watch). Run with `--help` for details.
 
 The emulator is left running by default so later runs are fast. The full
 integration test suite can take more than 10 minutes, so while iterating run
@@ -91,7 +93,7 @@ The last line of output is always `RESULT: SUCCESS ...` or
 | Exit code | Meaning | What to do |
 | --- | --- | --- |
 | 0 | Success | Report the result (see below). |
-| 2 | Android CLI missing or not the Android CLI | **Stop.** Warn the user and relay the install instructions from the output. Do not try other ways to start an emulator. |
+| 2 | Android CLI missing, too old, or not the Android CLI | **Stop.** Warn the user and relay the install or update instructions from the output. Do not install or update the CLI yourself (even though the [android-cli](../android-cli/SKILL.md) skill lists install commands), and do not try other ways to start an emulator. |
 | 3 | `adb` or `flutter` missing | **Stop.** Warn the user and relay the fix from the output. |
 | 4 | No usable AVD (none exist, `--avd` not found, or no camera) | **Stop.** Relay the suggested fix (e.g. `android emulator create medium_phone`, or editing the AVD's camera config) and ask the user before creating or modifying AVDs. |
 | 5 | Emulator failed to start or boot | **Stop.** Report the error. Suggest `android emulator start --cold <avd>` or freeing disk/RAM. |
@@ -165,10 +167,10 @@ and require changes to the example app. Write an integration test instead.
 ### Screenshots
 
 Take screenshots with
-`adb -s <serial> exec-out screencap -p > <artifact dir>/scratch/<name>.png`.
-`android screen capture --annotate -o <file>.png` adds labeled bounding boxes,
-but it has no device option, so use it only when `adb devices` lists a single
-device.
+`android screen capture --device=<serial> -o <artifact dir>/scratch/<name>.png`
+and view the PNG before doing anything else. Add `--annotate` to label UI
+elements with numbered boxes (see the [android-cli](../android-cli/SKILL.md)
+skill for using the labels).
 
 | A screenshot alone is enough for | A screenshot alone is NOT enough for |
 | --- | --- |
@@ -182,15 +184,23 @@ expressed as a value, report it as **not verified on the emulator** and give
 the user exact manual steps; you may attach the screenshot as context, but do
 not present it as proof.
 
-### adb Recipes
+### Device Recipes
+
+For general device interaction (the `android layout` JSON fields, annotated
+screenshots, `android screen resolve`, and typing text), follow the
+[android-cli](../android-cli/SKILL.md) skill.
 
 Replace `<serial>` with the value from the `RESULT:` line. The example app ID
 is `io.flutter.plugins.cameraxexample`.
 
-- **Find and tap a widget:** `android layout --device=<serial> --pretty`,
-  then `adb -s <serial> shell input tap <x> <y>` at the center of the
-  element's bounds. Do not guess coordinates from a screenshot. If a flow
-  needs more than about five taps, write an integration test instead.
+- **Find and tap a widget:** `android layout --device=<serial> --flat` to
+  find the element. The example app's camera controls have no text or
+  content descriptions, so tap by class instead, e.g.
+  `android input --device=<serial> tap clz=RadioButton --match=first`
+  (selects the first camera and starts the preview), or tap the element's
+  `center` from the layout with `adb -s <serial> shell input tap <x> <y>`.
+  Do not guess coordinates from a screenshot. If a flow needs more than about
+  five taps, write an integration test instead.
 - **Background and resume:** `adb -s <serial> shell input keyevent KEYCODE_HOME`,
   then `adb -s <serial> shell am start -n io.flutter.plugins.cameraxexample/.MainActivity`.
 - **Permissions:** `adb -s <serial> shell pm revoke io.flutter.plugins.cameraxexample android.permission.CAMERA`
