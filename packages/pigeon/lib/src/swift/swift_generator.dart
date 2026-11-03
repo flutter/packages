@@ -550,111 +550,37 @@ private class _PigeonFfiCodec {
       excludeSealedClasses: true,
     ).toList();
 
-    // Exact type matches are checked first, because comparing metatypes is
-    // much cheaper than a failed dynamic cast for every value.
-    final writeCustom = StringBuffer();
-    final writeCustomFallback = StringBuffer();
-    final writeClasses = StringBuffer();
-    void writeCustomBody(StringBuffer buffer, EnumeratedType customType, String value) {
+    void writeCustomBody(EnumeratedType customType, String value) {
       final Class? dataClass = customType.associatedClass;
       final writePayload = dataClass != null
           ? 'write${customType.name}($value)'
           : 'writeValue(Int64($value.rawValue))';
       if (customType.enumeration < maximumCodecFieldKey) {
-        buffer.writeln('      writeByte(${customType.enumeration})');
-        buffer.writeln('      $writePayload');
+        indent.writeln('writeByte(${customType.enumeration})');
+        indent.writeln(writePayload);
       } else {
-        buffer.writeln('      writeByte($maximumCodecFieldKey)');
-        buffer.writeln('      writeByte(12)');
-        buffer.writeln('      writeSize(2)');
-        buffer.writeln('      writeValue(Int64(${customType.enumeration - maximumCodecFieldKey}))');
-        buffer.writeln('      $writePayload');
+        indent.writeln('writeByte($maximumCodecFieldKey)');
+        indent.writeln('writeByte(12)');
+        indent.writeln('writeSize(2)');
+        indent.writeln('writeValue(Int64(${customType.enumeration - maximumCodecFieldKey}))');
+        indent.writeln(writePayload);
       }
-      buffer.writeln('      return true');
+      indent.writeln('return true');
     }
 
-    for (final customType in enumeratedTypes) {
-      final Class? dataClass = customType.associatedClass;
-      if (dataClass != null) {
-        // Fields are written by their declared types, so that a `List<int>`
-        // stays a list rather than becoming typed data, and optional fields
-        // aren't boxed.
-        final List<NamedType> fields = getFieldsInSerializationOrder(dataClass).toList();
-        writeClasses.writeln(
-          '  mutating func write${customType.name}(_ value: ${customType.name}) {',
-        );
-        writeClasses.writeln('    writeByte(12)');
-        writeClasses.writeln('    writeSize(${fields.length})');
-        for (final field in fields) {
-          writeClasses.writeln('    ${_swiftInteropWrite('value.${field.name}', field.type)}');
-        }
-        writeClasses.writeln('  }');
-        writeClasses.writeln();
-      }
-      writeCustom.writeln('    if valueType == ${customType.name}.self {');
-      writeCustomBody(writeCustom, customType, '(value as! ${customType.name})');
-      writeCustom.writeln('    }');
-      writeCustomFallback.writeln('    if let value = value as? ${customType.name} {');
-      writeCustomBody(writeCustomFallback, customType, 'value');
-      writeCustomFallback.writeln('    }');
-    }
-
-    String decodeCustom(EnumeratedType customType, String value) {
+    void writeDecodeCustom(EnumeratedType customType, String value) {
       if (customType.associatedClass != null) {
-        return 'return read${customType.name}()';
+        indent.writeln('return read${customType.name}()');
+      } else {
+        indent.writeln('guard let raw = $value as? Int64 else { return nil }');
+        indent.writeln('return ${customType.name}(rawValue: Int(raw))');
       }
-      return 'guard let raw = $value as? Int64 else { return nil }\n'
-          '      return ${customType.name}(rawValue: Int(raw))';
-    }
-
-    final readCustom = StringBuffer();
-    final readClasses = StringBuffer();
-    for (final customType in enumeratedTypes) {
-      final Class? dataClass = customType.associatedClass;
-      if (dataClass != null) {
-        // Fields are read by their declared types, which avoids converting
-        // untyped collections afterwards.
-        final List<NamedType> fields = getFieldsInSerializationOrder(dataClass).toList();
-        readClasses.writeln('  mutating func read${customType.name}() -> ${customType.name} {');
-        readClasses.writeln('    readListHeader()');
-        if (fields.isEmpty) {
-          readClasses.writeln('    return ${customType.name}()');
-        } else {
-          readClasses.writeln('    return ${customType.name}(');
-          readClasses.writeln(
-            fields
-                .map((NamedType field) => '      ${field.name}: ${_swiftInteropRead(field.type)}')
-                .join(',\n'),
-          );
-          readClasses.writeln('    )');
-        }
-        readClasses.writeln('  }');
-        readClasses.writeln();
-      }
-      if (customType.enumeration < maximumCodecFieldKey) {
-        readCustom.writeln('    case ${customType.enumeration}:');
-        readCustom.writeln('      ${decodeCustom(customType, 'readValue()')}');
-      }
-    }
-    if (root.requiresOverflowClass) {
-      readCustom.writeln('    case $maximumCodecFieldKey:');
-      readCustom.writeln('      readListHeader()');
-      readCustom.writeln('      switch read(Int64.self) {');
-      for (final customType in enumeratedTypes) {
-        if (customType.enumeration >= maximumCodecFieldKey) {
-          readCustom.writeln('      case ${customType.enumeration - maximumCodecFieldKey}:');
-          readCustom.writeln('        ${decodeCustom(customType, 'readValue()')}');
-        }
-      }
-      readCustom.writeln('      default:');
-      readCustom.writeln('        return nil');
-      readCustom.writeln('      }');
     }
 
     indent.newln();
-    indent.format('''
-/// Writes values in the format of Flutter's standard message codec.
-fileprivate struct ${prefix}PigeonInteropWriter {
+    indent.writeln("/// Writes values in the format of Flutter's standard message codec.");
+    indent.writeScoped('fileprivate struct ${prefix}PigeonInteropWriter {', '}', () {
+      indent.format('''
   private(set) var bytes: [UInt8] = []
 
   mutating func writeByte(_ byte: UInt8) {
@@ -925,16 +851,56 @@ fileprivate struct ${prefix}PigeonInteropWriter {
       writeEntry(&self, key, item)
     }
   }
+''');
+      for (final customType in enumeratedTypes) {
+        final Class? dataClass = customType.associatedClass;
+        if (dataClass != null) {
+          // Fields are written by their declared types, so that a `List<int>`
+          // stays a list rather than becoming typed data, and optional fields
+          // aren't boxed.
+          final List<NamedType> fields = getFieldsInSerializationOrder(dataClass).toList();
+          indent.newln();
+          indent.writeScoped(
+            'mutating func write${customType.name}(_ value: ${customType.name}) {',
+            '}',
+            () {
+              indent.writeln('writeByte(12)');
+              indent.writeln('writeSize(${fields.length})');
+              for (final field in fields) {
+                indent.writeln(_swiftInteropWrite('value.${field.name}', field.type));
+              }
+            },
+          );
+        }
+      }
+      indent.newln();
+      // Exact type matches are checked first, because comparing metatypes is
+      // much cheaper than a failed dynamic cast for every value.
+      indent.writeScoped(
+        'mutating func writeCustomValue(_ value: Any, type valueType: Any.Type) -> Bool {',
+        '}',
+        () {
+          for (final customType in enumeratedTypes) {
+            indent.writeScoped('if valueType == ${customType.name}.self {', '}', () {
+              writeCustomBody(customType, '(value as! ${customType.name})');
+            });
+          }
+          indent.writeln('return false');
+        },
+      );
+      indent.newln();
+      indent.writeScoped('mutating func writeCustomValueFallback(_ value: Any) -> Bool {', '}', () {
+        for (final customType in enumeratedTypes) {
+          indent.writeScoped('if let value = value as? ${customType.name} {', '}', () {
+            writeCustomBody(customType, 'value');
+          });
+        }
+        indent.writeln('return false');
+      });
+    });
 
-$writeClasses  mutating func writeCustomValue(_ value: Any, type valueType: Any.Type) -> Bool {
-$writeCustom    return false
-  }
-
-  mutating func writeCustomValueFallback(_ value: Any) -> Bool {
-$writeCustomFallback    return false
-  }
-}
-
+    indent.newln();
+    indent.format('''
 /// Unwraps optionals that a generic context boxed into `Any`.
 fileprivate protocol ${prefix}PigeonInteropOptional {
   var pigeonWrapped: Any? { get }
@@ -981,9 +947,12 @@ extension Dictionary: ${prefix}PigeonInteropMap {
     }
   }
 }
+''');
 
-/// Reads values in the format of Flutter's standard message codec.
-fileprivate struct ${prefix}PigeonInteropReader {
+    indent.newln();
+    indent.writeln("/// Reads values in the format of Flutter's standard message codec.");
+    indent.writeScoped('fileprivate struct ${prefix}PigeonInteropReader {', '}', () {
+      indent.format('''
   private let data: NSData
   private let bytes: UnsafeRawBufferPointer
   private var position = 0
@@ -1150,15 +1119,73 @@ fileprivate struct ${prefix}PigeonInteropReader {
     }
     return read([K: V].self)
   }
+''');
+      for (final customType in enumeratedTypes) {
+        final Class? dataClass = customType.associatedClass;
+        if (dataClass != null) {
+          // Fields are read by their declared types, which avoids converting
+          // untyped collections afterwards.
+          final List<NamedType> fields = getFieldsInSerializationOrder(dataClass).toList();
+          indent.newln();
+          indent.writeScoped(
+            'mutating func read${customType.name}() -> ${customType.name} {',
+            '}',
+            () {
+              indent.writeln('readListHeader()');
+              if (fields.isEmpty) {
+                indent.writeln('return ${customType.name}()');
+              } else {
+                indent.writeScoped('return ${customType.name}(', ')', () {
+                  for (final (int index, NamedType field) in fields.indexed) {
+                    final comma = index < fields.length - 1 ? ',' : '';
+                    indent.writeln('${field.name}: ${_swiftInteropRead(field.type)}$comma');
+                  }
+                });
+              }
+            },
+          );
+        }
+      }
+      indent.newln();
+      indent.writeScoped('mutating func readCustomValue(ofType type: UInt8) -> Any? {', '}', () {
+        indent.writeScoped('switch type {', '}', nestCount: 0, () {
+          for (final customType in enumeratedTypes) {
+            if (customType.enumeration < maximumCodecFieldKey) {
+              indent.writeScoped('case ${customType.enumeration}:', null, () {
+                writeDecodeCustom(customType, 'readValue()');
+              });
+            }
+          }
+          if (root.requiresOverflowClass) {
+            indent.writeScoped('case $maximumCodecFieldKey:', null, () {
+              indent.writeln('readListHeader()');
+              indent.writeScoped('switch read(Int64.self) {', '}', nestCount: 0, () {
+                for (final customType in enumeratedTypes) {
+                  if (customType.enumeration >= maximumCodecFieldKey) {
+                    indent.writeScoped(
+                      'case ${customType.enumeration - maximumCodecFieldKey}:',
+                      null,
+                      () {
+                        writeDecodeCustom(customType, 'readValue()');
+                      },
+                    );
+                  }
+                }
+                indent.writeScoped('default:', null, () {
+                  indent.writeln('return nil');
+                });
+              });
+            });
+          }
+          indent.writeScoped('default:', null, () {
+            indent.writeln(r'preconditionFailure("Unsupported type: \(type)")');
+          });
+        });
+      });
+    });
 
-$readClasses  mutating func readCustomValue(ofType type: UInt8) -> Any? {
-    switch type {
-$readCustom    default:
-      preconditionFailure("Unsupported type: \\(type)")
-    }
-  }
-}
-
+    indent.newln();
+    indent.format('''
 /// Encodes and decodes the buffers that native interop calls pass to and from
 /// Dart, in the same format as the message codec.
 fileprivate enum $codec {
@@ -1639,13 +1666,11 @@ if (wrapped == nil) {
       () {
         indent.writeScoped('switch ${varNamePrefix}Class {', '}', () {
           for (final Class child in classDefinition.children) {
-            indent.writeln('case let ${varNamePrefix}value as ${child.name}:');
-            indent.nest(1, () {
+            indent.writeScoped('case let ${varNamePrefix}value as ${child.name}:', null, () {
               indent.writeln('return ${child.name}Bridge.fromSwift(${varNamePrefix}value)');
             });
           }
-          indent.writeln('default:');
-          indent.nest(1, () {
+          indent.writeScoped('default:', null, () {
             indent.writeln('return nil');
           });
         });
@@ -1658,13 +1683,11 @@ if (wrapped == nil) {
       () {
         indent.writeScoped('switch ${varNamePrefix}bridge {', '}', () {
           for (final Class child in classDefinition.children) {
-            indent.writeln('case let ${varNamePrefix}value as ${child.name}Bridge:');
-            indent.nest(1, () {
+            indent.writeScoped('case let ${varNamePrefix}value as ${child.name}Bridge:', null, () {
               indent.writeln('return ${varNamePrefix}value.toSwift()');
             });
           }
-          indent.writeln('default:');
-          indent.nest(1, () {
+          indent.writeScoped('default:', null, () {
             indent.writeln('return nil');
           });
         });
@@ -3286,19 +3309,17 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
           indent.writeScoped('switch number {', '}', () {
             var caseNum = 4;
             for (final Enum anEnum in root.enums) {
-              indent.writeln('case let value as ${anEnum.name}:');
-              indent.inc();
-              indent.writeln(
-                'return ${_classNamePrefix}NumberWrapper(number: NSNumber(value: value.rawValue), type: ${caseNum++})',
-              );
-              indent.dec();
+              indent.writeScoped('case let value as ${anEnum.name}:', null, () {
+                indent.writeln(
+                  'return ${_classNamePrefix}NumberWrapper(number: NSNumber(value: value.rawValue), type: ${caseNum++})',
+                );
+              });
             }
-            indent.writeln('default:');
-            indent.inc();
-            indent.writeln(
-              'return ${_classNamePrefix}NumberWrapper(number: NSNumber(value: 0), type: 0)',
-            );
-            indent.dec();
+            indent.writeScoped('default:', null, () {
+              indent.writeln(
+                'return ${_classNamePrefix}NumberWrapper(number: NSNumber(value: 0), type: 0)',
+              );
+            });
           });
         } else {
           indent.writeln(
@@ -3322,15 +3343,13 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
     case 3:
       return wrappedNumber.number.boolValue''');
           for (final Enum anEnum in root.enums) {
-            indent.writeln('case ${caseNum++}:');
-            indent.inc();
-            indent.writeln('return ${anEnum.name}(rawValue: wrappedNumber.number.intValue)!');
-            indent.dec();
+            indent.writeScoped('case ${caseNum++}:', null, () {
+              indent.writeln('return ${anEnum.name}(rawValue: wrappedNumber.number.intValue)!');
+            });
           }
-          indent.writeln('default:');
-          indent.inc();
-          indent.writeln('return wrappedNumber.number.int64Value');
-          indent.dec();
+          indent.writeScoped('default:', null, () {
+            indent.writeln('return wrappedNumber.number.int64Value');
+          });
         });
       },
     );
