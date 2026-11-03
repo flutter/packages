@@ -540,7 +540,7 @@ private class _PigeonFfiCodec {
   ///
   /// It reads and writes the format of Flutter's standard message codec, but
   /// depends only on Foundation, because swiftgen compiles this file without
-  /// Flutter. All of its types are `fileprivate`, so they add no Objective-C
+  /// Flutter. All of its types are `private`, so they add no Objective-C
   /// symbols.
   void _writeFfiInteropCodec(InternalSwiftOptions generatorOptions, Root root, Indent indent) {
     final String prefix = _classNamePrefix;
@@ -560,7 +560,7 @@ private class _PigeonFfiCodec {
         indent.writeln(writePayload);
       } else {
         indent.writeln('writeByte($maximumCodecFieldKey)');
-        indent.writeln('writeByte(12)');
+        indent.writeln('writeByte($codec.typeList)');
         indent.writeln('writeSize(2)');
         indent.writeln('writeValue(Int64(${customType.enumeration - maximumCodecFieldKey}))');
         indent.writeln(writePayload);
@@ -579,7 +579,12 @@ private class _PigeonFfiCodec {
 
     indent.newln();
     indent.writeln("/// Writes values in the format of Flutter's standard message codec.");
-    indent.writeScoped('fileprivate struct ${prefix}PigeonInteropWriter {', '}', () {
+    indent.writeln('///');
+    indent.writeln(
+      '/// Implemented against Foundation rather than `FlutterStandardWriter` so that',
+    );
+    indent.writeln('/// swiftgen can compile this file without importing Flutter.');
+    indent.writeScoped('private struct ${prefix}PigeonInteropWriter {', '}', () {
       indent.format('''
   private(set) var bytes: [UInt8] = []
 
@@ -592,13 +597,13 @@ private class _PigeonFfiCodec {
   }
 
   mutating func writeSize(_ size: Int) {
-    if size < 254 {
+    if size < Int($codec.sizeUInt16) {
       writeByte(UInt8(size))
-    } else if size <= 0xffff {
-      writeByte(254)
+    } else if size <= Int(UInt16.max) {
+      writeByte($codec.sizeUInt16)
       writeRaw(UInt16(size))
     } else {
-      writeByte(255)
+      writeByte($codec.sizeUInt32)
       writeRaw(UInt32(size))
     }
   }
@@ -619,14 +624,14 @@ private class _PigeonFfiCodec {
 
   mutating func writeTypedData<T>(_ type: UInt8, _ array: [T]?, alignment: Int) {
     guard let array = array else {
-      writeByte(0)
+      writeByte($codec.typeNull)
       return
     }
     writeTypedData(type, array, alignment: alignment)
   }
 
   mutating func writeString(_ string: String) {
-    writeByte(7)
+    writeByte($codec.typeString)
     var string = string
     string.withUTF8 { utf8 in
       writeSize(utf8.count)
@@ -636,7 +641,7 @@ private class _PigeonFfiCodec {
 
   mutating func writeValue(_ value: Any?) {
     guard let value = value else {
-      writeByte(0)
+      writeByte($codec.typeNull)
       return
     }
     // The most common types are matched by exact type first, because
@@ -647,16 +652,16 @@ private class _PigeonFfiCodec {
       return
     }
     if valueType == Int64.self {
-      writeByte(4)
+      writeByte($codec.typeInt64)
       writeRaw(value as! Int64)
       return
     }
     if valueType == Bool.self {
-      writeByte((value as! Bool) ? 1 : 2)
+      writeByte((value as! Bool) ? $codec.typeTrue : $codec.typeFalse)
       return
     }
     if valueType == Double.self {
-      writeByte(6)
+      writeByte($codec.typeFloat64)
       writeAlignment(8)
       writeRaw((value as! Double).bitPattern)
       return
@@ -671,23 +676,23 @@ private class _PigeonFfiCodec {
     // Typed data is matched by exact type, because casting an empty array of
     // any element type to an array of numbers succeeds.
     if valueType == [UInt8].self {
-      writeTypedData(8, value as! [UInt8], alignment: 1)
+      writeTypedData($codec.typeUint8List, value as! [UInt8], alignment: 1)
       return
     }
     if valueType == [Int32].self {
-      writeTypedData(9, value as! [Int32], alignment: 4)
+      writeTypedData($codec.typeInt32List, value as! [Int32], alignment: 4)
       return
     }
     if valueType == [Int64].self {
-      writeTypedData(10, value as! [Int64], alignment: 8)
+      writeTypedData($codec.typeInt64List, value as! [Int64], alignment: 8)
       return
     }
     if valueType == [Float64].self {
-      writeTypedData(11, value as! [Float64], alignment: 8)
+      writeTypedData($codec.typeFloat64List, value as! [Float64], alignment: 8)
       return
     }
     if valueType == [Float32].self {
-      writeTypedData(14, value as! [Float32], alignment: 4)
+      writeTypedData($codec.typeFloat32List, value as! [Float32], alignment: 4)
       return
     }
     if valueType == AnyHashable.self {
@@ -710,18 +715,18 @@ private class _PigeonFfiCodec {
       return
     }
     if ${prefix}PigeonInternal.isNullish(value) {
-      writeByte(0)
+      writeByte($codec.typeNull)
       return
     }
     if let number = value as? NSNumber {
       if CFGetTypeID(number) == CFBooleanGetTypeID() {
-        writeByte(number.boolValue ? 1 : 2)
+        writeByte(number.boolValue ? $codec.typeTrue : $codec.typeFalse)
       } else if CFNumberIsFloatType(number) {
-        writeByte(6)
+        writeByte($codec.typeFloat64)
         writeAlignment(8)
         writeRaw(number.doubleValue.bitPattern)
       } else {
-        writeByte(4)
+        writeByte($codec.typeInt64)
         writeRaw(number.int64Value)
       }
       return
@@ -737,7 +742,7 @@ private class _PigeonFfiCodec {
   }
 
   mutating func writeList(_ list: [Any?]) {
-    writeByte(12)
+    writeByte($codec.typeList)
     writeSize(list.count)
     for item in list {
       writeValue(item)
@@ -746,10 +751,10 @@ private class _PigeonFfiCodec {
 
   mutating func writeList<T>(_ list: [T]?) {
     guard let list = list else {
-      writeByte(0)
+      writeByte($codec.typeNull)
       return
     }
-    writeByte(12)
+    writeByte($codec.typeList)
     writeSize(list.count)
     for item in list {
       writeValue(item)
@@ -758,10 +763,10 @@ private class _PigeonFfiCodec {
 
   mutating func writeList<T>(_ list: [T?]?) {
     guard let list = list else {
-      writeByte(0)
+      writeByte($codec.typeNull)
       return
     }
-    writeByte(12)
+    writeByte($codec.typeList)
     writeSize(list.count)
     for item in list {
       writeOptional(item)
@@ -770,10 +775,10 @@ private class _PigeonFfiCodec {
 
   mutating func writeList<T>(_ list: [T]?, _ writeElement: (inout Self, T) -> Void) {
     guard let list = list else {
-      writeByte(0)
+      writeByte($codec.typeNull)
       return
     }
-    writeByte(12)
+    writeByte($codec.typeList)
     writeSize(list.count)
     for item in list {
       writeElement(&self, item)
@@ -784,16 +789,16 @@ private class _PigeonFfiCodec {
     if let value = value {
       writeValue(value)
     } else {
-      writeByte(0)
+      writeByte($codec.typeNull)
     }
   }
 
   mutating func writeMap<K, V>(_ map: [K: V]?) {
     guard let map = map else {
-      writeByte(0)
+      writeByte($codec.typeNull)
       return
     }
-    writeByte(13)
+    writeByte($codec.typeMap)
     writeSize(map.count)
     for (key, item) in map {
       writeValue(key)
@@ -803,10 +808,10 @@ private class _PigeonFfiCodec {
 
   mutating func writeMap<K, V>(_ map: [K?: V]?) {
     guard let map = map else {
-      writeByte(0)
+      writeByte($codec.typeNull)
       return
     }
-    writeByte(13)
+    writeByte($codec.typeMap)
     writeSize(map.count)
     for (key, item) in map {
       writeOptional(key)
@@ -816,10 +821,10 @@ private class _PigeonFfiCodec {
 
   mutating func writeMap<K, V>(_ map: [K: V?]?) {
     guard let map = map else {
-      writeByte(0)
+      writeByte($codec.typeNull)
       return
     }
-    writeByte(13)
+    writeByte($codec.typeMap)
     writeSize(map.count)
     for (key, item) in map {
       writeValue(key)
@@ -829,10 +834,10 @@ private class _PigeonFfiCodec {
 
   mutating func writeMap<K, V>(_ map: [K?: V?]?) {
     guard let map = map else {
-      writeByte(0)
+      writeByte($codec.typeNull)
       return
     }
-    writeByte(13)
+    writeByte($codec.typeMap)
     writeSize(map.count)
     for (key, item) in map {
       writeOptional(key)
@@ -842,10 +847,10 @@ private class _PigeonFfiCodec {
 
   mutating func writeMap<K, V>(_ map: [K: V]?, _ writeEntry: (inout Self, K, V) -> Void) {
     guard let map = map else {
-      writeByte(0)
+      writeByte($codec.typeNull)
       return
     }
-    writeByte(13)
+    writeByte($codec.typeMap)
     writeSize(map.count)
     for (key, item) in map {
       writeEntry(&self, key, item)
@@ -864,7 +869,7 @@ private class _PigeonFfiCodec {
             'mutating func write${customType.name}(_ value: ${customType.name}) {',
             '}',
             () {
-              indent.writeln('writeByte(12)');
+              indent.writeln('writeByte($codec.typeList)');
               indent.writeln('writeSize(${fields.length})');
               for (final field in fields) {
                 indent.writeln(_swiftInteropWrite('value.${field.name}', field.type));
@@ -902,7 +907,7 @@ private class _PigeonFfiCodec {
     indent.newln();
     indent.format('''
 /// Unwraps optionals that a generic context boxed into `Any`.
-fileprivate protocol ${prefix}PigeonInteropOptional {
+private protocol ${prefix}PigeonInteropOptional {
   var pigeonWrapped: Any? { get }
 }
 
@@ -918,13 +923,13 @@ extension Optional: ${prefix}PigeonInteropOptional {
 }
 
 /// Writes typed lists without converting them to `[Any?]` first.
-fileprivate protocol ${prefix}PigeonInteropList {
+private protocol ${prefix}PigeonInteropList {
   func pigeonWrite(to writer: inout ${prefix}PigeonInteropWriter)
 }
 
 extension Array: ${prefix}PigeonInteropList {
   fileprivate func pigeonWrite(to writer: inout ${prefix}PigeonInteropWriter) {
-    writer.writeByte(12)
+    writer.writeByte($codec.typeList)
     writer.writeSize(count)
     for item in self {
       writer.writeValue(item)
@@ -933,13 +938,13 @@ extension Array: ${prefix}PigeonInteropList {
 }
 
 /// Writes typed maps without converting them to `[AnyHashable?: Any?]` first.
-fileprivate protocol ${prefix}PigeonInteropMap {
+private protocol ${prefix}PigeonInteropMap {
   func pigeonWrite(to writer: inout ${prefix}PigeonInteropWriter)
 }
 
 extension Dictionary: ${prefix}PigeonInteropMap {
   fileprivate func pigeonWrite(to writer: inout ${prefix}PigeonInteropWriter) {
-    writer.writeByte(13)
+    writer.writeByte($codec.typeMap)
     writer.writeSize(count)
     for (key, item) in self {
       writer.writeValue(key)
@@ -951,7 +956,7 @@ extension Dictionary: ${prefix}PigeonInteropMap {
 
     indent.newln();
     indent.writeln("/// Reads values in the format of Flutter's standard message codec.");
-    indent.writeScoped('fileprivate struct ${prefix}PigeonInteropReader {', '}', () {
+    indent.writeScoped('private struct ${prefix}PigeonInteropReader {', '}', () {
       indent.format('''
   private let data: NSData
   private let bytes: UnsafeRawBufferPointer
@@ -978,9 +983,9 @@ extension Dictionary: ${prefix}PigeonInteropMap {
 
   mutating func readSize() -> Int {
     let byte = readByte()
-    if byte < 254 {
+    if byte < $codec.sizeUInt16 {
       return Int(byte)
-    } else if byte == 254 {
+    } else if byte == $codec.sizeUInt16 {
       return Int(readRaw(UInt16.self))
     }
     return Int(readRaw(UInt32.self))
@@ -1014,35 +1019,35 @@ extension Dictionary: ${prefix}PigeonInteropMap {
 
   mutating func readValue(ofType type: UInt8) -> Any? {
     switch type {
-    case 0:
+    case $codec.typeNull:
       return nil
-    case 1:
+    case $codec.typeTrue:
       return true
-    case 2:
+    case $codec.typeFalse:
       return false
-    case 3:
+    case $codec.typeInt32:
       return Int64(readRaw(Int32.self))
-    case 4:
+    case $codec.typeInt64:
       return readRaw(Int64.self)
-    case 5, 7:
+    case $codec.typeLargeInt, $codec.typeString:
       let count = readSize()
       let string = String(
         decoding: UnsafeRawBufferPointer(rebasing: bytes[position..<(position + count)]),
         as: UTF8.self)
       position += count
       return string
-    case 6:
+    case $codec.typeFloat64:
       readAlignment(8)
       return Double(bitPattern: readRaw(UInt64.self))
-    case 8:
+    case $codec.typeUint8List:
       return readTypedData(UInt8.self, alignment: 1)
-    case 9:
+    case $codec.typeInt32List:
       return readTypedData(Int32.self, alignment: 4)
-    case 10:
+    case $codec.typeInt64List:
       return readTypedData(Int64.self, alignment: 8)
-    case 11:
+    case $codec.typeFloat64List:
       return readTypedData(Float64.self, alignment: 8)
-    case 12:
+    case $codec.typeList:
       let count = readSize()
       var list: [Any?] = []
       list.reserveCapacity(count)
@@ -1050,7 +1055,7 @@ extension Dictionary: ${prefix}PigeonInteropMap {
         list.append(readValue())
       }
       return list
-    case 13:
+    case $codec.typeMap:
       let count = readSize()
       var map: [AnyHashable?: Any?] = [:]
       map.reserveCapacity(count)
@@ -1059,7 +1064,7 @@ extension Dictionary: ${prefix}PigeonInteropMap {
         map[key] = readValue()
       }
       return map
-    case 14:
+    case $codec.typeFloat32List:
       return readTypedData(Float32.self, alignment: 4)
     default:
       return readCustomValue(ofType: type)
@@ -1077,7 +1082,7 @@ extension Dictionary: ${prefix}PigeonInteropMap {
 
   mutating func read<E>(_ type: [E].Type) -> [E] {
     let tag = readByte()
-    guard tag == 12 else {
+    guard tag == $codec.typeList else {
       return readValue(ofType: tag) as! [E]
     }
     let count = readSize()
@@ -1090,7 +1095,7 @@ extension Dictionary: ${prefix}PigeonInteropMap {
   }
 
   mutating func read<E>(_ type: [E]?.Type) -> [E]? {
-    if bytes[position] == 0 {
+    if bytes[position] == $codec.typeNull {
       position += 1
       return nil
     }
@@ -1099,7 +1104,7 @@ extension Dictionary: ${prefix}PigeonInteropMap {
 
   mutating func read<K: Hashable, V>(_ type: [K: V].Type) -> [K: V] {
     let tag = readByte()
-    guard tag == 13 else {
+    guard tag == $codec.typeMap else {
       return readValue(ofType: tag) as! [K: V]
     }
     let count = readSize()
@@ -1113,7 +1118,7 @@ extension Dictionary: ${prefix}PigeonInteropMap {
   }
 
   mutating func read<K: Hashable, V>(_ type: [K: V]?.Type) -> [K: V]? {
-    if bytes[position] == 0 {
+    if bytes[position] == $codec.typeNull {
       position += 1
       return nil
     }
@@ -1188,7 +1193,25 @@ extension Dictionary: ${prefix}PigeonInteropMap {
     indent.format('''
 /// Encodes and decodes the buffers that native interop calls pass to and from
 /// Dart, in the same format as the message codec.
-fileprivate enum $codec {
+private enum $codec {
+  static let typeNull: UInt8 = 0
+  static let typeTrue: UInt8 = 1
+  static let typeFalse: UInt8 = 2
+  static let typeInt32: UInt8 = 3
+  static let typeInt64: UInt8 = 4
+  static let typeLargeInt: UInt8 = 5
+  static let typeFloat64: UInt8 = 6
+  static let typeString: UInt8 = 7
+  static let typeUint8List: UInt8 = 8
+  static let typeInt32List: UInt8 = 9
+  static let typeInt64List: UInt8 = 10
+  static let typeFloat64List: UInt8 = 11
+  static let typeList: UInt8 = 12
+  static let typeMap: UInt8 = 13
+  static let typeFloat32List: UInt8 = 14
+  static let sizeUInt16: UInt8 = 254
+  static let sizeUInt32: UInt8 = 255
+
   static func encode(_ value: Any?) -> NSData {
     var writer = ${prefix}PigeonInteropWriter()
     writer.writeValue(value)
@@ -2248,7 +2271,7 @@ if (wrapped == nil) {
     final List<Parameter> encodedParameters = nativeInteropEncodedParameters(method.parameters);
     final String? encodedArgs = encodedParameters.isEmpty
         ? null
-        : '$codec.encode { \$0.writeByte(12); \$0.writeSize(${encodedParameters.length}); ${encodedParameters.map((Parameter p) => _swiftInteropWrite(_getSafeArgumentName(method.parameters.indexOf(p), p), p.type, writer: r'$0')).join('; ')} }';
+        : '$codec.encode { \$0.writeByte($codec.typeList); \$0.writeSize(${encodedParameters.length}); ${encodedParameters.map((Parameter p) => _swiftInteropWrite(_getSafeArgumentName(method.parameters.indexOf(p), p), p.type, writer: r'$0')).join('; ')} }';
     final String arguments = _hybridSwiftEntryPointArguments(
       method.parameters,
       directValue: (int index, Parameter parameter) =>

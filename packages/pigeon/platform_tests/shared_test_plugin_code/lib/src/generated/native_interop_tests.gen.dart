@@ -2065,7 +2065,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
@@ -2083,7 +2082,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[everything]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -2106,7 +2104,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -2129,7 +2126,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
@@ -2147,7 +2143,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -2170,7 +2165,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[anInt]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -2193,7 +2187,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aDouble]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -2216,7 +2209,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aBool]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -2239,7 +2231,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aString]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -2262,7 +2253,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aUint8List]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -2285,7 +2275,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aInt32List]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -2308,7 +2297,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aInt64List]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -2331,7 +2319,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aFloat64List]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -2354,7 +2341,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[anObject]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -2377,7 +2363,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[list]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -2400,7 +2385,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[stringList]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -2423,7 +2407,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[intList]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -2446,7 +2429,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[doubleList]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -2469,7 +2451,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[boolList]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -2492,7 +2473,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[enumList]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -2517,7 +2497,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[classList]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -2540,7 +2519,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[enumList]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -2565,7 +2543,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[classList]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -2588,7 +2565,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[map]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -2611,7 +2587,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[stringMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -2634,7 +2609,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[intMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -2659,7 +2633,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[enumMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -2685,7 +2658,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[classMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -2709,7 +2681,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[stringMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -2732,7 +2703,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[intMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -2757,7 +2727,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[enumMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -2783,7 +2752,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[classMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -2809,7 +2777,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[wrapper]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -2832,7 +2799,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[sealedClass]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -2857,7 +2823,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[sealedClass]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -2882,7 +2847,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[sealedClassList]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -2907,7 +2871,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[wrapper]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -2930,7 +2893,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[anEnum]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -2953,7 +2915,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[anotherEnum]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -2976,7 +2937,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aString]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -2999,7 +2959,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aDouble]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -3022,7 +2981,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[anInt]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -3047,7 +3005,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[everything]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -3072,7 +3029,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[everything]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -3096,7 +3052,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[wrapper]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -3120,7 +3075,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[nullableString]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -3154,7 +3108,6 @@ class NativeInteropHostIntegrationCoreApi {
       aNullableString,
     ]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -3189,7 +3142,6 @@ class NativeInteropHostIntegrationCoreApi {
       aNullableString,
     ]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -3212,7 +3164,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aNullableInt]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -3235,7 +3186,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aNullableDouble]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -3258,7 +3208,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aNullableBool]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -3281,7 +3230,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aNullableString]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -3306,7 +3254,6 @@ class NativeInteropHostIntegrationCoreApi {
       aNullableUint8List,
     ]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -3331,7 +3278,6 @@ class NativeInteropHostIntegrationCoreApi {
       aNullableInt32List,
     ]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -3356,7 +3302,6 @@ class NativeInteropHostIntegrationCoreApi {
       aNullableInt64List,
     ]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -3381,7 +3326,6 @@ class NativeInteropHostIntegrationCoreApi {
       aNullableFloat64List,
     ]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -3404,7 +3348,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aNullableObject]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -3427,7 +3370,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aNullableList]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -3452,7 +3394,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[enumList]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -3477,7 +3418,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[classList]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -3502,7 +3442,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[enumList]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -3527,7 +3466,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[classList]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -3550,7 +3488,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[map]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -3573,7 +3510,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[stringMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -3596,7 +3532,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[intMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -3621,7 +3556,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[enumMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -3647,7 +3581,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[classMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -3671,7 +3604,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[stringMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -3694,7 +3626,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[intMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -3719,7 +3650,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[enumMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -3745,7 +3675,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[classMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -3768,7 +3697,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[anEnum]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -3792,7 +3720,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[anotherEnum]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -3815,7 +3742,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aNullableInt]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -3838,7 +3764,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aNullableString]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -3862,7 +3787,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
@@ -3880,7 +3804,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[anInt]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -3903,7 +3826,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aDouble]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -3926,7 +3848,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aBool]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -3949,7 +3870,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aString]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -3972,7 +3892,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aUint8List]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -3995,7 +3914,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aInt32List]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -4018,7 +3936,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aInt64List]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -4041,7 +3958,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aFloat64List]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -4064,7 +3980,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[anObject]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -4087,7 +4002,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[list]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -4110,7 +4024,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[enumList]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -4135,7 +4048,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[classList]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -4158,7 +4070,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[map]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -4181,7 +4092,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[stringMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -4204,7 +4114,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[intMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -4229,7 +4138,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[enumMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -4255,7 +4163,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[classMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -4279,7 +4186,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[anEnum]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -4304,7 +4210,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[anotherEnum]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -4327,7 +4232,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -4350,7 +4254,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
@@ -4368,7 +4271,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -4393,7 +4295,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[everything]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -4418,7 +4319,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[sealedClass]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -4443,7 +4343,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[everything]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -4471,7 +4370,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[everything]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -4494,7 +4392,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[anInt]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -4517,7 +4414,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aDouble]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -4540,7 +4436,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aBool]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -4563,7 +4458,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aString]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -4586,7 +4480,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aUint8List]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -4609,7 +4502,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aInt32List]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -4632,7 +4524,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aInt64List]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -4655,7 +4546,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aFloat64List]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -4678,7 +4568,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[anObject]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -4701,7 +4590,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[list]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -4726,7 +4614,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[enumList]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -4751,7 +4638,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[classList]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -4774,7 +4660,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[map]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -4799,7 +4684,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[stringMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -4822,7 +4706,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[intMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -4847,7 +4730,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[enumMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -4873,7 +4755,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[classMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -4897,7 +4778,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[anEnum]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -4922,7 +4802,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[anotherEnum]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -4944,7 +4823,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
@@ -4961,7 +4839,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -4983,7 +4860,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
@@ -5002,7 +4878,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[everything]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -5026,7 +4901,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[everything]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -5050,7 +4924,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[sealedClass]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -5084,7 +4957,6 @@ class NativeInteropHostIntegrationCoreApi {
       aNullableString,
     ]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -5111,7 +4983,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[everything]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -5146,7 +5017,6 @@ class NativeInteropHostIntegrationCoreApi {
       aNullableString,
     ]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -5168,7 +5038,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aBool]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -5190,7 +5059,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[anInt]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -5212,7 +5080,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aDouble]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -5234,7 +5101,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aString]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -5256,7 +5122,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[list]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -5278,7 +5143,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[list]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -5300,7 +5164,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[list]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -5322,7 +5185,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[list]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -5344,7 +5206,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[list]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -5368,7 +5229,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[enumList]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -5392,7 +5252,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[classList]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -5416,7 +5275,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[enumList]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -5440,7 +5298,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[classList]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -5462,7 +5319,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[map]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -5484,7 +5340,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[stringMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -5506,7 +5361,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[intMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -5530,7 +5384,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[enumMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -5555,7 +5408,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[classMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -5578,7 +5430,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[stringMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -5600,7 +5451,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[intMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -5624,7 +5474,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[enumMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -5649,7 +5498,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[classMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -5672,7 +5520,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[anEnum]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -5696,7 +5543,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[anotherEnum]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -5718,7 +5564,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aBool]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -5740,7 +5585,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[anInt]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -5762,7 +5606,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aDouble]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -5784,7 +5627,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aString]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -5806,7 +5648,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[list]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -5828,7 +5669,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[list]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -5850,7 +5690,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[list]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -5872,7 +5711,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[list]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -5894,7 +5732,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[list]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -5918,7 +5755,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[enumList]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -5942,7 +5778,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[classList]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -5966,7 +5801,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[enumList]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -5990,7 +5824,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[classList]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -6012,7 +5845,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[map]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -6036,7 +5868,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[stringMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -6058,7 +5889,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[intMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -6082,7 +5912,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[enumMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -6107,7 +5936,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[classMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -6132,7 +5960,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[stringMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -6154,7 +5981,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[intMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -6178,7 +6004,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[enumMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -6203,7 +6028,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[classMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -6226,7 +6050,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[anEnum]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -6250,7 +6073,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[anotherEnum]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -6272,7 +6094,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
@@ -6291,7 +6112,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[everything]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -6317,7 +6137,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[everything]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -6343,7 +6162,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[everything]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -6365,7 +6183,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aBool]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -6387,7 +6204,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[anInt]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -6409,7 +6225,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aDouble]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -6431,7 +6246,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aString]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -6453,7 +6267,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[list]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -6475,7 +6288,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[list]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -6497,7 +6309,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[list]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -6519,7 +6330,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[list]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -6541,7 +6351,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[anObject]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -6563,7 +6372,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[list]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -6587,7 +6395,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[enumList]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -6611,7 +6418,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[classList]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -6635,7 +6441,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[enumList]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -6659,7 +6464,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[classList]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -6681,7 +6485,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[map]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -6705,7 +6508,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[stringMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -6727,7 +6529,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[intMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -6751,7 +6552,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[enumMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -6776,7 +6576,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[classMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -6799,7 +6598,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[anEnum]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -6823,7 +6621,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[anotherEnum]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -6845,7 +6642,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aBool]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -6867,7 +6663,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[anInt]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -6889,7 +6684,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aDouble]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -6911,7 +6705,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aString]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -6933,7 +6726,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[list]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -6955,7 +6747,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[list]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -6977,7 +6768,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[list]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -6999,7 +6789,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[list]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -7021,7 +6810,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -7043,7 +6831,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[anObject]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -7065,7 +6852,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[list]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -7089,7 +6875,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[enumList]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -7113,7 +6898,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[classList]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -7137,7 +6921,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[enumList]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -7161,7 +6944,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[classList]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -7183,7 +6965,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[map]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -7207,7 +6988,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[stringMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -7229,7 +7009,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[intMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -7253,7 +7032,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[enumMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -7278,7 +7056,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[classMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -7301,7 +7078,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[anEnum]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -7325,7 +7101,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[anotherEnum]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -7348,7 +7123,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -7371,7 +7145,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -7395,7 +7168,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -7419,7 +7191,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -7443,7 +7214,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[value]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
@@ -7463,7 +7233,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -7486,7 +7255,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -7509,7 +7277,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -7532,7 +7299,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[name]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
@@ -7550,7 +7316,6 @@ class NativeInteropHostIntegrationCoreApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[name]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -10786,7 +10551,6 @@ class NativeInteropReservedNamesHostApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[value]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -10809,7 +10573,6 @@ class NativeInteropReservedNamesHostApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[value]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -10832,7 +10595,6 @@ class NativeInteropReservedNamesHostApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -10855,7 +10617,6 @@ class NativeInteropReservedNamesHostApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -10878,7 +10639,6 @@ class NativeInteropReservedNamesHostApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -10901,7 +10661,6 @@ class NativeInteropReservedNamesHostApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -10925,7 +10684,6 @@ class NativeInteropReservedNamesHostApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -10948,7 +10706,6 @@ class NativeInteropReservedNamesHostApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[value]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
@@ -10966,7 +10723,6 @@ class NativeInteropReservedNamesHostApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -10989,7 +10745,6 @@ class NativeInteropReservedNamesHostApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -11012,7 +10767,6 @@ class NativeInteropReservedNamesHostApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[names]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -11035,7 +10789,6 @@ class NativeInteropReservedNamesHostApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[value]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -11058,7 +10811,6 @@ class NativeInteropReservedNamesHostApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -11081,7 +10833,6 @@ class NativeInteropReservedNamesHostApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[value]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -11104,7 +10855,6 @@ class NativeInteropReservedNamesHostApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -11127,7 +10877,6 @@ class NativeInteropReservedNamesHostApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -11417,7 +11166,6 @@ class NativeInteropSealedClassHostApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[shape]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -11439,7 +11187,6 @@ class NativeInteropSealedClassHostApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[shape]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -11461,7 +11208,6 @@ class NativeInteropSealedClassHostApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[shapes]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -11485,7 +11231,6 @@ class NativeInteropSealedClassHostApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[shapes]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -11507,7 +11252,6 @@ class NativeInteropSealedClassHostApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[shape]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
@@ -11529,7 +11273,6 @@ class NativeInteropSealedClassHostApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[shape]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,

@@ -319,6 +319,9 @@ private class _PigeonFfiCodec {
 }
 
 /// Writes values in the format of Flutter's standard message codec.
+///
+/// Implemented against Foundation rather than `FlutterStandardWriter` so that
+/// swiftgen can compile this file without importing Flutter.
 private struct NativeInteropExamplePigeonInteropWriter {
   private(set) var bytes: [UInt8] = []
 
@@ -331,13 +334,13 @@ private struct NativeInteropExamplePigeonInteropWriter {
   }
 
   mutating func writeSize(_ size: Int) {
-    if size < 254 {
+    if size < Int(NativeInteropExamplePigeonInteropCodec.sizeUInt16) {
       writeByte(UInt8(size))
-    } else if size <= 0xffff {
-      writeByte(254)
+    } else if size <= Int(UInt16.max) {
+      writeByte(NativeInteropExamplePigeonInteropCodec.sizeUInt16)
       writeRaw(UInt16(size))
     } else {
-      writeByte(255)
+      writeByte(NativeInteropExamplePigeonInteropCodec.sizeUInt32)
       writeRaw(UInt32(size))
     }
   }
@@ -358,14 +361,14 @@ private struct NativeInteropExamplePigeonInteropWriter {
 
   mutating func writeTypedData<T>(_ type: UInt8, _ array: [T]?, alignment: Int) {
     guard let array = array else {
-      writeByte(0)
+      writeByte(NativeInteropExamplePigeonInteropCodec.typeNull)
       return
     }
     writeTypedData(type, array, alignment: alignment)
   }
 
   mutating func writeString(_ string: String) {
-    writeByte(7)
+    writeByte(NativeInteropExamplePigeonInteropCodec.typeString)
     var string = string
     string.withUTF8 { utf8 in
       writeSize(utf8.count)
@@ -375,7 +378,7 @@ private struct NativeInteropExamplePigeonInteropWriter {
 
   mutating func writeValue(_ value: Any?) {
     guard let value = value else {
-      writeByte(0)
+      writeByte(NativeInteropExamplePigeonInteropCodec.typeNull)
       return
     }
     // The most common types are matched by exact type first, because
@@ -386,16 +389,19 @@ private struct NativeInteropExamplePigeonInteropWriter {
       return
     }
     if valueType == Int64.self {
-      writeByte(4)
+      writeByte(NativeInteropExamplePigeonInteropCodec.typeInt64)
       writeRaw(value as! Int64)
       return
     }
     if valueType == Bool.self {
-      writeByte((value as! Bool) ? 1 : 2)
+      writeByte(
+        (value as! Bool)
+          ? NativeInteropExamplePigeonInteropCodec.typeTrue
+          : NativeInteropExamplePigeonInteropCodec.typeFalse)
       return
     }
     if valueType == Double.self {
-      writeByte(6)
+      writeByte(NativeInteropExamplePigeonInteropCodec.typeFloat64)
       writeAlignment(8)
       writeRaw((value as! Double).bitPattern)
       return
@@ -410,23 +416,28 @@ private struct NativeInteropExamplePigeonInteropWriter {
     // Typed data is matched by exact type, because casting an empty array of
     // any element type to an array of numbers succeeds.
     if valueType == [UInt8].self {
-      writeTypedData(8, value as! [UInt8], alignment: 1)
+      writeTypedData(
+        NativeInteropExamplePigeonInteropCodec.typeUint8List, value as! [UInt8], alignment: 1)
       return
     }
     if valueType == [Int32].self {
-      writeTypedData(9, value as! [Int32], alignment: 4)
+      writeTypedData(
+        NativeInteropExamplePigeonInteropCodec.typeInt32List, value as! [Int32], alignment: 4)
       return
     }
     if valueType == [Int64].self {
-      writeTypedData(10, value as! [Int64], alignment: 8)
+      writeTypedData(
+        NativeInteropExamplePigeonInteropCodec.typeInt64List, value as! [Int64], alignment: 8)
       return
     }
     if valueType == [Float64].self {
-      writeTypedData(11, value as! [Float64], alignment: 8)
+      writeTypedData(
+        NativeInteropExamplePigeonInteropCodec.typeFloat64List, value as! [Float64], alignment: 8)
       return
     }
     if valueType == [Float32].self {
-      writeTypedData(14, value as! [Float32], alignment: 4)
+      writeTypedData(
+        NativeInteropExamplePigeonInteropCodec.typeFloat32List, value as! [Float32], alignment: 4)
       return
     }
     if valueType == AnyHashable.self {
@@ -449,18 +460,21 @@ private struct NativeInteropExamplePigeonInteropWriter {
       return
     }
     if NativeInteropExamplePigeonInternal.isNullish(value) {
-      writeByte(0)
+      writeByte(NativeInteropExamplePigeonInteropCodec.typeNull)
       return
     }
     if let number = value as? NSNumber {
       if CFGetTypeID(number) == CFBooleanGetTypeID() {
-        writeByte(number.boolValue ? 1 : 2)
+        writeByte(
+          number.boolValue
+            ? NativeInteropExamplePigeonInteropCodec.typeTrue
+            : NativeInteropExamplePigeonInteropCodec.typeFalse)
       } else if CFNumberIsFloatType(number) {
-        writeByte(6)
+        writeByte(NativeInteropExamplePigeonInteropCodec.typeFloat64)
         writeAlignment(8)
         writeRaw(number.doubleValue.bitPattern)
       } else {
-        writeByte(4)
+        writeByte(NativeInteropExamplePigeonInteropCodec.typeInt64)
         writeRaw(number.int64Value)
       }
       return
@@ -476,7 +490,7 @@ private struct NativeInteropExamplePigeonInteropWriter {
   }
 
   mutating func writeList(_ list: [Any?]) {
-    writeByte(12)
+    writeByte(NativeInteropExamplePigeonInteropCodec.typeList)
     writeSize(list.count)
     for item in list {
       writeValue(item)
@@ -485,10 +499,10 @@ private struct NativeInteropExamplePigeonInteropWriter {
 
   mutating func writeList<T>(_ list: [T]?) {
     guard let list = list else {
-      writeByte(0)
+      writeByte(NativeInteropExamplePigeonInteropCodec.typeNull)
       return
     }
-    writeByte(12)
+    writeByte(NativeInteropExamplePigeonInteropCodec.typeList)
     writeSize(list.count)
     for item in list {
       writeValue(item)
@@ -497,10 +511,10 @@ private struct NativeInteropExamplePigeonInteropWriter {
 
   mutating func writeList<T>(_ list: [T?]?) {
     guard let list = list else {
-      writeByte(0)
+      writeByte(NativeInteropExamplePigeonInteropCodec.typeNull)
       return
     }
-    writeByte(12)
+    writeByte(NativeInteropExamplePigeonInteropCodec.typeList)
     writeSize(list.count)
     for item in list {
       writeOptional(item)
@@ -509,10 +523,10 @@ private struct NativeInteropExamplePigeonInteropWriter {
 
   mutating func writeList<T>(_ list: [T]?, _ writeElement: (inout Self, T) -> Void) {
     guard let list = list else {
-      writeByte(0)
+      writeByte(NativeInteropExamplePigeonInteropCodec.typeNull)
       return
     }
-    writeByte(12)
+    writeByte(NativeInteropExamplePigeonInteropCodec.typeList)
     writeSize(list.count)
     for item in list {
       writeElement(&self, item)
@@ -523,16 +537,16 @@ private struct NativeInteropExamplePigeonInteropWriter {
     if let value = value {
       writeValue(value)
     } else {
-      writeByte(0)
+      writeByte(NativeInteropExamplePigeonInteropCodec.typeNull)
     }
   }
 
   mutating func writeMap<K, V>(_ map: [K: V]?) {
     guard let map = map else {
-      writeByte(0)
+      writeByte(NativeInteropExamplePigeonInteropCodec.typeNull)
       return
     }
-    writeByte(13)
+    writeByte(NativeInteropExamplePigeonInteropCodec.typeMap)
     writeSize(map.count)
     for (key, item) in map {
       writeValue(key)
@@ -542,10 +556,10 @@ private struct NativeInteropExamplePigeonInteropWriter {
 
   mutating func writeMap<K, V>(_ map: [K?: V]?) {
     guard let map = map else {
-      writeByte(0)
+      writeByte(NativeInteropExamplePigeonInteropCodec.typeNull)
       return
     }
-    writeByte(13)
+    writeByte(NativeInteropExamplePigeonInteropCodec.typeMap)
     writeSize(map.count)
     for (key, item) in map {
       writeOptional(key)
@@ -555,10 +569,10 @@ private struct NativeInteropExamplePigeonInteropWriter {
 
   mutating func writeMap<K, V>(_ map: [K: V?]?) {
     guard let map = map else {
-      writeByte(0)
+      writeByte(NativeInteropExamplePigeonInteropCodec.typeNull)
       return
     }
-    writeByte(13)
+    writeByte(NativeInteropExamplePigeonInteropCodec.typeMap)
     writeSize(map.count)
     for (key, item) in map {
       writeValue(key)
@@ -568,10 +582,10 @@ private struct NativeInteropExamplePigeonInteropWriter {
 
   mutating func writeMap<K, V>(_ map: [K?: V?]?) {
     guard let map = map else {
-      writeByte(0)
+      writeByte(NativeInteropExamplePigeonInteropCodec.typeNull)
       return
     }
-    writeByte(13)
+    writeByte(NativeInteropExamplePigeonInteropCodec.typeMap)
     writeSize(map.count)
     for (key, item) in map {
       writeOptional(key)
@@ -581,10 +595,10 @@ private struct NativeInteropExamplePigeonInteropWriter {
 
   mutating func writeMap<K, V>(_ map: [K: V]?, _ writeEntry: (inout Self, K, V) -> Void) {
     guard let map = map else {
-      writeByte(0)
+      writeByte(NativeInteropExamplePigeonInteropCodec.typeNull)
       return
     }
-    writeByte(13)
+    writeByte(NativeInteropExamplePigeonInteropCodec.typeMap)
     writeSize(map.count)
     for (key, item) in map {
       writeEntry(&self, key, item)
@@ -623,7 +637,7 @@ private protocol NativeInteropExamplePigeonInteropList {
 
 extension Array: NativeInteropExamplePigeonInteropList {
   fileprivate func pigeonWrite(to writer: inout NativeInteropExamplePigeonInteropWriter) {
-    writer.writeByte(12)
+    writer.writeByte(NativeInteropExamplePigeonInteropCodec.typeList)
     writer.writeSize(count)
     for item in self {
       writer.writeValue(item)
@@ -638,7 +652,7 @@ private protocol NativeInteropExamplePigeonInteropMap {
 
 extension Dictionary: NativeInteropExamplePigeonInteropMap {
   fileprivate func pigeonWrite(to writer: inout NativeInteropExamplePigeonInteropWriter) {
-    writer.writeByte(13)
+    writer.writeByte(NativeInteropExamplePigeonInteropCodec.typeMap)
     writer.writeSize(count)
     for (key, item) in self {
       writer.writeValue(key)
@@ -674,9 +688,9 @@ private struct NativeInteropExamplePigeonInteropReader {
 
   mutating func readSize() -> Int {
     let byte = readByte()
-    if byte < 254 {
+    if byte < NativeInteropExamplePigeonInteropCodec.sizeUInt16 {
       return Int(byte)
-    } else if byte == 254 {
+    } else if byte == NativeInteropExamplePigeonInteropCodec.sizeUInt16 {
       return Int(readRaw(UInt16.self))
     }
     return Int(readRaw(UInt32.self))
@@ -710,35 +724,36 @@ private struct NativeInteropExamplePigeonInteropReader {
 
   mutating func readValue(ofType type: UInt8) -> Any? {
     switch type {
-    case 0:
+    case NativeInteropExamplePigeonInteropCodec.typeNull:
       return nil
-    case 1:
+    case NativeInteropExamplePigeonInteropCodec.typeTrue:
       return true
-    case 2:
+    case NativeInteropExamplePigeonInteropCodec.typeFalse:
       return false
-    case 3:
+    case NativeInteropExamplePigeonInteropCodec.typeInt32:
       return Int64(readRaw(Int32.self))
-    case 4:
+    case NativeInteropExamplePigeonInteropCodec.typeInt64:
       return readRaw(Int64.self)
-    case 5, 7:
+    case NativeInteropExamplePigeonInteropCodec.typeLargeInt,
+      NativeInteropExamplePigeonInteropCodec.typeString:
       let count = readSize()
       let string = String(
         decoding: UnsafeRawBufferPointer(rebasing: bytes[position..<(position + count)]),
         as: UTF8.self)
       position += count
       return string
-    case 6:
+    case NativeInteropExamplePigeonInteropCodec.typeFloat64:
       readAlignment(8)
       return Double(bitPattern: readRaw(UInt64.self))
-    case 8:
+    case NativeInteropExamplePigeonInteropCodec.typeUint8List:
       return readTypedData(UInt8.self, alignment: 1)
-    case 9:
+    case NativeInteropExamplePigeonInteropCodec.typeInt32List:
       return readTypedData(Int32.self, alignment: 4)
-    case 10:
+    case NativeInteropExamplePigeonInteropCodec.typeInt64List:
       return readTypedData(Int64.self, alignment: 8)
-    case 11:
+    case NativeInteropExamplePigeonInteropCodec.typeFloat64List:
       return readTypedData(Float64.self, alignment: 8)
-    case 12:
+    case NativeInteropExamplePigeonInteropCodec.typeList:
       let count = readSize()
       var list: [Any?] = []
       list.reserveCapacity(count)
@@ -746,7 +761,7 @@ private struct NativeInteropExamplePigeonInteropReader {
         list.append(readValue())
       }
       return list
-    case 13:
+    case NativeInteropExamplePigeonInteropCodec.typeMap:
       let count = readSize()
       var map: [AnyHashable?: Any?] = [:]
       map.reserveCapacity(count)
@@ -755,7 +770,7 @@ private struct NativeInteropExamplePigeonInteropReader {
         map[key] = readValue()
       }
       return map
-    case 14:
+    case NativeInteropExamplePigeonInteropCodec.typeFloat32List:
       return readTypedData(Float32.self, alignment: 4)
     default:
       return readCustomValue(ofType: type)
@@ -773,7 +788,7 @@ private struct NativeInteropExamplePigeonInteropReader {
 
   mutating func read<E>(_ type: [E].Type) -> [E] {
     let tag = readByte()
-    guard tag == 12 else {
+    guard tag == NativeInteropExamplePigeonInteropCodec.typeList else {
       return readValue(ofType: tag) as! [E]
     }
     let count = readSize()
@@ -786,7 +801,7 @@ private struct NativeInteropExamplePigeonInteropReader {
   }
 
   mutating func read<E>(_ type: [E]?.Type) -> [E]? {
-    if bytes[position] == 0 {
+    if bytes[position] == NativeInteropExamplePigeonInteropCodec.typeNull {
       position += 1
       return nil
     }
@@ -795,7 +810,7 @@ private struct NativeInteropExamplePigeonInteropReader {
 
   mutating func read<K: Hashable, V>(_ type: [K: V].Type) -> [K: V] {
     let tag = readByte()
-    guard tag == 13 else {
+    guard tag == NativeInteropExamplePigeonInteropCodec.typeMap else {
       return readValue(ofType: tag) as! [K: V]
     }
     let count = readSize()
@@ -809,7 +824,7 @@ private struct NativeInteropExamplePigeonInteropReader {
   }
 
   mutating func read<K: Hashable, V>(_ type: [K: V]?.Type) -> [K: V]? {
-    if bytes[position] == 0 {
+    if bytes[position] == NativeInteropExamplePigeonInteropCodec.typeNull {
       position += 1
       return nil
     }
@@ -827,6 +842,24 @@ private struct NativeInteropExamplePigeonInteropReader {
 /// Encodes and decodes the buffers that native interop calls pass to and from
 /// Dart, in the same format as the message codec.
 private enum NativeInteropExamplePigeonInteropCodec {
+  static let typeNull: UInt8 = 0
+  static let typeTrue: UInt8 = 1
+  static let typeFalse: UInt8 = 2
+  static let typeInt32: UInt8 = 3
+  static let typeInt64: UInt8 = 4
+  static let typeLargeInt: UInt8 = 5
+  static let typeFloat64: UInt8 = 6
+  static let typeString: UInt8 = 7
+  static let typeUint8List: UInt8 = 8
+  static let typeInt32List: UInt8 = 9
+  static let typeInt64List: UInt8 = 10
+  static let typeFloat64List: UInt8 = 11
+  static let typeList: UInt8 = 12
+  static let typeMap: UInt8 = 13
+  static let typeFloat32List: UInt8 = 14
+  static let sizeUInt16: UInt8 = 254
+  static let sizeUInt32: UInt8 = 255
+
   static func encode(_ value: Any?) -> NSData {
     var writer = NativeInteropExamplePigeonInteropWriter()
     writer.writeValue(value)

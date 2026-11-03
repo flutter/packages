@@ -7,6 +7,7 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:mirrors';
 
+import 'package:meta/meta.dart';
 import 'package:path/path.dart' as path;
 import 'package:yaml/yaml.dart' as yaml;
 
@@ -30,6 +31,7 @@ const String defaultNativeInteropInstanceName =
 ///
 /// This option is temporary. It exists so that the [hybrid] transport can be
 /// adopted and benchmarked before it becomes the only transport.
+@internal
 enum NativeInteropTransport {
   /// Converts every value to a graph of native objects.
   ///

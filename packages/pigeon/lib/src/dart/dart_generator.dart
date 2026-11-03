@@ -2347,7 +2347,7 @@ return ${generatorOptions.useJni ? 'await ' : ''}$completerVar.future;
           completionHandler: '$_ffiBridgePrefix.$blockName.listener(($resultParameter) {',
           close: false,
         ),
-        '});',
+        '}));',
         () {
           indent.writeScoped('if ($errorVar.code != null) {', '}', () {
             indent.writeln('$completerVar.completeError(_wrapFfiError($errorVar));');

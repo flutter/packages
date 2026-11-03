@@ -2091,12 +2091,12 @@ void main() {
       return sink.toString();
     }
 
-    test('generates a Foundation-only fileprivate codec', () {
+    test('generates a Foundation-only private codec', () {
       final String code = generate(hybrid: true);
       expect(code, isNot(contains('import Flutter')));
-      expect(code, contains('fileprivate struct FooPigeonInteropWriter {'));
-      expect(code, contains('fileprivate struct FooPigeonInteropReader {'));
-      expect(code, contains('fileprivate enum FooPigeonInteropCodec {'));
+      expect(code, contains('private struct FooPigeonInteropWriter {'));
+      expect(code, contains('private struct FooPigeonInteropReader {'));
+      expect(code, contains('private enum FooPigeonInteropCodec {'));
       expect(code, contains('if let value = value as? Data {'));
       expect(code, contains('mutating func readData() -> Data {'));
       expect(code, contains('value: read(Int64.self)'));
@@ -2138,7 +2138,7 @@ void main() {
       expect(
         code,
         contains(
-          r'api.echoData(count: countArg, pigeonVar_args: FooPigeonInteropCodec.encode { $0.writeByte(12); $0.writeSize(1); $0.writeValue(dataArg) }, error: error)',
+          r'api.echoData(count: countArg, pigeonVar_args: FooPigeonInteropCodec.encode { $0.writeByte(FooPigeonInteropCodec.typeList); $0.writeSize(1); $0.writeValue(dataArg) }, error: error)',
         ),
       );
     });

@@ -2741,6 +2741,9 @@ private class _PigeonFfiCodec {
 }
 
 /// Writes values in the format of Flutter's standard message codec.
+///
+/// Implemented against Foundation rather than `FlutterStandardWriter` so that
+/// swiftgen can compile this file without importing Flutter.
 private struct NativeInteropTestsPigeonInteropWriter {
   private(set) var bytes: [UInt8] = []
 
@@ -2753,13 +2756,13 @@ private struct NativeInteropTestsPigeonInteropWriter {
   }
 
   mutating func writeSize(_ size: Int) {
-    if size < 254 {
+    if size < Int(NativeInteropTestsPigeonInteropCodec.sizeUInt16) {
       writeByte(UInt8(size))
-    } else if size <= 0xffff {
-      writeByte(254)
+    } else if size <= Int(UInt16.max) {
+      writeByte(NativeInteropTestsPigeonInteropCodec.sizeUInt16)
       writeRaw(UInt16(size))
     } else {
-      writeByte(255)
+      writeByte(NativeInteropTestsPigeonInteropCodec.sizeUInt32)
       writeRaw(UInt32(size))
     }
   }
@@ -2780,14 +2783,14 @@ private struct NativeInteropTestsPigeonInteropWriter {
 
   mutating func writeTypedData<T>(_ type: UInt8, _ array: [T]?, alignment: Int) {
     guard let array = array else {
-      writeByte(0)
+      writeByte(NativeInteropTestsPigeonInteropCodec.typeNull)
       return
     }
     writeTypedData(type, array, alignment: alignment)
   }
 
   mutating func writeString(_ string: String) {
-    writeByte(7)
+    writeByte(NativeInteropTestsPigeonInteropCodec.typeString)
     var string = string
     string.withUTF8 { utf8 in
       writeSize(utf8.count)
@@ -2797,7 +2800,7 @@ private struct NativeInteropTestsPigeonInteropWriter {
 
   mutating func writeValue(_ value: Any?) {
     guard let value = value else {
-      writeByte(0)
+      writeByte(NativeInteropTestsPigeonInteropCodec.typeNull)
       return
     }
     // The most common types are matched by exact type first, because
@@ -2808,16 +2811,19 @@ private struct NativeInteropTestsPigeonInteropWriter {
       return
     }
     if valueType == Int64.self {
-      writeByte(4)
+      writeByte(NativeInteropTestsPigeonInteropCodec.typeInt64)
       writeRaw(value as! Int64)
       return
     }
     if valueType == Bool.self {
-      writeByte((value as! Bool) ? 1 : 2)
+      writeByte(
+        (value as! Bool)
+          ? NativeInteropTestsPigeonInteropCodec.typeTrue
+          : NativeInteropTestsPigeonInteropCodec.typeFalse)
       return
     }
     if valueType == Double.self {
-      writeByte(6)
+      writeByte(NativeInteropTestsPigeonInteropCodec.typeFloat64)
       writeAlignment(8)
       writeRaw((value as! Double).bitPattern)
       return
@@ -2832,23 +2838,28 @@ private struct NativeInteropTestsPigeonInteropWriter {
     // Typed data is matched by exact type, because casting an empty array of
     // any element type to an array of numbers succeeds.
     if valueType == [UInt8].self {
-      writeTypedData(8, value as! [UInt8], alignment: 1)
+      writeTypedData(
+        NativeInteropTestsPigeonInteropCodec.typeUint8List, value as! [UInt8], alignment: 1)
       return
     }
     if valueType == [Int32].self {
-      writeTypedData(9, value as! [Int32], alignment: 4)
+      writeTypedData(
+        NativeInteropTestsPigeonInteropCodec.typeInt32List, value as! [Int32], alignment: 4)
       return
     }
     if valueType == [Int64].self {
-      writeTypedData(10, value as! [Int64], alignment: 8)
+      writeTypedData(
+        NativeInteropTestsPigeonInteropCodec.typeInt64List, value as! [Int64], alignment: 8)
       return
     }
     if valueType == [Float64].self {
-      writeTypedData(11, value as! [Float64], alignment: 8)
+      writeTypedData(
+        NativeInteropTestsPigeonInteropCodec.typeFloat64List, value as! [Float64], alignment: 8)
       return
     }
     if valueType == [Float32].self {
-      writeTypedData(14, value as! [Float32], alignment: 4)
+      writeTypedData(
+        NativeInteropTestsPigeonInteropCodec.typeFloat32List, value as! [Float32], alignment: 4)
       return
     }
     if valueType == AnyHashable.self {
@@ -2871,18 +2882,21 @@ private struct NativeInteropTestsPigeonInteropWriter {
       return
     }
     if NativeInteropTestsPigeonInternal.isNullish(value) {
-      writeByte(0)
+      writeByte(NativeInteropTestsPigeonInteropCodec.typeNull)
       return
     }
     if let number = value as? NSNumber {
       if CFGetTypeID(number) == CFBooleanGetTypeID() {
-        writeByte(number.boolValue ? 1 : 2)
+        writeByte(
+          number.boolValue
+            ? NativeInteropTestsPigeonInteropCodec.typeTrue
+            : NativeInteropTestsPigeonInteropCodec.typeFalse)
       } else if CFNumberIsFloatType(number) {
-        writeByte(6)
+        writeByte(NativeInteropTestsPigeonInteropCodec.typeFloat64)
         writeAlignment(8)
         writeRaw(number.doubleValue.bitPattern)
       } else {
-        writeByte(4)
+        writeByte(NativeInteropTestsPigeonInteropCodec.typeInt64)
         writeRaw(number.int64Value)
       }
       return
@@ -2898,7 +2912,7 @@ private struct NativeInteropTestsPigeonInteropWriter {
   }
 
   mutating func writeList(_ list: [Any?]) {
-    writeByte(12)
+    writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
     writeSize(list.count)
     for item in list {
       writeValue(item)
@@ -2907,10 +2921,10 @@ private struct NativeInteropTestsPigeonInteropWriter {
 
   mutating func writeList<T>(_ list: [T]?) {
     guard let list = list else {
-      writeByte(0)
+      writeByte(NativeInteropTestsPigeonInteropCodec.typeNull)
       return
     }
-    writeByte(12)
+    writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
     writeSize(list.count)
     for item in list {
       writeValue(item)
@@ -2919,10 +2933,10 @@ private struct NativeInteropTestsPigeonInteropWriter {
 
   mutating func writeList<T>(_ list: [T?]?) {
     guard let list = list else {
-      writeByte(0)
+      writeByte(NativeInteropTestsPigeonInteropCodec.typeNull)
       return
     }
-    writeByte(12)
+    writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
     writeSize(list.count)
     for item in list {
       writeOptional(item)
@@ -2931,10 +2945,10 @@ private struct NativeInteropTestsPigeonInteropWriter {
 
   mutating func writeList<T>(_ list: [T]?, _ writeElement: (inout Self, T) -> Void) {
     guard let list = list else {
-      writeByte(0)
+      writeByte(NativeInteropTestsPigeonInteropCodec.typeNull)
       return
     }
-    writeByte(12)
+    writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
     writeSize(list.count)
     for item in list {
       writeElement(&self, item)
@@ -2945,16 +2959,16 @@ private struct NativeInteropTestsPigeonInteropWriter {
     if let value = value {
       writeValue(value)
     } else {
-      writeByte(0)
+      writeByte(NativeInteropTestsPigeonInteropCodec.typeNull)
     }
   }
 
   mutating func writeMap<K, V>(_ map: [K: V]?) {
     guard let map = map else {
-      writeByte(0)
+      writeByte(NativeInteropTestsPigeonInteropCodec.typeNull)
       return
     }
-    writeByte(13)
+    writeByte(NativeInteropTestsPigeonInteropCodec.typeMap)
     writeSize(map.count)
     for (key, item) in map {
       writeValue(key)
@@ -2964,10 +2978,10 @@ private struct NativeInteropTestsPigeonInteropWriter {
 
   mutating func writeMap<K, V>(_ map: [K?: V]?) {
     guard let map = map else {
-      writeByte(0)
+      writeByte(NativeInteropTestsPigeonInteropCodec.typeNull)
       return
     }
-    writeByte(13)
+    writeByte(NativeInteropTestsPigeonInteropCodec.typeMap)
     writeSize(map.count)
     for (key, item) in map {
       writeOptional(key)
@@ -2977,10 +2991,10 @@ private struct NativeInteropTestsPigeonInteropWriter {
 
   mutating func writeMap<K, V>(_ map: [K: V?]?) {
     guard let map = map else {
-      writeByte(0)
+      writeByte(NativeInteropTestsPigeonInteropCodec.typeNull)
       return
     }
-    writeByte(13)
+    writeByte(NativeInteropTestsPigeonInteropCodec.typeMap)
     writeSize(map.count)
     for (key, item) in map {
       writeValue(key)
@@ -2990,10 +3004,10 @@ private struct NativeInteropTestsPigeonInteropWriter {
 
   mutating func writeMap<K, V>(_ map: [K?: V?]?) {
     guard let map = map else {
-      writeByte(0)
+      writeByte(NativeInteropTestsPigeonInteropCodec.typeNull)
       return
     }
-    writeByte(13)
+    writeByte(NativeInteropTestsPigeonInteropCodec.typeMap)
     writeSize(map.count)
     for (key, item) in map {
       writeOptional(key)
@@ -3003,10 +3017,10 @@ private struct NativeInteropTestsPigeonInteropWriter {
 
   mutating func writeMap<K, V>(_ map: [K: V]?, _ writeEntry: (inout Self, K, V) -> Void) {
     guard let map = map else {
-      writeByte(0)
+      writeByte(NativeInteropTestsPigeonInteropCodec.typeNull)
       return
     }
-    writeByte(13)
+    writeByte(NativeInteropTestsPigeonInteropCodec.typeMap)
     writeSize(map.count)
     for (key, item) in map {
       writeEntry(&self, key, item)
@@ -3014,13 +3028,13 @@ private struct NativeInteropTestsPigeonInteropWriter {
   }
 
   mutating func writeNativeInteropUnusedClass(_ value: NativeInteropUnusedClass) {
-    writeByte(12)
+    writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
     writeSize(1)
     writeValue(value.aField)
   }
 
   mutating func writeNativeInteropAllTypes(_ value: NativeInteropAllTypes) {
-    writeByte(12)
+    writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
     writeSize(28)
     writeValue(value.aBool)
     writeValue(value.anInt)
@@ -3053,7 +3067,7 @@ private struct NativeInteropTestsPigeonInteropWriter {
   }
 
   mutating func writeNativeInteropAllNullableTypes(_ value: NativeInteropAllNullableTypes) {
-    writeByte(12)
+    writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
     writeSize(31)
     writeValue(value.aNullableBool)
     writeValue(value.aNullableInt)
@@ -3091,7 +3105,7 @@ private struct NativeInteropTestsPigeonInteropWriter {
   mutating func writeNativeInteropAllNullableTypesWithoutRecursion(
     _ value: NativeInteropAllNullableTypesWithoutRecursion
   ) {
-    writeByte(12)
+    writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
     writeSize(29)
     writeValue(value.aNullableBool)
     writeValue(value.aNullableInt)
@@ -3125,7 +3139,7 @@ private struct NativeInteropTestsPigeonInteropWriter {
   }
 
   mutating func writeNativeInteropAllClassesWrapper(_ value: NativeInteropAllClassesWrapper) {
-    writeByte(12)
+    writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
     writeSize(7)
     writeValue(value.allNullableTypes)
     writeValue(value.allNullableTypesWithoutRecursion)
@@ -3138,7 +3152,7 @@ private struct NativeInteropTestsPigeonInteropWriter {
 
   mutating func writeNativeInteropSealedClassWithFields(_ value: NativeInteropSealedClassWithFields)
   {
-    writeByte(12)
+    writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
     writeSize(4)
     writeValue(value.aString)
     writeValue(value.aNullableInt)
@@ -3147,12 +3161,12 @@ private struct NativeInteropTestsPigeonInteropWriter {
   }
 
   mutating func writeNativeInteropEmptySealedClass(_ value: NativeInteropEmptySealedClass) {
-    writeByte(12)
+    writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
     writeSize(0)
   }
 
   mutating func writeNativeInteropSealedClassWrapper(_ value: NativeInteropSealedClassWrapper) {
-    writeByte(12)
+    writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
     writeSize(3)
     writeValue(value.sealedClass)
     writeValue(value.nullableSealedClass)
@@ -3160,7 +3174,7 @@ private struct NativeInteropTestsPigeonInteropWriter {
   }
 
   mutating func writeNativeInteropReservedNames(_ value: NativeInteropReservedNames) {
-    writeByte(12)
+    writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
     writeSize(14)
     writeValue(value.type)
     writeValue(value.use)
@@ -3179,13 +3193,13 @@ private struct NativeInteropTestsPigeonInteropWriter {
   }
 
   mutating func writeNativeInteropCircle(_ value: NativeInteropCircle) {
-    writeByte(12)
+    writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
     writeSize(1)
     writeValue(value.radius)
   }
 
   mutating func writeNativeInteropSquare(_ value: NativeInteropSquare) {
-    writeByte(12)
+    writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
     writeSize(2)
     writeValue(value.side)
     writeValue(value.label)
@@ -3354,7 +3368,7 @@ private protocol NativeInteropTestsPigeonInteropList {
 
 extension Array: NativeInteropTestsPigeonInteropList {
   fileprivate func pigeonWrite(to writer: inout NativeInteropTestsPigeonInteropWriter) {
-    writer.writeByte(12)
+    writer.writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
     writer.writeSize(count)
     for item in self {
       writer.writeValue(item)
@@ -3369,7 +3383,7 @@ private protocol NativeInteropTestsPigeonInteropMap {
 
 extension Dictionary: NativeInteropTestsPigeonInteropMap {
   fileprivate func pigeonWrite(to writer: inout NativeInteropTestsPigeonInteropWriter) {
-    writer.writeByte(13)
+    writer.writeByte(NativeInteropTestsPigeonInteropCodec.typeMap)
     writer.writeSize(count)
     for (key, item) in self {
       writer.writeValue(key)
@@ -3405,9 +3419,9 @@ private struct NativeInteropTestsPigeonInteropReader {
 
   mutating func readSize() -> Int {
     let byte = readByte()
-    if byte < 254 {
+    if byte < NativeInteropTestsPigeonInteropCodec.sizeUInt16 {
       return Int(byte)
-    } else if byte == 254 {
+    } else if byte == NativeInteropTestsPigeonInteropCodec.sizeUInt16 {
       return Int(readRaw(UInt16.self))
     }
     return Int(readRaw(UInt32.self))
@@ -3441,35 +3455,36 @@ private struct NativeInteropTestsPigeonInteropReader {
 
   mutating func readValue(ofType type: UInt8) -> Any? {
     switch type {
-    case 0:
+    case NativeInteropTestsPigeonInteropCodec.typeNull:
       return nil
-    case 1:
+    case NativeInteropTestsPigeonInteropCodec.typeTrue:
       return true
-    case 2:
+    case NativeInteropTestsPigeonInteropCodec.typeFalse:
       return false
-    case 3:
+    case NativeInteropTestsPigeonInteropCodec.typeInt32:
       return Int64(readRaw(Int32.self))
-    case 4:
+    case NativeInteropTestsPigeonInteropCodec.typeInt64:
       return readRaw(Int64.self)
-    case 5, 7:
+    case NativeInteropTestsPigeonInteropCodec.typeLargeInt,
+      NativeInteropTestsPigeonInteropCodec.typeString:
       let count = readSize()
       let string = String(
         decoding: UnsafeRawBufferPointer(rebasing: bytes[position..<(position + count)]),
         as: UTF8.self)
       position += count
       return string
-    case 6:
+    case NativeInteropTestsPigeonInteropCodec.typeFloat64:
       readAlignment(8)
       return Double(bitPattern: readRaw(UInt64.self))
-    case 8:
+    case NativeInteropTestsPigeonInteropCodec.typeUint8List:
       return readTypedData(UInt8.self, alignment: 1)
-    case 9:
+    case NativeInteropTestsPigeonInteropCodec.typeInt32List:
       return readTypedData(Int32.self, alignment: 4)
-    case 10:
+    case NativeInteropTestsPigeonInteropCodec.typeInt64List:
       return readTypedData(Int64.self, alignment: 8)
-    case 11:
+    case NativeInteropTestsPigeonInteropCodec.typeFloat64List:
       return readTypedData(Float64.self, alignment: 8)
-    case 12:
+    case NativeInteropTestsPigeonInteropCodec.typeList:
       let count = readSize()
       var list: [Any?] = []
       list.reserveCapacity(count)
@@ -3477,7 +3492,7 @@ private struct NativeInteropTestsPigeonInteropReader {
         list.append(readValue())
       }
       return list
-    case 13:
+    case NativeInteropTestsPigeonInteropCodec.typeMap:
       let count = readSize()
       var map: [AnyHashable?: Any?] = [:]
       map.reserveCapacity(count)
@@ -3486,7 +3501,7 @@ private struct NativeInteropTestsPigeonInteropReader {
         map[key] = readValue()
       }
       return map
-    case 14:
+    case NativeInteropTestsPigeonInteropCodec.typeFloat32List:
       return readTypedData(Float32.self, alignment: 4)
     default:
       return readCustomValue(ofType: type)
@@ -3504,7 +3519,7 @@ private struct NativeInteropTestsPigeonInteropReader {
 
   mutating func read<E>(_ type: [E].Type) -> [E] {
     let tag = readByte()
-    guard tag == 12 else {
+    guard tag == NativeInteropTestsPigeonInteropCodec.typeList else {
       return readValue(ofType: tag) as! [E]
     }
     let count = readSize()
@@ -3517,7 +3532,7 @@ private struct NativeInteropTestsPigeonInteropReader {
   }
 
   mutating func read<E>(_ type: [E]?.Type) -> [E]? {
-    if bytes[position] == 0 {
+    if bytes[position] == NativeInteropTestsPigeonInteropCodec.typeNull {
       position += 1
       return nil
     }
@@ -3526,7 +3541,7 @@ private struct NativeInteropTestsPigeonInteropReader {
 
   mutating func read<K: Hashable, V>(_ type: [K: V].Type) -> [K: V] {
     let tag = readByte()
-    guard tag == 13 else {
+    guard tag == NativeInteropTestsPigeonInteropCodec.typeMap else {
       return readValue(ofType: tag) as! [K: V]
     }
     let count = readSize()
@@ -3540,7 +3555,7 @@ private struct NativeInteropTestsPigeonInteropReader {
   }
 
   mutating func read<K: Hashable, V>(_ type: [K: V]?.Type) -> [K: V]? {
-    if bytes[position] == 0 {
+    if bytes[position] == NativeInteropTestsPigeonInteropCodec.typeNull {
       position += 1
       return nil
     }
@@ -3773,6 +3788,24 @@ private struct NativeInteropTestsPigeonInteropReader {
 /// Encodes and decodes the buffers that native interop calls pass to and from
 /// Dart, in the same format as the message codec.
 private enum NativeInteropTestsPigeonInteropCodec {
+  static let typeNull: UInt8 = 0
+  static let typeTrue: UInt8 = 1
+  static let typeFalse: UInt8 = 2
+  static let typeInt32: UInt8 = 3
+  static let typeInt64: UInt8 = 4
+  static let typeLargeInt: UInt8 = 5
+  static let typeFloat64: UInt8 = 6
+  static let typeString: UInt8 = 7
+  static let typeUint8List: UInt8 = 8
+  static let typeInt32List: UInt8 = 9
+  static let typeInt64List: UInt8 = 10
+  static let typeFloat64List: UInt8 = 11
+  static let typeList: UInt8 = 12
+  static let typeMap: UInt8 = 13
+  static let typeFloat32List: UInt8 = 14
+  static let sizeUInt16: UInt8 = 254
+  static let sizeUInt32: UInt8 = 255
+
   static func encode(_ value: Any?) -> NSData {
     var writer = NativeInteropTestsPigeonInteropWriter()
     writer.writeValue(value)
@@ -9377,7 +9410,7 @@ class NativeInteropFlutterIntegrationCoreApi {
     let error = NativeInteropTestsError()
     let res = api.echoNativeInteropAllTypes(
       pigeonVar_args: NativeInteropTestsPigeonInteropCodec.encode {
-        $0.writeByte(12)
+        $0.writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
         $0.writeSize(1)
         $0.writeValue(everythingArg)
       }, error: error)
@@ -9395,7 +9428,7 @@ class NativeInteropFlutterIntegrationCoreApi {
     let error = NativeInteropTestsError()
     let res = api.echoNativeInteropAllNullableTypes(
       pigeonVar_args: NativeInteropTestsPigeonInteropCodec.encode {
-        $0.writeByte(12)
+        $0.writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
         $0.writeSize(1)
         $0.writeValue(everythingArg)
       }, error: error)
@@ -9416,7 +9449,7 @@ class NativeInteropFlutterIntegrationCoreApi {
     let error = NativeInteropTestsError()
     let res = api.echoNativeInteropSealedClass(
       pigeonVar_args: NativeInteropTestsPigeonInteropCodec.encode {
-        $0.writeByte(12)
+        $0.writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
         $0.writeSize(1)
         $0.writeValue(sealedClassArg)
       }, error: error)
@@ -9453,7 +9486,7 @@ class NativeInteropFlutterIntegrationCoreApi {
     let error = NativeInteropTestsError()
     let res = api.echoNativeInteropAllNullableTypesWithoutRecursion(
       pigeonVar_args: NativeInteropTestsPigeonInteropCodec.encode {
-        $0.writeByte(12)
+        $0.writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
         $0.writeSize(1)
         $0.writeValue(everythingArg)
       }, error: error)
@@ -9575,7 +9608,7 @@ class NativeInteropFlutterIntegrationCoreApi {
     let error = NativeInteropTestsError()
     let res = api.echoList(
       pigeonVar_args: NativeInteropTestsPigeonInteropCodec.encode {
-        $0.writeByte(12)
+        $0.writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
         $0.writeSize(1)
         $0.writeList(listArg)
       }, error: error)
@@ -9591,7 +9624,7 @@ class NativeInteropFlutterIntegrationCoreApi {
     let error = NativeInteropTestsError()
     let res = api.echoEnumList(
       pigeonVar_args: NativeInteropTestsPigeonInteropCodec.encode {
-        $0.writeByte(12)
+        $0.writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
         $0.writeSize(1)
         $0.writeList(enumListArg)
       }, error: error)
@@ -9609,7 +9642,7 @@ class NativeInteropFlutterIntegrationCoreApi {
     let error = NativeInteropTestsError()
     let res = api.echoClassList(
       pigeonVar_args: NativeInteropTestsPigeonInteropCodec.encode {
-        $0.writeByte(12)
+        $0.writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
         $0.writeSize(1)
         $0.writeList(classListArg)
       }, error: error)
@@ -9627,7 +9660,7 @@ class NativeInteropFlutterIntegrationCoreApi {
     let error = NativeInteropTestsError()
     let res = api.echoNonNullEnumList(
       pigeonVar_args: NativeInteropTestsPigeonInteropCodec.encode {
-        $0.writeByte(12)
+        $0.writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
         $0.writeSize(1)
         $0.writeList(enumListArg)
       }, error: error)
@@ -9645,7 +9678,7 @@ class NativeInteropFlutterIntegrationCoreApi {
     let error = NativeInteropTestsError()
     let res = api.echoNonNullClassList(
       pigeonVar_args: NativeInteropTestsPigeonInteropCodec.encode {
-        $0.writeByte(12)
+        $0.writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
         $0.writeSize(1)
         $0.writeList(classListArg)
       }, error: error)
@@ -9661,7 +9694,7 @@ class NativeInteropFlutterIntegrationCoreApi {
     let error = NativeInteropTestsError()
     let res = api.echoMap(
       pigeonVar_args: NativeInteropTestsPigeonInteropCodec.encode {
-        $0.writeByte(12)
+        $0.writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
         $0.writeSize(1)
         $0.writeMap(mapArg)
       }, error: error)
@@ -9677,7 +9710,7 @@ class NativeInteropFlutterIntegrationCoreApi {
     let error = NativeInteropTestsError()
     let res = api.echoStringMap(
       pigeonVar_args: NativeInteropTestsPigeonInteropCodec.encode {
-        $0.writeByte(12)
+        $0.writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
         $0.writeSize(1)
         $0.writeMap(stringMapArg)
       }, error: error)
@@ -9693,7 +9726,7 @@ class NativeInteropFlutterIntegrationCoreApi {
     let error = NativeInteropTestsError()
     let res = api.echoIntMap(
       pigeonVar_args: NativeInteropTestsPigeonInteropCodec.encode {
-        $0.writeByte(12)
+        $0.writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
         $0.writeSize(1)
         $0.writeMap(intMapArg)
       }, error: error)
@@ -9711,7 +9744,7 @@ class NativeInteropFlutterIntegrationCoreApi {
     let error = NativeInteropTestsError()
     let res = api.echoEnumMap(
       pigeonVar_args: NativeInteropTestsPigeonInteropCodec.encode {
-        $0.writeByte(12)
+        $0.writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
         $0.writeSize(1)
         $0.writeMap(enumMapArg)
       }, error: error)
@@ -9729,7 +9762,7 @@ class NativeInteropFlutterIntegrationCoreApi {
     let error = NativeInteropTestsError()
     let res = api.echoClassMap(
       pigeonVar_args: NativeInteropTestsPigeonInteropCodec.encode {
-        $0.writeByte(12)
+        $0.writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
         $0.writeSize(1)
         $0.writeMap(classMapArg)
       }, error: error)
@@ -9745,7 +9778,7 @@ class NativeInteropFlutterIntegrationCoreApi {
     let error = NativeInteropTestsError()
     let res = api.echoNonNullStringMap(
       pigeonVar_args: NativeInteropTestsPigeonInteropCodec.encode {
-        $0.writeByte(12)
+        $0.writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
         $0.writeSize(1)
         $0.writeMap(stringMapArg)
       }, error: error)
@@ -9761,7 +9794,7 @@ class NativeInteropFlutterIntegrationCoreApi {
     let error = NativeInteropTestsError()
     let res = api.echoNonNullIntMap(
       pigeonVar_args: NativeInteropTestsPigeonInteropCodec.encode {
-        $0.writeByte(12)
+        $0.writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
         $0.writeSize(1)
         $0.writeMap(intMapArg)
       }, error: error)
@@ -9779,7 +9812,7 @@ class NativeInteropFlutterIntegrationCoreApi {
     let error = NativeInteropTestsError()
     let res = api.echoNonNullEnumMap(
       pigeonVar_args: NativeInteropTestsPigeonInteropCodec.encode {
-        $0.writeByte(12)
+        $0.writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
         $0.writeSize(1)
         $0.writeMap(enumMapArg)
       }, error: error)
@@ -9797,7 +9830,7 @@ class NativeInteropFlutterIntegrationCoreApi {
     let error = NativeInteropTestsError()
     let res = api.echoNonNullClassMap(
       pigeonVar_args: NativeInteropTestsPigeonInteropCodec.encode {
-        $0.writeByte(12)
+        $0.writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
         $0.writeSize(1)
         $0.writeMap(classMapArg)
       }, error: error)
@@ -9920,7 +9953,7 @@ class NativeInteropFlutterIntegrationCoreApi {
     let error = NativeInteropTestsError()
     let res = api.echoNullableList(
       pigeonVar_args: NativeInteropTestsPigeonInteropCodec.encode {
-        $0.writeByte(12)
+        $0.writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
         $0.writeSize(1)
         $0.writeList(listArg)
       }, error: error)
@@ -9941,7 +9974,7 @@ class NativeInteropFlutterIntegrationCoreApi {
     let error = NativeInteropTestsError()
     let res = api.echoNullableEnumList(
       pigeonVar_args: NativeInteropTestsPigeonInteropCodec.encode {
-        $0.writeByte(12)
+        $0.writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
         $0.writeSize(1)
         $0.writeList(enumListArg)
       }, error: error)
@@ -9962,7 +9995,7 @@ class NativeInteropFlutterIntegrationCoreApi {
     let error = NativeInteropTestsError()
     let res = api.echoNullableClassList(
       pigeonVar_args: NativeInteropTestsPigeonInteropCodec.encode {
-        $0.writeByte(12)
+        $0.writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
         $0.writeSize(1)
         $0.writeList(classListArg)
       }, error: error)
@@ -9983,7 +10016,7 @@ class NativeInteropFlutterIntegrationCoreApi {
     let error = NativeInteropTestsError()
     let res = api.echoNullableNonNullEnumList(
       pigeonVar_args: NativeInteropTestsPigeonInteropCodec.encode {
-        $0.writeByte(12)
+        $0.writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
         $0.writeSize(1)
         $0.writeList(enumListArg)
       }, error: error)
@@ -10004,7 +10037,7 @@ class NativeInteropFlutterIntegrationCoreApi {
     let error = NativeInteropTestsError()
     let res = api.echoNullableNonNullClassList(
       pigeonVar_args: NativeInteropTestsPigeonInteropCodec.encode {
-        $0.writeByte(12)
+        $0.writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
         $0.writeSize(1)
         $0.writeList(classListArg)
       }, error: error)
@@ -10023,7 +10056,7 @@ class NativeInteropFlutterIntegrationCoreApi {
     let error = NativeInteropTestsError()
     let res = api.echoNullableMap(
       pigeonVar_args: NativeInteropTestsPigeonInteropCodec.encode {
-        $0.writeByte(12)
+        $0.writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
         $0.writeSize(1)
         $0.writeMap(mapArg)
       }, error: error)
@@ -10044,7 +10077,7 @@ class NativeInteropFlutterIntegrationCoreApi {
     let error = NativeInteropTestsError()
     let res = api.echoNullableStringMap(
       pigeonVar_args: NativeInteropTestsPigeonInteropCodec.encode {
-        $0.writeByte(12)
+        $0.writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
         $0.writeSize(1)
         $0.writeMap(stringMapArg)
       }, error: error)
@@ -10063,7 +10096,7 @@ class NativeInteropFlutterIntegrationCoreApi {
     let error = NativeInteropTestsError()
     let res = api.echoNullableIntMap(
       pigeonVar_args: NativeInteropTestsPigeonInteropCodec.encode {
-        $0.writeByte(12)
+        $0.writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
         $0.writeSize(1)
         $0.writeMap(intMapArg)
       }, error: error)
@@ -10084,7 +10117,7 @@ class NativeInteropFlutterIntegrationCoreApi {
     let error = NativeInteropTestsError()
     let res = api.echoNullableEnumMap(
       pigeonVar_args: NativeInteropTestsPigeonInteropCodec.encode {
-        $0.writeByte(12)
+        $0.writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
         $0.writeSize(1)
         $0.writeMap(enumMapArg)
       }, error: error)
@@ -10105,7 +10138,7 @@ class NativeInteropFlutterIntegrationCoreApi {
     let error = NativeInteropTestsError()
     let res = api.echoNullableClassMap(
       pigeonVar_args: NativeInteropTestsPigeonInteropCodec.encode {
-        $0.writeByte(12)
+        $0.writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
         $0.writeSize(1)
         $0.writeMap(classMapArg)
       }, error: error)
@@ -10126,7 +10159,7 @@ class NativeInteropFlutterIntegrationCoreApi {
     let error = NativeInteropTestsError()
     let res = api.echoNullableNonNullStringMap(
       pigeonVar_args: NativeInteropTestsPigeonInteropCodec.encode {
-        $0.writeByte(12)
+        $0.writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
         $0.writeSize(1)
         $0.writeMap(stringMapArg)
       }, error: error)
@@ -10145,7 +10178,7 @@ class NativeInteropFlutterIntegrationCoreApi {
     let error = NativeInteropTestsError()
     let res = api.echoNullableNonNullIntMap(
       pigeonVar_args: NativeInteropTestsPigeonInteropCodec.encode {
-        $0.writeByte(12)
+        $0.writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
         $0.writeSize(1)
         $0.writeMap(intMapArg)
       }, error: error)
@@ -10166,7 +10199,7 @@ class NativeInteropFlutterIntegrationCoreApi {
     let error = NativeInteropTestsError()
     let res = api.echoNullableNonNullEnumMap(
       pigeonVar_args: NativeInteropTestsPigeonInteropCodec.encode {
-        $0.writeByte(12)
+        $0.writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
         $0.writeSize(1)
         $0.writeMap(enumMapArg)
       }, error: error)
@@ -10187,7 +10220,7 @@ class NativeInteropFlutterIntegrationCoreApi {
     let error = NativeInteropTestsError()
     let res = api.echoNullableNonNullClassMap(
       pigeonVar_args: NativeInteropTestsPigeonInteropCodec.encode {
-        $0.writeByte(12)
+        $0.writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
         $0.writeSize(1)
         $0.writeMap(classMapArg)
       }, error: error)
@@ -10253,7 +10286,7 @@ class NativeInteropFlutterIntegrationCoreApi {
     let error = NativeInteropTestsError()
     let res = await api.echoAsyncNativeInteropAllTypes(
       pigeonVar_args: NativeInteropTestsPigeonInteropCodec.encode {
-        $0.writeByte(12)
+        $0.writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
         $0.writeSize(1)
         $0.writeValue(everythingArg)
       }, error: error)
@@ -10270,7 +10303,7 @@ class NativeInteropFlutterIntegrationCoreApi {
     let error = NativeInteropTestsError()
     let res = await api.echoAsyncNullableNativeInteropAllNullableTypes(
       pigeonVar_args: NativeInteropTestsPigeonInteropCodec.encode {
-        $0.writeByte(12)
+        $0.writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
         $0.writeSize(1)
         $0.writeValue(everythingArg)
       }, error: error)
@@ -10290,7 +10323,7 @@ class NativeInteropFlutterIntegrationCoreApi {
     let error = NativeInteropTestsError()
     let res = await api.echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
       pigeonVar_args: NativeInteropTestsPigeonInteropCodec.encode {
-        $0.writeByte(12)
+        $0.writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
         $0.writeSize(1)
         $0.writeValue(everythingArg)
       }, error: error)
@@ -10384,7 +10417,7 @@ class NativeInteropFlutterIntegrationCoreApi {
     let error = NativeInteropTestsError()
     let res = await api.echoAsyncObject(
       pigeonVar_args: NativeInteropTestsPigeonInteropCodec.encode {
-        $0.writeByte(12)
+        $0.writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
         $0.writeSize(1)
         $0.writeValue(anObjectArg)
       }, error: error)
@@ -10399,7 +10432,7 @@ class NativeInteropFlutterIntegrationCoreApi {
     let error = NativeInteropTestsError()
     let res = await api.echoAsyncList(
       pigeonVar_args: NativeInteropTestsPigeonInteropCodec.encode {
-        $0.writeByte(12)
+        $0.writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
         $0.writeSize(1)
         $0.writeList(listArg)
       }, error: error)
@@ -10416,7 +10449,7 @@ class NativeInteropFlutterIntegrationCoreApi {
     let error = NativeInteropTestsError()
     let res = await api.echoAsyncEnumList(
       pigeonVar_args: NativeInteropTestsPigeonInteropCodec.encode {
-        $0.writeByte(12)
+        $0.writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
         $0.writeSize(1)
         $0.writeList(enumListArg)
       }, error: error)
@@ -10433,7 +10466,7 @@ class NativeInteropFlutterIntegrationCoreApi {
     let error = NativeInteropTestsError()
     let res = await api.echoAsyncClassList(
       pigeonVar_args: NativeInteropTestsPigeonInteropCodec.encode {
-        $0.writeByte(12)
+        $0.writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
         $0.writeSize(1)
         $0.writeList(classListArg)
       }, error: error)
@@ -10450,7 +10483,7 @@ class NativeInteropFlutterIntegrationCoreApi {
     let error = NativeInteropTestsError()
     let res = await api.echoAsyncNonNullEnumList(
       pigeonVar_args: NativeInteropTestsPigeonInteropCodec.encode {
-        $0.writeByte(12)
+        $0.writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
         $0.writeSize(1)
         $0.writeList(enumListArg)
       }, error: error)
@@ -10467,7 +10500,7 @@ class NativeInteropFlutterIntegrationCoreApi {
     let error = NativeInteropTestsError()
     let res = await api.echoAsyncNonNullClassList(
       pigeonVar_args: NativeInteropTestsPigeonInteropCodec.encode {
-        $0.writeByte(12)
+        $0.writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
         $0.writeSize(1)
         $0.writeList(classListArg)
       }, error: error)
@@ -10482,7 +10515,7 @@ class NativeInteropFlutterIntegrationCoreApi {
     let error = NativeInteropTestsError()
     let res = await api.echoAsyncMap(
       pigeonVar_args: NativeInteropTestsPigeonInteropCodec.encode {
-        $0.writeByte(12)
+        $0.writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
         $0.writeSize(1)
         $0.writeMap(mapArg)
       }, error: error)
@@ -10499,7 +10532,7 @@ class NativeInteropFlutterIntegrationCoreApi {
     let error = NativeInteropTestsError()
     let res = await api.echoAsyncStringMap(
       pigeonVar_args: NativeInteropTestsPigeonInteropCodec.encode {
-        $0.writeByte(12)
+        $0.writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
         $0.writeSize(1)
         $0.writeMap(stringMapArg)
       }, error: error)
@@ -10514,7 +10547,7 @@ class NativeInteropFlutterIntegrationCoreApi {
     let error = NativeInteropTestsError()
     let res = await api.echoAsyncIntMap(
       pigeonVar_args: NativeInteropTestsPigeonInteropCodec.encode {
-        $0.writeByte(12)
+        $0.writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
         $0.writeSize(1)
         $0.writeMap(intMapArg)
       }, error: error)
@@ -10531,7 +10564,7 @@ class NativeInteropFlutterIntegrationCoreApi {
     let error = NativeInteropTestsError()
     let res = await api.echoAsyncEnumMap(
       pigeonVar_args: NativeInteropTestsPigeonInteropCodec.encode {
-        $0.writeByte(12)
+        $0.writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
         $0.writeSize(1)
         $0.writeMap(enumMapArg)
       }, error: error)
@@ -10548,7 +10581,7 @@ class NativeInteropFlutterIntegrationCoreApi {
     let error = NativeInteropTestsError()
     let res = await api.echoAsyncClassMap(
       pigeonVar_args: NativeInteropTestsPigeonInteropCodec.encode {
-        $0.writeByte(12)
+        $0.writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
         $0.writeSize(1)
         $0.writeMap(classMapArg)
       }, error: error)
@@ -10663,7 +10696,7 @@ class NativeInteropFlutterIntegrationCoreApi {
     let error = NativeInteropTestsError()
     let res = await api.echoAsyncNullableObject(
       pigeonVar_args: NativeInteropTestsPigeonInteropCodec.encode {
-        $0.writeByte(12)
+        $0.writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
         $0.writeSize(1)
         $0.writeValue(anObjectArg)
       }, error: error)
@@ -10681,7 +10714,7 @@ class NativeInteropFlutterIntegrationCoreApi {
     let error = NativeInteropTestsError()
     let res = await api.echoAsyncNullableList(
       pigeonVar_args: NativeInteropTestsPigeonInteropCodec.encode {
-        $0.writeByte(12)
+        $0.writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
         $0.writeSize(1)
         $0.writeList(listArg)
       }, error: error)
@@ -10701,7 +10734,7 @@ class NativeInteropFlutterIntegrationCoreApi {
     let error = NativeInteropTestsError()
     let res = await api.echoAsyncNullableEnumList(
       pigeonVar_args: NativeInteropTestsPigeonInteropCodec.encode {
-        $0.writeByte(12)
+        $0.writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
         $0.writeSize(1)
         $0.writeList(enumListArg)
       }, error: error)
@@ -10721,7 +10754,7 @@ class NativeInteropFlutterIntegrationCoreApi {
     let error = NativeInteropTestsError()
     let res = await api.echoAsyncNullableClassList(
       pigeonVar_args: NativeInteropTestsPigeonInteropCodec.encode {
-        $0.writeByte(12)
+        $0.writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
         $0.writeSize(1)
         $0.writeList(classListArg)
       }, error: error)
@@ -10741,7 +10774,7 @@ class NativeInteropFlutterIntegrationCoreApi {
     let error = NativeInteropTestsError()
     let res = await api.echoAsyncNullableNonNullEnumList(
       pigeonVar_args: NativeInteropTestsPigeonInteropCodec.encode {
-        $0.writeByte(12)
+        $0.writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
         $0.writeSize(1)
         $0.writeList(enumListArg)
       }, error: error)
@@ -10761,7 +10794,7 @@ class NativeInteropFlutterIntegrationCoreApi {
     let error = NativeInteropTestsError()
     let res = await api.echoAsyncNullableNonNullClassList(
       pigeonVar_args: NativeInteropTestsPigeonInteropCodec.encode {
-        $0.writeByte(12)
+        $0.writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
         $0.writeSize(1)
         $0.writeList(classListArg)
       }, error: error)
@@ -10780,7 +10813,7 @@ class NativeInteropFlutterIntegrationCoreApi {
     let error = NativeInteropTestsError()
     let res = await api.echoAsyncNullableMap(
       pigeonVar_args: NativeInteropTestsPigeonInteropCodec.encode {
-        $0.writeByte(12)
+        $0.writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
         $0.writeSize(1)
         $0.writeMap(mapArg)
       }, error: error)
@@ -10800,7 +10833,7 @@ class NativeInteropFlutterIntegrationCoreApi {
     let error = NativeInteropTestsError()
     let res = await api.echoAsyncNullableStringMap(
       pigeonVar_args: NativeInteropTestsPigeonInteropCodec.encode {
-        $0.writeByte(12)
+        $0.writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
         $0.writeSize(1)
         $0.writeMap(stringMapArg)
       }, error: error)
@@ -10820,7 +10853,7 @@ class NativeInteropFlutterIntegrationCoreApi {
     let error = NativeInteropTestsError()
     let res = await api.echoAsyncNullableIntMap(
       pigeonVar_args: NativeInteropTestsPigeonInteropCodec.encode {
-        $0.writeByte(12)
+        $0.writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
         $0.writeSize(1)
         $0.writeMap(intMapArg)
       }, error: error)
@@ -10840,7 +10873,7 @@ class NativeInteropFlutterIntegrationCoreApi {
     let error = NativeInteropTestsError()
     let res = await api.echoAsyncNullableEnumMap(
       pigeonVar_args: NativeInteropTestsPigeonInteropCodec.encode {
-        $0.writeByte(12)
+        $0.writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
         $0.writeSize(1)
         $0.writeMap(enumMapArg)
       }, error: error)
@@ -10860,7 +10893,7 @@ class NativeInteropFlutterIntegrationCoreApi {
     let error = NativeInteropTestsError()
     let res = await api.echoAsyncNullableClassMap(
       pigeonVar_args: NativeInteropTestsPigeonInteropCodec.encode {
-        $0.writeByte(12)
+        $0.writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
         $0.writeSize(1)
         $0.writeMap(classMapArg)
       }, error: error)
@@ -11561,7 +11594,7 @@ class NativeInteropSealedClassFlutterApi {
     let error = NativeInteropTestsError()
     let res = api.echoShape(
       pigeonVar_args: NativeInteropTestsPigeonInteropCodec.encode {
-        $0.writeByte(12)
+        $0.writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
         $0.writeSize(1)
         $0.writeValue(shapeArg)
       }, error: error)

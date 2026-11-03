@@ -118,6 +118,7 @@ class _PigeonJniCodec {
   static final JClass _doubleArrayClass = JDoubleArray.type.jClass;
   static final JClass _listClass = JList.type.jClass;
   static final JClass _mapClass = JMap.type.jClass;
+
   static final JClass _classNativeInteropUnusedClass =
       jni_bridge.NativeInteropUnusedClass.type.jClass;
   static final JClass _classNativeInteropAllTypes = jni_bridge.NativeInteropAllTypes.type.jClass;
@@ -140,7 +141,6 @@ class _PigeonJniCodec {
   static final JClass _classNativeInteropAnEnum = jni_bridge.NativeInteropAnEnum.type.jClass;
   static final JClass _classNativeInteropAnotherEnum =
       jni_bridge.NativeInteropAnotherEnum.type.jClass;
-
   static Object? readValue(JObject? value) {
     if (value == null) {
       return null;
@@ -4561,7 +4561,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -4593,7 +4592,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -4625,7 +4623,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -4657,7 +4654,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -4694,7 +4690,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -4731,7 +4726,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -4770,7 +4764,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -4809,7 +4802,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -4848,7 +4840,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -4884,7 +4875,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -4922,7 +4912,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -4963,7 +4952,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -5006,7 +4994,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -5045,7 +5032,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -5086,7 +5072,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -5126,7 +5111,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -5169,7 +5153,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -5212,7 +5195,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -5246,7 +5228,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -5285,7 +5266,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -5314,7 +5294,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -5343,7 +5322,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -5372,7 +5350,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -5415,7 +5392,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -5456,7 +5432,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -5498,7 +5473,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -5543,7 +5517,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -5580,7 +5553,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -5619,7 +5591,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -5656,7 +5627,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -5695,7 +5665,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -5734,7 +5703,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -5775,7 +5743,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -5816,7 +5783,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -5857,7 +5823,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -5893,7 +5858,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -5931,7 +5895,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -5974,7 +5937,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -6019,7 +5981,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -6058,7 +6019,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -6103,7 +6063,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -6143,7 +6102,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -6186,7 +6144,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -6229,7 +6186,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -6266,7 +6222,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -6307,7 +6262,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -8019,7 +7973,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -8062,7 +8015,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -8104,7 +8056,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -8154,7 +8105,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
                 }
               }),
             );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -8186,7 +8136,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -8218,7 +8167,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -8250,7 +8198,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -8289,7 +8236,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -8326,7 +8272,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -8365,7 +8310,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -8404,7 +8348,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -8443,7 +8386,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -8481,7 +8423,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -8519,7 +8460,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -8564,7 +8504,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -8609,7 +8548,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -8654,7 +8592,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -8699,7 +8636,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -8738,7 +8674,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -8783,7 +8718,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -8825,7 +8759,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -8870,7 +8803,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -8915,7 +8847,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -8949,7 +8880,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -8988,7 +8918,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -9027,7 +8956,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -9066,7 +8994,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -9105,7 +9032,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -9144,7 +9070,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -9181,7 +9106,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -9220,7 +9144,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -9259,7 +9182,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -9298,7 +9220,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -9327,7 +9248,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -9365,7 +9285,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -9405,7 +9324,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -9450,7 +9368,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -9495,7 +9412,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -9539,7 +9455,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -9583,7 +9498,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -9624,7 +9538,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -9669,7 +9582,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -9711,7 +9623,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -9756,7 +9667,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -9801,7 +9711,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -9838,7 +9747,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -9879,7 +9787,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -9928,7 +9835,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -10014,7 +9920,6 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -13826,7 +13731,6 @@ class _NativeInteropReservedNamesHostApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -14285,7 +14189,6 @@ class _NativeInteropSealedClassHostApiForNativeInterop
             }
           }),
         );
-
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
