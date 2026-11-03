@@ -9,7 +9,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:material_ui_examples/motion/springs.0.dart' as example;
 
 void main() {
-  testWidgets('Springs example compares the standard and expressive springs', (
+  testWidgets('Springs example compares spatial schemes and effects speeds', (
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(const example.SpringsExampleApp());
@@ -18,99 +18,114 @@ void main() {
     expect(find.text('Standard'), findsOne);
     expect(find.text('Expressive'), findsOne);
 
-    // The standard box comes first.
-    final Finder standardBox = find.byIcon(Icons.star).first;
-    final Finder expressiveBox = find.byIcon(Icons.star).last;
+    // The standard puck comes first.
+    final Finder standardPuck = find.byIcon(Icons.star_rounded).first;
+    final Finder expressivePuck = find.byIcon(Icons.star_rounded).last;
     final ColorScheme colors = Theme.of(
       tester.element(find.byType(example.SpringsExample)),
     ).colorScheme;
-    Color? boxColor(Finder box) {
-      final DecoratedBox decoratedBox = tester.widget<DecoratedBox>(
-        find.ancestor(of: box, matching: find.byType(DecoratedBox)).first,
-      );
-      return (decoratedBox.decoration as BoxDecoration).color;
+    Color? decoratedBoxColor(Finder finder) {
+      final DecoratedBox box = tester.widget<DecoratedBox>(finder);
+      return (box.decoration as BoxDecoration).color;
+    }
+
+    Finder puckBox(Finder icon) {
+      return find.ancestor(of: icon, matching: find.byType(DecoratedBox)).first;
     }
 
     // The spatial springs of the default speed are shown at first.
-    expect(
-      find.text('Spatial spring: stiffness 700, damping ratio 0.90'),
-      findsOne,
-    );
-    expect(
-      find.text('Spatial spring: stiffness 380, damping ratio 0.80'),
-      findsOne,
-    );
+    expect(find.text('stiffness 700 · damping ratio 0.90'), findsOne);
+    expect(find.text('stiffness 380 · damping ratio 0.80'), findsOne);
 
-    // Spatial springs move the boxes without changing their color.
-    final double startX = tester.getCenter(standardBox).dx;
-    expect(tester.getCenter(expressiveBox).dx, startX);
+    // Spatial springs move the pucks without changing their color.
+    final double startX = tester.getCenter(standardPuck).dx;
+    expect(tester.getCenter(expressivePuck).dx, startX);
     await tester.tap(find.text('Animate'));
     await tester.pumpAndSettle();
-    final double endX = tester.getCenter(standardBox).dx;
+    final double endX = tester.getCenter(standardPuck).dx;
     expect(endX, greaterThan(startX));
-    expect(tester.getCenter(expressiveBox).dx, endX);
-    expect(boxColor(standardBox), colors.secondaryContainer);
-    expect(boxColor(expressiveBox), colors.secondaryContainer);
+    expect(tester.getCenter(expressivePuck).dx, endX);
+    expect(decoratedBoxColor(puckBox(standardPuck)), colors.primary);
+    expect(decoratedBoxColor(puckBox(expressivePuck)), colors.primary);
 
-    // With the fast speed, only the expressive box overshoots the start of the
-    // track before it settles there.
+    // With the fast speed, only the expressive puck overshoots the start slot
+    // before settling back into place.
     await tester.tap(find.text('Fast'));
     await tester.pump();
-    expect(
-      find.text('Spatial spring: stiffness 1400, damping ratio 0.90'),
-      findsOne,
-    );
-    expect(
-      find.text('Spatial spring: stiffness 800, damping ratio 0.60'),
-      findsOne,
-    );
+    expect(find.text('stiffness 1400 · damping ratio 0.90'), findsOne);
+    expect(find.text('stiffness 800 · damping ratio 0.60'), findsOne);
     await tester.tap(find.text('Animate'));
     await tester.pump();
     double standardMinX = endX;
     double expressiveMinX = endX;
     for (var frame = 0; frame < 60; frame++) {
       await tester.pump(const Duration(milliseconds: 16));
-      standardMinX = math.min(standardMinX, tester.getCenter(standardBox).dx);
+      standardMinX = math.min(standardMinX, tester.getCenter(standardPuck).dx);
       expressiveMinX = math.min(
         expressiveMinX,
-        tester.getCenter(expressiveBox).dx,
+        tester.getCenter(expressivePuck).dx,
       );
     }
     expect(standardMinX, greaterThan(startX - 2.0));
     expect(expressiveMinX, lessThan(startX - 10.0));
     await tester.pumpAndSettle();
     expect(
-      tester.getCenter(standardBox).dx,
+      tester.getCenter(standardPuck).dx,
       moreOrLessEquals(startX, epsilon: 1.0),
     );
     expect(
-      tester.getCenter(expressiveBox).dx,
+      tester.getCenter(expressivePuck).dx,
       moreOrLessEquals(startX, epsilon: 1.0),
     );
 
-    // Effects springs change the color of the boxes without moving them. Both
-    // schemes use the same effects springs, so the boxes change color the same
-    // way.
+    // Effects mode compares Fast, Default, and Slow stationary color swatches
+    // side by side without moving them.
     await tester.tap(find.text('Effects'));
     await tester.pump();
-    expect(
-      find.text('Effects spring: stiffness 3800, damping ratio 1.00'),
-      findsNWidgets(2),
+    expect(find.text('stiffness 3800 · damping ratio 1.00'), findsOne);
+    expect(find.text('stiffness 1600 · damping ratio 1.00'), findsOne);
+    expect(find.text('stiffness 800 · damping ratio 1.00'), findsOne);
+
+    final Finder fastSwatch = find.byKey(
+      const ValueKey<String>('effects-swatch-Fast'),
     );
-    final double effectsX = tester.getCenter(standardBox).dx;
-    expect(tester.getCenter(expressiveBox).dx, effectsX);
-    expect(boxColor(standardBox), colors.secondaryContainer);
-    expect(boxColor(expressiveBox), colors.secondaryContainer);
+    final Finder defaultSwatch = find.byKey(
+      const ValueKey<String>('effects-swatch-Default'),
+    );
+    final Finder slowSwatch = find.byKey(
+      const ValueKey<String>('effects-swatch-Slow'),
+    );
+    final Rect fastRect = tester.getRect(fastSwatch);
+    final Rect defaultRect = tester.getRect(defaultSwatch);
+    final Rect slowRect = tester.getRect(slowSwatch);
+    expect(decoratedBoxColor(fastSwatch), colors.surfaceContainerHighest);
+    expect(decoratedBoxColor(defaultSwatch), colors.surfaceContainerHighest);
+    expect(decoratedBoxColor(slowSwatch), colors.surfaceContainerHighest);
+
     await tester.tap(find.text('Animate'));
     await tester.pump();
-    for (var frame = 0; frame < 10; frame++) {
-      await tester.pump(const Duration(milliseconds: 16));
-      expect(tester.getCenter(standardBox).dx, effectsX);
-      expect(tester.getCenter(expressiveBox).dx, effectsX);
-      expect(boxColor(expressiveBox), boxColor(standardBox));
-    }
+    await tester.pump(const Duration(milliseconds: 48));
+    // All three swatches remain completely stationary.
+    expect(tester.getRect(fastSwatch), fastRect);
+    expect(tester.getRect(defaultSwatch), defaultRect);
+    expect(tester.getRect(slowSwatch), slowRect);
+    // At 48ms, Fast is closer to colors.primary (darker) than Default, which is
+    // closer than Slow.
+    final double fastLuminance = decoratedBoxColor(
+      fastSwatch,
+    )!.computeLuminance();
+    final double defaultLuminance = decoratedBoxColor(
+      defaultSwatch,
+    )!.computeLuminance();
+    final double slowLuminance = decoratedBoxColor(
+      slowSwatch,
+    )!.computeLuminance();
+    expect(fastLuminance, lessThan(defaultLuminance));
+    expect(defaultLuminance, lessThan(slowLuminance));
+
     await tester.pumpAndSettle();
-    expect(boxColor(standardBox), colors.primary);
-    expect(boxColor(expressiveBox), colors.primary);
+    expect(decoratedBoxColor(fastSwatch), colors.primary);
+    expect(decoratedBoxColor(defaultSwatch), colors.primary);
+    expect(decoratedBoxColor(slowSwatch), colors.primary);
   });
 }
