@@ -1,6 +1,9 @@
 ## 1.2.7
 
-* Fixes uncaught surface-creation throwables (such as bare JavaScript strings or engine errors) from `useHtmlRenderObject()` so `VectorGraphic` widgets reliably fall back to the HTML render object and cache the fallback instead of crashing repeatedly (flutter/flutter#189451).
+* Fixes uncaught surface-creation throwables (such as bare JavaScript strings
+  or engine errors) from `useHtmlRenderObject()` so `VectorGraphic` widgets
+  reliably fall back to the HTML render object and cache the fallback instead
+  of crashing repeatedly (flutter/flutter#189451).
 
 ## 1.2.6
 

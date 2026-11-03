@@ -31,6 +31,8 @@ bool useHtmlRenderObject() {
     return _cachedUseHtmlRenderObject!;
   }
 
+  // Non-web platforms do not use the HTML render object, except when unit tests
+  // inject an override to simulate web surface probe behavior.
   if (!kIsWeb && debugToImageSyncOverride == null) {
     return false;
   }
