@@ -29,6 +29,23 @@ List<String> descendantSemanticsLabels(SemanticsNode node) {
   return labels;
 }
 
+/// The WCAG contrast ratio between two colors, from 1 to 21.
+double contrastRatio(Color a, Color b) {
+  final double la = a.computeLuminance();
+  final double lb = b.computeLuminance();
+  final lighter = la > lb ? la : lb;
+  final darker = la > lb ? lb : la;
+  return (lighter + 0.05) / (darker + 0.05);
+}
+
+/// The color the given text is painted with, after default styles are applied.
+Color paintedTextColor(WidgetTester tester, Finder text) {
+  final RichText richText = tester.widget<RichText>(
+    find.descendant(of: text, matching: find.byType(RichText)),
+  );
+  return richText.text.style!.color!;
+}
+
 // Expects the visible snack bar with [text] to stay past its timeout, and to
 // close when its close icon is tapped.
 Future<void> expectSnackBarStaysUntilClosed(WidgetTester tester, String text) async {
@@ -42,4 +59,25 @@ Future<void> expectSnackBarStaysUntilClosed(WidgetTester tester, String text) as
   await tester.tap(find.descendant(of: find.byType(SnackBar), matching: find.byIcon(Icons.close)));
   await tester.pumpAndSettle();
   expect(find.text(text), findsNothing);
+}
+
+/// Returns whether any semantics node in the subtree rooted at [finder]
+/// specifies a list/collection.
+bool hasSemanticsList(WidgetTester tester, Finder finder) {
+  bool checkNode(SemanticsNode node) {
+    if ((node.scrollChildCount ?? 0) > 0 || node.indexInParent != null) {
+      return true;
+    }
+    var childHasList = false;
+    node.visitChildren((SemanticsNode child) {
+      if (checkNode(child)) {
+        childHasList = true;
+        return false;
+      }
+      return true;
+    });
+    return childHasList;
+  }
+
+  return checkNode(tester.getSemantics(finder));
 }
