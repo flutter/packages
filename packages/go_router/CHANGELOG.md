@@ -1,3 +1,7 @@
+## 18.1.2
+
+- Fixes web text fields losing focus when an autocomplete overlay opens inside a shell route.
+
 ## 18.1.1
 
 - Fixes unrelated async errors started during redirects being wrapped as `GoException`.
