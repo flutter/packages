@@ -8,16 +8,31 @@ import 'package:flutter/foundation.dart';
 
 bool? _cachedUseHtmlRenderObject;
 
+/// Signature for overriding [ui.Picture.toImageSync] during testing.
+@visibleForTesting
+typedef ToImageSyncCallback = ui.Image? Function(ui.Picture picture, int width, int height);
+
+/// Test hook allowing tests to simulate [ui.Picture.toImageSync] behavior.
+@visibleForTesting
+ToImageSyncCallback? debugToImageSyncOverride;
+
+/// Resets the cached HTML render object selection and any test override.
+@visibleForTesting
+void debugResetUseHtmlRenderObject() {
+  _cachedUseHtmlRenderObject = null;
+  debugToImageSyncOverride = null;
+}
+
 /// Whether or not the HTML compatibility render object should be used.
 ///
 /// This render object has worse performance and supports fewer features.
 bool useHtmlRenderObject() {
-  if (!kIsWeb) {
-    return false;
-  }
-
   if (_cachedUseHtmlRenderObject != null) {
     return _cachedUseHtmlRenderObject!;
+  }
+
+  if (!kIsWeb && debugToImageSyncOverride == null) {
+    return false;
   }
 
   final recorder = ui.PictureRecorder();
@@ -25,7 +40,9 @@ bool useHtmlRenderObject() {
   final ui.Picture picture = recorder.endRecording();
   ui.Image? image;
   try {
-    image = picture.toImageSync(1, 1);
+    image = debugToImageSyncOverride != null
+        ? debugToImageSyncOverride!(picture, 1, 1)
+        : picture.toImageSync(1, 1);
     _cachedUseHtmlRenderObject = false;
   } on UnsupportedError catch (_) {
     // The original HTML renderer does not implement toImageSync.
