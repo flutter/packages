@@ -78,12 +78,10 @@ class _SpringsExampleState extends State<SpringsExample> {
                   segments: const <ButtonSegment<_SpringType>>[
                     ButtonSegment<_SpringType>(
                       value: _SpringType.spatial,
-                      icon: Icon(Icons.swap_horiz_rounded),
                       label: Text('Spatial'),
                     ),
                     ButtonSegment<_SpringType>(
                       value: _SpringType.effects,
-                      icon: Icon(Icons.palette_outlined),
                       label: Text('Effects'),
                     ),
                   ],
@@ -198,14 +196,13 @@ class _SpringsExampleState extends State<SpringsExample> {
                   },
                 ),
                 const SizedBox(height: 16.0),
-                FilledButton.icon(
+                FilledButton(
                   onPressed: () {
                     setState(() {
                       _atEnd = !_atEnd;
                     });
                   },
-                  icon: const Icon(Icons.play_arrow_rounded),
-                  label: const Text('Animate'),
+                  child: const Text('Animate'),
                 ),
               ],
             ),
