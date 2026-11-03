@@ -66,12 +66,12 @@ class $className extends _TimePickerDefaults {
 
   @override
   Size get dayPeriodPortraitSize {
-    return const Size(${number(TokenTimePicker.periodSelectorVerticalContainerWidth)}, ${number(TokenTimePicker.periodSelectorVerticalContainerHeight)});
+    return const Size(${TokenTimePicker.periodSelectorVerticalContainerWidth}, ${TokenTimePicker.periodSelectorVerticalContainerHeight});
   }
 
   @override
   Size get dayPeriodLandscapeSize {
-    return const Size(${number(TokenTimePicker.periodSelectorHorizontalContainerWidth)}, ${number(TokenTimePicker.periodSelectorHorizontalContainerHeight)});
+    return const Size(${TokenTimePicker.periodSelectorHorizontalContainerWidth}, ${TokenTimePicker.periodSelectorHorizontalContainerHeight});
   }
 
   @override
@@ -126,22 +126,22 @@ class $className extends _TimePickerDefaults {
 
   @override
   Size get dialSize {
-    return const Size.square(${number(TokenTimePicker.clockDialContainerSize)});
+    return const Size.square(${TokenTimePicker.clockDialContainerSize});
   }
 
   @override
   double get handWidth {
-    return ${number(TokenTimePicker.clockDialSelectorTrackContainerWidth)};
+    return ${TokenTimePicker.clockDialSelectorTrackContainerWidth};
   }
 
   @override
   double get dotRadius {
-    return ${number(TokenTimePicker.clockDialSelectorHandleContainerSize)} / 2;
+    return ${TokenTimePicker.clockDialSelectorHandleContainerSize} / 2;
   }
 
   @override
   double get centerRadius {
-    return ${number(TokenTimePicker.clockDialSelectorCenterContainerSize)} / 2;
+    return ${TokenTimePicker.clockDialSelectorCenterContainerSize} / 2;
   }
 
   @override
@@ -161,7 +161,7 @@ class $className extends _TimePickerDefaults {
 
   @override
   double get elevation {
-    return ${number(TokenTimePicker.containerElevation)};
+    return ${TokenTimePicker.containerElevation};
   }
 
   @override
@@ -216,12 +216,12 @@ class $className extends _TimePickerDefaults {
 
   @override
   Size get hourMinuteSize {
-    return const Size(${number(TokenTimePicker.timeSelectorContainerWidth)}, ${number(TokenTimePicker.timeSelectorContainerHeight)});
+    return const Size(${TokenTimePicker.timeSelectorContainerWidth}, ${TokenTimePicker.timeSelectorContainerHeight});
   }
 
   @override
   Size get hourMinuteSize24Hour {
-    return Size(${number(TokenTimePicker.timeSelector24hVerticalContainerWidth)}, hourMinuteSize.height);
+    return Size(${TokenTimePicker.timeSelector24hVerticalContainerWidth}, hourMinuteSize.height);
   }
 
   @override
