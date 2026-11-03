@@ -25,6 +25,7 @@ dependencies:
   meta: ^1.10.0
 
 dev_dependencies:
+  cross_file_platform_interface: ^1.0.0
   flutter_test:
     sdk: flutter
   mockito: ^5.4.4
