@@ -2251,8 +2251,10 @@ void main() {
         },
       );
 
-      testWidgets('front camera previews are not mirrored if TransformationInfo.isMirroring is '
-          'false', (WidgetTester tester) async {
+      testWidgets('front camera previews copied by CameraX are mirrored and rotated like previews '
+          'from the camera directly, because CameraX mirroring is disabled', (
+        WidgetTester tester,
+      ) async {
         await createCameraAndBuildPreview(
           tester,
           cameraId: 42,
@@ -2265,18 +2267,22 @@ void main() {
           ),
         );
 
-        // Before any TransformationInfo is received, front camera previews are mirrored.
-        expect(tester.widget<RotatedBox>(find.byType(RotatedBox)).child, isA<Transform>());
+        // Before any TransformationInfo is received: 270 + 0 = 270 degrees, mirrored.
+        RotatedBox rotatedBox = tester.widget<RotatedBox>(find.byType(RotatedBox));
+        expect(rotatedBox.quarterTurns, _270DegreesClockwise);
+        expect(rotatedBox.child, isA<Transform>());
 
-        // The Preview target rotation is pinned to 90 degrees, so a buffer copied
-        // by CameraX has a relative rotation of 0 degrees and is not mirrored:
-        // 0 - (0 - 90) = 90 degrees.
+        // With the Preview target rotation pinned to 90 degrees and CameraX
+        // mirroring disabled, CameraX copies the buffer without rotating or
+        // mirroring it and reports that it does not need mirroring. It still
+        // needs to be mirrored like a buffer from the camera directly:
+        // 0 + (0 - 90) = -90 = 270 degrees.
         sendTransformationInfo(rotationDegrees: 0, hasCameraTransform: false, isMirroring: false);
         await tester.pumpAndSettle();
 
-        final RotatedBox rotatedBox = tester.widget<RotatedBox>(find.byType(RotatedBox));
-        expect(rotatedBox.child, isA<Texture>());
-        expect(rotatedBox.quarterTurns, _90DegreesClockwise);
+        rotatedBox = tester.widget<RotatedBox>(find.byType(RotatedBox));
+        expect(rotatedBox.quarterTurns, _270DegreesClockwise);
+        expect(rotatedBox.child, isA<Transform>());
       });
     });
 
@@ -2300,6 +2306,32 @@ void main() {
 
         // The SurfaceTexture applies the sensor rotation and mirroring, so only
         // the display rotation (0 degrees) is applied.
+        final RotatedBox rotatedBox = tester.widget<RotatedBox>(find.byType(RotatedBox));
+        expect(rotatedBox.quarterTurns, _0DegreesClockwise);
+        expect(rotatedBox.child, isA<Texture>());
+      });
+
+      testWidgets('front camera previews copied by CameraX follow TransformationInfo.isMirroring', (
+        WidgetTester tester,
+      ) async {
+        await createCameraAndBuildPreview(
+          tester,
+          cameraId: 49,
+          handlesCropAndRotation: true,
+          isCameraFrontFacing: true,
+          sensorRotationDegrees: 270,
+          mockDeviceOrientationManager: createMockDeviceOrientationManager(
+            uiOrientation: DeviceOrientation.portraitUp,
+            defaultDisplayRotation: Surface.rotation0,
+          ),
+        );
+
+        // CameraX mirroring is not disabled for SurfaceTexture backed previews,
+        // so CameraX mirrors the buffers it copies and reports that they do not
+        // need mirroring.
+        sendTransformationInfo(rotationDegrees: 0, hasCameraTransform: false, isMirroring: false);
+        await tester.pumpAndSettle();
+
         final RotatedBox rotatedBox = tester.widget<RotatedBox>(find.byType(RotatedBox));
         expect(rotatedBox.quarterTurns, _0DegreesClockwise);
         expect(rotatedBox.child, isA<Texture>());

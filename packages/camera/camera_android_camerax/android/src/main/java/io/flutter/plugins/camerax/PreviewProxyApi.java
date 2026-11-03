@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.OptIn;
 import androidx.camera.camera2.interop.Camera2Interop;
 import androidx.camera.camera2.interop.ExperimentalCamera2Interop;
+import androidx.camera.core.MirrorMode;
 import androidx.camera.core.Preview;
 import androidx.camera.core.ResolutionInfo;
 import androidx.camera.core.SurfaceRequest;
@@ -27,7 +28,7 @@ import java.util.concurrent.Executors;
  * class or an instance of that class.
  */
 class PreviewProxyApi extends PigeonApiPreview {
-  // Stores the SurfaceProducer when it is used as a SurfaceProvider for a Preview.
+  // Stores the SurfaceProducer of each Preview, which is used as its SurfaceProvider.
   private final Map<Preview, TextureRegistry.SurfaceProducer> surfaceProducers = new HashMap<>();
 
   PreviewProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
@@ -50,6 +51,17 @@ class PreviewProxyApi extends PigeonApiPreview {
       @Nullable Long targetRotation,
       @Nullable Range<?> targetFpsRange) {
     final Preview.Builder builder = new Preview.Builder();
+    // The SurfaceProducer is created here, rather than in setSurfaceProvider, because the
+    // mirror mode of the Preview can only be set before it is built and depends on it.
+    final TextureRegistry.SurfaceProducer surfaceProducer =
+        getPigeonRegistrar().getTextureRegistry().createSurfaceProducer();
+    if (!surfaceProducer.handlesCropAndRotation()) {
+      // An ImageReader backed SurfaceProducer ignores the camera transform, so buffers from the
+      // camera are never mirrored. Turning off mirroring makes CameraX not mirror the buffers it
+      // copies for stream sharing either, so both look the same while CameraX switches between
+      // them. The front camera preview is mirrored on the Dart side instead.
+      builder.setMirrorMode(MirrorMode.MIRROR_MODE_OFF);
+    }
     if (targetRotation != null) {
       builder.setTargetRotation(targetRotation.intValue());
     }
@@ -63,7 +75,9 @@ class PreviewProxyApi extends PigeonApiPreview {
           CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, (Range<Integer>) targetFpsRange);
     }
 
-    return builder.build();
+    final Preview preview = builder.build();
+    surfaceProducers.put(preview, surfaceProducer);
+    return preview;
   }
 
   @Override
@@ -71,8 +85,10 @@ class PreviewProxyApi extends PigeonApiPreview {
       @NonNull Preview pigeonInstance,
       @NonNull SystemServicesManager systemServicesManager,
       @Nullable SurfaceRequest.TransformationInfoListener transformationInfoListener) {
-    final TextureRegistry.SurfaceProducer surfaceProducer =
-        getPigeonRegistrar().getTextureRegistry().createSurfaceProducer();
+    TextureRegistry.SurfaceProducer surfaceProducer = surfaceProducers.get(pigeonInstance);
+    if (surfaceProducer == null) {
+      surfaceProducer = getPigeonRegistrar().getTextureRegistry().createSurfaceProducer();
+    }
     final Preview.SurfaceProvider surfaceProvider =
         createSurfaceProvider(surfaceProducer, systemServicesManager, transformationInfoListener);
 

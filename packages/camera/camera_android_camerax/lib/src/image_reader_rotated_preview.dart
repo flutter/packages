@@ -48,6 +48,9 @@ final class _ImageReaderRotatedPreviewState extends State<ImageReaderRotatedPrev
         sensorOrientationDegrees: widget.sensorOrientationDegrees.toInt(),
         displayRotation: defaultDisplayRotation,
         previewTargetRotation: widget.previewTargetRotation,
+        // The Preview of an ImageReader backed surface is created with CameraX
+        // mirroring turned off (see PreviewProxyApi.java).
+        previewMirroringDisabled: true,
         deviceOrientation: deviceOrientation,
       ),
     );

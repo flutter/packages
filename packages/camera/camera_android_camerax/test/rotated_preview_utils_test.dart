@@ -135,6 +135,7 @@ void main() {
           sensorOrientationDegrees: 90,
           displayRotation: Surface.rotation90,
           previewTargetRotation: Surface.rotation0,
+          previewMirroringDisabled: false,
         ),
         0,
       );
@@ -145,6 +146,7 @@ void main() {
           sensorOrientationDegrees: 90,
           displayRotation: Surface.rotation270,
           previewTargetRotation: Surface.rotation0,
+          previewMirroringDisabled: false,
         ),
         180,
       );
@@ -157,6 +159,7 @@ void main() {
           sensorOrientationDegrees: 270,
           displayRotation: Surface.rotation90,
           previewTargetRotation: Surface.rotation0,
+          previewMirroringDisabled: false,
         ),
         0,
       );
@@ -167,6 +170,7 @@ void main() {
           sensorOrientationDegrees: 270,
           displayRotation: Surface.rotation180,
           previewTargetRotation: Surface.rotation0,
+          previewMirroringDisabled: false,
         ),
         90,
       );
@@ -183,6 +187,7 @@ void main() {
           sensorOrientationDegrees: 90,
           displayRotation: Surface.rotation0,
           previewTargetRotation: Surface.rotation0,
+          previewMirroringDisabled: false,
         ),
         0,
       );
@@ -197,6 +202,7 @@ void main() {
             sensorOrientationDegrees: 90,
             displayRotation: displayRotation,
             previewTargetRotation: Surface.rotation0,
+            previewMirroringDisabled: false,
           );
 
           // rotationDegrees and isMirroring are deliberately inconsistent with
@@ -213,6 +219,7 @@ void main() {
                 sensorOrientationDegrees: 90,
                 displayRotation: displayRotation,
                 previewTargetRotation: Surface.rotation0,
+                previewMirroringDisabled: false,
               ),
               sensorBasedRotation,
               reason:
@@ -233,6 +240,7 @@ void main() {
           sensorOrientationDegrees: 90,
           displayRotation: Surface.rotation90,
           previewTargetRotation: Surface.rotation0,
+          previewMirroringDisabled: false,
         ),
         270,
       );
@@ -245,6 +253,7 @@ void main() {
           sensorOrientationDegrees: 270,
           displayRotation: Surface.rotation90,
           previewTargetRotation: Surface.rotation0,
+          previewMirroringDisabled: false,
         ),
         90,
       );
@@ -261,6 +270,7 @@ void main() {
           sensorOrientationDegrees: 270,
           displayRotation: Surface.rotation90,
           previewTargetRotation: Surface.rotation0,
+          previewMirroringDisabled: false,
         ),
         0,
       );
@@ -289,6 +299,7 @@ void main() {
                   sensorOrientationDegrees: sensorOrientationDegrees,
                   displayRotation: displayRotation,
                   previewTargetRotation: previewTargetRotation,
+                  previewMirroringDisabled: false,
                 );
 
                 expect(
@@ -301,6 +312,7 @@ void main() {
                     sensorOrientationDegrees: sensorOrientationDegrees,
                     displayRotation: displayRotation,
                     previewTargetRotation: previewTargetRotation,
+                    previewMirroringDisabled: false,
                   ),
                   expectedRotation,
                   reason:
@@ -332,6 +344,7 @@ void main() {
               sensorOrientationDegrees: sensorOrientationDegrees,
               displayRotation: displayRotation,
               previewTargetRotation: previewTargetRotation,
+              previewMirroringDisabled: false,
             );
 
             expect(
@@ -343,6 +356,7 @@ void main() {
                 sensorOrientationDegrees: sensorOrientationDegrees,
                 displayRotation: displayRotation,
                 previewTargetRotation: previewTargetRotation,
+                previewMirroringDisabled: false,
               ),
               -rawBufferRotation % 360,
               reason:
@@ -365,11 +379,81 @@ void main() {
                 sensorOrientationDegrees: 90,
                 displayRotation: displayRotation,
                 previewTargetRotation: previewTargetRotation,
+                previewMirroringDisabled: false,
               );
               expect(rotation, inInclusiveRange(0, 270));
               expect(rotation % 90, 0);
             }
           }
+        }
+      }
+    });
+  });
+
+  group('untransformedBufferNeedsMirroring', () {
+    test('returns whether the camera is front facing for buffers from the camera directly', () {
+      for (final cameraIsFrontFacing in <bool>[true, false]) {
+        for (final previewMirroringDisabled in <bool>[true, false]) {
+          for (final transformationInfo in <TransformationInfo?>[
+            null,
+            _createTransformationInfo(rotationDegrees: 0, hasCameraTransform: true),
+            _createTransformationInfo(
+              rotationDegrees: 0,
+              hasCameraTransform: true,
+              isMirroring: true,
+            ),
+          ]) {
+            expect(
+              untransformedBufferNeedsMirroring(
+                transformationInfo: transformationInfo,
+                cameraIsFrontFacing: cameraIsFrontFacing,
+                previewMirroringDisabled: previewMirroringDisabled,
+              ),
+              cameraIsFrontFacing,
+              reason:
+                  'front: $cameraIsFrontFacing, mirroring disabled: $previewMirroringDisabled, '
+                  'info: ${transformationInfo?.isMirroring}',
+            );
+          }
+        }
+      }
+    });
+
+    test('follows TransformationInfo.isMirroring for copied buffers by default', () {
+      for (final cameraIsFrontFacing in <bool>[true, false]) {
+        for (final isMirroring in <bool>[true, false]) {
+          expect(
+            untransformedBufferNeedsMirroring(
+              transformationInfo: _createTransformationInfo(
+                rotationDegrees: 0,
+                isMirroring: isMirroring,
+              ),
+              cameraIsFrontFacing: cameraIsFrontFacing,
+              previewMirroringDisabled: false,
+            ),
+            isMirroring,
+            reason: 'front: $cameraIsFrontFacing',
+          );
+        }
+      }
+    });
+
+    test('returns whether the camera is front facing for copied buffers if CameraX mirroring is '
+        'disabled', () {
+      for (final cameraIsFrontFacing in <bool>[true, false]) {
+        for (final isMirroring in <bool>[true, false]) {
+          expect(
+            untransformedBufferNeedsMirroring(
+              transformationInfo: _createTransformationInfo(
+                rotationDegrees: 0,
+                isMirroring: isMirroring,
+              ),
+              cameraIsFrontFacing: cameraIsFrontFacing,
+              previewMirroringDisabled: true,
+            ),
+            cameraIsFrontFacing,
+            reason: 'isMirroring: $isMirroring',
+          );
         }
       }
     });
@@ -384,6 +468,7 @@ void main() {
       int sensorOrientationDegrees = 90,
       int displayRotation = Surface.rotation0,
       int previewTargetRotation = Surface.rotation0,
+      bool previewMirroringDisabled = false,
       DeviceOrientation deviceOrientation = DeviceOrientation.portraitUp,
     }) {
       return buildUntransformedPreview(
@@ -393,6 +478,7 @@ void main() {
             sensorOrientationDegrees: sensorOrientationDegrees,
             displayRotation: displayRotation,
             previewTargetRotation: previewTargetRotation,
+            previewMirroringDisabled: previewMirroringDisabled,
             deviceOrientation: deviceOrientation,
           )
           as RotatedBox;
@@ -519,6 +605,64 @@ void main() {
         expect(transform.transform.storage[0], portrait ? 1 : -1, reason: '$orientation');
         expect(transform.transform.storage[5], portrait ? -1 : 1, reason: '$orientation');
       });
+    });
+
+    test('draws buffers copied by CameraX exactly like buffers from the camera directly for '
+        'ImageReader backed previews with the pinned target rotation', () {
+      // With the target rotation pinned by computePreviewTargetRotation and
+      // CameraX mirroring disabled, CameraX copies buffers without rotating or
+      // mirroring them, so it reports a rotation of 0 degrees that does not
+      // need mirroring. They must be drawn exactly like buffers from the camera
+      // directly so that switching between them is not visible.
+      const displayRotationToOrientation = <int, DeviceOrientation>{
+        Surface.rotation0: DeviceOrientation.portraitUp,
+        Surface.rotation90: DeviceOrientation.landscapeLeft,
+        Surface.rotation180: DeviceOrientation.portraitDown,
+        Surface.rotation270: DeviceOrientation.landscapeRight,
+      };
+      for (final cameraIsFrontFacing in <bool>[true, false]) {
+        for (final sensorOrientationDegrees in <int>[0, 90, 180, 270]) {
+          final int previewTargetRotation = computePreviewTargetRotation(
+            handlesCropAndRotation: false,
+            cameraIsFrontFacing: cameraIsFrontFacing,
+            sensorOrientationDegrees: sensorOrientationDegrees,
+          );
+          displayRotationToOrientation.forEach((
+            int displayRotation,
+            DeviceOrientation orientation,
+          ) {
+            RotatedBox build(TransformationInfo transformationInfo) => buildPreview(
+              transformationInfo: transformationInfo,
+              cameraIsFrontFacing: cameraIsFrontFacing,
+              sensorOrientationDegrees: sensorOrientationDegrees,
+              displayRotation: displayRotation,
+              previewTargetRotation: previewTargetRotation,
+              previewMirroringDisabled: true,
+              deviceOrientation: orientation,
+            );
+            final RotatedBox direct = build(
+              _createTransformationInfo(rotationDegrees: 0, hasCameraTransform: true),
+            );
+            final RotatedBox copied = build(_createTransformationInfo(rotationDegrees: 0));
+            final reason =
+                'front: $cameraIsFrontFacing, sensor: $sensorOrientationDegrees, '
+                'orientation: $orientation';
+
+            expect(copied.quarterTurns % 4, direct.quarterTurns % 4, reason: reason);
+            if (cameraIsFrontFacing) {
+              expect(copied.child, isA<Transform>(), reason: reason);
+              expect(
+                (copied.child! as Transform).transform,
+                (direct.child! as Transform).transform,
+                reason: reason,
+              );
+            } else {
+              expect(copied.child, child, reason: reason);
+              expect(direct.child, child, reason: reason);
+            }
+          });
+        }
+      }
     });
   });
 }

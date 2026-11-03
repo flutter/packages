@@ -57,6 +57,7 @@ final class _SurfaceTextureRotatedPreviewState extends State<SurfaceTextureRotat
           sensorOrientationDegrees: widget.sensorOrientationDegrees.toInt(),
           displayRotation: defaultDisplayRotation,
           previewTargetRotation: widget.previewTargetRotation,
+          previewMirroringDisabled: false,
           deviceOrientation: deviceOrientation,
         );
       }

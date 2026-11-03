@@ -5,12 +5,14 @@
 package io.flutter.plugins.camerax;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -21,6 +23,7 @@ import android.util.Size;
 import android.view.Surface;
 import androidx.annotation.NonNull;
 import androidx.camera.camera2.interop.Camera2Interop;
+import androidx.camera.core.MirrorMode;
 import androidx.camera.core.Preview;
 import androidx.camera.core.ResolutionInfo;
 import androidx.camera.core.SurfaceRequest;
@@ -43,7 +46,17 @@ public class PreviewTest {
   @SuppressWarnings({"unchecked", "rawtypes"})
   @Test
   public void pigeon_defaultConstructor_createsPreviewWithCorrectConfiguration() {
-    final PigeonApiPreview api = new TestProxyApiRegistrar().getPigeonApiPreview();
+    final TextureRegistry mockTextureRegistry = mock(TextureRegistry.class);
+    when(mockTextureRegistry.createSurfaceProducer())
+        .thenReturn(mock(TextureRegistry.SurfaceProducer.class));
+    final PigeonApiPreview api =
+        new TestProxyApiRegistrar() {
+          @NonNull
+          @Override
+          TextureRegistry getTextureRegistry() {
+            return mockTextureRegistry;
+          }
+        }.getPigeonApiPreview();
 
     final ResolutionSelector mockResolutionSelector = new ResolutionSelector.Builder().build();
     final long targetResolution = Surface.ROTATION_0;
@@ -64,6 +77,86 @@ public class PreviewTest {
       assertEquals(Surface.ROTATION_0, instance.getTargetRotation());
       assertEquals(1, mockCamera2InteropExtender.constructed().size());
     }
+  }
+
+  @Test
+  public void
+      pigeon_defaultConstructor_turnsOffMirroringWhenSurfaceProducerIgnoresCameraTransform() {
+    final TextureRegistry.SurfaceProducer mockSurfaceProducer =
+        mock(TextureRegistry.SurfaceProducer.class);
+    when(mockSurfaceProducer.handlesCropAndRotation()).thenReturn(false);
+
+    try (MockedConstruction<Preview.Builder> mockBuilders = mockPreviewBuilderConstruction()) {
+      createPreviewWithSurfaceProducer(mockSurfaceProducer);
+
+      verify(mockBuilders.constructed().get(0)).setMirrorMode(MirrorMode.MIRROR_MODE_OFF);
+    }
+  }
+
+  @Test
+  public void
+      pigeon_defaultConstructor_keepsDefaultMirroringWhenSurfaceProducerHandlesCameraTransform() {
+    final TextureRegistry.SurfaceProducer mockSurfaceProducer =
+        mock(TextureRegistry.SurfaceProducer.class);
+    when(mockSurfaceProducer.handlesCropAndRotation()).thenReturn(true);
+
+    try (MockedConstruction<Preview.Builder> mockBuilders = mockPreviewBuilderConstruction()) {
+      createPreviewWithSurfaceProducer(mockSurfaceProducer);
+
+      verify(mockBuilders.constructed().get(0), never()).setMirrorMode(anyInt());
+    }
+  }
+
+  @Test
+  public void setSurfaceProvider_usesSurfaceProducerCreatedWithPreview() {
+    final TextureRegistry mockTextureRegistry = mock(TextureRegistry.class);
+    final TextureRegistry.SurfaceProducer mockSurfaceProducer =
+        mock(TextureRegistry.SurfaceProducer.class);
+    final long textureId = 7;
+    when(mockSurfaceProducer.id()).thenReturn(textureId);
+    when(mockTextureRegistry.createSurfaceProducer()).thenReturn(mockSurfaceProducer);
+    final PigeonApiPreview api =
+        new TestProxyApiRegistrar() {
+          @NonNull
+          @Override
+          TextureRegistry getTextureRegistry() {
+            return mockTextureRegistry;
+          }
+        }.getPigeonApiPreview();
+
+    try (MockedConstruction<Preview.Builder> mockBuilders = mockPreviewBuilderConstruction()) {
+      final Preview preview = api.pigeon_defaultConstructor(null, null, null);
+      assertEquals(1, mockBuilders.constructed().size());
+
+      assertEquals(
+          textureId, api.setSurfaceProvider(preview, mock(SystemServicesManager.class), null));
+      verify(mockTextureRegistry, times(1)).createSurfaceProducer();
+      verify(preview).setSurfaceProvider(any(Preview.SurfaceProvider.class));
+    }
+  }
+
+  private static MockedConstruction<Preview.Builder> mockPreviewBuilderConstruction() {
+    return Mockito.mockConstruction(
+        Preview.Builder.class,
+        (mock, context) -> {
+          when(mock.setMirrorMode(anyInt())).thenReturn(mock);
+          when(mock.build()).thenReturn(mock(Preview.class));
+        });
+  }
+
+  private static void createPreviewWithSurfaceProducer(
+      @NonNull TextureRegistry.SurfaceProducer surfaceProducer) {
+    final TextureRegistry mockTextureRegistry = mock(TextureRegistry.class);
+    when(mockTextureRegistry.createSurfaceProducer()).thenReturn(surfaceProducer);
+    final PigeonApiPreview api =
+        new TestProxyApiRegistrar() {
+          @NonNull
+          @Override
+          TextureRegistry getTextureRegistry() {
+            return mockTextureRegistry;
+          }
+        }.getPigeonApiPreview();
+    api.pigeon_defaultConstructor(null, null, null);
   }
 
   @Test
