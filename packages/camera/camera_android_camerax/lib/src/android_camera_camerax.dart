@@ -129,8 +129,8 @@ class AndroidCameraCameraX extends CameraPlatform {
   @visibleForTesting
   ImageCapture? imageCapture;
 
-  /// The flash mode currently configured for [imageCapture].
-  CameraXFlashMode? _currentFlashMode;
+  /// The flash mode requested via [setFlashMode] for [imageCapture].
+  CameraXFlashMode? _requestedFlashMode;
 
   /// The flash mode last applied to [imageCapture], so that [takePicture]
   /// only calls `setFlashMode` when it would change.
@@ -1039,7 +1039,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     // Set flash mode. When torch mode has been enabled, ensure any previously
     // set flash modes are unset.
     final CameraXFlashMode? flashMode =
-        _currentFlashMode ?? (torchEnabled ? CameraXFlashMode.off : null);
+        _requestedFlashMode ?? (torchEnabled ? CameraXFlashMode.off : null);
     if (flashMode != null && flashMode != _appliedFlashMode) {
       await imageCapture!.setFlashMode(flashMode);
       _appliedFlashMode = flashMode;
@@ -1079,13 +1079,13 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     switch (mode) {
       case FlashMode.off:
-        _currentFlashMode = CameraXFlashMode.off;
+        _requestedFlashMode = CameraXFlashMode.off;
       case FlashMode.auto:
-        _currentFlashMode = CameraXFlashMode.auto;
+        _requestedFlashMode = CameraXFlashMode.auto;
       case FlashMode.always:
-        _currentFlashMode = CameraXFlashMode.on;
+        _requestedFlashMode = CameraXFlashMode.on;
       case FlashMode.torch:
-        _currentFlashMode = null;
+        _requestedFlashMode = null;
         if (torchEnabled) {
           // Torch mode enabled already.
           return;
