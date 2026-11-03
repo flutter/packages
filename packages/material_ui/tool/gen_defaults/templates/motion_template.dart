@@ -167,6 +167,19 @@ class MotionTemplateM3E extends TokenTemplateM3E {
 /// Use them with a `SpringSimulation`, for example through
 /// [AnimationController.animateWith].
 ///
+/// <callout-box>
+///
+/// This example moves a box with the spatial spring and changes its color with
+/// the effects spring of the selected motion scheme and speed.
+///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/motion/springs.0.dart#body}
+///
+/// </callout-box>
+///
 /// See also:
 ///
 /// * [Durations] and [Easing], which are the Material tokens for curve-based
