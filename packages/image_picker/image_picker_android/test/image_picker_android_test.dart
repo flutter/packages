@@ -62,8 +62,8 @@ void main() {
         source: ImageSource.camera,
         options: const ImagePickerOptions(
           imageOptions: ImageOptions(
-            maxWidth: 10.0,
-            maxHeight: 20.0,
+            maxWidth: 10,
+            maxHeight: 20,
             imageQuality: 70,
           ),
         ),
@@ -121,7 +121,7 @@ void main() {
         () => picker.pickImage(
           source: ImageSource.camera,
           options: const ImagePickerOptions(
-            imageOptions: ImageOptions(maxWidth: -1.0),
+            imageOptions: ImageOptions(maxWidth: -1),
           ),
         ),
         throwsArgumentError,
@@ -131,7 +131,7 @@ void main() {
         () => picker.pickImage(
           source: ImageSource.camera,
           options: const ImagePickerOptions(
-            imageOptions: ImageOptions(maxHeight: -1.0),
+            imageOptions: ImageOptions(maxHeight: -1),
           ),
         ),
         throwsArgumentError,
@@ -203,8 +203,8 @@ void main() {
       await picker.pickMultiImage(
         options: const MultiImagePickerOptions(
           imageOptions: ImageOptions(
-            maxWidth: 10.0,
-            maxHeight: 20.0,
+            maxWidth: 10,
+            maxHeight: 20,
             imageQuality: 70,
           ),
         ),
@@ -219,7 +219,7 @@ void main() {
       expect(
         () => picker.pickMultiImage(
           options: const MultiImagePickerOptions(
-            imageOptions: ImageOptions(maxWidth: -1.0),
+            imageOptions: ImageOptions(maxWidth: -1),
           ),
         ),
         throwsArgumentError,
@@ -228,7 +228,7 @@ void main() {
       expect(
         () => picker.pickMultiImage(
           options: const MultiImagePickerOptions(
-            imageOptions: ImageOptions(maxHeight: -1.0),
+            imageOptions: ImageOptions(maxHeight: -1),
           ),
         ),
         throwsArgumentError,
@@ -467,7 +467,7 @@ void main() {
       await picker.pickMedia(
         options: const MediaPickerOptions(
           allowMultiple: true,
-          imageOptions: ImageOptions(maxWidth: 10.0, maxHeight: 20.0, imageQuality: 70),
+          imageOptions: ImageOptions(maxWidth: 10, maxHeight: 20, imageQuality: 70),
           limit: 5,
         ),
       );
@@ -483,7 +483,7 @@ void main() {
         () => picker.pickMedia(
           options: const MediaPickerOptions(
             allowMultiple: true,
-            imageOptions: ImageOptions(maxWidth: -1.0),
+            imageOptions: ImageOptions(maxWidth: -1),
           ),
         ),
         throwsArgumentError,
@@ -493,7 +493,7 @@ void main() {
         () => picker.pickMedia(
           options: const MediaPickerOptions(
             allowMultiple: true,
-            imageOptions: ImageOptions(maxHeight: -1.0),
+            imageOptions: ImageOptions(maxHeight: -1),
           ),
         ),
         throwsArgumentError,

@@ -118,8 +118,8 @@ class _MyHomePageState extends State<MyHomePage> {
         }
       } else if (allowMultiple) {
         await _displayPickImageDialog(context, true, (
-          double? maxWidth,
-          double? maxHeight,
+          int? maxWidth,
+          int? maxHeight,
           int? quality,
           int? limit,
         ) async {
@@ -154,8 +154,8 @@ class _MyHomePageState extends State<MyHomePage> {
         });
       } else if (isMedia) {
         await _displayPickImageDialog(context, false, (
-          double? maxWidth,
-          double? maxHeight,
+          int? maxWidth,
+          int? maxHeight,
           int? quality,
           int? limit,
         ) async {
@@ -186,8 +186,8 @@ class _MyHomePageState extends State<MyHomePage> {
         });
       } else {
         await _displayPickImageDialog(context, false, (
-          double? maxWidth,
-          double? maxHeight,
+          int? maxWidth,
+          int? maxHeight,
           int? quality,
           int? limit,
         ) async {
@@ -574,11 +574,11 @@ class _MyHomePageState extends State<MyHomePage> {
             TextButton(
               child: const Text('PICK'),
               onPressed: () {
-                final double? width = maxWidthController.text.isNotEmpty
-                    ? double.parse(maxWidthController.text)
+                final int? width = maxWidthController.text.isNotEmpty
+                    ? int.parse(maxWidthController.text)
                     : null;
-                final double? height = maxHeightController.text.isNotEmpty
-                    ? double.parse(maxHeightController.text)
+                final int? height = maxHeightController.text.isNotEmpty
+                    ? int.parse(maxHeightController.text)
                     : null;
                 final int? quality = qualityController.text.isNotEmpty
                     ? int.parse(qualityController.text)
@@ -626,7 +626,7 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 typedef OnPickImageCallback =
-    void Function(double? maxWidth, double? maxHeight, int? quality, int? limit);
+    void Function(int? maxWidth, int? maxHeight, int? quality, int? limit);
 
 class AspectRatioVideo extends StatefulWidget {
   const AspectRatioVideo(this.controller, {super.key});

@@ -37,24 +37,15 @@ base class ImagePickerAndroid extends ImagePickerPlatform {
     ImagePickerOptions options = const ImagePickerOptions(),
   }) async {
     final ImageOptions imageOptions = options.imageOptions;
-    final int? imageQuality = imageOptions.imageQuality;
-    if (imageQuality != null && (imageQuality < 0 || imageQuality > 100)) {
-      throw ArgumentError.value(imageQuality, 'imageQuality', 'must be between 0 and 100');
-    }
-
-    final double? maxWidth = imageOptions.maxWidth;
-    if (maxWidth != null && maxWidth < 0) {
-      throw ArgumentError.value(maxWidth, 'maxWidth', 'cannot be negative');
-    }
-
-    final double? maxHeight = imageOptions.maxHeight;
-    if (maxHeight != null && maxHeight < 0) {
-      throw ArgumentError.value(maxHeight, 'maxHeight', 'cannot be negative');
-    }
+    _verifyImageOptions(imageOptions);
 
     final List<String> paths = await _hostApi.pickImages(
       _buildSourceSpec(source, options.preferredCameraDevice),
-      ImageSelectionOptions(maxWidth: maxWidth, maxHeight: maxHeight, quality: imageQuality ?? 100),
+      ImageSelectionOptions(
+        maxWidth: imageOptions.maxWidth?.toDouble(),
+        maxHeight: imageOptions.maxHeight?.toDouble(),
+        quality: imageOptions.imageQuality ?? 100,
+      ),
       GeneralOptions(allowMultiple: false, usePhotoPicker: useAndroidPhotoPicker),
     );
     return paths.isEmpty ? null : XFile.fileSystem(path: paths.first);
@@ -65,29 +56,20 @@ base class ImagePickerAndroid extends ImagePickerPlatform {
     MultiImagePickerOptions options = const MultiImagePickerOptions(),
   }) async {
     final ImageOptions imageOptions = options.imageOptions;
-    final int? imageQuality = imageOptions.imageQuality;
-    if (imageQuality != null && (imageQuality < 0 || imageQuality > 100)) {
-      throw ArgumentError.value(imageQuality, 'imageQuality', 'must be between 0 and 100');
-    }
-
-    final double? maxWidth = imageOptions.maxWidth;
-    if (maxWidth != null && maxWidth < 0) {
-      throw ArgumentError.value(maxWidth, 'maxWidth', 'cannot be negative');
-    }
-
-    final double? maxHeight = imageOptions.maxHeight;
-    if (maxHeight != null && maxHeight < 0) {
-      throw ArgumentError.value(maxHeight, 'maxHeight', 'cannot be negative');
-    }
+    _verifyImageOptions(imageOptions);
 
     final int? limit = options.limit;
     if (limit != null && limit < 2) {
-      throw ArgumentError.value(limit, 'limit', 'cannot be lower than 2');
+      throw RangeError.range(limit, 2, null, 'limit');
     }
 
     final List<String> paths = await _hostApi.pickImages(
       SourceSpecification(type: SourceType.gallery),
-      ImageSelectionOptions(maxWidth: maxWidth, maxHeight: maxHeight, quality: imageQuality ?? 100),
+      ImageSelectionOptions(
+        maxWidth: imageOptions.maxWidth?.toDouble(),
+        maxHeight: imageOptions.maxHeight?.toDouble(),
+        quality: imageOptions.imageQuality ?? 100,
+      ),
       GeneralOptions(allowMultiple: true, usePhotoPicker: useAndroidPhotoPicker, limit: limit),
     );
     if (paths.isEmpty) {
@@ -126,17 +108,13 @@ base class ImagePickerAndroid extends ImagePickerPlatform {
 
     final int? limit = options.limit;
     if (limit != null && limit < 2) {
-      throw ArgumentError.value(limit, 'limit', 'cannot be lower than 2');
+      throw RangeError.range(limit, 2, null, 'limit');
     }
 
     final List<String> paths = await _hostApi.pickVideos(
       SourceSpecification(type: SourceType.gallery),
       VideoSelectionOptions(maxDurationSeconds: options.videoOptions.maxDuration?.inSeconds),
-      GeneralOptions(
-        allowMultiple: true,
-        usePhotoPicker: useAndroidPhotoPicker,
-        limit: options.limit,
-      ),
+      GeneralOptions(allowMultiple: true, usePhotoPicker: useAndroidPhotoPicker, limit: limit),
     );
 
     if (paths.isEmpty) {
@@ -162,27 +140,13 @@ base class ImagePickerAndroid extends ImagePickerPlatform {
   }
 
   ImageSelectionOptions _imageOptionsToImageSelectionOptionsWithValidator(
-    ImageOptions? imageOptions,
+    ImageOptions imageOptions,
   ) {
-    final double? maxHeight = imageOptions?.maxHeight;
-    final double? maxWidth = imageOptions?.maxWidth;
-    final int? imageQuality = imageOptions?.imageQuality;
-
-    if (imageQuality != null && (imageQuality < 0 || imageQuality > 100)) {
-      throw ArgumentError.value(imageQuality, 'imageQuality', 'must be between 0 and 100');
-    }
-
-    if (maxWidth != null && maxWidth < 0) {
-      throw ArgumentError.value(maxWidth, 'maxWidth', 'cannot be negative');
-    }
-
-    if (maxHeight != null && maxHeight < 0) {
-      throw ArgumentError.value(maxHeight, 'maxHeight', 'cannot be negative');
-    }
+    _verifyImageOptions(imageOptions);
     return ImageSelectionOptions(
-      quality: imageQuality ?? 100,
-      maxHeight: maxHeight,
-      maxWidth: maxWidth,
+      quality: imageOptions.imageQuality ?? 100,
+      maxHeight: imageOptions.maxHeight?.toDouble(),
+      maxWidth: imageOptions.maxWidth?.toDouble(),
     );
   }
 
@@ -292,5 +256,17 @@ base class ImagePickerAndroid extends ImagePickerPlatform {
     // switch as needing an update.
     // ignore: dead_code
     return RetrieveType.image;
+  }
+
+  void _verifyImageOptions(ImageOptions options) {
+    if (options.imageQuality case final int imageQuality) {
+      RangeError.checkValueInInterval(imageQuality, 0, 100, 'imageQuality');
+    }
+    if (options.maxWidth case final int maxWidth) {
+      RangeError.checkNotNegative(maxWidth, 'maxWidth');
+    }
+    if (options.maxHeight case final int maxHeight) {
+      RangeError.checkNotNegative(maxHeight, 'maxHeight');
+    }
   }
 }

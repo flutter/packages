@@ -32,12 +32,12 @@ base class ImageOptions {
   /// The maximum width of the image, in pixels.
   ///
   /// If null, the image will only be resized if [maxHeight] is specified.
-  final double? maxWidth;
+  final int? maxWidth;
 
   /// The maximum height of the image, in pixels.
   ///
   /// If null, the image will only be resized if [maxWidth] is specified.
-  final double? maxHeight;
+  final int? maxHeight;
 
   /// Modifies the quality of the image, ranging from 0-100 where 100 is the
   /// original/max quality.
@@ -56,7 +56,7 @@ base class ImageOptions {
   final bool requestFullMetadata;
 
   /// Validates that all values are within required ranges. Throws if not.
-  static void _validateOptions({double? maxWidth, double? maxHeight, int? imageQuality}) {
+  static void _validateOptions({int? maxWidth, int? maxHeight, int? imageQuality}) {
     if (imageQuality != null && (imageQuality < 0 || imageQuality > 100)) {
       throw ArgumentError.value(imageQuality, 'imageQuality', 'must be between 0 and 100');
     }
