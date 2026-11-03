@@ -107,4 +107,84 @@ void main() {
     expect(secondCallCount, 1);
     expect(callCount, 1);
   });
+
+  test('returns false by default when no test override is set', () {
+    expect(debugToImageSyncOverride, isNull);
+    expect(useHtmlRenderObject(), isFalse);
+    expect(useHtmlRenderObject(), isFalse);
+  });
+
+  test('falls back to HTML render object when toImageSync throws arbitrary foreign object', () {
+    var callCount = 0;
+    debugToImageSyncOverride = (picture, width, height) {
+      callCount++;
+      // ignore: only_throw_errors
+      throw const <String, Object?>{'code': -1, 'message': 'GPU context lost'};
+    };
+
+    expect(useHtmlRenderObject(), isTrue);
+    expect(callCount, 1);
+    expect(useHtmlRenderObject(), isTrue);
+    expect(callCount, 1);
+  });
+
+  test('debugResetUseHtmlRenderObject is idempotent when called repeatedly', () {
+    // Calling reset multiple times before any override is set should not throw.
+    debugResetUseHtmlRenderObject();
+    debugResetUseHtmlRenderObject();
+    expect(debugToImageSyncOverride, isNull);
+
+    var callCount = 0;
+    debugToImageSyncOverride = (picture, width, height) {
+      callCount++;
+      return null;
+    };
+    expect(useHtmlRenderObject(), isFalse);
+    expect(callCount, 1);
+
+    // Calling reset multiple times after use should cleanly reset every time.
+    debugResetUseHtmlRenderObject();
+    debugResetUseHtmlRenderObject();
+    expect(debugToImageSyncOverride, isNull);
+  });
+
+  test('debugResetUseHtmlRenderObject allows transitioning from cached false to true fallback', () {
+    var successCallCount = 0;
+    debugToImageSyncOverride = (picture, width, height) {
+      successCallCount++;
+      return null;
+    };
+
+    expect(useHtmlRenderObject(), isFalse);
+    expect(successCallCount, 1);
+
+    debugResetUseHtmlRenderObject();
+    expect(debugToImageSyncOverride, isNull);
+
+    var failureCallCount = 0;
+    debugToImageSyncOverride = (picture, width, height) {
+      failureCallCount++;
+      // ignore: only_throw_errors
+      throw 'Canvas with id [object OffscreenCanvas] was not found';
+    };
+
+    expect(useHtmlRenderObject(), isTrue);
+    expect(failureCallCount, 1);
+    expect(successCallCount, 1);
+  });
+
+  test('returns false when called after reset without an override set', () {
+    debugToImageSyncOverride = (picture, width, height) {
+      // ignore: only_throw_errors
+      throw 'Canvas with id [object OffscreenCanvas] was not found';
+    };
+
+    expect(useHtmlRenderObject(), isTrue);
+
+    debugResetUseHtmlRenderObject();
+    expect(debugToImageSyncOverride, isNull);
+
+    // After reset with no override, should return false by default on non-web platforms.
+    expect(useHtmlRenderObject(), isFalse);
+  });
 }
