@@ -169,8 +169,10 @@ class MotionTemplateM3E extends TokenTemplateM3E {
 ///
 /// <callout-box>
 ///
-/// This example moves a box with the spatial spring and changes its color with
-/// the effects spring of the selected motion scheme and speed.
+/// This example moves two boxes at the same time: one with the standard
+/// springs and one with the expressive springs of the selected speed. Each
+/// box moves with the spatial spring and changes its color with the effects
+/// spring.
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123

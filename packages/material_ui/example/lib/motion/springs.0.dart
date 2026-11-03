@@ -23,8 +23,6 @@ class SpringsExampleApp extends StatelessWidget {
   }
 }
 
-enum _MotionScheme { standard, expressive }
-
 enum _Speed {
   fast,
 
@@ -41,107 +39,19 @@ class SpringsExample extends StatefulWidget {
   State<SpringsExample> createState() => _SpringsExampleState();
 }
 
-class _SpringsExampleState extends State<SpringsExample>
-    with TickerProviderStateMixin {
-  /// Moves the box with the selected spatial spring.
-  ///
-  /// The controller is unbounded so that the spring can overshoot the target
-  /// and bounce back into place.
-  late final AnimationController _position = AnimationController.unbounded(
-    vsync: this,
-  );
-
-  /// Changes the color of the box with the selected effects spring.
-  late final AnimationController _color = AnimationController.unbounded(
-    vsync: this,
-  );
-
-  _MotionScheme _scheme = _MotionScheme.standard;
+class _SpringsExampleState extends State<SpringsExample> {
   _Speed _speed = _Speed.normal;
   bool _atEnd = false;
 
-  SpringDescription get _spatialSpring => switch ((_scheme, _speed)) {
-    (_MotionScheme.standard, _Speed.fast) => Springs.standardFastSpatial,
-    (_MotionScheme.standard, _Speed.normal) => Springs.standardDefaultSpatial,
-    (_MotionScheme.standard, _Speed.slow) => Springs.standardSlowSpatial,
-    (_MotionScheme.expressive, _Speed.fast) => Springs.expressiveFastSpatial,
-    (_MotionScheme.expressive, _Speed.normal) =>
-      Springs.expressiveDefaultSpatial,
-    (_MotionScheme.expressive, _Speed.slow) => Springs.expressiveSlowSpatial,
-  };
-
-  SpringDescription get _effectsSpring => switch ((_scheme, _speed)) {
-    (_MotionScheme.standard, _Speed.fast) => Springs.standardFastEffects,
-    (_MotionScheme.standard, _Speed.normal) => Springs.standardDefaultEffects,
-    (_MotionScheme.standard, _Speed.slow) => Springs.standardSlowEffects,
-    (_MotionScheme.expressive, _Speed.fast) => Springs.expressiveFastEffects,
-    (_MotionScheme.expressive, _Speed.normal) =>
-      Springs.expressiveDefaultEffects,
-    (_MotionScheme.expressive, _Speed.slow) => Springs.expressiveSlowEffects,
-  };
-
-  void _toggle() {
-    setState(() {
-      _atEnd = !_atEnd;
-    });
-    final double target = _atEnd ? 1.0 : 0.0;
-    // Starting each simulation from the current value and velocity lets an
-    // interrupted animation head to its new target without a jump.
-    _position.animateWith(
-      SpringSimulation(
-        _spatialSpring,
-        _position.value,
-        target,
-        _position.velocity,
-        snapToEnd: true,
-      ),
-    );
-    _color.animateWith(
-      SpringSimulation(
-        _effectsSpring,
-        _color.value,
-        target,
-        _color.velocity,
-        snapToEnd: true,
-      ),
-    );
-  }
-
-  @override
-  void dispose() {
-    _position.dispose();
-    _color.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
-    final ColorScheme colors = Theme.of(context).colorScheme;
+    final double target = _atEnd ? 1.0 : 0.0;
     return Scaffold(
       appBar: AppBar(title: const Text('Material 3 Expressive Springs Sample')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: <Widget>[
-            SegmentedButton<_MotionScheme>(
-              segments: const <ButtonSegment<_MotionScheme>>[
-                ButtonSegment<_MotionScheme>(
-                  value: _MotionScheme.standard,
-                  label: Text('Standard'),
-                ),
-                ButtonSegment<_MotionScheme>(
-                  value: _MotionScheme.expressive,
-                  label: Text('Expressive'),
-                ),
-              ],
-              selected: <_MotionScheme>{_scheme},
-              onSelectionChanged: (Set<_MotionScheme> selection) {
-                setState(() {
-                  _scheme = selection.single;
-                });
-              },
-            ),
-            const SizedBox(height: 8.0),
             SegmentedButton<_Speed>(
               segments: const <ButtonSegment<_Speed>>[
                 ButtonSegment<_Speed>(value: _Speed.fast, label: Text('Fast')),
@@ -159,56 +69,171 @@ class _SpringsExampleState extends State<SpringsExample>
               },
             ),
             const SizedBox(height: 16.0),
-            Text('Spatial spring: ${_describe(_spatialSpring)}'),
-            Text('Effects spring: ${_describe(_effectsSpring)}'),
             Expanded(
-              child: LayoutBuilder(
-                builder: (BuildContext context, BoxConstraints constraints) {
-                  const double size = 80.0;
-                  final double travel = constraints.maxWidth - size;
-                  return AnimatedBuilder(
-                    animation: Listenable.merge(<Listenable>[
-                      _position,
-                      _color,
-                    ]),
-                    builder: (BuildContext context, Widget? child) {
-                      return Stack(
-                        clipBehavior: Clip.none,
-                        children: <Widget>[
-                          Positioned(
-                            left: _position.value * travel,
-                            top: (constraints.maxHeight - size) / 2,
-                            width: size,
-                            height: size,
-                            child: DecoratedBox(
-                              decoration: BoxDecoration(
-                                color: Color.lerp(
-                                  colors.secondaryContainer,
-                                  colors.primary,
-                                  math.min(math.max(_color.value, 0.0), 1.0),
-                                ),
-                                borderRadius: const BorderRadius.all(
-                                  Radius.circular(16.0),
-                                ),
-                              ),
-                              child: child,
-                            ),
-                          ),
-                        ],
-                      );
-                    },
-                    child: Icon(Icons.star, color: colors.onSecondaryContainer),
-                  );
+              child: _SpringTrack(
+                label: 'Standard',
+                spatialSpring: switch (_speed) {
+                  _Speed.fast => Springs.standardFastSpatial,
+                  _Speed.normal => Springs.standardDefaultSpatial,
+                  _Speed.slow => Springs.standardSlowSpatial,
                 },
+                effectsSpring: switch (_speed) {
+                  _Speed.fast => Springs.standardFastEffects,
+                  _Speed.normal => Springs.standardDefaultEffects,
+                  _Speed.slow => Springs.standardSlowEffects,
+                },
+                target: target,
+              ),
+            ),
+            Expanded(
+              child: _SpringTrack(
+                label: 'Expressive',
+                spatialSpring: switch (_speed) {
+                  _Speed.fast => Springs.expressiveFastSpatial,
+                  _Speed.normal => Springs.expressiveDefaultSpatial,
+                  _Speed.slow => Springs.expressiveSlowSpatial,
+                },
+                effectsSpring: switch (_speed) {
+                  _Speed.fast => Springs.expressiveFastEffects,
+                  _Speed.normal => Springs.expressiveDefaultEffects,
+                  _Speed.slow => Springs.expressiveSlowEffects,
+                },
+                target: target,
               ),
             ),
             FilledButton(
-              onPressed: _toggle,
+              onPressed: () {
+                setState(() {
+                  _atEnd = !_atEnd;
+                });
+              },
               child: Text(_atEnd ? 'Move back' : 'Move'),
             ),
           ],
         ),
       ),
+    );
+  }
+}
+
+/// A box that moves along a track with [spatialSpring] and changes its color
+/// with [effectsSpring] whenever [target] changes.
+class _SpringTrack extends StatefulWidget {
+  const _SpringTrack({
+    required this.label,
+    required this.spatialSpring,
+    required this.effectsSpring,
+    required this.target,
+  });
+
+  final String label;
+  final SpringDescription spatialSpring;
+  final SpringDescription effectsSpring;
+
+  /// Where the box should be: 0.0 for the start of the track, and 1.0 for the
+  /// end.
+  final double target;
+
+  @override
+  State<_SpringTrack> createState() => _SpringTrackState();
+}
+
+class _SpringTrackState extends State<_SpringTrack>
+    with TickerProviderStateMixin {
+  // The controllers are unbounded so that a spring can overshoot the target
+  // and bounce back into place.
+  late final AnimationController _position = AnimationController.unbounded(
+    vsync: this,
+    value: widget.target,
+  );
+  late final AnimationController _color = AnimationController.unbounded(
+    vsync: this,
+    value: widget.target,
+  );
+
+  @override
+  void didUpdateWidget(_SpringTrack oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.target != oldWidget.target) {
+      // Starting each simulation from the current value and velocity lets an
+      // interrupted animation head to its new target without a jump.
+      _position.animateWith(
+        SpringSimulation(
+          widget.spatialSpring,
+          _position.value,
+          widget.target,
+          _position.velocity,
+          snapToEnd: true,
+        ),
+      );
+      _color.animateWith(
+        SpringSimulation(
+          widget.effectsSpring,
+          _color.value,
+          widget.target,
+          _color.velocity,
+          snapToEnd: true,
+        ),
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _position.dispose();
+    _color.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    final ColorScheme colors = theme.colorScheme;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(widget.label, style: theme.textTheme.titleMedium),
+        Text('Spatial spring: ${_describe(widget.spatialSpring)}'),
+        Text('Effects spring: ${_describe(widget.effectsSpring)}'),
+        Expanded(
+          child: LayoutBuilder(
+            builder: (BuildContext context, BoxConstraints constraints) {
+              const double size = 56.0;
+              final double travel = constraints.maxWidth - size;
+              return AnimatedBuilder(
+                animation: Listenable.merge(<Listenable>[_position, _color]),
+                builder: (BuildContext context, Widget? child) {
+                  return Stack(
+                    clipBehavior: Clip.none,
+                    children: <Widget>[
+                      Positioned(
+                        left: _position.value * travel,
+                        top: (constraints.maxHeight - size) / 2,
+                        width: size,
+                        height: size,
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            color: Color.lerp(
+                              colors.secondaryContainer,
+                              colors.primary,
+                              math.min(math.max(_color.value, 0.0), 1.0),
+                            ),
+                            borderRadius: const BorderRadius.all(
+                              Radius.circular(16.0),
+                            ),
+                          ),
+                          child: child,
+                        ),
+                      ),
+                    ],
+                  );
+                },
+                child: Icon(Icons.star, color: colors.onSecondaryContainer),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 }
