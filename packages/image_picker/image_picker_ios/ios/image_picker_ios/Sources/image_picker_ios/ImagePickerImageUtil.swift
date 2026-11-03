@@ -138,13 +138,12 @@ enum ImagePickerImageUtil {
         CGImageSourceCopyPropertiesAtIndex(imageSource, index, nil) as NSDictionary?
       let gifProperties = properties?[kCGImagePropertyGIFDictionary] as? NSDictionary
 
-      var delay = gifProperties?[kCGImagePropertyGIFUnclampedDelayTime] as? NSNumber
-      if delay == nil {
-        delay = gifProperties?[kCGImagePropertyGIFDelayTime] as? NSNumber
-      }
+      let delay =
+        gifProperties?[kCGImagePropertyGIFUnclampedDelayTime] as? Double
+        ?? gifProperties?[kCGImagePropertyGIFDelayTime] as? Double
 
       if interval == 0.0 {
-        interval = delay?.doubleValue ?? 0
+        interval = delay ?? 0
       }
 
       var image: UIImage?
