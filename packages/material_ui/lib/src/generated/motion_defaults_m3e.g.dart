@@ -23,9 +23,7 @@ part of '../motion.dart';
 ///   color and opacity.
 ///
 /// Most motion should use the default speed. Smaller elements can use the fast
-/// speed, and larger elements can use the slow speed. In the Material
-/// specification, components use the fast spatial and fast effects springs of
-/// the selected scheme.
+/// speed, and larger elements can use the slow speed.
 ///
 /// Material spring tokens define a stiffness and a damping ratio, but no
 /// mass. The Material token named `damping` is the damping ratio (ζ), not
