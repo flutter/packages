@@ -6,6 +6,11 @@
 #import <StoreKit/StoreKit.h>
 #import "messages.g.h"
 
+// StoreKit 1 is intentionally used as the fallback on iOS < 15 and macOS < 12,
+// where StoreKit 2 is unavailable. Suppress its deprecation warnings.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface FIAObjectTranslator : NSObject
@@ -14,16 +19,14 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSDictionary *)getMapFromSKProduct:(SKProduct *)product;
 
 // Converts an instance of SKProductSubscriptionPeriod into a dictionary.
-+ (NSDictionary *)getMapFromSKProductSubscriptionPeriod:(SKProductSubscriptionPeriod *)period
-    API_AVAILABLE(ios(11.2));
++ (NSDictionary *)getMapFromSKProductSubscriptionPeriod:(SKProductSubscriptionPeriod *)period;
 
 // Converts an instance of SKProductDiscount into a dictionary.
-+ (NSDictionary *)getMapFromSKProductDiscount:(SKProductDiscount *)discount
-    API_AVAILABLE(ios(11.2));
++ (NSDictionary *)getMapFromSKProductDiscount:(SKProductDiscount *)discount;
 
 // Converts an array of SKProductDiscount instances into an array of dictionaries.
 + (nonnull NSArray *)getMapArrayFromSKProductDiscounts:
-    (nonnull NSArray<SKProductDiscount *> *)productDiscounts API_AVAILABLE(ios(12.2));
+    (nonnull NSArray<SKProductDiscount *> *)productDiscounts;
 
 // Converts an instance of SKProductsResponse into a dictionary.
 + (NSDictionary *)getMapFromSKProductsResponse:(SKProductsResponse *)productResponse;
@@ -44,47 +47,42 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSDictionary *)getMapFromNSError:(NSError *)error;
 
 // Converts an instance of SKStorefront into a dictionary.
-+ (NSDictionary *)getMapFromSKStorefront:(SKStorefront *)storefront
-    API_AVAILABLE(ios(13), macos(10.15), watchos(6.2));
++ (NSDictionary *)getMapFromSKStorefront:(SKStorefront *)storefront;
 
 // Converts the supplied instances of SKStorefront and SKPaymentTransaction into a dictionary.
 + (NSDictionary *)getMapFromSKStorefront:(SKStorefront *)storefront
-                 andSKPaymentTransaction:(SKPaymentTransaction *)transaction
-    API_AVAILABLE(ios(13), macos(10.15), watchos(6.2));
+                 andSKPaymentTransaction:(SKPaymentTransaction *)transaction;
 
 // Creates an instance of the SKPaymentDiscount class based on the supplied dictionary.
 + (nullable SKPaymentDiscount *)getSKPaymentDiscountFromMap:(NSDictionary *)map
-                                                  withError:(NSString *_Nullable *_Nullable)error
-    API_AVAILABLE(ios(12.2));
+                                                  withError:(NSString *_Nullable *_Nullable)error;
 
 + (nullable FIASKPaymentTransactionMessage *)convertTransactionToPigeon:
     (nullable SKPaymentTransaction *)transaction;
 
-+ (nullable FIASKStorefrontMessage *)convertStorefrontToPigeon:(nullable SKStorefront *)storefront
-    API_AVAILABLE(ios(13.0));
++ (nullable FIASKStorefrontMessage *)convertStorefrontToPigeon:(nullable SKStorefront *)storefront;
 
 + (nullable FIASKPaymentDiscountMessage *)convertPaymentDiscountToPigeon:
-    (nullable SKPaymentDiscount *)discount API_AVAILABLE(ios(12.2));
+    (nullable SKPaymentDiscount *)discount;
 
-+ (nullable FIASKPaymentMessage *)convertPaymentToPigeon:(nullable SKPayment *)payment
-    API_AVAILABLE(ios(12.2));
++ (nullable FIASKPaymentMessage *)convertPaymentToPigeon:(nullable SKPayment *)payment;
 
 + (nullable FIASKErrorMessage *)convertSKErrorToPigeon:(nullable NSError *)error;
 
 + (nullable FIASKProductsResponseMessage *)convertProductsResponseToPigeon:
     (nullable SKProductsResponse *)payment;
 
-+ (nullable FIASKProductMessage *)convertProductToPigeon:(nullable SKProduct *)product
-    API_AVAILABLE(ios(12.2));
++ (nullable FIASKProductMessage *)convertProductToPigeon:(nullable SKProduct *)product;
 
 + (nullable FIASKProductDiscountMessage *)convertProductDiscountToPigeon:
-    (nullable SKProductDiscount *)productDiscount API_AVAILABLE(ios(12.2));
+    (nullable SKProductDiscount *)productDiscount;
 
-+ (nullable FIASKPriceLocaleMessage *)convertNSLocaleToPigeon:(nullable NSLocale *)locale
-    API_AVAILABLE(ios(12.2));
++ (nullable FIASKPriceLocaleMessage *)convertNSLocaleToPigeon:(nullable NSLocale *)locale;
 
 + (nullable FIASKProductSubscriptionPeriodMessage *)convertSKProductSubscriptionPeriodToPigeon:
-    (nullable SKProductSubscriptionPeriod *)period API_AVAILABLE(ios(12.2));
+    (nullable SKProductSubscriptionPeriod *)period;
 @end
 
 NS_ASSUME_NONNULL_END
+
+#pragma clang diagnostic pop

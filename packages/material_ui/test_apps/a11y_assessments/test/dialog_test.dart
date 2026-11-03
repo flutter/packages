@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:a11y_assessments/use_cases/dialog.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -48,5 +49,28 @@ void main() {
     final Finder findHeadingLevelOnes = find.bySemanticsLabel('Dialog Demo');
     await tester.pumpAndSettle();
     expect(findHeadingLevelOnes, findsOne);
+  });
+
+  testWidgets('dialog text describes the dialog', (WidgetTester tester) async {
+    await pumpsUseCase(tester, DialogUseCase());
+    await tester.tap(find.text('Show Dialog'));
+    await tester.pumpAndSettle();
+
+    // On web, a namesRoute node inside a dialog route becomes the dialog's
+    // aria-describedby, so screen readers read the text when focus moves to
+    // the autofocused OK button.
+    final SemanticsNode text = tester.getSemantics(find.text('This is a typical dialog.'));
+    expect(text, containsSemantics(label: 'This is a typical dialog.', namesRoute: true));
+
+    // The web engine attaches the description to the nearest ancestor that is
+    // a dialog or a route, which must be the dialog itself.
+    SemanticsNode? route = text.parent;
+    while (route != null &&
+        route.getSemanticsData().role != SemanticsRole.dialog &&
+        !route.hasFlag(SemanticsFlag.scopesRoute)) {
+      route = route.parent;
+    }
+    expect(route, isNotNull);
+    expect(route!.getSemanticsData().role, SemanticsRole.dialog);
   });
 }

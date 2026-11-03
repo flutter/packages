@@ -1,3 +1,3 @@
 changelog: |
-  - Fixes the Badge text contrast in the accessibility assessment app.
+  - Adds light and dark theme regression coverage for Badge text contrast in the accessibility assessment app.
 version: skip

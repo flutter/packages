@@ -22,11 +22,9 @@ void main() async {
     input: Input(
       classes: [
         'com.example.test_plugin.NativeInteropTestsError',
-        'com.example.test_plugin.NativeInteropHostIntegrationCoreApi',
         'com.example.test_plugin.NativeInteropHostIntegrationCoreApiRegistrar',
         'com.example.test_plugin.NativeInteropFlutterIntegrationCoreApi',
         'com.example.test_plugin.NativeInteropFlutterIntegrationCoreApiRegistrar',
-        'com.example.test_plugin.NativeInteropReservedNamesHostApi',
         'com.example.test_plugin.NativeInteropReservedNamesHostApiRegistrar',
         'com.example.test_plugin.NativeInteropReservedNamesFlutterApi',
         'com.example.test_plugin.NativeInteropReservedNamesFlutterApiRegistrar',
@@ -35,6 +33,10 @@ void main() async {
         'com.example.test_plugin.NativeInteropAllNullableTypes',
         'com.example.test_plugin.NativeInteropAllNullableTypesWithoutRecursion',
         'com.example.test_plugin.NativeInteropAllClassesWrapper',
+        'com.example.test_plugin.NativeInteropSealedClass',
+        'com.example.test_plugin.NativeInteropSealedClassWithFields',
+        'com.example.test_plugin.NativeInteropEmptySealedClass',
+        'com.example.test_plugin.NativeInteropSealedClassWrapper',
         'com.example.test_plugin.NativeInteropReservedNames',
         'com.example.test_plugin.NativeInteropAnEnum',
         'com.example.test_plugin.NativeInteropAnotherEnum',

@@ -182,9 +182,9 @@ class ImagePickerIOS extends ImagePickerPlatform {
       options,
     );
 
-    return (await _hostApi.pickMedia(
-      mediaSelectionOptions,
-    )).map((String? path) => XFile(path!)).toList();
+    return (await _hostApi.pickMedia(mediaSelectionOptions))
+        .map((String? path) => XFile(path!))
+        .toList();
   }
 
   MaxSize _imageOptionsToMaxSizeWithValidation(ImageOptions imageOptions) {

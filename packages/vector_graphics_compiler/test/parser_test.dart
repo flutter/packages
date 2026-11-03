@@ -414,6 +414,82 @@ ${[for (var i = 2; i <= 30; i++) '    <pattern id="lvl$i" width="10" height="10"
     ]);
   });
 
+  test('text and tspan with coordinate lists throw an UnimplementedError', () {
+    for (final attributes in <String>['x="10 20 30" y="40"', 'x="10" y="40, 50"']) {
+      expect(
+        () => parseWithoutOptimizers(
+          '<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><text $attributes>ABC</text></svg>',
+        ),
+        throwsA(isA<UnimplementedError>()),
+      );
+    }
+    for (final attributes in <String>['dx="1 2"', 'dy="3,4"']) {
+      expect(
+        () => parseWithoutOptimizers(
+          '<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><text x="10" y="40">ABC<tspan $attributes>DE</tspan></text></svg>',
+        ),
+        throwsA(
+          isA<UnimplementedError>().having(
+            (UnimplementedError e) => e.message,
+            'message',
+            contains('is not supported'),
+          ),
+        ),
+      );
+    }
+  });
+
+  test('text with single coordinates surrounded by whitespace still parses', () {
+    final VectorInstructions instructions = parseWithoutOptimizers('''
+<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg">
+  <text x=" 10 " y="40">ABC</text>
+</svg>
+''');
+
+    expect(instructions.textPositions, const <TextPosition>[
+      TextPosition(x: 10, y: 40, reset: true),
+    ]);
+  });
+
+  test('tspan without position does not apply the group transform twice', () {
+    final VectorInstructions instructions = parseWithoutOptimizers('''
+<svg width="400" height="100" xmlns="http://www.w3.org/2000/svg">
+  <g transform="translate(10,10)">
+    <g transform="translate(10,10)">
+      <text x="15" y="25">bare text</text>
+      <text x="15" y="50"><tspan>text in tspan</tspan></text>
+    </g>
+  </g>
+</svg>
+''');
+
+    expect(instructions.textPositions, const <TextPosition>[
+      TextPosition(x: 35, y: 45, reset: true),
+      TextPosition(x: 35, y: 70, reset: true),
+      TextPosition(),
+    ]);
+  });
+
+  test('em units in text positions are relative to the font size', () {
+    final VectorInstructions instructions = parseWithoutOptimizers('''
+<svg width="1000" height="500" xmlns="http://www.w3.org/2000/svg">
+  <text x="500" y="250" dy=".5em" font-size="400">21</text>
+  <g font-size="20">
+    <text x="1em" y="2em" dx="1em" dy="-1em">inherited</text>
+  </g>
+  <text x="10" y="10" dy="1em">default</text>
+  <text x="10" y="10" dy="1EM" font-size="10">upper case</text>
+</svg>
+''');
+
+    expect(instructions.textPositions, const <TextPosition>[
+      TextPosition(x: 500, y: 250, dy: 200, reset: true),
+      TextPosition(x: 20, y: 40, dx: 20, dy: -20, reset: true),
+      TextPosition(x: 10, y: 10, dy: 16, reset: true),
+      TextPosition(x: 10, y: 10, dy: 10, reset: true),
+    ]);
+  });
+
   test('Non-standard root font-weight="regular" uses initial weight', () {
     final VectorInstructions instructions = parseWithoutOptimizers('''
 <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
@@ -1637,6 +1713,99 @@ ${[for (var i = 2; i <= 30; i++) '    <pattern id="lvl$i" width="10" height="10"
       DrawCommand(DrawCommandType.mask),
       DrawCommand(DrawCommandType.path, objectId: 2, paintId: 2),
       DrawCommand(DrawCommandType.path, objectId: 3, paintId: 1),
+      DrawCommand(DrawCommandType.restore),
+      DrawCommand(DrawCommandType.restore),
+    ]);
+  });
+
+  test('Handles alpha masks correctly', () {
+    const svg = '''
+<svg viewBox="0 0 100 100">
+  <mask id="mask1" mask-type="alpha">
+    <circle cx="50" cy="50" r="50" fill="white" />
+  </mask>
+  <rect width="100" height="100" fill="blue" mask="url(#mask1)"/>
+</svg>
+''';
+    final VectorInstructions instructions = parseWithoutOptimizers(svg);
+    expect(instructions.paths, <Path>[
+      PathBuilder().addRect(const Rect.fromLTWH(0, 0, 100, 100)).toPath(),
+      PathBuilder().addOval(const Rect.fromCircle(50, 50, 50)).toPath(),
+    ]);
+
+    expect(instructions.paints, const <Paint>[
+      Paint(fill: Fill()),
+      Paint(fill: Fill(color: Color(0xff0000ff))),
+      Paint(blendMode: BlendMode.dstIn, fill: Fill()),
+      Paint(fill: Fill(color: Color(0xffffffff))),
+    ]);
+
+    expect(instructions.commands, const <DrawCommand>[
+      DrawCommand(DrawCommandType.saveLayer, paintId: 0),
+      DrawCommand(DrawCommandType.path, objectId: 0, paintId: 1),
+      DrawCommand(DrawCommandType.saveLayer, paintId: 2),
+      DrawCommand(DrawCommandType.path, objectId: 1, paintId: 3),
+      DrawCommand(DrawCommandType.restore),
+      DrawCommand(DrawCommandType.restore),
+    ]);
+  });
+
+  test('Handles alpha masks specified via style attribute', () {
+    const svg = '''
+<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <mask id="m" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100">
+    <rect width="100" height="100" fill="#3366CC"/>
+  </mask>
+  <g mask="url(#m)">
+    <rect width="100" height="100" fill="#FF8800"/>
+  </g>
+</svg>
+''';
+    final VectorInstructions instructions = parseWithoutOptimizers(svg);
+    expect(instructions.paints, const <Paint>[
+      Paint(fill: Fill()),
+      Paint(fill: Fill(color: Color(0xffff8800))),
+      Paint(blendMode: BlendMode.dstIn, fill: Fill()),
+      Paint(fill: Fill(color: Color(0xff3366cc))),
+    ]);
+
+    expect(instructions.commands, const <DrawCommand>[
+      DrawCommand(DrawCommandType.saveLayer, paintId: 0),
+      DrawCommand(DrawCommandType.path, objectId: 0, paintId: 1),
+      DrawCommand(DrawCommandType.saveLayer, paintId: 2),
+      DrawCommand(DrawCommandType.path, objectId: 0, paintId: 3),
+      DrawCommand(DrawCommandType.restore),
+      DrawCommand(DrawCommandType.restore),
+    ]);
+  });
+
+  test('Handles uppercase and whitespace in mask-type', () {
+    const svg = '''
+<svg viewBox="0 0 100 100">
+  <mask id="mask1" mask-type=" ALPHA ">
+    <circle cx="50" cy="50" r="50" fill="white" />
+  </mask>
+  <rect width="100" height="100" fill="blue" mask="url(#mask1)"/>
+</svg>
+''';
+    final VectorInstructions instructions = parseWithoutOptimizers(svg);
+    expect(instructions.paths, <Path>[
+      PathBuilder().addRect(const Rect.fromLTWH(0, 0, 100, 100)).toPath(),
+      PathBuilder().addOval(const Rect.fromCircle(50, 50, 50)).toPath(),
+    ]);
+
+    expect(instructions.paints, const <Paint>[
+      Paint(fill: Fill()),
+      Paint(fill: Fill(color: Color(0xff0000ff))),
+      Paint(blendMode: BlendMode.dstIn, fill: Fill()),
+      Paint(fill: Fill(color: Color(0xffffffff))),
+    ]);
+
+    expect(instructions.commands, const <DrawCommand>[
+      DrawCommand(DrawCommandType.saveLayer, paintId: 0),
+      DrawCommand(DrawCommandType.path, objectId: 0, paintId: 1),
+      DrawCommand(DrawCommandType.saveLayer, paintId: 2),
+      DrawCommand(DrawCommandType.path, objectId: 1, paintId: 3),
       DrawCommand(DrawCommandType.restore),
       DrawCommand(DrawCommandType.restore),
     ]);

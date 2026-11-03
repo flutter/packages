@@ -23,7 +23,7 @@ void main() {
   });
 
   for (final Brightness brightness in Brightness.values) {
-    testWidgets('badge label meets text contrast guideline in $brightness', (
+    testWidgets('badge label meets the 4.5:1 text contrast ratio in $brightness', (
       WidgetTester tester,
     ) async {
       await tester.pumpWidget(
@@ -33,12 +33,13 @@ void main() {
         ),
       );
 
-      // The semantics label differs from the rendered text, so the default
-      // text contrast guideline cannot find this label.
-      await expectLater(
-        tester,
-        meetsGuideline(CustomMinimumContrastGuideline(finder: find.text('5'))),
+      final Container background = tester.widget<Container>(
+        find.descendant(of: find.byType(Badge), matching: find.byType(Container)),
       );
+      final Color backgroundColor = (background.decoration! as ShapeDecoration).color!;
+      final Color textColor = paintedTextColor(tester, find.text('5'));
+
+      expect(contrastRatio(textColor, backgroundColor), greaterThanOrEqualTo(4.5));
     });
   }
 }

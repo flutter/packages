@@ -4,21 +4,24 @@
 
 #import <StoreKit/StoreKit.h>
 
+// StoreKit 1 is intentionally used as the fallback on iOS < 15 and macOS < 12,
+// where StoreKit 2 is unavailable. Suppress its deprecation warnings.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+
 NS_ASSUME_NONNULL_BEGIN
 
 /// A protocol that wraps SKPaymentQueue
 @protocol FLTPaymentQueueProtocol <NSObject>
 
 /// An object containing the location and unique identifier of an Apple App Store storefront.
-@property(nonatomic, strong) SKStorefront *storefront API_AVAILABLE(ios(13.0));
+@property(nonatomic, strong) SKStorefront *storefront;
 
 /// A list of SKPaymentTransactions, which each represents a single transaction
-@property(nonatomic, strong) NSArray<SKPaymentTransaction *> *transactions API_AVAILABLE(
-    ios(3.0), macos(10.7), watchos(6.2));
+@property(nonatomic, strong) NSArray<SKPaymentTransaction *> *transactions;
 
 /// An object that provides information needed to complete transactions.
-@property(nonatomic, weak, nullable) id<SKPaymentQueueDelegate> delegate API_AVAILABLE(
-    ios(13.0), macos(10.15), watchos(6.2));
+@property(nonatomic, weak, nullable) id<SKPaymentQueueDelegate> delegate;
 
 /// Remove a finished (i.e. failed or completed) transaction from the queue.  Attempting to finish a
 /// purchasing transaction will throw an exception.
@@ -34,13 +37,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)addPayment:(SKPayment *_Nonnull)payment;
 
 /// Will add completed transactions for the current user back to the queue to be re-completed.
-- (void)restoreCompletedTransactions API_AVAILABLE(ios(3.0), macos(10.7), watchos(6.2),
-                                                   visionos(1.0));
+- (void)restoreCompletedTransactions;
 
 /// Will add completed transactions for the current user back to the queue to be re-completed. This
 /// version requires an identifier to the user's account.
-- (void)restoreCompletedTransactionsWithApplicationUsername:(nullable NSString *)username
-    API_AVAILABLE(ios(7.0), macos(10.9), watchos(6.2));
+- (void)restoreCompletedTransactionsWithApplicationUsername:(nullable NSString *)username;
 
 /// Call this method to have StoreKit present a sheet enabling the user to redeem codes provided by
 /// your app. Only for iOS.
@@ -65,3 +66,5 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 NS_ASSUME_NONNULL_END
+
+#pragma clang diagnostic pop
