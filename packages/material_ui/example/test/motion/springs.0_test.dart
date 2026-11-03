@@ -18,26 +18,9 @@ void main() {
     expect(find.text('Standard'), findsOne);
     expect(find.text('Expressive'), findsOne);
 
-    // The default speed is selected at first.
-    expect(
-      find.text('Spatial spring: stiffness 700, damping ratio 0.90'),
-      findsOne,
-    );
-    expect(
-      find.text('Spatial spring: stiffness 380, damping ratio 0.80'),
-      findsOne,
-    );
-    // The effects springs are the same in both motion schemes.
-    expect(
-      find.text('Effects spring: stiffness 1600, damping ratio 1.00'),
-      findsNWidgets(2),
-    );
-
     // The standard box comes first.
     final Finder standardBox = find.byIcon(Icons.star).first;
     final Finder expressiveBox = find.byIcon(Icons.star).last;
-    final double startX = tester.getCenter(standardBox).dx;
-    expect(tester.getCenter(expressiveBox).dx, startX);
     final ColorScheme colors = Theme.of(
       tester.element(find.byType(example.SpringsExample)),
     ).colorScheme;
@@ -48,21 +31,29 @@ void main() {
       return (decoratedBox.decoration as BoxDecoration).color;
     }
 
-    expect(boxColor(standardBox), colors.secondaryContainer);
-    expect(boxColor(expressiveBox), colors.secondaryContainer);
+    // The spatial springs of the default speed are shown at first.
+    expect(
+      find.text('Spatial spring: stiffness 700, damping ratio 0.90'),
+      findsOne,
+    );
+    expect(
+      find.text('Spatial spring: stiffness 380, damping ratio 0.80'),
+      findsOne,
+    );
 
-    // Moving carries both boxes to the end of their tracks and changes their
-    // color.
-    await tester.tap(find.text('Move'));
+    // Spatial springs move the boxes without changing their color.
+    final double startX = tester.getCenter(standardBox).dx;
+    expect(tester.getCenter(expressiveBox).dx, startX);
+    await tester.tap(find.text('Animate'));
     await tester.pumpAndSettle();
     final double endX = tester.getCenter(standardBox).dx;
     expect(endX, greaterThan(startX));
     expect(tester.getCenter(expressiveBox).dx, endX);
-    expect(boxColor(standardBox), colors.primary);
-    expect(boxColor(expressiveBox), colors.primary);
-    expect(find.text('Move back'), findsOne);
+    expect(boxColor(standardBox), colors.secondaryContainer);
+    expect(boxColor(expressiveBox), colors.secondaryContainer);
 
-    // Selecting the fast speed selects the fast springs of both schemes.
+    // With the fast speed, only the expressive box overshoots the start of the
+    // track before it settles there.
     await tester.tap(find.text('Fast'));
     await tester.pump();
     expect(
@@ -73,14 +64,7 @@ void main() {
       find.text('Spatial spring: stiffness 800, damping ratio 0.60'),
       findsOne,
     );
-    expect(
-      find.text('Effects spring: stiffness 3800, damping ratio 1.00'),
-      findsNWidgets(2),
-    );
-
-    // Only the expressive box overshoots the start of the track before it
-    // settles there.
-    await tester.tap(find.text('Move back'));
+    await tester.tap(find.text('Animate'));
     await tester.pump();
     double standardMinX = endX;
     double expressiveMinX = endX;
@@ -94,7 +78,6 @@ void main() {
     }
     expect(standardMinX, greaterThan(startX - 2.0));
     expect(expressiveMinX, lessThan(startX - 10.0));
-
     await tester.pumpAndSettle();
     expect(
       tester.getCenter(standardBox).dx,
@@ -104,8 +87,30 @@ void main() {
       tester.getCenter(expressiveBox).dx,
       moreOrLessEquals(startX, epsilon: 1.0),
     );
+
+    // Effects springs change the color of the boxes without moving them. Both
+    // schemes use the same effects springs, so the boxes change color the same
+    // way.
+    await tester.tap(find.text('Effects'));
+    await tester.pump();
+    expect(
+      find.text('Effects spring: stiffness 3800, damping ratio 1.00'),
+      findsNWidgets(2),
+    );
+    final double effectsX = tester.getCenter(standardBox).dx;
+    expect(tester.getCenter(expressiveBox).dx, effectsX);
     expect(boxColor(standardBox), colors.secondaryContainer);
     expect(boxColor(expressiveBox), colors.secondaryContainer);
-    expect(find.text('Move'), findsOne);
+    await tester.tap(find.text('Animate'));
+    await tester.pump();
+    for (var frame = 0; frame < 10; frame++) {
+      await tester.pump(const Duration(milliseconds: 16));
+      expect(tester.getCenter(standardBox).dx, effectsX);
+      expect(tester.getCenter(expressiveBox).dx, effectsX);
+      expect(boxColor(expressiveBox), boxColor(standardBox));
+    }
+    await tester.pumpAndSettle();
+    expect(boxColor(standardBox), colors.primary);
+    expect(boxColor(expressiveBox), colors.primary);
   });
 }
