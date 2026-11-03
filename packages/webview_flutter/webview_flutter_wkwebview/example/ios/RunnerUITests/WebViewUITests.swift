@@ -4,7 +4,7 @@
 
 import XCTest
 
-private func getPixelColorInImage(image: CGImage, x: size_t, y: size_t) -> UIColor? {
+private func getPixelColorInImage(image: CGImage, x: Int, y: Int) -> UIColor? {
   guard let provider = image.dataProvider,
     let pixelData = provider.data,
     let data = CFDataGetBytePtr(pixelData)
@@ -15,6 +15,9 @@ private func getPixelColorInImage(image: CGImage, x: size_t, y: size_t) -> UICol
   // `data` is an unsafe pointer, so ensure its target stays valid.
   return withExtendedLifetime(pixelData) {
     let pixelInfo = (image.bytesPerRow * y) + (x * 4)  // 4 bytes per pixel
+    guard pixelInfo + 3 < CFDataGetLength(pixelData) else {
+      return nil
+    }
     let red = data[pixelInfo + 0]
     let green = data[pixelInfo + 1]
     let blue = data[pixelInfo + 2]
