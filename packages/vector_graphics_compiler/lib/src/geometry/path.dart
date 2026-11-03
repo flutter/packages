@@ -605,6 +605,28 @@ Path parseSvgPathData(String svg, [PathFillType? type]) {
   return pathBuilder.toPath();
 }
 
+/// Parses the original SVG vertices for marker placement, collapsing the cubic
+/// commands produced when a single elliptical arc is normalized.
+@internal
+Path parseSvgMarkerPath(String raw) {
+  final parser = SvgPathStringSource(raw);
+  final normalizer = SvgPathNormalizer();
+  final builder = PathBuilder();
+  final commands = <PathCommand>[];
+  for (final PathSegmentData segment in parser.parseSegments()) {
+    normalizer.emitSegment(segment, builder);
+    final List<PathCommand> parts = builder.toPath().commands.toList();
+    if (parts.length > 1 && parts.every((part) => part is CubicToCommand)) {
+      final first = parts.first as CubicToCommand;
+      final last = parts.last as CubicToCommand;
+      commands.add(CubicToCommand(first.x1, first.y1, last.x2, last.y2, last.x3, last.y3));
+    } else {
+      commands.addAll(parts);
+    }
+  }
+  return Path(commands: commands);
+}
+
 class _CircularIntervalList {
   _CircularIntervalList(this._vals)
     : assert(_vals.isNotEmpty),

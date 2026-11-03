@@ -2,7 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:math' as math;
 import 'dart:typed_data';
+
 import '../geometry/basic_types.dart';
 import '../geometry/matrix.dart';
 import '../geometry/path.dart';
@@ -23,6 +25,7 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
   final Set<String> _activeMasks = <String>{};
   final Set<String> _activeDeferred = <String>{};
   final Set<String> _activePatterns = <String>{};
+  final Set<String> _activeMarkers = <String>{};
   int _deferredExpansionCount = 0;
 
   /// The position of the text or tspan currently being resolved, if any.
@@ -101,6 +104,132 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
 
   @override
   Node visitPathNode(PathNode pathNode, AffineMatrix data) {
+    final Resolver<SvgMarker?>? resolve = pathNode.markerResolver;
+    if (resolve == null) {
+      return _resolvePlainPath(pathNode, data);
+    }
+    final Map<String, String> raw = pathNode.attributes.raw;
+    final String? start = raw['marker-start'] ?? raw['marker'];
+    final String? mid = raw['marker-mid'] ?? raw['marker'];
+    final String? end = raw['marker-end'] ?? raw['marker'];
+    if (start == null && mid == null && end == null) {
+      return _resolvePlainPath(pathNode, data);
+    }
+    final String? rawMarkerPath = pathNode.markerPathData;
+    final List<_MarkerVertex> vertices = _markerVertices(
+      rawMarkerPath == null ? pathNode.path : parseSvgMarkerPath(rawMarkerPath),
+    );
+    if (vertices.isEmpty) {
+      return _resolvePlainPath(pathNode, data);
+    }
+    final double? opacity = pathNode.attributes.opacity;
+    if (opacity == 0) {
+      return Node.empty;
+    }
+    final bool needsLayer =
+        (opacity != null && opacity < 1) || pathNode.attributes.blendMode != null;
+    final plainPath = needsLayer
+        ? PathNode(pathNode.path, pathNode.attributes.forMarkerLayer())
+        : pathNode;
+    final Node result = _resolvePlainPath(plainPath, data);
+    final AffineMatrix transform = data.multiplied(pathNode.attributes.transform);
+    final children = <Node>[result];
+    for (var i = 0; i < vertices.length; i++) {
+      final ref = i == 0
+          ? start
+          : i == vertices.length - 1
+          ? end
+          : mid;
+      if (ref == null || ref == 'none' || !_activeMarkers.add(ref)) {
+        continue;
+      }
+      try {
+        final SvgMarker? marker = resolve(ref);
+        if (marker == null || marker.width <= 0 || marker.height <= 0) {
+          continue;
+        }
+        _deferredExpansionCount++;
+        if (_deferredExpansionCount > kMaxReferenceExpansions) {
+          throw StateError(kMaxReferenceExpansionsErrorMessage);
+        }
+        final double width = marker.strokeUnits ? pathNode.attributes.stroke?.width ?? 1.0 : 1.0;
+        if (width <= 0) {
+          continue;
+        }
+        final _MarkerVertex vertex = vertices[i];
+        var angle = 0.0;
+        if (marker.orient == 'auto' || marker.orient == 'auto-start-reverse') {
+          angle = vertex.angle;
+          if (i == 0 && marker.orient == 'auto-start-reverse') {
+            angle += math.pi;
+          }
+        } else {
+          angle = _markerAngle(marker.orient);
+        }
+        AffineMatrix view = AffineMatrix.identity;
+        final List<double>? box = marker.viewBox;
+        if (box != null) {
+          if (box[2] <= 0 || box[3] <= 0) {
+            continue;
+          }
+          final List<String> parts = marker.preserveAspectRatio.trim().split(RegExp(r'\s+'));
+          final String align = parts.first == 'defer' && parts.length > 1 ? parts[1] : parts.first;
+          double sx = marker.width / box[2];
+          double sy = marker.height / box[3];
+          var dx = 0.0;
+          var dy = 0.0;
+          if (align != 'none') {
+            sx = sy = parts.contains('slice') ? math.max(sx, sy) : math.min(sx, sy);
+            final double extraX = marker.width - box[2] * sx;
+            final double extraY = marker.height - box[3] * sy;
+            dx = align.contains('xMax')
+                ? extraX
+                : align.contains('xMid')
+                ? extraX / 2
+                : 0;
+            dy = align.contains('YMax')
+                ? extraY
+                : align.contains('YMid')
+                ? extraY / 2
+                : 0;
+          }
+          view = view.translated(dx, dy).scaled(sx, sy).translated(-box[0], -box[1]);
+        }
+        final Point refPoint = view.transformPoint(Point(marker.refX, marker.refY));
+        final AffineMatrix viewportTransform = transform
+            .translated(vertex.point.x, vertex.point.y)
+            .rotated(angle)
+            .scaled(width)
+            .translated(-refPoint.x, -refPoint.y);
+        final AffineMatrix markerTransform = viewportTransform.multiplied(view);
+        final Node markerContent = marker.content.accept(this, markerTransform);
+        if (marker.clip) {
+          final Path viewport = PathBuilder()
+              .addRect(Rect.fromLTWH(0, 0, marker.width, marker.height))
+              .toPath()
+              .transformed(viewportTransform);
+          children.add(ResolvedClipNode(clips: <Path>[viewport], child: markerContent));
+        } else {
+          children.add(markerContent);
+        }
+      } finally {
+        _activeMarkers.remove(ref);
+      }
+    }
+    if (needsLayer) {
+      return SaveLayerNode(
+        SvgAttributes.empty,
+        paint: Paint(
+          blendMode: pathNode.attributes.blendMode,
+          fill: Fill(color: Color.opaqueBlack.withOpacity(opacity ?? 1)),
+        ),
+        children: children,
+      );
+    }
+    return ParentNode(SvgAttributes.empty, children: children);
+  }
+
+  Node _resolvePlainPath(PathNode pathNode, AffineMatrix data) {
     final AffineMatrix transform = data.multiplied(pathNode.attributes.transform);
     final Path transformedPath = pathNode.path
         .transformed(transform)
@@ -580,4 +709,122 @@ class ResolvedPatternNode extends Node {
   S accept<S, V>(Visitor<S, V> visitor, V data) {
     return visitor.visitResolvedPatternNode(this, data);
   }
+}
+
+class _MarkerVertex {
+  _MarkerVertex(this.point, this.contour);
+  final Point point;
+  final int contour;
+  Point? incoming;
+  Point? outgoing;
+  double get angle {
+    final Point? a = incoming ?? outgoing;
+    final Point? b = outgoing ?? incoming;
+    if (a == null || b == null) {
+      return 0;
+    }
+    final double a1 = math.atan2(a.y, a.x);
+    final double a2 = math.atan2(b.y, b.x);
+    double delta = a2 - a1;
+    while (delta > math.pi) {
+      delta -= 2 * math.pi;
+    }
+    while (delta < -math.pi) {
+      delta += 2 * math.pi;
+    }
+    return a1 + delta / 2;
+  }
+}
+
+Point? _direction(Point from, Point to) {
+  final double dx = to.x - from.x;
+  final double dy = to.y - from.y;
+  return dx == 0 && dy == 0 ? null : Point(dx, dy);
+}
+
+List<_MarkerVertex> _markerVertices(Path path) {
+  final result = <_MarkerVertex>[];
+  _MarkerVertex? current;
+  Point? first;
+  var contour = -1;
+  for (final PathCommand command in path.commands) {
+    if (command is MoveToCommand) {
+      current = _MarkerVertex(Point(command.x, command.y), ++contour);
+      first = current.point;
+      result.add(current);
+      continue;
+    }
+    if (current == null) {
+      continue;
+    }
+    Point? target;
+    Point? outgoing;
+    Point? incoming;
+    if (command is LineToCommand) {
+      target = Point(command.x, command.y);
+      outgoing = incoming = _direction(current.point, target);
+    } else if (command is CubicToCommand) {
+      target = command.endPoint;
+      outgoing =
+          _direction(current.point, command.controlPoint1) ??
+          _direction(current.point, command.controlPoint2) ??
+          _direction(current.point, target);
+      incoming =
+          _direction(command.controlPoint2, target) ??
+          _direction(command.controlPoint1, target) ??
+          _direction(current.point, target);
+    } else if (command is CloseCommand && first != null) {
+      target = first;
+      outgoing = incoming = _direction(current.point, target);
+    }
+    if (target != null) {
+      current.outgoing = outgoing;
+      current = _MarkerVertex(target, contour)..incoming = incoming;
+      result.add(current);
+    }
+  }
+  // Find the nearest nonzero segment in each subpath in linear time.
+  final before = List<Point?>.filled(result.length, null);
+  Point? direction;
+  int? activeContour;
+  for (var i = 0; i < result.length; i++) {
+    final _MarkerVertex vertex = result[i];
+    if (vertex.contour != activeContour) {
+      direction = null;
+      activeContour = vertex.contour;
+    }
+    direction = vertex.incoming ?? direction;
+    before[i] = direction;
+    direction = vertex.outgoing ?? direction;
+  }
+  direction = null;
+  activeContour = null;
+  for (int i = result.length - 1; i >= 0; i--) {
+    final _MarkerVertex vertex = result[i];
+    if (vertex.contour != activeContour) {
+      direction = null;
+      activeContour = vertex.contour;
+    }
+    direction = vertex.outgoing ?? direction;
+    final after = direction;
+    direction = vertex.incoming ?? direction;
+    vertex.incoming ??= before[i] ?? after;
+    vertex.outgoing ??= after ?? before[i];
+  }
+  return result;
+}
+
+double _markerAngle(String raw) {
+  final String value = raw.trim();
+  if (value.endsWith('grad')) {
+    return (double.tryParse(value.substring(0, value.length - 4)) ?? 0) * math.pi / 200;
+  }
+  if (value.endsWith('rad')) {
+    return double.tryParse(value.substring(0, value.length - 3)) ?? 0;
+  }
+  if (value.endsWith('turn')) {
+    return (double.tryParse(value.substring(0, value.length - 4)) ?? 0) * 2 * math.pi;
+  }
+  final String degrees = value.endsWith('deg') ? value.substring(0, value.length - 3) : value;
+  return (double.tryParse(degrees) ?? 0) * math.pi / 180;
 }

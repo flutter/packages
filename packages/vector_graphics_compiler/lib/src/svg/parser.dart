@@ -47,6 +47,7 @@ const Map<String, _ParseFunc> _svgElementParsers = <String, _ParseFunc>{
   'a': _Elements.g, // treat as group
   'use': _Elements.use,
   'symbol': _Elements.symbol,
+  'marker': _Elements.marker,
   'mask': _Elements.symbol, // treat as symbol
   'pattern': _Elements.pattern,
   'radialGradient': _Elements.radialGradient,
@@ -145,6 +146,86 @@ class _Elements {
     );
     parserState.addGroup(element, group);
     return;
+  }
+
+  static void marker(SvgParser parserState, bool warningsAsErrors) {
+    SvgAttributes markerAttributes = parserState._currentAttributes;
+    for (final _SvgGroupTuple ancestor in parserState._parentDrawables.toList().reversed) {
+      markerAttributes = markerAttributes.applyParent(ancestor.drawable.attributes);
+    }
+    final group = ParentNode(markerAttributes);
+    final String? rawViewBox = parserState.attribute('viewBox');
+    final List<String>? parts = rawViewBox?.trim().split(RegExp(r'[\s,]+'));
+    final List<double?>? viewBox = parts?.length == 4 ? parts!.map(double.tryParse).toList() : null;
+    final double width =
+        parserState.parseDoubleWithUnits(
+          parserState.attribute('markerWidth', def: '3'),
+          percentageRef: parserState.viewportWidth,
+        ) ??
+        3;
+    final double height =
+        parserState.parseDoubleWithUnits(
+          parserState.attribute('markerHeight', def: '3'),
+          percentageRef: parserState.viewportHeight,
+        ) ??
+        3;
+    final double refWidth = viewBox != null && viewBox.length == 4 ? viewBox[2] ?? width : width;
+    final double refHeight = viewBox != null && viewBox.length == 4 ? viewBox[3] ?? height : height;
+    parserState._definitions.addMarker(
+      parserState.buildUrlIri(),
+      SvgMarker(
+        content: group,
+        width: width,
+        height: height,
+        refX: _markerReference(
+          parserState,
+          parserState.attribute('refX', def: '0')!,
+          viewBox?[0] ?? 0,
+          refWidth,
+          'left',
+          'right',
+        ),
+        refY: _markerReference(
+          parserState,
+          parserState.attribute('refY', def: '0')!,
+          viewBox?[1] ?? 0,
+          refHeight,
+          'top',
+          'bottom',
+        ),
+        orient: parserState.attribute('orient', def: '0')!,
+        preserveAspectRatio: parserState.attribute('preserveAspectRatio', def: 'xMidYMid meet')!,
+        clip: parserState.attribute('overflow', def: 'hidden') != 'visible',
+        strokeUnits: parserState.attribute('markerUnits', def: 'strokeWidth') == 'strokeWidth',
+        viewBox: viewBox != null && viewBox.every((value) => value != null)
+            ? viewBox.cast<double>()
+            : null,
+      ),
+    );
+    if (!(parserState._currentStartElement?.isSelfClosing ?? false)) {
+      parserState.addGroup(parserState._currentStartElement!, group);
+    }
+  }
+
+  static double _markerReference(
+    SvgParser parserState,
+    String raw,
+    double min,
+    double size,
+    String start,
+    String end,
+  ) {
+    if (raw == start) {
+      return min;
+    }
+    if (raw == 'center') {
+      return min + size / 2;
+    }
+    if (raw == end) {
+      return min + size;
+    }
+    final double value = parserState.parseDoubleWithUnits(raw, percentageRef: size) ?? 0;
+    return raw.trim().endsWith('%') ? min + value : value;
   }
 
   static void symbol(SvgParser parserState, bool warningsAsErrors) {
@@ -900,7 +981,13 @@ class SvgParser {
     if (path == null) {
       return false;
     }
-    final drawable = PathNode(path, _currentAttributes);
+    final String? rawPath = event.name == 'path' ? attribute('d') : null;
+    final drawable = PathNode(
+      path,
+      _currentAttributes,
+      markerResolver: _definitions.getMarker,
+      markerPathData: rawPath != null && RegExp('[aA]').hasMatch(rawPath) ? rawPath : null,
+    );
     checkForIri(drawable);
 
     parent.addChild(
@@ -1638,6 +1725,20 @@ class _Resolver {
   /// A default empty identifier.
   static const String emptyUrlIri = 'url(#)';
   final Map<String, AttributedNode> _drawables = <String, AttributedNode>{};
+  final Map<String, SvgMarker> _markers = <String, SvgMarker>{};
+
+  SvgMarker? getMarker(String ref) {
+    assert(_sealed);
+    return _markers[ref];
+  }
+
+  void addMarker(String ref, SvgMarker marker) {
+    assert(!_sealed);
+    if (ref != emptyUrlIri) {
+      _markers.putIfAbsent(ref, () => marker);
+    }
+  }
+
   final Map<String, Gradient> _shaders = <String, Gradient>{};
   final Map<String, List<Node>> _clips = <String, List<Node>>{};
   int _deferredExpansionCount = 0;
@@ -1902,6 +2003,8 @@ class SvgAttributes {
     'stroke-opacity',
     'visibility',
     'marker-start',
+    'marker-mid',
+    'marker-end',
     'marker',
     'color-interpolation',
     'color-interpolation-filters',
@@ -2037,6 +2140,37 @@ class SvgAttributes {
     );
   }
 
+  /// Removes object opacity and blend mode after they have been applied to a
+  /// layer containing both a shape and its markers.
+  SvgAttributes forMarkerLayer() {
+    return SvgAttributes._(
+      raw: raw,
+      id: id,
+      href: href,
+      transform: transform,
+      color: color,
+      stroke: stroke?.withOpacity(parseDouble(raw['stroke-opacity'])?.clamp(0.0, 1.0)),
+      fill: fill?.withOpacity(parseDouble(raw['fill-opacity'])?.clamp(0.0, 1.0)),
+      fillRule: fillRule,
+      clipRule: clipRule,
+      clipPathId: clipPathId,
+      fontFamily: fontFamily,
+      fontWeight: fontWeight,
+      fontSize: fontSize,
+      textDecoration: textDecoration,
+      textDecorationStyle: textDecorationStyle,
+      textDecorationColor: textDecorationColor,
+      x: x,
+      y: y,
+      dx: dx,
+      dy: dy,
+      textAnchorMultiplier: textAnchorMultiplier,
+      width: width,
+      height: height,
+      maskType: maskType,
+    );
+  }
+
   /// Creates a new set of attributes as if this inherited from `parent`.
   ///
   /// If `includePosition` is true, the `x`/`y` coordinates are also inherited. This
@@ -2049,6 +2183,11 @@ class SvgAttributes {
   }) {
     final newRaw = <String, String>{
       ...Map<String, String>.fromEntries(parent.heritable),
+      if (raw.containsKey('marker')) ...<String, String>{
+        'marker-start': raw['marker']!,
+        'marker-mid': raw['marker']!,
+        'marker-end': raw['marker']!,
+      },
       if (includePosition && parent.raw.containsKey('x')) 'x': parent.raw['x']!,
       if (includePosition && parent.raw.containsKey('y')) 'y': parent.raw['y']!,
       ...raw,
@@ -2211,6 +2350,21 @@ class SvgStrokeAttributes {
     );
   }
 
+  /// Copy with a specified opacity.
+  SvgStrokeAttributes withOpacity(double? value) => SvgStrokeAttributes._(
+    _definitions,
+    color: color,
+    shaderId: shaderId,
+    join: join,
+    cap: cap,
+    miterLimit: miterLimit,
+    width: width,
+    dashArray: dashArray,
+    dashOffset: dashOffset,
+    hasPattern: hasPattern,
+    opacity: value,
+  );
+
   /// Inherits attributes in this from parent.
   SvgStrokeAttributes applyParent(SvgStrokeAttributes? parent) {
     return SvgStrokeAttributes._(
@@ -2304,6 +2458,15 @@ class SvgFillAttributes {
       hasPattern: hasPattern,
     );
   }
+
+  /// Copy with a specified opacity.
+  SvgFillAttributes withOpacity(double? value) => SvgFillAttributes._(
+    _definitions,
+    color: color,
+    shaderId: shaderId,
+    hasPattern: hasPattern,
+    opacity: value,
+  );
 
   /// Inherits attributes in this from parent.
   SvgFillAttributes applyParent(SvgFillAttributes? parent) {

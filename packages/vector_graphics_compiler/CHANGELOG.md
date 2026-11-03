@@ -1,3 +1,7 @@
+## 1.4.0
+
+* Adds initial support for SVG vertex markers.
+
 ## 1.3.4
 
 * Fixes `em` units in text `x`, `y`, `dx` and `dy` being treated as pixels.
