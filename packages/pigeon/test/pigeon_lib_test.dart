@@ -2427,42 +2427,45 @@ const _$objcVersionCheck = objc.ObjCVersionCheck(9, 6);
       },
     );
 
-    test('checkJniPubspecVersion returns null when constraint matches JniVersionCheck', () {
-      final Directory tempDir = Directory.systemTemp.createTempSync('pigeon_jni_version_test_');
-      try {
-        File('${tempDir.path}/pubspec.yaml').writeAsStringSync('''
-name: my_package
-dependencies:
-  jni: ^1.1.0
-''');
-        final libDir = Directory('${tempDir.path}/lib')..createSync(recursive: true);
-        File('${libDir.path}/messages.g.jni.dart').writeAsStringSync(r'''
-const _$jniVersionCheck = jni$_.JniVersionCheck(1, 1);
-''');
-        final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
-          PigeonOptions(
-            input: 'foo.dart',
-            dartOut: '${libDir.path}/messages.g.dart',
-            kotlinOut: '${libDir.path}/Messages.g.kt',
-            kotlinOptions: const KotlinOptions(useJni: true),
-            dartPackageName: 'my_package',
-          ),
-        );
-        expect(checkJniPubspecVersion(options), isNull);
-      } finally {
-        tempDir.deleteSync(recursive: true);
-      }
-    });
-
     test(
-      'checkJniPubspecVersion warns when constraint allows lower minor version than JniVersionCheck',
+      'checkJniPubspecVersion returns null when constraint matches JniVersionCheck and >=1.1.1',
       () {
         final Directory tempDir = Directory.systemTemp.createTempSync('pigeon_jni_version_test_');
         try {
           File('${tempDir.path}/pubspec.yaml').writeAsStringSync('''
 name: my_package
 dependencies:
-  jni: ^1.0.0
+  jni: ^1.1.1
+''');
+          final libDir = Directory('${tempDir.path}/lib')..createSync(recursive: true);
+          File('${libDir.path}/messages.g.jni.dart').writeAsStringSync(r'''
+const _$jniVersionCheck = jni$_.JniVersionCheck(1, 1);
+''');
+          final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+            PigeonOptions(
+              input: 'foo.dart',
+              dartOut: '${libDir.path}/messages.g.dart',
+              kotlinOut: '${libDir.path}/Messages.g.kt',
+              kotlinOptions: const KotlinOptions(useJni: true),
+              dartPackageName: 'my_package',
+            ),
+          );
+          expect(checkJniPubspecVersion(options), isNull);
+        } finally {
+          tempDir.deleteSync(recursive: true);
+        }
+      },
+    );
+
+    test(
+      'checkJniPubspecVersion warns when constraint allows version below 1.1.1 floor or JniVersionCheck',
+      () {
+        final Directory tempDir = Directory.systemTemp.createTempSync('pigeon_jni_version_test_');
+        try {
+          File('${tempDir.path}/pubspec.yaml').writeAsStringSync('''
+name: my_package
+dependencies:
+  jni: ^1.1.0
 ''');
           final libDir = Directory('${tempDir.path}/lib')..createSync(recursive: true);
           File('${libDir.path}/messages.g.jni.dart').writeAsStringSync(r'''
@@ -2479,9 +2482,9 @@ const _$jniVersionCheck = jni$_.JniVersionCheck(1, 1);
           );
           final String? warning = checkJniPubspecVersion(options);
           expect(warning, isNotNull);
-          expect(warning, contains('require package:jni ^1.1.0'));
+          expect(warning, contains('require package:jni ^1.1.1'));
           expect(warning, contains('JniVersionCheck(1, 1)'));
-          expect(warning, contains('jni: ^1.0.0'));
+          expect(warning, contains('jni: ^1.1.0'));
         } finally {
           tempDir.deleteSync(recursive: true);
         }
@@ -3271,4 +3274,66 @@ const String myConst = 'hello ${1 + 2}';
       expect(configPath, equals('example/tool/pigeon/messages_ffigen_config.dart'));
     });
   });
+
+  test(
+    'DartGeneratorAdapter writes .native_interop.g.dart companion file when native interop is enabled',
+    () {
+      final Directory dir = Directory.systemTemp.createTempSync();
+      try {
+        final String dartOutPath = path.join(dir.path, 'messages.g.dart');
+        final String nativeInteropPath = path.join(dir.path, 'messages.native_interop.g.dart');
+        final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+          PigeonOptions(
+            dartOut: dartOutPath,
+            swiftOut: path.join(dir.path, 'Messages.swift'),
+            swiftOptions: const SwiftOptions(useFfi: true),
+            dartPackageName: 'test_package',
+          ),
+        );
+        const adapter = DartGeneratorAdapter();
+        final sink = StringBuffer();
+        adapter.generate(
+          sink,
+          options,
+          Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]),
+          FileType.na,
+        );
+
+        expect(
+          sink.toString(),
+          contains(
+            "import './messages.g.dart'\n"
+            "    if (dart.library.ffi) './messages.native_interop.g.dart'\n"
+            '    as pigeon_native;',
+          ),
+        );
+        final companionFile = File(nativeInteropPath);
+        expect(companionFile.existsSync(), isTrue);
+        expect(companionFile.readAsStringSync(), contains('class _PigeonFfiCodec'));
+
+        // Verify validate rejects 'stdout' and empty dartOut when native interop is enabled.
+        final emptyRoot = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+        expect(
+          adapter.validate(
+            InternalPigeonOptions.fromPigeonOptions(
+              const PigeonOptions(dartOut: 'stdout', swiftOptions: SwiftOptions(useFfi: true)),
+            ),
+            emptyRoot,
+          ),
+          isNotEmpty,
+        );
+        expect(
+          adapter.validate(
+            InternalPigeonOptions.fromPigeonOptions(
+              const PigeonOptions(dartOut: '', swiftOptions: SwiftOptions(useFfi: true)),
+            ),
+            emptyRoot,
+          ),
+          isNotEmpty,
+        );
+      } finally {
+        dir.deleteSync(recursive: true);
+      }
+    },
+  );
 }
