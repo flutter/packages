@@ -688,7 +688,12 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
       if (patternId != null) {
         paint.shader = _patterns[patternId]!.shader;
       }
-      final builder = ParagraphBuilder(ParagraphStyle(textDirection: _textDirection));
+      final builder = ParagraphBuilder(
+        // Positioning (x, text-anchor) is done by the listener, and the paragraph
+        // is laid out at infinite width: start alignment under RTL would place
+        // the line at +infinity.
+        ParagraphStyle(textDirection: _textDirection, textAlign: TextAlign.left),
+      );
       builder.pushStyle(
         TextStyle(
           locale: _locale,

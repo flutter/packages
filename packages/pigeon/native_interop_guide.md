@@ -131,12 +131,12 @@ When Native Interop options (`useJni` or `useFfi`) are enabled, Pigeon automatic
 
 - **Android (JNI)**: When `kotlinOptions.useJni` is enabled:
   1. Generates the JNI-compatible Kotlin bridge and the `<input_name>_jnigen_config.dart` script in `tool/pigeon/`.
-  2. Runs `jnigen` via the config script to parse the Kotlin bridge and produce Dart JNI bindings.
-  3. Generates the final pigeon Dart output that wraps and imports those JNI bindings.
+  2. Runs `jnigen` via the config script to parse the Kotlin bridge and produce Dart JNI bindings (`*.g.jni.dart`).
+  3. Generates the web-safe main Pigeon Dart output (`*.g.dart`) and the conditionally imported native interop companion file (`*.native_interop.g.dart`) that wraps and imports those JNI bindings.
 - **iOS/macOS (FFI)**: When `swiftOptions.useFfi` is enabled:
   1. Generates the Objective-C compatible Swift bridge and the `<input_name>_ffigen_config.dart` script in `tool/pigeon/`.
-  2. Runs `ffigen` via the config script to parse the Objective-C bridge and produce Dart FFI bindings.
-  3. Generates the final pigeon Dart output that wraps and imports those FFI bindings.
+  2. Runs `ffigen` via the config script to parse the Objective-C bridge and produce Dart FFI bindings (`*.g.ffi.dart`).
+  3. Generates the web-safe main Pigeon Dart output (`*.g.dart`) and the conditionally imported native interop companion file (`*.native_interop.g.dart`) that wraps and imports those FFI bindings.
 
 ### Step 4: iOS/macOS Build System Configuration (FFI)
 
