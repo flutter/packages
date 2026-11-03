@@ -101,22 +101,16 @@ Then, move on to the next verification step.
 
 ## 5. Check Integration Tests Pass
 
-CI does not run this package's integration tests on emulators,
-so they must be run locally before pushing.
-Read and follow the [run-on-emulator](../run-on-emulator/SKILL.md) skill
-to run the integration tests in `example/integration_test`:
+Run the full integration test suite in `example/integration_test` locally
+by following the [run-on-emulator](../run-on-emulator/SKILL.md) skill.
+CI also runs these tests on a physical device (Firebase Test Lab),
+but catching failures locally avoids a slow CI round trip.
 
-```bash
-dart run .agents/skills/run-on-emulator/tool/run.dart integration-test
-```
-
-- If the script fails with an environment exit code
-  (2: Android CLI missing, 3: `adb`/`flutter` missing, 4: no usable AVD,
-  5: emulator failed to boot), do not work around it.
-  Mark this check as skipped, warn the user with the fix from the script output,
+- If emulator setup stops on a missing requirement
+  (for example, the Android CLI or an AVD), do not work around it.
+  Mark this check as skipped, warn the user with what is missing,
   and move on to the next verification step.
-- If the build fails or the integration tests fail or time out
-  (exit code 6 or 7), the code is not ready to push.
+- If the integration tests fail or time out, the code is not ready to push.
   As with unit tests, the failures might predate these changes,
   so prompt the user to review the failing tests
   and fix any newly introduced failures before pushing.

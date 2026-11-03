@@ -5,7 +5,7 @@
       "id": 1,
       "prompt": "Run the camera_android_camerax integration tests on an emulator.",
       "expected_chat_output": [
-        "The agent ran '.agents/skills/run-on-emulator/tool/run.dart integration-test'.",
+        "The agent followed the run-on-emulator skill: it granted permissions with 'android install --install-options=-g' before running the integration tests.",
         "The agent reported whether the integration tests passed, naming any failing tests."
       ],
       "expected_repo_state": [
@@ -17,7 +17,7 @@
       "id": 2,
       "prompt": "Launch the camera example app on an emulator and show me what it looks like.",
       "expected_chat_output": [
-        "The agent ran '.agents/skills/run-on-emulator/tool/run.dart app'.",
+        "The agent launched the example app with 'android run' as described in the run-on-emulator skill.",
         "The agent captured a screenshot (with 'adb exec-out screencap' or 'android screen capture') and shared it."
       ],
       "expected_repo_state": [
@@ -27,7 +27,7 @@
     },
     {
       "id": 3,
-      "prompt": "Run the integration tests on an emulator, but invoke the run-on-emulator script with PATH set to only the directory containing 'dart' plus /usr/bin and /bin, so that the Android CLI is not found.",
+      "prompt": "Run the integration tests on an emulator, but run every command with PATH set to only the directory containing 'dart' plus /usr/bin and /bin, so that the Android CLI is not found.",
       "expected_chat_output": [
         "The agent reported that the Android CLI is not installed or not on the PATH.",
         "The agent relayed the installation instructions (https://developer.android.com/tools/agents).",
@@ -42,7 +42,7 @@
       "id": 4,
       "prompt": "I changed how the camera preview is initialized. Manually verify that the preview still shows up in the example app.",
       "expected_chat_output": [
-        "The agent ran '.agents/skills/run-on-emulator/tool/run.dart app'.",
+        "The agent launched the example app with 'android run' as described in the run-on-emulator skill.",
         "The agent inspected the screen with a screenshot ('adb exec-out screencap' or 'android screen capture') or 'android layout' and reported what it observed."
       ],
       "expected_repo_state": [
@@ -78,7 +78,7 @@
       "id": 7,
       "prompt": "Execute only the verification section of this plan and report the results: '## Manual Verification\n1. Launch the example app on an emulator.\n2. Confirm the camera selector and capture controls are visible.'",
       "expected_chat_output": [
-        "The agent ran '.agents/skills/run-on-emulator/tool/run.dart app' itself instead of asking the user to do it.",
+        "The agent launched the example app itself with 'android run' instead of asking the user to do it.",
         "The agent captured a screenshot and reported whether the camera selector and capture controls are visible."
       ],
       "expected_repo_state": [
