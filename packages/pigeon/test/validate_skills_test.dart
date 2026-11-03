@@ -9,7 +9,8 @@ void main() {
   test('validate skills', () async {
     final Configuration config = await ConfigParser.loadConfig();
     // validateSkills returns true even if the config has parsing errors, so
-    // check those separately.
+    // check those separately. skills_lint 0.6.0 plans to make validateSkills
+    // fail on them: https://github.com/google/skills_lint.dart/issues/152
     expect(config.parsingErrors, isEmpty);
     final bool isValid = await validateSkills(config: config);
     expect(isValid, isTrue, reason: 'Skills validation failed. See above for details.');
