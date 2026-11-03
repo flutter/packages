@@ -1491,7 +1491,9 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> with R
     final hasExistingNavigator = branchState.navigator != null;
 
     /// Only update the Navigator of the route match list has changed
-    final locationChanged = previousBranchLocation != currentBranchLocation;
+    final Uri navigatorUri = shellRouteContext.routeMatchList.uri;
+    final bool locationChanged =
+        previousBranchLocation != currentBranchLocation || branchState.navigatorUri != navigatorUri;
     if (locationChanged || !hasExistingNavigator) {
       branchState.navigator = shellRouteContext._buildNavigatorForCurrentRoute(
         context,
@@ -1499,6 +1501,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> with R
         route.notifyRootObserver,
         branch.restorationScopeId,
       );
+      branchState.navigatorUri = navigatorUri;
     }
 
     _cleanUpObsoleteBranches();
@@ -1536,6 +1539,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> with R
         final _StatefulShellBranchState branchState = _branchStateFor(branch, false);
         branchState.location.value = matchList;
         branchState.navigator = navigator;
+        branchState.navigatorUri = matchList.uri;
       }
     }
   }
@@ -1600,6 +1604,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> with R
         ),
         branch.restorationScopeId,
       );
+      branchState.navigatorUri = matchList.uri;
     }
   }
 
@@ -1674,6 +1679,13 @@ class _StatefulShellBranchState {
   _StatefulShellBranchState({required this.location});
 
   Widget? navigator;
+
+  /// The URI of the match list that [navigator] was built from.
+  ///
+  /// Pages in [navigator] read this URI through [GoRouterState]. It can include
+  /// routes on ancestor navigators, so it can change while [location] does not.
+  Uri? navigatorUri;
+
   final _RestorableRouteMatchList location;
 
   void dispose() {

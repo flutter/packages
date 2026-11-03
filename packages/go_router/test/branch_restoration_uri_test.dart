@@ -20,6 +20,14 @@ void main() {
     await tester.pumpAndSettle();
   }
 
+  void expectBranchPageState(WidgetTester tester, String uri) {
+    final GoRouterState state = GoRouterState.of(tester.element(find.text('Branch B')));
+    expect(state.uri.toString(), uri);
+    expect(state.pathParameters, <String, String>{'branchId': '17'});
+    expect(state.fullPath, '/b/:branchId');
+    expect(state.topRoute?.path, '/b/:branchId');
+  }
+
   testWidgets('restores a root-navigator redirect on every branch entry', (
     WidgetTester tester,
   ) async {
@@ -177,6 +185,83 @@ void main() {
     expect(configuration.pathParameters, <String, String>{'branchId': 'a/b'});
     expect(configuration.extra, 'payload');
   });
+
+  testWidgets('popping a root route updates the branch page state', (WidgetTester tester) async {
+    final fixture = _TestRouter();
+    await mount(tester, fixture);
+    fixture.router.go('/b/17/popup/99?source=branch#section');
+    await tester.pumpAndSettle();
+    expect(find.text('Popup'), findsOneWidget);
+
+    fixture.router.pop();
+    await tester.pumpAndSettle();
+
+    expectBranchPageState(tester, '/b/17?source=branch#section');
+  });
+
+  testWidgets('returning to a branch updates the branch page state', (WidgetTester tester) async {
+    final fixture = _TestRouter();
+    await mount(tester, fixture);
+    fixture.router.go('/b/17/popup/99?source=branch#section');
+    await tester.pumpAndSettle();
+    expect(find.text('Popup'), findsOneWidget);
+
+    fixture.router.go('/a');
+    await tester.pumpAndSettle();
+    fixture.shell.goBranch(1);
+    await tester.pumpAndSettle();
+
+    expectBranchPageState(tester, '/b/17?source=branch#section');
+  });
+
+  testWidgets('pushing and popping a root route does not rebuild branch pages', (
+    WidgetTester tester,
+  ) async {
+    final fixture = _TestRouter();
+    await mount(tester, fixture);
+    fixture.shell.goBranch(1);
+    await tester.pumpAndSettle();
+    fixture.branchBuildCount = 0;
+
+    unawaited(fixture.router.push<void>('/b/17/popup/99'));
+    await tester.pumpAndSettle();
+    expect(find.text('Popup'), findsOneWidget);
+    fixture.router.pop();
+    await tester.pumpAndSettle();
+
+    expect(find.text('Branch B'), findsOneWidget);
+    expect(fixture.branchBuildCount, 0);
+  });
+
+  testWidgets('popping a root route removes its redirect-only parent', (WidgetTester tester) async {
+    final fixture = _TestRouter();
+    await mount(tester, fixture);
+    fixture.router.go('/b/17/flow/5/popup/99');
+    await tester.pumpAndSettle();
+    expect(find.text('Popup'), findsOneWidget);
+
+    fixture.router.pop();
+    await tester.pumpAndSettle();
+
+    expectBranchPageState(tester, '/b/17');
+  });
+
+  testWidgets('returning to a branch removes the redirect-only parent of a root route', (
+    WidgetTester tester,
+  ) async {
+    final fixture = _TestRouter();
+    await mount(tester, fixture);
+    fixture.router.go('/b/17/flow/5/popup/99');
+    await tester.pumpAndSettle();
+    expect(find.text('Popup'), findsOneWidget);
+
+    fixture.router.go('/a');
+    await tester.pumpAndSettle();
+    fixture.shell.goBranch(1);
+    await tester.pumpAndSettle();
+
+    expectBranchPageState(tester, '/b/17');
+  });
 }
 
 class _TestRouter {
@@ -187,6 +272,7 @@ class _TestRouter {
   final GlobalKey<NavigatorState> rootKey = GlobalKey<NavigatorState>();
   final GlobalKey<NavigatorState> outerKey = GlobalKey<NavigatorState>();
   late StatefulNavigationShell shell;
+  int branchBuildCount = 0;
 
   late final GoRouter router = GoRouter(
     navigatorKey: rootKey,
@@ -233,7 +319,10 @@ class _TestRouter {
               }
               return null;
             },
-            builder: (BuildContext context, GoRouterState state) => const Text('Branch B'),
+            builder: (BuildContext context, GoRouterState state) {
+              branchBuildCount++;
+              return const Text('Branch B');
+            },
             routes: <RouteBase>[
               GoRoute(
                 path: 'welcome',
@@ -241,11 +330,11 @@ class _TestRouter {
                 builder: (BuildContext context, GoRouterState state) =>
                     const Scaffold(body: Text('Welcome')),
               ),
+              _popupRoute,
               GoRoute(
-                path: 'popup/:popupId',
-                parentNavigatorKey: rootKey,
-                builder: (BuildContext context, GoRouterState state) =>
-                    const Scaffold(body: Text('Popup')),
+                path: 'flow/:flowId',
+                redirect: (BuildContext context, GoRouterState state) => null,
+                routes: <RouteBase>[_popupRoute],
               ),
               GoRoute(
                 path: 'details/:detailId',
@@ -272,5 +361,11 @@ class _TestRouter {
         ],
       ),
     ],
+  );
+
+  GoRoute get _popupRoute => GoRoute(
+    path: 'popup/:popupId',
+    parentNavigatorKey: rootKey,
+    builder: (BuildContext context, GoRouterState state) => const Scaffold(body: Text('Popup')),
   );
 }
