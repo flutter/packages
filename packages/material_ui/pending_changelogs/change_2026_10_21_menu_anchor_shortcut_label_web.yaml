@@ -1,3 +1,0 @@
-changelog: |
-  - Fixes `MenuAnchor` and `MenuBar` shortcut labels for unlocalized non-Unicode keys (such as `Tab` and `F1`) on JavaScript web builds.
-version: patch
