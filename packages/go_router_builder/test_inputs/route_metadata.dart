@@ -4,7 +4,7 @@
 
 import 'package:go_router/go_router.dart';
 
-import 'route_metadata.dart.sources/constants.dart';
+import 'route_metadata.dart.sources/constants.dart' as constants;
 
 @TypedGoRoute<MetadataRoute>(
   path: '/metadata/:id',
@@ -16,6 +16,15 @@ import 'route_metadata.dart.sources/constants.dart';
   'values': [null, false, 42, -1.5, r'dollar$quote"'],
   'nested': {'key': 'value'},
   'set': <String>{'a', 'b'},
+  'emptyList': <int>[],
+  'emptySet': <String>{},
+  'emptyMap': <String, bool>{},
+  'nullableLists': <List<int>?>[
+    null,
+    <int>[1],
+  ],
+  'numericKeys': <int, String>{1: 'one'},
+  'specialNumbers': <double>[double.nan, double.infinity, double.negativeInfinity, -0.0],
 })
 class MetadataRoute extends GoRouteData with $MetadataRoute {
   const MetadataRoute(this.id);
@@ -28,7 +37,7 @@ class MetadataChild extends RelativeGoRouteData with $MetadataChild {
 }
 
 @TypedGoRoute<ImportedMetadataRoute>(path: '/imported')
-@RouteMetadata(importedMetadata)
+@RouteMetadata(constants.importedMetadata)
 class ImportedMetadataRoute extends GoRouteData with $ImportedMetadataRoute {
   const ImportedMetadataRoute();
 }

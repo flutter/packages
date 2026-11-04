@@ -543,42 +543,71 @@ void onTapRelative() => const DetailsRoute().goRelative(context);
 
 Relative routing methods are not idempotent and will cause an error when the relative location does not match a route.
 
+
+## Route metadata
+
+Apply `@RouteMetadata` to a `GoRouteData` or `RelativeGoRouteData` class to
+include constant application-defined metadata in the generated `GoRoute`:
+
+<?code-excerpt "example/lib/route_metadata.dart (routeMetadata)"?>
+```dart
+/// A library route with metadata shared by its descendants.
+@TypedGoRoute<LibraryRoute>(
+  path: '/library/:id',
+  routes: <TypedRoute<RouteData>>[
+    TypedRelativeGoRoute<PreviewRoute>(path: 'preview'),
+  ],
+)
+@RouteMetadata({
+  'section': 'library',
+  'requiresAuth': true,
+  'labels': <String>{'books'},
+})
+class LibraryRoute extends GoRouteData with $LibraryRoute {
+  /// Creates a library route for [id].
+  const LibraryRoute(this.id);
+
+  /// The library identifier from the path.
+  final String id;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) => Scaffold(
+    appBar: AppBar(title: Text('Library $id')),
+    body: TextButton(
+      onPressed: () => const PreviewRoute().goRelative(context),
+      child: const Text('Preview'),
+    ),
+  );
+}
+```
+
+Read the merged values through `GoRouterState.metadata`. Parent keys are
+inherited, and child values replace matching parent keys. For example, a child
+with `{'requiresAuth': false, 'title': 'Preview'}` inherits `section` from the
+route above and overrides `requiresAuth`.
+
+Metadata is independent of route parameters. The generator reads the annotation
+without creating a route instance, including for routes with required constructor
+parameters. Imported constant maps are supported.
+
+Values may be null, booleans, strings, integers, doubles, or nested lists, sets,
+and maps of these values. Collection types are preserved; their type arguments
+must be from `dart:core`, or be `dynamic`, `void`, or `Never`. Enum values and
+custom constant objects produce a generation error. Only one annotation per
+route class is allowed. Shell route and branch classes are not supported.
+
 ## Run tests
 
 To run unit tests, run command `dart tool/run_tests.dart` from `packages/go_router_builder/`.
 
 Each `.dart` file in `test_inputs/` is a test case, paired with a `.expect` file
 holding either the generated output or the error message the builder must
-produce. Two optional companion files tune a case:
+produce. Optional companion files tune a case:
 
+* `<name>.dart.sources/` contains additional Dart sources imported by the case.
 * `<name>.dart.options` holds a JSON map of builder options, matching what
   `build.yaml` would pass to the builder.
 * `<name>.dart.warnings` holds the warnings the builder must log, one per line.
   An empty file asserts that the builder logs nothing.
 
 To run tests in examples, run `flutter test` from `packages/go_router_builder/example`.
-
-## Route metadata
-
-Annotate a `GoRouteData` or `RelativeGoRouteData` class with constant metadata:
-
-<?code-excerpt ignore?>
-```dart
-@TypedGoRoute<PrivateRoute>(path: '/private')
-@RouteMetadata({'requiresAuth': true, 'analyticsName': 'private'})
-class PrivateRoute extends GoRouteData with $PrivateRoute {
-  const PrivateRoute();
-
-  @override
-  Widget build(BuildContext context, GoRouterState state) => const PrivatePage();
-}
-```
-
-Access merged metadata through `GoRouterState.metadata`. Child route values
-replace parent values with the same key. No route instance is created to read
-metadata, so routes with required constructor parameters are supported.
-
-Metadata may use imported constants. Supported values are null, booleans,
-strings, numbers, and nested lists, sets, and maps of these values. Enum values
-and custom constant objects produce a generation error. Shell route and branch
-classes are not supported.

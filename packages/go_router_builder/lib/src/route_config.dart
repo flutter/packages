@@ -600,8 +600,6 @@ abstract class RouteBaseConfig {
   RouteBaseConfig._({required this.routeDataClass, required this.parent})
     : _metadataCode = routeMetadataCode(routeDataClass);
 
-  final String? _metadataCode;
-
   /// Creates a new [RouteBaseConfig] represented the annotation data in [reader].
   factory RouteBaseConfig.fromAnnotation(ConstantReader reader, InterfaceElement element) {
     final definition = RouteBaseConfig._fromAnnotation(reader, element, null);
@@ -773,6 +771,8 @@ abstract class RouteBaseConfig {
 
     return value;
   }
+
+  final String? _metadataCode;
 
   final List<RouteBaseConfig> _children = <RouteBaseConfig>[];
 

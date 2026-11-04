@@ -87,12 +87,11 @@ class _MetadataEncoder {
       return '$number';
     }
     final List<DartObject>? list = value.toListValue();
-    final Set<DartObject>? set = value.toSetValue();
-    if (list != null || set != null) {
-      final Iterable<DartObject> elements = list ?? set!;
+    final Iterable<DartObject>? elements = list ?? value.toSetValue();
+    if (elements != null) {
       final contents = <String>[];
       var index = 0;
-      for (final element in elements) {
+      for (final DartObject element in elements) {
         contents.add(literal(element, '$path[${index++}]'));
       }
       final String arguments = _typeArguments(value, path);
@@ -104,7 +103,7 @@ class _MetadataEncoder {
     if (map != null) {
       final entries = <String>[];
       var index = 0;
-      for (final entry in map.entries) {
+      for (final MapEntry<DartObject?, DartObject?> entry in map.entries) {
         final String key = literal(entry.key, '$path.keys[$index]');
         entries.add('$key: ${literal(entry.value, '$path[$key]')}');
         index++;
@@ -115,19 +114,27 @@ class _MetadataEncoder {
   }
 
   String _typeArguments(DartObject value, String path) {
-    final type = value.type! as InterfaceType;
-    return '<${type.typeArguments.map((DartType type) => _typeCode(type, path)).join(', ')}>';
+    if (value.type case InterfaceType(:final List<DartType> typeArguments)) {
+      return '<${typeArguments.map((DartType type) => _typeCode(type, path)).join(', ')}>';
+    }
+    _unsupported(path, 'an unresolved collection type');
   }
 
   String _typeCode(DartType type, String path) {
-    if (type is DynamicType || type is NeverType || type is VoidType) {
-      return type.getDisplayString();
+    if (type is DynamicType) {
+      return 'dynamic';
+    }
+    if (type is NeverType) {
+      return 'Never${type.nullabilitySuffix == NullabilitySuffix.question ? '?' : ''}';
+    }
+    if (type is VoidType) {
+      return 'void';
     }
     if (type is InterfaceType && type.element.library.uri.toString() == 'dart:core') {
-      final String arguments = type.typeArguments.isEmpty
+      final arguments = type.typeArguments.isEmpty
           ? ''
           : '<${type.typeArguments.map((DartType type) => _typeCode(type, path)).join(', ')}>';
-      final String nullable = type.nullabilitySuffix == NullabilitySuffix.question ? '?' : '';
+      final nullable = type.nullabilitySuffix == NullabilitySuffix.question ? '?' : '';
       return '${type.element.displayName}$arguments$nullable';
     }
     _unsupported(path, 'a collection type argument $type');

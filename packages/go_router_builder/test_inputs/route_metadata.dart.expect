@@ -1,19 +1,28 @@
 RouteBase get $metadataRoute => GoRouteData.$route(
   path: '/metadata/:id',
   hasOverriddenOnExit: false,
-  metadata: const {
+  metadata: const <String, Object?>{
     'requiresAuth': true,
     'section': 'library',
-    'values': [null, false, 42, -1.5, r'dollar$quote"'],
-    'nested': {'key': 'value'},
-    'set': <Object?>{'a', 'b'},
+    'values': <Object?>[null, false, 42, -1.5, r'dollar$quote"'],
+    'nested': <String, String>{'key': 'value'},
+    'set': <String>{'a', 'b'},
+    'emptyList': <int>[],
+    'emptySet': <String>{},
+    'emptyMap': <String, bool>{},
+    'nullableLists': <List<int>?>[
+      null,
+      <int>[1],
+    ],
+    'numericKeys': <int, String>{1: 'one'},
+    'specialNumbers': <double>[double.nan, double.infinity, double.negativeInfinity, -0.0],
   },
   factory: $MetadataRoute._fromState,
   routes: [
     RelativeGoRouteData.$route(
       path: 'child',
       hasOverriddenOnExit: false,
-      metadata: const {'requiresAuth': false, 'title': 'Preview'},
+      metadata: const <String, Object?>{'requiresAuth': false, 'title': 'Preview'},
       factory: $MetadataChild._fromState,
     ),
   ],
@@ -66,7 +75,7 @@ mixin $MetadataChild on RelativeGoRouteData {
 RouteBase get $importedMetadataRoute => GoRouteData.$route(
   path: '/imported',
   hasOverriddenOnExit: false,
-  metadata: const {'imported': true},
+  metadata: const <String, Object?>{'imported': true},
   factory: $ImportedMetadataRoute._fromState,
 );
 
@@ -92,7 +101,7 @@ mixin $ImportedMetadataRoute on GoRouteData {
 RouteBase get $emptyMetadataRoute => GoRouteData.$route(
   path: '/empty',
   hasOverriddenOnExit: false,
-  metadata: const {},
+  metadata: const <String, Object?>{},
   factory: $EmptyMetadataRoute._fromState,
 );
 

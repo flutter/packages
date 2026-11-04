@@ -462,30 +462,33 @@ abstract class StatefulShellBranchData {
 
 /// Constant application-defined metadata for a typed route.
 ///
-/// Apply to a [GoRouteData] or [RelativeGoRouteData] subclass. Child metadata
-/// overrides matching parent keys in [GoRouterState.metadata]; other parent
-/// keys remain inherited. The metadata
-/// applies to every match of the route, independently of path parameters,
-/// query parameters, and extra data.
+/// Apply to a [GoRouteData] or [RelativeGoRouteData] subclass to populate
+/// [GoRoute.metadata]. Metadata is the same for every match of the route,
+/// regardless of path parameters, query parameters, or extra data. The builder
+/// reads the annotation without creating a route data instance, so required
+/// constructor parameters are supported.
 ///
-/// The builder reads this annotation at generation time and passes its values
-/// to [GoRoute.metadata]. It does not construct a route data instance to obtain
-/// metadata. A route may therefore have required constructor parameters.
-/// Metadata may also be supplied through an imported constant map.
-///
-/// Values supported by `go_router_builder` are null, booleans, strings, numbers,
-/// and lists, sets, and maps containing these values. Custom constant objects
-/// and enum values are not supported and cause a generation error. Only one
-/// [RouteMetadata] annotation may be applied to each route class. Shell route
-/// and stateful shell branch classes are not supported.
+/// [GoRouterState.metadata] contains the merged metadata for a match. Parent
+/// keys are inherited, and child values replace parent values with the same key.
 ///
 /// ```dart
 /// @TypedGoRoute<PrivateRoute>(path: '/private')
-/// @RouteMetadata({'requiresAuth': true})
+/// @RouteMetadata({'requiresAuth': true, 'analyticsName': 'private'})
 /// class PrivateRoute extends GoRouteData with $PrivateRoute {
 ///   // ...
 /// }
 /// ```
+///
+/// The map can be supplied through an imported constant. Supported values are
+/// null, booleans, strings, integers, doubles, and nested lists, sets, and maps
+/// of those values. Collection type arguments are preserved and must be types
+/// from `dart:core`, `dynamic`, `void`, or `Never`. Custom constant objects and
+/// enums are not supported. Unsupported values cause a generation error.
+///
+/// Only one annotation may be applied to a route class. Shell route and
+/// stateful shell branch classes are not supported.
+///
+/// {@category Type-safe routes}
 @Target(<TargetKind>{TargetKind.classType})
 @immutable
 class RouteMetadata {
@@ -494,12 +497,8 @@ class RouteMetadata {
 
   /// The metadata associated with this route.
   ///
-  /// Keys are application-defined strings. The builder emits a constant map
-  /// containing these values. An empty map adds no metadata; omitting the
-  /// annotation preserves the route's default behavior.
-  ///
-  /// Nested collections are emitted as literals. Their explicit generic type
-  /// arguments are not preserved in the generated configuration.
+  /// Keys are application-defined strings. An empty map adds no metadata;
+  /// omitting the annotation preserves the route's default behavior.
   final Map<String, Object?> values;
 }
 

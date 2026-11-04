@@ -1,0 +1,1 @@
+Unsupported @RouteMetadata at metadata['nested'][0]: a value of type MetadataValue. Use null, bool, String, int, double, or lists, sets, and maps of supported values with dart:core type arguments.
