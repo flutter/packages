@@ -2037,20 +2037,15 @@ class ThemeData with Diagnosticable {
     return theme;
   }
 
+  static final IconThemeData _defaultLightIconTheme = IconThemeData(color: kDefaultIconDarkColor);
+  static final IconThemeData _defaultDarkIconTheme = IconThemeData(color: kDefaultIconLightColor);
+
   static bool _isDefaultIconTheme(IconThemeData iconTheme, Brightness brightness) {
-    final Color defaultColor = switch (brightness) {
-      Brightness.light => kDefaultIconDarkColor,
-      Brightness.dark => kDefaultIconLightColor,
+    final IconThemeData defaultIconTheme = switch (brightness) {
+      Brightness.light => _defaultLightIconTheme,
+      Brightness.dark => _defaultDarkIconTheme,
     };
-    return identical(iconTheme.color, defaultColor) &&
-        iconTheme.opacity == null &&
-        iconTheme.size == null &&
-        iconTheme.fill == null &&
-        iconTheme.weight == null &&
-        iconTheme.grade == null &&
-        iconTheme.opticalSize == null &&
-        iconTheme.shadows == null &&
-        iconTheme.applyTextScaling == null;
+    return identical(iconTheme.color, defaultIconTheme.color) && iconTheme == defaultIconTheme;
   }
 
   /// Linearly interpolate between two themes.
@@ -2105,8 +2100,8 @@ class ThemeData with Diagnosticable {
             _isDefaultIconTheme(b.iconTheme, b.brightness)) {
           final Brightness brightness = t < 0.5 ? a.brightness : b.brightness;
           return switch (brightness) {
-            Brightness.light => IconThemeData(color: kDefaultIconDarkColor),
-            Brightness.dark => IconThemeData(color: kDefaultIconLightColor),
+            Brightness.light => _defaultLightIconTheme,
+            Brightness.dark => _defaultDarkIconTheme,
           };
         }
         return IconThemeData.lerp(a.iconTheme, b.iconTheme, t);
