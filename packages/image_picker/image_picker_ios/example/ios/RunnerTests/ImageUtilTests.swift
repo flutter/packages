@@ -10,10 +10,6 @@ import UniformTypeIdentifiers
 
 @testable import image_picker_ios
 
-#if canImport(image_picker_ios_objc)
-  @testable import image_picker_ios_objc
-#endif
-
 private let kColorRepresentation3x2BottomLeftYellow = "1 0.776471 0 1"
 private let kColorRepresentation3x2TopLeftRed = "1 0.0666667 0 1"
 private let kColorRepresentation3x2BottomRightCyan = "0 0.772549 1 1"
@@ -51,7 +47,7 @@ private func colorString(atPixel image: UIImage, pixelX: Int, pixelY: Int) -> St
 struct ImageUtilTests {
   @Test func scaledImageEqualSizeReturnsSameImage() {
     let image = UIImage(data: ImagePickerTestImages.jpgTestData)!
-    let scaledImage = FLTImagePickerImageUtil.scaledImage(
+    let scaledImage = ImagePickerImageUtil.scaledImage(
       image, maxWidth: NSNumber(value: image.size.width),
       maxHeight: NSNumber(value: image.size.height), isMetadataAvailable: true)
     #expect(image === scaledImage)
@@ -59,7 +55,7 @@ struct ImageUtilTests {
 
   @Test func scaledImageNilSizeReturnsSameImage() {
     let image = UIImage(data: ImagePickerTestImages.jpgTestData)!
-    let scaledImage = FLTImagePickerImageUtil.scaledImage(
+    let scaledImage = ImagePickerImageUtil.scaledImage(
       image, maxWidth: nil, maxHeight: nil, isMetadataAvailable: true)
     #expect(image === scaledImage)
   }
@@ -68,7 +64,7 @@ struct ImageUtilTests {
     let image = UIImage(data: ImagePickerTestImages.jpgTestData)!
     let scaledWidth: CGFloat = 3
     let scaledHeight: CGFloat = 2
-    let scaledImage = FLTImagePickerImageUtil.scaledImage(
+    let scaledImage = ImagePickerImageUtil.scaledImage(
       image, maxWidth: NSNumber(value: scaledWidth), maxHeight: NSNumber(value: scaledHeight),
       isMetadataAvailable: true)!
     #expect(scaledImage.size.width == scaledWidth)
@@ -92,7 +88,7 @@ struct ImageUtilTests {
     let image = UIImage(data: ImagePickerTestImages.jpgTestData)!
     let scaledWidth: CGFloat = 3
     let scaledHeight: CGFloat = 2
-    let scaledImage = FLTImagePickerImageUtil.scaledImage(
+    let scaledImage = ImagePickerImageUtil.scaledImage(
       image, maxWidth: NSNumber(value: scaledWidth), maxHeight: NSNumber(value: scaledHeight),
       isMetadataAvailable: false)!
     #expect(scaledImage.size.width == scaledWidth)
@@ -122,7 +118,7 @@ struct ImageUtilTests {
     #expect(image.size.height == 174)
     #expect(image.imageOrientation == .right)
 
-    let newImage = FLTImagePickerImageUtil.scaledImage(
+    let newImage = ImagePickerImageUtil.scaledImage(
       image, maxWidth: 10, maxHeight: 10, isMetadataAvailable: true)!
     #expect(newImage.size.width == 10)
     #expect(newImage.size.height == 7)
@@ -130,7 +126,7 @@ struct ImageUtilTests {
   }
 
   @Test func scaledGIFImageShouldBeScaled() {
-    let info = FLTImagePickerImageUtil.scaledGIFImage(
+    let info = ImagePickerImageUtil.scaledGIFImage(
       ImagePickerTestImages.gifTestData, maxWidth: 3, maxHeight: 2)
     #expect(info.images.count == 3)
     #expect(info.interval == 1)
@@ -144,7 +140,7 @@ struct ImageUtilTests {
     let image = UIImage(data: ImagePickerTestImages.jpgTallTestData)!
     #expect(image.size.width == 4)
     #expect(image.size.height == 7)
-    let newImage = FLTImagePickerImageUtil.scaledImage(
+    let newImage = ImagePickerImageUtil.scaledImage(
       image, maxWidth: 5, maxHeight: 5, isMetadataAvailable: true)!
     #expect(newImage.size.width == 3)
     #expect(newImage.size.height == 5)
@@ -152,7 +148,7 @@ struct ImageUtilTests {
 
   @Test func scaledImageTallImageShouldBeScaledBelowMaxWidth() {
     let image = UIImage(data: ImagePickerTestImages.jpgTallTestData)!
-    let newImage = FLTImagePickerImageUtil.scaledImage(
+    let newImage = ImagePickerImageUtil.scaledImage(
       image, maxWidth: 3, maxHeight: 10, isMetadataAvailable: true)!
     #expect(newImage.size.width == 3)
     #expect(newImage.size.height == 5)
@@ -160,7 +156,7 @@ struct ImageUtilTests {
 
   @Test func scaledImageTallImageShouldNotBeScaledAboveOriginalWidthOrHeight() {
     let image = UIImage(data: ImagePickerTestImages.jpgTallTestData)!
-    let newImage = FLTImagePickerImageUtil.scaledImage(
+    let newImage = ImagePickerImageUtil.scaledImage(
       image, maxWidth: 10, maxHeight: 10, isMetadataAvailable: true)!
     #expect(newImage.size.width == 4)
     #expect(newImage.size.height == 7)
@@ -170,7 +166,7 @@ struct ImageUtilTests {
     let image = UIImage(data: ImagePickerTestImages.jpgTestData)!
     #expect(image.size.width == 12)
     #expect(image.size.height == 7)
-    let newImage = FLTImagePickerImageUtil.scaledImage(
+    let newImage = ImagePickerImageUtil.scaledImage(
       image, maxWidth: 20, maxHeight: 6, isMetadataAvailable: true)!
     #expect(newImage.size.width == 10)
     #expect(newImage.size.height == 6)
@@ -178,7 +174,7 @@ struct ImageUtilTests {
 
   @Test func scaledImageWideImageShouldBeScaledBelowMaxWidth() {
     let image = UIImage(data: ImagePickerTestImages.jpgTestData)!
-    let newImage = FLTImagePickerImageUtil.scaledImage(
+    let newImage = ImagePickerImageUtil.scaledImage(
       image, maxWidth: 10, maxHeight: 10, isMetadataAvailable: true)!
     #expect(newImage.size.width == 10)
     #expect(newImage.size.height == 6)
@@ -186,21 +182,21 @@ struct ImageUtilTests {
 
   @Test func scaledImageWideImageShouldNotBeScaledAboveOriginalWidthOrHeight() {
     let image = UIImage(data: ImagePickerTestImages.jpgTestData)!
-    let newImage = FLTImagePickerImageUtil.scaledImage(
+    let newImage = ImagePickerImageUtil.scaledImage(
       image, maxWidth: 100, maxHeight: 100, isMetadataAvailable: true)!
     #expect(newImage.size.width == 12)
     #expect(newImage.size.height == 7)
   }
 
   @Test func scaledImageImageIsNil() {
-    let newImage = FLTImagePickerImageUtil.scaledImage(
+    let newImage = ImagePickerImageUtil.scaledImage(
       nil, maxWidth: 1440, maxHeight: 1440, isMetadataAvailable: true)
     #expect(newImage == nil)
   }
 
   @Test func scaledImageImageMaxWidthZeroAndMaxHeightIsZero() {
     let image = UIImage(data: ImagePickerTestImages.jpgTestData)!
-    let newImage = FLTImagePickerImageUtil.scaledImage(
+    let newImage = ImagePickerImageUtil.scaledImage(
       image, maxWidth: 0, maxHeight: 0, isMetadataAvailable: true)
     #expect(newImage == nil)
   }
@@ -219,7 +215,7 @@ struct ImageUtilTests {
     CGImageDestinationAddImage(destination, frame.cgImage!, frameProperties as CFDictionary)
     #expect(CGImageDestinationFinalize(destination))
 
-    let info = FLTImagePickerImageUtil.scaledGIFImage(
+    let info = ImagePickerImageUtil.scaledGIFImage(
       gifData as Data, maxWidth: 3, maxHeight: 2)
     #expect(info.images.count == 2)
     #expect(abs(info.interval - 0.25) < 0.001)
@@ -245,13 +241,13 @@ struct ImageUtilTests {
     #expect(cgImage.bitsPerComponent == 10)
 
     let image = UIImage(cgImage: cgImage)
-    let scaledImage = FLTImagePickerImageUtil.scaledImage(
+    let scaledImage = ImagePickerImageUtil.scaledImage(
       image, maxWidth: 1920, maxHeight: 1920, isMetadataAvailable: true)!
     #expect(scaledImage.size.width == 1920)
     #expect(scaledImage.size.height == 1440)
 
-    let encodedData = FLTImagePickerMetaDataUtil.convert(
-      scaledImage, using: FLTImagePickerMIMETypeJPEG, quality: 0.8)
+    let encodedData = try #require(
+      ImagePickerMetaDataUtil.convert(scaledImage, usingType: .jpeg, quality: 0.8))
     #expect(!encodedData.isEmpty)
     #expect(UIImage(data: encodedData) != nil)
   }
