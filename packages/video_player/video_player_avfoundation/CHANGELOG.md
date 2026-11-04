@@ -1,3 +1,8 @@
+## 2.13.0
+
+* Adds `setAllowBackgroundPlayback`. It needs no native setup, so it completes
+  without calling the host.
+
 ## 2.12.3
 
 * Fixes a potential crash when a player is disposed while an async method is in progress.

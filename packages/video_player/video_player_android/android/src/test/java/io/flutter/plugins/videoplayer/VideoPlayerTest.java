@@ -128,6 +128,27 @@ public final class VideoPlayerTest {
   }
 
   @Test
+  public void doesNotSetWakeModeByDefault() {
+    VideoPlayer videoPlayer = createVideoPlayer();
+
+    verify(mockExoPlayer, never()).setWakeMode(anyInt());
+
+    videoPlayer.dispose();
+  }
+
+  @Test
+  public void setsNetworkWakeModeWhenBackgroundPlaybackAllowed() {
+    VideoPlayerOptions options = new VideoPlayerOptions();
+    options.allowBackgroundPlayback = true;
+
+    VideoPlayer videoPlayer = createVideoPlayer(options);
+
+    verify(mockExoPlayer).setWakeMode(C.WAKE_MODE_NETWORK);
+
+    videoPlayer.dispose();
+  }
+
+  @Test
   public void playsAndPausesProvidedMedia() {
     VideoPlayer videoPlayer = createVideoPlayer();
 

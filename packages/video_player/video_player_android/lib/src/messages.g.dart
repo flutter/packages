@@ -1098,6 +1098,22 @@ class AndroidVideoPlayerApi {
     _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
+  Future<void> setAllowBackgroundPlayback(bool allowBackgroundPlayback) async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.video_player_android.AndroidVideoPlayerApi.setAllowBackgroundPlayback$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
+      allowBackgroundPlayback,
+    ]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+  }
+
   Future<String> getLookupKeyForAsset(String asset, String? packageName) async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.video_player_android.AndroidVideoPlayerApi.getLookupKeyForAsset$pigeonVar_messageChannelSuffix';

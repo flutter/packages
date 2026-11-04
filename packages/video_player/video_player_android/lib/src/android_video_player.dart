@@ -212,6 +212,11 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
+  Future<void> setAllowBackgroundPlayback(bool allowBackgroundPlayback) {
+    return _api.setAllowBackgroundPlayback(allowBackgroundPlayback);
+  }
+
+  @override
   Future<List<VideoAudioTrack>> getAudioTracks(int playerId) async {
     final NativeAudioTrackData nativeData = await _playerWith(id: playerId).getAudioTracks();
     final tracks = <VideoAudioTrack>[];

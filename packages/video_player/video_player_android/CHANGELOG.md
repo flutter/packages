@@ -1,3 +1,8 @@
+## 2.13.0
+
+* Implements `setAllowBackgroundPlayback`, which keeps the CPU and Wi-Fi awake
+  during playback so that network streams continue while the screen is off.
+
 ## 2.12.3
 
 * Updates Robolectric to 4.17 and adds the JVM arguments it requires for unit tests.

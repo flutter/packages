@@ -1823,6 +1823,25 @@ void main() {
         );
       });
 
+      test('passes allowBackgroundPlayback to the platform', () async {
+        final controller = VideoPlayerController.networkUrl(
+          _localhostUri,
+          videoPlayerOptions: VideoPlayerOptions(allowBackgroundPlayback: true),
+        );
+        addTearDown(controller.dispose);
+
+        await controller.initialize();
+        expect(fakeVideoPlayerPlatform.allowBackgroundPlayback, true);
+      });
+
+      test('does not set allowBackgroundPlayback without options', () async {
+        final controller = VideoPlayerController.networkUrl(_localhostUri);
+        addTearDown(controller.dispose);
+
+        await controller.initialize();
+        expect(fakeVideoPlayerPlatform.calls, isNot(contains('setAllowBackgroundPlayback')));
+      });
+
       test('true allowBackgroundPlayback continues playback', () async {
         final controller = VideoPlayerController.networkUrl(
           _localhostUri,
@@ -2171,6 +2190,14 @@ class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
   @override
   Future<void> setMixWithOthers(bool mixWithOthers) async {
     calls.add('setMixWithOthers');
+  }
+
+  bool? allowBackgroundPlayback;
+
+  @override
+  Future<void> setAllowBackgroundPlayback(bool allowBackgroundPlayback) async {
+    calls.add('setAllowBackgroundPlayback');
+    this.allowBackgroundPlayback = allowBackgroundPlayback;
   }
 
   @override
