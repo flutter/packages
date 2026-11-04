@@ -17,6 +17,7 @@
 #include <string>
 
 #include "mocks.h"
+#include "string_utils.h"
 
 namespace camera_windows {
 namespace test {
@@ -24,11 +25,24 @@ namespace test {
 using flutter::EncodableMap;
 using flutter::EncodableValue;
 using ::testing::_;
+using ::testing::AllOf;
 using ::testing::DoAll;
 using ::testing::EndsWith;
 using ::testing::Eq;
 using ::testing::Pointee;
 using ::testing::Return;
+using ::testing::StartsWith;
+
+namespace {
+
+// Returns the temp directory, with a trailing backslash.
+std::string GetTempDirectory() {
+  wchar_t temp_path[MAX_PATH + 1];
+  DWORD length = GetTempPathW(MAX_PATH + 1, temp_path);
+  return Utf8FromUtf16(std::wstring(temp_path, length));
+}
+
+}  // namespace
 
 void MockInitCamera(MockCamera* camera, bool success) {
   EXPECT_CALL(*camera,
@@ -431,7 +445,9 @@ TEST(CameraPlugin, TakePictureHandlerCallsTakePictureWithPath) {
         return cam->capture_controller_.get();
       });
 
-  EXPECT_CALL(*capture_controller, TakePicture(EndsWith(".jpeg")))
+  EXPECT_CALL(*capture_controller,
+              TakePicture(AllOf(StartsWith("C:\\Pictures\\PhotoCapture_"),
+                                EndsWith(".jpeg"))))
       .Times(1)
       .WillOnce([cam = camera.get()](const std::string& file_path) {
         assert(cam->pending_string_result_);
@@ -444,6 +460,84 @@ TEST(CameraPlugin, TakePictureHandlerCallsTakePictureWithPath) {
   MockCameraPlugin plugin(std::make_unique<MockTextureRegistrar>().get(),
                           std::make_unique<MockBinaryMessenger>().get(),
                           std::make_unique<MockCameraFactory>());
+
+  EXPECT_CALL(plugin, GetKnownFolderPath(Eq(FOLDERID_Pictures)))
+      .Times(1)
+      .WillOnce(Return(std::wstring(L"C:\\Pictures")));
+
+  // Add mocked camera to plugins camera list.
+  plugin.AddCamera(std::move(camera));
+
+  bool result_called = false;
+  std::function<void(ErrorOr<std::string>)> take_picture_result =
+      [&result_called](ErrorOr<std::string> reply) {
+        EXPECT_FALSE(result_called);  // Ensure only one reply call.
+        result_called = true;
+        EXPECT_FALSE(reply.has_error());
+      };
+
+  plugin.TakePicture(mock_camera_id, std::move(take_picture_result));
+
+  EXPECT_TRUE(result_called);
+}
+
+TEST(CameraPlugin, TakePictureHandlerFallsBackToTempDirectory) {
+  int64_t mock_camera_id = 1234;
+
+  std::unique_ptr<MockCamera> camera =
+      std::make_unique<MockCamera>(MOCK_DEVICE_ID);
+
+  std::unique_ptr<MockCaptureController> capture_controller =
+      std::make_unique<MockCaptureController>();
+
+  EXPECT_CALL(*camera, HasCameraId(Eq(mock_camera_id)))
+      .Times(1)
+      .WillOnce([cam = camera.get()](int64_t camera_id) {
+        return cam->camera_id_ == camera_id;
+      });
+
+  EXPECT_CALL(*camera,
+              HasPendingResultByType(Eq(PendingResultType::kTakePicture)))
+      .Times(1)
+      .WillOnce(Return(false));
+
+  EXPECT_CALL(*camera,
+              AddPendingStringResult(Eq(PendingResultType::kTakePicture), _))
+      .Times(1)
+      .WillOnce([cam = camera.get()](
+                    PendingResultType type,
+                    std::function<void(ErrorOr<std::string>)> result) {
+        cam->pending_string_result_ = std::move(result);
+        return true;
+      });
+
+  EXPECT_CALL(*camera, GetCaptureController)
+      .Times(1)
+      .WillOnce([cam = camera.get()]() {
+        assert(cam->pending_string_result_);
+        return cam->capture_controller_.get();
+      });
+
+  EXPECT_CALL(
+      *capture_controller,
+      TakePicture(AllOf(StartsWith(GetTempDirectory() + "PhotoCapture_"),
+                        EndsWith(".jpeg"))))
+      .Times(1)
+      .WillOnce([cam = camera.get()](const std::string& file_path) {
+        assert(cam->pending_string_result_);
+        return cam->pending_string_result_(file_path);
+      });
+
+  camera->camera_id_ = mock_camera_id;
+  camera->capture_controller_ = std::move(capture_controller);
+
+  MockCameraPlugin plugin(std::make_unique<MockTextureRegistrar>().get(),
+                          std::make_unique<MockBinaryMessenger>().get(),
+                          std::make_unique<MockCameraFactory>());
+
+  EXPECT_CALL(plugin, GetKnownFolderPath(Eq(FOLDERID_Pictures)))
+      .Times(1)
+      .WillOnce(Return(std::nullopt));
 
   // Add mocked camera to plugins camera list.
   plugin.AddCamera(std::move(camera));
@@ -541,7 +635,9 @@ TEST(CameraPlugin, StartVideoRecordingHandlerCallsStartRecordWithPath) {
         return cam->capture_controller_.get();
       });
 
-  EXPECT_CALL(*capture_controller, StartRecord(EndsWith(".mp4")))
+  EXPECT_CALL(*capture_controller,
+              StartRecord(AllOf(StartsWith("C:\\Videos\\VideoCapture_"),
+                                EndsWith(".mp4"))))
       .Times(1)
       .WillOnce([cam = camera.get()](const std::string& file_path) {
         assert(cam->pending_void_result_);
@@ -554,6 +650,85 @@ TEST(CameraPlugin, StartVideoRecordingHandlerCallsStartRecordWithPath) {
   MockCameraPlugin plugin(std::make_unique<MockTextureRegistrar>().get(),
                           std::make_unique<MockBinaryMessenger>().get(),
                           std::make_unique<MockCameraFactory>());
+
+  EXPECT_CALL(plugin, GetKnownFolderPath(Eq(FOLDERID_Videos)))
+      .Times(1)
+      .WillOnce(Return(std::wstring(L"C:\\Videos")));
+
+  // Add mocked camera to plugins camera list.
+  plugin.AddCamera(std::move(camera));
+
+  bool result_called = false;
+  std::function<void(std::optional<FlutterError>)> start_video_result =
+      [&result_called](std::optional<FlutterError> reply) {
+        EXPECT_FALSE(result_called);  // Ensure only one reply call.
+        result_called = true;
+        EXPECT_FALSE(reply);
+      };
+
+  plugin.StartVideoRecording(mock_camera_id, nullptr,
+                             std::move(start_video_result));
+
+  EXPECT_TRUE(result_called);
+}
+
+TEST(CameraPlugin, StartVideoRecordingHandlerFallsBackToTempDirectory) {
+  int64_t mock_camera_id = 1234;
+
+  std::unique_ptr<MockCamera> camera =
+      std::make_unique<MockCamera>(MOCK_DEVICE_ID);
+
+  std::unique_ptr<MockCaptureController> capture_controller =
+      std::make_unique<MockCaptureController>();
+
+  EXPECT_CALL(*camera, HasCameraId(Eq(mock_camera_id)))
+      .Times(1)
+      .WillOnce([cam = camera.get()](int64_t camera_id) {
+        return cam->camera_id_ == camera_id;
+      });
+
+  EXPECT_CALL(*camera,
+              HasPendingResultByType(Eq(PendingResultType::kStartRecord)))
+      .Times(1)
+      .WillOnce(Return(false));
+
+  EXPECT_CALL(*camera,
+              AddPendingVoidResult(Eq(PendingResultType::kStartRecord), _))
+      .Times(1)
+      .WillOnce([cam = camera.get()](
+                    PendingResultType type,
+                    std::function<void(std::optional<FlutterError>)> result) {
+        cam->pending_void_result_ = std::move(result);
+        return true;
+      });
+
+  EXPECT_CALL(*camera, GetCaptureController)
+      .Times(1)
+      .WillOnce([cam = camera.get()]() {
+        assert(cam->pending_void_result_);
+        return cam->capture_controller_.get();
+      });
+
+  EXPECT_CALL(
+      *capture_controller,
+      StartRecord(AllOf(StartsWith(GetTempDirectory() + "VideoCapture_"),
+                        EndsWith(".mp4"))))
+      .Times(1)
+      .WillOnce([cam = camera.get()](const std::string& file_path) {
+        assert(cam->pending_void_result_);
+        return cam->pending_void_result_(std::nullopt);
+      });
+
+  camera->camera_id_ = mock_camera_id;
+  camera->capture_controller_ = std::move(capture_controller);
+
+  MockCameraPlugin plugin(std::make_unique<MockTextureRegistrar>().get(),
+                          std::make_unique<MockBinaryMessenger>().get(),
+                          std::make_unique<MockCameraFactory>());
+
+  EXPECT_CALL(plugin, GetKnownFolderPath(Eq(FOLDERID_Videos)))
+      .Times(1)
+      .WillOnce(Return(std::nullopt));
 
   // Add mocked camera to plugins camera list.
   plugin.AddCamera(std::move(camera));
