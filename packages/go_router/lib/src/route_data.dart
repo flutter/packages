@@ -462,18 +462,21 @@ abstract class StatefulShellBranchData {
 
 /// Constant application-defined metadata for a typed route.
 ///
-/// Apply to a [GoRouteData] or [RelativeGoRouteData] subclass to populate
-/// [GoRoute.metadata]. Metadata is the same for every match of the route,
-/// regardless of path parameters, query parameters, or extra data. The builder
-/// reads the annotation without creating a route data instance, so required
-/// constructor parameters are supported.
+/// When applied to a [GoRouteData] or [RelativeGoRouteData] subclass, this
+/// annotation populates [GoRoute.metadata]. Metadata is the same for every match
+/// of the route, regardless of path parameters, query parameters, or extra data.
+/// The builder reads the annotation without creating a route data instance,
+/// so required constructor parameters are supported.
 ///
 /// [GoRouterState.metadata] contains the merged metadata for a match. Parent
 /// keys are inherited, and child values replace parent values with the same key.
 ///
 /// ```dart
 /// @TypedGoRoute<PrivateRoute>(path: '/private')
-/// @RouteMetadata({'requiresAuth': true, 'analyticsName': 'private'})
+/// @RouteMetadata(<String, Object?>{
+///   'requiresAuth': true,
+///   'analyticsName': 'private',
+/// })
 /// class PrivateRoute extends GoRouteData with $PrivateRoute {
 ///   // ...
 /// }

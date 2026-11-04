@@ -16,6 +16,9 @@ dev_dependencies:
   go_router_builder: ^4.0.1
 ```
 
+Feature-specific package requirements are described in the corresponding
+sections below.
+
 ### Source code
 
 Instructions below explain how to create and annotate types to use this builder.
@@ -543,11 +546,15 @@ void onTapRelative() => const DetailsRoute().goRelative(context);
 
 Relative routing methods are not idempotent and will cause an error when the relative location does not match a route.
 
-
 ## Route metadata
 
-Apply `@RouteMetadata` to a `GoRouteData` or `RelativeGoRouteData` class to
-include constant application-defined metadata in the generated `GoRoute`:
+This API is unreleased. The dependency versions in the Usage section do not
+provide `RouteMetadata`. Local evaluation requires both `go_router` and
+`go_router_builder` from the modified checkout, including the example app's
+`go_router` dependency.
+
+The `@RouteMetadata` annotation supplies constant application-defined metadata
+for the generated `GoRoute` of a `GoRouteData` or `RelativeGoRouteData` class:
 
 <?code-excerpt "example/lib/route_metadata.dart (routeMetadata)"?>
 ```dart
@@ -558,7 +565,7 @@ include constant application-defined metadata in the generated `GoRoute`:
     TypedRelativeGoRoute<PreviewRoute>(path: 'preview'),
   ],
 )
-@RouteMetadata({
+@RouteMetadata(<String, Object?>{
   'section': 'library',
   'requiresAuth': true,
   'labels': <String>{'books'},
@@ -581,10 +588,10 @@ class LibraryRoute extends GoRouteData with $LibraryRoute {
 }
 ```
 
-Read the merged values through `GoRouterState.metadata`. Parent keys are
+Merged values are available through `GoRouterState.metadata`. Parent keys are
 inherited, and child values replace matching parent keys. For example, a child
-with `{'requiresAuth': false, 'title': 'Preview'}` inherits `section` from the
-route above and overrides `requiresAuth`.
+that sets `requiresAuth` to `false` and `title` to `'Preview'` inherits `section`
+from its parent and overrides `requiresAuth`.
 
 Metadata is independent of route parameters. The generator reads the annotation
 without creating a route instance, including for routes with required constructor

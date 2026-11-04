@@ -34,7 +34,7 @@ final GoRouter _router = GoRouter(
     TypedRelativeGoRoute<PreviewRoute>(path: 'preview'),
   ],
 )
-@RouteMetadata({
+@RouteMetadata(<String, Object?>{
   'section': 'library',
   'requiresAuth': true,
   'labels': <String>{'books'},
