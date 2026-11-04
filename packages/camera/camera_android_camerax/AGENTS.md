@@ -22,11 +22,15 @@
   [run-on-emulator](.agents/skills/run-on-emulator/SKILL.md). For each
   behavior to verify:
   - If it needs physical hardware (e.g., flash/torch, real lens
-    characteristics, OEM quirks) or is a subtle visual property that cannot be
-    asserted in a test (e.g., mirroring), assign it to the user and state why.
+    characteristics, OEM quirks) or is a subtle visual property that neither a
+    test nor a screenshot can show (e.g., mirroring), assign it to the user and
+    state why.
   - Otherwise, verify it yourself with run-on-emulator. Write implementation
     plans (e.g., with `/plan`) this way, and carry out plan steps this way,
     even ones labeled "Manual Verification".
+  - If you are not sure whether the emulator can reproduce a bug, do not
+    assign it to the user up front. Plan to reproduce it on the emulator first,
+    and assign it to the user only if that fails.
 - **Run Pre-Push Checks**: Run [pre-push-skill](.agents/skills/pre-push-skill/SKILL.md)
   before pushing to prevent CI failures and code review blocks.
 

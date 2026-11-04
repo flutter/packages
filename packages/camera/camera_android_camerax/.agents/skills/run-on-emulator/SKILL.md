@@ -17,10 +17,14 @@ below are not exhaustive.
 
 The emulator can verify, for example:
 
-- Preview rendering and switching cameras.
-- Image capture, video recording, and image streaming.
+- Preview rendering and switching cameras, including whether the preview is
+  live or frozen.
+- Image capture, video recording, and image streaming, including CameraX
+  stream sharing (e.g., recording while streaming images).
 - Exposure, zoom, and focus/metering calls and their reported ranges.
 - Rotation, lifecycle (background/resume), and permission flows.
+- Both preview backends: `ImageReader` (the default on API 29+) and
+  `SurfaceTexture` (used below API 29; see 3b).
 
 It cannot verify behavior that depends on specific hardware, for example:
 
@@ -32,7 +36,8 @@ It cannot verify behavior that depends on specific hardware, for example:
 
 If the behavior depends on specific hardware, it needs a physical device: tell
 the user, and do not claim it was verified. You may still run the example app
-to check that the change does not crash.
+to check that the change does not crash. If you are not sure whether the
+emulator can reproduce a bug, try it on the emulator before deciding.
 
 ## 2. Start an emulator
 
@@ -50,7 +55,9 @@ lists commands for some of these.
    `emulator-<port>    device`, note that serial and skip to 3a or 3b.
 3. **Pick an AVD:** run `android emulator list`. If it lists none, stop and
    suggest `android emulator create medium_phone`. Otherwise use the AVD the
-   user named, or the first one.
+   user named, or the first one. If the task needs an API level that no AVD
+   has, stop and ask the user to create one (to test the `SurfaceTexture`
+   preview backend, you do not need an older API level; see 3b).
 4. **Check that the AVD has a camera:** run
    `grep hw.camera ~/.android/avd/<avd>.avd/config.ini`. If `hw.camera.back`
    and `hw.camera.front` are both `none`, stop: camera tests would pass without
@@ -101,9 +108,18 @@ Continue with the subsection that matches your task:
    failures, and report both results. Failures in the resolution preset tests
    are expected on an emulator (see section 1).
 
+When a test checks that video recording kept going, note that a recorded
+file's duration includes its audio track, so it does not prove video frames
+kept arriving. Record with audio disabled when asserting on duration, and check
+for CameraX errors: run `adb -s <serial> logcat -c` before the test and search
+`adb -s <serial> logcat -d` afterwards (e.g., for
+`Downstream node failed to provide Surface`).
+
 ### 3b. Run the example app
 
-1. **Build, install, and launch it** with permissions granted:
+1. **Build, install, and launch it** with permissions granted. Always
+   rebuild first: 3a writes a test build to the same APK path, and launching
+   that shows only a splash screen.
 
    ```bash
    (cd example && flutter build apk --debug)
@@ -123,11 +139,16 @@ Continue with the subsection that matches your task:
    integration test instead. Do not add Flutter Driver to the example app.
 3. **For visual changes, include a screenshot as evidence** in your report:
    `android screen capture --device=<serial> -o <artifact dir>/scratch/<name>.png`.
-   A screenshot can show that the preview is visible (not black or frozen),
-   that it is rotated by 90° or 180°, or that a control or error appeared. It
+   A screenshot can show that the preview is visible (not black), that it is
+   rotated by 90° or 180°, or that a control or error appeared. To tell whether
+   the preview is live or frozen, compare two screenshots of the front camera
+   taken a few seconds apart: its test pattern changes over time. A screenshot
    cannot show aspect ratio, mirroring, cropping, exposure, color, or frame
    rate: assert those in a test, or report them as not verified.
-4. **For rotation bugs**, first try to reproduce with auto-rotate as is, since
+4. **For lifecycle bugs**, background and resume the app with
+   `adb -s <serial> shell input keyevent KEYCODE_HOME`, then
+   `adb -s <serial> shell am start -n io.flutter.plugins.cameraxexample/.MainActivity`.
+5. **For rotation bugs**, first try to reproduce with auto-rotate as is, since
    locking can change the behavior. If you need a specific orientation, you
    can lock it, and always restore it afterwards:
 
@@ -137,3 +158,16 @@ Continue with the subsection that matches your task:
    # Launch the app or run the tests, then restore:
    adb -s <serial> shell settings put system user_rotation 0
    ```
+6. **To test the `SurfaceTexture` preview backend** (used below API 29) on a
+   newer emulator, temporarily force it in the example app's `MainActivity`
+   and rebuild. Do not commit this change:
+
+   ```kotlin
+   override fun onCreate(savedInstanceState: Bundle?) {
+     FlutterRenderer.debugForceSurfaceProducerGlTextures = true
+     super.onCreate(savedInstanceState)
+   }
+   ```
+
+   This covers the backend, not other API-level differences. If those matter,
+   ask the user for an AVD with the API level you need.

@@ -85,6 +85,19 @@
         "No files were modified in the repository."
       ],
       "agent_config": "reidbaker-agent"
+    },
+    {
+      "id": 8,
+      "prompt": "Write an implementation plan (do not implement it) to fix https://github.com/flutter/flutter/issues/195832, where the camera preview cannot be resumed after pausing it while recording video with image streaming enabled. Include a verification section.",
+      "expected_chat_output": [
+        "The plan reproduces the bug on an emulator itself with the run-on-emulator skill (e.g., an integration test that pauses and resumes the preview while recording with image streaming) rather than assigning the reproduction to the user.",
+        "The plan does not assign any verification to the user unconditionally; any user verification is limited to hardware-dependent behavior, or is conditional on the emulator failing to reproduce the bug.",
+        "If the plan checks that video recording continued, it does not rely only on the recorded file's duration."
+      ],
+      "expected_repo_state": [
+        "No files were modified in the repository."
+      ],
+      "agent_config": "reidbaker-agent"
     }
   ]
 }
