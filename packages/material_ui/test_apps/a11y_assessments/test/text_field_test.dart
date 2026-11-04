@@ -79,17 +79,24 @@ void main() {
 
     for (final key in <Key>[const Key('enabled text field'), const Key('disabled text field')]) {
       final Finder finder = find.byKey(key);
+      final Finder editableFinder = find.descendant(
+        of: finder,
+        matching: find.byType(EditableText),
+      );
       // On web, a single-line field with the email input type renders an
       // <input autocomplete="email">. A multiline field renders a <textarea>
       // with autocomplete="off".
       expect(
-        tester.getSemantics(finder),
+        tester.getSemantics(editableFinder),
         containsSemantics(inputType: SemanticsInputType.email, isMultiline: false),
       );
-      final EditableText editableText = tester.widget<EditableText>(
-        find.descendant(of: finder, matching: find.byType(EditableText)),
-      );
+      final EditableText editableText = tester.widget<EditableText>(editableFinder);
       expect(editableText.autofillHints, contains(AutofillHints.email));
     }
+  });
+
+  testWidgets('text field use case content is not a semantic list', (WidgetTester tester) async {
+    await pumpsUseCase(tester, TextFieldUseCase());
+    expect(hasSemanticsList(tester, find.byType(ListView)), isFalse);
   });
 }

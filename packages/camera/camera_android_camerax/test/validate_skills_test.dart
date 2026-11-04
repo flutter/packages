@@ -21,6 +21,7 @@ void main() {
 
     try {
       final Configuration config = await ConfigParser.loadConfig();
+      expect(config.parsingErrors, isEmpty, reason: 'Skills config failed to parse');
       final bool isValid = await validateSkills(
         config: config,
         customRules: [EnforceTrackedSkillsPreventPublishingRule()],
