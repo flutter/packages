@@ -68,7 +68,7 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi, HostCa
       with: binaryMessenger,
       instanceName: "1",
       streamHandler: streamHandlerOne)
-    streamHandlerOne.onCompleted = { channelOne.setStreamHandler(nil) }
+    streamHandlerOne.onCancelled = { channelOne.setStreamHandler(nil) }
     StreamConsistentNumbersStreamHandler.register(
       with: binaryMessenger,
       instanceName: "2",
@@ -2267,7 +2267,7 @@ class SendEvents: StreamEventsStreamHandler {
 
 class SendConsistentNumbers: StreamConsistentNumbersStreamHandler {
   let numberToSend: Int64
-  var onCompleted: (() -> Void)?
+  var onCancelled: (() -> Void)?
   init(numberToSend: Int64) {
     self.numberToSend = numberToSend
   }
@@ -2286,11 +2286,18 @@ class SendConsistentNumbers: StreamConsistentNumbersStreamHandler {
           if count >= 10 {
             sink.endOfStream()
             self.timer?.invalidate()
-            self.onCompleted?()
           }
         }
       }
     }
+  }
+
+  // Closing the stream causes the Dart side to send a "cancel" call, so any
+  // handler removal must wait until that call has been received. Removing the
+  // handler immediately after endOfStream races with the "cancel" call, which
+  // then fails with a MissingPluginException.
+  override func onCancel(withArguments arguments: Any?) {
+    onCancelled?()
   }
 }
 
