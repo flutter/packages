@@ -40,6 +40,9 @@ protocol WrappedAVPlayerItem: AnyObject {
 
   /// Wraps the underlying playerItem's videoComposition property.
   var videoComposition: AVVideoComposition? { get set }
+
+  /// Wraps the underlying playerItem's preferredForwardBufferDuration property.
+  var preferredForwardBufferDuration: TimeInterval { get set }
 }
 
 #if os(iOS)
@@ -138,6 +141,15 @@ class DefaultAVPlayerItem: WrappedAVPlayerItem {
     }
     set {
       avPlayerItem.videoComposition = newValue
+    }
+  }
+
+  var preferredForwardBufferDuration: TimeInterval {
+    get {
+      return avPlayerItem.preferredForwardBufferDuration
+    }
+    set {
+      avPlayerItem.preferredForwardBufferDuration = newValue
     }
   }
 }
