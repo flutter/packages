@@ -113,7 +113,7 @@ fully-featured iOS app, such as:
 * **Inputs & Selection**: `CupertinoTextField`, `CupertinoTextFormFieldRow`,
 `CupertinoFormSection`, `CupertinoFormRow`, `CupertinoSwitch`,
 `CupertinoSlider`, `CupertinoCheckbox`, `CupertinoRadio`,
-`CupertinoSearchTextField`
+`CupertinoColorPicker`, `CupertinoSearchTextField`
 * **Pickers & Dialogs**: `CupertinoPicker`, `CupertinoDatePicker`,
 `CupertinoTimerPicker`, `CupertinoAlertDialog`, `CupertinoActionSheet`,
 `CupertinoActionSheetAction`, `CupertinoPopupSurface`
