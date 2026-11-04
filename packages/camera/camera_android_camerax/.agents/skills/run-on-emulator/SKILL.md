@@ -6,9 +6,8 @@ metadata:
 ---
 # Run on Emulator
 
-Run all commands from the `camera_android_camerax` package root. Every task
-starts with sections 1 and 2, then continues with **3a** to run the
-integration tests or **3b** to run the example app.
+Run all commands from the `camera_android_camerax` package root. Work through
+the sections in order.
 
 ## 1. Should you use an emulator for this?
 
@@ -63,7 +62,17 @@ lists commands for some of these.
 Leave the emulator running for later runs. If you started it, stop it with
 `android emulator stop <serial>` when you are done.
 
-## 3a. Run the integration tests
+## 3. Run the integration tests or the example app
+
+Continue with the subsection that matches your task:
+
+- **3a. Run the integration tests** to reproduce a bug or verify a fix with a
+  test, or to run the full suite before pushing. Prefer this when the behavior
+  can be asserted in a test.
+- **3b. Run the example app** to check behavior that a test cannot assert
+  (e.g., a visual change), or to confirm that a change does not crash.
+
+### 3a. Run the integration tests
 
 1. **Grant permissions before every test command** (each `flutter test` or
    `drive-examples` run in step 2). Otherwise the camera permission dialog
@@ -92,7 +101,7 @@ Leave the emulator running for later runs. If you started it, stop it with
    failures, and report both results. Failures in the resolution preset tests
    are expected on an emulator (see section 1).
 
-## 3b. Run the example app
+### 3b. Run the example app
 
 1. **Build, install, and launch it** with permissions granted:
 
