@@ -92,26 +92,22 @@ internal class QuickActions(private val context: Context) : AndroidQuickActionsA
   private fun shortcutItemMessageToShortcutInfo(
       shortcuts: List<ShortcutItemMessage>
   ): List<ShortcutInfoCompat> {
-    val shortcutInfos: MutableList<ShortcutInfoCompat> = ArrayList()
+    return shortcuts
+        .map { shortcut ->
+          val type = shortcut.type
+          val title = shortcut.localizedTitle
+          val shortcutBuilder = ShortcutInfoCompat.Builder(context, type)
 
-    for (shortcut in shortcuts) {
-      val icon = shortcut.icon
-      val type = shortcut.type
-      val title = shortcut.localizedTitle
-      val shortcutBuilder = ShortcutInfoCompat.Builder(context, type)
+          val resourceId = loadResourceId(context, shortcut.icon)
+          val intent = getIntentToOpenMainActivity(type) ?: return@map null
 
-      val resourceId = loadResourceId(context, icon)
-      val intent = getIntentToOpenMainActivity(type) ?: continue
+          if (resourceId > 0) {
+            shortcutBuilder.setIcon(IconCompat.createWithResource(context, resourceId))
+          }
 
-      if (resourceId > 0) {
-        shortcutBuilder.setIcon(IconCompat.createWithResource(context, resourceId))
-      }
-
-      val shortcutInfo =
           shortcutBuilder.setLongLabel(title).setShortLabel(title).setIntent(intent).build()
-      shortcutInfos.add(shortcutInfo)
-    }
-    return shortcutInfos
+        }
+        .filterNotNull()
   }
 
   // This method requires doing dynamic resource lookup, which is a discouraged API.
