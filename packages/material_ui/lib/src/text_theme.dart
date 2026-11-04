@@ -152,10 +152,6 @@ class TextTheme with Diagnosticable {
   ///
   /// If you do decide to create your own text theme, consider using one of
   /// those predefined themes as a starting point for [copyWith] or [apply].
-  ///
-  /// The 2018 styles cannot be mixed with the 2021/2025 styles. Only one or the
-  /// other is allowed in this constructor. The 2018 styles are deprecated and
-  /// will eventually be removed.
   const TextTheme({
     this.displayLarge,
     this.displayMedium,
