@@ -2,7 +2,7 @@ name: cross_file
 description: An abstraction to allow working with files across multiple platforms.
 repository: https://github.com/flutter/packages/tree/main/packages/cross_file/cross_file
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+cross_file%22
-version: 0.4.0
+version: 0.4.1
 
 environment:
   sdk: ^3.11.0
@@ -40,3 +40,11 @@ dev_dependencies:
 topics:
   - files
   - cross-file
+# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
+# See https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#changing-federated-plugins
+dependency_overrides:
+  cross_file_android: {path: ../../../packages/cross_file/cross_file_android}
+  cross_file_darwin: {path: ../../../packages/cross_file/cross_file_darwin}
+  cross_file_io: {path: ../../../packages/cross_file/cross_file_io}
+  cross_file_platform_interface: {path: ../../../packages/cross_file/cross_file_platform_interface}
+  cross_file_web: {path: ../../../packages/cross_file/cross_file_web}

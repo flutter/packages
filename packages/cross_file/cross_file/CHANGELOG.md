@@ -1,3 +1,9 @@
+## 0.4.1
+
+* Adds support to modify files and directories. See `XFile.openWrite`, `XFile.writeAsString`,
+  `XFile.delete`, `XDirectory.createFile`, `XDirectory.createDirectory`, `XDirectory.delete`,
+  `ScopedStorageXFile.canWrite`, and `ScopedStorageXDirectory.canWrite`.
+
 ## 0.4.0
 
 * Updates `cross_file` to a package-separated federated plugin.

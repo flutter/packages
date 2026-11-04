@@ -36,4 +36,53 @@ void main() {
       (await testDirectory.list().toList()).map((FileSystemEntity entity) => entity.uri.toString()),
     );
   });
+
+  test('createFile', () async {
+    final Directory tempDir = Directory.systemTemp.createTempSync();
+    addTearDown(() => tempDir.deleteSync(recursive: true));
+
+    final directory = PlatformScopedStorageXDirectory(
+      PlatformScopedStorageXDirectoryCreationParams(uri: tempDir.uri.toString()),
+    );
+
+    final PlatformXFile file = await directory.createFile(
+      const PlatformCreateParams('new_file.txt'),
+    );
+
+    final String fileUri = path.join(tempDir.path, 'new_file.txt');
+    expect(file.params.uri, Uri.file(fileUri).toString());
+    expect(File(fileUri).existsSync(), isTrue);
+  });
+
+  test('createDirectory', () async {
+    final Directory tempDir = Directory.systemTemp.createTempSync();
+    addTearDown(() => tempDir.deleteSync(recursive: true));
+
+    final directory = PlatformScopedStorageXDirectory(
+      PlatformScopedStorageXDirectoryCreationParams(uri: tempDir.uri.toString()),
+    );
+
+    final PlatformXDirectory subDirectory = await directory.createDirectory(
+      const PlatformCreateParams('new_dir'),
+    );
+
+    final String subDirectoryUri = path.join(tempDir.path, 'new_dir');
+    expect(subDirectory.params.uri, Uri.directory(subDirectoryUri).toString());
+    expect(Directory(subDirectoryUri).existsSync(), isTrue);
+  });
+
+  test('delete', () async {
+    final Directory tempDir = Directory.systemTemp.createTempSync();
+    final testDir = Directory(path.join(tempDir.path, 'testDir'))..createSync();
+    addTearDown(() => tempDir.deleteSync(recursive: true));
+
+    final dir = PlatformScopedStorageXDirectory(
+      PlatformScopedStorageXDirectoryCreationParams(uri: testDir.uri.toString()),
+    );
+
+    expect(testDir.existsSync(), isTrue);
+    final bool success = await dir.delete(const PlatformDirectoryDeleteParams());
+    expect(success, isTrue);
+    expect(testDir.existsSync(), isFalse);
+  });
 }

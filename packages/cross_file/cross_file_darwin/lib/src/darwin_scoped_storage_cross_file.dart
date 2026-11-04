@@ -132,6 +132,36 @@ base class SecurityScopedDarwinScopedStorageXFile extends DarwinScopedStorageXFi
   }
 
   @override
+  Future<bool> canWrite() async {
+    return NSFileManager.getDefaultManager().isWritableFileAtPath(
+      Uri.parse(params.uri).toFilePath().toNSString(),
+    );
+  }
+
+  @override
+  StreamSink<Uint8List> openWrite(PlatformOpenWriteParams params) {
+    return _IOSinkWrapper(_file.openWrite());
+  }
+
+  @override
+  Future<PlatformXFile> writeAsString(PlatformWriteAsStringParams params) async {
+    final File file = await _file.writeAsString(params.contents, encoding: params.encoding);
+    return DarwinScopedStorageXFile(
+      DarwinScopedStorageXFileCreationParams.securityScoped(uri: file.uri.toString()),
+    );
+  }
+
+  @override
+  Future<bool> delete(PlatformFileDeleteParams params) async {
+    try {
+      await _file.delete();
+      return true;
+    } on FileSystemException {
+      return false;
+    }
+  }
+
+  @override
   Future<bool> exists() async => _file.existsSync();
 
   @override
@@ -255,6 +285,9 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
 
     return null;
   }
+
+  @override
+  Future<bool> canWrite() async => false;
 
   @override
   Future<void> dispose() async {
@@ -423,3 +456,26 @@ mixin SecurityScopedDarwinScopedStorageXFileExtension
 /// Provides platform-specific features for
 /// [PhotoKitDarwinScopedStorageXFile].
 mixin PhotoKitDarwinScopedStorageXFileExtension implements PlatformScopedStorageXFileExtension {}
+
+// A wrapper is necessary because the `IOSink` returned from File.openWrite
+// can't be casted to a `StreamSink<Uint8List>`.
+class _IOSinkWrapper implements StreamSink<Uint8List> {
+  _IOSinkWrapper(this._ioSink);
+
+  final IOSink _ioSink;
+
+  @override
+  void add(Uint8List event) => _ioSink.add(event);
+
+  @override
+  void addError(Object error, [StackTrace? stackTrace]) => _ioSink.addError(error, stackTrace);
+
+  @override
+  Future<dynamic> addStream(Stream<Uint8List> stream) => _ioSink.addStream(stream);
+
+  @override
+  Future<dynamic> close() => _ioSink.close();
+
+  @override
+  Future<dynamic> get done => _ioSink.done;
+}

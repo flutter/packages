@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
@@ -14,7 +15,12 @@ import 'package:mockito/mockito.dart';
 
 import 'android_scoped_storage_cross_file_test.mocks.dart';
 
-@GenerateMocks(<Type>[android.ContentResolver, android.DocumentFile, android.InputStream])
+@GenerateMocks(<Type>[
+  android.ContentResolver,
+  android.DocumentFile,
+  android.InputStream,
+  android.OutputStream,
+])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -82,6 +88,7 @@ void main() {
       );
 
       expect(combineLists(await file.openRead().toList()), testBytes);
+      verify(mockInputStream.close()).called(1);
     });
 
     test('openRead finishes successfully with file larger than max array len', () async {
@@ -186,6 +193,7 @@ void main() {
 
     final mockInputStream = MockInputStream();
     when(mockInputStream.readAllBytes()).thenAnswer((_) async => testBytes);
+    when(mockInputStream.close()).thenAnswer((_) async {});
 
     final mockContentResolver = MockContentResolver();
     when(mockContentResolver.openInputStream(uri)).thenAnswer((_) async => mockInputStream);
@@ -196,6 +204,7 @@ void main() {
     );
 
     expect(await file.readAsBytes(), testBytes);
+    verify(mockInputStream.close()).called(1);
   });
 
   test('readAsString', () async {
@@ -278,6 +287,151 @@ void main() {
 
     expect(await file.name(), name);
   });
+
+  test('canWrite', () async {
+    final mockDocumentFile = MockDocumentFile();
+    const canWrite = true;
+    when(mockDocumentFile.canWrite()).thenAnswer((_) async => canWrite);
+
+    const uri = 'uri';
+    android.PigeonOverrides.documentFile_fromSingleUri = ({required String singleUri}) {
+      expect(singleUri, uri);
+      return mockDocumentFile;
+    };
+
+    final file = AndroidScopedStorageXFile(
+      const PlatformScopedStorageXFileCreationParams(uri: uri),
+    );
+
+    expect(await file.canWrite(), canWrite);
+  });
+
+  test('delete', () async {
+    final mockDocumentFile = MockDocumentFile();
+    when(mockDocumentFile.delete()).thenAnswer((_) async => true);
+
+    const uri = 'uri';
+    android.PigeonOverrides.documentFile_fromSingleUri = ({required String singleUri}) {
+      expect(singleUri, uri);
+      return mockDocumentFile;
+    };
+
+    final file = AndroidScopedStorageXFile(
+      const PlatformScopedStorageXFileCreationParams(uri: uri),
+    );
+
+    expect(await file.delete(const PlatformFileDeleteParams()), true);
+  });
+
+  test('writeAsString', () async {
+    const testString = 'Hello, World!';
+    final Uint8List testBytes = utf8.encode(testString);
+
+    final mockDocumentFile = MockDocumentFile();
+
+    const uri = 'uri';
+    android.PigeonOverrides.documentFile_fromSingleUri = ({required String singleUri}) {
+      expect(singleUri, uri);
+      return mockDocumentFile;
+    };
+
+    final mockOutputStream = MockOutputStream();
+    final mockContentResolver = MockContentResolver();
+    when(mockContentResolver.openOutputStream(uri, 'w')).thenAnswer((_) async => mockOutputStream);
+    android.PigeonOverrides.contentResolver_instance = mockContentResolver;
+
+    final file = AndroidScopedStorageXFile(
+      const PlatformScopedStorageXFileCreationParams(uri: uri),
+    );
+
+    final PlatformXFile result = await file.writeAsString(
+      const PlatformWriteAsStringParams(testString),
+    );
+
+    expect(result, file);
+    verify(mockOutputStream.write(argThat(equals(testBytes)))).called(1);
+    verify(mockOutputStream.flush()).called(1);
+    verify(mockOutputStream.close()).called(1);
+  });
+
+  group('openWrite', () {
+    test('openWrite completes normally', () async {
+      const testString = 'Hello, World!';
+      final Uint8List testBytes = utf8.encode(testString);
+
+      final mockDocumentFile = MockDocumentFile();
+
+      const uri = 'uri';
+      android.PigeonOverrides.documentFile_fromSingleUri = ({required String singleUri}) {
+        expect(singleUri, uri);
+        return mockDocumentFile;
+      };
+
+      final mockOutputStream = MockOutputStream();
+      final mockContentResolver = MockContentResolver();
+      when(
+        mockContentResolver.openOutputStream(uri, 'w'),
+      ).thenAnswer((_) async => mockOutputStream);
+      android.PigeonOverrides.contentResolver_instance = mockContentResolver;
+
+      final file = AndroidScopedStorageXFile(
+        const PlatformScopedStorageXFileCreationParams(uri: uri),
+      );
+
+      final StreamSink<Uint8List> sink = file.openWrite(const PlatformOpenWriteParams());
+      sink.add(testBytes);
+      await sink.close();
+
+      verify(mockOutputStream.write(argThat(equals(testBytes)))).called(1);
+      verify(mockOutputStream.flush()).called(1);
+      verify(mockOutputStream.close()).called(1);
+    });
+
+    test('openWrite closes OutputStream when _AndroidStreamConsumer.addStream throws', () async {
+      const uri = 'uri';
+      final mockDocumentFile = MockDocumentFile();
+      android.PigeonOverrides.documentFile_fromSingleUri = ({required String singleUri}) {
+        return mockDocumentFile;
+      };
+
+      final mockOutputStream = MockOutputStream();
+      when(mockOutputStream.write(any)).thenThrow(Exception('Disk full'));
+      final mockContentResolver = MockContentResolver();
+      when(
+        mockContentResolver.openOutputStream(uri, 'w'),
+      ).thenAnswer((_) async => mockOutputStream);
+      android.PigeonOverrides.contentResolver_instance = mockContentResolver;
+
+      final file = AndroidScopedStorageXFile(
+        const PlatformScopedStorageXFileCreationParams(uri: uri),
+      );
+
+      final StreamSink<Uint8List> sink = file.openWrite(const PlatformOpenWriteParams());
+      sink.add(Uint8List.fromList(<int>[1, 2, 3]));
+      await expectLater(sink.close(), throwsException);
+
+      verify(mockOutputStream.close()).called(1);
+    });
+
+    test('openWrite throws exception if OutputStream when ', () async {
+      const uri = 'uri';
+      final mockDocumentFile = MockDocumentFile();
+      android.PigeonOverrides.documentFile_fromSingleUri = ({required String singleUri}) {
+        return mockDocumentFile;
+      };
+
+      final mockContentResolver = MockContentResolver();
+      when(mockContentResolver.openOutputStream(uri, 'w')).thenAnswer((_) async => null);
+      android.PigeonOverrides.contentResolver_instance = mockContentResolver;
+
+      final file = AndroidScopedStorageXFile(
+        const PlatformScopedStorageXFileCreationParams(uri: uri),
+      );
+
+      final StreamSink<Uint8List> sink = file.openWrite(const PlatformOpenWriteParams());
+      await expectLater(sink.close(), throwsA(isA<NullOutputStreamException>()));
+    });
+  });
 }
 
 void setUpInputStreamWithBytes(MockInputStream mockInputStream, Uint8List bytes) {
@@ -304,6 +458,8 @@ void setUpInputStreamWithBytes(MockInputStream mockInputStream, Uint8List bytes)
 
     return Uint8List.fromList(bytesRead);
   });
+
+  when(mockInputStream.close()).thenAnswer((_) async {});
 }
 
 Uint8List combineLists(List<Uint8List> lists) {

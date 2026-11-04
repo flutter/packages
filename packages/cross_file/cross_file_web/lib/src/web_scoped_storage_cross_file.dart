@@ -26,7 +26,7 @@ sealed class WebScopedStorageXFileCreationParams extends PlatformScopedStorageXF
 
   /// Constructs a [WebScopedStorageXFileCreationParams] with a [Blob].
   ///
-  /// Creates an Object URL using the provided blob. See [URL.createObjectURL]
+  /// Creates an Object URL using the provided blob. See [URL.createObjectURL].
   ///
   /// `autoRevokeObjectUrl`: Whether the unique object url obtained created with
   /// [blob] should be revoked when this instance is garbage collected. See
@@ -176,6 +176,9 @@ base class WebScopedStorageXFile extends PlatformScopedStorageXFile
     final Blob blob = await getBlob();
     return blob.isA<File>() ? (blob as File).name : null;
   }
+
+  @override
+  Future<bool> canWrite() async => false;
 
   @override
   Future<void> dispose() async {

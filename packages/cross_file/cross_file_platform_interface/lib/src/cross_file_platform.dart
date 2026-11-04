@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
@@ -9,6 +10,7 @@ import 'file_system/platform_file_system_cross_directory.dart';
 import 'file_system/platform_file_system_cross_file.dart';
 import 'platform_cross_directory.dart';
 import 'platform_cross_entity.dart';
+import 'platform_cross_file.dart';
 import 'scoped_storage/platform_scoped_storage_cross_directory.dart';
 import 'scoped_storage/platform_scoped_storage_cross_file.dart';
 
@@ -85,6 +87,21 @@ final class _DefaultFileSystemXFile extends PlatformFileSystemXFile {
   Future<PlatformFileSystemXFile> writeAsBytes(PlatformWriteAsBytesParams params) {
     throw UnsupportedError('This instance does not represent any resource.');
   }
+
+  @override
+  StreamSink<Uint8List> openWrite(PlatformOpenWriteParams params) {
+    throw UnsupportedError('This instance does not represent any resource.');
+  }
+
+  @override
+  Future<PlatformXFile> writeAsString(PlatformWriteAsStringParams params) {
+    throw UnsupportedError('This instance does not represent any resource.');
+  }
+
+  @override
+  Future<bool> delete(PlatformFileDeleteParams params) {
+    throw UnsupportedError('This instance does not represent any resource.');
+  }
 }
 
 /// Implementation of [PlatformFileSystemXDirectory] that represents a directory
@@ -97,6 +114,21 @@ final class _DefaultFileSystemXDirectory extends PlatformFileSystemXDirectory {
 
   @override
   Stream<PlatformXEntity> list(PlatformListParams params) async* {
+    throw UnsupportedError('This instance does not represent any directory.');
+  }
+
+  @override
+  Future<PlatformXFile> createFile(PlatformCreateParams params) {
+    throw UnsupportedError('This instance does not represent any directory.');
+  }
+
+  @override
+  Future<PlatformXDirectory> createDirectory(PlatformCreateParams params) {
+    throw UnsupportedError('This instance does not represent any directory.');
+  }
+
+  @override
+  Future<bool> delete(PlatformDirectoryDeleteParams params) {
     throw UnsupportedError('This instance does not represent any directory.');
   }
 }
@@ -137,6 +169,24 @@ final class _DefaultScopedStorageXFile extends PlatformScopedStorageXFile {
   }
 
   @override
+  Future<bool> canWrite() async => false;
+
+  @override
+  StreamSink<Uint8List> openWrite(PlatformOpenWriteParams params) {
+    throw UnsupportedError('This instance does not represent any resource.');
+  }
+
+  @override
+  Future<PlatformXFile> writeAsString(PlatformWriteAsStringParams params) {
+    throw UnsupportedError('This instance does not represent any resource.');
+  }
+
+  @override
+  Future<bool> delete(PlatformFileDeleteParams params) {
+    throw UnsupportedError('This instance does not represent any resource.');
+  }
+
+  @override
   Future<void> dispose() async {}
 }
 
@@ -153,6 +203,24 @@ final class _DefaultScopedStorageXDirectory extends PlatformScopedStorageXDirect
 
   @override
   Stream<PlatformXEntity> list(PlatformListParams params) async* {
+    throw UnsupportedError('This instance does not represent any directory.');
+  }
+
+  @override
+  Future<bool> canWrite() async => false;
+
+  @override
+  Future<PlatformXFile> createFile(PlatformCreateParams params) {
+    throw UnsupportedError('This instance does not represent any directory.');
+  }
+
+  @override
+  Future<PlatformXDirectory> createDirectory(PlatformCreateParams params) {
+    throw UnsupportedError('This instance does not represent any directory.');
+  }
+
+  @override
+  Future<bool> delete(PlatformDirectoryDeleteParams params) {
     throw UnsupportedError('This instance does not represent any directory.');
   }
 
