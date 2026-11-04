@@ -30,4 +30,11 @@ void main() {
     await tester.pumpAndSettle();
     expect(findHeadingLevelOnes, findsOne);
   });
+
+  testWidgets('check box list tile use case content is a semantic list', (
+    WidgetTester tester,
+  ) async {
+    await pumpsUseCase(tester, CheckBoxListTile());
+    expect(hasSemanticsList(tester, find.byType(ListView)), isTrue);
+  });
 }

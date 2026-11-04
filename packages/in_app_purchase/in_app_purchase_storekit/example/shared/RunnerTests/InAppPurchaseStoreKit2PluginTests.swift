@@ -134,6 +134,51 @@ final class InAppPurchase2PluginTests: XCTestCase {
     await fulfillment(of: [transactionExpectation], timeout: purchaseTimeout)
   }
 
+  func testGetCurrentEntitlements() async throws {
+    let subscriptionExpectation = self.expectation(
+      description: "Subscription purchase should succeed")
+    let consumableExpectation = self.expectation(description: "Consumable purchase should succeed")
+    let entitlementsExpectation = self.expectation(
+      description: "Getting current entitlements should succeed")
+
+    plugin.purchase(id: "subscription_silver", options: nil) { result in
+      switch result {
+      case .success:
+        subscriptionExpectation.fulfill()
+      case .failure(let error):
+        XCTFail("Subscription purchase should NOT fail. Failed with \(error)")
+        subscriptionExpectation.fulfill()
+      }
+    }
+    await fulfillment(of: [subscriptionExpectation], timeout: purchaseTimeout)
+
+    plugin.purchase(id: "consumable", options: nil) { result in
+      switch result {
+      case .success:
+        consumableExpectation.fulfill()
+      case .failure(let error):
+        XCTFail("Consumable purchase should NOT fail. Failed with \(error)")
+        consumableExpectation.fulfill()
+      }
+    }
+    await fulfillment(of: [consumableExpectation], timeout: purchaseTimeout)
+
+    plugin.currentEntitlements { result in
+      switch result {
+      case .success(let transactions):
+        XCTAssertEqual(transactions.count, 1)
+        XCTAssertEqual(transactions.first?.productId, "subscription_silver")
+        XCTAssertNotNil(transactions.first?.receiptData)
+        XCTAssertEqual(transactions.first?.status, .purchased)
+        entitlementsExpectation.fulfill()
+      case .failure(let error):
+        XCTFail("Getting current entitlements should NOT fail. Failed with \(error)")
+        entitlementsExpectation.fulfill()
+      }
+    }
+    await fulfillment(of: [entitlementsExpectation], timeout: purchaseTimeout)
+  }
+
   func testGetDiscountedProducts() async throws {
     let expectation = self.expectation(description: "products successfully fetched")
 
