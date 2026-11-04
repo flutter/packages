@@ -17,7 +17,6 @@ import androidx.core.graphics.drawable.IconCompat
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.ThreadPoolExecutor
 import java.util.concurrent.TimeUnit
-import kotlin.jvm.functions.Function1
 
 internal class QuickActions(private val context: Context) : AndroidQuickActionsApi {
   var activity: Activity? = null
@@ -28,36 +27,35 @@ internal class QuickActions(private val context: Context) : AndroidQuickActionsA
     get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1
 
   override fun setShortcutItems(
-      itemsList: MutableList<ShortcutItemMessage>,
-      callback: Function1<in Result<Unit>, Unit>
+      itemsList: List<ShortcutItemMessage>,
+      callback: (Result<Unit>) -> Unit
   ) {
     if (!this.isVersionAllowed) {
       callback(Result.success(Unit))
       return
     }
     val shortcuts = shortcutItemMessageToShortcutInfo(itemsList)
-    val executor = ThreadPoolExecutor(0, 1, 1, TimeUnit.SECONDS, LinkedBlockingQueue<Runnable?>())
+    val executor = ThreadPoolExecutor(0, 1, 1, TimeUnit.SECONDS, LinkedBlockingQueue())
 
-    executor.execute(
-        Runnable {
-          var dynamicShortcutsSet = false
-          try {
-            ShortcutManagerCompat.setDynamicShortcuts(context, shortcuts)
-            dynamicShortcutsSet = true
-          } catch (e: Exception) {
-            // Leave dynamicShortcutsSet as false
-          }
-          if (dynamicShortcutsSet) {
-            callback(Result.success(Unit))
-          } else {
-            callback(
-                Result.failure(
-                    FlutterError(
-                        "quick_action_setshortcutitems_failure",
-                        "Exception thrown when setting dynamic shortcuts",
-                        null)))
-          }
-        })
+    executor.execute {
+      var dynamicShortcutsSet = false
+      try {
+        ShortcutManagerCompat.setDynamicShortcuts(context, shortcuts)
+        dynamicShortcutsSet = true
+      } catch (_: Exception) {
+        // Leave dynamicShortcutsSet as false
+      }
+      if (dynamicShortcutsSet) {
+        callback(Result.success(Unit))
+      } else {
+        callback(
+            Result.failure(
+                FlutterError(
+                    "quick_action_setshortcutitems_failure",
+                    "Exception thrown when setting dynamic shortcuts",
+                    null)))
+      }
+    }
   }
 
   override fun clearShortcutItems() {
@@ -71,6 +69,7 @@ internal class QuickActions(private val context: Context) : AndroidQuickActionsA
     if (!this.isVersionAllowed) {
       return null
     }
+    val activity = this.activity
     if (activity == null) {
       // The engine can run without an attached activity, for instance when it is cached and warmed
       // up by a background service. Nothing launched the app in that case, so there is no launch
@@ -79,9 +78,9 @@ internal class QuickActions(private val context: Context) : AndroidQuickActionsA
       Log.d(TAG, "There is no activity available when getting the launch action.")
       return null
     }
-    val intent = activity!!.getIntent()
+    val intent = activity.intent
     val launchAction = intent.getStringExtra(EXTRA_ACTION)
-    if (launchAction != null && !launchAction.isEmpty()) {
+    if (!launchAction.isNullOrEmpty()) {
       ShortcutManagerCompat.reportShortcutUsed(context, launchAction)
       intent.removeExtra(EXTRA_ACTION)
     }
@@ -91,9 +90,9 @@ internal class QuickActions(private val context: Context) : AndroidQuickActionsA
   @SuppressLint("UseRequiresApi")
   @TargetApi(Build.VERSION_CODES.N_MR1)
   private fun shortcutItemMessageToShortcutInfo(
-      shortcuts: MutableList<ShortcutItemMessage>
-  ): MutableList<ShortcutInfoCompat?> {
-    val shortcutInfos: MutableList<ShortcutInfoCompat?> = ArrayList<ShortcutInfoCompat?>()
+      shortcuts: List<ShortcutItemMessage>
+  ): List<ShortcutInfoCompat> {
+    val shortcutInfos: MutableList<ShortcutInfoCompat> = ArrayList()
 
     for (shortcut in shortcuts) {
       val icon = shortcut.icon
@@ -102,7 +101,7 @@ internal class QuickActions(private val context: Context) : AndroidQuickActionsA
       val shortcutBuilder = ShortcutInfoCompat.Builder(context, type)
 
       val resourceId = loadResourceId(context, icon)
-      val intent = getIntentToOpenMainActivity(type)
+      val intent = getIntentToOpenMainActivity(type) ?: continue
 
       if (resourceId > 0) {
         shortcutBuilder.setIcon(IconCompat.createWithResource(context, resourceId))
@@ -116,31 +115,31 @@ internal class QuickActions(private val context: Context) : AndroidQuickActionsA
   }
 
   // This method requires doing dynamic resource lookup, which is a discouraged API.
+  @SuppressWarnings("DiscouragedApi")
   private fun loadResourceId(context: Context, icon: String?): Int {
     if (icon == null) {
       return 0
     }
-    val packageName = context.getPackageName()
-    val res = context.getResources()
+    val packageName = context.packageName
+    val res = context.resources
     val resourceId = res.getIdentifier(icon, "drawable", packageName)
 
-    if (resourceId == 0) {
-      return res.getIdentifier(icon, "mipmap", packageName)
+    return if (resourceId == 0) {
+      res.getIdentifier(icon, "mipmap", packageName)
     } else {
-      return resourceId
+      resourceId
     }
   }
 
-  private fun getIntentToOpenMainActivity(type: String?): Intent {
-    val packageName = context.getPackageName()
+  private fun getIntentToOpenMainActivity(type: String?): Intent? {
+    val packageName = context.packageName
 
-    return context
-        .getPackageManager()
-        .getLaunchIntentForPackage(packageName)!!
-        .setAction(Intent.ACTION_RUN)
-        .putExtra(EXTRA_ACTION, type)
-        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+    return context.packageManager
+        .getLaunchIntentForPackage(packageName)
+        ?.setAction(Intent.ACTION_RUN)
+        ?.putExtra(EXTRA_ACTION, type)
+        ?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        ?.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
   }
 
   companion object {
