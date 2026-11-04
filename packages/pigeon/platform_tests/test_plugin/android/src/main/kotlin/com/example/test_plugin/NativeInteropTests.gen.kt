@@ -2197,9 +2197,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val everythingArg = pigeonVar_decodedArgs[0] as NativeInteropAllTypes
+      val pigeonVar_arg_everything = pigeonVar_decodedArgs[0] as NativeInteropAllTypes
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.echoAllTypes(everythingArg))
+          pigeonVar_api.echoAllTypes(pigeonVar_arg_everything))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -2345,9 +2345,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val anObjectArg = pigeonVar_decodedArgs[0] as Any
+      val pigeonVar_arg_anObject = pigeonVar_decodedArgs[0] as Any
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.echoObject(anObjectArg))
+          pigeonVar_api.echoObject(pigeonVar_arg_anObject))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -2361,8 +2361,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val listArg = pigeonVar_decodedArgs[0] as List<Any?>
-      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(pigeonVar_api.echoList(listArg))
+      val pigeonVar_arg_list = pigeonVar_decodedArgs[0] as List<Any?>
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoList(pigeonVar_arg_list))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -2376,9 +2377,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val stringListArg = pigeonVar_decodedArgs[0] as List<String?>
+      val pigeonVar_arg_stringList = pigeonVar_decodedArgs[0] as List<String?>
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.echoStringList(stringListArg))
+          pigeonVar_api.echoStringList(pigeonVar_arg_stringList))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -2392,9 +2393,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val intListArg = pigeonVar_decodedArgs[0] as List<Long?>
+      val pigeonVar_arg_intList = pigeonVar_decodedArgs[0] as List<Long?>
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.echoIntList(intListArg))
+          pigeonVar_api.echoIntList(pigeonVar_arg_intList))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -2408,9 +2409,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val doubleListArg = pigeonVar_decodedArgs[0] as List<Double?>
+      val pigeonVar_arg_doubleList = pigeonVar_decodedArgs[0] as List<Double?>
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.echoDoubleList(doubleListArg))
+          pigeonVar_api.echoDoubleList(pigeonVar_arg_doubleList))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -2424,9 +2425,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val boolListArg = pigeonVar_decodedArgs[0] as List<Boolean?>
+      val pigeonVar_arg_boolList = pigeonVar_decodedArgs[0] as List<Boolean?>
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.echoBoolList(boolListArg))
+          pigeonVar_api.echoBoolList(pigeonVar_arg_boolList))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -2440,9 +2441,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val enumListArg = pigeonVar_decodedArgs[0] as List<NativeInteropAnEnum?>
+      val pigeonVar_arg_enumList = pigeonVar_decodedArgs[0] as List<NativeInteropAnEnum?>
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.echoEnumList(enumListArg))
+          pigeonVar_api.echoEnumList(pigeonVar_arg_enumList))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -2456,9 +2457,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val classListArg = pigeonVar_decodedArgs[0] as List<NativeInteropAllNullableTypes?>
+      val pigeonVar_arg_classList = pigeonVar_decodedArgs[0] as List<NativeInteropAllNullableTypes?>
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.echoClassList(classListArg))
+          pigeonVar_api.echoClassList(pigeonVar_arg_classList))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -2472,9 +2473,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val enumListArg = pigeonVar_decodedArgs[0] as List<NativeInteropAnEnum>
+      val pigeonVar_arg_enumList = pigeonVar_decodedArgs[0] as List<NativeInteropAnEnum>
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.echoNonNullEnumList(enumListArg))
+          pigeonVar_api.echoNonNullEnumList(pigeonVar_arg_enumList))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -2488,9 +2489,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val classListArg = pigeonVar_decodedArgs[0] as List<NativeInteropAllNullableTypes>
+      val pigeonVar_arg_classList = pigeonVar_decodedArgs[0] as List<NativeInteropAllNullableTypes>
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.echoNonNullClassList(classListArg))
+          pigeonVar_api.echoNonNullClassList(pigeonVar_arg_classList))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -2504,8 +2505,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val mapArg = pigeonVar_decodedArgs[0] as Map<Any?, Any?>
-      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(pigeonVar_api.echoMap(mapArg))
+      val pigeonVar_arg_map = pigeonVar_decodedArgs[0] as Map<Any?, Any?>
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoMap(pigeonVar_arg_map))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -2519,9 +2521,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val stringMapArg = pigeonVar_decodedArgs[0] as Map<String?, String?>
+      val pigeonVar_arg_stringMap = pigeonVar_decodedArgs[0] as Map<String?, String?>
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.echoStringMap(stringMapArg))
+          pigeonVar_api.echoStringMap(pigeonVar_arg_stringMap))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -2535,8 +2537,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val intMapArg = pigeonVar_decodedArgs[0] as Map<Long?, Long?>
-      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(pigeonVar_api.echoIntMap(intMapArg))
+      val pigeonVar_arg_intMap = pigeonVar_decodedArgs[0] as Map<Long?, Long?>
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoIntMap(pigeonVar_arg_intMap))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -2550,9 +2553,10 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val enumMapArg = pigeonVar_decodedArgs[0] as Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
+      val pigeonVar_arg_enumMap =
+          pigeonVar_decodedArgs[0] as Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.echoEnumMap(enumMapArg))
+          pigeonVar_api.echoEnumMap(pigeonVar_arg_enumMap))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -2566,9 +2570,10 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val classMapArg = pigeonVar_decodedArgs[0] as Map<Long?, NativeInteropAllNullableTypes?>
+      val pigeonVar_arg_classMap =
+          pigeonVar_decodedArgs[0] as Map<Long?, NativeInteropAllNullableTypes?>
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.echoClassMap(classMapArg))
+          pigeonVar_api.echoClassMap(pigeonVar_arg_classMap))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -2582,9 +2587,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val stringMapArg = pigeonVar_decodedArgs[0] as Map<String, String>
+      val pigeonVar_arg_stringMap = pigeonVar_decodedArgs[0] as Map<String, String>
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.echoNonNullStringMap(stringMapArg))
+          pigeonVar_api.echoNonNullStringMap(pigeonVar_arg_stringMap))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -2598,9 +2603,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val intMapArg = pigeonVar_decodedArgs[0] as Map<Long, Long>
+      val pigeonVar_arg_intMap = pigeonVar_decodedArgs[0] as Map<Long, Long>
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.echoNonNullIntMap(intMapArg))
+          pigeonVar_api.echoNonNullIntMap(pigeonVar_arg_intMap))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -2614,9 +2619,10 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val enumMapArg = pigeonVar_decodedArgs[0] as Map<NativeInteropAnEnum, NativeInteropAnEnum>
+      val pigeonVar_arg_enumMap =
+          pigeonVar_decodedArgs[0] as Map<NativeInteropAnEnum, NativeInteropAnEnum>
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.echoNonNullEnumMap(enumMapArg))
+          pigeonVar_api.echoNonNullEnumMap(pigeonVar_arg_enumMap))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -2630,9 +2636,10 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val classMapArg = pigeonVar_decodedArgs[0] as Map<Long, NativeInteropAllNullableTypes>
+      val pigeonVar_arg_classMap =
+          pigeonVar_decodedArgs[0] as Map<Long, NativeInteropAllNullableTypes>
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.echoNonNullClassMap(classMapArg))
+          pigeonVar_api.echoNonNullClassMap(pigeonVar_arg_classMap))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -2646,9 +2653,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val wrapperArg = pigeonVar_decodedArgs[0] as NativeInteropAllClassesWrapper
+      val pigeonVar_arg_wrapper = pigeonVar_decodedArgs[0] as NativeInteropAllClassesWrapper
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.echoClassWrapper(wrapperArg))
+          pigeonVar_api.echoClassWrapper(pigeonVar_arg_wrapper))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -2662,9 +2669,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val sealedClassArg = pigeonVar_decodedArgs[0] as NativeInteropSealedClass
+      val pigeonVar_arg_sealedClass = pigeonVar_decodedArgs[0] as NativeInteropSealedClass
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.echoSealedClass(sealedClassArg))
+          pigeonVar_api.echoSealedClass(pigeonVar_arg_sealedClass))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -2678,9 +2685,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val sealedClassArg = pigeonVar_decodedArgs[0] as NativeInteropSealedClass?
+      val pigeonVar_arg_sealedClass = pigeonVar_decodedArgs[0] as NativeInteropSealedClass?
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.echoNullableSealedClass(sealedClassArg))
+          pigeonVar_api.echoNullableSealedClass(pigeonVar_arg_sealedClass))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -2694,9 +2701,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val sealedClassListArg = pigeonVar_decodedArgs[0] as List<NativeInteropSealedClass>
+      val pigeonVar_arg_sealedClassList = pigeonVar_decodedArgs[0] as List<NativeInteropSealedClass>
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.echoSealedClassList(sealedClassListArg))
+          pigeonVar_api.echoSealedClassList(pigeonVar_arg_sealedClassList))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -2710,9 +2717,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val wrapperArg = pigeonVar_decodedArgs[0] as NativeInteropSealedClassWrapper
+      val pigeonVar_arg_wrapper = pigeonVar_decodedArgs[0] as NativeInteropSealedClassWrapper
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.echoSealedClassWrapper(wrapperArg))
+          pigeonVar_api.echoSealedClassWrapper(pigeonVar_arg_wrapper))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -2789,9 +2796,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val everythingArg = pigeonVar_decodedArgs[0] as NativeInteropAllNullableTypes?
+      val pigeonVar_arg_everything = pigeonVar_decodedArgs[0] as NativeInteropAllNullableTypes?
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.echoAllNullableTypes(everythingArg))
+          pigeonVar_api.echoAllNullableTypes(pigeonVar_arg_everything))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -2805,9 +2812,10 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val everythingArg = pigeonVar_decodedArgs[0] as NativeInteropAllNullableTypesWithoutRecursion?
+      val pigeonVar_arg_everything =
+          pigeonVar_decodedArgs[0] as NativeInteropAllNullableTypesWithoutRecursion?
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.echoAllNullableTypesWithoutRecursion(everythingArg))
+          pigeonVar_api.echoAllNullableTypesWithoutRecursion(pigeonVar_arg_everything))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -2821,8 +2829,8 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val wrapperArg = pigeonVar_decodedArgs[0] as NativeInteropAllClassesWrapper
-      return pigeonVar_api.extractNestedNullableString(wrapperArg)
+      val pigeonVar_arg_wrapper = pigeonVar_decodedArgs[0] as NativeInteropAllClassesWrapper
+      return pigeonVar_api.extractNestedNullableString(pigeonVar_arg_wrapper)
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -2980,9 +2988,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val aNullableObjectArg = pigeonVar_decodedArgs[0]
+      val pigeonVar_arg_aNullableObject = pigeonVar_decodedArgs[0]
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.echoNullableObject(aNullableObjectArg))
+          pigeonVar_api.echoNullableObject(pigeonVar_arg_aNullableObject))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -2996,9 +3004,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val aNullableListArg = pigeonVar_decodedArgs[0] as List<Any?>?
+      val pigeonVar_arg_aNullableList = pigeonVar_decodedArgs[0] as List<Any?>?
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.echoNullableList(aNullableListArg))
+          pigeonVar_api.echoNullableList(pigeonVar_arg_aNullableList))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -3012,9 +3020,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val enumListArg = pigeonVar_decodedArgs[0] as List<NativeInteropAnEnum?>?
+      val pigeonVar_arg_enumList = pigeonVar_decodedArgs[0] as List<NativeInteropAnEnum?>?
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.echoNullableEnumList(enumListArg))
+          pigeonVar_api.echoNullableEnumList(pigeonVar_arg_enumList))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -3028,9 +3036,10 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val classListArg = pigeonVar_decodedArgs[0] as List<NativeInteropAllNullableTypes?>?
+      val pigeonVar_arg_classList =
+          pigeonVar_decodedArgs[0] as List<NativeInteropAllNullableTypes?>?
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.echoNullableClassList(classListArg))
+          pigeonVar_api.echoNullableClassList(pigeonVar_arg_classList))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -3044,9 +3053,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val enumListArg = pigeonVar_decodedArgs[0] as List<NativeInteropAnEnum>?
+      val pigeonVar_arg_enumList = pigeonVar_decodedArgs[0] as List<NativeInteropAnEnum>?
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.echoNullableNonNullEnumList(enumListArg))
+          pigeonVar_api.echoNullableNonNullEnumList(pigeonVar_arg_enumList))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -3060,9 +3069,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val classListArg = pigeonVar_decodedArgs[0] as List<NativeInteropAllNullableTypes>?
+      val pigeonVar_arg_classList = pigeonVar_decodedArgs[0] as List<NativeInteropAllNullableTypes>?
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.echoNullableNonNullClassList(classListArg))
+          pigeonVar_api.echoNullableNonNullClassList(pigeonVar_arg_classList))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -3076,9 +3085,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val mapArg = pigeonVar_decodedArgs[0] as Map<Any?, Any?>?
+      val pigeonVar_arg_map = pigeonVar_decodedArgs[0] as Map<Any?, Any?>?
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.echoNullableMap(mapArg))
+          pigeonVar_api.echoNullableMap(pigeonVar_arg_map))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -3092,9 +3101,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val stringMapArg = pigeonVar_decodedArgs[0] as Map<String?, String?>?
+      val pigeonVar_arg_stringMap = pigeonVar_decodedArgs[0] as Map<String?, String?>?
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.echoNullableStringMap(stringMapArg))
+          pigeonVar_api.echoNullableStringMap(pigeonVar_arg_stringMap))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -3108,9 +3117,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val intMapArg = pigeonVar_decodedArgs[0] as Map<Long?, Long?>?
+      val pigeonVar_arg_intMap = pigeonVar_decodedArgs[0] as Map<Long?, Long?>?
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.echoNullableIntMap(intMapArg))
+          pigeonVar_api.echoNullableIntMap(pigeonVar_arg_intMap))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -3124,9 +3133,10 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val enumMapArg = pigeonVar_decodedArgs[0] as Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
+      val pigeonVar_arg_enumMap =
+          pigeonVar_decodedArgs[0] as Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.echoNullableEnumMap(enumMapArg))
+          pigeonVar_api.echoNullableEnumMap(pigeonVar_arg_enumMap))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -3140,9 +3150,10 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val classMapArg = pigeonVar_decodedArgs[0] as Map<Long?, NativeInteropAllNullableTypes?>?
+      val pigeonVar_arg_classMap =
+          pigeonVar_decodedArgs[0] as Map<Long?, NativeInteropAllNullableTypes?>?
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.echoNullableClassMap(classMapArg))
+          pigeonVar_api.echoNullableClassMap(pigeonVar_arg_classMap))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -3156,9 +3167,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val stringMapArg = pigeonVar_decodedArgs[0] as Map<String, String>?
+      val pigeonVar_arg_stringMap = pigeonVar_decodedArgs[0] as Map<String, String>?
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.echoNullableNonNullStringMap(stringMapArg))
+          pigeonVar_api.echoNullableNonNullStringMap(pigeonVar_arg_stringMap))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -3172,9 +3183,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val intMapArg = pigeonVar_decodedArgs[0] as Map<Long, Long>?
+      val pigeonVar_arg_intMap = pigeonVar_decodedArgs[0] as Map<Long, Long>?
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.echoNullableNonNullIntMap(intMapArg))
+          pigeonVar_api.echoNullableNonNullIntMap(pigeonVar_arg_intMap))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -3188,9 +3199,10 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val enumMapArg = pigeonVar_decodedArgs[0] as Map<NativeInteropAnEnum, NativeInteropAnEnum>?
+      val pigeonVar_arg_enumMap =
+          pigeonVar_decodedArgs[0] as Map<NativeInteropAnEnum, NativeInteropAnEnum>?
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.echoNullableNonNullEnumMap(enumMapArg))
+          pigeonVar_api.echoNullableNonNullEnumMap(pigeonVar_arg_enumMap))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -3204,9 +3216,10 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val classMapArg = pigeonVar_decodedArgs[0] as Map<Long, NativeInteropAllNullableTypes>?
+      val pigeonVar_arg_classMap =
+          pigeonVar_decodedArgs[0] as Map<Long, NativeInteropAllNullableTypes>?
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.echoNullableNonNullClassMap(classMapArg))
+          pigeonVar_api.echoNullableNonNullClassMap(pigeonVar_arg_classMap))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -3383,9 +3396,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val anObjectArg = pigeonVar_decodedArgs[0] as Any
+      val pigeonVar_arg_anObject = pigeonVar_decodedArgs[0] as Any
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.echoAsyncObject(anObjectArg))
+          pigeonVar_api.echoAsyncObject(pigeonVar_arg_anObject))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -3399,8 +3412,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val listArg = pigeonVar_decodedArgs[0] as List<Any?>
-      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(pigeonVar_api.echoAsyncList(listArg))
+      val pigeonVar_arg_list = pigeonVar_decodedArgs[0] as List<Any?>
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoAsyncList(pigeonVar_arg_list))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -3414,9 +3428,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val enumListArg = pigeonVar_decodedArgs[0] as List<NativeInteropAnEnum?>
+      val pigeonVar_arg_enumList = pigeonVar_decodedArgs[0] as List<NativeInteropAnEnum?>
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.echoAsyncEnumList(enumListArg))
+          pigeonVar_api.echoAsyncEnumList(pigeonVar_arg_enumList))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -3430,9 +3444,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val classListArg = pigeonVar_decodedArgs[0] as List<NativeInteropAllNullableTypes?>
+      val pigeonVar_arg_classList = pigeonVar_decodedArgs[0] as List<NativeInteropAllNullableTypes?>
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.echoAsyncClassList(classListArg))
+          pigeonVar_api.echoAsyncClassList(pigeonVar_arg_classList))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -3446,8 +3460,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val mapArg = pigeonVar_decodedArgs[0] as Map<Any?, Any?>
-      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(pigeonVar_api.echoAsyncMap(mapArg))
+      val pigeonVar_arg_map = pigeonVar_decodedArgs[0] as Map<Any?, Any?>
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoAsyncMap(pigeonVar_arg_map))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -3461,9 +3476,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val stringMapArg = pigeonVar_decodedArgs[0] as Map<String?, String?>
+      val pigeonVar_arg_stringMap = pigeonVar_decodedArgs[0] as Map<String?, String?>
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.echoAsyncStringMap(stringMapArg))
+          pigeonVar_api.echoAsyncStringMap(pigeonVar_arg_stringMap))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -3477,9 +3492,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val intMapArg = pigeonVar_decodedArgs[0] as Map<Long?, Long?>
+      val pigeonVar_arg_intMap = pigeonVar_decodedArgs[0] as Map<Long?, Long?>
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.echoAsyncIntMap(intMapArg))
+          pigeonVar_api.echoAsyncIntMap(pigeonVar_arg_intMap))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -3493,9 +3508,10 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val enumMapArg = pigeonVar_decodedArgs[0] as Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
+      val pigeonVar_arg_enumMap =
+          pigeonVar_decodedArgs[0] as Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.echoAsyncEnumMap(enumMapArg))
+          pigeonVar_api.echoAsyncEnumMap(pigeonVar_arg_enumMap))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -3509,9 +3525,10 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val classMapArg = pigeonVar_decodedArgs[0] as Map<Long?, NativeInteropAllNullableTypes?>
+      val pigeonVar_arg_classMap =
+          pigeonVar_decodedArgs[0] as Map<Long?, NativeInteropAllNullableTypes?>
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.echoAsyncClassMap(classMapArg))
+          pigeonVar_api.echoAsyncClassMap(pigeonVar_arg_classMap))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -3589,9 +3606,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val everythingArg = pigeonVar_decodedArgs[0] as NativeInteropAllTypes
+      val pigeonVar_arg_everything = pigeonVar_decodedArgs[0] as NativeInteropAllTypes
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.echoAsyncNativeInteropAllTypes(everythingArg))
+          pigeonVar_api.echoAsyncNativeInteropAllTypes(pigeonVar_arg_everything))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -3605,9 +3622,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val sealedClassArg = pigeonVar_decodedArgs[0] as NativeInteropSealedClass
+      val pigeonVar_arg_sealedClass = pigeonVar_decodedArgs[0] as NativeInteropSealedClass
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.echoAsyncSealedClass(sealedClassArg))
+          pigeonVar_api.echoAsyncSealedClass(pigeonVar_arg_sealedClass))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -3623,9 +3640,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val everythingArg = pigeonVar_decodedArgs[0] as NativeInteropAllNullableTypes?
+      val pigeonVar_arg_everything = pigeonVar_decodedArgs[0] as NativeInteropAllNullableTypes?
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.echoAsyncNullableNativeInteropAllNullableTypes(everythingArg))
+          pigeonVar_api.echoAsyncNullableNativeInteropAllNullableTypes(pigeonVar_arg_everything))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -3641,10 +3658,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val everythingArg = pigeonVar_decodedArgs[0] as NativeInteropAllNullableTypesWithoutRecursion?
+      val pigeonVar_arg_everything =
+          pigeonVar_decodedArgs[0] as NativeInteropAllNullableTypesWithoutRecursion?
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
           pigeonVar_api.echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
-              everythingArg))
+              pigeonVar_arg_everything))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -3754,9 +3772,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val anObjectArg = pigeonVar_decodedArgs[0]
+      val pigeonVar_arg_anObject = pigeonVar_decodedArgs[0]
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.echoAsyncNullableObject(anObjectArg))
+          pigeonVar_api.echoAsyncNullableObject(pigeonVar_arg_anObject))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -3770,9 +3788,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val listArg = pigeonVar_decodedArgs[0] as List<Any?>?
+      val pigeonVar_arg_list = pigeonVar_decodedArgs[0] as List<Any?>?
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.echoAsyncNullableList(listArg))
+          pigeonVar_api.echoAsyncNullableList(pigeonVar_arg_list))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -3786,9 +3804,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val enumListArg = pigeonVar_decodedArgs[0] as List<NativeInteropAnEnum?>?
+      val pigeonVar_arg_enumList = pigeonVar_decodedArgs[0] as List<NativeInteropAnEnum?>?
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.echoAsyncNullableEnumList(enumListArg))
+          pigeonVar_api.echoAsyncNullableEnumList(pigeonVar_arg_enumList))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -3802,9 +3820,10 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val classListArg = pigeonVar_decodedArgs[0] as List<NativeInteropAllNullableTypes?>?
+      val pigeonVar_arg_classList =
+          pigeonVar_decodedArgs[0] as List<NativeInteropAllNullableTypes?>?
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.echoAsyncNullableClassList(classListArg))
+          pigeonVar_api.echoAsyncNullableClassList(pigeonVar_arg_classList))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -3818,9 +3837,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val mapArg = pigeonVar_decodedArgs[0] as Map<Any?, Any?>?
+      val pigeonVar_arg_map = pigeonVar_decodedArgs[0] as Map<Any?, Any?>?
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.echoAsyncNullableMap(mapArg))
+          pigeonVar_api.echoAsyncNullableMap(pigeonVar_arg_map))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -3834,9 +3853,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val stringMapArg = pigeonVar_decodedArgs[0] as Map<String?, String?>?
+      val pigeonVar_arg_stringMap = pigeonVar_decodedArgs[0] as Map<String?, String?>?
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.echoAsyncNullableStringMap(stringMapArg))
+          pigeonVar_api.echoAsyncNullableStringMap(pigeonVar_arg_stringMap))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -3850,9 +3869,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val intMapArg = pigeonVar_decodedArgs[0] as Map<Long?, Long?>?
+      val pigeonVar_arg_intMap = pigeonVar_decodedArgs[0] as Map<Long?, Long?>?
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.echoAsyncNullableIntMap(intMapArg))
+          pigeonVar_api.echoAsyncNullableIntMap(pigeonVar_arg_intMap))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -3866,9 +3885,10 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val enumMapArg = pigeonVar_decodedArgs[0] as Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
+      val pigeonVar_arg_enumMap =
+          pigeonVar_decodedArgs[0] as Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.echoAsyncNullableEnumMap(enumMapArg))
+          pigeonVar_api.echoAsyncNullableEnumMap(pigeonVar_arg_enumMap))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -3882,9 +3902,10 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val classMapArg = pigeonVar_decodedArgs[0] as Map<Long?, NativeInteropAllNullableTypes?>?
+      val pigeonVar_arg_classMap =
+          pigeonVar_decodedArgs[0] as Map<Long?, NativeInteropAllNullableTypes?>?
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.echoAsyncNullableClassMap(classMapArg))
+          pigeonVar_api.echoAsyncNullableClassMap(pigeonVar_arg_classMap))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -3967,9 +3988,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val everythingArg = pigeonVar_decodedArgs[0] as NativeInteropAllTypes
+      val pigeonVar_arg_everything = pigeonVar_decodedArgs[0] as NativeInteropAllTypes
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.callFlutterEchoNativeInteropAllTypes(everythingArg))
+          pigeonVar_api.callFlutterEchoNativeInteropAllTypes(pigeonVar_arg_everything))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -3983,9 +4004,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val everythingArg = pigeonVar_decodedArgs[0] as NativeInteropAllNullableTypes?
+      val pigeonVar_arg_everything = pigeonVar_decodedArgs[0] as NativeInteropAllNullableTypes?
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.callFlutterEchoNativeInteropAllNullableTypes(everythingArg))
+          pigeonVar_api.callFlutterEchoNativeInteropAllNullableTypes(pigeonVar_arg_everything))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -3999,9 +4020,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val sealedClassArg = pigeonVar_decodedArgs[0] as NativeInteropSealedClass
+      val pigeonVar_arg_sealedClass = pigeonVar_decodedArgs[0] as NativeInteropSealedClass
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.callFlutterEchoSealedClass(sealedClassArg))
+          pigeonVar_api.callFlutterEchoSealedClass(pigeonVar_arg_sealedClass))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -4035,9 +4056,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val everythingArg = pigeonVar_decodedArgs[0] as NativeInteropAllNullableTypesWithoutRecursion?
+      val pigeonVar_arg_everything =
+          pigeonVar_decodedArgs[0] as NativeInteropAllNullableTypesWithoutRecursion?
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.callFlutterEchoNativeInteropAllNullableTypesWithoutRecursion(everythingArg))
+          pigeonVar_api.callFlutterEchoNativeInteropAllNullableTypesWithoutRecursion(
+              pigeonVar_arg_everything))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -4165,9 +4188,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val listArg = pigeonVar_decodedArgs[0] as List<Any?>
+      val pigeonVar_arg_list = pigeonVar_decodedArgs[0] as List<Any?>
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.callFlutterEchoList(listArg))
+          pigeonVar_api.callFlutterEchoList(pigeonVar_arg_list))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -4181,9 +4204,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val enumListArg = pigeonVar_decodedArgs[0] as List<NativeInteropAnEnum?>
+      val pigeonVar_arg_enumList = pigeonVar_decodedArgs[0] as List<NativeInteropAnEnum?>
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.callFlutterEchoEnumList(enumListArg))
+          pigeonVar_api.callFlutterEchoEnumList(pigeonVar_arg_enumList))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -4197,9 +4220,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val classListArg = pigeonVar_decodedArgs[0] as List<NativeInteropAllNullableTypes?>
+      val pigeonVar_arg_classList = pigeonVar_decodedArgs[0] as List<NativeInteropAllNullableTypes?>
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.callFlutterEchoClassList(classListArg))
+          pigeonVar_api.callFlutterEchoClassList(pigeonVar_arg_classList))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -4213,9 +4236,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val enumListArg = pigeonVar_decodedArgs[0] as List<NativeInteropAnEnum>
+      val pigeonVar_arg_enumList = pigeonVar_decodedArgs[0] as List<NativeInteropAnEnum>
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.callFlutterEchoNonNullEnumList(enumListArg))
+          pigeonVar_api.callFlutterEchoNonNullEnumList(pigeonVar_arg_enumList))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -4229,9 +4252,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val classListArg = pigeonVar_decodedArgs[0] as List<NativeInteropAllNullableTypes>
+      val pigeonVar_arg_classList = pigeonVar_decodedArgs[0] as List<NativeInteropAllNullableTypes>
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.callFlutterEchoNonNullClassList(classListArg))
+          pigeonVar_api.callFlutterEchoNonNullClassList(pigeonVar_arg_classList))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -4245,9 +4268,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val mapArg = pigeonVar_decodedArgs[0] as Map<Any?, Any?>
+      val pigeonVar_arg_map = pigeonVar_decodedArgs[0] as Map<Any?, Any?>
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.callFlutterEchoMap(mapArg))
+          pigeonVar_api.callFlutterEchoMap(pigeonVar_arg_map))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -4261,9 +4284,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val stringMapArg = pigeonVar_decodedArgs[0] as Map<String?, String?>
+      val pigeonVar_arg_stringMap = pigeonVar_decodedArgs[0] as Map<String?, String?>
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.callFlutterEchoStringMap(stringMapArg))
+          pigeonVar_api.callFlutterEchoStringMap(pigeonVar_arg_stringMap))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -4277,9 +4300,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val intMapArg = pigeonVar_decodedArgs[0] as Map<Long?, Long?>
+      val pigeonVar_arg_intMap = pigeonVar_decodedArgs[0] as Map<Long?, Long?>
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.callFlutterEchoIntMap(intMapArg))
+          pigeonVar_api.callFlutterEchoIntMap(pigeonVar_arg_intMap))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -4293,9 +4316,10 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val enumMapArg = pigeonVar_decodedArgs[0] as Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
+      val pigeonVar_arg_enumMap =
+          pigeonVar_decodedArgs[0] as Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.callFlutterEchoEnumMap(enumMapArg))
+          pigeonVar_api.callFlutterEchoEnumMap(pigeonVar_arg_enumMap))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -4309,9 +4333,10 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val classMapArg = pigeonVar_decodedArgs[0] as Map<Long?, NativeInteropAllNullableTypes?>
+      val pigeonVar_arg_classMap =
+          pigeonVar_decodedArgs[0] as Map<Long?, NativeInteropAllNullableTypes?>
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.callFlutterEchoClassMap(classMapArg))
+          pigeonVar_api.callFlutterEchoClassMap(pigeonVar_arg_classMap))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -4325,9 +4350,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val stringMapArg = pigeonVar_decodedArgs[0] as Map<String, String>
+      val pigeonVar_arg_stringMap = pigeonVar_decodedArgs[0] as Map<String, String>
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.callFlutterEchoNonNullStringMap(stringMapArg))
+          pigeonVar_api.callFlutterEchoNonNullStringMap(pigeonVar_arg_stringMap))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -4341,9 +4366,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val intMapArg = pigeonVar_decodedArgs[0] as Map<Long, Long>
+      val pigeonVar_arg_intMap = pigeonVar_decodedArgs[0] as Map<Long, Long>
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.callFlutterEchoNonNullIntMap(intMapArg))
+          pigeonVar_api.callFlutterEchoNonNullIntMap(pigeonVar_arg_intMap))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -4357,9 +4382,10 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val enumMapArg = pigeonVar_decodedArgs[0] as Map<NativeInteropAnEnum, NativeInteropAnEnum>
+      val pigeonVar_arg_enumMap =
+          pigeonVar_decodedArgs[0] as Map<NativeInteropAnEnum, NativeInteropAnEnum>
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.callFlutterEchoNonNullEnumMap(enumMapArg))
+          pigeonVar_api.callFlutterEchoNonNullEnumMap(pigeonVar_arg_enumMap))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -4373,9 +4399,10 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val classMapArg = pigeonVar_decodedArgs[0] as Map<Long, NativeInteropAllNullableTypes>
+      val pigeonVar_arg_classMap =
+          pigeonVar_decodedArgs[0] as Map<Long, NativeInteropAllNullableTypes>
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.callFlutterEchoNonNullClassMap(classMapArg))
+          pigeonVar_api.callFlutterEchoNonNullClassMap(pigeonVar_arg_classMap))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -4516,9 +4543,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val listArg = pigeonVar_decodedArgs[0] as List<Any?>?
+      val pigeonVar_arg_list = pigeonVar_decodedArgs[0] as List<Any?>?
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.callFlutterEchoNullableList(listArg))
+          pigeonVar_api.callFlutterEchoNullableList(pigeonVar_arg_list))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -4532,9 +4559,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val enumListArg = pigeonVar_decodedArgs[0] as List<NativeInteropAnEnum?>?
+      val pigeonVar_arg_enumList = pigeonVar_decodedArgs[0] as List<NativeInteropAnEnum?>?
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.callFlutterEchoNullableEnumList(enumListArg))
+          pigeonVar_api.callFlutterEchoNullableEnumList(pigeonVar_arg_enumList))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -4548,9 +4575,10 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val classListArg = pigeonVar_decodedArgs[0] as List<NativeInteropAllNullableTypes?>?
+      val pigeonVar_arg_classList =
+          pigeonVar_decodedArgs[0] as List<NativeInteropAllNullableTypes?>?
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.callFlutterEchoNullableClassList(classListArg))
+          pigeonVar_api.callFlutterEchoNullableClassList(pigeonVar_arg_classList))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -4564,9 +4592,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val enumListArg = pigeonVar_decodedArgs[0] as List<NativeInteropAnEnum>?
+      val pigeonVar_arg_enumList = pigeonVar_decodedArgs[0] as List<NativeInteropAnEnum>?
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.callFlutterEchoNullableNonNullEnumList(enumListArg))
+          pigeonVar_api.callFlutterEchoNullableNonNullEnumList(pigeonVar_arg_enumList))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -4580,9 +4608,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val classListArg = pigeonVar_decodedArgs[0] as List<NativeInteropAllNullableTypes>?
+      val pigeonVar_arg_classList = pigeonVar_decodedArgs[0] as List<NativeInteropAllNullableTypes>?
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.callFlutterEchoNullableNonNullClassList(classListArg))
+          pigeonVar_api.callFlutterEchoNullableNonNullClassList(pigeonVar_arg_classList))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -4596,9 +4624,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val mapArg = pigeonVar_decodedArgs[0] as Map<Any?, Any?>?
+      val pigeonVar_arg_map = pigeonVar_decodedArgs[0] as Map<Any?, Any?>?
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.callFlutterEchoNullableMap(mapArg))
+          pigeonVar_api.callFlutterEchoNullableMap(pigeonVar_arg_map))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -4612,9 +4640,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val stringMapArg = pigeonVar_decodedArgs[0] as Map<String?, String?>?
+      val pigeonVar_arg_stringMap = pigeonVar_decodedArgs[0] as Map<String?, String?>?
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.callFlutterEchoNullableStringMap(stringMapArg))
+          pigeonVar_api.callFlutterEchoNullableStringMap(pigeonVar_arg_stringMap))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -4628,9 +4656,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val intMapArg = pigeonVar_decodedArgs[0] as Map<Long?, Long?>?
+      val pigeonVar_arg_intMap = pigeonVar_decodedArgs[0] as Map<Long?, Long?>?
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.callFlutterEchoNullableIntMap(intMapArg))
+          pigeonVar_api.callFlutterEchoNullableIntMap(pigeonVar_arg_intMap))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -4644,9 +4672,10 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val enumMapArg = pigeonVar_decodedArgs[0] as Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
+      val pigeonVar_arg_enumMap =
+          pigeonVar_decodedArgs[0] as Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.callFlutterEchoNullableEnumMap(enumMapArg))
+          pigeonVar_api.callFlutterEchoNullableEnumMap(pigeonVar_arg_enumMap))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -4660,9 +4689,10 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val classMapArg = pigeonVar_decodedArgs[0] as Map<Long?, NativeInteropAllNullableTypes?>?
+      val pigeonVar_arg_classMap =
+          pigeonVar_decodedArgs[0] as Map<Long?, NativeInteropAllNullableTypes?>?
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.callFlutterEchoNullableClassMap(classMapArg))
+          pigeonVar_api.callFlutterEchoNullableClassMap(pigeonVar_arg_classMap))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -4676,9 +4706,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val stringMapArg = pigeonVar_decodedArgs[0] as Map<String, String>?
+      val pigeonVar_arg_stringMap = pigeonVar_decodedArgs[0] as Map<String, String>?
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.callFlutterEchoNullableNonNullStringMap(stringMapArg))
+          pigeonVar_api.callFlutterEchoNullableNonNullStringMap(pigeonVar_arg_stringMap))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -4692,9 +4722,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val intMapArg = pigeonVar_decodedArgs[0] as Map<Long, Long>?
+      val pigeonVar_arg_intMap = pigeonVar_decodedArgs[0] as Map<Long, Long>?
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.callFlutterEchoNullableNonNullIntMap(intMapArg))
+          pigeonVar_api.callFlutterEchoNullableNonNullIntMap(pigeonVar_arg_intMap))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -4708,9 +4738,10 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val enumMapArg = pigeonVar_decodedArgs[0] as Map<NativeInteropAnEnum, NativeInteropAnEnum>?
+      val pigeonVar_arg_enumMap =
+          pigeonVar_decodedArgs[0] as Map<NativeInteropAnEnum, NativeInteropAnEnum>?
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.callFlutterEchoNullableNonNullEnumMap(enumMapArg))
+          pigeonVar_api.callFlutterEchoNullableNonNullEnumMap(pigeonVar_arg_enumMap))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -4724,9 +4755,10 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val classMapArg = pigeonVar_decodedArgs[0] as Map<Long, NativeInteropAllNullableTypes>?
+      val pigeonVar_arg_classMap =
+          pigeonVar_decodedArgs[0] as Map<Long, NativeInteropAllNullableTypes>?
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.callFlutterEchoNullableNonNullClassMap(classMapArg))
+          pigeonVar_api.callFlutterEchoNullableNonNullClassMap(pigeonVar_arg_classMap))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -4784,9 +4816,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val everythingArg = pigeonVar_decodedArgs[0] as NativeInteropAllTypes
+      val pigeonVar_arg_everything = pigeonVar_decodedArgs[0] as NativeInteropAllTypes
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.callFlutterEchoAsyncNativeInteropAllTypes(everythingArg))
+          pigeonVar_api.callFlutterEchoAsyncNativeInteropAllTypes(pigeonVar_arg_everything))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -4802,9 +4834,10 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val everythingArg = pigeonVar_decodedArgs[0] as NativeInteropAllNullableTypes?
+      val pigeonVar_arg_everything = pigeonVar_decodedArgs[0] as NativeInteropAllNullableTypes?
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.callFlutterEchoAsyncNullableNativeInteropAllNullableTypes(everythingArg))
+          pigeonVar_api.callFlutterEchoAsyncNullableNativeInteropAllNullableTypes(
+              pigeonVar_arg_everything))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -4820,10 +4853,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val everythingArg = pigeonVar_decodedArgs[0] as NativeInteropAllNullableTypesWithoutRecursion?
+      val pigeonVar_arg_everything =
+          pigeonVar_decodedArgs[0] as NativeInteropAllNullableTypesWithoutRecursion?
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
           pigeonVar_api.callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
-              everythingArg))
+              pigeonVar_arg_everything))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -4933,9 +4967,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val anObjectArg = pigeonVar_decodedArgs[0] as Any
+      val pigeonVar_arg_anObject = pigeonVar_decodedArgs[0] as Any
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.callFlutterEchoAsyncObject(anObjectArg))
+          pigeonVar_api.callFlutterEchoAsyncObject(pigeonVar_arg_anObject))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -4949,9 +4983,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val listArg = pigeonVar_decodedArgs[0] as List<Any?>
+      val pigeonVar_arg_list = pigeonVar_decodedArgs[0] as List<Any?>
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.callFlutterEchoAsyncList(listArg))
+          pigeonVar_api.callFlutterEchoAsyncList(pigeonVar_arg_list))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -4965,9 +4999,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val enumListArg = pigeonVar_decodedArgs[0] as List<NativeInteropAnEnum?>
+      val pigeonVar_arg_enumList = pigeonVar_decodedArgs[0] as List<NativeInteropAnEnum?>
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.callFlutterEchoAsyncEnumList(enumListArg))
+          pigeonVar_api.callFlutterEchoAsyncEnumList(pigeonVar_arg_enumList))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -4981,9 +5015,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val classListArg = pigeonVar_decodedArgs[0] as List<NativeInteropAllNullableTypes?>
+      val pigeonVar_arg_classList = pigeonVar_decodedArgs[0] as List<NativeInteropAllNullableTypes?>
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.callFlutterEchoAsyncClassList(classListArg))
+          pigeonVar_api.callFlutterEchoAsyncClassList(pigeonVar_arg_classList))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -4997,9 +5031,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val enumListArg = pigeonVar_decodedArgs[0] as List<NativeInteropAnEnum>
+      val pigeonVar_arg_enumList = pigeonVar_decodedArgs[0] as List<NativeInteropAnEnum>
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.callFlutterEchoAsyncNonNullEnumList(enumListArg))
+          pigeonVar_api.callFlutterEchoAsyncNonNullEnumList(pigeonVar_arg_enumList))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -5013,9 +5047,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val classListArg = pigeonVar_decodedArgs[0] as List<NativeInteropAllNullableTypes>
+      val pigeonVar_arg_classList = pigeonVar_decodedArgs[0] as List<NativeInteropAllNullableTypes>
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.callFlutterEchoAsyncNonNullClassList(classListArg))
+          pigeonVar_api.callFlutterEchoAsyncNonNullClassList(pigeonVar_arg_classList))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -5029,9 +5063,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val mapArg = pigeonVar_decodedArgs[0] as Map<Any?, Any?>
+      val pigeonVar_arg_map = pigeonVar_decodedArgs[0] as Map<Any?, Any?>
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.callFlutterEchoAsyncMap(mapArg))
+          pigeonVar_api.callFlutterEchoAsyncMap(pigeonVar_arg_map))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -5045,9 +5079,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val stringMapArg = pigeonVar_decodedArgs[0] as Map<String?, String?>
+      val pigeonVar_arg_stringMap = pigeonVar_decodedArgs[0] as Map<String?, String?>
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.callFlutterEchoAsyncStringMap(stringMapArg))
+          pigeonVar_api.callFlutterEchoAsyncStringMap(pigeonVar_arg_stringMap))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -5061,9 +5095,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val intMapArg = pigeonVar_decodedArgs[0] as Map<Long?, Long?>
+      val pigeonVar_arg_intMap = pigeonVar_decodedArgs[0] as Map<Long?, Long?>
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.callFlutterEchoAsyncIntMap(intMapArg))
+          pigeonVar_api.callFlutterEchoAsyncIntMap(pigeonVar_arg_intMap))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -5077,9 +5111,10 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val enumMapArg = pigeonVar_decodedArgs[0] as Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
+      val pigeonVar_arg_enumMap =
+          pigeonVar_decodedArgs[0] as Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.callFlutterEchoAsyncEnumMap(enumMapArg))
+          pigeonVar_api.callFlutterEchoAsyncEnumMap(pigeonVar_arg_enumMap))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -5093,9 +5128,10 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val classMapArg = pigeonVar_decodedArgs[0] as Map<Long?, NativeInteropAllNullableTypes?>
+      val pigeonVar_arg_classMap =
+          pigeonVar_decodedArgs[0] as Map<Long?, NativeInteropAllNullableTypes?>
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.callFlutterEchoAsyncClassMap(classMapArg))
+          pigeonVar_api.callFlutterEchoAsyncClassMap(pigeonVar_arg_classMap))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -5248,9 +5284,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val anObjectArg = pigeonVar_decodedArgs[0]
+      val pigeonVar_arg_anObject = pigeonVar_decodedArgs[0]
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.callFlutterEchoAsyncNullableObject(anObjectArg))
+          pigeonVar_api.callFlutterEchoAsyncNullableObject(pigeonVar_arg_anObject))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -5264,9 +5300,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val listArg = pigeonVar_decodedArgs[0] as List<Any?>?
+      val pigeonVar_arg_list = pigeonVar_decodedArgs[0] as List<Any?>?
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.callFlutterEchoAsyncNullableList(listArg))
+          pigeonVar_api.callFlutterEchoAsyncNullableList(pigeonVar_arg_list))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -5280,9 +5316,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val enumListArg = pigeonVar_decodedArgs[0] as List<NativeInteropAnEnum?>?
+      val pigeonVar_arg_enumList = pigeonVar_decodedArgs[0] as List<NativeInteropAnEnum?>?
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.callFlutterEchoAsyncNullableEnumList(enumListArg))
+          pigeonVar_api.callFlutterEchoAsyncNullableEnumList(pigeonVar_arg_enumList))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -5296,9 +5332,10 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val classListArg = pigeonVar_decodedArgs[0] as List<NativeInteropAllNullableTypes?>?
+      val pigeonVar_arg_classList =
+          pigeonVar_decodedArgs[0] as List<NativeInteropAllNullableTypes?>?
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.callFlutterEchoAsyncNullableClassList(classListArg))
+          pigeonVar_api.callFlutterEchoAsyncNullableClassList(pigeonVar_arg_classList))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -5312,9 +5349,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val enumListArg = pigeonVar_decodedArgs[0] as List<NativeInteropAnEnum>?
+      val pigeonVar_arg_enumList = pigeonVar_decodedArgs[0] as List<NativeInteropAnEnum>?
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.callFlutterEchoAsyncNullableNonNullEnumList(enumListArg))
+          pigeonVar_api.callFlutterEchoAsyncNullableNonNullEnumList(pigeonVar_arg_enumList))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -5328,9 +5365,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val classListArg = pigeonVar_decodedArgs[0] as List<NativeInteropAllNullableTypes>?
+      val pigeonVar_arg_classList = pigeonVar_decodedArgs[0] as List<NativeInteropAllNullableTypes>?
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.callFlutterEchoAsyncNullableNonNullClassList(classListArg))
+          pigeonVar_api.callFlutterEchoAsyncNullableNonNullClassList(pigeonVar_arg_classList))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -5344,9 +5381,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val mapArg = pigeonVar_decodedArgs[0] as Map<Any?, Any?>?
+      val pigeonVar_arg_map = pigeonVar_decodedArgs[0] as Map<Any?, Any?>?
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.callFlutterEchoAsyncNullableMap(mapArg))
+          pigeonVar_api.callFlutterEchoAsyncNullableMap(pigeonVar_arg_map))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -5360,9 +5397,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val stringMapArg = pigeonVar_decodedArgs[0] as Map<String?, String?>?
+      val pigeonVar_arg_stringMap = pigeonVar_decodedArgs[0] as Map<String?, String?>?
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.callFlutterEchoAsyncNullableStringMap(stringMapArg))
+          pigeonVar_api.callFlutterEchoAsyncNullableStringMap(pigeonVar_arg_stringMap))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -5376,9 +5413,9 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val intMapArg = pigeonVar_decodedArgs[0] as Map<Long?, Long?>?
+      val pigeonVar_arg_intMap = pigeonVar_decodedArgs[0] as Map<Long?, Long?>?
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.callFlutterEchoAsyncNullableIntMap(intMapArg))
+          pigeonVar_api.callFlutterEchoAsyncNullableIntMap(pigeonVar_arg_intMap))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -5392,9 +5429,10 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val enumMapArg = pigeonVar_decodedArgs[0] as Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
+      val pigeonVar_arg_enumMap =
+          pigeonVar_decodedArgs[0] as Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.callFlutterEchoAsyncNullableEnumMap(enumMapArg))
+          pigeonVar_api.callFlutterEchoAsyncNullableEnumMap(pigeonVar_arg_enumMap))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -5408,9 +5446,10 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val classMapArg = pigeonVar_decodedArgs[0] as Map<Long?, NativeInteropAllNullableTypes?>?
+      val pigeonVar_arg_classMap =
+          pigeonVar_decodedArgs[0] as Map<Long?, NativeInteropAllNullableTypes?>?
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.callFlutterEchoAsyncNullableClassMap(classMapArg))
+          pigeonVar_api.callFlutterEchoAsyncNullableClassMap(pigeonVar_arg_classMap))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -7224,9 +7263,9 @@ class NativeInteropReservedNamesHostApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val namesArg = pigeonVar_decodedArgs[0] as NativeInteropReservedNames
+      val pigeonVar_arg_names = pigeonVar_decodedArgs[0] as NativeInteropReservedNames
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.echoReservedNames(namesArg))
+          pigeonVar_api.echoReservedNames(pigeonVar_arg_names))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -7437,8 +7476,9 @@ class NativeInteropSealedClassHostApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val shapeArg = pigeonVar_decodedArgs[0] as NativeInteropShape
-      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(pigeonVar_api.echoShape(shapeArg))
+      val pigeonVar_arg_shape = pigeonVar_decodedArgs[0] as NativeInteropShape
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoShape(pigeonVar_arg_shape))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -7451,9 +7491,9 @@ class NativeInteropSealedClassHostApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val shapeArg = pigeonVar_decodedArgs[0] as NativeInteropShape?
+      val pigeonVar_arg_shape = pigeonVar_decodedArgs[0] as NativeInteropShape?
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.echoNullableShape(shapeArg))
+          pigeonVar_api.echoNullableShape(pigeonVar_arg_shape))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -7466,9 +7506,9 @@ class NativeInteropSealedClassHostApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val shapesArg = pigeonVar_decodedArgs[0] as List<NativeInteropShape>
+      val pigeonVar_arg_shapes = pigeonVar_decodedArgs[0] as List<NativeInteropShape>
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.echoShapeList(shapesArg))
+          pigeonVar_api.echoShapeList(pigeonVar_arg_shapes))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -7481,9 +7521,9 @@ class NativeInteropSealedClassHostApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val shapesArg = pigeonVar_decodedArgs[0] as Map<String, NativeInteropShape>
+      val pigeonVar_arg_shapes = pigeonVar_decodedArgs[0] as Map<String, NativeInteropShape>
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.echoShapeMap(shapesArg))
+          pigeonVar_api.echoShapeMap(pigeonVar_arg_shapes))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -7496,9 +7536,9 @@ class NativeInteropSealedClassHostApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val shapeArg = pigeonVar_decodedArgs[0] as NativeInteropShape
+      val pigeonVar_arg_shape = pigeonVar_decodedArgs[0] as NativeInteropShape
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.echoAsyncShape(shapeArg))
+          pigeonVar_api.echoAsyncShape(pigeonVar_arg_shape))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -7511,9 +7551,9 @@ class NativeInteropSealedClassHostApiRegistrar {
     try {
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
-      val shapeArg = pigeonVar_decodedArgs[0] as NativeInteropShape
+      val pigeonVar_arg_shape = pigeonVar_decodedArgs[0] as NativeInteropShape
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-          pigeonVar_api.callFlutterEchoShape(shapeArg))
+          pigeonVar_api.callFlutterEchoShape(pigeonVar_arg_shape))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))

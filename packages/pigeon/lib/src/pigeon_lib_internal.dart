@@ -1852,9 +1852,10 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       return expression.value;
     } else if (expression is dart_ast.SimpleIdentifier) {
       return expression.name;
-    } else if (expression is dart_ast.PrefixedIdentifier) {
-      // Enum values, such as `NativeInteropTransport.hybrid`, are stored by
-      // name.
+    } else if (expression is dart_ast.PrefixedIdentifier &&
+        expression.prefix.name == 'NativeInteropTransport') {
+      // `NativeInteropTransport` values are stored by name. Any other prefixed
+      // identifier is reported as unrecognized below.
       return expression.identifier.name;
     } else if (expression is dart_ast.ListLiteral) {
       final list = <dynamic>[];

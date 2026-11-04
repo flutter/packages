@@ -872,7 +872,7 @@ private class _PigeonFfiCodec {
               indent.writeln('writeByte($codec.typeList)');
               indent.writeln('writeSize(${fields.length})');
               for (final field in fields) {
-                indent.writeln(_swiftInteropWrite('value.${field.name}', field.type));
+                indent.writeln(_swiftInteropWrite('value.${field.name}', field.type, codec));
               }
             },
           );
@@ -2271,7 +2271,7 @@ if (wrapped == nil) {
     final List<Parameter> encodedParameters = nativeInteropEncodedParameters(method.parameters);
     final String? encodedArgs = encodedParameters.isEmpty
         ? null
-        : '$codec.encode { \$0.writeByte($codec.typeList); \$0.writeSize(${encodedParameters.length}); ${encodedParameters.map((Parameter p) => _swiftInteropWrite(_getSafeArgumentName(method.parameters.indexOf(p), p), p.type, writer: r'$0')).join('; ')} }';
+        : '$codec.encode { \$0.writeByte($codec.typeList); \$0.writeSize(${encodedParameters.length}); ${encodedParameters.map((Parameter p) => _swiftInteropWrite(_getSafeArgumentName(method.parameters.indexOf(p), p), p.type, codec, writer: r'$0')).join('; ')} }';
     final String arguments = _hybridSwiftEntryPointArguments(
       method.parameters,
       directValue: (int index, Parameter parameter) =>
@@ -5330,26 +5330,26 @@ bool _hasAmbiguousSwiftListType(TypeDeclaration type) {
 }
 
 /// The statement that writes [value] of the declared [type] with the hybrid
-/// transport's writer.
+/// transport's writer, using the type tags defined by [codec].
 ///
 /// Lists, maps and typed data are written by their declared types, because
 /// Swift represents `Int64List` and a `List<int>` with the same type.
-String _swiftInteropWrite(String value, TypeDeclaration type, {String writer = ''}) {
+String _swiftInteropWrite(String value, TypeDeclaration type, String codec, {String writer = ''}) {
   final prefix = writer.isEmpty ? '' : '$writer.';
   if (_isSwiftTypedData(type)) {
-    final (int tag, int alignment) = switch (type.baseName) {
-      'Uint8List' => (8, 1),
-      'Int32List' => (9, 4),
-      'Int64List' => (10, 8),
-      'Float64List' => (11, 8),
-      'Float32List' => (14, 4),
+    final (String tag, int alignment) = switch (type.baseName) {
+      'Uint8List' => ('typeUint8List', 1),
+      'Int32List' => ('typeInt32List', 4),
+      'Int64List' => ('typeInt64List', 8),
+      'Float64List' => ('typeFloat64List', 8),
+      'Float32List' => ('typeFloat32List', 4),
       _ => throw ArgumentError.value(type.baseName),
     };
-    return '${prefix}writeTypedData($tag, $value, alignment: $alignment)';
+    return '${prefix}writeTypedData($codec.$tag, $value, alignment: $alignment)';
   }
   if (type.baseName == 'List') {
     if (type.typeArguments.length == 1 && _hasAmbiguousSwiftListType(type.typeArguments.first)) {
-      return '${prefix}writeList($value) { ${_swiftInteropWrite(r'$1', type.typeArguments.first, writer: r'$0')} }';
+      return '${prefix}writeList($value) { ${_swiftInteropWrite(r'$1', type.typeArguments.first, codec, writer: r'$0')} }';
     }
     return '${prefix}writeList($value)';
   }
@@ -5358,8 +5358,8 @@ String _swiftInteropWrite(String value, TypeDeclaration type, {String writer = '
         (_hasAmbiguousSwiftListType(type.typeArguments[0]) ||
             _hasAmbiguousSwiftListType(type.typeArguments[1]))) {
       return '${prefix}writeMap($value) { '
-          '${_swiftInteropWrite(r'$1', type.typeArguments[0], writer: r'$0')}; '
-          '${_swiftInteropWrite(r'$2', type.typeArguments[1], writer: r'$0')} }';
+          '${_swiftInteropWrite(r'$1', type.typeArguments[0], codec, writer: r'$0')}; '
+          '${_swiftInteropWrite(r'$2', type.typeArguments[1], codec, writer: r'$0')} }';
     }
     return '${prefix}writeMap($value)';
   }
@@ -5382,7 +5382,7 @@ String _swiftInteropEncode(String value, TypeDeclaration type, String codec) {
   if (type.baseName != 'List' && type.baseName != 'Map') {
     return '$codec.encodeOrNil($value)';
   }
-  final encode = '$codec.encode { ${_swiftInteropWrite(value, type, writer: r'$0')} }';
+  final encode = '$codec.encode { ${_swiftInteropWrite(value, type, codec, writer: r'$0')} }';
   return type.isNullable ? '$value == nil ? nil : $encode' : encode;
 }
 

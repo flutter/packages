@@ -218,6 +218,20 @@ abstract class Api {
     );
   });
 
+  test('ConfigurePigeon reports other prefixed identifiers as unrecognized', () {
+    const code = '''
+@ConfigurePigeon(PigeonOptions(dartOut: Paths.dartOut))
+@HostApi()
+abstract class Api {
+  void doSomething();
+}
+''';
+    final ParseResults results = parseSource(code);
+    expect(results.errors, hasLength(1));
+    expect(results.errors[0].message, contains('unrecognized expression type'));
+    expect(results.errors[0].message, contains('Paths.dartOut'));
+  });
+
   test('parse args - swift options', () {
     final PigeonOptions opts = Pigeon.parseArgs(<String>[
       '--swift_error_class_name',

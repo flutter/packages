@@ -2224,7 +2224,11 @@ void main() {
         contains('mutating func writeTypedData<T>(_ type: UInt8, _ array: [T]?, alignment: Int)'),
       );
       expect(code, contains('writeList(value.ints)'));
-      expect(code, contains('writeTypedData(10, value.longs, alignment: 8)'));
+      expect(
+        code,
+        contains('writeTypedData(PigeonInteropCodec.typeInt64List, value.longs, alignment: 8)'),
+      );
+      expect(code, isNot(matches(RegExp(r'writeTypedData\(\d'))));
       expect(code, contains(r'writeList(value.nestedInts) { $0.writeList($1) }'));
       expect(code, contains('ints: read([Int64].self)'));
       expect(code, contains('longs: read([Int64]?.self)'));

@@ -3040,10 +3040,14 @@ private struct NativeInteropTestsPigeonInteropWriter {
     writeValue(value.anInt)
     writeValue(value.anInt64)
     writeValue(value.aDouble)
-    writeTypedData(8, value.aByteArray, alignment: 1)
-    writeTypedData(9, value.a4ByteArray, alignment: 4)
-    writeTypedData(10, value.a8ByteArray, alignment: 8)
-    writeTypedData(11, value.aFloatArray, alignment: 8)
+    writeTypedData(
+      NativeInteropTestsPigeonInteropCodec.typeUint8List, value.aByteArray, alignment: 1)
+    writeTypedData(
+      NativeInteropTestsPigeonInteropCodec.typeInt32List, value.a4ByteArray, alignment: 4)
+    writeTypedData(
+      NativeInteropTestsPigeonInteropCodec.typeInt64List, value.a8ByteArray, alignment: 8)
+    writeTypedData(
+      NativeInteropTestsPigeonInteropCodec.typeFloat64List, value.aFloatArray, alignment: 8)
     writeValue(value.anEnum)
     writeValue(value.anotherEnum)
     writeValue(value.aString)
@@ -3073,10 +3077,14 @@ private struct NativeInteropTestsPigeonInteropWriter {
     writeValue(value.aNullableInt)
     writeValue(value.aNullableInt64)
     writeValue(value.aNullableDouble)
-    writeTypedData(8, value.aNullableByteArray, alignment: 1)
-    writeTypedData(9, value.aNullable4ByteArray, alignment: 4)
-    writeTypedData(10, value.aNullable8ByteArray, alignment: 8)
-    writeTypedData(11, value.aNullableFloatArray, alignment: 8)
+    writeTypedData(
+      NativeInteropTestsPigeonInteropCodec.typeUint8List, value.aNullableByteArray, alignment: 1)
+    writeTypedData(
+      NativeInteropTestsPigeonInteropCodec.typeInt32List, value.aNullable4ByteArray, alignment: 4)
+    writeTypedData(
+      NativeInteropTestsPigeonInteropCodec.typeInt64List, value.aNullable8ByteArray, alignment: 8)
+    writeTypedData(
+      NativeInteropTestsPigeonInteropCodec.typeFloat64List, value.aNullableFloatArray, alignment: 8)
     writeValue(value.aNullableEnum)
     writeValue(value.anotherNullableEnum)
     writeValue(value.aNullableString)
@@ -3111,10 +3119,14 @@ private struct NativeInteropTestsPigeonInteropWriter {
     writeValue(value.aNullableInt)
     writeValue(value.aNullableInt64)
     writeValue(value.aNullableDouble)
-    writeTypedData(8, value.aNullableByteArray, alignment: 1)
-    writeTypedData(9, value.aNullable4ByteArray, alignment: 4)
-    writeTypedData(10, value.aNullable8ByteArray, alignment: 8)
-    writeTypedData(11, value.aNullableFloatArray, alignment: 8)
+    writeTypedData(
+      NativeInteropTestsPigeonInteropCodec.typeUint8List, value.aNullableByteArray, alignment: 1)
+    writeTypedData(
+      NativeInteropTestsPigeonInteropCodec.typeInt32List, value.aNullable4ByteArray, alignment: 4)
+    writeTypedData(
+      NativeInteropTestsPigeonInteropCodec.typeInt64List, value.aNullable8ByteArray, alignment: 8)
+    writeTypedData(
+      NativeInteropTestsPigeonInteropCodec.typeFloat64List, value.aNullableFloatArray, alignment: 8)
     writeValue(value.aNullableEnum)
     writeValue(value.anotherNullableEnum)
     writeValue(value.aNullableString)

@@ -1176,7 +1176,9 @@ class ${api.name}Registrar() {
                 _hybridDirectToKotlin(_getArgumentName(index, parameter), parameter.type),
               );
             } else {
-              final String argName = _getSafeArgumentName(index, parameter);
+              // Prefixed so that it can't shadow a directly passed parameter,
+              // such as `itemsArg` alongside an encoded `items`.
+              final argName = '${varNamePrefix}arg_${_getArgumentName(index, parameter)}';
               indent.writeln(
                 'val $argName = ${_cast(indent, '${varNamePrefix}decodedArgs[$encodedIndex]', type: parameter.type)}',
               );

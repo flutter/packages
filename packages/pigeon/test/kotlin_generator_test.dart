@@ -2176,11 +2176,11 @@ void main() {
       final String code = generate(hybrid: true);
       expect(code, contains('class HostApiRegistrar {'));
       expect(code, contains('fun echoData(count: Long, pigeonVar_args: ByteArray): ByteArray? {'));
-      expect(code, contains('val dataArg = pigeonVar_decodedArgs[0] as Data?'));
+      expect(code, contains('val pigeonVar_arg_data = pigeonVar_decodedArgs[0] as Data?'));
       expect(
         code,
         contains(
-          'return FooPigeonInteropCodec.encodeOrNull(pigeonVar_api.echoData(count, dataArg))',
+          'return FooPigeonInteropCodec.encodeOrNull(pigeonVar_api.echoData(count, pigeonVar_arg_data))',
         ),
       );
       expect(code, contains('fun echoColor(color: Long): Long {'));
@@ -2277,6 +2277,54 @@ void main() {
           expect(code, contains('this.api?.let {'));
         }
       }
+    });
+
+    test('decoded arguments do not shadow directly passed parameters', () {
+      const stringType = TypeDeclaration(baseName: 'String', isNullable: false);
+      final root = Root(
+        apis: <Api>[
+          AstHostApi(
+            name: 'HostApi',
+            methods: <Method>[
+              Method(
+                name: 'send',
+                location: ApiLocation.host,
+                parameters: <Parameter>[
+                  Parameter(name: 'itemsArg', type: stringType),
+                  Parameter(
+                    name: 'items',
+                    type: const TypeDeclaration(
+                      baseName: 'List',
+                      isNullable: false,
+                      typeArguments: <TypeDeclaration>[stringType],
+                    ),
+                  ),
+                ],
+                returnType: const TypeDeclaration.voidDeclaration(),
+              ),
+            ],
+          ),
+        ],
+        classes: <Class>[],
+        enums: <Enum>[],
+      );
+      final sink = StringBuffer();
+      const KotlinGenerator().generate(
+        const InternalKotlinOptions(
+          errorClassName: 'FooError',
+          kotlinOut: '',
+          useJni: true,
+          fileSpecificClassNameComponent: 'Foo',
+        ),
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+      final code = sink.toString();
+      expect(code, contains('fun send(itemsArg: String, pigeonVar_args: ByteArray) {'));
+      expect(code, contains('val pigeonVar_arg_items = pigeonVar_decodedArgs[0] as List<String>'));
+      expect(code, contains('pigeonVar_api.send(itemsArg, pigeonVar_arg_items)'));
+      expect(code, isNot(contains('val itemsArg =')));
     });
 
     test('objects transport keeps the object graph registrar', () {
