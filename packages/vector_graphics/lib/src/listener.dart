@@ -113,11 +113,15 @@ Future<PictureInfo> decodeVectorGraphics(
         .fork(
           specification: ZoneSpecification(
             scheduleMicrotask: (Zone self, ZoneDelegate parent, Zone zone, void Function() f) {
-              Zone.root.scheduleMicrotask(f);
+              Zone.root.scheduleMicrotask(() {
+                zone.runGuarded(f);
+              });
             },
             createTimer:
                 (Zone self, ZoneDelegate parent, Zone zone, Duration duration, void Function() f) {
-                  return Zone.root.createTimer(duration, f);
+                  return Zone.root.createTimer(duration, () {
+                    zone.runGuarded(f);
+                  });
                 },
             createPeriodicTimer:
                 (
@@ -127,7 +131,9 @@ Future<PictureInfo> decodeVectorGraphics(
                   Duration period,
                   void Function(Timer timer) f,
                 ) {
-                  return Zone.root.createPeriodicTimer(period, f);
+                  return Zone.root.createPeriodicTimer(period, (timer) {
+                    zone.runUnaryGuarded(f, timer);
+                  });
                 },
           ),
         )
