@@ -115,6 +115,9 @@ class _MetadataEncoder {
 
   String _typeArguments(DartObject value, String path) {
     if (value.type case InterfaceType(:final List<DartType> typeArguments)) {
+      if (typeArguments.isEmpty) {
+        return '';
+      }
       return '<${typeArguments.map((DartType type) => _typeCode(type, path)).join(', ')}>';
     }
     _unsupported(path, 'an unresolved collection type');
