@@ -59,3 +59,13 @@ class LegacyPackageWidget extends StatelessWidget {
     return const Text('Legacy package widget');
   }
 }
+
+/// A Dartdoc comment template shown in `example/README.md`.
+const String dartdocCommentExample = r'''
+// #docregion DartdocComment
+/// {@example /example/lib/activity_indicator/cupertino_activity_indicator.0.dart}
+/// Write a description of the example here. This description will appear in the
+/// API web documentation to introduce the example.
+/// {@end-example}
+// #enddocregion DartdocComment
+''';
