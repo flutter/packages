@@ -1310,11 +1310,31 @@ class DataTable extends StatelessWidget {
 /// achieve: just put the [TableRowInkWell] as the direct child of the
 /// [Table], and put the other contents of the cell inside it.)
 ///
+/// ## Troubleshooting
+///
+/// ### The ink highlights and splashes aren't visible!
+///
+/// Like other ink responses, [TableRowInkWell] paints its highlights and
+/// splashes on the nearest ancestor [Material], which is painted beneath the
+/// [Table]. A [TableRow.decoration] is painted by the [Table] itself, so an
+/// opaque decoration color covers the ink effects, including those resolved
+/// from [InkResponse.overlayColor].
+///
+/// To keep the ink effects visible, either use a translucent color in the
+/// [TableRow.decoration], or leave the decoration without a color and give
+/// the ancestor [Material] the background color instead.
+///
+/// Wrapping the [TableRowInkWell] in its own [Material] is not recommended,
+/// because the ink effects would then be clipped to that cell instead of
+/// covering the whole row.
+///
 /// See also:
 ///
 ///  * [DataTable], which makes use of [TableRowInkWell] when
 ///    [DataRow.onSelectChanged] is defined and [DataCell.onTap]
 ///    is not.
+///  * [Ink], which paints decorations on a [Material] so that ink effects
+///    remain visible on top of them.
 class TableRowInkWell extends InkResponse {
   /// Creates an ink well for a table row.
   const TableRowInkWell({
