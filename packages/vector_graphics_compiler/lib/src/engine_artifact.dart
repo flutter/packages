@@ -34,7 +34,7 @@ String? engineArtifactSubpath({
 /// `dart compile exe`) can locate the Flutter artifact cache.
 Directory? resolveFlutterCacheRoot({String? resolvedExecutable, String? dartSdkPath}) {
   final String executable = resolvedExecutable ?? Platform.resolvedExecutable;
-  if (executable.contains('flutter_tester')) {
+  if (p.basenameWithoutExtension(executable) == 'flutter_tester') {
     return File(executable).parent.parent.parent.parent;
   }
 

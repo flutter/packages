@@ -130,6 +130,34 @@ void main() {
       expect(resolved?.path, cacheDir.path);
     });
 
+    test('resolves from flutter_tester.exe executable', () {
+      final String testerExe = p.join(
+        cacheDir.path,
+        'artifacts',
+        'engine',
+        'windows-x64',
+        'flutter_tester.exe',
+      );
+      final Directory? resolved = resolveFlutterCacheRoot(resolvedExecutable: testerExe);
+      expect(resolved?.path, cacheDir.path);
+    });
+
+    test('does not match flutter_tester when only in parent directory name', () {
+      final String aotExe = p.join(
+        tempDir.path,
+        'flutter_tester_workspace',
+        'bin',
+        'vector_graphics_compiler',
+      );
+      final Directory? resolved = runZoned(
+        () => resolveFlutterCacheRoot(resolvedExecutable: aotExe),
+        zoneValues: <Object, Object>{
+          cli_util.environmentOverridesKey: <String, String>{'_DART_RESOLVED_EXECUTABLE': aotExe},
+        },
+      );
+      expect(resolved, isNull);
+    });
+
     test('resolves from Flutter dart-sdk via cli_util when compiled to AOT binary', () {
       final String aotExe = p.join(
         tempDir.path,
