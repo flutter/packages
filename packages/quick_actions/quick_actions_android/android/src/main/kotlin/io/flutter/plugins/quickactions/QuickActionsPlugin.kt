@@ -81,8 +81,8 @@ internal constructor(private val sdkChecker: AndroidSdkChecker) :
       if (shortcutId != null) {
         quickActionsFlutterApi!!.launchAction(
             shortcutId,
-            ResultCompat.asCompatCallback<Unit> { result: ResultCompat<Unit?>? ->
-              val error = result!!.exceptionOrNull()
+            { result ->
+              val error = result.exceptionOrNull()
               if (error != null) {
                 Log.e(TAG, "Failed to handle launch action: " + error.message)
               }

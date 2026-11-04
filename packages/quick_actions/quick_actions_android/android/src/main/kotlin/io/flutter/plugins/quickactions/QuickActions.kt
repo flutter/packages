@@ -32,7 +32,7 @@ internal class QuickActions(private val context: Context) : AndroidQuickActionsA
       callback: Function1<in Result<Unit>, Unit>
   ) {
     if (!this.isVersionAllowed) {
-      completeWithUnitSuccess(callback)
+      callback(Result.success(Unit))
       return
     }
     val shortcuts = shortcutItemMessageToShortcutInfo(itemsList)
@@ -48,14 +48,14 @@ internal class QuickActions(private val context: Context) : AndroidQuickActionsA
             // Leave dynamicShortcutsSet as false
           }
           if (dynamicShortcutsSet) {
-            completeWithUnitSuccess(callback)
+            callback(Result.success(Unit))
           } else {
-            completeWithError<Unit>(
-                callback,
-                FlutterError(
-                    "quick_action_setshortcutitems_failure",
-                    "Exception thrown when setting dynamic shortcuts",
-                    null))
+            callback(
+                Result.failure(
+                    FlutterError(
+                        "quick_action_setshortcutitems_failure",
+                        "Exception thrown when setting dynamic shortcuts",
+                        null)))
           }
         })
   }
