@@ -35,5 +35,10 @@
   "expansionTileExpandedTapHint": "Жию",
   "expansionTileCollapsedTapHint": "Толық мәлімет алу үшін жайыңыз.",
   "expandedHint": "Жиылды",
-  "collapsedHint": "Жайылды"
+  "collapsedHint": "Жайылды",
+  "splitViewSidebarLabel": "Sidebar",
+  "splitViewDetailLabel": "Detail",
+  "splitViewShowSidebarButtonLabel": "Show sidebar",
+  "splitViewHideSidebarButtonLabel": "Hide sidebar",
+  "splitViewDismissSidebarButtonLabel": "Dismiss sidebar"
 }

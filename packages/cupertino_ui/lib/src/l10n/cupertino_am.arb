@@ -35,5 +35,10 @@
   "expansionTileExpandedTapHint": "ሰብስብ",
   "expansionTileCollapsedTapHint": "ለተጨማሪ ዝርዝሮች ይዘርጉ",
   "expandedHint": "ተሰብስቧል",
-  "collapsedHint": "ተዘርግቷል"
+  "collapsedHint": "ተዘርግቷል",
+  "splitViewSidebarLabel": "Sidebar",
+  "splitViewDetailLabel": "Detail",
+  "splitViewShowSidebarButtonLabel": "Show sidebar",
+  "splitViewHideSidebarButtonLabel": "Hide sidebar",
+  "splitViewDismissSidebarButtonLabel": "Dismiss sidebar"
 }

@@ -35,5 +35,10 @@
   "expansionTileExpandedTapHint": "سکیڑیں",
   "expansionTileCollapsedTapHint": "مزید تفصیلات کے لیے پھیلائیں",
   "expandedHint": "سکڑا ہوا",
-  "collapsedHint": "پھیلا ہوا"
+  "collapsedHint": "پھیلا ہوا",
+  "splitViewSidebarLabel": "Sidebar",
+  "splitViewDetailLabel": "Detail",
+  "splitViewShowSidebarButtonLabel": "Show sidebar",
+  "splitViewHideSidebarButtonLabel": "Hide sidebar",
+  "splitViewDismissSidebarButtonLabel": "Dismiss sidebar"
 }

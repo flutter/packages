@@ -55,5 +55,10 @@
   "expansionTileExpandedTapHint": "تصغير",
   "expansionTileCollapsedTapHint": "وسِّع المربّع لعرض مزيد من التفاصيل.",
   "expandedHint": "مصغَّر",
-  "collapsedHint": "موسَّع"
+  "collapsedHint": "موسَّع",
+  "splitViewSidebarLabel": "Sidebar",
+  "splitViewDetailLabel": "Detail",
+  "splitViewShowSidebarButtonLabel": "Show sidebar",
+  "splitViewHideSidebarButtonLabel": "Hide sidebar",
+  "splitViewDismissSidebarButtonLabel": "Dismiss sidebar"
 }

@@ -50,5 +50,10 @@
   "expansionTileExpandedTapHint": "Laghdaigh",
   "expansionTileCollapsedTapHint": "Leathnaigh chun tuilleadh sonraí a fháil",
   "expandedHint": "Laghdaithe",
-  "collapsedHint": "Leathnaithe"
+  "collapsedHint": "Leathnaithe",
+  "splitViewSidebarLabel": "Sidebar",
+  "splitViewDetailLabel": "Detail",
+  "splitViewShowSidebarButtonLabel": "Show sidebar",
+  "splitViewHideSidebarButtonLabel": "Hide sidebar",
+  "splitViewDismissSidebarButtonLabel": "Dismiss sidebar"
 }

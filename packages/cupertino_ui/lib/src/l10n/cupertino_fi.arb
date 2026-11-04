@@ -35,5 +35,10 @@
   "expansionTileExpandedTapHint": "Tiivistä",
   "expansionTileCollapsedTapHint": "Katso lisätietoja laajentamalla",
   "expandedHint": "Tiivistetty",
-  "collapsedHint": "Laajennettu"
+  "collapsedHint": "Laajennettu",
+  "splitViewSidebarLabel": "Sidebar",
+  "splitViewDetailLabel": "Detail",
+  "splitViewShowSidebarButtonLabel": "Show sidebar",
+  "splitViewHideSidebarButtonLabel": "Hide sidebar",
+  "splitViewDismissSidebarButtonLabel": "Dismiss sidebar"
 }

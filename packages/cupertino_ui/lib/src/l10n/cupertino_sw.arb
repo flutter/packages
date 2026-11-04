@@ -35,5 +35,10 @@
   "expansionTileExpandedTapHint": "Kunja",
   "expansionTileCollapsedTapHint": "Panua ili upate maelezo zaidi",
   "expandedHint": "Imekunjwa",
-  "collapsedHint": "Imepanuliwa"
+  "collapsedHint": "Imepanuliwa",
+  "splitViewSidebarLabel": "Sidebar",
+  "splitViewDetailLabel": "Detail",
+  "splitViewShowSidebarButtonLabel": "Show sidebar",
+  "splitViewHideSidebarButtonLabel": "Hide sidebar",
+  "splitViewDismissSidebarButtonLabel": "Dismiss sidebar"
 }

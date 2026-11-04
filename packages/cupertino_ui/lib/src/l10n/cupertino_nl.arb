@@ -35,5 +35,10 @@
   "expansionTileExpandedTapHint": "Samenvouwen",
   "expansionTileCollapsedTapHint": "Uitvouwen voor meer informatie",
   "expandedHint": "Samengevouwen",
-  "collapsedHint": "Uitgevouwen"
+  "collapsedHint": "Uitgevouwen",
+  "splitViewSidebarLabel": "Sidebar",
+  "splitViewDetailLabel": "Detail",
+  "splitViewShowSidebarButtonLabel": "Show sidebar",
+  "splitViewHideSidebarButtonLabel": "Hide sidebar",
+  "splitViewDismissSidebarButtonLabel": "Dismiss sidebar"
 }

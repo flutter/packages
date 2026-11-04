@@ -35,5 +35,10 @@
   "expansionTileExpandedTapHint": "Goqa",
   "expansionTileCollapsedTapHint": "Nweba ukuze uthole imininingwane eyengeziwe",
   "expandedHint": "Kugoqiwe",
-  "collapsedHint": "Kunwetshiwe"
+  "collapsedHint": "Kunwetshiwe",
+  "splitViewSidebarLabel": "Sidebar",
+  "splitViewDetailLabel": "Detail",
+  "splitViewShowSidebarButtonLabel": "Show sidebar",
+  "splitViewHideSidebarButtonLabel": "Hide sidebar",
+  "splitViewDismissSidebarButtonLabel": "Dismiss sidebar"
 }

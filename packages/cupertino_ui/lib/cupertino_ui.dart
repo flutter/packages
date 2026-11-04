@@ -35,6 +35,7 @@ export 'src/constants.dart';
 export 'src/context_menu.dart';
 export 'src/context_menu_action.dart';
 export 'src/cupertino_focus_halo.dart';
+export 'src/cupertino_split_view.dart';
 export 'src/date_picker.dart';
 export 'src/debug.dart';
 export 'src/desktop_text_selection.dart';

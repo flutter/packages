@@ -35,5 +35,10 @@
   "expansionTileExpandedTapHint": "Хураах",
   "expansionTileCollapsedTapHint": "Илүү дэлгэрэнгүй авах бол дэлгэнэ үү",
   "expandedHint": "Хураасан",
-  "collapsedHint": "Дэлгэсэн"
+  "collapsedHint": "Дэлгэсэн",
+  "splitViewSidebarLabel": "Sidebar",
+  "splitViewDetailLabel": "Detail",
+  "splitViewShowSidebarButtonLabel": "Show sidebar",
+  "splitViewHideSidebarButtonLabel": "Hide sidebar",
+  "splitViewDismissSidebarButtonLabel": "Dismiss sidebar"
 }

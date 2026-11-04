@@ -35,5 +35,10 @@
   "expansionTileExpandedTapHint": "Kuncupkan",
   "expansionTileCollapsedTapHint": "Kembangkan untuk mendapatkan butiran lanjut",
   "expandedHint": "Dikuncupkan",
-  "collapsedHint": "Dikembangkan"
+  "collapsedHint": "Dikembangkan",
+  "splitViewSidebarLabel": "Sidebar",
+  "splitViewDetailLabel": "Detail",
+  "splitViewShowSidebarButtonLabel": "Show sidebar",
+  "splitViewHideSidebarButtonLabel": "Hide sidebar",
+  "splitViewDismissSidebarButtonLabel": "Dismiss sidebar"
 }

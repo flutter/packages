@@ -35,5 +35,10 @@
   "expansionTileExpandedTapHint": "Contraer",
   "expansionTileCollapsedTapHint": "Desplegar para ver más detalles",
   "expandedHint": "Contraído",
-  "collapsedHint": "Desplegado"
+  "collapsedHint": "Desplegado",
+  "splitViewSidebarLabel": "Sidebar",
+  "splitViewDetailLabel": "Detail",
+  "splitViewShowSidebarButtonLabel": "Show sidebar",
+  "splitViewHideSidebarButtonLabel": "Hide sidebar",
+  "splitViewDismissSidebarButtonLabel": "Dismiss sidebar"
 }

@@ -35,5 +35,10 @@
   "expansionTileExpandedTapHint": "Жыйыштыруу",
   "expansionTileCollapsedTapHint": "Толук маалымат алуу үчүн жайып көрүңүз",
   "expandedHint": "Жыйыштырылды",
-  "collapsedHint": "Жайылып көрсөтүлдү"
+  "collapsedHint": "Жайылып көрсөтүлдү",
+  "splitViewSidebarLabel": "Sidebar",
+  "splitViewDetailLabel": "Detail",
+  "splitViewShowSidebarButtonLabel": "Show sidebar",
+  "splitViewHideSidebarButtonLabel": "Hide sidebar",
+  "splitViewDismissSidebarButtonLabel": "Dismiss sidebar"
 }

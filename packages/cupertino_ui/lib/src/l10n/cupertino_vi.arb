@@ -35,5 +35,10 @@
   "expansionTileExpandedTapHint": "Thu gọn",
   "expansionTileCollapsedTapHint": "Mở rộng để xem thêm chi tiết",
   "expandedHint": "Đã thu gọn",
-  "collapsedHint": "Đã mở rộng"
+  "collapsedHint": "Đã mở rộng",
+  "splitViewSidebarLabel": "Sidebar",
+  "splitViewDetailLabel": "Detail",
+  "splitViewShowSidebarButtonLabel": "Show sidebar",
+  "splitViewHideSidebarButtonLabel": "Hide sidebar",
+  "splitViewDismissSidebarButtonLabel": "Dismiss sidebar"
 }

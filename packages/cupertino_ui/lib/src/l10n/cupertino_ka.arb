@@ -35,5 +35,10 @@
   "expansionTileExpandedTapHint": "ჩაკეცვა",
   "expansionTileCollapsedTapHint": "მეტი დეტალებისთვის გააფართოეთ",
   "expandedHint": "ჩაკეცილია",
-  "collapsedHint": "გაფართოებულია"
+  "collapsedHint": "გაფართოებულია",
+  "splitViewSidebarLabel": "Sidebar",
+  "splitViewDetailLabel": "Detail",
+  "splitViewShowSidebarButtonLabel": "Show sidebar",
+  "splitViewHideSidebarButtonLabel": "Hide sidebar",
+  "splitViewDismissSidebarButtonLabel": "Dismiss sidebar"
 }
