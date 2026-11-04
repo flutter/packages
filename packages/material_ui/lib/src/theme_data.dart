@@ -2037,6 +2037,22 @@ class ThemeData with Diagnosticable {
     return theme;
   }
 
+  static bool _isDefaultIconTheme(IconThemeData iconTheme, Brightness brightness) {
+    final Color defaultColor = switch (brightness) {
+      Brightness.light => kDefaultIconDarkColor,
+      Brightness.dark => kDefaultIconLightColor,
+    };
+    return identical(iconTheme.color, defaultColor) &&
+        iconTheme.opacity == null &&
+        iconTheme.size == null &&
+        iconTheme.fill == null &&
+        iconTheme.weight == null &&
+        iconTheme.grade == null &&
+        iconTheme.opticalSize == null &&
+        iconTheme.shadows == null &&
+        iconTheme.applyTextScaling == null;
+  }
+
   /// Linearly interpolate between two themes.
   ///
   /// {@macro dart.ui.shadow.lerp}
@@ -2084,7 +2100,17 @@ class ThemeData with Diagnosticable {
       splashColor: Color.lerp(a.splashColor, b.splashColor, t)!,
       unselectedWidgetColor: Color.lerp(a.unselectedWidgetColor, b.unselectedWidgetColor, t)!,
       // TYPOGRAPHY & ICONOGRAPHY
-      iconTheme: IconThemeData.lerp(a.iconTheme, b.iconTheme, t),
+      iconTheme: () {
+        if (_isDefaultIconTheme(a.iconTheme, a.brightness) &&
+            _isDefaultIconTheme(b.iconTheme, b.brightness)) {
+          final Brightness brightness = t < 0.5 ? a.brightness : b.brightness;
+          return switch (brightness) {
+            Brightness.light => IconThemeData(color: kDefaultIconDarkColor),
+            Brightness.dark => IconThemeData(color: kDefaultIconLightColor),
+          };
+        }
+        return IconThemeData.lerp(a.iconTheme, b.iconTheme, t);
+      }(),
       primaryIconTheme: IconThemeData.lerp(a.primaryIconTheme, b.primaryIconTheme, t),
       primaryTextTheme: TextTheme.lerp(a.primaryTextTheme, b.primaryTextTheme, t),
       textTheme: TextTheme.lerp(a.textTheme, b.textTheme, t),

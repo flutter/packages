@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes `ThemeData.lerp` losing `iconTheme` default color identity during theme animations.
+version: patch

@@ -2953,10 +2953,124 @@ void main() {
       },
     );
 
-    testWidgets(
-      'black87 icon color defined by users shows correctly in Material3',
-      (WidgetTester tester) async {},
-    );
+    testWidgets('black87 icon color defined by users shows correctly in Material3', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(useMaterial3: true, colorScheme: const ColorScheme.light()),
+          home: Scaffold(
+            body: IconTheme(
+              data: const IconThemeData(color: Colors.black87),
+              child: IconButton(icon: const Icon(Icons.account_box), onPressed: () {}),
+            ),
+          ),
+        ),
+      );
+
+      Color? iconColor() => _iconStyle(tester, Icons.account_box)?.color;
+      expect(iconColor(), Colors.black87);
+    });
+
+    testWidgets('unstyled IconButton.filled matches explicit onPrimary during theme animation', (
+      WidgetTester tester,
+    ) async {
+      // Regression test for https://github.com/flutter/flutter/issues/195793.
+      final failures = <String>[];
+
+      for (final (String name, Brightness start, Brightness end)
+          in <(String, Brightness, Brightness)>[
+            ('dark to dark', Brightness.dark, Brightness.dark),
+            ('light to light', Brightness.light, Brightness.light),
+            ('dark to light', Brightness.dark, Brightness.light),
+            ('light to dark', Brightness.light, Brightness.dark),
+          ]) {
+        final GlobalKey defaultIconKey = GlobalKey();
+        final GlobalKey explicitIconKey = GlobalKey();
+        final themeA = ThemeData(
+          useMaterial3: true,
+          brightness: start,
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.red, brightness: start),
+        );
+        final themeB = ThemeData(
+          useMaterial3: true,
+          brightness: end,
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue, brightness: end),
+        );
+
+        Widget app(ThemeData theme) {
+          return MaterialApp(
+            theme: theme,
+            home: Scaffold(
+              body: Builder(
+                builder: (BuildContext context) {
+                  final ColorScheme scheme = Theme.of(context).colorScheme;
+                  return Row(
+                    children: <Widget>[
+                      IconButton.filled(
+                        onPressed: () {},
+                        icon: Icon(Icons.play_arrow_rounded, key: defaultIconKey),
+                      ),
+                      IconButton.filled(
+                        style: IconButton.styleFrom(foregroundColor: scheme.onPrimary),
+                        onPressed: () {},
+                        icon: Icon(Icons.play_arrow_rounded, key: explicitIconKey),
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ),
+          );
+        }
+
+        Color iconColor(GlobalKey key) {
+          return IconTheme.of(tester.element(find.byKey(key))).color!;
+        }
+
+        await tester.pumpWidget(app(themeA));
+        await tester.pumpAndSettle();
+        await tester.pumpWidget(app(themeB));
+
+        var maxDelta = 0.0;
+        var peakMs = 0;
+        Color? peakDefault;
+        Color? peakExplicit;
+        for (var elapsed = 0; elapsed <= 400; elapsed += 5) {
+          await tester.pump(Duration(milliseconds: elapsed == 0 ? 0 : 5));
+          final Color defaultColor = iconColor(defaultIconKey);
+          final Color explicitColor = iconColor(explicitIconKey);
+          final double delta = <double>[
+            (defaultColor.r - explicitColor.r).abs(),
+            (defaultColor.g - explicitColor.g).abs(),
+            (defaultColor.b - explicitColor.b).abs(),
+            (defaultColor.a - explicitColor.a).abs(),
+          ].reduce((double a, double b) => a > b ? a : b);
+          if (delta > maxDelta) {
+            maxDelta = delta;
+            peakMs = elapsed;
+            peakDefault = defaultColor;
+            peakExplicit = explicitColor;
+          }
+        }
+
+        if (maxDelta > 0.001) {
+          failures.add(
+            '$name: max channel delta ${maxDelta.toStringAsFixed(3)} at ${peakMs}ms; '
+            'default=$peakDefault, explicit=$peakExplicit',
+          );
+        }
+      }
+
+      expect(
+        failures,
+        isEmpty,
+        reason:
+            'With the default ThemeData.iconTheme, the unstyled filled '
+            'IconButton should match the explicit onPrimary control.\n'
+            '${failures.join("\n")}',
+      );
+    });
 
     testWidgets("IconButton.styleFrom doesn't throw exception on passing only one cursor", (
       WidgetTester tester,
