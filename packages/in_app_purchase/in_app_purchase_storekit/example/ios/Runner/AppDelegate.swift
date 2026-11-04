@@ -18,7 +18,7 @@ import UIKit
     // Plugin registration eventually starts listening to StoreKit transactions in the background,
     // which would run concurrently with the test cases during unit tests and auto-finish
     // transactions under test. Skip it when running unit tests.
-    if NSClassFromString("XCTest.XCTestCase") != nil {
+    if NSClassFromString("XCTestCase") != nil {
       return
     }
     GeneratedPluginRegistrant.register(with: engineBridge.pluginRegistry)
