@@ -104,7 +104,7 @@ internal class QuickActions(private val context: Context) : AndroidQuickActionsA
             }
             setLongLabel(title)
             setShortLabel(title)
-            setIntent(intent).build()
+            setIntent(intent)
           }
           .build()
     }
