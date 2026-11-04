@@ -24,4 +24,9 @@ void main() {
     checkbox = tester.widget(find.byType(Checkbox).first);
     expect(checkbox.value, isTrue);
   });
+
+  testWidgets('check box use case content is not a semantic list', (WidgetTester tester) async {
+    await pumpsUseCase(tester, CheckBoxUseCase());
+    expect(hasSemanticsList(tester, find.byType(ListView)), isFalse);
+  });
 }
