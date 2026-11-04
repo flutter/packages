@@ -557,3 +557,28 @@ produce. Two optional companion files tune a case:
   An empty file asserts that the builder logs nothing.
 
 To run tests in examples, run `flutter test` from `packages/go_router_builder/example`.
+
+## Route metadata
+
+Annotate a `GoRouteData` or `RelativeGoRouteData` class with constant metadata:
+
+<?code-excerpt ignore?>
+```dart
+@TypedGoRoute<PrivateRoute>(path: '/private')
+@RouteMetadata({'requiresAuth': true, 'analyticsName': 'private'})
+class PrivateRoute extends GoRouteData with $PrivateRoute {
+  const PrivateRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) => const PrivatePage();
+}
+```
+
+Access merged metadata through `GoRouterState.metadata`. Child route values
+replace parent values with the same key. No route instance is created to read
+metadata, so routes with required constructor parameters are supported.
+
+Metadata may use imported constants. Supported values are null, booleans,
+strings, numbers, and nested lists, sets, and maps of these values. Enum values
+and custom constant objects produce a generation error. Shell route and branch
+classes are not supported.

@@ -158,6 +158,7 @@ abstract class GoRouteData extends _GoRouteDataBase {
     GlobalKey<NavigatorState>? parentNavigatorKey,
     List<RouteBase> routes = const <RouteBase>[],
     bool? hasOverriddenOnExit,
+    Map<String, dynamic>? metadata,
   }) {
     final _GoRouteParameters params = _createGoRouteParameters<T>(
       factory: factory,
@@ -175,6 +176,7 @@ abstract class GoRouteData extends _GoRouteDataBase {
       routes: routes,
       parentNavigatorKey: parentNavigatorKey,
       onExit: params.onExit,
+      metadata: metadata,
     );
   }
 
@@ -227,6 +229,7 @@ abstract class RelativeGoRouteData extends _GoRouteDataBase {
     GlobalKey<NavigatorState>? parentNavigatorKey,
     List<RouteBase> routes = const <RouteBase>[],
     bool? hasOverriddenOnExit,
+    Map<String, dynamic>? metadata,
   }) {
     final _GoRouteParameters params = _createGoRouteParameters<T>(
       factory: factory,
@@ -243,6 +246,7 @@ abstract class RelativeGoRouteData extends _GoRouteDataBase {
       routes: routes,
       parentNavigatorKey: parentNavigatorKey,
       onExit: params.onExit,
+      metadata: metadata,
     );
   }
 
@@ -454,6 +458,49 @@ abstract class StatefulShellBranchData {
       clipBehavior: clipBehavior,
     );
   }
+}
+
+/// Constant application-defined metadata for a typed route.
+///
+/// Apply to a [GoRouteData] or [RelativeGoRouteData] subclass. Child metadata
+/// overrides matching parent keys in [GoRouterState.metadata]; other parent
+/// keys remain inherited. The metadata
+/// applies to every match of the route, independently of path parameters,
+/// query parameters, and extra data.
+///
+/// The builder reads this annotation at generation time and passes its values
+/// to [GoRoute.metadata]. It does not construct a route data instance to obtain
+/// metadata. A route may therefore have required constructor parameters.
+/// Metadata may also be supplied through an imported constant map.
+///
+/// Values supported by `go_router_builder` are null, booleans, strings, numbers,
+/// and lists, sets, and maps containing these values. Custom constant objects
+/// and enum values are not supported and cause a generation error. Only one
+/// [RouteMetadata] annotation may be applied to each route class. Shell route
+/// and stateful shell branch classes are not supported.
+///
+/// ```dart
+/// @TypedGoRoute<PrivateRoute>(path: '/private')
+/// @RouteMetadata({'requiresAuth': true})
+/// class PrivateRoute extends GoRouteData with $PrivateRoute {
+///   // ...
+/// }
+/// ```
+@Target(<TargetKind>{TargetKind.classType})
+@immutable
+class RouteMetadata {
+  /// Creates metadata for a typed route.
+  const RouteMetadata(this.values);
+
+  /// The metadata associated with this route.
+  ///
+  /// Keys are application-defined strings. The builder emits a constant map
+  /// containing these values. An empty map adds no metadata; omitting the
+  /// annotation preserves the route's default behavior.
+  ///
+  /// Nested collections are emitted as literals. Their explicit generic type
+  /// arguments are not preserved in the generated configuration.
+  final Map<String, Object?> values;
 }
 
 /// A superclass for each typed route descendant
