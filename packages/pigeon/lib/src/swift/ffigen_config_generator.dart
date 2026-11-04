@@ -92,10 +92,7 @@ import 'package:swiftgen/swiftgen.dart';
         : (configDirSetting.isNotEmpty ? configDirSetting : basePath);
 
     final String swiftOutPath = generatorOptions.swiftOptions.swiftOut;
-    final String rawSwiftOut =
-        (basePath.isNotEmpty &&
-            swiftOutPath.isNotEmpty &&
-            !isWithinOrEquals(basePath, swiftOutPath))
+    final String rawSwiftOut = (basePath.isNotEmpty && swiftOutPath.isNotEmpty)
         ? path.posix.join(basePath, swiftOutPath)
         : swiftOutPath;
     final String fullSwiftOut = rawConfigDir.isNotEmpty
@@ -103,8 +100,7 @@ import 'package:swiftgen/swiftgen.dart';
         : rawSwiftOut;
 
     final String dartOutPath = generatorOptions.dartOut ?? '';
-    final String rawDartOut =
-        (basePath.isNotEmpty && dartOutPath.isNotEmpty && !isWithinOrEquals(basePath, dartOutPath))
+    final String rawDartOut = (basePath.isNotEmpty && dartOutPath.isNotEmpty)
         ? path.posix.join(basePath, dartOutPath)
         : dartOutPath;
     final String fullDartOut = rawConfigDir.isNotEmpty

@@ -86,8 +86,7 @@ class JnigenConfigGenerator extends Generator<InternalJnigenConfigOptions> {
     }
 
     final String dartOutPath = generatorOptions.dartOptions.dartOut ?? '';
-    final String rawDartOut =
-        (basePath.isNotEmpty && dartOutPath.isNotEmpty && !isWithinOrEquals(basePath, dartOutPath))
+    final String rawDartOut = (basePath.isNotEmpty && dartOutPath.isNotEmpty)
         ? path.posix.join(basePath, dartOutPath)
         : dartOutPath;
     final String fullDartOut = rawConfigDir.isNotEmpty

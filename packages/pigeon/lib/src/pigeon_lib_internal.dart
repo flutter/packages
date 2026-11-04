@@ -2702,8 +2702,7 @@ String? _findTargetPubspecPath({
 }) {
   String? pubspecPath;
   if (dartOutPath != null && dartOutPath.isNotEmpty) {
-    final String fullDartOut =
-        (basePath != null && basePath.isNotEmpty && !isWithinOrEquals(basePath, dartOutPath))
+    final String fullDartOut = (basePath != null && basePath.isNotEmpty)
         ? path.join(basePath, dartOutPath)
         : dartOutPath;
     pubspecPath = findPubspecPath(File(fullDartOut).parent);
@@ -2776,9 +2775,7 @@ String? _checkGeneratedBindingsPubspecVersion({
     return null;
   }
   final String basePath = options.basePath ?? '';
-  final String fullDartOut = (basePath.isNotEmpty && !dartOutPath.startsWith(basePath))
-      ? path.join(basePath, dartOutPath)
-      : dartOutPath;
+  final String fullDartOut = basePath.isNotEmpty ? path.join(basePath, dartOutPath) : dartOutPath;
   final bindingsDartFile = File('${path.withoutExtension(fullDartOut)}$generatedFileSuffix');
   if (!bindingsDartFile.existsSync()) {
     return null;
@@ -2809,7 +2806,7 @@ String? _checkGeneratedBindingsPubspecVersion({
 
   final String? pubspecPath = _findTargetPubspecPath(
     appDirectory: appDirectory,
-    dartOutPath: fullDartOut,
+    dartOutPath: dartOutPath,
     basePath: options.basePath,
   );
   if (pubspecPath == null) {
