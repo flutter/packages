@@ -315,6 +315,9 @@ class InkResponse extends StatelessWidget {
     this.onSecondaryTapUp,
     this.onSecondaryTapDown,
     this.onSecondaryTapCancel,
+    this.onTertiaryTapUp,
+    this.onTertiaryTapDown,
+    this.onTertiaryTapCancel,
     this.onHighlightChanged,
     this.onHover,
     this.mouseCursor,
@@ -409,6 +412,35 @@ class InkResponse extends StatelessWidget {
   ///
   ///  * [kSecondaryButton], the button this callback responds to.
   final GestureTapCallback? onSecondaryTapCancel;
+
+  /// Called when the user taps down on this part of the material with a
+  /// tertiary button.
+  ///
+  /// A common use case for the tertiary button is opening a link in a new tab
+  /// or window with a middle click of a mouse.
+  ///
+  /// See also:
+  ///
+  ///  * [kTertiaryButton], the button this callback responds to.
+  final GestureTapDownCallback? onTertiaryTapDown;
+
+  /// Called when the user releases a tertiary button tap that was started on
+  /// this part of the material.
+  ///
+  /// See also:
+  ///
+  ///  * [onTertiaryTapDown], which is called when the tertiary button tap
+  ///    starts.
+  ///  * [kTertiaryButton], the button this callback responds to.
+  final GestureTapUpCallback? onTertiaryTapUp;
+
+  /// Called when the user cancels a tertiary button tap that was started on
+  /// this part of the material.
+  ///
+  /// See also:
+  ///
+  ///  * [kTertiaryButton], the button this callback responds to.
+  final GestureTapCancelCallback? onTertiaryTapCancel;
 
   /// Called when this part of the material either becomes highlighted or stops
   /// being highlighted.
@@ -674,6 +706,9 @@ class InkResponse extends StatelessWidget {
       onSecondaryTapUp: onSecondaryTapUp,
       onSecondaryTapDown: onSecondaryTapDown,
       onSecondaryTapCancel: onSecondaryTapCancel,
+      onTertiaryTapUp: onTertiaryTapUp,
+      onTertiaryTapDown: onTertiaryTapDown,
+      onTertiaryTapCancel: onTertiaryTapCancel,
       onHighlightChanged: onHighlightChanged,
       onHover: onHover,
       mouseCursor: mouseCursor,
@@ -732,6 +767,9 @@ class _InkResponseStateWidget extends StatefulWidget {
     this.onSecondaryTapUp,
     this.onSecondaryTapDown,
     this.onSecondaryTapCancel,
+    this.onTertiaryTapUp,
+    this.onTertiaryTapDown,
+    this.onTertiaryTapCancel,
     this.onHighlightChanged,
     this.onHover,
     this.mouseCursor,
@@ -771,6 +809,9 @@ class _InkResponseStateWidget extends StatefulWidget {
   final GestureTapUpCallback? onSecondaryTapUp;
   final GestureTapDownCallback? onSecondaryTapDown;
   final GestureTapCallback? onSecondaryTapCancel;
+  final GestureTapUpCallback? onTertiaryTapUp;
+  final GestureTapDownCallback? onTertiaryTapDown;
+  final GestureTapCancelCallback? onTertiaryTapCancel;
   final ValueChanged<bool>? onHighlightChanged;
   final ValueChanged<bool>? onHover;
   final MouseCursor? mouseCursor;
@@ -815,6 +856,9 @@ class _InkResponseStateWidget extends StatefulWidget {
       if (onSecondaryTapUp != null) 'secondary tap up',
       if (onSecondaryTapDown != null) 'secondary tap down',
       if (onSecondaryTapCancel != null) 'secondary tap cancel',
+      if (onTertiaryTapUp != null) 'tertiary tap up',
+      if (onTertiaryTapDown != null) 'tertiary tap down',
+      if (onTertiaryTapCancel != null) 'tertiary tap cancel',
     ];
     properties.add(IterableProperty<String>('gestures', gestures, ifEmpty: '<none>'));
     properties.add(DiagnosticsProperty<MouseCursor>('mouseCursor', mouseCursor));
@@ -1183,6 +1227,25 @@ class _InkResponseState extends State<_InkResponseStateWidget>
     widget.onSecondaryTapUp?.call(details);
   }
 
+  void handleTertiaryTapDown(TapDownDetails details) {
+    handleAnyTapDown(details);
+    widget.onTertiaryTapDown?.call(details);
+  }
+
+  void handleTertiaryTapUp(TapUpDetails details) {
+    _currentSplash?.confirm();
+    _currentSplash = null;
+    updateHighlight(_HighlightType.pressed, value: false);
+    widget.onTertiaryTapUp?.call(details);
+  }
+
+  void handleTertiaryTapCancel() {
+    _currentSplash?.cancel();
+    _currentSplash = null;
+    widget.onTertiaryTapCancel?.call();
+    updateHighlight(_HighlightType.pressed, value: false);
+  }
+
   void _startNewSplash({TapDownDetails? details, BuildContext? context}) {
     assert(details != null || context != null);
 
@@ -1284,7 +1347,9 @@ class _InkResponseState extends State<_InkResponseStateWidget>
   }
 
   bool isWidgetEnabled(_InkResponseStateWidget widget) {
-    return _primaryButtonEnabled(widget) || _secondaryButtonEnabled(widget);
+    return _primaryButtonEnabled(widget) ||
+        _secondaryButtonEnabled(widget) ||
+        _tertiaryButtonEnabled(widget);
   }
 
   bool _primaryButtonEnabled(_InkResponseStateWidget widget) {
@@ -1302,9 +1367,14 @@ class _InkResponseState extends State<_InkResponseStateWidget>
         widget.onSecondaryTapDown != null;
   }
 
+  bool _tertiaryButtonEnabled(_InkResponseStateWidget widget) {
+    return widget.onTertiaryTapUp != null || widget.onTertiaryTapDown != null;
+  }
+
   bool get enabled => isWidgetEnabled(widget);
   bool get _primaryEnabled => _primaryButtonEnabled(widget);
   bool get _secondaryEnabled => _secondaryButtonEnabled(widget);
+  bool get _tertiaryEnabled => _tertiaryButtonEnabled(widget);
 
   void handleMouseEnter(PointerEnterEvent event) {
     _hovering = true;
@@ -1409,6 +1479,9 @@ class _InkResponseState extends State<_InkResponseStateWidget>
                   onSecondaryTapUp: _secondaryEnabled ? handleSecondaryTapUp : null,
                   onSecondaryTap: _secondaryEnabled ? handleSecondaryTap : null,
                   onSecondaryTapCancel: _secondaryEnabled ? handleSecondaryTapCancel : null,
+                  onTertiaryTapDown: _tertiaryEnabled ? handleTertiaryTapDown : null,
+                  onTertiaryTapUp: _tertiaryEnabled ? handleTertiaryTapUp : null,
+                  onTertiaryTapCancel: _tertiaryEnabled ? handleTertiaryTapCancel : null,
                   behavior: HitTestBehavior.opaque,
                   excludeFromSemantics: true,
                   child: widget.child,
@@ -1524,6 +1597,9 @@ class InkWell extends InkResponse {
     super.onSecondaryTapUp,
     super.onSecondaryTapDown,
     super.onSecondaryTapCancel,
+    super.onTertiaryTapUp,
+    super.onTertiaryTapDown,
+    super.onTertiaryTapCancel,
     super.onHighlightChanged,
     super.onHover,
     super.mouseCursor,

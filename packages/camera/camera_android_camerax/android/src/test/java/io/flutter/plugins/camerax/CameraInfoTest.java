@@ -5,12 +5,15 @@
 package io.flutter.plugins.camerax;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import androidx.annotation.OptIn;
 import androidx.camera.core.CameraInfo;
 import androidx.camera.core.CameraSelector;
 import androidx.camera.core.CameraState;
+import androidx.camera.core.ExperimentalZeroShutterLag;
 import androidx.camera.core.ExposureState;
 import androidx.camera.core.ZoomState;
 import androidx.lifecycle.LiveData;
@@ -19,6 +22,17 @@ import java.util.List;
 import org.junit.Test;
 
 public class CameraInfoTest {
+  @Test
+  @OptIn(markerClass = ExperimentalZeroShutterLag.class)
+  public void isZslSupported_makesCallToRetrieveZslSupport() {
+    final PigeonApiCameraInfo api = new TestProxyApiRegistrar().getPigeonApiCameraInfo();
+
+    final CameraInfo instance = mock(CameraInfo.class);
+    when(instance.isZslSupported()).thenReturn(true);
+
+    assertTrue(api.isZslSupported(instance));
+  }
+
   @Test
   public void sensorRotationDegrees_makesCallToRetrieveSensorRotationDegrees() {
     final PigeonApiCameraInfo api = new TestProxyApiRegistrar().getPigeonApiCameraInfo();

@@ -227,7 +227,7 @@ class _VideoTracksDemoState extends State<VideoTracksDemo> {
               label: const Text('Select Video'),
               inputDecorationTheme: const InputDecorationTheme(border: OutlineInputBorder()),
               dropdownMenuEntries: _sampleVideos.indexed.map(((int, String) record) {
-                final (index, url) = record;
+                final (int index, String url) = record;
                 final label = url.contains('.m3u8')
                     ? 'HLS Stream ${index + 1}'
                     : 'MP4 Video ${index + 1}';

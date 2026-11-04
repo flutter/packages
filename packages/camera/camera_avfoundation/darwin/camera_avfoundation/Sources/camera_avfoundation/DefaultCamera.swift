@@ -122,6 +122,12 @@ final class DefaultCamera: NSObject, Camera {
 
   private var fileFormat = PlatformImageFileFormat.jpeg
   private var imageQuality: Int64 = 100
+
+  /// The zero-shutter-lag state last requested via [setZeroShutterLagEnabled],
+  /// if any. Session reconfiguration (e.g. switching cameras) silently resets
+  /// `isZeroShutterLagEnabled`, so the requested state is kept here and
+  /// reapplied afterwards.
+  private var zeroShutterLagRequested: Bool?
   private var lockedCaptureOrientation = UIDeviceOrientation.unknown
   private var exposureMode = PlatformExposureMode.auto
   private var focusMode = PlatformFocusMode.auto
@@ -873,10 +879,33 @@ final class DefaultCamera: NSObject, Camera {
   private func updateOrientation(
     _ orientation: UIDeviceOrientation, forCaptureOutput captureOutput: CaptureOutput
   ) {
-    if let connection = captureOutput.connection(with: .video),
-      connection.isVideoOrientationSupported
-    {
+    guard let connection = captureOutput.connection(with: .video) else { return }
+
+    if #available(iOS 17.0, *) {
+      let angle = videoRotationAngle(forDeviceOrientation: orientation)
+      if connection.isVideoRotationAngleSupported(angle) {
+        connection.videoRotationAngle = angle
+      }
+    } else if connection.isVideoOrientationSupported {
       connection.videoOrientation = videoOrientation(forDeviceOrientation: orientation)
+    }
+  }
+
+  /// Matches the `AVCaptureVideoOrientation` mapping.
+  private func videoRotationAngle(forDeviceOrientation deviceOrientation: UIDeviceOrientation)
+    -> CGFloat
+  {
+    switch deviceOrientation {
+    case .portrait:
+      return 90
+    case .landscapeLeft:
+      return 0
+    case .landscapeRight:
+      return 180
+    case .portraitUpsideDown:
+      return 270
+    default:
+      return 90
     }
   }
 
@@ -916,6 +945,35 @@ final class DefaultCamera: NSObject, Camera {
 
   func setJpegImageQuality(_ quality: Int64) {
     self.imageQuality = quality
+  }
+
+  func isZeroShutterLagSupported() -> Bool {
+    return capturePhotoOutput.flutterZeroShutterLagSupported
+  }
+
+  /// Applies the requested zero-shutter-lag state to the photo output.
+  ///
+  /// Enabling is guarded on `flutterZeroShutterLagSupported`: setting
+  /// `isZeroShutterLagEnabled` to `true` while unsupported throws
+  /// `NSInvalidArgumentException`, and the platform interface documents this
+  /// setting as best-effort. Changing the value requires a reconfiguration of
+  /// the capture pipeline, so the update is wrapped in
+  /// `beginConfiguration`/`commitConfiguration`.
+  func setZeroShutterLagEnabled(_ enabled: Bool) {
+    zeroShutterLagRequested = enabled
+    applyZeroShutterLag(enabled)
+  }
+
+  private func applyZeroShutterLag(_ enabled: Bool) {
+    if enabled && !capturePhotoOutput.flutterZeroShutterLagSupported {
+      return
+    }
+    if capturePhotoOutput.flutterZeroShutterLagEnabled == enabled {
+      return
+    }
+    videoCaptureSession.beginConfiguration()
+    capturePhotoOutput.flutterZeroShutterLagEnabled = enabled
+    videoCaptureSession.commitConfiguration()
   }
 
   func setExposureMode(_ mode: PlatformExposureMode) {
@@ -1232,8 +1290,15 @@ final class DefaultCamera: NSObject, Camera {
     }
 
     // Keep the same orientation the old connections had.
-    if let oldConnection = oldConnection, newConnection.isVideoOrientationSupported {
-      newConnection.videoOrientation = oldConnection.videoOrientation
+    if let oldConnection = oldConnection {
+      if #available(iOS 17.0, *) {
+        let angle = oldConnection.videoRotationAngle
+        if newConnection.isVideoRotationAngleSupported(angle) {
+          newConnection.videoRotationAngle = angle
+        }
+      } else if newConnection.isVideoOrientationSupported {
+        newConnection.videoOrientation = oldConnection.videoOrientation
+      }
     }
 
     // Add the new connections to the session.
@@ -1245,7 +1310,10 @@ final class DefaultCamera: NSObject, Camera {
             message: "Unable to switch video input",
             details: nil)))
     }
-    videoCaptureSession.addInputWithNoConnections(captureVideoInput)
+
+    // Do not use addInputWithNoConnections. The session still has the disconnected
+    // capturePhotoOutput, and we need to reconnect it to the captureVideoInput.
+    videoCaptureSession.addInput(captureVideoInput)
 
     if !videoCaptureSession.canAddOutput(captureVideoOutput.avOutput) {
       completion(
@@ -1269,6 +1337,12 @@ final class DefaultCamera: NSObject, Camera {
     videoCaptureSession.commitConfiguration()
 
     configureMaxPhotoDimensions()
+
+    // Reconfiguring the session silently resets `isZeroShutterLagEnabled`;
+    // reapply the state the caller last requested.
+    if let zeroShutterLagRequested = zeroShutterLagRequested {
+      applyZeroShutterLag(zeroShutterLagRequested)
+    }
 
     completion(.success(()))
   }

@@ -997,6 +997,8 @@ protocol InAppPurchase2API {
   func transactions(completion: @escaping (Result<[SK2TransactionMessage], Error>) -> Void)
   func unfinishedTransactions(
     completion: @escaping (Result<[SK2TransactionMessage], Error>) -> Void)
+  func currentEntitlements(
+    completion: @escaping (Result<[SK2TransactionMessage], Error>) -> Void)
   func finish(id: Int64, completion: @escaping (Result<Void, Error>) -> Void)
   func startListeningToTransactions() throws
   func stopListeningToTransactions() throws
@@ -1004,6 +1006,7 @@ protocol InAppPurchase2API {
   func countryCode(completion: @escaping (Result<String, Error>) -> Void)
   func sync(completion: @escaping (Result<Void, Error>) -> Void)
   func presentOfferCodeRedeemSheet(completion: @escaping (Result<Void, Error>) -> Void)
+  func showManageSubscriptions(completion: @escaping (Result<Void, Error>) -> Void)
 }
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
@@ -1149,6 +1152,24 @@ class InAppPurchase2APISetup {
     } else {
       unfinishedTransactionsChannel.setMessageHandler(nil)
     }
+    let currentEntitlementsChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.currentEntitlements\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      currentEntitlementsChannel.setMessageHandler { _, reply in
+        api.currentEntitlements { result in
+          switch result {
+          case .success(let res):
+            reply(wrapResult(res))
+          case .failure(let error):
+            reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      currentEntitlementsChannel.setMessageHandler(nil)
+    }
     let finishChannel = FlutterBasicMessageChannel(
       name: "dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.finish\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
@@ -1270,6 +1291,24 @@ class InAppPurchase2APISetup {
       }
     } else {
       presentOfferCodeRedeemSheetChannel.setMessageHandler(nil)
+    }
+    let showManageSubscriptionsChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.showManageSubscriptions\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      showManageSubscriptionsChannel.setMessageHandler { _, reply in
+        api.showManageSubscriptions { result in
+          switch result {
+          case .success:
+            reply(wrapResult(nil))
+          case .failure(let error):
+            reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      showManageSubscriptionsChannel.setMessageHandler(nil)
     }
   }
 }
