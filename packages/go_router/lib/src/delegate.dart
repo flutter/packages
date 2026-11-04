@@ -122,7 +122,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList> with ChangeNotifie
       states.add(navigatorKey.currentState!);
     }
     if (currentConfiguration.isEmpty) {
-      return states.reversed;
+      return states;
     }
     RouteMatchBase walker = currentConfiguration.matches.last;
     while (walker is ShellRouteMatch) {
