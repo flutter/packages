@@ -6,6 +6,7 @@ import Flutter
 import ImageIO
 import Testing
 import UIKit
+import UniformTypeIdentifiers
 
 @testable import image_picker_ios
 
@@ -80,8 +81,9 @@ struct PickerSaveImageToPathOperationTests {
     ("jpgImage", "jpg", true, "jpg"),
     ("bmpImage", "bmp", true, "jpg"),
     ("heicImage", "heic", true, "jpg"),
-    ("icnsImage", "icns", true, "jpg"),
-    ("icoImage", "ico", true, "jpg"),
+    // These two have an alpha channel, which a JPEG couldn't keep.
+    ("icnsImage", "icns", true, "png"),
+    ("icoImage", "ico", true, "png"),
     ("proRawImage", "dng", true, "jpg"),
     ("tiffImage", "tiff", true, "jpg"),
     // fullMetadata false skips the PHAsset lookup.
@@ -93,6 +95,20 @@ struct PickerSaveImageToPathOperationTests {
     try await verifySavingImage(
       try pickerItem(forResource: resource, ext: ext), fullMetadata: fullMetadata,
       extension: expectedExtension)
+  }
+
+  @Test func saveTransparentWebPKeepsItsAlpha() async throws {
+    let itemProvider = NSItemProvider(
+      item: ImagePickerTestImages.transparentWebPTestData as NSData,
+      typeIdentifier: UTType.webP.identifier)
+    let result = FakePickerItem(itemProvider: itemProvider, assetIdentifier: nil)
+    let (savedPath, savedError) = try await runSaveOperation(result: result, fullMetadata: false)
+    #expect(savedError == nil)
+    let path = try #require(savedPath)
+    defer { try? FileManager.default.removeItem(atPath: path) }
+    #expect(URL(fileURLWithPath: path).pathExtension == "png")
+    let alphaInfo = try #require(UIImage(contentsOfFile: path)?.cgImage?.alphaInfo)
+    #expect(alphaInfo == .last || alphaInfo == .premultipliedLast)
   }
 
   @Test func saveGIFImage() async throws {

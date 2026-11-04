@@ -1,3 +1,8 @@
+## 0.8.13+15
+
+* Saves picked images that have an alpha channel as PNG instead of JPEG when their format can't be
+  written back, such as WebP, so they keep their transparency.
+
 ## 0.8.13+14
 
 * Migrates the view provider from Objective-C to Swift.
