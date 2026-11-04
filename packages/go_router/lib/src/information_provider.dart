@@ -191,6 +191,26 @@ class GoRouteInformationProvider extends RouteInformationProvider
     );
   }
 
+  /// Sets [value] to `matchList`, as [restore] does, without notifying
+  /// listeners.
+  ///
+  /// Called when a page is popped without [GoRouter.pop], for example by
+  /// `Navigator.pop` or a system back gesture. The [Router] only reports the
+  /// new location after the frame, so until then [value] still describes the
+  /// popped page, and a refresh in that window would bring it back. The
+  /// router is already showing `matchList`, so there is nothing to re-parse.
+  @internal
+  void syncWithPoppedMatchList(RouteMatchList matchList) {
+    _value = RouteInformation(
+      uri: matchList.uri,
+      state: RouteInformationState<void>(
+        extra: matchList.extra,
+        baseRouteMatchList: matchList,
+        type: NavigatingType.restore,
+      ),
+    );
+  }
+
   /// Removes the top-most route match from `base` and pushes the `location` as a
   /// new route on top.
   Future<T?> pushReplacement<T>(String location, {required RouteMatchList base, Object? extra}) {
