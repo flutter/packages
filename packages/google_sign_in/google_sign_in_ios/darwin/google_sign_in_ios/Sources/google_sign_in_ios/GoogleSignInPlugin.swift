@@ -164,12 +164,19 @@ public final class GoogleSignInPlugin: NSObject, FlutterPlugin, GoogleSignInApi 
     }
   #endif
 
+  #if os(macOS)
+    /// Implements `FlutterAppLifecycleDelegate.handleOpenURLs`.
+    public func handleOpen(_ urls: [URL]) -> Bool {
+      return handleOpenURLs(urls)
+    }
+  #endif
+
   /// Forwards each URL to GIDSignIn.
   ///
   /// Returns `true` if GIDSignIn handled any of the URLs. On iOS this is also
   /// used from scene URL handling so tests can cover that path without
   /// constructing `UIOpenURLContext`.
-  public func handleOpen(_ urls: [URL]) -> Bool {
+  func handleOpenURLs(_ urls: [URL]) -> Bool {
     var handled = false
     for url in urls {
       handled = signIn.handle(url) || handled
@@ -440,7 +447,7 @@ public final class GoogleSignInPlugin: NSObject, FlutterPlugin, GoogleSignInApi 
   extension GoogleSignInPlugin: FlutterSceneLifeCycleDelegate {
     public func scene(_ scene: UIScene, openURLContexts urlContexts: Set<UIOpenURLContext>) -> Bool
     {
-      return handleOpen(urlContexts.map { $0.url })
+      return handleOpenURLs(urlContexts.map { $0.url })
     }
   }
 #endif

@@ -23,6 +23,7 @@ import 'package:a11y_assessments/use_cases/switch_list_tile.dart';
 import 'package:a11y_assessments/use_cases/text_button.dart';
 import 'package:a11y_assessments/use_cases/text_field.dart';
 import 'package:a11y_assessments/use_cases/text_field_password.dart';
+import 'package:a11y_assessments/use_cases/use_cases.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_color_utilities/material_color_utilities.dart';
@@ -425,5 +426,117 @@ void main() {
     final Finder findHeadingLevelOnes = find.bySemanticsLabel('Accessibility Assessments');
     await tester.pumpAndSettle();
     expect(findHeadingLevelOnes, findsOne);
+  });
+
+  testWidgets('Filter by tags button has correct expanded/collapsed semantics state', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const App());
+    await tester.pumpAndSettle();
+
+    final Finder filterButton = find.byTooltip('Filter by tags');
+    expect(
+      tester.getSemantics(filterButton),
+      matchesSemantics(
+        isButton: true,
+        hasEnabledState: true,
+        isEnabled: true,
+        hasExpandedState: true,
+        isFocusable: true,
+        hasTapAction: true,
+        hasFocusAction: true,
+        tooltip: 'Filter by tags',
+      ),
+    );
+
+    // Open the filter menu.
+    await tester.tap(filterButton);
+    await tester.pumpAndSettle();
+
+    expect(
+      tester.getSemantics(filterButton),
+      matchesSemantics(
+        isButton: true,
+        hasEnabledState: true,
+        isEnabled: true,
+        hasExpandedState: true,
+        isExpanded: true,
+        isFocusable: true,
+        hasTapAction: true,
+        hasFocusAction: true,
+        tooltip: 'Filter by tags',
+      ),
+    );
+
+    // Toggling a tag keeps the menu open and the button expanded.
+    await tester.tap(find.text(Tag.batch1.name));
+    await tester.pumpAndSettle();
+
+    expect(
+      tester.getSemantics(filterButton),
+      matchesSemantics(
+        isButton: true,
+        hasEnabledState: true,
+        isEnabled: true,
+        hasExpandedState: true,
+        isExpanded: true,
+        isFocusable: true,
+        hasTapAction: true,
+        hasFocusAction: true,
+        tooltip: 'Filter by tags',
+      ),
+    );
+
+    // Close the filter menu by tapping the button again.
+    await tester.tap(filterButton);
+    await tester.pumpAndSettle();
+
+    expect(
+      tester.getSemantics(filterButton),
+      matchesSemantics(
+        isButton: true,
+        hasEnabledState: true,
+        isEnabled: true,
+        hasExpandedState: true,
+        isFocusable: true,
+        hasTapAction: true,
+        hasFocusAction: true,
+        tooltip: 'Filter by tags',
+      ),
+    );
+
+    // Reopen and close by tapping outside the menu.
+    await tester.tap(filterButton);
+    await tester.pumpAndSettle();
+    expect(
+      tester.getSemantics(filterButton),
+      matchesSemantics(
+        isButton: true,
+        hasEnabledState: true,
+        isEnabled: true,
+        hasExpandedState: true,
+        isExpanded: true,
+        isFocusable: true,
+        hasTapAction: true,
+        hasFocusAction: true,
+        tooltip: 'Filter by tags',
+      ),
+    );
+
+    await tester.tapAt(Offset.zero);
+    await tester.pumpAndSettle();
+    expect(
+      tester.getSemantics(filterButton),
+      matchesSemantics(
+        isButton: true,
+        hasEnabledState: true,
+        isEnabled: true,
+        hasExpandedState: true,
+        isFocusable: true,
+        hasTapAction: true,
+        hasFocusAction: true,
+        tooltip: 'Filter by tags',
+      ),
+    );
   });
 }

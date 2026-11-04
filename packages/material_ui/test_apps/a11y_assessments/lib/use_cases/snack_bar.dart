@@ -42,9 +42,13 @@ class MainWidgetState extends State<MainWidget> {
             ElevatedButton(
               child: const Text('Show Snackbar'),
               onPressed: () {
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(const SnackBar(content: Text('Awesome Snackbar!')));
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Awesome Snackbar!'),
+                    persist: true,
+                    showCloseIcon: true,
+                  ),
+                );
               },
             ),
             ElevatedButton(
