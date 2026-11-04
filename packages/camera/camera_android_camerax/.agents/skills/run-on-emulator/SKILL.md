@@ -118,8 +118,9 @@ for CameraX errors: run `adb -s <serial> logcat -c` before the test and search
 ### 3b. Run the example app
 
 1. **Build, install, and launch it** with permissions granted. Always
-   rebuild first: 3a writes a test build to the same APK path, and launching
-   that shows only a splash screen.
+   rebuild first: the APK at that path may be out of date, or it may be an
+   integration test build (`flutter test` writes one there), which only
+   shows a splash screen when launched.
 
    ```bash
    (cd example && flutter build apk --debug)
