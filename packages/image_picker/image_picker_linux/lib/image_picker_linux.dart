@@ -11,10 +11,7 @@ import 'package:image_picker_platform_interface/image_picker_platform_interface.
 ///
 /// This class implements the `package:image_picker` functionality for
 /// Linux.
-class ImagePickerLinux extends CameraDelegatingImagePickerPlatform {
-  /// Constructs a platform implementation.
-  ImagePickerLinux();
-
+base class ImagePickerLinux extends CameraDelegatingImagePickerPlatform {
   /// The file selector used to prompt the user to select images or videos.
   @visibleForTesting
   static FileSelectorPlatform fileSelector = FileSelectorLinux();
@@ -24,88 +21,23 @@ class ImagePickerLinux extends CameraDelegatingImagePickerPlatform {
     ImagePickerPlatform.instance = ImagePickerLinux();
   }
 
-  // This is soft-deprecated in the platform interface, and is only implemented
-  // for compatibility. Callers should be using getImageFromSource.
-  @override
-  Future<PickedFile?> pickImage({
-    required ImageSource source,
-    double? maxWidth,
-    double? maxHeight,
-    int? imageQuality,
-    CameraDevice preferredCameraDevice = CameraDevice.rear,
-  }) async {
-    final XFile? file = await getImageFromSource(
-      source: source,
-      options: ImagePickerOptions(
-        maxWidth: maxWidth,
-        maxHeight: maxHeight,
-        imageQuality: imageQuality,
-        preferredCameraDevice: preferredCameraDevice,
-      ),
-    );
-    if (file != null) {
-      return PickedFile(file.path);
-    }
-    return null;
-  }
-
-  // This is soft-deprecated in the platform interface, and is only implemented
-  // for compatibility. Callers should be using getVideo.
-  @override
-  Future<PickedFile?> pickVideo({
-    required ImageSource source,
-    CameraDevice preferredCameraDevice = CameraDevice.rear,
-    Duration? maxDuration,
-  }) async {
-    final XFile? file = await getVideo(
-      source: source,
-      preferredCameraDevice: preferredCameraDevice,
-      maxDuration: maxDuration,
-    );
-    if (file != null) {
-      return PickedFile(file.path);
-    }
-    return null;
-  }
-
-  // This is soft-deprecated in the platform interface, and is only implemented
-  // for compatibility. Callers should be using getImageFromSource.
-  @override
-  Future<XFile?> getImage({
-    required ImageSource source,
-    double? maxWidth,
-    double? maxHeight,
-    int? imageQuality,
-    CameraDevice preferredCameraDevice = CameraDevice.rear,
-  }) async {
-    return getImageFromSource(
-      source: source,
-      options: ImagePickerOptions(
-        maxWidth: maxWidth,
-        maxHeight: maxHeight,
-        imageQuality: imageQuality,
-        preferredCameraDevice: preferredCameraDevice,
-      ),
-    );
-  }
-
   // [ImagePickerOptions] options are not currently supported. If any
   // of its fields are set, they will be silently ignored.
   //
   // If source is `ImageSource.camera`, a `StateError` will be thrown
   // unless a [cameraDelegate] is set.
   @override
-  Future<XFile?> getImageFromSource({
+  Future<XFile?> pickImage({
     required ImageSource source,
     ImagePickerOptions options = const ImagePickerOptions(),
   }) async {
     switch (source) {
       case ImageSource.camera:
-        return super.getImageFromSource(source: source);
+        return super.pickImage(source: source, options: options);
       case ImageSource.gallery:
         const typeGroup = XTypeGroup(label: 'Images', mimeTypes: <String>['image/*']);
         final XFile? file = await fileSelector.openFile(
-          acceptedTypeGroups: <XTypeGroup>[typeGroup],
+          options: const OpenFileDialogOptions(acceptedTypeGroups: <XTypeGroup>[typeGroup]),
         );
         return file;
     }
@@ -121,22 +53,17 @@ class ImagePickerLinux extends CameraDelegatingImagePickerPlatform {
   // If source is `ImageSource.camera`, a `StateError` will be thrown
   // unless a [cameraDelegate] is set.
   @override
-  Future<XFile?> getVideo({
+  Future<XFile?> pickVideo({
     required ImageSource source,
-    CameraDevice preferredCameraDevice = CameraDevice.rear,
-    Duration? maxDuration,
+    VideoPickerOptions options = const VideoPickerOptions(),
   }) async {
     switch (source) {
       case ImageSource.camera:
-        return super.getVideo(
-          source: source,
-          preferredCameraDevice: preferredCameraDevice,
-          maxDuration: maxDuration,
-        );
+        return super.pickVideo(source: source, options: options);
       case ImageSource.gallery:
         const typeGroup = XTypeGroup(label: 'Videos', mimeTypes: <String>['video/*']);
         final XFile? file = await fileSelector.openFile(
-          acceptedTypeGroups: <XTypeGroup>[typeGroup],
+          options: const OpenFileDialogOptions(acceptedTypeGroups: <XTypeGroup>[typeGroup]),
         );
         return file;
     }
@@ -149,25 +76,23 @@ class ImagePickerLinux extends CameraDelegatingImagePickerPlatform {
   // supported. If any of these arguments are supplied, they will be silently
   // ignored.
   @override
-  Future<List<XFile>> getMultiImage({
-    double? maxWidth,
-    double? maxHeight,
-    int? imageQuality,
+  Future<List<XFile>> pickMultiImage({
+    MultiImagePickerOptions options = const MultiImagePickerOptions(),
   }) async {
     const typeGroup = XTypeGroup(label: 'Images', mimeTypes: <String>['image/*']);
     final List<XFile> files = await fileSelector.openFiles(
-      acceptedTypeGroups: <XTypeGroup>[typeGroup],
+      options: const OpenFilesDialogOptions(acceptedTypeGroups: <XTypeGroup>[typeGroup]),
     );
     return files;
   }
 
   @override
-  Future<List<XFile>> getMultiVideoWithOptions({
+  Future<List<XFile>> pickMultiVideo({
     MultiVideoPickerOptions options = const MultiVideoPickerOptions(),
   }) async {
     const typeGroup = XTypeGroup(label: 'Videos', mimeTypes: <String>['video/*']);
     final List<XFile> files = await fileSelector.openFiles(
-      acceptedTypeGroups: <XTypeGroup>[typeGroup],
+      options: const OpenFilesDialogOptions(acceptedTypeGroups: <XTypeGroup>[typeGroup]),
     );
     return files;
   }
@@ -176,7 +101,7 @@ class ImagePickerLinux extends CameraDelegatingImagePickerPlatform {
   // supported. If any of these arguments are supplied, they will be silently
   // ignored.
   @override
-  Future<List<XFile>> getMedia({required MediaOptions options}) async {
+  Future<List<XFile>> pickMedia({required MediaPickerOptions options}) async {
     const typeGroup = XTypeGroup(
       label: 'Images and videos',
       mimeTypes: <String>['image/*', 'video/*'],
@@ -185,9 +110,13 @@ class ImagePickerLinux extends CameraDelegatingImagePickerPlatform {
     List<XFile> files;
 
     if (options.allowMultiple) {
-      files = await fileSelector.openFiles(acceptedTypeGroups: <XTypeGroup>[typeGroup]);
+      files = await fileSelector.openFiles(
+        options: const OpenFilesDialogOptions(acceptedTypeGroups: <XTypeGroup>[typeGroup]),
+      );
     } else {
-      final XFile? file = await fileSelector.openFile(acceptedTypeGroups: <XTypeGroup>[typeGroup]);
+      final XFile? file = await fileSelector.openFile(
+        options: const OpenFileDialogOptions(acceptedTypeGroups: <XTypeGroup>[typeGroup]),
+      );
       files = <XFile>[if (file != null) file];
     }
     return files;

@@ -30,5 +30,15 @@ flutter:
 # FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
 # See https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#changing-federated-plugins
 dependency_overrides:
+  file_selector_linux:
+    git:
+      url: git@github.com:bparrishMines/packages.git
+      ref: file_selector_2
+      path: packages/file_selector/file_selector_linux
+  file_selector_platform_interface:
+    git:
+      url: git@github.com:bparrishMines/packages.git
+      ref: file_selector_2
+      path: packages/file_selector/file_selector_platform_interface
   image_picker_linux: {path: ../../../../packages/image_picker/image_picker_linux}
   image_picker_platform_interface: {path: ../../../../packages/image_picker/image_picker_platform_interface}
