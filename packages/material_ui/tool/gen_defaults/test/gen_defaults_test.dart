@@ -425,12 +425,49 @@ void main() {
       expect(contents, contains('return _colors.onSecondary.withValues(alpha: 0.08);'));
     });
 
-    test('ButtonTemplateM3E throws for buttons without Material 3 Expressive defaults', () {
+    test('ButtonTemplateM3E emits M3E OutlinedButton defaults from tokens', () {
+      const template = ButtonTemplateM3E('Outlined Button');
+      expect(template.parentFilePath, 'outlined_button.dart');
+
+      final String contents = _generateContents(template);
+      expect(contents, contains('class _OutlinedButtonDefaultsM3E extends ButtonStyle'));
+      // The container is transparent, except for selected toggle buttons.
+      expect(contents, contains('return Colors.transparent;'));
+      expect(contents, contains('return _colors.inverseSurface;'));
+      expect(contents, contains('return _colors.onSurface.withValues(alpha: 0.1);'));
+      expect(contents, contains('return _colors.onSurfaceVariant;'));
+      expect(contents, contains('return _colors.onInverseSurface;'));
+      // The outline width depends on the size, and selected toggle buttons have
+      // no outline.
+      expect(contents, contains('WidgetStateProperty<BorderSide?>? get side'));
+      expect(contents, contains('return BorderSide.none;'));
+      expect(contents, contains('return BorderSide(color: _colors.outlineVariant, width: width);'));
+      expect(contents, contains('ButtonSizeVariant.medium => 1.0'));
+      expect(contents, contains('ButtonSizeVariant.large => 2.0'));
+      expect(contents, contains('ButtonSizeVariant.xLarge => 3.0'));
+      expect(contents, contains('return 0.0;'));
+    });
+
+    test('ButtonTemplateM3E emits M3E TextButton defaults from tokens', () {
+      const template = ButtonTemplateM3E('Text Button');
+      expect(template.parentFilePath, 'text_button.dart');
+
+      final String contents = _generateContents(template);
+      expect(contents, contains('class _TextButtonDefaultsM3E extends ButtonStyle'));
+      expect(contents, contains('return _colors.onSurface.withValues(alpha: 0.1);'));
+      expect(contents, contains('return Colors.transparent;'));
+      expect(contents, contains('return _colors.primary;'));
+      expect(contents, contains('return _colors.primary.withValues(alpha: 0.08);'));
+      // Text buttons have no selected or unselected tokens, and no outline.
+      expect(contents, isNot(contains('WidgetState.selected')));
+      expect(contents, isNot(contains('get side')));
+    });
+
+    test('ButtonTemplateM3E throws for unknown button names', () {
       expect(
-        () => const ButtonTemplateM3E('Outlined Button').parentFilePath,
+        () => const ButtonTemplateM3E('Unknown Button').parentFilePath,
         throwsUnsupportedError,
       );
-      expect(() => const ButtonTemplateM3E('Text Button').parentFilePath, throwsUnsupportedError);
     });
 
     test('ButtonTemplateM3 emits M3 FilledButton defaults from tokens', () {
