@@ -23,7 +23,7 @@ internal constructor(private val sdkIsAtLeast: (Int) -> Boolean) :
   private var quickActions: QuickActions? = null
   private var quickActionsFlutterApi: AndroidQuickActionsFlutterApi? = null
 
-  constructor() : this(sdkIsAtLeast = { version: Int -> Build.VERSION.SDK_INT >= version })
+  constructor() : this(sdkIsAtLeast = { Build.VERSION.SDK_INT >= it })
 
   override fun onAttachedToEngine(binding: FlutterPluginBinding) {
     quickActions = QuickActions(binding.applicationContext)
@@ -45,7 +45,7 @@ internal constructor(private val sdkIsAtLeast: (Int) -> Boolean) :
     val activity = binding.activity
     quickActions?.activity = activity
     binding.addOnNewIntentListener(this)
-    onNewIntent(activity.intent)
+    activity.intent?.let { onNewIntent(it) }
   }
 
   override fun onDetachedFromActivity() {
@@ -75,7 +75,7 @@ internal constructor(private val sdkIsAtLeast: (Int) -> Boolean) :
         quickActionsFlutterApi?.launchAction(shortcutId) { result ->
           val error = result.exceptionOrNull()
           if (error != null) {
-            Log.e(TAG, "Failed to handle launch action: " + error.message)
+            Log.e(TAG, "Failed to handle launch action: ${error.message}")
           }
         }
         ShortcutManagerCompat.reportShortcutUsed(context, shortcutId)

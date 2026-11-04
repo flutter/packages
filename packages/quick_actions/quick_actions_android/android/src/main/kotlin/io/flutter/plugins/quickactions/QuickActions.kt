@@ -30,7 +30,7 @@ internal class QuickActions(private val context: Context) : AndroidQuickActionsA
       itemsList: List<ShortcutItemMessage>,
       callback: (Result<Unit>) -> Unit
   ) {
-    if (!this.isVersionAllowed) {
+    if (!isVersionAllowed) {
       callback(Result.success(Unit))
       return
     }
@@ -38,38 +38,33 @@ internal class QuickActions(private val context: Context) : AndroidQuickActionsA
     val executor = ThreadPoolExecutor(0, 1, 1, TimeUnit.SECONDS, LinkedBlockingQueue())
 
     executor.execute {
-      var dynamicShortcutsSet = false
-      try {
-        ShortcutManagerCompat.setDynamicShortcuts(context, shortcuts)
-        dynamicShortcutsSet = true
-      } catch (_: Exception) {
-        // Leave dynamicShortcutsSet as false
-      }
-      if (dynamicShortcutsSet) {
-        callback(Result.success(Unit))
-      } else {
-        callback(
+      val result =
+          try {
+            ShortcutManagerCompat.setDynamicShortcuts(context, shortcuts)
+            Result.success(Unit)
+          } catch (_: Exception) {
             Result.failure(
                 FlutterError(
                     "quick_action_setshortcutitems_failure",
                     "Exception thrown when setting dynamic shortcuts",
-                    null)))
-      }
+                    null))
+          }
+      callback(result)
     }
   }
 
   override fun clearShortcutItems() {
-    if (!this.isVersionAllowed) {
+    if (!isVersionAllowed) {
       return
     }
     ShortcutManagerCompat.removeAllDynamicShortcuts(context)
   }
 
   override fun getLaunchAction(): String? {
-    if (!this.isVersionAllowed) {
+    if (!isVersionAllowed) {
       return null
     }
-    val activity = this.activity
+    val activity = activity
     if (activity == null) {
       // The engine can run without an attached activity, for instance when it is cached and warmed
       // up by a background service. Nothing launched the app in that case, so there is no launch
@@ -78,7 +73,7 @@ internal class QuickActions(private val context: Context) : AndroidQuickActionsA
       Log.d(TAG, "There is no activity available when getting the launch action.")
       return null
     }
-    val intent = activity.intent
+    val intent = activity.intent ?: return null
     val launchAction = intent.getStringExtra(EXTRA_ACTION)
     if (!launchAction.isNullOrEmpty()) {
       ShortcutManagerCompat.reportShortcutUsed(context, launchAction)
@@ -92,27 +87,32 @@ internal class QuickActions(private val context: Context) : AndroidQuickActionsA
   private fun shortcutItemMessageToShortcutInfo(
       shortcuts: List<ShortcutItemMessage>
   ): List<ShortcutInfoCompat> {
-    return shortcuts
-        .map { shortcut ->
-          val type = shortcut.type
-          val title = shortcut.localizedTitle
-          val shortcutBuilder = ShortcutInfoCompat.Builder(context, type)
+    return shortcuts.mapNotNull { shortcut ->
+      val type = shortcut.type
+      val title = shortcut.localizedTitle
+      val intent = getIntentToOpenMainActivity(type)
+      if (intent == null) {
+        Log.d(TAG, "No intent found for $title")
+        return@mapNotNull null
+      }
 
-          val resourceId = loadResourceId(context, shortcut.icon)
-          val intent = getIntentToOpenMainActivity(type) ?: return@map null
-
-          if (resourceId > 0) {
-            shortcutBuilder.setIcon(IconCompat.createWithResource(context, resourceId))
+      ShortcutInfoCompat.Builder(context, type)
+          .apply {
+            val resourceId = loadResourceId(shortcut.icon)
+            if (resourceId > 0) {
+              setIcon(IconCompat.createWithResource(context, resourceId))
+            }
+            setLongLabel(title)
+            setShortLabel(title)
+            setIntent(intent).build()
           }
-
-          shortcutBuilder.setLongLabel(title).setShortLabel(title).setIntent(intent).build()
-        }
-        .filterNotNull()
+          .build()
+    }
   }
 
   // This method requires doing dynamic resource lookup, which is a discouraged API.
-  @SuppressWarnings("DiscouragedApi")
-  private fun loadResourceId(context: Context, icon: String?): Int {
+  @Suppress("DiscouragedApi")
+  private fun loadResourceId(icon: String?): Int {
     if (icon == null) {
       return 0
     }
@@ -127,7 +127,7 @@ internal class QuickActions(private val context: Context) : AndroidQuickActionsA
     }
   }
 
-  private fun getIntentToOpenMainActivity(type: String?): Intent? {
+  private fun getIntentToOpenMainActivity(type: String): Intent? {
     val packageName = context.packageName
 
     return context.packageManager
@@ -140,6 +140,6 @@ internal class QuickActions(private val context: Context) : AndroidQuickActionsA
 
   companion object {
     private const val TAG = "QuickActionsAndroid"
-    const val EXTRA_ACTION: String = "some unique action key"
+    const val EXTRA_ACTION = "some unique action key"
   }
 }
