@@ -319,7 +319,7 @@ struct ImagePickerPluginTests {
         limit: nil
       ) { result in
         guard case .failure(let error as PigeonError) = result else {
-          Issue.record("Expected multiple_request error")
+          Issue.record("Expected multiple_request error, got \(result)")
           return
         }
         #expect(error.code == "multiple_request")
@@ -342,7 +342,7 @@ struct ImagePickerPluginTests {
     await confirmation("first call") { confirmed in
       plugin.pickMedia(mediaSelectionOptions: options) { result in
         guard case .failure(let error as PigeonError) = result else {
-          Issue.record("Expected multiple_request error")
+          Issue.record("Expected multiple_request error, got \(result)")
           return
         }
         #expect(error.code == "multiple_request")
@@ -362,7 +362,7 @@ struct ImagePickerPluginTests {
     await confirmation("first call") { confirmed in
       plugin.pickVideo(source: source, maxDurationSeconds: nil) { result in
         guard case .failure(let error as PigeonError) = result else {
-          Issue.record("Expected multiple_request error")
+          Issue.record("Expected multiple_request error, got \(result)")
           return
         }
         #expect(error.code == "multiple_request")
@@ -458,7 +458,7 @@ struct ImagePickerPluginTests {
         requestFullMetadata: false
       ) { result in
         guard case .failure(let error as PigeonError) = result else {
-          Issue.record("Expected invalid_result")
+          Issue.record("Expected invalid_result, got \(result)")
           return
         }
         #expect(error.code == "invalid_result")
@@ -476,7 +476,7 @@ struct ImagePickerPluginTests {
         maxDurationSeconds: nil
       ) { result in
         guard case .failure(let error as PigeonError) = result else {
-          Issue.record("Expected invalid_result")
+          Issue.record("Expected invalid_result, got \(result)")
           return
         }
         #expect(error.code == "invalid_result")
@@ -544,7 +544,7 @@ struct ImagePickerPluginTests {
         requestFullMetadata: true
       ) { result in
         guard case .failure(let error as PigeonError) = result else {
-          Issue.record("Expected camera_access_denied")
+          Issue.record("Expected camera_access_denied, got \(result)")
           return
         }
         #expect(error.code == "camera_access_denied")
@@ -567,7 +567,7 @@ struct ImagePickerPluginTests {
         requestFullMetadata: true
       ) { result in
         guard case .failure(let error as PigeonError) = result else {
-          Issue.record("Expected camera_access_restricted")
+          Issue.record("Expected camera_access_restricted, got \(result)")
           return
         }
         #expect(error.code == "camera_access_restricted")
@@ -591,7 +591,7 @@ struct ImagePickerPluginTests {
         requestFullMetadata: true
       ) { result in
         guard case .failure(let error as PigeonError) = result else {
-          Issue.record("Expected camera_access_denied")
+          Issue.record("Expected camera_access_denied, got \(result)")
           return
         }
         #expect(error.code == "camera_access_denied")
@@ -639,7 +639,7 @@ struct ImagePickerPluginTests {
         requestFullMetadata: true
       ) { result in
         guard case .success(let path) = result else {
-          Issue.record("Expected cancelled nil path")
+          Issue.record("Expected cancelled nil path, got \(result)")
           return
         }
         #expect(path == nil)
@@ -671,7 +671,7 @@ struct ImagePickerPluginTests {
         requestFullMetadata: true
       ) { result in
         guard case .failure(let error as PigeonError) = result else {
-          Issue.record("Expected camera_access_denied")
+          Issue.record("Expected camera_access_denied, got \(result)")
           return
         }
         #expect(error.code == "camera_access_denied")
@@ -698,7 +698,7 @@ struct ImagePickerPluginTests {
         requestFullMetadata: true
       ) { result in
         guard case .success(let path) = result else {
-          Issue.record("Expected cancelled nil path")
+          Issue.record("Expected cancelled nil path, got \(result)")
           return
         }
         #expect(path == nil)
