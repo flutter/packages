@@ -498,7 +498,7 @@ static int probe_device(const char *path, device_info *info, const char **why) {
     return -1;
   }
   snprintf(info->path, sizeof(info->path), "%s", path);
-  snprintf(info->card, sizeof(info->card), "%s", (const char *)cap.card);
+  snprintf(info->card, sizeof(info->card), "%.32s", (const char *)cap.card);
   info->fourcc = best_fourcc;
   return fd;
 }
