@@ -35,6 +35,7 @@ private object NativeInteropExamplePigeonUtils {
  * @property message The error message.
  * @property details The error details. Must be a datatype supported by the api codec.
  */
+@Keep
 class FlutterError(
     val code: String,
     override val message: String? = null,

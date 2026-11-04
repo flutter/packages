@@ -5,6 +5,7 @@
 import 'package:go_router/go_router.dart';
 
 mixin $IdeasRoute {}
+
 mixin $FavoritesRoute {}
 
 @TypedStatefulShellRoute<AppShellRouteData>(

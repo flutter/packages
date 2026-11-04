@@ -203,9 +203,8 @@ void main() {
           textDirection: TextDirection.ltr,
           child: StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
-              final SliderThemeData sliderTheme = SliderTheme.of(
-                context,
-              ).copyWith(thumbShape: loggingThumb);
+              final SliderThemeData sliderTheme = SliderTheme.of(context)
+                  .copyWith(thumbShape: loggingThumb);
               return Material(
                 child: Center(
                   child: SliderTheme(
@@ -458,9 +457,8 @@ void main() {
           textDirection: TextDirection.ltr,
           child: StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
-              final SliderThemeData sliderTheme = SliderTheme.of(
-                context,
-              ).copyWith(thumbShape: loggingThumb);
+              final SliderThemeData sliderTheme = SliderTheme.of(context)
+                  .copyWith(thumbShape: loggingThumb);
               return Material(
                 child: Center(
                   child: SliderTheme(
@@ -571,9 +569,8 @@ void main() {
           textDirection: TextDirection.ltr,
           child: StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
-              final SliderThemeData sliderTheme = SliderTheme.of(
-                context,
-              ).copyWith(thumbShape: loggingThumb);
+              final SliderThemeData sliderTheme = SliderTheme.of(context)
+                  .copyWith(thumbShape: loggingThumb);
               return Material(
                 child: Center(
                   child: SliderTheme(
@@ -680,6 +677,47 @@ void main() {
     await tester.pump(const Duration(milliseconds: 200));
     // Animation complete.
     expect(SchedulerBinding.instance.transientCallbackCount, equals(0));
+  });
+
+  testWidgets('Discrete slider has no floating-point rounding errors', (WidgetTester tester) async {
+    final values = <double>[];
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Directionality(
+          textDirection: TextDirection.ltr,
+          child: Material(
+            child: Center(
+              child: SizedBox(
+                width: 180.0,
+                child: Slider(
+                  max: 35.0,
+                  divisions: 35,
+                  value: 0.0,
+                  onChanged: (double newValue) {
+                    values.add(newValue);
+                  },
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    final Offset topLeft = tester.getTopLeft(find.byType(Slider));
+    final Offset bottomRight = tester.getBottomRight(find.byType(Slider));
+    final double width = bottomRight.dx - topLeft.dx;
+    final double activeTrackWidth = width - 48.0;
+    final Offset start = topLeft + Offset(24.0, (bottomRight.dy - topLeft.dy) / 2);
+    final TestGesture gesture = await tester.startGesture(start);
+    await gesture.moveTo(start + Offset(activeTrackWidth * 29.0 / 35.0, 0.0));
+    await gesture.up();
+
+    expect(values.isNotEmpty, isTrue);
+    expect(values.last, 29.0);
+    for (final val in values) {
+      expect(val, equals(val.roundToDouble()));
+    }
   });
 
   testWidgets('Slider can be given zero values', (WidgetTester tester) async {
@@ -927,9 +965,8 @@ void main() {
                   child: Material(
                     child: Theme(
                       data: Theme.of(context).copyWith(
-                        sliderTheme: Theme.of(
-                          context,
-                        ).sliderTheme.copyWith(showValueIndicator: show),
+                        sliderTheme: Theme.of(context).sliderTheme
+                            .copyWith(showValueIndicator: show),
                       ),
                       child: Center(
                         child: OverflowBox(
@@ -3382,9 +3419,8 @@ void main() {
           textDirection: TextDirection.ltr,
           child: StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
-              final SliderThemeData sliderTheme = SliderTheme.of(
-                context,
-              ).copyWith(tickMarkShape: TallSliderTickMarkShape());
+              final SliderThemeData sliderTheme = SliderTheme.of(context)
+                  .copyWith(tickMarkShape: TallSliderTickMarkShape());
               return Material(
                 child: Center(
                   child: IntrinsicHeight(
@@ -3885,9 +3921,8 @@ void main() {
                       dragStarted = true;
                     },
                     child: MediaQuery(
-                      data: MediaQuery.of(
-                        context,
-                      ).copyWith(gestureSettings: const DeviceGestureSettings(touchSlop: 20)),
+                      data: MediaQuery.of(context)
+                          .copyWith(gestureSettings: const DeviceGestureSettings(touchSlop: 20)),
                       child: Slider(
                         value: value,
                         key: sliderKey,
@@ -3941,9 +3976,8 @@ void main() {
                       dragStarted = true;
                     },
                     child: MediaQuery(
-                      data: MediaQuery.of(
-                        context,
-                      ).copyWith(gestureSettings: const DeviceGestureSettings(touchSlop: 10)),
+                      data: MediaQuery.of(context)
+                          .copyWith(gestureSettings: const DeviceGestureSettings(touchSlop: 10)),
                       child: Slider(
                         value: value,
                         key: sliderKey,
@@ -5282,9 +5316,8 @@ void main() {
 
     RenderBox sliderRenderBox() {
       return tester.allRenderObjects.firstWhere(
-            (RenderObject object) => object.runtimeType.toString() == '_RenderSlider',
-          )
-          as RenderBox;
+        (RenderObject object) => object.runtimeType.toString() == '_RenderSlider',
+      ) as RenderBox;
     }
 
     // Test Slider height and tracks spacing with zero padding.
@@ -5367,7 +5400,11 @@ void main() {
       final Color disabledThumbColor = colorScheme.onSurface.withOpacity(0.38);
       final Color valueIndicatorColor = colorScheme.inverseSurface;
       var value = 0.45;
-      Widget buildApp({int? divisions, bool enabled = true}) {
+      Widget buildApp({
+        int? divisions,
+        bool enabled = true,
+        TextDirection textDirection = TextDirection.ltr,
+      }) {
         final ValueChanged<double>? onChanged = !enabled
             ? null
             : (double d) {
@@ -5375,7 +5412,7 @@ void main() {
               };
         return MaterialApp(
           home: Directionality(
-            textDirection: TextDirection.ltr,
+            textDirection: textDirection,
             child: Material(
               child: Center(
                 child: Theme(
@@ -5432,8 +5469,75 @@ void main() {
               bottomLeft: trackInnerCornerRadius,
             ),
             color: inactiveTrackColor,
+          )
+          // Secondary track.
+          ..rrect(
+            rrect: RRect.fromLTRBAndCorners(
+              368.4,
+              292.0,
+              588.0,
+              308.0,
+              topLeft: trackInnerCornerRadius,
+              topRight: trackOuterCornerRadius,
+              bottomRight: trackOuterCornerRadius,
+              bottomLeft: trackInnerCornerRadius,
+            ),
+            color: secondaryActiveTrackColor,
           ),
       );
+
+      // Test default track shape in RTL. It is the mirror image of the one in LTR,
+      // and the secondary track stops a track gap before the thumb.
+      // Regression test for https://github.com/flutter/flutter/issues/194279
+      await tester.pumpWidget(buildApp(textDirection: TextDirection.rtl));
+      expect(
+        material,
+        paints
+          // Inactive track.
+          ..rrect(
+            rrect: RRect.fromLTRBAndCorners(
+              24.0,
+              292.0,
+              431.6,
+              308.0,
+              topLeft: trackOuterCornerRadius,
+              topRight: trackInnerCornerRadius,
+              bottomRight: trackInnerCornerRadius,
+              bottomLeft: trackOuterCornerRadius,
+            ),
+            color: inactiveTrackColor,
+          )
+          // Active track.
+          ..rrect(
+            rrect: RRect.fromLTRBAndCorners(
+              443.6,
+              292.0,
+              776.0,
+              308.0,
+              topLeft: trackInnerCornerRadius,
+              topRight: trackOuterCornerRadius,
+              bottomRight: trackOuterCornerRadius,
+              bottomLeft: trackInnerCornerRadius,
+            ),
+            color: activeTrackColor,
+          )
+          // Secondary track.
+          ..rrect(
+            rrect: RRect.fromLTRBAndCorners(
+              212.0,
+              292.0,
+              431.6,
+              308.0,
+              topLeft: trackOuterCornerRadius,
+              topRight: trackInnerCornerRadius,
+              bottomRight: trackInnerCornerRadius,
+              bottomLeft: trackOuterCornerRadius,
+            ),
+            color: secondaryActiveTrackColor,
+          ),
+      );
+
+      await tester.pumpWidget(buildApp());
 
       // Test default colors for enabled slider.
       expect(
@@ -5693,8 +5797,7 @@ void main() {
             child: Slider(
               value: 0.5,
               divisions: 10,
-              label:
-                  'A very long label string that exceeds standard screen widths to test clipping behavior',
+              label: 'A very long label string that exceeds standard screen widths to test clipping behavior',
               onChanged: (double value) {},
             ),
           ),
@@ -5712,6 +5815,189 @@ void main() {
 
     await gesture.up();
   });
+
+  // Regression tests for https://github.com/flutter/flutter/issues/184391.
+  //
+  // Tick marks are painted at `trackLeft + padding / 2 + i / d * (trackWidth - padding)`,
+  // where `padding` is the track height on rounded tracks. Tap detection used to
+  // invert an unpadded formula instead, so the snap boundary between two ticks
+  // drifted from their visual midpoint by up to `padding / 2` pixels. Tapping
+  // exactly on a tick center can't expose that (the drift is far smaller than half
+  // a division), so these tests tap just on either side of each visual midpoint.
+  for (final (String name, TextDirection textDirection, bool? year2023)
+      in <(String, TextDirection, bool?)>[
+        ('M3', TextDirection.ltr, null),
+        ('M3 RTL', TextDirection.rtl, null),
+        ('M3 with year2023 false (gapped track)', TextDirection.ltr, false),
+        ('M3 with year2023 false (gapped track) RTL', TextDirection.rtl, false),
+      ]) {
+    testWidgets('Discrete Slider snaps at the visual midpoint between ticks ($name)', (
+      WidgetTester tester,
+    ) async {
+      const divisions = 10;
+      final value = ValueNotifier<double>(0);
+      addTearDown(value.dispose);
+      final List<Offset> tickCenters = await pumpDiscreteSlider(
+        tester,
+        value: value,
+        divisions: divisions,
+        textDirection: textDirection,
+        year2023: year2023,
+      );
+      // Ticks are painted left to right in pixel space regardless of text
+      // direction, so in RTL the tick at pixel index i has the value divisions - i.
+      double valueOfTick(int pixelIndex) => switch (textDirection) {
+        TextDirection.ltr => pixelIndex.toDouble(),
+        TextDirection.rtl => (divisions - pixelIndex).toDouble(),
+      };
+
+      // A small offset keeps the taps well clear of the exact midpoint while
+      // staying smaller than the smallest drift of the old formula.
+      const midpointOffset = 0.05;
+      for (var i = 0; i < divisions; i++) {
+        final double midpointDx = (tickCenters[i].dx + tickCenters[i + 1].dx) / 2;
+        final double dy = tickCenters[i].dy;
+
+        await tester.tapAt(Offset(midpointDx - midpointOffset, dy));
+        await tester.pump();
+        expect(
+          value.value,
+          valueOfTick(i),
+          reason: 'Tapping just left of the midpoint between pixel ticks $i and ${i + 1}',
+        );
+
+        await tester.tapAt(Offset(midpointDx + midpointOffset, dy));
+        await tester.pump();
+        expect(
+          value.value,
+          valueOfTick(i + 1),
+          reason: 'Tapping just right of the midpoint between pixel ticks $i and ${i + 1}',
+        );
+      }
+    });
+  }
+
+  testWidgets('Discrete Slider snaps to a tick when tapping its center', (
+    WidgetTester tester,
+  ) async {
+    const divisions = 10;
+    final value = ValueNotifier<double>(0);
+    addTearDown(value.dispose);
+    final List<Offset> tickCenters = await pumpDiscreteSlider(
+      tester,
+      value: value,
+      divisions: divisions,
+    );
+
+    for (var i = divisions; i >= 0; i--) {
+      await tester.tapAt(tickCenters[i]);
+      await tester.pump();
+      expect(value.value, i.toDouble(), reason: 'Tapping the center of tick $i');
+    }
+  });
+
+  testWidgets('Discrete Slider drag after a tap uses the same track coordinates as the tap', (
+    WidgetTester tester,
+  ) async {
+    // With many divisions, even a small mismatch between the width used to map
+    // a position to a value and the width used to scale drag deltas adds up to
+    // more than half a division over a full-track drag. The gapped track has the
+    // largest padding, which makes the mismatch most visible.
+    const divisions = 100;
+    final value = ValueNotifier<double>(0);
+    addTearDown(value.dispose);
+    final List<Offset> tickCenters = await pumpDiscreteSlider(
+      tester,
+      value: value,
+      divisions: divisions,
+      year2023: false,
+    );
+
+    final TestGesture gesture = await tester.startGesture(tickCenters.first);
+    // Move past the touch slop first so the drag starts mid-gesture and the
+    // rest of the movement is scaled by the drag delta normalizer.
+    await gesture.moveBy(const Offset(kTouchSlop * 2, 0));
+    await gesture.moveTo(tickCenters.last);
+    await tester.pump();
+    expect(value.value, divisions.toDouble());
+
+    await gesture.moveTo(tickCenters.first);
+    await tester.pump();
+    expect(value.value, 0.0);
+    await gesture.up();
+  });
+}
+
+/// Pumps a [Slider] whose tick mark centers are recorded, and returns the
+/// centers of the `divisions + 1` ticks painted on the first frame, ordered
+/// left to right.
+///
+/// Recording the painted positions lets tests tap relative to the real tick
+/// marks without duplicating the track geometry math.
+Future<List<Offset>> pumpDiscreteSlider(
+  WidgetTester tester, {
+  required ValueNotifier<double> value,
+  required int divisions,
+  TextDirection textDirection = TextDirection.ltr,
+  bool? year2023,
+}) async {
+  final tickCenters = <Offset>[];
+  await tester.pumpWidget(
+    MaterialApp(
+      home: Directionality(
+        textDirection: textDirection,
+        child: SliderTheme(
+          data: SliderThemeData(tickMarkShape: _PositionRecordingTickMarkShape(tickCenters)),
+          child: Material(
+            child: Center(
+              child: ValueListenableBuilder<double>(
+                valueListenable: value,
+                builder: (BuildContext context, double current, Widget? child) {
+                  return Slider(
+                    year2023: year2023,
+                    max: divisions.toDouble(),
+                    divisions: divisions,
+                    value: current,
+                    onChanged: (double newValue) => value.value = newValue,
+                  );
+                },
+              ),
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+  // Later repaints append to the list, so keep only the first frame's ticks.
+  final List<Offset> firstFrame = tickCenters.take(divisions + 1).toList();
+  expect(firstFrame, hasLength(divisions + 1));
+  return firstFrame;
+}
+
+/// Records the center of each tick mark as it is painted.
+class _PositionRecordingTickMarkShape extends SliderTickMarkShape {
+  _PositionRecordingTickMarkShape(this.positions);
+
+  final List<Offset> positions;
+
+  @override
+  Size getPreferredSize({required SliderThemeData sliderTheme, required bool isEnabled}) {
+    return Size.zero;
+  }
+
+  @override
+  void paint(
+    PaintingContext context,
+    Offset center, {
+    required RenderBox parentBox,
+    required SliderThemeData sliderTheme,
+    required Animation<double> enableAnimation,
+    required Offset thumbCenter,
+    required bool isEnabled,
+    required TextDirection textDirection,
+  }) {
+    positions.add(center);
+  }
 }
 
 // A slider value indicator that's a circle with a fixed size and

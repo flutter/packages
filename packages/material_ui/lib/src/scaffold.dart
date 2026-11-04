@@ -1701,22 +1701,10 @@ class _FloatingActionButtonTransitionState extends State<_FloatingActionButtonTr
 ///
 /// <callout-box>
 ///
-// TODO(framework): Add unit tests to this code snippet.
-// https://github.com/flutter/flutter/issues/188530
-///
 /// Add a listener to the app's tab controller so that the [AppBar] title of the
 /// app's one and only scaffold is reset each time a new tab is selected.
 ///
-/// ```dart
-/// TabController(vsync: tickerProvider, length: tabCount)..addListener(() {
-///   if (!tabController.indexIsChanging) {
-///     setState(() {
-///       // Rebuild the enclosing scaffold with a new AppBar title
-///       appBarTitle = 'Tab ${tabController.index}';
-///     });
-///   }
-/// })
-/// ```
+/// {@example /example/lib/scaffold/scaffold.snippet.0.dart#body indent=strip}
 ///
 /// </callout-box>
 ///

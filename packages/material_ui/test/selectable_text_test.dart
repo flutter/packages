@@ -5019,7 +5019,7 @@ void main() {
       );
       expect(state.selectionOverlay!.handlesAreVisible, isFalse);
     }
-  });
+  }, tags: 'reduced-web-test-set');
 
   testWidgets('onSelectionChanged is called when selection changes', (WidgetTester tester) async {
     var onSelectionChangedCallCount = 0;

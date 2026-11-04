@@ -8,12 +8,11 @@ import UIKit
 
 /// Protocol for requesting tiles from the Dart side.
 protocol TileProviderDelegate: AnyObject {
-  func tile(
+  @MainActor func tile(
     withOverlayIdentifier tileOverlayId: String,
     location: PlatformPoint,
-    zoom: Int64,
-    completion: @escaping (Result<PlatformTile, PigeonError>) -> Void
-  )
+    zoom: Int64
+  ) async throws -> PlatformTile
 }
 
 /// Controller of a single tile overlay on the map.
@@ -107,33 +106,31 @@ class TileProviderController: GMSTileLayer {
   }
 
   override func requestTileFor(x: UInt, y: UInt, zoom: UInt, receiver: any GMSTileReceiver) {
-    DispatchQueue.main.async { [weak self] in
-      guard let self = self, let tileProviderDelegate = self.tileProviderDelegate else {
+    Task { @MainActor in
+      guard let tileProviderDelegate = self.tileProviderDelegate else {
         receiver.receiveTileWith(x: x, y: y, zoom: zoom, image: kGMSTileLayerNoTile)
         return
       }
-      tileProviderDelegate.tile(
-        withOverlayIdentifier: self.tileOverlayIdentifier,
-        location: PlatformPoint(x: Double(x), y: Double(y)),
-        zoom: Int64(zoom)
-      ) { [weak self] result in
-        guard let self = self else {
-          receiver.receiveTileWith(x: x, y: y, zoom: zoom, image: kGMSTileLayerNoTile)
-          return
+      var tileImage = kGMSTileLayerNoTile
+      do {
+        let tile = try await tileProviderDelegate.tile(
+          withOverlayIdentifier: self.tileOverlayIdentifier,
+          location: PlatformPoint(x: Double(x), y: Double(y)),
+          zoom: Int64(zoom)
+        )
+        if let data = tile.data?.data {
+          tileImage = self.handleResultTile(UIImage(data: data)) ?? kGMSTileLayerNoTile
         }
-        var tileImage = kGMSTileLayerNoTile
-        switch result {
-        case .success(let tile):
-          if let data = tile.data?.data {
-            tileImage = self.handleResultTile(UIImage(data: data)) ?? kGMSTileLayerNoTile
-          }
-        case .failure(let error):
-          NSLog(
+      } catch {
+        let message =
+          if let error = error as? PigeonError {
             "Can't get tile: errorCode = \(error.code), errorMessage = \(error.message ?? "nil"), details = \(error.details ?? "nil")"
-          )
-        }
-        receiver.receiveTileWith(x: x, y: y, zoom: zoom, image: tileImage)
+          } else {
+            "Can't get tile: unexpected error \(error)"
+          }
+        NSLog(message)
       }
+      receiver.receiveTileWith(x: x, y: y, zoom: zoom, image: tileImage)
     }
   }
 }

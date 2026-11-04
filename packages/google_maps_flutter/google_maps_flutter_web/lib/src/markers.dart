@@ -343,6 +343,7 @@ class AdvancedMarkersController
     assert(marker is AdvancedMarker, 'Marker must be an AdvancedMarker.');
 
     final gmMarker = gmaps.AdvancedMarkerElement(markerOptions);
+    _copyAdvancedMarkerOptionsAnchor(gmMarker, markerOptions);
     gmMarker.setAttribute('id', marker.markerId.value);
 
     return AdvancedMarkerController(

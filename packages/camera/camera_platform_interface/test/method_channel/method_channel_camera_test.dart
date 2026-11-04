@@ -586,6 +586,33 @@ void main() {
               'cameraId': cameraId,
               'maxVideoDuration': null,
               'enableStream': false,
+              'videoOutputPath': null,
+            },
+          ),
+        ]);
+      });
+
+      test('Should pass videoOutputPath when starting a video recording with options', () async {
+        // Arrange
+        final channel = MethodChannelMock(
+          channelName: 'plugins.flutter.io/camera',
+          methods: <String, dynamic>{'startVideoRecording': null},
+        );
+
+        // Act
+        await camera.startVideoCapturing(
+          VideoCaptureOptions(cameraId, videoOutputPath: 'path/to/video.mp4'),
+        );
+
+        // Assert
+        expect(channel.log, <Matcher>[
+          isMethodCall(
+            'startVideoRecording',
+            arguments: <String, Object?>{
+              'cameraId': cameraId,
+              'maxVideoDuration': null,
+              'enableStream': false,
+              'videoOutputPath': 'path/to/video.mp4',
             },
           ),
         ]);

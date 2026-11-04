@@ -18,7 +18,7 @@ final class MockCamera: NSObject, Camera {
   var receivedImageStreamDataStub: (() -> Void)?
   var startStub: (() -> Void)?
   var startVideoRecordingStub:
-    ((@escaping (Result<Void, any Error>) -> Void, FlutterBinaryMessenger?) -> Void)?
+    ((String?, @escaping (Result<Void, any Error>) -> Void, FlutterBinaryMessenger?) -> Void)?
   var pauseVideoRecordingStub: (() -> Void)?
   var resumeVideoRecordingStub: (() -> Void)?
   var stopVideoRecordingStub: ((@escaping (Result<String, any Error>) -> Void) -> Void)?
@@ -28,6 +28,8 @@ final class MockCamera: NSObject, Camera {
   var unlockCaptureOrientationStub: (() -> Void)?
   var setImageFileFormatStub: ((PlatformImageFileFormat) -> Void)?
   var setJpegImageQualityStub: ((Int64) -> Void)?
+  var isZeroShutterLagSupportedStub: (() -> Bool)?
+  var setZeroShutterLagEnabledStub: ((Bool) -> Void)?
   var setExposureModeStub: ((PlatformExposureMode) -> Void)?
   var setExposureOffsetStub: ((Double) -> Void)?
   var setExposurePointStub: ((PlatformPoint?, @escaping (Result<Void, any Error>) -> Void) -> Void)?
@@ -111,10 +113,11 @@ final class MockCamera: NSObject, Camera {
   func stop() {}
 
   func startVideoRecording(
+    videoOutputPath: String?,
     completion: @escaping (Result<Void, any Error>) -> Void,
     messengerForStreaming messenger: FlutterBinaryMessenger?
   ) {
-    startVideoRecordingStub?(completion, messenger)
+    startVideoRecordingStub?(videoOutputPath, completion, messenger)
   }
 
   func pauseVideoRecording() {
@@ -147,6 +150,14 @@ final class MockCamera: NSObject, Camera {
 
   func setJpegImageQuality(_ quality: Int64) {
     setJpegImageQualityStub?(quality)
+  }
+
+  func isZeroShutterLagSupported() -> Bool {
+    return isZeroShutterLagSupportedStub?() ?? false
+  }
+
+  func setZeroShutterLagEnabled(_ enabled: Bool) {
+    setZeroShutterLagEnabledStub?(enabled)
   }
 
   func setExposureMode(_ mode: PlatformExposureMode) {

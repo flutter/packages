@@ -8,8 +8,11 @@
 import 'package:go_router/go_router.dart';
 
 mixin $HomeRoute {}
+
 mixin $DetailsRoute {}
+
 mixin $NestedEditRoute {}
+
 mixin $SiblingEditRoute {}
 
 @TypedGoRoute<HomeRoute>(

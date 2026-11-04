@@ -1775,7 +1775,7 @@ void main() {
       RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
       SystemMouseCursors.basic,
     );
-  });
+  }, tags: 'reduced-web-test-set');
 
   testWidgets('ToggleButtons focus, hover, and highlight elevations are 0', (
     WidgetTester tester,

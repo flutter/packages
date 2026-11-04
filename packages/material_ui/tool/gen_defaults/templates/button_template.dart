@@ -5,9 +5,14 @@
 import '../data/button.dart';
 import '../data/button_elevated.dart';
 import '../data/button_filled.dart';
+import '../data/button_large.dart';
+import '../data/button_medium.dart';
 import '../data/button_outlined.dart';
+import '../data/button_small.dart';
 import '../data/button_text.dart';
 import '../data/button_tonal.dart';
+import '../data/button_xlarge.dart';
+import '../data/button_xsmall.dart';
 import '../data/color_role.dart';
 import 'template.dart';
 
@@ -146,20 +151,20 @@ class ButtonTemplateM3 extends TokenTemplateM3 {
     return '''
 WidgetStateProperty.resolveWith((Set<WidgetState> states) {
   if (states.contains(WidgetState.disabled)) {
-    return ${colorWithOpacity(TokenButton.disabledContainerColor, _legacyDisabledContainerOpacity, '_colors')};
+    return ${colorWithOpacity(TokenButton.disabledContainerColor, _legacyDisabledContainerOpacity)};
   }
-  return ${color(containerColor, '_colors')};
+  return ${color(containerColor)};
 })''';
   }
 
   String get _shadowColor {
     return switch (_variant) {
       _ButtonVariant.elevated =>
-        'MaterialStatePropertyAll<Color>(${color(TokenButtonElevated.containerShadowColor, '_colors')})',
+        'MaterialStatePropertyAll<Color>(${color(TokenButtonElevated.containerShadowColor)})',
       _ButtonVariant.filled =>
-        'MaterialStatePropertyAll<Color>(${color(TokenButtonFilled.containerShadowColor, '_colors')})',
+        'MaterialStatePropertyAll<Color>(${color(TokenButtonFilled.containerShadowColor)})',
       _ButtonVariant.filledTonal =>
-        'MaterialStatePropertyAll<Color>(${color(TokenButtonTonal.containerShadowColor, '_colors')})',
+        'MaterialStatePropertyAll<Color>(${color(TokenButtonTonal.containerShadowColor)})',
       _ButtonVariant.outlined ||
       _ButtonVariant.text => 'const MaterialStatePropertyAll<Color>(Colors.transparent)',
     };
@@ -196,12 +201,12 @@ WidgetStateProperty.resolveWith((Set<WidgetState> states) {
 WidgetStateProperty<BorderSide>? get side =>
   WidgetStateProperty.resolveWith((Set<WidgetState> states) {
     if (states.contains(WidgetState.disabled)) {
-      return BorderSide(color: ${colorWithOpacity(TokenButton.disabledContainerColor, _legacyDisabledContainerOpacity, '_colors')});
+      return BorderSide(color: ${colorWithOpacity(TokenButton.disabledContainerColor, _legacyDisabledContainerOpacity)});
     }
     if (states.contains(WidgetState.focused)) {
-      return BorderSide(color: ${color(TokenColorRole.primary, '_colors')});
+      return BorderSide(color: ${color(TokenColorRole.primary)});
     }
-    return BorderSide(color: ${color(TokenColorRole.outline, '_colors')});
+    return BorderSide(color: ${color(TokenColorRole.outline)});
   });''';
   }
 
@@ -230,22 +235,22 @@ class $className extends ButtonStyle {
   WidgetStateProperty<Color?>? get foregroundColor =>
       WidgetStateProperty.resolveWith((Set<WidgetState> states) {
         if (states.contains(WidgetState.disabled)) {
-          return ${colorWithOpacity(TokenButton.disabledLabelTextColor, TokenButton.disabledLabelTextOpacity, '_colors')};
+          return ${colorWithOpacity(TokenButton.disabledLabelTextColor, TokenButton.disabledLabelTextOpacity)};
         }
-        return ${color(_labelTextColor, '_colors')};
+        return ${color(_labelTextColor)};
       });
 
   @override
   WidgetStateProperty<Color?>? get overlayColor =>
       WidgetStateProperty.resolveWith((Set<WidgetState> states) {
         if (states.contains(WidgetState.pressed)) {
-          return ${colorWithOpacity(_stateLayerColor, _pressedStateLayerOpacity, '_colors')};
+          return ${colorWithOpacity(_stateLayerColor, _pressedStateLayerOpacity)};
         }
         if (states.contains(WidgetState.hovered)) {
-          return ${colorWithOpacity(_stateLayerColor, _hoveredStateLayerOpacity, '_colors')};
+          return ${colorWithOpacity(_stateLayerColor, _hoveredStateLayerOpacity)};
         }
         if (states.contains(WidgetState.focused)) {
-          return ${colorWithOpacity(_stateLayerColor, _focusedStateLayerOpacity, '_colors')};
+          return ${colorWithOpacity(_stateLayerColor, _focusedStateLayerOpacity)};
         }
         return null;
       });
@@ -277,18 +282,18 @@ class $className extends ButtonStyle {
   WidgetStateProperty<Color>? get iconColor {
     return WidgetStateProperty.resolveWith((Set<WidgetState> states) {
       if (states.contains(WidgetState.disabled)) {
-        return ${colorWithOpacity(TokenButton.disabledIconColor, TokenButton.disabledIconOpacity, '_colors')};
+        return ${colorWithOpacity(TokenButton.disabledIconColor, TokenButton.disabledIconOpacity)};
       }
       if (states.contains(WidgetState.pressed)) {
-        return ${color(_iconColor, '_colors')};
+        return ${color(_iconColor)};
       }
       if (states.contains(WidgetState.hovered)) {
-        return ${color(_iconColor, '_colors')};
+        return ${color(_iconColor)};
       }
       if (states.contains(WidgetState.focused)) {
-        return ${color(_iconColor, '_colors')};
+        return ${color(_iconColor)};
       }
-      return ${color(_iconColor, '_colors')};
+      return ${color(_iconColor)};
     });
   }
 
@@ -309,6 +314,316 @@ class $className extends ButtonStyle {
 
   @override
   MaterialTapTargetSize? get tapTargetSize => Theme.of(context).materialTapTargetSize;
+
+  @override
+  InteractiveInkFeatureFactory? get splashFactory => Theme.of(context).splashFactory;
+}
+''';
+}
+
+class ButtonTemplateM3E extends TokenTemplateM3E {
+  const ButtonTemplateM3E(this.name);
+
+  @override
+  final String name;
+
+  @override
+  String get parentFilePath => switch (name) {
+    'Elevated Button' => 'elevated_button.dart',
+    _ => throw UnsupportedError('Unsupported expressive button template name: $name'),
+  };
+
+  String _sizeSwitch({
+    required String xSmall,
+    required String small,
+    required String medium,
+    required String large,
+    required String xLarge,
+  }) =>
+      '''
+switch (sizeVariant) {
+      ButtonSizeVariant.xSmall => $xSmall,
+      ButtonSizeVariant.small => $small,
+      ButtonSizeVariant.medium => $medium,
+      ButtonSizeVariant.large => $large,
+      ButtonSizeVariant.xLarge => $xLarge,
+    }''';
+
+  String get _textStyleSwitch => _sizeSwitch(
+    xSmall: textStyle(TokenButtonXsmall.labelText, 'Theme.of(context).textTheme'),
+    small: textStyle(TokenButtonSmall.labelText, 'Theme.of(context).textTheme'),
+    medium: textStyle(TokenButtonMedium.labelText, 'Theme.of(context).textTheme'),
+    large: textStyle(TokenButtonLarge.labelText, 'Theme.of(context).textTheme'),
+    xLarge: textStyle(TokenButtonXlarge.labelText, 'Theme.of(context).textTheme'),
+  );
+
+  // Uses symmetric padding when the leading and trailing spaces are equal, and
+  // directional padding otherwise.
+  String _horizontalPadding(double leadingSpace, double trailingSpace) =>
+      leadingSpace == trailingSpace
+      ? 'const EdgeInsets.symmetric(horizontal: $leadingSpace)'
+      : 'const EdgeInsetsDirectional.only(start: $leadingSpace, end: $trailingSpace)';
+
+  String get _paddingSwitch => _sizeSwitch(
+    xSmall: _horizontalPadding(TokenButtonXsmall.leadingSpace, TokenButtonXsmall.trailingSpace),
+    small: _horizontalPadding(TokenButtonSmall.leadingSpace, TokenButtonSmall.trailingSpace),
+    medium: _horizontalPadding(TokenButtonMedium.leadingSpace, TokenButtonMedium.trailingSpace),
+    large: _horizontalPadding(TokenButtonLarge.leadingSpace, TokenButtonLarge.trailingSpace),
+    xLarge: _horizontalPadding(TokenButtonXlarge.leadingSpace, TokenButtonXlarge.trailingSpace),
+  );
+
+  // No token defines the minimum width. Keep the existing buttons' default.
+  static const double _minimumWidth = 64.0;
+
+  String get _minimumSizeSwitch => _sizeSwitch(
+    xSmall: 'const Size($_minimumWidth, ${TokenButtonXsmall.containerHeight})',
+    small: 'const Size($_minimumWidth, ${TokenButtonSmall.containerHeight})',
+    medium: 'const Size($_minimumWidth, ${TokenButtonMedium.containerHeight})',
+    large: 'const Size($_minimumWidth, ${TokenButtonLarge.containerHeight})',
+    xLarge: 'const Size($_minimumWidth, ${TokenButtonXlarge.containerHeight})',
+  );
+
+  String get _iconSizeSwitch => _sizeSwitch(
+    xSmall: '${TokenButtonXsmall.iconSize}',
+    small: '${TokenButtonSmall.iconSize}',
+    medium: '${TokenButtonMedium.iconSize}',
+    large: '${TokenButtonLarge.iconSize}',
+    xLarge: '${TokenButtonXlarge.iconSize}',
+  );
+
+  String get _iconLabelSpaceSwitch => _sizeSwitch(
+    xSmall: '${TokenButtonXsmall.iconLabelSpace}',
+    small: '${TokenButtonSmall.iconLabelSpace}',
+    medium: '${TokenButtonMedium.iconLabelSpace}',
+    large: '${TokenButtonLarge.iconLabelSpace}',
+    xLarge: '${TokenButtonXlarge.iconLabelSpace}',
+  );
+
+  String get _roundShapeSwitch => _sizeSwitch(
+    xSmall: shape(TokenButtonXsmall.containerShapeRound),
+    small: shape(TokenButtonSmall.containerShapeRound),
+    medium: shape(TokenButtonMedium.containerShapeRound),
+    large: shape(TokenButtonLarge.containerShapeRound),
+    xLarge: shape(TokenButtonXlarge.containerShapeRound),
+  );
+
+  String get _squareShapeSwitch => _sizeSwitch(
+    xSmall: shape(TokenButtonXsmall.containerShapeSquare),
+    small: shape(TokenButtonSmall.containerShapeSquare),
+    medium: shape(TokenButtonMedium.containerShapeSquare),
+    large: shape(TokenButtonLarge.containerShapeSquare),
+    xLarge: shape(TokenButtonXlarge.containerShapeSquare),
+  );
+
+  String get _selectedRoundShapeSwitch => _sizeSwitch(
+    xSmall: shape(TokenButtonXsmall.selectedContainerShapeRound),
+    small: shape(TokenButtonSmall.selectedContainerShapeRound),
+    medium: shape(TokenButtonMedium.selectedContainerShapeRound),
+    large: shape(TokenButtonLarge.selectedContainerShapeRound),
+    xLarge: shape(TokenButtonXlarge.selectedContainerShapeRound),
+  );
+
+  String get _selectedSquareShapeSwitch => _sizeSwitch(
+    xSmall: shape(TokenButtonXsmall.selectedContainerShapeSquare),
+    small: shape(TokenButtonSmall.selectedContainerShapeSquare),
+    medium: shape(TokenButtonMedium.selectedContainerShapeSquare),
+    large: shape(TokenButtonLarge.selectedContainerShapeSquare),
+    xLarge: shape(TokenButtonXlarge.selectedContainerShapeSquare),
+  );
+
+  String get _pressedShapeSwitch => _sizeSwitch(
+    xSmall: shape(TokenButtonXsmall.pressedContainerShape),
+    small: shape(TokenButtonSmall.pressedContainerShape),
+    medium: shape(TokenButtonMedium.pressedContainerShape),
+    large: shape(TokenButtonLarge.pressedContainerShape),
+    xLarge: shape(TokenButtonXlarge.pressedContainerShape),
+  );
+
+  @override
+  String generateContents(String className) =>
+      '''
+class $className extends ButtonStyle {
+  $className(
+    this.context,
+    this.toggleable,
+    ButtonSizeVariant? sizeVariant,
+    ButtonShapeVariant? shapeVariant,
+  ) : _sizeVariant = sizeVariant,
+      _shapeVariant = shapeVariant,
+      super(
+        animationDuration: kThemeChangeDuration,
+        enableFeedback: true,
+        alignment: Alignment.center,
+      );
+
+  final BuildContext context;
+  final bool toggleable;
+  final ButtonSizeVariant? _sizeVariant;
+  final ButtonShapeVariant? _shapeVariant;
+  late final ColorScheme _colors = Theme.of(context).colorScheme;
+
+  @override
+  ButtonSizeVariant get sizeVariant => _sizeVariant ?? ButtonSizeVariant.small;
+
+  @override
+  ButtonShapeVariant get shapeVariant => _shapeVariant ?? ButtonShapeVariant.round;
+
+  /// The space between the icon and the label for the given [sizeVariant].
+  static double iconLabelSpace(ButtonSizeVariant sizeVariant) => $_iconLabelSpaceSwitch;
+
+  @override
+  WidgetStateProperty<TextStyle?> get textStyle =>
+      WidgetStatePropertyAll<TextStyle?>($_textStyleSwitch);
+
+  @override
+  WidgetStateProperty<Color?>? get backgroundColor =>
+      WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+        if (states.contains(WidgetState.disabled)) {
+          return ${colorWithOpacity(TokenButtonElevated.disabledContainerColor, TokenButtonElevated.disabledContainerOpacity)};
+        }
+        if (toggleable && states.contains(WidgetState.selected)) {
+          return ${color(TokenButtonElevated.selectedContainerColor)};
+        }
+        if (toggleable) {
+          return ${color(TokenButtonElevated.unselectedContainerColor)};
+        }
+        return ${color(TokenButtonElevated.containerColor)};
+      });
+
+  @override
+  WidgetStateProperty<Color?>? get foregroundColor =>
+      WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+        if (states.contains(WidgetState.disabled)) {
+          return ${colorWithOpacity(TokenButtonElevated.disabledLabelTextColor, TokenButtonElevated.disabledLabelTextOpacity)};
+        }
+        if (toggleable && states.contains(WidgetState.selected)) {
+          return ${color(TokenButtonElevated.selectedLabelTextColor)};
+        }
+        if (toggleable) {
+          return ${color(TokenButtonElevated.unselectedLabelTextColor)};
+        }
+        return ${color(TokenButtonElevated.labelTextColor)};
+      });
+
+  @override
+  WidgetStateProperty<Color?>? get overlayColor =>
+      WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+        if (toggleable && states.contains(WidgetState.selected)) {
+          if (states.contains(WidgetState.pressed)) {
+            return ${colorWithOpacity(TokenButtonElevated.selectedPressedStateLayerColor, TokenButtonElevated.pressedStateLayerOpacity)};
+          }
+          if (states.contains(WidgetState.hovered)) {
+            return ${colorWithOpacity(TokenButtonElevated.selectedHoveredStateLayerColor, TokenButtonElevated.hoveredStateLayerOpacity)};
+          }
+          if (states.contains(WidgetState.focused)) {
+            return ${colorWithOpacity(TokenButtonElevated.selectedFocusedStateLayerColor, TokenButtonElevated.focusedStateLayerOpacity)};
+          }
+          return null;
+        }
+        if (toggleable) {
+          if (states.contains(WidgetState.pressed)) {
+            return ${colorWithOpacity(TokenButtonElevated.unselectedPressedStateLayerColor, TokenButtonElevated.pressedStateLayerOpacity)};
+          }
+          if (states.contains(WidgetState.hovered)) {
+            return ${colorWithOpacity(TokenButtonElevated.unselectedHoveredStateLayerColor, TokenButtonElevated.hoveredStateLayerOpacity)};
+          }
+          if (states.contains(WidgetState.focused)) {
+            return ${colorWithOpacity(TokenButtonElevated.unselectedFocusedStateLayerColor, TokenButtonElevated.focusedStateLayerOpacity)};
+          }
+          return null;
+        }
+        if (states.contains(WidgetState.pressed)) {
+          return ${colorWithOpacity(TokenButtonElevated.pressedStateLayerColor, TokenButtonElevated.pressedStateLayerOpacity)};
+        }
+        if (states.contains(WidgetState.hovered)) {
+          return ${colorWithOpacity(TokenButtonElevated.hoveredStateLayerColor, TokenButtonElevated.hoveredStateLayerOpacity)};
+        }
+        if (states.contains(WidgetState.focused)) {
+          return ${colorWithOpacity(TokenButtonElevated.focusedStateLayerColor, TokenButtonElevated.focusedStateLayerOpacity)};
+        }
+        return null;
+      });
+
+  @override
+  WidgetStateProperty<Color>? get shadowColor =>
+      WidgetStatePropertyAll<Color>(${color(TokenButtonElevated.containerShadowColor)});
+
+  @override
+  WidgetStateProperty<Color>? get surfaceTintColor =>
+      const WidgetStatePropertyAll<Color>(Colors.transparent);
+
+  @override
+  WidgetStateProperty<double>? get elevation =>
+      WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+        if (states.contains(WidgetState.disabled)) {
+          return ${TokenButtonElevated.disabledContainerElevation};
+        }
+        if (states.contains(WidgetState.pressed)) {
+          return ${TokenButtonElevated.pressedContainerElevation};
+        }
+        if (states.contains(WidgetState.focused)) {
+          return ${TokenButtonElevated.focusedContainerElevation};
+        }
+        return ${TokenButtonElevated.containerElevation};
+      });
+
+  @override
+  WidgetStateProperty<EdgeInsetsGeometry>? get padding =>
+      WidgetStatePropertyAll<EdgeInsetsGeometry>($_paddingSwitch);
+
+  @override
+  WidgetStateProperty<Size>? get minimumSize =>
+      WidgetStatePropertyAll<Size>($_minimumSizeSwitch);
+
+  @override
+  WidgetStateProperty<Size>? get maximumSize =>
+      const WidgetStatePropertyAll<Size>(Size.infinite);
+
+  @override
+  WidgetStateProperty<double>? get iconSize =>
+      WidgetStatePropertyAll<double>($_iconSizeSwitch);
+
+  @override
+  WidgetStateProperty<Color>? get iconColor =>
+      WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+        if (states.contains(WidgetState.disabled)) {
+          return ${colorWithOpacity(TokenButtonElevated.disabledIconColor, TokenButtonElevated.disabledIconOpacity)};
+        }
+        if (toggleable && states.contains(WidgetState.selected)) {
+          return ${color(TokenButtonElevated.selectedIconColor)};
+        }
+        if (toggleable) {
+          return ${color(TokenButtonElevated.unselectedIconColor)};
+        }
+        return ${color(TokenButtonElevated.iconColor)};
+      });
+
+  @override
+  WidgetStateProperty<OutlinedBorder>? get shape =>
+      WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+        if (states.contains(WidgetState.pressed)) {
+          return $_pressedShapeSwitch;
+        }
+        if (toggleable && states.contains(WidgetState.selected)) {
+          return switch (shapeVariant) {
+            ButtonShapeVariant.round => $_selectedRoundShapeSwitch,
+            ButtonShapeVariant.square => $_selectedSquareShapeSwitch,
+          };
+        }
+        return switch (shapeVariant) {
+          ButtonShapeVariant.round => $_roundShapeSwitch,
+          ButtonShapeVariant.square => $_squareShapeSwitch,
+        };
+      });
+
+  @override
+  WidgetStateProperty<MouseCursor?>? get mouseCursor => WidgetStateMouseCursor.adaptiveClickable;
+
+  @override
+  VisualDensity? get visualDensity => VisualDensity.standard;
+
+  @override
+  MaterialTapTargetSize? get tapTargetSize => MaterialTapTargetSize.padded;
 
   @override
   InteractiveInkFeatureFactory? get splashFactory => Theme.of(context).splashFactory;

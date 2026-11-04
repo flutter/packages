@@ -803,6 +803,10 @@ abstract class MapsCallbackApi {
   @SwiftFunction('didTapCircle(withIdentifier:)')
   void onCircleTap(String circleId);
 
+  /// Called when a point of interest is tapped.
+  @SwiftFunction('didTapPointOfInterest(withPlaceIdentifier:)')
+  void onPointOfInterestTap(String placeId);
+
   /// Called when a marker cluster is tapped.
   @SwiftFunction('didTapCluster(_:)')
   void onClusterTap(PlatformCluster cluster);

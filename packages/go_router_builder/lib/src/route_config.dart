@@ -459,9 +459,8 @@ class GoRouteConfig extends RouteBaseConfig with _GoRouteMixin {
   @override
   String get _mixinDefinition {
     final bool hasMixin =
-        getNodeDeclaration<ClassDeclaration>(
-          routeDataClass,
-        )?.withClause?.mixinTypes.any((NamedType e) => e.name.toString() == _mixinName) ??
+        getNodeDeclaration<ClassDeclaration>(routeDataClass)?.withClause?.mixinTypes
+            .any((NamedType e) => e.name.toString() == _mixinName) ??
         false;
 
     if (!hasMixin) {
@@ -544,9 +543,8 @@ class RelativeGoRouteConfig extends RouteBaseConfig with _GoRouteMixin {
   @override
   String get _mixinDefinition {
     final bool hasMixin =
-        getNodeDeclaration<ClassDeclaration>(
-          routeDataClass,
-        )?.withClause?.mixinTypes.any((NamedType e) => e.name.toString() == _mixinName) ??
+        getNodeDeclaration<ClassDeclaration>(routeDataClass)?.withClause?.mixinTypes
+            .any((NamedType e) => e.name.toString() == _mixinName) ??
         false;
 
     if (!hasMixin) {
@@ -805,7 +803,7 @@ abstract class RouteBaseConfig {
               return false;
             }
             final DartType typeArgument = typeArguments.single;
-            if (withoutNullability(typeArgument.getDisplayString()) != 'NavigatorState') {
+            if (typeArgument.toStringNonNullable() != 'NavigatorState') {
               return false;
             }
           }
@@ -923,9 +921,7 @@ String _enumMapConst(InterfaceType type) {
 
   final buffer = StringBuffer('const ${enumMapName(type)} = {');
 
-  for (final FieldElement enumField in type.element.fields.where(
-    (FieldElement element) => element.isEnumConstant,
-  )) {
+  for (final FieldElement enumField in type.enumConstants) {
     buffer.writeln(
       '$enumName.${enumField.displayName}: ${escapeDartString(enumField.displayName.kebab)},',
     );

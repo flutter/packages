@@ -2324,9 +2324,8 @@ void main() {
                   child: ElevatedButton(
                     child: const Text('Press me'),
                     onPressed: () {
-                      Scaffold.of(
-                        context,
-                      ).showBottomSheet((BuildContext context) => const Text('BottomSheet'));
+                      Scaffold.of(context)
+                          .showBottomSheet((BuildContext context) => const Text('BottomSheet'));
                     },
                   ),
                 );
@@ -2450,9 +2449,8 @@ void main() {
                   child: ElevatedButton(
                     child: const Text('Press me'),
                     onPressed: () {
-                      Scaffold.of(
-                        context,
-                      ).showBottomSheet((BuildContext context) => const Text('BottomSheet'));
+                      Scaffold.of(context)
+                          .showBottomSheet((BuildContext context) => const Text('BottomSheet'));
                     },
                   ),
                 );

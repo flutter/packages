@@ -218,6 +218,7 @@ Future<T?> showCupertinoSheet<T>({
       enableDrag: enableDrag,
       topGap: topGap,
       hasPlatformViews: hasPlatformViews,
+      showDragHandle: showDragHandle,
     );
 
     return Navigator.of(context, rootNavigator: true).push<T>(route);
@@ -263,6 +264,7 @@ Future<T?> showCupertinoSheet<T>({
       enableDrag: enableDrag,
       topGap: topGap,
       hasPlatformViews: hasPlatformViews,
+      showDragHandle: showDragHandle,
     );
     return Navigator.of(context, rootNavigator: true).push<T>(route);
   }
@@ -801,9 +803,8 @@ class CupertinoSheetRoute<T> extends PageRoute<T> with _CupertinoSheetRouteTrans
       fit: StackFit.expand,
       children: <Widget>[
         MediaQuery(
-          data: MediaQuery.of(
-            context,
-          ).copyWith(padding: const EdgeInsets.only(top: dragHandlePadding)),
+          data: MediaQuery.of(context)
+              .copyWith(padding: const EdgeInsets.only(top: dragHandlePadding)),
           child: _effectiveBuilder(context, controller),
         ),
         const Align(

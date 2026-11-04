@@ -22,6 +22,7 @@ import 'fetch_deps_command.dart';
 import 'firebase_test_lab_command.dart';
 import 'fix_command.dart';
 import 'format_command.dart';
+import 'in_flight_release_check_command.dart';
 import 'license_check_command.dart';
 import 'list_command.dart';
 import 'make_deps_path_based_command.dart';
@@ -68,6 +69,7 @@ void main(List<String> args) {
         ..addCommand(FirebaseTestLabCommand(packagesDir))
         ..addCommand(FixCommand(packagesDir))
         ..addCommand(FormatCommand(packagesDir))
+        ..addCommand(InFlightReleaseCheckCommand(packagesDir))
         ..addCommand(LicenseCheckCommand(packagesDir))
         ..addCommand(ListCommand(packagesDir))
         ..addCommand(MakeDepsPathBasedCommand(packagesDir))

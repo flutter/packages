@@ -35,10 +35,10 @@ class $className extends AppBarThemeData {
   late final TextTheme _textTheme = _theme.textTheme;
 
   @override
-  Color? get backgroundColor => ${color(TokenAppBar.containerColor, '_colors')};
+  Color? get backgroundColor => ${color(TokenAppBar.containerColor)};
 
   @override
-  Color? get foregroundColor => ${color(TokenAppBar.titleColor, '_colors')};
+  Color? get foregroundColor => ${color(TokenAppBar.titleColor)};
 
   @override
   Color? get shadowColor => Colors.transparent;
@@ -48,13 +48,13 @@ class $className extends AppBarThemeData {
 
   @override
   IconThemeData? get iconTheme => IconThemeData(
-    color: ${color(TokenAppBar.leadingIconColor, '_colors')},
+    color: ${color(TokenAppBar.leadingIconColor)},
     size: ${number(TokenAppBar.iconSize)},
   );
 
   @override
   IconThemeData? get actionsIconTheme => IconThemeData(
-    color: ${color(TokenAppBar.trailingIconColor, '_colors')},
+    color: ${color(TokenAppBar.trailingIconColor)},
     size: ${number(TokenAppBar.iconSize)},
   );
 
@@ -85,11 +85,11 @@ class _MediumScrollUnderFlexibleConfig with _ScrollUnderFlexibleConfig {
 
   @override
   TextStyle? get collapsedTextStyle =>
-    _textTheme.titleLarge?.apply(color: ${color(TokenAppBar.titleColor, '_colors')});
+    _textTheme.titleLarge?.apply(color: ${color(TokenAppBar.titleColor)});
 
   @override
   TextStyle? get expandedTextStyle =>
-    _textTheme.headlineSmall?.apply(color: ${color(TokenAppBar.titleColor, '_colors')});
+    _textTheme.headlineSmall?.apply(color: ${color(TokenAppBar.titleColor)});
 
   @override
   EdgeInsetsGeometry get expandedTitlePadding => const EdgeInsets.fromLTRB(16, 0, 16, 20);
@@ -108,11 +108,11 @@ class _LargeScrollUnderFlexibleConfig with _ScrollUnderFlexibleConfig {
 
   @override
   TextStyle? get collapsedTextStyle =>
-    _textTheme.titleLarge?.apply(color: ${color(TokenAppBar.titleColor, '_colors')});
+    _textTheme.titleLarge?.apply(color: ${color(TokenAppBar.titleColor)});
 
   @override
   TextStyle? get expandedTextStyle =>
-    _textTheme.headlineMedium?.apply(color: ${color(TokenAppBar.titleColor, '_colors')});
+    _textTheme.headlineMedium?.apply(color: ${color(TokenAppBar.titleColor)});
 
   @override
   EdgeInsetsGeometry get expandedTitlePadding => const EdgeInsets.fromLTRB(16, 0, 16, 28);

@@ -95,5 +95,6 @@ void main() {
       expect(find.text('Paste'), findsNothing);
       expect(find.text('Select all'), findsNothing);
     },
+    tags: 'reduced-web-test-set',
   );
 }

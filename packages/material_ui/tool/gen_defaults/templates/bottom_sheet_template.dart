@@ -30,7 +30,7 @@ class $className extends BottomSheetThemeData {
   late final ColorScheme _colors = Theme.of(context).colorScheme;
 
   @override
-  Color? get backgroundColor => ${color(TokenSheetBottom.dockedContainerColor, '_colors')};
+  Color? get backgroundColor => ${color(TokenSheetBottom.dockedContainerColor)};
 
   @override
   Color? get surfaceTintColor => Colors.transparent;
@@ -39,7 +39,7 @@ class $className extends BottomSheetThemeData {
   Color? get shadowColor => Colors.transparent;
 
   @override
-  Color? get dragHandleColor => ${color(TokenSheetBottom.dockedDragHandleColor, '_colors')};
+  Color? get dragHandleColor => ${color(TokenSheetBottom.dockedDragHandleColor)};
 
   @override
   Size? get dragHandleSize => const Size(${number(TokenSheetBottom.dockedDragHandleWidth)}, ${number(TokenSheetBottom.dockedDragHandleHeight)});

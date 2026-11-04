@@ -256,6 +256,49 @@ void runPigeonNativeInteropIntegrationTests(TargetGenerator targetGenerator) {
       expect(classWrapper, receivedClassWrapper);
     });
 
+    testWidgets('sealed classes serialize and deserialize correctly', (WidgetTester _) async {
+      final NativeInteropHostIntegrationCoreApiForNativeInterop? api =
+          NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance();
+
+      for (final NativeInteropSealedClass sealedClass in sealedClasses) {
+        expect(api!.echoSealedClass(sealedClass), sealedClass);
+      }
+    });
+
+    testWidgets('nullable sealed classes serialize and deserialize correctly', (
+      WidgetTester _,
+    ) async {
+      final NativeInteropHostIntegrationCoreApiForNativeInterop? api =
+          NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance();
+
+      for (final NativeInteropSealedClass sealedClass in sealedClasses) {
+        expect(api!.echoNullableSealedClass(sealedClass), sealedClass);
+      }
+      expect(api!.echoNullableSealedClass(null), isNull);
+    });
+
+    testWidgets('sealed classes in lists serialize and deserialize correctly', (
+      WidgetTester _,
+    ) async {
+      final NativeInteropHostIntegrationCoreApiForNativeInterop? api =
+          NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance();
+
+      expect(api!.echoSealedClassList(sealedClasses), sealedClasses);
+    });
+
+    testWidgets('sealed classes in class fields serialize and deserialize correctly', (
+      WidgetTester _,
+    ) async {
+      final NativeInteropHostIntegrationCoreApiForNativeInterop? api =
+          NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance();
+      final NativeInteropSealedClassWrapper wrapper = sealedClassWrapperMaker();
+
+      expect(api!.echoSealedClassWrapper(wrapper), wrapper);
+
+      wrapper.nullableSealedClass = null;
+      expect(api.echoSealedClassWrapper(wrapper), wrapper);
+    });
+
     testWidgets('Arguments of multiple types serialize and deserialize correctly', (
       WidgetTester _,
     ) async {
@@ -441,6 +484,11 @@ void runPigeonNativeInteropIntegrationTests(TargetGenerator targetGenerator) {
       const Object sentDouble = 2.0694;
       final Object receivedDouble = api!.echoObject(sentDouble);
       expect(receivedDouble, sentDouble);
+
+      const Object sentWholeDouble = 3.0;
+      final Object receivedWholeDouble = api.echoObject(sentWholeDouble);
+      expect(receivedWholeDouble, isA<double>());
+      expect(receivedWholeDouble, sentWholeDouble);
     });
 
     testWidgets('Uint8List as generic Objects serialize and deserialize correctly', (
@@ -849,10 +897,23 @@ void runPigeonNativeInteropIntegrationTests(TargetGenerator targetGenerator) {
       final Object? receivedString = api!.echoNullableObject(sentString);
       expect(receivedString, sentString);
 
-      // Echo a second type as well to ensure the handling is generic.
+      // Echo each primitive number/boolean type as well to test boxed number handling.
       const Object sentInt = regularInt;
       final Object? receivedInt = api.echoNullableObject(sentInt);
       expect(receivedInt, sentInt);
+
+      const Object sentBool = true;
+      final Object? receivedBool = api.echoNullableObject(sentBool);
+      expect(receivedBool, sentBool);
+
+      const Object sentDouble = 2.0694;
+      final Object? receivedDouble = api.echoNullableObject(sentDouble);
+      expect(receivedDouble, sentDouble);
+
+      const Object sentWholeDouble = 3.0;
+      final Object? receivedWholeDouble = api.echoNullableObject(sentWholeDouble);
+      expect(receivedWholeDouble, isA<double>());
+      expect(receivedWholeDouble, sentWholeDouble);
     });
 
     testWidgets('Null generic Objects serialize and deserialize correctly', (WidgetTester _) async {
@@ -1150,6 +1211,15 @@ void runPigeonNativeInteropIntegrationTests(TargetGenerator targetGenerator) {
           NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance();
 
       expect(api!.noopAsync(), completes);
+    });
+
+    testWidgets('sealed classes serialize and deserialize correctly', (WidgetTester _) async {
+      final NativeInteropHostIntegrationCoreApiForNativeInterop? api =
+          NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance();
+
+      for (final NativeInteropSealedClass sealedClass in sealedClasses) {
+        expect(await api!.echoAsyncSealedClass(sealedClass), sealedClass);
+      }
     });
 
     testWidgets('async errors are returned from non void methods correctly', (
@@ -1808,6 +1878,12 @@ void runPigeonNativeInteropIntegrationTests(TargetGenerator targetGenerator) {
       );
 
       expect(echoObject, genericNativeInteropAllTypes);
+    });
+
+    testWidgets('sealed classes serialize and deserialize correctly', (WidgetTester _) async {
+      for (final NativeInteropSealedClass sealedClass in sealedClasses) {
+        expect(api.callFlutterEchoSealedClass(sealedClass), sealedClass);
+      }
     });
 
     testWidgets('all nullable datatypes serialize and deserialize correctly', (
@@ -2813,6 +2889,62 @@ void runPigeonNativeInteropIntegrationTests(TargetGenerator targetGenerator) {
     });
   });
 
+  group('Reserved name tests', () {
+    NativeInteropReservedNamesFlutterApiRegistrar().register(
+      _NativeInteropReservedNamesFlutterApiImpl(),
+    );
+    final NativeInteropReservedNamesHostApiForNativeInterop? api =
+        NativeInteropReservedNamesHostApiForNativeInterop.getInstance();
+    api!;
+
+    testWidgets('host methods with reserved names are called correctly', (WidgetTester _) async {
+      expect(api.release('release'), 'release');
+      expect(api.use(42), 42);
+      expect(api.type(), 'type');
+      // `JObject.isNull` is false, so this also checks that it isn't called
+      // instead.
+      expect(api.isNull(), true);
+      expect(api.isNullable(), true);
+      expect(api.isOpen(), true);
+      api.setReference('reference');
+      expect(api.getReference(), 'reference');
+      expect(api.getDefault(), 'default');
+      expect(await api.getValueAsync(), 'value');
+    });
+
+    testWidgets('fields with reserved names serialize and deserialize correctly', (
+      WidgetTester _,
+    ) async {
+      final names = NativeInteropReservedNames(
+        type: 'type',
+        use: 'use',
+        reference: 'reference',
+        releasedBy: 'releasedBy',
+        fromReference: 'fromReference',
+        jClass: 'jClass',
+        isInstanceOf: 'isInstanceOf',
+        isNull: 'isNull',
+        // `JObject.isReleased` is false, so this also checks that it isn't
+        // read instead.
+        isReleased: true,
+        equals: 'equals',
+        isEnabled: true,
+        isMaybe: true,
+        isCount: 42,
+        getValue: 'getValue',
+      );
+      expect(api.echoReservedNames(names), names);
+    });
+
+    testWidgets('flutter methods with reserved names are called correctly', (WidgetTester _) async {
+      expect(api.callFlutterRelease('release'), 'release');
+      expect(api.callFlutterType(), 'type');
+      expect(api.callFlutterImplementIn('implementIn'), 'implementIn');
+      expect(api.callFlutterIsNull(), true);
+      expect(api.callFlutterGetReference(), 'reference');
+    });
+  });
+
   group('Threading tests', () {
     testWidgets('default calls land on main thread', (WidgetTester _) async {
       final NativeInteropHostIntegrationCoreApiForNativeInterop? api =
@@ -3227,6 +3359,11 @@ class NativeInteropFlutterIntegrationCoreApiImpl extends NativeInteropFlutterInt
   }
 
   @override
+  NativeInteropSealedClass echoNativeInteropSealedClass(NativeInteropSealedClass sealedClass) {
+    return sealedClass;
+  }
+
+  @override
   NativeInteropAllNullableTypesWithoutRecursion? echoNativeInteropAllNullableTypesWithoutRecursion(
     NativeInteropAllNullableTypesWithoutRecursion? everything,
   ) {
@@ -3471,4 +3608,21 @@ class NativeInteropFlutterIntegrationCoreApiImpl extends NativeInteropFlutterInt
   void throwErrorFromVoid() {
     throw PlatformException(code: 'code', message: 'message', details: 'details');
   }
+}
+
+class _NativeInteropReservedNamesFlutterApiImpl extends NativeInteropReservedNamesFlutterApi {
+  @override
+  String release(String value) => value;
+
+  @override
+  String type() => 'type';
+
+  @override
+  String implementIn(String value) => value;
+
+  @override
+  bool isNull() => true;
+
+  @override
+  String getReference() => 'reference';
 }
