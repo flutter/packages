@@ -2192,8 +2192,10 @@ class Scaffold extends StatefulWidget {
   /// the listener, and register a listener to the new [ScaffoldGeometry]
   /// listenable.
   static ValueListenable<ScaffoldGeometry> geometryOf(BuildContext context) {
-    final _ScaffoldScope? scaffoldScope = context
-        .dependOnInheritedWidgetOfExactType<_ScaffoldScope>();
+    final _ScaffoldScope? scaffoldScope = InheritedModel.inheritFrom<_ScaffoldScope>(
+      context,
+      aspect: _ScaffoldAspect.geometry,
+    );
     if (scaffoldScope == null) {
       throw FlutterError.fromParts(<DiagnosticsNode>[
         ErrorSummary(
@@ -2238,7 +2240,10 @@ class Scaffold extends StatefulWidget {
   ///    whole, from which you can show bottom sheets, and so forth.
   static bool hasDrawer(BuildContext context, {bool registerForUpdates = true}) {
     if (registerForUpdates) {
-      final _ScaffoldScope? scaffold = context.dependOnInheritedWidgetOfExactType<_ScaffoldScope>();
+      final _ScaffoldScope? scaffold = InheritedModel.inheritFrom<_ScaffoldScope>(
+        context,
+        aspect: _ScaffoldAspect.hasDrawer,
+      );
       return scaffold?.hasDrawer ?? false;
     } else {
       final ScaffoldState? scaffold = context.findAncestorStateOfType<ScaffoldState>();
@@ -3324,6 +3329,9 @@ class ScaffoldState extends State<Scaffold>
 
     return _ScaffoldScope(
       hasDrawer: hasDrawer,
+      hasEndDrawer: hasEndDrawer,
+      isDrawerOpen: isDrawerOpen,
+      isEndDrawerOpen: isEndDrawerOpen,
       geometryNotifier: _geometryNotifier,
       child: ScrollNotificationObserver(
         child: Material(
@@ -3559,19 +3567,67 @@ class PersistentBottomSheetController
   final bool _isLocalHistoryEntry;
 }
 
-class _ScaffoldScope extends InheritedWidget {
+enum _ScaffoldAspect { geometry, hasDrawer, drawerExpanded, endDrawerExpanded }
+
+/// Returns whether the enclosing [Scaffold]'s start drawer is open, or `null`
+/// if there is no enclosing [Scaffold] or it has no [Scaffold.drawer], and
+/// registers [context] to rebuild when that value changes.
+@internal
+bool? scaffoldDrawerExpandedOf(BuildContext context) {
+  return InheritedModel.inheritFrom<_ScaffoldScope>(
+    context,
+    aspect: _ScaffoldAspect.drawerExpanded,
+  )?.drawerExpanded;
+}
+
+/// Returns whether the enclosing [Scaffold]'s end drawer is open, or `null` if
+/// there is no enclosing [Scaffold] or it has no [Scaffold.endDrawer], and
+/// registers [context] to rebuild when that value changes.
+@internal
+bool? scaffoldEndDrawerExpandedOf(BuildContext context) {
+  return InheritedModel.inheritFrom<_ScaffoldScope>(
+    context,
+    aspect: _ScaffoldAspect.endDrawerExpanded,
+  )?.endDrawerExpanded;
+}
+
+class _ScaffoldScope extends InheritedModel<_ScaffoldAspect> {
   const _ScaffoldScope({
     required this.hasDrawer,
+    required this.hasEndDrawer,
+    required this.isDrawerOpen,
+    required this.isEndDrawerOpen,
     required this.geometryNotifier,
     required super.child,
   });
 
   final bool hasDrawer;
+  final bool hasEndDrawer;
+  final bool isDrawerOpen;
+  final bool isEndDrawerOpen;
   final _ScaffoldGeometryNotifier geometryNotifier;
+
+  bool? get drawerExpanded => hasDrawer ? isDrawerOpen : null;
+  bool? get endDrawerExpanded => hasEndDrawer ? isEndDrawerOpen : null;
 
   @override
   bool updateShouldNotify(_ScaffoldScope oldWidget) {
-    return hasDrawer != oldWidget.hasDrawer;
+    return geometryNotifier != oldWidget.geometryNotifier ||
+        hasDrawer != oldWidget.hasDrawer ||
+        hasEndDrawer != oldWidget.hasEndDrawer ||
+        isDrawerOpen != oldWidget.isDrawerOpen ||
+        isEndDrawerOpen != oldWidget.isEndDrawerOpen;
+  }
+
+  @override
+  bool updateShouldNotifyDependent(_ScaffoldScope oldWidget, Set<_ScaffoldAspect> dependencies) {
+    return (dependencies.contains(_ScaffoldAspect.geometry) &&
+            geometryNotifier != oldWidget.geometryNotifier) ||
+        (dependencies.contains(_ScaffoldAspect.hasDrawer) && hasDrawer != oldWidget.hasDrawer) ||
+        (dependencies.contains(_ScaffoldAspect.drawerExpanded) &&
+            drawerExpanded != oldWidget.drawerExpanded) ||
+        (dependencies.contains(_ScaffoldAspect.endDrawerExpanded) &&
+            endDrawerExpanded != oldWidget.endDrawerExpanded);
   }
 }
 

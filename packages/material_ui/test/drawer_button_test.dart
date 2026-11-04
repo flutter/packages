@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:ui' show PointerDeviceKind;
+import 'dart:ui' show PointerDeviceKind, Tristate;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart' show RendererBinding;
@@ -189,14 +189,15 @@ void main() {
       MaterialApp(
         home: Scaffold(
           key: scaffoldKey,
-          body: const Column(children: <Widget>[DrawerButton(), EndDrawerButton()]),
-          drawer: const Drawer(child: DrawerButton()),
-          endDrawer: const Drawer(child: EndDrawerButton()),
+          appBar: AppBar(),
+          drawer: const Drawer(),
+          endDrawer: const Drawer(),
         ),
       ),
     );
     await tester.pumpAndSettle();
 
+    // Initially closed: both AppBar buttons report collapsed (hasExpandedState: true, isExpanded: false).
     expect(
       tester.getSemantics(find.byType(DrawerButton)),
       matchesSemantics(
@@ -224,13 +225,12 @@ void main() {
       ),
     );
 
+    // Open start drawer: DrawerButton reports expanded; EndDrawerButton stays collapsed.
     scaffoldKey.currentState!.openDrawer();
     await tester.pumpAndSettle();
 
     expect(
-      tester.getSemantics(
-        find.descendant(of: find.byType(Drawer), matching: find.byType(DrawerButton)),
-      ),
+      tester.getSemantics(find.byType(DrawerButton)),
       matchesSemantics(
         tooltip: 'Open navigation menu',
         isButton: true,
@@ -243,17 +243,44 @@ void main() {
         isFocusable: true,
       ),
     );
+    expect(
+      tester.getSemantics(find.byType(EndDrawerButton)),
+      matchesSemantics(
+        tooltip: 'Open navigation menu',
+        isButton: true,
+        hasEnabledState: true,
+        isEnabled: true,
+        hasExpandedState: true,
+        hasTapAction: true,
+        hasFocusAction: true,
+        isFocusable: true,
+      ),
+    );
 
-    Navigator.of(scaffoldKey.currentContext!).pop();
+    // Close start drawer: DrawerButton reports collapsed again.
+    scaffoldKey.currentState!.closeDrawer();
     await tester.pumpAndSettle();
 
+    expect(
+      tester.getSemantics(find.byType(DrawerButton)),
+      matchesSemantics(
+        tooltip: 'Open navigation menu',
+        isButton: true,
+        hasEnabledState: true,
+        isEnabled: true,
+        hasExpandedState: true,
+        hasTapAction: true,
+        hasFocusAction: true,
+        isFocusable: true,
+      ),
+    );
+
+    // Open end drawer: EndDrawerButton reports expanded; DrawerButton stays collapsed.
     scaffoldKey.currentState!.openEndDrawer();
     await tester.pumpAndSettle();
 
     expect(
-      tester.getSemantics(
-        find.descendant(of: find.byType(Drawer), matching: find.byType(EndDrawerButton)),
-      ),
+      tester.getSemantics(find.byType(EndDrawerButton)),
       matchesSemantics(
         tooltip: 'Open navigation menu',
         isButton: true,
@@ -261,12 +288,114 @@ void main() {
         isEnabled: true,
         hasExpandedState: true,
         isExpanded: true,
+        hasTapAction: true,
+        hasFocusAction: true,
+        isFocusable: true,
+      ),
+    );
+    expect(
+      tester.getSemantics(find.byType(DrawerButton)),
+      matchesSemantics(
+        tooltip: 'Open navigation menu',
+        isButton: true,
+        hasEnabledState: true,
+        isEnabled: true,
+        hasExpandedState: true,
+        hasTapAction: true,
+        hasFocusAction: true,
+        isFocusable: true,
+      ),
+    );
+
+    // Close end drawer: EndDrawerButton reports collapsed again.
+    scaffoldKey.currentState!.closeEndDrawer();
+    await tester.pumpAndSettle();
+
+    expect(
+      tester.getSemantics(find.byType(EndDrawerButton)),
+      matchesSemantics(
+        tooltip: 'Open navigation menu',
+        isButton: true,
+        hasEnabledState: true,
+        isEnabled: true,
+        hasExpandedState: true,
         hasTapAction: true,
         hasFocusAction: true,
         isFocusable: true,
       ),
     );
   }, tags: 'reduced-web-test-set');
+
+  testWidgets(
+    'DrawerButton and EndDrawerButton update semantics when built while open or when drawer presence changes',
+    (WidgetTester tester) async {
+      final scaffoldKey = GlobalKey<ScaffoldState>();
+
+      Widget buildScaffold({
+        required bool showAppBar,
+        required bool hasDrawer,
+        required bool hasEndDrawer,
+      }) {
+        return MaterialApp(
+          home: Scaffold(
+            key: scaffoldKey,
+            appBar: showAppBar ? AppBar() : null,
+            body: const Column(children: <Widget>[DrawerButton(), EndDrawerButton()]),
+            drawer: hasDrawer ? const Drawer() : null,
+            endDrawer: hasEndDrawer ? const Drawer() : null,
+          ),
+        );
+      }
+
+      // Start without drawers: neither body button exposes expanded state.
+      await tester.pumpWidget(
+        buildScaffold(showAppBar: false, hasDrawer: false, hasEndDrawer: false),
+      );
+      await tester.pumpAndSettle();
+      expect(
+        tester.semantics.find(find.byType(DrawerButton)).flagsCollection.isExpanded,
+        Tristate.none,
+      );
+      expect(
+        tester.semantics.find(find.byType(EndDrawerButton)).flagsCollection.isExpanded,
+        Tristate.none,
+      );
+
+      // Dynamically add drawers: const body buttons rebuild to report collapsed (Tristate.isFalse).
+      await tester.pumpWidget(
+        buildScaffold(showAppBar: false, hasDrawer: true, hasEndDrawer: true),
+      );
+      await tester.pumpAndSettle();
+      expect(
+        tester.semantics.find(find.byType(DrawerButton)).flagsCollection.isExpanded,
+        Tristate.isFalse,
+      );
+      expect(
+        tester.semantics.find(find.byType(EndDrawerButton)).flagsCollection.isExpanded,
+        Tristate.isFalse,
+      );
+
+      // Open drawer, mount AppBar while open (so AppBar's DrawerButton builds with isDrawerOpen == true),
+      // then close drawer and verify AppBar's DrawerButton transitions to collapsed.
+      scaffoldKey.currentState!.openDrawer();
+      await tester.pumpAndSettle();
+      await tester.pumpWidget(buildScaffold(showAppBar: true, hasDrawer: true, hasEndDrawer: true));
+      await tester.pumpAndSettle();
+
+      scaffoldKey.currentState!.closeDrawer();
+      await tester.pumpAndSettle();
+
+      final Finder appBarDrawerButton = find.descendant(
+        of: find.byType(AppBar),
+        matching: find.byType(DrawerButton),
+      );
+      expect(
+        tester.semantics.find(appBarDrawerButton).flagsCollection.isExpanded,
+        Tristate.isFalse,
+      );
+    },
+    tags: 'reduced-web-test-set',
+  );
 
   testWidgets('EndDrawerButton control test', (WidgetTester tester) async {
     await tester.pumpWidget(

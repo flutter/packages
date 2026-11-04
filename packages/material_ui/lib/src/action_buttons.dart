@@ -292,10 +292,8 @@ class DrawerButtonIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ScaffoldState? scaffold = Scaffold.maybeOf(context);
-    final bool? isExpanded = (scaffold?.hasDrawer ?? false) ? scaffold!.isDrawerOpen : null;
     return Semantics(
-      expanded: isExpanded,
+      expanded: scaffoldDrawerExpandedOf(context),
       child: _ActionIcon(
         iconBuilderCallback: (ActionIconThemeData? actionIconTheme) {
           return actionIconTheme?.drawerButtonIconBuilder;
@@ -359,10 +357,8 @@ class EndDrawerButtonIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ScaffoldState? scaffold = Scaffold.maybeOf(context);
-    final bool? isExpanded = (scaffold?.hasEndDrawer ?? false) ? scaffold!.isEndDrawerOpen : null;
     return Semantics(
-      expanded: isExpanded,
+      expanded: scaffoldEndDrawerExpandedOf(context),
       child: _ActionIcon(
         iconBuilderCallback: (ActionIconThemeData? actionIconTheme) {
           return actionIconTheme?.endDrawerButtonIconBuilder;
