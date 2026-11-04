@@ -1,3 +1,8 @@
+## 6.4.0
+
+* Uses the `nonce` from `AuthenticateParameters`, when provided, instead of
+  the nonce passed to `init`.
+
 ## 6.3.9
 
 * Converts the iOS example app and UI tests to Swift.
