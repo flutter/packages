@@ -273,6 +273,19 @@ class Typography with Diagnosticable {
   /// The default values for [englishLike], [dense], and [tall] are
   /// [englishLike2025], [dense2025], and [tall2025].
   ///
+  /// <callout-box>
+  ///
+  /// This example shows each of the Material 3 Expressive baseline text styles
+  /// next to its emphasized counterpart.
+  ///
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
+  /// {@example /example/lib/typography/typography.0.dart#body}
+  ///
+  /// </callout-box>
+  ///
   /// See also:
   ///  * <https://m3.material.io/styles/typography>
   factory Typography.material2025({
