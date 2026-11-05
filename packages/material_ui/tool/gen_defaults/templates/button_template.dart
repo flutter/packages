@@ -839,9 +839,6 @@ class ButtonTemplateM3E extends TokenTemplateM3E {
     return buffer.toString();
   }
 
-  String _colorOrTransparent(TokenColorRole? role) =>
-      role == null ? 'Colors.transparent' : color(role);
-
   String get _backgroundColor {
     final buffer = StringBuffer();
     buffer.writeln('if (states.contains(WidgetState.disabled)) {');
@@ -853,9 +850,8 @@ class ButtonTemplateM3E extends TokenTemplateM3E {
       );
       buffer.writeln('}');
     }
-    final TokenColorRole? disabledContainerColor = _disabledContainerColor;
     buffer.writeln(
-      '  return ${disabledContainerColor == null ? 'Colors.transparent' : colorWithOpacity(disabledContainerColor, _disabledContainerOpacity)};',
+      '  return ${colorWithOpacity(_disabledContainerColor, _disabledContainerOpacity)};',
     );
     buffer.writeln('}');
     final TokenColorRole? selectedContainerColor = _selectedContainerColor;
@@ -866,10 +862,10 @@ class ButtonTemplateM3E extends TokenTemplateM3E {
     }
     if (_hasToggleTokens) {
       buffer.writeln('if (toggleable) {');
-      buffer.writeln('  return ${_colorOrTransparent(_unselectedContainerColor)};');
+      buffer.writeln('  return ${color(_unselectedContainerColor)};');
       buffer.writeln('}');
     }
-    buffer.write('return ${_colorOrTransparent(_containerColor)};');
+    buffer.write('return ${color(_containerColor)};');
     return buffer.toString();
   }
 

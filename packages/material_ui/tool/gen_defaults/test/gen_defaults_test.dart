@@ -117,6 +117,8 @@ void main() {
       expect(template.color(TokenColorRole.onSurface), '_colors.onSurface');
       expect(template.color(TokenColorRole.inverseOnSurface), '_colors.onInverseSurface');
       expect(template.color(TokenColorRole.onSurface, '_customColors'), '_customColors.onSurface');
+      // A null role means that the component has no token for this color.
+      expect(template.color(null), 'Colors.transparent');
     });
 
     test('textStyle generates text name', () {
@@ -148,6 +150,7 @@ void main() {
         template.colorWithOpacity(TokenColorRole.onSurface, 0.12, '_customColors'),
         '_customColors.onSurface.withOpacity(0.12)',
       );
+      expect(template.colorWithOpacity(null, 0.12), 'Colors.transparent');
     });
 
     test('M3E colorWithOpacity uses withValues', () {
@@ -164,6 +167,7 @@ void main() {
         template.colorWithOpacity(TokenColorRole.inverseOnSurface, 1.0),
         '_colors.onInverseSurface',
       );
+      expect(template.colorWithOpacity(null, 0.12), 'Colors.transparent');
     });
 
     test('border generates border expression', () {
