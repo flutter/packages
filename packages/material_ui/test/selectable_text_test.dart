@@ -5604,6 +5604,199 @@ void main() {
   );
 
   group('context menu', () {
+    testWidgets('SelectableText uses ThemeData.textSelectionTheme contextMenuBuilder', (
+      WidgetTester tester,
+    ) async {
+      Widget themeDataContextMenuBuilder(
+        BuildContext context,
+        EditableTextState editableTextState,
+      ) {
+        return const Placeholder();
+      }
+
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(
+            textSelectionTheme: TextSelectionThemeData(
+              contextMenuBuilder: themeDataContextMenuBuilder,
+            ),
+          ),
+          home: const Material(child: SelectableText('one two three')),
+        ),
+      );
+
+      final EditableTextState editableTextState = tester.firstState(find.byType(EditableText));
+      final BuildContext selectableTextContext = tester.element(find.byType(SelectableText));
+      final Widget contextMenu = editableTextState.widget.contextMenuBuilder!(
+        selectableTextContext,
+        editableTextState,
+      );
+
+      expect(contextMenu, isA<Placeholder>());
+    });
+
+    testWidgets('SelectableText prefers local TextSelectionTheme contextMenuBuilder', (
+      WidgetTester tester,
+    ) async {
+      Widget themeDataContextMenuBuilder(
+        BuildContext context,
+        EditableTextState editableTextState,
+      ) {
+        return const Placeholder();
+      }
+
+      Widget localTextSelectionThemeContextMenuBuilder(
+        BuildContext context,
+        EditableTextState editableTextState,
+      ) {
+        return const Icon(Icons.search);
+      }
+
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(
+            textSelectionTheme: TextSelectionThemeData(
+              contextMenuBuilder: themeDataContextMenuBuilder,
+            ),
+          ),
+          home: Material(
+            child: TextSelectionTheme(
+              data: TextSelectionThemeData(
+                contextMenuBuilder: localTextSelectionThemeContextMenuBuilder,
+              ),
+              child: const SelectableText('one two three'),
+            ),
+          ),
+        ),
+      );
+
+      final EditableTextState editableTextState = tester.firstState(find.byType(EditableText));
+      final BuildContext selectableTextContext = tester.element(find.byType(SelectableText));
+      final Widget contextMenu = editableTextState.widget.contextMenuBuilder!(
+        selectableTextContext,
+        editableTextState,
+      );
+
+      expect(contextMenu, isA<Icon>());
+      expect(contextMenu, isNot(isA<Placeholder>()));
+    });
+
+    testWidgets('SelectableText.contextMenuBuilder overrides TextSelectionTheme and ThemeData', (
+      WidgetTester tester,
+    ) async {
+      Widget themeDataContextMenuBuilder(
+        BuildContext context,
+        EditableTextState editableTextState,
+      ) {
+        return const Placeholder();
+      }
+
+      Widget localTextSelectionThemeContextMenuBuilder(
+        BuildContext context,
+        EditableTextState editableTextState,
+      ) {
+        return const Icon(Icons.search);
+      }
+
+      Widget selectableTextContextMenuBuilder(
+        BuildContext context,
+        EditableTextState editableTextState,
+      ) {
+        return const SizedBox();
+      }
+
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(
+            textSelectionTheme: TextSelectionThemeData(
+              contextMenuBuilder: themeDataContextMenuBuilder,
+            ),
+          ),
+          home: Material(
+            child: TextSelectionTheme(
+              data: TextSelectionThemeData(
+                contextMenuBuilder: localTextSelectionThemeContextMenuBuilder,
+              ),
+              child: SelectableText(
+                'one two three',
+                contextMenuBuilder: selectableTextContextMenuBuilder,
+              ),
+            ),
+          ),
+        ),
+      );
+
+      final EditableTextState editableTextState = tester.firstState(find.byType(EditableText));
+      final BuildContext selectableTextContext = tester.element(find.byType(SelectableText));
+      final Widget contextMenu = editableTextState.widget.contextMenuBuilder!(
+        selectableTextContext,
+        editableTextState,
+      );
+
+      expect(contextMenu, isA<SizedBox>());
+      expect(contextMenu, isNot(isA<Icon>()));
+      expect(contextMenu, isNot(isA<Placeholder>()));
+    });
+
+    testWidgets(
+      'contextMenuBuilder changes from default to null',
+      (WidgetTester tester) async {
+        final GlobalKey key = GlobalKey();
+        const data = 'one two three';
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Material(child: SelectableText(data, key: key)),
+          ),
+        );
+
+        await tester.pump(); // Wait for autofocus to take effect.
+
+        // Long-press to bring up the context menu.
+        Finder textFinder = find.byType(SelectableText);
+        Finder editableTextFinder = find.descendant(
+          of: textFinder,
+          matching: find.byType(EditableText),
+        );
+        await tester.longPress(editableTextFinder);
+        tester.state<EditableTextState>(editableTextFinder).showToolbar();
+        await tester.pump();
+
+        expect(find.byType(AdaptiveTextSelectionToolbar), findsOneWidget);
+
+        // Set contextMenuBuilder to null.
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Material(child: SelectableText(data, key: key, contextMenuBuilder: null)),
+          ),
+        );
+
+        // Trigger build one more time...
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Material(
+              child: Padding(
+                padding: EdgeInsets.zero,
+                child: SelectableText(data, key: key, contextMenuBuilder: null),
+              ),
+            ),
+          ),
+        );
+
+        await tester.pump(); // Wait for autofocus to take effect.
+
+        // Long-press to bring up the context menu.
+        textFinder = find.byType(SelectableText);
+        editableTextFinder = find.descendant(of: textFinder, matching: find.byType(EditableText));
+        await tester.longPress(editableTextFinder);
+        tester.state<EditableTextState>(editableTextFinder).showToolbar();
+        await tester.pump();
+
+        expect(find.byType(AdaptiveTextSelectionToolbar), findsNothing);
+      },
+      skip: kIsWeb, // [intended] on web the browser handles the context menu.
+    );
+
     // Regression test for https://github.com/flutter/flutter/issues/169001.
     testWidgets(
       'iOS does not use the system context menu by default even when supported',
