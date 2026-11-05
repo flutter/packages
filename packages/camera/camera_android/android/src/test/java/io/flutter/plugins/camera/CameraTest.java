@@ -168,6 +168,10 @@ public class CameraTest {
     mockHandler = mock(Handler.class);
 
     mockActivity = mock(Activity.class);
+    final Context mockApplicationContext = mock(Context.class);
+    when(mockApplicationContext.getCacheDir())
+        .thenReturn(new File(System.getProperty("java.io.tmpdir")));
+    when(mockActivity.getApplicationContext()).thenReturn(mockApplicationContext);
     TextureRegistry.SurfaceTextureEntry mockFlutterTexture =
         mock(TextureRegistry.SurfaceTextureEntry.class);
     when(mockFlutterTexture.surfaceTexture()).thenReturn(mock(SurfaceTexture.class));
@@ -1525,8 +1529,6 @@ public class CameraTest {
       throws Exception {
     final String videoPath =
         new File(System.getProperty("java.io.tmpdir"), "test_video.mp4").getAbsolutePath();
-    final String jpegPath =
-        new File(System.getProperty("java.io.tmpdir"), "test_photo.jpg").getAbsolutePath();
 
     final MediaRecorder mockMediaRecorder = mock(MediaRecorder.class);
     camera.mediaRecorder = mockMediaRecorder;
@@ -1549,11 +1551,12 @@ public class CameraTest {
       cameraSpy.prepareRecording(videoPath);
     }
 
-    // Simulate takePicture() overwriting the shared field with a JPEG path
-    // (this is the bug we fixed by introducing videoCaptureFile).
-    cameraSpy.captureFile = new File(jpegPath);
+    cameraSpy.pictureImageReader = mock(ImageReader.class);
+    @SuppressWarnings("unchecked")
+    final Messages.Result<String> result = mock(Messages.Result.class);
+    cameraSpy.takePicture(result);
+    verify(result, never()).error(any());
 
-    // Act
     String resultPath = cameraSpy.stopVideoRecording();
 
     // Assert: must still be the video path, not the JPEG from takePicture.
