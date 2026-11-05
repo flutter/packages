@@ -4,14 +4,8 @@ framework module image_picker_ios {
   export *
   module * { export * }
 
-  header "FIPViewProvider.h"
-  header "FIPPickerSeams.h"
-  header "messages.g.h"
   // CocoaPods compiles the Swift plugin into this module, and an explicit
-  // submodule is not visible there. These headers stay in the main module so
-  // ImagePickerPlugin.swift can use the Pigeon API and the Objective-C helpers.
-  header "FLTImagePickerImageUtil.h"
-  header "FLTImagePickerMetaDataUtil.h"
-  header "FLTImagePickerPhotoAssetUtil.h"
-  header "FLTPHPickerSaveImageToPathOperation.h"
+  // submodule is not visible there. This header stays in the main module so
+  // ImagePickerPlugin.swift can use the Pigeon API.
+  header "messages.g.h"
 }
