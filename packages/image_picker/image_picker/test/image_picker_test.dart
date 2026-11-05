@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:image_picker/image_picker.dart';
@@ -20,6 +21,7 @@ void main() {
     group('#Single image/video', () {
       group('#pickImage', () {
         setUp(() {
+          mockPlatform.onPickImage = ()
           when(
             mockPlatform.getImageFromSource(
               source: anyNamed('source'),
@@ -1106,4 +1108,58 @@ void main() {
       });
     });
   });
+}
+
+final class FakeCrossFile extends CrossFilePlatform {}
+
+final class _MockImagePickerPlatform extends ImagePickerPlatform {
+  _MockImagePickerPlatform();
+
+  late Future<XFile?> Function({required ImageSource source, required ImagePickerOptions options})
+  onPickImage;
+
+  late Future<List<XFile>> Function({required MultiImagePickerOptions options}) onPickMultiImage;
+
+  late Future<List<XFile>> Function({required MediaPickerOptions options}) onPickMedia;
+
+  late Future<XFile?> Function({required ImageSource source, required VideoPickerOptions options})
+  onPickVideo;
+
+  late Future<List<XFile>> Function({required MultiVideoPickerOptions options}) onPickMultiVideo;
+
+  late Future<LostDataResponse> Function() onGetLostData;
+
+  late bool Function(ImageSource source) onSupportsImageSource;
+
+  @override
+  Future<XFile?> pickImage({
+    required ImageSource source,
+    ImagePickerOptions options = const ImagePickerOptions(),
+  }) => onPickImage(source: source, options: options);
+
+  @override
+  Future<List<XFile>> pickMultiImage({
+    MultiImagePickerOptions options = const MultiImagePickerOptions(),
+  }) => onPickMultiImage(options: options);
+
+  @override
+  Future<List<XFile>> pickMedia({required MediaPickerOptions options}) =>
+      onPickMedia(options: options);
+
+  @override
+  Future<XFile?> pickVideo({
+    required ImageSource source,
+    VideoPickerOptions options = const VideoPickerOptions(),
+  }) => onPickVideo(source: source, options: options);
+
+  @override
+  Future<List<XFile>> pickMultiVideo({
+    MultiVideoPickerOptions options = const MultiVideoPickerOptions(),
+  }) => onPickMultiVideo(options: options);
+
+  @override
+  Future<LostDataResponse> getLostData() => onGetLostData();
+
+  @override
+  bool supportsImageSource(ImageSource source) => onSupportsImageSource(source);
 }
