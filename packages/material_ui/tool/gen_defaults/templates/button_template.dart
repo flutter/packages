@@ -793,21 +793,19 @@ class ButtonTemplateM3E extends TokenTemplateM3E {
   );
 
   // Returns the code that resolves [colors] for the pressed, hovered, focused,
-  // and resting states, in that order. A state has its own branch only when its
-  // color differs from the resting color. [format] converts a color to code,
-  // and gets the state, or null for the resting state.
+  // and resting states, in that order. Every state has its own branch, even
+  // when its token has the same value as the resting color, so that the
+  // generated code follows the tokens if their values change. [format] converts
+  // a color to code, and gets the state, or null for the resting state.
   String _resolveStateColors(
     _StateColors colors,
     String Function(TokenColorRole role, _InteractiveState? state) format,
   ) {
     final buffer = StringBuffer();
     for (final _InteractiveState state in _InteractiveState.values) {
-      final TokenColorRole role = colors.forState(state);
-      if (role != colors.resting) {
-        buffer.writeln('if (states.contains(WidgetState.${state.name})) {');
-        buffer.writeln('  return ${format(role, state)};');
-        buffer.writeln('}');
-      }
+      buffer.writeln('if (states.contains(WidgetState.${state.name})) {');
+      buffer.writeln('  return ${format(colors.forState(state), state)};');
+      buffer.writeln('}');
     }
     final TokenColorRole? resting = colors.resting;
     buffer.write('return ${resting == null ? 'null' : format(resting, null)};');
