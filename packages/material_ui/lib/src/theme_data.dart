@@ -2096,13 +2096,23 @@ class ThemeData with Diagnosticable {
       unselectedWidgetColor: Color.lerp(a.unselectedWidgetColor, b.unselectedWidgetColor, t)!,
       // TYPOGRAPHY & ICONOGRAPHY
       iconTheme: () {
+        if (identical(a.iconTheme, b.iconTheme)) {
+          return a.iconTheme;
+        }
+        if (t == 0.0) {
+          return a.iconTheme;
+        }
+        if (t == 1.0) {
+          return b.iconTheme;
+        }
         if (_isDefaultIconTheme(a.iconTheme, a.brightness) &&
             _isDefaultIconTheme(b.iconTheme, b.brightness)) {
-          final Brightness brightness = t < 0.5 ? a.brightness : b.brightness;
-          return switch (brightness) {
-            Brightness.light => _defaultLightIconTheme,
-            Brightness.dark => _defaultDarkIconTheme,
-          };
+          if (a.brightness == b.brightness) {
+            return switch (a.brightness) {
+              Brightness.light => _defaultLightIconTheme,
+              Brightness.dark => _defaultDarkIconTheme,
+            };
+          }
         }
         return IconThemeData.lerp(a.iconTheme, b.iconTheme, t);
       }(),

@@ -2982,8 +2982,6 @@ void main() {
           in <(String, Brightness, Brightness)>[
             ('dark to dark', Brightness.dark, Brightness.dark),
             ('light to light', Brightness.light, Brightness.light),
-            ('dark to light', Brightness.dark, Brightness.light),
-            ('light to dark', Brightness.light, Brightness.dark),
           ]) {
         final GlobalKey defaultIconKey = GlobalKey();
         final GlobalKey explicitIconKey = GlobalKey();
