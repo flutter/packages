@@ -12,7 +12,7 @@ import '../geometry/path.dart';
 import '../image/image_info.dart';
 import '../paint.dart';
 import 'constants.dart';
-import 'parser.dart' show SvgAttributes;
+import 'parser.dart' show SvgAttributes, SvgPaintContext;
 import 'visitor.dart';
 
 /// Signature of a method that resolves a string identifier to an object.
@@ -466,9 +466,16 @@ class PathNode extends AttributedNode {
   final Path path;
 
   /// Compute the paint used by this Path.
-  Paint? computePaint(Rect bounds, AffineMatrix transform) {
-    final Stroke? stroke = attributes.stroke?.toStroke(bounds, transform);
-    final Fill? fill = attributes.fill?.toFill(bounds, transform, defaultColor: Color.opaqueBlack);
+  ///
+  /// The [context] resolves `context-fill` and `context-stroke` paints.
+  Paint? computePaint(Rect bounds, AffineMatrix transform, {SvgPaintContext? context}) {
+    final Stroke? stroke = attributes.stroke?.toStroke(bounds, transform, context: context);
+    final Fill? fill = attributes.fill?.toFill(
+      bounds,
+      transform,
+      defaultColor: Color.opaqueBlack,
+      context: context,
+    );
     if (fill == null && stroke == null) {
       return null;
     }
@@ -542,9 +549,16 @@ class TextNode extends AttributedNode {
   final String text;
 
   /// Compute the [Paint] that this text node uses.
-  Paint? computePaint(Rect bounds, AffineMatrix transform) {
-    final Fill? fill = attributes.fill?.toFill(bounds, transform, defaultColor: Color.opaqueBlack);
-    final Stroke? stroke = attributes.stroke?.toStroke(bounds, transform);
+  ///
+  /// The [context] resolves `context-fill` and `context-stroke` paints.
+  Paint? computePaint(Rect bounds, AffineMatrix transform, {SvgPaintContext? context}) {
+    final Fill? fill = attributes.fill?.toFill(
+      bounds,
+      transform,
+      defaultColor: Color.opaqueBlack,
+      context: context,
+    );
+    final Stroke? stroke = attributes.stroke?.toStroke(bounds, transform, context: context);
     if (fill == null && stroke == null) {
       return null;
     }

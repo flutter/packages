@@ -1,6 +1,7 @@
 ## 1.4.0
 
-* Adds initial support for SVG vertex markers.
+* Adds support for SVG vertex markers on `line`, `path`, `polygon` and `polyline`.
+* Adds support for `context-fill` and `context-stroke` paint in marker content.
 
 ## 1.3.4
 

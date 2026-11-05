@@ -20,6 +20,10 @@ class _BytesLoader extends BytesLoader {
 }
 
 void main() {
+  setUpAll(() {
+    expect(initializePathOpsFromFlutterCache(), isTrue);
+  });
+
   test('marker-mid draws the marker at every interior path vertex', () {
     final VectorInstructions instructions = parseWithoutOptimizers('''
 <svg viewBox="0 0 100 100">
@@ -151,7 +155,7 @@ void main() {
   <marker id="a" overflow="visible" markerUnits="userSpaceOnUse"><path d="M0 0h1v1z"/></marker>
   <marker id="b" overflow="visible" markerUnits="userSpaceOnUse"><path d="M0 0h2v2z"/></marker>
  </defs>
- <g marker-mid="url(#a)"><path d="M0 0L10 10L20 0" fill="none" marker="url(#b)"/></g>
+ <g marker-mid="url(#a)"><path d="M0 0L10 10L20 0" fill="none" style="marker:url(#b)"/></g>
 </svg>''');
     expect(result.paths, <Path>[
       parseSvgPathData('M0 0 h2 v2 z'),
@@ -214,7 +218,6 @@ void main() {
   });
 
   test('compiler encodes markers with the normal optimizer pipeline', () {
-    expect(initializePathOpsFromFlutterCache(), isTrue);
     final Uint8List bytes = encodeSvg(
       xml: '''
 <svg viewBox="0 0 100 100">
@@ -293,5 +296,401 @@ void main() {
     final end = result.paths.last.commands.elementAt(1) as LineToCommand;
     expect(start.x, closeTo(8, 0.000001));
     expect(end.x, closeTo(22, 0.000001));
+  });
+
+  group('marker vertices and orientation', () {
+    const defs = '''
+<defs><marker id="a" overflow="visible" markerUnits="userSpaceOnUse" orient="auto"><path d="M0 0h2"/></marker></defs>''';
+
+    LineToCommand tip(Path path) => path.commands.elementAt(1) as LineToCommand;
+
+    test('the ends of a closed subpath bisect the closing and first segments', () {
+      final VectorInstructions result = parseWithoutOptimizers('''
+<svg viewBox="0 0 100 100">$defs
+ <path d="M0 0 L10 0 L10 10 L0 10 Z" fill="none" marker-start="url(#a)" marker-end="url(#a)"/>
+</svg>''');
+      // Both markers have the same geometry, which is stored only once.
+      expect(
+        result.commands.where((command) => command.type == DrawCommandType.path),
+        hasLength(2),
+      );
+      expect(tip(result.paths.single).x, closeTo(1.41421356, 0.000001));
+      expect(tip(result.paths.single).y, closeTo(-1.41421356, 0.000001));
+    });
+
+    test('an open subpath ending on its start point is not treated as closed', () {
+      final VectorInstructions result = parseWithoutOptimizers('''
+<svg viewBox="0 0 100 100">$defs
+ <path d="M0 0 L10 0 L10 10 L0 10 L0 0" fill="none" marker-start="url(#a)"/>
+</svg>''');
+      expect(tip(result.paths.single).x, closeTo(2, 0.000001));
+      expect(tip(result.paths.single).y, closeTo(0, 0.000001));
+    });
+
+    test('closed subpaths draw every marker on their shared vertices', () {
+      final VectorInstructions result = parseWithoutOptimizers('''
+<svg viewBox="0 0 100 100">
+ <defs>
+  <marker id="s" overflow="visible" markerUnits="userSpaceOnUse"><path d="M0 0h1v1z"/></marker>
+  <marker id="m" overflow="visible" markerUnits="userSpaceOnUse"><path d="M0 0h2v2z"/></marker>
+  <marker id="e" overflow="visible" markerUnits="userSpaceOnUse"><path d="M0 0h3v3z"/></marker>
+ </defs>
+ <path d="M10,10 h10 v10 z m20,0 h10 v10 z m20,0 h10 v10 z" fill="none"
+   marker-start="url(#s)" marker-mid="url(#m)" marker-end="url(#e)"/>
+</svg>''');
+      expect(
+        result.commands.where((command) => command.type == DrawCommandType.path),
+        hasLength(12),
+      );
+      expect(result.paths, contains(parseSvgPathData('M10 10 h1 v1 z')));
+      expect(result.paths, contains(parseSvgPathData('M10 10 h2 v2 z')));
+      expect(result.paths, contains(parseSvgPathData('M50 10 h3 v3 z')));
+    });
+
+    test('a single vertex draws both the start and end markers', () {
+      final VectorInstructions result = parseWithoutOptimizers('''
+<svg viewBox="0 0 100 100">
+ <defs>
+  <marker id="s" overflow="visible" markerUnits="userSpaceOnUse"><path d="M0 0h1v1z"/></marker>
+  <marker id="e" overflow="visible" markerUnits="userSpaceOnUse"><path d="M0 0h3v3z"/></marker>
+ </defs>
+ <path d="M10 10" fill="none" marker-start="url(#s)" marker-end="url(#e)"/>
+</svg>''');
+      expect(result.paths, <Path>[
+        parseSvgPathData('M10 10 h1 v1 z'),
+        parseSvgPathData('M10 10 h3 v3 z'),
+      ]);
+    });
+
+    test('a trailing moveto is a vertex', () {
+      final VectorInstructions result = parseWithoutOptimizers('''
+<svg viewBox="0 0 100 100">
+ <defs><marker id="a" overflow="visible" markerUnits="userSpaceOnUse"><path d="M0 0h1v1z"/></marker></defs>
+ <path d="M0 0 L10 0 M20 20" fill="none" marker-end="url(#a)"/>
+</svg>''');
+      expect(result.paths.last, parseSvgPathData('M20 20 h1 v1 z'));
+    });
+
+    test('a coincident first control point uses the next control point', () {
+      final VectorInstructions result = parseWithoutOptimizers('''
+<svg viewBox="0 0 100 100">$defs
+ <path d="M0 0 C0 0 0 10 10 10" fill="none" marker-start="url(#a)"/>
+</svg>''');
+      expect(tip(result.paths.single).x, closeTo(0, 0.000001));
+      expect(tip(result.paths.single).y, closeTo(2, 0.000001));
+    });
+
+    test('line, polyline and polygon are markable', () {
+      for (final shape in <String>[
+        '<line x1="0" y1="0" x2="10" y2="0" marker-end="url(#d)"/>',
+        '<polyline points="5,0 10,0" fill="none" marker-end="url(#d)"/>',
+        '<polygon points="10,0 20,0 20,20" fill="none" marker-start="url(#d)"/>',
+      ]) {
+        final VectorInstructions result = parseWithoutOptimizers('''
+<svg viewBox="0 0 100 100">
+ <defs><marker id="d" overflow="visible" markerUnits="userSpaceOnUse"><path d="M0 0h1v1z"/></marker></defs>
+ $shape
+</svg>''');
+        expect(result.paths, contains(parseSvgPathData('M10 0 h1 v1 z')), reason: shape);
+      }
+    });
+
+    test('rect, circle and ellipse are not markable', () {
+      final VectorInstructions result = parseWithoutOptimizers('''
+<svg viewBox="0 0 100 100" style="marker:url(#d)">
+ <defs><marker id="d" overflow="visible" markerUnits="userSpaceOnUse"><path d="M0 0h1v1z"/></marker></defs>
+ <rect width="10" height="10"/>
+ <circle cx="20" cy="20" r="5"/>
+ <ellipse cx="40" cy="40" rx="5" ry="2"/>
+</svg>''');
+      expect(result.paths, hasLength(3));
+      expect(result.paths, isNot(contains(parseSvgPathData('M0 0 h1 v1 z'))));
+    });
+
+    test('the marker shorthand is not a presentation attribute', () {
+      final VectorInstructions result = parseWithoutOptimizers('''
+<svg viewBox="0 0 100 100">
+ <defs><marker id="d" overflow="visible" markerUnits="userSpaceOnUse"><path d="M0 0h1v1z"/></marker></defs>
+ <path d="M0 0 L10 10" fill="none" marker="url(#d)"/>
+</svg>''');
+      expect(result.paths, isEmpty);
+    });
+
+    test('quoted marker references and none are understood', () {
+      final VectorInstructions result = parseWithoutOptimizers('''
+<svg viewBox="0 0 100 100">
+ <defs><marker id="d" overflow="visible" markerUnits="userSpaceOnUse"><path d="M0 0h1v1z"/></marker></defs>
+ <path d="M0 0 L10 10 L20 0" fill="none" style="marker-start: url('#d'); marker-mid: none; marker-end: url( &quot;#d&quot; )"/>
+</svg>''');
+      expect(result.paths, <Path>[
+        parseSvgPathData('M0 0 h1 v1 z'),
+        parseSvgPathData('M20 0 h1 v1 z'),
+      ]);
+    });
+
+    test('markers only referencing none do not parse a layer', () {
+      final VectorInstructions result = parseWithoutOptimizers('''
+<svg viewBox="0 0 100 100">
+ <path d="M0 0 L10 10" stroke="black" opacity="0.5" style="marker:none"/>
+</svg>''');
+      expect(
+        result.commands.map((command) => command.type),
+        isNot(contains(DrawCommandType.saveLayer)),
+      );
+    });
+  });
+
+  group('marker attributes', () {
+    VectorInstructions parse(String attributes, {String content = '<path d="M0 0h1v1z"/>'}) {
+      return parseWithoutOptimizers('''
+<svg viewBox="0 0 100 100">
+ <defs><marker id="a" $attributes>$content</marker></defs>
+ <path d="M0 0 L20 30 L40 0" fill="none" marker-mid="url(#a)"/>
+</svg>''');
+    }
+
+    int clipCount(VectorInstructions result) =>
+        result.commands.where((command) => command.type == DrawCommandType.clip).length;
+
+    test('overflow auto does not clip, and scroll does', () {
+      expect(clipCount(parse('overflow="auto"')), 0);
+      expect(clipCount(parse('overflow="visible"')), 0);
+      expect(clipCount(parse('overflow="hidden"')), 1);
+      expect(clipCount(parse('overflow="scroll"')), 1);
+    });
+
+    test('zero and negative marker sizes render nothing', () {
+      expect(parse('markerWidth="0"').paths, isEmpty);
+      expect(parse('markerHeight="0"').paths, isEmpty);
+      expect(parse('markerWidth="-1"').paths, isEmpty);
+      expect(parse('viewBox="0 0 0 10"').paths, isEmpty);
+    });
+
+    test('an invalid viewBox is ignored entirely', () {
+      const common = 'overflow="visible" markerUnits="userSpaceOnUse" markerWidth="10"';
+      final Path expected = parse(common).paths.single;
+      expect(parse('$common viewBox="0 0 oops 10"').paths.single, expected);
+      expect(parse('$common viewBox="0 0 10"').paths.single, expected);
+      expect(
+        parse('$common viewBox="0 0 oops 10" refX="right"').paths.single,
+        parseSvgPathData('M10 30 h1 v1 z'),
+      );
+    });
+
+    test('invalid numeric attributes fall back to their defaults', () {
+      final VectorInstructions result = parse(
+        'overflow="visible" markerUnits="userSpaceOnUse" markerWidth="oops" refX="oops" orient="oops"',
+      );
+      expect(result.paths.single, parseSvgPathData('M20 30 h1 v1 z'));
+    });
+
+    test('invalid preserveAspectRatio and markerUnits fall back to their defaults', () {
+      const viewBox = 'overflow="visible" markerWidth="10" markerHeight="20" viewBox="0 0 10 10"';
+      expect(
+        parse('$viewBox markerUnits="userSpaceOnUse" preserveAspectRatio="oops"').paths.single,
+        parse('$viewBox markerUnits="userSpaceOnUse"').paths.single,
+      );
+      expect(parse('$viewBox markerUnits="oops"').paths.single, parse(viewBox).paths.single);
+    });
+
+    test('preserveAspectRatio aligns the viewport around the reference point', () {
+      const common =
+          'markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="20" viewBox="0 0 10 10"';
+      Iterable<Rect> bounds(String aspectRatio) =>
+          parse('$common preserveAspectRatio="$aspectRatio"').paths.map((path) => path.bounds());
+
+      expect(bounds('xMinYMin'), contains(const Rect.fromLTWH(20, 30, 10, 20)));
+      expect(bounds('xMaxYMax'), contains(const Rect.fromLTWH(20, 20, 10, 20)));
+      expect(bounds('defer xMaxYMax'), contains(const Rect.fromLTWH(20, 25, 10, 20)));
+    });
+
+    test('preserveAspectRatio slice scales to cover the viewport', () {
+      const common =
+          'overflow="visible" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="20" viewBox="0 0 10 10"';
+      expect(
+        parse('$common preserveAspectRatio="xMinYMin slice"').paths.single,
+        parseSvgPathData('M20 30 h2 v2 z'),
+      );
+    });
+
+    test('display none on the marker does not prevent it being referenced', () {
+      expect(
+        parse('overflow="visible" markerUnits="userSpaceOnUse" display="none"').paths,
+        hasLength(1),
+      );
+    });
+
+    test('transform on the marker is ignored', () {
+      expect(
+        parse(
+          'overflow="visible" markerUnits="userSpaceOnUse" transform="translate(5 5)"',
+        ).paths.single,
+        parseSvgPathData('M20 30 h1 v1 z'),
+      );
+    });
+
+    test('opacity on the marker composites its contents', () {
+      final VectorInstructions result = parse(
+        'overflow="visible" markerUnits="userSpaceOnUse" opacity="0.5"',
+      );
+      expect(result.commands.map((command) => command.type), contains(DrawCommandType.saveLayer));
+    });
+
+    test('properties do not inherit from the referencing element', () {
+      final VectorInstructions result = parseWithoutOptimizers('''
+<svg viewBox="0 0 100 100">
+ <defs><marker id="a" overflow="visible" markerUnits="userSpaceOnUse"><path d="M0 0h1v1z"/></marker></defs>
+ <path d="M0 0 L20 30 L40 0" fill="red" stroke="blue" marker-mid="url(#a)"/>
+</svg>''');
+      expect(result.paints, contains(const Paint(fill: Fill(color: Color.opaqueBlack))));
+    });
+
+    test('clipPath children do not draw markers', () {
+      final VectorInstructions result = parseWithoutOptimizers('''
+<svg viewBox="0 0 100 100">
+ <defs>
+  <marker id="a" overflow="visible" markerUnits="userSpaceOnUse"><path d="M0 0h1v1z"/></marker>
+  <clipPath id="c"><path d="M0 0 L20 30 L40 0" marker-mid="url(#a)"/></clipPath>
+ </defs>
+ <rect width="10" height="10" clip-path="url(#c)"/>
+</svg>''');
+      expect(result.paths, isNot(contains(parseSvgPathData('M20 30 h1 v1 z'))));
+    });
+  });
+
+  group('contextual paint', () {
+    const red = Color(0xffff0000);
+    const blue = Color(0xff0000ff);
+
+    VectorInstructions parse(String content, String shape, {String defs = ''}) {
+      return parseWithoutOptimizers('''
+<svg viewBox="0 0 100 100">
+ <defs>$defs<marker id="a" overflow="visible" markerUnits="userSpaceOnUse">$content</marker></defs>
+ $shape
+</svg>''');
+    }
+
+    /// The paint of the only drawn marker, which is the last path drawn.
+    Paint markerPaint(VectorInstructions result) {
+      final DrawCommand command = result.commands.lastWhere(
+        (command) => command.type == DrawCommandType.path,
+      );
+      return result.paints[command.paintId!];
+    }
+
+    const path = 'd="M0 0 L20 30 L40 0" marker-mid="url(#a)"';
+
+    test('context-stroke and context-fill use the referencing element paint', () {
+      final Paint paint = markerPaint(
+        parse(
+          '<path d="M0 0h1v1z" fill="context-stroke" stroke="context-fill"/>',
+          '<path $path fill="red" stroke="blue"/>',
+        ),
+      );
+      expect(paint.fill!.color, blue);
+      expect(paint.stroke!.color, red);
+    });
+
+    test('each referencing element provides its own paint', () {
+      final VectorInstructions result = parse(
+        '<path d="M0 0h1v1z" fill="context-stroke"/>',
+        '<path $path fill="none" stroke="red"/><path $path fill="none" stroke="blue"/>',
+      );
+      final Iterable<Color?> fills = result.paints.map((paint) => paint.fill?.color);
+      expect(fills, containsAll(<Color>[red, blue]));
+    });
+
+    test('contextual paint inherits from the marker and can be overridden', () {
+      final VectorInstructions inherited = parseWithoutOptimizers('''
+<svg viewBox="0 0 100 100">
+ <defs><marker id="a" fill="context-stroke" overflow="visible" markerUnits="userSpaceOnUse"><g><path d="M0 0h1v1z"/></g></marker></defs>
+ <path $path fill="none" stroke="red"/>
+</svg>''');
+      expect(markerPaint(inherited).fill!.color, red);
+
+      final VectorInstructions overridden = parseWithoutOptimizers('''
+<svg viewBox="0 0 100 100">
+ <defs><marker id="a" fill="context-stroke" overflow="visible" markerUnits="userSpaceOnUse"><path d="M0 0h1v1z" fill="blue"/></marker></defs>
+ <path $path fill="none" stroke="red"/>
+</svg>''');
+      expect(markerPaint(overridden).fill!.color, blue);
+    });
+
+    test('the marker element keeps its own fill opacity', () {
+      final Paint paint = markerPaint(
+        parse(
+          '<path d="M0 0h1v1z" fill="context-stroke" fill-opacity="0.5"/>',
+          '<path $path fill="none" stroke="red" stroke-opacity="0.25"/>',
+        ),
+      );
+      expect(paint.fill!.color, red.withOpacity(0.5));
+    });
+
+    test('an unset context paint uses the initial value', () {
+      final Paint filled = markerPaint(
+        parse('<path d="M0 0h1v1z" fill="context-fill"/>', '<path $path stroke="red"/>'),
+      );
+      expect(filled.fill!.color, Color.opaqueBlack);
+
+      final VectorInstructions result = parse(
+        '<path d="M0 0h1v1z" fill="context-stroke"/>',
+        '<path $path fill="none"/>',
+      );
+      expect(result.paths, isEmpty);
+    });
+
+    test('a context paint of none paints nothing', () {
+      final VectorInstructions result = parse(
+        '<path d="M0 0h1v1z" fill="context-fill"/>',
+        '<path $path fill="none" stroke="red"/>',
+      );
+      expect(result.paths, hasLength(1));
+    });
+
+    test('gradients are continuous with the referencing element', () {
+      final VectorInstructions result = parse(
+        '<path d="M0 0h1v1z" fill="context-stroke"/>',
+        '<path $path fill="none" stroke="url(#g)"/>',
+        defs:
+            '<linearGradient id="g"><stop offset="0" stop-color="red"/><stop offset="1" stop-color="blue"/></linearGradient>',
+      );
+      final Paint main = result.paints.firstWhere((paint) => paint.stroke != null);
+      final Paint marker = result.paints.firstWhere((paint) => paint.fill != null);
+      expect(main.stroke!.shader, isNotNull);
+      expect(marker.fill!.shader, main.stroke!.shader);
+    });
+
+    test('nested markers resolve the context recursively', () {
+      final VectorInstructions result = parseWithoutOptimizers('''
+<svg viewBox="0 0 100 100">
+ <defs>
+  <marker id="inner" overflow="visible" markerUnits="userSpaceOnUse"><path d="M0 0h1v1z" fill="context-stroke"/></marker>
+  <marker id="a" overflow="visible" markerUnits="userSpaceOnUse"><path d="M0 0 L1 1 L2 0" fill="none" stroke="context-stroke" marker-mid="url(#inner)"/></marker>
+ </defs>
+ <path $path fill="none" stroke="red"/>
+</svg>''');
+      expect(markerPaint(result).fill!.color, red);
+    });
+
+    test('there is no paint outside of a context element', () {
+      final VectorInstructions result = parseWithoutOptimizers('''
+<svg viewBox="0 0 100 100">
+ <path d="M0 0 L20 30" fill="context-fill" stroke="context-stroke"/>
+</svg>''');
+      expect(result.paths, isEmpty);
+    });
+
+    test('encodes with the normal optimizer pipeline', () {
+      final Uint8List bytes = encodeSvg(
+        xml: '''
+<svg viewBox="0 0 100 100">
+ <defs><marker id="a" fill="context-stroke" opacity="0.5" markerUnits="userSpaceOnUse"><path d="M0 0h1v1z"/></marker></defs>
+ <path d="M0 0 L20 30 L40 0" fill="none" stroke="red" marker-mid="url(#a)"/>
+</svg>''',
+        debugName: 'marker.svg',
+        warningsAsErrors: true,
+      );
+      expect(bytes, isNotEmpty);
+    });
   });
 }
