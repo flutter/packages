@@ -25,6 +25,12 @@ class _MaterialAppRouterExampleState extends State<MaterialAppRouterExample> {
       _ExampleRouteInformationParser();
 
   @override
+  void dispose() {
+    _routerDelegate.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
       routerDelegate: _routerDelegate,
@@ -57,7 +63,10 @@ class _ExampleRouteInformationParser
 
   @override
   RouteInformation? restoreRouteInformation(_RoutePath configuration) {
-    return RouteInformation(uri: Uri(path: '/${configuration.pageId}'));
+    final String path = configuration.pageId == 0
+        ? '/'
+        : '/${configuration.pageId}';
+    return RouteInformation(uri: Uri(path: path));
   }
 }
 

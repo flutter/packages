@@ -6,7 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui_examples/app/app.1.dart' as example;
 
 void main() {
-  testWidgets('MaterialApp.router navigates to the details page', (
+  testWidgets('MaterialApp.router navigates to the details page and back', (
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(const example.MaterialAppRouterExample());
@@ -19,5 +19,11 @@ void main() {
 
     expect(find.text('Details'), findsOneWidget);
     expect(find.text('Page 1'), findsOneWidget);
+
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+
+    expect(find.text('Home'), findsOneWidget);
+    expect(find.text('Details'), findsNothing);
   });
 }

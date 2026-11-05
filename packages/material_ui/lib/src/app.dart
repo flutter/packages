@@ -294,7 +294,16 @@ class MaterialApp extends StatefulWidget {
   ///
   /// {@macro flutter.widgets.WidgetsApp.router}
   ///
+  /// <callout-box>
+  ///
+  /// This example shows how to create a [MaterialApp.router] with a custom
+  /// [RouterDelegate] and [RouteInformationParser].
+  ///
+  /// {@macro material_ui.dartpad_guide}
+  ///
   /// {@example /example/lib/app/app.1.dart#body}
+  ///
+  /// </callout-box>
   const MaterialApp.router({
     super.key,
     this.scaffoldMessengerKey,
