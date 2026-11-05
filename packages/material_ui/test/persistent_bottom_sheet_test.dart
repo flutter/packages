@@ -903,39 +903,45 @@ void main() {
     testWidgets('showBottomSheet sheet follows the drag with the keyboard up', (
       WidgetTester tester,
     ) async {
+      const keyboardHeight = 200.0;
+      const contentHeight = 100.0;
+      const double materialHeight = contentHeight + keyboardHeight;
+      // The content is at the top of the Material, which ends at the bottom of
+      // the 600px tall test screen.
+      const double contentTop = 600.0 - materialHeight;
       final scaffoldKey = GlobalKey<ScaffoldState>();
       await tester.pumpWidget(
         MaterialApp(
           home: MediaQuery(
-            data: const MediaQueryData(viewInsets: EdgeInsets.only(bottom: 200.0)),
+            data: const MediaQueryData(viewInsets: EdgeInsets.only(bottom: keyboardHeight)),
             child: Scaffold(key: scaffoldKey, body: const SizedBox.expand()),
           ),
         ),
       );
       scaffoldKey.currentState!.showBottomSheet(
-        (BuildContext context) => const SizedBox(height: 200.0, child: Text('sheet')),
+        (BuildContext context) => const SizedBox(height: contentHeight, child: Text('sheet')),
       );
       await tester.pumpAndSettle();
-      // Content is 200 tall; the Material behind it is 400 tall.
-      expect(tester.getRect(find.text('sheet')).top, 200.0);
-      expect(tester.getRect(sheetMaterial()).height, 400.0);
+      expect(tester.getRect(find.text('sheet')).top, contentTop);
+      expect(tester.getRect(sheetMaterial()).height, materialHeight);
 
       // The whole sheet moves with the finger.
+      const dragDistance = 100.0;
       final TestGesture gesture = await tester.startGesture(tester.getCenter(find.text('sheet')));
       await gesture.moveBy(const Offset(0.0, 20.0)); // Past the touch slop.
       await tester.pump();
-      await gesture.moveBy(const Offset(0.0, 100.0));
+      await gesture.moveBy(const Offset(0.0, dragDistance));
       await tester.pump();
-      expect(tester.getRect(find.text('sheet')).top, 300.0);
+      expect(tester.getRect(find.text('sheet')).top, contentTop + dragDistance);
 
-      // Less than half of the whole sheet, including the part behind the
-      // keyboard: springs back open.
+      // More than half of the content, but less than half of the whole sheet,
+      // including the part behind the keyboard: springs back open.
       await gesture.up();
       await tester.pumpAndSettle();
-      expect(tester.getRect(find.text('sheet')).top, 200.0);
+      expect(tester.getRect(find.text('sheet')).top, contentTop);
 
       // More than half of the whole sheet: closes.
-      await tester.drag(find.text('sheet'), const Offset(0.0, 250.0));
+      await tester.drag(find.text('sheet'), const Offset(0.0, materialHeight * 0.75));
       await tester.pumpAndSettle();
       expect(find.text('sheet'), findsNothing);
     });
