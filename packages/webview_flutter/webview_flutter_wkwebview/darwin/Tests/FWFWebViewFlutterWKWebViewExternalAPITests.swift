@@ -17,6 +17,8 @@ import WebKit
 #endif
 
 @Suite struct FWFWebViewFlutterWKWebViewExternalAPITests {
+  // Silences the deprecation warning, the deprecated method is still public API and should be tested.
+  @available(*, deprecated)
   @MainActor @Test func webViewForIdentifier() throws {
     let registry = TestRegistry()
 
@@ -40,6 +42,7 @@ import WebKit
     #expect(result == webView)
   }
 
+  @available(*, deprecated)
   @MainActor @Test func webViewForIdentifierHandlesIncorrectRegistry() throws {
     let registry = TestRegistry()
     // Ensure that passing an empty registry, such as the FlutterAppDelegate

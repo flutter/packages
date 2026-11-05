@@ -36,7 +36,7 @@ Using Native Interop in pigeon follows the standard pigeon workflow, with a few 
 3. **Configure Options**: Configure `kotlinOptions.useJni` or `swiftOptions.useFfi` in your `PigeonOptions` (see [Step 2: Configure Pigeon Options](#step-2-configure-pigeon-options) below).
 4. **Prerequisites**: Ensure your local environment meets the toolchain prerequisites for `jnigen` and `ffigen` (see [Section 3: Prerequisites](#3-prerequisites) below).
 5. **Run Code Generation**: Run the `pigeon` tool to generate the native bridge code and interop bindings (see [Step 3: Run Code Generation](#step-3-run-code-generation) below).
-6. **Configure Build Systems**: For Swift FFI, configure CocoaPods or Swift Package Manager (SwiftPM) to compile the intermediate Objective-C bridge files (see [Step 4: iOS/macOS Build System Configuration (FFI)](#step-4-iosmacos-build-system-configuration-ffi) below). For Kotlin JNI, add keep rules so that Android release builds work (see [Step 5: Android Release Build Configuration (JNI)](#step-5-android-release-build-configuration-jni) below). <!-- TODO(tarrinneal): Remove this JNI sentence once package:jni ships these keep rules: https://github.com/dart-lang/native/issues/3732 -->
+6. **Configure Build Systems**: For Swift FFI, configure CocoaPods or Swift Package Manager (SwiftPM) to compile the intermediate Objective-C bridge files (see [Step 4: iOS/macOS Build System Configuration (FFI)](#step-4-iosmacos-build-system-configuration-ffi) below).
 7. **Implement and Call**: Implement the generated protocol/class interface in your native codebase and call the generated Dart methods from your Flutter application.
 
 ---
@@ -131,12 +131,12 @@ When Native Interop options (`useJni` or `useFfi`) are enabled, Pigeon automatic
 
 - **Android (JNI)**: When `kotlinOptions.useJni` is enabled:
   1. Generates the JNI-compatible Kotlin bridge and the `<input_name>_jnigen_config.dart` script in `tool/pigeon/`.
-  2. Runs `jnigen` via the config script to parse the Kotlin bridge and produce Dart JNI bindings.
-  3. Generates the final pigeon Dart output that wraps and imports those JNI bindings.
+  2. Runs `jnigen` via the config script to parse the Kotlin bridge and produce Dart JNI bindings (`*.g.jni.dart`).
+  3. Generates the web-safe main Pigeon Dart output (`*.g.dart`) and the conditionally imported native interop companion file (`*.native_interop.g.dart`) that wraps and imports those JNI bindings.
 - **iOS/macOS (FFI)**: When `swiftOptions.useFfi` is enabled:
   1. Generates the Objective-C compatible Swift bridge and the `<input_name>_ffigen_config.dart` script in `tool/pigeon/`.
-  2. Runs `ffigen` via the config script to parse the Objective-C bridge and produce Dart FFI bindings.
-  3. Generates the final pigeon Dart output that wraps and imports those FFI bindings.
+  2. Runs `ffigen` via the config script to parse the Objective-C bridge and produce Dart FFI bindings (`*.g.ffi.dart`).
+  3. Generates the web-safe main Pigeon Dart output (`*.g.dart`) and the conditionally imported native interop companion file (`*.native_interop.g.dart`) that wraps and imports those FFI bindings.
 
 ### Step 4: iOS/macOS Build System Configuration (FFI)
 
@@ -200,36 +200,6 @@ When implementing Native Interop host APIs directly in an application target rat
   MyApiSetup.register(api: api)
   ```
   Calling `register(api:)` in native code also prevents the Xcode linker (`-dead_strip`) from stripping the setup class from the compiled binary.
-
-### Step 5: Android Release Build Configuration (JNI)
-
-<!-- TODO(tarrinneal): Remove this section once package:jni ships these keep rules: https://github.com/dart-lang/native/issues/3732 -->
-
-Flutter enables R8 for Android release builds by default. R8 removes, renames, and merges classes and members that it doesn't see being used. JNI looks up classes and members by name at runtime, so everything that JNI reaches must keep its original name.
-
-Pigeon adds `@Keep` to every generated Kotlin class that the generated Dart code reaches through JNI, so the generated code needs no extra rules. However, `package:jni` and the generated Dart code also look up several Kotlin standard library classes by name to call Kotlin `suspend` functions (`@async` methods) and to implement them from Dart. Library classes can't be annotated, so until `package:jni` includes rules for these classes, you must add them yourself:
-
-```text
-# Kotlin classes that package:jni and the generated Dart code look up by name.
--keep class kotlin.Unit { *; }
--keep class kotlin.Result { *; }
--keep class kotlin.Result$Failure { *; }
--keep class kotlin.coroutines.Continuation { *; }
--keep class kotlin.coroutines.intrinsics.CoroutineSingletons { *; }
--keep class kotlin.coroutines.intrinsics.IntrinsicsKt { *; }
-```
-
-* **Plugins**: Add the rules to a file in the plugin's `android/` directory, such as `consumer-rules.pro`, and list it in `consumerProguardFiles` in the plugin's `android/build.gradle` or `android/build.gradle.kts`. R8 then applies the rules to every application that uses the plugin:
-  ```gradle
-  android {
-      defaultConfig {
-          consumerProguardFiles("consumer-rules.pro")
-      }
-  }
-  ```
-* **Applications**: Add the rules to `android/app/proguard-rules.pro`. Flutter applies this file to release builds when it exists.
-
-Debug and profile builds are not minified, so test a release build (for example, with `flutter run --release`) to verify the configuration.
 
 ---
 
@@ -299,7 +269,6 @@ If native interop calls work in debug builds but fail in release builds with `ja
 - **Cause**: R8 removed or renamed a class or member that JNI looks up by name.
 - **Solution**:
   - If the error names a class generated by Pigeon, regenerate your Pigeon output with Pigeon 29.0.7 or later, which adds `@Keep` to every generated class that JNI reaches.
-  - If the error names a class in the `kotlin` package (for example, `kotlin/coroutines/Continuation` in the signature of a `suspend` method), add the keep rules from [Step 5](#step-5-android-release-build-configuration-jni). <!-- TODO(tarrinneal): Remove this bullet once package:jni ships these keep rules: https://github.com/dart-lang/native/issues/3732 -->
   - To see what R8 removed or renamed, check `build/app/outputs/mapping/release/mapping.txt` in the application directory.
 
 ---

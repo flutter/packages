@@ -1,3 +1,0 @@
-changelog: |
-  - Fixes `CupertinoPicker` throwing when it is disposed during the tap-to-select animation.
-version: patch
