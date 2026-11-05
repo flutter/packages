@@ -491,6 +491,7 @@ class CupertinoSplitViewState<T> extends State<CupertinoSplitView<T>> {
   bool _detailRouteOpen = false;
   bool _detailPushScheduled = false;
   T? _lastPushedSelection;
+  Route<void>? _pushedRoute;
 
   /// Whether the split view is currently using its compact, single-column
   /// layout.
@@ -625,18 +626,24 @@ class CupertinoSplitViewState<T> extends State<CupertinoSplitView<T>> {
   }
 
   void _scheduleDetailPush({T? value}) {
-    if (!mounted || _detailPushScheduled || _detailRouteOpen) {
+    if (!mounted || _detailPushScheduled) {
       return;
     }
     final T? selected = value ?? _controller.selection;
     if (selected == null) {
       return;
     }
+    if (_detailRouteOpen && selected == _lastPushedSelection) {
+      return;
+    }
 
     _detailPushScheduled = true;
     WidgetsBinding.instance.addPostFrameCallback((Duration _) {
       _detailPushScheduled = false;
-      if (!mounted || !isCompact || _detailRouteOpen) {
+      if (!mounted || !isCompact) {
+        return;
+      }
+      if (_detailRouteOpen && selected == _lastPushedSelection) {
         return;
       }
       _pushDetail(selected);
@@ -649,8 +656,7 @@ class CupertinoSplitViewState<T> extends State<CupertinoSplitView<T>> {
       return;
     }
 
-    _detailRouteOpen = true;
-    _lastPushedSelection = selected;
+    final bool replaceCurrentRoute = _detailRouteOpen;
     final route = CupertinoPageRoute<void>(
       settings: widget.detailRouteSettings?.call(selected),
       title: widget.detailRouteTitle?.call(selected),
@@ -663,8 +669,17 @@ class CupertinoSplitViewState<T> extends State<CupertinoSplitView<T>> {
       },
     );
 
-    navigator.push<void>(route).whenComplete(() {
-      _detailRouteOpen = false;
+    _detailRouteOpen = true;
+    _lastPushedSelection = selected;
+    _pushedRoute = route;
+    final Future<void> routeFuture = replaceCurrentRoute
+        ? navigator.pushReplacement<void, void>(route)
+        : navigator.push<void>(route);
+    routeFuture.whenComplete(() {
+      if (_pushedRoute == route) {
+        _detailRouteOpen = false;
+        _pushedRoute = null;
+      }
     });
   }
 
@@ -673,7 +688,12 @@ class CupertinoSplitViewState<T> extends State<CupertinoSplitView<T>> {
       isCompact: isCompact,
       isSidebarVisible: isSidebarVisible,
       toggleSidebar: toggleSidebar,
-      child: _CupertinoSplitViewSelectionScope<T>(state: this, child: child),
+      child: _CupertinoSplitViewSelectionScope<T>(
+        state: this,
+        selection: selection,
+        isCompact: isCompact,
+        child: child,
+      ),
     );
   }
 
@@ -1239,7 +1259,7 @@ class CupertinoSplitViewToggleButton extends StatelessWidget {
     return CupertinoButton(
       padding: EdgeInsets.zero,
       minimumSize: const Size.square(_kSidebarToggleSize),
-      sizeStyle: .medium,
+      sizeStyle: CupertinoButtonSize.medium,
       onPressed: scope.toggleSidebar,
       child: Semantics(
         excludeSemantics: true,
@@ -1271,15 +1291,22 @@ class _CupertinoSplitViewScope extends InheritedWidget {
 }
 
 class _CupertinoSplitViewSelectionScope<T> extends InheritedWidget {
-  const _CupertinoSplitViewSelectionScope({required this.state, required super.child});
+  const _CupertinoSplitViewSelectionScope({
+    required this.state,
+    required this.selection,
+    required this.isCompact,
+    required super.child,
+  });
 
   final CupertinoSplitViewState<T> state;
+  final T? selection;
+  final bool isCompact;
 
   @override
   bool updateShouldNotify(_CupertinoSplitViewSelectionScope<T> oldWidget) {
     return state != oldWidget.state ||
-        state.selection != oldWidget.state.selection ||
-        state.isCompact != oldWidget.state.isCompact;
+        selection != oldWidget.selection ||
+        isCompact != oldWidget.isCompact;
   }
 }
 
@@ -1290,7 +1317,7 @@ class _CupertinoSplitViewDivider extends StatelessWidget {
   Widget build(BuildContext context) {
     final divider = BorderSide(
       color: CupertinoColors.separator.resolveFrom(context),
-      width: 0.1 / MediaQuery.devicePixelRatioOf(context),
+      width: 1.0 / MediaQuery.devicePixelRatioOf(context),
     );
     return DecoratedBox(
       decoration: BoxDecoration(border: Border(right: divider)),

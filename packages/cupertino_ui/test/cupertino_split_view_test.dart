@@ -166,7 +166,7 @@ void main() {
     final decoration = decoratedBox.decoration as BoxDecoration;
     final border = decoration.border! as Border;
     expect(MediaQuery.devicePixelRatioOf(tester.element(decoratedFinder)), 2.0);
-    expect(border.right.width, 0.05);
+    expect(border.right.width, 0.5);
     expect(
       border.right.color,
       CupertinoColors.separator.resolveFrom(tester.element(decoratedFinder)),
@@ -222,11 +222,46 @@ void main() {
     expect(find.text('Detail Body inbox'), findsOneWidget);
     expect(find.byType(CupertinoNavigationBarBackButton), findsOneWidget);
 
+    controller.selection = 'sent';
+    await tester.pumpAndSettle();
+
+    expect(find.text('Detail Body sent'), findsOneWidget);
+    expect(find.text('Detail Body inbox'), findsNothing);
+    expect(find.byType(CupertinoNavigationBarBackButton), findsOneWidget);
+
     await tester.tap(find.byType(CupertinoNavigationBarBackButton));
     await tester.pumpAndSettle();
 
     expect(find.text('Sidebar'), findsOneWidget);
     expect(find.text('Detail Body inbox'), findsNothing);
+  });
+
+  testWidgets('selection scope rebuilds dependents when selection changes', (
+    WidgetTester tester,
+  ) async {
+    await _setSurfaceSize(tester, const Size(834.0, 1194.0));
+    final controller = CupertinoSplitViewController<String>(
+      initialColumnVisibility: CupertinoSplitViewVisibility.doubleColumn,
+    );
+    await tester.pumpWidget(
+      CupertinoApp(
+        home: CupertinoSplitView<String>(
+          controller: controller,
+          sidebar: const _SelectionScopeProbe(),
+          detailBuilder: (BuildContext context, String? selection) {
+            return const SizedBox.shrink();
+          },
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('selection none'), findsOneWidget);
+
+    controller.selection = 'inbox';
+    await tester.pumpAndSettle();
+
+    expect(find.text('selection inbox'), findsOneWidget);
   });
 
   testWidgets('iPad automatic visibility collapses and reveals the sidebar', (
@@ -301,8 +336,8 @@ void main() {
     expect(find.text('About Page'), findsOneWidget);
     expect(find.byKey(const ValueKey<String>('sidebar')), findsOneWidget);
     final Rect aboutRect = tester.getRect(find.byKey(_aboutPageKey));
-    expect(aboutRect.left, closeTo(320.1, 0.01));
-    expect(aboutRect.width, closeTo(513.9, 0.01));
+    expect(aboutRect.left, closeTo(321.0, 0.01));
+    expect(aboutRect.width, closeTo(513.0, 0.01));
     expect(find.byType(CupertinoNavigationBarBackButton), findsOneWidget);
 
     await tester.tap(find.byType(CupertinoNavigationBarBackButton));
@@ -361,7 +396,7 @@ void main() {
     await tester.pumpAndSettle();
 
     final Finder rootLeading = find.byKey(_detailNavigationLeadingKey);
-    expect(tester.getRect(rootLeading).left, closeTo(336.1, 0.01));
+    expect(tester.getRect(rootLeading).left, closeTo(337.0, 0.01));
 
     await tester.tap(_floatingToggleFinder);
     await tester.pumpAndSettle();
@@ -809,6 +844,16 @@ class _SplitViewLocalizationsDelegate extends LocalizationsDelegate<CupertinoLoc
 
   @override
   bool shouldReload(_SplitViewLocalizationsDelegate old) => false;
+}
+
+class _SelectionScopeProbe extends StatelessWidget {
+  const _SelectionScopeProbe();
+
+  @override
+  Widget build(BuildContext context) {
+    final CupertinoSplitViewState<String>? splitView = CupertinoSplitView.maybeOf<String>(context);
+    return Text('selection ${splitView?.selection ?? 'none'}');
+  }
 }
 
 class _TestSidebar extends StatelessWidget {
