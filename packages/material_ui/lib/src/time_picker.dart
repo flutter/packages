@@ -1851,10 +1851,11 @@ class _TimePickerInputState extends State<_TimePickerInput> with RestorationMixi
 
   String _removeLeadingZeros(String value) {
     final String localizedZero = MaterialLocalizations.of(context).formatDecimal(0);
-    while (value.startsWith(localizedZero) && value.length > localizedZero.length) {
-      value = value.substring(localizedZero.length);
+    var trimmedValue = value;
+    while (trimmedValue.startsWith(localizedZero) && trimmedValue.length > localizedZero.length) {
+      trimmedValue = trimmedValue.substring(localizedZero.length);
     }
-    return value;
+    return trimmedValue;
   }
 
   void _handleHourSavedSubmitted(String? value) {

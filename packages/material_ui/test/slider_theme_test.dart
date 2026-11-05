@@ -3672,16 +3672,17 @@ Widget _buildApp(
   int? divisions,
   FocusNode? focusNode,
 }) {
-  final ValueChanged<double>? onChanged = enabled ? (double d) => value = d : null;
+  var currentValue = value;
+  final ValueChanged<double>? onChanged = enabled ? (double d) => currentValue = d : null;
   return MaterialApp(
     home: Scaffold(
       body: Center(
         child: SliderTheme(
           data: sliderTheme,
           child: Slider(
-            value: value,
+            value: currentValue,
             secondaryTrackValue: secondaryTrackValue,
-            label: '$value',
+            label: '$currentValue',
             onChanged: onChanged,
             divisions: divisions,
             focusNode: focusNode,
@@ -3698,15 +3699,18 @@ Widget _buildRangeApp(
   bool enabled = true,
   int? divisions,
 }) {
-  final ValueChanged<RangeValues>? onChanged = enabled ? (RangeValues d) => values = d : null;
+  var currentValues = values;
+  final ValueChanged<RangeValues>? onChanged = enabled
+      ? (RangeValues d) => currentValues = d
+      : null;
   return MaterialApp(
     home: Scaffold(
       body: Center(
         child: SliderTheme(
           data: sliderTheme,
           child: RangeSlider(
-            values: values,
-            labels: RangeLabels(values.start.toString(), values.end.toString()),
+            values: currentValues,
+            labels: RangeLabels(currentValues.start.toString(), currentValues.end.toString()),
             onChanged: onChanged,
             divisions: divisions,
           ),
