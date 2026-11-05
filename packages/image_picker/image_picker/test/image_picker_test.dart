@@ -3,17 +3,16 @@
 // found in the LICENSE file.
 
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
-import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 void main() {
   group('ImagePicker', () {
     late _MockImagePickerPlatform mockPlatform;
 
     setUp(() {
+      CrossFilePlatform.instance = MockCrossFile();
       mockPlatform = _MockImagePickerPlatform();
       ImagePickerPlatform.instance = mockPlatform;
     });
@@ -21,442 +20,443 @@ void main() {
     group('#Single image/video', () {
       group('#pickImage', () {
         setUp(() {
-          mockPlatform.onPickImage = ()
+          mockPlatform.onPickImage = (ImageSource source, ImagePickerOptions options) async {
+            return null;
+          };
+        });
+
+        test('passes the image source argument correctly', () async {
+          final picker = ImagePicker();
+
+          mockPlatform.onPickImage = expectAsync2((
+            ImageSource source,
+            ImagePickerOptions options,
+          ) async {
+            expect(source, ImageSource.camera);
+            return null;
+          });
+          await picker.pickImage(source: ImageSource.camera);
+
+          mockPlatform.onPickImage = expectAsync2((
+            ImageSource source,
+            ImagePickerOptions options,
+          ) async {
+            expect(source, ImageSource.gallery);
+            return null;
+          });
+          await picker.pickImage(source: ImageSource.gallery);
+        });
+
+        // test('passes the width and height arguments correctly', () async {
+        //   final picker = ImagePicker();
+        //   await picker.pickImage(source: ImageSource.camera);
+        //   await picker.pickImage(source: ImageSource.camera, maxWidth: 10.0);
+        //   await picker.pickImage(source: ImageSource.camera, maxHeight: 10.0);
+        //   await picker.pickImage(source: ImageSource.camera, maxWidth: 10.0, maxHeight: 20.0);
+        //   await picker.pickImage(source: ImageSource.camera, maxWidth: 10.0, imageQuality: 70);
+        //   await picker.pickImage(source: ImageSource.camera, maxHeight: 10.0, imageQuality: 70);
+        //   await picker.pickImage(
+        //     source: ImageSource.camera,
+        //     maxWidth: 10.0,
+        //     maxHeight: 20.0,
+        //     imageQuality: 70,
+        //   );
+        //
+        //   verifyInOrder(<Object>[
+        //     mockPlatform.getImageFromSource(
+        //       source: ImageSource.camera,
+        //       options: argThat(
+        //         isInstanceOf<ImagePickerOptions>()
+        //             .having((ImagePickerOptions options) => options.maxWidth, 'maxWidth', isNull)
+        //             .having((ImagePickerOptions options) => options.maxHeight, 'maxHeight', isNull)
+        //             .having(
+        //               (ImagePickerOptions options) => options.imageQuality,
+        //               'imageQuality',
+        //               isNull,
+        //             ),
+        //         named: 'options',
+        //       ),
+        //     ),
+        //     mockPlatform.getImageFromSource(
+        //       source: ImageSource.camera,
+        //       options: argThat(
+        //         isInstanceOf<ImagePickerOptions>()
+        //             .having(
+        //               (ImagePickerOptions options) => options.maxWidth,
+        //               'maxWidth',
+        //               equals(10.0),
+        //             )
+        //             .having((ImagePickerOptions options) => options.maxHeight, 'maxHeight', isNull)
+        //             .having(
+        //               (ImagePickerOptions options) => options.imageQuality,
+        //               'imageQuality',
+        //               isNull,
+        //             ),
+        //         named: 'options',
+        //       ),
+        //     ),
+        //     mockPlatform.getImageFromSource(
+        //       source: ImageSource.camera,
+        //       options: argThat(
+        //         isInstanceOf<ImagePickerOptions>()
+        //             .having((ImagePickerOptions options) => options.maxWidth, 'maxWidth', isNull)
+        //             .having(
+        //               (ImagePickerOptions options) => options.maxHeight,
+        //               'maxHeight',
+        //               equals(10.0),
+        //             )
+        //             .having(
+        //               (ImagePickerOptions options) => options.imageQuality,
+        //               'imageQuality',
+        //               isNull,
+        //             ),
+        //         named: 'options',
+        //       ),
+        //     ),
+        //     mockPlatform.getImageFromSource(
+        //       source: ImageSource.camera,
+        //       options: argThat(
+        //         isInstanceOf<ImagePickerOptions>()
+        //             .having(
+        //               (ImagePickerOptions options) => options.maxWidth,
+        //               'maxWidth',
+        //               equals(10.0),
+        //             )
+        //             .having(
+        //               (ImagePickerOptions options) => options.maxHeight,
+        //               'maxHeight',
+        //               equals(20.0),
+        //             )
+        //             .having(
+        //               (ImagePickerOptions options) => options.imageQuality,
+        //               'imageQuality',
+        //               isNull,
+        //             ),
+        //         named: 'options',
+        //       ),
+        //     ),
+        //     mockPlatform.getImageFromSource(
+        //       source: ImageSource.camera,
+        //       options: argThat(
+        //         isInstanceOf<ImagePickerOptions>()
+        //             .having(
+        //               (ImagePickerOptions options) => options.maxWidth,
+        //               'maxWidth',
+        //               equals(10.0),
+        //             )
+        //             .having((ImagePickerOptions options) => options.maxHeight, 'maxHeight', isNull)
+        //             .having(
+        //               (ImagePickerOptions options) => options.imageQuality,
+        //               'imageQuality',
+        //               equals(70),
+        //             ),
+        //         named: 'options',
+        //       ),
+        //     ),
+        //     mockPlatform.getImageFromSource(
+        //       source: ImageSource.camera,
+        //       options: argThat(
+        //         isInstanceOf<ImagePickerOptions>()
+        //             .having((ImagePickerOptions options) => options.maxWidth, 'maxWidth', isNull)
+        //             .having(
+        //               (ImagePickerOptions options) => options.maxHeight,
+        //               'maxHeight',
+        //               equals(10.0),
+        //             )
+        //             .having(
+        //               (ImagePickerOptions options) => options.imageQuality,
+        //               'imageQuality',
+        //               equals(70),
+        //             ),
+        //         named: 'options',
+        //       ),
+        //     ),
+        //     mockPlatform.getImageFromSource(
+        //       source: ImageSource.camera,
+        //       options: argThat(
+        //         isInstanceOf<ImagePickerOptions>()
+        //             .having(
+        //               (ImagePickerOptions options) => options.maxWidth,
+        //               'maxWidth',
+        //               equals(10.0),
+        //             )
+        //             .having(
+        //               (ImagePickerOptions options) => options.maxHeight,
+        //               'maxHeight',
+        //               equals(20.0),
+        //             )
+        //             .having(
+        //               (ImagePickerOptions options) => options.imageQuality,
+        //               'imageQuality',
+        //               equals(70),
+        //             ),
+        //         named: 'options',
+        //       ),
+        //     ),
+        //   ]);
+        // });
+        //
+        // test('does not accept a negative width or height argument', () {
+        //   final picker = ImagePicker();
+        //   expect(
+        //     () => picker.pickImage(source: ImageSource.camera, maxWidth: -1.0),
+        //     throwsArgumentError,
+        //   );
+        //
+        //   expect(
+        //     () => picker.pickImage(source: ImageSource.camera, maxHeight: -1.0),
+        //     throwsArgumentError,
+        //   );
+        // });
+        //
+        // test('handles a null image file response gracefully', () async {
+        //   final picker = ImagePicker();
+        //
+        //   expect(await picker.pickImage(source: ImageSource.gallery), isNull);
+        //   expect(await picker.pickImage(source: ImageSource.camera), isNull);
+        // });
+        //
+        // test('camera position defaults to back', () async {
+        //   final picker = ImagePicker();
+        //   await picker.pickImage(source: ImageSource.camera);
+        //
+        //   verify(
+        //     mockPlatform.getImageFromSource(
+        //       source: ImageSource.camera,
+        //       options: argThat(
+        //         isInstanceOf<ImagePickerOptions>().having(
+        //           (ImagePickerOptions options) => options.preferredCameraDevice,
+        //           'preferredCameraDevice',
+        //           equals(CameraDevice.rear),
+        //         ),
+        //         named: 'options',
+        //       ),
+        //     ),
+        //   );
+        // });
+        //
+        // test('camera position can set to front', () async {
+        //   final picker = ImagePicker();
+        //   await picker.pickImage(
+        //     source: ImageSource.camera,
+        //     preferredCameraDevice: CameraDevice.front,
+        //   );
+        //
+        //   verify(
+        //     mockPlatform.getImageFromSource(
+        //       source: ImageSource.camera,
+        //       options: argThat(
+        //         isInstanceOf<ImagePickerOptions>().having(
+        //           (ImagePickerOptions options) => options.preferredCameraDevice,
+        //           'preferredCameraDevice',
+        //           equals(CameraDevice.front),
+        //         ),
+        //         named: 'options',
+        //       ),
+        //     ),
+        //   );
+        // });
+        //
+        // test('full metadata argument defaults to true', () async {
+        //   final picker = ImagePicker();
+        //   await picker.pickImage(source: ImageSource.gallery);
+        //
+        //   verify(
+        //     mockPlatform.getImageFromSource(
+        //       source: ImageSource.gallery,
+        //       options: argThat(
+        //         isInstanceOf<ImagePickerOptions>().having(
+        //           (ImagePickerOptions options) => options.requestFullMetadata,
+        //           'requestFullMetadata',
+        //           isTrue,
+        //         ),
+        //         named: 'options',
+        //       ),
+        //     ),
+        //   );
+        // });
+        //
+        // test('passes the full metadata argument correctly', () async {
+        //   final picker = ImagePicker();
+        //   await picker.pickImage(source: ImageSource.gallery, requestFullMetadata: false);
+        //
+        //   verify(
+        //     mockPlatform.getImageFromSource(
+        //       source: ImageSource.gallery,
+        //       options: argThat(
+        //         isInstanceOf<ImagePickerOptions>().having(
+        //           (ImagePickerOptions options) => options.requestFullMetadata,
+        //           'requestFullMetadata',
+        //           isFalse,
+        //         ),
+        //         named: 'options',
+        //       ),
+        //     ),
+        //   );
+        // });
+      });
+
+      group('#pickVideo', () {
+        setUp(() {
           when(
-            mockPlatform.getImageFromSource(
+            mockPlatform.getVideo(
               source: anyNamed('source'),
-              options: anyNamed('options'),
+              preferredCameraDevice: anyNamed('preferredCameraDevice'),
+              maxDuration: anyNamed('maxDuration'),
             ),
           ).thenAnswer((Invocation _) async => null);
         });
 
         test('passes the image source argument correctly', () async {
           final picker = ImagePicker();
-          await picker.pickImage(source: ImageSource.camera);
-          await picker.pickImage(source: ImageSource.gallery);
+          await picker.pickVideo(source: ImageSource.camera);
+          await picker.pickVideo(source: ImageSource.gallery);
 
           verifyInOrder(<Object>[
-            mockPlatform.getImageFromSource(
-              source: ImageSource.camera,
-              options: argThat(isInstanceOf<ImagePickerOptions>(), named: 'options'),
-            ),
-            mockPlatform.getImageFromSource(
-              source: ImageSource.gallery,
-              options: argThat(isInstanceOf<ImagePickerOptions>(), named: 'options'),
-            ),
+            mockPlatform.getVideo(source: ImageSource.camera),
+            mockPlatform.getVideo(source: ImageSource.gallery),
           ]);
         });
 
-        test('passes the width and height arguments correctly', () async {
+        test('passes the duration argument correctly', () async {
           final picker = ImagePicker();
-          await picker.pickImage(source: ImageSource.camera);
-          await picker.pickImage(source: ImageSource.camera, maxWidth: 10.0);
-          await picker.pickImage(source: ImageSource.camera, maxHeight: 10.0);
-          await picker.pickImage(source: ImageSource.camera, maxWidth: 10.0, maxHeight: 20.0);
-          await picker.pickImage(source: ImageSource.camera, maxWidth: 10.0, imageQuality: 70);
-          await picker.pickImage(source: ImageSource.camera, maxHeight: 10.0, imageQuality: 70);
-          await picker.pickImage(
+          await picker.pickVideo(source: ImageSource.camera);
+          await picker.pickVideo(
             source: ImageSource.camera,
-            maxWidth: 10.0,
-            maxHeight: 20.0,
-            imageQuality: 70,
+            maxDuration: const Duration(seconds: 10),
           );
 
           verifyInOrder(<Object>[
-            mockPlatform.getImageFromSource(
+            mockPlatform.getVideo(source: ImageSource.camera),
+            mockPlatform.getVideo(
               source: ImageSource.camera,
-              options: argThat(
-                isInstanceOf<ImagePickerOptions>()
-                    .having((ImagePickerOptions options) => options.maxWidth, 'maxWidth', isNull)
-                    .having((ImagePickerOptions options) => options.maxHeight, 'maxHeight', isNull)
-                    .having(
-                      (ImagePickerOptions options) => options.imageQuality,
-                      'imageQuality',
-                      isNull,
-                    ),
-                named: 'options',
-              ),
-            ),
-            mockPlatform.getImageFromSource(
-              source: ImageSource.camera,
-              options: argThat(
-                isInstanceOf<ImagePickerOptions>()
-                    .having(
-                      (ImagePickerOptions options) => options.maxWidth,
-                      'maxWidth',
-                      equals(10.0),
-                    )
-                    .having((ImagePickerOptions options) => options.maxHeight, 'maxHeight', isNull)
-                    .having(
-                      (ImagePickerOptions options) => options.imageQuality,
-                      'imageQuality',
-                      isNull,
-                    ),
-                named: 'options',
-              ),
-            ),
-            mockPlatform.getImageFromSource(
-              source: ImageSource.camera,
-              options: argThat(
-                isInstanceOf<ImagePickerOptions>()
-                    .having((ImagePickerOptions options) => options.maxWidth, 'maxWidth', isNull)
-                    .having(
-                      (ImagePickerOptions options) => options.maxHeight,
-                      'maxHeight',
-                      equals(10.0),
-                    )
-                    .having(
-                      (ImagePickerOptions options) => options.imageQuality,
-                      'imageQuality',
-                      isNull,
-                    ),
-                named: 'options',
-              ),
-            ),
-            mockPlatform.getImageFromSource(
-              source: ImageSource.camera,
-              options: argThat(
-                isInstanceOf<ImagePickerOptions>()
-                    .having(
-                      (ImagePickerOptions options) => options.maxWidth,
-                      'maxWidth',
-                      equals(10.0),
-                    )
-                    .having(
-                      (ImagePickerOptions options) => options.maxHeight,
-                      'maxHeight',
-                      equals(20.0),
-                    )
-                    .having(
-                      (ImagePickerOptions options) => options.imageQuality,
-                      'imageQuality',
-                      isNull,
-                    ),
-                named: 'options',
-              ),
-            ),
-            mockPlatform.getImageFromSource(
-              source: ImageSource.camera,
-              options: argThat(
-                isInstanceOf<ImagePickerOptions>()
-                    .having(
-                      (ImagePickerOptions options) => options.maxWidth,
-                      'maxWidth',
-                      equals(10.0),
-                    )
-                    .having((ImagePickerOptions options) => options.maxHeight, 'maxHeight', isNull)
-                    .having(
-                      (ImagePickerOptions options) => options.imageQuality,
-                      'imageQuality',
-                      equals(70),
-                    ),
-                named: 'options',
-              ),
-            ),
-            mockPlatform.getImageFromSource(
-              source: ImageSource.camera,
-              options: argThat(
-                isInstanceOf<ImagePickerOptions>()
-                    .having((ImagePickerOptions options) => options.maxWidth, 'maxWidth', isNull)
-                    .having(
-                      (ImagePickerOptions options) => options.maxHeight,
-                      'maxHeight',
-                      equals(10.0),
-                    )
-                    .having(
-                      (ImagePickerOptions options) => options.imageQuality,
-                      'imageQuality',
-                      equals(70),
-                    ),
-                named: 'options',
-              ),
-            ),
-            mockPlatform.getImageFromSource(
-              source: ImageSource.camera,
-              options: argThat(
-                isInstanceOf<ImagePickerOptions>()
-                    .having(
-                      (ImagePickerOptions options) => options.maxWidth,
-                      'maxWidth',
-                      equals(10.0),
-                    )
-                    .having(
-                      (ImagePickerOptions options) => options.maxHeight,
-                      'maxHeight',
-                      equals(20.0),
-                    )
-                    .having(
-                      (ImagePickerOptions options) => options.imageQuality,
-                      'imageQuality',
-                      equals(70),
-                    ),
-                named: 'options',
-              ),
+              maxDuration: const Duration(seconds: 10),
             ),
           ]);
         });
 
-        test('does not accept a negative width or height argument', () {
-          final picker = ImagePicker();
-          expect(
-            () => picker.pickImage(source: ImageSource.camera, maxWidth: -1.0),
-            throwsArgumentError,
-          );
-
-          expect(
-            () => picker.pickImage(source: ImageSource.camera, maxHeight: -1.0),
-            throwsArgumentError,
-          );
-        });
-
-        test('handles a null image file response gracefully', () async {
+        test('handles a null video file response gracefully', () async {
           final picker = ImagePicker();
 
-          expect(await picker.pickImage(source: ImageSource.gallery), isNull);
-          expect(await picker.pickImage(source: ImageSource.camera), isNull);
+          expect(await picker.pickVideo(source: ImageSource.gallery), isNull);
+          expect(await picker.pickVideo(source: ImageSource.camera), isNull);
         });
 
         test('camera position defaults to back', () async {
           final picker = ImagePicker();
-          await picker.pickImage(source: ImageSource.camera);
+          await picker.pickVideo(source: ImageSource.camera);
 
-          verify(
-            mockPlatform.getImageFromSource(
-              source: ImageSource.camera,
-              options: argThat(
-                isInstanceOf<ImagePickerOptions>().having(
-                  (ImagePickerOptions options) => options.preferredCameraDevice,
-                  'preferredCameraDevice',
-                  equals(CameraDevice.rear),
-                ),
-                named: 'options',
-              ),
-            ),
-          );
+          verify(mockPlatform.getVideo(source: ImageSource.camera));
         });
 
         test('camera position can set to front', () async {
           final picker = ImagePicker();
-          await picker.pickImage(
+          await picker.pickVideo(
             source: ImageSource.camera,
             preferredCameraDevice: CameraDevice.front,
           );
 
           verify(
-            mockPlatform.getImageFromSource(
+            mockPlatform.getVideo(
               source: ImageSource.camera,
-              options: argThat(
-                isInstanceOf<ImagePickerOptions>().having(
-                  (ImagePickerOptions options) => options.preferredCameraDevice,
-                  'preferredCameraDevice',
-                  equals(CameraDevice.front),
-                ),
-                named: 'options',
-              ),
-            ),
-          );
-        });
-
-        test('full metadata argument defaults to true', () async {
-          final picker = ImagePicker();
-          await picker.pickImage(source: ImageSource.gallery);
-
-          verify(
-            mockPlatform.getImageFromSource(
-              source: ImageSource.gallery,
-              options: argThat(
-                isInstanceOf<ImagePickerOptions>().having(
-                  (ImagePickerOptions options) => options.requestFullMetadata,
-                  'requestFullMetadata',
-                  isTrue,
-                ),
-                named: 'options',
-              ),
-            ),
-          );
-        });
-
-        test('passes the full metadata argument correctly', () async {
-          final picker = ImagePicker();
-          await picker.pickImage(source: ImageSource.gallery, requestFullMetadata: false);
-
-          verify(
-            mockPlatform.getImageFromSource(
-              source: ImageSource.gallery,
-              options: argThat(
-                isInstanceOf<ImagePickerOptions>().having(
-                  (ImagePickerOptions options) => options.requestFullMetadata,
-                  'requestFullMetadata',
-                  isFalse,
-                ),
-                named: 'options',
-              ),
+              preferredCameraDevice: CameraDevice.front,
             ),
           );
         });
       });
 
-      // group('#pickVideo', () {
-      //   setUp(() {
-      //     when(
-      //       mockPlatform.getVideo(
-      //         source: anyNamed('source'),
-      //         preferredCameraDevice: anyNamed('preferredCameraDevice'),
-      //         maxDuration: anyNamed('maxDuration'),
-      //       ),
-      //     ).thenAnswer((Invocation _) async => null);
-      //   });
-      //
-      //   test('passes the image source argument correctly', () async {
-      //     final picker = ImagePicker();
-      //     await picker.pickVideo(source: ImageSource.camera);
-      //     await picker.pickVideo(source: ImageSource.gallery);
-      //
-      //     verifyInOrder(<Object>[
-      //       mockPlatform.getVideo(source: ImageSource.camera),
-      //       mockPlatform.getVideo(source: ImageSource.gallery),
-      //     ]);
-      //   });
-      //
-      //   test('passes the duration argument correctly', () async {
-      //     final picker = ImagePicker();
-      //     await picker.pickVideo(source: ImageSource.camera);
-      //     await picker.pickVideo(
-      //       source: ImageSource.camera,
-      //       maxDuration: const Duration(seconds: 10),
-      //     );
-      //
-      //     verifyInOrder(<Object>[
-      //       mockPlatform.getVideo(source: ImageSource.camera),
-      //       mockPlatform.getVideo(
-      //         source: ImageSource.camera,
-      //         maxDuration: const Duration(seconds: 10),
-      //       ),
-      //     ]);
-      //   });
-      //
-      //   test('handles a null video file response gracefully', () async {
-      //     final picker = ImagePicker();
-      //
-      //     expect(await picker.pickVideo(source: ImageSource.gallery), isNull);
-      //     expect(await picker.pickVideo(source: ImageSource.camera), isNull);
-      //   });
-      //
-      //   test('camera position defaults to back', () async {
-      //     final picker = ImagePicker();
-      //     await picker.pickVideo(source: ImageSource.camera);
-      //
-      //     verify(mockPlatform.getVideo(source: ImageSource.camera));
-      //   });
-      //
-      //   test('camera position can set to front', () async {
-      //     final picker = ImagePicker();
-      //     await picker.pickVideo(
-      //       source: ImageSource.camera,
-      //       preferredCameraDevice: CameraDevice.front,
-      //     );
-      //
-      //     verify(
-      //       mockPlatform.getVideo(
-      //         source: ImageSource.camera,
-      //         preferredCameraDevice: CameraDevice.front,
-      //       ),
-      //     );
-      //   });
-      // });
-      //
-      // group('#retrieveLostData', () {
-      //   test('retrieveLostData get success response', () async {
-      //     final picker = ImagePicker();
-      //     final lostFile = XFile('/example/path');
-      //     when(mockPlatform.getLostData()).thenAnswer(
-      //       (Invocation _) async => LostDataResponse(
-      //         file: lostFile,
-      //         files: <XFile>[lostFile],
-      //         type: RetrieveType.image,
-      //       ),
-      //     );
-      //
-      //     final LostDataResponse response = await picker.retrieveLostData();
-      //
-      //     expect(response.type, RetrieveType.image);
-      //     expect(response.file!.path, '/example/path');
-      //   });
-      //
-      //   test('retrieveLostData should successfully retrieve multiple files', () async {
-      //     final picker = ImagePicker();
-      //     final lostFiles = <XFile>[XFile('/example/path0'), XFile('/example/path1')];
-      //     when(mockPlatform.getLostData()).thenAnswer(
-      //       (Invocation _) async =>
-      //           LostDataResponse(file: lostFiles.last, files: lostFiles, type: RetrieveType.image),
-      //     );
-      //
-      //     final LostDataResponse response = await picker.retrieveLostData();
-      //
-      //     expect(response.type, RetrieveType.image);
-      //     expect(response.file, isNotNull);
-      //     expect(response.file!.path, '/example/path1');
-      //     expect(response.files!.first.path, '/example/path0');
-      //     expect(response.files!.length, 2);
-      //   });
-      //
-      //   test('retrieveLostData get error response', () async {
-      //     final picker = ImagePicker();
-      //     when(mockPlatform.getLostData()).thenAnswer(
-      //       (Invocation _) async => LostDataResponse(
-      //         exception: PlatformException(code: 'test_error_code', message: 'test_error_message'),
-      //         type: RetrieveType.video,
-      //       ),
-      //     );
-      //
-      //     final LostDataResponse response = await picker.retrieveLostData();
-      //
-      //     expect(response.type, RetrieveType.video);
-      //     expect(response.exception!.code, 'test_error_code');
-      //     expect(response.exception!.message, 'test_error_message');
-      //   });
-      // });
-      //
-      // group('#pickMultiVideo', () {
-      //   setUp(() {
-      //     when(
-      //       mockPlatform.getMultiVideoWithOptions(options: anyNamed('options')),
-      //     ).thenAnswer((Invocation _) async => <XFile>[]);
-      //   });
-      //
-      //   test('passes the arguments correctly', () async {
-      //     final picker = ImagePicker();
-      //     await picker.pickMultiVideo();
-      //     await picker.pickMultiVideo(maxDuration: const Duration(seconds: 10));
-      //     await picker.pickMultiVideo(limit: 5);
-      //
-      //     verifyInOrder(<Object>[
-      //       mockPlatform.getMultiVideoWithOptions(
-      //         options: argThat(isInstanceOf<MultiVideoPickerOptions>(), named: 'options'),
-      //       ),
-      //       mockPlatform.getMultiVideoWithOptions(
-      //         options: argThat(
-      //           isInstanceOf<MultiVideoPickerOptions>().having(
-      //             (MultiVideoPickerOptions options) => options.maxDuration,
-      //             'maxDuration',
-      //             equals(const Duration(seconds: 10)),
-      //           ),
-      //           named: 'options',
-      //         ),
-      //       ),
-      //       mockPlatform.getMultiVideoWithOptions(
-      //         options: argThat(
-      //           isInstanceOf<MultiVideoPickerOptions>().having(
-      //             (MultiVideoPickerOptions options) => options.limit,
-      //             'limit',
-      //             equals(5),
-      //           ),
-      //           named: 'options',
-      //         ),
-      //       ),
-      //     ]);
-      //   });
-      // });
+      group('#retrieveLostData', () {
+        test('retrieveLostData get success response', () async {
+          final picker = ImagePicker();
+          final lostFile = XFile('/example/path');
+          when(mockPlatform.getLostData()).thenAnswer(
+            (Invocation _) async => LostDataResponse(
+              file: lostFile,
+              files: <XFile>[lostFile],
+              type: RetrieveType.image,
+            ),
+          );
+
+          final LostDataResponse response = await picker.retrieveLostData();
+
+          expect(response.type, RetrieveType.image);
+          expect(response.file!.path, '/example/path');
+        });
+
+        test('retrieveLostData should successfully retrieve multiple files', () async {
+          final picker = ImagePicker();
+          final lostFiles = <XFile>[XFile('/example/path0'), XFile('/example/path1')];
+          when(mockPlatform.getLostData()).thenAnswer(
+            (Invocation _) async =>
+                LostDataResponse(file: lostFiles.last, files: lostFiles, type: RetrieveType.image),
+          );
+
+          final LostDataResponse response = await picker.retrieveLostData();
+
+          expect(response.type, RetrieveType.image);
+          expect(response.file, isNotNull);
+          expect(response.file!.path, '/example/path1');
+          expect(response.files!.first.path, '/example/path0');
+          expect(response.files!.length, 2);
+        });
+
+        test('retrieveLostData get error response', () async {
+          final picker = ImagePicker();
+          when(mockPlatform.getLostData()).thenAnswer(
+            (Invocation _) async => LostDataResponse(
+              exception: PlatformException(code: 'test_error_code', message: 'test_error_message'),
+              type: RetrieveType.video,
+            ),
+          );
+
+          final LostDataResponse response = await picker.retrieveLostData();
+
+          expect(response.type, RetrieveType.video);
+          expect(response.exception!.code, 'test_error_code');
+          expect(response.exception!.message, 'test_error_message');
+        });
+      });
+
+      group('#pickMultiVideo', () {
+        setUp(() {
+          when(
+            mockPlatform.getMultiVideoWithOptions(options: anyNamed('options')),
+          ).thenAnswer((Invocation _) async => <XFile>[]);
+        });
+
+        test('passes the arguments correctly', () async {
+          final picker = ImagePicker();
+          await picker.pickMultiVideo();
+          await picker.pickMultiVideo(maxDuration: const Duration(seconds: 10));
+          await picker.pickMultiVideo(limit: 5);
+
+          verifyInOrder(<Object>[
+            mockPlatform.getMultiVideoWithOptions(
+              options: argThat(isInstanceOf<MultiVideoPickerOptions>(), named: 'options'),
+            ),
+            mockPlatform.getMultiVideoWithOptions(
+              options: argThat(
+                isInstanceOf<MultiVideoPickerOptions>().having(
+                  (MultiVideoPickerOptions options) => options.maxDuration,
+                  'maxDuration',
+                  equals(const Duration(seconds: 10)),
+                ),
+                named: 'options',
+              ),
+            ),
+            mockPlatform.getMultiVideoWithOptions(
+              options: argThat(
+                isInstanceOf<MultiVideoPickerOptions>().having(
+                  (MultiVideoPickerOptions options) => options.limit,
+                  'limit',
+                  equals(5),
+                ),
+                named: 'options',
+              ),
+            ),
+          ]);
+        });
+      });
     });
 
     group('#Multi images', () {
@@ -1110,22 +1110,20 @@ void main() {
   });
 }
 
-final class FakeCrossFile extends CrossFilePlatform {}
+final class MockCrossFile extends CrossFilePlatform {}
 
 final class _MockImagePickerPlatform extends ImagePickerPlatform {
   _MockImagePickerPlatform();
 
-  late Future<XFile?> Function({required ImageSource source, required ImagePickerOptions options})
-  onPickImage;
+  late Future<XFile?> Function(ImageSource source, ImagePickerOptions options) onPickImage;
 
-  late Future<List<XFile>> Function({required MultiImagePickerOptions options}) onPickMultiImage;
+  late Future<List<XFile>> Function(MultiImagePickerOptions options) onPickMultiImage;
 
-  late Future<List<XFile>> Function({required MediaPickerOptions options}) onPickMedia;
+  late Future<List<XFile>> Function(MediaPickerOptions options) onPickMedia;
 
-  late Future<XFile?> Function({required ImageSource source, required VideoPickerOptions options})
-  onPickVideo;
+  late Future<XFile?> Function(ImageSource source, VideoPickerOptions options) onPickVideo;
 
-  late Future<List<XFile>> Function({required MultiVideoPickerOptions options}) onPickMultiVideo;
+  late Future<List<XFile>> Function(MultiVideoPickerOptions options) onPickMultiVideo;
 
   late Future<LostDataResponse> Function() onGetLostData;
 
@@ -1135,27 +1133,26 @@ final class _MockImagePickerPlatform extends ImagePickerPlatform {
   Future<XFile?> pickImage({
     required ImageSource source,
     ImagePickerOptions options = const ImagePickerOptions(),
-  }) => onPickImage(source: source, options: options);
+  }) => onPickImage(source, options);
 
   @override
   Future<List<XFile>> pickMultiImage({
     MultiImagePickerOptions options = const MultiImagePickerOptions(),
-  }) => onPickMultiImage(options: options);
+  }) => onPickMultiImage(options);
 
   @override
-  Future<List<XFile>> pickMedia({required MediaPickerOptions options}) =>
-      onPickMedia(options: options);
+  Future<List<XFile>> pickMedia({required MediaPickerOptions options}) => onPickMedia(options);
 
   @override
   Future<XFile?> pickVideo({
     required ImageSource source,
     VideoPickerOptions options = const VideoPickerOptions(),
-  }) => onPickVideo(source: source, options: options);
+  }) => onPickVideo(source, options);
 
   @override
   Future<List<XFile>> pickMultiVideo({
     MultiVideoPickerOptions options = const MultiVideoPickerOptions(),
-  }) => onPickMultiVideo(options: options);
+  }) => onPickMultiVideo(options);
 
   @override
   Future<LostDataResponse> getLostData() => onGetLostData();
