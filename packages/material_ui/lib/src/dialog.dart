@@ -291,11 +291,9 @@ class Dialog extends StatelessWidget {
       // kept above the keyboard.
       dialogChild = Material(
         color: backgroundColor ?? dialogTheme.backgroundColor ?? defaults.backgroundColor,
-        child: _avoidViewInsets(
-          context,
-          padding: effectivePadding,
-          child: child ?? const SizedBox.shrink(),
-        ),
+        child: child == null
+            ? null
+            : _avoidViewInsets(context, padding: effectivePadding, child: child!),
       );
     } else {
       dialogChild = _avoidViewInsets(
