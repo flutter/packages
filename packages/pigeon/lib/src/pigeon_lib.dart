@@ -909,9 +909,10 @@ ${_argParser.usage}''';
             internalOptions.swiftOptions?.configDirectory ?? internalOptions.configDirectory;
         final String fullConfigDir =
             (internalOptions.basePath != null &&
+                internalOptions.basePath!.isNotEmpty &&
                 targetConfigDir != null &&
                 targetConfigDir.isNotEmpty &&
-                !targetConfigDir.startsWith(internalOptions.basePath!))
+                !isWithinOrEquals(internalOptions.basePath!, targetConfigDir))
             ? path.join(internalOptions.basePath!, targetConfigDir)
             : (targetConfigDir ?? internalOptions.basePath ?? '');
         final int exitCode = await _runFfigen(fullConfigDir, internalOptions.input, dartExecutable);
@@ -936,9 +937,10 @@ ${_argParser.usage}''';
             internalOptions.kotlinOptions?.configDirectory ?? internalOptions.configDirectory;
         final String fullConfigDir =
             (internalOptions.basePath != null &&
+                internalOptions.basePath!.isNotEmpty &&
                 targetConfigDir != null &&
                 targetConfigDir.isNotEmpty &&
-                !targetConfigDir.startsWith(internalOptions.basePath!))
+                !isWithinOrEquals(internalOptions.basePath!, targetConfigDir))
             ? path.join(internalOptions.basePath!, targetConfigDir)
             : (targetConfigDir ?? internalOptions.basePath ?? '');
         final bool success = await _runJnigen(
