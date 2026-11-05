@@ -519,5 +519,50 @@ void main() {
         'fromChild': true,
       });
     });
+
+    // Regression test for https://github.com/flutter/flutter/issues/196038.
+    testWidgets('works while leaving a nested shell under a shell that changes its key', (
+      WidgetTester tester,
+    ) async {
+      final locations = <String>[];
+      final routes = <RouteBase>[
+        ShellRoute(
+          builder: (_, _, Widget child) => KeyedSubtree(key: UniqueKey(), child: child),
+          routes: <RouteBase>[
+            GoRoute(
+              path: '/',
+              builder: (_, _) => const Text('home'),
+              routes: <RouteBase>[
+                ShellRoute(
+                  builder: (_, _, Widget child) => Builder(
+                    builder: (BuildContext context) {
+                      locations.add(GoRouterState.of(context).uri.path);
+                      return child;
+                    },
+                  ),
+                  routes: <RouteBase>[
+                    GoRoute(path: 'inner', builder: (_, _) => const Text('inner')),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
+      ];
+
+      final GoRouter router = await createRouter(routes, tester);
+
+      router.go('/inner');
+      await tester.pumpAndSettle();
+      expect(find.text('inner'), findsOneWidget);
+
+      locations.clear();
+      router.go('/');
+      await tester.pumpAndSettle();
+
+      expect(find.text('home'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+      expect(locations, everyElement('/inner'));
+    });
   });
 }

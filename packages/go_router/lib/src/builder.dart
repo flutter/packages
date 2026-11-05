@@ -146,6 +146,28 @@ class RouteBuilder {
   }
 }
 
+/// A global key for the [_CustomNavigator] of a shell route.
+///
+/// It is global because a [_CustomNavigator] owns the [GoRouterStateRegistry]
+/// that routes animating out of its [Navigator] still read from, and the
+/// [Navigator] keeps those routes when it moves in the tree.
+///
+/// It compares by [navigatorKey] rather than by identity because scoped
+/// navigator keys are recreated with equal values when matches are rebuilt.
+class _ShellNavigatorWrapperKey extends GlobalKey<_CustomNavigatorState> {
+  const _ShellNavigatorWrapperKey(this.navigatorKey) : super.constructor();
+
+  final GlobalKey<NavigatorState> navigatorKey;
+
+  @override
+  bool operator ==(Object other) {
+    return other is _ShellNavigatorWrapperKey && other.navigatorKey == navigatorKey;
+  }
+
+  @override
+  int get hashCode => navigatorKey.hashCode;
+}
+
 class _CustomNavigator extends StatefulWidget {
   const _CustomNavigator({
     super.key,
@@ -338,8 +360,9 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
             String? restorationScopeId,
           ) {
             final Widget navigator = _CustomNavigator(
-              // The state needs to persist across rebuild.
-              key: ValueKey<GlobalKey<NavigatorState>>(navigatorKey),
+              // The state needs to persist across rebuild, including when the
+              // builder of a parent shell moves this navigator in the tree.
+              key: _ShellNavigatorWrapperKey(navigatorKey),
               navigatorRestorationId: restorationScopeId,
               navigatorKey: navigatorKey,
               matches: match.matches,
