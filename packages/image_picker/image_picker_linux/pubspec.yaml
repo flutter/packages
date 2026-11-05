@@ -25,10 +25,8 @@ dependencies:
 dev_dependencies:
   cross_file: ^0.4.0
   cross_file_platform_interface: ^1.0.0
-  build_runner: ^2.1.5
   flutter_test:
     sdk: flutter
-  mockito: ^5.4.4
 
 topics:
   - image-picker

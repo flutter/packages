@@ -15,16 +15,14 @@ export 'package:image_picker_platform_interface/image_picker_platform_interface.
         PickedFile,
         RetrieveType,
         XFile,
+        ScopedStorageXFile,
+        FileSystemXFile,
         kTypeImage,
         kTypeVideo;
 
 /// Provides an easy way to pick an image/video from the image library,
 /// or to take a picture/video with the camera.
 class ImagePicker {
-  /// The platform interface that drives this plugin
-  @visibleForTesting
-  static ImagePickerPlatform get platform => ImagePickerPlatform.instance;
-
   /// Returns an [XFile] object wrapping the image that was picked.
   ///
   /// The returned [XFile] is intended to be used within a single app session.
@@ -71,8 +69,8 @@ class ImagePicker {
   /// be allocated (Android only) or due to an unknown error.
   Future<XFile?> pickImage({
     required ImageSource source,
-    double? maxWidth,
-    double? maxHeight,
+    int? maxWidth,
+    int? maxHeight,
     int? imageQuality,
     CameraDevice preferredCameraDevice = CameraDevice.rear,
     bool requestFullMetadata = true,
