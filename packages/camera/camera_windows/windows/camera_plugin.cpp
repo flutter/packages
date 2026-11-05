@@ -85,7 +85,8 @@ std::string GetCurrentTimeString() {
   return time_start + std::to_string(ms);
 }
 
-// Returns the system temp directory, with a trailing backslash.
+// Returns the system temp directory, with a trailing backslash, creating it if
+// needed.
 //
 // Captures are written here rather than to the user's Pictures or Videos
 // folders, matching the other platform implementations. Callers that need to
@@ -95,6 +96,15 @@ std::optional<std::string> GetTempDirectory() {
   // The returned length includes the trailing backslash.
   DWORD length = GetTempPathW(MAX_PATH + 1, temp_path);
   if (length == 0 || length > MAX_PATH) {
+    return std::nullopt;
+  }
+
+  // GetTempPathW doesn't verify that the directory exists, e.g. if TMP points
+  // to a deleted directory.
+  std::wstring directory(temp_path, length - 1);
+  int create_result = SHCreateDirectoryExW(nullptr, directory.c_str(), nullptr);
+  if (create_result != ERROR_SUCCESS && create_result != ERROR_ALREADY_EXISTS &&
+      create_result != ERROR_FILE_EXISTS) {
     return std::nullopt;
   }
 

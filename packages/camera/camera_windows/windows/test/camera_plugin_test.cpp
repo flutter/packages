@@ -14,6 +14,7 @@
 
 #include <functional>
 #include <memory>
+#include <optional>
 #include <string>
 
 #include "mocks.h"
@@ -41,6 +42,42 @@ std::string GetTempDirectory() {
   DWORD length = GetTempPathW(MAX_PATH + 1, temp_path);
   return Utf8FromUtf16(std::wstring(temp_path, length));
 }
+
+// Points TMP at a directory that doesn't exist while in scope, then restores
+// the previous value and removes the directory.
+class ScopedMissingTempDirectory {
+ public:
+  ScopedMissingTempDirectory() {
+    wchar_t previous[MAX_PATH + 1];
+    DWORD length = GetEnvironmentVariableW(L"TMP", previous, MAX_PATH + 1);
+    if (length > 0 && length <= MAX_PATH) {
+      previous_tmp_ = std::wstring(previous, length);
+    }
+    path_ = Utf16FromUtf8(GetTempDirectory()) + L"camera_windows_test_" +
+            std::to_wstring(GetCurrentProcessId());
+    RemoveDirectoryW(path_.c_str());
+    SetEnvironmentVariableW(L"TMP", path_.c_str());
+  }
+
+  ~ScopedMissingTempDirectory() {
+    SetEnvironmentVariableW(L"TMP",
+                            previous_tmp_ ? previous_tmp_->c_str() : nullptr);
+    RemoveDirectoryW(path_.c_str());
+  }
+
+  // Returns the directory, with a trailing backslash.
+  std::string path() const { return Utf8FromUtf16(path_) + "\\"; }
+
+  bool Exists() const {
+    DWORD attributes = GetFileAttributesW(path_.c_str());
+    return attributes != INVALID_FILE_ATTRIBUTES &&
+           (attributes & FILE_ATTRIBUTE_DIRECTORY) != 0;
+  }
+
+ private:
+  std::wstring path_;
+  std::optional<std::wstring> previous_tmp_;
+};
 
 }  // namespace
 
@@ -476,6 +513,78 @@ TEST(CameraPlugin, TakePictureHandlerCallsTakePictureWithPath) {
   plugin.TakePicture(mock_camera_id, std::move(take_picture_result));
 
   EXPECT_TRUE(result_called);
+}
+
+TEST(CameraPlugin, TakePictureHandlerCreatesMissingTempDirectory) {
+  ScopedMissingTempDirectory temp_directory;
+  ASSERT_FALSE(temp_directory.Exists());
+
+  int64_t mock_camera_id = 1234;
+
+  std::unique_ptr<MockCamera> camera =
+      std::make_unique<MockCamera>(MOCK_DEVICE_ID);
+
+  std::unique_ptr<MockCaptureController> capture_controller =
+      std::make_unique<MockCaptureController>();
+
+  EXPECT_CALL(*camera, HasCameraId(Eq(mock_camera_id)))
+      .Times(1)
+      .WillOnce([cam = camera.get()](int64_t camera_id) {
+        return cam->camera_id_ == camera_id;
+      });
+
+  EXPECT_CALL(*camera,
+              HasPendingResultByType(Eq(PendingResultType::kTakePicture)))
+      .Times(1)
+      .WillOnce(Return(false));
+
+  EXPECT_CALL(*camera,
+              AddPendingStringResult(Eq(PendingResultType::kTakePicture), _))
+      .Times(1)
+      .WillOnce([cam = camera.get()](
+                    PendingResultType type,
+                    std::function<void(ErrorOr<std::string>)> result) {
+        cam->pending_string_result_ = std::move(result);
+        return true;
+      });
+
+  EXPECT_CALL(*camera, GetCaptureController)
+      .Times(1)
+      .WillOnce([cam = camera.get()]() {
+        assert(cam->pending_string_result_);
+        return cam->capture_controller_.get();
+      });
+
+  EXPECT_CALL(*capture_controller,
+              TakePicture(StartsWith(temp_directory.path() + "PhotoCapture_")))
+      .Times(1)
+      .WillOnce([cam = camera.get()](const std::string& file_path) {
+        assert(cam->pending_string_result_);
+        return cam->pending_string_result_(file_path);
+      });
+
+  camera->camera_id_ = mock_camera_id;
+  camera->capture_controller_ = std::move(capture_controller);
+
+  MockCameraPlugin plugin(std::make_unique<MockTextureRegistrar>().get(),
+                          std::make_unique<MockBinaryMessenger>().get(),
+                          std::make_unique<MockCameraFactory>());
+
+  // Add mocked camera to plugins camera list.
+  plugin.AddCamera(std::move(camera));
+
+  bool result_called = false;
+  std::function<void(ErrorOr<std::string>)> take_picture_result =
+      [&result_called](ErrorOr<std::string> reply) {
+        EXPECT_FALSE(result_called);  // Ensure only one reply call.
+        result_called = true;
+        EXPECT_FALSE(reply.has_error());
+      };
+
+  plugin.TakePicture(mock_camera_id, std::move(take_picture_result));
+
+  EXPECT_TRUE(result_called);
+  EXPECT_TRUE(temp_directory.Exists());
 }
 
 TEST(CameraPlugin, TakePictureHandlerErrorOnInvalidCameraId) {
