@@ -60,9 +60,11 @@ disposing of the camera is the only way to reset the situation.
 
 ## Capture File Location
 
-By default, pictures and videos are saved to the system temp directory. If you
-need to keep a capture, move or copy it to a permanent location, for example
-with `XFile.saveTo`.
+By default, pictures and videos are saved to `camera\pictures` and
+`camera\videos` in the user's temp directory (as returned by `GetTempPathW`).
+Windows may delete files there, for example through Storage Sense or Disk
+Cleanup, so if you need to keep a capture, move or copy it to a permanent
+location, for example with `XFile.saveTo`.
 
 ## Custom Video Recording Path
 

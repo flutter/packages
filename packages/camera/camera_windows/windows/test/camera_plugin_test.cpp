@@ -44,7 +44,8 @@ std::string GetTempDirectory() {
 }
 
 // Points TMP at a directory that doesn't exist while in scope, then restores
-// the previous value and removes the directory.
+// the previous value and removes the directory and the picture capture
+// directories created under it.
 class ScopedMissingTempDirectory {
  public:
   ScopedMissingTempDirectory() {
@@ -62,14 +63,19 @@ class ScopedMissingTempDirectory {
   ~ScopedMissingTempDirectory() {
     SetEnvironmentVariableW(L"TMP",
                             previous_tmp_ ? previous_tmp_->c_str() : nullptr);
+    RemoveDirectoryW((path_ + L"\\camera\\pictures").c_str());
+    RemoveDirectoryW((path_ + L"\\camera").c_str());
     RemoveDirectoryW(path_.c_str());
   }
 
   // Returns the directory, with a trailing backslash.
   std::string path() const { return Utf8FromUtf16(path_) + "\\"; }
 
-  bool Exists() const {
-    DWORD attributes = GetFileAttributesW(path_.c_str());
+  // Returns whether the given directory, relative to this one, exists.
+  bool Exists(const std::wstring& relative_path = L"") const {
+    std::wstring full_path =
+        relative_path.empty() ? path_ : path_ + L"\\" + relative_path;
+    DWORD attributes = GetFileAttributesW(full_path.c_str());
     return attributes != INVALID_FILE_ATTRIBUTES &&
            (attributes & FILE_ATTRIBUTE_DIRECTORY) != 0;
   }
@@ -482,10 +488,10 @@ TEST(CameraPlugin, TakePictureHandlerCallsTakePictureWithPath) {
         return cam->capture_controller_.get();
       });
 
-  EXPECT_CALL(
-      *capture_controller,
-      TakePicture(AllOf(StartsWith(GetTempDirectory() + "PhotoCapture_"),
-                        EndsWith(".jpeg"))))
+  EXPECT_CALL(*capture_controller,
+              TakePicture(AllOf(StartsWith(GetTempDirectory() +
+                                           "camera\\pictures\\PhotoCapture_"),
+                                EndsWith(".jpeg"))))
       .Times(1)
       .WillOnce([cam = camera.get()](const std::string& file_path) {
         assert(cam->pending_string_result_);
@@ -556,7 +562,8 @@ TEST(CameraPlugin, TakePictureHandlerCreatesMissingTempDirectory) {
       });
 
   EXPECT_CALL(*capture_controller,
-              TakePicture(StartsWith(temp_directory.path() + "PhotoCapture_")))
+              TakePicture(StartsWith(temp_directory.path() +
+                                     "camera\\pictures\\PhotoCapture_")))
       .Times(1)
       .WillOnce([cam = camera.get()](const std::string& file_path) {
         assert(cam->pending_string_result_);
@@ -584,7 +591,7 @@ TEST(CameraPlugin, TakePictureHandlerCreatesMissingTempDirectory) {
   plugin.TakePicture(mock_camera_id, std::move(take_picture_result));
 
   EXPECT_TRUE(result_called);
-  EXPECT_TRUE(temp_directory.Exists());
+  EXPECT_TRUE(temp_directory.Exists(L"camera\\pictures"));
 }
 
 TEST(CameraPlugin, TakePictureHandlerErrorOnInvalidCameraId) {
@@ -667,10 +674,10 @@ TEST(CameraPlugin, StartVideoRecordingHandlerCallsStartRecordWithPath) {
         return cam->capture_controller_.get();
       });
 
-  EXPECT_CALL(
-      *capture_controller,
-      StartRecord(AllOf(StartsWith(GetTempDirectory() + "VideoCapture_"),
-                        EndsWith(".mp4"))))
+  EXPECT_CALL(*capture_controller,
+              StartRecord(AllOf(StartsWith(GetTempDirectory() +
+                                           "camera\\videos\\VideoCapture_"),
+                                EndsWith(".mp4"))))
       .Times(1)
       .WillOnce([cam = camera.get()](const std::string& file_path) {
         assert(cam->pending_void_result_);
