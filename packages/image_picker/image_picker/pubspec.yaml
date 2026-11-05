@@ -60,16 +60,16 @@ dependency_overrides:
       url: git@github.com:bparrishMines/packages.git
       ref: file_selector_2
       path: packages/file_selector/file_selector_macos
-  file_selector_windows:
-    git:
-      url: git@github.com:bparrishMines/packages.git
-      ref: file_selector_2
-      path: packages/file_selector/file_selector_windows
   file_selector_platform_interface:
     git:
       url: git@github.com:bparrishMines/packages.git
       ref: file_selector_2
       path: packages/file_selector/file_selector_platform_interface
+  file_selector_windows:
+    git:
+      url: git@github.com:bparrishMines/packages.git
+      ref: file_selector_2
+      path: packages/file_selector/file_selector_windows
   image_picker_android: {path: ../../../packages/image_picker/image_picker_android}
   image_picker_for_web: {path: ../../../packages/image_picker/image_picker_for_web}
   image_picker_ios: {path: ../../../packages/image_picker/image_picker_ios}
