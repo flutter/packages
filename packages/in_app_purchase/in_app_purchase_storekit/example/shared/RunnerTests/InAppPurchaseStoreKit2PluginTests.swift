@@ -252,46 +252,49 @@ final class InAppPurchase2PluginTests: XCTestCase {
   }
 
   func testRefundedTransactionHasRevocationInfo() async throws {
-    let expectation = self.expectation(description: "Purchase request should succeed")
+    let purchaseExpectation = self.expectation(description: "Purchase request should succeed")
+    let purchaseUpdateExpectation = self.expectation(
+      description: "Purchase transaction update should be received")
 
+    callback.onUpdateExpectation = purchaseUpdateExpectation
     plugin.purchase(id: "consumable", options: nil) { result in
       switch result {
-      case .success(_):
-        expectation.fulfill()
+      case .success:
+        purchaseExpectation.fulfill()
       case .failure(let error):
         XCTFail("Purchase should NOT fail. Failed with \(error)")
-        expectation.fulfill()
+        purchaseExpectation.fulfill()
+        purchaseUpdateExpectation.fulfill()
       }
     }
 
-    await fulfillment(of: [expectation], timeout: purchaseTimeout)
+    await fulfillment(
+      of: [purchaseExpectation, purchaseUpdateExpectation], timeout: purchaseTimeout)
 
     guard let transactionId = session.allTransactions().first?.identifier else {
       XCTFail("Purchase did not create a transaction.")
       return
     }
+
+    // The refund is delivered through Transaction.updates, which the plugin forwards to the callback.
+    let refundUpdateExpectation = self.expectation(
+      description: "Refund transaction update should be received")
+    callback.onUpdateExpectation = refundUpdateExpectation
     try session.refundTransaction(identifier: transactionId)
+    await fulfillment(of: [refundUpdateExpectation], timeout: purchaseTimeout)
 
-    // The refund is applied asynchronously, so wait for it to be reflected.
-    var transaction: Transaction?
-    for _ in 0..<20 {
-      transaction = await plugin.fetchTransaction(by: UInt64(transactionId))
-      if transaction?.revocationDate != nil {
-        break
-      }
-      try await Task.sleep(nanoseconds: 500_000_000)
+    guard let message = callback.lastUpdate.first else {
+      XCTFail("Refund update did not contain a transaction.")
+      return
     }
-
-    guard let transaction = transaction else {
+    guard let transaction = await plugin.fetchTransaction(by: UInt64(transactionId)) else {
       XCTFail("Transaction does not exist.")
       return
     }
 
-    let message = transaction.convertToPigeon(receipt: nil, status: .purchased)
-
-    XCTAssertNotNil(transaction.revocationDate)
-    XCTAssertEqual(
-      message.revocationDate, transaction.revocationDate?.timeIntervalSince1970)
+    XCTAssertEqual(message.id, Int64(transactionId))
+    XCTAssertNotNil(message.revocationDate)
+    XCTAssertEqual(message.revocationDate, transaction.revocationDate?.timeIntervalSince1970)
     XCTAssertEqual(message.revocationReason, transaction.revocationReason?.convertToPigeon)
   }
 

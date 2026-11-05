@@ -783,6 +783,8 @@ void main() {
     });
 
     test('should expose revocation info for revoked transactions', () async {
+      // The win back and introductory offer groups register their own fake as
+      // hostApi2, so re-register the top-level fake that this test configures.
       setInAppPurchaseHostApis(api2: fakeStoreKit2Platform);
       fakeStoreKit2Platform.transactionsList = <SK2TransactionMessage>[
         SK2TransactionMessage(

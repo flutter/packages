@@ -80,7 +80,7 @@ class SK2Transaction {
   /// The date that the App Store refunded the transaction or revoked it from
   /// Family Sharing.
   ///
-  /// Null if the transaction has not been revoked.
+  /// This is null if the transaction has not been revoked.
   ///
   /// Milliseconds since epoch.
   final String? revocationDate;
@@ -88,7 +88,7 @@ class SK2Transaction {
   /// The reason that the App Store refunded the transaction or revoked it from
   /// Family Sharing.
   ///
-  /// Null if the transaction has not been revoked.
+  /// This is null if the transaction has not been revoked.
   final SK2RevocationReason? revocationReason;
 
   /// Wrapper around [Transaction.finish]
