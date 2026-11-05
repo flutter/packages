@@ -1,3 +1,9 @@
+## 0.3.1
+
+* Changes the default storage location for captured pictures and videos from
+  the user's Pictures and Videos folders to the system temp directory, matching
+  the other platform implementations.
+
 ## 0.3.0+1
 
 * Fixes `CameraException(camera_error, Failed to initialize video preview)` on

@@ -17,6 +17,7 @@
 #include <string>
 
 #include "mocks.h"
+#include "string_utils.h"
 
 namespace camera_windows {
 namespace test {
@@ -24,11 +25,24 @@ namespace test {
 using flutter::EncodableMap;
 using flutter::EncodableValue;
 using ::testing::_;
+using ::testing::AllOf;
 using ::testing::DoAll;
 using ::testing::EndsWith;
 using ::testing::Eq;
 using ::testing::Pointee;
 using ::testing::Return;
+using ::testing::StartsWith;
+
+namespace {
+
+// Returns the temp directory, with a trailing backslash.
+std::string GetTempDirectory() {
+  wchar_t temp_path[MAX_PATH + 1];
+  DWORD length = GetTempPathW(MAX_PATH + 1, temp_path);
+  return Utf8FromUtf16(std::wstring(temp_path, length));
+}
+
+}  // namespace
 
 void MockInitCamera(MockCamera* camera, bool success) {
   EXPECT_CALL(*camera,
@@ -431,7 +445,10 @@ TEST(CameraPlugin, TakePictureHandlerCallsTakePictureWithPath) {
         return cam->capture_controller_.get();
       });
 
-  EXPECT_CALL(*capture_controller, TakePicture(EndsWith(".jpeg")))
+  EXPECT_CALL(
+      *capture_controller,
+      TakePicture(AllOf(StartsWith(GetTempDirectory() + "PhotoCapture_"),
+                        EndsWith(".jpeg"))))
       .Times(1)
       .WillOnce([cam = camera.get()](const std::string& file_path) {
         assert(cam->pending_string_result_);
@@ -541,7 +558,10 @@ TEST(CameraPlugin, StartVideoRecordingHandlerCallsStartRecordWithPath) {
         return cam->capture_controller_.get();
       });
 
-  EXPECT_CALL(*capture_controller, StartRecord(EndsWith(".mp4")))
+  EXPECT_CALL(
+      *capture_controller,
+      StartRecord(AllOf(StartsWith(GetTempDirectory() + "VideoCapture_"),
+                        EndsWith(".mp4"))))
       .Times(1)
       .WillOnce([cam = camera.get()](const std::string& file_path) {
         assert(cam->pending_void_result_);
