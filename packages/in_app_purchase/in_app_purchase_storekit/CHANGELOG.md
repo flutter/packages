@@ -1,6 +1,11 @@
-## 0.4.17
+## 0.4.18
 
 * Adds `revocationDate` and `revocationReason` to `SK2Transaction`.
+
+## 0.4.17
+
+* Uses `Product.purchase(confirmIn:options:)` for StoreKit 2 purchases when a view controller,
+  window scene, or window is available. Fixes purchases never completing on iOS 27 and iPadOS 27.
 
 ## 0.4.16
 

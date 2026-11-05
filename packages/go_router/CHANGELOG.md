@@ -1,3 +1,7 @@
+## 18.1.3
+
+- Fixes path parameter regex parsing to support nested parentheses, grouping constructs, and lookahead assertions in GoRoute paths.
+
 ## 18.1.2
 
 - Fixes web text fields losing focus when an autocomplete overlay opens inside a shell route.

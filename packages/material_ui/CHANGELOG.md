@@ -1,3 +1,16 @@
+## 1.10.0
+
+- Updates the `Typography` documentation to describe the 2021 (Material 3) geometry themes and the current `ThemeData.typography` defaults.
+- Deprecates the `black` and `white` parameters of `Typography.material2021`, and documents that their colors are replaced with colors from the `colorScheme`.
+- Fixes `MenuAnchor` and `MenuBar` shortcut labels for unlocalized non-Unicode keys (such as `Tab` and `F1`) on JavaScript web builds.
+- Adds `Checkbox.markInsets` and `CheckboxThemeData.markInsets`, which inset the
+  check mark (and the indeterminate dash) within the checkbox without changing the
+  size of the box itself. The mark and its stroke shrink proportionally.
+- Fixes an issue where pressing Escape does not close a MenuAnchor opened by a tap or click.
+- Fixes `TextTheme.debugFillProperties` to use the default `ThemeData` text theme, instead of `Typography.material2018(...).black`.
+- Fixes `Typography.debugFillProperties` to use the default `ThemeData` typography, instead of `Typography.material2014`.
+- Fixes `GappedSliderTrackShape` painting the secondary track with the wrong position and corners in right-to-left layouts.
+
 ## 1.9.0
 
 - Adds a `barFocusNode` parameter to `SearchAnchor.bar` to allow external control over the focus of the underlying `SearchBar`.
