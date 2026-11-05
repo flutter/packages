@@ -1747,7 +1747,7 @@ void main() {
           )
           ..restore(),
       );
-    }, skip: isBrowser); // https://github.com/flutter/flutter/issues/55317
+    });
 
     testWidgets('rounded OutlineInputBorder with zero padding just wraps the label', (
       WidgetTester tester,
@@ -1786,7 +1786,7 @@ void main() {
           )
           ..restore(),
       );
-    }, skip: isBrowser); // https://github.com/flutter/flutter/issues/55317
+    });
 
     testWidgets('OutlineInputBorder with BorderRadius.zero should draw a rectangular border', (
       WidgetTester tester,
@@ -1850,7 +1850,7 @@ void main() {
           )
           ..restore(),
       );
-    }, skip: isBrowser); // https://github.com/flutter/flutter/issues/55317
+    });
 
     testWidgets('InputDecorator OutlineInputBorder fillColor is clipped by border', (
       WidgetTester tester,
@@ -3217,7 +3217,7 @@ void main() {
           return true;
         }),
       );
-    }, skip: isBrowser); // TODO(yjbanov): https://github.com/flutter/flutter/issues/44020
+    });
 
     testWidgets('InputDecorator floating label Y coordinate', (WidgetTester tester) async {
       // Regression test for https://github.com/flutter/flutter/issues/54028
@@ -15056,7 +15056,7 @@ void main() {
           )
           ..restore(),
       );
-    }, skip: isBrowser); // https://github.com/flutter/flutter/issues/55317
+    });
 
     testWidgets('rounded OutlineInputBorder with zero padding just wraps the label', (
       WidgetTester tester,
@@ -15101,7 +15101,7 @@ void main() {
           )
           ..restore(),
       );
-    }, skip: isBrowser); // https://github.com/flutter/flutter/issues/55317
+    });
 
     testWidgets('OutlineInputBorder with BorderRadius.zero should draw a rectangular border', (
       WidgetTester tester,
@@ -15172,7 +15172,7 @@ void main() {
           )
           ..restore(),
       );
-    }, skip: isBrowser); // https://github.com/flutter/flutter/issues/55317
+    });
 
     testWidgets('uses alphabetic baseline for CJK layout', (WidgetTester tester) async {
       await tester.binding.setLocale('zh', 'CN');
@@ -15329,7 +15329,7 @@ void main() {
           return true;
         }),
       );
-    }, skip: isBrowser); // TODO(yjbanov): https://github.com/flutter/flutter/issues/44020
+    });
 
     testWidgets('textAlignVertical can be updated', (WidgetTester tester) async {
       // Regression test for https://github.com/flutter/flutter/issues/56933

@@ -1,0 +1,3 @@
+changelog: |
+  - Adds `IconButtonTheme.variantOf`, which returns the closest non-null `IconButtonThemeData.variant`, or `StyleVariant.material3` if none is set.
+version: minor
