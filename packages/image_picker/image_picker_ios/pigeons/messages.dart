@@ -7,13 +7,7 @@ import 'package:pigeon/pigeon.dart';
 @ConfigurePigeon(
   PigeonOptions(
     dartOut: 'lib/src/messages.g.dart',
-    objcHeaderOut:
-        'ios/image_picker_ios/Sources/image_picker_ios_objc/include/image_picker_ios/messages.g.h',
-    objcSourceOut: 'ios/image_picker_ios/Sources/image_picker_ios_objc/messages.g.m',
-    objcOptions: ObjcOptions(
-      prefix: 'FLT',
-      headerIncludePath: './include/image_picker_ios/messages.g.h',
-    ),
+    swiftOut: 'ios/image_picker_ios/Sources/image_picker_ios/messages.g.swift',
     copyrightHeader: 'pigeons/copyright.txt',
   ),
 )
@@ -94,7 +88,6 @@ class RecentMediaItem {
 @HostApi()
 abstract class ImagePickerApi {
   @async
-  @ObjCSelector('pickImageWithSource:maxSize:quality:fullMetadata:')
   String? pickImage(
     SourceSpecification source,
     MaxSize maxSize,
@@ -102,7 +95,6 @@ abstract class ImagePickerApi {
     bool requestFullMetadata,
   );
   @async
-  @ObjCSelector('pickMultiImageWithMaxSize:quality:fullMetadata:limit:')
   List<String> pickMultiImage(
     MaxSize maxSize,
     int? imageQuality,
@@ -110,19 +102,15 @@ abstract class ImagePickerApi {
     int? limit,
   );
   @async
-  @ObjCSelector('pickVideoWithSource:maxDuration:')
   String? pickVideo(SourceSpecification source, int? maxDurationSeconds);
   @async
-  @ObjCSelector('pickMultiVideoWithMaxDuration:limit:')
   List<String> pickMultiVideo(int? maxDurationSeconds, int? limit);
 
   /// Selects images and videos and returns their paths.
   @async
-  @ObjCSelector('pickMediaWithMediaSelectionOptions:')
   List<String> pickMedia(MediaSelectionOptions mediaSelectionOptions);
 
   /// Returns thumbnails of the most recent items in the photo library.
   @async
-  @ObjCSelector('getRecentMediaWithRequest:')
   List<RecentMediaItem> getRecentMedia(RecentMediaRequest request);
 }

@@ -2,6 +2,10 @@
 
 * Adds support for `getRecentMedia`.
 
+## 0.8.13+15
+
+* Switches Pigeon to Swift.
+
 ## 0.8.13+14
 
 * Migrates the view provider from Objective-C to Swift.

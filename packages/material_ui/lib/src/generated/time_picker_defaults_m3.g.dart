@@ -2,28 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'template.dart';
+// Do not edit by hand. The code is generated from data in the Material
+// Design token database by the script:
+//   packages/material_ui/tool/gen_defaults/bin/gen_defaults.dart.
+part of '../time_picker.dart';
 
-class TimePickerTemplate extends TokenTemplate {
-  const TimePickerTemplate(
-    super.blockName,
-    super.fileName,
-    super.tokens, {
-    super.colorSchemePrefix = '_colors.',
-    super.textThemePrefix = '_textTheme.',
-  });
-
-  static const String tokenGroup = 'md.comp.time-picker';
-  static const String hourMinuteComponent = '$tokenGroup.time-selector';
-  static const String dayPeriodComponent = '$tokenGroup.period-selector';
-  static const String dialComponent = '$tokenGroup.clock-dial';
-  static const String variant = '';
-
-  @override
-  String generate() =>
-      '''
-class _${blockName}DefaultsM3 extends _TimePickerDefaults {
-  _${blockName}DefaultsM3(this.context, { this.entryMode = TimePickerEntryMode.dial });
+class _TimePickerDefaultsM3 extends _TimePickerDefaults {
+  _TimePickerDefaultsM3(this.context, {this.entryMode = TimePickerEntryMode.dial});
 
   final BuildContext context;
   final TimePickerEntryMode entryMode;
@@ -33,7 +18,7 @@ class _${blockName}DefaultsM3 extends _TimePickerDefaults {
 
   @override
   Color get backgroundColor {
-    return ${componentColor("$tokenGroup.container")};
+    return _colors.surfaceContainerHigh;
   }
 
   @override
@@ -48,14 +33,14 @@ class _${blockName}DefaultsM3 extends _TimePickerDefaults {
 
   @override
   BorderSide get dayPeriodBorderSide {
-    return ${border('$dayPeriodComponent.outline')};
+    return BorderSide(color: _colors.outline);
   }
 
   @override
   Color get dayPeriodColor {
     return WidgetStateColor.resolveWith((Set<WidgetState> states) {
       if (states.contains(WidgetState.selected)) {
-        return ${componentColor("$dayPeriodComponent.selected.container")};
+        return _colors.tertiaryContainer;
       }
       // The unselected day period should match the overall picker dialog color.
       // Making it transparent enables that without being redundant and allows
@@ -66,17 +51,18 @@ class _${blockName}DefaultsM3 extends _TimePickerDefaults {
 
   @override
   OutlinedBorder get dayPeriodShape {
-    return ${shape("$dayPeriodComponent.container")}.copyWith(side: dayPeriodBorderSide);
+    return const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0)))
+        .copyWith(side: dayPeriodBorderSide);
   }
 
   @override
   Size get dayPeriodPortraitSize {
-    return ${size('$dayPeriodComponent.vertical.container')};
+    return const Size(52.0, 80.0);
   }
 
   @override
   Size get dayPeriodLandscapeSize {
-    return ${size('$dayPeriodComponent.horizontal.container')};
+    return const Size(216.0, 38.0);
   }
 
   @override
@@ -91,82 +77,82 @@ class _${blockName}DefaultsM3 extends _TimePickerDefaults {
     return WidgetStateColor.resolveWith((Set<WidgetState> states) {
       if (states.contains(WidgetState.selected)) {
         if (states.contains(WidgetState.focused)) {
-          return ${componentColor("$dayPeriodComponent.selected.focus.label-text")};
+          return _colors.onTertiaryContainer;
         }
         if (states.contains(WidgetState.hovered)) {
-          return ${componentColor("$dayPeriodComponent.selected.hover.label-text")};
+          return _colors.onTertiaryContainer;
         }
         if (states.contains(WidgetState.pressed)) {
-          return ${componentColor("$dayPeriodComponent.selected.pressed.label-text")};
+          return _colors.onTertiaryContainer;
         }
-        return ${componentColor("$dayPeriodComponent.selected.label-text")};
+        return _colors.onTertiaryContainer;
       }
       if (states.contains(WidgetState.focused)) {
-        return ${componentColor("$dayPeriodComponent.unselected.focus.label-text")};
+        return _colors.onSurfaceVariant;
       }
       if (states.contains(WidgetState.hovered)) {
-        return ${componentColor("$dayPeriodComponent.unselected.hover.label-text")};
+        return _colors.onSurfaceVariant;
       }
       if (states.contains(WidgetState.pressed)) {
-        return ${componentColor("$dayPeriodComponent.unselected.pressed.label-text")};
+        return _colors.onSurfaceVariant;
       }
-      return ${componentColor("$dayPeriodComponent.unselected.label-text")};
+      return _colors.onSurfaceVariant;
     });
   }
 
   @override
   TextStyle get dayPeriodTextStyle {
-    return ${textStyle("$dayPeriodComponent.label-text")}!.copyWith(color: dayPeriodTextColor);
+    return _textTheme.titleMedium!.copyWith(color: dayPeriodTextColor);
   }
 
   @override
   Color get dialBackgroundColor {
-    return ${componentColor(dialComponent)};
+    return _colors.surfaceContainerHighest;
   }
 
   @override
   Color get dialHandColor {
-    return ${componentColor('$dialComponent.selector.handle.container')};
+    return _colors.primary;
   }
 
   @override
   Size get dialSize {
-    return ${size("$dialComponent.container")};
+    return const Size.square(256.0);
   }
 
   @override
   double get handWidth {
-    return ${size("$dialComponent.selector.track.container")}.width;
+    return 2.0;
   }
 
   @override
   double get dotRadius {
-    return ${size("$dialComponent.selector.handle.container")}.width / 2;
+    return 48.0 / 2;
   }
 
   @override
   double get centerRadius {
-    return ${size("$dialComponent.selector.center.container")}.width / 2;
+    return 8.0 / 2;
   }
 
   @override
   Color get dialTextColor {
     return WidgetStateColor.resolveWith((Set<WidgetState> states) {
       if (states.contains(WidgetState.selected)) {
-        return ${componentColor('$dialComponent.selected.label-text')};
+        return _colors.onPrimary;
       }
-      return ${componentColor('$dialComponent.unselected.label-text')};
+      return _colors.onSurface;
     });
   }
 
   @override
   TextStyle get dialTextStyle {
-    return ${textStyle('$dialComponent.label-text')}!;
+    return _textTheme.bodyLarge!;
   }
 
   @override
   double get elevation {
-    return ${elevation("$tokenGroup.container")};
+    return 6.0;
   }
 
   @override
@@ -177,8 +163,8 @@ class _${blockName}DefaultsM3 extends _TimePickerDefaults {
   @override
   TextStyle get helpTextStyle {
     return WidgetStateTextStyle.resolveWith((Set<WidgetState> states) {
-      final TextStyle textStyle = ${textStyle('$tokenGroup.headline')}!;
-      return textStyle.copyWith(color: ${componentColor('$tokenGroup.headline')});
+      final TextStyle textStyle = _textTheme.labelMedium!;
+      return textStyle.copyWith(color: _colors.onSurfaceVariant);
     });
   }
 
@@ -191,46 +177,42 @@ class _${blockName}DefaultsM3 extends _TimePickerDefaults {
   Color get hourMinuteColor {
     return WidgetStateColor.resolveWith((Set<WidgetState> states) {
       if (states.contains(WidgetState.selected)) {
-        Color overlayColor = ${componentColor('$hourMinuteComponent.selected.container')};
+        Color overlayColor = _colors.primaryContainer;
         if (states.contains(WidgetState.pressed)) {
-          overlayColor = ${componentColor('$hourMinuteComponent.selected.pressed.state-layer')};
+          overlayColor = _colors.onPrimaryContainer;
         } else if (states.contains(WidgetState.hovered)) {
-          const hoverOpacity = ${opacity('$hourMinuteComponent.hover.state-layer.opacity')};
-          overlayColor = ${componentColor('$hourMinuteComponent.selected.hover.state-layer')}.withOpacity(hoverOpacity);
+          overlayColor = _colors.onPrimaryContainer.withOpacity(0.08);
         } else if (states.contains(WidgetState.focused)) {
-          const focusOpacity = ${opacity('$hourMinuteComponent.focus.state-layer.opacity')};
-          overlayColor = ${componentColor('$hourMinuteComponent.selected.focus.state-layer')}.withOpacity(focusOpacity);
+          overlayColor = _colors.onPrimaryContainer.withOpacity(0.1);
         }
-        return Color.alphaBlend(overlayColor, ${componentColor('$hourMinuteComponent.selected.container')});
+        return Color.alphaBlend(overlayColor, _colors.primaryContainer);
       } else {
-        Color overlayColor = ${componentColor('$hourMinuteComponent.unselected.container')};
+        Color overlayColor = _colors.surfaceContainerHighest;
         if (states.contains(WidgetState.pressed)) {
-          overlayColor = ${componentColor('$hourMinuteComponent.unselected.pressed.state-layer')};
+          overlayColor = _colors.onSurface;
         } else if (states.contains(WidgetState.hovered)) {
-          const hoverOpacity = ${opacity('$hourMinuteComponent.hover.state-layer.opacity')};
-          overlayColor = ${componentColor('$hourMinuteComponent.unselected.hover.state-layer')}.withOpacity(hoverOpacity);
+          overlayColor = _colors.onSurface.withOpacity(0.08);
         } else if (states.contains(WidgetState.focused)) {
-          const focusOpacity = ${opacity('$hourMinuteComponent.focus.state-layer.opacity')};
-          overlayColor = ${componentColor('$hourMinuteComponent.unselected.focus.state-layer')}.withOpacity(focusOpacity);
+          overlayColor = _colors.onSurface.withOpacity(0.1);
         }
-        return Color.alphaBlend(overlayColor, ${componentColor('$hourMinuteComponent.unselected.container')});
+        return Color.alphaBlend(overlayColor, _colors.surfaceContainerHighest);
       }
     });
   }
 
   @override
   ShapeBorder get hourMinuteShape {
-    return ${shape('$hourMinuteComponent.container')};
+    return const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0)));
   }
 
   @override
   Size get hourMinuteSize {
-    return ${size('$hourMinuteComponent.container')};
+    return const Size(96.0, 80.0);
   }
 
   @override
   Size get hourMinuteSize24Hour {
-    return Size(${size('$hourMinuteComponent.24h-vertical.container')}.width, hourMinuteSize.height);
+    return Size(114.0, hourMinuteSize.height);
   }
 
   @override
@@ -258,27 +240,27 @@ class _${blockName}DefaultsM3 extends _TimePickerDefaults {
     return WidgetStateProperty.resolveWith((Set<WidgetState> states) {
       if (states.contains(WidgetState.selected)) {
         if (states.contains(WidgetState.pressed)) {
-          return ${componentColor("$hourMinuteComponent.selected.pressed.label-text")};
+          return _colors.onPrimaryContainer;
         }
         if (states.contains(WidgetState.hovered)) {
-          return ${componentColor("$hourMinuteComponent.selected.hover.label-text")};
+          return _colors.onPrimaryContainer;
         }
         if (states.contains(WidgetState.focused)) {
-          return ${componentColor("$hourMinuteComponent.selected.focus.label-text")};
+          return _colors.onPrimaryContainer;
         }
-        return ${componentColor("$hourMinuteComponent.selected.label-text")};
+        return _colors.onPrimaryContainer;
       } else {
         // unselected
         if (states.contains(WidgetState.pressed)) {
-          return ${componentColor("$hourMinuteComponent.unselected.pressed.label-text")};
+          return _colors.onSurface;
         }
         if (states.contains(WidgetState.hovered)) {
-          return ${componentColor("$hourMinuteComponent.unselected.hover.label-text")};
+          return _colors.onSurface;
         }
         if (states.contains(WidgetState.focused)) {
-          return ${componentColor("$hourMinuteComponent.unselected.focus.label-text")};
+          return _colors.onSurface;
         }
-        return ${componentColor("$hourMinuteComponent.unselected.label-text")};
+        return _colors.onSurface;
       }
     });
   }
@@ -290,10 +272,10 @@ class _${blockName}DefaultsM3 extends _TimePickerDefaults {
       // This is using the correct text style from Material 3 spec.
       // https://m3.material.io/components/time-pickers/specs#fd0b6939-edab-4058-82e1-93d163945215
       return switch (entryMode) {
-        TimePickerEntryMode.dial || TimePickerEntryMode.dialOnly
-          => _textTheme.displayLarge!.copyWith(color: _hourMinuteTextColor.resolve(states)),
-        TimePickerEntryMode.input || TimePickerEntryMode.inputOnly
-          => _textTheme.displayMedium!.copyWith(color: _hourMinuteTextColor.resolve(states)),
+        TimePickerEntryMode.dial || TimePickerEntryMode.dialOnly =>
+          _textTheme.displayLarge!.copyWith(color: _hourMinuteTextColor.resolve(states)),
+        TimePickerEntryMode.input || TimePickerEntryMode.inputOnly =>
+          _textTheme.displayMedium!.copyWith(color: _hourMinuteTextColor.resolve(states)),
       };
     });
   }
@@ -304,9 +286,9 @@ class _${blockName}DefaultsM3 extends _TimePickerDefaults {
     // 'time-input.container.shape', so this is using the radius from the shape
     // for the hour/minute selector. It's a BorderRadiusGeometry, so we have to
     // resolve it before we can use it.
-    final BorderRadius selectorRadius = ${shape('$hourMinuteComponent.container')}
-      .borderRadius
-      .resolve(Directionality.of(context));
+    final BorderRadius selectorRadius = const RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(Radius.circular(8.0)),
+    ).borderRadius.resolve(Directionality.of(context));
     return InputDecorationThemeData(
       contentPadding: EdgeInsets.zero,
       filled: true,
@@ -341,7 +323,7 @@ class _${blockName}DefaultsM3 extends _TimePickerDefaults {
 
   @override
   ShapeBorder get shape {
-    return ${shape("$tokenGroup.container")};
+    return const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(28.0)));
   }
 
   @override
@@ -357,6 +339,4 @@ class _${blockName}DefaultsM3 extends _TimePickerDefaults {
     // This is taken from https://m3.material.io/components/time-pickers/specs.
     return MaterialStatePropertyAll<TextStyle?>(_textTheme.displayLarge);
   }
-}
-''';
 }
