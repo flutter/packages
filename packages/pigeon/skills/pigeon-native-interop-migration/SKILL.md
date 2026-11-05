@@ -1,3 +1,8 @@
+---
+name: pigeon-native-interop-migration
+description: Migrates a Flutter plugin from channel-based Pigeon code to direct Native Interop (useFfi for Swift, useJni for Kotlin)
+---
+
 # Skill: Migrating Flutter Plugins to Pigeon Native Interop (FFI & JNI)
 
 ## Overview
@@ -35,7 +40,7 @@ flutter pub add dev:jnigen dev:logging dev:path
 
 ## 2. Configure `@ConfigurePigeon` Options
 
-In your Pigeon Dart definition file (`pigeons/<messages_file>.dart`), update `@ConfigurePigeon` to enable native interop for Swift and Kotlin. 
+In your Pigeon Dart definition file (`pigeons/<messages_file>.dart`), update `@ConfigurePigeon` to enable native interop for Swift and Kotlin.
 
 > [!NOTE]
 > Keep your package's existing file paths and options (`input`, `dartOut`, `swiftOut`, `kotlinOut`, `package`, `fileSpecificClassNameComponent`, `copyrightHeader`) unchanged. You only need to enable `useFfi: true`, `useJni: true`, and configure `appDirectory`.

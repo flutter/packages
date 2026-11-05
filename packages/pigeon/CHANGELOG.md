@@ -1,3 +1,8 @@
+## 29.1.1
+
+* Renames the `native-interop-migration` agent skill to
+  `pigeon-native-interop-migration` and adds the required YAML frontmatter.
+
 ## 29.1.0
 
 * [kotlin,swift] Adds support for removing event channel handler registration
