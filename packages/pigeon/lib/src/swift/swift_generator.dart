@@ -1136,15 +1136,11 @@ if (wrapped == nil) {
   /// The Swift default value of a data class field, if it has one.
   String? _swiftDefaultValue(NamedType field, {required bool useFfi}) {
     // Native interop bridge classes use other Swift types for the fields.
-    final Object? value = useFfi ? null : field.literalDefaultValue;
-    if (value is EnumMember) {
-      if (field.type.isEnum) {
-        return '.${_camelCase(value.name)}';
-      }
-    } else if (value != null) {
-      return _formatSwiftValue(field.type.baseName, value);
-    }
-    return field.type.isNullable ? 'nil' : null;
+    return switch (useFfi ? null : field.literalDefaultValue) {
+      EnumMember(:final String name) when field.type.isEnum => '.${_camelCase(name)}',
+      null || EnumMember() => field.type.isNullable ? 'nil' : null,
+      final Object value => _formatSwiftValue(field.type.baseName, value),
+    };
   }
 
   void _writeClassFieldInit(Indent indent, NamedType field, {bool useFfiTypedData = false}) {

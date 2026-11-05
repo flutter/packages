@@ -606,17 +606,12 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
   }
 
   /// The Kotlin default value of a data class field, if it has one.
-  String? _kotlinDefaultValue(NamedType field) {
-    final Object? value = field.literalDefaultValue;
-    if (value is EnumMember) {
-      if (field.type.isEnum) {
-        return '${field.type.baseName}.${toScreamingSnakeCase(value.name)}';
-      }
-    } else if (value != null) {
-      return _formatKotlinValue(field.type.baseName, value);
-    }
-    return field.type.isNullable ? 'null' : null;
-  }
+  String? _kotlinDefaultValue(NamedType field) => switch (field.literalDefaultValue) {
+    EnumMember(:final String name) when field.type.isEnum =>
+      '${field.type.baseName}.${toScreamingSnakeCase(name)}',
+    null || EnumMember() => field.type.isNullable ? 'null' : null,
+    final Object value => _formatKotlinValue(field.type.baseName, value),
+  };
 
   @override
   void writeApis(
