@@ -13,7 +13,7 @@ void main() {
     late _MockImagePickerPlatform mockPlatform;
 
     setUp(() {
-      CrossFilePlatform.instance = MockCrossFile();
+      CrossFilePlatform.instance = _MockCrossFile();
       mockPlatform = _MockImagePickerPlatform();
       ImagePickerPlatform.instance = mockPlatform;
     });
@@ -814,7 +814,7 @@ void main() {
   });
 }
 
-final class MockCrossFile extends CrossFilePlatform {}
+final class _MockCrossFile extends CrossFilePlatform {}
 
 final class _MockImagePickerPlatform extends ImagePickerPlatform {
   _MockImagePickerPlatform();
