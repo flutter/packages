@@ -1,3 +1,7 @@
+## 29.1.1
+
+* Removes remaining unused `dart:mirrors` usage.
+
 ## 29.1.0
 
 * [kotlin,swift] Adds support for removing event channel handler registration
