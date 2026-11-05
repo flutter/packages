@@ -105,6 +105,17 @@ class SK2Transaction {
     return transactions;
   }
 
+  /// A wrapper around [Transaction.currentEntitlements]
+  /// https://developer.apple.com/documentation/storekit/transaction/currententitlements
+  /// A sequence that emits the latest transaction for each product the customer is currently entitled to.
+  static Future<List<SK2Transaction>> currentEntitlements() async {
+    final List<SK2TransactionMessage> msgs = await hostApi2.currentEntitlements();
+    final List<SK2Transaction> transactions = msgs
+        .map((SK2TransactionMessage e) => e.convertFromPigeon())
+        .toList();
+    return transactions;
+  }
+
   /// Start listening to transactions.
   /// Call this as soon as you can your app to avoid missing transactions.
   static void startListeningToTransactions() {
@@ -163,6 +174,7 @@ extension on SK2TransactionMessage {
       purchaseID: id > 0 ? id.toString() : null,
       appAccountToken: appAccountToken,
       expirationDate: _secondsToMillisecondsSinceEpochString(expirationDate),
+      sk2Transaction: id > 0 ? convertFromPigeon() : null,
     );
   }
 

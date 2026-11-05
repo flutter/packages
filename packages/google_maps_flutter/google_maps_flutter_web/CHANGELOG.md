@@ -1,3 +1,11 @@
+## 0.6.5
+
+* Adds support for `myLocationEnabled` and `myLocationButtonEnabled`.
+
+## 0.6.4+2
+
+* Fixes `onMapCreated` never being called when a map tile request stalls or fails.
+
 ## 0.6.4+1
 
 * Fixes AdvancedMarker anchor handling.

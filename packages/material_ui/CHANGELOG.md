@@ -1,3 +1,54 @@
+## 1.10.0
+
+- Updates the `Typography` documentation to describe the 2021 (Material 3) geometry themes and the current `ThemeData.typography` defaults.
+- Deprecates the `black` and `white` parameters of `Typography.material2021`, and documents that their colors are replaced with colors from the `colorScheme`.
+- Fixes `MenuAnchor` and `MenuBar` shortcut labels for unlocalized non-Unicode keys (such as `Tab` and `F1`) on JavaScript web builds.
+- Adds `Checkbox.markInsets` and `CheckboxThemeData.markInsets`, which inset the
+  check mark (and the indeterminate dash) within the checkbox without changing the
+  size of the box itself. The mark and its stroke shrink proportionally.
+- Fixes an issue where pressing Escape does not close a MenuAnchor opened by a tap or click.
+- Fixes `TextTheme.debugFillProperties` to use the default `ThemeData` text theme, instead of `Typography.material2018(...).black`.
+- Fixes `Typography.debugFillProperties` to use the default `ThemeData` typography, instead of `Typography.material2014`.
+- Fixes `GappedSliderTrackShape` painting the secondary track with the wrong position and corners in right-to-left layouts.
+
+## 1.9.0
+
+- Adds a `barFocusNode` parameter to `SearchAnchor.bar` to allow external control over the focus of the underlying `SearchBar`.
+- Fixes showTimePicker input mode failing to parse localized digits (e.g. Farsi, Arabic, Bengali, Myanmar, Thai, Nepali, French, German, Portuguese locales) by parsing hour/minute via MaterialLocalizations and handling localized leading zeros.
+- Corrects the `Divider.color` and `VerticalDivider.color` documentation to describe the Material 3 fallback (`ColorScheme.outlineVariant`).
+- Fixes `MenuAnchor` scrollbars inheriting system safe-area padding.
+- Fixes unlabeled tap target semantics in `SearchBar`.
+- Adds `enableTapHandling` to `SearchAnchor`.
+- Adds `dayBuilder` and `weekdayBuilder` callbacks to `CalendarDatePicker`, `DatePickerDialog`, and `showDatePicker`.
+- Adds `CalendarDatePickerDayDetails` and `CalendarDatePickerWeekdayDetails` to provide metadata and default widgets to the builders.
+
+## 1.8.0
+
+- Adds `RoundedPolygon` and `CornerRounding` for creating rounded polygonal shapes.
+- Adds `MaterialShapes`, the catalog of predefined Material Design shapes.
+- Adds `MaterialShapeBorder` for drawing a `RoundedPolygon` as an `OutlinedBorder`, which morphs between shapes when lerped.
+- Adds an example that morphs through the shapes in `MaterialShapes.all`.
+- Adds `enableInlinePrediction` to `TextFormField`.
+- Adds the `supportingTextPadding` property to `InputDecoration` and `InputDecorationThemeData`.
+- Adds an `enabled` parameter to `DropdownButtonFormField` and makes its
+  `onChanged` parameter optional. When `enabled` is true, the field is
+  interactive without an `onChanged` callback.
+- Adds a Material 3 Expressive IconButton example.
+- Fix `GridTile` crash when the incoming constraints are unbounded (e.g. inside a horizontally scrolling `ListView`).
+- Adds `onTertiaryTapDown`, `onTertiaryTapUp` and `onTertiaryTapCancel` to `InkResponse` and `InkWell`, so a tertiary (middle) button click can be handled directly.
+- Clarifies how `Slider.label` can be displayed for continuous sliders.
+- The FadeForwards page transition on Android now takes 20-40% less time to render thanks to snapshotting.
+- Fixes the installation command in README.md
+- Fixes `Theme.of` returning a fallback `ThemeData` whose `platform` was frozen to the first `defaultTargetPlatform` seen by the process. A subtree without a `Theme` ancestor now adapts when `defaultTargetPlatform` changes, for example under a `TargetPlatformVariant` or the platform override.
+
+## 1.7.0
+
+- Accounts for `MediaQuery`'s `TextScaler` when calculating `SnackBar` action overflow and removes unnecessary blank right spacing in multi-line layout.
+- Allows `TabBar.indicatorWeight` of 0 when the indicator is supplied by `TabBarThemeData`.
+- Fixes showTimePicker input mode rejecting or misreading hours in locales that use a 24-hour format.
+- Adds the `scrollPadding` property to `DropdownMenuFormField`, forwarding it to the underlying `DropdownMenu`.
+- Fixes an Android semantics assertion when an `ExpansionTile` is embedded in a `WidgetSpan`.
+
 ## 1.6.0
 
 - Documents that `TextField.decoration` is merged with the ambient

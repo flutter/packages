@@ -321,12 +321,14 @@ class FakeStoreKit2Platform implements InAppPurchase2API {
   late List<SK2Transaction> finishedTransactions;
   List<SK2TransactionMessage> transactionsList = <SK2TransactionMessage>[];
   List<SK2TransactionMessage> unfinishedTransactionsList = <SK2TransactionMessage>[];
+  List<SK2TransactionMessage> currentEntitlementsList = <SK2TransactionMessage>[];
 
   PlatformException? queryProductException;
   bool isListenerRegistered = false;
   SK2ProductPurchaseOptionsMessage? lastPurchaseOptions;
   Map<String, Set<String>> eligibleWinBackOffers = <String, Set<String>>{};
   Map<String, bool> eligibleIntroductoryOffers = <String, bool>{};
+  int showManageSubscriptionsCallCount = 0;
 
   /// Simulates purchase result for testing non-success scenarios.
   /// Set to userCancelled, pending, or unverified to test those cases.
@@ -350,6 +352,7 @@ class FakeStoreKit2Platform implements InAppPurchase2API {
     eligibleWinBackOffers = <String, Set<String>>{};
     eligibleIntroductoryOffers = <String, bool>{};
     simulatedPurchaseResult = SK2ProductPurchaseResultMessage.success;
+    showManageSubscriptionsCallCount = 0;
     transactionsList = <SK2TransactionMessage>[
       SK2TransactionMessage(
         id: 123,
@@ -370,6 +373,18 @@ class FakeStoreKit2Platform implements InAppPurchase2API {
         receiptData: 'fake_jws_representation',
         appAccountToken: 'fake_app_account_token',
         purchasedQuantity: 3,
+        status: SK2PurchaseStatusMessage.purchased,
+      ),
+    ];
+    currentEntitlementsList = <SK2TransactionMessage>[
+      SK2TransactionMessage(
+        id: 123,
+        originalId: 123,
+        productId: 'product_id',
+        purchaseDate: 123123.121,
+        expirationDate: 321321.32,
+        receiptData: 'fake_jws_representation',
+        appAccountToken: 'fake_app_account_token',
         status: SK2PurchaseStatusMessage.purchased,
       ),
     ];
@@ -483,6 +498,11 @@ class FakeStoreKit2Platform implements InAppPurchase2API {
   }
 
   @override
+  Future<List<SK2TransactionMessage>> currentEntitlements() {
+    return Future<List<SK2TransactionMessage>>.value(currentEntitlementsList);
+  }
+
+  @override
   Future<void> startListeningToTransactions() async {
     isListenerRegistered = true;
   }
@@ -557,6 +577,11 @@ class FakeStoreKit2Platform implements InAppPurchase2API {
 
   @override
   Future<void> presentOfferCodeRedeemSheet() async {}
+
+  @override
+  Future<void> showManageSubscriptions() async {
+    showManageSubscriptionsCallCount++;
+  }
 }
 
 SK2TransactionMessage createPendingTransaction(String id, {int quantity = 1}) {
