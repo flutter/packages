@@ -220,12 +220,23 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList> with ChangeNotifie
     return builder.build(context, currentConfiguration, routerNeglect);
   }
 
+  /// The configuration parsed from the latest new [GoRouter.go] call.
+  ///
+  /// Set by the route information parser. A refresh that re-parses the same
+  /// navigation does not set it.
+  @internal
+  RouteMatchList? newGoConfiguration;
+
   /// For use by the Router architecture as part of the RouterDelegate.
   // This class avoids using async to make sure the route is processed
   // synchronously if possible.
   @override
   Future<void> setNewRoutePath(RouteMatchList configuration) {
-    if (currentConfiguration == configuration) {
+    // Compared by identity so a go whose parse result the Router discarded
+    // does not affect a later navigation.
+    final bool removePagelessRoutes = identical(configuration, newGoConfiguration);
+    newGoConfiguration = null;
+    if (currentConfiguration == configuration && !removePagelessRoutes) {
       return SynchronousFuture<void>(null);
     }
 
@@ -269,12 +280,15 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList> with ChangeNotifie
           if (!exit) {
             return SynchronousFuture<void>(null);
           }
-          return _setCurrentConfiguration(configuration);
+          return _setCurrentConfiguration(
+            configuration,
+            removePagelessRoutes: removePagelessRoutes,
+          );
         });
       }
     }
 
-    return _setCurrentConfiguration(configuration);
+    return _setCurrentConfiguration(configuration, removePagelessRoutes: removePagelessRoutes);
   }
 
   /// Calls [GoRoute.onExit] starting from the index
@@ -316,9 +330,30 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList> with ChangeNotifie
     return exitFuture.then<bool>(handleOnExitResult);
   }
 
-  Future<void> _setCurrentConfiguration(RouteMatchList configuration) {
+  Future<void> _setCurrentConfiguration(
+    RouteMatchList configuration, {
+    bool removePagelessRoutes = false,
+  }) {
     currentConfiguration = configuration;
     notifyListeners();
+    if (removePagelessRoutes) {
+      // A Navigator only removes pageless routes whose page is removed, so the
+      // ones above pages that stay are popped once the new pages are applied.
+      WidgetsBinding.instance.addPostFrameCallback((_) => _popPagelessRoutes());
+    }
     return SynchronousFuture<void>(null);
+  }
+
+  void _popPagelessRoutes() {
+    final navigators = <NavigatorState?>[navigatorKey.currentState];
+    currentConfiguration.visitRouteMatches((RouteMatchBase match) {
+      if (match is ShellRouteMatch) {
+        navigators.add(match.navigatorKey.currentState);
+      }
+      return true;
+    });
+    for (final NavigatorState? navigator in navigators.reversed) {
+      navigator?.popUntil((Route<Object?> route) => route.settings is Page<Object?>);
+    }
   }
 }
