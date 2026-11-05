@@ -6,3 +6,6 @@ tasks:
     script: .ci/scripts/plugin_tools_tests.sh
   - name: flutter_goldens unit tests
     script: .ci/scripts/flutter_goldens_tests.sh
+  - name: ci_info unit tests
+    script: .ci/scripts/ci_info_tests.sh
+
