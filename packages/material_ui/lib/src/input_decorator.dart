@@ -1355,8 +1355,9 @@ class _RenderDecoration extends RenderBox
       prefixIconHeight,
       suffixIconHeight,
     ].reduce(math.max);
-    final double minContainerHeight = decoration.isDense! || expands
-        ? 0.0
+    // Keep in sync with the minimum container height computed in _layout.
+    final double minContainerHeight = decoration.isDense! || decoration.isCollapsed || expands
+        ? inputHeight
         : kMinInteractiveDimension;
 
     return math.max(containerHeight, minContainerHeight) + supportingTextHeight;
