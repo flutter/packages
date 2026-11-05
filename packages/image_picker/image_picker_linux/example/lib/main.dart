@@ -233,7 +233,21 @@ class _MyHomePageState extends State<MyHomePage> {
             return Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                Text(image.name(), key: const Key('image_picker_example_picked_image_name')),
+                FutureBuilder(
+                  future: image.name().then<String>((value) => value ?? 'Unknown Filename'),
+                  builder: (context, AsyncSnapshot<String> snapshot) {
+                    if (snapshot.hasData) {
+                      return Text(
+                        snapshot.data!,
+                        key: const Key('image_picker_example_picked_image_name'),
+                      );
+                    } else if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    }
+
+                    return const CircularProgressIndicator();
+                  },
+                ),
                 Semantics(
                   label: 'image_picker_example_picked_image',
                   child: mime == null || mime.startsWith('image/')
