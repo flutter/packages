@@ -1809,8 +1809,30 @@ void main() {
     const generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
     final code = sink.toString();
-    expect(code, contains('static func register(api: HostApi?, name: String = '));
+    expect(code, contains('static let lock = NSLock()'));
+    expect(code, contains('static var instancesOfHostApi = [String: [HostApiSetup]]()'));
+    expect(code, contains('@discardableResult'));
+    expect(
+      code,
+      contains(
+        'static func register(api: HostApi?, name: String = PigeonInternal.defaultInstanceName) -> HostApiSetup?',
+      ),
+    );
+    expect(
+      code,
+      contains(
+        'static func unregister(api: HostApi, name: String = PigeonInternal.defaultInstanceName)',
+      ),
+    );
+    expect(
+      code,
+      contains(
+        'static func unregister(setup: HostApiSetup, name: String = PigeonInternal.defaultInstanceName)',
+      ),
+    );
+    expect(code, contains('Swift.type(of: api) is AnyClass'));
     expect(code, contains('HostApiInstanceTracker.instancesOfHostApi.removeValue(forKey: name)'));
+    expect(code, contains('return HostApiInstanceTracker.instancesOfHostApi[name]?.last'));
     expect(code, contains('registerInstance(api: FlutterApiBridge?, name: String = '));
     expect(code, contains('FlutterApiRegistrar.registeredFlutterApi.removeValue(forKey: name)'));
   });

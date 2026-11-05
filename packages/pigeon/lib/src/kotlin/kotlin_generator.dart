@@ -936,7 +936,7 @@ class ${api.name}Registrar() {
     required String dartPackageName,
   }) {
     indent.writeln(
-      'val ${api.name}Instances: MutableMap<String, ${api.name}Registrar> = mutableMapOf()',
+      'val ${api.name}Instances: MutableMap<String, MutableList<${api.name}Registrar>> = mutableMapOf()',
     );
     indent.writeln('@Keep');
     indent.writeScoped('interface ${api.name} {', '}', () {
@@ -955,27 +955,79 @@ class ${api.name}Registrar() {
 
     indent.writeln('@Keep');
     indent.writeScoped('class ${api.name}Registrar : ${api.name} {', '}', () {
-      indent.writeln('private var api: ${api.name}? = null');
+      indent.writeln('@Volatile private var api: ${api.name}? = null');
 
       indent.writeScoped('fun register(', '):', () {
         indent.writeln('api: ${api.name}?,');
         indent.writeln('name: String = defaultInstanceName');
       }, addTrailingNewline: false);
-      indent.writeScoped(' ${api.name}Registrar {', '}', () {
-        indent.writeScoped('if (api != null) {', '}', () {
-          indent.writeln('this.api = api');
-          indent.writeln('${api.name}Instances[name] = this');
-        }, addTrailingNewline: false);
-        indent.addScoped(' else {', '}', () {
-          indent.writeln('${api.name}Instances.remove(name)');
+      indent.addScoped(' ${api.name}Registrar {', '}', () {
+        indent.writeScoped('kotlin.synchronized(${api.name}Instances) {', '}', () {
+          indent.writeScoped('if (api != null) {', '}', () {
+            indent.writeln('this.api = api');
+            indent.writeln('val list = ${api.name}Instances.getOrPut(name) { mutableListOf() }');
+            indent.writeln('val iterator = list.iterator()');
+            indent.writeScoped('while (iterator.hasNext()) {', '}', () {
+              indent.writeln('val entry = iterator.next()');
+              indent.writeScoped('if (entry === this || entry.api === api) {', '}', () {
+                indent.writeScoped('if (entry !== this) {', '}', () {
+                  indent.writeln('entry.api = null');
+                });
+                indent.writeln('iterator.remove()');
+              });
+            });
+            indent.writeln('list.add(this)');
+          }, addTrailingNewline: false);
+          indent.addScoped(' else {', '}', () {
+            indent.writeln('this.api = null');
+            indent.writeln('val list = ${api.name}Instances[name]');
+            indent.writeScoped('if (list != null) {', '}', () {
+              indent.writeScoped('if (!list.remove(this) && list.isNotEmpty()) {', '}', () {
+                indent.writeln('val removed = list.removeAt(list.lastIndex)');
+                indent.writeln('removed.api = null');
+              });
+              indent.writeScoped('if (list.isEmpty()) {', '}', () {
+                indent.writeln('${api.name}Instances.remove(name)');
+              });
+            });
+          });
         });
         indent.writeln('return this');
       });
 
-      indent.writeln('@Keep');
-      indent.writeScoped('fun getInstance(name: String): ${api.name}Registrar? {', '}', () {
-        indent.writeln('return ${api.name}Instances[name]');
+      indent.writeScoped('fun unregister(', ')', () {
+        indent.writeln('api: ${api.name},');
+        indent.writeln('name: String = defaultInstanceName');
+      }, addTrailingNewline: false);
+      indent.addScoped(' {', '}', () {
+        indent.writeScoped('kotlin.synchronized(${api.name}Instances) {', '}', () {
+          indent.writeln('val list = ${api.name}Instances[name]');
+          indent.writeScoped('if (list != null) {', '}', () {
+            indent.writeln('val iterator = list.iterator()');
+            indent.writeScoped('while (iterator.hasNext()) {', '}', () {
+              indent.writeln('val entry = iterator.next()');
+              indent.writeScoped('if (entry.api === api) {', '}', () {
+                indent.writeln('entry.api = null');
+                indent.writeln('iterator.remove()');
+              });
+            });
+            indent.writeScoped('if (list.isEmpty()) {', '}', () {
+              indent.writeln('${api.name}Instances.remove(name)');
+            });
+          });
+        });
       });
+
+      indent.writeln('@Keep');
+      indent.writeScoped(
+        'fun getInstance(name: String = defaultInstanceName): ${api.name}Registrar? {',
+        '}',
+        () {
+          indent.writeScoped('return kotlin.synchronized(${api.name}Instances) {', '}', () {
+            indent.writeln('${api.name}Instances[name]?.lastOrNull()');
+          });
+        },
+      );
 
       for (final Method method in api.methods) {
         _writeMethodDeclaration(

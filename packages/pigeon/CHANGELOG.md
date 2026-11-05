@@ -1,3 +1,8 @@
+## 29.2.0
+
+* [kotlin,swift] Preserves earlier engine registrations when multiple Native Interop `@HostApi` instances are registered and adds instance-aware `unregister` methods (`<Api>Registrar().unregister(api)` in Kotlin and `<Api>Setup.unregister(api:)` / `<Api>Setup.unregister(setup:)` in Swift) so detaching a secondary `FlutterEngine` does not deregister remaining engines.
+* Removes the experimental label from Native Interop documentation.
+
 ## 29.1.0
 
 * [kotlin,swift] Adds support for removing event channel handler registration

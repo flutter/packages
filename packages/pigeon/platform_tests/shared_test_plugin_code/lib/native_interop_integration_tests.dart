@@ -2843,6 +2843,10 @@ void runPigeonNativeInteropIntegrationTests(TargetGenerator targetGenerator) {
           NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance();
       final bool success = api!.testDeregisterHostApi();
       expect(success, true);
+      // Verify the primary engine's registration is still intact after secondary engine
+      // registrations are created and deregistered on the host.
+      final primaryEngineApi = NativeInteropHostIntegrationCoreApi.createWithNativeInteropApi();
+      await primaryEngineApi.noop();
     });
 
     testWidgets('flutter API deregistration works natively', (WidgetTester _) async {
@@ -2874,6 +2878,22 @@ void runPigeonNativeInteropIntegrationTests(TargetGenerator targetGenerator) {
       const instanceName = 'deregisteredFlutterInstanceTest';
       final bool success = api!.testCallDeregisteredFlutterApi(instanceName);
       expect(success, true);
+    });
+
+    testWidgets('createWithNativeInteropApi resolves registered instance', (WidgetTester _) async {
+      final api = NativeInteropHostIntegrationCoreApi.createWithNativeInteropApi();
+      await api.noop();
+    });
+
+    testWidgets('createWithNativeInteropApi throws for unregistered suffix', (
+      WidgetTester _,
+    ) async {
+      expect(
+        () => NativeInteropHostIntegrationCoreApi.createWithNativeInteropApi(
+          messageChannelSuffix: 'unregisteredSuffix',
+        ),
+        throwsA(isA<ArgumentError>()),
+      );
     });
   });
 

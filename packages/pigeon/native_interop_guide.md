@@ -201,6 +201,46 @@ When implementing Native Interop host APIs directly in an application target rat
   ```
   Calling `register(api:)` in native code also prevents the Xcode linker (`-dead_strip`) from stripping the setup class from the compiled binary.
 
+### Step 5: Plugin Registration, Deregistration, and Multi-Engine Support
+
+When implementing a Flutter plugin (`FlutterPlugin`), multiple `FlutterEngine` instances may attach and detach in any order (for example, in add-to-app scenarios, `FlutterEngineGroup`, background isolates/headless engines, or integration tests).
+
+Pigeon maintains an ordered stack of registered `@HostApi` instances per instance name. To ensure detaching one engine never wipes out registrations belonging to other active engines, store your API implementation (or returned handle) per plugin instance and deregister **that specific instance** on engine detach:
+
+- **Kotlin (JNI)**:
+  ```kotlin
+  class MyPlugin : FlutterPlugin, MyApi {
+    override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {
+      MyApiRegistrar().register(this)
+    }
+
+    override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
+      // Removes only `this` instance so other attached engines stay registered:
+      MyApiRegistrar().unregister(this)
+    }
+  }
+  ```
+  *(Alternatively, `register(api)` returns the `<Api>Registrar` handle, and calling `registrar.register(null)` on that saved handle also removes only that specific entry.)*
+
+- **Swift (FFI)**:
+  ```swift
+  public class MyPlugin: NSObject, FlutterPlugin, MyApi {
+    public static func register(with registrar: FlutterPluginRegistrar) {
+      let instance = MyPlugin()
+      registrar.publish(instance)
+      MyApiSetup.register(api: instance)
+    }
+
+    public func detachFromEngine(for registrar: FlutterPluginRegistrar) {
+      // Removes only `self` so other attached engines stay registered:
+      MyApiSetup.unregister(api: self)
+    }
+  }
+  ```
+  *(If your `MyApi` implementation is a Swift `struct` value type rather than a class, capture `let setup = MyApiSetup.register(api: valueImpl)` and call `if let setup { MyApiSetup.unregister(setup: setup) }` on detach.)*
+
+> **Multi-Engine Per-Engine State Caveat**: Because Native Interop resolves `<Api>.createWithNativeInteropApi()` directly against the host process without a platform channel `BinaryMessenger`, Dart calls resolve to the most recently registered active host instance for a given `name` (`messageChannelSuffix`). Stateless or process-wide host plugins work seamlessly across any number of engines. If a plugin holds **engine-specific state** (such as an Android `Activity` from `ActivityAware`, a per-engine `TextureRegistry`, or a specific `UIViewController`) and two engines initialize lazily out of order, pass a distinct `name` / `messageChannelSuffix` per engine or keep engine-scoped operations on platform channels / `@ProxyApi`.
+
 ---
 
 ## 5. Troubleshooting Automated Generation

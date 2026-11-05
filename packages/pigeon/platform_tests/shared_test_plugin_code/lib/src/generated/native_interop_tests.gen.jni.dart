@@ -301,6 +301,47 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     ).object<NativeInteropHostIntegrationCoreApiRegistrar>();
   }
 
+  static final _id_unregister = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(
+        r'unregister',
+        r'(Lcom/example/test_plugin/NativeInteropHostIntegrationCoreApi;Ljava/lang/String;)V',
+      );
+
+  static final _unregister =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JThrowablePtr Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+              )
+            >
+          >('globalEnv_CallVoidMethod')
+          .asFunction<
+            jni$_.JThrowablePtr Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun unregister(api: com.example.test_plugin.NativeInteropHostIntegrationCoreApi, name: kotlin.String): kotlin.Unit`
+  void unregister(
+    NativeInteropHostIntegrationCoreApi nativeInteropHostIntegrationCoreApi,
+    jni$_.JString string,
+  ) {
+    final _$$selfRef = reference;
+    final _$nativeInteropHostIntegrationCoreApi = nativeInteropHostIntegrationCoreApi.reference;
+    final _$string = string.reference;
+    _unregister(
+      _$$selfRef.pointer,
+      _id_unregister.pointer,
+      _$nativeInteropHostIntegrationCoreApi.pointer,
+      _$string.pointer,
+    ).check();
+  }
+
   static final _id_getInstance = NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
     r'getInstance',
     r'(Ljava/lang/String;)Lcom/example/test_plugin/NativeInteropHostIntegrationCoreApiRegistrar;',
@@ -18207,6 +18248,46 @@ extension NativeInteropReservedNamesHostApiRegistrar$$Methods
       _$nativeInteropReservedNamesHostApi.pointer,
       _$string.pointer,
     ).object<NativeInteropReservedNamesHostApiRegistrar>();
+  }
+
+  static final _id_unregister = NativeInteropReservedNamesHostApiRegistrar._class.instanceMethodId(
+    r'unregister',
+    r'(Lcom/example/test_plugin/NativeInteropReservedNamesHostApi;Ljava/lang/String;)V',
+  );
+
+  static final _unregister =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JThrowablePtr Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+              )
+            >
+          >('globalEnv_CallVoidMethod')
+          .asFunction<
+            jni$_.JThrowablePtr Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun unregister(api: com.example.test_plugin.NativeInteropReservedNamesHostApi, name: kotlin.String): kotlin.Unit`
+  void unregister(
+    NativeInteropReservedNamesHostApi nativeInteropReservedNamesHostApi,
+    jni$_.JString string,
+  ) {
+    final _$$selfRef = reference;
+    final _$nativeInteropReservedNamesHostApi = nativeInteropReservedNamesHostApi.reference;
+    final _$string = string.reference;
+    _unregister(
+      _$$selfRef.pointer,
+      _id_unregister.pointer,
+      _$nativeInteropReservedNamesHostApi.pointer,
+      _$string.pointer,
+    ).check();
   }
 
   static final _id_getInstance = NativeInteropReservedNamesHostApiRegistrar._class.instanceMethodId(

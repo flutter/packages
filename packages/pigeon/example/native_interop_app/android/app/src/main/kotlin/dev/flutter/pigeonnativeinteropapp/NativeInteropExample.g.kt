@@ -43,7 +43,8 @@ class FlutterError(
 ) : RuntimeException()
 
 private const val defaultInstanceName = "PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u"
-val NativeInteropExampleApiInstances: MutableMap<String, NativeInteropExampleApiRegistrar> =
+val NativeInteropExampleApiInstances:
+    MutableMap<String, MutableList<NativeInteropExampleApiRegistrar>> =
     mutableMapOf()
 
 @Keep
@@ -53,24 +54,68 @@ interface NativeInteropExampleApi {
 
 @Keep
 class NativeInteropExampleApiRegistrar : NativeInteropExampleApi {
-  private var api: NativeInteropExampleApi? = null
+  @Volatile private var api: NativeInteropExampleApi? = null
 
   fun register(
       api: NativeInteropExampleApi?,
       name: String = defaultInstanceName
   ): NativeInteropExampleApiRegistrar {
-    if (api != null) {
-      this.api = api
-      NativeInteropExampleApiInstances[name] = this
-    } else {
-      NativeInteropExampleApiInstances.remove(name)
+    kotlin.synchronized(NativeInteropExampleApiInstances) {
+      if (api != null) {
+        this.api = api
+        val list = NativeInteropExampleApiInstances.getOrPut(name) { mutableListOf() }
+        val iterator = list.iterator()
+        while (iterator.hasNext()) {
+          val entry = iterator.next()
+          if (entry === this || entry.api === api) {
+            if (entry !== this) {
+              entry.api = null
+            }
+            iterator.remove()
+          }
+        }
+        list.add(this)
+      } else {
+        this.api = null
+        val list = NativeInteropExampleApiInstances[name]
+        if (list != null) {
+          if (!list.remove(this) && list.isNotEmpty()) {
+            val removed = list.removeAt(list.lastIndex)
+            removed.api = null
+          }
+          if (list.isEmpty()) {
+            NativeInteropExampleApiInstances.remove(name)
+          }
+        }
+      }
     }
     return this
   }
 
+  fun unregister(api: NativeInteropExampleApi, name: String = defaultInstanceName) {
+    kotlin.synchronized(NativeInteropExampleApiInstances) {
+      val list = NativeInteropExampleApiInstances[name]
+      if (list != null) {
+        val iterator = list.iterator()
+        while (iterator.hasNext()) {
+          val entry = iterator.next()
+          if (entry.api === api) {
+            entry.api = null
+            iterator.remove()
+          }
+        }
+        if (list.isEmpty()) {
+          NativeInteropExampleApiInstances.remove(name)
+        }
+      }
+    }
+  }
+
   @Keep
-  fun getInstance(name: String): NativeInteropExampleApiRegistrar? {
-    return NativeInteropExampleApiInstances[name]
+  fun getInstance(name: String = defaultInstanceName): NativeInteropExampleApiRegistrar? {
+    return kotlin.synchronized(NativeInteropExampleApiInstances) {
+      NativeInteropExampleApiInstances[name]?.lastOrNull()
+    }
   }
 
   override fun doSomething() {

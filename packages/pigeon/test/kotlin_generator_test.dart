@@ -2008,10 +2008,23 @@ void main() {
     const generator = KotlinGenerator();
     generator.generate(kotlinOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
     final code = sink.toString();
+    expect(
+      code,
+      contains('val HostApiInstances: MutableMap<String, MutableList<HostApiRegistrar>>'),
+    );
     expect(code, contains('interface HostApi {'));
     expect(code, contains('class HostApiRegistrar : HostApi {'));
     expect(code, contains('api: HostApi?,'));
+    expect(code, contains('fun unregister('));
+    expect(code, contains('api: HostApi,'));
     expect(code, contains('HostApiInstances.remove(name)'));
+    expect(
+      code,
+      contains('fun getInstance(name: String = defaultInstanceName): HostApiRegistrar?'),
+    );
+    expect(code, contains('@Volatile private var api: HostApi? = null'));
+    expect(code, contains('kotlin.synchronized(HostApiInstances)'));
+    expect(code, contains('HostApiInstances[name]?.lastOrNull()'));
     expect(
       code,
       contains('fun registerInstance(api: FlutterApi?, name: String = defaultInstanceName)'),

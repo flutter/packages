@@ -35,6 +35,8 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi, HostCa
   var flutterSmallApiOne: FlutterSmallApi
   var flutterSmallApiTwo: FlutterSmallApi
   var proxyApiRegistrar: ProxyApiTestsPigeonProxyApiRegistrar?
+  var niHostApiImpl: NativeInteropTestsClass?
+  var niReservedSetup: NativeInteropReservedNamesHostApiSetup?
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     // Workaround for https://github.com/flutter/flutter/issues/118103.
@@ -76,12 +78,23 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi, HostCa
     proxyApiRegistrar = ProxyApiTestsPigeonProxyApiRegistrar(
       binaryMessenger: binaryMessenger, apiDelegate: ProxyApiDelegate())
     proxyApiRegistrar!.setUp()
-    NativeInteropHostIntegrationCoreApiSetup.register(api: NativeInteropTestsClass())
-    NativeInteropReservedNamesHostApiSetup.register(api: NativeInteropReservedNamesHostApiImpl())
+    let niImpl = NativeInteropTestsClass()
+    niHostApiImpl = niImpl
+    NativeInteropHostIntegrationCoreApiSetup.register(api: niImpl)
+    niReservedSetup = NativeInteropReservedNamesHostApiSetup.register(
+      api: NativeInteropReservedNamesHostApiImpl())
   }
 
   public func detachFromEngine(for registrar: FlutterPluginRegistrar) {
-    proxyApiRegistrar!.tearDown()
+    if let niHostApiImpl {
+      NativeInteropHostIntegrationCoreApiSetup.unregister(api: niHostApiImpl)
+      self.niHostApiImpl = nil
+    }
+    if let niReservedSetup {
+      NativeInteropReservedNamesHostApiSetup.unregister(setup: niReservedSetup)
+      self.niReservedSetup = nil
+    }
+    proxyApiRegistrar?.tearDown()
     proxyApiRegistrar = nil
   }
 
@@ -2090,7 +2103,86 @@ class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
       return false
     }
     NativeInteropHostIntegrationCoreApiSetup.register(api: nil, name: name)
-    return NativeInteropHostIntegrationCoreApiSetup.getInstance(name: name) == nil
+    guard NativeInteropHostIntegrationCoreApiSetup.getInstance(name: name) == nil else {
+      return false
+    }
+
+    // Multi-instance LIFO register(api: nil) pops only the latest instance.
+    let lifoName = "testLifoHostInstance"
+    let lifoSetup1 = NativeInteropHostIntegrationCoreApiSetup.register(
+      api: NativeInteropTestsClass(), name: lifoName)
+    let lifoSetup2 = NativeInteropHostIntegrationCoreApiSetup.register(
+      api: NativeInteropTestsClass(), name: lifoName)
+    guard lifoSetup1 != nil, lifoSetup2 != nil else {
+      return false
+    }
+    NativeInteropHostIntegrationCoreApiSetup.register(api: nil, name: lifoName)
+    guard NativeInteropHostIntegrationCoreApiSetup.getInstance(name: lifoName) === lifoSetup1 else {
+      return false
+    }
+    NativeInteropHostIntegrationCoreApiSetup.register(api: nil, name: lifoName)
+    guard NativeInteropHostIntegrationCoreApiSetup.getInstance(name: lifoName) == nil else {
+      return false
+    }
+
+    // Out-of-order instance-aware unregister(api:) keeps remaining instances active.
+    let outOfOrderName = "testOutOfOrderHostInstance"
+    let api1 = NativeInteropTestsClass()
+    let api2 = NativeInteropTestsClass()
+    NativeInteropHostIntegrationCoreApiSetup.register(api: api1, name: outOfOrderName)
+    let outOfOrderSetup2 = NativeInteropHostIntegrationCoreApiSetup.register(
+      api: api2, name: outOfOrderName)
+    NativeInteropHostIntegrationCoreApiSetup.unregister(api: api1, name: outOfOrderName)
+    guard
+      NativeInteropHostIntegrationCoreApiSetup.getInstance(name: outOfOrderName)
+        === outOfOrderSetup2
+    else {
+      return false
+    }
+    NativeInteropHostIntegrationCoreApiSetup.unregister(api: api2, name: outOfOrderName)
+    guard NativeInteropHostIntegrationCoreApiSetup.getInstance(name: outOfOrderName) == nil else {
+      return false
+    }
+
+    // Out-of-order handle-based unregister(setup:) keeps remaining instances active.
+    let handleName = "testHandleHostInstance"
+    guard
+      let handle1 = NativeInteropReservedNamesHostApiSetup.register(
+        api: NativeInteropReservedNamesHostApiImpl(), name: handleName),
+      let handle2 = NativeInteropReservedNamesHostApiSetup.register(
+        api: NativeInteropReservedNamesHostApiImpl(), name: handleName)
+    else {
+      return false
+    }
+    NativeInteropReservedNamesHostApiSetup.unregister(setup: handle1, name: handleName)
+    guard NativeInteropReservedNamesHostApiSetup.getInstance(name: handleName) === handle2 else {
+      return false
+    }
+    NativeInteropReservedNamesHostApiSetup.unregister(setup: handle2, name: handleName)
+    guard NativeInteropReservedNamesHostApiSetup.getInstance(name: handleName) == nil else {
+      return false
+    }
+
+    // Exercise secondary TestPlugin attach and out-of-order detach while primary engine stays
+    // registered.
+    let registrar1 = StubPluginRegistrar()
+    let registrar2 = StubPluginRegistrar()
+    TestPlugin.register(with: registrar1)
+    TestPlugin.register(with: registrar2)
+    guard let plugin1 = registrar1.published as? TestPlugin,
+      let plugin2 = registrar2.published as? TestPlugin
+    else {
+      return false
+    }
+    plugin1.detachFromEngine(for: registrar1)
+    guard NativeInteropHostIntegrationCoreApiSetup.getInstance() != nil,
+      NativeInteropReservedNamesHostApiSetup.getInstance() != nil
+    else {
+      return false
+    }
+    plugin2.detachFromEngine(for: registrar2)
+    return NativeInteropHostIntegrationCoreApiSetup.getInstance() != nil
+      && NativeInteropReservedNamesHostApiSetup.getInstance() != nil
   }
 
   func testDeregisterFlutterApi() throws -> Bool {
@@ -2298,4 +2390,66 @@ class SendConsistentNumbers: StreamConsistentNumbersStreamHandler {
   override func onCancel(withArguments arguments: Any?) {
     onCancelled?()
   }
+}
+
+final class StubBinaryMessenger: NSObject, FlutterBinaryMessenger {
+  func send(onChannel channel: String, message: Data?) {}
+
+  func send(
+    onChannel channel: String, message: Data?, binaryReply callback: FlutterBinaryReply? = nil
+  ) {
+    callback?(nil)
+  }
+
+  func setMessageHandlerOnChannel(
+    _ channel: String, binaryMessageHandler handler: FlutterBinaryMessageHandler? = nil
+  ) -> FlutterBinaryMessengerConnection {
+    return 0
+  }
+
+  func cleanUpConnection(_ connection: FlutterBinaryMessengerConnection) {}
+}
+
+final class StubTextureRegistry: NSObject, FlutterTextureRegistry {
+  func register(_ texture: FlutterTexture) -> Int64 { 0 }
+  func textureFrameAvailable(_ textureId: Int64) {}
+  func unregisterTexture(_ textureId: Int64) {}
+}
+
+final class StubPluginRegistrar: NSObject, FlutterPluginRegistrar {
+  let stubMessenger: FlutterBinaryMessenger = StubBinaryMessenger()
+  let stubTextures: FlutterTextureRegistry = StubTextureRegistry()
+  let engineIdentifier: Int64 = 0
+  var published: NSObject?
+
+  func publish(_ value: NSObject) {
+    published = value
+  }
+
+  func addMethodCallDelegate(_ delegate: FlutterPlugin, channel: FlutterMethodChannel) {}
+
+  func lookupKey(forAsset asset: String) -> String { asset }
+
+  func lookupKey(forAsset asset: String, fromPackage package: String) -> String { asset }
+
+  func valuePublished(byPlugin pluginKey: String) -> NSObject? { published }
+
+  func register(_ factory: FlutterPlatformViewFactory, withId factoryId: String) {}
+
+  #if os(iOS)
+    func messenger() -> FlutterBinaryMessenger { stubMessenger }
+    func textures() -> FlutterTextureRegistry { stubTextures }
+    func addApplicationDelegate(_ delegate: FlutterPlugin) {}
+    func addSceneDelegate(_ delegate: FlutterSceneLifeCycleDelegate) {}
+    func register(
+      _ factory: FlutterPlatformViewFactory, withId factoryId: String,
+      gestureRecognizersBlockingPolicy: FlutterPlatformViewGestureRecognizersBlockingPolicy
+    ) {}
+  #elseif os(macOS)
+    var messenger: FlutterBinaryMessenger { stubMessenger }
+    var textures: FlutterTextureRegistry { stubTextures }
+    var view: NSView? { nil }
+    var viewController: NSViewController? { nil }
+    func addApplicationDelegate(_ delegate: FlutterAppLifecycleDelegate) {}
+  #endif
 }

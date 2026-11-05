@@ -2926,6 +2926,50 @@ name: foobar
       expect(ffiOnlyCode, isNot(contains('jni_bridge')));
     },
   );
+
+  test('native interop JNI HostApi suffixes methods colliding with Registrar built-ins', () {
+    final root = Root(
+      apis: <Api>[
+        AstHostApi(
+          name: 'Api',
+          methods: <Method>[
+            Method(
+              name: 'register',
+              location: ApiLocation.host,
+              parameters: <Parameter>[],
+              returnType: const TypeDeclaration(baseName: 'void', isNullable: false),
+            ),
+            Method(
+              name: 'unregister',
+              location: ApiLocation.host,
+              parameters: <Parameter>[],
+              returnType: const TypeDeclaration(baseName: 'void', isNullable: false),
+            ),
+            Method(
+              name: 'getInstance',
+              location: ApiLocation.host,
+              parameters: <Parameter>[],
+              returnType: const TypeDeclaration(baseName: 'void', isNullable: false),
+            ),
+          ],
+        ),
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final sink = StringBuffer();
+    const generator = DartGenerator();
+    generator.generateNativeInterop(
+      const InternalDartOptions(ignoreLints: false, useJni: true, dartOut: 'lib/foo.g.dart'),
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final code = sink.toString();
+    expect(code, contains(r'_jniApi.register$1()'));
+    expect(code, contains(r'_jniApi.unregister$1()'));
+    expect(code, contains(r'_jniApi.getInstance$1()'));
+  });
 }
 
 /// Builds a root with a sealed class `Shape`, its subclasses `Circle` (one

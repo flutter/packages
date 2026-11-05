@@ -1774,7 +1774,7 @@ $dartApiName? ${classMemberNamePrefix}getInstance_${api.name}({
       // The Kotlin registrar declares these before the API methods.
       final jniNamer = _JniBindingNamer(
         isInterface: false,
-        declaredFirst: const <String>['register', 'getInstance'],
+        declaredFirst: const <String>['register', 'unregister', 'getInstance'],
       );
       for (final Method method in api.methods) {
         final _JniMember jniMember = jniNamer.nextApiMethod(method);

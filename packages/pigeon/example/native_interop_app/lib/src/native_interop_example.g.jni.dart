@@ -291,6 +291,43 @@ extension NativeInteropExampleApiRegistrar$$Methods on NativeInteropExampleApiRe
     ).object<NativeInteropExampleApiRegistrar>();
   }
 
+  static final _id_unregister = NativeInteropExampleApiRegistrar._class.instanceMethodId(
+    r'unregister',
+    r'(Ldev/flutter/pigeonnativeinteropapp/NativeInteropExampleApi;Ljava/lang/String;)V',
+  );
+
+  static final _unregister =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JThrowablePtr Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+              )
+            >
+          >('globalEnv_CallVoidMethod')
+          .asFunction<
+            jni$_.JThrowablePtr Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun unregister(api: dev.flutter.pigeonnativeinteropapp.NativeInteropExampleApi, name: kotlin.String): kotlin.Unit`
+  void unregister(NativeInteropExampleApi nativeInteropExampleApi, jni$_.JString string) {
+    final _$$selfRef = reference;
+    final _$nativeInteropExampleApi = nativeInteropExampleApi.reference;
+    final _$string = string.reference;
+    _unregister(
+      _$$selfRef.pointer,
+      _id_unregister.pointer,
+      _$nativeInteropExampleApi.pointer,
+      _$string.pointer,
+    ).check();
+  }
+
   static final _id_getInstance = NativeInteropExampleApiRegistrar._class.instanceMethodId(
     r'getInstance',
     r'(Ljava/lang/String;)Ldev/flutter/pigeonnativeinteropapp/NativeInteropExampleApiRegistrar;',

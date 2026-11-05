@@ -44,6 +44,49 @@ struct RunnerTests {
     let res = try await api.echo(string: aString)
     #expect(aString == res)
   }
+
+  @Test
+  func multiEngineHostApiRegistrationAndUnregister() {
+    let name = "iosMultiEngineTest"
+    let api1 = NativeInteropTestsClass()
+    let api2 = NativeInteropTestsClass()
+    NativeInteropHostIntegrationCoreApiSetup.register(api: api1, name: name)
+    NativeInteropHostIntegrationCoreApiSetup.register(api: api2, name: name)
+    #expect(NativeInteropHostIntegrationCoreApiSetup.getInstance(name: name) != nil)
+
+    NativeInteropHostIntegrationCoreApiSetup.unregister(api: api1, name: name)
+    #expect(NativeInteropHostIntegrationCoreApiSetup.getInstance(name: name) != nil)
+
+    NativeInteropHostIntegrationCoreApiSetup.unregister(api: api2, name: name)
+    #expect(NativeInteropHostIntegrationCoreApiSetup.getInstance(name: name) == nil)
+  }
+
+  @Test
+  func pluginDetachPreservesOtherEngineRegistrations() {
+    let preexistingSetup = NativeInteropHostIntegrationCoreApiSetup.getInstance()
+    let registrar1 = StubPluginRegistrar()
+    let registrar2 = StubPluginRegistrar()
+    TestPlugin.register(with: registrar1)
+    let setup1 = NativeInteropHostIntegrationCoreApiSetup.getInstance()
+    #expect(setup1 != nil)
+    #expect(setup1 !== preexistingSetup)
+
+    TestPlugin.register(with: registrar2)
+    let setup2 = NativeInteropHostIntegrationCoreApiSetup.getInstance()
+    #expect(setup2 != nil)
+    #expect(setup2 !== setup1)
+
+    let plugin1 = registrar1.published as? TestPlugin
+    let plugin2 = registrar2.published as? TestPlugin
+    #expect(plugin1 != nil)
+    #expect(plugin2 != nil)
+
+    plugin1?.detachFromEngine(for: registrar1)
+    #expect(NativeInteropHostIntegrationCoreApiSetup.getInstance() === setup2)
+
+    plugin2?.detachFromEngine(for: registrar2)
+    #expect(NativeInteropHostIntegrationCoreApiSetup.getInstance() === preexistingSetup)
+  }
 }
 
 final class FlutterApiFromProtocol: FlutterSmallApiProtocol {

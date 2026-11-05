@@ -1293,7 +1293,7 @@ data class NativeInteropReservedNames(
 }
 
 val NativeInteropHostIntegrationCoreApiInstances:
-    MutableMap<String, NativeInteropHostIntegrationCoreApiRegistrar> =
+    MutableMap<String, MutableList<NativeInteropHostIntegrationCoreApiRegistrar>> =
     mutableMapOf()
 
 @Keep
@@ -1934,24 +1934,70 @@ interface NativeInteropHostIntegrationCoreApi {
 
 @Keep
 class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegrationCoreApi {
-  private var api: NativeInteropHostIntegrationCoreApi? = null
+  @Volatile private var api: NativeInteropHostIntegrationCoreApi? = null
 
   fun register(
       api: NativeInteropHostIntegrationCoreApi?,
       name: String = defaultInstanceName
   ): NativeInteropHostIntegrationCoreApiRegistrar {
-    if (api != null) {
-      this.api = api
-      NativeInteropHostIntegrationCoreApiInstances[name] = this
-    } else {
-      NativeInteropHostIntegrationCoreApiInstances.remove(name)
+    kotlin.synchronized(NativeInteropHostIntegrationCoreApiInstances) {
+      if (api != null) {
+        this.api = api
+        val list = NativeInteropHostIntegrationCoreApiInstances.getOrPut(name) { mutableListOf() }
+        val iterator = list.iterator()
+        while (iterator.hasNext()) {
+          val entry = iterator.next()
+          if (entry === this || entry.api === api) {
+            if (entry !== this) {
+              entry.api = null
+            }
+            iterator.remove()
+          }
+        }
+        list.add(this)
+      } else {
+        this.api = null
+        val list = NativeInteropHostIntegrationCoreApiInstances[name]
+        if (list != null) {
+          if (!list.remove(this) && list.isNotEmpty()) {
+            val removed = list.removeAt(list.lastIndex)
+            removed.api = null
+          }
+          if (list.isEmpty()) {
+            NativeInteropHostIntegrationCoreApiInstances.remove(name)
+          }
+        }
+      }
     }
     return this
   }
 
+  fun unregister(api: NativeInteropHostIntegrationCoreApi, name: String = defaultInstanceName) {
+    kotlin.synchronized(NativeInteropHostIntegrationCoreApiInstances) {
+      val list = NativeInteropHostIntegrationCoreApiInstances[name]
+      if (list != null) {
+        val iterator = list.iterator()
+        while (iterator.hasNext()) {
+          val entry = iterator.next()
+          if (entry.api === api) {
+            entry.api = null
+            iterator.remove()
+          }
+        }
+        if (list.isEmpty()) {
+          NativeInteropHostIntegrationCoreApiInstances.remove(name)
+        }
+      }
+    }
+  }
+
   @Keep
-  fun getInstance(name: String): NativeInteropHostIntegrationCoreApiRegistrar? {
-    return NativeInteropHostIntegrationCoreApiInstances[name]
+  fun getInstance(
+      name: String = defaultInstanceName
+  ): NativeInteropHostIntegrationCoreApiRegistrar? {
+    return kotlin.synchronized(NativeInteropHostIntegrationCoreApiInstances) {
+      NativeInteropHostIntegrationCoreApiInstances[name]?.lastOrNull()
+    }
   }
   /** A no-op function taking no arguments and returning no value, to sanity test basic calling. */
   override fun noop() {
@@ -5067,7 +5113,7 @@ interface NativeInteropFlutterIntegrationCoreApi {
 }
 
 val NativeInteropReservedNamesHostApiInstances:
-    MutableMap<String, NativeInteropReservedNamesHostApiRegistrar> =
+    MutableMap<String, MutableList<NativeInteropReservedNamesHostApiRegistrar>> =
     mutableMapOf()
 
 @Keep
@@ -5111,24 +5157,68 @@ interface NativeInteropReservedNamesHostApi {
 
 @Keep
 class NativeInteropReservedNamesHostApiRegistrar : NativeInteropReservedNamesHostApi {
-  private var api: NativeInteropReservedNamesHostApi? = null
+  @Volatile private var api: NativeInteropReservedNamesHostApi? = null
 
   fun register(
       api: NativeInteropReservedNamesHostApi?,
       name: String = defaultInstanceName
   ): NativeInteropReservedNamesHostApiRegistrar {
-    if (api != null) {
-      this.api = api
-      NativeInteropReservedNamesHostApiInstances[name] = this
-    } else {
-      NativeInteropReservedNamesHostApiInstances.remove(name)
+    kotlin.synchronized(NativeInteropReservedNamesHostApiInstances) {
+      if (api != null) {
+        this.api = api
+        val list = NativeInteropReservedNamesHostApiInstances.getOrPut(name) { mutableListOf() }
+        val iterator = list.iterator()
+        while (iterator.hasNext()) {
+          val entry = iterator.next()
+          if (entry === this || entry.api === api) {
+            if (entry !== this) {
+              entry.api = null
+            }
+            iterator.remove()
+          }
+        }
+        list.add(this)
+      } else {
+        this.api = null
+        val list = NativeInteropReservedNamesHostApiInstances[name]
+        if (list != null) {
+          if (!list.remove(this) && list.isNotEmpty()) {
+            val removed = list.removeAt(list.lastIndex)
+            removed.api = null
+          }
+          if (list.isEmpty()) {
+            NativeInteropReservedNamesHostApiInstances.remove(name)
+          }
+        }
+      }
     }
     return this
   }
 
+  fun unregister(api: NativeInteropReservedNamesHostApi, name: String = defaultInstanceName) {
+    kotlin.synchronized(NativeInteropReservedNamesHostApiInstances) {
+      val list = NativeInteropReservedNamesHostApiInstances[name]
+      if (list != null) {
+        val iterator = list.iterator()
+        while (iterator.hasNext()) {
+          val entry = iterator.next()
+          if (entry.api === api) {
+            entry.api = null
+            iterator.remove()
+          }
+        }
+        if (list.isEmpty()) {
+          NativeInteropReservedNamesHostApiInstances.remove(name)
+        }
+      }
+    }
+  }
+
   @Keep
-  fun getInstance(name: String): NativeInteropReservedNamesHostApiRegistrar? {
-    return NativeInteropReservedNamesHostApiInstances[name]
+  fun getInstance(name: String = defaultInstanceName): NativeInteropReservedNamesHostApiRegistrar? {
+    return kotlin.synchronized(NativeInteropReservedNamesHostApiInstances) {
+      NativeInteropReservedNamesHostApiInstances[name]?.lastOrNull()
+    }
   }
   /** Collides with `JObject.release`. */
   override fun release(value: String): String {

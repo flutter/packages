@@ -2,6 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:io' show File;
+
+import 'package:path/path.dart' as p;
+
 import 'flutter_utils.dart';
 import 'process_utils.dart';
 
@@ -50,7 +54,7 @@ Future<int> runXcodeBuild(
 }
 
 Future<int> runGradleBuild(String nativeProjectDirectory, [String? command]) {
-  return runProcess('./gradlew', <String>[
+  return runProcess(File(p.join(nativeProjectDirectory, 'gradlew')).absolute.path, <String>[
     if (command != null) command,
   ], workingDirectory: nativeProjectDirectory);
 }

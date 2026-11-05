@@ -1519,29 +1519,153 @@ if (wrapped == nil) {
     );
     indent.writeScoped('@objc class ${api.name}Setup: NSObject {', '}', () {
       if (generatorOptions.useFfi) {
-        indent.writeln('private var api: ${api.name}?');
+        indent.writeln('private let pigeonApiLock = NSLock()');
+        indent.writeln('private var pigeonApi: ${api.name}?');
+        indent.writeScoped('private var api: ${api.name}? {', '}', () {
+          indent.writeScoped('get {', '}', () {
+            indent.writeln('pigeonApiLock.lock()');
+            indent.writeln('defer { pigeonApiLock.unlock() }');
+            indent.writeln('return pigeonApi');
+          });
+          indent.writeScoped('set {', '}', () {
+            indent.writeln('pigeonApiLock.lock()');
+            indent.writeln('defer { pigeonApiLock.unlock() }');
+            indent.writeln('pigeonApi = newValue');
+          });
+        });
         indent.writeln('override init() {}');
+        indent.writeln('@discardableResult');
         indent.writeScoped(
-          'static func register(api: ${api.name}?, name: String = ${_classNamePrefix}PigeonInternal.defaultInstanceName) {',
+          'static func register(api: ${api.name}?, name: String = ${_classNamePrefix}PigeonInternal.defaultInstanceName) -> ${api.name}Setup? {',
           '}',
           () {
+            indent.writeln('${api.name}InstanceTracker.lock.lock()');
+            indent.writeln('defer { ${api.name}InstanceTracker.lock.unlock() }');
             indent.writeScoped('if let api = api {', '}', () {
               indent.writeln('let wrapper = ${api.name}Setup()');
               indent.writeln('wrapper.api = api');
-              indent.writeln('${api.name}InstanceTracker.instancesOf${api.name}[name] = wrapper');
+              indent.writeln(
+                'var list = ${api.name}InstanceTracker.instancesOf${api.name}[name] ?? []',
+              );
+              indent.writeScoped('if Swift.type(of: api) is AnyClass {', '}', () {
+                indent.writeln('let apiObject = api as AnyObject');
+                indent.writeScoped('list.removeAll { entry in', '}', () {
+                  indent.writeScoped(
+                    'guard let existing = entry.api, Swift.type(of: existing) is AnyClass else {',
+                    '}',
+                    () {
+                      indent.writeln('return false');
+                    },
+                  );
+                  indent.writeScoped('if (existing as AnyObject) === apiObject {', '}', () {
+                    indent.writeln('entry.api = nil');
+                    indent.writeln('return true');
+                  });
+                  indent.writeln('return false');
+                });
+              });
+              indent.writeln('list.append(wrapper)');
+              indent.writeln('${api.name}InstanceTracker.instancesOf${api.name}[name] = list');
+              indent.writeln('return wrapper');
             }, addTrailingNewline: false);
             indent.addScoped(' else {', '}', () {
-              indent.writeln(
-                '${api.name}InstanceTracker.instancesOf${api.name}.removeValue(forKey: name)',
+              indent.writeScoped(
+                'if var list = ${api.name}InstanceTracker.instancesOf${api.name}[name] {',
+                '}',
+                () {
+                  indent.writeln('let removed = list.popLast()');
+                  indent.writeln('removed?.api = nil');
+                  indent.writeScoped('if list.isEmpty {', '}', () {
+                    indent.writeln(
+                      '${api.name}InstanceTracker.instancesOf${api.name}.removeValue(forKey: name)',
+                    );
+                  }, addTrailingNewline: false);
+                  indent.addScoped(' else {', '}', () {
+                    indent.writeln(
+                      '${api.name}InstanceTracker.instancesOf${api.name}[name] = list',
+                    );
+                  });
+                },
               );
+              indent.writeln('return nil');
             });
           },
         );
         indent.writeScoped(
-          '@objc static func getInstance(name: String) -> ${api.name}Setup? {',
+          'static func unregister(api: ${api.name}, name: String = ${_classNamePrefix}PigeonInternal.defaultInstanceName) {',
           '}',
           () {
-            indent.writeln('return ${api.name}InstanceTracker.instancesOf${api.name}[name] ?? nil');
+            indent.writeln('${api.name}InstanceTracker.lock.lock()');
+            indent.writeln('defer { ${api.name}InstanceTracker.lock.unlock() }');
+            indent.writeScoped(
+              'guard Swift.type(of: api) is AnyClass, var list = ${api.name}InstanceTracker.instancesOf${api.name}[name] else {',
+              '}',
+              () {
+                indent.writeln('return');
+              },
+            );
+            indent.writeln('let apiObject = api as AnyObject');
+            indent.writeScoped('list.removeAll { entry in', '}', () {
+              indent.writeScoped(
+                'guard let existing = entry.api, Swift.type(of: existing) is AnyClass else {',
+                '}',
+                () {
+                  indent.writeln('return false');
+                },
+              );
+              indent.writeScoped('if (existing as AnyObject) === apiObject {', '}', () {
+                indent.writeln('entry.api = nil');
+                indent.writeln('return true');
+              });
+              indent.writeln('return false');
+            });
+            indent.writeScoped('if list.isEmpty {', '}', () {
+              indent.writeln(
+                '${api.name}InstanceTracker.instancesOf${api.name}.removeValue(forKey: name)',
+              );
+            }, addTrailingNewline: false);
+            indent.addScoped(' else {', '}', () {
+              indent.writeln('${api.name}InstanceTracker.instancesOf${api.name}[name] = list');
+            });
+          },
+        );
+        indent.writeScoped(
+          'static func unregister(setup: ${api.name}Setup, name: String = ${_classNamePrefix}PigeonInternal.defaultInstanceName) {',
+          '}',
+          () {
+            indent.writeln('${api.name}InstanceTracker.lock.lock()');
+            indent.writeln('defer { ${api.name}InstanceTracker.lock.unlock() }');
+            indent.writeScoped(
+              'guard var list = ${api.name}InstanceTracker.instancesOf${api.name}[name] else {',
+              '}',
+              () {
+                indent.writeln('return');
+              },
+            );
+            indent.writeScoped('list.removeAll { entry in', '}', () {
+              indent.writeScoped('if entry === setup {', '}', () {
+                indent.writeln('entry.api = nil');
+                indent.writeln('return true');
+              });
+              indent.writeln('return false');
+            });
+            indent.writeScoped('if list.isEmpty {', '}', () {
+              indent.writeln(
+                '${api.name}InstanceTracker.instancesOf${api.name}.removeValue(forKey: name)',
+              );
+            }, addTrailingNewline: false);
+            indent.addScoped(' else {', '}', () {
+              indent.writeln('${api.name}InstanceTracker.instancesOf${api.name}[name] = list');
+            });
+          },
+        );
+        indent.writeScoped(
+          '@objc static func getInstance(name: String = ${_classNamePrefix}PigeonInternal.defaultInstanceName) -> ${api.name}Setup? {',
+          '}',
+          () {
+            indent.writeln('${api.name}InstanceTracker.lock.lock()');
+            indent.writeln('defer { ${api.name}InstanceTracker.lock.unlock() }');
+            indent.writeln('return ${api.name}InstanceTracker.instancesOf${api.name}[name]?.last');
           },
         );
       }
@@ -1648,11 +1772,10 @@ if (wrapped == nil) {
   }) {
     final String apiName = api.name;
     if (generatorOptions.useFfi) {
-      indent.format('''
-        class ${apiName}InstanceTracker {
-          static var instancesOf$apiName = [String: ${apiName}Setup?]()
-        }
-        ''');
+      indent.writeScoped('class ${apiName}InstanceTracker {', '}', () {
+        indent.writeln('static let lock = NSLock()');
+        indent.writeln('static var instancesOf$apiName = [String: [${apiName}Setup]]()');
+      });
     }
 
     const generatedComments = <String>[

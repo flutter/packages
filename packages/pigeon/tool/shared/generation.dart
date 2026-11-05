@@ -144,9 +144,8 @@ Future<int> _compileNativeInteropExampleApp() async {
     } catch (_) {}
   }
 
-  final gradleCommand = Platform.isWindows ? r'.\gradlew.bat' : './gradlew';
   return runProcess(
-    gradleCommand,
+    gradlewFile.absolute.path,
     <String>[':app:compileReleaseKotlin'],
     workingDirectory: androidDir,
     environment: environment,

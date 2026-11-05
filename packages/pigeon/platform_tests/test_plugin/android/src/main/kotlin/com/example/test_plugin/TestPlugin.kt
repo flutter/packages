@@ -4,8 +4,10 @@
 
 package com.example.test_plugin
 
+import android.content.Context
 import android.os.Handler
 import android.os.Looper
+import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding
 import kotlin.coroutines.resume
@@ -37,7 +39,8 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi, HostCallbackCoreApi {
   private var flutterSmallApiOne: FlutterSmallApi? = null
   private var flutterSmallApiTwo: FlutterSmallApi? = null
   private var proxyApiRegistrar: ProxyApiRegistrar? = null
-  private var niMessageApi: NativeInteropHostIntegrationCoreApiRegistrar? = null
+  private var niMessageApiImpl: NativeInteropIntegrationTests? = null
+  private var niReservedNamesRegistrar: NativeInteropReservedNamesHostApiRegistrar? = null
   private var eventChannelOne: StreamConsistentNumbersEventChannel? = null
 
   override fun onAttachedToEngine(binding: FlutterPluginBinding) {
@@ -47,9 +50,12 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi, HostCallbackCoreApi {
     testSuffixApiOne.setUp(binding, "suffixOne")
     val testSuffixApiTwo = TestPluginWithSuffix()
     testSuffixApiTwo.setUp(binding, "suffixTwo")
-    niMessageApi =
-        NativeInteropHostIntegrationCoreApiRegistrar().register(NativeInteropIntegrationTests())
-    NativeInteropReservedNamesHostApiRegistrar().register(NativeInteropReservedNamesHostApiImpl())
+    val niTests = NativeInteropIntegrationTests(binding.applicationContext)
+    niMessageApiImpl = niTests
+    NativeInteropHostIntegrationCoreApiRegistrar().register(niTests)
+    niReservedNamesRegistrar =
+        NativeInteropReservedNamesHostApiRegistrar()
+            .register(NativeInteropReservedNamesHostApiImpl())
     flutterApi = FlutterIntegrationCoreApi(binding.binaryMessenger)
     flutterCallbackApi = FlutterCallbackCoreApi(binding.binaryMessenger)
     flutterSmallApiOne = FlutterSmallApi(binding.binaryMessenger, "suffixOne")
@@ -74,6 +80,10 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi, HostCallbackCoreApi {
   override fun onDetachedFromEngine(binding: FlutterPluginBinding) {
     HostIntegrationCoreApi.setUp(binding.binaryMessenger, null)
     HostCallbackCoreApi.setUp(binding.binaryMessenger, null)
+    niMessageApiImpl?.let { NativeInteropHostIntegrationCoreApiRegistrar().unregister(it) }
+    niMessageApiImpl = null
+    niReservedNamesRegistrar?.register(null)
+    niReservedNamesRegistrar = null
     proxyApiRegistrar?.tearDown()
   }
 
@@ -899,7 +909,8 @@ class TestPluginWithSuffix : HostSmallApi {
   override suspend fun voidVoid() {}
 }
 
-class NativeInteropIntegrationTests : NativeInteropHostIntegrationCoreApi {
+class NativeInteropIntegrationTests(private val context: Context? = null) :
+    NativeInteropHostIntegrationCoreApi {
   override fun noop() {}
 
   override fun echoAllTypes(everything: NativeInteropAllTypes): NativeInteropAllTypes {
@@ -2180,7 +2191,97 @@ class NativeInteropIntegrationTests : NativeInteropHostIntegrationCoreApi {
       return false
     }
     NativeInteropHostIntegrationCoreApiRegistrar().register(null, name = name)
-    return NativeInteropHostIntegrationCoreApiRegistrar().getInstance(name) == null
+    if (NativeInteropHostIntegrationCoreApiRegistrar().getInstance(name) != null) {
+      return false
+    }
+
+    // Multi-instance LIFO register(null) pops only the latest entry.
+    val lifoName = "testLifoHostInstance"
+    val lifoReg1 =
+        NativeInteropHostIntegrationCoreApiRegistrar()
+            .register(NativeInteropIntegrationTests(), name = lifoName)
+    NativeInteropHostIntegrationCoreApiRegistrar()
+        .register(NativeInteropIntegrationTests(), name = lifoName)
+    NativeInteropHostIntegrationCoreApiRegistrar().register(null, name = lifoName)
+    if (NativeInteropHostIntegrationCoreApiRegistrar().getInstance(lifoName) !== lifoReg1) {
+      return false
+    }
+    NativeInteropHostIntegrationCoreApiRegistrar().register(null, name = lifoName)
+    if (NativeInteropHostIntegrationCoreApiRegistrar().getInstance(lifoName) != null) {
+      return false
+    }
+
+    // Out-of-order instance-aware unregister(api) keeps other engine instances intact.
+    val outOfOrderName = "testOutOfOrderHostInstance"
+    val api1 = NativeInteropIntegrationTests()
+    val api2 = NativeInteropIntegrationTests()
+    NativeInteropHostIntegrationCoreApiRegistrar().register(api1, name = outOfOrderName)
+    val reg2 = NativeInteropHostIntegrationCoreApiRegistrar().register(api2, name = outOfOrderName)
+    NativeInteropHostIntegrationCoreApiRegistrar().unregister(api1, name = outOfOrderName)
+    if (NativeInteropHostIntegrationCoreApiRegistrar().getInstance(outOfOrderName) !== reg2) {
+      return false
+    }
+    NativeInteropHostIntegrationCoreApiRegistrar().unregister(api2, name = outOfOrderName)
+    if (NativeInteropHostIntegrationCoreApiRegistrar().getInstance(outOfOrderName) != null) {
+      return false
+    }
+
+    // Handle-based registrar1.register(null) removes registrar1 out-of-order.
+    val handleName = "testHandleHostInstance"
+    val handleApi1 = NativeInteropIntegrationTests()
+    val handleApi2 = NativeInteropIntegrationTests()
+    val registrar1 =
+        NativeInteropHostIntegrationCoreApiRegistrar().register(handleApi1, name = handleName)
+    val registrar2 =
+        NativeInteropHostIntegrationCoreApiRegistrar().register(handleApi2, name = handleName)
+    registrar1.register(null, name = handleName)
+    if (NativeInteropHostIntegrationCoreApiRegistrar().getInstance(handleName) !== registrar2) {
+      return false
+    }
+    NativeInteropHostIntegrationCoreApiRegistrar().unregister(handleApi2, name = handleName)
+    if (NativeInteropHostIntegrationCoreApiRegistrar().getInstance(handleName) != null) {
+      return false
+    }
+
+    // Exercise real secondary FlutterEngine attach and out-of-order destroy while primary engine
+    // remains active.
+    if (context != null) {
+      var engineCheckPassed = false
+      val runEngineCheck = {
+        val engine2 = FlutterEngine(context, null, false)
+        val engine3 = FlutterEngine(context, null, false)
+        engine2.plugins.add(TestPlugin())
+        engine3.plugins.add(TestPlugin())
+        engine2.destroy()
+        val afterSecondDestroyed =
+            NativeInteropHostIntegrationCoreApiRegistrar().getInstance() != null &&
+                NativeInteropReservedNamesHostApiRegistrar().getInstance() != null
+        engine3.destroy()
+        val afterThirdDestroyed =
+            NativeInteropHostIntegrationCoreApiRegistrar().getInstance() != null &&
+                NativeInteropReservedNamesHostApiRegistrar().getInstance() != null
+        engineCheckPassed = afterSecondDestroyed && afterThirdDestroyed
+      }
+      if (Looper.myLooper() == Looper.getMainLooper()) {
+        runEngineCheck()
+      } else {
+        val latch = java.util.concurrent.CountDownLatch(1)
+        Handler(Looper.getMainLooper()).post {
+          try {
+            runEngineCheck()
+          } finally {
+            latch.countDown()
+          }
+        }
+        if (!latch.await(10, java.util.concurrent.TimeUnit.SECONDS)) {
+          return false
+        }
+      }
+      if (!engineCheckPassed) {
+        return false
+      }
+    }
+    return true
   }
 
   override fun testDeregisterFlutterApi(): Boolean {
