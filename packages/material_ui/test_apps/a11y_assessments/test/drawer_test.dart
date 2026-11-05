@@ -47,4 +47,18 @@ void main() {
       containsSemantics(label: 'Messages', hasSelectedState: true, isSelected: false),
     );
   });
+
+  testWidgets('drawer header meets the 4.5:1 text contrast ratio', (WidgetTester tester) async {
+    await pumpsUseCase(tester, DrawerUseCase());
+
+    final ScaffoldState state = tester.firstState(find.byType(Scaffold));
+    state.openEndDrawer();
+    await tester.pumpAndSettle();
+
+    final DrawerHeader header = tester.widget<DrawerHeader>(find.byType(DrawerHeader));
+    final Color backgroundColor = (header.decoration! as BoxDecoration).color!;
+    final Color textColor = paintedTextColor(tester, find.text('Drawer Header'));
+
+    expect(contrastRatio(textColor, backgroundColor), greaterThanOrEqualTo(4.5));
+  });
 }
