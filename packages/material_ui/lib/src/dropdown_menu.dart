@@ -13,6 +13,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 import 'button_style.dart';
+import 'constants.dart';
 import 'dropdown_menu_theme.dart';
 import 'icon_button.dart';
 import 'icons.dart';
@@ -275,7 +276,8 @@ class DropdownMenu<T> extends StatefulWidget {
   /// Determine the width of the [DropdownMenu].
   ///
   /// If this is null, the width of the [DropdownMenu] will be the same as the width of the widest
-  /// menu item plus the width of the leading/trailing icon.
+  /// menu item plus the width of the leading/trailing icon. The width is also large enough for the
+  /// text field to display the label of the selected entry.
   final double? width;
 
   /// Determine the height of the menu.
@@ -1356,6 +1358,51 @@ class _DropdownMenuState<T> extends State<DropdownMenu<T>> {
             effectiveDecoration.label ??
             (effectiveDecoration.labelText != null ? Text(effectiveDecoration.labelText!) : null);
 
+        // The entry labels as displayed by the text field, used in _DropdownMenuBody to compute
+        // the preferred width. Measuring the menu items is not enough because the menu items
+        // and the text field use different text styles, so the text field could be too narrow
+        // to display the selected label. See https://github.com/flutter/flutter/issues/170780.
+        Widget? entryLabels;
+        if (widget.dropdownMenuEntries.isNotEmpty) {
+          // The text style used by the text field, see TextField.build.
+          final ThemeData themeData = Theme.of(context);
+          final TextStyle? textFieldStyle =
+              (useMaterial3 ? themeData.textTheme.bodyLarge : themeData.textTheme.titleMedium)
+                  ?.merge(effectiveTextStyle) ??
+              effectiveTextStyle;
+
+          // The leading and trailing children of _DropdownMenuBody already account for most of
+          // the horizontal space the text field adds around its text. This padding mimics the
+          // remaining space. It won't be correct if non default values are used.
+          //
+          // 4 pixels on each side cover the caret and the gap between the text and the
+          // trailing icon. See RenderEditable.floatingCursorAddedMargin.
+          var startPadding = 4.0;
+          var endPadding = 4.0;
+          if (effectiveDecoration.prefixIcon != null) {
+            // The text field reserves at least kMinInteractiveDimension pixels for the leading
+            // icon and adds a 4 pixels gap, while the leading child only adds 8 pixels on each
+            // side of the icon, which is 24 pixels wide by default.
+            startPadding += kMinInteractiveDimension + 4.0 - (24.0 + 2 * 8.0);
+          }
+          if (effectiveDecoration.suffixIcon == null) {
+            // Without a trailing icon, the text field adds its end content padding.
+            endPadding += 12.0;
+          }
+
+          entryLabels = ExcludeSemantics(
+            child: Padding(
+              padding: EdgeInsetsDirectional.only(start: startPadding, end: endPadding),
+              child: Stack(
+                children: <Widget>[
+                  for (final DropdownMenuEntry<T> entry in widget.dropdownMenuEntries)
+                    Text(entry.label, style: textFieldStyle, maxLines: 1),
+                ],
+              ),
+            ),
+          );
+        }
+
         // If [expandedInsets] is not null, the width of the text field should depend
         // on its parent width. So we don't need to use `_DropdownMenuBody` to
         // calculate the children's width.
@@ -1376,6 +1423,7 @@ class _DropdownMenuState<T> extends State<DropdownMenu<T>> {
                 children: <Widget>[
                   textField,
                   ..._initialMenu!,
+                  ?entryLabels,
                   if (effectiveLabel != null)
                     ExcludeSemantics(
                       child: Padding(
