@@ -162,6 +162,11 @@ class AVFoundationCamera extends CameraPlatform {
   }
 
   @override
+  Stream<VideoRecordingDurationChangedEvent> onVideoRecordingDurationChanged(int cameraId) {
+    return _cameraEvents(cameraId).whereType<VideoRecordingDurationChangedEvent>();
+  }
+
+  @override
   Stream<DeviceOrientationChangedEvent> onDeviceOrientationChanged() {
     return hostHandler.deviceEventStreamController.stream
         .whereType<DeviceOrientationChangedEvent>();
@@ -659,6 +664,13 @@ class HostCameraMessageHandler implements CameraEventApi {
         focusModeFromPlatform(initialState.focusMode),
         initialState.focusPointSupported,
       ),
+    );
+  }
+
+  @override
+  void videoRecordingDurationChanged(int durationMs) {
+    streamController.add(
+      VideoRecordingDurationChangedEvent(cameraId, Duration(milliseconds: durationMs)),
     );
   }
 }

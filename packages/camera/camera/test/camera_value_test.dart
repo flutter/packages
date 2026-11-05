@@ -29,6 +29,7 @@ void main() {
         previewPauseOrientation: DeviceOrientation.portraitUp,
         description: FakeController.fakeDescription,
         videoStabilizationMode: VideoStabilizationMode.level2,
+        videoRecordingDuration: Duration(seconds: 5),
       );
 
       expect(cameraValue, isA<CameraValue>());
@@ -48,6 +49,7 @@ void main() {
       expect(cameraValue.isPreviewPaused, false);
       expect(cameraValue.previewPauseOrientation, DeviceOrientation.portraitUp);
       expect(cameraValue.videoStabilizationMode, VideoStabilizationMode.level2);
+      expect(cameraValue.videoRecordingDuration, const Duration(seconds: 5));
     });
 
     test('Can be created as uninitialized', () {
@@ -71,6 +73,7 @@ void main() {
       expect(cameraValue.isPreviewPaused, isFalse);
       expect(cameraValue.previewPauseOrientation, null);
       expect(cameraValue.videoStabilizationMode, VideoStabilizationMode.off);
+      expect(cameraValue.videoRecordingDuration, Duration.zero);
     });
 
     test('Can be copied with isInitialized', () {
@@ -95,6 +98,7 @@ void main() {
       expect(cameraValue.isPreviewPaused, isFalse);
       expect(cameraValue.previewPauseOrientation, null);
       expect(cameraValue.videoStabilizationMode, VideoStabilizationMode.off);
+      expect(cameraValue.videoRecordingDuration, Duration.zero);
     });
 
     test('Has aspectRatio after setting size', () {
@@ -146,6 +150,7 @@ void main() {
         previewPauseOrientation: DeviceOrientation.portraitUp,
         description: FakeController.fakeDescription,
         videoStabilizationMode: VideoStabilizationMode.level3,
+        videoRecordingDuration: Duration(seconds: 12),
       );
 
       expect(
@@ -161,6 +166,7 @@ void main() {
         'isPreviewPaused: true, '
         'previewPausedOrientation: DeviceOrientation.portraitUp, '
         'videoStabilizationMode: VideoStabilizationMode.level3, '
+        'videoRecordingDuration: 0:00:12.000000, '
         // CameraDescription.toString is defined in the platform interface
         // package, so don't assert a specific value for it, only that
         // whatever it returns is inserted as expected.

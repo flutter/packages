@@ -8,14 +8,20 @@ import Flutter
 /// a `CameraPlugin` instance for testing. It contains an empty implementation for all protocol
 /// methods.
 final class MockFlutterBinaryMessenger: NSObject, FlutterBinaryMessenger {
-  func send(onChannel channel: String, message: Data?) {}
+  var sendOnChannelStub: ((String, Data?, FlutterBinaryReply?) -> Void)?
+
+  func send(onChannel channel: String, message: Data?) {
+    sendOnChannelStub?(channel, message, nil)
+  }
 
   func send(
     onChannel channel:
       String,
     message:
       Data?, binaryReply callback: FlutterBinaryReply? = nil
-  ) {}
+  ) {
+    sendOnChannelStub?(channel, message, callback)
+  }
 
   func setMessageHandlerOnChannel(
     _ channel: String,

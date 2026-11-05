@@ -248,6 +248,7 @@ class CaptureControllerImpl : public CaptureController,
   ComPtr<IMFMediaSource> audio_source_;
 
   TextureRegistrar* texture_registrar_ = nullptr;
+  int64_t last_reported_duration_ms_ = -1;
 };
 
 // Inferface for factory classes that create |CaptureController| instances.

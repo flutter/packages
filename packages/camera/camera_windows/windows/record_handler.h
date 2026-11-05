@@ -72,6 +72,9 @@ class RecordHandler {
   // Returns true if recording can be stopped.
   bool CanStop() const { return recording_state_ == RecordState::kRunning; }
 
+  // Returns true if currently recording.
+  bool IsRecording() const { return recording_state_ == RecordState::kRunning; }
+
   // Returns the filesystem path of the video recording.
   std::string GetRecordPath() const { return file_path_; }
 

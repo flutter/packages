@@ -87,4 +87,7 @@ abstract class CameraEventApi {
 
   /// Called when a camera error occurs on the native side.
   void error(String errorMessage);
+
+  /// Called when the video recording duration changes on the native side.
+  void videoRecordingDurationChanged(int durationMs);
 }

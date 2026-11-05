@@ -107,6 +107,12 @@ final class DefaultCamera: NSObject, Camera {
   private var outputForOffsetAdjusting: AVCaptureOutput?
   /// Time of the last appended video sample.
   private var lastAppendedVideoSampleTime = CMTime.invalid
+  /// Presentation time of the first video sample.
+  private var videoRecordingStartTime = CMTime.invalid
+  /// Last reported video recording duration in milliseconds.
+  private var lastReportedRecordingDurationMs: Int64 = -1
+  /// Lock to protect access to videoRecordingStartTime and lastReportedRecordingDurationMs across threads.
+  private let videoRecordingDurationLock = NSLock()
 
   /// True when images from the camera are being streamed.
   private(set) var isStreamingImages = false
@@ -611,6 +617,10 @@ final class DefaultCamera: NSObject, Camera {
     recordingTimeOffset = CMTime.zero
     outputForOffsetAdjusting = captureVideoOutput.avOutput
     lastAppendedVideoSampleTime = CMTime.negativeInfinity
+    videoRecordingDurationLock.lock()
+    videoRecordingStartTime = CMTime.invalid
+    lastReportedRecordingDurationMs = -1
+    videoRecordingDurationLock.unlock()
     completion(.success(()))
   }
 
@@ -746,6 +756,10 @@ final class DefaultCamera: NSObject, Camera {
     }
 
     isRecording = false
+    videoRecordingDurationLock.lock()
+    videoRecordingStartTime = CMTime.invalid
+    lastReportedRecordingDurationMs = -1
+    videoRecordingDurationLock.unlock()
 
     // When `isRecording` is true `startWriting` was already called so `videoWriter.status`
     // is always either `.writing` or `.failed` and `finishWriting` does not throw exceptions so
@@ -1445,6 +1459,9 @@ final class DefaultCamera: NSObject, Camera {
 
       if isFirstVideoSample {
         videoWriter?.startSession(atSourceTime: sampleTime)
+        videoRecordingDurationLock.lock()
+        videoRecordingStartTime = sampleTime
+        videoRecordingDurationLock.unlock()
         // fix sample times not being numeric when pause/resume happens before first sample buffer
         // arrives
         // https://github.com/flutter/flutter/issues/132014
@@ -1480,6 +1497,29 @@ final class DefaultCamera: NSObject, Camera {
         if nextSampleTime > lastAppendedVideoSampleTime {
           let _ = videoAdaptor?.append(nextBuffer!, withPresentationTime: nextSampleTime)
           lastAppendedVideoSampleTime = nextSampleTime
+          var durationMs: Int64 = -1
+          var shouldReport = false
+
+          videoRecordingDurationLock.lock()
+          if CMTIME_IS_NUMERIC(videoRecordingStartTime) {
+            let duration = CMTimeSubtract(nextSampleTime, videoRecordingStartTime)
+            let calculatedDurationMs = Int64(CMTimeGetSeconds(duration) * 1000)
+            if calculatedDurationMs >= 0
+              && (calculatedDurationMs - lastReportedRecordingDurationMs >= 100
+                || lastReportedRecordingDurationMs < 0)
+            {
+              lastReportedRecordingDurationMs = calculatedDurationMs
+              durationMs = calculatedDurationMs
+              shouldReport = true
+            }
+          }
+          videoRecordingDurationLock.unlock()
+
+          if shouldReport {
+            ensureToRunOnMainQueue { [weak self] in
+              self?.dartAPI?.videoRecordingDurationChanged(durationMs: durationMs) { _ in }
+            }
+          }
         }
       } else {
         if recordingTimeOffset.value != 0 {

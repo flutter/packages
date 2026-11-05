@@ -291,6 +291,13 @@ void CameraImpl::OnStopRecordFailed(CameraResult result,
   }
 };
 
+void CameraImpl::OnRecordDurationChanged(int64_t duration_ms) {
+  if (messenger_ && camera_id_ >= 0) {
+    GetEventApi()->VideoRecordingDurationChanged(
+        duration_ms, []() {}, [](const FlutterError& error) {});
+  }
+}
+
 void CameraImpl::OnTakePictureSucceeded(const std::string& file_path) {
   auto pending_result =
       GetPendingStringResultByType(PendingResultType::kTakePicture);

@@ -1,3 +1,7 @@
+## 0.3.6
+
+* Adds support for `onVideoRecordingDurationChanged`.
+
 ## 0.3.5+7
 
 * Fixes `availableCameras` failing when a video input device cannot be started, for example

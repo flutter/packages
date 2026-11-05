@@ -1,3 +1,7 @@
+## 0.7.7
+
+* Adds support for `onVideoRecordingDurationChanged` to report the current duration of recorded video.
+
 ## 0.7.6+1
 
 * Fixes video recording duration discrepancy by waiting for the first recorded frame before completing `startVideoCapturing`, and validates errors on `stopVideoRecording`.
