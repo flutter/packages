@@ -1,3 +1,8 @@
+## 2.15.1
+
+* Fixes `VideoRecordedEvent` equality and `hashCode` to compare the recorded file's path,
+  so equal events always have equal hash codes.
+
 ## 2.15.0
 
 * Adds `isZeroShutterLagSupported` and `setZeroShutterLagEnabled` for
