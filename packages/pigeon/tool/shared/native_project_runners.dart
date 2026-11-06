@@ -2,10 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:io' show File, Platform;
-
-import 'package:path/path.dart' as p;
-
 import 'flutter_utils.dart';
 import 'process_utils.dart';
 
@@ -54,11 +50,7 @@ Future<int> runXcodeBuild(
 }
 
 Future<int> runGradleBuild(String nativeProjectDirectory, [String? command]) {
-  final gradlew = Platform.isWindows ? 'gradlew.bat' : 'gradlew';
-  return runProcess(
-    File(p.join(nativeProjectDirectory, gradlew)).absolute.path,
-    <String>[if (command != null) command],
-    workingDirectory: nativeProjectDirectory,
-    runInShell: Platform.isWindows,
-  );
+  return runProcess('./gradlew', <String>[
+    if (command != null) command,
+  ], workingDirectory: nativeProjectDirectory);
 }
