@@ -58,6 +58,14 @@ Camera errors can be listened using the platform's `onCameraError` method.
 Listening to errors is important, and in certain situations,
 disposing of the camera is the only way to reset the situation.
 
+## Capture File Location
+
+By default, pictures and videos are saved to `camera\pictures` and
+`camera\videos` in the user's temp directory (as returned by `GetTempPathW`).
+Windows may delete files there, for example through Storage Sense or Disk
+Cleanup, so if you need to keep a capture, move or copy it to a permanent
+location, for example with `XFile.saveTo`.
+
 ## Custom Video Recording Path
 
 Ensure you use the [path_provider](https://pub.dev/packages/path_provider) package to resolve a valid system path (such as `getApplicationDocumentsDirectory()` or `getApplicationSupportDirectory()`). This helps avoid OS permission issues (`Access Denied`) when writing files directly to protected directories like the root drive.
