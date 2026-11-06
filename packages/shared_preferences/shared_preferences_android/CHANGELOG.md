@@ -1,3 +1,7 @@
+## 2.5.5
+
+* Updates to Pigeon 29.0.13 and `jni` `^1.1.1`, removing manual web conditional FFI export and R8 consumer rules workarounds.
+
 ## 2.5.4
 
 * Fixes eager SharedPreferences fetch in `LegacySharedPreferencesPlugin` executing synchronous disk I/O on Android main thread during startup by deferring the fetch until first use.
