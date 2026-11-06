@@ -1836,8 +1836,12 @@ void main() {
     expect(code, contains('Swift.type(of: api) is AnyClass'));
     expect(code, contains('HostApiInstanceTracker.instancesOfHostApi.removeValue(forKey: name)'));
     expect(code, contains('return HostApiInstanceTracker.instancesOfHostApi[name]?.last'));
+    expect(code, contains('static var registeredFlutterApi = [String: [FlutterApi]]()'));
+    expect(code, contains('FlutterApiRegistrar.lock.lock()'));
     expect(code, contains('registerInstance(api: FlutterApiBridge?, name: String = '));
+    expect(code, contains('unregisterInstance(api: FlutterApiBridge, name: String = '));
     expect(code, contains('FlutterApiRegistrar.registeredFlutterApi.removeValue(forKey: name)'));
+    expect(code, contains('return FlutterApiRegistrar.registeredFlutterApi[name]?.last'));
   });
 
   test('ffi bridges of sealed class subclasses extend the sealed bridge', () {

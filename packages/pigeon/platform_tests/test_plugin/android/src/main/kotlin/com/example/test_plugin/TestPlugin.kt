@@ -2291,6 +2291,55 @@ class NativeInteropIntegrationTests(private val context: Context? = null) :
 
   override fun testDeregisterFlutterApi(): Boolean {
     val name = "testDeregisterFlutterInstance"
+    val makeApi = { label: String ->
+      object : NativeInteropReservedNamesFlutterApi {
+        override fun release(value: String): String = "$label:$value"
+
+        override fun type(): String = label
+
+        override fun implementIn(value: String): String = "$label:$value"
+
+        override fun isNull(): Boolean = false
+
+        override fun getReference(): String = label
+      }
+    }
+    val api1 = makeApi("engine1")
+    val api2 = makeApi("engine2")
+    val registrar = NativeInteropReservedNamesFlutterApiRegistrar()
+
+    registrar.registerInstance(api1, name = name)
+    registrar.registerInstance(api2, name = name)
+    if (registrar.getInstance(name)?.release("ping") != "engine2:ping") {
+      return false
+    }
+
+    // Re-registering api1 deduplicates and moves it to the top of the stack.
+    registrar.registerInstance(api1, name = name)
+    if (registrar.getInstance(name)?.release("ping") != "engine1:ping") {
+      return false
+    }
+
+    // Single unregisterInstance(api1) removes api1 completely and restores api2.
+    registrar.unregisterInstance(api1, name = name)
+    if (registrar.getInstance(name)?.release("ping") != "engine2:ping") {
+      return false
+    }
+
+    // Out-of-order unregisterInstance on bottom entry leaves top entry intact.
+    val api3 = makeApi("engine3")
+    registrar.registerInstance(api3, name = name)
+    registrar.unregisterInstance(api2, name = name)
+    if (registrar.getInstance(name)?.release("ping") != "engine3:ping") {
+      return false
+    }
+
+    // registerInstance(null) pops the remaining entry.
+    registrar.registerInstance(null, name = name)
+    if (registrar.getInstance(name) != null) {
+      return false
+    }
+
     NativeInteropFlutterIntegrationCoreApiRegistrar().registerInstance(null, name = name)
     return NativeInteropFlutterIntegrationCoreApiRegistrar().getInstance(name) == null
   }

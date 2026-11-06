@@ -8305,35 +8305,80 @@ protocol NativeInteropHostIntegrationCoreApi {
 }
 
 @objc class NativeInteropFlutterIntegrationCoreApiRegistrar: NSObject {
+  private static let lock = NSLock()
   static var registeredNativeInteropFlutterIntegrationCoreApi = [
-    String: NativeInteropFlutterIntegrationCoreApi
+    String: [NativeInteropFlutterIntegrationCoreApi]
   ]()
 
   @objc static func registerInstance(
     api: NativeInteropFlutterIntegrationCoreApiBridge?,
     name: String = NativeInteropTestsPigeonInternal.defaultInstanceName
   ) {
+    NativeInteropFlutterIntegrationCoreApiRegistrar.lock.lock()
+    defer { NativeInteropFlutterIntegrationCoreApiRegistrar.lock.unlock() }
     if let api = api {
+      let apiObject = api as AnyObject
+      var list =
+        NativeInteropFlutterIntegrationCoreApiRegistrar
+        .registeredNativeInteropFlutterIntegrationCoreApi[name] ?? []
+      list.removeAll { ($0.api as AnyObject) === apiObject }
+      list.append(NativeInteropFlutterIntegrationCoreApi(api: api))
       NativeInteropFlutterIntegrationCoreApiRegistrar
-        .registeredNativeInteropFlutterIntegrationCoreApi[name] =
-        NativeInteropFlutterIntegrationCoreApi(api: api)
+        .registeredNativeInteropFlutterIntegrationCoreApi[name] = list
     } else {
+      if var list =
+        NativeInteropFlutterIntegrationCoreApiRegistrar
+        .registeredNativeInteropFlutterIntegrationCoreApi[name]
+      {
+        _ = list.popLast()
+        if list.isEmpty {
+          NativeInteropFlutterIntegrationCoreApiRegistrar
+            .registeredNativeInteropFlutterIntegrationCoreApi.removeValue(forKey: name)
+        } else {
+          NativeInteropFlutterIntegrationCoreApiRegistrar
+            .registeredNativeInteropFlutterIntegrationCoreApi[name] = list
+        }
+      }
+    }
+  }
+
+  @objc static func unregisterInstance(
+    api: NativeInteropFlutterIntegrationCoreApiBridge,
+    name: String = NativeInteropTestsPigeonInternal.defaultInstanceName
+  ) {
+    NativeInteropFlutterIntegrationCoreApiRegistrar.lock.lock()
+    defer { NativeInteropFlutterIntegrationCoreApiRegistrar.lock.unlock() }
+    guard
+      var list =
+        NativeInteropFlutterIntegrationCoreApiRegistrar
+        .registeredNativeInteropFlutterIntegrationCoreApi[name]
+    else {
+      return
+    }
+    let apiObject = api as AnyObject
+    list.removeAll { ($0.api as AnyObject) === apiObject }
+    if list.isEmpty {
       NativeInteropFlutterIntegrationCoreApiRegistrar
         .registeredNativeInteropFlutterIntegrationCoreApi.removeValue(forKey: name)
+    } else {
+      NativeInteropFlutterIntegrationCoreApiRegistrar
+        .registeredNativeInteropFlutterIntegrationCoreApi[name] = list
     }
   }
 
   static func getInstance(name: String = NativeInteropTestsPigeonInternal.defaultInstanceName)
     -> NativeInteropFlutterIntegrationCoreApi?
   {
+    NativeInteropFlutterIntegrationCoreApiRegistrar.lock.lock()
+    defer { NativeInteropFlutterIntegrationCoreApiRegistrar.lock.unlock() }
     return
       NativeInteropFlutterIntegrationCoreApiRegistrar
-      .registeredNativeInteropFlutterIntegrationCoreApi[name]
+      .registeredNativeInteropFlutterIntegrationCoreApi[name]?.last
   }
 }
 
 class NativeInteropFlutterIntegrationCoreApi {
-  private let api: NativeInteropFlutterIntegrationCoreApiBridge
+  fileprivate let api: NativeInteropFlutterIntegrationCoreApiBridge
 
   fileprivate init(api: NativeInteropFlutterIntegrationCoreApiBridge) {
     self.api = api
@@ -10128,34 +10173,80 @@ protocol NativeInteropReservedNamesHostApi {
 }
 
 @objc class NativeInteropReservedNamesFlutterApiRegistrar: NSObject {
+  private static let lock = NSLock()
   static var registeredNativeInteropReservedNamesFlutterApi = [
-    String: NativeInteropReservedNamesFlutterApi
+    String: [NativeInteropReservedNamesFlutterApi]
   ]()
 
   @objc static func registerInstance(
     api: NativeInteropReservedNamesFlutterApiBridge?,
     name: String = NativeInteropTestsPigeonInternal.defaultInstanceName
   ) {
+    NativeInteropReservedNamesFlutterApiRegistrar.lock.lock()
+    defer { NativeInteropReservedNamesFlutterApiRegistrar.lock.unlock() }
     if let api = api {
+      let apiObject = api as AnyObject
+      var list =
+        NativeInteropReservedNamesFlutterApiRegistrar.registeredNativeInteropReservedNamesFlutterApi[
+          name] ?? []
+      list.removeAll { ($0.api as AnyObject) === apiObject }
+      list.append(NativeInteropReservedNamesFlutterApi(api: api))
       NativeInteropReservedNamesFlutterApiRegistrar.registeredNativeInteropReservedNamesFlutterApi[
-        name] = NativeInteropReservedNamesFlutterApi(api: api)
+        name] = list
     } else {
+      if var list =
+        NativeInteropReservedNamesFlutterApiRegistrar.registeredNativeInteropReservedNamesFlutterApi[
+          name]
+      {
+        _ = list.popLast()
+        if list.isEmpty {
+          NativeInteropReservedNamesFlutterApiRegistrar
+            .registeredNativeInteropReservedNamesFlutterApi.removeValue(forKey: name)
+        } else {
+          NativeInteropReservedNamesFlutterApiRegistrar
+            .registeredNativeInteropReservedNamesFlutterApi[name] = list
+        }
+      }
+    }
+  }
+
+  @objc static func unregisterInstance(
+    api: NativeInteropReservedNamesFlutterApiBridge,
+    name: String = NativeInteropTestsPigeonInternal.defaultInstanceName
+  ) {
+    NativeInteropReservedNamesFlutterApiRegistrar.lock.lock()
+    defer { NativeInteropReservedNamesFlutterApiRegistrar.lock.unlock() }
+    guard
+      var list =
+        NativeInteropReservedNamesFlutterApiRegistrar.registeredNativeInteropReservedNamesFlutterApi[
+          name]
+    else {
+      return
+    }
+    let apiObject = api as AnyObject
+    list.removeAll { ($0.api as AnyObject) === apiObject }
+    if list.isEmpty {
       NativeInteropReservedNamesFlutterApiRegistrar.registeredNativeInteropReservedNamesFlutterApi
         .removeValue(forKey: name)
+    } else {
+      NativeInteropReservedNamesFlutterApiRegistrar.registeredNativeInteropReservedNamesFlutterApi[
+        name] = list
     }
   }
 
   static func getInstance(name: String = NativeInteropTestsPigeonInternal.defaultInstanceName)
     -> NativeInteropReservedNamesFlutterApi?
   {
+    NativeInteropReservedNamesFlutterApiRegistrar.lock.lock()
+    defer { NativeInteropReservedNamesFlutterApiRegistrar.lock.unlock() }
     return
       NativeInteropReservedNamesFlutterApiRegistrar.registeredNativeInteropReservedNamesFlutterApi[
-        name]
+        name]?.last
   }
 }
 
 class NativeInteropReservedNamesFlutterApi {
-  private let api: NativeInteropReservedNamesFlutterApiBridge
+  fileprivate let api: NativeInteropReservedNamesFlutterApiBridge
 
   fileprivate init(api: NativeInteropReservedNamesFlutterApiBridge) {
     self.api = api

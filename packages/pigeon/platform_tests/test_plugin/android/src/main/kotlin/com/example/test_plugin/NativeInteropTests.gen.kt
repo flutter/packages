@@ -4853,28 +4853,58 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
  */
 /// Map that stores instances
 val registeredNativeInteropFlutterIntegrationCoreApi:
-    MutableMap<String, NativeInteropFlutterIntegrationCoreApi> =
+    MutableMap<String, MutableList<NativeInteropFlutterIntegrationCoreApi>> =
     mutableMapOf()
 
 /// Class that stores instances
 @Keep
 class NativeInteropFlutterIntegrationCoreApiRegistrar() {
-
   /// Registers an instance with the given name.
   fun registerInstance(
       api: NativeInteropFlutterIntegrationCoreApi?,
       name: String = defaultInstanceName
   ) {
-    if (api != null) {
-      registeredNativeInteropFlutterIntegrationCoreApi[name] = api
-    } else {
-      registeredNativeInteropFlutterIntegrationCoreApi.remove(name)
+    kotlin.synchronized(registeredNativeInteropFlutterIntegrationCoreApi) {
+      if (api != null) {
+        val list =
+            registeredNativeInteropFlutterIntegrationCoreApi.getOrPut(name) { mutableListOf() }
+        list.removeAll { it === api }
+        list.add(api)
+      } else {
+        val list = registeredNativeInteropFlutterIntegrationCoreApi[name]
+        if (list != null) {
+          if (list.isNotEmpty()) {
+            list.removeAt(list.lastIndex)
+          }
+          if (list.isEmpty()) {
+            registeredNativeInteropFlutterIntegrationCoreApi.remove(name)
+          }
+        }
+      }
+    }
+  }
+
+  /// Unregisters a specific instance with the given name.
+  fun unregisterInstance(
+      api: NativeInteropFlutterIntegrationCoreApi,
+      name: String = defaultInstanceName
+  ) {
+    kotlin.synchronized(registeredNativeInteropFlutterIntegrationCoreApi) {
+      val list = registeredNativeInteropFlutterIntegrationCoreApi[name]
+      if (list != null) {
+        list.removeAll { it === api }
+        if (list.isEmpty()) {
+          registeredNativeInteropFlutterIntegrationCoreApi.remove(name)
+        }
+      }
     }
   }
 
   /// Gets an instance with the given name.
   fun getInstance(name: String = defaultInstanceName): NativeInteropFlutterIntegrationCoreApi? {
-    return registeredNativeInteropFlutterIntegrationCoreApi[name]
+    return kotlin.synchronized(registeredNativeInteropFlutterIntegrationCoreApi) {
+      registeredNativeInteropFlutterIntegrationCoreApi[name]?.lastOrNull()
+    }
   }
 }
 
@@ -5466,28 +5496,57 @@ class NativeInteropReservedNamesHostApiRegistrar : NativeInteropReservedNamesHos
  */
 /// Map that stores instances
 val registeredNativeInteropReservedNamesFlutterApi:
-    MutableMap<String, NativeInteropReservedNamesFlutterApi> =
+    MutableMap<String, MutableList<NativeInteropReservedNamesFlutterApi>> =
     mutableMapOf()
 
 /// Class that stores instances
 @Keep
 class NativeInteropReservedNamesFlutterApiRegistrar() {
-
   /// Registers an instance with the given name.
   fun registerInstance(
       api: NativeInteropReservedNamesFlutterApi?,
       name: String = defaultInstanceName
   ) {
-    if (api != null) {
-      registeredNativeInteropReservedNamesFlutterApi[name] = api
-    } else {
-      registeredNativeInteropReservedNamesFlutterApi.remove(name)
+    kotlin.synchronized(registeredNativeInteropReservedNamesFlutterApi) {
+      if (api != null) {
+        val list = registeredNativeInteropReservedNamesFlutterApi.getOrPut(name) { mutableListOf() }
+        list.removeAll { it === api }
+        list.add(api)
+      } else {
+        val list = registeredNativeInteropReservedNamesFlutterApi[name]
+        if (list != null) {
+          if (list.isNotEmpty()) {
+            list.removeAt(list.lastIndex)
+          }
+          if (list.isEmpty()) {
+            registeredNativeInteropReservedNamesFlutterApi.remove(name)
+          }
+        }
+      }
+    }
+  }
+
+  /// Unregisters a specific instance with the given name.
+  fun unregisterInstance(
+      api: NativeInteropReservedNamesFlutterApi,
+      name: String = defaultInstanceName
+  ) {
+    kotlin.synchronized(registeredNativeInteropReservedNamesFlutterApi) {
+      val list = registeredNativeInteropReservedNamesFlutterApi[name]
+      if (list != null) {
+        list.removeAll { it === api }
+        if (list.isEmpty()) {
+          registeredNativeInteropReservedNamesFlutterApi.remove(name)
+        }
+      }
     }
   }
 
   /// Gets an instance with the given name.
   fun getInstance(name: String = defaultInstanceName): NativeInteropReservedNamesFlutterApi? {
-    return registeredNativeInteropReservedNamesFlutterApi[name]
+    return kotlin.synchronized(registeredNativeInteropReservedNamesFlutterApi) {
+      registeredNativeInteropReservedNamesFlutterApi[name]?.lastOrNull()
+    }
   }
 }
 

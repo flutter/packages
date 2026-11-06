@@ -18232,6 +18232,48 @@ extension NativeInteropFlutterIntegrationCoreApiRegistrar$$Methods
     ).check();
   }
 
+  static final _id_unregisterInstance = NativeInteropFlutterIntegrationCoreApiRegistrar._class
+      .instanceMethodId(
+        r'unregisterInstance',
+        r'(Lcom/example/test_plugin/NativeInteropFlutterIntegrationCoreApi;Ljava/lang/String;)V',
+      );
+
+  static final _unregisterInstance =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JThrowablePtr Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+              )
+            >
+          >('globalEnv_CallVoidMethod')
+          .asFunction<
+            jni$_.JThrowablePtr Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun unregisterInstance(api: com.example.test_plugin.NativeInteropFlutterIntegrationCoreApi, name: kotlin.String): kotlin.Unit`
+  void unregisterInstance(
+    NativeInteropFlutterIntegrationCoreApi nativeInteropFlutterIntegrationCoreApi,
+    jni$_.JString string,
+  ) {
+    final _$$selfRef = reference;
+    final _$nativeInteropFlutterIntegrationCoreApi =
+        nativeInteropFlutterIntegrationCoreApi.reference;
+    final _$string = string.reference;
+    _unregisterInstance(
+      _$$selfRef.pointer,
+      _id_unregisterInstance.pointer,
+      _$nativeInteropFlutterIntegrationCoreApi.pointer,
+      _$string.pointer,
+    ).check();
+  }
+
   static final _id_getInstance = NativeInteropFlutterIntegrationCoreApiRegistrar._class
       .instanceMethodId(
         r'getInstance',
@@ -19223,6 +19265,47 @@ extension NativeInteropReservedNamesFlutterApiRegistrar$$Methods
     _registerInstance(
       _$$selfRef.pointer,
       _id_registerInstance.pointer,
+      _$nativeInteropReservedNamesFlutterApi.pointer,
+      _$string.pointer,
+    ).check();
+  }
+
+  static final _id_unregisterInstance = NativeInteropReservedNamesFlutterApiRegistrar._class
+      .instanceMethodId(
+        r'unregisterInstance',
+        r'(Lcom/example/test_plugin/NativeInteropReservedNamesFlutterApi;Ljava/lang/String;)V',
+      );
+
+  static final _unregisterInstance =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JThrowablePtr Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+              )
+            >
+          >('globalEnv_CallVoidMethod')
+          .asFunction<
+            jni$_.JThrowablePtr Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun unregisterInstance(api: com.example.test_plugin.NativeInteropReservedNamesFlutterApi, name: kotlin.String): kotlin.Unit`
+  void unregisterInstance(
+    NativeInteropReservedNamesFlutterApi nativeInteropReservedNamesFlutterApi,
+    jni$_.JString string,
+  ) {
+    final _$$selfRef = reference;
+    final _$nativeInteropReservedNamesFlutterApi = nativeInteropReservedNamesFlutterApi.reference;
+    final _$string = string.reference;
+    _unregisterInstance(
+      _$$selfRef.pointer,
+      _id_unregisterInstance.pointer,
       _$nativeInteropReservedNamesFlutterApi.pointer,
       _$string.pointer,
     ).check();

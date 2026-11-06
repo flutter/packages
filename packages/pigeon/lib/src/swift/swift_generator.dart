@@ -1405,19 +1405,61 @@ if (wrapped == nil) {
     indent.newln();
     indent.write('@objc class ${api.name}Registrar: NSObject ');
     indent.addScoped('{', '}', () {
-      indent.writeln('static var registered${api.name} = [String: ${api.name}]()');
+      indent.writeln('private static let lock = NSLock()');
+      indent.writeln('static var registered${api.name} = [String: [${api.name}]]()');
       indent.newln();
       indent.write(
         '@objc static func registerInstance(api: ${api.name}Bridge?, name: String = ${_classNamePrefix}PigeonInternal.defaultInstanceName) ',
       );
       indent.addScoped('{', '}', () {
+        indent.writeln('${api.name}Registrar.lock.lock()');
+        indent.writeln('defer { ${api.name}Registrar.lock.unlock() }');
         indent.writeScoped('if let api = api {', '}', () {
-          indent.writeln(
-            '${api.name}Registrar.registered${api.name}[name] = ${api.name}(api: api)',
-          );
+          indent.writeln('let apiObject = api as AnyObject');
+          indent.writeln('var list = ${api.name}Registrar.registered${api.name}[name] ?? []');
+          indent.writeln(r'list.removeAll { ($0.api as AnyObject) === apiObject }');
+          indent.writeln('list.append(${api.name}(api: api))');
+          indent.writeln('${api.name}Registrar.registered${api.name}[name] = list');
         }, addTrailingNewline: false);
         indent.addScoped(' else {', '}', () {
+          indent.writeScoped(
+            'if var list = ${api.name}Registrar.registered${api.name}[name] {',
+            '}',
+            () {
+              indent.writeln('_ = list.popLast()');
+              indent.writeScoped('if list.isEmpty {', '}', () {
+                indent.writeln(
+                  '${api.name}Registrar.registered${api.name}.removeValue(forKey: name)',
+                );
+              }, addTrailingNewline: false);
+              indent.addScoped(' else {', '}', () {
+                indent.writeln('${api.name}Registrar.registered${api.name}[name] = list');
+              });
+            },
+          );
+        });
+      });
+      indent.newln();
+      indent.write(
+        '@objc static func unregisterInstance(api: ${api.name}Bridge, name: String = ${_classNamePrefix}PigeonInternal.defaultInstanceName) ',
+      );
+      indent.addScoped('{', '}', () {
+        indent.writeln('${api.name}Registrar.lock.lock()');
+        indent.writeln('defer { ${api.name}Registrar.lock.unlock() }');
+        indent.writeScoped(
+          'guard var list = ${api.name}Registrar.registered${api.name}[name] else {',
+          '}',
+          () {
+            indent.writeln('return');
+          },
+        );
+        indent.writeln('let apiObject = api as AnyObject');
+        indent.writeln(r'list.removeAll { ($0.api as AnyObject) === apiObject }');
+        indent.writeScoped('if list.isEmpty {', '}', () {
           indent.writeln('${api.name}Registrar.registered${api.name}.removeValue(forKey: name)');
+        }, addTrailingNewline: false);
+        indent.addScoped(' else {', '}', () {
+          indent.writeln('${api.name}Registrar.registered${api.name}[name] = list');
         });
       });
       indent.newln();
@@ -1425,14 +1467,16 @@ if (wrapped == nil) {
         'static func getInstance(name: String = ${_classNamePrefix}PigeonInternal.defaultInstanceName) -> ${api.name}? ',
       );
       indent.addScoped('{', '}', () {
-        indent.writeln('return ${api.name}Registrar.registered${api.name}[name]');
+        indent.writeln('${api.name}Registrar.lock.lock()');
+        indent.writeln('defer { ${api.name}Registrar.lock.unlock() }');
+        indent.writeln('return ${api.name}Registrar.registered${api.name}[name]?.last');
       });
     });
 
     indent.newln();
     indent.write('class ${api.name} ');
     indent.addScoped('{', '}', () {
-      indent.writeln('private let api: ${api.name}Bridge');
+      indent.writeln('fileprivate let api: ${api.name}Bridge');
       indent.newln();
       indent.write('fileprivate init(api: ${api.name}Bridge) ');
       indent.addScoped('{', '}', () {

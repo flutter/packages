@@ -2025,10 +2025,17 @@ void main() {
     expect(code, contains('@Volatile private var api: HostApi? = null'));
     expect(code, contains('kotlin.synchronized(HostApiInstances)'));
     expect(code, contains('HostApiInstances[name]?.lastOrNull()'));
+    expect(code, contains('val registeredFlutterApi: MutableMap<String, MutableList<FlutterApi>>'));
     expect(
       code,
       contains('fun registerInstance(api: FlutterApi?, name: String = defaultInstanceName)'),
     );
+    expect(
+      code,
+      contains('fun unregisterInstance(api: FlutterApi, name: String = defaultInstanceName)'),
+    );
+    expect(code, contains('kotlin.synchronized(registeredFlutterApi)'));
+    expect(code, contains('registeredFlutterApi[name]?.lastOrNull()'));
     expect(code, contains('registeredFlutterApi.remove(name)'));
   });
 

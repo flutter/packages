@@ -14971,6 +14971,21 @@ extension type NativeInteropFlutterIntegrationCoreApiRegistrar._(objc.ObjCObject
     );
   }
 
+  /// unregisterInstanceWithApi:name:
+  static void unregisterInstanceWithApi(
+    NativeInteropFlutterIntegrationCoreApiBridge api, {
+    required objc.NSString name,
+  }) {
+    final _$$ref = api.ref;
+    final _$$ref$1 = name.ref;
+    _objc_msgSend_pfv6jd(
+      _class_NativeInteropFlutterIntegrationCoreApiRegistrar,
+      _sel_unregisterInstanceWithApi_name_,
+      _$$ref.pointer,
+      _$$ref$1.pointer,
+    );
+  }
+
   /// Returns a new instance of NativeInteropFlutterIntegrationCoreApiRegistrar constructed with the default `new` method.
   NativeInteropFlutterIntegrationCoreApiRegistrar() : this.as(new$().object$);
 }
@@ -20075,6 +20090,21 @@ extension type NativeInteropReservedNamesFlutterApiRegistrar._(objc.ObjCObject o
       _class_NativeInteropReservedNamesFlutterApiRegistrar,
       _sel_registerInstanceWithApi_name_,
       _$$ref?.pointer ?? ffi.nullptr,
+      _$$ref$1.pointer,
+    );
+  }
+
+  /// unregisterInstanceWithApi:name:
+  static void unregisterInstanceWithApi(
+    NativeInteropReservedNamesFlutterApiBridge api, {
+    required objc.NSString name,
+  }) {
+    final _$$ref = api.ref;
+    final _$$ref$1 = name.ref;
+    _objc_msgSend_pfv6jd(
+      _class_NativeInteropReservedNamesFlutterApiRegistrar,
+      _sel_unregisterInstanceWithApi_name_,
+      _$$ref.pointer,
       _$$ref$1.pointer,
     );
   }
@@ -32709,6 +32739,9 @@ late final _sel_throwFlutterErrorWithWrappedError_ = objc.registerName(
 late final _sel_type = objc.registerName("type");
 late final _sel_typeWithError_ = objc.registerName("typeWithError:");
 late final _sel_typeWithWrappedError_ = objc.registerName("typeWithWrappedError:");
+late final _sel_unregisterInstanceWithApi_name_ = objc.registerName(
+  "unregisterInstanceWithApi:name:",
+);
 late final _sel_use = objc.registerName("use");
 late final _sel_useWithValue_wrappedError_ = objc.registerName("useWithValue:wrappedError:");
 late final _sel_user = objc.registerName("user");

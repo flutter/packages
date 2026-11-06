@@ -7547,11 +7547,42 @@ NativeInteropFlutterIntegrationCoreApi pigeon_register_NativeInteropFlutterInteg
   );
 }
 
+@internal
+void pigeon_unregister_NativeInteropFlutterIntegrationCoreApi({
+  NativeInteropFlutterIntegrationCoreApi? api,
+  String name = defaultInstanceName,
+}) {
+  throw UnsupportedError(
+    'Native Interop is not supported on this platform. Use NativeInteropFlutterIntegrationCoreApi.setUp instead.',
+  );
+}
+
+@internal
+void pigeon_set_up_NativeInteropFlutterIntegrationCoreApi(
+  NativeInteropFlutterIntegrationCoreApi? api, {
+  String name = defaultInstanceName,
+}) {
+  throw UnsupportedError(
+    'Native Interop is not supported on this platform. Use NativeInteropFlutterIntegrationCoreApi.setUp instead.',
+  );
+}
+
 final class NativeInteropFlutterIntegrationCoreApiRegistrar {
   NativeInteropFlutterIntegrationCoreApi register(
     NativeInteropFlutterIntegrationCoreApi api, {
     String name = defaultInstanceName,
-  }) => pigeon_native.pigeon_register_NativeInteropFlutterIntegrationCoreApi(api, name: name);
+  }) => pigeon_native.pigeon_register_NativeInteropFlutterIntegrationCoreApi(
+    api,
+    name: name.isEmpty ? defaultInstanceName : name,
+  );
+
+  void unregister({
+    NativeInteropFlutterIntegrationCoreApi? api,
+    String name = defaultInstanceName,
+  }) => pigeon_native.pigeon_unregister_NativeInteropFlutterIntegrationCoreApi(
+    api: api,
+    name: name.isEmpty ? defaultInstanceName : name,
+  );
 }
 
 /// The core interface that the Dart platform_test code implements for host
@@ -7902,13 +7933,12 @@ abstract class NativeInteropFlutterIntegrationCoreApi {
     BinaryMessenger? binaryMessenger,
     String messageChannelSuffix = '',
   }) {
-    if (!kIsWeb && api != null) {
-      NativeInteropFlutterIntegrationCoreApiRegistrar().register(
+    if (!kIsWeb) {
+      pigeon_native.pigeon_set_up_NativeInteropFlutterIntegrationCoreApi(
         api,
         name: messageChannelSuffix.isEmpty ? defaultInstanceName : messageChannelSuffix,
       );
     }
-
     messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -10635,9 +10665,12 @@ abstract class NativeInteropFlutterIntegrationCoreApi {
 
   static NativeInteropFlutterIntegrationCoreApi implement(
     NativeInteropFlutterIntegrationCoreApi api, {
-    String name = '',
+    String name = defaultInstanceName,
   }) {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar().register(api, name: name);
+    return NativeInteropFlutterIntegrationCoreApiRegistrar().register(
+      api,
+      name: name.isEmpty ? defaultInstanceName : name,
+    );
   }
 }
 
@@ -11124,11 +11157,40 @@ NativeInteropReservedNamesFlutterApi pigeon_register_NativeInteropReservedNamesF
   );
 }
 
+@internal
+void pigeon_unregister_NativeInteropReservedNamesFlutterApi({
+  NativeInteropReservedNamesFlutterApi? api,
+  String name = defaultInstanceName,
+}) {
+  throw UnsupportedError(
+    'Native Interop is not supported on this platform. Use NativeInteropReservedNamesFlutterApi.setUp instead.',
+  );
+}
+
+@internal
+void pigeon_set_up_NativeInteropReservedNamesFlutterApi(
+  NativeInteropReservedNamesFlutterApi? api, {
+  String name = defaultInstanceName,
+}) {
+  throw UnsupportedError(
+    'Native Interop is not supported on this platform. Use NativeInteropReservedNamesFlutterApi.setUp instead.',
+  );
+}
+
 final class NativeInteropReservedNamesFlutterApiRegistrar {
   NativeInteropReservedNamesFlutterApi register(
     NativeInteropReservedNamesFlutterApi api, {
     String name = defaultInstanceName,
-  }) => pigeon_native.pigeon_register_NativeInteropReservedNamesFlutterApi(api, name: name);
+  }) => pigeon_native.pigeon_register_NativeInteropReservedNamesFlutterApi(
+    api,
+    name: name.isEmpty ? defaultInstanceName : name,
+  );
+
+  void unregister({NativeInteropReservedNamesFlutterApi? api, String name = defaultInstanceName}) =>
+      pigeon_native.pigeon_unregister_NativeInteropReservedNamesFlutterApi(
+        api: api,
+        name: name.isEmpty ? defaultInstanceName : name,
+      );
 }
 
 /// The Flutter API counterpart of [NativeInteropReservedNamesHostApi].
@@ -11158,13 +11220,12 @@ abstract class NativeInteropReservedNamesFlutterApi {
     BinaryMessenger? binaryMessenger,
     String messageChannelSuffix = '',
   }) {
-    if (!kIsWeb && api != null) {
-      NativeInteropReservedNamesFlutterApiRegistrar().register(
+    if (!kIsWeb) {
+      pigeon_native.pigeon_set_up_NativeInteropReservedNamesFlutterApi(
         api,
         name: messageChannelSuffix.isEmpty ? defaultInstanceName : messageChannelSuffix,
       );
     }
-
     messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -11289,8 +11350,11 @@ abstract class NativeInteropReservedNamesFlutterApi {
 
   static NativeInteropReservedNamesFlutterApi implement(
     NativeInteropReservedNamesFlutterApi api, {
-    String name = '',
+    String name = defaultInstanceName,
   }) {
-    return NativeInteropReservedNamesFlutterApiRegistrar().register(api, name: name);
+    return NativeInteropReservedNamesFlutterApiRegistrar().register(
+      api,
+      name: name.isEmpty ? defaultInstanceName : name,
+    );
   }
 }

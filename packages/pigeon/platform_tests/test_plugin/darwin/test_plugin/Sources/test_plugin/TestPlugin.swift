@@ -2207,6 +2207,53 @@ class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
 
   func testDeregisterFlutterApi() throws -> Bool {
     let name = "testDeregisterFlutterInstance"
+    let bridge1 = TestPluginReservedFlutterBridge("engine1")
+    let bridge2 = TestPluginReservedFlutterBridge("engine2")
+    let bridge3 = TestPluginReservedFlutterBridge("engine3")
+
+    NativeInteropReservedNamesFlutterApiRegistrar.registerInstance(api: bridge1, name: name)
+    NativeInteropReservedNamesFlutterApiRegistrar.registerInstance(api: bridge2, name: name)
+    guard
+      try NativeInteropReservedNamesFlutterApi.getInstance(name: name)?.release(value: "ping")
+        == "engine2:ping"
+    else {
+      return false
+    }
+
+    // Re-registering bridge1 deduplicates and moves it to the top of the stack.
+    NativeInteropReservedNamesFlutterApiRegistrar.registerInstance(api: bridge1, name: name)
+    guard
+      try NativeInteropReservedNamesFlutterApi.getInstance(name: name)?.release(value: "ping")
+        == "engine1:ping"
+    else {
+      return false
+    }
+
+    // Single unregisterInstance removes bridge1 completely and restores bridge2.
+    NativeInteropReservedNamesFlutterApiRegistrar.unregisterInstance(api: bridge1, name: name)
+    guard
+      try NativeInteropReservedNamesFlutterApi.getInstance(name: name)?.release(value: "ping")
+        == "engine2:ping"
+    else {
+      return false
+    }
+
+    // Out-of-order unregisterInstance on bottom entry leaves top entry intact.
+    NativeInteropReservedNamesFlutterApiRegistrar.registerInstance(api: bridge3, name: name)
+    NativeInteropReservedNamesFlutterApiRegistrar.unregisterInstance(api: bridge2, name: name)
+    guard
+      try NativeInteropReservedNamesFlutterApi.getInstance(name: name)?.release(value: "ping")
+        == "engine3:ping"
+    else {
+      return false
+    }
+
+    // registerInstance(api: nil) pops the remaining entry.
+    NativeInteropReservedNamesFlutterApiRegistrar.registerInstance(api: nil, name: name)
+    guard NativeInteropReservedNamesFlutterApi.getInstance(name: name) == nil else {
+      return false
+    }
+
     NativeInteropFlutterIntegrationCoreApiRegistrar.registerInstance(api: nil, name: name)
     return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance(name: name) == nil
   }
@@ -2882,4 +2929,21 @@ final class StubPluginRegistrar: NSObject, FlutterPluginRegistrar {
     var viewController: NSViewController? { nil }
     func addApplicationDelegate(_ delegate: FlutterAppLifecycleDelegate) {}
   #endif
+}
+
+@objc
+private final class TestPluginReservedFlutterBridge: NSObject,
+  NativeInteropReservedNamesFlutterApiBridge
+{
+  let label: String
+  init(_ label: String) { self.label = label }
+  func release(value valueArg: NSString?, error: NativeInteropTestsError) -> NSString? {
+    "\(label):\(valueArg ?? "")" as NSString
+  }
+  func type(error: NativeInteropTestsError) -> NSString? { label as NSString }
+  func implementIn(value valueArg: NSString?, error: NativeInteropTestsError) -> NSString? {
+    "\(label):\(valueArg ?? "")" as NSString
+  }
+  func isNull(error: NativeInteropTestsError) -> NSNumber? { NSNumber(value: false) }
+  func getReference(error: NativeInteropTestsError) -> NSString? { label as NSString }
 }

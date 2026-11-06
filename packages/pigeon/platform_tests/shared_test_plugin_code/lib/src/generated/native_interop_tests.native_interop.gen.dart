@@ -9901,16 +9901,104 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
     with jni_bridge.$NativeInteropFlutterIntegrationCoreApi {
   _NativeInteropFlutterIntegrationCoreApiRegistrar(this.dartApi);
 
+  static final Map<String, List<(NativeInteropFlutterIntegrationCoreApi, Object)>>
+  _registeredHandles = <String, List<(NativeInteropFlutterIntegrationCoreApi, Object)>>{};
+  static final Map<String, NativeInteropFlutterIntegrationCoreApi> _setUpInstances =
+      <String, NativeInteropFlutterIntegrationCoreApi>{};
+
   final NativeInteropFlutterIntegrationCoreApi dartApi;
 
+  static void setUp(
+    NativeInteropFlutterIntegrationCoreApi? api, {
+    String name = defaultInstanceName,
+  }) {
+    final String resolvedName = name.isEmpty ? defaultInstanceName : name;
+    final NativeInteropFlutterIntegrationCoreApi? previous = _setUpInstances.remove(resolvedName);
+    if (previous != null && !identical(previous, api)) {
+      unregister(api: previous, name: resolvedName);
+    }
+    if (api != null) {
+      _NativeInteropFlutterIntegrationCoreApiRegistrar(api).register(name: resolvedName);
+      _setUpInstances[resolvedName] = api;
+    }
+  }
+
+  static void unregister({
+    NativeInteropFlutterIntegrationCoreApi? api,
+    String name = defaultInstanceName,
+  }) {
+    final String resolvedName = name.isEmpty ? defaultInstanceName : name;
+    final List<(NativeInteropFlutterIntegrationCoreApi, Object)>? handles =
+        _registeredHandles[resolvedName];
+    Object? removedHandle;
+    NativeInteropFlutterIntegrationCoreApi? removedApi;
+    if (handles != null && handles.isNotEmpty) {
+      if (api != null) {
+        for (int i = handles.length - 1; i >= 0; i--) {
+          if (identical(handles[i].$1, api)) {
+            final (NativeInteropFlutterIntegrationCoreApi, Object) removed = handles.removeAt(i);
+            removedApi = removed.$1;
+            removedHandle = removed.$2;
+            break;
+          }
+        }
+        if (removedHandle == null) {
+          return;
+        }
+      } else {
+        final (NativeInteropFlutterIntegrationCoreApi, Object) removed = handles.removeLast();
+        removedApi = removed.$1;
+        removedHandle = removed.$2;
+      }
+      if (handles.isEmpty) {
+        _registeredHandles.remove(resolvedName);
+      }
+    } else if (api != null) {
+      return;
+    }
+    if (removedApi != null && identical(_setUpInstances[resolvedName], removedApi)) {
+      _setUpInstances.remove(resolvedName);
+    }
+    if (Platform.isAndroid) {
+      if (removedHandle != null) {
+        jni_bridge.NativeInteropFlutterIntegrationCoreApiRegistrar().unregisterInstance(
+          removedHandle as jni_bridge.NativeInteropFlutterIntegrationCoreApi,
+          resolvedName.toJString(),
+        );
+      } else if (api == null) {
+        jni_bridge.NativeInteropFlutterIntegrationCoreApiRegistrar().registerInstance(
+          null,
+          resolvedName.toJString(),
+        );
+      }
+    }
+    if (Platform.isIOS || Platform.isMacOS) {
+      if (removedHandle != null) {
+        ffi_bridge.NativeInteropFlutterIntegrationCoreApiRegistrar.unregisterInstanceWithApi(
+          removedHandle as ffi_bridge.NativeInteropFlutterIntegrationCoreApiBridge,
+          name: NSString(resolvedName),
+        );
+      } else if (api == null) {
+        ffi_bridge.NativeInteropFlutterIntegrationCoreApiRegistrar.registerInstanceWithApi(
+          null,
+          name: NSString(resolvedName),
+        );
+      }
+    }
+  }
+
   NativeInteropFlutterIntegrationCoreApi register({String name = defaultInstanceName}) {
+    final String resolvedName = name.isEmpty ? defaultInstanceName : name;
+    unregister(api: dartApi, name: resolvedName);
     if (Platform.isAndroid) {
       final jni_bridge.NativeInteropFlutterIntegrationCoreApi impl =
           jni_bridge.NativeInteropFlutterIntegrationCoreApi.implement(this);
       jni_bridge.NativeInteropFlutterIntegrationCoreApiRegistrar().registerInstance(
         impl,
-        name.toJString(),
+        resolvedName.toJString(),
       );
+      (_registeredHandles[resolvedName] ??= <(NativeInteropFlutterIntegrationCoreApi, Object)>[])
+          .add((dartApi, impl));
     }
     if (Platform.isIOS || Platform.isMacOS) {
       final ObjCProtocolBuilder builder = ObjCProtocolBuilder(
@@ -12467,8 +12555,10 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
           ffi_bridge.NativeInteropFlutterIntegrationCoreApiBridge.as(builder.build());
       ffi_bridge.NativeInteropFlutterIntegrationCoreApiRegistrar.registerInstanceWithApi(
         impl,
-        name: NSString(name),
+        name: NSString(resolvedName),
       );
+      (_registeredHandles[resolvedName] ??= <(NativeInteropFlutterIntegrationCoreApi, Object)>[])
+          .add((dartApi, impl));
     }
     return dartApi;
   }
@@ -13542,6 +13632,16 @@ NativeInteropFlutterIntegrationCoreApi pigeon_register_NativeInteropFlutterInteg
   String name = defaultInstanceName,
 }) => _NativeInteropFlutterIntegrationCoreApiRegistrar(api).register(name: name);
 
+void pigeon_unregister_NativeInteropFlutterIntegrationCoreApi({
+  NativeInteropFlutterIntegrationCoreApi? api,
+  String name = defaultInstanceName,
+}) => _NativeInteropFlutterIntegrationCoreApiRegistrar.unregister(api: api, name: name);
+
+void pigeon_set_up_NativeInteropFlutterIntegrationCoreApi(
+  NativeInteropFlutterIntegrationCoreApi? api, {
+  String name = defaultInstanceName,
+}) => _NativeInteropFlutterIntegrationCoreApiRegistrar.setUp(api, name: name);
+
 NativeInteropReservedNamesHostApiForNativeInterop?
 pigeon_getInstance_NativeInteropReservedNamesHostApi({String channelName = defaultInstanceName}) =>
     _NativeInteropReservedNamesHostApiForNativeInterop.getInstance(channelName: channelName);
@@ -13949,15 +14049,104 @@ final class _NativeInteropReservedNamesFlutterApiRegistrar
     with jni_bridge.$NativeInteropReservedNamesFlutterApi {
   _NativeInteropReservedNamesFlutterApiRegistrar(this.dartApi);
 
+  static final Map<String, List<(NativeInteropReservedNamesFlutterApi, Object)>>
+  _registeredHandles = <String, List<(NativeInteropReservedNamesFlutterApi, Object)>>{};
+  static final Map<String, NativeInteropReservedNamesFlutterApi> _setUpInstances =
+      <String, NativeInteropReservedNamesFlutterApi>{};
+
   final NativeInteropReservedNamesFlutterApi dartApi;
 
+  static void setUp(
+    NativeInteropReservedNamesFlutterApi? api, {
+    String name = defaultInstanceName,
+  }) {
+    final String resolvedName = name.isEmpty ? defaultInstanceName : name;
+    final NativeInteropReservedNamesFlutterApi? previous = _setUpInstances.remove(resolvedName);
+    if (previous != null && !identical(previous, api)) {
+      unregister(api: previous, name: resolvedName);
+    }
+    if (api != null) {
+      _NativeInteropReservedNamesFlutterApiRegistrar(api).register(name: resolvedName);
+      _setUpInstances[resolvedName] = api;
+    }
+  }
+
+  static void unregister({
+    NativeInteropReservedNamesFlutterApi? api,
+    String name = defaultInstanceName,
+  }) {
+    final String resolvedName = name.isEmpty ? defaultInstanceName : name;
+    final List<(NativeInteropReservedNamesFlutterApi, Object)>? handles =
+        _registeredHandles[resolvedName];
+    Object? removedHandle;
+    NativeInteropReservedNamesFlutterApi? removedApi;
+    if (handles != null && handles.isNotEmpty) {
+      if (api != null) {
+        for (int i = handles.length - 1; i >= 0; i--) {
+          if (identical(handles[i].$1, api)) {
+            final (NativeInteropReservedNamesFlutterApi, Object) removed = handles.removeAt(i);
+            removedApi = removed.$1;
+            removedHandle = removed.$2;
+            break;
+          }
+        }
+        if (removedHandle == null) {
+          return;
+        }
+      } else {
+        final (NativeInteropReservedNamesFlutterApi, Object) removed = handles.removeLast();
+        removedApi = removed.$1;
+        removedHandle = removed.$2;
+      }
+      if (handles.isEmpty) {
+        _registeredHandles.remove(resolvedName);
+      }
+    } else if (api != null) {
+      return;
+    }
+    if (removedApi != null && identical(_setUpInstances[resolvedName], removedApi)) {
+      _setUpInstances.remove(resolvedName);
+    }
+    if (Platform.isAndroid) {
+      if (removedHandle != null) {
+        jni_bridge.NativeInteropReservedNamesFlutterApiRegistrar().unregisterInstance(
+          removedHandle as jni_bridge.NativeInteropReservedNamesFlutterApi,
+          resolvedName.toJString(),
+        );
+      } else if (api == null) {
+        jni_bridge.NativeInteropReservedNamesFlutterApiRegistrar().registerInstance(
+          null,
+          resolvedName.toJString(),
+        );
+      }
+    }
+    if (Platform.isIOS || Platform.isMacOS) {
+      if (removedHandle != null) {
+        ffi_bridge.NativeInteropReservedNamesFlutterApiRegistrar.unregisterInstanceWithApi(
+          removedHandle as ffi_bridge.NativeInteropReservedNamesFlutterApiBridge,
+          name: NSString(resolvedName),
+        );
+      } else if (api == null) {
+        ffi_bridge.NativeInteropReservedNamesFlutterApiRegistrar.registerInstanceWithApi(
+          null,
+          name: NSString(resolvedName),
+        );
+      }
+    }
+  }
+
   NativeInteropReservedNamesFlutterApi register({String name = defaultInstanceName}) {
+    final String resolvedName = name.isEmpty ? defaultInstanceName : name;
+    unregister(api: dartApi, name: resolvedName);
     if (Platform.isAndroid) {
       final jni_bridge.NativeInteropReservedNamesFlutterApi impl =
           jni_bridge.NativeInteropReservedNamesFlutterApi.implement(this);
       jni_bridge.NativeInteropReservedNamesFlutterApiRegistrar().registerInstance(
         impl,
-        name.toJString(),
+        resolvedName.toJString(),
+      );
+      (_registeredHandles[resolvedName] ??= <(NativeInteropReservedNamesFlutterApi, Object)>[]).add(
+        (dartApi, impl),
       );
     }
     if (Platform.isIOS || Platform.isMacOS) {
@@ -14023,7 +14212,10 @@ final class _NativeInteropReservedNamesFlutterApiRegistrar
           ffi_bridge.NativeInteropReservedNamesFlutterApiBridge.as(builder.build());
       ffi_bridge.NativeInteropReservedNamesFlutterApiRegistrar.registerInstanceWithApi(
         impl,
-        name: NSString(name),
+        name: NSString(resolvedName),
+      );
+      (_registeredHandles[resolvedName] ??= <(NativeInteropReservedNamesFlutterApi, Object)>[]).add(
+        (dartApi, impl),
       );
     }
     return dartApi;
@@ -14064,3 +14256,13 @@ NativeInteropReservedNamesFlutterApi pigeon_register_NativeInteropReservedNamesF
   NativeInteropReservedNamesFlutterApi api, {
   String name = defaultInstanceName,
 }) => _NativeInteropReservedNamesFlutterApiRegistrar(api).register(name: name);
+
+void pigeon_unregister_NativeInteropReservedNamesFlutterApi({
+  NativeInteropReservedNamesFlutterApi? api,
+  String name = defaultInstanceName,
+}) => _NativeInteropReservedNamesFlutterApiRegistrar.unregister(api: api, name: name);
+
+void pigeon_set_up_NativeInteropReservedNamesFlutterApi(
+  NativeInteropReservedNamesFlutterApi? api, {
+  String name = defaultInstanceName,
+}) => _NativeInteropReservedNamesFlutterApiRegistrar.setUp(api, name: name);

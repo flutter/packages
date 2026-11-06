@@ -2851,7 +2851,8 @@ name: foobar
       );
       expect(code, contains("import 'package:flutter/foundation.dart' show kIsWeb;"));
       expect(code, contains('if (!kIsWeb) {'));
-      expect(code, contains('if (!kIsWeb && api != null) {'));
+      expect(code, isNot(contains('if (!kIsWeb && api != null) {')));
+      expect(code, contains('pigeon_native.pigeon_set_up_Callbacks('));
       expect(
         code,
         contains(
@@ -2861,8 +2862,17 @@ name: foobar
       expect(code, contains('@internal\nApiForNativeInterop? pigeon_getInstance_Api({'));
       expect(code, contains('pigeon_native.pigeon_getInstance_Api(channelName: channelName)'));
       expect(code, contains('@internal\nCallbacks pigeon_register_Callbacks('));
+      expect(code, contains('@internal\nvoid pigeon_unregister_Callbacks({'));
+      expect(code, contains('@internal\nvoid pigeon_set_up_Callbacks('));
       expect(code, contains('final class CallbacksRegistrar'));
-      expect(code, contains('pigeon_native.pigeon_register_Callbacks(api, name: name)'));
+      expect(code, contains('pigeon_native.pigeon_register_Callbacks('));
+      expect(code, contains('pigeon_native.pigeon_unregister_Callbacks('));
+      expect(
+        code,
+        contains(
+          'static Callbacks implement(Callbacks api, {\n    String name = defaultInstanceName,',
+        ),
+      );
 
       final nativeInteropSink = StringBuffer();
       generator.generateNativeInterop(
@@ -2881,6 +2891,10 @@ name: foobar
       );
       expect(nativeInteropCode, contains('final class _CallbacksRegistrar'));
       expect(nativeInteropCode, contains('_CallbacksRegistrar(this.dartApi);'));
+      expect(nativeInteropCode, contains('_registeredHandles'));
+      expect(nativeInteropCode, contains('_setUpInstances'));
+      expect(nativeInteropCode, contains('unregisterInstance('));
+      expect(nativeInteropCode, contains('unregisterInstanceWithApi('));
       expect(nativeInteropCode, contains('final Callbacks dartApi;'));
       expect(nativeInteropCode, isNot(contains('if (dartApi != null)')));
 

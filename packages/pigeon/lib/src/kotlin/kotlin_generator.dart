@@ -810,29 +810,68 @@ if (wrapped == null) {
     AstFlutterApi api, {
     required String dartPackageName,
   }) {
-    indent.format('''
-/// Map that stores instances
-val registered${api.name}: MutableMap<String, ${api.name}> = mutableMapOf()
-
-/// Class that stores instances
-@Keep
-class ${api.name}Registrar() {
-
-  /// Registers an instance with the given name.
-  fun registerInstance(api: ${api.name}?, name: String = defaultInstanceName) {
-    if (api != null) {
-      registered${api.name}[name] = api
-    } else {
-      registered${api.name}.remove(name)
-    }
-  }
-
-  /// Gets an instance with the given name.
-  fun getInstance(name: String = defaultInstanceName): ${api.name}? {
-    return registered${api.name}[name]
-  }
-}
-''');
+    indent.writeln('/// Map that stores instances');
+    indent.writeln(
+      'val registered${api.name}: MutableMap<String, MutableList<${api.name}>> = mutableMapOf()',
+    );
+    indent.newln();
+    indent.writeln('/// Class that stores instances');
+    indent.writeln('@Keep');
+    indent.writeScoped('class ${api.name}Registrar() {', '}', () {
+      indent.writeln('/// Registers an instance with the given name.');
+      indent.writeScoped(
+        'fun registerInstance(api: ${api.name}?, name: String = defaultInstanceName) {',
+        '}',
+        () {
+          indent.writeScoped('kotlin.synchronized(registered${api.name}) {', '}', () {
+            indent.writeScoped('if (api != null) {', '}', () {
+              indent.writeln('val list = registered${api.name}.getOrPut(name) { mutableListOf() }');
+              indent.writeln('list.removeAll { it === api }');
+              indent.writeln('list.add(api)');
+            }, addTrailingNewline: false);
+            indent.addScoped(' else {', '}', () {
+              indent.writeln('val list = registered${api.name}[name]');
+              indent.writeScoped('if (list != null) {', '}', () {
+                indent.writeScoped('if (list.isNotEmpty()) {', '}', () {
+                  indent.writeln('list.removeAt(list.lastIndex)');
+                });
+                indent.writeScoped('if (list.isEmpty()) {', '}', () {
+                  indent.writeln('registered${api.name}.remove(name)');
+                });
+              });
+            });
+          });
+        },
+      );
+      indent.newln();
+      indent.writeln('/// Unregisters a specific instance with the given name.');
+      indent.writeScoped(
+        'fun unregisterInstance(api: ${api.name}, name: String = defaultInstanceName) {',
+        '}',
+        () {
+          indent.writeScoped('kotlin.synchronized(registered${api.name}) {', '}', () {
+            indent.writeln('val list = registered${api.name}[name]');
+            indent.writeScoped('if (list != null) {', '}', () {
+              indent.writeln('list.removeAll { it === api }');
+              indent.writeScoped('if (list.isEmpty()) {', '}', () {
+                indent.writeln('registered${api.name}.remove(name)');
+              });
+            });
+          });
+        },
+      );
+      indent.newln();
+      indent.writeln('/// Gets an instance with the given name.');
+      indent.writeScoped(
+        'fun getInstance(name: String = defaultInstanceName): ${api.name}? {',
+        '}',
+        () {
+          indent.writeScoped('return kotlin.synchronized(registered${api.name}) {', '}', () {
+            indent.writeln('registered${api.name}[name]?.lastOrNull()');
+          });
+        },
+      );
+    });
     indent.writeln('@Keep');
     indent.writeScoped('interface ${api.name} {', '}', () {
       for (final Method method in api.methods) {

@@ -141,4 +141,78 @@ class NativeInteropRegistrarTest {
     NativeInteropReservedNamesHostApiRegistrar().unregister(api2, name)
     assertNull(NativeInteropReservedNamesHostApiRegistrar().getInstance(name))
   }
+
+  @Test
+  fun flutterApiRegistrarOutOfOrderUnregisterAndNullPopPreservesStack() {
+    val name = "unitTestFlutterApiStack"
+    val api1 = FakeReservedNamesFlutterApi("engine1")
+    val api2 = FakeReservedNamesFlutterApi("engine2")
+
+    NativeInteropReservedNamesFlutterApiRegistrar().registerInstance(api1, name)
+    NativeInteropReservedNamesFlutterApiRegistrar().registerInstance(api2, name)
+    assertEquals(
+        "engine2:ping",
+        NativeInteropReservedNamesFlutterApiRegistrar().getInstance(name)?.release("ping"),
+    )
+
+    // Out-of-order unregister of api1 leaves api2 active.
+    NativeInteropReservedNamesFlutterApiRegistrar().unregisterInstance(api1, name)
+    assertEquals(
+        "engine2:ping",
+        NativeInteropReservedNamesFlutterApiRegistrar().getInstance(name)?.release("ping"),
+    )
+
+    // Re-registering api1 pushes to top, and registerInstance(null) pops only api1.
+    NativeInteropReservedNamesFlutterApiRegistrar().registerInstance(api1, name)
+    assertEquals(
+        "engine1:ping",
+        NativeInteropReservedNamesFlutterApiRegistrar().getInstance(name)?.release("ping"),
+    )
+    NativeInteropReservedNamesFlutterApiRegistrar().registerInstance(null, name)
+    assertEquals(
+        "engine2:ping",
+        NativeInteropReservedNamesFlutterApiRegistrar().getInstance(name)?.release("ping"),
+    )
+
+    NativeInteropReservedNamesFlutterApiRegistrar().unregisterInstance(api2, name)
+    assertNull(NativeInteropReservedNamesFlutterApiRegistrar().getInstance(name))
+  }
+
+  @Test
+  fun flutterApiReRegisteringSameInstanceDeduplicatesAndMovesToTop() {
+    val name = "unitTestFlutterApiDeduplicate"
+    val api1 = FakeReservedNamesFlutterApi("engine1")
+    val api2 = FakeReservedNamesFlutterApi("engine2")
+
+    NativeInteropReservedNamesFlutterApiRegistrar().registerInstance(api1, name)
+    NativeInteropReservedNamesFlutterApiRegistrar().registerInstance(api2, name)
+    NativeInteropReservedNamesFlutterApiRegistrar().registerInstance(api1, name)
+
+    assertEquals(
+        "engine1:ping",
+        NativeInteropReservedNamesFlutterApiRegistrar().getInstance(name)?.release("ping"),
+    )
+
+    // Since api1 was deduplicated rather than duplicated, unregistering api1 once leaves only api2.
+    NativeInteropReservedNamesFlutterApiRegistrar().unregisterInstance(api1, name)
+    assertEquals(
+        "engine2:ping",
+        NativeInteropReservedNamesFlutterApiRegistrar().getInstance(name)?.release("ping"),
+    )
+    NativeInteropReservedNamesFlutterApiRegistrar().unregisterInstance(api2, name)
+    assertNull(NativeInteropReservedNamesFlutterApiRegistrar().getInstance(name))
+  }
+}
+
+private class FakeReservedNamesFlutterApi(private val label: String) :
+    NativeInteropReservedNamesFlutterApi {
+  override fun release(value: String): String = "$label:$value"
+
+  override fun type(): String = label
+
+  override fun implementIn(value: String): String = "$label:$value"
+
+  override fun isNull(): Boolean = false
+
+  override fun getReference(): String = label
 }

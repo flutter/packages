@@ -239,7 +239,13 @@ Pigeon maintains an ordered stack of registered `@HostApi` instances per instanc
   ```
   *(If your `MyApi` implementation is a Swift `struct` value type rather than a class, capture `let setup = MyApiSetup.register(api: valueImpl)` and call `if let setup { MyApiSetup.unregister(setup: setup) }` on detach.)*
 
-> **Multi-Engine Per-Engine State Caveat**: Because Native Interop resolves `<Api>.createWithNativeInteropApi()` directly against the host process without a platform channel `BinaryMessenger`, Dart calls resolve to the most recently registered active host instance for a given `name` (`messageChannelSuffix`). Stateless or process-wide host plugins work seamlessly across any number of engines. If a plugin holds **engine-specific state** (such as an Android `Activity` from `ActivityAware`, a per-engine `TextureRegistry`, or a specific `UIViewController`) and two engines initialize lazily out of order, pass a distinct `name` / `messageChannelSuffix` per engine or keep engine-scoped operations on platform channels / `@ProxyApi`.
+- **Dart (`@FlutterApi`)**:
+  `@FlutterApi` registrations (`MyFlutterApi.setUp(api)`, `MyFlutterApi.implement(api)`, or `MyFlutterApiRegistrar().register(api)`) also maintain a thread-safe, ordered stack per instance name. Calling `MyFlutterApi.setUp(null)` when an engine's Dart isolate tears down (or `MyFlutterApiRegistrar().unregister(api: myApi)` for `implement`/`register` registrations) removes **only** that isolate's instance so other active engines stay registered.
+
+- **Custom Headless `FlutterEngine`s on Android (`JniPlugin`)**:
+  If you spawn a custom or background `FlutterEngine` on Android (e.g., in a `Service`, `BroadcastReceiver`, or `FlutterEngineGroup`) **without** calling `GeneratedPluginRegistrant.registerWith(flutterEngine)`, register `JniPlugin` (`flutterEngine.plugins.add(com.github.dart_lang.jni.JniPlugin())`) before executing Dart code that uses JNI so `DartJNI` is guaranteed to be initialized even when no main `FlutterActivity` has started yet.
+
+> **Multi-Engine Per-Engine State Caveat**: Because Native Interop resolves `<Api>.createWithNativeInteropApi()` and `<FlutterApi>.getInstance()` directly in process memory without a platform channel `BinaryMessenger`, calls resolve to the most recently registered active instance for a given `name` (`messageChannelSuffix`). Stateless or process-wide plugins work seamlessly across any number of engines. If an API holds **engine-specific state** (such as an Android `Activity` from `ActivityAware`, a per-engine `TextureRegistry`, a specific `UIViewController`, or engine-specific `@FlutterApi` callbacks) across concurrently active engines, pass a distinct `name` / `messageChannelSuffix` per engine or keep engine-scoped operations on platform channels / `@ProxyApi`.
 
 ---
 

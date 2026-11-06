@@ -1340,6 +1340,9 @@ SWIFT_CLASS(
 + (void)registerInstanceWithApi:
             (id<NativeInteropFlutterIntegrationCoreApiBridge> _Nullable)api
                            name:(NSString* _Nonnull)name;
++ (void)unregisterInstanceWithApi:
+            (id<NativeInteropFlutterIntegrationCoreApiBridge> _Nonnull)api
+                             name:(NSString* _Nonnull)name;
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
 @end
 
@@ -3121,6 +3124,9 @@ SWIFT_CLASS("_TtC11test_plugin45NativeInteropReservedNamesFlutterApiRegistrar")
 + (void)registerInstanceWithApi:
             (id<NativeInteropReservedNamesFlutterApiBridge> _Nullable)api
                            name:(NSString* _Nonnull)name;
++ (void)unregisterInstanceWithApi:
+            (id<NativeInteropReservedNamesFlutterApiBridge> _Nonnull)api
+                             name:(NSString* _Nonnull)name;
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
 @end
 

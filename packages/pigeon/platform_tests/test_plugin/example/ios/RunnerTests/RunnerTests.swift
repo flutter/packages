@@ -101,6 +101,76 @@ struct RunnerTests {
   func liveSecondaryEnginesExecuteDartIsolatesAcrossOutOfOrderDestroy() async {
     #expect(await SecondaryEngineTestRunner.verifyIOSLiveSecondaryEngineExecution())
   }
+
+  @Test
+  func flutterApiRegistrarOutOfOrderUnregisterPreservesOtherEngineRegistrations() throws {
+    let name = "unitTestFlutterApiStack"
+    let bridge1 = FakeReservedNamesFlutterApiBridge("engine1")
+    let bridge2 = FakeReservedNamesFlutterApiBridge("engine2")
+
+    NativeInteropReservedNamesFlutterApiRegistrar.registerInstance(api: bridge1, name: name)
+    NativeInteropReservedNamesFlutterApiRegistrar.registerInstance(api: bridge2, name: name)
+    #expect(
+      try NativeInteropReservedNamesFlutterApi.getInstance(name: name)?.release(value: "ping")
+        == "engine2:ping")
+
+    NativeInteropReservedNamesFlutterApiRegistrar.unregisterInstance(api: bridge1, name: name)
+    #expect(
+      try NativeInteropReservedNamesFlutterApi.getInstance(name: name)?.release(value: "ping")
+        == "engine2:ping")
+
+    NativeInteropReservedNamesFlutterApiRegistrar.registerInstance(api: bridge1, name: name)
+    #expect(
+      try NativeInteropReservedNamesFlutterApi.getInstance(name: name)?.release(value: "ping")
+        == "engine1:ping")
+    NativeInteropReservedNamesFlutterApiRegistrar.registerInstance(api: nil, name: name)
+    #expect(
+      try NativeInteropReservedNamesFlutterApi.getInstance(name: name)?.release(value: "ping")
+        == "engine2:ping")
+
+    NativeInteropReservedNamesFlutterApiRegistrar.unregisterInstance(api: bridge2, name: name)
+    #expect(NativeInteropReservedNamesFlutterApi.getInstance(name: name) == nil)
+  }
+
+  @Test
+  func flutterApiReRegisteringSameInstanceDeduplicatesAndMovesToTop() throws {
+    let name = "unitTestFlutterApiDeduplicate"
+    let bridge1 = FakeReservedNamesFlutterApiBridge("engine1")
+    let bridge2 = FakeReservedNamesFlutterApiBridge("engine2")
+
+    NativeInteropReservedNamesFlutterApiRegistrar.registerInstance(api: bridge1, name: name)
+    NativeInteropReservedNamesFlutterApiRegistrar.registerInstance(api: bridge2, name: name)
+    NativeInteropReservedNamesFlutterApiRegistrar.registerInstance(api: bridge1, name: name)
+
+    #expect(
+      try NativeInteropReservedNamesFlutterApi.getInstance(name: name)?.release(value: "ping")
+        == "engine1:ping")
+
+    NativeInteropReservedNamesFlutterApiRegistrar.unregisterInstance(api: bridge1, name: name)
+    #expect(
+      try NativeInteropReservedNamesFlutterApi.getInstance(name: name)?.release(value: "ping")
+        == "engine2:ping")
+
+    NativeInteropReservedNamesFlutterApiRegistrar.unregisterInstance(api: bridge2, name: name)
+    #expect(NativeInteropReservedNamesFlutterApi.getInstance(name: name) == nil)
+  }
+}
+
+@objc
+final class FakeReservedNamesFlutterApiBridge: NSObject,
+  NativeInteropReservedNamesFlutterApiBridge
+{
+  let label: String
+  init(_ label: String) { self.label = label }
+  func release(value valueArg: NSString?, error: NativeInteropTestsError) -> NSString? {
+    "\(label):\(valueArg ?? "")" as NSString
+  }
+  func type(error: NativeInteropTestsError) -> NSString? { label as NSString }
+  func implementIn(value valueArg: NSString?, error: NativeInteropTestsError) -> NSString? {
+    "\(label):\(valueArg ?? "")" as NSString
+  }
+  func isNull(error: NativeInteropTestsError) -> NSNumber? { NSNumber(value: false) }
+  func getReference(error: NativeInteropTestsError) -> NSString? { label as NSString }
 }
 
 final class FlutterApiFromProtocol: FlutterSmallApiProtocol {
