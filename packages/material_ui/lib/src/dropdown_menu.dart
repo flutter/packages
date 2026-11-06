@@ -974,7 +974,7 @@ class _DropdownMenuState<T> extends State<DropdownMenu<T>> {
       final double padding = entry.leadingIcon == null
           ? (leadingPadding ?? _kDefaultHorizontalPadding)
           : _kDefaultHorizontalPadding;
-      ButtonStyle effectiveStyle =
+      final ButtonStyle baseStyle =
           entry.style ??
           MenuItemButton.styleFrom(
             padding: EdgeInsetsDirectional.only(start: padding, end: _kDefaultHorizontalPadding),
@@ -991,16 +991,18 @@ class _DropdownMenuState<T> extends State<DropdownMenu<T>> {
         backgroundColor: entry.style?.backgroundColor ?? themeStyle?.backgroundColor,
       );
       final bool entryIsHighlighted = entry.enabled && i == focusedIndex;
-      final (ButtonStyle itemStyle, WidgetStatesController? statesController) = switch (variant) {
-        StyleVariant.material3 => _buildItemStyleM3(effectiveStyle, colors, entryIsHighlighted),
+      final (
+        ButtonStyle effectiveStyle,
+        WidgetStatesController? statesController,
+      ) = switch (variant) {
+        StyleVariant.material3 => _buildItemStyleM3(baseStyle, colors, entryIsHighlighted),
         StyleVariant.material3Expressive => _buildItemStyleM3E(
-          effectiveStyle,
+          baseStyle,
           colors,
           entryIsHighlighted: entryIsHighlighted,
           entryIsSelected: i == selectedIndex,
         ),
       };
-      effectiveStyle = itemStyle;
 
       Widget label = entry.labelWidget ?? Text(entry.label);
       if (widget.width != null) {
