@@ -12,6 +12,10 @@
 * [kotlin,swift] Throws an `unregistered-instance` error when calling a Native Interop `@HostApi` handle whose instance has been unregistered, instead of crashing.
 * Expands multi-engine guidance in Native Interop documentation.
 
+## 29.1.1
+
+* Updates README to label Native Interop as Preview and warn about multi-engine `@HostApi` registrations.
+
 ## 29.1.0
 
 * [kotlin,swift] Adds support for removing event channel handler registration

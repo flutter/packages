@@ -540,6 +540,12 @@
 // This FlutterPluginRegistrar is a protocol, so to make a stub it has to be implemented.
 @implementation FlutterPluginRegistrarStub
 
+// Implemented as a method rather than via @synthesize so that this compiles
+// against Flutter versions that do not yet declare `engineIdentifier`.
+- (int64_t)engineIdentifier {
+  return 0;
+}
+
 - (void)addApplicationDelegate:(nonnull NSObject<FlutterPlugin> *)delegate {
   if (self.addApplicationDelegateStub) {
     self.addApplicationDelegateStub(delegate);
