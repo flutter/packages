@@ -1,0 +1,3 @@
+changelog: |
+  - Adds `ReorderableListView.separated`, a reorderable list with separators between items, mirroring `ListView.separated`.
+version: minor
