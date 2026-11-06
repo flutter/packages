@@ -1,0 +1,3 @@
+changelog: |
+  - Adds `MenuThemeData.variant` and `MenuTheme.variantOf` to opt menus, including the menu of `DropdownMenu`, into Material 3 Expressive colors. Sizes and shapes are not migrated yet.
+version: minor

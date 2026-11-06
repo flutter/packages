@@ -13,7 +13,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 import 'button_style.dart';
-import 'color_scheme.dart';
 import 'dropdown_menu_theme.dart';
 import 'icon_button.dart';
 import 'icons.dart';
@@ -172,6 +171,14 @@ enum DropdownMenuCloseBehavior {
 /// the text field will be updated. Disabled items will be skipped during traversal.
 ///
 /// The menu can be scrollable if not all items in the list are displayed at once.
+///
+/// To use the Material 3 Expressive menu colors, set [MenuThemeData.variant]
+/// to [StyleVariant.material3Expressive] in an enclosing [MenuTheme] or in
+/// [ThemeData.menuTheme]. With Material 3 Expressive, the first entry whose
+/// label equals the text in the text field uses the selected menu item colors.
+/// Traversing the menu with the arrow keys updates the text field, so the
+/// traversed entry is also the selected one. An entry highlighted by a partial
+/// search query uses the focused state layer instead.
 ///
 /// <callout-box>
 ///
@@ -770,6 +777,7 @@ class _DropdownMenuState<T> extends State<DropdownMenu<T>> {
       widget.controller ?? (_localTextEditingController ??= TextEditingController());
   final FocusNode _internalFocusNode = FocusNode();
   WidgetStatesController? _highlightedItemStatesController;
+  WidgetStatesController? _selectedItemStatesController;
 
   FocusNode? _localTrailingIconButtonFocusNode;
   FocusNode get _trailingIconButtonFocusNode =>
@@ -803,6 +811,7 @@ class _DropdownMenuState<T> extends State<DropdownMenu<T>> {
     _localTrailingIconButtonFocusNode?.dispose();
     _localTrailingIconButtonFocusNode = null;
     _highlightedItemStatesController?.dispose();
+    _selectedItemStatesController?.dispose();
     super.dispose();
   }
 
@@ -936,11 +945,13 @@ class _DropdownMenuState<T> extends State<DropdownMenu<T>> {
     List<DropdownMenuEntry<T>> filteredEntries,
     TextDirection textDirection, {
     int? focusedIndex,
+    int? selectedIndex,
     bool enableScrollToHighlight = true,
     bool excludeSemantics = false,
     bool? useMaterial3,
   }) {
     final double effectiveInputStartGap = useMaterial3 ?? false ? _kInputStartGap : 0.0;
+    final isExpressive = MenuTheme.variantOf(context) == StyleVariant.material3Expressive;
     final result = <Widget>[];
     for (var i = 0; i < filteredEntries.length; i++) {
       final DropdownMenuEntry<T> entry = filteredEntries[i];
@@ -974,30 +985,78 @@ class _DropdownMenuState<T> extends State<DropdownMenu<T>> {
       // Simulate the focused state because the text field should always be focused
       // during traversal. Include potential MenuItemButton theme in the focus
       // simulation for all colors in the theme.
-      final bool entryIsSelected = entry.enabled && i == focusedIndex;
-      if (entryIsSelected) {
+      final bool entryIsHighlighted = entry.enabled && i == focusedIndex;
+      WidgetStatesController? statesController;
+      if (isExpressive) {
+        // In Material 3 Expressive, the entry that matches the text field gets
+        // the selected colors, and the highlighted entry gets the focused
+        // state layer. They are the same entry unless the text field holds a
+        // partial search query.
+        // Disabled entries can be selected too, for example through
+        // initialSelection, and use the selected disabled colors.
+        final entryMatchesText = i == selectedIndex;
+        if (entryIsHighlighted || entryMatchesText) {
+          final states = <WidgetState>{
+            if (entryIsHighlighted) WidgetState.focused,
+            if (entryMatchesText) WidgetState.selected,
+          };
+          if (entryMatchesText) {
+            _selectedItemStatesController?.dispose();
+            statesController = _selectedItemStatesController = WidgetStatesController(states);
+          } else {
+            _highlightedItemStatesController?.dispose();
+            statesController = _highlightedItemStatesController = WidgetStatesController(states);
+          }
+        }
+        var backgroundColor = effectiveBackgroundColor;
+        if (entryIsHighlighted &&
+            !entryMatchesText &&
+            effectiveBackgroundColor?.resolve(statesController!.value) == null) {
+          // The text field keeps the focus, so the highlighted entry never
+          // paints its focused state layer. Paint it as the background instead.
+          // The selected entry skips this because its selected container
+          // already marks it, and the state layer would lower the label
+          // contrast.
+          final ButtonStyle defaultStyle = const MenuItemButton().defaultStyleOf(context);
+          backgroundColor = WidgetStatePropertyAll<Color?>(
+            (effectiveOverlayColor ?? defaultStyle.overlayColor)?.resolve(statesController!.value),
+          );
+        }
+        effectiveStyle = effectiveStyle.copyWith(
+          backgroundColor: backgroundColor,
+          foregroundColor: effectiveForegroundColor,
+          iconColor: effectiveIconColor,
+          overlayColor: effectiveOverlayColor,
+        );
+      } else if (entryIsHighlighted) {
         _highlightedItemStatesController?.dispose();
-        _highlightedItemStatesController = WidgetStatesController(<WidgetState>{
+        statesController = _highlightedItemStatesController = WidgetStatesController(<WidgetState>{
           WidgetState.focused,
         });
 
-        final ColorScheme colorScheme = Theme.of(context).colorScheme;
+        // Query the Material 3 default style.
+        // TODO(bleroux): replace once a standard way for accessing defaults will be defined.
+        // See: https://github.com/flutter/flutter/issues/130135.
+        final ButtonStyle defaultStyle = const MenuItemButton().defaultStyleOf(context);
 
         Color? resolveFocusedColor(WidgetStateProperty<Color?>? colorStateProperty) {
           return colorStateProperty?.resolve(<WidgetState>{WidgetState.focused});
         }
 
-        // Per M3 standard menu specs, highlighted/selected menu items default
-        // to tertiaryContainer background and onTertiaryContainer foreground.
-        final Color focusedForegroundColor =
-            resolveFocusedColor(effectiveForegroundColor) ?? colorScheme.onTertiaryContainer;
-        final Color focusedIconColor =
-            resolveFocusedColor(effectiveIconColor) ?? colorScheme.onTertiaryContainer;
-        final Color focusedOverlayColor =
-            resolveFocusedColor(effectiveOverlayColor) ??
-            colorScheme.onTertiaryContainer.withOpacity(0.1);
+        final Color focusedForegroundColor = resolveFocusedColor(
+          effectiveForegroundColor ?? defaultStyle.foregroundColor!,
+        )!;
+        final Color focusedIconColor = resolveFocusedColor(
+          effectiveIconColor ?? defaultStyle.iconColor!,
+        )!;
+        final Color focusedOverlayColor = resolveFocusedColor(
+          effectiveOverlayColor ?? defaultStyle.overlayColor!,
+        )!;
+        // For the background color we can't rely on the default style which is transparent.
+        // Defaults to onSurface.withOpacity(0.12).
         final Color focusedBackgroundColor =
-            resolveFocusedColor(effectiveBackgroundColor) ?? colorScheme.tertiaryContainer;
+            resolveFocusedColor(effectiveBackgroundColor) ??
+            Theme.of(context).colorScheme.onSurface.withOpacity(0.12);
 
         effectiveStyle = effectiveStyle.copyWith(
           backgroundColor: MaterialStatePropertyAll<Color>(focusedBackgroundColor),
@@ -1029,7 +1088,7 @@ class _DropdownMenuState<T> extends State<DropdownMenu<T>> {
           excluding: excludeSemantics,
           child: MenuItemButton(
             key: enableScrollToHighlight ? buttonItemKeys[i] : null,
-            statesController: entryIsSelected ? _highlightedItemStatesController : null,
+            statesController: statesController,
             style: effectiveStyle,
             leadingIcon: entry.leadingIcon,
             trailingIcon: entry.trailingIcon,
@@ -1204,10 +1263,15 @@ class _DropdownMenuState<T> extends State<DropdownMenu<T>> {
       }
     }
 
+    final String text = _effectiveTextEditingController.text;
+    final int selectedIndex = text.isEmpty
+        ? -1
+        : filteredEntries.indexWhere((DropdownMenuEntry<T> entry) => entry.label == text);
     final List<Widget> menu = _buildButtons(
       filteredEntries,
       textDirection,
       focusedIndex: currentHighlight,
+      selectedIndex: selectedIndex == -1 ? null : selectedIndex,
       useMaterial3: useMaterial3,
     );
 
@@ -1217,18 +1281,13 @@ class _DropdownMenuState<T> extends State<DropdownMenu<T>> {
         ? baseTextStyle
         : baseTextStyle?.copyWith(color: disabledColor) ?? TextStyle(color: disabledColor);
 
-    MenuStyle effectiveMenuStyle = widget.menuStyle ?? theme.menuStyle ?? defaults.menuStyle!;
-    if (effectiveMenuStyle.backgroundColor == null) {
-      effectiveMenuStyle = effectiveMenuStyle.copyWith(
-        backgroundColor: theme.menuStyle?.backgroundColor ?? defaults.menuStyle!.backgroundColor,
-      );
-    }
+    MenuStyle? effectiveMenuStyle = widget.menuStyle ?? theme.menuStyle ?? defaults.menuStyle!;
 
     final double? anchorWidth = getWidth(_anchorKey);
     if (widget.width != null) {
       effectiveMenuStyle = effectiveMenuStyle.copyWith(
         minimumSize: WidgetStateProperty.resolveWith<Size?>((Set<WidgetState> states) {
-          final double? effectiveMaximumWidth = effectiveMenuStyle.maximumSize
+          final double? effectiveMaximumWidth = effectiveMenuStyle!.maximumSize
               ?.resolve(states)
               ?.width;
           return Size(math.min(widget.width!, effectiveMaximumWidth ?? widget.width!), 0.0);
@@ -1237,7 +1296,7 @@ class _DropdownMenuState<T> extends State<DropdownMenu<T>> {
     } else if (anchorWidth != null) {
       effectiveMenuStyle = effectiveMenuStyle.copyWith(
         minimumSize: WidgetStateProperty.resolveWith<Size?>((Set<WidgetState> states) {
-          final double? effectiveMaximumWidth = effectiveMenuStyle.maximumSize
+          final double? effectiveMaximumWidth = effectiveMenuStyle!.maximumSize
               ?.resolve(states)
               ?.width;
           return Size(math.min(anchorWidth, effectiveMaximumWidth ?? anchorWidth), 0.0);
@@ -1753,12 +1812,9 @@ class _DropdownMenuDefaultsM3 extends DropdownMenuThemeData {
 
   @override
   MenuStyle get menuStyle {
-    return MenuStyle(
-      backgroundColor:
-          MenuTheme.of(context).style?.backgroundColor ??
-          MaterialStatePropertyAll<Color>(_theme.colorScheme.surfaceContainerLow),
-      minimumSize: const MaterialStatePropertyAll<Size>(Size(_kMinimumWidth, 0.0)),
-      maximumSize: const MaterialStatePropertyAll<Size>(Size.infinite),
+    return const MenuStyle(
+      minimumSize: MaterialStatePropertyAll<Size>(Size(_kMinimumWidth, 0.0)),
+      maximumSize: MaterialStatePropertyAll<Size>(Size.infinite),
       visualDensity: VisualDensity.standard,
     );
   }
