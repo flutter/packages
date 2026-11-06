@@ -1,8 +1,12 @@
-## 0.7.6+1
+## 0.7.6+2
 
 * Fixes zero-shutter-lag having no effect with `ResolutionPreset.max`.
   `ResolutionPreset.max` now prefers higher resolution over capture rate only
   for still image capture, and not while zero-shutter-lag is enabled.
+
+## 0.7.6+1
+
+* Fixes video recording duration discrepancy by waiting for the first recorded frame before completing `startVideoCapturing`, and validates errors on `stopVideoRecording`.
 
 ## 0.7.6
 

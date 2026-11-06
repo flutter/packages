@@ -252,6 +252,24 @@ public class ProxyApiRegistrar extends CameraXLibraryPigeonProxyApiRegistrar {
 
   @NonNull
   @Override
+  public PigeonApiRecordingStats getPigeonApiRecordingStats() {
+    return new RecordingStatsProxyApi(this);
+  }
+
+  @NonNull
+  @Override
+  public PigeonApiVideoRecordEvent getPigeonApiVideoRecordEvent() {
+    return new VideoRecordEventProxyApi(this);
+  }
+
+  @NonNull
+  @Override
+  public PigeonApiVideoRecordEventFinalize getPigeonApiVideoRecordEventFinalize() {
+    return new VideoRecordEventFinalizeProxyApi(this);
+  }
+
+  @NonNull
+  @Override
   public PigeonApiPendingRecording getPigeonApiPendingRecording() {
     return new PendingRecordingProxyApi(this);
   }

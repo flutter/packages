@@ -1,0 +1,3 @@
+changelog: |
+  - Updates `InkSparkle` to set its shader uniforms by name instead of with `FragmentShader.setFloat`.
+version: patch
