@@ -1,0 +1,3 @@
+changelog: |
+  - Add regression coverage for arrow keys not moving the caret of a `TextField` in a `MenuAnchor` when the menu is closed, fixed in the framework's `RawMenuAnchor`.
+version: patch
