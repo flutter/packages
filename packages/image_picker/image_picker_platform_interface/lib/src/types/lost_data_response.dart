@@ -18,11 +18,11 @@ base class LostDataResponse {
   /// Creates an instance with the given [file], [exception], and [type].
   ///
   /// Any of the params may be null, but this is never considered to be empty.
-  LostDataResponse({this.file, this.exception, this.type, this.files}) : _empty = false;
+  const LostDataResponse({this.file, this.exception, this.type, this.files}) : _empty = false;
 
   /// Initializes an instance with all member params set to null and considered
   /// to be empty.
-  LostDataResponse.empty()
+  const LostDataResponse.empty()
     : file = null,
       exception = null,
       type = null,

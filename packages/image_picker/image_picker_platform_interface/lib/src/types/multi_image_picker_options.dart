@@ -36,7 +36,7 @@ base class MultiImagePickerOptions {
   /// Throws if limit is lower than 2.
   static void _validate({int? limit}) {
     if (limit != null && limit < 2) {
-      throw ArgumentError.value(limit, 'limit', 'cannot be lower than 2');
+      throw RangeError.range(limit, 2, null, 'limit');
     }
   }
 }

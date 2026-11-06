@@ -57,14 +57,14 @@ base class ImageOptions {
 
   /// Validates that all values are within required ranges. Throws if not.
   static void _validateOptions({int? maxWidth, int? maxHeight, int? imageQuality}) {
-    if (imageQuality != null && (imageQuality < 0 || imageQuality > 100)) {
-      throw ArgumentError.value(imageQuality, 'imageQuality', 'must be between 0 and 100');
+    if (imageQuality != null) {
+      RangeError.checkValueInInterval(imageQuality, 0, 100, 'imageQuality');
     }
-    if (maxWidth != null && maxWidth < 0) {
-      throw ArgumentError.value(maxWidth, 'maxWidth', 'cannot be negative');
+    if (maxWidth != null) {
+      RangeError.checkNotNegative(maxWidth, 'maxWidth');
     }
-    if (maxHeight != null && maxHeight < 0) {
-      throw ArgumentError.value(maxHeight, 'maxHeight', 'cannot be negative');
+    if (maxHeight != null) {
+      RangeError.checkNotNegative(maxHeight, 'maxHeight');
     }
   }
 }
