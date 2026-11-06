@@ -1,7 +1,11 @@
 ## 2.0.0
 
-* Updates `image_picker_platform_interface` to `3.0.0` which updates `cross_file` dependency to
-  `0.4.0`. See its breaking changes in its [CHANGELOG](https://pub.dev/packages/cross_file/changelog#040).
+* **Breaking Changes**
+  * Updates `image_picker_platform_interface` to `3.0.0` which updates `cross_file` dependency to
+    `0.4.0`. See its breaking changes in its [CHANGELOG](https://pub.dev/packages/cross_file/changelog#040).
+  * Changes `maxWidth` and `maxWidth` parameters to be `int`s.
+  * Replaces `ImagePicker.pickMultipleMedia` to `ImagePicker.pickMultiMedia`.
+  * Changes `pickMultiVideo` to support setting a limit of 1.
 * Updates README to reflect that the latest version of `image_picker_ios`
   requires iOS 15.
   * Applications built with older versions of Flutter will continue to use
