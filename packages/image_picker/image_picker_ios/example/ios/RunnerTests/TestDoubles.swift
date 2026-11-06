@@ -22,6 +22,7 @@ final class StubViewProvider: ViewProvider {
 
 /// Minimal `FlutterPluginRegistrar` so tests can exercise `DefaultViewProvider`.
 final class TestFlutterPluginRegistrar: NSObject, FlutterPluginRegistrar {
+  var engineIdentifier: Int64 { 0 }
   var viewController: UIViewController?
 
   func publish(_ value: NSObject) {}
