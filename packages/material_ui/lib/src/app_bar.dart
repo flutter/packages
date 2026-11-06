@@ -2109,8 +2109,8 @@ class _SliverAppBarState extends State<SliverAppBar> with TickerProviderStateMix
         widget.toolbarHeight ?? AppBarTheme.of(context).toolbarHeight ?? kToolbarHeight;
     assert(
       widget.collapsedHeight == null || widget.collapsedHeight! >= toolbarHeight,
-      'The "collapsedHeight" argument has to be larger than or equal to the toolbar height, '
-      'which is [toolbarHeight] or, when that is null, [AppBarThemeData.toolbarHeight].',
+      'The "collapsedHeight" argument (${widget.collapsedHeight}) has to be larger than or '
+      'equal to the resolved toolbar height ($toolbarHeight).',
     );
     final double collapsedHeight = (widget.pinned && widget.floating && widget.bottom != null)
         ? (widget.collapsedHeight ?? 0.0) + bottomHeight + topPadding
