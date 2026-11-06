@@ -5,7 +5,6 @@
 // ignore_for_file: unused_local_variable
 
 import 'dart:isolate';
-import 'dart:ui' show PlatformDispatcher;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
