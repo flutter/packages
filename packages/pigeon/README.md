@@ -114,14 +114,17 @@ Pigeon supports two distinct models for communication between Dart and native co
 > native code (always for Kotlin `register(api, flutterEngine)`; for plugin bindings and registrars,
 > only on Flutter versions that expose it). See
 > [Multi-Engine Routing](./native_interop_guide.md#multi-engine-routing) and
-> [flutter/flutter#195877](https://github.com/flutter/flutter/issues/195877). Until engine
-> identifiers are available to plugins on stable Flutter:
-> - Lookups may resolve another engine's registration when engines are created back-to-back before
->   their Dart code starts, or from isolates created with `Isolate.spawn`.
+> [flutter/flutter#195877](https://github.com/flutter/flutter/issues/195877). Known limitations:
+> - Until engine identifiers are available to plugins on stable Flutter, lookups may resolve another
+>   engine's registration when engines are created back-to-back before their Dart code starts, or
+>   from isolates created with `Isolate.spawn`.
 > - APIs that hold engine-specific state (such as an Android `Activity`, a `TextureRegistry`, or a
 >   `UIViewController`) may act on the wrong engine; use a distinct `messageChannelSuffix` per
 >   engine, or platform channels / `@ProxyApi`, for those APIs.
 > - On macOS, plugins receive no detach callback, so registrations outlive their engine.
+> - `@FlutterApi` registrations are only removed when Dart calls `setUp(null)` / `unregister`. If an
+>   isolate goes away without doing so (for example, after a hot restart or when its engine is
+>   destroyed), native lookups can still return its stale registration, and calls to it fail.
 
 #### Quick Comparison
 
