@@ -1319,6 +1319,66 @@ void main() {
     }
   });
 
+  testWidgets('RefreshIndicator with transparent color arms and disarms at the drag threshold', (
+    WidgetTester tester,
+  ) async {
+    refreshCalled = false;
+    final controller = ScrollController();
+    addTearDown(controller.dispose);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: RefreshIndicator(
+          color: Colors.transparent,
+          onRefresh: refresh,
+          child: ListView(
+            controller: controller,
+            physics: const AlwaysScrollableScrollPhysics(),
+            children: const <Widget>[
+              SizedBox(height: 200.0, child: Text('X')),
+              SizedBox(height: 1000.0),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    final Offset startLocation = tester.getCenter(find.text('X'));
+
+    // A small drag below the armed threshold must not arm or trigger refresh.
+    final testPointer1 = TestPointer();
+    await tester.sendEventToBinding(testPointer1.down(startLocation));
+    await tester.sendEventToBinding(testPointer1.move(startLocation + const Offset(0.0, 50.0)));
+    await tester.pump();
+    await tester.sendEventToBinding(testPointer1.up());
+    await tester.pumpAndSettle();
+    expect(refreshCalled, isFalse);
+
+    // Dragging past the armed threshold and back above it must disarm and cancel.
+    final testPointer2 = TestPointer(2);
+    await tester.sendEventToBinding(testPointer2.down(startLocation));
+    await tester.sendEventToBinding(testPointer2.move(startLocation + const Offset(0.0, 175.0)));
+    await tester.pump();
+    await tester.sendEventToBinding(testPointer2.move(startLocation + const Offset(0.0, 99.0)));
+    await tester.pump();
+    await tester.sendEventToBinding(testPointer2.up());
+    await tester.pumpAndSettle();
+    expect(refreshCalled, isFalse);
+
+    // Reset scroll offset to the top and verify releasing at the armed threshold triggers refresh.
+    controller.jumpTo(0.0);
+    await tester.pump();
+    final testPointer3 = TestPointer(3);
+    await tester.sendEventToBinding(testPointer3.down(startLocation));
+    await tester.sendEventToBinding(testPointer3.move(startLocation + const Offset(0.0, 175.0)));
+    await tester.pump();
+    await tester.sendEventToBinding(testPointer3.move(startLocation + const Offset(0.0, 100.0)));
+    await tester.pump();
+    await tester.sendEventToBinding(testPointer3.up());
+    await tester.pumpAndSettle();
+    expect(refreshCalled, isTrue);
+  });
+
   testWidgets('RefreshIndicator passes the default elevation through correctly', (
     WidgetTester tester,
   ) async {

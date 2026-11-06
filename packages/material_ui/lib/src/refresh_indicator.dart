@@ -518,7 +518,10 @@ class RefreshIndicatorState extends State<RefreshIndicator>
         } else if (notification.metrics.axisDirection == AxisDirection.up) {
           _dragOffset = _dragOffset! + notification.overscroll;
         }
-        _checkDragOffset(notification.metrics.viewportDimension);
+        _checkDragOffset(
+          notification.metrics.viewportDimension,
+          isDrag: notification.dragDetails != null,
+        );
       }
     } else if (notification is ScrollEndNotification) {
       switch (_status) {
@@ -576,12 +579,13 @@ class RefreshIndicatorState extends State<RefreshIndicator>
       newValue = math.max(newValue, 1.0 / _kDragSizeFactorLimit);
     }
     _positionController.value = clampDouble(newValue, 0.0, 1.0); // This triggers various rebuilds.
-    if (_status == RefreshIndicatorStatus.drag &&
-        _valueColor.value!.alpha == _effectiveValueColor.alpha) {
+    final bool isAtArmedThreshold = _effectiveValueColor.alpha == 0
+        ? newValue >= 1.0 / _kDragSizeFactorLimit
+        : _valueColor.value!.alpha == _effectiveValueColor.alpha;
+    if (_status == RefreshIndicatorStatus.drag && isAtArmedThreshold) {
       _status = RefreshIndicatorStatus.armed;
       widget.onStatusChange?.call(_status);
-    } else if (_status == RefreshIndicatorStatus.armed &&
-        _valueColor.value!.alpha < _effectiveValueColor.alpha) {
+    } else if (_status == RefreshIndicatorStatus.armed && !isAtArmedThreshold) {
       _status = RefreshIndicatorStatus.drag;
       widget.onStatusChange?.call(_status);
     }
