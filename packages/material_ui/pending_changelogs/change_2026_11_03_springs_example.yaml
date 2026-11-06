@@ -1,0 +1,3 @@
+changelog: |
+  - Adds an example that animates with the springs in `Springs`.
+version: patch
