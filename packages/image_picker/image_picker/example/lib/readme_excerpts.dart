@@ -13,16 +13,12 @@ import 'package:image_picker_platform_interface/image_picker_platform_interface.
 // #docregion CameraDelegate
 base class MyCameraDelegate extends ImagePickerCameraDelegate {
   @override
-  Future<XFile?> takePhoto({
-    ImagePickerOptions options = const ImagePickerOptions(),
-  }) async {
+  Future<XFile?> takePhoto({ImagePickerOptions options = const ImagePickerOptions()}) async {
     return _takeAPhoto(options.preferredCameraDevice);
   }
 
   @override
-  Future<XFile?> takeVideo({
-    VideoPickerOptions options = const VideoPickerOptions(),
-  }) async {
+  Future<XFile?> takeVideo({VideoPickerOptions options = const VideoPickerOptions()}) async {
     return _takeAVideo(options.preferredCameraDevice);
   }
 }

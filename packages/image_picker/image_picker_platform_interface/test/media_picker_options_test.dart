@@ -15,7 +15,10 @@ void main() {
     });
 
     test('createAndValidate does not throw error for correct limit', () {
-      expect(() => MediaPickerOptions.createAndValidate(allowMultiple: true, limit: 2), returnsNormally);
+      expect(
+        () => MediaPickerOptions.createAndValidate(allowMultiple: true, limit: 2),
+        returnsNormally,
+      );
     });
 
     test('createAndValidate throws error for too small limit', () {

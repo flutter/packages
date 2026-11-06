@@ -13,8 +13,11 @@ void main() {
 
     test('createAndValidate throws error for too small limit', () {
       final Matcher throwsLimitArgumentError = throwsA(
-        isA<RangeError>()
-            .having((ArgumentError error) => error.toString(), 'message', contains('Not greater than or equal to 2')),
+        isA<RangeError>().having(
+          (ArgumentError error) => error.toString(),
+          'message',
+          contains('Not greater than or equal to 2'),
+        ),
       );
 
       expect(() => MultiImagePickerOptions.createAndValidate(limit: 1), throwsLimitArgumentError);

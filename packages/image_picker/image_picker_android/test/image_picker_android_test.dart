@@ -61,11 +61,7 @@ void main() {
       await picker.pickImage(
         source: ImageSource.camera,
         options: const ImagePickerOptions(
-          imageOptions: ImageOptions(
-            maxWidth: 10,
-            maxHeight: 20,
-            imageQuality: 70,
-          ),
+          imageOptions: ImageOptions(maxWidth: 10, maxHeight: 20, imageQuality: 70),
         ),
       );
 
@@ -78,9 +74,7 @@ void main() {
       expect(
         () => picker.pickImage(
           source: ImageSource.gallery,
-          options: const ImagePickerOptions(
-            imageOptions: ImageOptions(imageQuality: -1),
-          ),
+          options: const ImagePickerOptions(imageOptions: ImageOptions(imageQuality: -1)),
         ),
         throwsArgumentError,
       );
@@ -88,9 +82,7 @@ void main() {
       expect(
         () => picker.pickImage(
           source: ImageSource.gallery,
-          options: const ImagePickerOptions(
-            imageOptions: ImageOptions(imageQuality: 101),
-          ),
+          options: const ImagePickerOptions(imageOptions: ImageOptions(imageQuality: 101)),
         ),
         throwsArgumentError,
       );
@@ -98,9 +90,7 @@ void main() {
       expect(
         () => picker.pickImage(
           source: ImageSource.camera,
-          options: const ImagePickerOptions(
-            imageOptions: ImageOptions(imageQuality: -1),
-          ),
+          options: const ImagePickerOptions(imageOptions: ImageOptions(imageQuality: -1)),
         ),
         throwsArgumentError,
       );
@@ -108,9 +98,7 @@ void main() {
       expect(
         () => picker.pickImage(
           source: ImageSource.camera,
-          options: const ImagePickerOptions(
-            imageOptions: ImageOptions(imageQuality: 101),
-          ),
+          options: const ImagePickerOptions(imageOptions: ImageOptions(imageQuality: 101)),
         ),
         throwsArgumentError,
       );
@@ -120,9 +108,7 @@ void main() {
       expect(
         () => picker.pickImage(
           source: ImageSource.camera,
-          options: const ImagePickerOptions(
-            imageOptions: ImageOptions(maxWidth: -1),
-          ),
+          options: const ImagePickerOptions(imageOptions: ImageOptions(maxWidth: -1)),
         ),
         throwsArgumentError,
       );
@@ -130,9 +116,7 @@ void main() {
       expect(
         () => picker.pickImage(
           source: ImageSource.camera,
-          options: const ImagePickerOptions(
-            imageOptions: ImageOptions(maxHeight: -1),
-          ),
+          options: const ImagePickerOptions(imageOptions: ImageOptions(maxHeight: -1)),
         ),
         throwsArgumentError,
       );
@@ -154,9 +138,7 @@ void main() {
     test('camera position can be set to front', () async {
       await picker.pickImage(
         source: ImageSource.camera,
-        options: const ImagePickerOptions(
-          preferredCameraDevice: CameraDevice.front,
-        ),
+        options: const ImagePickerOptions(preferredCameraDevice: CameraDevice.front),
       );
 
       expect(api.passedSource?.camera, SourceCamera.front);
@@ -202,11 +184,7 @@ void main() {
     test('passes image option arguments correctly', () async {
       await picker.pickMultiImage(
         options: const MultiImagePickerOptions(
-          imageOptions: ImageOptions(
-            maxWidth: 10,
-            maxHeight: 20,
-            imageQuality: 70,
-          ),
+          imageOptions: ImageOptions(maxWidth: 10, maxHeight: 20, imageQuality: 70),
         ),
       );
 
@@ -218,18 +196,14 @@ void main() {
     test('does not accept a negative width or height argument', () {
       expect(
         () => picker.pickMultiImage(
-          options: const MultiImagePickerOptions(
-            imageOptions: ImageOptions(maxWidth: -1),
-          ),
+          options: const MultiImagePickerOptions(imageOptions: ImageOptions(maxWidth: -1)),
         ),
         throwsArgumentError,
       );
 
       expect(
         () => picker.pickMultiImage(
-          options: const MultiImagePickerOptions(
-            imageOptions: ImageOptions(maxHeight: -1),
-          ),
+          options: const MultiImagePickerOptions(imageOptions: ImageOptions(maxHeight: -1)),
         ),
         throwsArgumentError,
       );
@@ -238,18 +212,14 @@ void main() {
     test('does not accept an invalid imageQuality argument', () {
       expect(
         () => picker.pickMultiImage(
-          options: const MultiImagePickerOptions(
-            imageOptions: ImageOptions(imageQuality: -1),
-          ),
+          options: const MultiImagePickerOptions(imageOptions: ImageOptions(imageQuality: -1)),
         ),
         throwsArgumentError,
       );
 
       expect(
         () => picker.pickMultiImage(
-          options: const MultiImagePickerOptions(
-            imageOptions: ImageOptions(imageQuality: 101),
-          ),
+          options: const MultiImagePickerOptions(imageOptions: ImageOptions(imageQuality: 101)),
         ),
         throwsArgumentError,
       );
@@ -332,9 +302,7 @@ void main() {
     test('camera position can set to front', () async {
       await picker.pickVideo(
         source: ImageSource.camera,
-        options: const VideoPickerOptions(
-          preferredCameraDevice: CameraDevice.front,
-        ),
+        options: const VideoPickerOptions(preferredCameraDevice: CameraDevice.front),
       );
 
       expect(api.passedSource?.camera, SourceCamera.front);
@@ -555,7 +523,10 @@ void main() {
     test('handles an empty path response gracefully', () async {
       api.returnValue = <String>[];
 
-      expect(await picker.pickMedia(options: const MediaPickerOptions(allowMultiple: true)), <XFile>[]);
+      expect(
+        await picker.pickMedia(options: const MediaPickerOptions(allowMultiple: true)),
+        <XFile>[],
+      );
     });
 
     test('defaults to not using Android Photo Picker', () async {
