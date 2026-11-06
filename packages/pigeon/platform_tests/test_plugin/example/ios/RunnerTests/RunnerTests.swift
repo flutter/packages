@@ -136,26 +136,26 @@ struct RunnerTests {
     let bridge2 = FakeReservedNamesFlutterApiBridge("engine2")
     let neverRegistered = FakeReservedNamesFlutterApiBridge("never")
 
-    NativeInteropReservedNamesFlutterApiRegistrar.register(
+    NativeInteropReservedNamesFlutterApiRegistrar.registerInstance(
       api: bridge1, engineId: stub.engineIdentifier, affinityKey: Int64.min, name: name)
-    NativeInteropReservedNamesFlutterApiRegistrar.register(
+    NativeInteropReservedNamesFlutterApiRegistrar.registerInstance(
       api: bridge2, engineId: stub.engineIdentifier, affinityKey: Int64.min, name: name)
     #expect(
       try NativeInteropReservedNamesFlutterApiRegistrar.getInstance(registrar: stub, name: name)?
         .release(value: "ping")
         == "engine2:ping")
 
-    NativeInteropReservedNamesFlutterApiRegistrar.unregister(api: bridge1, name: name)
+    NativeInteropReservedNamesFlutterApiRegistrar.unregisterInstance(api: bridge1, name: name)
     // Duplicate unregister and never-registered unregister must be no-ops.
-    NativeInteropReservedNamesFlutterApiRegistrar.unregister(api: bridge1, name: name)
-    NativeInteropReservedNamesFlutterApiRegistrar.unregister(
+    NativeInteropReservedNamesFlutterApiRegistrar.unregisterInstance(api: bridge1, name: name)
+    NativeInteropReservedNamesFlutterApiRegistrar.unregisterInstance(
       api: neverRegistered, name: name)
     #expect(
       try NativeInteropReservedNamesFlutterApiRegistrar.getInstance(registrar: stub, name: name)?
         .release(value: "ping")
         == "engine2:ping")
 
-    NativeInteropReservedNamesFlutterApiRegistrar.unregister(api: bridge2, name: name)
+    NativeInteropReservedNamesFlutterApiRegistrar.unregisterInstance(api: bridge2, name: name)
     #expect(
       NativeInteropReservedNamesFlutterApiRegistrar.getInstance(registrar: stub, name: name) == nil)
   }
@@ -167,11 +167,11 @@ struct RunnerTests {
     let bridge1 = FakeReservedNamesFlutterApiBridge("engine1")
     let bridge2 = FakeReservedNamesFlutterApiBridge("engine2")
 
-    NativeInteropReservedNamesFlutterApiRegistrar.register(
+    NativeInteropReservedNamesFlutterApiRegistrar.registerInstance(
       api: bridge1, engineId: stub.engineIdentifier, affinityKey: Int64.min, name: name)
-    NativeInteropReservedNamesFlutterApiRegistrar.register(
+    NativeInteropReservedNamesFlutterApiRegistrar.registerInstance(
       api: bridge2, engineId: stub.engineIdentifier, affinityKey: Int64.min, name: name)
-    NativeInteropReservedNamesFlutterApiRegistrar.register(
+    NativeInteropReservedNamesFlutterApiRegistrar.registerInstance(
       api: bridge1, engineId: stub.engineIdentifier, affinityKey: Int64.min, name: name)
 
     #expect(
@@ -179,13 +179,13 @@ struct RunnerTests {
         .release(value: "ping")
         == "engine1:ping")
 
-    NativeInteropReservedNamesFlutterApiRegistrar.unregister(api: bridge1, name: name)
+    NativeInteropReservedNamesFlutterApiRegistrar.unregisterInstance(api: bridge1, name: name)
     #expect(
       try NativeInteropReservedNamesFlutterApiRegistrar.getInstance(registrar: stub, name: name)?
         .release(value: "ping")
         == "engine2:ping")
 
-    NativeInteropReservedNamesFlutterApiRegistrar.unregister(api: bridge2, name: name)
+    NativeInteropReservedNamesFlutterApiRegistrar.unregisterInstance(api: bridge2, name: name)
     #expect(
       NativeInteropReservedNamesFlutterApiRegistrar.getInstance(registrar: stub, name: name) == nil)
   }
@@ -286,7 +286,7 @@ struct RunnerTests {
     let affinityBridge = FakeReservedNamesFlutterApiBridge("affinity")
     defer {
       for bridge in [bridge1, bridge2, affinityBridge] {
-        NativeInteropReservedNamesFlutterApiRegistrar.unregister(api: bridge, name: name)
+        NativeInteropReservedNamesFlutterApiRegistrar.unregisterInstance(api: bridge, name: name)
       }
     }
     func release(_ registrar: FlutterPluginRegistrar) throws -> String? {
@@ -294,18 +294,18 @@ struct RunnerTests {
         registrar: registrar, name: name)?.release(value: "ping")
     }
 
-    NativeInteropReservedNamesFlutterApiRegistrar.register(
+    NativeInteropReservedNamesFlutterApiRegistrar.registerInstance(
       api: bridge1, engineId: registrar1.engineIdentifier, affinityKey: noKey, name: name)
-    NativeInteropReservedNamesFlutterApiRegistrar.register(
+    NativeInteropReservedNamesFlutterApiRegistrar.registerInstance(
       api: bridge2, engineId: registrar2.engineIdentifier, affinityKey: noKey, name: name)
     #expect(try release(registrar1) == "engine1:ping")
     #expect(try release(registrar2) == "engine2:ping")
     #expect(try release(unrelated) == "engine2:ping")
 
     // A registration with an unknown Dart engine id matches by affinity key.
-    NativeInteropReservedNamesFlutterApiRegistrar.register(
+    NativeInteropReservedNamesFlutterApiRegistrar.registerInstance(
       api: affinityBridge, engineId: noKey, affinityKey: registrar1.engineIdentifier, name: name)
-    NativeInteropReservedNamesFlutterApiRegistrar.unregister(api: bridge1, name: name)
+    NativeInteropReservedNamesFlutterApiRegistrar.unregisterInstance(api: bridge1, name: name)
     #expect(try release(registrar1) == "affinity:ping")
     #expect(try release(registrar2) == "engine2:ping")
   }

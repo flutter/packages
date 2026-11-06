@@ -1266,18 +1266,23 @@ class _PigeonCodec extends StandardMessageCodec {
   }
 }
 
+const String defaultInstanceName = 'PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u';
+
 @internal
 NativeInteropHostIntegrationCoreApiForNativeInterop?
-pigeon_getInstance_NativeInteropHostIntegrationCoreApi({String? name}) {
+pigeon_getInstance_NativeInteropHostIntegrationCoreApi({String channelName = defaultInstanceName}) {
   throw UnsupportedError(
     'Native Interop is not supported on this platform. Use NativeInteropHostIntegrationCoreApi instead.',
   );
 }
 
 abstract class NativeInteropHostIntegrationCoreApiForNativeInterop {
-  /// Returns the instance of [NativeInteropHostIntegrationCoreApiForNativeInterop] registered with [name] (or the default instance when [name] is null), or null if none is registered.
-  static NativeInteropHostIntegrationCoreApiForNativeInterop? getInstance({String? name}) =>
-      pigeon_native.pigeon_getInstance_NativeInteropHostIntegrationCoreApi(name: name);
+  /// Returns instance of NativeInteropHostIntegrationCoreApiForNativeInterop with specified [channelName] if one has been registered.
+  static NativeInteropHostIntegrationCoreApiForNativeInterop? getInstance({
+    String channelName = defaultInstanceName,
+  }) => pigeon_native.pigeon_getInstance_NativeInteropHostIntegrationCoreApi(
+    channelName: channelName,
+  );
 
   void noop();
 
@@ -1934,7 +1939,7 @@ class NativeInteropHostIntegrationCoreApi {
     }
     final NativeInteropHostIntegrationCoreApiForNativeInterop? nativeInteropApi =
         NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance(
-          name: messageChannelSuffix.isEmpty ? null : messageChannelSuffix,
+          channelName: messageChannelSuffix.isEmpty ? defaultInstanceName : messageChannelSuffix,
         );
     if (nativeInteropApi == null) {
       throw ArgumentError(
@@ -7618,9 +7623,9 @@ class NativeInteropHostIntegrationCoreApi {
 }
 
 @internal
-void pigeon_register_NativeInteropFlutterIntegrationCoreApi(
+NativeInteropFlutterIntegrationCoreApi pigeon_register_NativeInteropFlutterIntegrationCoreApi(
   NativeInteropFlutterIntegrationCoreApi api, {
-  String? name,
+  String name = defaultInstanceName,
 }) {
   throw UnsupportedError(
     'Native Interop is not supported on this platform. Use NativeInteropFlutterIntegrationCoreApi.setUp instead.',
@@ -7630,7 +7635,7 @@ void pigeon_register_NativeInteropFlutterIntegrationCoreApi(
 @internal
 void pigeon_unregister_NativeInteropFlutterIntegrationCoreApi(
   NativeInteropFlutterIntegrationCoreApi api, {
-  String? name,
+  String name = defaultInstanceName,
 }) {
   throw UnsupportedError(
     'Native Interop is not supported on this platform. Use NativeInteropFlutterIntegrationCoreApi.setUp instead.',
@@ -7640,7 +7645,7 @@ void pigeon_unregister_NativeInteropFlutterIntegrationCoreApi(
 @internal
 void pigeon_set_up_NativeInteropFlutterIntegrationCoreApi(
   NativeInteropFlutterIntegrationCoreApi? api, {
-  String? name,
+  String name = defaultInstanceName,
 }) {
   throw UnsupportedError(
     'Native Interop is not supported on this platform. Use NativeInteropFlutterIntegrationCoreApi.setUp instead.',
@@ -7649,23 +7654,26 @@ void pigeon_set_up_NativeInteropFlutterIntegrationCoreApi(
 
 /// Registers [NativeInteropFlutterIntegrationCoreApi] implementations for Native Interop callers.
 final class NativeInteropFlutterIntegrationCoreApiRegistrar {
-  const NativeInteropFlutterIntegrationCoreApiRegistrar._();
-
-  /// Registers [api] under [name] (or the default instance when [name] is null).
+  /// Registers [api] under [name] (or the default instance when [name] is
+  /// omitted) and returns [api].
   ///
   /// Registrations are kept in an ordered stack per name, and native callers
   /// receive the most recent one. Registering an instance that is already
   /// registered under [name] moves it to the top. Unlike [NativeInteropFlutterIntegrationCoreApi.setUp],
   /// this does not replace earlier registrations from this isolate.
-  static void register(NativeInteropFlutterIntegrationCoreApi api, {String? name}) =>
-      pigeon_native.pigeon_register_NativeInteropFlutterIntegrationCoreApi(api, name: name);
+  NativeInteropFlutterIntegrationCoreApi register(
+    NativeInteropFlutterIntegrationCoreApi api, {
+    String name = defaultInstanceName,
+  }) => pigeon_native.pigeon_register_NativeInteropFlutterIntegrationCoreApi(api, name: name);
 
   /// Removes [api], registered from this isolate under [name] (or the default
-  /// instance when [name] is null), leaving other registrations in place.
+  /// instance when [name] is omitted), leaving other registrations in place.
   ///
   /// Instances are matched by identity. Does nothing if [api] is not registered.
-  static void unregister(NativeInteropFlutterIntegrationCoreApi api, {String? name}) =>
-      pigeon_native.pigeon_unregister_NativeInteropFlutterIntegrationCoreApi(api, name: name);
+  void unregister(
+    NativeInteropFlutterIntegrationCoreApi api, {
+    String name = defaultInstanceName,
+  }) => pigeon_native.pigeon_unregister_NativeInteropFlutterIntegrationCoreApi(api, name: name);
 }
 
 /// The core interface that the Dart platform_test code implements for host
@@ -8019,7 +8027,7 @@ abstract class NativeInteropFlutterIntegrationCoreApi {
     if (!kIsWeb) {
       pigeon_native.pigeon_set_up_NativeInteropFlutterIntegrationCoreApi(
         api,
-        name: messageChannelSuffix.isEmpty ? null : messageChannelSuffix,
+        name: messageChannelSuffix.isEmpty ? defaultInstanceName : messageChannelSuffix,
       );
     }
     messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
@@ -10745,20 +10753,34 @@ abstract class NativeInteropFlutterIntegrationCoreApi {
       }
     }
   }
+
+  /// Registers [api] for Native Interop callers under [name], or the default
+  /// instance when [name] is omitted or empty, and returns [api].
+  static NativeInteropFlutterIntegrationCoreApi implement(
+    NativeInteropFlutterIntegrationCoreApi api, {
+    String name = defaultInstanceName,
+  }) {
+    return NativeInteropFlutterIntegrationCoreApiRegistrar().register(
+      api,
+      name: name.isEmpty ? defaultInstanceName : name,
+    );
+  }
 }
 
 @internal
 NativeInteropReservedNamesHostApiForNativeInterop?
-pigeon_getInstance_NativeInteropReservedNamesHostApi({String? name}) {
+pigeon_getInstance_NativeInteropReservedNamesHostApi({String channelName = defaultInstanceName}) {
   throw UnsupportedError(
     'Native Interop is not supported on this platform. Use NativeInteropReservedNamesHostApi instead.',
   );
 }
 
 abstract class NativeInteropReservedNamesHostApiForNativeInterop {
-  /// Returns the instance of [NativeInteropReservedNamesHostApiForNativeInterop] registered with [name] (or the default instance when [name] is null), or null if none is registered.
-  static NativeInteropReservedNamesHostApiForNativeInterop? getInstance({String? name}) =>
-      pigeon_native.pigeon_getInstance_NativeInteropReservedNamesHostApi(name: name);
+  /// Returns instance of NativeInteropReservedNamesHostApiForNativeInterop with specified [channelName] if one has been registered.
+  static NativeInteropReservedNamesHostApiForNativeInterop? getInstance({
+    String channelName = defaultInstanceName,
+  }) =>
+      pigeon_native.pigeon_getInstance_NativeInteropReservedNamesHostApi(channelName: channelName);
 
   String release(String value);
 
@@ -10835,7 +10857,7 @@ class NativeInteropReservedNamesHostApi {
     }
     final NativeInteropReservedNamesHostApiForNativeInterop? nativeInteropApi =
         NativeInteropReservedNamesHostApiForNativeInterop.getInstance(
-          name: messageChannelSuffix.isEmpty ? null : messageChannelSuffix,
+          channelName: messageChannelSuffix.isEmpty ? defaultInstanceName : messageChannelSuffix,
         );
     if (nativeInteropApi == null) {
       throw ArgumentError(
@@ -11338,9 +11360,9 @@ class NativeInteropReservedNamesHostApi {
 }
 
 @internal
-void pigeon_register_NativeInteropReservedNamesFlutterApi(
+NativeInteropReservedNamesFlutterApi pigeon_register_NativeInteropReservedNamesFlutterApi(
   NativeInteropReservedNamesFlutterApi api, {
-  String? name,
+  String name = defaultInstanceName,
 }) {
   throw UnsupportedError(
     'Native Interop is not supported on this platform. Use NativeInteropReservedNamesFlutterApi.setUp instead.',
@@ -11350,7 +11372,7 @@ void pigeon_register_NativeInteropReservedNamesFlutterApi(
 @internal
 void pigeon_unregister_NativeInteropReservedNamesFlutterApi(
   NativeInteropReservedNamesFlutterApi api, {
-  String? name,
+  String name = defaultInstanceName,
 }) {
   throw UnsupportedError(
     'Native Interop is not supported on this platform. Use NativeInteropReservedNamesFlutterApi.setUp instead.',
@@ -11360,7 +11382,7 @@ void pigeon_unregister_NativeInteropReservedNamesFlutterApi(
 @internal
 void pigeon_set_up_NativeInteropReservedNamesFlutterApi(
   NativeInteropReservedNamesFlutterApi? api, {
-  String? name,
+  String name = defaultInstanceName,
 }) {
   throw UnsupportedError(
     'Native Interop is not supported on this platform. Use NativeInteropReservedNamesFlutterApi.setUp instead.',
@@ -11369,22 +11391,23 @@ void pigeon_set_up_NativeInteropReservedNamesFlutterApi(
 
 /// Registers [NativeInteropReservedNamesFlutterApi] implementations for Native Interop callers.
 final class NativeInteropReservedNamesFlutterApiRegistrar {
-  const NativeInteropReservedNamesFlutterApiRegistrar._();
-
-  /// Registers [api] under [name] (or the default instance when [name] is null).
+  /// Registers [api] under [name] (or the default instance when [name] is
+  /// omitted) and returns [api].
   ///
   /// Registrations are kept in an ordered stack per name, and native callers
   /// receive the most recent one. Registering an instance that is already
   /// registered under [name] moves it to the top. Unlike [NativeInteropReservedNamesFlutterApi.setUp],
   /// this does not replace earlier registrations from this isolate.
-  static void register(NativeInteropReservedNamesFlutterApi api, {String? name}) =>
-      pigeon_native.pigeon_register_NativeInteropReservedNamesFlutterApi(api, name: name);
+  NativeInteropReservedNamesFlutterApi register(
+    NativeInteropReservedNamesFlutterApi api, {
+    String name = defaultInstanceName,
+  }) => pigeon_native.pigeon_register_NativeInteropReservedNamesFlutterApi(api, name: name);
 
   /// Removes [api], registered from this isolate under [name] (or the default
-  /// instance when [name] is null), leaving other registrations in place.
+  /// instance when [name] is omitted), leaving other registrations in place.
   ///
   /// Instances are matched by identity. Does nothing if [api] is not registered.
-  static void unregister(NativeInteropReservedNamesFlutterApi api, {String? name}) =>
+  void unregister(NativeInteropReservedNamesFlutterApi api, {String name = defaultInstanceName}) =>
       pigeon_native.pigeon_unregister_NativeInteropReservedNamesFlutterApi(api, name: name);
 }
 
@@ -11424,7 +11447,7 @@ abstract class NativeInteropReservedNamesFlutterApi {
     if (!kIsWeb) {
       pigeon_native.pigeon_set_up_NativeInteropReservedNamesFlutterApi(
         api,
-        name: messageChannelSuffix.isEmpty ? null : messageChannelSuffix,
+        name: messageChannelSuffix.isEmpty ? defaultInstanceName : messageChannelSuffix,
       );
     }
     messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
@@ -11595,5 +11618,17 @@ abstract class NativeInteropReservedNamesFlutterApi {
         });
       }
     }
+  }
+
+  /// Registers [api] for Native Interop callers under [name], or the default
+  /// instance when [name] is omitted or empty, and returns [api].
+  static NativeInteropReservedNamesFlutterApi implement(
+    NativeInteropReservedNamesFlutterApi api, {
+    String name = defaultInstanceName,
+  }) {
+    return NativeInteropReservedNamesFlutterApiRegistrar().register(
+      api,
+      name: name.isEmpty ? defaultInstanceName : name,
+    );
   }
 }

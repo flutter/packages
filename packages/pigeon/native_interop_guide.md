@@ -207,7 +207,7 @@ When implementing Native Interop host APIs directly in an application target rat
   ```kotlin
   override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
     super.configureFlutterEngine(flutterEngine)
-    MyApiRegistrar.register(MyApiImplementation(), flutterEngine)
+    MyApiRegistrar().register(MyApiImplementation(), flutterEngine)
   }
   ```
 
@@ -215,22 +215,22 @@ When implementing Native Interop host APIs directly in an application target rat
 
 When implementing a Flutter plugin (`FlutterPlugin`), multiple `FlutterEngine` instances may attach and detach in any order (for example, in add-to-app scenarios, `FlutterEngineGroup`, background isolates/headless engines, or integration tests).
 
-Pigeon maintains an ordered stack of registered `@HostApi` instances per instance name (`name = null` / `nil` for the default instance). Each registration is associated with the engine passed to `register` (a plugin binding, `FlutterEngine`, or plugin registrar), so the same API instance registered from two engines is tracked as two registrations. Register on attach and unregister **that specific instance** for **that engine** on detach, so detaching one engine never removes registrations belonging to other active engines. `unregister` removes the entry matching both the engine and the instance; if none matches, it falls back to removing that instance (by identity) for any engine.
+Pigeon maintains an ordered stack of registered `@HostApi` instances per instance name (omitting `name` uses the default instance). Each registration is associated with the engine passed to `register` (a plugin binding, `FlutterEngine`, or plugin registrar), so the same API instance registered from two engines is tracked as two registrations. Register on attach and unregister **that specific instance** for **that engine** on detach, so detaching one engine never removes registrations belonging to other active engines. `unregister` removes the entry matching both the engine and the instance; if none matches, it falls back to removing that instance (by identity) for any engine.
 
 - **Kotlin (JNI)**:
   ```kotlin
   class MyPlugin : FlutterPlugin, MyApi {
     override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {
-      MyApiRegistrar.register(this, binding)
+      MyApiRegistrar().register(this, binding)
     }
 
     override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
       // Removes only `this` instance for this engine, so other attached engines stay registered:
-      MyApiRegistrar.unregister(this, binding)
+      MyApiRegistrar().unregister(this, binding)
     }
   }
   ```
-  *(If your `MyApi` implementation is a separate object rather than `this`, store that implementation reference on a plugin property and pass it to `MyApiRegistrar.unregister(impl, binding)` on detach. Apps that own a `FlutterEngine` directly can use `register(api, flutterEngine)` / `unregister(api, flutterEngine)`.)*
+  *(If your `MyApi` implementation is a separate object rather than `this`, store that implementation reference on a plugin property and pass it to `MyApiRegistrar().unregister(impl, binding)` on detach. Apps that own a `FlutterEngine` directly can use `register(api, flutterEngine)` / `unregister(api, flutterEngine)`.)*
 
 - **Swift (FFI)**:
   ```swift
@@ -260,10 +260,10 @@ Pigeon maintains an ordered stack of registered `@HostApi` instances per instanc
   > **macOS has no detach callback**: `FlutterMacOS`'s `FlutterPlugin` protocol does not declare or invoke `detachFromEngine(for:)`, so macOS plugins have no point at which to unregister, and macOS registrations currently outlive their engine. Plugins that hold engine-specific state on macOS should stay on platform channels for now.
 
 - **Dart (`@FlutterApi`)**:
-  `@FlutterApi` registrations (`MyFlutterApi.setUp(api)` or `MyFlutterApiRegistrar.register(api)`) also maintain an ordered stack per instance name. Calling `MyFlutterApi.setUp(null)` (or `MyFlutterApiRegistrar.unregister(myApi)` for `register` registrations) removes **only** that isolate's instance so other active engines stay registered.
+  `@FlutterApi` registrations (`MyFlutterApi.setUp(api)` or `MyFlutterApiRegistrar().register(api)`) also maintain an ordered stack per instance name. Calling `MyFlutterApi.setUp(null)` (or `MyFlutterApiRegistrar().unregister(myApi)` for `register` registrations) removes **only** that isolate's instance so other active engines stay registered.
 
   Native code looks up the Dart implementation for a specific engine:
-  - **Kotlin**: `MyFlutterApiRegistrar.getInstance(binding)` in a plugin, or `MyFlutterApiRegistrar.getInstance(flutterEngine)` in an app.
+  - **Kotlin**: `MyFlutterApiRegistrar().getInstance(binding)` in a plugin, or `MyFlutterApiRegistrar().getInstance(flutterEngine)` in an app.
   - **Swift**: `MyFlutterApiRegistrar.getInstance(registrar: registrar)`.
 
   These return the instance registered by that engine's Dart isolate when it can be identified (see [Multi-Engine Routing](#multi-engine-routing) below), otherwise the most recent registration, or `null` / `nil` if none is registered.

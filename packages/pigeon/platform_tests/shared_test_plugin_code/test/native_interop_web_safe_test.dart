@@ -54,12 +54,17 @@ void main() {
         throwsUnsupportedError,
       );
       expect(
-        () =>
-            NativeInteropReservedNamesFlutterApiRegistrar.register(_FakeReservedNamesFlutterApi()),
+        () => NativeInteropReservedNamesFlutterApi.implement(_FakeReservedNamesFlutterApi()),
         throwsUnsupportedError,
       );
       expect(
-        () => NativeInteropReservedNamesFlutterApiRegistrar.unregister(
+        () => NativeInteropReservedNamesFlutterApiRegistrar().register(
+          _FakeReservedNamesFlutterApi(),
+        ),
+        throwsUnsupportedError,
+      );
+      expect(
+        () => NativeInteropReservedNamesFlutterApiRegistrar().unregister(
           _FakeReservedNamesFlutterApi(),
         ),
         throwsUnsupportedError,

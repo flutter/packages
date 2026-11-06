@@ -2167,7 +2167,7 @@ class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
       return false
     }
 
-    // Default instance (name: nil) is distinct from an explicit empty string (name: "").
+    // Default instance is distinct from an explicit empty string (name: "").
     let defaultReservedSetup = NativeInteropReservedNamesHostApiSetup.getInstance()
     guard
       defaultReservedSetup != nil,
@@ -2247,43 +2247,43 @@ class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
       return NativeInteropReservedNamesFlutterApiRegistrar.getInstance(registrar: stub, name: name)
     }
 
-    NativeInteropReservedNamesFlutterApiRegistrar.register(
+    NativeInteropReservedNamesFlutterApiRegistrar.registerInstance(
       api: bridge1, engineId: engineId, affinityKey: noKey, name: name)
-    NativeInteropReservedNamesFlutterApiRegistrar.register(
+    NativeInteropReservedNamesFlutterApiRegistrar.registerInstance(
       api: bridge2, engineId: engineId, affinityKey: noKey, name: name)
     guard try lookup()?.release(value: "ping") == "engine2:ping" else {
       return false
     }
 
     // Re-registering bridge1 deduplicates and moves it to the top of the stack.
-    NativeInteropReservedNamesFlutterApiRegistrar.register(
+    NativeInteropReservedNamesFlutterApiRegistrar.registerInstance(
       api: bridge1, engineId: engineId, affinityKey: noKey, name: name)
     guard try lookup()?.release(value: "ping") == "engine1:ping" else {
       return false
     }
 
     // Single unregister removes bridge1 completely and restores bridge2.
-    NativeInteropReservedNamesFlutterApiRegistrar.unregister(api: bridge1, name: name)
+    NativeInteropReservedNamesFlutterApiRegistrar.unregisterInstance(api: bridge1, name: name)
     guard try lookup()?.release(value: "ping") == "engine2:ping" else {
       return false
     }
 
     // Out-of-order unregister on bottom entry leaves top entry intact.
-    NativeInteropReservedNamesFlutterApiRegistrar.register(
+    NativeInteropReservedNamesFlutterApiRegistrar.registerInstance(
       api: bridge3, engineId: engineId, affinityKey: noKey, name: name)
-    NativeInteropReservedNamesFlutterApiRegistrar.unregister(api: bridge2, name: name)
+    NativeInteropReservedNamesFlutterApiRegistrar.unregisterInstance(api: bridge2, name: name)
     guard try lookup()?.release(value: "ping") == "engine3:ping" else {
       return false
     }
 
     // Unregistering the remaining entry clears the registration list completely.
-    NativeInteropReservedNamesFlutterApiRegistrar.unregister(api: bridge3, name: name)
+    NativeInteropReservedNamesFlutterApiRegistrar.unregisterInstance(api: bridge3, name: name)
     guard lookup() == nil else {
       return false
     }
 
     // Duplicate unregister is a safe no-op.
-    NativeInteropReservedNamesFlutterApiRegistrar.unregister(api: bridge3, name: name)
+    NativeInteropReservedNamesFlutterApiRegistrar.unregisterInstance(api: bridge3, name: name)
     guard lookup() == nil else {
       return false
     }
@@ -2303,7 +2303,7 @@ class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
     let affinityBridge = TestPluginReservedFlutterBridge("affinity")
     defer {
       for bridge in [bridge1, bridge2, affinityBridge] {
-        NativeInteropReservedNamesFlutterApiRegistrar.unregister(api: bridge, name: name)
+        NativeInteropReservedNamesFlutterApiRegistrar.unregisterInstance(api: bridge, name: name)
       }
     }
     func release(_ registrar: FlutterPluginRegistrar) -> String? {
@@ -2311,9 +2311,9 @@ class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
         registrar: registrar, name: name)?.release(value: "ping")
     }
 
-    NativeInteropReservedNamesFlutterApiRegistrar.register(
+    NativeInteropReservedNamesFlutterApiRegistrar.registerInstance(
       api: bridge1, engineId: registrar1.engineIdentifier, affinityKey: noKey, name: name)
-    NativeInteropReservedNamesFlutterApiRegistrar.register(
+    NativeInteropReservedNamesFlutterApiRegistrar.registerInstance(
       api: bridge2, engineId: registrar2.engineIdentifier, affinityKey: noKey, name: name)
     guard
       release(registrar1) == "engine1:ping",
@@ -2325,9 +2325,9 @@ class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
     }
 
     // A registration whose Dart engine id is unknown matches by affinity key.
-    NativeInteropReservedNamesFlutterApiRegistrar.register(
+    NativeInteropReservedNamesFlutterApiRegistrar.registerInstance(
       api: affinityBridge, engineId: noKey, affinityKey: registrar1.engineIdentifier, name: name)
-    NativeInteropReservedNamesFlutterApiRegistrar.unregister(api: bridge1, name: name)
+    NativeInteropReservedNamesFlutterApiRegistrar.unregisterInstance(api: bridge1, name: name)
     guard
       release(registrar1) == "affinity:ping",
       release(registrar2) == "engine2:ping"
@@ -2459,7 +2459,7 @@ class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
   }
 
   func registeredEngineKey() throws -> Int64 {
-    guard let registration = NativeInteropHostIntegrationCoreApiSetup.getInstance(name: nil) else {
+    guard let registration = NativeInteropHostIntegrationCoreApiSetup.getInstance() else {
       throw NativeInteropTestsError(
         code: "no-registration", message: "No default Host API registration.", details: nil)
     }

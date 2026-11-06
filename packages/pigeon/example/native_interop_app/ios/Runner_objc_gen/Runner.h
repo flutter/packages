@@ -334,23 +334,20 @@ typedef unsigned int swift_uint4 __attribute__((__ext_vector_type__(4)));
 /// NativeInteropExampleApi classes.
 SWIFT_CLASS("_TtC6Runner28NativeInteropExampleApiSetup")
 @interface NativeInteropExampleApiSetup : NSObject
-- (nonnull instancetype)init SWIFT_UNAVAILABLE;
-+ (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
+- (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
 /// Returns the most recently registered instance for <code>name</code> (or the
-/// default instance when <code>name</code> is nil), or nil if none is
-/// registered. A nil <code>name</code> and an empty <code>name</code> refer to
-/// different registrations.
+/// default instance when <code>name</code> is omitted), or nil if none is
+/// registered.
 + (NativeInteropExampleApiSetup* _Nullable)getInstanceWithName:
-    (NSString* _Nullable)name SWIFT_WARN_UNUSED_RESULT;
+    (NSString* _Nonnull)name SWIFT_WARN_UNUSED_RESULT;
 /// Returns the instance generated Dart code should use for <code>name</code>
-/// (or the default instance when <code>name</code> is nil). Prefers the most
-/// recent registration whose engine key is <code>engineId</code>, then
-/// <code>affinityKey</code>, then the most recent registration.
-/// <code>Int64.min</code> means unknown.
+/// (or the default instance). Prefers the most recent registration whose engine
+/// key is <code>engineId</code>, then <code>affinityKey</code>, then the most
+/// recent registration. <code>Int64.min</code> means unknown.
 + (NativeInteropExampleApiSetup* _Nullable)
     pigeonResolveInstanceWithEngineId:(int64_t)engineId
                           affinityKey:(int64_t)affinityKey
-                                 name:(NSString* _Nullable)name
+                                 name:(NSString* _Nonnull)name
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns the engine key <code>instance</code> was registered with, or
 /// <code>Int64.min</code> if unknown.

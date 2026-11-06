@@ -577,6 +577,7 @@ List<Error> _errorOnNativeInteropReservedMethodNames(Root root) {
         'pigeonEngineKey',
         'pigeonEngineKeyOf',
       },
+      AstFlutterApi() => const <String>{'implement'},
       _ => const <String>{},
     };
     for (final Method method in api.methods) {

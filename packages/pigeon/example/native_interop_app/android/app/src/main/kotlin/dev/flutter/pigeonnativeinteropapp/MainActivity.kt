@@ -20,6 +20,6 @@ class MainActivity : FlutterActivity() {
     super.configureFlutterEngine(flutterEngine)
 
     val api = PigeonApiImplementation()
-    NativeInteropExampleApiRegistrar.register(api, flutterEngine)
+    NativeInteropExampleApiRegistrar().register(api, flutterEngine)
   }
 }

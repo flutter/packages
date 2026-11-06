@@ -1414,9 +1414,8 @@ if (wrapped == nil) {
     indent.newln();
     indent.write('@objc class ${api.name}Registrar: NSObject ');
     indent.addScoped('{', '}', () {
-      indent.writeln('private override init() {}');
       indent.writeln('private static let lock = NSLock()');
-      indent.writeln('private static var registered${api.name} = [String: [${api.name}]]()');
+      indent.writeln('static var registered${api.name} = [String: [${api.name}]]()');
       indent.newln();
       _writeNativeInteropRegisterDocs(indent);
       indent.writeln(_docCommentPrefix);
@@ -1425,21 +1424,16 @@ if (wrapped == nil) {
       );
       indent.writeln('$_docCommentPrefix that registered `api`, or are `Int64.min` when unknown.');
       indent.write(
-        '@objc static func register(api: ${api.name}Bridge, engineId: Int64, affinityKey: Int64, name: String?) ',
+        '@objc static func registerInstance(api: ${api.name}Bridge, engineId: Int64, affinityKey: Int64, name: String = ${_classNamePrefix}PigeonInternal.defaultInstanceName) ',
       );
       indent.addScoped('{', '}', () {
-        indent.writeln(
-          'let resolvedName = name ?? ${_classNamePrefix}PigeonInternal.defaultInstanceName',
-        );
         indent.writeln('let apiObject = api as AnyObject');
         _writeDisplacedLifetimeComment(indent);
         indent.writeln('var displaced: [${api.name}] = []');
         indent.writeScoped('do {', '}', () {
           indent.writeln('${api.name}Registrar.lock.lock()');
           indent.writeln('defer { ${api.name}Registrar.lock.unlock() }');
-          indent.writeln(
-            'var list = ${api.name}Registrar.registered${api.name}[resolvedName] ?? []',
-          );
+          indent.writeln('var list = ${api.name}Registrar.registered${api.name}[name] ?? []');
           indent.writeScoped('list.removeAll { entry in', '}', () {
             indent.writeScoped('if (entry.api as AnyObject) === apiObject {', '}', () {
               indent.writeln('displaced.append(entry)');
@@ -1450,17 +1444,16 @@ if (wrapped == nil) {
           indent.writeln(
             'list.append(${api.name}(api: api, engineId: engineId, affinityKey: affinityKey))',
           );
-          indent.writeln('${api.name}Registrar.registered${api.name}[resolvedName] = list');
+          indent.writeln('${api.name}Registrar.registered${api.name}[name] = list');
         });
         indent.writeln('withExtendedLifetime(displaced) {}');
       });
       indent.newln();
       _writeNativeInteropUnregisterDocs(indent);
-      indent.write('@objc static func unregister(api: ${api.name}Bridge, name: String? = nil) ');
+      indent.write(
+        '@objc static func unregisterInstance(api: ${api.name}Bridge, name: String = ${_classNamePrefix}PigeonInternal.defaultInstanceName) ',
+      );
       indent.addScoped('{', '}', () {
-        indent.writeln(
-          'let resolvedName = name ?? ${_classNamePrefix}PigeonInternal.defaultInstanceName',
-        );
         indent.writeln('let apiObject = api as AnyObject');
         _writeDisplacedLifetimeComment(indent);
         indent.writeln('var displaced: [${api.name}] = []');
@@ -1468,7 +1461,7 @@ if (wrapped == nil) {
           indent.writeln('${api.name}Registrar.lock.lock()');
           indent.writeln('defer { ${api.name}Registrar.lock.unlock() }');
           indent.writeScoped(
-            'guard var list = ${api.name}Registrar.registered${api.name}[resolvedName] else {',
+            'guard var list = ${api.name}Registrar.registered${api.name}[name] else {',
             '}',
             () {
               indent.writeln('return');
@@ -1482,12 +1475,10 @@ if (wrapped == nil) {
             indent.writeln('return false');
           });
           indent.writeScoped('if list.isEmpty {', '}', () {
-            indent.writeln(
-              '${api.name}Registrar.registered${api.name}.removeValue(forKey: resolvedName)',
-            );
+            indent.writeln('${api.name}Registrar.registered${api.name}.removeValue(forKey: name)');
           }, addTrailingNewline: false);
           indent.addScoped(' else {', '}', () {
-            indent.writeln('${api.name}Registrar.registered${api.name}[resolvedName] = list');
+            indent.writeln('${api.name}Registrar.registered${api.name}[name] = list');
           });
         });
         indent.writeln('withExtendedLifetime(displaced) {}');
@@ -1496,7 +1487,7 @@ if (wrapped == nil) {
       indent.writeln('#if canImport(Flutter) || canImport(FlutterMacOS)');
       indent.nest(1, () {
         indent.writeln(
-          '$_docCommentPrefix Returns the instance for `name` (or the default instance when `name` is nil)',
+          '$_docCommentPrefix Returns the instance for `name` (or the default instance when `name` is omitted)',
         );
         indent.writeln(
           '$_docCommentPrefix that was registered from the engine that owns `registrar`.',
@@ -1509,7 +1500,7 @@ if (wrapped == nil) {
           '$_docCommentPrefix registration matches the engine, and returns nil if none is registered.',
         );
         indent.writeScoped(
-          'static func getInstance(registrar: FlutterPluginRegistrar, name: String? = nil) -> ${api.name}? {',
+          'static func getInstance(registrar: FlutterPluginRegistrar, name: String = ${_classNamePrefix}PigeonInternal.defaultInstanceName) -> ${api.name}? {',
           '}',
           () {
             indent.writeln(
@@ -1521,16 +1512,13 @@ if (wrapped == nil) {
       indent.writeln('#endif');
       indent.newln();
       indent.write(
-        'fileprivate static func getInstance(engineKey: Int64, name: String?) -> ${api.name}? ',
+        'fileprivate static func getInstance(engineKey: Int64, name: String) -> ${api.name}? ',
       );
       indent.addScoped('{', '}', () {
-        indent.writeln(
-          'let resolvedName = name ?? ${_classNamePrefix}PigeonInternal.defaultInstanceName',
-        );
         indent.writeln('${api.name}Registrar.lock.lock()');
         indent.writeln('defer { ${api.name}Registrar.lock.unlock() }');
         indent.writeScoped(
-          'guard let list = ${api.name}Registrar.registered${api.name}[resolvedName] else {',
+          'guard let list = ${api.name}Registrar.registered${api.name}[name] else {',
           '}',
           () {
             indent.writeln('return nil');
@@ -1623,7 +1611,7 @@ if (wrapped == nil) {
 
   void _writeNativeInteropRegisterDocs(Indent indent) {
     indent.writeln(
-      '$_docCommentPrefix Registers `api` under `name` (or the default instance when `name` is nil).',
+      '$_docCommentPrefix Registers `api` under `name` (or the default instance when `name` is omitted).',
     );
     indent.writeln(_docCommentPrefix);
     indent.writeln(
@@ -1639,7 +1627,9 @@ if (wrapped == nil) {
     indent.writeln(
       '$_docCommentPrefix Removes `api` from the registrations under `name` (or the default instance',
     );
-    indent.writeln('$_docCommentPrefix when `name` is nil), leaving other registrations in place.');
+    indent.writeln(
+      '$_docCommentPrefix when `name` is omitted), leaving other registrations in place.',
+    );
     indent.writeln(_docCommentPrefix);
     indent.writeln(
       '$_docCommentPrefix Instances are matched by identity. Does nothing if `api` is not registered.',
@@ -1651,11 +1641,7 @@ if (wrapped == nil) {
       '$_docCommentPrefix Returns the most recently registered instance for `name` (or the default',
     );
     indent.writeln(
-      '$_docCommentPrefix instance when `name` is nil), or nil if none is registered.',
-    );
-    indent.writeln(_docCommentPrefix);
-    indent.writeln(
-      '$_docCommentPrefix A nil `name` and an empty `name` refer to different registrations.',
+      '$_docCommentPrefix instance when `name` is omitted), or nil if none is registered.',
     );
   }
 
@@ -1677,7 +1663,6 @@ if (wrapped == nil) {
     final setupName = '${api.name}Setup';
     final tracker = '${api.name}InstanceTracker';
     final instances = '$tracker.instancesOf${api.name}';
-    const resolvedName = 'let resolvedName = name ?? ';
     final defaultName = '${_classNamePrefix}PigeonInternal.defaultInstanceName';
 
     indent.writeln(
@@ -1696,7 +1681,7 @@ if (wrapped == nil) {
         '$_docCommentPrefix `api` registered from different engines is tracked as separate registrations.',
       );
       indent.writeScoped(
-        'static func register(api: ${api.name}, registrar: FlutterPluginRegistrar, name: String? = nil) {',
+        'static func register(api: ${api.name}, registrar: FlutterPluginRegistrar, name: String = $defaultName) {',
         '}',
         () {
           indent.writeln(
@@ -1714,7 +1699,7 @@ if (wrapped == nil) {
         '$_docCommentPrefix otherwise removes every registration of `api` under `name`.',
       );
       indent.writeScoped(
-        'static func unregister(api: ${api.name}, registrar: FlutterPluginRegistrar, name: String? = nil) {',
+        'static func unregister(api: ${api.name}, registrar: FlutterPluginRegistrar, name: String = $defaultName) {',
         '}',
         () {
           indent.writeln(
@@ -1726,13 +1711,12 @@ if (wrapped == nil) {
     indent.writeln('#endif');
     indent.newln();
     indent.writeScoped(
-      'fileprivate static func register(api: ${api.name}, engineKey: Int64, name: String?) {',
+      'fileprivate static func register(api: ${api.name}, engineKey: Int64, name: String) {',
       '}',
       () {
-        indent.writeln('$resolvedName$defaultName');
         indent.writeln('$tracker.lock.lock()');
         indent.writeln('defer { $tracker.lock.unlock() }');
-        indent.writeln('var list = $instances[resolvedName] ?? []');
+        indent.writeln('var list = $instances[name] ?? []');
         // Reuse the existing wrapper so Dart handles that already resolved
         // it keep working after the instance moves back to the top.
         indent.writeScoped(
@@ -1749,21 +1733,20 @@ if (wrapped == nil) {
           indent.writeln('wrapper.api = api');
           indent.writeln('list.append(wrapper)');
         });
-        indent.writeln('$instances[resolvedName] = list');
+        indent.writeln('$instances[name] = list');
       },
     );
     indent.newln();
     indent.writeScoped(
-      'fileprivate static func unregister(api: ${api.name}, engineKey: Int64, name: String?) {',
+      'fileprivate static func unregister(api: ${api.name}, engineKey: Int64, name: String) {',
       '}',
       () {
-        indent.writeln('$resolvedName$defaultName');
         _writeDisplacedLifetimeComment(indent);
         indent.writeln('var displaced: [Any] = []');
         indent.writeScoped('do {', '}', () {
           indent.writeln('$tracker.lock.lock()');
           indent.writeln('defer { $tracker.lock.unlock() }');
-          indent.writeScoped('guard var list = $instances[resolvedName] else {', '}', () {
+          indent.writeScoped('guard var list = $instances[name] else {', '}', () {
             indent.writeln('return');
           });
           indent.writeln(
@@ -1789,10 +1772,10 @@ if (wrapped == nil) {
             indent.writeln('return false');
           });
           indent.writeScoped('if list.isEmpty {', '}', () {
-            indent.writeln('$instances.removeValue(forKey: resolvedName)');
+            indent.writeln('$instances.removeValue(forKey: name)');
           }, addTrailingNewline: false);
           indent.addScoped(' else {', '}', () {
-            indent.writeln('$instances[resolvedName] = list');
+            indent.writeln('$instances[name] = list');
           });
         });
         indent.writeln('withExtendedLifetime(displaced) {}');
@@ -1801,20 +1784,19 @@ if (wrapped == nil) {
     indent.newln();
     _writeNativeInteropGetInstanceDocs(indent);
     indent.writeScoped(
-      '@objc static func getInstance(name: String? = nil) -> $setupName? {',
+      '@objc static func getInstance(name: String = $defaultName) -> $setupName? {',
       '}',
       () {
-        indent.writeln('$resolvedName$defaultName');
         indent.writeln('$tracker.lock.lock()');
         indent.writeln('defer { $tracker.lock.unlock() }');
-        indent.writeln('return $instances[resolvedName]?.last');
+        indent.writeln('return $instances[name]?.last');
       },
     );
     indent.newln();
     indent.writeln(
       '$_docCommentPrefix Returns the instance generated Dart code should use for `name` (or the default',
     );
-    indent.writeln('$_docCommentPrefix instance when `name` is nil).');
+    indent.writeln('$_docCommentPrefix instance).');
     indent.writeln(_docCommentPrefix);
     indent.writeln(
       '$_docCommentPrefix Prefers the most recent registration whose engine key is `engineId`, then',
@@ -1823,13 +1805,12 @@ if (wrapped == nil) {
       '$_docCommentPrefix `affinityKey`, then the most recent registration. `Int64.min` means unknown.',
     );
     indent.writeScoped(
-      '@objc static func pigeonResolveInstance(engineId: Int64, affinityKey: Int64, name: String?) -> $setupName? {',
+      '@objc static func pigeonResolveInstance(engineId: Int64, affinityKey: Int64, name: String) -> $setupName? {',
       '}',
       () {
-        indent.writeln('$resolvedName$defaultName');
         indent.writeln('$tracker.lock.lock()');
         indent.writeln('defer { $tracker.lock.unlock() }');
-        indent.writeScoped('guard let list = $instances[resolvedName] else {', '}', () {
+        indent.writeScoped('guard let list = $instances[name] else {', '}', () {
           indent.writeln('return nil');
         });
         indent.writeScoped(
@@ -1899,7 +1880,7 @@ if (wrapped == nil) {
             indent.writeln('withExtendedLifetime(oldValue) {}');
           });
         });
-        indent.writeln('private override init() {}');
+        indent.writeln('override init() {}');
         indent.writeScoped('private func resolveApi() throws -> ${api.name} {', '}', () {
           indent.writeScoped('guard let currentApi = api else {', '}', () {
             indent.writeScoped('throw ${_getErrorClassName(generatorOptions)}(', ')', () {
@@ -2016,7 +1997,7 @@ if (wrapped == nil) {
   }) {
     final String apiName = api.name;
     if (generatorOptions.useFfi) {
-      indent.writeScoped('private class ${apiName}InstanceTracker {', '}', () {
+      indent.writeScoped('class ${apiName}InstanceTracker {', '}', () {
         indent.writeln('static let lock = NSLock()');
         indent.writeln('static var instancesOf$apiName = [String: [${apiName}Setup]]()');
       });
@@ -2937,9 +2918,7 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
     final String uniqueComponent = generatorOptions.fileSpecificClassNameComponent ?? '';
     indent.writeScoped('enum ${uniqueComponent}PigeonInternal {', '}', () {
       if (generatorOptions.useFfi) {
-        indent.writeln(
-          'fileprivate static let defaultInstanceName = "$defaultNativeInteropInstanceName"',
-        );
+        indent.writeln('static let defaultInstanceName = "$defaultNativeInteropInstanceName"');
       }
       _writeIsNullish(generatorOptions, indent);
       if (root.classes.isNotEmpty) {

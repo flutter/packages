@@ -57,10 +57,10 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi, HostCallbackCoreApi {
     testSuffixApiTwo.setUp(binding, "suffixTwo")
     val niTests = NativeInteropIntegrationTests(binding.applicationContext, binding)
     niMessageApiImpl = niTests
-    NativeInteropHostIntegrationCoreApiRegistrar.register(niTests, binding)
+    NativeInteropHostIntegrationCoreApiRegistrar().register(niTests, binding)
     val reservedImpl = NativeInteropReservedNamesHostApiImpl(binding)
     niReservedNamesImpl = reservedImpl
-    NativeInteropReservedNamesHostApiRegistrar.register(reservedImpl, binding)
+    NativeInteropReservedNamesHostApiRegistrar().register(reservedImpl, binding)
     flutterApi = FlutterIntegrationCoreApi(binding.binaryMessenger)
     flutterCallbackApi = FlutterCallbackCoreApi(binding.binaryMessenger)
     flutterSmallApiOne = FlutterSmallApi(binding.binaryMessenger, "suffixOne")
@@ -85,9 +85,11 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi, HostCallbackCoreApi {
   override fun onDetachedFromEngine(binding: FlutterPluginBinding) {
     HostIntegrationCoreApi.setUp(binding.binaryMessenger, null)
     HostCallbackCoreApi.setUp(binding.binaryMessenger, null)
-    niMessageApiImpl?.let { NativeInteropHostIntegrationCoreApiRegistrar.unregister(it, binding) }
+    niMessageApiImpl?.let { NativeInteropHostIntegrationCoreApiRegistrar().unregister(it, binding) }
     niMessageApiImpl = null
-    niReservedNamesImpl?.let { NativeInteropReservedNamesHostApiRegistrar.unregister(it, binding) }
+    niReservedNamesImpl?.let {
+      NativeInteropReservedNamesHostApiRegistrar().unregister(it, binding)
+    }
     niReservedNamesImpl = null
     proxyApiRegistrar?.tearDown()
   }
@@ -928,7 +930,9 @@ class NativeInteropIntegrationTests(
       checkNotNull(binding) { "NativeInteropIntegrationTests was not created with a binding." }
 
   private fun niFlutterApi(name: String? = null): NativeInteropFlutterIntegrationCoreApi? {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance(requireBinding(), name)
+    val registrar = NativeInteropFlutterIntegrationCoreApiRegistrar()
+    return if (name == null) registrar.getInstance(requireBinding())
+    else registrar.getInstance(requireBinding(), name)
   }
 
   override fun noop() {}
@@ -2058,13 +2062,14 @@ class NativeInteropIntegrationTests(
   override fun testDeregisterHostApi(): Boolean {
     val name = "testDeregisterHostInstance"
     val singleApi = NativeInteropIntegrationTests()
-    NativeInteropHostIntegrationCoreApiRegistrar.register(singleApi, requireBinding(), name = name)
-    if (NativeInteropHostIntegrationCoreApiRegistrar.getInstance(name) == null) {
+    NativeInteropHostIntegrationCoreApiRegistrar()
+        .register(singleApi, requireBinding(), name = name)
+    if (NativeInteropHostIntegrationCoreApiRegistrar().getInstance(name) == null) {
       return false
     }
-    NativeInteropHostIntegrationCoreApiRegistrar.unregister(
-        singleApi, requireBinding(), name = name)
-    if (NativeInteropHostIntegrationCoreApiRegistrar.getInstance(name) != null) {
+    NativeInteropHostIntegrationCoreApiRegistrar()
+        .unregister(singleApi, requireBinding(), name = name)
+    if (NativeInteropHostIntegrationCoreApiRegistrar().getInstance(name) != null) {
       return false
     }
 
@@ -2074,44 +2079,45 @@ class NativeInteropIntegrationTests(
     val api1 = NativeInteropIntegrationTests()
     val api2 = NativeInteropIntegrationTests()
     val unregisteredApi = NativeInteropIntegrationTests()
-    NativeInteropHostIntegrationCoreApiRegistrar.register(
-        api1, requireBinding(), name = outOfOrderName)
-    NativeInteropHostIntegrationCoreApiRegistrar.register(
-        api2, requireBinding(), name = outOfOrderName)
-    val reg2 = NativeInteropHostIntegrationCoreApiRegistrar.getInstance(outOfOrderName)
-    NativeInteropHostIntegrationCoreApiRegistrar.unregister(
-        api1, requireBinding(), name = outOfOrderName)
-    NativeInteropHostIntegrationCoreApiRegistrar.unregister(
-        api1, requireBinding(), name = outOfOrderName)
-    NativeInteropHostIntegrationCoreApiRegistrar.unregister(
-        unregisteredApi, requireBinding(), name = outOfOrderName)
+    NativeInteropHostIntegrationCoreApiRegistrar()
+        .register(api1, requireBinding(), name = outOfOrderName)
+    NativeInteropHostIntegrationCoreApiRegistrar()
+        .register(api2, requireBinding(), name = outOfOrderName)
+    val reg2 = NativeInteropHostIntegrationCoreApiRegistrar().getInstance(outOfOrderName)
+    NativeInteropHostIntegrationCoreApiRegistrar()
+        .unregister(api1, requireBinding(), name = outOfOrderName)
+    NativeInteropHostIntegrationCoreApiRegistrar()
+        .unregister(api1, requireBinding(), name = outOfOrderName)
+    NativeInteropHostIntegrationCoreApiRegistrar()
+        .unregister(unregisteredApi, requireBinding(), name = outOfOrderName)
     if (reg2 == null ||
-        NativeInteropHostIntegrationCoreApiRegistrar.getInstance(outOfOrderName) !== reg2) {
+        NativeInteropHostIntegrationCoreApiRegistrar().getInstance(outOfOrderName) !== reg2) {
       return false
     }
-    NativeInteropHostIntegrationCoreApiRegistrar.unregister(
-        api2, requireBinding(), name = outOfOrderName)
-    if (NativeInteropHostIntegrationCoreApiRegistrar.getInstance(outOfOrderName) != null) {
+    NativeInteropHostIntegrationCoreApiRegistrar()
+        .unregister(api2, requireBinding(), name = outOfOrderName)
+    if (NativeInteropHostIntegrationCoreApiRegistrar().getInstance(outOfOrderName) != null) {
       return false
     }
 
-    // Default instance (name = null) is distinct from an explicit empty string (name = "").
-    val defaultReservedWrapper = NativeInteropReservedNamesHostApiRegistrar.getInstance()
+    // Default instance is distinct from an explicit empty string (name = "").
+    val defaultReservedWrapper = NativeInteropReservedNamesHostApiRegistrar().getInstance()
     if (defaultReservedWrapper == null ||
-        NativeInteropReservedNamesHostApiRegistrar.getInstance("") != null) {
+        NativeInteropReservedNamesHostApiRegistrar().getInstance("") != null) {
       return false
     }
     val emptyNameApi = NativeInteropReservedNamesHostApiImpl()
-    NativeInteropReservedNamesHostApiRegistrar.register(emptyNameApi, requireBinding(), name = "")
-    val emptyNameWrapper = NativeInteropReservedNamesHostApiRegistrar.getInstance("")
+    NativeInteropReservedNamesHostApiRegistrar().register(emptyNameApi, requireBinding(), name = "")
+    val emptyNameWrapper = NativeInteropReservedNamesHostApiRegistrar().getInstance("")
     val emptyNameIsolated =
         emptyNameWrapper != null &&
             emptyNameWrapper !== defaultReservedWrapper &&
-            NativeInteropReservedNamesHostApiRegistrar.getInstance() === defaultReservedWrapper
-    NativeInteropReservedNamesHostApiRegistrar.unregister(emptyNameApi, requireBinding(), name = "")
+            NativeInteropReservedNamesHostApiRegistrar().getInstance() === defaultReservedWrapper
+    NativeInteropReservedNamesHostApiRegistrar()
+        .unregister(emptyNameApi, requireBinding(), name = "")
     if (!emptyNameIsolated ||
-        NativeInteropReservedNamesHostApiRegistrar.getInstance("") != null ||
-        NativeInteropReservedNamesHostApiRegistrar.getInstance() !== defaultReservedWrapper) {
+        NativeInteropReservedNamesHostApiRegistrar().getInstance("") != null ||
+        NativeInteropReservedNamesHostApiRegistrar().getInstance() !== defaultReservedWrapper) {
       return false
     }
 
@@ -2126,12 +2132,12 @@ class NativeInteropIntegrationTests(
         engine3.plugins.add(TestPlugin())
         engine2.destroy()
         val afterSecondDestroyed =
-            NativeInteropHostIntegrationCoreApiRegistrar.getInstance() != null &&
-                NativeInteropReservedNamesHostApiRegistrar.getInstance() != null
+            NativeInteropHostIntegrationCoreApiRegistrar().getInstance() != null &&
+                NativeInteropReservedNamesHostApiRegistrar().getInstance() != null
         engine3.destroy()
         val afterThirdDestroyed =
-            NativeInteropHostIntegrationCoreApiRegistrar.getInstance() != null &&
-                NativeInteropReservedNamesHostApiRegistrar.getInstance() != null
+            NativeInteropHostIntegrationCoreApiRegistrar().getInstance() != null &&
+                NativeInteropReservedNamesHostApiRegistrar().getInstance() != null
         engineCheckPassed = afterSecondDestroyed && afterThirdDestroyed
       }
       if (Looper.myLooper() == Looper.getMainLooper()) {
@@ -2181,64 +2187,68 @@ class NativeInteropIntegrationTests(
     val noKey = Long.MIN_VALUE
     val binding = requireBinding()
 
-    NativeInteropReservedNamesFlutterApiRegistrar.register(api1, noKey, noKey, name)
-    NativeInteropReservedNamesFlutterApiRegistrar.register(api2, noKey, noKey, name)
-    if (NativeInteropReservedNamesFlutterApiRegistrar.getInstance(binding, name)?.release("ping") !=
-        "engine2:ping") {
+    NativeInteropReservedNamesFlutterApiRegistrar().registerInstance(api1, noKey, noKey, name)
+    NativeInteropReservedNamesFlutterApiRegistrar().registerInstance(api2, noKey, noKey, name)
+    if (NativeInteropReservedNamesFlutterApiRegistrar()
+        .getInstance(binding, name)
+        ?.release("ping") != "engine2:ping") {
       return false
     }
 
     // Re-registering api1 deduplicates and moves it to the top of the stack.
-    NativeInteropReservedNamesFlutterApiRegistrar.register(api1, noKey, noKey, name)
-    if (NativeInteropReservedNamesFlutterApiRegistrar.getInstance(binding, name)?.release("ping") !=
-        "engine1:ping") {
+    NativeInteropReservedNamesFlutterApiRegistrar().registerInstance(api1, noKey, noKey, name)
+    if (NativeInteropReservedNamesFlutterApiRegistrar()
+        .getInstance(binding, name)
+        ?.release("ping") != "engine1:ping") {
       return false
     }
 
     // Single unregister(api1) removes api1 completely and restores api2.
-    NativeInteropReservedNamesFlutterApiRegistrar.unregister(api1, name = name)
-    if (NativeInteropReservedNamesFlutterApiRegistrar.getInstance(binding, name)?.release("ping") !=
-        "engine2:ping") {
+    NativeInteropReservedNamesFlutterApiRegistrar().unregisterInstance(api1, name = name)
+    if (NativeInteropReservedNamesFlutterApiRegistrar()
+        .getInstance(binding, name)
+        ?.release("ping") != "engine2:ping") {
       return false
     }
 
     // Out-of-order unregister on bottom entry leaves top entry intact.
     val api3 = makeApi("engine3")
-    NativeInteropReservedNamesFlutterApiRegistrar.register(api3, noKey, noKey, name)
-    NativeInteropReservedNamesFlutterApiRegistrar.unregister(api2, name = name)
-    if (NativeInteropReservedNamesFlutterApiRegistrar.getInstance(binding, name)?.release("ping") !=
-        "engine3:ping") {
+    NativeInteropReservedNamesFlutterApiRegistrar().registerInstance(api3, noKey, noKey, name)
+    NativeInteropReservedNamesFlutterApiRegistrar().unregisterInstance(api2, name = name)
+    if (NativeInteropReservedNamesFlutterApiRegistrar()
+        .getInstance(binding, name)
+        ?.release("ping") != "engine3:ping") {
       return false
     }
 
     // Unregistering the remaining entry clears the registration list completely.
-    NativeInteropReservedNamesFlutterApiRegistrar.unregister(api3, name = name)
-    if (NativeInteropReservedNamesFlutterApiRegistrar.getInstance(binding, name) != null) {
+    NativeInteropReservedNamesFlutterApiRegistrar().unregisterInstance(api3, name = name)
+    if (NativeInteropReservedNamesFlutterApiRegistrar().getInstance(binding, name) != null) {
       return false
     }
 
     // Duplicate unregister is a safe no-op.
-    NativeInteropReservedNamesFlutterApiRegistrar.unregister(api3, name = name)
-    return NativeInteropReservedNamesFlutterApiRegistrar.getInstance(binding, name) == null
+    NativeInteropReservedNamesFlutterApiRegistrar().unregisterInstance(api3, name = name)
+    return NativeInteropReservedNamesFlutterApiRegistrar().getInstance(binding, name) == null
   }
 
   private val namedHostApis = mutableMapOf<String, NativeInteropIntegrationTests>()
 
   override fun registerAndImmediatelyDeregisterHostApi(name: String) {
     val api = NativeInteropIntegrationTests()
-    NativeInteropHostIntegrationCoreApiRegistrar.register(api, requireBinding(), name = name)
-    NativeInteropHostIntegrationCoreApiRegistrar.unregister(api, requireBinding(), name = name)
+    NativeInteropHostIntegrationCoreApiRegistrar().register(api, requireBinding(), name = name)
+    NativeInteropHostIntegrationCoreApiRegistrar().unregister(api, requireBinding(), name = name)
   }
 
   override fun registerNamedHostApi(name: String) {
     val api = NativeInteropIntegrationTests()
     namedHostApis[name] = api
-    NativeInteropHostIntegrationCoreApiRegistrar.register(api, requireBinding(), name = name)
+    NativeInteropHostIntegrationCoreApiRegistrar().register(api, requireBinding(), name = name)
   }
 
   override fun deregisterNamedHostApi(name: String) {
     val api = namedHostApis.remove(name) ?: return
-    NativeInteropHostIntegrationCoreApiRegistrar.unregister(api, requireBinding(), name = name)
+    NativeInteropHostIntegrationCoreApiRegistrar().unregister(api, requireBinding(), name = name)
   }
 
   override fun testCallDeregisteredFlutterApi(name: String): Boolean {
@@ -2288,7 +2298,7 @@ class NativeInteropIntegrationTests(
 
   override fun registeredEngineKey(): Long {
     val registration =
-        NativeInteropHostIntegrationCoreApiRegistrar.getInstance()
+        NativeInteropHostIntegrationCoreApiRegistrar().getInstance()
             ?: throw NativeInteropTestsError("no-registration", "No default Host API registration.")
     return NativeInteropHostIntegrationCoreApiRegistrar.pigeonEngineKeyOf(registration)
   }
@@ -2407,7 +2417,7 @@ class NativeInteropReservedNamesHostApiImpl(private val binding: FlutterPluginBi
   }
 
   private fun flutterApi(): NativeInteropReservedNamesFlutterApi {
-    return NativeInteropReservedNamesFlutterApiRegistrar.getInstance(checkNotNull(binding))!!
+    return NativeInteropReservedNamesFlutterApiRegistrar().getInstance(checkNotNull(binding))!!
   }
 
   override fun callFlutterRelease(value: String): String {

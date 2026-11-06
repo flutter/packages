@@ -3045,6 +3045,7 @@ abstract class Api {
 
 @FlutterApi()
 abstract class Callbacks {
+  void implement();
   void register();
   void dartApi();
   void pigeonResolveInstance();
@@ -3057,10 +3058,11 @@ abstract class Callbacks {
       contains('Method name "pigeonResolveInstance" in API "Api"'),
       contains('Method name "pigeonEngineKey" in API "Api"'),
       contains('Method name "pigeonEngineKeyOf" in API "Api"'),
+      contains('Method name "implement" in API "Callbacks"'),
     ];
 
     test(
-      'Dart rejects HostApi method names reserved by JNI interop code and allows register/dartApi on FlutterApi',
+      'Dart rejects method names reserved by JNI interop code and allows register/dartApi on FlutterApi',
       () {
         final List<Error> errors = validate(
           const DartGeneratorAdapter(),
@@ -3072,7 +3074,7 @@ abstract class Callbacks {
     );
 
     test(
-      'Dart rejects HostApi method names reserved by FFI interop code and allows register/dartApi on FlutterApi',
+      'Dart rejects method names reserved by FFI interop code and allows register/dartApi on FlutterApi',
       () {
         final List<Error> errors = validate(
           const DartGeneratorAdapter(),

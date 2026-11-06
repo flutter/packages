@@ -1,14 +1,10 @@
 ## 30.0.0
 
 * **BREAKING CHANGE**: [dart,kotlin,swift] Redesigns Native Interop registration APIs for multi-engine support:
-  * `@HostApi` registration now takes the engine it belongs to: `MyApiRegistrar.register(api, binding)` / `register(api, flutterEngine)` in Kotlin and `MyApiSetup.register(api:registrar:)` in Swift. The same applies to `unregister`.
-  * Replaces `register(null)` / `register(api: nil)` / `registerInstance(null|nil)` with `unregister`, which removes only the given instance for the given engine. `register` now requires a non-null API and returns `void`.
-  * Replaces native `@FlutterApi` `getInstance(name)` with `MyFlutterApiRegistrar.getInstance(binding|flutterEngine)` in Kotlin and `getInstance(registrar:)` in Swift, which return the instance registered by that engine's Dart isolate when known.
-  * Makes registrars static (for example, `MyApiRegistrar.register(...)` instead of `MyApiRegistrar().register(...)`) and renames Kotlin/Swift `@FlutterApi` `registerInstance` to `register`.
-  * Removes Dart `<FlutterApi>.implement`; use `<FlutterApi>.setUp` or `<FlutterApi>Registrar.register`.
+  * `@HostApi` registration now takes the engine it belongs to: `MyApiRegistrar().register(api, binding)` / `register(api, flutterEngine)` in Kotlin and `MyApiSetup.register(api:registrar:)` in Swift. The same applies to `unregister`.
+  * Replaces `register(null)` / `register(api: nil)` / `registerInstance(null|nil)` with `unregister` / `unregisterInstance`, which remove only the given instance (for the given engine). `register` now requires a non-null API and returns `void` in Kotlin and Swift.
+  * Replaces native `@FlutterApi` `getInstance(name)` with `MyFlutterApiRegistrar().getInstance(binding|flutterEngine)` in Kotlin and `MyFlutterApiRegistrar.getInstance(registrar:)` in Swift, which return the instance registered by that engine's Dart isolate when known.
   * Requires classes for Swift `@HostApi` implementations when using `useFfi` (protocols now conform to `AnyObject`).
-  * Makes `name` parameters nullable (`null`/`nil` is the default instance) and makes `defaultInstanceName` and the backing registration maps private.
-  * Renames Dart `<HostApi>ForNativeInterop.getInstance`'s `channelName` parameter to `name`, and returns `null` instead of throwing when no instance is registered.
   * Reserves `pigeonResolveInstance`, `pigeonEngineKey`, and `pigeonEngineKeyOf` as `@HostApi` method names.
 * [dart,kotlin,swift] Keeps earlier registrations when multiple engines register Native Interop APIs under the same name, so detaching one engine no longer clears the others.
 * [dart,kotlin,swift] Routes Native Interop lookups to the calling engine's registration when the engine identifier is available, and otherwise to the engine an isolate first resolved.

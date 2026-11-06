@@ -14943,50 +14943,82 @@ extension type NativeInteropFlutterIntegrationCoreApiRegistrar._(objc.ObjCObject
     );
   }
 
-  /// Registers <code>api</code> under <code>name</code> (or the default instance when <code>name</code> is nil).
+  /// new
+  static NativeInteropFlutterIntegrationCoreApiRegistrar new$() {
+    final $ret = _objc_msgSend_151sglz(
+      _class_NativeInteropFlutterIntegrationCoreApiRegistrar,
+      _sel_new,
+    );
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.fromPointer(
+      $ret,
+      retain: false,
+      release: true,
+    );
+  }
+
+  /// Registers <code>api</code> under <code>name</code> (or the default instance when <code>name</code> is omitted).
   /// Registrations are kept in an ordered stack per name, and <code>getInstance</code> returns
   /// the most recent one. Registering an instance that is already registered under
   /// <code>name</code> moves it to the top of the stack.
   /// Called by generated Dart code. <code>engineId</code> and <code>affinityKey</code> identify the engine
   /// that registered <code>api</code>, or are <code>Int64.min</code> when unknown.
-  static void registerWithApi(
+  static void registerInstanceWithApi(
     NativeInteropFlutterIntegrationCoreApiBridge api, {
     required int engineId,
     required int affinityKey,
-    objc.NSString? name,
+    required objc.NSString name,
   }) {
     final _$$ref = api.ref;
-    final _$$ref$1 = name?.ref;
+    final _$$ref$1 = name.ref;
     _objc_msgSend_1hz5td9(
       _class_NativeInteropFlutterIntegrationCoreApiRegistrar,
-      _sel_registerWithApi_engineId_affinityKey_name_,
+      _sel_registerInstanceWithApi_engineId_affinityKey_name_,
       _$$ref.pointer,
       engineId,
       affinityKey,
-      _$$ref$1?.pointer ?? ffi.nullptr,
+      _$$ref$1.pointer,
     );
   }
 
   /// Removes <code>api</code> from the registrations under <code>name</code> (or the default instance
-  /// when <code>name</code> is nil), leaving other registrations in place.
+  /// when <code>name</code> is omitted), leaving other registrations in place.
   /// Instances are matched by identity. Does nothing if <code>api</code> is not registered.
-  static void unregisterWithApi(
+  static void unregisterInstanceWithApi(
     NativeInteropFlutterIntegrationCoreApiBridge api, {
-    objc.NSString? name,
+    required objc.NSString name,
   }) {
     final _$$ref = api.ref;
-    final _$$ref$1 = name?.ref;
+    final _$$ref$1 = name.ref;
     _objc_msgSend_pfv6jd(
       _class_NativeInteropFlutterIntegrationCoreApiRegistrar,
-      _sel_unregisterWithApi_name_,
+      _sel_unregisterInstanceWithApi_name_,
       _$$ref.pointer,
-      _$$ref$1?.pointer ?? ffi.nullptr,
+      _$$ref$1.pointer,
     );
   }
+
+  /// Returns a new instance of NativeInteropFlutterIntegrationCoreApiRegistrar constructed with the default `new` method.
+  NativeInteropFlutterIntegrationCoreApiRegistrar() : this.as(new$().object$);
 }
 
 extension NativeInteropFlutterIntegrationCoreApiRegistrar$Methods
-    on NativeInteropFlutterIntegrationCoreApiRegistrar {}
+    on NativeInteropFlutterIntegrationCoreApiRegistrar {
+  /// init
+  NativeInteropFlutterIntegrationCoreApiRegistrar init() {
+    final _$$ref = object$.ref;
+    objc.checkOsVersionInternal(
+      'NativeInteropFlutterIntegrationCoreApiRegistrar.init',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    final $ret = _objc_msgSend_151sglz(_$$ref.retainAndReturnPointer(), _sel_init);
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.fromPointer(
+      $ret,
+      retain: false,
+      release: true,
+    );
+  }
+}
 
 /// Generated setup class from Pigeon to register implemented NativeInteropHostIntegrationCoreApi classes.
 extension type NativeInteropHostIntegrationCoreApiSetup._(objc.ObjCObject object$)
@@ -15031,18 +15063,23 @@ extension type NativeInteropHostIntegrationCoreApiSetup._(objc.ObjCObject object
   }
 
   /// Returns the most recently registered instance for <code>name</code> (or the default
-  /// instance when <code>name</code> is nil), or nil if none is registered.
-  /// A nil <code>name</code> and an empty <code>name</code> refer to different registrations.
-  static NativeInteropHostIntegrationCoreApiSetup? getInstanceWithName(objc.NSString? name) {
-    final _$$ref = name?.ref;
+  /// instance when <code>name</code> is omitted), or nil if none is registered.
+  static NativeInteropHostIntegrationCoreApiSetup? getInstanceWithName(objc.NSString name) {
+    final _$$ref = name.ref;
     final $ret = _objc_msgSend_1sotr3r(
       _class_NativeInteropHostIntegrationCoreApiSetup,
       _sel_getInstanceWithName_,
-      _$$ref?.pointer ?? ffi.nullptr,
+      _$$ref.pointer,
     );
     return $ret.address == 0
         ? null
         : NativeInteropHostIntegrationCoreApiSetup.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// new
+  static NativeInteropHostIntegrationCoreApiSetup new$() {
+    final $ret = _objc_msgSend_151sglz(_class_NativeInteropHostIntegrationCoreApiSetup, _sel_new);
+    return NativeInteropHostIntegrationCoreApiSetup.fromPointer($ret, retain: false, release: true);
   }
 
   /// Returns the engine key <code>instance</code> was registered with, or <code>Int64.min</code> if unknown.
@@ -15056,26 +15093,29 @@ extension type NativeInteropHostIntegrationCoreApiSetup._(objc.ObjCObject object
   }
 
   /// Returns the instance generated Dart code should use for <code>name</code> (or the default
-  /// instance when <code>name</code> is nil).
+  /// instance).
   /// Prefers the most recent registration whose engine key is <code>engineId</code>, then
   /// <code>affinityKey</code>, then the most recent registration. <code>Int64.min</code> means unknown.
   static NativeInteropHostIntegrationCoreApiSetup? pigeonResolveInstanceWithEngineId(
     int engineId, {
     required int affinityKey,
-    objc.NSString? name,
+    required objc.NSString name,
   }) {
-    final _$$ref = name?.ref;
+    final _$$ref = name.ref;
     final $ret = _objc_msgSend_6vqy4b(
       _class_NativeInteropHostIntegrationCoreApiSetup,
       _sel_pigeonResolveInstanceWithEngineId_affinityKey_name_,
       engineId,
       affinityKey,
-      _$$ref?.pointer ?? ffi.nullptr,
+      _$$ref.pointer,
     );
     return $ret.address == 0
         ? null
         : NativeInteropHostIntegrationCoreApiSetup.fromPointer($ret, retain: true, release: true);
   }
+
+  /// Returns a new instance of NativeInteropHostIntegrationCoreApiSetup constructed with the default `new` method.
+  NativeInteropHostIntegrationCoreApiSetup() : this.as(new$().object$);
 }
 
 extension NativeInteropHostIntegrationCoreApiSetup$Methods
@@ -19101,6 +19141,18 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
     return $ret.address == 0 ? null : objc.NSNumber.fromPointer($ret, retain: true, release: true);
   }
 
+  /// init
+  NativeInteropHostIntegrationCoreApiSetup init() {
+    final _$$ref = object$.ref;
+    objc.checkOsVersionInternal(
+      'NativeInteropHostIntegrationCoreApiSetup.init',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    final $ret = _objc_msgSend_151sglz(_$$ref.retainAndReturnPointer(), _sel_init);
+    return NativeInteropHostIntegrationCoreApiSetup.fromPointer($ret, retain: false, release: true);
+  }
+
   /// Tests that zero-argument boolean methods starting with ‘is’ are correctly
   /// invoked as JNI property getters (e.g., <code>_jniApi.isGetter</code>).
   objc.NSNumber? isGetterWithWrappedError(NativeInteropTestsError wrappedError) {
@@ -20221,50 +20273,82 @@ extension type NativeInteropReservedNamesFlutterApiRegistrar._(objc.ObjCObject o
     );
   }
 
-  /// Registers <code>api</code> under <code>name</code> (or the default instance when <code>name</code> is nil).
+  /// new
+  static NativeInteropReservedNamesFlutterApiRegistrar new$() {
+    final $ret = _objc_msgSend_151sglz(
+      _class_NativeInteropReservedNamesFlutterApiRegistrar,
+      _sel_new,
+    );
+    return NativeInteropReservedNamesFlutterApiRegistrar.fromPointer(
+      $ret,
+      retain: false,
+      release: true,
+    );
+  }
+
+  /// Registers <code>api</code> under <code>name</code> (or the default instance when <code>name</code> is omitted).
   /// Registrations are kept in an ordered stack per name, and <code>getInstance</code> returns
   /// the most recent one. Registering an instance that is already registered under
   /// <code>name</code> moves it to the top of the stack.
   /// Called by generated Dart code. <code>engineId</code> and <code>affinityKey</code> identify the engine
   /// that registered <code>api</code>, or are <code>Int64.min</code> when unknown.
-  static void registerWithApi(
+  static void registerInstanceWithApi(
     NativeInteropReservedNamesFlutterApiBridge api, {
     required int engineId,
     required int affinityKey,
-    objc.NSString? name,
+    required objc.NSString name,
   }) {
     final _$$ref = api.ref;
-    final _$$ref$1 = name?.ref;
+    final _$$ref$1 = name.ref;
     _objc_msgSend_1hz5td9(
       _class_NativeInteropReservedNamesFlutterApiRegistrar,
-      _sel_registerWithApi_engineId_affinityKey_name_,
+      _sel_registerInstanceWithApi_engineId_affinityKey_name_,
       _$$ref.pointer,
       engineId,
       affinityKey,
-      _$$ref$1?.pointer ?? ffi.nullptr,
+      _$$ref$1.pointer,
     );
   }
 
   /// Removes <code>api</code> from the registrations under <code>name</code> (or the default instance
-  /// when <code>name</code> is nil), leaving other registrations in place.
+  /// when <code>name</code> is omitted), leaving other registrations in place.
   /// Instances are matched by identity. Does nothing if <code>api</code> is not registered.
-  static void unregisterWithApi(
+  static void unregisterInstanceWithApi(
     NativeInteropReservedNamesFlutterApiBridge api, {
-    objc.NSString? name,
+    required objc.NSString name,
   }) {
     final _$$ref = api.ref;
-    final _$$ref$1 = name?.ref;
+    final _$$ref$1 = name.ref;
     _objc_msgSend_pfv6jd(
       _class_NativeInteropReservedNamesFlutterApiRegistrar,
-      _sel_unregisterWithApi_name_,
+      _sel_unregisterInstanceWithApi_name_,
       _$$ref.pointer,
-      _$$ref$1?.pointer ?? ffi.nullptr,
+      _$$ref$1.pointer,
     );
   }
+
+  /// Returns a new instance of NativeInteropReservedNamesFlutterApiRegistrar constructed with the default `new` method.
+  NativeInteropReservedNamesFlutterApiRegistrar() : this.as(new$().object$);
 }
 
 extension NativeInteropReservedNamesFlutterApiRegistrar$Methods
-    on NativeInteropReservedNamesFlutterApiRegistrar {}
+    on NativeInteropReservedNamesFlutterApiRegistrar {
+  /// init
+  NativeInteropReservedNamesFlutterApiRegistrar init() {
+    final _$$ref = object$.ref;
+    objc.checkOsVersionInternal(
+      'NativeInteropReservedNamesFlutterApiRegistrar.init',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    final $ret = _objc_msgSend_151sglz(_$$ref.retainAndReturnPointer(), _sel_init);
+    return NativeInteropReservedNamesFlutterApiRegistrar.fromPointer(
+      $ret,
+      retain: false,
+      release: true,
+    );
+  }
+}
 
 /// Generated setup class from Pigeon to register implemented NativeInteropReservedNamesHostApi classes.
 extension type NativeInteropReservedNamesHostApiSetup._(objc.ObjCObject object$)
@@ -20309,18 +20393,23 @@ extension type NativeInteropReservedNamesHostApiSetup._(objc.ObjCObject object$)
   }
 
   /// Returns the most recently registered instance for <code>name</code> (or the default
-  /// instance when <code>name</code> is nil), or nil if none is registered.
-  /// A nil <code>name</code> and an empty <code>name</code> refer to different registrations.
-  static NativeInteropReservedNamesHostApiSetup? getInstanceWithName(objc.NSString? name) {
-    final _$$ref = name?.ref;
+  /// instance when <code>name</code> is omitted), or nil if none is registered.
+  static NativeInteropReservedNamesHostApiSetup? getInstanceWithName(objc.NSString name) {
+    final _$$ref = name.ref;
     final $ret = _objc_msgSend_1sotr3r(
       _class_NativeInteropReservedNamesHostApiSetup,
       _sel_getInstanceWithName_,
-      _$$ref?.pointer ?? ffi.nullptr,
+      _$$ref.pointer,
     );
     return $ret.address == 0
         ? null
         : NativeInteropReservedNamesHostApiSetup.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// new
+  static NativeInteropReservedNamesHostApiSetup new$() {
+    final $ret = _objc_msgSend_151sglz(_class_NativeInteropReservedNamesHostApiSetup, _sel_new);
+    return NativeInteropReservedNamesHostApiSetup.fromPointer($ret, retain: false, release: true);
   }
 
   /// Returns the engine key <code>instance</code> was registered with, or <code>Int64.min</code> if unknown.
@@ -20334,26 +20423,29 @@ extension type NativeInteropReservedNamesHostApiSetup._(objc.ObjCObject object$)
   }
 
   /// Returns the instance generated Dart code should use for <code>name</code> (or the default
-  /// instance when <code>name</code> is nil).
+  /// instance).
   /// Prefers the most recent registration whose engine key is <code>engineId</code>, then
   /// <code>affinityKey</code>, then the most recent registration. <code>Int64.min</code> means unknown.
   static NativeInteropReservedNamesHostApiSetup? pigeonResolveInstanceWithEngineId(
     int engineId, {
     required int affinityKey,
-    objc.NSString? name,
+    required objc.NSString name,
   }) {
-    final _$$ref = name?.ref;
+    final _$$ref = name.ref;
     final $ret = _objc_msgSend_6vqy4b(
       _class_NativeInteropReservedNamesHostApiSetup,
       _sel_pigeonResolveInstanceWithEngineId_affinityKey_name_,
       engineId,
       affinityKey,
-      _$$ref?.pointer ?? ffi.nullptr,
+      _$$ref.pointer,
     );
     return $ret.address == 0
         ? null
         : NativeInteropReservedNamesHostApiSetup.fromPointer($ret, retain: true, release: true);
   }
+
+  /// Returns a new instance of NativeInteropReservedNamesHostApiSetup constructed with the default `new` method.
+  NativeInteropReservedNamesHostApiSetup() : this.as(new$().object$);
 }
 
 extension NativeInteropReservedNamesHostApiSetup$Methods on NativeInteropReservedNamesHostApiSetup {
@@ -20527,6 +20619,18 @@ extension NativeInteropReservedNamesHostApiSetup$Methods on NativeInteropReserve
       _$$ref$1.pointer,
       _$$ref$2.pointer,
     );
+  }
+
+  /// init
+  NativeInteropReservedNamesHostApiSetup init() {
+    final _$$ref = object$.ref;
+    objc.checkOsVersionInternal(
+      'NativeInteropReservedNamesHostApiSetup.init',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    final $ret = _objc_msgSend_151sglz(_$$ref.retainAndReturnPointer(), _sel_init);
+    return NativeInteropReservedNamesHostApiSetup.fromPointer($ret, retain: false, release: true);
   }
 
   /// JNIgen makes this a getter, which collides with <code>JObject.isNull</code>.
@@ -32897,11 +33001,11 @@ late final _sel_reference = objc.registerName("reference");
 late final _sel_registerAndImmediatelyDeregisterHostApiWithName_wrappedError_ = objc.registerName(
   "registerAndImmediatelyDeregisterHostApiWithName:wrappedError:",
 );
+late final _sel_registerInstanceWithApi_engineId_affinityKey_name_ = objc.registerName(
+  "registerInstanceWithApi:engineId:affinityKey:name:",
+);
 late final _sel_registerNamedHostApiWithName_wrappedError_ = objc.registerName(
   "registerNamedHostApiWithName:wrappedError:",
-);
-late final _sel_registerWithApi_engineId_affinityKey_name_ = objc.registerName(
-  "registerWithApi:engineId:affinityKey:name:",
 );
 late final _sel_registerWithValue_error_ = objc.registerName("registerWithValue:error:");
 late final _sel_registerWithValue_wrappedError_ = objc.registerName(
@@ -33055,7 +33159,9 @@ late final _sel_throwFlutterErrorWithWrappedError_ = objc.registerName(
 late final _sel_type = objc.registerName("type");
 late final _sel_typeWithError_ = objc.registerName("typeWithError:");
 late final _sel_typeWithWrappedError_ = objc.registerName("typeWithWrappedError:");
-late final _sel_unregisterWithApi_name_ = objc.registerName("unregisterWithApi:name:");
+late final _sel_unregisterInstanceWithApi_name_ = objc.registerName(
+  "unregisterInstanceWithApi:name:",
+);
 late final _sel_unregisterWithValue_wrappedError_ = objc.registerName(
   "unregisterWithValue:wrappedError:",
 );

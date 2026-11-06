@@ -1337,27 +1337,26 @@ SWIFT_PROTOCOL(
 SWIFT_CLASS(
     "_TtC11test_plugin47NativeInteropFlutterIntegrationCoreApiRegistrar")
 @interface NativeInteropFlutterIntegrationCoreApiRegistrar : NSObject
-- (nonnull instancetype)init SWIFT_UNAVAILABLE;
-+ (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
 /// Registers <code>api</code> under <code>name</code> (or the default instance
-/// when <code>name</code> is nil). Registrations are kept in an ordered stack
-/// per name, and <code>getInstance</code> returns the most recent one.
+/// when <code>name</code> is omitted). Registrations are kept in an ordered
+/// stack per name, and <code>getInstance</code> returns the most recent one.
 /// Registering an instance that is already registered under <code>name</code>
 /// moves it to the top of the stack. Called by generated Dart code.
 /// <code>engineId</code> and <code>affinityKey</code> identify the engine that
 /// registered <code>api</code>, or are <code>Int64.min</code> when unknown.
-+ (void)registerWithApi:
++ (void)registerInstanceWithApi:
             (id<NativeInteropFlutterIntegrationCoreApiBridge> _Nonnull)api
-               engineId:(int64_t)engineId
-            affinityKey:(int64_t)affinityKey
-                   name:(NSString* _Nullable)name;
+                       engineId:(int64_t)engineId
+                    affinityKey:(int64_t)affinityKey
+                           name:(NSString* _Nonnull)name;
 /// Removes <code>api</code> from the registrations under <code>name</code> (or
-/// the default instance when <code>name</code> is nil), leaving other
+/// the default instance when <code>name</code> is omitted), leaving other
 /// registrations in place. Instances are matched by identity. Does nothing if
 /// <code>api</code> is not registered.
-+ (void)unregisterWithApi:
++ (void)unregisterInstanceWithApi:
             (id<NativeInteropFlutterIntegrationCoreApiBridge> _Nonnull)api
-                     name:(NSString* _Nullable)name;
+                             name:(NSString* _Nonnull)name;
+- (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
 @end
 
 @class NativeInteropSealedClassWrapperBridge;
@@ -1365,23 +1364,20 @@ SWIFT_CLASS(
 /// NativeInteropHostIntegrationCoreApi classes.
 SWIFT_CLASS("_TtC11test_plugin40NativeInteropHostIntegrationCoreApiSetup")
 @interface NativeInteropHostIntegrationCoreApiSetup : NSObject
-- (nonnull instancetype)init SWIFT_UNAVAILABLE;
-+ (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
+- (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
 /// Returns the most recently registered instance for <code>name</code> (or the
-/// default instance when <code>name</code> is nil), or nil if none is
-/// registered. A nil <code>name</code> and an empty <code>name</code> refer to
-/// different registrations.
+/// default instance when <code>name</code> is omitted), or nil if none is
+/// registered.
 + (NativeInteropHostIntegrationCoreApiSetup* _Nullable)getInstanceWithName:
-    (NSString* _Nullable)name SWIFT_WARN_UNUSED_RESULT;
+    (NSString* _Nonnull)name SWIFT_WARN_UNUSED_RESULT;
 /// Returns the instance generated Dart code should use for <code>name</code>
-/// (or the default instance when <code>name</code> is nil). Prefers the most
-/// recent registration whose engine key is <code>engineId</code>, then
-/// <code>affinityKey</code>, then the most recent registration.
-/// <code>Int64.min</code> means unknown.
+/// (or the default instance). Prefers the most recent registration whose engine
+/// key is <code>engineId</code>, then <code>affinityKey</code>, then the most
+/// recent registration. <code>Int64.min</code> means unknown.
 + (NativeInteropHostIntegrationCoreApiSetup* _Nullable)
     pigeonResolveInstanceWithEngineId:(int64_t)engineId
                           affinityKey:(int64_t)affinityKey
-                                 name:(NSString* _Nullable)name
+                                 name:(NSString* _Nonnull)name
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns the engine key <code>instance</code> was registered with, or
 /// <code>Int64.min</code> if unknown.
@@ -3183,50 +3179,46 @@ SWIFT_PROTOCOL("_TtP11test_plugin42NativeInteropReservedNamesFlutterApiBridge_")
 
 SWIFT_CLASS("_TtC11test_plugin45NativeInteropReservedNamesFlutterApiRegistrar")
 @interface NativeInteropReservedNamesFlutterApiRegistrar : NSObject
-- (nonnull instancetype)init SWIFT_UNAVAILABLE;
-+ (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
 /// Registers <code>api</code> under <code>name</code> (or the default instance
-/// when <code>name</code> is nil). Registrations are kept in an ordered stack
-/// per name, and <code>getInstance</code> returns the most recent one.
+/// when <code>name</code> is omitted). Registrations are kept in an ordered
+/// stack per name, and <code>getInstance</code> returns the most recent one.
 /// Registering an instance that is already registered under <code>name</code>
 /// moves it to the top of the stack. Called by generated Dart code.
 /// <code>engineId</code> and <code>affinityKey</code> identify the engine that
 /// registered <code>api</code>, or are <code>Int64.min</code> when unknown.
-+ (void)registerWithApi:
++ (void)registerInstanceWithApi:
             (id<NativeInteropReservedNamesFlutterApiBridge> _Nonnull)api
-               engineId:(int64_t)engineId
-            affinityKey:(int64_t)affinityKey
-                   name:(NSString* _Nullable)name;
+                       engineId:(int64_t)engineId
+                    affinityKey:(int64_t)affinityKey
+                           name:(NSString* _Nonnull)name;
 /// Removes <code>api</code> from the registrations under <code>name</code> (or
-/// the default instance when <code>name</code> is nil), leaving other
+/// the default instance when <code>name</code> is omitted), leaving other
 /// registrations in place. Instances are matched by identity. Does nothing if
 /// <code>api</code> is not registered.
-+ (void)unregisterWithApi:
++ (void)unregisterInstanceWithApi:
             (id<NativeInteropReservedNamesFlutterApiBridge> _Nonnull)api
-                     name:(NSString* _Nullable)name;
+                             name:(NSString* _Nonnull)name;
+- (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
 @end
 
 /// Generated setup class from Pigeon to register implemented
 /// NativeInteropReservedNamesHostApi classes.
 SWIFT_CLASS("_TtC11test_plugin38NativeInteropReservedNamesHostApiSetup")
 @interface NativeInteropReservedNamesHostApiSetup : NSObject
-- (nonnull instancetype)init SWIFT_UNAVAILABLE;
-+ (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
+- (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
 /// Returns the most recently registered instance for <code>name</code> (or the
-/// default instance when <code>name</code> is nil), or nil if none is
-/// registered. A nil <code>name</code> and an empty <code>name</code> refer to
-/// different registrations.
+/// default instance when <code>name</code> is omitted), or nil if none is
+/// registered.
 + (NativeInteropReservedNamesHostApiSetup* _Nullable)getInstanceWithName:
-    (NSString* _Nullable)name SWIFT_WARN_UNUSED_RESULT;
+    (NSString* _Nonnull)name SWIFT_WARN_UNUSED_RESULT;
 /// Returns the instance generated Dart code should use for <code>name</code>
-/// (or the default instance when <code>name</code> is nil). Prefers the most
-/// recent registration whose engine key is <code>engineId</code>, then
-/// <code>affinityKey</code>, then the most recent registration.
-/// <code>Int64.min</code> means unknown.
+/// (or the default instance). Prefers the most recent registration whose engine
+/// key is <code>engineId</code>, then <code>affinityKey</code>, then the most
+/// recent registration. <code>Int64.min</code> means unknown.
 + (NativeInteropReservedNamesHostApiSetup* _Nullable)
     pigeonResolveInstanceWithEngineId:(int64_t)engineId
                           affinityKey:(int64_t)affinityKey
-                                 name:(NSString* _Nullable)name
+                                 name:(NSString* _Nonnull)name
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns the engine key <code>instance</code> was registered with, or
 /// <code>Int64.min</code> if unknown.

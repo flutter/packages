@@ -62,9 +62,11 @@ class _PigeonCodec extends StandardMessageCodec {
   }
 }
 
+const String defaultInstanceName = 'PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u';
+
 @internal
 NativeInteropExampleApiForNativeInterop? pigeon_getInstance_NativeInteropExampleApi({
-  String? name,
+  String channelName = defaultInstanceName,
 }) {
   throw UnsupportedError(
     'Native Interop is not supported on this platform. Use NativeInteropExampleApi instead.',
@@ -72,9 +74,10 @@ NativeInteropExampleApiForNativeInterop? pigeon_getInstance_NativeInteropExample
 }
 
 abstract class NativeInteropExampleApiForNativeInterop {
-  /// Returns the instance of [NativeInteropExampleApiForNativeInterop] registered with [name] (or the default instance when [name] is null), or null if none is registered.
-  static NativeInteropExampleApiForNativeInterop? getInstance({String? name}) =>
-      pigeon_native.pigeon_getInstance_NativeInteropExampleApi(name: name);
+  /// Returns instance of NativeInteropExampleApiForNativeInterop with specified [channelName] if one has been registered.
+  static NativeInteropExampleApiForNativeInterop? getInstance({
+    String channelName = defaultInstanceName,
+  }) => pigeon_native.pigeon_getInstance_NativeInteropExampleApi(channelName: channelName);
 
   void doSomething();
 }
@@ -109,7 +112,7 @@ class NativeInteropExampleApi {
     }
     final NativeInteropExampleApiForNativeInterop? nativeInteropApi =
         NativeInteropExampleApiForNativeInterop.getInstance(
-          name: messageChannelSuffix.isEmpty ? null : messageChannelSuffix,
+          channelName: messageChannelSuffix.isEmpty ? defaultInstanceName : messageChannelSuffix,
         );
     if (nativeInteropApi == null) {
       throw ArgumentError(

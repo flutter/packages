@@ -340,6 +340,15 @@ ffi_bridge.NativeInteropExampleNumberWrapper _convertToFfiNumberWrapper(Object v
 bool _isType<T>(Type t) => T == t;
 bool _isTypeOrNullableType<T>(Type t) => _isType<T>(t) || _isType<T?>(t);
 
+void _throwNoInstanceError(String channelName) {
+  String nameString = 'named $channelName';
+  if (channelName == defaultInstanceName) {
+    nameString = 'with no name';
+  }
+  final String error = 'No instance $nameString has been registered.';
+  throw ArgumentError(error);
+}
+
 /// Native engine key meaning "no engine", matching `Long.MIN_VALUE` in Kotlin
 /// and `Int64.min` in Swift.
 const int _pigeonNoEngineKey = -9223372036854775808;
@@ -394,8 +403,8 @@ PlatformException _wrapJniException(JThrowable e) {
 }
 
 NativeInteropExampleApiForNativeInterop? pigeon_getInstance_NativeInteropExampleApi({
-  String? name,
-}) => _NativeInteropExampleApiForNativeInterop.getInstance(name: name);
+  String channelName = defaultInstanceName,
+}) => _NativeInteropExampleApiForNativeInterop.getInstance(channelName: channelName);
 
 class _NativeInteropExampleApiForNativeInterop implements NativeInteropExampleApiForNativeInterop {
   _NativeInteropExampleApiForNativeInterop._withRegistrar({
@@ -404,14 +413,16 @@ class _NativeInteropExampleApiForNativeInterop implements NativeInteropExampleAp
   }) : _jniApi = jniApi,
        _ffiApi = ffiApi;
 
-  /// Returns instance of NativeInteropExampleApiForNativeInterop with specified [name] if one has been registered.
+  /// Returns instance of NativeInteropExampleApiForNativeInterop with specified [channelName] if one has been registered.
   ///
   /// Prefers an instance registered by this isolate's engine, falling back to
   /// the most recently registered instance.
-  static NativeInteropExampleApiForNativeInterop? getInstance({String? name}) {
+  static NativeInteropExampleApiForNativeInterop? getInstance({
+    String channelName = defaultInstanceName,
+  }) {
     if (Platform.isAndroid) {
       final int? engineId = PlatformDispatcher.instance.engineId;
-      final JString? jName = name?.toJString();
+      final JString jName = channelName.toJString();
       final jni_bridge.NativeInteropExampleApiRegistrar? link;
       try {
         link = jni_bridge.NativeInteropExampleApiRegistrar.pigeonResolveInstance(
@@ -420,7 +431,10 @@ class _NativeInteropExampleApiForNativeInterop implements NativeInteropExampleAp
           jName,
         );
       } finally {
-        jName?.release();
+        jName.release();
+      }
+      if (link == null) {
+        _throwNoInstanceError(channelName);
       }
       if (link != null && _pigeonEngineAffinity == null) {
         final int linkEngineKey = jni_bridge.NativeInteropExampleApiRegistrar.pigeonEngineKeyOf(
@@ -430,26 +444,25 @@ class _NativeInteropExampleApiForNativeInterop implements NativeInteropExampleAp
           _pigeonEngineAffinity = linkEngineKey;
         }
       }
-      return link == null
-          ? null
-          : _NativeInteropExampleApiForNativeInterop._withRegistrar(jniApi: link);
+      return _NativeInteropExampleApiForNativeInterop._withRegistrar(jniApi: link);
     } else if (Platform.isIOS || Platform.isMacOS) {
       final int? engineId = PlatformDispatcher.instance.engineId;
       final ffi_bridge.NativeInteropExampleApiSetup? link =
           ffi_bridge.NativeInteropExampleApiSetup.pigeonResolveInstanceWithEngineId(
             engineId ?? _pigeonNoEngineKey,
             affinityKey: _pigeonEngineAffinity ?? _pigeonNoEngineKey,
-            name: name != null ? NSString(name) : null,
+            name: NSString(channelName),
           );
+      if (link == null) {
+        _throwNoInstanceError(channelName);
+      }
       if (link != null && _pigeonEngineAffinity == null) {
         final int linkEngineKey = ffi_bridge.NativeInteropExampleApiSetup.pigeonEngineKeyOf(link);
         if (linkEngineKey != _pigeonNoEngineKey) {
           _pigeonEngineAffinity = linkEngineKey;
         }
       }
-      return link == null
-          ? null
-          : _NativeInteropExampleApiForNativeInterop._withRegistrar(ffiApi: link);
+      return _NativeInteropExampleApiForNativeInterop._withRegistrar(ffiApi: link);
     } else {
       throw UnsupportedError(
         'Native Interop is not supported on this platform. Use NativeInteropExampleApi instead.',

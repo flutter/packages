@@ -200,8 +200,7 @@ enum NativeInteropTestsPigeonInternalNumberType: Int {
 }
 
 enum NativeInteropTestsPigeonInternal {
-  fileprivate static let defaultInstanceName =
-    "PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u"
+  static let defaultInstanceName = "PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u"
   static func isNullish(_ value: Any?) -> Bool {
     guard let innerValue = value else {
       return true
@@ -2632,7 +2631,7 @@ private class _PigeonFfiCodec {
   }
 }
 
-private class NativeInteropHostIntegrationCoreApiInstanceTracker {
+class NativeInteropHostIntegrationCoreApiInstanceTracker {
   static let lock = NSLock()
   static var instancesOfNativeInteropHostIntegrationCoreApi = [
     String: [NativeInteropHostIntegrationCoreApiSetup]
@@ -3130,7 +3129,7 @@ protocol NativeInteropHostIntegrationCoreApi: AnyObject {
       withExtendedLifetime(oldValue) {}
     }
   }
-  private override init() {}
+  override init() {}
   private func resolveApi() throws -> NativeInteropHostIntegrationCoreApi {
     guard let currentApi = api else {
       throw NativeInteropTestsError(
@@ -3145,7 +3144,7 @@ protocol NativeInteropHostIntegrationCoreApi: AnyObject {
   private var engineKey: Int64 = Int64.min
 
   #if canImport(Flutter) || canImport(FlutterMacOS)
-    /// Registers `api` under `name` (or the default instance when `name` is nil).
+    /// Registers `api` under `name` (or the default instance when `name` is omitted).
     ///
     /// Registrations are kept in an ordered stack per name, and `getInstance` returns
     /// the most recent one. Registering an instance that is already registered under
@@ -3155,13 +3154,13 @@ protocol NativeInteropHostIntegrationCoreApi: AnyObject {
     /// `api` registered from different engines is tracked as separate registrations.
     static func register(
       api: NativeInteropHostIntegrationCoreApi, registrar: FlutterPluginRegistrar,
-      name: String? = nil
+      name: String = NativeInteropTestsPigeonInternal.defaultInstanceName
     ) {
       register(api: api, engineKey: PigeonEngineKeys.key(for: registrar), name: name)
     }
 
     /// Removes `api` from the registrations under `name` (or the default instance
-    /// when `name` is nil), leaving other registrations in place.
+    /// when `name` is omitted), leaving other registrations in place.
     ///
     /// Instances are matched by identity. Does nothing if `api` is not registered.
     ///
@@ -3169,21 +3168,20 @@ protocol NativeInteropHostIntegrationCoreApi: AnyObject {
     /// otherwise removes every registration of `api` under `name`.
     static func unregister(
       api: NativeInteropHostIntegrationCoreApi, registrar: FlutterPluginRegistrar,
-      name: String? = nil
+      name: String = NativeInteropTestsPigeonInternal.defaultInstanceName
     ) {
       unregister(api: api, engineKey: PigeonEngineKeys.key(for: registrar), name: name)
     }
   #endif
 
   fileprivate static func register(
-    api: NativeInteropHostIntegrationCoreApi, engineKey: Int64, name: String?
+    api: NativeInteropHostIntegrationCoreApi, engineKey: Int64, name: String
   ) {
-    let resolvedName = name ?? NativeInteropTestsPigeonInternal.defaultInstanceName
     NativeInteropHostIntegrationCoreApiInstanceTracker.lock.lock()
     defer { NativeInteropHostIntegrationCoreApiInstanceTracker.lock.unlock() }
     var list =
       NativeInteropHostIntegrationCoreApiInstanceTracker
-      .instancesOfNativeInteropHostIntegrationCoreApi[resolvedName] ?? []
+      .instancesOfNativeInteropHostIntegrationCoreApi[name] ?? []
     if let index = list.firstIndex(where: { $0.api === api && $0.engineKey == engineKey }) {
       list.append(list.remove(at: index))
     } else {
@@ -3193,13 +3191,12 @@ protocol NativeInteropHostIntegrationCoreApi: AnyObject {
       list.append(wrapper)
     }
     NativeInteropHostIntegrationCoreApiInstanceTracker
-      .instancesOfNativeInteropHostIntegrationCoreApi[resolvedName] = list
+      .instancesOfNativeInteropHostIntegrationCoreApi[name] = list
   }
 
   fileprivate static func unregister(
-    api: NativeInteropHostIntegrationCoreApi, engineKey: Int64, name: String?
+    api: NativeInteropHostIntegrationCoreApi, engineKey: Int64, name: String
   ) {
-    let resolvedName = name ?? NativeInteropTestsPigeonInternal.defaultInstanceName
     // Removed entries are kept alive until after unlocking so their deinit cannot run while the
     // non-recursive lock is held.
     var displaced: [Any] = []
@@ -3209,7 +3206,7 @@ protocol NativeInteropHostIntegrationCoreApi: AnyObject {
       guard
         var list =
           NativeInteropHostIntegrationCoreApiInstanceTracker
-          .instancesOfNativeInteropHostIntegrationCoreApi[resolvedName]
+          .instancesOfNativeInteropHostIntegrationCoreApi[name]
       else {
         return
       }
@@ -3229,43 +3226,41 @@ protocol NativeInteropHostIntegrationCoreApi: AnyObject {
       }
       if list.isEmpty {
         NativeInteropHostIntegrationCoreApiInstanceTracker
-          .instancesOfNativeInteropHostIntegrationCoreApi.removeValue(forKey: resolvedName)
+          .instancesOfNativeInteropHostIntegrationCoreApi.removeValue(forKey: name)
       } else {
         NativeInteropHostIntegrationCoreApiInstanceTracker
-          .instancesOfNativeInteropHostIntegrationCoreApi[resolvedName] = list
+          .instancesOfNativeInteropHostIntegrationCoreApi[name] = list
       }
     }
     withExtendedLifetime(displaced) {}
   }
 
   /// Returns the most recently registered instance for `name` (or the default
-  /// instance when `name` is nil), or nil if none is registered.
-  ///
-  /// A nil `name` and an empty `name` refer to different registrations.
-  @objc static func getInstance(name: String? = nil) -> NativeInteropHostIntegrationCoreApiSetup? {
-    let resolvedName = name ?? NativeInteropTestsPigeonInternal.defaultInstanceName
+  /// instance when `name` is omitted), or nil if none is registered.
+  @objc static func getInstance(name: String = NativeInteropTestsPigeonInternal.defaultInstanceName)
+    -> NativeInteropHostIntegrationCoreApiSetup?
+  {
     NativeInteropHostIntegrationCoreApiInstanceTracker.lock.lock()
     defer { NativeInteropHostIntegrationCoreApiInstanceTracker.lock.unlock() }
     return
       NativeInteropHostIntegrationCoreApiInstanceTracker
-      .instancesOfNativeInteropHostIntegrationCoreApi[resolvedName]?.last
+      .instancesOfNativeInteropHostIntegrationCoreApi[name]?.last
   }
 
   /// Returns the instance generated Dart code should use for `name` (or the default
-  /// instance when `name` is nil).
+  /// instance).
   ///
   /// Prefers the most recent registration whose engine key is `engineId`, then
   /// `affinityKey`, then the most recent registration. `Int64.min` means unknown.
-  @objc static func pigeonResolveInstance(engineId: Int64, affinityKey: Int64, name: String?)
+  @objc static func pigeonResolveInstance(engineId: Int64, affinityKey: Int64, name: String)
     -> NativeInteropHostIntegrationCoreApiSetup?
   {
-    let resolvedName = name ?? NativeInteropTestsPigeonInternal.defaultInstanceName
     NativeInteropHostIntegrationCoreApiInstanceTracker.lock.lock()
     defer { NativeInteropHostIntegrationCoreApiInstanceTracker.lock.unlock() }
     guard
       let list =
         NativeInteropHostIntegrationCoreApiInstanceTracker
-        .instancesOfNativeInteropHostIntegrationCoreApi[resolvedName]
+        .instancesOfNativeInteropHostIntegrationCoreApi[name]
     else {
       return nil
     }
@@ -8487,13 +8482,12 @@ protocol NativeInteropHostIntegrationCoreApi: AnyObject {
 }
 
 @objc class NativeInteropFlutterIntegrationCoreApiRegistrar: NSObject {
-  private override init() {}
   private static let lock = NSLock()
-  private static var registeredNativeInteropFlutterIntegrationCoreApi = [
+  static var registeredNativeInteropFlutterIntegrationCoreApi = [
     String: [NativeInteropFlutterIntegrationCoreApi]
   ]()
 
-  /// Registers `api` under `name` (or the default instance when `name` is nil).
+  /// Registers `api` under `name` (or the default instance when `name` is omitted).
   ///
   /// Registrations are kept in an ordered stack per name, and `getInstance` returns
   /// the most recent one. Registering an instance that is already registered under
@@ -8501,11 +8495,10 @@ protocol NativeInteropHostIntegrationCoreApi: AnyObject {
   ///
   /// Called by generated Dart code. `engineId` and `affinityKey` identify the engine
   /// that registered `api`, or are `Int64.min` when unknown.
-  @objc static func register(
+  @objc static func registerInstance(
     api: NativeInteropFlutterIntegrationCoreApiBridge, engineId: Int64, affinityKey: Int64,
-    name: String?
+    name: String = NativeInteropTestsPigeonInternal.defaultInstanceName
   ) {
-    let resolvedName = name ?? NativeInteropTestsPigeonInternal.defaultInstanceName
     let apiObject = api as AnyObject
     // Removed entries are kept alive until after unlocking so their deinit cannot run while the
     // non-recursive lock is held.
@@ -8515,7 +8508,7 @@ protocol NativeInteropHostIntegrationCoreApi: AnyObject {
       defer { NativeInteropFlutterIntegrationCoreApiRegistrar.lock.unlock() }
       var list =
         NativeInteropFlutterIntegrationCoreApiRegistrar
-        .registeredNativeInteropFlutterIntegrationCoreApi[resolvedName] ?? []
+        .registeredNativeInteropFlutterIntegrationCoreApi[name] ?? []
       list.removeAll { entry in
         if (entry.api as AnyObject) === apiObject {
           displaced.append(entry)
@@ -8527,19 +8520,19 @@ protocol NativeInteropHostIntegrationCoreApi: AnyObject {
         NativeInteropFlutterIntegrationCoreApi(
           api: api, engineId: engineId, affinityKey: affinityKey))
       NativeInteropFlutterIntegrationCoreApiRegistrar
-        .registeredNativeInteropFlutterIntegrationCoreApi[resolvedName] = list
+        .registeredNativeInteropFlutterIntegrationCoreApi[name] = list
     }
     withExtendedLifetime(displaced) {}
   }
 
   /// Removes `api` from the registrations under `name` (or the default instance
-  /// when `name` is nil), leaving other registrations in place.
+  /// when `name` is omitted), leaving other registrations in place.
   ///
   /// Instances are matched by identity. Does nothing if `api` is not registered.
-  @objc static func unregister(
-    api: NativeInteropFlutterIntegrationCoreApiBridge, name: String? = nil
+  @objc static func unregisterInstance(
+    api: NativeInteropFlutterIntegrationCoreApiBridge,
+    name: String = NativeInteropTestsPigeonInternal.defaultInstanceName
   ) {
-    let resolvedName = name ?? NativeInteropTestsPigeonInternal.defaultInstanceName
     let apiObject = api as AnyObject
     // Removed entries are kept alive until after unlocking so their deinit cannot run while the
     // non-recursive lock is held.
@@ -8550,7 +8543,7 @@ protocol NativeInteropHostIntegrationCoreApi: AnyObject {
       guard
         var list =
           NativeInteropFlutterIntegrationCoreApiRegistrar
-          .registeredNativeInteropFlutterIntegrationCoreApi[resolvedName]
+          .registeredNativeInteropFlutterIntegrationCoreApi[name]
       else {
         return
       }
@@ -8563,38 +8556,38 @@ protocol NativeInteropHostIntegrationCoreApi: AnyObject {
       }
       if list.isEmpty {
         NativeInteropFlutterIntegrationCoreApiRegistrar
-          .registeredNativeInteropFlutterIntegrationCoreApi.removeValue(forKey: resolvedName)
+          .registeredNativeInteropFlutterIntegrationCoreApi.removeValue(forKey: name)
       } else {
         NativeInteropFlutterIntegrationCoreApiRegistrar
-          .registeredNativeInteropFlutterIntegrationCoreApi[resolvedName] = list
+          .registeredNativeInteropFlutterIntegrationCoreApi[name] = list
       }
     }
     withExtendedLifetime(displaced) {}
   }
 
   #if canImport(Flutter) || canImport(FlutterMacOS)
-    /// Returns the instance for `name` (or the default instance when `name` is nil)
+    /// Returns the instance for `name` (or the default instance when `name` is omitted)
     /// that was registered from the engine that owns `registrar`.
     ///
     /// Falls back to the most recently registered instance for `name` when no
     /// registration matches the engine, and returns nil if none is registered.
-    static func getInstance(registrar: FlutterPluginRegistrar, name: String? = nil)
-      -> NativeInteropFlutterIntegrationCoreApi?
-    {
+    static func getInstance(
+      registrar: FlutterPluginRegistrar,
+      name: String = NativeInteropTestsPigeonInternal.defaultInstanceName
+    ) -> NativeInteropFlutterIntegrationCoreApi? {
       return getInstance(engineKey: PigeonEngineKeys.key(for: registrar), name: name)
     }
   #endif
 
-  fileprivate static func getInstance(engineKey: Int64, name: String?)
+  fileprivate static func getInstance(engineKey: Int64, name: String)
     -> NativeInteropFlutterIntegrationCoreApi?
   {
-    let resolvedName = name ?? NativeInteropTestsPigeonInternal.defaultInstanceName
     NativeInteropFlutterIntegrationCoreApiRegistrar.lock.lock()
     defer { NativeInteropFlutterIntegrationCoreApiRegistrar.lock.unlock() }
     guard
       let list =
         NativeInteropFlutterIntegrationCoreApiRegistrar
-        .registeredNativeInteropFlutterIntegrationCoreApi[resolvedName]
+        .registeredNativeInteropFlutterIntegrationCoreApi[name]
     else {
       return nil
     }
@@ -9907,7 +9900,7 @@ class NativeInteropFlutterIntegrationCoreApi {
       as! NativeInteropAnotherEnum?
   }
 }
-private class NativeInteropReservedNamesHostApiInstanceTracker {
+class NativeInteropReservedNamesHostApiInstanceTracker {
   static let lock = NSLock()
   static var instancesOfNativeInteropReservedNamesHostApi = [
     String: [NativeInteropReservedNamesHostApiSetup]
@@ -9986,7 +9979,7 @@ protocol NativeInteropReservedNamesHostApi: AnyObject {
       withExtendedLifetime(oldValue) {}
     }
   }
-  private override init() {}
+  override init() {}
   private func resolveApi() throws -> NativeInteropReservedNamesHostApi {
     guard let currentApi = api else {
       throw NativeInteropTestsError(
@@ -10001,7 +9994,7 @@ protocol NativeInteropReservedNamesHostApi: AnyObject {
   private var engineKey: Int64 = Int64.min
 
   #if canImport(Flutter) || canImport(FlutterMacOS)
-    /// Registers `api` under `name` (or the default instance when `name` is nil).
+    /// Registers `api` under `name` (or the default instance when `name` is omitted).
     ///
     /// Registrations are kept in an ordered stack per name, and `getInstance` returns
     /// the most recent one. Registering an instance that is already registered under
@@ -10010,34 +10003,35 @@ protocol NativeInteropReservedNamesHostApi: AnyObject {
     /// The registration is associated with the engine that owns `registrar`. The same
     /// `api` registered from different engines is tracked as separate registrations.
     static func register(
-      api: NativeInteropReservedNamesHostApi, registrar: FlutterPluginRegistrar, name: String? = nil
+      api: NativeInteropReservedNamesHostApi, registrar: FlutterPluginRegistrar,
+      name: String = NativeInteropTestsPigeonInternal.defaultInstanceName
     ) {
       register(api: api, engineKey: PigeonEngineKeys.key(for: registrar), name: name)
     }
 
     /// Removes `api` from the registrations under `name` (or the default instance
-    /// when `name` is nil), leaving other registrations in place.
+    /// when `name` is omitted), leaving other registrations in place.
     ///
     /// Instances are matched by identity. Does nothing if `api` is not registered.
     ///
     /// Prefers the registration made from the engine that owns `registrar`, and
     /// otherwise removes every registration of `api` under `name`.
     static func unregister(
-      api: NativeInteropReservedNamesHostApi, registrar: FlutterPluginRegistrar, name: String? = nil
+      api: NativeInteropReservedNamesHostApi, registrar: FlutterPluginRegistrar,
+      name: String = NativeInteropTestsPigeonInternal.defaultInstanceName
     ) {
       unregister(api: api, engineKey: PigeonEngineKeys.key(for: registrar), name: name)
     }
   #endif
 
   fileprivate static func register(
-    api: NativeInteropReservedNamesHostApi, engineKey: Int64, name: String?
+    api: NativeInteropReservedNamesHostApi, engineKey: Int64, name: String
   ) {
-    let resolvedName = name ?? NativeInteropTestsPigeonInternal.defaultInstanceName
     NativeInteropReservedNamesHostApiInstanceTracker.lock.lock()
     defer { NativeInteropReservedNamesHostApiInstanceTracker.lock.unlock() }
     var list =
       NativeInteropReservedNamesHostApiInstanceTracker.instancesOfNativeInteropReservedNamesHostApi[
-        resolvedName] ?? []
+        name] ?? []
     if let index = list.firstIndex(where: { $0.api === api && $0.engineKey == engineKey }) {
       list.append(list.remove(at: index))
     } else {
@@ -10047,13 +10041,12 @@ protocol NativeInteropReservedNamesHostApi: AnyObject {
       list.append(wrapper)
     }
     NativeInteropReservedNamesHostApiInstanceTracker.instancesOfNativeInteropReservedNamesHostApi[
-      resolvedName] = list
+      name] = list
   }
 
   fileprivate static func unregister(
-    api: NativeInteropReservedNamesHostApi, engineKey: Int64, name: String?
+    api: NativeInteropReservedNamesHostApi, engineKey: Int64, name: String
   ) {
-    let resolvedName = name ?? NativeInteropTestsPigeonInternal.defaultInstanceName
     // Removed entries are kept alive until after unlocking so their deinit cannot run while the
     // non-recursive lock is held.
     var displaced: [Any] = []
@@ -10063,7 +10056,7 @@ protocol NativeInteropReservedNamesHostApi: AnyObject {
       guard
         var list =
           NativeInteropReservedNamesHostApiInstanceTracker
-          .instancesOfNativeInteropReservedNamesHostApi[resolvedName]
+          .instancesOfNativeInteropReservedNamesHostApi[name]
       else {
         return
       }
@@ -10083,43 +10076,41 @@ protocol NativeInteropReservedNamesHostApi: AnyObject {
       }
       if list.isEmpty {
         NativeInteropReservedNamesHostApiInstanceTracker
-          .instancesOfNativeInteropReservedNamesHostApi.removeValue(forKey: resolvedName)
+          .instancesOfNativeInteropReservedNamesHostApi.removeValue(forKey: name)
       } else {
         NativeInteropReservedNamesHostApiInstanceTracker
-          .instancesOfNativeInteropReservedNamesHostApi[resolvedName] = list
+          .instancesOfNativeInteropReservedNamesHostApi[name] = list
       }
     }
     withExtendedLifetime(displaced) {}
   }
 
   /// Returns the most recently registered instance for `name` (or the default
-  /// instance when `name` is nil), or nil if none is registered.
-  ///
-  /// A nil `name` and an empty `name` refer to different registrations.
-  @objc static func getInstance(name: String? = nil) -> NativeInteropReservedNamesHostApiSetup? {
-    let resolvedName = name ?? NativeInteropTestsPigeonInternal.defaultInstanceName
+  /// instance when `name` is omitted), or nil if none is registered.
+  @objc static func getInstance(name: String = NativeInteropTestsPigeonInternal.defaultInstanceName)
+    -> NativeInteropReservedNamesHostApiSetup?
+  {
     NativeInteropReservedNamesHostApiInstanceTracker.lock.lock()
     defer { NativeInteropReservedNamesHostApiInstanceTracker.lock.unlock() }
     return
       NativeInteropReservedNamesHostApiInstanceTracker.instancesOfNativeInteropReservedNamesHostApi[
-        resolvedName]?.last
+        name]?.last
   }
 
   /// Returns the instance generated Dart code should use for `name` (or the default
-  /// instance when `name` is nil).
+  /// instance).
   ///
   /// Prefers the most recent registration whose engine key is `engineId`, then
   /// `affinityKey`, then the most recent registration. `Int64.min` means unknown.
-  @objc static func pigeonResolveInstance(engineId: Int64, affinityKey: Int64, name: String?)
+  @objc static func pigeonResolveInstance(engineId: Int64, affinityKey: Int64, name: String)
     -> NativeInteropReservedNamesHostApiSetup?
   {
-    let resolvedName = name ?? NativeInteropTestsPigeonInternal.defaultInstanceName
     NativeInteropReservedNamesHostApiInstanceTracker.lock.lock()
     defer { NativeInteropReservedNamesHostApiInstanceTracker.lock.unlock() }
     guard
       let list =
         NativeInteropReservedNamesHostApiInstanceTracker
-        .instancesOfNativeInteropReservedNamesHostApi[resolvedName]
+        .instancesOfNativeInteropReservedNamesHostApi[name]
     else {
       return nil
     }
@@ -10535,13 +10526,12 @@ protocol NativeInteropReservedNamesHostApi: AnyObject {
 }
 
 @objc class NativeInteropReservedNamesFlutterApiRegistrar: NSObject {
-  private override init() {}
   private static let lock = NSLock()
-  private static var registeredNativeInteropReservedNamesFlutterApi = [
+  static var registeredNativeInteropReservedNamesFlutterApi = [
     String: [NativeInteropReservedNamesFlutterApi]
   ]()
 
-  /// Registers `api` under `name` (or the default instance when `name` is nil).
+  /// Registers `api` under `name` (or the default instance when `name` is omitted).
   ///
   /// Registrations are kept in an ordered stack per name, and `getInstance` returns
   /// the most recent one. Registering an instance that is already registered under
@@ -10549,11 +10539,10 @@ protocol NativeInteropReservedNamesHostApi: AnyObject {
   ///
   /// Called by generated Dart code. `engineId` and `affinityKey` identify the engine
   /// that registered `api`, or are `Int64.min` when unknown.
-  @objc static func register(
+  @objc static func registerInstance(
     api: NativeInteropReservedNamesFlutterApiBridge, engineId: Int64, affinityKey: Int64,
-    name: String?
+    name: String = NativeInteropTestsPigeonInternal.defaultInstanceName
   ) {
-    let resolvedName = name ?? NativeInteropTestsPigeonInternal.defaultInstanceName
     let apiObject = api as AnyObject
     // Removed entries are kept alive until after unlocking so their deinit cannot run while the
     // non-recursive lock is held.
@@ -10563,7 +10552,7 @@ protocol NativeInteropReservedNamesHostApi: AnyObject {
       defer { NativeInteropReservedNamesFlutterApiRegistrar.lock.unlock() }
       var list =
         NativeInteropReservedNamesFlutterApiRegistrar.registeredNativeInteropReservedNamesFlutterApi[
-          resolvedName] ?? []
+          name] ?? []
       list.removeAll { entry in
         if (entry.api as AnyObject) === apiObject {
           displaced.append(entry)
@@ -10575,18 +10564,19 @@ protocol NativeInteropReservedNamesHostApi: AnyObject {
         NativeInteropReservedNamesFlutterApi(api: api, engineId: engineId, affinityKey: affinityKey)
       )
       NativeInteropReservedNamesFlutterApiRegistrar.registeredNativeInteropReservedNamesFlutterApi[
-        resolvedName] = list
+        name] = list
     }
     withExtendedLifetime(displaced) {}
   }
 
   /// Removes `api` from the registrations under `name` (or the default instance
-  /// when `name` is nil), leaving other registrations in place.
+  /// when `name` is omitted), leaving other registrations in place.
   ///
   /// Instances are matched by identity. Does nothing if `api` is not registered.
-  @objc static func unregister(api: NativeInteropReservedNamesFlutterApiBridge, name: String? = nil)
-  {
-    let resolvedName = name ?? NativeInteropTestsPigeonInternal.defaultInstanceName
+  @objc static func unregisterInstance(
+    api: NativeInteropReservedNamesFlutterApiBridge,
+    name: String = NativeInteropTestsPigeonInternal.defaultInstanceName
+  ) {
     let apiObject = api as AnyObject
     // Removed entries are kept alive until after unlocking so their deinit cannot run while the
     // non-recursive lock is held.
@@ -10597,7 +10587,7 @@ protocol NativeInteropReservedNamesHostApi: AnyObject {
       guard
         var list =
           NativeInteropReservedNamesFlutterApiRegistrar
-          .registeredNativeInteropReservedNamesFlutterApi[resolvedName]
+          .registeredNativeInteropReservedNamesFlutterApi[name]
       else {
         return
       }
@@ -10610,38 +10600,38 @@ protocol NativeInteropReservedNamesHostApi: AnyObject {
       }
       if list.isEmpty {
         NativeInteropReservedNamesFlutterApiRegistrar.registeredNativeInteropReservedNamesFlutterApi
-          .removeValue(forKey: resolvedName)
+          .removeValue(forKey: name)
       } else {
         NativeInteropReservedNamesFlutterApiRegistrar.registeredNativeInteropReservedNamesFlutterApi[
-          resolvedName] = list
+          name] = list
       }
     }
     withExtendedLifetime(displaced) {}
   }
 
   #if canImport(Flutter) || canImport(FlutterMacOS)
-    /// Returns the instance for `name` (or the default instance when `name` is nil)
+    /// Returns the instance for `name` (or the default instance when `name` is omitted)
     /// that was registered from the engine that owns `registrar`.
     ///
     /// Falls back to the most recently registered instance for `name` when no
     /// registration matches the engine, and returns nil if none is registered.
-    static func getInstance(registrar: FlutterPluginRegistrar, name: String? = nil)
-      -> NativeInteropReservedNamesFlutterApi?
-    {
+    static func getInstance(
+      registrar: FlutterPluginRegistrar,
+      name: String = NativeInteropTestsPigeonInternal.defaultInstanceName
+    ) -> NativeInteropReservedNamesFlutterApi? {
       return getInstance(engineKey: PigeonEngineKeys.key(for: registrar), name: name)
     }
   #endif
 
-  fileprivate static func getInstance(engineKey: Int64, name: String?)
+  fileprivate static func getInstance(engineKey: Int64, name: String)
     -> NativeInteropReservedNamesFlutterApi?
   {
-    let resolvedName = name ?? NativeInteropTestsPigeonInternal.defaultInstanceName
     NativeInteropReservedNamesFlutterApiRegistrar.lock.lock()
     defer { NativeInteropReservedNamesFlutterApiRegistrar.lock.unlock() }
     guard
       let list =
         NativeInteropReservedNamesFlutterApiRegistrar.registeredNativeInteropReservedNamesFlutterApi[
-          resolvedName]
+          name]
     else {
       return nil
     }

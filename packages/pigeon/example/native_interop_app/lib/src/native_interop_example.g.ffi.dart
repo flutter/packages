@@ -58,18 +58,23 @@ extension type NativeInteropExampleApiSetup._(objc.ObjCObject object$)
   }
 
   /// Returns the most recently registered instance for <code>name</code> (or the default
-  /// instance when <code>name</code> is nil), or nil if none is registered.
-  /// A nil <code>name</code> and an empty <code>name</code> refer to different registrations.
-  static NativeInteropExampleApiSetup? getInstanceWithName(objc.NSString? name) {
-    final _$$ref = name?.ref;
+  /// instance when <code>name</code> is omitted), or nil if none is registered.
+  static NativeInteropExampleApiSetup? getInstanceWithName(objc.NSString name) {
+    final _$$ref = name.ref;
     final $ret = _objc_msgSend_1sotr3r(
       _class_NativeInteropExampleApiSetup,
       _sel_getInstanceWithName_,
-      _$$ref?.pointer ?? ffi.nullptr,
+      _$$ref.pointer,
     );
     return $ret.address == 0
         ? null
         : NativeInteropExampleApiSetup.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// new
+  static NativeInteropExampleApiSetup new$() {
+    final $ret = _objc_msgSend_151sglz(_class_NativeInteropExampleApiSetup, _sel_new);
+    return NativeInteropExampleApiSetup.fromPointer($ret, retain: false, release: true);
   }
 
   /// Returns the engine key <code>instance</code> was registered with, or <code>Int64.min</code> if unknown.
@@ -83,26 +88,29 @@ extension type NativeInteropExampleApiSetup._(objc.ObjCObject object$)
   }
 
   /// Returns the instance generated Dart code should use for <code>name</code> (or the default
-  /// instance when <code>name</code> is nil).
+  /// instance).
   /// Prefers the most recent registration whose engine key is <code>engineId</code>, then
   /// <code>affinityKey</code>, then the most recent registration. <code>Int64.min</code> means unknown.
   static NativeInteropExampleApiSetup? pigeonResolveInstanceWithEngineId(
     int engineId, {
     required int affinityKey,
-    objc.NSString? name,
+    required objc.NSString name,
   }) {
-    final _$$ref = name?.ref;
+    final _$$ref = name.ref;
     final $ret = _objc_msgSend_6vqy4b(
       _class_NativeInteropExampleApiSetup,
       _sel_pigeonResolveInstanceWithEngineId_affinityKey_name_,
       engineId,
       affinityKey,
-      _$$ref?.pointer ?? ffi.nullptr,
+      _$$ref.pointer,
     );
     return $ret.address == 0
         ? null
         : NativeInteropExampleApiSetup.fromPointer($ret, retain: true, release: true);
   }
+
+  /// Returns a new instance of NativeInteropExampleApiSetup constructed with the default `new` method.
+  NativeInteropExampleApiSetup() : this.as(new$().object$);
 }
 
 extension NativeInteropExampleApiSetup$Methods on NativeInteropExampleApiSetup {
@@ -111,6 +119,18 @@ extension NativeInteropExampleApiSetup$Methods on NativeInteropExampleApiSetup {
     final _$$ref = object$.ref;
     final _$$ref$1 = wrappedError.ref;
     _objc_msgSend_xtuoz7(_$$ref.pointer, _sel_doSomethingWithWrappedError_, _$$ref$1.pointer);
+  }
+
+  /// init
+  NativeInteropExampleApiSetup init() {
+    final _$$ref = object$.ref;
+    objc.checkOsVersionInternal(
+      'NativeInteropExampleApiSetup.init',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    final $ret = _objc_msgSend_151sglz(_$$ref.retainAndReturnPointer(), _sel_init);
+    return NativeInteropExampleApiSetup.fromPointer($ret, retain: false, release: true);
   }
 }
 

@@ -23,9 +23,8 @@ void runComparisonBenchmarks(TargetGenerator targetGenerator) {
         native_interop.NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance();
 
     core.FlutterIntegrationCoreApi.setUp(FlutterApiTestImplementation());
-    native_interop.NativeInteropFlutterIntegrationCoreApiRegistrar.register(
-      NativeInteropFlutterIntegrationCoreApiImpl(),
-    );
+    final nativeInteropRegistrar = native_interop.NativeInteropFlutterIntegrationCoreApiRegistrar();
+    nativeInteropRegistrar.register(NativeInteropFlutterIntegrationCoreApiImpl());
 
     testWidgets('Uint8List Echo 1MB Comparison', (WidgetTester _) async {
       const int size = 1024 * 1024;
