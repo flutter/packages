@@ -106,7 +106,7 @@ to the api to allow for multiple instances to be created and operate in parallel
 Pigeon supports two distinct models for communication between Dart and native code:
 
 1. **Platform Channels**: The standard Flutter communication model. It serializes data into binary buffers via `StandardMessageCodec` and transmits them asynchronously over platform channels.
-2. **Native Interop (Direct FFI & JNI) \*Experimental\***: A direct, memory-bound function call model utilizing Dart FFI (for Swift/Objective-C on iOS/macOS) and JNI (for Kotlin/Java on Android).
+2. **Native Interop (Direct FFI & JNI) \*Preview\***: A direct, memory-bound function call model utilizing Dart FFI (for Swift/Objective-C on iOS/macOS) and JNI (for Kotlin/Java on Android).
 
 #### Quick Comparison
 
