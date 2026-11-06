@@ -1,0 +1,6 @@
+include: ../../analysis_options.yaml
+
+linter:
+  rules:
+    # These are command-line tools whose output is meant for stdout.
+    avoid_print: false
