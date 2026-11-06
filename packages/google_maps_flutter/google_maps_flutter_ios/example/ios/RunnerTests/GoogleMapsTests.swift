@@ -39,6 +39,7 @@ class StubBinaryMessenger: NSObject, FlutterBinaryMessenger {
 }
 
 class StubPluginRegistrar: NSObject, FlutterPluginRegistrar {
+  var engineIdentifier: Int64 { 0 }
   var viewController: UIViewController? { nil }
   func publish(_ value: NSObject) {}
   func addMethodCallDelegate(_ delegate: any FlutterPlugin, channel: FlutterMethodChannel) {}
