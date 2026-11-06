@@ -39,6 +39,11 @@ Every file in this directory originated from Tim Lehmann's `liquid_glass_rendere
 | `glass_drag_builder.dart` | `lib/src/internal/glass_drag_builder.dart` | Continuous drag gesture builder; integrated `InteractionNotification` for Smart Silence touch suppression. |
 | `liquid_glass_render_scope.dart` | `lib/src/liquid_glass_render_scope.dart` | Render scope InheritedWidget. |
 | `shaders.dart` | `lib/src/shaders.dart` | Mapped compiled shader asset keys. |
+| `liquid_glass_renderer.dart` | `lib/liquid_glass_renderer.dart` | Internal engine barrel re-exporting foundational primitives and `debugPaintLiquidGlassGeometry`. |
+| `draggable_indicator_physics.dart` | `example/` | Physics and velocity-snapping calculations adapted from `liquid_glass_renderer` example code. |
+| `specular_rim_painter.dart` | `lib/src/fake_glass.dart` | Specular rim `CustomPainter` ported from `FakeGlass._paintSpecular()`. |
+| `test/liquid_glass_blend_group_test.dart` | `test/src/liquid_glass_blend_group_test.dart` | Adapted widget tests for `LiquidGlassBlendGroup`. |
+| `test/liquid_glass_test.dart` | `test/src/liquid_glass_test.dart` | Adapted golden and widget tests for `LiquidGlass`. |
 | `internal/transform_tracking_repaint_boundary_mixin.dart` | `lib/src/internal/...` | Repaint boundary transform tracking mixin; `onTransformChanged` deferred to a post-frame callback when fired from compositing, so the repaint it asks for gets a frame. |
 
 ---
