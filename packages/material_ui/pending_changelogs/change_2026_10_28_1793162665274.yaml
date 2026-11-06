@@ -1,3 +1,3 @@
 changelog: |
-  - Enforces the Material 3 minimum width for primary tab indicators.
+  - Makes the default Material 3 primary TabBar indicator at least 24dp wide. Use a custom indicator to keep the previous width.
 version: patch
