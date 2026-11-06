@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes `CupertinoExpansionTile` skipping its fade transition when toggled with an `ExpansibleController`.
+version: patch

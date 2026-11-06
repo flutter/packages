@@ -125,25 +125,37 @@ class _CupertinoExpansionTileState extends State<CupertinoExpansionTile> {
   void initState() {
     super.initState();
     _tileController = widget.controller ?? ExpansibleController();
+    _tileController.addListener(_handleExpansionChanged);
   }
 
   @override
   void didUpdateWidget(CupertinoExpansionTile oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.controller != widget.controller) {
+      _tileController.removeListener(_handleExpansionChanged);
       if (oldWidget.controller == null) {
         _tileController.dispose();
       }
       _tileController = widget.controller ?? ExpansibleController();
+      _tileController.addListener(_handleExpansionChanged);
     }
   }
 
   @override
   void dispose() {
+    _tileController.removeListener(_handleExpansionChanged);
     if (widget.controller == null) {
       _tileController.dispose();
     }
     super.dispose();
+  }
+
+  // Shows the faded clone of the child whenever the tile expands or collapses,
+  // whether that was triggered by tapping the header or by the controller.
+  void _handleExpansionChanged() {
+    if (widget.transitionMode == ExpansionTileTransitionMode.fade) {
+      _fadeController.show();
+    }
   }
 
   Widget? _buildIcon(BuildContext context, Animation<double> animation) {
@@ -170,7 +182,6 @@ class _CupertinoExpansionTileState extends State<CupertinoExpansionTile> {
     } else {
       _tileController.expand();
     }
-    _fadeController.show();
   }
 
   Widget _buildHeader(BuildContext context, Animation<double> animation) {
