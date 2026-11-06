@@ -42,7 +42,7 @@ base class FakeImagePicker extends ImagePickerPlatform {
 
   @override
   Future<LostDataResponse> getLostData() async {
-    return LostDataResponse.empty();
+    return const LostDataResponse.empty();
   }
 
   @override
