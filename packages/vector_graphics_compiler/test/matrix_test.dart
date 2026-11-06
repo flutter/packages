@@ -26,6 +26,11 @@ void main() {
     expect(AffineMatrix.identity.scaled(2.0, 1.0).scaleStrokeWidth(2), 3);
     expect(AffineMatrix.identity.scaled(2.0, 1.0).rotated(1.2).scaleStrokeWidth(1), 1.5);
     expect(AffineMatrix.identity.scaled(2.0, 1.0).rotated(1.2).scaleStrokeWidth(2), 3);
+
+    expect(AffineMatrix.identity.scaled(2.0).scaleStrokeWidth(null), 2);
+    expect(AffineMatrix.identity.scaled(0.25).scaleStrokeWidth(null), 0.25);
+    expect(AffineMatrix.identity.scaled(2.0, 1.0).scaleStrokeWidth(null), 1.5);
+    expect(AffineMatrix.identity.rotated(1.2).scaleStrokeWidth(null), null);
   });
 
   test('Parse rotate and scale', () {
