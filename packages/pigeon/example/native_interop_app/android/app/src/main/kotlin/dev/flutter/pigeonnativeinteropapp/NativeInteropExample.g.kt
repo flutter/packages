@@ -53,34 +53,18 @@ interface NativeInteropExampleApi {
 }
 
 @Keep
-class NativeInteropExampleApiRegistrar : NativeInteropExampleApi {
+class NativeInteropExampleApiRegistrar private constructor() : NativeInteropExampleApi {
   @Volatile private var api: NativeInteropExampleApi? = null
 
-  fun register(
-      api: NativeInteropExampleApi,
-      name: String = defaultInstanceName
-  ): NativeInteropExampleApiRegistrar {
-    val wrapper = NativeInteropExampleApiRegistrar()
-    wrapper.api = api
-    kotlin.synchronized(NativeInteropExampleApiInstances) {
-      val list = NativeInteropExampleApiInstances.getOrPut(name) { mutableListOf() }
-      val iterator = list.iterator()
-      while (iterator.hasNext()) {
-        val entry = iterator.next()
-        if (entry.api === api) {
-          entry.api = null
-          iterator.remove()
-        }
-      }
-      list.add(wrapper)
-    }
-    return wrapper
-  }
-
-  fun unregister(api: NativeInteropExampleApi, name: String = defaultInstanceName) {
-    kotlin.synchronized(NativeInteropExampleApiInstances) {
-      val list = NativeInteropExampleApiInstances[name]
-      if (list != null) {
+  companion object {
+    @JvmStatic
+    @Keep
+    fun register(api: NativeInteropExampleApi, name: String? = null) {
+      val resolvedName = name ?: defaultInstanceName
+      val wrapper = NativeInteropExampleApiRegistrar()
+      wrapper.api = api
+      kotlin.synchronized(NativeInteropExampleApiInstances) {
+        val list = NativeInteropExampleApiInstances.getOrPut(resolvedName) { mutableListOf() }
         val iterator = list.iterator()
         while (iterator.hasNext()) {
           val entry = iterator.next()
@@ -89,17 +73,39 @@ class NativeInteropExampleApiRegistrar : NativeInteropExampleApi {
             iterator.remove()
           }
         }
-        if (list.isEmpty()) {
-          NativeInteropExampleApiInstances.remove(name)
+        list.add(wrapper)
+      }
+    }
+
+    @JvmStatic
+    @Keep
+    fun unregister(api: NativeInteropExampleApi, name: String? = null) {
+      val resolvedName = name ?: defaultInstanceName
+      kotlin.synchronized(NativeInteropExampleApiInstances) {
+        val list = NativeInteropExampleApiInstances[resolvedName]
+        if (list != null) {
+          val iterator = list.iterator()
+          while (iterator.hasNext()) {
+            val entry = iterator.next()
+            if (entry.api === api) {
+              entry.api = null
+              iterator.remove()
+            }
+          }
+          if (list.isEmpty()) {
+            NativeInteropExampleApiInstances.remove(resolvedName)
+          }
         }
       }
     }
-  }
 
-  @Keep
-  fun getInstance(name: String = defaultInstanceName): NativeInteropExampleApiRegistrar? {
-    return kotlin.synchronized(NativeInteropExampleApiInstances) {
-      NativeInteropExampleApiInstances[name]?.lastOrNull()
+    @JvmStatic
+    @Keep
+    fun getInstance(name: String? = null): NativeInteropExampleApiRegistrar? {
+      val resolvedName = name ?: defaultInstanceName
+      return kotlin.synchronized(NativeInteropExampleApiInstances) {
+        NativeInteropExampleApiInstances[resolvedName]?.lastOrNull()
+      }
     }
   }
 

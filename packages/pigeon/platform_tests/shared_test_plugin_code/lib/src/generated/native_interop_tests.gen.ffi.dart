@@ -14956,33 +14956,33 @@ extension type NativeInteropFlutterIntegrationCoreApiRegistrar._(objc.ObjCObject
     );
   }
 
-  /// registerInstanceWithApi:name:
-  static void registerInstanceWithApi(
+  /// registerWithApi:name:
+  static void registerWithApi(
     NativeInteropFlutterIntegrationCoreApiBridge api, {
-    required objc.NSString name,
+    objc.NSString? name,
   }) {
     final _$$ref = api.ref;
-    final _$$ref$1 = name.ref;
+    final _$$ref$1 = name?.ref;
     _objc_msgSend_pfv6jd(
       _class_NativeInteropFlutterIntegrationCoreApiRegistrar,
-      _sel_registerInstanceWithApi_name_,
+      _sel_registerWithApi_name_,
       _$$ref.pointer,
-      _$$ref$1.pointer,
+      _$$ref$1?.pointer ?? ffi.nullptr,
     );
   }
 
-  /// unregisterInstanceWithApi:name:
-  static void unregisterInstanceWithApi(
+  /// unregisterWithApi:name:
+  static void unregisterWithApi(
     NativeInteropFlutterIntegrationCoreApiBridge api, {
-    required objc.NSString name,
+    objc.NSString? name,
   }) {
     final _$$ref = api.ref;
-    final _$$ref$1 = name.ref;
+    final _$$ref$1 = name?.ref;
     _objc_msgSend_pfv6jd(
       _class_NativeInteropFlutterIntegrationCoreApiRegistrar,
-      _sel_unregisterInstanceWithApi_name_,
+      _sel_unregisterWithApi_name_,
       _$$ref.pointer,
-      _$$ref$1.pointer,
+      _$$ref$1?.pointer ?? ffi.nullptr,
     );
   }
 
@@ -15052,12 +15052,12 @@ extension type NativeInteropHostIntegrationCoreApiSetup._(objc.ObjCObject object
   }
 
   /// getInstanceWithName:
-  static NativeInteropHostIntegrationCoreApiSetup? getInstanceWithName(objc.NSString name) {
-    final _$$ref = name.ref;
+  static NativeInteropHostIntegrationCoreApiSetup? getInstanceWithName(objc.NSString? name) {
+    final _$$ref = name?.ref;
     final $ret = _objc_msgSend_1sotr3r(
       _class_NativeInteropHostIntegrationCoreApiSetup,
       _sel_getInstanceWithName_,
-      _$$ref.pointer,
+      _$$ref?.pointer ?? ffi.nullptr,
     );
     return $ret.address == 0
         ? null
@@ -20079,33 +20079,33 @@ extension type NativeInteropReservedNamesFlutterApiRegistrar._(objc.ObjCObject o
     );
   }
 
-  /// registerInstanceWithApi:name:
-  static void registerInstanceWithApi(
+  /// registerWithApi:name:
+  static void registerWithApi(
     NativeInteropReservedNamesFlutterApiBridge api, {
-    required objc.NSString name,
+    objc.NSString? name,
   }) {
     final _$$ref = api.ref;
-    final _$$ref$1 = name.ref;
+    final _$$ref$1 = name?.ref;
     _objc_msgSend_pfv6jd(
       _class_NativeInteropReservedNamesFlutterApiRegistrar,
-      _sel_registerInstanceWithApi_name_,
+      _sel_registerWithApi_name_,
       _$$ref.pointer,
-      _$$ref$1.pointer,
+      _$$ref$1?.pointer ?? ffi.nullptr,
     );
   }
 
-  /// unregisterInstanceWithApi:name:
-  static void unregisterInstanceWithApi(
+  /// unregisterWithApi:name:
+  static void unregisterWithApi(
     NativeInteropReservedNamesFlutterApiBridge api, {
-    required objc.NSString name,
+    objc.NSString? name,
   }) {
     final _$$ref = api.ref;
-    final _$$ref$1 = name.ref;
+    final _$$ref$1 = name?.ref;
     _objc_msgSend_pfv6jd(
       _class_NativeInteropReservedNamesFlutterApiRegistrar,
-      _sel_unregisterInstanceWithApi_name_,
+      _sel_unregisterWithApi_name_,
       _$$ref.pointer,
-      _$$ref$1.pointer,
+      _$$ref$1?.pointer ?? ffi.nullptr,
     );
   }
 
@@ -20175,12 +20175,12 @@ extension type NativeInteropReservedNamesHostApiSetup._(objc.ObjCObject object$)
   }
 
   /// getInstanceWithName:
-  static NativeInteropReservedNamesHostApiSetup? getInstanceWithName(objc.NSString name) {
-    final _$$ref = name.ref;
+  static NativeInteropReservedNamesHostApiSetup? getInstanceWithName(objc.NSString? name) {
+    final _$$ref = name?.ref;
     final $ret = _objc_msgSend_1sotr3r(
       _class_NativeInteropReservedNamesHostApiSetup,
       _sel_getInstanceWithName_,
-      _$$ref.pointer,
+      _$$ref?.pointer ?? ffi.nullptr,
     );
     return $ret.address == 0
         ? null
@@ -32593,7 +32593,7 @@ late final _sel_reference = objc.registerName("reference");
 late final _sel_registerAndImmediatelyDeregisterHostApiWithName_wrappedError_ = objc.registerName(
   "registerAndImmediatelyDeregisterHostApiWithName:wrappedError:",
 );
-late final _sel_registerInstanceWithApi_name_ = objc.registerName("registerInstanceWithApi:name:");
+late final _sel_registerWithApi_name_ = objc.registerName("registerWithApi:name:");
 late final _sel_releaseWithValue_error_ = objc.registerName("releaseWithValue:error:");
 late final _sel_releaseWithValue_wrappedError_ = objc.registerName(
   "releaseWithValue:wrappedError:",
@@ -32739,9 +32739,7 @@ late final _sel_throwFlutterErrorWithWrappedError_ = objc.registerName(
 late final _sel_type = objc.registerName("type");
 late final _sel_typeWithError_ = objc.registerName("typeWithError:");
 late final _sel_typeWithWrappedError_ = objc.registerName("typeWithWrappedError:");
-late final _sel_unregisterInstanceWithApi_name_ = objc.registerName(
-  "unregisterInstanceWithApi:name:",
-);
+late final _sel_unregisterWithApi_name_ = objc.registerName("unregisterWithApi:name:");
 late final _sel_use = objc.registerName("use");
 late final _sel_useWithValue_wrappedError_ = objc.registerName("useWithValue:wrappedError:");
 late final _sel_user = objc.registerName("user");

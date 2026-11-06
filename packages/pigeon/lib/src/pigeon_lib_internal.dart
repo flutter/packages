@@ -574,7 +574,6 @@ List<Error> _errorOnNativeInteropReservedMethodNames(Root root, {required bool u
       // The JNI registrar implements the JNIgen interface for the API, so it
       // shares a namespace with the API's methods.
       AstFlutterApi() => <String>{
-        'implement',
         if (useJni) ...<String>{'dartApi', 'register'},
       },
       _ => const <String>{},

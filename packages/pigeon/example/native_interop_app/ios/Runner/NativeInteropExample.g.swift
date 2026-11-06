@@ -176,7 +176,8 @@ enum NativeInteropExamplePigeonInternalNumberType: Int {
 }
 
 enum NativeInteropExamplePigeonInternal {
-  static let defaultInstanceName = "PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u"
+  fileprivate static let defaultInstanceName =
+    "PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u"
   static func isNullish(_ value: Any?) -> Bool {
     guard let innerValue = value else {
       return true
@@ -323,7 +324,7 @@ private class NativeInteropExampleApiInstanceTracker {
   static var instancesOfNativeInteropExampleApi = [String: [NativeInteropExampleApiSetup]]()
 }
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
-protocol NativeInteropExampleApi {
+protocol NativeInteropExampleApi: AnyObject {
   func doSomething() throws
 }
 
@@ -359,11 +360,8 @@ protocol NativeInteropExampleApi {
     }
     return currentApi
   }
-  @discardableResult
-  static func register(
-    api: NativeInteropExampleApi,
-    name: String = NativeInteropExamplePigeonInternal.defaultInstanceName
-  ) -> NativeInteropExampleApiSetup {
+  static func register(api: NativeInteropExampleApi, name: String? = nil) {
+    let resolvedName = name ?? NativeInteropExamplePigeonInternal.defaultInstanceName
     let wrapper = NativeInteropExampleApiSetup()
     wrapper.api = api
     var displaced: [Any] = []
@@ -371,49 +369,42 @@ protocol NativeInteropExampleApi {
       NativeInteropExampleApiInstanceTracker.lock.lock()
       defer { NativeInteropExampleApiInstanceTracker.lock.unlock() }
       var list =
-        NativeInteropExampleApiInstanceTracker.instancesOfNativeInteropExampleApi[name] ?? []
-      if Swift.type(of: api) is AnyClass {
-        let apiObject = api as AnyObject
-        list.removeAll { entry in
-          guard let existing = entry.api, Swift.type(of: existing) is AnyClass else {
-            return false
-          }
-          if (existing as AnyObject) === apiObject {
-            displaced.append(existing)
-            displaced.append(entry)
-            entry.api = nil
-            return true
-          }
+        NativeInteropExampleApiInstanceTracker.instancesOfNativeInteropExampleApi[resolvedName]
+        ?? []
+      list.removeAll { entry in
+        guard let existing = entry.api else {
           return false
         }
+        if existing === api {
+          displaced.append(existing)
+          displaced.append(entry)
+          entry.api = nil
+          return true
+        }
+        return false
       }
       list.append(wrapper)
-      NativeInteropExampleApiInstanceTracker.instancesOfNativeInteropExampleApi[name] = list
+      NativeInteropExampleApiInstanceTracker.instancesOfNativeInteropExampleApi[resolvedName] = list
     }
     withExtendedLifetime(displaced) {}
-    return wrapper
   }
-  /// Unregisters a reference-type `api` instance from `name`.
-  /// For value-type (`struct`) implementations, store the token returned by `register(api:name:)` and call `unregister(setup:name:)` instead.
-  static func unregister(
-    api: NativeInteropExampleApi,
-    name: String = NativeInteropExamplePigeonInternal.defaultInstanceName
-  ) {
+  static func unregister(api: NativeInteropExampleApi, name: String? = nil) {
+    let resolvedName = name ?? NativeInteropExamplePigeonInternal.defaultInstanceName
     var displaced: [Any] = []
     do {
       NativeInteropExampleApiInstanceTracker.lock.lock()
       defer { NativeInteropExampleApiInstanceTracker.lock.unlock() }
-      guard Swift.type(of: api) is AnyClass,
-        var list = NativeInteropExampleApiInstanceTracker.instancesOfNativeInteropExampleApi[name]
+      guard
+        var list = NativeInteropExampleApiInstanceTracker.instancesOfNativeInteropExampleApi[
+          resolvedName]
       else {
         return
       }
-      let apiObject = api as AnyObject
       list.removeAll { entry in
-        guard let existing = entry.api, Swift.type(of: existing) is AnyClass else {
+        guard let existing = entry.api else {
           return false
         }
-        if (existing as AnyObject) === apiObject {
+        if existing === api {
           displaced.append(existing)
           displaced.append(entry)
           entry.api = nil
@@ -423,52 +414,20 @@ protocol NativeInteropExampleApi {
       }
       if list.isEmpty {
         NativeInteropExampleApiInstanceTracker.instancesOfNativeInteropExampleApi.removeValue(
-          forKey: name)
+          forKey: resolvedName)
       } else {
-        NativeInteropExampleApiInstanceTracker.instancesOfNativeInteropExampleApi[name] = list
+        NativeInteropExampleApiInstanceTracker.instancesOfNativeInteropExampleApi[resolvedName] =
+          list
       }
     }
     withExtendedLifetime(displaced) {}
   }
-  static func unregister(
-    setup: NativeInteropExampleApiSetup,
-    name: String = NativeInteropExamplePigeonInternal.defaultInstanceName
-  ) {
-    var displaced: [Any] = []
-    do {
-      NativeInteropExampleApiInstanceTracker.lock.lock()
-      defer { NativeInteropExampleApiInstanceTracker.lock.unlock() }
-      guard
-        var list = NativeInteropExampleApiInstanceTracker.instancesOfNativeInteropExampleApi[name]
-      else {
-        return
-      }
-      list.removeAll { entry in
-        if entry === setup {
-          if let existing = entry.api {
-            displaced.append(existing)
-          }
-          displaced.append(entry)
-          entry.api = nil
-          return true
-        }
-        return false
-      }
-      if list.isEmpty {
-        NativeInteropExampleApiInstanceTracker.instancesOfNativeInteropExampleApi.removeValue(
-          forKey: name)
-      } else {
-        NativeInteropExampleApiInstanceTracker.instancesOfNativeInteropExampleApi[name] = list
-      }
-    }
-    withExtendedLifetime(displaced) {}
-  }
-  @objc static func getInstance(
-    name: String = NativeInteropExamplePigeonInternal.defaultInstanceName
-  ) -> NativeInteropExampleApiSetup? {
+  @objc static func getInstance(name: String? = nil) -> NativeInteropExampleApiSetup? {
+    let resolvedName = name ?? NativeInteropExamplePigeonInternal.defaultInstanceName
     NativeInteropExampleApiInstanceTracker.lock.lock()
     defer { NativeInteropExampleApiInstanceTracker.lock.unlock() }
-    return NativeInteropExampleApiInstanceTracker.instancesOfNativeInteropExampleApi[name]?.last
+    return NativeInteropExampleApiInstanceTracker.instancesOfNativeInteropExampleApi[resolvedName]?
+      .last
   }
   @objc func doSomething(wrappedError: PigeonError) {
     do {

@@ -34,61 +34,6 @@ final class FakeClassReservedApi: NativeInteropReservedNamesHostApi {
   func callFlutterGetReference() throws -> String { label }
 }
 
-struct FakeStructReservedApi: NativeInteropReservedNamesHostApi {
-  let label: String
-  func release(value: String) throws -> String { "\(label):\(value)" }
-  func use(value: Int64) throws -> Int64 { value }
-  func type() throws -> String { label }
-  func isNull() throws -> Bool { false }
-  func isNullable() throws -> Bool? { nil }
-  func isOpen() throws -> Bool { true }
-  func getReference() throws -> String { label }
-  func setReference(value: String) throws {}
-  func getDefault() throws -> String { label }
-  func getValueAsync() async throws -> String { label }
-  func echoReservedNames(names: NativeInteropReservedNames) throws -> NativeInteropReservedNames {
-    names
-  }
-  func callFlutterRelease(value: String) throws -> String { value }
-  func callFlutterType() throws -> String { label }
-  func callFlutterImplementIn(value: String) throws -> String { value }
-  func callFlutterIsNull() throws -> Bool { false }
-  func callFlutterGetReference() throws -> String { label }
-}
-
-final class ReentrantDeinitReservedApi: NativeInteropReservedNamesHostApi {
-  let instanceName: String
-  let onDeinit: () -> Void
-  init(instanceName: String, onDeinit: @escaping () -> Void) {
-    self.instanceName = instanceName
-    self.onDeinit = onDeinit
-  }
-  deinit {
-    _ = NativeInteropReservedNamesHostApiSetup.getInstance(name: instanceName)
-    let probe = FakeClassReservedApi("probe")
-    NativeInteropReservedNamesHostApiSetup.unregister(api: probe, name: instanceName)
-    onDeinit()
-  }
-  func release(value: String) throws -> String { value }
-  func use(value: Int64) throws -> Int64 { value }
-  func type() throws -> String { "reentrant" }
-  func isNull() throws -> Bool { false }
-  func isNullable() throws -> Bool? { nil }
-  func isOpen() throws -> Bool { true }
-  func getReference() throws -> String { "reentrant" }
-  func setReference(value: String) throws {}
-  func getDefault() throws -> String { "reentrant" }
-  func getValueAsync() async throws -> String { "reentrant" }
-  func echoReservedNames(names: NativeInteropReservedNames) throws -> NativeInteropReservedNames {
-    names
-  }
-  func callFlutterRelease(value: String) throws -> String { value }
-  func callFlutterType() throws -> String { "reentrant" }
-  func callFlutterImplementIn(value: String) throws -> String { value }
-  func callFlutterIsNull() throws -> Bool { false }
-  func callFlutterGetReference() throws -> String { "reentrant" }
-}
-
 // Tests macOS compilation and Native Interop HostApi multi-instance registration/deregistration.
 @Suite(.serialized)
 struct BasicCompileTest {
@@ -99,12 +44,13 @@ struct BasicCompileTest {
   }
 
   @Test
-  func classUnregisterRemovesSpecificInstanceOutOfOrder() {
+  func classUnregisterRemovesSpecificInstanceOutOfOrder() throws {
     let name = "macosOutOfOrderClass"
     let api1 = FakeClassReservedApi("engine1")
     let api2 = FakeClassReservedApi("engine2")
 
-    let setup1 = NativeInteropReservedNamesHostApiSetup.register(api: api1, name: name)
+    NativeInteropReservedNamesHostApiSetup.register(api: api1, name: name)
+    let setup1 = try #require(NativeInteropReservedNamesHostApiSetup.getInstance(name: name))
     NativeInteropReservedNamesHostApiSetup.register(api: api2, name: name)
     #expect(
       NativeInteropReservedNamesHostApiSetup.getInstance(name: name)?.release(
@@ -125,38 +71,30 @@ struct BasicCompileTest {
   }
 
   @Test
-  func setupHandleUnregisterWorksForValueTypes() {
-    let name = "macosStructSetupHandle"
-    let setup1 = NativeInteropReservedNamesHostApiSetup.register(
-      api: FakeStructReservedApi(label: "struct1"), name: name)
-    let setup2 = NativeInteropReservedNamesHostApiSetup.register(
-      api: FakeStructReservedApi(label: "struct2"), name: name)
+  func defaultNilNameAndExplicitEmptyStringNameAreDistinct() throws {
+    let preexistingDefault = NativeInteropReservedNamesHostApiSetup.getInstance()
+    let defaultApi = FakeClassReservedApi("defaultEngine")
+    let emptyNameApi = FakeClassReservedApi("emptyStringEngine")
 
-    NativeInteropReservedNamesHostApiSetup.unregister(setup: setup1, name: name)
+    NativeInteropReservedNamesHostApiSetup.register(api: defaultApi)
+    #expect(NativeInteropReservedNamesHostApiSetup.getInstance(name: "") == nil)
+
+    NativeInteropReservedNamesHostApiSetup.register(api: emptyNameApi, name: "")
     #expect(
-      NativeInteropReservedNamesHostApiSetup.getInstance(name: name)?.release(
-        value: "ping", wrappedError: NativeInteropTestsError()) == "struct2:ping")
+      NativeInteropReservedNamesHostApiSetup.getInstance()?.release(
+        value: "ping", wrappedError: NativeInteropTestsError()) == "defaultEngine:ping")
+    #expect(
+      NativeInteropReservedNamesHostApiSetup.getInstance(name: "")?.release(
+        value: "ping", wrappedError: NativeInteropTestsError()) == "emptyStringEngine:ping")
 
-    NativeInteropReservedNamesHostApiSetup.unregister(setup: setup2, name: name)
-    #expect(NativeInteropReservedNamesHostApiSetup.getInstance(name: name) == nil)
-  }
+    NativeInteropReservedNamesHostApiSetup.unregister(api: emptyNameApi, name: "")
+    #expect(NativeInteropReservedNamesHostApiSetup.getInstance(name: "") == nil)
+    #expect(
+      NativeInteropReservedNamesHostApiSetup.getInstance()?.release(
+        value: "ping", wrappedError: NativeInteropTestsError()) == "defaultEngine:ping")
 
-  @Test
-  func deinitReenteringSetupDoesNotDeadlock() {
-    let name = "macosReentrantDeinit"
-    var deinitCount = 0
-    var setup: NativeInteropReservedNamesHostApiSetup?
-    do {
-      let api = ReentrantDeinitReservedApi(instanceName: name) {
-        deinitCount += 1
-      }
-      setup = NativeInteropReservedNamesHostApiSetup.register(api: api, name: name)
-    }
-    if let setup {
-      NativeInteropReservedNamesHostApiSetup.unregister(setup: setup, name: name)
-    }
-    #expect(deinitCount == 1)
-    #expect(NativeInteropReservedNamesHostApiSetup.getInstance(name: name) == nil)
+    NativeInteropReservedNamesHostApiSetup.unregister(api: defaultApi)
+    #expect(NativeInteropReservedNamesHostApiSetup.getInstance() === preexistingDefault)
   }
 
   @Test
@@ -207,23 +145,23 @@ struct BasicCompileTest {
     let bridge2 = FakeReservedNamesFlutterApiBridge("engine2")
     let neverRegistered = FakeReservedNamesFlutterApiBridge("never")
 
-    NativeInteropReservedNamesFlutterApiRegistrar.registerInstance(api: bridge1, name: name)
-    NativeInteropReservedNamesFlutterApiRegistrar.registerInstance(api: bridge2, name: name)
+    NativeInteropReservedNamesFlutterApiRegistrar.register(api: bridge1, name: name)
+    NativeInteropReservedNamesFlutterApiRegistrar.register(api: bridge2, name: name)
     #expect(
       try NativeInteropReservedNamesFlutterApi.getInstance(name: name)?.release(value: "ping")
         == "engine2:ping")
 
     // Out-of-order unregister of bridge1 leaves bridge2 active.
-    NativeInteropReservedNamesFlutterApiRegistrar.unregisterInstance(api: bridge1, name: name)
+    NativeInteropReservedNamesFlutterApiRegistrar.unregister(api: bridge1, name: name)
     // Duplicate unregister and never-registered unregister must be safe no-ops.
-    NativeInteropReservedNamesFlutterApiRegistrar.unregisterInstance(api: bridge1, name: name)
-    NativeInteropReservedNamesFlutterApiRegistrar.unregisterInstance(
+    NativeInteropReservedNamesFlutterApiRegistrar.unregister(api: bridge1, name: name)
+    NativeInteropReservedNamesFlutterApiRegistrar.unregister(
       api: neverRegistered, name: name)
     #expect(
       try NativeInteropReservedNamesFlutterApi.getInstance(name: name)?.release(value: "ping")
         == "engine2:ping")
 
-    NativeInteropReservedNamesFlutterApiRegistrar.unregisterInstance(api: bridge2, name: name)
+    NativeInteropReservedNamesFlutterApiRegistrar.unregister(api: bridge2, name: name)
     #expect(NativeInteropReservedNamesFlutterApi.getInstance(name: name) == nil)
   }
 
@@ -233,22 +171,49 @@ struct BasicCompileTest {
     let bridge1 = FakeReservedNamesFlutterApiBridge("engine1")
     let bridge2 = FakeReservedNamesFlutterApiBridge("engine2")
 
-    NativeInteropReservedNamesFlutterApiRegistrar.registerInstance(api: bridge1, name: name)
-    NativeInteropReservedNamesFlutterApiRegistrar.registerInstance(api: bridge2, name: name)
-    NativeInteropReservedNamesFlutterApiRegistrar.registerInstance(api: bridge1, name: name)
+    NativeInteropReservedNamesFlutterApiRegistrar.register(api: bridge1, name: name)
+    NativeInteropReservedNamesFlutterApiRegistrar.register(api: bridge2, name: name)
+    NativeInteropReservedNamesFlutterApiRegistrar.register(api: bridge1, name: name)
 
     #expect(
       try NativeInteropReservedNamesFlutterApi.getInstance(name: name)?.release(value: "ping")
         == "engine1:ping")
 
     // Since bridge1 was deduplicated, unregistering bridge1 once leaves only bridge2.
-    NativeInteropReservedNamesFlutterApiRegistrar.unregisterInstance(api: bridge1, name: name)
+    NativeInteropReservedNamesFlutterApiRegistrar.unregister(api: bridge1, name: name)
     #expect(
       try NativeInteropReservedNamesFlutterApi.getInstance(name: name)?.release(value: "ping")
         == "engine2:ping")
 
-    NativeInteropReservedNamesFlutterApiRegistrar.unregisterInstance(api: bridge2, name: name)
+    NativeInteropReservedNamesFlutterApiRegistrar.unregister(api: bridge2, name: name)
     #expect(NativeInteropReservedNamesFlutterApi.getInstance(name: name) == nil)
+  }
+
+  @Test
+  func flutterApiDefaultNilNameAndExplicitEmptyStringNameAreDistinct() throws {
+    let preexistingDefault = NativeInteropReservedNamesFlutterApiRegistrar.getInstance()
+    let defaultBridge = FakeReservedNamesFlutterApiBridge("defaultFlutter")
+    let emptyNameBridge = FakeReservedNamesFlutterApiBridge("emptyStringFlutter")
+
+    NativeInteropReservedNamesFlutterApiRegistrar.register(api: defaultBridge)
+    #expect(NativeInteropReservedNamesFlutterApi.getInstance(name: "") == nil)
+
+    NativeInteropReservedNamesFlutterApiRegistrar.register(api: emptyNameBridge, name: "")
+    #expect(
+      try NativeInteropReservedNamesFlutterApi.getInstance()?.release(value: "ping")
+        == "defaultFlutter:ping")
+    #expect(
+      try NativeInteropReservedNamesFlutterApi.getInstance(name: "")?.release(value: "ping")
+        == "emptyStringFlutter:ping")
+
+    NativeInteropReservedNamesFlutterApiRegistrar.unregister(api: emptyNameBridge, name: "")
+    #expect(NativeInteropReservedNamesFlutterApi.getInstance(name: "") == nil)
+    #expect(
+      try NativeInteropReservedNamesFlutterApi.getInstance()?.release(value: "ping")
+        == "defaultFlutter:ping")
+
+    NativeInteropReservedNamesFlutterApiRegistrar.unregister(api: defaultBridge)
+    #expect(NativeInteropReservedNamesFlutterApiRegistrar.getInstance() === preexistingDefault)
   }
 }
 

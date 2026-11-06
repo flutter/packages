@@ -4,6 +4,7 @@
 
 import 'package:pigeon/pigeon.dart' show TaskQueueType;
 import 'package:pigeon/src/ast.dart';
+import 'package:pigeon/src/generator_tools.dart' show defaultNativeInteropInstanceName;
 import 'package:pigeon/src/kotlin/kotlin_generator.dart';
 import 'package:test/test.dart';
 
@@ -1743,9 +1744,9 @@ void main() {
       expect(code, contains('@Keep\n  companion object {\n    fun ofRaw(raw: Int): AnEnum?'));
       expect(code, contains('@Keep\ndata class DataClass ('));
       expect(code, contains('@Keep\ninterface HostApi {'));
-      expect(code, contains('@Keep\nclass HostApiRegistrar : HostApi {'));
+      expect(code, contains('@Keep\nclass HostApiRegistrar private constructor() : HostApi {'));
       expect(code, contains('@Keep\ninterface FlutterApi {'));
-      expect(code, contains('@Keep\nclass FlutterApiRegistrar() {'));
+      expect(code, contains('@Keep\nclass FlutterApiRegistrar private constructor() {'));
     });
 
     test('is not added when not using JNI', () {
@@ -2014,34 +2015,34 @@ void main() {
         code,
         contains('private val HostApiInstances: MutableMap<String, MutableList<HostApiRegistrar>>'),
       );
-      expect(code, contains('interface HostApi {'));
-      expect(code, contains('class HostApiRegistrar : HostApi {'));
-      expect(code, isNot(contains('api: HostApi?,')));
-      expect(code, contains('fun unregister('));
-      expect(code, contains('api: HostApi,'));
-      expect(code, contains('HostApiInstances.remove(name)'));
       expect(
         code,
-        contains('fun getInstance(name: String = defaultInstanceName): HostApiRegistrar?'),
+        contains('private const val defaultInstanceName = "$defaultNativeInteropInstanceName"'),
       );
+      expect(code, contains('interface HostApi {'));
+      expect(code, contains('class HostApiRegistrar private constructor() : HostApi {'));
+      expect(code, isNot(contains('api: HostApi?,')));
+      expect(code, contains('@JvmStatic'));
+      expect(code, contains('fun register(api: HostApi, name: String? = null) {'));
+      expect(code, isNot(contains('): HostApiRegistrar {')));
+      expect(code, contains('fun unregister(api: HostApi, name: String? = null) {'));
+      expect(code, contains('val resolvedName = name ?: defaultInstanceName'));
+      expect(code, contains('HostApiInstances.remove(resolvedName)'));
+      expect(code, contains('fun getInstance(name: String? = null): HostApiRegistrar?'));
       expect(code, contains('@Volatile private var api: HostApi? = null'));
       expect(code, contains('kotlin.synchronized(HostApiInstances)'));
-      expect(code, contains('HostApiInstances[name]?.lastOrNull()'));
+      expect(code, contains('HostApiInstances[resolvedName]?.lastOrNull()'));
       expect(
         code,
         contains('private val registeredFlutterApi: MutableMap<String, MutableList<FlutterApi>>'),
       );
-      expect(
-        code,
-        contains('fun registerInstance(api: FlutterApi, name: String = defaultInstanceName)'),
-      );
-      expect(
-        code,
-        contains('fun unregisterInstance(api: FlutterApi, name: String = defaultInstanceName)'),
-      );
+      expect(code, contains('class FlutterApiRegistrar private constructor() {'));
+      expect(code, contains('fun register(api: FlutterApi, name: String? = null)'));
+      expect(code, contains('fun unregister(api: FlutterApi, name: String? = null)'));
+      expect(code, contains('fun getInstance(name: String? = null): FlutterApi?'));
       expect(code, contains('kotlin.synchronized(registeredFlutterApi)'));
-      expect(code, contains('registeredFlutterApi[name]?.lastOrNull()'));
-      expect(code, contains('registeredFlutterApi.remove(name)'));
+      expect(code, contains('registeredFlutterApi[resolvedName]?.lastOrNull()'));
+      expect(code, contains('registeredFlutterApi.remove(resolvedName)'));
     },
   );
 

@@ -205,22 +205,22 @@ When implementing Native Interop host APIs directly in an application target rat
 
 When implementing a Flutter plugin (`FlutterPlugin`), multiple `FlutterEngine` instances may attach and detach in any order (for example, in add-to-app scenarios, `FlutterEngineGroup`, background isolates/headless engines, or integration tests).
 
-Pigeon maintains an ordered stack of registered `@HostApi` instances per instance name. To ensure detaching one engine never wipes out registrations belonging to other active engines, store your API implementation (or returned handle) per plugin instance and deregister **that specific instance** on engine detach:
+Pigeon maintains an ordered stack of registered `@HostApi` instances per instance name (`name = null` / `nil` for the default instance). To ensure detaching one engine never wipes out registrations belonging to other active engines, store your API implementation per plugin instance and deregister **that specific instance** on engine detach:
 
 - **Kotlin (JNI)**:
   ```kotlin
   class MyPlugin : FlutterPlugin, MyApi {
     override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {
-      MyApiRegistrar().register(this)
+      MyApiRegistrar.register(this)
     }
 
     override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
       // Removes only `this` instance so other attached engines stay registered:
-      MyApiRegistrar().unregister(this)
+      MyApiRegistrar.unregister(this)
     }
   }
   ```
-  *(If your `MyApi` implementation is a separate object rather than `this`, store that implementation reference on a plugin property and pass it to `MyApiRegistrar().unregister(impl)` on detach.)*
+  *(If your `MyApi` implementation is a separate object rather than `this`, store that implementation reference on a plugin property and pass it to `MyApiRegistrar.unregister(impl)` on detach.)*
 
 - **Swift (FFI)**:
   ```swift
@@ -237,17 +237,17 @@ Pigeon maintains an ordered stack of registered `@HostApi` instances per instanc
     }
   }
   ```
-  *(If your `MyApi` implementation is a Swift `struct` value type rather than a class, capture `let setup = MyApiSetup.register(api: valueImpl)` and call `MyApiSetup.unregister(setup: setup)` on detach—passing a `struct` to `unregister(api:)` is a no-op because value types lack object identity.)*
+  *(Generated Swift FFI `@HostApi` protocols conform to `AnyObject`, so implementations must be reference types so `MyApiSetup.unregister(api:)` can match instances by identity.)*
 
-  > **macOS Engine Teardown Note**: Unlike `FlutterPlugin` on iOS (UIKit) and Android, `FlutterMacOS`'s `FlutterPlugin` protocol does not currently declare or automatically invoke `detachFromEngine(for:)` when `FlutterEngine.shutDownEngine()` is called. If your macOS app dynamically creates and tears down secondary `FlutterEngine` instances, explicitly unregister that engine's `@HostApi` instance (via `MyApiSetup.unregister(api:)` or `MyApiSetup.unregister(setup:)`) during your macOS engine teardown flow.
+  > **macOS Engine Teardown Note**: Unlike `FlutterPlugin` on iOS (UIKit) and Android, `FlutterMacOS`'s `FlutterPlugin` protocol does not currently declare or automatically invoke `detachFromEngine(for:)` when `FlutterEngine.shutDownEngine()` is called. If your macOS app dynamically creates and tears down secondary `FlutterEngine` instances, explicitly unregister that engine's `@HostApi` instance via `MyApiSetup.unregister(api:)` during your macOS engine teardown flow.
 
 - **Dart (`@FlutterApi`)**:
-  `@FlutterApi` registrations (`MyFlutterApi.setUp(api)`, `MyFlutterApi.implement(api)`, or `MyFlutterApiRegistrar().register(api)`) also maintain a thread-safe, ordered stack per instance name. Calling `MyFlutterApi.setUp(null)` when an engine's Dart isolate tears down (or `MyFlutterApiRegistrar().unregister(myApi)` for `implement`/`register` registrations) removes **only** that isolate's instance so other active engines stay registered.
+  `@FlutterApi` registrations (`MyFlutterApi.setUp(api)` or `MyFlutterApiRegistrar.register(api)`) also maintain a thread-safe, ordered stack per instance name. Calling `MyFlutterApi.setUp(null)` when an engine's Dart isolate tears down (or `MyFlutterApiRegistrar.unregister(myApi)` for `register` registrations) removes **only** that isolate's instance so other active engines stay registered.
 
 - **Custom Headless `FlutterEngine`s on Android (`JniPlugin`)**:
   If you spawn a custom or background `FlutterEngine` on Android (e.g., in a `Service`, `BroadcastReceiver`, or `FlutterEngineGroup`) **without** calling `GeneratedPluginRegistrant.registerWith(flutterEngine)`, register `JniPlugin` (`flutterEngine.plugins.add(com.github.dart_lang.jni.JniPlugin())`) before executing Dart code that uses JNI so `DartJNI` is guaranteed to be initialized even when no main `FlutterActivity` has started yet.
 
-> **Multi-Engine Per-Engine State Caveat**: Because Native Interop resolves `<Api>.createWithNativeInteropApi()` and `<FlutterApi>.getInstance()` directly in process memory without a platform channel `BinaryMessenger`, calls resolve to the most recently registered active instance for a given `name` (`messageChannelSuffix`). Stateless or process-wide plugins work seamlessly across any number of engines. If an API holds **engine-specific state** (such as an Android `Activity` from `ActivityAware`, a per-engine `TextureRegistry`, a specific `UIViewController`, or engine-specific `@FlutterApi` callbacks) across concurrently active engines, pass a distinct `name` / `messageChannelSuffix` per engine or keep engine-scoped operations on platform channels / `@ProxyApi`.
+> **Multi-Engine Per-Engine State Caveat**: Because Native Interop resolves `<Api>.createWithNativeInteropApi()` / `<Api>ForNativeInterop.getInstance()` and `<FlutterApi>Registrar.getInstance()` directly in process memory without a platform channel `BinaryMessenger`, calls resolve to the most recently registered active instance for a given `name` (`messageChannelSuffix`). Stateless or process-wide plugins work seamlessly across any number of engines. If an API holds **engine-specific state** (such as an Android `Activity` from `ActivityAware`, a per-engine `TextureRegistry`, a specific `UIViewController`, or engine-specific `@FlutterApi` callbacks) across concurrently active engines, pass a distinct `name` / `messageChannelSuffix` per engine or keep engine-scoped operations on platform channels / `@ProxyApi`.
 
 ---
 

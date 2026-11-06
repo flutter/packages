@@ -62,11 +62,9 @@ class _PigeonCodec extends StandardMessageCodec {
   }
 }
 
-const String defaultInstanceName = 'PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u';
-
 @internal
 NativeInteropExampleApiForNativeInterop? pigeon_getInstance_NativeInteropExampleApi({
-  String channelName = defaultInstanceName,
+  String? name,
 }) {
   throw UnsupportedError(
     'Native Interop is not supported on this platform. Use NativeInteropExampleApi instead.',
@@ -74,10 +72,9 @@ NativeInteropExampleApiForNativeInterop? pigeon_getInstance_NativeInteropExample
 }
 
 abstract class NativeInteropExampleApiForNativeInterop {
-  /// Returns instance of NativeInteropExampleApiForNativeInterop with specified [channelName] if one has been registered.
-  static NativeInteropExampleApiForNativeInterop? getInstance({
-    String channelName = defaultInstanceName,
-  }) => pigeon_native.pigeon_getInstance_NativeInteropExampleApi(channelName: channelName);
+  /// Returns the instance of [NativeInteropExampleApiForNativeInterop] registered with [name] (or the default instance when [name] is null), or null if none is registered.
+  static NativeInteropExampleApiForNativeInterop? getInstance({String? name}) =>
+      pigeon_native.pigeon_getInstance_NativeInteropExampleApi(name: name);
 
   void doSomething();
 }
@@ -105,25 +102,18 @@ class NativeInteropExampleApi {
     BinaryMessenger? binaryMessenger,
     String messageChannelSuffix = '',
   }) {
-    NativeInteropExampleApiForNativeInterop? nativeInteropApi;
-    String nativeInteropApiInstanceName = '';
-    if (!kIsWeb) {
-      if (messageChannelSuffix.isEmpty) {
-        nativeInteropApi = NativeInteropExampleApiForNativeInterop.getInstance();
-      } else {
-        nativeInteropApiInstanceName = messageChannelSuffix;
-        nativeInteropApi = NativeInteropExampleApiForNativeInterop.getInstance(
-          channelName: messageChannelSuffix,
-        );
-      }
-    } else {
+    if (kIsWeb) {
       throw UnsupportedError(
         'Native Interop is not supported on this platform. Use the default constructor of NativeInteropExampleApi instead.',
       );
     }
+    final NativeInteropExampleApiForNativeInterop? nativeInteropApi =
+        NativeInteropExampleApiForNativeInterop.getInstance(
+          name: messageChannelSuffix.isEmpty ? null : messageChannelSuffix,
+        );
     if (nativeInteropApi == null) {
       throw ArgumentError(
-        'No NativeInteropExampleApi instance with ${nativeInteropApiInstanceName.isEmpty ? 'no ' : ''} instance name ${nativeInteropApiInstanceName.isNotEmpty ? '"$nativeInteropApiInstanceName" ' : ''}found.',
+        'No NativeInteropExampleApi instance with ${messageChannelSuffix.isEmpty ? 'no ' : ''} instance name ${messageChannelSuffix.isNotEmpty ? '"$messageChannelSuffix" ' : ''}found.',
       );
     }
     return NativeInteropExampleApi(

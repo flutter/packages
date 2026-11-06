@@ -57,10 +57,10 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi, HostCallbackCoreApi {
     testSuffixApiTwo.setUp(binding, "suffixTwo")
     val niTests = NativeInteropIntegrationTests(binding.applicationContext)
     niMessageApiImpl = niTests
-    NativeInteropHostIntegrationCoreApiRegistrar().register(niTests)
+    NativeInteropHostIntegrationCoreApiRegistrar.register(niTests)
     val reservedImpl = NativeInteropReservedNamesHostApiImpl()
     niReservedNamesImpl = reservedImpl
-    NativeInteropReservedNamesHostApiRegistrar().register(reservedImpl)
+    NativeInteropReservedNamesHostApiRegistrar.register(reservedImpl)
     flutterApi = FlutterIntegrationCoreApi(binding.binaryMessenger)
     flutterCallbackApi = FlutterCallbackCoreApi(binding.binaryMessenger)
     flutterSmallApiOne = FlutterSmallApi(binding.binaryMessenger, "suffixOne")
@@ -85,9 +85,9 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi, HostCallbackCoreApi {
   override fun onDetachedFromEngine(binding: FlutterPluginBinding) {
     HostIntegrationCoreApi.setUp(binding.binaryMessenger, null)
     HostCallbackCoreApi.setUp(binding.binaryMessenger, null)
-    niMessageApiImpl?.let { NativeInteropHostIntegrationCoreApiRegistrar().unregister(it) }
+    niMessageApiImpl?.let { NativeInteropHostIntegrationCoreApiRegistrar.unregister(it) }
     niMessageApiImpl = null
-    niReservedNamesImpl?.let { NativeInteropReservedNamesHostApiRegistrar().unregister(it) }
+    niReservedNamesImpl?.let { NativeInteropReservedNamesHostApiRegistrar.unregister(it) }
     niReservedNamesImpl = null
     proxyApiRegistrar?.tearDown()
   }
@@ -1488,38 +1488,35 @@ class NativeInteropIntegrationTests(private val context: Context? = null) :
   }
 
   override fun callFlutterNoop() {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar().getInstance()!!.noop()
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.noop()
   }
 
   override fun callFlutterThrowError(): Any? {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar().getInstance()!!.throwError()
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.throwError()
   }
 
   override fun callFlutterThrowErrorFromVoid() {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar().getInstance()!!.throwErrorFromVoid()
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.throwErrorFromVoid()
   }
 
   override fun callFlutterEchoNativeInteropAllTypes(
       everything: NativeInteropAllTypes
   ): NativeInteropAllTypes {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!
         .echoNativeInteropAllTypes(everything)
   }
 
   override fun callFlutterEchoNativeInteropAllNullableTypes(
       everything: NativeInteropAllNullableTypes?
   ): NativeInteropAllNullableTypes? {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!
         .echoNativeInteropAllNullableTypes(everything)
   }
 
   override fun callFlutterEchoSealedClass(
       sealedClass: NativeInteropSealedClass
   ): NativeInteropSealedClass {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!
         .echoNativeInteropSealedClass(sealedClass)
   }
 
@@ -1528,16 +1525,14 @@ class NativeInteropIntegrationTests(private val context: Context? = null) :
       aNullableInt: Long?,
       aNullableString: String?
   ): NativeInteropAllNullableTypes {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!
         .sendMultipleNullableTypes(aNullableBool, aNullableInt, aNullableString)
   }
 
   override fun callFlutterEchoNativeInteropAllNullableTypesWithoutRecursion(
       everything: NativeInteropAllNullableTypesWithoutRecursion?
   ): NativeInteropAllNullableTypesWithoutRecursion? {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!
         .echoNativeInteropAllNullableTypesWithoutRecursion(everything)
   }
 
@@ -1546,610 +1541,527 @@ class NativeInteropIntegrationTests(private val context: Context? = null) :
       aNullableInt: Long?,
       aNullableString: String?
   ): NativeInteropAllNullableTypesWithoutRecursion {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!
         .sendMultipleNullableTypesWithoutRecursion(aNullableBool, aNullableInt, aNullableString)
   }
 
   override fun callFlutterEchoBool(aBool: Boolean): Boolean {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar().getInstance()!!.echoBool(aBool)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoBool(aBool)
   }
 
   override fun callFlutterEchoInt(anInt: Long): Long {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar().getInstance()!!.echoInt(anInt)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoInt(anInt)
   }
 
   override fun callFlutterEchoDouble(aDouble: Double): Double {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar().getInstance()!!.echoDouble(aDouble)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoDouble(aDouble)
   }
 
   override fun callFlutterEchoString(aString: String): String {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar().getInstance()!!.echoString(aString)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoString(aString)
   }
 
   override fun callFlutterEchoUint8List(list: ByteArray): ByteArray {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar().getInstance()!!.echoUint8List(list)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoUint8List(list)
   }
 
   override fun callFlutterEchoInt32List(list: IntArray): IntArray {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar().getInstance()!!.echoInt32List(list)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoInt32List(list)
   }
 
   override fun callFlutterEchoInt64List(list: LongArray): LongArray {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar().getInstance()!!.echoInt64List(list)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoInt64List(list)
   }
 
   override fun callFlutterEchoFloat64List(list: DoubleArray): DoubleArray {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar().getInstance()!!.echoFloat64List(list)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoFloat64List(list)
   }
 
   override fun callFlutterEchoList(list: List<Any?>): List<Any?> {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar().getInstance()!!.echoList(list)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoList(list)
   }
 
   override fun callFlutterEchoEnumList(
       enumList: List<NativeInteropAnEnum?>
   ): List<NativeInteropAnEnum?> {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar().getInstance()!!.echoEnumList(enumList)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoEnumList(enumList)
   }
 
   override fun callFlutterEchoClassList(
       classList: List<NativeInteropAllNullableTypes?>
   ): List<NativeInteropAllNullableTypes?> {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
-        .echoClassList(classList)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoClassList(classList)
   }
 
   override fun callFlutterEchoNonNullEnumList(
       enumList: List<NativeInteropAnEnum>
   ): List<NativeInteropAnEnum> {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
-        .echoNonNullEnumList(enumList)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoNonNullEnumList(
+        enumList)
   }
 
   override fun callFlutterEchoNonNullClassList(
       classList: List<NativeInteropAllNullableTypes>
   ): List<NativeInteropAllNullableTypes> {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
-        .echoNonNullClassList(classList)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoNonNullClassList(
+        classList)
   }
 
   override fun callFlutterEchoMap(map: Map<Any?, Any?>): Map<Any?, Any?> {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar().getInstance()!!.echoMap(map)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoMap(map)
   }
 
   override fun callFlutterEchoStringMap(stringMap: Map<String?, String?>): Map<String?, String?> {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
-        .echoStringMap(stringMap)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoStringMap(stringMap)
   }
 
   override fun callFlutterEchoIntMap(intMap: Map<Long?, Long?>): Map<Long?, Long?> {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar().getInstance()!!.echoIntMap(intMap)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoIntMap(intMap)
   }
 
   override fun callFlutterEchoEnumMap(
       enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
   ): Map<NativeInteropAnEnum?, NativeInteropAnEnum?> {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar().getInstance()!!.echoEnumMap(enumMap)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoEnumMap(enumMap)
   }
 
   override fun callFlutterEchoClassMap(
       classMap: Map<Long?, NativeInteropAllNullableTypes?>
   ): Map<Long?, NativeInteropAllNullableTypes?> {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar().getInstance()!!.echoClassMap(classMap)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoClassMap(classMap)
   }
 
   override fun callFlutterEchoNonNullStringMap(
       stringMap: Map<String, String>
   ): Map<String, String> {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
-        .echoNonNullStringMap(stringMap)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoNonNullStringMap(
+        stringMap)
   }
 
   override fun callFlutterEchoNonNullIntMap(intMap: Map<Long, Long>): Map<Long, Long> {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
-        .echoNonNullIntMap(intMap)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoNonNullIntMap(intMap)
   }
 
   override fun callFlutterEchoNonNullEnumMap(
       enumMap: Map<NativeInteropAnEnum, NativeInteropAnEnum>
   ): Map<NativeInteropAnEnum, NativeInteropAnEnum> {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
-        .echoNonNullEnumMap(enumMap)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoNonNullEnumMap(
+        enumMap)
   }
 
   override fun callFlutterEchoNonNullClassMap(
       classMap: Map<Long, NativeInteropAllNullableTypes>
   ): Map<Long, NativeInteropAllNullableTypes> {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
-        .echoNonNullClassMap(classMap)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoNonNullClassMap(
+        classMap)
   }
 
   override fun callFlutterEchoEnum(anEnum: NativeInteropAnEnum): NativeInteropAnEnum {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar().getInstance()!!.echoEnum(anEnum)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoEnum(anEnum)
   }
 
   override fun callFlutterEchoNativeInteropAnotherEnum(
       anotherEnum: NativeInteropAnotherEnum
   ): NativeInteropAnotherEnum {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!
         .echoNativeInteropAnotherEnum(anotherEnum)
   }
 
   override fun callFlutterEchoNullableBool(aBool: Boolean?): Boolean? {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar().getInstance()!!.echoNullableBool(aBool)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoNullableBool(aBool)
   }
 
   override fun callFlutterEchoNullableInt(anInt: Long?): Long? {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar().getInstance()!!.echoNullableInt(anInt)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoNullableInt(anInt)
   }
 
   override fun callFlutterEchoNullableDouble(aDouble: Double?): Double? {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
-        .echoNullableDouble(aDouble)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoNullableDouble(
+        aDouble)
   }
 
   override fun callFlutterEchoNullableString(aString: String?): String? {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
-        .echoNullableString(aString)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoNullableString(
+        aString)
   }
 
   override fun callFlutterEchoNullableUint8List(list: ByteArray?): ByteArray? {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
-        .echoNullableUint8List(list)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoNullableUint8List(
+        list)
   }
 
   override fun callFlutterEchoNullableInt32List(list: IntArray?): IntArray? {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
-        .echoNullableInt32List(list)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoNullableInt32List(
+        list)
   }
 
   override fun callFlutterEchoNullableInt64List(list: LongArray?): LongArray? {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
-        .echoNullableInt64List(list)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoNullableInt64List(
+        list)
   }
 
   override fun callFlutterEchoNullableFloat64List(list: DoubleArray?): DoubleArray? {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
-        .echoNullableFloat64List(list)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoNullableFloat64List(
+        list)
   }
 
   override fun callFlutterEchoNullableList(list: List<Any?>?): List<Any?>? {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar().getInstance()!!.echoNullableList(list)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoNullableList(list)
   }
 
   override fun callFlutterEchoNullableEnumList(
       enumList: List<NativeInteropAnEnum?>?
   ): List<NativeInteropAnEnum?>? {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
-        .echoNullableEnumList(enumList)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoNullableEnumList(
+        enumList)
   }
 
   override fun callFlutterEchoNullableClassList(
       classList: List<NativeInteropAllNullableTypes?>?
   ): List<NativeInteropAllNullableTypes?>? {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
-        .echoNullableClassList(classList)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoNullableClassList(
+        classList)
   }
 
   override fun callFlutterEchoNullableNonNullEnumList(
       enumList: List<NativeInteropAnEnum>?
   ): List<NativeInteropAnEnum>? {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!
         .echoNullableNonNullEnumList(enumList)
   }
 
   override fun callFlutterEchoNullableNonNullClassList(
       classList: List<NativeInteropAllNullableTypes>?
   ): List<NativeInteropAllNullableTypes>? {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!
         .echoNullableNonNullClassList(classList)
   }
 
   override fun callFlutterEchoNullableMap(map: Map<Any?, Any?>?): Map<Any?, Any?>? {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar().getInstance()!!.echoNullableMap(map)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoNullableMap(map)
   }
 
   override fun callFlutterEchoNullableStringMap(
       stringMap: Map<String?, String?>?
   ): Map<String?, String?>? {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
-        .echoNullableStringMap(stringMap)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoNullableStringMap(
+        stringMap)
   }
 
   override fun callFlutterEchoNullableIntMap(intMap: Map<Long?, Long?>?): Map<Long?, Long?>? {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
-        .echoNullableIntMap(intMap)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoNullableIntMap(
+        intMap)
   }
 
   override fun callFlutterEchoNullableEnumMap(
       enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
   ): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>? {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
-        .echoNullableEnumMap(enumMap)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoNullableEnumMap(
+        enumMap)
   }
 
   override fun callFlutterEchoNullableClassMap(
       classMap: Map<Long?, NativeInteropAllNullableTypes?>?
   ): Map<Long?, NativeInteropAllNullableTypes?>? {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
-        .echoNullableClassMap(classMap)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoNullableClassMap(
+        classMap)
   }
 
   override fun callFlutterEchoNullableNonNullStringMap(
       stringMap: Map<String, String>?
   ): Map<String, String>? {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!
         .echoNullableNonNullStringMap(stringMap)
   }
 
   override fun callFlutterEchoNullableNonNullIntMap(intMap: Map<Long, Long>?): Map<Long, Long>? {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!
         .echoNullableNonNullIntMap(intMap)
   }
 
   override fun callFlutterEchoNullableNonNullEnumMap(
       enumMap: Map<NativeInteropAnEnum, NativeInteropAnEnum>?
   ): Map<NativeInteropAnEnum, NativeInteropAnEnum>? {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!
         .echoNullableNonNullEnumMap(enumMap)
   }
 
   override fun callFlutterEchoNullableNonNullClassMap(
       classMap: Map<Long, NativeInteropAllNullableTypes>?
   ): Map<Long, NativeInteropAllNullableTypes>? {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!
         .echoNullableNonNullClassMap(classMap)
   }
 
   override fun callFlutterEchoNullableEnum(anEnum: NativeInteropAnEnum?): NativeInteropAnEnum? {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
-        .echoNullableEnum(anEnum)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoNullableEnum(anEnum)
   }
 
   override fun callFlutterEchoAnotherNullableEnum(
       anotherEnum: NativeInteropAnotherEnum?
   ): NativeInteropAnotherEnum? {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
-        .echoAnotherNullableEnum(anotherEnum)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoAnotherNullableEnum(
+        anotherEnum)
   }
 
   override suspend fun callFlutterNoopAsync() {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar().getInstance()!!.noopAsync()
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.noopAsync()
   }
 
   override suspend fun callFlutterEchoAsyncNativeInteropAllTypes(
       everything: NativeInteropAllTypes
   ): NativeInteropAllTypes {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!
         .echoAsyncNativeInteropAllTypes(everything)
   }
 
   override suspend fun callFlutterEchoAsyncNullableNativeInteropAllNullableTypes(
       everything: NativeInteropAllNullableTypes?
   ): NativeInteropAllNullableTypes? {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!
         .echoAsyncNullableNativeInteropAllNullableTypes(everything)
   }
 
   override suspend fun callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
       everything: NativeInteropAllNullableTypesWithoutRecursion?
   ): NativeInteropAllNullableTypesWithoutRecursion? {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!
         .echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(everything)
   }
 
   override suspend fun callFlutterEchoAsyncBool(aBool: Boolean): Boolean {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar().getInstance()!!.echoAsyncBool(aBool)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoAsyncBool(aBool)
   }
 
   override suspend fun callFlutterEchoAsyncInt(anInt: Long): Long {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar().getInstance()!!.echoAsyncInt(anInt)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoAsyncInt(anInt)
   }
 
   override suspend fun callFlutterEchoAsyncDouble(aDouble: Double): Double {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
-        .echoAsyncDouble(aDouble)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoAsyncDouble(aDouble)
   }
 
   override suspend fun callFlutterEchoAsyncString(aString: String): String {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
-        .echoAsyncString(aString)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoAsyncString(aString)
   }
 
   override suspend fun callFlutterEchoAsyncUint8List(list: ByteArray): ByteArray {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
-        .echoAsyncUint8List(list)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoAsyncUint8List(list)
   }
 
   override suspend fun callFlutterEchoAsyncInt32List(list: IntArray): IntArray {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
-        .echoAsyncInt32List(list)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoAsyncInt32List(list)
   }
 
   override suspend fun callFlutterEchoAsyncInt64List(list: LongArray): LongArray {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
-        .echoAsyncInt64List(list)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoAsyncInt64List(list)
   }
 
   override suspend fun callFlutterEchoAsyncFloat64List(list: DoubleArray): DoubleArray {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
-        .echoAsyncFloat64List(list)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoAsyncFloat64List(
+        list)
   }
 
   override suspend fun callFlutterEchoAsyncObject(anObject: Any): Any {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
-        .echoAsyncObject(anObject)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoAsyncObject(anObject)
   }
 
   override suspend fun callFlutterEchoAsyncList(list: List<Any?>): List<Any?> {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar().getInstance()!!.echoAsyncList(list)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoAsyncList(list)
   }
 
   override suspend fun callFlutterEchoAsyncEnumList(
       enumList: List<NativeInteropAnEnum?>
   ): List<NativeInteropAnEnum?> {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
-        .echoAsyncEnumList(enumList)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoAsyncEnumList(
+        enumList)
   }
 
   override suspend fun callFlutterEchoAsyncClassList(
       classList: List<NativeInteropAllNullableTypes?>
   ): List<NativeInteropAllNullableTypes?> {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
-        .echoAsyncClassList(classList)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoAsyncClassList(
+        classList)
   }
 
   override suspend fun callFlutterEchoAsyncNonNullEnumList(
       enumList: List<NativeInteropAnEnum>
   ): List<NativeInteropAnEnum> {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
-        .echoAsyncNonNullEnumList(enumList)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoAsyncNonNullEnumList(
+        enumList)
   }
 
   override suspend fun callFlutterEchoAsyncNonNullClassList(
       classList: List<NativeInteropAllNullableTypes>
   ): List<NativeInteropAllNullableTypes> {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!
         .echoAsyncNonNullClassList(classList)
   }
 
   override suspend fun callFlutterEchoAsyncMap(map: Map<Any?, Any?>): Map<Any?, Any?> {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar().getInstance()!!.echoAsyncMap(map)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoAsyncMap(map)
   }
 
   override suspend fun callFlutterEchoAsyncStringMap(
       stringMap: Map<String?, String?>
   ): Map<String?, String?> {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
-        .echoAsyncStringMap(stringMap)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoAsyncStringMap(
+        stringMap)
   }
 
   override suspend fun callFlutterEchoAsyncIntMap(intMap: Map<Long?, Long?>): Map<Long?, Long?> {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar().getInstance()!!.echoAsyncIntMap(intMap)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoAsyncIntMap(intMap)
   }
 
   override suspend fun callFlutterEchoAsyncEnumMap(
       enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
   ): Map<NativeInteropAnEnum?, NativeInteropAnEnum?> {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
-        .echoAsyncEnumMap(enumMap)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoAsyncEnumMap(enumMap)
   }
 
   override suspend fun callFlutterEchoAsyncClassMap(
       classMap: Map<Long?, NativeInteropAllNullableTypes?>
   ): Map<Long?, NativeInteropAllNullableTypes?> {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
-        .echoAsyncClassMap(classMap)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoAsyncClassMap(
+        classMap)
   }
 
   override suspend fun callFlutterEchoAsyncEnum(anEnum: NativeInteropAnEnum): NativeInteropAnEnum {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar().getInstance()!!.echoAsyncEnum(anEnum)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoAsyncEnum(anEnum)
   }
 
   override suspend fun callFlutterEchoAnotherAsyncEnum(
       anotherEnum: NativeInteropAnotherEnum
   ): NativeInteropAnotherEnum {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
-        .echoAnotherAsyncEnum(anotherEnum)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoAnotherAsyncEnum(
+        anotherEnum)
   }
 
   override suspend fun callFlutterEchoAsyncNullableBool(aBool: Boolean?): Boolean? {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
-        .echoAsyncNullableBool(aBool)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoAsyncNullableBool(
+        aBool)
   }
 
   override suspend fun callFlutterEchoAsyncNullableInt(anInt: Long?): Long? {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
-        .echoAsyncNullableInt(anInt)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoAsyncNullableInt(
+        anInt)
   }
 
   override suspend fun callFlutterEchoAsyncNullableDouble(aDouble: Double?): Double? {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
-        .echoAsyncNullableDouble(aDouble)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoAsyncNullableDouble(
+        aDouble)
   }
 
   override suspend fun callFlutterEchoAsyncNullableString(aString: String?): String? {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
-        .echoAsyncNullableString(aString)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoAsyncNullableString(
+        aString)
   }
 
   override suspend fun callFlutterEchoAsyncNullableUint8List(list: ByteArray?): ByteArray? {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!
         .echoAsyncNullableUint8List(list)
   }
 
   override suspend fun callFlutterEchoAsyncNullableInt32List(list: IntArray?): IntArray? {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!
         .echoAsyncNullableInt32List(list)
   }
 
   override suspend fun callFlutterEchoAsyncNullableInt64List(list: LongArray?): LongArray? {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!
         .echoAsyncNullableInt64List(list)
   }
 
   override suspend fun callFlutterEchoAsyncNullableFloat64List(list: DoubleArray?): DoubleArray? {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!
         .echoAsyncNullableFloat64List(list)
   }
 
   override suspend fun callFlutterThrowFlutterErrorAsync(): Any? {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
-        .throwFlutterErrorAsync()
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.throwFlutterErrorAsync()
   }
 
   override suspend fun callFlutterEchoAsyncNullableObject(anObject: Any?): Any? {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
-        .echoAsyncNullableObject(anObject)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoAsyncNullableObject(
+        anObject)
   }
 
   override suspend fun callFlutterEchoAsyncNullableList(list: List<Any?>?): List<Any?>? {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
-        .echoAsyncNullableList(list)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoAsyncNullableList(
+        list)
   }
 
   override suspend fun callFlutterEchoAsyncNullableEnumList(
       enumList: List<NativeInteropAnEnum?>?
   ): List<NativeInteropAnEnum?>? {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!
         .echoAsyncNullableEnumList(enumList)
   }
 
   override suspend fun callFlutterEchoAsyncNullableClassList(
       classList: List<NativeInteropAllNullableTypes?>?
   ): List<NativeInteropAllNullableTypes?>? {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!
         .echoAsyncNullableClassList(classList)
   }
 
   override suspend fun callFlutterEchoAsyncNullableNonNullEnumList(
       enumList: List<NativeInteropAnEnum>?
   ): List<NativeInteropAnEnum>? {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!
         .echoAsyncNullableNonNullEnumList(enumList)
   }
 
   override suspend fun callFlutterEchoAsyncNullableNonNullClassList(
       classList: List<NativeInteropAllNullableTypes>?
   ): List<NativeInteropAllNullableTypes>? {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!
         .echoAsyncNullableNonNullClassList(classList)
   }
 
   override suspend fun callFlutterEchoAsyncNullableMap(map: Map<Any?, Any?>?): Map<Any?, Any?>? {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
-        .echoAsyncNullableMap(map)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoAsyncNullableMap(map)
   }
 
   override suspend fun callFlutterEchoAsyncNullableStringMap(
       stringMap: Map<String?, String?>?
   ): Map<String?, String?>? {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!
         .echoAsyncNullableStringMap(stringMap)
   }
 
   override suspend fun callFlutterEchoAsyncNullableIntMap(
       intMap: Map<Long?, Long?>?
   ): Map<Long?, Long?>? {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
-        .echoAsyncNullableIntMap(intMap)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoAsyncNullableIntMap(
+        intMap)
   }
 
   override suspend fun callFlutterEchoAsyncNullableEnumMap(
       enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
   ): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>? {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
-        .echoAsyncNullableEnumMap(enumMap)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoAsyncNullableEnumMap(
+        enumMap)
   }
 
   override suspend fun callFlutterEchoAsyncNullableClassMap(
       classMap: Map<Long?, NativeInteropAllNullableTypes?>?
   ): Map<Long?, NativeInteropAllNullableTypes?>? {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!
         .echoAsyncNullableClassMap(classMap)
   }
 
   override suspend fun callFlutterEchoAsyncNullableEnum(
       anEnum: NativeInteropAnEnum?
   ): NativeInteropAnEnum? {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
-        .echoAsyncNullableEnum(anEnum)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.echoAsyncNullableEnum(
+        anEnum)
   }
 
   override suspend fun callFlutterEchoAnotherAsyncNullableEnum(
       anotherEnum: NativeInteropAnotherEnum?
   ): NativeInteropAnotherEnum? {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar()
-        .getInstance()!!
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!
         .echoAnotherAsyncNullableEnum(anotherEnum)
   }
 
@@ -2180,7 +2092,7 @@ class NativeInteropIntegrationTests(private val context: Context? = null) :
   override suspend fun callFlutterNoopOnBackgroundThread(): Boolean {
     return withContext(Dispatchers.Default) {
       try {
-        NativeInteropFlutterIntegrationCoreApiRegistrar().getInstance()!!.noopAsync()
+        NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance()!!.noopAsync()
         true
       } catch (e: Exception) {
         false
@@ -2191,12 +2103,12 @@ class NativeInteropIntegrationTests(private val context: Context? = null) :
   override fun testDeregisterHostApi(): Boolean {
     val name = "testDeregisterHostInstance"
     val singleApi = NativeInteropIntegrationTests()
-    NativeInteropHostIntegrationCoreApiRegistrar().register(singleApi, name = name)
-    if (NativeInteropHostIntegrationCoreApiRegistrar().getInstance(name) == null) {
+    NativeInteropHostIntegrationCoreApiRegistrar.register(singleApi, name = name)
+    if (NativeInteropHostIntegrationCoreApiRegistrar.getInstance(name) == null) {
       return false
     }
-    NativeInteropHostIntegrationCoreApiRegistrar().unregister(singleApi, name = name)
-    if (NativeInteropHostIntegrationCoreApiRegistrar().getInstance(name) != null) {
+    NativeInteropHostIntegrationCoreApiRegistrar.unregister(singleApi, name = name)
+    if (NativeInteropHostIntegrationCoreApiRegistrar.getInstance(name) != null) {
       return false
     }
 
@@ -2206,35 +2118,38 @@ class NativeInteropIntegrationTests(private val context: Context? = null) :
     val api1 = NativeInteropIntegrationTests()
     val api2 = NativeInteropIntegrationTests()
     val unregisteredApi = NativeInteropIntegrationTests()
-    NativeInteropHostIntegrationCoreApiRegistrar().register(api1, name = outOfOrderName)
-    val reg2 = NativeInteropHostIntegrationCoreApiRegistrar().register(api2, name = outOfOrderName)
-    NativeInteropHostIntegrationCoreApiRegistrar().unregister(api1, name = outOfOrderName)
-    NativeInteropHostIntegrationCoreApiRegistrar().unregister(api1, name = outOfOrderName)
-    NativeInteropHostIntegrationCoreApiRegistrar()
-        .unregister(unregisteredApi, name = outOfOrderName)
-    if (NativeInteropHostIntegrationCoreApiRegistrar().getInstance(outOfOrderName) !== reg2) {
+    NativeInteropHostIntegrationCoreApiRegistrar.register(api1, name = outOfOrderName)
+    NativeInteropHostIntegrationCoreApiRegistrar.register(api2, name = outOfOrderName)
+    val reg2 = NativeInteropHostIntegrationCoreApiRegistrar.getInstance(outOfOrderName)
+    NativeInteropHostIntegrationCoreApiRegistrar.unregister(api1, name = outOfOrderName)
+    NativeInteropHostIntegrationCoreApiRegistrar.unregister(api1, name = outOfOrderName)
+    NativeInteropHostIntegrationCoreApiRegistrar.unregister(unregisteredApi, name = outOfOrderName)
+    if (reg2 == null ||
+        NativeInteropHostIntegrationCoreApiRegistrar.getInstance(outOfOrderName) !== reg2) {
       return false
     }
-    NativeInteropHostIntegrationCoreApiRegistrar().unregister(api2, name = outOfOrderName)
-    if (NativeInteropHostIntegrationCoreApiRegistrar().getInstance(outOfOrderName) != null) {
+    NativeInteropHostIntegrationCoreApiRegistrar.unregister(api2, name = outOfOrderName)
+    if (NativeInteropHostIntegrationCoreApiRegistrar.getInstance(outOfOrderName) != null) {
       return false
     }
 
-    // Reusing the same Registrar receiver across names keeps each name's wrapper isolated.
-    val sharedRegistrar = NativeInteropHostIntegrationCoreApiRegistrar()
-    val sharedName1 = "testSharedRegistrar1"
-    val sharedName2 = "testSharedRegistrar2"
-    val sharedApi1 = NativeInteropIntegrationTests()
-    val sharedApi2 = NativeInteropIntegrationTests()
-    val wrapper1 = sharedRegistrar.register(sharedApi1, name = sharedName1)
-    val wrapper2 = sharedRegistrar.register(sharedApi2, name = sharedName2)
-    val sharedOk =
-        NativeInteropHostIntegrationCoreApiRegistrar().getInstance(sharedName1) === wrapper1 &&
-            NativeInteropHostIntegrationCoreApiRegistrar().getInstance(sharedName2) === wrapper2 &&
-            wrapper1 !== wrapper2
-    NativeInteropHostIntegrationCoreApiRegistrar().unregister(sharedApi1, name = sharedName1)
-    NativeInteropHostIntegrationCoreApiRegistrar().unregister(sharedApi2, name = sharedName2)
-    if (!sharedOk) {
+    // Default instance (name = null) is distinct from an explicit empty string (name = "").
+    val defaultReservedWrapper = NativeInteropReservedNamesHostApiRegistrar.getInstance()
+    if (defaultReservedWrapper == null ||
+        NativeInteropReservedNamesHostApiRegistrar.getInstance("") != null) {
+      return false
+    }
+    val emptyNameApi = NativeInteropReservedNamesHostApiImpl()
+    NativeInteropReservedNamesHostApiRegistrar.register(emptyNameApi, name = "")
+    val emptyNameWrapper = NativeInteropReservedNamesHostApiRegistrar.getInstance("")
+    val emptyNameIsolated =
+        emptyNameWrapper != null &&
+            emptyNameWrapper !== defaultReservedWrapper &&
+            NativeInteropReservedNamesHostApiRegistrar.getInstance() === defaultReservedWrapper
+    NativeInteropReservedNamesHostApiRegistrar.unregister(emptyNameApi, name = "")
+    if (!emptyNameIsolated ||
+        NativeInteropReservedNamesHostApiRegistrar.getInstance("") != null ||
+        NativeInteropReservedNamesHostApiRegistrar.getInstance() !== defaultReservedWrapper) {
       return false
     }
 
@@ -2249,12 +2164,12 @@ class NativeInteropIntegrationTests(private val context: Context? = null) :
         engine3.plugins.add(TestPlugin())
         engine2.destroy()
         val afterSecondDestroyed =
-            NativeInteropHostIntegrationCoreApiRegistrar().getInstance() != null &&
-                NativeInteropReservedNamesHostApiRegistrar().getInstance() != null
+            NativeInteropHostIntegrationCoreApiRegistrar.getInstance() != null &&
+                NativeInteropReservedNamesHostApiRegistrar.getInstance() != null
         engine3.destroy()
         val afterThirdDestroyed =
-            NativeInteropHostIntegrationCoreApiRegistrar().getInstance() != null &&
-                NativeInteropReservedNamesHostApiRegistrar().getInstance() != null
+            NativeInteropHostIntegrationCoreApiRegistrar.getInstance() != null &&
+                NativeInteropReservedNamesHostApiRegistrar.getInstance() != null
         engineCheckPassed = afterSecondDestroyed && afterThirdDestroyed
       }
       if (Looper.myLooper() == Looper.getMainLooper()) {
@@ -2296,53 +2211,56 @@ class NativeInteropIntegrationTests(private val context: Context? = null) :
     }
     val api1 = makeApi("engine1")
     val api2 = makeApi("engine2")
-    val registrar = NativeInteropReservedNamesFlutterApiRegistrar()
 
-    registrar.registerInstance(api1, name = name)
-    registrar.registerInstance(api2, name = name)
-    if (registrar.getInstance(name)?.release("ping") != "engine2:ping") {
+    NativeInteropReservedNamesFlutterApiRegistrar.register(api1, name = name)
+    NativeInteropReservedNamesFlutterApiRegistrar.register(api2, name = name)
+    if (NativeInteropReservedNamesFlutterApiRegistrar.getInstance(name)?.release("ping") !=
+        "engine2:ping") {
       return false
     }
 
     // Re-registering api1 deduplicates and moves it to the top of the stack.
-    registrar.registerInstance(api1, name = name)
-    if (registrar.getInstance(name)?.release("ping") != "engine1:ping") {
+    NativeInteropReservedNamesFlutterApiRegistrar.register(api1, name = name)
+    if (NativeInteropReservedNamesFlutterApiRegistrar.getInstance(name)?.release("ping") !=
+        "engine1:ping") {
       return false
     }
 
-    // Single unregisterInstance(api1) removes api1 completely and restores api2.
-    registrar.unregisterInstance(api1, name = name)
-    if (registrar.getInstance(name)?.release("ping") != "engine2:ping") {
+    // Single unregister(api1) removes api1 completely and restores api2.
+    NativeInteropReservedNamesFlutterApiRegistrar.unregister(api1, name = name)
+    if (NativeInteropReservedNamesFlutterApiRegistrar.getInstance(name)?.release("ping") !=
+        "engine2:ping") {
       return false
     }
 
-    // Out-of-order unregisterInstance on bottom entry leaves top entry intact.
+    // Out-of-order unregister on bottom entry leaves top entry intact.
     val api3 = makeApi("engine3")
-    registrar.registerInstance(api3, name = name)
-    registrar.unregisterInstance(api2, name = name)
-    if (registrar.getInstance(name)?.release("ping") != "engine3:ping") {
+    NativeInteropReservedNamesFlutterApiRegistrar.register(api3, name = name)
+    NativeInteropReservedNamesFlutterApiRegistrar.unregister(api2, name = name)
+    if (NativeInteropReservedNamesFlutterApiRegistrar.getInstance(name)?.release("ping") !=
+        "engine3:ping") {
       return false
     }
 
     // Unregistering the remaining entry clears the registration list completely.
-    registrar.unregisterInstance(api3, name = name)
-    if (registrar.getInstance(name) != null) {
+    NativeInteropReservedNamesFlutterApiRegistrar.unregister(api3, name = name)
+    if (NativeInteropReservedNamesFlutterApiRegistrar.getInstance(name) != null) {
       return false
     }
 
-    // Duplicate unregisterInstance is a safe no-op.
-    registrar.unregisterInstance(api3, name = name)
-    return NativeInteropFlutterIntegrationCoreApiRegistrar().getInstance(name) == null
+    // Duplicate unregister is a safe no-op.
+    NativeInteropReservedNamesFlutterApiRegistrar.unregister(api3, name = name)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance(name) == null
   }
 
   override fun registerAndImmediatelyDeregisterHostApi(name: String) {
     val api = NativeInteropIntegrationTests()
-    NativeInteropHostIntegrationCoreApiRegistrar().register(api, name = name)
-    NativeInteropHostIntegrationCoreApiRegistrar().unregister(api, name = name)
+    NativeInteropHostIntegrationCoreApiRegistrar.register(api, name = name)
+    NativeInteropHostIntegrationCoreApiRegistrar.unregister(api, name = name)
   }
 
   override fun testCallDeregisteredFlutterApi(name: String): Boolean {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar().getInstance(name) == null
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance(name) == null
   }
 
   override suspend fun testSecondaryEngineDartExecution(): Boolean {
@@ -2476,7 +2394,7 @@ class NativeInteropReservedNamesHostApiImpl : NativeInteropReservedNamesHostApi 
   }
 
   private fun flutterApi(): NativeInteropReservedNamesFlutterApi {
-    return NativeInteropReservedNamesFlutterApiRegistrar().getInstance()!!
+    return NativeInteropReservedNamesFlutterApiRegistrar.getInstance()!!
   }
 
   override fun callFlutterRelease(value: String): String {

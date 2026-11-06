@@ -147,7 +147,7 @@ When implementing Native Interop host APIs directly in an application target (su
 ## 4. Update Native Plugin Implementations
 
 ### 4.1 Swift Implementation (`<PluginName>.swift`)
-1. **Registration & Multi-Engine Deregistration Calls**: Replace platform channel setup calls with FFI registration, and publish/unregister the specific plugin instance in `detachFromEngine(for:)` so detaching a secondary `FlutterEngine` does not clear other active engines:
+1. **Registration & Multi-Engine Deregistration Calls**: Replace platform channel setup calls with FFI registration, and publish/unregister the specific plugin instance in `detachFromEngine(for:)` so detaching a secondary `FlutterEngine` does not clear other active engines (note that Swift FFI `@HostApi` protocols conform to `AnyObject`, so implementations must be classes):
    ```swift
    // BEFORE (platform channels):
    // LegacyUserDefaultsApiSetup.setUp(binaryMessenger: messenger, api: instance)
@@ -156,11 +156,9 @@ When implementing Native Interop host APIs directly in an application target (su
    registrar.publish(instance)
    LegacyUserDefaultsApiSetup.register(api: instance)
 
-    // In detachFromEngine(for registrar: FlutterPluginRegistrar):
-    LegacyUserDefaultsApiSetup.unregister(api: self)
-    // (Or for struct value types, capture `let setup = ...register(api: impl)`
-    // and call `LegacyUserDefaultsApiSetup.unregister(setup: setup)`.)
-    ```
+   // In detachFromEngine(for registrar: FlutterPluginRegistrar):
+   LegacyUserDefaultsApiSetup.unregister(api: self)
+   ```
    *Note: On macOS, `FlutterMacOS`'s `FlutterPlugin` protocol does not automatically call `detachFromEngine(for:)` when `FlutterEngine.shutDownEngine()` runs; apps that dynamically tear down secondary macOS engines should invoke `unregister` explicitly during engine teardown.*
 
 2. **Async Method Signatures**: Replace completion-handler callbacks with Swift `async/await`:
@@ -177,15 +175,15 @@ When implementing Native Interop host APIs directly in an application target (su
    ```
 
 ### 4.2 Kotlin Implementation (`<PluginName>.kt`)
-1. **Registration & Multi-Engine Deregistration Calls**: Replace platform channel setup/teardown with JNI registrars, using `unregister(this)` in `onDetachedFromEngine` so detaching a secondary `FlutterEngine` does not wipe out other active engines:
+1. **Registration & Multi-Engine Deregistration Calls**: Replace platform channel setup/teardown with JNI registrars, using `MyApiRegistrar.unregister(this)` in `onDetachedFromEngine` so detaching a secondary `FlutterEngine` does not wipe out other active engines:
    ```kotlin
    // In onAttachedToEngine:
    // BEFORE: MyApi.setUp(binding.binaryMessenger, this)
-   // AFTER:  MyApiRegistrar().register(this)
+   // AFTER:  MyApiRegistrar.register(this)
 
    // In onDetachedFromEngine:
    // BEFORE: MyApi.setUp(binding.binaryMessenger, null)
-   // AFTER:  MyApiRegistrar().unregister(this)
+   // AFTER:  MyApiRegistrar.unregister(this)
    ```
 2. **Async Method Signatures**: Replace callback interfaces with Kotlin Coroutine `suspend` functions:
    ```kotlin
@@ -343,6 +341,6 @@ If creating and destroying a secondary `FlutterEngine` causes subsequent Dart ca
 - **Cause**: The plugin used a Pigeon version prior to `30.0.0` and called `register(null)` / `register(api: nil)` unconditionally during engine teardown (or stored only a single instance per name).
 - **Solution**:
   - Regenerate with Pigeon `30.0.0` or later, which maintains an ordered instance stack per `name` and requires non-null `register` / instance-specific `unregister`.
-  - Deregister the specific plugin instance on engine detach using `MyApiRegistrar().unregister(this)` in Kotlin and `MyApiSetup.unregister(api: self)` (or `MyApiSetup.unregister(setup: savedSetup)` for Swift structs) in Swift.
-  - **Per-Engine State Caveat**: Because `<Api>.createWithNativeInteropApi()` resolves to the most recently registered active host instance for `name` (`messageChannelSuffix`), plugins that hold engine-specific state (such as `ActivityAware` activities, `TextureRegistry`, or view controllers) across concurrently active engines should either register under a unique `messageChannelSuffix` per engine or keep engine-scoped operations on platform channels / `@ProxyApi`.
+  - Deregister the specific plugin instance on engine detach using `MyApiRegistrar.unregister(this)` in Kotlin and `MyApiSetup.unregister(api: self)` in Swift.
+  - **Per-Engine State Caveat**: Because `<Api>.createWithNativeInteropApi()` / `<Api>ForNativeInterop.getInstance()` resolves to the most recently registered active host instance for `name` (`messageChannelSuffix`), plugins that hold engine-specific state (such as `ActivityAware` activities, `TextureRegistry`, or view controllers) across concurrently active engines should either register under a unique `messageChannelSuffix` per engine or keep engine-scoped operations on platform channels / `@ProxyApi`.
 

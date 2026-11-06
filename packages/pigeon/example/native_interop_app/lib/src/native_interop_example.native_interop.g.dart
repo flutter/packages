@@ -338,16 +338,6 @@ ffi_bridge.NativeInteropExampleNumberWrapper _convertToFfiNumberWrapper(Object v
 
 bool _isType<T>(Type t) => T == t;
 bool _isTypeOrNullableType<T>(Type t) => _isType<T>(t) || _isType<T?>(t);
-
-void _throwNoInstanceError(String channelName) {
-  String nameString = 'named $channelName';
-  if (channelName == defaultInstanceName) {
-    nameString = 'with no name';
-  }
-  final String error = 'No instance $nameString has been registered.';
-  throw ArgumentError(error);
-}
-
 void _throwIfFfiError(ffi_bridge.PigeonError error) {
   if (error.code != null) {
     throw _wrapFfiError(error);
@@ -393,8 +383,8 @@ PlatformException _wrapJniException(JThrowable e) {
 }
 
 NativeInteropExampleApiForNativeInterop? pigeon_getInstance_NativeInteropExampleApi({
-  String channelName = defaultInstanceName,
-}) => _NativeInteropExampleApiForNativeInterop.getInstance(channelName: channelName);
+  String? name,
+}) => _NativeInteropExampleApiForNativeInterop.getInstance(name: name);
 
 class _NativeInteropExampleApiForNativeInterop implements NativeInteropExampleApiForNativeInterop {
   _NativeInteropExampleApiForNativeInterop._withRegistrar({
@@ -403,31 +393,30 @@ class _NativeInteropExampleApiForNativeInterop implements NativeInteropExampleAp
   }) : _jniApi = jniApi,
        _ffiApi = ffiApi;
 
-  /// Returns instance of NativeInteropExampleApiForNativeInterop with specified [channelName] if one has been registered.
-  static NativeInteropExampleApiForNativeInterop? getInstance({
-    String channelName = defaultInstanceName,
-  }) {
-    final NativeInteropExampleApiForNativeInterop res;
+  /// Returns instance of NativeInteropExampleApiForNativeInterop with specified [name] if one has been registered.
+  static NativeInteropExampleApiForNativeInterop? getInstance({String? name}) {
     if (Platform.isAndroid) {
-      final jni_bridge.NativeInteropExampleApiRegistrar? link =
-          jni_bridge.NativeInteropExampleApiRegistrar().getInstance(channelName.toJString());
-      if (link == null) {
-        _throwNoInstanceError(channelName);
+      final JString? jName = name?.toJString();
+      final jni_bridge.NativeInteropExampleApiRegistrar? link;
+      try {
+        link = jni_bridge.NativeInteropExampleApiRegistrar.getInstance(jName);
+      } finally {
+        jName?.release();
       }
-      res = _NativeInteropExampleApiForNativeInterop._withRegistrar(jniApi: link);
+      return link == null
+          ? null
+          : _NativeInteropExampleApiForNativeInterop._withRegistrar(jniApi: link);
     } else if (Platform.isIOS || Platform.isMacOS) {
-      final ffi_bridge.NativeInteropExampleApiSetup? link =
-          ffi_bridge.NativeInteropExampleApiSetup.getInstanceWithName(NSString(channelName));
-      if (link == null) {
-        _throwNoInstanceError(channelName);
-      }
-      res = _NativeInteropExampleApiForNativeInterop._withRegistrar(ffiApi: link);
+      final ffi_bridge.NativeInteropExampleApiSetup? link = ffi_bridge
+          .NativeInteropExampleApiSetup.getInstanceWithName(name != null ? NSString(name) : null);
+      return link == null
+          ? null
+          : _NativeInteropExampleApiForNativeInterop._withRegistrar(ffiApi: link);
     } else {
       throw UnsupportedError(
         'Native Interop is not supported on this platform. Use NativeInteropExampleApi instead.',
       );
     }
-    return res;
   }
 
   late final jni_bridge.NativeInteropExampleApiRegistrar? _jniApi;

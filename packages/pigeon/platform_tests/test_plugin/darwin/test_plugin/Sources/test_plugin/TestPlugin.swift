@@ -37,7 +37,7 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi, HostCa
   var flutterSmallApiTwo: FlutterSmallApi
   var proxyApiRegistrar: ProxyApiTestsPigeonProxyApiRegistrar?
   var niHostApiImpl: NativeInteropTestsClass?
-  var niReservedSetup: NativeInteropReservedNamesHostApiSetup?
+  var niReservedImpl: NativeInteropReservedNamesHostApiImpl?
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     // Workaround for https://github.com/flutter/flutter/issues/118103.
@@ -82,8 +82,9 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi, HostCa
     let niImpl = NativeInteropTestsClass()
     niHostApiImpl = niImpl
     NativeInteropHostIntegrationCoreApiSetup.register(api: niImpl)
-    niReservedSetup = NativeInteropReservedNamesHostApiSetup.register(
-      api: NativeInteropReservedNamesHostApiImpl())
+    let reservedImpl = NativeInteropReservedNamesHostApiImpl()
+    niReservedImpl = reservedImpl
+    NativeInteropReservedNamesHostApiSetup.register(api: reservedImpl)
   }
 
   public func detachFromEngine(for registrar: FlutterPluginRegistrar) {
@@ -96,9 +97,9 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi, HostCa
       NativeInteropHostIntegrationCoreApiSetup.unregister(api: niHostApiImpl)
       self.niHostApiImpl = nil
     }
-    if let niReservedSetup {
-      NativeInteropReservedNamesHostApiSetup.unregister(setup: niReservedSetup)
-      self.niReservedSetup = nil
+    if let niReservedImpl {
+      NativeInteropReservedNamesHostApiSetup.unregister(api: niReservedImpl)
+      self.niReservedImpl = nil
     }
     proxyApiRegistrar?.tearDown()
     proxyApiRegistrar = nil
@@ -2121,12 +2122,14 @@ class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
     let api2 = NativeInteropTestsClass()
     let unregisteredApi = NativeInteropTestsClass()
     NativeInteropHostIntegrationCoreApiSetup.register(api: api1, name: outOfOrderName)
-    let outOfOrderSetup2 = NativeInteropHostIntegrationCoreApiSetup.register(
-      api: api2, name: outOfOrderName)
+    NativeInteropHostIntegrationCoreApiSetup.register(api: api2, name: outOfOrderName)
+    let outOfOrderSetup2 = NativeInteropHostIntegrationCoreApiSetup.getInstance(
+      name: outOfOrderName)
     NativeInteropHostIntegrationCoreApiSetup.unregister(api: api1, name: outOfOrderName)
     NativeInteropHostIntegrationCoreApiSetup.unregister(api: api1, name: outOfOrderName)
     NativeInteropHostIntegrationCoreApiSetup.unregister(api: unregisteredApi, name: outOfOrderName)
     guard
+      outOfOrderSetup2 != nil,
       NativeInteropHostIntegrationCoreApiSetup.getInstance(name: outOfOrderName)
         === outOfOrderSetup2
     else {
@@ -2137,19 +2140,30 @@ class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
       return false
     }
 
-    // Out-of-order handle-based unregister(setup:) keeps remaining instances active.
-    let handleName = "testHandleHostInstance"
-    let handle1 = NativeInteropReservedNamesHostApiSetup.register(
-      api: NativeInteropReservedNamesHostApiImpl(), name: handleName)
-    let handle2 = NativeInteropReservedNamesHostApiSetup.register(
-      api: NativeInteropReservedNamesHostApiImpl(), name: handleName)
-    NativeInteropReservedNamesHostApiSetup.unregister(setup: handle1, name: handleName)
-    NativeInteropReservedNamesHostApiSetup.unregister(setup: handle1, name: handleName)
-    guard NativeInteropReservedNamesHostApiSetup.getInstance(name: handleName) === handle2 else {
+    // Default instance (name: nil) is distinct from an explicit empty string (name: "").
+    let defaultReservedSetup = NativeInteropReservedNamesHostApiSetup.getInstance()
+    guard
+      defaultReservedSetup != nil,
+      NativeInteropReservedNamesHostApiSetup.getInstance(name: "") == nil
+    else {
       return false
     }
-    NativeInteropReservedNamesHostApiSetup.unregister(setup: handle2, name: handleName)
-    guard NativeInteropReservedNamesHostApiSetup.getInstance(name: handleName) == nil else {
+    let emptyNameApi = NativeInteropReservedNamesHostApiImpl()
+    NativeInteropReservedNamesHostApiSetup.register(api: emptyNameApi, name: "")
+    let emptyNameSetup = NativeInteropReservedNamesHostApiSetup.getInstance(name: "")
+    guard
+      emptyNameSetup != nil,
+      emptyNameSetup !== defaultReservedSetup,
+      NativeInteropReservedNamesHostApiSetup.getInstance() === defaultReservedSetup
+    else {
+      NativeInteropReservedNamesHostApiSetup.unregister(api: emptyNameApi, name: "")
+      return false
+    }
+    NativeInteropReservedNamesHostApiSetup.unregister(api: emptyNameApi, name: "")
+    guard
+      NativeInteropReservedNamesHostApiSetup.getInstance(name: "") == nil,
+      NativeInteropReservedNamesHostApiSetup.getInstance() === defaultReservedSetup
+    else {
       return false
     }
 
@@ -2195,8 +2209,8 @@ class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
     let bridge2 = TestPluginReservedFlutterBridge("engine2")
     let bridge3 = TestPluginReservedFlutterBridge("engine3")
 
-    NativeInteropReservedNamesFlutterApiRegistrar.registerInstance(api: bridge1, name: name)
-    NativeInteropReservedNamesFlutterApiRegistrar.registerInstance(api: bridge2, name: name)
+    NativeInteropReservedNamesFlutterApiRegistrar.register(api: bridge1, name: name)
+    NativeInteropReservedNamesFlutterApiRegistrar.register(api: bridge2, name: name)
     guard
       try NativeInteropReservedNamesFlutterApi.getInstance(name: name)?.release(value: "ping")
         == "engine2:ping"
@@ -2205,7 +2219,7 @@ class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
     }
 
     // Re-registering bridge1 deduplicates and moves it to the top of the stack.
-    NativeInteropReservedNamesFlutterApiRegistrar.registerInstance(api: bridge1, name: name)
+    NativeInteropReservedNamesFlutterApiRegistrar.register(api: bridge1, name: name)
     guard
       try NativeInteropReservedNamesFlutterApi.getInstance(name: name)?.release(value: "ping")
         == "engine1:ping"
@@ -2213,8 +2227,8 @@ class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
       return false
     }
 
-    // Single unregisterInstance removes bridge1 completely and restores bridge2.
-    NativeInteropReservedNamesFlutterApiRegistrar.unregisterInstance(api: bridge1, name: name)
+    // Single unregister removes bridge1 completely and restores bridge2.
+    NativeInteropReservedNamesFlutterApiRegistrar.unregister(api: bridge1, name: name)
     guard
       try NativeInteropReservedNamesFlutterApi.getInstance(name: name)?.release(value: "ping")
         == "engine2:ping"
@@ -2222,9 +2236,9 @@ class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
       return false
     }
 
-    // Out-of-order unregisterInstance on bottom entry leaves top entry intact.
-    NativeInteropReservedNamesFlutterApiRegistrar.registerInstance(api: bridge3, name: name)
-    NativeInteropReservedNamesFlutterApiRegistrar.unregisterInstance(api: bridge2, name: name)
+    // Out-of-order unregister on bottom entry leaves top entry intact.
+    NativeInteropReservedNamesFlutterApiRegistrar.register(api: bridge3, name: name)
+    NativeInteropReservedNamesFlutterApiRegistrar.unregister(api: bridge2, name: name)
     guard
       try NativeInteropReservedNamesFlutterApi.getInstance(name: name)?.release(value: "ping")
         == "engine3:ping"
@@ -2233,13 +2247,13 @@ class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
     }
 
     // Unregistering the remaining entry clears the registration list completely.
-    NativeInteropReservedNamesFlutterApiRegistrar.unregisterInstance(api: bridge3, name: name)
+    NativeInteropReservedNamesFlutterApiRegistrar.unregister(api: bridge3, name: name)
     guard NativeInteropReservedNamesFlutterApi.getInstance(name: name) == nil else {
       return false
     }
 
-    // Duplicate unregisterInstance is a safe no-op.
-    NativeInteropReservedNamesFlutterApiRegistrar.unregisterInstance(api: bridge3, name: name)
+    // Duplicate unregister is a safe no-op.
+    NativeInteropReservedNamesFlutterApiRegistrar.unregister(api: bridge3, name: name)
     return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance(name: name) == nil
   }
 

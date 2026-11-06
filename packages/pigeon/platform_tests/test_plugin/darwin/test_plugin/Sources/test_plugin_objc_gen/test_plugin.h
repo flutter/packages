@@ -1337,12 +1337,12 @@ SWIFT_PROTOCOL(
 SWIFT_CLASS(
     "_TtC11test_plugin47NativeInteropFlutterIntegrationCoreApiRegistrar")
 @interface NativeInteropFlutterIntegrationCoreApiRegistrar : NSObject
-+ (void)registerInstanceWithApi:
++ (void)registerWithApi:
             (id<NativeInteropFlutterIntegrationCoreApiBridge> _Nonnull)api
-                           name:(NSString* _Nonnull)name;
-+ (void)unregisterInstanceWithApi:
+                   name:(NSString* _Nullable)name;
++ (void)unregisterWithApi:
             (id<NativeInteropFlutterIntegrationCoreApiBridge> _Nonnull)api
-                             name:(NSString* _Nonnull)name;
+                     name:(NSString* _Nullable)name;
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
 @end
 
@@ -1353,7 +1353,7 @@ SWIFT_CLASS("_TtC11test_plugin40NativeInteropHostIntegrationCoreApiSetup")
 @interface NativeInteropHostIntegrationCoreApiSetup : NSObject
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
 + (NativeInteropHostIntegrationCoreApiSetup* _Nullable)getInstanceWithName:
-    (NSString* _Nonnull)name SWIFT_WARN_UNUSED_RESULT;
+    (NSString* _Nullable)name SWIFT_WARN_UNUSED_RESULT;
 /// A no-op function taking no arguments and returning no value, to sanity
 /// test basic calling.
 - (void)noopWithWrappedError:(NativeInteropTestsError* _Nonnull)wrappedError;
@@ -3121,12 +3121,12 @@ SWIFT_PROTOCOL("_TtP11test_plugin42NativeInteropReservedNamesFlutterApiBridge_")
 
 SWIFT_CLASS("_TtC11test_plugin45NativeInteropReservedNamesFlutterApiRegistrar")
 @interface NativeInteropReservedNamesFlutterApiRegistrar : NSObject
-+ (void)registerInstanceWithApi:
++ (void)registerWithApi:
             (id<NativeInteropReservedNamesFlutterApiBridge> _Nonnull)api
-                           name:(NSString* _Nonnull)name;
-+ (void)unregisterInstanceWithApi:
+                   name:(NSString* _Nullable)name;
++ (void)unregisterWithApi:
             (id<NativeInteropReservedNamesFlutterApiBridge> _Nonnull)api
-                             name:(NSString* _Nonnull)name;
+                     name:(NSString* _Nullable)name;
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
 @end
 
@@ -3136,7 +3136,7 @@ SWIFT_CLASS("_TtC11test_plugin38NativeInteropReservedNamesHostApiSetup")
 @interface NativeInteropReservedNamesHostApiSetup : NSObject
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
 + (NativeInteropReservedNamesHostApiSetup* _Nullable)getInstanceWithName:
-    (NSString* _Nonnull)name SWIFT_WARN_UNUSED_RESULT;
+    (NSString* _Nullable)name SWIFT_WARN_UNUSED_RESULT;
 /// Collides with <code>JObject.release</code>.
 - (NSString* _Nullable)releaseWithValue:(NSString* _Nonnull)valueArg
                            wrappedError:

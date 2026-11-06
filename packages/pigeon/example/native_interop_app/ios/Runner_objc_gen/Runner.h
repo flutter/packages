@@ -336,7 +336,7 @@ SWIFT_CLASS("_TtC6Runner28NativeInteropExampleApiSetup")
 @interface NativeInteropExampleApiSetup : NSObject
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
 + (NativeInteropExampleApiSetup* _Nullable)getInstanceWithName:
-    (NSString* _Nonnull)name SWIFT_WARN_UNUSED_RESULT;
+    (NSString* _Nullable)name SWIFT_WARN_UNUSED_RESULT;
 - (void)doSomethingWithWrappedError:(PigeonError* _Nonnull)wrappedError;
 @end
 

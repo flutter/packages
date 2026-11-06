@@ -1814,8 +1814,16 @@ void runPigeonNativeInteropIntegrationTests(TargetGenerator targetGenerator) {
   group('Host API with suffix', () {
     testWidgets('multiple instances will have different instance names', (WidgetTester _) async {
       expect(
-        () => NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance(
-          channelName: 'suffixWithNoHost',
+        NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance(name: 'suffixWithNoHost'),
+        isNull,
+      );
+      expect(
+        NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance(name: 'suffixWithoutHost'),
+        isNull,
+      );
+      expect(
+        () => NativeInteropHostIntegrationCoreApi.createWithNativeInteropApi(
+          messageChannelSuffix: 'suffixWithNoHost',
         ),
         throwsA(
           isA<ArgumentError>().having(
@@ -1825,10 +1833,9 @@ void runPigeonNativeInteropIntegrationTests(TargetGenerator targetGenerator) {
           ),
         ),
       );
-
       expect(
-        () => NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance(
-          channelName: 'suffixWithoutHost',
+        () => NativeInteropHostIntegrationCoreApi.createWithNativeInteropApi(
+          messageChannelSuffix: 'suffixWithoutHost',
         ),
         throwsA(
           isA<ArgumentError>().having(
@@ -1842,9 +1849,7 @@ void runPigeonNativeInteropIntegrationTests(TargetGenerator targetGenerator) {
   });
 
   group('Flutter Api', () {
-    final registrar = NativeInteropFlutterIntegrationCoreApiRegistrar();
-
-    final NativeInteropFlutterIntegrationCoreApi flutterApi = registrar.register(
+    NativeInteropFlutterIntegrationCoreApiRegistrar.register(
       NativeInteropFlutterIntegrationCoreApiImpl(),
     );
     final NativeInteropHostIntegrationCoreApiForNativeInterop? api =
@@ -2856,15 +2861,21 @@ void runPigeonNativeInteropIntegrationTests(TargetGenerator targetGenerator) {
       expect(success, true);
     });
 
-    testWidgets('calling a deregistered Host API fails as expected', (WidgetTester _) async {
+    testWidgets('calling a deregistered Host API returns null from getInstance', (
+      WidgetTester _,
+    ) async {
       final NativeInteropHostIntegrationCoreApiForNativeInterop? api =
           NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance();
       const instanceName = 'deregisteredHostInstanceTest';
       api!.registerAndImmediatelyDeregisterHostApi(instanceName);
 
       expect(
-        () => NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance(
-          channelName: instanceName,
+        NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance(name: instanceName),
+        isNull,
+      );
+      expect(
+        () => NativeInteropHostIntegrationCoreApi.createWithNativeInteropApi(
+          messageChannelSuffix: instanceName,
         ),
         throwsA(isA<ArgumentError>()),
       );
@@ -2877,8 +2888,8 @@ void runPigeonNativeInteropIntegrationTests(TargetGenerator targetGenerator) {
           NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance();
       const instanceName = 'deregisteredFlutterInstanceTest';
       final impl = NativeInteropFlutterIntegrationCoreApiImpl();
-      NativeInteropFlutterIntegrationCoreApiRegistrar().register(impl, name: instanceName);
-      NativeInteropFlutterIntegrationCoreApiRegistrar().unregister(impl, name: instanceName);
+      NativeInteropFlutterIntegrationCoreApiRegistrar.register(impl, name: instanceName);
+      NativeInteropFlutterIntegrationCoreApiRegistrar.unregister(impl, name: instanceName);
       final bool success = api!.testCallDeregisteredFlutterApi(instanceName);
       expect(success, true);
     });
@@ -2902,7 +2913,7 @@ void runPigeonNativeInteropIntegrationTests(TargetGenerator targetGenerator) {
     testWidgets(
       'secondary engine execution and teardown preserves primary engine Native Interop APIs',
       (WidgetTester _) async {
-        NativeInteropReservedNamesFlutterApiRegistrar().register(
+        NativeInteropReservedNamesFlutterApiRegistrar.register(
           _NativeInteropReservedNamesFlutterApiImpl(),
         );
         final primaryApi = NativeInteropHostIntegrationCoreApi.createWithNativeInteropApi();
@@ -2947,54 +2958,59 @@ void runPigeonNativeInteropIntegrationTests(TargetGenerator targetGenerator) {
     );
 
     testWidgets(
-      'FlutterApi.implement uses defaultInstanceName and Registrar.unregister preserves stack',
+      'FlutterApiRegistrar keeps default null name distinct from empty string and preserves stack',
       (WidgetTester _) async {
-        final NativeInteropReservedNamesFlutterApi baseImpl =
-            NativeInteropReservedNamesFlutterApiRegistrar().register(
-              _NativeInteropReservedNamesFlutterApiImpl(),
-            );
+        final baseImpl = _NativeInteropReservedNamesFlutterApiImpl();
+        NativeInteropReservedNamesFlutterApiRegistrar.register(baseImpl);
         final NativeInteropReservedNamesHostApiForNativeInterop hostApi =
             NativeInteropReservedNamesHostApiForNativeInterop.getInstance()!;
         expect(hostApi.callFlutterRelease('ping'), 'ping');
 
         final impl1 = _PrefixedReservedNamesFlutterApiImpl('impl1');
         final impl2 = _PrefixedReservedNamesFlutterApiImpl('impl2');
+        final emptyNameImpl = _PrefixedReservedNamesFlutterApiImpl('emptyName');
         final neverRegistered = _PrefixedReservedNamesFlutterApiImpl('never');
-        // Omitted `name` and `name: ''` must both resolve to `defaultInstanceName`.
-        NativeInteropReservedNamesFlutterApi.implement(impl1);
+
+        // Registering under an explicit empty string (`name: ''`) must not overwrite the default
+        // (`name: null`) registration, and unregistering it must leave the default intact.
+        NativeInteropReservedNamesFlutterApiRegistrar.register(emptyNameImpl, name: '');
+        expect(hostApi.callFlutterRelease('ping'), 'ping');
+        NativeInteropReservedNamesFlutterApiRegistrar.unregister(emptyNameImpl, name: '');
+        expect(hostApi.callFlutterRelease('ping'), 'ping');
+
+        NativeInteropReservedNamesFlutterApiRegistrar.register(impl1);
         expect(hostApi.callFlutterRelease('ping'), 'impl1:ping');
-        NativeInteropReservedNamesFlutterApi.implement(impl2, name: '');
+        NativeInteropReservedNamesFlutterApiRegistrar.register(impl2);
         expect(hostApi.callFlutterRelease('ping'), 'impl2:ping');
 
         // Re-registering impl1 deduplicates and moves it to the top of the stack; a single
         // unregister(impl1) then removes it completely and restores impl2.
-        NativeInteropReservedNamesFlutterApi.implement(impl1);
+        NativeInteropReservedNamesFlutterApiRegistrar.register(impl1);
         expect(hostApi.callFlutterRelease('ping'), 'impl1:ping');
-        NativeInteropReservedNamesFlutterApiRegistrar().unregister(impl1);
+        NativeInteropReservedNamesFlutterApiRegistrar.unregister(impl1);
         expect(hostApi.callFlutterRelease('ping'), 'impl2:ping');
 
         // Duplicate unregister(impl1) and unregister of a never-registered instance are no-ops.
-        NativeInteropReservedNamesFlutterApiRegistrar().unregister(impl1);
-        NativeInteropReservedNamesFlutterApiRegistrar().unregister(neverRegistered);
+        NativeInteropReservedNamesFlutterApiRegistrar.unregister(impl1);
+        NativeInteropReservedNamesFlutterApiRegistrar.unregister(neverRegistered);
         expect(hostApi.callFlutterRelease('ping'), 'impl2:ping');
 
         // Re-register impl2 over impl1 and unregister impl1 out-of-order while impl2 stays active.
-        NativeInteropReservedNamesFlutterApi.implement(impl1);
-        NativeInteropReservedNamesFlutterApi.implement(impl2);
-        NativeInteropReservedNamesFlutterApiRegistrar().unregister(impl1);
+        NativeInteropReservedNamesFlutterApiRegistrar.register(impl1);
+        NativeInteropReservedNamesFlutterApiRegistrar.register(impl2);
+        NativeInteropReservedNamesFlutterApiRegistrar.unregister(impl1);
         expect(hostApi.callFlutterRelease('ping'), 'impl2:ping');
 
         // Unregistering impl2 restores baseImpl underneath.
-        NativeInteropReservedNamesFlutterApiRegistrar().unregister(impl2, name: '');
+        NativeInteropReservedNamesFlutterApiRegistrar.unregister(impl2);
         expect(hostApi.callFlutterRelease('ping'), 'ping');
-        expect(baseImpl, isNotNull);
       },
     );
 
     testWidgets(
       'FlutterApi.setUp replaces per-isolate instance and setUp(null) deregisters without popping underlying stack',
       (WidgetTester _) async {
-        NativeInteropReservedNamesFlutterApiRegistrar().register(
+        NativeInteropReservedNamesFlutterApiRegistrar.register(
           _NativeInteropReservedNamesFlutterApiImpl(),
         );
         final NativeInteropReservedNamesHostApiForNativeInterop hostApi =
@@ -3037,7 +3053,7 @@ void runPigeonNativeInteropIntegrationTests(TargetGenerator targetGenerator) {
   });
 
   group('Reserved name tests', () {
-    NativeInteropReservedNamesFlutterApiRegistrar().register(
+    NativeInteropReservedNamesFlutterApiRegistrar.register(
       _NativeInteropReservedNamesFlutterApiImpl(),
     );
     final NativeInteropReservedNamesHostApiForNativeInterop? api =
