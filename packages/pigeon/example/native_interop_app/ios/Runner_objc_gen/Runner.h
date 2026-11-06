@@ -336,6 +336,10 @@ SWIFT_CLASS("_TtC6Runner28NativeInteropExampleApiSetup")
 @interface NativeInteropExampleApiSetup : NSObject
 - (nonnull instancetype)init SWIFT_UNAVAILABLE;
 + (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
+/// Returns the most recently registered instance for <code>name</code> (or the
+/// default instance when <code>name</code> is nil), or nil if none is
+/// registered. A nil <code>name</code> and an empty <code>name</code> refer to
+/// different registrations.
 + (NativeInteropExampleApiSetup* _Nullable)getInstanceWithName:
     (NSString* _Nullable)name SWIFT_WARN_UNUSED_RESULT;
 - (void)doSomethingWithWrappedError:(PigeonError* _Nonnull)wrappedError;

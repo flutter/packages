@@ -3045,6 +3045,7 @@ protocol NativeInteropHostIntegrationCoreApi: AnyObject {
       return pigeonApi
     }
     set {
+      // Release the previous value after unlocking so its deinit cannot run while the lock is held.
       let oldValue: NativeInteropHostIntegrationCoreApi?
       do {
         pigeonApiLock.lock()
@@ -3066,37 +3067,36 @@ protocol NativeInteropHostIntegrationCoreApi: AnyObject {
     }
     return currentApi
   }
+  /// Registers `api` under `name` (or the default instance when `name` is nil).
+  ///
+  /// Registrations are kept in an ordered stack per name, and `getInstance` returns
+  /// the most recent one. Registering an instance that is already registered under
+  /// `name` moves it to the top of the stack.
   static func register(api: NativeInteropHostIntegrationCoreApi, name: String? = nil) {
     let resolvedName = name ?? NativeInteropTestsPigeonInternal.defaultInstanceName
-    let wrapper = NativeInteropHostIntegrationCoreApiSetup()
-    wrapper.api = api
-    var displaced: [Any] = []
-    do {
-      NativeInteropHostIntegrationCoreApiInstanceTracker.lock.lock()
-      defer { NativeInteropHostIntegrationCoreApiInstanceTracker.lock.unlock() }
-      var list =
-        NativeInteropHostIntegrationCoreApiInstanceTracker
-        .instancesOfNativeInteropHostIntegrationCoreApi[resolvedName] ?? []
-      list.removeAll { entry in
-        guard let existing = entry.api else {
-          return false
-        }
-        if existing === api {
-          displaced.append(existing)
-          displaced.append(entry)
-          entry.api = nil
-          return true
-        }
-        return false
-      }
-      list.append(wrapper)
+    NativeInteropHostIntegrationCoreApiInstanceTracker.lock.lock()
+    defer { NativeInteropHostIntegrationCoreApiInstanceTracker.lock.unlock() }
+    var list =
       NativeInteropHostIntegrationCoreApiInstanceTracker
-        .instancesOfNativeInteropHostIntegrationCoreApi[resolvedName] = list
+      .instancesOfNativeInteropHostIntegrationCoreApi[resolvedName] ?? []
+    if let index = list.firstIndex(where: { $0.api === api }) {
+      list.append(list.remove(at: index))
+    } else {
+      let wrapper = NativeInteropHostIntegrationCoreApiSetup()
+      wrapper.api = api
+      list.append(wrapper)
     }
-    withExtendedLifetime(displaced) {}
+    NativeInteropHostIntegrationCoreApiInstanceTracker
+      .instancesOfNativeInteropHostIntegrationCoreApi[resolvedName] = list
   }
+  /// Removes `api` from the registrations under `name` (or the default instance
+  /// when `name` is nil), leaving other registrations in place.
+  ///
+  /// Instances are matched by identity. Does nothing if `api` is not registered.
   static func unregister(api: NativeInteropHostIntegrationCoreApi, name: String? = nil) {
     let resolvedName = name ?? NativeInteropTestsPigeonInternal.defaultInstanceName
+    // Removed entries are kept alive until after unlocking so their deinit cannot run while the
+    // non-recursive lock is held.
     var displaced: [Any] = []
     do {
       NativeInteropHostIntegrationCoreApiInstanceTracker.lock.lock()
@@ -3130,6 +3130,10 @@ protocol NativeInteropHostIntegrationCoreApi: AnyObject {
     }
     withExtendedLifetime(displaced) {}
   }
+  /// Returns the most recently registered instance for `name` (or the default
+  /// instance when `name` is nil), or nil if none is registered.
+  ///
+  /// A nil `name` and an empty `name` refer to different registrations.
   @objc static func getInstance(name: String? = nil) -> NativeInteropHostIntegrationCoreApiSetup? {
     let resolvedName = name ?? NativeInteropTestsPigeonInternal.defaultInstanceName
     NativeInteropHostIntegrationCoreApiInstanceTracker.lock.lock()
@@ -8310,37 +8314,40 @@ protocol NativeInteropHostIntegrationCoreApi: AnyObject {
     String: [NativeInteropFlutterIntegrationCoreApi]
   ]()
 
+  /// Registers `api` under `name` (or the default instance when `name` is nil).
+  ///
+  /// Registrations are kept in an ordered stack per name, and `getInstance` returns
+  /// the most recent one. Registering an instance that is already registered under
+  /// `name` moves it to the top of the stack.
   @objc static func register(api: NativeInteropFlutterIntegrationCoreApiBridge, name: String? = nil)
   {
     let resolvedName = name ?? NativeInteropTestsPigeonInternal.defaultInstanceName
     let apiObject = api as AnyObject
-    let wrapper = NativeInteropFlutterIntegrationCoreApi(api: api)
-    var displaced: [NativeInteropFlutterIntegrationCoreApi] = []
-    do {
-      NativeInteropFlutterIntegrationCoreApiRegistrar.lock.lock()
-      defer { NativeInteropFlutterIntegrationCoreApiRegistrar.lock.unlock() }
-      var list =
-        NativeInteropFlutterIntegrationCoreApiRegistrar
-        .registeredNativeInteropFlutterIntegrationCoreApi[resolvedName] ?? []
-      list.removeAll { entry in
-        if (entry.api as AnyObject) === apiObject {
-          displaced.append(entry)
-          return true
-        }
-        return false
-      }
-      list.append(wrapper)
+    NativeInteropFlutterIntegrationCoreApiRegistrar.lock.lock()
+    defer { NativeInteropFlutterIntegrationCoreApiRegistrar.lock.unlock() }
+    var list =
       NativeInteropFlutterIntegrationCoreApiRegistrar
-        .registeredNativeInteropFlutterIntegrationCoreApi[resolvedName] = list
+      .registeredNativeInteropFlutterIntegrationCoreApi[resolvedName] ?? []
+    if let index = list.firstIndex(where: { ($0.api as AnyObject) === apiObject }) {
+      list.append(list.remove(at: index))
+    } else {
+      list.append(NativeInteropFlutterIntegrationCoreApi(api: api))
     }
-    withExtendedLifetime(displaced) {}
+    NativeInteropFlutterIntegrationCoreApiRegistrar.registeredNativeInteropFlutterIntegrationCoreApi[
+      resolvedName] = list
   }
 
+  /// Removes `api` from the registrations under `name` (or the default instance
+  /// when `name` is nil), leaving other registrations in place.
+  ///
+  /// Instances are matched by identity. Does nothing if `api` is not registered.
   @objc static func unregister(
     api: NativeInteropFlutterIntegrationCoreApiBridge, name: String? = nil
   ) {
     let resolvedName = name ?? NativeInteropTestsPigeonInternal.defaultInstanceName
     let apiObject = api as AnyObject
+    // Removed entries are kept alive until after unlocking so their deinit cannot run while the
+    // non-recursive lock is held.
     var displaced: [NativeInteropFlutterIntegrationCoreApi] = []
     do {
       NativeInteropFlutterIntegrationCoreApiRegistrar.lock.lock()
@@ -8370,6 +8377,10 @@ protocol NativeInteropHostIntegrationCoreApi: AnyObject {
     withExtendedLifetime(displaced) {}
   }
 
+  /// Returns the most recently registered instance for `name` (or the default
+  /// instance when `name` is nil), or nil if none is registered.
+  ///
+  /// A nil `name` and an empty `name` refer to different registrations.
   static func getInstance(name: String? = nil) -> NativeInteropFlutterIntegrationCoreApi? {
     let resolvedName = name ?? NativeInteropTestsPigeonInternal.defaultInstanceName
     NativeInteropFlutterIntegrationCoreApiRegistrar.lock.lock()
@@ -9750,6 +9761,7 @@ protocol NativeInteropReservedNamesHostApi: AnyObject {
       return pigeonApi
     }
     set {
+      // Release the previous value after unlocking so its deinit cannot run while the lock is held.
       let oldValue: NativeInteropReservedNamesHostApi?
       do {
         pigeonApiLock.lock()
@@ -9771,37 +9783,36 @@ protocol NativeInteropReservedNamesHostApi: AnyObject {
     }
     return currentApi
   }
+  /// Registers `api` under `name` (or the default instance when `name` is nil).
+  ///
+  /// Registrations are kept in an ordered stack per name, and `getInstance` returns
+  /// the most recent one. Registering an instance that is already registered under
+  /// `name` moves it to the top of the stack.
   static func register(api: NativeInteropReservedNamesHostApi, name: String? = nil) {
     let resolvedName = name ?? NativeInteropTestsPigeonInternal.defaultInstanceName
-    let wrapper = NativeInteropReservedNamesHostApiSetup()
-    wrapper.api = api
-    var displaced: [Any] = []
-    do {
-      NativeInteropReservedNamesHostApiInstanceTracker.lock.lock()
-      defer { NativeInteropReservedNamesHostApiInstanceTracker.lock.unlock() }
-      var list =
-        NativeInteropReservedNamesHostApiInstanceTracker
-        .instancesOfNativeInteropReservedNamesHostApi[resolvedName] ?? []
-      list.removeAll { entry in
-        guard let existing = entry.api else {
-          return false
-        }
-        if existing === api {
-          displaced.append(existing)
-          displaced.append(entry)
-          entry.api = nil
-          return true
-        }
-        return false
-      }
-      list.append(wrapper)
+    NativeInteropReservedNamesHostApiInstanceTracker.lock.lock()
+    defer { NativeInteropReservedNamesHostApiInstanceTracker.lock.unlock() }
+    var list =
       NativeInteropReservedNamesHostApiInstanceTracker.instancesOfNativeInteropReservedNamesHostApi[
-        resolvedName] = list
+        resolvedName] ?? []
+    if let index = list.firstIndex(where: { $0.api === api }) {
+      list.append(list.remove(at: index))
+    } else {
+      let wrapper = NativeInteropReservedNamesHostApiSetup()
+      wrapper.api = api
+      list.append(wrapper)
     }
-    withExtendedLifetime(displaced) {}
+    NativeInteropReservedNamesHostApiInstanceTracker.instancesOfNativeInteropReservedNamesHostApi[
+      resolvedName] = list
   }
+  /// Removes `api` from the registrations under `name` (or the default instance
+  /// when `name` is nil), leaving other registrations in place.
+  ///
+  /// Instances are matched by identity. Does nothing if `api` is not registered.
   static func unregister(api: NativeInteropReservedNamesHostApi, name: String? = nil) {
     let resolvedName = name ?? NativeInteropTestsPigeonInternal.defaultInstanceName
+    // Removed entries are kept alive until after unlocking so their deinit cannot run while the
+    // non-recursive lock is held.
     var displaced: [Any] = []
     do {
       NativeInteropReservedNamesHostApiInstanceTracker.lock.lock()
@@ -9835,6 +9846,10 @@ protocol NativeInteropReservedNamesHostApi: AnyObject {
     }
     withExtendedLifetime(displaced) {}
   }
+  /// Returns the most recently registered instance for `name` (or the default
+  /// instance when `name` is nil), or nil if none is registered.
+  ///
+  /// A nil `name` and an empty `name` refer to different registrations.
   @objc static func getInstance(name: String? = nil) -> NativeInteropReservedNamesHostApiSetup? {
     let resolvedName = name ?? NativeInteropTestsPigeonInternal.defaultInstanceName
     NativeInteropReservedNamesHostApiInstanceTracker.lock.lock()
@@ -10246,35 +10261,38 @@ protocol NativeInteropReservedNamesHostApi: AnyObject {
     String: [NativeInteropReservedNamesFlutterApi]
   ]()
 
+  /// Registers `api` under `name` (or the default instance when `name` is nil).
+  ///
+  /// Registrations are kept in an ordered stack per name, and `getInstance` returns
+  /// the most recent one. Registering an instance that is already registered under
+  /// `name` moves it to the top of the stack.
   @objc static func register(api: NativeInteropReservedNamesFlutterApiBridge, name: String? = nil) {
     let resolvedName = name ?? NativeInteropTestsPigeonInternal.defaultInstanceName
     let apiObject = api as AnyObject
-    let wrapper = NativeInteropReservedNamesFlutterApi(api: api)
-    var displaced: [NativeInteropReservedNamesFlutterApi] = []
-    do {
-      NativeInteropReservedNamesFlutterApiRegistrar.lock.lock()
-      defer { NativeInteropReservedNamesFlutterApiRegistrar.lock.unlock() }
-      var list =
-        NativeInteropReservedNamesFlutterApiRegistrar.registeredNativeInteropReservedNamesFlutterApi[
-          resolvedName] ?? []
-      list.removeAll { entry in
-        if (entry.api as AnyObject) === apiObject {
-          displaced.append(entry)
-          return true
-        }
-        return false
-      }
-      list.append(wrapper)
+    NativeInteropReservedNamesFlutterApiRegistrar.lock.lock()
+    defer { NativeInteropReservedNamesFlutterApiRegistrar.lock.unlock() }
+    var list =
       NativeInteropReservedNamesFlutterApiRegistrar.registeredNativeInteropReservedNamesFlutterApi[
-        resolvedName] = list
+        resolvedName] ?? []
+    if let index = list.firstIndex(where: { ($0.api as AnyObject) === apiObject }) {
+      list.append(list.remove(at: index))
+    } else {
+      list.append(NativeInteropReservedNamesFlutterApi(api: api))
     }
-    withExtendedLifetime(displaced) {}
+    NativeInteropReservedNamesFlutterApiRegistrar.registeredNativeInteropReservedNamesFlutterApi[
+      resolvedName] = list
   }
 
+  /// Removes `api` from the registrations under `name` (or the default instance
+  /// when `name` is nil), leaving other registrations in place.
+  ///
+  /// Instances are matched by identity. Does nothing if `api` is not registered.
   @objc static func unregister(api: NativeInteropReservedNamesFlutterApiBridge, name: String? = nil)
   {
     let resolvedName = name ?? NativeInteropTestsPigeonInternal.defaultInstanceName
     let apiObject = api as AnyObject
+    // Removed entries are kept alive until after unlocking so their deinit cannot run while the
+    // non-recursive lock is held.
     var displaced: [NativeInteropReservedNamesFlutterApi] = []
     do {
       NativeInteropReservedNamesFlutterApiRegistrar.lock.lock()
@@ -10304,6 +10322,10 @@ protocol NativeInteropReservedNamesHostApi: AnyObject {
     withExtendedLifetime(displaced) {}
   }
 
+  /// Returns the most recently registered instance for `name` (or the default
+  /// instance when `name` is nil), or nil if none is registered.
+  ///
+  /// A nil `name` and an empty `name` refer to different registrations.
   static func getInstance(name: String? = nil) -> NativeInteropReservedNamesFlutterApi? {
     let resolvedName = name ?? NativeInteropTestsPigeonInternal.defaultInstanceName
     NativeInteropReservedNamesFlutterApiRegistrar.lock.lock()

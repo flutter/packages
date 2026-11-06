@@ -7,6 +7,7 @@ package com.example.test_plugin
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertSame
 import org.junit.Assert.assertThrows
 import org.junit.Test
 
@@ -148,20 +149,19 @@ class NativeInteropRegistrarTest {
     val api2 = FakeReservedNamesHostApi("engine2")
 
     NativeInteropReservedNamesHostApiRegistrar.register(api1, name)
+    val reg1 = NativeInteropReservedNamesHostApiRegistrar.getInstance(name)!!
     NativeInteropReservedNamesHostApiRegistrar.register(api2, name)
+    val reg2 = NativeInteropReservedNamesHostApiRegistrar.getInstance(name)!!
     NativeInteropReservedNamesHostApiRegistrar.register(api1, name)
 
-    assertEquals(
-        "engine1:ping",
-        NativeInteropReservedNamesHostApiRegistrar.getInstance(name)?.release("ping"),
-    )
+    // Re-registering api1 reuses its existing wrapper, so handles that already resolved it keep
+    // working.
+    assertSame(reg1, NativeInteropReservedNamesHostApiRegistrar.getInstance(name))
+    assertEquals("engine1:ping", reg1.release("ping"))
 
     // Since api1 was deduplicated rather than duplicated, unregistering api1 once leaves only api2.
     NativeInteropReservedNamesHostApiRegistrar.unregister(api1, name)
-    assertEquals(
-        "engine2:ping",
-        NativeInteropReservedNamesHostApiRegistrar.getInstance(name)?.release("ping"),
-    )
+    assertSame(reg2, NativeInteropReservedNamesHostApiRegistrar.getInstance(name))
     NativeInteropReservedNamesHostApiRegistrar.unregister(api2, name)
     assertNull(NativeInteropReservedNamesHostApiRegistrar.getInstance(name))
   }

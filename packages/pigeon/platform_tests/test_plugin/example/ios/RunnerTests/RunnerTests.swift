@@ -54,14 +54,37 @@ struct RunnerTests {
     NativeInteropHostIntegrationCoreApiSetup.register(api: api1, name: name)
     let setup1 = try #require(NativeInteropHostIntegrationCoreApiSetup.getInstance(name: name))
     NativeInteropHostIntegrationCoreApiSetup.register(api: api2, name: name)
-    #expect(NativeInteropHostIntegrationCoreApiSetup.getInstance(name: name) != nil)
+    let setup2 = try #require(NativeInteropHostIntegrationCoreApiSetup.getInstance(name: name))
+    #expect(setup2 !== setup1)
 
     NativeInteropHostIntegrationCoreApiSetup.unregister(api: api1, name: name)
     let staleError = NativeInteropTestsError()
     #expect(setup1.echoString(aString: "ping", wrappedError: staleError) == nil)
     #expect(staleError.code == "unregistered-instance")
-    #expect(NativeInteropHostIntegrationCoreApiSetup.getInstance(name: name) != nil)
+    #expect(NativeInteropHostIntegrationCoreApiSetup.getInstance(name: name) === setup2)
 
+    NativeInteropHostIntegrationCoreApiSetup.unregister(api: api2, name: name)
+    #expect(NativeInteropHostIntegrationCoreApiSetup.getInstance(name: name) == nil)
+  }
+
+  @Test
+  func reRegisteringHostApiMovesExistingSetupToTop() throws {
+    let name = "iosReRegisterTest"
+    let api1 = NativeInteropTestsClass()
+    let api2 = NativeInteropTestsClass()
+    NativeInteropHostIntegrationCoreApiSetup.register(api: api1, name: name)
+    let setup1 = try #require(NativeInteropHostIntegrationCoreApiSetup.getInstance(name: name))
+    NativeInteropHostIntegrationCoreApiSetup.register(api: api2, name: name)
+    let setup2 = try #require(NativeInteropHostIntegrationCoreApiSetup.getInstance(name: name))
+
+    NativeInteropHostIntegrationCoreApiSetup.register(api: api1, name: name)
+    #expect(NativeInteropHostIntegrationCoreApiSetup.getInstance(name: name) === setup1)
+    let error = NativeInteropTestsError()
+    #expect(setup1.echoString(aString: "ping", wrappedError: error) == "ping")
+    #expect(error.code == nil)
+
+    NativeInteropHostIntegrationCoreApiSetup.unregister(api: api1, name: name)
+    #expect(NativeInteropHostIntegrationCoreApiSetup.getInstance(name: name) === setup2)
     NativeInteropHostIntegrationCoreApiSetup.unregister(api: api2, name: name)
     #expect(NativeInteropHostIntegrationCoreApiSetup.getInstance(name: name) == nil)
   }

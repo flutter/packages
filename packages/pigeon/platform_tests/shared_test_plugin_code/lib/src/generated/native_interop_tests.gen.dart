@@ -7595,12 +7595,23 @@ void pigeon_set_up_NativeInteropFlutterIntegrationCoreApi(
   );
 }
 
+/// Registers [NativeInteropFlutterIntegrationCoreApi] implementations for Native Interop callers.
 final class NativeInteropFlutterIntegrationCoreApiRegistrar {
   const NativeInteropFlutterIntegrationCoreApiRegistrar._();
 
+  /// Registers [api] under [name] (or the default instance when [name] is null).
+  ///
+  /// Registrations are kept in an ordered stack per name, and native callers
+  /// receive the most recent one. Registering an instance that is already
+  /// registered under [name] moves it to the top. Unlike [NativeInteropFlutterIntegrationCoreApi.setUp],
+  /// this does not replace earlier registrations from this isolate.
   static void register(NativeInteropFlutterIntegrationCoreApi api, {String? name}) =>
       pigeon_native.pigeon_register_NativeInteropFlutterIntegrationCoreApi(api, name: name);
 
+  /// Removes [api], registered from this isolate under [name] (or the default
+  /// instance when [name] is null), leaving other registrations in place.
+  ///
+  /// Instances are matched by identity. Does nothing if [api] is not registered.
   static void unregister(NativeInteropFlutterIntegrationCoreApi api, {String? name}) =>
       pigeon_native.pigeon_unregister_NativeInteropFlutterIntegrationCoreApi(api, name: name);
 }
@@ -11304,12 +11315,23 @@ void pigeon_set_up_NativeInteropReservedNamesFlutterApi(
   );
 }
 
+/// Registers [NativeInteropReservedNamesFlutterApi] implementations for Native Interop callers.
 final class NativeInteropReservedNamesFlutterApiRegistrar {
   const NativeInteropReservedNamesFlutterApiRegistrar._();
 
+  /// Registers [api] under [name] (or the default instance when [name] is null).
+  ///
+  /// Registrations are kept in an ordered stack per name, and native callers
+  /// receive the most recent one. Registering an instance that is already
+  /// registered under [name] moves it to the top. Unlike [NativeInteropReservedNamesFlutterApi.setUp],
+  /// this does not replace earlier registrations from this isolate.
   static void register(NativeInteropReservedNamesFlutterApi api, {String? name}) =>
       pigeon_native.pigeon_register_NativeInteropReservedNamesFlutterApi(api, name: name);
 
+  /// Removes [api], registered from this isolate under [name] (or the default
+  /// instance when [name] is null), leaving other registrations in place.
+  ///
+  /// Instances are matched by identity. Does nothing if [api] is not registered.
   static void unregister(NativeInteropReservedNamesFlutterApi api, {String? name}) =>
       pigeon_native.pigeon_unregister_NativeInteropReservedNamesFlutterApi(api, name: name);
 }

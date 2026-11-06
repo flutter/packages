@@ -803,6 +803,38 @@ if (wrapped == null) {
     });
   }
 
+  void _writeNativeInteropRegisterDocs(Indent indent) {
+    indent.writeln('/**');
+    indent.writeln(
+      ' * Registers [api] under [name] (or the default instance when [name] is null).',
+    );
+    indent.writeln(' *');
+    indent.writeln(' * Registrations are kept in an ordered stack per name, and [getInstance]');
+    indent.writeln(' * returns the most recent one. Registering an instance that is already');
+    indent.writeln(' * registered under [name] moves it to the top of the stack.');
+    indent.writeln(' */');
+  }
+
+  void _writeNativeInteropUnregisterDocs(Indent indent) {
+    indent.writeln('/**');
+    indent.writeln(' * Removes [api] from the registrations under [name] (or the default instance');
+    indent.writeln(' * when [name] is null), leaving other registrations in place.');
+    indent.writeln(' *');
+    indent.writeln(
+      ' * Instances are matched by identity. Does nothing if [api] is not registered.',
+    );
+    indent.writeln(' */');
+  }
+
+  void _writeNativeInteropGetInstanceDocs(Indent indent) {
+    indent.writeln('/**');
+    indent.writeln(' * Returns the most recently registered instance for [name] (or the default');
+    indent.writeln(' * instance when [name] is null), or null if none is registered.');
+    indent.writeln(' *');
+    indent.writeln(' * A null [name] and an empty [name] refer to different registrations.');
+    indent.writeln(' */');
+  }
+
   void _writeJniFlutterApi(
     InternalKotlinOptions generatorOptions,
     Root root,
@@ -819,7 +851,7 @@ if (wrapped == null) {
     indent.writeln('@Keep');
     indent.writeScoped('class ${api.name}Registrar private constructor() {', '}', () {
       indent.writeScoped('companion object {', '}', () {
-        indent.writeln('/// Registers an instance with the given name.');
+        _writeNativeInteropRegisterDocs(indent);
         indent.writeln('@JvmStatic');
         indent.writeln('@Keep');
         indent.writeScoped('fun register(api: ${api.name}, name: String? = null) {', '}', () {
@@ -833,7 +865,7 @@ if (wrapped == null) {
           });
         });
         indent.newln();
-        indent.writeln('/// Unregisters a specific instance with the given name.');
+        _writeNativeInteropUnregisterDocs(indent);
         indent.writeln('@JvmStatic');
         indent.writeln('@Keep');
         indent.writeScoped('fun unregister(api: ${api.name}, name: String? = null) {', '}', () {
@@ -849,7 +881,7 @@ if (wrapped == null) {
           });
         });
         indent.newln();
-        indent.writeln('/// Gets an instance with the given name.');
+        _writeNativeInteropGetInstanceDocs(indent);
         indent.writeln('@JvmStatic');
         indent.writeln('@Keep');
         indent.writeScoped('fun getInstance(name: String? = null): ${api.name}? {', '}', () {
@@ -985,28 +1017,30 @@ if (wrapped == null) {
       indent.writeln('@Volatile private var api: ${api.name}? = null');
       indent.newln();
       indent.writeScoped('companion object {', '}', () {
+        _writeNativeInteropRegisterDocs(indent);
         indent.writeln('@JvmStatic');
         indent.writeln('@Keep');
         indent.writeScoped('fun register(api: ${api.name}, name: String? = null) {', '}', () {
           indent.writeln('val resolvedName = name ?: defaultInstanceName');
-          indent.writeln('val wrapper = ${api.name}Registrar()');
-          indent.writeln('wrapper.api = api');
           indent.writeScoped('kotlin.synchronized(${api.name}Instances) {', '}', () {
             indent.writeln(
               'val list = ${api.name}Instances.getOrPut(resolvedName) { mutableListOf() }',
             );
-            indent.writeln('val iterator = list.iterator()');
-            indent.writeScoped('while (iterator.hasNext()) {', '}', () {
-              indent.writeln('val entry = iterator.next()');
-              indent.writeScoped('if (entry.api === api) {', '}', () {
-                indent.writeln('entry.api = null');
-                indent.writeln('iterator.remove()');
-              });
+            // Reuse the existing wrapper so Dart handles that already resolved
+            // it keep working after the instance moves back to the top.
+            indent.writeln('val index = list.indexOfFirst { it.api === api }');
+            indent.writeScoped('if (index >= 0) {', '}', () {
+              indent.writeln('list.add(list.removeAt(index))');
+            }, addTrailingNewline: false);
+            indent.addScoped(' else {', '}', () {
+              indent.writeln('val wrapper = ${api.name}Registrar()');
+              indent.writeln('wrapper.api = api');
+              indent.writeln('list.add(wrapper)');
             });
-            indent.writeln('list.add(wrapper)');
           });
         });
         indent.newln();
+        _writeNativeInteropUnregisterDocs(indent);
         indent.writeln('@JvmStatic');
         indent.writeln('@Keep');
         indent.writeScoped('fun unregister(api: ${api.name}, name: String? = null) {', '}', () {
@@ -1029,6 +1063,7 @@ if (wrapped == null) {
           });
         });
         indent.newln();
+        _writeNativeInteropGetInstanceDocs(indent);
         indent.writeln('@JvmStatic');
         indent.writeln('@Keep');
         indent.writeScoped(

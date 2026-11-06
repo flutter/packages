@@ -2037,6 +2037,11 @@ void main() {
       expect(code, isNot(contains('error("HostApi has not been registered")')));
       expect(code, contains('kotlin.synchronized(HostApiInstances)'));
       expect(code, contains('HostApiInstances[resolvedName]?.lastOrNull()'));
+      expect(code, contains('val index = list.indexOfFirst { it.api === api }'));
+      expect(code, contains('list.add(list.removeAt(index))'));
+      expect(code, contains(' * Registers [api] under [name]'));
+      expect(code, contains(' * Instances are matched by identity.'));
+      expect(code, contains(' * Returns the most recently registered instance for [name]'));
       expect(
         code,
         contains('private val registeredFlutterApi: MutableMap<String, MutableList<FlutterApi>>'),

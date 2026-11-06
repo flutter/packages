@@ -1859,6 +1859,18 @@ void main() {
         contains('FlutterApiRegistrar.registeredFlutterApi.removeValue(forKey: resolvedName)'),
       );
       expect(code, contains('return FlutterApiRegistrar.registeredFlutterApi[resolvedName]?.last'));
+      expect(code, contains(r'if let index = list.firstIndex(where: { $0.api === api }) {'));
+      expect(
+        code,
+        contains(
+          r'if let index = list.firstIndex(where: { ($0.api as AnyObject) === apiObject }) {',
+        ),
+      );
+      expect(code, contains('list.append(list.remove(at: index))'));
+      expect(code, contains('/// Registers `api` under `name`'));
+      expect(code, contains('/// Instances are matched by identity.'));
+      expect(code, contains('/// Returns the most recently registered instance for `name`'));
+      expect(code, contains('// Removed entries are kept alive until after unlocking'));
 
       final nonFfiSink = StringBuffer();
       generator.generate(

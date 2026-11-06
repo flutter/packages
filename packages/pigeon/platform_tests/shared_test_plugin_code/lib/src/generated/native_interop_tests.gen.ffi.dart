@@ -14943,7 +14943,10 @@ extension type NativeInteropFlutterIntegrationCoreApiRegistrar._(objc.ObjCObject
     );
   }
 
-  /// registerWithApi:name:
+  /// Registers <code>api</code> under <code>name</code> (or the default instance when <code>name</code> is nil).
+  /// Registrations are kept in an ordered stack per name, and <code>getInstance</code> returns
+  /// the most recent one. Registering an instance that is already registered under
+  /// <code>name</code> moves it to the top of the stack.
   static void registerWithApi(
     NativeInteropFlutterIntegrationCoreApiBridge api, {
     objc.NSString? name,
@@ -14958,7 +14961,9 @@ extension type NativeInteropFlutterIntegrationCoreApiRegistrar._(objc.ObjCObject
     );
   }
 
-  /// unregisterWithApi:name:
+  /// Removes <code>api</code> from the registrations under <code>name</code> (or the default instance
+  /// when <code>name</code> is nil), leaving other registrations in place.
+  /// Instances are matched by identity. Does nothing if <code>api</code> is not registered.
   static void unregisterWithApi(
     NativeInteropFlutterIntegrationCoreApiBridge api, {
     objc.NSString? name,
@@ -15019,7 +15024,9 @@ extension type NativeInteropHostIntegrationCoreApiSetup._(objc.ObjCObject object
     return NativeInteropHostIntegrationCoreApiSetup.fromPointer($ret, retain: false, release: true);
   }
 
-  /// getInstanceWithName:
+  /// Returns the most recently registered instance for <code>name</code> (or the default
+  /// instance when <code>name</code> is nil), or nil if none is registered.
+  /// A nil <code>name</code> and an empty <code>name</code> refer to different registrations.
   static NativeInteropHostIntegrationCoreApiSetup? getInstanceWithName(objc.NSString? name) {
     final _$$ref = name?.ref;
     final $ret = _objc_msgSend_1sotr3r(
@@ -20148,7 +20155,10 @@ extension type NativeInteropReservedNamesFlutterApiRegistrar._(objc.ObjCObject o
     );
   }
 
-  /// registerWithApi:name:
+  /// Registers <code>api</code> under <code>name</code> (or the default instance when <code>name</code> is nil).
+  /// Registrations are kept in an ordered stack per name, and <code>getInstance</code> returns
+  /// the most recent one. Registering an instance that is already registered under
+  /// <code>name</code> moves it to the top of the stack.
   static void registerWithApi(
     NativeInteropReservedNamesFlutterApiBridge api, {
     objc.NSString? name,
@@ -20163,7 +20173,9 @@ extension type NativeInteropReservedNamesFlutterApiRegistrar._(objc.ObjCObject o
     );
   }
 
-  /// unregisterWithApi:name:
+  /// Removes <code>api</code> from the registrations under <code>name</code> (or the default instance
+  /// when <code>name</code> is nil), leaving other registrations in place.
+  /// Instances are matched by identity. Does nothing if <code>api</code> is not registered.
   static void unregisterWithApi(
     NativeInteropReservedNamesFlutterApiBridge api, {
     objc.NSString? name,
@@ -20224,7 +20236,9 @@ extension type NativeInteropReservedNamesHostApiSetup._(objc.ObjCObject object$)
     return NativeInteropReservedNamesHostApiSetup.fromPointer($ret, retain: false, release: true);
   }
 
-  /// getInstanceWithName:
+  /// Returns the most recently registered instance for <code>name</code> (or the default
+  /// instance when <code>name</code> is nil), or nil if none is registered.
+  /// A nil <code>name</code> and an empty <code>name</code> refer to different registrations.
   static NativeInteropReservedNamesHostApiSetup? getInstanceWithName(objc.NSString? name) {
     final _$$ref = name?.ref;
     final $ret = _objc_msgSend_1sotr3r(

@@ -57,26 +57,36 @@ class NativeInteropExampleApiRegistrar private constructor() : NativeInteropExam
   @Volatile private var api: NativeInteropExampleApi? = null
 
   companion object {
+    /**
+     * Registers [api] under [name] (or the default instance when [name] is null).
+     *
+     * Registrations are kept in an ordered stack per name, and [getInstance] returns the most
+     * recent one. Registering an instance that is already registered under [name] moves it to the
+     * top of the stack.
+     */
     @JvmStatic
     @Keep
     fun register(api: NativeInteropExampleApi, name: String? = null) {
       val resolvedName = name ?: defaultInstanceName
-      val wrapper = NativeInteropExampleApiRegistrar()
-      wrapper.api = api
       kotlin.synchronized(NativeInteropExampleApiInstances) {
         val list = NativeInteropExampleApiInstances.getOrPut(resolvedName) { mutableListOf() }
-        val iterator = list.iterator()
-        while (iterator.hasNext()) {
-          val entry = iterator.next()
-          if (entry.api === api) {
-            entry.api = null
-            iterator.remove()
-          }
+        val index = list.indexOfFirst { it.api === api }
+        if (index >= 0) {
+          list.add(list.removeAt(index))
+        } else {
+          val wrapper = NativeInteropExampleApiRegistrar()
+          wrapper.api = api
+          list.add(wrapper)
         }
-        list.add(wrapper)
       }
     }
 
+    /**
+     * Removes [api] from the registrations under [name] (or the default instance when [name] is
+     * null), leaving other registrations in place.
+     *
+     * Instances are matched by identity. Does nothing if [api] is not registered.
+     */
     @JvmStatic
     @Keep
     fun unregister(api: NativeInteropExampleApi, name: String? = null) {
@@ -99,6 +109,12 @@ class NativeInteropExampleApiRegistrar private constructor() : NativeInteropExam
       }
     }
 
+    /**
+     * Returns the most recently registered instance for [name] (or the default instance when [name]
+     * is null), or null if none is registered.
+     *
+     * A null [name] and an empty [name] refer to different registrations.
+     */
     @JvmStatic
     @Keep
     fun getInstance(name: String? = null): NativeInteropExampleApiRegistrar? {

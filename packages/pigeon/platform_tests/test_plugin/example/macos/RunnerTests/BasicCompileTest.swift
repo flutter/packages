@@ -76,6 +76,34 @@ struct BasicCompileTest {
   }
 
   @Test
+  func reRegisteringSameApiMovesExistingSetupToTop() throws {
+    let name = "macosReRegisterClass"
+    let api1 = FakeClassReservedApi("engine1")
+    let api2 = FakeClassReservedApi("engine2")
+
+    NativeInteropReservedNamesHostApiSetup.register(api: api1, name: name)
+    let setup1 = try #require(NativeInteropReservedNamesHostApiSetup.getInstance(name: name))
+    NativeInteropReservedNamesHostApiSetup.register(api: api2, name: name)
+    let setup2 = try #require(NativeInteropReservedNamesHostApiSetup.getInstance(name: name))
+    #expect(setup2 !== setup1)
+
+    // Re-registering api1 reuses its existing setup, so handles that already resolved it keep
+    // working.
+    NativeInteropReservedNamesHostApiSetup.register(api: api1, name: name)
+    #expect(NativeInteropReservedNamesHostApiSetup.getInstance(name: name) === setup1)
+    let error = NativeInteropTestsError()
+    #expect(setup1.release(value: "ping", wrappedError: error) == "engine1:ping")
+    #expect(error.code == nil)
+
+    // api1 is only registered once, so a single unregister falls back to api2.
+    NativeInteropReservedNamesHostApiSetup.unregister(api: api1, name: name)
+    #expect(NativeInteropReservedNamesHostApiSetup.getInstance(name: name) === setup2)
+
+    NativeInteropReservedNamesHostApiSetup.unregister(api: api2, name: name)
+    #expect(NativeInteropReservedNamesHostApiSetup.getInstance(name: name) == nil)
+  }
+
+  @Test
   func defaultNilNameAndExplicitEmptyStringNameAreDistinct() throws {
     let preexistingDefault = NativeInteropReservedNamesHostApiSetup.getInstance()
     let defaultApi = FakeClassReservedApi("defaultEngine")

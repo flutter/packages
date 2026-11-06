@@ -1,13 +1,15 @@
 ## 30.0.0
 
-* **BREAKING CHANGE**: [dart,kotlin,swift] Redesigns Native Interop registration and lookup APIs for multi-engine safety and cross-language consistency:
-  * Requires non-null API instances in `register` (returning `void`/`Unit`/`Void`) and instance-aware `unregister(api, ...)` instead of passing `null`/`nil` to `register` or calling parameterless `unregister`, and makes backing registration maps `private`.
-  * Makes Dart `<FlutterApi>Registrar` and Kotlin `<HostApi>Registrar` / `<FlutterApi>Registrar` methods static (with `private` constructors, plus `private` initializers on Swift `<HostApi>Setup` / `<FlutterApi>Registrar`) and unifies `@FlutterApi` registrar method names to `register`, `unregister`, and `getInstance` across Dart, Kotlin, and Swift.
-  * Removes `<FlutterApi>.implement` in Dart (use `<FlutterApi>.setUp` or `<FlutterApi>Registrar.register`) and `<HostApi>Setup.unregister(setup:name:)` in Swift, and constrains Swift FFI `@HostApi` protocols to `AnyObject`.
-  * Makes Native Interop `name` parameters nullable (`String?`, defaulting to `null`/`nil`), makes `defaultInstanceName` private, and changes Dart `<HostApi>ForNativeInterop.getInstance({String? name})` to accept `name` (instead of `channelName`) and return `null` (instead of throwing `ArgumentError`) when unregistered.
-* [dart,kotlin,swift] Preserves earlier engine registrations in thread-safe per-name instance stacks when multiple Native Interop `@HostApi` or `@FlutterApi` instances are registered, and fixes Dart `<FlutterApi>.setUp` to replace or deregister only that isolate's native callback.
-* [swift] Throws a structured `PigeonError` instead of trapping when invoking a Native Interop `@HostApi` method on a detached `Setup` handle.
-* Expands multi-engine and migration guidance in Native Interop documentation.
+* **BREAKING CHANGE**: [dart,kotlin,swift] Redesigns Native Interop registration APIs for multi-engine support:
+  * Replaces `register(null)` / `registerInstance(nil)` with `unregister(api)`, which removes only the given instance. `register` now requires a non-null API and returns `void`.
+  * Makes registrars static (for example, `MyApiRegistrar.register(api)` instead of `MyApiRegistrar().register(api)`) and renames Kotlin/Swift `@FlutterApi` `registerInstance` to `register`.
+  * Removes Dart `<FlutterApi>.implement`; use `<FlutterApi>.setUp` or `<FlutterApi>Registrar.register`.
+  * Requires classes for Swift `@HostApi` implementations when using `useFfi` (protocols now conform to `AnyObject`).
+  * Makes `name` parameters nullable (`null`/`nil` is the default instance) and makes `defaultInstanceName` private.
+  * Renames Dart `<HostApi>ForNativeInterop.getInstance`'s `channelName` parameter to `name`, and returns `null` instead of throwing when no instance is registered.
+* [dart,kotlin,swift] Keeps earlier registrations when multiple engines register Native Interop APIs under the same name, so detaching one engine no longer clears the others.
+* [kotlin,swift] Throws a `unregistered-instance` error when calling a Native Interop `@HostApi` handle whose instance has been unregistered, instead of crashing.
+* Expands multi-engine guidance in Native Interop documentation.
 
 ## 29.1.0
 

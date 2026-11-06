@@ -1959,27 +1959,37 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor() :
   @Volatile private var api: NativeInteropHostIntegrationCoreApi? = null
 
   companion object {
+    /**
+     * Registers [api] under [name] (or the default instance when [name] is null).
+     *
+     * Registrations are kept in an ordered stack per name, and [getInstance] returns the most
+     * recent one. Registering an instance that is already registered under [name] moves it to the
+     * top of the stack.
+     */
     @JvmStatic
     @Keep
     fun register(api: NativeInteropHostIntegrationCoreApi, name: String? = null) {
       val resolvedName = name ?: defaultInstanceName
-      val wrapper = NativeInteropHostIntegrationCoreApiRegistrar()
-      wrapper.api = api
       kotlin.synchronized(NativeInteropHostIntegrationCoreApiInstances) {
         val list =
             NativeInteropHostIntegrationCoreApiInstances.getOrPut(resolvedName) { mutableListOf() }
-        val iterator = list.iterator()
-        while (iterator.hasNext()) {
-          val entry = iterator.next()
-          if (entry.api === api) {
-            entry.api = null
-            iterator.remove()
-          }
+        val index = list.indexOfFirst { it.api === api }
+        if (index >= 0) {
+          list.add(list.removeAt(index))
+        } else {
+          val wrapper = NativeInteropHostIntegrationCoreApiRegistrar()
+          wrapper.api = api
+          list.add(wrapper)
         }
-        list.add(wrapper)
       }
     }
 
+    /**
+     * Removes [api] from the registrations under [name] (or the default instance when [name] is
+     * null), leaving other registrations in place.
+     *
+     * Instances are matched by identity. Does nothing if [api] is not registered.
+     */
     @JvmStatic
     @Keep
     fun unregister(api: NativeInteropHostIntegrationCoreApi, name: String? = null) {
@@ -2002,6 +2012,12 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor() :
       }
     }
 
+    /**
+     * Returns the most recently registered instance for [name] (or the default instance when [name]
+     * is null), or null if none is registered.
+     *
+     * A null [name] and an empty [name] refer to different registrations.
+     */
     @JvmStatic
     @Keep
     fun getInstance(name: String? = null): NativeInteropHostIntegrationCoreApiRegistrar? {
@@ -5121,7 +5137,13 @@ private val registeredNativeInteropFlutterIntegrationCoreApi:
 @Keep
 class NativeInteropFlutterIntegrationCoreApiRegistrar private constructor() {
   companion object {
-    /// Registers an instance with the given name.
+    /**
+     * Registers [api] under [name] (or the default instance when [name] is null).
+     *
+     * Registrations are kept in an ordered stack per name, and [getInstance] returns the most
+     * recent one. Registering an instance that is already registered under [name] moves it to the
+     * top of the stack.
+     */
     @JvmStatic
     @Keep
     fun register(api: NativeInteropFlutterIntegrationCoreApi, name: String? = null) {
@@ -5136,7 +5158,12 @@ class NativeInteropFlutterIntegrationCoreApiRegistrar private constructor() {
       }
     }
 
-    /// Unregisters a specific instance with the given name.
+    /**
+     * Removes [api] from the registrations under [name] (or the default instance when [name] is
+     * null), leaving other registrations in place.
+     *
+     * Instances are matched by identity. Does nothing if [api] is not registered.
+     */
     @JvmStatic
     @Keep
     fun unregister(api: NativeInteropFlutterIntegrationCoreApi, name: String? = null) {
@@ -5152,7 +5179,12 @@ class NativeInteropFlutterIntegrationCoreApiRegistrar private constructor() {
       }
     }
 
-    /// Gets an instance with the given name.
+    /**
+     * Returns the most recently registered instance for [name] (or the default instance when [name]
+     * is null), or null if none is registered.
+     *
+     * A null [name] and an empty [name] refer to different registrations.
+     */
     @JvmStatic
     @Keep
     fun getInstance(name: String? = null): NativeInteropFlutterIntegrationCoreApi? {
@@ -5517,27 +5549,37 @@ class NativeInteropReservedNamesHostApiRegistrar private constructor() :
   @Volatile private var api: NativeInteropReservedNamesHostApi? = null
 
   companion object {
+    /**
+     * Registers [api] under [name] (or the default instance when [name] is null).
+     *
+     * Registrations are kept in an ordered stack per name, and [getInstance] returns the most
+     * recent one. Registering an instance that is already registered under [name] moves it to the
+     * top of the stack.
+     */
     @JvmStatic
     @Keep
     fun register(api: NativeInteropReservedNamesHostApi, name: String? = null) {
       val resolvedName = name ?: defaultInstanceName
-      val wrapper = NativeInteropReservedNamesHostApiRegistrar()
-      wrapper.api = api
       kotlin.synchronized(NativeInteropReservedNamesHostApiInstances) {
         val list =
             NativeInteropReservedNamesHostApiInstances.getOrPut(resolvedName) { mutableListOf() }
-        val iterator = list.iterator()
-        while (iterator.hasNext()) {
-          val entry = iterator.next()
-          if (entry.api === api) {
-            entry.api = null
-            iterator.remove()
-          }
+        val index = list.indexOfFirst { it.api === api }
+        if (index >= 0) {
+          list.add(list.removeAt(index))
+        } else {
+          val wrapper = NativeInteropReservedNamesHostApiRegistrar()
+          wrapper.api = api
+          list.add(wrapper)
         }
-        list.add(wrapper)
       }
     }
 
+    /**
+     * Removes [api] from the registrations under [name] (or the default instance when [name] is
+     * null), leaving other registrations in place.
+     *
+     * Instances are matched by identity. Does nothing if [api] is not registered.
+     */
     @JvmStatic
     @Keep
     fun unregister(api: NativeInteropReservedNamesHostApi, name: String? = null) {
@@ -5560,6 +5602,12 @@ class NativeInteropReservedNamesHostApiRegistrar private constructor() :
       }
     }
 
+    /**
+     * Returns the most recently registered instance for [name] (or the default instance when [name]
+     * is null), or null if none is registered.
+     *
+     * A null [name] and an empty [name] refer to different registrations.
+     */
     @JvmStatic
     @Keep
     fun getInstance(name: String? = null): NativeInteropReservedNamesHostApiRegistrar? {
@@ -5844,7 +5892,13 @@ private val registeredNativeInteropReservedNamesFlutterApi:
 @Keep
 class NativeInteropReservedNamesFlutterApiRegistrar private constructor() {
   companion object {
-    /// Registers an instance with the given name.
+    /**
+     * Registers [api] under [name] (or the default instance when [name] is null).
+     *
+     * Registrations are kept in an ordered stack per name, and [getInstance] returns the most
+     * recent one. Registering an instance that is already registered under [name] moves it to the
+     * top of the stack.
+     */
     @JvmStatic
     @Keep
     fun register(api: NativeInteropReservedNamesFlutterApi, name: String? = null) {
@@ -5859,7 +5913,12 @@ class NativeInteropReservedNamesFlutterApiRegistrar private constructor() {
       }
     }
 
-    /// Unregisters a specific instance with the given name.
+    /**
+     * Removes [api] from the registrations under [name] (or the default instance when [name] is
+     * null), leaving other registrations in place.
+     *
+     * Instances are matched by identity. Does nothing if [api] is not registered.
+     */
     @JvmStatic
     @Keep
     fun unregister(api: NativeInteropReservedNamesFlutterApi, name: String? = null) {
@@ -5875,7 +5934,12 @@ class NativeInteropReservedNamesFlutterApiRegistrar private constructor() {
       }
     }
 
-    /// Gets an instance with the given name.
+    /**
+     * Returns the most recently registered instance for [name] (or the default instance when [name]
+     * is null), or null if none is registered.
+     *
+     * A null [name] and an empty [name] refer to different registrations.
+     */
     @JvmStatic
     @Keep
     fun getInstance(name: String? = null): NativeInteropReservedNamesFlutterApi? {

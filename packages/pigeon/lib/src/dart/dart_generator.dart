@@ -1710,9 +1710,16 @@ void ${classMemberNamePrefix}set_up_${api.name}(
 \t);
 }
 
+/// Registers [${api.name}] implementations for Native Interop callers.
 final class ${api.name}Registrar {
 \tconst ${api.name}Registrar._();
 
+\t/// Registers [api] under [name] (or the default instance when [name] is null).
+\t///
+\t/// Registrations are kept in an ordered stack per name, and native callers
+\t/// receive the most recent one. Registering an instance that is already
+\t/// registered under [name] moves it to the top. Unlike [${api.name}.setUp],
+\t/// this does not replace earlier registrations from this isolate.
 \tstatic void register(
 \t\t${api.name} api, {
 \t\tString? name,
@@ -1721,6 +1728,10 @@ final class ${api.name}Registrar {
 \t\tname: name,
 \t);
 
+\t/// Removes [api], registered from this isolate under [name] (or the default
+\t/// instance when [name] is null), leaving other registrations in place.
+\t///
+\t/// Instances are matched by identity. Does nothing if [api] is not registered.
 \tstatic void unregister(
 \t\t${api.name} api, {
 \t\tString? name,

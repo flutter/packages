@@ -1339,9 +1339,18 @@ SWIFT_CLASS(
 @interface NativeInteropFlutterIntegrationCoreApiRegistrar : NSObject
 - (nonnull instancetype)init SWIFT_UNAVAILABLE;
 + (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
+/// Registers <code>api</code> under <code>name</code> (or the default instance
+/// when <code>name</code> is nil). Registrations are kept in an ordered stack
+/// per name, and <code>getInstance</code> returns the most recent one.
+/// Registering an instance that is already registered under <code>name</code>
+/// moves it to the top of the stack.
 + (void)registerWithApi:
             (id<NativeInteropFlutterIntegrationCoreApiBridge> _Nonnull)api
                    name:(NSString* _Nullable)name;
+/// Removes <code>api</code> from the registrations under <code>name</code> (or
+/// the default instance when <code>name</code> is nil), leaving other
+/// registrations in place. Instances are matched by identity. Does nothing if
+/// <code>api</code> is not registered.
 + (void)unregisterWithApi:
             (id<NativeInteropFlutterIntegrationCoreApiBridge> _Nonnull)api
                      name:(NSString* _Nullable)name;
@@ -1354,6 +1363,10 @@ SWIFT_CLASS("_TtC11test_plugin40NativeInteropHostIntegrationCoreApiSetup")
 @interface NativeInteropHostIntegrationCoreApiSetup : NSObject
 - (nonnull instancetype)init SWIFT_UNAVAILABLE;
 + (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
+/// Returns the most recently registered instance for <code>name</code> (or the
+/// default instance when <code>name</code> is nil), or nil if none is
+/// registered. A nil <code>name</code> and an empty <code>name</code> refer to
+/// different registrations.
 + (NativeInteropHostIntegrationCoreApiSetup* _Nullable)getInstanceWithName:
     (NSString* _Nullable)name SWIFT_WARN_UNUSED_RESULT;
 /// A no-op function taking no arguments and returning no value, to sanity
@@ -3145,9 +3158,18 @@ SWIFT_CLASS("_TtC11test_plugin45NativeInteropReservedNamesFlutterApiRegistrar")
 @interface NativeInteropReservedNamesFlutterApiRegistrar : NSObject
 - (nonnull instancetype)init SWIFT_UNAVAILABLE;
 + (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
+/// Registers <code>api</code> under <code>name</code> (or the default instance
+/// when <code>name</code> is nil). Registrations are kept in an ordered stack
+/// per name, and <code>getInstance</code> returns the most recent one.
+/// Registering an instance that is already registered under <code>name</code>
+/// moves it to the top of the stack.
 + (void)registerWithApi:
             (id<NativeInteropReservedNamesFlutterApiBridge> _Nonnull)api
                    name:(NSString* _Nullable)name;
+/// Removes <code>api</code> from the registrations under <code>name</code> (or
+/// the default instance when <code>name</code> is nil), leaving other
+/// registrations in place. Instances are matched by identity. Does nothing if
+/// <code>api</code> is not registered.
 + (void)unregisterWithApi:
             (id<NativeInteropReservedNamesFlutterApiBridge> _Nonnull)api
                      name:(NSString* _Nullable)name;
@@ -3159,6 +3181,10 @@ SWIFT_CLASS("_TtC11test_plugin38NativeInteropReservedNamesHostApiSetup")
 @interface NativeInteropReservedNamesHostApiSetup : NSObject
 - (nonnull instancetype)init SWIFT_UNAVAILABLE;
 + (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
+/// Returns the most recently registered instance for <code>name</code> (or the
+/// default instance when <code>name</code> is nil), or nil if none is
+/// registered. A nil <code>name</code> and an empty <code>name</code> refer to
+/// different registrations.
 + (NativeInteropReservedNamesHostApiSetup* _Nullable)getInstanceWithName:
     (NSString* _Nullable)name SWIFT_WARN_UNUSED_RESULT;
 /// Collides with <code>JObject.release</code>.
