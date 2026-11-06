@@ -1,0 +1,4 @@
+changelog: |
+  - Fixes restoration of root-navigator child redirects by keeping cached `StatefulShellRoute` branch URIs and path parameters consistent with their route matches.
+  - Fixes an assertion failure when removing a route on an ancestor navigator that is nested under a redirect-only route inside a shell route.
+version: patch
