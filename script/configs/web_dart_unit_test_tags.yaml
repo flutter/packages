@@ -1,8 +1,18 @@
-# Maps packages to test tag selectors for the web dart unit tests.
+# Maps packages to test tags for the web dart unit tests.
 #
 # Packages are identified by their path relative to the packages directory
 # (e.g., `foo` or `foo/foo_android`). Packages listed here, and any packages
 # nested inside them (such as examples), will only run tests matching the
 # specified tag.
-# Note: Only one tag per package is supported.
+#
+# Only test files whose contents include the tag name are run, so the tag must
+# appear literally (e.g., `tags: 'reduced-web-test-set'`) in each test file
+# that uses it, rather than via a constant or helper defined in another file.
+# To help catch this, `dart-test` fails if the tag appears in any non-test Dart
+# file in the package's `lib/` or `test/` directories.
+#
+# Tag selector expressions (e.g., `!slow` or `a || b`) are allowed, but can't
+# be found by searching test files, so every test file in the package is
+# compiled and run with the selector as a filter. This is much slower on web,
+# and should be avoided.
 material_ui: reduced-web-test-set

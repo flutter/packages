@@ -1,2 +1,7 @@
 tags:
+  # Tests with this tag are the only ones run in web CI (see
+  # script/configs/web_dart_unit_test_tags.yaml). Only test files whose contents
+  # include the tag name are run, so the tag must appear literally (e.g.,
+  # `tags: 'reduced-web-test-set'`) in each test file that uses it, rather than
+  # via a constant or helper defined in another file.
   reduced-web-test-set:

@@ -734,8 +734,18 @@ test_on: !vm && firefox
     });
 
     test('skips packages where no tests match tag (exit code 79)', () async {
-      createFakePlugin('plugin1', packagesDir, extraFiles: <String>['test/empty_test.dart']);
-      createFakePlugin('plugin2', packagesDir, extraFiles: <String>['test/empty_test.dart']);
+      final RepositoryPackage plugin1 = createFakePlugin(
+        'plugin1',
+        packagesDir,
+        extraFiles: <String>['test/empty_test.dart'],
+      );
+      final RepositoryPackage plugin2 = createFakePlugin(
+        'plugin2',
+        packagesDir,
+        extraFiles: <String>['test/empty_test.dart'],
+      );
+      writeTaggedTest(plugin1.testDirectory.childFile('empty_test.dart'));
+      writeTaggedTest(plugin2.testDirectory.childFile('empty_test.dart'));
 
       processRunner.mockProcessesForExecutable[getFlutterCommand(mockPlatform)] = <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(exitCode: 79), <String>[
@@ -758,7 +768,7 @@ plugin2: reduced-web-test-set
       expect(
         output,
         containsAllInOrder(<Matcher>[
-          contains('SKIPPING: No tests match the requested tag selector.'),
+          contains('SKIPPING: No tests match the requested tag.'),
           contains('plugin1 - skipped'),
           contains('plugin2 - ran'),
         ]),
@@ -776,6 +786,8 @@ plugin2: reduced-web-test-set
         packagesDir,
         extraFiles: <String>['test/empty_test.dart'],
       );
+      writeTaggedTest(pluginA.testDirectory.childFile('empty_test.dart'));
+      writeTaggedTest(getExampleDir(pluginA).childDirectory('test').childFile('empty_test.dart'));
 
       final File configFile = packagesDir.fileSystem.file('config.yaml');
       configFile.writeAsStringSync('''
@@ -791,11 +803,13 @@ a: reduced-web-test-set
             'test',
             '--color',
             '--tags=reduced-web-test-set',
+            'test/empty_test.dart',
           ], pluginA.path),
           ProcessCall(getFlutterCommand(mockPlatform), const <String>[
             'test',
             '--color',
             '--tags=reduced-web-test-set',
+            'test/empty_test.dart',
           ], getExampleDir(pluginA).path),
           ProcessCall('dart', const <String>['pub', 'get'], packageB.path),
           ProcessCall('dart', const <String>['run', 'test'], packageB.path),
@@ -838,6 +852,9 @@ a: reduced-web-test-set
         examples: <String>[],
         extraFiles: <String>['test/empty_test.dart'],
       );
+      writeTaggedTest(package.testDirectory.childFile('empty_test.dart'));
+      writeTaggedTest(getExampleDir(package).childDirectory('test').childFile('empty_test.dart'));
+      writeTaggedTest(nestedApp.testDirectory.childFile('empty_test.dart'));
 
       final File configFile = fileSystem.file('/config.yaml');
       configFile.writeAsStringSync('''
@@ -856,19 +873,361 @@ a: reduced-web-test-set
             'test',
             '--color',
             '--tags=reduced-web-test-set',
+            'test/empty_test.dart',
           ], package.path),
           ProcessCall(getFlutterCommand(mockPlatform), const <String>[
             'test',
             '--color',
             '--tags=reduced-web-test-set',
+            'test/empty_test.dart',
           ], getExampleDir(package).path),
           ProcessCall(getFlutterCommand(mockPlatform), const <String>[
             'test',
             '--color',
             '--tags=reduced-web-test-set',
+            'test/empty_test.dart',
           ], nestedApp.path),
         ]),
       );
+    });
+
+    group('package-tags test file selection', () {
+      late File configFile;
+
+      setUp(() {
+        configFile = packagesDir.fileSystem.file('config.yaml');
+        configFile.writeAsStringSync('''
+a: reduced-web-test-set
+''');
+      });
+
+      test('runs only test files that contain the tag', () async {
+        final RepositoryPackage package = createFakePackage(
+          'a',
+          packagesDir,
+          isFlutter: true,
+          examples: <String>[],
+          extraFiles: <String>[
+            'test/untagged_test.dart',
+            'test/tagged_test.dart',
+            'test/nested/also_tagged_test.dart',
+          ],
+        );
+        writeTaggedTest(package.testDirectory.childFile('tagged_test.dart'));
+        writeTaggedTest(
+          package.testDirectory.childDirectory('nested').childFile('also_tagged_test.dart'),
+        );
+        package.testDirectory
+            .childFile('untagged_test.dart')
+            .writeAsStringSync("void main() { test('untagged', () {}); }");
+
+        await runCapturingPrint(runner, <String>[
+          'dart-test',
+          '--platform=chrome',
+          '--package-tags=${configFile.path}',
+        ]);
+
+        expect(
+          processRunner.recordedCalls,
+          orderedEquals(<ProcessCall>[
+            ProcessCall(getFlutterCommand(mockPlatform), const <String>[
+              'test',
+              '--color',
+              '--platform=chrome',
+              '--tags=reduced-web-test-set',
+              'test/nested/also_tagged_test.dart',
+              'test/tagged_test.dart',
+            ], package.path),
+          ]),
+        );
+      });
+
+      test('runs only test files that contain the tag for non-Flutter packages', () async {
+        final RepositoryPackage package = createFakePackage(
+          'a',
+          packagesDir,
+          examples: <String>[],
+          extraFiles: <String>['test/untagged_test.dart', 'test/tagged_test.dart'],
+        );
+        writeTaggedTest(package.testDirectory.childFile('tagged_test.dart'));
+
+        await runCapturingPrint(runner, <String>[
+          'dart-test',
+          '--platform=chrome',
+          '--package-tags=${configFile.path}',
+        ]);
+
+        expect(
+          processRunner.recordedCalls,
+          orderedEquals(<ProcessCall>[
+            ProcessCall('dart', const <String>['pub', 'get'], package.path),
+            ProcessCall('dart', const <String>[
+              'run',
+              'test',
+              '--platform=chrome',
+              '--tags=reduced-web-test-set',
+              'test/tagged_test.dart',
+            ], package.path),
+          ]),
+        );
+      });
+
+      test('ignores non-test files that do not contain the tag', () async {
+        final RepositoryPackage package = createFakePackage(
+          'a',
+          packagesDir,
+          isFlutter: true,
+          examples: <String>[],
+          extraFiles: <String>[
+            'test/tagged_test.dart',
+            'test/helpers.dart',
+            'test/data/notes.txt',
+            'lib/a.dart',
+          ],
+        );
+        writeTaggedTest(package.testDirectory.childFile('tagged_test.dart'));
+        package.testDirectory.childFile('helpers.dart').writeAsStringSync('void helper() {}');
+        package.testDirectory
+            .childDirectory('data')
+            .childFile('notes.txt')
+            .writeAsStringSync('reduced-web-test-set');
+
+        await runCapturingPrint(runner, <String>['dart-test', '--package-tags=${configFile.path}']);
+
+        expect(
+          processRunner.recordedCalls,
+          orderedEquals(<ProcessCall>[
+            ProcessCall(getFlutterCommand(mockPlatform), const <String>[
+              'test',
+              '--color',
+              '--tags=reduced-web-test-set',
+              'test/tagged_test.dart',
+            ], package.path),
+          ]),
+        );
+      });
+
+      for (final (String description, String file) in <(String, String)>[
+        ('a test helper', 'test/tags.dart'),
+        ('a nested test helper', 'test/utils/tags.dart'),
+        ('a library file', 'lib/tags.dart'),
+      ]) {
+        test('fails when $description contains the tag', () async {
+          final RepositoryPackage package = createFakePackage(
+            'a',
+            packagesDir,
+            isFlutter: true,
+            examples: <String>[],
+            extraFiles: <String>['test/tagged_test.dart', 'test/constant_test.dart', file],
+          );
+          writeTaggedTest(package.testDirectory.childFile('tagged_test.dart'));
+          package.testDirectory
+              .childFile('constant_test.dart')
+              .writeAsStringSync("void main() { test('tagged', () {}, tags: kTag); }");
+          package.directory
+              .childFile(file)
+              .writeAsStringSync("const String kTag = 'reduced-web-test-set';");
+
+          Error? commandError;
+          final List<String> output = await runCapturingPrint(runner, <String>[
+            'dart-test',
+            '--package-tags=${configFile.path}',
+          ], errorHandler: (Error e) => commandError = e);
+
+          expect(commandError, isA<ToolExit>());
+          expect(processRunner.recordedCalls, isEmpty);
+          expect(
+            output,
+            containsAllInOrder(<Matcher>[
+              allOf(
+                contains(
+                  'The tag "reduced-web-test-set" appears in the following '
+                  'files, which are not test files:\n  $file\n',
+                ),
+                contains(
+                  "Use the tag directly in each test file that uses it (e.g., `tags: 'reduced-web-test-set'`).",
+                ),
+              ),
+              contains('The following packages had errors:'),
+              contains('a:\n    $file'),
+            ]),
+          );
+        });
+      }
+
+      test('fails rather than skipping when only a non-test file contains the tag', () async {
+        final RepositoryPackage package = createFakePackage(
+          'a',
+          packagesDir,
+          isFlutter: true,
+          examples: <String>[],
+          extraFiles: <String>['test/constant_test.dart', 'test/tags.dart'],
+        );
+        package.testDirectory
+            .childFile('constant_test.dart')
+            .writeAsStringSync("void main() { test('tagged', () {}, tags: kTag); }");
+        package.testDirectory
+            .childFile('tags.dart')
+            .writeAsStringSync("const String kTag = 'reduced-web-test-set';");
+
+        Error? commandError;
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'dart-test',
+          '--package-tags=${configFile.path}',
+        ], errorHandler: (Error e) => commandError = e);
+
+        expect(commandError, isA<ToolExit>());
+        expect(processRunner.recordedCalls, isEmpty);
+        expect(output, isNot(contains(contains('SKIPPING'))));
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[contains('which are not test files:\n  test/tags.dart\n')]),
+        );
+      });
+
+      test('does not check non-test files when dart_test.yaml disables file selection', () async {
+        final RepositoryPackage package = createFakePackage(
+          'a',
+          packagesDir,
+          isFlutter: true,
+          examples: <String>[],
+          extraFiles: <String>['test/constant_test.dart', 'test/tags.dart'],
+        );
+        package.testDirectory
+            .childFile('tags.dart')
+            .writeAsStringSync("const String kTag = 'reduced-web-test-set';");
+        package.directory.childFile('dart_test.yaml').writeAsStringSync('paths: [test]\n');
+
+        await runCapturingPrint(runner, <String>['dart-test', '--package-tags=${configFile.path}']);
+
+        expect(
+          processRunner.recordedCalls,
+          orderedEquals(<ProcessCall>[
+            ProcessCall(getFlutterCommand(mockPlatform), const <String>[
+              'test',
+              '--color',
+              '--tags=reduced-web-test-set',
+            ], package.path),
+          ]),
+        );
+      });
+
+      test('skips packages with no test files that contain the tag', () async {
+        createFakePackage(
+          'a',
+          packagesDir,
+          isFlutter: true,
+          examples: <String>[],
+          extraFiles: <String>['test/untagged_test.dart'],
+        );
+
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'dart-test',
+          '--package-tags=${configFile.path}',
+        ]);
+
+        expect(processRunner.recordedCalls, isEmpty);
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('SKIPPING: No test files contain the requested tag.'),
+          ]),
+        );
+      });
+
+      test('does not apply to packages without a tag', () async {
+        final RepositoryPackage package = createFakePackage(
+          'b',
+          packagesDir,
+          isFlutter: true,
+          examples: <String>[],
+          extraFiles: <String>['test/untagged_test.dart'],
+        );
+
+        await runCapturingPrint(runner, <String>['dart-test', '--package-tags=${configFile.path}']);
+
+        expect(
+          processRunner.recordedCalls,
+          orderedEquals(<ProcessCall>[
+            ProcessCall(getFlutterCommand(mockPlatform), const <String>[
+              'test',
+              '--color',
+            ], package.path),
+          ]),
+        );
+      });
+
+      for (final (String description, String key, String testConfig) in <(String, String, String)>[
+        (
+          'tag implication',
+          'add_tags',
+          '''
+tags:
+  other-tag:
+    add_tags: [reduced-web-test-set]
+''',
+        ),
+        (
+          'custom test paths',
+          'paths',
+          '''
+paths: [test/unit]
+''',
+        ),
+        (
+          'custom test file names',
+          'filename',
+          '''
+presets:
+  ci:
+    filename: "*_spec.dart"
+''',
+        ),
+        (
+          'an included configuration file',
+          'include',
+          '''
+include: ../shared_dart_test.yaml
+''',
+        ),
+      ]) {
+        test('runs all test files with the tag filter when dart_test.yaml uses '
+            '$description', () async {
+          final RepositoryPackage package = createFakePackage(
+            'a',
+            packagesDir,
+            isFlutter: true,
+            examples: <String>[],
+            extraFiles: <String>['test/untagged_test.dart'],
+          );
+          package.directory.childFile('dart_test.yaml').writeAsStringSync(testConfig);
+
+          final List<String> output = await runCapturingPrint(runner, <String>[
+            'dart-test',
+            '--package-tags=${configFile.path}',
+          ]);
+
+          expect(
+            processRunner.recordedCalls,
+            orderedEquals(<ProcessCall>[
+              ProcessCall(getFlutterCommand(mockPlatform), const <String>[
+                'test',
+                '--color',
+                '--tags=reduced-web-test-set',
+              ], package.path),
+            ]),
+          );
+          expect(
+            output,
+            containsAllInOrder(<Matcher>[
+              contains(
+                'Running all test files with --tags=reduced-web-test-set '
+                'because dart_test.yaml uses "$key"',
+              ),
+            ]),
+          );
+        });
+      }
     });
 
     test('package-tags flag fails if configuration file does not exist', () async {
@@ -903,6 +1262,54 @@ a: reduced-web-test-set
       expect(commandError, isA<ToolExit>());
       expect(output, containsAllInOrder(<Matcher>[contains('is not a valid YAML map.')]));
     });
+
+    for (final selector in <String>[
+      '!slow',
+      'web-a || web-b',
+      'reduced-web-test-set && !flaky',
+      '(reduced-web-test-set)',
+    ]) {
+      test('package-tags runs all test files with the tag filter for tag '
+          'selector expression "$selector"', () async {
+        final RepositoryPackage plugin = createFakePlugin(
+          'a',
+          packagesDir,
+          extraFiles: <String>['test/untagged_test.dart', 'test/tags.dart'],
+        );
+        // A non-test file containing the tag would fail the run if test files
+        // were being selected, so this also checks that selection is skipped.
+        plugin.testDirectory
+            .childFile('tags.dart')
+            .writeAsStringSync("const String kTag = 'reduced-web-test-set';");
+        final File configFile = packagesDir.fileSystem.file('config.yaml');
+        configFile.writeAsStringSync("a: '$selector'\n");
+
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'dart-test',
+          '--package-tags=${configFile.path}',
+        ]);
+
+        expect(
+          processRunner.recordedCalls,
+          orderedEquals(<ProcessCall>[
+            ProcessCall(getFlutterCommand(mockPlatform), <String>[
+              'test',
+              '--color',
+              '--tags=$selector',
+            ], plugin.path),
+          ]),
+        );
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains(
+              'Running all test files with --tags=$selector because '
+              '"$selector" is a tag selector expression',
+            ),
+          ]),
+        );
+      });
+    }
 
     group('file filtering', () {
       test('runs command for changes to Dart source', () async {
@@ -977,4 +1384,15 @@ packages/package_a/CHANGELOG.md
       });
     });
   });
+}
+
+/// Writes a test file to [file] containing a test tagged with [tag].
+void writeTaggedTest(File file, {String tag = 'reduced-web-test-set'}) {
+  file
+    ..createSync(recursive: true)
+    ..writeAsStringSync('''
+void main() {
+  test('tagged', () {}, tags: '$tag');
+}
+''');
 }
