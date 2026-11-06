@@ -15,6 +15,7 @@ import 'package:analyzer/dart/analysis/session.dart' show AnalysisSession;
 import 'package:analyzer/dart/ast/ast.dart' as dart_ast;
 import 'package:analyzer/diagnostic/diagnostic.dart' show Diagnostic;
 import 'package:args/args.dart';
+import 'package:cli_util/cli_util.dart' as cli_util;
 import 'package:meta/meta.dart' show visibleForTesting;
 import 'package:path/path.dart' as path;
 
@@ -491,7 +492,10 @@ class Pigeon {
   /// [AnalysisContextCollection].
   ParseResults parseFile(String inputPath, {String? sdkPath}) {
     final includedPaths = <String>[path.absolute(path.normalize(inputPath))];
-    final collection = AnalysisContextCollection(includedPaths: includedPaths, sdkPath: sdkPath);
+    final collection = AnalysisContextCollection(
+      includedPaths: includedPaths,
+      sdkPath: sdkPath ?? cli_util.sdkPath,
+    );
 
     final compilationErrors = <Error>[];
     final rootBuilder = RootBuilder(File(inputPath).readAsStringSync());
@@ -796,6 +800,13 @@ ${_argParser.usage}''';
     }
   }
 
+  static String _resolveDartExecutable(String? sdkPath) {
+    if (sdkPath != null) {
+      return path.join(sdkPath, 'bin', Platform.isWindows ? 'dart.exe' : 'dart');
+    }
+    return Platform.resolvedExecutable;
+  }
+
   /// The 'main' entrypoint used by the command-line tool. [args] are the
   /// command-line arguments. The optional parameter [adapters] allows you to
   /// customize the generators that pigeon will use. The optional parameter
@@ -889,7 +900,7 @@ ${_argParser.usage}''';
     final bool useFfi = internalOptions.swiftOptions?.useFfi ?? false;
     final bool useJni = internalOptions.kotlinOptions?.useJni ?? false;
 
-    final String dartExecutable = Platform.resolvedExecutable;
+    final String dartExecutable = _resolveDartExecutable(cli_util.sdkPath);
     for (final adapter in safeGeneratorAdapters) {
       for (final FileType fileType in adapter.fileTypeList) {
         final IOSink? sink = adapter.shouldGenerate(internalOptions, fileType);

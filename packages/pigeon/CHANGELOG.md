@@ -1,3 +1,9 @@
+## 29.1.1
+
+* Adds `pigeon` to `executables` in `pubspec.yaml` and resolves the Dart SDK and
+  executable via `package:cli_util` so `pigeon` can run as a standalone
+  AOT-compiled executable (such as via `dart install` or `dart run pigeon@`).
+
 ## 29.1.0
 
 * [kotlin,swift] Adds support for removing event channel handler registration
