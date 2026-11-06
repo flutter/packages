@@ -154,6 +154,39 @@ void main() {
       );
     });
 
+    testWidgets('Ring is drawn the same way on every platform', (WidgetTester tester) async {
+      final focusNode = FocusNode();
+      addTearDown(focusNode.dispose);
+      await tester.pumpWidget(
+        buildApp(
+          focusRingTheme: visibleRing,
+          child: TextButton(
+            style: TextButton.styleFrom(shape: const StadiumBorder()),
+            focusNode: focusNode,
+            onPressed: () {},
+            child: const Text('Submit'),
+          ),
+        ),
+      );
+      focusNode.requestFocus();
+      await tester.pumpAndSettle();
+
+      final RenderBox box = inkWellBox(tester, find.byType(TextButton));
+      final Rect rect = Offset.zero & box.size;
+      final shape = RRect.fromRectAndRadius(rect, Radius.circular(rect.shortestSide / 2));
+      expect(
+        box,
+        paints
+          ..rrect(rrect: shape.inflate(0.5), style: PaintingStyle.stroke, strokeWidth: 3.0)
+          ..rrect(rrect: shape.inflate(3.5), style: PaintingStyle.stroke, strokeWidth: 3.0),
+      );
+
+      // A pointer interaction hides the ring on every platform too.
+      FocusManager.instance.highlightStrategy = FocusHighlightStrategy.alwaysTouch;
+      await tester.pumpAndSettle();
+      expect(box, isNot(paints..rrect(style: PaintingStyle.stroke, strokeWidth: 3.0)));
+    }, variant: TargetPlatformVariant.all());
+
     testWidgets('List tile draws the ring inside its edge', (WidgetTester tester) async {
       final focusNode = FocusNode();
       addTearDown(focusNode.dispose);
