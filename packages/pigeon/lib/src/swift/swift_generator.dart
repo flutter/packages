@@ -1414,7 +1414,6 @@ if (wrapped == nil) {
     indent.newln();
     indent.write('@objc class ${api.name}Registrar: NSObject ');
     indent.addScoped('{', '}', () {
-      indent.writeln('private static let lock = NSLock()');
       indent.writeln('static var registered${api.name} = [String: [${api.name}]]()');
       indent.newln();
       _writeNativeInteropRegisterDocs(indent);
@@ -1428,25 +1427,12 @@ if (wrapped == nil) {
       );
       indent.addScoped('{', '}', () {
         indent.writeln('let apiObject = api as AnyObject');
-        _writeDisplacedLifetimeComment(indent);
-        indent.writeln('var displaced: [${api.name}] = []');
-        indent.writeScoped('do {', '}', () {
-          indent.writeln('${api.name}Registrar.lock.lock()');
-          indent.writeln('defer { ${api.name}Registrar.lock.unlock() }');
-          indent.writeln('var list = ${api.name}Registrar.registered${api.name}[name] ?? []');
-          indent.writeScoped('list.removeAll { entry in', '}', () {
-            indent.writeScoped('if (entry.api as AnyObject) === apiObject {', '}', () {
-              indent.writeln('displaced.append(entry)');
-              indent.writeln('return true');
-            });
-            indent.writeln('return false');
-          });
-          indent.writeln(
-            'list.append(${api.name}(api: api, engineId: engineId, affinityKey: affinityKey))',
-          );
-          indent.writeln('${api.name}Registrar.registered${api.name}[name] = list');
-        });
-        indent.writeln('withExtendedLifetime(displaced) {}');
+        indent.writeln('var list = ${api.name}Registrar.registered${api.name}[name] ?? []');
+        indent.writeln(r'list.removeAll { ($0.api as AnyObject) === apiObject }');
+        indent.writeln(
+          'list.append(${api.name}(api: api, engineId: engineId, affinityKey: affinityKey))',
+        );
+        indent.writeln('${api.name}Registrar.registered${api.name}[name] = list');
       });
       indent.newln();
       _writeNativeInteropUnregisterDocs(indent);
@@ -1455,33 +1441,20 @@ if (wrapped == nil) {
       );
       indent.addScoped('{', '}', () {
         indent.writeln('let apiObject = api as AnyObject');
-        _writeDisplacedLifetimeComment(indent);
-        indent.writeln('var displaced: [${api.name}] = []');
-        indent.writeScoped('do {', '}', () {
-          indent.writeln('${api.name}Registrar.lock.lock()');
-          indent.writeln('defer { ${api.name}Registrar.lock.unlock() }');
-          indent.writeScoped(
-            'guard var list = ${api.name}Registrar.registered${api.name}[name] else {',
-            '}',
-            () {
-              indent.writeln('return');
-            },
-          );
-          indent.writeScoped('list.removeAll { entry in', '}', () {
-            indent.writeScoped('if (entry.api as AnyObject) === apiObject {', '}', () {
-              indent.writeln('displaced.append(entry)');
-              indent.writeln('return true');
-            });
-            indent.writeln('return false');
-          });
-          indent.writeScoped('if list.isEmpty {', '}', () {
-            indent.writeln('${api.name}Registrar.registered${api.name}.removeValue(forKey: name)');
-          }, addTrailingNewline: false);
-          indent.addScoped(' else {', '}', () {
-            indent.writeln('${api.name}Registrar.registered${api.name}[name] = list');
-          });
+        indent.writeScoped(
+          'guard var list = ${api.name}Registrar.registered${api.name}[name] else {',
+          '}',
+          () {
+            indent.writeln('return');
+          },
+        );
+        indent.writeln(r'list.removeAll { ($0.api as AnyObject) === apiObject }');
+        indent.writeScoped('if list.isEmpty {', '}', () {
+          indent.writeln('${api.name}Registrar.registered${api.name}.removeValue(forKey: name)');
+        }, addTrailingNewline: false);
+        indent.addScoped(' else {', '}', () {
+          indent.writeln('${api.name}Registrar.registered${api.name}[name] = list');
         });
-        indent.writeln('withExtendedLifetime(displaced) {}');
       });
       indent.newln();
       indent.writeln('#if canImport(Flutter) || canImport(FlutterMacOS)');
@@ -1515,8 +1488,6 @@ if (wrapped == nil) {
         'fileprivate static func getInstance(engineKey: Int64, name: String) -> ${api.name}? ',
       );
       indent.addScoped('{', '}', () {
-        indent.writeln('${api.name}Registrar.lock.lock()');
-        indent.writeln('defer { ${api.name}Registrar.lock.unlock() }');
         indent.writeScoped(
           'guard let list = ${api.name}Registrar.registered${api.name}[name] else {',
           '}',
@@ -1645,15 +1616,6 @@ if (wrapped == nil) {
     );
   }
 
-  /// Emits a comment explaining why removed registrations are collected in
-  /// `displaced` instead of being released inline.
-  void _writeDisplacedLifetimeComment(Indent indent) {
-    indent.writeln(
-      '// Removed entries are kept alive until after unlocking so their deinit cannot run while the',
-    );
-    indent.writeln('// non-recursive lock is held.');
-  }
-
   /// Writes the engine-keyed registration statics of an FFI HostApi `Setup`
   /// class.
   ///
@@ -1665,9 +1627,7 @@ if (wrapped == nil) {
     final instances = '$tracker.instancesOf${api.name}';
     final defaultName = '${_classNamePrefix}PigeonInternal.defaultInstanceName';
 
-    indent.writeln(
-      '$_docCommentPrefix The engine key this wrapper was registered with, guarded by `$tracker.lock`.',
-    );
+    indent.writeln('$_docCommentPrefix The engine key this wrapper was registered with.');
     indent.writeln('private var engineKey: Int64 = Int64.min');
     indent.newln();
     indent.writeln('#if canImport(Flutter) || canImport(FlutterMacOS)');
@@ -1714,8 +1674,6 @@ if (wrapped == nil) {
       'fileprivate static func register(api: ${api.name}, engineKey: Int64, name: String) {',
       '}',
       () {
-        indent.writeln('$tracker.lock.lock()');
-        indent.writeln('defer { $tracker.lock.unlock() }');
         indent.writeln('var list = $instances[name] ?? []');
         // Reuse the existing wrapper so Dart handles that already resolved
         // it keep working after the instance moves back to the top.
@@ -1741,44 +1699,33 @@ if (wrapped == nil) {
       'fileprivate static func unregister(api: ${api.name}, engineKey: Int64, name: String) {',
       '}',
       () {
-        _writeDisplacedLifetimeComment(indent);
-        indent.writeln('var displaced: [Any] = []');
-        indent.writeScoped('do {', '}', () {
-          indent.writeln('$tracker.lock.lock()');
-          indent.writeln('defer { $tracker.lock.unlock() }');
-          indent.writeScoped('guard var list = $instances[name] else {', '}', () {
-            indent.writeln('return');
-          });
-          indent.writeln(
-            '// Fall back to identity-only matching when no entry has this engine key.',
-          );
-          indent.writeln(
-            r'let matchesKey = list.contains { $0.api === api && $0.engineKey == engineKey }',
-          );
-          indent.writeScoped('list.removeAll { entry in', '}', () {
-            indent.writeScoped('guard let existing = entry.api else {', '}', () {
-              indent.writeln('return false');
-            });
-            indent.writeScoped(
-              'if existing === api && (!matchesKey || entry.engineKey == engineKey) {',
-              '}',
-              () {
-                indent.writeln('displaced.append(existing)');
-                indent.writeln('displaced.append(entry)');
-                indent.writeln('entry.api = nil');
-                indent.writeln('return true');
-              },
-            );
+        indent.writeScoped('guard var list = $instances[name] else {', '}', () {
+          indent.writeln('return');
+        });
+        indent.writeln('// Fall back to identity-only matching when no entry has this engine key.');
+        indent.writeln(
+          r'let matchesKey = list.contains { $0.api === api && $0.engineKey == engineKey }',
+        );
+        indent.writeScoped('list.removeAll { entry in', '}', () {
+          indent.writeScoped('guard let existing = entry.api else {', '}', () {
             indent.writeln('return false');
           });
-          indent.writeScoped('if list.isEmpty {', '}', () {
-            indent.writeln('$instances.removeValue(forKey: name)');
-          }, addTrailingNewline: false);
-          indent.addScoped(' else {', '}', () {
-            indent.writeln('$instances[name] = list');
-          });
+          indent.writeScoped(
+            'if existing === api && (!matchesKey || entry.engineKey == engineKey) {',
+            '}',
+            () {
+              indent.writeln('entry.api = nil');
+              indent.writeln('return true');
+            },
+          );
+          indent.writeln('return false');
         });
-        indent.writeln('withExtendedLifetime(displaced) {}');
+        indent.writeScoped('if list.isEmpty {', '}', () {
+          indent.writeln('$instances.removeValue(forKey: name)');
+        }, addTrailingNewline: false);
+        indent.addScoped(' else {', '}', () {
+          indent.writeln('$instances[name] = list');
+        });
       },
     );
     indent.newln();
@@ -1787,8 +1734,6 @@ if (wrapped == nil) {
       '@objc static func getInstance(name: String = $defaultName) -> $setupName? {',
       '}',
       () {
-        indent.writeln('$tracker.lock.lock()');
-        indent.writeln('defer { $tracker.lock.unlock() }');
         indent.writeln('return $instances[name]?.last');
       },
     );
@@ -1808,8 +1753,6 @@ if (wrapped == nil) {
       '@objc static func pigeonResolveInstance(engineId: Int64, affinityKey: Int64, name: String) -> $setupName? {',
       '}',
       () {
-        indent.writeln('$tracker.lock.lock()');
-        indent.writeln('defer { $tracker.lock.unlock() }');
         indent.writeScoped('guard let list = $instances[name] else {', '}', () {
           indent.writeln('return nil');
         });
@@ -1838,8 +1781,6 @@ if (wrapped == nil) {
       '@objc static func pigeonEngineKey(of instance: $setupName) -> Int64 {',
       '}',
       () {
-        indent.writeln('$tracker.lock.lock()');
-        indent.writeln('defer { $tracker.lock.unlock() }');
         indent.writeln('return instance.engineKey');
       },
     );
@@ -1858,28 +1799,7 @@ if (wrapped == nil) {
     );
     indent.writeScoped('@objc class ${api.name}Setup: NSObject {', '}', () {
       if (generatorOptions.useFfi) {
-        indent.writeln('private let pigeonApiLock = NSLock()');
-        indent.writeln('private var pigeonApi: ${api.name}?');
-        indent.writeScoped('private var api: ${api.name}? {', '}', () {
-          indent.writeScoped('get {', '}', () {
-            indent.writeln('pigeonApiLock.lock()');
-            indent.writeln('defer { pigeonApiLock.unlock() }');
-            indent.writeln('return pigeonApi');
-          });
-          indent.writeScoped('set {', '}', () {
-            indent.writeln(
-              '// Release the previous value after unlocking so its deinit cannot run while the lock is held.',
-            );
-            indent.writeln('let oldValue: ${api.name}?');
-            indent.writeScoped('do {', '}', () {
-              indent.writeln('pigeonApiLock.lock()');
-              indent.writeln('defer { pigeonApiLock.unlock() }');
-              indent.writeln('oldValue = pigeonApi');
-              indent.writeln('pigeonApi = newValue');
-            });
-            indent.writeln('withExtendedLifetime(oldValue) {}');
-          });
-        });
+        indent.writeln('private var api: ${api.name}?');
         indent.writeln('override init() {}');
         indent.writeScoped('private func resolveApi() throws -> ${api.name} {', '}', () {
           indent.writeScoped('guard let currentApi = api else {', '}', () {
@@ -1998,7 +1918,6 @@ if (wrapped == nil) {
     final String apiName = api.name;
     if (generatorOptions.useFfi) {
       indent.writeScoped('class ${apiName}InstanceTracker {', '}', () {
-        indent.writeln('static let lock = NSLock()');
         indent.writeln('static var instancesOf$apiName = [String: [${apiName}Setup]]()');
       });
     }
@@ -2979,7 +2898,6 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
 fileprivate enum PigeonEngineKeys {
   /// The sentinel for an unknown engine.
   static let noKey: Int64 = Int64.min
-  private static let lock = NSLock()
   private static let syntheticKeys = NSMapTable<AnyObject, NSNumber>.weakToStrongObjects()
   private static var nextSyntheticKey: Int64 = -1
 
@@ -2989,8 +2907,6 @@ fileprivate enum PigeonEngineKeys {
     if let exactKey = exactKey {
       return exactKey
     }
-    lock.lock()
-    defer { lock.unlock() }
     if let existing = syntheticKeys.object(forKey: messenger) {
       return existing.int64Value
     }
@@ -3008,10 +2924,7 @@ fileprivate enum PigeonEngineKeys {
     /// Returns the key for the engine that owns `registrar`, or `noKey` if it can't be determined.
     static func key(for registrar: FlutterPluginRegistrar) -> Int64 {
       let registrarObject = registrar as AnyObject
-      lock.lock()
-      let cached = registrarKeys.object(forKey: registrarObject)
-      lock.unlock()
-      if let cached = cached {
+      if let cached = registrarKeys.object(forKey: registrarObject) {
         return cached.int64Value
       }
       var resolved = noKey
@@ -3025,9 +2938,7 @@ fileprivate enum PigeonEngineKeys {
         resolved = key(messenger: messenger, exactKey: nil)
       }
       if resolved != noKey {
-        lock.lock()
         registrarKeys.setObject(NSNumber(value: resolved), forKey: registrarObject)
-        lock.unlock()
       }
       return resolved
     }

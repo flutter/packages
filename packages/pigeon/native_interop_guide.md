@@ -215,7 +215,9 @@ When implementing Native Interop host APIs directly in an application target rat
 
 When implementing a Flutter plugin (`FlutterPlugin`), multiple `FlutterEngine` instances may attach and detach in any order (for example, in add-to-app scenarios, `FlutterEngineGroup`, background isolates/headless engines, or integration tests).
 
-Pigeon maintains an ordered stack of registered `@HostApi` instances per instance name (omitting `name` uses the default instance). Each registration is associated with the engine passed to `register` (a plugin binding, `FlutterEngine`, or plugin registrar), so the same API instance registered from two engines is tracked as two registrations. Register on attach and unregister **that specific instance** for **that engine** on detach, so detaching one engine never removes registrations belonging to other active engines. `unregister` removes the entry matching both the engine and the instance; if none matches, it falls back to removing that instance (by identity) for any engine.
+Each `@HostApi` registration is associated with the engine passed to `register` (a plugin binding, `FlutterEngine`, or plugin registrar). Register on attach and unregister **that specific instance** for **that engine** on detach: detaching one engine only removes that engine's registration, and Dart lookups prefer the calling engine's registration (see [Multi-Engine Routing](#multi-engine-routing)).
+
+> **Call registration APIs on the platform main thread**: As with platform channel `setUp`, Native Interop registration and unregistration (`register` / `unregister` / `registerInstance` / `unregisterInstance`, and Dart `setUp` / `Registrar` calls from the root isolate) are not synchronized and must be called on the platform main thread, which is where plugin attach/detach callbacks and engine configuration already run.
 
 - **Kotlin (JNI)**:
   ```kotlin
@@ -260,7 +262,7 @@ Pigeon maintains an ordered stack of registered `@HostApi` instances per instanc
   > **macOS has no detach callback**: `FlutterMacOS`'s `FlutterPlugin` protocol does not declare or invoke `detachFromEngine(for:)`, so macOS plugins have no point at which to unregister, and macOS registrations currently outlive their engine. Plugins that hold engine-specific state on macOS should stay on platform channels for now.
 
 - **Dart (`@FlutterApi`)**:
-  `@FlutterApi` registrations (`MyFlutterApi.setUp(api)` or `MyFlutterApiRegistrar().register(api)`) also maintain an ordered stack per instance name. Calling `MyFlutterApi.setUp(null)` (or `MyFlutterApiRegistrar().unregister(myApi)` for `register` registrations) removes **only** that isolate's instance so other active engines stay registered.
+  `@FlutterApi` registrations (`MyFlutterApi.setUp(api)` or `MyFlutterApiRegistrar().register(api)`) are also tracked per engine. Calling `MyFlutterApi.setUp(null)` (or `MyFlutterApiRegistrar().unregister(myApi)` for `register` registrations) removes **only** that isolate's instance so other active engines stay registered.
 
   Native code looks up the Dart implementation for a specific engine:
   - **Kotlin**: `MyFlutterApiRegistrar().getInstance(binding)` in a plugin, or `MyFlutterApiRegistrar().getInstance(flutterEngine)` in an app.
@@ -268,7 +270,7 @@ Pigeon maintains an ordered stack of registered `@HostApi` instances per instanc
 
   These return the instance registered by that engine's Dart isolate when it can be identified (see [Multi-Engine Routing](#multi-engine-routing) below), otherwise the most recent registration, or `null` / `nil` if none is registered.
 
-  > **Stale `@FlutterApi` registrations**: Dart has no hook that runs when an isolate shuts down, so a registration is only removed when Dart code explicitly calls `setUp(null)` or `unregister`. If an isolate goes away without doing so (for example, after a hot restart, or when an engine is destroyed while its `@FlutterApi` is still registered), its entry stays in the native stack and can still be returned by `<FlutterApi>Registrar.getInstance(...)`. Native code that calls `@FlutterApi` methods should be prepared for those calls to fail, and Dart code should unregister before shutting down an isolate or engine whenever possible.
+  > **Stale `@FlutterApi` registrations**: Dart has no hook that runs when an isolate shuts down, so a registration is only removed when Dart code explicitly calls `setUp(null)` or `unregister`. If an isolate goes away without doing so (for example, after a hot restart, or when an engine is destroyed while its `@FlutterApi` is still registered), its registration stays in native memory and can still be returned by `<FlutterApi>Registrar.getInstance(...)`. Native code that calls `@FlutterApi` methods should be prepared for those calls to fail, and Dart code should unregister before shutting down an isolate or engine whenever possible.
 
 - **Custom Headless `FlutterEngine`s on Android (`JniPlugin`)**:
   If you spawn a custom or background `FlutterEngine` on Android (e.g., in a `Service`, `BroadcastReceiver`, or `FlutterEngineGroup`) **without** calling `GeneratedPluginRegistrant.registerWith(flutterEngine)`, register `JniPlugin` (`flutterEngine.plugins.add(com.github.dart_lang.jni.JniPlugin())`) before executing Dart code that uses JNI so `DartJNI` is guaranteed to be initialized even when no main `FlutterActivity` has started yet.

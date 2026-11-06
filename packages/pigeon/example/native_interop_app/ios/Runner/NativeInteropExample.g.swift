@@ -208,7 +208,6 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
 private enum PigeonEngineKeys {
   /// The sentinel for an unknown engine.
   static let noKey: Int64 = Int64.min
-  private static let lock = NSLock()
   private static let syntheticKeys = NSMapTable<AnyObject, NSNumber>.weakToStrongObjects()
   private static var nextSyntheticKey: Int64 = -1
 
@@ -218,8 +217,6 @@ private enum PigeonEngineKeys {
     if let exactKey = exactKey {
       return exactKey
     }
-    lock.lock()
-    defer { lock.unlock() }
     if let existing = syntheticKeys.object(forKey: messenger) {
       return existing.int64Value
     }
@@ -237,10 +234,7 @@ private enum PigeonEngineKeys {
     /// Returns the key for the engine that owns `registrar`, or `noKey` if it can't be determined.
     static func key(for registrar: FlutterPluginRegistrar) -> Int64 {
       let registrarObject = registrar as AnyObject
-      lock.lock()
-      let cached = registrarKeys.object(forKey: registrarObject)
-      lock.unlock()
-      if let cached = cached {
+      if let cached = registrarKeys.object(forKey: registrarObject) {
         return cached.int64Value
       }
       var resolved = noKey
@@ -254,9 +248,7 @@ private enum PigeonEngineKeys {
         resolved = key(messenger: messenger, exactKey: nil)
       }
       if resolved != noKey {
-        lock.lock()
         registrarKeys.setObject(NSNumber(value: resolved), forKey: registrarObject)
-        lock.unlock()
       }
       return resolved
     }
@@ -387,7 +379,6 @@ private class _PigeonFfiCodec {
 }
 
 class NativeInteropExampleApiInstanceTracker {
-  static let lock = NSLock()
   static var instancesOfNativeInteropExampleApi = [String: [NativeInteropExampleApiSetup]]()
 }
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
@@ -397,26 +388,7 @@ protocol NativeInteropExampleApi: AnyObject {
 
 /// Generated setup class from Pigeon to register implemented NativeInteropExampleApi classes.
 @objc class NativeInteropExampleApiSetup: NSObject {
-  private let pigeonApiLock = NSLock()
-  private var pigeonApi: NativeInteropExampleApi?
-  private var api: NativeInteropExampleApi? {
-    get {
-      pigeonApiLock.lock()
-      defer { pigeonApiLock.unlock() }
-      return pigeonApi
-    }
-    set {
-      // Release the previous value after unlocking so its deinit cannot run while the lock is held.
-      let oldValue: NativeInteropExampleApi?
-      do {
-        pigeonApiLock.lock()
-        defer { pigeonApiLock.unlock() }
-        oldValue = pigeonApi
-        pigeonApi = newValue
-      }
-      withExtendedLifetime(oldValue) {}
-    }
-  }
+  private var api: NativeInteropExampleApi?
   override init() {}
   private func resolveApi() throws -> NativeInteropExampleApi {
     guard let currentApi = api else {
@@ -428,7 +400,7 @@ protocol NativeInteropExampleApi: AnyObject {
     }
     return currentApi
   }
-  /// The engine key this wrapper was registered with, guarded by `NativeInteropExampleApiInstanceTracker.lock`.
+  /// The engine key this wrapper was registered with.
   private var engineKey: Int64 = Int64.min
 
   #if canImport(Flutter) || canImport(FlutterMacOS)
@@ -463,8 +435,6 @@ protocol NativeInteropExampleApi: AnyObject {
   #endif
 
   fileprivate static func register(api: NativeInteropExampleApi, engineKey: Int64, name: String) {
-    NativeInteropExampleApiInstanceTracker.lock.lock()
-    defer { NativeInteropExampleApiInstanceTracker.lock.unlock() }
     var list = NativeInteropExampleApiInstanceTracker.instancesOfNativeInteropExampleApi[name] ?? []
     if let index = list.firstIndex(where: { $0.api === api && $0.engineKey == engineKey }) {
       list.append(list.remove(at: index))
@@ -478,39 +448,28 @@ protocol NativeInteropExampleApi: AnyObject {
   }
 
   fileprivate static func unregister(api: NativeInteropExampleApi, engineKey: Int64, name: String) {
-    // Removed entries are kept alive until after unlocking so their deinit cannot run while the
-    // non-recursive lock is held.
-    var displaced: [Any] = []
-    do {
-      NativeInteropExampleApiInstanceTracker.lock.lock()
-      defer { NativeInteropExampleApiInstanceTracker.lock.unlock() }
-      guard
-        var list = NativeInteropExampleApiInstanceTracker.instancesOfNativeInteropExampleApi[name]
-      else {
-        return
-      }
-      // Fall back to identity-only matching when no entry has this engine key.
-      let matchesKey = list.contains { $0.api === api && $0.engineKey == engineKey }
-      list.removeAll { entry in
-        guard let existing = entry.api else {
-          return false
-        }
-        if existing === api && (!matchesKey || entry.engineKey == engineKey) {
-          displaced.append(existing)
-          displaced.append(entry)
-          entry.api = nil
-          return true
-        }
+    guard var list = NativeInteropExampleApiInstanceTracker.instancesOfNativeInteropExampleApi[name]
+    else {
+      return
+    }
+    // Fall back to identity-only matching when no entry has this engine key.
+    let matchesKey = list.contains { $0.api === api && $0.engineKey == engineKey }
+    list.removeAll { entry in
+      guard let existing = entry.api else {
         return false
       }
-      if list.isEmpty {
-        NativeInteropExampleApiInstanceTracker.instancesOfNativeInteropExampleApi.removeValue(
-          forKey: name)
-      } else {
-        NativeInteropExampleApiInstanceTracker.instancesOfNativeInteropExampleApi[name] = list
+      if existing === api && (!matchesKey || entry.engineKey == engineKey) {
+        entry.api = nil
+        return true
       }
+      return false
     }
-    withExtendedLifetime(displaced) {}
+    if list.isEmpty {
+      NativeInteropExampleApiInstanceTracker.instancesOfNativeInteropExampleApi.removeValue(
+        forKey: name)
+    } else {
+      NativeInteropExampleApiInstanceTracker.instancesOfNativeInteropExampleApi[name] = list
+    }
   }
 
   /// Returns the most recently registered instance for `name` (or the default
@@ -518,8 +477,6 @@ protocol NativeInteropExampleApi: AnyObject {
   @objc static func getInstance(
     name: String = NativeInteropExamplePigeonInternal.defaultInstanceName
   ) -> NativeInteropExampleApiSetup? {
-    NativeInteropExampleApiInstanceTracker.lock.lock()
-    defer { NativeInteropExampleApiInstanceTracker.lock.unlock() }
     return NativeInteropExampleApiInstanceTracker.instancesOfNativeInteropExampleApi[name]?.last
   }
 
@@ -531,8 +488,6 @@ protocol NativeInteropExampleApi: AnyObject {
   @objc static func pigeonResolveInstance(engineId: Int64, affinityKey: Int64, name: String)
     -> NativeInteropExampleApiSetup?
   {
-    NativeInteropExampleApiInstanceTracker.lock.lock()
-    defer { NativeInteropExampleApiInstanceTracker.lock.unlock() }
     guard let list = NativeInteropExampleApiInstanceTracker.instancesOfNativeInteropExampleApi[name]
     else {
       return nil
@@ -548,8 +503,6 @@ protocol NativeInteropExampleApi: AnyObject {
 
   /// Returns the engine key `instance` was registered with, or `Int64.min` if unknown.
   @objc static func pigeonEngineKey(of instance: NativeInteropExampleApiSetup) -> Int64 {
-    NativeInteropExampleApiInstanceTracker.lock.lock()
-    defer { NativeInteropExampleApiInstanceTracker.lock.unlock() }
     return instance.engineKey
   }
   @objc func doSomething(wrappedError: PigeonError) {

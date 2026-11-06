@@ -2046,13 +2046,14 @@ void main() {
         code,
         contains('fun getInstance(name: String = defaultInstanceName): HostApiRegistrar?'),
       );
-      expect(code, contains('@Volatile private var api: HostApi? = null'));
+      expect(code, contains('private var api: HostApi? = null'));
+      expect(code, isNot(contains('@Volatile')));
       expect(
         code,
         contains('throw FlutterError("unregistered-instance", "HostApi has not been registered.")'),
       );
       expect(code, isNot(contains('error("HostApi has not been registered")')));
-      expect(code, contains('kotlin.synchronized(HostApiInstances)'));
+      expect(code, isNot(contains('synchronized')));
       expect(code, contains('HostApiInstances[name]?.lastOrNull()'));
       expect(
         code,
@@ -2078,7 +2079,6 @@ void main() {
       );
       expect(code, isNot(contains('private class FlutterApiRegistration')));
       expect(code, contains('class FlutterApiRegistrar() {'));
-      expect(code, contains('kotlin.synchronized(registeredFlutterApi)'));
       expect(code, contains('registeredFlutterApi.remove(name)'));
       expect(
         code,
@@ -2234,10 +2234,10 @@ void main() {
     test('host API resolves by engine id, then affinity, then top of stack', () {
       final String code = generate(buildRoot(flutter: false));
       expectInOrder(code, <String>[
-        'val list = HostApiInstances[name] ?: return@synchronized null',
+        'val list = HostApiInstances[name] ?: return null',
         'val exact = if (engineId != PigeonEngineKeys.NO_KEY) list.lastOrNull { it.engineKey == engineId } else null',
         'val affine = if (affinityKey != PigeonEngineKeys.NO_KEY) list.lastOrNull { it.engineKey == affinityKey } else null',
-        'exact ?: affine ?: list.lastOrNull()',
+        'return exact ?: affine ?: list.lastOrNull()',
       ]);
       expect(code, contains('return instance.engineKey'));
     });

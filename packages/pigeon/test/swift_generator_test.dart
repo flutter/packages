@@ -1813,7 +1813,7 @@ void main() {
     expect(code, isNot(contains('fileprivate static let defaultInstanceName')));
     expect(code, contains('protocol HostApi: AnyObject {'));
     expect(code, contains('\nclass HostApiInstanceTracker {'));
-    expect(code, contains('static let lock = NSLock()'));
+    expect(code, isNot(contains('NSLock')));
     expect(code, contains('static var instancesOfHostApi = [String: [HostApiSetup]]()'));
     expect(code, isNot(contains('@discardableResult')));
     expect(code, contains('\n  override init() {}'));
@@ -1889,11 +1889,10 @@ void main() {
     expect(code, contains('return HostApiInstanceTracker.instancesOfHostApi[name]?.last'));
     expect(
       code,
-      contains('@objc class FlutterApiRegistrar: NSObject {\n  private static let lock'),
+      contains('@objc class FlutterApiRegistrar: NSObject {\n  static var registeredFlutterApi'),
     );
     expect(code, contains('  static var registeredFlutterApi = [String: [FlutterApi]]()'));
     expect(code, isNot(contains('private static var registeredFlutterApi')));
-    expect(code, contains('FlutterApiRegistrar.lock.lock()'));
     expect(
       code,
       contains(
@@ -1941,7 +1940,6 @@ void main() {
     expect(code, contains('/// Registers `api` under `name`'));
     expect(code, contains('/// Instances are matched by identity.'));
     expect(code, contains('/// Returns the most recently registered instance for `name`'));
-    expect(code, contains('// Removed entries are kept alive until after unlocking'));
 
     // Flutter-typed members must compile without the Flutter module (swiftgen).
     expect(
@@ -2139,7 +2137,7 @@ void main() {
         'static func register(api: Api, registrar: FlutterPluginRegistrar, name: String = PigeonInternal.defaultInstanceName) {',
       ),
     );
-    expect(code, contains('withExtendedLifetime(displaced) {}'));
+    expect(code, isNot(contains('withExtendedLifetime')));
     expect(
       code,
       contains(

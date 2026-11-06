@@ -209,7 +209,7 @@ When implementing Native Interop host APIs directly in an application target (su
 ### 4.3 FlutterApi (Host-to-Dart Calls)
 For `@FlutterApi()` interfaces (where host native code calls into Dart):
 
-- **Dart side**: Register your Dart implementation using `MyFlutterApi.setUp(MyFlutterApiImpl())` (or `MyFlutterApiRegistrar().register(MyFlutterApiImpl())` / `MyFlutterApiRegistrar().unregister(...)` for explicit stack-based lifecycle management).
+- **Dart side**: Register your Dart implementation using `MyFlutterApi.setUp(MyFlutterApiImpl())` (or `MyFlutterApiRegistrar().register(MyFlutterApiImpl())` / `MyFlutterApiRegistrar().unregister(...)` for explicit lifecycle management).
 - **Swift (FFI)**: Look up the instance for the plugin's engine via `MyFlutterApiRegistrar.getInstance(registrar:)` instead of passing a `BinaryMessenger` (keep the registrar from `register(with:)` on the plugin instance):
   ```swift
   // BEFORE (platform channels):
@@ -351,7 +351,7 @@ If creating and destroying a secondary `FlutterEngine` causes subsequent Dart ca
   - The plugin used a Pigeon version prior to `30.0.0`, which kept a single instance per name, and called `register(null)` / `register(api: nil)` during engine teardown.
   - The handle was resolved from the detached engine's registration (for example, a lookup that ran before the engine's own registration existed, without exact engine routing).
 - **Solution**:
-  - Regenerate with Pigeon `30.0.0` or later, which keeps an ordered, engine-associated instance stack per `name`.
+  - Regenerate with Pigeon `30.0.0` or later, which keeps each engine's registration separate so detaching one engine only removes its own registration.
   - Register and unregister with the engine: `MyApiRegistrar().register(this, binding)` / `MyApiRegistrar().unregister(this, binding)` in Kotlin (or `register(api, flutterEngine)` in an app), and `MyApiSetup.register(api: instance, registrar: registrar)` / `MyApiSetup.unregister(api: self, registrar: registrar)` in Swift. On iOS, call `registrar.publish(instance)` so `detachFromEngine(for:)` runs.
   - Resolve the first Dart handle early in startup (for example at the start of `main()`; on Android not in `registerWith`, where JNI isn't initialized yet) so each engine's isolate binds to its own engine when exact engine identifiers aren't available.
   - In native code, look up `@FlutterApi` instances with `MyFlutterApiRegistrar().getInstance(binding)` / `getInstance(flutterEngine)` (Kotlin) or `getInstance(registrar:)` (Swift).
