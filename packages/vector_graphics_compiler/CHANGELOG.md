@@ -1,3 +1,7 @@
+## 1.3.5
+
+* Fixes the initial `stroke-width` not being scaled by transforms.
+
 ## 1.3.4
 
 * Fixes `em` units in text `x`, `y`, `dx` and `dy` being treated as pixels.

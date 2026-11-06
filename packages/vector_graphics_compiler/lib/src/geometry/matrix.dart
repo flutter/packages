@@ -45,15 +45,22 @@ class AffineMatrix {
 
   /// Calculates the scale for a stroke width based on the average of the x- and
   /// y-axis scales of this matrix.
+  ///
+  /// A null [width] is the initial SVG stroke width of 1, which also scales. It
+  /// stays null if this matrix has no scale to apply.
   double? scaleStrokeWidth(double? width) {
-    if (width == null || (a == 1 && d == 1)) {
+    if (a == 1 && d == 1) {
       return width;
     }
 
     final double xScale = math.sqrt(a * a + c * c);
     final double yScale = math.sqrt(b * b + d * d);
+    final double scale = (xScale + yScale) / 2;
 
-    return (xScale + yScale) / 2 * width;
+    if (width == null && (scale - 1).abs() < 1e-9) {
+      return null;
+    }
+    return scale * (width ?? 1);
   }
 
   /// Creates a new affine matrix rotated by `radians`.

@@ -930,12 +930,12 @@ ${[for (var i = 2; i <= 30; i++) '    <pattern id="lvl$i" width="10" height="10"
       ),
       Paint(
         blendMode: BlendMode.srcOver,
-        stroke: Stroke(color: Color(0xffccaa00), join: StrokeJoin.round),
+        stroke: Stroke(color: Color(0xffccaa00), join: StrokeJoin.round, width: 0.8),
         fill: Fill(color: Color(0xffccaa00)),
       ),
       Paint(
         blendMode: BlendMode.srcOver,
-        stroke: Stroke(color: Color(0xff333333), join: StrokeJoin.round),
+        stroke: Stroke(color: Color(0xff333333), join: StrokeJoin.round, width: 0.8),
         fill: Fill(color: Color(0xff555555)),
       ),
       Paint(
@@ -2433,11 +2433,11 @@ const List<Paint> ghostScriptTigerPaints = <Paint>[
     fill: Fill(color: Color(0xffffffff)),
   ),
   Paint(
-    stroke: Stroke(color: Color.opaqueBlack),
+    stroke: Stroke(color: Color.opaqueBlack, width: 1.7656463),
     fill: Fill(color: Color(0xffffffff)),
   ),
   Paint(
-    stroke: Stroke(color: Color.opaqueBlack),
+    stroke: Stroke(color: Color.opaqueBlack, width: 1.7656463),
     fill: Fill(color: Color(0xffcc7226)),
   ),
   Paint(fill: Fill(color: Color(0xffcc7226))),
@@ -2466,7 +2466,7 @@ const List<Paint> ghostScriptTigerPaints = <Paint>[
   Paint(fill: Fill(color: Color(0xffb23259))),
   Paint(fill: Fill(color: Color(0xffa5264c))),
   Paint(
-    stroke: Stroke(color: Color.opaqueBlack),
+    stroke: Stroke(color: Color.opaqueBlack, width: 1.7656463),
     fill: Fill(color: Color(0xffff727f)),
   ),
   Paint(
@@ -2815,10 +2815,10 @@ const List<Paint> ghostScriptTigerPaints = <Paint>[
   Paint(fill: Fill(color: Color(0xffcccccc))),
   Paint(fill: Fill(color: Color(0xffcccccc))),
   Paint(fill: Fill(color: Color(0xffcccccc))),
-  Paint(stroke: Stroke(color: Color.opaqueBlack)),
-  Paint(stroke: Stroke(color: Color.opaqueBlack)),
-  Paint(stroke: Stroke(color: Color.opaqueBlack)),
-  Paint(stroke: Stroke(color: Color.opaqueBlack)),
+  Paint(stroke: Stroke(color: Color.opaqueBlack, width: 1.7656463)),
+  Paint(stroke: Stroke(color: Color.opaqueBlack, width: 1.7656463)),
+  Paint(stroke: Stroke(color: Color.opaqueBlack, width: 1.7656463)),
+  Paint(stroke: Stroke(color: Color.opaqueBlack, width: 1.7656463)),
 ];
 
 final List<Path> ghostScriptTigerPaths = <Path>[
