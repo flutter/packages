@@ -56,6 +56,7 @@ struct FakeStructReservedApi: NativeInteropReservedNamesHostApi {
 }
 
 // Tests macOS compilation and Native Interop HostApi multi-instance registration/deregistration.
+@Suite(.serialized)
 struct BasicCompileTest {
   @Test
   func makeApi() {
@@ -69,14 +70,18 @@ struct BasicCompileTest {
     let api1 = FakeClassReservedApi("engine1")
     let api2 = FakeClassReservedApi("engine2")
 
-    NativeInteropReservedNamesHostApiSetup.register(api: api1, name: name)
+    let setup1 = NativeInteropReservedNamesHostApiSetup.register(api: api1, name: name)!
     NativeInteropReservedNamesHostApiSetup.register(api: api2, name: name)
     #expect(
       NativeInteropReservedNamesHostApiSetup.getInstance(name: name)?.release(
         value: "ping", wrappedError: NativeInteropTestsError()) == "engine2:ping")
 
-    // Unregistering api1 out-of-order keeps api2 registered.
+    // Unregistering api1 out-of-order keeps api2 registered while detached setup1 reports an error
+    // instead of trapping.
     NativeInteropReservedNamesHostApiSetup.unregister(api: api1, name: name)
+    let staleError = NativeInteropTestsError()
+    #expect(setup1.release(value: "ping", wrappedError: staleError) == nil)
+    #expect(staleError.code == "unregistered-instance")
     #expect(
       NativeInteropReservedNamesHostApiSetup.getInstance(name: name)?.release(
         value: "ping", wrappedError: NativeInteropTestsError()) == "engine2:ping")
@@ -147,5 +152,17 @@ struct BasicCompileTest {
     // Detaching plugin2 restores whatever state existed prior to registrar1/registrar2.
     plugin2?.detachFromEngine(for: registrar2)
     #expect(NativeInteropHostIntegrationCoreApiSetup.getInstance() === preexistingSetup)
+  }
+
+  @Test
+  @MainActor
+  func realFlutterEnginesOutOfOrderTeardownPreservesRegistrations() {
+    #expect(SecondaryEngineTestRunner.verifyRealSecondaryEnginesOnMain())
+  }
+
+  @Test
+  @MainActor
+  func liveSecondaryEnginesExecuteDartIsolatesAcrossOutOfOrderTeardown() async {
+    #expect(await SecondaryEngineTestRunner.verifyMacOSLiveSecondaryEnginesWithEntrypoint())
   }
 }

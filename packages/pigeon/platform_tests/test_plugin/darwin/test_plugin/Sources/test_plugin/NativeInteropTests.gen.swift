@@ -3017,6 +3017,16 @@ protocol NativeInteropHostIntegrationCoreApi {
   func registerAndImmediatelyDeregisterHostApi(name: String) throws
   /// Tests that calling a deregistered Flutter API under [name] fails / returns null.
   func testCallDeregisteredFlutterApi(name: String) throws -> Bool
+  /// Spawns secondary engines, destroys one out-of-order, executes a live Dart
+  /// entrypoint on another (where supported by the embedder), and tears it down
+  /// while keeping the primary engine registration intact.
+  func testSecondaryEngineDartExecution() async throws -> Bool
+  /// Returns whether the secondary engine's Host API registration is ready for
+  /// the secondary Dart isolate to invoke.
+  func isSecondaryEngineRegistrationReady() throws -> Bool
+  /// Reports whether Native Interop Host API calls from a secondary engine's
+  /// Dart isolate succeeded.
+  func reportSecondaryEngineCheck(success: Bool) throws
 }
 
 /// Generated setup class from Pigeon to register implemented NativeInteropHostIntegrationCoreApi classes.
@@ -3036,6 +3046,16 @@ protocol NativeInteropHostIntegrationCoreApi {
     }
   }
   override init() {}
+  private func resolveApi() throws -> NativeInteropHostIntegrationCoreApi {
+    guard let currentApi = api else {
+      throw NativeInteropTestsError(
+        code: "unregistered-instance",
+        message: "NativeInteropHostIntegrationCoreApi has not been registered.",
+        details: nil
+      )
+    }
+    return currentApi
+  }
   @discardableResult
   static func register(
     api: NativeInteropHostIntegrationCoreApi?,
@@ -3157,7 +3177,8 @@ protocol NativeInteropHostIntegrationCoreApi {
   /// test basic calling.
   @objc func noop(wrappedError: NativeInteropTestsError) {
     do {
-      try api!.noop()
+      let activeApi = try resolveApi()
+      try activeApi.noop()
       return
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -3175,7 +3196,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     everything everythingArg: NativeInteropAllTypesBridge, wrappedError: NativeInteropTestsError
   ) -> NativeInteropAllTypesBridge? {
     do {
-      let res: NativeInteropAllTypes = try api!.echo(everythingArg.toSwift())
+      let activeApi = try resolveApi()
+      let res: NativeInteropAllTypes = try activeApi.echo(everythingArg.toSwift())
       return NativeInteropAllTypesBridge.fromSwift(res)!
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -3191,7 +3213,8 @@ protocol NativeInteropHostIntegrationCoreApi {
   /// Returns an error, to test error handling.
   @objc func throwError(wrappedError: NativeInteropTestsError) -> NSObject? {
     do {
-      let res: Any? = try api!.throwError()
+      let activeApi = try resolveApi()
+      let res: Any? = try activeApi.throwError()
       return _PigeonFfiCodec.writeValue(value: res, isObject: true) as? NSObject
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -3207,7 +3230,8 @@ protocol NativeInteropHostIntegrationCoreApi {
   /// Returns an error from a void function, to test error handling.
   @objc func throwErrorFromVoid(wrappedError: NativeInteropTestsError) {
     do {
-      try api!.throwErrorFromVoid()
+      let activeApi = try resolveApi()
+      try activeApi.throwErrorFromVoid()
       return
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -3223,7 +3247,8 @@ protocol NativeInteropHostIntegrationCoreApi {
   /// Returns a Flutter error, to test error handling.
   @objc func throwFlutterError(wrappedError: NativeInteropTestsError) -> NSObject? {
     do {
-      let res: Any? = try api!.throwFlutterError()
+      let activeApi = try resolveApi()
+      let res: Any? = try activeApi.throwFlutterError()
       return _PigeonFfiCodec.writeValue(value: res, isObject: true) as? NSObject
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -3239,7 +3264,8 @@ protocol NativeInteropHostIntegrationCoreApi {
   /// Returns passed in int.
   @objc func echoInt(anInt anIntArg: Int64, wrappedError: NativeInteropTestsError) -> NSNumber? {
     do {
-      let res: Int64 = try api!.echo(anIntArg)
+      let activeApi = try resolveApi()
+      let res: Int64 = try activeApi.echo(anIntArg)
       return NSNumber(value: res)
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -3257,7 +3283,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     -> NSNumber?
   {
     do {
-      let res: Double = try api!.echo(aDoubleArg)
+      let activeApi = try resolveApi()
+      let res: Double = try activeApi.echo(aDoubleArg)
       return NSNumber(value: res)
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -3273,7 +3300,8 @@ protocol NativeInteropHostIntegrationCoreApi {
   /// Returns the passed in boolean.
   @objc func echoBool(aBool aBoolArg: Bool, wrappedError: NativeInteropTestsError) -> NSNumber? {
     do {
-      let res: Bool = try api!.echo(aBoolArg)
+      let activeApi = try resolveApi()
+      let res: Bool = try activeApi.echo(aBoolArg)
       return NSNumber(value: res)
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -3291,7 +3319,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     -> NSString?
   {
     do {
-      let res: String = try api!.echo(aStringArg as String)
+      let activeApi = try resolveApi()
+      let res: String = try activeApi.echo(aStringArg as String)
       return res as NSString?
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -3310,7 +3339,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     wrappedError: NativeInteropTestsError
   ) -> NativeInteropTestsPigeonTypedData? {
     do {
-      let res: [UInt8] = try api!.echo(aUint8ListArg.toUint8Array()!)
+      let activeApi = try resolveApi()
+      let res: [UInt8] = try activeApi.echo(aUint8ListArg.toUint8Array()!)
       return NativeInteropTestsPigeonInternal.isNullish(res)
         ? nil : NativeInteropTestsPigeonTypedData(res)
     } catch let error as NativeInteropTestsError {
@@ -3330,7 +3360,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     wrappedError: NativeInteropTestsError
   ) -> NativeInteropTestsPigeonTypedData? {
     do {
-      let res: [Int32] = try api!.echo(aInt32ListArg.toInt32Array()!)
+      let activeApi = try resolveApi()
+      let res: [Int32] = try activeApi.echo(aInt32ListArg.toInt32Array()!)
       return NativeInteropTestsPigeonInternal.isNullish(res)
         ? nil : NativeInteropTestsPigeonTypedData(res)
     } catch let error as NativeInteropTestsError {
@@ -3350,7 +3381,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     wrappedError: NativeInteropTestsError
   ) -> NativeInteropTestsPigeonTypedData? {
     do {
-      let res: [Int64] = try api!.echo(aInt64ListArg.toInt64Array()!)
+      let activeApi = try resolveApi()
+      let res: [Int64] = try activeApi.echo(aInt64ListArg.toInt64Array()!)
       return NativeInteropTestsPigeonInternal.isNullish(res)
         ? nil : NativeInteropTestsPigeonTypedData(res)
     } catch let error as NativeInteropTestsError {
@@ -3370,7 +3402,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     wrappedError: NativeInteropTestsError
   ) -> NativeInteropTestsPigeonTypedData? {
     do {
-      let res: [Float64] = try api!.echo(aFloat64ListArg.toFloat64Array()!)
+      let activeApi = try resolveApi()
+      let res: [Float64] = try activeApi.echo(aFloat64ListArg.toFloat64Array()!)
       return NativeInteropTestsPigeonInternal.isNullish(res)
         ? nil : NativeInteropTestsPigeonTypedData(res)
     } catch let error as NativeInteropTestsError {
@@ -3389,7 +3422,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     -> NSObject?
   {
     do {
-      let res: Any = try api!.echo(_PigeonFfiCodec.readValue(value: anObjectArg)!)
+      let activeApi = try resolveApi()
+      let res: Any = try activeApi.echo(_PigeonFfiCodec.readValue(value: anObjectArg)!)
       return _PigeonFfiCodec.writeValue(value: res, isObject: true) as? NSObject
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -3407,7 +3441,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     -> [NSObject]?
   {
     do {
-      let res: [Any?] = try api!.echo(
+      let activeApi = try resolveApi()
+      let res: [Any?] = try activeApi.echo(
         _PigeonFfiCodec.readValue(value: listArg as NSObject, type: "Object") as! [Any?])
       return _PigeonFfiCodec.writeValue(value: res) as? [NSObject]
     } catch let error as NativeInteropTestsError {
@@ -3426,7 +3461,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     stringList stringListArg: [NSObject], wrappedError: NativeInteropTestsError
   ) -> [NSObject]? {
     do {
-      let res: [String?] = try api!.echo(
+      let activeApi = try resolveApi()
+      let res: [String?] = try activeApi.echo(
         stringList: _PigeonFfiCodec.readValue(value: stringListArg as NSObject, type: "String")
           as! [String?])
       return _PigeonFfiCodec.writeValue(value: res) as? [NSObject]
@@ -3446,7 +3482,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     -> [NSObject]?
   {
     do {
-      let res: [Int64?] = try api!.echo(
+      let activeApi = try resolveApi()
+      let res: [Int64?] = try activeApi.echo(
         intList: _PigeonFfiCodec.readValue(value: intListArg as NSObject, type: "int") as! [Int64?])
       return _PigeonFfiCodec.writeValue(value: res) as? [NSObject]
     } catch let error as NativeInteropTestsError {
@@ -3465,7 +3502,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     doubleList doubleListArg: [NSObject], wrappedError: NativeInteropTestsError
   ) -> [NSObject]? {
     do {
-      let res: [Double?] = try api!.echo(
+      let activeApi = try resolveApi()
+      let res: [Double?] = try activeApi.echo(
         doubleList: _PigeonFfiCodec.readValue(value: doubleListArg as NSObject, type: "double")
           as! [Double?])
       return _PigeonFfiCodec.writeValue(value: res) as? [NSObject]
@@ -3485,7 +3523,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     -> [NSObject]?
   {
     do {
-      let res: [Bool?] = try api!.echo(
+      let activeApi = try resolveApi()
+      let res: [Bool?] = try activeApi.echo(
         boolList: _PigeonFfiCodec.readValue(value: boolListArg as NSObject, type: "bool")
           as! [Bool?])
       return _PigeonFfiCodec.writeValue(value: res) as? [NSObject]
@@ -3505,7 +3544,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     -> [NSObject]?
   {
     do {
-      let res: [NativeInteropAnEnum?] = try api!.echo(
+      let activeApi = try resolveApi()
+      let res: [NativeInteropAnEnum?] = try activeApi.echo(
         enumList: _PigeonFfiCodec.readValue(
           value: enumListArg as NSObject, type: "NativeInteropAnEnum") as! [NativeInteropAnEnum?])
       return _PigeonFfiCodec.writeValue(value: res) as? [NSObject]
@@ -3525,7 +3565,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     classList classListArg: [NSObject], wrappedError: NativeInteropTestsError
   ) -> [NSObject]? {
     do {
-      let res: [NativeInteropAllNullableTypes?] = try api!.echo(
+      let activeApi = try resolveApi()
+      let res: [NativeInteropAllNullableTypes?] = try activeApi.echo(
         classList: _PigeonFfiCodec.readValue(
           value: classListArg as NSObject, type: "NativeInteropAllNullableTypes")
           as! [NativeInteropAllNullableTypes?])
@@ -3546,7 +3587,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     enumList enumListArg: [NSObject], wrappedError: NativeInteropTestsError
   ) -> [NSObject]? {
     do {
-      let res: [NativeInteropAnEnum] = try api!.echoNonNull(
+      let activeApi = try resolveApi()
+      let res: [NativeInteropAnEnum] = try activeApi.echoNonNull(
         enumList: _PigeonFfiCodec.readValue(
           value: enumListArg as NSObject, type: "NativeInteropAnEnum") as! [NativeInteropAnEnum])
       return _PigeonFfiCodec.writeValue(value: res) as? [NSObject]
@@ -3566,7 +3608,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     classList classListArg: [NSObject], wrappedError: NativeInteropTestsError
   ) -> [NSObject]? {
     do {
-      let res: [NativeInteropAllNullableTypes] = try api!.echoNonNull(
+      let activeApi = try resolveApi()
+      let res: [NativeInteropAllNullableTypes] = try activeApi.echoNonNull(
         classList: _PigeonFfiCodec.readValue(
           value: classListArg as NSObject, type: "NativeInteropAllNullableTypes")
           as! [NativeInteropAllNullableTypes])
@@ -3587,7 +3630,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     -> [NSObject: NSObject]?
   {
     do {
-      let res: [AnyHashable?: Any?] = try api!.echo(
+      let activeApi = try resolveApi()
+      let res: [AnyHashable?: Any?] = try activeApi.echo(
         _PigeonFfiCodec.readValue(value: mapArg as NSObject, type: "Object", type2: "Object")
           as! [AnyHashable?: Any?])
       return _PigeonFfiCodec.writeValue(value: res) as? [NSObject: NSObject]
@@ -3607,7 +3651,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     stringMap stringMapArg: [NSObject: NSObject], wrappedError: NativeInteropTestsError
   ) -> [NSObject: NSObject]? {
     do {
-      let res: [String?: String?] = try api!.echo(
+      let activeApi = try resolveApi()
+      let res: [String?: String?] = try activeApi.echo(
         stringMap: _PigeonFfiCodec.readValue(
           value: stringMapArg as NSObject, type: "String", type2: "String") as! [String?: String?])
       return _PigeonFfiCodec.writeValue(value: res) as? [NSObject: NSObject]
@@ -3627,7 +3672,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     intMap intMapArg: [NSObject: NSObject], wrappedError: NativeInteropTestsError
   ) -> [NSObject: NSObject]? {
     do {
-      let res: [Int64?: Int64?] = try api!.echo(
+      let activeApi = try resolveApi()
+      let res: [Int64?: Int64?] = try activeApi.echo(
         intMap: _PigeonFfiCodec.readValue(value: intMapArg as NSObject, type: "int", type2: "int")
           as! [Int64?: Int64?])
       return _PigeonFfiCodec.writeValue(value: res) as? [NSObject: NSObject]
@@ -3647,7 +3693,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     enumMap enumMapArg: [NSObject: NSObject], wrappedError: NativeInteropTestsError
   ) -> [NSObject: NSObject]? {
     do {
-      let res: [NativeInteropAnEnum?: NativeInteropAnEnum?] = try api!.echo(
+      let activeApi = try resolveApi()
+      let res: [NativeInteropAnEnum?: NativeInteropAnEnum?] = try activeApi.echo(
         enumMap: _PigeonFfiCodec.readValue(
           value: enumMapArg as NSObject, type: "NativeInteropAnEnum", type2: "NativeInteropAnEnum")
           as! [NativeInteropAnEnum?: NativeInteropAnEnum?])
@@ -3668,7 +3715,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     classMap classMapArg: [NSObject: NSObject], wrappedError: NativeInteropTestsError
   ) -> [NSObject: NSObject]? {
     do {
-      let res: [Int64?: NativeInteropAllNullableTypes?] = try api!.echo(
+      let activeApi = try resolveApi()
+      let res: [Int64?: NativeInteropAllNullableTypes?] = try activeApi.echo(
         classMap: _PigeonFfiCodec.readValue(
           value: classMapArg as NSObject, type: "int", type2: "NativeInteropAllNullableTypes")
           as! [Int64?: NativeInteropAllNullableTypes?])
@@ -3689,7 +3737,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     stringMap stringMapArg: [NSObject: NSObject], wrappedError: NativeInteropTestsError
   ) -> [NSObject: NSObject]? {
     do {
-      let res: [String: String] = try api!.echoNonNull(
+      let activeApi = try resolveApi()
+      let res: [String: String] = try activeApi.echoNonNull(
         stringMap: _PigeonFfiCodec.readValue(
           value: stringMapArg as NSObject, type: "String", type2: "String") as! [String: String])
       return _PigeonFfiCodec.writeValue(value: res) as? [NSObject: NSObject]
@@ -3709,7 +3758,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     intMap intMapArg: [NSObject: NSObject], wrappedError: NativeInteropTestsError
   ) -> [NSObject: NSObject]? {
     do {
-      let res: [Int64: Int64] = try api!.echoNonNull(
+      let activeApi = try resolveApi()
+      let res: [Int64: Int64] = try activeApi.echoNonNull(
         intMap: _PigeonFfiCodec.readValue(value: intMapArg as NSObject, type: "int", type2: "int")
           as! [Int64: Int64])
       return _PigeonFfiCodec.writeValue(value: res) as? [NSObject: NSObject]
@@ -3729,7 +3779,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     enumMap enumMapArg: [NSObject: NSObject], wrappedError: NativeInteropTestsError
   ) -> [NSObject: NSObject]? {
     do {
-      let res: [NativeInteropAnEnum: NativeInteropAnEnum] = try api!.echoNonNull(
+      let activeApi = try resolveApi()
+      let res: [NativeInteropAnEnum: NativeInteropAnEnum] = try activeApi.echoNonNull(
         enumMap: _PigeonFfiCodec.readValue(
           value: enumMapArg as NSObject, type: "NativeInteropAnEnum", type2: "NativeInteropAnEnum")
           as! [NativeInteropAnEnum: NativeInteropAnEnum])
@@ -3750,7 +3801,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     classMap classMapArg: [NSObject: NSObject], wrappedError: NativeInteropTestsError
   ) -> [NSObject: NSObject]? {
     do {
-      let res: [Int64: NativeInteropAllNullableTypes] = try api!.echoNonNull(
+      let activeApi = try resolveApi()
+      let res: [Int64: NativeInteropAllNullableTypes] = try activeApi.echoNonNull(
         classMap: _PigeonFfiCodec.readValue(
           value: classMapArg as NSObject, type: "int", type2: "NativeInteropAllNullableTypes")
           as! [Int64: NativeInteropAllNullableTypes])
@@ -3771,7 +3823,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     wrapper wrapperArg: NativeInteropAllClassesWrapperBridge, wrappedError: NativeInteropTestsError
   ) -> NativeInteropAllClassesWrapperBridge? {
     do {
-      let res: NativeInteropAllClassesWrapper = try api!.echo(wrapperArg.toSwift())
+      let activeApi = try resolveApi()
+      let res: NativeInteropAllClassesWrapper = try activeApi.echo(wrapperArg.toSwift())
       return NativeInteropAllClassesWrapperBridge.fromSwift(res)!
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -3790,7 +3843,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     wrappedError: NativeInteropTestsError
   ) -> NativeInteropSealedClassBridge? {
     do {
-      let res: NativeInteropSealedClass = try api!.echo(
+      let activeApi = try resolveApi()
+      let res: NativeInteropSealedClass = try activeApi.echo(
         sealedClass: NativeInteropSealedClassBridge.toSwift(sealedClassArg)!)
       return NativeInteropSealedClassBridge.fromSwift(res)!
     } catch let error as NativeInteropTestsError {
@@ -3810,7 +3864,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     wrappedError: NativeInteropTestsError
   ) -> NativeInteropSealedClassBridge? {
     do {
-      let res: NativeInteropSealedClass? = try api!.echoNullable(
+      let activeApi = try resolveApi()
+      let res: NativeInteropSealedClass? = try activeApi.echoNullable(
         sealedClass: NativeInteropSealedClassBridge.toSwift(sealedClassArg))
       return NativeInteropSealedClassBridge.fromSwift(res)
     } catch let error as NativeInteropTestsError {
@@ -3829,7 +3884,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     sealedClassList sealedClassListArg: [NSObject], wrappedError: NativeInteropTestsError
   ) -> [NSObject]? {
     do {
-      let res: [NativeInteropSealedClass] = try api!.echo(
+      let activeApi = try resolveApi()
+      let res: [NativeInteropSealedClass] = try activeApi.echo(
         sealedClassList: _PigeonFfiCodec.readValue(
           value: sealedClassListArg as NSObject, type: "NativeInteropSealedClass")
           as! [NativeInteropSealedClass])
@@ -3850,7 +3906,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     wrapper wrapperArg: NativeInteropSealedClassWrapperBridge, wrappedError: NativeInteropTestsError
   ) -> NativeInteropSealedClassWrapperBridge? {
     do {
-      let res: NativeInteropSealedClassWrapper = try api!.echo(
+      let activeApi = try resolveApi()
+      let res: NativeInteropSealedClassWrapper = try activeApi.echo(
         sealedClassWrapper: wrapperArg.toSwift())
       return NativeInteropSealedClassWrapperBridge.fromSwift(res)!
     } catch let error as NativeInteropTestsError {
@@ -3869,7 +3926,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     -> NSNumber?
   {
     do {
-      let res: NativeInteropAnEnum = try api!.echo(anEnumArg)
+      let activeApi = try resolveApi()
+      let res: NativeInteropAnEnum = try activeApi.echo(anEnumArg)
       return NSNumber(value: res.rawValue)
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -3887,7 +3945,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     anotherEnum anotherEnumArg: NativeInteropAnotherEnum, wrappedError: NativeInteropTestsError
   ) -> NSNumber? {
     do {
-      let res: NativeInteropAnotherEnum = try api!.echo(anotherEnumArg)
+      let activeApi = try resolveApi()
+      let res: NativeInteropAnotherEnum = try activeApi.echo(anotherEnumArg)
       return NSNumber(value: res.rawValue)
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -3905,7 +3964,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     aString aStringArg: NSString, wrappedError: NativeInteropTestsError
   ) -> NSString? {
     do {
-      let res: String = try api!.echoNamedDefault(aStringArg as String)
+      let activeApi = try resolveApi()
+      let res: String = try activeApi.echoNamedDefault(aStringArg as String)
       return res as NSString?
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -3923,7 +3983,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     aDouble aDoubleArg: Double, wrappedError: NativeInteropTestsError
   ) -> NSNumber? {
     do {
-      let res: Double = try api!.echoOptionalDefault(aDoubleArg)
+      let activeApi = try resolveApi()
+      let res: Double = try activeApi.echoOptionalDefault(aDoubleArg)
       return NSNumber(value: res)
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -3941,7 +4002,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     -> NSNumber?
   {
     do {
-      let res: Int64 = try api!.echoRequired(anIntArg)
+      let activeApi = try resolveApi()
+      let res: Int64 = try activeApi.echoRequired(anIntArg)
       return NSNumber(value: res)
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -3960,7 +4022,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     wrappedError: NativeInteropTestsError
   ) -> NativeInteropAllNullableTypesBridge? {
     do {
-      let res: NativeInteropAllNullableTypes? = try api!.echoNullable(
+      let activeApi = try resolveApi()
+      let res: NativeInteropAllNullableTypes? = try activeApi.echoNullable(
         NativeInteropTestsPigeonInternal.isNullish(everythingArg) ? nil : everythingArg!.toSwift())
       return NativeInteropAllNullableTypesBridge.fromSwift(res)
     } catch let error as NativeInteropTestsError {
@@ -3980,7 +4043,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     wrappedError: NativeInteropTestsError
   ) -> NativeInteropAllNullableTypesWithoutRecursionBridge? {
     do {
-      let res: NativeInteropAllNullableTypesWithoutRecursion? = try api!.echoNullable(
+      let activeApi = try resolveApi()
+      let res: NativeInteropAllNullableTypesWithoutRecursion? = try activeApi.echoNullable(
         NativeInteropTestsPigeonInternal.isNullish(everythingArg) ? nil : everythingArg!.toSwift())
       return NativeInteropAllNullableTypesWithoutRecursionBridge.fromSwift(res)
     } catch let error as NativeInteropTestsError {
@@ -4000,7 +4064,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     wrapper wrapperArg: NativeInteropAllClassesWrapperBridge, wrappedError: NativeInteropTestsError
   ) -> NSString? {
     do {
-      let res: String? = try api!.extractNestedNullableString(from: wrapperArg.toSwift())
+      let activeApi = try resolveApi()
+      let res: String? = try activeApi.extractNestedNullableString(from: wrapperArg.toSwift())
       return res as NSString?
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -4019,7 +4084,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     nullableString nullableStringArg: NSString?, wrappedError: NativeInteropTestsError
   ) -> NativeInteropAllClassesWrapperBridge? {
     do {
-      let res: NativeInteropAllClassesWrapper = try api!.createNestedObject(
+      let activeApi = try resolveApi()
+      let res: NativeInteropAllClassesWrapper = try activeApi.createNestedObject(
         with: nullableStringArg as String?)
       return NativeInteropAllClassesWrapperBridge.fromSwift(res)!
     } catch let error as NativeInteropTestsError {
@@ -4038,7 +4104,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     aNullableString aNullableStringArg: NSString?, wrappedError: NativeInteropTestsError
   ) -> NativeInteropAllNullableTypesBridge? {
     do {
-      let res: NativeInteropAllNullableTypes = try api!.sendMultipleNullableTypes(
+      let activeApi = try resolveApi()
+      let res: NativeInteropAllNullableTypes = try activeApi.sendMultipleNullableTypes(
         aBool: NativeInteropTestsPigeonInternal.isNullish(aNullableBoolArg)
           ? nil : aNullableBoolArg!.boolValue,
         anInt: NativeInteropTestsPigeonInternal.isNullish(aNullableIntArg)
@@ -4061,8 +4128,9 @@ protocol NativeInteropHostIntegrationCoreApi {
     aNullableString aNullableStringArg: NSString?, wrappedError: NativeInteropTestsError
   ) -> NativeInteropAllNullableTypesWithoutRecursionBridge? {
     do {
-      let res: NativeInteropAllNullableTypesWithoutRecursion = try api!
-        .sendMultipleNullableTypesWithoutRecursion(
+      let activeApi = try resolveApi()
+      let res: NativeInteropAllNullableTypesWithoutRecursion =
+        try activeApi.sendMultipleNullableTypesWithoutRecursion(
           aBool: NativeInteropTestsPigeonInternal.isNullish(aNullableBoolArg)
             ? nil : aNullableBoolArg!.boolValue,
           anInt: NativeInteropTestsPigeonInternal.isNullish(aNullableIntArg)
@@ -4084,7 +4152,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     aNullableInt aNullableIntArg: NSNumber?, wrappedError: NativeInteropTestsError
   ) -> NSNumber? {
     do {
-      let res: Int64? = try api!.echoNullable(
+      let activeApi = try resolveApi()
+      let res: Int64? = try activeApi.echoNullable(
         NativeInteropTestsPigeonInternal.isNullish(aNullableIntArg)
           ? nil : aNullableIntArg!.int64Value)
       return NativeInteropTestsPigeonInternal.isNullish(res) ? nil : NSNumber(value: res!)
@@ -4104,7 +4173,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     aNullableDouble aNullableDoubleArg: NSNumber?, wrappedError: NativeInteropTestsError
   ) -> NSNumber? {
     do {
-      let res: Double? = try api!.echoNullable(
+      let activeApi = try resolveApi()
+      let res: Double? = try activeApi.echoNullable(
         NativeInteropTestsPigeonInternal.isNullish(aNullableDoubleArg)
           ? nil : aNullableDoubleArg!.doubleValue)
       return NativeInteropTestsPigeonInternal.isNullish(res) ? nil : NSNumber(value: res!)
@@ -4124,7 +4194,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     aNullableBool aNullableBoolArg: NSNumber?, wrappedError: NativeInteropTestsError
   ) -> NSNumber? {
     do {
-      let res: Bool? = try api!.echoNullable(
+      let activeApi = try resolveApi()
+      let res: Bool? = try activeApi.echoNullable(
         NativeInteropTestsPigeonInternal.isNullish(aNullableBoolArg)
           ? nil : aNullableBoolArg!.boolValue)
       return NativeInteropTestsPigeonInternal.isNullish(res) ? nil : NSNumber(value: res!)
@@ -4144,7 +4215,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     aNullableString aNullableStringArg: NSString?, wrappedError: NativeInteropTestsError
   ) -> NSString? {
     do {
-      let res: String? = try api!.echoNullable(aNullableStringArg as String?)
+      let activeApi = try resolveApi()
+      let res: String? = try activeApi.echoNullable(aNullableStringArg as String?)
       return res as NSString?
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -4163,7 +4235,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     wrappedError: NativeInteropTestsError
   ) -> NativeInteropTestsPigeonTypedData? {
     do {
-      let res: [UInt8]? = try api!.echoNullable(
+      let activeApi = try resolveApi()
+      let res: [UInt8]? = try activeApi.echoNullable(
         NativeInteropTestsPigeonInternal.isNullish(aNullableUint8ListArg)
           ? nil : aNullableUint8ListArg!.toUint8Array())
       return NativeInteropTestsPigeonInternal.isNullish(res)
@@ -4185,7 +4258,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     wrappedError: NativeInteropTestsError
   ) -> NativeInteropTestsPigeonTypedData? {
     do {
-      let res: [Int32]? = try api!.echoNullable(
+      let activeApi = try resolveApi()
+      let res: [Int32]? = try activeApi.echoNullable(
         NativeInteropTestsPigeonInternal.isNullish(aNullableInt32ListArg)
           ? nil : aNullableInt32ListArg!.toInt32Array())
       return NativeInteropTestsPigeonInternal.isNullish(res)
@@ -4207,7 +4281,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     wrappedError: NativeInteropTestsError
   ) -> NativeInteropTestsPigeonTypedData? {
     do {
-      let res: [Int64]? = try api!.echoNullable(
+      let activeApi = try resolveApi()
+      let res: [Int64]? = try activeApi.echoNullable(
         NativeInteropTestsPigeonInternal.isNullish(aNullableInt64ListArg)
           ? nil : aNullableInt64ListArg!.toInt64Array())
       return NativeInteropTestsPigeonInternal.isNullish(res)
@@ -4229,7 +4304,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     wrappedError: NativeInteropTestsError
   ) -> NativeInteropTestsPigeonTypedData? {
     do {
-      let res: [Float64]? = try api!.echoNullable(
+      let activeApi = try resolveApi()
+      let res: [Float64]? = try activeApi.echoNullable(
         NativeInteropTestsPigeonInternal.isNullish(aNullableFloat64ListArg)
           ? nil : aNullableFloat64ListArg!.toFloat64Array())
       return NativeInteropTestsPigeonInternal.isNullish(res)
@@ -4250,7 +4326,9 @@ protocol NativeInteropHostIntegrationCoreApi {
     aNullableObject aNullableObjectArg: NSObject, wrappedError: NativeInteropTestsError
   ) -> NSObject? {
     do {
-      let res: Any? = try api!.echoNullable(_PigeonFfiCodec.readValue(value: aNullableObjectArg))
+      let activeApi = try resolveApi()
+      let res: Any? = try activeApi.echoNullable(
+        _PigeonFfiCodec.readValue(value: aNullableObjectArg))
       return _PigeonFfiCodec.writeValue(value: res, isObject: true) as? NSObject
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -4268,7 +4346,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     aNullableList aNullableListArg: [NSObject]?, wrappedError: NativeInteropTestsError
   ) -> [NSObject]? {
     do {
-      let res: [Any?]? = try api!.echoNullable(
+      let activeApi = try resolveApi()
+      let res: [Any?]? = try activeApi.echoNullable(
         _PigeonFfiCodec.readValue(value: aNullableListArg as NSObject?, type: "Object") as? [Any?])
       return _PigeonFfiCodec.writeValue(value: res) as? [NSObject]
     } catch let error as NativeInteropTestsError {
@@ -4287,7 +4366,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     enumList enumListArg: [NSObject]?, wrappedError: NativeInteropTestsError
   ) -> [NSObject]? {
     do {
-      let res: [NativeInteropAnEnum?]? = try api!.echoNullable(
+      let activeApi = try resolveApi()
+      let res: [NativeInteropAnEnum?]? = try activeApi.echoNullable(
         enumList: _PigeonFfiCodec.readValue(
           value: enumListArg as NSObject?, type: "NativeInteropAnEnum") as? [NativeInteropAnEnum?])
       return _PigeonFfiCodec.writeValue(value: res) as? [NSObject]
@@ -4307,7 +4387,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     classList classListArg: [NSObject]?, wrappedError: NativeInteropTestsError
   ) -> [NSObject]? {
     do {
-      let res: [NativeInteropAllNullableTypes?]? = try api!.echoNullable(
+      let activeApi = try resolveApi()
+      let res: [NativeInteropAllNullableTypes?]? = try activeApi.echoNullable(
         classList: _PigeonFfiCodec.readValue(
           value: classListArg as NSObject?, type: "NativeInteropAllNullableTypes")
           as? [NativeInteropAllNullableTypes?])
@@ -4328,7 +4409,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     enumList enumListArg: [NSObject]?, wrappedError: NativeInteropTestsError
   ) -> [NSObject]? {
     do {
-      let res: [NativeInteropAnEnum]? = try api!.echoNullableNonNull(
+      let activeApi = try resolveApi()
+      let res: [NativeInteropAnEnum]? = try activeApi.echoNullableNonNull(
         enumList: _PigeonFfiCodec.readValue(
           value: enumListArg as NSObject?, type: "NativeInteropAnEnum") as? [NativeInteropAnEnum])
       return _PigeonFfiCodec.writeValue(value: res) as? [NSObject]
@@ -4348,7 +4430,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     classList classListArg: [NSObject]?, wrappedError: NativeInteropTestsError
   ) -> [NSObject]? {
     do {
-      let res: [NativeInteropAllNullableTypes]? = try api!.echoNullableNonNull(
+      let activeApi = try resolveApi()
+      let res: [NativeInteropAllNullableTypes]? = try activeApi.echoNullableNonNull(
         classList: _PigeonFfiCodec.readValue(
           value: classListArg as NSObject?, type: "NativeInteropAllNullableTypes")
           as? [NativeInteropAllNullableTypes])
@@ -4369,7 +4452,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     map mapArg: [NSObject: NSObject]?, wrappedError: NativeInteropTestsError
   ) -> [NSObject: NSObject]? {
     do {
-      let res: [AnyHashable?: Any?]? = try api!.echoNullable(
+      let activeApi = try resolveApi()
+      let res: [AnyHashable?: Any?]? = try activeApi.echoNullable(
         _PigeonFfiCodec.readValue(value: mapArg as NSObject?, type: "Object", type2: "Object")
           as? [AnyHashable?: Any?])
       return _PigeonFfiCodec.writeValue(value: res) as? [NSObject: NSObject]
@@ -4389,7 +4473,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     stringMap stringMapArg: [NSObject: NSObject]?, wrappedError: NativeInteropTestsError
   ) -> [NSObject: NSObject]? {
     do {
-      let res: [String?: String?]? = try api!.echoNullable(
+      let activeApi = try resolveApi()
+      let res: [String?: String?]? = try activeApi.echoNullable(
         stringMap: _PigeonFfiCodec.readValue(
           value: stringMapArg as NSObject?, type: "String", type2: "String") as? [String?: String?])
       return _PigeonFfiCodec.writeValue(value: res) as? [NSObject: NSObject]
@@ -4409,7 +4494,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     intMap intMapArg: [NSObject: NSObject]?, wrappedError: NativeInteropTestsError
   ) -> [NSObject: NSObject]? {
     do {
-      let res: [Int64?: Int64?]? = try api!.echoNullable(
+      let activeApi = try resolveApi()
+      let res: [Int64?: Int64?]? = try activeApi.echoNullable(
         intMap: _PigeonFfiCodec.readValue(value: intMapArg as NSObject?, type: "int", type2: "int")
           as? [Int64?: Int64?])
       return _PigeonFfiCodec.writeValue(value: res) as? [NSObject: NSObject]
@@ -4429,7 +4515,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     enumMap enumMapArg: [NSObject: NSObject]?, wrappedError: NativeInteropTestsError
   ) -> [NSObject: NSObject]? {
     do {
-      let res: [NativeInteropAnEnum?: NativeInteropAnEnum?]? = try api!.echoNullable(
+      let activeApi = try resolveApi()
+      let res: [NativeInteropAnEnum?: NativeInteropAnEnum?]? = try activeApi.echoNullable(
         enumMap: _PigeonFfiCodec.readValue(
           value: enumMapArg as NSObject?, type: "NativeInteropAnEnum", type2: "NativeInteropAnEnum")
           as? [NativeInteropAnEnum?: NativeInteropAnEnum?])
@@ -4450,7 +4537,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     classMap classMapArg: [NSObject: NSObject]?, wrappedError: NativeInteropTestsError
   ) -> [NSObject: NSObject]? {
     do {
-      let res: [Int64?: NativeInteropAllNullableTypes?]? = try api!.echoNullable(
+      let activeApi = try resolveApi()
+      let res: [Int64?: NativeInteropAllNullableTypes?]? = try activeApi.echoNullable(
         classMap: _PigeonFfiCodec.readValue(
           value: classMapArg as NSObject?, type: "int", type2: "NativeInteropAllNullableTypes")
           as? [Int64?: NativeInteropAllNullableTypes?])
@@ -4471,7 +4559,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     stringMap stringMapArg: [NSObject: NSObject]?, wrappedError: NativeInteropTestsError
   ) -> [NSObject: NSObject]? {
     do {
-      let res: [String: String]? = try api!.echoNullableNonNull(
+      let activeApi = try resolveApi()
+      let res: [String: String]? = try activeApi.echoNullableNonNull(
         stringMap: _PigeonFfiCodec.readValue(
           value: stringMapArg as NSObject?, type: "String", type2: "String") as? [String: String])
       return _PigeonFfiCodec.writeValue(value: res) as? [NSObject: NSObject]
@@ -4491,7 +4580,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     intMap intMapArg: [NSObject: NSObject]?, wrappedError: NativeInteropTestsError
   ) -> [NSObject: NSObject]? {
     do {
-      let res: [Int64: Int64]? = try api!.echoNullableNonNull(
+      let activeApi = try resolveApi()
+      let res: [Int64: Int64]? = try activeApi.echoNullableNonNull(
         intMap: _PigeonFfiCodec.readValue(value: intMapArg as NSObject?, type: "int", type2: "int")
           as? [Int64: Int64])
       return _PigeonFfiCodec.writeValue(value: res) as? [NSObject: NSObject]
@@ -4511,7 +4601,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     enumMap enumMapArg: [NSObject: NSObject]?, wrappedError: NativeInteropTestsError
   ) -> [NSObject: NSObject]? {
     do {
-      let res: [NativeInteropAnEnum: NativeInteropAnEnum]? = try api!.echoNullableNonNull(
+      let activeApi = try resolveApi()
+      let res: [NativeInteropAnEnum: NativeInteropAnEnum]? = try activeApi.echoNullableNonNull(
         enumMap: _PigeonFfiCodec.readValue(
           value: enumMapArg as NSObject?, type: "NativeInteropAnEnum", type2: "NativeInteropAnEnum")
           as? [NativeInteropAnEnum: NativeInteropAnEnum])
@@ -4532,7 +4623,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     classMap classMapArg: [NSObject: NSObject]?, wrappedError: NativeInteropTestsError
   ) -> [NSObject: NSObject]? {
     do {
-      let res: [Int64: NativeInteropAllNullableTypes]? = try api!.echoNullableNonNull(
+      let activeApi = try resolveApi()
+      let res: [Int64: NativeInteropAllNullableTypes]? = try activeApi.echoNullableNonNull(
         classMap: _PigeonFfiCodec.readValue(
           value: classMapArg as NSObject?, type: "int", type2: "NativeInteropAllNullableTypes")
           as? [Int64: NativeInteropAllNullableTypes])
@@ -4552,7 +4644,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     -> NSNumber?
   {
     do {
-      let res: NativeInteropAnEnum? = try api!.echoNullable(
+      let activeApi = try resolveApi()
+      let res: NativeInteropAnEnum? = try activeApi.echoNullable(
         NativeInteropTestsPigeonInternal.isNullish(anEnumArg)
           ? nil : NativeInteropAnEnum.init(rawValue: anEnumArg!.intValue))
       return NativeInteropTestsPigeonInternal.isNullish(res) ? nil : NSNumber(value: res!.rawValue)
@@ -4571,7 +4664,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     anotherEnum anotherEnumArg: NSNumber?, wrappedError: NativeInteropTestsError
   ) -> NSNumber? {
     do {
-      let res: NativeInteropAnotherEnum? = try api!.echoNullable(
+      let activeApi = try resolveApi()
+      let res: NativeInteropAnotherEnum? = try activeApi.echoNullable(
         NativeInteropTestsPigeonInternal.isNullish(anotherEnumArg)
           ? nil : NativeInteropAnotherEnum.init(rawValue: anotherEnumArg!.intValue))
       return NativeInteropTestsPigeonInternal.isNullish(res) ? nil : NSNumber(value: res!.rawValue)
@@ -4591,7 +4685,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     aNullableInt aNullableIntArg: NSNumber?, wrappedError: NativeInteropTestsError
   ) -> NSNumber? {
     do {
-      let res: Int64? = try api!.echoOptional(
+      let activeApi = try resolveApi()
+      let res: Int64? = try activeApi.echoOptional(
         NativeInteropTestsPigeonInternal.isNullish(aNullableIntArg)
           ? nil : aNullableIntArg!.int64Value)
       return NativeInteropTestsPigeonInternal.isNullish(res) ? nil : NSNumber(value: res!)
@@ -4611,7 +4706,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     aNullableString aNullableStringArg: NSString?, wrappedError: NativeInteropTestsError
   ) -> NSString? {
     do {
-      let res: String? = try api!.echoNamed(aNullableStringArg as String?)
+      let activeApi = try resolveApi()
+      let res: String? = try activeApi.echoNamed(aNullableStringArg as String?)
       return res as NSString?
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -4628,7 +4724,8 @@ protocol NativeInteropHostIntegrationCoreApi {
   /// test basic asynchronous calling.
   @objc func noopAsync(wrappedError: NativeInteropTestsError) async {
     do {
-      try await api!.noopAsync()
+      let activeApi = try resolveApi()
+      try await activeApi.noopAsync()
       return
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -4646,7 +4743,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     -> NSNumber?
   {
     do {
-      let res: Int64 = try await api!.echoAsync(anIntArg)
+      let activeApi = try resolveApi()
+      let res: Int64 = try await activeApi.echoAsync(anIntArg)
       return NSNumber(value: res)
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -4664,7 +4762,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     async -> NSNumber?
   {
     do {
-      let res: Double = try await api!.echoAsync(aDoubleArg)
+      let activeApi = try resolveApi()
+      let res: Double = try await activeApi.echoAsync(aDoubleArg)
       return NSNumber(value: res)
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -4682,7 +4781,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     -> NSNumber?
   {
     do {
-      let res: Bool = try await api!.echoAsync(aBoolArg)
+      let activeApi = try resolveApi()
+      let res: Bool = try await activeApi.echoAsync(aBoolArg)
       return NSNumber(value: res)
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -4700,7 +4800,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     async -> NSString?
   {
     do {
-      let res: String = try await api!.echoAsync(aStringArg as String)
+      let activeApi = try resolveApi()
+      let res: String = try await activeApi.echoAsync(aStringArg as String)
       return res as NSString?
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -4719,7 +4820,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     wrappedError: NativeInteropTestsError
   ) async -> NativeInteropTestsPigeonTypedData? {
     do {
-      let res: [UInt8] = try await api!.echoAsync(aUint8ListArg.toUint8Array()!)
+      let activeApi = try resolveApi()
+      let res: [UInt8] = try await activeApi.echoAsync(aUint8ListArg.toUint8Array()!)
       return NativeInteropTestsPigeonInternal.isNullish(res)
         ? nil : NativeInteropTestsPigeonTypedData(res)
     } catch let error as NativeInteropTestsError {
@@ -4739,7 +4841,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     wrappedError: NativeInteropTestsError
   ) async -> NativeInteropTestsPigeonTypedData? {
     do {
-      let res: [Int32] = try await api!.echoAsync(aInt32ListArg.toInt32Array()!)
+      let activeApi = try resolveApi()
+      let res: [Int32] = try await activeApi.echoAsync(aInt32ListArg.toInt32Array()!)
       return NativeInteropTestsPigeonInternal.isNullish(res)
         ? nil : NativeInteropTestsPigeonTypedData(res)
     } catch let error as NativeInteropTestsError {
@@ -4759,7 +4862,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     wrappedError: NativeInteropTestsError
   ) async -> NativeInteropTestsPigeonTypedData? {
     do {
-      let res: [Int64] = try await api!.echoAsync(aInt64ListArg.toInt64Array()!)
+      let activeApi = try resolveApi()
+      let res: [Int64] = try await activeApi.echoAsync(aInt64ListArg.toInt64Array()!)
       return NativeInteropTestsPigeonInternal.isNullish(res)
         ? nil : NativeInteropTestsPigeonTypedData(res)
     } catch let error as NativeInteropTestsError {
@@ -4779,7 +4883,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     wrappedError: NativeInteropTestsError
   ) async -> NativeInteropTestsPigeonTypedData? {
     do {
-      let res: [Float64] = try await api!.echoAsync(aFloat64ListArg.toFloat64Array()!)
+      let activeApi = try resolveApi()
+      let res: [Float64] = try await activeApi.echoAsync(aFloat64ListArg.toFloat64Array()!)
       return NativeInteropTestsPigeonInternal.isNullish(res)
         ? nil : NativeInteropTestsPigeonTypedData(res)
     } catch let error as NativeInteropTestsError {
@@ -4798,7 +4903,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     async -> NSObject?
   {
     do {
-      let res: Any = try await api!.echoAsync(_PigeonFfiCodec.readValue(value: anObjectArg)!)
+      let activeApi = try resolveApi()
+      let res: Any = try await activeApi.echoAsync(_PigeonFfiCodec.readValue(value: anObjectArg)!)
       return _PigeonFfiCodec.writeValue(value: res, isObject: true) as? NSObject
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -4816,7 +4922,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     -> [NSObject]?
   {
     do {
-      let res: [Any?] = try await api!.echoAsync(
+      let activeApi = try resolveApi()
+      let res: [Any?] = try await activeApi.echoAsync(
         _PigeonFfiCodec.readValue(value: listArg as NSObject, type: "Object") as! [Any?])
       return _PigeonFfiCodec.writeValue(value: res) as? [NSObject]
     } catch let error as NativeInteropTestsError {
@@ -4835,7 +4942,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     enumList enumListArg: [NSObject], wrappedError: NativeInteropTestsError
   ) async -> [NSObject]? {
     do {
-      let res: [NativeInteropAnEnum?] = try await api!.echoAsync(
+      let activeApi = try resolveApi()
+      let res: [NativeInteropAnEnum?] = try await activeApi.echoAsync(
         enumList: _PigeonFfiCodec.readValue(
           value: enumListArg as NSObject, type: "NativeInteropAnEnum") as! [NativeInteropAnEnum?])
       return _PigeonFfiCodec.writeValue(value: res) as? [NSObject]
@@ -4855,7 +4963,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     classList classListArg: [NSObject], wrappedError: NativeInteropTestsError
   ) async -> [NSObject]? {
     do {
-      let res: [NativeInteropAllNullableTypes?] = try await api!.echoAsync(
+      let activeApi = try resolveApi()
+      let res: [NativeInteropAllNullableTypes?] = try await activeApi.echoAsync(
         classList: _PigeonFfiCodec.readValue(
           value: classListArg as NSObject, type: "NativeInteropAllNullableTypes")
           as! [NativeInteropAllNullableTypes?])
@@ -4876,7 +4985,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     async -> [NSObject: NSObject]?
   {
     do {
-      let res: [AnyHashable?: Any?] = try await api!.echoAsync(
+      let activeApi = try resolveApi()
+      let res: [AnyHashable?: Any?] = try await activeApi.echoAsync(
         _PigeonFfiCodec.readValue(value: mapArg as NSObject, type: "Object", type2: "Object")
           as! [AnyHashable?: Any?])
       return _PigeonFfiCodec.writeValue(value: res) as? [NSObject: NSObject]
@@ -4896,7 +5006,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     stringMap stringMapArg: [NSObject: NSObject], wrappedError: NativeInteropTestsError
   ) async -> [NSObject: NSObject]? {
     do {
-      let res: [String?: String?] = try await api!.echoAsync(
+      let activeApi = try resolveApi()
+      let res: [String?: String?] = try await activeApi.echoAsync(
         stringMap: _PigeonFfiCodec.readValue(
           value: stringMapArg as NSObject, type: "String", type2: "String") as! [String?: String?])
       return _PigeonFfiCodec.writeValue(value: res) as? [NSObject: NSObject]
@@ -4916,7 +5027,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     intMap intMapArg: [NSObject: NSObject], wrappedError: NativeInteropTestsError
   ) async -> [NSObject: NSObject]? {
     do {
-      let res: [Int64?: Int64?] = try await api!.echoAsync(
+      let activeApi = try resolveApi()
+      let res: [Int64?: Int64?] = try await activeApi.echoAsync(
         intMap: _PigeonFfiCodec.readValue(value: intMapArg as NSObject, type: "int", type2: "int")
           as! [Int64?: Int64?])
       return _PigeonFfiCodec.writeValue(value: res) as? [NSObject: NSObject]
@@ -4936,7 +5048,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     enumMap enumMapArg: [NSObject: NSObject], wrappedError: NativeInteropTestsError
   ) async -> [NSObject: NSObject]? {
     do {
-      let res: [NativeInteropAnEnum?: NativeInteropAnEnum?] = try await api!.echoAsync(
+      let activeApi = try resolveApi()
+      let res: [NativeInteropAnEnum?: NativeInteropAnEnum?] = try await activeApi.echoAsync(
         enumMap: _PigeonFfiCodec.readValue(
           value: enumMapArg as NSObject, type: "NativeInteropAnEnum", type2: "NativeInteropAnEnum")
           as! [NativeInteropAnEnum?: NativeInteropAnEnum?])
@@ -4957,7 +5070,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     classMap classMapArg: [NSObject: NSObject], wrappedError: NativeInteropTestsError
   ) async -> [NSObject: NSObject]? {
     do {
-      let res: [Int64?: NativeInteropAllNullableTypes?] = try await api!.echoAsync(
+      let activeApi = try resolveApi()
+      let res: [Int64?: NativeInteropAllNullableTypes?] = try await activeApi.echoAsync(
         classMap: _PigeonFfiCodec.readValue(
           value: classMapArg as NSObject, type: "int", type2: "NativeInteropAllNullableTypes")
           as! [Int64?: NativeInteropAllNullableTypes?])
@@ -4978,7 +5092,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     anEnum anEnumArg: NativeInteropAnEnum, wrappedError: NativeInteropTestsError
   ) async -> NSNumber? {
     do {
-      let res: NativeInteropAnEnum = try await api!.echoAsync(anEnumArg)
+      let activeApi = try resolveApi()
+      let res: NativeInteropAnEnum = try await activeApi.echoAsync(anEnumArg)
       return NSNumber(value: res.rawValue)
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -4996,7 +5111,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     anotherEnum anotherEnumArg: NativeInteropAnotherEnum, wrappedError: NativeInteropTestsError
   ) async -> NSNumber? {
     do {
-      let res: NativeInteropAnotherEnum = try await api!.echoAsync(anotherEnumArg)
+      let activeApi = try resolveApi()
+      let res: NativeInteropAnotherEnum = try await activeApi.echoAsync(anotherEnumArg)
       return NSNumber(value: res.rawValue)
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -5012,7 +5128,8 @@ protocol NativeInteropHostIntegrationCoreApi {
   /// Responds with an error from an async function returning a value.
   @objc func throwAsyncError(wrappedError: NativeInteropTestsError) async -> NSObject? {
     do {
-      let res: Any? = try await api!.throwAsyncError()
+      let activeApi = try resolveApi()
+      let res: Any? = try await activeApi.throwAsyncError()
       return _PigeonFfiCodec.writeValue(value: res, isObject: true) as? NSObject
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -5028,7 +5145,8 @@ protocol NativeInteropHostIntegrationCoreApi {
   /// Responds with an error from an async void function.
   @objc func throwAsyncErrorFromVoid(wrappedError: NativeInteropTestsError) async {
     do {
-      try await api!.throwAsyncErrorFromVoid()
+      let activeApi = try resolveApi()
+      try await activeApi.throwAsyncErrorFromVoid()
       return
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -5044,7 +5162,8 @@ protocol NativeInteropHostIntegrationCoreApi {
   /// Responds with a Flutter error from an async function returning a value.
   @objc func throwAsyncFlutterError(wrappedError: NativeInteropTestsError) async -> NSObject? {
     do {
-      let res: Any? = try await api!.throwAsyncFlutterError()
+      let activeApi = try resolveApi()
+      let res: Any? = try await activeApi.throwAsyncFlutterError()
       return _PigeonFfiCodec.writeValue(value: res, isObject: true) as? NSObject
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -5062,7 +5181,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     everything everythingArg: NativeInteropAllTypesBridge, wrappedError: NativeInteropTestsError
   ) async -> NativeInteropAllTypesBridge? {
     do {
-      let res: NativeInteropAllTypes = try await api!.echoAsync(everythingArg.toSwift())
+      let activeApi = try resolveApi()
+      let res: NativeInteropAllTypes = try await activeApi.echoAsync(everythingArg.toSwift())
       return NativeInteropAllTypesBridge.fromSwift(res)!
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -5081,7 +5201,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     wrappedError: NativeInteropTestsError
   ) async -> NativeInteropSealedClassBridge? {
     do {
-      let res: NativeInteropSealedClass = try await api!.echoAsync(
+      let activeApi = try resolveApi()
+      let res: NativeInteropSealedClass = try await activeApi.echoAsync(
         sealedClass: NativeInteropSealedClassBridge.toSwift(sealedClassArg)!)
       return NativeInteropSealedClassBridge.fromSwift(res)!
     } catch let error as NativeInteropTestsError {
@@ -5101,7 +5222,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     wrappedError: NativeInteropTestsError
   ) async -> NativeInteropAllNullableTypesBridge? {
     do {
-      let res: NativeInteropAllNullableTypes? = try await api!.echoAsync(
+      let activeApi = try resolveApi()
+      let res: NativeInteropAllNullableTypes? = try await activeApi.echoAsync(
         NativeInteropTestsPigeonInternal.isNullish(everythingArg) ? nil : everythingArg!.toSwift())
       return NativeInteropAllNullableTypesBridge.fromSwift(res)
     } catch let error as NativeInteropTestsError {
@@ -5121,7 +5243,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     wrappedError: NativeInteropTestsError
   ) async -> NativeInteropAllNullableTypesWithoutRecursionBridge? {
     do {
-      let res: NativeInteropAllNullableTypesWithoutRecursion? = try await api!.echoAsync(
+      let activeApi = try resolveApi()
+      let res: NativeInteropAllNullableTypesWithoutRecursion? = try await activeApi.echoAsync(
         NativeInteropTestsPigeonInternal.isNullish(everythingArg) ? nil : everythingArg!.toSwift())
       return NativeInteropAllNullableTypesWithoutRecursionBridge.fromSwift(res)
     } catch let error as NativeInteropTestsError {
@@ -5140,7 +5263,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     async -> NSNumber?
   {
     do {
-      let res: Int64? = try await api!.echoAsyncNullable(
+      let activeApi = try resolveApi()
+      let res: Int64? = try await activeApi.echoAsyncNullable(
         NativeInteropTestsPigeonInternal.isNullish(anIntArg) ? nil : anIntArg!.int64Value)
       return NativeInteropTestsPigeonInternal.isNullish(res) ? nil : NSNumber(value: res!)
     } catch let error as NativeInteropTestsError {
@@ -5159,7 +5283,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     aDouble aDoubleArg: NSNumber?, wrappedError: NativeInteropTestsError
   ) async -> NSNumber? {
     do {
-      let res: Double? = try await api!.echoAsyncNullable(
+      let activeApi = try resolveApi()
+      let res: Double? = try await activeApi.echoAsyncNullable(
         NativeInteropTestsPigeonInternal.isNullish(aDoubleArg) ? nil : aDoubleArg!.doubleValue)
       return NativeInteropTestsPigeonInternal.isNullish(res) ? nil : NSNumber(value: res!)
     } catch let error as NativeInteropTestsError {
@@ -5178,7 +5303,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     async -> NSNumber?
   {
     do {
-      let res: Bool? = try await api!.echoAsyncNullable(
+      let activeApi = try resolveApi()
+      let res: Bool? = try await activeApi.echoAsyncNullable(
         NativeInteropTestsPigeonInternal.isNullish(aBoolArg) ? nil : aBoolArg!.boolValue)
       return NativeInteropTestsPigeonInternal.isNullish(res) ? nil : NSNumber(value: res!)
     } catch let error as NativeInteropTestsError {
@@ -5197,7 +5323,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     aString aStringArg: NSString?, wrappedError: NativeInteropTestsError
   ) async -> NSString? {
     do {
-      let res: String? = try await api!.echoAsyncNullable(aStringArg as String?)
+      let activeApi = try resolveApi()
+      let res: String? = try await activeApi.echoAsyncNullable(aStringArg as String?)
       return res as NSString?
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -5216,7 +5343,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     wrappedError: NativeInteropTestsError
   ) async -> NativeInteropTestsPigeonTypedData? {
     do {
-      let res: [UInt8]? = try await api!.echoAsyncNullable(
+      let activeApi = try resolveApi()
+      let res: [UInt8]? = try await activeApi.echoAsyncNullable(
         NativeInteropTestsPigeonInternal.isNullish(aUint8ListArg)
           ? nil : aUint8ListArg!.toUint8Array())
       return NativeInteropTestsPigeonInternal.isNullish(res)
@@ -5238,7 +5366,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     wrappedError: NativeInteropTestsError
   ) async -> NativeInteropTestsPigeonTypedData? {
     do {
-      let res: [Int32]? = try await api!.echoAsyncNullable(
+      let activeApi = try resolveApi()
+      let res: [Int32]? = try await activeApi.echoAsyncNullable(
         NativeInteropTestsPigeonInternal.isNullish(aInt32ListArg)
           ? nil : aInt32ListArg!.toInt32Array())
       return NativeInteropTestsPigeonInternal.isNullish(res)
@@ -5260,7 +5389,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     wrappedError: NativeInteropTestsError
   ) async -> NativeInteropTestsPigeonTypedData? {
     do {
-      let res: [Int64]? = try await api!.echoAsyncNullable(
+      let activeApi = try resolveApi()
+      let res: [Int64]? = try await activeApi.echoAsyncNullable(
         NativeInteropTestsPigeonInternal.isNullish(aInt64ListArg)
           ? nil : aInt64ListArg!.toInt64Array())
       return NativeInteropTestsPigeonInternal.isNullish(res)
@@ -5282,7 +5412,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     wrappedError: NativeInteropTestsError
   ) async -> NativeInteropTestsPigeonTypedData? {
     do {
-      let res: [Float64]? = try await api!.echoAsyncNullable(
+      let activeApi = try resolveApi()
+      let res: [Float64]? = try await activeApi.echoAsyncNullable(
         NativeInteropTestsPigeonInternal.isNullish(aFloat64ListArg)
           ? nil : aFloat64ListArg!.toFloat64Array())
       return NativeInteropTestsPigeonInternal.isNullish(res)
@@ -5303,7 +5434,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     anObject anObjectArg: NSObject, wrappedError: NativeInteropTestsError
   ) async -> NSObject? {
     do {
-      let res: Any? = try await api!.echoAsyncNullable(
+      let activeApi = try resolveApi()
+      let res: Any? = try await activeApi.echoAsyncNullable(
         _PigeonFfiCodec.readValue(value: anObjectArg))
       return _PigeonFfiCodec.writeValue(value: res, isObject: true) as? NSObject
     } catch let error as NativeInteropTestsError {
@@ -5322,7 +5454,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     async -> [NSObject]?
   {
     do {
-      let res: [Any?]? = try await api!.echoAsyncNullable(
+      let activeApi = try resolveApi()
+      let res: [Any?]? = try await activeApi.echoAsyncNullable(
         _PigeonFfiCodec.readValue(value: listArg as NSObject?, type: "Object") as? [Any?])
       return _PigeonFfiCodec.writeValue(value: res) as? [NSObject]
     } catch let error as NativeInteropTestsError {
@@ -5341,7 +5474,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     enumList enumListArg: [NSObject]?, wrappedError: NativeInteropTestsError
   ) async -> [NSObject]? {
     do {
-      let res: [NativeInteropAnEnum?]? = try await api!.echoAsyncNullable(
+      let activeApi = try resolveApi()
+      let res: [NativeInteropAnEnum?]? = try await activeApi.echoAsyncNullable(
         enumList: _PigeonFfiCodec.readValue(
           value: enumListArg as NSObject?, type: "NativeInteropAnEnum") as? [NativeInteropAnEnum?])
       return _PigeonFfiCodec.writeValue(value: res) as? [NSObject]
@@ -5361,7 +5495,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     classList classListArg: [NSObject]?, wrappedError: NativeInteropTestsError
   ) async -> [NSObject]? {
     do {
-      let res: [NativeInteropAllNullableTypes?]? = try await api!.echoAsyncNullable(
+      let activeApi = try resolveApi()
+      let res: [NativeInteropAllNullableTypes?]? = try await activeApi.echoAsyncNullable(
         classList: _PigeonFfiCodec.readValue(
           value: classListArg as NSObject?, type: "NativeInteropAllNullableTypes")
           as? [NativeInteropAllNullableTypes?])
@@ -5382,7 +5517,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     map mapArg: [NSObject: NSObject]?, wrappedError: NativeInteropTestsError
   ) async -> [NSObject: NSObject]? {
     do {
-      let res: [AnyHashable?: Any?]? = try await api!.echoAsyncNullable(
+      let activeApi = try resolveApi()
+      let res: [AnyHashable?: Any?]? = try await activeApi.echoAsyncNullable(
         _PigeonFfiCodec.readValue(value: mapArg as NSObject?, type: "Object", type2: "Object")
           as? [AnyHashable?: Any?])
       return _PigeonFfiCodec.writeValue(value: res) as? [NSObject: NSObject]
@@ -5402,7 +5538,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     stringMap stringMapArg: [NSObject: NSObject]?, wrappedError: NativeInteropTestsError
   ) async -> [NSObject: NSObject]? {
     do {
-      let res: [String?: String?]? = try await api!.echoAsyncNullable(
+      let activeApi = try resolveApi()
+      let res: [String?: String?]? = try await activeApi.echoAsyncNullable(
         stringMap: _PigeonFfiCodec.readValue(
           value: stringMapArg as NSObject?, type: "String", type2: "String") as? [String?: String?])
       return _PigeonFfiCodec.writeValue(value: res) as? [NSObject: NSObject]
@@ -5422,7 +5559,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     intMap intMapArg: [NSObject: NSObject]?, wrappedError: NativeInteropTestsError
   ) async -> [NSObject: NSObject]? {
     do {
-      let res: [Int64?: Int64?]? = try await api!.echoAsyncNullable(
+      let activeApi = try resolveApi()
+      let res: [Int64?: Int64?]? = try await activeApi.echoAsyncNullable(
         intMap: _PigeonFfiCodec.readValue(value: intMapArg as NSObject?, type: "int", type2: "int")
           as? [Int64?: Int64?])
       return _PigeonFfiCodec.writeValue(value: res) as? [NSObject: NSObject]
@@ -5442,10 +5580,12 @@ protocol NativeInteropHostIntegrationCoreApi {
     enumMap enumMapArg: [NSObject: NSObject]?, wrappedError: NativeInteropTestsError
   ) async -> [NSObject: NSObject]? {
     do {
-      let res: [NativeInteropAnEnum?: NativeInteropAnEnum?]? = try await api!.echoAsyncNullable(
-        enumMap: _PigeonFfiCodec.readValue(
-          value: enumMapArg as NSObject?, type: "NativeInteropAnEnum", type2: "NativeInteropAnEnum")
-          as? [NativeInteropAnEnum?: NativeInteropAnEnum?])
+      let activeApi = try resolveApi()
+      let res: [NativeInteropAnEnum?: NativeInteropAnEnum?]? =
+        try await activeApi.echoAsyncNullable(
+          enumMap: _PigeonFfiCodec.readValue(
+            value: enumMapArg as NSObject?, type: "NativeInteropAnEnum",
+            type2: "NativeInteropAnEnum") as? [NativeInteropAnEnum?: NativeInteropAnEnum?])
       return _PigeonFfiCodec.writeValue(value: res) as? [NSObject: NSObject]
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -5463,7 +5603,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     classMap classMapArg: [NSObject: NSObject]?, wrappedError: NativeInteropTestsError
   ) async -> [NSObject: NSObject]? {
     do {
-      let res: [Int64?: NativeInteropAllNullableTypes?]? = try await api!.echoAsyncNullable(
+      let activeApi = try resolveApi()
+      let res: [Int64?: NativeInteropAllNullableTypes?]? = try await activeApi.echoAsyncNullable(
         classMap: _PigeonFfiCodec.readValue(
           value: classMapArg as NSObject?, type: "int", type2: "NativeInteropAllNullableTypes")
           as? [Int64?: NativeInteropAllNullableTypes?])
@@ -5484,7 +5625,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     anEnum anEnumArg: NSNumber?, wrappedError: NativeInteropTestsError
   ) async -> NSNumber? {
     do {
-      let res: NativeInteropAnEnum? = try await api!.echoAsyncNullable(
+      let activeApi = try resolveApi()
+      let res: NativeInteropAnEnum? = try await activeApi.echoAsyncNullable(
         NativeInteropTestsPigeonInternal.isNullish(anEnumArg)
           ? nil : NativeInteropAnEnum.init(rawValue: anEnumArg!.intValue))
       return NativeInteropTestsPigeonInternal.isNullish(res) ? nil : NSNumber(value: res!.rawValue)
@@ -5504,7 +5646,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     anotherEnum anotherEnumArg: NSNumber?, wrappedError: NativeInteropTestsError
   ) async -> NSNumber? {
     do {
-      let res: NativeInteropAnotherEnum? = try await api!.echoAsyncNullable(
+      let activeApi = try resolveApi()
+      let res: NativeInteropAnotherEnum? = try await activeApi.echoAsyncNullable(
         NativeInteropTestsPigeonInternal.isNullish(anotherEnumArg)
           ? nil : NativeInteropAnotherEnum.init(rawValue: anotherEnumArg!.intValue))
       return NativeInteropTestsPigeonInternal.isNullish(res) ? nil : NSNumber(value: res!.rawValue)
@@ -5521,7 +5664,8 @@ protocol NativeInteropHostIntegrationCoreApi {
   }
   @objc func callFlutterNoop(wrappedError: NativeInteropTestsError) {
     do {
-      try api!.callFlutterNoop()
+      let activeApi = try resolveApi()
+      try activeApi.callFlutterNoop()
       return
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -5536,7 +5680,8 @@ protocol NativeInteropHostIntegrationCoreApi {
   }
   @objc func callFlutterThrowError(wrappedError: NativeInteropTestsError) -> NSObject? {
     do {
-      let res: Any? = try api!.callFlutterThrowError()
+      let activeApi = try resolveApi()
+      let res: Any? = try activeApi.callFlutterThrowError()
       return _PigeonFfiCodec.writeValue(value: res, isObject: true) as? NSObject
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -5551,7 +5696,8 @@ protocol NativeInteropHostIntegrationCoreApi {
   }
   @objc func callFlutterThrowErrorFromVoid(wrappedError: NativeInteropTestsError) {
     do {
-      try api!.callFlutterThrowErrorFromVoid()
+      let activeApi = try resolveApi()
+      try activeApi.callFlutterThrowErrorFromVoid()
       return
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -5568,7 +5714,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     everything everythingArg: NativeInteropAllTypesBridge, wrappedError: NativeInteropTestsError
   ) -> NativeInteropAllTypesBridge? {
     do {
-      let res: NativeInteropAllTypes = try api!.callFlutterEcho(everythingArg.toSwift())
+      let activeApi = try resolveApi()
+      let res: NativeInteropAllTypes = try activeApi.callFlutterEcho(everythingArg.toSwift())
       return NativeInteropAllTypesBridge.fromSwift(res)!
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -5586,7 +5733,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     wrappedError: NativeInteropTestsError
   ) -> NativeInteropAllNullableTypesBridge? {
     do {
-      let res: NativeInteropAllNullableTypes? = try api!.callFlutterEcho(
+      let activeApi = try resolveApi()
+      let res: NativeInteropAllNullableTypes? = try activeApi.callFlutterEcho(
         NativeInteropTestsPigeonInternal.isNullish(everythingArg) ? nil : everythingArg!.toSwift())
       return NativeInteropAllNullableTypesBridge.fromSwift(res)
     } catch let error as NativeInteropTestsError {
@@ -5605,7 +5753,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     wrappedError: NativeInteropTestsError
   ) -> NativeInteropSealedClassBridge? {
     do {
-      let res: NativeInteropSealedClass = try api!.callFlutterEcho(
+      let activeApi = try resolveApi()
+      let res: NativeInteropSealedClass = try activeApi.callFlutterEcho(
         sealedClass: NativeInteropSealedClassBridge.toSwift(sealedClassArg)!)
       return NativeInteropSealedClassBridge.fromSwift(res)!
     } catch let error as NativeInteropTestsError {
@@ -5624,7 +5773,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     aNullableString aNullableStringArg: NSString?, wrappedError: NativeInteropTestsError
   ) -> NativeInteropAllNullableTypesBridge? {
     do {
-      let res: NativeInteropAllNullableTypes = try api!.callFlutterSendMultipleNullableTypes(
+      let activeApi = try resolveApi()
+      let res: NativeInteropAllNullableTypes = try activeApi.callFlutterSendMultipleNullableTypes(
         aBool: NativeInteropTestsPigeonInternal.isNullish(aNullableBoolArg)
           ? nil : aNullableBoolArg!.boolValue,
         anInt: NativeInteropTestsPigeonInternal.isNullish(aNullableIntArg)
@@ -5646,7 +5796,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     wrappedError: NativeInteropTestsError
   ) -> NativeInteropAllNullableTypesWithoutRecursionBridge? {
     do {
-      let res: NativeInteropAllNullableTypesWithoutRecursion? = try api!.callFlutterEcho(
+      let activeApi = try resolveApi()
+      let res: NativeInteropAllNullableTypesWithoutRecursion? = try activeApi.callFlutterEcho(
         NativeInteropTestsPigeonInternal.isNullish(everythingArg) ? nil : everythingArg!.toSwift())
       return NativeInteropAllNullableTypesWithoutRecursionBridge.fromSwift(res)
     } catch let error as NativeInteropTestsError {
@@ -5665,8 +5816,9 @@ protocol NativeInteropHostIntegrationCoreApi {
     aNullableString aNullableStringArg: NSString?, wrappedError: NativeInteropTestsError
   ) -> NativeInteropAllNullableTypesWithoutRecursionBridge? {
     do {
-      let res: NativeInteropAllNullableTypesWithoutRecursion = try api!
-        .callFlutterSendMultipleNullableTypesWithoutRecursion(
+      let activeApi = try resolveApi()
+      let res: NativeInteropAllNullableTypesWithoutRecursion =
+        try activeApi.callFlutterSendMultipleNullableTypesWithoutRecursion(
           aBool: NativeInteropTestsPigeonInternal.isNullish(aNullableBoolArg)
             ? nil : aNullableBoolArg!.boolValue,
           anInt: NativeInteropTestsPigeonInternal.isNullish(aNullableIntArg)
@@ -5687,7 +5839,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     -> NSNumber?
   {
     do {
-      let res: Bool = try api!.callFlutterEcho(aBoolArg)
+      let activeApi = try resolveApi()
+      let res: Bool = try activeApi.callFlutterEcho(aBoolArg)
       return NSNumber(value: res)
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -5704,7 +5857,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     -> NSNumber?
   {
     do {
-      let res: Int64 = try api!.callFlutterEcho(anIntArg)
+      let activeApi = try resolveApi()
+      let res: Int64 = try activeApi.callFlutterEcho(anIntArg)
       return NSNumber(value: res)
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -5721,7 +5875,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     aDouble aDoubleArg: Double, wrappedError: NativeInteropTestsError
   ) -> NSNumber? {
     do {
-      let res: Double = try api!.callFlutterEcho(aDoubleArg)
+      let activeApi = try resolveApi()
+      let res: Double = try activeApi.callFlutterEcho(aDoubleArg)
       return NSNumber(value: res)
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -5738,7 +5893,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     aString aStringArg: NSString, wrappedError: NativeInteropTestsError
   ) -> NSString? {
     do {
-      let res: String = try api!.callFlutterEcho(aStringArg as String)
+      let activeApi = try resolveApi()
+      let res: String = try activeApi.callFlutterEcho(aStringArg as String)
       return res as NSString?
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -5755,7 +5911,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     list listArg: NativeInteropTestsPigeonTypedData, wrappedError: NativeInteropTestsError
   ) -> NativeInteropTestsPigeonTypedData? {
     do {
-      let res: [UInt8] = try api!.callFlutterEcho(listArg.toUint8Array()!)
+      let activeApi = try resolveApi()
+      let res: [UInt8] = try activeApi.callFlutterEcho(listArg.toUint8Array()!)
       return NativeInteropTestsPigeonInternal.isNullish(res)
         ? nil : NativeInteropTestsPigeonTypedData(res)
     } catch let error as NativeInteropTestsError {
@@ -5773,7 +5930,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     list listArg: NativeInteropTestsPigeonTypedData, wrappedError: NativeInteropTestsError
   ) -> NativeInteropTestsPigeonTypedData? {
     do {
-      let res: [Int32] = try api!.callFlutterEcho(listArg.toInt32Array()!)
+      let activeApi = try resolveApi()
+      let res: [Int32] = try activeApi.callFlutterEcho(listArg.toInt32Array()!)
       return NativeInteropTestsPigeonInternal.isNullish(res)
         ? nil : NativeInteropTestsPigeonTypedData(res)
     } catch let error as NativeInteropTestsError {
@@ -5791,7 +5949,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     list listArg: NativeInteropTestsPigeonTypedData, wrappedError: NativeInteropTestsError
   ) -> NativeInteropTestsPigeonTypedData? {
     do {
-      let res: [Int64] = try api!.callFlutterEcho(listArg.toInt64Array()!)
+      let activeApi = try resolveApi()
+      let res: [Int64] = try activeApi.callFlutterEcho(listArg.toInt64Array()!)
       return NativeInteropTestsPigeonInternal.isNullish(res)
         ? nil : NativeInteropTestsPigeonTypedData(res)
     } catch let error as NativeInteropTestsError {
@@ -5809,7 +5968,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     list listArg: NativeInteropTestsPigeonTypedData, wrappedError: NativeInteropTestsError
   ) -> NativeInteropTestsPigeonTypedData? {
     do {
-      let res: [Float64] = try api!.callFlutterEcho(listArg.toFloat64Array()!)
+      let activeApi = try resolveApi()
+      let res: [Float64] = try activeApi.callFlutterEcho(listArg.toFloat64Array()!)
       return NativeInteropTestsPigeonInternal.isNullish(res)
         ? nil : NativeInteropTestsPigeonTypedData(res)
     } catch let error as NativeInteropTestsError {
@@ -5827,7 +5987,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     -> [NSObject]?
   {
     do {
-      let res: [Any?] = try api!.callFlutterEcho(
+      let activeApi = try resolveApi()
+      let res: [Any?] = try activeApi.callFlutterEcho(
         _PigeonFfiCodec.readValue(value: listArg as NSObject, type: "Object") as! [Any?])
       return _PigeonFfiCodec.writeValue(value: res) as? [NSObject]
     } catch let error as NativeInteropTestsError {
@@ -5845,7 +6006,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     enumList enumListArg: [NSObject], wrappedError: NativeInteropTestsError
   ) -> [NSObject]? {
     do {
-      let res: [NativeInteropAnEnum?] = try api!.callFlutterEcho(
+      let activeApi = try resolveApi()
+      let res: [NativeInteropAnEnum?] = try activeApi.callFlutterEcho(
         enumList: _PigeonFfiCodec.readValue(
           value: enumListArg as NSObject, type: "NativeInteropAnEnum") as! [NativeInteropAnEnum?])
       return _PigeonFfiCodec.writeValue(value: res) as? [NSObject]
@@ -5864,7 +6026,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     classList classListArg: [NSObject], wrappedError: NativeInteropTestsError
   ) -> [NSObject]? {
     do {
-      let res: [NativeInteropAllNullableTypes?] = try api!.callFlutterEcho(
+      let activeApi = try resolveApi()
+      let res: [NativeInteropAllNullableTypes?] = try activeApi.callFlutterEcho(
         classList: _PigeonFfiCodec.readValue(
           value: classListArg as NSObject, type: "NativeInteropAllNullableTypes")
           as! [NativeInteropAllNullableTypes?])
@@ -5884,7 +6047,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     enumList enumListArg: [NSObject], wrappedError: NativeInteropTestsError
   ) -> [NSObject]? {
     do {
-      let res: [NativeInteropAnEnum] = try api!.callFlutterEchoNonNull(
+      let activeApi = try resolveApi()
+      let res: [NativeInteropAnEnum] = try activeApi.callFlutterEchoNonNull(
         enumList: _PigeonFfiCodec.readValue(
           value: enumListArg as NSObject, type: "NativeInteropAnEnum") as! [NativeInteropAnEnum])
       return _PigeonFfiCodec.writeValue(value: res) as? [NSObject]
@@ -5903,7 +6067,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     classList classListArg: [NSObject], wrappedError: NativeInteropTestsError
   ) -> [NSObject]? {
     do {
-      let res: [NativeInteropAllNullableTypes] = try api!.callFlutterEchoNonNull(
+      let activeApi = try resolveApi()
+      let res: [NativeInteropAllNullableTypes] = try activeApi.callFlutterEchoNonNull(
         classList: _PigeonFfiCodec.readValue(
           value: classListArg as NSObject, type: "NativeInteropAllNullableTypes")
           as! [NativeInteropAllNullableTypes])
@@ -5923,7 +6088,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     map mapArg: [NSObject: NSObject], wrappedError: NativeInteropTestsError
   ) -> [NSObject: NSObject]? {
     do {
-      let res: [AnyHashable?: Any?] = try api!.callFlutterEcho(
+      let activeApi = try resolveApi()
+      let res: [AnyHashable?: Any?] = try activeApi.callFlutterEcho(
         _PigeonFfiCodec.readValue(value: mapArg as NSObject, type: "Object", type2: "Object")
           as! [AnyHashable?: Any?])
       return _PigeonFfiCodec.writeValue(value: res) as? [NSObject: NSObject]
@@ -5942,7 +6108,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     stringMap stringMapArg: [NSObject: NSObject], wrappedError: NativeInteropTestsError
   ) -> [NSObject: NSObject]? {
     do {
-      let res: [String?: String?] = try api!.callFlutterEcho(
+      let activeApi = try resolveApi()
+      let res: [String?: String?] = try activeApi.callFlutterEcho(
         stringMap: _PigeonFfiCodec.readValue(
           value: stringMapArg as NSObject, type: "String", type2: "String") as! [String?: String?])
       return _PigeonFfiCodec.writeValue(value: res) as? [NSObject: NSObject]
@@ -5961,7 +6128,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     intMap intMapArg: [NSObject: NSObject], wrappedError: NativeInteropTestsError
   ) -> [NSObject: NSObject]? {
     do {
-      let res: [Int64?: Int64?] = try api!.callFlutterEcho(
+      let activeApi = try resolveApi()
+      let res: [Int64?: Int64?] = try activeApi.callFlutterEcho(
         intMap: _PigeonFfiCodec.readValue(value: intMapArg as NSObject, type: "int", type2: "int")
           as! [Int64?: Int64?])
       return _PigeonFfiCodec.writeValue(value: res) as? [NSObject: NSObject]
@@ -5980,7 +6148,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     enumMap enumMapArg: [NSObject: NSObject], wrappedError: NativeInteropTestsError
   ) -> [NSObject: NSObject]? {
     do {
-      let res: [NativeInteropAnEnum?: NativeInteropAnEnum?] = try api!.callFlutterEcho(
+      let activeApi = try resolveApi()
+      let res: [NativeInteropAnEnum?: NativeInteropAnEnum?] = try activeApi.callFlutterEcho(
         enumMap: _PigeonFfiCodec.readValue(
           value: enumMapArg as NSObject, type: "NativeInteropAnEnum", type2: "NativeInteropAnEnum")
           as! [NativeInteropAnEnum?: NativeInteropAnEnum?])
@@ -6000,7 +6169,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     classMap classMapArg: [NSObject: NSObject], wrappedError: NativeInteropTestsError
   ) -> [NSObject: NSObject]? {
     do {
-      let res: [Int64?: NativeInteropAllNullableTypes?] = try api!.callFlutterEcho(
+      let activeApi = try resolveApi()
+      let res: [Int64?: NativeInteropAllNullableTypes?] = try activeApi.callFlutterEcho(
         classMap: _PigeonFfiCodec.readValue(
           value: classMapArg as NSObject, type: "int", type2: "NativeInteropAllNullableTypes")
           as! [Int64?: NativeInteropAllNullableTypes?])
@@ -6020,7 +6190,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     stringMap stringMapArg: [NSObject: NSObject], wrappedError: NativeInteropTestsError
   ) -> [NSObject: NSObject]? {
     do {
-      let res: [String: String] = try api!.callFlutterEchoNonNull(
+      let activeApi = try resolveApi()
+      let res: [String: String] = try activeApi.callFlutterEchoNonNull(
         stringMap: _PigeonFfiCodec.readValue(
           value: stringMapArg as NSObject, type: "String", type2: "String") as! [String: String])
       return _PigeonFfiCodec.writeValue(value: res) as? [NSObject: NSObject]
@@ -6039,7 +6210,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     intMap intMapArg: [NSObject: NSObject], wrappedError: NativeInteropTestsError
   ) -> [NSObject: NSObject]? {
     do {
-      let res: [Int64: Int64] = try api!.callFlutterEchoNonNull(
+      let activeApi = try resolveApi()
+      let res: [Int64: Int64] = try activeApi.callFlutterEchoNonNull(
         intMap: _PigeonFfiCodec.readValue(value: intMapArg as NSObject, type: "int", type2: "int")
           as! [Int64: Int64])
       return _PigeonFfiCodec.writeValue(value: res) as? [NSObject: NSObject]
@@ -6058,7 +6230,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     enumMap enumMapArg: [NSObject: NSObject], wrappedError: NativeInteropTestsError
   ) -> [NSObject: NSObject]? {
     do {
-      let res: [NativeInteropAnEnum: NativeInteropAnEnum] = try api!.callFlutterEchoNonNull(
+      let activeApi = try resolveApi()
+      let res: [NativeInteropAnEnum: NativeInteropAnEnum] = try activeApi.callFlutterEchoNonNull(
         enumMap: _PigeonFfiCodec.readValue(
           value: enumMapArg as NSObject, type: "NativeInteropAnEnum", type2: "NativeInteropAnEnum")
           as! [NativeInteropAnEnum: NativeInteropAnEnum])
@@ -6078,7 +6251,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     classMap classMapArg: [NSObject: NSObject], wrappedError: NativeInteropTestsError
   ) -> [NSObject: NSObject]? {
     do {
-      let res: [Int64: NativeInteropAllNullableTypes] = try api!.callFlutterEchoNonNull(
+      let activeApi = try resolveApi()
+      let res: [Int64: NativeInteropAllNullableTypes] = try activeApi.callFlutterEchoNonNull(
         classMap: _PigeonFfiCodec.readValue(
           value: classMapArg as NSObject, type: "int", type2: "NativeInteropAllNullableTypes")
           as! [Int64: NativeInteropAllNullableTypes])
@@ -6098,7 +6272,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     anEnum anEnumArg: NativeInteropAnEnum, wrappedError: NativeInteropTestsError
   ) -> NSNumber? {
     do {
-      let res: NativeInteropAnEnum = try api!.callFlutterEcho(anEnumArg)
+      let activeApi = try resolveApi()
+      let res: NativeInteropAnEnum = try activeApi.callFlutterEcho(anEnumArg)
       return NSNumber(value: res.rawValue)
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -6115,7 +6290,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     anotherEnum anotherEnumArg: NativeInteropAnotherEnum, wrappedError: NativeInteropTestsError
   ) -> NSNumber? {
     do {
-      let res: NativeInteropAnotherEnum = try api!.callFlutterEcho(anotherEnumArg)
+      let activeApi = try resolveApi()
+      let res: NativeInteropAnotherEnum = try activeApi.callFlutterEcho(anotherEnumArg)
       return NSNumber(value: res.rawValue)
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -6132,7 +6308,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     aBool aBoolArg: NSNumber?, wrappedError: NativeInteropTestsError
   ) -> NSNumber? {
     do {
-      let res: Bool? = try api!.callFlutterEchoNullable(
+      let activeApi = try resolveApi()
+      let res: Bool? = try activeApi.callFlutterEchoNullable(
         NativeInteropTestsPigeonInternal.isNullish(aBoolArg) ? nil : aBoolArg!.boolValue)
       return NativeInteropTestsPigeonInternal.isNullish(res) ? nil : NSNumber(value: res!)
     } catch let error as NativeInteropTestsError {
@@ -6150,7 +6327,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     anInt anIntArg: NSNumber?, wrappedError: NativeInteropTestsError
   ) -> NSNumber? {
     do {
-      let res: Int64? = try api!.callFlutterEchoNullable(
+      let activeApi = try resolveApi()
+      let res: Int64? = try activeApi.callFlutterEchoNullable(
         NativeInteropTestsPigeonInternal.isNullish(anIntArg) ? nil : anIntArg!.int64Value)
       return NativeInteropTestsPigeonInternal.isNullish(res) ? nil : NSNumber(value: res!)
     } catch let error as NativeInteropTestsError {
@@ -6168,7 +6346,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     aDouble aDoubleArg: NSNumber?, wrappedError: NativeInteropTestsError
   ) -> NSNumber? {
     do {
-      let res: Double? = try api!.callFlutterEchoNullable(
+      let activeApi = try resolveApi()
+      let res: Double? = try activeApi.callFlutterEchoNullable(
         NativeInteropTestsPigeonInternal.isNullish(aDoubleArg) ? nil : aDoubleArg!.doubleValue)
       return NativeInteropTestsPigeonInternal.isNullish(res) ? nil : NSNumber(value: res!)
     } catch let error as NativeInteropTestsError {
@@ -6186,7 +6365,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     aString aStringArg: NSString?, wrappedError: NativeInteropTestsError
   ) -> NSString? {
     do {
-      let res: String? = try api!.callFlutterEchoNullable(aStringArg as String?)
+      let activeApi = try resolveApi()
+      let res: String? = try activeApi.callFlutterEchoNullable(aStringArg as String?)
       return res as NSString?
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -6203,7 +6383,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     list listArg: NativeInteropTestsPigeonTypedData?, wrappedError: NativeInteropTestsError
   ) -> NativeInteropTestsPigeonTypedData? {
     do {
-      let res: [UInt8]? = try api!.callFlutterEchoNullable(
+      let activeApi = try resolveApi()
+      let res: [UInt8]? = try activeApi.callFlutterEchoNullable(
         NativeInteropTestsPigeonInternal.isNullish(listArg) ? nil : listArg!.toUint8Array())
       return NativeInteropTestsPigeonInternal.isNullish(res)
         ? nil : NativeInteropTestsPigeonTypedData(res!)
@@ -6222,7 +6403,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     list listArg: NativeInteropTestsPigeonTypedData?, wrappedError: NativeInteropTestsError
   ) -> NativeInteropTestsPigeonTypedData? {
     do {
-      let res: [Int32]? = try api!.callFlutterEchoNullable(
+      let activeApi = try resolveApi()
+      let res: [Int32]? = try activeApi.callFlutterEchoNullable(
         NativeInteropTestsPigeonInternal.isNullish(listArg) ? nil : listArg!.toInt32Array())
       return NativeInteropTestsPigeonInternal.isNullish(res)
         ? nil : NativeInteropTestsPigeonTypedData(res!)
@@ -6241,7 +6423,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     list listArg: NativeInteropTestsPigeonTypedData?, wrappedError: NativeInteropTestsError
   ) -> NativeInteropTestsPigeonTypedData? {
     do {
-      let res: [Int64]? = try api!.callFlutterEchoNullable(
+      let activeApi = try resolveApi()
+      let res: [Int64]? = try activeApi.callFlutterEchoNullable(
         NativeInteropTestsPigeonInternal.isNullish(listArg) ? nil : listArg!.toInt64Array())
       return NativeInteropTestsPigeonInternal.isNullish(res)
         ? nil : NativeInteropTestsPigeonTypedData(res!)
@@ -6260,7 +6443,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     list listArg: NativeInteropTestsPigeonTypedData?, wrappedError: NativeInteropTestsError
   ) -> NativeInteropTestsPigeonTypedData? {
     do {
-      let res: [Float64]? = try api!.callFlutterEchoNullable(
+      let activeApi = try resolveApi()
+      let res: [Float64]? = try activeApi.callFlutterEchoNullable(
         NativeInteropTestsPigeonInternal.isNullish(listArg) ? nil : listArg!.toFloat64Array())
       return NativeInteropTestsPigeonInternal.isNullish(res)
         ? nil : NativeInteropTestsPigeonTypedData(res!)
@@ -6279,7 +6463,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     list listArg: [NSObject]?, wrappedError: NativeInteropTestsError
   ) -> [NSObject]? {
     do {
-      let res: [Any?]? = try api!.callFlutterEchoNullable(
+      let activeApi = try resolveApi()
+      let res: [Any?]? = try activeApi.callFlutterEchoNullable(
         _PigeonFfiCodec.readValue(value: listArg as NSObject?, type: "Object") as? [Any?])
       return _PigeonFfiCodec.writeValue(value: res) as? [NSObject]
     } catch let error as NativeInteropTestsError {
@@ -6297,7 +6482,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     enumList enumListArg: [NSObject]?, wrappedError: NativeInteropTestsError
   ) -> [NSObject]? {
     do {
-      let res: [NativeInteropAnEnum?]? = try api!.callFlutterEchoNullable(
+      let activeApi = try resolveApi()
+      let res: [NativeInteropAnEnum?]? = try activeApi.callFlutterEchoNullable(
         enumList: _PigeonFfiCodec.readValue(
           value: enumListArg as NSObject?, type: "NativeInteropAnEnum") as? [NativeInteropAnEnum?])
       return _PigeonFfiCodec.writeValue(value: res) as? [NSObject]
@@ -6316,7 +6502,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     classList classListArg: [NSObject]?, wrappedError: NativeInteropTestsError
   ) -> [NSObject]? {
     do {
-      let res: [NativeInteropAllNullableTypes?]? = try api!.callFlutterEchoNullable(
+      let activeApi = try resolveApi()
+      let res: [NativeInteropAllNullableTypes?]? = try activeApi.callFlutterEchoNullable(
         classList: _PigeonFfiCodec.readValue(
           value: classListArg as NSObject?, type: "NativeInteropAllNullableTypes")
           as? [NativeInteropAllNullableTypes?])
@@ -6336,7 +6523,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     enumList enumListArg: [NSObject]?, wrappedError: NativeInteropTestsError
   ) -> [NSObject]? {
     do {
-      let res: [NativeInteropAnEnum]? = try api!.callFlutterEchoNullableNonNull(
+      let activeApi = try resolveApi()
+      let res: [NativeInteropAnEnum]? = try activeApi.callFlutterEchoNullableNonNull(
         enumList: _PigeonFfiCodec.readValue(
           value: enumListArg as NSObject?, type: "NativeInteropAnEnum") as? [NativeInteropAnEnum])
       return _PigeonFfiCodec.writeValue(value: res) as? [NSObject]
@@ -6355,7 +6543,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     classList classListArg: [NSObject]?, wrappedError: NativeInteropTestsError
   ) -> [NSObject]? {
     do {
-      let res: [NativeInteropAllNullableTypes]? = try api!.callFlutterEchoNullableNonNull(
+      let activeApi = try resolveApi()
+      let res: [NativeInteropAllNullableTypes]? = try activeApi.callFlutterEchoNullableNonNull(
         classList: _PigeonFfiCodec.readValue(
           value: classListArg as NSObject?, type: "NativeInteropAllNullableTypes")
           as? [NativeInteropAllNullableTypes])
@@ -6375,7 +6564,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     map mapArg: [NSObject: NSObject]?, wrappedError: NativeInteropTestsError
   ) -> [NSObject: NSObject]? {
     do {
-      let res: [AnyHashable?: Any?]? = try api!.callFlutterEchoNullable(
+      let activeApi = try resolveApi()
+      let res: [AnyHashable?: Any?]? = try activeApi.callFlutterEchoNullable(
         _PigeonFfiCodec.readValue(value: mapArg as NSObject?, type: "Object", type2: "Object")
           as? [AnyHashable?: Any?])
       return _PigeonFfiCodec.writeValue(value: res) as? [NSObject: NSObject]
@@ -6394,7 +6584,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     stringMap stringMapArg: [NSObject: NSObject]?, wrappedError: NativeInteropTestsError
   ) -> [NSObject: NSObject]? {
     do {
-      let res: [String?: String?]? = try api!.callFlutterEchoNullable(
+      let activeApi = try resolveApi()
+      let res: [String?: String?]? = try activeApi.callFlutterEchoNullable(
         stringMap: _PigeonFfiCodec.readValue(
           value: stringMapArg as NSObject?, type: "String", type2: "String") as? [String?: String?])
       return _PigeonFfiCodec.writeValue(value: res) as? [NSObject: NSObject]
@@ -6413,7 +6604,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     intMap intMapArg: [NSObject: NSObject]?, wrappedError: NativeInteropTestsError
   ) -> [NSObject: NSObject]? {
     do {
-      let res: [Int64?: Int64?]? = try api!.callFlutterEchoNullable(
+      let activeApi = try resolveApi()
+      let res: [Int64?: Int64?]? = try activeApi.callFlutterEchoNullable(
         intMap: _PigeonFfiCodec.readValue(value: intMapArg as NSObject?, type: "int", type2: "int")
           as? [Int64?: Int64?])
       return _PigeonFfiCodec.writeValue(value: res) as? [NSObject: NSObject]
@@ -6432,10 +6624,12 @@ protocol NativeInteropHostIntegrationCoreApi {
     enumMap enumMapArg: [NSObject: NSObject]?, wrappedError: NativeInteropTestsError
   ) -> [NSObject: NSObject]? {
     do {
-      let res: [NativeInteropAnEnum?: NativeInteropAnEnum?]? = try api!.callFlutterEchoNullable(
-        enumMap: _PigeonFfiCodec.readValue(
-          value: enumMapArg as NSObject?, type: "NativeInteropAnEnum", type2: "NativeInteropAnEnum")
-          as? [NativeInteropAnEnum?: NativeInteropAnEnum?])
+      let activeApi = try resolveApi()
+      let res: [NativeInteropAnEnum?: NativeInteropAnEnum?]? =
+        try activeApi.callFlutterEchoNullable(
+          enumMap: _PigeonFfiCodec.readValue(
+            value: enumMapArg as NSObject?, type: "NativeInteropAnEnum",
+            type2: "NativeInteropAnEnum") as? [NativeInteropAnEnum?: NativeInteropAnEnum?])
       return _PigeonFfiCodec.writeValue(value: res) as? [NSObject: NSObject]
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -6452,7 +6646,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     classMap classMapArg: [NSObject: NSObject]?, wrappedError: NativeInteropTestsError
   ) -> [NSObject: NSObject]? {
     do {
-      let res: [Int64?: NativeInteropAllNullableTypes?]? = try api!.callFlutterEchoNullable(
+      let activeApi = try resolveApi()
+      let res: [Int64?: NativeInteropAllNullableTypes?]? = try activeApi.callFlutterEchoNullable(
         classMap: _PigeonFfiCodec.readValue(
           value: classMapArg as NSObject?, type: "int", type2: "NativeInteropAllNullableTypes")
           as? [Int64?: NativeInteropAllNullableTypes?])
@@ -6472,7 +6667,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     stringMap stringMapArg: [NSObject: NSObject]?, wrappedError: NativeInteropTestsError
   ) -> [NSObject: NSObject]? {
     do {
-      let res: [String: String]? = try api!.callFlutterEchoNullableNonNull(
+      let activeApi = try resolveApi()
+      let res: [String: String]? = try activeApi.callFlutterEchoNullableNonNull(
         stringMap: _PigeonFfiCodec.readValue(
           value: stringMapArg as NSObject?, type: "String", type2: "String") as? [String: String])
       return _PigeonFfiCodec.writeValue(value: res) as? [NSObject: NSObject]
@@ -6491,7 +6687,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     intMap intMapArg: [NSObject: NSObject]?, wrappedError: NativeInteropTestsError
   ) -> [NSObject: NSObject]? {
     do {
-      let res: [Int64: Int64]? = try api!.callFlutterEchoNullableNonNull(
+      let activeApi = try resolveApi()
+      let res: [Int64: Int64]? = try activeApi.callFlutterEchoNullableNonNull(
         intMap: _PigeonFfiCodec.readValue(value: intMapArg as NSObject?, type: "int", type2: "int")
           as? [Int64: Int64])
       return _PigeonFfiCodec.writeValue(value: res) as? [NSObject: NSObject]
@@ -6510,8 +6707,9 @@ protocol NativeInteropHostIntegrationCoreApi {
     enumMap enumMapArg: [NSObject: NSObject]?, wrappedError: NativeInteropTestsError
   ) -> [NSObject: NSObject]? {
     do {
-      let res: [NativeInteropAnEnum: NativeInteropAnEnum]? = try api!
-        .callFlutterEchoNullableNonNull(
+      let activeApi = try resolveApi()
+      let res: [NativeInteropAnEnum: NativeInteropAnEnum]? =
+        try activeApi.callFlutterEchoNullableNonNull(
           enumMap: _PigeonFfiCodec.readValue(
             value: enumMapArg as NSObject?, type: "NativeInteropAnEnum",
             type2: "NativeInteropAnEnum") as? [NativeInteropAnEnum: NativeInteropAnEnum])
@@ -6531,10 +6729,12 @@ protocol NativeInteropHostIntegrationCoreApi {
     classMap classMapArg: [NSObject: NSObject]?, wrappedError: NativeInteropTestsError
   ) -> [NSObject: NSObject]? {
     do {
-      let res: [Int64: NativeInteropAllNullableTypes]? = try api!.callFlutterEchoNullableNonNull(
-        classMap: _PigeonFfiCodec.readValue(
-          value: classMapArg as NSObject?, type: "int", type2: "NativeInteropAllNullableTypes")
-          as? [Int64: NativeInteropAllNullableTypes])
+      let activeApi = try resolveApi()
+      let res: [Int64: NativeInteropAllNullableTypes]? =
+        try activeApi.callFlutterEchoNullableNonNull(
+          classMap: _PigeonFfiCodec.readValue(
+            value: classMapArg as NSObject?, type: "int", type2: "NativeInteropAllNullableTypes")
+            as? [Int64: NativeInteropAllNullableTypes])
       return _PigeonFfiCodec.writeValue(value: res) as? [NSObject: NSObject]
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -6551,7 +6751,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     anEnum anEnumArg: NSNumber?, wrappedError: NativeInteropTestsError
   ) -> NSNumber? {
     do {
-      let res: NativeInteropAnEnum? = try api!.callFlutterEchoNullable(
+      let activeApi = try resolveApi()
+      let res: NativeInteropAnEnum? = try activeApi.callFlutterEchoNullable(
         NativeInteropTestsPigeonInternal.isNullish(anEnumArg)
           ? nil : NativeInteropAnEnum.init(rawValue: anEnumArg!.intValue))
       return NativeInteropTestsPigeonInternal.isNullish(res) ? nil : NSNumber(value: res!.rawValue)
@@ -6570,7 +6771,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     anotherEnum anotherEnumArg: NSNumber?, wrappedError: NativeInteropTestsError
   ) -> NSNumber? {
     do {
-      let res: NativeInteropAnotherEnum? = try api!.callFlutterEchoNullable(
+      let activeApi = try resolveApi()
+      let res: NativeInteropAnotherEnum? = try activeApi.callFlutterEchoNullable(
         NativeInteropTestsPigeonInternal.isNullish(anotherEnumArg)
           ? nil : NativeInteropAnotherEnum.init(rawValue: anotherEnumArg!.intValue))
       return NativeInteropTestsPigeonInternal.isNullish(res) ? nil : NSNumber(value: res!.rawValue)
@@ -6587,7 +6789,8 @@ protocol NativeInteropHostIntegrationCoreApi {
   }
   @objc func callFlutterNoopAsync(wrappedError: NativeInteropTestsError) async {
     do {
-      try await api!.callFlutterNoopAsync()
+      let activeApi = try resolveApi()
+      try await activeApi.callFlutterNoopAsync()
       return
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -6604,8 +6807,10 @@ protocol NativeInteropHostIntegrationCoreApi {
     everything everythingArg: NativeInteropAllTypesBridge, wrappedError: NativeInteropTestsError
   ) async -> NativeInteropAllTypesBridge? {
     do {
-      let res: NativeInteropAllTypes = try await api!.callFlutterEchoAsyncNativeInteropAllTypes(
-        everything: everythingArg.toSwift())
+      let activeApi = try resolveApi()
+      let res: NativeInteropAllTypes =
+        try await activeApi.callFlutterEchoAsyncNativeInteropAllTypes(
+          everything: everythingArg.toSwift())
       return NativeInteropAllTypesBridge.fromSwift(res)!
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -6623,8 +6828,9 @@ protocol NativeInteropHostIntegrationCoreApi {
     wrappedError: NativeInteropTestsError
   ) async -> NativeInteropAllNullableTypesBridge? {
     do {
-      let res: NativeInteropAllNullableTypes? = try await api!
-        .callFlutterEchoAsyncNullableNativeInteropAllNullableTypes(
+      let activeApi = try resolveApi()
+      let res: NativeInteropAllNullableTypes? =
+        try await activeApi.callFlutterEchoAsyncNullableNativeInteropAllNullableTypes(
           everything: NativeInteropTestsPigeonInternal.isNullish(everythingArg)
             ? nil : everythingArg!.toSwift())
       return NativeInteropAllNullableTypesBridge.fromSwift(res)
@@ -6644,7 +6850,9 @@ protocol NativeInteropHostIntegrationCoreApi {
     wrappedError: NativeInteropTestsError
   ) async -> NativeInteropAllNullableTypesWithoutRecursionBridge? {
     do {
-      let res: NativeInteropAllNullableTypesWithoutRecursion? = try await api!
+      let activeApi = try resolveApi()
+      let res: NativeInteropAllNullableTypesWithoutRecursion? =
+        try await activeApi
         .callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
           everything: NativeInteropTestsPigeonInternal.isNullish(everythingArg)
             ? nil : everythingArg!.toSwift())
@@ -6664,7 +6872,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     async -> NSNumber?
   {
     do {
-      let res: Bool = try await api!.callFlutterEchoAsyncBool(aBool: aBoolArg)
+      let activeApi = try resolveApi()
+      let res: Bool = try await activeApi.callFlutterEchoAsyncBool(aBool: aBoolArg)
       return NSNumber(value: res)
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -6681,7 +6890,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     async -> NSNumber?
   {
     do {
-      let res: Int64 = try await api!.callFlutterEchoAsyncInt(anInt: anIntArg)
+      let activeApi = try resolveApi()
+      let res: Int64 = try await activeApi.callFlutterEchoAsyncInt(anInt: anIntArg)
       return NSNumber(value: res)
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -6698,7 +6908,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     aDouble aDoubleArg: Double, wrappedError: NativeInteropTestsError
   ) async -> NSNumber? {
     do {
-      let res: Double = try await api!.callFlutterEchoAsyncDouble(aDouble: aDoubleArg)
+      let activeApi = try resolveApi()
+      let res: Double = try await activeApi.callFlutterEchoAsyncDouble(aDouble: aDoubleArg)
       return NSNumber(value: res)
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -6715,7 +6926,9 @@ protocol NativeInteropHostIntegrationCoreApi {
     aString aStringArg: NSString, wrappedError: NativeInteropTestsError
   ) async -> NSString? {
     do {
-      let res: String = try await api!.callFlutterEchoAsyncString(aString: aStringArg as String)
+      let activeApi = try resolveApi()
+      let res: String = try await activeApi.callFlutterEchoAsyncString(
+        aString: aStringArg as String)
       return res as NSString?
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -6732,7 +6945,9 @@ protocol NativeInteropHostIntegrationCoreApi {
     list listArg: NativeInteropTestsPigeonTypedData, wrappedError: NativeInteropTestsError
   ) async -> NativeInteropTestsPigeonTypedData? {
     do {
-      let res: [UInt8] = try await api!.callFlutterEchoAsyncUint8List(list: listArg.toUint8Array()!)
+      let activeApi = try resolveApi()
+      let res: [UInt8] = try await activeApi.callFlutterEchoAsyncUint8List(
+        list: listArg.toUint8Array()!)
       return NativeInteropTestsPigeonInternal.isNullish(res)
         ? nil : NativeInteropTestsPigeonTypedData(res)
     } catch let error as NativeInteropTestsError {
@@ -6750,7 +6965,9 @@ protocol NativeInteropHostIntegrationCoreApi {
     list listArg: NativeInteropTestsPigeonTypedData, wrappedError: NativeInteropTestsError
   ) async -> NativeInteropTestsPigeonTypedData? {
     do {
-      let res: [Int32] = try await api!.callFlutterEchoAsyncInt32List(list: listArg.toInt32Array()!)
+      let activeApi = try resolveApi()
+      let res: [Int32] = try await activeApi.callFlutterEchoAsyncInt32List(
+        list: listArg.toInt32Array()!)
       return NativeInteropTestsPigeonInternal.isNullish(res)
         ? nil : NativeInteropTestsPigeonTypedData(res)
     } catch let error as NativeInteropTestsError {
@@ -6768,7 +6985,9 @@ protocol NativeInteropHostIntegrationCoreApi {
     list listArg: NativeInteropTestsPigeonTypedData, wrappedError: NativeInteropTestsError
   ) async -> NativeInteropTestsPigeonTypedData? {
     do {
-      let res: [Int64] = try await api!.callFlutterEchoAsyncInt64List(list: listArg.toInt64Array()!)
+      let activeApi = try resolveApi()
+      let res: [Int64] = try await activeApi.callFlutterEchoAsyncInt64List(
+        list: listArg.toInt64Array()!)
       return NativeInteropTestsPigeonInternal.isNullish(res)
         ? nil : NativeInteropTestsPigeonTypedData(res)
     } catch let error as NativeInteropTestsError {
@@ -6786,7 +7005,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     list listArg: NativeInteropTestsPigeonTypedData, wrappedError: NativeInteropTestsError
   ) async -> NativeInteropTestsPigeonTypedData? {
     do {
-      let res: [Float64] = try await api!.callFlutterEchoAsyncFloat64List(
+      let activeApi = try resolveApi()
+      let res: [Float64] = try await activeApi.callFlutterEchoAsyncFloat64List(
         list: listArg.toFloat64Array()!)
       return NativeInteropTestsPigeonInternal.isNullish(res)
         ? nil : NativeInteropTestsPigeonTypedData(res)
@@ -6805,7 +7025,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     anObject anObjectArg: NSObject, wrappedError: NativeInteropTestsError
   ) async -> NSObject? {
     do {
-      let res: Any = try await api!.callFlutterEchoAsyncObject(
+      let activeApi = try resolveApi()
+      let res: Any = try await activeApi.callFlutterEchoAsyncObject(
         anObject: _PigeonFfiCodec.readValue(value: anObjectArg)!)
       return _PigeonFfiCodec.writeValue(value: res, isObject: true) as? NSObject
     } catch let error as NativeInteropTestsError {
@@ -6823,7 +7044,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     list listArg: [NSObject], wrappedError: NativeInteropTestsError
   ) async -> [NSObject]? {
     do {
-      let res: [Any?] = try await api!.callFlutterEchoAsyncList(
+      let activeApi = try resolveApi()
+      let res: [Any?] = try await activeApi.callFlutterEchoAsyncList(
         list: _PigeonFfiCodec.readValue(value: listArg as NSObject, type: "Object") as! [Any?])
       return _PigeonFfiCodec.writeValue(value: res) as? [NSObject]
     } catch let error as NativeInteropTestsError {
@@ -6841,7 +7063,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     enumList enumListArg: [NSObject], wrappedError: NativeInteropTestsError
   ) async -> [NSObject]? {
     do {
-      let res: [NativeInteropAnEnum?] = try await api!.callFlutterEchoAsyncEnumList(
+      let activeApi = try resolveApi()
+      let res: [NativeInteropAnEnum?] = try await activeApi.callFlutterEchoAsyncEnumList(
         enumList: _PigeonFfiCodec.readValue(
           value: enumListArg as NSObject, type: "NativeInteropAnEnum") as! [NativeInteropAnEnum?])
       return _PigeonFfiCodec.writeValue(value: res) as? [NSObject]
@@ -6860,7 +7083,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     classList classListArg: [NSObject], wrappedError: NativeInteropTestsError
   ) async -> [NSObject]? {
     do {
-      let res: [NativeInteropAllNullableTypes?] = try await api!.callFlutterEchoAsyncClassList(
+      let activeApi = try resolveApi()
+      let res: [NativeInteropAllNullableTypes?] = try await activeApi.callFlutterEchoAsyncClassList(
         classList: _PigeonFfiCodec.readValue(
           value: classListArg as NSObject, type: "NativeInteropAllNullableTypes")
           as! [NativeInteropAllNullableTypes?])
@@ -6880,7 +7104,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     enumList enumListArg: [NSObject], wrappedError: NativeInteropTestsError
   ) async -> [NSObject]? {
     do {
-      let res: [NativeInteropAnEnum] = try await api!.callFlutterEchoAsyncNonNullEnumList(
+      let activeApi = try resolveApi()
+      let res: [NativeInteropAnEnum] = try await activeApi.callFlutterEchoAsyncNonNullEnumList(
         enumList: _PigeonFfiCodec.readValue(
           value: enumListArg as NSObject, type: "NativeInteropAnEnum") as! [NativeInteropAnEnum])
       return _PigeonFfiCodec.writeValue(value: res) as? [NSObject]
@@ -6899,8 +7124,9 @@ protocol NativeInteropHostIntegrationCoreApi {
     classList classListArg: [NSObject], wrappedError: NativeInteropTestsError
   ) async -> [NSObject]? {
     do {
-      let res: [NativeInteropAllNullableTypes] = try await api!
-        .callFlutterEchoAsyncNonNullClassList(
+      let activeApi = try resolveApi()
+      let res: [NativeInteropAllNullableTypes] =
+        try await activeApi.callFlutterEchoAsyncNonNullClassList(
           classList: _PigeonFfiCodec.readValue(
             value: classListArg as NSObject, type: "NativeInteropAllNullableTypes")
             as! [NativeInteropAllNullableTypes])
@@ -6920,7 +7146,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     map mapArg: [NSObject: NSObject], wrappedError: NativeInteropTestsError
   ) async -> [NSObject: NSObject]? {
     do {
-      let res: [AnyHashable?: Any?] = try await api!.callFlutterEchoAsyncMap(
+      let activeApi = try resolveApi()
+      let res: [AnyHashable?: Any?] = try await activeApi.callFlutterEchoAsyncMap(
         map: _PigeonFfiCodec.readValue(value: mapArg as NSObject, type: "Object", type2: "Object")
           as! [AnyHashable?: Any?])
       return _PigeonFfiCodec.writeValue(value: res) as? [NSObject: NSObject]
@@ -6939,7 +7166,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     stringMap stringMapArg: [NSObject: NSObject], wrappedError: NativeInteropTestsError
   ) async -> [NSObject: NSObject]? {
     do {
-      let res: [String?: String?] = try await api!.callFlutterEchoAsyncStringMap(
+      let activeApi = try resolveApi()
+      let res: [String?: String?] = try await activeApi.callFlutterEchoAsyncStringMap(
         stringMap: _PigeonFfiCodec.readValue(
           value: stringMapArg as NSObject, type: "String", type2: "String") as! [String?: String?])
       return _PigeonFfiCodec.writeValue(value: res) as? [NSObject: NSObject]
@@ -6958,7 +7186,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     intMap intMapArg: [NSObject: NSObject], wrappedError: NativeInteropTestsError
   ) async -> [NSObject: NSObject]? {
     do {
-      let res: [Int64?: Int64?] = try await api!.callFlutterEchoAsyncIntMap(
+      let activeApi = try resolveApi()
+      let res: [Int64?: Int64?] = try await activeApi.callFlutterEchoAsyncIntMap(
         intMap: _PigeonFfiCodec.readValue(value: intMapArg as NSObject, type: "int", type2: "int")
           as! [Int64?: Int64?])
       return _PigeonFfiCodec.writeValue(value: res) as? [NSObject: NSObject]
@@ -6977,8 +7206,9 @@ protocol NativeInteropHostIntegrationCoreApi {
     enumMap enumMapArg: [NSObject: NSObject], wrappedError: NativeInteropTestsError
   ) async -> [NSObject: NSObject]? {
     do {
-      let res: [NativeInteropAnEnum?: NativeInteropAnEnum?] = try await api!
-        .callFlutterEchoAsyncEnumMap(
+      let activeApi = try resolveApi()
+      let res: [NativeInteropAnEnum?: NativeInteropAnEnum?] =
+        try await activeApi.callFlutterEchoAsyncEnumMap(
           enumMap: _PigeonFfiCodec.readValue(
             value: enumMapArg as NSObject, type: "NativeInteropAnEnum", type2: "NativeInteropAnEnum"
           ) as! [NativeInteropAnEnum?: NativeInteropAnEnum?])
@@ -6998,8 +7228,9 @@ protocol NativeInteropHostIntegrationCoreApi {
     classMap classMapArg: [NSObject: NSObject], wrappedError: NativeInteropTestsError
   ) async -> [NSObject: NSObject]? {
     do {
-      let res: [Int64?: NativeInteropAllNullableTypes?] = try await api!
-        .callFlutterEchoAsyncClassMap(
+      let activeApi = try resolveApi()
+      let res: [Int64?: NativeInteropAllNullableTypes?] =
+        try await activeApi.callFlutterEchoAsyncClassMap(
           classMap: _PigeonFfiCodec.readValue(
             value: classMapArg as NSObject, type: "int", type2: "NativeInteropAllNullableTypes")
             as! [Int64?: NativeInteropAllNullableTypes?])
@@ -7019,7 +7250,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     anEnum anEnumArg: NativeInteropAnEnum, wrappedError: NativeInteropTestsError
   ) async -> NSNumber? {
     do {
-      let res: NativeInteropAnEnum = try await api!.callFlutterEchoAsyncEnum(anEnum: anEnumArg)
+      let activeApi = try resolveApi()
+      let res: NativeInteropAnEnum = try await activeApi.callFlutterEchoAsyncEnum(anEnum: anEnumArg)
       return NSNumber(value: res.rawValue)
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -7036,7 +7268,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     anotherEnum anotherEnumArg: NativeInteropAnotherEnum, wrappedError: NativeInteropTestsError
   ) async -> NSNumber? {
     do {
-      let res: NativeInteropAnotherEnum = try await api!.callFlutterEchoAnotherAsyncEnum(
+      let activeApi = try resolveApi()
+      let res: NativeInteropAnotherEnum = try await activeApi.callFlutterEchoAnotherAsyncEnum(
         anotherEnum: anotherEnumArg)
       return NSNumber(value: res.rawValue)
     } catch let error as NativeInteropTestsError {
@@ -7054,7 +7287,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     aBool aBoolArg: NSNumber?, wrappedError: NativeInteropTestsError
   ) async -> NSNumber? {
     do {
-      let res: Bool? = try await api!.callFlutterEchoAsyncNullableBool(
+      let activeApi = try resolveApi()
+      let res: Bool? = try await activeApi.callFlutterEchoAsyncNullableBool(
         aBool: NativeInteropTestsPigeonInternal.isNullish(aBoolArg) ? nil : aBoolArg!.boolValue)
       return NativeInteropTestsPigeonInternal.isNullish(res) ? nil : NSNumber(value: res!)
     } catch let error as NativeInteropTestsError {
@@ -7072,7 +7306,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     anInt anIntArg: NSNumber?, wrappedError: NativeInteropTestsError
   ) async -> NSNumber? {
     do {
-      let res: Int64? = try await api!.callFlutterEchoAsyncNullableInt(
+      let activeApi = try resolveApi()
+      let res: Int64? = try await activeApi.callFlutterEchoAsyncNullableInt(
         anInt: NativeInteropTestsPigeonInternal.isNullish(anIntArg) ? nil : anIntArg!.int64Value)
       return NativeInteropTestsPigeonInternal.isNullish(res) ? nil : NSNumber(value: res!)
     } catch let error as NativeInteropTestsError {
@@ -7090,7 +7325,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     aDouble aDoubleArg: NSNumber?, wrappedError: NativeInteropTestsError
   ) async -> NSNumber? {
     do {
-      let res: Double? = try await api!.callFlutterEchoAsyncNullableDouble(
+      let activeApi = try resolveApi()
+      let res: Double? = try await activeApi.callFlutterEchoAsyncNullableDouble(
         aDouble: NativeInteropTestsPigeonInternal.isNullish(aDoubleArg)
           ? nil : aDoubleArg!.doubleValue)
       return NativeInteropTestsPigeonInternal.isNullish(res) ? nil : NSNumber(value: res!)
@@ -7109,7 +7345,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     aString aStringArg: NSString?, wrappedError: NativeInteropTestsError
   ) async -> NSString? {
     do {
-      let res: String? = try await api!.callFlutterEchoAsyncNullableString(
+      let activeApi = try resolveApi()
+      let res: String? = try await activeApi.callFlutterEchoAsyncNullableString(
         aString: aStringArg as String?)
       return res as NSString?
     } catch let error as NativeInteropTestsError {
@@ -7127,7 +7364,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     list listArg: NativeInteropTestsPigeonTypedData?, wrappedError: NativeInteropTestsError
   ) async -> NativeInteropTestsPigeonTypedData? {
     do {
-      let res: [UInt8]? = try await api!.callFlutterEchoAsyncNullableUint8List(
+      let activeApi = try resolveApi()
+      let res: [UInt8]? = try await activeApi.callFlutterEchoAsyncNullableUint8List(
         list: NativeInteropTestsPigeonInternal.isNullish(listArg) ? nil : listArg!.toUint8Array())
       return NativeInteropTestsPigeonInternal.isNullish(res)
         ? nil : NativeInteropTestsPigeonTypedData(res!)
@@ -7146,7 +7384,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     list listArg: NativeInteropTestsPigeonTypedData?, wrappedError: NativeInteropTestsError
   ) async -> NativeInteropTestsPigeonTypedData? {
     do {
-      let res: [Int32]? = try await api!.callFlutterEchoAsyncNullableInt32List(
+      let activeApi = try resolveApi()
+      let res: [Int32]? = try await activeApi.callFlutterEchoAsyncNullableInt32List(
         list: NativeInteropTestsPigeonInternal.isNullish(listArg) ? nil : listArg!.toInt32Array())
       return NativeInteropTestsPigeonInternal.isNullish(res)
         ? nil : NativeInteropTestsPigeonTypedData(res!)
@@ -7165,7 +7404,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     list listArg: NativeInteropTestsPigeonTypedData?, wrappedError: NativeInteropTestsError
   ) async -> NativeInteropTestsPigeonTypedData? {
     do {
-      let res: [Int64]? = try await api!.callFlutterEchoAsyncNullableInt64List(
+      let activeApi = try resolveApi()
+      let res: [Int64]? = try await activeApi.callFlutterEchoAsyncNullableInt64List(
         list: NativeInteropTestsPigeonInternal.isNullish(listArg) ? nil : listArg!.toInt64Array())
       return NativeInteropTestsPigeonInternal.isNullish(res)
         ? nil : NativeInteropTestsPigeonTypedData(res!)
@@ -7184,7 +7424,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     list listArg: NativeInteropTestsPigeonTypedData?, wrappedError: NativeInteropTestsError
   ) async -> NativeInteropTestsPigeonTypedData? {
     do {
-      let res: [Float64]? = try await api!.callFlutterEchoAsyncNullableFloat64List(
+      let activeApi = try resolveApi()
+      let res: [Float64]? = try await activeApi.callFlutterEchoAsyncNullableFloat64List(
         list: NativeInteropTestsPigeonInternal.isNullish(listArg) ? nil : listArg!.toFloat64Array())
       return NativeInteropTestsPigeonInternal.isNullish(res)
         ? nil : NativeInteropTestsPigeonTypedData(res!)
@@ -7203,7 +7444,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     -> NSObject?
   {
     do {
-      let res: Any? = try await api!.callFlutterThrowFlutterErrorAsync()
+      let activeApi = try resolveApi()
+      let res: Any? = try await activeApi.callFlutterThrowFlutterErrorAsync()
       return _PigeonFfiCodec.writeValue(value: res, isObject: true) as? NSObject
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -7220,7 +7462,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     anObject anObjectArg: NSObject, wrappedError: NativeInteropTestsError
   ) async -> NSObject? {
     do {
-      let res: Any? = try await api!.callFlutterEchoAsyncNullableObject(
+      let activeApi = try resolveApi()
+      let res: Any? = try await activeApi.callFlutterEchoAsyncNullableObject(
         anObject: _PigeonFfiCodec.readValue(value: anObjectArg))
       return _PigeonFfiCodec.writeValue(value: res, isObject: true) as? NSObject
     } catch let error as NativeInteropTestsError {
@@ -7238,7 +7481,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     list listArg: [NSObject]?, wrappedError: NativeInteropTestsError
   ) async -> [NSObject]? {
     do {
-      let res: [Any?]? = try await api!.callFlutterEchoAsyncNullableList(
+      let activeApi = try resolveApi()
+      let res: [Any?]? = try await activeApi.callFlutterEchoAsyncNullableList(
         list: _PigeonFfiCodec.readValue(value: listArg as NSObject?, type: "Object") as? [Any?])
       return _PigeonFfiCodec.writeValue(value: res) as? [NSObject]
     } catch let error as NativeInteropTestsError {
@@ -7256,7 +7500,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     enumList enumListArg: [NSObject]?, wrappedError: NativeInteropTestsError
   ) async -> [NSObject]? {
     do {
-      let res: [NativeInteropAnEnum?]? = try await api!.callFlutterEchoAsyncNullableEnumList(
+      let activeApi = try resolveApi()
+      let res: [NativeInteropAnEnum?]? = try await activeApi.callFlutterEchoAsyncNullableEnumList(
         enumList: _PigeonFfiCodec.readValue(
           value: enumListArg as NSObject?, type: "NativeInteropAnEnum") as? [NativeInteropAnEnum?])
       return _PigeonFfiCodec.writeValue(value: res) as? [NSObject]
@@ -7275,8 +7520,9 @@ protocol NativeInteropHostIntegrationCoreApi {
     classList classListArg: [NSObject]?, wrappedError: NativeInteropTestsError
   ) async -> [NSObject]? {
     do {
-      let res: [NativeInteropAllNullableTypes?]? = try await api!
-        .callFlutterEchoAsyncNullableClassList(
+      let activeApi = try resolveApi()
+      let res: [NativeInteropAllNullableTypes?]? =
+        try await activeApi.callFlutterEchoAsyncNullableClassList(
           classList: _PigeonFfiCodec.readValue(
             value: classListArg as NSObject?, type: "NativeInteropAllNullableTypes")
             as? [NativeInteropAllNullableTypes?])
@@ -7296,9 +7542,11 @@ protocol NativeInteropHostIntegrationCoreApi {
     enumList enumListArg: [NSObject]?, wrappedError: NativeInteropTestsError
   ) async -> [NSObject]? {
     do {
-      let res: [NativeInteropAnEnum]? = try await api!.callFlutterEchoAsyncNullableNonNullEnumList(
-        enumList: _PigeonFfiCodec.readValue(
-          value: enumListArg as NSObject?, type: "NativeInteropAnEnum") as? [NativeInteropAnEnum])
+      let activeApi = try resolveApi()
+      let res: [NativeInteropAnEnum]? =
+        try await activeApi.callFlutterEchoAsyncNullableNonNullEnumList(
+          enumList: _PigeonFfiCodec.readValue(
+            value: enumListArg as NSObject?, type: "NativeInteropAnEnum") as? [NativeInteropAnEnum])
       return _PigeonFfiCodec.writeValue(value: res) as? [NSObject]
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -7315,8 +7563,9 @@ protocol NativeInteropHostIntegrationCoreApi {
     classList classListArg: [NSObject]?, wrappedError: NativeInteropTestsError
   ) async -> [NSObject]? {
     do {
-      let res: [NativeInteropAllNullableTypes]? = try await api!
-        .callFlutterEchoAsyncNullableNonNullClassList(
+      let activeApi = try resolveApi()
+      let res: [NativeInteropAllNullableTypes]? =
+        try await activeApi.callFlutterEchoAsyncNullableNonNullClassList(
           classList: _PigeonFfiCodec.readValue(
             value: classListArg as NSObject?, type: "NativeInteropAllNullableTypes")
             as? [NativeInteropAllNullableTypes])
@@ -7336,7 +7585,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     map mapArg: [NSObject: NSObject]?, wrappedError: NativeInteropTestsError
   ) async -> [NSObject: NSObject]? {
     do {
-      let res: [AnyHashable?: Any?]? = try await api!.callFlutterEchoAsyncNullableMap(
+      let activeApi = try resolveApi()
+      let res: [AnyHashable?: Any?]? = try await activeApi.callFlutterEchoAsyncNullableMap(
         map: _PigeonFfiCodec.readValue(value: mapArg as NSObject?, type: "Object", type2: "Object")
           as? [AnyHashable?: Any?])
       return _PigeonFfiCodec.writeValue(value: res) as? [NSObject: NSObject]
@@ -7355,7 +7605,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     stringMap stringMapArg: [NSObject: NSObject]?, wrappedError: NativeInteropTestsError
   ) async -> [NSObject: NSObject]? {
     do {
-      let res: [String?: String?]? = try await api!.callFlutterEchoAsyncNullableStringMap(
+      let activeApi = try resolveApi()
+      let res: [String?: String?]? = try await activeApi.callFlutterEchoAsyncNullableStringMap(
         stringMap: _PigeonFfiCodec.readValue(
           value: stringMapArg as NSObject?, type: "String", type2: "String") as? [String?: String?])
       return _PigeonFfiCodec.writeValue(value: res) as? [NSObject: NSObject]
@@ -7374,7 +7625,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     intMap intMapArg: [NSObject: NSObject]?, wrappedError: NativeInteropTestsError
   ) async -> [NSObject: NSObject]? {
     do {
-      let res: [Int64?: Int64?]? = try await api!.callFlutterEchoAsyncNullableIntMap(
+      let activeApi = try resolveApi()
+      let res: [Int64?: Int64?]? = try await activeApi.callFlutterEchoAsyncNullableIntMap(
         intMap: _PigeonFfiCodec.readValue(value: intMapArg as NSObject?, type: "int", type2: "int")
           as? [Int64?: Int64?])
       return _PigeonFfiCodec.writeValue(value: res) as? [NSObject: NSObject]
@@ -7393,8 +7645,9 @@ protocol NativeInteropHostIntegrationCoreApi {
     enumMap enumMapArg: [NSObject: NSObject]?, wrappedError: NativeInteropTestsError
   ) async -> [NSObject: NSObject]? {
     do {
-      let res: [NativeInteropAnEnum?: NativeInteropAnEnum?]? = try await api!
-        .callFlutterEchoAsyncNullableEnumMap(
+      let activeApi = try resolveApi()
+      let res: [NativeInteropAnEnum?: NativeInteropAnEnum?]? =
+        try await activeApi.callFlutterEchoAsyncNullableEnumMap(
           enumMap: _PigeonFfiCodec.readValue(
             value: enumMapArg as NSObject?, type: "NativeInteropAnEnum",
             type2: "NativeInteropAnEnum") as? [NativeInteropAnEnum?: NativeInteropAnEnum?])
@@ -7414,8 +7667,9 @@ protocol NativeInteropHostIntegrationCoreApi {
     classMap classMapArg: [NSObject: NSObject]?, wrappedError: NativeInteropTestsError
   ) async -> [NSObject: NSObject]? {
     do {
-      let res: [Int64?: NativeInteropAllNullableTypes?]? = try await api!
-        .callFlutterEchoAsyncNullableClassMap(
+      let activeApi = try resolveApi()
+      let res: [Int64?: NativeInteropAllNullableTypes?]? =
+        try await activeApi.callFlutterEchoAsyncNullableClassMap(
           classMap: _PigeonFfiCodec.readValue(
             value: classMapArg as NSObject?, type: "int", type2: "NativeInteropAllNullableTypes")
             as? [Int64?: NativeInteropAllNullableTypes?])
@@ -7435,7 +7689,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     anEnum anEnumArg: NSNumber?, wrappedError: NativeInteropTestsError
   ) async -> NSNumber? {
     do {
-      let res: NativeInteropAnEnum? = try await api!.callFlutterEchoAsyncNullableEnum(
+      let activeApi = try resolveApi()
+      let res: NativeInteropAnEnum? = try await activeApi.callFlutterEchoAsyncNullableEnum(
         anEnum: NativeInteropTestsPigeonInternal.isNullish(anEnumArg)
           ? nil : NativeInteropAnEnum.init(rawValue: anEnumArg!.intValue))
       return NativeInteropTestsPigeonInternal.isNullish(res) ? nil : NSNumber(value: res!.rawValue)
@@ -7454,9 +7709,11 @@ protocol NativeInteropHostIntegrationCoreApi {
     anotherEnum anotherEnumArg: NSNumber?, wrappedError: NativeInteropTestsError
   ) async -> NSNumber? {
     do {
-      let res: NativeInteropAnotherEnum? = try await api!.callFlutterEchoAnotherAsyncNullableEnum(
-        anotherEnum: NativeInteropTestsPigeonInternal.isNullish(anotherEnumArg)
-          ? nil : NativeInteropAnotherEnum.init(rawValue: anotherEnumArg!.intValue))
+      let activeApi = try resolveApi()
+      let res: NativeInteropAnotherEnum? =
+        try await activeApi.callFlutterEchoAnotherAsyncNullableEnum(
+          anotherEnum: NativeInteropTestsPigeonInternal.isNullish(anotherEnumArg)
+            ? nil : NativeInteropAnotherEnum.init(rawValue: anotherEnumArg!.intValue))
       return NativeInteropTestsPigeonInternal.isNullish(res) ? nil : NSNumber(value: res!.rawValue)
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -7472,7 +7729,8 @@ protocol NativeInteropHostIntegrationCoreApi {
   /// Returns true if the handler is run on a main thread.
   @objc func isMainThread(wrappedError: NativeInteropTestsError) -> NSNumber? {
     do {
-      let res: Bool = try api!.isMainThread()
+      let activeApi = try resolveApi()
+      let res: Bool = try activeApi.isMainThread()
       return NSNumber(value: res)
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -7488,7 +7746,8 @@ protocol NativeInteropHostIntegrationCoreApi {
   /// Returns true if the async handler runs on a background thread.
   @objc func asyncIsBackgroundThread(wrappedError: NativeInteropTestsError) async -> NSNumber? {
     do {
-      let res: Bool = try await api!.asyncIsBackgroundThread()
+      let activeApi = try resolveApi()
+      let res: Bool = try await activeApi.asyncIsBackgroundThread()
       return NSNumber(value: res)
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -7505,7 +7764,8 @@ protocol NativeInteropHostIntegrationCoreApi {
   /// invoked as JNI property getters (e.g., `_jniApi.isGetter`).
   @objc func isGetter(wrappedError: NativeInteropTestsError) -> NSNumber? {
     do {
-      let res: Bool = try api!.isGetter()
+      let activeApi = try resolveApi()
+      let res: Bool = try activeApi.isGetter()
       return NSNumber(value: res)
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -7522,7 +7782,8 @@ protocol NativeInteropHostIntegrationCoreApi {
   /// invoked as JNI property getters with decapitalized names (e.g., `_jniApi.getter`).
   @objc func getGetter(wrappedError: NativeInteropTestsError) -> NSNumber? {
     do {
-      let res: Int64 = try api!.getGetter()
+      let activeApi = try resolveApi()
+      let res: Int64 = try activeApi.getGetter()
       return NSNumber(value: res)
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -7539,7 +7800,8 @@ protocol NativeInteropHostIntegrationCoreApi {
   /// invoked as JNI property setters with decapitalized names (e.g., `_jniApi.setter = value`).
   @objc func setSetter(value valueArg: Int64, wrappedError: NativeInteropTestsError) {
     do {
-      try api!.setSetter(value: valueArg)
+      let activeApi = try resolveApi()
+      try activeApi.setSetter(value: valueArg)
       return
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -7559,7 +7821,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     -> NSNumber?
   {
     do {
-      let res: Bool = try await api!.callFlutterNoopOnBackgroundThread()
+      let activeApi = try resolveApi()
+      let res: Bool = try await activeApi.callFlutterNoopOnBackgroundThread()
       return NSNumber(value: res)
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -7575,7 +7838,8 @@ protocol NativeInteropHostIntegrationCoreApi {
   /// Tests deregistering a Host API natively.
   @objc func testDeregisterHostApi(wrappedError: NativeInteropTestsError) -> NSNumber? {
     do {
-      let res: Bool = try api!.testDeregisterHostApi()
+      let activeApi = try resolveApi()
+      let res: Bool = try activeApi.testDeregisterHostApi()
       return NSNumber(value: res)
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -7591,7 +7855,8 @@ protocol NativeInteropHostIntegrationCoreApi {
   /// Tests deregistering a Flutter API natively.
   @objc func testDeregisterFlutterApi(wrappedError: NativeInteropTestsError) -> NSNumber? {
     do {
-      let res: Bool = try api!.testDeregisterFlutterApi()
+      let activeApi = try resolveApi()
+      let res: Bool = try activeApi.testDeregisterFlutterApi()
       return NSNumber(value: res)
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -7609,7 +7874,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     name nameArg: NSString, wrappedError: NativeInteropTestsError
   ) {
     do {
-      try api!.registerAndImmediatelyDeregisterHostApi(name: nameArg as String)
+      let activeApi = try resolveApi()
+      try activeApi.registerAndImmediatelyDeregisterHostApi(name: nameArg as String)
       return
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -7627,7 +7893,8 @@ protocol NativeInteropHostIntegrationCoreApi {
     name nameArg: NSString, wrappedError: NativeInteropTestsError
   ) -> NSNumber? {
     do {
-      let res: Bool = try api!.testCallDeregisteredFlutterApi(name: nameArg as String)
+      let activeApi = try resolveApi()
+      let res: Bool = try activeApi.testCallDeregisteredFlutterApi(name: nameArg as String)
       return NSNumber(value: res)
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -7639,6 +7906,66 @@ protocol NativeInteropHostIntegrationCoreApi {
       wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
     }
     return nil
+  }
+  /// Spawns secondary engines, destroys one out-of-order, executes a live Dart
+  /// entrypoint on another (where supported by the embedder), and tears it down
+  /// while keeping the primary engine registration intact.
+  @objc func testSecondaryEngineDartExecution(wrappedError: NativeInteropTestsError) async
+    -> NSNumber?
+  {
+    do {
+      let activeApi = try resolveApi()
+      let res: Bool = try await activeApi.testSecondaryEngineDartExecution()
+      return NSNumber(value: res)
+    } catch let error as NativeInteropTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(Swift.type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
+  /// Returns whether the secondary engine's Host API registration is ready for
+  /// the secondary Dart isolate to invoke.
+  @objc func isSecondaryEngineRegistrationReady(wrappedError: NativeInteropTestsError) -> NSNumber?
+  {
+    do {
+      let activeApi = try resolveApi()
+      let res: Bool = try activeApi.isSecondaryEngineRegistrationReady()
+      return NSNumber(value: res)
+    } catch let error as NativeInteropTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(Swift.type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
+  /// Reports whether Native Interop Host API calls from a secondary engine's
+  /// Dart isolate succeeded.
+  @objc func reportSecondaryEngineCheck(
+    success successArg: Bool, wrappedError: NativeInteropTestsError
+  ) {
+    do {
+      let activeApi = try resolveApi()
+      try activeApi.reportSecondaryEngineCheck(success: successArg)
+      return
+    } catch let error as NativeInteropTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(Swift.type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return
   }
 }
 
@@ -9372,6 +9699,16 @@ protocol NativeInteropReservedNamesHostApi {
     }
   }
   override init() {}
+  private func resolveApi() throws -> NativeInteropReservedNamesHostApi {
+    guard let currentApi = api else {
+      throw NativeInteropTestsError(
+        code: "unregistered-instance",
+        message: "NativeInteropReservedNamesHostApi has not been registered.",
+        details: nil
+      )
+    }
+    return currentApi
+  }
   @discardableResult
   static func register(
     api: NativeInteropReservedNamesHostApi?,
@@ -9492,7 +9829,8 @@ protocol NativeInteropReservedNamesHostApi {
   /// Collides with `JObject.release`.
   @objc func release(value valueArg: NSString, wrappedError: NativeInteropTestsError) -> NSString? {
     do {
-      let res: String = try api!.release(value: valueArg as String)
+      let activeApi = try resolveApi()
+      let res: String = try activeApi.release(value: valueArg as String)
       return res as NSString?
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -9508,7 +9846,8 @@ protocol NativeInteropReservedNamesHostApi {
   /// Collides with `JObject.use`.
   @objc func use(value valueArg: Int64, wrappedError: NativeInteropTestsError) -> NSNumber? {
     do {
-      let res: Int64 = try api!.use(value: valueArg)
+      let activeApi = try resolveApi()
+      let res: Int64 = try activeApi.use(value: valueArg)
       return NSNumber(value: res)
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -9524,7 +9863,8 @@ protocol NativeInteropReservedNamesHostApi {
   /// Collides with the static `type` field that JNIgen adds to every class.
   @objc func type(wrappedError: NativeInteropTestsError) -> NSString? {
     do {
-      let res: String = try api!.type()
+      let activeApi = try resolveApi()
+      let res: String = try activeApi.type()
       return res as NSString?
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -9540,7 +9880,8 @@ protocol NativeInteropReservedNamesHostApi {
   /// JNIgen makes this a getter, which collides with `JObject.isNull`.
   @objc func isNull(wrappedError: NativeInteropTestsError) -> NSNumber? {
     do {
-      let res: Bool = try api!.isNull()
+      let activeApi = try resolveApi()
+      let res: Bool = try activeApi.isNull()
       return NSNumber(value: res)
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -9556,7 +9897,8 @@ protocol NativeInteropReservedNamesHostApi {
   /// JNIgen keeps this a method, since nullable booleans are boxed on the JVM.
   @objc func isNullable(wrappedError: NativeInteropTestsError) -> NSNumber? {
     do {
-      let res: Bool? = try api!.isNullable()
+      let activeApi = try resolveApi()
+      let res: Bool? = try activeApi.isNullable()
       return NativeInteropTestsPigeonInternal.isNullish(res) ? nil : NSNumber(value: res!)
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -9572,7 +9914,8 @@ protocol NativeInteropReservedNamesHostApi {
   /// JNIgen makes this a getter.
   @objc func isOpen(wrappedError: NativeInteropTestsError) -> NSNumber? {
     do {
-      let res: Bool = try api!.isOpen()
+      let activeApi = try resolveApi()
+      let res: Bool = try activeApi.isOpen()
       return NSNumber(value: res)
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -9589,7 +9932,8 @@ protocol NativeInteropReservedNamesHostApi {
   /// with `JObject.reference`.
   @objc func getReference(wrappedError: NativeInteropTestsError) -> NSString? {
     do {
-      let res: String = try api!.getReference()
+      let activeApi = try resolveApi()
+      let res: String = try activeApi.getReference()
       return res as NSString?
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -9605,7 +9949,8 @@ protocol NativeInteropReservedNamesHostApi {
   /// See [getReference].
   @objc func setReference(value valueArg: NSString, wrappedError: NativeInteropTestsError) {
     do {
-      try api!.setReference(value: valueArg as String)
+      let activeApi = try resolveApi()
+      try activeApi.setReference(value: valueArg as String)
       return
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -9621,7 +9966,8 @@ protocol NativeInteropReservedNamesHostApi {
   /// JNIgen makes this a getter named after a Dart keyword, `default`.
   @objc func getDefault(wrappedError: NativeInteropTestsError) -> NSString? {
     do {
-      let res: String = try api!.getDefault()
+      let activeApi = try resolveApi()
+      let res: String = try activeApi.getDefault()
       return res as NSString?
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -9637,7 +9983,8 @@ protocol NativeInteropReservedNamesHostApi {
   /// JNIgen keeps suspend functions as methods.
   @objc func getValueAsync(wrappedError: NativeInteropTestsError) async -> NSString? {
     do {
-      let res: String = try await api!.getValueAsync()
+      let activeApi = try resolveApi()
+      let res: String = try await activeApi.getValueAsync()
       return res as NSString?
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -9655,7 +10002,9 @@ protocol NativeInteropReservedNamesHostApi {
     names namesArg: NativeInteropReservedNamesBridge, wrappedError: NativeInteropTestsError
   ) -> NativeInteropReservedNamesBridge? {
     do {
-      let res: NativeInteropReservedNames = try api!.echoReservedNames(names: namesArg.toSwift())
+      let activeApi = try resolveApi()
+      let res: NativeInteropReservedNames = try activeApi.echoReservedNames(
+        names: namesArg.toSwift())
       return NativeInteropReservedNamesBridge.fromSwift(res)!
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -9673,7 +10022,8 @@ protocol NativeInteropReservedNamesHostApi {
     -> NSString?
   {
     do {
-      let res: String = try api!.callFlutterRelease(value: valueArg as String)
+      let activeApi = try resolveApi()
+      let res: String = try activeApi.callFlutterRelease(value: valueArg as String)
       return res as NSString?
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -9689,7 +10039,8 @@ protocol NativeInteropReservedNamesHostApi {
   /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.type].
   @objc func callFlutterType(wrappedError: NativeInteropTestsError) -> NSString? {
     do {
-      let res: String = try api!.callFlutterType()
+      let activeApi = try resolveApi()
+      let res: String = try activeApi.callFlutterType()
       return res as NSString?
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -9707,7 +10058,8 @@ protocol NativeInteropReservedNamesHostApi {
     -> NSString?
   {
     do {
-      let res: String = try api!.callFlutterImplementIn(value: valueArg as String)
+      let activeApi = try resolveApi()
+      let res: String = try activeApi.callFlutterImplementIn(value: valueArg as String)
       return res as NSString?
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -9723,7 +10075,8 @@ protocol NativeInteropReservedNamesHostApi {
   /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.isNull].
   @objc func callFlutterIsNull(wrappedError: NativeInteropTestsError) -> NSNumber? {
     do {
-      let res: Bool = try api!.callFlutterIsNull()
+      let activeApi = try resolveApi()
+      let res: Bool = try activeApi.callFlutterIsNull()
       return NSNumber(value: res)
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
@@ -9739,7 +10092,8 @@ protocol NativeInteropReservedNamesHostApi {
   /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.getReference].
   @objc func callFlutterGetReference(wrappedError: NativeInteropTestsError) -> NSString? {
     do {
-      let res: String = try api!.callFlutterGetReference()
+      let activeApi = try resolveApi()
+      let res: String = try activeApi.callFlutterGetReference()
       return res as NSString?
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code

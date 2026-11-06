@@ -1830,6 +1830,9 @@ void main() {
         'static func unregister(setup: HostApiSetup, name: String = PigeonInternal.defaultInstanceName)',
       ),
     );
+    expect(code, contains('private func resolveApi() throws -> HostApi'));
+    expect(code, contains('code: "unregistered-instance"'));
+    expect(code, isNot(contains('api!.')));
     expect(code, contains('Swift.type(of: api) is AnyClass'));
     expect(code, contains('HostApiInstanceTracker.instancesOfHostApi.removeValue(forKey: name)'));
     expect(code, contains('return HostApiInstanceTracker.instancesOfHostApi[name]?.last'));
@@ -1980,7 +1983,8 @@ void main() {
         '@objc func echo(error errorArg: NSString, wrappedError: PigeonError) -> NSString? {',
       ),
     );
-    expect(code, contains('let res: String = try api!.echo(error: errorArg as String)'));
+    expect(code, contains('let activeApi = try resolveApi()'));
+    expect(code, contains('let res: String = try activeApi.echo(error: errorArg as String)'));
     expect(
       code,
       contains(
@@ -1990,7 +1994,7 @@ void main() {
     expect(
       code,
       contains(
-        r'api!.later(value: valueArg as String, completion: { continuation.resume(with: $0) })',
+        r'activeApi.later(value: valueArg as String, completion: { continuation.resume(with: $0) })',
       ),
     );
     expect(code, contains(r'wrappedError.message = "\(Swift.type(of: error))"'));

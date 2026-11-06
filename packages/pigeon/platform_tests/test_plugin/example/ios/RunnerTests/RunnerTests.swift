@@ -8,6 +8,7 @@ import Testing
 
 @testable import test_plugin
 
+@Suite(.serialized)
 @MainActor
 struct RunnerTests {
 
@@ -50,11 +51,14 @@ struct RunnerTests {
     let name = "iosMultiEngineTest"
     let api1 = NativeInteropTestsClass()
     let api2 = NativeInteropTestsClass()
-    NativeInteropHostIntegrationCoreApiSetup.register(api: api1, name: name)
+    let setup1 = NativeInteropHostIntegrationCoreApiSetup.register(api: api1, name: name)!
     NativeInteropHostIntegrationCoreApiSetup.register(api: api2, name: name)
     #expect(NativeInteropHostIntegrationCoreApiSetup.getInstance(name: name) != nil)
 
     NativeInteropHostIntegrationCoreApiSetup.unregister(api: api1, name: name)
+    let staleError = NativeInteropTestsError()
+    #expect(setup1.echoString(aString: "ping", wrappedError: staleError) == nil)
+    #expect(staleError.code == "unregistered-instance")
     #expect(NativeInteropHostIntegrationCoreApiSetup.getInstance(name: name) != nil)
 
     NativeInteropHostIntegrationCoreApiSetup.unregister(api: api2, name: name)
@@ -86,6 +90,16 @@ struct RunnerTests {
 
     plugin2?.detachFromEngine(for: registrar2)
     #expect(NativeInteropHostIntegrationCoreApiSetup.getInstance() === preexistingSetup)
+  }
+
+  @Test
+  func realFlutterEnginesOutOfOrderDestroyInvokesDetachAndPreservesRegistrations() async {
+    #expect(await SecondaryEngineTestRunner.verifyRealSecondaryEnginesIOS())
+  }
+
+  @Test
+  func liveSecondaryEnginesExecuteDartIsolatesAcrossOutOfOrderDestroy() async {
+    #expect(await SecondaryEngineTestRunner.verifyIOSLiveSecondaryEngineExecution())
   }
 }
 

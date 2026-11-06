@@ -7,14 +7,19 @@ package com.example.test_plugin
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
+import io.flutter.FlutterInjector
 import io.flutter.embedding.engine.FlutterEngine
+import io.flutter.embedding.engine.dart.DartExecutor
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
 
 /**
  * Helper to adapt callback-based Flutter API calls into Kotlin coroutines, allowing integration
@@ -39,7 +44,7 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi, HostCallbackCoreApi {
   private var flutterSmallApiOne: FlutterSmallApi? = null
   private var flutterSmallApiTwo: FlutterSmallApi? = null
   private var proxyApiRegistrar: ProxyApiRegistrar? = null
-  private var niMessageApiImpl: NativeInteropIntegrationTests? = null
+  internal var niMessageApiImpl: NativeInteropIntegrationTests? = null
   private var niReservedNamesRegistrar: NativeInteropReservedNamesHostApiRegistrar? = null
   private var eventChannelOne: StreamConsistentNumbersEventChannel? = null
 
@@ -2299,6 +2304,88 @@ class NativeInteropIntegrationTests(private val context: Context? = null) :
   override fun testCallDeregisteredFlutterApi(name: String): Boolean {
     NativeInteropFlutterIntegrationCoreApiRegistrar().registerInstance(null, name = name)
     return NativeInteropFlutterIntegrationCoreApiRegistrar().getInstance(name) == null
+  }
+
+  override suspend fun testSecondaryEngineDartExecution(): Boolean {
+    val appContext = context ?: return false
+    val deferred = SecondaryEngineCheckTracker.begin()
+    var engine2: FlutterEngine? = null
+    try {
+      withContext(Dispatchers.Main) {
+        // Attach TestPlugin to two secondary engines, destroy the first out-of-order, and execute
+        // a live Dart isolate on the second while the primary engine remains active.
+        val engine1 = FlutterEngine(appContext, null, false)
+        val createdEngine2 = FlutterEngine(appContext, null, false)
+        engine2 = createdEngine2
+        val plugin1 = TestPlugin()
+        val plugin2 = TestPlugin()
+        engine1.plugins.add(plugin1)
+        createdEngine2.plugins.add(plugin2)
+        engine1.destroy()
+
+        SecondaryEngineCheckTracker.markRegistrationReady(plugin2.niMessageApiImpl)
+        val appBundlePath = FlutterInjector.instance().flutterLoader().findAppBundlePath()
+        val entrypoint =
+            DartExecutor.DartEntrypoint(
+                appBundlePath,
+                "package:shared_test_plugin_code/secondary_engine_entrypoints.dart",
+                "secondaryEngineMain")
+        createdEngine2.dartExecutor.executeDartEntrypoint(entrypoint)
+      }
+      return withTimeoutOrNull(15_000L) { deferred.await() } == true
+    } finally {
+      SecondaryEngineCheckTracker.reset()
+      withContext(NonCancellable + Dispatchers.Main) { engine2?.destroy() }
+    }
+  }
+
+  override fun isSecondaryEngineRegistrationReady(): Boolean {
+    return SecondaryEngineCheckTracker.isReady()
+  }
+
+  override fun reportSecondaryEngineCheck(success: Boolean) {
+    SecondaryEngineCheckTracker.report(success, this)
+  }
+}
+
+internal object SecondaryEngineCheckTracker {
+  private val lock = Any()
+  private var registrationReady = false
+  private var expectedReceiver: NativeInteropIntegrationTests? = null
+  private var resultDeferred: CompletableDeferred<Boolean>? = null
+
+  fun begin(): CompletableDeferred<Boolean> =
+      synchronized(lock) {
+        registrationReady = false
+        expectedReceiver = null
+        CompletableDeferred<Boolean>().also { resultDeferred = it }
+      }
+
+  fun markRegistrationReady(expected: NativeInteropIntegrationTests?) {
+    synchronized(lock) {
+      expectedReceiver = expected
+      registrationReady = true
+    }
+  }
+
+  fun isReady(): Boolean = synchronized(lock) { registrationReady }
+
+  fun report(success: Boolean, receiver: NativeInteropIntegrationTests) {
+    val deferred: CompletableDeferred<Boolean>?
+    val receiverMatches: Boolean
+    synchronized(lock) {
+      deferred = resultDeferred
+      receiverMatches = expectedReceiver == null || expectedReceiver === receiver
+    }
+    deferred?.complete(success && receiverMatches)
+  }
+
+  fun reset() {
+    synchronized(lock) {
+      registrationReady = false
+      expectedReceiver = null
+      resultDeferred = null
+    }
   }
 }
 

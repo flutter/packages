@@ -1535,6 +1535,20 @@ abstract class NativeInteropHostIntegrationCoreApi {
 
   /// Tests that calling a deregistered Flutter API under [name] fails / returns null.
   bool testCallDeregisteredFlutterApi(String name);
+
+  /// Spawns secondary engines, destroys one out-of-order, executes a live Dart
+  /// entrypoint on another (where supported by the embedder), and tears it down
+  /// while keeping the primary engine registration intact.
+  @async
+  bool testSecondaryEngineDartExecution();
+
+  /// Returns whether the secondary engine's Host API registration is ready for
+  /// the secondary Dart isolate to invoke.
+  bool isSecondaryEngineRegistrationReady();
+
+  /// Reports whether Native Interop Host API calls from a secondary engine's
+  /// Dart isolate succeeded.
+  void reportSecondaryEngineCheck(bool success);
 }
 
 /// The core interface that the Dart platform_test code implements for host

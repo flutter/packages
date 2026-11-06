@@ -19103,6 +19103,21 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
     return $ret.address == 0 ? null : objc.NSNumber.fromPointer($ret, retain: true, release: true);
   }
 
+  /// Returns whether the secondary engine’s Host API registration is ready for
+  /// the secondary Dart isolate to invoke.
+  objc.NSNumber? isSecondaryEngineRegistrationReadyWithWrappedError(
+    NativeInteropTestsError wrappedError,
+  ) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = wrappedError.ref;
+    final $ret = _objc_msgSend_1sotr3r(
+      _$$ref.pointer,
+      _sel_isSecondaryEngineRegistrationReadyWithWrappedError_,
+      _$$ref$1.pointer,
+    );
+    return $ret.address == 0 ? null : objc.NSNumber.fromPointer($ret, retain: true, release: true);
+  }
+
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic asynchronous calling.
   void noopAsyncWithWrappedError(
@@ -19141,6 +19156,22 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
       _sel_registerAndImmediatelyDeregisterHostApiWithName_wrappedError_,
       _$$ref$1.pointer,
       _$$ref$2.pointer,
+    );
+  }
+
+  /// Reports whether Native Interop Host API calls from a secondary engine’s
+  /// Dart isolate succeeded.
+  void reportSecondaryEngineCheckWithSuccess(
+    bool successArg, {
+    required NativeInteropTestsError wrappedError,
+  }) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = wrappedError.ref;
+    _objc_msgSend_hk7n97(
+      _$$ref.pointer,
+      _sel_reportSecondaryEngineCheckWithSuccess_wrappedError_,
+      successArg,
+      _$$ref$1.pointer,
     );
   }
 
@@ -19251,6 +19282,24 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
       _$$ref$1.pointer,
     );
     return $ret.address == 0 ? null : objc.NSNumber.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// Spawns secondary engines, destroys one out-of-order, executes a live Dart
+  /// entrypoint on another (where supported by the embedder), and tears it down
+  /// while keeping the primary engine registration intact.
+  void testSecondaryEngineDartExecutionWithWrappedError(
+    NativeInteropTestsError wrappedError, {
+    required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
+  }) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = wrappedError.ref;
+    final _$$ref$2 = completionHandler.ref;
+    _objc_msgSend_o762yo(
+      _$$ref.pointer,
+      _sel_testSecondaryEngineDartExecutionWithWrappedError_completionHandler_,
+      _$$ref$1.pointer,
+      _$$ref$2.pointer,
+    );
   }
 
   /// Responds with an error from an async void function.
@@ -31220,6 +31269,25 @@ final _objc_msgSend_gthscw = objc.msgSendPointer
         ffi.Pointer<objc.ObjCBlockImpl>,
       )
     >();
+final _objc_msgSend_hk7n97 = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Void Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Bool,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+        )
+      >
+    >()
+    .asFunction<
+      void Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+        bool,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+      )
+    >();
 final _objc_msgSend_hwm8nu = objc.msgSendPointer
     .cast<
       ffi.NativeFunction<
@@ -32461,6 +32529,9 @@ late final _sel_isNullWithWrappedError_ = objc.registerName("isNullWithWrappedEr
 late final _sel_isNullableWithWrappedError_ = objc.registerName("isNullableWithWrappedError:");
 late final _sel_isOpenWithWrappedError_ = objc.registerName("isOpenWithWrappedError:");
 late final _sel_isReleased = objc.registerName("isReleased");
+late final _sel_isSecondaryEngineRegistrationReadyWithWrappedError_ = objc.registerName(
+  "isSecondaryEngineRegistrationReadyWithWrappedError:",
+);
 late final _sel_jClass = objc.registerName("jClass");
 late final _sel_list = objc.registerName("list");
 late final _sel_listList = objc.registerName("listList");
@@ -32498,6 +32569,9 @@ late final _sel_releaseWithValue_wrappedError_ = objc.registerName(
   "releaseWithValue:wrappedError:",
 );
 late final _sel_releasedBy = objc.registerName("releasedBy");
+late final _sel_reportSecondaryEngineCheckWithSuccess_wrappedError_ = objc.registerName(
+  "reportSecondaryEngineCheckWithSuccess:wrappedError:",
+);
 late final _sel_sealedClass = objc.registerName("sealedClass");
 late final _sel_sealedClassList = objc.registerName("sealedClassList");
 late final _sel_sendMultipleNullableTypesWithANullableBool_aNullableInt_aNullableString_error_ =
@@ -32608,6 +32682,8 @@ late final _sel_testDeregisterFlutterApiWithWrappedError_ = objc.registerName(
 late final _sel_testDeregisterHostApiWithWrappedError_ = objc.registerName(
   "testDeregisterHostApiWithWrappedError:",
 );
+late final _sel_testSecondaryEngineDartExecutionWithWrappedError_completionHandler_ = objc
+    .registerName("testSecondaryEngineDartExecutionWithWrappedError:completionHandler:");
 late final _sel_throwAsyncErrorFromVoidWithWrappedError_completionHandler_ = objc.registerName(
   "throwAsyncErrorFromVoidWithWrappedError:completionHandler:",
 );

@@ -344,6 +344,16 @@ protocol NativeInteropExampleApi {
     }
   }
   override init() {}
+  private func resolveApi() throws -> NativeInteropExampleApi {
+    guard let currentApi = api else {
+      throw PigeonError(
+        code: "unregistered-instance",
+        message: "NativeInteropExampleApi has not been registered.",
+        details: nil
+      )
+    }
+    return currentApi
+  }
   @discardableResult
   static func register(
     api: NativeInteropExampleApi?,
@@ -449,7 +459,8 @@ protocol NativeInteropExampleApi {
   }
   @objc func doSomething(wrappedError: PigeonError) {
     do {
-      try api!.doSomething()
+      let activeApi = try resolveApi()
+      try activeApi.doSomething()
       return
     } catch let error as PigeonError {
       wrappedError.code = error.code

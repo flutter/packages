@@ -3026,6 +3026,25 @@ SWIFT_CLASS("_TtC11test_plugin40NativeInteropHostIntegrationCoreApiSetup")
                               wrappedError:(NativeInteropTestsError* _Nonnull)
                                                wrappedError
     SWIFT_WARN_UNUSED_RESULT;
+/// Spawns secondary engines, destroys one out-of-order, executes a live Dart
+/// entrypoint on another (where supported by the embedder), and tears it down
+/// while keeping the primary engine registration intact.
+- (void)
+    testSecondaryEngineDartExecutionWithWrappedError:
+        (NativeInteropTestsError* _Nonnull)wrappedError
+                                   completionHandler:
+                                       (void (^_Nonnull)(NSNumber* _Nullable))
+                                           completionHandler;
+/// Returns whether the secondary engine’s Host API registration is ready for
+/// the secondary Dart isolate to invoke.
+- (NSNumber* _Nullable)isSecondaryEngineRegistrationReadyWithWrappedError:
+    (NativeInteropTestsError* _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
+/// Reports whether Native Interop Host API calls from a secondary engine’s
+/// Dart isolate succeeded.
+- (void)reportSecondaryEngineCheckWithSuccess:(BOOL)successArg
+                                 wrappedError:
+                                     (NativeInteropTestsError* _Nonnull)
+                                         wrappedError;
 @end
 
 /// A class whose field names collide with members of the bindings that JNIgen

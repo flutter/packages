@@ -2895,6 +2895,48 @@ void runPigeonNativeInteropIntegrationTests(TargetGenerator targetGenerator) {
         throwsA(isA<ArgumentError>()),
       );
     });
+
+    testWidgets(
+      'secondary engine execution and teardown preserves primary engine Native Interop APIs',
+      (WidgetTester _) async {
+        final primaryApi = NativeInteropHostIntegrationCoreApi.createWithNativeInteropApi();
+        final primaryReservedApi = NativeInteropReservedNamesHostApi.createWithNativeInteropApi();
+
+        // Bind a background isolate to the primary engine before secondary engines attach,
+        // then execute its Host API call concurrently with secondary engine execution/teardown.
+        final readyPort = ReceivePort();
+        final resultPort = ReceivePort();
+        await Isolate.spawn<(SendPort, SendPort)>((ports) async {
+          final (SendPort ready, SendPort result) = ports;
+          final isolateApi = NativeInteropHostIntegrationCoreApi.createWithNativeInteropApi();
+          final goPort = ReceivePort();
+          ready.send(goPort.sendPort);
+          await goPort.first;
+          goPort.close();
+          result.send(await isolateApi.echoString('from_concurrent_isolate'));
+        }, (readyPort.sendPort, resultPort.sendPort));
+        final goSendPort = await readyPort.first as SendPort;
+        readyPort.close();
+
+        goSendPort.send(null);
+        final bool secondarySucceeded = await primaryApi.testSecondaryEngineDartExecution();
+        expect(secondarySucceeded, true);
+        expect(await resultPort.first, 'from_concurrent_isolate');
+        resultPort.close();
+
+        // Verify existing clients, freshly created clients, and a newly spawned isolate in the
+        // primary engine all continue working after secondary engines are torn down.
+        expect(await primaryApi.echoString('from_primary_engine'), 'from_primary_engine');
+        expect(await primaryReservedApi.type(), 'type');
+        final freshPrimaryApi = NativeInteropHostIntegrationCoreApi.createWithNativeInteropApi();
+        expect(await freshPrimaryApi.echoString('fresh_primary_engine'), 'fresh_primary_engine');
+        final String postTeardownIsolateEcho = await Isolate.run(() async {
+          final postApi = NativeInteropHostIntegrationCoreApi.createWithNativeInteropApi();
+          return postApi.echoString('post_teardown_isolate');
+        });
+        expect(postTeardownIsolateEcho, 'post_teardown_isolate');
+      },
+    );
   });
 
   group('JavaBean property getter and setter tests', () {

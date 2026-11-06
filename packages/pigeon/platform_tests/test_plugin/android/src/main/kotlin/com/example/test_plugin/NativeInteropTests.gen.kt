@@ -1930,6 +1930,21 @@ interface NativeInteropHostIntegrationCoreApi {
   fun registerAndImmediatelyDeregisterHostApi(name: String)
   /** Tests that calling a deregistered Flutter API under [name] fails / returns null. */
   fun testCallDeregisteredFlutterApi(name: String): Boolean
+  /**
+   * Spawns secondary engines, destroys one out-of-order, executes a live Dart entrypoint on another
+   * (where supported by the embedder), and tears it down while keeping the primary engine
+   * registration intact.
+   */
+  suspend fun testSecondaryEngineDartExecution(): Boolean
+  /**
+   * Returns whether the secondary engine's Host API registration is ready for the secondary Dart
+   * isolate to invoke.
+   */
+  fun isSecondaryEngineRegistrationReady(): Boolean
+  /**
+   * Reports whether Native Interop Host API calls from a secondary engine's Dart isolate succeeded.
+   */
+  fun reportSecondaryEngineCheck(success: Boolean)
 }
 
 @Keep
@@ -4781,6 +4796,48 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
     api?.let {
       try {
         return it.testCallDeregisteredFlutterApi(name)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
+  }
+  /**
+   * Spawns secondary engines, destroys one out-of-order, executes a live Dart entrypoint on another
+   * (where supported by the embedder), and tears it down while keeping the primary engine
+   * registration intact.
+   */
+  override suspend fun testSecondaryEngineDartExecution(): Boolean {
+    api?.let {
+      try {
+        return it.testSecondaryEngineDartExecution()
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
+  }
+  /**
+   * Returns whether the secondary engine's Host API registration is ready for the secondary Dart
+   * isolate to invoke.
+   */
+  override fun isSecondaryEngineRegistrationReady(): Boolean {
+    api?.let {
+      try {
+        return it.isSecondaryEngineRegistrationReady()
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
+  }
+  /**
+   * Reports whether Native Interop Host API calls from a secondary engine's Dart isolate succeeded.
+   */
+  override fun reportSecondaryEngineCheck(success: Boolean) {
+    api?.let {
+      try {
+        return it.reportSecondaryEngineCheck(success)
       } catch (e: Exception) {
         throw e
       }

@@ -9825,6 +9825,76 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
       throw _wrapJniException(e);
     }
   }
+
+  @override
+  Future<bool> testSecondaryEngineDartExecution() async {
+    try {
+      if (_jniApi != null) {
+        final JBoolean pigeonVar_res = await _jniApi.testSecondaryEngineDartExecution();
+        final bool pigeonVar_dartTypeRes = pigeonVar_res.toDartBool(releaseOriginal: true);
+        return pigeonVar_dartTypeRes;
+      } else if (_ffiApi != null) {
+        final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final Completer<bool> pigeonVar_completer = Completer<bool>();
+        _ffiApi.testSecondaryEngineDartExecutionWithWrappedError(
+          pigeonVar_error,
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSNumber.listener((
+            NSNumber? pigeonVar_res,
+          ) {
+            if (pigeonVar_error.code != null) {
+              pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
+            } else {
+              pigeonVar_completer.complete(pigeonVar_res!.boolValue);
+            }
+          }),
+        );
+        return await pigeonVar_completer.future;
+      } else {
+        throw Exception('No JNI or FFI api available');
+      }
+    } on JThrowable catch (e) {
+      throw _wrapJniException(e);
+    }
+  }
+
+  @override
+  bool isSecondaryEngineRegistrationReady() {
+    try {
+      if (_jniApi != null) {
+        return _jniApi.isSecondaryEngineRegistrationReady;
+      } else if (_ffiApi != null) {
+        final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSNumber? pigeonVar_res = _ffiApi.isSecondaryEngineRegistrationReadyWithWrappedError(
+          pigeonVar_error,
+        );
+        _throwIfFfiError(pigeonVar_error);
+        final bool pigeonVar_dartTypeRes = pigeonVar_res!.boolValue;
+        return pigeonVar_dartTypeRes;
+      } else {
+        throw Exception('No JNI or FFI api available');
+      }
+    } on JThrowable catch (e) {
+      throw _wrapJniException(e);
+    }
+  }
+
+  @override
+  void reportSecondaryEngineCheck(bool success) {
+    try {
+      if (_jniApi != null) {
+        return _jniApi.reportSecondaryEngineCheck(success);
+      } else if (_ffiApi != null) {
+        final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        _ffiApi.reportSecondaryEngineCheckWithSuccess(success, wrappedError: pigeonVar_error);
+        _throwIfFfiError(pigeonVar_error);
+        return;
+      } else {
+        throw Exception('No JNI or FFI api available');
+      }
+    } on JThrowable catch (e) {
+      throw _wrapJniException(e);
+    }
+  }
 }
 
 final class _NativeInteropFlutterIntegrationCoreApiRegistrar

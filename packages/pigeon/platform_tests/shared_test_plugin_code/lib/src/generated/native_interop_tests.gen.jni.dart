@@ -10715,6 +10715,111 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
       _$string.pointer,
     ).boolean;
   }
+
+  static final _id_testSecondaryEngineDartExecution = NativeInteropHostIntegrationCoreApiRegistrar
+      ._class
+      .instanceMethodId(
+        r'testSecondaryEngineDartExecution',
+        r'(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+      );
+
+  static final _testSecondaryEngineDartExecution =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public suspend fun testSecondaryEngineDartExecution(): kotlin.Boolean`
+  /// The returned object must be released after use, by calling the [release] method.
+  core$_.Future<jni$_.JBoolean> testSecondaryEngineDartExecution() async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
+    final _$$selfRef = reference;
+    final $r = _testSecondaryEngineDartExecution(
+      _$$selfRef.pointer,
+      _id_testSecondaryEngineDartExecution.pointer,
+      _$continuation.pointer,
+    ).object<jni$_.JObject>();
+    _$continuation.release();
+    jni$_.JObject $o;
+    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return $o.as<jni$_.JBoolean>(jni$_.JBoolean.type, releaseOriginal: true);
+  }
+
+  static final _id_get$isSecondaryEngineRegistrationReady =
+      NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
+        r'isSecondaryEngineRegistrationReady',
+        r'()Z',
+      );
+
+  static final _get$isSecondaryEngineRegistrationReady =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_CallBooleanMethod')
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
+
+  /// from: `public fun isSecondaryEngineRegistrationReady(): kotlin.Boolean`
+  core$_.bool get isSecondaryEngineRegistrationReady {
+    final _$$selfRef = reference;
+    return _get$isSecondaryEngineRegistrationReady(
+      _$$selfRef.pointer,
+      _id_get$isSecondaryEngineRegistrationReady.pointer,
+    ).boolean;
+  }
+
+  static final _id_reportSecondaryEngineCheck = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'reportSecondaryEngineCheck', r'(Z)V');
+
+  static final _reportSecondaryEngineCheck =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JThrowablePtr Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Int32,)>,
+              )
+            >
+          >('globalEnv_CallVoidMethod')
+          .asFunction<
+            jni$_.JThrowablePtr Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr, core$_.int)
+          >();
+
+  /// from: `public fun reportSecondaryEngineCheck(success: kotlin.Boolean): kotlin.Unit`
+  void reportSecondaryEngineCheck(core$_.bool z) {
+    final _$$selfRef = reference;
+    _reportSecondaryEngineCheck(
+      _$$selfRef.pointer,
+      _id_reportSecondaryEngineCheck.pointer,
+      z ? 1 : 0,
+    ).check();
+  }
 }
 
 final class $NativeInteropHostIntegrationCoreApiRegistrar$Type$

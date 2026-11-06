@@ -1534,6 +1534,16 @@ if (wrapped == nil) {
           });
         });
         indent.writeln('override init() {}');
+        indent.writeScoped('private func resolveApi() throws -> ${api.name} {', '}', () {
+          indent.writeScoped('guard let currentApi = api else {', '}', () {
+            indent.writeScoped('throw ${_getErrorClassName(generatorOptions)}(', ')', () {
+              indent.writeln('code: "unregistered-instance",');
+              indent.writeln('message: "${api.name} has not been registered.",');
+              indent.writeln('details: nil');
+            });
+          });
+          indent.writeln('return currentApi');
+        });
         indent.writeln('@discardableResult');
         indent.writeScoped(
           'static func register(api: ${api.name}?, name: String = ${_classNamePrefix}PigeonInternal.defaultInstanceName) -> ${api.name}Setup? {',
@@ -1706,6 +1716,7 @@ if (wrapped == nil) {
               : 'Void';
           final resultDeclaration = returnsValue ? 'let res: $swiftReturnType = ' : '';
           indent.writeScoped('do {', '}', () {
+            indent.writeln('let activeApi = try resolveApi()');
             if (method.isAsynchronousCallback) {
               final completion =
                   '${arguments.isEmpty ? '' : ', '}completion: { continuation.resume(with: \$0) }';
@@ -1713,12 +1724,12 @@ if (wrapped == nil) {
                 '${resultDeclaration}try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<$swiftReturnType, Error>) in',
                 '}',
                 () {
-                  indent.writeln('api!.${components.name}($arguments$completion)');
+                  indent.writeln('activeApi.${components.name}($arguments$completion)');
                 },
               );
             } else {
               indent.writeln(
-                '${resultDeclaration}try ${method.isAsynchronous ? 'await ' : ''}api!.${components.name}($arguments)',
+                '${resultDeclaration}try ${method.isAsynchronous ? 'await ' : ''}activeApi.${components.name}($arguments)',
               );
             }
             if (!returnsValue) {
