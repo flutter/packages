@@ -1,5 +1,6 @@
-## NEXT
+## 1.3.7
 
+* Fixes paths with a single straight line being drawn as a line when filled.
 * Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
 
 ## 1.3.6
