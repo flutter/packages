@@ -54,8 +54,9 @@ void main() {
     expect(hasSemanticsList(tester, find.byType(ListView)), isFalse);
   });
 
-  // Under standard contrast, tertiaryContainer against surfaceContainerLow does
-  // not reach a 3:1 contrast ratio. Medium contrast (contrastLevel: 0.5) is
+  // The use case opts into the Material 3 Expressive menu. Under standard
+  // contrast, tertiaryContainer against surfaceContainerLow does not reach a
+  // 3:1 contrast ratio. Medium contrast (contrastLevel: 0.5) is
   // required to satisfy WCAG 2.1 Success Criterion 1.4.11 (Non-text Contrast).
   for (final Brightness brightness in Brightness.values) {
     testWidgets('dropdown menu active option has at least 3:1 contrast ratio in '

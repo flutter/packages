@@ -36,15 +36,18 @@ class _MainWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final String pageTitle = getUseCaseName(DropdownMenuUseCase());
     final ThemeData theme = Theme.of(context);
-    // Under standard contrast, tertiaryContainer against surfaceContainerLow does
-    // not reach a 3:1 contrast ratio. Medium contrast (contrastLevel: 0.5) is
-    // required to satisfy WCAG 2.1 Success Criterion 1.4.11 (Non-text Contrast).
+    // The Material 3 Expressive menu marks the selected option with
+    // tertiaryContainer. Under standard contrast, tertiaryContainer against
+    // surfaceContainerLow does not reach a 3:1 contrast ratio. Medium contrast
+    // (contrastLevel: 0.5) is required to satisfy WCAG 2.1 Success Criterion
+    // 1.4.11 (Non-text Contrast).
     final ThemeData mediumContrastTheme = theme.copyWith(
       colorScheme: ColorScheme.fromSeed(
         brightness: theme.brightness,
         seedColor: const Color(0xff6750a4),
         contrastLevel: 0.5,
       ),
+      menuTheme: const MenuThemeData(variant: StyleVariant.material3Expressive),
     );
     return Theme(
       data: mediumContrastTheme,
