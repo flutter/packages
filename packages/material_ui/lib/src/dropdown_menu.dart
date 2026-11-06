@@ -1173,7 +1173,8 @@ class _DropdownMenuState<T> extends State<DropdownMenu<T>> {
 
   @override
   Widget build(BuildContext context) {
-    final bool useMaterial3 = Theme.of(context).useMaterial3;
+    final ThemeData themeData = Theme.of(context);
+    final bool useMaterial3 = themeData.useMaterial3;
     final TextDirection textDirection = Directionality.of(context);
     _initialMenu ??= _buildButtons(
       widget.dropdownMenuEntries,
@@ -1362,10 +1363,15 @@ class _DropdownMenuState<T> extends State<DropdownMenu<T>> {
         // the preferred width. Measuring the menu items is not enough because the menu items
         // and the text field use different text styles, so the text field could be too narrow
         // to display the selected label. See https://github.com/flutter/flutter/issues/170780.
+        //
+        // The preferred width is not used when the width is fixed by [DropdownMenu.width] or
+        // when the text field is expanded with [DropdownMenu.expandedInsets], so the entry labels
+        // are only built when both are null.
         Widget? entryLabels;
-        if (widget.dropdownMenuEntries.isNotEmpty) {
+        if (widget.width == null &&
+            widget.expandedInsets == null &&
+            widget.dropdownMenuEntries.isNotEmpty) {
           // The text style used by the text field, see TextField.build.
-          final ThemeData themeData = Theme.of(context);
           final TextStyle? textFieldStyle =
               (useMaterial3 ? themeData.textTheme.bodyLarge : themeData.textTheme.titleMedium)
                   ?.merge(effectiveTextStyle) ??
@@ -1393,7 +1399,11 @@ class _DropdownMenuState<T> extends State<DropdownMenu<T>> {
           entryLabels = ExcludeSemantics(
             child: Padding(
               padding: EdgeInsetsDirectional.only(start: startPadding, end: endPadding),
+              // Fill the available width, like the menu items do, so that _DropdownMenuBody is
+              // as wide as the text field even when the menu items do not contribute to its
+              // width, for instance when dropdownMenuEntries was initially empty.
               child: Stack(
+                fit: StackFit.expand,
                 children: <Widget>[
                   for (final DropdownMenuEntry<T> entry in widget.dropdownMenuEntries)
                     Text(entry.label, style: textFieldStyle, maxLines: 1),

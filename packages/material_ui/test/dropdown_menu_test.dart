@@ -946,15 +946,48 @@ void main() {
       expectSelectedLabelIsNotClipped(tester);
     });
 
-    testWidgets('with Material 2', (WidgetTester tester) async {
+    testWidgets('with Material 2 and a text style without a font size', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           theme: ThemeData(useMaterial3: false),
           home: const Scaffold(
-            body: DropdownMenu<int>(initialSelection: 1, dropdownMenuEntries: entries),
+            body: DropdownMenu<int>(
+              initialSelection: 1,
+              // In Material 2, the text field merges this style with TextTheme.titleMedium,
+              // which is larger than the text style of the menu items.
+              textStyle: TextStyle(color: Colors.red),
+              dropdownMenuEntries: entries,
+            ),
           ),
         ),
       );
+
+      expectSelectedLabelIsNotClipped(tester);
+    });
+
+    testWidgets('when dropdownMenuEntries is updated from empty to non-empty', (
+      WidgetTester tester,
+    ) async {
+      Widget buildDropdownMenu(List<DropdownMenuEntry<int>> dropdownMenuEntries) {
+        return MaterialApp(
+          home: Scaffold(body: DropdownMenu<int>(dropdownMenuEntries: dropdownMenuEntries)),
+        );
+      }
+
+      await tester.pumpWidget(buildDropdownMenu(const <DropdownMenuEntry<int>>[]));
+      await tester.pumpWidget(buildDropdownMenu(entries));
+
+      expect(
+        tester.getSize(find.byType(DropdownMenu<int>)).width,
+        tester.getSize(find.byType(TextField)).width,
+      );
+
+      await tester.tap(find.byType(DropdownMenu<int>));
+      await tester.pumpAndSettle();
+      await tester.tap(find.widgetWithText(MenuItemButton, longLabel).last);
+      await tester.pumpAndSettle();
 
       expectSelectedLabelIsNotClipped(tester);
     });
