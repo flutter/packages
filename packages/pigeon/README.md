@@ -109,9 +109,19 @@ Pigeon supports two distinct models for communication between Dart and native co
 2. **Native Interop (Direct FFI & JNI) \*Preview\***: A direct, memory-bound function call model utilizing Dart FFI (for Swift/Objective-C on iOS/macOS) and JNI (for Kotlin/Java on Android).
 
 > [!WARNING]
-> Native Interop `@HostApi` registrations are process-wide, not per-engine. In apps that run multiple
-> `FlutterEngine`s, one engine can overwrite or unregister another engine's implementation. See
-> [flutter/flutter#195877](https://github.com/flutter/flutter/issues/195877).
+> Native Interop associates each registration with the `FlutterEngine` that made it, but in apps
+> that run multiple engines, routing is only exact when the engine identifier is available to
+> native code (always for Kotlin `register(api, flutterEngine)`; for plugin bindings and registrars,
+> only on Flutter versions that expose it). See
+> [Multi-Engine Routing](./native_interop_guide.md#multi-engine-routing) and
+> [flutter/flutter#195877](https://github.com/flutter/flutter/issues/195877). Until engine
+> identifiers are available to plugins on stable Flutter:
+> - Lookups may resolve another engine's registration when engines are created back-to-back before
+>   their Dart code starts, or from isolates created with `Isolate.spawn`.
+> - APIs that hold engine-specific state (such as an Android `Activity`, a `TextureRegistry`, or a
+>   `UIViewController`) may act on the wrong engine; use a distinct `messageChannelSuffix` per
+>   engine, or platform channels / `@ProxyApi`, for those APIs.
+> - On macOS, plugins receive no detach callback, so registrations outlive their engine.
 
 #### Quick Comparison
 

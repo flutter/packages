@@ -10,7 +10,7 @@
 * [dart,kotlin,swift] Routes Native Interop lookups to the calling engine's registration when the engine identifier is available, and otherwise to the engine an isolate first resolved.
 * [dart] `<FlutterApi>.setUp(null)` now also removes that isolate's Native Interop registration, and `setUp(newApi)` replaces the previous one.
 * [kotlin,swift] Throws an `unregistered-instance` error when calling a Native Interop `@HostApi` handle whose instance has been unregistered, instead of crashing.
-* Expands multi-engine guidance in Native Interop documentation.
+* Expands multi-engine guidance in Native Interop documentation and README.
 
 ## 29.1.1
 
