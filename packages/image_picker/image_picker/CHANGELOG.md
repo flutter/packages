@@ -1,5 +1,7 @@
-## NEXT
+## 2.0.0
 
+* Updates `image_picker_platform_interface` to `3.0.0` which updates `cross_file` dependency to
+  `0.4.0`. See its breaking changes in its [CHANGELOG](https://pub.dev/packages/cross_file/changelog#040).
 * Updates README to reflect that the latest version of `image_picker_ios`
   requires iOS 15.
   * Applications built with older versions of Flutter will continue to use

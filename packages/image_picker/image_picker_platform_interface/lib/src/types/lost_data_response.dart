@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:cross_file/cross_file.dart';
+import 'package:flutter/foundation.dart' show immutable;
 import 'package:flutter/services.dart';
 
 import 'retrieve_type.dart';
@@ -12,7 +13,8 @@ import 'retrieve_type.dart';
 /// Only applies to Android.
 /// See also:
 /// * [ImagePickerPlatform.getLostData] for more details on retrieving lost data.
-class LostDataResponse {
+@immutable
+base class LostDataResponse {
   /// Creates an instance with the given [file], [exception], and [type].
   ///
   /// Any of the params may be null, but this is never considered to be empty.
