@@ -1,3 +1,10 @@
+## 29.2.0
+
+* [kotlin, swift] Adds data class default values to the generated data classes when they are
+  `bool`, `int`, `double`, `String` or enum literals.
+* [dart] Fixes data class default values being dropped when the constructor is declared after the
+  fields.
+
 ## 29.1.0
 
 * [kotlin,swift] Adds support for removing event channel handler registration

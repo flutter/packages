@@ -300,4 +300,38 @@ internal class DataClassMethodsTest {
     assertEquals(3.14, aDoubleConstant, 0.0)
     assertEquals(true, aBoolConstant)
   }
+
+  @Test
+  fun testDefaultValues() {
+    val allTypes =
+        AllTypes(
+            aByteArray = byteArrayOf(),
+            a4ByteArray = intArrayOf(),
+            a8ByteArray = longArrayOf(),
+            aFloatArray = doubleArrayOf(),
+            anObject = 0,
+            list = listOf(),
+            stringList = listOf(),
+            intList = listOf(),
+            doubleList = listOf(),
+            boolList = listOf(),
+            enumList = listOf(),
+            objectList = listOf(),
+            listList = listOf(),
+            mapList = listOf(),
+            map = mapOf(),
+            stringMap = mapOf(),
+            intMap = mapOf(),
+            enumMap = mapOf(),
+            objectMap = mapOf(),
+            listMap = mapOf(),
+            mapMap = mapOf())
+    assertEquals(false, allTypes.aBool)
+    assertEquals(0L, allTypes.anInt)
+    assertEquals(0L, allTypes.anInt64)
+    assertEquals(0.0, allTypes.aDouble, 0.0)
+    assertEquals(AnEnum.ONE, allTypes.anEnum)
+    assertEquals(AnotherEnum.JUST_IN_CASE, allTypes.anotherEnum)
+    assertEquals("", allTypes.aString)
+  }
 }

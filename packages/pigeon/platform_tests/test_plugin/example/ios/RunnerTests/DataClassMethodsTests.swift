@@ -374,4 +374,38 @@ struct DataClassMethodsTests {
     #expect(aDoubleConstant == 3.14)
     #expect(aBoolConstant == true)
   }
+
+  @Test
+  func testDefaultValues() {
+    let allTypes = AllTypes(
+      aByteArray: FlutterStandardTypedData(bytes: Data()),
+      a4ByteArray: FlutterStandardTypedData(int32: Data()),
+      a8ByteArray: FlutterStandardTypedData(int64: Data()),
+      aFloatArray: FlutterStandardTypedData(float64: Data()),
+      anObject: 0,
+      list: [],
+      stringList: [],
+      intList: [],
+      doubleList: [],
+      boolList: [],
+      enumList: [],
+      objectList: [],
+      listList: [],
+      mapList: [],
+      map: [:],
+      stringMap: [:],
+      intMap: [:],
+      enumMap: [:],
+      objectMap: [:],
+      listMap: [:],
+      mapMap: [:]
+    )
+    #expect(allTypes.aBool == false)
+    #expect(allTypes.anInt == 0)
+    #expect(allTypes.anInt64 == 0)
+    #expect(allTypes.aDouble == 0.0)
+    #expect(allTypes.anEnum == .one)
+    #expect(allTypes.anotherEnum == .justInCase)
+    #expect(allTypes.aString == "")
+  }
 }

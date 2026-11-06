@@ -48,6 +48,105 @@ void main() {
     expect(code, isNot(contains('if (')));
   });
 
+  test('gen struct with default values', () {
+    final anEnum = Enum(
+      name: 'Color',
+      members: <EnumMember>[
+        EnumMember(name: 'red'),
+        EnumMember(name: 'darkBlue'),
+      ],
+    );
+    final classDefinition = Class(
+      name: 'Foobar',
+      fields: <NamedType>[
+        NamedType(
+          type: const TypeDeclaration(baseName: 'int', isNullable: false),
+          name: 'anInt',
+          defaultValue: '-5',
+          literalDefaultValue: -5,
+        ),
+        NamedType(
+          type: const TypeDeclaration(baseName: 'double', isNullable: false),
+          name: 'aDouble',
+          defaultValue: '0',
+          literalDefaultValue: 0.0,
+        ),
+        NamedType(
+          type: const TypeDeclaration(baseName: 'bool', isNullable: false),
+          name: 'aBool',
+          defaultValue: 'true',
+          literalDefaultValue: true,
+        ),
+        NamedType(
+          type: const TypeDeclaration(baseName: 'String', isNullable: false),
+          name: 'aString',
+          defaultValue: r"""'\$5 "a"'""",
+          literalDefaultValue: r'$5 "a"',
+        ),
+        NamedType(
+          type: TypeDeclaration(baseName: 'Color', isNullable: false, associatedEnum: anEnum),
+          name: 'aColor',
+          defaultValue: 'Color.darkBlue',
+          literalDefaultValue: EnumMember(name: 'darkBlue'),
+        ),
+        NamedType(
+          type: const TypeDeclaration(baseName: 'int', isNullable: true),
+          name: 'aNullableInt',
+          defaultValue: '7',
+          literalDefaultValue: 7,
+        ),
+        NamedType(
+          type: const TypeDeclaration(baseName: 'List', isNullable: false),
+          name: 'aList',
+          defaultValue: 'const <Object?>[]',
+        ),
+      ],
+    );
+    final root = Root(apis: <Api>[], classes: <Class>[classDefinition], enums: <Enum>[anEnum]);
+    final sink = StringBuffer();
+    const swiftOptions = InternalSwiftOptions(swiftOut: '');
+    const generator = SwiftGenerator();
+    generator.generate(swiftOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    final code = sink.toString();
+    expect(code, contains('var anInt: Int64 = -5\n'));
+    expect(code, contains('var aDouble: Double = 0.0\n'));
+    expect(code, contains('var aBool: Bool = true\n'));
+    expect(code, contains('var aString: String = "\$5 \\"a\\""\n'));
+    expect(code, contains('var aColor: Color = .darkBlue\n'));
+    expect(code, contains('var aNullableInt: Int64? = 7\n'));
+    expect(code, contains('var aList: [Any?]\n'));
+  });
+
+  test('gen class with default values in the initializer', () {
+    final classDefinition = Class(
+      name: 'Foobar',
+      isSwiftClass: true,
+      fields: <NamedType>[
+        NamedType(
+          type: const TypeDeclaration(baseName: 'int', isNullable: false),
+          name: 'anInt',
+          defaultValue: '5',
+          literalDefaultValue: 5,
+        ),
+        NamedType(
+          type: const TypeDeclaration(baseName: 'String', isNullable: true),
+          name: 'aString',
+        ),
+      ],
+    );
+    final root = Root(apis: <Api>[], classes: <Class>[classDefinition], enums: <Enum>[]);
+    final sink = StringBuffer();
+    const swiftOptions = InternalSwiftOptions(swiftOut: '');
+    const generator = SwiftGenerator();
+    generator.generate(swiftOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    final code = sink.toString();
+    expect(code, contains('class Foobar'));
+    expect(code, contains('anInt: Int64 = 5,\n'));
+    expect(code, contains('aString: String? = nil\n'));
+    expect(code, contains('var anInt: Int64\n'));
+    expect(code, contains('var aString: String?\n'));
+  });
+
   test('fileSpecificClassNameComponent defaults to UpperCamelCase from swiftOut', () {
     final swiftOptions = InternalSwiftOptions.fromSwiftOptions(
       const SwiftOptions(),

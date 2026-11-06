@@ -918,6 +918,85 @@ abstract class Api {
     expect(results.errors, isEmpty);
   });
 
+  test('data class default values do not depend on member order', () {
+    const code = '''
+class FieldsFirst {
+  int x;
+  String y;
+  int? z;
+  FieldsFirst({this.x = 5, this.y = 'hi', this.z});
+}
+
+class ConstructorFirst {
+  ConstructorFirst({this.x = 5, this.y = 'hi', this.z});
+  int x;
+  String y;
+  int? z;
+}
+
+@HostApi()
+abstract class Api {
+  FieldsFirst doit(FieldsFirst a, ConstructorFirst b);
+}
+''';
+    final ParseResults results = parseSource(code);
+    expect(results.errors, isEmpty);
+    expect(results.root.classes, hasLength(2));
+    for (final Class classDefinition in results.root.classes) {
+      expect(classDefinition.fields.map((NamedType field) => field.defaultValue), <String?>[
+        '5',
+        "'hi'",
+        null,
+      ], reason: classDefinition.name);
+    }
+  });
+
+  test('literal values of data class default values', () {
+    const code = '''
+enum Color { red, darkBlue }
+
+class Foo {
+  Foo({
+    this.anInt = -5,
+    this.aDouble = 1,
+    this.aBool = true,
+    this.aString = 'a' "b",
+    this.aColor = Color.darkBlue,
+    this.aList = const <int>[],
+    this.aNullableInt,
+  });
+
+  int anInt;
+  double aDouble;
+  bool aBool;
+  String aString;
+  Color aColor;
+  List<int> aList;
+  int? aNullableInt;
+}
+
+@HostApi()
+abstract class Api {
+  Foo doit(Foo foo);
+}
+''';
+    final ParseResults results = parseSource(code);
+    expect(results.errors, isEmpty);
+    final List<NamedType> fields = results.root.classes.single.fields;
+    expect(fields[0].literalDefaultValue, -5);
+    expect(fields[1].literalDefaultValue, isA<double>());
+    expect(fields[1].literalDefaultValue, 1.0);
+    expect(fields[2].literalDefaultValue, true);
+    expect(fields[3].literalDefaultValue, 'ab');
+    expect(
+      fields[4].literalDefaultValue,
+      isA<EnumMember>().having((EnumMember member) => member.name, 'name', 'darkBlue'),
+    );
+    expect(fields[5].defaultValue, 'const <int>[]');
+    expect(fields[5].literalDefaultValue, isNull);
+    expect(fields[6].literalDefaultValue, isNull);
+  });
+
   test('constructor body in data class', () {
     const code = '''
 class Foo {
