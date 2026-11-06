@@ -58,6 +58,7 @@ void main() {
     const menuThemeData = MenuThemeData();
     expect(menuThemeData.style, isNull);
     expect(menuThemeData.submenuIcon, isNull);
+    expect(menuThemeData.variant, isNull);
   });
 
   testWidgets('Default MenuThemeData debugFillProperties', (WidgetTester tester) async {
@@ -341,6 +342,243 @@ void main() {
     await tester.tap(find.text(TestMenu.subMenu00.label));
     await tester.pump();
     expect(find.byIcon(disabledIcon), findsOneWidget);
+  });
+
+  test('MenuThemeData variant lerp, equality, and hashCode', () {
+    const m3 = MenuThemeData(variant: StyleVariant.material3);
+    const m3e = MenuThemeData(variant: StyleVariant.material3Expressive);
+    expect(MenuThemeData.lerp(m3, m3e, 0.4)!.variant, StyleVariant.material3);
+    expect(MenuThemeData.lerp(m3, m3e, 0.6)!.variant, StyleVariant.material3Expressive);
+    expect(m3, isNot(m3e));
+    expect(m3, const MenuThemeData(variant: StyleVariant.material3));
+    expect(m3.hashCode, const MenuThemeData(variant: StyleVariant.material3).hashCode);
+    expect(m3.hashCode, isNot(m3e.hashCode));
+  });
+
+  testWidgets('MenuThemeData variant debugFillProperties', (WidgetTester tester) async {
+    final builder = DiagnosticPropertiesBuilder();
+    const MenuThemeData(variant: StyleVariant.material3Expressive).debugFillProperties(builder);
+
+    final List<String> description = builder.properties
+        .where((DiagnosticsNode node) => !node.isFiltered(DiagnosticLevel.info))
+        .map((DiagnosticsNode node) => node.toString())
+        .toList();
+
+    expect(description, <String>['variant: material3Expressive']);
+  });
+
+  group('MenuTheme.variantOf', () {
+    Future<StyleVariant> pumpVariant(
+      WidgetTester tester, {
+      StyleVariant? themeDataVariant,
+      List<StyleVariant?> enclosingVariants = const <StyleVariant?>[],
+    }) async {
+      late StyleVariant variant;
+      Widget child = Builder(
+        builder: (BuildContext context) {
+          variant = MenuTheme.variantOf(context);
+          return const SizedBox();
+        },
+      );
+      for (final StyleVariant? enclosingVariant in enclosingVariants.reversed) {
+        child = MenuTheme(
+          data: MenuThemeData(variant: enclosingVariant),
+          child: child,
+        );
+      }
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(menuTheme: MenuThemeData(variant: themeDataVariant)),
+          home: child,
+        ),
+      );
+      return variant;
+    }
+
+    testWidgets('defaults to material3', (WidgetTester tester) async {
+      expect(await pumpVariant(tester), StyleVariant.material3);
+    });
+
+    testWidgets('falls back to ThemeData.menuTheme', (WidgetTester tester) async {
+      expect(
+        await pumpVariant(tester, themeDataVariant: StyleVariant.material3Expressive),
+        StyleVariant.material3Expressive,
+      );
+    });
+
+    testWidgets('nested theme without variant inherits it', (WidgetTester tester) async {
+      expect(
+        await pumpVariant(
+          tester,
+          enclosingVariants: <StyleVariant?>[StyleVariant.material3Expressive, null],
+        ),
+        StyleVariant.material3Expressive,
+      );
+    });
+
+    testWidgets('explicit material3 opts a subtree out', (WidgetTester tester) async {
+      expect(
+        await pumpVariant(
+          tester,
+          themeDataVariant: StyleVariant.material3Expressive,
+          enclosingVariants: <StyleVariant?>[StyleVariant.material3, null],
+        ),
+        StyleVariant.material3,
+      );
+    });
+
+    testWidgets('changing an enclosing variant rebuilds dependents', (WidgetTester tester) async {
+      var buildCount = 0;
+      late StyleVariant variant;
+      Widget build(StyleVariant outer) {
+        return MaterialApp(
+          home: MenuTheme(
+            data: MenuThemeData(variant: outer),
+            child: MenuTheme(
+              data: const MenuThemeData(),
+              child: Builder(
+                builder: (BuildContext context) {
+                  buildCount++;
+                  variant = MenuTheme.variantOf(context);
+                  return const SizedBox();
+                },
+              ),
+            ),
+          ),
+        );
+      }
+
+      await tester.pumpWidget(build(StyleVariant.material3));
+      expect(variant, StyleVariant.material3);
+      final initialBuildCount = buildCount;
+
+      await tester.pumpWidget(build(StyleVariant.material3Expressive));
+      expect(variant, StyleVariant.material3Expressive);
+      expect(buildCount, initialBuildCount + 1);
+    });
+  });
+
+  group('Material 3 Expressive', () {
+    final themeData = ThemeData(
+      menuTheme: const MenuThemeData(variant: StyleVariant.material3Expressive),
+    );
+
+    Material getItemMaterial(WidgetTester tester, String label) {
+      return tester.widget<Material>(
+        find.descendant(
+          of: find.widgetWithText(MenuItemButton, label),
+          matching: find.byType(Material),
+        ),
+      );
+    }
+
+    Widget buildMenu({ThemeData? theme, WidgetStatesController? statesController}) {
+      return MaterialApp(
+        theme: theme ?? themeData,
+        home: Material(
+          child: MenuAnchor(
+            menuChildren: <Widget>[
+              MenuItemButton(
+                statesController: statesController,
+                leadingIcon: const Icon(Icons.add),
+                onPressed: () {},
+                child: Text(TestMenu.subMenu00.label),
+              ),
+              MenuItemButton(onPressed: () {}, child: Text(TestMenu.subMenu10.label)),
+              const MenuItemButton(child: Text('Disabled')),
+            ],
+            builder: (BuildContext context, MenuController controller, Widget? child) {
+              return TextButton(onPressed: controller.open, child: const Text('Open'));
+            },
+          ),
+        ),
+      );
+    }
+
+    testWidgets('menu and item defaults', (WidgetTester tester) async {
+      await tester.pumpWidget(buildMenu());
+      await tester.tap(find.text('Open'));
+      await tester.pumpAndSettle();
+
+      final ColorScheme colors = themeData.colorScheme;
+      expect(getSubmenuPanelMaterial(tester).color, colors.surfaceContainerLow);
+      expect(getSubmenuPanelMaterial(tester).shadowColor, colors.shadow);
+
+      final Material item = getItemMaterial(tester, TestMenu.subMenu00.label);
+      expect(item.color, Colors.transparent);
+      expect(item.textStyle?.color, colors.onSurface);
+
+      final Material disabled = getItemMaterial(tester, 'Disabled');
+      expect(disabled.textStyle?.color, colors.onSurface.withValues(alpha: 0.38));
+    });
+
+    testWidgets('selected item uses the selected container colors', (WidgetTester tester) async {
+      final statesController = WidgetStatesController(<WidgetState>{WidgetState.selected});
+      addTearDown(statesController.dispose);
+      await tester.pumpWidget(buildMenu(statesController: statesController));
+      await tester.tap(find.text('Open'));
+      await tester.pumpAndSettle();
+
+      final ColorScheme colors = themeData.colorScheme;
+      final Material item = getItemMaterial(tester, TestMenu.subMenu00.label);
+      expect(item.color, colors.tertiaryContainer);
+      expect(item.textStyle?.color, colors.onTertiaryContainer);
+      final RichText icon = tester.widget<RichText>(
+        find.descendant(of: find.byIcon(Icons.add), matching: find.byType(RichText)),
+      );
+      expect(icon.text.style?.color, colors.onTertiaryContainer);
+    });
+
+    testWidgets('selected state is ignored in Material 3', (WidgetTester tester) async {
+      final statesController = WidgetStatesController(<WidgetState>{WidgetState.selected});
+      addTearDown(statesController.dispose);
+      final m3Theme = ThemeData();
+      await tester.pumpWidget(buildMenu(theme: m3Theme, statesController: statesController));
+      await tester.tap(find.text('Open'));
+      await tester.pumpAndSettle();
+
+      expect(getSubmenuPanelMaterial(tester).color, m3Theme.colorScheme.surfaceContainer);
+      expect(getItemMaterial(tester, TestMenu.subMenu00.label).color, Colors.transparent);
+    });
+
+    testWidgets('MenuBar keeps the Material 3 bar colors', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: themeData,
+          home: Material(
+            child: MenuBar(children: createTestMenus(onPressed: onPressed)),
+          ),
+        ),
+      );
+      await tester.tap(find.text(TestMenu.mainMenu1.label));
+      await tester.pump();
+
+      expect(getMenuBarPanelMaterial(tester).color, themeData.colorScheme.surfaceContainer);
+      expect(getSubmenuPanelMaterial(tester).color, themeData.colorScheme.surfaceContainerLow);
+    });
+
+    testWidgets('MenuTheme and MenuButtonTheme styles override the defaults', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        buildMenu(
+          theme: themeData.copyWith(
+            menuTheme: const MenuThemeData(
+              variant: StyleVariant.material3Expressive,
+              style: MenuStyle(backgroundColor: WidgetStatePropertyAll<Color>(Colors.teal)),
+            ),
+            menuButtonTheme: MenuButtonThemeData(
+              style: MenuItemButton.styleFrom(foregroundColor: Colors.orange),
+            ),
+          ),
+        ),
+      );
+      await tester.tap(find.text('Open'));
+      await tester.pumpAndSettle();
+
+      expect(getSubmenuPanelMaterial(tester).color, Colors.teal);
+      expect(getItemMaterial(tester, TestMenu.subMenu00.label).textStyle?.color, Colors.orange);
+    });
   });
 }
 
