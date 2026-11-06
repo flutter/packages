@@ -3118,9 +3118,9 @@ protocol NativeInteropHostIntegrationCoreApi: AnyObject {
   #if canImport(Flutter) || canImport(FlutterMacOS)
     /// Registers `api` under `name` (or the default instance when `name` is omitted).
     ///
-    /// Registrations are kept in an ordered stack per name, and `getInstance` returns
-    /// the most recent one. Registering an instance that is already registered under
-    /// `name` moves it to the top of the stack.
+    /// The registration is tied to its engine: unregistering it for one engine leaves
+    /// other engines' registrations in place, and Dart code running on an engine uses
+    /// the instance registered for that engine when it is known.
     ///
     /// The registration is associated with the engine that owns `registrar`. The same
     /// `api` registered from different engines is tracked as separate registrations.
@@ -3195,8 +3195,9 @@ protocol NativeInteropHostIntegrationCoreApi: AnyObject {
     }
   }
 
-  /// Returns the most recently registered instance for `name` (or the default
-  /// instance when `name` is omitted), or nil if none is registered.
+  /// Returns an instance registered under `name` (or the default instance when
+  /// `name` is omitted) by any engine, preferring the most recent registration,
+  /// or nil if none is registered.
   @objc static func getInstance(name: String = NativeInteropTestsPigeonInternal.defaultInstanceName)
     -> NativeInteropHostIntegrationCoreApiSetup?
   {
@@ -8442,9 +8443,9 @@ protocol NativeInteropHostIntegrationCoreApi: AnyObject {
 
   /// Registers `api` under `name` (or the default instance when `name` is omitted).
   ///
-  /// Registrations are kept in an ordered stack per name, and `getInstance` returns
-  /// the most recent one. Registering an instance that is already registered under
-  /// `name` moves it to the top of the stack.
+  /// The registration is tied to its engine: unregistering it for one engine leaves
+  /// other engines' registrations in place, and Dart code running on an engine uses
+  /// the instance registered for that engine when it is known.
   ///
   /// Called by generated Dart code. `engineId` and `affinityKey` identify the engine
   /// that registered `api`, or are `Int64.min` when unknown.
@@ -8494,8 +8495,8 @@ protocol NativeInteropHostIntegrationCoreApi: AnyObject {
     /// Returns the instance for `name` (or the default instance when `name` is omitted)
     /// that was registered from the engine that owns `registrar`.
     ///
-    /// Falls back to the most recently registered instance for `name` when no
-    /// registration matches the engine, and returns nil if none is registered.
+    /// When no instance is known to belong to that engine, falls back to the most
+    /// recent registration for `name`. Returns nil if none is registered.
     static func getInstance(
       registrar: FlutterPluginRegistrar,
       name: String = NativeInteropTestsPigeonInternal.defaultInstanceName
@@ -9899,9 +9900,9 @@ protocol NativeInteropReservedNamesHostApi: AnyObject {
   #if canImport(Flutter) || canImport(FlutterMacOS)
     /// Registers `api` under `name` (or the default instance when `name` is omitted).
     ///
-    /// Registrations are kept in an ordered stack per name, and `getInstance` returns
-    /// the most recent one. Registering an instance that is already registered under
-    /// `name` moves it to the top of the stack.
+    /// The registration is tied to its engine: unregistering it for one engine leaves
+    /// other engines' registrations in place, and Dart code running on an engine uses
+    /// the instance registered for that engine when it is known.
     ///
     /// The registration is associated with the engine that owns `registrar`. The same
     /// `api` registered from different engines is tracked as separate registrations.
@@ -9976,8 +9977,9 @@ protocol NativeInteropReservedNamesHostApi: AnyObject {
     }
   }
 
-  /// Returns the most recently registered instance for `name` (or the default
-  /// instance when `name` is omitted), or nil if none is registered.
+  /// Returns an instance registered under `name` (or the default instance when
+  /// `name` is omitted) by any engine, preferring the most recent registration,
+  /// or nil if none is registered.
   @objc static func getInstance(name: String = NativeInteropTestsPigeonInternal.defaultInstanceName)
     -> NativeInteropReservedNamesHostApiSetup?
   {
@@ -10417,9 +10419,9 @@ protocol NativeInteropReservedNamesHostApi: AnyObject {
 
   /// Registers `api` under `name` (or the default instance when `name` is omitted).
   ///
-  /// Registrations are kept in an ordered stack per name, and `getInstance` returns
-  /// the most recent one. Registering an instance that is already registered under
-  /// `name` moves it to the top of the stack.
+  /// The registration is tied to its engine: unregistering it for one engine leaves
+  /// other engines' registrations in place, and Dart code running on an engine uses
+  /// the instance registered for that engine when it is known.
   ///
   /// Called by generated Dart code. `engineId` and `affinityKey` identify the engine
   /// that registered `api`, or are `Int64.min` when unknown.
@@ -10468,8 +10470,8 @@ protocol NativeInteropReservedNamesHostApi: AnyObject {
     /// Returns the instance for `name` (or the default instance when `name` is omitted)
     /// that was registered from the engine that owns `registrar`.
     ///
-    /// Falls back to the most recently registered instance for `name` when no
-    /// registration matches the engine, and returns nil if none is registered.
+    /// When no instance is known to belong to that engine, falls back to the most
+    /// recent registration for `name`. Returns nil if none is registered.
     static func getInstance(
       registrar: FlutterPluginRegistrar,
       name: String = NativeInteropTestsPigeonInternal.defaultInstanceName

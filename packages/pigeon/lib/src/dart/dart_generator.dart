@@ -1762,9 +1762,8 @@ final class ${api.name}Registrar {
 \t/// Registers [api] under [name] (or the default instance when [name] is
 \t/// omitted) and returns [api].
 \t///
-\t/// Registrations are kept in an ordered stack per name, and native callers
-\t/// receive the most recent one. Registering an instance that is already
-\t/// registered under [name] moves it to the top. Unlike [${api.name}.setUp],
+\t/// The registration is tied to this isolate's engine, so native code looking
+\t/// up the instance for that engine receives [api]. Unlike [${api.name}.setUp],
 \t/// this does not replace earlier registrations from this isolate.
 \t${api.name} register(
 \t\t${api.name} api, {
@@ -1978,9 +1977,9 @@ $dartApiName? ${classMemberNamePrefix}getInstance_${api.name}({
       );
       indent.writeln('///');
       indent.writeln(
-        "/// Prefers an instance registered by this isolate's engine, falling back to",
+        "/// Returns the instance registered by this isolate's engine when it is known,",
       );
-      indent.writeln('/// the most recently registered instance.');
+      indent.writeln('/// and otherwise the most recent registration.');
       indent.writeScoped(
         'static $dartApiName? getInstance({String channelName = defaultInstanceName}) {',
         '}',

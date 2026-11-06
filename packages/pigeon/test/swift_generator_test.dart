@@ -1939,7 +1939,7 @@ void main() {
     expect(code, contains('list.append(list.remove(at: index))'));
     expect(code, contains('/// Registers `api` under `name`'));
     expect(code, contains('/// Instances are matched by identity.'));
-    expect(code, contains('/// Returns the most recently registered instance for `name`'));
+    expect(code, contains('/// Returns an instance registered under `name`'));
 
     // Flutter-typed members must compile without the Flutter module (swiftgen).
     expect(

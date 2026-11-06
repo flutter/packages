@@ -406,9 +406,9 @@ protocol NativeInteropExampleApi: AnyObject {
   #if canImport(Flutter) || canImport(FlutterMacOS)
     /// Registers `api` under `name` (or the default instance when `name` is omitted).
     ///
-    /// Registrations are kept in an ordered stack per name, and `getInstance` returns
-    /// the most recent one. Registering an instance that is already registered under
-    /// `name` moves it to the top of the stack.
+    /// The registration is tied to its engine: unregistering it for one engine leaves
+    /// other engines' registrations in place, and Dart code running on an engine uses
+    /// the instance registered for that engine when it is known.
     ///
     /// The registration is associated with the engine that owns `registrar`. The same
     /// `api` registered from different engines is tracked as separate registrations.
@@ -472,8 +472,9 @@ protocol NativeInteropExampleApi: AnyObject {
     }
   }
 
-  /// Returns the most recently registered instance for `name` (or the default
-  /// instance when `name` is omitted), or nil if none is registered.
+  /// Returns an instance registered under `name` (or the default instance when
+  /// `name` is omitted) by any engine, preferring the most recent registration,
+  /// or nil if none is registered.
   @objc static func getInstance(
     name: String = NativeInteropExamplePigeonInternal.defaultInstanceName
   ) -> NativeInteropExampleApiSetup? {

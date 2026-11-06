@@ -7657,9 +7657,8 @@ final class NativeInteropFlutterIntegrationCoreApiRegistrar {
   /// Registers [api] under [name] (or the default instance when [name] is
   /// omitted) and returns [api].
   ///
-  /// Registrations are kept in an ordered stack per name, and native callers
-  /// receive the most recent one. Registering an instance that is already
-  /// registered under [name] moves it to the top. Unlike [NativeInteropFlutterIntegrationCoreApi.setUp],
+  /// The registration is tied to this isolate's engine, so native code looking
+  /// up the instance for that engine receives [api]. Unlike [NativeInteropFlutterIntegrationCoreApi.setUp],
   /// this does not replace earlier registrations from this isolate.
   NativeInteropFlutterIntegrationCoreApi register(
     NativeInteropFlutterIntegrationCoreApi api, {
@@ -11394,9 +11393,8 @@ final class NativeInteropReservedNamesFlutterApiRegistrar {
   /// Registers [api] under [name] (or the default instance when [name] is
   /// omitted) and returns [api].
   ///
-  /// Registrations are kept in an ordered stack per name, and native callers
-  /// receive the most recent one. Registering an instance that is already
-  /// registered under [name] moves it to the top. Unlike [NativeInteropReservedNamesFlutterApi.setUp],
+  /// The registration is tied to this isolate's engine, so native code looking
+  /// up the instance for that engine receives [api]. Unlike [NativeInteropReservedNamesFlutterApi.setUp],
   /// this does not replace earlier registrations from this isolate.
   NativeInteropReservedNamesFlutterApi register(
     NativeInteropReservedNamesFlutterApi api, {

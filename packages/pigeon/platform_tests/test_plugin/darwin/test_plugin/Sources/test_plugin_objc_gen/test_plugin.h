@@ -1338,10 +1338,10 @@ SWIFT_CLASS(
     "_TtC11test_plugin47NativeInteropFlutterIntegrationCoreApiRegistrar")
 @interface NativeInteropFlutterIntegrationCoreApiRegistrar : NSObject
 /// Registers <code>api</code> under <code>name</code> (or the default instance
-/// when <code>name</code> is omitted). Registrations are kept in an ordered
-/// stack per name, and <code>getInstance</code> returns the most recent one.
-/// Registering an instance that is already registered under <code>name</code>
-/// moves it to the top of the stack. Called by generated Dart code.
+/// when <code>name</code> is omitted). The registration is tied to its engine:
+/// unregistering it for one engine leaves other engines’ registrations in
+/// place, and Dart code running on an engine uses the instance registered for
+/// that engine when it is known. Called by generated Dart code.
 /// <code>engineId</code> and <code>affinityKey</code> identify the engine that
 /// registered <code>api</code>, or are <code>Int64.min</code> when unknown.
 + (void)registerInstanceWithApi:
@@ -1365,9 +1365,9 @@ SWIFT_CLASS(
 SWIFT_CLASS("_TtC11test_plugin40NativeInteropHostIntegrationCoreApiSetup")
 @interface NativeInteropHostIntegrationCoreApiSetup : NSObject
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
-/// Returns the most recently registered instance for <code>name</code> (or the
-/// default instance when <code>name</code> is omitted), or nil if none is
-/// registered.
+/// Returns an instance registered under <code>name</code> (or the default
+/// instance when <code>name</code> is omitted) by any engine, preferring the
+/// most recent registration, or nil if none is registered.
 + (NativeInteropHostIntegrationCoreApiSetup* _Nullable)getInstanceWithName:
     (NSString* _Nonnull)name SWIFT_WARN_UNUSED_RESULT;
 /// Returns the instance generated Dart code should use for <code>name</code>
@@ -3180,10 +3180,10 @@ SWIFT_PROTOCOL("_TtP11test_plugin42NativeInteropReservedNamesFlutterApiBridge_")
 SWIFT_CLASS("_TtC11test_plugin45NativeInteropReservedNamesFlutterApiRegistrar")
 @interface NativeInteropReservedNamesFlutterApiRegistrar : NSObject
 /// Registers <code>api</code> under <code>name</code> (or the default instance
-/// when <code>name</code> is omitted). Registrations are kept in an ordered
-/// stack per name, and <code>getInstance</code> returns the most recent one.
-/// Registering an instance that is already registered under <code>name</code>
-/// moves it to the top of the stack. Called by generated Dart code.
+/// when <code>name</code> is omitted). The registration is tied to its engine:
+/// unregistering it for one engine leaves other engines’ registrations in
+/// place, and Dart code running on an engine uses the instance registered for
+/// that engine when it is known. Called by generated Dart code.
 /// <code>engineId</code> and <code>affinityKey</code> identify the engine that
 /// registered <code>api</code>, or are <code>Int64.min</code> when unknown.
 + (void)registerInstanceWithApi:
@@ -3206,9 +3206,9 @@ SWIFT_CLASS("_TtC11test_plugin45NativeInteropReservedNamesFlutterApiRegistrar")
 SWIFT_CLASS("_TtC11test_plugin38NativeInteropReservedNamesHostApiSetup")
 @interface NativeInteropReservedNamesHostApiSetup : NSObject
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
-/// Returns the most recently registered instance for <code>name</code> (or the
-/// default instance when <code>name</code> is omitted), or nil if none is
-/// registered.
+/// Returns an instance registered under <code>name</code> (or the default
+/// instance when <code>name</code> is omitted) by any engine, preferring the
+/// most recent registration, or nil if none is registered.
 + (NativeInteropReservedNamesHostApiSetup* _Nullable)getInstanceWithName:
     (NSString* _Nonnull)name SWIFT_WARN_UNUSED_RESULT;
 /// Returns the instance generated Dart code should use for <code>name</code>

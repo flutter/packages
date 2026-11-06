@@ -2021,10 +2021,9 @@ private constructor(private val engineKey: Long) : NativeInteropHostIntegrationC
    * Registers [api] under [name] (or the default instance when [name] is omitted) for the engine of
    * the plugin binding [binding].
    *
-   * Registrations are kept in an ordered stack per name, and [getInstance] returns the most recent
-   * one. Dart code running on an engine prefers the instance registered for that engine.
-   * Registering an instance that is already registered under [name] for the same engine moves it to
-   * the top of the stack.
+   * The registration is tied to that engine: unregistering it for this engine leaves other engines'
+   * registrations in place, and Dart code running on an engine uses the instance registered for
+   * that engine when it is known.
    */
   @Keep
   fun register(
@@ -2039,10 +2038,9 @@ private constructor(private val engineKey: Long) : NativeInteropHostIntegrationC
    * Registers [api] under [name] (or the default instance when [name] is omitted) for the engine of
    * [engine].
    *
-   * Registrations are kept in an ordered stack per name, and [getInstance] returns the most recent
-   * one. Dart code running on an engine prefers the instance registered for that engine.
-   * Registering an instance that is already registered under [name] for the same engine moves it to
-   * the top of the stack.
+   * The registration is tied to that engine: unregistering it for this engine leaves other engines'
+   * registrations in place, and Dart code running on an engine uses the instance registered for
+   * that engine when it is known.
    */
   @Keep
   fun register(
@@ -2086,8 +2084,8 @@ private constructor(private val engineKey: Long) : NativeInteropHostIntegrationC
   }
 
   /**
-   * Returns the most recently registered instance for [name] (or the default instance when [name]
-   * is omitted), or null if none is registered.
+   * Returns an instance registered under [name] (or the default instance when [name] is omitted) by
+   * any engine, preferring the most recent registration, or null if none is registered.
    */
   @Keep
   fun getInstance(
@@ -5325,7 +5323,7 @@ class NativeInteropFlutterIntegrationCoreApiRegistrar() {
    * identified by [engineId] and [affinityKey].
    *
    * Either key may be `Long.MIN_VALUE` when it is unknown. Registering an instance that is already
-   * registered under [name] moves it to the top of the stack.
+   * registered under [name] replaces its earlier registration.
    *
    * This is called by the generated Dart code and is not intended for direct use.
    */
@@ -5365,8 +5363,8 @@ class NativeInteropFlutterIntegrationCoreApiRegistrar() {
    * Returns the instance registered under [name] (or the default instance when [name] is omitted)
    * by the Dart code running on the engine of the plugin binding [binding].
    *
-   * Falls back to the most recently registered instance for [name] when none was registered for
-   * that engine, or returns null if none is registered.
+   * When no instance is known to belong to that engine, falls back to the most recent registration
+   * for [name]. Returns null if none is registered.
    */
   @Keep
   fun getInstance(
@@ -5380,8 +5378,8 @@ class NativeInteropFlutterIntegrationCoreApiRegistrar() {
    * Returns the instance registered under [name] (or the default instance when [name] is omitted)
    * by the Dart code running on the engine of [engine].
    *
-   * Falls back to the most recently registered instance for [name] when none was registered for
-   * that engine, or returns null if none is registered.
+   * When no instance is known to belong to that engine, falls back to the most recent registration
+   * for [name]. Returns null if none is registered.
    */
   @Keep
   fun getInstance(
@@ -5759,10 +5757,9 @@ class NativeInteropReservedNamesHostApiRegistrar private constructor(private val
    * Registers [api] under [name] (or the default instance when [name] is omitted) for the engine of
    * the plugin binding [binding].
    *
-   * Registrations are kept in an ordered stack per name, and [getInstance] returns the most recent
-   * one. Dart code running on an engine prefers the instance registered for that engine.
-   * Registering an instance that is already registered under [name] for the same engine moves it to
-   * the top of the stack.
+   * The registration is tied to that engine: unregistering it for this engine leaves other engines'
+   * registrations in place, and Dart code running on an engine uses the instance registered for
+   * that engine when it is known.
    */
   @Keep
   fun register(
@@ -5777,10 +5774,9 @@ class NativeInteropReservedNamesHostApiRegistrar private constructor(private val
    * Registers [api] under [name] (or the default instance when [name] is omitted) for the engine of
    * [engine].
    *
-   * Registrations are kept in an ordered stack per name, and [getInstance] returns the most recent
-   * one. Dart code running on an engine prefers the instance registered for that engine.
-   * Registering an instance that is already registered under [name] for the same engine moves it to
-   * the top of the stack.
+   * The registration is tied to that engine: unregistering it for this engine leaves other engines'
+   * registrations in place, and Dart code running on an engine uses the instance registered for
+   * that engine when it is known.
    */
   @Keep
   fun register(
@@ -5824,8 +5820,8 @@ class NativeInteropReservedNamesHostApiRegistrar private constructor(private val
   }
 
   /**
-   * Returns the most recently registered instance for [name] (or the default instance when [name]
-   * is omitted), or null if none is registered.
+   * Returns an instance registered under [name] (or the default instance when [name] is omitted) by
+   * any engine, preferring the most recent registration, or null if none is registered.
    */
   @Keep
   fun getInstance(name: String = defaultInstanceName): NativeInteropReservedNamesHostApiRegistrar? {
@@ -6195,7 +6191,7 @@ class NativeInteropReservedNamesFlutterApiRegistrar() {
    * identified by [engineId] and [affinityKey].
    *
    * Either key may be `Long.MIN_VALUE` when it is unknown. Registering an instance that is already
-   * registered under [name] moves it to the top of the stack.
+   * registered under [name] replaces its earlier registration.
    *
    * This is called by the generated Dart code and is not intended for direct use.
    */
@@ -6235,8 +6231,8 @@ class NativeInteropReservedNamesFlutterApiRegistrar() {
    * Returns the instance registered under [name] (or the default instance when [name] is omitted)
    * by the Dart code running on the engine of the plugin binding [binding].
    *
-   * Falls back to the most recently registered instance for [name] when none was registered for
-   * that engine, or returns null if none is registered.
+   * When no instance is known to belong to that engine, falls back to the most recent registration
+   * for [name]. Returns null if none is registered.
    */
   @Keep
   fun getInstance(
@@ -6250,8 +6246,8 @@ class NativeInteropReservedNamesFlutterApiRegistrar() {
    * Returns the instance registered under [name] (or the default instance when [name] is omitted)
    * by the Dart code running on the engine of [engine].
    *
-   * Falls back to the most recently registered instance for [name] when none was registered for
-   * that engine, or returns null if none is registered.
+   * When no instance is known to belong to that engine, falls back to the most recent registration
+   * for [name]. Returns null if none is registered.
    */
   @Keep
   fun getInstance(

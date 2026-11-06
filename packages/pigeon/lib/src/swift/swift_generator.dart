@@ -1467,10 +1467,10 @@ if (wrapped == nil) {
         );
         indent.writeln(_docCommentPrefix);
         indent.writeln(
-          '$_docCommentPrefix Falls back to the most recently registered instance for `name` when no',
+          '$_docCommentPrefix When no instance is known to belong to that engine, falls back to the most',
         );
         indent.writeln(
-          '$_docCommentPrefix registration matches the engine, and returns nil if none is registered.',
+          '$_docCommentPrefix recent registration for `name`. Returns nil if none is registered.',
         );
         indent.writeScoped(
           'static func getInstance(registrar: FlutterPluginRegistrar, name: String = ${_classNamePrefix}PigeonInternal.defaultInstanceName) -> ${api.name}? {',
@@ -1586,12 +1586,12 @@ if (wrapped == nil) {
     );
     indent.writeln(_docCommentPrefix);
     indent.writeln(
-      '$_docCommentPrefix Registrations are kept in an ordered stack per name, and `getInstance` returns',
+      '$_docCommentPrefix The registration is tied to its engine: unregistering it for one engine leaves',
     );
     indent.writeln(
-      '$_docCommentPrefix the most recent one. Registering an instance that is already registered under',
+      "$_docCommentPrefix other engines' registrations in place, and Dart code running on an engine uses",
     );
-    indent.writeln('$_docCommentPrefix `name` moves it to the top of the stack.');
+    indent.writeln('$_docCommentPrefix the instance registered for that engine when it is known.');
   }
 
   void _writeNativeInteropUnregisterDocs(Indent indent) {
@@ -1609,11 +1609,12 @@ if (wrapped == nil) {
 
   void _writeNativeInteropGetInstanceDocs(Indent indent) {
     indent.writeln(
-      '$_docCommentPrefix Returns the most recently registered instance for `name` (or the default',
+      '$_docCommentPrefix Returns an instance registered under `name` (or the default instance when',
     );
     indent.writeln(
-      '$_docCommentPrefix instance when `name` is omitted), or nil if none is registered.',
+      '$_docCommentPrefix `name` is omitted) by any engine, preferring the most recent registration,',
     );
+    indent.writeln('$_docCommentPrefix or nil if none is registered.');
   }
 
   /// Writes the engine-keyed registration statics of an FFI HostApi `Setup`

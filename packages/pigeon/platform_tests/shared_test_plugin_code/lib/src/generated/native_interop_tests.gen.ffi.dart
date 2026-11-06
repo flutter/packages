@@ -14957,9 +14957,9 @@ extension type NativeInteropFlutterIntegrationCoreApiRegistrar._(objc.ObjCObject
   }
 
   /// Registers <code>api</code> under <code>name</code> (or the default instance when <code>name</code> is omitted).
-  /// Registrations are kept in an ordered stack per name, and <code>getInstance</code> returns
-  /// the most recent one. Registering an instance that is already registered under
-  /// <code>name</code> moves it to the top of the stack.
+  /// The registration is tied to its engine: unregistering it for one engine leaves
+  /// other engines’ registrations in place, and Dart code running on an engine uses
+  /// the instance registered for that engine when it is known.
   /// Called by generated Dart code. <code>engineId</code> and <code>affinityKey</code> identify the engine
   /// that registered <code>api</code>, or are <code>Int64.min</code> when unknown.
   static void registerInstanceWithApi(
@@ -15062,8 +15062,9 @@ extension type NativeInteropHostIntegrationCoreApiSetup._(objc.ObjCObject object
     return NativeInteropHostIntegrationCoreApiSetup.fromPointer($ret, retain: false, release: true);
   }
 
-  /// Returns the most recently registered instance for <code>name</code> (or the default
-  /// instance when <code>name</code> is omitted), or nil if none is registered.
+  /// Returns an instance registered under <code>name</code> (or the default instance when
+  /// <code>name</code> is omitted) by any engine, preferring the most recent registration,
+  /// or nil if none is registered.
   static NativeInteropHostIntegrationCoreApiSetup? getInstanceWithName(objc.NSString name) {
     final _$$ref = name.ref;
     final $ret = _objc_msgSend_1sotr3r(
@@ -20287,9 +20288,9 @@ extension type NativeInteropReservedNamesFlutterApiRegistrar._(objc.ObjCObject o
   }
 
   /// Registers <code>api</code> under <code>name</code> (or the default instance when <code>name</code> is omitted).
-  /// Registrations are kept in an ordered stack per name, and <code>getInstance</code> returns
-  /// the most recent one. Registering an instance that is already registered under
-  /// <code>name</code> moves it to the top of the stack.
+  /// The registration is tied to its engine: unregistering it for one engine leaves
+  /// other engines’ registrations in place, and Dart code running on an engine uses
+  /// the instance registered for that engine when it is known.
   /// Called by generated Dart code. <code>engineId</code> and <code>affinityKey</code> identify the engine
   /// that registered <code>api</code>, or are <code>Int64.min</code> when unknown.
   static void registerInstanceWithApi(
@@ -20392,8 +20393,9 @@ extension type NativeInteropReservedNamesHostApiSetup._(objc.ObjCObject object$)
     return NativeInteropReservedNamesHostApiSetup.fromPointer($ret, retain: false, release: true);
   }
 
-  /// Returns the most recently registered instance for <code>name</code> (or the default
-  /// instance when <code>name</code> is omitted), or nil if none is registered.
+  /// Returns an instance registered under <code>name</code> (or the default instance when
+  /// <code>name</code> is omitted) by any engine, preferring the most recent registration,
+  /// or nil if none is registered.
   static NativeInteropReservedNamesHostApiSetup? getInstanceWithName(objc.NSString name) {
     final _$$ref = name.ref;
     final $ret = _objc_msgSend_1sotr3r(

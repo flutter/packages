@@ -2116,8 +2116,8 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
 
   /// Returns instance of NativeInteropHostIntegrationCoreApiForNativeInterop with specified [channelName] if one has been registered.
   ///
-  /// Prefers an instance registered by this isolate's engine, falling back to
-  /// the most recently registered instance.
+  /// Returns the instance registered by this isolate's engine when it is known,
+  /// and otherwise the most recent registration.
   static NativeInteropHostIntegrationCoreApiForNativeInterop? getInstance({
     String channelName = defaultInstanceName,
   }) {
@@ -13811,8 +13811,8 @@ class _NativeInteropReservedNamesHostApiForNativeInterop
 
   /// Returns instance of NativeInteropReservedNamesHostApiForNativeInterop with specified [channelName] if one has been registered.
   ///
-  /// Prefers an instance registered by this isolate's engine, falling back to
-  /// the most recently registered instance.
+  /// Returns the instance registered by this isolate's engine when it is known,
+  /// and otherwise the most recent registration.
   static NativeInteropReservedNamesHostApiForNativeInterop? getInstance({
     String channelName = defaultInstanceName,
   }) {

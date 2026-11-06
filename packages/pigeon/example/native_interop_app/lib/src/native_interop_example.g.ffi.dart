@@ -57,8 +57,9 @@ extension type NativeInteropExampleApiSetup._(objc.ObjCObject object$)
     return NativeInteropExampleApiSetup.fromPointer($ret, retain: false, release: true);
   }
 
-  /// Returns the most recently registered instance for <code>name</code> (or the default
-  /// instance when <code>name</code> is omitted), or nil if none is registered.
+  /// Returns an instance registered under <code>name</code> (or the default instance when
+  /// <code>name</code> is omitted) by any engine, preferring the most recent registration,
+  /// or nil if none is registered.
   static NativeInteropExampleApiSetup? getInstanceWithName(objc.NSString name) {
     final _$$ref = name.ref;
     final $ret = _objc_msgSend_1sotr3r(

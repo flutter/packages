@@ -335,9 +335,9 @@ typedef unsigned int swift_uint4 __attribute__((__ext_vector_type__(4)));
 SWIFT_CLASS("_TtC6Runner28NativeInteropExampleApiSetup")
 @interface NativeInteropExampleApiSetup : NSObject
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
-/// Returns the most recently registered instance for <code>name</code> (or the
-/// default instance when <code>name</code> is omitted), or nil if none is
-/// registered.
+/// Returns an instance registered under <code>name</code> (or the default
+/// instance when <code>name</code> is omitted) by any engine, preferring the
+/// most recent registration, or nil if none is registered.
 + (NativeInteropExampleApiSetup* _Nullable)getInstanceWithName:
     (NSString* _Nonnull)name SWIFT_WARN_UNUSED_RESULT;
 /// Returns the instance generated Dart code should use for <code>name</code>

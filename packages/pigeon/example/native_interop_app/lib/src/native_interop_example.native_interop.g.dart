@@ -415,8 +415,8 @@ class _NativeInteropExampleApiForNativeInterop implements NativeInteropExampleAp
 
   /// Returns instance of NativeInteropExampleApiForNativeInterop with specified [channelName] if one has been registered.
   ///
-  /// Prefers an instance registered by this isolate's engine, falling back to
-  /// the most recently registered instance.
+  /// Returns the instance registered by this isolate's engine when it is known,
+  /// and otherwise the most recent registration.
   static NativeInteropExampleApiForNativeInterop? getInstance({
     String channelName = defaultInstanceName,
   }) {

@@ -2063,7 +2063,7 @@ void main() {
       expect(code, contains('val wrapper = HostApiRegistrar(engineKey)'));
       expect(code, contains(' * Registers [api] under [name]'));
       expect(code, contains(' * Instances are matched by identity.'));
-      expect(code, contains(' * Returns the most recently registered instance for [name]'));
+      expect(code, contains(' * Returns an instance registered under [name]'));
       expect(
         code,
         contains(
@@ -2231,7 +2231,7 @@ void main() {
       expect(code, contains('entry.api = null'));
     });
 
-    test('host API resolves by engine id, then affinity, then top of stack', () {
+    test('host API resolves by engine id, then affinity, then most recent registration', () {
       final String code = generate(buildRoot(flutter: false));
       expectInOrder(code, <String>[
         'val list = HostApiInstances[name] ?: return null',
