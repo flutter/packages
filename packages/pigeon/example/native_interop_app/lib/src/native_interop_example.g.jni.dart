@@ -274,14 +274,14 @@ extension NativeInteropExampleApiRegistrar$$Methods on NativeInteropExampleApiRe
             )
           >();
 
-  /// from: `public fun register(api: dev.flutter.pigeonnativeinteropapp.NativeInteropExampleApi?, name: kotlin.String): dev.flutter.pigeonnativeinteropapp.NativeInteropExampleApiRegistrar`
+  /// from: `public fun register(api: dev.flutter.pigeonnativeinteropapp.NativeInteropExampleApi, name: kotlin.String): dev.flutter.pigeonnativeinteropapp.NativeInteropExampleApiRegistrar`
   /// The returned object must be released after use, by calling the [release] method.
   NativeInteropExampleApiRegistrar register(
-    NativeInteropExampleApi? nativeInteropExampleApi,
+    NativeInteropExampleApi nativeInteropExampleApi,
     jni$_.JString string,
   ) {
     final _$$selfRef = reference;
-    final _$nativeInteropExampleApi = nativeInteropExampleApi?.reference ?? jni$_.jNullReference;
+    final _$nativeInteropExampleApi = nativeInteropExampleApi.reference;
     final _$string = string.reference;
     return _register(
       _$$selfRef.pointer,

@@ -1775,7 +1775,7 @@ void main() {
     );
   });
 
-  test('swift generator handles HostApi and FlutterApi deregistration with nil', () {
+  test('swift generator handles HostApi and FlutterApi multi-instance registration and unregister', () {
     final root = Root(
       apis: <Api>[
         AstHostApi(
@@ -1809,13 +1809,14 @@ void main() {
     const generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
     final code = sink.toString();
+    expect(code, contains('private class HostApiInstanceTracker {'));
     expect(code, contains('static let lock = NSLock()'));
     expect(code, contains('static var instancesOfHostApi = [String: [HostApiSetup]]()'));
     expect(code, contains('@discardableResult'));
     expect(
       code,
       contains(
-        'static func register(api: HostApi?, name: String = PigeonInternal.defaultInstanceName) -> HostApiSetup?',
+        'static func register(api: HostApi, name: String = PigeonInternal.defaultInstanceName) -> HostApiSetup',
       ),
     );
     expect(
@@ -1836,9 +1837,9 @@ void main() {
     expect(code, contains('Swift.type(of: api) is AnyClass'));
     expect(code, contains('HostApiInstanceTracker.instancesOfHostApi.removeValue(forKey: name)'));
     expect(code, contains('return HostApiInstanceTracker.instancesOfHostApi[name]?.last'));
-    expect(code, contains('static var registeredFlutterApi = [String: [FlutterApi]]()'));
+    expect(code, contains('private static var registeredFlutterApi = [String: [FlutterApi]]()'));
     expect(code, contains('FlutterApiRegistrar.lock.lock()'));
-    expect(code, contains('registerInstance(api: FlutterApiBridge?, name: String = '));
+    expect(code, contains('registerInstance(api: FlutterApiBridge, name: String = '));
     expect(code, contains('unregisterInstance(api: FlutterApiBridge, name: String = '));
     expect(code, contains('FlutterApiRegistrar.registeredFlutterApi.removeValue(forKey: name)'));
     expect(code, contains('return FlutterApiRegistrar.registeredFlutterApi[name]?.last'));
@@ -1981,6 +1982,14 @@ void main() {
     const generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
     final code = sink.toString();
+    expect(code, contains('private class ApiInstanceTracker {'));
+    expect(
+      code,
+      contains(
+        'static func register(api: Api, name: String = PigeonInternal.defaultInstanceName) -> ApiSetup {',
+      ),
+    );
+    expect(code, contains('withExtendedLifetime(displaced) {}'));
     expect(
       code,
       contains(
@@ -2032,6 +2041,13 @@ void main() {
     const generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
     final code = sink.toString();
+    expect(code, contains('private static var registeredApi = [String: [Api]]()'));
+    expect(
+      code,
+      contains(
+        '@objc static func registerInstance(api: ApiBridge, name: String = PigeonInternal.defaultInstanceName)',
+      ),
+    );
     expect(
       code,
       contains('@objc func report(error errorArg: NSString?, error: PigeonError) -> NSString?'),

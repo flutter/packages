@@ -14958,15 +14958,15 @@ extension type NativeInteropFlutterIntegrationCoreApiRegistrar._(objc.ObjCObject
 
   /// registerInstanceWithApi:name:
   static void registerInstanceWithApi(
-    NativeInteropFlutterIntegrationCoreApiBridge? api, {
+    NativeInteropFlutterIntegrationCoreApiBridge api, {
     required objc.NSString name,
   }) {
-    final _$$ref = api?.ref;
+    final _$$ref = api.ref;
     final _$$ref$1 = name.ref;
     _objc_msgSend_pfv6jd(
       _class_NativeInteropFlutterIntegrationCoreApiRegistrar,
       _sel_registerInstanceWithApi_name_,
-      _$$ref?.pointer ?? ffi.nullptr,
+      _$$ref.pointer,
       _$$ref$1.pointer,
     );
   }
@@ -20081,15 +20081,15 @@ extension type NativeInteropReservedNamesFlutterApiRegistrar._(objc.ObjCObject o
 
   /// registerInstanceWithApi:name:
   static void registerInstanceWithApi(
-    NativeInteropReservedNamesFlutterApiBridge? api, {
+    NativeInteropReservedNamesFlutterApiBridge api, {
     required objc.NSString name,
   }) {
-    final _$$ref = api?.ref;
+    final _$$ref = api.ref;
     final _$$ref$1 = name.ref;
     _objc_msgSend_pfv6jd(
       _class_NativeInteropReservedNamesFlutterApiRegistrar,
       _sel_registerInstanceWithApi_name_,
-      _$$ref?.pointer ?? ffi.nullptr,
+      _$$ref.pointer,
       _$$ref$1.pointer,
     );
   }

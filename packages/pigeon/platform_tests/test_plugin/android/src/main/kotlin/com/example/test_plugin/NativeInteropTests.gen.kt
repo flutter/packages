@@ -1292,7 +1292,7 @@ data class NativeInteropReservedNames(
   }
 }
 
-val NativeInteropHostIntegrationCoreApiInstances:
+private val NativeInteropHostIntegrationCoreApiInstances:
     MutableMap<String, MutableList<NativeInteropHostIntegrationCoreApiRegistrar>> =
     mutableMapOf()
 
@@ -1952,39 +1952,24 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
   @Volatile private var api: NativeInteropHostIntegrationCoreApi? = null
 
   fun register(
-      api: NativeInteropHostIntegrationCoreApi?,
+      api: NativeInteropHostIntegrationCoreApi,
       name: String = defaultInstanceName
   ): NativeInteropHostIntegrationCoreApiRegistrar {
+    val wrapper = NativeInteropHostIntegrationCoreApiRegistrar()
+    wrapper.api = api
     kotlin.synchronized(NativeInteropHostIntegrationCoreApiInstances) {
-      if (api != null) {
-        this.api = api
-        val list = NativeInteropHostIntegrationCoreApiInstances.getOrPut(name) { mutableListOf() }
-        val iterator = list.iterator()
-        while (iterator.hasNext()) {
-          val entry = iterator.next()
-          if (entry === this || entry.api === api) {
-            if (entry !== this) {
-              entry.api = null
-            }
-            iterator.remove()
-          }
-        }
-        list.add(this)
-      } else {
-        this.api = null
-        val list = NativeInteropHostIntegrationCoreApiInstances[name]
-        if (list != null) {
-          if (!list.remove(this) && list.isNotEmpty()) {
-            val removed = list.removeAt(list.lastIndex)
-            removed.api = null
-          }
-          if (list.isEmpty()) {
-            NativeInteropHostIntegrationCoreApiInstances.remove(name)
-          }
+      val list = NativeInteropHostIntegrationCoreApiInstances.getOrPut(name) { mutableListOf() }
+      val iterator = list.iterator()
+      while (iterator.hasNext()) {
+        val entry = iterator.next()
+        if (entry.api === api) {
+          entry.api = null
+          iterator.remove()
         }
       }
+      list.add(wrapper)
     }
-    return this
+    return wrapper
   }
 
   fun unregister(api: NativeInteropHostIntegrationCoreApi, name: String = defaultInstanceName) {
@@ -4852,7 +4837,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
  * Generated class from Pigeon that represents Flutter messages that can be called from Kotlin.
  */
 /// Map that stores instances
-val registeredNativeInteropFlutterIntegrationCoreApi:
+private val registeredNativeInteropFlutterIntegrationCoreApi:
     MutableMap<String, MutableList<NativeInteropFlutterIntegrationCoreApi>> =
     mutableMapOf()
 
@@ -4861,26 +4846,13 @@ val registeredNativeInteropFlutterIntegrationCoreApi:
 class NativeInteropFlutterIntegrationCoreApiRegistrar() {
   /// Registers an instance with the given name.
   fun registerInstance(
-      api: NativeInteropFlutterIntegrationCoreApi?,
+      api: NativeInteropFlutterIntegrationCoreApi,
       name: String = defaultInstanceName
   ) {
     kotlin.synchronized(registeredNativeInteropFlutterIntegrationCoreApi) {
-      if (api != null) {
-        val list =
-            registeredNativeInteropFlutterIntegrationCoreApi.getOrPut(name) { mutableListOf() }
-        list.removeAll { it === api }
-        list.add(api)
-      } else {
-        val list = registeredNativeInteropFlutterIntegrationCoreApi[name]
-        if (list != null) {
-          if (list.isNotEmpty()) {
-            list.removeAt(list.lastIndex)
-          }
-          if (list.isEmpty()) {
-            registeredNativeInteropFlutterIntegrationCoreApi.remove(name)
-          }
-        }
-      }
+      val list = registeredNativeInteropFlutterIntegrationCoreApi.getOrPut(name) { mutableListOf() }
+      list.removeAll { it === api }
+      list.add(api)
     }
   }
 
@@ -5199,7 +5171,7 @@ interface NativeInteropFlutterIntegrationCoreApi {
   ): NativeInteropAnotherEnum?
 }
 
-val NativeInteropReservedNamesHostApiInstances:
+private val NativeInteropReservedNamesHostApiInstances:
     MutableMap<String, MutableList<NativeInteropReservedNamesHostApiRegistrar>> =
     mutableMapOf()
 
@@ -5247,39 +5219,24 @@ class NativeInteropReservedNamesHostApiRegistrar : NativeInteropReservedNamesHos
   @Volatile private var api: NativeInteropReservedNamesHostApi? = null
 
   fun register(
-      api: NativeInteropReservedNamesHostApi?,
+      api: NativeInteropReservedNamesHostApi,
       name: String = defaultInstanceName
   ): NativeInteropReservedNamesHostApiRegistrar {
+    val wrapper = NativeInteropReservedNamesHostApiRegistrar()
+    wrapper.api = api
     kotlin.synchronized(NativeInteropReservedNamesHostApiInstances) {
-      if (api != null) {
-        this.api = api
-        val list = NativeInteropReservedNamesHostApiInstances.getOrPut(name) { mutableListOf() }
-        val iterator = list.iterator()
-        while (iterator.hasNext()) {
-          val entry = iterator.next()
-          if (entry === this || entry.api === api) {
-            if (entry !== this) {
-              entry.api = null
-            }
-            iterator.remove()
-          }
-        }
-        list.add(this)
-      } else {
-        this.api = null
-        val list = NativeInteropReservedNamesHostApiInstances[name]
-        if (list != null) {
-          if (!list.remove(this) && list.isNotEmpty()) {
-            val removed = list.removeAt(list.lastIndex)
-            removed.api = null
-          }
-          if (list.isEmpty()) {
-            NativeInteropReservedNamesHostApiInstances.remove(name)
-          }
+      val list = NativeInteropReservedNamesHostApiInstances.getOrPut(name) { mutableListOf() }
+      val iterator = list.iterator()
+      while (iterator.hasNext()) {
+        val entry = iterator.next()
+        if (entry.api === api) {
+          entry.api = null
+          iterator.remove()
         }
       }
+      list.add(wrapper)
     }
-    return this
+    return wrapper
   }
 
   fun unregister(api: NativeInteropReservedNamesHostApi, name: String = defaultInstanceName) {
@@ -5495,7 +5452,7 @@ class NativeInteropReservedNamesHostApiRegistrar : NativeInteropReservedNamesHos
  * Generated class from Pigeon that represents Flutter messages that can be called from Kotlin.
  */
 /// Map that stores instances
-val registeredNativeInteropReservedNamesFlutterApi:
+private val registeredNativeInteropReservedNamesFlutterApi:
     MutableMap<String, MutableList<NativeInteropReservedNamesFlutterApi>> =
     mutableMapOf()
 
@@ -5504,25 +5461,13 @@ val registeredNativeInteropReservedNamesFlutterApi:
 class NativeInteropReservedNamesFlutterApiRegistrar() {
   /// Registers an instance with the given name.
   fun registerInstance(
-      api: NativeInteropReservedNamesFlutterApi?,
+      api: NativeInteropReservedNamesFlutterApi,
       name: String = defaultInstanceName
   ) {
     kotlin.synchronized(registeredNativeInteropReservedNamesFlutterApi) {
-      if (api != null) {
-        val list = registeredNativeInteropReservedNamesFlutterApi.getOrPut(name) { mutableListOf() }
-        list.removeAll { it === api }
-        list.add(api)
-      } else {
-        val list = registeredNativeInteropReservedNamesFlutterApi[name]
-        if (list != null) {
-          if (list.isNotEmpty()) {
-            list.removeAt(list.lastIndex)
-          }
-          if (list.isEmpty()) {
-            registeredNativeInteropReservedNamesFlutterApi.remove(name)
-          }
-        }
-      }
+      val list = registeredNativeInteropReservedNamesFlutterApi.getOrPut(name) { mutableListOf() }
+      list.removeAll { it === api }
+      list.add(api)
     }
   }
 

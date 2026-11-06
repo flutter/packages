@@ -43,7 +43,7 @@ class FlutterError(
 ) : RuntimeException()
 
 private const val defaultInstanceName = "PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u"
-val NativeInteropExampleApiInstances:
+private val NativeInteropExampleApiInstances:
     MutableMap<String, MutableList<NativeInteropExampleApiRegistrar>> =
     mutableMapOf()
 
@@ -57,39 +57,24 @@ class NativeInteropExampleApiRegistrar : NativeInteropExampleApi {
   @Volatile private var api: NativeInteropExampleApi? = null
 
   fun register(
-      api: NativeInteropExampleApi?,
+      api: NativeInteropExampleApi,
       name: String = defaultInstanceName
   ): NativeInteropExampleApiRegistrar {
+    val wrapper = NativeInteropExampleApiRegistrar()
+    wrapper.api = api
     kotlin.synchronized(NativeInteropExampleApiInstances) {
-      if (api != null) {
-        this.api = api
-        val list = NativeInteropExampleApiInstances.getOrPut(name) { mutableListOf() }
-        val iterator = list.iterator()
-        while (iterator.hasNext()) {
-          val entry = iterator.next()
-          if (entry === this || entry.api === api) {
-            if (entry !== this) {
-              entry.api = null
-            }
-            iterator.remove()
-          }
-        }
-        list.add(this)
-      } else {
-        this.api = null
-        val list = NativeInteropExampleApiInstances[name]
-        if (list != null) {
-          if (!list.remove(this) && list.isNotEmpty()) {
-            val removed = list.removeAt(list.lastIndex)
-            removed.api = null
-          }
-          if (list.isEmpty()) {
-            NativeInteropExampleApiInstances.remove(name)
-          }
+      val list = NativeInteropExampleApiInstances.getOrPut(name) { mutableListOf() }
+      val iterator = list.iterator()
+      while (iterator.hasNext()) {
+        val entry = iterator.next()
+        if (entry.api === api) {
+          entry.api = null
+          iterator.remove()
         }
       }
+      list.add(wrapper)
     }
-    return this
+    return wrapper
   }
 
   fun unregister(api: NativeInteropExampleApi, name: String = defaultInstanceName) {

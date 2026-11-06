@@ -2563,7 +2563,7 @@ private class _PigeonFfiCodec {
   }
 }
 
-class NativeInteropHostIntegrationCoreApiInstanceTracker {
+private class NativeInteropHostIntegrationCoreApiInstanceTracker {
   static let lock = NSLock()
   static var instancesOfNativeInteropHostIntegrationCoreApi = [
     String: [NativeInteropHostIntegrationCoreApiSetup]
@@ -3040,9 +3040,14 @@ protocol NativeInteropHostIntegrationCoreApi {
       return pigeonApi
     }
     set {
-      pigeonApiLock.lock()
-      defer { pigeonApiLock.unlock() }
-      pigeonApi = newValue
+      let oldValue: NativeInteropHostIntegrationCoreApi?
+      do {
+        pigeonApiLock.lock()
+        defer { pigeonApiLock.unlock() }
+        oldValue = pigeonApi
+        pigeonApi = newValue
+      }
+      withExtendedLifetime(oldValue) {}
     }
   }
   override init() {}
@@ -3058,14 +3063,15 @@ protocol NativeInteropHostIntegrationCoreApi {
   }
   @discardableResult
   static func register(
-    api: NativeInteropHostIntegrationCoreApi?,
+    api: NativeInteropHostIntegrationCoreApi,
     name: String = NativeInteropTestsPigeonInternal.defaultInstanceName
-  ) -> NativeInteropHostIntegrationCoreApiSetup? {
-    NativeInteropHostIntegrationCoreApiInstanceTracker.lock.lock()
-    defer { NativeInteropHostIntegrationCoreApiInstanceTracker.lock.unlock() }
-    if let api = api {
-      let wrapper = NativeInteropHostIntegrationCoreApiSetup()
-      wrapper.api = api
+  ) -> NativeInteropHostIntegrationCoreApiSetup {
+    let wrapper = NativeInteropHostIntegrationCoreApiSetup()
+    wrapper.api = api
+    var displaced: [Any] = []
+    do {
+      NativeInteropHostIntegrationCoreApiInstanceTracker.lock.lock()
+      defer { NativeInteropHostIntegrationCoreApiInstanceTracker.lock.unlock() }
       var list =
         NativeInteropHostIntegrationCoreApiInstanceTracker
         .instancesOfNativeInteropHostIntegrationCoreApi[name] ?? []
@@ -3076,6 +3082,8 @@ protocol NativeInteropHostIntegrationCoreApi {
             return false
           }
           if (existing as AnyObject) === apiObject {
+            displaced.append(existing)
+            displaced.append(entry)
             entry.api = nil
             return true
           }
@@ -3085,84 +3093,85 @@ protocol NativeInteropHostIntegrationCoreApi {
       list.append(wrapper)
       NativeInteropHostIntegrationCoreApiInstanceTracker
         .instancesOfNativeInteropHostIntegrationCoreApi[name] = list
-      return wrapper
-    } else {
-      if var list =
-        NativeInteropHostIntegrationCoreApiInstanceTracker
-        .instancesOfNativeInteropHostIntegrationCoreApi[name]
-      {
-        let removed = list.popLast()
-        removed?.api = nil
-        if list.isEmpty {
-          NativeInteropHostIntegrationCoreApiInstanceTracker
-            .instancesOfNativeInteropHostIntegrationCoreApi.removeValue(forKey: name)
-        } else {
-          NativeInteropHostIntegrationCoreApiInstanceTracker
-            .instancesOfNativeInteropHostIntegrationCoreApi[name] = list
-        }
-      }
-      return nil
     }
+    withExtendedLifetime(displaced) {}
+    return wrapper
   }
+  /// Unregisters a reference-type `api` instance from `name`.
+  /// For value-type (`struct`) implementations, store the token returned by `register(api:name:)` and call `unregister(setup:name:)` instead.
   static func unregister(
     api: NativeInteropHostIntegrationCoreApi,
     name: String = NativeInteropTestsPigeonInternal.defaultInstanceName
   ) {
-    NativeInteropHostIntegrationCoreApiInstanceTracker.lock.lock()
-    defer { NativeInteropHostIntegrationCoreApiInstanceTracker.lock.unlock() }
-    guard Swift.type(of: api) is AnyClass,
-      var list =
-        NativeInteropHostIntegrationCoreApiInstanceTracker
-        .instancesOfNativeInteropHostIntegrationCoreApi[name]
-    else {
-      return
-    }
-    let apiObject = api as AnyObject
-    list.removeAll { entry in
-      guard let existing = entry.api, Swift.type(of: existing) is AnyClass else {
+    var displaced: [Any] = []
+    do {
+      NativeInteropHostIntegrationCoreApiInstanceTracker.lock.lock()
+      defer { NativeInteropHostIntegrationCoreApiInstanceTracker.lock.unlock() }
+      guard Swift.type(of: api) is AnyClass,
+        var list =
+          NativeInteropHostIntegrationCoreApiInstanceTracker
+          .instancesOfNativeInteropHostIntegrationCoreApi[name]
+      else {
+        return
+      }
+      let apiObject = api as AnyObject
+      list.removeAll { entry in
+        guard let existing = entry.api, Swift.type(of: existing) is AnyClass else {
+          return false
+        }
+        if (existing as AnyObject) === apiObject {
+          displaced.append(existing)
+          displaced.append(entry)
+          entry.api = nil
+          return true
+        }
         return false
       }
-      if (existing as AnyObject) === apiObject {
-        entry.api = nil
-        return true
+      if list.isEmpty {
+        NativeInteropHostIntegrationCoreApiInstanceTracker
+          .instancesOfNativeInteropHostIntegrationCoreApi.removeValue(forKey: name)
+      } else {
+        NativeInteropHostIntegrationCoreApiInstanceTracker
+          .instancesOfNativeInteropHostIntegrationCoreApi[name] = list
       }
-      return false
     }
-    if list.isEmpty {
-      NativeInteropHostIntegrationCoreApiInstanceTracker
-        .instancesOfNativeInteropHostIntegrationCoreApi.removeValue(forKey: name)
-    } else {
-      NativeInteropHostIntegrationCoreApiInstanceTracker
-        .instancesOfNativeInteropHostIntegrationCoreApi[name] = list
-    }
+    withExtendedLifetime(displaced) {}
   }
   static func unregister(
     setup: NativeInteropHostIntegrationCoreApiSetup,
     name: String = NativeInteropTestsPigeonInternal.defaultInstanceName
   ) {
-    NativeInteropHostIntegrationCoreApiInstanceTracker.lock.lock()
-    defer { NativeInteropHostIntegrationCoreApiInstanceTracker.lock.unlock() }
-    guard
-      var list =
-        NativeInteropHostIntegrationCoreApiInstanceTracker
-        .instancesOfNativeInteropHostIntegrationCoreApi[name]
-    else {
-      return
-    }
-    list.removeAll { entry in
-      if entry === setup {
-        entry.api = nil
-        return true
+    var displaced: [Any] = []
+    do {
+      NativeInteropHostIntegrationCoreApiInstanceTracker.lock.lock()
+      defer { NativeInteropHostIntegrationCoreApiInstanceTracker.lock.unlock() }
+      guard
+        var list =
+          NativeInteropHostIntegrationCoreApiInstanceTracker
+          .instancesOfNativeInteropHostIntegrationCoreApi[name]
+      else {
+        return
       }
-      return false
+      list.removeAll { entry in
+        if entry === setup {
+          if let existing = entry.api {
+            displaced.append(existing)
+          }
+          displaced.append(entry)
+          entry.api = nil
+          return true
+        }
+        return false
+      }
+      if list.isEmpty {
+        NativeInteropHostIntegrationCoreApiInstanceTracker
+          .instancesOfNativeInteropHostIntegrationCoreApi.removeValue(forKey: name)
+      } else {
+        NativeInteropHostIntegrationCoreApiInstanceTracker
+          .instancesOfNativeInteropHostIntegrationCoreApi[name] = list
+      }
     }
-    if list.isEmpty {
-      NativeInteropHostIntegrationCoreApiInstanceTracker
-        .instancesOfNativeInteropHostIntegrationCoreApi.removeValue(forKey: name)
-    } else {
-      NativeInteropHostIntegrationCoreApiInstanceTracker
-        .instancesOfNativeInteropHostIntegrationCoreApi[name] = list
-    }
+    withExtendedLifetime(displaced) {}
   }
   @objc static func getInstance(name: String = NativeInteropTestsPigeonInternal.defaultInstanceName)
     -> NativeInteropHostIntegrationCoreApiSetup?
@@ -8306,64 +8315,69 @@ protocol NativeInteropHostIntegrationCoreApi {
 
 @objc class NativeInteropFlutterIntegrationCoreApiRegistrar: NSObject {
   private static let lock = NSLock()
-  static var registeredNativeInteropFlutterIntegrationCoreApi = [
+  private static var registeredNativeInteropFlutterIntegrationCoreApi = [
     String: [NativeInteropFlutterIntegrationCoreApi]
   ]()
 
   @objc static func registerInstance(
-    api: NativeInteropFlutterIntegrationCoreApiBridge?,
+    api: NativeInteropFlutterIntegrationCoreApiBridge,
     name: String = NativeInteropTestsPigeonInternal.defaultInstanceName
   ) {
-    NativeInteropFlutterIntegrationCoreApiRegistrar.lock.lock()
-    defer { NativeInteropFlutterIntegrationCoreApiRegistrar.lock.unlock() }
-    if let api = api {
-      let apiObject = api as AnyObject
+    let apiObject = api as AnyObject
+    let wrapper = NativeInteropFlutterIntegrationCoreApi(api: api)
+    var displaced: [NativeInteropFlutterIntegrationCoreApi] = []
+    do {
+      NativeInteropFlutterIntegrationCoreApiRegistrar.lock.lock()
+      defer { NativeInteropFlutterIntegrationCoreApiRegistrar.lock.unlock() }
       var list =
         NativeInteropFlutterIntegrationCoreApiRegistrar
         .registeredNativeInteropFlutterIntegrationCoreApi[name] ?? []
-      list.removeAll { ($0.api as AnyObject) === apiObject }
-      list.append(NativeInteropFlutterIntegrationCoreApi(api: api))
+      list.removeAll { entry in
+        if (entry.api as AnyObject) === apiObject {
+          displaced.append(entry)
+          return true
+        }
+        return false
+      }
+      list.append(wrapper)
       NativeInteropFlutterIntegrationCoreApiRegistrar
         .registeredNativeInteropFlutterIntegrationCoreApi[name] = list
-    } else {
-      if var list =
-        NativeInteropFlutterIntegrationCoreApiRegistrar
-        .registeredNativeInteropFlutterIntegrationCoreApi[name]
-      {
-        _ = list.popLast()
-        if list.isEmpty {
-          NativeInteropFlutterIntegrationCoreApiRegistrar
-            .registeredNativeInteropFlutterIntegrationCoreApi.removeValue(forKey: name)
-        } else {
-          NativeInteropFlutterIntegrationCoreApiRegistrar
-            .registeredNativeInteropFlutterIntegrationCoreApi[name] = list
-        }
-      }
     }
+    withExtendedLifetime(displaced) {}
   }
 
   @objc static func unregisterInstance(
     api: NativeInteropFlutterIntegrationCoreApiBridge,
     name: String = NativeInteropTestsPigeonInternal.defaultInstanceName
   ) {
-    NativeInteropFlutterIntegrationCoreApiRegistrar.lock.lock()
-    defer { NativeInteropFlutterIntegrationCoreApiRegistrar.lock.unlock() }
-    guard
-      var list =
-        NativeInteropFlutterIntegrationCoreApiRegistrar
-        .registeredNativeInteropFlutterIntegrationCoreApi[name]
-    else {
-      return
-    }
     let apiObject = api as AnyObject
-    list.removeAll { ($0.api as AnyObject) === apiObject }
-    if list.isEmpty {
-      NativeInteropFlutterIntegrationCoreApiRegistrar
-        .registeredNativeInteropFlutterIntegrationCoreApi.removeValue(forKey: name)
-    } else {
-      NativeInteropFlutterIntegrationCoreApiRegistrar
-        .registeredNativeInteropFlutterIntegrationCoreApi[name] = list
+    var displaced: [NativeInteropFlutterIntegrationCoreApi] = []
+    do {
+      NativeInteropFlutterIntegrationCoreApiRegistrar.lock.lock()
+      defer { NativeInteropFlutterIntegrationCoreApiRegistrar.lock.unlock() }
+      guard
+        var list =
+          NativeInteropFlutterIntegrationCoreApiRegistrar
+          .registeredNativeInteropFlutterIntegrationCoreApi[name]
+      else {
+        return
+      }
+      list.removeAll { entry in
+        if (entry.api as AnyObject) === apiObject {
+          displaced.append(entry)
+          return true
+        }
+        return false
+      }
+      if list.isEmpty {
+        NativeInteropFlutterIntegrationCoreApiRegistrar
+          .registeredNativeInteropFlutterIntegrationCoreApi.removeValue(forKey: name)
+      } else {
+        NativeInteropFlutterIntegrationCoreApiRegistrar
+          .registeredNativeInteropFlutterIntegrationCoreApi[name] = list
+      }
     }
+    withExtendedLifetime(displaced) {}
   }
 
   static func getInstance(name: String = NativeInteropTestsPigeonInternal.defaultInstanceName)
@@ -9681,7 +9695,7 @@ class NativeInteropFlutterIntegrationCoreApi {
       as! NativeInteropAnotherEnum?
   }
 }
-class NativeInteropReservedNamesHostApiInstanceTracker {
+private class NativeInteropReservedNamesHostApiInstanceTracker {
   static let lock = NSLock()
   static var instancesOfNativeInteropReservedNamesHostApi = [
     String: [NativeInteropReservedNamesHostApiSetup]
@@ -9738,9 +9752,14 @@ protocol NativeInteropReservedNamesHostApi {
       return pigeonApi
     }
     set {
-      pigeonApiLock.lock()
-      defer { pigeonApiLock.unlock() }
-      pigeonApi = newValue
+      let oldValue: NativeInteropReservedNamesHostApi?
+      do {
+        pigeonApiLock.lock()
+        defer { pigeonApiLock.unlock() }
+        oldValue = pigeonApi
+        pigeonApi = newValue
+      }
+      withExtendedLifetime(oldValue) {}
     }
   }
   override init() {}
@@ -9756,14 +9775,15 @@ protocol NativeInteropReservedNamesHostApi {
   }
   @discardableResult
   static func register(
-    api: NativeInteropReservedNamesHostApi?,
+    api: NativeInteropReservedNamesHostApi,
     name: String = NativeInteropTestsPigeonInternal.defaultInstanceName
-  ) -> NativeInteropReservedNamesHostApiSetup? {
-    NativeInteropReservedNamesHostApiInstanceTracker.lock.lock()
-    defer { NativeInteropReservedNamesHostApiInstanceTracker.lock.unlock() }
-    if let api = api {
-      let wrapper = NativeInteropReservedNamesHostApiSetup()
-      wrapper.api = api
+  ) -> NativeInteropReservedNamesHostApiSetup {
+    let wrapper = NativeInteropReservedNamesHostApiSetup()
+    wrapper.api = api
+    var displaced: [Any] = []
+    do {
+      NativeInteropReservedNamesHostApiInstanceTracker.lock.lock()
+      defer { NativeInteropReservedNamesHostApiInstanceTracker.lock.unlock() }
       var list =
         NativeInteropReservedNamesHostApiInstanceTracker
         .instancesOfNativeInteropReservedNamesHostApi[name] ?? []
@@ -9774,6 +9794,8 @@ protocol NativeInteropReservedNamesHostApi {
             return false
           }
           if (existing as AnyObject) === apiObject {
+            displaced.append(existing)
+            displaced.append(entry)
             entry.api = nil
             return true
           }
@@ -9783,84 +9805,85 @@ protocol NativeInteropReservedNamesHostApi {
       list.append(wrapper)
       NativeInteropReservedNamesHostApiInstanceTracker.instancesOfNativeInteropReservedNamesHostApi[
         name] = list
-      return wrapper
-    } else {
-      if var list =
-        NativeInteropReservedNamesHostApiInstanceTracker
-        .instancesOfNativeInteropReservedNamesHostApi[name]
-      {
-        let removed = list.popLast()
-        removed?.api = nil
-        if list.isEmpty {
-          NativeInteropReservedNamesHostApiInstanceTracker
-            .instancesOfNativeInteropReservedNamesHostApi.removeValue(forKey: name)
-        } else {
-          NativeInteropReservedNamesHostApiInstanceTracker
-            .instancesOfNativeInteropReservedNamesHostApi[name] = list
-        }
-      }
-      return nil
     }
+    withExtendedLifetime(displaced) {}
+    return wrapper
   }
+  /// Unregisters a reference-type `api` instance from `name`.
+  /// For value-type (`struct`) implementations, store the token returned by `register(api:name:)` and call `unregister(setup:name:)` instead.
   static func unregister(
     api: NativeInteropReservedNamesHostApi,
     name: String = NativeInteropTestsPigeonInternal.defaultInstanceName
   ) {
-    NativeInteropReservedNamesHostApiInstanceTracker.lock.lock()
-    defer { NativeInteropReservedNamesHostApiInstanceTracker.lock.unlock() }
-    guard Swift.type(of: api) is AnyClass,
-      var list =
-        NativeInteropReservedNamesHostApiInstanceTracker
-        .instancesOfNativeInteropReservedNamesHostApi[name]
-    else {
-      return
-    }
-    let apiObject = api as AnyObject
-    list.removeAll { entry in
-      guard let existing = entry.api, Swift.type(of: existing) is AnyClass else {
+    var displaced: [Any] = []
+    do {
+      NativeInteropReservedNamesHostApiInstanceTracker.lock.lock()
+      defer { NativeInteropReservedNamesHostApiInstanceTracker.lock.unlock() }
+      guard Swift.type(of: api) is AnyClass,
+        var list =
+          NativeInteropReservedNamesHostApiInstanceTracker
+          .instancesOfNativeInteropReservedNamesHostApi[name]
+      else {
+        return
+      }
+      let apiObject = api as AnyObject
+      list.removeAll { entry in
+        guard let existing = entry.api, Swift.type(of: existing) is AnyClass else {
+          return false
+        }
+        if (existing as AnyObject) === apiObject {
+          displaced.append(existing)
+          displaced.append(entry)
+          entry.api = nil
+          return true
+        }
         return false
       }
-      if (existing as AnyObject) === apiObject {
-        entry.api = nil
-        return true
+      if list.isEmpty {
+        NativeInteropReservedNamesHostApiInstanceTracker
+          .instancesOfNativeInteropReservedNamesHostApi.removeValue(forKey: name)
+      } else {
+        NativeInteropReservedNamesHostApiInstanceTracker
+          .instancesOfNativeInteropReservedNamesHostApi[name] = list
       }
-      return false
     }
-    if list.isEmpty {
-      NativeInteropReservedNamesHostApiInstanceTracker.instancesOfNativeInteropReservedNamesHostApi
-        .removeValue(forKey: name)
-    } else {
-      NativeInteropReservedNamesHostApiInstanceTracker.instancesOfNativeInteropReservedNamesHostApi[
-        name] = list
-    }
+    withExtendedLifetime(displaced) {}
   }
   static func unregister(
     setup: NativeInteropReservedNamesHostApiSetup,
     name: String = NativeInteropTestsPigeonInternal.defaultInstanceName
   ) {
-    NativeInteropReservedNamesHostApiInstanceTracker.lock.lock()
-    defer { NativeInteropReservedNamesHostApiInstanceTracker.lock.unlock() }
-    guard
-      var list =
-        NativeInteropReservedNamesHostApiInstanceTracker
-        .instancesOfNativeInteropReservedNamesHostApi[name]
-    else {
-      return
-    }
-    list.removeAll { entry in
-      if entry === setup {
-        entry.api = nil
-        return true
+    var displaced: [Any] = []
+    do {
+      NativeInteropReservedNamesHostApiInstanceTracker.lock.lock()
+      defer { NativeInteropReservedNamesHostApiInstanceTracker.lock.unlock() }
+      guard
+        var list =
+          NativeInteropReservedNamesHostApiInstanceTracker
+          .instancesOfNativeInteropReservedNamesHostApi[name]
+      else {
+        return
       }
-      return false
+      list.removeAll { entry in
+        if entry === setup {
+          if let existing = entry.api {
+            displaced.append(existing)
+          }
+          displaced.append(entry)
+          entry.api = nil
+          return true
+        }
+        return false
+      }
+      if list.isEmpty {
+        NativeInteropReservedNamesHostApiInstanceTracker
+          .instancesOfNativeInteropReservedNamesHostApi.removeValue(forKey: name)
+      } else {
+        NativeInteropReservedNamesHostApiInstanceTracker
+          .instancesOfNativeInteropReservedNamesHostApi[name] = list
+      }
     }
-    if list.isEmpty {
-      NativeInteropReservedNamesHostApiInstanceTracker.instancesOfNativeInteropReservedNamesHostApi
-        .removeValue(forKey: name)
-    } else {
-      NativeInteropReservedNamesHostApiInstanceTracker.instancesOfNativeInteropReservedNamesHostApi[
-        name] = list
-    }
+    withExtendedLifetime(displaced) {}
   }
   @objc static func getInstance(name: String = NativeInteropTestsPigeonInternal.defaultInstanceName)
     -> NativeInteropReservedNamesHostApiSetup?
@@ -10174,64 +10197,69 @@ protocol NativeInteropReservedNamesHostApi {
 
 @objc class NativeInteropReservedNamesFlutterApiRegistrar: NSObject {
   private static let lock = NSLock()
-  static var registeredNativeInteropReservedNamesFlutterApi = [
+  private static var registeredNativeInteropReservedNamesFlutterApi = [
     String: [NativeInteropReservedNamesFlutterApi]
   ]()
 
   @objc static func registerInstance(
-    api: NativeInteropReservedNamesFlutterApiBridge?,
+    api: NativeInteropReservedNamesFlutterApiBridge,
     name: String = NativeInteropTestsPigeonInternal.defaultInstanceName
   ) {
-    NativeInteropReservedNamesFlutterApiRegistrar.lock.lock()
-    defer { NativeInteropReservedNamesFlutterApiRegistrar.lock.unlock() }
-    if let api = api {
-      let apiObject = api as AnyObject
+    let apiObject = api as AnyObject
+    let wrapper = NativeInteropReservedNamesFlutterApi(api: api)
+    var displaced: [NativeInteropReservedNamesFlutterApi] = []
+    do {
+      NativeInteropReservedNamesFlutterApiRegistrar.lock.lock()
+      defer { NativeInteropReservedNamesFlutterApiRegistrar.lock.unlock() }
       var list =
         NativeInteropReservedNamesFlutterApiRegistrar.registeredNativeInteropReservedNamesFlutterApi[
           name] ?? []
-      list.removeAll { ($0.api as AnyObject) === apiObject }
-      list.append(NativeInteropReservedNamesFlutterApi(api: api))
+      list.removeAll { entry in
+        if (entry.api as AnyObject) === apiObject {
+          displaced.append(entry)
+          return true
+        }
+        return false
+      }
+      list.append(wrapper)
       NativeInteropReservedNamesFlutterApiRegistrar.registeredNativeInteropReservedNamesFlutterApi[
         name] = list
-    } else {
-      if var list =
-        NativeInteropReservedNamesFlutterApiRegistrar.registeredNativeInteropReservedNamesFlutterApi[
-          name]
-      {
-        _ = list.popLast()
-        if list.isEmpty {
-          NativeInteropReservedNamesFlutterApiRegistrar
-            .registeredNativeInteropReservedNamesFlutterApi.removeValue(forKey: name)
-        } else {
-          NativeInteropReservedNamesFlutterApiRegistrar
-            .registeredNativeInteropReservedNamesFlutterApi[name] = list
-        }
-      }
     }
+    withExtendedLifetime(displaced) {}
   }
 
   @objc static func unregisterInstance(
     api: NativeInteropReservedNamesFlutterApiBridge,
     name: String = NativeInteropTestsPigeonInternal.defaultInstanceName
   ) {
-    NativeInteropReservedNamesFlutterApiRegistrar.lock.lock()
-    defer { NativeInteropReservedNamesFlutterApiRegistrar.lock.unlock() }
-    guard
-      var list =
-        NativeInteropReservedNamesFlutterApiRegistrar.registeredNativeInteropReservedNamesFlutterApi[
-          name]
-    else {
-      return
-    }
     let apiObject = api as AnyObject
-    list.removeAll { ($0.api as AnyObject) === apiObject }
-    if list.isEmpty {
-      NativeInteropReservedNamesFlutterApiRegistrar.registeredNativeInteropReservedNamesFlutterApi
-        .removeValue(forKey: name)
-    } else {
-      NativeInteropReservedNamesFlutterApiRegistrar.registeredNativeInteropReservedNamesFlutterApi[
-        name] = list
+    var displaced: [NativeInteropReservedNamesFlutterApi] = []
+    do {
+      NativeInteropReservedNamesFlutterApiRegistrar.lock.lock()
+      defer { NativeInteropReservedNamesFlutterApiRegistrar.lock.unlock() }
+      guard
+        var list =
+          NativeInteropReservedNamesFlutterApiRegistrar
+          .registeredNativeInteropReservedNamesFlutterApi[name]
+      else {
+        return
+      }
+      list.removeAll { entry in
+        if (entry.api as AnyObject) === apiObject {
+          displaced.append(entry)
+          return true
+        }
+        return false
+      }
+      if list.isEmpty {
+        NativeInteropReservedNamesFlutterApiRegistrar.registeredNativeInteropReservedNamesFlutterApi
+          .removeValue(forKey: name)
+      } else {
+        NativeInteropReservedNamesFlutterApiRegistrar.registeredNativeInteropReservedNamesFlutterApi[
+          name] = list
+      }
     }
+    withExtendedLifetime(displaced) {}
   }
 
   static func getInstance(name: String = NativeInteropTestsPigeonInternal.defaultInstanceName)

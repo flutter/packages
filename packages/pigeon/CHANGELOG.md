@@ -1,5 +1,6 @@
-## 29.2.0
+## 30.0.0
 
+* **BREAKING CHANGE**: [kotlin,swift] Makes `api` non-nullable in Native Interop `register` and `registerInstance` methods (returning non-optional `<Api>Setup` from Swift `<Api>Setup.register`) and makes backing registration maps `private`. Callers must deregister specific instances via `unregister` / `unregisterInstance` instead of passing `null` / `nil` to `register` / `registerInstance`.
 * [dart,kotlin,swift] Preserves earlier engine registrations when multiple Native Interop `@HostApi` or `@FlutterApi` instances are registered, synchronizes registrar state across threads/isolates, and adds instance-aware `unregister` / `unregisterInstance` APIs so detaching a secondary `FlutterEngine` does not deregister remaining engines.
 * [dart] Fixes Native Interop `@FlutterApi` `setUp(null)` to deregister the isolate's native callback and `implement()` to use `defaultInstanceName` when `name` is omitted or empty.
 * [swift] Throws a structured `PigeonError` instead of trapping when invoking a Native Interop `@HostApi` method on a detached `Setup` handle.

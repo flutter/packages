@@ -220,7 +220,7 @@ Pigeon maintains an ordered stack of registered `@HostApi` instances per instanc
     }
   }
   ```
-  *(Alternatively, `register(api)` returns the `<Api>Registrar` handle, and calling `registrar.register(null)` on that saved handle also removes only that specific entry.)*
+  *(If your `MyApi` implementation is a separate object rather than `this`, store that implementation reference on a plugin property and pass it to `MyApiRegistrar().unregister(impl)` on detach.)*
 
 - **Swift (FFI)**:
   ```swift
@@ -237,10 +237,12 @@ Pigeon maintains an ordered stack of registered `@HostApi` instances per instanc
     }
   }
   ```
-  *(If your `MyApi` implementation is a Swift `struct` value type rather than a class, capture `let setup = MyApiSetup.register(api: valueImpl)` and call `if let setup { MyApiSetup.unregister(setup: setup) }` on detach.)*
+  *(If your `MyApi` implementation is a Swift `struct` value type rather than a class, capture `let setup = MyApiSetup.register(api: valueImpl)` and call `MyApiSetup.unregister(setup: setup)` on detach—passing a `struct` to `unregister(api:)` is a no-op because value types lack object identity.)*
+
+  > **macOS Engine Teardown Note**: Unlike `FlutterPlugin` on iOS (UIKit) and Android, `FlutterMacOS`'s `FlutterPlugin` protocol does not currently declare or automatically invoke `detachFromEngine(for:)` when `FlutterEngine.shutDownEngine()` is called. If your macOS app dynamically creates and tears down secondary `FlutterEngine` instances, explicitly unregister that engine's `@HostApi` instance (via `MyApiSetup.unregister(api:)` or `MyApiSetup.unregister(setup:)`) during your macOS engine teardown flow.
 
 - **Dart (`@FlutterApi`)**:
-  `@FlutterApi` registrations (`MyFlutterApi.setUp(api)`, `MyFlutterApi.implement(api)`, or `MyFlutterApiRegistrar().register(api)`) also maintain a thread-safe, ordered stack per instance name. Calling `MyFlutterApi.setUp(null)` when an engine's Dart isolate tears down (or `MyFlutterApiRegistrar().unregister(api: myApi)` for `implement`/`register` registrations) removes **only** that isolate's instance so other active engines stay registered.
+  `@FlutterApi` registrations (`MyFlutterApi.setUp(api)`, `MyFlutterApi.implement(api)`, or `MyFlutterApiRegistrar().register(api)`) also maintain a thread-safe, ordered stack per instance name. Calling `MyFlutterApi.setUp(null)` when an engine's Dart isolate tears down (or `MyFlutterApiRegistrar().unregister(myApi)` for `implement`/`register` registrations) removes **only** that isolate's instance so other active engines stay registered.
 
 - **Custom Headless `FlutterEngine`s on Android (`JniPlugin`)**:
   If you spawn a custom or background `FlutterEngine` on Android (e.g., in a `Service`, `BroadcastReceiver`, or `FlutterEngineGroup`) **without** calling `GeneratedPluginRegistrant.registerWith(flutterEngine)`, register `JniPlugin` (`flutterEngine.plugins.add(com.github.dart_lang.jni.JniPlugin())`) before executing Dart code that uses JNI so `DartJNI` is guaranteed to be initialized even when no main `FlutterActivity` has started yet.

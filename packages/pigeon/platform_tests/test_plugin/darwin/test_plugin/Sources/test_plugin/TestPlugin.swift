@@ -2104,41 +2104,28 @@ class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
 
   func testDeregisterHostApi() throws -> Bool {
     let name = "testDeregisterHostInstance"
-    NativeInteropHostIntegrationCoreApiSetup.register(api: NativeInteropTestsClass(), name: name)
+    let singleApi = NativeInteropTestsClass()
+    NativeInteropHostIntegrationCoreApiSetup.register(api: singleApi, name: name)
     guard NativeInteropHostIntegrationCoreApiSetup.getInstance(name: name) != nil else {
       return false
     }
-    NativeInteropHostIntegrationCoreApiSetup.register(api: nil, name: name)
+    NativeInteropHostIntegrationCoreApiSetup.unregister(api: singleApi, name: name)
     guard NativeInteropHostIntegrationCoreApiSetup.getInstance(name: name) == nil else {
       return false
     }
 
-    // Multi-instance LIFO register(api: nil) pops only the latest instance.
-    let lifoName = "testLifoHostInstance"
-    let lifoSetup1 = NativeInteropHostIntegrationCoreApiSetup.register(
-      api: NativeInteropTestsClass(), name: lifoName)
-    let lifoSetup2 = NativeInteropHostIntegrationCoreApiSetup.register(
-      api: NativeInteropTestsClass(), name: lifoName)
-    guard lifoSetup1 != nil, lifoSetup2 != nil else {
-      return false
-    }
-    NativeInteropHostIntegrationCoreApiSetup.register(api: nil, name: lifoName)
-    guard NativeInteropHostIntegrationCoreApiSetup.getInstance(name: lifoName) === lifoSetup1 else {
-      return false
-    }
-    NativeInteropHostIntegrationCoreApiSetup.register(api: nil, name: lifoName)
-    guard NativeInteropHostIntegrationCoreApiSetup.getInstance(name: lifoName) == nil else {
-      return false
-    }
-
-    // Out-of-order instance-aware unregister(api:) keeps remaining instances active.
+    // Out-of-order instance-aware unregister(api:) keeps remaining instances active,
+    // and duplicate or never-registered unregister calls are safe no-ops.
     let outOfOrderName = "testOutOfOrderHostInstance"
     let api1 = NativeInteropTestsClass()
     let api2 = NativeInteropTestsClass()
+    let unregisteredApi = NativeInteropTestsClass()
     NativeInteropHostIntegrationCoreApiSetup.register(api: api1, name: outOfOrderName)
     let outOfOrderSetup2 = NativeInteropHostIntegrationCoreApiSetup.register(
       api: api2, name: outOfOrderName)
     NativeInteropHostIntegrationCoreApiSetup.unregister(api: api1, name: outOfOrderName)
+    NativeInteropHostIntegrationCoreApiSetup.unregister(api: api1, name: outOfOrderName)
+    NativeInteropHostIntegrationCoreApiSetup.unregister(api: unregisteredApi, name: outOfOrderName)
     guard
       NativeInteropHostIntegrationCoreApiSetup.getInstance(name: outOfOrderName)
         === outOfOrderSetup2
@@ -2152,14 +2139,11 @@ class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
 
     // Out-of-order handle-based unregister(setup:) keeps remaining instances active.
     let handleName = "testHandleHostInstance"
-    guard
-      let handle1 = NativeInteropReservedNamesHostApiSetup.register(
-        api: NativeInteropReservedNamesHostApiImpl(), name: handleName),
-      let handle2 = NativeInteropReservedNamesHostApiSetup.register(
-        api: NativeInteropReservedNamesHostApiImpl(), name: handleName)
-    else {
-      return false
-    }
+    let handle1 = NativeInteropReservedNamesHostApiSetup.register(
+      api: NativeInteropReservedNamesHostApiImpl(), name: handleName)
+    let handle2 = NativeInteropReservedNamesHostApiSetup.register(
+      api: NativeInteropReservedNamesHostApiImpl(), name: handleName)
+    NativeInteropReservedNamesHostApiSetup.unregister(setup: handle1, name: handleName)
     NativeInteropReservedNamesHostApiSetup.unregister(setup: handle1, name: handleName)
     guard NativeInteropReservedNamesHostApiSetup.getInstance(name: handleName) === handle2 else {
       return false
@@ -2248,23 +2232,24 @@ class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
       return false
     }
 
-    // registerInstance(api: nil) pops the remaining entry.
-    NativeInteropReservedNamesFlutterApiRegistrar.registerInstance(api: nil, name: name)
+    // Unregistering the remaining entry clears the registration list completely.
+    NativeInteropReservedNamesFlutterApiRegistrar.unregisterInstance(api: bridge3, name: name)
     guard NativeInteropReservedNamesFlutterApi.getInstance(name: name) == nil else {
       return false
     }
 
-    NativeInteropFlutterIntegrationCoreApiRegistrar.registerInstance(api: nil, name: name)
+    // Duplicate unregisterInstance is a safe no-op.
+    NativeInteropReservedNamesFlutterApiRegistrar.unregisterInstance(api: bridge3, name: name)
     return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance(name: name) == nil
   }
 
   func registerAndImmediatelyDeregisterHostApi(name: String) throws {
-    NativeInteropHostIntegrationCoreApiSetup.register(api: NativeInteropTestsClass(), name: name)
-    NativeInteropHostIntegrationCoreApiSetup.register(api: nil, name: name)
+    let api = NativeInteropTestsClass()
+    NativeInteropHostIntegrationCoreApiSetup.register(api: api, name: name)
+    NativeInteropHostIntegrationCoreApiSetup.unregister(api: api, name: name)
   }
 
   func testCallDeregisteredFlutterApi(name: String) throws -> Bool {
-    NativeInteropFlutterIntegrationCoreApiRegistrar.registerInstance(api: nil, name: name)
     return NativeInteropFlutterIntegrationCoreApi.getInstance(name: name) == nil
   }
 

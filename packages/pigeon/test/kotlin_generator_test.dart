@@ -1974,70 +1974,76 @@ void main() {
     expect(code, contains(r'const val stringWithTwoBackslashesDollar: String = "\\\\\$"'));
   });
 
-  test('kotlin generator handles HostApi and FlutterApi deregistration with null', () {
-    final root = Root(
-      apis: <Api>[
-        AstHostApi(
-          name: 'HostApi',
-          methods: <Method>[
-            Method(
-              name: 'doSomething',
-              location: ApiLocation.host,
-              returnType: const TypeDeclaration.voidDeclaration(),
-              parameters: <Parameter>[],
-            ),
-          ],
-        ),
-        AstFlutterApi(
-          name: 'FlutterApi',
-          methods: <Method>[
-            Method(
-              name: 'onEvent',
-              location: ApiLocation.flutter,
-              returnType: const TypeDeclaration.voidDeclaration(),
-              parameters: <Parameter>[],
-            ),
-          ],
-        ),
-      ],
-      classes: <Class>[],
-      enums: <Enum>[],
-    );
-    final sink = StringBuffer();
-    const kotlinOptions = InternalKotlinOptions(kotlinOut: '', useJni: true);
-    const generator = KotlinGenerator();
-    generator.generate(kotlinOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
-    final code = sink.toString();
-    expect(
-      code,
-      contains('val HostApiInstances: MutableMap<String, MutableList<HostApiRegistrar>>'),
-    );
-    expect(code, contains('interface HostApi {'));
-    expect(code, contains('class HostApiRegistrar : HostApi {'));
-    expect(code, contains('api: HostApi?,'));
-    expect(code, contains('fun unregister('));
-    expect(code, contains('api: HostApi,'));
-    expect(code, contains('HostApiInstances.remove(name)'));
-    expect(
-      code,
-      contains('fun getInstance(name: String = defaultInstanceName): HostApiRegistrar?'),
-    );
-    expect(code, contains('@Volatile private var api: HostApi? = null'));
-    expect(code, contains('kotlin.synchronized(HostApiInstances)'));
-    expect(code, contains('HostApiInstances[name]?.lastOrNull()'));
-    expect(code, contains('val registeredFlutterApi: MutableMap<String, MutableList<FlutterApi>>'));
-    expect(
-      code,
-      contains('fun registerInstance(api: FlutterApi?, name: String = defaultInstanceName)'),
-    );
-    expect(
-      code,
-      contains('fun unregisterInstance(api: FlutterApi, name: String = defaultInstanceName)'),
-    );
-    expect(code, contains('kotlin.synchronized(registeredFlutterApi)'));
-    expect(code, contains('registeredFlutterApi[name]?.lastOrNull()'));
-    expect(code, contains('registeredFlutterApi.remove(name)'));
-  });
+  test(
+    'kotlin generator handles HostApi and FlutterApi multi-instance registration and unregister',
+    () {
+      final root = Root(
+        apis: <Api>[
+          AstHostApi(
+            name: 'HostApi',
+            methods: <Method>[
+              Method(
+                name: 'doSomething',
+                location: ApiLocation.host,
+                returnType: const TypeDeclaration.voidDeclaration(),
+                parameters: <Parameter>[],
+              ),
+            ],
+          ),
+          AstFlutterApi(
+            name: 'FlutterApi',
+            methods: <Method>[
+              Method(
+                name: 'onEvent',
+                location: ApiLocation.flutter,
+                returnType: const TypeDeclaration.voidDeclaration(),
+                parameters: <Parameter>[],
+              ),
+            ],
+          ),
+        ],
+        classes: <Class>[],
+        enums: <Enum>[],
+      );
+      final sink = StringBuffer();
+      const kotlinOptions = InternalKotlinOptions(kotlinOut: '', useJni: true);
+      const generator = KotlinGenerator();
+      generator.generate(kotlinOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+      final code = sink.toString();
+      expect(
+        code,
+        contains('private val HostApiInstances: MutableMap<String, MutableList<HostApiRegistrar>>'),
+      );
+      expect(code, contains('interface HostApi {'));
+      expect(code, contains('class HostApiRegistrar : HostApi {'));
+      expect(code, isNot(contains('api: HostApi?,')));
+      expect(code, contains('fun unregister('));
+      expect(code, contains('api: HostApi,'));
+      expect(code, contains('HostApiInstances.remove(name)'));
+      expect(
+        code,
+        contains('fun getInstance(name: String = defaultInstanceName): HostApiRegistrar?'),
+      );
+      expect(code, contains('@Volatile private var api: HostApi? = null'));
+      expect(code, contains('kotlin.synchronized(HostApiInstances)'));
+      expect(code, contains('HostApiInstances[name]?.lastOrNull()'));
+      expect(
+        code,
+        contains('private val registeredFlutterApi: MutableMap<String, MutableList<FlutterApi>>'),
+      );
+      expect(
+        code,
+        contains('fun registerInstance(api: FlutterApi, name: String = defaultInstanceName)'),
+      );
+      expect(
+        code,
+        contains('fun unregisterInstance(api: FlutterApi, name: String = defaultInstanceName)'),
+      );
+      expect(code, contains('kotlin.synchronized(registeredFlutterApi)'));
+      expect(code, contains('registeredFlutterApi[name]?.lastOrNull()'));
+      expect(code, contains('registeredFlutterApi.remove(name)'));
+    },
+  );
 
   test('asyncCallback emits callback-based host api method', () {
     final root = Root(

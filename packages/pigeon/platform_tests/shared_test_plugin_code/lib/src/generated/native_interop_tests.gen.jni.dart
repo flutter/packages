@@ -283,15 +283,14 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun register(api: com.example.test_plugin.NativeInteropHostIntegrationCoreApi?, name: kotlin.String): com.example.test_plugin.NativeInteropHostIntegrationCoreApiRegistrar`
+  /// from: `public fun register(api: com.example.test_plugin.NativeInteropHostIntegrationCoreApi, name: kotlin.String): com.example.test_plugin.NativeInteropHostIntegrationCoreApiRegistrar`
   /// The returned object must be released after use, by calling the [release] method.
   NativeInteropHostIntegrationCoreApiRegistrar register(
-    NativeInteropHostIntegrationCoreApi? nativeInteropHostIntegrationCoreApi,
+    NativeInteropHostIntegrationCoreApi nativeInteropHostIntegrationCoreApi,
     jni$_.JString string,
   ) {
     final _$$selfRef = reference;
-    final _$nativeInteropHostIntegrationCoreApi =
-        nativeInteropHostIntegrationCoreApi?.reference ?? jni$_.jNullReference;
+    final _$nativeInteropHostIntegrationCoreApi = nativeInteropHostIntegrationCoreApi.reference;
     final _$string = string.reference;
     return _register(
       _$$selfRef.pointer,
@@ -18215,14 +18214,14 @@ extension NativeInteropFlutterIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun registerInstance(api: com.example.test_plugin.NativeInteropFlutterIntegrationCoreApi?, name: kotlin.String): kotlin.Unit`
+  /// from: `public fun registerInstance(api: com.example.test_plugin.NativeInteropFlutterIntegrationCoreApi, name: kotlin.String): kotlin.Unit`
   void registerInstance(
-    NativeInteropFlutterIntegrationCoreApi? nativeInteropFlutterIntegrationCoreApi,
+    NativeInteropFlutterIntegrationCoreApi nativeInteropFlutterIntegrationCoreApi,
     jni$_.JString string,
   ) {
     final _$$selfRef = reference;
     final _$nativeInteropFlutterIntegrationCoreApi =
-        nativeInteropFlutterIntegrationCoreApi?.reference ?? jni$_.jNullReference;
+        nativeInteropFlutterIntegrationCoreApi.reference;
     final _$string = string.reference;
     _registerInstance(
       _$$selfRef.pointer,
@@ -18379,15 +18378,14 @@ extension NativeInteropReservedNamesHostApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun register(api: com.example.test_plugin.NativeInteropReservedNamesHostApi?, name: kotlin.String): com.example.test_plugin.NativeInteropReservedNamesHostApiRegistrar`
+  /// from: `public fun register(api: com.example.test_plugin.NativeInteropReservedNamesHostApi, name: kotlin.String): com.example.test_plugin.NativeInteropReservedNamesHostApiRegistrar`
   /// The returned object must be released after use, by calling the [release] method.
   NativeInteropReservedNamesHostApiRegistrar register(
-    NativeInteropReservedNamesHostApi? nativeInteropReservedNamesHostApi,
+    NativeInteropReservedNamesHostApi nativeInteropReservedNamesHostApi,
     jni$_.JString string,
   ) {
     final _$$selfRef = reference;
-    final _$nativeInteropReservedNamesHostApi =
-        nativeInteropReservedNamesHostApi?.reference ?? jni$_.jNullReference;
+    final _$nativeInteropReservedNamesHostApi = nativeInteropReservedNamesHostApi.reference;
     final _$string = string.reference;
     return _register(
       _$$selfRef.pointer,
@@ -19253,14 +19251,13 @@ extension NativeInteropReservedNamesFlutterApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun registerInstance(api: com.example.test_plugin.NativeInteropReservedNamesFlutterApi?, name: kotlin.String): kotlin.Unit`
+  /// from: `public fun registerInstance(api: com.example.test_plugin.NativeInteropReservedNamesFlutterApi, name: kotlin.String): kotlin.Unit`
   void registerInstance(
-    NativeInteropReservedNamesFlutterApi? nativeInteropReservedNamesFlutterApi,
+    NativeInteropReservedNamesFlutterApi nativeInteropReservedNamesFlutterApi,
     jni$_.JString string,
   ) {
     final _$$selfRef = reference;
-    final _$nativeInteropReservedNamesFlutterApi =
-        nativeInteropReservedNamesFlutterApi?.reference ?? jni$_.jNullReference;
+    final _$nativeInteropReservedNamesFlutterApi = nativeInteropReservedNamesFlutterApi.reference;
     final _$string = string.reference;
     _registerInstance(
       _$$selfRef.pointer,

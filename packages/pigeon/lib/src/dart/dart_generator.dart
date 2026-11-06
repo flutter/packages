@@ -1347,119 +1347,92 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
       indent.writeln('_${api.name}Registrar(this.dartApi);');
       indent.newln();
       indent.writeln(
-        'static final Map<String, List<(${api.name}, Object)>> _registeredHandles = <String, List<(${api.name}, Object)>>{};',
+        'static final Map<String, List<(${api.name}, Object)>> ${varNamePrefix}registeredHandles = <String, List<(${api.name}, Object)>>{};',
       );
       indent.writeln(
-        'static final Map<String, ${api.name}> _setUpInstances = <String, ${api.name}>{};',
+        'static final Map<String, ${api.name}> ${varNamePrefix}setUpInstances = <String, ${api.name}>{};',
       );
       indent.newln();
       indent.writeln('final ${api.name} dartApi;');
       indent.newln();
       indent.writeScoped(
-        'static void setUp(${api.name}? api, {String name = defaultInstanceName}) {',
+        'static void ${varNamePrefix}setUp(${api.name}? api, {String name = defaultInstanceName}) {',
         '}',
         () {
           indent.writeln('final String resolvedName = name.isEmpty ? defaultInstanceName : name;');
-          indent.writeln('final ${api.name}? previous = _setUpInstances.remove(resolvedName);');
+          indent.writeln(
+            'final ${api.name}? previous = ${varNamePrefix}setUpInstances.remove(resolvedName);',
+          );
           indent.writeScoped('if (previous != null && !identical(previous, api)) {', '}', () {
-            indent.writeln('unregister(api: previous, name: resolvedName);');
+            indent.writeln('${varNamePrefix}unregister(previous, name: resolvedName);');
           });
           indent.writeScoped('if (api != null) {', '}', () {
             indent.writeln('_${api.name}Registrar(api).register(name: resolvedName);');
-            indent.writeln('_setUpInstances[resolvedName] = api;');
+            indent.writeln('${varNamePrefix}setUpInstances[resolvedName] = api;');
           });
         },
       );
       indent.newln();
       indent.writeScoped(
-        'static void unregister({${api.name}? api, String name = defaultInstanceName}) {',
+        'static void ${varNamePrefix}unregister(${api.name} api, {String name = defaultInstanceName}) {',
         '}',
         () {
           indent.writeln('final String resolvedName = name.isEmpty ? defaultInstanceName : name;');
           indent.writeln(
-            'final List<(${api.name}, Object)>? handles = _registeredHandles[resolvedName];',
+            'final List<(${api.name}, Object)>? handles = ${varNamePrefix}registeredHandles[resolvedName];',
           );
-          indent.writeln('Object? removedHandle;');
-          indent.writeln('${api.name}? removedApi;');
-          indent.writeScoped('if (handles != null && handles.isNotEmpty) {', '}', () {
-            indent.writeScoped('if (api != null) {', '}', () {
-              indent.writeScoped('for (int i = handles.length - 1; i >= 0; i--) {', '}', () {
-                indent.writeScoped(r'if (identical(handles[i].$1, api)) {', '}', () {
-                  indent.writeln('final (${api.name}, Object) removed = handles.removeAt(i);');
-                  indent.writeln(r'removedApi = removed.$1;');
-                  indent.writeln(r'removedHandle = removed.$2;');
-                  indent.writeln('break;');
-                });
-              });
-              indent.writeScoped('if (removedHandle == null) {', '}', () {
-                indent.writeln('return;');
-              });
-            }, addTrailingNewline: false);
-            indent.addScoped(' else {', '}', () {
-              indent.writeln('final (${api.name}, Object) removed = handles.removeLast();');
-              indent.writeln(r'removedApi = removed.$1;');
-              indent.writeln(r'removedHandle = removed.$2;');
-            });
-            indent.writeScoped('if (handles.isEmpty) {', '}', () {
-              indent.writeln('_registeredHandles.remove(resolvedName);');
-            });
-          }, addTrailingNewline: false);
-          indent.addScoped(' else if (api != null) {', '}', () {
+          indent.writeScoped('if (handles == null || handles.isEmpty) {', '}', () {
             indent.writeln('return;');
           });
+          indent.writeln('Object? removedHandle;');
+          indent.writeScoped('for (int i = handles.length - 1; i >= 0; i--) {', '}', () {
+            indent.writeScoped(r'if (identical(handles[i].$1, api)) {', '}', () {
+              indent.writeln(r'removedHandle = handles.removeAt(i).$2;');
+              indent.writeln('break;');
+            });
+          });
+          indent.writeScoped('if (removedHandle == null) {', '}', () {
+            indent.writeln('return;');
+          });
+          indent.writeScoped('if (handles.isEmpty) {', '}', () {
+            indent.writeln('${varNamePrefix}registeredHandles.remove(resolvedName);');
+          });
           indent.writeScoped(
-            'if (removedApi != null && identical(_setUpInstances[resolvedName], removedApi)) {',
+            'if (identical(${varNamePrefix}setUpInstances[resolvedName], api)) {',
             '}',
             () {
-              indent.writeln('_setUpInstances.remove(resolvedName);');
+              indent.writeln('${varNamePrefix}setUpInstances.remove(resolvedName);');
             },
           );
           if (generatorOptions.useJni) {
             indent.writeScoped('if (Platform.isAndroid) {', '}', () {
-              indent.writeScoped('if (removedHandle != null) {', '}', () {
-                indent.writeScoped(
-                  '$_jniBridgePrefix.${api.name}Registrar().unregisterInstance(',
-                  ');',
-                  () {
-                    indent.writeln('removedHandle as $_jniBridgePrefix.${api.name},');
-                    indent.writeln('resolvedName.toJString(),');
-                  },
-                );
+              indent.writeln(
+                'final $_jniBridgePrefix.${api.name}Registrar registrar = $_jniBridgePrefix.${api.name}Registrar();',
+              );
+              indent.writeln('final JString jName = resolvedName.toJString();');
+              indent.writeScoped('try {', '}', () {
+                indent.writeScoped('registrar.unregisterInstance(', ');', () {
+                  indent.writeln('removedHandle as $_jniBridgePrefix.${api.name},');
+                  indent.writeln('jName,');
+                });
               }, addTrailingNewline: false);
-              indent.addScoped(' else if (api == null) {', '}', () {
-                indent.writeScoped(
-                  '$_jniBridgePrefix.${api.name}Registrar().registerInstance(',
-                  ');',
-                  () {
-                    indent.writeln('null,');
-                    indent.writeln('resolvedName.toJString(),');
-                  },
-                );
+              indent.addScoped(' finally {', '}', () {
+                indent.writeln('jName.release();');
+                indent.writeln('registrar.release();');
+                indent.writeln('(removedHandle as JObject).release();');
               });
             });
           }
           if (generatorOptions.useFfi) {
             indent.writeScoped('if (Platform.isIOS || Platform.isMacOS) {', '}', () {
-              indent.writeScoped('if (removedHandle != null) {', '}', () {
-                indent.writeScoped(
-                  '$_ffiBridgePrefix.${api.name}Registrar.unregisterInstanceWithApi(',
-                  ');',
-                  () {
-                    indent.writeln('removedHandle as $_ffiBridgePrefix.${api.name}Bridge,');
-                    indent.writeln('name: NSString(resolvedName),');
-                  },
-                );
-              }, addTrailingNewline: false);
-              indent.addScoped(' else if (api == null) {', '}', () {
-                indent.writeScoped(
-                  '$_ffiBridgePrefix.${api.name}Registrar.registerInstanceWithApi(',
-                  ');',
-                  () {
-                    indent.writeln('null,');
-                    indent.writeln('name: NSString(resolvedName),');
-                  },
-                );
-              });
+              indent.writeScoped(
+                '$_ffiBridgePrefix.${api.name}Registrar.unregisterInstanceWithApi(',
+                ');',
+                () {
+                  indent.writeln('removedHandle as $_ffiBridgePrefix.${api.name}Bridge,');
+                  indent.writeln('name: NSString(resolvedName),');
+                },
+              );
             });
           }
         },
@@ -1467,22 +1440,25 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
       indent.newln();
       indent.writeScoped('${api.name} register({String name = defaultInstanceName}) {', '}', () {
         indent.writeln('final String resolvedName = name.isEmpty ? defaultInstanceName : name;');
-        indent.writeln('unregister(api: dartApi, name: resolvedName);');
+        indent.writeln('${varNamePrefix}unregister(dartApi, name: resolvedName);');
         if (generatorOptions.useJni) {
           indent.writeScoped('if (Platform.isAndroid) {', '}', () {
             indent.writeln(
               'final $_jniBridgePrefix.${api.name} impl = $_jniBridgePrefix.${api.name}.implement(this);',
             );
-            indent.writeScoped(
-              '$_jniBridgePrefix.${api.name}Registrar().registerInstance(',
-              ');',
-              () {
-                indent.writeln('impl,');
-                indent.writeln('resolvedName.toJString(),');
-              },
-            );
             indent.writeln(
-              '(_registeredHandles[resolvedName] ??= <(${api.name}, Object)>[]).add((dartApi, impl));',
+              'final $_jniBridgePrefix.${api.name}Registrar registrar = $_jniBridgePrefix.${api.name}Registrar();',
+            );
+            indent.writeln('final JString jName = resolvedName.toJString();');
+            indent.writeScoped('try {', '}', () {
+              indent.writeln('registrar.registerInstance(impl, jName);');
+            }, addTrailingNewline: false);
+            indent.addScoped(' finally {', '}', () {
+              indent.writeln('jName.release();');
+              indent.writeln('registrar.release();');
+            });
+            indent.writeln(
+              '(${varNamePrefix}registeredHandles[resolvedName] ??= <(${api.name}, Object)>[]).add((dartApi, impl));',
             );
           });
         }
@@ -1602,7 +1578,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
               },
             );
             indent.writeln(
-              '(_registeredHandles[resolvedName] ??= <(${api.name}, Object)>[]).add((dartApi, impl));',
+              '(${varNamePrefix}registeredHandles[resolvedName] ??= <(${api.name}, Object)>[]).add((dartApi, impl));',
             );
           });
         }
@@ -1676,15 +1652,15 @@ ${api.name} ${classMemberNamePrefix}register_${api.name}(
 \tString name = defaultInstanceName,
 }) => _${api.name}Registrar(api).register(name: name);
 
-void ${classMemberNamePrefix}unregister_${api.name}({
-\t${api.name}? api,
+void ${classMemberNamePrefix}unregister_${api.name}(
+\t${api.name} api, {
 \tString name = defaultInstanceName,
-}) => _${api.name}Registrar.unregister(api: api, name: name);
+}) => _${api.name}Registrar.${varNamePrefix}unregister(api, name: name);
 
 void ${classMemberNamePrefix}set_up_${api.name}(
 \t${api.name}? api, {
 \tString name = defaultInstanceName,
-}) => _${api.name}Registrar.setUp(api, name: name);
+}) => _${api.name}Registrar.${varNamePrefix}setUp(api, name: name);
 ''');
   }
 
@@ -1723,8 +1699,8 @@ ${api.name} ${classMemberNamePrefix}register_${api.name}(
 }
 
 @internal
-void ${classMemberNamePrefix}unregister_${api.name}({
-\t${api.name}? api,
+void ${classMemberNamePrefix}unregister_${api.name}(
+\t${api.name} api, {
 \tString name = defaultInstanceName,
 }) {
 \tthrow UnsupportedError(
@@ -1751,11 +1727,11 @@ final class ${api.name}Registrar {
 \t\tname: name.isEmpty ? defaultInstanceName : name,
 \t);
 
-\tvoid unregister({
-\t\t${api.name}? api,
+\tvoid unregister(
+\t\t${api.name} api, {
 \t\tString name = defaultInstanceName,
 \t}) => pigeon_native.${classMemberNamePrefix}unregister_${api.name}(
-\t\tapi: api,
+\t\tapi,
 \t\tname: name.isEmpty ? defaultInstanceName : name,
 \t);
 }

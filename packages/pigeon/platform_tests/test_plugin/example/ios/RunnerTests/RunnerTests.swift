@@ -51,7 +51,7 @@ struct RunnerTests {
     let name = "iosMultiEngineTest"
     let api1 = NativeInteropTestsClass()
     let api2 = NativeInteropTestsClass()
-    let setup1 = NativeInteropHostIntegrationCoreApiSetup.register(api: api1, name: name)!
+    let setup1 = NativeInteropHostIntegrationCoreApiSetup.register(api: api1, name: name)
     NativeInteropHostIntegrationCoreApiSetup.register(api: api2, name: name)
     #expect(NativeInteropHostIntegrationCoreApiSetup.getInstance(name: name) != nil)
 
@@ -107,6 +107,7 @@ struct RunnerTests {
     let name = "unitTestFlutterApiStack"
     let bridge1 = FakeReservedNamesFlutterApiBridge("engine1")
     let bridge2 = FakeReservedNamesFlutterApiBridge("engine2")
+    let neverRegistered = FakeReservedNamesFlutterApiBridge("never")
 
     NativeInteropReservedNamesFlutterApiRegistrar.registerInstance(api: bridge1, name: name)
     NativeInteropReservedNamesFlutterApiRegistrar.registerInstance(api: bridge2, name: name)
@@ -115,15 +116,10 @@ struct RunnerTests {
         == "engine2:ping")
 
     NativeInteropReservedNamesFlutterApiRegistrar.unregisterInstance(api: bridge1, name: name)
-    #expect(
-      try NativeInteropReservedNamesFlutterApi.getInstance(name: name)?.release(value: "ping")
-        == "engine2:ping")
-
-    NativeInteropReservedNamesFlutterApiRegistrar.registerInstance(api: bridge1, name: name)
-    #expect(
-      try NativeInteropReservedNamesFlutterApi.getInstance(name: name)?.release(value: "ping")
-        == "engine1:ping")
-    NativeInteropReservedNamesFlutterApiRegistrar.registerInstance(api: nil, name: name)
+    // Duplicate unregister and never-registered unregister must be no-ops.
+    NativeInteropReservedNamesFlutterApiRegistrar.unregisterInstance(api: bridge1, name: name)
+    NativeInteropReservedNamesFlutterApiRegistrar.unregisterInstance(
+      api: neverRegistered, name: name)
     #expect(
       try NativeInteropReservedNamesFlutterApi.getInstance(name: name)?.release(value: "ping")
         == "engine2:ping")

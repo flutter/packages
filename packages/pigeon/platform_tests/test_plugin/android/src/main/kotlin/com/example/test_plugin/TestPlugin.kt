@@ -45,7 +45,7 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi, HostCallbackCoreApi {
   private var flutterSmallApiTwo: FlutterSmallApi? = null
   private var proxyApiRegistrar: ProxyApiRegistrar? = null
   internal var niMessageApiImpl: NativeInteropIntegrationTests? = null
-  private var niReservedNamesRegistrar: NativeInteropReservedNamesHostApiRegistrar? = null
+  private var niReservedNamesImpl: NativeInteropReservedNamesHostApiImpl? = null
   private var eventChannelOne: StreamConsistentNumbersEventChannel? = null
 
   override fun onAttachedToEngine(binding: FlutterPluginBinding) {
@@ -58,9 +58,9 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi, HostCallbackCoreApi {
     val niTests = NativeInteropIntegrationTests(binding.applicationContext)
     niMessageApiImpl = niTests
     NativeInteropHostIntegrationCoreApiRegistrar().register(niTests)
-    niReservedNamesRegistrar =
-        NativeInteropReservedNamesHostApiRegistrar()
-            .register(NativeInteropReservedNamesHostApiImpl())
+    val reservedImpl = NativeInteropReservedNamesHostApiImpl()
+    niReservedNamesImpl = reservedImpl
+    NativeInteropReservedNamesHostApiRegistrar().register(reservedImpl)
     flutterApi = FlutterIntegrationCoreApi(binding.binaryMessenger)
     flutterCallbackApi = FlutterCallbackCoreApi(binding.binaryMessenger)
     flutterSmallApiOne = FlutterSmallApi(binding.binaryMessenger, "suffixOne")
@@ -87,8 +87,8 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi, HostCallbackCoreApi {
     HostCallbackCoreApi.setUp(binding.binaryMessenger, null)
     niMessageApiImpl?.let { NativeInteropHostIntegrationCoreApiRegistrar().unregister(it) }
     niMessageApiImpl = null
-    niReservedNamesRegistrar?.register(null)
-    niReservedNamesRegistrar = null
+    niReservedNamesImpl?.let { NativeInteropReservedNamesHostApiRegistrar().unregister(it) }
+    niReservedNamesImpl = null
     proxyApiRegistrar?.tearDown()
   }
 
@@ -2190,39 +2190,28 @@ class NativeInteropIntegrationTests(private val context: Context? = null) :
 
   override fun testDeregisterHostApi(): Boolean {
     val name = "testDeregisterHostInstance"
-    NativeInteropHostIntegrationCoreApiRegistrar()
-        .register(NativeInteropIntegrationTests(), name = name)
+    val singleApi = NativeInteropIntegrationTests()
+    NativeInteropHostIntegrationCoreApiRegistrar().register(singleApi, name = name)
     if (NativeInteropHostIntegrationCoreApiRegistrar().getInstance(name) == null) {
       return false
     }
-    NativeInteropHostIntegrationCoreApiRegistrar().register(null, name = name)
+    NativeInteropHostIntegrationCoreApiRegistrar().unregister(singleApi, name = name)
     if (NativeInteropHostIntegrationCoreApiRegistrar().getInstance(name) != null) {
       return false
     }
 
-    // Multi-instance LIFO register(null) pops only the latest entry.
-    val lifoName = "testLifoHostInstance"
-    val lifoReg1 =
-        NativeInteropHostIntegrationCoreApiRegistrar()
-            .register(NativeInteropIntegrationTests(), name = lifoName)
-    NativeInteropHostIntegrationCoreApiRegistrar()
-        .register(NativeInteropIntegrationTests(), name = lifoName)
-    NativeInteropHostIntegrationCoreApiRegistrar().register(null, name = lifoName)
-    if (NativeInteropHostIntegrationCoreApiRegistrar().getInstance(lifoName) !== lifoReg1) {
-      return false
-    }
-    NativeInteropHostIntegrationCoreApiRegistrar().register(null, name = lifoName)
-    if (NativeInteropHostIntegrationCoreApiRegistrar().getInstance(lifoName) != null) {
-      return false
-    }
-
-    // Out-of-order instance-aware unregister(api) keeps other engine instances intact.
+    // Out-of-order instance-aware unregister(api) keeps other engine instances intact,
+    // and duplicate or never-registered unregister calls are safe no-ops.
     val outOfOrderName = "testOutOfOrderHostInstance"
     val api1 = NativeInteropIntegrationTests()
     val api2 = NativeInteropIntegrationTests()
+    val unregisteredApi = NativeInteropIntegrationTests()
     NativeInteropHostIntegrationCoreApiRegistrar().register(api1, name = outOfOrderName)
     val reg2 = NativeInteropHostIntegrationCoreApiRegistrar().register(api2, name = outOfOrderName)
     NativeInteropHostIntegrationCoreApiRegistrar().unregister(api1, name = outOfOrderName)
+    NativeInteropHostIntegrationCoreApiRegistrar().unregister(api1, name = outOfOrderName)
+    NativeInteropHostIntegrationCoreApiRegistrar()
+        .unregister(unregisteredApi, name = outOfOrderName)
     if (NativeInteropHostIntegrationCoreApiRegistrar().getInstance(outOfOrderName) !== reg2) {
       return false
     }
@@ -2231,20 +2220,21 @@ class NativeInteropIntegrationTests(private val context: Context? = null) :
       return false
     }
 
-    // Handle-based registrar1.register(null) removes registrar1 out-of-order.
-    val handleName = "testHandleHostInstance"
-    val handleApi1 = NativeInteropIntegrationTests()
-    val handleApi2 = NativeInteropIntegrationTests()
-    val registrar1 =
-        NativeInteropHostIntegrationCoreApiRegistrar().register(handleApi1, name = handleName)
-    val registrar2 =
-        NativeInteropHostIntegrationCoreApiRegistrar().register(handleApi2, name = handleName)
-    registrar1.register(null, name = handleName)
-    if (NativeInteropHostIntegrationCoreApiRegistrar().getInstance(handleName) !== registrar2) {
-      return false
-    }
-    NativeInteropHostIntegrationCoreApiRegistrar().unregister(handleApi2, name = handleName)
-    if (NativeInteropHostIntegrationCoreApiRegistrar().getInstance(handleName) != null) {
+    // Reusing the same Registrar receiver across names keeps each name's wrapper isolated.
+    val sharedRegistrar = NativeInteropHostIntegrationCoreApiRegistrar()
+    val sharedName1 = "testSharedRegistrar1"
+    val sharedName2 = "testSharedRegistrar2"
+    val sharedApi1 = NativeInteropIntegrationTests()
+    val sharedApi2 = NativeInteropIntegrationTests()
+    val wrapper1 = sharedRegistrar.register(sharedApi1, name = sharedName1)
+    val wrapper2 = sharedRegistrar.register(sharedApi2, name = sharedName2)
+    val sharedOk =
+        NativeInteropHostIntegrationCoreApiRegistrar().getInstance(sharedName1) === wrapper1 &&
+            NativeInteropHostIntegrationCoreApiRegistrar().getInstance(sharedName2) === wrapper2 &&
+            wrapper1 !== wrapper2
+    NativeInteropHostIntegrationCoreApiRegistrar().unregister(sharedApi1, name = sharedName1)
+    NativeInteropHostIntegrationCoreApiRegistrar().unregister(sharedApi2, name = sharedName2)
+    if (!sharedOk) {
       return false
     }
 
@@ -2334,24 +2324,24 @@ class NativeInteropIntegrationTests(private val context: Context? = null) :
       return false
     }
 
-    // registerInstance(null) pops the remaining entry.
-    registrar.registerInstance(null, name = name)
+    // Unregistering the remaining entry clears the registration list completely.
+    registrar.unregisterInstance(api3, name = name)
     if (registrar.getInstance(name) != null) {
       return false
     }
 
-    NativeInteropFlutterIntegrationCoreApiRegistrar().registerInstance(null, name = name)
+    // Duplicate unregisterInstance is a safe no-op.
+    registrar.unregisterInstance(api3, name = name)
     return NativeInteropFlutterIntegrationCoreApiRegistrar().getInstance(name) == null
   }
 
   override fun registerAndImmediatelyDeregisterHostApi(name: String) {
-    NativeInteropHostIntegrationCoreApiRegistrar()
-        .register(NativeInteropIntegrationTests(), name = name)
-    NativeInteropHostIntegrationCoreApiRegistrar().register(null, name = name)
+    val api = NativeInteropIntegrationTests()
+    NativeInteropHostIntegrationCoreApiRegistrar().register(api, name = name)
+    NativeInteropHostIntegrationCoreApiRegistrar().unregister(api, name = name)
   }
 
   override fun testCallDeregisteredFlutterApi(name: String): Boolean {
-    NativeInteropFlutterIntegrationCoreApiRegistrar().registerInstance(null, name = name)
     return NativeInteropFlutterIntegrationCoreApiRegistrar().getInstance(name) == null
   }
 

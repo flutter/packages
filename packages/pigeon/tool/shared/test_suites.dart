@@ -6,7 +6,7 @@
 
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io' show Directory, File, Process, ProcessSignal;
+import 'dart:io' show Directory, File, Platform, Process, ProcessSignal;
 
 import 'package:meta/meta.dart';
 import 'package:path/path.dart' as p;
@@ -177,7 +177,8 @@ Future<int> _runAndroidKotlinLint({bool ciMode = false}) async {
 Future<int> _runAndroidUnitTests(String testPluginPath) async {
   final examplePath = './$testPluginPath/example';
   final androidProjectPath = '$examplePath/android';
-  final gradleFile = File(p.join(androidProjectPath, 'gradlew'));
+  final gradleExecutable = Platform.isWindows ? 'gradlew.bat' : 'gradlew';
+  final gradleFile = File(p.join(androidProjectPath, gradleExecutable));
   if (!gradleFile.existsSync()) {
     final int compileCode = await runFlutterBuild(examplePath, 'apk');
     if (compileCode != 0) {
@@ -194,7 +195,8 @@ Future<int> _runAndroidLint({
 }) async {
   final examplePath = './$testPluginPath/example';
   final androidProjectPath = '$examplePath/android';
-  final gradleFile = File(p.join(androidProjectPath, 'gradlew'));
+  final gradleExecutable = Platform.isWindows ? 'gradlew.bat' : 'gradlew';
+  final gradleFile = File(p.join(androidProjectPath, gradleExecutable));
   if (!gradleFile.existsSync()) {
     final int compileCode = await runFlutterBuild(
       examplePath,

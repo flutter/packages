@@ -1338,7 +1338,7 @@ SWIFT_CLASS(
     "_TtC11test_plugin47NativeInteropFlutterIntegrationCoreApiRegistrar")
 @interface NativeInteropFlutterIntegrationCoreApiRegistrar : NSObject
 + (void)registerInstanceWithApi:
-            (id<NativeInteropFlutterIntegrationCoreApiBridge> _Nullable)api
+            (id<NativeInteropFlutterIntegrationCoreApiBridge> _Nonnull)api
                            name:(NSString* _Nonnull)name;
 + (void)unregisterInstanceWithApi:
             (id<NativeInteropFlutterIntegrationCoreApiBridge> _Nonnull)api
@@ -3122,7 +3122,7 @@ SWIFT_PROTOCOL("_TtP11test_plugin42NativeInteropReservedNamesFlutterApiBridge_")
 SWIFT_CLASS("_TtC11test_plugin45NativeInteropReservedNamesFlutterApiRegistrar")
 @interface NativeInteropReservedNamesFlutterApiRegistrar : NSObject
 + (void)registerInstanceWithApi:
-            (id<NativeInteropReservedNamesFlutterApiBridge> _Nullable)api
+            (id<NativeInteropReservedNamesFlutterApiBridge> _Nonnull)api
                            name:(NSString* _Nonnull)name;
 + (void)unregisterInstanceWithApi:
             (id<NativeInteropReservedNamesFlutterApiBridge> _Nonnull)api

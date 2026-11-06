@@ -812,7 +812,7 @@ if (wrapped == null) {
   }) {
     indent.writeln('/// Map that stores instances');
     indent.writeln(
-      'val registered${api.name}: MutableMap<String, MutableList<${api.name}>> = mutableMapOf()',
+      'private val registered${api.name}: MutableMap<String, MutableList<${api.name}>> = mutableMapOf()',
     );
     indent.newln();
     indent.writeln('/// Class that stores instances');
@@ -820,26 +820,13 @@ if (wrapped == null) {
     indent.writeScoped('class ${api.name}Registrar() {', '}', () {
       indent.writeln('/// Registers an instance with the given name.');
       indent.writeScoped(
-        'fun registerInstance(api: ${api.name}?, name: String = defaultInstanceName) {',
+        'fun registerInstance(api: ${api.name}, name: String = defaultInstanceName) {',
         '}',
         () {
           indent.writeScoped('kotlin.synchronized(registered${api.name}) {', '}', () {
-            indent.writeScoped('if (api != null) {', '}', () {
-              indent.writeln('val list = registered${api.name}.getOrPut(name) { mutableListOf() }');
-              indent.writeln('list.removeAll { it === api }');
-              indent.writeln('list.add(api)');
-            }, addTrailingNewline: false);
-            indent.addScoped(' else {', '}', () {
-              indent.writeln('val list = registered${api.name}[name]');
-              indent.writeScoped('if (list != null) {', '}', () {
-                indent.writeScoped('if (list.isNotEmpty()) {', '}', () {
-                  indent.writeln('list.removeAt(list.lastIndex)');
-                });
-                indent.writeScoped('if (list.isEmpty()) {', '}', () {
-                  indent.writeln('registered${api.name}.remove(name)');
-                });
-              });
-            });
+            indent.writeln('val list = registered${api.name}.getOrPut(name) { mutableListOf() }');
+            indent.writeln('list.removeAll { it === api }');
+            indent.writeln('list.add(api)');
           });
         },
       );
@@ -975,7 +962,7 @@ if (wrapped == null) {
     required String dartPackageName,
   }) {
     indent.writeln(
-      'val ${api.name}Instances: MutableMap<String, MutableList<${api.name}Registrar>> = mutableMapOf()',
+      'private val ${api.name}Instances: MutableMap<String, MutableList<${api.name}Registrar>> = mutableMapOf()',
     );
     indent.writeln('@Keep');
     indent.writeScoped('interface ${api.name} {', '}', () {
@@ -997,41 +984,25 @@ if (wrapped == null) {
       indent.writeln('@Volatile private var api: ${api.name}? = null');
 
       indent.writeScoped('fun register(', '):', () {
-        indent.writeln('api: ${api.name}?,');
+        indent.writeln('api: ${api.name},');
         indent.writeln('name: String = defaultInstanceName');
       }, addTrailingNewline: false);
       indent.addScoped(' ${api.name}Registrar {', '}', () {
+        indent.writeln('val wrapper = ${api.name}Registrar()');
+        indent.writeln('wrapper.api = api');
         indent.writeScoped('kotlin.synchronized(${api.name}Instances) {', '}', () {
-          indent.writeScoped('if (api != null) {', '}', () {
-            indent.writeln('this.api = api');
-            indent.writeln('val list = ${api.name}Instances.getOrPut(name) { mutableListOf() }');
-            indent.writeln('val iterator = list.iterator()');
-            indent.writeScoped('while (iterator.hasNext()) {', '}', () {
-              indent.writeln('val entry = iterator.next()');
-              indent.writeScoped('if (entry === this || entry.api === api) {', '}', () {
-                indent.writeScoped('if (entry !== this) {', '}', () {
-                  indent.writeln('entry.api = null');
-                });
-                indent.writeln('iterator.remove()');
-              });
-            });
-            indent.writeln('list.add(this)');
-          }, addTrailingNewline: false);
-          indent.addScoped(' else {', '}', () {
-            indent.writeln('this.api = null');
-            indent.writeln('val list = ${api.name}Instances[name]');
-            indent.writeScoped('if (list != null) {', '}', () {
-              indent.writeScoped('if (!list.remove(this) && list.isNotEmpty()) {', '}', () {
-                indent.writeln('val removed = list.removeAt(list.lastIndex)');
-                indent.writeln('removed.api = null');
-              });
-              indent.writeScoped('if (list.isEmpty()) {', '}', () {
-                indent.writeln('${api.name}Instances.remove(name)');
-              });
+          indent.writeln('val list = ${api.name}Instances.getOrPut(name) { mutableListOf() }');
+          indent.writeln('val iterator = list.iterator()');
+          indent.writeScoped('while (iterator.hasNext()) {', '}', () {
+            indent.writeln('val entry = iterator.next()');
+            indent.writeScoped('if (entry.api === api) {', '}', () {
+              indent.writeln('entry.api = null');
+              indent.writeln('iterator.remove()');
             });
           });
+          indent.writeln('list.add(wrapper)');
         });
-        indent.writeln('return this');
+        indent.writeln('return wrapper');
       });
 
       indent.writeScoped('fun unregister(', ')', () {

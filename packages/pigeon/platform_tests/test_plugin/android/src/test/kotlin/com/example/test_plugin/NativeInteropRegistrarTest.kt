@@ -76,45 +76,54 @@ class NativeInteropRegistrarTest {
   }
 
   @Test
-  fun registerNullPopsLatestInstanceWithoutClearingEarlierEngines() {
-    val name = "unitTestLifoNull"
+  fun duplicateAndUnregisteredUnregisterCallsAreNoOps() {
+    val name = "unitTestIdempotentUnregister"
     val api1 = FakeReservedNamesHostApi("engine1")
     val api2 = FakeReservedNamesHostApi("engine2")
+    val neverRegistered = FakeReservedNamesHostApi("never")
 
     NativeInteropReservedNamesHostApiRegistrar().register(api1, name)
-    val registrar2 = NativeInteropReservedNamesHostApiRegistrar().register(api2, name)
+    NativeInteropReservedNamesHostApiRegistrar().register(api2, name)
 
-    // Legacy `Registrar().register(null, name)` pops engine2 and preserves engine1.
-    NativeInteropReservedNamesHostApiRegistrar().register(null, name)
-    assertThrows(IllegalStateException::class.java) { registrar2.release("ping") }
+    NativeInteropReservedNamesHostApiRegistrar().unregister(api1, name)
+    // Calling unregister again on api1 or on a never-registered instance must not pop api2.
+    NativeInteropReservedNamesHostApiRegistrar().unregister(api1, name)
+    NativeInteropReservedNamesHostApiRegistrar().unregister(neverRegistered, name)
     assertEquals(
-        "engine1:ping",
+        "engine2:ping",
         NativeInteropReservedNamesHostApiRegistrar().getInstance(name)?.release("ping"),
     )
 
-    NativeInteropReservedNamesHostApiRegistrar().register(null, name)
+    NativeInteropReservedNamesHostApiRegistrar().unregister(api2, name)
     assertNull(NativeInteropReservedNamesHostApiRegistrar().getInstance(name))
   }
 
   @Test
-  fun registrarHandleRegisterNullRemovesThatHandleOutOfOrder() {
-    val name = "unitTestHandleNull"
+  fun reusingRegistrarReceiverAcrossNamesIsolatesEachWrapper() {
+    val name1 = "unitTestReceiver1"
+    val name2 = "unitTestReceiver2"
     val api1 = FakeReservedNamesHostApi("engine1")
     val api2 = FakeReservedNamesHostApi("engine2")
+    val sharedRegistrar = NativeInteropReservedNamesHostApiRegistrar()
 
-    val registrar1 = NativeInteropReservedNamesHostApiRegistrar().register(api1, name)
-    val registrar2 = NativeInteropReservedNamesHostApiRegistrar().register(api2, name)
+    val wrapper1 = sharedRegistrar.register(api1, name1)
+    val wrapper2 = sharedRegistrar.register(api2, name2)
 
-    // Calling register(null) on registrar1 removes specifically registrar1 even though registrar2
-    // was registered more recently.
-    registrar1.register(null, name)
-    assertThrows(IllegalStateException::class.java) { registrar1.release("ping") }
-    val active = NativeInteropReservedNamesHostApiRegistrar().getInstance(name)
-    assertNotNull(active)
-    assertEquals("engine2:ping", active!!.release("ping"))
+    assertNotNull(wrapper1)
+    assertNotNull(wrapper2)
+    assertEquals(
+        "engine1:ping",
+        NativeInteropReservedNamesHostApiRegistrar().getInstance(name1)?.release("ping"),
+    )
+    assertEquals(
+        "engine2:ping",
+        NativeInteropReservedNamesHostApiRegistrar().getInstance(name2)?.release("ping"),
+    )
 
-    registrar2.register(null, name)
-    assertNull(NativeInteropReservedNamesHostApiRegistrar().getInstance(name))
+    NativeInteropReservedNamesHostApiRegistrar().unregister(api1, name1)
+    NativeInteropReservedNamesHostApiRegistrar().unregister(api2, name2)
+    assertNull(NativeInteropReservedNamesHostApiRegistrar().getInstance(name1))
+    assertNull(NativeInteropReservedNamesHostApiRegistrar().getInstance(name2))
   }
 
   @Test
@@ -143,10 +152,11 @@ class NativeInteropRegistrarTest {
   }
 
   @Test
-  fun flutterApiRegistrarOutOfOrderUnregisterAndNullPopPreservesStack() {
+  fun flutterApiRegistrarOutOfOrderAndIdempotentUnregisterPreservesStack() {
     val name = "unitTestFlutterApiStack"
     val api1 = FakeReservedNamesFlutterApi("engine1")
     val api2 = FakeReservedNamesFlutterApi("engine2")
+    val neverRegistered = FakeReservedNamesFlutterApi("never")
 
     NativeInteropReservedNamesFlutterApiRegistrar().registerInstance(api1, name)
     NativeInteropReservedNamesFlutterApiRegistrar().registerInstance(api2, name)
@@ -157,18 +167,9 @@ class NativeInteropRegistrarTest {
 
     // Out-of-order unregister of api1 leaves api2 active.
     NativeInteropReservedNamesFlutterApiRegistrar().unregisterInstance(api1, name)
-    assertEquals(
-        "engine2:ping",
-        NativeInteropReservedNamesFlutterApiRegistrar().getInstance(name)?.release("ping"),
-    )
-
-    // Re-registering api1 pushes to top, and registerInstance(null) pops only api1.
-    NativeInteropReservedNamesFlutterApiRegistrar().registerInstance(api1, name)
-    assertEquals(
-        "engine1:ping",
-        NativeInteropReservedNamesFlutterApiRegistrar().getInstance(name)?.release("ping"),
-    )
-    NativeInteropReservedNamesFlutterApiRegistrar().registerInstance(null, name)
+    // Duplicate unregister of api1 and unregister of a never-registered instance are safe no-ops.
+    NativeInteropReservedNamesFlutterApiRegistrar().unregisterInstance(api1, name)
+    NativeInteropReservedNamesFlutterApiRegistrar().unregisterInstance(neverRegistered, name)
     assertEquals(
         "engine2:ping",
         NativeInteropReservedNamesFlutterApiRegistrar().getInstance(name)?.release("ping"),

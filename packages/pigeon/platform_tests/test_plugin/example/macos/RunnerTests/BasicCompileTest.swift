@@ -56,6 +56,39 @@ struct FakeStructReservedApi: NativeInteropReservedNamesHostApi {
   func callFlutterGetReference() throws -> String { label }
 }
 
+final class ReentrantDeinitReservedApi: NativeInteropReservedNamesHostApi {
+  let instanceName: String
+  let onDeinit: () -> Void
+  init(instanceName: String, onDeinit: @escaping () -> Void) {
+    self.instanceName = instanceName
+    self.onDeinit = onDeinit
+  }
+  deinit {
+    _ = NativeInteropReservedNamesHostApiSetup.getInstance(name: instanceName)
+    let probe = FakeClassReservedApi("probe")
+    NativeInteropReservedNamesHostApiSetup.unregister(api: probe, name: instanceName)
+    onDeinit()
+  }
+  func release(value: String) throws -> String { value }
+  func use(value: Int64) throws -> Int64 { value }
+  func type() throws -> String { "reentrant" }
+  func isNull() throws -> Bool { false }
+  func isNullable() throws -> Bool? { nil }
+  func isOpen() throws -> Bool { true }
+  func getReference() throws -> String { "reentrant" }
+  func setReference(value: String) throws {}
+  func getDefault() throws -> String { "reentrant" }
+  func getValueAsync() async throws -> String { "reentrant" }
+  func echoReservedNames(names: NativeInteropReservedNames) throws -> NativeInteropReservedNames {
+    names
+  }
+  func callFlutterRelease(value: String) throws -> String { value }
+  func callFlutterType() throws -> String { "reentrant" }
+  func callFlutterImplementIn(value: String) throws -> String { value }
+  func callFlutterIsNull() throws -> Bool { false }
+  func callFlutterGetReference() throws -> String { "reentrant" }
+}
+
 // Tests macOS compilation and Native Interop HostApi multi-instance registration/deregistration.
 @Suite(.serialized)
 struct BasicCompileTest {
@@ -71,7 +104,7 @@ struct BasicCompileTest {
     let api1 = FakeClassReservedApi("engine1")
     let api2 = FakeClassReservedApi("engine2")
 
-    let setup1 = NativeInteropReservedNamesHostApiSetup.register(api: api1, name: name)!
+    let setup1 = NativeInteropReservedNamesHostApiSetup.register(api: api1, name: name)
     NativeInteropReservedNamesHostApiSetup.register(api: api2, name: name)
     #expect(
       NativeInteropReservedNamesHostApiSetup.getInstance(name: name)?.release(
@@ -95,9 +128,9 @@ struct BasicCompileTest {
   func setupHandleUnregisterWorksForValueTypes() {
     let name = "macosStructSetupHandle"
     let setup1 = NativeInteropReservedNamesHostApiSetup.register(
-      api: FakeStructReservedApi(label: "struct1"), name: name)!
+      api: FakeStructReservedApi(label: "struct1"), name: name)
     let setup2 = NativeInteropReservedNamesHostApiSetup.register(
-      api: FakeStructReservedApi(label: "struct2"), name: name)!
+      api: FakeStructReservedApi(label: "struct2"), name: name)
 
     NativeInteropReservedNamesHostApiSetup.unregister(setup: setup1, name: name)
     #expect(
@@ -109,20 +142,20 @@ struct BasicCompileTest {
   }
 
   @Test
-  func registerNilPopsLastInstanceWithoutClearingEarlierEngines() {
-    let name = "macosLifoNil"
-    let api1 = FakeClassReservedApi("engine1")
-    let api2 = FakeClassReservedApi("engine2")
-
-    NativeInteropReservedNamesHostApiSetup.register(api: api1, name: name)
-    NativeInteropReservedNamesHostApiSetup.register(api: api2, name: name)
-
-    NativeInteropReservedNamesHostApiSetup.register(api: nil, name: name)
-    #expect(
-      NativeInteropReservedNamesHostApiSetup.getInstance(name: name)?.release(
-        value: "ping", wrappedError: NativeInteropTestsError()) == "engine1:ping")
-
-    NativeInteropReservedNamesHostApiSetup.register(api: nil, name: name)
+  func deinitReenteringSetupDoesNotDeadlock() {
+    let name = "macosReentrantDeinit"
+    var deinitCount = 0
+    var setup: NativeInteropReservedNamesHostApiSetup?
+    do {
+      let api = ReentrantDeinitReservedApi(instanceName: name) {
+        deinitCount += 1
+      }
+      setup = NativeInteropReservedNamesHostApiSetup.register(api: api, name: name)
+    }
+    if let setup {
+      NativeInteropReservedNamesHostApiSetup.unregister(setup: setup, name: name)
+    }
+    #expect(deinitCount == 1)
     #expect(NativeInteropReservedNamesHostApiSetup.getInstance(name: name) == nil)
   }
 
@@ -172,6 +205,7 @@ struct BasicCompileTest {
     let name = "unitTestFlutterApiStack"
     let bridge1 = FakeReservedNamesFlutterApiBridge("engine1")
     let bridge2 = FakeReservedNamesFlutterApiBridge("engine2")
+    let neverRegistered = FakeReservedNamesFlutterApiBridge("never")
 
     NativeInteropReservedNamesFlutterApiRegistrar.registerInstance(api: bridge1, name: name)
     NativeInteropReservedNamesFlutterApiRegistrar.registerInstance(api: bridge2, name: name)
@@ -181,16 +215,10 @@ struct BasicCompileTest {
 
     // Out-of-order unregister of bridge1 leaves bridge2 active.
     NativeInteropReservedNamesFlutterApiRegistrar.unregisterInstance(api: bridge1, name: name)
-    #expect(
-      try NativeInteropReservedNamesFlutterApi.getInstance(name: name)?.release(value: "ping")
-        == "engine2:ping")
-
-    // Re-registering bridge1 pushes to top, and registerInstance(api: nil) pops only bridge1.
-    NativeInteropReservedNamesFlutterApiRegistrar.registerInstance(api: bridge1, name: name)
-    #expect(
-      try NativeInteropReservedNamesFlutterApi.getInstance(name: name)?.release(value: "ping")
-        == "engine1:ping")
-    NativeInteropReservedNamesFlutterApiRegistrar.registerInstance(api: nil, name: name)
+    // Duplicate unregister and never-registered unregister must be safe no-ops.
+    NativeInteropReservedNamesFlutterApiRegistrar.unregisterInstance(api: bridge1, name: name)
+    NativeInteropReservedNamesFlutterApiRegistrar.unregisterInstance(
+      api: neverRegistered, name: name)
     #expect(
       try NativeInteropReservedNamesFlutterApi.getInstance(name: name)?.release(value: "ping")
         == "engine2:ping")

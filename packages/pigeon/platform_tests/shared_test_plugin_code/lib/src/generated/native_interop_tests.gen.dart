@@ -7548,8 +7548,8 @@ NativeInteropFlutterIntegrationCoreApi pigeon_register_NativeInteropFlutterInteg
 }
 
 @internal
-void pigeon_unregister_NativeInteropFlutterIntegrationCoreApi({
-  NativeInteropFlutterIntegrationCoreApi? api,
+void pigeon_unregister_NativeInteropFlutterIntegrationCoreApi(
+  NativeInteropFlutterIntegrationCoreApi api, {
   String name = defaultInstanceName,
 }) {
   throw UnsupportedError(
@@ -7576,11 +7576,11 @@ final class NativeInteropFlutterIntegrationCoreApiRegistrar {
     name: name.isEmpty ? defaultInstanceName : name,
   );
 
-  void unregister({
-    NativeInteropFlutterIntegrationCoreApi? api,
+  void unregister(
+    NativeInteropFlutterIntegrationCoreApi api, {
     String name = defaultInstanceName,
   }) => pigeon_native.pigeon_unregister_NativeInteropFlutterIntegrationCoreApi(
-    api: api,
+    api,
     name: name.isEmpty ? defaultInstanceName : name,
   );
 }
@@ -11158,8 +11158,8 @@ NativeInteropReservedNamesFlutterApi pigeon_register_NativeInteropReservedNamesF
 }
 
 @internal
-void pigeon_unregister_NativeInteropReservedNamesFlutterApi({
-  NativeInteropReservedNamesFlutterApi? api,
+void pigeon_unregister_NativeInteropReservedNamesFlutterApi(
+  NativeInteropReservedNamesFlutterApi api, {
   String name = defaultInstanceName,
 }) {
   throw UnsupportedError(
@@ -11186,9 +11186,9 @@ final class NativeInteropReservedNamesFlutterApiRegistrar {
     name: name.isEmpty ? defaultInstanceName : name,
   );
 
-  void unregister({NativeInteropReservedNamesFlutterApi? api, String name = defaultInstanceName}) =>
+  void unregister(NativeInteropReservedNamesFlutterApi api, {String name = defaultInstanceName}) =>
       pigeon_native.pigeon_unregister_NativeInteropReservedNamesFlutterApi(
-        api: api,
+        api,
         name: name.isEmpty ? defaultInstanceName : name,
       );
 }
