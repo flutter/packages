@@ -3,7 +3,7 @@
 * [dart,kotlin,swift] Preserves earlier engine registrations when multiple Native Interop `@HostApi` or `@FlutterApi` instances are registered, synchronizes registrar state across threads/isolates, and adds instance-aware `unregister` / `unregisterInstance` APIs so detaching a secondary `FlutterEngine` does not deregister remaining engines.
 * [dart] Fixes Native Interop `@FlutterApi` `setUp(null)` to deregister the isolate's native callback and `implement()` to use `defaultInstanceName` when `name` is omitted or empty.
 * [swift] Throws a structured `PigeonError` instead of trapping when invoking a Native Interop `@HostApi` method on a detached `Setup` handle.
-* Removes the experimental label from Native Interop documentation and expands multi-engine and migration guidance.
+* Expands multi-engine and migration guidance in Native Interop documentation.
 
 ## 29.1.0
 
