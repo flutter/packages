@@ -5,6 +5,7 @@ package io.flutter.plugins.urllauncher
 
 import android.app.Activity
 import android.content.ActivityNotFoundException
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -60,6 +61,25 @@ class UrlLauncherTest {
     val result = api.canLaunchUrl("https://flutter.dev")
 
     assertFalse(result)
+  }
+
+  @Test
+  fun canLaunch_parsesIntentUri() {
+    val resolver = mock<IntentResolver>()
+    val api = UrlLauncher(ApplicationProvider.getApplicationContext(), resolver)
+    val url =
+        "intent://details?id=com.example.app#Intent;scheme=bazaar;package=com.example.store;action=android.intent.action.EDIT;end"
+    whenever(resolver.getHandlerComponentName(any())).thenReturn("some.component")
+
+    val result = api.canLaunchUrl(url)
+
+    val intentCaptor = argumentCaptor<Intent>()
+    verify(resolver).getHandlerComponentName(intentCaptor.capture())
+    assertTrue(result)
+    assertEquals(Intent.ACTION_EDIT, intentCaptor.firstValue.action)
+    assertEquals(Uri.parse("bazaar://details?id=com.example.app"), intentCaptor.firstValue.data)
+    assertEquals("com.example.store", intentCaptor.firstValue.`package`)
+    assertTrue(intentCaptor.firstValue.hasCategory(Intent.CATEGORY_BROWSABLE))
   }
 
   // Integration testing on emulators won't work as expected without the workaround this tests
@@ -142,6 +162,76 @@ class UrlLauncherTest {
     val result = api.launchUrl("https://flutter.dev", emptyMap(), false)
 
     assertTrue(result)
+  }
+
+  @Test
+  fun launch_parsesCaseInsensitiveIntentUriAndForwardsHeaders() {
+    val activity = mock<Activity>()
+    val api = UrlLauncher(ApplicationProvider.getApplicationContext())
+    api.setActivity(activity)
+    val url =
+        "InTeNt://details?id=com.example.app#Intent;scheme=bazaar;package=com.example.store;action=android.intent.action.EDIT;end"
+    val headers = mapOf("X-Test" to "value")
+
+    api.launchUrl(url, headers, false)
+
+    val intentCaptor = argumentCaptor<Intent>()
+    verify(activity).startActivity(intentCaptor.capture())
+    assertEquals(Intent.ACTION_EDIT, intentCaptor.firstValue.action)
+    assertEquals(Uri.parse("bazaar://details?id=com.example.app"), intentCaptor.firstValue.data)
+    assertEquals("com.example.store", intentCaptor.firstValue.`package`)
+    assertTrue(intentCaptor.firstValue.hasCategory(Intent.CATEGORY_BROWSABLE))
+    assertEquals(
+        "value",
+        intentCaptor.firstValue.extras?.getBundle(Browser.EXTRA_HEADERS)?.getString("X-Test"))
+  }
+
+  @Test
+  fun launch_discardsExplicitComponentFromIntentUri() {
+    val activity = mock<Activity>()
+    val api = UrlLauncher(ApplicationProvider.getApplicationContext())
+    api.setActivity(activity)
+    val explicitIntent =
+        Intent(Intent.ACTION_EDIT).setData(Uri.parse("bazaar://details?id=com.example.app"))
+    explicitIntent.component =
+        ComponentName("com.example.store", "com.example.store.InternalActivity")
+
+    api.launchUrl(explicitIntent.toUri(Intent.URI_INTENT_SCHEME), emptyMap(), false)
+
+    val intentCaptor = argumentCaptor<Intent>()
+    verify(activity).startActivity(intentCaptor.capture())
+    assertEquals(Intent.ACTION_EDIT, intentCaptor.firstValue.action)
+    assertNull(intentCaptor.firstValue.component)
+    assertTrue(intentCaptor.firstValue.hasCategory(Intent.CATEGORY_BROWSABLE))
+  }
+
+  @Test
+  fun launch_discardsSelectorFromIntentUri() {
+    val activity = mock<Activity>()
+    val api = UrlLauncher(ApplicationProvider.getApplicationContext())
+    api.setActivity(activity)
+    val explicitIntent =
+        Intent(Intent.ACTION_EDIT).setData(Uri.parse("bazaar://details?id=com.example.app"))
+    explicitIntent.selector = Intent(Intent.ACTION_SEND)
+
+    api.launchUrl(explicitIntent.toUri(Intent.URI_INTENT_SCHEME), emptyMap(), false)
+
+    val intentCaptor = argumentCaptor<Intent>()
+    verify(activity).startActivity(intentCaptor.capture())
+    assertNull(intentCaptor.firstValue.selector)
+    assertTrue(intentCaptor.firstValue.hasCategory(Intent.CATEGORY_BROWSABLE))
+  }
+
+  @Test
+  fun launch_returnsFalseForMalformedIntentUri() {
+    val activity = mock<Activity>()
+    val api = UrlLauncher(ApplicationProvider.getApplicationContext())
+    api.setActivity(activity)
+
+    val malformedUrl = "intent://details#Intent;scheme=bazaar;action=android.intent.action.EDIT"
+    val result = api.launchUrl(malformedUrl, emptyMap(), false)
+
+    assertFalse(result)
   }
 
   @Test
