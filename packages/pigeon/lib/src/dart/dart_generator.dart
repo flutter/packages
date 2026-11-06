@@ -719,6 +719,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
 
   void _writeNativeInteropFileImports(
     InternalDartOptions generatorOptions,
+    Root root,
     Indent indent, {
     required String dartPackageName,
   }) {
@@ -737,6 +738,9 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
       'TypedData',
     ];
     indent.writeln("import 'dart:typed_data' show ${typedDataClasses.join(', ')};");
+    if (_hasNativeInteropEngineKeyedApis(root)) {
+      indent.writeln("import 'dart:ui' show PlatformDispatcher;");
+    }
     indent.newln();
     if (generatorOptions.useFfi) {
       indent.writeln("import 'package:ffi/ffi.dart';");
@@ -1343,6 +1347,25 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     required String dartPackageName,
   }) {
     final mixin = generatorOptions.useJni ? ' with $_jniBridgePrefix.\$${api.name}' : '';
+    // `<Api>Registrar` in Kotlin declares `Companion` and then the `@JvmStatic`
+    // methods `register(api, engineId, affinityKey, name)`,
+    // `unregister(api, name)`, and two `getInstance(..., name)` overloads.
+    final jniRegistrarNamer = _JniBindingNamer(
+      isInterface: false,
+      declaredFirst: const <String>['Companion'],
+    );
+    final _JniMember jniRegister = jniRegistrarNamer.next(
+      'register',
+      parameterCount: 4,
+      returnsVoid: true,
+    );
+    final _JniMember jniUnregister = jniRegistrarNamer.next(
+      'unregister',
+      parameterCount: 2,
+      returnsVoid: true,
+    );
+    jniRegistrarNamer.next('getInstance', parameterCount: 2);
+    jniRegistrarNamer.next('getInstance', parameterCount: 2);
     indent.writeScoped('final class _${api.name}Registrar$mixin {', '}', () {
       indent.writeln('_${api.name}Registrar(this.${varNamePrefix}dartApi);');
       indent.newln();
@@ -1378,6 +1401,25 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
         '}',
         () {
           indent.writeln('final String mapKey = name ?? _defaultInstanceName;');
+          indent.writeScoped(
+            'if (identical(${varNamePrefix}setUpInstances[mapKey], api)) {',
+            '}',
+            () {
+              indent.writeln('${varNamePrefix}setUpInstances.remove(mapKey);');
+            },
+          );
+          indent.writeln('${varNamePrefix}removeHandle(api, name: name);');
+        },
+      );
+      indent.newln();
+      // Unlike `unregister`, this leaves `setUpInstances` alone, so that
+      // re-registering an instance installed with `setUp` keeps it tracked as
+      // the `setUp` instance.
+      indent.writeScoped(
+        'static void ${varNamePrefix}removeHandle(${api.name} api, {String? name}) {',
+        '}',
+        () {
+          indent.writeln('final String mapKey = name ?? _defaultInstanceName;');
           indent.writeln(
             'final List<(${api.name}, Object)>? handles = ${varNamePrefix}registeredHandles[mapKey];',
           );
@@ -1397,21 +1439,18 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
           indent.writeScoped('if (handles.isEmpty) {', '}', () {
             indent.writeln('${varNamePrefix}registeredHandles.remove(mapKey);');
           });
-          indent.writeScoped(
-            'if (identical(${varNamePrefix}setUpInstances[mapKey], api)) {',
-            '}',
-            () {
-              indent.writeln('${varNamePrefix}setUpInstances.remove(mapKey);');
-            },
-          );
           if (generatorOptions.useJni) {
             indent.writeScoped('if (Platform.isAndroid) {', '}', () {
               indent.writeln('final JString? jName = name?.toJString();');
               indent.writeScoped('try {', '}', () {
-                indent.writeScoped('$_jniBridgePrefix.${api.name}Registrar.unregister(', ');', () {
-                  indent.writeln('removedHandle as $_jniBridgePrefix.${api.name},');
-                  indent.writeln('jName,');
-                });
+                indent.writeScoped(
+                  '$_jniBridgePrefix.${api.name}Registrar.${jniUnregister.name}(',
+                  ');',
+                  () {
+                    indent.writeln('removedHandle as $_jniBridgePrefix.${api.name},');
+                    indent.writeln('jName,');
+                  },
+                );
               }, addTrailingNewline: false);
               indent.addScoped(' finally {', '}', () {
                 indent.writeln('jName?.release();');
@@ -1441,7 +1480,11 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
       indent.newln();
       indent.writeScoped('void ${varNamePrefix}register({String? name}) {', '}', () {
         indent.writeln('final String mapKey = name ?? _defaultInstanceName;');
-        indent.writeln('${varNamePrefix}unregister(${varNamePrefix}dartApi, name: name);');
+        indent.writeln('${varNamePrefix}removeHandle(${varNamePrefix}dartApi, name: name);');
+        indent.writeln(
+          'final int engineId = PlatformDispatcher.instance.engineId ?? _pigeonNoEngineKey;',
+        );
+        indent.writeln('final int affinityKey = _pigeonEngineAffinity ?? _pigeonNoEngineKey;');
         if (generatorOptions.useJni) {
           indent.writeScoped('if (Platform.isAndroid) {', '}', () {
             indent.writeln(
@@ -1449,7 +1492,9 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
             );
             indent.writeln('final JString? jName = name?.toJString();');
             indent.writeScoped('try {', '}', () {
-              indent.writeln('$_jniBridgePrefix.${api.name}Registrar.register(impl, jName);');
+              indent.writeln(
+                '$_jniBridgePrefix.${api.name}Registrar.${jniRegister.name}(impl, engineId, affinityKey, jName);',
+              );
             }, addTrailingNewline: false);
             indent.addScoped(' finally {', '}', () {
               indent.writeln('jName?.release();');
@@ -1568,6 +1613,8 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
             );
             indent.writeScoped('$_ffiBridgePrefix.${api.name}Registrar.registerWithApi(', ');', () {
               indent.writeln('impl,');
+              indent.writeln('engineId: engineId,');
+              indent.writeln('affinityKey: affinityKey,');
               indent.writeln('name: name != null ? NSString(name) : null,');
             });
             indent.writeln(
@@ -1829,8 +1876,7 @@ $dartApiName? ${classMemberNamePrefix}getInstance_${api.name}({
     indent.writeScoped('class $implClassName implements $dartApiName {', '}', () {
       // In Kotlin bytecode for `<Api>Registrar`, `Companion` is a static field
       // renamed first by JNIgen, followed by the overridden API methods, and
-      // finally the `@JvmStatic` bridge methods `register`, `unregister`, and
-      // `getInstance`.
+      // finally the `@JvmStatic` bridge methods, in declaration order.
       final jniNamer = _JniBindingNamer(
         isInterface: false,
         declaredFirst: const <String>['Companion'],
@@ -1838,9 +1884,23 @@ $dartApiName? ${classMemberNamePrefix}getInstance_${api.name}({
       final jniApiMembers = <Method, _JniMember>{
         for (final Method method in api.methods) method: jniNamer.nextApiMethod(method),
       };
-      jniNamer.next('register', parameterCount: 2, returnsVoid: true);
-      jniNamer.next('unregister', parameterCount: 2, returnsVoid: true);
-      final _JniMember jniGetInstance = jniNamer.next('getInstance', parameterCount: 1);
+      // register(api, binding, name) and register(api, engine, name).
+      jniNamer.next('register', parameterCount: 3, returnsVoid: true);
+      jniNamer.next('register', parameterCount: 3, returnsVoid: true);
+      // unregister(api, binding, name) and unregister(api, engine, name).
+      jniNamer.next('unregister', parameterCount: 3, returnsVoid: true);
+      jniNamer.next('unregister', parameterCount: 3, returnsVoid: true);
+      jniNamer.next('getInstance', parameterCount: 1);
+      final _JniMember jniResolveInstance = jniNamer.next(
+        'pigeonResolveInstance',
+        parameterCount: 3,
+      );
+      final _JniMember jniEngineKeyOf = jniNamer.next('pigeonEngineKeyOf', parameterCount: 1);
+      final String ffiResolveInstance = _swiftObjcSelectorFirstPiece(
+        'pigeonResolveInstance',
+        'engineId',
+      );
+      final String ffiEngineKeyOf = _swiftObjcSelectorFirstPiece('pigeonEngineKey', 'of');
 
       final List<String> constructorParams = [];
       final List<String> constructorInitializers = [];
@@ -1868,21 +1928,52 @@ $dartApiName? ${classMemberNamePrefix}getInstance_${api.name}({
 
       indent.newln();
 
+      void writeEngineKeys() {
+        indent.writeln('final int? engineId = PlatformDispatcher.instance.engineId;');
+      }
+
+      // Native registrations are matched to this isolate's engine. When the
+      // engine id is unavailable, the engine of the first resolved instance is
+      // remembered so later lookups stay on the same engine.
+      void writeRecordAffinity(String engineKeyOfCall) {
+        indent.writeScoped('if (link != null && _pigeonEngineAffinity == null) {', '}', () {
+          indent.writeln('final int linkEngineKey = $engineKeyOfCall;');
+          indent.writeScoped('if (linkEngineKey != _pigeonNoEngineKey) {', '}', () {
+            indent.writeln('_pigeonEngineAffinity = linkEngineKey;');
+          });
+        });
+      }
+
       indent.writeln(
         '/// Returns instance of $dartApiName with specified [name] if one has been registered.',
       );
+      indent.writeln('///');
+      indent.writeln(
+        "/// Prefers an instance registered by this isolate's engine, falling back to",
+      );
+      indent.writeln('/// the most recently registered instance.');
       indent.writeScoped('static $dartApiName? getInstance({String? name}) {', '}', () {
         var isFirst = true;
         if (generatorOptions.useJni) {
           indent.writeScoped('if (Platform.isAndroid) {', '}', () {
+            writeEngineKeys();
             indent.writeln('final JString? jName = name?.toJString();');
             indent.writeln('final $jniApiRegistrarName? link;');
             indent.writeScoped('try {', '}', () {
-              indent.writeln('link = $jniApiRegistrarName.${jniGetInstance.name}(jName);');
+              indent.writeScoped(
+                'link = $jniApiRegistrarName.${jniResolveInstance.name}(',
+                ');',
+                () {
+                  indent.writeln('engineId ?? _pigeonNoEngineKey,');
+                  indent.writeln('_pigeonEngineAffinity ?? _pigeonNoEngineKey,');
+                  indent.writeln('jName,');
+                },
+              );
             }, addTrailingNewline: false);
             indent.addScoped(' finally {', '}', () {
               indent.writeln('jName?.release();');
             });
+            writeRecordAffinity('$jniApiRegistrarName.${jniEngineKeyOf.name}(link)');
             indent.writeln(
               'return link == null ? null : $implClassName._withRegistrar(jniApi: link);',
             );
@@ -1892,12 +1983,17 @@ $dartApiName? ${classMemberNamePrefix}getInstance_${api.name}({
         if (generatorOptions.useFfi) {
           final elseStr = isFirst ? '' : ' else';
           indent.addScoped('$elseStr if (Platform.isIOS || Platform.isMacOS) {', '}', () {
-            indent.writeln('final $ffiApiRegistrarName? link =');
-            indent.nest(2, () {
-              indent.writeln(
-                '$ffiApiRegistrarName.getInstanceWithName(name != null ? NSString(name) : null);',
-              );
-            });
+            writeEngineKeys();
+            indent.writeScoped(
+              'final $ffiApiRegistrarName? link = $ffiApiRegistrarName.$ffiResolveInstance(',
+              ');',
+              () {
+                indent.writeln('engineId ?? _pigeonNoEngineKey,');
+                indent.writeln('affinityKey: _pigeonEngineAffinity ?? _pigeonNoEngineKey,');
+                indent.writeln('name: name != null ? NSString(name) : null,');
+              },
+            );
+            writeRecordAffinity('$ffiApiRegistrarName.$ffiEngineKeyOf(link)');
             indent.writeln(
               'return link == null ? null : $implClassName._withRegistrar(ffiApi: link);',
             );
@@ -2657,7 +2753,12 @@ ${api.name}({
   }) {
     final indent = Indent();
     writeFilePrologue(generatorOptions, root, indent, dartPackageName: dartPackageName);
-    _writeNativeInteropFileImports(generatorOptions, indent, dartPackageName: dartPackageName);
+    _writeNativeInteropFileImports(
+      generatorOptions,
+      root,
+      indent,
+      dartPackageName: dartPackageName,
+    );
     _writeNativeInteropGeneralUtilities(generatorOptions, root, indent);
     for (final Enum anEnum in root.enums) {
       _writeNativeInteropEnum(generatorOptions, indent, anEnum);
@@ -2817,6 +2918,19 @@ ${api.name}({
     if (root.apis.whereType<AstFlutterApi>().isNotEmpty) {
       indent.newln();
       indent.writeln("const String _defaultInstanceName = '$defaultNativeInteropInstanceName';");
+    }
+    if (_hasNativeInteropEngineKeyedApis(root)) {
+      indent.newln();
+      indent.format('''
+/// Native engine key meaning "no engine", matching `Long.MIN_VALUE` in Kotlin
+/// and `Int64.min` in Swift.
+const int _pigeonNoEngineKey = -9223372036854775808;
+
+/// The native engine key this isolate has been associated with, learned from
+/// the first native instance it resolves.
+///
+/// Used to route lookups when [PlatformDispatcher.engineId] is unavailable.
+int? _pigeonEngineAffinity;''');
     }
     _writeErrorHelpers(indent, generatorOptions);
     indent.newln();
@@ -3786,6 +3900,11 @@ class _JniMember {
     };
   }
 }
+
+/// Whether the native interop file for [root] routes registrations by engine,
+/// which is the case whenever it has a HostApi or FlutterApi.
+bool _hasNativeInteropEngineKeyedApis(Root root) =>
+    root.apis.any((Api api) => api is AstHostApi || api is AstFlutterApi);
 
 /// Predicts the names JNIgen gives the Dart members of one binding class.
 ///

@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import FlutterMacOS
 import Foundation
 import Testing
 
@@ -50,20 +51,21 @@ struct BasicCompileTest {
 
   @Test
   func classUnregisterRemovesSpecificInstanceOutOfOrder() throws {
+    let stub = StubPluginRegistrar()
     let name = "macosOutOfOrderClass"
     let api1 = FakeClassReservedApi("engine1")
     let api2 = FakeClassReservedApi("engine2")
 
-    NativeInteropReservedNamesHostApiSetup.register(api: api1, name: name)
+    NativeInteropReservedNamesHostApiSetup.register(api: api1, registrar: stub, name: name)
     let setup1 = try #require(NativeInteropReservedNamesHostApiSetup.getInstance(name: name))
-    NativeInteropReservedNamesHostApiSetup.register(api: api2, name: name)
+    NativeInteropReservedNamesHostApiSetup.register(api: api2, registrar: stub, name: name)
     #expect(
       NativeInteropReservedNamesHostApiSetup.getInstance(name: name)?.release(
         value: "ping", wrappedError: NativeInteropTestsError()) == "engine2:ping")
 
     // Unregistering api1 out-of-order keeps api2 registered while detached setup1 reports an error
     // instead of trapping.
-    NativeInteropReservedNamesHostApiSetup.unregister(api: api1, name: name)
+    NativeInteropReservedNamesHostApiSetup.unregister(api: api1, registrar: stub, name: name)
     let staleError = NativeInteropTestsError()
     #expect(setup1.release(value: "ping", wrappedError: staleError) == nil)
     #expect(staleError.code == "unregistered-instance")
@@ -71,48 +73,50 @@ struct BasicCompileTest {
       NativeInteropReservedNamesHostApiSetup.getInstance(name: name)?.release(
         value: "ping", wrappedError: NativeInteropTestsError()) == "engine2:ping")
 
-    NativeInteropReservedNamesHostApiSetup.unregister(api: api2, name: name)
+    NativeInteropReservedNamesHostApiSetup.unregister(api: api2, registrar: stub, name: name)
     #expect(NativeInteropReservedNamesHostApiSetup.getInstance(name: name) == nil)
   }
 
   @Test
   func reRegisteringSameApiMovesExistingSetupToTop() throws {
+    let stub = StubPluginRegistrar()
     let name = "macosReRegisterClass"
     let api1 = FakeClassReservedApi("engine1")
     let api2 = FakeClassReservedApi("engine2")
 
-    NativeInteropReservedNamesHostApiSetup.register(api: api1, name: name)
+    NativeInteropReservedNamesHostApiSetup.register(api: api1, registrar: stub, name: name)
     let setup1 = try #require(NativeInteropReservedNamesHostApiSetup.getInstance(name: name))
-    NativeInteropReservedNamesHostApiSetup.register(api: api2, name: name)
+    NativeInteropReservedNamesHostApiSetup.register(api: api2, registrar: stub, name: name)
     let setup2 = try #require(NativeInteropReservedNamesHostApiSetup.getInstance(name: name))
     #expect(setup2 !== setup1)
 
     // Re-registering api1 reuses its existing setup, so handles that already resolved it keep
     // working.
-    NativeInteropReservedNamesHostApiSetup.register(api: api1, name: name)
+    NativeInteropReservedNamesHostApiSetup.register(api: api1, registrar: stub, name: name)
     #expect(NativeInteropReservedNamesHostApiSetup.getInstance(name: name) === setup1)
     let error = NativeInteropTestsError()
     #expect(setup1.release(value: "ping", wrappedError: error) == "engine1:ping")
     #expect(error.code == nil)
 
     // api1 is only registered once, so a single unregister falls back to api2.
-    NativeInteropReservedNamesHostApiSetup.unregister(api: api1, name: name)
+    NativeInteropReservedNamesHostApiSetup.unregister(api: api1, registrar: stub, name: name)
     #expect(NativeInteropReservedNamesHostApiSetup.getInstance(name: name) === setup2)
 
-    NativeInteropReservedNamesHostApiSetup.unregister(api: api2, name: name)
+    NativeInteropReservedNamesHostApiSetup.unregister(api: api2, registrar: stub, name: name)
     #expect(NativeInteropReservedNamesHostApiSetup.getInstance(name: name) == nil)
   }
 
   @Test
   func defaultNilNameAndExplicitEmptyStringNameAreDistinct() throws {
+    let stub = StubPluginRegistrar()
     let preexistingDefault = NativeInteropReservedNamesHostApiSetup.getInstance()
     let defaultApi = FakeClassReservedApi("defaultEngine")
     let emptyNameApi = FakeClassReservedApi("emptyStringEngine")
 
-    NativeInteropReservedNamesHostApiSetup.register(api: defaultApi)
+    NativeInteropReservedNamesHostApiSetup.register(api: defaultApi, registrar: stub)
     #expect(NativeInteropReservedNamesHostApiSetup.getInstance(name: "") == nil)
 
-    NativeInteropReservedNamesHostApiSetup.register(api: emptyNameApi, name: "")
+    NativeInteropReservedNamesHostApiSetup.register(api: emptyNameApi, registrar: stub, name: "")
     #expect(
       NativeInteropReservedNamesHostApiSetup.getInstance()?.release(
         value: "ping", wrappedError: NativeInteropTestsError()) == "defaultEngine:ping")
@@ -120,13 +124,13 @@ struct BasicCompileTest {
       NativeInteropReservedNamesHostApiSetup.getInstance(name: "")?.release(
         value: "ping", wrappedError: NativeInteropTestsError()) == "emptyStringEngine:ping")
 
-    NativeInteropReservedNamesHostApiSetup.unregister(api: emptyNameApi, name: "")
+    NativeInteropReservedNamesHostApiSetup.unregister(api: emptyNameApi, registrar: stub, name: "")
     #expect(NativeInteropReservedNamesHostApiSetup.getInstance(name: "") == nil)
     #expect(
       NativeInteropReservedNamesHostApiSetup.getInstance()?.release(
         value: "ping", wrappedError: NativeInteropTestsError()) == "defaultEngine:ping")
 
-    NativeInteropReservedNamesHostApiSetup.unregister(api: defaultApi)
+    NativeInteropReservedNamesHostApiSetup.unregister(api: defaultApi, registrar: stub)
     #expect(NativeInteropReservedNamesHostApiSetup.getInstance() === preexistingDefault)
   }
 
@@ -173,15 +177,19 @@ struct BasicCompileTest {
 
   @Test
   func flutterApiRegistrarOutOfOrderUnregisterPreservesOtherEngineRegistrations() throws {
+    let stub = StubPluginRegistrar()
     let name = "unitTestFlutterApiStack"
     let bridge1 = FakeReservedNamesFlutterApiBridge("engine1")
     let bridge2 = FakeReservedNamesFlutterApiBridge("engine2")
     let neverRegistered = FakeReservedNamesFlutterApiBridge("never")
 
-    NativeInteropReservedNamesFlutterApiRegistrar.register(api: bridge1, name: name)
-    NativeInteropReservedNamesFlutterApiRegistrar.register(api: bridge2, name: name)
+    NativeInteropReservedNamesFlutterApiRegistrar.register(
+      api: bridge1, engineId: stub.engineIdentifier, affinityKey: Int64.min, name: name)
+    NativeInteropReservedNamesFlutterApiRegistrar.register(
+      api: bridge2, engineId: stub.engineIdentifier, affinityKey: Int64.min, name: name)
     #expect(
-      try NativeInteropReservedNamesFlutterApi.getInstance(name: name)?.release(value: "ping")
+      try NativeInteropReservedNamesFlutterApiRegistrar.getInstance(registrar: stub, name: name)?
+        .release(value: "ping")
         == "engine2:ping")
 
     // Out-of-order unregister of bridge1 leaves bridge2 active.
@@ -191,62 +199,202 @@ struct BasicCompileTest {
     NativeInteropReservedNamesFlutterApiRegistrar.unregister(
       api: neverRegistered, name: name)
     #expect(
-      try NativeInteropReservedNamesFlutterApi.getInstance(name: name)?.release(value: "ping")
+      try NativeInteropReservedNamesFlutterApiRegistrar.getInstance(registrar: stub, name: name)?
+        .release(value: "ping")
         == "engine2:ping")
 
     NativeInteropReservedNamesFlutterApiRegistrar.unregister(api: bridge2, name: name)
-    #expect(NativeInteropReservedNamesFlutterApi.getInstance(name: name) == nil)
+    #expect(
+      NativeInteropReservedNamesFlutterApiRegistrar.getInstance(registrar: stub, name: name) == nil)
   }
 
   @Test
   func flutterApiReRegisteringSameInstanceDeduplicatesAndMovesToTop() throws {
+    let stub = StubPluginRegistrar()
     let name = "unitTestFlutterApiDeduplicate"
     let bridge1 = FakeReservedNamesFlutterApiBridge("engine1")
     let bridge2 = FakeReservedNamesFlutterApiBridge("engine2")
 
-    NativeInteropReservedNamesFlutterApiRegistrar.register(api: bridge1, name: name)
-    NativeInteropReservedNamesFlutterApiRegistrar.register(api: bridge2, name: name)
-    NativeInteropReservedNamesFlutterApiRegistrar.register(api: bridge1, name: name)
+    NativeInteropReservedNamesFlutterApiRegistrar.register(
+      api: bridge1, engineId: stub.engineIdentifier, affinityKey: Int64.min, name: name)
+    NativeInteropReservedNamesFlutterApiRegistrar.register(
+      api: bridge2, engineId: stub.engineIdentifier, affinityKey: Int64.min, name: name)
+    NativeInteropReservedNamesFlutterApiRegistrar.register(
+      api: bridge1, engineId: stub.engineIdentifier, affinityKey: Int64.min, name: name)
 
     #expect(
-      try NativeInteropReservedNamesFlutterApi.getInstance(name: name)?.release(value: "ping")
+      try NativeInteropReservedNamesFlutterApiRegistrar.getInstance(registrar: stub, name: name)?
+        .release(value: "ping")
         == "engine1:ping")
 
     // Since bridge1 was deduplicated, unregistering bridge1 once leaves only bridge2.
     NativeInteropReservedNamesFlutterApiRegistrar.unregister(api: bridge1, name: name)
     #expect(
-      try NativeInteropReservedNamesFlutterApi.getInstance(name: name)?.release(value: "ping")
+      try NativeInteropReservedNamesFlutterApiRegistrar.getInstance(registrar: stub, name: name)?
+        .release(value: "ping")
         == "engine2:ping")
 
     NativeInteropReservedNamesFlutterApiRegistrar.unregister(api: bridge2, name: name)
-    #expect(NativeInteropReservedNamesFlutterApi.getInstance(name: name) == nil)
+    #expect(
+      NativeInteropReservedNamesFlutterApiRegistrar.getInstance(registrar: stub, name: name) == nil)
   }
 
   @Test
   func flutterApiDefaultNilNameAndExplicitEmptyStringNameAreDistinct() throws {
-    let preexistingDefault = NativeInteropReservedNamesFlutterApiRegistrar.getInstance()
+    let stub = StubPluginRegistrar()
+    let preexistingDefault = NativeInteropReservedNamesFlutterApiRegistrar.getInstance(
+      registrar: stub)
     let defaultBridge = FakeReservedNamesFlutterApiBridge("defaultFlutter")
     let emptyNameBridge = FakeReservedNamesFlutterApiBridge("emptyStringFlutter")
 
-    NativeInteropReservedNamesFlutterApiRegistrar.register(api: defaultBridge)
-    #expect(NativeInteropReservedNamesFlutterApi.getInstance(name: "") == nil)
-
-    NativeInteropReservedNamesFlutterApiRegistrar.register(api: emptyNameBridge, name: "")
+    NativeInteropReservedNamesFlutterApiRegistrar.register(
+      api: defaultBridge, engineId: stub.engineIdentifier, affinityKey: Int64.min, name: nil)
     #expect(
-      try NativeInteropReservedNamesFlutterApi.getInstance()?.release(value: "ping")
+      NativeInteropReservedNamesFlutterApiRegistrar.getInstance(registrar: stub, name: "") == nil)
+
+    NativeInteropReservedNamesFlutterApiRegistrar.register(
+      api: emptyNameBridge, engineId: stub.engineIdentifier, affinityKey: Int64.min, name: "")
+    #expect(
+      try NativeInteropReservedNamesFlutterApiRegistrar.getInstance(registrar: stub)?.release(
+        value: "ping")
         == "defaultFlutter:ping")
     #expect(
-      try NativeInteropReservedNamesFlutterApi.getInstance(name: "")?.release(value: "ping")
+      try NativeInteropReservedNamesFlutterApiRegistrar.getInstance(registrar: stub, name: "")?
+        .release(value: "ping")
         == "emptyStringFlutter:ping")
 
     NativeInteropReservedNamesFlutterApiRegistrar.unregister(api: emptyNameBridge, name: "")
-    #expect(NativeInteropReservedNamesFlutterApi.getInstance(name: "") == nil)
     #expect(
-      try NativeInteropReservedNamesFlutterApi.getInstance()?.release(value: "ping")
+      NativeInteropReservedNamesFlutterApiRegistrar.getInstance(registrar: stub, name: "") == nil)
+    #expect(
+      try NativeInteropReservedNamesFlutterApiRegistrar.getInstance(registrar: stub)?.release(
+        value: "ping")
         == "defaultFlutter:ping")
 
     NativeInteropReservedNamesFlutterApiRegistrar.unregister(api: defaultBridge)
-    #expect(NativeInteropReservedNamesFlutterApiRegistrar.getInstance() === preexistingDefault)
+    #expect(
+      NativeInteropReservedNamesFlutterApiRegistrar.getInstance(registrar: stub)
+        === preexistingDefault)
+  }
+
+  @Test
+  func sameHostApiOnTwoRegistrarsIsTrackedPerEngine() throws {
+    let name = "macosSameApiTwoEngines"
+    let registrar1 = StubPluginRegistrar()
+    let registrar2 = StubPluginRegistrar()
+    let api = FakeClassReservedApi("shared")
+    NativeInteropReservedNamesHostApiSetup.register(api: api, registrar: registrar1, name: name)
+    let setup1 = try #require(NativeInteropReservedNamesHostApiSetup.getInstance(name: name))
+    NativeInteropReservedNamesHostApiSetup.register(api: api, registrar: registrar2, name: name)
+    let setup2 = try #require(NativeInteropReservedNamesHostApiSetup.getInstance(name: name))
+    #expect(setup1 !== setup2)
+    #expect(
+      NativeInteropReservedNamesHostApiSetup.pigeonEngineKey(of: setup1)
+        == registrar1.engineIdentifier)
+    #expect(
+      NativeInteropReservedNamesHostApiSetup.pigeonEngineKey(of: setup2)
+        == registrar2.engineIdentifier)
+
+    // Re-registering from the same engine reuses its wrapper.
+    NativeInteropReservedNamesHostApiSetup.register(api: api, registrar: registrar1, name: name)
+    #expect(NativeInteropReservedNamesHostApiSetup.getInstance(name: name) === setup1)
+
+    // Out-of-order unregister removes only the entry for that engine.
+    NativeInteropReservedNamesHostApiSetup.unregister(api: api, registrar: registrar1, name: name)
+    #expect(NativeInteropReservedNamesHostApiSetup.getInstance(name: name) === setup2)
+    NativeInteropReservedNamesHostApiSetup.unregister(api: api, registrar: registrar2, name: name)
+    #expect(NativeInteropReservedNamesHostApiSetup.getInstance(name: name) == nil)
+  }
+
+  @Test
+  func hostApiUnregisterFromUnknownEngineFallsBackToIdentity() throws {
+    let name = "macosUnregisterFallback"
+    let registrar = StubPluginRegistrar()
+    let otherRegistrar = StubPluginRegistrar()
+    let api = FakeClassReservedApi("shared")
+    NativeInteropReservedNamesHostApiSetup.register(api: api, registrar: registrar, name: name)
+    NativeInteropReservedNamesHostApiSetup.unregister(
+      api: api, registrar: otherRegistrar, name: name)
+    #expect(NativeInteropReservedNamesHostApiSetup.getInstance(name: name) == nil)
+  }
+
+  @Test
+  func pigeonResolveInstancePrefersEngineIdThenAffinityThenTop() throws {
+    let name = "macosResolveOrder"
+    let noKey = Int64.min
+    let registrar1 = StubPluginRegistrar()
+    let registrar2 = StubPluginRegistrar()
+    let unrelated = StubPluginRegistrar()
+    let engine1 = registrar1.engineIdentifier
+    let engine2 = registrar2.engineIdentifier
+    let api1 = FakeClassReservedApi("shared")
+    let api2 = FakeClassReservedApi("other")
+    NativeInteropReservedNamesHostApiSetup.register(api: api1, registrar: registrar1, name: name)
+    let setup1 = try #require(NativeInteropReservedNamesHostApiSetup.getInstance(name: name))
+    NativeInteropReservedNamesHostApiSetup.register(api: api2, registrar: registrar2, name: name)
+    let setup2 = try #require(NativeInteropReservedNamesHostApiSetup.getInstance(name: name))
+    defer {
+      NativeInteropReservedNamesHostApiSetup.unregister(
+        api: api1, registrar: registrar1, name: name)
+      NativeInteropReservedNamesHostApiSetup.unregister(
+        api: api2, registrar: registrar2, name: name)
+    }
+
+    #expect(
+      NativeInteropReservedNamesHostApiSetup.pigeonResolveInstance(
+        engineId: engine1, affinityKey: engine2, name: name) === setup1)
+    #expect(
+      NativeInteropReservedNamesHostApiSetup.pigeonResolveInstance(
+        engineId: noKey, affinityKey: engine1, name: name) === setup1)
+    #expect(
+      NativeInteropReservedNamesHostApiSetup.pigeonResolveInstance(
+        engineId: unrelated.engineIdentifier, affinityKey: engine1, name: name) === setup1)
+    #expect(
+      NativeInteropReservedNamesHostApiSetup.pigeonResolveInstance(
+        engineId: unrelated.engineIdentifier, affinityKey: noKey, name: name) === setup2)
+    #expect(
+      NativeInteropReservedNamesHostApiSetup.pigeonResolveInstance(
+        engineId: noKey, affinityKey: noKey, name: name)
+        === setup2)
+    #expect(
+      NativeInteropReservedNamesHostApiSetup.pigeonResolveInstance(
+        engineId: engine1, affinityKey: engine2, name: "macosUnregistered") == nil)
+  }
+
+  @Test
+  func flutterApiLookupByRegistrarPrefersThatEngine() throws {
+    let name = "macosFlutterLookupByEngine"
+    let noKey = Int64.min
+    let registrar1 = StubPluginRegistrar()
+    let registrar2 = StubPluginRegistrar()
+    let unrelated = StubPluginRegistrar()
+    let bridge1 = FakeReservedNamesFlutterApiBridge("engine1")
+    let bridge2 = FakeReservedNamesFlutterApiBridge("engine2")
+    let affinityBridge = FakeReservedNamesFlutterApiBridge("affinity")
+    defer {
+      for bridge in [bridge1, bridge2, affinityBridge] {
+        NativeInteropReservedNamesFlutterApiRegistrar.unregister(api: bridge, name: name)
+      }
+    }
+    func release(_ registrar: FlutterPluginRegistrar) throws -> String? {
+      return try NativeInteropReservedNamesFlutterApiRegistrar.getInstance(
+        registrar: registrar, name: name)?.release(value: "ping")
+    }
+
+    NativeInteropReservedNamesFlutterApiRegistrar.register(
+      api: bridge1, engineId: registrar1.engineIdentifier, affinityKey: noKey, name: name)
+    NativeInteropReservedNamesFlutterApiRegistrar.register(
+      api: bridge2, engineId: registrar2.engineIdentifier, affinityKey: noKey, name: name)
+    #expect(try release(registrar1) == "engine1:ping")
+    #expect(try release(registrar2) == "engine2:ping")
+    #expect(try release(unrelated) == "engine2:ping")
+
+    // A registration with an unknown Dart engine id matches by affinity key.
+    NativeInteropReservedNamesFlutterApiRegistrar.register(
+      api: affinityBridge, engineId: noKey, affinityKey: registrar1.engineIdentifier, name: name)
+    NativeInteropReservedNamesFlutterApiRegistrar.unregister(api: bridge1, name: name)
+    #expect(try release(registrar1) == "affinity:ping")
+    #expect(try release(registrar2) == "engine2:ping")
   }
 }
 

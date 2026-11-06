@@ -1555,6 +1555,14 @@ abstract class NativeInteropHostIntegrationCoreApi {
   /// Reports whether Native Interop Host API calls from a secondary engine's
   /// Dart isolate succeeded.
   void reportSecondaryEngineCheck(bool success);
+
+  /// Returns the engine key that native code stored for this plugin's
+  /// default Host API registration.
+  int registeredEngineKey();
+
+  /// Returns whether this platform's plugin binding / registrar exposes an
+  /// engine identifier, so registrations should use exact engine keys.
+  bool pluginEngineIdentifierIsAvailable();
 }
 
 /// The core interface that the Dart platform_test code implements for host

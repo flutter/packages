@@ -3038,14 +3038,26 @@ abstract class Proxy {
 abstract class Api {
   int getInstance();
   void createWithNativeInteropApi();
+  void pigeonResolveInstance();
+  int pigeonEngineKey();
+  int pigeonEngineKeyOf();
 }
 
 @FlutterApi()
 abstract class Callbacks {
   void register();
   void dartApi();
+  void pigeonResolveInstance();
 }
 ''';
+
+    final reservedMethodNameMatchers = <Matcher>[
+      contains('Method name "getInstance" in API "Api"'),
+      contains('Method name "createWithNativeInteropApi" in API "Api"'),
+      contains('Method name "pigeonResolveInstance" in API "Api"'),
+      contains('Method name "pigeonEngineKey" in API "Api"'),
+      contains('Method name "pigeonEngineKeyOf" in API "Api"'),
+    ];
 
     test(
       'Dart rejects HostApi method names reserved by JNI interop code and allows register/dartApi on FlutterApi',
@@ -3055,10 +3067,7 @@ abstract class Callbacks {
           reservedMethodNamesSource,
           swiftOptions: const SwiftOptions(),
         );
-        expect(errors.map((Error e) => e.message), <Matcher>[
-          contains('Method name "getInstance" in API "Api"'),
-          contains('Method name "createWithNativeInteropApi" in API "Api"'),
-        ]);
+        expect(errors.map((Error e) => e.message), reservedMethodNameMatchers);
       },
     );
 
@@ -3070,10 +3079,7 @@ abstract class Callbacks {
           reservedMethodNamesSource,
           kotlinOptions: const KotlinOptions(),
         );
-        expect(errors.map((Error e) => e.message), <Matcher>[
-          contains('Method name "getInstance" in API "Api"'),
-          contains('Method name "createWithNativeInteropApi" in API "Api"'),
-        ]);
+        expect(errors.map((Error e) => e.message), reservedMethodNameMatchers);
       },
     );
 

@@ -6,6 +6,12 @@
 
 import Foundation
 
+#if canImport(Flutter)
+  import Flutter
+#elseif canImport(FlutterMacOS)
+  import FlutterMacOS
+#endif
+
 /// Error class for passing custom error details to Dart side.
 @objc final class PigeonError: NSObject, Error {
   @objc var code: String?
@@ -196,6 +202,68 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
   return value as! T?
 }
 
+/// Computes the keys that associate Native Interop registrations with a Flutter engine.
+///
+/// `Int64.min` means "no key". Exact keys match Dart's `PlatformDispatcher.instance.engineId`.
+/// When an exact key is unavailable, each engine messenger is assigned a negative synthetic key.
+private enum PigeonEngineKeys {
+  /// The sentinel for an unknown engine.
+  static let noKey: Int64 = Int64.min
+  private static let lock = NSLock()
+  private static let syntheticKeys = NSMapTable<AnyObject, NSNumber>.weakToStrongObjects()
+  private static var nextSyntheticKey: Int64 = -1
+
+  /// Returns `exactKey` if non-nil, otherwise the key previously assigned to `messenger`, otherwise
+  /// a new synthetic key for `messenger`.
+  static func key(messenger: AnyObject, exactKey: Int64?) -> Int64 {
+    if let exactKey = exactKey {
+      return exactKey
+    }
+    lock.lock()
+    defer { lock.unlock() }
+    if let existing = syntheticKeys.object(forKey: messenger) {
+      return existing.int64Value
+    }
+    let key = nextSyntheticKey
+    nextSyntheticKey -= 1
+    syntheticKeys.setObject(NSNumber(value: key), forKey: messenger)
+    return key
+  }
+
+  #if canImport(Flutter) || canImport(FlutterMacOS)
+    /// Keys already computed for each registrar, so `unregister` during engine teardown reuses the
+    /// key from registration even after the registrar's engine and messenger are gone.
+    private static let registrarKeys = NSMapTable<AnyObject, NSNumber>.weakToStrongObjects()
+
+    /// Returns the key for the engine that owns `registrar`, or `noKey` if it can't be determined.
+    static func key(for registrar: FlutterPluginRegistrar) -> Int64 {
+      let registrarObject = registrar as AnyObject
+      lock.lock()
+      let cached = registrarKeys.object(forKey: registrarObject)
+      lock.unlock()
+      if let cached = cached {
+        return cached.int64Value
+      }
+      var resolved = noKey
+      if registrarObject.responds(to: NSSelectorFromString("engineIdentifier")),
+        let identifier = registrarObject.value(forKey: "engineIdentifier") as? NSNumber
+      {
+        resolved = identifier.int64Value
+      } else if let messenger = registrarObject.value(forKey: "messenger") as AnyObject? {
+        // Read through KVC because the messenger can be nil while the engine is deallocating,
+        // even though it is declared non-null.
+        resolved = key(messenger: messenger, exactKey: nil)
+      }
+      if resolved != noKey {
+        lock.lock()
+        registrarKeys.setObject(NSNumber(value: resolved), forKey: registrarObject)
+        lock.unlock()
+      }
+      return resolved
+    }
+  #endif
+}
+
 @objc class NativeInteropExamplePigeonInternalNull: NSObject {}
 
 private class _PigeonFfiCodec {
@@ -361,31 +429,57 @@ protocol NativeInteropExampleApi: AnyObject {
     }
     return currentApi
   }
-  /// Registers `api` under `name` (or the default instance when `name` is nil).
-  ///
-  /// Registrations are kept in an ordered stack per name, and `getInstance` returns
-  /// the most recent one. Registering an instance that is already registered under
-  /// `name` moves it to the top of the stack.
-  static func register(api: NativeInteropExampleApi, name: String? = nil) {
+  /// The engine key this wrapper was registered with, guarded by `NativeInteropExampleApiInstanceTracker.lock`.
+  private var engineKey: Int64 = Int64.min
+
+  #if canImport(Flutter) || canImport(FlutterMacOS)
+    /// Registers `api` under `name` (or the default instance when `name` is nil).
+    ///
+    /// Registrations are kept in an ordered stack per name, and `getInstance` returns
+    /// the most recent one. Registering an instance that is already registered under
+    /// `name` moves it to the top of the stack.
+    ///
+    /// The registration is associated with the engine that owns `registrar`. The same
+    /// `api` registered from different engines is tracked as separate registrations.
+    static func register(
+      api: NativeInteropExampleApi, registrar: FlutterPluginRegistrar, name: String? = nil
+    ) {
+      register(api: api, engineKey: PigeonEngineKeys.key(for: registrar), name: name)
+    }
+
+    /// Removes `api` from the registrations under `name` (or the default instance
+    /// when `name` is nil), leaving other registrations in place.
+    ///
+    /// Instances are matched by identity. Does nothing if `api` is not registered.
+    ///
+    /// Prefers the registration made from the engine that owns `registrar`, and
+    /// otherwise removes every registration of `api` under `name`.
+    static func unregister(
+      api: NativeInteropExampleApi, registrar: FlutterPluginRegistrar, name: String? = nil
+    ) {
+      unregister(api: api, engineKey: PigeonEngineKeys.key(for: registrar), name: name)
+    }
+  #endif
+
+  fileprivate static func register(api: NativeInteropExampleApi, engineKey: Int64, name: String?) {
     let resolvedName = name ?? NativeInteropExamplePigeonInternal.defaultInstanceName
     NativeInteropExampleApiInstanceTracker.lock.lock()
     defer { NativeInteropExampleApiInstanceTracker.lock.unlock() }
     var list =
       NativeInteropExampleApiInstanceTracker.instancesOfNativeInteropExampleApi[resolvedName] ?? []
-    if let index = list.firstIndex(where: { $0.api === api }) {
+    if let index = list.firstIndex(where: { $0.api === api && $0.engineKey == engineKey }) {
       list.append(list.remove(at: index))
     } else {
       let wrapper = NativeInteropExampleApiSetup()
+      wrapper.engineKey = engineKey
       wrapper.api = api
       list.append(wrapper)
     }
     NativeInteropExampleApiInstanceTracker.instancesOfNativeInteropExampleApi[resolvedName] = list
   }
-  /// Removes `api` from the registrations under `name` (or the default instance
-  /// when `name` is nil), leaving other registrations in place.
-  ///
-  /// Instances are matched by identity. Does nothing if `api` is not registered.
-  static func unregister(api: NativeInteropExampleApi, name: String? = nil) {
+
+  fileprivate static func unregister(api: NativeInteropExampleApi, engineKey: Int64, name: String?)
+  {
     let resolvedName = name ?? NativeInteropExamplePigeonInternal.defaultInstanceName
     // Removed entries are kept alive until after unlocking so their deinit cannot run while the
     // non-recursive lock is held.
@@ -399,11 +493,13 @@ protocol NativeInteropExampleApi: AnyObject {
       else {
         return
       }
+      // Fall back to identity-only matching when no entry has this engine key.
+      let matchesKey = list.contains { $0.api === api && $0.engineKey == engineKey }
       list.removeAll { entry in
         guard let existing = entry.api else {
           return false
         }
-        if existing === api {
+        if existing === api && (!matchesKey || entry.engineKey == engineKey) {
           displaced.append(existing)
           displaced.append(entry)
           entry.api = nil
@@ -421,6 +517,7 @@ protocol NativeInteropExampleApi: AnyObject {
     }
     withExtendedLifetime(displaced) {}
   }
+
   /// Returns the most recently registered instance for `name` (or the default
   /// instance when `name` is nil), or nil if none is registered.
   ///
@@ -431,6 +528,39 @@ protocol NativeInteropExampleApi: AnyObject {
     defer { NativeInteropExampleApiInstanceTracker.lock.unlock() }
     return NativeInteropExampleApiInstanceTracker.instancesOfNativeInteropExampleApi[resolvedName]?
       .last
+  }
+
+  /// Returns the instance generated Dart code should use for `name` (or the default
+  /// instance when `name` is nil).
+  ///
+  /// Prefers the most recent registration whose engine key is `engineId`, then
+  /// `affinityKey`, then the most recent registration. `Int64.min` means unknown.
+  @objc static func pigeonResolveInstance(engineId: Int64, affinityKey: Int64, name: String?)
+    -> NativeInteropExampleApiSetup?
+  {
+    let resolvedName = name ?? NativeInteropExamplePigeonInternal.defaultInstanceName
+    NativeInteropExampleApiInstanceTracker.lock.lock()
+    defer { NativeInteropExampleApiInstanceTracker.lock.unlock() }
+    guard
+      let list = NativeInteropExampleApiInstanceTracker.instancesOfNativeInteropExampleApi[
+        resolvedName]
+    else {
+      return nil
+    }
+    if engineId != Int64.min, let match = list.last(where: { $0.engineKey == engineId }) {
+      return match
+    }
+    if affinityKey != Int64.min, let match = list.last(where: { $0.engineKey == affinityKey }) {
+      return match
+    }
+    return list.last
+  }
+
+  /// Returns the engine key `instance` was registered with, or `Int64.min` if unknown.
+  @objc static func pigeonEngineKey(of instance: NativeInteropExampleApiSetup) -> Int64 {
+    NativeInteropExampleApiInstanceTracker.lock.lock()
+    defer { NativeInteropExampleApiInstanceTracker.lock.unlock() }
+    return instance.engineKey
   }
   @objc func doSomething(wrappedError: PigeonError) {
     do {

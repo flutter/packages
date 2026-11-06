@@ -342,6 +342,20 @@ SWIFT_CLASS("_TtC6Runner28NativeInteropExampleApiSetup")
 /// different registrations.
 + (NativeInteropExampleApiSetup* _Nullable)getInstanceWithName:
     (NSString* _Nullable)name SWIFT_WARN_UNUSED_RESULT;
+/// Returns the instance generated Dart code should use for <code>name</code>
+/// (or the default instance when <code>name</code> is nil). Prefers the most
+/// recent registration whose engine key is <code>engineId</code>, then
+/// <code>affinityKey</code>, then the most recent registration.
+/// <code>Int64.min</code> means unknown.
++ (NativeInteropExampleApiSetup* _Nullable)
+    pigeonResolveInstanceWithEngineId:(int64_t)engineId
+                          affinityKey:(int64_t)affinityKey
+                                 name:(NSString* _Nullable)name
+    SWIFT_WARN_UNUSED_RESULT;
+/// Returns the engine key <code>instance</code> was registered with, or
+/// <code>Int64.min</code> if unknown.
++ (int64_t)pigeonEngineKeyOf:(NativeInteropExampleApiSetup* _Nonnull)instance
+    SWIFT_WARN_UNUSED_RESULT;
 - (void)doSomethingWithWrappedError:(PigeonError* _Nonnull)wrappedError;
 @end
 

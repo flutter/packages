@@ -1896,6 +1896,10 @@ abstract class NativeInteropHostIntegrationCoreApiForNativeInterop {
   bool isSecondaryEngineRegistrationReady();
 
   void reportSecondaryEngineCheck(bool success);
+
+  int registeredEngineKey();
+
+  bool pluginEngineIdentifierIsAvailable();
 }
 
 /// The core interface that each host language plugin must implement in
@@ -7562,6 +7566,54 @@ class NativeInteropHostIntegrationCoreApi {
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+  }
+
+  /// Returns the engine key that native code stored for this plugin's
+  /// default Host API registration.
+  Future<int> registeredEngineKey() async {
+    if (_nativeInteropApi != null) {
+      return _nativeInteropApi.registeredEngineKey();
+    }
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropHostIntegrationCoreApi.registeredEngineKey$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return pigeonVar_replyValue! as int;
+  }
+
+  /// Returns whether this platform's plugin binding / registrar exposes an
+  /// engine identifier, so registrations should use exact engine keys.
+  Future<bool> pluginEngineIdentifierIsAvailable() async {
+    if (_nativeInteropApi != null) {
+      return _nativeInteropApi.pluginEngineIdentifierIsAvailable();
+    }
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropHostIntegrationCoreApi.pluginEngineIdentifierIsAvailable$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return pigeonVar_replyValue! as bool;
   }
 }
 

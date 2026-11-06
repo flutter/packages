@@ -10,6 +10,8 @@ package com.example.test_plugin
 
 import android.util.Log
 import androidx.annotation.Keep
+import io.flutter.embedding.engine.FlutterEngine
+import io.flutter.embedding.engine.plugins.FlutterPlugin
 
 private object NativeInteropTestsPigeonUtils {
 
@@ -193,6 +195,54 @@ class NativeInteropTestsError(
 ) : RuntimeException()
 
 private const val defaultInstanceName = "PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u"
+
+/** Computes keys that identify the Flutter engine a registration belongs to. */
+private object NativeInteropTestsPigeonEngineKeys {
+  /** Sentinel meaning that no engine key is known. */
+  const val NO_KEY: Long = Long.MIN_VALUE
+
+  /** `FlutterPluginBinding.getEngineId`, which is missing on older Flutter versions. */
+  private val getEngineIdMethod: java.lang.reflect.Method? by lazy {
+    try {
+      FlutterPlugin.FlutterPluginBinding::class.java.getMethod("getEngineId")
+    } catch (e: Exception) {
+      null
+    }
+  }
+
+  /** Keys for engine messengers, used when an exact engine id is unavailable. */
+  private val messengerKeys = java.util.WeakHashMap<Any, Long>()
+
+  private var nextSyntheticKey: Long = -1L
+
+  /** Returns the key for the engine that [binding] belongs to. */
+  fun keyOf(binding: FlutterPlugin.FlutterPluginBinding): Long {
+    val method = getEngineIdMethod
+    if (method != null) {
+      try {
+        return method.invoke(binding) as Long
+      } catch (e: Exception) {
+        // Fall back to a messenger-based key.
+      }
+    }
+    return keyOfMessenger(binding.binaryMessenger)
+  }
+
+  /** Returns the key for [engine]. */
+  fun keyOf(engine: FlutterEngine): Long {
+    val key = engine.engineId
+    // Record the exact key so later lookups through a binding for this engine
+    // agree with it even when the binding cannot report the engine id.
+    kotlin.synchronized(messengerKeys) { messengerKeys[engine.dartExecutor] = key }
+    return key
+  }
+
+  private fun keyOfMessenger(messenger: Any): Long {
+    return kotlin.synchronized(messengerKeys) {
+      messengerKeys.getOrPut(messenger) { nextSyntheticKey-- }
+    }
+  }
+}
 
 @Keep
 enum class NativeInteropAnEnum(val raw: Int) {
@@ -1951,65 +2001,93 @@ interface NativeInteropHostIntegrationCoreApi {
    * Reports whether Native Interop Host API calls from a secondary engine's Dart isolate succeeded.
    */
   fun reportSecondaryEngineCheck(success: Boolean)
+  /**
+   * Returns the engine key that native code stored for this plugin's default Host API registration.
+   */
+  fun registeredEngineKey(): Long
+  /**
+   * Returns whether this platform's plugin binding / registrar exposes an engine identifier, so
+   * registrations should use exact engine keys.
+   */
+  fun pluginEngineIdentifierIsAvailable(): Boolean
 }
 
 @Keep
-class NativeInteropHostIntegrationCoreApiRegistrar private constructor() :
-    NativeInteropHostIntegrationCoreApi {
+class NativeInteropHostIntegrationCoreApiRegistrar
+private constructor(private val engineKey: Long) : NativeInteropHostIntegrationCoreApi {
   @Volatile private var api: NativeInteropHostIntegrationCoreApi? = null
 
   companion object {
     /**
-     * Registers [api] under [name] (or the default instance when [name] is null).
+     * Registers [api] under [name] (or the default instance when [name] is null) for the engine of
+     * the plugin binding [binding].
      *
      * Registrations are kept in an ordered stack per name, and [getInstance] returns the most
-     * recent one. Registering an instance that is already registered under [name] moves it to the
-     * top of the stack.
+     * recent one. Dart code running on an engine prefers the instance registered for that engine.
+     * Registering an instance that is already registered under [name] for the same engine moves it
+     * to the top of the stack.
      */
     @JvmStatic
     @Keep
-    fun register(api: NativeInteropHostIntegrationCoreApi, name: String? = null) {
-      val resolvedName = name ?: defaultInstanceName
-      kotlin.synchronized(NativeInteropHostIntegrationCoreApiInstances) {
-        val list =
-            NativeInteropHostIntegrationCoreApiInstances.getOrPut(resolvedName) { mutableListOf() }
-        val index = list.indexOfFirst { it.api === api }
-        if (index >= 0) {
-          list.add(list.removeAt(index))
-        } else {
-          val wrapper = NativeInteropHostIntegrationCoreApiRegistrar()
-          wrapper.api = api
-          list.add(wrapper)
-        }
-      }
+    fun register(
+        api: NativeInteropHostIntegrationCoreApi,
+        binding: FlutterPlugin.FlutterPluginBinding,
+        name: String? = null
+    ) {
+      registerWithKey(api, NativeInteropTestsPigeonEngineKeys.keyOf(binding), name)
+    }
+
+    /**
+     * Registers [api] under [name] (or the default instance when [name] is null) for the engine of
+     * [engine].
+     *
+     * Registrations are kept in an ordered stack per name, and [getInstance] returns the most
+     * recent one. Dart code running on an engine prefers the instance registered for that engine.
+     * Registering an instance that is already registered under [name] for the same engine moves it
+     * to the top of the stack.
+     */
+    @JvmStatic
+    @Keep
+    fun register(
+        api: NativeInteropHostIntegrationCoreApi,
+        engine: FlutterEngine,
+        name: String? = null
+    ) {
+      registerWithKey(api, NativeInteropTestsPigeonEngineKeys.keyOf(engine), name)
     }
 
     /**
      * Removes [api] from the registrations under [name] (or the default instance when [name] is
-     * null), leaving other registrations in place.
+     * null) for the engine of the plugin binding [binding], leaving other registrations in place.
      *
-     * Instances are matched by identity. Does nothing if [api] is not registered.
+     * Instances are matched by identity. If [api] is not registered for that engine, its
+     * registrations for any engine are removed. Does nothing if [api] is not registered.
      */
     @JvmStatic
     @Keep
-    fun unregister(api: NativeInteropHostIntegrationCoreApi, name: String? = null) {
-      val resolvedName = name ?: defaultInstanceName
-      kotlin.synchronized(NativeInteropHostIntegrationCoreApiInstances) {
-        val list = NativeInteropHostIntegrationCoreApiInstances[resolvedName]
-        if (list != null) {
-          val iterator = list.iterator()
-          while (iterator.hasNext()) {
-            val entry = iterator.next()
-            if (entry.api === api) {
-              entry.api = null
-              iterator.remove()
-            }
-          }
-          if (list.isEmpty()) {
-            NativeInteropHostIntegrationCoreApiInstances.remove(resolvedName)
-          }
-        }
-      }
+    fun unregister(
+        api: NativeInteropHostIntegrationCoreApi,
+        binding: FlutterPlugin.FlutterPluginBinding,
+        name: String? = null
+    ) {
+      unregisterWithKey(api, NativeInteropTestsPigeonEngineKeys.keyOf(binding), name)
+    }
+
+    /**
+     * Removes [api] from the registrations under [name] (or the default instance when [name] is
+     * null) for the engine of [engine], leaving other registrations in place.
+     *
+     * Instances are matched by identity. If [api] is not registered for that engine, its
+     * registrations for any engine are removed. Does nothing if [api] is not registered.
+     */
+    @JvmStatic
+    @Keep
+    fun unregister(
+        api: NativeInteropHostIntegrationCoreApi,
+        engine: FlutterEngine,
+        name: String? = null
+    ) {
+      unregisterWithKey(api, NativeInteropTestsPigeonEngineKeys.keyOf(engine), name)
     }
 
     /**
@@ -2024,6 +2102,95 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor() :
       val resolvedName = name ?: defaultInstanceName
       return kotlin.synchronized(NativeInteropHostIntegrationCoreApiInstances) {
         NativeInteropHostIntegrationCoreApiInstances[resolvedName]?.lastOrNull()
+      }
+    }
+
+    /**
+     * Returns the instance registered under [name] (or the default instance when [name] is null)
+     * for the engine identified by [engineId].
+     *
+     * Falls back to the most recent instance registered for [affinityKey], then to the most recent
+     * instance overall. Either key may be `Long.MIN_VALUE` when it is unknown.
+     *
+     * This is called by the generated Dart code and is not intended for direct use.
+     */
+    @JvmStatic
+    @Keep
+    fun pigeonResolveInstance(
+        engineId: Long,
+        affinityKey: Long,
+        name: String?
+    ): NativeInteropHostIntegrationCoreApiRegistrar? {
+      val resolvedName = name ?: defaultInstanceName
+      return kotlin.synchronized(NativeInteropHostIntegrationCoreApiInstances) {
+        val list =
+            NativeInteropHostIntegrationCoreApiInstances[resolvedName] ?: return@synchronized null
+        val exact =
+            if (engineId != NativeInteropTestsPigeonEngineKeys.NO_KEY)
+                list.lastOrNull { it.engineKey == engineId }
+            else null
+        val affine =
+            if (affinityKey != NativeInteropTestsPigeonEngineKeys.NO_KEY)
+                list.lastOrNull { it.engineKey == affinityKey }
+            else null
+        exact ?: affine ?: list.lastOrNull()
+      }
+    }
+
+    /**
+     * Returns the engine key that [instance] was registered with, or `Long.MIN_VALUE` if it is
+     * unknown.
+     *
+     * This is called by the generated Dart code and is not intended for direct use.
+     */
+    @JvmStatic
+    @Keep
+    fun pigeonEngineKeyOf(instance: NativeInteropHostIntegrationCoreApiRegistrar): Long {
+      return instance.engineKey
+    }
+
+    private fun registerWithKey(
+        api: NativeInteropHostIntegrationCoreApi,
+        engineKey: Long,
+        name: String?
+    ) {
+      val resolvedName = name ?: defaultInstanceName
+      kotlin.synchronized(NativeInteropHostIntegrationCoreApiInstances) {
+        val list =
+            NativeInteropHostIntegrationCoreApiInstances.getOrPut(resolvedName) { mutableListOf() }
+        val index = list.indexOfFirst { it.api === api && it.engineKey == engineKey }
+        if (index >= 0) {
+          list.add(list.removeAt(index))
+        } else {
+          val wrapper = NativeInteropHostIntegrationCoreApiRegistrar(engineKey)
+          wrapper.api = api
+          list.add(wrapper)
+        }
+      }
+    }
+
+    private fun unregisterWithKey(
+        api: NativeInteropHostIntegrationCoreApi,
+        engineKey: Long,
+        name: String?
+    ) {
+      val resolvedName = name ?: defaultInstanceName
+      kotlin.synchronized(NativeInteropHostIntegrationCoreApiInstances) {
+        val list = NativeInteropHostIntegrationCoreApiInstances[resolvedName]
+        if (list != null) {
+          val matchKey = list.any { it.api === api && it.engineKey == engineKey }
+          val iterator = list.iterator()
+          while (iterator.hasNext()) {
+            val entry = iterator.next()
+            if (entry.api === api && (!matchKey || entry.engineKey == engineKey)) {
+              entry.api = null
+              iterator.remove()
+            }
+          }
+          if (list.isEmpty()) {
+            NativeInteropHostIntegrationCoreApiInstances.remove(resolvedName)
+          }
+        }
       }
     }
   }
@@ -5121,6 +5288,35 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor() :
     throw NativeInteropTestsError(
         "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
+  /**
+   * Returns the engine key that native code stored for this plugin's default Host API registration.
+   */
+  override fun registeredEngineKey(): Long {
+    api?.let {
+      try {
+        return it.registeredEngineKey()
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+  }
+  /**
+   * Returns whether this platform's plugin binding / registrar exposes an engine identifier, so
+   * registrations should use exact engine keys.
+   */
+  override fun pluginEngineIdentifierIsAvailable(): Boolean {
+    api?.let {
+      try {
+        return it.pluginEngineIdentifierIsAvailable()
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+  }
 }
 /**
  * The core interface that the Dart platform_test code implements for host integration tests to call
@@ -5128,9 +5324,18 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor() :
  *
  * Generated class from Pigeon that represents Flutter messages that can be called from Kotlin.
  */
+/**
+ * A registered [NativeInteropFlutterIntegrationCoreApi] and the keys of the engine it belongs to.
+ */
+private class NativeInteropFlutterIntegrationCoreApiRegistration(
+    val api: NativeInteropFlutterIntegrationCoreApi,
+    val engineId: Long,
+    val affinityKey: Long
+)
+
 /// Map that stores instances
 private val registeredNativeInteropFlutterIntegrationCoreApi:
-    MutableMap<String, MutableList<NativeInteropFlutterIntegrationCoreApi>> =
+    MutableMap<String, MutableList<NativeInteropFlutterIntegrationCoreApiRegistration>> =
     mutableMapOf()
 
 /// Class that stores instances
@@ -5138,23 +5343,30 @@ private val registeredNativeInteropFlutterIntegrationCoreApi:
 class NativeInteropFlutterIntegrationCoreApiRegistrar private constructor() {
   companion object {
     /**
-     * Registers [api] under [name] (or the default instance when [name] is null).
+     * Registers [api] under [name] (or the default instance when [name] is null) for the engine
+     * identified by [engineId] and [affinityKey].
      *
-     * Registrations are kept in an ordered stack per name, and [getInstance] returns the most
-     * recent one. Registering an instance that is already registered under [name] moves it to the
-     * top of the stack.
+     * Either key may be `Long.MIN_VALUE` when it is unknown. Registering an instance that is
+     * already registered under [name] moves it to the top of the stack.
+     *
+     * This is called by the generated Dart code and is not intended for direct use.
      */
     @JvmStatic
     @Keep
-    fun register(api: NativeInteropFlutterIntegrationCoreApi, name: String? = null) {
+    fun register(
+        api: NativeInteropFlutterIntegrationCoreApi,
+        engineId: Long,
+        affinityKey: Long,
+        name: String?
+    ) {
       val resolvedName = name ?: defaultInstanceName
       kotlin.synchronized(registeredNativeInteropFlutterIntegrationCoreApi) {
         val list =
             registeredNativeInteropFlutterIntegrationCoreApi.getOrPut(resolvedName) {
               mutableListOf()
             }
-        list.removeAll { it === api }
-        list.add(api)
+        list.removeAll { it.api === api }
+        list.add(NativeInteropFlutterIntegrationCoreApiRegistration(api, engineId, affinityKey))
       }
     }
 
@@ -5163,15 +5375,17 @@ class NativeInteropFlutterIntegrationCoreApiRegistrar private constructor() {
      * null), leaving other registrations in place.
      *
      * Instances are matched by identity. Does nothing if [api] is not registered.
+     *
+     * This is called by the generated Dart code and is not intended for direct use.
      */
     @JvmStatic
     @Keep
-    fun unregister(api: NativeInteropFlutterIntegrationCoreApi, name: String? = null) {
+    fun unregister(api: NativeInteropFlutterIntegrationCoreApi, name: String?) {
       val resolvedName = name ?: defaultInstanceName
       kotlin.synchronized(registeredNativeInteropFlutterIntegrationCoreApi) {
         val list = registeredNativeInteropFlutterIntegrationCoreApi[resolvedName]
         if (list != null) {
-          list.removeAll { it === api }
+          list.removeAll { it.api === api }
           if (list.isEmpty()) {
             registeredNativeInteropFlutterIntegrationCoreApi.remove(resolvedName)
           }
@@ -5180,17 +5394,52 @@ class NativeInteropFlutterIntegrationCoreApiRegistrar private constructor() {
     }
 
     /**
-     * Returns the most recently registered instance for [name] (or the default instance when [name]
-     * is null), or null if none is registered.
+     * Returns the instance registered under [name] (or the default instance when [name] is null) by
+     * the Dart code running on the engine of the plugin binding [binding].
+     *
+     * Falls back to the most recently registered instance for [name] when none was registered for
+     * that engine, or returns null if none is registered.
      *
      * A null [name] and an empty [name] refer to different registrations.
      */
     @JvmStatic
     @Keep
-    fun getInstance(name: String? = null): NativeInteropFlutterIntegrationCoreApi? {
+    fun getInstance(
+        binding: FlutterPlugin.FlutterPluginBinding,
+        name: String? = null
+    ): NativeInteropFlutterIntegrationCoreApi? {
+      return getInstanceWithKey(NativeInteropTestsPigeonEngineKeys.keyOf(binding), name)
+    }
+
+    /**
+     * Returns the instance registered under [name] (or the default instance when [name] is null) by
+     * the Dart code running on the engine of [engine].
+     *
+     * Falls back to the most recently registered instance for [name] when none was registered for
+     * that engine, or returns null if none is registered.
+     *
+     * A null [name] and an empty [name] refer to different registrations.
+     */
+    @JvmStatic
+    @Keep
+    fun getInstance(
+        engine: FlutterEngine,
+        name: String? = null
+    ): NativeInteropFlutterIntegrationCoreApi? {
+      return getInstanceWithKey(NativeInteropTestsPigeonEngineKeys.keyOf(engine), name)
+    }
+
+    private fun getInstanceWithKey(
+        engineKey: Long,
+        name: String?
+    ): NativeInteropFlutterIntegrationCoreApi? {
       val resolvedName = name ?: defaultInstanceName
       return kotlin.synchronized(registeredNativeInteropFlutterIntegrationCoreApi) {
-        registeredNativeInteropFlutterIntegrationCoreApi[resolvedName]?.lastOrNull()
+        val list =
+            registeredNativeInteropFlutterIntegrationCoreApi[resolvedName]
+                ?: return@synchronized null
+        val match = list.lastOrNull { it.engineId == engineKey || it.affinityKey == engineKey }
+        (match ?: list.lastOrNull())?.api
       }
     }
   }
@@ -5544,62 +5793,81 @@ interface NativeInteropReservedNamesHostApi {
 }
 
 @Keep
-class NativeInteropReservedNamesHostApiRegistrar private constructor() :
+class NativeInteropReservedNamesHostApiRegistrar private constructor(private val engineKey: Long) :
     NativeInteropReservedNamesHostApi {
   @Volatile private var api: NativeInteropReservedNamesHostApi? = null
 
   companion object {
     /**
-     * Registers [api] under [name] (or the default instance when [name] is null).
+     * Registers [api] under [name] (or the default instance when [name] is null) for the engine of
+     * the plugin binding [binding].
      *
      * Registrations are kept in an ordered stack per name, and [getInstance] returns the most
-     * recent one. Registering an instance that is already registered under [name] moves it to the
-     * top of the stack.
+     * recent one. Dart code running on an engine prefers the instance registered for that engine.
+     * Registering an instance that is already registered under [name] for the same engine moves it
+     * to the top of the stack.
      */
     @JvmStatic
     @Keep
-    fun register(api: NativeInteropReservedNamesHostApi, name: String? = null) {
-      val resolvedName = name ?: defaultInstanceName
-      kotlin.synchronized(NativeInteropReservedNamesHostApiInstances) {
-        val list =
-            NativeInteropReservedNamesHostApiInstances.getOrPut(resolvedName) { mutableListOf() }
-        val index = list.indexOfFirst { it.api === api }
-        if (index >= 0) {
-          list.add(list.removeAt(index))
-        } else {
-          val wrapper = NativeInteropReservedNamesHostApiRegistrar()
-          wrapper.api = api
-          list.add(wrapper)
-        }
-      }
+    fun register(
+        api: NativeInteropReservedNamesHostApi,
+        binding: FlutterPlugin.FlutterPluginBinding,
+        name: String? = null
+    ) {
+      registerWithKey(api, NativeInteropTestsPigeonEngineKeys.keyOf(binding), name)
+    }
+
+    /**
+     * Registers [api] under [name] (or the default instance when [name] is null) for the engine of
+     * [engine].
+     *
+     * Registrations are kept in an ordered stack per name, and [getInstance] returns the most
+     * recent one. Dart code running on an engine prefers the instance registered for that engine.
+     * Registering an instance that is already registered under [name] for the same engine moves it
+     * to the top of the stack.
+     */
+    @JvmStatic
+    @Keep
+    fun register(
+        api: NativeInteropReservedNamesHostApi,
+        engine: FlutterEngine,
+        name: String? = null
+    ) {
+      registerWithKey(api, NativeInteropTestsPigeonEngineKeys.keyOf(engine), name)
     }
 
     /**
      * Removes [api] from the registrations under [name] (or the default instance when [name] is
-     * null), leaving other registrations in place.
+     * null) for the engine of the plugin binding [binding], leaving other registrations in place.
      *
-     * Instances are matched by identity. Does nothing if [api] is not registered.
+     * Instances are matched by identity. If [api] is not registered for that engine, its
+     * registrations for any engine are removed. Does nothing if [api] is not registered.
      */
     @JvmStatic
     @Keep
-    fun unregister(api: NativeInteropReservedNamesHostApi, name: String? = null) {
-      val resolvedName = name ?: defaultInstanceName
-      kotlin.synchronized(NativeInteropReservedNamesHostApiInstances) {
-        val list = NativeInteropReservedNamesHostApiInstances[resolvedName]
-        if (list != null) {
-          val iterator = list.iterator()
-          while (iterator.hasNext()) {
-            val entry = iterator.next()
-            if (entry.api === api) {
-              entry.api = null
-              iterator.remove()
-            }
-          }
-          if (list.isEmpty()) {
-            NativeInteropReservedNamesHostApiInstances.remove(resolvedName)
-          }
-        }
-      }
+    fun unregister(
+        api: NativeInteropReservedNamesHostApi,
+        binding: FlutterPlugin.FlutterPluginBinding,
+        name: String? = null
+    ) {
+      unregisterWithKey(api, NativeInteropTestsPigeonEngineKeys.keyOf(binding), name)
+    }
+
+    /**
+     * Removes [api] from the registrations under [name] (or the default instance when [name] is
+     * null) for the engine of [engine], leaving other registrations in place.
+     *
+     * Instances are matched by identity. If [api] is not registered for that engine, its
+     * registrations for any engine are removed. Does nothing if [api] is not registered.
+     */
+    @JvmStatic
+    @Keep
+    fun unregister(
+        api: NativeInteropReservedNamesHostApi,
+        engine: FlutterEngine,
+        name: String? = null
+    ) {
+      unregisterWithKey(api, NativeInteropTestsPigeonEngineKeys.keyOf(engine), name)
     }
 
     /**
@@ -5614,6 +5882,95 @@ class NativeInteropReservedNamesHostApiRegistrar private constructor() :
       val resolvedName = name ?: defaultInstanceName
       return kotlin.synchronized(NativeInteropReservedNamesHostApiInstances) {
         NativeInteropReservedNamesHostApiInstances[resolvedName]?.lastOrNull()
+      }
+    }
+
+    /**
+     * Returns the instance registered under [name] (or the default instance when [name] is null)
+     * for the engine identified by [engineId].
+     *
+     * Falls back to the most recent instance registered for [affinityKey], then to the most recent
+     * instance overall. Either key may be `Long.MIN_VALUE` when it is unknown.
+     *
+     * This is called by the generated Dart code and is not intended for direct use.
+     */
+    @JvmStatic
+    @Keep
+    fun pigeonResolveInstance(
+        engineId: Long,
+        affinityKey: Long,
+        name: String?
+    ): NativeInteropReservedNamesHostApiRegistrar? {
+      val resolvedName = name ?: defaultInstanceName
+      return kotlin.synchronized(NativeInteropReservedNamesHostApiInstances) {
+        val list =
+            NativeInteropReservedNamesHostApiInstances[resolvedName] ?: return@synchronized null
+        val exact =
+            if (engineId != NativeInteropTestsPigeonEngineKeys.NO_KEY)
+                list.lastOrNull { it.engineKey == engineId }
+            else null
+        val affine =
+            if (affinityKey != NativeInteropTestsPigeonEngineKeys.NO_KEY)
+                list.lastOrNull { it.engineKey == affinityKey }
+            else null
+        exact ?: affine ?: list.lastOrNull()
+      }
+    }
+
+    /**
+     * Returns the engine key that [instance] was registered with, or `Long.MIN_VALUE` if it is
+     * unknown.
+     *
+     * This is called by the generated Dart code and is not intended for direct use.
+     */
+    @JvmStatic
+    @Keep
+    fun pigeonEngineKeyOf(instance: NativeInteropReservedNamesHostApiRegistrar): Long {
+      return instance.engineKey
+    }
+
+    private fun registerWithKey(
+        api: NativeInteropReservedNamesHostApi,
+        engineKey: Long,
+        name: String?
+    ) {
+      val resolvedName = name ?: defaultInstanceName
+      kotlin.synchronized(NativeInteropReservedNamesHostApiInstances) {
+        val list =
+            NativeInteropReservedNamesHostApiInstances.getOrPut(resolvedName) { mutableListOf() }
+        val index = list.indexOfFirst { it.api === api && it.engineKey == engineKey }
+        if (index >= 0) {
+          list.add(list.removeAt(index))
+        } else {
+          val wrapper = NativeInteropReservedNamesHostApiRegistrar(engineKey)
+          wrapper.api = api
+          list.add(wrapper)
+        }
+      }
+    }
+
+    private fun unregisterWithKey(
+        api: NativeInteropReservedNamesHostApi,
+        engineKey: Long,
+        name: String?
+    ) {
+      val resolvedName = name ?: defaultInstanceName
+      kotlin.synchronized(NativeInteropReservedNamesHostApiInstances) {
+        val list = NativeInteropReservedNamesHostApiInstances[resolvedName]
+        if (list != null) {
+          val matchKey = list.any { it.api === api && it.engineKey == engineKey }
+          val iterator = list.iterator()
+          while (iterator.hasNext()) {
+            val entry = iterator.next()
+            if (entry.api === api && (!matchKey || entry.engineKey == engineKey)) {
+              entry.api = null
+              iterator.remove()
+            }
+          }
+          if (list.isEmpty()) {
+            NativeInteropReservedNamesHostApiInstances.remove(resolvedName)
+          }
+        }
       }
     }
   }
@@ -5883,9 +6240,16 @@ class NativeInteropReservedNamesHostApiRegistrar private constructor() :
  *
  * Generated class from Pigeon that represents Flutter messages that can be called from Kotlin.
  */
+/** A registered [NativeInteropReservedNamesFlutterApi] and the keys of the engine it belongs to. */
+private class NativeInteropReservedNamesFlutterApiRegistration(
+    val api: NativeInteropReservedNamesFlutterApi,
+    val engineId: Long,
+    val affinityKey: Long
+)
+
 /// Map that stores instances
 private val registeredNativeInteropReservedNamesFlutterApi:
-    MutableMap<String, MutableList<NativeInteropReservedNamesFlutterApi>> =
+    MutableMap<String, MutableList<NativeInteropReservedNamesFlutterApiRegistration>> =
     mutableMapOf()
 
 /// Class that stores instances
@@ -5893,23 +6257,30 @@ private val registeredNativeInteropReservedNamesFlutterApi:
 class NativeInteropReservedNamesFlutterApiRegistrar private constructor() {
   companion object {
     /**
-     * Registers [api] under [name] (or the default instance when [name] is null).
+     * Registers [api] under [name] (or the default instance when [name] is null) for the engine
+     * identified by [engineId] and [affinityKey].
      *
-     * Registrations are kept in an ordered stack per name, and [getInstance] returns the most
-     * recent one. Registering an instance that is already registered under [name] moves it to the
-     * top of the stack.
+     * Either key may be `Long.MIN_VALUE` when it is unknown. Registering an instance that is
+     * already registered under [name] moves it to the top of the stack.
+     *
+     * This is called by the generated Dart code and is not intended for direct use.
      */
     @JvmStatic
     @Keep
-    fun register(api: NativeInteropReservedNamesFlutterApi, name: String? = null) {
+    fun register(
+        api: NativeInteropReservedNamesFlutterApi,
+        engineId: Long,
+        affinityKey: Long,
+        name: String?
+    ) {
       val resolvedName = name ?: defaultInstanceName
       kotlin.synchronized(registeredNativeInteropReservedNamesFlutterApi) {
         val list =
             registeredNativeInteropReservedNamesFlutterApi.getOrPut(resolvedName) {
               mutableListOf()
             }
-        list.removeAll { it === api }
-        list.add(api)
+        list.removeAll { it.api === api }
+        list.add(NativeInteropReservedNamesFlutterApiRegistration(api, engineId, affinityKey))
       }
     }
 
@@ -5918,15 +6289,17 @@ class NativeInteropReservedNamesFlutterApiRegistrar private constructor() {
      * null), leaving other registrations in place.
      *
      * Instances are matched by identity. Does nothing if [api] is not registered.
+     *
+     * This is called by the generated Dart code and is not intended for direct use.
      */
     @JvmStatic
     @Keep
-    fun unregister(api: NativeInteropReservedNamesFlutterApi, name: String? = null) {
+    fun unregister(api: NativeInteropReservedNamesFlutterApi, name: String?) {
       val resolvedName = name ?: defaultInstanceName
       kotlin.synchronized(registeredNativeInteropReservedNamesFlutterApi) {
         val list = registeredNativeInteropReservedNamesFlutterApi[resolvedName]
         if (list != null) {
-          list.removeAll { it === api }
+          list.removeAll { it.api === api }
           if (list.isEmpty()) {
             registeredNativeInteropReservedNamesFlutterApi.remove(resolvedName)
           }
@@ -5935,17 +6308,51 @@ class NativeInteropReservedNamesFlutterApiRegistrar private constructor() {
     }
 
     /**
-     * Returns the most recently registered instance for [name] (or the default instance when [name]
-     * is null), or null if none is registered.
+     * Returns the instance registered under [name] (or the default instance when [name] is null) by
+     * the Dart code running on the engine of the plugin binding [binding].
+     *
+     * Falls back to the most recently registered instance for [name] when none was registered for
+     * that engine, or returns null if none is registered.
      *
      * A null [name] and an empty [name] refer to different registrations.
      */
     @JvmStatic
     @Keep
-    fun getInstance(name: String? = null): NativeInteropReservedNamesFlutterApi? {
+    fun getInstance(
+        binding: FlutterPlugin.FlutterPluginBinding,
+        name: String? = null
+    ): NativeInteropReservedNamesFlutterApi? {
+      return getInstanceWithKey(NativeInteropTestsPigeonEngineKeys.keyOf(binding), name)
+    }
+
+    /**
+     * Returns the instance registered under [name] (or the default instance when [name] is null) by
+     * the Dart code running on the engine of [engine].
+     *
+     * Falls back to the most recently registered instance for [name] when none was registered for
+     * that engine, or returns null if none is registered.
+     *
+     * A null [name] and an empty [name] refer to different registrations.
+     */
+    @JvmStatic
+    @Keep
+    fun getInstance(
+        engine: FlutterEngine,
+        name: String? = null
+    ): NativeInteropReservedNamesFlutterApi? {
+      return getInstanceWithKey(NativeInteropTestsPigeonEngineKeys.keyOf(engine), name)
+    }
+
+    private fun getInstanceWithKey(
+        engineKey: Long,
+        name: String?
+    ): NativeInteropReservedNamesFlutterApi? {
       val resolvedName = name ?: defaultInstanceName
       return kotlin.synchronized(registeredNativeInteropReservedNamesFlutterApi) {
-        registeredNativeInteropReservedNamesFlutterApi[resolvedName]?.lastOrNull()
+        val list =
+            registeredNativeInteropReservedNamesFlutterApi[resolvedName] ?: return@synchronized null
+        val match = list.lastOrNull { it.engineId == engineKey || it.affinityKey == engineKey }
+        (match ?: list.lastOrNull())?.api
       }
     }
   }

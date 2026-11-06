@@ -10,6 +10,7 @@ import 'dart:async';
 import 'dart:ffi';
 import 'dart:io' show Platform;
 import 'dart:typed_data' show Float32List, Float64List, Int32List, Int64List, Int8List, TypedData;
+import 'dart:ui' show PlatformDispatcher;
 
 import 'package:ffi/ffi.dart';
 import 'package:flutter/services.dart';
@@ -338,6 +339,16 @@ ffi_bridge.NativeInteropExampleNumberWrapper _convertToFfiNumberWrapper(Object v
 
 bool _isType<T>(Type t) => T == t;
 bool _isTypeOrNullableType<T>(Type t) => _isType<T>(t) || _isType<T?>(t);
+
+/// Native engine key meaning "no engine", matching `Long.MIN_VALUE` in Kotlin
+/// and `Int64.min` in Swift.
+const int _pigeonNoEngineKey = -9223372036854775808;
+
+/// The native engine key this isolate has been associated with, learned from
+/// the first native instance it resolves.
+///
+/// Used to route lookups when [PlatformDispatcher.engineId] is unavailable.
+int? _pigeonEngineAffinity;
 void _throwIfFfiError(ffi_bridge.PigeonError error) {
   if (error.code != null) {
     throw _wrapFfiError(error);
@@ -394,21 +405,48 @@ class _NativeInteropExampleApiForNativeInterop implements NativeInteropExampleAp
        _ffiApi = ffiApi;
 
   /// Returns instance of NativeInteropExampleApiForNativeInterop with specified [name] if one has been registered.
+  ///
+  /// Prefers an instance registered by this isolate's engine, falling back to
+  /// the most recently registered instance.
   static NativeInteropExampleApiForNativeInterop? getInstance({String? name}) {
     if (Platform.isAndroid) {
+      final int? engineId = PlatformDispatcher.instance.engineId;
       final JString? jName = name?.toJString();
       final jni_bridge.NativeInteropExampleApiRegistrar? link;
       try {
-        link = jni_bridge.NativeInteropExampleApiRegistrar.getInstance(jName);
+        link = jni_bridge.NativeInteropExampleApiRegistrar.pigeonResolveInstance(
+          engineId ?? _pigeonNoEngineKey,
+          _pigeonEngineAffinity ?? _pigeonNoEngineKey,
+          jName,
+        );
       } finally {
         jName?.release();
+      }
+      if (link != null && _pigeonEngineAffinity == null) {
+        final int linkEngineKey = jni_bridge.NativeInteropExampleApiRegistrar.pigeonEngineKeyOf(
+          link,
+        );
+        if (linkEngineKey != _pigeonNoEngineKey) {
+          _pigeonEngineAffinity = linkEngineKey;
+        }
       }
       return link == null
           ? null
           : _NativeInteropExampleApiForNativeInterop._withRegistrar(jniApi: link);
     } else if (Platform.isIOS || Platform.isMacOS) {
-      final ffi_bridge.NativeInteropExampleApiSetup? link = ffi_bridge
-          .NativeInteropExampleApiSetup.getInstanceWithName(name != null ? NSString(name) : null);
+      final int? engineId = PlatformDispatcher.instance.engineId;
+      final ffi_bridge.NativeInteropExampleApiSetup? link =
+          ffi_bridge.NativeInteropExampleApiSetup.pigeonResolveInstanceWithEngineId(
+            engineId ?? _pigeonNoEngineKey,
+            affinityKey: _pigeonEngineAffinity ?? _pigeonNoEngineKey,
+            name: name != null ? NSString(name) : null,
+          );
+      if (link != null && _pigeonEngineAffinity == null) {
+        final int linkEngineKey = ffi_bridge.NativeInteropExampleApiSetup.pigeonEngineKeyOf(link);
+        if (linkEngineKey != _pigeonNoEngineKey) {
+          _pigeonEngineAffinity = linkEngineKey;
+        }
+      }
       return link == null
           ? null
           : _NativeInteropExampleApiForNativeInterop._withRegistrar(ffiApi: link);

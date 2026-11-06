@@ -278,7 +278,7 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$Companion$$Methods
   static final _id_register = NativeInteropHostIntegrationCoreApiRegistrar$Companion._class
       .instanceMethodId(
         r'register',
-        r'(Lcom/example/test_plugin/NativeInteropHostIntegrationCoreApi;Ljava/lang/String;)V',
+        r'(Lcom/example/test_plugin/NativeInteropHostIntegrationCoreApi;Lio/flutter/embedding/engine/plugins/FlutterPlugin$FlutterPluginBinding;Ljava/lang/String;)V',
       );
 
   static final _register =
@@ -287,7 +287,9 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$Companion$$Methods
               jni$_.JThrowablePtr Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+                jni$_.VarArgs<
+                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                >,
               )
             >
           >('globalEnv_CallVoidMethod')
@@ -297,21 +299,72 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$Companion$$Methods
               jni$_.JMethodIDPtr,
               jni$_.Pointer<jni$_.Void>,
               jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `public fun register(api: com.example.test_plugin.NativeInteropHostIntegrationCoreApi, name: kotlin.String?): kotlin.Unit`
+  /// from: `public fun register(api: com.example.test_plugin.NativeInteropHostIntegrationCoreApi, binding: io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding, name: kotlin.String?): kotlin.Unit`
   void register(
     NativeInteropHostIntegrationCoreApi nativeInteropHostIntegrationCoreApi,
+    FlutterPlugin$$FlutterPluginBinding flutterPluginBinding,
     jni$_.JString? string,
   ) {
     final _$$selfRef = reference;
     final _$nativeInteropHostIntegrationCoreApi = nativeInteropHostIntegrationCoreApi.reference;
+    final _$flutterPluginBinding = flutterPluginBinding.reference;
     final _$string = string?.reference ?? jni$_.jNullReference;
     _register(
       _$$selfRef.pointer,
       _id_register.pointer,
       _$nativeInteropHostIntegrationCoreApi.pointer,
+      _$flutterPluginBinding.pointer,
+      _$string.pointer,
+    ).check();
+  }
+
+  static final _id_register$1 = NativeInteropHostIntegrationCoreApiRegistrar$Companion._class
+      .instanceMethodId(
+        r'register',
+        r'(Lcom/example/test_plugin/NativeInteropHostIntegrationCoreApi;Lio/flutter/embedding/engine/FlutterEngine;Ljava/lang/String;)V',
+      );
+
+  static final _register$1 =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JThrowablePtr Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<
+                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                >,
+              )
+            >
+          >('globalEnv_CallVoidMethod')
+          .asFunction<
+            jni$_.JThrowablePtr Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun register(api: com.example.test_plugin.NativeInteropHostIntegrationCoreApi, engine: io.flutter.embedding.engine.FlutterEngine, name: kotlin.String?): kotlin.Unit`
+  void register$1(
+    NativeInteropHostIntegrationCoreApi nativeInteropHostIntegrationCoreApi,
+    FlutterEngine flutterEngine,
+    jni$_.JString? string,
+  ) {
+    final _$$selfRef = reference;
+    final _$nativeInteropHostIntegrationCoreApi = nativeInteropHostIntegrationCoreApi.reference;
+    final _$flutterEngine = flutterEngine.reference;
+    final _$string = string?.reference ?? jni$_.jNullReference;
+    _register$1(
+      _$$selfRef.pointer,
+      _id_register$1.pointer,
+      _$nativeInteropHostIntegrationCoreApi.pointer,
+      _$flutterEngine.pointer,
       _$string.pointer,
     ).check();
   }
@@ -319,7 +372,7 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$Companion$$Methods
   static final _id_unregister = NativeInteropHostIntegrationCoreApiRegistrar$Companion._class
       .instanceMethodId(
         r'unregister',
-        r'(Lcom/example/test_plugin/NativeInteropHostIntegrationCoreApi;Ljava/lang/String;)V',
+        r'(Lcom/example/test_plugin/NativeInteropHostIntegrationCoreApi;Lio/flutter/embedding/engine/plugins/FlutterPlugin$FlutterPluginBinding;Ljava/lang/String;)V',
       );
 
   static final _unregister =
@@ -328,7 +381,9 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$Companion$$Methods
               jni$_.JThrowablePtr Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+                jni$_.VarArgs<
+                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                >,
               )
             >
           >('globalEnv_CallVoidMethod')
@@ -338,21 +393,72 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$Companion$$Methods
               jni$_.JMethodIDPtr,
               jni$_.Pointer<jni$_.Void>,
               jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `public fun unregister(api: com.example.test_plugin.NativeInteropHostIntegrationCoreApi, name: kotlin.String?): kotlin.Unit`
+  /// from: `public fun unregister(api: com.example.test_plugin.NativeInteropHostIntegrationCoreApi, binding: io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding, name: kotlin.String?): kotlin.Unit`
   void unregister(
     NativeInteropHostIntegrationCoreApi nativeInteropHostIntegrationCoreApi,
+    FlutterPlugin$$FlutterPluginBinding flutterPluginBinding,
     jni$_.JString? string,
   ) {
     final _$$selfRef = reference;
     final _$nativeInteropHostIntegrationCoreApi = nativeInteropHostIntegrationCoreApi.reference;
+    final _$flutterPluginBinding = flutterPluginBinding.reference;
     final _$string = string?.reference ?? jni$_.jNullReference;
     _unregister(
       _$$selfRef.pointer,
       _id_unregister.pointer,
       _$nativeInteropHostIntegrationCoreApi.pointer,
+      _$flutterPluginBinding.pointer,
+      _$string.pointer,
+    ).check();
+  }
+
+  static final _id_unregister$1 = NativeInteropHostIntegrationCoreApiRegistrar$Companion._class
+      .instanceMethodId(
+        r'unregister',
+        r'(Lcom/example/test_plugin/NativeInteropHostIntegrationCoreApi;Lio/flutter/embedding/engine/FlutterEngine;Ljava/lang/String;)V',
+      );
+
+  static final _unregister$1 =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JThrowablePtr Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<
+                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                >,
+              )
+            >
+          >('globalEnv_CallVoidMethod')
+          .asFunction<
+            jni$_.JThrowablePtr Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun unregister(api: com.example.test_plugin.NativeInteropHostIntegrationCoreApi, engine: io.flutter.embedding.engine.FlutterEngine, name: kotlin.String?): kotlin.Unit`
+  void unregister$1(
+    NativeInteropHostIntegrationCoreApi nativeInteropHostIntegrationCoreApi,
+    FlutterEngine flutterEngine,
+    jni$_.JString? string,
+  ) {
+    final _$$selfRef = reference;
+    final _$nativeInteropHostIntegrationCoreApi = nativeInteropHostIntegrationCoreApi.reference;
+    final _$flutterEngine = flutterEngine.reference;
+    final _$string = string?.reference ?? jni$_.jNullReference;
+    _unregister$1(
+      _$$selfRef.pointer,
+      _id_unregister$1.pointer,
+      _$nativeInteropHostIntegrationCoreApi.pointer,
+      _$flutterEngine.pointer,
       _$string.pointer,
     ).check();
   }
@@ -392,6 +498,89 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$Companion$$Methods
       _$string.pointer,
     ).object<NativeInteropHostIntegrationCoreApiRegistrar?>();
   }
+
+  static final _id_pigeonResolveInstance = NativeInteropHostIntegrationCoreApiRegistrar$Companion
+      ._class
+      .instanceMethodId(
+        r'pigeonResolveInstance',
+        r'(JJLjava/lang/String;)Lcom/example/test_plugin/NativeInteropHostIntegrationCoreApiRegistrar;',
+      );
+
+  static final _pigeonResolveInstance =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Int64, jni$_.Int64, jni$_.Pointer<jni$_.Void>)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              core$_.int,
+              core$_.int,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun pigeonResolveInstance(engineId: kotlin.Long, affinityKey: kotlin.Long, name: kotlin.String?): com.example.test_plugin.NativeInteropHostIntegrationCoreApiRegistrar?`
+  /// The returned object must be released after use, by calling the [release] method.
+  NativeInteropHostIntegrationCoreApiRegistrar? pigeonResolveInstance(
+    core$_.int j,
+    core$_.int j1,
+    jni$_.JString? string,
+  ) {
+    final _$$selfRef = reference;
+    final _$string = string?.reference ?? jni$_.jNullReference;
+    return _pigeonResolveInstance(
+      _$$selfRef.pointer,
+      _id_pigeonResolveInstance.pointer,
+      j,
+      j1,
+      _$string.pointer,
+    ).object<NativeInteropHostIntegrationCoreApiRegistrar?>();
+  }
+
+  static final _id_pigeonEngineKeyOf = NativeInteropHostIntegrationCoreApiRegistrar$Companion._class
+      .instanceMethodId(
+        r'pigeonEngineKeyOf',
+        r'(Lcom/example/test_plugin/NativeInteropHostIntegrationCoreApiRegistrar;)J',
+      );
+
+  static final _pigeonEngineKeyOf =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallLongMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun pigeonEngineKeyOf(instance: com.example.test_plugin.NativeInteropHostIntegrationCoreApiRegistrar): kotlin.Long`
+  core$_.int pigeonEngineKeyOf(
+    NativeInteropHostIntegrationCoreApiRegistrar nativeInteropHostIntegrationCoreApiRegistrar,
+  ) {
+    final _$$selfRef = reference;
+    final _$nativeInteropHostIntegrationCoreApiRegistrar =
+        nativeInteropHostIntegrationCoreApiRegistrar.reference;
+    return _pigeonEngineKeyOf(
+      _$$selfRef.pointer,
+      _id_pigeonEngineKeyOf.pointer,
+      _$nativeInteropHostIntegrationCoreApiRegistrar.pointer,
+    ).long;
+  }
 }
 
 final class $NativeInteropHostIntegrationCoreApiRegistrar$Companion$Type$
@@ -428,7 +617,7 @@ extension type NativeInteropHostIntegrationCoreApiRegistrar._(jni$_.JObject _$th
 
   static final _id_register = _class.staticMethodId(
     r'register',
-    r'(Lcom/example/test_plugin/NativeInteropHostIntegrationCoreApi;Ljava/lang/String;)V',
+    r'(Lcom/example/test_plugin/NativeInteropHostIntegrationCoreApi;Lio/flutter/embedding/engine/plugins/FlutterPlugin$FlutterPluginBinding;Ljava/lang/String;)V',
   );
 
   static final _register =
@@ -437,7 +626,9 @@ extension type NativeInteropHostIntegrationCoreApiRegistrar._(jni$_.JObject _$th
               jni$_.JThrowablePtr Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+                jni$_.VarArgs<
+                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                >,
               )
             >
           >('globalEnv_CallStaticVoidMethod')
@@ -447,28 +638,78 @@ extension type NativeInteropHostIntegrationCoreApiRegistrar._(jni$_.JObject _$th
               jni$_.JMethodIDPtr,
               jni$_.Pointer<jni$_.Void>,
               jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `static public final void register(com.example.test_plugin.NativeInteropHostIntegrationCoreApi nativeInteropHostIntegrationCoreApi, java.lang.String string)`
+  /// from: `static public final void register(com.example.test_plugin.NativeInteropHostIntegrationCoreApi nativeInteropHostIntegrationCoreApi, io.flutter.embedding.engine.plugins.FlutterPlugin$FlutterPluginBinding flutterPluginBinding, java.lang.String string)`
   static void register(
     NativeInteropHostIntegrationCoreApi nativeInteropHostIntegrationCoreApi,
+    FlutterPlugin$$FlutterPluginBinding flutterPluginBinding,
     jni$_.JString? string,
   ) {
     final _$$classRef = _class.reference;
     final _$nativeInteropHostIntegrationCoreApi = nativeInteropHostIntegrationCoreApi.reference;
+    final _$flutterPluginBinding = flutterPluginBinding.reference;
     final _$string = string?.reference ?? jni$_.jNullReference;
     _register(
       _$$classRef.pointer,
       _id_register.pointer,
       _$nativeInteropHostIntegrationCoreApi.pointer,
+      _$flutterPluginBinding.pointer,
+      _$string.pointer,
+    ).check();
+  }
+
+  static final _id_register$1 = _class.staticMethodId(
+    r'register',
+    r'(Lcom/example/test_plugin/NativeInteropHostIntegrationCoreApi;Lio/flutter/embedding/engine/FlutterEngine;Ljava/lang/String;)V',
+  );
+
+  static final _register$1 =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JThrowablePtr Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<
+                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                >,
+              )
+            >
+          >('globalEnv_CallStaticVoidMethod')
+          .asFunction<
+            jni$_.JThrowablePtr Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `static public final void register(com.example.test_plugin.NativeInteropHostIntegrationCoreApi nativeInteropHostIntegrationCoreApi, io.flutter.embedding.engine.FlutterEngine flutterEngine, java.lang.String string)`
+  static void register$1(
+    NativeInteropHostIntegrationCoreApi nativeInteropHostIntegrationCoreApi,
+    FlutterEngine flutterEngine,
+    jni$_.JString? string,
+  ) {
+    final _$$classRef = _class.reference;
+    final _$nativeInteropHostIntegrationCoreApi = nativeInteropHostIntegrationCoreApi.reference;
+    final _$flutterEngine = flutterEngine.reference;
+    final _$string = string?.reference ?? jni$_.jNullReference;
+    _register$1(
+      _$$classRef.pointer,
+      _id_register$1.pointer,
+      _$nativeInteropHostIntegrationCoreApi.pointer,
+      _$flutterEngine.pointer,
       _$string.pointer,
     ).check();
   }
 
   static final _id_unregister = _class.staticMethodId(
     r'unregister',
-    r'(Lcom/example/test_plugin/NativeInteropHostIntegrationCoreApi;Ljava/lang/String;)V',
+    r'(Lcom/example/test_plugin/NativeInteropHostIntegrationCoreApi;Lio/flutter/embedding/engine/plugins/FlutterPlugin$FlutterPluginBinding;Ljava/lang/String;)V',
   );
 
   static final _unregister =
@@ -477,7 +718,9 @@ extension type NativeInteropHostIntegrationCoreApiRegistrar._(jni$_.JObject _$th
               jni$_.JThrowablePtr Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+                jni$_.VarArgs<
+                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                >,
               )
             >
           >('globalEnv_CallStaticVoidMethod')
@@ -487,21 +730,71 @@ extension type NativeInteropHostIntegrationCoreApiRegistrar._(jni$_.JObject _$th
               jni$_.JMethodIDPtr,
               jni$_.Pointer<jni$_.Void>,
               jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `static public final void unregister(com.example.test_plugin.NativeInteropHostIntegrationCoreApi nativeInteropHostIntegrationCoreApi, java.lang.String string)`
+  /// from: `static public final void unregister(com.example.test_plugin.NativeInteropHostIntegrationCoreApi nativeInteropHostIntegrationCoreApi, io.flutter.embedding.engine.plugins.FlutterPlugin$FlutterPluginBinding flutterPluginBinding, java.lang.String string)`
   static void unregister(
     NativeInteropHostIntegrationCoreApi nativeInteropHostIntegrationCoreApi,
+    FlutterPlugin$$FlutterPluginBinding flutterPluginBinding,
     jni$_.JString? string,
   ) {
     final _$$classRef = _class.reference;
     final _$nativeInteropHostIntegrationCoreApi = nativeInteropHostIntegrationCoreApi.reference;
+    final _$flutterPluginBinding = flutterPluginBinding.reference;
     final _$string = string?.reference ?? jni$_.jNullReference;
     _unregister(
       _$$classRef.pointer,
       _id_unregister.pointer,
       _$nativeInteropHostIntegrationCoreApi.pointer,
+      _$flutterPluginBinding.pointer,
+      _$string.pointer,
+    ).check();
+  }
+
+  static final _id_unregister$1 = _class.staticMethodId(
+    r'unregister',
+    r'(Lcom/example/test_plugin/NativeInteropHostIntegrationCoreApi;Lio/flutter/embedding/engine/FlutterEngine;Ljava/lang/String;)V',
+  );
+
+  static final _unregister$1 =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JThrowablePtr Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<
+                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                >,
+              )
+            >
+          >('globalEnv_CallStaticVoidMethod')
+          .asFunction<
+            jni$_.JThrowablePtr Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `static public final void unregister(com.example.test_plugin.NativeInteropHostIntegrationCoreApi nativeInteropHostIntegrationCoreApi, io.flutter.embedding.engine.FlutterEngine flutterEngine, java.lang.String string)`
+  static void unregister$1(
+    NativeInteropHostIntegrationCoreApi nativeInteropHostIntegrationCoreApi,
+    FlutterEngine flutterEngine,
+    jni$_.JString? string,
+  ) {
+    final _$$classRef = _class.reference;
+    final _$nativeInteropHostIntegrationCoreApi = nativeInteropHostIntegrationCoreApi.reference;
+    final _$flutterEngine = flutterEngine.reference;
+    final _$string = string?.reference ?? jni$_.jNullReference;
+    _unregister$1(
+      _$$classRef.pointer,
+      _id_unregister$1.pointer,
+      _$nativeInteropHostIntegrationCoreApi.pointer,
+      _$flutterEngine.pointer,
       _$string.pointer,
     ).check();
   }
@@ -541,11 +834,55 @@ extension type NativeInteropHostIntegrationCoreApiRegistrar._(jni$_.JObject _$th
     ).object<NativeInteropHostIntegrationCoreApiRegistrar?>();
   }
 
-  static final _id_new$ = _class.constructorId(
-    r'(Lkotlin/jvm/internal/DefaultConstructorMarker;)V',
+  static final _id_pigeonResolveInstance = _class.staticMethodId(
+    r'pigeonResolveInstance',
+    r'(JJLjava/lang/String;)Lcom/example/test_plugin/NativeInteropHostIntegrationCoreApiRegistrar;',
   );
 
-  static final _new$ =
+  static final _pigeonResolveInstance =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Int64, jni$_.Int64, jni$_.Pointer<jni$_.Void>)>,
+              )
+            >
+          >('globalEnv_CallStaticObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              core$_.int,
+              core$_.int,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `static public final com.example.test_plugin.NativeInteropHostIntegrationCoreApiRegistrar pigeonResolveInstance(long j, long j1, java.lang.String string)`
+  /// The returned object must be released after use, by calling the [release] method.
+  static NativeInteropHostIntegrationCoreApiRegistrar? pigeonResolveInstance(
+    core$_.int j,
+    core$_.int j1,
+    jni$_.JString? string,
+  ) {
+    final _$$classRef = _class.reference;
+    final _$string = string?.reference ?? jni$_.jNullReference;
+    return _pigeonResolveInstance(
+      _$$classRef.pointer,
+      _id_pigeonResolveInstance.pointer,
+      j,
+      j1,
+      _$string.pointer,
+    ).object<NativeInteropHostIntegrationCoreApiRegistrar?>();
+  }
+
+  static final _id_pigeonEngineKeyOf = _class.staticMethodId(
+    r'pigeonEngineKeyOf',
+    r'(Lcom/example/test_plugin/NativeInteropHostIntegrationCoreApiRegistrar;)J',
+  );
+
+  static final _pigeonEngineKeyOf =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -554,7 +891,7 @@ extension type NativeInteropHostIntegrationCoreApiRegistrar._(jni$_.JObject _$th
                 jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
               )
             >
-          >('globalEnv_NewObject')
+          >('globalEnv_CallStaticLongMethod')
           .asFunction<
             jni$_.JniResult Function(
               jni$_.Pointer<jni$_.Void>,
@@ -563,9 +900,47 @@ extension type NativeInteropHostIntegrationCoreApiRegistrar._(jni$_.JObject _$th
             )
           >();
 
-  /// from: `synthetic public void <init>(kotlin.jvm.internal.DefaultConstructorMarker defaultConstructorMarker)`
+  /// from: `static public final long pigeonEngineKeyOf(com.example.test_plugin.NativeInteropHostIntegrationCoreApiRegistrar nativeInteropHostIntegrationCoreApiRegistrar)`
+  static core$_.int pigeonEngineKeyOf(
+    NativeInteropHostIntegrationCoreApiRegistrar nativeInteropHostIntegrationCoreApiRegistrar,
+  ) {
+    final _$$classRef = _class.reference;
+    final _$nativeInteropHostIntegrationCoreApiRegistrar =
+        nativeInteropHostIntegrationCoreApiRegistrar.reference;
+    return _pigeonEngineKeyOf(
+      _$$classRef.pointer,
+      _id_pigeonEngineKeyOf.pointer,
+      _$nativeInteropHostIntegrationCoreApiRegistrar.pointer,
+    ).long;
+  }
+
+  static final _id_new$ = _class.constructorId(
+    r'(JLkotlin/jvm/internal/DefaultConstructorMarker;)V',
+  );
+
+  static final _new$ =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Int64, jni$_.Pointer<jni$_.Void>)>,
+              )
+            >
+          >('globalEnv_NewObject')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              core$_.int,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `synthetic public void <init>(long j, kotlin.jvm.internal.DefaultConstructorMarker defaultConstructorMarker)`
   /// The returned object must be released after use, by calling the [release] method.
   factory NativeInteropHostIntegrationCoreApiRegistrar(
+    core$_.int j,
     DefaultConstructorMarker? defaultConstructorMarker,
   ) {
     final _$$classRef = _class.reference;
@@ -573,6 +948,7 @@ extension type NativeInteropHostIntegrationCoreApiRegistrar._(jni$_.JObject _$th
     return _new$(
       _$$classRef.pointer,
       _id_new$.pointer,
+      j,
       _$defaultConstructorMarker.pointer,
     ).object<NativeInteropHostIntegrationCoreApiRegistrar>();
   }
@@ -11087,6 +11463,44 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
       z ? 1 : 0,
     ).check();
   }
+
+  static final _id_registeredEngineKey = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'registeredEngineKey', r'()J');
+
+  static final _registeredEngineKey =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_CallLongMethod')
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
+
+  /// from: `public fun registeredEngineKey(): kotlin.Long`
+  core$_.int registeredEngineKey() {
+    final _$$selfRef = reference;
+    return _registeredEngineKey(_$$selfRef.pointer, _id_registeredEngineKey.pointer).long;
+  }
+
+  static final _id_pluginEngineIdentifierIsAvailable = NativeInteropHostIntegrationCoreApiRegistrar
+      ._class
+      .instanceMethodId(r'pluginEngineIdentifierIsAvailable', r'()Z');
+
+  static final _pluginEngineIdentifierIsAvailable =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_CallBooleanMethod')
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
+
+  /// from: `public fun pluginEngineIdentifierIsAvailable(): kotlin.Boolean`
+  core$_.bool pluginEngineIdentifierIsAvailable() {
+    final _$$selfRef = reference;
+    return _pluginEngineIdentifierIsAvailable(
+      _$$selfRef.pointer,
+      _id_pluginEngineIdentifierIsAvailable.pointer,
+    ).boolean;
+  }
 }
 
 final class $NativeInteropHostIntegrationCoreApiRegistrar$Type$
@@ -18476,7 +18890,7 @@ extension NativeInteropFlutterIntegrationCoreApiRegistrar$Companion$$Methods
   static final _id_register = NativeInteropFlutterIntegrationCoreApiRegistrar$Companion._class
       .instanceMethodId(
         r'register',
-        r'(Lcom/example/test_plugin/NativeInteropFlutterIntegrationCoreApi;Ljava/lang/String;)V',
+        r'(Lcom/example/test_plugin/NativeInteropFlutterIntegrationCoreApi;JJLjava/lang/String;)V',
       );
 
   static final _register =
@@ -18485,7 +18899,9 @@ extension NativeInteropFlutterIntegrationCoreApiRegistrar$Companion$$Methods
               jni$_.JThrowablePtr Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+                jni$_.VarArgs<
+                  (jni$_.Pointer<jni$_.Void>, jni$_.Int64, jni$_.Int64, jni$_.Pointer<jni$_.Void>)
+                >,
               )
             >
           >('globalEnv_CallVoidMethod')
@@ -18494,13 +18910,17 @@ extension NativeInteropFlutterIntegrationCoreApiRegistrar$Companion$$Methods
               jni$_.Pointer<jni$_.Void>,
               jni$_.JMethodIDPtr,
               jni$_.Pointer<jni$_.Void>,
+              core$_.int,
+              core$_.int,
               jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `public fun register(api: com.example.test_plugin.NativeInteropFlutterIntegrationCoreApi, name: kotlin.String?): kotlin.Unit`
+  /// from: `public fun register(api: com.example.test_plugin.NativeInteropFlutterIntegrationCoreApi, engineId: kotlin.Long, affinityKey: kotlin.Long, name: kotlin.String?): kotlin.Unit`
   void register(
     NativeInteropFlutterIntegrationCoreApi nativeInteropFlutterIntegrationCoreApi,
+    core$_.int j,
+    core$_.int j1,
     jni$_.JString? string,
   ) {
     final _$$selfRef = reference;
@@ -18511,6 +18931,8 @@ extension NativeInteropFlutterIntegrationCoreApiRegistrar$Companion$$Methods
       _$$selfRef.pointer,
       _id_register.pointer,
       _$nativeInteropFlutterIntegrationCoreApi.pointer,
+      j,
+      j1,
       _$string.pointer,
     ).check();
   }
@@ -18560,7 +18982,7 @@ extension NativeInteropFlutterIntegrationCoreApiRegistrar$Companion$$Methods
   static final _id_getInstance = NativeInteropFlutterIntegrationCoreApiRegistrar$Companion._class
       .instanceMethodId(
         r'getInstance',
-        r'(Ljava/lang/String;)Lcom/example/test_plugin/NativeInteropFlutterIntegrationCoreApi;',
+        r'(Lio/flutter/embedding/engine/plugins/FlutterPlugin$FlutterPluginBinding;Ljava/lang/String;)Lcom/example/test_plugin/NativeInteropFlutterIntegrationCoreApi;',
       );
 
   static final _getInstance =
@@ -18569,7 +18991,7 @@ extension NativeInteropFlutterIntegrationCoreApiRegistrar$Companion$$Methods
               jni$_.JniResult Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
               )
             >
           >('globalEnv_CallObjectMethod')
@@ -18578,17 +19000,65 @@ extension NativeInteropFlutterIntegrationCoreApiRegistrar$Companion$$Methods
               jni$_.Pointer<jni$_.Void>,
               jni$_.JMethodIDPtr,
               jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `public fun getInstance(name: kotlin.String?): com.example.test_plugin.NativeInteropFlutterIntegrationCoreApi?`
+  /// from: `public fun getInstance(binding: io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding, name: kotlin.String?): com.example.test_plugin.NativeInteropFlutterIntegrationCoreApi?`
   /// The returned object must be released after use, by calling the [release] method.
-  NativeInteropFlutterIntegrationCoreApi? getInstance(jni$_.JString? string) {
+  NativeInteropFlutterIntegrationCoreApi? getInstance(
+    FlutterPlugin$$FlutterPluginBinding flutterPluginBinding,
+    jni$_.JString? string,
+  ) {
     final _$$selfRef = reference;
+    final _$flutterPluginBinding = flutterPluginBinding.reference;
     final _$string = string?.reference ?? jni$_.jNullReference;
     return _getInstance(
       _$$selfRef.pointer,
       _id_getInstance.pointer,
+      _$flutterPluginBinding.pointer,
+      _$string.pointer,
+    ).object<NativeInteropFlutterIntegrationCoreApi?>();
+  }
+
+  static final _id_getInstance$1 = NativeInteropFlutterIntegrationCoreApiRegistrar$Companion._class
+      .instanceMethodId(
+        r'getInstance',
+        r'(Lio/flutter/embedding/engine/FlutterEngine;Ljava/lang/String;)Lcom/example/test_plugin/NativeInteropFlutterIntegrationCoreApi;',
+      );
+
+  static final _getInstance$1 =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun getInstance(engine: io.flutter.embedding.engine.FlutterEngine, name: kotlin.String?): com.example.test_plugin.NativeInteropFlutterIntegrationCoreApi?`
+  /// The returned object must be released after use, by calling the [release] method.
+  NativeInteropFlutterIntegrationCoreApi? getInstance$1(
+    FlutterEngine flutterEngine,
+    jni$_.JString? string,
+  ) {
+    final _$$selfRef = reference;
+    final _$flutterEngine = flutterEngine.reference;
+    final _$string = string?.reference ?? jni$_.jNullReference;
+    return _getInstance$1(
+      _$$selfRef.pointer,
+      _id_getInstance$1.pointer,
+      _$flutterEngine.pointer,
       _$string.pointer,
     ).object<NativeInteropFlutterIntegrationCoreApi?>();
   }
@@ -18628,7 +19098,7 @@ extension type NativeInteropFlutterIntegrationCoreApiRegistrar._(jni$_.JObject _
 
   static final _id_register = _class.staticMethodId(
     r'register',
-    r'(Lcom/example/test_plugin/NativeInteropFlutterIntegrationCoreApi;Ljava/lang/String;)V',
+    r'(Lcom/example/test_plugin/NativeInteropFlutterIntegrationCoreApi;JJLjava/lang/String;)V',
   );
 
   static final _register =
@@ -18637,7 +19107,9 @@ extension type NativeInteropFlutterIntegrationCoreApiRegistrar._(jni$_.JObject _
               jni$_.JThrowablePtr Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+                jni$_.VarArgs<
+                  (jni$_.Pointer<jni$_.Void>, jni$_.Int64, jni$_.Int64, jni$_.Pointer<jni$_.Void>)
+                >,
               )
             >
           >('globalEnv_CallStaticVoidMethod')
@@ -18646,13 +19118,17 @@ extension type NativeInteropFlutterIntegrationCoreApiRegistrar._(jni$_.JObject _
               jni$_.Pointer<jni$_.Void>,
               jni$_.JMethodIDPtr,
               jni$_.Pointer<jni$_.Void>,
+              core$_.int,
+              core$_.int,
               jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `static public final void register(com.example.test_plugin.NativeInteropFlutterIntegrationCoreApi nativeInteropFlutterIntegrationCoreApi, java.lang.String string)`
+  /// from: `static public final void register(com.example.test_plugin.NativeInteropFlutterIntegrationCoreApi nativeInteropFlutterIntegrationCoreApi, long j, long j1, java.lang.String string)`
   static void register(
     NativeInteropFlutterIntegrationCoreApi nativeInteropFlutterIntegrationCoreApi,
+    core$_.int j,
+    core$_.int j1,
     jni$_.JString? string,
   ) {
     final _$$classRef = _class.reference;
@@ -18663,6 +19139,8 @@ extension type NativeInteropFlutterIntegrationCoreApiRegistrar._(jni$_.JObject _
       _$$classRef.pointer,
       _id_register.pointer,
       _$nativeInteropFlutterIntegrationCoreApi.pointer,
+      j,
+      j1,
       _$string.pointer,
     ).check();
   }
@@ -18710,7 +19188,7 @@ extension type NativeInteropFlutterIntegrationCoreApiRegistrar._(jni$_.JObject _
 
   static final _id_getInstance = _class.staticMethodId(
     r'getInstance',
-    r'(Ljava/lang/String;)Lcom/example/test_plugin/NativeInteropFlutterIntegrationCoreApi;',
+    r'(Lio/flutter/embedding/engine/plugins/FlutterPlugin$FlutterPluginBinding;Ljava/lang/String;)Lcom/example/test_plugin/NativeInteropFlutterIntegrationCoreApi;',
   );
 
   static final _getInstance =
@@ -18719,7 +19197,7 @@ extension type NativeInteropFlutterIntegrationCoreApiRegistrar._(jni$_.JObject _
               jni$_.JniResult Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
               )
             >
           >('globalEnv_CallStaticObjectMethod')
@@ -18728,17 +19206,64 @@ extension type NativeInteropFlutterIntegrationCoreApiRegistrar._(jni$_.JObject _
               jni$_.Pointer<jni$_.Void>,
               jni$_.JMethodIDPtr,
               jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `static public final com.example.test_plugin.NativeInteropFlutterIntegrationCoreApi getInstance(java.lang.String string)`
+  /// from: `static public final com.example.test_plugin.NativeInteropFlutterIntegrationCoreApi getInstance(io.flutter.embedding.engine.plugins.FlutterPlugin$FlutterPluginBinding flutterPluginBinding, java.lang.String string)`
   /// The returned object must be released after use, by calling the [release] method.
-  static NativeInteropFlutterIntegrationCoreApi? getInstance(jni$_.JString? string) {
+  static NativeInteropFlutterIntegrationCoreApi? getInstance(
+    FlutterPlugin$$FlutterPluginBinding flutterPluginBinding,
+    jni$_.JString? string,
+  ) {
     final _$$classRef = _class.reference;
+    final _$flutterPluginBinding = flutterPluginBinding.reference;
     final _$string = string?.reference ?? jni$_.jNullReference;
     return _getInstance(
       _$$classRef.pointer,
       _id_getInstance.pointer,
+      _$flutterPluginBinding.pointer,
+      _$string.pointer,
+    ).object<NativeInteropFlutterIntegrationCoreApi?>();
+  }
+
+  static final _id_getInstance$1 = _class.staticMethodId(
+    r'getInstance',
+    r'(Lio/flutter/embedding/engine/FlutterEngine;Ljava/lang/String;)Lcom/example/test_plugin/NativeInteropFlutterIntegrationCoreApi;',
+  );
+
+  static final _getInstance$1 =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+              )
+            >
+          >('globalEnv_CallStaticObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `static public final com.example.test_plugin.NativeInteropFlutterIntegrationCoreApi getInstance(io.flutter.embedding.engine.FlutterEngine flutterEngine, java.lang.String string)`
+  /// The returned object must be released after use, by calling the [release] method.
+  static NativeInteropFlutterIntegrationCoreApi? getInstance$1(
+    FlutterEngine flutterEngine,
+    jni$_.JString? string,
+  ) {
+    final _$$classRef = _class.reference;
+    final _$flutterEngine = flutterEngine.reference;
+    final _$string = string?.reference ?? jni$_.jNullReference;
+    return _getInstance$1(
+      _$$classRef.pointer,
+      _id_getInstance$1.pointer,
+      _$flutterEngine.pointer,
       _$string.pointer,
     ).object<NativeInteropFlutterIntegrationCoreApi?>();
   }
@@ -18807,7 +19332,7 @@ extension NativeInteropReservedNamesHostApiRegistrar$Companion$$Methods
   static final _id_register = NativeInteropReservedNamesHostApiRegistrar$Companion._class
       .instanceMethodId(
         r'register',
-        r'(Lcom/example/test_plugin/NativeInteropReservedNamesHostApi;Ljava/lang/String;)V',
+        r'(Lcom/example/test_plugin/NativeInteropReservedNamesHostApi;Lio/flutter/embedding/engine/plugins/FlutterPlugin$FlutterPluginBinding;Ljava/lang/String;)V',
       );
 
   static final _register =
@@ -18816,7 +19341,9 @@ extension NativeInteropReservedNamesHostApiRegistrar$Companion$$Methods
               jni$_.JThrowablePtr Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+                jni$_.VarArgs<
+                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                >,
               )
             >
           >('globalEnv_CallVoidMethod')
@@ -18826,21 +19353,72 @@ extension NativeInteropReservedNamesHostApiRegistrar$Companion$$Methods
               jni$_.JMethodIDPtr,
               jni$_.Pointer<jni$_.Void>,
               jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `public fun register(api: com.example.test_plugin.NativeInteropReservedNamesHostApi, name: kotlin.String?): kotlin.Unit`
+  /// from: `public fun register(api: com.example.test_plugin.NativeInteropReservedNamesHostApi, binding: io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding, name: kotlin.String?): kotlin.Unit`
   void register(
     NativeInteropReservedNamesHostApi nativeInteropReservedNamesHostApi,
+    FlutterPlugin$$FlutterPluginBinding flutterPluginBinding,
     jni$_.JString? string,
   ) {
     final _$$selfRef = reference;
     final _$nativeInteropReservedNamesHostApi = nativeInteropReservedNamesHostApi.reference;
+    final _$flutterPluginBinding = flutterPluginBinding.reference;
     final _$string = string?.reference ?? jni$_.jNullReference;
     _register(
       _$$selfRef.pointer,
       _id_register.pointer,
       _$nativeInteropReservedNamesHostApi.pointer,
+      _$flutterPluginBinding.pointer,
+      _$string.pointer,
+    ).check();
+  }
+
+  static final _id_register$1 = NativeInteropReservedNamesHostApiRegistrar$Companion._class
+      .instanceMethodId(
+        r'register',
+        r'(Lcom/example/test_plugin/NativeInteropReservedNamesHostApi;Lio/flutter/embedding/engine/FlutterEngine;Ljava/lang/String;)V',
+      );
+
+  static final _register$1 =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JThrowablePtr Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<
+                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                >,
+              )
+            >
+          >('globalEnv_CallVoidMethod')
+          .asFunction<
+            jni$_.JThrowablePtr Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun register(api: com.example.test_plugin.NativeInteropReservedNamesHostApi, engine: io.flutter.embedding.engine.FlutterEngine, name: kotlin.String?): kotlin.Unit`
+  void register$1(
+    NativeInteropReservedNamesHostApi nativeInteropReservedNamesHostApi,
+    FlutterEngine flutterEngine,
+    jni$_.JString? string,
+  ) {
+    final _$$selfRef = reference;
+    final _$nativeInteropReservedNamesHostApi = nativeInteropReservedNamesHostApi.reference;
+    final _$flutterEngine = flutterEngine.reference;
+    final _$string = string?.reference ?? jni$_.jNullReference;
+    _register$1(
+      _$$selfRef.pointer,
+      _id_register$1.pointer,
+      _$nativeInteropReservedNamesHostApi.pointer,
+      _$flutterEngine.pointer,
       _$string.pointer,
     ).check();
   }
@@ -18848,7 +19426,7 @@ extension NativeInteropReservedNamesHostApiRegistrar$Companion$$Methods
   static final _id_unregister = NativeInteropReservedNamesHostApiRegistrar$Companion._class
       .instanceMethodId(
         r'unregister',
-        r'(Lcom/example/test_plugin/NativeInteropReservedNamesHostApi;Ljava/lang/String;)V',
+        r'(Lcom/example/test_plugin/NativeInteropReservedNamesHostApi;Lio/flutter/embedding/engine/plugins/FlutterPlugin$FlutterPluginBinding;Ljava/lang/String;)V',
       );
 
   static final _unregister =
@@ -18857,7 +19435,9 @@ extension NativeInteropReservedNamesHostApiRegistrar$Companion$$Methods
               jni$_.JThrowablePtr Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+                jni$_.VarArgs<
+                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                >,
               )
             >
           >('globalEnv_CallVoidMethod')
@@ -18867,21 +19447,72 @@ extension NativeInteropReservedNamesHostApiRegistrar$Companion$$Methods
               jni$_.JMethodIDPtr,
               jni$_.Pointer<jni$_.Void>,
               jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `public fun unregister(api: com.example.test_plugin.NativeInteropReservedNamesHostApi, name: kotlin.String?): kotlin.Unit`
+  /// from: `public fun unregister(api: com.example.test_plugin.NativeInteropReservedNamesHostApi, binding: io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding, name: kotlin.String?): kotlin.Unit`
   void unregister(
     NativeInteropReservedNamesHostApi nativeInteropReservedNamesHostApi,
+    FlutterPlugin$$FlutterPluginBinding flutterPluginBinding,
     jni$_.JString? string,
   ) {
     final _$$selfRef = reference;
     final _$nativeInteropReservedNamesHostApi = nativeInteropReservedNamesHostApi.reference;
+    final _$flutterPluginBinding = flutterPluginBinding.reference;
     final _$string = string?.reference ?? jni$_.jNullReference;
     _unregister(
       _$$selfRef.pointer,
       _id_unregister.pointer,
       _$nativeInteropReservedNamesHostApi.pointer,
+      _$flutterPluginBinding.pointer,
+      _$string.pointer,
+    ).check();
+  }
+
+  static final _id_unregister$1 = NativeInteropReservedNamesHostApiRegistrar$Companion._class
+      .instanceMethodId(
+        r'unregister',
+        r'(Lcom/example/test_plugin/NativeInteropReservedNamesHostApi;Lio/flutter/embedding/engine/FlutterEngine;Ljava/lang/String;)V',
+      );
+
+  static final _unregister$1 =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JThrowablePtr Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<
+                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                >,
+              )
+            >
+          >('globalEnv_CallVoidMethod')
+          .asFunction<
+            jni$_.JThrowablePtr Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun unregister(api: com.example.test_plugin.NativeInteropReservedNamesHostApi, engine: io.flutter.embedding.engine.FlutterEngine, name: kotlin.String?): kotlin.Unit`
+  void unregister$1(
+    NativeInteropReservedNamesHostApi nativeInteropReservedNamesHostApi,
+    FlutterEngine flutterEngine,
+    jni$_.JString? string,
+  ) {
+    final _$$selfRef = reference;
+    final _$nativeInteropReservedNamesHostApi = nativeInteropReservedNamesHostApi.reference;
+    final _$flutterEngine = flutterEngine.reference;
+    final _$string = string?.reference ?? jni$_.jNullReference;
+    _unregister$1(
+      _$$selfRef.pointer,
+      _id_unregister$1.pointer,
+      _$nativeInteropReservedNamesHostApi.pointer,
+      _$flutterEngine.pointer,
       _$string.pointer,
     ).check();
   }
@@ -18921,6 +19552,89 @@ extension NativeInteropReservedNamesHostApiRegistrar$Companion$$Methods
       _$string.pointer,
     ).object<NativeInteropReservedNamesHostApiRegistrar?>();
   }
+
+  static final _id_pigeonResolveInstance = NativeInteropReservedNamesHostApiRegistrar$Companion
+      ._class
+      .instanceMethodId(
+        r'pigeonResolveInstance',
+        r'(JJLjava/lang/String;)Lcom/example/test_plugin/NativeInteropReservedNamesHostApiRegistrar;',
+      );
+
+  static final _pigeonResolveInstance =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Int64, jni$_.Int64, jni$_.Pointer<jni$_.Void>)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              core$_.int,
+              core$_.int,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun pigeonResolveInstance(engineId: kotlin.Long, affinityKey: kotlin.Long, name: kotlin.String?): com.example.test_plugin.NativeInteropReservedNamesHostApiRegistrar?`
+  /// The returned object must be released after use, by calling the [release] method.
+  NativeInteropReservedNamesHostApiRegistrar? pigeonResolveInstance(
+    core$_.int j,
+    core$_.int j1,
+    jni$_.JString? string,
+  ) {
+    final _$$selfRef = reference;
+    final _$string = string?.reference ?? jni$_.jNullReference;
+    return _pigeonResolveInstance(
+      _$$selfRef.pointer,
+      _id_pigeonResolveInstance.pointer,
+      j,
+      j1,
+      _$string.pointer,
+    ).object<NativeInteropReservedNamesHostApiRegistrar?>();
+  }
+
+  static final _id_pigeonEngineKeyOf = NativeInteropReservedNamesHostApiRegistrar$Companion._class
+      .instanceMethodId(
+        r'pigeonEngineKeyOf',
+        r'(Lcom/example/test_plugin/NativeInteropReservedNamesHostApiRegistrar;)J',
+      );
+
+  static final _pigeonEngineKeyOf =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallLongMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun pigeonEngineKeyOf(instance: com.example.test_plugin.NativeInteropReservedNamesHostApiRegistrar): kotlin.Long`
+  core$_.int pigeonEngineKeyOf(
+    NativeInteropReservedNamesHostApiRegistrar nativeInteropReservedNamesHostApiRegistrar,
+  ) {
+    final _$$selfRef = reference;
+    final _$nativeInteropReservedNamesHostApiRegistrar =
+        nativeInteropReservedNamesHostApiRegistrar.reference;
+    return _pigeonEngineKeyOf(
+      _$$selfRef.pointer,
+      _id_pigeonEngineKeyOf.pointer,
+      _$nativeInteropReservedNamesHostApiRegistrar.pointer,
+    ).long;
+  }
 }
 
 final class $NativeInteropReservedNamesHostApiRegistrar$Companion$Type$
@@ -18957,7 +19671,7 @@ extension type NativeInteropReservedNamesHostApiRegistrar._(jni$_.JObject _$this
 
   static final _id_register$1 = _class.staticMethodId(
     r'register',
-    r'(Lcom/example/test_plugin/NativeInteropReservedNamesHostApi;Ljava/lang/String;)V',
+    r'(Lcom/example/test_plugin/NativeInteropReservedNamesHostApi;Lio/flutter/embedding/engine/plugins/FlutterPlugin$FlutterPluginBinding;Ljava/lang/String;)V',
   );
 
   static final _register$1 =
@@ -18966,7 +19680,9 @@ extension type NativeInteropReservedNamesHostApiRegistrar._(jni$_.JObject _$this
               jni$_.JThrowablePtr Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+                jni$_.VarArgs<
+                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                >,
               )
             >
           >('globalEnv_CallStaticVoidMethod')
@@ -18976,28 +19692,78 @@ extension type NativeInteropReservedNamesHostApiRegistrar._(jni$_.JObject _$this
               jni$_.JMethodIDPtr,
               jni$_.Pointer<jni$_.Void>,
               jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `static public final void register(com.example.test_plugin.NativeInteropReservedNamesHostApi nativeInteropReservedNamesHostApi, java.lang.String string)`
+  /// from: `static public final void register(com.example.test_plugin.NativeInteropReservedNamesHostApi nativeInteropReservedNamesHostApi, io.flutter.embedding.engine.plugins.FlutterPlugin$FlutterPluginBinding flutterPluginBinding, java.lang.String string)`
   static void register$1(
     NativeInteropReservedNamesHostApi nativeInteropReservedNamesHostApi,
+    FlutterPlugin$$FlutterPluginBinding flutterPluginBinding,
     jni$_.JString? string,
   ) {
     final _$$classRef = _class.reference;
     final _$nativeInteropReservedNamesHostApi = nativeInteropReservedNamesHostApi.reference;
+    final _$flutterPluginBinding = flutterPluginBinding.reference;
     final _$string = string?.reference ?? jni$_.jNullReference;
     _register$1(
       _$$classRef.pointer,
       _id_register$1.pointer,
       _$nativeInteropReservedNamesHostApi.pointer,
+      _$flutterPluginBinding.pointer,
+      _$string.pointer,
+    ).check();
+  }
+
+  static final _id_register$2 = _class.staticMethodId(
+    r'register',
+    r'(Lcom/example/test_plugin/NativeInteropReservedNamesHostApi;Lio/flutter/embedding/engine/FlutterEngine;Ljava/lang/String;)V',
+  );
+
+  static final _register$2 =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JThrowablePtr Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<
+                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                >,
+              )
+            >
+          >('globalEnv_CallStaticVoidMethod')
+          .asFunction<
+            jni$_.JThrowablePtr Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `static public final void register(com.example.test_plugin.NativeInteropReservedNamesHostApi nativeInteropReservedNamesHostApi, io.flutter.embedding.engine.FlutterEngine flutterEngine, java.lang.String string)`
+  static void register$2(
+    NativeInteropReservedNamesHostApi nativeInteropReservedNamesHostApi,
+    FlutterEngine flutterEngine,
+    jni$_.JString? string,
+  ) {
+    final _$$classRef = _class.reference;
+    final _$nativeInteropReservedNamesHostApi = nativeInteropReservedNamesHostApi.reference;
+    final _$flutterEngine = flutterEngine.reference;
+    final _$string = string?.reference ?? jni$_.jNullReference;
+    _register$2(
+      _$$classRef.pointer,
+      _id_register$2.pointer,
+      _$nativeInteropReservedNamesHostApi.pointer,
+      _$flutterEngine.pointer,
       _$string.pointer,
     ).check();
   }
 
   static final _id_unregister$1 = _class.staticMethodId(
     r'unregister',
-    r'(Lcom/example/test_plugin/NativeInteropReservedNamesHostApi;Ljava/lang/String;)V',
+    r'(Lcom/example/test_plugin/NativeInteropReservedNamesHostApi;Lio/flutter/embedding/engine/plugins/FlutterPlugin$FlutterPluginBinding;Ljava/lang/String;)V',
   );
 
   static final _unregister$1 =
@@ -19006,7 +19772,9 @@ extension type NativeInteropReservedNamesHostApiRegistrar._(jni$_.JObject _$this
               jni$_.JThrowablePtr Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+                jni$_.VarArgs<
+                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                >,
               )
             >
           >('globalEnv_CallStaticVoidMethod')
@@ -19016,21 +19784,71 @@ extension type NativeInteropReservedNamesHostApiRegistrar._(jni$_.JObject _$this
               jni$_.JMethodIDPtr,
               jni$_.Pointer<jni$_.Void>,
               jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `static public final void unregister(com.example.test_plugin.NativeInteropReservedNamesHostApi nativeInteropReservedNamesHostApi, java.lang.String string)`
+  /// from: `static public final void unregister(com.example.test_plugin.NativeInteropReservedNamesHostApi nativeInteropReservedNamesHostApi, io.flutter.embedding.engine.plugins.FlutterPlugin$FlutterPluginBinding flutterPluginBinding, java.lang.String string)`
   static void unregister$1(
     NativeInteropReservedNamesHostApi nativeInteropReservedNamesHostApi,
+    FlutterPlugin$$FlutterPluginBinding flutterPluginBinding,
     jni$_.JString? string,
   ) {
     final _$$classRef = _class.reference;
     final _$nativeInteropReservedNamesHostApi = nativeInteropReservedNamesHostApi.reference;
+    final _$flutterPluginBinding = flutterPluginBinding.reference;
     final _$string = string?.reference ?? jni$_.jNullReference;
     _unregister$1(
       _$$classRef.pointer,
       _id_unregister$1.pointer,
       _$nativeInteropReservedNamesHostApi.pointer,
+      _$flutterPluginBinding.pointer,
+      _$string.pointer,
+    ).check();
+  }
+
+  static final _id_unregister$2 = _class.staticMethodId(
+    r'unregister',
+    r'(Lcom/example/test_plugin/NativeInteropReservedNamesHostApi;Lio/flutter/embedding/engine/FlutterEngine;Ljava/lang/String;)V',
+  );
+
+  static final _unregister$2 =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JThrowablePtr Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<
+                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                >,
+              )
+            >
+          >('globalEnv_CallStaticVoidMethod')
+          .asFunction<
+            jni$_.JThrowablePtr Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `static public final void unregister(com.example.test_plugin.NativeInteropReservedNamesHostApi nativeInteropReservedNamesHostApi, io.flutter.embedding.engine.FlutterEngine flutterEngine, java.lang.String string)`
+  static void unregister$2(
+    NativeInteropReservedNamesHostApi nativeInteropReservedNamesHostApi,
+    FlutterEngine flutterEngine,
+    jni$_.JString? string,
+  ) {
+    final _$$classRef = _class.reference;
+    final _$nativeInteropReservedNamesHostApi = nativeInteropReservedNamesHostApi.reference;
+    final _$flutterEngine = flutterEngine.reference;
+    final _$string = string?.reference ?? jni$_.jNullReference;
+    _unregister$2(
+      _$$classRef.pointer,
+      _id_unregister$2.pointer,
+      _$nativeInteropReservedNamesHostApi.pointer,
+      _$flutterEngine.pointer,
       _$string.pointer,
     ).check();
   }
@@ -19070,11 +19888,55 @@ extension type NativeInteropReservedNamesHostApiRegistrar._(jni$_.JObject _$this
     ).object<NativeInteropReservedNamesHostApiRegistrar?>();
   }
 
-  static final _id_new$ = _class.constructorId(
-    r'(Lkotlin/jvm/internal/DefaultConstructorMarker;)V',
+  static final _id_pigeonResolveInstance = _class.staticMethodId(
+    r'pigeonResolveInstance',
+    r'(JJLjava/lang/String;)Lcom/example/test_plugin/NativeInteropReservedNamesHostApiRegistrar;',
   );
 
-  static final _new$ =
+  static final _pigeonResolveInstance =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Int64, jni$_.Int64, jni$_.Pointer<jni$_.Void>)>,
+              )
+            >
+          >('globalEnv_CallStaticObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              core$_.int,
+              core$_.int,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `static public final com.example.test_plugin.NativeInteropReservedNamesHostApiRegistrar pigeonResolveInstance(long j, long j1, java.lang.String string)`
+  /// The returned object must be released after use, by calling the [release] method.
+  static NativeInteropReservedNamesHostApiRegistrar? pigeonResolveInstance(
+    core$_.int j,
+    core$_.int j1,
+    jni$_.JString? string,
+  ) {
+    final _$$classRef = _class.reference;
+    final _$string = string?.reference ?? jni$_.jNullReference;
+    return _pigeonResolveInstance(
+      _$$classRef.pointer,
+      _id_pigeonResolveInstance.pointer,
+      j,
+      j1,
+      _$string.pointer,
+    ).object<NativeInteropReservedNamesHostApiRegistrar?>();
+  }
+
+  static final _id_pigeonEngineKeyOf = _class.staticMethodId(
+    r'pigeonEngineKeyOf',
+    r'(Lcom/example/test_plugin/NativeInteropReservedNamesHostApiRegistrar;)J',
+  );
+
+  static final _pigeonEngineKeyOf =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -19083,7 +19945,7 @@ extension type NativeInteropReservedNamesHostApiRegistrar._(jni$_.JObject _$this
                 jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
               )
             >
-          >('globalEnv_NewObject')
+          >('globalEnv_CallStaticLongMethod')
           .asFunction<
             jni$_.JniResult Function(
               jni$_.Pointer<jni$_.Void>,
@@ -19092,9 +19954,47 @@ extension type NativeInteropReservedNamesHostApiRegistrar._(jni$_.JObject _$this
             )
           >();
 
-  /// from: `synthetic public void <init>(kotlin.jvm.internal.DefaultConstructorMarker defaultConstructorMarker)`
+  /// from: `static public final long pigeonEngineKeyOf(com.example.test_plugin.NativeInteropReservedNamesHostApiRegistrar nativeInteropReservedNamesHostApiRegistrar)`
+  static core$_.int pigeonEngineKeyOf(
+    NativeInteropReservedNamesHostApiRegistrar nativeInteropReservedNamesHostApiRegistrar,
+  ) {
+    final _$$classRef = _class.reference;
+    final _$nativeInteropReservedNamesHostApiRegistrar =
+        nativeInteropReservedNamesHostApiRegistrar.reference;
+    return _pigeonEngineKeyOf(
+      _$$classRef.pointer,
+      _id_pigeonEngineKeyOf.pointer,
+      _$nativeInteropReservedNamesHostApiRegistrar.pointer,
+    ).long;
+  }
+
+  static final _id_new$ = _class.constructorId(
+    r'(JLkotlin/jvm/internal/DefaultConstructorMarker;)V',
+  );
+
+  static final _new$ =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Int64, jni$_.Pointer<jni$_.Void>)>,
+              )
+            >
+          >('globalEnv_NewObject')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              core$_.int,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `synthetic public void <init>(long j, kotlin.jvm.internal.DefaultConstructorMarker defaultConstructorMarker)`
   /// The returned object must be released after use, by calling the [release] method.
   factory NativeInteropReservedNamesHostApiRegistrar(
+    core$_.int j,
     DefaultConstructorMarker? defaultConstructorMarker,
   ) {
     final _$$classRef = _class.reference;
@@ -19102,6 +20002,7 @@ extension type NativeInteropReservedNamesHostApiRegistrar._(jni$_.JObject _$this
     return _new$(
       _$$classRef.pointer,
       _id_new$.pointer,
+      j,
       _$defaultConstructorMarker.pointer,
     ).object<NativeInteropReservedNamesHostApiRegistrar>();
   }
@@ -20112,7 +21013,7 @@ extension NativeInteropReservedNamesFlutterApiRegistrar$Companion$$Methods
   static final _id_register = NativeInteropReservedNamesFlutterApiRegistrar$Companion._class
       .instanceMethodId(
         r'register',
-        r'(Lcom/example/test_plugin/NativeInteropReservedNamesFlutterApi;Ljava/lang/String;)V',
+        r'(Lcom/example/test_plugin/NativeInteropReservedNamesFlutterApi;JJLjava/lang/String;)V',
       );
 
   static final _register =
@@ -20121,7 +21022,9 @@ extension NativeInteropReservedNamesFlutterApiRegistrar$Companion$$Methods
               jni$_.JThrowablePtr Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+                jni$_.VarArgs<
+                  (jni$_.Pointer<jni$_.Void>, jni$_.Int64, jni$_.Int64, jni$_.Pointer<jni$_.Void>)
+                >,
               )
             >
           >('globalEnv_CallVoidMethod')
@@ -20130,13 +21033,17 @@ extension NativeInteropReservedNamesFlutterApiRegistrar$Companion$$Methods
               jni$_.Pointer<jni$_.Void>,
               jni$_.JMethodIDPtr,
               jni$_.Pointer<jni$_.Void>,
+              core$_.int,
+              core$_.int,
               jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `public fun register(api: com.example.test_plugin.NativeInteropReservedNamesFlutterApi, name: kotlin.String?): kotlin.Unit`
+  /// from: `public fun register(api: com.example.test_plugin.NativeInteropReservedNamesFlutterApi, engineId: kotlin.Long, affinityKey: kotlin.Long, name: kotlin.String?): kotlin.Unit`
   void register(
     NativeInteropReservedNamesFlutterApi nativeInteropReservedNamesFlutterApi,
+    core$_.int j,
+    core$_.int j1,
     jni$_.JString? string,
   ) {
     final _$$selfRef = reference;
@@ -20146,6 +21053,8 @@ extension NativeInteropReservedNamesFlutterApiRegistrar$Companion$$Methods
       _$$selfRef.pointer,
       _id_register.pointer,
       _$nativeInteropReservedNamesFlutterApi.pointer,
+      j,
+      j1,
       _$string.pointer,
     ).check();
   }
@@ -20194,7 +21103,7 @@ extension NativeInteropReservedNamesFlutterApiRegistrar$Companion$$Methods
   static final _id_getInstance = NativeInteropReservedNamesFlutterApiRegistrar$Companion._class
       .instanceMethodId(
         r'getInstance',
-        r'(Ljava/lang/String;)Lcom/example/test_plugin/NativeInteropReservedNamesFlutterApi;',
+        r'(Lio/flutter/embedding/engine/plugins/FlutterPlugin$FlutterPluginBinding;Ljava/lang/String;)Lcom/example/test_plugin/NativeInteropReservedNamesFlutterApi;',
       );
 
   static final _getInstance =
@@ -20203,7 +21112,7 @@ extension NativeInteropReservedNamesFlutterApiRegistrar$Companion$$Methods
               jni$_.JniResult Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
               )
             >
           >('globalEnv_CallObjectMethod')
@@ -20212,17 +21121,65 @@ extension NativeInteropReservedNamesFlutterApiRegistrar$Companion$$Methods
               jni$_.Pointer<jni$_.Void>,
               jni$_.JMethodIDPtr,
               jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `public fun getInstance(name: kotlin.String?): com.example.test_plugin.NativeInteropReservedNamesFlutterApi?`
+  /// from: `public fun getInstance(binding: io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding, name: kotlin.String?): com.example.test_plugin.NativeInteropReservedNamesFlutterApi?`
   /// The returned object must be released after use, by calling the [release] method.
-  NativeInteropReservedNamesFlutterApi? getInstance(jni$_.JString? string) {
+  NativeInteropReservedNamesFlutterApi? getInstance(
+    FlutterPlugin$$FlutterPluginBinding flutterPluginBinding,
+    jni$_.JString? string,
+  ) {
     final _$$selfRef = reference;
+    final _$flutterPluginBinding = flutterPluginBinding.reference;
     final _$string = string?.reference ?? jni$_.jNullReference;
     return _getInstance(
       _$$selfRef.pointer,
       _id_getInstance.pointer,
+      _$flutterPluginBinding.pointer,
+      _$string.pointer,
+    ).object<NativeInteropReservedNamesFlutterApi?>();
+  }
+
+  static final _id_getInstance$1 = NativeInteropReservedNamesFlutterApiRegistrar$Companion._class
+      .instanceMethodId(
+        r'getInstance',
+        r'(Lio/flutter/embedding/engine/FlutterEngine;Ljava/lang/String;)Lcom/example/test_plugin/NativeInteropReservedNamesFlutterApi;',
+      );
+
+  static final _getInstance$1 =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun getInstance(engine: io.flutter.embedding.engine.FlutterEngine, name: kotlin.String?): com.example.test_plugin.NativeInteropReservedNamesFlutterApi?`
+  /// The returned object must be released after use, by calling the [release] method.
+  NativeInteropReservedNamesFlutterApi? getInstance$1(
+    FlutterEngine flutterEngine,
+    jni$_.JString? string,
+  ) {
+    final _$$selfRef = reference;
+    final _$flutterEngine = flutterEngine.reference;
+    final _$string = string?.reference ?? jni$_.jNullReference;
+    return _getInstance$1(
+      _$$selfRef.pointer,
+      _id_getInstance$1.pointer,
+      _$flutterEngine.pointer,
       _$string.pointer,
     ).object<NativeInteropReservedNamesFlutterApi?>();
   }
@@ -20262,7 +21219,7 @@ extension type NativeInteropReservedNamesFlutterApiRegistrar._(jni$_.JObject _$t
 
   static final _id_register = _class.staticMethodId(
     r'register',
-    r'(Lcom/example/test_plugin/NativeInteropReservedNamesFlutterApi;Ljava/lang/String;)V',
+    r'(Lcom/example/test_plugin/NativeInteropReservedNamesFlutterApi;JJLjava/lang/String;)V',
   );
 
   static final _register =
@@ -20271,7 +21228,9 @@ extension type NativeInteropReservedNamesFlutterApiRegistrar._(jni$_.JObject _$t
               jni$_.JThrowablePtr Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+                jni$_.VarArgs<
+                  (jni$_.Pointer<jni$_.Void>, jni$_.Int64, jni$_.Int64, jni$_.Pointer<jni$_.Void>)
+                >,
               )
             >
           >('globalEnv_CallStaticVoidMethod')
@@ -20280,13 +21239,17 @@ extension type NativeInteropReservedNamesFlutterApiRegistrar._(jni$_.JObject _$t
               jni$_.Pointer<jni$_.Void>,
               jni$_.JMethodIDPtr,
               jni$_.Pointer<jni$_.Void>,
+              core$_.int,
+              core$_.int,
               jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `static public final void register(com.example.test_plugin.NativeInteropReservedNamesFlutterApi nativeInteropReservedNamesFlutterApi, java.lang.String string)`
+  /// from: `static public final void register(com.example.test_plugin.NativeInteropReservedNamesFlutterApi nativeInteropReservedNamesFlutterApi, long j, long j1, java.lang.String string)`
   static void register(
     NativeInteropReservedNamesFlutterApi nativeInteropReservedNamesFlutterApi,
+    core$_.int j,
+    core$_.int j1,
     jni$_.JString? string,
   ) {
     final _$$classRef = _class.reference;
@@ -20296,6 +21259,8 @@ extension type NativeInteropReservedNamesFlutterApiRegistrar._(jni$_.JObject _$t
       _$$classRef.pointer,
       _id_register.pointer,
       _$nativeInteropReservedNamesFlutterApi.pointer,
+      j,
+      j1,
       _$string.pointer,
     ).check();
   }
@@ -20342,7 +21307,7 @@ extension type NativeInteropReservedNamesFlutterApiRegistrar._(jni$_.JObject _$t
 
   static final _id_getInstance = _class.staticMethodId(
     r'getInstance',
-    r'(Ljava/lang/String;)Lcom/example/test_plugin/NativeInteropReservedNamesFlutterApi;',
+    r'(Lio/flutter/embedding/engine/plugins/FlutterPlugin$FlutterPluginBinding;Ljava/lang/String;)Lcom/example/test_plugin/NativeInteropReservedNamesFlutterApi;',
   );
 
   static final _getInstance =
@@ -20351,7 +21316,7 @@ extension type NativeInteropReservedNamesFlutterApiRegistrar._(jni$_.JObject _$t
               jni$_.JniResult Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
               )
             >
           >('globalEnv_CallStaticObjectMethod')
@@ -20360,17 +21325,64 @@ extension type NativeInteropReservedNamesFlutterApiRegistrar._(jni$_.JObject _$t
               jni$_.Pointer<jni$_.Void>,
               jni$_.JMethodIDPtr,
               jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `static public final com.example.test_plugin.NativeInteropReservedNamesFlutterApi getInstance(java.lang.String string)`
+  /// from: `static public final com.example.test_plugin.NativeInteropReservedNamesFlutterApi getInstance(io.flutter.embedding.engine.plugins.FlutterPlugin$FlutterPluginBinding flutterPluginBinding, java.lang.String string)`
   /// The returned object must be released after use, by calling the [release] method.
-  static NativeInteropReservedNamesFlutterApi? getInstance(jni$_.JString? string) {
+  static NativeInteropReservedNamesFlutterApi? getInstance(
+    FlutterPlugin$$FlutterPluginBinding flutterPluginBinding,
+    jni$_.JString? string,
+  ) {
     final _$$classRef = _class.reference;
+    final _$flutterPluginBinding = flutterPluginBinding.reference;
     final _$string = string?.reference ?? jni$_.jNullReference;
     return _getInstance(
       _$$classRef.pointer,
       _id_getInstance.pointer,
+      _$flutterPluginBinding.pointer,
+      _$string.pointer,
+    ).object<NativeInteropReservedNamesFlutterApi?>();
+  }
+
+  static final _id_getInstance$1 = _class.staticMethodId(
+    r'getInstance',
+    r'(Lio/flutter/embedding/engine/FlutterEngine;Ljava/lang/String;)Lcom/example/test_plugin/NativeInteropReservedNamesFlutterApi;',
+  );
+
+  static final _getInstance$1 =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+              )
+            >
+          >('globalEnv_CallStaticObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `static public final com.example.test_plugin.NativeInteropReservedNamesFlutterApi getInstance(io.flutter.embedding.engine.FlutterEngine flutterEngine, java.lang.String string)`
+  /// The returned object must be released after use, by calling the [release] method.
+  static NativeInteropReservedNamesFlutterApi? getInstance$1(
+    FlutterEngine flutterEngine,
+    jni$_.JString? string,
+  ) {
+    final _$$classRef = _class.reference;
+    final _$flutterEngine = flutterEngine.reference;
+    final _$string = string?.reference ?? jni$_.jNullReference;
+    return _getInstance$1(
+      _$$classRef.pointer,
+      _id_getInstance$1.pointer,
+      _$flutterEngine.pointer,
       _$string.pointer,
     ).object<NativeInteropReservedNamesFlutterApi?>();
   }
@@ -30460,6 +31472,46 @@ final class $NativeInteropHostIntegrationCoreApi$Type$
   @jni$_.internal
   @core$_.override
   String get signature => r'Lcom/example/test_plugin/NativeInteropHostIntegrationCoreApi;';
+}
+
+/// from: `io.flutter.embedding.engine.plugins.FlutterPlugin$FlutterPluginBinding`
+///
+/// WARNING: FlutterPlugin$$FlutterPluginBinding is a stub. To generate bindings for this class, include
+/// io.flutter.embedding.engine.plugins.FlutterPlugin$FlutterPluginBinding in your config's classes list.
+///
+extension type FlutterPlugin$$FlutterPluginBinding._(jni$_.JObject _$this)
+    implements jni$_.JObject {
+  static const jni$_.JType<FlutterPlugin$$FlutterPluginBinding> type =
+      $FlutterPlugin$$FlutterPluginBinding$Type$();
+}
+
+final class $FlutterPlugin$$FlutterPluginBinding$Type$
+    extends jni$_.JType<FlutterPlugin$$FlutterPluginBinding> {
+  @jni$_.internal
+  const $FlutterPlugin$$FlutterPluginBinding$Type$();
+
+  @jni$_.internal
+  @core$_.override
+  String get signature =>
+      r'Lio/flutter/embedding/engine/plugins/FlutterPlugin$FlutterPluginBinding;';
+}
+
+/// from: `io.flutter.embedding.engine.FlutterEngine`
+///
+/// WARNING: FlutterEngine is a stub. To generate bindings for this class, include
+/// io.flutter.embedding.engine.FlutterEngine in your config's classes list.
+///
+extension type FlutterEngine._(jni$_.JObject _$this) implements jni$_.JObject {
+  static const jni$_.JType<FlutterEngine> type = $FlutterEngine$Type$();
+}
+
+final class $FlutterEngine$Type$ extends jni$_.JType<FlutterEngine> {
+  @jni$_.internal
+  const $FlutterEngine$Type$();
+
+  @jni$_.internal
+  @core$_.override
+  String get signature => r'Lio/flutter/embedding/engine/FlutterEngine;';
 }
 
 /// from: `com.example.test_plugin.NativeInteropReservedNamesHostApi`

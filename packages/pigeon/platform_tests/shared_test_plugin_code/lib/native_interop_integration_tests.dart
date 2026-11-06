@@ -5,6 +5,7 @@
 // ignore_for_file: unused_local_variable
 
 import 'dart:isolate';
+import 'dart:ui' show PlatformDispatcher;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -2843,6 +2844,21 @@ void runPigeonNativeInteropIntegrationTests(TargetGenerator targetGenerator) {
   });
 
   group('Deregistration tests', () {
+    testWidgets('registrations use the exact engine id when the platform exposes it', (
+      WidgetTester _,
+    ) async {
+      final NativeInteropHostIntegrationCoreApiForNativeInterop api =
+          NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance()!;
+      final int registeredKey = api.registeredEngineKey();
+      if (api.pluginEngineIdentifierIsAvailable()) {
+        // Also covers minified release builds, where the generated code's lookup of the
+        // engine identifier must survive R8 renaming.
+        expect(registeredKey, PlatformDispatcher.instance.engineId);
+      } else {
+        // Synthetic keys are negative so they can never collide with real engine ids.
+        expect(registeredKey, isNegative);
+      }
+    });
     testWidgets('host API deregistration works natively', (WidgetTester _) async {
       final NativeInteropHostIntegrationCoreApiForNativeInterop? api =
           NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance();
@@ -3075,6 +3091,57 @@ void runPigeonNativeInteropIntegrationTests(TargetGenerator targetGenerator) {
 
         // A redundant setUp(null) is a no-op and must not pop the underlying Registrar instance.
         NativeInteropReservedNamesFlutterApi.setUp(null);
+        expect(hostApi.callFlutterRelease('ping'), 'ping');
+      },
+    );
+
+    testWidgets(
+      'FlutterApi.setUp(null) still deregisters an instance re-registered through the Registrar',
+      (WidgetTester _) async {
+        final baseImpl = _NativeInteropReservedNamesFlutterApiImpl();
+        NativeInteropReservedNamesFlutterApiRegistrar.register(baseImpl);
+        addTearDown(() => NativeInteropReservedNamesFlutterApiRegistrar.unregister(baseImpl));
+        final NativeInteropReservedNamesHostApiForNativeInterop hostApi =
+            NativeInteropReservedNamesHostApiForNativeInterop.getInstance()!;
+
+        final setup = _PrefixedReservedNamesFlutterApiImpl('setup');
+        addTearDown(() => NativeInteropReservedNamesFlutterApiRegistrar.unregister(setup));
+        NativeInteropReservedNamesFlutterApi.setUp(setup);
+        expect(hostApi.callFlutterRelease('ping'), 'setup:ping');
+
+        // Re-registering the setUp instance through the Registrar moves it to the top, but it
+        // must stay tracked as the setUp instance.
+        NativeInteropReservedNamesFlutterApiRegistrar.register(setup);
+        expect(hostApi.callFlutterRelease('ping'), 'setup:ping');
+
+        NativeInteropReservedNamesFlutterApi.setUp(null);
+        expect(hostApi.callFlutterRelease('ping'), 'ping');
+      },
+    );
+
+    testWidgets(
+      'FlutterApi.setUp(null) deregisters the setUp instance when it is not top of the stack',
+      (WidgetTester _) async {
+        final baseImpl = _NativeInteropReservedNamesFlutterApiImpl();
+        NativeInteropReservedNamesFlutterApiRegistrar.register(baseImpl);
+        addTearDown(() => NativeInteropReservedNamesFlutterApiRegistrar.unregister(baseImpl));
+        final NativeInteropReservedNamesHostApiForNativeInterop hostApi =
+            NativeInteropReservedNamesHostApiForNativeInterop.getInstance()!;
+
+        final setup = _PrefixedReservedNamesFlutterApiImpl('setup');
+        final registered = _PrefixedReservedNamesFlutterApiImpl('registered');
+        addTearDown(() => NativeInteropReservedNamesFlutterApiRegistrar.unregister(setup));
+        addTearDown(() => NativeInteropReservedNamesFlutterApiRegistrar.unregister(registered));
+        NativeInteropReservedNamesFlutterApi.setUp(setup);
+        NativeInteropReservedNamesFlutterApiRegistrar.register(registered);
+        expect(hostApi.callFlutterRelease('ping'), 'registered:ping');
+
+        // setUp(null) removes the buried setUp instance and leaves the Registrar one on top.
+        NativeInteropReservedNamesFlutterApi.setUp(null);
+        expect(hostApi.callFlutterRelease('ping'), 'registered:ping');
+
+        // With setup gone, unregistering the top instance falls back to baseImpl.
+        NativeInteropReservedNamesFlutterApiRegistrar.unregister(registered);
         expect(hostApi.callFlutterRelease('ping'), 'ping');
       },
     );

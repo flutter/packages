@@ -11,6 +11,7 @@ import 'dart:async';
 import 'dart:ffi';
 import 'dart:io' show Platform;
 import 'dart:typed_data' show Float32List, Float64List, Int32List, Int64List, Int8List, TypedData;
+import 'dart:ui' show PlatformDispatcher;
 
 import 'package:ffi/ffi.dart';
 import 'package:flutter/services.dart';
@@ -985,6 +986,16 @@ bool _isType<T>(Type t) => T == t;
 bool _isTypeOrNullableType<T>(Type t) => _isType<T>(t) || _isType<T?>(t);
 
 const String _defaultInstanceName = 'PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u';
+
+/// Native engine key meaning "no engine", matching `Long.MIN_VALUE` in Kotlin
+/// and `Int64.min` in Swift.
+const int _pigeonNoEngineKey = -9223372036854775808;
+
+/// The native engine key this isolate has been associated with, learned from
+/// the first native instance it resolves.
+///
+/// Used to route lookups when [PlatformDispatcher.engineId] is unavailable.
+int? _pigeonEngineAffinity;
 void _throwIfFfiError(ffi_bridge.NativeInteropTestsError error) {
   if (error.code != null) {
     throw _wrapFfiError(error);
@@ -2096,23 +2107,48 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
        _ffiApi = ffiApi;
 
   /// Returns instance of NativeInteropHostIntegrationCoreApiForNativeInterop with specified [name] if one has been registered.
+  ///
+  /// Prefers an instance registered by this isolate's engine, falling back to
+  /// the most recently registered instance.
   static NativeInteropHostIntegrationCoreApiForNativeInterop? getInstance({String? name}) {
     if (Platform.isAndroid) {
+      final int? engineId = PlatformDispatcher.instance.engineId;
       final JString? jName = name?.toJString();
       final jni_bridge.NativeInteropHostIntegrationCoreApiRegistrar? link;
       try {
-        link = jni_bridge.NativeInteropHostIntegrationCoreApiRegistrar.getInstance(jName);
+        link = jni_bridge.NativeInteropHostIntegrationCoreApiRegistrar.pigeonResolveInstance(
+          engineId ?? _pigeonNoEngineKey,
+          _pigeonEngineAffinity ?? _pigeonNoEngineKey,
+          jName,
+        );
       } finally {
         jName?.release();
+      }
+      if (link != null && _pigeonEngineAffinity == null) {
+        final int linkEngineKey =
+            jni_bridge.NativeInteropHostIntegrationCoreApiRegistrar.pigeonEngineKeyOf(link);
+        if (linkEngineKey != _pigeonNoEngineKey) {
+          _pigeonEngineAffinity = linkEngineKey;
+        }
       }
       return link == null
           ? null
           : _NativeInteropHostIntegrationCoreApiForNativeInterop._withRegistrar(jniApi: link);
     } else if (Platform.isIOS || Platform.isMacOS) {
+      final int? engineId = PlatformDispatcher.instance.engineId;
       final ffi_bridge.NativeInteropHostIntegrationCoreApiSetup? link =
-          ffi_bridge.NativeInteropHostIntegrationCoreApiSetup.getInstanceWithName(
-            name != null ? NSString(name) : null,
+          ffi_bridge.NativeInteropHostIntegrationCoreApiSetup.pigeonResolveInstanceWithEngineId(
+            engineId ?? _pigeonNoEngineKey,
+            affinityKey: _pigeonEngineAffinity ?? _pigeonNoEngineKey,
+            name: name != null ? NSString(name) : null,
           );
+      if (link != null && _pigeonEngineAffinity == null) {
+        final int linkEngineKey =
+            ffi_bridge.NativeInteropHostIntegrationCoreApiSetup.pigeonEngineKeyOf(link);
+        if (linkEngineKey != _pigeonNoEngineKey) {
+          _pigeonEngineAffinity = linkEngineKey;
+        }
+      }
       return link == null
           ? null
           : _NativeInteropHostIntegrationCoreApiForNativeInterop._withRegistrar(ffiApi: link);
@@ -9927,6 +9963,48 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
       throw _wrapJniException(e);
     }
   }
+
+  @override
+  int registeredEngineKey() {
+    try {
+      if (_jniApi != null) {
+        return _jniApi.registeredEngineKey();
+      } else if (_ffiApi != null) {
+        final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSNumber? pigeonVar_res = _ffiApi.registeredEngineKeyWithWrappedError(
+          pigeonVar_error,
+        );
+        _throwIfFfiError(pigeonVar_error);
+        final int pigeonVar_dartTypeRes = pigeonVar_res!.longValue;
+        return pigeonVar_dartTypeRes;
+      } else {
+        throw Exception('No JNI or FFI api available');
+      }
+    } on JThrowable catch (e) {
+      throw _wrapJniException(e);
+    }
+  }
+
+  @override
+  bool pluginEngineIdentifierIsAvailable() {
+    try {
+      if (_jniApi != null) {
+        return _jniApi.pluginEngineIdentifierIsAvailable();
+      } else if (_ffiApi != null) {
+        final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSNumber? pigeonVar_res = _ffiApi.pluginEngineIdentifierIsAvailableWithWrappedError(
+          pigeonVar_error,
+        );
+        _throwIfFfiError(pigeonVar_error);
+        final bool pigeonVar_dartTypeRes = pigeonVar_res!.boolValue;
+        return pigeonVar_dartTypeRes;
+      } else {
+        throw Exception('No JNI or FFI api available');
+      }
+    } on JThrowable catch (e) {
+      throw _wrapJniException(e);
+    }
+  }
 }
 
 final class _NativeInteropFlutterIntegrationCoreApiRegistrar
@@ -9956,6 +10034,14 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
 
   static void pigeonVar_unregister(NativeInteropFlutterIntegrationCoreApi api, {String? name}) {
     final String mapKey = name ?? _defaultInstanceName;
+    if (identical(pigeonVar_setUpInstances[mapKey], api)) {
+      pigeonVar_setUpInstances.remove(mapKey);
+    }
+    pigeonVar_removeHandle(api, name: name);
+  }
+
+  static void pigeonVar_removeHandle(NativeInteropFlutterIntegrationCoreApi api, {String? name}) {
+    final String mapKey = name ?? _defaultInstanceName;
     final List<(NativeInteropFlutterIntegrationCoreApi, Object)>? handles =
         pigeonVar_registeredHandles[mapKey];
     if (handles == null || handles.isEmpty) {
@@ -9973,9 +10059,6 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
     }
     if (handles.isEmpty) {
       pigeonVar_registeredHandles.remove(mapKey);
-    }
-    if (identical(pigeonVar_setUpInstances[mapKey], api)) {
-      pigeonVar_setUpInstances.remove(mapKey);
     }
     if (Platform.isAndroid) {
       final JString? jName = name?.toJString();
@@ -10003,13 +10086,20 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
 
   void pigeonVar_register({String? name}) {
     final String mapKey = name ?? _defaultInstanceName;
-    pigeonVar_unregister(pigeonVar_dartApi, name: name);
+    pigeonVar_removeHandle(pigeonVar_dartApi, name: name);
+    final int engineId = PlatformDispatcher.instance.engineId ?? _pigeonNoEngineKey;
+    final int affinityKey = _pigeonEngineAffinity ?? _pigeonNoEngineKey;
     if (Platform.isAndroid) {
       final jni_bridge.NativeInteropFlutterIntegrationCoreApi impl =
           jni_bridge.NativeInteropFlutterIntegrationCoreApi.implement(this);
       final JString? jName = name?.toJString();
       try {
-        jni_bridge.NativeInteropFlutterIntegrationCoreApiRegistrar.register(impl, jName);
+        jni_bridge.NativeInteropFlutterIntegrationCoreApiRegistrar.register(
+          impl,
+          engineId,
+          affinityKey,
+          jName,
+        );
       } finally {
         jName?.release();
       }
@@ -12588,6 +12678,8 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
           ffi_bridge.NativeInteropFlutterIntegrationCoreApiBridge.as(builder.build());
       ffi_bridge.NativeInteropFlutterIntegrationCoreApiRegistrar.registerWithApi(
         impl,
+        engineId: engineId,
+        affinityKey: affinityKey,
         name: name != null ? NSString(name) : null,
       );
       (pigeonVar_registeredHandles[mapKey] ??= <(NativeInteropFlutterIntegrationCoreApi, Object)>[])
@@ -13701,23 +13793,48 @@ class _NativeInteropReservedNamesHostApiForNativeInterop
        _ffiApi = ffiApi;
 
   /// Returns instance of NativeInteropReservedNamesHostApiForNativeInterop with specified [name] if one has been registered.
+  ///
+  /// Prefers an instance registered by this isolate's engine, falling back to
+  /// the most recently registered instance.
   static NativeInteropReservedNamesHostApiForNativeInterop? getInstance({String? name}) {
     if (Platform.isAndroid) {
+      final int? engineId = PlatformDispatcher.instance.engineId;
       final JString? jName = name?.toJString();
       final jni_bridge.NativeInteropReservedNamesHostApiRegistrar? link;
       try {
-        link = jni_bridge.NativeInteropReservedNamesHostApiRegistrar.getInstance$1(jName);
+        link = jni_bridge.NativeInteropReservedNamesHostApiRegistrar.pigeonResolveInstance(
+          engineId ?? _pigeonNoEngineKey,
+          _pigeonEngineAffinity ?? _pigeonNoEngineKey,
+          jName,
+        );
       } finally {
         jName?.release();
+      }
+      if (link != null && _pigeonEngineAffinity == null) {
+        final int linkEngineKey =
+            jni_bridge.NativeInteropReservedNamesHostApiRegistrar.pigeonEngineKeyOf(link);
+        if (linkEngineKey != _pigeonNoEngineKey) {
+          _pigeonEngineAffinity = linkEngineKey;
+        }
       }
       return link == null
           ? null
           : _NativeInteropReservedNamesHostApiForNativeInterop._withRegistrar(jniApi: link);
     } else if (Platform.isIOS || Platform.isMacOS) {
+      final int? engineId = PlatformDispatcher.instance.engineId;
       final ffi_bridge.NativeInteropReservedNamesHostApiSetup? link =
-          ffi_bridge.NativeInteropReservedNamesHostApiSetup.getInstanceWithName(
-            name != null ? NSString(name) : null,
+          ffi_bridge.NativeInteropReservedNamesHostApiSetup.pigeonResolveInstanceWithEngineId(
+            engineId ?? _pigeonNoEngineKey,
+            affinityKey: _pigeonEngineAffinity ?? _pigeonNoEngineKey,
+            name: name != null ? NSString(name) : null,
           );
+      if (link != null && _pigeonEngineAffinity == null) {
+        final int linkEngineKey =
+            ffi_bridge.NativeInteropReservedNamesHostApiSetup.pigeonEngineKeyOf(link);
+        if (linkEngineKey != _pigeonNoEngineKey) {
+          _pigeonEngineAffinity = linkEngineKey;
+        }
+      }
       return link == null
           ? null
           : _NativeInteropReservedNamesHostApiForNativeInterop._withRegistrar(ffiApi: link);
@@ -14233,6 +14350,14 @@ final class _NativeInteropReservedNamesFlutterApiRegistrar
 
   static void pigeonVar_unregister(NativeInteropReservedNamesFlutterApi api, {String? name}) {
     final String mapKey = name ?? _defaultInstanceName;
+    if (identical(pigeonVar_setUpInstances[mapKey], api)) {
+      pigeonVar_setUpInstances.remove(mapKey);
+    }
+    pigeonVar_removeHandle(api, name: name);
+  }
+
+  static void pigeonVar_removeHandle(NativeInteropReservedNamesFlutterApi api, {String? name}) {
+    final String mapKey = name ?? _defaultInstanceName;
     final List<(NativeInteropReservedNamesFlutterApi, Object)>? handles =
         pigeonVar_registeredHandles[mapKey];
     if (handles == null || handles.isEmpty) {
@@ -14250,9 +14375,6 @@ final class _NativeInteropReservedNamesFlutterApiRegistrar
     }
     if (handles.isEmpty) {
       pigeonVar_registeredHandles.remove(mapKey);
-    }
-    if (identical(pigeonVar_setUpInstances[mapKey], api)) {
-      pigeonVar_setUpInstances.remove(mapKey);
     }
     if (Platform.isAndroid) {
       final JString? jName = name?.toJString();
@@ -14280,13 +14402,20 @@ final class _NativeInteropReservedNamesFlutterApiRegistrar
 
   void pigeonVar_register({String? name}) {
     final String mapKey = name ?? _defaultInstanceName;
-    pigeonVar_unregister(pigeonVar_dartApi, name: name);
+    pigeonVar_removeHandle(pigeonVar_dartApi, name: name);
+    final int engineId = PlatformDispatcher.instance.engineId ?? _pigeonNoEngineKey;
+    final int affinityKey = _pigeonEngineAffinity ?? _pigeonNoEngineKey;
     if (Platform.isAndroid) {
       final jni_bridge.NativeInteropReservedNamesFlutterApi impl =
           jni_bridge.NativeInteropReservedNamesFlutterApi.implement(this);
       final JString? jName = name?.toJString();
       try {
-        jni_bridge.NativeInteropReservedNamesFlutterApiRegistrar.register(impl, jName);
+        jni_bridge.NativeInteropReservedNamesFlutterApiRegistrar.register(
+          impl,
+          engineId,
+          affinityKey,
+          jName,
+        );
       } finally {
         jName?.release();
       }
@@ -14378,6 +14507,8 @@ final class _NativeInteropReservedNamesFlutterApiRegistrar
           ffi_bridge.NativeInteropReservedNamesFlutterApiBridge.as(builder.build());
       ffi_bridge.NativeInteropReservedNamesFlutterApiRegistrar.registerWithApi(
         impl,
+        engineId: engineId,
+        affinityKey: affinityKey,
         name: name != null ? NSString(name) : null,
       );
       (pigeonVar_registeredHandles[mapKey] ??= <(NativeInteropReservedNamesFlutterApi, Object)>[])

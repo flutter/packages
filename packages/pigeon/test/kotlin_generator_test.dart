@@ -1744,7 +1744,12 @@ void main() {
       expect(code, contains('@Keep\n  companion object {\n    fun ofRaw(raw: Int): AnEnum?'));
       expect(code, contains('@Keep\ndata class DataClass ('));
       expect(code, contains('@Keep\ninterface HostApi {'));
-      expect(code, contains('@Keep\nclass HostApiRegistrar private constructor() : HostApi {'));
+      expect(
+        code,
+        contains(
+          '@Keep\nclass HostApiRegistrar private constructor(private val engineKey: Long) : HostApi {',
+        ),
+      );
       expect(code, contains('@Keep\ninterface FlutterApi {'));
       expect(code, contains('@Keep\nclass FlutterApiRegistrar private constructor() {'));
     });
@@ -2020,12 +2025,17 @@ void main() {
         contains('private const val defaultInstanceName = "$defaultNativeInteropInstanceName"'),
       );
       expect(code, contains('interface HostApi {'));
-      expect(code, contains('class HostApiRegistrar private constructor() : HostApi {'));
+      expect(
+        code,
+        contains(
+          'class HostApiRegistrar private constructor(private val engineKey: Long) : HostApi {',
+        ),
+      );
       expect(code, isNot(contains('api: HostApi?,')));
       expect(code, contains('@JvmStatic'));
-      expect(code, contains('fun register(api: HostApi, name: String? = null) {'));
+      expect(code, isNot(contains('fun register(api: HostApi, name: String? = null)')));
       expect(code, isNot(contains('): HostApiRegistrar {')));
-      expect(code, contains('fun unregister(api: HostApi, name: String? = null) {'));
+      expect(code, isNot(contains('fun unregister(api: HostApi, name: String? = null)')));
       expect(code, contains('val resolvedName = name ?: defaultInstanceName'));
       expect(code, contains('HostApiInstances.remove(resolvedName)'));
       expect(code, contains('fun getInstance(name: String? = null): HostApiRegistrar?'));
@@ -2037,24 +2047,214 @@ void main() {
       expect(code, isNot(contains('error("HostApi has not been registered")')));
       expect(code, contains('kotlin.synchronized(HostApiInstances)'));
       expect(code, contains('HostApiInstances[resolvedName]?.lastOrNull()'));
-      expect(code, contains('val index = list.indexOfFirst { it.api === api }'));
+      expect(
+        code,
+        contains('val index = list.indexOfFirst { it.api === api && it.engineKey == engineKey }'),
+      );
       expect(code, contains('list.add(list.removeAt(index))'));
+      expect(code, contains('val wrapper = HostApiRegistrar(engineKey)'));
       expect(code, contains(' * Registers [api] under [name]'));
       expect(code, contains(' * Instances are matched by identity.'));
       expect(code, contains(' * Returns the most recently registered instance for [name]'));
       expect(
         code,
-        contains('private val registeredFlutterApi: MutableMap<String, MutableList<FlutterApi>>'),
+        contains(
+          'private val registeredFlutterApi: MutableMap<String, MutableList<FlutterApiRegistration>>',
+        ),
+      );
+      expect(
+        code,
+        contains(
+          'private class FlutterApiRegistration(val api: FlutterApi, val engineId: Long, val affinityKey: Long)',
+        ),
       );
       expect(code, contains('class FlutterApiRegistrar private constructor() {'));
-      expect(code, contains('fun register(api: FlutterApi, name: String? = null)'));
-      expect(code, contains('fun unregister(api: FlutterApi, name: String? = null)'));
-      expect(code, contains('fun getInstance(name: String? = null): FlutterApi?'));
       expect(code, contains('kotlin.synchronized(registeredFlutterApi)'));
-      expect(code, contains('registeredFlutterApi[resolvedName]?.lastOrNull()'));
       expect(code, contains('registeredFlutterApi.remove(resolvedName)'));
+      expect(code, isNot(contains('fun getInstance(name: String? = null): FlutterApi?')));
     },
   );
+
+  group('JNI engine-keyed registration', () {
+    Root buildRoot({bool host = true, bool flutter = true}) {
+      return Root(
+        apis: <Api>[
+          if (host)
+            AstHostApi(
+              name: 'HostApi',
+              methods: <Method>[
+                Method(
+                  name: 'doSomething',
+                  location: ApiLocation.host,
+                  returnType: const TypeDeclaration.voidDeclaration(),
+                  parameters: <Parameter>[],
+                ),
+              ],
+            ),
+          if (flutter)
+            AstFlutterApi(
+              name: 'FlutterApi',
+              methods: <Method>[
+                Method(
+                  name: 'onEvent',
+                  location: ApiLocation.flutter,
+                  returnType: const TypeDeclaration.voidDeclaration(),
+                  parameters: <Parameter>[],
+                ),
+              ],
+            ),
+        ],
+        classes: <Class>[],
+        enums: <Enum>[],
+      );
+    }
+
+    String generate(Root root, {bool useJni = true, String? fileSpecificClassNameComponent}) {
+      final sink = StringBuffer();
+      const KotlinGenerator().generate(
+        InternalKotlinOptions(
+          kotlinOut: '',
+          useJni: useJni,
+          fileSpecificClassNameComponent: fileSpecificClassNameComponent,
+        ),
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+      return sink.toString();
+    }
+
+    void expectInOrder(String code, List<String> snippets) {
+      var previous = -1;
+      for (final snippet in snippets) {
+        final int index = code.indexOf(snippet);
+        expect(index, greaterThan(previous), reason: 'Expected "$snippet" after previous snippet');
+        previous = index;
+      }
+    }
+
+    test('imports Flutter engine types only when there is a host or Flutter API', () {
+      const engineImport = 'import io.flutter.embedding.engine.FlutterEngine';
+      const pluginImport = 'import io.flutter.embedding.engine.plugins.FlutterPlugin';
+      final String withHost = generate(buildRoot(flutter: false));
+      expect(withHost, contains(engineImport));
+      expect(withHost, contains(pluginImport));
+      final String withFlutter = generate(buildRoot(host: false));
+      expect(withFlutter, contains(engineImport));
+      expect(withFlutter, contains(pluginImport));
+      final String withNone = generate(buildRoot(host: false, flutter: false));
+      expect(withNone, isNot(contains(engineImport)));
+      expect(withNone, isNot(contains('PigeonEngineKeys')));
+      final String nonJni = generate(buildRoot(), useJni: false);
+      expect(nonJni, isNot(contains(engineImport)));
+      expect(nonJni, isNot(contains('PigeonEngineKeys')));
+    });
+
+    test('emits a file-private engine key helper', () {
+      final String code = generate(buildRoot());
+      expect(code, contains('private object PigeonEngineKeys {'));
+      expect(code, contains('const val NO_KEY: Long = Long.MIN_VALUE'));
+      expect(code, contains('private val getEngineIdMethod: java.lang.reflect.Method? by lazy {'));
+      expect(
+        code,
+        contains('FlutterPlugin.FlutterPluginBinding::class.java.getMethod("getEngineId")'),
+      );
+      expect(code, contains('return method.invoke(binding) as Long'));
+      expect(code, contains('private val messengerKeys = java.util.WeakHashMap<Any, Long>()'));
+      expect(code, contains('private var nextSyntheticKey: Long = -1L'));
+      expect(code, contains('fun keyOf(binding: FlutterPlugin.FlutterPluginBinding): Long {'));
+      expect(code, contains('return keyOfMessenger(binding.binaryMessenger)'));
+      expect(code, contains('fun keyOf(engine: FlutterEngine): Long {'));
+      expect(code, contains('val key = engine.engineId'));
+      expect(code, contains('messengerKeys[engine.dartExecutor] = key'));
+      expect(code, contains('messengerKeys.getOrPut(messenger) { nextSyntheticKey-- }'));
+      expect(code, isNot(contains('flutterEngine')));
+      expect(code, isNot(contains('getFlutterEngine')));
+    });
+
+    test('engine key helper name is file-specific', () {
+      final String code = generate(buildRoot(), fileSpecificClassNameComponent: 'Foo');
+      expect(code, contains('private object FooPigeonEngineKeys {'));
+      expect(code, contains('FooPigeonEngineKeys.keyOf(binding)'));
+      expect(code, contains('FooPigeonEngineKeys.NO_KEY'));
+    });
+
+    test('host API registrar statics are declared in the order Dart expects', () {
+      final String code = generate(buildRoot(flutter: false));
+      expectInOrder(code, <String>[
+        'fun register(api: HostApi, binding: FlutterPlugin.FlutterPluginBinding, name: String? = null) {',
+        'fun register(api: HostApi, engine: FlutterEngine, name: String? = null) {',
+        'fun unregister(api: HostApi, binding: FlutterPlugin.FlutterPluginBinding, name: String? = null) {',
+        'fun unregister(api: HostApi, engine: FlutterEngine, name: String? = null) {',
+        'fun getInstance(name: String? = null): HostApiRegistrar? {',
+        'fun pigeonResolveInstance(engineId: Long, affinityKey: Long, name: String?): HostApiRegistrar? {',
+        'fun pigeonEngineKeyOf(instance: HostApiRegistrar): Long {',
+        'private fun registerWithKey(',
+        'private fun unregisterWithKey(',
+        'override fun doSomething()',
+      ]);
+      expect('@JvmStatic\n    @Keep\n    fun '.allMatches(code).length, 7);
+    });
+
+    test('host API register and unregister compute engine keys', () {
+      final String code = generate(buildRoot(flutter: false));
+      expect(code, contains('registerWithKey(api, PigeonEngineKeys.keyOf(binding), name)'));
+      expect(code, contains('registerWithKey(api, PigeonEngineKeys.keyOf(engine), name)'));
+      expect(code, contains('unregisterWithKey(api, PigeonEngineKeys.keyOf(binding), name)'));
+      expect(code, contains('unregisterWithKey(api, PigeonEngineKeys.keyOf(engine), name)'));
+    });
+
+    test('host API unregister falls back to identity when no key matches', () {
+      final String code = generate(buildRoot(flutter: false));
+      expect(
+        code,
+        contains('val matchKey = list.any { it.api === api && it.engineKey == engineKey }'),
+      );
+      expect(
+        code,
+        contains('if (entry.api === api && (!matchKey || entry.engineKey == engineKey)) {'),
+      );
+      expect(code, contains('entry.api = null'));
+    });
+
+    test('host API resolves by engine id, then affinity, then top of stack', () {
+      final String code = generate(buildRoot(flutter: false));
+      expectInOrder(code, <String>[
+        'val list = HostApiInstances[resolvedName] ?: return@synchronized null',
+        'val exact = if (engineId != PigeonEngineKeys.NO_KEY) list.lastOrNull { it.engineKey == engineId } else null',
+        'val affine = if (affinityKey != PigeonEngineKeys.NO_KEY) list.lastOrNull { it.engineKey == affinityKey } else null',
+        'exact ?: affine ?: list.lastOrNull()',
+      ]);
+      expect(code, contains('return instance.engineKey'));
+    });
+
+    test('Flutter API registrar statics are declared in the order Dart expects', () {
+      final String code = generate(buildRoot(host: false));
+      expectInOrder(code, <String>[
+        'fun register(api: FlutterApi, engineId: Long, affinityKey: Long, name: String?) {',
+        'fun unregister(api: FlutterApi, name: String?) {',
+        'fun getInstance(binding: FlutterPlugin.FlutterPluginBinding, name: String? = null): FlutterApi? {',
+        'fun getInstance(engine: FlutterEngine, name: String? = null): FlutterApi? {',
+        'private fun getInstanceWithKey(engineKey: Long, name: String?): FlutterApi? {',
+      ]);
+      expect('@JvmStatic\n    @Keep\n    fun '.allMatches(code).length, 4);
+    });
+
+    test('Flutter API registration dedups by identity and looks up by engine', () {
+      final String code = generate(buildRoot(host: false));
+      expect(code, contains('list.removeAll { it.api === api }'));
+      expect(code, contains('list.add(FlutterApiRegistration(api, engineId, affinityKey))'));
+      expect(code, contains('return getInstanceWithKey(PigeonEngineKeys.keyOf(binding), name)'));
+      expect(code, contains('return getInstanceWithKey(PigeonEngineKeys.keyOf(engine), name)'));
+      expect(
+        code,
+        contains(
+          'val match = list.lastOrNull { it.engineId == engineKey || it.affinityKey == engineKey }',
+        ),
+      );
+      expect(code, contains('(match ?: list.lastOrNull())?.api'));
+    });
+  });
 
   test('asyncCallback emits callback-based host api method', () {
     final root = Root(

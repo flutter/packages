@@ -1343,9 +1343,13 @@ SWIFT_CLASS(
 /// when <code>name</code> is nil). Registrations are kept in an ordered stack
 /// per name, and <code>getInstance</code> returns the most recent one.
 /// Registering an instance that is already registered under <code>name</code>
-/// moves it to the top of the stack.
+/// moves it to the top of the stack. Called by generated Dart code.
+/// <code>engineId</code> and <code>affinityKey</code> identify the engine that
+/// registered <code>api</code>, or are <code>Int64.min</code> when unknown.
 + (void)registerWithApi:
             (id<NativeInteropFlutterIntegrationCoreApiBridge> _Nonnull)api
+               engineId:(int64_t)engineId
+            affinityKey:(int64_t)affinityKey
                    name:(NSString* _Nullable)name;
 /// Removes <code>api</code> from the registrations under <code>name</code> (or
 /// the default instance when <code>name</code> is nil), leaving other
@@ -1369,6 +1373,21 @@ SWIFT_CLASS("_TtC11test_plugin40NativeInteropHostIntegrationCoreApiSetup")
 /// different registrations.
 + (NativeInteropHostIntegrationCoreApiSetup* _Nullable)getInstanceWithName:
     (NSString* _Nullable)name SWIFT_WARN_UNUSED_RESULT;
+/// Returns the instance generated Dart code should use for <code>name</code>
+/// (or the default instance when <code>name</code> is nil). Prefers the most
+/// recent registration whose engine key is <code>engineId</code>, then
+/// <code>affinityKey</code>, then the most recent registration.
+/// <code>Int64.min</code> means unknown.
++ (NativeInteropHostIntegrationCoreApiSetup* _Nullable)
+    pigeonResolveInstanceWithEngineId:(int64_t)engineId
+                          affinityKey:(int64_t)affinityKey
+                                 name:(NSString* _Nullable)name
+    SWIFT_WARN_UNUSED_RESULT;
+/// Returns the engine key <code>instance</code> was registered with, or
+/// <code>Int64.min</code> if unknown.
++ (int64_t)pigeonEngineKeyOf:
+    (NativeInteropHostIntegrationCoreApiSetup* _Nonnull)instance
+    SWIFT_WARN_UNUSED_RESULT;
 /// A no-op function taking no arguments and returning no value, to sanity
 /// test basic calling.
 - (void)noopWithWrappedError:(NativeInteropTestsError* _Nonnull)wrappedError;
@@ -3073,6 +3092,14 @@ SWIFT_CLASS("_TtC11test_plugin40NativeInteropHostIntegrationCoreApiSetup")
                                  wrappedError:
                                      (NativeInteropTestsError* _Nonnull)
                                          wrappedError;
+/// Returns the engine key that native code stored for this plugin’s
+/// default Host API registration.
+- (NSNumber* _Nullable)registeredEngineKeyWithWrappedError:
+    (NativeInteropTestsError* _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
+/// Returns whether this platform’s plugin binding / registrar exposes an
+/// engine identifier, so registrations should use exact engine keys.
+- (NSNumber* _Nullable)pluginEngineIdentifierIsAvailableWithWrappedError:
+    (NativeInteropTestsError* _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 @end
 
 /// A class whose field names collide with members of the bindings that JNIgen
@@ -3162,9 +3189,13 @@ SWIFT_CLASS("_TtC11test_plugin45NativeInteropReservedNamesFlutterApiRegistrar")
 /// when <code>name</code> is nil). Registrations are kept in an ordered stack
 /// per name, and <code>getInstance</code> returns the most recent one.
 /// Registering an instance that is already registered under <code>name</code>
-/// moves it to the top of the stack.
+/// moves it to the top of the stack. Called by generated Dart code.
+/// <code>engineId</code> and <code>affinityKey</code> identify the engine that
+/// registered <code>api</code>, or are <code>Int64.min</code> when unknown.
 + (void)registerWithApi:
             (id<NativeInteropReservedNamesFlutterApiBridge> _Nonnull)api
+               engineId:(int64_t)engineId
+            affinityKey:(int64_t)affinityKey
                    name:(NSString* _Nullable)name;
 /// Removes <code>api</code> from the registrations under <code>name</code> (or
 /// the default instance when <code>name</code> is nil), leaving other
@@ -3187,6 +3218,21 @@ SWIFT_CLASS("_TtC11test_plugin38NativeInteropReservedNamesHostApiSetup")
 /// different registrations.
 + (NativeInteropReservedNamesHostApiSetup* _Nullable)getInstanceWithName:
     (NSString* _Nullable)name SWIFT_WARN_UNUSED_RESULT;
+/// Returns the instance generated Dart code should use for <code>name</code>
+/// (or the default instance when <code>name</code> is nil). Prefers the most
+/// recent registration whose engine key is <code>engineId</code>, then
+/// <code>affinityKey</code>, then the most recent registration.
+/// <code>Int64.min</code> means unknown.
++ (NativeInteropReservedNamesHostApiSetup* _Nullable)
+    pigeonResolveInstanceWithEngineId:(int64_t)engineId
+                          affinityKey:(int64_t)affinityKey
+                                 name:(NSString* _Nullable)name
+    SWIFT_WARN_UNUSED_RESULT;
+/// Returns the engine key <code>instance</code> was registered with, or
+/// <code>Int64.min</code> if unknown.
++ (int64_t)pigeonEngineKeyOf:
+    (NativeInteropReservedNamesHostApiSetup* _Nonnull)instance
+    SWIFT_WARN_UNUSED_RESULT;
 /// Collides with <code>JObject.release</code>.
 - (NSString* _Nullable)releaseWithValue:(NSString* _Nonnull)valueArg
                            wrappedError:

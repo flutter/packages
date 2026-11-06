@@ -284,6 +284,10 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
     if (generatorOptions.useJni) {
       indent.writeln('import androidx.annotation.Keep');
     }
+    if (_needsEngineKeys(generatorOptions, root)) {
+      indent.writeln('import io.flutter.embedding.engine.FlutterEngine');
+      indent.writeln('import io.flutter.embedding.engine.plugins.FlutterPlugin');
+    }
     if (!generatorOptions.useJni || root.containsEventChannel || root.containsProxyApi) {
       indent.writeln('import io.flutter.plugin.common.BasicMessageChannel');
       indent.writeln('import io.flutter.plugin.common.BinaryMessenger');
@@ -803,27 +807,31 @@ if (wrapped == null) {
     });
   }
 
-  void _writeNativeInteropRegisterDocs(Indent indent) {
-    indent.writeln('/**');
-    indent.writeln(
-      ' * Registers [api] under [name] (or the default instance when [name] is null).',
-    );
-    indent.writeln(' *');
-    indent.writeln(' * Registrations are kept in an ordered stack per name, and [getInstance]');
-    indent.writeln(' * returns the most recent one. Registering an instance that is already');
-    indent.writeln(' * registered under [name] moves it to the top of the stack.');
-    indent.writeln(' */');
+  /// Writes a KDoc comment containing the lines of [doc].
+  void _writeKDoc(Indent indent, String doc) {
+    addDocumentationComments(indent, doc.trim().split('\n'), _docCommentSpec);
   }
 
-  void _writeNativeInteropUnregisterDocs(Indent indent) {
-    indent.writeln('/**');
-    indent.writeln(' * Removes [api] from the registrations under [name] (or the default instance');
-    indent.writeln(' * when [name] is null), leaving other registrations in place.');
-    indent.writeln(' *');
-    indent.writeln(
-      ' * Instances are matched by identity. Does nothing if [api] is not registered.',
-    );
-    indent.writeln(' */');
+  void _writeNativeInteropHostRegisterDocs(Indent indent, {required String engineSource}) {
+    _writeKDoc(indent, '''
+Registers [api] under [name] (or the default instance when [name] is null)
+for the engine of $engineSource.
+
+Registrations are kept in an ordered stack per name, and [getInstance]
+returns the most recent one. Dart code running on an engine prefers the
+instance registered for that engine. Registering an instance that is already
+registered under [name] for the same engine moves it to the top of the stack.''');
+  }
+
+  void _writeNativeInteropHostUnregisterDocs(Indent indent, {required String engineSource}) {
+    _writeKDoc(indent, '''
+Removes [api] from the registrations under [name] (or the default instance
+when [name] is null) for the engine of $engineSource, leaving other
+registrations in place.
+
+Instances are matched by identity. If [api] is not registered for that
+engine, its registrations for any engine are removed. Does nothing if [api]
+is not registered.''');
   }
 
   void _writeNativeInteropGetInstanceDocs(Indent indent) {
@@ -842,54 +850,106 @@ if (wrapped == null) {
     AstFlutterApi api, {
     required String dartPackageName,
   }) {
+    final registrationName = '${api.name}Registration';
+    final registered = 'registered${api.name}';
+    final String engineKeys = _getEngineKeysClassName(generatorOptions);
+    indent.writeln('/** A registered [${api.name}] and the keys of the engine it belongs to. */');
+    indent.writeln(
+      'private class $registrationName(val api: ${api.name}, val engineId: Long, val affinityKey: Long)',
+    );
+    indent.newln();
     indent.writeln('/// Map that stores instances');
     indent.writeln(
-      'private val registered${api.name}: MutableMap<String, MutableList<${api.name}>> = mutableMapOf()',
+      'private val $registered: MutableMap<String, MutableList<$registrationName>> = mutableMapOf()',
     );
     indent.newln();
     indent.writeln('/// Class that stores instances');
     indent.writeln('@Keep');
     indent.writeScoped('class ${api.name}Registrar private constructor() {', '}', () {
       indent.writeScoped('companion object {', '}', () {
-        _writeNativeInteropRegisterDocs(indent);
+        _writeKDoc(indent, '''
+Registers [api] under [name] (or the default instance when [name] is null)
+for the engine identified by [engineId] and [affinityKey].
+
+Either key may be `Long.MIN_VALUE` when it is unknown. Registering an
+instance that is already registered under [name] moves it to the top of the
+stack.
+
+This is called by the generated Dart code and is not intended for direct use.''');
         indent.writeln('@JvmStatic');
         indent.writeln('@Keep');
-        indent.writeScoped('fun register(api: ${api.name}, name: String? = null) {', '}', () {
-          indent.writeln('val resolvedName = name ?: defaultInstanceName');
-          indent.writeScoped('kotlin.synchronized(registered${api.name}) {', '}', () {
-            indent.writeln(
-              'val list = registered${api.name}.getOrPut(resolvedName) { mutableListOf() }',
-            );
-            indent.writeln('list.removeAll { it === api }');
-            indent.writeln('list.add(api)');
-          });
-        });
+        indent.writeScoped(
+          'fun register(api: ${api.name}, engineId: Long, affinityKey: Long, name: String?) {',
+          '}',
+          () {
+            indent.writeln('val resolvedName = name ?: defaultInstanceName');
+            indent.writeScoped('kotlin.synchronized($registered) {', '}', () {
+              indent.writeln('val list = $registered.getOrPut(resolvedName) { mutableListOf() }');
+              indent.writeln('list.removeAll { it.api === api }');
+              indent.writeln('list.add($registrationName(api, engineId, affinityKey))');
+            });
+          },
+        );
         indent.newln();
-        _writeNativeInteropUnregisterDocs(indent);
+        _writeKDoc(indent, '''
+Removes [api] from the registrations under [name] (or the default instance
+when [name] is null), leaving other registrations in place.
+
+Instances are matched by identity. Does nothing if [api] is not registered.
+
+This is called by the generated Dart code and is not intended for direct use.''');
         indent.writeln('@JvmStatic');
         indent.writeln('@Keep');
-        indent.writeScoped('fun unregister(api: ${api.name}, name: String? = null) {', '}', () {
+        indent.writeScoped('fun unregister(api: ${api.name}, name: String?) {', '}', () {
           indent.writeln('val resolvedName = name ?: defaultInstanceName');
-          indent.writeScoped('kotlin.synchronized(registered${api.name}) {', '}', () {
-            indent.writeln('val list = registered${api.name}[resolvedName]');
+          indent.writeScoped('kotlin.synchronized($registered) {', '}', () {
+            indent.writeln('val list = $registered[resolvedName]');
             indent.writeScoped('if (list != null) {', '}', () {
-              indent.writeln('list.removeAll { it === api }');
+              indent.writeln('list.removeAll { it.api === api }');
               indent.writeScoped('if (list.isEmpty()) {', '}', () {
-                indent.writeln('registered${api.name}.remove(resolvedName)');
+                indent.writeln('$registered.remove(resolvedName)');
               });
             });
           });
         });
+        for (final (String paramName, String paramType, String source)
+            in <(String, String, String)>[
+              ('binding', 'FlutterPlugin.FlutterPluginBinding', 'the plugin binding [binding]'),
+              ('engine', 'FlutterEngine', '[engine]'),
+            ]) {
+          indent.newln();
+          _writeKDoc(indent, '''
+Returns the instance registered under [name] (or the default instance when
+[name] is null) by the Dart code running on the engine of $source.
+
+Falls back to the most recently registered instance for [name] when none was
+registered for that engine, or returns null if none is registered.
+
+A null [name] and an empty [name] refer to different registrations.''');
+          indent.writeln('@JvmStatic');
+          indent.writeln('@Keep');
+          indent.writeScoped(
+            'fun getInstance($paramName: $paramType, name: String? = null): ${api.name}? {',
+            '}',
+            () {
+              indent.writeln('return getInstanceWithKey($engineKeys.keyOf($paramName), name)');
+            },
+          );
+        }
         indent.newln();
-        _writeNativeInteropGetInstanceDocs(indent);
-        indent.writeln('@JvmStatic');
-        indent.writeln('@Keep');
-        indent.writeScoped('fun getInstance(name: String? = null): ${api.name}? {', '}', () {
-          indent.writeln('val resolvedName = name ?: defaultInstanceName');
-          indent.writeScoped('return kotlin.synchronized(registered${api.name}) {', '}', () {
-            indent.writeln('registered${api.name}[resolvedName]?.lastOrNull()');
-          });
-        });
+        indent.writeScoped(
+          'private fun getInstanceWithKey(engineKey: Long, name: String?): ${api.name}? {',
+          '}',
+          () {
+            indent.writeln('val resolvedName = name ?: defaultInstanceName');
+            indent.writeScoped('return kotlin.synchronized($registered) {', '}', () {
+              indent.format('''
+val list = $registered[resolvedName] ?: return@synchronized null
+val match = list.lastOrNull { it.engineId == engineKey || it.affinityKey == engineKey }
+(match ?: list.lastOrNull())?.api''');
+            });
+          },
+        );
       });
     });
     indent.writeln('@Keep');
@@ -1012,100 +1072,185 @@ if (wrapped == null) {
       }
     });
 
+    final registrarName = '${api.name}Registrar';
+    final instances = '${api.name}Instances';
+    final String engineKeys = _getEngineKeysClassName(generatorOptions);
     indent.writeln('@Keep');
-    indent.writeScoped('class ${api.name}Registrar private constructor() : ${api.name} {', '}', () {
-      indent.writeln('@Volatile private var api: ${api.name}? = null');
-      indent.newln();
-      indent.writeScoped('companion object {', '}', () {
-        _writeNativeInteropRegisterDocs(indent);
-        indent.writeln('@JvmStatic');
-        indent.writeln('@Keep');
-        indent.writeScoped('fun register(api: ${api.name}, name: String? = null) {', '}', () {
-          indent.writeln('val resolvedName = name ?: defaultInstanceName');
-          indent.writeScoped('kotlin.synchronized(${api.name}Instances) {', '}', () {
-            indent.writeln(
-              'val list = ${api.name}Instances.getOrPut(resolvedName) { mutableListOf() }',
+    indent.writeScoped(
+      'class $registrarName private constructor(private val engineKey: Long) : ${api.name} {',
+      '}',
+      () {
+        indent.writeln('@Volatile private var api: ${api.name}? = null');
+        indent.newln();
+        indent.writeScoped('companion object {', '}', () {
+          for (final (String paramName, String paramType, String source)
+              in <(String, String, String)>[
+                ('binding', 'FlutterPlugin.FlutterPluginBinding', 'the plugin binding [binding]'),
+                ('engine', 'FlutterEngine', '[engine]'),
+              ]) {
+            _writeNativeInteropHostRegisterDocs(indent, engineSource: source);
+            indent.writeln('@JvmStatic');
+            indent.writeln('@Keep');
+            indent.writeScoped(
+              'fun register(api: ${api.name}, $paramName: $paramType, name: String? = null) {',
+              '}',
+              () {
+                indent.writeln('registerWithKey(api, $engineKeys.keyOf($paramName), name)');
+              },
             );
-            // Reuse the existing wrapper so Dart handles that already resolved
-            // it keep working after the instance moves back to the top.
-            indent.writeln('val index = list.indexOfFirst { it.api === api }');
-            indent.writeScoped('if (index >= 0) {', '}', () {
-              indent.writeln('list.add(list.removeAt(index))');
-            }, addTrailingNewline: false);
-            indent.addScoped(' else {', '}', () {
-              indent.writeln('val wrapper = ${api.name}Registrar()');
-              indent.writeln('wrapper.api = api');
-              indent.writeln('list.add(wrapper)');
+            indent.newln();
+          }
+          for (final (String paramName, String paramType, String source)
+              in <(String, String, String)>[
+                ('binding', 'FlutterPlugin.FlutterPluginBinding', 'the plugin binding [binding]'),
+                ('engine', 'FlutterEngine', '[engine]'),
+              ]) {
+            _writeNativeInteropHostUnregisterDocs(indent, engineSource: source);
+            indent.writeln('@JvmStatic');
+            indent.writeln('@Keep');
+            indent.writeScoped(
+              'fun unregister(api: ${api.name}, $paramName: $paramType, name: String? = null) {',
+              '}',
+              () {
+                indent.writeln('unregisterWithKey(api, $engineKeys.keyOf($paramName), name)');
+              },
+            );
+            indent.newln();
+          }
+          _writeNativeInteropGetInstanceDocs(indent);
+          indent.writeln('@JvmStatic');
+          indent.writeln('@Keep');
+          indent.writeScoped('fun getInstance(name: String? = null): $registrarName? {', '}', () {
+            indent.writeln('val resolvedName = name ?: defaultInstanceName');
+            indent.writeScoped('return kotlin.synchronized($instances) {', '}', () {
+              indent.writeln('$instances[resolvedName]?.lastOrNull()');
             });
           });
-        });
-        indent.newln();
-        _writeNativeInteropUnregisterDocs(indent);
-        indent.writeln('@JvmStatic');
-        indent.writeln('@Keep');
-        indent.writeScoped('fun unregister(api: ${api.name}, name: String? = null) {', '}', () {
-          indent.writeln('val resolvedName = name ?: defaultInstanceName');
-          indent.writeScoped('kotlin.synchronized(${api.name}Instances) {', '}', () {
-            indent.writeln('val list = ${api.name}Instances[resolvedName]');
-            indent.writeScoped('if (list != null) {', '}', () {
-              indent.writeln('val iterator = list.iterator()');
-              indent.writeScoped('while (iterator.hasNext()) {', '}', () {
-                indent.writeln('val entry = iterator.next()');
-                indent.writeScoped('if (entry.api === api) {', '}', () {
-                  indent.writeln('entry.api = null');
-                  indent.writeln('iterator.remove()');
+          indent.newln();
+          _writeKDoc(indent, '''
+Returns the instance registered under [name] (or the default instance when
+[name] is null) for the engine identified by [engineId].
+
+Falls back to the most recent instance registered for [affinityKey], then to
+the most recent instance overall. Either key may be `Long.MIN_VALUE` when it
+is unknown.
+
+This is called by the generated Dart code and is not intended for direct use.''');
+          indent.writeln('@JvmStatic');
+          indent.writeln('@Keep');
+          indent.writeScoped(
+            'fun pigeonResolveInstance(engineId: Long, affinityKey: Long, name: String?): $registrarName? {',
+            '}',
+            () {
+              indent.writeln('val resolvedName = name ?: defaultInstanceName');
+              indent.writeScoped('return kotlin.synchronized($instances) {', '}', () {
+                indent.format('''
+val list = $instances[resolvedName] ?: return@synchronized null
+val exact = if (engineId != $engineKeys.NO_KEY) list.lastOrNull { it.engineKey == engineId } else null
+val affine = if (affinityKey != $engineKeys.NO_KEY) list.lastOrNull { it.engineKey == affinityKey } else null
+exact ?: affine ?: list.lastOrNull()''');
+              });
+            },
+          );
+          indent.newln();
+          _writeKDoc(indent, '''
+Returns the engine key that [instance] was registered with, or
+`Long.MIN_VALUE` if it is unknown.
+
+This is called by the generated Dart code and is not intended for direct use.''');
+          indent.writeln('@JvmStatic');
+          indent.writeln('@Keep');
+          indent.writeScoped('fun pigeonEngineKeyOf(instance: $registrarName): Long {', '}', () {
+            indent.writeln('return instance.engineKey');
+          });
+          indent.newln();
+          indent.writeScoped(
+            'private fun registerWithKey(api: ${api.name}, engineKey: Long, name: String?) {',
+            '}',
+            () {
+              indent.writeln('val resolvedName = name ?: defaultInstanceName');
+              indent.writeScoped('kotlin.synchronized($instances) {', '}', () {
+                indent.writeln('val list = $instances.getOrPut(resolvedName) { mutableListOf() }');
+                // Reuse the existing wrapper so Dart handles that already resolved
+                // it keep working after the instance moves back to the top.
+                indent.writeln(
+                  'val index = list.indexOfFirst { it.api === api && it.engineKey == engineKey }',
+                );
+                indent.writeScoped('if (index >= 0) {', '}', () {
+                  indent.writeln('list.add(list.removeAt(index))');
+                }, addTrailingNewline: false);
+                indent.addScoped(' else {', '}', () {
+                  indent.writeln('val wrapper = $registrarName(engineKey)');
+                  indent.writeln('wrapper.api = api');
+                  indent.writeln('list.add(wrapper)');
                 });
               });
-              indent.writeScoped('if (list.isEmpty()) {', '}', () {
-                indent.writeln('${api.name}Instances.remove(resolvedName)');
+            },
+          );
+          indent.newln();
+          indent.writeScoped(
+            'private fun unregisterWithKey(api: ${api.name}, engineKey: Long, name: String?) {',
+            '}',
+            () {
+              indent.writeln('val resolvedName = name ?: defaultInstanceName');
+              indent.writeScoped('kotlin.synchronized($instances) {', '}', () {
+                indent.writeln('val list = $instances[resolvedName]');
+                indent.writeScoped('if (list != null) {', '}', () {
+                  // If no entry matches the key, e.g. because the engine key
+                  // could not be computed the same way, fall back to identity.
+                  indent.writeln(
+                    'val matchKey = list.any { it.api === api && it.engineKey == engineKey }',
+                  );
+                  indent.writeln('val iterator = list.iterator()');
+                  indent.writeScoped('while (iterator.hasNext()) {', '}', () {
+                    indent.writeln('val entry = iterator.next()');
+                    indent.writeScoped(
+                      'if (entry.api === api && (!matchKey || entry.engineKey == engineKey)) {',
+                      '}',
+                      () {
+                        indent.writeln('entry.api = null');
+                        indent.writeln('iterator.remove()');
+                      },
+                    );
+                  });
+                  indent.writeScoped('if (list.isEmpty()) {', '}', () {
+                    indent.writeln('$instances.remove(resolvedName)');
+                  });
+                });
               });
-            });
-          });
-        });
-        indent.newln();
-        _writeNativeInteropGetInstanceDocs(indent);
-        indent.writeln('@JvmStatic');
-        indent.writeln('@Keep');
-        indent.writeScoped(
-          'fun getInstance(name: String? = null): ${api.name}Registrar? {',
-          '}',
-          () {
-            indent.writeln('val resolvedName = name ?: defaultInstanceName');
-            indent.writeScoped('return kotlin.synchronized(${api.name}Instances) {', '}', () {
-              indent.writeln('${api.name}Instances[resolvedName]?.lastOrNull()');
-            });
-          },
-        );
-      });
-
-      for (final Method method in api.methods) {
-        _writeMethodDeclaration(
-          indent,
-          name: method.name,
-          documentationComments: method.documentationComments,
-          returnType: method.returnType,
-          parameters: method.parameters,
-          isAsynchronous: method.isAsynchronous,
-          isOverride: true,
-          useJni: true,
-        );
-        final String argNames = method.parameters.map((Parameter arg) => arg.name).join(', ');
-        indent.addScoped(' {', '}', () {
-          indent.writeScoped('api?.let {', '}', () {
-            indent.writeScoped('try {', '}', () {
-              indent.writeln('return it.${method.name}($argNames)');
-            }, addTrailingNewline: false);
-            indent.addScoped(' catch (e: Exception) {', '}', () {
-              indent.writeln('throw e');
-            });
-          });
-
-          indent.writeln(
-            'throw ${_getErrorClassName(generatorOptions)}("unregistered-instance", "${api.name} has not been registered.")',
+            },
           );
         });
-      }
-    });
+
+        for (final Method method in api.methods) {
+          _writeMethodDeclaration(
+            indent,
+            name: method.name,
+            documentationComments: method.documentationComments,
+            returnType: method.returnType,
+            parameters: method.parameters,
+            isAsynchronous: method.isAsynchronous,
+            isOverride: true,
+            useJni: true,
+          );
+          final String argNames = method.parameters.map((Parameter arg) => arg.name).join(', ');
+          indent.addScoped(' {', '}', () {
+            indent.writeScoped('api?.let {', '}', () {
+              indent.writeScoped('try {', '}', () {
+                indent.writeln('return it.${method.name}($argNames)');
+              }, addTrailingNewline: false);
+              indent.addScoped(' catch (e: Exception) {', '}', () {
+                indent.writeln('throw e');
+              });
+            });
+
+            indent.writeln(
+              'throw ${_getErrorClassName(generatorOptions)}("unregistered-instance", "${api.name} has not been registered.")',
+            );
+          });
+        }
+      },
+    );
   }
 
   /// Write the kotlin code that represents a host [Api], [api].
@@ -1873,7 +2018,77 @@ fun floatHash(f: Float): Int {
     }
     if (generatorOptions.useJni) {
       indent.writeln('private const val defaultInstanceName = "$defaultNativeInteropInstanceName"');
+      if (_needsEngineKeys(generatorOptions, root)) {
+        _writeEngineKeys(generatorOptions, indent);
+      }
     }
+  }
+
+  /// Whether the file needs the engine key helper used to route native interop
+  /// registrations to the Flutter engine they belong to.
+  static bool _needsEngineKeys(InternalKotlinOptions generatorOptions, Root root) {
+    return generatorOptions.useJni &&
+        root.apis.any((Api api) => api is AstHostApi || api is AstFlutterApi);
+  }
+
+  /// Writes the file-private helper that computes engine keys.
+  ///
+  /// The key for an engine matches Dart's `PlatformDispatcher.instance.engineId`
+  /// when the embedding exposes it. Otherwise each engine's messenger gets a
+  /// process-unique negative key.
+  void _writeEngineKeys(InternalKotlinOptions generatorOptions, Indent indent) {
+    final String className = _getEngineKeysClassName(generatorOptions);
+    indent.newln();
+    indent.writeln(
+      '/** Computes keys that identify the Flutter engine a registration belongs to. */',
+    );
+    indent.writeScoped('private object $className {', '}', () {
+      indent.format('''
+/** Sentinel meaning that no engine key is known. */
+const val NO_KEY: Long = Long.MIN_VALUE
+
+/** `FlutterPluginBinding.getEngineId`, which is missing on older Flutter versions. */
+private val getEngineIdMethod: java.lang.reflect.Method? by lazy {
+\ttry {
+\t\tFlutterPlugin.FlutterPluginBinding::class.java.getMethod("getEngineId")
+\t} catch (e: Exception) {
+\t\tnull
+\t}
+}
+
+/** Keys for engine messengers, used when an exact engine id is unavailable. */
+private val messengerKeys = java.util.WeakHashMap<Any, Long>()
+
+private var nextSyntheticKey: Long = -1L
+
+/** Returns the key for the engine that [binding] belongs to. */
+fun keyOf(binding: FlutterPlugin.FlutterPluginBinding): Long {
+\tval method = getEngineIdMethod
+\tif (method != null) {
+\t\ttry {
+\t\t\treturn method.invoke(binding) as Long
+\t\t} catch (e: Exception) {
+\t\t\t// Fall back to a messenger-based key.
+\t\t}
+\t}
+\treturn keyOfMessenger(binding.binaryMessenger)
+}
+
+/** Returns the key for [engine]. */
+fun keyOf(engine: FlutterEngine): Long {
+\tval key = engine.engineId
+\t// Record the exact key so later lookups through a binding for this engine
+\t// agree with it even when the binding cannot report the engine id.
+\tkotlin.synchronized(messengerKeys) { messengerKeys[engine.dartExecutor] = key }
+\treturn key
+}
+
+private fun keyOfMessenger(messenger: Any): Long {
+\treturn kotlin.synchronized(messengerKeys) {
+\t\tmessengerKeys.getOrPut(messenger) { nextSyntheticKey-- }
+\t}
+}''');
+    });
   }
 
   static void _writeMethodDeclaration(
@@ -2807,6 +3022,14 @@ String _getErrorClassName(InternalKotlinOptions generatorOptions) =>
 /// the file.
 String _getUtilsClassName(InternalKotlinOptions options) {
   return toUpperCamelCase('${options.fileSpecificClassNameComponent ?? ''}PigeonUtils');
+}
+
+/// Calculates the name of the private engine key helper generated for the file.
+///
+/// Private top-level Kotlin classes still compile to package-level JVM classes,
+/// so the name must be file-specific to avoid clashes between generated files.
+String _getEngineKeysClassName(InternalKotlinOptions options) {
+  return toUpperCamelCase('${options.fileSpecificClassNameComponent ?? ''}PigeonEngineKeys');
 }
 
 String _getArgumentName(int count, NamedType argument) =>

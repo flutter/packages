@@ -328,6 +328,15 @@ class SwiftGenerator extends StructuredGenerator<InternalSwiftOptions> {
 #else
   #error("Unsupported platform.")
 #endif''');
+    } else if (_needsEngineKeys(generatorOptions, root)) {
+      // swiftgen compiles FFI output without the Flutter module, so the
+      // import and every Flutter-typed member must be conditional.
+      indent.format('''
+#if canImport(Flutter)
+  import Flutter
+#elseif canImport(FlutterMacOS)
+  import FlutterMacOS
+#endif''');
     }
   }
 
@@ -1410,27 +1419,40 @@ if (wrapped == nil) {
       indent.writeln('private static var registered${api.name} = [String: [${api.name}]]()');
       indent.newln();
       _writeNativeInteropRegisterDocs(indent);
-      indent.write('@objc static func register(api: ${api.name}Bridge, name: String? = nil) ');
+      indent.writeln(_docCommentPrefix);
+      indent.writeln(
+        '$_docCommentPrefix Called by generated Dart code. `engineId` and `affinityKey` identify the engine',
+      );
+      indent.writeln('$_docCommentPrefix that registered `api`, or are `Int64.min` when unknown.');
+      indent.write(
+        '@objc static func register(api: ${api.name}Bridge, engineId: Int64, affinityKey: Int64, name: String?) ',
+      );
       indent.addScoped('{', '}', () {
         indent.writeln(
           'let resolvedName = name ?? ${_classNamePrefix}PigeonInternal.defaultInstanceName',
         );
         indent.writeln('let apiObject = api as AnyObject');
-        indent.writeln('${api.name}Registrar.lock.lock()');
-        indent.writeln('defer { ${api.name}Registrar.lock.unlock() }');
-        indent.writeln('var list = ${api.name}Registrar.registered${api.name}[resolvedName] ?? []');
-        indent.writeScoped(
-          r'if let index = list.firstIndex(where: { ($0.api as AnyObject) === apiObject }) {',
-          '}',
-          () {
-            indent.writeln('list.append(list.remove(at: index))');
-          },
-          addTrailingNewline: false,
-        );
-        indent.addScoped(' else {', '}', () {
-          indent.writeln('list.append(${api.name}(api: api))');
+        _writeDisplacedLifetimeComment(indent);
+        indent.writeln('var displaced: [${api.name}] = []');
+        indent.writeScoped('do {', '}', () {
+          indent.writeln('${api.name}Registrar.lock.lock()');
+          indent.writeln('defer { ${api.name}Registrar.lock.unlock() }');
+          indent.writeln(
+            'var list = ${api.name}Registrar.registered${api.name}[resolvedName] ?? []',
+          );
+          indent.writeScoped('list.removeAll { entry in', '}', () {
+            indent.writeScoped('if (entry.api as AnyObject) === apiObject {', '}', () {
+              indent.writeln('displaced.append(entry)');
+              indent.writeln('return true');
+            });
+            indent.writeln('return false');
+          });
+          indent.writeln(
+            'list.append(${api.name}(api: api, engineId: engineId, affinityKey: affinityKey))',
+          );
+          indent.writeln('${api.name}Registrar.registered${api.name}[resolvedName] = list');
         });
-        indent.writeln('${api.name}Registrar.registered${api.name}[resolvedName] = list');
+        indent.writeln('withExtendedLifetime(displaced) {}');
       });
       indent.newln();
       _writeNativeInteropUnregisterDocs(indent);
@@ -1471,15 +1493,55 @@ if (wrapped == nil) {
         indent.writeln('withExtendedLifetime(displaced) {}');
       });
       indent.newln();
-      _writeNativeInteropGetInstanceDocs(indent);
-      indent.write('static func getInstance(name: String? = nil) -> ${api.name}? ');
+      indent.writeln('#if canImport(Flutter) || canImport(FlutterMacOS)');
+      indent.nest(1, () {
+        indent.writeln(
+          '$_docCommentPrefix Returns the instance for `name` (or the default instance when `name` is nil)',
+        );
+        indent.writeln(
+          '$_docCommentPrefix that was registered from the engine that owns `registrar`.',
+        );
+        indent.writeln(_docCommentPrefix);
+        indent.writeln(
+          '$_docCommentPrefix Falls back to the most recently registered instance for `name` when no',
+        );
+        indent.writeln(
+          '$_docCommentPrefix registration matches the engine, and returns nil if none is registered.',
+        );
+        indent.writeScoped(
+          'static func getInstance(registrar: FlutterPluginRegistrar, name: String? = nil) -> ${api.name}? {',
+          '}',
+          () {
+            indent.writeln(
+              'return getInstance(engineKey: PigeonEngineKeys.key(for: registrar), name: name)',
+            );
+          },
+        );
+      });
+      indent.writeln('#endif');
+      indent.newln();
+      indent.write(
+        'fileprivate static func getInstance(engineKey: Int64, name: String?) -> ${api.name}? ',
+      );
       indent.addScoped('{', '}', () {
         indent.writeln(
           'let resolvedName = name ?? ${_classNamePrefix}PigeonInternal.defaultInstanceName',
         );
         indent.writeln('${api.name}Registrar.lock.lock()');
         indent.writeln('defer { ${api.name}Registrar.lock.unlock() }');
-        indent.writeln('return ${api.name}Registrar.registered${api.name}[resolvedName]?.last');
+        indent.writeScoped(
+          'guard let list = ${api.name}Registrar.registered${api.name}[resolvedName] else {',
+          '}',
+          () {
+            indent.writeln('return nil');
+          },
+        );
+        indent.writeln(
+          r'return list.last(where: { $0.engineId == engineKey || $0.affinityKey == engineKey })',
+        );
+        indent.nest(1, () {
+          indent.writeln('?? list.last');
+        });
       });
     });
 
@@ -1487,15 +1549,16 @@ if (wrapped == nil) {
     indent.write('class ${api.name} ');
     indent.addScoped('{', '}', () {
       indent.writeln('fileprivate let api: ${api.name}Bridge');
+      indent.writeln('fileprivate let engineId: Int64');
+      indent.writeln('fileprivate let affinityKey: Int64');
       indent.newln();
-      indent.write('fileprivate init(api: ${api.name}Bridge) ');
+      indent.write(
+        'fileprivate init(api: ${api.name}Bridge, engineId: Int64, affinityKey: Int64) ',
+      );
       indent.addScoped('{', '}', () {
         indent.writeln('self.api = api');
-      });
-      indent.newln();
-      indent.write('static func getInstance(name: String? = nil) -> ${api.name}? ');
-      indent.addScoped('{', '}', () {
-        indent.writeln('return ${api.name}Registrar.getInstance(name: name)');
+        indent.writeln('self.engineId = engineId');
+        indent.writeln('self.affinityKey = affinityKey');
       });
 
       for (final Method method in api.methods) {
@@ -1605,6 +1668,202 @@ if (wrapped == nil) {
     indent.writeln('// non-recursive lock is held.');
   }
 
+  /// Writes the engine-keyed registration statics of an FFI HostApi `Setup`
+  /// class.
+  ///
+  /// The registrar-based entry points are Swift-only and wrapped in
+  /// `canImport` guards because swiftgen compiles the file without Flutter.
+  void _writeFfiHostApiRegistration(Indent indent, AstHostApi api) {
+    final setupName = '${api.name}Setup';
+    final tracker = '${api.name}InstanceTracker';
+    final instances = '$tracker.instancesOf${api.name}';
+    const resolvedName = 'let resolvedName = name ?? ';
+    final defaultName = '${_classNamePrefix}PigeonInternal.defaultInstanceName';
+
+    indent.writeln(
+      '$_docCommentPrefix The engine key this wrapper was registered with, guarded by `$tracker.lock`.',
+    );
+    indent.writeln('private var engineKey: Int64 = Int64.min');
+    indent.newln();
+    indent.writeln('#if canImport(Flutter) || canImport(FlutterMacOS)');
+    indent.nest(1, () {
+      _writeNativeInteropRegisterDocs(indent);
+      indent.writeln(_docCommentPrefix);
+      indent.writeln(
+        '$_docCommentPrefix The registration is associated with the engine that owns `registrar`. The same',
+      );
+      indent.writeln(
+        '$_docCommentPrefix `api` registered from different engines is tracked as separate registrations.',
+      );
+      indent.writeScoped(
+        'static func register(api: ${api.name}, registrar: FlutterPluginRegistrar, name: String? = nil) {',
+        '}',
+        () {
+          indent.writeln(
+            'register(api: api, engineKey: PigeonEngineKeys.key(for: registrar), name: name)',
+          );
+        },
+      );
+      indent.newln();
+      _writeNativeInteropUnregisterDocs(indent);
+      indent.writeln(_docCommentPrefix);
+      indent.writeln(
+        '$_docCommentPrefix Prefers the registration made from the engine that owns `registrar`, and',
+      );
+      indent.writeln(
+        '$_docCommentPrefix otherwise removes every registration of `api` under `name`.',
+      );
+      indent.writeScoped(
+        'static func unregister(api: ${api.name}, registrar: FlutterPluginRegistrar, name: String? = nil) {',
+        '}',
+        () {
+          indent.writeln(
+            'unregister(api: api, engineKey: PigeonEngineKeys.key(for: registrar), name: name)',
+          );
+        },
+      );
+    });
+    indent.writeln('#endif');
+    indent.newln();
+    indent.writeScoped(
+      'fileprivate static func register(api: ${api.name}, engineKey: Int64, name: String?) {',
+      '}',
+      () {
+        indent.writeln('$resolvedName$defaultName');
+        indent.writeln('$tracker.lock.lock()');
+        indent.writeln('defer { $tracker.lock.unlock() }');
+        indent.writeln('var list = $instances[resolvedName] ?? []');
+        // Reuse the existing wrapper so Dart handles that already resolved
+        // it keep working after the instance moves back to the top.
+        indent.writeScoped(
+          r'if let index = list.firstIndex(where: { $0.api === api && $0.engineKey == engineKey }) {',
+          '}',
+          () {
+            indent.writeln('list.append(list.remove(at: index))');
+          },
+          addTrailingNewline: false,
+        );
+        indent.addScoped(' else {', '}', () {
+          indent.writeln('let wrapper = $setupName()');
+          indent.writeln('wrapper.engineKey = engineKey');
+          indent.writeln('wrapper.api = api');
+          indent.writeln('list.append(wrapper)');
+        });
+        indent.writeln('$instances[resolvedName] = list');
+      },
+    );
+    indent.newln();
+    indent.writeScoped(
+      'fileprivate static func unregister(api: ${api.name}, engineKey: Int64, name: String?) {',
+      '}',
+      () {
+        indent.writeln('$resolvedName$defaultName');
+        _writeDisplacedLifetimeComment(indent);
+        indent.writeln('var displaced: [Any] = []');
+        indent.writeScoped('do {', '}', () {
+          indent.writeln('$tracker.lock.lock()');
+          indent.writeln('defer { $tracker.lock.unlock() }');
+          indent.writeScoped('guard var list = $instances[resolvedName] else {', '}', () {
+            indent.writeln('return');
+          });
+          indent.writeln(
+            '// Fall back to identity-only matching when no entry has this engine key.',
+          );
+          indent.writeln(
+            r'let matchesKey = list.contains { $0.api === api && $0.engineKey == engineKey }',
+          );
+          indent.writeScoped('list.removeAll { entry in', '}', () {
+            indent.writeScoped('guard let existing = entry.api else {', '}', () {
+              indent.writeln('return false');
+            });
+            indent.writeScoped(
+              'if existing === api && (!matchesKey || entry.engineKey == engineKey) {',
+              '}',
+              () {
+                indent.writeln('displaced.append(existing)');
+                indent.writeln('displaced.append(entry)');
+                indent.writeln('entry.api = nil');
+                indent.writeln('return true');
+              },
+            );
+            indent.writeln('return false');
+          });
+          indent.writeScoped('if list.isEmpty {', '}', () {
+            indent.writeln('$instances.removeValue(forKey: resolvedName)');
+          }, addTrailingNewline: false);
+          indent.addScoped(' else {', '}', () {
+            indent.writeln('$instances[resolvedName] = list');
+          });
+        });
+        indent.writeln('withExtendedLifetime(displaced) {}');
+      },
+    );
+    indent.newln();
+    _writeNativeInteropGetInstanceDocs(indent);
+    indent.writeScoped(
+      '@objc static func getInstance(name: String? = nil) -> $setupName? {',
+      '}',
+      () {
+        indent.writeln('$resolvedName$defaultName');
+        indent.writeln('$tracker.lock.lock()');
+        indent.writeln('defer { $tracker.lock.unlock() }');
+        indent.writeln('return $instances[resolvedName]?.last');
+      },
+    );
+    indent.newln();
+    indent.writeln(
+      '$_docCommentPrefix Returns the instance generated Dart code should use for `name` (or the default',
+    );
+    indent.writeln('$_docCommentPrefix instance when `name` is nil).');
+    indent.writeln(_docCommentPrefix);
+    indent.writeln(
+      '$_docCommentPrefix Prefers the most recent registration whose engine key is `engineId`, then',
+    );
+    indent.writeln(
+      '$_docCommentPrefix `affinityKey`, then the most recent registration. `Int64.min` means unknown.',
+    );
+    indent.writeScoped(
+      '@objc static func pigeonResolveInstance(engineId: Int64, affinityKey: Int64, name: String?) -> $setupName? {',
+      '}',
+      () {
+        indent.writeln('$resolvedName$defaultName');
+        indent.writeln('$tracker.lock.lock()');
+        indent.writeln('defer { $tracker.lock.unlock() }');
+        indent.writeScoped('guard let list = $instances[resolvedName] else {', '}', () {
+          indent.writeln('return nil');
+        });
+        indent.writeScoped(
+          r'if engineId != Int64.min, let match = list.last(where: { $0.engineKey == engineId }) {',
+          '}',
+          () {
+            indent.writeln('return match');
+          },
+        );
+        indent.writeScoped(
+          r'if affinityKey != Int64.min, let match = list.last(where: { $0.engineKey == affinityKey }) {',
+          '}',
+          () {
+            indent.writeln('return match');
+          },
+        );
+        indent.writeln('return list.last');
+      },
+    );
+    indent.newln();
+    indent.writeln(
+      '$_docCommentPrefix Returns the engine key `instance` was registered with, or `Int64.min` if unknown.',
+    );
+    indent.writeScoped(
+      '@objc static func pigeonEngineKey(of instance: $setupName) -> Int64 {',
+      '}',
+      () {
+        indent.writeln('$tracker.lock.lock()');
+        indent.writeln('defer { $tracker.lock.unlock() }');
+        indent.writeln('return instance.engineKey');
+      },
+    );
+  }
+
   void _writeFfiHostApi(
     InternalSwiftOptions generatorOptions,
     Root root,
@@ -1651,96 +1910,7 @@ if (wrapped == nil) {
           });
           indent.writeln('return currentApi');
         });
-        _writeNativeInteropRegisterDocs(indent);
-        indent.writeScoped(
-          'static func register(api: ${api.name}, name: String? = nil) {',
-          '}',
-          () {
-            indent.writeln(
-              'let resolvedName = name ?? ${_classNamePrefix}PigeonInternal.defaultInstanceName',
-            );
-            indent.writeln('${api.name}InstanceTracker.lock.lock()');
-            indent.writeln('defer { ${api.name}InstanceTracker.lock.unlock() }');
-            indent.writeln(
-              'var list = ${api.name}InstanceTracker.instancesOf${api.name}[resolvedName] ?? []',
-            );
-            // Reuse the existing wrapper so Dart handles that already resolved
-            // it keep working after the instance moves back to the top.
-            indent.writeScoped(
-              r'if let index = list.firstIndex(where: { $0.api === api }) {',
-              '}',
-              () {
-                indent.writeln('list.append(list.remove(at: index))');
-              },
-              addTrailingNewline: false,
-            );
-            indent.addScoped(' else {', '}', () {
-              indent.writeln('let wrapper = ${api.name}Setup()');
-              indent.writeln('wrapper.api = api');
-              indent.writeln('list.append(wrapper)');
-            });
-            indent.writeln(
-              '${api.name}InstanceTracker.instancesOf${api.name}[resolvedName] = list',
-            );
-          },
-        );
-        _writeNativeInteropUnregisterDocs(indent);
-        indent.writeScoped('static func unregister(api: ${api.name}, name: String? = nil) {', '}', () {
-          indent.writeln(
-            'let resolvedName = name ?? ${_classNamePrefix}PigeonInternal.defaultInstanceName',
-          );
-          _writeDisplacedLifetimeComment(indent);
-          indent.writeln('var displaced: [Any] = []');
-          indent.writeScoped('do {', '}', () {
-            indent.writeln('${api.name}InstanceTracker.lock.lock()');
-            indent.writeln('defer { ${api.name}InstanceTracker.lock.unlock() }');
-            indent.writeScoped(
-              'guard var list = ${api.name}InstanceTracker.instancesOf${api.name}[resolvedName] else {',
-              '}',
-              () {
-                indent.writeln('return');
-              },
-            );
-            indent.writeScoped('list.removeAll { entry in', '}', () {
-              indent.writeScoped('guard let existing = entry.api else {', '}', () {
-                indent.writeln('return false');
-              });
-              indent.writeScoped('if existing === api {', '}', () {
-                indent.writeln('displaced.append(existing)');
-                indent.writeln('displaced.append(entry)');
-                indent.writeln('entry.api = nil');
-                indent.writeln('return true');
-              });
-              indent.writeln('return false');
-            });
-            indent.writeScoped('if list.isEmpty {', '}', () {
-              indent.writeln(
-                '${api.name}InstanceTracker.instancesOf${api.name}.removeValue(forKey: resolvedName)',
-              );
-            }, addTrailingNewline: false);
-            indent.addScoped(' else {', '}', () {
-              indent.writeln(
-                '${api.name}InstanceTracker.instancesOf${api.name}[resolvedName] = list',
-              );
-            });
-          });
-          indent.writeln('withExtendedLifetime(displaced) {}');
-        });
-        _writeNativeInteropGetInstanceDocs(indent);
-        indent.writeScoped(
-          '@objc static func getInstance(name: String? = nil) -> ${api.name}Setup? {',
-          '}',
-          () {
-            indent.writeln(
-              'let resolvedName = name ?? ${_classNamePrefix}PigeonInternal.defaultInstanceName',
-            );
-            indent.writeln('${api.name}InstanceTracker.lock.lock()');
-            indent.writeln('defer { ${api.name}InstanceTracker.lock.unlock() }');
-            indent.writeln(
-              'return ${api.name}InstanceTracker.instancesOf${api.name}[resolvedName]?.last',
-            );
-          },
-        );
+        _writeFfiHostApiRegistration(indent, api);
       }
       for (final Method method in api.methods) {
         addDocumentationComments(indent, method.documentationComments, _docCommentSpec);
@@ -2802,6 +2972,88 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
 
     _writePigeonInternal(generatorOptions, root, indent);
     _writeNilOrValue(indent);
+    if (_needsEngineKeys(generatorOptions, root)) {
+      _writePigeonEngineKeys(indent);
+    }
+  }
+
+  /// Whether the file needs the engine-key helper and the Flutter import used
+  /// by the registrar-based Native Interop registration APIs.
+  bool _needsEngineKeys(InternalSwiftOptions generatorOptions, Root root) {
+    return generatorOptions.useFfi &&
+        root.apis.any((Api api) => api is AstHostApi || api is AstFlutterApi);
+  }
+
+  /// Writes the file-private helper that maps a Flutter engine to the key
+  /// used to route Native Interop registrations.
+  ///
+  /// Keys match Dart's `PlatformDispatcher.instance.engineId` when the
+  /// embedder exposes `engineIdentifier`, and are otherwise synthetic negative
+  /// values unique to each engine messenger.
+  void _writePigeonEngineKeys(Indent indent) {
+    indent.newln();
+    indent.format('''
+/// Computes the keys that associate Native Interop registrations with a Flutter engine.
+///
+/// `Int64.min` means "no key". Exact keys match Dart's `PlatformDispatcher.instance.engineId`.
+/// When an exact key is unavailable, each engine messenger is assigned a negative synthetic key.
+fileprivate enum PigeonEngineKeys {
+  /// The sentinel for an unknown engine.
+  static let noKey: Int64 = Int64.min
+  private static let lock = NSLock()
+  private static let syntheticKeys = NSMapTable<AnyObject, NSNumber>.weakToStrongObjects()
+  private static var nextSyntheticKey: Int64 = -1
+
+  /// Returns `exactKey` if non-nil, otherwise the key previously assigned to `messenger`, otherwise
+  /// a new synthetic key for `messenger`.
+  static func key(messenger: AnyObject, exactKey: Int64?) -> Int64 {
+    if let exactKey = exactKey {
+      return exactKey
+    }
+    lock.lock()
+    defer { lock.unlock() }
+    if let existing = syntheticKeys.object(forKey: messenger) {
+      return existing.int64Value
+    }
+    let key = nextSyntheticKey
+    nextSyntheticKey -= 1
+    syntheticKeys.setObject(NSNumber(value: key), forKey: messenger)
+    return key
+  }
+
+  #if canImport(Flutter) || canImport(FlutterMacOS)
+    /// Keys already computed for each registrar, so `unregister` during engine teardown reuses the
+    /// key from registration even after the registrar's engine and messenger are gone.
+    private static let registrarKeys = NSMapTable<AnyObject, NSNumber>.weakToStrongObjects()
+
+    /// Returns the key for the engine that owns `registrar`, or `noKey` if it can't be determined.
+    static func key(for registrar: FlutterPluginRegistrar) -> Int64 {
+      let registrarObject = registrar as AnyObject
+      lock.lock()
+      let cached = registrarKeys.object(forKey: registrarObject)
+      lock.unlock()
+      if let cached = cached {
+        return cached.int64Value
+      }
+      var resolved = noKey
+      if registrarObject.responds(to: NSSelectorFromString("engineIdentifier")),
+        let identifier = registrarObject.value(forKey: "engineIdentifier") as? NSNumber
+      {
+        resolved = identifier.int64Value
+      } else if let messenger = registrarObject.value(forKey: "messenger") as AnyObject? {
+        // Read through KVC because the messenger can be nil while the engine is deallocating,
+        // even though it is declared non-null.
+        resolved = key(messenger: messenger, exactKey: nil)
+      }
+      if resolved != noKey {
+        lock.lock()
+        registrarKeys.setObject(NSNumber(value: resolved), forKey: registrarObject)
+        lock.unlock()
+      }
+      return resolved
+    }
+  #endif
+}''');
   }
 
   @override
