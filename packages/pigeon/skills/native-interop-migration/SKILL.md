@@ -201,26 +201,26 @@ When implementing Native Interop host APIs directly in an application target (su
 ### 4.3 FlutterApi (Host-to-Dart Calls)
 For `@FlutterApi()` interfaces (where host native code calls into Dart):
 
-- **Dart side**: Register your Dart implementation using `MyFlutterApi.setUp(MyFlutterApiImpl())`.
-- **Swift (FFI)**: Instantiate `MyFlutterApi()` directly without passing a `BinaryMessenger`:
+- **Dart side**: Register your Dart implementation using `MyFlutterApi.setUp(MyFlutterApiImpl())` (or `MyFlutterApiRegistrar.register(MyFlutterApiImpl())` / `MyFlutterApiRegistrar.unregister(...)` for explicit stack-based lifecycle management).
+- **Swift (FFI)**: Look up the active instance via `MyFlutterApi.getInstance()` instead of passing a `BinaryMessenger`:
   ```swift
   // BEFORE (platform channels):
   // let flutterApi = MyFlutterApi(binaryMessenger: messenger)
   // flutterApi.onEvent(data) { result in ... }
 
   // AFTER (Native Interop FFI):
-  let flutterApi = MyFlutterApi()
-  try await flutterApi.onEvent(data)
+  if let flutterApi = MyFlutterApi.getInstance() {
+    try await flutterApi.onEvent(data)
+  }
   ```
-- **Kotlin (JNI)**: Instantiate `MyFlutterApi()` directly without passing a `BinaryMessenger`:
+- **Kotlin (JNI)**: Look up the active instance via `MyFlutterApiRegistrar.getInstance()` instead of passing a `BinaryMessenger`:
   ```kotlin
   // BEFORE (platform channels):
   // val flutterApi = MyFlutterApi(messenger)
   // flutterApi.onEvent(data) { ... }
 
   // AFTER (Native Interop JNI):
-  val flutterApi = MyFlutterApi()
-  flutterApi.onEvent(data)
+  MyFlutterApiRegistrar.getInstance()?.onEvent(data)
   ```
 
 ### 4.4 Dart Plugin Client (`createWithNativeInteropApi` & `dartPluginClass`)
@@ -337,7 +337,7 @@ If native interop calls work in debug builds but fail in release builds with `ja
   - To see what R8 removed or renamed, check `build/app/outputs/mapping/release/mapping.txt` in the example app directory.
 
 ### 6.11 Multi-Engine Deregistration & Per-Engine State (`ArgumentError` / `unregistered-instance`)
-If creating and destroying a secondary `FlutterEngine` causes subsequent Dart calls on a still-running engine to fail with `ArgumentError: No instance of ... has been registered.` (when calling `createWithNativeInteropApi()`) or `PlatformException(code: 'unregistered-instance', ...)` / `IllegalStateException: <Api> has not been registered` (when calling a previously resolved handle):
+If creating and destroying a secondary `FlutterEngine` causes subsequent Dart calls on a still-running engine to fail with `ArgumentError: No <Api> instance with ... found.` (when calling `createWithNativeInteropApi()`) or `PlatformException(code: 'unregistered-instance', ...)` (when calling a previously resolved handle):
 - **Cause**: The plugin used a Pigeon version prior to `30.0.0` and called `register(null)` / `register(api: nil)` unconditionally during engine teardown (or stored only a single instance per name).
 - **Solution**:
   - Regenerate with Pigeon `30.0.0` or later, which maintains an ordered instance stack per `name` and requires non-null `register` / instance-specific `unregister`.

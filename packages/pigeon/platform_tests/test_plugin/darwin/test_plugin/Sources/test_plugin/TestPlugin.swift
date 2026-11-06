@@ -2254,12 +2254,27 @@ class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
 
     // Duplicate unregister is a safe no-op.
     NativeInteropReservedNamesFlutterApiRegistrar.unregister(api: bridge3, name: name)
-    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance(name: name) == nil
+    return NativeInteropReservedNamesFlutterApiRegistrar.getInstance(name: name) == nil
   }
+
+  private var namedHostApis: [String: NativeInteropTestsClass] = [:]
 
   func registerAndImmediatelyDeregisterHostApi(name: String) throws {
     let api = NativeInteropTestsClass()
     NativeInteropHostIntegrationCoreApiSetup.register(api: api, name: name)
+    NativeInteropHostIntegrationCoreApiSetup.unregister(api: api, name: name)
+  }
+
+  func registerNamedHostApi(name: String) throws {
+    let api = NativeInteropTestsClass()
+    namedHostApis[name] = api
+    NativeInteropHostIntegrationCoreApiSetup.register(api: api, name: name)
+  }
+
+  func deregisterNamedHostApi(name: String) throws {
+    guard let api = namedHostApis.removeValue(forKey: name) else {
+      return
+    }
     NativeInteropHostIntegrationCoreApiSetup.unregister(api: api, name: name)
   }
 
@@ -2720,6 +2735,18 @@ class NativeInteropReservedNamesHostApiImpl: NativeInteropReservedNamesHostApi {
     return "value"
   }
 
+  func register(value: String) throws -> String {
+    return value
+  }
+
+  func unregister(value: String) throws -> String {
+    return value
+  }
+
+  func getGetInstance() throws -> String {
+    return "getInstance"
+  }
+
   func echoReservedNames(names: NativeInteropReservedNames) throws -> NativeInteropReservedNames {
     return names
   }
@@ -2751,6 +2778,14 @@ class NativeInteropReservedNamesHostApiImpl: NativeInteropReservedNamesHostApi {
 
   func callFlutterGetReference() throws -> String {
     return try flutterApi().getReference()
+  }
+
+  func callFlutterRegister(value: String) throws -> String {
+    return try flutterApi().register(value: value)
+  }
+
+  func callFlutterDartApi() throws -> String {
+    return try flutterApi().dartApi()
   }
 }
 
@@ -2945,4 +2980,8 @@ private final class TestPluginReservedFlutterBridge: NSObject,
   }
   func isNull(error: NativeInteropTestsError) -> NSNumber? { NSNumber(value: false) }
   func getReference(error: NativeInteropTestsError) -> NSString? { label as NSString }
+  func register(value valueArg: NSString?, error: NativeInteropTestsError) -> NSString? {
+    "\(label):\(valueArg ?? "")" as NSString
+  }
+  func dartApi(error: NativeInteropTestsError) -> NSString? { label as NSString }
 }

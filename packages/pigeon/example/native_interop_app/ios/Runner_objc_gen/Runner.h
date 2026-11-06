@@ -334,7 +334,8 @@ typedef unsigned int swift_uint4 __attribute__((__ext_vector_type__(4)));
 /// NativeInteropExampleApi classes.
 SWIFT_CLASS("_TtC6Runner28NativeInteropExampleApiSetup")
 @interface NativeInteropExampleApiSetup : NSObject
-- (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
+- (nonnull instancetype)init SWIFT_UNAVAILABLE;
++ (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
 + (NativeInteropExampleApiSetup* _Nullable)getInstanceWithName:
     (NSString* _Nullable)name SWIFT_WARN_UNUSED_RESULT;
 - (void)doSomethingWithWrappedError:(PigeonError* _Nonnull)wrappedError;

@@ -349,7 +349,7 @@ protocol NativeInteropExampleApi: AnyObject {
       withExtendedLifetime(oldValue) {}
     }
   }
-  override init() {}
+  private override init() {}
   private func resolveApi() throws -> NativeInteropExampleApi {
     guard let currentApi = api else {
       throw PigeonError(

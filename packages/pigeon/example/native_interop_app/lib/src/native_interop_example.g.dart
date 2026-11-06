@@ -113,7 +113,7 @@ class NativeInteropExampleApi {
         );
     if (nativeInteropApi == null) {
       throw ArgumentError(
-        'No NativeInteropExampleApi instance with ${messageChannelSuffix.isEmpty ? 'no ' : ''} instance name ${messageChannelSuffix.isNotEmpty ? '"$messageChannelSuffix" ' : ''}found.',
+        'No NativeInteropExampleApi instance with ${messageChannelSuffix.isEmpty ? 'no ' : ''}instance name ${messageChannelSuffix.isNotEmpty ? '"$messageChannelSuffix" ' : ''}found.',
       );
     }
     return NativeInteropExampleApi(

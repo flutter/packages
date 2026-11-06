@@ -117,6 +117,6 @@ class NativeInteropExampleApiRegistrar private constructor() : NativeInteropExam
         throw e
       }
     }
-    error("NativeInteropExampleApi has not been registered")
+    throw FlutterError("unregistered-instance", "NativeInteropExampleApi has not been registered.")
   }
 }

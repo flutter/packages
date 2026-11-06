@@ -2207,6 +2207,10 @@ class NativeInteropIntegrationTests(private val context: Context? = null) :
         override fun isNull(): Boolean = false
 
         override fun getReference(): String = label
+
+        override fun register(value: String): String = "$label:$value"
+
+        override fun dartApi(): String = label
       }
     }
     val api1 = makeApi("engine1")
@@ -2250,12 +2254,25 @@ class NativeInteropIntegrationTests(private val context: Context? = null) :
 
     // Duplicate unregister is a safe no-op.
     NativeInteropReservedNamesFlutterApiRegistrar.unregister(api3, name = name)
-    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance(name) == null
+    return NativeInteropReservedNamesFlutterApiRegistrar.getInstance(name) == null
   }
+
+  private val namedHostApis = mutableMapOf<String, NativeInteropIntegrationTests>()
 
   override fun registerAndImmediatelyDeregisterHostApi(name: String) {
     val api = NativeInteropIntegrationTests()
     NativeInteropHostIntegrationCoreApiRegistrar.register(api, name = name)
+    NativeInteropHostIntegrationCoreApiRegistrar.unregister(api, name = name)
+  }
+
+  override fun registerNamedHostApi(name: String) {
+    val api = NativeInteropIntegrationTests()
+    namedHostApis[name] = api
+    NativeInteropHostIntegrationCoreApiRegistrar.register(api, name = name)
+  }
+
+  override fun deregisterNamedHostApi(name: String) {
+    val api = namedHostApis.remove(name) ?: return
     NativeInteropHostIntegrationCoreApiRegistrar.unregister(api, name = name)
   }
 
@@ -2389,6 +2406,18 @@ class NativeInteropReservedNamesHostApiImpl : NativeInteropReservedNamesHostApi 
     return "value"
   }
 
+  override fun register(value: String): String {
+    return value
+  }
+
+  override fun unregister(value: String): String {
+    return value
+  }
+
+  override fun getGetInstance(): String {
+    return "getInstance"
+  }
+
   override fun echoReservedNames(names: NativeInteropReservedNames): NativeInteropReservedNames {
     return names
   }
@@ -2415,6 +2444,14 @@ class NativeInteropReservedNamesHostApiImpl : NativeInteropReservedNamesHostApi 
 
   override fun callFlutterGetReference(): String {
     return flutterApi().getReference()
+  }
+
+  override fun callFlutterRegister(value: String): String {
+    return flutterApi().register(value)
+  }
+
+  override fun callFlutterDartApi(): String {
+    return flutterApi().dartApi()
   }
 }
 

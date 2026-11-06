@@ -1885,6 +1885,10 @@ abstract class NativeInteropHostIntegrationCoreApiForNativeInterop {
 
   void registerAndImmediatelyDeregisterHostApi(String name);
 
+  void registerNamedHostApi(String name);
+
+  void deregisterNamedHostApi(String name);
+
   bool testCallDeregisteredFlutterApi(String name);
 
   Future<bool> testSecondaryEngineDartExecution();
@@ -1930,7 +1934,7 @@ class NativeInteropHostIntegrationCoreApi {
         );
     if (nativeInteropApi == null) {
       throw ArgumentError(
-        'No NativeInteropHostIntegrationCoreApi instance with ${messageChannelSuffix.isEmpty ? 'no ' : ''} instance name ${messageChannelSuffix.isNotEmpty ? '"$messageChannelSuffix" ' : ''}found.',
+        'No NativeInteropHostIntegrationCoreApi instance with ${messageChannelSuffix.isEmpty ? 'no ' : ''}instance name ${messageChannelSuffix.isNotEmpty ? '"$messageChannelSuffix" ' : ''}found.',
       );
     }
     return NativeInteropHostIntegrationCoreApi(
@@ -7433,6 +7437,42 @@ class NativeInteropHostIntegrationCoreApi {
     _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
+  /// Registers a separate Host API instance under [name] for detached-handle testing.
+  Future<void> registerNamedHostApi(String name) async {
+    if (_nativeInteropApi != null) {
+      return _nativeInteropApi.registerNamedHostApi(name);
+    }
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropHostIntegrationCoreApi.registerNamedHostApi$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[name]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+  }
+
+  /// Deregisters the Host API instance previously registered by [registerNamedHostApi] under [name].
+  Future<void> deregisterNamedHostApi(String name) async {
+    if (_nativeInteropApi != null) {
+      return _nativeInteropApi.deregisterNamedHostApi(name);
+    }
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropHostIntegrationCoreApi.deregisterNamedHostApi$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[name]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+  }
+
   /// Tests that calling a deregistered Flutter API under [name] fails / returns null.
   Future<bool> testCallDeregisteredFlutterApi(String name) async {
     if (_nativeInteropApi != null) {
@@ -10677,6 +10717,12 @@ abstract class NativeInteropReservedNamesHostApiForNativeInterop {
 
   Future<String> getValueAsync();
 
+  String register(String value);
+
+  String unregister(String value);
+
+  String getGetInstance();
+
   NativeInteropReservedNames echoReservedNames(NativeInteropReservedNames names);
 
   String callFlutterRelease(String value);
@@ -10688,6 +10734,10 @@ abstract class NativeInteropReservedNamesHostApiForNativeInterop {
   bool callFlutterIsNull();
 
   String callFlutterGetReference();
+
+  String callFlutterRegister(String value);
+
+  String callFlutterDartApi();
 }
 
 /// Methods whose names collide with members of the bindings that JNIgen
@@ -10726,7 +10776,7 @@ class NativeInteropReservedNamesHostApi {
         );
     if (nativeInteropApi == null) {
       throw ArgumentError(
-        'No NativeInteropReservedNamesHostApi instance with ${messageChannelSuffix.isEmpty ? 'no ' : ''} instance name ${messageChannelSuffix.isNotEmpty ? '"$messageChannelSuffix" ' : ''}found.',
+        'No NativeInteropReservedNamesHostApi instance with ${messageChannelSuffix.isEmpty ? 'no ' : ''}instance name ${messageChannelSuffix.isNotEmpty ? '"$messageChannelSuffix" ' : ''}found.',
       );
     }
     return NativeInteropReservedNamesHostApi(
@@ -10969,6 +11019,76 @@ class NativeInteropReservedNamesHostApi {
     return pigeonVar_replyValue! as String;
   }
 
+  /// Collides with `<Api>Registrar.register` in Kotlin bytecode.
+  Future<String> register(String value) async {
+    if (_nativeInteropApi != null) {
+      return _nativeInteropApi.register(value);
+    }
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropReservedNamesHostApi.register$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[value]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return pigeonVar_replyValue! as String;
+  }
+
+  /// Collides with `<Api>Registrar.unregister` in Kotlin bytecode.
+  Future<String> unregister(String value) async {
+    if (_nativeInteropApi != null) {
+      return _nativeInteropApi.unregister(value);
+    }
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropReservedNamesHostApi.unregister$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[value]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return pigeonVar_replyValue! as String;
+  }
+
+  /// JNIgen turns this into an instance getter `getInstance`, colliding with
+  /// `<Api>Registrar.getInstance`.
+  Future<String> getGetInstance() async {
+    if (_nativeInteropApi != null) {
+      return _nativeInteropApi.getGetInstance();
+    }
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropReservedNamesHostApi.getGetInstance$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return pigeonVar_replyValue! as String;
+  }
+
   /// Returns the passed object, to test serialization and deserialization.
   Future<NativeInteropReservedNames> echoReservedNames(NativeInteropReservedNames names) async {
     if (_nativeInteropApi != null) {
@@ -11106,6 +11226,52 @@ class NativeInteropReservedNamesHostApi {
     );
     return pigeonVar_replyValue! as String;
   }
+
+  /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.register].
+  Future<String> callFlutterRegister(String value) async {
+    if (_nativeInteropApi != null) {
+      return _nativeInteropApi.callFlutterRegister(value);
+    }
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropReservedNamesHostApi.callFlutterRegister$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[value]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return pigeonVar_replyValue! as String;
+  }
+
+  /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.dartApi].
+  Future<String> callFlutterDartApi() async {
+    if (_nativeInteropApi != null) {
+      return _nativeInteropApi.callFlutterDartApi();
+    }
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropReservedNamesHostApi.callFlutterDartApi$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return pigeonVar_replyValue! as String;
+  }
 }
 
 @internal
@@ -11169,6 +11335,12 @@ abstract class NativeInteropReservedNamesFlutterApi {
 
   /// JNIgen doesn't turn interface methods into properties.
   String getReference();
+
+  /// Previously collided with internal Dart JNI registrar `register` member.
+  String register(String value);
+
+  /// Previously collided with internal Dart JNI registrar `dartApi` field.
+  String dartApi();
 
   static void setUp(
     NativeInteropReservedNamesFlutterApi? api, {
@@ -11290,6 +11462,54 @@ abstract class NativeInteropReservedNamesFlutterApi {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           try {
             final String output = api.getReference();
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
+          }
+        });
+      }
+    }
+    {
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropReservedNamesFlutterApi.register$messageChannelSuffix',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
+      if (api == null) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          final List<Object?> args = message! as List<Object?>;
+          final String arg_value = args[0]! as String;
+          try {
+            final String output = api.register(arg_value);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
+          }
+        });
+      }
+    }
+    {
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropReservedNamesFlutterApi.dartApi$messageChannelSuffix',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
+      if (api == null) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          try {
+            final String output = api.dartApi();
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);

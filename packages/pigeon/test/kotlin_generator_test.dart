@@ -2030,6 +2030,11 @@ void main() {
       expect(code, contains('HostApiInstances.remove(resolvedName)'));
       expect(code, contains('fun getInstance(name: String? = null): HostApiRegistrar?'));
       expect(code, contains('@Volatile private var api: HostApi? = null'));
+      expect(
+        code,
+        contains('throw FlutterError("unregistered-instance", "HostApi has not been registered.")'),
+      );
+      expect(code, isNot(contains('error("HostApi has not been registered")')));
       expect(code, contains('kotlin.synchronized(HostApiInstances)'));
       expect(code, contains('HostApiInstances[resolvedName]?.lastOrNull()'));
       expect(

@@ -1405,6 +1405,7 @@ if (wrapped == nil) {
     indent.newln();
     indent.write('@objc class ${api.name}Registrar: NSObject ');
     indent.addScoped('{', '}', () {
+      indent.writeln('private override init() {}');
       indent.writeln('private static let lock = NSLock()');
       indent.writeln('private static var registered${api.name} = [String: [${api.name}]]()');
       indent.newln();
@@ -1589,7 +1590,7 @@ if (wrapped == nil) {
             indent.writeln('withExtendedLifetime(oldValue) {}');
           });
         });
-        indent.writeln('override init() {}');
+        indent.writeln('private override init() {}');
         indent.writeScoped('private func resolveApi() throws -> ${api.name} {', '}', () {
           indent.writeScoped('guard let currentApi = api else {', '}', () {
             indent.writeScoped('throw ${_getErrorClassName(generatorOptions)}(', ')', () {

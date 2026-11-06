@@ -1337,13 +1337,14 @@ SWIFT_PROTOCOL(
 SWIFT_CLASS(
     "_TtC11test_plugin47NativeInteropFlutterIntegrationCoreApiRegistrar")
 @interface NativeInteropFlutterIntegrationCoreApiRegistrar : NSObject
+- (nonnull instancetype)init SWIFT_UNAVAILABLE;
++ (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
 + (void)registerWithApi:
             (id<NativeInteropFlutterIntegrationCoreApiBridge> _Nonnull)api
                    name:(NSString* _Nullable)name;
 + (void)unregisterWithApi:
             (id<NativeInteropFlutterIntegrationCoreApiBridge> _Nonnull)api
                      name:(NSString* _Nullable)name;
-- (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
 @end
 
 @class NativeInteropSealedClassWrapperBridge;
@@ -1351,7 +1352,8 @@ SWIFT_CLASS(
 /// NativeInteropHostIntegrationCoreApi classes.
 SWIFT_CLASS("_TtC11test_plugin40NativeInteropHostIntegrationCoreApiSetup")
 @interface NativeInteropHostIntegrationCoreApiSetup : NSObject
-- (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
+- (nonnull instancetype)init SWIFT_UNAVAILABLE;
++ (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
 + (NativeInteropHostIntegrationCoreApiSetup* _Nullable)getInstanceWithName:
     (NSString* _Nullable)name SWIFT_WARN_UNUSED_RESULT;
 /// A no-op function taking no arguments and returning no value, to sanity
@@ -3022,6 +3024,16 @@ SWIFT_CLASS("_TtC11test_plugin40NativeInteropHostIntegrationCoreApiSetup")
                                        wrappedError:
                                            (NativeInteropTestsError* _Nonnull)
                                                wrappedError;
+/// Registers a separate Host API instance under [name] for detached-handle
+/// testing.
+- (void)registerNamedHostApiWithName:(NSString* _Nonnull)nameArg
+                        wrappedError:
+                            (NativeInteropTestsError* _Nonnull)wrappedError;
+/// Deregisters the Host API instance previously registered by
+/// [registerNamedHostApi] under [name].
+- (void)deregisterNamedHostApiWithName:(NSString* _Nonnull)nameArg
+                          wrappedError:
+                              (NativeInteropTestsError* _Nonnull)wrappedError;
 /// Tests that calling a deregistered Flutter API under [name] fails / returns
 /// null.
 - (NSNumber* _Nullable)
@@ -3117,24 +3129,36 @@ SWIFT_PROTOCOL("_TtP11test_plugin42NativeInteropReservedNamesFlutterApiBridge_")
 /// JNIgen doesn’t turn interface methods into properties.
 - (NSString* _Nullable)getReferenceWithError:
     (NativeInteropTestsError* _Nonnull)error SWIFT_WARN_UNUSED_RESULT;
+/// Previously collided with internal Dart JNI registrar <code>register</code>
+/// member.
+- (NSString* _Nullable)registerWithValue:(NSString* _Nullable)valueArg
+                                   error:
+                                       (NativeInteropTestsError* _Nonnull)error
+    SWIFT_WARN_UNUSED_RESULT;
+/// Previously collided with internal Dart JNI registrar <code>dartApi</code>
+/// field.
+- (NSString* _Nullable)dartApiWithError:(NativeInteropTestsError* _Nonnull)error
+    SWIFT_WARN_UNUSED_RESULT;
 @end
 
 SWIFT_CLASS("_TtC11test_plugin45NativeInteropReservedNamesFlutterApiRegistrar")
 @interface NativeInteropReservedNamesFlutterApiRegistrar : NSObject
+- (nonnull instancetype)init SWIFT_UNAVAILABLE;
++ (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
 + (void)registerWithApi:
             (id<NativeInteropReservedNamesFlutterApiBridge> _Nonnull)api
                    name:(NSString* _Nullable)name;
 + (void)unregisterWithApi:
             (id<NativeInteropReservedNamesFlutterApiBridge> _Nonnull)api
                      name:(NSString* _Nullable)name;
-- (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
 @end
 
 /// Generated setup class from Pigeon to register implemented
 /// NativeInteropReservedNamesHostApi classes.
 SWIFT_CLASS("_TtC11test_plugin38NativeInteropReservedNamesHostApiSetup")
 @interface NativeInteropReservedNamesHostApiSetup : NSObject
-- (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
+- (nonnull instancetype)init SWIFT_UNAVAILABLE;
++ (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
 + (NativeInteropReservedNamesHostApiSetup* _Nullable)getInstanceWithName:
     (NSString* _Nullable)name SWIFT_WARN_UNUSED_RESULT;
 /// Collides with <code>JObject.release</code>.
@@ -3175,6 +3199,20 @@ SWIFT_CLASS("_TtC11test_plugin38NativeInteropReservedNamesHostApiSetup")
             (NativeInteropTestsError* _Nonnull)wrappedError
                     completionHandler:(void (^_Nonnull)(NSString* _Nullable))
                                           completionHandler;
+/// Collides with <code><Api>Registrar.register</code> in Kotlin bytecode.
+- (NSString* _Nullable)registerWithValue:(NSString* _Nonnull)valueArg
+                            wrappedError:
+                                (NativeInteropTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+/// Collides with <code><Api>Registrar.unregister</code> in Kotlin bytecode.
+- (NSString* _Nullable)unregisterWithValue:(NSString* _Nonnull)valueArg
+                              wrappedError:(NativeInteropTestsError* _Nonnull)
+                                               wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+/// JNIgen turns this into an instance getter <code>getInstance</code>,
+/// colliding with <code><Api>Registrar.getInstance</code>.
+- (NSString* _Nullable)getGetInstanceWithWrappedError:
+    (NativeInteropTestsError* _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed object, to test serialization and deserialization.
 - (NativeInteropReservedNamesBridge* _Nullable)
     echoReservedNamesWithNames:
@@ -3202,6 +3240,16 @@ SWIFT_CLASS("_TtC11test_plugin38NativeInteropReservedNamesHostApiSetup")
 /// Returns the result of calling
 /// [NativeInteropReservedNamesFlutterApi.getReference].
 - (NSString* _Nullable)callFlutterGetReferenceWithWrappedError:
+    (NativeInteropTestsError* _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
+/// Returns the result of calling
+/// [NativeInteropReservedNamesFlutterApi.register].
+- (NSString* _Nullable)
+    callFlutterRegisterWithValue:(NSString* _Nonnull)valueArg
+                    wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+/// Returns the result of calling
+/// [NativeInteropReservedNamesFlutterApi.dartApi].
+- (NSString* _Nullable)callFlutterDartApiWithWrappedError:
     (NativeInteropTestsError* _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 @end
 

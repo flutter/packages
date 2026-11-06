@@ -1421,14 +1421,19 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
           }
           if (generatorOptions.useFfi) {
             indent.writeScoped('if (Platform.isIOS || Platform.isMacOS) {', '}', () {
-              indent.writeScoped(
-                '$_ffiBridgePrefix.${api.name}Registrar.unregisterWithApi(',
-                ');',
-                () {
-                  indent.writeln('removedHandle as $_ffiBridgePrefix.${api.name}Bridge,');
-                  indent.writeln('name: name != null ? NSString(name) : null,');
-                },
-              );
+              indent.writeScoped('try {', '}', () {
+                indent.writeScoped(
+                  '$_ffiBridgePrefix.${api.name}Registrar.unregisterWithApi(',
+                  ');',
+                  () {
+                    indent.writeln('removedHandle as $_ffiBridgePrefix.${api.name}Bridge,');
+                    indent.writeln('name: name != null ? NSString(name) : null,');
+                  },
+                );
+              }, addTrailingNewline: false);
+              indent.addScoped(' finally {', '}', () {
+                indent.writeln('(removedHandle as ObjCObject).ref.release();');
+              });
             });
           }
         },
@@ -1806,11 +1811,26 @@ static void setUp(${api.name}? api, {
     indent.newln();
     indent.format('''
 $dartApiName? ${classMemberNamePrefix}getInstance_${api.name}({
-  String? name,
+\tString? name,
 }) => $implClassName.getInstance(name: name);
 ''');
     indent.newln();
     indent.writeScoped('class $implClassName implements $dartApiName {', '}', () {
+      // In Kotlin bytecode for `<Api>Registrar`, `Companion` is a static field
+      // renamed first by JNIgen, followed by the overridden API methods, and
+      // finally the `@JvmStatic` bridge methods `register`, `unregister`, and
+      // `getInstance`.
+      final jniNamer = _JniBindingNamer(
+        isInterface: false,
+        declaredFirst: const <String>['Companion'],
+      );
+      final jniApiMembers = <Method, _JniMember>{
+        for (final Method method in api.methods) method: jniNamer.nextApiMethod(method),
+      };
+      jniNamer.next('register', parameterCount: 2, returnsVoid: true);
+      jniNamer.next('unregister', parameterCount: 2, returnsVoid: true);
+      final _JniMember jniGetInstance = jniNamer.next('getInstance', parameterCount: 1);
+
       final List<String> constructorParams = [];
       final List<String> constructorInitializers = [];
       final List<String> fields = [];
@@ -1847,7 +1867,7 @@ $dartApiName? ${classMemberNamePrefix}getInstance_${api.name}({
             indent.writeln('final JString? jName = name?.toJString();');
             indent.writeln('final $jniApiRegistrarName? link;');
             indent.writeScoped('try {', '}', () {
-              indent.writeln('link = $jniApiRegistrarName.getInstance(jName);');
+              indent.writeln('link = $jniApiRegistrarName.${jniGetInstance.name}(jName);');
             }, addTrailingNewline: false);
             indent.addScoped(' finally {', '}', () {
               indent.writeln('jName?.release();');
@@ -1891,13 +1911,8 @@ $dartApiName? ${classMemberNamePrefix}getInstance_${api.name}({
 
       indent.newln();
 
-      // The Kotlin registrar declares these alongside the API methods.
-      final jniNamer = _JniBindingNamer(
-        isInterface: false,
-        declaredFirst: const <String>['Companion', 'register', 'unregister', 'getInstance'],
-      );
       for (final Method method in api.methods) {
-        final _JniMember jniMember = jniNamer.nextApiMethod(method);
+        final _JniMember jniMember = jniApiMembers[method]!;
         indent.writeln('@override');
         indent.writeScoped(
           '${method.isAsynchronous ? 'Future<' : ''}${addGenericTypes(method.returnType)}${method.isAsynchronous ? '>' : ''} ${method.name}(${_getMethodParameterSignature(method.parameters)}) ${method.isAsynchronous ? 'async ' : ''}{',
@@ -2248,7 +2263,7 @@ ${api.name}({
 \t\t);
 \t\tif (nativeInteropApi == null) {
 \t\t\tthrow ArgumentError(
-\t\t\t\t'No ${api.name} instance with \${messageChannelSuffix.isEmpty ? 'no ' : ''} instance name \${messageChannelSuffix.isNotEmpty ? '"\$messageChannelSuffix" ' : ''}found.',
+\t\t\t\t'No ${api.name} instance with \${messageChannelSuffix.isEmpty ? 'no ' : ''}instance name \${messageChannelSuffix.isNotEmpty ? '"\$messageChannelSuffix" ' : ''}found.',
 \t\t\t);
 \t\t}
 \t\treturn ${api.name}(

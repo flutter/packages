@@ -32,6 +32,12 @@ private class FakeReservedNamesHostApi(private val label: String) :
 
   override suspend fun getValueAsync(): String = label
 
+  override fun register(value: String): String = "$label:$value"
+
+  override fun unregister(value: String): String = "$label:$value"
+
+  override fun getGetInstance(): String = label
+
   override fun echoReservedNames(names: NativeInteropReservedNames): NativeInteropReservedNames =
       names
 
@@ -44,6 +50,10 @@ private class FakeReservedNamesHostApi(private val label: String) :
   override fun callFlutterIsNull(): Boolean = false
 
   override fun callFlutterGetReference(): String = label
+
+  override fun callFlutterRegister(value: String): String = value
+
+  override fun callFlutterDartApi(): String = label
 }
 
 class NativeInteropRegistrarTest {
@@ -70,7 +80,9 @@ class NativeInteropRegistrarTest {
         NativeInteropReservedNamesHostApiRegistrar.getInstance(name)?.release("ping"),
     )
     // Stale registrar1 reference has its internal api cleared.
-    assertThrows(IllegalStateException::class.java) { registrar1!!.release("ping") }
+    val error = assertThrows(NativeInteropTestsError::class.java) { registrar1!!.release("ping") }
+    assertEquals("unregistered-instance", error.code)
+    assertEquals("NativeInteropReservedNamesHostApi has not been registered.", error.message)
 
     // Unregistering engine2 clears the registration list completely.
     NativeInteropReservedNamesHostApiRegistrar.unregister(api2, name)
@@ -248,4 +260,8 @@ private class FakeReservedNamesFlutterApi(private val label: String) :
   override fun isNull(): Boolean = false
 
   override fun getReference(): String = label
+
+  override fun register(value: String): String = "$label:$value"
+
+  override fun dartApi(): String = label
 }

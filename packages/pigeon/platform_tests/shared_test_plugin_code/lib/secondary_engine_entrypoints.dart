@@ -16,19 +16,19 @@ void idleSecondaryEngineMain() {}
 @pragma('vm:entry-point')
 Future<void> secondaryEngineMain() async {
   WidgetsFlutterBinding.ensureInitialized();
+  final hostApi = NativeInteropHostIntegrationCoreApi.createWithNativeInteropApi();
   var ready = false;
-  for (var i = 0; i < 200; i++) {
-    final probeApi = NativeInteropHostIntegrationCoreApi.createWithNativeInteropApi();
-    if (await probeApi.isSecondaryEngineRegistrationReady()) {
+  for (var i = 0; i < 1200; i++) {
+    if (await hostApi.isSecondaryEngineRegistrationReady()) {
       ready = true;
       break;
     }
     await Future<void>.delayed(const Duration(milliseconds: 10));
   }
   if (!ready) {
+    await hostApi.reportSecondaryEngineCheck(false);
     return;
   }
-  final hostApi = NativeInteropHostIntegrationCoreApi.createWithNativeInteropApi();
   final reservedApi = NativeInteropReservedNamesHostApi.createWithNativeInteropApi();
   NativeInteropReservedNamesFlutterApi.setUp(_SecondaryEngineReservedNamesFlutterApi());
   NativeInteropFlutterIntegrationCoreApi.setUp(_SecondaryEngineAsyncFlutterApi());
@@ -61,6 +61,12 @@ class _SecondaryEngineReservedNamesFlutterApi extends NativeInteropReservedNames
 
   @override
   String getReference() => 'secondary_reference';
+
+  @override
+  String register(String value) => 'secondary:$value';
+
+  @override
+  String dartApi() => 'secondary_dartApi';
 }
 
 class _SecondaryEngineAsyncFlutterApi extends NativeInteropFlutterIntegrationCoreApi {

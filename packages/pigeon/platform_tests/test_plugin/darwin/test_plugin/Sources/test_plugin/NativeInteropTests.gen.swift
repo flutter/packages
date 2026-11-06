@@ -3016,6 +3016,10 @@ protocol NativeInteropHostIntegrationCoreApi: AnyObject {
   func testDeregisterFlutterApi() throws -> Bool
   /// Registers and immediately deregisters a Host API under [name].
   func registerAndImmediatelyDeregisterHostApi(name: String) throws
+  /// Registers a separate Host API instance under [name] for detached-handle testing.
+  func registerNamedHostApi(name: String) throws
+  /// Deregisters the Host API instance previously registered by [registerNamedHostApi] under [name].
+  func deregisterNamedHostApi(name: String) throws
   /// Tests that calling a deregistered Flutter API under [name] fails / returns null.
   func testCallDeregisteredFlutterApi(name: String) throws -> Bool
   /// Spawns secondary engines, destroys one out-of-order, executes a live Dart
@@ -3051,7 +3055,7 @@ protocol NativeInteropHostIntegrationCoreApi: AnyObject {
       withExtendedLifetime(oldValue) {}
     }
   }
-  override init() {}
+  private override init() {}
   private func resolveApi() throws -> NativeInteropHostIntegrationCoreApi {
     guard let currentApi = api else {
       throw NativeInteropTestsError(
@@ -7849,6 +7853,40 @@ protocol NativeInteropHostIntegrationCoreApi: AnyObject {
     }
     return
   }
+  /// Registers a separate Host API instance under [name] for detached-handle testing.
+  @objc func registerNamedHostApi(name nameArg: NSString, wrappedError: NativeInteropTestsError) {
+    do {
+      let activeApi = try resolveApi()
+      try activeApi.registerNamedHostApi(name: nameArg as String)
+      return
+    } catch let error as NativeInteropTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(Swift.type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return
+  }
+  /// Deregisters the Host API instance previously registered by [registerNamedHostApi] under [name].
+  @objc func deregisterNamedHostApi(name nameArg: NSString, wrappedError: NativeInteropTestsError) {
+    do {
+      let activeApi = try resolveApi()
+      try activeApi.deregisterNamedHostApi(name: nameArg as String)
+      return
+    } catch let error as NativeInteropTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(Swift.type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return
+  }
   /// Tests that calling a deregistered Flutter API under [name] fails / returns null.
   @objc func testCallDeregisteredFlutterApi(
     name nameArg: NSString, wrappedError: NativeInteropTestsError
@@ -8266,6 +8304,7 @@ protocol NativeInteropHostIntegrationCoreApi: AnyObject {
 }
 
 @objc class NativeInteropFlutterIntegrationCoreApiRegistrar: NSObject {
+  private override init() {}
   private static let lock = NSLock()
   private static var registeredNativeInteropFlutterIntegrationCoreApi = [
     String: [NativeInteropFlutterIntegrationCoreApi]
@@ -9675,6 +9714,13 @@ protocol NativeInteropReservedNamesHostApi: AnyObject {
   func getDefault() throws -> String
   /// JNIgen keeps suspend functions as methods.
   func getValueAsync() async throws -> String
+  /// Collides with `<Api>Registrar.register` in Kotlin bytecode.
+  func register(value: String) throws -> String
+  /// Collides with `<Api>Registrar.unregister` in Kotlin bytecode.
+  func unregister(value: String) throws -> String
+  /// JNIgen turns this into an instance getter `getInstance`, colliding with
+  /// `<Api>Registrar.getInstance`.
+  func getGetInstance() throws -> String
   /// Returns the passed object, to test serialization and deserialization.
   func echoReservedNames(names: NativeInteropReservedNames) throws -> NativeInteropReservedNames
   /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.release].
@@ -9687,6 +9733,10 @@ protocol NativeInteropReservedNamesHostApi: AnyObject {
   func callFlutterIsNull() throws -> Bool
   /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.getReference].
   func callFlutterGetReference() throws -> String
+  /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.register].
+  func callFlutterRegister(value: String) throws -> String
+  /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.dartApi].
+  func callFlutterDartApi() throws -> String
 }
 
 /// Generated setup class from Pigeon to register implemented NativeInteropReservedNamesHostApi classes.
@@ -9710,7 +9760,7 @@ protocol NativeInteropReservedNamesHostApi: AnyObject {
       withExtendedLifetime(oldValue) {}
     }
   }
-  override init() {}
+  private override init() {}
   private func resolveApi() throws -> NativeInteropReservedNamesHostApi {
     guard let currentApi = api else {
       throw NativeInteropTestsError(
@@ -9964,6 +10014,61 @@ protocol NativeInteropReservedNamesHostApi: AnyObject {
     }
     return nil
   }
+  /// Collides with `<Api>Registrar.register` in Kotlin bytecode.
+  @objc func register(value valueArg: NSString, wrappedError: NativeInteropTestsError) -> NSString?
+  {
+    do {
+      let activeApi = try resolveApi()
+      let res: String = try activeApi.register(value: valueArg as String)
+      return res as NSString?
+    } catch let error as NativeInteropTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(Swift.type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
+  /// Collides with `<Api>Registrar.unregister` in Kotlin bytecode.
+  @objc func unregister(value valueArg: NSString, wrappedError: NativeInteropTestsError)
+    -> NSString?
+  {
+    do {
+      let activeApi = try resolveApi()
+      let res: String = try activeApi.unregister(value: valueArg as String)
+      return res as NSString?
+    } catch let error as NativeInteropTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(Swift.type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
+  /// JNIgen turns this into an instance getter `getInstance`, colliding with
+  /// `<Api>Registrar.getInstance`.
+  @objc func getGetInstance(wrappedError: NativeInteropTestsError) -> NSString? {
+    do {
+      let activeApi = try resolveApi()
+      let res: String = try activeApi.getGetInstance()
+      return res as NSString?
+    } catch let error as NativeInteropTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(Swift.type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
   /// Returns the passed object, to test serialization and deserialization.
   @objc func echoReservedNames(
     names namesArg: NativeInteropReservedNamesBridge, wrappedError: NativeInteropTestsError
@@ -10073,6 +10178,42 @@ protocol NativeInteropReservedNamesHostApi: AnyObject {
     }
     return nil
   }
+  /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.register].
+  @objc func callFlutterRegister(value valueArg: NSString, wrappedError: NativeInteropTestsError)
+    -> NSString?
+  {
+    do {
+      let activeApi = try resolveApi()
+      let res: String = try activeApi.callFlutterRegister(value: valueArg as String)
+      return res as NSString?
+    } catch let error as NativeInteropTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(Swift.type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
+  /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.dartApi].
+  @objc func callFlutterDartApi(wrappedError: NativeInteropTestsError) -> NSString? {
+    do {
+      let activeApi = try resolveApi()
+      let res: String = try activeApi.callFlutterDartApi()
+      return res as NSString?
+    } catch let error as NativeInteropTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(Swift.type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
 }
 
 /// The Flutter API counterpart of [NativeInteropReservedNamesHostApi].
@@ -10092,9 +10233,14 @@ protocol NativeInteropReservedNamesHostApi: AnyObject {
   @objc func isNull(error: NativeInteropTestsError) -> NSNumber?
   /// JNIgen doesn't turn interface methods into properties.
   @objc func getReference(error: NativeInteropTestsError) -> NSString?
+  /// Previously collided with internal Dart JNI registrar `register` member.
+  @objc func register(value valueArg: NSString?, error: NativeInteropTestsError) -> NSString?
+  /// Previously collided with internal Dart JNI registrar `dartApi` field.
+  @objc func dartApi(error: NativeInteropTestsError) -> NSString?
 }
 
 @objc class NativeInteropReservedNamesFlutterApiRegistrar: NSObject {
+  private override init() {}
   private static let lock = NSLock()
   private static var registeredNativeInteropReservedNamesFlutterApi = [
     String: [NativeInteropReservedNamesFlutterApi]
@@ -10223,6 +10369,26 @@ class NativeInteropReservedNamesFlutterApi {
   func getReference() throws -> String {
     let error = NativeInteropTestsError()
     let res = api.getReference(error: error)
+    if error.code != nil {
+      throw error
+    }
+    return _PigeonFfiCodec.readValue(value: (res), type: "String") as! String
+  }
+
+  /// Previously collided with internal Dart JNI registrar `register` member.
+  func register(value valueArg: String) throws -> String {
+    let error = NativeInteropTestsError()
+    let res = api.register(value: valueArg as NSString?, error: error)
+    if error.code != nil {
+      throw error
+    }
+    return _PigeonFfiCodec.readValue(value: (res), type: "String") as! String
+  }
+
+  /// Previously collided with internal Dart JNI registrar `dartApi` field.
+  func dartApi() throws -> String {
+    let error = NativeInteropTestsError()
+    let res = api.dartApi(error: error)
     if error.code != nil {
       throw error
     }

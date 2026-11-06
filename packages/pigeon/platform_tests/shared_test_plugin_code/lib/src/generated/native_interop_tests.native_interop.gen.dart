@@ -9795,6 +9795,48 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
   }
 
   @override
+  void registerNamedHostApi(String name) {
+    try {
+      if (_jniApi != null) {
+        return _jniApi.registerNamedHostApi(_PigeonJniCodec.writeValue<JString>(name));
+      } else if (_ffiApi != null) {
+        final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        _ffiApi.registerNamedHostApiWithName(
+          _PigeonFfiCodec.writeValue<NSString>(name),
+          wrappedError: pigeonVar_error,
+        );
+        _throwIfFfiError(pigeonVar_error);
+        return;
+      } else {
+        throw Exception('No JNI or FFI api available');
+      }
+    } on JThrowable catch (e) {
+      throw _wrapJniException(e);
+    }
+  }
+
+  @override
+  void deregisterNamedHostApi(String name) {
+    try {
+      if (_jniApi != null) {
+        return _jniApi.deregisterNamedHostApi(_PigeonJniCodec.writeValue<JString>(name));
+      } else if (_ffiApi != null) {
+        final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        _ffiApi.deregisterNamedHostApiWithName(
+          _PigeonFfiCodec.writeValue<NSString>(name),
+          wrappedError: pigeonVar_error,
+        );
+        _throwIfFfiError(pigeonVar_error);
+        return;
+      } else {
+        throw Exception('No JNI or FFI api available');
+      }
+    } on JThrowable catch (e) {
+      throw _wrapJniException(e);
+    }
+  }
+
+  @override
   bool testCallDeregisteredFlutterApi(String name) {
     try {
       if (_jniApi != null) {
@@ -9948,10 +9990,14 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
       }
     }
     if (Platform.isIOS || Platform.isMacOS) {
-      ffi_bridge.NativeInteropFlutterIntegrationCoreApiRegistrar.unregisterWithApi(
-        removedHandle as ffi_bridge.NativeInteropFlutterIntegrationCoreApiBridge,
-        name: name != null ? NSString(name) : null,
-      );
+      try {
+        ffi_bridge.NativeInteropFlutterIntegrationCoreApiRegistrar.unregisterWithApi(
+          removedHandle as ffi_bridge.NativeInteropFlutterIntegrationCoreApiBridge,
+          name: name != null ? NSString(name) : null,
+        );
+      } finally {
+        (removedHandle as ObjCObject).ref.release();
+      }
     }
   }
 
@@ -13660,7 +13706,7 @@ class _NativeInteropReservedNamesHostApiForNativeInterop
       final JString? jName = name?.toJString();
       final jni_bridge.NativeInteropReservedNamesHostApiRegistrar? link;
       try {
-        link = jni_bridge.NativeInteropReservedNamesHostApiRegistrar.getInstance(jName);
+        link = jni_bridge.NativeInteropReservedNamesHostApiRegistrar.getInstance$1(jName);
       } finally {
         jName?.release();
       }
@@ -13903,6 +13949,77 @@ class _NativeInteropReservedNamesHostApiForNativeInterop
   }
 
   @override
+  String register(String value) {
+    try {
+      if (_jniApi != null) {
+        final JString pigeonVar_res = _jniApi.register(_PigeonJniCodec.writeValue<JString>(value));
+        final String pigeonVar_dartTypeRes = pigeonVar_res.toDartString(releaseOriginal: true);
+        return pigeonVar_dartTypeRes;
+      } else if (_ffiApi != null) {
+        final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSString? pigeonVar_res = _ffiApi.registerWithValue(
+          _PigeonFfiCodec.writeValue<NSString>(value),
+          wrappedError: pigeonVar_error,
+        );
+        _throwIfFfiError(pigeonVar_error);
+        final String pigeonVar_dartTypeRes = pigeonVar_res!.toDartString();
+        return pigeonVar_dartTypeRes;
+      } else {
+        throw Exception('No JNI or FFI api available');
+      }
+    } on JThrowable catch (e) {
+      throw _wrapJniException(e);
+    }
+  }
+
+  @override
+  String unregister(String value) {
+    try {
+      if (_jniApi != null) {
+        final JString pigeonVar_res = _jniApi.unregister(
+          _PigeonJniCodec.writeValue<JString>(value),
+        );
+        final String pigeonVar_dartTypeRes = pigeonVar_res.toDartString(releaseOriginal: true);
+        return pigeonVar_dartTypeRes;
+      } else if (_ffiApi != null) {
+        final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSString? pigeonVar_res = _ffiApi.unregisterWithValue(
+          _PigeonFfiCodec.writeValue<NSString>(value),
+          wrappedError: pigeonVar_error,
+        );
+        _throwIfFfiError(pigeonVar_error);
+        final String pigeonVar_dartTypeRes = pigeonVar_res!.toDartString();
+        return pigeonVar_dartTypeRes;
+      } else {
+        throw Exception('No JNI or FFI api available');
+      }
+    } on JThrowable catch (e) {
+      throw _wrapJniException(e);
+    }
+  }
+
+  @override
+  String getGetInstance() {
+    try {
+      if (_jniApi != null) {
+        final JString pigeonVar_res = _jniApi.getInstance;
+        final String pigeonVar_dartTypeRes = pigeonVar_res.toDartString(releaseOriginal: true);
+        return pigeonVar_dartTypeRes;
+      } else if (_ffiApi != null) {
+        final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSString? pigeonVar_res = _ffiApi.getGetInstanceWithWrappedError(pigeonVar_error);
+        _throwIfFfiError(pigeonVar_error);
+        final String pigeonVar_dartTypeRes = pigeonVar_res!.toDartString();
+        return pigeonVar_dartTypeRes;
+      } else {
+        throw Exception('No JNI or FFI api available');
+      }
+    } on JThrowable catch (e) {
+      throw _wrapJniException(e);
+    }
+  }
+
+  @override
   NativeInteropReservedNames echoReservedNames(NativeInteropReservedNames names) {
     try {
       if (_jniApi != null) {
@@ -14042,6 +14159,53 @@ class _NativeInteropReservedNamesHostApiForNativeInterop
       throw _wrapJniException(e);
     }
   }
+
+  @override
+  String callFlutterRegister(String value) {
+    try {
+      if (_jniApi != null) {
+        final JString pigeonVar_res = _jniApi.callFlutterRegister(
+          _PigeonJniCodec.writeValue<JString>(value),
+        );
+        final String pigeonVar_dartTypeRes = pigeonVar_res.toDartString(releaseOriginal: true);
+        return pigeonVar_dartTypeRes;
+      } else if (_ffiApi != null) {
+        final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSString? pigeonVar_res = _ffiApi.callFlutterRegisterWithValue(
+          _PigeonFfiCodec.writeValue<NSString>(value),
+          wrappedError: pigeonVar_error,
+        );
+        _throwIfFfiError(pigeonVar_error);
+        final String pigeonVar_dartTypeRes = pigeonVar_res!.toDartString();
+        return pigeonVar_dartTypeRes;
+      } else {
+        throw Exception('No JNI or FFI api available');
+      }
+    } on JThrowable catch (e) {
+      throw _wrapJniException(e);
+    }
+  }
+
+  @override
+  String callFlutterDartApi() {
+    try {
+      if (_jniApi != null) {
+        final JString pigeonVar_res = _jniApi.callFlutterDartApi();
+        final String pigeonVar_dartTypeRes = pigeonVar_res.toDartString(releaseOriginal: true);
+        return pigeonVar_dartTypeRes;
+      } else if (_ffiApi != null) {
+        final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSString? pigeonVar_res = _ffiApi.callFlutterDartApiWithWrappedError(pigeonVar_error);
+        _throwIfFfiError(pigeonVar_error);
+        final String pigeonVar_dartTypeRes = pigeonVar_res!.toDartString();
+        return pigeonVar_dartTypeRes;
+      } else {
+        throw Exception('No JNI or FFI api available');
+      }
+    } on JThrowable catch (e) {
+      throw _wrapJniException(e);
+    }
+  }
 }
 
 final class _NativeInteropReservedNamesFlutterApiRegistrar
@@ -14103,10 +14267,14 @@ final class _NativeInteropReservedNamesFlutterApiRegistrar
       }
     }
     if (Platform.isIOS || Platform.isMacOS) {
-      ffi_bridge.NativeInteropReservedNamesFlutterApiRegistrar.unregisterWithApi(
-        removedHandle as ffi_bridge.NativeInteropReservedNamesFlutterApiBridge,
-        name: name != null ? NSString(name) : null,
-      );
+      try {
+        ffi_bridge.NativeInteropReservedNamesFlutterApiRegistrar.unregisterWithApi(
+          removedHandle as ffi_bridge.NativeInteropReservedNamesFlutterApiBridge,
+          name: name != null ? NSString(name) : null,
+        );
+      } finally {
+        (removedHandle as ObjCObject).ref.release();
+      }
     }
   }
 
@@ -14183,6 +14351,28 @@ final class _NativeInteropReservedNamesFlutterApiRegistrar
               return null;
             }
           });
+      ffi_bridge.NativeInteropReservedNamesFlutterApiBridge$Builder.registerWithValue_error_
+          .implement(builder, (NSString? arg_value, ffi_bridge.NativeInteropTestsError errorOut) {
+            try {
+              final String response = pigeonVar_dartApi.register(arg_value!.toDartString());
+              return _PigeonFfiCodec.writeValue<NSString>(response);
+            } catch (e) {
+              _reportFfiError(errorOut, e);
+              return null;
+            }
+          });
+      ffi_bridge.NativeInteropReservedNamesFlutterApiBridge$Builder.dartApiWithError_.implement(
+        builder,
+        (ffi_bridge.NativeInteropTestsError errorOut) {
+          try {
+            final String response = pigeonVar_dartApi.dartApi();
+            return _PigeonFfiCodec.writeValue<NSString>(response);
+          } catch (e) {
+            _reportFfiError(errorOut, e);
+            return null;
+          }
+        },
+      );
       builder.addProtocol(ffi_bridge.NativeInteropReservedNamesFlutterApiBridge$Builder.$protocol);
       final ffi_bridge.NativeInteropReservedNamesFlutterApiBridge impl =
           ffi_bridge.NativeInteropReservedNamesFlutterApiBridge.as(builder.build());
@@ -14226,6 +14416,20 @@ final class _NativeInteropReservedNamesFlutterApiRegistrar
   @override
   JString getReference() {
     final String response = pigeonVar_dartApi.getReference();
+    return _PigeonJniCodec.writeValue<JString>(response);
+  }
+
+  @override
+  JString register(JString arg_value) {
+    final String response = pigeonVar_dartApi.register(
+      arg_value.toDartString(releaseOriginal: true),
+    );
+    return _PigeonJniCodec.writeValue<JString>(response);
+  }
+
+  @override
+  JString dartApi() {
+    final String response = pigeonVar_dartApi.dartApi();
     return _PigeonJniCodec.writeValue<JString>(response);
   }
 }

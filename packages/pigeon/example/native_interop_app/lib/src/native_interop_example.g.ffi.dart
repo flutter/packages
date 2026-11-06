@@ -69,15 +69,6 @@ extension type NativeInteropExampleApiSetup._(objc.ObjCObject object$)
         ? null
         : NativeInteropExampleApiSetup.fromPointer($ret, retain: true, release: true);
   }
-
-  /// new
-  static NativeInteropExampleApiSetup new$() {
-    final $ret = _objc_msgSend_151sglz(_class_NativeInteropExampleApiSetup, _sel_new);
-    return NativeInteropExampleApiSetup.fromPointer($ret, retain: false, release: true);
-  }
-
-  /// Returns a new instance of NativeInteropExampleApiSetup constructed with the default `new` method.
-  NativeInteropExampleApiSetup() : this.as(new$().object$);
 }
 
 extension NativeInteropExampleApiSetup$Methods on NativeInteropExampleApiSetup {
@@ -86,18 +77,6 @@ extension NativeInteropExampleApiSetup$Methods on NativeInteropExampleApiSetup {
     final _$$ref = object$.ref;
     final _$$ref$1 = wrappedError.ref;
     _objc_msgSend_xtuoz7(_$$ref.pointer, _sel_doSomethingWithWrappedError_, _$$ref$1.pointer);
-  }
-
-  /// init
-  NativeInteropExampleApiSetup init() {
-    final _$$ref = object$.ref;
-    objc.checkOsVersionInternal(
-      'NativeInteropExampleApiSetup.init',
-      iOS: (false, (2, 0, 0)),
-      macOS: (false, (10, 0, 0)),
-    );
-    final $ret = _objc_msgSend_151sglz(_$$ref.retainAndReturnPointer(), _sel_init);
-    return NativeInteropExampleApiSetup.fromPointer($ret, retain: false, release: true);
   }
 }
 

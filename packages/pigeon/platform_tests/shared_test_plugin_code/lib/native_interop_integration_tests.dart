@@ -2881,6 +2881,45 @@ void runPigeonNativeInteropIntegrationTests(TargetGenerator targetGenerator) {
       );
     });
 
+    testWidgets(
+      'calling a cached Host API handle after deregistration throws unregistered-instance PlatformException',
+      (WidgetTester _) async {
+        final NativeInteropHostIntegrationCoreApiForNativeInterop primaryApi =
+            NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance()!;
+        const instanceName = 'detachedCachedHostHandleTest';
+
+        primaryApi.registerNamedHostApi(instanceName);
+        addTearDown(() {
+          primaryApi.deregisterNamedHostApi(instanceName);
+        });
+
+        final NativeInteropHostIntegrationCoreApiForNativeInterop cachedDirectApi =
+            NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance(name: instanceName)!;
+        final cachedWrappedApi = NativeInteropHostIntegrationCoreApi.createWithNativeInteropApi(
+          messageChannelSuffix: instanceName,
+        );
+
+        // Calls succeed while the host instance is registered.
+        cachedDirectApi.noop();
+        await cachedWrappedApi.noop();
+        await cachedWrappedApi.noopAsync();
+
+        // Deregister the host instance while holding the cached Dart handles.
+        primaryApi.deregisterNamedHostApi(instanceName);
+
+        Matcher isUnregisteredInstanceException() => isA<PlatformException>().having(
+          (PlatformException e) => e.code,
+          'code',
+          'unregistered-instance',
+        );
+
+        expect(() => cachedDirectApi.noop(), throwsA(isUnregisteredInstanceException()));
+        await expectLater(cachedDirectApi.noopAsync(), throwsA(isUnregisteredInstanceException()));
+        await expectLater(cachedWrappedApi.noop(), throwsA(isUnregisteredInstanceException()));
+        await expectLater(cachedWrappedApi.noopAsync(), throwsA(isUnregisteredInstanceException()));
+      },
+    );
+
     testWidgets('calling a deregistered Flutter API fails on native lookup', (
       WidgetTester _,
     ) async {
@@ -2913,9 +2952,9 @@ void runPigeonNativeInteropIntegrationTests(TargetGenerator targetGenerator) {
     testWidgets(
       'secondary engine execution and teardown preserves primary engine Native Interop APIs',
       (WidgetTester _) async {
-        NativeInteropReservedNamesFlutterApiRegistrar.register(
-          _NativeInteropReservedNamesFlutterApiImpl(),
-        );
+        final baseImpl = _NativeInteropReservedNamesFlutterApiImpl();
+        NativeInteropReservedNamesFlutterApiRegistrar.register(baseImpl);
+        addTearDown(() => NativeInteropReservedNamesFlutterApiRegistrar.unregister(baseImpl));
         final primaryApi = NativeInteropHostIntegrationCoreApi.createWithNativeInteropApi();
         final primaryReservedApi = NativeInteropReservedNamesHostApi.createWithNativeInteropApi();
 
@@ -2962,6 +3001,7 @@ void runPigeonNativeInteropIntegrationTests(TargetGenerator targetGenerator) {
       (WidgetTester _) async {
         final baseImpl = _NativeInteropReservedNamesFlutterApiImpl();
         NativeInteropReservedNamesFlutterApiRegistrar.register(baseImpl);
+        addTearDown(() => NativeInteropReservedNamesFlutterApiRegistrar.unregister(baseImpl));
         final NativeInteropReservedNamesHostApiForNativeInterop hostApi =
             NativeInteropReservedNamesHostApiForNativeInterop.getInstance()!;
         expect(hostApi.callFlutterRelease('ping'), 'ping');
@@ -3010,9 +3050,9 @@ void runPigeonNativeInteropIntegrationTests(TargetGenerator targetGenerator) {
     testWidgets(
       'FlutterApi.setUp replaces per-isolate instance and setUp(null) deregisters without popping underlying stack',
       (WidgetTester _) async {
-        NativeInteropReservedNamesFlutterApiRegistrar.register(
-          _NativeInteropReservedNamesFlutterApiImpl(),
-        );
+        final baseImpl = _NativeInteropReservedNamesFlutterApiImpl();
+        NativeInteropReservedNamesFlutterApiRegistrar.register(baseImpl);
+        addTearDown(() => NativeInteropReservedNamesFlutterApiRegistrar.unregister(baseImpl));
         final NativeInteropReservedNamesHostApiForNativeInterop hostApi =
             NativeInteropReservedNamesHostApiForNativeInterop.getInstance()!;
         expect(hostApi.callFlutterRelease('ping'), 'ping');
@@ -3073,6 +3113,9 @@ void runPigeonNativeInteropIntegrationTests(TargetGenerator targetGenerator) {
       expect(api.getReference(), 'reference');
       expect(api.getDefault(), 'default');
       expect(await api.getValueAsync(), 'value');
+      expect(api.register('register'), 'register');
+      expect(api.unregister('unregister'), 'unregister');
+      expect(api.getGetInstance(), 'getInstance');
     });
 
     testWidgets('fields with reserved names serialize and deserialize correctly', (
@@ -3105,6 +3148,8 @@ void runPigeonNativeInteropIntegrationTests(TargetGenerator targetGenerator) {
       expect(api.callFlutterImplementIn('implementIn'), 'implementIn');
       expect(api.callFlutterIsNull(), true);
       expect(api.callFlutterGetReference(), 'reference');
+      expect(api.callFlutterRegister('register'), 'register');
+      expect(api.callFlutterDartApi(), 'dartApi');
     });
   });
 
@@ -3788,6 +3833,12 @@ class _NativeInteropReservedNamesFlutterApiImpl extends NativeInteropReservedNam
 
   @override
   String getReference() => 'reference';
+
+  @override
+  String register(String value) => value;
+
+  @override
+  String dartApi() => 'dartApi';
 }
 
 class _PrefixedReservedNamesFlutterApiImpl extends NativeInteropReservedNamesFlutterApi {
@@ -3809,4 +3860,10 @@ class _PrefixedReservedNamesFlutterApiImpl extends NativeInteropReservedNamesFlu
 
   @override
   String getReference() => '$prefix:reference';
+
+  @override
+  String register(String value) => '$prefix:$value';
+
+  @override
+  String dartApi() => '$prefix:dartApi';
 }

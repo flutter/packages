@@ -1065,7 +1065,9 @@ if (wrapped == null) {
             });
           });
 
-          indent.writeln('error("${api.name} has not been registered")');
+          indent.writeln(
+            'throw ${_getErrorClassName(generatorOptions)}("unregistered-instance", "${api.name} has not been registered.")',
+          );
         });
       }
     });

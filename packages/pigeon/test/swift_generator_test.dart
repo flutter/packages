@@ -1817,6 +1817,8 @@ void main() {
       expect(code, contains('static let lock = NSLock()'));
       expect(code, contains('static var instancesOfHostApi = [String: [HostApiSetup]]()'));
       expect(code, isNot(contains('@discardableResult')));
+      expect(code, isNot(contains('\n  override init() {}')));
+      expect(code, contains('private override init() {}'));
       expect(code, contains('static func register(api: HostApi, name: String? = nil) {'));
       expect(code, contains('static func unregister(api: HostApi, name: String? = nil) {'));
       expect(code, isNot(contains('static func unregister(setup:')));
@@ -1836,6 +1838,10 @@ void main() {
       expect(
         code,
         contains('return HostApiInstanceTracker.instancesOfHostApi[resolvedName]?.last'),
+      );
+      expect(
+        code,
+        contains('@objc class FlutterApiRegistrar: NSObject {\n  private override init() {}'),
       );
       expect(code, contains('private static var registeredFlutterApi = [String: [FlutterApi]]()'));
       expect(code, contains('FlutterApiRegistrar.lock.lock()'));

@@ -1533,6 +1533,12 @@ abstract class NativeInteropHostIntegrationCoreApi {
   /// Registers and immediately deregisters a Host API under [name].
   void registerAndImmediatelyDeregisterHostApi(String name);
 
+  /// Registers a separate Host API instance under [name] for detached-handle testing.
+  void registerNamedHostApi(String name);
+
+  /// Deregisters the Host API instance previously registered by [registerNamedHostApi] under [name].
+  void deregisterNamedHostApi(String name);
+
   /// Tests that calling a deregistered Flutter API under [name] fails / returns null.
   bool testCallDeregisteredFlutterApi(String name);
 
@@ -2085,6 +2091,16 @@ abstract class NativeInteropReservedNamesHostApi {
   @async
   String getValueAsync();
 
+  /// Collides with `<Api>Registrar.register` in Kotlin bytecode.
+  String register(String value);
+
+  /// Collides with `<Api>Registrar.unregister` in Kotlin bytecode.
+  String unregister(String value);
+
+  /// JNIgen turns this into an instance getter `getInstance`, colliding with
+  /// `<Api>Registrar.getInstance`.
+  String getGetInstance();
+
   /// Returns the passed object, to test serialization and deserialization.
   NativeInteropReservedNames echoReservedNames(NativeInteropReservedNames names);
 
@@ -2102,6 +2118,12 @@ abstract class NativeInteropReservedNamesHostApi {
 
   /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.getReference].
   String callFlutterGetReference();
+
+  /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.register].
+  String callFlutterRegister(String value);
+
+  /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.dartApi].
+  String callFlutterDartApi();
 }
 
 /// The Flutter API counterpart of [NativeInteropReservedNamesHostApi].
@@ -2124,4 +2146,10 @@ abstract class NativeInteropReservedNamesFlutterApi {
 
   /// JNIgen doesn't turn interface methods into properties.
   String getReference();
+
+  /// Previously collided with internal Dart JNI registrar `register` member.
+  String register(String value);
+
+  /// Previously collided with internal Dart JNI registrar `dartApi` field.
+  String dartApi();
 }
