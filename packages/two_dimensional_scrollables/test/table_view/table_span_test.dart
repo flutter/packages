@@ -1678,12 +1678,12 @@ void main() {
       var rowBuildCount = 0;
       final rowColor = WidgetStateColor.resolveWith((Set<WidgetState> states) {
         if (states.contains(WidgetState.pressed)) {
-          return const Color(0xff00ff00);
+          return const Color(0xFF00FF00);
         }
         if (states.contains(WidgetState.hovered)) {
-          return const Color(0xff0000ff);
+          return const Color(0xFF0000FF);
         }
-        return const Color(0xffff0000);
+        return const Color(0xFFFF0000);
       });
 
       await tester.pumpWidget(
@@ -1712,14 +1712,14 @@ void main() {
       expect(
         find.byType(TableViewport),
         paints
-          ..rect(rect: const Rect.fromLTRB(0.0, 0.0, 200.0, 100.0), color: const Color(0xffff0000))
+          ..rect(rect: const Rect.fromLTRB(0.0, 0.0, 200.0, 100.0), color: const Color(0xFFFF0000))
           ..rect(
             rect: const Rect.fromLTRB(0.0, 100.0, 200.0, 200.0),
-            color: const Color(0xffff0000),
+            color: const Color(0xFFFF0000),
           ),
       );
 
-      // Hover over row 0
+      // Hover over row 0.
       final TestGesture mouseGesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
       await mouseGesture.addPointer(location: const Offset(50.0, 50.0));
       await tester.pump();
@@ -1727,50 +1727,50 @@ void main() {
       expect(
         find.byType(TableViewport),
         paints
-          ..rect(rect: const Rect.fromLTRB(0.0, 0.0, 200.0, 100.0), color: const Color(0xff0000ff))
+          ..rect(rect: const Rect.fromLTRB(0.0, 0.0, 200.0, 100.0), color: const Color(0xFF0000FF))
           ..rect(
             rect: const Rect.fromLTRB(0.0, 100.0, 200.0, 200.0),
-            color: const Color(0xffff0000),
+            color: const Color(0xFFFF0000),
           ),
       );
 
-      // Press on row 0
+      // Press on row 0.
       await mouseGesture.down(const Offset(50.0, 50.0));
       await tester.pump();
       expect(rowBuildCount, initialBuildCount);
       expect(
         find.byType(TableViewport),
         paints
-          ..rect(rect: const Rect.fromLTRB(0.0, 0.0, 200.0, 100.0), color: const Color(0xff00ff00))
+          ..rect(rect: const Rect.fromLTRB(0.0, 0.0, 200.0, 100.0), color: const Color(0xFF00FF00))
           ..rect(
             rect: const Rect.fromLTRB(0.0, 100.0, 200.0, 200.0),
-            color: const Color(0xffff0000),
+            color: const Color(0xFFFF0000),
           ),
       );
 
-      // Release press on row 0 (still hovered)
+      // Release press on row 0 (still hovered).
       await mouseGesture.up();
       await tester.pump();
       expect(
         find.byType(TableViewport),
         paints
-          ..rect(rect: const Rect.fromLTRB(0.0, 0.0, 200.0, 100.0), color: const Color(0xff0000ff))
+          ..rect(rect: const Rect.fromLTRB(0.0, 0.0, 200.0, 100.0), color: const Color(0xFF0000FF))
           ..rect(
             rect: const Rect.fromLTRB(0.0, 100.0, 200.0, 200.0),
-            color: const Color(0xffff0000),
+            color: const Color(0xFFFF0000),
           ),
       );
 
-      // Move to row 1
+      // Move to row 1.
       await mouseGesture.moveTo(const Offset(50.0, 150.0));
       await tester.pump();
       expect(
         find.byType(TableViewport),
         paints
-          ..rect(rect: const Rect.fromLTRB(0.0, 0.0, 200.0, 100.0), color: const Color(0xffff0000))
+          ..rect(rect: const Rect.fromLTRB(0.0, 0.0, 200.0, 100.0), color: const Color(0xFFFF0000))
           ..rect(
             rect: const Rect.fromLTRB(0.0, 100.0, 200.0, 200.0),
-            color: const Color(0xff0000ff),
+            color: const Color(0xFF0000FF),
           ),
       );
 
@@ -1782,9 +1782,9 @@ void main() {
     ) async {
       final rowColor = WidgetStateColor.resolveWith((Set<WidgetState> states) {
         if (states.contains(WidgetState.hovered)) {
-          return const Color(0xff0000ff);
+          return const Color(0xFF0000FF);
         }
-        return const Color(0xffff0000);
+        return const Color(0xFFFF0000);
       });
 
       await tester.pumpWidget(
@@ -1812,12 +1812,12 @@ void main() {
 
       final TestGesture mouseGesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
       await mouseGesture.addPointer(location: const Offset(50.0, 50.0));
-      await tester.pump(); // Start of animation (t = 0ms)
-      await tester.pump(const Duration(milliseconds: 100)); // Halfway (t = 100ms)
+      await tester.pump(); // Start of animation (t = 0ms).
+      await tester.pump(const Duration(milliseconds: 100)); // Halfway (t = 100ms).
 
       final Color expectedMidColor = Color.lerp(
-        const Color(0xffff0000),
-        const Color(0xff0000ff),
+        const Color(0xFFFF0000),
+        const Color(0xFF0000FF),
         0.5,
       )!;
       expect(
@@ -1829,7 +1829,7 @@ void main() {
       expect(
         find.byType(TableViewport),
         paints
-          ..rect(rect: const Rect.fromLTRB(0.0, 0.0, 200.0, 100.0), color: const Color(0xff0000ff)),
+          ..rect(rect: const Rect.fromLTRB(0.0, 0.0, 200.0, 100.0), color: const Color(0xFF0000FF)),
       );
 
       await mouseGesture.removePointer();
@@ -1849,8 +1849,8 @@ void main() {
             rowBuilder: (_) => const TableSpan(
               extent: FixedTableSpanExtent(100.0),
               backgroundDecoration: TableSpanDecoration(
-                color: Color(0xffffffff),
-                splashColor: Color(0x802196f3),
+                color: Color(0xFFFFFFFF),
+                splashColor: Color(0x802196F3),
                 splashAnimationStyle: AnimationStyle(
                   duration: Duration(milliseconds: 200),
                   curve: Curves.linear,
@@ -1865,26 +1865,101 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // Tap in the unpinned column (x = 150, y = 50)
+      // Tap in the unpinned column (x = 150, y = 50).
       await tester.tapAt(const Offset(150.0, 50.0));
-      await tester.pump(); // Start of ripple (t = 0ms)
-      await tester.pump(const Duration(milliseconds: 100)); // Halfway (t = 100ms)
+      await tester.pump(); // Start of ripple (t = 0ms).
+      await tester.pump(const Duration(milliseconds: 100)); // Halfway (t = 100ms).
 
       // Both the unpinned cell section and the pinned column section should
-      // paint the ripple circle with the exact same center (150, 50) and radius.
+      // paint the ripple circle with the exact same center (150, 50) and radius
+      // bounded by the actual visible row width (200.0) rather than viewport width (800.0).
+      // Distance from (150, 50) to (0, 0) is sqrt(150^2 + 50^2) = 158.113883;
+      // at t = 0.5, radius is ~79.0569415.
       expect(
         find.byType(TableViewport),
         paints
           ..rect(
             rect: const Rect.fromLTRB(100.0, 0.0, 200.0, 100.0),
-            color: const Color(0xffffffff),
+            color: const Color(0xFFFFFFFF),
           )
-          ..circle(x: 150.0, y: 50.0)
-          ..rect(rect: const Rect.fromLTRB(0.0, 0.0, 100.0, 100.0), color: const Color(0xffffffff))
-          ..circle(x: 150.0, y: 50.0),
+          ..circle(x: 150.0, y: 50.0, radius: 79.05694150420949)
+          ..rect(rect: const Rect.fromLTRB(0.0, 0.0, 100.0, 100.0), color: const Color(0xFFFFFFFF))
+          ..circle(x: 150.0, y: 50.0, radius: 79.05694150420949),
       );
 
       await tester.pumpAndSettle();
+    });
+
+    testWidgets('TableSpan clears hovered state when updated to non-interactive decoration', (
+      WidgetTester tester,
+    ) async {
+      final interactiveColor = WidgetStateColor.resolveWith((Set<WidgetState> states) {
+        if (states.contains(WidgetState.hovered)) {
+          return const Color(0xFF0000FF);
+        }
+        return const Color(0xFFFF0000);
+      });
+
+      var isInteractive = true;
+      late StateSetter setTableState;
+
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              setTableState = setState;
+              return TableView.builder(
+                rowCount: 1,
+                columnCount: 1,
+                columnBuilder: (_) => const TableSpan(extent: FixedTableSpanExtent(200.0)),
+                rowBuilder: (_) => TableSpan(
+                  extent: const FixedTableSpanExtent(100.0),
+                  backgroundDecoration: TableSpanDecoration(
+                    color: isInteractive ? interactiveColor : const Color(0xFFFF0000),
+                  ),
+                ),
+                cellBuilder: (_, _) => const TableViewCell(child: SizedBox.expand()),
+              );
+            },
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Hover over row 0 while interactive.
+      final TestGesture mouseGesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
+      await mouseGesture.addPointer(location: const Offset(50.0, 50.0));
+      await tester.pump();
+      expect(
+        find.byType(TableViewport),
+        paints
+          ..rect(rect: const Rect.fromLTRB(0.0, 0.0, 200.0, 100.0), color: const Color(0xFF0000FF)),
+      );
+
+      // Update row 0 to a non-interactive decoration while hovered.
+      setTableState(() {
+        isInteractive = false;
+      });
+      await tester.pump();
+
+      // Move mouse outside row 0 while it is non-interactive.
+      await mouseGesture.moveTo(const Offset(50.0, 250.0));
+      await tester.pump();
+
+      // Re-enable interactive decoration while mouse is outside row 0;
+      // row 0 must not retain a stale hovered state.
+      setTableState(() {
+        isInteractive = true;
+      });
+      await tester.pump();
+      expect(
+        find.byType(TableViewport),
+        paints
+          ..rect(rect: const Rect.fromLTRB(0.0, 0.0, 200.0, 100.0), color: const Color(0xFFFF0000)),
+      );
+
+      await mouseGesture.removePointer();
     });
   });
 }

@@ -105,6 +105,22 @@ class SpanState<T extends Span>
       return;
     }
     _configuration = configuration;
+    if (!_hasDecorations) {
+      if (configuration.onExit == null) {
+        _states.remove(WidgetState.hovered);
+      }
+      _previousStates = const <WidgetState>{};
+      _stateAnimationProgress = 1.0;
+      _stateAnimationRawProgress = 1.0;
+      _stateAnimationStartTime = null;
+      _splashAnimating = false;
+      _splashProgress = 0.0;
+      _splashAnimationStartTime = null;
+      if (_frameCallbackId != null) {
+        SchedulerBinding.instance.cancelFrameCallbackWithId(_frameCallbackId!);
+        _frameCallbackId = null;
+      }
+    }
     // Only sync recognizers if they are in use already.
     if (_recognizers != null) {
       _syncRecognizers();

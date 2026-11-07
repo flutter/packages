@@ -573,12 +573,18 @@ class SpanBorder {
     if (stateAnimationProgress < 1.0) {
       final BorderSide previousSide = _resolveSideForStates(side, previousStates);
       final BorderSide lerped = BorderSide.lerp(previousSide, targetSide, stateAnimationProgress);
-      if ((previousSide.color.a == 0.0 && targetSide.color.a > 0.0) ||
-          (targetSide.color.a == 0.0 && previousSide.color.a > 0.0)) {
+      final Color effectivePreviousColor = previousSide.style == BorderStyle.none
+          ? previousSide.color.withValues(alpha: 0.0)
+          : previousSide.color;
+      final Color effectiveTargetColor = targetSide.style == BorderStyle.none
+          ? targetSide.color.withValues(alpha: 0.0)
+          : targetSide.color;
+      if ((effectivePreviousColor.a == 0.0 && effectiveTargetColor.a > 0.0) ||
+          (effectiveTargetColor.a == 0.0 && effectivePreviousColor.a > 0.0)) {
         return lerped.copyWith(
           color: SpanDecoration._lerpColor(
-            previousSide.color,
-            targetSide.color,
+            effectivePreviousColor,
+            effectiveTargetColor,
             stateAnimationProgress,
           ),
         );

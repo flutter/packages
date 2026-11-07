@@ -934,12 +934,12 @@ void main() {
     ) async {
       final rowColor = WidgetStateColor.resolveWith((Set<WidgetState> states) {
         if (states.contains(WidgetState.pressed)) {
-          return const Color(0xff00ff00);
+          return const Color(0xFF00FF00);
         }
         if (states.contains(WidgetState.hovered)) {
-          return const Color(0xff0000ff);
+          return const Color(0xFF0000FF);
         }
-        return const Color(0xffff0000);
+        return const Color(0xFFFF0000);
       });
 
       await tester.pumpWidget(
@@ -950,7 +950,7 @@ void main() {
               extent: const FixedTreeRowExtent(80.0),
               backgroundDecoration: TreeRowDecoration(
                 color: rowColor,
-                splashColor: const Color(0x80ffffff),
+                splashColor: const Color(0x80FFFFFF),
                 splashAnimationStyle: const AnimationStyle(
                   duration: Duration(milliseconds: 200),
                   curve: Curves.linear,
@@ -965,7 +965,7 @@ void main() {
       expect(
         find.byType(TreeViewport),
         paints
-          ..rect(rect: const Rect.fromLTRB(0.0, 0.0, 800.0, 80.0), color: const Color(0xffff0000)),
+          ..rect(rect: const Rect.fromLTRB(0.0, 0.0, 800.0, 80.0), color: const Color(0xFFFF0000)),
       );
 
       final TestGesture mouseGesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
@@ -975,7 +975,7 @@ void main() {
       expect(
         find.byType(TreeViewport),
         paints
-          ..rect(rect: const Rect.fromLTRB(0.0, 0.0, 800.0, 80.0), color: const Color(0xff0000ff)),
+          ..rect(rect: const Rect.fromLTRB(0.0, 0.0, 800.0, 80.0), color: const Color(0xFF0000FF)),
       );
 
       await mouseGesture.down(const Offset(100.0, 40.0));
@@ -985,7 +985,7 @@ void main() {
       expect(
         find.byType(TreeViewport),
         paints
-          ..rect(rect: const Rect.fromLTRB(0.0, 0.0, 800.0, 80.0), color: const Color(0xff00ff00))
+          ..rect(rect: const Rect.fromLTRB(0.0, 0.0, 800.0, 80.0), color: const Color(0xFF00FF00))
           ..circle(x: 100.0, y: 40.0),
       );
 

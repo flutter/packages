@@ -2181,9 +2181,39 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
           : null;
       double? maxSplashRadius;
       if (pointerPosition != null) {
-        final fullSpanRect = isRow
-            ? Rect.fromLTRB(offset.dx, rect.top, offset.dx + viewportDimension.width, rect.bottom)
-            : Rect.fromLTRB(rect.left, offset.dy, rect.right, offset.dy + viewportDimension.height);
+        final bool reversedH = axisDirectionIsReversed(horizontalAxisDirection);
+        final bool reversedV = axisDirectionIsReversed(verticalAxisDirection);
+        final Rect fullSpanRect;
+        if (isRow) {
+          final double visibleRowWidth = _firstTrailingPinnedColumn != null
+              ? viewportDimension.width
+              : math.min(
+                  viewportDimension.width,
+                  _leadingPinnedColumnsExtent +
+                      (_lastNonPinnedColumn != null
+                          ? _columnMetrics[_lastNonPinnedColumn!]!.trailingOffset -
+                                horizontalOffset.pixels
+                          : 0.0),
+                );
+          final double left = reversedH
+              ? offset.dx + viewportDimension.width - _hAlignmentOffset - visibleRowWidth
+              : offset.dx + _hAlignmentOffset;
+          fullSpanRect = Rect.fromLTRB(left, rect.top, left + visibleRowWidth, rect.bottom);
+        } else {
+          final double visibleColumnHeight = _firstTrailingPinnedRow != null
+              ? viewportDimension.height
+              : math.min(
+                  viewportDimension.height,
+                  _leadingPinnedRowsExtent +
+                      (_lastNonPinnedRow != null
+                          ? _rowMetrics[_lastNonPinnedRow!]!.trailingOffset - verticalOffset.pixels
+                          : 0.0),
+                );
+          final double top = reversedV
+              ? offset.dy + viewportDimension.height - _vAlignmentOffset - visibleColumnHeight
+              : offset.dy + _vAlignmentOffset;
+          fullSpanRect = Rect.fromLTRB(rect.left, top, rect.right, top + visibleColumnHeight);
+        }
         maxSplashRadius = math.max(
           math.max(
             (pointerPosition - fullSpanRect.topLeft).distance,
