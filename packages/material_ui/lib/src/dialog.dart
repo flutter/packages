@@ -642,8 +642,9 @@ class AlertDialog extends StatelessWidget {
   /// If [ThemeData.useMaterial3] is true, the top padding separating the
   /// content from the title defaults to 16 pixels instead of 20 pixels.
   ///
-  /// If there is neither an [icon] nor a [title] above the [content], the top
-  /// padding defaults to 24 pixels instead, matching the other three edges.
+  /// If [ThemeData.useMaterial3] is true and there is neither an [icon] nor a
+  /// [title] above the [content], the top padding defaults to 24 pixels
+  /// instead, matching the other three edges.
   final EdgeInsetsGeometry? contentPadding;
 
   /// Style for the text in the [content] of this [AlertDialog].
@@ -911,11 +912,10 @@ class AlertDialog extends StatelessWidget {
 
     if (content != null) {
       final bool isFirst = title == null && icon == null;
-      // See: https://m3.material.io/components/dialogs/specs.
       final double defaultTopPadding = switch ((isFirst, theme.useMaterial3)) {
-        (true, _) => 24.0, // The dialog's own inset.
+        (true, true) => 24.0, // The dialog's own inset.
         (false, true) => 16.0, // M3 gap below a headline.
-        (false, false) => 20.0, // M2 gap below a headline.
+        (_, false) => 20.0, // M2 keeps its previous default.
       };
       final defaultContentPadding = EdgeInsets.only(
         left: 24.0,

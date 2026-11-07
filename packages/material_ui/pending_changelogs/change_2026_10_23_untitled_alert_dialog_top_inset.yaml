@@ -1,3 +1,3 @@
 changelog: |
-  - Fixes the top padding of an `AlertDialog` with no title or icon.
+  - Increases the default top padding of `AlertDialog` content with no title or icon from 16 to 24 pixels in Material 3, matching the other edges.
 version: patch
