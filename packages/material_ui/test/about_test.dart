@@ -1263,6 +1263,28 @@ void main() {
     expect(materialDones[1].color, cardColor);
   });
 
+  // Regression test for https://github.com/flutter/flutter/issues/195685.
+  testWidgets('LicensePage loading state scrolls when it does not fit', (
+    WidgetTester tester,
+  ) async {
+    // A landscape phone (844x390 logical pixels) with the text size at 200%.
+    tester.view.physicalSize = const Size(844, 390) * tester.view.devicePixelRatio;
+    addTearDown(tester.view.resetPhysicalSize);
+    tester.platformDispatcher.textScaleFactorTestValue = 2.0;
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+
+    await tester.pumpWidget(const MaterialApp(home: LicensePage(applicationName: 'MyApp')));
+
+    // The licenses are still loading, so the page shows the app header and a
+    // progress indicator, which together are taller than the screen.
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    expect(tester.takeException(), isNull);
+    expect(
+      find.ancestor(of: find.byType(CircularProgressIndicator), matching: find.byType(Scrollable)),
+      findsOneWidget,
+    );
+  });
+
   testWidgets('Conflicting scrollbars are not applied by ScrollBehavior to _PackageLicensePage', (
     WidgetTester tester,
   ) async {
