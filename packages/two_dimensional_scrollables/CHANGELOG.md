@@ -1,3 +1,7 @@
+## 0.6.0
+
+* Adds interactive `WidgetState` (`hovered`, `pressed`), state transition animations (`animationStyle`), and tap ripple animations (`splashColor`, `splashAnimationStyle`) support to `SpanDecoration` (`TableSpanDecoration` and `TreeRowDecoration`).
+
 ## 0.5.6
 
 * Fixes an issue where trailing pinned cells in `TableView` were losing hit tests to underlying non-pinned cells.

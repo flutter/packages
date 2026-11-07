@@ -928,6 +928,71 @@ void main() {
         expect(scrollController.offset, 0.0);
       });
     });
+
+    testWidgets('TreeRowDecoration updates on hover, press, and tap ripple', (
+      WidgetTester tester,
+    ) async {
+      final rowColor = WidgetStateColor.resolveWith((Set<WidgetState> states) {
+        if (states.contains(WidgetState.pressed)) {
+          return const Color(0xFF00FF00);
+        }
+        if (states.contains(WidgetState.hovered)) {
+          return const Color(0xFF0000FF);
+        }
+        return const Color(0xFFFF0000);
+      });
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: TreeView<String>(
+            tree: <TreeViewNode<String>>[TreeViewNode<String>('Root')],
+            treeRowBuilder: (_) => TreeRow(
+              extent: const FixedTreeRowExtent(80.0),
+              backgroundDecoration: TreeRowDecoration(
+                color: rowColor,
+                splashColor: const Color(0x80FFFFFF),
+                splashAnimationStyle: const AnimationStyle(
+                  duration: Duration(milliseconds: 200),
+                  curve: Curves.linear,
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(
+        find.byType(TreeViewport),
+        paints
+          ..rect(rect: const Rect.fromLTRB(0.0, 0.0, 800.0, 80.0), color: const Color(0xFFFF0000)),
+      );
+
+      final TestGesture mouseGesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
+      await mouseGesture.addPointer(location: const Offset(100.0, 40.0));
+      await tester.pump();
+
+      expect(
+        find.byType(TreeViewport),
+        paints
+          ..rect(rect: const Rect.fromLTRB(0.0, 0.0, 800.0, 80.0), color: const Color(0xFF0000FF)),
+      );
+
+      await mouseGesture.down(const Offset(100.0, 40.0));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      expect(
+        find.byType(TreeViewport),
+        paints
+          ..rect(rect: const Rect.fromLTRB(0.0, 0.0, 800.0, 80.0), color: const Color(0xFF00FF00))
+          ..circle(x: 100.0, y: 40.0),
+      );
+
+      await mouseGesture.up();
+      await tester.pumpAndSettle();
+      await mouseGesture.removePointer();
+    });
   });
 }
 
