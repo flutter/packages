@@ -5,7 +5,7 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show debugDefaultTargetPlatformOverride, kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -2039,6 +2039,40 @@ void main() {
 
       expect(fakeVideoPlayerPlatform.calls, contains('selectVideoTrack'));
     });
+
+    test('Windows selection and reset refresh dimensions from the selected native track', () async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+      addTearDown(() => debugDefaultTargetPlatformOverride = null);
+      final controller = VideoPlayerController.networkUrl(_localhostUri);
+      addTearDown(controller.dispose);
+      await controller.initialize();
+
+      for (final size in <Size>[const Size(320, 240), const Size(1280, 720)]) {
+        fakeVideoPlayerPlatform
+            .setVideoTracksForPlayer(controller.playerId, <platform_interface.VideoTrack>[
+              platform_interface.VideoTrack(
+                id: 'native',
+                isSelected: true,
+                width: size.width.toInt(),
+                height: size.height.toInt(),
+              ),
+            ]);
+        await controller.selectVideoTrack(
+          size.width == 320 ? const VideoTrack(id: 'native', isSelected: false) : null,
+        );
+        expect(controller.value.size, size);
+        expect(controller.value.aspectRatio, size.width / size.height);
+      }
+
+      fakeVideoPlayerPlatform.setVideoTracksForPlayer(
+        controller.playerId,
+        <platform_interface.VideoTrack>[
+          const platform_interface.VideoTrack(id: 'native', isSelected: true, width: 0, height: 0),
+        ],
+      );
+      await controller.selectVideoTrack(null);
+      expect(controller.value.size, const Size(1280, 720));
+    }, skip: kIsWeb);
 
     test('selectVideoTrack with null enables auto quality', () async {
       final controller = VideoPlayerController.networkUrl(_localhostUri);

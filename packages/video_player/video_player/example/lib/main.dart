@@ -475,28 +475,54 @@ class _PlayerVideoAndPopPage extends StatefulWidget {
 
 class _PlayerVideoAndPopPageState extends State<_PlayerVideoAndPopPage> {
   late VideoPlayerController _videoPlayerController;
+  late final Future<bool> _started;
   bool startedPlaying = false;
+  bool _popScheduled = false;
 
   @override
   void initState() {
     super.initState();
 
     _videoPlayerController = VideoPlayerController.asset('assets/Butterfly-209.mp4');
-    _videoPlayerController.addListener(() {
-      if (startedPlaying && !_videoPlayerController.value.isPlaying) {
-        Navigator.pop(context);
+    _videoPlayerController.addListener(_onPlaybackChanged);
+    // Route transitions can rebuild this widget without starting a new player.
+    _started = started();
+  }
+
+  void _onPlaybackChanged() {
+    if (!mounted || !startedPlaying || _videoPlayerController.value.isPlaying || _popScheduled) {
+      return;
+    }
+
+    // Completion can notify again while the route's reverse transition is running.
+    _popScheduled = true;
+    _videoPlayerController.removeListener(_onPlaybackChanged);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && (ModalRoute.of(context)?.isCurrent ?? false)) {
+        final NavigatorState navigator = Navigator.of(context);
+        if (navigator.canPop()) {
+          navigator.pop();
+        }
       }
     });
+    // A stopped texture may not schedule another frame for the pending pop.
+    WidgetsBinding.instance.ensureVisualUpdate();
   }
 
   @override
   void dispose() {
+    _videoPlayerController.removeListener(_onPlaybackChanged);
     _videoPlayerController.dispose();
     super.dispose();
   }
 
   Future<bool> started() async {
     await _videoPlayerController.initialize();
+    if (!mounted) {
+      return false;
+    }
+
     await _videoPlayerController.play();
     startedPlaying = true;
     return true;
@@ -507,7 +533,7 @@ class _PlayerVideoAndPopPageState extends State<_PlayerVideoAndPopPage> {
     return Material(
       child: Center(
         child: FutureBuilder<bool>(
-          future: started(),
+          future: _started,
           builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
             if (snapshot.data ?? false) {
               return AspectRatio(

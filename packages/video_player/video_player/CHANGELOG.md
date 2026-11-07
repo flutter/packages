@@ -1,4 +1,11 @@
-## NEXT
+## 2.15.0
+
+* Adds a Windows implementation using Media Foundation.
+* Supports custom HTTP headers and audio/video track selection on Windows, with
+  controller dimensions refreshed after video track changes.
+* Fixes disposal while initialization is still configuring the platform or has
+  failed to create a player.
+* Fixes repeated navigation pops when example playback stops.
 
 * Updates README to reflect currently supported OS versions for the latest
   versions of the endorsed iOS and macOS platform implementations.

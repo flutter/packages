@@ -607,13 +607,17 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       videoPlayerOptions: videoPlayerOptions,
     );
 
-    if (videoPlayerOptions?.mixWithOthers != null) {
-      await _videoPlayerPlatform.setMixWithOthers(videoPlayerOptions!.mixWithOthers);
-    }
+    try {
+      if (videoPlayerOptions?.mixWithOthers != null) {
+        await _videoPlayerPlatform.setMixWithOthers(videoPlayerOptions!.mixWithOthers);
+      }
 
-    _playerId =
-        (await _videoPlayerPlatform.createWithOptions(creationOptions)) ?? kUninitializedPlayerId;
-    _creatingCompleter!.complete();
+      _playerId =
+          (await _videoPlayerPlatform.createWithOptions(creationOptions)) ?? kUninitializedPlayerId;
+    } finally {
+      // Disposal waits on this completer even when native creation fails.
+      _creatingCompleter!.complete();
+    }
     final initializingCompleter = Completer<void>();
 
     await _videoPlayerPlatform.setPreventsDisplaySleepDuringVideoPlayback(
@@ -683,6 +687,10 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       await _updateClosedCaptionWithFuture(_closedCaptionFileFuture);
     }
 
+    if (_isDisposed) {
+      return;
+    }
+
     void errorListener(Object obj) {
       final e = obj as PlatformException;
       value = VideoPlayerValue.erroneous(e.message!);
@@ -710,7 +718,9 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         _isDisposed = true;
         _timer?.cancel();
         await _eventSubscription?.cancel();
-        await _videoPlayerPlatform.dispose(_playerId);
+        if (_playerId != kUninitializedPlayerId) {
+          await _videoPlayerPlatform.dispose(_playerId);
+        }
       }
       _lifeCycleObserver?.dispose();
     }
@@ -960,10 +970,16 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   }
 
   Future<void> _updateClosedCaptionWithFuture(Future<ClosedCaptionFile>? closedCaptionFile) async {
+    if (_isDisposed) {
+      return;
+    }
     if (closedCaptionFile != null) {
       _closedCaptionFile = await closedCaptionFile;
+      // Caller-owned caption futures can outlive this controller.
+      if (_isDisposed) {
+        return;
+      }
 
-      // Only sort if we haven't sorted yet (first initialization)
       _sortedCaptions ??= List<Caption>.from(_closedCaptionFile!.captions)
         ..sort((Caption a, Caption b) {
           return a.start.compareTo(b.start);
@@ -1105,7 +1121,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     if (_isDisposedOrNotInitialized) {
       return;
     }
-    // Convert app-facing VideoTrack to platform interface VideoTrack
     final platform_interface.VideoTrack? platformTrack = track != null
         ? platform_interface.VideoTrack(
             id: track.id,
@@ -1119,6 +1134,27 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           )
         : null;
     await _videoPlayerPlatform.selectVideoTrack(_playerId, platformTrack);
+
+    if (!kIsWeb &&
+        defaultTargetPlatform == TargetPlatform.windows &&
+        !_isDisposedOrNotInitialized) {
+      // Windows chooses the reset target natively; the requested track cannot
+      // supply the dimensions of that restored stream.
+      final List<platform_interface.VideoTrack> tracks = await _videoPlayerPlatform.getVideoTracks(
+        _playerId,
+      );
+      final List<platform_interface.VideoTrack> selected = tracks
+          .where((platform_interface.VideoTrack item) => item.isSelected)
+          .toList();
+
+      if (!_isDisposedOrNotInitialized && selected.length == 1) {
+        final int? width = selected.single.width;
+        final int? height = selected.single.height;
+        if (width != null && height != null && width > 0 && height > 0) {
+          value = value.copyWith(size: Size(width.toDouble(), height.toDouble()));
+        }
+      }
+    }
   }
 
   /// Whether video track selection is supported on this platform.
