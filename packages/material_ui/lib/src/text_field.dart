@@ -22,6 +22,7 @@ import 'color_scheme.dart';
 import 'colors.dart';
 import 'debug.dart';
 import 'desktop_text_selection.dart';
+import 'ink_response_press_registry.dart';
 import 'input_decorator.dart';
 import 'magnifier.dart';
 import 'material_localizations.dart';
@@ -69,6 +70,47 @@ class _TextFieldSelectionGestureDetectorBuilder extends TextSelectionGestureDete
   @override
   void onUserTap() {
     _state.widget.onTap?.call();
+  }
+
+  // Whether the current long press started on an enabled ink response (for
+  // example an IconButton in the decoration's suffixIcon). As on native
+  // platforms, a long press on such a button must not focus the field, move
+  // the selection or show the selection toolbar.
+  bool _longPressStartedOnInkResponse = false;
+
+  @override
+  void onSingleLongTapStart(LongPressStartDetails details) {
+    _longPressStartedOnInkResponse = _state._pressRegistry.hasPressAt(details.globalPosition);
+    if (_longPressStartedOnInkResponse) {
+      return;
+    }
+    super.onSingleLongTapStart(details);
+  }
+
+  @override
+  void onSingleLongTapMoveUpdate(LongPressMoveUpdateDetails details) {
+    if (_longPressStartedOnInkResponse) {
+      return;
+    }
+    super.onSingleLongTapMoveUpdate(details);
+  }
+
+  @override
+  void onSingleLongTapEnd(LongPressEndDetails details) {
+    if (_longPressStartedOnInkResponse) {
+      _longPressStartedOnInkResponse = false;
+      return;
+    }
+    super.onSingleLongTapEnd(details);
+  }
+
+  @override
+  void onSingleLongTapCancel() {
+    if (_longPressStartedOnInkResponse) {
+      _longPressStartedOnInkResponse = false;
+      return;
+    }
+    super.onSingleLongTapCancel();
   }
 }
 
@@ -1190,6 +1232,10 @@ class _TextFieldState extends State<TextField>
   FocusNode? _focusNode;
   FocusNode get _effectiveFocusNode => widget.focusNode ?? (_focusNode ??= FocusNode());
 
+  // Pointers pressing an enabled ink response in this text field, such as an
+  // IconButton in the decoration.
+  final InkResponsePressRegistry _pressRegistry = InkResponsePressRegistry();
+
   MaxLengthEnforcement get _effectiveMaxLengthEnforcement =>
       widget.maxLengthEnforcement ??
       LengthLimitingTextInputFormatter.getDefaultMaxLengthEnforcement(Theme.of(context).platform);
@@ -1891,7 +1937,7 @@ class _TextFieldState extends State<TextField>
             },
             child: _selectionGestureDetectorBuilder.buildGestureDetector(
               behavior: HitTestBehavior.translucent,
-              child: child,
+              child: InkResponsePressScope(registry: _pressRegistry, child: child),
             ),
           ),
         ),
