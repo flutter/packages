@@ -1588,6 +1588,40 @@ void main() {
     expect(find.text('two'), findsNothing);
   });
 
+  // Regression test for https://github.com/flutter/flutter/issues/195192.
+  testWidgets('DropdownButtonFormField decoration is disabled when the field is disabled', (
+    WidgetTester tester,
+  ) async {
+    Widget buildFormField({bool? enabled, ValueChanged<int?>? onChanged}) {
+      return MaterialApp(
+        home: Material(
+          child: DropdownButtonFormField<int>(
+            initialValue: 1,
+            items: const <DropdownMenuItem<int>>[
+              DropdownMenuItem<int>(value: 1, child: Text('one')),
+              DropdownMenuItem<int>(value: 2, child: Text('two')),
+            ],
+            enabled: enabled,
+            onChanged: onChanged,
+          ),
+        ),
+      );
+    }
+
+    bool isDecorationEnabled() =>
+        tester.widget<InputDecorator>(find.byType(InputDecorator)).decoration.enabled;
+
+    await tester.pumpWidget(buildFormField(onChanged: (int? value) {}));
+    expect(isDecorationEnabled(), isTrue);
+
+    await tester.pumpWidget(buildFormField(enabled: false, onChanged: (int? value) {}));
+    expect(isDecorationEnabled(), isFalse);
+
+    // Without `enabled`, a null onChanged disables the field.
+    await tester.pumpWidget(buildFormField());
+    expect(isDecorationEnabled(), isFalse);
+  });
+
   testWidgets('DropdownButtonFormField with onChanged: null still autovalidates', (
     WidgetTester tester,
   ) async {
