@@ -2218,17 +2218,26 @@ void main() {
       expect(code, contains('unregisterWithKey(api, PigeonEngineKeys.keyOf(engine), name)'));
     });
 
-    test('host API unregister falls back to identity when no key matches', () {
+    test('host API unregister falls back to identity only for a single engine', () {
+      final String code = generate(buildRoot(flutter: false));
+      expectInOrder(code, <String>[
+        'if (list.any { it.api === api && it.engineKey == engineKey }) {',
+        'list.filter { it.api === api }.map { it.engineKey }.distinct().singleOrNull() ?: return',
+        'if (entry.api === api && entry.engineKey == removeKey) {',
+      ]);
+      expect(code, contains('entry.api = null'));
+      expect(code, isNot(contains('!matchKey')));
+    });
+
+    test('engine keys are cached per binding', () {
       final String code = generate(buildRoot(flutter: false));
       expect(
         code,
-        contains('val matchKey = list.any { it.api === api && it.engineKey == engineKey }'),
+        contains(
+          'private val bindingKeys = java.util.WeakHashMap<FlutterPlugin.FlutterPluginBinding, Long>()',
+        ),
       );
-      expect(
-        code,
-        contains('if (entry.api === api && (!matchKey || entry.engineKey == engineKey)) {'),
-      );
-      expect(code, contains('entry.api = null'));
+      expect(code, contains('return bindingKeys.getOrPut(binding) { computeKey(binding) }'));
     });
 
     test('host API resolves by engine id, then affinity, then most recent registration', () {
@@ -2257,17 +2266,23 @@ void main() {
 
     test('Flutter API registration dedups by identity and looks up by engine', () {
       final String code = generate(buildRoot(host: false));
-      expect(code, contains('list.removeAll { it.api === api }'));
-      expect(code, contains('list.add(FlutterApiRegistration(api, engineId, affinityKey))'));
-      expect(code, contains('return getInstanceWithKey(PigeonEngineKeys.keyOf(binding), name)'));
-      expect(code, contains('return getInstanceWithKey(PigeonEngineKeys.keyOf(engine), name)'));
+      expectInOrder(code, <String>[
+        'val index = list.indexOfFirst { it.api === api }',
+        'list[index] = registration',
+        'list.add(registration)',
+      ]);
       expect(
         code,
-        contains(
-          'val match = list.lastOrNull { it.engineId == engineKey || it.affinityKey == engineKey }',
-        ),
+        contains('val registration = FlutterApiRegistration(api, engineId, affinityKey)'),
       );
-      expect(code, contains('(match ?: list.lastOrNull())?.api'));
+      expect(code, contains('return getInstanceWithKey(PigeonEngineKeys.keyOf(binding), name)'));
+      expect(code, contains('return getInstanceWithKey(PigeonEngineKeys.keyOf(engine), name)'));
+      expectInOrder(code, <String>[
+        'if (engineKey != PigeonEngineKeys.NO_KEY) {',
+        'val match = list.lastOrNull { it.engineId == engineKey } ?: list.lastOrNull { it.affinityKey == engineKey }',
+        'return list.lastOrNull()?.api',
+      ]);
+      expect(code, isNot(contains('it.engineId == engineKey || it.affinityKey == engineKey')));
     });
   });
 

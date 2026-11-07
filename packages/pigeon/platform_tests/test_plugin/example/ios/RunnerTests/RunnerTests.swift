@@ -161,23 +161,29 @@ struct RunnerTests {
   }
 
   @Test
-  func flutterApiReRegisteringSameInstanceDeduplicatesAndMovesToTop() throws {
+  func flutterApiReRegisteringSameInstanceUpdatesKeysInPlace() throws {
     let stub = StubPluginRegistrar()
+    let other = StubPluginRegistrar()
     let name = "unitTestFlutterApiDeduplicate"
     let bridge1 = FakeReservedNamesFlutterApiBridge("engine1")
     let bridge2 = FakeReservedNamesFlutterApiBridge("engine2")
 
     NativeInteropReservedNamesFlutterApiRegistrar.registerInstance(
-      api: bridge1, engineId: stub.engineIdentifier, affinityKey: Int64.min, name: name)
+      api: bridge1, engineId: Int64.min, affinityKey: Int64.min, name: name)
     NativeInteropReservedNamesFlutterApiRegistrar.registerInstance(
-      api: bridge2, engineId: stub.engineIdentifier, affinityKey: Int64.min, name: name)
+      api: bridge2, engineId: Int64.min, affinityKey: Int64.min, name: name)
+    // Re-sending bridge1 with a newly learned affinity updates it without moving it.
     NativeInteropReservedNamesFlutterApiRegistrar.registerInstance(
-      api: bridge1, engineId: stub.engineIdentifier, affinityKey: Int64.min, name: name)
+      api: bridge1, engineId: Int64.min, affinityKey: stub.engineIdentifier, name: name)
 
     #expect(
       try NativeInteropReservedNamesFlutterApiRegistrar.getInstance(registrar: stub, name: name)?
         .release(value: "ping")
         == "engine1:ping")
+    #expect(
+      try NativeInteropReservedNamesFlutterApiRegistrar.getInstance(registrar: other, name: name)?
+        .release(value: "ping")
+        == "engine2:ping")
 
     NativeInteropReservedNamesFlutterApiRegistrar.unregisterInstance(api: bridge1, name: name)
     #expect(
@@ -302,12 +308,47 @@ struct RunnerTests {
     #expect(try release(registrar2) == "engine2:ping")
     #expect(try release(unrelated) == "engine2:ping")
 
-    // A registration with an unknown Dart engine id matches by affinity key.
+    // A later registration that only has an affinity for engine1 doesn't override the
+    // registration made from engine1 itself, but is used once that one is gone.
     NativeInteropReservedNamesFlutterApiRegistrar.registerInstance(
       api: affinityBridge, engineId: noKey, affinityKey: registrar1.engineIdentifier, name: name)
+    #expect(try release(registrar1) == "engine1:ping")
     NativeInteropReservedNamesFlutterApiRegistrar.unregisterInstance(api: bridge1, name: name)
     #expect(try release(registrar1) == "affinity:ping")
     #expect(try release(registrar2) == "engine2:ping")
+  }
+
+  @Test
+  func hostApiUnregisterFromUnknownEngineKeepsApiRegisteredForSeveralEngines() throws {
+    let name = "iosUnregisterFallbackMultiEngine"
+    let registrar1 = StubPluginRegistrar()
+    let registrar2 = StubPluginRegistrar()
+    let unrelated = StubPluginRegistrar()
+    let api = NativeInteropTestsClass()
+    NativeInteropHostIntegrationCoreApiSetup.register(api: api, registrar: registrar1, name: name)
+    NativeInteropHostIntegrationCoreApiSetup.register(api: api, registrar: registrar2, name: name)
+    defer {
+      NativeInteropHostIntegrationCoreApiSetup.unregister(
+        api: api, registrar: registrar1, name: name)
+      NativeInteropHostIntegrationCoreApiSetup.unregister(
+        api: api, registrar: registrar2, name: name)
+    }
+    let setup1 = try #require(
+      NativeInteropHostIntegrationCoreApiSetup.pigeonResolveInstance(
+        engineId: registrar1.engineIdentifier, affinityKey: Int64.min, name: name))
+    let setup2 = try #require(
+      NativeInteropHostIntegrationCoreApiSetup.pigeonResolveInstance(
+        engineId: registrar2.engineIdentifier, affinityKey: Int64.min, name: name))
+    #expect(setup1 !== setup2)
+
+    // api is held by two engines and neither matches, so nothing is removed.
+    NativeInteropHostIntegrationCoreApiSetup.unregister(api: api, registrar: unrelated, name: name)
+    #expect(
+      NativeInteropHostIntegrationCoreApiSetup.pigeonResolveInstance(
+        engineId: registrar1.engineIdentifier, affinityKey: Int64.min, name: name) === setup1)
+    #expect(
+      NativeInteropHostIntegrationCoreApiSetup.pigeonResolveInstance(
+        engineId: registrar2.engineIdentifier, affinityKey: Int64.min, name: name) === setup2)
   }
 }
 

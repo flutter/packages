@@ -3093,6 +3093,9 @@ protocol NativeInteropHostIntegrationCoreApi: AnyObject {
   /// Returns the engine key that native code stored for this plugin's
   /// default Host API registration.
   func registeredEngineKey() throws -> Int64
+  /// Returns a label unique to the Host API instance that handled the call, so
+  /// tests can check which engine's registration a handle resolved to.
+  func engineLabel() throws -> String
   /// Returns whether this platform's plugin binding / registrar exposes an
   /// engine identifier, so registrations should use exact engine keys.
   func pluginEngineIdentifierIsAvailable() throws -> Bool
@@ -3137,7 +3140,8 @@ protocol NativeInteropHostIntegrationCoreApi: AnyObject {
     /// Instances are matched by identity. Does nothing if `api` is not registered.
     ///
     /// Prefers the registration made from the engine that owns `registrar`, and
-    /// otherwise removes every registration of `api` under `name`.
+    /// otherwise removes the registration of `api` under `name` if exactly one engine
+    /// holds it.
     static func unregister(
       api: NativeInteropHostIntegrationCoreApi, registrar: FlutterPluginRegistrar,
       name: String = NativeInteropTestsPigeonInternal.defaultInstanceName
@@ -3174,13 +3178,21 @@ protocol NativeInteropHostIntegrationCoreApi: AnyObject {
     else {
       return
     }
-    // Fall back to identity-only matching when no entry has this engine key.
-    let matchesKey = list.contains { $0.api === api && $0.engineKey == engineKey }
+    let removeKey: Int64
+    if list.contains(where: { $0.api === api && $0.engineKey == engineKey }) {
+      removeKey = engineKey
+    } else {
+      let keys = Set(list.filter { $0.api === api }.map { $0.engineKey })
+      guard keys.count == 1, let onlyKey = keys.first else {
+        return
+      }
+      removeKey = onlyKey
+    }
     list.removeAll { entry in
       guard let existing = entry.api else {
         return false
       }
-      if existing === api && (!matchesKey || entry.engineKey == engineKey) {
+      if existing === api && entry.engineKey == removeKey {
         entry.api = nil
         return true
       }
@@ -8081,6 +8093,24 @@ protocol NativeInteropHostIntegrationCoreApi: AnyObject {
     }
     return nil
   }
+  /// Returns a label unique to the Host API instance that handled the call, so
+  /// tests can check which engine's registration a handle resolved to.
+  @objc func engineLabel(wrappedError: NativeInteropTestsError) -> NSString? {
+    do {
+      let activeApi = try resolveApi()
+      let res: String = try activeApi.engineLabel()
+      return res as NSString?
+    } catch let error as NativeInteropTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(Swift.type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
   /// Returns whether this platform's plugin binding / registrar exposes an
   /// engine identifier, so registrations should use exact engine keys.
   @objc func pluginEngineIdentifierIsAvailable(wrappedError: NativeInteropTestsError) -> NSNumber? {
@@ -8449,6 +8479,8 @@ protocol NativeInteropHostIntegrationCoreApi: AnyObject {
   ///
   /// Called by generated Dart code. `engineId` and `affinityKey` identify the engine
   /// that registered `api`, or are `Int64.min` when unknown.
+  /// Registering an instance that is already registered under `name` updates its
+  /// keys and keeps its position.
   @objc static func registerInstance(
     api: NativeInteropFlutterIntegrationCoreApiBridge, engineId: Int64, affinityKey: Int64,
     name: String = NativeInteropTestsPigeonInternal.defaultInstanceName
@@ -8457,10 +8489,13 @@ protocol NativeInteropHostIntegrationCoreApi: AnyObject {
     var list =
       NativeInteropFlutterIntegrationCoreApiRegistrar
       .registeredNativeInteropFlutterIntegrationCoreApi[name] ?? []
-    list.removeAll { ($0.api as AnyObject) === apiObject }
-    list.append(
-      NativeInteropFlutterIntegrationCoreApi(api: api, engineId: engineId, affinityKey: affinityKey)
-    )
+    let registration = NativeInteropFlutterIntegrationCoreApi(
+      api: api, engineId: engineId, affinityKey: affinityKey)
+    if let index = list.firstIndex(where: { ($0.api as AnyObject) === apiObject }) {
+      list[index] = registration
+    } else {
+      list.append(registration)
+    }
     NativeInteropFlutterIntegrationCoreApiRegistrar.registeredNativeInteropFlutterIntegrationCoreApi[
       name] = list
   }
@@ -8515,8 +8550,13 @@ protocol NativeInteropHostIntegrationCoreApi: AnyObject {
     else {
       return nil
     }
-    return list.last(where: { $0.engineId == engineKey || $0.affinityKey == engineKey })
-      ?? list.last
+    if engineKey != Int64.min,
+      let match = list.last(where: { $0.engineId == engineKey })
+        ?? list.last(where: { $0.affinityKey == engineKey })
+    {
+      return match
+    }
+    return list.last
   }
 }
 
@@ -9919,7 +9959,8 @@ protocol NativeInteropReservedNamesHostApi: AnyObject {
     /// Instances are matched by identity. Does nothing if `api` is not registered.
     ///
     /// Prefers the registration made from the engine that owns `registrar`, and
-    /// otherwise removes every registration of `api` under `name`.
+    /// otherwise removes the registration of `api` under `name` if exactly one engine
+    /// holds it.
     static func unregister(
       api: NativeInteropReservedNamesHostApi, registrar: FlutterPluginRegistrar,
       name: String = NativeInteropTestsPigeonInternal.defaultInstanceName
@@ -9956,13 +9997,21 @@ protocol NativeInteropReservedNamesHostApi: AnyObject {
     else {
       return
     }
-    // Fall back to identity-only matching when no entry has this engine key.
-    let matchesKey = list.contains { $0.api === api && $0.engineKey == engineKey }
+    let removeKey: Int64
+    if list.contains(where: { $0.api === api && $0.engineKey == engineKey }) {
+      removeKey = engineKey
+    } else {
+      let keys = Set(list.filter { $0.api === api }.map { $0.engineKey })
+      guard keys.count == 1, let onlyKey = keys.first else {
+        return
+      }
+      removeKey = onlyKey
+    }
     list.removeAll { entry in
       guard let existing = entry.api else {
         return false
       }
-      if existing === api && (!matchesKey || entry.engineKey == engineKey) {
+      if existing === api && entry.engineKey == removeKey {
         entry.api = nil
         return true
       }
@@ -10425,6 +10474,8 @@ protocol NativeInteropReservedNamesHostApi: AnyObject {
   ///
   /// Called by generated Dart code. `engineId` and `affinityKey` identify the engine
   /// that registered `api`, or are `Int64.min` when unknown.
+  /// Registering an instance that is already registered under `name` updates its
+  /// keys and keeps its position.
   @objc static func registerInstance(
     api: NativeInteropReservedNamesFlutterApiBridge, engineId: Int64, affinityKey: Int64,
     name: String = NativeInteropTestsPigeonInternal.defaultInstanceName
@@ -10433,9 +10484,13 @@ protocol NativeInteropReservedNamesHostApi: AnyObject {
     var list =
       NativeInteropReservedNamesFlutterApiRegistrar.registeredNativeInteropReservedNamesFlutterApi[
         name] ?? []
-    list.removeAll { ($0.api as AnyObject) === apiObject }
-    list.append(
-      NativeInteropReservedNamesFlutterApi(api: api, engineId: engineId, affinityKey: affinityKey))
+    let registration = NativeInteropReservedNamesFlutterApi(
+      api: api, engineId: engineId, affinityKey: affinityKey)
+    if let index = list.firstIndex(where: { ($0.api as AnyObject) === apiObject }) {
+      list[index] = registration
+    } else {
+      list.append(registration)
+    }
     NativeInteropReservedNamesFlutterApiRegistrar.registeredNativeInteropReservedNamesFlutterApi[
       name] = list
   }
@@ -10490,8 +10545,13 @@ protocol NativeInteropReservedNamesHostApi: AnyObject {
     else {
       return nil
     }
-    return list.last(where: { $0.engineId == engineKey || $0.affinityKey == engineKey })
-      ?? list.last
+    if engineKey != Int64.min,
+      let match = list.last(where: { $0.engineId == engineKey })
+        ?? list.last(where: { $0.affinityKey == engineKey })
+    {
+      return match
+    }
+    return list.last
   }
 }
 

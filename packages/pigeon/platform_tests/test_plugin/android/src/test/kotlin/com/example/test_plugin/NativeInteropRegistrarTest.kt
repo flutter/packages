@@ -248,6 +248,56 @@ class NativeInteropRegistrarTest {
   }
 
   @Test
+  fun bindingKeyIsStableWhenItsEngineIsLaterKeyedExactly() {
+    val name = "unitTestBindingThenEngine"
+    val api = FakeReservedNamesHostApi("shared")
+    val engineA = mockEngine(1301L)
+    val bindingA = mockBinding(engineA.dartExecutor)
+    val bindingB = mockBinding()
+
+    NativeInteropReservedNamesHostApiRegistrar().register(api, bindingA, name)
+    NativeInteropReservedNamesHostApiRegistrar().register(api, bindingB, name)
+    val wrapperB = NativeInteropReservedNamesHostApiRegistrar().getInstance(name)!!
+
+    // Keying engine A exactly afterwards must not change the key that bindingA registered with.
+    NativeInteropReservedNamesHostApiRegistrar().register(api, engineA, "${name}Other")
+    NativeInteropReservedNamesHostApiRegistrar().unregister(api, engineA, "${name}Other")
+
+    // Unregistering through bindingA removes only engine A's registration.
+    NativeInteropReservedNamesHostApiRegistrar().unregister(api, bindingA, name)
+    assertEquals("shared:ping", wrapperB.release("ping"))
+    assertSame(wrapperB, NativeInteropReservedNamesHostApiRegistrar().getInstance(name))
+
+    NativeInteropReservedNamesHostApiRegistrar().unregister(api, bindingB, name)
+    assertNull(NativeInteropReservedNamesHostApiRegistrar().getInstance(name))
+  }
+
+  @Test
+  fun unmatchedUnregisterDoesNotRemoveApiRegisteredForSeveralEngines() {
+    val name = "unitTestUnmatchedMultiEngine"
+    val api = FakeReservedNamesHostApi("shared")
+    val engine1 = mockEngine(1401L)
+    val engine2 = mockEngine(1402L)
+
+    NativeInteropReservedNamesHostApiRegistrar().register(api, engine1, name)
+    NativeInteropReservedNamesHostApiRegistrar().register(api, engine2, name)
+    val wrapper1 =
+        NativeInteropReservedNamesHostApiRegistrar.pigeonResolveInstance(1401L, NO_KEY, name)!!
+    val wrapper2 =
+        NativeInteropReservedNamesHostApiRegistrar.pigeonResolveInstance(1402L, NO_KEY, name)!!
+
+    // The binding's key matches neither engine, and api is held by two engines, so nothing is
+    // removed rather than guessing which registration to drop.
+    NativeInteropReservedNamesHostApiRegistrar().unregister(api, mockBinding(), name)
+    assertEquals("shared:ping", wrapper1.release("ping"))
+    assertEquals("shared:ping", wrapper2.release("ping"))
+
+    NativeInteropReservedNamesHostApiRegistrar().unregister(api, engine1, name)
+    NativeInteropReservedNamesHostApiRegistrar().unregister(api, engine2, name)
+    assertNull(NativeInteropReservedNamesHostApiRegistrar().getInstance(name))
+  }
+
+  @Test
   fun resolveInstancePrefersEngineIdThenAffinityThenTopOfStack() {
     val name = "unitTestResolveOrder"
     val api1 = FakeReservedNamesHostApi("engine1")
@@ -365,17 +415,21 @@ class NativeInteropRegistrarTest {
             .getInstance(binding1, name)
             ?.release("ping"))
 
-    // A registration whose affinity key matches the engine also counts, and the latest wins.
+    // A later registration that only has an affinity for engine1 doesn't override the
+    // registration made by the isolate running on engine1.
     NativeInteropReservedNamesFlutterApiRegistrar().registerInstance(affineApi, NO_KEY, 901L, name)
-    assertEquals(
-        "affine:ping",
-        NativeInteropReservedNamesFlutterApiRegistrar().getInstance(engine1, name)?.release("ping"))
-    NativeInteropReservedNamesFlutterApiRegistrar().unregisterInstance(affineApi, name)
     assertEquals(
         "engine1:ping",
         NativeInteropReservedNamesFlutterApiRegistrar().getInstance(engine1, name)?.release("ping"))
 
+    // Without an exact match, the affine registration wins over the top of the stack.
     NativeInteropReservedNamesFlutterApiRegistrar().unregisterInstance(api1, name)
+    NativeInteropReservedNamesFlutterApiRegistrar().registerInstance(api2, 902L, NO_KEY, name)
+    assertEquals(
+        "affine:ping",
+        NativeInteropReservedNamesFlutterApiRegistrar().getInstance(engine1, name)?.release("ping"))
+
+    NativeInteropReservedNamesFlutterApiRegistrar().unregisterInstance(affineApi, name)
     NativeInteropReservedNamesFlutterApiRegistrar().unregisterInstance(api2, name)
     assertNull(NativeInteropReservedNamesFlutterApiRegistrar().getInstance(engine1, name))
   }
@@ -408,27 +462,54 @@ class NativeInteropRegistrarTest {
   }
 
   @Test
-  fun flutterApiReRegisteringSameInstanceDeduplicatesAndMovesToTop() {
+  fun flutterApiReRegisteringSameInstanceUpdatesKeysInPlace() {
     val name = "unitTestFlutterApiDeduplicate"
     val api1 = FakeReservedNamesFlutterApi("engine1")
     val api2 = FakeReservedNamesFlutterApi("engine2")
-    val engine = mockEngine(1101L)
+    val engine1 = mockEngine(1101L)
+    val binding1 = mockBinding(mockk<DartExecutor>())
 
+    // api1 registers before its isolate knows its engine affinity.
     NativeInteropReservedNamesFlutterApiRegistrar().registerInstance(api1, NO_KEY, NO_KEY, name)
     NativeInteropReservedNamesFlutterApiRegistrar().registerInstance(api2, NO_KEY, NO_KEY, name)
-    NativeInteropReservedNamesFlutterApiRegistrar().registerInstance(api1, NO_KEY, NO_KEY, name)
+    assertEquals(
+        "engine2:ping",
+        NativeInteropReservedNamesFlutterApiRegistrar()
+            .getInstance(binding1, name)
+            ?.release("ping"))
 
+    // Dart re-sends api1 once it learns the affinity, which is binding1's key. The registration is
+    // updated without moving, so it is found by key while api2 stays the most recent.
+    val binding1Key =
+        NativeInteropReservedNamesHostApiRegistrar.run {
+          val host = FakeReservedNamesHostApi("probe")
+          NativeInteropReservedNamesHostApiRegistrar().register(host, binding1, "${name}Probe")
+          val key =
+              pigeonEngineKeyOf(
+                  NativeInteropReservedNamesHostApiRegistrar().getInstance("${name}Probe")!!)
+          NativeInteropReservedNamesHostApiRegistrar().unregister(host, binding1, "${name}Probe")
+          key
+        }
+    NativeInteropReservedNamesFlutterApiRegistrar()
+        .registerInstance(api1, NO_KEY, binding1Key, name)
     assertEquals(
         "engine1:ping",
-        NativeInteropReservedNamesFlutterApiRegistrar().getInstance(engine, name)?.release("ping"))
+        NativeInteropReservedNamesFlutterApiRegistrar()
+            .getInstance(binding1, name)
+            ?.release("ping"))
+    assertEquals(
+        "engine2:ping",
+        NativeInteropReservedNamesFlutterApiRegistrar().getInstance(engine1, name)?.release("ping"))
 
-    // Since api1 was deduplicated rather than duplicated, unregistering api1 once leaves only api2.
+    // Since api1 was updated rather than duplicated, unregistering api1 once leaves only api2.
     NativeInteropReservedNamesFlutterApiRegistrar().unregisterInstance(api1, name)
     assertEquals(
         "engine2:ping",
-        NativeInteropReservedNamesFlutterApiRegistrar().getInstance(engine, name)?.release("ping"))
+        NativeInteropReservedNamesFlutterApiRegistrar()
+            .getInstance(binding1, name)
+            ?.release("ping"))
     NativeInteropReservedNamesFlutterApiRegistrar().unregisterInstance(api2, name)
-    assertNull(NativeInteropReservedNamesFlutterApiRegistrar().getInstance(engine, name))
+    assertNull(NativeInteropReservedNamesFlutterApiRegistrar().getInstance(engine1, name))
   }
 
   @Test

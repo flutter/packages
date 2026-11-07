@@ -871,6 +871,17 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi, HostCa
 }
 
 class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
+  private static var nextLabelId = 1
+  /// Unique to this instance; see `engineLabel()`.
+  private let label: String = {
+    defer { NativeInteropTestsClass.nextLabelId += 1 }
+    return "instance-\(NativeInteropTestsClass.nextLabelId)"
+  }()
+
+  func engineLabel() throws -> String {
+    return label
+  }
+
   /// The registrar of the engine this instance serves; used to find that engine's Flutter APIs.
   weak var registrar: FlutterPluginRegistrar?
   /// Used for registrations made by test helpers when this instance has no engine.
@@ -2255,10 +2266,10 @@ class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
       return false
     }
 
-    // Re-registering bridge1 deduplicates and moves it to the top of the stack.
+    // Re-registering bridge1 updates it in place, so bridge2 stays on top.
     NativeInteropReservedNamesFlutterApiRegistrar.registerInstance(
       api: bridge1, engineId: engineId, affinityKey: noKey, name: name)
-    guard try lookup()?.release(value: "ping") == "engine1:ping" else {
+    guard try lookup()?.release(value: "ping") == "engine2:ping" else {
       return false
     }
 
@@ -3107,7 +3118,9 @@ final class StubTextureRegistry: NSObject, FlutterTextureRegistry {
 final class StubPluginRegistrar: NSObject, FlutterPluginRegistrar {
   let stubMessenger: FlutterBinaryMessenger = StubBinaryMessenger()
   let stubTextures: FlutterTextureRegistry = StubTextureRegistry()
-  let engineIdentifier: Int64
+  // `@objc` so that the generated runtime lookup finds it even on Flutter
+  // versions whose `FlutterPluginRegistrar` doesn't declare it.
+  @objc let engineIdentifier: Int64
   var published: NSObject?
 
   private static let identifierLock = NSLock()

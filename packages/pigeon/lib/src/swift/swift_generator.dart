@@ -1422,16 +1422,30 @@ if (wrapped == nil) {
         '$_docCommentPrefix Called by generated Dart code. `engineId` and `affinityKey` identify the engine',
       );
       indent.writeln('$_docCommentPrefix that registered `api`, or are `Int64.min` when unknown.');
+      indent.writeln(
+        '$_docCommentPrefix Registering an instance that is already registered under `name` updates its',
+      );
+      indent.writeln('$_docCommentPrefix keys and keeps its position.');
       indent.write(
         '@objc static func registerInstance(api: ${api.name}Bridge, engineId: Int64, affinityKey: Int64, name: String = ${_classNamePrefix}PigeonInternal.defaultInstanceName) ',
       );
       indent.addScoped('{', '}', () {
         indent.writeln('let apiObject = api as AnyObject');
         indent.writeln('var list = ${api.name}Registrar.registered${api.name}[name] ?? []');
-        indent.writeln(r'list.removeAll { ($0.api as AnyObject) === apiObject }');
         indent.writeln(
-          'list.append(${api.name}(api: api, engineId: engineId, affinityKey: affinityKey))',
+          'let registration = ${api.name}(api: api, engineId: engineId, affinityKey: affinityKey)',
         );
+        indent.writeScoped(
+          r'if let index = list.firstIndex(where: { ($0.api as AnyObject) === apiObject }) {',
+          '}',
+          () {
+            indent.writeln('list[index] = registration');
+          },
+          addTrailingNewline: false,
+        );
+        indent.addScoped(' else {', '}', () {
+          indent.writeln('list.append(registration)');
+        });
         indent.writeln('${api.name}Registrar.registered${api.name}[name] = list');
       });
       indent.newln();
@@ -1495,12 +1509,16 @@ if (wrapped == nil) {
             indent.writeln('return nil');
           },
         );
-        indent.writeln(
-          r'return list.last(where: { $0.engineId == engineKey || $0.affinityKey == engineKey })',
+        // Prefer the isolate running on the engine over isolates that only
+        // learned an affinity for it.
+        indent.writeScoped(
+          r'if engineKey != Int64.min, let match = list.last(where: { $0.engineId == engineKey }) ?? list.last(where: { $0.affinityKey == engineKey }) {',
+          '}',
+          () {
+            indent.writeln('return match');
+          },
         );
-        indent.nest(1, () {
-          indent.writeln('?? list.last');
-        });
+        indent.writeln('return list.last');
       });
     });
 
@@ -1657,8 +1675,9 @@ if (wrapped == nil) {
         '$_docCommentPrefix Prefers the registration made from the engine that owns `registrar`, and',
       );
       indent.writeln(
-        '$_docCommentPrefix otherwise removes every registration of `api` under `name`.',
+        '$_docCommentPrefix otherwise removes the registration of `api` under `name` if exactly one engine',
       );
+      indent.writeln('$_docCommentPrefix holds it.');
       indent.writeScoped(
         'static func unregister(api: ${api.name}, registrar: FlutterPluginRegistrar, name: String = $defaultName) {',
         '}',
@@ -1703,22 +1722,33 @@ if (wrapped == nil) {
         indent.writeScoped('guard var list = $instances[name] else {', '}', () {
           indent.writeln('return');
         });
-        indent.writeln('// Fall back to identity-only matching when no entry has this engine key.');
-        indent.writeln(
-          r'let matchesKey = list.contains { $0.api === api && $0.engineKey == engineKey }',
+        // Fall back to identity when no entry has this engine key, but only
+        // when a single engine holds `api` so that other engines'
+        // registrations of a shared instance are never removed.
+        indent.writeln('let removeKey: Int64');
+        indent.writeScoped(
+          r'if list.contains(where: { $0.api === api && $0.engineKey == engineKey }) {',
+          '}',
+          () {
+            indent.writeln('removeKey = engineKey');
+          },
+          addTrailingNewline: false,
         );
+        indent.addScoped(' else {', '}', () {
+          indent.writeln(r'let keys = Set(list.filter { $0.api === api }.map { $0.engineKey })');
+          indent.writeScoped('guard keys.count == 1, let onlyKey = keys.first else {', '}', () {
+            indent.writeln('return');
+          });
+          indent.writeln('removeKey = onlyKey');
+        });
         indent.writeScoped('list.removeAll { entry in', '}', () {
           indent.writeScoped('guard let existing = entry.api else {', '}', () {
             indent.writeln('return false');
           });
-          indent.writeScoped(
-            'if existing === api && (!matchesKey || entry.engineKey == engineKey) {',
-            '}',
-            () {
-              indent.writeln('entry.api = nil');
-              indent.writeln('return true');
-            },
-          );
+          indent.writeScoped('if existing === api && entry.engineKey == removeKey {', '}', () {
+            indent.writeln('entry.api = nil');
+            indent.writeln('return true');
+          });
           indent.writeln('return false');
         });
         indent.writeScoped('if list.isEmpty {', '}', () {

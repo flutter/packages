@@ -425,7 +425,8 @@ protocol NativeInteropExampleApi: AnyObject {
     /// Instances are matched by identity. Does nothing if `api` is not registered.
     ///
     /// Prefers the registration made from the engine that owns `registrar`, and
-    /// otherwise removes every registration of `api` under `name`.
+    /// otherwise removes the registration of `api` under `name` if exactly one engine
+    /// holds it.
     static func unregister(
       api: NativeInteropExampleApi, registrar: FlutterPluginRegistrar,
       name: String = NativeInteropExamplePigeonInternal.defaultInstanceName
@@ -452,13 +453,21 @@ protocol NativeInteropExampleApi: AnyObject {
     else {
       return
     }
-    // Fall back to identity-only matching when no entry has this engine key.
-    let matchesKey = list.contains { $0.api === api && $0.engineKey == engineKey }
+    let removeKey: Int64
+    if list.contains(where: { $0.api === api && $0.engineKey == engineKey }) {
+      removeKey = engineKey
+    } else {
+      let keys = Set(list.filter { $0.api === api }.map { $0.engineKey })
+      guard keys.count == 1, let onlyKey = keys.first else {
+        return
+      }
+      removeKey = onlyKey
+    }
     list.removeAll { entry in
       guard let existing = entry.api else {
         return false
       }
-      if existing === api && (!matchesKey || entry.engineKey == engineKey) {
+      if existing === api && entry.engineKey == removeKey {
         entry.api = nil
         return true
       }

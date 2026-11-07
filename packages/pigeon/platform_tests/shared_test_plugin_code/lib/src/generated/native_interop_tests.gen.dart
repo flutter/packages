@@ -1904,6 +1904,8 @@ abstract class NativeInteropHostIntegrationCoreApiForNativeInterop {
 
   int registeredEngineKey();
 
+  String engineLabel();
+
   bool pluginEngineIdentifierIsAvailable();
 }
 
@@ -7595,6 +7597,30 @@ class NativeInteropHostIntegrationCoreApi {
       isNullValid: false,
     );
     return pigeonVar_replyValue! as int;
+  }
+
+  /// Returns a label unique to the Host API instance that handled the call, so
+  /// tests can check which engine's registration a handle resolved to.
+  Future<String> engineLabel() async {
+    if (_nativeInteropApi != null) {
+      return _nativeInteropApi.engineLabel();
+    }
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropHostIntegrationCoreApi.engineLabel$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return pigeonVar_replyValue! as String;
   }
 
   /// Returns whether this platform's plugin binding / registrar exposes an

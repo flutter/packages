@@ -3156,6 +3156,7 @@ name: foobar
           '        final int linkEngineKey = jni_bridge.ApiRegistrar.pigeonEngineKeyOf(link);\n'
           '        if (linkEngineKey != _pigeonNoEngineKey) {\n'
           '          _pigeonEngineAffinity = linkEngineKey;\n'
+          '          _pigeonUpdateFlutterApiEngineAffinity();\n'
           '        }\n'
           '      }\n',
         ),
@@ -3219,6 +3220,52 @@ name: foobar
           '      );',
         ),
       );
+    });
+
+    test('learning affinity re-sends FlutterApi registrations to native', () {
+      final String jniCode = generateNativeInterop(jniOptions, root);
+      expect(
+        jniCode,
+        contains(
+          'void _pigeonUpdateFlutterApiEngineAffinity() {\n'
+          '  _CallbacksRegistrar.pigeonVar_updateEngineAffinity();\n'
+          '}',
+        ),
+      );
+      expect(jniCode, contains('static void pigeonVar_updateEngineAffinity() {'));
+      expect(
+        jniCode,
+        contains(
+          'registrar.registerInstance(handle as jni_bridge.Callbacks, engineId, affinityKey, jName);',
+        ),
+      );
+
+      final String ffiCode = generateNativeInterop(ffiOptions, root);
+      expect(ffiCode, contains('_pigeonUpdateFlutterApiEngineAffinity();'));
+      expect(
+        ffiCode,
+        contains(
+          'ffi_bridge.CallbacksRegistrar.registerInstanceWithApi(\n'
+          '            handle as ffi_bridge.CallbacksBridge,\n'
+          '            engineId: engineId,\n'
+          '            affinityKey: affinityKey,\n'
+          '            name: NSString(entry.key),\n'
+          '          );',
+        ),
+      );
+    });
+
+    test('omits the FlutterApi affinity update without FlutterApis', () {
+      final String code = generateNativeInterop(
+        jniOptions,
+        Root(
+          apis: root.apis.whereType<AstHostApi>().toList(),
+          classes: root.classes,
+          enums: root.enums,
+        ),
+      );
+      expect(code, contains('_pigeonEngineAffinity = linkEngineKey;'));
+      expect(code, isNot(contains('_pigeonUpdateFlutterApiEngineAffinity')));
     });
 
     test('FlutterApi re-registration keeps the setUp instance tracked', () {

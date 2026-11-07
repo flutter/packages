@@ -1874,12 +1874,11 @@ void main() {
     );
     expect(
       code,
-      contains(r'let matchesKey = list.contains { $0.api === api && $0.engineKey == engineKey }'),
+      contains(r'if list.contains(where: { $0.api === api && $0.engineKey == engineKey }) {'),
     );
-    expect(
-      code,
-      contains('if existing === api && (!matchesKey || entry.engineKey == engineKey) {'),
-    );
+    expect(code, contains(r'let keys = Set(list.filter { $0.api === api }.map { $0.engineKey })'));
+    expect(code, contains('guard keys.count == 1, let onlyKey = keys.first else {'));
+    expect(code, contains('if existing === api && entry.engineKey == removeKey {'));
     expect(code, isNot(contains('resolvedName')));
     expect(code, contains('private func resolveApi() throws -> HostApi'));
     expect(code, contains('code: "unregistered-instance"'));
@@ -1900,6 +1899,11 @@ void main() {
       ),
     );
     expect(code, isNot(contains('@objc static func register(api: FlutterApiBridge')));
+    expect(
+      code,
+      contains(r'if let index = list.firstIndex(where: { ($0.api as AnyObject) === apiObject }) {'),
+    );
+    expect(code, contains('list[index] = registration'));
     expect(
       code,
       contains(
@@ -1924,9 +1928,10 @@ void main() {
     expect(
       code,
       contains(
-        r'return list.last(where: { $0.engineId == engineKey || $0.affinityKey == engineKey })',
+        r'if engineKey != Int64.min, let match = list.last(where: { $0.engineId == engineKey }) ?? list.last(where: { $0.affinityKey == engineKey }) {',
       ),
     );
+    expect(code, isNot(contains(r'$0.engineId == engineKey || $0.affinityKey == engineKey')));
     expect(code, contains('fileprivate let engineId: Int64'));
     expect(code, contains('fileprivate let affinityKey: Int64'));
     expect(code, contains('FlutterApiRegistrar.registeredFlutterApi.removeValue(forKey: name)'));

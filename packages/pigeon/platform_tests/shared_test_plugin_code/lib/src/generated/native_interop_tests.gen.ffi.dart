@@ -14962,6 +14962,8 @@ extension type NativeInteropFlutterIntegrationCoreApiRegistrar._(objc.ObjCObject
   /// the instance registered for that engine when it is known.
   /// Called by generated Dart code. <code>engineId</code> and <code>affinityKey</code> identify the engine
   /// that registered <code>api</code>, or are <code>Int64.min</code> when unknown.
+  /// Registering an instance that is already registered under <code>name</code> updates its
+  /// keys and keeps its position.
   static void registerInstanceWithApi(
     NativeInteropFlutterIntegrationCoreApiBridge api, {
     required int engineId,
@@ -19111,6 +19113,19 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
         : NativeInteropTestsPigeonTypedData.fromPointer($ret, retain: true, release: true);
   }
 
+  /// Returns a label unique to the Host API instance that handled the call, so
+  /// tests can check which engine’s registration a handle resolved to.
+  objc.NSString? engineLabelWithWrappedError(NativeInteropTestsError wrappedError) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = wrappedError.ref;
+    final $ret = _objc_msgSend_1sotr3r(
+      _$$ref.pointer,
+      _sel_engineLabelWithWrappedError_,
+      _$$ref$1.pointer,
+    );
+    return $ret.address == 0 ? null : objc.NSString.fromPointer($ret, retain: true, release: true);
+  }
+
   /// Returns the inner <code>aString</code> value from the wrapped object, to test
   /// sending of nested objects.
   objc.NSString? extractNestedNullableStringWithWrapper(
@@ -20293,6 +20308,8 @@ extension type NativeInteropReservedNamesFlutterApiRegistrar._(objc.ObjCObject o
   /// the instance registered for that engine when it is known.
   /// Called by generated Dart code. <code>engineId</code> and <code>affinityKey</code> identify the engine
   /// that registered <code>api</code>, or are <code>Int64.min</code> when unknown.
+  /// Registering an instance that is already registered under <code>name</code> updates its
+  /// keys and keeps its position.
   static void registerInstanceWithApi(
     NativeInteropReservedNamesFlutterApiBridge api, {
     required int engineId,
@@ -32891,6 +32908,7 @@ late final _sel_echoUint8ListWithAUint8List_wrappedError_ = objc.registerName(
 );
 late final _sel_echoUint8ListWithList_error_ = objc.registerName("echoUint8ListWithList:error:");
 late final _sel_encodeWithCoder_ = objc.registerName("encodeWithCoder:");
+late final _sel_engineLabelWithWrappedError_ = objc.registerName("engineLabelWithWrappedError:");
 late final _sel_enumList = objc.registerName("enumList");
 late final _sel_enumMap = objc.registerName("enumMap");
 late final _sel_equals = objc.registerName("equals");

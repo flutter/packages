@@ -63,10 +63,20 @@ private object NativeInteropExamplePigeonEngineKeys {
   /** Keys for engine messengers, used when an exact engine id is unavailable. */
   private val messengerKeys = java.util.WeakHashMap<Any, Long>()
 
+  /**
+   * Keys already computed for each binding, so `register` and `unregister` with the same binding
+   * always agree even if [keyOf] for its engine later records an exact key for the messenger.
+   */
+  private val bindingKeys = java.util.WeakHashMap<FlutterPlugin.FlutterPluginBinding, Long>()
+
   private var nextSyntheticKey: Long = -1L
 
   /** Returns the key for the engine that [binding] belongs to. */
   fun keyOf(binding: FlutterPlugin.FlutterPluginBinding): Long {
+    return bindingKeys.getOrPut(binding) { computeKey(binding) }
+  }
+
+  private fun computeKey(binding: FlutterPlugin.FlutterPluginBinding): Long {
     val method = getEngineIdMethod
     if (method != null) {
       try {
@@ -146,8 +156,9 @@ class NativeInteropExampleApiRegistrar private constructor(private val engineKey
    * Removes [api] from the registrations under [name] (or the default instance when [name] is
    * omitted) for the engine of the plugin binding [binding], leaving other registrations in place.
    *
-   * Instances are matched by identity. If [api] is not registered for that engine, its
-   * registrations for any engine are removed. Does nothing if [api] is not registered.
+   * Instances are matched by identity. If [api] is not registered for that engine but is registered
+   * for exactly one other engine, that registration is removed. Does nothing if [api] is not
+   * registered, or is only registered for several other engines.
    */
   @Keep
   fun unregister(
@@ -162,8 +173,9 @@ class NativeInteropExampleApiRegistrar private constructor(private val engineKey
    * Removes [api] from the registrations under [name] (or the default instance when [name] is
    * omitted) for the engine of [engine], leaving other registrations in place.
    *
-   * Instances are matched by identity. If [api] is not registered for that engine, its
-   * registrations for any engine are removed. Does nothing if [api] is not registered.
+   * Instances are matched by identity. If [api] is not registered for that engine but is registered
+   * for exactly one other engine, that registration is removed. Does nothing if [api] is not
+   * registered, or is only registered for several other engines.
    */
   @Keep
   fun unregister(
@@ -237,11 +249,16 @@ class NativeInteropExampleApiRegistrar private constructor(private val engineKey
 
     private fun unregisterWithKey(api: NativeInteropExampleApi, engineKey: Long, name: String) {
       val list = NativeInteropExampleApiInstances[name] ?: return
-      val matchKey = list.any { it.api === api && it.engineKey == engineKey }
+      val removeKey =
+          if (list.any { it.api === api && it.engineKey == engineKey }) {
+            engineKey
+          } else {
+            list.filter { it.api === api }.map { it.engineKey }.distinct().singleOrNull() ?: return
+          }
       val iterator = list.iterator()
       while (iterator.hasNext()) {
         val entry = iterator.next()
-        if (entry.api === api && (!matchKey || entry.engineKey == engineKey)) {
+        if (entry.api === api && entry.engineKey == removeKey) {
           entry.api = null
           iterator.remove()
         }

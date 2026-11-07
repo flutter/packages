@@ -11277,6 +11277,24 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return _registeredEngineKey(_$$selfRef.pointer, _id_registeredEngineKey.pointer).long;
   }
 
+  static final _id_engineLabel = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'engineLabel', r'()Ljava/lang/String;');
+
+  static final _engineLabel =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
+
+  /// from: `public fun engineLabel(): kotlin.String`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JString engineLabel() {
+    final _$$selfRef = reference;
+    return _engineLabel(_$$selfRef.pointer, _id_engineLabel.pointer).object<jni$_.JString>();
+  }
+
   static final _id_pluginEngineIdentifierIsAvailable = NativeInteropHostIntegrationCoreApiRegistrar
       ._class
       .instanceMethodId(r'pluginEngineIdentifierIsAvailable', r'()Z');

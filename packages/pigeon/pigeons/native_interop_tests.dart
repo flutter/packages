@@ -1560,6 +1560,10 @@ abstract class NativeInteropHostIntegrationCoreApi {
   /// default Host API registration.
   int registeredEngineKey();
 
+  /// Returns a label unique to the Host API instance that handled the call, so
+  /// tests can check which engine's registration a handle resolved to.
+  String engineLabel();
+
   /// Returns whether this platform's plugin binding / registrar exposes an
   /// engine identifier, so registrations should use exact engine keys.
   bool pluginEngineIdentifierIsAvailable();

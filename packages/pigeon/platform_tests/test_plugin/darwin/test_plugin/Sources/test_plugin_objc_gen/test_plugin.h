@@ -1344,6 +1344,8 @@ SWIFT_CLASS(
 /// that engine when it is known. Called by generated Dart code.
 /// <code>engineId</code> and <code>affinityKey</code> identify the engine that
 /// registered <code>api</code>, or are <code>Int64.min</code> when unknown.
+/// Registering an instance that is already registered under <code>name</code>
+/// updates its keys and keeps its position.
 + (void)registerInstanceWithApi:
             (id<NativeInteropFlutterIntegrationCoreApiBridge> _Nonnull)api
                        engineId:(int64_t)engineId
@@ -3092,6 +3094,10 @@ SWIFT_CLASS("_TtC11test_plugin40NativeInteropHostIntegrationCoreApiSetup")
 /// default Host API registration.
 - (NSNumber* _Nullable)registeredEngineKeyWithWrappedError:
     (NativeInteropTestsError* _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
+/// Returns a label unique to the Host API instance that handled the call, so
+/// tests can check which engine’s registration a handle resolved to.
+- (NSString* _Nullable)engineLabelWithWrappedError:
+    (NativeInteropTestsError* _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns whether this platform’s plugin binding / registrar exposes an
 /// engine identifier, so registrations should use exact engine keys.
 - (NSNumber* _Nullable)pluginEngineIdentifierIsAvailableWithWrappedError:
@@ -3186,6 +3192,8 @@ SWIFT_CLASS("_TtC11test_plugin45NativeInteropReservedNamesFlutterApiRegistrar")
 /// that engine when it is known. Called by generated Dart code.
 /// <code>engineId</code> and <code>affinityKey</code> identify the engine that
 /// registered <code>api</code>, or are <code>Int64.min</code> when unknown.
+/// Registering an instance that is already registered under <code>name</code>
+/// updates its keys and keeps its position.
 + (void)registerInstanceWithApi:
             (id<NativeInteropReservedNamesFlutterApiBridge> _Nonnull)api
                        engineId:(int64_t)engineId

@@ -916,6 +916,9 @@ class TestPluginWithSuffix : HostSmallApi {
   override suspend fun voidVoid() {}
 }
 
+/** Source of the per-instance labels returned by [NativeInteropIntegrationTests.engineLabel]. */
+private val nextLabelId = java.util.concurrent.atomic.AtomicInteger(1)
+
 /**
  * Native Interop host API implementation used by the integration tests.
  *
@@ -926,6 +929,10 @@ class NativeInteropIntegrationTests(
     private val context: Context? = null,
     private val binding: FlutterPluginBinding? = null
 ) : NativeInteropHostIntegrationCoreApi {
+  private val label = "instance-${nextLabelId.getAndIncrement()}"
+
+  override fun engineLabel(): String = label
+
   private fun requireBinding(): FlutterPluginBinding =
       checkNotNull(binding) { "NativeInteropIntegrationTests was not created with a binding." }
 
@@ -2195,11 +2202,11 @@ class NativeInteropIntegrationTests(
       return false
     }
 
-    // Re-registering api1 deduplicates and moves it to the top of the stack.
+    // Re-registering api1 updates it in place, so api2 stays on top.
     NativeInteropReservedNamesFlutterApiRegistrar().registerInstance(api1, noKey, noKey, name)
     if (NativeInteropReservedNamesFlutterApiRegistrar()
         .getInstance(binding, name)
-        ?.release("ping") != "engine1:ping") {
+        ?.release("ping") != "engine2:ping") {
       return false
     }
 

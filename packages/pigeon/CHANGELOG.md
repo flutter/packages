@@ -1,16 +1,14 @@
 ## 30.0.0
 
-* **BREAKING CHANGE**: [dart,kotlin,swift] Redesigns Native Interop registration APIs for multi-engine support:
-  * `@HostApi` registration now takes the engine it belongs to: `MyApiRegistrar().register(api, binding)` / `register(api, flutterEngine)` in Kotlin and `MyApiSetup.register(api:registrar:)` in Swift. The same applies to `unregister`.
-  * Replaces `register(null)` / `register(api: nil)` / `registerInstance(null|nil)` with `unregister` / `unregisterInstance`, which remove only the given instance (for the given engine). `register` now requires a non-null API and returns `void` in Kotlin and Swift.
-  * Replaces native `@FlutterApi` `getInstance(name)` with `MyFlutterApiRegistrar().getInstance(binding|flutterEngine)` in Kotlin and `MyFlutterApiRegistrar.getInstance(registrar:)` in Swift, which return the instance registered by that engine's Dart isolate when known.
-  * Requires classes for Swift `@HostApi` implementations when using `useFfi` (protocols now conform to `AnyObject`).
-  * Reserves `pigeonResolveInstance`, `pigeonEngineKey`, and `pigeonEngineKeyOf` as `@HostApi` method names.
-* [dart,kotlin,swift] Keeps earlier registrations when multiple engines register Native Interop APIs under the same name, so detaching one engine no longer clears the others.
-* [dart,kotlin,swift] Routes Native Interop lookups to the calling engine's registration when the engine identifier is available, and otherwise to the engine an isolate first resolved.
-* [dart] `<FlutterApi>.setUp(null)` now also removes that isolate's Native Interop registration, and `setUp(newApi)` replaces the previous one.
-* [kotlin,swift] Throws an `unregistered-instance` error when calling a Native Interop `@HostApi` handle whose instance has been unregistered, instead of crashing.
-* Expands multi-engine guidance in Native Interop documentation and README.
+* **BREAKING CHANGE**: [kotlin,swift] Native Interop registration now supports multiple engines:
+  * `register` and `unregister` take the engine the instance belongs to (a plugin binding or `FlutterEngine` in Kotlin, a registrar in Swift). Use `unregister` instead of `register(null)`.
+  * Native `@FlutterApi` lookups take the engine (`getInstance(binding)` / `getInstance(registrar:)`) instead of a name.
+  * Swift FFI `@HostApi` implementations must be classes.
+  * See the [Native Interop migration guide](./native_interop_migration_guide.md) for details.
+* [dart,kotlin,swift] Fixes detaching one engine clearing Native Interop APIs for all other engines.
+* [dart,kotlin,swift] Native Interop calls now go to the calling engine's instance where possible.
+* [kotlin,swift] Calling a Native Interop API whose instance was unregistered now throws a `PlatformException` instead of crashing.
+* [dart] Fixes `@FlutterApi` methods named `register` or `dartApi` failing with `useJni`, and `implement` with an empty `name`.
 
 ## 29.1.1
 
