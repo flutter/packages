@@ -1482,7 +1482,7 @@ class _SwitchPainter extends ToggleablePainter {
   bool _stopPressAnimation = false;
   double? _pressedInactiveThumbRadius;
   double? _pressedActiveThumbRadius;
-  late double? _pressedThumbExtension;
+  double _pressedThumbExtension = 0;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -1532,18 +1532,21 @@ class _SwitchPainter extends ToggleablePainter {
         _pressedInactiveThumbRadius = inactiveThumbRadius;
       }
     }
+    final double effectivePressedInactiveThumbRadius =
+        _pressedInactiveThumbRadius ?? inactiveThumbRadius;
+    final double effectivePressedActiveThumbRadius = _pressedActiveThumbRadius ?? activeThumbRadius;
     final inactiveThumbSize = isCupertino
         ? Size(
-            _pressedInactiveThumbRadius! * 2 + _pressedThumbExtension!,
-            _pressedInactiveThumbRadius! * 2,
+            effectivePressedInactiveThumbRadius * 2 + _pressedThumbExtension,
+            effectivePressedInactiveThumbRadius * 2,
           )
-        : Size.fromRadius(_pressedInactiveThumbRadius ?? inactiveThumbRadius);
+        : Size.fromRadius(effectivePressedInactiveThumbRadius);
     final activeThumbSize = isCupertino
         ? Size(
-            _pressedActiveThumbRadius! * 2 + _pressedThumbExtension!,
-            _pressedActiveThumbRadius! * 2,
+            effectivePressedActiveThumbRadius * 2 + _pressedThumbExtension,
+            effectivePressedActiveThumbRadius * 2,
           )
-        : Size.fromRadius(_pressedActiveThumbRadius ?? activeThumbRadius);
+        : Size.fromRadius(effectivePressedActiveThumbRadius);
     Animation<Size> thumbSizeAnimation(bool isForward) {
       List<TweenSequenceItem<Size>> thumbSizeSequence;
       if (isForward) {
@@ -1591,8 +1594,8 @@ class _SwitchPainter extends ToggleablePainter {
     if (isCupertino) {
       if (reaction.isCompleted) {
         thumbSize = Size(
-          _pressedInactiveThumbRadius! * 2 + _pressedThumbExtension!,
-          _pressedInactiveThumbRadius! * 2,
+          effectivePressedInactiveThumbRadius * 2 + _pressedThumbExtension,
+          effectivePressedInactiveThumbRadius * 2,
         );
       } else {
         if (position.isDismissed || position.status == AnimationStatus.forward) {
@@ -1695,11 +1698,11 @@ class _SwitchPainter extends ToggleablePainter {
     final double trackRadius = trackHeight / 2;
     final double additionalThumbRadius = thumbSize.height / 2 - trackRadius;
 
-    final double horizontalProgress = visualPosition * (trackInnerLength - _pressedThumbExtension!);
+    final double horizontalProgress = visualPosition * (trackInnerLength - _pressedThumbExtension);
     final double thumbHorizontalOffset =
         trackPaintOffset.dx +
         trackRadius +
-        (_pressedThumbExtension! / 2) -
+        (_pressedThumbExtension / 2) -
         thumbSize.width / 2 +
         horizontalProgress;
     final double thumbVerticalOffset = trackPaintOffset.dy - additionalThumbRadius;

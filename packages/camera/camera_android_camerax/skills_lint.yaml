@@ -1,10 +1,21 @@
 skills_lint:
   rules:
     check-relative-paths: error
+    check-absolute-paths: error
     check-trailing-whitespace: error
+    disallowed-field: error
   directories:
     - path: "skills"
+      rules:
+        pub-archive-includes-skill: error
+        published-skill-name: error
+        check-relative-paths:
+          severity: error
+          within-skill: true
   individual_skills:
     - path: ".agents/skills/check-readiness"
+      rules:
+        prevent-skills-sh-publishing: error
+    - path: ".agents/skills/pre-push-skill"
       rules:
         prevent-skills-sh-publishing: error

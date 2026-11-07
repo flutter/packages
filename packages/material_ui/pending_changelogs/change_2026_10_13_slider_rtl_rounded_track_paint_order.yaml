@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes `RoundedRectSliderTrackShape` painting the inactive track segment over the end of the active one in right-to-left layouts.
+version: patch
