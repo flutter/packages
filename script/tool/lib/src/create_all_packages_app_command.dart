@@ -437,8 +437,8 @@ dev_dependencies:${_pubspecMapString(pubspec.devDependencies)}
     _adjustFile(
       pbxprojFile,
       replacements: <String, List<String>>{
-        // iOS 15 is required by google_maps_flutter_ios_sdk9.
-        'IPHONEOS_DEPLOYMENT_TARGET': <String>['				IPHONEOS_DEPLOYMENT_TARGET = 15.0;'],
+        // iOS 16 is required by google_maps_flutter_ios_sdk10.
+        'IPHONEOS_DEPLOYMENT_TARGET': <String>['				IPHONEOS_DEPLOYMENT_TARGET = 16.0;'],
       },
     );
   }
