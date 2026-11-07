@@ -219,14 +219,16 @@ class _InteractiveShowcasePageState extends State<InteractiveShowcasePage> {
       return TableSpan(
         extent: FixedTableSpanExtent(isPinned ? 140.0 : 160.0),
         backgroundDecoration: isPinned ? TableSpanDecoration(color: Colors.indigo.shade50) : null,
-        foregroundDecoration: TableSpanDecoration(
-          border: TableSpanBorder(
-            trailing: BorderSide(
-              color: isPinned ? Colors.indigo.shade300 : Colors.grey.shade300,
-              width: isPinned ? 2.0 : 1.0,
-            ),
-          ),
-        ),
+        foregroundDecoration: _roundedBorders && !isPinned
+            ? null
+            : TableSpanDecoration(
+                border: TableSpanBorder(
+                  trailing: BorderSide(
+                    color: isPinned ? Colors.indigo.shade300 : Colors.grey.shade300,
+                    width: isPinned ? 2.0 : 1.0,
+                  ),
+                ),
+              ),
       );
     }
 
@@ -239,27 +241,30 @@ class _InteractiveShowcasePageState extends State<InteractiveShowcasePage> {
           }
           return Colors.transparent;
         }),
+        borderRadius: _roundedBorders ? const BorderRadius.all(Radius.circular(12.0)) : null,
         animationStyle: AnimationStyle(
           duration: Duration(milliseconds: _stateDurationMs),
           curve: Curves.easeOut,
         ),
       ),
-      foregroundDecoration: TableSpanDecoration(
-        border: TableSpanBorder(
-          trailing: BorderSide(
-            color: WidgetStateColor.resolveWith((Set<WidgetState> states) {
-              if (states.contains(WidgetState.hovered)) {
-                return Colors.teal.shade400;
-              }
-              return Colors.grey.shade300;
-            }),
-          ),
-        ),
-        animationStyle: AnimationStyle(
-          duration: Duration(milliseconds: _stateDurationMs),
-          curve: Curves.easeOut,
-        ),
-      ),
+      foregroundDecoration: _roundedBorders
+          ? null
+          : TableSpanDecoration(
+              border: TableSpanBorder(
+                trailing: BorderSide(
+                  color: WidgetStateColor.resolveWith((Set<WidgetState> states) {
+                    if (states.contains(WidgetState.hovered)) {
+                      return Colors.teal.shade400;
+                    }
+                    return Colors.grey.shade300;
+                  }),
+                ),
+              ),
+              animationStyle: AnimationStyle(
+                duration: Duration(milliseconds: _stateDurationMs),
+                curve: Curves.easeOut,
+              ),
+            ),
     );
   }
 
@@ -286,12 +291,18 @@ class _InteractiveShowcasePageState extends State<InteractiveShowcasePage> {
       return TableSpan(
         extent: const FixedTableSpanExtent(56.0),
         padding: _roundedBorders
-            ? const TableSpanPadding(leading: 2.0, trailing: 2.0)
+            ? const TableSpanPadding(leading: 3.0, trailing: 3.0)
             : const TableSpanPadding(),
-        backgroundDecoration: TableSpanDecoration(color: baseColor, borderRadius: borderRadius),
-        foregroundDecoration: TableSpanDecoration(
-          border: TableSpanBorder(trailing: BorderSide(color: Colors.grey.shade300)),
+        backgroundDecoration: TableSpanDecoration(
+          color: baseColor,
+          borderRadius: borderRadius,
+          consumeSpanPadding: false,
         ),
+        foregroundDecoration: _roundedBorders
+            ? null
+            : TableSpanDecoration(
+                border: TableSpanBorder(trailing: BorderSide(color: Colors.grey.shade300)),
+              ),
       );
     }
 
@@ -329,7 +340,7 @@ class _InteractiveShowcasePageState extends State<InteractiveShowcasePage> {
       extent: const FixedTableSpanExtent(56.0),
       cursor: SystemMouseCursors.click,
       padding: _roundedBorders
-          ? const TableSpanPadding(leading: 2.0, trailing: 2.0)
+          ? const TableSpanPadding(leading: 3.0, trailing: 3.0)
           : const TableSpanPadding(),
       recognizerFactories: <Type, GestureRecognizerFactory>{
         TapGestureRecognizer: GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>(
@@ -366,9 +377,11 @@ class _InteractiveShowcasePageState extends State<InteractiveShowcasePage> {
                 curve: Curves.easeInOut,
               ),
             )
-          : TableSpanDecoration(
-              border: TableSpanBorder(trailing: BorderSide(color: Colors.grey.shade300)),
-            ),
+          : (_roundedBorders
+                ? null
+                : TableSpanDecoration(
+                    border: TableSpanBorder(trailing: BorderSide(color: Colors.grey.shade300)),
+                  )),
     );
   }
 
@@ -424,6 +437,9 @@ class _InteractiveShowcasePageState extends State<InteractiveShowcasePage> {
 
             return TreeRow(
               extent: const FixedTreeRowExtent(48.0),
+              padding: _roundedBorders
+                  ? const TreeRowPadding(leading: 2.0, trailing: 2.0)
+                  : const TreeRowPadding(),
               cursor: SystemMouseCursors.click,
               recognizerFactories: <Type, GestureRecognizerFactory>{
                 TapGestureRecognizer: GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>(
@@ -452,6 +468,7 @@ class _InteractiveShowcasePageState extends State<InteractiveShowcasePage> {
                         return isSelected ? Colors.indigo.shade100 : Colors.transparent;
                       }),
                       borderRadius: borderRadius,
+                      consumeSpanPadding: false,
                       splashColor: _enableSplash ? Colors.indigo.withValues(alpha: 0.20) : null,
                       animationStyle: AnimationStyle(
                         duration: Duration(milliseconds: _stateDurationMs),
@@ -465,20 +482,22 @@ class _InteractiveShowcasePageState extends State<InteractiveShowcasePage> {
                   : TreeRowDecoration(
                       color: isSelected ? Colors.indigo.shade100 : Colors.transparent,
                       borderRadius: borderRadius,
+                      consumeSpanPadding: false,
                     ),
               foregroundDecoration: _interactiveEnabled
                   ? TreeRowDecoration(
                       borderRadius: borderRadius,
+                      consumeSpanPadding: false,
                       border: _roundedBorders
                           ? TreeRowBorder.all(
                               WidgetStateBorderSide.resolveWith((Set<WidgetState> states) {
                                 if (states.contains(WidgetState.pressed)) {
-                                  return BorderSide(color: Colors.indigo.shade800, width: 2.5);
+                                  return BorderSide(color: Colors.indigo.shade700, width: 2.0);
                                 }
                                 if (states.contains(WidgetState.hovered) || isSelected) {
-                                  return BorderSide(color: Colors.indigo.shade400, width: 1.5);
+                                  return BorderSide(color: Colors.indigo.shade300, width: 1.5);
                                 }
-                                return BorderSide(color: Colors.grey.shade300);
+                                return null;
                               }),
                             )
                           : TreeRowBorder(
@@ -498,12 +517,11 @@ class _InteractiveShowcasePageState extends State<InteractiveShowcasePage> {
                         curve: Curves.easeInOut,
                       ),
                     )
-                  : TreeRowDecoration(
-                      borderRadius: borderRadius,
-                      border: _roundedBorders
-                          ? TreeRowBorder.all(BorderSide(color: Colors.grey.shade300))
-                          : TreeRowBorder(bottom: BorderSide(color: Colors.grey.shade200)),
-                    ),
+                  : (_roundedBorders
+                        ? null
+                        : TreeRowDecoration(
+                            border: TreeRowBorder(bottom: BorderSide(color: Colors.grey.shade200)),
+                          )),
             );
           },
         ),

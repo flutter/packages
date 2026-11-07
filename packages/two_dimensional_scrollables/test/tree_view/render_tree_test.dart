@@ -944,16 +944,19 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
-          home: TreeView<String>(
-            tree: <TreeViewNode<String>>[TreeViewNode<String>('Root')],
-            treeRowBuilder: (_) => TreeRow(
-              extent: const FixedTreeRowExtent(80.0),
-              backgroundDecoration: TreeRowDecoration(
-                color: rowColor,
-                splashColor: const Color(0x80FFFFFF),
-                splashAnimationStyle: const AnimationStyle(
-                  duration: Duration(milliseconds: 200),
-                  curve: Curves.linear,
+          home: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: TreeView<String>(
+              tree: <TreeViewNode<String>>[TreeViewNode<String>('Root')],
+              treeRowBuilder: (_) => TreeRow(
+                extent: const FixedTreeRowExtent(80.0),
+                backgroundDecoration: TreeRowDecoration(
+                  color: rowColor,
+                  splashColor: const Color(0x80FFFFFF),
+                  splashAnimationStyle: const AnimationStyle(
+                    duration: Duration(milliseconds: 200),
+                    curve: Curves.linear,
+                  ),
                 ),
               ),
             ),
@@ -963,30 +966,34 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(
-        find.byType(TreeViewport),
-        paints
-          ..rect(rect: const Rect.fromLTRB(0.0, 0.0, 800.0, 80.0), color: const Color(0xFFFF0000)),
+        find.byType(Padding).first,
+        paints..rect(
+          rect: const Rect.fromLTRB(16.0, 16.0, 784.0, 96.0),
+          color: const Color(0xFFFF0000),
+        ),
       );
 
       final TestGesture mouseGesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
-      await mouseGesture.addPointer(location: const Offset(100.0, 40.0));
+      await mouseGesture.addPointer(location: const Offset(116.0, 56.0));
       await tester.pump();
 
       expect(
-        find.byType(TreeViewport),
-        paints
-          ..rect(rect: const Rect.fromLTRB(0.0, 0.0, 800.0, 80.0), color: const Color(0xFF0000FF)),
+        find.byType(Padding).first,
+        paints..rect(
+          rect: const Rect.fromLTRB(16.0, 16.0, 784.0, 96.0),
+          color: const Color(0xFF0000FF),
+        ),
       );
 
-      await mouseGesture.down(const Offset(100.0, 40.0));
+      await mouseGesture.down(const Offset(116.0, 56.0));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 
       expect(
-        find.byType(TreeViewport),
+        find.byType(Padding).first,
         paints
-          ..rect(rect: const Rect.fromLTRB(0.0, 0.0, 800.0, 80.0), color: const Color(0xFF00FF00))
-          ..circle(x: 100.0, y: 40.0),
+          ..rect(rect: const Rect.fromLTRB(16.0, 16.0, 784.0, 96.0), color: const Color(0xFF00FF00))
+          ..circle(x: 116.0, y: 56.0),
       );
 
       await mouseGesture.up();
