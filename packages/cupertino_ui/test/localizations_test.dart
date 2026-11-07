@@ -38,6 +38,7 @@ void main() {
     expect(localizations.noSpellCheckReplacementsLabel, isNotNull);
     expect(localizations.clearButtonLabel, isNotNull);
     expect(localizations.cancelButtonLabel, isNotNull);
+    expect(localizations.closeButtonLabel, isNotNull);
     expect(localizations.backButtonLabel, isNotNull);
 
     expect(localizations.expansionTileExpandedHint, isNotNull);

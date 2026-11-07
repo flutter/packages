@@ -311,6 +311,10 @@ abstract class CupertinoLocalizations {
   /// The label for the cancel button in modal views, used in [CupertinoNavigationBar] and [CupertinoSliverNavigationBar].
   String get cancelButtonLabel;
 
+  /// The label for a close button. Unlike [cancelButtonLabel], it does not
+  /// imply discarding anything.
+  String get closeButtonLabel;
+
   /// The label for the back button, used in [CupertinoNavigationBar] and [CupertinoSliverNavigationBar].
   String get backButtonLabel;
 
@@ -558,6 +562,9 @@ class DefaultCupertinoLocalizations implements CupertinoLocalizations {
 
   @override
   String get cancelButtonLabel => 'Cancel';
+
+  @override
+  String get closeButtonLabel => 'Close';
 
   @override
   String get backButtonLabel => 'Back';
