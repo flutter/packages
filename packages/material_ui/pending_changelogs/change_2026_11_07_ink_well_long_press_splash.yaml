@@ -1,0 +1,3 @@
+changelog: |
+  - Keeps the `InkWell` splash and pressed state until the pointer is lifted when a competing gesture that does not move the pointer, such as the long press of an enclosing `Tooltip` or `TextField`, wins the gesture arena. The press is still canceled when the pointer moves beyond the touch slop or is canceled.
+version: patch

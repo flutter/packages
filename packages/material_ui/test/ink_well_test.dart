@@ -2689,4 +2689,206 @@ void main() {
     );
     expect(tester.getSize(find.byType(InkWell)), Size.zero);
   });
+
+  group('press held after a stationary gesture wins the arena', () {
+    late List<String> log;
+    late WidgetStatesController states;
+
+    setUp(() {
+      log = <String>[];
+      states = WidgetStatesController();
+    });
+
+    tearDown(() {
+      states.dispose();
+    });
+
+    Widget buildInkWell({VoidCallback? onLongPress}) {
+      return InkWell(
+        key: const Key('ink'),
+        statesController: states,
+        onTap: () => log.add('tap'),
+        onTapCancel: () => log.add('tapCancel'),
+        onLongPress: onLongPress,
+        onHighlightChanged: (bool value) => log.add('highlight $value'),
+        child: const SizedBox.square(dimension: 48),
+      );
+    }
+
+    Widget buildApp(Widget child) {
+      return MaterialApp(
+        theme: ThemeData(splashFactory: InkRipple.splashFactory),
+        home: Scaffold(body: Center(child: child)),
+      );
+    }
+
+    bool isPressed() => states.value.contains(WidgetState.pressed);
+
+    Future<TestGesture> longPressAndHold(WidgetTester tester) async {
+      final TestGesture gesture = await tester.startGesture(
+        tester.getCenter(find.byKey(const Key('ink'))),
+      );
+      await tester.pump(kPressTimeout);
+      await tester.pump(kLongPressTimeout);
+      await tester.pump(const Duration(milliseconds: 500));
+      return gesture;
+    }
+
+    testWidgets('InkWell in a TextField prefixIcon holds the press until release', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        buildApp(TextField(decoration: InputDecoration(prefixIcon: buildInkWell()))),
+      );
+
+      final TestGesture gesture = await longPressAndHold(tester);
+      expect(log, <String>['highlight true', 'tapCancel']);
+      expect(isPressed(), isTrue);
+      expect(getInkFeatures(tester), paints..circle());
+
+      await gesture.up();
+      await tester.pumpAndSettle();
+      expect(log, <String>['highlight true', 'tapCancel', 'highlight false']);
+      expect(isPressed(), isFalse);
+      expect(getInkFeatures(tester), paintsExactlyCountTimes(#drawCircle, 0));
+    });
+
+    testWidgets('InkWell wrapped in a Tooltip holds the press until release', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(buildApp(Tooltip(message: 'tooltip', child: buildInkWell())));
+
+      final TestGesture gesture = await longPressAndHold(tester);
+      expect(find.text('tooltip'), findsOneWidget);
+      expect(log, <String>['highlight true', 'tapCancel']);
+      expect(isPressed(), isTrue);
+      expect(getInkFeatures(tester), paints..circle());
+
+      await gesture.up();
+      await tester.pumpAndSettle();
+      expect(log, <String>['highlight true', 'tapCancel', 'highlight false']);
+      expect(isPressed(), isFalse);
+    });
+
+    testWidgets('InkWell with onLongPress holds the press until release', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(buildApp(buildInkWell(onLongPress: () => log.add('longPress'))));
+
+      final TestGesture gesture = await longPressAndHold(tester);
+      expect(log, <String>['highlight true', 'tapCancel', 'longPress']);
+      expect(isPressed(), isTrue);
+      expect(getInkFeatures(tester), paints..circle());
+
+      await gesture.up();
+      await tester.pumpAndSettle();
+      expect(log, <String>['highlight true', 'tapCancel', 'longPress', 'highlight false']);
+      expect(isPressed(), isFalse);
+    });
+
+    testWidgets('held press is canceled when the pointer moves beyond the touch slop', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(buildApp(Tooltip(message: 'tooltip', child: buildInkWell())));
+
+      final TestGesture gesture = await longPressAndHold(tester);
+      expect(isPressed(), isTrue);
+
+      await gesture.moveBy(const Offset(0, kTouchSlop / 2));
+      await tester.pump();
+      expect(isPressed(), isTrue);
+
+      await gesture.moveBy(const Offset(0, kTouchSlop));
+      await tester.pump();
+      expect(isPressed(), isFalse);
+      expect(log, <String>['highlight true', 'tapCancel', 'highlight false']);
+
+      await gesture.up();
+      await tester.pumpAndSettle();
+      expect(log, <String>['highlight true', 'tapCancel', 'highlight false']);
+    });
+
+    testWidgets('held press is canceled when the pointer is canceled', (WidgetTester tester) async {
+      await tester.pumpWidget(buildApp(Tooltip(message: 'tooltip', child: buildInkWell())));
+
+      final TestGesture gesture = await longPressAndHold(tester);
+      expect(isPressed(), isTrue);
+
+      await gesture.cancel();
+      await tester.pumpAndSettle();
+      expect(isPressed(), isFalse);
+      expect(log, <String>['highlight true', 'tapCancel', 'highlight false']);
+    });
+
+    testWidgets('held press is canceled when the pointer is removed', (WidgetTester tester) async {
+      await tester.pumpWidget(buildApp(Tooltip(message: 'tooltip', child: buildInkWell())));
+
+      final TestGesture gesture = await longPressAndHold(tester);
+      expect(isPressed(), isTrue);
+
+      await gesture.removePointer();
+      await tester.pumpAndSettle();
+      expect(isPressed(), isFalse);
+      expect(log, <String>['highlight true', 'tapCancel', 'highlight false']);
+    });
+
+    testWidgets('press is canceled immediately when a scroll wins the arena', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        buildApp(
+          ListView(
+            children: <Widget>[
+              const SizedBox(height: 100),
+              buildInkWell(),
+              const SizedBox(height: 2000),
+            ],
+          ),
+        ),
+      );
+
+      final TestGesture gesture = await tester.startGesture(
+        tester.getCenter(find.byKey(const Key('ink'))),
+      );
+      await tester.pump(kPressTimeout);
+      expect(isPressed(), isTrue);
+
+      await gesture.moveBy(const Offset(0, -50));
+      await tester.pump();
+      expect(isPressed(), isFalse);
+      expect(log, <String>['highlight true', 'tapCancel', 'highlight false']);
+
+      await gesture.up();
+      await tester.pumpAndSettle();
+    });
+
+    testWidgets('held press is released when the InkWell becomes disabled', (
+      WidgetTester tester,
+    ) async {
+      Widget build({required bool enabled}) {
+        return buildApp(
+          Tooltip(
+            message: 'tooltip',
+            child: InkWell(
+              key: const Key('ink'),
+              statesController: states,
+              onTap: enabled ? () {} : null,
+              child: const SizedBox.square(dimension: 48),
+            ),
+          ),
+        );
+      }
+
+      await tester.pumpWidget(build(enabled: true));
+      final TestGesture gesture = await longPressAndHold(tester);
+      expect(isPressed(), isTrue);
+
+      await tester.pumpWidget(build(enabled: false));
+      expect(isPressed(), isFalse);
+
+      await gesture.up();
+      await tester.pumpAndSettle();
+      expect(isPressed(), isFalse);
+    });
+  });
 }

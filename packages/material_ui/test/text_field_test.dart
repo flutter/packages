@@ -19341,6 +19341,182 @@ void main() {
     },
     skip: kIsWeb, // [intended] SystemContextMenu is not supported on web.
   );
+
+  group('long press on an ink response in the decoration', () {
+    late TextEditingController controller;
+    late FocusNode focusNode;
+
+    setUp(() {
+      controller = TextEditingController(text: 'Hello world');
+      focusNode = FocusNode();
+    });
+
+    tearDown(() {
+      controller.dispose();
+      focusNode.dispose();
+    });
+
+    Widget buildField(InputDecoration decoration) {
+      return MaterialApp(
+        home: Material(
+          child: Center(
+            child: TextField(controller: controller, focusNode: focusNode, decoration: decoration),
+          ),
+        ),
+      );
+    }
+
+    void expectUnfocusedAndUnchanged(TextSelection initialSelection) {
+      expect(focusNode.hasFocus, isFalse);
+      expect(controller.selection, initialSelection);
+      expect(find.byType(AdaptiveTextSelectionToolbar), findsNothing);
+    }
+
+    testWidgets('on an IconButton does not focus the field and keeps the button pressed', (
+      WidgetTester tester,
+    ) async {
+      final states = WidgetStatesController();
+      addTearDown(states.dispose);
+      var pressed = 0;
+      await tester.pumpWidget(
+        buildField(
+          InputDecoration(
+            prefixIcon: IconButton(
+              key: const Key('button'),
+              statesController: states,
+              icon: const Icon(Icons.search),
+              onPressed: () => pressed++,
+            ),
+          ),
+        ),
+      );
+      final TextSelection initialSelection = controller.selection;
+
+      final TestGesture gesture = await tester.startGesture(
+        tester.getCenter(find.byKey(const Key('button'))),
+      );
+      await tester.pump(kLongPressTimeout + const Duration(milliseconds: 500));
+      expectUnfocusedAndUnchanged(initialSelection);
+      expect(states.value, contains(WidgetState.pressed));
+
+      await gesture.up();
+      await tester.pumpAndSettle();
+      expectUnfocusedAndUnchanged(initialSelection);
+      expect(states.value, isNot(contains(WidgetState.pressed)));
+      expect(pressed, 0);
+
+      // The press is no longer registered: a long press on the text focuses.
+      await tester.longPress(find.byType(EditableText));
+      await tester.pumpAndSettle();
+      expect(focusNode.hasFocus, isTrue);
+    }, variant: TargetPlatformVariant.mobile());
+
+    testWidgets('on an InkWell in the icon, prefix or suffix slot does not focus the field', (
+      WidgetTester tester,
+    ) async {
+      Widget inkWell(String key) {
+        return InkWell(key: Key(key), onTap: () {}, child: const SizedBox.square(dimension: 24));
+      }
+
+      await tester.pumpWidget(
+        buildField(
+          InputDecoration(
+            icon: inkWell('icon'),
+            prefix: inkWell('prefix'),
+            suffix: inkWell('suffix'),
+          ),
+        ),
+      );
+      final TextSelection initialSelection = controller.selection;
+
+      for (final key in <String>['icon', 'prefix', 'suffix']) {
+        await tester.longPress(find.byKey(Key(key)));
+        await tester.pumpAndSettle();
+        expectUnfocusedAndUnchanged(initialSelection);
+      }
+    }, variant: TargetPlatformVariant.mobile());
+
+    testWidgets('on a plain Icon still focuses the field', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        buildField(const InputDecoration(suffixIcon: Icon(Icons.clear, key: Key('icon')))),
+      );
+
+      await tester.longPress(find.byKey(const Key('icon')));
+      await tester.pumpAndSettle();
+      expect(focusNode.hasFocus, isTrue);
+    }, variant: TargetPlatformVariant.mobile());
+
+    testWidgets('on a disabled IconButton still focuses the field', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        buildField(
+          const InputDecoration(
+            suffixIcon: IconButton(key: Key('button'), icon: Icon(Icons.clear), onPressed: null),
+          ),
+        ),
+      );
+
+      await tester.longPress(find.byKey(const Key('button')));
+      await tester.pumpAndSettle();
+      expect(focusNode.hasFocus, isTrue);
+    }, variant: TargetPlatformVariant.mobile());
+
+    testWidgets('on an IconButton with a tooltip shows the tooltip and does not focus the field', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        buildField(
+          InputDecoration(
+            suffixIcon: IconButton(
+              key: const Key('button'),
+              tooltip: 'Clear',
+              icon: const Icon(Icons.clear),
+              onPressed: () {},
+            ),
+          ),
+        ),
+      );
+      final TextSelection initialSelection = controller.selection;
+
+      final TestGesture gesture = await tester.startGesture(
+        tester.getCenter(find.byKey(const Key('button'))),
+      );
+      await tester.pump(kLongPressTimeout + const Duration(milliseconds: 500));
+      expect(find.text('Clear'), findsOneWidget);
+      expectUnfocusedAndUnchanged(initialSelection);
+      await gesture.up();
+      await tester.pumpAndSettle(const Duration(seconds: 2));
+    }, variant: TargetPlatformVariant.mobile());
+
+    testWidgets('on an IconButton removed while pressed does not block later long presses', (
+      WidgetTester tester,
+    ) async {
+      Widget build({required bool withButton}) {
+        return buildField(
+          InputDecoration(
+            suffixIcon: withButton
+                ? IconButton(
+                    key: const Key('button'),
+                    icon: const Icon(Icons.clear),
+                    onPressed: () {},
+                  )
+                : null,
+          ),
+        );
+      }
+
+      await tester.pumpWidget(build(withButton: true));
+      final Offset buttonCenter = tester.getCenter(find.byKey(const Key('button')));
+      final TestGesture gesture = await tester.startGesture(buttonCenter);
+      await tester.pump(kPressTimeout);
+      await tester.pumpWidget(build(withButton: false));
+      await gesture.up();
+      await tester.pumpAndSettle();
+
+      await tester.longPressAt(buttonCenter);
+      await tester.pumpAndSettle();
+      expect(focusNode.hasFocus, isTrue);
+    }, variant: TargetPlatformVariant.mobile());
+  });
 }
 
 /// A Simple widget for testing the obscure text.
