@@ -2458,7 +2458,7 @@ name: foobar
     expect(code, contains('isMaybe: jniClass.isMaybe()?.'));
     // Host API registrar members.
     expect(code, contains(r'_jniApi.release$1('));
-    expect(code, contains(r'_jniApi.register$1('));
+    expect(code, contains(r'_jniApi.register$2('));
     expect(code, contains('_jniApi.isNullable()'));
     expect(code, contains(r'_jniApi.default$;'));
     // Flutter API interface overrides.
@@ -2851,18 +2851,43 @@ name: foobar
       );
       expect(code, contains("import 'package:flutter/foundation.dart' show kIsWeb;"));
       expect(code, contains('if (!kIsWeb) {'));
-      expect(code, contains('if (!kIsWeb && api != null) {'));
+      expect(code, isNot(contains('if (!kIsWeb && api != null) {')));
+      expect(code, contains('pigeon_native.pigeon_set_up_Callbacks('));
       expect(
         code,
         contains(
           "import 'package:meta/meta.dart' show immutable, internal, protected, visibleForTesting;",
         ),
       );
+      expect(
+        code,
+        contains("const String defaultInstanceName = '$defaultNativeInteropInstanceName';"),
+      );
       expect(code, contains('@internal\nApiForNativeInterop? pigeon_getInstance_Api({'));
       expect(code, contains('pigeon_native.pigeon_getInstance_Api(channelName: channelName)'));
+      expect(
+        code,
+        contains(
+          'static ApiForNativeInterop? getInstance({String channelName = defaultInstanceName}) =>',
+        ),
+      );
+      expect(
+        code,
+        contains(
+          r"No Api instance with ${messageChannelSuffix.isEmpty ? 'no ' : ''}instance name ",
+        ),
+      );
       expect(code, contains('@internal\nCallbacks pigeon_register_Callbacks('));
+      expect(code, contains('@internal\nvoid pigeon_unregister_Callbacks(\n  Callbacks api, {'));
+      expect(code, contains('@internal\nvoid pigeon_set_up_Callbacks('));
       expect(code, contains('final class CallbacksRegistrar'));
-      expect(code, contains('pigeon_native.pigeon_register_Callbacks(api, name: name)'));
+      expect(code, isNot(contains('const CallbacksRegistrar._();')));
+      expect(code, contains('  Callbacks register(\n    Callbacks api, {'));
+      expect(code, contains('  void unregister(\n    Callbacks api, {'));
+      expect(code, contains('pigeon_native.pigeon_register_Callbacks('));
+      expect(code, contains('pigeon_native.pigeon_unregister_Callbacks('));
+      expect(code, contains('static Callbacks implement(Callbacks api, {'));
+      expect(code, contains('name: name.isEmpty ? defaultInstanceName : name,'));
 
       final nativeInteropSink = StringBuffer();
       generator.generateNativeInterop(
@@ -2873,15 +2898,53 @@ name: foobar
       );
       final nativeInteropCode = nativeInteropSink.toString();
       expect(nativeInteropCode, contains("import './foo.g.dart';"));
+      expect(nativeInteropCode, isNot(contains('_defaultInstanceName')));
+      expect(nativeInteropCode, contains('void _throwNoInstanceError(String channelName) {'));
+      expect(
+        nativeInteropCode,
+        contains(
+          'ApiForNativeInterop? pigeon_getInstance_Api({\n'
+          '  String channelName = defaultInstanceName,\n'
+          '}) => _ApiForNativeInterop.getInstance(channelName: channelName);',
+        ),
+      );
       expect(nativeInteropCode, contains('extension _PigeonInternalDataNativeInterop on Data'));
       expect(nativeInteropCode, contains('extension _PigeonInternalMyEnumNativeInterop on MyEnum'));
       expect(
         nativeInteropCode,
         contains('class _ApiForNativeInterop implements ApiForNativeInterop'),
       );
+      expect(
+        nativeInteropCode,
+        contains(
+          'static ApiForNativeInterop? getInstance({String channelName = defaultInstanceName}) {',
+        ),
+      );
+      expect(nativeInteropCode, contains('_throwNoInstanceError(channelName);'));
+      expect(
+        nativeInteropCode,
+        contains('return _ApiForNativeInterop._withRegistrar(jniApi: link);'),
+      );
+      expect(
+        nativeInteropCode,
+        contains('return _ApiForNativeInterop._withRegistrar(ffiApi: link);'),
+      );
       expect(nativeInteropCode, contains('final class _CallbacksRegistrar'));
-      expect(nativeInteropCode, contains('_CallbacksRegistrar(this.dartApi);'));
-      expect(nativeInteropCode, contains('final Callbacks dartApi;'));
+      expect(nativeInteropCode, contains('_CallbacksRegistrar(this.pigeonVar_dartApi);'));
+      expect(nativeInteropCode, contains('pigeonVar_registeredHandles'));
+      expect(nativeInteropCode, contains('pigeonVar_setUpInstances'));
+      expect(nativeInteropCode, contains('Callbacks pigeon_register_Callbacks('));
+      expect(nativeInteropCode, contains('void pigeon_unregister_Callbacks('));
+      expect(nativeInteropCode, contains('registrar.registerInstance('));
+      expect(nativeInteropCode, contains('registrar.unregisterInstance('));
+      expect(nativeInteropCode, contains('ffi_bridge.CallbacksRegistrar.registerInstanceWithApi('));
+      expect(
+        nativeInteropCode,
+        contains('ffi_bridge.CallbacksRegistrar.unregisterInstanceWithApi('),
+      );
+      expect(nativeInteropCode, contains('(removedHandle as JObject).release();'));
+      expect(nativeInteropCode, contains('(removedHandle as ObjCObject).ref.release();'));
+      expect(nativeInteropCode, contains('final Callbacks pigeonVar_dartApi;'));
       expect(nativeInteropCode, isNot(contains('if (dartApi != null)')));
 
       // Verify single-platform import isolation in generateNativeInterop.
@@ -2900,6 +2963,9 @@ name: foobar
       final jniOnlyCode = jniOnlySink.toString();
       expect(jniOnlyCode, contains("import 'package:jni/jni.dart';"));
       expect(jniOnlyCode, contains("import './foo.g.jni.dart' as jni_bridge;"));
+      expect(jniOnlyCode, contains('registrar.unregisterInstance('));
+      expect(jniOnlyCode, isNot(contains('unregisterInstanceWithApi(')));
+      expect(jniOnlyCode, isNot(contains('ObjCObject')));
       expect(jniOnlyCode, isNot(contains("import 'dart:ffi';")));
       expect(jniOnlyCode, isNot(contains("import 'package:ffi/ffi.dart';")));
       expect(jniOnlyCode, isNot(contains("import 'package:objective_c/objective_c.dart';")));
@@ -2922,10 +2988,409 @@ name: foobar
       expect(ffiOnlyCode, contains("import 'package:ffi/ffi.dart';"));
       expect(ffiOnlyCode, contains("import 'package:objective_c/objective_c.dart';"));
       expect(ffiOnlyCode, contains("import './foo.g.ffi.dart' as ffi_bridge;"));
+      expect(ffiOnlyCode, contains('ffi_bridge.CallbacksRegistrar.unregisterInstanceWithApi('));
+      expect(ffiOnlyCode, contains('(removedHandle as ObjCObject).ref.release();'));
+      expect(ffiOnlyCode, isNot(contains('registrar.unregisterInstance(')));
       expect(ffiOnlyCode, isNot(contains("import 'package:jni/jni.dart';")));
       expect(ffiOnlyCode, isNot(contains('jni_bridge')));
     },
   );
+
+  test('native interop JNI HostApi orders instance registrar methods before API methods', () {
+    final root = Root(
+      apis: <Api>[
+        AstHostApi(
+          name: 'Api',
+          methods: <Method>[
+            Method(
+              name: 'register',
+              location: ApiLocation.host,
+              parameters: <Parameter>[],
+              returnType: const TypeDeclaration(baseName: 'void', isNullable: false),
+            ),
+            Method(
+              name: 'unregister',
+              location: ApiLocation.host,
+              parameters: <Parameter>[],
+              returnType: const TypeDeclaration(baseName: 'void', isNullable: false),
+            ),
+            Method(
+              name: 'getGetInstance',
+              location: ApiLocation.host,
+              parameters: <Parameter>[],
+              returnType: const TypeDeclaration(baseName: 'String', isNullable: false),
+            ),
+          ],
+        ),
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    const dartOptions = InternalDartOptions(
+      ignoreLints: false,
+      useJni: true,
+      dartOut: 'lib/foo.g.dart',
+    );
+    final mainSink = StringBuffer();
+    const generator = DartGenerator();
+    generator.generate(dartOptions, root, mainSink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    final sink = StringBuffer();
+    generator.generateNativeInterop(dartOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    final code = sink.toString();
+    // `register` and `unregister` each have two instance overloads declared
+    // before the API methods. With no `getInstance(name)` on the registrar,
+    // JNIgen's getter for `getGetInstance` keeps the plain name.
+    expect(code, contains(r'_jniApi.register$2()'));
+    expect(code, contains(r'_jniApi.unregister$2()'));
+    expect(code, contains('_jniApi.getInstance;'));
+    expect(code, isNot(contains(r'_jniApi.getInstance$1')));
+    expect(code, contains('link = jni_bridge.ApiRegistrar.pigeonResolveInstance('));
+    expect(code, contains('jni_bridge.ApiRegistrar.pigeonEngineKeyOf(link)'));
+  });
+
+  group('native interop engine keys', () {
+    final root = Root(
+      apis: <Api>[
+        AstHostApi(
+          name: 'Api',
+          methods: <Method>[
+            Method(
+              name: 'doSomething',
+              location: ApiLocation.host,
+              parameters: <Parameter>[],
+              returnType: const TypeDeclaration(baseName: 'void', isNullable: false),
+            ),
+          ],
+        ),
+        AstFlutterApi(
+          name: 'Callbacks',
+          methods: <Method>[
+            Method(
+              name: 'onEvent',
+              location: ApiLocation.flutter,
+              parameters: <Parameter>[],
+              returnType: const TypeDeclaration(baseName: 'void', isNullable: false),
+            ),
+          ],
+        ),
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+
+    String generateNativeInterop(InternalDartOptions options, Root root) {
+      final sink = StringBuffer();
+      const DartGenerator().generateNativeInterop(
+        options,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+      return sink.toString();
+    }
+
+    const jniOptions = InternalDartOptions(
+      ignoreLints: false,
+      useJni: true,
+      jniErrorClassName: 'PigeonError',
+      dartOut: 'lib/foo.g.dart',
+    );
+    const ffiOptions = InternalDartOptions(
+      ignoreLints: false,
+      useFfi: true,
+      ffiErrorClassName: 'PigeonError',
+      dartOut: 'lib/foo.g.dart',
+    );
+
+    test('emits engine affinity state once per file', () {
+      final String code = generateNativeInterop(jniOptions, root);
+      expect(code, contains("import 'dart:ui' show PlatformDispatcher;"));
+      expect('const int _pigeonNoEngineKey = -9223372036854775808;'.allMatches(code), hasLength(1));
+      expect('int? _pigeonEngineAffinity;'.allMatches(code), hasLength(1));
+    });
+
+    test('omits engine affinity state without APIs', () {
+      final String code = generateNativeInterop(
+        jniOptions,
+        Root(
+          apis: <Api>[],
+          classes: <Class>[
+            Class(
+              name: 'Data',
+              fields: <NamedType>[
+                NamedType(
+                  type: const TypeDeclaration(baseName: 'int', isNullable: true),
+                  name: 'value',
+                ),
+              ],
+            ),
+          ],
+          enums: <Enum>[],
+        ),
+      );
+      expect(code, isNot(contains('dart:ui')));
+      expect(code, isNot(contains('_pigeonNoEngineKey')));
+      expect(code, isNot(contains('_pigeonEngineAffinity')));
+    });
+
+    test('JNI HostApi resolves by engine id and records affinity', () {
+      final String code = generateNativeInterop(jniOptions, root);
+      expect(
+        code,
+        contains(
+          'final int? engineId = PlatformDispatcher.instance.engineId;\n'
+          '      final JString jName = channelName.toJString();\n'
+          '      final jni_bridge.ApiRegistrar? link;\n'
+          '      try {\n'
+          '        link = jni_bridge.ApiRegistrar.pigeonResolveInstance(\n'
+          '          engineId ?? _pigeonNoEngineKey,\n'
+          '          _pigeonEngineAffinity ?? _pigeonNoEngineKey,\n'
+          '          jName,\n'
+          '        );\n'
+          '      } finally {\n'
+          '        jName.release();\n'
+          '      }\n'
+          '      if (link == null) {\n'
+          '        _throwNoInstanceError(channelName);\n'
+          '      }\n'
+          '      if (link != null && _pigeonEngineAffinity == null) {\n'
+          '        final int linkEngineKey = jni_bridge.ApiRegistrar.pigeonEngineKeyOf(link);\n'
+          '        if (linkEngineKey != _pigeonNoEngineKey) {\n'
+          '          _pigeonEngineAffinity = linkEngineKey;\n'
+          '          _pigeonUpdateFlutterApiEngineAffinity();\n'
+          '        }\n'
+          '      }\n',
+        ),
+      );
+      expect(code, isNot(contains('ApiRegistrar().getInstance(')));
+    });
+
+    test('FFI HostApi resolves by engine id and records affinity', () {
+      final String code = generateNativeInterop(ffiOptions, root);
+      expect(
+        code,
+        contains(
+          'final ffi_bridge.ApiSetup? link = ffi_bridge.ApiSetup.pigeonResolveInstanceWithEngineId(\n'
+          '        engineId ?? _pigeonNoEngineKey,\n'
+          '        affinityKey: _pigeonEngineAffinity ?? _pigeonNoEngineKey,\n'
+          '        name: NSString(channelName),\n'
+          '      );\n'
+          '      if (link == null) {\n'
+          '        _throwNoInstanceError(channelName);\n'
+          '      }\n',
+        ),
+      );
+      expect(
+        code,
+        contains('final int linkEngineKey = ffi_bridge.ApiSetup.pigeonEngineKeyOf(link);'),
+      );
+      expect(code, isNot(contains('getInstanceWithName')));
+    });
+
+    test('FlutterApi registration passes engine keys to native', () {
+      final String jniCode = generateNativeInterop(jniOptions, root);
+      expect(
+        jniCode,
+        contains(
+          'final int engineId = PlatformDispatcher.instance.engineId ?? _pigeonNoEngineKey;\n'
+          '    final int affinityKey = _pigeonEngineAffinity ?? _pigeonNoEngineKey;\n',
+        ),
+      );
+      expect(
+        jniCode,
+        contains(
+          'final jni_bridge.CallbacksRegistrar registrar = jni_bridge.CallbacksRegistrar();\n'
+          '      try {\n'
+          '        registrar.registerInstance(impl, engineId, affinityKey, jName);\n'
+          '      } catch (_) {\n'
+          '        impl.release();\n'
+          '        rethrow;\n'
+          '      } finally {\n'
+          '        registrar.release();\n'
+          '        jName.release();\n'
+          '      }\n',
+        ),
+      );
+
+      final String ffiCode = generateNativeInterop(ffiOptions, root);
+      expect(
+        ffiCode,
+        contains(
+          'ffi_bridge.CallbacksRegistrar.registerInstanceWithApi(\n'
+          '        impl,\n'
+          '        engineId: engineId,\n'
+          '        affinityKey: affinityKey,\n'
+          '        name: NSString(name),\n'
+          '      );',
+        ),
+      );
+    });
+
+    test('learning affinity re-sends FlutterApi registrations to native', () {
+      final String jniCode = generateNativeInterop(jniOptions, root);
+      expect(
+        jniCode,
+        contains(
+          'void _pigeonUpdateFlutterApiEngineAffinity() {\n'
+          '  _CallbacksRegistrar.pigeonVar_updateEngineAffinity();\n'
+          '}',
+        ),
+      );
+      expect(jniCode, contains('static void pigeonVar_updateEngineAffinity() {'));
+      expect(
+        jniCode,
+        contains(
+          'registrar.registerInstance(handle as jni_bridge.Callbacks, engineId, affinityKey, jName);',
+        ),
+      );
+
+      final String ffiCode = generateNativeInterop(ffiOptions, root);
+      expect(ffiCode, contains('_pigeonUpdateFlutterApiEngineAffinity();'));
+      expect(
+        ffiCode,
+        contains(
+          'ffi_bridge.CallbacksRegistrar.registerInstanceWithApi(\n'
+          '            handle as ffi_bridge.CallbacksBridge,\n'
+          '            engineId: engineId,\n'
+          '            affinityKey: affinityKey,\n'
+          '            name: NSString(entry.key),\n'
+          '          );',
+        ),
+      );
+    });
+
+    test('omits the FlutterApi affinity update without FlutterApis', () {
+      final String code = generateNativeInterop(
+        jniOptions,
+        Root(
+          apis: root.apis.whereType<AstHostApi>().toList(),
+          classes: root.classes,
+          enums: root.enums,
+        ),
+      );
+      expect(code, contains('_pigeonEngineAffinity = linkEngineKey;'));
+      expect(code, isNot(contains('_pigeonUpdateFlutterApiEngineAffinity')));
+    });
+
+    test('FlutterApi re-registration keeps the setUp instance tracked', () {
+      for (final options in <InternalDartOptions>[jniOptions, ffiOptions]) {
+        final String code = generateNativeInterop(options, root);
+        final int removeHandleStart = code.indexOf('static void pigeonVar_removeHandle(');
+        final int registerStart = code.indexOf(
+          'Callbacks pigeonVar_register({String name = defaultInstanceName}) {',
+        );
+        expect(removeHandleStart, isNonNegative);
+        expect(registerStart, greaterThan(removeHandleStart));
+
+        // Dedup in register only removes the native handle, so that
+        // setUp(a) -> Registrar.register(a) -> setUp(null) still unregisters a.
+        final String removeHandle = code.substring(removeHandleStart, registerStart);
+        expect(removeHandle, isNot(contains('setUpInstances')));
+        final String register = code.substring(registerStart);
+        expect(
+          register,
+          startsWith(
+            'Callbacks pigeonVar_register({String name = defaultInstanceName}) {\n'
+            '    pigeonVar_removeHandle(pigeonVar_dartApi, name: name);\n',
+          ),
+        );
+
+        // The public unregister path still clears the setUp slot.
+        expect(
+          code,
+          contains(
+            'static void pigeonVar_unregister(Callbacks api, {String name = defaultInstanceName}) {\n'
+            '    if (identical(pigeonVar_setUpInstances[name], api)) {\n'
+            '      pigeonVar_setUpInstances.remove(name);\n'
+            '    }\n'
+            '    pigeonVar_removeHandle(api, name: name);\n'
+            '  }',
+          ),
+        );
+      }
+    });
+  });
+
+  test('native interop JNI FlutterApi registrar methods are not renamed by API methods', () {
+    final root = Root(
+      apis: <Api>[
+        AstFlutterApi(
+          name: 'Callbacks',
+          methods: <Method>[
+            Method(
+              name: 'register',
+              location: ApiLocation.flutter,
+              parameters: <Parameter>[],
+              returnType: const TypeDeclaration(baseName: 'void', isNullable: false),
+            ),
+          ],
+        ),
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final sink = StringBuffer();
+    const DartGenerator().generateNativeInterop(
+      const InternalDartOptions(ignoreLints: false, useJni: true, dartOut: 'lib/foo.g.dart'),
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final code = sink.toString();
+    // The registrar is a separate Kotlin class from the bridge interface, so
+    // an API method named `register` does not rename its methods.
+    expect(code, contains('registrar.registerInstance(impl, engineId, affinityKey'));
+    expect(code, contains('registrar.unregisterInstance('));
+  });
+
+  test('native interop JNI FlutterApi prefixes internal registrar members to avoid collisions', () {
+    final root = Root(
+      apis: <Api>[
+        AstFlutterApi(
+          name: 'Callbacks',
+          methods: <Method>[
+            Method(
+              name: 'register',
+              location: ApiLocation.flutter,
+              parameters: <Parameter>[],
+              returnType: const TypeDeclaration(baseName: 'void', isNullable: false),
+            ),
+            Method(
+              name: 'unregister',
+              location: ApiLocation.flutter,
+              parameters: <Parameter>[],
+              returnType: const TypeDeclaration(baseName: 'void', isNullable: false),
+            ),
+            Method(
+              name: 'dartApi',
+              location: ApiLocation.flutter,
+              parameters: <Parameter>[],
+              returnType: const TypeDeclaration(baseName: 'void', isNullable: false),
+            ),
+          ],
+        ),
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    const dartOptions = InternalDartOptions(
+      ignoreLints: false,
+      useJni: true,
+      dartOut: 'lib/foo.g.dart',
+    );
+    final mainSink = StringBuffer();
+    const generator = DartGenerator();
+    generator.generate(dartOptions, root, mainSink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    final sink = StringBuffer();
+    generator.generateNativeInterop(dartOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    final code = sink.toString();
+    expect(code, contains('Callbacks pigeonVar_register('));
+    expect(code, contains('static void pigeonVar_unregister('));
+    expect(code, contains('static void pigeonVar_setUp('));
+    expect(code, contains('@override\n  void register()'));
+    expect(code, contains('@override\n  void unregister()'));
+    expect(code, contains('@override\n  void dartApi()'));
+  });
 }
 
 /// Builds a root with a sealed class `Shape`, its subclasses `Circle` (one

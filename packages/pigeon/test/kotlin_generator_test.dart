@@ -4,6 +4,7 @@
 
 import 'package:pigeon/pigeon.dart' show TaskQueueType;
 import 'package:pigeon/src/ast.dart';
+import 'package:pigeon/src/generator_tools.dart' show defaultNativeInteropInstanceName;
 import 'package:pigeon/src/kotlin/kotlin_generator.dart';
 import 'package:test/test.dart';
 
@@ -1743,7 +1744,12 @@ void main() {
       expect(code, contains('@Keep\n  companion object {\n    fun ofRaw(raw: Int): AnEnum?'));
       expect(code, contains('@Keep\ndata class DataClass ('));
       expect(code, contains('@Keep\ninterface HostApi {'));
-      expect(code, contains('@Keep\nclass HostApiRegistrar : HostApi {'));
+      expect(
+        code,
+        contains(
+          '@Keep\nclass HostApiRegistrar private constructor(private val engineKey: Long) : HostApi {',
+        ),
+      );
       expect(code, contains('@Keep\ninterface FlutterApi {'));
       expect(code, contains('@Keep\nclass FlutterApiRegistrar() {'));
     });
@@ -1974,49 +1980,306 @@ void main() {
     expect(code, contains(r'const val stringWithTwoBackslashesDollar: String = "\\\\\$"'));
   });
 
-  test('kotlin generator handles HostApi and FlutterApi deregistration with null', () {
-    final root = Root(
-      apis: <Api>[
-        AstHostApi(
-          name: 'HostApi',
-          methods: <Method>[
-            Method(
-              name: 'doSomething',
-              location: ApiLocation.host,
-              returnType: const TypeDeclaration.voidDeclaration(),
-              parameters: <Parameter>[],
-            ),
-          ],
+  test(
+    'kotlin generator handles HostApi and FlutterApi multi-instance registration and unregister',
+    () {
+      final root = Root(
+        apis: <Api>[
+          AstHostApi(
+            name: 'HostApi',
+            methods: <Method>[
+              Method(
+                name: 'doSomething',
+                location: ApiLocation.host,
+                returnType: const TypeDeclaration.voidDeclaration(),
+                parameters: <Parameter>[],
+              ),
+            ],
+          ),
+          AstFlutterApi(
+            name: 'FlutterApi',
+            methods: <Method>[
+              Method(
+                name: 'onEvent',
+                location: ApiLocation.flutter,
+                returnType: const TypeDeclaration.voidDeclaration(),
+                parameters: <Parameter>[],
+              ),
+            ],
+          ),
+        ],
+        classes: <Class>[],
+        enums: <Enum>[],
+      );
+      final sink = StringBuffer();
+      const kotlinOptions = InternalKotlinOptions(kotlinOut: '', useJni: true);
+      const generator = KotlinGenerator();
+      generator.generate(kotlinOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+      final code = sink.toString();
+      expect(
+        code,
+        contains('val HostApiInstances: MutableMap<String, MutableList<HostApiRegistrar>>'),
+      );
+      expect(code, isNot(contains('private val HostApiInstances')));
+      expect(
+        code,
+        contains('private const val defaultInstanceName = "$defaultNativeInteropInstanceName"'),
+      );
+      expect(code, contains('interface HostApi {'));
+      expect(
+        code,
+        contains(
+          'class HostApiRegistrar private constructor(private val engineKey: Long) : HostApi {',
         ),
-        AstFlutterApi(
-          name: 'FlutterApi',
-          methods: <Method>[
-            Method(
-              name: 'onEvent',
-              location: ApiLocation.flutter,
-              returnType: const TypeDeclaration.voidDeclaration(),
-              parameters: <Parameter>[],
-            ),
-          ],
+      );
+      expect(code, contains('constructor() : this(PigeonEngineKeys.NO_KEY)'));
+      expect(code, isNot(contains('api: HostApi?,')));
+      expect(
+        code,
+        isNot(contains('fun register(api: HostApi, name: String = defaultInstanceName)')),
+      );
+      expect(code, isNot(contains('): HostApiRegistrar {')));
+      expect(code, isNot(contains('name: String?')));
+      expect(code, isNot(contains('resolvedName')));
+      expect(code, contains('HostApiInstances.remove(name)'));
+      expect(code, isNot(contains('fun getInstance(name: String')));
+      expect(code, contains('private var api: HostApi? = null'));
+      expect(code, isNot(contains('@Volatile')));
+      expect(
+        code,
+        contains('throw FlutterError("unregistered-instance", "HostApi has not been registered.")'),
+      );
+      expect(code, isNot(contains('error("HostApi has not been registered")')));
+      expect(code, isNot(contains('synchronized')));
+      expect(code, isNot(contains('HostApiInstances[name]?.lastOrNull()')));
+      expect(
+        code,
+        contains('val index = list.indexOfFirst { it.api === api && it.engineKey == engineKey }'),
+      );
+      expect(code, contains('list.add(list.removeAt(index))'));
+      expect(code, contains('val wrapper = HostApiRegistrar(engineKey)'));
+      expect(code, contains(' * Registers [api] under [name]'));
+      expect(code, contains(' * Instances are matched by identity.'));
+      expect(code, isNot(contains(' * Returns an instance registered under [name]')));
+      expect(
+        code,
+        contains(
+          'val registeredFlutterApi: MutableMap<String, MutableList<FlutterApiRegistration>>',
         ),
-      ],
-      classes: <Class>[],
-      enums: <Enum>[],
-    );
-    final sink = StringBuffer();
-    const kotlinOptions = InternalKotlinOptions(kotlinOut: '', useJni: true);
-    const generator = KotlinGenerator();
-    generator.generate(kotlinOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
-    final code = sink.toString();
-    expect(code, contains('interface HostApi {'));
-    expect(code, contains('class HostApiRegistrar : HostApi {'));
-    expect(code, contains('api: HostApi?,'));
-    expect(code, contains('HostApiInstances.remove(name)'));
-    expect(
-      code,
-      contains('fun registerInstance(api: FlutterApi?, name: String = defaultInstanceName)'),
-    );
-    expect(code, contains('registeredFlutterApi.remove(name)'));
+      );
+      expect(code, isNot(contains('private val registeredFlutterApi')));
+      expect(
+        code,
+        contains(
+          'class FlutterApiRegistration(val api: FlutterApi, val engineId: Long, val affinityKey: Long)',
+        ),
+      );
+      expect(code, isNot(contains('private class FlutterApiRegistration')));
+      expect(code, contains('class FlutterApiRegistrar() {'));
+      expect(code, contains('registeredFlutterApi.remove(name)'));
+      expect(
+        code,
+        isNot(contains('fun getInstance(name: String = defaultInstanceName): FlutterApi?')),
+      );
+    },
+  );
+
+  group('JNI engine-keyed registration', () {
+    Root buildRoot({bool host = true, bool flutter = true}) {
+      return Root(
+        apis: <Api>[
+          if (host)
+            AstHostApi(
+              name: 'HostApi',
+              methods: <Method>[
+                Method(
+                  name: 'doSomething',
+                  location: ApiLocation.host,
+                  returnType: const TypeDeclaration.voidDeclaration(),
+                  parameters: <Parameter>[],
+                ),
+              ],
+            ),
+          if (flutter)
+            AstFlutterApi(
+              name: 'FlutterApi',
+              methods: <Method>[
+                Method(
+                  name: 'onEvent',
+                  location: ApiLocation.flutter,
+                  returnType: const TypeDeclaration.voidDeclaration(),
+                  parameters: <Parameter>[],
+                ),
+              ],
+            ),
+        ],
+        classes: <Class>[],
+        enums: <Enum>[],
+      );
+    }
+
+    String generate(Root root, {bool useJni = true, String? fileSpecificClassNameComponent}) {
+      final sink = StringBuffer();
+      const KotlinGenerator().generate(
+        InternalKotlinOptions(
+          kotlinOut: '',
+          useJni: useJni,
+          fileSpecificClassNameComponent: fileSpecificClassNameComponent,
+        ),
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+      return sink.toString();
+    }
+
+    void expectInOrder(String code, List<String> snippets) {
+      var previous = -1;
+      for (final snippet in snippets) {
+        final int index = code.indexOf(snippet);
+        expect(index, greaterThan(previous), reason: 'Expected "$snippet" after previous snippet');
+        previous = index;
+      }
+    }
+
+    test('imports Flutter engine types only when there is a host or Flutter API', () {
+      const engineImport = 'import io.flutter.embedding.engine.FlutterEngine';
+      const pluginImport = 'import io.flutter.embedding.engine.plugins.FlutterPlugin';
+      final String withHost = generate(buildRoot(flutter: false));
+      expect(withHost, contains(engineImport));
+      expect(withHost, contains(pluginImport));
+      final String withFlutter = generate(buildRoot(host: false));
+      expect(withFlutter, contains(engineImport));
+      expect(withFlutter, contains(pluginImport));
+      final String withNone = generate(buildRoot(host: false, flutter: false));
+      expect(withNone, isNot(contains(engineImport)));
+      expect(withNone, isNot(contains('PigeonEngineKeys')));
+      final String nonJni = generate(buildRoot(), useJni: false);
+      expect(nonJni, isNot(contains(engineImport)));
+      expect(nonJni, isNot(contains('PigeonEngineKeys')));
+    });
+
+    test('emits a file-private engine key helper', () {
+      final String code = generate(buildRoot());
+      expect(code, contains('private object PigeonEngineKeys {'));
+      expect(code, contains('const val NO_KEY: Long = Long.MIN_VALUE'));
+      expect(code, contains('private val getEngineIdMethod: java.lang.reflect.Method? by lazy {'));
+      expect(
+        code,
+        contains('FlutterPlugin.FlutterPluginBinding::class.java.getMethod("getEngineId")'),
+      );
+      expect(code, contains('return method.invoke(binding) as Long'));
+      expect(code, contains('private val messengerKeys = java.util.WeakHashMap<Any, Long>()'));
+      expect(code, contains('private var nextSyntheticKey: Long = -1L'));
+      expect(code, contains('fun keyOf(binding: FlutterPlugin.FlutterPluginBinding): Long {'));
+      expect(code, contains('return keyOfMessenger(binding.binaryMessenger)'));
+      expect(code, contains('fun keyOf(engine: FlutterEngine): Long {'));
+      expect(code, contains('val key = engine.engineId'));
+      expect(code, contains('messengerKeys[engine.dartExecutor] = key'));
+      expect(code, contains('messengerKeys.getOrPut(messenger) { nextSyntheticKey-- }'));
+      expect(code, isNot(contains('flutterEngine')));
+      expect(code, isNot(contains('getFlutterEngine')));
+    });
+
+    test('engine key helper name is file-specific', () {
+      final String code = generate(buildRoot(), fileSpecificClassNameComponent: 'Foo');
+      expect(code, contains('private object FooPigeonEngineKeys {'));
+      expect(code, contains('FooPigeonEngineKeys.keyOf(binding)'));
+      expect(code, contains('FooPigeonEngineKeys.NO_KEY'));
+    });
+
+    test('host API registrar members are declared in the order Dart expects', () {
+      final String code = generate(buildRoot(flutter: false));
+      expectInOrder(code, <String>[
+        'fun register(api: HostApi, binding: FlutterPlugin.FlutterPluginBinding, name: String = defaultInstanceName) {',
+        'fun register(api: HostApi, engine: FlutterEngine, name: String = defaultInstanceName) {',
+        'fun unregister(api: HostApi, binding: FlutterPlugin.FlutterPluginBinding, name: String = defaultInstanceName) {',
+        'fun unregister(api: HostApi, engine: FlutterEngine, name: String = defaultInstanceName) {',
+        'private fun registerWithKey(',
+        'private fun unregisterWithKey(',
+        'companion object {',
+        'fun pigeonResolveInstance(engineId: Long, affinityKey: Long, name: String = defaultInstanceName): HostApiRegistrar? {',
+        'fun pigeonEngineKeyOf(instance: HostApiRegistrar): Long {',
+        'override fun doSomething()',
+      ]);
+      // Only the Dart-facing internal helpers are static.
+      expect('@JvmStatic\n    @Keep\n    fun '.allMatches(code).length, 2);
+    });
+
+    test('host API register and unregister compute engine keys', () {
+      final String code = generate(buildRoot(flutter: false));
+      expect(code, contains('registerWithKey(api, PigeonEngineKeys.keyOf(binding), name)'));
+      expect(code, contains('registerWithKey(api, PigeonEngineKeys.keyOf(engine), name)'));
+      expect(code, contains('unregisterWithKey(api, PigeonEngineKeys.keyOf(binding), name)'));
+      expect(code, contains('unregisterWithKey(api, PigeonEngineKeys.keyOf(engine), name)'));
+    });
+
+    test('host API unregister falls back to identity only for a single engine', () {
+      final String code = generate(buildRoot(flutter: false));
+      expectInOrder(code, <String>[
+        'if (list.any { it.api === api && it.engineKey == engineKey }) {',
+        'list.filter { it.api === api }.map { it.engineKey }.distinct().singleOrNull() ?: return',
+        'if (entry.api === api && entry.engineKey == removeKey) {',
+      ]);
+      expect(code, contains('entry.api = null'));
+      expect(code, isNot(contains('!matchKey')));
+    });
+
+    test('engine keys are cached per binding', () {
+      final String code = generate(buildRoot(flutter: false));
+      expect(
+        code,
+        contains(
+          'private val bindingKeys = java.util.WeakHashMap<FlutterPlugin.FlutterPluginBinding, Long>()',
+        ),
+      );
+      expect(code, contains('return bindingKeys.getOrPut(binding) { computeKey(binding) }'));
+    });
+
+    test('host API resolves by engine id, then affinity, then most recent registration', () {
+      final String code = generate(buildRoot(flutter: false));
+      expectInOrder(code, <String>[
+        'val list = HostApiInstances[name] ?: return null',
+        'val exact = if (engineId != PigeonEngineKeys.NO_KEY) list.lastOrNull { it.engineKey == engineId } else null',
+        'val affine = if (affinityKey != PigeonEngineKeys.NO_KEY) list.lastOrNull { it.engineKey == affinityKey } else null',
+        'return exact ?: affine ?: list.lastOrNull()',
+      ]);
+      expect(code, contains('return instance.engineKey'));
+    });
+
+    test('Flutter API registrar methods are declared in the order Dart expects', () {
+      final String code = generate(buildRoot(host: false));
+      expectInOrder(code, <String>[
+        'fun registerInstance(api: FlutterApi, engineId: Long, affinityKey: Long, name: String = defaultInstanceName) {',
+        'fun unregisterInstance(api: FlutterApi, name: String = defaultInstanceName) {',
+        'fun getInstance(binding: FlutterPlugin.FlutterPluginBinding, name: String = defaultInstanceName): FlutterApi? {',
+        'fun getInstance(engine: FlutterEngine, name: String = defaultInstanceName): FlutterApi? {',
+        'private fun getInstanceWithKey(engineKey: Long, name: String): FlutterApi? {',
+      ]);
+      expect(code, isNot(contains('@JvmStatic')));
+      expect(code, isNot(contains('companion object')));
+    });
+
+    test('Flutter API registration dedups by identity and looks up by engine', () {
+      final String code = generate(buildRoot(host: false));
+      expectInOrder(code, <String>[
+        'val index = list.indexOfFirst { it.api === api }',
+        'list[index] = registration',
+        'list.add(registration)',
+      ]);
+      expect(
+        code,
+        contains('val registration = FlutterApiRegistration(api, engineId, affinityKey)'),
+      );
+      expect(code, contains('return getInstanceWithKey(PigeonEngineKeys.keyOf(binding), name)'));
+      expect(code, contains('return getInstanceWithKey(PigeonEngineKeys.keyOf(engine), name)'));
+      expectInOrder(code, <String>[
+        'if (engineKey != PigeonEngineKeys.NO_KEY) {',
+        'val match = list.lastOrNull { it.engineId == engineKey } ?: list.lastOrNull { it.affinityKey == engineKey }',
+        'return list.lastOrNull()?.api',
+      ]);
+      expect(code, isNot(contains('it.engineId == engineKey || it.affinityKey == engineKey')));
+    });
   });
 
   test('asyncCallback emits callback-based host api method', () {

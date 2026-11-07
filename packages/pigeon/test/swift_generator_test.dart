@@ -1775,7 +1775,7 @@ void main() {
     );
   });
 
-  test('swift generator handles HostApi and FlutterApi deregistration with nil', () {
+  test('swift generator handles HostApi and FlutterApi multi-instance registration and unregister', () {
     final root = Root(
       apis: <Api>[
         AstHostApi(
@@ -1809,10 +1809,185 @@ void main() {
     const generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
     final code = sink.toString();
-    expect(code, contains('static func register(api: HostApi?, name: String = '));
+    expect(code, contains('  static let defaultInstanceName'));
+    expect(code, isNot(contains('fileprivate static let defaultInstanceName')));
+    expect(code, contains('protocol HostApi: AnyObject {'));
+    expect(code, contains('\nclass HostApiInstanceTracker {'));
+    expect(code, isNot(contains('NSLock')));
+    expect(code, contains('static var instancesOfHostApi = [String: [HostApiSetup]]()'));
+    expect(code, isNot(contains('@discardableResult')));
+    expect(code, contains('\n  override init() {}'));
+    expect(code, isNot(contains('private override init() {}')));
+    expect(code, isNot(contains('name: String?')));
+    expect(
+      code,
+      contains(
+        'static func register(api: HostApi, registrar: FlutterPluginRegistrar, name: String = PigeonInternal.defaultInstanceName) {',
+      ),
+    );
+    expect(
+      code,
+      contains(
+        'static func unregister(api: HostApi, registrar: FlutterPluginRegistrar, name: String = PigeonInternal.defaultInstanceName) {',
+      ),
+    );
+    expect(
+      code,
+      contains('fileprivate static func register(api: HostApi, engineKey: Int64, name: String) {'),
+    );
+    expect(
+      code,
+      contains(
+        'fileprivate static func unregister(api: HostApi, engineKey: Int64, name: String) {',
+      ),
+    );
+    expect(code, isNot(contains('@objc static func register(api: HostApi')));
+    expect(code, isNot(contains('static func unregister(setup:')));
+    expect(code, isNot(contains('static func getInstance(name: String')));
+    expect(
+      code,
+      contains(
+        '@objc static func pigeonResolveInstance(engineId: Int64, affinityKey: Int64, name: String = PigeonInternal.defaultInstanceName) -> HostApiSetup? {',
+      ),
+    );
+    expect(
+      code,
+      contains('@objc static func pigeonEngineKey(of instance: HostApiSetup) -> Int64 {'),
+    );
+    expect(code, contains('private var engineKey: Int64 = Int64.min'));
+    expect(
+      code,
+      contains(
+        r'if engineId != Int64.min, let match = list.last(where: { $0.engineKey == engineId }) {',
+      ),
+    );
+    expect(
+      code,
+      contains(
+        r'if affinityKey != Int64.min, let match = list.last(where: { $0.engineKey == affinityKey }) {',
+      ),
+    );
+    expect(
+      code,
+      contains(r'if list.contains(where: { $0.api === api && $0.engineKey == engineKey }) {'),
+    );
+    expect(code, contains(r'let keys = Set(list.filter { $0.api === api }.map { $0.engineKey })'));
+    expect(code, contains('guard keys.count == 1, let onlyKey = keys.first else {'));
+    expect(code, contains('if existing === api && entry.engineKey == removeKey {'));
+    expect(code, isNot(contains('resolvedName')));
+    expect(code, contains('private func resolveApi() throws -> HostApi'));
+    expect(code, contains('code: "unregistered-instance"'));
+    expect(code, isNot(contains('api!.')));
+    expect(code, isNot(contains('Swift.type(of: api) is AnyClass')));
     expect(code, contains('HostApiInstanceTracker.instancesOfHostApi.removeValue(forKey: name)'));
-    expect(code, contains('registerInstance(api: FlutterApiBridge?, name: String = '));
+    expect(code, isNot(contains('return HostApiInstanceTracker.instancesOfHostApi[name]?.last')));
+    expect(
+      code,
+      contains('@objc class FlutterApiRegistrar: NSObject {\n  static var registeredFlutterApi'),
+    );
+    expect(code, contains('  static var registeredFlutterApi = [String: [FlutterApi]]()'));
+    expect(code, isNot(contains('private static var registeredFlutterApi')));
+    expect(
+      code,
+      contains(
+        '@objc static func registerInstance(api: FlutterApiBridge, engineId: Int64, affinityKey: Int64, name: String = PigeonInternal.defaultInstanceName)',
+      ),
+    );
+    expect(code, isNot(contains('@objc static func register(api: FlutterApiBridge')));
+    expect(
+      code,
+      contains(r'if let index = list.firstIndex(where: { ($0.api as AnyObject) === apiObject }) {'),
+    );
+    expect(code, contains('list[index] = registration'));
+    expect(
+      code,
+      contains(
+        '@objc static func unregisterInstance(api: FlutterApiBridge, name: String = PigeonInternal.defaultInstanceName)',
+      ),
+    );
+    expect(
+      code,
+      contains(
+        'static func getInstance(registrar: FlutterPluginRegistrar, name: String = PigeonInternal.defaultInstanceName) -> FlutterApi? {',
+      ),
+    );
+    expect(
+      code,
+      isNot(
+        contains(
+          'static func getInstance(name: String = PigeonInternal.defaultInstanceName) -> FlutterApi?',
+        ),
+      ),
+    );
+    expect(code, isNot(contains('FlutterApiRegistrar.getInstance(name: name)')));
+    expect(
+      code,
+      contains(
+        r'if engineKey != Int64.min, let match = list.last(where: { $0.engineId == engineKey }) ?? list.last(where: { $0.affinityKey == engineKey }) {',
+      ),
+    );
+    expect(code, isNot(contains(r'$0.engineId == engineKey || $0.affinityKey == engineKey')));
+    expect(code, contains('fileprivate let engineId: Int64'));
+    expect(code, contains('fileprivate let affinityKey: Int64'));
     expect(code, contains('FlutterApiRegistrar.registeredFlutterApi.removeValue(forKey: name)'));
+    expect(
+      code,
+      contains(
+        r'if let index = list.firstIndex(where: { $0.api === api && $0.engineKey == engineKey }) {',
+      ),
+    );
+    expect(code, contains('list.append(list.remove(at: index))'));
+    expect(code, contains('/// Registers `api` under `name`'));
+    expect(code, contains('/// Instances are matched by identity.'));
+    expect(code, isNot(contains('/// Returns an instance registered under `name`')));
+
+    // Flutter-typed members must compile without the Flutter module (swiftgen).
+    expect(
+      code,
+      contains(
+        '#if canImport(Flutter)\n  import Flutter\n#elseif canImport(FlutterMacOS)\n  import FlutterMacOS\n#endif',
+      ),
+    );
+    expect(code, isNot(contains('#error("Unsupported platform.")')));
+    final flutterTypedMember = RegExp(r'^.*FlutterPluginRegistrar.*$', multiLine: true);
+    final guard = RegExp(r'^\s*#if canImport\(Flutter\) \|\| canImport\(FlutterMacOS\)$');
+    final List<String> lines = code.split('\n');
+    for (final RegExpMatch match in flutterTypedMember.allMatches(code)) {
+      final int lineIndex = code.substring(0, match.start).split('\n').length - 1;
+      final int guardIndex = lines.lastIndexWhere(guard.hasMatch, lineIndex);
+      final int endIndex = lines.lastIndexWhere(
+        (String line) => line.trim() == '#endif',
+        lineIndex,
+      );
+      expect(guardIndex, greaterThan(endIndex), reason: 'Unguarded: ${match.group(0)}');
+      expect(match.group(0), isNot(contains('@objc')));
+    }
+
+    // Engine key helper.
+    expect(code, contains('fileprivate enum PigeonEngineKeys {'));
+    expect(code, contains('NSMapTable<AnyObject, NSNumber>.weakToStrongObjects()'));
+    expect(code, contains('private static var nextSyntheticKey: Int64 = -1'));
+    expect(code, contains('NSSelectorFromString("engineIdentifier")'));
+    expect(code, contains('value(forKey: "engineIdentifier") as? NSNumber'));
+    // The messenger is read via KVC because it can be nil during engine
+    // teardown, and keys are cached per registrar for detach.
+    expect(code, contains('value(forKey: "messenger") as AnyObject?'));
+    expect(code, isNot(contains('registrar.messenger() as AnyObject')));
+    expect(code, contains('private static let registrarKeys'));
+    expect(
+      code,
+      contains('registrarKeys.setObject(NSNumber(value: resolved), forKey: registrarObject)'),
+    );
+
+    final nonFfiSink = StringBuffer();
+    generator.generate(
+      const InternalSwiftOptions(swiftOut: ''),
+      root,
+      nonFfiSink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    expect(nonFfiSink.toString(), contains('protocol HostApi {'));
+    expect(nonFfiSink.toString(), isNot(contains('protocol HostApi: AnyObject')));
   });
 
   test('ffi bridges of sealed class subclasses extend the sealed bridge', () {
@@ -1904,6 +2079,8 @@ void main() {
     generator.generate(swiftOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
     final code = sink.toString();
     expect(code, contains('private class _PigeonFfiCodec {'));
+    expect(code, isNot(contains('PigeonEngineKeys')));
+    expect(code, isNot(contains('import Flutter')));
   });
 
   test('ffi bridge for a class without fields overrides the NSObject initializer', () {
@@ -1952,13 +2129,23 @@ void main() {
     const generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
     final code = sink.toString();
+    expect(code, contains('protocol Api: AnyObject {'));
+    expect(code, contains('\nclass ApiInstanceTracker {'));
+    expect(
+      code,
+      contains(
+        'static func register(api: Api, registrar: FlutterPluginRegistrar, name: String = PigeonInternal.defaultInstanceName) {',
+      ),
+    );
+    expect(code, isNot(contains('withExtendedLifetime')));
     expect(
       code,
       contains(
         '@objc func echo(error errorArg: NSString, wrappedError: PigeonError) -> NSString? {',
       ),
     );
-    expect(code, contains('let res: String = try api!.echo(error: errorArg as String)'));
+    expect(code, contains('let activeApi = try resolveApi()'));
+    expect(code, contains('let res: String = try activeApi.echo(error: errorArg as String)'));
     expect(
       code,
       contains(
@@ -1968,7 +2155,7 @@ void main() {
     expect(
       code,
       contains(
-        r'api!.later(value: valueArg as String, completion: { continuation.resume(with: $0) })',
+        r'activeApi.later(value: valueArg as String, completion: { continuation.resume(with: $0) })',
       ),
     );
     expect(code, contains(r'wrappedError.message = "\(Swift.type(of: error))"'));
@@ -2002,6 +2189,13 @@ void main() {
     const generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
     final code = sink.toString();
+    expect(code, contains('  static var registeredApi = [String: [Api]]()'));
+    expect(
+      code,
+      contains(
+        '@objc static func registerInstance(api: ApiBridge, engineId: Int64, affinityKey: Int64, name: String = PigeonInternal.defaultInstanceName)',
+      ),
+    );
     expect(
       code,
       contains('@objc func report(error errorArg: NSString?, error: PigeonError) -> NSString?'),

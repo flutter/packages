@@ -6,6 +6,7 @@ import Foundation
 
 #if os(iOS)
   import Flutter
+  import UIKit
 #elseif os(macOS)
   import FlutterMacOS
 #endif
@@ -35,6 +36,8 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi, HostCa
   var flutterSmallApiOne: FlutterSmallApi
   var flutterSmallApiTwo: FlutterSmallApi
   var proxyApiRegistrar: ProxyApiTestsPigeonProxyApiRegistrar?
+  var niHostApiImpl: NativeInteropTestsClass?
+  var niReservedImpl: NativeInteropReservedNamesHostApiImpl?
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     // Workaround for https://github.com/flutter/flutter/issues/118103.
@@ -43,7 +46,7 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi, HostCa
     #else
       let messenger = registrar.messenger
     #endif
-    let plugin = TestPlugin(binaryMessenger: messenger)
+    let plugin = TestPlugin(binaryMessenger: messenger, registrar: registrar)
     HostIntegrationCoreApiSetup.setUp(binaryMessenger: messenger, api: plugin)
     HostCallbackCoreApiSetup.setUp(binaryMessenger: messenger, api: plugin)
     TestPluginWithSuffix.register(with: registrar, suffix: "suffixOne")
@@ -51,7 +54,7 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi, HostCa
     registrar.publish(plugin)
   }
 
-  init(binaryMessenger: FlutterBinaryMessenger) {
+  init(binaryMessenger: FlutterBinaryMessenger, registrar: FlutterPluginRegistrar) {
     flutterAPI = FlutterIntegrationCoreApi(binaryMessenger: binaryMessenger)
     flutterCallbackAPI = FlutterCallbackCoreApi(binaryMessenger: binaryMessenger)
     flutterSmallApiOne = FlutterSmallApi(
@@ -76,12 +79,29 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi, HostCa
     proxyApiRegistrar = ProxyApiTestsPigeonProxyApiRegistrar(
       binaryMessenger: binaryMessenger, apiDelegate: ProxyApiDelegate())
     proxyApiRegistrar!.setUp()
-    NativeInteropHostIntegrationCoreApiSetup.register(api: NativeInteropTestsClass())
-    NativeInteropReservedNamesHostApiSetup.register(api: NativeInteropReservedNamesHostApiImpl())
+    let niImpl = NativeInteropTestsClass(registrar: registrar)
+    niHostApiImpl = niImpl
+    NativeInteropHostIntegrationCoreApiSetup.register(api: niImpl, registrar: registrar)
+    let reservedImpl = NativeInteropReservedNamesHostApiImpl(registrar: registrar)
+    niReservedImpl = reservedImpl
+    NativeInteropReservedNamesHostApiSetup.register(api: reservedImpl, registrar: registrar)
   }
 
   public func detachFromEngine(for registrar: FlutterPluginRegistrar) {
-    proxyApiRegistrar!.tearDown()
+    #if os(macOS)
+      let messenger = registrar.messenger
+      HostIntegrationCoreApiSetup.setUp(binaryMessenger: messenger, api: nil)
+      HostCallbackCoreApiSetup.setUp(binaryMessenger: messenger, api: nil)
+    #endif
+    if let niHostApiImpl {
+      NativeInteropHostIntegrationCoreApiSetup.unregister(api: niHostApiImpl, registrar: registrar)
+      self.niHostApiImpl = nil
+    }
+    if let niReservedImpl {
+      NativeInteropReservedNamesHostApiSetup.unregister(api: niReservedImpl, registrar: registrar)
+      self.niReservedImpl = nil
+    }
+    proxyApiRegistrar?.tearDown()
     proxyApiRegistrar = nil
   }
 
@@ -851,6 +871,31 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi, HostCa
 }
 
 class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
+  private static var nextLabelId = 1
+  /// Unique to this instance; see `engineLabel()`.
+  private let label: String = {
+    defer { NativeInteropTestsClass.nextLabelId += 1 }
+    return "instance-\(NativeInteropTestsClass.nextLabelId)"
+  }()
+
+  func engineLabel() throws -> String {
+    return label
+  }
+
+  /// The registrar of the engine this instance serves; used to find that engine's Flutter APIs.
+  weak var registrar: FlutterPluginRegistrar?
+  /// Used for registrations made by test helpers when this instance has no engine.
+  private lazy var detachedRegistrar = StubPluginRegistrar()
+
+  init(registrar: FlutterPluginRegistrar? = nil) {
+    self.registrar = registrar
+    super.init()
+  }
+
+  private var effectiveRegistrar: FlutterPluginRegistrar {
+    return registrar ?? detachedRegistrar
+  }
+
   func noop() throws {
     return
   }
@@ -1314,7 +1359,10 @@ class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
   }
 
   private func getNativeInteropFlutterApi() throws -> NativeInteropFlutterIntegrationCoreApi {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
+    guard let registrar,
+      let flutterApi = NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance(
+        registrar: registrar)
+    else {
       throw NativeInteropTestsError(
         code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
         details: nil)
@@ -2069,7 +2117,10 @@ class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
       DispatchQueue.global(qos: .background).async {
         Task {
           do {
-            guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
+            guard let registrar = self.registrar,
+              let flutterApi = NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance(
+                registrar: registrar)
+            else {
               continuation.resume(returning: false)
               return
             }
@@ -2085,33 +2136,807 @@ class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
 
   func testDeregisterHostApi() throws -> Bool {
     let name = "testDeregisterHostInstance"
-    NativeInteropHostIntegrationCoreApiSetup.register(api: NativeInteropTestsClass(), name: name)
-    guard NativeInteropHostIntegrationCoreApiSetup.getInstance(name: name) != nil else {
+    let stub = StubPluginRegistrar()
+    let singleApi = NativeInteropTestsClass()
+    NativeInteropHostIntegrationCoreApiSetup.register(api: singleApi, registrar: stub, name: name)
+    guard
+      NativeInteropHostIntegrationCoreApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min, name: name) != nil
+    else {
       return false
     }
-    NativeInteropHostIntegrationCoreApiSetup.register(api: nil, name: name)
-    return NativeInteropHostIntegrationCoreApiSetup.getInstance(name: name) == nil
+    NativeInteropHostIntegrationCoreApiSetup.unregister(api: singleApi, registrar: stub, name: name)
+    guard
+      NativeInteropHostIntegrationCoreApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min, name: name) == nil
+    else {
+      return false
+    }
+
+    // Out-of-order instance-aware unregister(api:) keeps remaining instances active,
+    // and duplicate or never-registered unregister calls are safe no-ops.
+    let outOfOrderName = "testOutOfOrderHostInstance"
+    let api1 = NativeInteropTestsClass()
+    let api2 = NativeInteropTestsClass()
+    let unregisteredApi = NativeInteropTestsClass()
+    NativeInteropHostIntegrationCoreApiSetup.register(
+      api: api1, registrar: stub, name: outOfOrderName)
+    NativeInteropHostIntegrationCoreApiSetup.register(
+      api: api2, registrar: stub, name: outOfOrderName)
+    let outOfOrderSetup2 = NativeInteropHostIntegrationCoreApiSetup.pigeonResolveInstance(
+      engineId: Int64.min, affinityKey: Int64.min, name: outOfOrderName)
+    NativeInteropHostIntegrationCoreApiSetup.unregister(
+      api: api1, registrar: stub, name: outOfOrderName)
+    NativeInteropHostIntegrationCoreApiSetup.unregister(
+      api: api1, registrar: stub, name: outOfOrderName)
+    NativeInteropHostIntegrationCoreApiSetup.unregister(
+      api: unregisteredApi, registrar: stub, name: outOfOrderName)
+    guard
+      outOfOrderSetup2 != nil,
+      NativeInteropHostIntegrationCoreApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min, name: outOfOrderName)
+        === outOfOrderSetup2
+    else {
+      return false
+    }
+    NativeInteropHostIntegrationCoreApiSetup.unregister(
+      api: api2, registrar: stub, name: outOfOrderName)
+    guard
+      NativeInteropHostIntegrationCoreApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min, name: outOfOrderName) == nil
+    else {
+      return false
+    }
+
+    // Default instance is distinct from an explicit empty string (name: "").
+    let defaultReservedSetup = NativeInteropReservedNamesHostApiSetup.pigeonResolveInstance(
+      engineId: Int64.min, affinityKey: Int64.min)
+    guard
+      defaultReservedSetup != nil,
+      NativeInteropReservedNamesHostApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min, name: "") == nil
+    else {
+      return false
+    }
+    let emptyNameApi = NativeInteropReservedNamesHostApiImpl()
+    NativeInteropReservedNamesHostApiSetup.register(api: emptyNameApi, registrar: stub, name: "")
+    let emptyNameSetup = NativeInteropReservedNamesHostApiSetup.pigeonResolveInstance(
+      engineId: Int64.min, affinityKey: Int64.min, name: "")
+    guard
+      emptyNameSetup != nil,
+      emptyNameSetup !== defaultReservedSetup,
+      NativeInteropReservedNamesHostApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min) === defaultReservedSetup
+    else {
+      NativeInteropReservedNamesHostApiSetup.unregister(
+        api: emptyNameApi, registrar: stub, name: "")
+      return false
+    }
+    NativeInteropReservedNamesHostApiSetup.unregister(api: emptyNameApi, registrar: stub, name: "")
+    guard
+      NativeInteropReservedNamesHostApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min, name: "") == nil,
+      NativeInteropReservedNamesHostApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min) === defaultReservedSetup
+    else {
+      return false
+    }
+
+    guard verifyEngineKeyedHostRegistration() else {
+      return false
+    }
+
+    // Exercise secondary TestPlugin attach and out-of-order detach while primary engine stays
+    // registered.
+    let registrar1 = StubPluginRegistrar()
+    let registrar2 = StubPluginRegistrar()
+    TestPlugin.register(with: registrar1)
+    TestPlugin.register(with: registrar2)
+    guard let plugin1 = registrar1.published as? TestPlugin,
+      let plugin2 = registrar2.published as? TestPlugin
+    else {
+      return false
+    }
+    plugin1.detachFromEngine(for: registrar1)
+    guard
+      NativeInteropHostIntegrationCoreApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min) != nil,
+      NativeInteropReservedNamesHostApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min) != nil
+    else {
+      return false
+    }
+    plugin2.detachFromEngine(for: registrar2)
+    guard
+      NativeInteropHostIntegrationCoreApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min) != nil,
+      NativeInteropReservedNamesHostApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min) != nil
+    else {
+      return false
+    }
+
+    #if os(macOS)
+      // Exercise real secondary FlutterEngine creation and out-of-order teardown synchronously.
+      // On iOS, real secondary FlutterEngine execution and deallocation require yielding the main
+      // dispatch queue asynchronously and are verified in `testSecondaryEngineDartExecution()` and
+      // `RunnerTests`.
+      return SecondaryEngineTestRunner.verifyRealSecondaryEnginesLifecycle()
+    #else
+      return true
+    #endif
   }
 
   func testDeregisterFlutterApi() throws -> Bool {
     let name = "testDeregisterFlutterInstance"
-    NativeInteropFlutterIntegrationCoreApiRegistrar.registerInstance(api: nil, name: name)
-    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance(name: name) == nil
+    let stub = StubPluginRegistrar()
+    let engineId = stub.engineIdentifier
+    let noKey = Int64.min
+    let bridge1 = TestPluginReservedFlutterBridge("engine1")
+    let bridge2 = TestPluginReservedFlutterBridge("engine2")
+    let bridge3 = TestPluginReservedFlutterBridge("engine3")
+    func lookup() -> NativeInteropReservedNamesFlutterApi? {
+      return NativeInteropReservedNamesFlutterApiRegistrar.getInstance(registrar: stub, name: name)
+    }
+
+    NativeInteropReservedNamesFlutterApiRegistrar.registerInstance(
+      api: bridge1, engineId: engineId, affinityKey: noKey, name: name)
+    NativeInteropReservedNamesFlutterApiRegistrar.registerInstance(
+      api: bridge2, engineId: engineId, affinityKey: noKey, name: name)
+    guard try lookup()?.release(value: "ping") == "engine2:ping" else {
+      return false
+    }
+
+    // Re-registering bridge1 updates it in place, so bridge2 stays on top.
+    NativeInteropReservedNamesFlutterApiRegistrar.registerInstance(
+      api: bridge1, engineId: engineId, affinityKey: noKey, name: name)
+    guard try lookup()?.release(value: "ping") == "engine2:ping" else {
+      return false
+    }
+
+    // Single unregister removes bridge1 completely and restores bridge2.
+    NativeInteropReservedNamesFlutterApiRegistrar.unregisterInstance(api: bridge1, name: name)
+    guard try lookup()?.release(value: "ping") == "engine2:ping" else {
+      return false
+    }
+
+    // Out-of-order unregister on bottom entry leaves top entry intact.
+    NativeInteropReservedNamesFlutterApiRegistrar.registerInstance(
+      api: bridge3, engineId: engineId, affinityKey: noKey, name: name)
+    NativeInteropReservedNamesFlutterApiRegistrar.unregisterInstance(api: bridge2, name: name)
+    guard try lookup()?.release(value: "ping") == "engine3:ping" else {
+      return false
+    }
+
+    // Unregistering the remaining entry clears the registration list completely.
+    NativeInteropReservedNamesFlutterApiRegistrar.unregisterInstance(api: bridge3, name: name)
+    guard lookup() == nil else {
+      return false
+    }
+
+    // Duplicate unregister is a safe no-op.
+    NativeInteropReservedNamesFlutterApiRegistrar.unregisterInstance(api: bridge3, name: name)
+    guard lookup() == nil else {
+      return false
+    }
+
+    return verifyEngineKeyedFlutterLookup()
   }
 
+  /// Verifies that Flutter API lookups prefer the registration from the registrar's engine.
+  private func verifyEngineKeyedFlutterLookup() -> Bool {
+    let name = "testEngineKeyedFlutterLookup"
+    let noKey = Int64.min
+    let registrar1 = StubPluginRegistrar()
+    let registrar2 = StubPluginRegistrar()
+    let unrelated = StubPluginRegistrar()
+    let bridge1 = TestPluginReservedFlutterBridge("engine1")
+    let bridge2 = TestPluginReservedFlutterBridge("engine2")
+    let affinityBridge = TestPluginReservedFlutterBridge("affinity")
+    defer {
+      for bridge in [bridge1, bridge2, affinityBridge] {
+        NativeInteropReservedNamesFlutterApiRegistrar.unregisterInstance(api: bridge, name: name)
+      }
+    }
+    func release(_ registrar: FlutterPluginRegistrar) -> String? {
+      return try? NativeInteropReservedNamesFlutterApiRegistrar.getInstance(
+        registrar: registrar, name: name)?.release(value: "ping")
+    }
+
+    NativeInteropReservedNamesFlutterApiRegistrar.registerInstance(
+      api: bridge1, engineId: registrar1.engineIdentifier, affinityKey: noKey, name: name)
+    NativeInteropReservedNamesFlutterApiRegistrar.registerInstance(
+      api: bridge2, engineId: registrar2.engineIdentifier, affinityKey: noKey, name: name)
+    guard
+      release(registrar1) == "engine1:ping",
+      release(registrar2) == "engine2:ping",
+      // No matching engine falls back to the top of the stack.
+      release(unrelated) == "engine2:ping"
+    else {
+      return false
+    }
+
+    // A registration whose Dart engine id is unknown matches by affinity key.
+    NativeInteropReservedNamesFlutterApiRegistrar.registerInstance(
+      api: affinityBridge, engineId: noKey, affinityKey: registrar1.engineIdentifier, name: name)
+    NativeInteropReservedNamesFlutterApiRegistrar.unregisterInstance(api: bridge1, name: name)
+    guard
+      release(registrar1) == "affinity:ping",
+      release(registrar2) == "engine2:ping"
+    else {
+      return false
+    }
+    return true
+  }
+
+  /// Verifies engine-keyed Host API registration, unregistration, and resolution.
+  private func verifyEngineKeyedHostRegistration() -> Bool {
+    let name = "testEngineKeyedHostRegistration"
+    let noKey = Int64.min
+    let registrar1 = StubPluginRegistrar()
+    let registrar2 = StubPluginRegistrar()
+    let engine1 = registrar1.engineIdentifier
+    let engine2 = registrar2.engineIdentifier
+    let shared = NativeInteropTestsClass()
+    let other = NativeInteropTestsClass()
+    typealias Setup = NativeInteropHostIntegrationCoreApiSetup
+    defer {
+      Setup.unregister(api: shared, registrar: registrar1, name: name)
+      Setup.unregister(api: shared, registrar: registrar2, name: name)
+      Setup.unregister(api: other, registrar: registrar1, name: name)
+    }
+
+    // The same api registered from two engines is tracked separately.
+    Setup.register(api: shared, registrar: registrar1, name: name)
+    let setup1 = Setup.pigeonResolveInstance(
+      engineId: Int64.min, affinityKey: Int64.min, name: name)
+    Setup.register(api: shared, registrar: registrar2, name: name)
+    let setup2 = Setup.pigeonResolveInstance(
+      engineId: Int64.min, affinityKey: Int64.min, name: name)
+    guard let setup1, let setup2, setup1 !== setup2,
+      Setup.pigeonEngineKey(of: setup1) == engine1,
+      Setup.pigeonEngineKey(of: setup2) == engine2
+    else {
+      return false
+    }
+
+    // Resolution prefers engineId, then affinityKey, then the top of the stack.
+    guard
+      Setup.pigeonResolveInstance(engineId: engine1, affinityKey: engine2, name: name) === setup1,
+      Setup.pigeonResolveInstance(engineId: engine2, affinityKey: engine1, name: name) === setup2,
+      Setup.pigeonResolveInstance(engineId: noKey, affinityKey: engine1, name: name) === setup1,
+      Setup.pigeonResolveInstance(engineId: noKey, affinityKey: noKey, name: name) === setup2,
+      Setup.pigeonResolveInstance(engineId: 42, affinityKey: 43, name: name) === setup2,
+      Setup.pigeonResolveInstance(engineId: engine1, affinityKey: noKey, name: "unknown") == nil
+    else {
+      return false
+    }
+
+    // Re-registering from the same engine reuses the wrapper and moves it to the top.
+    Setup.register(api: shared, registrar: registrar1, name: name)
+    guard
+      Setup.pigeonResolveInstance(engineId: Int64.min, affinityKey: Int64.min, name: name)
+        === setup1
+    else {
+      return false
+    }
+
+    // Out-of-order unregister removes only the entry for that engine.
+    Setup.unregister(api: shared, registrar: registrar1, name: name)
+    guard
+      Setup.pigeonResolveInstance(engineId: Int64.min, affinityKey: Int64.min, name: name)
+        === setup2,
+      Setup.pigeonResolveInstance(engineId: engine1, affinityKey: noKey, name: name) === setup2
+    else {
+      return false
+    }
+
+    // Unregistering from an engine with no matching entry falls back to identity matching.
+    Setup.register(api: other, registrar: registrar1, name: name)
+    Setup.unregister(api: shared, registrar: registrar1, name: name)
+    guard
+      let remaining = Setup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min, name: name),
+      remaining !== setup2,
+      Setup.pigeonEngineKey(of: remaining) == engine1,
+      Setup.pigeonResolveInstance(engineId: engine2, affinityKey: noKey, name: name) === remaining
+    else {
+      return false
+    }
+    Setup.unregister(api: other, registrar: registrar1, name: name)
+    return Setup.pigeonResolveInstance(engineId: Int64.min, affinityKey: Int64.min, name: name)
+      == nil
+  }
+
+  private var namedHostApis: [String: NativeInteropTestsClass] = [:]
+
   func registerAndImmediatelyDeregisterHostApi(name: String) throws {
-    NativeInteropHostIntegrationCoreApiSetup.register(api: NativeInteropTestsClass(), name: name)
-    NativeInteropHostIntegrationCoreApiSetup.register(api: nil, name: name)
+    let api = NativeInteropTestsClass()
+    NativeInteropHostIntegrationCoreApiSetup.register(
+      api: api, registrar: effectiveRegistrar, name: name)
+    NativeInteropHostIntegrationCoreApiSetup.unregister(
+      api: api, registrar: effectiveRegistrar, name: name)
+  }
+
+  func registerNamedHostApi(name: String) throws {
+    let api = NativeInteropTestsClass()
+    namedHostApis[name] = api
+    NativeInteropHostIntegrationCoreApiSetup.register(
+      api: api, registrar: effectiveRegistrar, name: name)
+  }
+
+  func deregisterNamedHostApi(name: String) throws {
+    guard let api = namedHostApis.removeValue(forKey: name) else {
+      return
+    }
+    NativeInteropHostIntegrationCoreApiSetup.unregister(
+      api: api, registrar: effectiveRegistrar, name: name)
   }
 
   func testCallDeregisteredFlutterApi(name: String) throws -> Bool {
-    NativeInteropFlutterIntegrationCoreApiRegistrar.registerInstance(api: nil, name: name)
-    return NativeInteropFlutterIntegrationCoreApi.getInstance(name: name) == nil
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance(
+      registrar: effectiveRegistrar, name: name) == nil
   }
+
+  func testSecondaryEngineDartExecution() async throws -> Bool {
+    #if os(iOS)
+      return await SecondaryEngineTestRunner.verifyIOSLiveSecondaryEngineExecution()
+    #elseif os(macOS)
+      // Under `flutter test`, macOS FlutterEngine's `run(withEntrypoint:)` resolves symbols only
+      // from flutter_tools' synthetic bootstrap library; two-engine live Dart execution on macOS
+      // is therefore exercised in RunnerTests (`BasicCompileTest`) where `Runner.app`'s root
+      // library exports `secondaryEngineMain`.
+      return await MainActor.run {
+        SecondaryEngineTestRunner.verifyRealSecondaryEnginesOnMain()
+      }
+    #endif
+  }
+
+  func isSecondaryEngineRegistrationReady() throws -> Bool {
+    return SecondaryEngineCheckTracker.shared.isReady()
+  }
+
+  func reportSecondaryEngineCheck(success: Bool) throws {
+    SecondaryEngineCheckTracker.shared.report(success: success, receiver: self)
+  }
+
+  func registeredEngineKey() throws -> Int64 {
+    guard
+      let registration = NativeInteropHostIntegrationCoreApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min)
+    else {
+      throw NativeInteropTestsError(
+        code: "no-registration", message: "No default Host API registration.", details: nil)
+    }
+    return NativeInteropHostIntegrationCoreApiSetup.pigeonEngineKey(of: registration)
+  }
+
+  func pluginEngineIdentifierIsAvailable() throws -> Bool {
+    guard let registrar = registrar else {
+      return false
+    }
+    return (registrar as AnyObject).responds(to: NSSelectorFromString("engineIdentifier"))
+  }
+}
+
+final class SecondaryEngineCheckTracker: @unchecked Sendable {
+  static let shared = SecondaryEngineCheckTracker()
+
+  private let lock = NSLock()
+  private var registrationReady = false
+  private var expectedReceiver: NativeInteropTestsClass?
+  private var completedResult: Bool?
+  private var continuation: CheckedContinuation<Bool, Never>?
+
+  func begin() {
+    lock.lock()
+    defer { lock.unlock() }
+    registrationReady = false
+    expectedReceiver = nil
+    completedResult = nil
+    continuation = nil
+  }
+
+  func markRegistrationReady(expected: NativeInteropTestsClass?) {
+    lock.lock()
+    defer { lock.unlock() }
+    expectedReceiver = expected
+    registrationReady = true
+  }
+
+  func isReady() -> Bool {
+    lock.lock()
+    defer { lock.unlock() }
+    return registrationReady
+  }
+
+  func report(success: Bool, receiver: NativeInteropTestsClass) {
+    var pendingContinuation: CheckedContinuation<Bool, Never>?
+    let finalOutcome: Bool
+    lock.lock()
+    let receiverMatches = expectedReceiver == nil || expectedReceiver === receiver
+    finalOutcome = success && receiverMatches
+    if let cont = continuation {
+      pendingContinuation = cont
+      continuation = nil
+    } else if completedResult == nil {
+      completedResult = finalOutcome
+    }
+    lock.unlock()
+    pendingContinuation?.resume(returning: finalOutcome)
+  }
+
+  func waitForResult(timeoutNanoseconds: UInt64 = 15_000_000_000) async -> Bool {
+    let timeoutTask = Task {
+      try? await Task.sleep(nanoseconds: timeoutNanoseconds)
+      self.timeoutIfPending()
+    }
+    let outcome = await withCheckedContinuation { (cont: CheckedContinuation<Bool, Never>) in
+      var immediateResult: Bool?
+      lock.lock()
+      if let existing = completedResult {
+        immediateResult = existing
+        completedResult = nil
+      } else {
+        continuation = cont
+      }
+      lock.unlock()
+      if let immediateResult {
+        cont.resume(returning: immediateResult)
+      }
+    }
+    timeoutTask.cancel()
+    return outcome
+  }
+
+  private func timeoutIfPending() {
+    var pendingContinuation: CheckedContinuation<Bool, Never>?
+    lock.lock()
+    if let cont = continuation {
+      pendingContinuation = cont
+      continuation = nil
+    } else if completedResult == nil {
+      completedResult = false
+    }
+    lock.unlock()
+    pendingContinuation?.resume(returning: false)
+  }
+
+  func reset() {
+    lock.lock()
+    defer { lock.unlock() }
+    registrationReady = false
+    expectedReceiver = nil
+    completedResult = nil
+    continuation = nil
+  }
+}
+
+enum SecondaryEngineTestRunner {
+  #if os(iOS)
+    private final class WeakEngineBox {
+      weak var engine: FlutterEngine?
+      init(_ engine: FlutterEngine?) {
+        self.engine = engine
+      }
+    }
+
+    @MainActor
+    private static func startRegisteredIOSEngine(
+      name: String,
+      entrypoint: String,
+      engineOut: inout FlutterEngine?,
+      hostSetupOut: inout NativeInteropHostIntegrationCoreApiSetup?,
+      reservedSetupOut: inout NativeInteropReservedNamesHostApiSetup?,
+      hostImplOut: inout NativeInteropTestsClass?
+    ) -> Bool {
+      autoreleasepool {
+        let engine = FlutterEngine(name: name, project: nil, allowHeadlessExecution: true)
+        let libUri = "package:shared_test_plugin_code/secondary_engine_entrypoints.dart"
+        guard
+          engine.run(withEntrypoint: entrypoint, libraryURI: libUri),
+          let registrar = engine.registrar(forPlugin: "TestPlugin")
+        else {
+          engine.destroyContext()
+          return false
+        }
+        TestPlugin.register(with: registrar)
+        engineOut = engine
+        hostSetupOut = NativeInteropHostIntegrationCoreApiSetup.pigeonResolveInstance(
+          engineId: Int64.min, affinityKey: Int64.min)
+        reservedSetupOut = NativeInteropReservedNamesHostApiSetup.pigeonResolveInstance(
+          engineId: Int64.min, affinityKey: Int64.min)
+        hostImplOut = (engine.valuePublished(byPlugin: "TestPlugin") as? TestPlugin)?.niHostApiImpl
+        return true
+      }
+    }
+
+    @MainActor
+    private static func beginIOSEngineDestroy(_ engine: inout FlutterEngine?) -> WeakEngineBox {
+      let box = WeakEngineBox(engine)
+      autoreleasepool {
+        engine?.destroyContext()
+        engine = nil
+      }
+      return box
+    }
+
+    @MainActor
+    private static func awaitIOSEngineDealloc(_ box: WeakEngineBox) async -> Bool {
+      var attempts = 0
+      while box.engine != nil && attempts < 400 {
+        try? await Task.sleep(nanoseconds: 5_000_000)
+        attempts += 1
+      }
+      return box.engine == nil
+    }
+
+    @MainActor
+    static func verifyRealSecondaryEnginesIOS() async -> Bool {
+      let preexistingHostSetup = NativeInteropHostIntegrationCoreApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min)
+      let preexistingReservedSetup = NativeInteropReservedNamesHostApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min)
+      var engine1: FlutterEngine?
+      var engine2: FlutterEngine?
+      var setup1: NativeInteropHostIntegrationCoreApiSetup?
+      var setup2: NativeInteropHostIntegrationCoreApiSetup?
+      var reservedSetup1: NativeInteropReservedNamesHostApiSetup?
+      var reservedSetup2: NativeInteropReservedNamesHostApiSetup?
+      var impl1: NativeInteropTestsClass?
+      var impl2: NativeInteropTestsClass?
+
+      let started =
+        startRegisteredIOSEngine(
+          name: "pigeon_secondary_1",
+          entrypoint: "idleSecondaryEngineMain",
+          engineOut: &engine1,
+          hostSetupOut: &setup1,
+          reservedSetupOut: &reservedSetup1,
+          hostImplOut: &impl1)
+        && startRegisteredIOSEngine(
+          name: "pigeon_secondary_2",
+          entrypoint: "idleSecondaryEngineMain",
+          engineOut: &engine2,
+          hostSetupOut: &setup2,
+          reservedSetupOut: &reservedSetup2,
+          hostImplOut: &impl2)
+      impl1 = nil
+      impl2 = nil
+
+      guard
+        started,
+        setup1 != nil, setup1 !== preexistingHostSetup,
+        setup2 != nil, setup2 !== setup1,
+        reservedSetup1 != nil, reservedSetup1 !== preexistingReservedSetup,
+        reservedSetup2 != nil, reservedSetup2 !== reservedSetup1
+      else {
+        let box1 = beginIOSEngineDestroy(&engine1)
+        let box2 = beginIOSEngineDestroy(&engine2)
+        _ = await awaitIOSEngineDealloc(box1)
+        _ = await awaitIOSEngineDealloc(box2)
+        return false
+      }
+
+      // Destroy engine1 out-of-order without calling detachFromEngine manually;
+      // iOS FlutterEngine deallocation invokes detachFromEngine(for:) automatically.
+      let box1 = beginIOSEngineDestroy(&engine1)
+      let deallocated1 = await awaitIOSEngineDealloc(box1)
+      guard
+        deallocated1,
+        NativeInteropHostIntegrationCoreApiSetup.pigeonResolveInstance(
+          engineId: Int64.min, affinityKey: Int64.min) === setup2,
+        NativeInteropReservedNamesHostApiSetup.pigeonResolveInstance(
+          engineId: Int64.min, affinityKey: Int64.min) === reservedSetup2
+      else {
+        let box2 = beginIOSEngineDestroy(&engine2)
+        _ = await awaitIOSEngineDealloc(box2)
+        return false
+      }
+
+      let box2 = beginIOSEngineDestroy(&engine2)
+      let deallocated2 = await awaitIOSEngineDealloc(box2)
+      return deallocated2
+        && NativeInteropHostIntegrationCoreApiSetup.pigeonResolveInstance(
+          engineId: Int64.min, affinityKey: Int64.min) === preexistingHostSetup
+        && NativeInteropReservedNamesHostApiSetup.pigeonResolveInstance(
+          engineId: Int64.min, affinityKey: Int64.min) === preexistingReservedSetup
+    }
+
+    @MainActor
+    static func verifyIOSLiveSecondaryEngineExecution() async -> Bool {
+      let preexistingHostSetup = NativeInteropHostIntegrationCoreApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min)
+      let preexistingReservedSetup = NativeInteropReservedNamesHostApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min)
+      SecondaryEngineCheckTracker.shared.begin()
+      var engine1: FlutterEngine?
+      var engine2: FlutterEngine?
+      var setup1: NativeInteropHostIntegrationCoreApiSetup?
+      var setup2: NativeInteropHostIntegrationCoreApiSetup?
+      var reservedSetup1: NativeInteropReservedNamesHostApiSetup?
+      var reservedSetup2: NativeInteropReservedNamesHostApiSetup?
+      var impl1: NativeInteropTestsClass?
+      var expectedImpl: NativeInteropTestsClass?
+
+      let started =
+        startRegisteredIOSEngine(
+          name: "pigeon_live_1",
+          entrypoint: "idleSecondaryEngineMain",
+          engineOut: &engine1,
+          hostSetupOut: &setup1,
+          reservedSetupOut: &reservedSetup1,
+          hostImplOut: &impl1)
+        && startRegisteredIOSEngine(
+          name: "pigeon_live_2",
+          entrypoint: "secondaryEngineMain",
+          engineOut: &engine2,
+          hostSetupOut: &setup2,
+          reservedSetupOut: &reservedSetup2,
+          hostImplOut: &expectedImpl)
+      impl1 = nil
+
+      guard started, expectedImpl != nil else {
+        SecondaryEngineCheckTracker.shared.reset()
+        let box1 = beginIOSEngineDestroy(&engine1)
+        let box2 = beginIOSEngineDestroy(&engine2)
+        _ = await awaitIOSEngineDealloc(box1)
+        _ = await awaitIOSEngineDealloc(box2)
+        return false
+      }
+
+      // Destroy engine1 out-of-order before unblocking engine2's Dart isolate.
+      let box1 = beginIOSEngineDestroy(&engine1)
+      let deallocated1 = await awaitIOSEngineDealloc(box1)
+      SecondaryEngineCheckTracker.shared.markRegistrationReady(expected: expectedImpl)
+      expectedImpl = nil
+      let passed = await SecondaryEngineCheckTracker.shared.waitForResult()
+      SecondaryEngineCheckTracker.shared.reset()
+      let box2 = beginIOSEngineDestroy(&engine2)
+      let deallocated2 = await awaitIOSEngineDealloc(box2)
+      return deallocated1 && passed && deallocated2
+        && NativeInteropHostIntegrationCoreApiSetup.pigeonResolveInstance(
+          engineId: Int64.min, affinityKey: Int64.min) === preexistingHostSetup
+        && NativeInteropReservedNamesHostApiSetup.pigeonResolveInstance(
+          engineId: Int64.min, affinityKey: Int64.min) === preexistingReservedSetup
+    }
+  #elseif os(macOS)
+    static func verifyRealSecondaryEnginesLifecycle() -> Bool {
+      if Thread.isMainThread {
+        return MainActor.assumeIsolated {
+          verifyRealSecondaryEnginesOnMain()
+        }
+      }
+      return DispatchQueue.main.sync {
+        MainActor.assumeIsolated {
+          verifyRealSecondaryEnginesOnMain()
+        }
+      }
+    }
+
+    @MainActor
+    static func verifyRealSecondaryEnginesOnMain() -> Bool {
+      let preexistingHostSetup = NativeInteropHostIntegrationCoreApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min)
+      let preexistingReservedSetup = NativeInteropReservedNamesHostApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min)
+      let engine1 = FlutterEngine(
+        name: "pigeon_secondary_1", project: nil, allowHeadlessExecution: true)
+      let engine2 = FlutterEngine(
+        name: "pigeon_secondary_2", project: nil, allowHeadlessExecution: true)
+      let reg1 = engine1.registrar(forPlugin: "TestPlugin")
+      let reg2 = engine2.registrar(forPlugin: "TestPlugin")
+      TestPlugin.register(with: reg1)
+      let setup1 = NativeInteropHostIntegrationCoreApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min)
+      TestPlugin.register(with: reg2)
+      let setup2 = NativeInteropHostIntegrationCoreApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min)
+      guard
+        let plugin1 = engine1.valuePublished(byPlugin: "TestPlugin") as? TestPlugin,
+        let plugin2 = engine2.valuePublished(byPlugin: "TestPlugin") as? TestPlugin,
+        setup1 != nil, setup1 !== preexistingHostSetup,
+        setup2 != nil, setup2 !== setup1
+      else {
+        engine1.shutDownEngine()
+        engine2.shutDownEngine()
+        return false
+      }
+      plugin1.detachFromEngine(for: reg1)
+      engine1.shutDownEngine()
+      guard
+        NativeInteropHostIntegrationCoreApiSetup.pigeonResolveInstance(
+          engineId: Int64.min, affinityKey: Int64.min) === setup2
+      else {
+        plugin2.detachFromEngine(for: reg2)
+        engine2.shutDownEngine()
+        return false
+      }
+      plugin2.detachFromEngine(for: reg2)
+      engine2.shutDownEngine()
+      return NativeInteropHostIntegrationCoreApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min) === preexistingHostSetup
+        && NativeInteropReservedNamesHostApiSetup.pigeonResolveInstance(
+          engineId: Int64.min, affinityKey: Int64.min) === preexistingReservedSetup
+    }
+
+    @MainActor
+    static func verifyMacOSLiveSecondaryEnginesWithEntrypoint(
+      _ entrypoint: String = "secondaryEngineMain"
+    ) async -> Bool {
+      let preexistingHostSetup = NativeInteropHostIntegrationCoreApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min)
+      let engine1 = FlutterEngine(
+        name: "pigeon_macos_live_1", project: nil, allowHeadlessExecution: true)
+      let engine2 = FlutterEngine(
+        name: "pigeon_macos_live_2", project: nil, allowHeadlessExecution: true)
+      let reg1 = engine1.registrar(forPlugin: "TestPlugin")
+      let reg2 = engine2.registrar(forPlugin: "TestPlugin")
+
+      // Register engine1 and verify its live Dart isolate invokes engine1's Host API.
+      SecondaryEngineCheckTracker.shared.begin()
+      TestPlugin.register(with: reg1)
+      guard let plugin1 = engine1.valuePublished(byPlugin: "TestPlugin") as? TestPlugin,
+        let impl1 = plugin1.niHostApiImpl
+      else {
+        SecondaryEngineCheckTracker.shared.reset()
+        engine1.shutDownEngine()
+        engine2.shutDownEngine()
+        return false
+      }
+      SecondaryEngineCheckTracker.shared.markRegistrationReady(expected: impl1)
+      guard engine1.run(withEntrypoint: entrypoint) else {
+        SecondaryEngineCheckTracker.shared.reset()
+        plugin1.detachFromEngine(for: reg1)
+        engine1.shutDownEngine()
+        engine2.shutDownEngine()
+        return false
+      }
+      let firstPassed = await SecondaryEngineCheckTracker.shared.waitForResult()
+
+      // Register engine2 while engine1 is still running, then tear down engine1 out-of-order
+      // and verify engine2's live Dart isolate invokes engine2's Host API.
+      SecondaryEngineCheckTracker.shared.begin()
+      TestPlugin.register(with: reg2)
+      guard let plugin2 = engine2.valuePublished(byPlugin: "TestPlugin") as? TestPlugin,
+        let impl2 = plugin2.niHostApiImpl
+      else {
+        SecondaryEngineCheckTracker.shared.reset()
+        plugin1.detachFromEngine(for: reg1)
+        engine1.shutDownEngine()
+        engine2.shutDownEngine()
+        return false
+      }
+      plugin1.detachFromEngine(for: reg1)
+      engine1.shutDownEngine()
+
+      SecondaryEngineCheckTracker.shared.markRegistrationReady(expected: impl2)
+      guard engine2.run(withEntrypoint: entrypoint) else {
+        SecondaryEngineCheckTracker.shared.reset()
+        plugin2.detachFromEngine(for: reg2)
+        engine2.shutDownEngine()
+        return false
+      }
+      let secondPassed = await SecondaryEngineCheckTracker.shared.waitForResult()
+      SecondaryEngineCheckTracker.shared.reset()
+
+      plugin2.detachFromEngine(for: reg2)
+      engine2.shutDownEngine()
+      return firstPassed && secondPassed
+        && NativeInteropHostIntegrationCoreApiSetup.pigeonResolveInstance(
+          engineId: Int64.min, affinityKey: Int64.min) === preexistingHostSetup
+    }
+  #endif
 }
 
 class NativeInteropReservedNamesHostApiImpl: NativeInteropReservedNamesHostApi {
   private var storedReference = ""
+  /// The registrar of the engine this instance serves; used to find that engine's Flutter APIs.
+  weak var registrar: FlutterPluginRegistrar?
+
+  init(registrar: FlutterPluginRegistrar? = nil) {
+    self.registrar = registrar
+  }
 
   func release(value: String) throws -> String {
     return value
@@ -2153,12 +2978,27 @@ class NativeInteropReservedNamesHostApiImpl: NativeInteropReservedNamesHostApi {
     return "value"
   }
 
+  func register(value: String) throws -> String {
+    return value
+  }
+
+  func unregister(value: String) throws -> String {
+    return value
+  }
+
+  func getGetInstance() throws -> String {
+    return "getInstance"
+  }
+
   func echoReservedNames(names: NativeInteropReservedNames) throws -> NativeInteropReservedNames {
     return names
   }
 
   private func flutterApi() throws -> NativeInteropReservedNamesFlutterApi {
-    guard let flutterApi = NativeInteropReservedNamesFlutterApi.getInstance() else {
+    guard let registrar,
+      let flutterApi = NativeInteropReservedNamesFlutterApiRegistrar.getInstance(
+        registrar: registrar)
+    else {
       throw NativeInteropTestsError(
         code: "not_registered", message: "NativeInteropReservedNamesFlutterApi not registered",
         details: nil)
@@ -2184,6 +3024,14 @@ class NativeInteropReservedNamesHostApiImpl: NativeInteropReservedNamesHostApi {
 
   func callFlutterGetReference() throws -> String {
     return try flutterApi().getReference()
+  }
+
+  func callFlutterRegister(value: String) throws -> String {
+    return try flutterApi().register(value: value)
+  }
+
+  func callFlutterDartApi() throws -> String {
+    return try flutterApi().dartApi()
   }
 }
 
@@ -2298,4 +3146,103 @@ class SendConsistentNumbers: StreamConsistentNumbersStreamHandler {
   override func onCancel(withArguments arguments: Any?) {
     onCancelled?()
   }
+}
+
+final class StubBinaryMessenger: NSObject, FlutterBinaryMessenger {
+  func send(onChannel channel: String, message: Data?) {}
+
+  func send(
+    onChannel channel: String, message: Data?, binaryReply callback: FlutterBinaryReply? = nil
+  ) {
+    callback?(nil)
+  }
+
+  func setMessageHandlerOnChannel(
+    _ channel: String, binaryMessageHandler handler: FlutterBinaryMessageHandler? = nil
+  ) -> FlutterBinaryMessengerConnection {
+    return 0
+  }
+
+  func cleanUpConnection(_ connection: FlutterBinaryMessengerConnection) {}
+}
+
+final class StubTextureRegistry: NSObject, FlutterTextureRegistry {
+  func register(_ texture: FlutterTexture) -> Int64 { 0 }
+  func textureFrameAvailable(_ textureId: Int64) {}
+  func unregisterTexture(_ textureId: Int64) {}
+}
+
+final class StubPluginRegistrar: NSObject, FlutterPluginRegistrar {
+  let stubMessenger: FlutterBinaryMessenger = StubBinaryMessenger()
+  let stubTextures: FlutterTextureRegistry = StubTextureRegistry()
+  // `@objc` so that the generated runtime lookup finds it even on Flutter
+  // versions whose `FlutterPluginRegistrar` doesn't declare it.
+  @objc let engineIdentifier: Int64
+  var published: NSObject?
+
+  private static let identifierLock = NSLock()
+  // Large enough not to collide with the identifiers of real engines in the test process.
+  private static var nextEngineIdentifier: Int64 = 1 << 40
+
+  /// Creates a registrar for a fake engine with a unique `engineIdentifier`.
+  override init() {
+    StubPluginRegistrar.identifierLock.lock()
+    engineIdentifier = StubPluginRegistrar.nextEngineIdentifier
+    StubPluginRegistrar.nextEngineIdentifier += 1
+    StubPluginRegistrar.identifierLock.unlock()
+    super.init()
+  }
+
+  func publish(_ value: NSObject) {
+    published = value
+  }
+
+  func addMethodCallDelegate(_ delegate: FlutterPlugin, channel: FlutterMethodChannel) {}
+
+  func lookupKey(forAsset asset: String) -> String { asset }
+
+  func lookupKey(forAsset asset: String, fromPackage package: String) -> String { asset }
+
+  func valuePublished(byPlugin pluginKey: String) -> NSObject? { published }
+
+  func register(_ factory: FlutterPlatformViewFactory, withId factoryId: String) {}
+
+  #if os(iOS)
+    var viewController: UIViewController? { nil }
+    func messenger() -> FlutterBinaryMessenger { stubMessenger }
+    func textures() -> FlutterTextureRegistry { stubTextures }
+    func addApplicationDelegate(_ delegate: FlutterPlugin) {}
+    func addSceneDelegate(_ delegate: FlutterSceneLifeCycleDelegate) {}
+    func register(
+      _ factory: FlutterPlatformViewFactory, withId factoryId: String,
+      gestureRecognizersBlockingPolicy: FlutterPlatformViewGestureRecognizersBlockingPolicy
+    ) {}
+  #elseif os(macOS)
+    var messenger: FlutterBinaryMessenger { stubMessenger }
+    var textures: FlutterTextureRegistry { stubTextures }
+    var view: NSView? { nil }
+    var viewController: NSViewController? { nil }
+    func addApplicationDelegate(_ delegate: FlutterAppLifecycleDelegate) {}
+  #endif
+}
+
+@objc
+private final class TestPluginReservedFlutterBridge: NSObject,
+  NativeInteropReservedNamesFlutterApiBridge
+{
+  let label: String
+  init(_ label: String) { self.label = label }
+  func release(value valueArg: NSString?, error: NativeInteropTestsError) -> NSString? {
+    "\(label):\(valueArg ?? "")" as NSString
+  }
+  func type(error: NativeInteropTestsError) -> NSString? { label as NSString }
+  func implementIn(value valueArg: NSString?, error: NativeInteropTestsError) -> NSString? {
+    "\(label):\(valueArg ?? "")" as NSString
+  }
+  func isNull(error: NativeInteropTestsError) -> NSNumber? { NSNumber(value: false) }
+  func getReference(error: NativeInteropTestsError) -> NSString? { label as NSString }
+  func register(value valueArg: NSString?, error: NativeInteropTestsError) -> NSString? {
+    "\(label):\(valueArg ?? "")" as NSString
+  }
+  func dartApi(error: NativeInteropTestsError) -> NSString? { label as NSString }
 }

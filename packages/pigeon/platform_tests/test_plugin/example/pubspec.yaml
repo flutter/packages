@@ -10,7 +10,11 @@ dependencies:
   flutter:
     sdk: flutter
   jni: ^1.1.1
-  objective_c: ^9.6.2
+  # TODO(tarrinneal): Remove the upper bound once objective_c's debug object
+  # validity check handles runtime-allocated classes on the iOS simulator.
+  # 9.6.3's check masks the isa with a class mask that is too narrow there, so
+  # it rejects valid ObjCProtocolBuilder instances.
+  objective_c: ">=9.6.2 <9.6.3"
   pub_semver: ^2.2.0
   shared_test_plugin_code:
     path: ../../shared_test_plugin_code
