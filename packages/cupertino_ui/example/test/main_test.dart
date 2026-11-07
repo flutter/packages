@@ -12,6 +12,8 @@ import 'package:cupertino_ui_examples/button/cupertino_button.0.dart'
     as cupertino_button_0;
 import 'package:cupertino_ui_examples/checkbox/cupertino_checkbox.0.dart'
     as cupertino_checkbox_0;
+import 'package:cupertino_ui_examples/color_picker/cupertino_color_picker.0.dart'
+    as cupertino_color_picker_0;
 import 'package:cupertino_ui_examples/context_menu/cupertino_context_menu.0.dart'
     as cupertino_context_menu_0;
 import 'package:cupertino_ui_examples/context_menu/cupertino_context_menu.1.dart'
@@ -115,6 +117,7 @@ const Map<String, Type> examples = <String, Type>{
   'CupertinoTabBar': cupertino_tab_bar_0.CupertinoTabBarApp,
   'CupertinoButton': cupertino_button_0.CupertinoButtonApp,
   'CupertinoCheckbox': cupertino_checkbox_0.CupertinoCheckboxApp,
+  'CupertinoColorPicker': cupertino_color_picker_0.CupertinoColorPickerApp,
   'CupertinoContextMenu': cupertino_context_menu_0.ContextMenuApp,
   'CupertinoContextMenu.builder': cupertino_context_menu_1.ContextMenuApp,
   'CupertinoDatePicker': cupertino_date_picker_0.DatePickerApp,
