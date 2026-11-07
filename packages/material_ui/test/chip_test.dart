@@ -5855,6 +5855,99 @@ void main() {
     expect(getIconStyle(tester, deleteIcon)?.color, iconColor);
   });
 
+  testWidgets('Chip resolves a WidgetStateColor iconTheme color for the avatar', (
+    WidgetTester tester,
+  ) async {
+    const IconData avatarIcon = Icons.person;
+    const selectedColor = Color(0xff00ff00);
+    const unselectedColor = Color(0xff0000ff);
+    const disabledColor = Color(0xff888888);
+
+    Widget buildChip({
+      required IconThemeData iconTheme,
+      bool selected = false,
+      bool enabled = true,
+    }) {
+      return wrapForChip(
+        child: FilterChip(
+          avatar: const Icon(avatarIcon),
+          iconTheme: iconTheme,
+          label: const Text('Label'),
+          selected: selected,
+          onSelected: enabled ? (bool value) {} : null,
+        ),
+      );
+    }
+
+    final stateIconTheme = IconThemeData(
+      color: WidgetStateColor.resolveWith((Set<WidgetState> states) {
+        if (states.contains(WidgetState.disabled)) {
+          return disabledColor;
+        }
+        if (states.contains(WidgetState.selected)) {
+          return selectedColor;
+        }
+        return unselectedColor;
+      }),
+    );
+
+    await tester.pumpWidget(buildChip(iconTheme: stateIconTheme));
+    expect(getIconStyle(tester, avatarIcon)?.color, unselectedColor);
+
+    await tester.pumpWidget(buildChip(iconTheme: stateIconTheme, selected: true));
+    expect(getIconStyle(tester, avatarIcon)?.color, selectedColor);
+
+    await tester.pumpWidget(buildChip(iconTheme: stateIconTheme, enabled: false));
+    await tester.pumpAndSettle();
+    expect(getIconStyle(tester, avatarIcon)?.color, disabledColor);
+
+    // A plain color does not change with the chip's state.
+    const plainIconTheme = IconThemeData(color: Color(0xffff00ff));
+    await tester.pumpWidget(buildChip(iconTheme: plainIconTheme));
+    expect(getIconStyle(tester, avatarIcon)?.color, plainIconTheme.color);
+
+    await tester.pumpWidget(buildChip(iconTheme: plainIconTheme, selected: true));
+    expect(getIconStyle(tester, avatarIcon)?.color, plainIconTheme.color);
+
+    await tester.pumpWidget(buildChip(iconTheme: plainIconTheme, enabled: false));
+    await tester.pumpAndSettle();
+    expect(getIconStyle(tester, avatarIcon)?.color, plainIconTheme.color);
+  });
+
+  testWidgets('Chip resolves a WidgetStateColor ChipTheme iconTheme color for the avatar', (
+    WidgetTester tester,
+  ) async {
+    const IconData avatarIcon = Icons.person;
+    const selectedColor = Color(0xff00ff00);
+    const unselectedColor = Color(0xff0000ff);
+
+    Widget buildChip({bool selected = false}) {
+      return wrapForChip(
+        child: ChipTheme(
+          data: ChipThemeData(
+            iconTheme: IconThemeData(
+              color: WidgetStateColor.resolveWith((Set<WidgetState> states) {
+                return states.contains(WidgetState.selected) ? selectedColor : unselectedColor;
+              }),
+            ),
+          ),
+          child: FilterChip(
+            avatar: const Icon(avatarIcon),
+            label: const Text('Label'),
+            selected: selected,
+            onSelected: (bool value) {},
+          ),
+        ),
+      );
+    }
+
+    await tester.pumpWidget(buildChip());
+    expect(getIconStyle(tester, avatarIcon)?.color, unselectedColor);
+
+    await tester.pumpWidget(buildChip(selected: true));
+    expect(getIconStyle(tester, avatarIcon)?.color, selectedColor);
+  });
+
   testWidgets('RawChip.deleteIconColor overrides iconTheme color', (WidgetTester tester) async {
     const iconColor = Color(0xffff00ff);
     const deleteIconColor = Color(0xffff00ff);
