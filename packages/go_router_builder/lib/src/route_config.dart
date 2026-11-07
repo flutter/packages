@@ -18,6 +18,7 @@ import 'package:source_helper/source_helper.dart';
 
 import 'duplicate_path_severity.dart';
 import 'path_utils.dart';
+import 'route_metadata.dart';
 import 'type_helpers.dart';
 
 /// Custom [Iterable] implementation with extra info.
@@ -596,7 +597,8 @@ mixin $_mixinName on $routeDataClassName {
 
 /// Represents a `TypedGoRoute` annotation to the builder.
 abstract class RouteBaseConfig {
-  RouteBaseConfig._({required this.routeDataClass, required this.parent});
+  RouteBaseConfig._({required this.routeDataClass, required this.parent})
+    : _metadataCode = routeMetadataCode(routeDataClass);
 
   /// Creates a new [RouteBaseConfig] represented the annotation data in [reader].
   factory RouteBaseConfig.fromAnnotation(ConstantReader reader, InterfaceElement element) {
@@ -770,6 +772,8 @@ abstract class RouteBaseConfig {
     return value;
   }
 
+  final String? _metadataCode;
+
   final List<RouteBaseConfig> _children = <RouteBaseConfig>[];
 
   /// The `RouteData` class this class represents.
@@ -882,7 +886,7 @@ ${_generateChildrenGetterName(routeDataClassName)}: [${_children.map((RouteBaseC
 
     return '''
 $routeDataClassName.$dataConvertionFunctionName(
-    $routeConstructorParameters $factorConstructorParameters $routesBit)
+    $routeConstructorParameters ${_metadataCode == null ? '' : 'metadata: $_metadataCode,'} $factorConstructorParameters $routesBit)
 ''';
   }
 
