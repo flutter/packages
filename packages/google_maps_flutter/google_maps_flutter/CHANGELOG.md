@@ -1,3 +1,7 @@
+## 2.20.0
+
+* Updates default iOS implementation to `google_maps_flutter_ios_sdk9`.
+
 ## 2.19.0
 
 * Adds support for tapping points of interest on the map.

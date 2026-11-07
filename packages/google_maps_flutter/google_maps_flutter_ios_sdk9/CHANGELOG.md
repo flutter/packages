@@ -1,3 +1,7 @@
+## 2.19.1
+
+* Updates README to reflect that this is now the default endorsed iOS implementation.
+
 ## 2.19.0
 
 * Adds support for tapping points of interest on the map.
