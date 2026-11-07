@@ -81,6 +81,17 @@ class SpanState<T extends Span>
   double get splashProgress => _splashProgress;
   double _splashProgress = 0.0;
 
+  bool _disposed = false;
+  final Set<int> _activePointers = <int>{};
+  bool _splashAnimating = false;
+  int? _frameCallbackId;
+  Duration? _stateAnimationStartTime;
+  double _stateAnimationRawProgress = 1.0;
+  double _stateAnimationInitialProgress = 0.0;
+  bool _stateAnimationReversed = false;
+  Duration? _splashAnimationStartTime;
+  Map<Type, GestureRecognizer>? _recognizers;
+
   /// Updates the layout metrics and [configuration] for this span.
   ///
   /// If [configuration] has changed and [GestureRecognizer]s have already been
@@ -100,8 +111,6 @@ class SpanState<T extends Span>
     }
   }
 
-  bool _disposed = false;
-
   /// Releases any resources held by this span, including active frame callbacks
   /// and [GestureRecognizer]s.
   @mustCallSuper
@@ -115,13 +124,6 @@ class SpanState<T extends Span>
     _states.clear();
     _disposeRecognizers();
   }
-
-  final Set<int> _activePointers = <int>{};
-  bool _splashAnimating = false;
-  int? _frameCallbackId;
-  Duration? _stateAnimationStartTime;
-  double _stateAnimationInitialProgress = 0.0;
-  Duration? _splashAnimationStartTime;
 
   bool get _hasDecorations =>
       _configuration != null &&
@@ -159,10 +161,7 @@ class SpanState<T extends Span>
       return Duration.zero;
     }
     final Duration? styleDuration =
-        bg?.splashAnimationStyle?.duration ??
-        fg?.splashAnimationStyle?.duration ??
-        bg?.animationStyle?.duration ??
-        fg?.animationStyle?.duration;
+        bg?.splashAnimationStyle?.duration ?? fg?.splashAnimationStyle?.duration;
     return styleDuration ?? SpanDecoration.defaultSplashDuration;
   }
 
@@ -172,8 +171,6 @@ class SpanState<T extends Span>
     }
     return _configuration!.backgroundDecoration?.splashAnimationStyle?.curve ??
         _configuration!.foregroundDecoration?.splashAnimationStyle?.curve ??
-        _configuration!.backgroundDecoration?.animationStyle?.curve ??
-        _configuration!.foregroundDecoration?.animationStyle?.curve ??
         SpanDecoration.defaultSplashCurve;
   }
 
@@ -195,7 +192,9 @@ class SpanState<T extends Span>
       final Duration duration = _stateAnimationDuration;
       if (duration <= Duration.zero) {
         _stateAnimationProgress = 1.0;
+        _stateAnimationRawProgress = 1.0;
         _stateAnimationInitialProgress = 0.0;
+        _stateAnimationReversed = false;
         _stateAnimationStartTime = null;
       } else {
         _stateAnimationStartTime ??= timeStamp;
@@ -203,12 +202,18 @@ class SpanState<T extends Span>
         final double rawProgress =
             (_stateAnimationInitialProgress + (elapsed.inMicroseconds / duration.inMicroseconds))
                 .clamp(0.0, 1.0);
-        _stateAnimationProgress = _stateAnimationCurve.transform(rawProgress);
+        _stateAnimationRawProgress = rawProgress;
+        final Curve curve = _stateAnimationReversed
+            ? _stateAnimationCurve.flipped
+            : _stateAnimationCurve;
+        _stateAnimationProgress = curve.transform(rawProgress);
         if (rawProgress < 1.0) {
           needsMoreFrames = true;
         } else {
           _stateAnimationProgress = 1.0;
+          _stateAnimationRawProgress = 1.0;
           _stateAnimationInitialProgress = 0.0;
+          _stateAnimationReversed = false;
           _stateAnimationStartTime = null;
         }
       }
@@ -249,6 +254,14 @@ class SpanState<T extends Span>
     if (!willChange) {
       return;
     }
+    if (!_hasDecorations) {
+      if (value) {
+        _states.add(state);
+      } else {
+        _states.remove(state);
+      }
+      return;
+    }
     final Set<WidgetState> oldPreviousStates = _previousStates;
     _previousStates = Set<WidgetState>.of(_states);
     if (value) {
@@ -256,26 +269,28 @@ class SpanState<T extends Span>
     } else {
       _states.remove(state);
     }
-    if (_hasDecorations) {
-      if (_stateAnimationDuration > Duration.zero) {
-        if (_stateAnimationProgress < 1.0 && setEquals(_states, oldPreviousStates)) {
-          _stateAnimationProgress = 1.0 - _stateAnimationProgress;
-          _stateAnimationInitialProgress = _stateAnimationProgress;
-        } else {
-          _stateAnimationProgress = 0.0;
-          _stateAnimationInitialProgress = 0.0;
-        }
-        _stateAnimationStartTime = null;
-        _ensureFrameScheduled();
+    if (_stateAnimationDuration > Duration.zero) {
+      if (_stateAnimationProgress < 1.0 && setEquals(_states, oldPreviousStates)) {
+        _stateAnimationReversed = !_stateAnimationReversed;
+        _stateAnimationRawProgress = 1.0 - _stateAnimationRawProgress;
+        _stateAnimationInitialProgress = _stateAnimationRawProgress;
+        _stateAnimationProgress = 1.0 - _stateAnimationProgress;
       } else {
-        _stateAnimationProgress = 1.0;
+        _stateAnimationReversed = false;
+        _stateAnimationRawProgress = 0.0;
         _stateAnimationInitialProgress = 0.0;
+        _stateAnimationProgress = 0.0;
       }
-      onStateChanged?.call();
+      _stateAnimationStartTime = null;
+      _ensureFrameScheduled();
+    } else {
+      _stateAnimationReversed = false;
+      _stateAnimationRawProgress = 1.0;
+      _stateAnimationInitialProgress = 0.0;
+      _stateAnimationProgress = 1.0;
     }
+    onStateChanged?.call();
   }
-
-  Map<Type, GestureRecognizer>? _recognizers;
 
   void _syncRecognizers() {
     if (configuration.recognizerFactories.isEmpty) {
