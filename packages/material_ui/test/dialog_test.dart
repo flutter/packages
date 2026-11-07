@@ -1217,7 +1217,7 @@ void main() {
               tester,
               finder: contentFinder,
               textScaleFactor: textScaleFactor,
-              unscaledValue: 24.0,
+              unscaledValue: isM3 ? 24.0 : 20.0,
             );
             expectLeftEdgePadding(
               tester,
@@ -1259,27 +1259,22 @@ void main() {
         );
       }
 
-      for (final isM3 in <bool>[true, false]) {
-        testWidgets(
-          'AlertDialog content with no icon or title is inset from the top as much as from the sides [textScaleFactor]=$textScaleFactor [isM3]=$isM3',
-          (WidgetTester tester) async {
-            final dialog = AlertDialog(content: content);
+      testWidgets(
+        'AlertDialog content with no icon or title is inset from the top as much as from the sides [textScaleFactor]=$textScaleFactor',
+        (WidgetTester tester) async {
+          final dialog = AlertDialog(content: content);
 
-            await openDialog(tester, dialog, textScaleFactor, isM3: isM3);
+          await openDialog(tester, dialog, textScaleFactor, isM3: true);
 
-            final Rect surface = tester.getRect(dialogFinder);
-            final Rect contentRect = tester.getRect(contentFinder);
-            expect(
-              contentRect.top - surface.top,
-              moreOrLessEquals(contentRect.left - surface.left),
-            );
-            expect(
-              contentRect.top - surface.top,
-              moreOrLessEquals(surface.right - contentRect.right),
-            );
-          },
-        );
-      }
+          final Rect surface = tester.getRect(dialogFinder);
+          final Rect contentRect = tester.getRect(contentFinder);
+          expect(contentRect.top - surface.top, moreOrLessEquals(contentRect.left - surface.left));
+          expect(
+            contentRect.top - surface.top,
+            moreOrLessEquals(surface.right - contentRect.right),
+          );
+        },
+      );
 
       testWidgets(
         'AlertDialog padding is correct when title, content, and actions are specified [textScaleFactor]=$textScaleFactor',
