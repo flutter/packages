@@ -9,21 +9,19 @@ import 'package:image_picker_platform_interface/image_picker_platform_interface.
 export 'package:image_picker_platform_interface/image_picker_platform_interface.dart'
     show
         CameraDevice,
+        FileSystemXFile,
         ImageSource,
-        LostData,
         LostDataResponse,
-        PickedFile,
         RetrieveType,
-        XFile,
-        kTypeImage,
-        kTypeVideo;
+        ScopedStorageXFile,
+        XFile;
 
 /// Provides an easy way to pick an image/video from the image library,
 /// or to take a picture/video with the camera.
 class ImagePicker {
   /// The platform interface that drives this plugin
   @visibleForTesting
-  static ImagePickerPlatform get platform => ImagePickerPlatform.instance;
+  static ImagePickerPlatform get platform => ImagePickerPlatform.instance!;
 
   /// Returns an [XFile] object wrapping the image that was picked.
   ///
@@ -71,21 +69,23 @@ class ImagePicker {
   /// be allocated (Android only) or due to an unknown error.
   Future<XFile?> pickImage({
     required ImageSource source,
-    double? maxWidth,
-    double? maxHeight,
+    int? maxWidth,
+    int? maxHeight,
     int? imageQuality,
     CameraDevice preferredCameraDevice = CameraDevice.rear,
     bool requestFullMetadata = true,
   }) {
-    final imagePickerOptions = ImagePickerOptions.createAndValidate(
-      maxWidth: maxWidth,
-      maxHeight: maxHeight,
-      imageQuality: imageQuality,
+    final imagePickerOptions = ImagePickerOptions(
+      imageOptions: ImageOptions.createAndValidate(
+        maxWidth: maxWidth,
+        maxHeight: maxHeight,
+        imageQuality: imageQuality,
+        requestFullMetadata: requestFullMetadata,
+      ),
       preferredCameraDevice: preferredCameraDevice,
-      requestFullMetadata: requestFullMetadata,
     );
 
-    return platform.getImageFromSource(source: source, options: imagePickerOptions);
+    return ImagePickerPlatform.instance!.pickImage(source: source, options: imagePickerOptions);
   }
 
   /// Returns a [List<XFile>] object wrapping the images that were picked.
@@ -124,14 +124,14 @@ class ImagePicker {
   ///
   /// See also [pickImage] to allow users to only pick a single image.
   Future<List<XFile>> pickMultiImage({
-    double? maxWidth,
-    double? maxHeight,
+    int? maxWidth,
+    int? maxHeight,
     int? imageQuality,
     int? limit,
     bool requestFullMetadata = true,
   }) async {
     if (limit != null && limit < 1) {
-      throw ArgumentError.value(limit, 'limit', 'cannot be lower than 1');
+      throw RangeError.range(limit, 1, null, 'limit');
     }
     // limit: 1 would fail MultiImagePickerOptions validation (requires >= 2),
     // so delegate to pickImage which already handles single-image selection.
@@ -153,7 +153,7 @@ class ImagePicker {
       requestFullMetadata: requestFullMetadata,
     );
 
-    return platform.getMultiImageWithOptions(
+    return platform.pickMultiImage(
       options: MultiImagePickerOptions.createAndValidate(imageOptions: imageOptions, limit: limit),
     );
   }
@@ -194,13 +194,13 @@ class ImagePicker {
   ///
   /// If no image or video was picked, the return value is null.
   Future<XFile?> pickMedia({
-    double? maxWidth,
-    double? maxHeight,
+    int? maxWidth,
+    int? maxHeight,
     int? imageQuality,
     bool requestFullMetadata = true,
   }) async {
-    final List<XFile> listMedia = await platform.getMedia(
-      options: MediaOptions.createAndValidate(
+    final List<XFile> listMedia = await platform.pickMedia(
+      options: MediaPickerOptions.createAndValidate(
         imageOptions: ImageOptions.createAndValidate(
           maxHeight: maxHeight,
           maxWidth: maxWidth,
@@ -252,17 +252,17 @@ class ImagePicker {
   /// or due to an unknown error.
   ///
   /// If no images or videos were picked, the return value is an empty list.
-  Future<List<XFile>> pickMultipleMedia({
-    double? maxWidth,
-    double? maxHeight,
+  Future<List<XFile>> pickMultiMedia({
+    int? maxWidth,
+    int? maxHeight,
     int? imageQuality,
     int? limit,
     bool requestFullMetadata = true,
   }) async {
     if (limit != null && limit < 1) {
-      throw ArgumentError.value(limit, 'limit', 'cannot be lower than 1');
+      throw RangeError.range(limit, 1, null, 'limit');
     }
-    // limit: 1 would fail MediaOptions validation (requires >= 2),
+    // limit: 1 would fail MediaPickerOptions validation (requires >= 2),
     // so delegate to pickMedia which already handles single-item selection.
     if (limit == 1) {
       final XFile? media = await pickMedia(
@@ -274,8 +274,8 @@ class ImagePicker {
       return <XFile>[if (media != null) media];
     }
 
-    return platform.getMedia(
-      options: MediaOptions.createAndValidate(
+    return platform.pickMedia(
+      options: MediaPickerOptions.createAndValidate(
         allowMultiple: true,
         imageOptions: ImageOptions.createAndValidate(
           maxHeight: maxHeight,
@@ -315,10 +315,12 @@ class ImagePicker {
     CameraDevice preferredCameraDevice = CameraDevice.rear,
     Duration? maxDuration,
   }) {
-    return platform.getVideo(
+    return platform.pickVideo(
       source: source,
-      preferredCameraDevice: preferredCameraDevice,
-      maxDuration: maxDuration,
+      options: VideoPickerOptions(
+        preferredCameraDevice: preferredCameraDevice,
+        videoOptions: VideoOptions.createAndValidate(maxDuration: maxDuration),
+      ),
     );
   }
 
@@ -338,9 +340,22 @@ class ImagePicker {
   ///
   /// The method can throw a [PlatformException] if the video selection process
   /// fails.
-  Future<List<XFile>> pickMultiVideo({Duration? maxDuration, int? limit}) {
-    return platform.getMultiVideoWithOptions(
-      options: MultiVideoPickerOptions(maxDuration: maxDuration, limit: limit),
+  Future<List<XFile>> pickMultiVideo({Duration? maxDuration, int? limit}) async {
+    if (limit != null && limit < 1) {
+      throw RangeError.range(limit, 1, null, 'limit');
+    }
+    // limit: 1 would fail MultiVideoPickerOptions validation (requires >= 2),
+    // so delegate to pickMedia which already handles single-item selection.
+    if (limit == 1) {
+      final XFile? video = await pickVideo(source: ImageSource.gallery, maxDuration: maxDuration);
+      return <XFile>[if (video != null) video];
+    }
+
+    return platform.pickMultiVideo(
+      options: MultiVideoPickerOptions(
+        videoOptions: VideoOptions.createAndValidate(maxDuration: maxDuration),
+        limit: limit,
+      ),
     );
   }
 

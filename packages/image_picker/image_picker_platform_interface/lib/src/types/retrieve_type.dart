@@ -4,12 +4,18 @@
 
 /// The type of the retrieved data in a [LostDataResponse].
 enum RetrieveType {
-  /// A static picture. See [ImagePicker.pickImage].
+  /// A static picture.
+  ///
+  /// See [ImagePickerPlatform.pickImage].
   image,
 
-  /// A video. See [ImagePicker.pickVideo].
+  /// A video.
+  ///
+  /// See [ImagePickerPlatform.pickVideo].
   video,
 
-  /// Either a video or a static picture. See [ImagePicker.pickMedia].
+  /// Either a video or a static picture.
+  ///
+  /// See [ImagePickerPlatform.pickMedia].
   media,
 }

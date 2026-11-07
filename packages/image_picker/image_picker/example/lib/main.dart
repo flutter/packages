@@ -63,9 +63,9 @@ class _MyHomePageState extends State<MyHomePage> {
       await _disposeVideoController();
       final VideoPlayerController controller;
       if (kIsWeb) {
-        controller = VideoPlayerController.networkUrl(Uri.parse(file.path));
+        controller = VideoPlayerController.networkUrl(Uri.parse(file.uri));
       } else {
-        controller = VideoPlayerController.file(File(file.path));
+        controller = VideoPlayerController.file(File(Uri.parse(file.uri).toFilePath()));
       }
       _controller = controller;
       // In web, most browsers won't honor a programmatic call to .play
@@ -107,14 +107,14 @@ class _MyHomePageState extends State<MyHomePage> {
         await _playVideo(files.firstOrNull);
       } else if (allowMultiple) {
         await _displayPickImageDialog(context, true, (
-          double? maxWidth,
-          double? maxHeight,
+          int? maxWidth,
+          int? maxHeight,
           int? quality,
           int? limit,
         ) async {
           try {
             final List<XFile> pickedFileList = isMedia
-                ? await _picker.pickMultipleMedia(
+                ? await _picker.pickMultiMedia(
                     maxWidth: maxWidth,
                     maxHeight: maxHeight,
                     imageQuality: quality,
@@ -137,8 +137,8 @@ class _MyHomePageState extends State<MyHomePage> {
         });
       } else if (isMedia) {
         await _displayPickImageDialog(context, false, (
-          double? maxWidth,
-          double? maxHeight,
+          int? maxWidth,
+          int? maxHeight,
           int? quality,
           int? limit,
         ) async {
@@ -163,8 +163,8 @@ class _MyHomePageState extends State<MyHomePage> {
         });
       } else {
         await _displayPickImageDialog(context, false, (
-          double? maxWidth,
-          double? maxHeight,
+          int? maxWidth,
+          int? maxHeight,
           int? quality,
           int? limit,
         ) async {
@@ -236,17 +236,17 @@ class _MyHomePageState extends State<MyHomePage> {
         child: ListView.builder(
           key: UniqueKey(),
           itemBuilder: (BuildContext context, int index) {
-            final String? mime = lookupMimeType(_mediaFileList![index].path);
+            final String? mime = lookupMimeType(_mediaFileList![index].uri);
 
             // Why network for web?
             // See https://pub.dev/packages/image_picker_for_web#limitations-on-the-web-platform
             return Semantics(
               label: 'image_picker_example_picked_image',
               child: kIsWeb
-                  ? Image.network(_mediaFileList![index].path)
+                  ? Image.network(_mediaFileList![index].uri)
                   : (mime == null || mime.startsWith('image/')
                         ? Image.file(
-                            File(_mediaFileList![index].path),
+                            File(Uri.parse(_mediaFileList![index].uri).toFilePath()),
                             errorBuilder:
                                 (BuildContext context, Object error, StackTrace? stackTrace) {
                                   return const Center(
@@ -268,7 +268,9 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget _buildInlineVideoPlayer(int index) {
-    final controller = VideoPlayerController.file(File(_mediaFileList![index].path));
+    final controller = VideoPlayerController.file(
+      File(Uri.parse(_mediaFileList![index].uri).toFilePath()),
+    );
     const volume = kIsWeb ? 0.0 : 1.0;
     controller.setVolume(volume);
     controller.initialize();
@@ -513,11 +515,11 @@ class _MyHomePageState extends State<MyHomePage> {
             TextButton(
               child: const Text('PICK'),
               onPressed: () {
-                final double? width = maxWidthController.text.isNotEmpty
-                    ? double.parse(maxWidthController.text)
+                final int? width = maxWidthController.text.isNotEmpty
+                    ? int.parse(maxWidthController.text)
                     : null;
-                final double? height = maxHeightController.text.isNotEmpty
-                    ? double.parse(maxHeightController.text)
+                final int? height = maxHeightController.text.isNotEmpty
+                    ? int.parse(maxHeightController.text)
                     : null;
                 final int? quality = qualityController.text.isNotEmpty
                     ? int.parse(qualityController.text)
@@ -537,7 +539,7 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 typedef OnPickImageCallback =
-    void Function(double? maxWidth, double? maxHeight, int? quality, int? limit);
+    void Function(int? maxWidth, int? maxHeight, int? quality, int? limit);
 
 class AspectRatioVideo extends StatefulWidget {
   const AspectRatioVideo(this.controller, {super.key});
