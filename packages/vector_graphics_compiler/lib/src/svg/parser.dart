@@ -47,6 +47,7 @@ const Map<String, _ParseFunc> _svgElementParsers = <String, _ParseFunc>{
   'a': _Elements.g, // treat as group
   'use': _Elements.use,
   'symbol': _Elements.symbol,
+  'marker': _Elements.marker,
   'mask': _Elements.symbol, // treat as symbol
   'pattern': _Elements.pattern,
   'radialGradient': _Elements.radialGradient,
@@ -56,6 +57,8 @@ const Map<String, _ParseFunc> _svgElementParsers = <String, _ParseFunc>{
   'text': _Elements.textOrTspan,
   'tspan': _Elements.textOrTspan,
 };
+
+const Set<String> _markableElements = <String>{'line', 'path', 'polygon', 'polyline'};
 
 const Map<String, _PathFunc> _svgPathFuncs = <String, _PathFunc>{
   'circle': _Paths.circle,
@@ -146,6 +149,106 @@ class _Elements {
     parserState.addGroup(element, group);
     return;
   }
+
+  static void marker(SvgParser parserState, bool warningsAsErrors) {
+    SvgAttributes markerAttributes = parserState._currentAttributes;
+    for (final _SvgGroupTuple ancestor in parserState._parentDrawables.toList().reversed) {
+      markerAttributes = markerAttributes.applyParent(ancestor.drawable.attributes);
+    }
+    // A marker is not a graphics element, so its transform attribute is ignored.
+    final group = ParentNode(markerAttributes, precalculatedTransform: AffineMatrix.identity);
+    final List<double?>? parsedViewBox = parserState
+        .attribute('viewBox')
+        ?.trim()
+        .split(RegExp(r'[\s,]+'))
+        .map(double.tryParse)
+        .toList();
+    final List<double>? viewBox = parsedViewBox?.length == 4 && !parsedViewBox!.contains(null)
+        ? parsedViewBox.cast<double>()
+        : null;
+    final double width =
+        parserState.parseDoubleWithUnits(
+          parserState.attribute('markerWidth', def: '3'),
+          tryParse: true,
+          percentageRef: parserState.viewportWidth,
+        ) ??
+        3;
+    final double height =
+        parserState.parseDoubleWithUnits(
+          parserState.attribute('markerHeight', def: '3'),
+          tryParse: true,
+          percentageRef: parserState.viewportHeight,
+        ) ??
+        3;
+    final double refWidth = viewBox?[2] ?? width;
+    final double refHeight = viewBox?[3] ?? height;
+    final String rawAspectRatio = parserState.attribute(
+      'preserveAspectRatio',
+      def: _defaultMarkerAspectRatio,
+    )!;
+    final String overflow = parserState.attribute('overflow', def: 'hidden')!;
+    parserState._definitions.addMarker(
+      parserState.buildUrlIri(),
+      SvgMarker(
+        content: group,
+        width: width,
+        height: height,
+        refX: _markerReference(
+          parserState,
+          parserState.attribute('refX', def: '0')!,
+          viewBox?[0] ?? 0,
+          refWidth,
+          'left',
+          'right',
+        ),
+        refY: _markerReference(
+          parserState,
+          parserState.attribute('refY', def: '0')!,
+          viewBox?[1] ?? 0,
+          refHeight,
+          'top',
+          'bottom',
+        ),
+        orient: parserState.attribute('orient', def: '0')!,
+        preserveAspectRatio: _markerAspectRatio.hasMatch(rawAspectRatio)
+            ? rawAspectRatio
+            : _defaultMarkerAspectRatio,
+        clip: overflow != 'visible' && overflow != 'auto',
+        strokeUnits: parserState.attribute('markerUnits') != 'userSpaceOnUse',
+        viewBox: viewBox,
+      ),
+    );
+    if (!(parserState._currentStartElement?.isSelfClosing ?? false)) {
+      parserState.addGroup(parserState._currentStartElement!, group);
+    }
+  }
+
+  static double _markerReference(
+    SvgParser parserState,
+    String raw,
+    double min,
+    double size,
+    String start,
+    String end,
+  ) {
+    if (raw == start) {
+      return min;
+    }
+    if (raw == 'center') {
+      return min + size / 2;
+    }
+    if (raw == end) {
+      return min + size;
+    }
+    final double value =
+        parserState.parseDoubleWithUnits(raw, tryParse: true, percentageRef: size) ?? 0;
+    return raw.endsWith('%') ? min + value : value;
+  }
+
+  static const String _defaultMarkerAspectRatio = 'xMidYMid meet';
+  static final RegExp _markerAspectRatio = RegExp(
+    r'^(none|x(Min|Mid|Max)Y(Min|Mid|Max))(\s+(meet|slice))?$',
+  );
 
   static void symbol(SvgParser parserState, bool warningsAsErrors) {
     final group = ParentNode(parserState._currentAttributes);
@@ -674,7 +777,11 @@ class SvgParser {
       var isSelfClosing = false;
       if (event is XmlStartElementEvent) {
         final Map<String, String> attributeMap = _createAttributeMap(event.attributes);
-        if (!_isVisible(attributeMap)) {
+        // A marker can be referenced regardless of its own display value.
+        final bool isVisible = event.name == 'marker'
+            ? attributeMap['visibility'] != 'hidden'
+            : _isVisible(attributeMap);
+        if (!isVisible) {
           if (!event.isSelfClosing) {
             depth += 1;
             _discardSubtree();
@@ -900,7 +1007,13 @@ class SvgParser {
     if (path == null) {
       return false;
     }
-    final drawable = PathNode(path, _currentAttributes);
+    final String? rawPath = event.name == 'path' ? attribute('d') : null;
+    final drawable = PathNode(
+      path,
+      _currentAttributes,
+      markerResolver: _markableElements.contains(event.name) ? _definitions.getMarker : null,
+      markerPathData: rawPath != null && RegExp('[aA]').hasMatch(rawPath) ? rawPath : null,
+    );
     checkForIri(drawable);
 
     parent.addChild(
@@ -1440,7 +1553,8 @@ class SvgParser {
           }
           attributeMap[styleParts[0].trim()] = attributeValue;
         }
-      } else if (value != 'inherit') {
+      } else if (value != 'inherit' && attribute.localName != 'marker') {
+        // The marker shorthand is a CSS property, not a presentation attribute.
         attributeMap[attribute.localName] = value;
       }
     }
@@ -1515,7 +1629,16 @@ class SvgParser {
       dashOffset: _parseDashOffset(rawStrokeDashOffset),
       hasPattern: hasPattern,
       opacity: opacity,
+      contextPaint: _parseContextPaint(rawStroke),
     );
+  }
+
+  SvgContextPaint? _parseContextPaint(String? raw) {
+    return switch (raw) {
+      'context-fill' => SvgContextPaint.fill,
+      'context-stroke' => SvgContextPaint.stroke,
+      _ => null,
+    };
   }
 
   SvgFillAttributes? _parseFillAttributes(
@@ -1563,6 +1686,7 @@ class SvgParser {
       _definitions,
       color: rawFill == 'none' ? const ColorOrNone.none() : ColorOrNone.color(fillColor),
       opacity: opacity,
+      contextPaint: _parseContextPaint(rawFill),
     );
   }
 
@@ -1638,6 +1762,20 @@ class _Resolver {
   /// A default empty identifier.
   static const String emptyUrlIri = 'url(#)';
   final Map<String, AttributedNode> _drawables = <String, AttributedNode>{};
+  final Map<String, SvgMarker> _markers = <String, SvgMarker>{};
+
+  SvgMarker? getMarker(String ref) {
+    assert(_sealed);
+    return _markers[ref];
+  }
+
+  void addMarker(String ref, SvgMarker marker) {
+    assert(!_sealed);
+    if (ref != emptyUrlIri) {
+      _markers.putIfAbsent(ref, () => marker);
+    }
+  }
+
   final Map<String, Gradient> _shaders = <String, Gradient>{};
   final Map<String, List<Node>> _clips = <String, List<Node>>{};
   int _deferredExpansionCount = 0;
@@ -1902,6 +2040,8 @@ class SvgAttributes {
     'stroke-opacity',
     'visibility',
     'marker-start',
+    'marker-mid',
+    'marker-end',
     'marker',
     'color-interpolation',
     'color-interpolation-filters',
@@ -2037,6 +2177,37 @@ class SvgAttributes {
     );
   }
 
+  /// Removes object opacity and blend mode after they have been applied to a
+  /// layer containing both a shape and its markers.
+  SvgAttributes forMarkerLayer() {
+    return SvgAttributes._(
+      raw: raw,
+      id: id,
+      href: href,
+      transform: transform,
+      color: color,
+      stroke: stroke?.withOpacity(parseDouble(raw['stroke-opacity'])?.clamp(0.0, 1.0)),
+      fill: fill?.withOpacity(parseDouble(raw['fill-opacity'])?.clamp(0.0, 1.0)),
+      fillRule: fillRule,
+      clipRule: clipRule,
+      clipPathId: clipPathId,
+      fontFamily: fontFamily,
+      fontWeight: fontWeight,
+      fontSize: fontSize,
+      textDecoration: textDecoration,
+      textDecorationStyle: textDecorationStyle,
+      textDecorationColor: textDecorationColor,
+      x: x,
+      y: y,
+      dx: dx,
+      dy: dy,
+      textAnchorMultiplier: textAnchorMultiplier,
+      width: width,
+      height: height,
+      maskType: maskType,
+    );
+  }
+
   /// Creates a new set of attributes as if this inherited from `parent`.
   ///
   /// If `includePosition` is true, the `x`/`y` coordinates are also inherited. This
@@ -2049,6 +2220,11 @@ class SvgAttributes {
   }) {
     final newRaw = <String, String>{
       ...Map<String, String>.fromEntries(parent.heritable),
+      if (raw.containsKey('marker')) ...<String, String>{
+        'marker-start': raw['marker']!,
+        'marker-mid': raw['marker']!,
+        'marker-end': raw['marker']!,
+      },
       if (includePosition && parent.raw.containsKey('x')) 'x': parent.raw['x']!,
       if (includePosition && parent.raw.containsKey('y')) 'y': parent.raw['y']!,
       ...raw,
@@ -2143,6 +2319,66 @@ class DoubleOrPercentage {
   }
 }
 
+/// The paint of a context element selected by a contextual paint keyword.
+enum SvgContextPaint {
+  /// The `context-fill` keyword.
+  fill,
+
+  /// The `context-stroke` keyword.
+  stroke,
+}
+
+/// The element whose paint is used by `context-fill` and `context-stroke`.
+class SvgPaintContext {
+  /// Creates a paint context for an element with [attributes].
+  ///
+  /// The [bounds] and [transform] are those of the element, so that gradients
+  /// are continuous between the element and its markers. The [parent] is used
+  /// if the element's own paint is contextual.
+  const SvgPaintContext(this.attributes, this.bounds, this.transform, {this.parent});
+
+  /// The attributes of the context element.
+  final SvgAttributes attributes;
+
+  /// The bounding box of the context element.
+  final Rect bounds;
+
+  /// The transform of the context element.
+  final AffineMatrix transform;
+
+  /// The context of the context element, if any.
+  final SvgPaintContext? parent;
+
+  /// Returns the color and shader of the selected paint, or null if it paints
+  /// nothing.
+  ///
+  /// Patterns are drawn by masking the element, so they cannot be reused here
+  /// and also paint nothing.
+  ({Color color, Gradient? shader})? _resolve(SvgContextPaint paint) {
+    final isFill = paint == SvgContextPaint.fill;
+    final SvgFillAttributes? fill = attributes.fill;
+    final SvgStrokeAttributes? stroke = attributes.stroke;
+    final SvgContextPaint? contextPaint = isFill ? fill?.contextPaint : stroke?.contextPaint;
+    if (contextPaint != null) {
+      return parent?._resolve(contextPaint);
+    }
+    final ColorOrNone? color = isFill ? fill?.color : stroke?.color;
+    if ((color?.isNone ?? false) || ((isFill ? fill?.hasPattern : stroke?.hasPattern) ?? false)) {
+      return null;
+    }
+    final String? shaderId = isFill ? fill?.shaderId : stroke?.shaderId;
+    if (shaderId != null) {
+      final _Resolver? definitions = isFill ? fill?._definitions : stroke?._definitions;
+      final Gradient? shader = definitions
+          ?.getGradient<Gradient>(shaderId)
+          ?.applyBounds(bounds, transform);
+      return shader == null ? null : (color: color?.color ?? Color.opaqueBlack, shader: shader);
+    }
+    final Color? resolved = color?.color ?? (isFill ? Color.opaqueBlack : null);
+    return resolved == null ? null : (color: resolved, shader: null);
+  }
+}
+
 /// SVG attributes specific to stroking.
 class SvgStrokeAttributes {
   const SvgStrokeAttributes._(
@@ -2157,6 +2393,7 @@ class SvgStrokeAttributes {
     this.dashOffset,
     this.hasPattern,
     this.opacity,
+    this.contextPaint,
   });
 
   final _Resolver? _definitions;
@@ -2192,6 +2429,9 @@ class SvgStrokeAttributes {
   /// The opacity to apply to a default color, if [color] is null.
   final double? opacity;
 
+  /// The paint to use from the context element, if any.
+  final SvgContextPaint? contextPaint;
+
   /// A copy of these attributes after absorbing a saveLayer.
   ///
   /// Specifically, this will null out any opacity related
@@ -2208,8 +2448,25 @@ class SvgStrokeAttributes {
       dashArray: dashArray,
       dashOffset: dashOffset,
       hasPattern: hasPattern,
+      contextPaint: contextPaint,
     );
   }
+
+  /// Copy with a specified opacity.
+  SvgStrokeAttributes withOpacity(double? value) => SvgStrokeAttributes._(
+    _definitions,
+    color: color,
+    shaderId: shaderId,
+    join: join,
+    cap: cap,
+    miterLimit: miterLimit,
+    width: width,
+    dashArray: dashArray,
+    dashOffset: dashOffset,
+    hasPattern: hasPattern,
+    opacity: value,
+    contextPaint: contextPaint,
+  );
 
   /// Inherits attributes in this from parent.
   SvgStrokeAttributes applyParent(SvgStrokeAttributes? parent) {
@@ -2225,14 +2482,34 @@ class SvgStrokeAttributes {
       dashOffset: dashOffset ?? parent?.dashOffset,
       hasPattern: hasPattern ?? parent?.hasPattern,
       opacity: opacity ?? parent?.opacity,
+      contextPaint:
+          contextPaint ??
+          (color.isNone || color.color != null || shaderId != null ? null : parent?.contextPaint),
     );
   }
 
   /// Creates a stroking paint object from this set of attributes, using the
   /// bounds and transform specified for shader computation.
   ///
+  /// The [context] provides the paint when this uses [contextPaint].
+  ///
   /// Returns null if this is [none].
-  Stroke? toStroke(Rect shaderBounds, AffineMatrix transform) {
+  Stroke? toStroke(Rect shaderBounds, AffineMatrix transform, {SvgPaintContext? context}) {
+    if (contextPaint != null) {
+      final ({Color color, Gradient? shader})? paint = context?._resolve(contextPaint!);
+      if (paint == null || width == 0) {
+        return null;
+      }
+      return Stroke(
+        color: opacity == null ? paint.color : paint.color.withOpacity(opacity!),
+        shader: paint.shader,
+        join: join,
+        cap: cap,
+        miterLimit: miterLimit,
+        width: transform.scaleStrokeWidth(width),
+      );
+    }
+
     // A zero width stroke is a hairline in Flutter, but a nop in SVG.
     if (color.isNone ||
         (color.color == null && hasPattern == null && shaderId == null || width == 0)) {
@@ -2275,6 +2552,7 @@ class SvgFillAttributes {
     this.shaderId,
     this.hasPattern,
     this.opacity,
+    this.contextPaint,
   });
 
   final _Resolver? _definitions;
@@ -2292,6 +2570,9 @@ class SvgFillAttributes {
   /// If there is a pattern a default fill will be returned.
   final bool? hasPattern;
 
+  /// The paint to use from the context element, if any.
+  final SvgContextPaint? contextPaint;
+
   /// A copy of these attributes after absorbing a saveLayer.
   ///
   /// Specifically, this will null out any opacity related
@@ -2302,8 +2583,19 @@ class SvgFillAttributes {
       color: color,
       shaderId: shaderId,
       hasPattern: hasPattern,
+      contextPaint: contextPaint,
     );
   }
+
+  /// Copy with a specified opacity.
+  SvgFillAttributes withOpacity(double? value) => SvgFillAttributes._(
+    _definitions,
+    color: color,
+    shaderId: shaderId,
+    hasPattern: hasPattern,
+    opacity: value,
+    contextPaint: contextPaint,
+  );
 
   /// Inherits attributes in this from parent.
   SvgFillAttributes applyParent(SvgFillAttributes? parent) {
@@ -2313,14 +2605,34 @@ class SvgFillAttributes {
       shaderId: shaderId ?? parent?.shaderId,
       hasPattern: hasPattern ?? parent?.hasPattern,
       opacity: opacity ?? parent?.opacity,
+      contextPaint:
+          contextPaint ??
+          (color.isNone || color.color != null || shaderId != null ? null : parent?.contextPaint),
     );
   }
 
   /// Creates a [Fill] from this information with appropriate transforms and
   /// bounds for shaders.
   ///
+  /// The [context] provides the paint when this uses [contextPaint].
+  ///
   /// Returns null if this is [none].
-  Fill? toFill(Rect shaderBounds, AffineMatrix transform, {Color? defaultColor}) {
+  Fill? toFill(
+    Rect shaderBounds,
+    AffineMatrix transform, {
+    Color? defaultColor,
+    SvgPaintContext? context,
+  }) {
+    if (contextPaint != null) {
+      final ({Color color, Gradient? shader})? paint = context?._resolve(contextPaint!);
+      if (paint == null) {
+        return null;
+      }
+      return Fill(
+        color: opacity == null ? paint.color : paint.color.withOpacity(opacity!),
+        shader: paint.shader,
+      );
+    }
     if (color.isNone) {
       return null;
     }

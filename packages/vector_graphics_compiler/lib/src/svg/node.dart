@@ -12,7 +12,7 @@ import '../geometry/path.dart';
 import '../image/image_info.dart';
 import '../paint.dart';
 import 'constants.dart';
-import 'parser.dart' show SvgAttributes;
+import 'parser.dart' show SvgAttributes, SvgPaintContext;
 import 'visitor.dart';
 
 /// Signature of a method that resolves a string identifier to an object.
@@ -406,6 +406,47 @@ class MaskNode extends TransformableNode {
   }
 }
 
+/// A marker definition referenced by a path.
+class SvgMarker {
+  /// Creates a marker definition.
+  const SvgMarker({
+    required this.content,
+    required this.width,
+    required this.height,
+    required this.refX,
+    required this.refY,
+    required this.orient,
+    required this.strokeUnits,
+    required this.viewBox,
+    required this.preserveAspectRatio,
+    required this.clip,
+  });
+
+  /// The content of the marker.
+  final ParentNode content;
+
+  /// The marker viewport dimensions.
+  final double width, height;
+
+  /// The reference point in marker coordinates.
+  final double refX, refY;
+
+  /// The orientation value, either auto, auto-start-reverse, or an angle.
+  final String orient;
+
+  /// Whether the viewport is measured in stroke-width units.
+  final bool strokeUnits;
+
+  /// The viewBox as min-x, min-y, width, height, or null.
+  final List<double>? viewBox;
+
+  /// ViewBox alignment and scaling mode.
+  final String preserveAspectRatio;
+
+  /// Whether the marker viewport clips its contents.
+  final bool clip;
+}
+
 /// A leaf node in the graphics tree.
 ///
 /// Leaf nodes get added with all paint and transform accumulations from their
@@ -413,15 +454,28 @@ class MaskNode extends TransformableNode {
 class PathNode extends AttributedNode {
   /// Creates a new leaf node for the graphics tree with the specified [path]
   /// and attributes
-  PathNode(this.path, super.attributes);
+  PathNode(this.path, super.attributes, {this.markerResolver, this.markerPathData});
+
+  /// Resolves marker references after the complete document has been read.
+  final Resolver<SvgMarker?>? markerResolver;
+
+  /// Original path data when arcs may have been decomposed into curves.
+  final String? markerPathData;
 
   /// The description of the geometry this leaf node draws.
   final Path path;
 
   /// Compute the paint used by this Path.
-  Paint? computePaint(Rect bounds, AffineMatrix transform) {
-    final Stroke? stroke = attributes.stroke?.toStroke(bounds, transform);
-    final Fill? fill = attributes.fill?.toFill(bounds, transform, defaultColor: Color.opaqueBlack);
+  ///
+  /// The [context] resolves `context-fill` and `context-stroke` paints.
+  Paint? computePaint(Rect bounds, AffineMatrix transform, {SvgPaintContext? context}) {
+    final Stroke? stroke = attributes.stroke?.toStroke(bounds, transform, context: context);
+    final Fill? fill = attributes.fill?.toFill(
+      bounds,
+      transform,
+      defaultColor: Color.opaqueBlack,
+      context: context,
+    );
     if (fill == null && stroke == null) {
       return null;
     }
@@ -435,6 +489,8 @@ class PathNode extends AttributedNode {
       replace
           ? newAttributes.applyParent(attributes, transformOverride: transform)
           : attributes.applyParent(newAttributes),
+      markerResolver: markerResolver,
+      markerPathData: markerPathData,
     );
   }
 
@@ -493,9 +549,16 @@ class TextNode extends AttributedNode {
   final String text;
 
   /// Compute the [Paint] that this text node uses.
-  Paint? computePaint(Rect bounds, AffineMatrix transform) {
-    final Fill? fill = attributes.fill?.toFill(bounds, transform, defaultColor: Color.opaqueBlack);
-    final Stroke? stroke = attributes.stroke?.toStroke(bounds, transform);
+  ///
+  /// The [context] resolves `context-fill` and `context-stroke` paints.
+  Paint? computePaint(Rect bounds, AffineMatrix transform, {SvgPaintContext? context}) {
+    final Fill? fill = attributes.fill?.toFill(
+      bounds,
+      transform,
+      defaultColor: Color.opaqueBlack,
+      context: context,
+    );
+    final Stroke? stroke = attributes.stroke?.toStroke(bounds, transform, context: context);
     if (fill == null && stroke == null) {
       return null;
     }

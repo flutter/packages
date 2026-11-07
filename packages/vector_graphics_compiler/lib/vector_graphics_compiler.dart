@@ -23,7 +23,7 @@ export 'src/_initialize_tessellator_io.dart'
     if (dart.library.js_interop) 'src/_initialize_tessellator_web.dart';
 export 'src/geometry/basic_types.dart';
 export 'src/geometry/matrix.dart';
-export 'src/geometry/path.dart';
+export 'src/geometry/path.dart' hide parseSvgMarkerPath;
 export 'src/geometry/vertices.dart';
 export 'src/paint.dart';
 export 'src/svg/color_mapper.dart';

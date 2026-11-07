@@ -1,3 +1,8 @@
+## 1.4.0
+
+* Adds support for SVG vertex markers on `line`, `path`, `polygon` and `polyline`.
+* Adds support for `context-fill` and `context-stroke` paint in marker content.
+
 ## 1.3.4
 
 * Fixes `em` units in text `x`, `y`, `dx` and `dy` being treated as pixels.
