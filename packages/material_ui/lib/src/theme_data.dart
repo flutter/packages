@@ -2037,6 +2037,17 @@ class ThemeData with Diagnosticable {
     return theme;
   }
 
+  static final IconThemeData _defaultLightIconTheme = IconThemeData(color: kDefaultIconDarkColor);
+  static final IconThemeData _defaultDarkIconTheme = IconThemeData(color: kDefaultIconLightColor);
+
+  static bool _isDefaultIconTheme(IconThemeData iconTheme, Brightness brightness) {
+    final IconThemeData defaultIconTheme = switch (brightness) {
+      Brightness.light => _defaultLightIconTheme,
+      Brightness.dark => _defaultDarkIconTheme,
+    };
+    return identical(iconTheme.color, defaultIconTheme.color) && iconTheme == defaultIconTheme;
+  }
+
   /// Linearly interpolate between two themes.
   ///
   /// {@macro dart.ui.shadow.lerp}
@@ -2084,7 +2095,27 @@ class ThemeData with Diagnosticable {
       splashColor: Color.lerp(a.splashColor, b.splashColor, t)!,
       unselectedWidgetColor: Color.lerp(a.unselectedWidgetColor, b.unselectedWidgetColor, t)!,
       // TYPOGRAPHY & ICONOGRAPHY
-      iconTheme: IconThemeData.lerp(a.iconTheme, b.iconTheme, t),
+      iconTheme: () {
+        if (identical(a.iconTheme, b.iconTheme)) {
+          return a.iconTheme;
+        }
+        if (t == 0.0) {
+          return a.iconTheme;
+        }
+        if (t == 1.0) {
+          return b.iconTheme;
+        }
+        if (_isDefaultIconTheme(a.iconTheme, a.brightness) &&
+            _isDefaultIconTheme(b.iconTheme, b.brightness)) {
+          if (a.brightness == b.brightness) {
+            return switch (a.brightness) {
+              Brightness.light => _defaultLightIconTheme,
+              Brightness.dark => _defaultDarkIconTheme,
+            };
+          }
+        }
+        return IconThemeData.lerp(a.iconTheme, b.iconTheme, t);
+      }(),
       primaryIconTheme: IconThemeData.lerp(a.primaryIconTheme, b.primaryIconTheme, t),
       primaryTextTheme: TextTheme.lerp(a.primaryTextTheme, b.primaryTextTheme, t),
       textTheme: TextTheme.lerp(a.textTheme, b.textTheme, t),
