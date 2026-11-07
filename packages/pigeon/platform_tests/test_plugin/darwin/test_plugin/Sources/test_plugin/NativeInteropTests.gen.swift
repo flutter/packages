@@ -3207,25 +3207,15 @@ protocol NativeInteropHostIntegrationCoreApi: AnyObject {
     }
   }
 
-  /// Returns an instance registered under `name` (or the default instance when
-  /// `name` is omitted) by any engine, preferring the most recent registration,
-  /// or nil if none is registered.
-  @objc static func getInstance(name: String = NativeInteropTestsPigeonInternal.defaultInstanceName)
-    -> NativeInteropHostIntegrationCoreApiSetup?
-  {
-    return
-      NativeInteropHostIntegrationCoreApiInstanceTracker
-      .instancesOfNativeInteropHostIntegrationCoreApi[name]?.last
-  }
-
   /// Returns the instance generated Dart code should use for `name` (or the default
   /// instance).
   ///
   /// Prefers the most recent registration whose engine key is `engineId`, then
   /// `affinityKey`, then the most recent registration. `Int64.min` means unknown.
-  @objc static func pigeonResolveInstance(engineId: Int64, affinityKey: Int64, name: String)
-    -> NativeInteropHostIntegrationCoreApiSetup?
-  {
+  @objc static func pigeonResolveInstance(
+    engineId: Int64, affinityKey: Int64,
+    name: String = NativeInteropTestsPigeonInternal.defaultInstanceName
+  ) -> NativeInteropHostIntegrationCoreApiSetup? {
     guard
       let list =
         NativeInteropHostIntegrationCoreApiInstanceTracker
@@ -8471,11 +8461,8 @@ protocol NativeInteropHostIntegrationCoreApi: AnyObject {
     String: [NativeInteropFlutterIntegrationCoreApi]
   ]()
 
-  /// Registers `api` under `name` (or the default instance when `name` is omitted).
-  ///
-  /// The registration is tied to its engine: unregistering it for one engine leaves
-  /// other engines' registrations in place, and Dart code running on an engine uses
-  /// the instance registered for that engine when it is known.
+  /// Registers the Dart implementation `api` under `name` (or the default instance
+  /// when `name` is omitted).
   ///
   /// Called by generated Dart code. `engineId` and `affinityKey` identify the engine
   /// that registered `api`, or are `Int64.min` when unknown.
@@ -10026,25 +10013,15 @@ protocol NativeInteropReservedNamesHostApi: AnyObject {
     }
   }
 
-  /// Returns an instance registered under `name` (or the default instance when
-  /// `name` is omitted) by any engine, preferring the most recent registration,
-  /// or nil if none is registered.
-  @objc static func getInstance(name: String = NativeInteropTestsPigeonInternal.defaultInstanceName)
-    -> NativeInteropReservedNamesHostApiSetup?
-  {
-    return
-      NativeInteropReservedNamesHostApiInstanceTracker.instancesOfNativeInteropReservedNamesHostApi[
-        name]?.last
-  }
-
   /// Returns the instance generated Dart code should use for `name` (or the default
   /// instance).
   ///
   /// Prefers the most recent registration whose engine key is `engineId`, then
   /// `affinityKey`, then the most recent registration. `Int64.min` means unknown.
-  @objc static func pigeonResolveInstance(engineId: Int64, affinityKey: Int64, name: String)
-    -> NativeInteropReservedNamesHostApiSetup?
-  {
+  @objc static func pigeonResolveInstance(
+    engineId: Int64, affinityKey: Int64,
+    name: String = NativeInteropTestsPigeonInternal.defaultInstanceName
+  ) -> NativeInteropReservedNamesHostApiSetup? {
     guard
       let list =
         NativeInteropReservedNamesHostApiInstanceTracker
@@ -10466,11 +10443,8 @@ protocol NativeInteropReservedNamesHostApi: AnyObject {
     String: [NativeInteropReservedNamesFlutterApi]
   ]()
 
-  /// Registers `api` under `name` (or the default instance when `name` is omitted).
-  ///
-  /// The registration is tied to its engine: unregistering it for one engine leaves
-  /// other engines' registrations in place, and Dart code running on an engine uses
-  /// the instance registered for that engine when it is known.
+  /// Registers the Dart implementation `api` under `name` (or the default instance
+  /// when `name` is omitted).
   ///
   /// Called by generated Dart code. `engineId` and `affinityKey` identify the engine
   /// that registered `api`, or are `Int64.min` when unknown.

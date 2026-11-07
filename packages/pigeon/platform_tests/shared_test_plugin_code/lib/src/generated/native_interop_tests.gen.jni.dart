@@ -717,41 +717,6 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     ).check();
   }
 
-  static final _id_getInstance = NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-    r'getInstance',
-    r'(Ljava/lang/String;)Lcom/example/test_plugin/NativeInteropHostIntegrationCoreApiRegistrar;',
-  );
-
-  static final _getInstance =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
-              )
-            >
-          >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-            )
-          >();
-
-  /// from: `public fun getInstance(name: kotlin.String): com.example.test_plugin.NativeInteropHostIntegrationCoreApiRegistrar?`
-  /// The returned object must be released after use, by calling the [release] method.
-  NativeInteropHostIntegrationCoreApiRegistrar? getInstance(jni$_.JString string) {
-    final _$$selfRef = reference;
-    final _$string = string.reference;
-    return _getInstance(
-      _$$selfRef.pointer,
-      _id_getInstance.pointer,
-      _$string.pointer,
-    ).object<NativeInteropHostIntegrationCoreApiRegistrar?>();
-  }
-
   static final _id_noop = NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
     r'noop',
     r'()V',
@@ -19364,41 +19329,6 @@ extension NativeInteropReservedNamesHostApiRegistrar$$Methods
     ).check();
   }
 
-  static final _id_getInstance = NativeInteropReservedNamesHostApiRegistrar._class.instanceMethodId(
-    r'getInstance',
-    r'(Ljava/lang/String;)Lcom/example/test_plugin/NativeInteropReservedNamesHostApiRegistrar;',
-  );
-
-  static final _getInstance =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
-              )
-            >
-          >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-            )
-          >();
-
-  /// from: `public fun getInstance(name: kotlin.String): com.example.test_plugin.NativeInteropReservedNamesHostApiRegistrar?`
-  /// The returned object must be released after use, by calling the [release] method.
-  NativeInteropReservedNamesHostApiRegistrar? getInstance(jni$_.JString string) {
-    final _$$selfRef = reference;
-    final _$string = string.reference;
-    return _getInstance(
-      _$$selfRef.pointer,
-      _id_getInstance.pointer,
-      _$string.pointer,
-    ).object<NativeInteropReservedNamesHostApiRegistrar?>();
-  }
-
   static final _id_release$1 = NativeInteropReservedNamesHostApiRegistrar._class.instanceMethodId(
     r'release',
     r'(Ljava/lang/String;)Ljava/lang/String;',
@@ -19721,10 +19651,10 @@ extension NativeInteropReservedNamesHostApiRegistrar$$Methods
     ).object<jni$_.JString>();
   }
 
-  static final _id_get$getInstance$1 = NativeInteropReservedNamesHostApiRegistrar._class
+  static final _id_get$getInstance = NativeInteropReservedNamesHostApiRegistrar._class
       .instanceMethodId(r'getGetInstance', r'()Ljava/lang/String;');
 
-  static final _get$getInstance$1 =
+  static final _get$getInstance =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
@@ -19734,11 +19664,11 @@ extension NativeInteropReservedNamesHostApiRegistrar$$Methods
 
   /// from: `public fun getGetInstance(): kotlin.String`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JString get getInstance$1 {
+  jni$_.JString get getInstance {
     final _$$selfRef = reference;
-    return _get$getInstance$1(
+    return _get$getInstance(
       _$$selfRef.pointer,
-      _id_get$getInstance$1.pointer,
+      _id_get$getInstance.pointer,
     ).object<jni$_.JString>();
   }
 

@@ -834,14 +834,6 @@ removed. Does nothing if [api] is not registered, or is only registered for
 several other engines.''');
   }
 
-  void _writeNativeInteropGetInstanceDocs(Indent indent) {
-    indent.writeln('/**');
-    indent.writeln(' * Returns an instance registered under [name] (or the default instance when');
-    indent.writeln(' * [name] is omitted) by any engine, preferring the most recent registration,');
-    indent.writeln(' * or null if none is registered.');
-    indent.writeln(' */');
-  }
-
   void _writeJniFlutterApi(
     InternalKotlinOptions generatorOptions,
     Root root,
@@ -1113,16 +1105,6 @@ return list.lastOrNull()?.api''');
           );
           indent.newln();
         }
-        _writeNativeInteropGetInstanceDocs(indent);
-        indent.writeln('@Keep');
-        indent.writeScoped(
-          'fun getInstance(name: String = defaultInstanceName): $registrarName? {',
-          '}',
-          () {
-            indent.writeln('return $instances[name]?.lastOrNull()');
-          },
-        );
-        indent.newln();
         indent.writeScoped('companion object {', '}', () {
           _writeKDoc(indent, '''
 Returns the instance registered under [name] for the engine identified by
@@ -1136,7 +1118,7 @@ This is called by the generated Dart code and is not intended for direct use.'''
           indent.writeln('@JvmStatic');
           indent.writeln('@Keep');
           indent.writeScoped(
-            'fun pigeonResolveInstance(engineId: Long, affinityKey: Long, name: String): $registrarName? {',
+            'fun pigeonResolveInstance(engineId: Long, affinityKey: Long, name: String = defaultInstanceName): $registrarName? {',
             '}',
             () {
               indent.format('''
@@ -2035,6 +2017,10 @@ fun floatHash(f: Float): Int {
     indent.writeln(
       '/** Computes keys that identify the Flutter engine a registration belongs to. */',
     );
+    // TODO(tarrinneal): Call FlutterPluginBinding.getEngineId() directly
+    // instead of through reflection, and drop the messenger-based fallback,
+    // once it is available on stable Flutter.
+    // https://github.com/flutter/flutter/issues/195877
     indent.writeScoped('private object $className {', '}', () {
       indent.format('''
 /** Sentinel meaning that no engine key is known. */

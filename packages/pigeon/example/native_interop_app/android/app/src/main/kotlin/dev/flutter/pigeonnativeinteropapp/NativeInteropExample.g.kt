@@ -186,15 +186,6 @@ class NativeInteropExampleApiRegistrar private constructor(private val engineKey
     unregisterWithKey(api, NativeInteropExamplePigeonEngineKeys.keyOf(engine), name)
   }
 
-  /**
-   * Returns an instance registered under [name] (or the default instance when [name] is omitted) by
-   * any engine, preferring the most recent registration, or null if none is registered.
-   */
-  @Keep
-  fun getInstance(name: String = defaultInstanceName): NativeInteropExampleApiRegistrar? {
-    return NativeInteropExampleApiInstances[name]?.lastOrNull()
-  }
-
   companion object {
     /**
      * Returns the instance registered under [name] for the engine identified by [engineId].
@@ -209,7 +200,7 @@ class NativeInteropExampleApiRegistrar private constructor(private val engineKey
     fun pigeonResolveInstance(
         engineId: Long,
         affinityKey: Long,
-        name: String
+        name: String = defaultInstanceName
     ): NativeInteropExampleApiRegistrar? {
       val list = NativeInteropExampleApiInstances[name] ?: return null
       val exact =

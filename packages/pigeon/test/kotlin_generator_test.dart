@@ -2042,10 +2042,7 @@ void main() {
       expect(code, isNot(contains('name: String?')));
       expect(code, isNot(contains('resolvedName')));
       expect(code, contains('HostApiInstances.remove(name)'));
-      expect(
-        code,
-        contains('fun getInstance(name: String = defaultInstanceName): HostApiRegistrar?'),
-      );
+      expect(code, isNot(contains('fun getInstance(name: String')));
       expect(code, contains('private var api: HostApi? = null'));
       expect(code, isNot(contains('@Volatile')));
       expect(
@@ -2054,7 +2051,7 @@ void main() {
       );
       expect(code, isNot(contains('error("HostApi has not been registered")')));
       expect(code, isNot(contains('synchronized')));
-      expect(code, contains('HostApiInstances[name]?.lastOrNull()'));
+      expect(code, isNot(contains('HostApiInstances[name]?.lastOrNull()')));
       expect(
         code,
         contains('val index = list.indexOfFirst { it.api === api && it.engineKey == engineKey }'),
@@ -2063,7 +2060,7 @@ void main() {
       expect(code, contains('val wrapper = HostApiRegistrar(engineKey)'));
       expect(code, contains(' * Registers [api] under [name]'));
       expect(code, contains(' * Instances are matched by identity.'));
-      expect(code, contains(' * Returns an instance registered under [name]'));
+      expect(code, isNot(contains(' * Returns an instance registered under [name]')));
       expect(
         code,
         contains(
@@ -2198,9 +2195,8 @@ void main() {
         'fun register(api: HostApi, engine: FlutterEngine, name: String = defaultInstanceName) {',
         'fun unregister(api: HostApi, binding: FlutterPlugin.FlutterPluginBinding, name: String = defaultInstanceName) {',
         'fun unregister(api: HostApi, engine: FlutterEngine, name: String = defaultInstanceName) {',
-        'fun getInstance(name: String = defaultInstanceName): HostApiRegistrar? {',
         'companion object {',
-        'fun pigeonResolveInstance(engineId: Long, affinityKey: Long, name: String): HostApiRegistrar? {',
+        'fun pigeonResolveInstance(engineId: Long, affinityKey: Long, name: String = defaultInstanceName): HostApiRegistrar? {',
         'fun pigeonEngineKeyOf(instance: HostApiRegistrar): Long {',
         'private fun registerWithKey(',
         'private fun unregisterWithKey(',

@@ -1843,16 +1843,11 @@ void main() {
     );
     expect(code, isNot(contains('@objc static func register(api: HostApi')));
     expect(code, isNot(contains('static func unregister(setup:')));
+    expect(code, isNot(contains('static func getInstance(name: String')));
     expect(
       code,
       contains(
-        '@objc static func getInstance(name: String = PigeonInternal.defaultInstanceName) -> HostApiSetup? {',
-      ),
-    );
-    expect(
-      code,
-      contains(
-        '@objc static func pigeonResolveInstance(engineId: Int64, affinityKey: Int64, name: String) -> HostApiSetup? {',
+        '@objc static func pigeonResolveInstance(engineId: Int64, affinityKey: Int64, name: String = PigeonInternal.defaultInstanceName) -> HostApiSetup? {',
       ),
     );
     expect(
@@ -1885,7 +1880,7 @@ void main() {
     expect(code, isNot(contains('api!.')));
     expect(code, isNot(contains('Swift.type(of: api) is AnyClass')));
     expect(code, contains('HostApiInstanceTracker.instancesOfHostApi.removeValue(forKey: name)'));
-    expect(code, contains('return HostApiInstanceTracker.instancesOfHostApi[name]?.last'));
+    expect(code, isNot(contains('return HostApiInstanceTracker.instancesOfHostApi[name]?.last')));
     expect(
       code,
       contains('@objc class FlutterApiRegistrar: NSObject {\n  static var registeredFlutterApi'),
@@ -1944,7 +1939,7 @@ void main() {
     expect(code, contains('list.append(list.remove(at: index))'));
     expect(code, contains('/// Registers `api` under `name`'));
     expect(code, contains('/// Instances are matched by identity.'));
-    expect(code, contains('/// Returns an instance registered under `name`'));
+    expect(code, isNot(contains('/// Returns an instance registered under `name`')));
 
     // Flutter-typed members must compile without the Flutter module (swiftgen).
     expect(

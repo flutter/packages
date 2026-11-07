@@ -57,11 +57,14 @@ struct BasicCompileTest {
     let api2 = FakeClassReservedApi("engine2")
 
     NativeInteropReservedNamesHostApiSetup.register(api: api1, registrar: stub, name: name)
-    let setup1 = try #require(NativeInteropReservedNamesHostApiSetup.getInstance(name: name))
+    let setup1 = try #require(
+      NativeInteropReservedNamesHostApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min, name: name))
     NativeInteropReservedNamesHostApiSetup.register(api: api2, registrar: stub, name: name)
     #expect(
-      NativeInteropReservedNamesHostApiSetup.getInstance(name: name)?.release(
-        value: "ping", wrappedError: NativeInteropTestsError()) == "engine2:ping")
+      NativeInteropReservedNamesHostApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min, name: name)?.release(
+          value: "ping", wrappedError: NativeInteropTestsError()) == "engine2:ping")
 
     // Unregistering api1 out-of-order keeps api2 registered while detached setup1 reports an error
     // instead of trapping.
@@ -70,11 +73,14 @@ struct BasicCompileTest {
     #expect(setup1.release(value: "ping", wrappedError: staleError) == nil)
     #expect(staleError.code == "unregistered-instance")
     #expect(
-      NativeInteropReservedNamesHostApiSetup.getInstance(name: name)?.release(
-        value: "ping", wrappedError: NativeInteropTestsError()) == "engine2:ping")
+      NativeInteropReservedNamesHostApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min, name: name)?.release(
+          value: "ping", wrappedError: NativeInteropTestsError()) == "engine2:ping")
 
     NativeInteropReservedNamesHostApiSetup.unregister(api: api2, registrar: stub, name: name)
-    #expect(NativeInteropReservedNamesHostApiSetup.getInstance(name: name) == nil)
+    #expect(
+      NativeInteropReservedNamesHostApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min, name: name) == nil)
   }
 
   @Test
@@ -85,67 +91,90 @@ struct BasicCompileTest {
     let api2 = FakeClassReservedApi("engine2")
 
     NativeInteropReservedNamesHostApiSetup.register(api: api1, registrar: stub, name: name)
-    let setup1 = try #require(NativeInteropReservedNamesHostApiSetup.getInstance(name: name))
+    let setup1 = try #require(
+      NativeInteropReservedNamesHostApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min, name: name))
     NativeInteropReservedNamesHostApiSetup.register(api: api2, registrar: stub, name: name)
-    let setup2 = try #require(NativeInteropReservedNamesHostApiSetup.getInstance(name: name))
+    let setup2 = try #require(
+      NativeInteropReservedNamesHostApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min, name: name))
     #expect(setup2 !== setup1)
 
     // Re-registering api1 reuses its existing setup, so handles that already resolved it keep
     // working.
     NativeInteropReservedNamesHostApiSetup.register(api: api1, registrar: stub, name: name)
-    #expect(NativeInteropReservedNamesHostApiSetup.getInstance(name: name) === setup1)
+    #expect(
+      NativeInteropReservedNamesHostApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min, name: name) === setup1)
     let error = NativeInteropTestsError()
     #expect(setup1.release(value: "ping", wrappedError: error) == "engine1:ping")
     #expect(error.code == nil)
 
     // api1 is only registered once, so a single unregister falls back to api2.
     NativeInteropReservedNamesHostApiSetup.unregister(api: api1, registrar: stub, name: name)
-    #expect(NativeInteropReservedNamesHostApiSetup.getInstance(name: name) === setup2)
+    #expect(
+      NativeInteropReservedNamesHostApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min, name: name) === setup2)
 
     NativeInteropReservedNamesHostApiSetup.unregister(api: api2, registrar: stub, name: name)
-    #expect(NativeInteropReservedNamesHostApiSetup.getInstance(name: name) == nil)
+    #expect(
+      NativeInteropReservedNamesHostApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min, name: name) == nil)
   }
 
   @Test
   func defaultNameAndExplicitEmptyStringNameAreDistinct() throws {
     let stub = StubPluginRegistrar()
-    let preexistingDefault = NativeInteropReservedNamesHostApiSetup.getInstance()
+    let preexistingDefault = NativeInteropReservedNamesHostApiSetup.pigeonResolveInstance(
+      engineId: Int64.min, affinityKey: Int64.min)
     let defaultApi = FakeClassReservedApi("defaultEngine")
     let emptyNameApi = FakeClassReservedApi("emptyStringEngine")
 
     NativeInteropReservedNamesHostApiSetup.register(api: defaultApi, registrar: stub)
-    #expect(NativeInteropReservedNamesHostApiSetup.getInstance(name: "") == nil)
+    #expect(
+      NativeInteropReservedNamesHostApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min, name: "") == nil)
 
     NativeInteropReservedNamesHostApiSetup.register(api: emptyNameApi, registrar: stub, name: "")
     #expect(
-      NativeInteropReservedNamesHostApiSetup.getInstance()?.release(
-        value: "ping", wrappedError: NativeInteropTestsError()) == "defaultEngine:ping")
+      NativeInteropReservedNamesHostApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min)?.release(
+          value: "ping", wrappedError: NativeInteropTestsError()) == "defaultEngine:ping")
     #expect(
-      NativeInteropReservedNamesHostApiSetup.getInstance(name: "")?.release(
-        value: "ping", wrappedError: NativeInteropTestsError()) == "emptyStringEngine:ping")
+      NativeInteropReservedNamesHostApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min, name: "")?.release(
+          value: "ping", wrappedError: NativeInteropTestsError()) == "emptyStringEngine:ping")
 
     NativeInteropReservedNamesHostApiSetup.unregister(api: emptyNameApi, registrar: stub, name: "")
-    #expect(NativeInteropReservedNamesHostApiSetup.getInstance(name: "") == nil)
     #expect(
-      NativeInteropReservedNamesHostApiSetup.getInstance()?.release(
-        value: "ping", wrappedError: NativeInteropTestsError()) == "defaultEngine:ping")
+      NativeInteropReservedNamesHostApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min, name: "") == nil)
+    #expect(
+      NativeInteropReservedNamesHostApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min)?.release(
+          value: "ping", wrappedError: NativeInteropTestsError()) == "defaultEngine:ping")
 
     NativeInteropReservedNamesHostApiSetup.unregister(api: defaultApi, registrar: stub)
-    #expect(NativeInteropReservedNamesHostApiSetup.getInstance() === preexistingDefault)
+    #expect(
+      NativeInteropReservedNamesHostApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min) === preexistingDefault)
   }
 
   @Test
   func pluginDetachPreservesOtherEngineRegistrations() {
-    let preexistingSetup = NativeInteropHostIntegrationCoreApiSetup.getInstance()
+    let preexistingSetup = NativeInteropHostIntegrationCoreApiSetup.pigeonResolveInstance(
+      engineId: Int64.min, affinityKey: Int64.min)
     let registrar1 = StubPluginRegistrar()
     let registrar2 = StubPluginRegistrar()
     TestPlugin.register(with: registrar1)
-    let setup1 = NativeInteropHostIntegrationCoreApiSetup.getInstance()
+    let setup1 = NativeInteropHostIntegrationCoreApiSetup.pigeonResolveInstance(
+      engineId: Int64.min, affinityKey: Int64.min)
     #expect(setup1 != nil)
     #expect(setup1 !== preexistingSetup)
 
     TestPlugin.register(with: registrar2)
-    let setup2 = NativeInteropHostIntegrationCoreApiSetup.getInstance()
+    let setup2 = NativeInteropHostIntegrationCoreApiSetup.pigeonResolveInstance(
+      engineId: Int64.min, affinityKey: Int64.min)
     #expect(setup2 != nil)
     #expect(setup2 !== setup1)
 
@@ -156,11 +185,15 @@ struct BasicCompileTest {
 
     // Detaching plugin1 out-of-order leaves plugin2's registration active at top of stack.
     plugin1?.detachFromEngine(for: registrar1)
-    #expect(NativeInteropHostIntegrationCoreApiSetup.getInstance() === setup2)
+    #expect(
+      NativeInteropHostIntegrationCoreApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min) === setup2)
 
     // Detaching plugin2 restores whatever state existed prior to registrar1/registrar2.
     plugin2?.detachFromEngine(for: registrar2)
-    #expect(NativeInteropHostIntegrationCoreApiSetup.getInstance() === preexistingSetup)
+    #expect(
+      NativeInteropHostIntegrationCoreApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min) === preexistingSetup)
   }
 
   @Test
@@ -290,9 +323,13 @@ struct BasicCompileTest {
     let registrar2 = StubPluginRegistrar()
     let api = FakeClassReservedApi("shared")
     NativeInteropReservedNamesHostApiSetup.register(api: api, registrar: registrar1, name: name)
-    let setup1 = try #require(NativeInteropReservedNamesHostApiSetup.getInstance(name: name))
+    let setup1 = try #require(
+      NativeInteropReservedNamesHostApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min, name: name))
     NativeInteropReservedNamesHostApiSetup.register(api: api, registrar: registrar2, name: name)
-    let setup2 = try #require(NativeInteropReservedNamesHostApiSetup.getInstance(name: name))
+    let setup2 = try #require(
+      NativeInteropReservedNamesHostApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min, name: name))
     #expect(setup1 !== setup2)
     #expect(
       NativeInteropReservedNamesHostApiSetup.pigeonEngineKey(of: setup1)
@@ -303,13 +340,19 @@ struct BasicCompileTest {
 
     // Re-registering from the same engine reuses its wrapper.
     NativeInteropReservedNamesHostApiSetup.register(api: api, registrar: registrar1, name: name)
-    #expect(NativeInteropReservedNamesHostApiSetup.getInstance(name: name) === setup1)
+    #expect(
+      NativeInteropReservedNamesHostApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min, name: name) === setup1)
 
     // Out-of-order unregister removes only the entry for that engine.
     NativeInteropReservedNamesHostApiSetup.unregister(api: api, registrar: registrar1, name: name)
-    #expect(NativeInteropReservedNamesHostApiSetup.getInstance(name: name) === setup2)
+    #expect(
+      NativeInteropReservedNamesHostApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min, name: name) === setup2)
     NativeInteropReservedNamesHostApiSetup.unregister(api: api, registrar: registrar2, name: name)
-    #expect(NativeInteropReservedNamesHostApiSetup.getInstance(name: name) == nil)
+    #expect(
+      NativeInteropReservedNamesHostApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min, name: name) == nil)
   }
 
   @Test
@@ -321,7 +364,9 @@ struct BasicCompileTest {
     NativeInteropReservedNamesHostApiSetup.register(api: api, registrar: registrar, name: name)
     NativeInteropReservedNamesHostApiSetup.unregister(
       api: api, registrar: otherRegistrar, name: name)
-    #expect(NativeInteropReservedNamesHostApiSetup.getInstance(name: name) == nil)
+    #expect(
+      NativeInteropReservedNamesHostApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min, name: name) == nil)
   }
 
   @Test
@@ -336,9 +381,13 @@ struct BasicCompileTest {
     let api1 = FakeClassReservedApi("shared")
     let api2 = FakeClassReservedApi("other")
     NativeInteropReservedNamesHostApiSetup.register(api: api1, registrar: registrar1, name: name)
-    let setup1 = try #require(NativeInteropReservedNamesHostApiSetup.getInstance(name: name))
+    let setup1 = try #require(
+      NativeInteropReservedNamesHostApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min, name: name))
     NativeInteropReservedNamesHostApiSetup.register(api: api2, registrar: registrar2, name: name)
-    let setup2 = try #require(NativeInteropReservedNamesHostApiSetup.getInstance(name: name))
+    let setup2 = try #require(
+      NativeInteropReservedNamesHostApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min, name: name))
     defer {
       NativeInteropReservedNamesHostApiSetup.unregister(
         api: api1, registrar: registrar1, name: name)

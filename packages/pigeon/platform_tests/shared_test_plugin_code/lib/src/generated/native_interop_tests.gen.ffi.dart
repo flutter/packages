@@ -14956,10 +14956,8 @@ extension type NativeInteropFlutterIntegrationCoreApiRegistrar._(objc.ObjCObject
     );
   }
 
-  /// Registers <code>api</code> under <code>name</code> (or the default instance when <code>name</code> is omitted).
-  /// The registration is tied to its engine: unregistering it for one engine leaves
-  /// other engines’ registrations in place, and Dart code running on an engine uses
-  /// the instance registered for that engine when it is known.
+  /// Registers the Dart implementation <code>api</code> under <code>name</code> (or the default instance
+  /// when <code>name</code> is omitted).
   /// Called by generated Dart code. <code>engineId</code> and <code>affinityKey</code> identify the engine
   /// that registered <code>api</code>, or are <code>Int64.min</code> when unknown.
   /// Registering an instance that is already registered under <code>name</code> updates its
@@ -15062,21 +15060,6 @@ extension type NativeInteropHostIntegrationCoreApiSetup._(objc.ObjCObject object
       zone,
     );
     return NativeInteropHostIntegrationCoreApiSetup.fromPointer($ret, retain: false, release: true);
-  }
-
-  /// Returns an instance registered under <code>name</code> (or the default instance when
-  /// <code>name</code> is omitted) by any engine, preferring the most recent registration,
-  /// or nil if none is registered.
-  static NativeInteropHostIntegrationCoreApiSetup? getInstanceWithName(objc.NSString name) {
-    final _$$ref = name.ref;
-    final $ret = _objc_msgSend_1sotr3r(
-      _class_NativeInteropHostIntegrationCoreApiSetup,
-      _sel_getInstanceWithName_,
-      _$$ref.pointer,
-    );
-    return $ret.address == 0
-        ? null
-        : NativeInteropHostIntegrationCoreApiSetup.fromPointer($ret, retain: true, release: true);
   }
 
   /// new
@@ -20302,10 +20285,8 @@ extension type NativeInteropReservedNamesFlutterApiRegistrar._(objc.ObjCObject o
     );
   }
 
-  /// Registers <code>api</code> under <code>name</code> (or the default instance when <code>name</code> is omitted).
-  /// The registration is tied to its engine: unregistering it for one engine leaves
-  /// other engines’ registrations in place, and Dart code running on an engine uses
-  /// the instance registered for that engine when it is known.
+  /// Registers the Dart implementation <code>api</code> under <code>name</code> (or the default instance
+  /// when <code>name</code> is omitted).
   /// Called by generated Dart code. <code>engineId</code> and <code>affinityKey</code> identify the engine
   /// that registered <code>api</code>, or are <code>Int64.min</code> when unknown.
   /// Registering an instance that is already registered under <code>name</code> updates its
@@ -20408,21 +20389,6 @@ extension type NativeInteropReservedNamesHostApiSetup._(objc.ObjCObject object$)
       zone,
     );
     return NativeInteropReservedNamesHostApiSetup.fromPointer($ret, retain: false, release: true);
-  }
-
-  /// Returns an instance registered under <code>name</code> (or the default instance when
-  /// <code>name</code> is omitted) by any engine, preferring the most recent registration,
-  /// or nil if none is registered.
-  static NativeInteropReservedNamesHostApiSetup? getInstanceWithName(objc.NSString name) {
-    final _$$ref = name.ref;
-    final $ret = _objc_msgSend_1sotr3r(
-      _class_NativeInteropReservedNamesHostApiSetup,
-      _sel_getInstanceWithName_,
-      _$$ref.pointer,
-    );
-    return $ret.address == 0
-        ? null
-        : NativeInteropReservedNamesHostApiSetup.fromPointer($ret, retain: true, release: true);
   }
 
   /// new
@@ -32921,7 +32887,6 @@ late final _sel_getGetInstanceWithWrappedError_ = objc.registerName(
   "getGetInstanceWithWrappedError:",
 );
 late final _sel_getGetterWithWrappedError_ = objc.registerName("getGetterWithWrappedError:");
-late final _sel_getInstanceWithName_ = objc.registerName("getInstanceWithName:");
 late final _sel_getReferenceWithError_ = objc.registerName("getReferenceWithError:");
 late final _sel_getReferenceWithWrappedError_ = objc.registerName("getReferenceWithWrappedError:");
 late final _sel_getValue = objc.registerName("getValue");

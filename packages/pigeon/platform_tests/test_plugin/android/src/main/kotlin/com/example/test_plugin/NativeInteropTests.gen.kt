@@ -2100,17 +2100,6 @@ private constructor(private val engineKey: Long) : NativeInteropHostIntegrationC
     unregisterWithKey(api, NativeInteropTestsPigeonEngineKeys.keyOf(engine), name)
   }
 
-  /**
-   * Returns an instance registered under [name] (or the default instance when [name] is omitted) by
-   * any engine, preferring the most recent registration, or null if none is registered.
-   */
-  @Keep
-  fun getInstance(
-      name: String = defaultInstanceName
-  ): NativeInteropHostIntegrationCoreApiRegistrar? {
-    return NativeInteropHostIntegrationCoreApiInstances[name]?.lastOrNull()
-  }
-
   companion object {
     /**
      * Returns the instance registered under [name] for the engine identified by [engineId].
@@ -2125,7 +2114,7 @@ private constructor(private val engineKey: Long) : NativeInteropHostIntegrationC
     fun pigeonResolveInstance(
         engineId: Long,
         affinityKey: Long,
-        name: String
+        name: String = defaultInstanceName
     ): NativeInteropHostIntegrationCoreApiRegistrar? {
       val list = NativeInteropHostIntegrationCoreApiInstances[name] ?: return null
       val exact =
@@ -5873,15 +5862,6 @@ class NativeInteropReservedNamesHostApiRegistrar private constructor(private val
     unregisterWithKey(api, NativeInteropTestsPigeonEngineKeys.keyOf(engine), name)
   }
 
-  /**
-   * Returns an instance registered under [name] (or the default instance when [name] is omitted) by
-   * any engine, preferring the most recent registration, or null if none is registered.
-   */
-  @Keep
-  fun getInstance(name: String = defaultInstanceName): NativeInteropReservedNamesHostApiRegistrar? {
-    return NativeInteropReservedNamesHostApiInstances[name]?.lastOrNull()
-  }
-
   companion object {
     /**
      * Returns the instance registered under [name] for the engine identified by [engineId].
@@ -5896,7 +5876,7 @@ class NativeInteropReservedNamesHostApiRegistrar private constructor(private val
     fun pigeonResolveInstance(
         engineId: Long,
         affinityKey: Long,
-        name: String
+        name: String = defaultInstanceName
     ): NativeInteropReservedNamesHostApiRegistrar? {
       val list = NativeInteropReservedNamesHostApiInstances[name] ?: return null
       val exact =

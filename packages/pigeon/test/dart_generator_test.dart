@@ -3038,11 +3038,12 @@ name: foobar
     generator.generateNativeInterop(dartOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
     final code = sink.toString();
     // `register` and `unregister` each have two instance overloads declared
-    // before the API methods, and `getInstance(name)` shares a name with the
-    // `getInstance` getter JNIgen makes for `getGetInstance`.
+    // before the API methods. With no `getInstance(name)` on the registrar,
+    // JNIgen's getter for `getGetInstance` keeps the plain name.
     expect(code, contains(r'_jniApi.register$2()'));
     expect(code, contains(r'_jniApi.unregister$2()'));
-    expect(code, contains(r'_jniApi.getInstance$1;'));
+    expect(code, contains('_jniApi.getInstance;'));
+    expect(code, isNot(contains(r'_jniApi.getInstance$1')));
     expect(code, contains('link = jni_bridge.ApiRegistrar.pigeonResolveInstance('));
     expect(code, contains('jni_bridge.ApiRegistrar.pigeonEngineKeyOf(link)'));
   });
@@ -3201,6 +3202,9 @@ name: foobar
           'final jni_bridge.CallbacksRegistrar registrar = jni_bridge.CallbacksRegistrar();\n'
           '      try {\n'
           '        registrar.registerInstance(impl, engineId, affinityKey, jName);\n'
+          '      } catch (_) {\n'
+          '        impl.release();\n'
+          '        rethrow;\n'
           '      } finally {\n'
           '        registrar.release();\n'
           '        jName.release();\n'

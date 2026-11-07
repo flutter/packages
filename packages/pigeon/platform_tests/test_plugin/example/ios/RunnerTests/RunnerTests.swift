@@ -53,19 +53,27 @@ struct RunnerTests {
     let api1 = NativeInteropTestsClass()
     let api2 = NativeInteropTestsClass()
     NativeInteropHostIntegrationCoreApiSetup.register(api: api1, registrar: stub, name: name)
-    let setup1 = try #require(NativeInteropHostIntegrationCoreApiSetup.getInstance(name: name))
+    let setup1 = try #require(
+      NativeInteropHostIntegrationCoreApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min, name: name))
     NativeInteropHostIntegrationCoreApiSetup.register(api: api2, registrar: stub, name: name)
-    let setup2 = try #require(NativeInteropHostIntegrationCoreApiSetup.getInstance(name: name))
+    let setup2 = try #require(
+      NativeInteropHostIntegrationCoreApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min, name: name))
     #expect(setup2 !== setup1)
 
     NativeInteropHostIntegrationCoreApiSetup.unregister(api: api1, registrar: stub, name: name)
     let staleError = NativeInteropTestsError()
     #expect(setup1.echoString(aString: "ping", wrappedError: staleError) == nil)
     #expect(staleError.code == "unregistered-instance")
-    #expect(NativeInteropHostIntegrationCoreApiSetup.getInstance(name: name) === setup2)
+    #expect(
+      NativeInteropHostIntegrationCoreApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min, name: name) === setup2)
 
     NativeInteropHostIntegrationCoreApiSetup.unregister(api: api2, registrar: stub, name: name)
-    #expect(NativeInteropHostIntegrationCoreApiSetup.getInstance(name: name) == nil)
+    #expect(
+      NativeInteropHostIntegrationCoreApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min, name: name) == nil)
   }
 
   @Test
@@ -75,34 +83,47 @@ struct RunnerTests {
     let api1 = NativeInteropTestsClass()
     let api2 = NativeInteropTestsClass()
     NativeInteropHostIntegrationCoreApiSetup.register(api: api1, registrar: stub, name: name)
-    let setup1 = try #require(NativeInteropHostIntegrationCoreApiSetup.getInstance(name: name))
+    let setup1 = try #require(
+      NativeInteropHostIntegrationCoreApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min, name: name))
     NativeInteropHostIntegrationCoreApiSetup.register(api: api2, registrar: stub, name: name)
-    let setup2 = try #require(NativeInteropHostIntegrationCoreApiSetup.getInstance(name: name))
+    let setup2 = try #require(
+      NativeInteropHostIntegrationCoreApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min, name: name))
 
     NativeInteropHostIntegrationCoreApiSetup.register(api: api1, registrar: stub, name: name)
-    #expect(NativeInteropHostIntegrationCoreApiSetup.getInstance(name: name) === setup1)
+    #expect(
+      NativeInteropHostIntegrationCoreApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min, name: name) === setup1)
     let error = NativeInteropTestsError()
     #expect(setup1.echoString(aString: "ping", wrappedError: error) == "ping")
     #expect(error.code == nil)
 
     NativeInteropHostIntegrationCoreApiSetup.unregister(api: api1, registrar: stub, name: name)
-    #expect(NativeInteropHostIntegrationCoreApiSetup.getInstance(name: name) === setup2)
+    #expect(
+      NativeInteropHostIntegrationCoreApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min, name: name) === setup2)
     NativeInteropHostIntegrationCoreApiSetup.unregister(api: api2, registrar: stub, name: name)
-    #expect(NativeInteropHostIntegrationCoreApiSetup.getInstance(name: name) == nil)
+    #expect(
+      NativeInteropHostIntegrationCoreApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min, name: name) == nil)
   }
 
   @Test
   func pluginDetachPreservesOtherEngineRegistrations() {
-    let preexistingSetup = NativeInteropHostIntegrationCoreApiSetup.getInstance()
+    let preexistingSetup = NativeInteropHostIntegrationCoreApiSetup.pigeonResolveInstance(
+      engineId: Int64.min, affinityKey: Int64.min)
     let registrar1 = StubPluginRegistrar()
     let registrar2 = StubPluginRegistrar()
     TestPlugin.register(with: registrar1)
-    let setup1 = NativeInteropHostIntegrationCoreApiSetup.getInstance()
+    let setup1 = NativeInteropHostIntegrationCoreApiSetup.pigeonResolveInstance(
+      engineId: Int64.min, affinityKey: Int64.min)
     #expect(setup1 != nil)
     #expect(setup1 !== preexistingSetup)
 
     TestPlugin.register(with: registrar2)
-    let setup2 = NativeInteropHostIntegrationCoreApiSetup.getInstance()
+    let setup2 = NativeInteropHostIntegrationCoreApiSetup.pigeonResolveInstance(
+      engineId: Int64.min, affinityKey: Int64.min)
     #expect(setup2 != nil)
     #expect(setup2 !== setup1)
 
@@ -112,10 +133,14 @@ struct RunnerTests {
     #expect(plugin2 != nil)
 
     plugin1?.detachFromEngine(for: registrar1)
-    #expect(NativeInteropHostIntegrationCoreApiSetup.getInstance() === setup2)
+    #expect(
+      NativeInteropHostIntegrationCoreApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min) === setup2)
 
     plugin2?.detachFromEngine(for: registrar2)
-    #expect(NativeInteropHostIntegrationCoreApiSetup.getInstance() === preexistingSetup)
+    #expect(
+      NativeInteropHostIntegrationCoreApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min) === preexistingSetup)
   }
 
   @Test
@@ -203,9 +228,13 @@ struct RunnerTests {
     let registrar2 = StubPluginRegistrar()
     let api = NativeInteropTestsClass()
     NativeInteropHostIntegrationCoreApiSetup.register(api: api, registrar: registrar1, name: name)
-    let setup1 = try #require(NativeInteropHostIntegrationCoreApiSetup.getInstance(name: name))
+    let setup1 = try #require(
+      NativeInteropHostIntegrationCoreApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min, name: name))
     NativeInteropHostIntegrationCoreApiSetup.register(api: api, registrar: registrar2, name: name)
-    let setup2 = try #require(NativeInteropHostIntegrationCoreApiSetup.getInstance(name: name))
+    let setup2 = try #require(
+      NativeInteropHostIntegrationCoreApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min, name: name))
     #expect(setup1 !== setup2)
     #expect(
       NativeInteropHostIntegrationCoreApiSetup.pigeonEngineKey(of: setup1)
@@ -216,13 +245,19 @@ struct RunnerTests {
 
     // Re-registering from the same engine reuses its wrapper.
     NativeInteropHostIntegrationCoreApiSetup.register(api: api, registrar: registrar1, name: name)
-    #expect(NativeInteropHostIntegrationCoreApiSetup.getInstance(name: name) === setup1)
+    #expect(
+      NativeInteropHostIntegrationCoreApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min, name: name) === setup1)
 
     // Out-of-order unregister removes only the entry for that engine.
     NativeInteropHostIntegrationCoreApiSetup.unregister(api: api, registrar: registrar1, name: name)
-    #expect(NativeInteropHostIntegrationCoreApiSetup.getInstance(name: name) === setup2)
+    #expect(
+      NativeInteropHostIntegrationCoreApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min, name: name) === setup2)
     NativeInteropHostIntegrationCoreApiSetup.unregister(api: api, registrar: registrar2, name: name)
-    #expect(NativeInteropHostIntegrationCoreApiSetup.getInstance(name: name) == nil)
+    #expect(
+      NativeInteropHostIntegrationCoreApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min, name: name) == nil)
   }
 
   @Test
@@ -234,7 +269,9 @@ struct RunnerTests {
     NativeInteropHostIntegrationCoreApiSetup.register(api: api, registrar: registrar, name: name)
     NativeInteropHostIntegrationCoreApiSetup.unregister(
       api: api, registrar: otherRegistrar, name: name)
-    #expect(NativeInteropHostIntegrationCoreApiSetup.getInstance(name: name) == nil)
+    #expect(
+      NativeInteropHostIntegrationCoreApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min, name: name) == nil)
   }
 
   @Test
@@ -249,9 +286,13 @@ struct RunnerTests {
     let api1 = NativeInteropTestsClass()
     let api2 = NativeInteropTestsClass()
     NativeInteropHostIntegrationCoreApiSetup.register(api: api1, registrar: registrar1, name: name)
-    let setup1 = try #require(NativeInteropHostIntegrationCoreApiSetup.getInstance(name: name))
+    let setup1 = try #require(
+      NativeInteropHostIntegrationCoreApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min, name: name))
     NativeInteropHostIntegrationCoreApiSetup.register(api: api2, registrar: registrar2, name: name)
-    let setup2 = try #require(NativeInteropHostIntegrationCoreApiSetup.getInstance(name: name))
+    let setup2 = try #require(
+      NativeInteropHostIntegrationCoreApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min, name: name))
     defer {
       NativeInteropHostIntegrationCoreApiSetup.unregister(
         api: api1, registrar: registrar1, name: name)

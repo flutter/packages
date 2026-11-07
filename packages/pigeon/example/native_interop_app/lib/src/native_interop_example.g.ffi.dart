@@ -57,21 +57,6 @@ extension type NativeInteropExampleApiSetup._(objc.ObjCObject object$)
     return NativeInteropExampleApiSetup.fromPointer($ret, retain: false, release: true);
   }
 
-  /// Returns an instance registered under <code>name</code> (or the default instance when
-  /// <code>name</code> is omitted) by any engine, preferring the most recent registration,
-  /// or nil if none is registered.
-  static NativeInteropExampleApiSetup? getInstanceWithName(objc.NSString name) {
-    final _$$ref = name.ref;
-    final $ret = _objc_msgSend_1sotr3r(
-      _class_NativeInteropExampleApiSetup,
-      _sel_getInstanceWithName_,
-      _$$ref.pointer,
-    );
-    return $ret.address == 0
-        ? null
-        : NativeInteropExampleApiSetup.fromPointer($ret, retain: true, release: true);
-  }
-
   /// new
   static NativeInteropExampleApiSetup new$() {
     final $ret = _objc_msgSend_151sglz(_class_NativeInteropExampleApiSetup, _sel_new);
@@ -631,23 +616,6 @@ final _objc_msgSend_1oj5o8z = objc.msgSendPointer
         ffi.Pointer<objc.ObjCObjectImpl>,
       )
     >();
-final _objc_msgSend_1sotr3r = objc.msgSendPointer
-    .cast<
-      ffi.NativeFunction<
-        ffi.Pointer<objc.ObjCObjectImpl> Function(
-          ffi.Pointer<objc.ObjCObjectImpl>,
-          ffi.Pointer<objc.ObjCSelector>,
-          ffi.Pointer<objc.ObjCObjectImpl>,
-        )
-      >
-    >()
-    .asFunction<
-      ffi.Pointer<objc.ObjCObjectImpl> Function(
-        ffi.Pointer<objc.ObjCObjectImpl>,
-        ffi.Pointer<objc.ObjCSelector>,
-        ffi.Pointer<objc.ObjCObjectImpl>,
-      )
-    >();
 final _objc_msgSend_4sp4xj = objc.msgSendPointer
     .cast<
       ffi.NativeFunction<
@@ -732,7 +700,6 @@ late final _sel_copyWithZone_ = objc.registerName("copyWithZone:");
 late final _sel_data = objc.registerName("data");
 late final _sel_details = objc.registerName("details");
 late final _sel_doSomethingWithWrappedError_ = objc.registerName("doSomethingWithWrappedError:");
-late final _sel_getInstanceWithName_ = objc.registerName("getInstanceWithName:");
 late final _sel_hash = objc.registerName("hash");
 late final _sel_init = objc.registerName("init");
 late final _sel_initWithCode_message_details_ = objc.registerName("initWithCode:message:details:");

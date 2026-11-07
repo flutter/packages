@@ -1490,6 +1490,12 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
             indent.writeScoped('try {', '}', () {
               indent.writeln('registrar.${jniRegister.name}(impl, engineId, affinityKey, jName);');
             }, addTrailingNewline: false);
+            // `impl` is only tracked (and later released) once registration
+            // succeeds.
+            indent.addScoped(' catch (_) {', '}', () {
+              indent.writeln('impl.release();');
+              indent.writeln('rethrow;');
+            }, addTrailingNewline: false);
             indent.addScoped(' finally {', '}', () {
               indent.writeln('registrar.release();');
               indent.writeln('jName.release();');
@@ -1956,9 +1962,8 @@ $dartApiName? ${classMemberNamePrefix}getInstance_${api.name}({
       // In Kotlin bytecode for `<Api>Registrar`, `Companion` is a static field
       // renamed first by JNIgen. The instance methods follow in declaration
       // order: `register(api, binding, name)`, `register(api, engine, name)`,
-      // the matching `unregister` overloads, `getInstance(name)`, and the
-      // overridden API methods. The `@JvmStatic` bridge methods of the
-      // companion come last.
+      // the matching `unregister` overloads, and the overridden API methods.
+      // The `@JvmStatic` bridge methods of the companion come last.
       final jniNamer = _JniBindingNamer(
         isInterface: false,
         declaredFirst: const <String>['Companion'],
@@ -1967,7 +1972,6 @@ $dartApiName? ${classMemberNamePrefix}getInstance_${api.name}({
       jniNamer.next('register', parameterCount: 3, returnsVoid: true);
       jniNamer.next('unregister', parameterCount: 3, returnsVoid: true);
       jniNamer.next('unregister', parameterCount: 3, returnsVoid: true);
-      jniNamer.next('getInstance', parameterCount: 1);
       final jniApiMembers = <Method, _JniMember>{
         for (final Method method in api.methods) method: jniNamer.nextApiMethod(method),
       };

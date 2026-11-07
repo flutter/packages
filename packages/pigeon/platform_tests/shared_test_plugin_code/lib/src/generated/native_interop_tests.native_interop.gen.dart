@@ -10146,6 +10146,9 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
           jni_bridge.NativeInteropFlutterIntegrationCoreApiRegistrar();
       try {
         registrar.registerInstance(impl, engineId, affinityKey, jName);
+      } catch (_) {
+        impl.release();
+        rethrow;
       } finally {
         registrar.release();
         jName.release();
@@ -14213,7 +14216,7 @@ class _NativeInteropReservedNamesHostApiForNativeInterop
   String getGetInstance() {
     try {
       if (_jniApi != null) {
-        final JString pigeonVar_res = _jniApi.getInstance$1;
+        final JString pigeonVar_res = _jniApi.getInstance;
         final String pigeonVar_dartTypeRes = pigeonVar_res.toDartString(releaseOriginal: true);
         return pigeonVar_dartTypeRes;
       } else if (_ffiApi != null) {
@@ -14515,6 +14518,9 @@ final class _NativeInteropReservedNamesFlutterApiRegistrar
           jni_bridge.NativeInteropReservedNamesFlutterApiRegistrar();
       try {
         registrar.registerInstance(impl, engineId, affinityKey, jName);
+      } catch (_) {
+        impl.release();
+        rethrow;
       } finally {
         registrar.release();
         jName.release();

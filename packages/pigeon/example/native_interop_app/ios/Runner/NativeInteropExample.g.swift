@@ -481,23 +481,15 @@ protocol NativeInteropExampleApi: AnyObject {
     }
   }
 
-  /// Returns an instance registered under `name` (or the default instance when
-  /// `name` is omitted) by any engine, preferring the most recent registration,
-  /// or nil if none is registered.
-  @objc static func getInstance(
-    name: String = NativeInteropExamplePigeonInternal.defaultInstanceName
-  ) -> NativeInteropExampleApiSetup? {
-    return NativeInteropExampleApiInstanceTracker.instancesOfNativeInteropExampleApi[name]?.last
-  }
-
   /// Returns the instance generated Dart code should use for `name` (or the default
   /// instance).
   ///
   /// Prefers the most recent registration whose engine key is `engineId`, then
   /// `affinityKey`, then the most recent registration. `Int64.min` means unknown.
-  @objc static func pigeonResolveInstance(engineId: Int64, affinityKey: Int64, name: String)
-    -> NativeInteropExampleApiSetup?
-  {
+  @objc static func pigeonResolveInstance(
+    engineId: Int64, affinityKey: Int64,
+    name: String = NativeInteropExamplePigeonInternal.defaultInstanceName
+  ) -> NativeInteropExampleApiSetup? {
     guard let list = NativeInteropExampleApiInstanceTracker.instancesOfNativeInteropExampleApi[name]
     else {
       return nil

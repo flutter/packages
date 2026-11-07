@@ -1416,7 +1416,10 @@ if (wrapped == nil) {
     indent.addScoped('{', '}', () {
       indent.writeln('static var registered${api.name} = [String: [${api.name}]]()');
       indent.newln();
-      _writeNativeInteropRegisterDocs(indent);
+      indent.writeln(
+        '$_docCommentPrefix Registers the Dart implementation `api` under `name` (or the default instance',
+      );
+      indent.writeln('$_docCommentPrefix when `name` is omitted).');
       indent.writeln(_docCommentPrefix);
       indent.writeln(
         '$_docCommentPrefix Called by generated Dart code. `engineId` and `affinityKey` identify the engine',
@@ -1625,16 +1628,6 @@ if (wrapped == nil) {
     );
   }
 
-  void _writeNativeInteropGetInstanceDocs(Indent indent) {
-    indent.writeln(
-      '$_docCommentPrefix Returns an instance registered under `name` (or the default instance when',
-    );
-    indent.writeln(
-      '$_docCommentPrefix `name` is omitted) by any engine, preferring the most recent registration,',
-    );
-    indent.writeln('$_docCommentPrefix or nil if none is registered.');
-  }
-
   /// Writes the engine-keyed registration statics of an FFI HostApi `Setup`
   /// class.
   ///
@@ -1760,15 +1753,6 @@ if (wrapped == nil) {
       },
     );
     indent.newln();
-    _writeNativeInteropGetInstanceDocs(indent);
-    indent.writeScoped(
-      '@objc static func getInstance(name: String = $defaultName) -> $setupName? {',
-      '}',
-      () {
-        indent.writeln('return $instances[name]?.last');
-      },
-    );
-    indent.newln();
     indent.writeln(
       '$_docCommentPrefix Returns the instance generated Dart code should use for `name` (or the default',
     );
@@ -1781,7 +1765,7 @@ if (wrapped == nil) {
       '$_docCommentPrefix `affinityKey`, then the most recent registration. `Int64.min` means unknown.',
     );
     indent.writeScoped(
-      '@objc static func pigeonResolveInstance(engineId: Int64, affinityKey: Int64, name: String) -> $setupName? {',
+      '@objc static func pigeonResolveInstance(engineId: Int64, affinityKey: Int64, name: String = $defaultName) -> $setupName? {',
       '}',
       () {
         indent.writeScoped('guard let list = $instances[name] else {', '}', () {
@@ -2920,6 +2904,10 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
   /// embedder exposes `engineIdentifier`, and are otherwise synthetic negative
   /// values unique to each engine messenger.
   void _writePigeonEngineKeys(Indent indent) {
+    // TODO(tarrinneal): Read FlutterPluginRegistrar.engineIdentifier directly
+    // instead of through `responds(to:)`/KVC, and drop the messenger-based
+    // fallback, once it is available on stable Flutter.
+    // https://github.com/flutter/flutter/issues/195877
     indent.newln();
     indent.format('''
 /// Computes the keys that associate Native Interop registrations with a Flutter engine.

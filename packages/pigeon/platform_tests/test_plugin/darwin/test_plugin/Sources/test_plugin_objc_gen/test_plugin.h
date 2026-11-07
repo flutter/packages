@@ -1337,15 +1337,12 @@ SWIFT_PROTOCOL(
 SWIFT_CLASS(
     "_TtC11test_plugin47NativeInteropFlutterIntegrationCoreApiRegistrar")
 @interface NativeInteropFlutterIntegrationCoreApiRegistrar : NSObject
-/// Registers <code>api</code> under <code>name</code> (or the default instance
-/// when <code>name</code> is omitted). The registration is tied to its engine:
-/// unregistering it for one engine leaves other engines’ registrations in
-/// place, and Dart code running on an engine uses the instance registered for
-/// that engine when it is known. Called by generated Dart code.
-/// <code>engineId</code> and <code>affinityKey</code> identify the engine that
-/// registered <code>api</code>, or are <code>Int64.min</code> when unknown.
-/// Registering an instance that is already registered under <code>name</code>
-/// updates its keys and keeps its position.
+/// Registers the Dart implementation <code>api</code> under <code>name</code>
+/// (or the default instance when <code>name</code> is omitted). Called by
+/// generated Dart code. <code>engineId</code> and <code>affinityKey</code>
+/// identify the engine that registered <code>api</code>, or are
+/// <code>Int64.min</code> when unknown. Registering an instance that is already
+/// registered under <code>name</code> updates its keys and keeps its position.
 + (void)registerInstanceWithApi:
             (id<NativeInteropFlutterIntegrationCoreApiBridge> _Nonnull)api
                        engineId:(int64_t)engineId
@@ -1367,11 +1364,6 @@ SWIFT_CLASS(
 SWIFT_CLASS("_TtC11test_plugin40NativeInteropHostIntegrationCoreApiSetup")
 @interface NativeInteropHostIntegrationCoreApiSetup : NSObject
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
-/// Returns an instance registered under <code>name</code> (or the default
-/// instance when <code>name</code> is omitted) by any engine, preferring the
-/// most recent registration, or nil if none is registered.
-+ (NativeInteropHostIntegrationCoreApiSetup* _Nullable)getInstanceWithName:
-    (NSString* _Nonnull)name SWIFT_WARN_UNUSED_RESULT;
 /// Returns the instance generated Dart code should use for <code>name</code>
 /// (or the default instance). Prefers the most recent registration whose engine
 /// key is <code>engineId</code>, then <code>affinityKey</code>, then the most
@@ -3185,15 +3177,12 @@ SWIFT_PROTOCOL("_TtP11test_plugin42NativeInteropReservedNamesFlutterApiBridge_")
 
 SWIFT_CLASS("_TtC11test_plugin45NativeInteropReservedNamesFlutterApiRegistrar")
 @interface NativeInteropReservedNamesFlutterApiRegistrar : NSObject
-/// Registers <code>api</code> under <code>name</code> (or the default instance
-/// when <code>name</code> is omitted). The registration is tied to its engine:
-/// unregistering it for one engine leaves other engines’ registrations in
-/// place, and Dart code running on an engine uses the instance registered for
-/// that engine when it is known. Called by generated Dart code.
-/// <code>engineId</code> and <code>affinityKey</code> identify the engine that
-/// registered <code>api</code>, or are <code>Int64.min</code> when unknown.
-/// Registering an instance that is already registered under <code>name</code>
-/// updates its keys and keeps its position.
+/// Registers the Dart implementation <code>api</code> under <code>name</code>
+/// (or the default instance when <code>name</code> is omitted). Called by
+/// generated Dart code. <code>engineId</code> and <code>affinityKey</code>
+/// identify the engine that registered <code>api</code>, or are
+/// <code>Int64.min</code> when unknown. Registering an instance that is already
+/// registered under <code>name</code> updates its keys and keeps its position.
 + (void)registerInstanceWithApi:
             (id<NativeInteropReservedNamesFlutterApiBridge> _Nonnull)api
                        engineId:(int64_t)engineId
@@ -3214,11 +3203,6 @@ SWIFT_CLASS("_TtC11test_plugin45NativeInteropReservedNamesFlutterApiRegistrar")
 SWIFT_CLASS("_TtC11test_plugin38NativeInteropReservedNamesHostApiSetup")
 @interface NativeInteropReservedNamesHostApiSetup : NSObject
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
-/// Returns an instance registered under <code>name</code> (or the default
-/// instance when <code>name</code> is omitted) by any engine, preferring the
-/// most recent registration, or nil if none is registered.
-+ (NativeInteropReservedNamesHostApiSetup* _Nullable)getInstanceWithName:
-    (NSString* _Nonnull)name SWIFT_WARN_UNUSED_RESULT;
 /// Returns the instance generated Dart code should use for <code>name</code>
 /// (or the default instance). Prefers the most recent registration whose engine
 /// key is <code>engineId</code>, then <code>affinityKey</code>, then the most

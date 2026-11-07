@@ -2071,12 +2071,14 @@ class NativeInteropIntegrationTests(
     val singleApi = NativeInteropIntegrationTests()
     NativeInteropHostIntegrationCoreApiRegistrar()
         .register(singleApi, requireBinding(), name = name)
-    if (NativeInteropHostIntegrationCoreApiRegistrar().getInstance(name) == null) {
+    if (NativeInteropHostIntegrationCoreApiRegistrar.pigeonResolveInstance(
+        Long.MIN_VALUE, Long.MIN_VALUE, name) == null) {
       return false
     }
     NativeInteropHostIntegrationCoreApiRegistrar()
         .unregister(singleApi, requireBinding(), name = name)
-    if (NativeInteropHostIntegrationCoreApiRegistrar().getInstance(name) != null) {
+    if (NativeInteropHostIntegrationCoreApiRegistrar.pigeonResolveInstance(
+        Long.MIN_VALUE, Long.MIN_VALUE, name) != null) {
       return false
     }
 
@@ -2090,7 +2092,9 @@ class NativeInteropIntegrationTests(
         .register(api1, requireBinding(), name = outOfOrderName)
     NativeInteropHostIntegrationCoreApiRegistrar()
         .register(api2, requireBinding(), name = outOfOrderName)
-    val reg2 = NativeInteropHostIntegrationCoreApiRegistrar().getInstance(outOfOrderName)
+    val reg2 =
+        NativeInteropHostIntegrationCoreApiRegistrar.pigeonResolveInstance(
+            Long.MIN_VALUE, Long.MIN_VALUE, outOfOrderName)
     NativeInteropHostIntegrationCoreApiRegistrar()
         .unregister(api1, requireBinding(), name = outOfOrderName)
     NativeInteropHostIntegrationCoreApiRegistrar()
@@ -2098,33 +2102,43 @@ class NativeInteropIntegrationTests(
     NativeInteropHostIntegrationCoreApiRegistrar()
         .unregister(unregisteredApi, requireBinding(), name = outOfOrderName)
     if (reg2 == null ||
-        NativeInteropHostIntegrationCoreApiRegistrar().getInstance(outOfOrderName) !== reg2) {
+        NativeInteropHostIntegrationCoreApiRegistrar.pigeonResolveInstance(
+            Long.MIN_VALUE, Long.MIN_VALUE, outOfOrderName) !== reg2) {
       return false
     }
     NativeInteropHostIntegrationCoreApiRegistrar()
         .unregister(api2, requireBinding(), name = outOfOrderName)
-    if (NativeInteropHostIntegrationCoreApiRegistrar().getInstance(outOfOrderName) != null) {
+    if (NativeInteropHostIntegrationCoreApiRegistrar.pigeonResolveInstance(
+        Long.MIN_VALUE, Long.MIN_VALUE, outOfOrderName) != null) {
       return false
     }
 
     // Default instance is distinct from an explicit empty string (name = "").
-    val defaultReservedWrapper = NativeInteropReservedNamesHostApiRegistrar().getInstance()
+    val defaultReservedWrapper =
+        NativeInteropReservedNamesHostApiRegistrar.pigeonResolveInstance(
+            Long.MIN_VALUE, Long.MIN_VALUE)
     if (defaultReservedWrapper == null ||
-        NativeInteropReservedNamesHostApiRegistrar().getInstance("") != null) {
+        NativeInteropReservedNamesHostApiRegistrar.pigeonResolveInstance(
+            Long.MIN_VALUE, Long.MIN_VALUE, "") != null) {
       return false
     }
     val emptyNameApi = NativeInteropReservedNamesHostApiImpl()
     NativeInteropReservedNamesHostApiRegistrar().register(emptyNameApi, requireBinding(), name = "")
-    val emptyNameWrapper = NativeInteropReservedNamesHostApiRegistrar().getInstance("")
+    val emptyNameWrapper =
+        NativeInteropReservedNamesHostApiRegistrar.pigeonResolveInstance(
+            Long.MIN_VALUE, Long.MIN_VALUE, "")
     val emptyNameIsolated =
         emptyNameWrapper != null &&
             emptyNameWrapper !== defaultReservedWrapper &&
-            NativeInteropReservedNamesHostApiRegistrar().getInstance() === defaultReservedWrapper
+            NativeInteropReservedNamesHostApiRegistrar.pigeonResolveInstance(
+                Long.MIN_VALUE, Long.MIN_VALUE) === defaultReservedWrapper
     NativeInteropReservedNamesHostApiRegistrar()
         .unregister(emptyNameApi, requireBinding(), name = "")
     if (!emptyNameIsolated ||
-        NativeInteropReservedNamesHostApiRegistrar().getInstance("") != null ||
-        NativeInteropReservedNamesHostApiRegistrar().getInstance() !== defaultReservedWrapper) {
+        NativeInteropReservedNamesHostApiRegistrar.pigeonResolveInstance(
+            Long.MIN_VALUE, Long.MIN_VALUE, "") != null ||
+        NativeInteropReservedNamesHostApiRegistrar.pigeonResolveInstance(
+            Long.MIN_VALUE, Long.MIN_VALUE) !== defaultReservedWrapper) {
       return false
     }
 
@@ -2139,12 +2153,16 @@ class NativeInteropIntegrationTests(
         engine3.plugins.add(TestPlugin())
         engine2.destroy()
         val afterSecondDestroyed =
-            NativeInteropHostIntegrationCoreApiRegistrar().getInstance() != null &&
-                NativeInteropReservedNamesHostApiRegistrar().getInstance() != null
+            NativeInteropHostIntegrationCoreApiRegistrar.pigeonResolveInstance(
+                Long.MIN_VALUE, Long.MIN_VALUE) != null &&
+                NativeInteropReservedNamesHostApiRegistrar.pigeonResolveInstance(
+                    Long.MIN_VALUE, Long.MIN_VALUE) != null
         engine3.destroy()
         val afterThirdDestroyed =
-            NativeInteropHostIntegrationCoreApiRegistrar().getInstance() != null &&
-                NativeInteropReservedNamesHostApiRegistrar().getInstance() != null
+            NativeInteropHostIntegrationCoreApiRegistrar.pigeonResolveInstance(
+                Long.MIN_VALUE, Long.MIN_VALUE) != null &&
+                NativeInteropReservedNamesHostApiRegistrar.pigeonResolveInstance(
+                    Long.MIN_VALUE, Long.MIN_VALUE) != null
         engineCheckPassed = afterSecondDestroyed && afterThirdDestroyed
       }
       if (Looper.myLooper() == Looper.getMainLooper()) {
@@ -2305,7 +2323,8 @@ class NativeInteropIntegrationTests(
 
   override fun registeredEngineKey(): Long {
     val registration =
-        NativeInteropHostIntegrationCoreApiRegistrar().getInstance()
+        NativeInteropHostIntegrationCoreApiRegistrar.pigeonResolveInstance(
+            Long.MIN_VALUE, Long.MIN_VALUE)
             ?: throw NativeInteropTestsError("no-registration", "No default Host API registration.")
     return NativeInteropHostIntegrationCoreApiRegistrar.pigeonEngineKeyOf(registration)
   }

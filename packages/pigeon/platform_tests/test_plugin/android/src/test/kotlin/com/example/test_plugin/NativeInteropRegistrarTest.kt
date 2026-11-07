@@ -122,7 +122,8 @@ class NativeInteropRegistrarTest {
         NativeInteropReservedNamesHostApiRegistrar.pigeonResolveInstance(101L, NO_KEY, name))
 
     NativeInteropReservedNamesHostApiRegistrar().unregister(api, engineB, name)
-    assertNull(NativeInteropReservedNamesHostApiRegistrar().getInstance(name))
+    assertNull(
+        NativeInteropReservedNamesHostApiRegistrar.pigeonResolveInstance(NO_KEY, NO_KEY, name))
   }
 
   @Test
@@ -134,23 +135,29 @@ class NativeInteropRegistrarTest {
     val engine2 = mockEngine(202L)
 
     NativeInteropReservedNamesHostApiRegistrar().register(api1, engine1, name)
-    val registrar1 = NativeInteropReservedNamesHostApiRegistrar().getInstance(name)
+    val registrar1 =
+        NativeInteropReservedNamesHostApiRegistrar.pigeonResolveInstance(NO_KEY, NO_KEY, name)
     assertNotNull(registrar1)
     NativeInteropReservedNamesHostApiRegistrar().register(api2, engine2, name)
     assertEquals(
-        "engine2:ping", releasePing(NativeInteropReservedNamesHostApiRegistrar().getInstance(name)))
+        "engine2:ping",
+        releasePing(
+            NativeInteropReservedNamesHostApiRegistrar.pigeonResolveInstance(NO_KEY, NO_KEY, name)))
 
     // Unregistering engine1 out-of-order leaves engine2 active.
     NativeInteropReservedNamesHostApiRegistrar().unregister(api1, engine1, name)
     assertEquals(
-        "engine2:ping", releasePing(NativeInteropReservedNamesHostApiRegistrar().getInstance(name)))
+        "engine2:ping",
+        releasePing(
+            NativeInteropReservedNamesHostApiRegistrar.pigeonResolveInstance(NO_KEY, NO_KEY, name)))
     // Stale registrar1 reference has its internal api cleared.
     val error = assertThrows(NativeInteropTestsError::class.java) { registrar1!!.release("ping") }
     assertEquals("unregistered-instance", error.code)
     assertEquals("NativeInteropReservedNamesHostApi has not been registered.", error.message)
 
     NativeInteropReservedNamesHostApiRegistrar().unregister(api2, engine2, name)
-    assertNull(NativeInteropReservedNamesHostApiRegistrar().getInstance(name))
+    assertNull(
+        NativeInteropReservedNamesHostApiRegistrar.pigeonResolveInstance(NO_KEY, NO_KEY, name))
   }
 
   @Test
@@ -165,10 +172,13 @@ class NativeInteropRegistrarTest {
     // No entry for api has the key of this binding, so api's entries are removed by identity.
     NativeInteropReservedNamesHostApiRegistrar().unregister(api, mockBinding(), name)
     assertEquals(
-        "other:ping", releasePing(NativeInteropReservedNamesHostApiRegistrar().getInstance(name)))
+        "other:ping",
+        releasePing(
+            NativeInteropReservedNamesHostApiRegistrar.pigeonResolveInstance(NO_KEY, NO_KEY, name)))
 
     NativeInteropReservedNamesHostApiRegistrar().unregister(other, engine, name)
-    assertNull(NativeInteropReservedNamesHostApiRegistrar().getInstance(name))
+    assertNull(
+        NativeInteropReservedNamesHostApiRegistrar.pigeonResolveInstance(NO_KEY, NO_KEY, name))
   }
 
   @Test
@@ -187,10 +197,13 @@ class NativeInteropRegistrarTest {
     NativeInteropReservedNamesHostApiRegistrar().unregister(api1, engine, name)
     NativeInteropReservedNamesHostApiRegistrar().unregister(neverRegistered, engine, name)
     assertEquals(
-        "engine2:ping", releasePing(NativeInteropReservedNamesHostApiRegistrar().getInstance(name)))
+        "engine2:ping",
+        releasePing(
+            NativeInteropReservedNamesHostApiRegistrar.pigeonResolveInstance(NO_KEY, NO_KEY, name)))
 
     NativeInteropReservedNamesHostApiRegistrar().unregister(api2, engine, name)
-    assertNull(NativeInteropReservedNamesHostApiRegistrar().getInstance(name))
+    assertNull(
+        NativeInteropReservedNamesHostApiRegistrar.pigeonResolveInstance(NO_KEY, NO_KEY, name))
   }
 
   @Test
@@ -203,18 +216,22 @@ class NativeInteropRegistrarTest {
     val otherBinding = mockBinding()
 
     NativeInteropReservedNamesHostApiRegistrar().register(api, binding1, name)
-    val wrapper = NativeInteropReservedNamesHostApiRegistrar().getInstance(name)!!
+    val wrapper =
+        NativeInteropReservedNamesHostApiRegistrar.pigeonResolveInstance(NO_KEY, NO_KEY, name)!!
     val key = NativeInteropReservedNamesHostApiRegistrar.pigeonEngineKeyOf(wrapper)
     assertTrue(key < 0)
     assertNotEquals(NO_KEY, key)
 
     // A binding with the same messenger belongs to the same engine, so it reuses the wrapper.
     NativeInteropReservedNamesHostApiRegistrar().register(api, binding2, name)
-    assertSame(wrapper, NativeInteropReservedNamesHostApiRegistrar().getInstance(name))
+    assertSame(
+        wrapper,
+        NativeInteropReservedNamesHostApiRegistrar.pigeonResolveInstance(NO_KEY, NO_KEY, name))
 
     // A binding with another messenger gets a different key.
     NativeInteropReservedNamesHostApiRegistrar().register(api, otherBinding, name)
-    val otherWrapper = NativeInteropReservedNamesHostApiRegistrar().getInstance(name)!!
+    val otherWrapper =
+        NativeInteropReservedNamesHostApiRegistrar.pigeonResolveInstance(NO_KEY, NO_KEY, name)!!
     assertNotSame(wrapper, otherWrapper)
     val otherKey = NativeInteropReservedNamesHostApiRegistrar.pigeonEngineKeyOf(otherWrapper)
     assertTrue(otherKey < 0)
@@ -222,9 +239,12 @@ class NativeInteropRegistrarTest {
     assertNotEquals(NO_KEY, otherKey)
 
     NativeInteropReservedNamesHostApiRegistrar().unregister(api, binding1, name)
-    assertSame(otherWrapper, NativeInteropReservedNamesHostApiRegistrar().getInstance(name))
+    assertSame(
+        otherWrapper,
+        NativeInteropReservedNamesHostApiRegistrar.pigeonResolveInstance(NO_KEY, NO_KEY, name))
     NativeInteropReservedNamesHostApiRegistrar().unregister(api, otherBinding, name)
-    assertNull(NativeInteropReservedNamesHostApiRegistrar().getInstance(name))
+    assertNull(
+        NativeInteropReservedNamesHostApiRegistrar.pigeonResolveInstance(NO_KEY, NO_KEY, name))
   }
 
   @Test
@@ -234,17 +254,21 @@ class NativeInteropRegistrarTest {
     val engine = mockEngine(501L)
 
     NativeInteropReservedNamesHostApiRegistrar().register(api, engine, name)
-    val wrapper = NativeInteropReservedNamesHostApiRegistrar().getInstance(name)!!
+    val wrapper =
+        NativeInteropReservedNamesHostApiRegistrar.pigeonResolveInstance(NO_KEY, NO_KEY, name)!!
     assertEquals(501L, NativeInteropReservedNamesHostApiRegistrar.pigeonEngineKeyOf(wrapper))
 
     // The binding for the same engine exposes the engine's Dart executor as its messenger, so it
     // maps to the exact key recorded through the engine.
     val binding = mockBinding(engine.dartExecutor)
     NativeInteropReservedNamesHostApiRegistrar().register(api, binding, name)
-    assertSame(wrapper, NativeInteropReservedNamesHostApiRegistrar().getInstance(name))
+    assertSame(
+        wrapper,
+        NativeInteropReservedNamesHostApiRegistrar.pigeonResolveInstance(NO_KEY, NO_KEY, name))
 
     NativeInteropReservedNamesHostApiRegistrar().unregister(api, binding, name)
-    assertNull(NativeInteropReservedNamesHostApiRegistrar().getInstance(name))
+    assertNull(
+        NativeInteropReservedNamesHostApiRegistrar.pigeonResolveInstance(NO_KEY, NO_KEY, name))
   }
 
   @Test
@@ -257,7 +281,8 @@ class NativeInteropRegistrarTest {
 
     NativeInteropReservedNamesHostApiRegistrar().register(api, bindingA, name)
     NativeInteropReservedNamesHostApiRegistrar().register(api, bindingB, name)
-    val wrapperB = NativeInteropReservedNamesHostApiRegistrar().getInstance(name)!!
+    val wrapperB =
+        NativeInteropReservedNamesHostApiRegistrar.pigeonResolveInstance(NO_KEY, NO_KEY, name)!!
 
     // Keying engine A exactly afterwards must not change the key that bindingA registered with.
     NativeInteropReservedNamesHostApiRegistrar().register(api, engineA, "${name}Other")
@@ -266,10 +291,13 @@ class NativeInteropRegistrarTest {
     // Unregistering through bindingA removes only engine A's registration.
     NativeInteropReservedNamesHostApiRegistrar().unregister(api, bindingA, name)
     assertEquals("shared:ping", wrapperB.release("ping"))
-    assertSame(wrapperB, NativeInteropReservedNamesHostApiRegistrar().getInstance(name))
+    assertSame(
+        wrapperB,
+        NativeInteropReservedNamesHostApiRegistrar.pigeonResolveInstance(NO_KEY, NO_KEY, name))
 
     NativeInteropReservedNamesHostApiRegistrar().unregister(api, bindingB, name)
-    assertNull(NativeInteropReservedNamesHostApiRegistrar().getInstance(name))
+    assertNull(
+        NativeInteropReservedNamesHostApiRegistrar.pigeonResolveInstance(NO_KEY, NO_KEY, name))
   }
 
   @Test
@@ -294,7 +322,8 @@ class NativeInteropRegistrarTest {
 
     NativeInteropReservedNamesHostApiRegistrar().unregister(api, engine1, name)
     NativeInteropReservedNamesHostApiRegistrar().unregister(api, engine2, name)
-    assertNull(NativeInteropReservedNamesHostApiRegistrar().getInstance(name))
+    assertNull(
+        NativeInteropReservedNamesHostApiRegistrar.pigeonResolveInstance(NO_KEY, NO_KEY, name))
   }
 
   @Test
@@ -337,24 +366,27 @@ class NativeInteropRegistrarTest {
     val engine = mockEngine(701L)
 
     NativeInteropReservedNamesHostApiRegistrar().register(defaultApi, engine)
-    assertNull(NativeInteropReservedNamesHostApiRegistrar().getInstance(""))
+    assertNull(NativeInteropReservedNamesHostApiRegistrar.pigeonResolveInstance(NO_KEY, NO_KEY, ""))
 
     NativeInteropReservedNamesHostApiRegistrar().register(emptyNameApi, engine, "")
     assertEquals(
         "defaultEngine:ping",
-        releasePing(NativeInteropReservedNamesHostApiRegistrar().getInstance()))
+        releasePing(
+            NativeInteropReservedNamesHostApiRegistrar.pigeonResolveInstance(NO_KEY, NO_KEY)))
     assertEquals(
         "emptyStringEngine:ping",
-        releasePing(NativeInteropReservedNamesHostApiRegistrar().getInstance("")))
+        releasePing(
+            NativeInteropReservedNamesHostApiRegistrar.pigeonResolveInstance(NO_KEY, NO_KEY, "")))
 
     NativeInteropReservedNamesHostApiRegistrar().unregister(emptyNameApi, engine, "")
-    assertNull(NativeInteropReservedNamesHostApiRegistrar().getInstance(""))
+    assertNull(NativeInteropReservedNamesHostApiRegistrar.pigeonResolveInstance(NO_KEY, NO_KEY, ""))
     assertEquals(
         "defaultEngine:ping",
-        releasePing(NativeInteropReservedNamesHostApiRegistrar().getInstance()))
+        releasePing(
+            NativeInteropReservedNamesHostApiRegistrar.pigeonResolveInstance(NO_KEY, NO_KEY)))
 
     NativeInteropReservedNamesHostApiRegistrar().unregister(defaultApi, engine)
-    assertNull(NativeInteropReservedNamesHostApiRegistrar().getInstance())
+    assertNull(NativeInteropReservedNamesHostApiRegistrar.pigeonResolveInstance(NO_KEY, NO_KEY))
   }
 
   @Test
@@ -365,21 +397,28 @@ class NativeInteropRegistrarTest {
     val engine = mockEngine(801L)
 
     NativeInteropReservedNamesHostApiRegistrar().register(api1, engine, name)
-    val reg1 = NativeInteropReservedNamesHostApiRegistrar().getInstance(name)!!
+    val reg1 =
+        NativeInteropReservedNamesHostApiRegistrar.pigeonResolveInstance(NO_KEY, NO_KEY, name)!!
     NativeInteropReservedNamesHostApiRegistrar().register(api2, engine, name)
-    val reg2 = NativeInteropReservedNamesHostApiRegistrar().getInstance(name)!!
+    val reg2 =
+        NativeInteropReservedNamesHostApiRegistrar.pigeonResolveInstance(NO_KEY, NO_KEY, name)!!
     NativeInteropReservedNamesHostApiRegistrar().register(api1, engine, name)
 
     // Re-registering api1 reuses its existing wrapper, so handles that already resolved it keep
     // working.
-    assertSame(reg1, NativeInteropReservedNamesHostApiRegistrar().getInstance(name))
+    assertSame(
+        reg1,
+        NativeInteropReservedNamesHostApiRegistrar.pigeonResolveInstance(NO_KEY, NO_KEY, name))
     assertEquals("engine1:ping", reg1.release("ping"))
 
     // Since api1 was deduplicated rather than duplicated, unregistering api1 once leaves only api2.
     NativeInteropReservedNamesHostApiRegistrar().unregister(api1, engine, name)
-    assertSame(reg2, NativeInteropReservedNamesHostApiRegistrar().getInstance(name))
+    assertSame(
+        reg2,
+        NativeInteropReservedNamesHostApiRegistrar.pigeonResolveInstance(NO_KEY, NO_KEY, name))
     NativeInteropReservedNamesHostApiRegistrar().unregister(api2, engine, name)
-    assertNull(NativeInteropReservedNamesHostApiRegistrar().getInstance(name))
+    assertNull(
+        NativeInteropReservedNamesHostApiRegistrar.pigeonResolveInstance(NO_KEY, NO_KEY, name))
   }
 
   @Test
@@ -486,7 +525,8 @@ class NativeInteropRegistrarTest {
           NativeInteropReservedNamesHostApiRegistrar().register(host, binding1, "${name}Probe")
           val key =
               pigeonEngineKeyOf(
-                  NativeInteropReservedNamesHostApiRegistrar().getInstance("${name}Probe")!!)
+                  NativeInteropReservedNamesHostApiRegistrar.pigeonResolveInstance(
+                      NO_KEY, NO_KEY, "${name}Probe")!!)
           NativeInteropReservedNamesHostApiRegistrar().unregister(host, binding1, "${name}Probe")
           key
         }
