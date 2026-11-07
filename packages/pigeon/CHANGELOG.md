@@ -1,3 +1,7 @@
+## 29.1.1
+
+* Updates README to label Native Interop as Preview and warn about multi-engine `@HostApi` registrations.
+
 ## 29.1.0
 
 * [kotlin,swift] Adds support for removing event channel handler registration
