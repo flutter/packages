@@ -201,11 +201,11 @@ class SpanState<T extends Span>
     if (_configuration == null) {
       return Duration.zero;
     }
-    final Duration bgDuration =
+    final Duration backgroundDuration =
         _configuration!.backgroundDecoration?.animationStyle?.duration ?? Duration.zero;
-    final Duration fgDuration =
+    final Duration foregroundDuration =
         _configuration!.foregroundDecoration?.animationStyle?.duration ?? Duration.zero;
-    return bgDuration >= fgDuration ? bgDuration : fgDuration;
+    return backgroundDuration >= foregroundDuration ? backgroundDuration : foregroundDuration;
   }
 
   Curve get _stateAnimationCurve {
@@ -221,14 +221,16 @@ class SpanState<T extends Span>
     if (_configuration == null) {
       return Duration.zero;
     }
-    final SpanDecoration? bg = _configuration!.backgroundDecoration;
-    final SpanDecoration? fg = _configuration!.foregroundDecoration;
-    final bool hasSplash = bg?.splashColor != null || fg?.splashColor != null;
+    final SpanDecoration? backgroundDecoration = _configuration!.backgroundDecoration;
+    final SpanDecoration? foregroundDecoration = _configuration!.foregroundDecoration;
+    final bool hasSplash =
+        backgroundDecoration?.splashColor != null || foregroundDecoration?.splashColor != null;
     if (!hasSplash) {
       return Duration.zero;
     }
     final Duration? styleDuration =
-        bg?.splashAnimationStyle?.duration ?? fg?.splashAnimationStyle?.duration;
+        backgroundDecoration?.splashAnimationStyle?.duration ??
+        foregroundDecoration?.splashAnimationStyle?.duration;
     return styleDuration ?? SpanDecoration.defaultSplashDuration;
   }
 
