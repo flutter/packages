@@ -8,6 +8,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -63,6 +64,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -1087,6 +1091,190 @@ public class CameraTest {
         .thenThrow(new CameraAccessException(0, ""));
     camera.setFocusMode(FocusMode.locked);
     verify(mockDartMessenger, times(1)).sendCameraErrorEvent(any());
+  }
+
+  @Test
+  public void setFocusMode_shouldSendErrorEventWhenLockingAutoFocusOnAClosedCamera()
+      throws CameraAccessException {
+    when(mockCaptureSession.capture(any(), any(), any()))
+        .thenThrow(new IllegalStateException("CameraDevice was already closed"));
+    camera.setFocusMode(FocusMode.locked);
+    verify(mockDartMessenger, times(1)).sendCameraErrorEvent("CameraDevice was already closed");
+  }
+
+  @Test
+  public void unlockAutoFocus_shouldSendErrorEventWhenTheCameraIsAlreadyClosed()
+      throws CameraAccessException {
+    when(mockCaptureSession.capture(any(), any(), any()))
+        .thenThrow(new IllegalStateException("CameraDevice was already closed"));
+    camera.unlockAutoFocus();
+    verify(mockDartMessenger, times(1)).sendCameraErrorEvent("CameraDevice was already closed");
+  }
+
+  @Test
+  public void unlockAutoFocus_shouldNotAnswerThePictureResultWhenThePreviewCannotRefresh()
+      throws CameraAccessException {
+    prepareStillCapture();
+    when(mockCaptureSession.setRepeatingRequest(any(), any(), any()))
+        .thenThrow(new CameraAccessException(0, ""));
+    camera.unlockAutoFocus();
+    verify(mockDartMessenger, times(1)).sendCameraErrorEvent(any());
+    verify(mockDartMessenger, never()).error(any(), any(), any(), any());
+  }
+
+  @Test
+  public void onConverged_shouldEndThePictureWhileTheSessionIsBeingReplaced() {
+    Messages.Result<String> result = prepareStillCapture();
+    camera.captureSession = null;
+    camera.onConverged();
+    verify(mockDartMessenger, times(1))
+        .error(result, "cameraAccess", "The camera was closed.", null);
+    assertEquals(CameraState.STATE_PREVIEW, camera.cameraCaptureCallback.getCameraState());
+  }
+
+  @Test
+  public void onConverged_shouldEndThePictureWhenTheCaptureFindsTheCameraClosed()
+      throws CameraAccessException {
+    Messages.Result<String> result = prepareStillCapture();
+    when(mockCaptureSession.capture(any(), any(), any()))
+        .thenThrow(new IllegalStateException("CameraDevice was already closed"));
+    camera.onConverged();
+    verify(mockDartMessenger, times(1))
+        .error(result, "cameraAccess", "CameraDevice was already closed", null);
+    assertEquals(CameraState.STATE_PREVIEW, camera.cameraCaptureCallback.getCameraState());
+  }
+
+  @Test
+  public void onPrecapture_shouldEndThePictureWhenTheCameraIsAlreadyClosed() {
+    Messages.Result<String> result = prepareStillCapture();
+    camera.cameraCaptureCallback.setCameraState(CameraState.STATE_WAITING_FOCUS);
+    camera.captureSession = null;
+    camera.onPrecapture();
+    verify(mockDartMessenger, times(1))
+        .error(result, "cameraAccess", "The camera was closed.", null);
+    assertEquals(CameraState.STATE_PREVIEW, camera.cameraCaptureCallback.getCameraState());
+  }
+
+  @Test
+  public void onPrecapture_shouldEndThePictureWhenTheCaptureFindsTheCameraClosed()
+      throws CameraAccessException {
+    Messages.Result<String> result = prepareStillCapture();
+    camera.cameraCaptureCallback.setCameraState(CameraState.STATE_WAITING_FOCUS);
+    when(mockCaptureSession.capture(any(), any(), any()))
+        .thenThrow(new IllegalStateException("CameraDevice was already closed"));
+    camera.onPrecapture();
+    verify(mockDartMessenger, times(1))
+        .error(result, "cameraAccess", "CameraDevice was already closed", null);
+    assertEquals(CameraState.STATE_PREVIEW, camera.cameraCaptureCallback.getCameraState());
+  }
+
+  @Test
+  public void onPrecapture_shouldEndThePictureWhenTheCaptureCannotReachTheCamera()
+      throws CameraAccessException {
+    Messages.Result<String> result = prepareStillCapture();
+    camera.cameraCaptureCallback.setCameraState(CameraState.STATE_WAITING_FOCUS);
+    when(mockCaptureSession.capture(any(), any(), any()))
+        .thenThrow(new CameraAccessException(CameraAccessException.CAMERA_DISCONNECTED));
+    camera.onPrecapture();
+    verify(mockDartMessenger, times(1)).error(eq(result), eq("cameraAccess"), any(), isNull());
+    assertEquals(CameraState.STATE_PREVIEW, camera.cameraCaptureCallback.getCameraState());
+  }
+
+  @Test
+  public void onPrecapture_shouldAnswerThePictureOnceWhenThePreviewCannotRefresh()
+      throws CameraAccessException {
+    Messages.Result<String> result = prepareStillCapture();
+    camera.cameraCaptureCallback.setCameraState(CameraState.STATE_WAITING_FOCUS);
+    when(mockCaptureSession.setRepeatingRequest(any(), any(), any()))
+        .thenThrow(new IllegalStateException("Session has been closed"));
+    camera.onPrecapture();
+    verify(mockDartMessenger, times(1)).error(eq(result), any(), any(), any());
+    verify(mockCaptureSession, times(1)).capture(any(), any(), any());
+    assertEquals(CameraState.STATE_PREVIEW, camera.cameraCaptureCallback.getCameraState());
+  }
+
+  @Test
+  public void onConverged_shouldEndThePictureWhenTheStillRequestCannotBeCreated()
+      throws CameraAccessException {
+    Messages.Result<String> result = prepareStillCapture();
+    CameraDeviceWrapper device = mock(CameraDeviceWrapper.class);
+    when(device.createCaptureRequest(anyInt()))
+        .thenThrow(new CameraAccessException(CameraAccessException.CAMERA_DISCONNECTED));
+    camera.cameraDevice = device;
+    camera.onConverged();
+    verify(mockDartMessenger, times(1)).error(eq(result), eq("cameraAccess"), any(), isNull());
+    assertEquals(CameraState.STATE_PREVIEW, camera.cameraCaptureCallback.getCameraState());
+    verify(mockCaptureSession, never()).capture(any(), any(), any());
+  }
+
+  @Test
+  public void refreshPreviewCaptureSession_shouldRunItsCallbackWithoutHoldingTheLock() {
+    AtomicBoolean ranHoldingTheLock = new AtomicBoolean(true);
+    camera.refreshPreviewCaptureSession(
+        () -> ranHoldingTheLock.set(Thread.holdsLock(camera.captureSessionLock)),
+        (code, message) -> {});
+    assertFalse(ranHoldingTheLock.get());
+  }
+
+  @Test
+  public void close_shouldWaitForACaptureRequestThatIsStillBeingSent() throws Exception {
+    CountDownLatch captureStarted = new CountDownLatch(1);
+    CountDownLatch captureMayFinish = new CountDownLatch(1);
+    when(mockCaptureSession.capture(any(), any(), any()))
+        .thenAnswer(
+            invocation -> {
+              captureStarted.countDown();
+              captureMayFinish.await();
+              return 0;
+            });
+    AtomicBoolean deviceClosed = new AtomicBoolean(false);
+    CameraDeviceWrapper device = mock(CameraDeviceWrapper.class);
+    doAnswer(
+            invocation -> {
+              deviceClosed.set(true);
+              return null;
+            })
+        .when(device)
+        .close();
+    camera.cameraDevice = device;
+
+    Thread backgroundThread = new Thread(camera::unlockAutoFocus);
+    Thread platformThread = new Thread(camera::close);
+    try {
+      backgroundThread.start();
+      assertTrue(captureStarted.await(5, TimeUnit.SECONDS));
+      platformThread.start();
+      long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(5);
+      while (!deviceClosed.get()
+          && !isBlockedIn(platformThread, "stopAndReleaseCamera")
+          && System.nanoTime() < deadline) {
+        Thread.sleep(1);
+      }
+      assertFalse(deviceClosed.get());
+      assertTrue(isBlockedIn(platformThread, "stopAndReleaseCamera"));
+    } finally {
+      captureMayFinish.countDown();
+      backgroundThread.join(5000);
+      platformThread.join(5000);
+    }
+    assertTrue(deviceClosed.get());
+  }
+
+  private static boolean isBlockedIn(Thread thread, String methodName) {
+    StackTraceElement[] stack = thread.getStackTrace();
+    return thread.getState() == Thread.State.BLOCKED
+        && stack.length > 0
+        && stack[0].getMethodName().equals(methodName);
+  }
+
+  @SuppressWarnings("unchecked")
+  private Messages.Result<String> prepareStillCapture() {
+    ArrayList<CaptureRequest.Builder> mockRequestBuilders = new ArrayList<>();
+    mockRequestBuilders.add(mock(CaptureRequest.Builder.class));
+    camera.cameraDevice = new FakeCameraDeviceWrapper(mockRequestBuilders);
+    camera.pictureImageReader = mock(ImageReader.class);
+    camera.flutterResult = mock(Messages.Result.class);
+    return camera.flutterResult;
   }
 
   @Test

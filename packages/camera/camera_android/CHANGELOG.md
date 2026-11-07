@@ -1,3 +1,7 @@
+## 0.10.12+2
+
+* Fixes a crash when the camera is closed right after a picture is taken.
+
 ## 0.10.12+1
 
 * Updates Robolectric to 4.17 and adds the JVM arguments it requires for unit tests.
