@@ -596,7 +596,9 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
         states: span.states,
         previousStates: span.previousStates,
         stateAnimationProgress: span.stateAnimationProgress,
-        pointerPosition: span.splashProgress > 0.0 ? span.pointerPosition : null,
+        pointerPosition: span.splashProgress > 0.0 && span.pointerPosition != null
+            ? offset + span.pointerPosition!
+            : null,
         splashProgress: span.splashProgress,
       );
     }

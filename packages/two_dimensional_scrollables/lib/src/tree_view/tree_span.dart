@@ -103,7 +103,6 @@ class TreeRowBorder extends SpanBorder {
 
   @override
   bool get isInteractive =>
-      runtimeType != TreeRowBorder ||
       leading is WidgetStateProperty ||
       leading.color is WidgetStateProperty ||
       trailing is WidgetStateProperty ||

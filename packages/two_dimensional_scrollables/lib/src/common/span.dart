@@ -408,7 +408,6 @@ class SpanDecoration {
   /// Whether this decoration resolves dynamically based on interactive
   /// [WidgetState]s or paints a tap splash animation.
   bool get isInteractive =>
-      runtimeType != SpanDecoration ||
       color is WidgetStateProperty ||
       borderRadius is WidgetStateProperty ||
       splashColor != null ||
@@ -545,7 +544,6 @@ class SpanBorder {
   /// Whether this border resolves dynamically based on interactive
   /// [WidgetState]s.
   bool get isInteractive =>
-      runtimeType != SpanBorder ||
       leading is WidgetStateProperty ||
       leading.color is WidgetStateProperty ||
       trailing is WidgetStateProperty ||

@@ -226,6 +226,13 @@ void main() {
     expect(staticDecoration.isInteractive, isFalse);
     expect(staticDecoration.border!.isInteractive, isFalse);
 
+    const staticTreeDecoration = TreeRowDecoration(
+      color: Color(0xffff0000),
+      border: TreeRowBorder(top: BorderSide(), left: BorderSide()),
+    );
+    expect(staticTreeDecoration.isInteractive, isFalse);
+    expect(staticTreeDecoration.border!.isInteractive, isFalse);
+
     final interactiveColor = WidgetStateColor.resolveWith((Set<WidgetState> states) {
       if (states.contains(WidgetState.hovered)) {
         return const Color(0xffce93d8);
@@ -234,6 +241,11 @@ void main() {
     });
     final interactiveDecoration = SpanDecoration(color: interactiveColor);
     expect(interactiveDecoration.isInteractive, isTrue);
+
+    final interactiveTreeDecoration = TreeRowDecoration(
+      border: TreeRowBorder(left: BorderSide(color: interactiveColor)),
+    );
+    expect(interactiveTreeDecoration.isInteractive, isTrue);
 
     final canvas = TestCanvas();
     const rect = Rect.fromLTWH(0, 0, 100, 50);

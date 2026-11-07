@@ -100,10 +100,13 @@ class SpanState<T extends Span>
     }
   }
 
+  bool _disposed = false;
+
   /// Releases any resources held by this span, including active frame callbacks
   /// and [GestureRecognizer]s.
   @mustCallSuper
   void dispose() {
+    _disposed = true;
     if (_frameCallbackId != null) {
       SchedulerBinding.instance.cancelFrameCallbackWithId(_frameCallbackId!);
       _frameCallbackId = null;
@@ -175,7 +178,7 @@ class SpanState<T extends Span>
   }
 
   void _ensureFrameScheduled() {
-    if (_frameCallbackId != null) {
+    if (_disposed || _frameCallbackId != null) {
       return;
     }
     _frameCallbackId = SchedulerBinding.instance.scheduleFrameCallback(_onFrame);
@@ -183,6 +186,9 @@ class SpanState<T extends Span>
 
   void _onFrame(Duration timeStamp) {
     _frameCallbackId = null;
+    if (_disposed) {
+      return;
+    }
     var needsMoreFrames = false;
 
     if (_stateAnimationProgress < 1.0) {
