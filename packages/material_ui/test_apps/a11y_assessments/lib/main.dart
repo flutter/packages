@@ -24,6 +24,7 @@ ThemeData _buildTheme({required Brightness brightness, double contrastLevel = 0.
   return ThemeData(
     colorScheme: scheme,
     appBarTheme: AppBarTheme(backgroundColor: scheme.primary, foregroundColor: scheme.onPrimary),
+    focusRingTheme: const FocusRingThemeData(visible: true),
     pageTransitionsTheme: PageTransitionsTheme(
       builders: <TargetPlatform, PageTransitionsBuilder>{
         for (final TargetPlatform platform in TargetPlatform.values)

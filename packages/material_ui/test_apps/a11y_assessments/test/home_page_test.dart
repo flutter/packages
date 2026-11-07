@@ -39,6 +39,15 @@ void main() {
     expect(app.darkTheme!.brightness, equals(Brightness.dark));
   });
 
+  testWidgets('Every theme shows the keyboard focus ring', (WidgetTester tester) async {
+    await tester.pumpWidget(const App());
+    final app = find.byType(MaterialApp).evaluate().first.widget as MaterialApp;
+    expect(app.theme!.focusRingTheme.visible, isTrue);
+    expect(app.darkTheme!.focusRingTheme.visible, isTrue);
+    expect(app.highContrastTheme!.focusRingTheme.visible, isTrue);
+    expect(app.highContrastDarkTheme!.focusRingTheme.visible, isTrue);
+  });
+
   testWidgets('App can generate high-contrast color scheme', (WidgetTester tester) async {
     await tester.pumpWidget(
       const MediaQuery(data: MediaQueryData(highContrast: true), child: App()),

@@ -384,6 +384,8 @@ class _NavigationDestinationBuilder extends StatelessWidget {
       onTap: enabled ? info.onTap : null,
       customBorder:
           info.indicatorShape ?? navigationDrawerTheme.indicatorShape ?? defaults.indicatorShape!,
+      // md.comp.navigation-drawer.focus.indicator.outline.offset
+      focusRingOffset: -3.0,
       child: Stack(
         alignment: Alignment.center,
         children: <Widget>[

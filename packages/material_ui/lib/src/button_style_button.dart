@@ -595,6 +595,9 @@ class _ButtonStyleState extends State<ButtonStyleButton> with TickerProviderStat
         highlightColor: Colors.transparent,
         customBorder: resolvedShape!.copyWith(side: resolvedSide),
         statesController: statesController,
+        // md.comp.button.focus.indicator.outline.offset. A ring outside the
+        // button would be cut off when the Material clips, so draw it inside.
+        focusRingOffset: effectiveClipBehavior == Clip.none ? 2.0 : null,
         child: result,
       ),
     );
