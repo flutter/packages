@@ -477,45 +477,6 @@ extension type NativeInteropExampleApiRegistrar._(jni$_.JObject _$this)
       _$nativeInteropExampleApiRegistrar.pointer,
     ).long;
   }
-
-  static final _id_new$1 = _class.constructorId(
-    r'(JLkotlin/jvm/internal/DefaultConstructorMarker;)V',
-  );
-
-  static final _new$1 =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Int64, jni$_.Pointer<jni$_.Void>)>,
-              )
-            >
-          >('globalEnv_NewObject')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              core$_.int,
-              jni$_.Pointer<jni$_.Void>,
-            )
-          >();
-
-  /// from: `synthetic public void <init>(long j, kotlin.jvm.internal.DefaultConstructorMarker defaultConstructorMarker)`
-  /// The returned object must be released after use, by calling the [release] method.
-  factory NativeInteropExampleApiRegistrar.new$1(
-    core$_.int j,
-    DefaultConstructorMarker? defaultConstructorMarker,
-  ) {
-    final _$$classRef = _class.reference;
-    final _$defaultConstructorMarker = defaultConstructorMarker?.reference ?? jni$_.jNullReference;
-    return _new$1(
-      _$$classRef.pointer,
-      _id_new$1.pointer,
-      j,
-      _$defaultConstructorMarker.pointer,
-    ).object<NativeInteropExampleApiRegistrar>();
-  }
 }
 
 extension NativeInteropExampleApiRegistrar$$Methods on NativeInteropExampleApiRegistrar {
