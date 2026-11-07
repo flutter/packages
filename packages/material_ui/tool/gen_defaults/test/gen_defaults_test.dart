@@ -1143,6 +1143,35 @@ void main() {
       expect(contents, contains('fontWeight: FontWeight.w500'));
     });
 
+    test('TypographyTemplateM3E emits M3E Typography defaults from tokens', () {
+      const template = TypographyTemplateM3E();
+      final String contents = _generateContents(template);
+      expect(contents, contains('abstract final class _M3ETypography'));
+      expect(contents, contains('static const TextTheme englishLike = TextTheme('));
+      expect(contents, contains('static const TextTheme dense = TextTheme('));
+      expect(contents, contains('static const TextTheme tall = TextTheme('));
+      expect(
+        contents,
+        contains(
+          "displayLarge: TextStyle(debugLabel: 'englishLike displayLarge 2025', inherit: false, "
+          'fontSize: 57.0, fontWeight: FontWeight.w400, letterSpacing: -0.25, height: 1.12, '
+          'textBaseline: TextBaseline.alphabetic, leadingDistribution: TextLeadingDistribution.even)',
+        ),
+      );
+      expect(
+        contents,
+        contains(
+          "displayLargeEmphasized: TextStyle(debugLabel: 'englishLike displayLargeEmphasized 2025', "
+          'inherit: false, fontSize: 57.0, fontWeight: FontWeight.w500, letterSpacing: -0.25, '
+          'height: 1.12, textBaseline: TextBaseline.alphabetic, '
+          'leadingDistribution: TextLeadingDistribution.even)',
+        ),
+      );
+      expect(contents, contains("debugLabel: 'dense bodySmallEmphasized 2025'"));
+      expect(contents, contains("debugLabel: 'tall labelSmallEmphasized 2025'"));
+      expect(contents, isNot(contains('2021')));
+    });
+
     test('will run dart format over the generated file', () {
       final template = UnformattedTemplate(testPath());
       template.generateFile();
