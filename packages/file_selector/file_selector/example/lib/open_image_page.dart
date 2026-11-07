@@ -2,11 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:io';
-
 import 'package:file_selector/file_selector.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+
+import 'image_loader.dart';
 
 /// Screen that shows an example of openFiles
 class OpenImagePage extends StatelessWidget {
@@ -26,13 +25,14 @@ class OpenImagePage extends StatelessWidget {
       // Operation was canceled by the user.
       return;
     }
-    final String fileName = file.name;
-    final String filePath = file.path;
+    final String? fileName = await file.name();
 
     if (context.mounted) {
       await showDialog<void>(
         context: context,
-        builder: (BuildContext context) => ImageDisplay(fileName, filePath),
+        builder: (BuildContext context) {
+          return ImageDisplay(file, fileName: fileName ?? 'Unknown Filename');
+        },
       );
     }
   }
@@ -60,24 +60,22 @@ class OpenImagePage extends StatelessWidget {
   }
 }
 
-/// Widget that displays a text file in a dialog
+/// Widget that displays an image in a dialog.
 class ImageDisplay extends StatelessWidget {
-  /// Default Constructor
-  const ImageDisplay(this.fileName, this.filePath, {super.key});
+  /// Default Constructor.
+  const ImageDisplay(this.file, {super.key, required this.fileName});
 
-  /// Image's name
+  /// The selected file.
+  final XFile file;
+
+  /// The name of the selected file.
   final String fileName;
-
-  /// Image's path
-  final String filePath;
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(fileName),
-      // On web the filePath is a blob url
-      // while on other platforms it is a system path.
-      content: kIsWeb ? Image.network(filePath) : Image.file(File(filePath)),
+      title: Text(key: const Key('result_image_name'), fileName),
+      content: ImageBuilder(file),
       actions: <Widget>[
         TextButton(
           child: const Text('Close'),
