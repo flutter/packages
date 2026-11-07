@@ -196,6 +196,11 @@ enum SourceType: Int, CaseIterable {
   case gallery = 1
 }
 
+enum RecentMediaKind: Int, CaseIterable {
+  case image = 0
+  case video = 1
+}
+
 /// Generated class from Pigeon that represents data sent in messages.
 struct MaxSize: Hashable, CustomStringConvertible {
   var width: Double? = nil
@@ -336,6 +341,116 @@ struct SourceSpecification: Hashable, CustomStringConvertible {
   }
 }
 
+/// Options for retrieving recent media.
+///
+/// Generated class from Pigeon that represents data sent in messages.
+struct RecentMediaRequest: Hashable, CustomStringConvertible {
+  /// The maximum number of items to return.
+  var limit: Int64
+  /// Whether to include images.
+  var includeImages: Bool
+  /// Whether to include videos.
+  var includeVideos: Bool
+  /// The target width of each thumbnail, in pixels.
+  var width: Int64
+  /// The target height of each thumbnail, in pixels.
+  var height: Int64
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ pigeonVar_list: [Any?]) -> RecentMediaRequest? {
+    let limit = pigeonVar_list[0] as! Int64
+    let includeImages = pigeonVar_list[1] as! Bool
+    let includeVideos = pigeonVar_list[2] as! Bool
+    let width = pigeonVar_list[3] as! Int64
+    let height = pigeonVar_list[4] as! Int64
+
+    return RecentMediaRequest(
+      limit: limit,
+      includeImages: includeImages,
+      includeVideos: includeVideos,
+      width: width,
+      height: height
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      limit,
+      includeImages,
+      includeVideos,
+      width,
+      height,
+    ]
+  }
+  static func == (lhs: RecentMediaRequest, rhs: RecentMediaRequest) -> Bool {
+    if Swift.type(of: lhs) != Swift.type(of: rhs) {
+      return false
+    }
+    return MessagesPigeonInternal.deepEquals(lhs.limit, rhs.limit)
+      && MessagesPigeonInternal.deepEquals(lhs.includeImages, rhs.includeImages)
+      && MessagesPigeonInternal.deepEquals(lhs.includeVideos, rhs.includeVideos)
+      && MessagesPigeonInternal.deepEquals(lhs.width, rhs.width)
+      && MessagesPigeonInternal.deepEquals(lhs.height, rhs.height)
+  }
+
+  func hash(into hasher: inout Hasher) {
+    hasher.combine("RecentMediaRequest")
+    MessagesPigeonInternal.deepHash(value: limit, hasher: &hasher)
+    MessagesPigeonInternal.deepHash(value: includeImages, hasher: &hasher)
+    MessagesPigeonInternal.deepHash(value: includeVideos, hasher: &hasher)
+    MessagesPigeonInternal.deepHash(value: width, hasher: &hasher)
+    MessagesPigeonInternal.deepHash(value: height, hasher: &hasher)
+  }
+
+  public var description: String {
+    return
+      "RecentMediaRequest(limit: \(String(describing: limit)), includeImages: \(String(describing: includeImages)), includeVideos: \(String(describing: includeVideos)), width: \(String(describing: width)), height: \(String(describing: height)))"
+  }
+}
+
+/// A thumbnail of a recent item from the photo library.
+///
+/// Generated class from Pigeon that represents data sent in messages.
+struct RecentMediaItem: Hashable, CustomStringConvertible {
+  /// The path to the JPEG thumbnail.
+  var path: String
+  /// The type of the original item.
+  var kind: RecentMediaKind
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ pigeonVar_list: [Any?]) -> RecentMediaItem? {
+    let path = pigeonVar_list[0] as! String
+    let kind = pigeonVar_list[1] as! RecentMediaKind
+
+    return RecentMediaItem(
+      path: path,
+      kind: kind
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      path,
+      kind,
+    ]
+  }
+  static func == (lhs: RecentMediaItem, rhs: RecentMediaItem) -> Bool {
+    if Swift.type(of: lhs) != Swift.type(of: rhs) {
+      return false
+    }
+    return MessagesPigeonInternal.deepEquals(lhs.path, rhs.path)
+      && MessagesPigeonInternal.deepEquals(lhs.kind, rhs.kind)
+  }
+
+  func hash(into hasher: inout Hasher) {
+    hasher.combine("RecentMediaItem")
+    MessagesPigeonInternal.deepHash(value: path, hasher: &hasher)
+    MessagesPigeonInternal.deepHash(value: kind, hasher: &hasher)
+  }
+
+  public var description: String {
+    return "RecentMediaItem(path: \(String(describing: path)), kind: \(String(describing: kind)))"
+  }
+}
+
 private class MessagesPigeonCodecReader: FlutterStandardReader {
   override func readValue(ofType type: UInt8) -> Any? {
     switch type {
@@ -352,11 +467,21 @@ private class MessagesPigeonCodecReader: FlutterStandardReader {
       }
       return nil
     case 131:
-      return MaxSize.fromList(self.readValue() as! [Any?])
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as! Int?)
+      if let enumResultAsInt = enumResultAsInt {
+        return RecentMediaKind(rawValue: enumResultAsInt)
+      }
+      return nil
     case 132:
-      return MediaSelectionOptions.fromList(self.readValue() as! [Any?])
+      return MaxSize.fromList(self.readValue() as! [Any?])
     case 133:
+      return MediaSelectionOptions.fromList(self.readValue() as! [Any?])
+    case 134:
       return SourceSpecification.fromList(self.readValue() as! [Any?])
+    case 135:
+      return RecentMediaRequest.fromList(self.readValue() as! [Any?])
+    case 136:
+      return RecentMediaItem.fromList(self.readValue() as! [Any?])
     default:
       return super.readValue(ofType: type)
     }
@@ -371,14 +496,23 @@ private class MessagesPigeonCodecWriter: FlutterStandardWriter {
     } else if let value = value as? SourceType {
       super.writeByte(130)
       super.writeValue(value.rawValue)
-    } else if let value = value as? MaxSize {
+    } else if let value = value as? RecentMediaKind {
       super.writeByte(131)
-      super.writeValue(value.toList())
-    } else if let value = value as? MediaSelectionOptions {
+      super.writeValue(value.rawValue)
+    } else if let value = value as? MaxSize {
       super.writeByte(132)
       super.writeValue(value.toList())
-    } else if let value = value as? SourceSpecification {
+    } else if let value = value as? MediaSelectionOptions {
       super.writeByte(133)
+      super.writeValue(value.toList())
+    } else if let value = value as? SourceSpecification {
+      super.writeByte(134)
+      super.writeValue(value.toList())
+    } else if let value = value as? RecentMediaRequest {
+      super.writeByte(135)
+      super.writeValue(value.toList())
+    } else if let value = value as? RecentMediaItem {
+      super.writeByte(136)
       super.writeValue(value.toList())
     } else {
       super.writeValue(value)
@@ -418,6 +552,9 @@ protocol ImagePickerApi {
   func pickMedia(
     mediaSelectionOptions: MediaSelectionOptions,
     completion: @escaping (Result<[String], Error>) -> Void)
+  /// Returns thumbnails of the most recent items in the photo library.
+  func getRecentMedia(
+    request: RecentMediaRequest, completion: @escaping (Result<[RecentMediaItem], Error>) -> Void)
 }
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
@@ -537,6 +674,26 @@ class ImagePickerApiSetup {
       }
     } else {
       pickMediaChannel.setMessageHandler(nil)
+    }
+    /// Returns thumbnails of the most recent items in the photo library.
+    let getRecentMediaChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.image_picker_ios.ImagePickerApi.getRecentMedia\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      getRecentMediaChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let requestArg = args[0] as! RecentMediaRequest
+        api.getRecentMedia(request: requestArg) { result in
+          switch result {
+          case .success(let res):
+            reply(wrapResult(res))
+          case .failure(let error):
+            reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      getRecentMediaChannel.setMessageHandler(nil)
     }
   }
 }

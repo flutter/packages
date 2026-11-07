@@ -23,6 +23,12 @@ void main() {
     expect(results.map((XFile? file) => file?.path).toSet().length, results.length);
   });
 
+  test('sanity check readmeRecentMediaExample', () async {
+    // Ensure that the snippet code runs successfully.
+    final List<RecentMedia> results = await readmeRecentMediaExample();
+    expect(results.length, 1);
+  });
+
   test('sanity check getLostData', () async {
     // Ensure that the snippet code runs successfully.
     await getLostData();
@@ -64,5 +70,17 @@ class FakeImagePicker extends ImagePickerPlatform {
     Duration? maxDuration,
   }) async {
     return XFile(source == ImageSource.camera ? 'cameraVideo' : 'galleryVideo');
+  }
+
+  @override
+  bool supportsRecentMedia() => true;
+
+  @override
+  Future<List<RecentMedia>> getRecentMedia({
+    RecentMediaOptions options = const RecentMediaOptions(),
+  }) async {
+    return <RecentMedia>[
+      RecentMedia(thumbnail: XFile('recentMedia'), type: MediaSelectionType.image),
+    ];
   }
 }

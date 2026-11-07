@@ -12,7 +12,9 @@ export 'package:image_picker_platform_interface/image_picker_platform_interface.
         ImageSource,
         LostData,
         LostDataResponse,
+        MediaSelectionType,
         PickedFile,
+        RecentMedia,
         RetrieveType,
         XFile,
         kTypeImage,
@@ -372,5 +374,63 @@ class ImagePicker {
   /// returns `false` will throw an error.
   bool supportsImageSource(ImageSource source) {
     return platform.supportsImageSource(source);
+  }
+
+  /// Returns true if the current platform implementation supports
+  /// [getRecentMedia].
+  ///
+  /// Currently only Android and iOS are supported.
+  bool supportsRecentMedia() {
+    return platform.supportsRecentMedia();
+  }
+
+  /// Returns OS-generated thumbnails of the most recent items in the device's
+  /// media library, newest first, without showing a picker.
+  ///
+  /// This is intended for things like showing the latest photo or video on a
+  /// gallery button. Use [pickMedia] or the other `pick*` methods to let the
+  /// user select items.
+  ///
+  /// `limit` is the maximum number of items to return, from 1 to 100.
+  /// `types` selects whether images, videos, or both are included, and must
+  /// not be empty.
+  ///
+  /// Each [RecentMedia.thumbnail] is a JPEG scaled to fit within
+  /// `thumbnailWidth` x `thumbnailHeight` pixels while keeping its aspect
+  /// ratio. The platform may return a thumbnail that is somewhat larger or
+  /// smaller than requested. [RecentMedia.type] is the type of the original
+  /// item, so a video thumbnail has [MediaSelectionType.video].
+  ///
+  /// This requires read access to the media library, and the app must declare
+  /// the corresponding permissions; see the README for details. If the user
+  /// has not decided yet, the platform asks for access, so call this method in
+  /// response to a user action rather than at startup. If access is denied,
+  /// returns an empty list. If the user granted access to only some items,
+  /// returns the most recent of those items.
+  ///
+  /// Thumbnails are written to the app's temporary or cache directory and are
+  /// reused by later calls for the same item and size.
+  ///
+  /// Throws an [ArgumentError] if any argument is out of range. On platforms
+  /// where [supportsRecentMedia] returns false, returns an empty list.
+  Future<List<RecentMedia>> getRecentMedia({
+    int limit = 1,
+    Set<MediaSelectionType> types = const <MediaSelectionType>{
+      MediaSelectionType.image,
+      MediaSelectionType.video,
+    },
+    int thumbnailWidth = 256,
+    int thumbnailHeight = 256,
+  }) async {
+    final options = RecentMediaOptions.createAndValidate(
+      limit: limit,
+      types: types,
+      thumbnailWidth: thumbnailWidth,
+      thumbnailHeight: thumbnailHeight,
+    );
+    if (!platform.supportsRecentMedia()) {
+      return <RecentMedia>[];
+    }
+    return platform.getRecentMedia(options: options);
   }
 }

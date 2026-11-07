@@ -61,6 +61,19 @@ Future<List<XFile?>> readmePickExample() async {
   ];
 }
 
+/// Example function for README demonstration of getting recent media.
+Future<List<RecentMedia>> readmeRecentMediaExample() async {
+  // #docregion RecentMedia
+  final picker = ImagePicker();
+  // Get thumbnails of the three most recent photos and videos.
+  final List<RecentMedia> recentMedia = await picker.getRecentMedia(limit: 3);
+  for (final media in recentMedia) {
+    _showThumbnail(media.thumbnail, isVideo: media.type == MediaSelectionType.video);
+  }
+  // #enddocregion RecentMedia
+  return recentMedia;
+}
+
 /// Example function for README demonstration of getting lost data.
 // #docregion LostData
 Future<void> getLostData() async {
@@ -89,6 +102,9 @@ void setUpCameraDelegate() {
 }
 
 // #enddocregion CameraDelegate
+
+// Stub for the readmeRecentMediaExample function.
+void _showThumbnail(XFile thumbnail, {required bool isVideo}) {}
 
 // Stubs for the getLostData function.
 void _handleLostFiles(List<XFile> file) {}
