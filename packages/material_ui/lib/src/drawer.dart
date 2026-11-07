@@ -12,7 +12,6 @@
 /// @docImport 'icon_button.dart';
 /// @docImport 'navigation_drawer.dart';
 /// @docImport 'scaffold.dart';
-/// @docImport 'theme_data.dart';
 library;
 
 import 'package:flutter/foundation.dart';

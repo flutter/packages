@@ -8,12 +8,12 @@
 /// @docImport 'bottom_app_bar.dart';
 /// @docImport 'bottom_navigation_bar.dart';
 /// @docImport 'bottom_sheet_theme.dart';
+/// @docImport 'color_scheme.dart';
 /// @docImport 'drawer_theme.dart';
 /// @docImport 'icon_button.dart';
 /// @docImport 'tab_controller.dart';
 /// @docImport 'tabs.dart';
 /// @docImport 'text_button.dart';
-/// @docImport 'theme_data.dart';
 library;
 
 import 'dart:async';

@@ -8,7 +8,6 @@
 ///
 /// @docImport 'app.dart';
 /// @docImport 'text_button.dart';
-/// @docImport 'theme_data.dart';
 library;
 
 import 'dart:ui' show SemanticsHitTestBehavior, SemanticsRole, clampDouble, lerpDouble;

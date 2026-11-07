@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 /// @docImport 'dart:ui';
-/// @docImport 'theme_data.dart';
 library;
 
 import 'dart:math' as math;
