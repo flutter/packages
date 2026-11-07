@@ -105,8 +105,9 @@ The `cupertino_ui` package contains everything you need to create a
 fully-featured iOS app, such as:
 
 * **App Structure & Navigation**: `CupertinoApp`, `CupertinoPageScaffold`,
-`CupertinoTabScaffold`, `CupertinoTabView`, `CupertinoNavigationBar`,
-`CupertinoSliverNavigationBar`, `CupertinoTabBar`, `CupertinoPageRoute`
+`CupertinoSplitView`, `CupertinoTabScaffold`, `CupertinoTabView`,
+`CupertinoNavigationBar`, `CupertinoSliverNavigationBar`, `CupertinoTabBar`,
+`CupertinoPageRoute`
 * **Buttons & Controls**: `CupertinoButton`, `CupertinoSegmentedControl`,
 `CupertinoSlidingSegmentedControl`, `CupertinoContextMenu`,
 `CupertinoContextMenuAction`, `CupertinoScrollbar`

@@ -35,5 +35,10 @@
   "expansionTileExpandedTapHint": "ยุบ",
   "expansionTileCollapsedTapHint": "ขยายเพื่อดูรายละเอียดเพิ่มเติม",
   "expandedHint": "ยุบ",
-  "collapsedHint": "ขยาย"
+  "collapsedHint": "ขยาย",
+  "splitViewSidebarLabel": "Sidebar",
+  "splitViewDetailLabel": "Detail",
+  "splitViewShowSidebarButtonLabel": "Show sidebar",
+  "splitViewHideSidebarButtonLabel": "Hide sidebar",
+  "splitViewDismissSidebarButtonLabel": "Dismiss sidebar"
 }

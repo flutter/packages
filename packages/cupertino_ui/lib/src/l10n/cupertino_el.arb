@@ -35,5 +35,10 @@
   "expansionTileExpandedTapHint": "Σύμπτυξη",
   "expansionTileCollapsedTapHint": "Ανάπτυξη για περισσότερες λεπτομέρειες",
   "expandedHint": "Συμπτύχθηκε",
-  "collapsedHint": "Αναπτύχθηκε"
+  "collapsedHint": "Αναπτύχθηκε",
+  "splitViewSidebarLabel": "Sidebar",
+  "splitViewDetailLabel": "Detail",
+  "splitViewShowSidebarButtonLabel": "Show sidebar",
+  "splitViewHideSidebarButtonLabel": "Hide sidebar",
+  "splitViewDismissSidebarButtonLabel": "Dismiss sidebar"
 }

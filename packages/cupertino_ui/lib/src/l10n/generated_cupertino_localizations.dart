@@ -156,6 +156,21 @@ class CupertinoLocalizationAf extends GlobalCupertinoLocalizations {
   String get shareButtonLabel => 'Deel …';
 
   @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
+
+  @override
   String get tabSemanticsLabelRaw => r'Oortjie $tabIndex van $tabCount';
 
   @override
@@ -344,6 +359,21 @@ class CupertinoLocalizationAm extends GlobalCupertinoLocalizations {
 
   @override
   String get shareButtonLabel => 'አጋራ...';
+
+  @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
 
   @override
   String get tabSemanticsLabelRaw => r'ትር $tabIndex ከ$tabCount';
@@ -536,6 +566,21 @@ class CupertinoLocalizationAr extends GlobalCupertinoLocalizations {
   String get shareButtonLabel => 'مشاركة…';
 
   @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
+
+  @override
   String get tabSemanticsLabelRaw => r'علامة التبويب $tabIndex من $tabCount';
 
   @override
@@ -724,6 +769,21 @@ class CupertinoLocalizationAs extends GlobalCupertinoLocalizations {
 
   @override
   String get shareButtonLabel => 'শ্বেয়াৰ কৰক…';
+
+  @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
 
   @override
   String get tabSemanticsLabelRaw => r'$tabCount টা টেবৰ $tabIndex নম্বৰটো';
@@ -916,6 +976,21 @@ class CupertinoLocalizationAz extends GlobalCupertinoLocalizations {
   String get shareButtonLabel => 'Paylaşın...';
 
   @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
+
+  @override
   String get tabSemanticsLabelRaw => r'Tab $tabIndex/$tabCount';
 
   @override
@@ -1104,6 +1179,21 @@ class CupertinoLocalizationBe extends GlobalCupertinoLocalizations {
 
   @override
   String get shareButtonLabel => 'Абагуліць...';
+
+  @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
 
   @override
   String get tabSemanticsLabelRaw => r'Укладка $tabIndex з $tabCount';
@@ -1296,6 +1386,21 @@ class CupertinoLocalizationBg extends GlobalCupertinoLocalizations {
   String get shareButtonLabel => 'Споделяне...';
 
   @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
+
+  @override
   String get tabSemanticsLabelRaw => r'Раздел $tabIndex от $tabCount';
 
   @override
@@ -1484,6 +1589,21 @@ class CupertinoLocalizationBn extends GlobalCupertinoLocalizations {
 
   @override
   String get shareButtonLabel => 'শেয়ার করুন...';
+
+  @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
 
   @override
   String get tabSemanticsLabelRaw => r'$tabCount-এর মধ্যে $tabIndex নম্বর ট্যাব';
@@ -1676,6 +1796,21 @@ class CupertinoLocalizationBo extends GlobalCupertinoLocalizations {
   String get shareButtonLabel => 'མཉམ་སྤྱོད།…';
 
   @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
+
+  @override
   String get tabSemanticsLabelRaw => r'འཛར་གནོན་ $tabIndex ཡི $tabCount';
 
   @override
@@ -1864,6 +1999,21 @@ class CupertinoLocalizationBs extends GlobalCupertinoLocalizations {
 
   @override
   String get shareButtonLabel => 'Dijeli...';
+
+  @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
 
   @override
   String get tabSemanticsLabelRaw => r'Kartica $tabIndex od $tabCount';
@@ -2056,6 +2206,21 @@ class CupertinoLocalizationCa extends GlobalCupertinoLocalizations {
   String get shareButtonLabel => 'Comparteix...';
 
   @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
+
+  @override
   String get tabSemanticsLabelRaw => r'Pestanya $tabIndex de $tabCount';
 
   @override
@@ -2244,6 +2409,21 @@ class CupertinoLocalizationCs extends GlobalCupertinoLocalizations {
 
   @override
   String get shareButtonLabel => 'Sdílet…';
+
+  @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
 
   @override
   String get tabSemanticsLabelRaw => r'Karta $tabIndex z $tabCount';
@@ -2436,6 +2616,21 @@ class CupertinoLocalizationCy extends GlobalCupertinoLocalizations {
   String get shareButtonLabel => 'Rhannu...';
 
   @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
+
+  @override
   String get tabSemanticsLabelRaw => r'Tab $tabIndex o $tabCount';
 
   @override
@@ -2626,6 +2821,21 @@ class CupertinoLocalizationDa extends GlobalCupertinoLocalizations {
   String get shareButtonLabel => 'Del…';
 
   @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
+
+  @override
   String get tabSemanticsLabelRaw => r'Fane $tabIndex af $tabCount';
 
   @override
@@ -2814,6 +3024,21 @@ class CupertinoLocalizationDe extends GlobalCupertinoLocalizations {
 
   @override
   String get shareButtonLabel => 'Teilen…';
+
+  @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
 
   @override
   String get tabSemanticsLabelRaw => r'Tab $tabIndex von $tabCount';
@@ -3034,6 +3259,21 @@ class CupertinoLocalizationEl extends GlobalCupertinoLocalizations {
   String get shareButtonLabel => 'Κοινοποίηση…';
 
   @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
+
+  @override
   String get tabSemanticsLabelRaw => r'Καρτέλα $tabIndex από $tabCount';
 
   @override
@@ -3222,6 +3462,21 @@ class CupertinoLocalizationEn extends GlobalCupertinoLocalizations {
 
   @override
   String get shareButtonLabel => 'Share...';
+
+  @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
 
   @override
   String get tabSemanticsLabelRaw => r'Tab $tabIndex of $tabCount';
@@ -3696,6 +3951,21 @@ class CupertinoLocalizationEs extends GlobalCupertinoLocalizations {
 
   @override
   String get shareButtonLabel => 'Compartir...';
+
+  @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
 
   @override
   String get tabSemanticsLabelRaw => r'Pestaña $tabIndex de $tabCount';
@@ -5048,6 +5318,21 @@ class CupertinoLocalizationEt extends GlobalCupertinoLocalizations {
   String get shareButtonLabel => 'Jaga …';
 
   @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
+
+  @override
   String get tabSemanticsLabelRaw => r'$tabIndex. vaheleht $tabCount-st';
 
   @override
@@ -5236,6 +5521,21 @@ class CupertinoLocalizationEu extends GlobalCupertinoLocalizations {
 
   @override
   String get shareButtonLabel => 'Partekatu...';
+
+  @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
 
   @override
   String get tabSemanticsLabelRaw => r'$tabIndex/$tabCount fitxa';
@@ -5428,6 +5728,21 @@ class CupertinoLocalizationFa extends GlobalCupertinoLocalizations {
   String get shareButtonLabel => 'هم‌رسانی…';
 
   @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
+
+  @override
   String get tabSemanticsLabelRaw => r'برگه $tabIndex از $tabCount';
 
   @override
@@ -5616,6 +5931,21 @@ class CupertinoLocalizationFi extends GlobalCupertinoLocalizations {
 
   @override
   String get shareButtonLabel => 'Jaa…';
+
+  @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
 
   @override
   String get tabSemanticsLabelRaw => r'Välilehti $tabIndex kautta $tabCount';
@@ -5808,6 +6138,21 @@ class CupertinoLocalizationFil extends GlobalCupertinoLocalizations {
   String get shareButtonLabel => 'Ibahagi...';
 
   @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
+
+  @override
   String get tabSemanticsLabelRaw => r'Tab $tabIndex ng $tabCount';
 
   @override
@@ -5996,6 +6341,21 @@ class CupertinoLocalizationFr extends GlobalCupertinoLocalizations {
 
   @override
   String get shareButtonLabel => 'Partager…';
+
+  @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
 
   @override
   String get tabSemanticsLabelRaw => r'Onglet $tabIndex sur $tabCount';
@@ -6243,6 +6603,21 @@ class CupertinoLocalizationGa extends GlobalCupertinoLocalizations {
   String get shareButtonLabel => 'Comhroinn...';
 
   @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
+
+  @override
   String get tabSemanticsLabelRaw => r'Cluaisín $tabIndex de $tabCount';
 
   @override
@@ -6431,6 +6806,21 @@ class CupertinoLocalizationGl extends GlobalCupertinoLocalizations {
 
   @override
   String get shareButtonLabel => 'Compartir…';
+
+  @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
 
   @override
   String get tabSemanticsLabelRaw => r'Pestana $tabIndex de $tabCount';
@@ -6623,6 +7013,21 @@ class CupertinoLocalizationGsw extends GlobalCupertinoLocalizations {
   String get shareButtonLabel => 'Teilen…';
 
   @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
+
+  @override
   String get tabSemanticsLabelRaw => r'Tab $tabIndex von $tabCount';
 
   @override
@@ -6811,6 +7216,21 @@ class CupertinoLocalizationGu extends GlobalCupertinoLocalizations {
 
   @override
   String get shareButtonLabel => 'શેર કરો…';
+
+  @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
 
   @override
   String get tabSemanticsLabelRaw => r'$tabCountમાંથી $tabIndex ટૅબ';
@@ -7003,6 +7423,21 @@ class CupertinoLocalizationHe extends GlobalCupertinoLocalizations {
   String get shareButtonLabel => 'שיתוף…';
 
   @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
+
+  @override
   String get tabSemanticsLabelRaw => r'כרטיסייה $tabIndex מתוך $tabCount';
 
   @override
@@ -7191,6 +7626,21 @@ class CupertinoLocalizationHi extends GlobalCupertinoLocalizations {
 
   @override
   String get shareButtonLabel => 'शेयर करें…';
+
+  @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
 
   @override
   String get tabSemanticsLabelRaw => r'$tabCount का टैब $tabIndex';
@@ -7383,6 +7833,21 @@ class CupertinoLocalizationHr extends GlobalCupertinoLocalizations {
   String get shareButtonLabel => 'Dijeli...';
 
   @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
+
+  @override
   String get tabSemanticsLabelRaw => r'Kartica $tabIndex od $tabCount';
 
   @override
@@ -7571,6 +8036,21 @@ class CupertinoLocalizationHu extends GlobalCupertinoLocalizations {
 
   @override
   String get shareButtonLabel => 'Megosztás…';
+
+  @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
 
   @override
   String get tabSemanticsLabelRaw => r'$tabCount/$tabIndex. lap';
@@ -7763,6 +8243,21 @@ class CupertinoLocalizationHy extends GlobalCupertinoLocalizations {
   String get shareButtonLabel => 'Կիսվել...';
 
   @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
+
+  @override
   String get tabSemanticsLabelRaw => r'Ներդիր $tabIndex՝ $tabCount-ից';
 
   @override
@@ -7951,6 +8446,21 @@ class CupertinoLocalizationId extends GlobalCupertinoLocalizations {
 
   @override
   String get shareButtonLabel => 'Bagikan...';
+
+  @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
 
   @override
   String get tabSemanticsLabelRaw => r'Tab $tabIndex dari $tabCount';
@@ -8143,6 +8653,21 @@ class CupertinoLocalizationIs extends GlobalCupertinoLocalizations {
   String get shareButtonLabel => 'Deila...';
 
   @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
+
+  @override
   String get tabSemanticsLabelRaw => r'Flipi $tabIndex af $tabCount';
 
   @override
@@ -8331,6 +8856,21 @@ class CupertinoLocalizationIt extends GlobalCupertinoLocalizations {
 
   @override
   String get shareButtonLabel => 'Condividi…';
+
+  @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
 
   @override
   String get tabSemanticsLabelRaw => r'Scheda $tabIndex di $tabCount';
@@ -8523,6 +9063,21 @@ class CupertinoLocalizationJa extends GlobalCupertinoLocalizations {
   String get shareButtonLabel => '共有...';
 
   @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
+
+  @override
   String get tabSemanticsLabelRaw => r'タブ: $tabIndex/$tabCount';
 
   @override
@@ -8711,6 +9266,21 @@ class CupertinoLocalizationKa extends GlobalCupertinoLocalizations {
 
   @override
   String get shareButtonLabel => 'გაზიარება...';
+
+  @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
 
   @override
   String get tabSemanticsLabelRaw => r'ჩანართი $tabIndex / $tabCount-დან';
@@ -8903,6 +9473,21 @@ class CupertinoLocalizationKk extends GlobalCupertinoLocalizations {
   String get shareButtonLabel => 'Бөлісу…';
 
   @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
+
+  @override
   String get tabSemanticsLabelRaw => r'Қойынды: $tabIndex/$tabCount';
 
   @override
@@ -9091,6 +9676,21 @@ class CupertinoLocalizationKm extends GlobalCupertinoLocalizations {
 
   @override
   String get shareButtonLabel => 'ចែករំលែក...';
+
+  @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
 
   @override
   String get tabSemanticsLabelRaw => r'ផ្ទាំងទី $tabIndex នៃ $tabCount';
@@ -9283,6 +9883,21 @@ class CupertinoLocalizationKn extends GlobalCupertinoLocalizations {
   String get shareButtonLabel => '\u{cb9}\u{c82}\u{c9a}\u{cbf}\u{c95}\u{cca}\u{cb3}\u{ccd}\u{cb3}\u{cbf}\u{2e}\u{2e}\u{2e}';
 
   @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
+
+  @override
   String get tabSemanticsLabelRaw => '\u{24}\u{74}\u{61}\u{62}\u{43}\u{6f}\u{75}\u{6e}\u{74}\u{20}\u{cb0}\u{cb2}\u{ccd}\u{cb2}\u{cbf}\u{ca8}\u{20}\u{24}\u{74}\u{61}\u{62}\u{49}\u{6e}\u{64}\u{65}\u{78}\u{20}\u{c9f}\u{ccd}\u{caf}\u{cbe}\u{cac}\u{ccd}';
 
   @override
@@ -9471,6 +10086,21 @@ class CupertinoLocalizationKo extends GlobalCupertinoLocalizations {
 
   @override
   String get shareButtonLabel => '공유...';
+
+  @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
 
   @override
   String get tabSemanticsLabelRaw => r'탭 $tabCount개 중 $tabIndex번째';
@@ -9663,6 +10293,21 @@ class CupertinoLocalizationKy extends GlobalCupertinoLocalizations {
   String get shareButtonLabel => 'Бөлүшүү…';
 
   @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
+
+  @override
   String get tabSemanticsLabelRaw => r'$tabCount ичинен $tabIndex-өтмөк';
 
   @override
@@ -9851,6 +10496,21 @@ class CupertinoLocalizationLo extends GlobalCupertinoLocalizations {
 
   @override
   String get shareButtonLabel => 'ແບ່ງປັນ...';
+
+  @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
 
   @override
   String get tabSemanticsLabelRaw => r'ແຖບທີ $tabIndex ຈາກທັງໝົດ $tabCount';
@@ -10043,6 +10703,21 @@ class CupertinoLocalizationLt extends GlobalCupertinoLocalizations {
   String get shareButtonLabel => 'Bendrinti...';
 
   @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
+
+  @override
   String get tabSemanticsLabelRaw => r'$tabIndex skirtukas iš $tabCount';
 
   @override
@@ -10231,6 +10906,21 @@ class CupertinoLocalizationLv extends GlobalCupertinoLocalizations {
 
   @override
   String get shareButtonLabel => 'Kopīgot…';
+
+  @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
 
   @override
   String get tabSemanticsLabelRaw => r'$tabIndex. cilne no $tabCount';
@@ -10423,6 +11113,21 @@ class CupertinoLocalizationMk extends GlobalCupertinoLocalizations {
   String get shareButtonLabel => 'Споделете...';
 
   @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
+
+  @override
   String get tabSemanticsLabelRaw => r'Картичка $tabIndex од $tabCount';
 
   @override
@@ -10611,6 +11316,21 @@ class CupertinoLocalizationMl extends GlobalCupertinoLocalizations {
 
   @override
   String get shareButtonLabel => 'പങ്കിടുക...';
+
+  @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
 
   @override
   String get tabSemanticsLabelRaw => r'$tabCount ടാബിൽ $tabIndex-ാമത്തേത്';
@@ -10803,6 +11523,21 @@ class CupertinoLocalizationMn extends GlobalCupertinoLocalizations {
   String get shareButtonLabel => 'Хуваалцах...';
 
   @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
+
+  @override
   String get tabSemanticsLabelRaw => r'$tabCount-н $tabIndex-р таб';
 
   @override
@@ -10991,6 +11726,21 @@ class CupertinoLocalizationMr extends GlobalCupertinoLocalizations {
 
   @override
   String get shareButtonLabel => 'शेअर करा...';
+
+  @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
 
   @override
   String get tabSemanticsLabelRaw => r'$tabCount पैकी $tabIndex टॅब';
@@ -11183,6 +11933,21 @@ class CupertinoLocalizationMs extends GlobalCupertinoLocalizations {
   String get shareButtonLabel => 'Kongsi...';
 
   @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
+
+  @override
   String get tabSemanticsLabelRaw => r'Tab $tabIndex daripada $tabCount';
 
   @override
@@ -11371,6 +12136,21 @@ class CupertinoLocalizationMy extends GlobalCupertinoLocalizations {
 
   @override
   String get shareButtonLabel => 'မျှဝေရန်...';
+
+  @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
 
   @override
   String get tabSemanticsLabelRaw => r'တဘ် $tabCount ခုအနက် $tabIndex ခု';
@@ -11563,6 +12343,21 @@ class CupertinoLocalizationNb extends GlobalCupertinoLocalizations {
   String get shareButtonLabel => 'Del…';
 
   @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
+
+  @override
   String get tabSemanticsLabelRaw => r'Fane $tabIndex av $tabCount';
 
   @override
@@ -11751,6 +12546,21 @@ class CupertinoLocalizationNe extends GlobalCupertinoLocalizations {
 
   @override
   String get shareButtonLabel => 'सेयर गर्नुहोस्...';
+
+  @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
 
   @override
   String get tabSemanticsLabelRaw => r'$tabCount मध्ये $tabIndex ट्याब';
@@ -11943,6 +12753,21 @@ class CupertinoLocalizationNl extends GlobalCupertinoLocalizations {
   String get shareButtonLabel => 'Delen...';
 
   @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
+
+  @override
   String get tabSemanticsLabelRaw => r'Tabblad $tabIndex van $tabCount';
 
   @override
@@ -12131,6 +12956,21 @@ class CupertinoLocalizationNo extends GlobalCupertinoLocalizations {
 
   @override
   String get shareButtonLabel => 'Del…';
+
+  @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
 
   @override
   String get tabSemanticsLabelRaw => r'Fane $tabIndex av $tabCount';
@@ -12323,6 +13163,21 @@ class CupertinoLocalizationOr extends GlobalCupertinoLocalizations {
   String get shareButtonLabel => 'ସେୟାର କରନ୍ତୁ...';
 
   @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
+
+  @override
   String get tabSemanticsLabelRaw => r'$tabCountର $tabIndex ଟାବ';
 
   @override
@@ -12511,6 +13366,21 @@ class CupertinoLocalizationPa extends GlobalCupertinoLocalizations {
 
   @override
   String get shareButtonLabel => 'ਸਾਂਝਾ ਕਰੋ...';
+
+  @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
 
   @override
   String get tabSemanticsLabelRaw => r'$tabCount ਵਿੱਚੋਂ $tabIndex ਟੈਬ';
@@ -12703,6 +13573,21 @@ class CupertinoLocalizationPl extends GlobalCupertinoLocalizations {
   String get shareButtonLabel => 'Udostępnij…';
 
   @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
+
+  @override
   String get tabSemanticsLabelRaw => r'Karta $tabIndex z $tabCount';
 
   @override
@@ -12891,6 +13776,21 @@ class CupertinoLocalizationPt extends GlobalCupertinoLocalizations {
 
   @override
   String get shareButtonLabel => 'Compartilhar…';
+
+  @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
 
   @override
   String get tabSemanticsLabelRaw => r'Guia $tabIndex de $tabCount';
@@ -13153,6 +14053,21 @@ class CupertinoLocalizationRo extends GlobalCupertinoLocalizations {
   String get shareButtonLabel => 'Trimiteți…';
 
   @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
+
+  @override
   String get tabSemanticsLabelRaw => r'Fila $tabIndex din $tabCount';
 
   @override
@@ -13341,6 +14256,21 @@ class CupertinoLocalizationRu extends GlobalCupertinoLocalizations {
 
   @override
   String get shareButtonLabel => 'Поделиться';
+
+  @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
 
   @override
   String get tabSemanticsLabelRaw => r'Вкладка $tabIndex из $tabCount';
@@ -13533,6 +14463,21 @@ class CupertinoLocalizationSi extends GlobalCupertinoLocalizations {
   String get shareButtonLabel => 'බෙදා ගන්න...';
 
   @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
+
+  @override
   String get tabSemanticsLabelRaw => r'ටැබ $tabCount න් $tabIndex';
 
   @override
@@ -13721,6 +14666,21 @@ class CupertinoLocalizationSk extends GlobalCupertinoLocalizations {
 
   @override
   String get shareButtonLabel => 'Zdieľať…';
+
+  @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
 
   @override
   String get tabSemanticsLabelRaw => r'Karta $tabIndex z $tabCount';
@@ -13913,6 +14873,21 @@ class CupertinoLocalizationSl extends GlobalCupertinoLocalizations {
   String get shareButtonLabel => 'Deli …';
 
   @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
+
+  @override
   String get tabSemanticsLabelRaw => r'Zavihek $tabIndex od $tabCount';
 
   @override
@@ -14103,6 +15078,21 @@ class CupertinoLocalizationSq extends GlobalCupertinoLocalizations {
   String get shareButtonLabel => 'Ndaj...';
 
   @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
+
+  @override
   String get tabSemanticsLabelRaw => r'Skeda $tabIndex nga $tabCount';
 
   @override
@@ -14291,6 +15281,21 @@ class CupertinoLocalizationSr extends GlobalCupertinoLocalizations {
 
   @override
   String get shareButtonLabel => 'Дели…';
+
+  @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
 
   @override
   String get tabSemanticsLabelRaw => r'$tabIndex. картица од $tabCount';
@@ -14641,6 +15646,21 @@ class CupertinoLocalizationSv extends GlobalCupertinoLocalizations {
   String get shareButtonLabel => 'Dela …';
 
   @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
+
+  @override
   String get tabSemanticsLabelRaw => r'Flik $tabIndex av $tabCount';
 
   @override
@@ -14829,6 +15849,21 @@ class CupertinoLocalizationSw extends GlobalCupertinoLocalizations {
 
   @override
   String get shareButtonLabel => 'Shiriki...';
+
+  @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
 
   @override
   String get tabSemanticsLabelRaw => r'Kichupo cha $tabIndex kati ya $tabCount';
@@ -15021,6 +16056,21 @@ class CupertinoLocalizationTa extends GlobalCupertinoLocalizations {
   String get shareButtonLabel => 'பகிர்...';
 
   @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
+
+  @override
   String get tabSemanticsLabelRaw => r'தாவல் $tabIndex / $tabCount';
 
   @override
@@ -15209,6 +16259,21 @@ class CupertinoLocalizationTe extends GlobalCupertinoLocalizations {
 
   @override
   String get shareButtonLabel => 'షేర్ చేయండి...';
+
+  @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
 
   @override
   String get tabSemanticsLabelRaw => r'$tabCountలో $tabIndexవ ట్యాబ్';
@@ -15401,6 +16466,21 @@ class CupertinoLocalizationTh extends GlobalCupertinoLocalizations {
   String get shareButtonLabel => 'แชร์...';
 
   @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
+
+  @override
   String get tabSemanticsLabelRaw => r'แท็บที่ $tabIndex จาก $tabCount';
 
   @override
@@ -15589,6 +16669,21 @@ class CupertinoLocalizationTl extends GlobalCupertinoLocalizations {
 
   @override
   String get shareButtonLabel => 'Ibahagi...';
+
+  @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
 
   @override
   String get tabSemanticsLabelRaw => r'Tab $tabIndex ng $tabCount';
@@ -15781,6 +16876,21 @@ class CupertinoLocalizationTr extends GlobalCupertinoLocalizations {
   String get shareButtonLabel => 'Paylaş...';
 
   @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
+
+  @override
   String get tabSemanticsLabelRaw => r'Sekme $tabIndex/$tabCount';
 
   @override
@@ -15969,6 +17079,21 @@ class CupertinoLocalizationUg extends GlobalCupertinoLocalizations {
 
   @override
   String get shareButtonLabel => 'ھەمبەھرلەش...';
+
+  @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
 
   @override
   String get tabSemanticsLabelRaw => r'بەتكۈچ $tabIndex جەمئىي $tabCount';
@@ -16161,6 +17286,21 @@ class CupertinoLocalizationUk extends GlobalCupertinoLocalizations {
   String get shareButtonLabel => 'Поділитися…';
 
   @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
+
+  @override
   String get tabSemanticsLabelRaw => r'Вкладка $tabIndex з $tabCount';
 
   @override
@@ -16349,6 +17489,21 @@ class CupertinoLocalizationUr extends GlobalCupertinoLocalizations {
 
   @override
   String get shareButtonLabel => 'اشتراک کریں...';
+
+  @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
 
   @override
   String get tabSemanticsLabelRaw => r'$tabCount میں سے $tabIndex ٹیب';
@@ -16541,6 +17696,21 @@ class CupertinoLocalizationUz extends GlobalCupertinoLocalizations {
   String get shareButtonLabel => 'Ulashish…';
 
   @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
+
+  @override
   String get tabSemanticsLabelRaw => r'$tabCount varaqdan $tabIndex';
 
   @override
@@ -16731,6 +17901,21 @@ class CupertinoLocalizationVi extends GlobalCupertinoLocalizations {
   String get shareButtonLabel => 'Chia sẻ...';
 
   @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
+
+  @override
   String get tabSemanticsLabelRaw => r'Thẻ $tabIndex/$tabCount';
 
   @override
@@ -16919,6 +18104,21 @@ class CupertinoLocalizationZh extends GlobalCupertinoLocalizations {
 
   @override
   String get shareButtonLabel => '共享…';
+
+  @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
 
   @override
   String get tabSemanticsLabelRaw => r'第 $tabIndex 个标签，共 $tabCount 个';
@@ -17308,6 +18508,21 @@ class CupertinoLocalizationZu extends GlobalCupertinoLocalizations {
 
   @override
   String get shareButtonLabel => 'Yabelana...';
+
+  @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
 
   @override
   String get tabSemanticsLabelRaw => r'Ithebhu $tabIndex kwangu-$tabCount';
