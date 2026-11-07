@@ -611,6 +611,12 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       await _videoPlayerPlatform.setMixWithOthers(videoPlayerOptions!.mixWithOthers);
     }
 
+    if (videoPlayerOptions?.allowBackgroundPlayback != null) {
+      await _videoPlayerPlatform.setAllowBackgroundPlayback(
+        videoPlayerOptions!.allowBackgroundPlayback,
+      );
+    }
+
     _playerId =
         (await _videoPlayerPlatform.createWithOptions(creationOptions)) ?? kUninitializedPlayerId;
     _creatingCompleter!.complete();

@@ -10,6 +10,9 @@ import androidx.annotation.Nullable;
 public class VideoPlayerOptions {
   public boolean mixWithOthers;
 
+  /** Whether playback should be able to continue while the app is in the background. */
+  public boolean allowBackgroundPlayback;
+
   /**
    * The duration of the back buffer in milliseconds, used to configure ExoPlayer's load control.
    */
@@ -20,6 +23,7 @@ public class VideoPlayerOptions {
   /** Copy constructor to ensure all options are reliably copied. */
   public VideoPlayerOptions(@NonNull VideoPlayerOptions other) {
     this.mixWithOthers = other.mixWithOthers;
+    this.allowBackgroundPlayback = other.allowBackgroundPlayback;
     this.backBufferDurationMs = other.backBufferDurationMs;
   }
 }

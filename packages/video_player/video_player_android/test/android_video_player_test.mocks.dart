@@ -108,6 +108,15 @@ class MockAndroidVideoPlayerApi extends _i1.Mock implements _i2.AndroidVideoPlay
           as _i4.Future<void>);
 
   @override
+  _i4.Future<void> setAllowBackgroundPlayback(bool? allowBackgroundPlayback) =>
+      (super.noSuchMethod(
+            Invocation.method(#setAllowBackgroundPlayback, [allowBackgroundPlayback]),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
+
+  @override
   _i4.Future<String> getLookupKeyForAsset(String? asset, String? packageName) =>
       (super.noSuchMethod(
             Invocation.method(#getLookupKeyForAsset, [asset, packageName]),

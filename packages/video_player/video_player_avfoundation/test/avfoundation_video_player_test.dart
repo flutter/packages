@@ -315,6 +315,15 @@ void main() {
       });
     });
 
+    test('setAllowBackgroundPlayback completes without calling the host', () async {
+      final (AVFoundationVideoPlayer player, MockAVFoundationVideoPlayerApi api, _) =
+          setUpMockPlayer(playerId: 1);
+
+      await expectLater(player.setAllowBackgroundPlayback(true), completes);
+      await expectLater(player.setAllowBackgroundPlayback(false), completes);
+      verifyNoMoreInteractions(api);
+    });
+
     test('setVolume', () async {
       final (AVFoundationVideoPlayer player, _, MockVideoPlayerInstanceApi playerApi) =
           setUpMockPlayer(playerId: 1);
