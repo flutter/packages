@@ -78,6 +78,7 @@ class _CarouselAutoPlayExampleState extends State<CarouselAutoPlayExample> {
       if (_controller.hasClients) {
         int nextIndex = (_targetIndex + 1) % _itemCount;
         if (!_infinite &&
+            _controller.position.hasContentDimensions &&
             _controller.offset >= _controller.position.maxScrollExtent) {
           nextIndex = 0;
         }
