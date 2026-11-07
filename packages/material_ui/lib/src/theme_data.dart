@@ -474,7 +474,6 @@ class ThemeData with Diagnosticable {
         );
       }
     }
-    inputDecorationTheme ??= const InputDecorationThemeData();
     platform ??= defaultTargetPlatform;
     switch (platform) {
       case TargetPlatform.android:
@@ -487,7 +486,6 @@ class ThemeData with Diagnosticable {
         materialTapTargetSize ??= MaterialTapTargetSize.shrinkWrap;
     }
     pageTransitionsTheme ??= const PageTransitionsTheme();
-    scrollbarTheme ??= const ScrollbarThemeData();
     visualDensity ??= VisualDensity.defaultDensityForPlatform(platform);
     useMaterial3 ??= true;
     useSystemColors ??= false;
@@ -633,51 +631,7 @@ class ThemeData with Diagnosticable {
         throw ArgumentError('appBarTheme must be either a AppBarThemeData or a AppBarTheme');
       }
     }
-    badgeTheme ??= const BadgeThemeData();
-    bannerTheme ??= const MaterialBannerThemeData();
-    bottomAppBarTheme ??= const BottomAppBarThemeData();
-    bottomNavigationBarTheme ??= const BottomNavigationBarThemeData();
-    bottomSheetTheme ??= const BottomSheetThemeData();
-    cardTheme ??= const CardThemeData();
-    carouselViewTheme ??= const CarouselViewThemeData();
-    checkboxTheme ??= const CheckboxThemeData();
-    chipTheme ??= const ChipThemeData();
-    dataTableTheme ??= const DataTableThemeData();
-    datePickerTheme ??= const DatePickerThemeData();
-    dialogTheme ??= const DialogThemeData();
-    dividerTheme ??= const DividerThemeData();
-    drawerTheme ??= const DrawerThemeData();
-    dropdownMenuTheme ??= const DropdownMenuThemeData();
-    elevatedButtonTheme ??= const ElevatedButtonThemeData();
-    expansionTileTheme ??= const ExpansionTileThemeData();
-    filledButtonTheme ??= const FilledButtonThemeData();
-    floatingActionButtonTheme ??= const FloatingActionButtonThemeData();
-    iconButtonTheme ??= const IconButtonThemeData();
-    listTileTheme ??= const ListTileThemeData();
-    menuBarTheme ??= const MenuBarThemeData();
-    menuButtonTheme ??= const MenuButtonThemeData();
-    menuTheme ??= const MenuThemeData();
-    navigationBarTheme ??= const NavigationBarThemeData();
-    navigationDrawerTheme ??= const NavigationDrawerThemeData();
-    navigationRailTheme ??= const NavigationRailThemeData();
-    outlinedButtonTheme ??= const OutlinedButtonThemeData();
-    popupMenuTheme ??= const PopupMenuThemeData();
-    progressIndicatorTheme ??= const ProgressIndicatorThemeData();
-    radioTheme ??= const RadioThemeData();
-    searchBarTheme ??= const SearchBarThemeData();
-    searchViewTheme ??= const SearchViewThemeData();
-    segmentedButtonTheme ??= const SegmentedButtonThemeData();
-    sliderTheme ??= const SliderThemeData();
-    snackBarTheme ??= const SnackBarThemeData();
-    switchTheme ??= const SwitchThemeData();
-    tabBarTheme ??= const TabBarThemeData();
-    textButtonTheme ??= const TextButtonThemeData();
-    textSelectionTheme ??= const TextSelectionThemeData();
-    timePickerTheme ??= const TimePickerThemeData();
-    toggleButtonsTheme ??= const ToggleButtonsThemeData();
-    tooltipTheme ??= const TooltipThemeData();
     // DEPRECATED (newest deprecations at the bottom)
-    buttonBarTheme ??= const ButtonBarThemeData();
     dialogBackgroundColor ??= isDark ? Colors.grey[800]! : Colors.white;
     indicatorColor ??= colorScheme.secondary == primaryColor ? Colors.white : colorScheme.secondary;
 
@@ -692,7 +646,7 @@ class ThemeData with Diagnosticable {
       applyElevationOverlayColor: applyElevationOverlayColor,
       cupertinoOverrideTheme: cupertinoOverrideTheme,
       extensions: _themeExtensionIterableToMap(extensions),
-      inputDecorationTheme: inputDecorationTheme as InputDecorationThemeData,
+      inputDecorationTheme: inputDecorationTheme as InputDecorationThemeData?,
       materialTapTargetSize: materialTapTargetSize,
       pageTransitionsTheme: pageTransitionsTheme,
       platform: platform,
@@ -727,7 +681,7 @@ class ThemeData with Diagnosticable {
       // COMPONENT THEMES
       actionIconTheme: actionIconTheme,
       // TODO(huycozy): Remove this type cast when appBarTheme is explicitly set to appBarThemeData
-      appBarTheme: (appBarTheme as AppBarThemeData?) ?? const AppBarThemeData(),
+      appBarTheme: appBarTheme as AppBarThemeData?,
       badgeTheme: badgeTheme,
       bannerTheme: bannerTheme,
       bottomAppBarTheme: bottomAppBarTheme,
@@ -785,8 +739,9 @@ class ThemeData with Diagnosticable {
   }
 
   /// Create a [ThemeData] given a set of exact values. Most values must be
-  /// specified. They all must also be non-null except for
-  /// [cupertinoOverrideTheme], and deprecated members.
+  /// specified. Core configuration, color, and typography values must be
+  /// non-null except for [cupertinoOverrideTheme]. Component themes may be
+  /// null, in which case their getters return default-constructed theme data.
   ///
   /// This will rarely be used directly. It is used by [lerp] to
   /// create intermediate themes based on two themes created with the
@@ -802,11 +757,11 @@ class ThemeData with Diagnosticable {
     required this.applyElevationOverlayColor,
     required this.cupertinoOverrideTheme,
     required this.extensions,
-    required this.inputDecorationTheme,
+    required this._inputDecorationTheme,
     required this.materialTapTargetSize,
     required this.pageTransitionsTheme,
     required this.platform,
-    required this.scrollbarTheme,
+    required this._scrollbarTheme,
     required this.splashFactory,
     required this.useMaterial3,
     required this.visualDensity,
@@ -839,51 +794,51 @@ class ThemeData with Diagnosticable {
     required this.typography,
     // COMPONENT THEMES
     required this.actionIconTheme,
-    required this.appBarTheme,
-    required this.badgeTheme,
-    required this.bannerTheme,
-    required this.bottomAppBarTheme,
-    required this.bottomNavigationBarTheme,
-    required this.bottomSheetTheme,
+    required this._appBarTheme,
+    required this._badgeTheme,
+    required this._bannerTheme,
+    required this._bottomAppBarTheme,
+    required this._bottomNavigationBarTheme,
+    required this._bottomSheetTheme,
     required this.buttonTheme,
-    required this.cardTheme,
-    required this.carouselViewTheme,
-    required this.checkboxTheme,
-    required this.chipTheme,
-    required this.dataTableTheme,
-    required this.datePickerTheme,
-    required this.dialogTheme,
-    required this.dividerTheme,
-    required this.drawerTheme,
-    required this.dropdownMenuTheme,
-    required this.elevatedButtonTheme,
-    required this.expansionTileTheme,
-    required this.filledButtonTheme,
-    required this.floatingActionButtonTheme,
-    required this.iconButtonTheme,
-    required this.listTileTheme,
-    required this.menuBarTheme,
-    required this.menuButtonTheme,
-    required this.menuTheme,
-    required this.navigationBarTheme,
-    required this.navigationDrawerTheme,
-    required this.navigationRailTheme,
-    required this.outlinedButtonTheme,
-    required this.popupMenuTheme,
-    required this.progressIndicatorTheme,
-    required this.radioTheme,
-    required this.searchBarTheme,
-    required this.searchViewTheme,
-    required this.segmentedButtonTheme,
-    required this.sliderTheme,
-    required this.snackBarTheme,
-    required this.switchTheme,
-    required this.tabBarTheme,
-    required this.textButtonTheme,
-    required this.textSelectionTheme,
-    required this.timePickerTheme,
-    required this.toggleButtonsTheme,
-    required this.tooltipTheme,
+    required this._cardTheme,
+    required this._carouselViewTheme,
+    required this._checkboxTheme,
+    required this._chipTheme,
+    required this._dataTableTheme,
+    required this._datePickerTheme,
+    required this._dialogTheme,
+    required this._dividerTheme,
+    required this._drawerTheme,
+    required this._dropdownMenuTheme,
+    required this._elevatedButtonTheme,
+    required this._expansionTileTheme,
+    required this._filledButtonTheme,
+    required this._floatingActionButtonTheme,
+    required this._iconButtonTheme,
+    required this._listTileTheme,
+    required this._menuBarTheme,
+    required this._menuButtonTheme,
+    required this._menuTheme,
+    required this._navigationBarTheme,
+    required this._navigationDrawerTheme,
+    required this._navigationRailTheme,
+    required this._outlinedButtonTheme,
+    required this._popupMenuTheme,
+    required this._progressIndicatorTheme,
+    required this._radioTheme,
+    required this._searchBarTheme,
+    required this._searchViewTheme,
+    required this._segmentedButtonTheme,
+    required this._sliderTheme,
+    required this._snackBarTheme,
+    required this._switchTheme,
+    required this._tabBarTheme,
+    required this._textButtonTheme,
+    required this._textSelectionTheme,
+    required this._timePickerTheme,
+    required this._toggleButtonsTheme,
+    required this._tooltipTheme,
     // DEPRECATED (newest deprecations at the bottom)
     @Deprecated(
       'Use OverflowBar instead. '
@@ -902,8 +857,8 @@ class ThemeData with Diagnosticable {
     required this.indicatorColor,
   }) : // DEPRECATED (newest deprecations at the bottom)
        // should not be `required`, use getter pattern to avoid breakages.
-       _buttonBarTheme = buttonBarTheme,
-       assert(buttonBarTheme != null);
+       // ignore: prefer_initializing_formals, (can't use initializing formals for a deprecated parameter).
+       _buttonBarTheme = buttonBarTheme;
 
   /// Create a [ThemeData] based on the colors in the given [colorScheme] and
   /// text styles of the optional [textTheme].
@@ -1107,7 +1062,9 @@ class ThemeData with Diagnosticable {
   /// and [TextFormField] are based on this theme.
   ///
   /// See [InputDecoration.applyDefaults].
-  final InputDecorationThemeData inputDecorationTheme;
+  InputDecorationThemeData get inputDecorationTheme =>
+      _inputDecorationTheme ?? const InputDecorationThemeData();
+  final InputDecorationThemeData? _inputDecorationTheme;
 
   /// Configures the hit test size of certain Material widgets.
   ///
@@ -1151,7 +1108,8 @@ class ThemeData with Diagnosticable {
   final TargetPlatform platform;
 
   /// A theme for customizing the colors, thickness, and shape of [Scrollbar]s.
-  final ScrollbarThemeData scrollbarTheme;
+  ScrollbarThemeData get scrollbarTheme => _scrollbarTheme ?? const ScrollbarThemeData();
+  final ScrollbarThemeData? _scrollbarTheme;
 
   /// Defines the appearance of ink splashes produces by [InkWell]
   /// and [InkResponse].
@@ -1404,23 +1362,31 @@ class ThemeData with Diagnosticable {
 
   /// A theme for customizing the color, elevation, brightness, iconTheme and
   /// textTheme of [AppBar]s.
-  final AppBarThemeData appBarTheme;
+  AppBarThemeData get appBarTheme => _appBarTheme ?? const AppBarThemeData();
+  final AppBarThemeData? _appBarTheme;
 
   /// A theme for customizing the color of [Badge]s.
-  final BadgeThemeData badgeTheme;
+  BadgeThemeData get badgeTheme => _badgeTheme ?? const BadgeThemeData();
+  final BadgeThemeData? _badgeTheme;
 
   /// A theme for customizing the color and text style of a [MaterialBanner].
-  final MaterialBannerThemeData bannerTheme;
+  MaterialBannerThemeData get bannerTheme => _bannerTheme ?? const MaterialBannerThemeData();
+  final MaterialBannerThemeData? _bannerTheme;
 
   /// A theme for customizing the shape, elevation, and color of a [BottomAppBar].
-  final BottomAppBarThemeData bottomAppBarTheme;
+  BottomAppBarThemeData get bottomAppBarTheme =>
+      _bottomAppBarTheme ?? const BottomAppBarThemeData();
+  final BottomAppBarThemeData? _bottomAppBarTheme;
 
   /// A theme for customizing the appearance and layout of [BottomNavigationBar]
   /// widgets.
-  final BottomNavigationBarThemeData bottomNavigationBarTheme;
+  BottomNavigationBarThemeData get bottomNavigationBarTheme =>
+      _bottomNavigationBarTheme ?? const BottomNavigationBarThemeData();
+  final BottomNavigationBarThemeData? _bottomNavigationBarTheme;
 
   /// A theme for customizing the color, elevation, and shape of a bottom sheet.
-  final BottomSheetThemeData bottomSheetTheme;
+  BottomSheetThemeData get bottomSheetTheme => _bottomSheetTheme ?? const BottomSheetThemeData();
+  final BottomSheetThemeData? _bottomSheetTheme;
 
   /// Defines the default configuration of button widgets, like [DropdownButton]
   /// and [ButtonBar].
@@ -1429,144 +1395,196 @@ class ThemeData with Diagnosticable {
   /// The colors and styles used to render [Card].
   ///
   /// This is the value returned from [CardTheme.of].
-  final CardThemeData cardTheme;
+  CardThemeData get cardTheme => _cardTheme ?? const CardThemeData();
+  final CardThemeData? _cardTheme;
 
   /// A theme for customizing the appearance and layout of [CarouselView] widgets.
-  final CarouselViewThemeData carouselViewTheme;
+  CarouselViewThemeData get carouselViewTheme =>
+      _carouselViewTheme ?? const CarouselViewThemeData();
+  final CarouselViewThemeData? _carouselViewTheme;
 
   /// A theme for customizing the appearance and layout of [Checkbox] widgets.
-  final CheckboxThemeData checkboxTheme;
+  CheckboxThemeData get checkboxTheme => _checkboxTheme ?? const CheckboxThemeData();
+  final CheckboxThemeData? _checkboxTheme;
 
   /// The colors and styles used to render [Chip]s.
   ///
   /// This is the value returned from [ChipTheme.of].
-  final ChipThemeData chipTheme;
+  ChipThemeData get chipTheme => _chipTheme ?? const ChipThemeData();
+  final ChipThemeData? _chipTheme;
 
   /// A theme for customizing the appearance and layout of [DataTable]
   /// widgets.
-  final DataTableThemeData dataTableTheme;
+  DataTableThemeData get dataTableTheme => _dataTableTheme ?? const DataTableThemeData();
+  final DataTableThemeData? _dataTableTheme;
 
   /// A theme for customizing the appearance and layout of [DatePickerDialog]
   /// widgets.
-  final DatePickerThemeData datePickerTheme;
+  DatePickerThemeData get datePickerTheme => _datePickerTheme ?? const DatePickerThemeData();
+  final DatePickerThemeData? _datePickerTheme;
 
   /// A theme for customizing the shape of a dialog.
-  final DialogThemeData dialogTheme;
+  DialogThemeData get dialogTheme => _dialogTheme ?? const DialogThemeData();
+  final DialogThemeData? _dialogTheme;
 
   /// A theme for customizing the color, thickness, and indents of [Divider]s,
   /// [VerticalDivider]s, etc.
-  final DividerThemeData dividerTheme;
+  DividerThemeData get dividerTheme => _dividerTheme ?? const DividerThemeData();
+  final DividerThemeData? _dividerTheme;
 
   /// A theme for customizing the appearance and layout of [Drawer] widgets.
-  final DrawerThemeData drawerTheme;
+  DrawerThemeData get drawerTheme => _drawerTheme ?? const DrawerThemeData();
+  final DrawerThemeData? _drawerTheme;
 
   /// A theme for customizing the appearance and layout of [DropdownMenu] widgets.
-  final DropdownMenuThemeData dropdownMenuTheme;
+  DropdownMenuThemeData get dropdownMenuTheme =>
+      _dropdownMenuTheme ?? const DropdownMenuThemeData();
+  final DropdownMenuThemeData? _dropdownMenuTheme;
 
   /// A theme for customizing the appearance and internal layout of
   /// [ElevatedButton]s.
-  final ElevatedButtonThemeData elevatedButtonTheme;
+  ElevatedButtonThemeData get elevatedButtonTheme =>
+      _elevatedButtonTheme ?? const ElevatedButtonThemeData();
+  final ElevatedButtonThemeData? _elevatedButtonTheme;
 
   /// A theme for customizing the visual properties of [ExpansionTile]s.
-  final ExpansionTileThemeData expansionTileTheme;
+  ExpansionTileThemeData get expansionTileTheme =>
+      _expansionTileTheme ?? const ExpansionTileThemeData();
+  final ExpansionTileThemeData? _expansionTileTheme;
 
   /// A theme for customizing the appearance and internal layout of
   /// [FilledButton]s.
-  final FilledButtonThemeData filledButtonTheme;
+  FilledButtonThemeData get filledButtonTheme =>
+      _filledButtonTheme ?? const FilledButtonThemeData();
+  final FilledButtonThemeData? _filledButtonTheme;
 
   /// A theme for customizing the shape, elevation, and color of a
   /// [FloatingActionButton].
-  final FloatingActionButtonThemeData floatingActionButtonTheme;
+  FloatingActionButtonThemeData get floatingActionButtonTheme =>
+      _floatingActionButtonTheme ?? const FloatingActionButtonThemeData();
+  final FloatingActionButtonThemeData? _floatingActionButtonTheme;
 
   /// A theme for customizing the appearance and internal layout of
   /// [IconButton]s.
-  final IconButtonThemeData iconButtonTheme;
+  IconButtonThemeData get iconButtonTheme => _iconButtonTheme ?? const IconButtonThemeData();
+  final IconButtonThemeData? _iconButtonTheme;
 
   /// A theme for customizing the appearance of [ListTile] widgets.
-  final ListTileThemeData listTileTheme;
+  ListTileThemeData get listTileTheme => _listTileTheme ?? const ListTileThemeData();
+  final ListTileThemeData? _listTileTheme;
 
   /// A theme for customizing the color, shape, elevation, and other [MenuStyle]
   /// aspects of the menu bar created by the [MenuBar] widget.
-  final MenuBarThemeData menuBarTheme;
+  MenuBarThemeData get menuBarTheme => _menuBarTheme ?? const MenuBarThemeData();
+  final MenuBarThemeData? _menuBarTheme;
 
   /// A theme for customizing the color, shape, elevation, and text style of
   /// cascading menu buttons created by [SubmenuButton] or [MenuItemButton].
-  final MenuButtonThemeData menuButtonTheme;
+  MenuButtonThemeData get menuButtonTheme => _menuButtonTheme ?? const MenuButtonThemeData();
+  final MenuButtonThemeData? _menuButtonTheme;
 
   /// A theme for customizing the color, shape, elevation, and other [MenuStyle]
   /// attributes of menus created by the [SubmenuButton] widget.
-  final MenuThemeData menuTheme;
+  MenuThemeData get menuTheme => _menuTheme ?? const MenuThemeData();
+  final MenuThemeData? _menuTheme;
 
   /// A theme for customizing the background color, text style, and icon themes
   /// of a [NavigationBar].
-  final NavigationBarThemeData navigationBarTheme;
+  NavigationBarThemeData get navigationBarTheme =>
+      _navigationBarTheme ?? const NavigationBarThemeData();
+  final NavigationBarThemeData? _navigationBarTheme;
 
   /// A theme for customizing the background color, text style, and icon themes
   /// of a [NavigationDrawer].
-  final NavigationDrawerThemeData navigationDrawerTheme;
+  NavigationDrawerThemeData get navigationDrawerTheme =>
+      _navigationDrawerTheme ?? const NavigationDrawerThemeData();
+  final NavigationDrawerThemeData? _navigationDrawerTheme;
 
   /// A theme for customizing the background color, elevation, text style, and
   /// icon themes of a [NavigationRail].
-  final NavigationRailThemeData navigationRailTheme;
+  NavigationRailThemeData get navigationRailTheme =>
+      _navigationRailTheme ?? const NavigationRailThemeData();
+  final NavigationRailThemeData? _navigationRailTheme;
 
   /// A theme for customizing the appearance and internal layout of
   /// [OutlinedButton]s.
-  final OutlinedButtonThemeData outlinedButtonTheme;
+  OutlinedButtonThemeData get outlinedButtonTheme =>
+      _outlinedButtonTheme ?? const OutlinedButtonThemeData();
+  final OutlinedButtonThemeData? _outlinedButtonTheme;
 
   /// A theme for customizing the color, shape, elevation, and text style of
   /// popup menus.
-  final PopupMenuThemeData popupMenuTheme;
+  PopupMenuThemeData get popupMenuTheme => _popupMenuTheme ?? const PopupMenuThemeData();
+  final PopupMenuThemeData? _popupMenuTheme;
 
   /// A theme for customizing the appearance and layout of [ProgressIndicator] widgets.
-  final ProgressIndicatorThemeData progressIndicatorTheme;
+  ProgressIndicatorThemeData get progressIndicatorTheme =>
+      _progressIndicatorTheme ?? const ProgressIndicatorThemeData();
+  final ProgressIndicatorThemeData? _progressIndicatorTheme;
 
   /// A theme for customizing the appearance and layout of [Radio] widgets.
-  final RadioThemeData radioTheme;
+  RadioThemeData get radioTheme => _radioTheme ?? const RadioThemeData();
+  final RadioThemeData? _radioTheme;
 
   /// A theme for customizing the appearance and layout of [SearchBar] widgets.
-  final SearchBarThemeData searchBarTheme;
+  SearchBarThemeData get searchBarTheme => _searchBarTheme ?? const SearchBarThemeData();
+  final SearchBarThemeData? _searchBarTheme;
 
   /// A theme for customizing the appearance and layout of search views created by [SearchAnchor] widgets.
-  final SearchViewThemeData searchViewTheme;
+  SearchViewThemeData get searchViewTheme => _searchViewTheme ?? const SearchViewThemeData();
+  final SearchViewThemeData? _searchViewTheme;
 
   /// A theme for customizing the appearance and layout of [SegmentedButton] widgets.
-  final SegmentedButtonThemeData segmentedButtonTheme;
+  SegmentedButtonThemeData get segmentedButtonTheme =>
+      _segmentedButtonTheme ?? const SegmentedButtonThemeData();
+  final SegmentedButtonThemeData? _segmentedButtonTheme;
 
   /// A theme for customizing the appearance and layout of [Slider] widgets.
-  final SliderThemeData sliderTheme;
+  SliderThemeData get sliderTheme => _sliderTheme ?? const SliderThemeData();
+  final SliderThemeData? _sliderTheme;
 
   /// A theme for customizing colors, shape, elevation, and behavior of a [SnackBar].
-  final SnackBarThemeData snackBarTheme;
+  SnackBarThemeData get snackBarTheme => _snackBarTheme ?? const SnackBarThemeData();
+  final SnackBarThemeData? _snackBarTheme;
 
   /// A theme for customizing the appearance and layout of [Switch] widgets.
-  final SwitchThemeData switchTheme;
+  SwitchThemeData get switchTheme => _switchTheme ?? const SwitchThemeData();
+  final SwitchThemeData? _switchTheme;
 
   /// A theme for customizing the size, shape, and color of the tab bar indicator.
-  final TabBarThemeData tabBarTheme;
+  TabBarThemeData get tabBarTheme => _tabBarTheme ?? const TabBarThemeData();
+  final TabBarThemeData? _tabBarTheme;
 
   /// A theme for customizing the appearance and internal layout of
   /// [TextButton]s.
-  final TextButtonThemeData textButtonTheme;
+  TextButtonThemeData get textButtonTheme => _textButtonTheme ?? const TextButtonThemeData();
+  final TextButtonThemeData? _textButtonTheme;
 
   /// A theme for customizing the appearance for text selection in [TextField] and
   /// [SelectableText] widgets.
-  final TextSelectionThemeData textSelectionTheme;
+  TextSelectionThemeData get textSelectionTheme =>
+      _textSelectionTheme ?? const TextSelectionThemeData();
+  final TextSelectionThemeData? _textSelectionTheme;
 
   /// A theme for customizing the appearance and layout of time picker widgets.
-  final TimePickerThemeData timePickerTheme;
+  TimePickerThemeData get timePickerTheme => _timePickerTheme ?? const TimePickerThemeData();
+  final TimePickerThemeData? _timePickerTheme;
 
   /// A theme for customizing the appearance and layout of [ToggleButtons] widgets.
-  final ToggleButtonsThemeData toggleButtonsTheme;
+  ToggleButtonsThemeData get toggleButtonsTheme =>
+      _toggleButtonsTheme ?? const ToggleButtonsThemeData();
+  final ToggleButtonsThemeData? _toggleButtonsTheme;
 
   /// A theme for customizing the appearance and layout of [Tooltip] widgets.
-  final TooltipThemeData tooltipTheme;
+  TooltipThemeData get tooltipTheme => _tooltipTheme ?? const TooltipThemeData();
+  final TooltipThemeData? _tooltipTheme;
 
   /// A theme for customizing the appearance and layout of [ButtonBar] widgets.
   @Deprecated(
     'Use OverflowBar instead. '
     'This feature was deprecated after v3.21.0-10.0.pre.',
   )
-  ButtonBarThemeData get buttonBarTheme => _buttonBarTheme!;
+  ButtonBarThemeData get buttonBarTheme => _buttonBarTheme ?? const ButtonBarThemeData();
   final ButtonBarThemeData? _buttonBarTheme;
 
   /// The background color of [Dialog] elements.
@@ -1730,11 +1748,11 @@ class ThemeData with Diagnosticable {
       cupertinoOverrideTheme: cupertinoOverrideTheme ?? this.cupertinoOverrideTheme,
       extensions: (extensions != null) ? _themeExtensionIterableToMap(extensions) : this.extensions,
       inputDecorationTheme:
-          inputDecorationTheme as InputDecorationThemeData? ?? this.inputDecorationTheme,
+          inputDecorationTheme as InputDecorationThemeData? ?? _inputDecorationTheme,
       materialTapTargetSize: materialTapTargetSize ?? this.materialTapTargetSize,
       pageTransitionsTheme: pageTransitionsTheme ?? this.pageTransitionsTheme,
       platform: platform ?? this.platform,
-      scrollbarTheme: scrollbarTheme ?? this.scrollbarTheme,
+      scrollbarTheme: scrollbarTheme ?? _scrollbarTheme,
       splashFactory: splashFactory ?? this.splashFactory,
       // When deprecated useMaterial3 removed, maintain `this.useMaterial3` here
       // for == evaluation.
@@ -1775,52 +1793,52 @@ class ThemeData with Diagnosticable {
             throw ArgumentError('appBarTheme must be either a AppBarThemeData or a AppBarTheme');
           }
         }
-        return appBarTheme as AppBarThemeData? ?? this.appBarTheme;
+        return appBarTheme as AppBarThemeData? ?? _appBarTheme;
       }(),
-      badgeTheme: badgeTheme ?? this.badgeTheme,
-      bannerTheme: bannerTheme ?? this.bannerTheme,
-      bottomAppBarTheme: bottomAppBarTheme ?? this.bottomAppBarTheme,
-      bottomNavigationBarTheme: bottomNavigationBarTheme ?? this.bottomNavigationBarTheme,
-      bottomSheetTheme: bottomSheetTheme ?? this.bottomSheetTheme,
+      badgeTheme: badgeTheme ?? _badgeTheme,
+      bannerTheme: bannerTheme ?? _bannerTheme,
+      bottomAppBarTheme: bottomAppBarTheme ?? _bottomAppBarTheme,
+      bottomNavigationBarTheme: bottomNavigationBarTheme ?? _bottomNavigationBarTheme,
+      bottomSheetTheme: bottomSheetTheme ?? _bottomSheetTheme,
       buttonTheme: buttonTheme ?? this.buttonTheme,
-      cardTheme: cardTheme ?? this.cardTheme,
-      carouselViewTheme: carouselViewTheme ?? this.carouselViewTheme,
-      checkboxTheme: checkboxTheme ?? this.checkboxTheme,
-      chipTheme: chipTheme ?? this.chipTheme,
-      dataTableTheme: dataTableTheme ?? this.dataTableTheme,
-      datePickerTheme: datePickerTheme ?? this.datePickerTheme,
-      dialogTheme: dialogTheme ?? this.dialogTheme,
-      dividerTheme: dividerTheme ?? this.dividerTheme,
-      drawerTheme: drawerTheme ?? this.drawerTheme,
-      dropdownMenuTheme: dropdownMenuTheme ?? this.dropdownMenuTheme,
-      elevatedButtonTheme: elevatedButtonTheme ?? this.elevatedButtonTheme,
-      expansionTileTheme: expansionTileTheme ?? this.expansionTileTheme,
-      filledButtonTheme: filledButtonTheme ?? this.filledButtonTheme,
-      floatingActionButtonTheme: floatingActionButtonTheme ?? this.floatingActionButtonTheme,
-      iconButtonTheme: iconButtonTheme ?? this.iconButtonTheme,
-      listTileTheme: listTileTheme ?? this.listTileTheme,
-      menuBarTheme: menuBarTheme ?? this.menuBarTheme,
-      menuButtonTheme: menuButtonTheme ?? this.menuButtonTheme,
-      menuTheme: menuTheme ?? this.menuTheme,
-      navigationBarTheme: navigationBarTheme ?? this.navigationBarTheme,
-      navigationDrawerTheme: navigationDrawerTheme ?? this.navigationDrawerTheme,
-      navigationRailTheme: navigationRailTheme ?? this.navigationRailTheme,
-      outlinedButtonTheme: outlinedButtonTheme ?? this.outlinedButtonTheme,
-      popupMenuTheme: popupMenuTheme ?? this.popupMenuTheme,
-      progressIndicatorTheme: progressIndicatorTheme ?? this.progressIndicatorTheme,
-      radioTheme: radioTheme ?? this.radioTheme,
-      searchBarTheme: searchBarTheme ?? this.searchBarTheme,
-      searchViewTheme: searchViewTheme ?? this.searchViewTheme,
-      segmentedButtonTheme: segmentedButtonTheme ?? this.segmentedButtonTheme,
-      sliderTheme: sliderTheme ?? this.sliderTheme,
-      snackBarTheme: snackBarTheme ?? this.snackBarTheme,
-      switchTheme: switchTheme ?? this.switchTheme,
-      tabBarTheme: tabBarTheme ?? this.tabBarTheme,
-      textButtonTheme: textButtonTheme ?? this.textButtonTheme,
-      textSelectionTheme: textSelectionTheme ?? this.textSelectionTheme,
-      timePickerTheme: timePickerTheme ?? this.timePickerTheme,
-      toggleButtonsTheme: toggleButtonsTheme ?? this.toggleButtonsTheme,
-      tooltipTheme: tooltipTheme ?? this.tooltipTheme,
+      cardTheme: cardTheme ?? _cardTheme,
+      carouselViewTheme: carouselViewTheme ?? _carouselViewTheme,
+      checkboxTheme: checkboxTheme ?? _checkboxTheme,
+      chipTheme: chipTheme ?? _chipTheme,
+      dataTableTheme: dataTableTheme ?? _dataTableTheme,
+      datePickerTheme: datePickerTheme ?? _datePickerTheme,
+      dialogTheme: dialogTheme ?? _dialogTheme,
+      dividerTheme: dividerTheme ?? _dividerTheme,
+      drawerTheme: drawerTheme ?? _drawerTheme,
+      dropdownMenuTheme: dropdownMenuTheme ?? _dropdownMenuTheme,
+      elevatedButtonTheme: elevatedButtonTheme ?? _elevatedButtonTheme,
+      expansionTileTheme: expansionTileTheme ?? _expansionTileTheme,
+      filledButtonTheme: filledButtonTheme ?? _filledButtonTheme,
+      floatingActionButtonTheme: floatingActionButtonTheme ?? _floatingActionButtonTheme,
+      iconButtonTheme: iconButtonTheme ?? _iconButtonTheme,
+      listTileTheme: listTileTheme ?? _listTileTheme,
+      menuBarTheme: menuBarTheme ?? _menuBarTheme,
+      menuButtonTheme: menuButtonTheme ?? _menuButtonTheme,
+      menuTheme: menuTheme ?? _menuTheme,
+      navigationBarTheme: navigationBarTheme ?? _navigationBarTheme,
+      navigationDrawerTheme: navigationDrawerTheme ?? _navigationDrawerTheme,
+      navigationRailTheme: navigationRailTheme ?? _navigationRailTheme,
+      outlinedButtonTheme: outlinedButtonTheme ?? _outlinedButtonTheme,
+      popupMenuTheme: popupMenuTheme ?? _popupMenuTheme,
+      progressIndicatorTheme: progressIndicatorTheme ?? _progressIndicatorTheme,
+      radioTheme: radioTheme ?? _radioTheme,
+      searchBarTheme: searchBarTheme ?? _searchBarTheme,
+      searchViewTheme: searchViewTheme ?? _searchViewTheme,
+      segmentedButtonTheme: segmentedButtonTheme ?? _segmentedButtonTheme,
+      sliderTheme: sliderTheme ?? _sliderTheme,
+      snackBarTheme: snackBarTheme ?? _snackBarTheme,
+      switchTheme: switchTheme ?? _switchTheme,
+      tabBarTheme: tabBarTheme ?? _tabBarTheme,
+      textButtonTheme: textButtonTheme ?? _textButtonTheme,
+      textSelectionTheme: textSelectionTheme ?? _textSelectionTheme,
+      timePickerTheme: timePickerTheme ?? _timePickerTheme,
+      toggleButtonsTheme: toggleButtonsTheme ?? _toggleButtonsTheme,
+      tooltipTheme: tooltipTheme ?? _tooltipTheme,
       // DEPRECATED (newest deprecations at the bottom)
       buttonBarTheme: buttonBarTheme ?? _buttonBarTheme,
       dialogBackgroundColor: dialogBackgroundColor ?? this.dialogBackgroundColor,
@@ -2057,11 +2075,17 @@ class ThemeData with Diagnosticable {
           : b.applyElevationOverlayColor,
       cupertinoOverrideTheme: t < 0.5 ? a.cupertinoOverrideTheme : b.cupertinoOverrideTheme,
       extensions: _lerpThemeExtensions(a, b, t),
-      inputDecorationTheme: t < 0.5 ? a.inputDecorationTheme : b.inputDecorationTheme,
+      inputDecorationTheme: a._inputDecorationTheme == null && b._inputDecorationTheme == null
+          ? null
+          : t < 0.5
+          ? a.inputDecorationTheme
+          : b.inputDecorationTheme,
       materialTapTargetSize: t < 0.5 ? a.materialTapTargetSize : b.materialTapTargetSize,
       pageTransitionsTheme: t < 0.5 ? a.pageTransitionsTheme : b.pageTransitionsTheme,
       platform: t < 0.5 ? a.platform : b.platform,
-      scrollbarTheme: ScrollbarThemeData.lerp(a.scrollbarTheme, b.scrollbarTheme, t),
+      scrollbarTheme: a._scrollbarTheme == null && b._scrollbarTheme == null
+          ? null
+          : ScrollbarThemeData.lerp(a.scrollbarTheme, b.scrollbarTheme, t),
       splashFactory: t < 0.5 ? a.splashFactory : b.splashFactory,
       useMaterial3: t < 0.5 ? a.useMaterial3 : b.useMaterial3,
       visualDensity: VisualDensity.lerp(a.visualDensity, b.visualDensity, t),
@@ -2091,101 +2115,153 @@ class ThemeData with Diagnosticable {
       typography: Typography.lerp(a.typography, b.typography, t),
       // COMPONENT THEMES
       actionIconTheme: ActionIconThemeData.lerp(a.actionIconTheme, b.actionIconTheme, t),
-      appBarTheme: AppBarThemeData.lerp(a.appBarTheme, b.appBarTheme, t),
-      badgeTheme: BadgeThemeData.lerp(a.badgeTheme, b.badgeTheme, t),
-      bannerTheme: MaterialBannerThemeData.lerp(a.bannerTheme, b.bannerTheme, t),
-      bottomAppBarTheme: BottomAppBarThemeData.lerp(a.bottomAppBarTheme, b.bottomAppBarTheme, t),
-      bottomNavigationBarTheme: BottomNavigationBarThemeData.lerp(
-        a.bottomNavigationBarTheme,
-        b.bottomNavigationBarTheme,
-        t,
-      ),
-      bottomSheetTheme: BottomSheetThemeData.lerp(a.bottomSheetTheme, b.bottomSheetTheme, t)!,
+      appBarTheme: a._appBarTheme == null && b._appBarTheme == null
+          ? null
+          : AppBarThemeData.lerp(a.appBarTheme, b.appBarTheme, t),
+      badgeTheme: a._badgeTheme == null && b._badgeTheme == null
+          ? null
+          : BadgeThemeData.lerp(a.badgeTheme, b.badgeTheme, t),
+      bannerTheme: a._bannerTheme == null && b._bannerTheme == null
+          ? null
+          : MaterialBannerThemeData.lerp(a.bannerTheme, b.bannerTheme, t),
+      bottomAppBarTheme: a._bottomAppBarTheme == null && b._bottomAppBarTheme == null
+          ? null
+          : BottomAppBarThemeData.lerp(a.bottomAppBarTheme, b.bottomAppBarTheme, t),
+      bottomNavigationBarTheme:
+          a._bottomNavigationBarTheme == null && b._bottomNavigationBarTheme == null
+          ? null
+          : BottomNavigationBarThemeData.lerp(
+              a.bottomNavigationBarTheme,
+              b.bottomNavigationBarTheme,
+              t,
+            ),
+      bottomSheetTheme: a._bottomSheetTheme == null && b._bottomSheetTheme == null
+          ? null
+          : BottomSheetThemeData.lerp(a.bottomSheetTheme, b.bottomSheetTheme, t)!,
       buttonTheme: t < 0.5 ? a.buttonTheme : b.buttonTheme,
-      cardTheme: CardThemeData.lerp(a.cardTheme, b.cardTheme, t),
-      carouselViewTheme: CarouselViewThemeData.lerp(a.carouselViewTheme, b.carouselViewTheme, t),
-      checkboxTheme: CheckboxThemeData.lerp(a.checkboxTheme, b.checkboxTheme, t),
-      chipTheme: ChipThemeData.lerp(a.chipTheme, b.chipTheme, t)!,
-      dataTableTheme: DataTableThemeData.lerp(a.dataTableTheme, b.dataTableTheme, t),
-      datePickerTheme: DatePickerThemeData.lerp(a.datePickerTheme, b.datePickerTheme, t),
-      dialogTheme: DialogThemeData.lerp(a.dialogTheme, b.dialogTheme, t),
-      dividerTheme: DividerThemeData.lerp(a.dividerTheme, b.dividerTheme, t),
-      drawerTheme: DrawerThemeData.lerp(a.drawerTheme, b.drawerTheme, t)!,
-      dropdownMenuTheme: DropdownMenuThemeData.lerp(a.dropdownMenuTheme, b.dropdownMenuTheme, t),
-      elevatedButtonTheme: ElevatedButtonThemeData.lerp(
-        a.elevatedButtonTheme,
-        b.elevatedButtonTheme,
-        t,
-      )!,
-      expansionTileTheme: ExpansionTileThemeData.lerp(
-        a.expansionTileTheme,
-        b.expansionTileTheme,
-        t,
-      )!,
-      filledButtonTheme: FilledButtonThemeData.lerp(a.filledButtonTheme, b.filledButtonTheme, t)!,
-      floatingActionButtonTheme: FloatingActionButtonThemeData.lerp(
-        a.floatingActionButtonTheme,
-        b.floatingActionButtonTheme,
-        t,
-      )!,
-      iconButtonTheme: IconButtonThemeData.lerp(a.iconButtonTheme, b.iconButtonTheme, t)!,
-      listTileTheme: ListTileThemeData.lerp(a.listTileTheme, b.listTileTheme, t)!,
-      menuBarTheme: MenuBarThemeData.lerp(a.menuBarTheme, b.menuBarTheme, t)!,
-      menuButtonTheme: MenuButtonThemeData.lerp(a.menuButtonTheme, b.menuButtonTheme, t)!,
-      menuTheme: MenuThemeData.lerp(a.menuTheme, b.menuTheme, t)!,
-      navigationBarTheme: NavigationBarThemeData.lerp(
-        a.navigationBarTheme,
-        b.navigationBarTheme,
-        t,
-      )!,
-      navigationDrawerTheme: NavigationDrawerThemeData.lerp(
-        a.navigationDrawerTheme,
-        b.navigationDrawerTheme,
-        t,
-      )!,
-      navigationRailTheme: NavigationRailThemeData.lerp(
-        a.navigationRailTheme,
-        b.navigationRailTheme,
-        t,
-      )!,
-      outlinedButtonTheme: OutlinedButtonThemeData.lerp(
-        a.outlinedButtonTheme,
-        b.outlinedButtonTheme,
-        t,
-      )!,
-      popupMenuTheme: PopupMenuThemeData.lerp(a.popupMenuTheme, b.popupMenuTheme, t)!,
-      progressIndicatorTheme: ProgressIndicatorThemeData.lerp(
-        a.progressIndicatorTheme,
-        b.progressIndicatorTheme,
-        t,
-      )!,
-      radioTheme: RadioThemeData.lerp(a.radioTheme, b.radioTheme, t),
-      searchBarTheme: SearchBarThemeData.lerp(a.searchBarTheme, b.searchBarTheme, t)!,
-      searchViewTheme: SearchViewThemeData.lerp(a.searchViewTheme, b.searchViewTheme, t)!,
-      segmentedButtonTheme: SegmentedButtonThemeData.lerp(
-        a.segmentedButtonTheme,
-        b.segmentedButtonTheme,
-        t,
-      ),
-      sliderTheme: SliderThemeData.lerp(a.sliderTheme, b.sliderTheme, t),
-      snackBarTheme: SnackBarThemeData.lerp(a.snackBarTheme, b.snackBarTheme, t),
-      switchTheme: SwitchThemeData.lerp(a.switchTheme, b.switchTheme, t),
-      tabBarTheme: TabBarThemeData.lerp(a.tabBarTheme, b.tabBarTheme, t),
-      textButtonTheme: TextButtonThemeData.lerp(a.textButtonTheme, b.textButtonTheme, t)!,
-      textSelectionTheme: TextSelectionThemeData.lerp(
-        a.textSelectionTheme,
-        b.textSelectionTheme,
-        t,
-      )!,
-      timePickerTheme: TimePickerThemeData.lerp(a.timePickerTheme, b.timePickerTheme, t),
-      toggleButtonsTheme: ToggleButtonsThemeData.lerp(
-        a.toggleButtonsTheme,
-        b.toggleButtonsTheme,
-        t,
-      )!,
-      tooltipTheme: TooltipThemeData.lerp(a.tooltipTheme, b.tooltipTheme, t)!,
+      cardTheme: a._cardTheme == null && b._cardTheme == null
+          ? null
+          : CardThemeData.lerp(a.cardTheme, b.cardTheme, t),
+      carouselViewTheme: a._carouselViewTheme == null && b._carouselViewTheme == null
+          ? null
+          : CarouselViewThemeData.lerp(a.carouselViewTheme, b.carouselViewTheme, t),
+      checkboxTheme: a._checkboxTheme == null && b._checkboxTheme == null
+          ? null
+          : CheckboxThemeData.lerp(a.checkboxTheme, b.checkboxTheme, t),
+      chipTheme: a._chipTheme == null && b._chipTheme == null
+          ? null
+          : ChipThemeData.lerp(a.chipTheme, b.chipTheme, t)!,
+      dataTableTheme: a._dataTableTheme == null && b._dataTableTheme == null
+          ? null
+          : DataTableThemeData.lerp(a.dataTableTheme, b.dataTableTheme, t),
+      datePickerTheme: a._datePickerTheme == null && b._datePickerTheme == null
+          ? null
+          : DatePickerThemeData.lerp(a.datePickerTheme, b.datePickerTheme, t),
+      dialogTheme: a._dialogTheme == null && b._dialogTheme == null
+          ? null
+          : DialogThemeData.lerp(a.dialogTheme, b.dialogTheme, t),
+      dividerTheme: a._dividerTheme == null && b._dividerTheme == null
+          ? null
+          : DividerThemeData.lerp(a.dividerTheme, b.dividerTheme, t),
+      drawerTheme: a._drawerTheme == null && b._drawerTheme == null
+          ? null
+          : DrawerThemeData.lerp(a.drawerTheme, b.drawerTheme, t)!,
+      dropdownMenuTheme: a._dropdownMenuTheme == null && b._dropdownMenuTheme == null
+          ? null
+          : DropdownMenuThemeData.lerp(a.dropdownMenuTheme, b.dropdownMenuTheme, t),
+      elevatedButtonTheme: a._elevatedButtonTheme == null && b._elevatedButtonTheme == null
+          ? null
+          : ElevatedButtonThemeData.lerp(a.elevatedButtonTheme, b.elevatedButtonTheme, t)!,
+      expansionTileTheme: a._expansionTileTheme == null && b._expansionTileTheme == null
+          ? null
+          : ExpansionTileThemeData.lerp(a.expansionTileTheme, b.expansionTileTheme, t)!,
+      filledButtonTheme: a._filledButtonTheme == null && b._filledButtonTheme == null
+          ? null
+          : FilledButtonThemeData.lerp(a.filledButtonTheme, b.filledButtonTheme, t)!,
+      floatingActionButtonTheme:
+          a._floatingActionButtonTheme == null && b._floatingActionButtonTheme == null
+          ? null
+          : FloatingActionButtonThemeData.lerp(
+              a.floatingActionButtonTheme,
+              b.floatingActionButtonTheme,
+              t,
+            )!,
+      iconButtonTheme: a._iconButtonTheme == null && b._iconButtonTheme == null
+          ? null
+          : IconButtonThemeData.lerp(a.iconButtonTheme, b.iconButtonTheme, t)!,
+      listTileTheme: a._listTileTheme == null && b._listTileTheme == null
+          ? null
+          : ListTileThemeData.lerp(a.listTileTheme, b.listTileTheme, t)!,
+      menuBarTheme: a._menuBarTheme == null && b._menuBarTheme == null
+          ? null
+          : MenuBarThemeData.lerp(a.menuBarTheme, b.menuBarTheme, t)!,
+      menuButtonTheme: a._menuButtonTheme == null && b._menuButtonTheme == null
+          ? null
+          : MenuButtonThemeData.lerp(a.menuButtonTheme, b.menuButtonTheme, t)!,
+      menuTheme: a._menuTheme == null && b._menuTheme == null
+          ? null
+          : MenuThemeData.lerp(a.menuTheme, b.menuTheme, t)!,
+      navigationBarTheme: a._navigationBarTheme == null && b._navigationBarTheme == null
+          ? null
+          : NavigationBarThemeData.lerp(a.navigationBarTheme, b.navigationBarTheme, t)!,
+      navigationDrawerTheme: a._navigationDrawerTheme == null && b._navigationDrawerTheme == null
+          ? null
+          : NavigationDrawerThemeData.lerp(a.navigationDrawerTheme, b.navigationDrawerTheme, t)!,
+      navigationRailTheme: a._navigationRailTheme == null && b._navigationRailTheme == null
+          ? null
+          : NavigationRailThemeData.lerp(a.navigationRailTheme, b.navigationRailTheme, t)!,
+      outlinedButtonTheme: a._outlinedButtonTheme == null && b._outlinedButtonTheme == null
+          ? null
+          : OutlinedButtonThemeData.lerp(a.outlinedButtonTheme, b.outlinedButtonTheme, t)!,
+      popupMenuTheme: a._popupMenuTheme == null && b._popupMenuTheme == null
+          ? null
+          : PopupMenuThemeData.lerp(a.popupMenuTheme, b.popupMenuTheme, t)!,
+      progressIndicatorTheme: a._progressIndicatorTheme == null && b._progressIndicatorTheme == null
+          ? null
+          : ProgressIndicatorThemeData.lerp(a.progressIndicatorTheme, b.progressIndicatorTheme, t)!,
+      radioTheme: a._radioTheme == null && b._radioTheme == null
+          ? null
+          : RadioThemeData.lerp(a.radioTheme, b.radioTheme, t),
+      searchBarTheme: a._searchBarTheme == null && b._searchBarTheme == null
+          ? null
+          : SearchBarThemeData.lerp(a.searchBarTheme, b.searchBarTheme, t)!,
+      searchViewTheme: a._searchViewTheme == null && b._searchViewTheme == null
+          ? null
+          : SearchViewThemeData.lerp(a.searchViewTheme, b.searchViewTheme, t)!,
+      segmentedButtonTheme: a._segmentedButtonTheme == null && b._segmentedButtonTheme == null
+          ? null
+          : SegmentedButtonThemeData.lerp(a.segmentedButtonTheme, b.segmentedButtonTheme, t),
+      sliderTheme: a._sliderTheme == null && b._sliderTheme == null
+          ? null
+          : SliderThemeData.lerp(a.sliderTheme, b.sliderTheme, t),
+      snackBarTheme: a._snackBarTheme == null && b._snackBarTheme == null
+          ? null
+          : SnackBarThemeData.lerp(a.snackBarTheme, b.snackBarTheme, t),
+      switchTheme: a._switchTheme == null && b._switchTheme == null
+          ? null
+          : SwitchThemeData.lerp(a.switchTheme, b.switchTheme, t),
+      tabBarTheme: a._tabBarTheme == null && b._tabBarTheme == null
+          ? null
+          : TabBarThemeData.lerp(a.tabBarTheme, b.tabBarTheme, t),
+      textButtonTheme: a._textButtonTheme == null && b._textButtonTheme == null
+          ? null
+          : TextButtonThemeData.lerp(a.textButtonTheme, b.textButtonTheme, t)!,
+      textSelectionTheme: a._textSelectionTheme == null && b._textSelectionTheme == null
+          ? null
+          : TextSelectionThemeData.lerp(a.textSelectionTheme, b.textSelectionTheme, t)!,
+      timePickerTheme: a._timePickerTheme == null && b._timePickerTheme == null
+          ? null
+          : TimePickerThemeData.lerp(a.timePickerTheme, b.timePickerTheme, t),
+      toggleButtonsTheme: a._toggleButtonsTheme == null && b._toggleButtonsTheme == null
+          ? null
+          : ToggleButtonsThemeData.lerp(a.toggleButtonsTheme, b.toggleButtonsTheme, t)!,
+      tooltipTheme: a._tooltipTheme == null && b._tooltipTheme == null
+          ? null
+          : TooltipThemeData.lerp(a.tooltipTheme, b.tooltipTheme, t)!,
       // DEPRECATED (newest deprecations at the bottom)
-      buttonBarTheme: ButtonBarThemeData.lerp(a.buttonBarTheme, b.buttonBarTheme, t),
+      buttonBarTheme: a._buttonBarTheme == null && b._buttonBarTheme == null
+          ? null
+          : ButtonBarThemeData.lerp(a.buttonBarTheme, b.buttonBarTheme, t),
       dialogBackgroundColor: Color.lerp(a.dialogBackgroundColor, b.dialogBackgroundColor, t)!,
       indicatorColor: Color.lerp(a.indicatorColor, b.indicatorColor, t)!,
     );
@@ -2205,11 +2281,13 @@ class ThemeData with Diagnosticable {
         other.applyElevationOverlayColor == applyElevationOverlayColor &&
         other.cupertinoOverrideTheme == cupertinoOverrideTheme &&
         mapEquals(other.extensions, extensions) &&
-        other.inputDecorationTheme == inputDecorationTheme &&
+        ((other._inputDecorationTheme == null && _inputDecorationTheme == null) ||
+            other.inputDecorationTheme == inputDecorationTheme) &&
         other.materialTapTargetSize == materialTapTargetSize &&
         other.pageTransitionsTheme == pageTransitionsTheme &&
         other.platform == platform &&
-        other.scrollbarTheme == scrollbarTheme &&
+        ((other._scrollbarTheme == null && _scrollbarTheme == null) ||
+            other.scrollbarTheme == scrollbarTheme) &&
         other.splashFactory == splashFactory &&
         other.useMaterial3 == useMaterial3 &&
         other.visualDensity == visualDensity &&
@@ -2239,53 +2317,93 @@ class ThemeData with Diagnosticable {
         other.typography == typography &&
         // COMPONENT THEMES
         other.actionIconTheme == actionIconTheme &&
-        other.appBarTheme == appBarTheme &&
-        other.badgeTheme == badgeTheme &&
-        other.bannerTheme == bannerTheme &&
-        other.bottomAppBarTheme == bottomAppBarTheme &&
-        other.bottomNavigationBarTheme == bottomNavigationBarTheme &&
-        other.bottomSheetTheme == bottomSheetTheme &&
+        ((other._appBarTheme == null && _appBarTheme == null) ||
+            other.appBarTheme == appBarTheme) &&
+        ((other._badgeTheme == null && _badgeTheme == null) || other.badgeTheme == badgeTheme) &&
+        ((other._bannerTheme == null && _bannerTheme == null) ||
+            other.bannerTheme == bannerTheme) &&
+        ((other._bottomAppBarTheme == null && _bottomAppBarTheme == null) ||
+            other.bottomAppBarTheme == bottomAppBarTheme) &&
+        ((other._bottomNavigationBarTheme == null && _bottomNavigationBarTheme == null) ||
+            other.bottomNavigationBarTheme == bottomNavigationBarTheme) &&
+        ((other._bottomSheetTheme == null && _bottomSheetTheme == null) ||
+            other.bottomSheetTheme == bottomSheetTheme) &&
         other.buttonTheme == buttonTheme &&
-        other.cardTheme == cardTheme &&
-        other.carouselViewTheme == carouselViewTheme &&
-        other.checkboxTheme == checkboxTheme &&
-        other.chipTheme == chipTheme &&
-        other.dataTableTheme == dataTableTheme &&
-        other.datePickerTheme == datePickerTheme &&
-        other.dialogTheme == dialogTheme &&
-        other.dividerTheme == dividerTheme &&
-        other.drawerTheme == drawerTheme &&
-        other.dropdownMenuTheme == dropdownMenuTheme &&
-        other.elevatedButtonTheme == elevatedButtonTheme &&
-        other.expansionTileTheme == expansionTileTheme &&
-        other.filledButtonTheme == filledButtonTheme &&
-        other.floatingActionButtonTheme == floatingActionButtonTheme &&
-        other.iconButtonTheme == iconButtonTheme &&
-        other.listTileTheme == listTileTheme &&
-        other.menuBarTheme == menuBarTheme &&
-        other.menuButtonTheme == menuButtonTheme &&
-        other.menuTheme == menuTheme &&
-        other.navigationBarTheme == navigationBarTheme &&
-        other.navigationDrawerTheme == navigationDrawerTheme &&
-        other.navigationRailTheme == navigationRailTheme &&
-        other.outlinedButtonTheme == outlinedButtonTheme &&
-        other.popupMenuTheme == popupMenuTheme &&
-        other.progressIndicatorTheme == progressIndicatorTheme &&
-        other.radioTheme == radioTheme &&
-        other.searchBarTheme == searchBarTheme &&
-        other.searchViewTheme == searchViewTheme &&
-        other.segmentedButtonTheme == segmentedButtonTheme &&
-        other.sliderTheme == sliderTheme &&
-        other.snackBarTheme == snackBarTheme &&
-        other.switchTheme == switchTheme &&
-        other.tabBarTheme == tabBarTheme &&
-        other.textButtonTheme == textButtonTheme &&
-        other.textSelectionTheme == textSelectionTheme &&
-        other.timePickerTheme == timePickerTheme &&
-        other.toggleButtonsTheme == toggleButtonsTheme &&
-        other.tooltipTheme == tooltipTheme &&
+        ((other._cardTheme == null && _cardTheme == null) || other.cardTheme == cardTheme) &&
+        ((other._carouselViewTheme == null && _carouselViewTheme == null) ||
+            other.carouselViewTheme == carouselViewTheme) &&
+        ((other._checkboxTheme == null && _checkboxTheme == null) ||
+            other.checkboxTheme == checkboxTheme) &&
+        ((other._chipTheme == null && _chipTheme == null) || other.chipTheme == chipTheme) &&
+        ((other._dataTableTheme == null && _dataTableTheme == null) ||
+            other.dataTableTheme == dataTableTheme) &&
+        ((other._datePickerTheme == null && _datePickerTheme == null) ||
+            other.datePickerTheme == datePickerTheme) &&
+        ((other._dialogTheme == null && _dialogTheme == null) ||
+            other.dialogTheme == dialogTheme) &&
+        ((other._dividerTheme == null && _dividerTheme == null) ||
+            other.dividerTheme == dividerTheme) &&
+        ((other._drawerTheme == null && _drawerTheme == null) ||
+            other.drawerTheme == drawerTheme) &&
+        ((other._dropdownMenuTheme == null && _dropdownMenuTheme == null) ||
+            other.dropdownMenuTheme == dropdownMenuTheme) &&
+        ((other._elevatedButtonTheme == null && _elevatedButtonTheme == null) ||
+            other.elevatedButtonTheme == elevatedButtonTheme) &&
+        ((other._expansionTileTheme == null && _expansionTileTheme == null) ||
+            other.expansionTileTheme == expansionTileTheme) &&
+        ((other._filledButtonTheme == null && _filledButtonTheme == null) ||
+            other.filledButtonTheme == filledButtonTheme) &&
+        ((other._floatingActionButtonTheme == null && _floatingActionButtonTheme == null) ||
+            other.floatingActionButtonTheme == floatingActionButtonTheme) &&
+        ((other._iconButtonTheme == null && _iconButtonTheme == null) ||
+            other.iconButtonTheme == iconButtonTheme) &&
+        ((other._listTileTheme == null && _listTileTheme == null) ||
+            other.listTileTheme == listTileTheme) &&
+        ((other._menuBarTheme == null && _menuBarTheme == null) ||
+            other.menuBarTheme == menuBarTheme) &&
+        ((other._menuButtonTheme == null && _menuButtonTheme == null) ||
+            other.menuButtonTheme == menuButtonTheme) &&
+        ((other._menuTheme == null && _menuTheme == null) || other.menuTheme == menuTheme) &&
+        ((other._navigationBarTheme == null && _navigationBarTheme == null) ||
+            other.navigationBarTheme == navigationBarTheme) &&
+        ((other._navigationDrawerTheme == null && _navigationDrawerTheme == null) ||
+            other.navigationDrawerTheme == navigationDrawerTheme) &&
+        ((other._navigationRailTheme == null && _navigationRailTheme == null) ||
+            other.navigationRailTheme == navigationRailTheme) &&
+        ((other._outlinedButtonTheme == null && _outlinedButtonTheme == null) ||
+            other.outlinedButtonTheme == outlinedButtonTheme) &&
+        ((other._popupMenuTheme == null && _popupMenuTheme == null) ||
+            other.popupMenuTheme == popupMenuTheme) &&
+        ((other._progressIndicatorTheme == null && _progressIndicatorTheme == null) ||
+            other.progressIndicatorTheme == progressIndicatorTheme) &&
+        ((other._radioTheme == null && _radioTheme == null) || other.radioTheme == radioTheme) &&
+        ((other._searchBarTheme == null && _searchBarTheme == null) ||
+            other.searchBarTheme == searchBarTheme) &&
+        ((other._searchViewTheme == null && _searchViewTheme == null) ||
+            other.searchViewTheme == searchViewTheme) &&
+        ((other._segmentedButtonTheme == null && _segmentedButtonTheme == null) ||
+            other.segmentedButtonTheme == segmentedButtonTheme) &&
+        ((other._sliderTheme == null && _sliderTheme == null) ||
+            other.sliderTheme == sliderTheme) &&
+        ((other._snackBarTheme == null && _snackBarTheme == null) ||
+            other.snackBarTheme == snackBarTheme) &&
+        ((other._switchTheme == null && _switchTheme == null) ||
+            other.switchTheme == switchTheme) &&
+        ((other._tabBarTheme == null && _tabBarTheme == null) ||
+            other.tabBarTheme == tabBarTheme) &&
+        ((other._textButtonTheme == null && _textButtonTheme == null) ||
+            other.textButtonTheme == textButtonTheme) &&
+        ((other._textSelectionTheme == null && _textSelectionTheme == null) ||
+            other.textSelectionTheme == textSelectionTheme) &&
+        ((other._timePickerTheme == null && _timePickerTheme == null) ||
+            other.timePickerTheme == timePickerTheme) &&
+        ((other._toggleButtonsTheme == null && _toggleButtonsTheme == null) ||
+            other.toggleButtonsTheme == toggleButtonsTheme) &&
+        ((other._tooltipTheme == null && _tooltipTheme == null) ||
+            other.tooltipTheme == tooltipTheme) &&
         // DEPRECATED (newest deprecations at the bottom)
-        other.buttonBarTheme == buttonBarTheme &&
+        ((other._buttonBarTheme == null && _buttonBarTheme == null) ||
+            other.buttonBarTheme == buttonBarTheme) &&
         other.dialogBackgroundColor == dialogBackgroundColor &&
         other.indicatorColor == indicatorColor;
   }
@@ -2305,11 +2423,13 @@ class ThemeData with Diagnosticable {
       cupertinoOverrideTheme,
       ...extensions.keys,
       ...extensions.values,
-      inputDecorationTheme,
+      if (_inputDecorationTheme != null &&
+          _inputDecorationTheme != const InputDecorationThemeData())
+        _inputDecorationTheme,
       materialTapTargetSize,
       pageTransitionsTheme,
       platform,
-      scrollbarTheme,
+      if (_scrollbarTheme != null && _scrollbarTheme != const ScrollbarThemeData()) _scrollbarTheme,
       splashFactory,
       useMaterial3,
       visualDensity,
@@ -2339,53 +2459,81 @@ class ThemeData with Diagnosticable {
       typography,
       // COMPONENT THEMES
       actionIconTheme,
-      appBarTheme,
-      badgeTheme,
-      bannerTheme,
-      bottomAppBarTheme,
-      bottomNavigationBarTheme,
-      bottomSheetTheme,
+      if (_appBarTheme != null && _appBarTheme != const AppBarThemeData()) _appBarTheme,
+      if (_badgeTheme != null && _badgeTheme != const BadgeThemeData()) _badgeTheme,
+      if (_bannerTheme != null && _bannerTheme != const MaterialBannerThemeData()) _bannerTheme,
+      if (_bottomAppBarTheme != null && _bottomAppBarTheme != const BottomAppBarThemeData())
+        _bottomAppBarTheme,
+      if (_bottomNavigationBarTheme != null &&
+          _bottomNavigationBarTheme != const BottomNavigationBarThemeData())
+        _bottomNavigationBarTheme,
+      if (_bottomSheetTheme != null && _bottomSheetTheme != const BottomSheetThemeData())
+        _bottomSheetTheme,
       buttonTheme,
-      cardTheme,
-      carouselViewTheme,
-      checkboxTheme,
-      chipTheme,
-      dataTableTheme,
-      datePickerTheme,
-      dialogTheme,
-      dividerTheme,
-      drawerTheme,
-      dropdownMenuTheme,
-      elevatedButtonTheme,
-      expansionTileTheme,
-      filledButtonTheme,
-      floatingActionButtonTheme,
-      iconButtonTheme,
-      listTileTheme,
-      menuBarTheme,
-      menuButtonTheme,
-      menuTheme,
-      navigationBarTheme,
-      navigationDrawerTheme,
-      navigationRailTheme,
-      outlinedButtonTheme,
-      popupMenuTheme,
-      progressIndicatorTheme,
-      radioTheme,
-      searchBarTheme,
-      searchViewTheme,
-      segmentedButtonTheme,
-      sliderTheme,
-      snackBarTheme,
-      switchTheme,
-      tabBarTheme,
-      textButtonTheme,
-      textSelectionTheme,
-      timePickerTheme,
-      toggleButtonsTheme,
-      tooltipTheme,
+      if (_cardTheme != null && _cardTheme != const CardThemeData()) _cardTheme,
+      if (_carouselViewTheme != null && _carouselViewTheme != const CarouselViewThemeData())
+        _carouselViewTheme,
+      if (_checkboxTheme != null && _checkboxTheme != const CheckboxThemeData()) _checkboxTheme,
+      if (_chipTheme != null && _chipTheme != const ChipThemeData()) _chipTheme,
+      if (_dataTableTheme != null && _dataTableTheme != const DataTableThemeData()) _dataTableTheme,
+      if (_datePickerTheme != null && _datePickerTheme != const DatePickerThemeData())
+        _datePickerTheme,
+      if (_dialogTheme != null && _dialogTheme != const DialogThemeData()) _dialogTheme,
+      if (_dividerTheme != null && _dividerTheme != const DividerThemeData()) _dividerTheme,
+      if (_drawerTheme != null && _drawerTheme != const DrawerThemeData()) _drawerTheme,
+      if (_dropdownMenuTheme != null && _dropdownMenuTheme != const DropdownMenuThemeData())
+        _dropdownMenuTheme,
+      if (_elevatedButtonTheme != null && _elevatedButtonTheme != const ElevatedButtonThemeData())
+        _elevatedButtonTheme,
+      if (_expansionTileTheme != null && _expansionTileTheme != const ExpansionTileThemeData())
+        _expansionTileTheme,
+      if (_filledButtonTheme != null && _filledButtonTheme != const FilledButtonThemeData())
+        _filledButtonTheme,
+      if (_floatingActionButtonTheme != null &&
+          _floatingActionButtonTheme != const FloatingActionButtonThemeData())
+        _floatingActionButtonTheme,
+      if (_iconButtonTheme != null && _iconButtonTheme != const IconButtonThemeData())
+        _iconButtonTheme,
+      if (_listTileTheme != null && _listTileTheme != const ListTileThemeData()) _listTileTheme,
+      if (_menuBarTheme != null && _menuBarTheme != const MenuBarThemeData()) _menuBarTheme,
+      if (_menuButtonTheme != null && _menuButtonTheme != const MenuButtonThemeData())
+        _menuButtonTheme,
+      if (_menuTheme != null && _menuTheme != const MenuThemeData()) _menuTheme,
+      if (_navigationBarTheme != null && _navigationBarTheme != const NavigationBarThemeData())
+        _navigationBarTheme,
+      if (_navigationDrawerTheme != null &&
+          _navigationDrawerTheme != const NavigationDrawerThemeData())
+        _navigationDrawerTheme,
+      if (_navigationRailTheme != null && _navigationRailTheme != const NavigationRailThemeData())
+        _navigationRailTheme,
+      if (_outlinedButtonTheme != null && _outlinedButtonTheme != const OutlinedButtonThemeData())
+        _outlinedButtonTheme,
+      if (_popupMenuTheme != null && _popupMenuTheme != const PopupMenuThemeData()) _popupMenuTheme,
+      if (_progressIndicatorTheme != null &&
+          _progressIndicatorTheme != const ProgressIndicatorThemeData())
+        _progressIndicatorTheme,
+      if (_radioTheme != null && _radioTheme != const RadioThemeData()) _radioTheme,
+      if (_searchBarTheme != null && _searchBarTheme != const SearchBarThemeData()) _searchBarTheme,
+      if (_searchViewTheme != null && _searchViewTheme != const SearchViewThemeData())
+        _searchViewTheme,
+      if (_segmentedButtonTheme != null &&
+          _segmentedButtonTheme != const SegmentedButtonThemeData())
+        _segmentedButtonTheme,
+      if (_sliderTheme != null && _sliderTheme != const SliderThemeData()) _sliderTheme,
+      if (_snackBarTheme != null && _snackBarTheme != const SnackBarThemeData()) _snackBarTheme,
+      if (_switchTheme != null && _switchTheme != const SwitchThemeData()) _switchTheme,
+      if (_tabBarTheme != null && _tabBarTheme != const TabBarThemeData()) _tabBarTheme,
+      if (_textButtonTheme != null && _textButtonTheme != const TextButtonThemeData())
+        _textButtonTheme,
+      if (_textSelectionTheme != null && _textSelectionTheme != const TextSelectionThemeData())
+        _textSelectionTheme,
+      if (_timePickerTheme != null && _timePickerTheme != const TimePickerThemeData())
+        _timePickerTheme,
+      if (_toggleButtonsTheme != null && _toggleButtonsTheme != const ToggleButtonsThemeData())
+        _toggleButtonsTheme,
+      if (_tooltipTheme != null && _tooltipTheme != const TooltipThemeData()) _tooltipTheme,
       // DEPRECATED (newest deprecations at the bottom)
-      buttonBarTheme,
+      if (_buttonBarTheme != null && _buttonBarTheme != const ButtonBarThemeData()) _buttonBarTheme,
       dialogBackgroundColor,
       indicatorColor,
     ];
