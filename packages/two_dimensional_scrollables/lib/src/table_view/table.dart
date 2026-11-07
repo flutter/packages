@@ -1452,12 +1452,15 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     required TableVicinity end,
     required Offset offset,
   }) {
+    final bool reversedH = axisDirectionIsReversed(horizontalAxisDirection);
+    final bool reversedV = axisDirectionIsReversed(verticalAxisDirection);
     _Span colSpan, rowSpan;
     double rowOffset = -offset.dy;
     for (int row = start.row; row <= end.row; row += 1) {
       double columnOffset = -offset.dx;
       assert(row < _rowMetrics.length);
       rowSpan = _rowMetrics[row]!;
+      rowSpan.viewportOffset = Offset(0.0, reversedV ? -rowOffset : rowOffset);
       final double standardRowHeight = rowSpan.extent;
       double? mergedRowHeight;
       double? mergedRowOffset;
@@ -1466,6 +1469,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       for (int column = start.column; column <= end.column; column += 1) {
         assert(column < _columnMetrics.length);
         colSpan = _columnMetrics[column]!;
+        colSpan.viewportOffset = Offset(reversedH ? -columnOffset : columnOffset, 0.0);
         final double standardColumnWidth = colSpan.extent;
         double? mergedColumnWidth;
         double? mergedColumnOffset;
@@ -2173,10 +2177,12 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       required Rect rect,
       required AxisDirection axisDirection,
       required AxisDirection crossAxisDirection,
+      required TableSpanDecoration decoration,
       required _Span span,
       required bool isRow,
     }) {
-      final Offset? pointerPosition = span.splashProgress > 0.0 && span.pointerPosition != null
+      final double splashProgress = span.splashProgressFor(decoration);
+      final Offset? pointerPosition = splashProgress > 0.0 && span.pointerPosition != null
           ? offset + span.pointerPosition!
           : null;
       double? maxSplashRadius;
@@ -2232,10 +2238,10 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         crossAxisDirection: crossAxisDirection,
         states: span.states,
         previousStates: span.previousStates,
-        stateAnimationProgress: span.stateAnimationProgress,
+        stateAnimationProgress: span.stateAnimationProgressFor(decoration),
         pointerPosition: pointerPosition,
         maxSplashRadius: maxSplashRadius,
-        splashProgress: span.splashProgress,
+        splashProgress: splashProgress,
       );
     }
 
@@ -2254,6 +2260,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
               rect: rect,
               axisDirection: horizontalAxisDirection,
               crossAxisDirection: verticalAxisDirection,
+              decoration: entry.decoration,
               span: entry.span,
               isRow: true,
             ),
@@ -2268,6 +2275,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
               rect: rect,
               axisDirection: verticalAxisDirection,
               crossAxisDirection: horizontalAxisDirection,
+              decoration: entry.decoration,
               span: entry.span,
               isRow: false,
             ),
@@ -2284,6 +2292,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
               rect: rect,
               axisDirection: verticalAxisDirection,
               crossAxisDirection: horizontalAxisDirection,
+              decoration: entry.decoration,
               span: entry.span,
               isRow: false,
             ),
@@ -2295,6 +2304,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
               rect: rect,
               axisDirection: horizontalAxisDirection,
               crossAxisDirection: verticalAxisDirection,
+              decoration: entry.decoration,
               span: entry.span,
               isRow: true,
             ),
@@ -2335,6 +2345,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
               rect: rect,
               axisDirection: horizontalAxisDirection,
               crossAxisDirection: verticalAxisDirection,
+              decoration: entry.decoration,
               span: entry.span,
               isRow: true,
             ),
@@ -2349,6 +2360,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
               rect: rect,
               axisDirection: verticalAxisDirection,
               crossAxisDirection: horizontalAxisDirection,
+              decoration: entry.decoration,
               span: entry.span,
               isRow: false,
             ),
@@ -2365,6 +2377,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
               rect: rect,
               axisDirection: verticalAxisDirection,
               crossAxisDirection: horizontalAxisDirection,
+              decoration: entry.decoration,
               span: entry.span,
               isRow: false,
             ),
@@ -2376,6 +2389,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
               rect: rect,
               axisDirection: horizontalAxisDirection,
               crossAxisDirection: verticalAxisDirection,
+              decoration: entry.decoration,
               span: entry.span,
               isRow: true,
             ),

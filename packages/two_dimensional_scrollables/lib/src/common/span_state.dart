@@ -75,6 +75,24 @@ class SpanState<T extends Span>
   Offset? get pointerPosition => _pointerPosition;
   Offset? _pointerPosition;
 
+  /// The current offset of this span in viewport coordinates.
+  ///
+  /// Updating this offset while a [pointerPosition] is recorded shifts
+  /// [pointerPosition] by the same delta so that active tap splash animations
+  /// scroll naturally with the span.
+  Offset get viewportOffset => _viewportOffset;
+  Offset _viewportOffset = Offset.zero;
+  set viewportOffset(Offset value) {
+    if (_viewportOffset == value) {
+      return;
+    }
+    final Offset delta = value - _viewportOffset;
+    _viewportOffset = value;
+    if (_pointerPosition != null) {
+      _pointerPosition = _pointerPosition! + delta;
+    }
+  }
+
   /// The progress of the current tap splash animation, from 0.0 to 1.0.
   ///
   /// Defaults to 0.0 when no splash animation is active.
@@ -84,6 +102,7 @@ class SpanState<T extends Span>
   bool _disposed = false;
   final Set<int> _activePointers = <int>{};
   bool _splashAnimating = false;
+  double _splashRawProgress = 0.0;
   int? _frameCallbackId;
   Duration? _stateAnimationStartTime;
   double _stateAnimationRawProgress = 1.0;
@@ -91,6 +110,33 @@ class SpanState<T extends Span>
   bool _stateAnimationReversed = false;
   Duration? _splashAnimationStartTime;
   Map<Type, GestureRecognizer>? _recognizers;
+
+  /// Returns the state transition animation progress for [decoration],
+  /// applying its [SpanDecoration.animationStyle] curve when configured.
+  double stateAnimationProgressFor(SpanDecoration decoration) {
+    if (_stateAnimationRawProgress >= 1.0) {
+      return 1.0;
+    }
+    if (decoration.animationStyle?.duration == Duration.zero) {
+      return 1.0;
+    }
+    final Curve baseCurve = decoration.animationStyle?.curve ?? _stateAnimationCurve;
+    final Curve curve = _stateAnimationReversed ? baseCurve.flipped : baseCurve;
+    return curve.transform(_stateAnimationRawProgress);
+  }
+
+  /// Returns the tap splash animation progress for [decoration], applying its
+  /// [SpanDecoration.splashAnimationStyle] curve when configured.
+  double splashProgressFor(SpanDecoration decoration) {
+    if (!_splashAnimating || decoration.splashColor == null) {
+      return 0.0;
+    }
+    if (decoration.splashAnimationStyle?.duration == Duration.zero) {
+      return 0.0;
+    }
+    final Curve curve = decoration.splashAnimationStyle?.curve ?? _splashAnimationCurve;
+    return curve.transform(_splashRawProgress);
+  }
 
   /// Updates the layout metrics and [configuration] for this span.
   ///
@@ -105,16 +151,17 @@ class SpanState<T extends Span>
       return;
     }
     _configuration = configuration;
+    if (!_tracksHover) {
+      _states.remove(WidgetState.hovered);
+    }
     if (!_hasDecorations) {
-      if (configuration.onExit == null) {
-        _states.remove(WidgetState.hovered);
-      }
       _previousStates = const <WidgetState>{};
       _stateAnimationProgress = 1.0;
       _stateAnimationRawProgress = 1.0;
       _stateAnimationStartTime = null;
       _splashAnimating = false;
       _splashProgress = 0.0;
+      _splashRawProgress = 0.0;
       _splashAnimationStartTime = null;
       if (_frameCallbackId != null) {
         SchedulerBinding.instance.cancelFrameCallbackWithId(_frameCallbackId!);
@@ -145,6 +192,10 @@ class SpanState<T extends Span>
       _configuration != null &&
       ((_configuration!.backgroundDecoration?.isInteractive ?? false) ||
           (_configuration!.foregroundDecoration?.isInteractive ?? false));
+
+  bool get _tracksHover =>
+      _configuration != null &&
+      (_configuration!.onEnter != null || _configuration!.onExit != null || _hasDecorations);
 
   Duration get _stateAnimationDuration {
     if (_configuration == null) {
@@ -240,6 +291,7 @@ class SpanState<T extends Span>
       if (duration <= Duration.zero) {
         _splashAnimating = false;
         _splashProgress = 0.0;
+        _splashRawProgress = 0.0;
         _splashAnimationStartTime = null;
       } else {
         _splashAnimationStartTime ??= timeStamp;
@@ -248,12 +300,14 @@ class SpanState<T extends Span>
           0.0,
           1.0,
         );
+        _splashRawProgress = rawProgress;
         _splashProgress = _splashAnimationCurve.transform(rawProgress);
         if (rawProgress < 1.0) {
           needsMoreFrames = true;
         } else {
           _splashAnimating = false;
           _splashProgress = 0.0;
+          _splashRawProgress = 0.0;
           _splashAnimationStartTime = null;
         }
       }
@@ -349,6 +403,7 @@ class SpanState<T extends Span>
       if (_splashAnimationDuration > Duration.zero) {
         _splashAnimating = true;
         _splashProgress = 0.0;
+        _splashRawProgress = 0.0;
         _splashAnimationStartTime = null;
         _ensureFrameScheduled();
         onStateChanged?.call();
@@ -384,12 +439,10 @@ class SpanState<T extends Span>
   MouseCursor get cursor => configuration.cursor;
 
   @override
-  PointerEnterEventListener? get onEnter =>
-      configuration.onEnter != null || _hasDecorations ? _handleEnter : null;
+  PointerEnterEventListener? get onEnter => _tracksHover ? _handleEnter : null;
 
   @override
-  PointerExitEventListener? get onExit =>
-      configuration.onExit != null || _hasDecorations ? _handleExit : null;
+  PointerExitEventListener? get onExit => _tracksHover ? _handleExit : null;
 
   @override
   bool get validForMouseTracker => true;

@@ -393,6 +393,7 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
     }
 
     assert(_lastRow != null);
+    final bool reversedV = axisDirectionIsReversed(verticalAxisDirection);
     _Span rowSpan;
     double rowOffset =
         -verticalOffset.pixels + _rowMetrics[_firstRow!]!.leadingOffset + _vAlignmentOffset;
@@ -402,6 +403,7 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
       if (_animationLeadingIndices.keys.contains(row)) {
         rowOffset -= rowSpan.animationOffset;
       }
+      rowSpan.viewportOffset = Offset(0.0, reversedV ? -rowOffset : rowOffset);
       rowOffset += rowSpan.configuration.padding.leading;
 
       final vicinity = TreeVicinity(depth: _rowDepths[row]!, row: row);
@@ -587,7 +589,12 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
       currentRow++;
     }
 
-    TreeRowDecorationPaintDetails createPaintDetails(Rect rect, _Span span) {
+    TreeRowDecorationPaintDetails createPaintDetails(
+      Rect rect,
+      TreeRowDecoration decoration,
+      _Span span,
+    ) {
+      final double splashProgress = span.splashProgressFor(decoration);
       return TreeRowDecorationPaintDetails(
         canvas: context.canvas,
         rect: rect,
@@ -595,18 +602,18 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
         crossAxisDirection: verticalAxisDirection,
         states: span.states,
         previousStates: span.previousStates,
-        stateAnimationProgress: span.stateAnimationProgress,
-        pointerPosition: span.splashProgress > 0.0 && span.pointerPosition != null
+        stateAnimationProgress: span.stateAnimationProgressFor(decoration),
+        pointerPosition: splashProgress > 0.0 && span.pointerPosition != null
             ? offset + span.pointerPosition!
             : null,
-        splashProgress: span.splashProgress,
+        splashProgress: splashProgress,
       );
     }
 
     // Get to painting.
     // Background decorations first.
     backgroundRows.forEach((Rect rect, ({TreeRowDecoration decoration, _Span span}) entry) {
-      entry.decoration.paint(createPaintDetails(rect, entry.span));
+      entry.decoration.paint(createPaintDetails(rect, entry.decoration, entry.span));
     });
     // Child nodes.
     for (var row = leadingRow; row <= trailingRow; row++) {
@@ -618,7 +625,7 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
     }
     // Foreground decorations.
     foregroundRows.forEach((Rect rect, ({TreeRowDecoration decoration, _Span span}) entry) {
-      entry.decoration.paint(createPaintDetails(rect, entry.span));
+      entry.decoration.paint(createPaintDetails(rect, entry.decoration, entry.span));
     });
   }
 }

@@ -1786,6 +1786,12 @@ void main() {
         }
         return const Color(0xFFFF0000);
       });
+      final foregroundColor = WidgetStateColor.resolveWith((Set<WidgetState> states) {
+        if (states.contains(WidgetState.hovered)) {
+          return const Color(0xFF00FF00);
+        }
+        return const Color(0xFF000000);
+      });
 
       await tester.pumpWidget(
         Directionality(
@@ -1803,6 +1809,13 @@ void main() {
                   curve: Curves.linear,
                 ),
               ),
+              foregroundDecoration: TableSpanDecoration(
+                color: foregroundColor,
+                animationStyle: const AnimationStyle(
+                  duration: Duration(milliseconds: 200),
+                  curve: Curves.easeIn,
+                ),
+              ),
             ),
             cellBuilder: (_, _) => const TableViewCell(child: SizedBox.expand()),
           ),
@@ -1815,21 +1828,29 @@ void main() {
       await tester.pump(); // Start of animation (t = 0ms).
       await tester.pump(const Duration(milliseconds: 100)); // Halfway (t = 100ms).
 
-      final Color expectedMidColor = Color.lerp(
+      final Color expectedBgMidColor = Color.lerp(
         const Color(0xFFFF0000),
         const Color(0xFF0000FF),
         0.5,
       )!;
+      final Color expectedFgMidColor = Color.lerp(
+        const Color(0xFF000000),
+        const Color(0xFF00FF00),
+        Curves.easeIn.transform(0.5),
+      )!;
       expect(
         find.byType(TableViewport),
-        paints..rect(rect: const Rect.fromLTRB(0.0, 0.0, 200.0, 100.0), color: expectedMidColor),
+        paints
+          ..rect(rect: const Rect.fromLTRB(0.0, 0.0, 200.0, 100.0), color: expectedBgMidColor)
+          ..rect(rect: const Rect.fromLTRB(0.0, 0.0, 200.0, 100.0), color: expectedFgMidColor),
       );
 
       await tester.pumpAndSettle();
       expect(
         find.byType(TableViewport),
         paints
-          ..rect(rect: const Rect.fromLTRB(0.0, 0.0, 200.0, 100.0), color: const Color(0xFF0000FF)),
+          ..rect(rect: const Rect.fromLTRB(0.0, 0.0, 200.0, 100.0), color: const Color(0xFF0000FF))
+          ..rect(rect: const Rect.fromLTRB(0.0, 0.0, 200.0, 100.0), color: const Color(0xFF00FF00)),
       );
 
       await mouseGesture.removePointer();
@@ -1888,6 +1909,116 @@ void main() {
       await tester.pumpAndSettle();
     });
 
+    testWidgets('TableSpanDecoration tap ripple scrolls with span when viewport scrolls', (
+      WidgetTester tester,
+    ) async {
+      final verticalController = ScrollController();
+      addTearDown(verticalController.dispose);
+
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: TableView.builder(
+            verticalDetails: ScrollableDetails.vertical(controller: verticalController),
+            rowCount: 10,
+            columnCount: 1,
+            columnBuilder: (_) => const TableSpan(extent: FixedTableSpanExtent(200.0)),
+            rowBuilder: (int index) => TableSpan(
+              extent: const FixedTableSpanExtent(100.0),
+              backgroundDecoration: index == 0
+                  ? const TableSpanDecoration(
+                      color: Color(0xFFFFFFFF),
+                      splashColor: Color(0x802196F3),
+                      splashAnimationStyle: AnimationStyle(
+                        duration: Duration(milliseconds: 200),
+                        curve: Curves.linear,
+                      ),
+                    )
+                  : null,
+            ),
+            cellBuilder: (_, TableVicinity vicinity) {
+              return TableViewCell(child: Text('R${vicinity.row}:C${vicinity.column}'));
+            },
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      const tapPosition = Offset(100.0, 50.0);
+      await tester.tapAt(tapPosition);
+      await tester.pump(); // Start of ripple (t = 0ms).
+
+      // Scroll down by 20 pixels while the ripple is animating.
+      verticalController.jumpTo(20.0);
+      await tester.pump(const Duration(milliseconds: 100)); // Halfway (t = 100ms).
+
+      // Row 0 shifted up by 20px, so the ripple center should also shift from (100, 50) to (100, 30).
+      final double expectedRadius = tapPosition.distance / 2;
+      expect(
+        find.byType(TableViewport),
+        paints
+          ..rect(rect: const Rect.fromLTRB(0.0, -20.0, 200.0, 80.0), color: const Color(0xFFFFFFFF))
+          ..circle(x: 100.0, y: 30.0, radius: expectedRadius),
+      );
+
+      await tester.pumpAndSettle();
+    });
+
+    testWidgets('TableSpanDecoration tap ripple scrolls with span when viewport scrolls', (
+      WidgetTester tester,
+    ) async {
+      final verticalController = ScrollController();
+      addTearDown(verticalController.dispose);
+
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: TableView.builder(
+            verticalDetails: ScrollableDetails.vertical(controller: verticalController),
+            rowCount: 10,
+            columnCount: 1,
+            columnBuilder: (_) => const TableSpan(extent: FixedTableSpanExtent(200.0)),
+            rowBuilder: (int index) => TableSpan(
+              extent: const FixedTableSpanExtent(100.0),
+              backgroundDecoration: index == 0
+                  ? const TableSpanDecoration(
+                      color: Color(0xFFFFFFFF),
+                      splashColor: Color(0x802196F3),
+                      splashAnimationStyle: AnimationStyle(
+                        duration: Duration(milliseconds: 200),
+                        curve: Curves.linear,
+                      ),
+                    )
+                  : null,
+            ),
+            cellBuilder: (_, TableVicinity vicinity) {
+              return TableViewCell(child: Text('R${vicinity.row}:C${vicinity.column}'));
+            },
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      const tapPosition = Offset(100.0, 50.0);
+      await tester.tapAt(tapPosition);
+      await tester.pump(); // Start of ripple (t = 0ms).
+
+      // Scroll down by 20 pixels while the ripple is animating.
+      verticalController.jumpTo(20.0);
+      await tester.pump(const Duration(milliseconds: 100)); // Halfway (t = 100ms).
+
+      // Row 0 shifted up by 20px, so the ripple center should also shift from (100, 50) to (100, 30).
+      final double expectedRadius = tapPosition.distance / 2;
+      expect(
+        find.byType(TableViewport),
+        paints
+          ..rect(rect: const Rect.fromLTRB(0.0, -20.0, 200.0, 80.0), color: const Color(0xFFFFFFFF))
+          ..circle(x: 100.0, y: 30.0, radius: expectedRadius),
+      );
+
+      await tester.pumpAndSettle();
+    });
+
     testWidgets('TableSpan clears hovered state when updated to non-interactive decoration', (
       WidgetTester tester,
     ) async {
@@ -1898,7 +2029,7 @@ void main() {
         return const Color(0xFFFF0000);
       });
 
-      var isInteractive = true;
+      var isInteractive = false;
       late StateSetter setTableState;
 
       await tester.pumpWidget(
@@ -1913,6 +2044,7 @@ void main() {
                 columnBuilder: (_) => const TableSpan(extent: FixedTableSpanExtent(200.0)),
                 rowBuilder: (_) => TableSpan(
                   extent: const FixedTableSpanExtent(100.0),
+                  onEnter: (_) {},
                   backgroundDecoration: TableSpanDecoration(
                     color: isInteractive ? interactiveColor : const Color(0xFFFF0000),
                   ),
@@ -1925,9 +2057,27 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // Hover over row 0 while interactive.
+      // Hover and exit row 0 while non-interactive (with onEnter set and onExit null).
       final TestGesture mouseGesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
       await mouseGesture.addPointer(location: const Offset(50.0, 50.0));
+      await tester.pump();
+      await mouseGesture.moveTo(const Offset(50.0, 250.0));
+      await tester.pump();
+
+      // Enable interactive decoration while mouse is outside row 0;
+      // row 0 must not retain a stale hovered state from onEnter without onExit.
+      setTableState(() {
+        isInteractive = true;
+      });
+      await tester.pump();
+      expect(
+        find.byType(TableViewport),
+        paints
+          ..rect(rect: const Rect.fromLTRB(0.0, 0.0, 200.0, 100.0), color: const Color(0xFFFF0000)),
+      );
+
+      // Hover over row 0 while interactive.
+      await mouseGesture.moveTo(const Offset(50.0, 50.0));
       await tester.pump();
       expect(
         find.byType(TableViewport),
