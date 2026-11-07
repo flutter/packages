@@ -144,34 +144,38 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, FIAInAppPurchaseAPI {
     requestHandlers.add(handler)
 
     handler.startProductRequest { [weak self] response, startProductRequestError in
-      guard let self = self else { return }
-      if let startProductRequestError = startProductRequestError {
-        let error = FlutterError(
-          code: "storekit_getproductrequest_platform_error",
-          message: startProductRequestError.localizedDescription,
-          details: startProductRequestError.localizedDescription)
-        completion(nil, error)
-        return
-      }
+      // StoreKit calls back on a background queue, but `productsCache` and `requestHandlers`
+      // are not thread safe and are also used from the main thread.
+      InAppPurchasePlugin.runOnMainThread {
+        guard let self = self else { return }
+        if let startProductRequestError = startProductRequestError {
+          let error = FlutterError(
+            code: "storekit_getproductrequest_platform_error",
+            message: startProductRequestError.localizedDescription,
+            details: startProductRequestError.localizedDescription)
+          completion(nil, error)
+          return
+        }
 
-      guard let response = response else {
-        let error = FlutterError(
-          code: "storekit_platform_no_response",
-          message:
-            "Failed to get SKProductResponse in startRequest call. Error occurred on iOS platform",
-          details: productIdentifiers)
-        completion(nil, error)
-        return
-      }
+        guard let response = response else {
+          let error = FlutterError(
+            code: "storekit_platform_no_response",
+            message:
+              "Failed to get SKProductResponse in startRequest call. Error occurred on iOS platform",
+            details: productIdentifiers)
+          completion(nil, error)
+          return
+        }
 
-      for product in response.products {
-        self.productsCache[product.productIdentifier] = product
-      }
+        for product in response.products {
+          self.productsCache[product.productIdentifier] = product
+        }
 
-      if let responseMessage = FIAObjectTranslator.convertProductsResponse(toPigeon: response) {
-        completion(responseMessage, nil)
+        if let responseMessage = FIAObjectTranslator.convertProductsResponse(toPigeon: response) {
+          completion(responseMessage, nil)
+        }
+        self.requestHandlers.remove(handler)
       }
-      self.requestHandlers.remove(handler)
     }
   }
 
@@ -302,16 +306,18 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, FIAInAppPurchaseAPI {
     let handler = handlerFactory(request)
     requestHandlers.add(handler)
     handler.startProductRequest { [weak self] response, error in
-      if let error = error {
-        let requestError = FlutterError(
-          code: "storekit_refreshreceiptrequest_platform_error",
-          message: error.localizedDescription,
-          details: error.localizedDescription)
-        completion(requestError)
-        return
+      InAppPurchasePlugin.runOnMainThread {
+        if let error = error {
+          let requestError = FlutterError(
+            code: "storekit_refreshreceiptrequest_platform_error",
+            message: error.localizedDescription,
+            details: error.localizedDescription)
+          completion(requestError)
+          return
+        }
+        completion(nil)
+        self?.requestHandlers.remove(handler)
       }
-      completion(nil)
-      self?.requestHandlers.remove(handler)
     }
   }
 
@@ -412,6 +418,15 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, FIAInAppPurchaseAPI {
       return true
     }
     return false
+  }
+
+  /// Runs [block] immediately when already on the main thread, otherwise asynchronously on it.
+  private static func runOnMainThread(_ block: @escaping () -> Void) {
+    if Thread.isMainThread {
+      block()
+    } else {
+      DispatchQueue.main.async(execute: block)
+    }
   }
 
   // MARK: - Methods exposed for testing
