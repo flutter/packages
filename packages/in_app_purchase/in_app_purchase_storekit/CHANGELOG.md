@@ -1,6 +1,8 @@
-## NEXT
+## 0.4.17+1
 
 * Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
+* Fixes a data race that could crash when StoreKit 1 product and receipt refresh requests
+  completed on a background queue while the main thread accessed the same state.
 
 ## 0.4.17
 
