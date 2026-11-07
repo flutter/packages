@@ -405,6 +405,15 @@ class SpanDecoration {
   /// [defaultSplashCurve] ([Curves.easeOut]).
   final AnimationStyle? splashAnimationStyle;
 
+  /// Whether this decoration resolves dynamically based on interactive
+  /// [WidgetState]s or paints a tap splash animation.
+  bool get isInteractive =>
+      runtimeType != SpanDecoration ||
+      color is WidgetStateProperty ||
+      borderRadius is WidgetStateProperty ||
+      splashColor != null ||
+      (border?.isInteractive ?? false);
+
   static double _calculateMaxSplashRadius(Offset center, Rect rect) {
     return math.max(
       math.max((center - rect.topLeft).distance, (center - rect.topRight).distance),
@@ -456,7 +465,7 @@ class SpanDecoration {
       resolvedBorderRadius = targetBorderRadius;
     }
 
-    if (resolvedColor != null) {
+    if (resolvedColor != null && resolvedColor.a > 0.0) {
       final paint = Paint()
         ..color = resolvedColor
         ..isAntiAlias = resolvedBorderRadius != null;
@@ -520,6 +529,15 @@ class SpanBorder {
   /// [AxisDirection.down], the leading side of a column
   /// is its left side when the [Axis.horizontal] is [AxisDirection.right].
   final BorderSide leading;
+
+  /// Whether this border resolves dynamically based on interactive
+  /// [WidgetState]s.
+  bool get isInteractive =>
+      runtimeType != SpanBorder ||
+      leading is WidgetStateProperty ||
+      leading.color is WidgetStateProperty ||
+      trailing is WidgetStateProperty ||
+      trailing.color is WidgetStateProperty;
 
   BorderSide _resolveSideForStates(BorderSide side, Set<WidgetState> states) {
     final BorderSide resolvedSide =

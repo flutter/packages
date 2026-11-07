@@ -121,8 +121,8 @@ class SpanState<T extends Span>
 
   bool get _hasDecorations =>
       _configuration != null &&
-      (_configuration!.backgroundDecoration != null ||
-          _configuration!.foregroundDecoration != null);
+      ((_configuration!.backgroundDecoration?.isInteractive ?? false) ||
+          (_configuration!.foregroundDecoration?.isInteractive ?? false));
 
   Duration get _stateAnimationDuration {
     if (_configuration == null) {
@@ -356,4 +356,3 @@ class SpanState<T extends Span>
     properties.add(IterableProperty<WidgetState>('states', _states));
   }
 }
-

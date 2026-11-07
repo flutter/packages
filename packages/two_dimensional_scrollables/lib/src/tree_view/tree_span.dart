@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/painting.dart';
+import 'package:flutter/widgets.dart';
 
 import '../common/span.dart';
 
@@ -100,6 +100,18 @@ class TreeRowBorder extends SpanBorder {
 
   /// The border to draw on the right side of the [TreeRow].
   final BorderSide right;
+
+  @override
+  bool get isInteractive =>
+      runtimeType != TreeRowBorder ||
+      leading is WidgetStateProperty ||
+      leading.color is WidgetStateProperty ||
+      trailing is WidgetStateProperty ||
+      trailing.color is WidgetStateProperty ||
+      left is WidgetStateProperty ||
+      left.color is WidgetStateProperty ||
+      right is WidgetStateProperty ||
+      right.color is WidgetStateProperty;
 
   @override
   void paint(SpanDecorationPaintDetails details, BorderRadius? borderRadius) {
