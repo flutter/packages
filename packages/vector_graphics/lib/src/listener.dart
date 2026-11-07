@@ -599,10 +599,12 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
       decorations.add(TextDecoration.lineThrough);
     }
 
+    final List<String> fontFamilies = _parseFontFamilies(fontFamily);
     _textConfig.add(
       _TextConfig(
         text,
-        fontFamily,
+        fontFamilies.firstOrNull,
+        fontFamilies.length > 1 ? fontFamilies.sublist(1) : null,
         xAnchorMultiplier,
         FontWeight.values[fontWeight],
         fontSize,
@@ -701,6 +703,7 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
           fontWeight: textConfig.fontWeight,
           fontSize: textConfig.fontSize,
           fontFamily: textConfig.fontFamily,
+          fontFamilyFallback: textConfig.fontFamilyFallback,
           decoration: textConfig.decoration,
           decorationStyle: textConfig.decorationStyle,
           decorationColor: textConfig.decorationColor,
@@ -862,10 +865,33 @@ class _TextPosition {
   final Float64List? transform;
 }
 
+// SVG `font-family` is a comma separated list of family names in order of
+// preference, each optionally quoted. Flutter takes the first name as the family
+// and the rest as fallbacks.
+List<String> _parseFontFamilies(String? fontFamily) {
+  if (fontFamily == null) {
+    return const <String>[];
+  }
+  final families = <String>[];
+  for (final String part in fontFamily.split(',')) {
+    String family = part.trim();
+    if (family.length >= 2 &&
+        (family.startsWith('"') || family.startsWith("'")) &&
+        family.endsWith(family[0])) {
+      family = family.substring(1, family.length - 1).trim();
+    }
+    if (family.isNotEmpty) {
+      families.add(family);
+    }
+  }
+  return families;
+}
+
 class _TextConfig {
   const _TextConfig(
     this.text,
     this.fontFamily,
+    this.fontFamilyFallback,
     this.xAnchorMultiplier,
     this.fontWeight,
     this.fontSize,
@@ -876,6 +902,7 @@ class _TextConfig {
 
   final String text;
   final String? fontFamily;
+  final List<String>? fontFamilyFallback;
   final double fontSize;
   final double xAnchorMultiplier;
   final FontWeight fontWeight;
