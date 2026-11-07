@@ -1,3 +1,8 @@
+## 0.4.17+1
+
+* Fixes a data race that could crash when StoreKit 1 product and receipt refresh requests
+  completed on a background queue while the main thread accessed the same state.
+
 ## 0.4.17
 
 * Uses `Product.purchase(confirmIn:options:)` for StoreKit 2 purchases when a view controller,

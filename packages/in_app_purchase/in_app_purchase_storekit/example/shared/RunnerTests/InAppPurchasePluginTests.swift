@@ -485,6 +485,51 @@ final class InAppPurchasePluginTests: XCTestCase {
     XCTAssertEqual(errorCode, 99)
   }
 
+  func testGetProductResponseCompletesOnMainThreadWhenRequestFinishesOnBackgroundQueue() {
+    let expectation = self.expectation(description: "completion handler successfully called")
+
+    let handlerStub = RequestHandlerStub()
+    let plugin = InAppPurchasePlugin(receiptManager: receiptManagerStub) { request in
+      return handlerStub
+    }
+
+    // StoreKit delivers product responses on a background queue.
+    handlerStub.startProductRequestWithCompletionHandlerStub = { completion in
+      DispatchQueue.global().async {
+        completion(nil, NSError(domain: "errorDomain", code: 0, userInfo: nil))
+      }
+    }
+
+    plugin.startProductRequestProductIdentifiers(["123"]) { _, _ in
+      XCTAssertTrue(Thread.isMainThread)
+      expectation.fulfill()
+    }
+
+    waitForExpectations(timeout: 5, handler: nil)
+  }
+
+  func testRefreshReceiptCompletesOnMainThreadWhenRequestFinishesOnBackgroundQueue() {
+    let expectation = self.expectation(description: "completion handler successfully called")
+
+    let handlerStub = RequestHandlerStub()
+    let plugin = InAppPurchasePlugin(receiptManager: receiptManagerStub) { request in
+      return handlerStub
+    }
+
+    handlerStub.startProductRequestWithCompletionHandlerStub = { completion in
+      DispatchQueue.global().async {
+        completion(nil, nil)
+      }
+    }
+
+    plugin.refreshReceiptReceiptProperties(nil) { _ in
+      XCTAssertTrue(Thread.isMainThread)
+      expectation.fulfill()
+    }
+
+    waitForExpectations(timeout: 5, handler: nil)
+  }
+
   func testRefreshReceiptRequest() {
     let expectation = self.expectation(description: "completion handler successfully called")
 
