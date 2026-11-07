@@ -16,9 +16,6 @@ void idleSecondaryEngineMain() {}
 @pragma('vm:entry-point')
 Future<void> secondaryEngineMain() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // Registered before this isolate resolves any Host API, so the engine
-  // affinity learned by the first lookup must be applied to it afterwards.
-  NativeInteropReservedNamesFlutterApi.setUp(_SecondaryEngineReservedNamesFlutterApi());
   final hostApi = NativeInteropHostIntegrationCoreApi.createWithNativeInteropApi();
   var ready = false;
   for (var i = 0; i < 1200; i++) {
@@ -29,11 +26,11 @@ Future<void> secondaryEngineMain() async {
     await Future<void>.delayed(const Duration(milliseconds: 10));
   }
   if (!ready) {
-    NativeInteropReservedNamesFlutterApi.setUp(null);
     await hostApi.reportSecondaryEngineCheck(false);
     return;
   }
   final reservedApi = NativeInteropReservedNamesHostApi.createWithNativeInteropApi();
+  NativeInteropReservedNamesFlutterApi.setUp(_SecondaryEngineReservedNamesFlutterApi());
   NativeInteropFlutterIntegrationCoreApi.setUp(_SecondaryEngineAsyncFlutterApi());
   final String echoed = await hostApi.echoString('from_secondary_engine');
   final String reservedType = await reservedApi.type();
