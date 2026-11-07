@@ -117,6 +117,7 @@ class SpanState<T extends Span>
   bool _splashAnimating = false;
   int? _frameCallbackId;
   Duration? _stateAnimationStartTime;
+  double _stateAnimationInitialProgress = 0.0;
   Duration? _splashAnimationStartTime;
 
   bool get _hasDecorations =>
@@ -188,19 +189,20 @@ class SpanState<T extends Span>
       final Duration duration = _stateAnimationDuration;
       if (duration <= Duration.zero) {
         _stateAnimationProgress = 1.0;
+        _stateAnimationInitialProgress = 0.0;
         _stateAnimationStartTime = null;
       } else {
         _stateAnimationStartTime ??= timeStamp;
         final Duration elapsed = timeStamp - _stateAnimationStartTime!;
-        final double rawProgress = (elapsed.inMicroseconds / duration.inMicroseconds).clamp(
-          0.0,
-          1.0,
-        );
+        final double rawProgress =
+            (_stateAnimationInitialProgress + (elapsed.inMicroseconds / duration.inMicroseconds))
+                .clamp(0.0, 1.0);
         _stateAnimationProgress = _stateAnimationCurve.transform(rawProgress);
         if (rawProgress < 1.0) {
           needsMoreFrames = true;
         } else {
           _stateAnimationProgress = 1.0;
+          _stateAnimationInitialProgress = 0.0;
           _stateAnimationStartTime = null;
         }
       }
@@ -241,6 +243,7 @@ class SpanState<T extends Span>
     if (!willChange) {
       return;
     }
+    final Set<WidgetState> oldPreviousStates = _previousStates;
     _previousStates = Set<WidgetState>.of(_states);
     if (value) {
       _states.add(state);
@@ -249,11 +252,18 @@ class SpanState<T extends Span>
     }
     if (_hasDecorations) {
       if (_stateAnimationDuration > Duration.zero) {
-        _stateAnimationProgress = 0.0;
+        if (_stateAnimationProgress < 1.0 && setEquals(_states, oldPreviousStates)) {
+          _stateAnimationProgress = 1.0 - _stateAnimationProgress;
+          _stateAnimationInitialProgress = _stateAnimationProgress;
+        } else {
+          _stateAnimationProgress = 0.0;
+          _stateAnimationInitialProgress = 0.0;
+        }
         _stateAnimationStartTime = null;
         _ensureFrameScheduled();
       } else {
         _stateAnimationProgress = 1.0;
+        _stateAnimationInitialProgress = 0.0;
       }
       onStateChanged?.call();
     }

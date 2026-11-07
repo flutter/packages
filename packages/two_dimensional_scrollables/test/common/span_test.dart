@@ -217,12 +217,53 @@ void main() {
     expect(canvas.circleCenter, const Offset(50, 25));
     expect(canvas.circleRadius, 40.0);
   });
+
+  test('SpanDecoration transparent lerp and isInteractive edge cases', () {
+    const staticDecoration = SpanDecoration(
+      color: Color(0xffff0000),
+      border: SpanBorder(leading: BorderSide()),
+    );
+    expect(staticDecoration.isInteractive, isFalse);
+    expect(staticDecoration.border!.isInteractive, isFalse);
+
+    final interactiveColor = WidgetStateColor.resolveWith((Set<WidgetState> states) {
+      if (states.contains(WidgetState.hovered)) {
+        return const Color(0xffce93d8);
+      }
+      return const Color(0x00000000);
+    });
+    final interactiveDecoration = SpanDecoration(color: interactiveColor);
+    expect(interactiveDecoration.isInteractive, isTrue);
+
+    final canvas = TestCanvas();
+    const rect = Rect.fromLTWH(0, 0, 100, 50);
+
+    // Fully transparent default color skips drawRect
+    interactiveDecoration.paint(
+      SpanDecorationPaintDetails(canvas: canvas, rect: rect, axisDirection: AxisDirection.right),
+    );
+    expect(canvas.drawRectCount, 0);
+
+    // Interpolating from transparent (0x00000000) to 0xffce93d8 preserves RGB
+    interactiveDecoration.paint(
+      SpanDecorationPaintDetails(
+        canvas: canvas,
+        rect: rect,
+        axisDirection: AxisDirection.right,
+        states: const <WidgetState>{WidgetState.hovered},
+        stateAnimationProgress: 0.5,
+      ),
+    );
+    expect(canvas.drawRectCount, 1);
+    expect(canvas.paint.color, isSameColorAs(const Color(0xffce93d8).withValues(alpha: 0.5)));
+  });
 }
 
 class TestCanvas implements Canvas {
   final List<Invocation> noSuchMethodInvocations = <Invocation>[];
   late Rect rect;
   late Paint paint;
+  int drawRectCount = 0;
   Offset? circleCenter;
   double? circleRadius;
   Paint? circlePaint;
@@ -231,6 +272,7 @@ class TestCanvas implements Canvas {
   void drawRect(Rect rect, Paint paint) {
     this.rect = rect;
     this.paint = paint;
+    drawRectCount++;
   }
 
   @override

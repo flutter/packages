@@ -421,6 +421,18 @@ class SpanDecoration {
     );
   }
 
+  static Color? _lerpColor(Color? a, Color? b, double t) {
+    if (a != null && b != null) {
+      if (a.a == 0.0 && b.a > 0.0) {
+        return Color.lerp(b.withValues(alpha: 0.0), b, t);
+      }
+      if (b.a == 0.0 && a.a > 0.0) {
+        return Color.lerp(a, a.withValues(alpha: 0.0), t);
+      }
+    }
+    return Color.lerp(a, b, t);
+  }
+
   /// Called to draw the decoration around a span.
   ///
   /// The provided [SpanDecorationPaintDetails] describes the bounds and
@@ -441,7 +453,7 @@ class SpanDecoration {
         color,
         details.previousStates,
       );
-      resolvedColor = Color.lerp(previousColor, targetColor, details.stateAnimationProgress);
+      resolvedColor = _lerpColor(previousColor, targetColor, details.stateAnimationProgress);
     } else {
       resolvedColor = targetColor;
     }
@@ -562,7 +574,18 @@ class SpanBorder {
     final BorderSide targetSide = _resolveSideForStates(side, states);
     if (stateAnimationProgress < 1.0) {
       final BorderSide previousSide = _resolveSideForStates(side, previousStates);
-      return BorderSide.lerp(previousSide, targetSide, stateAnimationProgress);
+      final BorderSide lerped = BorderSide.lerp(previousSide, targetSide, stateAnimationProgress);
+      if ((previousSide.color.a == 0.0 && targetSide.color.a > 0.0) ||
+          (targetSide.color.a == 0.0 && previousSide.color.a > 0.0)) {
+        return lerped.copyWith(
+          color: SpanDecoration._lerpColor(
+            previousSide.color,
+            targetSide.color,
+            stateAnimationProgress,
+          ),
+        );
+      }
+      return lerped;
     }
     return targetSide;
   }

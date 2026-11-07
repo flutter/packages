@@ -228,12 +228,11 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
     // We animate only a portion of children that would be visible/in the cache
     // extent, unless all animating children would fit on the screen.
     while (currentIndex <= lastIndex && currentPosition < _targetRowPixel) {
-      _Span? span = _rowMetrics.remove(currentIndex);
+      final _Span? span = _rowMetrics[currentIndex];
       assert(needsDelegateRebuild || span != null);
       final TreeRow configuration = needsDelegateRebuild
           ? delegate.buildRow(TreeVicinity(depth: _rowDepths[currentIndex]!, row: currentIndex))
           : span!.configuration;
-      span ??= _Span(onStateChanged: markNeedsPaint);
       final double extent = configuration.extent.calculateExtent(
         TreeRowExtentDelegate(viewportExtent: viewportDimension.height, precedingExtent: position),
       );
@@ -597,7 +596,7 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
         states: span.states,
         previousStates: span.previousStates,
         stateAnimationProgress: span.stateAnimationProgress,
-        pointerPosition: span.pointerPosition,
+        pointerPosition: span.splashProgress > 0.0 ? span.pointerPosition : null,
         splashProgress: span.splashProgress,
       );
     }
