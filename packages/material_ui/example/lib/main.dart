@@ -28,6 +28,8 @@ import 'progress_indicator/linear_progress_indicator.0.dart'
 import 'progress_indicator/circular_progress_indicator.0.dart'
     as circular_progress_indicator_0;
 import 'dropdown_menu/dropdown_menu.1.dart' as dropdown_menu_1;
+import 'loading_indicator/loading_indicator.0.dart' as loading_indicator_0;
+import 'loading_indicator/loading_indicator.1.dart' as loading_indicator_1;
 import 'material_shapes/material_shapes.0.dart' as material_shapes_0;
 import 'navigation_bar/navigation_bar.1.dart' as navigation_bar_1;
 import 'navigation_rail/navigation_rail.0.dart' as navigation_rail_0;
@@ -161,6 +163,18 @@ class ExampleApp extends StatelessWidget {
       title: 'Circular progress indicators',
       builder: (BuildContext context) =>
           const circular_progress_indicator_0.ProgressIndicatorExampleApp(),
+    ),
+    _Example(
+      filepath: 'loading_indicator/loading_indicator.0.dart',
+      title: 'Loading indicators',
+      builder: (BuildContext context) =>
+          const loading_indicator_0.LoadingIndicatorExampleApp(),
+    ),
+    _Example(
+      filepath: 'loading_indicator/loading_indicator.1.dart',
+      title: 'Loading indicator pull to refresh',
+      builder: (BuildContext context) =>
+          const loading_indicator_1.LoadingIndicatorExampleApp(),
     ),
     _Example(
       filepath: 'material_shapes/material_shapes.0.dart',
