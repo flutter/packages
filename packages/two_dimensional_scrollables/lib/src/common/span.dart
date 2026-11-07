@@ -533,7 +533,7 @@ class SpanBorder {
 
   /// Resolves a [BorderSide] (and its [BorderSide.color]) against the provided
   /// [WidgetState]s, interpolating from [previousStates] when
-  /// [stateAnimationProgress] is less than `1.0`.
+  /// [stateAnimationProgress] is less than 1.0.
   @protected
   BorderSide resolveBorderSide(
     BorderSide side,
@@ -657,10 +657,10 @@ class SpanDecorationPaintDetails {
   /// [SpanDecoration.animationStyle] is configured.
   final Set<WidgetState> previousStates;
 
-  /// The progress (from `0.0` to `1.0`) of the transition from
-  /// [previousStates] to [states].
+  /// The progress of the transition from [previousStates] to [states], from
+  /// 0.0 to 1.0.
   ///
-  /// Defaults to `1.0` when no state transition animation is active.
+  /// Defaults to 1.0 when no state transition animation is active.
   final double stateAnimationProgress;
 
   /// The most recent pointer down position on the [Span] in [canvas]
@@ -673,8 +673,8 @@ class SpanDecorationPaintDetails {
   /// When null, [SpanDecoration.paint] computes the radius from [rect].
   final double? maxSplashRadius;
 
-  /// The progress (from `0.0` to `1.0`) of the tap splash (ripple) animation.
+  /// The progress of the tap splash (ripple) animation, from 0.0 to 1.0.
   ///
-  /// Defaults to `0.0` when no splash animation is active.
+  /// Defaults to 0.0 when no splash animation is active.
   final double splashProgress;
 }
