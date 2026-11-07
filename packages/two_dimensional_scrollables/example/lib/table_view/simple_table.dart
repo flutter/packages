@@ -183,8 +183,16 @@ class _TableExampleState extends State<TableExample> {
   }
 
   TableSpan _buildRowSpan(int index) {
+    final Color? defaultColor = index.isEven ? Colors.purple[100] : null;
     final decoration = TableSpanDecoration(
-      color: index.isEven ? Colors.purple[100] : null,
+      color: WidgetStateColor.resolveWith((Set<WidgetState> states) {
+        if (states.contains(WidgetState.hovered)) {
+          return Colors.purple[200]!;
+        }
+        return defaultColor ?? Colors.transparent;
+      }),
+      splashColor: Colors.purple.withValues(alpha: 0.25),
+      animationStyle: const AnimationStyle(duration: Duration(milliseconds: 150)),
       border: const TableSpanBorder(trailing: BorderSide(width: 3)),
     );
 

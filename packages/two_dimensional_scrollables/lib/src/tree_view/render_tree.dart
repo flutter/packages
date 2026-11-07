@@ -7,6 +7,7 @@ import 'dart:math' as math;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
@@ -235,7 +236,7 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
       final TreeRow configuration = needsDelegateRebuild
           ? delegate.buildRow(TreeVicinity(depth: _rowDepths[currentIndex]!, row: currentIndex))
           : span!.configuration;
-      span ??= _Span();
+      span ??= _Span(onStateChanged: markNeedsPaint);
       final double extent = configuration.extent.calculateExtent(
         TreeRowExtentDelegate(viewportExtent: viewportDimension.height, precedingExtent: position),
       );
@@ -266,7 +267,7 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
       final TreeRow configuration = needsDelegateRebuild
           ? delegate.buildRow(TreeVicinity(depth: _rowDepths[row]!, row: row))
           : span!.configuration;
-      span ??= _Span();
+      span ??= _Span(onStateChanged: markNeedsPaint);
       final double extent = configuration.extent.calculateExtent(
         TreeRowExtentDelegate(
           viewportExtent: viewportDimension.height,
@@ -550,8 +551,8 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
     required int trailingRow,
   }) {
     // Row decorations
-    final foregroundRows = <Rect, TreeRowDecoration>{};
-    final backgroundRows = <Rect, TreeRowDecoration>{};
+    final foregroundRows = <Rect, ({TreeRowDecoration decoration, _Span span})>{};
+    final backgroundRows = <Rect, ({TreeRowDecoration decoration, _Span span})>{};
 
     var currentRow = leadingRow;
     while (currentRow <= trailingRow) {
@@ -580,26 +581,34 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
 
         if (configuration.backgroundDecoration != null) {
           final Rect rect = getRowRect(configuration.backgroundDecoration!.consumeSpanPadding);
-          backgroundRows[rect] = configuration.backgroundDecoration!;
+          backgroundRows[rect] = (decoration: configuration.backgroundDecoration!, span: rowSpan);
         }
         if (configuration.foregroundDecoration != null) {
           final Rect rect = getRowRect(configuration.foregroundDecoration!.consumeSpanPadding);
-          foregroundRows[rect] = configuration.foregroundDecoration!;
+          foregroundRows[rect] = (decoration: configuration.foregroundDecoration!, span: rowSpan);
         }
       }
       currentRow++;
     }
 
-    // Get to painting.
-    // Background decorations first.
-    backgroundRows.forEach((Rect rect, TreeRowDecoration decoration) {
-      final paintingDetails = TreeRowDecorationPaintDetails(
+    TreeRowDecorationPaintDetails createPaintDetails(Rect rect, _Span span) {
+      return TreeRowDecorationPaintDetails(
         canvas: context.canvas,
         rect: rect,
         axisDirection: horizontalAxisDirection,
         crossAxisDirection: verticalAxisDirection,
+        states: span.states,
+        previousStates: span.previousStates,
+        stateAnimationProgress: span.stateAnimationProgress,
+        pointerPosition: span.pointerPosition,
+        splashProgress: span.splashProgress,
       );
-      decoration.paint(paintingDetails);
+    }
+
+    // Get to painting.
+    // Background decorations first.
+    backgroundRows.forEach((Rect rect, ({TreeRowDecoration decoration, _Span span}) entry) {
+      entry.decoration.paint(createPaintDetails(rect, entry.span));
     });
     // Child nodes.
     for (var row = leadingRow; row <= trailingRow; row++) {
@@ -610,19 +619,17 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
       }
     }
     // Foreground decorations.
-    foregroundRows.forEach((Rect rect, TreeRowDecoration decoration) {
-      final paintingDetails = TreeRowDecorationPaintDetails(
-        canvas: context.canvas,
-        rect: rect,
-        axisDirection: horizontalAxisDirection,
-        crossAxisDirection: verticalAxisDirection,
-      );
-      decoration.paint(paintingDetails);
+    foregroundRows.forEach((Rect rect, ({TreeRowDecoration decoration, _Span span}) entry) {
+      entry.decoration.paint(createPaintDetails(rect, entry.span));
     });
   }
 }
 
 class _Span with Diagnosticable implements HitTestTarget, MouseTrackerAnnotation {
+  _Span({this.onStateChanged});
+
+  final VoidCallback? onStateChanged;
+
   double get leadingOffset => _leadingOffset;
   late double _leadingOffset;
 
@@ -634,6 +641,166 @@ class _Span with Diagnosticable implements HitTestTarget, MouseTrackerAnnotation
 
   double get animationOffset => _animationOffset;
   late double _animationOffset;
+
+  final Set<WidgetState> _states = <WidgetState>{};
+  Set<WidgetState> _previousStates = const <WidgetState>{};
+  final Set<int> _activePointers = <int>{};
+  double _stateAnimationProgress = 1.0;
+  Offset? _pointerPosition;
+  double _splashProgress = 0.0;
+  bool _splashAnimating = false;
+  int? _frameCallbackId;
+  Duration? _stateAnimationStartTime;
+  Duration? _splashAnimationStartTime;
+
+  Set<WidgetState> get states =>
+      _states.isEmpty ? const <WidgetState>{} : Set<WidgetState>.unmodifiable(_states);
+  Set<WidgetState> get previousStates => _previousStates.isEmpty
+      ? const <WidgetState>{}
+      : Set<WidgetState>.unmodifiable(_previousStates);
+  double get stateAnimationProgress => _stateAnimationProgress;
+  Offset? get pointerPosition => _pointerPosition;
+  double get splashProgress => _splashProgress;
+
+  bool get _hasDecorations =>
+      _configuration != null &&
+      (_configuration!.backgroundDecoration != null ||
+          _configuration!.foregroundDecoration != null);
+
+  Duration get _stateAnimationDuration {
+    if (_configuration == null) {
+      return Duration.zero;
+    }
+    final Duration bgDuration =
+        _configuration!.backgroundDecoration?.animationStyle?.duration ?? Duration.zero;
+    final Duration fgDuration =
+        _configuration!.foregroundDecoration?.animationStyle?.duration ?? Duration.zero;
+    return bgDuration >= fgDuration ? bgDuration : fgDuration;
+  }
+
+  Curve get _stateAnimationCurve {
+    if (_configuration == null) {
+      return Curves.linear;
+    }
+    return _configuration!.backgroundDecoration?.animationStyle?.curve ??
+        _configuration!.foregroundDecoration?.animationStyle?.curve ??
+        Curves.linear;
+  }
+
+  Duration get _splashAnimationDuration {
+    if (_configuration == null) {
+      return Duration.zero;
+    }
+    final TreeRowDecoration? bg = _configuration!.backgroundDecoration;
+    final TreeRowDecoration? fg = _configuration!.foregroundDecoration;
+    final bool hasSplash = bg?.splashColor != null || fg?.splashColor != null;
+    if (!hasSplash) {
+      return Duration.zero;
+    }
+    final Duration? styleDuration =
+        bg?.splashAnimationStyle?.duration ??
+        fg?.splashAnimationStyle?.duration ??
+        bg?.animationStyle?.duration ??
+        fg?.animationStyle?.duration;
+    return styleDuration ?? TreeRowDecoration.defaultSplashDuration;
+  }
+
+  Curve get _splashAnimationCurve {
+    if (_configuration == null) {
+      return TreeRowDecoration.defaultSplashCurve;
+    }
+    return _configuration!.backgroundDecoration?.splashAnimationStyle?.curve ??
+        _configuration!.foregroundDecoration?.splashAnimationStyle?.curve ??
+        _configuration!.backgroundDecoration?.animationStyle?.curve ??
+        _configuration!.foregroundDecoration?.animationStyle?.curve ??
+        TreeRowDecoration.defaultSplashCurve;
+  }
+
+  void _ensureFrameScheduled() {
+    if (_frameCallbackId != null) {
+      return;
+    }
+    _frameCallbackId = SchedulerBinding.instance.scheduleFrameCallback(_onFrame);
+  }
+
+  void _onFrame(Duration timeStamp) {
+    _frameCallbackId = null;
+    var needsMoreFrames = false;
+
+    if (_stateAnimationProgress < 1.0) {
+      final Duration duration = _stateAnimationDuration;
+      if (duration <= Duration.zero) {
+        _stateAnimationProgress = 1.0;
+        _stateAnimationStartTime = null;
+      } else {
+        _stateAnimationStartTime ??= timeStamp;
+        final Duration elapsed = timeStamp - _stateAnimationStartTime!;
+        final double rawProgress = (elapsed.inMicroseconds / duration.inMicroseconds).clamp(
+          0.0,
+          1.0,
+        );
+        _stateAnimationProgress = _stateAnimationCurve.transform(rawProgress);
+        if (rawProgress < 1.0) {
+          needsMoreFrames = true;
+        } else {
+          _stateAnimationProgress = 1.0;
+          _stateAnimationStartTime = null;
+        }
+      }
+    }
+
+    if (_splashAnimating) {
+      final Duration duration = _splashAnimationDuration;
+      if (duration <= Duration.zero) {
+        _splashAnimating = false;
+        _splashProgress = 0.0;
+        _splashAnimationStartTime = null;
+      } else {
+        _splashAnimationStartTime ??= timeStamp;
+        final Duration elapsed = timeStamp - _splashAnimationStartTime!;
+        final double rawProgress = (elapsed.inMicroseconds / duration.inMicroseconds).clamp(
+          0.0,
+          1.0,
+        );
+        _splashProgress = _splashAnimationCurve.transform(rawProgress);
+        if (rawProgress < 1.0) {
+          needsMoreFrames = true;
+        } else {
+          _splashAnimating = false;
+          _splashProgress = 0.0;
+          _splashAnimationStartTime = null;
+        }
+      }
+    }
+
+    onStateChanged?.call();
+    if (needsMoreFrames) {
+      _ensureFrameScheduled();
+    }
+  }
+
+  void _updateState(WidgetState state, bool value) {
+    final bool willChange = value ? !_states.contains(state) : _states.contains(state);
+    if (!willChange) {
+      return;
+    }
+    _previousStates = Set<WidgetState>.of(_states);
+    if (value) {
+      _states.add(state);
+    } else {
+      _states.remove(state);
+    }
+    if (_hasDecorations) {
+      if (_stateAnimationDuration > Duration.zero) {
+        _stateAnimationProgress = 0.0;
+        _stateAnimationStartTime = null;
+        _ensureFrameScheduled();
+      } else {
+        _stateAnimationProgress = 1.0;
+      }
+      onStateChanged?.call();
+    }
+  }
 
   double get trailingOffset {
     return leadingOffset + extent + configuration.padding.leading + configuration.padding.trailing;
@@ -661,6 +828,12 @@ class _Span with Diagnosticable implements HitTestTarget, MouseTrackerAnnotation
   }
 
   void dispose() {
+    if (_frameCallbackId != null) {
+      SchedulerBinding.instance.cancelFrameCallbackWithId(_frameCallbackId!);
+      _frameCallbackId = null;
+    }
+    _activePointers.clear();
+    _states.clear();
     _disposeRecognizers();
   }
 
@@ -704,27 +877,56 @@ class _Span with Diagnosticable implements HitTestTarget, MouseTrackerAnnotation
 
   @override
   void handleEvent(PointerEvent event, HitTestEntry entry) {
-    if (event is PointerDownEvent && configuration.recognizerFactories.isNotEmpty) {
-      if (_recognizers == null) {
-        _syncRecognizers();
+    if (event is PointerDownEvent) {
+      _pointerPosition = event.localPosition;
+      _activePointers.add(event.pointer);
+      _updateState(WidgetState.pressed, true);
+      if (_splashAnimationDuration > Duration.zero) {
+        _splashAnimating = true;
+        _splashProgress = 0.0;
+        _splashAnimationStartTime = null;
+        _ensureFrameScheduled();
+        onStateChanged?.call();
       }
-      assert(_recognizers != null);
-      for (final GestureRecognizer recognizer in _recognizers!.values) {
-        recognizer.addPointer(event);
+      if (configuration.recognizerFactories.isNotEmpty) {
+        if (_recognizers == null) {
+          _syncRecognizers();
+        }
+        assert(_recognizers != null);
+        for (final GestureRecognizer recognizer in _recognizers!.values) {
+          recognizer.addPointer(event);
+        }
+      }
+    } else if (event is PointerUpEvent || event is PointerCancelEvent) {
+      _activePointers.remove(event.pointer);
+      if (_activePointers.isEmpty) {
+        _updateState(WidgetState.pressed, false);
       }
     }
   }
 
   // ---- MouseTrackerAnnotation ----
 
+  void _handleEnter(PointerEnterEvent event) {
+    _updateState(WidgetState.hovered, true);
+    configuration.onEnter?.call(event);
+  }
+
+  void _handleExit(PointerExitEvent event) {
+    _updateState(WidgetState.hovered, false);
+    configuration.onExit?.call(event);
+  }
+
   @override
   MouseCursor get cursor => configuration.cursor;
 
   @override
-  PointerEnterEventListener? get onEnter => configuration.onEnter;
+  PointerEnterEventListener? get onEnter =>
+      configuration.onEnter != null || _hasDecorations ? _handleEnter : null;
 
   @override
-  PointerExitEventListener? get onExit => configuration.onExit;
+  PointerExitEventListener? get onExit =>
+      configuration.onExit != null || _hasDecorations ? _handleExit : null;
 
   @override
   bool get validForMouseTracker => true;

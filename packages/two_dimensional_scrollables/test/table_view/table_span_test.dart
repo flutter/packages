@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:two_dimensional_scrollables/two_dimensional_scrollables.dart';
@@ -1668,6 +1669,223 @@ void main() {
     await tester.pumpAndSettle();
     expect(tester.getTopLeft(find.text('M(0,0)')), const Offset(10.0, 10.0));
     expect(tester.getSize(find.text('M(0,0)')), const Size(225.0, 225.0));
+  });
+
+  group('Interactive states and animations (hover, press, ripple)', () {
+    testWidgets('TableSpanDecoration updates on hover and press without rebuilding delegate', (
+      WidgetTester tester,
+    ) async {
+      var rowBuildCount = 0;
+      final rowColor = WidgetStateColor.resolveWith((Set<WidgetState> states) {
+        if (states.contains(WidgetState.pressed)) {
+          return const Color(0xff00ff00);
+        }
+        if (states.contains(WidgetState.hovered)) {
+          return const Color(0xff0000ff);
+        }
+        return const Color(0xffff0000);
+      });
+
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: TableView.builder(
+            rowCount: 2,
+            columnCount: 2,
+            columnBuilder: (_) => const TableSpan(extent: FixedTableSpanExtent(100.0)),
+            rowBuilder: (int index) {
+              rowBuildCount++;
+              return TableSpan(
+                extent: const FixedTableSpanExtent(100.0),
+                backgroundDecoration: TableSpanDecoration(color: rowColor),
+              );
+            },
+            cellBuilder: (_, TableVicinity vicinity) {
+              return TableViewCell(child: Text('R${vicinity.row}:C${vicinity.column}'));
+            },
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      final initialBuildCount = rowBuildCount;
+
+      expect(
+        find.byType(TableViewport),
+        paints
+          ..rect(rect: const Rect.fromLTRB(0.0, 0.0, 200.0, 100.0), color: const Color(0xffff0000))
+          ..rect(
+            rect: const Rect.fromLTRB(0.0, 100.0, 200.0, 200.0),
+            color: const Color(0xffff0000),
+          ),
+      );
+
+      // Hover over row 0
+      final TestGesture mouseGesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
+      await mouseGesture.addPointer(location: const Offset(50.0, 50.0));
+      await tester.pump();
+      expect(rowBuildCount, initialBuildCount);
+      expect(
+        find.byType(TableViewport),
+        paints
+          ..rect(rect: const Rect.fromLTRB(0.0, 0.0, 200.0, 100.0), color: const Color(0xff0000ff))
+          ..rect(
+            rect: const Rect.fromLTRB(0.0, 100.0, 200.0, 200.0),
+            color: const Color(0xffff0000),
+          ),
+      );
+
+      // Press on row 0
+      await mouseGesture.down(const Offset(50.0, 50.0));
+      await tester.pump();
+      expect(rowBuildCount, initialBuildCount);
+      expect(
+        find.byType(TableViewport),
+        paints
+          ..rect(rect: const Rect.fromLTRB(0.0, 0.0, 200.0, 100.0), color: const Color(0xff00ff00))
+          ..rect(
+            rect: const Rect.fromLTRB(0.0, 100.0, 200.0, 200.0),
+            color: const Color(0xffff0000),
+          ),
+      );
+
+      // Release press on row 0 (still hovered)
+      await mouseGesture.up();
+      await tester.pump();
+      expect(
+        find.byType(TableViewport),
+        paints
+          ..rect(rect: const Rect.fromLTRB(0.0, 0.0, 200.0, 100.0), color: const Color(0xff0000ff))
+          ..rect(
+            rect: const Rect.fromLTRB(0.0, 100.0, 200.0, 200.0),
+            color: const Color(0xffff0000),
+          ),
+      );
+
+      // Move to row 1
+      await mouseGesture.moveTo(const Offset(50.0, 150.0));
+      await tester.pump();
+      expect(
+        find.byType(TableViewport),
+        paints
+          ..rect(rect: const Rect.fromLTRB(0.0, 0.0, 200.0, 100.0), color: const Color(0xffff0000))
+          ..rect(
+            rect: const Rect.fromLTRB(0.0, 100.0, 200.0, 200.0),
+            color: const Color(0xff0000ff),
+          ),
+      );
+
+      await mouseGesture.removePointer();
+    });
+
+    testWidgets('TableSpanDecoration animates hover state transitions with animationStyle', (
+      WidgetTester tester,
+    ) async {
+      final rowColor = WidgetStateColor.resolveWith((Set<WidgetState> states) {
+        if (states.contains(WidgetState.hovered)) {
+          return const Color(0xff0000ff);
+        }
+        return const Color(0xffff0000);
+      });
+
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: TableView.builder(
+            rowCount: 1,
+            columnCount: 1,
+            columnBuilder: (_) => const TableSpan(extent: FixedTableSpanExtent(200.0)),
+            rowBuilder: (_) => TableSpan(
+              extent: const FixedTableSpanExtent(100.0),
+              backgroundDecoration: TableSpanDecoration(
+                color: rowColor,
+                animationStyle: const AnimationStyle(
+                  duration: Duration(milliseconds: 200),
+                  curve: Curves.linear,
+                ),
+              ),
+            ),
+            cellBuilder: (_, _) => const TableViewCell(child: SizedBox.expand()),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final TestGesture mouseGesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
+      await mouseGesture.addPointer(location: const Offset(50.0, 50.0));
+      await tester.pump(); // Start of animation (t = 0ms)
+      await tester.pump(const Duration(milliseconds: 100)); // Halfway (t = 100ms)
+
+      final Color expectedMidColor = Color.lerp(
+        const Color(0xffff0000),
+        const Color(0xff0000ff),
+        0.5,
+      )!;
+      expect(
+        find.byType(TableViewport),
+        paints..rect(rect: const Rect.fromLTRB(0.0, 0.0, 200.0, 100.0), color: expectedMidColor),
+      );
+
+      await tester.pumpAndSettle();
+      expect(
+        find.byType(TableViewport),
+        paints
+          ..rect(rect: const Rect.fromLTRB(0.0, 0.0, 200.0, 100.0), color: const Color(0xff0000ff)),
+      );
+
+      await mouseGesture.removePointer();
+    });
+
+    testWidgets('TableSpanDecoration paints tap ripple across pinned and unpinned columns', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: TableView.builder(
+            rowCount: 1,
+            columnCount: 2,
+            pinnedColumnCount: 1,
+            columnBuilder: (_) => const TableSpan(extent: FixedTableSpanExtent(100.0)),
+            rowBuilder: (_) => const TableSpan(
+              extent: FixedTableSpanExtent(100.0),
+              backgroundDecoration: TableSpanDecoration(
+                color: Color(0xffffffff),
+                splashColor: Color(0x802196f3),
+                splashAnimationStyle: AnimationStyle(
+                  duration: Duration(milliseconds: 200),
+                  curve: Curves.linear,
+                ),
+              ),
+            ),
+            cellBuilder: (_, TableVicinity vicinity) {
+              return TableViewCell(child: Text('R${vicinity.row}:C${vicinity.column}'));
+            },
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Tap in the unpinned column (x = 150, y = 50)
+      await tester.tapAt(const Offset(150.0, 50.0));
+      await tester.pump(); // Start of ripple (t = 0ms)
+      await tester.pump(const Duration(milliseconds: 100)); // Halfway (t = 100ms)
+
+      // Both the unpinned cell section and the pinned column section should
+      // paint the ripple circle with the exact same center (150, 50) and radius.
+      expect(
+        find.byType(TableViewport),
+        paints
+          ..rect(
+            rect: const Rect.fromLTRB(100.0, 0.0, 200.0, 100.0),
+            color: const Color(0xffffffff),
+          )
+          ..circle(x: 150.0, y: 50.0)
+          ..rect(rect: const Rect.fromLTRB(0.0, 0.0, 100.0, 100.0), color: const Color(0xffffffff))
+          ..circle(x: 150.0, y: 50.0),
+      );
+
+      await tester.pumpAndSettle();
+    });
   });
 }
 

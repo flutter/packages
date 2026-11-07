@@ -7,6 +7,7 @@ import 'dart:math' as math;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
@@ -877,7 +878,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         span?.dispose();
         break;
       }
-      span ??= _Span();
+      span ??= _Span(onStateChanged: markNeedsPaint);
       span.update(
         isPinned: isPinned,
         configuration: configuration,
@@ -1002,7 +1003,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         span?.dispose();
         break;
       }
-      span ??= _Span();
+      span ??= _Span(onStateChanged: markNeedsPaint);
       span.update(
         isPinned: isPinned,
         configuration: configuration,
@@ -1903,11 +1904,12 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     required Offset offset,
   }) {
     // Column decorations
-    final foregroundColumns = <Rect, TableSpanDecoration>{};
-    final backgroundColumns = <Rect, TableSpanDecoration>{};
+    final foregroundColumns = <Rect, ({TableSpanDecoration decoration, _Span span})>{};
+    final backgroundColumns = <Rect, ({TableSpanDecoration decoration, _Span span})>{};
 
     for (int column = leadingVicinity.column; column <= trailingVicinity.column; column++) {
-      TableSpan columnSpan = _columnMetrics[column]!.configuration;
+      _Span columnMetric = _columnMetrics[column]!;
+      TableSpan columnSpan = columnMetric.configuration;
       if (columnSpan.backgroundDecoration != null ||
           columnSpan.foregroundDecoration != null ||
           _mergedColumns.contains(column)) {
@@ -2008,14 +2010,18 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
           final int columnIndex =
               parentDataOf(cell.leading).columnMergeStart ??
               parentDataOf(cell.leading).tableVicinity.column;
-          columnSpan = _columnMetrics[columnIndex]!.configuration;
+          columnMetric = _columnMetrics[columnIndex]!;
+          columnSpan = columnMetric.configuration;
           if (columnSpan.backgroundDecoration != null) {
             final Rect rect = getColumnRect(
               leadingCell: cell.leading,
               trailingCell: cell.trailing,
               consumePadding: columnSpan.backgroundDecoration!.consumeSpanPadding,
             );
-            backgroundColumns[rect] = columnSpan.backgroundDecoration!;
+            backgroundColumns[rect] = (
+              decoration: columnSpan.backgroundDecoration!,
+              span: columnMetric,
+            );
           }
           if (columnSpan.foregroundDecoration != null) {
             final Rect rect = getColumnRect(
@@ -2023,17 +2029,21 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
               trailingCell: cell.trailing,
               consumePadding: columnSpan.foregroundDecoration!.consumeSpanPadding,
             );
-            foregroundColumns[rect] = columnSpan.foregroundDecoration!;
+            foregroundColumns[rect] = (
+              decoration: columnSpan.foregroundDecoration!,
+              span: columnMetric,
+            );
           }
         }
       }
     }
 
     // Row decorations
-    final foregroundRows = <Rect, TableSpanDecoration>{};
-    final backgroundRows = <Rect, TableSpanDecoration>{};
+    final foregroundRows = <Rect, ({TableSpanDecoration decoration, _Span span})>{};
+    final backgroundRows = <Rect, ({TableSpanDecoration decoration, _Span span})>{};
     for (int row = leadingVicinity.row; row <= trailingVicinity.row; row++) {
-      TableSpan rowSpan = _rowMetrics[row]!.configuration;
+      _Span rowMetric = _rowMetrics[row]!;
+      TableSpan rowSpan = rowMetric.configuration;
       if (rowSpan.backgroundDecoration != null ||
           rowSpan.foregroundDecoration != null ||
           _mergedRows.contains(row)) {
@@ -2138,14 +2148,15 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
           final int rowIndex =
               parentDataOf(cell.leading).rowMergeStart ??
               parentDataOf(cell.trailing).tableVicinity.row;
-          rowSpan = _rowMetrics[rowIndex]!.configuration;
+          rowMetric = _rowMetrics[rowIndex]!;
+          rowSpan = rowMetric.configuration;
           if (rowSpan.backgroundDecoration != null) {
             final Rect rect = getRowRect(
               leadingCell: cell.leading,
               trailingCell: cell.trailing,
               consumePadding: rowSpan.backgroundDecoration!.consumeSpanPadding,
             );
-            backgroundRows[rect] = rowSpan.backgroundDecoration!;
+            backgroundRows[rect] = (decoration: rowSpan.backgroundDecoration!, span: rowMetric);
           }
           if (rowSpan.foregroundDecoration != null) {
             final Rect rect = getRowRect(
@@ -2153,10 +2164,50 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
               trailingCell: cell.trailing,
               consumePadding: rowSpan.foregroundDecoration!.consumeSpanPadding,
             );
-            foregroundRows[rect] = rowSpan.foregroundDecoration!;
+            foregroundRows[rect] = (decoration: rowSpan.foregroundDecoration!, span: rowMetric);
           }
         }
       }
+    }
+
+    TableSpanDecorationPaintDetails createPaintDetails({
+      required Rect rect,
+      required AxisDirection axisDirection,
+      required AxisDirection crossAxisDirection,
+      required _Span span,
+      required bool isRow,
+    }) {
+      final Offset? pointerPosition = span.splashProgress > 0.0 && span.pointerPosition != null
+          ? offset + span.pointerPosition!
+          : null;
+      double? maxSplashRadius;
+      if (pointerPosition != null) {
+        final fullSpanRect = isRow
+            ? Rect.fromLTRB(offset.dx, rect.top, offset.dx + viewportDimension.width, rect.bottom)
+            : Rect.fromLTRB(rect.left, offset.dy, rect.right, offset.dy + viewportDimension.height);
+        maxSplashRadius = math.max(
+          math.max(
+            (pointerPosition - fullSpanRect.topLeft).distance,
+            (pointerPosition - fullSpanRect.topRight).distance,
+          ),
+          math.max(
+            (pointerPosition - fullSpanRect.bottomLeft).distance,
+            (pointerPosition - fullSpanRect.bottomRight).distance,
+          ),
+        );
+      }
+      return TableSpanDecorationPaintDetails(
+        canvas: context.canvas,
+        rect: rect,
+        axisDirection: axisDirection,
+        crossAxisDirection: crossAxisDirection,
+        states: span.states,
+        previousStates: span.previousStates,
+        stateAnimationProgress: span.stateAnimationProgress,
+        pointerPosition: pointerPosition,
+        maxSplashRadius: maxSplashRadius,
+        splashProgress: span.splashProgress,
+      );
     }
 
     // Get to painting.
@@ -2168,43 +2219,57 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     switch (mainAxis) {
       // Default, row major order. Rows go first.
       case Axis.vertical:
-        backgroundRows.forEach((Rect rect, TableSpanDecoration decoration) {
-          final paintingDetails = TableSpanDecorationPaintDetails(
-            canvas: context.canvas,
-            rect: rect,
-            axisDirection: horizontalAxisDirection,
-            crossAxisDirection: verticalAxisDirection,
+        backgroundRows.forEach((Rect rect, ({TableSpanDecoration decoration, _Span span}) entry) {
+          entry.decoration.paint(
+            createPaintDetails(
+              rect: rect,
+              axisDirection: horizontalAxisDirection,
+              crossAxisDirection: verticalAxisDirection,
+              span: entry.span,
+              isRow: true,
+            ),
           );
-          decoration.paint(paintingDetails);
         });
-        backgroundColumns.forEach((Rect rect, TableSpanDecoration decoration) {
-          final paintingDetails = TableSpanDecorationPaintDetails(
-            canvas: context.canvas,
-            rect: rect,
-            axisDirection: verticalAxisDirection,
-            crossAxisDirection: horizontalAxisDirection,
+        backgroundColumns.forEach((
+          Rect rect,
+          ({TableSpanDecoration decoration, _Span span}) entry,
+        ) {
+          entry.decoration.paint(
+            createPaintDetails(
+              rect: rect,
+              axisDirection: verticalAxisDirection,
+              crossAxisDirection: horizontalAxisDirection,
+              span: entry.span,
+              isRow: false,
+            ),
           );
-          decoration.paint(paintingDetails);
         });
       // Column major order. Columns go first.
       case Axis.horizontal:
-        backgroundColumns.forEach((Rect rect, TableSpanDecoration decoration) {
-          final paintingDetails = TableSpanDecorationPaintDetails(
-            canvas: context.canvas,
-            rect: rect,
-            axisDirection: verticalAxisDirection,
-            crossAxisDirection: horizontalAxisDirection,
+        backgroundColumns.forEach((
+          Rect rect,
+          ({TableSpanDecoration decoration, _Span span}) entry,
+        ) {
+          entry.decoration.paint(
+            createPaintDetails(
+              rect: rect,
+              axisDirection: verticalAxisDirection,
+              crossAxisDirection: horizontalAxisDirection,
+              span: entry.span,
+              isRow: false,
+            ),
           );
-          decoration.paint(paintingDetails);
         });
-        backgroundRows.forEach((Rect rect, TableSpanDecoration decoration) {
-          final paintingDetails = TableSpanDecorationPaintDetails(
-            canvas: context.canvas,
-            rect: rect,
-            axisDirection: horizontalAxisDirection,
-            crossAxisDirection: verticalAxisDirection,
+        backgroundRows.forEach((Rect rect, ({TableSpanDecoration decoration, _Span span}) entry) {
+          entry.decoration.paint(
+            createPaintDetails(
+              rect: rect,
+              axisDirection: horizontalAxisDirection,
+              crossAxisDirection: verticalAxisDirection,
+              span: entry.span,
+              isRow: true,
+            ),
           );
-          decoration.paint(paintingDetails);
         });
     }
 
@@ -2235,43 +2300,57 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     switch (mainAxis) {
       // Default, row major order. Rows go first.
       case Axis.vertical:
-        foregroundRows.forEach((Rect rect, TableSpanDecoration decoration) {
-          final paintingDetails = TableSpanDecorationPaintDetails(
-            canvas: context.canvas,
-            rect: rect,
-            axisDirection: horizontalAxisDirection,
-            crossAxisDirection: verticalAxisDirection,
+        foregroundRows.forEach((Rect rect, ({TableSpanDecoration decoration, _Span span}) entry) {
+          entry.decoration.paint(
+            createPaintDetails(
+              rect: rect,
+              axisDirection: horizontalAxisDirection,
+              crossAxisDirection: verticalAxisDirection,
+              span: entry.span,
+              isRow: true,
+            ),
           );
-          decoration.paint(paintingDetails);
         });
-        foregroundColumns.forEach((Rect rect, TableSpanDecoration decoration) {
-          final paintingDetails = TableSpanDecorationPaintDetails(
-            canvas: context.canvas,
-            rect: rect,
-            axisDirection: verticalAxisDirection,
-            crossAxisDirection: horizontalAxisDirection,
+        foregroundColumns.forEach((
+          Rect rect,
+          ({TableSpanDecoration decoration, _Span span}) entry,
+        ) {
+          entry.decoration.paint(
+            createPaintDetails(
+              rect: rect,
+              axisDirection: verticalAxisDirection,
+              crossAxisDirection: horizontalAxisDirection,
+              span: entry.span,
+              isRow: false,
+            ),
           );
-          decoration.paint(paintingDetails);
         });
       // Column major order. Columns go first.
       case Axis.horizontal:
-        foregroundColumns.forEach((Rect rect, TableSpanDecoration decoration) {
-          final paintingDetails = TableSpanDecorationPaintDetails(
-            canvas: context.canvas,
-            rect: rect,
-            axisDirection: verticalAxisDirection,
-            crossAxisDirection: horizontalAxisDirection,
+        foregroundColumns.forEach((
+          Rect rect,
+          ({TableSpanDecoration decoration, _Span span}) entry,
+        ) {
+          entry.decoration.paint(
+            createPaintDetails(
+              rect: rect,
+              axisDirection: verticalAxisDirection,
+              crossAxisDirection: horizontalAxisDirection,
+              span: entry.span,
+              isRow: false,
+            ),
           );
-          decoration.paint(paintingDetails);
         });
-        foregroundRows.forEach((Rect rect, TableSpanDecoration decoration) {
-          final paintingDetails = TableSpanDecorationPaintDetails(
-            canvas: context.canvas,
-            rect: rect,
-            axisDirection: horizontalAxisDirection,
-            crossAxisDirection: verticalAxisDirection,
+        foregroundRows.forEach((Rect rect, ({TableSpanDecoration decoration, _Span span}) entry) {
+          entry.decoration.paint(
+            createPaintDetails(
+              rect: rect,
+              axisDirection: horizontalAxisDirection,
+              crossAxisDirection: verticalAxisDirection,
+              span: entry.span,
+              isRow: true,
+            ),
           );
-          decoration.paint(paintingDetails);
         });
     }
   }
@@ -2294,6 +2373,10 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
 }
 
 class _Span with Diagnosticable implements HitTestTarget, MouseTrackerAnnotation {
+  _Span({this.onStateChanged});
+
+  final VoidCallback? onStateChanged;
+
   double get leadingOffset => _leadingOffset;
   late double _leadingOffset;
 
@@ -2305,6 +2388,166 @@ class _Span with Diagnosticable implements HitTestTarget, MouseTrackerAnnotation
 
   bool get isPinned => _isPinned;
   late bool _isPinned;
+
+  final Set<WidgetState> _states = <WidgetState>{};
+  Set<WidgetState> _previousStates = const <WidgetState>{};
+  final Set<int> _activePointers = <int>{};
+  double _stateAnimationProgress = 1.0;
+  Offset? _pointerPosition;
+  double _splashProgress = 0.0;
+  bool _splashAnimating = false;
+  int? _frameCallbackId;
+  Duration? _stateAnimationStartTime;
+  Duration? _splashAnimationStartTime;
+
+  Set<WidgetState> get states =>
+      _states.isEmpty ? const <WidgetState>{} : Set<WidgetState>.unmodifiable(_states);
+  Set<WidgetState> get previousStates => _previousStates.isEmpty
+      ? const <WidgetState>{}
+      : Set<WidgetState>.unmodifiable(_previousStates);
+  double get stateAnimationProgress => _stateAnimationProgress;
+  Offset? get pointerPosition => _pointerPosition;
+  double get splashProgress => _splashProgress;
+
+  bool get _hasDecorations =>
+      _configuration != null &&
+      (_configuration!.backgroundDecoration != null ||
+          _configuration!.foregroundDecoration != null);
+
+  Duration get _stateAnimationDuration {
+    if (_configuration == null) {
+      return Duration.zero;
+    }
+    final Duration bgDuration =
+        _configuration!.backgroundDecoration?.animationStyle?.duration ?? Duration.zero;
+    final Duration fgDuration =
+        _configuration!.foregroundDecoration?.animationStyle?.duration ?? Duration.zero;
+    return bgDuration >= fgDuration ? bgDuration : fgDuration;
+  }
+
+  Curve get _stateAnimationCurve {
+    if (_configuration == null) {
+      return Curves.linear;
+    }
+    return _configuration!.backgroundDecoration?.animationStyle?.curve ??
+        _configuration!.foregroundDecoration?.animationStyle?.curve ??
+        Curves.linear;
+  }
+
+  Duration get _splashAnimationDuration {
+    if (_configuration == null) {
+      return Duration.zero;
+    }
+    final TableSpanDecoration? bg = _configuration!.backgroundDecoration;
+    final TableSpanDecoration? fg = _configuration!.foregroundDecoration;
+    final bool hasSplash = bg?.splashColor != null || fg?.splashColor != null;
+    if (!hasSplash) {
+      return Duration.zero;
+    }
+    final Duration? styleDuration =
+        bg?.splashAnimationStyle?.duration ??
+        fg?.splashAnimationStyle?.duration ??
+        bg?.animationStyle?.duration ??
+        fg?.animationStyle?.duration;
+    return styleDuration ?? TableSpanDecoration.defaultSplashDuration;
+  }
+
+  Curve get _splashAnimationCurve {
+    if (_configuration == null) {
+      return TableSpanDecoration.defaultSplashCurve;
+    }
+    return _configuration!.backgroundDecoration?.splashAnimationStyle?.curve ??
+        _configuration!.foregroundDecoration?.splashAnimationStyle?.curve ??
+        _configuration!.backgroundDecoration?.animationStyle?.curve ??
+        _configuration!.foregroundDecoration?.animationStyle?.curve ??
+        TableSpanDecoration.defaultSplashCurve;
+  }
+
+  void _ensureFrameScheduled() {
+    if (_frameCallbackId != null) {
+      return;
+    }
+    _frameCallbackId = SchedulerBinding.instance.scheduleFrameCallback(_onFrame);
+  }
+
+  void _onFrame(Duration timeStamp) {
+    _frameCallbackId = null;
+    var needsMoreFrames = false;
+
+    if (_stateAnimationProgress < 1.0) {
+      final Duration duration = _stateAnimationDuration;
+      if (duration <= Duration.zero) {
+        _stateAnimationProgress = 1.0;
+        _stateAnimationStartTime = null;
+      } else {
+        _stateAnimationStartTime ??= timeStamp;
+        final Duration elapsed = timeStamp - _stateAnimationStartTime!;
+        final double rawProgress = (elapsed.inMicroseconds / duration.inMicroseconds).clamp(
+          0.0,
+          1.0,
+        );
+        _stateAnimationProgress = _stateAnimationCurve.transform(rawProgress);
+        if (rawProgress < 1.0) {
+          needsMoreFrames = true;
+        } else {
+          _stateAnimationProgress = 1.0;
+          _stateAnimationStartTime = null;
+        }
+      }
+    }
+
+    if (_splashAnimating) {
+      final Duration duration = _splashAnimationDuration;
+      if (duration <= Duration.zero) {
+        _splashAnimating = false;
+        _splashProgress = 0.0;
+        _splashAnimationStartTime = null;
+      } else {
+        _splashAnimationStartTime ??= timeStamp;
+        final Duration elapsed = timeStamp - _splashAnimationStartTime!;
+        final double rawProgress = (elapsed.inMicroseconds / duration.inMicroseconds).clamp(
+          0.0,
+          1.0,
+        );
+        _splashProgress = _splashAnimationCurve.transform(rawProgress);
+        if (rawProgress < 1.0) {
+          needsMoreFrames = true;
+        } else {
+          _splashAnimating = false;
+          _splashProgress = 0.0;
+          _splashAnimationStartTime = null;
+        }
+      }
+    }
+
+    onStateChanged?.call();
+    if (needsMoreFrames) {
+      _ensureFrameScheduled();
+    }
+  }
+
+  void _updateState(WidgetState state, bool value) {
+    final bool willChange = value ? !_states.contains(state) : _states.contains(state);
+    if (!willChange) {
+      return;
+    }
+    _previousStates = Set<WidgetState>.of(_states);
+    if (value) {
+      _states.add(state);
+    } else {
+      _states.remove(state);
+    }
+    if (_hasDecorations) {
+      if (_stateAnimationDuration > Duration.zero) {
+        _stateAnimationProgress = 0.0;
+        _stateAnimationStartTime = null;
+        _ensureFrameScheduled();
+      } else {
+        _stateAnimationProgress = 1.0;
+      }
+      onStateChanged?.call();
+    }
+  }
 
   double get trailingOffset {
     return leadingOffset + extent + configuration.padding.leading + configuration.padding.trailing;
@@ -2332,6 +2575,12 @@ class _Span with Diagnosticable implements HitTestTarget, MouseTrackerAnnotation
   }
 
   void dispose() {
+    if (_frameCallbackId != null) {
+      SchedulerBinding.instance.cancelFrameCallbackWithId(_frameCallbackId!);
+      _frameCallbackId = null;
+    }
+    _activePointers.clear();
+    _states.clear();
     _disposeRecognizers();
   }
 
@@ -2375,27 +2624,56 @@ class _Span with Diagnosticable implements HitTestTarget, MouseTrackerAnnotation
 
   @override
   void handleEvent(PointerEvent event, HitTestEntry entry) {
-    if (event is PointerDownEvent && configuration.recognizerFactories.isNotEmpty) {
-      if (_recognizers == null) {
-        _syncRecognizers();
+    if (event is PointerDownEvent) {
+      _pointerPosition = event.localPosition;
+      _activePointers.add(event.pointer);
+      _updateState(WidgetState.pressed, true);
+      if (_splashAnimationDuration > Duration.zero) {
+        _splashAnimating = true;
+        _splashProgress = 0.0;
+        _splashAnimationStartTime = null;
+        _ensureFrameScheduled();
+        onStateChanged?.call();
       }
-      assert(_recognizers != null);
-      for (final GestureRecognizer recognizer in _recognizers!.values) {
-        recognizer.addPointer(event);
+      if (configuration.recognizerFactories.isNotEmpty) {
+        if (_recognizers == null) {
+          _syncRecognizers();
+        }
+        assert(_recognizers != null);
+        for (final GestureRecognizer recognizer in _recognizers!.values) {
+          recognizer.addPointer(event);
+        }
+      }
+    } else if (event is PointerUpEvent || event is PointerCancelEvent) {
+      _activePointers.remove(event.pointer);
+      if (_activePointers.isEmpty) {
+        _updateState(WidgetState.pressed, false);
       }
     }
   }
 
   // ---- MouseTrackerAnnotation ----
 
+  void _handleEnter(PointerEnterEvent event) {
+    _updateState(WidgetState.hovered, true);
+    configuration.onEnter?.call(event);
+  }
+
+  void _handleExit(PointerExitEvent event) {
+    _updateState(WidgetState.hovered, false);
+    configuration.onExit?.call(event);
+  }
+
   @override
   MouseCursor get cursor => configuration.cursor;
 
   @override
-  PointerEnterEventListener? get onEnter => configuration.onEnter;
+  PointerEnterEventListener? get onEnter =>
+      configuration.onEnter != null || _hasDecorations ? _handleEnter : null;
 
   @override
-  PointerExitEventListener? get onExit => configuration.onExit;
+  PointerExitEventListener? get onExit =>
+      configuration.onExit != null || _hasDecorations ? _handleExit : null;
 
   @override
   bool get validForMouseTracker => true;
