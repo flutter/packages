@@ -2,6 +2,11 @@
 
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 
+## 1.2.0
+
+* Adds iosSystemIcon field for iOS quick actions.
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+
 ## 1.1.0
 
 * Adds localizedSubtitle field for iOS quick actions.
