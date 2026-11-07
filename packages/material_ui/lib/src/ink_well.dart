@@ -898,6 +898,7 @@ class _InkResponseState extends State<_InkResponseStateWidget>
   Offset? _trackedPointerPosition;
   double _trackedPointerSlop = kTouchSlop;
   InkResponsePressRegistry? _pressRegistry;
+  DeviceGestureSettings? _gestureSettings;
 
   // Whether the splash and pressed highlight are being held after the tap was
   // canceled, until the tracked pointer is lifted or moves beyond the slop.
@@ -984,6 +985,12 @@ class _InkResponseState extends State<_InkResponseStateWidget>
     super.initState();
     initStatesController();
     FocusManager.instance.addHighlightModeListener(handleFocusHighlightModeChange);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _gestureSettings = MediaQuery.maybeGestureSettingsOf(context);
   }
 
   @override
@@ -1308,6 +1315,7 @@ class _InkResponseState extends State<_InkResponseStateWidget>
       widget.onTapCancel?.call();
       return;
     }
+    _stopTrackingPointer();
     _currentSplash?.cancel();
     _currentSplash = null;
     widget.onTapCancel?.call();
@@ -1343,7 +1351,7 @@ class _InkResponseState extends State<_InkResponseStateWidget>
     _trackedPointer = event.pointer;
     _trackedPointerDownPosition = event.position;
     _trackedPointerPosition = event.position;
-    _trackedPointerSlop = computeHitSlop(event.kind, MediaQuery.maybeGestureSettingsOf(context));
+    _trackedPointerSlop = computeHitSlop(event.kind, _gestureSettings);
     // The route sees the end of the pointer even when it is not delivered
     // through hit testing, such as a PointerRemovedEvent.
     GestureBinding.instance.pointerRouter.addRoute(event.pointer, _handleTrackedPointerEvent);
@@ -1361,6 +1369,7 @@ class _InkResponseState extends State<_InkResponseStateWidget>
       _stopTrackingPointer();
       _releaseHeldPress(canceled: true);
     } else if (_holdingPress && !_isTrackedPointerWithinSlop) {
+      _stopTrackingPointer();
       _releaseHeldPress(canceled: true);
     }
   }

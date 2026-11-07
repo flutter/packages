@@ -8,6 +8,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/src/services/keyboard_key.g.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:material_ui/src/ink_response_press_registry.dart';
 
 import 'feedback_tester.dart';
 import 'semantics_tester.dart';
@@ -2784,6 +2785,50 @@ void main() {
       await tester.pumpAndSettle();
       expect(log, <String>['highlight true', 'tapCancel', 'longPress', 'highlight false']);
       expect(isPressed(), isFalse);
+    });
+
+    testWidgets('pointer is unregistered when the press is canceled while the pointer is down', (
+      WidgetTester tester,
+    ) async {
+      final registry = InkResponsePressRegistry();
+      await tester.pumpWidget(
+        buildApp(
+          InkResponsePressScope(
+            registry: registry,
+            child: ListView(
+              children: <Widget>[
+                const SizedBox(height: 100),
+                Tooltip(message: 'tooltip', child: buildInkWell()),
+                const SizedBox(height: 2000),
+              ],
+            ),
+          ),
+        ),
+      );
+      final Offset center = tester.getCenter(find.byKey(const Key('ink')));
+
+      // Held press that then moves beyond the touch slop.
+      TestGesture gesture = await tester.startGesture(center, pointer: 7);
+      expect(registry.contains(7), isTrue);
+      await tester.pump(kPressTimeout + kLongPressTimeout + const Duration(milliseconds: 100));
+      expect(isPressed(), isTrue);
+      await gesture.moveBy(const Offset(kTouchSlop * 2, 0));
+      await tester.pump();
+      expect(isPressed(), isFalse);
+      expect(registry.contains(7), isFalse);
+      await gesture.up();
+      await tester.pumpAndSettle();
+
+      // Press canceled by a scroll.
+      gesture = await tester.startGesture(center, pointer: 8);
+      await tester.pump(kPressTimeout);
+      expect(registry.contains(8), isTrue);
+      await gesture.moveBy(const Offset(0, -50));
+      await tester.pump();
+      expect(isPressed(), isFalse);
+      expect(registry.contains(8), isFalse);
+      await gesture.up();
+      await tester.pumpAndSettle();
     });
 
     testWidgets('held press is canceled when the pointer moves beyond the touch slop', (
