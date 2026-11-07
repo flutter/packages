@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes `PaginatedDataTable` leaking scroll notifications from its footer, which could leave a surrounding `Scrollbar` with `thumbVisibility` set without a thumb until the table was scrolled.
+version: patch
