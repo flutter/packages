@@ -1,0 +1,4 @@
+changelog: |
+  - Fixes `RefreshIndicator` on Android not calling `onRefresh` when the drag is released after `onStatusChange` reports `RefreshIndicatorStatus.armed`. Android now triggers a refresh at the same pull distance as iOS.
+  - Fixes `RefreshIndicator` staying armed when the drag moves back above the armed threshold. The status now returns to `RefreshIndicatorStatus.drag`, and releasing cancels the refresh.
+version: patch
