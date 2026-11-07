@@ -323,6 +323,12 @@ class CameraWindows extends CameraPlatform {
   PlatformMediaSettings _pigeonMediaSettings(MediaSettings? settings) {
     return PlatformMediaSettings(
       resolutionPreset: _pigeonResolutionPreset(settings?.resolutionPreset),
+      photoResolutionPreset: settings?.photoResolutionPreset == null
+          ? null
+          : _pigeonResolutionPreset(settings?.photoResolutionPreset),
+      videoResolutionPreset: settings?.videoResolutionPreset == null
+          ? null
+          : _pigeonResolutionPreset(settings?.videoResolutionPreset),
       enableAudio: settings?.enableAudio ?? true,
       framesPerSecond: settings?.fps,
       videoBitrate: settings?.videoBitrate,

@@ -18,6 +18,18 @@ void main() {
     );
 
     expect(
+      settingsWithNoParameters.photoResolutionPreset,
+      isNull,
+      reason: 'MediaSettings constructor should have null default photoResolutionPreset',
+    );
+
+    expect(
+      settingsWithNoParameters.videoResolutionPreset,
+      isNull,
+      reason: 'MediaSettings constructor should have null default videoResolutionPreset',
+    );
+
+    expect(
       settingsWithNoParameters.fps,
       isNull,
       reason: 'MediaSettings constructor should have null default fps',
@@ -45,6 +57,8 @@ void main() {
   test('MediaSettings fps should hold parameters', () {
     const settings = MediaSettings(
       resolutionPreset: ResolutionPreset.low,
+      photoResolutionPreset: ResolutionPreset.max,
+      videoResolutionPreset: ResolutionPreset.medium,
       fps: 20,
       videoBitrate: 128000,
       audioBitrate: 32000,
@@ -55,6 +69,18 @@ void main() {
       settings.resolutionPreset,
       ResolutionPreset.low,
       reason: 'MediaSettings constructor should hold resolutionPreset parameter',
+    );
+
+    expect(
+      settings.photoResolutionPreset,
+      ResolutionPreset.max,
+      reason: 'MediaSettings constructor should hold photoResolutionPreset parameter',
+    );
+
+    expect(
+      settings.videoResolutionPreset,
+      ResolutionPreset.medium,
+      reason: 'MediaSettings constructor should hold videoResolutionPreset parameter',
     );
 
     expect(settings.fps, 20, reason: 'MediaSettings constructor should hold fps parameter');
@@ -81,6 +107,8 @@ void main() {
   test('MediaSettings hash should be Object.hash of passed parameters', () {
     const settings = MediaSettings(
       resolutionPreset: ResolutionPreset.low,
+      photoResolutionPreset: ResolutionPreset.max,
+      videoResolutionPreset: ResolutionPreset.medium,
       fps: 20,
       videoBitrate: 128000,
       audioBitrate: 32000,
@@ -89,26 +117,40 @@ void main() {
 
     expect(
       settings.hashCode,
-      Object.hash(ResolutionPreset.low, 20, 128000, 32000, true),
+      Object.hash(
+        ResolutionPreset.low,
+        ResolutionPreset.max,
+        ResolutionPreset.medium,
+        20,
+        128000,
+        32000,
+        true,
+      ),
       reason: 'MediaSettings hash() should be equal to Object.hash of parameters',
     );
   });
 
   group('MediaSettings == operator', () {
     const ResolutionPreset preset1 = ResolutionPreset.low;
+    const ResolutionPreset photoPreset1 = ResolutionPreset.max;
+    const ResolutionPreset videoPreset1 = ResolutionPreset.medium;
     const fps1 = 20;
     const videoBitrate1 = 128000;
     const audioBitrate1 = 32000;
     const enableAudio1 = true;
 
     const ResolutionPreset preset2 = ResolutionPreset.high;
+    const ResolutionPreset photoPreset2 = ResolutionPreset.ultraHigh;
+    const ResolutionPreset videoPreset2 = ResolutionPreset.high;
     const int fps2 = fps1 + 10;
     const int videoBitrate2 = videoBitrate1 * 2;
     const int audioBitrate2 = audioBitrate1 * 2;
     const bool enableAudio2 = !enableAudio1;
 
     const settings1 = MediaSettings(
-      resolutionPreset: ResolutionPreset.low,
+      resolutionPreset: preset1,
+      photoResolutionPreset: photoPreset1,
+      videoResolutionPreset: videoPreset1,
       fps: 20,
       videoBitrate: 128000,
       audioBitrate: 32000,
@@ -118,6 +160,36 @@ void main() {
     test('should compare resolutionPreset', () {
       const settings2 = MediaSettings(
         resolutionPreset: preset2,
+        photoResolutionPreset: photoPreset1,
+        videoResolutionPreset: videoPreset1,
+        fps: fps1,
+        videoBitrate: videoBitrate1,
+        audioBitrate: audioBitrate1,
+        enableAudio: enableAudio1,
+      );
+
+      expect(settings1 == settings2, isFalse);
+    });
+
+    test('should compare photoResolutionPreset', () {
+      const settings2 = MediaSettings(
+        resolutionPreset: preset1,
+        photoResolutionPreset: photoPreset2,
+        videoResolutionPreset: videoPreset1,
+        fps: fps1,
+        videoBitrate: videoBitrate1,
+        audioBitrate: audioBitrate1,
+        enableAudio: enableAudio1,
+      );
+
+      expect(settings1 == settings2, isFalse);
+    });
+
+    test('should compare videoResolutionPreset', () {
+      const settings2 = MediaSettings(
+        resolutionPreset: preset1,
+        photoResolutionPreset: photoPreset1,
+        videoResolutionPreset: videoPreset2,
         fps: fps1,
         videoBitrate: videoBitrate1,
         audioBitrate: audioBitrate1,
@@ -130,6 +202,8 @@ void main() {
     test('should compare fps', () {
       const settings2 = MediaSettings(
         resolutionPreset: preset1,
+        photoResolutionPreset: photoPreset1,
+        videoResolutionPreset: videoPreset1,
         fps: fps2,
         videoBitrate: videoBitrate1,
         audioBitrate: audioBitrate1,
@@ -142,6 +216,8 @@ void main() {
     test('should compare videoBitrate', () {
       const settings2 = MediaSettings(
         resolutionPreset: preset1,
+        photoResolutionPreset: photoPreset1,
+        videoResolutionPreset: videoPreset1,
         fps: fps1,
         videoBitrate: videoBitrate2,
         audioBitrate: audioBitrate1,
@@ -154,6 +230,8 @@ void main() {
     test('should compare audioBitrate', () {
       const settings2 = MediaSettings(
         resolutionPreset: preset1,
+        photoResolutionPreset: photoPreset1,
+        videoResolutionPreset: videoPreset1,
         fps: fps1,
         videoBitrate: videoBitrate1,
         audioBitrate: audioBitrate2,
@@ -166,6 +244,8 @@ void main() {
     test('should compare enableAudio', () {
       const settings2 = MediaSettings(
         resolutionPreset: preset1,
+        photoResolutionPreset: photoPreset1,
+        videoResolutionPreset: videoPreset1,
         fps: fps1,
         videoBitrate: videoBitrate1,
         audioBitrate: audioBitrate1,
@@ -179,6 +259,8 @@ void main() {
     test('should return true when all parameters are equal', () {
       const sameSettings = MediaSettings(
         resolutionPreset: preset1,
+        photoResolutionPreset: photoPreset1,
+        videoResolutionPreset: videoPreset1,
         fps: fps1,
         videoBitrate: videoBitrate1,
         audioBitrate: audioBitrate1,

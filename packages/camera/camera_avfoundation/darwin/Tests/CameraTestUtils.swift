@@ -11,11 +11,15 @@ import XCTest
 enum CameraTestUtils {
   /// This method provides a convenient way to create media settings with minimal configuration.
   /// Audio is enabled by default, while other parameters use platform-specific defaults.
-  static func createDefaultMediaSettings(resolutionPreset: PlatformResolutionPreset)
-    -> PlatformMediaSettings
-  {
+  static func createDefaultMediaSettings(
+    resolutionPreset: PlatformResolutionPreset,
+    photoResolutionPreset: PlatformResolutionPreset? = nil,
+    videoResolutionPreset: PlatformResolutionPreset? = nil
+  ) -> PlatformMediaSettings {
     return PlatformMediaSettings(
       resolutionPreset: resolutionPreset,
+      photoResolutionPreset: photoResolutionPreset,
+      videoResolutionPreset: videoResolutionPreset,
       framesPerSecond: nil,
       videoBitrate: nil,
       audioBitrate: nil,

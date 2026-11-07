@@ -115,6 +115,8 @@ enum PlatformResolutionPreset { low, medium, high, veryHigh, ultraHigh, max }
 class PlatformMediaSettings {
   PlatformMediaSettings({
     required this.resolutionPreset,
+    this.photoResolutionPreset,
+    this.videoResolutionPreset,
     this.framesPerSecond,
     this.videoBitrate,
     this.audioBitrate,
@@ -122,6 +124,10 @@ class PlatformMediaSettings {
   });
 
   PlatformResolutionPreset resolutionPreset;
+
+  PlatformResolutionPreset? photoResolutionPreset;
+
+  PlatformResolutionPreset? videoResolutionPreset;
 
   int? framesPerSecond;
 
@@ -132,7 +138,15 @@ class PlatformMediaSettings {
   bool enableAudio;
 
   List<Object?> _toList() {
-    return <Object?>[resolutionPreset, framesPerSecond, videoBitrate, audioBitrate, enableAudio];
+    return <Object?>[
+      resolutionPreset,
+      photoResolutionPreset,
+      videoResolutionPreset,
+      framesPerSecond,
+      videoBitrate,
+      audioBitrate,
+      enableAudio,
+    ];
   }
 
   Object encode() {
@@ -143,10 +157,12 @@ class PlatformMediaSettings {
     result as List<Object?>;
     return PlatformMediaSettings(
       resolutionPreset: result[0]! as PlatformResolutionPreset,
-      framesPerSecond: result[1] as int?,
-      videoBitrate: result[2] as int?,
-      audioBitrate: result[3] as int?,
-      enableAudio: result[4]! as bool,
+      photoResolutionPreset: result[1] as PlatformResolutionPreset?,
+      videoResolutionPreset: result[2] as PlatformResolutionPreset?,
+      framesPerSecond: result[3] as int?,
+      videoBitrate: result[4] as int?,
+      audioBitrate: result[5] as int?,
+      enableAudio: result[6]! as bool,
     );
   }
 
@@ -160,6 +176,8 @@ class PlatformMediaSettings {
       return true;
     }
     return _deepEquals(resolutionPreset, other.resolutionPreset) &&
+        _deepEquals(photoResolutionPreset, other.photoResolutionPreset) &&
+        _deepEquals(videoResolutionPreset, other.videoResolutionPreset) &&
         _deepEquals(framesPerSecond, other.framesPerSecond) &&
         _deepEquals(videoBitrate, other.videoBitrate) &&
         _deepEquals(audioBitrate, other.audioBitrate) &&
@@ -172,7 +190,7 @@ class PlatformMediaSettings {
 
   @override
   String toString() {
-    return 'PlatformMediaSettings(resolutionPreset: $resolutionPreset, framesPerSecond: $framesPerSecond, videoBitrate: $videoBitrate, audioBitrate: $audioBitrate, enableAudio: $enableAudio)';
+    return 'PlatformMediaSettings(resolutionPreset: $resolutionPreset, photoResolutionPreset: $photoResolutionPreset, videoResolutionPreset: $videoResolutionPreset, framesPerSecond: $framesPerSecond, videoBitrate: $videoBitrate, audioBitrate: $audioBitrate, enableAudio: $enableAudio)';
   }
 }
 

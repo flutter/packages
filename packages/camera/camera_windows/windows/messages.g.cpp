@@ -343,9 +343,19 @@ PlatformMediaSettings::PlatformMediaSettings(
 
 PlatformMediaSettings::PlatformMediaSettings(
     const PlatformResolutionPreset& resolution_preset,
+    const PlatformResolutionPreset* photo_resolution_preset,
+    const PlatformResolutionPreset* video_resolution_preset,
     const int64_t* frames_per_second, const int64_t* video_bitrate,
     const int64_t* audio_bitrate, bool enable_audio)
     : resolution_preset_(resolution_preset),
+      photo_resolution_preset_(photo_resolution_preset
+                                   ? std::optional<PlatformResolutionPreset>(
+                                         *photo_resolution_preset)
+                                   : std::nullopt),
+      video_resolution_preset_(video_resolution_preset
+                                   ? std::optional<PlatformResolutionPreset>(
+                                         *video_resolution_preset)
+                                   : std::nullopt),
       frames_per_second_(frames_per_second
                              ? std::optional<int64_t>(*frames_per_second)
                              : std::nullopt),
@@ -363,6 +373,40 @@ const PlatformResolutionPreset& PlatformMediaSettings::resolution_preset()
 void PlatformMediaSettings::set_resolution_preset(
     const PlatformResolutionPreset& value_arg) {
   resolution_preset_ = value_arg;
+}
+
+const PlatformResolutionPreset* PlatformMediaSettings::photo_resolution_preset()
+    const {
+  return photo_resolution_preset_ ? &(*photo_resolution_preset_) : nullptr;
+}
+
+void PlatformMediaSettings::set_photo_resolution_preset(
+    const PlatformResolutionPreset* value_arg) {
+  photo_resolution_preset_ =
+      value_arg ? std::optional<PlatformResolutionPreset>(*value_arg)
+                : std::nullopt;
+}
+
+void PlatformMediaSettings::set_photo_resolution_preset(
+    const PlatformResolutionPreset& value_arg) {
+  photo_resolution_preset_ = value_arg;
+}
+
+const PlatformResolutionPreset* PlatformMediaSettings::video_resolution_preset()
+    const {
+  return video_resolution_preset_ ? &(*video_resolution_preset_) : nullptr;
+}
+
+void PlatformMediaSettings::set_video_resolution_preset(
+    const PlatformResolutionPreset* value_arg) {
+  video_resolution_preset_ =
+      value_arg ? std::optional<PlatformResolutionPreset>(*value_arg)
+                : std::nullopt;
+}
+
+void PlatformMediaSettings::set_video_resolution_preset(
+    const PlatformResolutionPreset& value_arg) {
+  video_resolution_preset_ = value_arg;
 }
 
 const int64_t* PlatformMediaSettings::frames_per_second() const {
@@ -412,8 +456,14 @@ void PlatformMediaSettings::set_enable_audio(bool value_arg) {
 
 EncodableList PlatformMediaSettings::ToEncodableList() const {
   EncodableList list;
-  list.reserve(5);
+  list.reserve(7);
   list.push_back(CustomEncodableValue(resolution_preset_));
+  list.push_back(photo_resolution_preset_
+                     ? CustomEncodableValue(*photo_resolution_preset_)
+                     : EncodableValue());
+  list.push_back(video_resolution_preset_
+                     ? CustomEncodableValue(*video_resolution_preset_)
+                     : EncodableValue());
   list.push_back(frames_per_second_ ? EncodableValue(*frames_per_second_)
                                     : EncodableValue());
   list.push_back(video_bitrate_ ? EncodableValue(*video_bitrate_)
@@ -428,17 +478,29 @@ PlatformMediaSettings PlatformMediaSettings::FromEncodableList(
     const EncodableList& list) {
   PlatformMediaSettings decoded(std::any_cast<const PlatformResolutionPreset&>(
                                     std::get<CustomEncodableValue>(list[0])),
-                                std::get<bool>(list[4]));
-  auto& encodable_frames_per_second = list[1];
+                                std::get<bool>(list[6]));
+  auto& encodable_photo_resolution_preset = list[1];
+  if (!encodable_photo_resolution_preset.IsNull()) {
+    decoded.set_photo_resolution_preset(
+        std::any_cast<const PlatformResolutionPreset&>(
+            std::get<CustomEncodableValue>(encodable_photo_resolution_preset)));
+  }
+  auto& encodable_video_resolution_preset = list[2];
+  if (!encodable_video_resolution_preset.IsNull()) {
+    decoded.set_video_resolution_preset(
+        std::any_cast<const PlatformResolutionPreset&>(
+            std::get<CustomEncodableValue>(encodable_video_resolution_preset)));
+  }
+  auto& encodable_frames_per_second = list[3];
   if (!encodable_frames_per_second.IsNull()) {
     decoded.set_frames_per_second(
         std::get<int64_t>(encodable_frames_per_second));
   }
-  auto& encodable_video_bitrate = list[2];
+  auto& encodable_video_bitrate = list[4];
   if (!encodable_video_bitrate.IsNull()) {
     decoded.set_video_bitrate(std::get<int64_t>(encodable_video_bitrate));
   }
-  auto& encodable_audio_bitrate = list[3];
+  auto& encodable_audio_bitrate = list[5];
   if (!encodable_audio_bitrate.IsNull()) {
     decoded.set_audio_bitrate(std::get<int64_t>(encodable_audio_bitrate));
   }
@@ -449,6 +511,10 @@ bool PlatformMediaSettings::operator==(
     const PlatformMediaSettings& other) const {
   return PigeonInternalDeepEquals(resolution_preset_,
                                   other.resolution_preset_) &&
+         PigeonInternalDeepEquals(photo_resolution_preset_,
+                                  other.photo_resolution_preset_) &&
+         PigeonInternalDeepEquals(video_resolution_preset_,
+                                  other.video_resolution_preset_) &&
          PigeonInternalDeepEquals(frames_per_second_,
                                   other.frames_per_second_) &&
          PigeonInternalDeepEquals(video_bitrate_, other.video_bitrate_) &&
@@ -464,6 +530,8 @@ bool PlatformMediaSettings::operator!=(
 size_t PlatformMediaSettings::Hash() const {
   size_t result = 1;
   result = result * 31 + PigeonInternalDeepHash(resolution_preset_);
+  result = result * 31 + PigeonInternalDeepHash(photo_resolution_preset_);
+  result = result * 31 + PigeonInternalDeepHash(video_resolution_preset_);
   result = result * 31 + PigeonInternalDeepHash(frames_per_second_);
   result = result * 31 + PigeonInternalDeepHash(video_bitrate_);
   result = result * 31 + PigeonInternalDeepHash(audio_bitrate_);
@@ -475,6 +543,18 @@ std::ostream& operator<<(std::ostream& os, const PlatformMediaSettings& obj) {
   os << "PlatformMediaSettings(";
   os << "resolution_preset: ";
   os << PigeonInternalToString(obj.resolution_preset_);
+  os << ", photo_resolution_preset: ";
+  if (obj.photo_resolution_preset_) {
+    os << PigeonInternalToString(*obj.photo_resolution_preset_);
+  } else {
+    os << "null";
+  }
+  os << ", video_resolution_preset: ";
+  if (obj.video_resolution_preset_) {
+    os << PigeonInternalToString(*obj.video_resolution_preset_);
+  } else {
+    os << "null";
+  }
   os << ", frames_per_second: ";
   if (obj.frames_per_second_) {
     os << PigeonInternalToString(*obj.frames_per_second_);

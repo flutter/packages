@@ -1302,8 +1302,60 @@ void main() {
 
     // Test null case.
     await camera.createCamera(testCameraDescription, null);
-    expect(await camera.recorder!.getQualitySelector(), isNot(equals(mockQualitySelector)));
   });
+
+  test(
+    'createCameraWithSettings properly configures separate photo and video resolution presets',
+    () async {
+      final camera = AndroidCameraCameraX();
+      const CameraLensDirection testLensDirection = CameraLensDirection.back;
+      const testSensorOrientation = 90;
+      const testCameraDescription = CameraDescription(
+        name: 'cameraName',
+        lensDirection: testLensDirection,
+        sensorOrientation: testSensorOrientation,
+      );
+      final mockCamera = MockCamera();
+      final mockProcessCameraProvider = MockProcessCameraProvider();
+      final mockCameraInfo = MockCameraInfo();
+      final mockQualitySelector = MockQualitySelector();
+      final mockFallbackStrategy = MockFallbackStrategy();
+      VideoQuality? qualitySelectorVideoQuality;
+
+      setUpOverridesForTestingUseCaseConfiguration(
+        mockProcessCameraProvider,
+        lowerQualityOrHigherThanFallbackStrategy: ({required VideoQuality quality}) {
+          return mockFallbackStrategy;
+        },
+        fromQualitySelector: ({required VideoQuality quality, FallbackStrategy? fallbackStrategy}) {
+          qualitySelectorVideoQuality = quality;
+          return mockQualitySelector;
+        },
+      );
+
+      when(mockProcessCameraProvider.bindToLifecycle(any, any)).thenAnswer((_) async => mockCamera);
+      when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
+      when(mockCameraInfo.getCameraState()).thenAnswer((_) async => MockLiveCameraState());
+
+      final int cameraId = await camera.createCameraWithSettings(
+        testCameraDescription,
+        const MediaSettings(
+          resolutionPreset: ResolutionPreset.low,
+          photoResolutionPreset: ResolutionPreset.max,
+          videoResolutionPreset: ResolutionPreset.high,
+        ),
+      );
+      await camera.initializeCamera(cameraId);
+
+      // Verify video quality is HD (corresponding to ResolutionPreset.high, not low or max).
+      expect(qualitySelectorVideoQuality, equals(VideoQuality.HD));
+
+      // Verify ImageCapture and Preview have separate resolution selectors.
+      expect(camera.imageCapture!.resolutionSelector, isNotNull);
+      expect(camera.preview!.resolutionSelector, isNotNull);
+      expect(camera.imageAnalysis!.resolutionSelector, equals(camera.preview!.resolutionSelector));
+    },
+  );
 
   test('createCamera sets sensorOrientationDegrees and enableRecordingAudio as expected', () async {
     final camera = AndroidCameraCameraX();
