@@ -7,7 +7,7 @@ import 'dart:math' as math;
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 
-import '../common/span_metrics.dart';
+import '../common/span_state.dart';
 import 'tree_core.dart';
 import 'tree_delegate.dart';
 import 'tree_span.dart';
@@ -622,7 +622,7 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
   }
 }
 
-class _Span extends SpanMetrics<TreeRow> {
+class _Span extends SpanState<TreeRow> {
   _Span({super.onStateChanged});
 
   double get animationOffset => _animationOffset;

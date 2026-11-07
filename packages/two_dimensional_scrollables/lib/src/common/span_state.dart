@@ -10,18 +10,19 @@ import 'package:flutter/widgets.dart';
 
 import 'span.dart';
 
-/// A representation of a [Span] used during layout, hit testing, and painting.
+/// The mutable runtime state and layout metrics for a [Span] in a two
+/// dimensional viewport.
 ///
-/// Manages layout metrics, [GestureRecognizer]s, mouse tracking, interactive
+/// Manages layout offsets, [GestureRecognizer]s, mouse tracking, interactive
 /// [WidgetState]s, and [SpanDecoration] animations for a row or column.
 ///
 /// The type [T] represents the [Span] configuration managed by this instance.
 @internal
-class SpanMetrics<T extends Span>
+class SpanState<T extends Span>
     with Diagnosticable
     implements HitTestTarget, MouseTrackerAnnotation {
-  /// Creates a [SpanMetrics].
-  SpanMetrics({this.onStateChanged});
+  /// Creates a [SpanState].
+  SpanState({this.onStateChanged});
 
   /// Called when the interactive state or active decoration animation of this
   /// span changes and the viewport needs to repaint.
@@ -35,7 +36,7 @@ class SpanMetrics<T extends Span>
   double get extent => _extent;
   late double _extent;
 
-  /// The [Span] configuration for this metric.
+  /// The [Span] configuration for this state.
   T get configuration => _configuration!;
   T? _configuration;
 

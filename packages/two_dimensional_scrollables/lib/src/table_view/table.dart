@@ -9,7 +9,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 
-import '../common/span_metrics.dart';
+import '../common/span_state.dart';
 import 'table_cell.dart';
 import 'table_delegate.dart';
 import 'table_span.dart';
@@ -2371,7 +2371,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
   }
 }
 
-class _Span extends SpanMetrics<TableSpan> {
+class _Span extends SpanState<TableSpan> {
   _Span({super.onStateChanged});
 
   bool get isPinned => _isPinned;
