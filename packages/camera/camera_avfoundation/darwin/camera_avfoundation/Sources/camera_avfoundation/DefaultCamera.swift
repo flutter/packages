@@ -1478,7 +1478,12 @@ final class DefaultCamera: NSObject, Camera {
         let nextBuffer = CMSampleBufferGetImageBuffer(sampleBuffer)
         let nextSampleTime = CMTimeSubtract(sampleTime, recordingTimeOffset)
         if nextSampleTime > lastAppendedVideoSampleTime {
-          let _ = videoAdaptor?.append(nextBuffer!, withPresentationTime: nextSampleTime)
+          guard videoAdaptor?.append(nextBuffer!, withPresentationTime: nextSampleTime) == true
+          else {
+            reportErrorMessage(
+              videoWriter?.error?.localizedDescription ?? "Unable to write to video input")
+            return
+          }
           lastAppendedVideoSampleTime = nextSampleTime
         }
       } else {
