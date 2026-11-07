@@ -641,6 +641,10 @@ class AlertDialog extends StatelessWidget {
   ///
   /// If [ThemeData.useMaterial3] is true, the top padding separating the
   /// content from the title defaults to 16 pixels instead of 20 pixels.
+  ///
+  /// If [ThemeData.useMaterial3] is true and there is neither an [icon] nor a
+  /// [title] above the [content], the top padding defaults to 24 pixels
+  /// instead, matching the other three edges.
   final EdgeInsetsGeometry? contentPadding;
 
   /// Style for the text in the [content] of this [AlertDialog].
@@ -907,9 +911,15 @@ class AlertDialog extends StatelessWidget {
     }
 
     if (content != null) {
+      final bool isFirst = title == null && icon == null;
+      final double defaultTopPadding = switch ((isFirst, theme.useMaterial3)) {
+        (true, true) => 24.0, // The dialog's own inset.
+        (false, true) => 16.0, // M3 gap below a headline.
+        (_, false) => 20.0, // M2 keeps its previous default.
+      };
       final defaultContentPadding = EdgeInsets.only(
         left: 24.0,
-        top: theme.useMaterial3 ? 16.0 : 20.0,
+        top: defaultTopPadding,
         right: 24.0,
         bottom: 24.0,
       );
@@ -919,7 +929,7 @@ class AlertDialog extends StatelessWidget {
         padding: EdgeInsets.only(
           left: effectiveContentPadding.left * paddingScaleFactor,
           right: effectiveContentPadding.right * paddingScaleFactor,
-          top: title == null && icon == null
+          top: isFirst
               ? effectiveContentPadding.top * paddingScaleFactor
               : effectiveContentPadding.top,
           bottom: effectiveContentPadding.bottom,
