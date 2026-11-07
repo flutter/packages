@@ -173,7 +173,10 @@ targets: [
   ),
   .target(
     name: "test_plugin",
-    dependencies: ["test_plugin_objc_gen"]
+    dependencies: [
+      "test_plugin_objc_gen",
+      .product(name: "FlutterFramework", package: "FlutterFramework"),
+    ]
   ),
 ]
 ```

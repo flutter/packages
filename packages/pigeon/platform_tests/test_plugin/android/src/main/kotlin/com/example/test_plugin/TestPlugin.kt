@@ -12,6 +12,7 @@ import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.embedding.engine.dart.DartExecutor
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding
+import java.lang.ref.WeakReference
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlinx.coroutines.CompletableDeferred
@@ -2344,7 +2345,7 @@ class NativeInteropIntegrationTests(
 internal object SecondaryEngineCheckTracker {
   private val lock = Any()
   private var registrationReady = false
-  private var expectedReceiver: NativeInteropIntegrationTests? = null
+  private var expectedReceiver: WeakReference<NativeInteropIntegrationTests>? = null
   private var resultDeferred: CompletableDeferred<Boolean>? = null
 
   fun begin(): CompletableDeferred<Boolean> =
@@ -2356,7 +2357,7 @@ internal object SecondaryEngineCheckTracker {
 
   fun markRegistrationReady(expected: NativeInteropIntegrationTests?) {
     synchronized(lock) {
-      expectedReceiver = expected
+      expectedReceiver = expected?.let { WeakReference(it) }
       registrationReady = true
     }
   }
@@ -2368,7 +2369,7 @@ internal object SecondaryEngineCheckTracker {
     val receiverMatches: Boolean
     synchronized(lock) {
       deferred = resultDeferred
-      receiverMatches = expectedReceiver == null || expectedReceiver === receiver
+      receiverMatches = expectedReceiver.let { it == null || it.get() === receiver }
     }
     deferred?.complete(success && receiverMatches)
   }

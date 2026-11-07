@@ -1105,6 +1105,63 @@ return list.lastOrNull()?.api''');
           );
           indent.newln();
         }
+        // These are instance members rather than private companion members so
+        // the public overloads above don't need synthetic accessors.
+        indent.writeScoped(
+          'private fun registerWithKey(api: ${api.name}, engineKey: Long, name: String) {',
+          '}',
+          () {
+            indent.writeln('val list = $instances.getOrPut(name) { mutableListOf() }');
+            // Reuse the existing wrapper so Dart handles that already resolved
+            // it keep working after the instance moves back to the top.
+            indent.writeln(
+              'val index = list.indexOfFirst { it.api === api && it.engineKey == engineKey }',
+            );
+            indent.writeScoped('if (index >= 0) {', '}', () {
+              indent.writeln('list.add(list.removeAt(index))');
+            }, addTrailingNewline: false);
+            indent.addScoped(' else {', '}', () {
+              indent.writeln('val wrapper = $registrarName(engineKey)');
+              indent.writeln('wrapper.api = api');
+              indent.writeln('list.add(wrapper)');
+            });
+          },
+        );
+        indent.newln();
+        indent.writeScoped(
+          'private fun unregisterWithKey(api: ${api.name}, engineKey: Long, name: String) {',
+          '}',
+          () {
+            indent.writeln('val list = $instances[name] ?: return');
+            // If no entry matches the key, e.g. because the engine key
+            // could not be computed the same way, fall back to identity, but
+            // only when a single engine holds [api] so that other engines'
+            // registrations of a shared instance are never removed.
+            indent.format('''
+val removeKey =
+\tif (list.any { it.api === api && it.engineKey == engineKey }) {
+\t\tengineKey
+\t} else {
+\t\tlist.filter { it.api === api }.map { it.engineKey }.distinct().singleOrNull() ?: return
+\t}''');
+            indent.writeln('val iterator = list.iterator()');
+            indent.writeScoped('while (iterator.hasNext()) {', '}', () {
+              indent.writeln('val entry = iterator.next()');
+              indent.writeScoped(
+                'if (entry.api === api && entry.engineKey == removeKey) {',
+                '}',
+                () {
+                  indent.writeln('entry.api = null');
+                  indent.writeln('iterator.remove()');
+                },
+              );
+            });
+            indent.writeScoped('if (list.isEmpty()) {', '}', () {
+              indent.writeln('$instances.remove(name)');
+            });
+          },
+        );
+        indent.newln();
         indent.writeScoped('companion object {', '}', () {
           _writeKDoc(indent, '''
 Returns the instance registered under [name] for the engine identified by
@@ -1139,61 +1196,6 @@ This is called by the generated Dart code and is not intended for direct use.'''
           indent.writeScoped('fun pigeonEngineKeyOf(instance: $registrarName): Long {', '}', () {
             indent.writeln('return instance.engineKey');
           });
-          indent.newln();
-          indent.writeScoped(
-            'private fun registerWithKey(api: ${api.name}, engineKey: Long, name: String) {',
-            '}',
-            () {
-              indent.writeln('val list = $instances.getOrPut(name) { mutableListOf() }');
-              // Reuse the existing wrapper so Dart handles that already resolved
-              // it keep working after the instance moves back to the top.
-              indent.writeln(
-                'val index = list.indexOfFirst { it.api === api && it.engineKey == engineKey }',
-              );
-              indent.writeScoped('if (index >= 0) {', '}', () {
-                indent.writeln('list.add(list.removeAt(index))');
-              }, addTrailingNewline: false);
-              indent.addScoped(' else {', '}', () {
-                indent.writeln('val wrapper = $registrarName(engineKey)');
-                indent.writeln('wrapper.api = api');
-                indent.writeln('list.add(wrapper)');
-              });
-            },
-          );
-          indent.newln();
-          indent.writeScoped(
-            'private fun unregisterWithKey(api: ${api.name}, engineKey: Long, name: String) {',
-            '}',
-            () {
-              indent.writeln('val list = $instances[name] ?: return');
-              // If no entry matches the key, e.g. because the engine key
-              // could not be computed the same way, fall back to identity, but
-              // only when a single engine holds [api] so that other engines'
-              // registrations of a shared instance are never removed.
-              indent.format('''
-val removeKey =
-\tif (list.any { it.api === api && it.engineKey == engineKey }) {
-\t\tengineKey
-\t} else {
-\t\tlist.filter { it.api === api }.map { it.engineKey }.distinct().singleOrNull() ?: return
-\t}''');
-              indent.writeln('val iterator = list.iterator()');
-              indent.writeScoped('while (iterator.hasNext()) {', '}', () {
-                indent.writeln('val entry = iterator.next()');
-                indent.writeScoped(
-                  'if (entry.api === api && entry.engineKey == removeKey) {',
-                  '}',
-                  () {
-                    indent.writeln('entry.api = null');
-                    indent.writeln('iterator.remove()');
-                  },
-                );
-              });
-              indent.writeScoped('if (list.isEmpty()) {', '}', () {
-                indent.writeln('$instances.remove(name)');
-              });
-            },
-          );
         });
         indent.newln();
 

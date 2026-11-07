@@ -2100,6 +2100,47 @@ private constructor(private val engineKey: Long) : NativeInteropHostIntegrationC
     unregisterWithKey(api, NativeInteropTestsPigeonEngineKeys.keyOf(engine), name)
   }
 
+  private fun registerWithKey(
+      api: NativeInteropHostIntegrationCoreApi,
+      engineKey: Long,
+      name: String
+  ) {
+    val list = NativeInteropHostIntegrationCoreApiInstances.getOrPut(name) { mutableListOf() }
+    val index = list.indexOfFirst { it.api === api && it.engineKey == engineKey }
+    if (index >= 0) {
+      list.add(list.removeAt(index))
+    } else {
+      val wrapper = NativeInteropHostIntegrationCoreApiRegistrar(engineKey)
+      wrapper.api = api
+      list.add(wrapper)
+    }
+  }
+
+  private fun unregisterWithKey(
+      api: NativeInteropHostIntegrationCoreApi,
+      engineKey: Long,
+      name: String
+  ) {
+    val list = NativeInteropHostIntegrationCoreApiInstances[name] ?: return
+    val removeKey =
+        if (list.any { it.api === api && it.engineKey == engineKey }) {
+          engineKey
+        } else {
+          list.filter { it.api === api }.map { it.engineKey }.distinct().singleOrNull() ?: return
+        }
+    val iterator = list.iterator()
+    while (iterator.hasNext()) {
+      val entry = iterator.next()
+      if (entry.api === api && entry.engineKey == removeKey) {
+        entry.api = null
+        iterator.remove()
+      }
+    }
+    if (list.isEmpty()) {
+      NativeInteropHostIntegrationCoreApiInstances.remove(name)
+    }
+  }
+
   companion object {
     /**
      * Returns the instance registered under [name] for the engine identified by [engineId].
@@ -2138,47 +2179,6 @@ private constructor(private val engineKey: Long) : NativeInteropHostIntegrationC
     @Keep
     fun pigeonEngineKeyOf(instance: NativeInteropHostIntegrationCoreApiRegistrar): Long {
       return instance.engineKey
-    }
-
-    private fun registerWithKey(
-        api: NativeInteropHostIntegrationCoreApi,
-        engineKey: Long,
-        name: String
-    ) {
-      val list = NativeInteropHostIntegrationCoreApiInstances.getOrPut(name) { mutableListOf() }
-      val index = list.indexOfFirst { it.api === api && it.engineKey == engineKey }
-      if (index >= 0) {
-        list.add(list.removeAt(index))
-      } else {
-        val wrapper = NativeInteropHostIntegrationCoreApiRegistrar(engineKey)
-        wrapper.api = api
-        list.add(wrapper)
-      }
-    }
-
-    private fun unregisterWithKey(
-        api: NativeInteropHostIntegrationCoreApi,
-        engineKey: Long,
-        name: String
-    ) {
-      val list = NativeInteropHostIntegrationCoreApiInstances[name] ?: return
-      val removeKey =
-          if (list.any { it.api === api && it.engineKey == engineKey }) {
-            engineKey
-          } else {
-            list.filter { it.api === api }.map { it.engineKey }.distinct().singleOrNull() ?: return
-          }
-      val iterator = list.iterator()
-      while (iterator.hasNext()) {
-        val entry = iterator.next()
-        if (entry.api === api && entry.engineKey == removeKey) {
-          entry.api = null
-          iterator.remove()
-        }
-      }
-      if (list.isEmpty()) {
-        NativeInteropHostIntegrationCoreApiInstances.remove(name)
-      }
     }
   }
 
@@ -5862,6 +5862,47 @@ class NativeInteropReservedNamesHostApiRegistrar private constructor(private val
     unregisterWithKey(api, NativeInteropTestsPigeonEngineKeys.keyOf(engine), name)
   }
 
+  private fun registerWithKey(
+      api: NativeInteropReservedNamesHostApi,
+      engineKey: Long,
+      name: String
+  ) {
+    val list = NativeInteropReservedNamesHostApiInstances.getOrPut(name) { mutableListOf() }
+    val index = list.indexOfFirst { it.api === api && it.engineKey == engineKey }
+    if (index >= 0) {
+      list.add(list.removeAt(index))
+    } else {
+      val wrapper = NativeInteropReservedNamesHostApiRegistrar(engineKey)
+      wrapper.api = api
+      list.add(wrapper)
+    }
+  }
+
+  private fun unregisterWithKey(
+      api: NativeInteropReservedNamesHostApi,
+      engineKey: Long,
+      name: String
+  ) {
+    val list = NativeInteropReservedNamesHostApiInstances[name] ?: return
+    val removeKey =
+        if (list.any { it.api === api && it.engineKey == engineKey }) {
+          engineKey
+        } else {
+          list.filter { it.api === api }.map { it.engineKey }.distinct().singleOrNull() ?: return
+        }
+    val iterator = list.iterator()
+    while (iterator.hasNext()) {
+      val entry = iterator.next()
+      if (entry.api === api && entry.engineKey == removeKey) {
+        entry.api = null
+        iterator.remove()
+      }
+    }
+    if (list.isEmpty()) {
+      NativeInteropReservedNamesHostApiInstances.remove(name)
+    }
+  }
+
   companion object {
     /**
      * Returns the instance registered under [name] for the engine identified by [engineId].
@@ -5900,47 +5941,6 @@ class NativeInteropReservedNamesHostApiRegistrar private constructor(private val
     @Keep
     fun pigeonEngineKeyOf(instance: NativeInteropReservedNamesHostApiRegistrar): Long {
       return instance.engineKey
-    }
-
-    private fun registerWithKey(
-        api: NativeInteropReservedNamesHostApi,
-        engineKey: Long,
-        name: String
-    ) {
-      val list = NativeInteropReservedNamesHostApiInstances.getOrPut(name) { mutableListOf() }
-      val index = list.indexOfFirst { it.api === api && it.engineKey == engineKey }
-      if (index >= 0) {
-        list.add(list.removeAt(index))
-      } else {
-        val wrapper = NativeInteropReservedNamesHostApiRegistrar(engineKey)
-        wrapper.api = api
-        list.add(wrapper)
-      }
-    }
-
-    private fun unregisterWithKey(
-        api: NativeInteropReservedNamesHostApi,
-        engineKey: Long,
-        name: String
-    ) {
-      val list = NativeInteropReservedNamesHostApiInstances[name] ?: return
-      val removeKey =
-          if (list.any { it.api === api && it.engineKey == engineKey }) {
-            engineKey
-          } else {
-            list.filter { it.api === api }.map { it.engineKey }.distinct().singleOrNull() ?: return
-          }
-      val iterator = list.iterator()
-      while (iterator.hasNext()) {
-        val entry = iterator.next()
-        if (entry.api === api && entry.engineKey == removeKey) {
-          entry.api = null
-          iterator.remove()
-        }
-      }
-      if (list.isEmpty()) {
-        NativeInteropReservedNamesHostApiInstances.remove(name)
-      }
     }
   }
 
