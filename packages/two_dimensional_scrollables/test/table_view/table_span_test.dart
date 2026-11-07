@@ -1865,16 +1865,14 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // Tap in the unpinned column (x = 150, y = 50).
-      await tester.tapAt(const Offset(150.0, 50.0));
+      const tapPosition = Offset(150.0, 50.0);
+      await tester.tapAt(tapPosition);
       await tester.pump(); // Start of ripple (t = 0ms).
       await tester.pump(const Duration(milliseconds: 100)); // Halfway (t = 100ms).
 
-      // Both the unpinned cell section and the pinned column section should
-      // paint the ripple circle with the exact same center (150, 50) and radius
-      // bounded by the actual visible row width (200.0) rather than viewport width (800.0).
-      // Distance from (150, 50) to (0, 0) is sqrt(150^2 + 50^2) = 158.113883;
-      // at t = 0.5, radius is ~79.0569415.
+      // The ripple is bounded by the visible row rect (200x100), so its maximum
+      // radius is the distance from tapPosition to the farthest corner (0, 0).
+      final double expectedRadius = tapPosition.distance / 2;
       expect(
         find.byType(TableViewport),
         paints
@@ -1882,9 +1880,9 @@ void main() {
             rect: const Rect.fromLTRB(100.0, 0.0, 200.0, 100.0),
             color: const Color(0xFFFFFFFF),
           )
-          ..circle(x: 150.0, y: 50.0, radius: 79.05694150420949)
+          ..circle(x: tapPosition.dx, y: tapPosition.dy, radius: expectedRadius)
           ..rect(rect: const Rect.fromLTRB(0.0, 0.0, 100.0, 100.0), color: const Color(0xFFFFFFFF))
-          ..circle(x: 150.0, y: 50.0, radius: 79.05694150420949),
+          ..circle(x: tapPosition.dx, y: tapPosition.dy, radius: expectedRadius),
       );
 
       await tester.pumpAndSettle();
