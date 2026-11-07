@@ -613,6 +613,12 @@ public final class ImagePickerPlugin: NSObject, FlutterPlugin, ImagePickerApi,
     let savedPath = ImagePickerPhotoAssetUtil.saveImageWithOriginalImageData(
       originalImageData, image: image, maxWidth: maxWidth, maxHeight: maxHeight,
       imageQuality: imageQuality)
+    guard let savedPath else {
+      sendCallResult(
+        with: PigeonError(
+          code: "invalid_image", message: "Could not save the image.", details: nil))
+      return
+    }
     sendCallResult(withSavedPathList: [savedPath])
   }
 
@@ -621,6 +627,12 @@ public final class ImagePickerPlugin: NSObject, FlutterPlugin, ImagePickerApi,
   ) {
     let savedPath = ImagePickerPhotoAssetUtil.saveImage(
       withPickerInfo: info, image: image, imageQuality: imageQuality)
+    guard let savedPath else {
+      sendCallResult(
+        with: PigeonError(
+          code: "invalid_image", message: "Could not save the image.", details: nil))
+      return
+    }
     sendCallResult(withSavedPathList: [savedPath])
   }
 
