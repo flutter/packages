@@ -12,11 +12,7 @@ import UniformTypeIdentifiers
 
 @testable import image_picker_ios
 
-#if canImport(image_picker_ios_objc)
-  @testable import image_picker_ios_objc
-#endif
-
-final class StubViewProvider: NSObject, FIPViewProvider {
+final class StubViewProvider: ViewProvider {
   var viewController: UIViewController?
 
   init(viewController: UIViewController? = nil) {
@@ -24,8 +20,9 @@ final class StubViewProvider: NSObject, FIPViewProvider {
   }
 }
 
-/// Minimal `FlutterPluginRegistrar` so tests can exercise `FIPDefaultViewProvider`.
+/// Minimal `FlutterPluginRegistrar` so tests can exercise `DefaultViewProvider`.
 final class TestFlutterPluginRegistrar: NSObject, FlutterPluginRegistrar {
+  var engineIdentifier: Int64 { 0 }
   var viewController: UIViewController?
 
   func publish(_ value: NSObject) {}
@@ -86,7 +83,7 @@ final class RecordingViewController: UIViewController {
   }
 }
 
-final class FakeCameraAvailability: NSObject, CameraAvailabilityChecking {
+final class FakeCameraAvailability: CameraAvailabilityChecking {
   var sourceTypeAvailable = false
   var cameraDeviceAvailable = false
 
@@ -99,7 +96,7 @@ final class FakeCameraAvailability: NSObject, CameraAvailabilityChecking {
   }
 }
 
-final class FakeCameraPermissionChecker: NSObject, CameraPermissionChecking {
+final class FakeCameraPermissionChecker: CameraPermissionChecking {
   var status: AVAuthorizationStatus = .notDetermined
   var requestAccessCallCount = 0
   /// When false, `requestAccess` stores the handler without invoking it.
@@ -122,7 +119,7 @@ final class FakeCameraPermissionChecker: NSObject, CameraPermissionChecking {
   }
 }
 
-final class FakePhotoLibraryPermissionChecker: NSObject, PhotoLibraryPermissionChecking {
+final class FakePhotoLibraryPermissionChecker: PhotoLibraryPermissionChecking {
   var status: PHAuthorizationStatus = .notDetermined
   var authorizationStatusCallCount = 0
   var requestAuthorizationCallCount = 0
@@ -141,23 +138,21 @@ final class FakePhotoLibraryPermissionChecker: NSObject, PhotoLibraryPermissionC
 }
 
 /// A `PickerItem` stand-in that does not require constructing a `PHPickerResult`.
-final class FakePickerItem: NSObject, PickerItem {
+struct FakePickerItem: PickerItem {
   let itemProvider: NSItemProvider
   let assetIdentifier: String?
-
-  init(itemProvider: NSItemProvider, assetIdentifier: String?) {
-    self.itemProvider = itemProvider
-    self.assetIdentifier = assetIdentifier
-  }
 }
 
-final class RecordingPHPickerCreator: NSObject, PHPickerCreating {
+final class RecordingPHPickerCreator: PHPickerCreating {
   private(set) var lastConfiguration: PHPickerConfiguration?
-  var picker = PHPickerViewController(configuration: PHPickerConfiguration())
+  var picker: PHPickerViewController?
 
   func makePicker(configuration: PHPickerConfiguration) -> PHPickerViewController {
     lastConfiguration = configuration
-    return picker
+    if let picker {
+      return picker
+    }
+    return PHPickerViewController(configuration: configuration)
   }
 }
 
