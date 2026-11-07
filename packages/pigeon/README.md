@@ -110,14 +110,15 @@ Pigeon supports two distinct models for communication between Dart and native co
 
 > [!WARNING]
 > Native Interop associates each registration with the `FlutterEngine` that made it, but in apps
-> that run multiple engines, routing is only exact when the engine identifier is available to
-> native code (always for Kotlin `register(api, flutterEngine)`; for plugin bindings and registrars,
-> only on Flutter versions that expose it). See
+> that run multiple engines, routing on an engine's root isolate is only exact when the engine
+> identifier is available to native code (always for Kotlin `register(api, flutterEngine)`; for
+> plugin bindings and registrars, only on Flutter versions that expose it). See
 > [Multi-Engine Routing](./native_interop_guide.md#multi-engine-routing) and
 > [flutter/flutter#195877](https://github.com/flutter/flutter/issues/195877). Known limitations:
 > - Until engine identifiers are available to plugins on stable Flutter, lookups may resolve another
->   engine's registration when engines are created back-to-back before their Dart code starts, or
->   from isolates created with `Isolate.spawn`.
+>   engine's registration when engines are created back-to-back before their Dart code starts.
+> - Background isolates (`Isolate.spawn` / `Isolate.run`) do not have a `PlatformDispatcher.engineId`,
+>   so in multi-engine apps their lookups may resolve another engine's registration.
 > - APIs that hold engine-specific state (such as an Android `Activity`, a `TextureRegistry`, or a
 >   `UIViewController`) may act on the wrong engine; use a distinct `messageChannelSuffix` per
 >   engine, or platform channels / `@ProxyApi`, for those APIs.

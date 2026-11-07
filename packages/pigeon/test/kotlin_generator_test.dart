@@ -2195,11 +2195,11 @@ void main() {
         'fun register(api: HostApi, engine: FlutterEngine, name: String = defaultInstanceName) {',
         'fun unregister(api: HostApi, binding: FlutterPlugin.FlutterPluginBinding, name: String = defaultInstanceName) {',
         'fun unregister(api: HostApi, engine: FlutterEngine, name: String = defaultInstanceName) {',
+        'private fun registerWithKey(',
+        'private fun unregisterWithKey(',
         'companion object {',
         'fun pigeonResolveInstance(engineId: Long, affinityKey: Long, name: String = defaultInstanceName): HostApiRegistrar? {',
         'fun pigeonEngineKeyOf(instance: HostApiRegistrar): Long {',
-        'private fun registerWithKey(',
-        'private fun unregisterWithKey(',
         'override fun doSomething()',
       ]);
       // Only the Dart-facing internal helpers are static.

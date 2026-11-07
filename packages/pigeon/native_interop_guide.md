@@ -46,7 +46,7 @@ Using Native Interop in pigeon follows the standard pigeon workflow, with a few 
 To use Native Interop, your development environment and the corresponding external tools must be configured:
 
 ### Android (JNI / JNIgen)
-- **Android SDK**: Must be installed and configured in your path. JNIgen uses the JDK bundled with Flutter by default, so a separate JDK installation is not required.
+- **Android SDK**: Must be installed with `ANDROID_HOME` (or `ANDROID_SDK_ROOT`) set in your environment; otherwise Pigeon skips `jnigen`. JNIgen uses the JDK bundled with Flutter by default, so a separate JDK installation is not required.
 - **`jnigen` 1.0.0 or later**: Earlier versions of JNIgen cannot parse metadata from newer Kotlin compilers and fail with `IllegalArgumentException: Provided Metadata instance has version ... while maximum supported version is ...`. `jnigen` 1.0.0 supports Kotlin metadata up to 2.4.
 
 ### iOS/macOS (FFI / FFIgen)
@@ -194,8 +194,19 @@ When implementing Native Interop host APIs directly in an application target rat
   ```
   *(Note: If iOS and macOS use separate Pigeon generation outputs or you only target one platform, unifying module names between platforms is not required.)*
 
+* **Native Registration in iOS (`AppDelegate.swift`)**:
+  Register the host implementation in `AppDelegate.swift` within `didInitializeImplicitFlutterEngine`:
+  ```swift
+  GeneratedPluginRegistrant.register(with: engineBridge.pluginRegistry)
+
+  let api = PigeonApiImplementation()
+  if let registrar = engineBridge.pluginRegistry.registrar(forPlugin: "MyApi") {
+    MyApiSetup.register(api: api, registrar: registrar)
+  }
+  ```
+
 * **Native Registration in macOS (`MainFlutterWindow.swift`)**:
-  While iOS registers the host implementation in `AppDelegate.swift` within `didInitializeImplicitFlutterEngine` (using `engineBridge.pluginRegistry.registrar(forPlugin:)`), macOS applications should register it in `MainFlutterWindow.swift` within `awakeFromNib()`:
+  Register the host implementation in `MainFlutterWindow.swift` within `awakeFromNib()`:
   ```swift
   RegisterGeneratedPlugins(registry: flutterViewController)
 
@@ -203,7 +214,7 @@ When implementing Native Interop host APIs directly in an application target rat
   MyApiSetup.register(
     api: api, registrar: flutterViewController.registrar(forPlugin: "MyApi"))
   ```
-  Calling `register(api:registrar:)` in native code also prevents the Xcode linker (`-dead_strip`) from stripping the setup class from the compiled binary.
+  Calling `register(api:registrar:)` in native code on iOS and macOS also prevents the Xcode linker (`-dead_strip`) from stripping the setup class from the compiled binary.
 
 * **Native Registration in Android Apps (`MainActivity.kt`)**:
   Register the host implementation against the engine in `configureFlutterEngine`:
@@ -286,13 +297,13 @@ Native Interop looks up instances directly in process memory rather than through
 2. A registration for the engine this isolate first resolved a handle from.
 3. The most recent registration.
 
-**Routing is exact** when the engine identifier is available to native code:
+**Routing is exact** on an engine's root isolate when the engine identifier is available to native code:
 - Kotlin `register(api, flutterEngine)`, always.
 - Kotlin `register(api, binding)` and Swift `register(api:registrar:)`, on Flutter versions whose plugin binding / registrar exposes `engineId` / `engineIdentifier`. This is detected at runtime; Pigeon does not use deprecated APIs to obtain it.
 
 **Otherwise routing is best-effort.** It is correct when each engine's Dart code resolves its first handle early in startup, before any other engine registers. Resolve it, for example, at the start of `main()` or during app initialization. On Android, don't resolve handles in your plugin's `registerWith`, because JNI isn't initialized yet (see [5.5](#55-startup-crash-on-android-vmservicedisappearedexception--jni-is-not-initialized)). Later lazy lookups in the same isolate reuse that first engine. It may pick another engine's registration when:
 - Engines are created back-to-back before their Dart code starts.
-- Lookups come from background isolates created with `Isolate.spawn`.
+- Lookups come from background isolates (`Isolate.spawn` / `Isolate.run`), which do not have a `PlatformDispatcher.engineId`.
 
 Native `@FlutterApi` lookups by engine (`getInstance(binding)` / `getInstance(flutterEngine)` / `getInstance(registrar:)`) find that engine's Dart registration when the registering isolate either has an engine identifier native code can match, or has resolved a `@HostApi` handle from that engine that is defined in the same Pigeon input file. The `@FlutterApi` can be registered before or after that `@HostApi` handle is resolved. A Pigeon file that defines only `@FlutterApi`s can't learn its engine this way, so without an exact engine identifier its lookups fall back to the most recent registration.
 
