@@ -77,8 +77,6 @@ flutter pub add jni
 flutter pub add dev:jnigen dev:logging dev:path
 ```
 
-*Note: Ensure the resolved `objective_c` version in `pubspec.yaml` matches the version expected by your `ffigen` version (e.g., `ffigen: ^22.0.0` generates bindings that require `objective_c: ^9.6.0`).*
-
 ### Step 2: Configure Pigeon Options
 
 Enable Native Interop for your target platforms by setting the configuration options in your Pigeon file:
@@ -133,12 +131,12 @@ When Native Interop options (`useJni` or `useFfi`) are enabled, Pigeon automatic
 
 - **Android (JNI)**: When `kotlinOptions.useJni` is enabled:
   1. Generates the JNI-compatible Kotlin bridge and the `<input_name>_jnigen_config.dart` script in `tool/pigeon/`.
-  2. Runs `jnigen` via the config script to parse the Kotlin bridge and produce Dart JNI bindings.
-  3. Generates the final pigeon Dart output that wraps and imports those JNI bindings.
+  2. Runs `jnigen` via the config script to parse the Kotlin bridge and produce Dart JNI bindings (`*.g.jni.dart`).
+  3. Generates the web-safe main Pigeon Dart output (`*.g.dart`) and the conditionally imported native interop companion file (`*.native_interop.g.dart`) that wraps and imports those JNI bindings.
 - **iOS/macOS (FFI)**: When `swiftOptions.useFfi` is enabled:
   1. Generates the Objective-C compatible Swift bridge and the `<input_name>_ffigen_config.dart` script in `tool/pigeon/`.
-  2. Runs `ffigen` via the config script to parse the Objective-C bridge and produce Dart FFI bindings.
-  3. Generates the final pigeon Dart output that wraps and imports those FFI bindings.
+  2. Runs `ffigen` via the config script to parse the Objective-C bridge and produce Dart FFI bindings (`*.g.ffi.dart`).
+  3. Generates the web-safe main Pigeon Dart output (`*.g.dart`) and the conditionally imported native interop companion file (`*.native_interop.g.dart`) that wraps and imports those FFI bindings.
 
 ### Step 4: iOS/macOS Build System Configuration (FFI)
 
@@ -157,11 +155,14 @@ s.source_files = 'Sources/**/*.{swift,m,h}'
 This allows CocoaPods to automatically compile the generated Objective-C bridging files into the framework.
 
 #### Swift Package Manager (SwiftPM) Configuration
-Because Swift and Objective-C files cannot reside within the same SwiftPM target, you must define two separate targets in your `Package.swift` file:
+**Only if a `.m` file is generated** in `<swift_output_dir>_objc_gen`, you must configure a separate Objective-C target in your `Package.swift` file. Because Swift and Objective-C files cannot reside within the same SwiftPM target, define two separate targets:
 1. An Objective-C target for the generated bridge files (e.g., `my_plugin_objc_gen`).
 2. The main Swift target that depends on the Objective-C target.
 
-Example configuration:
+> **Important:** If your Pigeon schema only uses synchronous `@HostApi()` methods (and does not generate a `.m` file in `<swift_output_dir>_objc_gen`), **do not** add the `<plugin_name>_objc_gen` target to `Package.swift`. SwiftPM requires every `.target` to contain at least one compilable source file (`.m`, `.c`, or `.swift`). Declaring a `<plugin_name>_objc_gen` target when the directory only contains a `.h` header (or temporary `.o` file) will cause Xcode builds to fail with:
+> `Build input file cannot be found: '.../<plugin_name>_objc_gen.o'`
+
+Example configuration (when `<plugin_name>_objc_gen` contains a generated `.m` file):
 <?code-excerpt "platform_tests/test_plugin/darwin/test_plugin/Package.swift (swiftpm-targets)"?>
 ```swift
 targets: [
@@ -204,7 +205,7 @@ When implementing Native Interop host APIs directly in an application target rat
 
 ## 5. Troubleshooting Automated Generation
 
-If `dart run pigeon` encounters errors while running `jnigen` or `ffigen`, review the following troubleshooting steps:
+If `dart run pigeon` or your platform build encounters errors, review the following troubleshooting steps:
 
 ### 5.1 Unupdated Native Implementation or Uncompiled Code (JNI)
 
@@ -255,6 +256,20 @@ F DartJNI : JNI is not initialized. Are you trying to invoke a Java API from Dar
 ```
 - **Cause**: Your plugin's `registerWith()` method (invoked by Flutter's `_PluginRegistrant.register()` before `main()`) constructed your Dart plugin class, and its constructor eagerly called `<MyApi>.createWithNativeInteropApi()` before `JniPlugin` initialized `DartJNI`.
 - **Solution**: Initialize `<MyApi>.createWithNativeInteropApi()` lazily using `late final` rather than eagerly in the constructor initializer list (see [Section 4 of the Migration Guide](./native_interop_migration_guide.md#4-dart-client-adaptation)).
+
+### 5.6 Xcode Error: `Build input file cannot be found: '.../<plugin_name>_objc_gen.o'`
+
+If an iOS or macOS SwiftPM build fails because `<plugin_name>_objc_gen.o` cannot be found:
+- **Cause**: `Package.swift` defines a `<plugin_name>_objc_gen` target, but `ffigen` did not generate a `.m` implementation file in `Sources/<plugin_name>_objc_gen/` (because the Pigeon schema has no async callbacks, closures, or `@FlutterApi` methods requiring Objective-C trampolines). Without a `.m` source file, SwiftPM does not produce an object file for the target. (Note: any `.o` file produced inside `Sources/<plugin_name>_objc_gen/` during `ffigen` execution is a temporary `swiftc` artifact and must not be committed or used.)
+- **Solution**: Remove the `<plugin_name>_objc_gen` target and its dependency entry from `Package.swift`.
+
+### 5.7 `ClassNotFoundException` or `NoSuchMethodError` in Android Release Builds (JNI)
+
+If native interop calls work in debug builds but fail in release builds with `java.lang.ClassNotFoundException` or `java.lang.NoSuchMethodError`:
+- **Cause**: R8 removed or renamed a class or member that JNI looks up by name.
+- **Solution**:
+  - If the error names a class generated by Pigeon, regenerate your Pigeon output with Pigeon 29.0.7 or later, which adds `@Keep` to every generated class that JNI reaches.
+  - To see what R8 removed or renamed, check `build/app/outputs/mapping/release/mapping.txt` in the application directory.
 
 ---
 

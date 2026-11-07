@@ -1,3 +1,0 @@
-changelog: |
-  - Added `fontFeatures` and `fontVariations` parameters to `TextTheme.apply()`.
-version: minor

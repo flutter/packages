@@ -1,5 +1,14 @@
 ## NEXT
 
+* Updates README to reflect that the latest version of `image_picker_ios`
+  requires iOS 15.
+  * Applications built with older versions of Flutter will continue to use
+    compatible versions of the platform implementation.
+
+## 1.2.4
+
+* Documents that `retrieveLostData` is a one-time operation that clears the
+  stored lost data once it is returned.
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 
 ## 1.2.3
