@@ -1,3 +1,7 @@
+## 1.3.0
+
+* Adds support for SVG filters (`feGaussianBlur`, `feOffset`, `feMerge`, and `feMergeNode`).
+
 ## 1.2.6
 
 * Fixes `<text>` not being drawn when the ambient text direction is RTL.
