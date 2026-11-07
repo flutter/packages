@@ -189,6 +189,8 @@ class _CarouselAutoPlayExampleState extends State<CarouselAutoPlayExample> {
                 setState(() {
                   _infinite = value;
                   if (!_infinite &&
+                      _controller.hasClients &&
+                      _controller.position.hasContentDimensions &&
                       _controller.offset >=
                           _controller.position.maxScrollExtent) {
                     _targetIndex = 0;
