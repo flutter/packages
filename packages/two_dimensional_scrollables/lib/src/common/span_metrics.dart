@@ -16,11 +16,12 @@ import 'span.dart';
 /// [WidgetState]s, and [SpanDecoration] animations for a row or column.
 ///
 /// The type [T] represents the [Span] configuration managed by this instance.
-class RenderSpan<T extends Span>
+@internal
+class SpanMetrics<T extends Span>
     with Diagnosticable
     implements HitTestTarget, MouseTrackerAnnotation {
-  /// Creates a [RenderSpan].
-  RenderSpan({this.onStateChanged});
+  /// Creates a [SpanMetrics].
+  SpanMetrics({this.onStateChanged});
 
   /// Called when the interactive state or active decoration animation of this
   /// span changes and the viewport needs to repaint.
@@ -344,4 +345,14 @@ class RenderSpan<T extends Span>
 
   @override
   bool get validForMouseTracker => true;
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DoubleProperty('leadingOffset', _leadingOffset));
+    properties.add(DoubleProperty('extent', _extent));
+    properties.add(DiagnosticsProperty<T>('configuration', _configuration));
+    properties.add(IterableProperty<WidgetState>('states', _states));
+  }
 }
+

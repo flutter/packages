@@ -7,7 +7,7 @@ import 'dart:math' as math;
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 
-import '../common/render_span.dart';
+import '../common/span_metrics.dart';
 import 'tree_core.dart';
 import 'tree_delegate.dart';
 import 'tree_span.dart';
@@ -622,7 +622,7 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
   }
 }
 
-class _Span extends RenderSpan<TreeRow> {
+class _Span extends SpanMetrics<TreeRow> {
   _Span({super.onStateChanged});
 
   double get animationOffset => _animationOffset;
@@ -637,5 +637,11 @@ class _Span extends RenderSpan<TreeRow> {
   }) {
     _animationOffset = animationOffset;
     super.update(configuration: configuration, leadingOffset: leadingOffset, extent: extent);
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DoubleProperty('animationOffset', _animationOffset));
   }
 }
