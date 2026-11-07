@@ -69,6 +69,9 @@ const Set<String> _unannotatedFileThirdPartyDirectories = <String>{
 // When adding license regexes here, include the copyright info to ensure that
 // any new additions are flagged for added scrutiny in review.
 final List<RegExp> _thirdPartyLicenseBlockRegexes = <RegExp>[
+  // packages/camera/camera_linux/src/third_party/stb (public domain / MIT,
+  // Sean Barrett).
+  RegExp(r'^/\* stb_image_write - v[0-9.]+ - public domain - http://nothings.org/stb$', multiLine: true),
   // Third-party code used in google_maps_flutter_web.
   RegExp(r'^// The MIT License [^C]+ Copyright \(c\) 2008 Krasimir Tsonev', multiLine: true),
   // packages/third_party/mustache_template.
