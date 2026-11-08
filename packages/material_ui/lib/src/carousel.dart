@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+/// @docImport 'dart:async';
 /// @docImport 'color_scheme.dart';
 library;
 
@@ -136,12 +137,18 @@ import 'theme.dart';
 ///
 /// </callout-box>
 ///
-/// {@tool dartpad}
+/// <callout-box>
+///
 /// This example shows how to create an auto-playing carousel by using a [Timer]
 /// to periodically animate the [CarouselController].
 ///
-/// ** See code in examples/api/lib/material/carousel/carousel.2.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/carousel/carousel.2.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -216,14 +223,20 @@ class CarouselView extends StatefulWidget {
   /// and [Center-aligned hero](https://m3.material.io/components/carousel/specs#92c779ce-de8b-4dee-8201-95d3e429204f)
   /// layouts indicated in the Material Design 3.
   ///
-  /// {@tool dartpad}
+  /// <callout-box>
+  ///
   /// This example shows how to create an auto-playing weighted carousel by using
   /// a [Timer] to periodically animate the [CarouselController]. It tracks the
   /// current item index using [onIndexChanged] to know exactly which item to
   /// animate to next.
   ///
-  /// ** See code in examples/api/lib/material/carousel/carousel.2.dart **
-  /// {@end-tool}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
+  /// {@example /example/lib/carousel/carousel.2.dart#body}
+  ///
+  /// </callout-box>
   const CarouselView.weighted({
     super.key,
     this.padding,

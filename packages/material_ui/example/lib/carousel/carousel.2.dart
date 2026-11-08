@@ -1,11 +1,12 @@
-// Copyright 2014 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// #region body
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Flutter code sample for [CarouselView] with auto-play.
 
@@ -21,9 +22,7 @@ class CarouselAutoPlayExampleApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Flutter Sample - Auto-play'),
-        ),
+        appBar: AppBar(title: const Text('Flutter Sample - Auto-play')),
         body: const CarouselAutoPlayExample(),
       ),
     );
@@ -83,10 +82,12 @@ class _CarouselAutoPlayExampleState extends State<CarouselAutoPlayExample> {
           nextIndex = 0;
         }
         _targetIndex = nextIndex;
-        _controller.animateToItem(
-          _targetIndex,
-          duration: const Duration(milliseconds: 400),
-          curve: Curves.easeInOut,
+        unawaited(
+          _controller.animateToItem(
+            _targetIndex,
+            duration: const Duration(milliseconds: 400),
+            curve: Curves.easeInOut,
+          ),
         );
       }
     });
@@ -206,3 +207,4 @@ class _CarouselAutoPlayExampleState extends State<CarouselAutoPlayExample> {
     );
   }
 }
+// #endregion body

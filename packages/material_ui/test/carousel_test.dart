@@ -2002,6 +2002,35 @@ void main() {
       // Should show last item 2 times based on size.
       expect(find.textContaining('Item 2'), findsAtLeastNWidgets(2));
     });
+
+    testWidgets('CarouselView non-infinite clamps target offset to maxScrollExtent', (
+      WidgetTester tester,
+    ) async {
+      final controller = CarouselController();
+      addTearDown(controller.dispose);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: CarouselView(
+              itemExtent: 200,
+              controller: controller,
+              children: List<Widget>.generate(5, (int index) {
+                return Center(child: Text('Item $index'));
+              }),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Animating to the last item (index 4 -> 800.0) should clamp to maxScrollExtent (200.0).
+      unawaited(controller.animateToItem(4));
+      await tester.pumpAndSettle();
+
+      expect(controller.offset, controller.position.maxScrollExtent);
+      expect(controller.offset, 200.0);
+    });
   });
 
   testWidgets('CarouselView infinite scrolling', (WidgetTester tester) async {

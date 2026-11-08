@@ -1,3 +1,4 @@
 changelog: |
-  - Adds auto-play examples to CarouselView.
-version: minor
+  - Adds auto-play examples to `CarouselView`.
+  - Clamps `CarouselController.animateToItem` target offset within scroll bounds when `infinite` is false.
+version: patch

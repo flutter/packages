@@ -1,20 +1,13 @@
-// Copyright 2014 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:io';
-
 import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_api_samples/material/carousel/carousel.2.dart'
-    as example;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:material_ui_examples/carousel/carousel.2.dart' as example;
 
 void main() {
-  setUpAll(() {
-    HttpOverrides.global = null;
-  });
-
   testWidgets('Carousel auto-plays and pauses on interaction (unweighted)', (
     WidgetTester tester,
   ) async {
