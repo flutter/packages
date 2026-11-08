@@ -5,6 +5,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:two_dimensional_scrollables/src/common/span_state.dart';
 import 'package:two_dimensional_scrollables/two_dimensional_scrollables.dart';
 
 void main() {
@@ -291,6 +292,13 @@ void main() {
     );
     expect(reverseLerpedSide.width, 2.0);
     expect(reverseLerpedSide.color, isSameColorAs(const Color(0xFF2196F3).withValues(alpha: 0.5)));
+  });
+
+  test('SpanState debugFillProperties works before update is called', () {
+    final spanState = SpanState<TableSpan>();
+    expect(spanState.toString(), contains('leadingOffset: 0.0'));
+    expect(spanState.toString(), contains('extent: 0.0'));
+    spanState.dispose();
   });
 }
 

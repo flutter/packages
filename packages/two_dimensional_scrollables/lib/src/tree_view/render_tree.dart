@@ -636,7 +636,7 @@ class _Span extends SpanState<TreeRow> {
   _Span({super.onStateChanged});
 
   double get animationOffset => _animationOffset;
-  late double _animationOffset;
+  double _animationOffset = 0.0;
 
   @override
   void update({

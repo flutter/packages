@@ -2419,7 +2419,7 @@ class _Span extends SpanState<TableSpan> {
   _Span({super.onStateChanged});
 
   bool get isPinned => _isPinned;
-  late bool _isPinned;
+  bool _isPinned = false;
 
   @override
   void update({

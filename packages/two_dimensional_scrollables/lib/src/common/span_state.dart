@@ -30,11 +30,11 @@ class SpanState<T extends Span>
 
   /// The leading pixel offset of this span.
   double get leadingOffset => _leadingOffset;
-  late double _leadingOffset;
+  double _leadingOffset = 0.0;
 
   /// The layout extent of this span along its axis.
   double get extent => _extent;
-  late double _extent;
+  double _extent = 0.0;
 
   /// The [Span] configuration for this state.
   T get configuration => _configuration!;
