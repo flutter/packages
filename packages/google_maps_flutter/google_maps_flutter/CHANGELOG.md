@@ -1,6 +1,8 @@
 ## 2.20.0
 
-* Updates default iOS implementation to `google_maps_flutter_ios_sdk9`.
+* Updates the default iOS implementation to `google_maps_flutter_ios_sdk9`.
+  Clients with apps that do not support iOS 15 should opt in to using
+  `google_maps_flutter_ios_sdk10` instead, as described in the README.
 
 ## 2.19.0
 
