@@ -237,6 +237,7 @@ void main() {
       red.hashCode,
       const NoDefaultCupertinoThemeData(selectionHandleColor: CupertinoColors.systemRed).hashCode,
     );
+    expect(red.hashCode, isNot(blue.hashCode));
   });
 
   late Brightness currentBrightness;
