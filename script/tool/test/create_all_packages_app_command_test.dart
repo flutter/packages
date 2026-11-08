@@ -455,7 +455,7 @@ android {
       expect(
         pbxproj,
         everyElement(
-          (String line) => !line.contains('IPHONEOS_DEPLOYMENT_TARGET') || line.contains('15.0'),
+          (String line) => !line.contains('IPHONEOS_DEPLOYMENT_TARGET') || line.contains('16.0'),
         ),
       );
     });
