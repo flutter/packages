@@ -1,3 +1,8 @@
+## 0.3.6
+
+* Adds support for camera image stream on web.
+* Updates minimum `web` package version to 1.0.0.
+
 ## 0.3.5+7
 
 * Fixes `availableCameras` failing when a video input device cannot be started, for example
