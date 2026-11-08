@@ -5,7 +5,7 @@ An iOS implementation of [`google_maps_flutter`][1] using
 
 ## Usage
 
-This package is [endorsed][2], which means you can simply use
+This package is [endorsed][3], which means you can simply use
 `google_maps_flutter` normally. This package will be automatically included in
 your app when you do, so you do not need to add it to your `pubspec.yaml`.
 
