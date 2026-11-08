@@ -321,6 +321,7 @@ class FakeStoreKit2Platform implements InAppPurchase2API {
   late List<SK2Transaction> finishedTransactions;
   List<SK2TransactionMessage> transactionsList = <SK2TransactionMessage>[];
   List<SK2TransactionMessage> unfinishedTransactionsList = <SK2TransactionMessage>[];
+  List<SK2TransactionMessage> currentEntitlementsList = <SK2TransactionMessage>[];
 
   PlatformException? queryProductException;
   bool isListenerRegistered = false;
@@ -372,6 +373,18 @@ class FakeStoreKit2Platform implements InAppPurchase2API {
         receiptData: 'fake_jws_representation',
         appAccountToken: 'fake_app_account_token',
         purchasedQuantity: 3,
+        status: SK2PurchaseStatusMessage.purchased,
+      ),
+    ];
+    currentEntitlementsList = <SK2TransactionMessage>[
+      SK2TransactionMessage(
+        id: 123,
+        originalId: 123,
+        productId: 'product_id',
+        purchaseDate: 123123.121,
+        expirationDate: 321321.32,
+        receiptData: 'fake_jws_representation',
+        appAccountToken: 'fake_app_account_token',
         status: SK2PurchaseStatusMessage.purchased,
       ),
     ];
@@ -482,6 +495,11 @@ class FakeStoreKit2Platform implements InAppPurchase2API {
   @override
   Future<List<SK2TransactionMessage>> unfinishedTransactions() {
     return Future<List<SK2TransactionMessage>>.value(unfinishedTransactionsList);
+  }
+
+  @override
+  Future<List<SK2TransactionMessage>> currentEntitlements() {
+    return Future<List<SK2TransactionMessage>>.value(currentEntitlementsList);
   }
 
   @override

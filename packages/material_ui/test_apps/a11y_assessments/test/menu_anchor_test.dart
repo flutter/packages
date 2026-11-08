@@ -50,4 +50,9 @@ void main() {
     await tester.pumpAndSettle();
     expect(findHeadingLevelOnes, findsOne);
   });
+
+  testWidgets('menu anchor use case content is not a semantic list', (WidgetTester tester) async {
+    await pumpsUseCase(tester, MenuAnchorUseCase());
+    expect(hasSemanticsList(tester, find.byType(ListView)), isFalse);
+  });
 }

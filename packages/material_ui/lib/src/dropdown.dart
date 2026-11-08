@@ -1745,6 +1745,9 @@ class _DropdownButtonState<T> extends State<DropdownButton<T>> with WidgetsBindi
 
       final suffixIconEndMargin = (filled || outlined) ? 12.0 : 0.0;
       InputDecoration effectiveDecoration = widget._inputDecoration!.copyWith(
+        // The decorator only uses its disabled colors and borders, and ignores
+        // hovering, when the decoration is disabled, as for a disabled TextField.
+        enabled: _enabled && widget._inputDecoration!.enabled,
         // Override the suffix icon constraints to allow the
         // icon alignment to match the regular dropdown button.
         suffixIconConstraints: BoxConstraints(

@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'package:cupertino_ui/cupertino_ui.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -11,31 +10,27 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets(
-    'more than three suggestions throws an error',
-    (WidgetTester tester) async {
-      Future<void> pumpToolbar(List<String> suggestions) async {
-        await tester.pumpWidget(
-          CupertinoApp(
-            home: Center(
-              child: CupertinoSpellCheckSuggestionsToolbar(
-                anchors: const TextSelectionToolbarAnchors(primaryAnchor: Offset.zero),
-                buttonItems: suggestions.map((String string) {
-                  return ContextMenuButtonItem(onPressed: () {}, label: string);
-                }).toList(),
-              ),
+  testWidgets('more than three suggestions throws an error', (WidgetTester tester) async {
+    Future<void> pumpToolbar(List<String> suggestions) async {
+      await tester.pumpWidget(
+        CupertinoApp(
+          home: Center(
+            child: CupertinoSpellCheckSuggestionsToolbar(
+              anchors: const TextSelectionToolbarAnchors(primaryAnchor: Offset.zero),
+              buttonItems: suggestions.map((String string) {
+                return ContextMenuButtonItem(onPressed: () {}, label: string);
+              }).toList(),
             ),
           ),
-        );
-      }
+        ),
+      );
+    }
 
-      await pumpToolbar(<String>['hello', 'yellow', 'yell']);
-      expect(() async {
-        await pumpToolbar(<String>['hello', 'yellow', 'yell', 'yeller']);
-      }, throwsAssertionError);
-    },
-    skip: kIsWeb, // [intended]
-  );
+    await pumpToolbar(<String>['hello', 'yellow', 'yell']);
+    expect(() async {
+      await pumpToolbar(<String>['hello', 'yellow', 'yell', 'yeller']);
+    }, throwsAssertionError);
+  });
 
   test('buildSuggestionButtons only considers the first three suggestions', () {
     final editableTextState = _FakeEditableTextState(
