@@ -8,7 +8,7 @@ import 'package:pigeon/pigeon.dart';
   PigeonOptions(
     dartOut: 'lib/src/messages.g.dart',
     swiftOut:
-        'ios/google_maps_flutter_ios_sdk10/Sources/google_maps_flutter_ios_sdk10/Messages.g.swift',
+        'ios/google_maps_flutter_ios_sdk11/Sources/google_maps_flutter_ios_sdk11/Messages.g.swift',
     copyrightHeader: 'pigeons/copyright.txt',
     // Use the base package name so that the generated code can be shared
     // across the implementation copies.

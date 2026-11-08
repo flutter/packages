@@ -4,7 +4,7 @@
 
 import UIKit
 
-@testable import google_maps_flutter_ios_sdk10
+@testable import google_maps_flutter_ios_sdk11
 
 /// Fake implementation of AssetProvider for unit tests.
 class TestAssetProvider: AssetProvider {

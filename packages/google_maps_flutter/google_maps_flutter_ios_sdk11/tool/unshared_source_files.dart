@@ -4,10 +4,10 @@
 
 const intentionallyUnsharedSourceFiles = <String>[
   // Package dependencies are platform-specific due to versioning.
-  'ios/google_maps_flutter_ios_sdk10/Package.swift',
+  'ios/google_maps_flutter_ios_sdk11/Package.swift',
   // Intentionally unshared since it has almost no code, and would need
   // special handling for the filename being different.
-  'lib/google_maps_flutter_ios_sdk10.dart',
+  'lib/google_maps_flutter_ios_sdk11.dart',
   // Intentionally unshared to isolate import name differences.
   'test/package_specific_test_import.dart',
   // Each package will have its own list.

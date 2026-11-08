@@ -5,7 +5,7 @@
 import Flutter
 import Testing
 
-@testable import google_maps_flutter_ios_sdk10
+@testable import google_maps_flutter_ios_sdk11
 
 @MainActor struct ExtractIconFromDataTests {
 

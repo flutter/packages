@@ -4,7 +4,7 @@
 
 import Foundation
 
-@testable import google_maps_flutter_ios_sdk10
+@testable import google_maps_flutter_ios_sdk11
 
 /// Fake implementation of MapEventDelegate (and TileProviderDelegate) for unit tests.
 class TestMapEventHandler: MapEventDelegate, TileProviderDelegate {

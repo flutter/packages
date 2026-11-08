@@ -1,7 +1,7 @@
-# google\_maps\_flutter\_ios\_sdk10
+# google\_maps\_flutter\_ios\_sdk11
 
 An iOS implementation of [`google_maps_flutter`][1] using
-[Google Maps SDK 10.x][2].
+[Google Maps SDK 11.x][2].
 
 ## Usage
 
@@ -39,7 +39,7 @@ select the appropriate SDK version for their minimum iOS version target.
     }
     ```
 
-2. Google Maps SDK 10.x requires iOS 16, so if your application does not already
+2. Google Maps SDK 11.x requires iOS 16, so if your application does not already
    require iOS 16 you must update your minimum iOS deployment version.
 
    Alternatively, you could use a [different SDK version][4]
