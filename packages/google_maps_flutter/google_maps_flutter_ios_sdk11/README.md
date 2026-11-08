@@ -39,8 +39,8 @@ select the appropriate SDK version for their minimum iOS version target.
     }
     ```
 
-2. Google Maps SDK 11.x requires iOS 16, so if your application does not already
-   require iOS 16 you must update your minimum iOS deployment version.
+2. Google Maps SDK 11.x requires iOS 17, so if your application does not already
+   require iOS 17 you must update your minimum iOS deployment version.
 
    Alternatively, you could use a [different SDK version][4]
    with a lower iOS version requirement.
