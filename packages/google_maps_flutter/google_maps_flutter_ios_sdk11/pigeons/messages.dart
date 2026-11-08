@@ -1,0 +1,864 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+import 'package:pigeon/pigeon.dart';
+
+@ConfigurePigeon(
+  PigeonOptions(
+    dartOut: 'lib/src/messages.g.dart',
+    swiftOut:
+        'ios/google_maps_flutter_ios_sdk10/Sources/google_maps_flutter_ios_sdk10/Messages.g.swift',
+    copyrightHeader: 'pigeons/copyright.txt',
+    // Use the base package name so that the generated code can be shared
+    // across the implementation copies.
+    dartPackageName: 'google_maps_flutter_ios',
+  ),
+)
+/// Pigeon equivalent of MapType
+enum PlatformMapType { none, normal, satellite, terrain, hybrid }
+
+/// Pigeon representatation of a CameraPosition.
+class PlatformCameraPosition {
+  PlatformCameraPosition({
+    required this.bearing,
+    required this.target,
+    required this.tilt,
+    required this.zoom,
+  });
+
+  final double bearing;
+  final PlatformLatLng target;
+  final double tilt;
+  final double zoom;
+}
+
+/// Pigeon representation of a CameraUpdate.
+sealed class PlatformCameraUpdate {}
+
+/// Pigeon equivalent of NewCameraPosition
+class PlatformCameraUpdateNewCameraPosition extends PlatformCameraUpdate {
+  PlatformCameraUpdateNewCameraPosition(this.cameraPosition);
+  final PlatformCameraPosition cameraPosition;
+}
+
+/// Pigeon equivalent of NewLatLng
+class PlatformCameraUpdateNewLatLng extends PlatformCameraUpdate {
+  PlatformCameraUpdateNewLatLng(this.latLng);
+  final PlatformLatLng latLng;
+}
+
+/// Pigeon equivalent of NewLatLngBounds
+class PlatformCameraUpdateNewLatLngBounds extends PlatformCameraUpdate {
+  PlatformCameraUpdateNewLatLngBounds(this.bounds, this.padding);
+  final PlatformLatLngBounds bounds;
+  final double padding;
+}
+
+/// Pigeon equivalent of NewLatLngZoom
+class PlatformCameraUpdateNewLatLngZoom extends PlatformCameraUpdate {
+  PlatformCameraUpdateNewLatLngZoom(this.latLng, this.zoom);
+  final PlatformLatLng latLng;
+  final double zoom;
+}
+
+/// Pigeon equivalent of ScrollBy
+class PlatformCameraUpdateScrollBy extends PlatformCameraUpdate {
+  PlatformCameraUpdateScrollBy(this.dx, this.dy);
+  final double dx;
+  final double dy;
+}
+
+/// Pigeon equivalent of ZoomBy
+class PlatformCameraUpdateZoomBy extends PlatformCameraUpdate {
+  PlatformCameraUpdateZoomBy(this.amount, [this.focus]);
+  final double amount;
+  final PlatformPoint? focus;
+}
+
+/// Pigeon equivalent of ZoomIn/ZoomOut
+class PlatformCameraUpdateZoom extends PlatformCameraUpdate {
+  PlatformCameraUpdateZoom(this.out);
+  final bool out;
+}
+
+/// Pigeon equivalent of ZoomTo
+class PlatformCameraUpdateZoomTo extends PlatformCameraUpdate {
+  PlatformCameraUpdateZoomTo(this.zoom);
+  final double zoom;
+}
+
+/// Pigeon equivalent of the Circle class.
+class PlatformCircle {
+  PlatformCircle({
+    required this.circleId,
+    required this.center,
+    required this.fillColor,
+    required this.strokeColor,
+    this.consumeTapEvents = false,
+    this.visible = true,
+    this.strokeWidth = 10,
+    this.zIndex = 0.0,
+    this.radius = 0,
+  });
+
+  final bool consumeTapEvents;
+  final PlatformColor fillColor;
+  final PlatformColor strokeColor;
+  final bool visible;
+  final int strokeWidth;
+  final double zIndex;
+  final PlatformLatLng center;
+  final double radius;
+  final String circleId;
+}
+
+/// Pigeon equivalent of the Heatmap class.
+class PlatformHeatmap {
+  PlatformHeatmap({
+    required this.heatmapId,
+    required this.data,
+    this.gradient,
+    required this.opacity,
+    required this.radius,
+    required this.minimumZoomIntensity,
+    required this.maximumZoomIntensity,
+  });
+
+  final String heatmapId;
+  final List<PlatformWeightedLatLng> data;
+  final PlatformHeatmapGradient? gradient;
+  final double opacity;
+  final int radius;
+  final int minimumZoomIntensity;
+  final int maximumZoomIntensity;
+}
+
+/// Pigeon equivalent of the HeatmapGradient class.
+///
+/// The GMUGradient structure is slightly different from HeatmapGradient, so
+/// this matches the iOS API so that conversion can be done on the Dart side
+/// where the structures are easier to work with.
+class PlatformHeatmapGradient {
+  PlatformHeatmapGradient({
+    required this.colors,
+    required this.startPoints,
+    required this.colorMapSize,
+  });
+
+  final List<PlatformColor> colors;
+  final List<double> startPoints;
+  final int colorMapSize;
+}
+
+/// Pigeon equivalent of the WeightedLatLng class.
+class PlatformWeightedLatLng {
+  PlatformWeightedLatLng({required this.point, required this.weight});
+
+  final PlatformLatLng point;
+  final double weight;
+}
+
+/// Pigeon equivalent of the InfoWindow class.
+class PlatformInfoWindow {
+  PlatformInfoWindow({required this.anchor, this.title, this.snippet});
+
+  final String? title;
+  final String? snippet;
+  final PlatformPoint anchor;
+}
+
+/// Pigeon equivalent of Cluster.
+class PlatformCluster {
+  PlatformCluster({
+    required this.clusterManagerId,
+    required this.position,
+    required this.bounds,
+    required this.markerIds,
+  });
+
+  final String clusterManagerId;
+  final PlatformLatLng position;
+  final PlatformLatLngBounds bounds;
+  final List<String> markerIds;
+}
+
+/// Pigeon equivalent of the ClusterManager class.
+class PlatformClusterManager {
+  PlatformClusterManager({required this.identifier});
+
+  final String identifier;
+}
+
+/// Pigeon equivalent of the Marker class.
+class PlatformMarker {
+  PlatformMarker({
+    required this.markerId,
+    required this.icon,
+    this.alpha = 1.0,
+    required this.anchor,
+    this.consumeTapEvents = false,
+    this.draggable = false,
+    this.flat = false,
+    required this.infoWindow,
+    required this.position,
+    this.rotation = 0.0,
+    this.visible = true,
+    this.zIndex = 0,
+    this.clusterManagerId,
+    this.collisionBehavior,
+  });
+
+  final double alpha;
+  final PlatformPoint anchor;
+  final bool consumeTapEvents;
+  final bool draggable;
+  final bool flat;
+
+  final PlatformBitmap icon;
+  final PlatformInfoWindow infoWindow;
+  final PlatformLatLng position;
+  final double rotation;
+  final bool visible;
+  final int zIndex;
+  final String markerId;
+  final String? clusterManagerId;
+  final PlatformMarkerCollisionBehavior? collisionBehavior;
+}
+
+/// Pigeon equivalent of the MarkerCollisionBehavior enum.
+enum PlatformMarkerCollisionBehavior {
+  requiredDisplay,
+  optionalAndHidesLowerPriority,
+  requiredAndHidesOptional,
+}
+
+/// Pigeon equivalent of the Polygon class.
+class PlatformPolygon {
+  PlatformPolygon({
+    required this.polygonId,
+    required this.consumesTapEvents,
+    required this.fillColor,
+    required this.geodesic,
+    required this.points,
+    required this.holes,
+    required this.visible,
+    required this.strokeColor,
+    required this.strokeWidth,
+    required this.zIndex,
+  });
+
+  final String polygonId;
+  final bool consumesTapEvents;
+  final PlatformColor fillColor;
+  final bool geodesic;
+  final List<PlatformLatLng> points;
+  final List<List<PlatformLatLng>> holes;
+  final bool visible;
+  final PlatformColor strokeColor;
+  final int strokeWidth;
+  final int zIndex;
+}
+
+/// Join types for polyline joints.
+enum PlatformJointType { mitered, bevel, round }
+
+/// Pigeon equivalent of the Polyline class.
+class PlatformPolyline {
+  PlatformPolyline({
+    required this.polylineId,
+    required this.consumesTapEvents,
+    required this.color,
+    required this.geodesic,
+    required this.jointType,
+    required this.patterns,
+    required this.points,
+    required this.visible,
+    required this.width,
+    required this.zIndex,
+  });
+
+  final String polylineId;
+  final bool consumesTapEvents;
+  final PlatformColor color;
+  final bool geodesic;
+
+  /// The joint type.
+  final PlatformJointType jointType;
+
+  /// The pattern data, as a list of pattern items.
+  final List<PlatformPatternItem> patterns;
+  final List<PlatformLatLng> points;
+
+  final bool visible;
+  final int width;
+  final int zIndex;
+}
+
+/// Enumeration of possible types for PatternItem.
+enum PlatformPatternItemType { dot, dash, gap }
+
+/// Pigeon equivalent of the PatternItem class.
+class PlatformPatternItem {
+  PlatformPatternItem({required this.type, this.length});
+
+  final PlatformPatternItemType type;
+  final double? length;
+}
+
+/// Pigeon equivalent of the Tile class.
+class PlatformTile {
+  PlatformTile({required this.width, required this.height, required this.data});
+
+  final int width;
+  final int height;
+  final Uint8List? data;
+}
+
+/// Pigeon equivalent of the TileOverlay class.
+class PlatformTileOverlay {
+  PlatformTileOverlay({
+    required this.tileOverlayId,
+    required this.fadeIn,
+    required this.transparency,
+    required this.zIndex,
+    required this.visible,
+    required this.tileSize,
+  });
+
+  final String tileOverlayId;
+  final bool fadeIn;
+  final double transparency;
+  final int zIndex;
+  final bool visible;
+  final int tileSize;
+}
+
+/// Pigeon equivalent of Flutter's EdgeInsets.
+class PlatformEdgeInsets {
+  PlatformEdgeInsets({
+    required this.top,
+    required this.bottom,
+    required this.left,
+    required this.right,
+  });
+
+  final double top;
+  final double bottom;
+  final double left;
+  final double right;
+}
+
+/// Pigeon equivalent of LatLng.
+class PlatformLatLng {
+  PlatformLatLng({required this.latitude, required this.longitude});
+
+  final double latitude;
+  final double longitude;
+}
+
+/// Pigeon equivalent of LatLngBounds.
+class PlatformLatLngBounds {
+  PlatformLatLngBounds({required this.northeast, required this.southwest});
+
+  final PlatformLatLng northeast;
+  final PlatformLatLng southwest;
+}
+
+/// Pigeon equivalent of CameraTargetBounds.
+///
+/// As with the Dart version, it exists to distinguish between not setting a
+/// a target, and having an explicitly unbounded target (null [bounds]).
+class PlatformCameraTargetBounds {
+  PlatformCameraTargetBounds({required this.bounds});
+
+  final PlatformLatLngBounds? bounds;
+}
+
+/// Pigeon equivalent of the GroundOverlay class.
+class PlatformGroundOverlay {
+  PlatformGroundOverlay({
+    required this.groundOverlayId,
+    required this.image,
+    required this.position,
+    required this.bounds,
+    required this.anchor,
+    required this.transparency,
+    required this.bearing,
+    required this.zIndex,
+    required this.visible,
+    required this.clickable,
+    required this.zoomLevel,
+  });
+
+  final String groundOverlayId;
+  final PlatformBitmap image;
+  final PlatformLatLng? position;
+  final PlatformLatLngBounds? bounds;
+  final PlatformPoint? anchor;
+  final double transparency;
+  final double bearing;
+  final int zIndex;
+  final bool visible;
+  final bool clickable;
+  final double? zoomLevel;
+}
+
+/// Information passed to the platform view creation.
+class PlatformMapViewCreationParams {
+  PlatformMapViewCreationParams({
+    required this.initialCameraPosition,
+    required this.mapConfiguration,
+    required this.initialCircles,
+    required this.initialMarkers,
+    required this.initialPolygons,
+    required this.initialPolylines,
+    required this.initialHeatmaps,
+    required this.initialTileOverlays,
+    required this.initialClusterManagers,
+    required this.initialGroundOverlays,
+  });
+
+  final PlatformCameraPosition initialCameraPosition;
+  final PlatformMapConfiguration mapConfiguration;
+  final List<PlatformCircle> initialCircles;
+  final List<PlatformMarker> initialMarkers;
+  final List<PlatformPolygon> initialPolygons;
+  final List<PlatformPolyline> initialPolylines;
+  final List<PlatformHeatmap> initialHeatmaps;
+  final List<PlatformTileOverlay> initialTileOverlays;
+  final List<PlatformClusterManager> initialClusterManagers;
+  final List<PlatformGroundOverlay> initialGroundOverlays;
+}
+
+enum PlatformMarkerType { marker, advancedMarker }
+
+/// Pigeon equivalent of MapConfiguration.
+class PlatformMapConfiguration {
+  PlatformMapConfiguration({
+    required this.compassEnabled,
+    required this.cameraTargetBounds,
+    required this.mapType,
+    required this.minMaxZoomPreference,
+    required this.rotateGesturesEnabled,
+    required this.scrollGesturesEnabled,
+    required this.tiltGesturesEnabled,
+    required this.trackCameraPosition,
+    required this.zoomGesturesEnabled,
+    required this.myLocationEnabled,
+    required this.myLocationButtonEnabled,
+    required this.padding,
+    required this.indoorViewEnabled,
+    required this.trafficEnabled,
+    required this.buildingsEnabled,
+    required this.markerType,
+    required this.mapId,
+    required this.style,
+  });
+
+  final bool? compassEnabled;
+  final PlatformCameraTargetBounds? cameraTargetBounds;
+  final PlatformMapType? mapType;
+  final PlatformZoomRange? minMaxZoomPreference;
+  final bool? rotateGesturesEnabled;
+  final bool? scrollGesturesEnabled;
+  final bool? tiltGesturesEnabled;
+  final bool? trackCameraPosition;
+  final bool? zoomGesturesEnabled;
+  final bool? myLocationEnabled;
+  final bool? myLocationButtonEnabled;
+  final PlatformEdgeInsets? padding;
+  final bool? indoorViewEnabled;
+  final bool? trafficEnabled;
+  final bool? buildingsEnabled;
+  final PlatformMarkerType markerType;
+  final String? mapId;
+  final String? style;
+}
+
+/// Pigeon representation of an x,y coordinate.
+class PlatformPoint {
+  PlatformPoint({required this.x, required this.y});
+
+  final double x;
+  final double y;
+}
+
+/// Pigeon representation of a size.
+class PlatformSize {
+  PlatformSize({required this.width, required this.height});
+
+  final double width;
+  final double height;
+}
+
+/// Pigeon representation of a color.
+class PlatformColor {
+  PlatformColor({required this.red, required this.green, required this.blue, required this.alpha});
+
+  final double red;
+  final double green;
+  final double blue;
+  final double alpha;
+}
+
+/// Pigeon equivalent of GMSTileLayer properties.
+class PlatformTileLayer {
+  PlatformTileLayer({
+    required this.visible,
+    required this.fadeIn,
+    required this.opacity,
+    required this.zIndex,
+  });
+
+  final bool visible;
+  final bool fadeIn;
+  final double opacity;
+  final int zIndex;
+}
+
+/// Pigeon equivalent of MinMaxZoomPreference.
+class PlatformZoomRange {
+  PlatformZoomRange({required this.min, required this.max});
+
+  final double? min;
+  final double? max;
+}
+
+/// Pigeon equivalent of [BitmapDescriptor].
+sealed class PlatformBitmap {}
+
+/// Pigeon equivalent of [DefaultMarker].
+class PlatformBitmapDefaultMarker extends PlatformBitmap {
+  PlatformBitmapDefaultMarker({this.hue});
+
+  final double? hue;
+}
+
+/// Pigeon equivalent of [BytesBitmap].
+class PlatformBitmapBytes extends PlatformBitmap {
+  PlatformBitmapBytes({required this.byteData, this.size});
+
+  final Uint8List byteData;
+  final PlatformSize? size;
+}
+
+/// Pigeon equivalent of [AssetBitmap].
+class PlatformBitmapAsset extends PlatformBitmap {
+  PlatformBitmapAsset({required this.name, this.pkg});
+
+  final String name;
+  final String? pkg;
+}
+
+/// Pigeon equivalent of [AssetImageBitmap].
+class PlatformBitmapAssetImage extends PlatformBitmap {
+  PlatformBitmapAssetImage({required this.name, required this.scale, this.size});
+  final String name;
+  final double scale;
+  final PlatformSize? size;
+}
+
+/// Pigeon equivalent of [AssetMapBitmap].
+class PlatformBitmapAssetMap extends PlatformBitmap {
+  PlatformBitmapAssetMap({
+    required this.assetName,
+    required this.bitmapScaling,
+    required this.imagePixelRatio,
+    this.width,
+    this.height,
+  });
+  final String assetName;
+  final PlatformMapBitmapScaling bitmapScaling;
+  final double imagePixelRatio;
+  final double? width;
+  final double? height;
+}
+
+/// Pigeon equivalent of [BytesMapBitmap].
+class PlatformBitmapBytesMap extends PlatformBitmap {
+  PlatformBitmapBytesMap({
+    required this.byteData,
+    required this.bitmapScaling,
+    required this.imagePixelRatio,
+    this.width,
+    this.height,
+  });
+  final Uint8List byteData;
+  final PlatformMapBitmapScaling bitmapScaling;
+  final double imagePixelRatio;
+  final double? width;
+  final double? height;
+}
+
+/// Pigeon equivalent of [MapBitmapScaling].
+enum PlatformMapBitmapScaling { auto, none }
+
+/// Pigeon equivalent of [PinConfig].
+class PlatformBitmapPinConfig extends PlatformBitmap {
+  PlatformBitmapPinConfig({
+    required this.backgroundColor,
+    required this.borderColor,
+    required this.glyphColor,
+    required this.glyphTextColor,
+    required this.glyphText,
+    required this.glyphBitmap,
+  });
+
+  final PlatformColor? backgroundColor;
+  final PlatformColor? borderColor;
+
+  final PlatformColor? glyphColor;
+  final PlatformColor? glyphTextColor;
+  final String? glyphText;
+  final PlatformBitmap? glyphBitmap;
+}
+
+/// Interface for non-test interactions with the native SDK.
+///
+/// For test-only state queries, see [MapsInspectorApi].
+@HostApi()
+abstract class MapsApi {
+  /// Returns once the map instance is available.
+  void waitForMap();
+
+  /// Updates the map's configuration options.
+  ///
+  /// Only non-null configuration values will result in updates; options with
+  /// null values will remain unchanged.
+  @SwiftFunction('updateWithMapConfiguration(_:)')
+  void updateMapConfiguration(PlatformMapConfiguration configuration);
+
+  /// Updates the set of circles on the map.
+  @SwiftFunction('updateCircles(adding:changing:removing:)')
+  void updateCircles(
+    List<PlatformCircle> toAdd,
+    List<PlatformCircle> toChange,
+    List<String> idsToRemove,
+  );
+
+  /// Updates the set of heatmaps on the map.
+  @SwiftFunction('updateHeatmaps(adding:changing:removing:)')
+  void updateHeatmaps(
+    List<PlatformHeatmap> toAdd,
+    List<PlatformHeatmap> toChange,
+    List<String> idsToRemove,
+  );
+
+  /// Updates the set of custer managers for clusters on the map.
+  @SwiftFunction('updateClusterManagers(adding:removing:)')
+  void updateClusterManagers(List<PlatformClusterManager> toAdd, List<String> idsToRemove);
+
+  /// Updates the set of markers on the map.
+  @SwiftFunction('updateMarkers(adding:changing:removing:)')
+  void updateMarkers(
+    List<PlatformMarker> toAdd,
+    List<PlatformMarker> toChange,
+    List<String> idsToRemove,
+  );
+
+  /// Updates the set of polygonss on the map.
+  @SwiftFunction('updatePolygons(adding:changing:removing:)')
+  void updatePolygons(
+    List<PlatformPolygon> toAdd,
+    List<PlatformPolygon> toChange,
+    List<String> idsToRemove,
+  );
+
+  /// Updates the set of polylines on the map.
+  @SwiftFunction('updatePolylines(adding:changing:removing:)')
+  void updatePolylines(
+    List<PlatformPolyline> toAdd,
+    List<PlatformPolyline> toChange,
+    List<String> idsToRemove,
+  );
+
+  /// Updates the set of tile overlays on the map.
+  @SwiftFunction('updateTileOverlays(adding:changing:removing:)')
+  void updateTileOverlays(
+    List<PlatformTileOverlay> toAdd,
+    List<PlatformTileOverlay> toChange,
+    List<String> idsToRemove,
+  );
+
+  /// Updates the set of ground overlays on the map.
+  @SwiftFunction('updateGroundOverlays(adding:changing:removing:)')
+  void updateGroundOverlays(
+    List<PlatformGroundOverlay> toAdd,
+    List<PlatformGroundOverlay> toChange,
+    List<String> idsToRemove,
+  );
+
+  /// Gets the screen coordinate for the given map location.
+  @SwiftFunction('screenCoordinates(for:)')
+  PlatformPoint getScreenCoordinate(PlatformLatLng latLng);
+
+  /// Gets the map location for the given screen coordinate.
+  @SwiftFunction('latLng(for:)')
+  PlatformLatLng getLatLng(PlatformPoint screenCoordinate);
+
+  /// Gets the map region currently displayed on the map.
+  @SwiftFunction('visibleMapRegion()')
+  PlatformLatLngBounds getVisibleRegion();
+
+  /// Moves the camera according to [cameraUpdate] immediately, with no
+  /// animation.
+  @SwiftFunction('moveCamera(_:)')
+  void moveCamera(PlatformCameraUpdate cameraUpdate);
+
+  /// Moves the camera according to [cameraUpdate], animating the update using a
+  /// duration in milliseconds if provided.
+  @SwiftFunction('animateCamera(_:duration:)')
+  void animateCamera(PlatformCameraUpdate cameraUpdate, int? durationMilliseconds);
+
+  /// Gets the current map zoom level.
+  @SwiftFunction('zoomLevel()')
+  double getZoomLevel();
+
+  /// Show the info window for the marker with the given ID.
+  @SwiftFunction('showInfoWindowForMarker(withIdentifier:)')
+  void showInfoWindow(String markerId);
+
+  /// Hide the info window for the marker with the given ID.
+  @SwiftFunction('hideInfoWindowForMarker(withIdentifier:)')
+  void hideInfoWindow(String markerId);
+
+  /// Returns true if the marker with the given ID is currently displaying its
+  /// info window.
+  @SwiftFunction('isShowingInfoWindowForMarker(withIdentifier:)')
+  bool isInfoWindowShown(String markerId);
+
+  /// Sets the style to the given map style string, where an empty string
+  /// indicates that the style should be cleared.
+  ///
+  /// If there was an error setting the style, such as an invalid style string,
+  /// returns the error message.
+  @SwiftFunction('setStyle(_:)')
+  String? setStyle(String style);
+
+  /// Returns the error string from the last attempt to set the map style, if
+  /// any.
+  ///
+  /// This allows checking asynchronously for initial style failures, as there
+  /// is no way to return failures from map initialization.
+  @SwiftFunction('lastStyleError()')
+  String? getLastStyleError();
+
+  /// Clears the cache of tiles previously requseted from the tile provider.
+  @SwiftFunction('clearTileCacheForOverlay(withIdentifier:)')
+  void clearTileCache(String tileOverlayId);
+
+  /// Takes a snapshot of the map and returns its image data.
+  Uint8List? takeSnapshot();
+
+  /// Returns true if the map supports advanced markers.
+  @SwiftFunction('isAdvancedMarkersAvailable()')
+  bool isAdvancedMarkersAvailable();
+}
+
+/// Interface for calls from the native SDK to Dart.
+@FlutterApi()
+abstract class MapsCallbackApi {
+  /// Called when the map camera starts moving.
+  @SwiftFunction('didStartCameraMove()')
+  void onCameraMoveStarted();
+
+  /// Called when the map camera moves.
+  @SwiftFunction('didMoveCamera(to:)')
+  void onCameraMove(PlatformCameraPosition cameraPosition);
+
+  /// Called when the map camera stops moving.
+  @SwiftFunction('didIdleCamera()')
+  void onCameraIdle();
+
+  /// Called when the map, not a specifc map object, is tapped.
+  @SwiftFunction('didTap(at:)')
+  void onTap(PlatformLatLng position);
+
+  /// Called when the map, not a specifc map object, is long pressed.
+  @SwiftFunction('didLongPress(at:)')
+  void onLongPress(PlatformLatLng position);
+
+  /// Called when a marker is tapped.
+  @SwiftFunction('didTapMarker(withIdentifier:)')
+  void onMarkerTap(String markerId);
+
+  /// Called when a marker drag starts.
+  @SwiftFunction('didStartDragForMarker(withIdentifier:at:)')
+  void onMarkerDragStart(String markerId, PlatformLatLng position);
+
+  /// Called when a marker drag updates.
+  @SwiftFunction('didDragMarker(withIdentifier:at:)')
+  void onMarkerDrag(String markerId, PlatformLatLng position);
+
+  /// Called when a marker drag ends.
+  @SwiftFunction('didEndDragForMarker(withIdentifier:at:)')
+  void onMarkerDragEnd(String markerId, PlatformLatLng position);
+
+  /// Called when a marker's info window is tapped.
+  @SwiftFunction('didTapInfoWindowOfMarker(withIdentifier:)')
+  void onInfoWindowTap(String markerId);
+
+  /// Called when a circle is tapped.
+  @SwiftFunction('didTapCircle(withIdentifier:)')
+  void onCircleTap(String circleId);
+
+  /// Called when a point of interest is tapped.
+  @SwiftFunction('didTapPointOfInterest(withPlaceIdentifier:)')
+  void onPointOfInterestTap(String placeId);
+
+  /// Called when a marker cluster is tapped.
+  @SwiftFunction('didTapCluster(_:)')
+  void onClusterTap(PlatformCluster cluster);
+
+  /// Called when a polygon is tapped.
+  @SwiftFunction('didTapPolygon(withIdentifier:)')
+  void onPolygonTap(String polygonId);
+
+  /// Called when a polyline is tapped.
+  @SwiftFunction('didTapPolyline(withIdentifier:)')
+  void onPolylineTap(String polylineId);
+
+  /// Called when a ground overlay is tapped.
+  @SwiftFunction('didTapGroundOverlay(withIdentifier:)')
+  void onGroundOverlayTap(String groundOverlayId);
+
+  /// Called to get data for a map tile.
+  @async
+  @SwiftFunction('tile(withOverlayIdentifier:location:zoom:)')
+  PlatformTile getTileOverlayTile(String tileOverlayId, PlatformPoint location, int zoom);
+}
+
+/// Dummy interface to force generation of the platform view creation params,
+/// which are not used in any Pigeon calls, only the platform view creation
+/// call made internally by Flutter.
+@HostApi()
+abstract class MapsPlatformViewApi {
+  // This is never actually called.
+  void createView(PlatformMapViewCreationParams? type);
+}
+
+/// Inspector API only intended for use in integration tests.
+@HostApi()
+abstract class MapsInspectorApi {
+  bool areBuildingsEnabled();
+  bool areRotateGesturesEnabled();
+  bool areScrollGesturesEnabled();
+  bool areTiltGesturesEnabled();
+  bool areZoomGesturesEnabled();
+  bool isCompassEnabled();
+  bool isMyLocationButtonEnabled();
+  bool isTrafficEnabled();
+  @SwiftFunction('tileOverlay(withIdentifier:)')
+  PlatformTileLayer? getTileOverlayInfo(String tileOverlayId);
+  @SwiftFunction('groundOverlay(withIdentifier:)')
+  PlatformGroundOverlay? getGroundOverlayInfo(String groundOverlayId);
+  @SwiftFunction('heatmap(withIdentifier:)')
+  PlatformHeatmap? getHeatmapInfo(String heatmapId);
+  @SwiftFunction('zoomRange()')
+  PlatformZoomRange getZoomRange();
+  @SwiftFunction('clusters(withIdentifier:)')
+  List<PlatformCluster> getClusters(String clusterManagerId);
+  @SwiftFunction('cameraPosition()')
+  PlatformCameraPosition getCameraPosition();
+}
