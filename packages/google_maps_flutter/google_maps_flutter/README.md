@@ -44,6 +44,7 @@ For more details, see [Getting started with Google Maps Platform](https://develo
   implementation that does not support Swift Package Manager, and will not
   receive future updates. All clients should migrate to one of the following
   implementations:
+  * [SDK 11.x (iOS 16+)](https://pub.dev/packages/google_maps_flutter_ios_sdk11#setup)
   * [SDK 10.x (iOS 16+)](https://pub.dev/packages/google_maps_flutter_ios_sdk10#setup)
   * [SDK 9.x (iOS 15+)](https://pub.dev/packages/google_maps_flutter_ios_sdk9#setup)
 * **Web**: Please see [the `google_maps_flutter_web` README](https://pub.dev/packages/google_maps_flutter_web#setup).

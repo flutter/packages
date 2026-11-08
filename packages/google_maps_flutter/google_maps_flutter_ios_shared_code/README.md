@@ -28,8 +28,6 @@ When a new major version of the Google Maps SDK is released:
 - Update the package name in all the relevant places (Swift Package directory
   structure, pubspec, top-level lib/ file, pigeons/messages.dart, etc.).
 - Update the versions in Package.swift.
-  - When creating google_maps_flutter_ios_sdk11, delete the podspec, since
-    version 10 is the last to support CocoaPods.
 - Update the minimum deployment version in the example/ Xcode project.
 - If there are any source-level breaking changes, fork files as necessary.
   When feasible, refactor to minimize the amount of code that needs to diverge

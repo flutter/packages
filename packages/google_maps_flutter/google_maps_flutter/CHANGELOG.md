@@ -1,3 +1,8 @@
+## 2.19.1
+
+* Updates README to include `google_maps_flutter_ios_sdk10` as an implementation
+  option on iOS.
+
 ## 2.19.0
 
 * Adds support for tapping points of interest on the map.
