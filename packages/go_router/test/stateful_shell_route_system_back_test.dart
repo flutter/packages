@@ -90,6 +90,179 @@ void main() {
     });
 
     for (final usePageBuilder in <bool>[false, true]) {
+      for (final preload in <bool>[false, true]) {
+        testWidgets('only the active branch controls framework back handling '
+            '(pageBuilder: $usePageBuilder, preload: $preload)', (WidgetTester tester) async {
+          debugDefaultTargetPlatformOverride = TargetPlatform.android;
+          addTearDown(() => debugDefaultTargetPlatformOverride = null);
+          tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+          final calls = <bool>[];
+          tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.platform, (
+            MethodCall call,
+          ) async {
+            if (call.method == 'SystemNavigator.setFrameworkHandlesBack') {
+              calls.add(call.arguments as bool);
+            }
+            return null;
+          });
+          addTearDown(() {
+            tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+              SystemChannels.platform,
+              null,
+            );
+          });
+          final aKey = GlobalKey<NavigatorState>();
+          final bKey = GlobalKey<NavigatorState>();
+          StatefulNavigationShell? navigationShell;
+          final pops = <String>[];
+          final GoRouter router = await createRouter(
+            <RouteBase>[
+              StatefulShellRoute.indexedStack(
+                builder:
+                    (BuildContext context, GoRouterState state, StatefulNavigationShell shell) {
+                      navigationShell = shell;
+                      return shell;
+                    },
+                branches: <StatefulShellBranch>[
+                  StatefulShellBranch(
+                    navigatorKey: aKey,
+                    observers: <NavigatorObserver>[_RecordingNavigatorObserver('/a', pops)],
+                    routes: <RouteBase>[
+                      _buildBranchRoute(
+                        path: '/a',
+                        title: 'A root',
+                        usePageBuilder: usePageBuilder,
+                        routes: <RouteBase>[
+                          _buildBranchRoute(
+                            path: 'detail',
+                            title: 'A detail',
+                            usePageBuilder: usePageBuilder,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  StatefulShellBranch(
+                    navigatorKey: bKey,
+                    preload: preload,
+                    routes: <RouteBase>[
+                      _buildBranchRoute(
+                        path: '/b',
+                        title: 'B root',
+                        usePageBuilder: usePageBuilder,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+            tester,
+            initialLocation: '/a',
+          );
+          await tester.pumpAndSettle();
+          expect(calls.last, isFalse);
+          final List<NavigatorObserver> observers = (aKey.currentWidget! as Navigator).observers;
+
+          router.go('/a/detail');
+          await tester.pumpAndSettle();
+          expect(calls.last, isTrue);
+          expect((aKey.currentWidget! as Navigator).observers, same(observers));
+
+          navigationShell!.goBranch(1);
+          await tester.pumpAndSettle();
+          expect(calls.last, isFalse);
+          final int callCount = calls.length;
+          const NavigationNotification(canHandlePop: true).dispatch(aKey.currentContext);
+          await tester.pumpAndSettle();
+          expect(calls.length, callCount);
+
+          navigationShell!.goBranch(0);
+          await tester.pumpAndSettle();
+          expect(calls.last, isTrue);
+          await simulateAndroidPredictiveBackGesture(tester);
+          await tester.pumpAndSettle();
+          expect(find.text('A root'), findsOneWidget);
+          expect(pops, hasLength(1));
+          expect(calls.last, isFalse);
+          debugDefaultTargetPlatformOverride = null;
+        });
+      }
+
+      for (final platform in <TargetPlatform>[TargetPlatform.android, TargetPlatform.iOS]) {
+        testWidgets('inactive deep branch does not block popping the shell '
+            '(pageBuilder: $usePageBuilder, platform: $platform)', (WidgetTester tester) async {
+          debugDefaultTargetPlatformOverride = platform;
+          addTearDown(() => debugDefaultTargetPlatformOverride = null);
+          StatefulNavigationShell? navigationShell;
+          final pops = <String>[];
+          final GoRouter router = await createRouter(
+            <RouteBase>[
+              GoRoute(
+                path: '/',
+                builder: (_, _) => const Scaffold(body: Text('Home')),
+                routes: <RouteBase>[
+                  StatefulShellRoute.indexedStack(
+                    builder:
+                        (BuildContext context, GoRouterState state, StatefulNavigationShell shell) {
+                          navigationShell = shell;
+                          return shell;
+                        },
+                    branches: <StatefulShellBranch>[
+                      StatefulShellBranch(
+                        observers: <NavigatorObserver>[_RecordingNavigatorObserver('/a', pops)],
+                        routes: <RouteBase>[
+                          _buildBranchRoute(
+                            path: 'a',
+                            title: 'A root',
+                            usePageBuilder: usePageBuilder,
+                            routes: <RouteBase>[
+                              _buildBranchRoute(
+                                path: 'detail',
+                                title: 'A detail',
+                                usePageBuilder: usePageBuilder,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      StatefulShellBranch(
+                        routes: <RouteBase>[
+                          _buildBranchRoute(
+                            path: 'b',
+                            title: 'B root',
+                            usePageBuilder: usePageBuilder,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+            tester,
+            initialLocation: '/a/detail',
+          );
+          await tester.pumpAndSettle();
+          navigationShell!.goBranch(1);
+          await tester.pumpAndSettle();
+          expect(find.text('B root'), findsOneWidget);
+          final BuildContext shellContext = tester.element(find.byWidget(navigationShell!));
+          expect(ModalRoute.of(shellContext)!.popDisposition, RoutePopDisposition.pop);
+          if (platform == TargetPlatform.iOS) {
+            await simulateIosBackGesture(tester);
+          } else {
+            await simulateAndroidPredictiveBackGesture(tester);
+          }
+          await tester.pumpAndSettle();
+          expect(find.text('Home'), findsOneWidget);
+          expect(router.routeInformationProvider.value.uri.path, '/');
+          expect(pops, isEmpty);
+          debugDefaultTargetPlatformOverride = null;
+        });
+      }
+    }
+
+    for (final usePageBuilder in <bool>[false, true]) {
       testWidgets('does not pop inactive StatefulShellRoute branches with '
           '${usePageBuilder ? 'pageBuilder' : 'builder'}', (WidgetTester tester) async {
         final pops = <String>[];

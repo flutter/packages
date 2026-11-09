@@ -166,19 +166,31 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
   late Map<Page<Object?>, RouteMatchBase> _pageToRouteMatchBase;
   final GoRouterStateRegistry _registry = GoRouterStateRegistry();
   List<Page<Object?>>? _pages;
-  late final _BranchNavigatorPopScopeObserver? _branchNavigatorPopScopeObserver;
+  _BranchNavigatorPopScopeObserver? _branchNavigatorPopScopeObserver;
+  late List<NavigatorObserver> _observers;
 
   @override
   void initState() {
     super.initState();
+    _updateObservers();
+  }
+
+  void _updateObservers() {
     _branchNavigatorPopScopeObserver = widget.navigatorActive == null
         ? null
         : _BranchNavigatorPopScopeObserver(widget.navigatorActive!);
+    _observers = <NavigatorObserver>[...widget.observers, ?_branchNavigatorPopScopeObserver];
   }
 
   @override
   void didUpdateWidget(_CustomNavigator oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (widget.navigatorActive != oldWidget.navigatorActive) {
+      _branchNavigatorPopScopeObserver?.dispose();
+      _updateObservers();
+    } else if (!listEquals(widget.observers, oldWidget.observers)) {
+      _observers = <NavigatorObserver>[...widget.observers, ?_branchNavigatorPopScopeObserver];
+    }
     if (widget.matchList != oldWidget.matchList) {
       _pages = null;
     }
@@ -292,28 +304,32 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
             String? restorationScopeId, {
             ValueListenable<bool>? navigatorActive,
           }) {
-            return PopScope(
-              // Prevent ShellRoute from being popped, for example
-              // by an iOS back gesture, when the route has active sub-routes.
-              // TODO(LukasMirbt): Remove when minimum flutter version includes
-              // https://github.com/flutter/flutter/pull/152330.
-              canPop: match.matches.length == 1,
-              child: _CustomNavigator(
-                // The state needs to persist across rebuild.
-                key: GlobalObjectKey(navigatorKey.hashCode),
-                navigatorRestorationId: restorationScopeId,
-                navigatorKey: navigatorKey,
-                matches: match.matches,
-                matchList: matchList,
-                configuration: widget.configuration,
-                observers: observers ?? const <NavigatorObserver>[],
-                onPopPageWithRouteMatch: widget.onPopPageWithRouteMatch,
-                navigatorActive: navigatorActive,
-                // This is used to recursively build pages under this shell route.
-                errorBuilder: widget.errorBuilder,
-                errorPageBuilder: widget.errorPageBuilder,
-                requestFocus: widget.requestFocus,
-              ),
+            final Widget navigator = _CustomNavigator(
+              // The state needs to persist across rebuild.
+              key: GlobalObjectKey(navigatorKey.hashCode),
+              navigatorRestorationId: restorationScopeId,
+              navigatorKey: navigatorKey,
+              matches: match.matches,
+              matchList: matchList,
+              configuration: widget.configuration,
+              observers: observers ?? const <NavigatorObserver>[],
+              onPopPageWithRouteMatch: widget.onPopPageWithRouteMatch,
+              navigatorActive: navigatorActive,
+              // This is used to recursively build pages under this shell route.
+              errorBuilder: widget.errorBuilder,
+              errorPageBuilder: widget.errorPageBuilder,
+              requestFocus: widget.requestFocus,
+            );
+            if (navigatorActive == null) {
+              return PopScope(canPop: match.matches.length == 1, child: navigator);
+            }
+            return ValueListenableBuilder<bool>(
+              valueListenable: navigatorActive,
+              child: navigator,
+              builder: (BuildContext context, bool active, Widget? child) {
+                // Inactive branches must not block the parent shell route.
+                return PopScope(canPop: !active || match.matches.length == 1, child: child!);
+              },
             );
           },
     );
@@ -444,15 +460,18 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
       registry: _registry,
       child: HeroControllerScope(
         controller: _controller!,
-        child: Navigator(
-          key: widget.navigatorKey,
-          requestFocus: widget.requestFocus,
-          restorationScopeId: widget.navigatorRestorationId,
-          pages: _pages!,
-          observers: _branchNavigatorPopScopeObserver == null
-              ? widget.observers
-              : <NavigatorObserver>[...widget.observers, _branchNavigatorPopScopeObserver],
-          onPopPage: _handlePopPage,
+        child: NotificationListener<NavigationNotification>(
+          // Inactive branches must not claim system back handling.
+          onNotification: (NavigationNotification notification) =>
+              widget.navigatorActive?.value == false,
+          child: Navigator(
+            key: widget.navigatorKey,
+            requestFocus: widget.requestFocus,
+            restorationScopeId: widget.navigatorRestorationId,
+            pages: _pages!,
+            observers: _observers,
+            onPopPage: _handlePopPage,
+          ),
         ),
       ),
     );
