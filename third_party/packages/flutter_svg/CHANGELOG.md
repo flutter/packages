@@ -1,3 +1,8 @@
+## 2.3.5
+
+* Fixes network cache keys to compare header values, snapshot mutable headers,
+  and distinguish explicitly supplied HTTP clients.
+
 ## 2.3.4
 
 * Prevents pending loads invalidated by clear or evict from repopulating the cache.
