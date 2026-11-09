@@ -65,7 +65,7 @@ void main() {
     final XFile file = await controller.stopVideoRecording();
 
     // Load video metadata
-    final videoFile = File(file.path);
+    final videoFile = File.fromUri(Uri.parse(file.uri));
     final videoController = VideoPlayerController.file(videoFile);
     await videoController.initialize();
     final Size video = videoController.value.size;
@@ -123,7 +123,7 @@ void main() {
     final XFile file = await controller.stopVideoRecording();
     final int recordingTime = DateTime.now().millisecondsSinceEpoch - recordingStart;
 
-    final videoFile = File(file.path);
+    final videoFile = File.fromUri(Uri.parse(file.uri));
     final videoController = VideoPlayerController.file(videoFile);
     await videoController.initialize();
     final int duration = videoController.value.duration.inMilliseconds;
@@ -164,7 +164,7 @@ void main() {
     final XFile file = await controller.stopVideoRecording();
     final int recordingTime = DateTime.now().millisecondsSinceEpoch - recordingStart;
 
-    final videoFile = File(file.path);
+    final videoFile = File.fromUri(Uri.parse(file.uri));
     final videoController = VideoPlayerController.file(videoFile);
     await videoController.initialize();
     final int duration = videoController.value.duration.inMilliseconds;
@@ -252,7 +252,7 @@ void main() {
 
     final XFile file = await controller.stopVideoRecording();
 
-    final videoFile = File(file.path);
+    final videoFile = File.fromUri(Uri.parse(file.uri));
     final videoController = VideoPlayerController.file(videoFile);
     await videoController.initialize();
     final int duration = videoController.value.duration.inMilliseconds;

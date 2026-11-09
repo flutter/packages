@@ -13,9 +13,9 @@ Image getImageFromResultExample(XFile capturedImage) {
   // #docregion ImageFromXFile
   final Image image;
   if (kIsWeb) {
-    image = Image.network(capturedImage.path);
+    image = Image.network(capturedImage.uri);
   } else {
-    image = Image.file(File(capturedImage.path));
+    image = Image.file(File.fromUri(Uri.parse(capturedImage.uri)));
   }
   // #enddocregion ImageFromXFile
   return image;

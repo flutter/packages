@@ -228,7 +228,9 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
                       // pointing to a location within the browser. It may be displayed
                       // either with Image.network or Image.memory after loading the image
                       // bytes to memory.
-                      kIsWeb ? Image.network(imageFile!.path) : Image.file(File(imageFile!.path)))
+                      kIsWeb
+                          ? Image.network(imageFile!.uri)
+                          : Image.file(File.fromUri(Uri.parse(imageFile!.uri))))
                     : Container(
                         decoration: BoxDecoration(border: Border.all(color: Colors.pink)),
                         child: Center(
@@ -669,7 +671,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
           videoController = null;
         });
         if (file != null) {
-          showInSnackBar('Picture saved to ${file.path}');
+          showInSnackBar('Picture saved to ${file.uri}');
         }
       }
     });
@@ -772,7 +774,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
         setState(() {});
       }
       if (file != null) {
-        showInSnackBar('Video recorded to ${file.path}');
+        showInSnackBar('Video recorded to ${file.uri}');
         videoFile = file;
         _startVideoPlayer();
       }
@@ -943,8 +945,8 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
     }
 
     final vController = kIsWeb
-        ? VideoPlayerController.networkUrl(Uri.parse(videoFile!.path))
-        : VideoPlayerController.file(File(videoFile!.path));
+        ? VideoPlayerController.networkUrl(Uri.parse(videoFile!.uri))
+        : VideoPlayerController.file(File.fromUri(Uri.parse(videoFile!.uri)));
 
     videoPlayerListener = () {
       if (videoController != null) {

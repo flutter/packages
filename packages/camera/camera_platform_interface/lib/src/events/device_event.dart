@@ -5,8 +5,6 @@
 import 'package:flutter/foundation.dart' show immutable;
 import 'package:flutter/services.dart';
 
-import '../utils/utils.dart';
-
 /// Generic Event coming from the native side of Camera,
 /// not related to a specific camera module.
 ///
@@ -31,19 +29,8 @@ class DeviceOrientationChangedEvent extends DeviceEvent {
   /// Build a new orientation changed event.
   const DeviceOrientationChangedEvent(this.orientation);
 
-  /// Converts the supplied [Map] to an instance of the [DeviceOrientationChangedEvent]
-  /// class.
-  DeviceOrientationChangedEvent.fromJson(Map<String, dynamic> json)
-    : orientation = deserializeDeviceOrientation(json['orientation']! as String);
-
   /// The new orientation of the device
   final DeviceOrientation orientation;
-
-  /// Converts the [DeviceOrientationChangedEvent] instance into a [Map] instance that
-  /// can be serialized to JSON.
-  Map<String, dynamic> toJson() => <String, Object>{
-    'orientation': serializeDeviceOrientation(orientation),
-  };
 
   @override
   bool operator ==(Object other) =>

@@ -16,23 +16,6 @@ void main() {
       expect(event.orientation, DeviceOrientation.portraitUp);
     });
 
-    test('fromJson should initialize all properties', () {
-      final event = DeviceOrientationChangedEvent.fromJson(const <String, dynamic>{
-        'orientation': 'portraitUp',
-      });
-
-      expect(event.orientation, DeviceOrientation.portraitUp);
-    });
-
-    test('toJson should return a map with all fields', () {
-      const event = DeviceOrientationChangedEvent(DeviceOrientation.portraitUp);
-
-      final Map<String, dynamic> jsonMap = event.toJson();
-
-      expect(jsonMap.length, 1);
-      expect(jsonMap['orientation'], 'portraitUp');
-    });
-
     test('equals should return true if objects are the same', () {
       const firstEvent = DeviceOrientationChangedEvent(DeviceOrientation.portraitUp);
       const secondEvent = DeviceOrientationChangedEvent(DeviceOrientation.portraitUp);

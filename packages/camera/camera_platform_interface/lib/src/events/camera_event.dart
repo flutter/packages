@@ -58,17 +58,6 @@ class CameraInitializedEvent extends CameraEvent {
     this.focusPointSupported,
   );
 
-  /// Converts the supplied [Map] to an instance of the [CameraInitializedEvent]
-  /// class.
-  CameraInitializedEvent.fromJson(Map<String, dynamic> json)
-    : previewWidth = json['previewWidth']! as double,
-      previewHeight = json['previewHeight']! as double,
-      exposureMode = deserializeExposureMode(json['exposureMode']! as String),
-      exposurePointSupported = (json['exposurePointSupported'] as bool?) ?? false,
-      focusMode = deserializeFocusMode(json['focusMode']! as String),
-      focusPointSupported = (json['focusPointSupported'] as bool?) ?? false,
-      super(json['cameraId']! as int);
-
   /// The width of the preview in pixels.
   final double previewWidth;
 
@@ -86,18 +75,6 @@ class CameraInitializedEvent extends CameraEvent {
 
   /// Whether setting focus points is supported.
   final bool focusPointSupported;
-
-  /// Converts the [CameraInitializedEvent] instance into a [Map] instance that
-  /// can be serialized to JSON.
-  Map<String, dynamic> toJson() => <String, Object>{
-    'cameraId': cameraId,
-    'previewWidth': previewWidth,
-    'previewHeight': previewHeight,
-    'exposureMode': serializeExposureMode(exposureMode),
-    'exposurePointSupported': exposurePointSupported,
-    'focusMode': serializeFocusMode(focusMode),
-    'focusPointSupported': focusPointSupported,
-  };
 
   @override
   bool operator ==(Object other) =>
@@ -133,26 +110,11 @@ class CameraResolutionChangedEvent extends CameraEvent {
   /// The `captureHeight` represents the height of the resulting image in pixels.
   const CameraResolutionChangedEvent(super.cameraId, this.captureWidth, this.captureHeight);
 
-  /// Converts the supplied [Map] to an instance of the
-  /// [CameraResolutionChangedEvent] class.
-  CameraResolutionChangedEvent.fromJson(Map<String, dynamic> json)
-    : captureWidth = json['captureWidth']! as double,
-      captureHeight = json['captureHeight']! as double,
-      super(json['cameraId']! as int);
-
   /// The capture width in pixels.
   final double captureWidth;
 
   /// The capture height in pixels.
   final double captureHeight;
-
-  /// Converts the [CameraResolutionChangedEvent] instance into a [Map] instance
-  /// that can be serialized to JSON.
-  Map<String, dynamic> toJson() => <String, Object>{
-    'cameraId': cameraId,
-    'captureWidth': captureWidth,
-    'captureHeight': captureHeight,
-  };
 
   @override
   bool operator ==(Object other) =>
@@ -172,14 +134,6 @@ class CameraClosingEvent extends CameraEvent {
   /// Build a CameraClosing event triggered from the camera represented by
   /// `cameraId`.
   const CameraClosingEvent(super.cameraId);
-
-  /// Converts the supplied [Map] to an instance of the [CameraClosingEvent]
-  /// class.
-  CameraClosingEvent.fromJson(Map<String, dynamic> json) : super(json['cameraId']! as int);
-
-  /// Converts the [CameraClosingEvent] instance into a [Map] instance that can
-  /// be serialized to JSON.
-  Map<String, dynamic> toJson() => <String, Object>{'cameraId': cameraId};
 
   @override
   bool operator ==(Object other) =>
@@ -201,21 +155,8 @@ class CameraErrorEvent extends CameraEvent {
   /// The `description` represents the error occured on the camera.
   const CameraErrorEvent(super.cameraId, this.description);
 
-  /// Converts the supplied [Map] to an instance of the [CameraErrorEvent]
-  /// class.
-  CameraErrorEvent.fromJson(Map<String, dynamic> json)
-    : description = json['description']! as String,
-      super(json['cameraId']! as int);
-
   /// Description of the error.
   final String description;
-
-  /// Converts the [CameraErrorEvent] instance into a [Map] instance that can be
-  /// serialized to JSON.
-  Map<String, dynamic> toJson() => <String, Object>{
-    'cameraId': cameraId,
-    'description': description,
-  };
 
   @override
   bool operator ==(Object other) =>
@@ -238,28 +179,11 @@ class VideoRecordedEvent extends CameraEvent {
   /// video duration was set.
   const VideoRecordedEvent(super.cameraId, this.file, this.maxVideoDuration);
 
-  /// Converts the supplied [Map] to an instance of the [VideoRecordedEvent]
-  /// class.
-  VideoRecordedEvent.fromJson(Map<String, dynamic> json)
-    : file = XFile(json['path']! as String),
-      maxVideoDuration = json['maxVideoDuration'] != null
-          ? Duration(milliseconds: json['maxVideoDuration'] as int)
-          : null,
-      super(json['cameraId']! as int);
-
   /// XFile of the recorded video.
   final XFile file;
 
   /// Maximum duration of the recorded video.
   final Duration? maxVideoDuration;
-
-  /// Converts the [VideoRecordedEvent] instance into a [Map] instance that can be
-  /// serialized to JSON.
-  Map<String, dynamic> toJson() => <String, Object?>{
-    'cameraId': cameraId,
-    'path': file.path,
-    'maxVideoDuration': maxVideoDuration?.inMilliseconds,
-  };
 
   @override
   bool operator ==(Object other) =>

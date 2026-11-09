@@ -8,6 +8,7 @@ import 'dart:async';
 import 'dart:js_interop';
 import 'dart:ui';
 
+import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:camera_web/src/camera.dart';
 import 'package:camera_web/src/camera_service.dart';
 import 'package:camera_web/src/shims/dart_js_util.dart';
@@ -30,6 +31,8 @@ import 'package:web/web.dart' as web;
       #divElement: divElementShim,
       #window: windowShim,
       #blobBuilder: blobBuilderShim,
+      #takePicture: xFileShim,
+      #stopVideoRecording: xFileShim,
     },
   ),
   MockSpec<CameraOptions>(
@@ -37,6 +40,8 @@ import 'package:web/web.dart' as web;
   ),
 ])
 export 'mocks.mocks.dart';
+
+Future<XFile> xFileShim() async => XFile.scopedStorage(uri: 'blob:camera-test');
 
 web.Window windowShim() => throw UnimplementedError();
 

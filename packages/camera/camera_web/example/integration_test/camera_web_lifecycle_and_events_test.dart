@@ -825,7 +825,7 @@ void main() {
 
       testWidgets('onVideoRecordedEvent emits a VideoRecordedEvent', (WidgetTester tester) async {
         final camera = MockCamera();
-        final capturedVideo = XFile('/bogus/test');
+        final capturedVideo = XFile.scopedStorage(uri: '/bogus/test');
         final stream = Stream<VideoRecordedEvent>.value(
           VideoRecordedEvent(cameraId, capturedVideo, Duration.zero),
         );

@@ -1,3 +1,8 @@
+## 0.13.0
+
+* **BREAKING CHANGE**: Updates to `cross_file` 0.4.0. Captured files use the
+  new `XFile` API; use `uri` instead of `path`, and `name()` instead of `name`.
+
 ## 0.12.2
 
 * Adds `CameraController.isZeroShutterLagSupported` and

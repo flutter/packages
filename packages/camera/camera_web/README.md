@@ -84,9 +84,9 @@ See the example below:
 ```dart
 final Image image;
 if (kIsWeb) {
-  image = Image.network(capturedImage.path);
+  image = Image.network(capturedImage.uri);
 } else {
-  image = Image.file(File(capturedImage.path));
+  image = Image.file(File.fromUri(Uri.parse(capturedImage.uri)));
 }
 ```
 

@@ -8,6 +8,7 @@ import 'dart:ui';
 import 'dart:ui_web' as ui_web;
 
 import 'package:camera_platform_interface/camera_platform_interface.dart';
+import 'package:cross_file_web/cross_file_web.dart';
 import 'package:flutter/foundation.dart';
 import 'package:web/web.dart' as web;
 import 'package:web/web.dart';
@@ -279,7 +280,9 @@ class Camera {
       _setTorchMode(enabled: false);
     }
 
-    return XFile(web.URL.createObjectURL(blob));
+    return ScopedStorageXFile.fromCreationParams(
+      WebScopedStorageXFileCreationParams.fromBlob(blob),
+    );
   }
 
   /// Returns a size of the camera video based on its first video track size.
@@ -478,10 +481,14 @@ class Camera {
       final web.Blob videoBlob = blobBuilder(_videoData, videoType);
 
       // Create a file containing the video blob.
-      final file = XFile(
-        web.URL.createObjectURL(videoBlob),
-        mimeType: _videoMimeType,
-        name: videoBlob.hashCode.toString(),
+      final file = ScopedStorageXFile.fromCreationParams(
+        WebScopedStorageXFileCreationParams.fromBlob(
+          web.File(
+            <JSAny>[videoBlob].toJS,
+            videoBlob.hashCode.toString(),
+            web.FilePropertyBag(type: _videoMimeType),
+          ),
+        ),
       );
 
       // Emit an event containing the recorded video file.

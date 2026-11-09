@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'package:camera_platform_interface/camera_platform_interface.dart';
-import 'package:camera_platform_interface/src/method_channel/method_channel_camera.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -11,8 +10,8 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('$CameraPlatform', () {
-    test('$MethodChannelCamera is the default instance', () {
-      expect(CameraPlatform.instance, isA<MethodChannelCamera>());
+    test('availableCameras throws before a platform implementation is registered', () {
+      expect(CameraPlatform.instance.availableCameras, throwsUnimplementedError);
     });
 
     test('Cannot be implemented with `implements`', () {
