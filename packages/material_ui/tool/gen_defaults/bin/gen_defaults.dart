@@ -39,10 +39,8 @@ import '../templates/motion_template.dart';
 import '../templates/navigation_bar_template.dart';
 import '../templates/navigation_drawer_template.dart';
 import '../templates/navigation_rail_template.dart';
-
 import '../templates/popup_menu_template.dart';
 import '../templates/progress_indicator_template.dart';
-
 import '../templates/radio_template.dart';
 import '../templates/range_slider_template.dart';
 import '../templates/search_bar_template.dart';
@@ -52,9 +50,8 @@ import '../templates/slider_template.dart';
 import '../templates/snackbar_template.dart';
 import '../templates/switch_template.dart';
 import '../templates/tabs_template.dart';
-
 import '../templates/text_field_template.dart';
-// import '../templates/time_picker_template.dart';
+import '../templates/time_picker_template.dart';
 import '../templates/typography_template.dart';
 
 Future<void> main(List<String> args) async {
@@ -72,6 +69,7 @@ Future<void> main(List<String> args) async {
   const BottomAppBarTemplateM3().generateFile(verbose: verbose);
   const BottomSheetTemplateM3().generateFile(verbose: verbose);
   const ButtonTemplateM3('Elevated Button').generateFile(verbose: verbose);
+  const ButtonTemplateM3E('Elevated Button').generateFile(verbose: verbose);
   const ButtonTemplateM3('Filled Button').generateFile(verbose: verbose);
   const ButtonTemplateM3('Filled Tonal Button').generateFile(verbose: verbose);
   const ButtonTemplateM3('Outlined Button').generateFile(verbose: verbose);
@@ -103,6 +101,7 @@ Future<void> main(List<String> args) async {
   const ListTileTemplateM3().generateFile(verbose: verbose);
   const MenuTemplateM3().generateFile(verbose: verbose);
   const MotionTemplateM3().generateFile(verbose: verbose);
+  const MotionTemplateM3E().generateFile(verbose: verbose);
   const NavigationBarTemplateM3().generateFile(verbose: verbose);
   const NavigationDrawerTemplateM3().generateFile(verbose: verbose);
   const NavigationRailTemplateM3().generateFile(verbose: verbose);
@@ -118,6 +117,6 @@ Future<void> main(List<String> args) async {
   const SwitchTemplateM3().generateFile(verbose: verbose);
   const TabsTemplateM3().generateFile(verbose: verbose);
   const TextFieldTemplateM3().generateFile(verbose: verbose);
-  // const TimePickerTemplateM3().generateFile(verbose: verbose);
+  const TimePickerTemplateM3().generateFile(verbose: verbose);
   const TypographyTemplateM3().generateFile(verbose: verbose);
 }

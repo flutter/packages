@@ -39,6 +39,8 @@ class _MainWidget extends StatelessWidget {
       appBar: AppBar(title: Semantics(headingLevel: 1, child: Text('$pageTitle Demo'))),
       body: ListView(
         padding: const EdgeInsets.all(24.0),
+        semanticChildCount: 0,
+        addSemanticIndexes: false,
         children: <Widget>[
           Semantics(
             label: 'Enabled dropdown menu',
