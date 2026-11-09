@@ -29,7 +29,7 @@ let package = Package(
     // to be compatible.
     .package(url: "https://github.com/googlemaps/ios-maps-sdk", "11.0.0"..<"11.3.0"),
     // 7.1.2 is the first version to support SDK 11.x. In the past, SDK major version
-    // and required iOS minimum versinos have changed without a major version
+    // and required iOS minimum versions have changed without a major version
     // change, so pin an exact version to avoid breakage if the same thing
     // happens again in the future.
     .package(url: "https://github.com/googlemaps/google-maps-ios-utils", exact: "7.1.2"),

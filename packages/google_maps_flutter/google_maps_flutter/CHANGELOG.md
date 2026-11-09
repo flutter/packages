@@ -1,6 +1,6 @@
 ## 2.19.1
 
-* Updates README to include `google_maps_flutter_ios_sdk10` as an implementation
+* Updates README to include `google_maps_flutter_ios_sdk11` as an implementation
   option on iOS.
 
 ## 2.19.0
