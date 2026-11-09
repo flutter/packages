@@ -2863,6 +2863,9 @@ name: foobar
       expect(code, contains('@internal\nCallbacks pigeon_register_Callbacks('));
       expect(code, contains('final class CallbacksRegistrar'));
       expect(code, contains('pigeon_native.pigeon_register_Callbacks(api, name: name)'));
+      expect(code, contains('static Callbacks implement(Callbacks api, {'));
+      expect(code, contains('String name = defaultInstanceName,'));
+      expect(code, contains('name: name.isEmpty ? defaultInstanceName : name'));
 
       final nativeInteropSink = StringBuffer();
       generator.generateNativeInterop(
@@ -2880,9 +2883,9 @@ name: foobar
         contains('class _ApiForNativeInterop implements ApiForNativeInterop'),
       );
       expect(nativeInteropCode, contains('final class _CallbacksRegistrar'));
-      expect(nativeInteropCode, contains('_CallbacksRegistrar(this.dartApi);'));
-      expect(nativeInteropCode, contains('final Callbacks dartApi;'));
-      expect(nativeInteropCode, isNot(contains('if (dartApi != null)')));
+      expect(nativeInteropCode, contains('_CallbacksRegistrar(this.pigeonVar_dartApi);'));
+      expect(nativeInteropCode, contains('final Callbacks pigeonVar_dartApi;'));
+      expect(nativeInteropCode, isNot(contains('if (pigeonVar_dartApi != null)')));
 
       // Verify single-platform import isolation in generateNativeInterop.
       final jniOnlySink = StringBuffer();
@@ -2926,6 +2929,42 @@ name: foobar
       expect(ffiOnlyCode, isNot(contains('jni_bridge')));
     },
   );
+
+  test('native interop JNI FlutterApi prefixes internal registrar members to avoid collisions', () {
+    final root = Root(
+      apis: <Api>[
+        AstFlutterApi(
+          name: 'Callbacks',
+          methods: <Method>[
+            for (final name in <String>['register', 'dartApi'])
+              Method(
+                name: name,
+                location: ApiLocation.flutter,
+                parameters: <Parameter>[],
+                returnType: const TypeDeclaration(baseName: 'void', isNullable: false),
+              ),
+          ],
+        ),
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final sink = StringBuffer();
+    const DartGenerator().generateNativeInterop(
+      const InternalDartOptions(ignoreLints: false, useJni: true, dartOut: 'lib/foo.g.dart'),
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final code = sink.toString();
+    expect(code, contains('final Callbacks pigeonVar_dartApi;'));
+    expect(code, contains('Callbacks pigeonVar_register({String name = defaultInstanceName}) {'));
+    expect(code, contains('_CallbacksRegistrar(api).pigeonVar_register(name: name)'));
+    expect(code, contains('pigeonVar_dartApi.register()'));
+    expect(code, contains('pigeonVar_dartApi.dartApi()'));
+    expect(code, contains('@override\n  void register()'));
+    expect(code, contains('@override\n  void dartApi()'));
+  });
 }
 
 /// Builds a root with a sealed class `Shape`, its subclasses `Circle` (one

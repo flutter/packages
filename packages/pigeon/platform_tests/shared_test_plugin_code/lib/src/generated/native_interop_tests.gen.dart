@@ -10561,9 +10561,12 @@ abstract class NativeInteropFlutterIntegrationCoreApi {
 
   static NativeInteropFlutterIntegrationCoreApi implement(
     NativeInteropFlutterIntegrationCoreApi api, {
-    String name = '',
+    String name = defaultInstanceName,
   }) {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar().register(api, name: name);
+    return NativeInteropFlutterIntegrationCoreApiRegistrar().register(
+      api,
+      name: name.isEmpty ? defaultInstanceName : name,
+    );
   }
 }
 
@@ -11215,8 +11218,11 @@ abstract class NativeInteropReservedNamesFlutterApi {
 
   static NativeInteropReservedNamesFlutterApi implement(
     NativeInteropReservedNamesFlutterApi api, {
-    String name = '',
+    String name = defaultInstanceName,
   }) {
-    return NativeInteropReservedNamesFlutterApiRegistrar().register(api, name: name);
+    return NativeInteropReservedNamesFlutterApiRegistrar().register(
+      api,
+      name: name.isEmpty ? defaultInstanceName : name,
+    );
   }
 }
