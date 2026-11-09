@@ -1449,7 +1449,7 @@ void main() {
           width: 200,
           child: _boilerplate(
             child: ListView.builder(
-              cacheExtent: 0,
+              scrollCacheExtent: const ScrollCacheExtent.pixels(0),
               controller: controller,
               itemBuilder: (BuildContext context, int index) {
                 return OpenContainer(
@@ -1515,7 +1515,7 @@ void main() {
           child: _boilerplate(
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              cacheExtent: 0,
+              scrollCacheExtent: const ScrollCacheExtent.pixels(0),
               controller: controller,
               itemBuilder: (BuildContext context, int index) {
                 return OpenContainer(
