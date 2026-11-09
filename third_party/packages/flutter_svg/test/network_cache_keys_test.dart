@@ -84,6 +84,21 @@ void main() {
     expect(original, originalAgain);
   });
 
+  test('client identity stays stable when its custom hash changes', () async {
+    final client = _MutableHashClient();
+    final loader = SvgNetworkLoader('https://example.com/logo.svg', httpClient: client);
+    final SvgCacheKey originalKey = loader.cacheKey(null);
+    final originalHash = loader.hashCode;
+    final ByteData original = await loader.loadBytes(null);
+    client.customHash++;
+
+    expect(loader.cacheKey(null), originalKey);
+    expect(loader.hashCode, originalHash);
+    expect(identical(await loader.loadBytes(null), original), isTrue);
+    expect(client.requests, 1);
+    expect(svg.cache.evict(originalKey), isTrue);
+  });
+
   test('mutating headers preserves existing cache entries and eviction', () async {
     final client = _CountingSvgClient();
     final headers = <String, String>{'Authorization': 'old'};
@@ -145,4 +160,16 @@ class _CountingSvgClient extends http.BaseClient {
       200,
     );
   }
+}
+
+class _MutableHashClient extends _CountingSvgClient {
+  int customHash = 0;
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => customHash;
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) => other is _MutableHashClient && other.customHash == customHash;
 }
