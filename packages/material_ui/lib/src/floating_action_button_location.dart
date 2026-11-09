@@ -642,8 +642,17 @@ mixin FabContainedOffsetY on StandardFabLocation {
   /// action button lines up with the center of the bottom navigation bar.
   @override
   double getOffsetY(ScaffoldPrelayoutGeometry scaffoldGeometry, double adjustment) {
-    final double contentBottom = scaffoldGeometry.contentBottom;
-    final double contentMargin = scaffoldGeometry.scaffoldSize.height - contentBottom;
+    final double scaffoldHeight = scaffoldGeometry.scaffoldSize.height;
+    final double? bottomNavigationBarTop = scaffoldGeometry.bottomNavigationBarTop;
+    // contentBottom is above any persistent footer buttons, which are laid out
+    // on top of the bottom navigation bar. Measure from the top of the bar
+    // instead, unless the keyboard covers it.
+    final double contentBottom =
+        bottomNavigationBarTop != null &&
+            bottomNavigationBarTop <= scaffoldHeight - scaffoldGeometry.minInsets.bottom
+        ? bottomNavigationBarTop
+        : scaffoldGeometry.contentBottom;
+    final double contentMargin = scaffoldHeight - contentBottom;
     final double bottomViewPadding = scaffoldGeometry.minViewPadding.bottom;
     final double fabHeight = scaffoldGeometry.floatingActionButtonSize.height;
 
@@ -661,7 +670,7 @@ mixin FabContainedOffsetY on StandardFabLocation {
     // too small.
     final double contentBottomToFabTop = (contentMargin - bottomViewPadding - fabHeight) / 2.0;
     final double fabY = contentBottom + contentBottomToFabTop;
-    final double maxFabY = scaffoldGeometry.scaffoldSize.height - fabHeight - safeMargin;
+    final double maxFabY = scaffoldHeight - fabHeight - safeMargin;
 
     return math.min(maxFabY, fabY);
   }

@@ -350,6 +350,92 @@ void main() {
     expect(tester.getCenter(find.byType(FloatingActionButton)), const Offset(756.0, 550.0));
   });
 
+  testWidgets('Contained floating action button location with persistent footer buttons', (
+    WidgetTester tester,
+  ) async {
+    // Regression test for https://github.com/flutter/flutter/issues/141922.
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          persistentFooterButtons: <Widget>[
+            TextButton(onPressed: () {}, child: const Text('Footer')),
+          ],
+          bottomNavigationBar: const BottomAppBar(),
+          floatingActionButton: FloatingActionButton(onPressed: () {}),
+          floatingActionButtonLocation: FloatingActionButtonLocation.endContained,
+        ),
+      ),
+    );
+
+    final Rect fabRect = tester.getRect(find.byType(FloatingActionButton));
+    final Rect babRect = tester.getRect(find.byType(BottomAppBar));
+    expect(fabRect.center.dy, babRect.center.dy);
+    expect(fabRect.top, greaterThanOrEqualTo(babRect.top));
+  });
+
+  testWidgets('Contained floating action button location with footer buttons and keyboard', (
+    WidgetTester tester,
+  ) async {
+    Widget buildFrame({List<Widget>? persistentFooterButtons}) {
+      return MaterialApp(
+        home: MediaQuery(
+          data: const MediaQueryData(viewInsets: EdgeInsets.only(bottom: 300.0)),
+          child: Scaffold(
+            persistentFooterButtons: persistentFooterButtons,
+            bottomNavigationBar: const BottomAppBar(),
+            floatingActionButton: FloatingActionButton(onPressed: () {}),
+            floatingActionButtonLocation: FloatingActionButtonLocation.endContained,
+          ),
+        ),
+      );
+    }
+
+    await tester.pumpWidget(buildFrame());
+    final Offset withoutFooter = tester.getCenter(find.byType(FloatingActionButton));
+
+    await tester.pumpWidget(
+      buildFrame(
+        persistentFooterButtons: <Widget>[
+          TextButton(onPressed: () {}, child: const Text('Footer')),
+        ],
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(tester.getCenter(find.byType(FloatingActionButton)), withoutFooter);
+  });
+
+  testWidgets('ScaffoldPrelayoutGeometry.bottomNavigationBarTop', (WidgetTester tester) async {
+    final location = _RecordingFabLocation();
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          persistentFooterButtons: <Widget>[
+            TextButton(onPressed: () {}, child: const Text('Footer')),
+          ],
+          bottomNavigationBar: const BottomAppBar(),
+          floatingActionButton: FloatingActionButton(onPressed: () {}),
+          floatingActionButtonLocation: location,
+        ),
+      ),
+    );
+    expect(
+      location.geometry!.bottomNavigationBarTop,
+      tester.getTopLeft(find.byType(BottomAppBar)).dy,
+    );
+    expect(location.geometry!.contentBottom, lessThan(location.geometry!.bottomNavigationBarTop!));
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          floatingActionButton: FloatingActionButton(onPressed: () {}),
+          floatingActionButtonLocation: location,
+        ),
+      ),
+    );
+    expect(location.geometry!.bottomNavigationBarTop, isNull);
+  });
+
   testWidgets('Mini-start-top floating action button location', (WidgetTester tester) async {
     await tester.pumpWidget(
       MaterialApp(
@@ -1879,6 +1965,16 @@ Widget _buildFrame({
       ),
     ),
   );
+}
+
+class _RecordingFabLocation extends FloatingActionButtonLocation {
+  ScaffoldPrelayoutGeometry? geometry;
+
+  @override
+  Offset getOffset(ScaffoldPrelayoutGeometry scaffoldGeometry) {
+    geometry = scaffoldGeometry;
+    return Offset.zero;
+  }
 }
 
 class _StartTopFloatingActionButtonLocation extends FloatingActionButtonLocation {
