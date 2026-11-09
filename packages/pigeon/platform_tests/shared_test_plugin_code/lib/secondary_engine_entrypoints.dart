@@ -61,12 +61,6 @@ class _SecondaryEngineReservedNamesFlutterApi extends NativeInteropReservedNames
 
   @override
   String getReference() => 'secondary_reference';
-
-  @override
-  String register(String value) => 'secondary:$value';
-
-  @override
-  String dartApi() => 'secondary_dartApi';
 }
 
 class _SecondaryEngineAsyncFlutterApi extends NativeInteropFlutterIntegrationCoreApi {

@@ -5781,10 +5781,6 @@ interface NativeInteropReservedNamesHostApi {
   fun callFlutterIsNull(): Boolean
   /** Returns the result of calling [NativeInteropReservedNamesFlutterApi.getReference]. */
   fun callFlutterGetReference(): String
-  /** Returns the result of calling [NativeInteropReservedNamesFlutterApi.register]. */
-  fun callFlutterRegister(value: String): String
-  /** Returns the result of calling [NativeInteropReservedNamesFlutterApi.dartApi]. */
-  fun callFlutterDartApi(): String
 }
 
 @Keep
@@ -6178,30 +6174,6 @@ class NativeInteropReservedNamesHostApiRegistrar private constructor(private val
     throw NativeInteropTestsError(
         "unregistered-instance", "NativeInteropReservedNamesHostApi has not been registered.")
   }
-  /** Returns the result of calling [NativeInteropReservedNamesFlutterApi.register]. */
-  override fun callFlutterRegister(value: String): String {
-    api?.let {
-      try {
-        return it.callFlutterRegister(value)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    throw NativeInteropTestsError(
-        "unregistered-instance", "NativeInteropReservedNamesHostApi has not been registered.")
-  }
-  /** Returns the result of calling [NativeInteropReservedNamesFlutterApi.dartApi]. */
-  override fun callFlutterDartApi(): String {
-    api?.let {
-      try {
-        return it.callFlutterDartApi()
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    throw NativeInteropTestsError(
-        "unregistered-instance", "NativeInteropReservedNamesHostApi has not been registered.")
-  }
 }
 /**
  * The Flutter API counterpart of [NativeInteropReservedNamesHostApi].
@@ -6332,8 +6304,4 @@ interface NativeInteropReservedNamesFlutterApi {
   fun isNull(): Boolean
   /** JNIgen doesn't turn interface methods into properties. */
   fun getReference(): String
-  /** Previously collided with internal Dart JNI registrar `register` member. */
-  fun register(value: String): String
-  /** Previously collided with internal Dart JNI registrar `dartApi` field. */
-  fun dartApi(): String
 }

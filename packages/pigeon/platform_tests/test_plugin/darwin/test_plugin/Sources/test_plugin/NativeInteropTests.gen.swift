@@ -9901,10 +9901,6 @@ protocol NativeInteropReservedNamesHostApi: AnyObject {
   func callFlutterIsNull() throws -> Bool
   /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.getReference].
   func callFlutterGetReference() throws -> String
-  /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.register].
-  func callFlutterRegister(value: String) throws -> String
-  /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.dartApi].
-  func callFlutterDartApi() throws -> String
 }
 
 /// Generated setup class from Pigeon to register implemented NativeInteropReservedNamesHostApi classes.
@@ -10377,42 +10373,6 @@ protocol NativeInteropReservedNamesHostApi: AnyObject {
     }
     return nil
   }
-  /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.register].
-  @objc func callFlutterRegister(value valueArg: NSString, wrappedError: NativeInteropTestsError)
-    -> NSString?
-  {
-    do {
-      let activeApi = try resolveApi()
-      let res: String = try activeApi.callFlutterRegister(value: valueArg as String)
-      return res as NSString?
-    } catch let error as NativeInteropTestsError {
-      wrappedError.code = error.code
-      wrappedError.message = error.message
-      wrappedError.details = error.details
-    } catch let error {
-      wrappedError.code = "\(error)"
-      wrappedError.message = "\(Swift.type(of: error))"
-      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
-    }
-    return nil
-  }
-  /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.dartApi].
-  @objc func callFlutterDartApi(wrappedError: NativeInteropTestsError) -> NSString? {
-    do {
-      let activeApi = try resolveApi()
-      let res: String = try activeApi.callFlutterDartApi()
-      return res as NSString?
-    } catch let error as NativeInteropTestsError {
-      wrappedError.code = error.code
-      wrappedError.message = error.message
-      wrappedError.details = error.details
-    } catch let error {
-      wrappedError.code = "\(error)"
-      wrappedError.message = "\(Swift.type(of: error))"
-      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
-    }
-    return nil
-  }
 }
 
 /// The Flutter API counterpart of [NativeInteropReservedNamesHostApi].
@@ -10432,10 +10392,6 @@ protocol NativeInteropReservedNamesHostApi: AnyObject {
   @objc func isNull(error: NativeInteropTestsError) -> NSNumber?
   /// JNIgen doesn't turn interface methods into properties.
   @objc func getReference(error: NativeInteropTestsError) -> NSString?
-  /// Previously collided with internal Dart JNI registrar `register` member.
-  @objc func register(value valueArg: NSString?, error: NativeInteropTestsError) -> NSString?
-  /// Previously collided with internal Dart JNI registrar `dartApi` field.
-  @objc func dartApi(error: NativeInteropTestsError) -> NSString?
 }
 
 @objc class NativeInteropReservedNamesFlutterApiRegistrar: NSObject {
@@ -10586,26 +10542,6 @@ class NativeInteropReservedNamesFlutterApi {
   func getReference() throws -> String {
     let error = NativeInteropTestsError()
     let res = api.getReference(error: error)
-    if error.code != nil {
-      throw error
-    }
-    return _PigeonFfiCodec.readValue(value: (res), type: "String") as! String
-  }
-
-  /// Previously collided with internal Dart JNI registrar `register` member.
-  func register(value valueArg: String) throws -> String {
-    let error = NativeInteropTestsError()
-    let res = api.register(value: valueArg as NSString?, error: error)
-    if error.code != nil {
-      throw error
-    }
-    return _PigeonFfiCodec.readValue(value: (res), type: "String") as! String
-  }
-
-  /// Previously collided with internal Dart JNI registrar `dartApi` field.
-  func dartApi() throws -> String {
-    let error = NativeInteropTestsError()
-    let res = api.dartApi(error: error)
     if error.code != nil {
       throw error
     }

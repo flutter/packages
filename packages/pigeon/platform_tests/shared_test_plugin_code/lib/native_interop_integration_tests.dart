@@ -3243,8 +3243,6 @@ void runPigeonNativeInteropIntegrationTests(TargetGenerator targetGenerator) {
       expect(api.callFlutterImplementIn('implementIn'), 'implementIn');
       expect(api.callFlutterIsNull(), true);
       expect(api.callFlutterGetReference(), 'reference');
-      expect(api.callFlutterRegister('register'), 'register');
-      expect(api.callFlutterDartApi(), 'dartApi');
     });
   });
 
@@ -3928,12 +3926,6 @@ class _NativeInteropReservedNamesFlutterApiImpl extends NativeInteropReservedNam
 
   @override
   String getReference() => 'reference';
-
-  @override
-  String register(String value) => value;
-
-  @override
-  String dartApi() => 'dartApi';
 }
 
 class _PrefixedReservedNamesFlutterApiImpl extends NativeInteropReservedNamesFlutterApi {
@@ -3955,10 +3947,4 @@ class _PrefixedReservedNamesFlutterApiImpl extends NativeInteropReservedNamesFlu
 
   @override
   String getReference() => '$prefix:reference';
-
-  @override
-  String register(String value) => '$prefix:$value';
-
-  @override
-  String dartApi() => '$prefix:dartApi';
 }

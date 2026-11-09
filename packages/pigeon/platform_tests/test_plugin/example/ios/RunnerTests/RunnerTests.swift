@@ -408,10 +408,6 @@ final class FakeReservedNamesFlutterApiBridge: NSObject,
   }
   func isNull(error: NativeInteropTestsError) -> NSNumber? { NSNumber(value: false) }
   func getReference(error: NativeInteropTestsError) -> NSString? { label as NSString }
-  func register(value valueArg: NSString?, error: NativeInteropTestsError) -> NSString? {
-    "\(label):\(valueArg ?? "")" as NSString
-  }
-  func dartApi(error: NativeInteropTestsError) -> NSString? { label as NSString }
 }
 
 final class FlutterApiFromProtocol: FlutterSmallApiProtocol {

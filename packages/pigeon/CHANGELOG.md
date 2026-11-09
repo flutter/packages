@@ -8,7 +8,6 @@
 * [dart,kotlin,swift] Fixes detaching one engine clearing Native Interop APIs for all other engines.
 * [dart,kotlin,swift] Native Interop calls now go to the calling engine's instance where possible.
 * [kotlin,swift] Calling a Native Interop API whose instance was unregistered now throws a `PlatformException` instead of crashing.
-* [dart] Fixes `@FlutterApi` methods named `register` or `dartApi` failing with `useJni`, and `implement` with an empty `name`.
 
 ## 29.1.1
 

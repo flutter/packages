@@ -10779,16 +10779,12 @@ abstract class NativeInteropFlutterIntegrationCoreApi {
     }
   }
 
-  /// Registers [api] for Native Interop callers under [name], or the default
-  /// instance when [name] is omitted or empty, and returns [api].
+  /// Registers [api] for Native Interop callers under [name] and returns [api].
   static NativeInteropFlutterIntegrationCoreApi implement(
     NativeInteropFlutterIntegrationCoreApi api, {
-    String name = defaultInstanceName,
+    String name = '',
   }) {
-    return NativeInteropFlutterIntegrationCoreApiRegistrar().register(
-      api,
-      name: name.isEmpty ? defaultInstanceName : name,
-    );
+    return NativeInteropFlutterIntegrationCoreApiRegistrar().register(api, name: name);
   }
 }
 
@@ -10844,10 +10840,6 @@ abstract class NativeInteropReservedNamesHostApiForNativeInterop {
   bool callFlutterIsNull();
 
   String callFlutterGetReference();
-
-  String callFlutterRegister(String value);
-
-  String callFlutterDartApi();
 }
 
 /// Methods whose names collide with members of the bindings that JNIgen
@@ -11336,52 +11328,6 @@ class NativeInteropReservedNamesHostApi {
     );
     return pigeonVar_replyValue! as String;
   }
-
-  /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.register].
-  Future<String> callFlutterRegister(String value) async {
-    if (_nativeInteropApi != null) {
-      return _nativeInteropApi.callFlutterRegister(value);
-    }
-    final pigeonVar_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropReservedNamesHostApi.callFlutterRegister$pigeonVar_messageChannelSuffix';
-    final pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[value]);
-    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
-    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: false,
-    );
-    return pigeonVar_replyValue! as String;
-  }
-
-  /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.dartApi].
-  Future<String> callFlutterDartApi() async {
-    if (_nativeInteropApi != null) {
-      return _nativeInteropApi.callFlutterDartApi();
-    }
-    final pigeonVar_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropReservedNamesHostApi.callFlutterDartApi$pigeonVar_messageChannelSuffix';
-    final pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
-    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
-    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: false,
-    );
-    return pigeonVar_replyValue! as String;
-  }
 }
 
 @internal
@@ -11456,12 +11402,6 @@ abstract class NativeInteropReservedNamesFlutterApi {
 
   /// JNIgen doesn't turn interface methods into properties.
   String getReference();
-
-  /// Previously collided with internal Dart JNI registrar `register` member.
-  String register(String value);
-
-  /// Previously collided with internal Dart JNI registrar `dartApi` field.
-  String dartApi();
 
   static void setUp(
     NativeInteropReservedNamesFlutterApi? api, {
@@ -11594,65 +11534,13 @@ abstract class NativeInteropReservedNamesFlutterApi {
         });
       }
     }
-    {
-      final pigeonVar_channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropReservedNamesFlutterApi.register$messageChannelSuffix',
-        pigeonChannelCodec,
-        binaryMessenger: binaryMessenger,
-      );
-      if (api == null) {
-        pigeonVar_channel.setMessageHandler(null);
-      } else {
-        pigeonVar_channel.setMessageHandler((Object? message) async {
-          final List<Object?> args = message! as List<Object?>;
-          final String arg_value = args[0]! as String;
-          try {
-            final String output = api.register(arg_value);
-            return wrapResponse(result: output);
-          } on PlatformException catch (e) {
-            return wrapResponse(error: e);
-          } catch (e) {
-            return wrapResponse(
-              error: PlatformException(code: 'error', message: e.toString()),
-            );
-          }
-        });
-      }
-    }
-    {
-      final pigeonVar_channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropReservedNamesFlutterApi.dartApi$messageChannelSuffix',
-        pigeonChannelCodec,
-        binaryMessenger: binaryMessenger,
-      );
-      if (api == null) {
-        pigeonVar_channel.setMessageHandler(null);
-      } else {
-        pigeonVar_channel.setMessageHandler((Object? message) async {
-          try {
-            final String output = api.dartApi();
-            return wrapResponse(result: output);
-          } on PlatformException catch (e) {
-            return wrapResponse(error: e);
-          } catch (e) {
-            return wrapResponse(
-              error: PlatformException(code: 'error', message: e.toString()),
-            );
-          }
-        });
-      }
-    }
   }
 
-  /// Registers [api] for Native Interop callers under [name], or the default
-  /// instance when [name] is omitted or empty, and returns [api].
+  /// Registers [api] for Native Interop callers under [name] and returns [api].
   static NativeInteropReservedNamesFlutterApi implement(
     NativeInteropReservedNamesFlutterApi api, {
-    String name = defaultInstanceName,
+    String name = '',
   }) {
-    return NativeInteropReservedNamesFlutterApiRegistrar().register(
-      api,
-      name: name.isEmpty ? defaultInstanceName : name,
-    );
+    return NativeInteropReservedNamesFlutterApiRegistrar().register(api, name: name);
   }
 }

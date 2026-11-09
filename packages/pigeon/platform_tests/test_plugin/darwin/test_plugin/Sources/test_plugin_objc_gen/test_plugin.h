@@ -3163,16 +3163,6 @@ SWIFT_PROTOCOL("_TtP11test_plugin42NativeInteropReservedNamesFlutterApiBridge_")
 /// JNIgen doesn’t turn interface methods into properties.
 - (NSString* _Nullable)getReferenceWithError:
     (NativeInteropTestsError* _Nonnull)error SWIFT_WARN_UNUSED_RESULT;
-/// Previously collided with internal Dart JNI registrar <code>register</code>
-/// member.
-- (NSString* _Nullable)registerWithValue:(NSString* _Nullable)valueArg
-                                   error:
-                                       (NativeInteropTestsError* _Nonnull)error
-    SWIFT_WARN_UNUSED_RESULT;
-/// Previously collided with internal Dart JNI registrar <code>dartApi</code>
-/// field.
-- (NSString* _Nullable)dartApiWithError:(NativeInteropTestsError* _Nonnull)error
-    SWIFT_WARN_UNUSED_RESULT;
 @end
 
 SWIFT_CLASS("_TtC11test_plugin45NativeInteropReservedNamesFlutterApiRegistrar")
@@ -3296,16 +3286,6 @@ SWIFT_CLASS("_TtC11test_plugin38NativeInteropReservedNamesHostApiSetup")
 /// Returns the result of calling
 /// [NativeInteropReservedNamesFlutterApi.getReference].
 - (NSString* _Nullable)callFlutterGetReferenceWithWrappedError:
-    (NativeInteropTestsError* _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
-/// Returns the result of calling
-/// [NativeInteropReservedNamesFlutterApi.register].
-- (NSString* _Nullable)
-    callFlutterRegisterWithValue:(NSString* _Nonnull)valueArg
-                    wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
-    SWIFT_WARN_UNUSED_RESULT;
-/// Returns the result of calling
-/// [NativeInteropReservedNamesFlutterApi.dartApi].
-- (NSString* _Nullable)callFlutterDartApiWithWrappedError:
     (NativeInteropTestsError* _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 @end
 

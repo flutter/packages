@@ -2130,12 +2130,6 @@ abstract class NativeInteropReservedNamesHostApi {
 
   /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.getReference].
   String callFlutterGetReference();
-
-  /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.register].
-  String callFlutterRegister(String value);
-
-  /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.dartApi].
-  String callFlutterDartApi();
 }
 
 /// The Flutter API counterpart of [NativeInteropReservedNamesHostApi].
@@ -2158,10 +2152,4 @@ abstract class NativeInteropReservedNamesFlutterApi {
 
   /// JNIgen doesn't turn interface methods into properties.
   String getReference();
-
-  /// Previously collided with internal Dart JNI registrar `register` member.
-  String register(String value);
-
-  /// Previously collided with internal Dart JNI registrar `dartApi` field.
-  String dartApi();
 }

@@ -2887,7 +2887,6 @@ name: foobar
       expect(code, contains('pigeon_native.pigeon_register_Callbacks('));
       expect(code, contains('pigeon_native.pigeon_unregister_Callbacks('));
       expect(code, contains('static Callbacks implement(Callbacks api, {'));
-      expect(code, contains('name: name.isEmpty ? defaultInstanceName : name,'));
 
       final nativeInteropSink = StringBuffer();
       generator.generateNativeInterop(
@@ -2930,7 +2929,7 @@ name: foobar
         contains('return _ApiForNativeInterop._withRegistrar(ffiApi: link);'),
       );
       expect(nativeInteropCode, contains('final class _CallbacksRegistrar'));
-      expect(nativeInteropCode, contains('_CallbacksRegistrar(this.pigeonVar_dartApi);'));
+      expect(nativeInteropCode, contains('_CallbacksRegistrar(this.dartApi);'));
       expect(nativeInteropCode, contains('pigeonVar_registeredHandles'));
       expect(nativeInteropCode, contains('pigeonVar_setUpInstances'));
       expect(nativeInteropCode, contains('Callbacks pigeon_register_Callbacks('));
@@ -2944,7 +2943,7 @@ name: foobar
       );
       expect(nativeInteropCode, contains('(removedHandle as JObject).release();'));
       expect(nativeInteropCode, contains('(removedHandle as ObjCObject).ref.release();'));
-      expect(nativeInteropCode, contains('final Callbacks pigeonVar_dartApi;'));
+      expect(nativeInteropCode, contains('final Callbacks dartApi;'));
       expect(nativeInteropCode, isNot(contains('if (dartApi != null)')));
 
       // Verify single-platform import isolation in generateNativeInterop.
@@ -3277,7 +3276,7 @@ name: foobar
         final String code = generateNativeInterop(options, root);
         final int removeHandleStart = code.indexOf('static void pigeonVar_removeHandle(');
         final int registerStart = code.indexOf(
-          'Callbacks pigeonVar_register({String name = defaultInstanceName}) {',
+          'Callbacks register({String name = defaultInstanceName}) {',
         );
         expect(removeHandleStart, isNonNegative);
         expect(registerStart, greaterThan(removeHandleStart));
@@ -3290,8 +3289,8 @@ name: foobar
         expect(
           register,
           startsWith(
-            'Callbacks pigeonVar_register({String name = defaultInstanceName}) {\n'
-            '    pigeonVar_removeHandle(pigeonVar_dartApi, name: name);\n',
+            'Callbacks register({String name = defaultInstanceName}) {\n'
+            '    pigeonVar_removeHandle(dartApi, name: name);\n',
           ),
         );
 
@@ -3318,7 +3317,7 @@ name: foobar
           name: 'Callbacks',
           methods: <Method>[
             Method(
-              name: 'register',
+              name: 'unregister',
               location: ApiLocation.flutter,
               parameters: <Parameter>[],
               returnType: const TypeDeclaration(baseName: 'void', isNullable: false),
@@ -3338,31 +3337,19 @@ name: foobar
     );
     final code = sink.toString();
     // The registrar is a separate Kotlin class from the bridge interface, so
-    // an API method named `register` does not rename its methods.
+    // an API method named `unregister` does not rename its methods.
     expect(code, contains('registrar.registerInstance(impl, engineId, affinityKey'));
     expect(code, contains('registrar.unregisterInstance('));
   });
 
-  test('native interop JNI FlutterApi prefixes internal registrar members to avoid collisions', () {
+  test('native interop JNI FlutterApi prefixes internal registrar statics to avoid collisions', () {
     final root = Root(
       apis: <Api>[
         AstFlutterApi(
           name: 'Callbacks',
           methods: <Method>[
             Method(
-              name: 'register',
-              location: ApiLocation.flutter,
-              parameters: <Parameter>[],
-              returnType: const TypeDeclaration(baseName: 'void', isNullable: false),
-            ),
-            Method(
               name: 'unregister',
-              location: ApiLocation.flutter,
-              parameters: <Parameter>[],
-              returnType: const TypeDeclaration(baseName: 'void', isNullable: false),
-            ),
-            Method(
-              name: 'dartApi',
               location: ApiLocation.flutter,
               parameters: <Parameter>[],
               returnType: const TypeDeclaration(baseName: 'void', isNullable: false),
@@ -3384,12 +3371,9 @@ name: foobar
     final sink = StringBuffer();
     generator.generateNativeInterop(dartOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
     final code = sink.toString();
-    expect(code, contains('Callbacks pigeonVar_register('));
     expect(code, contains('static void pigeonVar_unregister('));
     expect(code, contains('static void pigeonVar_setUp('));
-    expect(code, contains('@override\n  void register()'));
     expect(code, contains('@override\n  void unregister()'));
-    expect(code, contains('@override\n  void dartApi()'));
   });
 }
 

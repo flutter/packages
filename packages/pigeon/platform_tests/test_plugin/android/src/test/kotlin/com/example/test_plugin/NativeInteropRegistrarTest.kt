@@ -63,10 +63,6 @@ private class FakeReservedNamesHostApi(private val label: String) :
   override fun callFlutterIsNull(): Boolean = false
 
   override fun callFlutterGetReference(): String = label
-
-  override fun callFlutterRegister(value: String): String = value
-
-  override fun callFlutterDartApi(): String = label
 }
 
 /** Returns a mock engine with the exact engine id [id] and its own Dart executor. */
@@ -592,8 +588,4 @@ private class FakeReservedNamesFlutterApi(private val label: String) :
   override fun isNull(): Boolean = false
 
   override fun getReference(): String = label
-
-  override fun register(value: String): String = "$label:$value"
-
-  override fun dartApi(): String = label
 }
