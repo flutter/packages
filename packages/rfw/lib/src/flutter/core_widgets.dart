@@ -12,6 +12,11 @@
 import 'dart:ui' show FontFeature;
 
 import 'package:flutter/gestures.dart' show DragStartBehavior;
+// TODO(chunhtai): Remove when minimum Flutter version is >=3.50.0 (Flutter 3.56
+// stable under the N-2 policy), as widgets.dart re-exports ScrollCacheExtent in
+// Flutter 3.50+ (https://github.com/flutter/flutter/pull/189483).
+// ignore: unnecessary_import
+import 'package:flutter/rendering.dart' show ScrollCacheExtent;
 import 'package:flutter/widgets.dart';
 import 'package:material_ui/material_ui.dart' show Icons;
 
