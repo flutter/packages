@@ -230,6 +230,13 @@ import 'runtime.dart';
 /// a default of 200ms and [Curves.fastOutSlowIn] is used.
 LocalWidgetLibrary createCoreWidgets() => LocalWidgetLibrary(_coreWidgetsDefinitions);
 
+// Decodes the `cacheExtent` argument (a number of logical pixels) into a
+// [ScrollCacheExtent].
+ScrollCacheExtent? _scrollCacheExtent(DataSource source) {
+  final double? cacheExtent = source.v<double>(['cacheExtent']);
+  return cacheExtent == null ? null : ScrollCacheExtent.pixels(cacheExtent);
+}
+
 // In these widgets we make an effort to expose every single argument available.
 Map<String, LocalWidgetBuilder> get _coreWidgetsDefinitions => <String, LocalWidgetBuilder>{
 
@@ -404,7 +411,7 @@ Map<String, LocalWidgetBuilder> get _coreWidgetsDefinitions => <String, LocalWid
       addAutomaticKeepAlives: source.v<bool>(['addAutomaticKeepAlives']) ?? true,
       addRepaintBoundaries: source.v<bool>(['addRepaintBoundaries']) ?? true,
       addSemanticIndexes: source.v<bool>(['addSemanticIndexes']) ?? true,
-      cacheExtent: source.v<double>(['cacheExtent']),
+      scrollCacheExtent: _scrollCacheExtent(source),
       semanticChildCount: source.v<int>(['semanticChildCount']),
       dragStartBehavior: ArgumentDecoders.enumValue<DragStartBehavior>(DragStartBehavior.values, source, ['dragStartBehavior']) ?? DragStartBehavior.start,
       keyboardDismissBehavior: ArgumentDecoders.enumValue<ScrollViewKeyboardDismissBehavior>(ScrollViewKeyboardDismissBehavior.values, source, ['keyboardDismissBehavior']) ?? ScrollViewKeyboardDismissBehavior.manual,
@@ -493,7 +500,7 @@ Map<String, LocalWidgetBuilder> get _coreWidgetsDefinitions => <String, LocalWid
       addAutomaticKeepAlives: source.v<bool>(['addAutomaticKeepAlives']) ?? true,
       addRepaintBoundaries: source.v<bool>(['addRepaintBoundaries']) ?? true,
       addSemanticIndexes: source.v<bool>(['addSemanticIndexes']) ?? true,
-      cacheExtent: source.v<double>(['cacheExtent']),
+      scrollCacheExtent: _scrollCacheExtent(source),
       semanticChildCount: source.v<int>(['semanticChildCount']),
       dragStartBehavior: ArgumentDecoders.enumValue<DragStartBehavior>(DragStartBehavior.values, source, ['dragStartBehavior']) ?? DragStartBehavior.start,
       keyboardDismissBehavior: ArgumentDecoders.enumValue<ScrollViewKeyboardDismissBehavior>(ScrollViewKeyboardDismissBehavior.values, source, ['keyboardDismissBehavior']) ?? ScrollViewKeyboardDismissBehavior.manual,
