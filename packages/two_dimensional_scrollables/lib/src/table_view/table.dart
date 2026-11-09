@@ -2182,53 +2182,62 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       required bool isRow,
     }) {
       final double splashProgress = span.splashProgressFor(decoration);
-      final Offset? pointerPosition = splashProgress > 0.0 && span.pointerPosition != null
-          ? offset + span.pointerPosition!
-          : null;
+      final bool isPointerActive = splashProgress > 0.0 && span.pointerPosition != null;
+      final Offset? pointerPosition = isPointerActive ? offset + span.pointerPosition! : null;
+
       double? maxSplashRadius;
+
       if (pointerPosition != null) {
-        final bool reversedH = axisDirectionIsReversed(horizontalAxisDirection);
-        final bool reversedV = axisDirectionIsReversed(verticalAxisDirection);
-        final Rect fullSpanRect;
+        late final Rect fullSpanRect;
+
         if (isRow) {
-          final double visibleRowWidth = _firstTrailingPinnedColumn != null
-              ? viewportDimension.width
-              : math.min(
-                  viewportDimension.width,
-                  _leadingPinnedColumnsExtent +
-                      (_lastNonPinnedColumn != null
-                          ? _columnMetrics[_lastNonPinnedColumn!]!.trailingOffset -
-                                horizontalOffset.pixels
-                          : 0.0),
-                );
+          final bool reversedH = axisDirectionIsReversed(horizontalAxisDirection);
+          double visibleRowWidth = viewportDimension.width;
+
+          if (_firstTrailingPinnedColumn == null) {
+            var trailingOffset = 0.0;
+            if (_lastNonPinnedColumn != null) {
+              trailingOffset =
+                  _columnMetrics[_lastNonPinnedColumn!]!.trailingOffset - horizontalOffset.pixels;
+            }
+            final double calculatedWidth = _leadingPinnedColumnsExtent + trailingOffset;
+            visibleRowWidth = math.min(viewportDimension.width, calculatedWidth);
+          }
+
           final double left = reversedH
               ? offset.dx + viewportDimension.width - _hAlignmentOffset - visibleRowWidth
               : offset.dx + _hAlignmentOffset;
+
           fullSpanRect = Rect.fromLTRB(left, rect.top, left + visibleRowWidth, rect.bottom);
         } else {
-          final double visibleColumnHeight = _firstTrailingPinnedRow != null
-              ? viewportDimension.height
-              : math.min(
-                  viewportDimension.height,
-                  _leadingPinnedRowsExtent +
-                      (_lastNonPinnedRow != null
-                          ? _rowMetrics[_lastNonPinnedRow!]!.trailingOffset - verticalOffset.pixels
-                          : 0.0),
-                );
+          final bool reversedV = axisDirectionIsReversed(verticalAxisDirection);
+          double visibleColumnHeight = viewportDimension.height;
+
+          if (_firstTrailingPinnedRow == null) {
+            var trailingOffset = 0.0;
+            if (_lastNonPinnedRow != null) {
+              trailingOffset =
+                  _rowMetrics[_lastNonPinnedRow!]!.trailingOffset - verticalOffset.pixels;
+            }
+            final double calculatedHeight = _leadingPinnedRowsExtent + trailingOffset;
+            visibleColumnHeight = math.min(viewportDimension.height, calculatedHeight);
+          }
+
           final double top = reversedV
               ? offset.dy + viewportDimension.height - _vAlignmentOffset - visibleColumnHeight
               : offset.dy + _vAlignmentOffset;
+
           fullSpanRect = Rect.fromLTRB(rect.left, top, rect.right, top + visibleColumnHeight);
         }
+
+        final double distTopLeft = (pointerPosition - fullSpanRect.topLeft).distance;
+        final double distTopRight = (pointerPosition - fullSpanRect.topRight).distance;
+        final double distBottomLeft = (pointerPosition - fullSpanRect.bottomLeft).distance;
+        final double distBottomRight = (pointerPosition - fullSpanRect.bottomRight).distance;
+
         maxSplashRadius = math.max(
-          math.max(
-            (pointerPosition - fullSpanRect.topLeft).distance,
-            (pointerPosition - fullSpanRect.topRight).distance,
-          ),
-          math.max(
-            (pointerPosition - fullSpanRect.bottomLeft).distance,
-            (pointerPosition - fullSpanRect.bottomRight).distance,
-          ),
+          math.max(distTopLeft, distTopRight),
+          math.max(distBottomLeft, distBottomRight),
         );
       }
       return TableSpanDecorationPaintDetails(
