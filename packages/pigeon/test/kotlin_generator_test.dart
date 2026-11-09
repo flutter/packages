@@ -2044,13 +2044,13 @@ void main() {
       expect(code, contains('HostApiInstances.remove(name)'));
       expect(code, isNot(contains('fun getInstance(name: String')));
       expect(code, contains('private var api: HostApi? = null'));
-      expect(code, isNot(contains('@Volatile')));
+      expect(code, contains('@Volatile private var api: HostApi? = null'));
       expect(
         code,
         contains('throw FlutterError("unregistered-instance", "HostApi has not been registered.")'),
       );
       expect(code, isNot(contains('error("HostApi has not been registered")')));
-      expect(code, isNot(contains('synchronized')));
+      expect(code, contains('kotlin.synchronized(HostApiInstances) {'));
       expect(code, isNot(contains('HostApiInstances[name]?.lastOrNull()')));
       expect(
         code,
@@ -2168,7 +2168,13 @@ void main() {
         code,
         contains('FlutterPlugin.FlutterPluginBinding::class.java.getMethod("getEngineId")'),
       );
-      expect(code, contains('return method.invoke(binding) as Long'));
+      expect(code, contains('val engineId = method.invoke(binding) as Long'));
+      expect(code, contains('if (engineId != 0L) {'));
+      expect(
+        code,
+        contains('@Synchronized\n  fun keyOf(binding: FlutterPlugin.FlutterPluginBinding): Long {'),
+      );
+      expect(code, contains('@Synchronized\n  private fun keyOfMessenger(messenger: Any): Long {'));
       expect(code, contains('private val messengerKeys = java.util.WeakHashMap<Any, Long>()'));
       expect(code, contains('private var nextSyntheticKey: Long = -1L'));
       expect(code, contains('fun keyOf(binding: FlutterPlugin.FlutterPluginBinding): Long {'));
@@ -2239,10 +2245,11 @@ void main() {
     test('host API resolves by engine id, then affinity, then most recent registration', () {
       final String code = generate(buildRoot(flutter: false));
       expectInOrder(code, <String>[
+        'return kotlin.synchronized(HostApiInstances) {',
         'val list = HostApiInstances[name] ?: return null',
         'val exact = if (engineId != PigeonEngineKeys.NO_KEY) list.lastOrNull { it.engineKey == engineId } else null',
         'val affine = if (affinityKey != PigeonEngineKeys.NO_KEY) list.lastOrNull { it.engineKey == affinityKey } else null',
-        'return exact ?: affine ?: list.lastOrNull()',
+        'exact ?: affine ?: list.lastOrNull()',
       ]);
       expect(code, contains('return instance.engineKey'));
     });

@@ -3152,7 +3152,7 @@ name: foobar
           '      if (link == null) {\n'
           '        _throwNoInstanceError(channelName);\n'
           '      }\n'
-          '      if (link != null && _pigeonEngineAffinity == null) {\n'
+          '      if (link != null && engineId == null && _pigeonEngineAffinity == null) {\n'
           '        final int linkEngineKey = jni_bridge.ApiRegistrar.pigeonEngineKeyOf(link);\n'
           '        if (linkEngineKey != _pigeonNoEngineKey) {\n'
           '          _pigeonEngineAffinity = linkEngineKey;\n'

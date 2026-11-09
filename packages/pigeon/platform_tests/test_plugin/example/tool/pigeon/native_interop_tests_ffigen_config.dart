@@ -15,13 +15,14 @@ import 'package:swift2objc/swift2objc.dart';
 import 'package:swiftgen/src/config.dart';
 import 'package:swiftgen/swiftgen.dart';
 
+  
 Future<void> main(List<String> args) async {
   if (!Platform.isMacOS) {
     print('FFI generation is only supported on macOS.');
     return;
   }
 
-  Directory.current = Platform.script.resolve('../..').toFilePath();
+    Directory.current = Platform.script.resolve('../..').toFilePath();
   Uri sdk;
   if (args.isNotEmpty) {
     sdk = Uri.directory(args[0]);
@@ -30,143 +31,138 @@ Future<void> main(List<String> args) async {
   }
   final bool isValidSdk =
       File(path.join(sdk.toFilePath(), 'SDKSettings.json')).existsSync() ||
-      File(path.join(sdk.toFilePath(), 'SDKSettings.plist')).existsSync();
+          File(path.join(sdk.toFilePath(), 'SDKSettings.plist')).existsSync();
   if (!isValidSdk) {
     sdk = await _getAppleSdk();
   }
 
   final classes = <String>{
-    'NativeInteropTestsPigeonInternalNull',
-    'NativeInteropTestsPigeonTypedData',
-    'NativeInteropTestsNumberWrapper',
-    'NSURLCredential',
-    'NativeInteropHostIntegrationCoreApiSetup',
-    'NativeInteropFlutterIntegrationCoreApiBridge',
-    'NativeInteropFlutterIntegrationCoreApiRegistrar',
-    'NativeInteropReservedNamesHostApiSetup',
-    'NativeInteropReservedNamesFlutterApiBridge',
-    'NativeInteropReservedNamesFlutterApiRegistrar',
-    'NativeInteropUnusedClassBridge',
-    'NativeInteropAllTypesBridge',
-    'NativeInteropAllNullableTypesBridge',
-    'NativeInteropAllNullableTypesWithoutRecursionBridge',
-    'NativeInteropAllClassesWrapperBridge',
-    'NativeInteropSealedClassBridge',
-    'NativeInteropSealedClassWithFieldsBridge',
-    'NativeInteropEmptySealedClassBridge',
-    'NativeInteropSealedClassWrapperBridge',
-    'NativeInteropReservedNamesBridge',
-    'NativeInteropTestsError',
+      'NativeInteropTestsPigeonInternalNull',
+      'NativeInteropTestsPigeonTypedData',
+      'NativeInteropTestsNumberWrapper',
+      'NSURLCredential',
+      'NativeInteropHostIntegrationCoreApiSetup',
+      'NativeInteropFlutterIntegrationCoreApiBridge',
+      'NativeInteropFlutterIntegrationCoreApiRegistrar',
+      'NativeInteropReservedNamesHostApiSetup',
+      'NativeInteropReservedNamesFlutterApiBridge',
+      'NativeInteropReservedNamesFlutterApiRegistrar',
+      'NativeInteropUnusedClassBridge',
+      'NativeInteropAllTypesBridge',
+      'NativeInteropAllNullableTypesBridge',
+      'NativeInteropAllNullableTypesWithoutRecursionBridge',
+      'NativeInteropAllClassesWrapperBridge',
+      'NativeInteropSealedClassBridge',
+      'NativeInteropSealedClassWithFieldsBridge',
+      'NativeInteropEmptySealedClassBridge',
+      'NativeInteropSealedClassWrapperBridge',
+      'NativeInteropReservedNamesBridge',
+      'NativeInteropTestsError'
   };
   final enums = <String>{
-    'NativeInteropAnEnum',
-    'NativeInteropAnotherEnum',
-    'NSURLSessionAuthChallengeDisposition',
-    'NativeInteropTestsPigeonInternalNumberType',
+      'NativeInteropAnEnum',
+      'NativeInteropAnotherEnum',
+      'NSURLSessionAuthChallengeDisposition',
+      'NativeInteropTestsPigeonInternalNumberType',
   };
-  var targetTriple = '';
-  if (targetTriple.isEmpty) {
-    try {
-      targetTriple = sdk.path.toLowerCase().contains('macosx')
-          ? await macOSX64TargetTripleLatest
-          : await iOSArm64TargetTripleLatest;
-    } catch (_) {
-      targetTriple = sdk.path.toLowerCase().contains('macosx')
-          ? 'x86_64-apple-macosx'
-          : 'arm64-apple-ios';
+    var targetTriple = '';
+    if (targetTriple.isEmpty) {
+      try {
+        targetTriple = sdk.path.toLowerCase().contains('macosx')
+            ? await macOSX64TargetTripleLatest
+            : await iOSArm64TargetTripleLatest;
+      } catch (_) {
+        targetTriple = sdk.path.toLowerCase().contains('macosx')
+            ? 'x86_64-apple-macosx'
+            : 'arm64-apple-ios';
+      }
     }
-  }
 
-  await SwiftGenerator(
-    target: Target(triple: targetTriple, sdk: sdk),
-    inputs: <SwiftGenInput>[
-      ObjCCompatibleSwiftFileInput(
-        files: <Uri>[
-          Uri.file('../darwin/test_plugin/Sources/test_plugin/NativeInteropTests.gen.swift'),
-        ],
+    await SwiftGenerator(
+      target: Target(
+        triple: targetTriple,
+        sdk: sdk,
       ),
-    ],
-    include: (Declaration d) => classes.contains(d.name) || enums.contains(d.name),
-    output: Output(
-      module: 'test_plugin',
-      dartFile: Uri.file(
-        '../../shared_test_plugin_code/lib/src/generated/native_interop_tests.gen.ffi.dart',
-      ),
-      objectiveCFile: Uri.file(
-        '../darwin/test_plugin/Sources/test_plugin_objc_gen/NativeInteropTests.gen.m',
-      ),
-      preamble: '''
+      inputs: <SwiftGenInput>[ObjCCompatibleSwiftFileInput(files: <Uri>[
+          Uri.file('../darwin/test_plugin/Sources/test_plugin/NativeInteropTests.gen.swift')
+        ])
+      ],
+      include: (Declaration d) =>
+          classes.contains(d.name) || enums.contains(d.name),
+      output: Output(
+        module: 'test_plugin',
+        dartFile: Uri.file('../../shared_test_plugin_code/lib/src/generated/native_interop_tests.gen.ffi.dart'),
+        objectiveCFile: Uri.file('../darwin/test_plugin/Sources/test_plugin_objc_gen/NativeInteropTests.gen.m'),
+        preamble: '''
   // Copyright 2013 The Flutter Authors\n// Use of this source code is governed by a BSD-style license that can be\n// found in the LICENSE file.\n// 
 
   // ignore_for_file: always_specify_types, camel_case_types, non_constant_identifier_names, unnecessary_non_null_assertion, unused_element, unused_field
   // coverage:ignore-file
   ''',
-    ),
-    ffigen: FfiGeneratorOptions(
-      objectiveC: fg.ObjectiveC(
-        externalVersions: fg.ExternalVersions(
-          ios: fg.Versions(min: Version(13, 0, 0)),
-          macos: fg.Versions(min: Version(10, 14, 0)),
         ),
+      ffigen: FfiGeneratorOptions(
+        objectiveC: fg.ObjectiveC(
+          externalVersions: fg.ExternalVersions(
+            ios: fg.Versions(min: Version(13, 0, 0)),
+            macos: fg.Versions(min: Version(10, 14, 0)),
+          ),
+        ),
+        visitors: [
+          fg.Visitor(
+            objCInterface: (decl) {
+              if (classes.contains(decl.originalName) ||
+                  enums.contains(decl.originalName)) {
+                decl.isIncluded = true;
+              }
+              // Assign declarations to their destination module. Foundation classes starting with 'NS'
+              // return null so ffigen treats them as external system framework types (provided by
+              // package:objective_c) rather than generating local module wrappers for them.
+              // Specific types (like NSURLCredential) return 'test_plugin' so ffigen generates the
+              // explicit Dart FFI bindings required by this plugin.
+              if (decl.originalName == 'NSURLCredential' ||
+                  decl.originalName == 'NSURLSessionAuthChallengeDisposition') {
+                decl.module = 'test_plugin';
+                return;
+              }
+              decl.module = decl.originalName.startsWith('NS') ? null : 'test_plugin';
+            },
+            objCProtocol: (decl) {
+              if (classes.contains(decl.originalName)) {
+                decl.isIncluded = true;
+              }
+              // Assign declarations to their destination module. Foundation classes starting with 'NS'
+              // return null so ffigen treats them as external system framework types (provided by
+              // package:objective_c) rather than generating local module wrappers for them.
+              // Specific types (like NSURLCredential) return 'test_plugin' so ffigen generates the
+              // explicit Dart FFI bindings required by this plugin.
+              if (decl.originalName == 'NSURLCredential' ||
+                  decl.originalName == 'NSURLSessionAuthChallengeDisposition') {
+                decl.module = 'test_plugin';
+                return;
+              }
+              decl.module = decl.originalName.startsWith('NS') ? null : 'test_plugin';
+            },
+            enumClass: (decl) {
+              if (enums.contains(decl.originalName) ||
+                  classes.contains(decl.originalName)) {
+                decl.isIncluded = true;
+              }
+            },
+          ),
+        ],
       ),
-      visitors: [
-        fg.Visitor(
-          objCInterface: (decl) {
-            if (classes.contains(decl.originalName) || enums.contains(decl.originalName)) {
-              decl.isIncluded = true;
-            }
-            // Assign declarations to their destination module. Foundation classes starting with 'NS'
-            // return null so ffigen treats them as external system framework types (provided by
-            // package:objective_c) rather than generating local module wrappers for them.
-            // Specific types (like NSURLCredential) return 'test_plugin' so ffigen generates the
-            // explicit Dart FFI bindings required by this plugin.
-            if (decl.originalName == 'NSURLCredential' ||
-                decl.originalName == 'NSURLSessionAuthChallengeDisposition') {
-              decl.module = 'test_plugin';
-              return;
-            }
-            decl.module = decl.originalName.startsWith('NS') ? null : 'test_plugin';
-          },
-          objCProtocol: (decl) {
-            if (classes.contains(decl.originalName)) {
-              decl.isIncluded = true;
-            }
-            // Assign declarations to their destination module. Foundation classes starting with 'NS'
-            // return null so ffigen treats them as external system framework types (provided by
-            // package:objective_c) rather than generating local module wrappers for them.
-            // Specific types (like NSURLCredential) return 'test_plugin' so ffigen generates the
-            // explicit Dart FFI bindings required by this plugin.
-            if (decl.originalName == 'NSURLCredential' ||
-                decl.originalName == 'NSURLSessionAuthChallengeDisposition') {
-              decl.module = 'test_plugin';
-              return;
-            }
-            decl.module = decl.originalName.startsWith('NS') ? null : 'test_plugin';
-          },
-          enumClass: (decl) {
-            if (enums.contains(decl.originalName) || classes.contains(decl.originalName)) {
-              decl.isIncluded = true;
-            }
-          },
-        ),
-      ],
-    ),
-  ).generate(
-    logger: null,
-    tempDirectory: Uri.directory('../darwin/test_plugin/Sources/test_plugin_objc_gen'),
-  );
-}
+    ).generate(
+      logger: null,
+      tempDirectory: Uri.directory('../darwin/test_plugin/Sources/test_plugin_objc_gen'),
+    );
 
+}
 Future<Uri> _getAppleSdk() async {
   if (!Platform.isMacOS) {
     return Uri.directory('/');
   }
   try {
-    final ProcessResult result = await Process.run('xcrun', <String>[
-      '--sdk',
-      'iphoneos',
-      '--show-sdk-path',
-    ]);
+    final ProcessResult result = await Process.run('xcrun', <String>['--sdk', 'iphoneos', '--show-sdk-path']);
     if (result.exitCode == 0) {
       final String sdkPath = result.stdout.toString().trim();
       if (sdkPath.isNotEmpty &&
@@ -178,3 +174,4 @@ Future<Uri> _getAppleSdk() async {
   } catch (_) {}
   return iOSSdk;
 }
+

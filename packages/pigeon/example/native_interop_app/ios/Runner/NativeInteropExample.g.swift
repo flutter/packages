@@ -208,6 +208,8 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
 private enum PigeonEngineKeys {
   /// The sentinel for an unknown engine.
   static let noKey: Int64 = Int64.min
+  /// Guards the key caches. Recursive because `key(for:)` calls `key(messenger:exactKey:)`.
+  private static let lock = NSRecursiveLock()
   private static let syntheticKeys = NSMapTable<AnyObject, NSNumber>.weakToStrongObjects()
   private static var nextSyntheticKey: Int64 = -1
 
@@ -217,6 +219,8 @@ private enum PigeonEngineKeys {
     if let exactKey = exactKey {
       return exactKey
     }
+    lock.lock()
+    defer { lock.unlock() }
     if let existing = syntheticKeys.object(forKey: messenger) {
       return existing.int64Value
     }
@@ -234,13 +238,18 @@ private enum PigeonEngineKeys {
     /// Returns the key for the engine that owns `registrar`, or `noKey` if it can't be determined.
     static func key(for registrar: FlutterPluginRegistrar) -> Int64 {
       let registrarObject = registrar as AnyObject
+      lock.lock()
+      defer { lock.unlock() }
       if let cached = registrarKeys.object(forKey: registrarObject) {
         return cached.int64Value
       }
       var resolved = noKey
       if registrarObject.responds(to: NSSelectorFromString("engineIdentifier")),
-        let identifier = registrarObject.value(forKey: "engineIdentifier") as? NSNumber
+        let identifier = registrarObject.value(forKey: "engineIdentifier") as? NSNumber,
+        identifier.int64Value != 0
       {
+        // Real engine identifiers are never 0. 0 comes from a registrar whose engine is already
+        // deallocating, or from a test double, and must not be shared between engines.
         resolved = identifier.int64Value
       } else if let messenger = registrarObject.value(forKey: "messenger") as AnyObject? {
         // Read through KVC because the messenger can be nil while the engine is deallocating,
@@ -380,6 +389,8 @@ private class _PigeonFfiCodec {
 
 class NativeInteropExampleApiInstanceTracker {
   static var instancesOfNativeInteropExampleApi = [String: [NativeInteropExampleApiSetup]]()
+  /// Guards the registrations, which Native Interop calls can read from any thread.
+  static let lock = NSLock()
 }
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
 protocol NativeInteropExampleApi: AnyObject {
@@ -391,7 +402,10 @@ protocol NativeInteropExampleApi: AnyObject {
   private var api: NativeInteropExampleApi?
   override init() {}
   private func resolveApi() throws -> NativeInteropExampleApi {
-    guard let currentApi = api else {
+    NativeInteropExampleApiInstanceTracker.lock.lock()
+    let registeredApi = api
+    NativeInteropExampleApiInstanceTracker.lock.unlock()
+    guard let currentApi = registeredApi else {
       throw PigeonError(
         code: "unregistered-instance",
         message: "NativeInteropExampleApi has not been registered.",
@@ -400,7 +414,7 @@ protocol NativeInteropExampleApi: AnyObject {
     }
     return currentApi
   }
-  /// The engine key this wrapper was registered with.
+  /// The engine key this wrapper was registered with. Set before the wrapper is published.
   private var engineKey: Int64 = Int64.min
 
   #if canImport(Flutter) || canImport(FlutterMacOS)
@@ -436,6 +450,8 @@ protocol NativeInteropExampleApi: AnyObject {
   #endif
 
   fileprivate static func register(api: NativeInteropExampleApi, engineKey: Int64, name: String) {
+    NativeInteropExampleApiInstanceTracker.lock.lock()
+    defer { NativeInteropExampleApiInstanceTracker.lock.unlock() }
     var list = NativeInteropExampleApiInstanceTracker.instancesOfNativeInteropExampleApi[name] ?? []
     if let index = list.firstIndex(where: { $0.api === api && $0.engineKey == engineKey }) {
       list.append(list.remove(at: index))
@@ -449,36 +465,47 @@ protocol NativeInteropExampleApi: AnyObject {
   }
 
   fileprivate static func unregister(api: NativeInteropExampleApi, engineKey: Int64, name: String) {
-    guard var list = NativeInteropExampleApiInstanceTracker.instancesOfNativeInteropExampleApi[name]
-    else {
-      return
-    }
-    let removeKey: Int64
-    if list.contains(where: { $0.api === api && $0.engineKey == engineKey }) {
-      removeKey = engineKey
-    } else {
-      let keys = Set(list.filter { $0.api === api }.map { $0.engineKey })
-      guard keys.count == 1, let onlyKey = keys.first else {
+    // Removed entries are kept alive until after unlocking so their deinit cannot run while the
+    // non-recursive lock is held.
+    var displaced: [Any] = []
+    do {
+      NativeInteropExampleApiInstanceTracker.lock.lock()
+      defer { NativeInteropExampleApiInstanceTracker.lock.unlock() }
+      guard
+        var list = NativeInteropExampleApiInstanceTracker.instancesOfNativeInteropExampleApi[name]
+      else {
         return
       }
-      removeKey = onlyKey
-    }
-    list.removeAll { entry in
-      guard let existing = entry.api else {
+      let removeKey: Int64
+      if list.contains(where: { $0.api === api && $0.engineKey == engineKey }) {
+        removeKey = engineKey
+      } else {
+        let keys = Set(list.filter { $0.api === api }.map { $0.engineKey })
+        guard keys.count == 1, let onlyKey = keys.first else {
+          return
+        }
+        removeKey = onlyKey
+      }
+      list.removeAll { entry in
+        guard let existing = entry.api else {
+          return false
+        }
+        if existing === api && entry.engineKey == removeKey {
+          displaced.append(existing)
+          displaced.append(entry)
+          entry.api = nil
+          return true
+        }
         return false
       }
-      if existing === api && entry.engineKey == removeKey {
-        entry.api = nil
-        return true
+      if list.isEmpty {
+        NativeInteropExampleApiInstanceTracker.instancesOfNativeInteropExampleApi.removeValue(
+          forKey: name)
+      } else {
+        NativeInteropExampleApiInstanceTracker.instancesOfNativeInteropExampleApi[name] = list
       }
-      return false
     }
-    if list.isEmpty {
-      NativeInteropExampleApiInstanceTracker.instancesOfNativeInteropExampleApi.removeValue(
-        forKey: name)
-    } else {
-      NativeInteropExampleApiInstanceTracker.instancesOfNativeInteropExampleApi[name] = list
-    }
+    withExtendedLifetime(displaced) {}
   }
 
   /// Returns the instance generated Dart code should use for `name` (or the default
@@ -490,6 +517,8 @@ protocol NativeInteropExampleApi: AnyObject {
     engineId: Int64, affinityKey: Int64,
     name: String = NativeInteropExamplePigeonInternal.defaultInstanceName
   ) -> NativeInteropExampleApiSetup? {
+    NativeInteropExampleApiInstanceTracker.lock.lock()
+    defer { NativeInteropExampleApiInstanceTracker.lock.unlock() }
     guard let list = NativeInteropExampleApiInstanceTracker.instancesOfNativeInteropExampleApi[name]
     else {
       return nil

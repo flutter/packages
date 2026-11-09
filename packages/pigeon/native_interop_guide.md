@@ -294,15 +294,16 @@ Each `@HostApi` registration is associated with the engine passed to `register` 
 Native Interop looks up instances directly in process memory rather than through an engine's `BinaryMessenger`. Dart callers are unchanged: `<Api>.createWithNativeInteropApi()` / `<Api>ForNativeInterop.getInstance()` pick a registration for `name` (`messageChannelSuffix`) **at the time of the lookup**, preferring, in order:
 
 1. The registration for the calling engine (`PlatformDispatcher.instance.engineId`), when native code knows exact engine identifiers.
-2. A registration for the engine this isolate first resolved a handle from.
+2. When the calling isolate has no engine identifier, a registration for the engine that isolate first resolved a handle from. This is tracked separately for each generated Pigeon file.
 3. The most recent registration.
 
 **Routing is exact** on an engine's root isolate when the engine identifier is available to native code:
 - Kotlin `register(api, flutterEngine)`, always.
 - Kotlin `register(api, binding)` and Swift `register(api:registrar:)`, on Flutter versions whose plugin binding / registrar exposes `engineId` / `engineIdentifier`. This is detected at runtime; Pigeon does not use deprecated APIs to obtain it.
 
-**Otherwise routing is best-effort.** It is correct when each engine's Dart code resolves its first handle early in startup, before any other engine registers. Resolve it, for example, at the start of `main()` or during app initialization. On Android, don't resolve handles in your plugin's `registerWith`, because JNI isn't initialized yet (see [5.5](#55-startup-crash-on-android-vmservicedisappearedexception--jni-is-not-initialized)). Later lazy lookups in the same isolate reuse that first engine. It may pick another engine's registration when:
+**Otherwise routing is best-effort.** It is correct when each engine's Dart code resolves its first handle from each Pigeon file early in startup, before any other engine registers. Resolve it, for example, at the start of `main()` or during app initialization. On Android, don't resolve handles in your plugin's `registerWith`, because JNI isn't initialized yet (see [5.5](#55-startup-crash-on-android-vmservicedisappearedexception--jni-is-not-initialized)). Later lazy lookups from the same file in the same isolate reuse that first engine. It may pick another engine's registration when:
 - Engines are created back-to-back before their Dart code starts.
+- A file's first lookup happens lazily while another engine's registration is the most recent one, for example while a secondary engine is attached. APIs created from that file are then bound to the other engine's instance and throw `unregistered-instance` after that engine detaches.
 - Lookups come from background isolates (`Isolate.spawn` / `Isolate.run`), which do not have a `PlatformDispatcher.engineId`.
 
 Native `@FlutterApi` lookups by engine (`getInstance(binding)` / `getInstance(flutterEngine)` / `getInstance(registrar:)`) find that engine's Dart registration when the registering isolate either has an engine identifier native code can match, or has resolved a `@HostApi` handle from that engine that is defined in the same Pigeon input file. The `@FlutterApi` can be registered before or after that `@HostApi` handle is resolved. A Pigeon file that defines only `@FlutterApi`s can't learn its engine this way, so without an exact engine identifier its lookups fall back to the most recent registration.

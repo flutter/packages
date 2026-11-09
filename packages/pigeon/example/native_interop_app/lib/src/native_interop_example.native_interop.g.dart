@@ -436,7 +436,7 @@ class _NativeInteropExampleApiForNativeInterop implements NativeInteropExampleAp
       if (link == null) {
         _throwNoInstanceError(channelName);
       }
-      if (link != null && _pigeonEngineAffinity == null) {
+      if (link != null && engineId == null && _pigeonEngineAffinity == null) {
         final int linkEngineKey = jni_bridge.NativeInteropExampleApiRegistrar.pigeonEngineKeyOf(
           link,
         );
@@ -456,7 +456,7 @@ class _NativeInteropExampleApiForNativeInterop implements NativeInteropExampleAp
       if (link == null) {
         _throwNoInstanceError(channelName);
       }
-      if (link != null && _pigeonEngineAffinity == null) {
+      if (link != null && engineId == null && _pigeonEngineAffinity == null) {
         final int linkEngineKey = ffi_bridge.NativeInteropExampleApiSetup.pigeonEngineKeyOf(link);
         if (linkEngineKey != _pigeonNoEngineKey) {
           _pigeonEngineAffinity = linkEngineKey;

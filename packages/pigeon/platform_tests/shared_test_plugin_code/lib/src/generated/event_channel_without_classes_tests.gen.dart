@@ -13,6 +13,7 @@ import 'dart:typed_data' show Float64List, Int32List, Int64List;
 import 'package:flutter/services.dart';
 import 'package:meta/meta.dart' show immutable, protected, visibleForTesting;
 
+
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
@@ -42,15 +43,14 @@ const StandardMethodCodec pigeonMethodCodec = StandardMethodCodec(_PigeonCodec()
 /// not be called multiple times for the same `instanceName`. To deliver
 /// events to multiple listeners, call this method once and listen to the
 /// returned broadcast stream multiple times instead.
-Stream<int> streamIntsAgain({String instanceName = ''}) {
+Stream<int> streamIntsAgain( {String instanceName = ''}) {
   if (instanceName.isNotEmpty) {
     instanceName = '.$instanceName';
   }
-  final EventChannel streamIntsAgainChannel = EventChannel(
-    'dev.flutter.pigeon.pigeon_integration_tests.EventChannelMethods.streamIntsAgain$instanceName',
-    pigeonMethodCodec,
-  );
+  final EventChannel streamIntsAgainChannel =
+      EventChannel('dev.flutter.pigeon.pigeon_integration_tests.EventChannelMethods.streamIntsAgain$instanceName', pigeonMethodCodec);
   return streamIntsAgainChannel.receiveBroadcastStream().map((dynamic event) {
     return event as int;
   });
 }
+    

@@ -115,8 +115,12 @@ Pigeon supports two distinct models for communication between Dart and native co
 > plugin bindings and registrars, only on Flutter versions that expose it). See
 > [Multi-Engine Routing](./native_interop_guide.md#multi-engine-routing) and
 > [flutter/flutter#195877](https://github.com/flutter/flutter/issues/195877). Known limitations:
-> - Until engine identifiers are available to plugins on stable Flutter, lookups may resolve another
->   engine's registration when engines are created back-to-back before their Dart code starts.
+> - Until engine identifiers are available to plugins on stable Flutter, each generated Pigeon file
+>   binds to the engine of its first resolved `@HostApi` handle. If that first lookup happens while
+>   another engine's registration is the most recent one, for example when engines are created
+>   back-to-back before their Dart code starts, or when an API is first used lazily while a
+>   secondary engine is attached, that file's APIs may be bound to the other engine's instance and
+>   throw `unregistered-instance` after that engine detaches.
 > - Background isolates (`Isolate.spawn` / `Isolate.run`) do not have a `PlatformDispatcher.engineId`,
 >   so in multi-engine apps their lookups may resolve another engine's registration.
 > - APIs that hold engine-specific state (such as an Android `Activity`, a `TextureRegistry`, or a

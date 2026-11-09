@@ -871,14 +871,16 @@ This is called by the generated Dart code and is not intended for direct use.'''
         'fun registerInstance(api: ${api.name}, engineId: Long, affinityKey: Long, name: String = defaultInstanceName) {',
         '}',
         () {
-          indent.writeln('val list = $registered.getOrPut(name) { mutableListOf() }');
-          indent.writeln('val registration = $registrationName(api, engineId, affinityKey)');
-          indent.writeln('val index = list.indexOfFirst { it.api === api }');
-          indent.writeScoped('if (index >= 0) {', '}', () {
-            indent.writeln('list[index] = registration');
-          }, addTrailingNewline: false);
-          indent.addScoped(' else {', '}', () {
-            indent.writeln('list.add(registration)');
+          indent.writeScoped('kotlin.synchronized($registered) {', '}', () {
+            indent.writeln('val list = $registered.getOrPut(name) { mutableListOf() }');
+            indent.writeln('val registration = $registrationName(api, engineId, affinityKey)');
+            indent.writeln('val index = list.indexOfFirst { it.api === api }');
+            indent.writeScoped('if (index >= 0) {', '}', () {
+              indent.writeln('list[index] = registration');
+            }, addTrailingNewline: false);
+            indent.addScoped(' else {', '}', () {
+              indent.writeln('list.add(registration)');
+            });
           });
         },
       );
@@ -895,10 +897,12 @@ This is called by the generated Dart code and is not intended for direct use.'''
         'fun unregisterInstance(api: ${api.name}, name: String = defaultInstanceName) {',
         '}',
         () {
-          indent.writeln('val list = $registered[name] ?: return');
-          indent.writeln('list.removeAll { it.api === api }');
-          indent.writeScoped('if (list.isEmpty()) {', '}', () {
-            indent.writeln('$registered.remove(name)');
+          indent.writeScoped('kotlin.synchronized($registered) {', '}', () {
+            indent.writeln('val list = $registered[name] ?: return');
+            indent.writeln('list.removeAll { it.api === api }');
+            indent.writeScoped('if (list.isEmpty()) {', '}', () {
+              indent.writeln('$registered.remove(name)');
+            });
           });
         },
       );
@@ -928,16 +932,18 @@ recent registration for [name]. Returns null if none is registered.''');
         '}',
         () {
           indent.format('''
-val list = $registered[name] ?: return null
-if (engineKey != $engineKeys.NO_KEY) {
-\t// Prefer the isolate running on the engine over isolates that only
-\t// learned an affinity for it.
-\tval match = list.lastOrNull { it.engineId == engineKey } ?: list.lastOrNull { it.affinityKey == engineKey }
-\tif (match != null) {
-\t\treturn match.api
+kotlin.synchronized($registered) {
+\tval list = $registered[name] ?: return null
+\tif (engineKey != $engineKeys.NO_KEY) {
+\t\t// Prefer the isolate running on the engine over isolates that only
+\t\t// learned an affinity for it.
+\t\tval match = list.lastOrNull { it.engineId == engineKey } ?: list.lastOrNull { it.affinityKey == engineKey }
+\t\tif (match != null) {
+\t\t\treturn match.api
+\t\t}
 \t}
-}
-return list.lastOrNull()?.api''');
+\treturn list.lastOrNull()?.api
+}''');
         },
       );
     });
@@ -1069,7 +1075,7 @@ return list.lastOrNull()?.api''');
       'class $registrarName private constructor(private val engineKey: Long) : ${api.name} {',
       '}',
       () {
-        indent.writeln('private var api: ${api.name}? = null');
+        indent.writeln('@Volatile private var api: ${api.name}? = null');
         indent.newln();
         indent.writeln('constructor() : this($engineKeys.NO_KEY)');
         indent.newln();
@@ -1111,19 +1117,21 @@ return list.lastOrNull()?.api''');
           'private fun registerWithKey(api: ${api.name}, engineKey: Long, name: String) {',
           '}',
           () {
-            indent.writeln('val list = $instances.getOrPut(name) { mutableListOf() }');
-            // Reuse the existing wrapper so Dart handles that already resolved
-            // it keep working after the instance moves back to the top.
-            indent.writeln(
-              'val index = list.indexOfFirst { it.api === api && it.engineKey == engineKey }',
-            );
-            indent.writeScoped('if (index >= 0) {', '}', () {
-              indent.writeln('list.add(list.removeAt(index))');
-            }, addTrailingNewline: false);
-            indent.addScoped(' else {', '}', () {
-              indent.writeln('val wrapper = $registrarName(engineKey)');
-              indent.writeln('wrapper.api = api');
-              indent.writeln('list.add(wrapper)');
+            indent.writeScoped('kotlin.synchronized($instances) {', '}', () {
+              indent.writeln('val list = $instances.getOrPut(name) { mutableListOf() }');
+              // Reuse the existing wrapper so Dart handles that already resolved
+              // it keep working after the instance moves back to the top.
+              indent.writeln(
+                'val index = list.indexOfFirst { it.api === api && it.engineKey == engineKey }',
+              );
+              indent.writeScoped('if (index >= 0) {', '}', () {
+                indent.writeln('list.add(list.removeAt(index))');
+              }, addTrailingNewline: false);
+              indent.addScoped(' else {', '}', () {
+                indent.writeln('val wrapper = $registrarName(engineKey)');
+                indent.writeln('wrapper.api = api');
+                indent.writeln('list.add(wrapper)');
+              });
             });
           },
         );
@@ -1132,32 +1140,34 @@ return list.lastOrNull()?.api''');
           'private fun unregisterWithKey(api: ${api.name}, engineKey: Long, name: String) {',
           '}',
           () {
-            indent.writeln('val list = $instances[name] ?: return');
-            // If no entry matches the key, e.g. because the engine key
-            // could not be computed the same way, fall back to identity, but
-            // only when a single engine holds [api] so that other engines'
-            // registrations of a shared instance are never removed.
-            indent.format('''
-val removeKey =
-\tif (list.any { it.api === api && it.engineKey == engineKey }) {
-\t\tengineKey
-\t} else {
-\t\tlist.filter { it.api === api }.map { it.engineKey }.distinct().singleOrNull() ?: return
-\t}''');
-            indent.writeln('val iterator = list.iterator()');
-            indent.writeScoped('while (iterator.hasNext()) {', '}', () {
-              indent.writeln('val entry = iterator.next()');
-              indent.writeScoped(
-                'if (entry.api === api && entry.engineKey == removeKey) {',
-                '}',
-                () {
-                  indent.writeln('entry.api = null');
-                  indent.writeln('iterator.remove()');
-                },
-              );
-            });
-            indent.writeScoped('if (list.isEmpty()) {', '}', () {
-              indent.writeln('$instances.remove(name)');
+            indent.writeScoped('kotlin.synchronized($instances) {', '}', () {
+              indent.writeln('val list = $instances[name] ?: return');
+              // If no entry matches the key, e.g. because the engine key
+              // could not be computed the same way, fall back to identity, but
+              // only when a single engine holds [api] so that other engines'
+              // registrations of a shared instance are never removed.
+              indent.format('''
+  val removeKey =
+  \tif (list.any { it.api === api && it.engineKey == engineKey }) {
+  \t\tengineKey
+  \t} else {
+  \t\tlist.filter { it.api === api }.map { it.engineKey }.distinct().singleOrNull() ?: return
+  \t}''');
+              indent.writeln('val iterator = list.iterator()');
+              indent.writeScoped('while (iterator.hasNext()) {', '}', () {
+                indent.writeln('val entry = iterator.next()');
+                indent.writeScoped(
+                  'if (entry.api === api && entry.engineKey == removeKey) {',
+                  '}',
+                  () {
+                    indent.writeln('entry.api = null');
+                    indent.writeln('iterator.remove()');
+                  },
+                );
+              });
+              indent.writeScoped('if (list.isEmpty()) {', '}', () {
+                indent.writeln('$instances.remove(name)');
+              });
             });
           },
         );
@@ -1179,10 +1189,12 @@ This is called by the generated Dart code and is not intended for direct use.'''
             '}',
             () {
               indent.format('''
-val list = $instances[name] ?: return null
-val exact = if (engineId != $engineKeys.NO_KEY) list.lastOrNull { it.engineKey == engineId } else null
-val affine = if (affinityKey != $engineKeys.NO_KEY) list.lastOrNull { it.engineKey == affinityKey } else null
-return exact ?: affine ?: list.lastOrNull()''');
+return kotlin.synchronized($instances) {
+\tval list = $instances[name] ?: return null
+\tval exact = if (engineId != $engineKeys.NO_KEY) list.lastOrNull { it.engineKey == engineId } else null
+\tval affine = if (affinityKey != $engineKeys.NO_KEY) list.lastOrNull { it.engineKey == affinityKey } else null
+\texact ?: affine ?: list.lastOrNull()
+}''');
             },
           );
           indent.newln();
@@ -2050,6 +2062,7 @@ private val bindingKeys = java.util.WeakHashMap<FlutterPlugin.FlutterPluginBindi
 private var nextSyntheticKey: Long = -1L
 
 /** Returns the key for the engine that [binding] belongs to. */
+@Synchronized
 fun keyOf(binding: FlutterPlugin.FlutterPluginBinding): Long {
 \treturn bindingKeys.getOrPut(binding) { computeKey(binding) }
 }
@@ -2058,7 +2071,12 @@ private fun computeKey(binding: FlutterPlugin.FlutterPluginBinding): Long {
 \tval method = getEngineIdMethod
 \tif (method != null) {
 \t\ttry {
-\t\t\treturn method.invoke(binding) as Long
+\t\t\t// Real engine ids are never 0, but an engine without one, or a test
+\t\t\t// double, reports 0, which must not be shared between engines.
+\t\t\tval engineId = method.invoke(binding) as Long
+\t\t\tif (engineId != 0L) {
+\t\t\t\treturn engineId
+\t\t\t}
 \t\t} catch (e: Exception) {
 \t\t\t// Fall back to a messenger-based key.
 \t\t}
@@ -2067,6 +2085,7 @@ private fun computeKey(binding: FlutterPlugin.FlutterPluginBinding): Long {
 }
 
 /** Returns the key for [engine]. */
+@Synchronized
 fun keyOf(engine: FlutterEngine): Long {
 \tval key = engine.engineId
 \t// Record the exact key so later lookups through a binding for this engine
@@ -2075,6 +2094,7 @@ fun keyOf(engine: FlutterEngine): Long {
 \treturn key
 }
 
+@Synchronized
 private fun keyOfMessenger(messenger: Any): Long {
 \treturn messengerKeys.getOrPut(messenger) { nextSyntheticKey-- }
 }''');

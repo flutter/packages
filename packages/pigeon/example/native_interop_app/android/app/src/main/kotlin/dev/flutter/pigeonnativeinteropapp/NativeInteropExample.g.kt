@@ -72,6 +72,7 @@ private object NativeInteropExamplePigeonEngineKeys {
   private var nextSyntheticKey: Long = -1L
 
   /** Returns the key for the engine that [binding] belongs to. */
+  @Synchronized
   fun keyOf(binding: FlutterPlugin.FlutterPluginBinding): Long {
     return bindingKeys.getOrPut(binding) { computeKey(binding) }
   }
@@ -80,7 +81,12 @@ private object NativeInteropExamplePigeonEngineKeys {
     val method = getEngineIdMethod
     if (method != null) {
       try {
-        return method.invoke(binding) as Long
+        // Real engine ids are never 0, but an engine without one, or a test
+        // double, reports 0, which must not be shared between engines.
+        val engineId = method.invoke(binding) as Long
+        if (engineId != 0L) {
+          return engineId
+        }
       } catch (e: Exception) {
         // Fall back to a messenger-based key.
       }
@@ -89,6 +95,7 @@ private object NativeInteropExamplePigeonEngineKeys {
   }
 
   /** Returns the key for [engine]. */
+  @Synchronized
   fun keyOf(engine: FlutterEngine): Long {
     val key = engine.engineId
     // Record the exact key so later lookups through a binding for this engine
@@ -97,6 +104,7 @@ private object NativeInteropExamplePigeonEngineKeys {
     return key
   }
 
+  @Synchronized
   private fun keyOfMessenger(messenger: Any): Long {
     return messengerKeys.getOrPut(messenger) { nextSyntheticKey-- }
   }
@@ -114,7 +122,7 @@ interface NativeInteropExampleApi {
 @Keep
 class NativeInteropExampleApiRegistrar private constructor(private val engineKey: Long) :
     NativeInteropExampleApi {
-  private var api: NativeInteropExampleApi? = null
+  @Volatile private var api: NativeInteropExampleApi? = null
 
   constructor() : this(NativeInteropExamplePigeonEngineKeys.NO_KEY)
 
@@ -187,35 +195,39 @@ class NativeInteropExampleApiRegistrar private constructor(private val engineKey
   }
 
   private fun registerWithKey(api: NativeInteropExampleApi, engineKey: Long, name: String) {
-    val list = NativeInteropExampleApiInstances.getOrPut(name) { mutableListOf() }
-    val index = list.indexOfFirst { it.api === api && it.engineKey == engineKey }
-    if (index >= 0) {
-      list.add(list.removeAt(index))
-    } else {
-      val wrapper = NativeInteropExampleApiRegistrar(engineKey)
-      wrapper.api = api
-      list.add(wrapper)
+    kotlin.synchronized(NativeInteropExampleApiInstances) {
+      val list = NativeInteropExampleApiInstances.getOrPut(name) { mutableListOf() }
+      val index = list.indexOfFirst { it.api === api && it.engineKey == engineKey }
+      if (index >= 0) {
+        list.add(list.removeAt(index))
+      } else {
+        val wrapper = NativeInteropExampleApiRegistrar(engineKey)
+        wrapper.api = api
+        list.add(wrapper)
+      }
     }
   }
 
   private fun unregisterWithKey(api: NativeInteropExampleApi, engineKey: Long, name: String) {
-    val list = NativeInteropExampleApiInstances[name] ?: return
-    val removeKey =
-        if (list.any { it.api === api && it.engineKey == engineKey }) {
-          engineKey
-        } else {
-          list.filter { it.api === api }.map { it.engineKey }.distinct().singleOrNull() ?: return
+    kotlin.synchronized(NativeInteropExampleApiInstances) {
+      val list = NativeInteropExampleApiInstances[name] ?: return
+      val removeKey =
+          if (list.any { it.api === api && it.engineKey == engineKey }) {
+            engineKey
+          } else {
+            list.filter { it.api === api }.map { it.engineKey }.distinct().singleOrNull() ?: return
+          }
+      val iterator = list.iterator()
+      while (iterator.hasNext()) {
+        val entry = iterator.next()
+        if (entry.api === api && entry.engineKey == removeKey) {
+          entry.api = null
+          iterator.remove()
         }
-    val iterator = list.iterator()
-    while (iterator.hasNext()) {
-      val entry = iterator.next()
-      if (entry.api === api && entry.engineKey == removeKey) {
-        entry.api = null
-        iterator.remove()
       }
-    }
-    if (list.isEmpty()) {
-      NativeInteropExampleApiInstances.remove(name)
+      if (list.isEmpty()) {
+        NativeInteropExampleApiInstances.remove(name)
+      }
     }
   }
 
@@ -235,16 +247,18 @@ class NativeInteropExampleApiRegistrar private constructor(private val engineKey
         affinityKey: Long,
         name: String = defaultInstanceName
     ): NativeInteropExampleApiRegistrar? {
-      val list = NativeInteropExampleApiInstances[name] ?: return null
-      val exact =
-          if (engineId != NativeInteropExamplePigeonEngineKeys.NO_KEY)
-              list.lastOrNull { it.engineKey == engineId }
-          else null
-      val affine =
-          if (affinityKey != NativeInteropExamplePigeonEngineKeys.NO_KEY)
-              list.lastOrNull { it.engineKey == affinityKey }
-          else null
-      return exact ?: affine ?: list.lastOrNull()
+      return kotlin.synchronized(NativeInteropExampleApiInstances) {
+        val list = NativeInteropExampleApiInstances[name] ?: return null
+        val exact =
+            if (engineId != NativeInteropExamplePigeonEngineKeys.NO_KEY)
+                list.lastOrNull { it.engineKey == engineId }
+            else null
+        val affine =
+            if (affinityKey != NativeInteropExamplePigeonEngineKeys.NO_KEY)
+                list.lastOrNull { it.engineKey == affinityKey }
+            else null
+        exact ?: affine ?: list.lastOrNull()
+      }
     }
 
     /**

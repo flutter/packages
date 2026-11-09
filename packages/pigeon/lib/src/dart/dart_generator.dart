@@ -2015,17 +2015,24 @@ $dartApiName? ${classMemberNamePrefix}getInstance_${api.name}({
       // Native registrations are matched to this isolate's engine. When the
       // engine id is unavailable, the engine of the first resolved instance is
       // remembered so later lookups stay on the same engine, and Flutter API
-      // registrations made before it was known are updated with it.
+      // registrations made before it was known are updated with it. Isolates
+      // that know their engine id never learn an affinity, because a lookup
+      // that falls back to another engine's registration doesn't make that
+      // engine theirs.
       void writeRecordAffinity(String engineKeyOfCall) {
-        indent.writeScoped('if (link != null && _pigeonEngineAffinity == null) {', '}', () {
-          indent.writeln('final int linkEngineKey = $engineKeyOfCall;');
-          indent.writeScoped('if (linkEngineKey != _pigeonNoEngineKey) {', '}', () {
-            indent.writeln('_pigeonEngineAffinity = linkEngineKey;');
-            if (root.apis.any((Api api) => api is AstFlutterApi)) {
-              indent.writeln('_pigeonUpdateFlutterApiEngineAffinity();');
-            }
-          });
-        });
+        indent.writeScoped(
+          'if (link != null && engineId == null && _pigeonEngineAffinity == null) {',
+          '}',
+          () {
+            indent.writeln('final int linkEngineKey = $engineKeyOfCall;');
+            indent.writeScoped('if (linkEngineKey != _pigeonNoEngineKey) {', '}', () {
+              indent.writeln('_pigeonEngineAffinity = linkEngineKey;');
+              if (root.apis.any((Api api) => api is AstFlutterApi)) {
+                indent.writeln('_pigeonUpdateFlutterApiEngineAffinity();');
+              }
+            });
+          },
+        );
       }
 
       indent.writeln(

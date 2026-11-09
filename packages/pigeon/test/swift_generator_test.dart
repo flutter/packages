@@ -1813,7 +1813,7 @@ void main() {
     expect(code, isNot(contains('fileprivate static let defaultInstanceName')));
     expect(code, contains('protocol HostApi: AnyObject {'));
     expect(code, contains('\nclass HostApiInstanceTracker {'));
-    expect(code, isNot(contains('NSLock')));
+    expect(code, contains('static let lock = NSLock()'));
     expect(code, contains('static var instancesOfHostApi = [String: [HostApiSetup]]()'));
     expect(code, isNot(contains('@discardableResult')));
     expect(code, contains('\n  override init() {}'));
@@ -1969,6 +1969,8 @@ void main() {
     expect(code, contains('private static var nextSyntheticKey: Int64 = -1'));
     expect(code, contains('NSSelectorFromString("engineIdentifier")'));
     expect(code, contains('value(forKey: "engineIdentifier") as? NSNumber'));
+    expect(code, contains('identifier.int64Value != 0'));
+    expect(code, contains('private static let lock = NSRecursiveLock()'));
     // The messenger is read via KVC because it can be nil during engine
     // teardown, and keys are cached per registrar for detach.
     expect(code, contains('value(forKey: "messenger") as AnyObject?'));
@@ -2137,7 +2139,7 @@ void main() {
         'static func register(api: Api, registrar: FlutterPluginRegistrar, name: String = PigeonInternal.defaultInstanceName) {',
       ),
     );
-    expect(code, isNot(contains('withExtendedLifetime')));
+    expect(code, contains('withExtendedLifetime(displaced) {}'));
     expect(
       code,
       contains(
