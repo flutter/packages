@@ -1,3 +1,7 @@
+## 2.3.3
+
+* Uses the configured default placeholder builder when no widget-specific placeholder is supplied.
+
 ## 2.3.2
 
 * Fixes `SvgNetworkLoader` parsing the body of a non-2xx HTTP response as SVG.
