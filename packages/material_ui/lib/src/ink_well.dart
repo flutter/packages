@@ -1536,9 +1536,10 @@ class _InkResponseState extends State<_InkResponseStateWidget>
           borderRadius: widget.borderRadius,
           customBorder: widget.customBorder,
           textDirection: Directionality.of(context),
-          // A new closure each build, so that a rebuild with a different
-          // getRectCallback repaints the ring.
-          rectForSize: (Size size) => _focusRingRect(size),
+          // Only widgets with a getRectCallback need a new closure each build,
+          // so that a rebuild with a different callback repaints the ring.
+          // Without one, the ring follows the box, which repaints on layout.
+          rectForSize: widget.getRectCallback != null ? (Size size) => _focusRingRect(size) : null,
         ),
         child: result,
       );
@@ -1574,7 +1575,7 @@ class _FocusRingPainter extends CustomPainter {
     required this.borderRadius,
     required this.customBorder,
     required this.textDirection,
-    required this.rectForSize,
+    this.rectForSize,
   }) : super(repaint: visible);
 
   final ValueListenable<bool> visible;
@@ -1587,14 +1588,14 @@ class _FocusRingPainter extends CustomPainter {
   final BorderRadius? borderRadius;
   final ShapeBorder? customBorder;
   final TextDirection textDirection;
-  final Rect Function(Size size) rectForSize;
+  final Rect Function(Size size)? rectForSize;
 
   @override
   void paint(Canvas canvas, Size size) {
     if (!visible.value) {
       return;
     }
-    final Rect rect = rectForSize(size);
+    final Rect rect = rectForSize?.call(size) ?? Offset.zero & size;
     // The ring spans from `offset` to `offset + width` outside the shape's
     // edge, so its stroke is centered half a width further out.
     final double delta = offset + width / 2;
