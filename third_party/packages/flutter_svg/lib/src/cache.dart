@@ -149,7 +149,8 @@ class Cache {
   }
 
   void _add(Object key, ByteData result) {
-    // Return oversized decodes to their callers, but do not retain them.
+    // Oversized decodes are not retained; putIfAbsent still returns the decoded
+    // data to its callers through its Future.
     if (maximumSize > 0 && maximumByteSize > 0 && result.lengthInBytes <= maximumByteSize) {
       _remove(key);
       _cache[key] = result;
