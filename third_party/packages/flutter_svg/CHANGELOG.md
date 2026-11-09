@@ -1,3 +1,7 @@
+## 2.3.3
+
+* Fixes the default clip behavior shown by SVG widget diagnostics.
+
 ## 2.3.2
 
 * Fixes `SvgNetworkLoader` parsing the body of a non-2xx HTTP response as SVG.
