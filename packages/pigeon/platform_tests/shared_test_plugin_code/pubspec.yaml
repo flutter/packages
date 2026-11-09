@@ -22,7 +22,12 @@ dependencies:
   jni: ^1.1.1
   meta: ^1.17.0
   mockito: ^5.4.4
-  objective_c: ^9.6.2
+  # TODO(tarrinneal): Remove the upper bound once objective_c's debug object
+  # validity check handles runtime-allocated classes on the iOS simulator.
+  # See https://github.com/dart-lang/native/pull/3788.
+  # 9.6.3's check masks the isa with a class mask that is too narrow there, so
+  # it rejects valid ObjCProtocolBuilder instances.
+  objective_c: ">=9.6.2 <9.6.3"
 
 dev_dependencies:
   ffigen: 22.0.0
