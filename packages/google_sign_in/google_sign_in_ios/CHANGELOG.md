@@ -1,3 +1,8 @@
+## 6.5.0
+
+* Adds opt-in support for App Check on iOS, enabled by setting
+  `GIDEnableAppCheck` in the app's `Info.plist`.
+
 ## 6.4.0
 
 * Adds support for `GoogleSignIn` 10.x.

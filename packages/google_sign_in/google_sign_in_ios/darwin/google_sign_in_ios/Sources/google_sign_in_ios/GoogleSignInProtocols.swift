@@ -88,6 +88,13 @@ protocol GIDSignInProtocol: AnyObject {
 
   func disconnect(completion: ((Error?) -> Void)?)
 
+  // GIDSignIn only provides App Check support on iOS.
+  #if os(iOS) && !targetEnvironment(macCatalyst)
+    func configureAppCheck(completion: ((Error?) -> Void)?)
+
+    func configureAppCheckDebugProvider(apiKey: String, completion: ((Error?) -> Void)?)
+  #endif
+
   #if os(iOS) || targetEnvironment(macCatalyst)
     func signIn(
       withPresenting presentingViewController: UIViewController?,

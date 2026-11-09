@@ -71,6 +71,23 @@ class TestSignIn: NSObject, GIDSignInProtocol {
     completion?(error)
   }
 
+  #if os(iOS) && !targetEnvironment(macCatalyst)
+    // Whether configureAppCheck was called.
+    var configureAppCheckCalled = false
+    // The API key passed to configureAppCheckDebugProvider, if it was called.
+    var appCheckDebugProviderAPIKey: String?
+
+    func configureAppCheck(completion: ((Error?) -> Void)?) {
+      configureAppCheckCalled = true
+      completion?(error)
+    }
+
+    func configureAppCheckDebugProvider(apiKey: String, completion: ((Error?) -> Void)?) {
+      appCheckDebugProviderAPIKey = apiKey
+      completion?(error)
+    }
+  #endif
+
   #if os(iOS) || targetEnvironment(macCatalyst)
     func signIn(
       withPresenting presentingViewController: UIViewController?,
@@ -294,6 +311,72 @@ struct GoogleSignInPluginTests {
       #expect(fakeSignIn.configuration?.hostedDomain == expectedDomain)
     }
   }
+
+  #if os(iOS) && !targetEnvironment(macCatalyst)
+    @Suite("appCheck") struct AppCheckTests {
+      @Test(arguments: [true, false])
+      func notConfiguredWithoutOptIn(useDebugProvider: Bool) {
+        let (plugin, fakeSignIn) = createTestPlugin(
+          googleServiceProperties: loadGoogleServiceInfo())
+
+        plugin.configureAppCheckIfEnabled(infoDictionary: [:], useDebugProvider: useDebugProvider)
+
+        #expect(fakeSignIn.configureAppCheckCalled == false)
+        #expect(fakeSignIn.appCheckDebugProviderAPIKey == nil)
+      }
+
+      @Test func notConfiguredWhenOptedOut() {
+        let (plugin, fakeSignIn) = createTestPlugin()
+
+        plugin.configureAppCheckIfEnabled(
+          infoDictionary: ["GIDEnableAppCheck": false], useDebugProvider: false)
+
+        #expect(fakeSignIn.configureAppCheckCalled == false)
+      }
+
+      @Test func configuresAppAttestProvider() {
+        let (plugin, fakeSignIn) = createTestPlugin()
+
+        plugin.configureAppCheckIfEnabled(
+          infoDictionary: ["GIDEnableAppCheck": true], useDebugProvider: false)
+
+        #expect(fakeSignIn.configureAppCheckCalled == true)
+        #expect(fakeSignIn.appCheckDebugProviderAPIKey == nil)
+      }
+
+      @Test func configuresDebugProviderWithAPIKey() {
+        let (plugin, fakeSignIn) = createTestPlugin(
+          googleServiceProperties: loadGoogleServiceInfo())
+
+        plugin.configureAppCheckIfEnabled(
+          infoDictionary: ["GIDEnableAppCheck": true], useDebugProvider: true)
+
+        #expect(fakeSignIn.configureAppCheckCalled == false)
+        #expect(
+          fakeSignIn.appCheckDebugProviderAPIKey == "AIzaSyBECOwLTAN6PU4Aet1b2QLGIb3kRK8Xjew")
+      }
+
+      @Test func debugProviderNotConfiguredWithoutAPIKey() {
+        let (plugin, fakeSignIn) = createTestPlugin(googleServiceProperties: nil)
+
+        plugin.configureAppCheckIfEnabled(
+          infoDictionary: ["GIDEnableAppCheck": true], useDebugProvider: true)
+
+        #expect(fakeSignIn.configureAppCheckCalled == false)
+        #expect(fakeSignIn.appCheckDebugProviderAPIKey == nil)
+      }
+
+      @Test func configurationErrorIsNotFatal() {
+        let (plugin, fakeSignIn) = createTestPlugin()
+        fakeSignIn.error = NSError(domain: "AppCheck", code: 1)
+
+        plugin.configureAppCheckIfEnabled(
+          infoDictionary: ["GIDEnableAppCheck": true], useDebugProvider: false)
+
+        #expect(fakeSignIn.configureAppCheckCalled == true)
+      }
+    }
+  #endif
 
   @Suite("restorePreviousSignIn") struct RestorePreviousSignInTests {
     @Test func restorePreviousSignInSuccess() async {

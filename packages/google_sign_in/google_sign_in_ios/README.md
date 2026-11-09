@@ -74,6 +74,26 @@ await signIn.init(
 
 Note that step 6 is still required.
 
+#### App Check
+
+The GoogleSignIn SDK can attach a [Firebase App Check](https://firebase.google.com/docs/app-check)
+token to its requests, so that an OAuth client that enforces App Check can
+verify that they come from your app. To enable it, add the following to your
+`[my_project]/ios/Runner/Info.plist` file:
+
+```xml
+<key>GIDEnableAppCheck</key>
+<true/>
+```
+
+App Check requires the `GIDClientID` key from step 4, even if you pass
+`clientId` from Dart. In release builds, the plugin uses App Attest. In debug
+builds, which includes the simulator, it uses the App Check debug provider
+instead. The debug provider needs the `API_KEY` from `GoogleService-Info.plist`,
+so it is only configured if that file is bundled with your app (for example, by
+Firebase setup). Register the debug token that the SDK prints to the console in
+the Firebase console.
+
 #### App Store requirements
 
 Apple's App Review Guidelines impose

@@ -18,6 +18,19 @@ import GoogleSignIn
 /// for more info.
 private let clientIdKey = "CLIENT_ID"
 private let serverClientIdKey = "SERVER_CLIENT_ID"
+/// The key within `GoogleService-Info.plist` used to hold the API key, which
+/// the App Check debug provider requires.
+private let apiKeyKey = "API_KEY"
+
+/// The key within the app's `Info.plist` that opts in to App Check for
+/// Google Sign-In.
+private let enableAppCheckKey = "GIDEnableAppCheck"
+
+#if DEBUG
+  private let isDebugBuild = true
+#else
+  private let isDebugBuild = false
+#endif
 
 private func loadGoogleServiceInfo() -> [String: Any]? {
   guard let plistPath = Bundle.main.path(forResource: "GoogleService-Info", ofType: "plist")
@@ -120,6 +133,10 @@ public final class GoogleSignInPlugin: NSObject, FlutterPlugin, GoogleSignInApi 
     #else
       let messenger = registrar.messenger
     #endif
+    #if os(iOS) && !targetEnvironment(macCatalyst)
+      instance.configureAppCheckIfEnabled(
+        infoDictionary: Bundle.main.infoDictionary, useDebugProvider: isDebugBuild)
+    #endif
     GoogleSignInApiSetup.setUp(binaryMessenger: messenger, api: instance)
   }
 
@@ -183,6 +200,43 @@ public final class GoogleSignInPlugin: NSObject, FlutterPlugin, GoogleSignInApi 
     }
     return handled
   }
+
+  #if os(iOS) && !targetEnvironment(macCatalyst)
+    /// Configures App Check for GIDSignIn if the app opted in by setting
+    /// `GIDEnableAppCheck` to `YES` in its Info.plist.
+    ///
+    /// This is called during plugin registration rather than from
+    /// `configure(params:)`, since GIDSignIn asks for it to happen as early as
+    /// possible: it generates the App Attest key and attestation eagerly.
+    ///
+    /// Failures are logged rather than surfaced, since GIDSignIn then sends
+    /// requests without an App Check token, which only fails if App Check is
+    /// enforced for the OAuth client.
+    func configureAppCheckIfEnabled(infoDictionary: [String: Any]?, useDebugProvider: Bool) {
+      guard infoDictionary?[enableAppCheckKey] as? Bool == true else {
+        return
+      }
+      let completion: (Error?) -> Void = { error in
+        if let error {
+          NSLog("google_sign_in: Failed to configure App Check: \(error)")
+        }
+      }
+      if useDebugProvider {
+        // App Attest is not available on the simulator, so debug builds use
+        // the debug provider, which prints a debug token to register in the
+        // Firebase console.
+        guard let apiKey = googleServiceProperties?[apiKeyKey] as? String else {
+          NSLog(
+            "google_sign_in: \(enableAppCheckKey) is set, but the App Check debug provider "
+              + "requires \(apiKeyKey) in GoogleService-Info.plist. App Check is not configured.")
+          return
+        }
+        signIn.configureAppCheckDebugProvider(apiKey: apiKey, completion: completion)
+      } else {
+        signIn.configureAppCheck(completion: completion)
+      }
+    }
+  #endif
 
   // MARK: - GoogleSignInApi
 

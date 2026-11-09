@@ -53,6 +53,16 @@ final class GIDSignInWrapper: GIDSignInProtocol {
     gidSignIn.disconnect(completion: completion)
   }
 
+  #if os(iOS) && !targetEnvironment(macCatalyst)
+    func configureAppCheck(completion: ((Error?) -> Void)?) {
+      gidSignIn.configure(completion: completion)
+    }
+
+    func configureAppCheckDebugProvider(apiKey: String, completion: ((Error?) -> Void)?) {
+      gidSignIn.configureDebugProvider(withAPIKey: apiKey, completion: completion)
+    }
+  #endif
+
   #if os(iOS) || targetEnvironment(macCatalyst)
     func signIn(
       withPresenting presentingViewController: UIViewController?,
