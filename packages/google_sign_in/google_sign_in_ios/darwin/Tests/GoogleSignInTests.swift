@@ -325,20 +325,23 @@ struct GoogleSignInPluginTests {
         #expect(fakeSignIn.appCheckDebugProviderAPIKey == nil)
       }
 
-      @Test func notConfiguredWhenOptedOut() {
+      @Test(arguments: [false, "NO", "false", "0", ""] as [any Sendable])
+      func notConfiguredWhenOptedOut(value: any Sendable) {
         let (plugin, fakeSignIn) = createTestPlugin()
 
         plugin.configureAppCheckIfEnabled(
-          infoDictionary: ["GIDEnableAppCheck": false], useDebugProvider: false)
+          infoDictionary: ["GIDEnableAppCheck": value], useDebugProvider: false)
 
         #expect(fakeSignIn.configureAppCheckCalled == false)
       }
 
-      @Test func configuresAppAttestProvider() {
+      // String values come from build setting substitution, e.g. `$(SOME_SETTING)`.
+      @Test(arguments: [true, "YES", "yes", "true", "1"] as [any Sendable])
+      func configuresAppAttestProvider(value: any Sendable) {
         let (plugin, fakeSignIn) = createTestPlugin()
 
         plugin.configureAppCheckIfEnabled(
-          infoDictionary: ["GIDEnableAppCheck": true], useDebugProvider: false)
+          infoDictionary: ["GIDEnableAppCheck": value], useDebugProvider: false)
 
         #expect(fakeSignIn.configureAppCheckCalled == true)
         #expect(fakeSignIn.appCheckDebugProviderAPIKey == nil)

@@ -32,6 +32,21 @@ private let enableAppCheckKey = "GIDEnableAppCheck"
   private let isDebugBuild = false
 #endif
 
+/// Interprets an `Info.plist` flag.
+///
+/// Accepts string values as well as booleans, since values substituted from
+/// build settings (e.g. `$(SOME_SETTING)`) are always strings.
+private func isPlistFlagSet(_ value: Any?) -> Bool {
+  switch value {
+  case let flag as Bool:
+    return flag
+  case let string as String:
+    return ["yes", "true", "1"].contains(string.lowercased())
+  default:
+    return false
+  }
+}
+
 private func loadGoogleServiceInfo() -> [String: Any]? {
   guard let plistPath = Bundle.main.path(forResource: "GoogleService-Info", ofType: "plist")
   else {
@@ -213,7 +228,7 @@ public final class GoogleSignInPlugin: NSObject, FlutterPlugin, GoogleSignInApi 
     /// requests without an App Check token, which only fails if App Check is
     /// enforced for the OAuth client.
     func configureAppCheckIfEnabled(infoDictionary: [String: Any]?, useDebugProvider: Bool) {
-      guard infoDictionary?[enableAppCheckKey] as? Bool == true else {
+      guard isPlistFlagSet(infoDictionary?[enableAppCheckKey]) else {
         return
       }
       let completion: (Error?) -> Void = { error in
