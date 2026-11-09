@@ -3769,7 +3769,7 @@ void main() {
               width: 400,
               height: 400,
               child: TableView.builder(
-                cacheExtent: 0.0,
+                scrollCacheExtent: const ScrollCacheExtent.pixels(0.0),
                 horizontalDetails: ScrollableDetails.horizontal(controller: horizontalController),
                 pinnedColumnCount: 1,
                 columnCount: 10,
@@ -3830,7 +3830,7 @@ void main() {
             width: 400,
             height: 400,
             child: TableView.builder(
-              cacheExtent: 0.0,
+              scrollCacheExtent: const ScrollCacheExtent.pixels(0.0),
               verticalDetails: ScrollableDetails.vertical(controller: verticalController),
               pinnedRowCount: 1,
               columnCount: 10,
@@ -3971,7 +3971,7 @@ void main() {
       int trailingPinnedRowCount = 0,
     }) {
       return TableView.builder(
-        cacheExtent: 0.0,
+        scrollCacheExtent: const ScrollCacheExtent.pixels(0.0),
         columnCount: columnCount,
         rowCount: rowCount,
         pinnedColumnCount: pinnedColumnCount,
@@ -4311,7 +4311,7 @@ void main() {
             height: 400,
             width: 400,
             child: TableView.builder(
-              cacheExtent: 0.0,
+              scrollCacheExtent: const ScrollCacheExtent.pixels(0.0),
               columnCount: 10,
               rowCount: 10,
               trailingPinnedRowCount: 2,
@@ -4378,7 +4378,7 @@ void main() {
               height: 400,
               width: 400,
               child: TableView.builder(
-                cacheExtent: 0.0,
+                scrollCacheExtent: const ScrollCacheExtent.pixels(0.0),
                 columnCount: 10,
                 rowCount: 1,
                 trailingPinnedColumnCount: 1,
@@ -4430,7 +4430,7 @@ void main() {
               height: 400,
               width: 400,
               child: TableView.builder(
-                cacheExtent: 0.0,
+                scrollCacheExtent: const ScrollCacheExtent.pixels(0.0),
                 columnCount: 1,
                 rowCount: 10,
                 trailingPinnedRowCount: 1,
@@ -4483,7 +4483,7 @@ void main() {
               height: 400,
               width: 400,
               child: TableView.builder(
-                cacheExtent: 0.0,
+                scrollCacheExtent: const ScrollCacheExtent.pixels(0.0),
                 columnCount: 10,
                 rowCount: 10,
                 trailingPinnedColumnCount: 1,
@@ -4539,7 +4539,7 @@ void main() {
               height: 100,
               width: 400,
               child: TableView.builder(
-                cacheExtent: 0.0,
+                scrollCacheExtent: const ScrollCacheExtent.pixels(0.0),
                 columnCount: 10,
                 rowCount: 1,
                 // col 0  → always at x = 0..100
@@ -4608,7 +4608,7 @@ void main() {
                 height: 400,
                 width: 400,
                 child: TableView.builder(
-                  cacheExtent: 0.0,
+                  scrollCacheExtent: const ScrollCacheExtent.pixels(0.0),
                   columnCount: 3,
                   rowCount: 1,
                   pinnedColumnCount: 1,
@@ -4840,7 +4840,7 @@ void main() {
               height: 400,
               width: 400,
               child: TableView.builder(
-                cacheExtent: 0.0,
+                scrollCacheExtent: const ScrollCacheExtent.pixels(0.0),
                 columnCount: 1,
                 rowCount: 10,
                 trailingPinnedRowCount: 1,
@@ -4896,7 +4896,7 @@ void main() {
               height: 400,
               width: 400,
               child: TableView.builder(
-                cacheExtent: 0.0,
+                scrollCacheExtent: const ScrollCacheExtent.pixels(0.0),
                 columnCount: 10,
                 rowCount: 10,
                 trailingPinnedColumnCount: 1,
