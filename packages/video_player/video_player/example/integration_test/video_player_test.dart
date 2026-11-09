@@ -239,9 +239,11 @@ void main() {
       await controller.initialize();
 
       await controller.play();
+      await tester.pumpAndSettle(_playDuration);
       expect(controller.value.isPlaying, true);
 
       await controller.pause();
+      await tester.pumpAndSettle(_playDuration);
       expect(controller.value.isPlaying, false);
     }, skip: kIsWeb);
   });

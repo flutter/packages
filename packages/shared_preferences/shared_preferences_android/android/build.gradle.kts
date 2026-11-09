@@ -49,6 +49,9 @@ android {
     defaultConfig {
         minSdk = 24
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        // TODO(https://github.com/dart-lang/native/issues/3732): Remove, along with
+        // consumer-rules.pro, once package:jni ships the Kotlin keep rules.
+        consumerProguardFiles("consumer-rules.pro")
     }
 
     lint {
@@ -59,8 +62,8 @@ android {
     }
 
     dependencies {
-        implementation("androidx.datastore:datastore:1.1.7")
-        implementation("androidx.datastore:datastore-preferences:1.1.7")
+        implementation("androidx.datastore:datastore:1.2.1")
+        implementation("androidx.datastore:datastore-preferences:1.2.1")
         implementation("androidx.preference:preference:1.2.1")
         testImplementation("junit:junit:4.13.2")
         testImplementation("androidx.test:core-ktx:1.7.0")

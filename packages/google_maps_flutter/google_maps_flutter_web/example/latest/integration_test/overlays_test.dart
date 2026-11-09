@@ -19,6 +19,7 @@ import 'package:web/web.dart';
 
 @GenerateNiceMocks(<MockSpec<dynamic>>[MockSpec<TileProvider>()])
 import 'overlays_test.mocks.dart';
+import 'resources/pump_map.dart';
 
 MockTileProvider neverTileProvider() {
   final tileProvider = MockTileProvider();
@@ -27,7 +28,10 @@ MockTileProvider neverTileProvider() {
 }
 
 void main() {
-  IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+  // Fails any test that hangs, instead of letting the driver time out.
+  IntegrationTestWidgetsFlutterBinding.ensureInitialized().defaultTestTimeout = const Timeout(
+    Duration(minutes: 2),
+  );
 
   group('TileOverlaysController', () {
     late TileOverlaysController controller;
@@ -136,44 +140,33 @@ void main() {
       verifyZeroInteractions(tileProviders[2]);
     });
 
-    testWidgets(
-      'clearTileCache',
-      (WidgetTester tester) async {
-        final controllerCompleter = Completer<GoogleMapController>();
-        await tester.pumpWidget(
-          MaterialApp(
-            home: Scaffold(
-              body: GoogleMap(
-                initialCameraPosition: const CameraPosition(
-                  target: LatLng(43.3078, -5.6958),
-                  zoom: 14,
-                ),
-                tileOverlays: <TileOverlay>{...tileOverlays.take(2)},
-                onMapCreated: (GoogleMapController value) {
-                  controllerCompleter.complete(value);
-                  addTearDown(() => value.dispose());
-                },
+    testWidgets('clearTileCache', (WidgetTester tester) async {
+      final GoogleMapController controller = await pumpMap(
+        tester,
+        (void Function(GoogleMapController) onMapCreated) => MaterialApp(
+          home: Scaffold(
+            body: GoogleMap(
+              initialCameraPosition: const CameraPosition(
+                target: LatLng(43.3078, -5.6958),
+                zoom: 14,
               ),
+              tileOverlays: <TileOverlay>{...tileOverlays.take(2)},
+              onMapCreated: onMapCreated,
             ),
           ),
-        );
+        ),
+      );
+      addTearDown(controller.dispose);
 
-        // This is needed to kick-off the rendering of the JS Map flutter widget
-        await tester.pump();
-        final GoogleMapController controller = await controllerCompleter.future;
+      await tester.pump();
+      verify(tileProviders[0].getTile(any, any, any));
+      verify(tileProviders[1].getTile(any, any, any));
 
-        await tester.pump();
-        verify(tileProviders[0].getTile(any, any, any));
-        verify(tileProviders[1].getTile(any, any, any));
+      await controller.clearTileCache(tileOverlays[0].tileOverlayId);
 
-        await controller.clearTileCache(tileOverlays[0].tileOverlayId);
-
-        await tester.pump();
-        verify(tileProviders[0].getTile(any, any, any));
-        verifyNoMoreInteractions(tileProviders[1]);
-      },
-      // Flaky; see https://github.com/flutter/flutter/issues/193452
-      skip: true,
-    );
+      await tester.pump();
+      verify(tileProviders[0].getTile(any, any, any));
+      verifyNoMoreInteractions(tileProviders[1]);
+    });
   });
 }

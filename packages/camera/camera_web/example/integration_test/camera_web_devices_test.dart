@@ -380,6 +380,63 @@ void main() {
         expect(stops.every((bool e) => e), isTrue);
       });
 
+      testWidgets('skips a video input device '
+          'that cannot be started', (WidgetTester tester) async {
+        final unreadableVideoDevice =
+            createJSInteropWrapper(FakeMediaDeviceInfo('1', 'Camera 1', MediaDeviceKind.videoInput))
+                as MediaDeviceInfo;
+
+        final videoDevice =
+            createJSInteropWrapper(FakeMediaDeviceInfo('2', 'Camera 2', MediaDeviceKind.videoInput))
+                as MediaDeviceInfo;
+
+        final videoStream =
+            createJSInteropWrapper(
+                  FakeMediaStream(<MediaStreamTrack>[
+                    createJSInteropWrapper(MockMediaStreamTrack()) as MediaStreamTrack,
+                  ]),
+                )
+                as MediaStream;
+
+        mockMediaDevices.enumerateDevices = () {
+          return Future<JSArray<MediaDeviceInfo>>.value(
+            <MediaDeviceInfo>[unreadableVideoDevice, videoDevice].toJS,
+          ).toJS;
+        }.toJS;
+
+        when(
+          cameraService.getMediaStreamForOptions(
+            CameraOptions(video: VideoConstraints(deviceId: unreadableVideoDevice.deviceId)),
+          ),
+        ).thenThrow(CameraWebException(0, CameraErrorCode.notReadable, 'description'));
+
+        when(
+          cameraService.getMediaStreamForOptions(
+            CameraOptions(video: VideoConstraints(deviceId: videoDevice.deviceId)),
+          ),
+        ).thenAnswer((_) => Future<MediaStream>.value(videoStream));
+
+        final List<CameraDescription> cameras = await CameraPlatform.instance.availableCameras();
+
+        expect(
+          cameras,
+          equals(<CameraDescription>[
+            CameraDescription(
+              name: videoDevice.label,
+              lensDirection: CameraLensDirection.external,
+              sensorOrientation: 0,
+            ),
+          ]),
+        );
+
+        expect(
+          (CameraPlatform.instance as CameraPlugin).camerasMetadata,
+          equals(<CameraDescription, CameraMetadata>{
+            cameras.first: CameraMetadata(deviceId: videoDevice.deviceId, facingMode: null),
+          }),
+        );
+      });
+
       group('throws CameraException', () {
         testWidgets('when MediaDevices.enumerateDevices throws DomException', (
           WidgetTester tester,
@@ -405,6 +462,37 @@ void main() {
           final exception = CameraWebException(cameraId, CameraErrorCode.security, 'description');
 
           when(cameraService.getMediaStreamForOptions(any)).thenThrow(exception);
+
+          expect(
+            CameraPlatform.instance.availableCameras(),
+            throwsA(
+              isA<CameraException>().having(
+                (CameraException e) => e.code,
+                'code',
+                exception.code.toString(),
+              ),
+            ),
+          );
+        });
+
+        testWidgets('when no video input device can be started', (WidgetTester tester) async {
+          final videoDevice =
+              createJSInteropWrapper(
+                    FakeMediaDeviceInfo('1', 'Camera 1', MediaDeviceKind.videoInput),
+                  )
+                  as MediaDeviceInfo;
+
+          mockMediaDevices.enumerateDevices = () {
+            return Future<JSArray<MediaDeviceInfo>>.value(<MediaDeviceInfo>[videoDevice].toJS).toJS;
+          }.toJS;
+
+          final exception = CameraWebException(0, CameraErrorCode.notReadable, 'description');
+
+          when(
+            cameraService.getMediaStreamForOptions(
+              CameraOptions(video: VideoConstraints(deviceId: videoDevice.deviceId)),
+            ),
+          ).thenThrow(exception);
 
           expect(
             CameraPlatform.instance.availableCameras(),

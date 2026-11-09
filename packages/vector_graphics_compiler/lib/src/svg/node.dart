@@ -11,6 +11,7 @@ import '../geometry/matrix.dart';
 import '../geometry/path.dart';
 import '../image/image_info.dart';
 import '../paint.dart';
+import 'constants.dart';
 import 'parser.dart' show SvgAttributes;
 import 'visitor.dart';
 
@@ -204,17 +205,17 @@ class ParentNode extends AttributedNode {
   /// Create the paint required to draw a save layer, or `null` if none is
   /// required.
   Paint? createLayerPaint() {
-    final double? fillOpacity = attributes.fill?.opacity;
+    final double? layerOpacity = attributes.fill?.opacity ?? attributes.opacity;
     final bool needsLayer =
         (attributes.blendMode != null) ||
-        (fillOpacity != null && fillOpacity != 1.0 && fillOpacity != 0.0);
+        (layerOpacity != null && layerOpacity != 1.0 && layerOpacity != 0.0);
 
     if (needsLayer) {
       return Paint(
         blendMode: attributes.blendMode,
         fill:
             attributes.fill?.toFill(Rect.largest, transform) ??
-            Fill(color: Color.opaqueBlack.withOpacity(fillOpacity ?? 1.0)),
+            Fill(color: Color.opaqueBlack.withOpacity(layerOpacity ?? 1.0)),
       );
     }
     return null;
@@ -236,16 +237,29 @@ class TextPositionNode extends ParentNode {
   final bool reset;
 
   /// Computes a [TextPosition] to encode for this node.
-  TextPosition computeTextPosition(Rect bounds, AffineMatrix transform) {
+  ///
+  /// [parent] is the [TextPosition] of the enclosing text or tspan, if any.
+  TextPosition computeTextPosition(Rect bounds, AffineMatrix transform, {TextPosition? parent}) {
     final AffineMatrix computedTransform = concatTransform(transform);
 
-    double? x = attributes.x?.calculate(bounds.width);
-    double? y = attributes.y?.calculate(bounds.height);
-    double? dx = attributes.dx?.calculate(bounds.width);
-    double? dy = attributes.dy?.calculate(bounds.height);
+    final double fontSize = attributes.fontSize ?? kDefaultFontSize;
+    double? x = attributes.x?.calculate(bounds.width, fontSize: fontSize);
+    double? y = attributes.y?.calculate(bounds.height, fontSize: fontSize);
+    double? dx = attributes.dx?.calculate(bounds.width, fontSize: fontSize);
+    double? dy = attributes.dy?.calculate(bounds.height, fontSize: fontSize);
 
     final bool hasXY = x != null && y != null;
     final bool hasDxDy = dx != null && dy != null;
+    // A tspan without its own position continues from the parent's position.
+    // If the parent already applied the transform to its position (its
+    // `transform` is null), the transform must not be applied again.
+    final bool inheritsConsumedTransform =
+        parent != null &&
+        parent.transform == null &&
+        x == null &&
+        y == null &&
+        dx == null &&
+        dy == null;
     final bool consumeTransform =
         computedTransform == AffineMatrix.identity ||
         (computedTransform.encodableInRect && (hasXY || hasDxDy));
@@ -272,7 +286,7 @@ class TextPositionNode extends ParentNode {
       dx: dx,
       dy: dy,
       reset: reset,
-      transform: consumeTransform ? null : computedTransform,
+      transform: (inheritsConsumedTransform || consumeTransform) ? null : computedTransform,
     );
   }
 
@@ -497,7 +511,7 @@ class TextNode extends AttributedNode {
       attributes.textAnchorMultiplier ?? 0,
       attributes.fontFamily,
       attributes.fontWeight ?? normalFontWeight,
-      attributes.fontSize ?? 16, // default in many browsers
+      attributes.fontSize ?? kDefaultFontSize,
       attributes.textDecoration ?? TextDecoration.none,
       attributes.textDecorationStyle ?? TextDecorationStyle.solid,
       attributes.textDecorationColor ?? Color.opaqueBlack,

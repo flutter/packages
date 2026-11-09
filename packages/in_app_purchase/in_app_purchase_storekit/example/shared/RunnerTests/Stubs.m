@@ -483,7 +483,6 @@
     restoreCompletedTransactionsFinished:
         (nullable RestoreCompletedTransactionsFinished)restoreCompletedTransactionsFinished
                    shouldAddStorePayment:(nullable ShouldAddStorePayment)shouldAddStorePayment
-                        updatedDownloads:(nullable UpdatedDownloads)updatedDownloads
                         transactionCache:(nonnull id<FLTTransactionCacheProtocol>)transactionCache {
   return [[PaymentQueueHandlerStub alloc] init];
 }
@@ -520,8 +519,7 @@
                 restoreTransactionFailed:(nullable RestoreTransactionFailed)restoreTransactionFailed
     restoreCompletedTransactionsFinished:
         (nullable RestoreCompletedTransactionsFinished)restoreCompletedTransactionsFinished
-                   shouldAddStorePayment:(nullable ShouldAddStorePayment)shouldAddStorePayment
-                        updatedDownloads:(nullable UpdatedDownloads)updatedDownloads {
+                   shouldAddStorePayment:(nullable ShouldAddStorePayment)shouldAddStorePayment {
   return [[PaymentQueueHandlerStub alloc] init];
 }
 
@@ -541,6 +539,12 @@
 
 // This FlutterPluginRegistrar is a protocol, so to make a stub it has to be implemented.
 @implementation FlutterPluginRegistrarStub
+
+// Implemented as a method rather than via @synthesize so that this compiles
+// against Flutter versions that do not yet declare `engineIdentifier`.
+- (int64_t)engineIdentifier {
+  return 0;
+}
 
 - (void)addApplicationDelegate:(nonnull NSObject<FlutterPlugin> *)delegate {
   if (self.addApplicationDelegateStub) {

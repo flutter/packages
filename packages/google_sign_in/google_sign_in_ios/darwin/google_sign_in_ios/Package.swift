@@ -9,8 +9,8 @@ import PackageDescription
 let package = Package(
   name: "google_sign_in_ios",
   platforms: [
-    .iOS("13.0"),
-    .macOS("10.15"),
+    .iOS("15.0"),
+    .macOS("12.0"),
   ],
   products: [
     .library(name: "google-sign-in-ios", targets: ["google_sign_in_ios"])
@@ -18,25 +18,17 @@ let package = Package(
   dependencies: [
     .package(
       url: "https://github.com/google/GoogleSignIn-iOS.git",
-      from: "9.0.0")
+      "9.0.0"..<"11.0.0")
   ],
   targets: [
     .target(
       name: "google_sign_in_ios",
       dependencies: [
-        .product(name: "GoogleSignIn", package: "GoogleSignIn-iOS"),
-        "google_sign_in_ios_objc",
+        .product(name: "GoogleSignIn", package: "GoogleSignIn-iOS")
       ],
       resources: [
         .process("Resources")
       ]
-    ),
-    // Swift cannot catch NSException, so ExceptionCatcher.m stays in a separate
-    // Objective-C target. That target also holds the CocoaPods placeholder
-    // header required to import google_sign_in_ios.h.
-    .target(
-      name: "google_sign_in_ios_objc",
-      publicHeadersPath: "include/google_sign_in_ios_objc"
-    ),
+    )
   ]
 )
