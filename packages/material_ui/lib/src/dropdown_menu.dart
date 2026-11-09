@@ -183,19 +183,6 @@ enum DropdownMenuCloseBehavior {
 ///
 /// </callout-box>
 ///
-/// <callout-box>
-///
-/// This sample demonstrates how to programmatically clear or reset the selection
-/// in a [DropdownMenu] using a [TextEditingController].
-///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
-/// {@macro material_ui.dartpad_guide}
-///
-/// {@example /example/lib/dropdown_menu/dropdown_menu.3.dart#body}
-///
-/// </callout-box>
-///
 /// See also:
 ///
 /// * [MenuAnchor], which is a widget used to mark the "anchor" for a set of submenus.
@@ -468,8 +455,8 @@ class DropdownMenu<T> extends StatefulWidget {
   ///
   /// When tracking the selected value in a state variable, calling
   /// [TextEditingController.clear] alongside updating the state variable to null
-  /// is required to clear the displayed selection, as updating [initialSelection]
-  /// does not clear the text field.
+  /// is required to clear the displayed selection, as setting [initialSelection]
+  /// to null does not clear the text field.
   ///
   /// <callout-box>
   ///
@@ -496,9 +483,9 @@ class DropdownMenu<T> extends StatefulWidget {
   /// is first created. If the value matches one of the [dropdownMenuEntries],
   /// the corresponding label will be displayed in the text field.
   ///
-  /// Setting this to null does not clear the text field because [initialSelection]
-  /// only specifies an initial selection and does not act as a reactive, controlled
-  /// selection property.
+  /// Setting this to null on a rebuild does not clear the text field, because
+  /// [DropdownMenu] only updates the text field when [initialSelection] changes
+  /// to a value that matches one of the [dropdownMenuEntries].
   ///
   /// To programmatically clear or reset the selection, provide a [controller]
   /// and call [TextEditingController.clear] on it alongside resetting the state

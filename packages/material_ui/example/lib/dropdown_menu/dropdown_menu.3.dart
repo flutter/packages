@@ -43,7 +43,7 @@ enum ColorItem {
 
 class _DropdownMenuClearExampleState extends State<DropdownMenuClearExample> {
   final TextEditingController _controller = TextEditingController();
-  ColorItem? _selectedColor;
+  ColorItem? _selectedColor = ColorItem.red;
 
   @override
   void dispose() {

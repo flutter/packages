@@ -13,8 +13,8 @@ void main() {
   ) async {
     await tester.pumpWidget(const example.DropdownMenuClearExampleApp());
 
-    expect(find.text('Selected: None'), findsOneWidget);
-    expect(find.widgetWithText(TextField, ''), findsOneWidget);
+    expect(find.text('Selected: Red'), findsOneWidget);
+    expect(find.widgetWithText(TextField, 'Red'), findsOneWidget);
 
     // Open menu and select Green.
     await tester.tap(find.byType(DropdownMenu<example.ColorItem>));
@@ -50,4 +50,20 @@ void main() {
       expect(find.widgetWithText(TextField, ''), findsOneWidget);
     },
   );
+
+  testWidgets('Pressing clear selection button clears the initial selection', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const example.DropdownMenuClearExampleApp());
+
+    expect(find.text('Selected: Red'), findsOneWidget);
+    expect(find.widgetWithText(TextField, 'Red'), findsOneWidget);
+
+    // Tap clear button without opening the menu.
+    await tester.tap(find.widgetWithText(FilledButton, 'Clear selection'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Selected: None'), findsOneWidget);
+    expect(find.widgetWithText(TextField, ''), findsOneWidget);
+  });
 }
