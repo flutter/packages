@@ -14,9 +14,9 @@ import 'package:flutter/services.dart';
 import 'package:meta/meta.dart' show immutable, protected, visibleForTesting;
 
 Object? _extractReplyValueOrThrow(
-    List<Object?>? replyList,
-    String channelName, {
-    required bool isNullValid,
+  List<Object?>? replyList,
+  String channelName, {
+  required bool isNullValid,
 }) {
   if (replyList == null) {
     throw PlatformException(
@@ -38,7 +38,6 @@ Object? _extractReplyValueOrThrow(
   return replyList.firstOrNull;
 }
 
-
 List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty = false}) {
   if (empty) {
     return <Object?>[];
@@ -48,6 +47,7 @@ List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty
   }
   return <Object?>[error.code, error.message, error.details];
 }
+
 bool _deepEquals(Object? a, Object? b) {
   if (identical(a, b)) {
     return true;
@@ -60,8 +60,7 @@ bool _deepEquals(Object? a, Object? b) {
   }
   if (a is List && b is List) {
     return a.length == b.length &&
-        a.indexed
-            .every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
+        a.indexed.every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
   }
   if (a is Map && b is Map) {
     if (a.length != b.length) {
@@ -110,38 +109,26 @@ int _deepHash(Object? value) {
   return value.hashCode;
 }
 
-
-enum NullFieldsSearchReplyType {
-  success,
-  failure;
-}
+enum NullFieldsSearchReplyType { success, failure }
 
 class NullFieldsSearchRequest {
-  NullFieldsSearchRequest({
-    this.query,
-    required this.identifier,
-  });
+  NullFieldsSearchRequest({this.query, required this.identifier});
 
   String? query;
 
   int identifier;
 
   List<Object?> _toList() {
-    return <Object?>[
-      query,
-      identifier,
-    ];
+    return <Object?>[query, identifier];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static NullFieldsSearchRequest decode(Object result) {
     result as List<Object?>;
-    return NullFieldsSearchRequest(
-      query: result[0] as String?,
-      identifier: result[1]! as int,
-    );
+    return NullFieldsSearchRequest(query: result[0] as String?, identifier: result[1]! as int);
   }
 
   @override
@@ -167,13 +154,7 @@ class NullFieldsSearchRequest {
 }
 
 class NullFieldsSearchReply {
-  NullFieldsSearchReply({
-    this.result,
-    this.error,
-    this.indices,
-    this.request,
-    this.type,
-  });
+  NullFieldsSearchReply({this.result, this.error, this.indices, this.request, this.type});
 
   String? result;
 
@@ -186,17 +167,12 @@ class NullFieldsSearchReply {
   NullFieldsSearchReplyType? type;
 
   List<Object?> _toList() {
-    return <Object?>[
-      result,
-      error,
-      indices,
-      request,
-      type,
-    ];
+    return <Object?>[result, error, indices, request, type];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static NullFieldsSearchReply decode(Object result) {
     result as List<Object?>;
@@ -218,7 +194,11 @@ class NullFieldsSearchReply {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(result, other.result) && _deepEquals(error, other.error) && _deepEquals(indices, other.indices) && _deepEquals(request, other.request) && _deepEquals(type, other.type);
+    return _deepEquals(result, other.result) &&
+        _deepEquals(error, other.error) &&
+        _deepEquals(indices, other.indices) &&
+        _deepEquals(request, other.request) &&
+        _deepEquals(type, other.type);
   }
 
   @override
@@ -231,7 +211,6 @@ class NullFieldsSearchReply {
   }
 }
 
-
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
@@ -239,13 +218,13 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
-    }    else if (value is NullFieldsSearchReplyType) {
+    } else if (value is NullFieldsSearchReplyType) {
       buffer.putUint8(129);
       writeValue(buffer, value.index);
-    }    else if (value is NullFieldsSearchRequest) {
+    } else if (value is NullFieldsSearchRequest) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    }    else if (value is NullFieldsSearchReply) {
+    } else if (value is NullFieldsSearchReply) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
     } else {
@@ -273,21 +252,20 @@ class NullFieldsHostApi {
   /// Constructor for [NullFieldsHostApi]. The [binaryMessenger] named argument is
   /// available for dependency injection. If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  NullFieldsHostApi({
-      BinaryMessenger? binaryMessenger, 
-      String messageChannelSuffix = '', 
-      })
-      : pigeonVar_binaryMessenger = binaryMessenger,
-        pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+  NullFieldsHostApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
+    : pigeonVar_binaryMessenger = binaryMessenger,
+      pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+          ? '.$messageChannelSuffix'
+          : '';
 
   final BinaryMessenger? pigeonVar_binaryMessenger;
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
 
   final String pigeonVar_messageChannelSuffix;
 
-
   Future<NullFieldsSearchReply> search(NullFieldsSearchRequest nested) async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.pigeon_integration_tests.NullFieldsHostApi.search$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NullFieldsHostApi.search$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -297,11 +275,10 @@ class NullFieldsHostApi {
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: false,
-    )
-    ;
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
     return pigeonVar_replyValue! as NullFieldsSearchReply;
   }
 }
@@ -311,16 +288,18 @@ abstract class NullFieldsFlutterApi {
 
   NullFieldsSearchReply search(NullFieldsSearchRequest request);
 
-  static void setUp(NullFieldsFlutterApi? api, {
+  static void setUp(
+    NullFieldsFlutterApi? api, {
     BinaryMessenger? binaryMessenger,
     String messageChannelSuffix = '',
-  }) 
-{
+  }) {
     messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.NullFieldsFlutterApi.search$messageChannelSuffix', pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+        'dev.flutter.pigeon.pigeon_integration_tests.NullFieldsFlutterApi.search$messageChannelSuffix',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -332,8 +311,10 @@ abstract class NullFieldsFlutterApi {
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }

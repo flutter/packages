@@ -3025,6 +3025,14 @@ class NativeInteropReservedNamesHostApiImpl: NativeInteropReservedNamesHostApi {
   func callFlutterGetReference() throws -> String {
     return try flutterApi().getReference()
   }
+
+  func callFlutterRegister(value: String) throws -> String {
+    return try flutterApi().register(value: value)
+  }
+
+  func callFlutterDartApi() throws -> String {
+    return try flutterApi().dartApi()
+  }
 }
 
 public class TestPluginWithSuffix: HostSmallApi {
@@ -3233,4 +3241,8 @@ private final class TestPluginReservedFlutterBridge: NSObject,
   }
   func isNull(error: NativeInteropTestsError) -> NSNumber? { NSNumber(value: false) }
   func getReference(error: NativeInteropTestsError) -> NSString? { label as NSString }
+  func register(value valueArg: NSString?, error: NativeInteropTestsError) -> NSString? {
+    "\(label):\(valueArg ?? "")" as NSString
+  }
+  func dartApi(error: NativeInteropTestsError) -> NSString? { label as NSString }
 }

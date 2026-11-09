@@ -1364,7 +1364,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     jniRegistrarNamer.next('getInstance', parameterCount: 2);
     jniRegistrarNamer.next('getInstance', parameterCount: 2);
     indent.writeScoped('final class _${api.name}Registrar$mixin {', '}', () {
-      indent.writeln('_${api.name}Registrar(this.dartApi);');
+      indent.writeln('_${api.name}Registrar(this.${varNamePrefix}dartApi);');
       indent.newln();
       indent.writeln(
         'static final Map<String, List<(${api.name}, Object)>> ${varNamePrefix}registeredHandles = <String, List<(${api.name}, Object)>>{};',
@@ -1373,7 +1373,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
         'static final Map<String, ${api.name}> ${varNamePrefix}setUpInstances = <String, ${api.name}>{};',
       );
       indent.newln();
-      indent.writeln('final ${api.name} dartApi;');
+      indent.writeln('final ${api.name} ${varNamePrefix}dartApi;');
       indent.newln();
       indent.writeScoped(
         'static void ${varNamePrefix}setUp(${api.name}? api, {String name = defaultInstanceName}) {',
@@ -1386,7 +1386,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
             indent.writeln('${varNamePrefix}unregister(previous, name: name);');
           });
           indent.writeScoped('if (api != null) {', '}', () {
-            indent.writeln('_${api.name}Registrar(api).register(name: name);');
+            indent.writeln('_${api.name}Registrar(api).${varNamePrefix}register(name: name);');
             indent.writeln('${varNamePrefix}setUpInstances[name] = api;');
           });
         },
@@ -1472,8 +1472,8 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
         },
       );
       indent.newln();
-      indent.writeScoped('${api.name} register({String name = defaultInstanceName}) {', '}', () {
-        indent.writeln('${varNamePrefix}removeHandle(dartApi, name: name);');
+      indent.writeScoped('${api.name} ${varNamePrefix}register({String name = defaultInstanceName}) {', '}', () {
+        indent.writeln('${varNamePrefix}removeHandle(${varNamePrefix}dartApi, name: name);');
         indent.writeln(
           'final int engineId = PlatformDispatcher.instance.engineId ?? _pigeonNoEngineKey;',
         );
@@ -1501,7 +1501,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
               indent.writeln('jName.release();');
             });
             indent.writeln(
-              '(${varNamePrefix}registeredHandles[name] ??= <(${api.name}, Object)>[]).add((dartApi, impl));',
+              '(${varNamePrefix}registeredHandles[name] ??= <(${api.name}, Object)>[]).add((${varNamePrefix}dartApi, impl));',
             );
           });
         }
@@ -1521,7 +1521,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
                 () {
                   indent.writeScoped('try {', '}', () {
                     final methodCall =
-                        'dartApi.${method.name}(${indexMap(method.parameters, (int index, Parameter p) {
+                        '${varNamePrefix}dartApi.${method.name}(${indexMap(method.parameters, (int index, Parameter p) {
                           final _FfiType ffiType = _FfiType.fromTypeDeclaration(p.type);
                           return ffiType.getToDartCall(p.type, varName: _getSafeArgumentName(index, p), forceNullable: true);
                         }).join(', ')})';
@@ -1623,11 +1623,11 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
               },
             );
             indent.writeln(
-              '(${varNamePrefix}registeredHandles[name] ??= <(${api.name}, Object)>[]).add((dartApi, impl));',
+              '(${varNamePrefix}registeredHandles[name] ??= <(${api.name}, Object)>[]).add((${varNamePrefix}dartApi, impl));',
             );
           });
         }
-        indent.writeln('return dartApi;');
+        indent.writeln('return ${varNamePrefix}dartApi;');
       });
       indent.newln();
       indent.writeln("/// Re-sends this isolate's registrations to native code with the current");
@@ -1703,7 +1703,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
           final String jniMethodName = jniNamer.nextApiMethod(method).name;
           indent.writeScoped('$returnType $jniMethodName($params) {', '}', () {
             final methodCall =
-                'dartApi.${method.name}(${indexMap(method.parameters, (int index, Parameter p) {
+                '${varNamePrefix}dartApi.${method.name}(${indexMap(method.parameters, (int index, Parameter p) {
                   final _JniType jniType = _JniType.fromTypeDeclaration(p.type);
                   return jniType.getToDartCall(p.type, varName: _getSafeArgumentName(index, p));
                 }).join(', ')})';
@@ -1747,7 +1747,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
 ${api.name} ${classMemberNamePrefix}register_${api.name}(
 \t${api.name} api, {
 \tString name = defaultInstanceName,
-}) => _${api.name}Registrar(api).register(name: name);
+}) => _${api.name}Registrar(api).${varNamePrefix}register(name: name);
 
 void ${classMemberNamePrefix}unregister_${api.name}(
 \t${api.name} api, {
@@ -1913,11 +1913,15 @@ static void setUp(${api.name}? api, {
       if (usesNativeInterop(generatorOptions)) {
         indent.newln();
         indent.format('''
-/// Registers [api] for Native Interop callers under [name] and returns [api].
+/// Registers [api] for Native Interop callers under [name], or the default
+/// instance when [name] is omitted or empty, and returns [api].
 static ${api.name} implement(${api.name} api, {
-\tString name = '',
+\tString name = defaultInstanceName,
 }) {
-\treturn ${api.name}Registrar().register(api, name: name);
+\treturn ${api.name}Registrar().register(
+\t\tapi,
+\t\tname: name.isEmpty ? defaultInstanceName : name,
+\t);
 }''');
       }
     });

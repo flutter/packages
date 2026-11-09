@@ -3061,27 +3061,29 @@ abstract class Callbacks {
       contains('Method name "implement" in API "Callbacks"'),
     ];
 
-    test('Dart rejects method names reserved by JNI interop code', () {
-      final List<Error> errors = validate(
-        const DartGeneratorAdapter(),
-        reservedMethodNamesSource,
-        swiftOptions: const SwiftOptions(),
-      );
-      expect(errors.map((Error e) => e.message), <Matcher>[
-        ...reservedMethodNameMatchers,
-        contains('Method name "register" in API "Callbacks"'),
-        contains('Method name "dartApi" in API "Callbacks"'),
-      ]);
-    });
+    test(
+      'Dart rejects method names reserved by JNI interop code and allows register/dartApi on FlutterApi',
+      () {
+        final List<Error> errors = validate(
+          const DartGeneratorAdapter(),
+          reservedMethodNamesSource,
+          swiftOptions: const SwiftOptions(),
+        );
+        expect(errors.map((Error e) => e.message), reservedMethodNameMatchers);
+      },
+    );
 
-    test('Dart rejects method names reserved by FFI interop code', () {
-      final List<Error> errors = validate(
-        const DartGeneratorAdapter(),
-        reservedMethodNamesSource,
-        kotlinOptions: const KotlinOptions(),
-      );
-      expect(errors.map((Error e) => e.message), reservedMethodNameMatchers);
-    });
+    test(
+      'Dart rejects method names reserved by FFI interop code and allows register/dartApi on FlutterApi',
+      () {
+        final List<Error> errors = validate(
+          const DartGeneratorAdapter(),
+          reservedMethodNamesSource,
+          kotlinOptions: const KotlinOptions(),
+        );
+        expect(errors.map((Error e) => e.message), reservedMethodNameMatchers);
+      },
+    );
 
     test('Dart allows those method names without native interop', () {
       final List<Error> errors = validate(

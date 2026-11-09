@@ -2201,6 +2201,10 @@ class NativeInteropIntegrationTests(
         override fun isNull(): Boolean = false
 
         override fun getReference(): String = label
+
+        override fun register(value: String): String = "$label:$value"
+
+        override fun dartApi(): String = label
       }
     }
     val api1 = makeApi("engine1")
@@ -2461,6 +2465,14 @@ class NativeInteropReservedNamesHostApiImpl(private val binding: FlutterPluginBi
 
   override fun callFlutterGetReference(): String {
     return flutterApi().getReference()
+  }
+
+  override fun callFlutterRegister(value: String): String {
+    return flutterApi().register(value)
+  }
+
+  override fun callFlutterDartApi(): String {
+    return flutterApi().dartApi()
   }
 }
 

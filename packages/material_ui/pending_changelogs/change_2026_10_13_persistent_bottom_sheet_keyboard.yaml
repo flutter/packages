@@ -1,3 +1,0 @@
-changelog: |
-  - Extends the `Material` of a `Scaffold` persistent bottom sheet behind the software keyboard when `resizeToAvoidBottomInset` is true, so that a translucent keyboard shows the sheet's surface instead of the scaffold's background color.
-version: patch

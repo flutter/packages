@@ -559,14 +559,14 @@ class DartGeneratorAdapter implements GeneratorAdapter {
         ),
       );
     }
-    errors.addAll(_errorOnNativeInteropReservedMethodNames(root, useJni: dartOptions.useJni));
+    errors.addAll(_errorOnNativeInteropReservedMethodNames(root));
     return errors;
   }
 }
 
 /// Returns errors for API methods whose names conflict with members of the
 /// Dart classes that native interop generates for the API.
-List<Error> _errorOnNativeInteropReservedMethodNames(Root root, {required bool useJni}) {
+List<Error> _errorOnNativeInteropReservedMethodNames(Root root) {
   final errors = <Error>[];
   for (final Api api in root.apis) {
     final Set<String> reservedNames = switch (api) {
@@ -577,12 +577,7 @@ List<Error> _errorOnNativeInteropReservedMethodNames(Root root, {required bool u
         'pigeonEngineKey',
         'pigeonEngineKeyOf',
       },
-      // The JNI registrar implements the JNIgen interface for the API, so it
-      // shares a namespace with the API's methods.
-      AstFlutterApi() => <String>{
-        'implement',
-        if (useJni) ...<String>{'dartApi', 'register'},
-      },
+      AstFlutterApi() => const <String>{'implement'},
       _ => const <String>{},
     };
     for (final Method method in api.methods) {

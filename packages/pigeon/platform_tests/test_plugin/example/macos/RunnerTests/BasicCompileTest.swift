@@ -36,6 +36,8 @@ final class FakeClassReservedApi: NativeInteropReservedNamesHostApi {
   func callFlutterImplementIn(value: String) throws -> String { value }
   func callFlutterIsNull() throws -> Bool { false }
   func callFlutterGetReference() throws -> String { label }
+  func callFlutterRegister(value: String) throws -> String { value }
+  func callFlutterDartApi() throws -> String { label }
 }
 
 // Tests macOS compilation and Native Interop HostApi multi-instance registration/deregistration.
@@ -501,4 +503,8 @@ final class FakeReservedNamesFlutterApiBridge: NSObject,
   }
   func isNull(error: NativeInteropTestsError) -> NSNumber? { NSNumber(value: false) }
   func getReference(error: NativeInteropTestsError) -> NSString? { label as NSString }
+  func register(value valueArg: NSString?, error: NativeInteropTestsError) -> NSString? {
+    "\(label):\(valueArg ?? "")" as NSString
+  }
+  func dartApi(error: NativeInteropTestsError) -> NSString? { label as NSString }
 }

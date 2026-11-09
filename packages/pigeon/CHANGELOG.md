@@ -9,6 +9,11 @@
 * [dart,kotlin,swift] Native Interop calls now go to the calling engine's instance where possible.
 * [kotlin,swift] Calling a Native Interop API whose instance was unregistered now throws a `PlatformException` instead of crashing.
 
+## 29.1.2
+
+* [dart] Fixes `@FlutterApi` methods named `register` or `dartApi` failing with `useJni`.
+* [dart] Fixes `@FlutterApi` `implement` registering under an empty name instead of the default instance.
+
 ## 29.1.1
 
 * Updates README to label Native Interop as Preview and warn about multi-engine `@HostApi` registrations.

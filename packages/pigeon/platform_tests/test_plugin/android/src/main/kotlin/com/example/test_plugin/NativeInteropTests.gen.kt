@@ -12,16 +12,13 @@ import android.util.Log
 import androidx.annotation.Keep
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.embedding.engine.plugins.FlutterPlugin
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
+
 private object NativeInteropTestsPigeonUtils {
 
   fun createConnectionError(channelName: String): NativeInteropTestsError {
-    return NativeInteropTestsError("channel-error",  "Unable to establish connection on channel: '$channelName'.", "")  }
+    return NativeInteropTestsError(
+        "channel-error", "Unable to establish connection on channel: '$channelName'.", "")
+  }
 
   fun wrapResult(result: Any?): List<Any?> {
     return listOf(result)
@@ -29,19 +26,15 @@ private object NativeInteropTestsPigeonUtils {
 
   fun wrapError(exception: Throwable): List<Any?> {
     return if (exception is NativeInteropTestsError) {
-      listOf(
-        exception.code,
-        exception.message,
-        exception.details
-      )
+      listOf(exception.code, exception.message, exception.details)
     } else {
       listOf(
-        exception.javaClass.simpleName,
-        exception.toString(),
-        "Cause: " + exception.cause + ", Stacktrace: " + Log.getStackTraceString(exception)
-      )
+          exception.javaClass.simpleName,
+          exception.toString(),
+          "Cause: " + exception.cause + ", Stacktrace: " + Log.getStackTraceString(exception))
     }
   }
+
   fun doubleEquals(a: Double, b: Double): Boolean {
     // Normalize -0.0 to 0.0 and handle NaN equality.
     return (if (a == 0.0) 0.0 else a) == (if (b == 0.0) 0.0 else b) || (a.isNaN() && b.isNaN())
@@ -185,21 +178,22 @@ private object NativeInteropTestsPigeonUtils {
       else -> value.hashCode()
     }
   }
-
 }
 
 /**
  * Error class for passing custom error details to Flutter via a thrown PlatformException.
+ *
  * @property code The error code.
  * @property message The error message.
  * @property details The error details. Must be a datatype supported by the api codec.
  */
 @Keep
-class NativeInteropTestsError (
-  val code: String,
-  override val message: String? = null,
-  val details: Any? = null
+class NativeInteropTestsError(
+    val code: String,
+    override val message: String? = null,
+    val details: Any? = null
 ) : RuntimeException()
+
 private const val defaultInstanceName = "PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u"
 
 /** Computes keys that identify the Flutter engine a registration belongs to. */
@@ -220,9 +214,8 @@ private object NativeInteropTestsPigeonEngineKeys {
   private val messengerKeys = java.util.WeakHashMap<Any, Long>()
 
   /**
-   * Keys already computed for each binding, so `register` and `unregister` with
-   * the same binding always agree even if [keyOf] for its engine later records
-   * an exact key for the messenger.
+   * Keys already computed for each binding, so `register` and `unregister` with the same binding
+   * always agree even if [keyOf] for its engine later records an exact key for the messenger.
    */
   private val bindingKeys = java.util.WeakHashMap<FlutterPlugin.FlutterPluginBinding, Long>()
 
@@ -297,21 +290,20 @@ enum class NativeInteropAnotherEnum(val raw: Int) {
 
 /** Generated class from Pigeon that represents data sent in messages. */
 @Keep
-data class NativeInteropUnusedClass (
-  val aField: Any? = null
-)
- {
+data class NativeInteropUnusedClass(val aField: Any? = null) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): NativeInteropUnusedClass {
       val aField = pigeonVar_list[0]
       return NativeInteropUnusedClass(aField)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      aField,
+        aField,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -328,6 +320,7 @@ data class NativeInteropUnusedClass (
     result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.aField)
     return result
   }
+
   override fun toString(): String {
     return "NativeInteropUnusedClass(aField=$aField)"
   }
@@ -339,37 +332,36 @@ data class NativeInteropUnusedClass (
  * Generated class from Pigeon that represents data sent in messages.
  */
 @Keep
-data class NativeInteropAllTypes (
-  val aBool: Boolean,
-  val anInt: Long,
-  val anInt64: Long,
-  val aDouble: Double,
-  val aByteArray: ByteArray,
-  val a4ByteArray: IntArray,
-  val a8ByteArray: LongArray,
-  val aFloatArray: DoubleArray,
-  val anEnum: NativeInteropAnEnum,
-  val anotherEnum: NativeInteropAnotherEnum,
-  val aString: String,
-  val anObject: Any,
-  val list: List<Any?>,
-  val stringList: List<String>,
-  val intList: List<Long>,
-  val doubleList: List<Double>,
-  val boolList: List<Boolean>,
-  val enumList: List<NativeInteropAnEnum>,
-  val objectList: List<Any>,
-  val listList: List<List<Any?>>,
-  val mapList: List<Map<Any?, Any?>>,
-  val map: Map<Any, Any?>,
-  val stringMap: Map<String, String>,
-  val intMap: Map<Long, Long>,
-  val enumMap: Map<NativeInteropAnEnum, NativeInteropAnEnum>,
-  val objectMap: Map<Any, Any>,
-  val listMap: Map<Long, List<Any?>>,
-  val mapMap: Map<Long, Map<Any?, Any?>>
-)
- {
+data class NativeInteropAllTypes(
+    val aBool: Boolean,
+    val anInt: Long,
+    val anInt64: Long,
+    val aDouble: Double,
+    val aByteArray: ByteArray,
+    val a4ByteArray: IntArray,
+    val a8ByteArray: LongArray,
+    val aFloatArray: DoubleArray,
+    val anEnum: NativeInteropAnEnum,
+    val anotherEnum: NativeInteropAnotherEnum,
+    val aString: String,
+    val anObject: Any,
+    val list: List<Any?>,
+    val stringList: List<String>,
+    val intList: List<Long>,
+    val doubleList: List<Double>,
+    val boolList: List<Boolean>,
+    val enumList: List<NativeInteropAnEnum>,
+    val objectList: List<Any>,
+    val listList: List<List<Any?>>,
+    val mapList: List<Map<Any?, Any?>>,
+    val map: Map<Any, Any?>,
+    val stringMap: Map<String, String>,
+    val intMap: Map<Long, Long>,
+    val enumMap: Map<NativeInteropAnEnum, NativeInteropAnEnum>,
+    val objectMap: Map<Any, Any>,
+    val listMap: Map<Long, List<Any?>>,
+    val mapMap: Map<Long, Map<Any?, Any?>>
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): NativeInteropAllTypes {
       val aBool = pigeonVar_list[0] as Boolean
@@ -400,41 +392,71 @@ data class NativeInteropAllTypes (
       val objectMap = pigeonVar_list[25] as Map<Any, Any>
       val listMap = pigeonVar_list[26] as Map<Long, List<Any?>>
       val mapMap = pigeonVar_list[27] as Map<Long, Map<Any?, Any?>>
-      return NativeInteropAllTypes(aBool, anInt, anInt64, aDouble, aByteArray, a4ByteArray, a8ByteArray, aFloatArray, anEnum, anotherEnum, aString, anObject, list, stringList, intList, doubleList, boolList, enumList, objectList, listList, mapList, map, stringMap, intMap, enumMap, objectMap, listMap, mapMap)
+      return NativeInteropAllTypes(
+          aBool,
+          anInt,
+          anInt64,
+          aDouble,
+          aByteArray,
+          a4ByteArray,
+          a8ByteArray,
+          aFloatArray,
+          anEnum,
+          anotherEnum,
+          aString,
+          anObject,
+          list,
+          stringList,
+          intList,
+          doubleList,
+          boolList,
+          enumList,
+          objectList,
+          listList,
+          mapList,
+          map,
+          stringMap,
+          intMap,
+          enumMap,
+          objectMap,
+          listMap,
+          mapMap)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      aBool,
-      anInt,
-      anInt64,
-      aDouble,
-      aByteArray,
-      a4ByteArray,
-      a8ByteArray,
-      aFloatArray,
-      anEnum,
-      anotherEnum,
-      aString,
-      anObject,
-      list,
-      stringList,
-      intList,
-      doubleList,
-      boolList,
-      enumList,
-      objectList,
-      listList,
-      mapList,
-      map,
-      stringMap,
-      intMap,
-      enumMap,
-      objectMap,
-      listMap,
-      mapMap,
+        aBool,
+        anInt,
+        anInt64,
+        aDouble,
+        aByteArray,
+        a4ByteArray,
+        a8ByteArray,
+        aFloatArray,
+        anEnum,
+        anotherEnum,
+        aString,
+        anObject,
+        list,
+        stringList,
+        intList,
+        doubleList,
+        boolList,
+        enumList,
+        objectList,
+        listList,
+        mapList,
+        map,
+        stringMap,
+        intMap,
+        enumMap,
+        objectMap,
+        listMap,
+        mapMap,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -443,7 +465,34 @@ data class NativeInteropAllTypes (
       return true
     }
     val other = other as NativeInteropAllTypes
-    return NativeInteropTestsPigeonUtils.deepEquals(this.aBool, other.aBool) && NativeInteropTestsPigeonUtils.deepEquals(this.anInt, other.anInt) && NativeInteropTestsPigeonUtils.deepEquals(this.anInt64, other.anInt64) && NativeInteropTestsPigeonUtils.deepEquals(this.aDouble, other.aDouble) && NativeInteropTestsPigeonUtils.deepEquals(this.aByteArray, other.aByteArray) && NativeInteropTestsPigeonUtils.deepEquals(this.a4ByteArray, other.a4ByteArray) && NativeInteropTestsPigeonUtils.deepEquals(this.a8ByteArray, other.a8ByteArray) && NativeInteropTestsPigeonUtils.deepEquals(this.aFloatArray, other.aFloatArray) && NativeInteropTestsPigeonUtils.deepEquals(this.anEnum, other.anEnum) && NativeInteropTestsPigeonUtils.deepEquals(this.anotherEnum, other.anotherEnum) && NativeInteropTestsPigeonUtils.deepEquals(this.aString, other.aString) && NativeInteropTestsPigeonUtils.deepEquals(this.anObject, other.anObject) && NativeInteropTestsPigeonUtils.deepEquals(this.list, other.list) && NativeInteropTestsPigeonUtils.deepEquals(this.stringList, other.stringList) && NativeInteropTestsPigeonUtils.deepEquals(this.intList, other.intList) && NativeInteropTestsPigeonUtils.deepEquals(this.doubleList, other.doubleList) && NativeInteropTestsPigeonUtils.deepEquals(this.boolList, other.boolList) && NativeInteropTestsPigeonUtils.deepEquals(this.enumList, other.enumList) && NativeInteropTestsPigeonUtils.deepEquals(this.objectList, other.objectList) && NativeInteropTestsPigeonUtils.deepEquals(this.listList, other.listList) && NativeInteropTestsPigeonUtils.deepEquals(this.mapList, other.mapList) && NativeInteropTestsPigeonUtils.deepEquals(this.map, other.map) && NativeInteropTestsPigeonUtils.deepEquals(this.stringMap, other.stringMap) && NativeInteropTestsPigeonUtils.deepEquals(this.intMap, other.intMap) && NativeInteropTestsPigeonUtils.deepEquals(this.enumMap, other.enumMap) && NativeInteropTestsPigeonUtils.deepEquals(this.objectMap, other.objectMap) && NativeInteropTestsPigeonUtils.deepEquals(this.listMap, other.listMap) && NativeInteropTestsPigeonUtils.deepEquals(this.mapMap, other.mapMap)
+    return NativeInteropTestsPigeonUtils.deepEquals(this.aBool, other.aBool) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.anInt, other.anInt) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.anInt64, other.anInt64) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.aDouble, other.aDouble) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.aByteArray, other.aByteArray) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.a4ByteArray, other.a4ByteArray) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.a8ByteArray, other.a8ByteArray) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.aFloatArray, other.aFloatArray) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.anEnum, other.anEnum) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.anotherEnum, other.anotherEnum) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.aString, other.aString) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.anObject, other.anObject) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.list, other.list) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.stringList, other.stringList) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.intList, other.intList) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.doubleList, other.doubleList) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.boolList, other.boolList) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.enumList, other.enumList) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.objectList, other.objectList) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.listList, other.listList) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.mapList, other.mapList) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.map, other.map) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.stringMap, other.stringMap) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.intMap, other.intMap) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.enumMap, other.enumMap) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.objectMap, other.objectMap) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.listMap, other.listMap) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.mapMap, other.mapMap)
   }
 
   override fun hashCode(): Int {
@@ -478,6 +527,7 @@ data class NativeInteropAllTypes (
     result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.mapMap)
     return result
   }
+
   override fun toString(): String {
     return "NativeInteropAllTypes(aBool=$aBool, anInt=$anInt, anInt64=$anInt64, aDouble=$aDouble, aByteArray=${aByteArray.contentToString()}, a4ByteArray=${a4ByteArray.contentToString()}, a8ByteArray=${a8ByteArray.contentToString()}, aFloatArray=${aFloatArray.contentToString()}, anEnum=$anEnum, anotherEnum=$anotherEnum, aString=$aString, anObject=$anObject, list=$list, stringList=$stringList, intList=$intList, doubleList=$doubleList, boolList=$boolList, enumList=$enumList, objectList=$objectList, listList=$listList, mapList=$mapList, map=$map, stringMap=$stringMap, intMap=$intMap, enumMap=$enumMap, objectMap=$objectMap, listMap=$listMap, mapMap=$mapMap)"
   }
@@ -489,40 +539,39 @@ data class NativeInteropAllTypes (
  * Generated class from Pigeon that represents data sent in messages.
  */
 @Keep
-data class NativeInteropAllNullableTypes (
-  val aNullableBool: Boolean? = null,
-  val aNullableInt: Long? = null,
-  val aNullableInt64: Long? = null,
-  val aNullableDouble: Double? = null,
-  val aNullableByteArray: ByteArray? = null,
-  val aNullable4ByteArray: IntArray? = null,
-  val aNullable8ByteArray: LongArray? = null,
-  val aNullableFloatArray: DoubleArray? = null,
-  val aNullableEnum: NativeInteropAnEnum? = null,
-  val anotherNullableEnum: NativeInteropAnotherEnum? = null,
-  val aNullableString: String? = null,
-  val aNullableObject: Any? = null,
-  val allNullableTypes: NativeInteropAllNullableTypes? = null,
-  val list: List<Any?>? = null,
-  val stringList: List<String?>? = null,
-  val intList: List<Long?>? = null,
-  val doubleList: List<Double?>? = null,
-  val boolList: List<Boolean?>? = null,
-  val enumList: List<NativeInteropAnEnum?>? = null,
-  val objectList: List<Any?>? = null,
-  val listList: List<List<Any?>?>? = null,
-  val mapList: List<Map<Any?, Any?>?>? = null,
-  val recursiveClassList: List<NativeInteropAllNullableTypes?>? = null,
-  val map: Map<Any, Any?>? = null,
-  val stringMap: Map<String?, String?>? = null,
-  val intMap: Map<Long?, Long?>? = null,
-  val enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>? = null,
-  val objectMap: Map<Any?, Any?>? = null,
-  val listMap: Map<Long?, List<Any?>?>? = null,
-  val mapMap: Map<Long?, Map<Any?, Any?>?>? = null,
-  val recursiveClassMap: Map<Long?, NativeInteropAllNullableTypes?>? = null
-)
- {
+data class NativeInteropAllNullableTypes(
+    val aNullableBool: Boolean? = null,
+    val aNullableInt: Long? = null,
+    val aNullableInt64: Long? = null,
+    val aNullableDouble: Double? = null,
+    val aNullableByteArray: ByteArray? = null,
+    val aNullable4ByteArray: IntArray? = null,
+    val aNullable8ByteArray: LongArray? = null,
+    val aNullableFloatArray: DoubleArray? = null,
+    val aNullableEnum: NativeInteropAnEnum? = null,
+    val anotherNullableEnum: NativeInteropAnotherEnum? = null,
+    val aNullableString: String? = null,
+    val aNullableObject: Any? = null,
+    val allNullableTypes: NativeInteropAllNullableTypes? = null,
+    val list: List<Any?>? = null,
+    val stringList: List<String?>? = null,
+    val intList: List<Long?>? = null,
+    val doubleList: List<Double?>? = null,
+    val boolList: List<Boolean?>? = null,
+    val enumList: List<NativeInteropAnEnum?>? = null,
+    val objectList: List<Any?>? = null,
+    val listList: List<List<Any?>?>? = null,
+    val mapList: List<Map<Any?, Any?>?>? = null,
+    val recursiveClassList: List<NativeInteropAllNullableTypes?>? = null,
+    val map: Map<Any, Any?>? = null,
+    val stringMap: Map<String?, String?>? = null,
+    val intMap: Map<Long?, Long?>? = null,
+    val enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>? = null,
+    val objectMap: Map<Any?, Any?>? = null,
+    val listMap: Map<Long?, List<Any?>?>? = null,
+    val mapMap: Map<Long?, Map<Any?, Any?>?>? = null,
+    val recursiveClassMap: Map<Long?, NativeInteropAllNullableTypes?>? = null
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): NativeInteropAllNullableTypes {
       val aNullableBool = pigeonVar_list[0] as Boolean?
@@ -556,44 +605,77 @@ data class NativeInteropAllNullableTypes (
       val listMap = pigeonVar_list[28] as Map<Long?, List<Any?>?>?
       val mapMap = pigeonVar_list[29] as Map<Long?, Map<Any?, Any?>?>?
       val recursiveClassMap = pigeonVar_list[30] as Map<Long?, NativeInteropAllNullableTypes?>?
-      return NativeInteropAllNullableTypes(aNullableBool, aNullableInt, aNullableInt64, aNullableDouble, aNullableByteArray, aNullable4ByteArray, aNullable8ByteArray, aNullableFloatArray, aNullableEnum, anotherNullableEnum, aNullableString, aNullableObject, allNullableTypes, list, stringList, intList, doubleList, boolList, enumList, objectList, listList, mapList, recursiveClassList, map, stringMap, intMap, enumMap, objectMap, listMap, mapMap, recursiveClassMap)
+      return NativeInteropAllNullableTypes(
+          aNullableBool,
+          aNullableInt,
+          aNullableInt64,
+          aNullableDouble,
+          aNullableByteArray,
+          aNullable4ByteArray,
+          aNullable8ByteArray,
+          aNullableFloatArray,
+          aNullableEnum,
+          anotherNullableEnum,
+          aNullableString,
+          aNullableObject,
+          allNullableTypes,
+          list,
+          stringList,
+          intList,
+          doubleList,
+          boolList,
+          enumList,
+          objectList,
+          listList,
+          mapList,
+          recursiveClassList,
+          map,
+          stringMap,
+          intMap,
+          enumMap,
+          objectMap,
+          listMap,
+          mapMap,
+          recursiveClassMap)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      aNullableBool,
-      aNullableInt,
-      aNullableInt64,
-      aNullableDouble,
-      aNullableByteArray,
-      aNullable4ByteArray,
-      aNullable8ByteArray,
-      aNullableFloatArray,
-      aNullableEnum,
-      anotherNullableEnum,
-      aNullableString,
-      aNullableObject,
-      allNullableTypes,
-      list,
-      stringList,
-      intList,
-      doubleList,
-      boolList,
-      enumList,
-      objectList,
-      listList,
-      mapList,
-      recursiveClassList,
-      map,
-      stringMap,
-      intMap,
-      enumMap,
-      objectMap,
-      listMap,
-      mapMap,
-      recursiveClassMap,
+        aNullableBool,
+        aNullableInt,
+        aNullableInt64,
+        aNullableDouble,
+        aNullableByteArray,
+        aNullable4ByteArray,
+        aNullable8ByteArray,
+        aNullableFloatArray,
+        aNullableEnum,
+        anotherNullableEnum,
+        aNullableString,
+        aNullableObject,
+        allNullableTypes,
+        list,
+        stringList,
+        intList,
+        doubleList,
+        boolList,
+        enumList,
+        objectList,
+        listList,
+        mapList,
+        recursiveClassList,
+        map,
+        stringMap,
+        intMap,
+        enumMap,
+        objectMap,
+        listMap,
+        mapMap,
+        recursiveClassMap,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -602,7 +684,43 @@ data class NativeInteropAllNullableTypes (
       return true
     }
     val other = other as NativeInteropAllNullableTypes
-    return NativeInteropTestsPigeonUtils.deepEquals(this.aNullableBool, other.aNullableBool) && NativeInteropTestsPigeonUtils.deepEquals(this.aNullableInt, other.aNullableInt) && NativeInteropTestsPigeonUtils.deepEquals(this.aNullableInt64, other.aNullableInt64) && NativeInteropTestsPigeonUtils.deepEquals(this.aNullableDouble, other.aNullableDouble) && NativeInteropTestsPigeonUtils.deepEquals(this.aNullableByteArray, other.aNullableByteArray) && NativeInteropTestsPigeonUtils.deepEquals(this.aNullable4ByteArray, other.aNullable4ByteArray) && NativeInteropTestsPigeonUtils.deepEquals(this.aNullable8ByteArray, other.aNullable8ByteArray) && NativeInteropTestsPigeonUtils.deepEquals(this.aNullableFloatArray, other.aNullableFloatArray) && NativeInteropTestsPigeonUtils.deepEquals(this.aNullableEnum, other.aNullableEnum) && NativeInteropTestsPigeonUtils.deepEquals(this.anotherNullableEnum, other.anotherNullableEnum) && NativeInteropTestsPigeonUtils.deepEquals(this.aNullableString, other.aNullableString) && NativeInteropTestsPigeonUtils.deepEquals(this.aNullableObject, other.aNullableObject) && NativeInteropTestsPigeonUtils.deepEquals(this.allNullableTypes, other.allNullableTypes) && NativeInteropTestsPigeonUtils.deepEquals(this.list, other.list) && NativeInteropTestsPigeonUtils.deepEquals(this.stringList, other.stringList) && NativeInteropTestsPigeonUtils.deepEquals(this.intList, other.intList) && NativeInteropTestsPigeonUtils.deepEquals(this.doubleList, other.doubleList) && NativeInteropTestsPigeonUtils.deepEquals(this.boolList, other.boolList) && NativeInteropTestsPigeonUtils.deepEquals(this.enumList, other.enumList) && NativeInteropTestsPigeonUtils.deepEquals(this.objectList, other.objectList) && NativeInteropTestsPigeonUtils.deepEquals(this.listList, other.listList) && NativeInteropTestsPigeonUtils.deepEquals(this.mapList, other.mapList) && NativeInteropTestsPigeonUtils.deepEquals(this.recursiveClassList, other.recursiveClassList) && NativeInteropTestsPigeonUtils.deepEquals(this.map, other.map) && NativeInteropTestsPigeonUtils.deepEquals(this.stringMap, other.stringMap) && NativeInteropTestsPigeonUtils.deepEquals(this.intMap, other.intMap) && NativeInteropTestsPigeonUtils.deepEquals(this.enumMap, other.enumMap) && NativeInteropTestsPigeonUtils.deepEquals(this.objectMap, other.objectMap) && NativeInteropTestsPigeonUtils.deepEquals(this.listMap, other.listMap) && NativeInteropTestsPigeonUtils.deepEquals(this.mapMap, other.mapMap) && NativeInteropTestsPigeonUtils.deepEquals(this.recursiveClassMap, other.recursiveClassMap)
+    return NativeInteropTestsPigeonUtils.deepEquals(this.aNullableBool, other.aNullableBool) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.aNullableInt, other.aNullableInt) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.aNullableInt64, other.aNullableInt64) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.aNullableDouble, other.aNullableDouble) &&
+        NativeInteropTestsPigeonUtils.deepEquals(
+            this.aNullableByteArray, other.aNullableByteArray) &&
+        NativeInteropTestsPigeonUtils.deepEquals(
+            this.aNullable4ByteArray, other.aNullable4ByteArray) &&
+        NativeInteropTestsPigeonUtils.deepEquals(
+            this.aNullable8ByteArray, other.aNullable8ByteArray) &&
+        NativeInteropTestsPigeonUtils.deepEquals(
+            this.aNullableFloatArray, other.aNullableFloatArray) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.aNullableEnum, other.aNullableEnum) &&
+        NativeInteropTestsPigeonUtils.deepEquals(
+            this.anotherNullableEnum, other.anotherNullableEnum) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.aNullableString, other.aNullableString) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.aNullableObject, other.aNullableObject) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.allNullableTypes, other.allNullableTypes) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.list, other.list) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.stringList, other.stringList) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.intList, other.intList) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.doubleList, other.doubleList) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.boolList, other.boolList) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.enumList, other.enumList) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.objectList, other.objectList) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.listList, other.listList) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.mapList, other.mapList) &&
+        NativeInteropTestsPigeonUtils.deepEquals(
+            this.recursiveClassList, other.recursiveClassList) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.map, other.map) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.stringMap, other.stringMap) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.intMap, other.intMap) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.enumMap, other.enumMap) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.objectMap, other.objectMap) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.listMap, other.listMap) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.mapMap, other.mapMap) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.recursiveClassMap, other.recursiveClassMap)
   }
 
   override fun hashCode(): Int {
@@ -640,51 +758,50 @@ data class NativeInteropAllNullableTypes (
     result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.recursiveClassMap)
     return result
   }
+
   override fun toString(): String {
     return "NativeInteropAllNullableTypes(aNullableBool=$aNullableBool, aNullableInt=$aNullableInt, aNullableInt64=$aNullableInt64, aNullableDouble=$aNullableDouble, aNullableByteArray=${aNullableByteArray?.contentToString()}, aNullable4ByteArray=${aNullable4ByteArray?.contentToString()}, aNullable8ByteArray=${aNullable8ByteArray?.contentToString()}, aNullableFloatArray=${aNullableFloatArray?.contentToString()}, aNullableEnum=$aNullableEnum, anotherNullableEnum=$anotherNullableEnum, aNullableString=$aNullableString, aNullableObject=$aNullableObject, allNullableTypes=$allNullableTypes, list=$list, stringList=$stringList, intList=$intList, doubleList=$doubleList, boolList=$boolList, enumList=$enumList, objectList=$objectList, listList=$listList, mapList=$mapList, recursiveClassList=$recursiveClassList, map=$map, stringMap=$stringMap, intMap=$intMap, enumMap=$enumMap, objectMap=$objectMap, listMap=$listMap, mapMap=$mapMap, recursiveClassMap=$recursiveClassMap)"
   }
 }
 
 /**
- * The primary purpose for this class is to ensure coverage of Swift structs
- * with nullable items, as the primary [NativeInteropAllNullableTypes] class is being used to
- * test Swift classes.
+ * The primary purpose for this class is to ensure coverage of Swift structs with nullable items, as
+ * the primary [NativeInteropAllNullableTypes] class is being used to test Swift classes.
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
 @Keep
-data class NativeInteropAllNullableTypesWithoutRecursion (
-  val aNullableBool: Boolean? = null,
-  val aNullableInt: Long? = null,
-  val aNullableInt64: Long? = null,
-  val aNullableDouble: Double? = null,
-  val aNullableByteArray: ByteArray? = null,
-  val aNullable4ByteArray: IntArray? = null,
-  val aNullable8ByteArray: LongArray? = null,
-  val aNullableFloatArray: DoubleArray? = null,
-  val aNullableEnum: NativeInteropAnEnum? = null,
-  val anotherNullableEnum: NativeInteropAnotherEnum? = null,
-  val aNullableString: String? = null,
-  val aNullableObject: Any? = null,
-  val type: Long? = null,
-  val list: List<Any?>? = null,
-  val stringList: List<String?>? = null,
-  val intList: List<Long?>? = null,
-  val doubleList: List<Double?>? = null,
-  val boolList: List<Boolean?>? = null,
-  val enumList: List<NativeInteropAnEnum?>? = null,
-  val objectList: List<Any?>? = null,
-  val listList: List<List<Any?>?>? = null,
-  val mapList: List<Map<Any?, Any?>?>? = null,
-  val map: Map<Any, Any?>? = null,
-  val stringMap: Map<String?, String?>? = null,
-  val intMap: Map<Long?, Long?>? = null,
-  val enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>? = null,
-  val objectMap: Map<Any?, Any?>? = null,
-  val listMap: Map<Long?, List<Any?>?>? = null,
-  val mapMap: Map<Long?, Map<Any?, Any?>?>? = null
-)
- {
+data class NativeInteropAllNullableTypesWithoutRecursion(
+    val aNullableBool: Boolean? = null,
+    val aNullableInt: Long? = null,
+    val aNullableInt64: Long? = null,
+    val aNullableDouble: Double? = null,
+    val aNullableByteArray: ByteArray? = null,
+    val aNullable4ByteArray: IntArray? = null,
+    val aNullable8ByteArray: LongArray? = null,
+    val aNullableFloatArray: DoubleArray? = null,
+    val aNullableEnum: NativeInteropAnEnum? = null,
+    val anotherNullableEnum: NativeInteropAnotherEnum? = null,
+    val aNullableString: String? = null,
+    val aNullableObject: Any? = null,
+    val type: Long? = null,
+    val list: List<Any?>? = null,
+    val stringList: List<String?>? = null,
+    val intList: List<Long?>? = null,
+    val doubleList: List<Double?>? = null,
+    val boolList: List<Boolean?>? = null,
+    val enumList: List<NativeInteropAnEnum?>? = null,
+    val objectList: List<Any?>? = null,
+    val listList: List<List<Any?>?>? = null,
+    val mapList: List<Map<Any?, Any?>?>? = null,
+    val map: Map<Any, Any?>? = null,
+    val stringMap: Map<String?, String?>? = null,
+    val intMap: Map<Long?, Long?>? = null,
+    val enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>? = null,
+    val objectMap: Map<Any?, Any?>? = null,
+    val listMap: Map<Long?, List<Any?>?>? = null,
+    val mapMap: Map<Long?, Map<Any?, Any?>?>? = null
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): NativeInteropAllNullableTypesWithoutRecursion {
       val aNullableBool = pigeonVar_list[0] as Boolean?
@@ -716,42 +833,73 @@ data class NativeInteropAllNullableTypesWithoutRecursion (
       val objectMap = pigeonVar_list[26] as Map<Any?, Any?>?
       val listMap = pigeonVar_list[27] as Map<Long?, List<Any?>?>?
       val mapMap = pigeonVar_list[28] as Map<Long?, Map<Any?, Any?>?>?
-      return NativeInteropAllNullableTypesWithoutRecursion(aNullableBool, aNullableInt, aNullableInt64, aNullableDouble, aNullableByteArray, aNullable4ByteArray, aNullable8ByteArray, aNullableFloatArray, aNullableEnum, anotherNullableEnum, aNullableString, aNullableObject, type, list, stringList, intList, doubleList, boolList, enumList, objectList, listList, mapList, map, stringMap, intMap, enumMap, objectMap, listMap, mapMap)
+      return NativeInteropAllNullableTypesWithoutRecursion(
+          aNullableBool,
+          aNullableInt,
+          aNullableInt64,
+          aNullableDouble,
+          aNullableByteArray,
+          aNullable4ByteArray,
+          aNullable8ByteArray,
+          aNullableFloatArray,
+          aNullableEnum,
+          anotherNullableEnum,
+          aNullableString,
+          aNullableObject,
+          type,
+          list,
+          stringList,
+          intList,
+          doubleList,
+          boolList,
+          enumList,
+          objectList,
+          listList,
+          mapList,
+          map,
+          stringMap,
+          intMap,
+          enumMap,
+          objectMap,
+          listMap,
+          mapMap)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      aNullableBool,
-      aNullableInt,
-      aNullableInt64,
-      aNullableDouble,
-      aNullableByteArray,
-      aNullable4ByteArray,
-      aNullable8ByteArray,
-      aNullableFloatArray,
-      aNullableEnum,
-      anotherNullableEnum,
-      aNullableString,
-      aNullableObject,
-      type,
-      list,
-      stringList,
-      intList,
-      doubleList,
-      boolList,
-      enumList,
-      objectList,
-      listList,
-      mapList,
-      map,
-      stringMap,
-      intMap,
-      enumMap,
-      objectMap,
-      listMap,
-      mapMap,
+        aNullableBool,
+        aNullableInt,
+        aNullableInt64,
+        aNullableDouble,
+        aNullableByteArray,
+        aNullable4ByteArray,
+        aNullable8ByteArray,
+        aNullableFloatArray,
+        aNullableEnum,
+        anotherNullableEnum,
+        aNullableString,
+        aNullableObject,
+        type,
+        list,
+        stringList,
+        intList,
+        doubleList,
+        boolList,
+        enumList,
+        objectList,
+        listList,
+        mapList,
+        map,
+        stringMap,
+        intMap,
+        enumMap,
+        objectMap,
+        listMap,
+        mapMap,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -760,7 +908,40 @@ data class NativeInteropAllNullableTypesWithoutRecursion (
       return true
     }
     val other = other as NativeInteropAllNullableTypesWithoutRecursion
-    return NativeInteropTestsPigeonUtils.deepEquals(this.aNullableBool, other.aNullableBool) && NativeInteropTestsPigeonUtils.deepEquals(this.aNullableInt, other.aNullableInt) && NativeInteropTestsPigeonUtils.deepEquals(this.aNullableInt64, other.aNullableInt64) && NativeInteropTestsPigeonUtils.deepEquals(this.aNullableDouble, other.aNullableDouble) && NativeInteropTestsPigeonUtils.deepEquals(this.aNullableByteArray, other.aNullableByteArray) && NativeInteropTestsPigeonUtils.deepEquals(this.aNullable4ByteArray, other.aNullable4ByteArray) && NativeInteropTestsPigeonUtils.deepEquals(this.aNullable8ByteArray, other.aNullable8ByteArray) && NativeInteropTestsPigeonUtils.deepEquals(this.aNullableFloatArray, other.aNullableFloatArray) && NativeInteropTestsPigeonUtils.deepEquals(this.aNullableEnum, other.aNullableEnum) && NativeInteropTestsPigeonUtils.deepEquals(this.anotherNullableEnum, other.anotherNullableEnum) && NativeInteropTestsPigeonUtils.deepEquals(this.aNullableString, other.aNullableString) && NativeInteropTestsPigeonUtils.deepEquals(this.aNullableObject, other.aNullableObject) && NativeInteropTestsPigeonUtils.deepEquals(this.type, other.type) && NativeInteropTestsPigeonUtils.deepEquals(this.list, other.list) && NativeInteropTestsPigeonUtils.deepEquals(this.stringList, other.stringList) && NativeInteropTestsPigeonUtils.deepEquals(this.intList, other.intList) && NativeInteropTestsPigeonUtils.deepEquals(this.doubleList, other.doubleList) && NativeInteropTestsPigeonUtils.deepEquals(this.boolList, other.boolList) && NativeInteropTestsPigeonUtils.deepEquals(this.enumList, other.enumList) && NativeInteropTestsPigeonUtils.deepEquals(this.objectList, other.objectList) && NativeInteropTestsPigeonUtils.deepEquals(this.listList, other.listList) && NativeInteropTestsPigeonUtils.deepEquals(this.mapList, other.mapList) && NativeInteropTestsPigeonUtils.deepEquals(this.map, other.map) && NativeInteropTestsPigeonUtils.deepEquals(this.stringMap, other.stringMap) && NativeInteropTestsPigeonUtils.deepEquals(this.intMap, other.intMap) && NativeInteropTestsPigeonUtils.deepEquals(this.enumMap, other.enumMap) && NativeInteropTestsPigeonUtils.deepEquals(this.objectMap, other.objectMap) && NativeInteropTestsPigeonUtils.deepEquals(this.listMap, other.listMap) && NativeInteropTestsPigeonUtils.deepEquals(this.mapMap, other.mapMap)
+    return NativeInteropTestsPigeonUtils.deepEquals(this.aNullableBool, other.aNullableBool) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.aNullableInt, other.aNullableInt) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.aNullableInt64, other.aNullableInt64) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.aNullableDouble, other.aNullableDouble) &&
+        NativeInteropTestsPigeonUtils.deepEquals(
+            this.aNullableByteArray, other.aNullableByteArray) &&
+        NativeInteropTestsPigeonUtils.deepEquals(
+            this.aNullable4ByteArray, other.aNullable4ByteArray) &&
+        NativeInteropTestsPigeonUtils.deepEquals(
+            this.aNullable8ByteArray, other.aNullable8ByteArray) &&
+        NativeInteropTestsPigeonUtils.deepEquals(
+            this.aNullableFloatArray, other.aNullableFloatArray) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.aNullableEnum, other.aNullableEnum) &&
+        NativeInteropTestsPigeonUtils.deepEquals(
+            this.anotherNullableEnum, other.anotherNullableEnum) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.aNullableString, other.aNullableString) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.aNullableObject, other.aNullableObject) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.type, other.type) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.list, other.list) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.stringList, other.stringList) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.intList, other.intList) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.doubleList, other.doubleList) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.boolList, other.boolList) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.enumList, other.enumList) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.objectList, other.objectList) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.listList, other.listList) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.mapList, other.mapList) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.map, other.map) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.stringMap, other.stringMap) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.intMap, other.intMap) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.enumMap, other.enumMap) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.objectMap, other.objectMap) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.listMap, other.listMap) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.mapMap, other.mapMap)
   }
 
   override fun hashCode(): Int {
@@ -796,6 +977,7 @@ data class NativeInteropAllNullableTypesWithoutRecursion (
     result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.mapMap)
     return result
   }
+
   override fun toString(): String {
     return "NativeInteropAllNullableTypesWithoutRecursion(aNullableBool=$aNullableBool, aNullableInt=$aNullableInt, aNullableInt64=$aNullableInt64, aNullableDouble=$aNullableDouble, aNullableByteArray=${aNullableByteArray?.contentToString()}, aNullable4ByteArray=${aNullable4ByteArray?.contentToString()}, aNullable8ByteArray=${aNullable8ByteArray?.contentToString()}, aNullableFloatArray=${aNullableFloatArray?.contentToString()}, aNullableEnum=$aNullableEnum, anotherNullableEnum=$anotherNullableEnum, aNullableString=$aNullableString, aNullableObject=$aNullableObject, type=$type, list=$list, stringList=$stringList, intList=$intList, doubleList=$doubleList, boolList=$boolList, enumList=$enumList, objectList=$objectList, listList=$listList, mapList=$mapList, map=$map, stringMap=$stringMap, intMap=$intMap, enumMap=$enumMap, objectMap=$objectMap, listMap=$listMap, mapMap=$mapMap)"
   }
@@ -804,46 +986,57 @@ data class NativeInteropAllNullableTypesWithoutRecursion (
 /**
  * A class for testing nested class handling.
  *
- * This is needed to test nested nullable and non-nullable classes,
- * `NativeInteropAllNullableTypes` is non-nullable here as it is easier to instantiate
- * than `NativeInteropAllTypes` when testing doesn't require both (ie. testing null classes).
+ * This is needed to test nested nullable and non-nullable classes, `NativeInteropAllNullableTypes`
+ * is non-nullable here as it is easier to instantiate than `NativeInteropAllTypes` when testing
+ * doesn't require both (ie. testing null classes).
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
 @Keep
-data class NativeInteropAllClassesWrapper (
-  val allNullableTypes: NativeInteropAllNullableTypes,
-  val allNullableTypesWithoutRecursion: NativeInteropAllNullableTypesWithoutRecursion? = null,
-  val allTypes: NativeInteropAllTypes? = null,
-  val classList: List<NativeInteropAllTypes?>,
-  val nullableClassList: List<NativeInteropAllNullableTypesWithoutRecursion?>? = null,
-  val classMap: Map<Long?, NativeInteropAllTypes?>,
-  val nullableClassMap: Map<Long?, NativeInteropAllNullableTypesWithoutRecursion?>? = null
-)
- {
+data class NativeInteropAllClassesWrapper(
+    val allNullableTypes: NativeInteropAllNullableTypes,
+    val allNullableTypesWithoutRecursion: NativeInteropAllNullableTypesWithoutRecursion? = null,
+    val allTypes: NativeInteropAllTypes? = null,
+    val classList: List<NativeInteropAllTypes?>,
+    val nullableClassList: List<NativeInteropAllNullableTypesWithoutRecursion?>? = null,
+    val classMap: Map<Long?, NativeInteropAllTypes?>,
+    val nullableClassMap: Map<Long?, NativeInteropAllNullableTypesWithoutRecursion?>? = null
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): NativeInteropAllClassesWrapper {
       val allNullableTypes = pigeonVar_list[0] as NativeInteropAllNullableTypes
-      val allNullableTypesWithoutRecursion = pigeonVar_list[1] as NativeInteropAllNullableTypesWithoutRecursion?
+      val allNullableTypesWithoutRecursion =
+          pigeonVar_list[1] as NativeInteropAllNullableTypesWithoutRecursion?
       val allTypes = pigeonVar_list[2] as NativeInteropAllTypes?
       val classList = pigeonVar_list[3] as List<NativeInteropAllTypes?>
-      val nullableClassList = pigeonVar_list[4] as List<NativeInteropAllNullableTypesWithoutRecursion?>?
+      val nullableClassList =
+          pigeonVar_list[4] as List<NativeInteropAllNullableTypesWithoutRecursion?>?
       val classMap = pigeonVar_list[5] as Map<Long?, NativeInteropAllTypes?>
-      val nullableClassMap = pigeonVar_list[6] as Map<Long?, NativeInteropAllNullableTypesWithoutRecursion?>?
-      return NativeInteropAllClassesWrapper(allNullableTypes, allNullableTypesWithoutRecursion, allTypes, classList, nullableClassList, classMap, nullableClassMap)
+      val nullableClassMap =
+          pigeonVar_list[6] as Map<Long?, NativeInteropAllNullableTypesWithoutRecursion?>?
+      return NativeInteropAllClassesWrapper(
+          allNullableTypes,
+          allNullableTypesWithoutRecursion,
+          allTypes,
+          classList,
+          nullableClassList,
+          classMap,
+          nullableClassMap)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      allNullableTypes,
-      allNullableTypesWithoutRecursion,
-      allTypes,
-      classList,
-      nullableClassList,
-      classMap,
-      nullableClassMap,
+        allNullableTypes,
+        allNullableTypesWithoutRecursion,
+        allTypes,
+        classList,
+        nullableClassList,
+        classMap,
+        nullableClassMap,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -852,13 +1045,22 @@ data class NativeInteropAllClassesWrapper (
       return true
     }
     val other = other as NativeInteropAllClassesWrapper
-    return NativeInteropTestsPigeonUtils.deepEquals(this.allNullableTypes, other.allNullableTypes) && NativeInteropTestsPigeonUtils.deepEquals(this.allNullableTypesWithoutRecursion, other.allNullableTypesWithoutRecursion) && NativeInteropTestsPigeonUtils.deepEquals(this.allTypes, other.allTypes) && NativeInteropTestsPigeonUtils.deepEquals(this.classList, other.classList) && NativeInteropTestsPigeonUtils.deepEquals(this.nullableClassList, other.nullableClassList) && NativeInteropTestsPigeonUtils.deepEquals(this.classMap, other.classMap) && NativeInteropTestsPigeonUtils.deepEquals(this.nullableClassMap, other.nullableClassMap)
+    return NativeInteropTestsPigeonUtils.deepEquals(
+        this.allNullableTypes, other.allNullableTypes) &&
+        NativeInteropTestsPigeonUtils.deepEquals(
+            this.allNullableTypesWithoutRecursion, other.allNullableTypesWithoutRecursion) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.allTypes, other.allTypes) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.classList, other.classList) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.nullableClassList, other.nullableClassList) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.classMap, other.classMap) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.nullableClassMap, other.nullableClassMap)
   }
 
   override fun hashCode(): Int {
     var result = javaClass.hashCode()
     result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.allNullableTypes)
-    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.allNullableTypesWithoutRecursion)
+    result =
+        31 * result + NativeInteropTestsPigeonUtils.deepHash(this.allNullableTypesWithoutRecursion)
     result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.allTypes)
     result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.classList)
     result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.nullableClassList)
@@ -866,6 +1068,7 @@ data class NativeInteropAllClassesWrapper (
     result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.nullableClassMap)
     return result
   }
+
   override fun toString(): String {
     return "NativeInteropAllClassesWrapper(allNullableTypes=$allNullableTypes, allNullableTypesWithoutRecursion=$allNullableTypesWithoutRecursion, allTypes=$allTypes, classList=$classList, nullableClassList=$nullableClassList, classMap=$classMap, nullableClassMap=$nullableClassMap)"
   }
@@ -874,24 +1077,22 @@ data class NativeInteropAllClassesWrapper (
 /**
  * A sealed class, to test sealed class handling.
  *
- * Generated class from Pigeon that represents data sent in messages.
- * This class should not be extended by any user class outside of the generated file.
+ * Generated class from Pigeon that represents data sent in messages. This class should not be
+ * extended by any user class outside of the generated file.
  */
-@Keep
-sealed class NativeInteropSealedClass 
+@Keep sealed class NativeInteropSealedClass
 /**
  * A subclass of `NativeInteropSealedClass` with fields.
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
 @Keep
-data class NativeInteropSealedClassWithFields (
-  val aString: String,
-  val aNullableInt: Long? = null,
-  val anEnum: NativeInteropAnEnum,
-  val aClass: NativeInteropAllNullableTypesWithoutRecursion? = null
-) : NativeInteropSealedClass()
- {
+data class NativeInteropSealedClassWithFields(
+    val aString: String,
+    val aNullableInt: Long? = null,
+    val anEnum: NativeInteropAnEnum,
+    val aClass: NativeInteropAllNullableTypesWithoutRecursion? = null
+) : NativeInteropSealedClass() {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): NativeInteropSealedClassWithFields {
       val aString = pigeonVar_list[0] as String
@@ -901,14 +1102,16 @@ data class NativeInteropSealedClassWithFields (
       return NativeInteropSealedClassWithFields(aString, aNullableInt, anEnum, aClass)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      aString,
-      aNullableInt,
-      anEnum,
-      aClass,
+        aString,
+        aNullableInt,
+        anEnum,
+        aClass,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -917,7 +1120,10 @@ data class NativeInteropSealedClassWithFields (
       return true
     }
     val other = other as NativeInteropSealedClassWithFields
-    return NativeInteropTestsPigeonUtils.deepEquals(this.aString, other.aString) && NativeInteropTestsPigeonUtils.deepEquals(this.aNullableInt, other.aNullableInt) && NativeInteropTestsPigeonUtils.deepEquals(this.anEnum, other.anEnum) && NativeInteropTestsPigeonUtils.deepEquals(this.aClass, other.aClass)
+    return NativeInteropTestsPigeonUtils.deepEquals(this.aString, other.aString) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.aNullableInt, other.aNullableInt) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.anEnum, other.anEnum) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.aClass, other.aClass)
   }
 
   override fun hashCode(): Int {
@@ -928,6 +1134,7 @@ data class NativeInteropSealedClassWithFields (
     result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.aClass)
     return result
   }
+
   override fun toString(): String {
     return "NativeInteropSealedClassWithFields(aString=$aString, aNullableInt=$aNullableInt, anEnum=$anEnum, aClass=$aClass)"
   }
@@ -939,16 +1146,17 @@ data class NativeInteropSealedClassWithFields (
  * Generated class from Pigeon that represents data sent in messages.
  */
 @Keep
-class NativeInteropEmptySealedClass  : NativeInteropSealedClass() {
+class NativeInteropEmptySealedClass : NativeInteropSealedClass() {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): NativeInteropEmptySealedClass {
       return NativeInteropEmptySealedClass()
     }
   }
+
   fun toList(): List<Any?> {
-    return listOf(
-    )
+    return listOf()
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -963,24 +1171,23 @@ class NativeInteropEmptySealedClass  : NativeInteropSealedClass() {
     var result = javaClass.hashCode()
     return result
   }
+
   override fun toString(): String {
     return "NativeInteropEmptySealedClass()"
   }
 }
 
 /**
- * A class with sealed class fields, to test sealed classes nested in classes
- * and lists.
+ * A class with sealed class fields, to test sealed classes nested in classes and lists.
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
 @Keep
-data class NativeInteropSealedClassWrapper (
-  val sealedClass: NativeInteropSealedClass,
-  val nullableSealedClass: NativeInteropSealedClass? = null,
-  val sealedClassList: List<NativeInteropSealedClass>
-)
- {
+data class NativeInteropSealedClassWrapper(
+    val sealedClass: NativeInteropSealedClass,
+    val nullableSealedClass: NativeInteropSealedClass? = null,
+    val sealedClassList: List<NativeInteropSealedClass>
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): NativeInteropSealedClassWrapper {
       val sealedClass = pigeonVar_list[0] as NativeInteropSealedClass
@@ -989,13 +1196,15 @@ data class NativeInteropSealedClassWrapper (
       return NativeInteropSealedClassWrapper(sealedClass, nullableSealedClass, sealedClassList)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      sealedClass,
-      nullableSealedClass,
-      sealedClassList,
+        sealedClass,
+        nullableSealedClass,
+        sealedClassList,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -1004,7 +1213,10 @@ data class NativeInteropSealedClassWrapper (
       return true
     }
     val other = other as NativeInteropSealedClassWrapper
-    return NativeInteropTestsPigeonUtils.deepEquals(this.sealedClass, other.sealedClass) && NativeInteropTestsPigeonUtils.deepEquals(this.nullableSealedClass, other.nullableSealedClass) && NativeInteropTestsPigeonUtils.deepEquals(this.sealedClassList, other.sealedClassList)
+    return NativeInteropTestsPigeonUtils.deepEquals(this.sealedClass, other.sealedClass) &&
+        NativeInteropTestsPigeonUtils.deepEquals(
+            this.nullableSealedClass, other.nullableSealedClass) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.sealedClassList, other.sealedClassList)
   }
 
   override fun hashCode(): Int {
@@ -1014,38 +1226,37 @@ data class NativeInteropSealedClassWrapper (
     result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.sealedClassList)
     return result
   }
+
   override fun toString(): String {
     return "NativeInteropSealedClassWrapper(sealedClass=$sealedClass, nullableSealedClass=$nullableSealedClass, sealedClassList=$sealedClassList)"
   }
 }
 
 /**
- * A class whose field names collide with members of the bindings that JNIgen
- * generates, so JNIgen renames their accessors.
+ * A class whose field names collide with members of the bindings that JNIgen generates, so JNIgen
+ * renames their accessors.
  *
- * The Dart generator has to predict those names, since it is generated before
- * JNIgen runs.
+ * The Dart generator has to predict those names, since it is generated before JNIgen runs.
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
 @Keep
-data class NativeInteropReservedNames (
-  val type: String? = null,
-  val use: String? = null,
-  val reference: String? = null,
-  val releasedBy: String? = null,
-  val fromReference: String? = null,
-  val jClass: String? = null,
-  val isInstanceOf: String? = null,
-  val isNull: String? = null,
-  val isReleased: Boolean,
-  val equals: String? = null,
-  val isEnabled: Boolean,
-  val isMaybe: Boolean? = null,
-  val isCount: Long? = null,
-  val getValue: String? = null
-)
- {
+data class NativeInteropReservedNames(
+    val type: String? = null,
+    val use: String? = null,
+    val reference: String? = null,
+    val releasedBy: String? = null,
+    val fromReference: String? = null,
+    val jClass: String? = null,
+    val isInstanceOf: String? = null,
+    val isNull: String? = null,
+    val isReleased: Boolean,
+    val equals: String? = null,
+    val isEnabled: Boolean,
+    val isMaybe: Boolean? = null,
+    val isCount: Long? = null,
+    val getValue: String? = null
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): NativeInteropReservedNames {
       val type = pigeonVar_list[0] as String?
@@ -1062,27 +1273,43 @@ data class NativeInteropReservedNames (
       val isMaybe = pigeonVar_list[11] as Boolean?
       val isCount = pigeonVar_list[12] as Long?
       val getValue = pigeonVar_list[13] as String?
-      return NativeInteropReservedNames(type, use, reference, releasedBy, fromReference, jClass, isInstanceOf, isNull, isReleased, equals, isEnabled, isMaybe, isCount, getValue)
+      return NativeInteropReservedNames(
+          type,
+          use,
+          reference,
+          releasedBy,
+          fromReference,
+          jClass,
+          isInstanceOf,
+          isNull,
+          isReleased,
+          equals,
+          isEnabled,
+          isMaybe,
+          isCount,
+          getValue)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      type,
-      use,
-      reference,
-      releasedBy,
-      fromReference,
-      jClass,
-      isInstanceOf,
-      isNull,
-      isReleased,
-      equals,
-      isEnabled,
-      isMaybe,
-      isCount,
-      getValue,
+        type,
+        use,
+        reference,
+        releasedBy,
+        fromReference,
+        jClass,
+        isInstanceOf,
+        isNull,
+        isReleased,
+        equals,
+        isEnabled,
+        isMaybe,
+        isCount,
+        getValue,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -1091,7 +1318,20 @@ data class NativeInteropReservedNames (
       return true
     }
     val other = other as NativeInteropReservedNames
-    return NativeInteropTestsPigeonUtils.deepEquals(this.type, other.type) && NativeInteropTestsPigeonUtils.deepEquals(this.use, other.use) && NativeInteropTestsPigeonUtils.deepEquals(this.reference, other.reference) && NativeInteropTestsPigeonUtils.deepEquals(this.releasedBy, other.releasedBy) && NativeInteropTestsPigeonUtils.deepEquals(this.fromReference, other.fromReference) && NativeInteropTestsPigeonUtils.deepEquals(this.jClass, other.jClass) && NativeInteropTestsPigeonUtils.deepEquals(this.isInstanceOf, other.isInstanceOf) && NativeInteropTestsPigeonUtils.deepEquals(this.isNull, other.isNull) && NativeInteropTestsPigeonUtils.deepEquals(this.isReleased, other.isReleased) && NativeInteropTestsPigeonUtils.deepEquals(this.equals, other.equals) && NativeInteropTestsPigeonUtils.deepEquals(this.isEnabled, other.isEnabled) && NativeInteropTestsPigeonUtils.deepEquals(this.isMaybe, other.isMaybe) && NativeInteropTestsPigeonUtils.deepEquals(this.isCount, other.isCount) && NativeInteropTestsPigeonUtils.deepEquals(this.getValue, other.getValue)
+    return NativeInteropTestsPigeonUtils.deepEquals(this.type, other.type) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.use, other.use) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.reference, other.reference) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.releasedBy, other.releasedBy) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.fromReference, other.fromReference) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.jClass, other.jClass) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.isInstanceOf, other.isInstanceOf) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.isNull, other.isNull) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.isReleased, other.isReleased) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.equals, other.equals) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.isEnabled, other.isEnabled) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.isMaybe, other.isMaybe) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.isCount, other.isCount) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.getValue, other.getValue)
   }
 
   override fun hashCode(): Int {
@@ -1112,18 +1352,19 @@ data class NativeInteropReservedNames (
     result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.getValue)
     return result
   }
+
   override fun toString(): String {
     return "NativeInteropReservedNames(type=$type, use=$use, reference=$reference, releasedBy=$releasedBy, fromReference=$fromReference, jClass=$jClass, isInstanceOf=$isInstanceOf, isNull=$isNull, isReleased=$isReleased, equals=$equals, isEnabled=$isEnabled, isMaybe=$isMaybe, isCount=$isCount, getValue=$getValue)"
   }
 }
 
-val NativeInteropHostIntegrationCoreApiInstances: MutableMap<String, MutableList<NativeInteropHostIntegrationCoreApiRegistrar>> = mutableMapOf()
+val NativeInteropHostIntegrationCoreApiInstances:
+    MutableMap<String, MutableList<NativeInteropHostIntegrationCoreApiRegistrar>> =
+    mutableMapOf()
+
 @Keep
 interface NativeInteropHostIntegrationCoreApi {
-  /**
-   * A no-op function taking no arguments and returning no value, to sanity
-   * test basic calling.
-   */
+  /** A no-op function taking no arguments and returning no value, to sanity test basic calling. */
   fun noop()
   /** Returns the passed object, to test serialization and deserialization. */
   fun echoAllTypes(everything: NativeInteropAllTypes): NativeInteropAllTypes
@@ -1164,11 +1405,15 @@ interface NativeInteropHostIntegrationCoreApi {
   /** Returns the passed list, to test serialization and deserialization. */
   fun echoEnumList(enumList: List<NativeInteropAnEnum?>): List<NativeInteropAnEnum?>
   /** Returns the passed list, to test serialization and deserialization. */
-  fun echoClassList(classList: List<NativeInteropAllNullableTypes?>): List<NativeInteropAllNullableTypes?>
+  fun echoClassList(
+      classList: List<NativeInteropAllNullableTypes?>
+  ): List<NativeInteropAllNullableTypes?>
   /** Returns the passed list, to test serialization and deserialization. */
   fun echoNonNullEnumList(enumList: List<NativeInteropAnEnum>): List<NativeInteropAnEnum>
   /** Returns the passed list, to test serialization and deserialization. */
-  fun echoNonNullClassList(classList: List<NativeInteropAllNullableTypes>): List<NativeInteropAllNullableTypes>
+  fun echoNonNullClassList(
+      classList: List<NativeInteropAllNullableTypes>
+  ): List<NativeInteropAllNullableTypes>
   /** Returns the passed map, to test serialization and deserialization. */
   fun echoMap(map: Map<Any?, Any?>): Map<Any?, Any?>
   /** Returns the passed map, to test serialization and deserialization. */
@@ -1176,17 +1421,25 @@ interface NativeInteropHostIntegrationCoreApi {
   /** Returns the passed map, to test serialization and deserialization. */
   fun echoIntMap(intMap: Map<Long?, Long?>): Map<Long?, Long?>
   /** Returns the passed map, to test serialization and deserialization. */
-  fun echoEnumMap(enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
+  fun echoEnumMap(
+      enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
+  ): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
   /** Returns the passed map, to test serialization and deserialization. */
-  fun echoClassMap(classMap: Map<Long?, NativeInteropAllNullableTypes?>): Map<Long?, NativeInteropAllNullableTypes?>
+  fun echoClassMap(
+      classMap: Map<Long?, NativeInteropAllNullableTypes?>
+  ): Map<Long?, NativeInteropAllNullableTypes?>
   /** Returns the passed map, to test serialization and deserialization. */
   fun echoNonNullStringMap(stringMap: Map<String, String>): Map<String, String>
   /** Returns the passed map, to test serialization and deserialization. */
   fun echoNonNullIntMap(intMap: Map<Long, Long>): Map<Long, Long>
   /** Returns the passed map, to test serialization and deserialization. */
-  fun echoNonNullEnumMap(enumMap: Map<NativeInteropAnEnum, NativeInteropAnEnum>): Map<NativeInteropAnEnum, NativeInteropAnEnum>
+  fun echoNonNullEnumMap(
+      enumMap: Map<NativeInteropAnEnum, NativeInteropAnEnum>
+  ): Map<NativeInteropAnEnum, NativeInteropAnEnum>
   /** Returns the passed map, to test serialization and deserialization. */
-  fun echoNonNullClassMap(classMap: Map<Long, NativeInteropAllNullableTypes>): Map<Long, NativeInteropAllNullableTypes>
+  fun echoNonNullClassMap(
+      classMap: Map<Long, NativeInteropAllNullableTypes>
+  ): Map<Long, NativeInteropAllNullableTypes>
   /** Returns the passed class to test nested class serialization and deserialization. */
   fun echoClassWrapper(wrapper: NativeInteropAllClassesWrapper): NativeInteropAllClassesWrapper
   /** Returns the passed sealed class, to test sealed class handling. */
@@ -1194,9 +1447,13 @@ interface NativeInteropHostIntegrationCoreApi {
   /** Returns the passed sealed class, to test nullable sealed class handling. */
   fun echoNullableSealedClass(sealedClass: NativeInteropSealedClass?): NativeInteropSealedClass?
   /** Returns the passed list, to test sealed classes in lists. */
-  fun echoSealedClassList(sealedClassList: List<NativeInteropSealedClass>): List<NativeInteropSealedClass>
+  fun echoSealedClassList(
+      sealedClassList: List<NativeInteropSealedClass>
+  ): List<NativeInteropSealedClass>
   /** Returns the passed wrapper, to test sealed classes in class fields. */
-  fun echoSealedClassWrapper(wrapper: NativeInteropSealedClassWrapper): NativeInteropSealedClassWrapper
+  fun echoSealedClassWrapper(
+      wrapper: NativeInteropSealedClassWrapper
+  ): NativeInteropSealedClassWrapper
   /** Returns the passed enum to test serialization and deserialization. */
   fun echoEnum(anEnum: NativeInteropAnEnum): NativeInteropAnEnum
   /** Returns the passed enum to test serialization and deserialization. */
@@ -1208,22 +1465,33 @@ interface NativeInteropHostIntegrationCoreApi {
   /** Returns passed in int. */
   fun echoRequiredInt(anInt: Long): Long
   /** Returns the passed object, to test serialization and deserialization. */
-  fun echoAllNullableTypes(everything: NativeInteropAllNullableTypes?): NativeInteropAllNullableTypes?
+  fun echoAllNullableTypes(
+      everything: NativeInteropAllNullableTypes?
+  ): NativeInteropAllNullableTypes?
   /** Returns the passed object, to test serialization and deserialization. */
-  fun echoAllNullableTypesWithoutRecursion(everything: NativeInteropAllNullableTypesWithoutRecursion?): NativeInteropAllNullableTypesWithoutRecursion?
+  fun echoAllNullableTypesWithoutRecursion(
+      everything: NativeInteropAllNullableTypesWithoutRecursion?
+  ): NativeInteropAllNullableTypesWithoutRecursion?
   /**
-   * Returns the inner `aString` value from the wrapped object, to test
-   * sending of nested objects.
+   * Returns the inner `aString` value from the wrapped object, to test sending of nested objects.
    */
   fun extractNestedNullableString(wrapper: NativeInteropAllClassesWrapper): String?
   /**
-   * Returns the inner `aString` value from the wrapped object, to test
-   * sending of nested objects.
+   * Returns the inner `aString` value from the wrapped object, to test sending of nested objects.
    */
   fun createNestedNullableString(nullableString: String?): NativeInteropAllClassesWrapper
-  fun sendMultipleNullableTypes(aNullableBool: Boolean?, aNullableInt: Long?, aNullableString: String?): NativeInteropAllNullableTypes
+
+  fun sendMultipleNullableTypes(
+      aNullableBool: Boolean?,
+      aNullableInt: Long?,
+      aNullableString: String?
+  ): NativeInteropAllNullableTypes
   /** Returns passed in arguments of multiple types. */
-  fun sendMultipleNullableTypesWithoutRecursion(aNullableBool: Boolean?, aNullableInt: Long?, aNullableString: String?): NativeInteropAllNullableTypesWithoutRecursion
+  fun sendMultipleNullableTypesWithoutRecursion(
+      aNullableBool: Boolean?,
+      aNullableInt: Long?,
+      aNullableString: String?
+  ): NativeInteropAllNullableTypesWithoutRecursion
   /** Returns passed in int. */
   fun echoNullableInt(aNullableInt: Long?): Long?
   /** Returns passed in double. */
@@ -1247,11 +1515,15 @@ interface NativeInteropHostIntegrationCoreApi {
   /** Returns the passed list, to test serialization and deserialization. */
   fun echoNullableEnumList(enumList: List<NativeInteropAnEnum?>?): List<NativeInteropAnEnum?>?
   /** Returns the passed list, to test serialization and deserialization. */
-  fun echoNullableClassList(classList: List<NativeInteropAllNullableTypes?>?): List<NativeInteropAllNullableTypes?>?
+  fun echoNullableClassList(
+      classList: List<NativeInteropAllNullableTypes?>?
+  ): List<NativeInteropAllNullableTypes?>?
   /** Returns the passed list, to test serialization and deserialization. */
   fun echoNullableNonNullEnumList(enumList: List<NativeInteropAnEnum>?): List<NativeInteropAnEnum>?
   /** Returns the passed list, to test serialization and deserialization. */
-  fun echoNullableNonNullClassList(classList: List<NativeInteropAllNullableTypes>?): List<NativeInteropAllNullableTypes>?
+  fun echoNullableNonNullClassList(
+      classList: List<NativeInteropAllNullableTypes>?
+  ): List<NativeInteropAllNullableTypes>?
   /** Returns the passed map, to test serialization and deserialization. */
   fun echoNullableMap(map: Map<Any?, Any?>?): Map<Any?, Any?>?
   /** Returns the passed map, to test serialization and deserialization. */
@@ -1259,26 +1531,36 @@ interface NativeInteropHostIntegrationCoreApi {
   /** Returns the passed map, to test serialization and deserialization. */
   fun echoNullableIntMap(intMap: Map<Long?, Long?>?): Map<Long?, Long?>?
   /** Returns the passed map, to test serialization and deserialization. */
-  fun echoNullableEnumMap(enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
+  fun echoNullableEnumMap(
+      enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
+  ): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
   /** Returns the passed map, to test serialization and deserialization. */
-  fun echoNullableClassMap(classMap: Map<Long?, NativeInteropAllNullableTypes?>?): Map<Long?, NativeInteropAllNullableTypes?>?
+  fun echoNullableClassMap(
+      classMap: Map<Long?, NativeInteropAllNullableTypes?>?
+  ): Map<Long?, NativeInteropAllNullableTypes?>?
   /** Returns the passed map, to test serialization and deserialization. */
   fun echoNullableNonNullStringMap(stringMap: Map<String, String>?): Map<String, String>?
   /** Returns the passed map, to test serialization and deserialization. */
   fun echoNullableNonNullIntMap(intMap: Map<Long, Long>?): Map<Long, Long>?
   /** Returns the passed map, to test serialization and deserialization. */
-  fun echoNullableNonNullEnumMap(enumMap: Map<NativeInteropAnEnum, NativeInteropAnEnum>?): Map<NativeInteropAnEnum, NativeInteropAnEnum>?
+  fun echoNullableNonNullEnumMap(
+      enumMap: Map<NativeInteropAnEnum, NativeInteropAnEnum>?
+  ): Map<NativeInteropAnEnum, NativeInteropAnEnum>?
   /** Returns the passed map, to test serialization and deserialization. */
-  fun echoNullableNonNullClassMap(classMap: Map<Long, NativeInteropAllNullableTypes>?): Map<Long, NativeInteropAllNullableTypes>?
+  fun echoNullableNonNullClassMap(
+      classMap: Map<Long, NativeInteropAllNullableTypes>?
+  ): Map<Long, NativeInteropAllNullableTypes>?
+
   fun echoNullableEnum(anEnum: NativeInteropAnEnum?): NativeInteropAnEnum?
+
   fun echoAnotherNullableEnum(anotherEnum: NativeInteropAnotherEnum?): NativeInteropAnotherEnum?
   /** Returns passed in int. */
   fun echoOptionalNullableInt(aNullableInt: Long?): Long?
   /** Returns the passed in string. */
   fun echoNamedNullableString(aNullableString: String?): String?
   /**
-   * A no-op function taking no arguments and returning no value, to sanity
-   * test basic asynchronous calling.
+   * A no-op function taking no arguments and returning no value, to sanity test basic asynchronous
+   * calling.
    */
   suspend fun noopAsync()
   /** Returns passed in int asynchronously. */
@@ -1304,7 +1586,9 @@ interface NativeInteropHostIntegrationCoreApi {
   /** Returns the passed list, to test asynchronous serialization and deserialization. */
   suspend fun echoAsyncEnumList(enumList: List<NativeInteropAnEnum?>): List<NativeInteropAnEnum?>
   /** Returns the passed list, to test asynchronous serialization and deserialization. */
-  suspend fun echoAsyncClassList(classList: List<NativeInteropAllNullableTypes?>): List<NativeInteropAllNullableTypes?>
+  suspend fun echoAsyncClassList(
+      classList: List<NativeInteropAllNullableTypes?>
+  ): List<NativeInteropAllNullableTypes?>
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
   suspend fun echoAsyncMap(map: Map<Any?, Any?>): Map<Any?, Any?>
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
@@ -1312,9 +1596,13 @@ interface NativeInteropHostIntegrationCoreApi {
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
   suspend fun echoAsyncIntMap(intMap: Map<Long?, Long?>): Map<Long?, Long?>
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
-  suspend fun echoAsyncEnumMap(enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
+  suspend fun echoAsyncEnumMap(
+      enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
+  ): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
-  suspend fun echoAsyncClassMap(classMap: Map<Long?, NativeInteropAllNullableTypes?>): Map<Long?, NativeInteropAllNullableTypes?>
+  suspend fun echoAsyncClassMap(
+      classMap: Map<Long?, NativeInteropAllNullableTypes?>
+  ): Map<Long?, NativeInteropAllNullableTypes?>
   /** Returns the passed enum, to test asynchronous serialization and deserialization. */
   suspend fun echoAsyncEnum(anEnum: NativeInteropAnEnum): NativeInteropAnEnum
   /** Returns the passed enum, to test asynchronous serialization and deserialization. */
@@ -1326,13 +1614,19 @@ interface NativeInteropHostIntegrationCoreApi {
   /** Responds with a Flutter error from an async function returning a value. */
   suspend fun throwAsyncFlutterError(): Any?
   /** Returns the passed object, to test async serialization and deserialization. */
-  suspend fun echoAsyncNativeInteropAllTypes(everything: NativeInteropAllTypes): NativeInteropAllTypes
+  suspend fun echoAsyncNativeInteropAllTypes(
+      everything: NativeInteropAllTypes
+  ): NativeInteropAllTypes
   /** Returns the passed sealed class asynchronously. */
   suspend fun echoAsyncSealedClass(sealedClass: NativeInteropSealedClass): NativeInteropSealedClass
   /** Returns the passed object, to test serialization and deserialization. */
-  suspend fun echoAsyncNullableNativeInteropAllNullableTypes(everything: NativeInteropAllNullableTypes?): NativeInteropAllNullableTypes?
+  suspend fun echoAsyncNullableNativeInteropAllNullableTypes(
+      everything: NativeInteropAllNullableTypes?
+  ): NativeInteropAllNullableTypes?
   /** Returns the passed object, to test serialization and deserialization. */
-  suspend fun echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(everything: NativeInteropAllNullableTypesWithoutRecursion?): NativeInteropAllNullableTypesWithoutRecursion?
+  suspend fun echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
+      everything: NativeInteropAllNullableTypesWithoutRecursion?
+  ): NativeInteropAllNullableTypesWithoutRecursion?
   /** Returns passed in int asynchronously. */
   suspend fun echoAsyncNullableInt(anInt: Long?): Long?
   /** Returns passed in double asynchronously. */
@@ -1354,9 +1648,13 @@ interface NativeInteropHostIntegrationCoreApi {
   /** Returns the passed list, to test asynchronous serialization and deserialization. */
   suspend fun echoAsyncNullableList(list: List<Any?>?): List<Any?>?
   /** Returns the passed list, to test asynchronous serialization and deserialization. */
-  suspend fun echoAsyncNullableEnumList(enumList: List<NativeInteropAnEnum?>?): List<NativeInteropAnEnum?>?
+  suspend fun echoAsyncNullableEnumList(
+      enumList: List<NativeInteropAnEnum?>?
+  ): List<NativeInteropAnEnum?>?
   /** Returns the passed list, to test asynchronous serialization and deserialization. */
-  suspend fun echoAsyncNullableClassList(classList: List<NativeInteropAllNullableTypes?>?): List<NativeInteropAllNullableTypes?>?
+  suspend fun echoAsyncNullableClassList(
+      classList: List<NativeInteropAllNullableTypes?>?
+  ): List<NativeInteropAllNullableTypes?>?
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
   suspend fun echoAsyncNullableMap(map: Map<Any?, Any?>?): Map<Any?, Any?>?
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
@@ -1364,134 +1662,324 @@ interface NativeInteropHostIntegrationCoreApi {
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
   suspend fun echoAsyncNullableIntMap(intMap: Map<Long?, Long?>?): Map<Long?, Long?>?
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
-  suspend fun echoAsyncNullableEnumMap(enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
+  suspend fun echoAsyncNullableEnumMap(
+      enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
+  ): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
-  suspend fun echoAsyncNullableClassMap(classMap: Map<Long?, NativeInteropAllNullableTypes?>?): Map<Long?, NativeInteropAllNullableTypes?>?
+  suspend fun echoAsyncNullableClassMap(
+      classMap: Map<Long?, NativeInteropAllNullableTypes?>?
+  ): Map<Long?, NativeInteropAllNullableTypes?>?
   /** Returns the passed enum, to test asynchronous serialization and deserialization. */
   suspend fun echoAsyncNullableEnum(anEnum: NativeInteropAnEnum?): NativeInteropAnEnum?
   /** Returns the passed enum, to test asynchronous serialization and deserialization. */
-  suspend fun echoAnotherAsyncNullableEnum(anotherEnum: NativeInteropAnotherEnum?): NativeInteropAnotherEnum?
+  suspend fun echoAnotherAsyncNullableEnum(
+      anotherEnum: NativeInteropAnotherEnum?
+  ): NativeInteropAnotherEnum?
+
   fun callFlutterNoop()
+
   fun callFlutterThrowError(): Any?
+
   fun callFlutterThrowErrorFromVoid()
+
   fun callFlutterEchoNativeInteropAllTypes(everything: NativeInteropAllTypes): NativeInteropAllTypes
-  fun callFlutterEchoNativeInteropAllNullableTypes(everything: NativeInteropAllNullableTypes?): NativeInteropAllNullableTypes?
+
+  fun callFlutterEchoNativeInteropAllNullableTypes(
+      everything: NativeInteropAllNullableTypes?
+  ): NativeInteropAllNullableTypes?
+
   fun callFlutterEchoSealedClass(sealedClass: NativeInteropSealedClass): NativeInteropSealedClass
-  fun callFlutterSendMultipleNullableTypes(aNullableBool: Boolean?, aNullableInt: Long?, aNullableString: String?): NativeInteropAllNullableTypes
-  fun callFlutterEchoNativeInteropAllNullableTypesWithoutRecursion(everything: NativeInteropAllNullableTypesWithoutRecursion?): NativeInteropAllNullableTypesWithoutRecursion?
-  fun callFlutterSendMultipleNullableTypesWithoutRecursion(aNullableBool: Boolean?, aNullableInt: Long?, aNullableString: String?): NativeInteropAllNullableTypesWithoutRecursion
+
+  fun callFlutterSendMultipleNullableTypes(
+      aNullableBool: Boolean?,
+      aNullableInt: Long?,
+      aNullableString: String?
+  ): NativeInteropAllNullableTypes
+
+  fun callFlutterEchoNativeInteropAllNullableTypesWithoutRecursion(
+      everything: NativeInteropAllNullableTypesWithoutRecursion?
+  ): NativeInteropAllNullableTypesWithoutRecursion?
+
+  fun callFlutterSendMultipleNullableTypesWithoutRecursion(
+      aNullableBool: Boolean?,
+      aNullableInt: Long?,
+      aNullableString: String?
+  ): NativeInteropAllNullableTypesWithoutRecursion
+
   fun callFlutterEchoBool(aBool: Boolean): Boolean
+
   fun callFlutterEchoInt(anInt: Long): Long
+
   fun callFlutterEchoDouble(aDouble: Double): Double
+
   fun callFlutterEchoString(aString: String): String
+
   fun callFlutterEchoUint8List(list: ByteArray): ByteArray
+
   fun callFlutterEchoInt32List(list: IntArray): IntArray
+
   fun callFlutterEchoInt64List(list: LongArray): LongArray
+
   fun callFlutterEchoFloat64List(list: DoubleArray): DoubleArray
+
   fun callFlutterEchoList(list: List<Any?>): List<Any?>
+
   fun callFlutterEchoEnumList(enumList: List<NativeInteropAnEnum?>): List<NativeInteropAnEnum?>
-  fun callFlutterEchoClassList(classList: List<NativeInteropAllNullableTypes?>): List<NativeInteropAllNullableTypes?>
+
+  fun callFlutterEchoClassList(
+      classList: List<NativeInteropAllNullableTypes?>
+  ): List<NativeInteropAllNullableTypes?>
+
   fun callFlutterEchoNonNullEnumList(enumList: List<NativeInteropAnEnum>): List<NativeInteropAnEnum>
-  fun callFlutterEchoNonNullClassList(classList: List<NativeInteropAllNullableTypes>): List<NativeInteropAllNullableTypes>
+
+  fun callFlutterEchoNonNullClassList(
+      classList: List<NativeInteropAllNullableTypes>
+  ): List<NativeInteropAllNullableTypes>
+
   fun callFlutterEchoMap(map: Map<Any?, Any?>): Map<Any?, Any?>
+
   fun callFlutterEchoStringMap(stringMap: Map<String?, String?>): Map<String?, String?>
+
   fun callFlutterEchoIntMap(intMap: Map<Long?, Long?>): Map<Long?, Long?>
-  fun callFlutterEchoEnumMap(enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
-  fun callFlutterEchoClassMap(classMap: Map<Long?, NativeInteropAllNullableTypes?>): Map<Long?, NativeInteropAllNullableTypes?>
+
+  fun callFlutterEchoEnumMap(
+      enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
+  ): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
+
+  fun callFlutterEchoClassMap(
+      classMap: Map<Long?, NativeInteropAllNullableTypes?>
+  ): Map<Long?, NativeInteropAllNullableTypes?>
+
   fun callFlutterEchoNonNullStringMap(stringMap: Map<String, String>): Map<String, String>
+
   fun callFlutterEchoNonNullIntMap(intMap: Map<Long, Long>): Map<Long, Long>
-  fun callFlutterEchoNonNullEnumMap(enumMap: Map<NativeInteropAnEnum, NativeInteropAnEnum>): Map<NativeInteropAnEnum, NativeInteropAnEnum>
-  fun callFlutterEchoNonNullClassMap(classMap: Map<Long, NativeInteropAllNullableTypes>): Map<Long, NativeInteropAllNullableTypes>
+
+  fun callFlutterEchoNonNullEnumMap(
+      enumMap: Map<NativeInteropAnEnum, NativeInteropAnEnum>
+  ): Map<NativeInteropAnEnum, NativeInteropAnEnum>
+
+  fun callFlutterEchoNonNullClassMap(
+      classMap: Map<Long, NativeInteropAllNullableTypes>
+  ): Map<Long, NativeInteropAllNullableTypes>
+
   fun callFlutterEchoEnum(anEnum: NativeInteropAnEnum): NativeInteropAnEnum
-  fun callFlutterEchoNativeInteropAnotherEnum(anotherEnum: NativeInteropAnotherEnum): NativeInteropAnotherEnum
+
+  fun callFlutterEchoNativeInteropAnotherEnum(
+      anotherEnum: NativeInteropAnotherEnum
+  ): NativeInteropAnotherEnum
+
   fun callFlutterEchoNullableBool(aBool: Boolean?): Boolean?
+
   fun callFlutterEchoNullableInt(anInt: Long?): Long?
+
   fun callFlutterEchoNullableDouble(aDouble: Double?): Double?
+
   fun callFlutterEchoNullableString(aString: String?): String?
+
   fun callFlutterEchoNullableUint8List(list: ByteArray?): ByteArray?
+
   fun callFlutterEchoNullableInt32List(list: IntArray?): IntArray?
+
   fun callFlutterEchoNullableInt64List(list: LongArray?): LongArray?
+
   fun callFlutterEchoNullableFloat64List(list: DoubleArray?): DoubleArray?
+
   fun callFlutterEchoNullableList(list: List<Any?>?): List<Any?>?
-  fun callFlutterEchoNullableEnumList(enumList: List<NativeInteropAnEnum?>?): List<NativeInteropAnEnum?>?
-  fun callFlutterEchoNullableClassList(classList: List<NativeInteropAllNullableTypes?>?): List<NativeInteropAllNullableTypes?>?
-  fun callFlutterEchoNullableNonNullEnumList(enumList: List<NativeInteropAnEnum>?): List<NativeInteropAnEnum>?
-  fun callFlutterEchoNullableNonNullClassList(classList: List<NativeInteropAllNullableTypes>?): List<NativeInteropAllNullableTypes>?
+
+  fun callFlutterEchoNullableEnumList(
+      enumList: List<NativeInteropAnEnum?>?
+  ): List<NativeInteropAnEnum?>?
+
+  fun callFlutterEchoNullableClassList(
+      classList: List<NativeInteropAllNullableTypes?>?
+  ): List<NativeInteropAllNullableTypes?>?
+
+  fun callFlutterEchoNullableNonNullEnumList(
+      enumList: List<NativeInteropAnEnum>?
+  ): List<NativeInteropAnEnum>?
+
+  fun callFlutterEchoNullableNonNullClassList(
+      classList: List<NativeInteropAllNullableTypes>?
+  ): List<NativeInteropAllNullableTypes>?
+
   fun callFlutterEchoNullableMap(map: Map<Any?, Any?>?): Map<Any?, Any?>?
+
   fun callFlutterEchoNullableStringMap(stringMap: Map<String?, String?>?): Map<String?, String?>?
+
   fun callFlutterEchoNullableIntMap(intMap: Map<Long?, Long?>?): Map<Long?, Long?>?
-  fun callFlutterEchoNullableEnumMap(enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
-  fun callFlutterEchoNullableClassMap(classMap: Map<Long?, NativeInteropAllNullableTypes?>?): Map<Long?, NativeInteropAllNullableTypes?>?
+
+  fun callFlutterEchoNullableEnumMap(
+      enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
+  ): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
+
+  fun callFlutterEchoNullableClassMap(
+      classMap: Map<Long?, NativeInteropAllNullableTypes?>?
+  ): Map<Long?, NativeInteropAllNullableTypes?>?
+
   fun callFlutterEchoNullableNonNullStringMap(stringMap: Map<String, String>?): Map<String, String>?
+
   fun callFlutterEchoNullableNonNullIntMap(intMap: Map<Long, Long>?): Map<Long, Long>?
-  fun callFlutterEchoNullableNonNullEnumMap(enumMap: Map<NativeInteropAnEnum, NativeInteropAnEnum>?): Map<NativeInteropAnEnum, NativeInteropAnEnum>?
-  fun callFlutterEchoNullableNonNullClassMap(classMap: Map<Long, NativeInteropAllNullableTypes>?): Map<Long, NativeInteropAllNullableTypes>?
+
+  fun callFlutterEchoNullableNonNullEnumMap(
+      enumMap: Map<NativeInteropAnEnum, NativeInteropAnEnum>?
+  ): Map<NativeInteropAnEnum, NativeInteropAnEnum>?
+
+  fun callFlutterEchoNullableNonNullClassMap(
+      classMap: Map<Long, NativeInteropAllNullableTypes>?
+  ): Map<Long, NativeInteropAllNullableTypes>?
+
   fun callFlutterEchoNullableEnum(anEnum: NativeInteropAnEnum?): NativeInteropAnEnum?
-  fun callFlutterEchoAnotherNullableEnum(anotherEnum: NativeInteropAnotherEnum?): NativeInteropAnotherEnum?
+
+  fun callFlutterEchoAnotherNullableEnum(
+      anotherEnum: NativeInteropAnotherEnum?
+  ): NativeInteropAnotherEnum?
+
   suspend fun callFlutterNoopAsync()
-  suspend fun callFlutterEchoAsyncNativeInteropAllTypes(everything: NativeInteropAllTypes): NativeInteropAllTypes
-  suspend fun callFlutterEchoAsyncNullableNativeInteropAllNullableTypes(everything: NativeInteropAllNullableTypes?): NativeInteropAllNullableTypes?
-  suspend fun callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(everything: NativeInteropAllNullableTypesWithoutRecursion?): NativeInteropAllNullableTypesWithoutRecursion?
+
+  suspend fun callFlutterEchoAsyncNativeInteropAllTypes(
+      everything: NativeInteropAllTypes
+  ): NativeInteropAllTypes
+
+  suspend fun callFlutterEchoAsyncNullableNativeInteropAllNullableTypes(
+      everything: NativeInteropAllNullableTypes?
+  ): NativeInteropAllNullableTypes?
+
+  suspend fun callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
+      everything: NativeInteropAllNullableTypesWithoutRecursion?
+  ): NativeInteropAllNullableTypesWithoutRecursion?
+
   suspend fun callFlutterEchoAsyncBool(aBool: Boolean): Boolean
+
   suspend fun callFlutterEchoAsyncInt(anInt: Long): Long
+
   suspend fun callFlutterEchoAsyncDouble(aDouble: Double): Double
+
   suspend fun callFlutterEchoAsyncString(aString: String): String
+
   suspend fun callFlutterEchoAsyncUint8List(list: ByteArray): ByteArray
+
   suspend fun callFlutterEchoAsyncInt32List(list: IntArray): IntArray
+
   suspend fun callFlutterEchoAsyncInt64List(list: LongArray): LongArray
+
   suspend fun callFlutterEchoAsyncFloat64List(list: DoubleArray): DoubleArray
+
   suspend fun callFlutterEchoAsyncObject(anObject: Any): Any
+
   suspend fun callFlutterEchoAsyncList(list: List<Any?>): List<Any?>
-  suspend fun callFlutterEchoAsyncEnumList(enumList: List<NativeInteropAnEnum?>): List<NativeInteropAnEnum?>
-  suspend fun callFlutterEchoAsyncClassList(classList: List<NativeInteropAllNullableTypes?>): List<NativeInteropAllNullableTypes?>
-  suspend fun callFlutterEchoAsyncNonNullEnumList(enumList: List<NativeInteropAnEnum>): List<NativeInteropAnEnum>
-  suspend fun callFlutterEchoAsyncNonNullClassList(classList: List<NativeInteropAllNullableTypes>): List<NativeInteropAllNullableTypes>
+
+  suspend fun callFlutterEchoAsyncEnumList(
+      enumList: List<NativeInteropAnEnum?>
+  ): List<NativeInteropAnEnum?>
+
+  suspend fun callFlutterEchoAsyncClassList(
+      classList: List<NativeInteropAllNullableTypes?>
+  ): List<NativeInteropAllNullableTypes?>
+
+  suspend fun callFlutterEchoAsyncNonNullEnumList(
+      enumList: List<NativeInteropAnEnum>
+  ): List<NativeInteropAnEnum>
+
+  suspend fun callFlutterEchoAsyncNonNullClassList(
+      classList: List<NativeInteropAllNullableTypes>
+  ): List<NativeInteropAllNullableTypes>
+
   suspend fun callFlutterEchoAsyncMap(map: Map<Any?, Any?>): Map<Any?, Any?>
+
   suspend fun callFlutterEchoAsyncStringMap(stringMap: Map<String?, String?>): Map<String?, String?>
+
   suspend fun callFlutterEchoAsyncIntMap(intMap: Map<Long?, Long?>): Map<Long?, Long?>
-  suspend fun callFlutterEchoAsyncEnumMap(enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
-  suspend fun callFlutterEchoAsyncClassMap(classMap: Map<Long?, NativeInteropAllNullableTypes?>): Map<Long?, NativeInteropAllNullableTypes?>
+
+  suspend fun callFlutterEchoAsyncEnumMap(
+      enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
+  ): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
+
+  suspend fun callFlutterEchoAsyncClassMap(
+      classMap: Map<Long?, NativeInteropAllNullableTypes?>
+  ): Map<Long?, NativeInteropAllNullableTypes?>
+
   suspend fun callFlutterEchoAsyncEnum(anEnum: NativeInteropAnEnum): NativeInteropAnEnum
-  suspend fun callFlutterEchoAnotherAsyncEnum(anotherEnum: NativeInteropAnotherEnum): NativeInteropAnotherEnum
+
+  suspend fun callFlutterEchoAnotherAsyncEnum(
+      anotherEnum: NativeInteropAnotherEnum
+  ): NativeInteropAnotherEnum
+
   suspend fun callFlutterEchoAsyncNullableBool(aBool: Boolean?): Boolean?
+
   suspend fun callFlutterEchoAsyncNullableInt(anInt: Long?): Long?
+
   suspend fun callFlutterEchoAsyncNullableDouble(aDouble: Double?): Double?
+
   suspend fun callFlutterEchoAsyncNullableString(aString: String?): String?
+
   suspend fun callFlutterEchoAsyncNullableUint8List(list: ByteArray?): ByteArray?
+
   suspend fun callFlutterEchoAsyncNullableInt32List(list: IntArray?): IntArray?
+
   suspend fun callFlutterEchoAsyncNullableInt64List(list: LongArray?): LongArray?
+
   suspend fun callFlutterEchoAsyncNullableFloat64List(list: DoubleArray?): DoubleArray?
+
   suspend fun callFlutterThrowFlutterErrorAsync(): Any?
+
   suspend fun callFlutterEchoAsyncNullableObject(anObject: Any?): Any?
+
   suspend fun callFlutterEchoAsyncNullableList(list: List<Any?>?): List<Any?>?
-  suspend fun callFlutterEchoAsyncNullableEnumList(enumList: List<NativeInteropAnEnum?>?): List<NativeInteropAnEnum?>?
-  suspend fun callFlutterEchoAsyncNullableClassList(classList: List<NativeInteropAllNullableTypes?>?): List<NativeInteropAllNullableTypes?>?
-  suspend fun callFlutterEchoAsyncNullableNonNullEnumList(enumList: List<NativeInteropAnEnum>?): List<NativeInteropAnEnum>?
-  suspend fun callFlutterEchoAsyncNullableNonNullClassList(classList: List<NativeInteropAllNullableTypes>?): List<NativeInteropAllNullableTypes>?
+
+  suspend fun callFlutterEchoAsyncNullableEnumList(
+      enumList: List<NativeInteropAnEnum?>?
+  ): List<NativeInteropAnEnum?>?
+
+  suspend fun callFlutterEchoAsyncNullableClassList(
+      classList: List<NativeInteropAllNullableTypes?>?
+  ): List<NativeInteropAllNullableTypes?>?
+
+  suspend fun callFlutterEchoAsyncNullableNonNullEnumList(
+      enumList: List<NativeInteropAnEnum>?
+  ): List<NativeInteropAnEnum>?
+
+  suspend fun callFlutterEchoAsyncNullableNonNullClassList(
+      classList: List<NativeInteropAllNullableTypes>?
+  ): List<NativeInteropAllNullableTypes>?
+
   suspend fun callFlutterEchoAsyncNullableMap(map: Map<Any?, Any?>?): Map<Any?, Any?>?
-  suspend fun callFlutterEchoAsyncNullableStringMap(stringMap: Map<String?, String?>?): Map<String?, String?>?
+
+  suspend fun callFlutterEchoAsyncNullableStringMap(
+      stringMap: Map<String?, String?>?
+  ): Map<String?, String?>?
+
   suspend fun callFlutterEchoAsyncNullableIntMap(intMap: Map<Long?, Long?>?): Map<Long?, Long?>?
-  suspend fun callFlutterEchoAsyncNullableEnumMap(enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
-  suspend fun callFlutterEchoAsyncNullableClassMap(classMap: Map<Long?, NativeInteropAllNullableTypes?>?): Map<Long?, NativeInteropAllNullableTypes?>?
+
+  suspend fun callFlutterEchoAsyncNullableEnumMap(
+      enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
+  ): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
+
+  suspend fun callFlutterEchoAsyncNullableClassMap(
+      classMap: Map<Long?, NativeInteropAllNullableTypes?>?
+  ): Map<Long?, NativeInteropAllNullableTypes?>?
+
   suspend fun callFlutterEchoAsyncNullableEnum(anEnum: NativeInteropAnEnum?): NativeInteropAnEnum?
-  suspend fun callFlutterEchoAnotherAsyncNullableEnum(anotherEnum: NativeInteropAnotherEnum?): NativeInteropAnotherEnum?
+
+  suspend fun callFlutterEchoAnotherAsyncNullableEnum(
+      anotherEnum: NativeInteropAnotherEnum?
+  ): NativeInteropAnotherEnum?
   /** Returns true if the handler is run on a main thread. */
   fun isMainThread(): Boolean
   /** Returns true if the async handler runs on a background thread. */
   suspend fun asyncIsBackgroundThread(): Boolean
   /**
-   * Tests that zero-argument boolean methods starting with 'is' are correctly
-   * invoked as JNI property getters (e.g., `_jniApi.isGetter`).
+   * Tests that zero-argument boolean methods starting with 'is' are correctly invoked as JNI
+   * property getters (e.g., `_jniApi.isGetter`).
    */
   fun isGetter(): Boolean
   /**
-   * Tests that zero-argument methods starting with 'get' are correctly
-   * invoked as JNI property getters with decapitalized names (e.g., `_jniApi.getter`).
+   * Tests that zero-argument methods starting with 'get' are correctly invoked as JNI property
+   * getters with decapitalized names (e.g., `_jniApi.getter`).
    */
   fun getGetter(): Long
   /**
-   * Tests that single-argument void methods starting with 'set' are correctly
-   * invoked as JNI property setters with decapitalized names (e.g., `_jniApi.setter = value`).
+   * Tests that single-argument void methods starting with 'set' are correctly invoked as JNI
+   * property setters with decapitalized names (e.g., `_jniApi.setter = value`).
    */
   fun setSetter(value: Long)
   /**
@@ -1508,105 +1996,123 @@ interface NativeInteropHostIntegrationCoreApi {
   fun registerAndImmediatelyDeregisterHostApi(name: String)
   /** Registers a separate Host API instance under [name] for detached-handle testing. */
   fun registerNamedHostApi(name: String)
-  /** Deregisters the Host API instance previously registered by [registerNamedHostApi] under [name]. */
+  /**
+   * Deregisters the Host API instance previously registered by [registerNamedHostApi] under [name].
+   */
   fun deregisterNamedHostApi(name: String)
   /** Tests that calling a deregistered Flutter API under [name] fails / returns null. */
   fun testCallDeregisteredFlutterApi(name: String): Boolean
   /**
-   * Spawns secondary engines, destroys one out-of-order, executes a live Dart
-   * entrypoint on another (where supported by the embedder), and tears it down
-   * while keeping the primary engine registration intact.
+   * Spawns secondary engines, destroys one out-of-order, executes a live Dart entrypoint on another
+   * (where supported by the embedder), and tears it down while keeping the primary engine
+   * registration intact.
    */
   suspend fun testSecondaryEngineDartExecution(): Boolean
   /**
-   * Returns whether the secondary engine's Host API registration is ready for
-   * the secondary Dart isolate to invoke.
+   * Returns whether the secondary engine's Host API registration is ready for the secondary Dart
+   * isolate to invoke.
    */
   fun isSecondaryEngineRegistrationReady(): Boolean
   /**
-   * Reports whether Native Interop Host API calls from a secondary engine's
-   * Dart isolate succeeded.
+   * Reports whether Native Interop Host API calls from a secondary engine's Dart isolate succeeded.
    */
   fun reportSecondaryEngineCheck(success: Boolean)
   /**
-   * Returns the engine key that native code stored for this plugin's
-   * default Host API registration.
+   * Returns the engine key that native code stored for this plugin's default Host API registration.
    */
   fun registeredEngineKey(): Long
   /**
-   * Returns a label unique to the Host API instance that handled the call, so
-   * tests can check which engine's registration a handle resolved to.
+   * Returns a label unique to the Host API instance that handled the call, so tests can check which
+   * engine's registration a handle resolved to.
    */
   fun engineLabel(): String
   /**
-   * Returns whether this platform's plugin binding / registrar exposes an
-   * engine identifier, so registrations should use exact engine keys.
+   * Returns whether this platform's plugin binding / registrar exposes an engine identifier, so
+   * registrations should use exact engine keys.
    */
   fun pluginEngineIdentifierIsAvailable(): Boolean
 }
+
 @Keep
-class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private val engineKey: Long) : NativeInteropHostIntegrationCoreApi {
+class NativeInteropHostIntegrationCoreApiRegistrar
+private constructor(private val engineKey: Long) : NativeInteropHostIntegrationCoreApi {
   @Volatile private var api: NativeInteropHostIntegrationCoreApi? = null
 
   constructor() : this(NativeInteropTestsPigeonEngineKeys.NO_KEY)
 
   /**
-   * Registers [api] under [name] (or the default instance when [name] is
-   * omitted) for the engine of the plugin binding [binding].
+   * Registers [api] under [name] (or the default instance when [name] is omitted) for the engine of
+   * the plugin binding [binding].
    *
-   * The registration is tied to that engine: unregistering it for this engine
-   * leaves other engines' registrations in place, and Dart code running on an
-   * engine uses the instance registered for that engine when it is known.
+   * The registration is tied to that engine: unregistering it for this engine leaves other engines'
+   * registrations in place, and Dart code running on an engine uses the instance registered for
+   * that engine when it is known.
    */
   @Keep
-  fun register(api: NativeInteropHostIntegrationCoreApi, binding: FlutterPlugin.FlutterPluginBinding, name: String = defaultInstanceName) {
+  fun register(
+      api: NativeInteropHostIntegrationCoreApi,
+      binding: FlutterPlugin.FlutterPluginBinding,
+      name: String = defaultInstanceName
+  ) {
     registerWithKey(api, NativeInteropTestsPigeonEngineKeys.keyOf(binding), name)
   }
 
   /**
-   * Registers [api] under [name] (or the default instance when [name] is
-   * omitted) for the engine of [engine].
+   * Registers [api] under [name] (or the default instance when [name] is omitted) for the engine of
+   * [engine].
    *
-   * The registration is tied to that engine: unregistering it for this engine
-   * leaves other engines' registrations in place, and Dart code running on an
-   * engine uses the instance registered for that engine when it is known.
+   * The registration is tied to that engine: unregistering it for this engine leaves other engines'
+   * registrations in place, and Dart code running on an engine uses the instance registered for
+   * that engine when it is known.
    */
   @Keep
-  fun register(api: NativeInteropHostIntegrationCoreApi, engine: FlutterEngine, name: String = defaultInstanceName) {
+  fun register(
+      api: NativeInteropHostIntegrationCoreApi,
+      engine: FlutterEngine,
+      name: String = defaultInstanceName
+  ) {
     registerWithKey(api, NativeInteropTestsPigeonEngineKeys.keyOf(engine), name)
   }
 
   /**
-   * Removes [api] from the registrations under [name] (or the default instance
-   * when [name] is omitted) for the engine of the plugin binding [binding], leaving other
-   * registrations in place.
+   * Removes [api] from the registrations under [name] (or the default instance when [name] is
+   * omitted) for the engine of the plugin binding [binding], leaving other registrations in place.
    *
-   * Instances are matched by identity. If [api] is not registered for that
-   * engine but is registered for exactly one other engine, that registration is
-   * removed. Does nothing if [api] is not registered, or is only registered for
-   * several other engines.
+   * Instances are matched by identity. If [api] is not registered for that engine but is registered
+   * for exactly one other engine, that registration is removed. Does nothing if [api] is not
+   * registered, or is only registered for several other engines.
    */
   @Keep
-  fun unregister(api: NativeInteropHostIntegrationCoreApi, binding: FlutterPlugin.FlutterPluginBinding, name: String = defaultInstanceName) {
+  fun unregister(
+      api: NativeInteropHostIntegrationCoreApi,
+      binding: FlutterPlugin.FlutterPluginBinding,
+      name: String = defaultInstanceName
+  ) {
     unregisterWithKey(api, NativeInteropTestsPigeonEngineKeys.keyOf(binding), name)
   }
 
   /**
-   * Removes [api] from the registrations under [name] (or the default instance
-   * when [name] is omitted) for the engine of [engine], leaving other
-   * registrations in place.
+   * Removes [api] from the registrations under [name] (or the default instance when [name] is
+   * omitted) for the engine of [engine], leaving other registrations in place.
    *
-   * Instances are matched by identity. If [api] is not registered for that
-   * engine but is registered for exactly one other engine, that registration is
-   * removed. Does nothing if [api] is not registered, or is only registered for
-   * several other engines.
+   * Instances are matched by identity. If [api] is not registered for that engine but is registered
+   * for exactly one other engine, that registration is removed. Does nothing if [api] is not
+   * registered, or is only registered for several other engines.
    */
   @Keep
-  fun unregister(api: NativeInteropHostIntegrationCoreApi, engine: FlutterEngine, name: String = defaultInstanceName) {
+  fun unregister(
+      api: NativeInteropHostIntegrationCoreApi,
+      engine: FlutterEngine,
+      name: String = defaultInstanceName
+  ) {
     unregisterWithKey(api, NativeInteropTestsPigeonEngineKeys.keyOf(engine), name)
   }
 
-  private fun registerWithKey(api: NativeInteropHostIntegrationCoreApi, engineKey: Long, name: String) {
+  private fun registerWithKey(
+      api: NativeInteropHostIntegrationCoreApi,
+      engineKey: Long,
+      name: String
+  ) {
     kotlin.synchronized(NativeInteropHostIntegrationCoreApiInstances) {
       val list = NativeInteropHostIntegrationCoreApiInstances.getOrPut(name) { mutableListOf() }
       val index = list.indexOfFirst { it.api === api && it.engineKey == engineKey }
@@ -1620,15 +2126,19 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
     }
   }
 
-  private fun unregisterWithKey(api: NativeInteropHostIntegrationCoreApi, engineKey: Long, name: String) {
+  private fun unregisterWithKey(
+      api: NativeInteropHostIntegrationCoreApi,
+      engineKey: Long,
+      name: String
+  ) {
     kotlin.synchronized(NativeInteropHostIntegrationCoreApiInstances) {
       val list = NativeInteropHostIntegrationCoreApiInstances[name] ?: return
       val removeKey =
-        if (list.any { it.api === api && it.engineKey == engineKey }) {
-          engineKey
-        } else {
-          list.filter { it.api === api }.map { it.engineKey }.distinct().singleOrNull() ?: return
-        }
+          if (list.any { it.api === api && it.engineKey == engineKey }) {
+            engineKey
+          } else {
+            list.filter { it.api === api }.map { it.engineKey }.distinct().singleOrNull() ?: return
+          }
       val iterator = list.iterator()
       while (iterator.hasNext()) {
         val entry = iterator.next()
@@ -1645,29 +2155,37 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
 
   companion object {
     /**
-     * Returns the instance registered under [name] for the engine identified by
-     * [engineId].
+     * Returns the instance registered under [name] for the engine identified by [engineId].
      *
-     * Falls back to the most recent instance registered for [affinityKey], then to
-     * the most recent instance overall. Either key may be `Long.MIN_VALUE` when it
-     * is unknown.
+     * Falls back to the most recent instance registered for [affinityKey], then to the most recent
+     * instance overall. Either key may be `Long.MIN_VALUE` when it is unknown.
      *
      * This is called by the generated Dart code and is not intended for direct use.
      */
     @JvmStatic
     @Keep
-    fun pigeonResolveInstance(engineId: Long, affinityKey: Long, name: String = defaultInstanceName): NativeInteropHostIntegrationCoreApiRegistrar? {
+    fun pigeonResolveInstance(
+        engineId: Long,
+        affinityKey: Long,
+        name: String = defaultInstanceName
+    ): NativeInteropHostIntegrationCoreApiRegistrar? {
       return kotlin.synchronized(NativeInteropHostIntegrationCoreApiInstances) {
         val list = NativeInteropHostIntegrationCoreApiInstances[name] ?: return null
-        val exact = if (engineId != NativeInteropTestsPigeonEngineKeys.NO_KEY) list.lastOrNull { it.engineKey == engineId } else null
-        val affine = if (affinityKey != NativeInteropTestsPigeonEngineKeys.NO_KEY) list.lastOrNull { it.engineKey == affinityKey } else null
+        val exact =
+            if (engineId != NativeInteropTestsPigeonEngineKeys.NO_KEY)
+                list.lastOrNull { it.engineKey == engineId }
+            else null
+        val affine =
+            if (affinityKey != NativeInteropTestsPigeonEngineKeys.NO_KEY)
+                list.lastOrNull { it.engineKey == affinityKey }
+            else null
         exact ?: affine ?: list.lastOrNull()
       }
     }
 
     /**
-     * Returns the engine key that [instance] was registered with, or
-     * `Long.MIN_VALUE` if it is unknown.
+     * Returns the engine key that [instance] was registered with, or `Long.MIN_VALUE` if it is
+     * unknown.
      *
      * This is called by the generated Dart code and is not intended for direct use.
      */
@@ -1678,12 +2196,8 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
     }
   }
 
-  /**
-   * A no-op function taking no arguments and returning no value, to sanity
-   * test basic calling.
-   */
-  override fun noop()
- {
+  /** A no-op function taking no arguments and returning no value, to sanity test basic calling. */
+  override fun noop() {
     api?.let {
       try {
         return it.noop()
@@ -1691,11 +2205,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed object, to test serialization and deserialization. */
-  override fun echoAllTypes(everything: NativeInteropAllTypes): NativeInteropAllTypes
- {
+  override fun echoAllTypes(everything: NativeInteropAllTypes): NativeInteropAllTypes {
     api?.let {
       try {
         return it.echoAllTypes(everything)
@@ -1703,11 +2217,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns an error, to test error handling. */
-  override fun throwError(): Any?
- {
+  override fun throwError(): Any? {
     api?.let {
       try {
         return it.throwError()
@@ -1715,11 +2229,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns an error from a void function, to test error handling. */
-  override fun throwErrorFromVoid()
- {
+  override fun throwErrorFromVoid() {
     api?.let {
       try {
         return it.throwErrorFromVoid()
@@ -1727,11 +2241,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns a Flutter error, to test error handling. */
-  override fun throwFlutterError(): Any?
- {
+  override fun throwFlutterError(): Any? {
     api?.let {
       try {
         return it.throwFlutterError()
@@ -1739,11 +2253,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns passed in int. */
-  override fun echoInt(anInt: Long): Long
- {
+  override fun echoInt(anInt: Long): Long {
     api?.let {
       try {
         return it.echoInt(anInt)
@@ -1751,11 +2265,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns passed in double. */
-  override fun echoDouble(aDouble: Double): Double
- {
+  override fun echoDouble(aDouble: Double): Double {
     api?.let {
       try {
         return it.echoDouble(aDouble)
@@ -1763,11 +2277,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed in boolean. */
-  override fun echoBool(aBool: Boolean): Boolean
- {
+  override fun echoBool(aBool: Boolean): Boolean {
     api?.let {
       try {
         return it.echoBool(aBool)
@@ -1775,11 +2289,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed in string. */
-  override fun echoString(aString: String): String
- {
+  override fun echoString(aString: String): String {
     api?.let {
       try {
         return it.echoString(aString)
@@ -1787,11 +2301,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed in Uint8List. */
-  override fun echoUint8List(aUint8List: ByteArray): ByteArray
- {
+  override fun echoUint8List(aUint8List: ByteArray): ByteArray {
     api?.let {
       try {
         return it.echoUint8List(aUint8List)
@@ -1799,11 +2313,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed in Int32List. */
-  override fun echoInt32List(aInt32List: IntArray): IntArray
- {
+  override fun echoInt32List(aInt32List: IntArray): IntArray {
     api?.let {
       try {
         return it.echoInt32List(aInt32List)
@@ -1811,11 +2325,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed in Int64List. */
-  override fun echoInt64List(aInt64List: LongArray): LongArray
- {
+  override fun echoInt64List(aInt64List: LongArray): LongArray {
     api?.let {
       try {
         return it.echoInt64List(aInt64List)
@@ -1823,11 +2337,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed in Float64List. */
-  override fun echoFloat64List(aFloat64List: DoubleArray): DoubleArray
- {
+  override fun echoFloat64List(aFloat64List: DoubleArray): DoubleArray {
     api?.let {
       try {
         return it.echoFloat64List(aFloat64List)
@@ -1835,11 +2349,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed in generic Object. */
-  override fun echoObject(anObject: Any): Any
- {
+  override fun echoObject(anObject: Any): Any {
     api?.let {
       try {
         return it.echoObject(anObject)
@@ -1847,11 +2361,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed list, to test serialization and deserialization. */
-  override fun echoList(list: List<Any?>): List<Any?>
- {
+  override fun echoList(list: List<Any?>): List<Any?> {
     api?.let {
       try {
         return it.echoList(list)
@@ -1859,11 +2373,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed list, to test serialization and deserialization. */
-  override fun echoStringList(stringList: List<String?>): List<String?>
- {
+  override fun echoStringList(stringList: List<String?>): List<String?> {
     api?.let {
       try {
         return it.echoStringList(stringList)
@@ -1871,11 +2385,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed list, to test serialization and deserialization. */
-  override fun echoIntList(intList: List<Long?>): List<Long?>
- {
+  override fun echoIntList(intList: List<Long?>): List<Long?> {
     api?.let {
       try {
         return it.echoIntList(intList)
@@ -1883,11 +2397,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed list, to test serialization and deserialization. */
-  override fun echoDoubleList(doubleList: List<Double?>): List<Double?>
- {
+  override fun echoDoubleList(doubleList: List<Double?>): List<Double?> {
     api?.let {
       try {
         return it.echoDoubleList(doubleList)
@@ -1895,11 +2409,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed list, to test serialization and deserialization. */
-  override fun echoBoolList(boolList: List<Boolean?>): List<Boolean?>
- {
+  override fun echoBoolList(boolList: List<Boolean?>): List<Boolean?> {
     api?.let {
       try {
         return it.echoBoolList(boolList)
@@ -1907,11 +2421,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed list, to test serialization and deserialization. */
-  override fun echoEnumList(enumList: List<NativeInteropAnEnum?>): List<NativeInteropAnEnum?>
- {
+  override fun echoEnumList(enumList: List<NativeInteropAnEnum?>): List<NativeInteropAnEnum?> {
     api?.let {
       try {
         return it.echoEnumList(enumList)
@@ -1919,11 +2433,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed list, to test serialization and deserialization. */
-  override fun echoClassList(classList: List<NativeInteropAllNullableTypes?>): List<NativeInteropAllNullableTypes?>
- {
+  override fun echoClassList(
+      classList: List<NativeInteropAllNullableTypes?>
+  ): List<NativeInteropAllNullableTypes?> {
     api?.let {
       try {
         return it.echoClassList(classList)
@@ -1931,11 +2447,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed list, to test serialization and deserialization. */
-  override fun echoNonNullEnumList(enumList: List<NativeInteropAnEnum>): List<NativeInteropAnEnum>
- {
+  override fun echoNonNullEnumList(enumList: List<NativeInteropAnEnum>): List<NativeInteropAnEnum> {
     api?.let {
       try {
         return it.echoNonNullEnumList(enumList)
@@ -1943,11 +2459,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed list, to test serialization and deserialization. */
-  override fun echoNonNullClassList(classList: List<NativeInteropAllNullableTypes>): List<NativeInteropAllNullableTypes>
- {
+  override fun echoNonNullClassList(
+      classList: List<NativeInteropAllNullableTypes>
+  ): List<NativeInteropAllNullableTypes> {
     api?.let {
       try {
         return it.echoNonNullClassList(classList)
@@ -1955,11 +2473,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed map, to test serialization and deserialization. */
-  override fun echoMap(map: Map<Any?, Any?>): Map<Any?, Any?>
- {
+  override fun echoMap(map: Map<Any?, Any?>): Map<Any?, Any?> {
     api?.let {
       try {
         return it.echoMap(map)
@@ -1967,11 +2485,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed map, to test serialization and deserialization. */
-  override fun echoStringMap(stringMap: Map<String?, String?>): Map<String?, String?>
- {
+  override fun echoStringMap(stringMap: Map<String?, String?>): Map<String?, String?> {
     api?.let {
       try {
         return it.echoStringMap(stringMap)
@@ -1979,11 +2497,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed map, to test serialization and deserialization. */
-  override fun echoIntMap(intMap: Map<Long?, Long?>): Map<Long?, Long?>
- {
+  override fun echoIntMap(intMap: Map<Long?, Long?>): Map<Long?, Long?> {
     api?.let {
       try {
         return it.echoIntMap(intMap)
@@ -1991,11 +2509,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed map, to test serialization and deserialization. */
-  override fun echoEnumMap(enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
- {
+  override fun echoEnumMap(
+      enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
+  ): Map<NativeInteropAnEnum?, NativeInteropAnEnum?> {
     api?.let {
       try {
         return it.echoEnumMap(enumMap)
@@ -2003,11 +2523,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed map, to test serialization and deserialization. */
-  override fun echoClassMap(classMap: Map<Long?, NativeInteropAllNullableTypes?>): Map<Long?, NativeInteropAllNullableTypes?>
- {
+  override fun echoClassMap(
+      classMap: Map<Long?, NativeInteropAllNullableTypes?>
+  ): Map<Long?, NativeInteropAllNullableTypes?> {
     api?.let {
       try {
         return it.echoClassMap(classMap)
@@ -2015,11 +2537,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed map, to test serialization and deserialization. */
-  override fun echoNonNullStringMap(stringMap: Map<String, String>): Map<String, String>
- {
+  override fun echoNonNullStringMap(stringMap: Map<String, String>): Map<String, String> {
     api?.let {
       try {
         return it.echoNonNullStringMap(stringMap)
@@ -2027,11 +2549,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed map, to test serialization and deserialization. */
-  override fun echoNonNullIntMap(intMap: Map<Long, Long>): Map<Long, Long>
- {
+  override fun echoNonNullIntMap(intMap: Map<Long, Long>): Map<Long, Long> {
     api?.let {
       try {
         return it.echoNonNullIntMap(intMap)
@@ -2039,11 +2561,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed map, to test serialization and deserialization. */
-  override fun echoNonNullEnumMap(enumMap: Map<NativeInteropAnEnum, NativeInteropAnEnum>): Map<NativeInteropAnEnum, NativeInteropAnEnum>
- {
+  override fun echoNonNullEnumMap(
+      enumMap: Map<NativeInteropAnEnum, NativeInteropAnEnum>
+  ): Map<NativeInteropAnEnum, NativeInteropAnEnum> {
     api?.let {
       try {
         return it.echoNonNullEnumMap(enumMap)
@@ -2051,11 +2575,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed map, to test serialization and deserialization. */
-  override fun echoNonNullClassMap(classMap: Map<Long, NativeInteropAllNullableTypes>): Map<Long, NativeInteropAllNullableTypes>
- {
+  override fun echoNonNullClassMap(
+      classMap: Map<Long, NativeInteropAllNullableTypes>
+  ): Map<Long, NativeInteropAllNullableTypes> {
     api?.let {
       try {
         return it.echoNonNullClassMap(classMap)
@@ -2063,11 +2589,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed class to test nested class serialization and deserialization. */
-  override fun echoClassWrapper(wrapper: NativeInteropAllClassesWrapper): NativeInteropAllClassesWrapper
- {
+  override fun echoClassWrapper(
+      wrapper: NativeInteropAllClassesWrapper
+  ): NativeInteropAllClassesWrapper {
     api?.let {
       try {
         return it.echoClassWrapper(wrapper)
@@ -2075,11 +2603,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed sealed class, to test sealed class handling. */
-  override fun echoSealedClass(sealedClass: NativeInteropSealedClass): NativeInteropSealedClass
- {
+  override fun echoSealedClass(sealedClass: NativeInteropSealedClass): NativeInteropSealedClass {
     api?.let {
       try {
         return it.echoSealedClass(sealedClass)
@@ -2087,11 +2615,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed sealed class, to test nullable sealed class handling. */
-  override fun echoNullableSealedClass(sealedClass: NativeInteropSealedClass?): NativeInteropSealedClass?
- {
+  override fun echoNullableSealedClass(
+      sealedClass: NativeInteropSealedClass?
+  ): NativeInteropSealedClass? {
     api?.let {
       try {
         return it.echoNullableSealedClass(sealedClass)
@@ -2099,11 +2629,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed list, to test sealed classes in lists. */
-  override fun echoSealedClassList(sealedClassList: List<NativeInteropSealedClass>): List<NativeInteropSealedClass>
- {
+  override fun echoSealedClassList(
+      sealedClassList: List<NativeInteropSealedClass>
+  ): List<NativeInteropSealedClass> {
     api?.let {
       try {
         return it.echoSealedClassList(sealedClassList)
@@ -2111,11 +2643,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed wrapper, to test sealed classes in class fields. */
-  override fun echoSealedClassWrapper(wrapper: NativeInteropSealedClassWrapper): NativeInteropSealedClassWrapper
- {
+  override fun echoSealedClassWrapper(
+      wrapper: NativeInteropSealedClassWrapper
+  ): NativeInteropSealedClassWrapper {
     api?.let {
       try {
         return it.echoSealedClassWrapper(wrapper)
@@ -2123,11 +2657,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed enum to test serialization and deserialization. */
-  override fun echoEnum(anEnum: NativeInteropAnEnum): NativeInteropAnEnum
- {
+  override fun echoEnum(anEnum: NativeInteropAnEnum): NativeInteropAnEnum {
     api?.let {
       try {
         return it.echoEnum(anEnum)
@@ -2135,11 +2669,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed enum to test serialization and deserialization. */
-  override fun echoAnotherEnum(anotherEnum: NativeInteropAnotherEnum): NativeInteropAnotherEnum
- {
+  override fun echoAnotherEnum(anotherEnum: NativeInteropAnotherEnum): NativeInteropAnotherEnum {
     api?.let {
       try {
         return it.echoAnotherEnum(anotherEnum)
@@ -2147,11 +2681,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the default string. */
-  override fun echoNamedDefaultString(aString: String): String
- {
+  override fun echoNamedDefaultString(aString: String): String {
     api?.let {
       try {
         return it.echoNamedDefaultString(aString)
@@ -2159,11 +2693,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns passed in double. */
-  override fun echoOptionalDefaultDouble(aDouble: Double): Double
- {
+  override fun echoOptionalDefaultDouble(aDouble: Double): Double {
     api?.let {
       try {
         return it.echoOptionalDefaultDouble(aDouble)
@@ -2171,11 +2705,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns passed in int. */
-  override fun echoRequiredInt(anInt: Long): Long
- {
+  override fun echoRequiredInt(anInt: Long): Long {
     api?.let {
       try {
         return it.echoRequiredInt(anInt)
@@ -2183,11 +2717,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed object, to test serialization and deserialization. */
-  override fun echoAllNullableTypes(everything: NativeInteropAllNullableTypes?): NativeInteropAllNullableTypes?
- {
+  override fun echoAllNullableTypes(
+      everything: NativeInteropAllNullableTypes?
+  ): NativeInteropAllNullableTypes? {
     api?.let {
       try {
         return it.echoAllNullableTypes(everything)
@@ -2195,11 +2731,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed object, to test serialization and deserialization. */
-  override fun echoAllNullableTypesWithoutRecursion(everything: NativeInteropAllNullableTypesWithoutRecursion?): NativeInteropAllNullableTypesWithoutRecursion?
- {
+  override fun echoAllNullableTypesWithoutRecursion(
+      everything: NativeInteropAllNullableTypesWithoutRecursion?
+  ): NativeInteropAllNullableTypesWithoutRecursion? {
     api?.let {
       try {
         return it.echoAllNullableTypesWithoutRecursion(everything)
@@ -2207,14 +2745,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /**
-   * Returns the inner `aString` value from the wrapped object, to test
-   * sending of nested objects.
+   * Returns the inner `aString` value from the wrapped object, to test sending of nested objects.
    */
-  override fun extractNestedNullableString(wrapper: NativeInteropAllClassesWrapper): String?
- {
+  override fun extractNestedNullableString(wrapper: NativeInteropAllClassesWrapper): String? {
     api?.let {
       try {
         return it.extractNestedNullableString(wrapper)
@@ -2222,14 +2759,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /**
-   * Returns the inner `aString` value from the wrapped object, to test
-   * sending of nested objects.
+   * Returns the inner `aString` value from the wrapped object, to test sending of nested objects.
    */
-  override fun createNestedNullableString(nullableString: String?): NativeInteropAllClassesWrapper
- {
+  override fun createNestedNullableString(nullableString: String?): NativeInteropAllClassesWrapper {
     api?.let {
       try {
         return it.createNestedNullableString(nullableString)
@@ -2237,10 +2773,15 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override fun sendMultipleNullableTypes(aNullableBool: Boolean?, aNullableInt: Long?, aNullableString: String?): NativeInteropAllNullableTypes
- {
+
+  override fun sendMultipleNullableTypes(
+      aNullableBool: Boolean?,
+      aNullableInt: Long?,
+      aNullableString: String?
+  ): NativeInteropAllNullableTypes {
     api?.let {
       try {
         return it.sendMultipleNullableTypes(aNullableBool, aNullableInt, aNullableString)
@@ -2248,23 +2789,28 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns passed in arguments of multiple types. */
-  override fun sendMultipleNullableTypesWithoutRecursion(aNullableBool: Boolean?, aNullableInt: Long?, aNullableString: String?): NativeInteropAllNullableTypesWithoutRecursion
- {
+  override fun sendMultipleNullableTypesWithoutRecursion(
+      aNullableBool: Boolean?,
+      aNullableInt: Long?,
+      aNullableString: String?
+  ): NativeInteropAllNullableTypesWithoutRecursion {
     api?.let {
       try {
-        return it.sendMultipleNullableTypesWithoutRecursion(aNullableBool, aNullableInt, aNullableString)
+        return it.sendMultipleNullableTypesWithoutRecursion(
+            aNullableBool, aNullableInt, aNullableString)
       } catch (e: Exception) {
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns passed in int. */
-  override fun echoNullableInt(aNullableInt: Long?): Long?
- {
+  override fun echoNullableInt(aNullableInt: Long?): Long? {
     api?.let {
       try {
         return it.echoNullableInt(aNullableInt)
@@ -2272,11 +2818,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns passed in double. */
-  override fun echoNullableDouble(aNullableDouble: Double?): Double?
- {
+  override fun echoNullableDouble(aNullableDouble: Double?): Double? {
     api?.let {
       try {
         return it.echoNullableDouble(aNullableDouble)
@@ -2284,11 +2830,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed in boolean. */
-  override fun echoNullableBool(aNullableBool: Boolean?): Boolean?
- {
+  override fun echoNullableBool(aNullableBool: Boolean?): Boolean? {
     api?.let {
       try {
         return it.echoNullableBool(aNullableBool)
@@ -2296,11 +2842,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed in string. */
-  override fun echoNullableString(aNullableString: String?): String?
- {
+  override fun echoNullableString(aNullableString: String?): String? {
     api?.let {
       try {
         return it.echoNullableString(aNullableString)
@@ -2308,11 +2854,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed in Uint8List. */
-  override fun echoNullableUint8List(aNullableUint8List: ByteArray?): ByteArray?
- {
+  override fun echoNullableUint8List(aNullableUint8List: ByteArray?): ByteArray? {
     api?.let {
       try {
         return it.echoNullableUint8List(aNullableUint8List)
@@ -2320,11 +2866,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed in Int32List. */
-  override fun echoNullableInt32List(aNullableInt32List: IntArray?): IntArray?
- {
+  override fun echoNullableInt32List(aNullableInt32List: IntArray?): IntArray? {
     api?.let {
       try {
         return it.echoNullableInt32List(aNullableInt32List)
@@ -2332,11 +2878,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed in Int64List. */
-  override fun echoNullableInt64List(aNullableInt64List: LongArray?): LongArray?
- {
+  override fun echoNullableInt64List(aNullableInt64List: LongArray?): LongArray? {
     api?.let {
       try {
         return it.echoNullableInt64List(aNullableInt64List)
@@ -2344,11 +2890,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed in Float64List. */
-  override fun echoNullableFloat64List(aNullableFloat64List: DoubleArray?): DoubleArray?
- {
+  override fun echoNullableFloat64List(aNullableFloat64List: DoubleArray?): DoubleArray? {
     api?.let {
       try {
         return it.echoNullableFloat64List(aNullableFloat64List)
@@ -2356,11 +2902,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed in generic Object. */
-  override fun echoNullableObject(aNullableObject: Any?): Any?
- {
+  override fun echoNullableObject(aNullableObject: Any?): Any? {
     api?.let {
       try {
         return it.echoNullableObject(aNullableObject)
@@ -2368,11 +2914,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed list, to test serialization and deserialization. */
-  override fun echoNullableList(aNullableList: List<Any?>?): List<Any?>?
- {
+  override fun echoNullableList(aNullableList: List<Any?>?): List<Any?>? {
     api?.let {
       try {
         return it.echoNullableList(aNullableList)
@@ -2380,11 +2926,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed list, to test serialization and deserialization. */
-  override fun echoNullableEnumList(enumList: List<NativeInteropAnEnum?>?): List<NativeInteropAnEnum?>?
- {
+  override fun echoNullableEnumList(
+      enumList: List<NativeInteropAnEnum?>?
+  ): List<NativeInteropAnEnum?>? {
     api?.let {
       try {
         return it.echoNullableEnumList(enumList)
@@ -2392,11 +2940,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed list, to test serialization and deserialization. */
-  override fun echoNullableClassList(classList: List<NativeInteropAllNullableTypes?>?): List<NativeInteropAllNullableTypes?>?
- {
+  override fun echoNullableClassList(
+      classList: List<NativeInteropAllNullableTypes?>?
+  ): List<NativeInteropAllNullableTypes?>? {
     api?.let {
       try {
         return it.echoNullableClassList(classList)
@@ -2404,11 +2954,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed list, to test serialization and deserialization. */
-  override fun echoNullableNonNullEnumList(enumList: List<NativeInteropAnEnum>?): List<NativeInteropAnEnum>?
- {
+  override fun echoNullableNonNullEnumList(
+      enumList: List<NativeInteropAnEnum>?
+  ): List<NativeInteropAnEnum>? {
     api?.let {
       try {
         return it.echoNullableNonNullEnumList(enumList)
@@ -2416,11 +2968,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed list, to test serialization and deserialization. */
-  override fun echoNullableNonNullClassList(classList: List<NativeInteropAllNullableTypes>?): List<NativeInteropAllNullableTypes>?
- {
+  override fun echoNullableNonNullClassList(
+      classList: List<NativeInteropAllNullableTypes>?
+  ): List<NativeInteropAllNullableTypes>? {
     api?.let {
       try {
         return it.echoNullableNonNullClassList(classList)
@@ -2428,11 +2982,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed map, to test serialization and deserialization. */
-  override fun echoNullableMap(map: Map<Any?, Any?>?): Map<Any?, Any?>?
- {
+  override fun echoNullableMap(map: Map<Any?, Any?>?): Map<Any?, Any?>? {
     api?.let {
       try {
         return it.echoNullableMap(map)
@@ -2440,11 +2994,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed map, to test serialization and deserialization. */
-  override fun echoNullableStringMap(stringMap: Map<String?, String?>?): Map<String?, String?>?
- {
+  override fun echoNullableStringMap(stringMap: Map<String?, String?>?): Map<String?, String?>? {
     api?.let {
       try {
         return it.echoNullableStringMap(stringMap)
@@ -2452,11 +3006,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed map, to test serialization and deserialization. */
-  override fun echoNullableIntMap(intMap: Map<Long?, Long?>?): Map<Long?, Long?>?
- {
+  override fun echoNullableIntMap(intMap: Map<Long?, Long?>?): Map<Long?, Long?>? {
     api?.let {
       try {
         return it.echoNullableIntMap(intMap)
@@ -2464,11 +3018,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed map, to test serialization and deserialization. */
-  override fun echoNullableEnumMap(enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
- {
+  override fun echoNullableEnumMap(
+      enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
+  ): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>? {
     api?.let {
       try {
         return it.echoNullableEnumMap(enumMap)
@@ -2476,11 +3032,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed map, to test serialization and deserialization. */
-  override fun echoNullableClassMap(classMap: Map<Long?, NativeInteropAllNullableTypes?>?): Map<Long?, NativeInteropAllNullableTypes?>?
- {
+  override fun echoNullableClassMap(
+      classMap: Map<Long?, NativeInteropAllNullableTypes?>?
+  ): Map<Long?, NativeInteropAllNullableTypes?>? {
     api?.let {
       try {
         return it.echoNullableClassMap(classMap)
@@ -2488,11 +3046,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed map, to test serialization and deserialization. */
-  override fun echoNullableNonNullStringMap(stringMap: Map<String, String>?): Map<String, String>?
- {
+  override fun echoNullableNonNullStringMap(stringMap: Map<String, String>?): Map<String, String>? {
     api?.let {
       try {
         return it.echoNullableNonNullStringMap(stringMap)
@@ -2500,11 +3058,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed map, to test serialization and deserialization. */
-  override fun echoNullableNonNullIntMap(intMap: Map<Long, Long>?): Map<Long, Long>?
- {
+  override fun echoNullableNonNullIntMap(intMap: Map<Long, Long>?): Map<Long, Long>? {
     api?.let {
       try {
         return it.echoNullableNonNullIntMap(intMap)
@@ -2512,11 +3070,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed map, to test serialization and deserialization. */
-  override fun echoNullableNonNullEnumMap(enumMap: Map<NativeInteropAnEnum, NativeInteropAnEnum>?): Map<NativeInteropAnEnum, NativeInteropAnEnum>?
- {
+  override fun echoNullableNonNullEnumMap(
+      enumMap: Map<NativeInteropAnEnum, NativeInteropAnEnum>?
+  ): Map<NativeInteropAnEnum, NativeInteropAnEnum>? {
     api?.let {
       try {
         return it.echoNullableNonNullEnumMap(enumMap)
@@ -2524,11 +3084,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed map, to test serialization and deserialization. */
-  override fun echoNullableNonNullClassMap(classMap: Map<Long, NativeInteropAllNullableTypes>?): Map<Long, NativeInteropAllNullableTypes>?
- {
+  override fun echoNullableNonNullClassMap(
+      classMap: Map<Long, NativeInteropAllNullableTypes>?
+  ): Map<Long, NativeInteropAllNullableTypes>? {
     api?.let {
       try {
         return it.echoNullableNonNullClassMap(classMap)
@@ -2536,10 +3098,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override fun echoNullableEnum(anEnum: NativeInteropAnEnum?): NativeInteropAnEnum?
- {
+
+  override fun echoNullableEnum(anEnum: NativeInteropAnEnum?): NativeInteropAnEnum? {
     api?.let {
       try {
         return it.echoNullableEnum(anEnum)
@@ -2547,10 +3110,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override fun echoAnotherNullableEnum(anotherEnum: NativeInteropAnotherEnum?): NativeInteropAnotherEnum?
- {
+
+  override fun echoAnotherNullableEnum(
+      anotherEnum: NativeInteropAnotherEnum?
+  ): NativeInteropAnotherEnum? {
     api?.let {
       try {
         return it.echoAnotherNullableEnum(anotherEnum)
@@ -2558,11 +3124,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns passed in int. */
-  override fun echoOptionalNullableInt(aNullableInt: Long?): Long?
- {
+  override fun echoOptionalNullableInt(aNullableInt: Long?): Long? {
     api?.let {
       try {
         return it.echoOptionalNullableInt(aNullableInt)
@@ -2570,11 +3136,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed in string. */
-  override fun echoNamedNullableString(aNullableString: String?): String?
- {
+  override fun echoNamedNullableString(aNullableString: String?): String? {
     api?.let {
       try {
         return it.echoNamedNullableString(aNullableString)
@@ -2582,14 +3148,14 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /**
-   * A no-op function taking no arguments and returning no value, to sanity
-   * test basic asynchronous calling.
+   * A no-op function taking no arguments and returning no value, to sanity test basic asynchronous
+   * calling.
    */
-  override suspend fun noopAsync()
- {
+  override suspend fun noopAsync() {
     api?.let {
       try {
         return it.noopAsync()
@@ -2597,11 +3163,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns passed in int asynchronously. */
-  override suspend fun echoAsyncInt(anInt: Long): Long
- {
+  override suspend fun echoAsyncInt(anInt: Long): Long {
     api?.let {
       try {
         return it.echoAsyncInt(anInt)
@@ -2609,11 +3175,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns passed in double asynchronously. */
-  override suspend fun echoAsyncDouble(aDouble: Double): Double
- {
+  override suspend fun echoAsyncDouble(aDouble: Double): Double {
     api?.let {
       try {
         return it.echoAsyncDouble(aDouble)
@@ -2621,11 +3187,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed in boolean asynchronously. */
-  override suspend fun echoAsyncBool(aBool: Boolean): Boolean
- {
+  override suspend fun echoAsyncBool(aBool: Boolean): Boolean {
     api?.let {
       try {
         return it.echoAsyncBool(aBool)
@@ -2633,11 +3199,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed string asynchronously. */
-  override suspend fun echoAsyncString(aString: String): String
- {
+  override suspend fun echoAsyncString(aString: String): String {
     api?.let {
       try {
         return it.echoAsyncString(aString)
@@ -2645,11 +3211,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed in Uint8List asynchronously. */
-  override suspend fun echoAsyncUint8List(aUint8List: ByteArray): ByteArray
- {
+  override suspend fun echoAsyncUint8List(aUint8List: ByteArray): ByteArray {
     api?.let {
       try {
         return it.echoAsyncUint8List(aUint8List)
@@ -2657,11 +3223,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed in Int32List asynchronously. */
-  override suspend fun echoAsyncInt32List(aInt32List: IntArray): IntArray
- {
+  override suspend fun echoAsyncInt32List(aInt32List: IntArray): IntArray {
     api?.let {
       try {
         return it.echoAsyncInt32List(aInt32List)
@@ -2669,11 +3235,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed in Int64List asynchronously. */
-  override suspend fun echoAsyncInt64List(aInt64List: LongArray): LongArray
- {
+  override suspend fun echoAsyncInt64List(aInt64List: LongArray): LongArray {
     api?.let {
       try {
         return it.echoAsyncInt64List(aInt64List)
@@ -2681,11 +3247,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed in Float64List asynchronously. */
-  override suspend fun echoAsyncFloat64List(aFloat64List: DoubleArray): DoubleArray
- {
+  override suspend fun echoAsyncFloat64List(aFloat64List: DoubleArray): DoubleArray {
     api?.let {
       try {
         return it.echoAsyncFloat64List(aFloat64List)
@@ -2693,11 +3259,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed in generic Object asynchronously. */
-  override suspend fun echoAsyncObject(anObject: Any): Any
- {
+  override suspend fun echoAsyncObject(anObject: Any): Any {
     api?.let {
       try {
         return it.echoAsyncObject(anObject)
@@ -2705,11 +3271,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed list, to test asynchronous serialization and deserialization. */
-  override suspend fun echoAsyncList(list: List<Any?>): List<Any?>
- {
+  override suspend fun echoAsyncList(list: List<Any?>): List<Any?> {
     api?.let {
       try {
         return it.echoAsyncList(list)
@@ -2717,11 +3283,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed list, to test asynchronous serialization and deserialization. */
-  override suspend fun echoAsyncEnumList(enumList: List<NativeInteropAnEnum?>): List<NativeInteropAnEnum?>
- {
+  override suspend fun echoAsyncEnumList(
+      enumList: List<NativeInteropAnEnum?>
+  ): List<NativeInteropAnEnum?> {
     api?.let {
       try {
         return it.echoAsyncEnumList(enumList)
@@ -2729,11 +3297,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed list, to test asynchronous serialization and deserialization. */
-  override suspend fun echoAsyncClassList(classList: List<NativeInteropAllNullableTypes?>): List<NativeInteropAllNullableTypes?>
- {
+  override suspend fun echoAsyncClassList(
+      classList: List<NativeInteropAllNullableTypes?>
+  ): List<NativeInteropAllNullableTypes?> {
     api?.let {
       try {
         return it.echoAsyncClassList(classList)
@@ -2741,11 +3311,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
-  override suspend fun echoAsyncMap(map: Map<Any?, Any?>): Map<Any?, Any?>
- {
+  override suspend fun echoAsyncMap(map: Map<Any?, Any?>): Map<Any?, Any?> {
     api?.let {
       try {
         return it.echoAsyncMap(map)
@@ -2753,11 +3323,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
-  override suspend fun echoAsyncStringMap(stringMap: Map<String?, String?>): Map<String?, String?>
- {
+  override suspend fun echoAsyncStringMap(stringMap: Map<String?, String?>): Map<String?, String?> {
     api?.let {
       try {
         return it.echoAsyncStringMap(stringMap)
@@ -2765,11 +3335,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
-  override suspend fun echoAsyncIntMap(intMap: Map<Long?, Long?>): Map<Long?, Long?>
- {
+  override suspend fun echoAsyncIntMap(intMap: Map<Long?, Long?>): Map<Long?, Long?> {
     api?.let {
       try {
         return it.echoAsyncIntMap(intMap)
@@ -2777,11 +3347,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
-  override suspend fun echoAsyncEnumMap(enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
- {
+  override suspend fun echoAsyncEnumMap(
+      enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
+  ): Map<NativeInteropAnEnum?, NativeInteropAnEnum?> {
     api?.let {
       try {
         return it.echoAsyncEnumMap(enumMap)
@@ -2789,11 +3361,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
-  override suspend fun echoAsyncClassMap(classMap: Map<Long?, NativeInteropAllNullableTypes?>): Map<Long?, NativeInteropAllNullableTypes?>
- {
+  override suspend fun echoAsyncClassMap(
+      classMap: Map<Long?, NativeInteropAllNullableTypes?>
+  ): Map<Long?, NativeInteropAllNullableTypes?> {
     api?.let {
       try {
         return it.echoAsyncClassMap(classMap)
@@ -2801,11 +3375,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed enum, to test asynchronous serialization and deserialization. */
-  override suspend fun echoAsyncEnum(anEnum: NativeInteropAnEnum): NativeInteropAnEnum
- {
+  override suspend fun echoAsyncEnum(anEnum: NativeInteropAnEnum): NativeInteropAnEnum {
     api?.let {
       try {
         return it.echoAsyncEnum(anEnum)
@@ -2813,11 +3387,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed enum, to test asynchronous serialization and deserialization. */
-  override suspend fun echoAnotherAsyncEnum(anotherEnum: NativeInteropAnotherEnum): NativeInteropAnotherEnum
- {
+  override suspend fun echoAnotherAsyncEnum(
+      anotherEnum: NativeInteropAnotherEnum
+  ): NativeInteropAnotherEnum {
     api?.let {
       try {
         return it.echoAnotherAsyncEnum(anotherEnum)
@@ -2825,11 +3401,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Responds with an error from an async function returning a value. */
-  override suspend fun throwAsyncError(): Any?
- {
+  override suspend fun throwAsyncError(): Any? {
     api?.let {
       try {
         return it.throwAsyncError()
@@ -2837,11 +3413,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Responds with an error from an async void function. */
-  override suspend fun throwAsyncErrorFromVoid()
- {
+  override suspend fun throwAsyncErrorFromVoid() {
     api?.let {
       try {
         return it.throwAsyncErrorFromVoid()
@@ -2849,11 +3425,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Responds with a Flutter error from an async function returning a value. */
-  override suspend fun throwAsyncFlutterError(): Any?
- {
+  override suspend fun throwAsyncFlutterError(): Any? {
     api?.let {
       try {
         return it.throwAsyncFlutterError()
@@ -2861,11 +3437,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed object, to test async serialization and deserialization. */
-  override suspend fun echoAsyncNativeInteropAllTypes(everything: NativeInteropAllTypes): NativeInteropAllTypes
- {
+  override suspend fun echoAsyncNativeInteropAllTypes(
+      everything: NativeInteropAllTypes
+  ): NativeInteropAllTypes {
     api?.let {
       try {
         return it.echoAsyncNativeInteropAllTypes(everything)
@@ -2873,11 +3451,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed sealed class asynchronously. */
-  override suspend fun echoAsyncSealedClass(sealedClass: NativeInteropSealedClass): NativeInteropSealedClass
- {
+  override suspend fun echoAsyncSealedClass(
+      sealedClass: NativeInteropSealedClass
+  ): NativeInteropSealedClass {
     api?.let {
       try {
         return it.echoAsyncSealedClass(sealedClass)
@@ -2885,11 +3465,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed object, to test serialization and deserialization. */
-  override suspend fun echoAsyncNullableNativeInteropAllNullableTypes(everything: NativeInteropAllNullableTypes?): NativeInteropAllNullableTypes?
- {
+  override suspend fun echoAsyncNullableNativeInteropAllNullableTypes(
+      everything: NativeInteropAllNullableTypes?
+  ): NativeInteropAllNullableTypes? {
     api?.let {
       try {
         return it.echoAsyncNullableNativeInteropAllNullableTypes(everything)
@@ -2897,11 +3479,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed object, to test serialization and deserialization. */
-  override suspend fun echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(everything: NativeInteropAllNullableTypesWithoutRecursion?): NativeInteropAllNullableTypesWithoutRecursion?
- {
+  override suspend fun echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
+      everything: NativeInteropAllNullableTypesWithoutRecursion?
+  ): NativeInteropAllNullableTypesWithoutRecursion? {
     api?.let {
       try {
         return it.echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(everything)
@@ -2909,11 +3493,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns passed in int asynchronously. */
-  override suspend fun echoAsyncNullableInt(anInt: Long?): Long?
- {
+  override suspend fun echoAsyncNullableInt(anInt: Long?): Long? {
     api?.let {
       try {
         return it.echoAsyncNullableInt(anInt)
@@ -2921,11 +3505,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns passed in double asynchronously. */
-  override suspend fun echoAsyncNullableDouble(aDouble: Double?): Double?
- {
+  override suspend fun echoAsyncNullableDouble(aDouble: Double?): Double? {
     api?.let {
       try {
         return it.echoAsyncNullableDouble(aDouble)
@@ -2933,11 +3517,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed in boolean asynchronously. */
-  override suspend fun echoAsyncNullableBool(aBool: Boolean?): Boolean?
- {
+  override suspend fun echoAsyncNullableBool(aBool: Boolean?): Boolean? {
     api?.let {
       try {
         return it.echoAsyncNullableBool(aBool)
@@ -2945,11 +3529,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed string asynchronously. */
-  override suspend fun echoAsyncNullableString(aString: String?): String?
- {
+  override suspend fun echoAsyncNullableString(aString: String?): String? {
     api?.let {
       try {
         return it.echoAsyncNullableString(aString)
@@ -2957,11 +3541,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed in Uint8List asynchronously. */
-  override suspend fun echoAsyncNullableUint8List(aUint8List: ByteArray?): ByteArray?
- {
+  override suspend fun echoAsyncNullableUint8List(aUint8List: ByteArray?): ByteArray? {
     api?.let {
       try {
         return it.echoAsyncNullableUint8List(aUint8List)
@@ -2969,11 +3553,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed in Int32List asynchronously. */
-  override suspend fun echoAsyncNullableInt32List(aInt32List: IntArray?): IntArray?
- {
+  override suspend fun echoAsyncNullableInt32List(aInt32List: IntArray?): IntArray? {
     api?.let {
       try {
         return it.echoAsyncNullableInt32List(aInt32List)
@@ -2981,11 +3565,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed in Int64List asynchronously. */
-  override suspend fun echoAsyncNullableInt64List(aInt64List: LongArray?): LongArray?
- {
+  override suspend fun echoAsyncNullableInt64List(aInt64List: LongArray?): LongArray? {
     api?.let {
       try {
         return it.echoAsyncNullableInt64List(aInt64List)
@@ -2993,11 +3577,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed in Float64List asynchronously. */
-  override suspend fun echoAsyncNullableFloat64List(aFloat64List: DoubleArray?): DoubleArray?
- {
+  override suspend fun echoAsyncNullableFloat64List(aFloat64List: DoubleArray?): DoubleArray? {
     api?.let {
       try {
         return it.echoAsyncNullableFloat64List(aFloat64List)
@@ -3005,11 +3589,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed in generic Object asynchronously. */
-  override suspend fun echoAsyncNullableObject(anObject: Any?): Any?
- {
+  override suspend fun echoAsyncNullableObject(anObject: Any?): Any? {
     api?.let {
       try {
         return it.echoAsyncNullableObject(anObject)
@@ -3017,11 +3601,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed list, to test asynchronous serialization and deserialization. */
-  override suspend fun echoAsyncNullableList(list: List<Any?>?): List<Any?>?
- {
+  override suspend fun echoAsyncNullableList(list: List<Any?>?): List<Any?>? {
     api?.let {
       try {
         return it.echoAsyncNullableList(list)
@@ -3029,11 +3613,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed list, to test asynchronous serialization and deserialization. */
-  override suspend fun echoAsyncNullableEnumList(enumList: List<NativeInteropAnEnum?>?): List<NativeInteropAnEnum?>?
- {
+  override suspend fun echoAsyncNullableEnumList(
+      enumList: List<NativeInteropAnEnum?>?
+  ): List<NativeInteropAnEnum?>? {
     api?.let {
       try {
         return it.echoAsyncNullableEnumList(enumList)
@@ -3041,11 +3627,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed list, to test asynchronous serialization and deserialization. */
-  override suspend fun echoAsyncNullableClassList(classList: List<NativeInteropAllNullableTypes?>?): List<NativeInteropAllNullableTypes?>?
- {
+  override suspend fun echoAsyncNullableClassList(
+      classList: List<NativeInteropAllNullableTypes?>?
+  ): List<NativeInteropAllNullableTypes?>? {
     api?.let {
       try {
         return it.echoAsyncNullableClassList(classList)
@@ -3053,11 +3641,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
-  override suspend fun echoAsyncNullableMap(map: Map<Any?, Any?>?): Map<Any?, Any?>?
- {
+  override suspend fun echoAsyncNullableMap(map: Map<Any?, Any?>?): Map<Any?, Any?>? {
     api?.let {
       try {
         return it.echoAsyncNullableMap(map)
@@ -3065,11 +3653,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
-  override suspend fun echoAsyncNullableStringMap(stringMap: Map<String?, String?>?): Map<String?, String?>?
- {
+  override suspend fun echoAsyncNullableStringMap(
+      stringMap: Map<String?, String?>?
+  ): Map<String?, String?>? {
     api?.let {
       try {
         return it.echoAsyncNullableStringMap(stringMap)
@@ -3077,11 +3667,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
-  override suspend fun echoAsyncNullableIntMap(intMap: Map<Long?, Long?>?): Map<Long?, Long?>?
- {
+  override suspend fun echoAsyncNullableIntMap(intMap: Map<Long?, Long?>?): Map<Long?, Long?>? {
     api?.let {
       try {
         return it.echoAsyncNullableIntMap(intMap)
@@ -3089,11 +3679,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
-  override suspend fun echoAsyncNullableEnumMap(enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
- {
+  override suspend fun echoAsyncNullableEnumMap(
+      enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
+  ): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>? {
     api?.let {
       try {
         return it.echoAsyncNullableEnumMap(enumMap)
@@ -3101,11 +3693,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
-  override suspend fun echoAsyncNullableClassMap(classMap: Map<Long?, NativeInteropAllNullableTypes?>?): Map<Long?, NativeInteropAllNullableTypes?>?
- {
+  override suspend fun echoAsyncNullableClassMap(
+      classMap: Map<Long?, NativeInteropAllNullableTypes?>?
+  ): Map<Long?, NativeInteropAllNullableTypes?>? {
     api?.let {
       try {
         return it.echoAsyncNullableClassMap(classMap)
@@ -3113,11 +3707,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed enum, to test asynchronous serialization and deserialization. */
-  override suspend fun echoAsyncNullableEnum(anEnum: NativeInteropAnEnum?): NativeInteropAnEnum?
- {
+  override suspend fun echoAsyncNullableEnum(anEnum: NativeInteropAnEnum?): NativeInteropAnEnum? {
     api?.let {
       try {
         return it.echoAsyncNullableEnum(anEnum)
@@ -3125,11 +3719,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns the passed enum, to test asynchronous serialization and deserialization. */
-  override suspend fun echoAnotherAsyncNullableEnum(anotherEnum: NativeInteropAnotherEnum?): NativeInteropAnotherEnum?
- {
+  override suspend fun echoAnotherAsyncNullableEnum(
+      anotherEnum: NativeInteropAnotherEnum?
+  ): NativeInteropAnotherEnum? {
     api?.let {
       try {
         return it.echoAnotherAsyncNullableEnum(anotherEnum)
@@ -3137,10 +3733,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override fun callFlutterNoop()
- {
+
+  override fun callFlutterNoop() {
     api?.let {
       try {
         return it.callFlutterNoop()
@@ -3148,10 +3745,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override fun callFlutterThrowError(): Any?
- {
+
+  override fun callFlutterThrowError(): Any? {
     api?.let {
       try {
         return it.callFlutterThrowError()
@@ -3159,10 +3757,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override fun callFlutterThrowErrorFromVoid()
- {
+
+  override fun callFlutterThrowErrorFromVoid() {
     api?.let {
       try {
         return it.callFlutterThrowErrorFromVoid()
@@ -3170,10 +3769,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override fun callFlutterEchoNativeInteropAllTypes(everything: NativeInteropAllTypes): NativeInteropAllTypes
- {
+
+  override fun callFlutterEchoNativeInteropAllTypes(
+      everything: NativeInteropAllTypes
+  ): NativeInteropAllTypes {
     api?.let {
       try {
         return it.callFlutterEchoNativeInteropAllTypes(everything)
@@ -3181,10 +3783,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override fun callFlutterEchoNativeInteropAllNullableTypes(everything: NativeInteropAllNullableTypes?): NativeInteropAllNullableTypes?
- {
+
+  override fun callFlutterEchoNativeInteropAllNullableTypes(
+      everything: NativeInteropAllNullableTypes?
+  ): NativeInteropAllNullableTypes? {
     api?.let {
       try {
         return it.callFlutterEchoNativeInteropAllNullableTypes(everything)
@@ -3192,10 +3797,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override fun callFlutterEchoSealedClass(sealedClass: NativeInteropSealedClass): NativeInteropSealedClass
- {
+
+  override fun callFlutterEchoSealedClass(
+      sealedClass: NativeInteropSealedClass
+  ): NativeInteropSealedClass {
     api?.let {
       try {
         return it.callFlutterEchoSealedClass(sealedClass)
@@ -3203,10 +3811,15 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override fun callFlutterSendMultipleNullableTypes(aNullableBool: Boolean?, aNullableInt: Long?, aNullableString: String?): NativeInteropAllNullableTypes
- {
+
+  override fun callFlutterSendMultipleNullableTypes(
+      aNullableBool: Boolean?,
+      aNullableInt: Long?,
+      aNullableString: String?
+  ): NativeInteropAllNullableTypes {
     api?.let {
       try {
         return it.callFlutterSendMultipleNullableTypes(aNullableBool, aNullableInt, aNullableString)
@@ -3214,10 +3827,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override fun callFlutterEchoNativeInteropAllNullableTypesWithoutRecursion(everything: NativeInteropAllNullableTypesWithoutRecursion?): NativeInteropAllNullableTypesWithoutRecursion?
- {
+
+  override fun callFlutterEchoNativeInteropAllNullableTypesWithoutRecursion(
+      everything: NativeInteropAllNullableTypesWithoutRecursion?
+  ): NativeInteropAllNullableTypesWithoutRecursion? {
     api?.let {
       try {
         return it.callFlutterEchoNativeInteropAllNullableTypesWithoutRecursion(everything)
@@ -3225,21 +3841,28 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override fun callFlutterSendMultipleNullableTypesWithoutRecursion(aNullableBool: Boolean?, aNullableInt: Long?, aNullableString: String?): NativeInteropAllNullableTypesWithoutRecursion
- {
+
+  override fun callFlutterSendMultipleNullableTypesWithoutRecursion(
+      aNullableBool: Boolean?,
+      aNullableInt: Long?,
+      aNullableString: String?
+  ): NativeInteropAllNullableTypesWithoutRecursion {
     api?.let {
       try {
-        return it.callFlutterSendMultipleNullableTypesWithoutRecursion(aNullableBool, aNullableInt, aNullableString)
+        return it.callFlutterSendMultipleNullableTypesWithoutRecursion(
+            aNullableBool, aNullableInt, aNullableString)
       } catch (e: Exception) {
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override fun callFlutterEchoBool(aBool: Boolean): Boolean
- {
+
+  override fun callFlutterEchoBool(aBool: Boolean): Boolean {
     api?.let {
       try {
         return it.callFlutterEchoBool(aBool)
@@ -3247,10 +3870,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override fun callFlutterEchoInt(anInt: Long): Long
- {
+
+  override fun callFlutterEchoInt(anInt: Long): Long {
     api?.let {
       try {
         return it.callFlutterEchoInt(anInt)
@@ -3258,10 +3882,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override fun callFlutterEchoDouble(aDouble: Double): Double
- {
+
+  override fun callFlutterEchoDouble(aDouble: Double): Double {
     api?.let {
       try {
         return it.callFlutterEchoDouble(aDouble)
@@ -3269,10 +3894,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override fun callFlutterEchoString(aString: String): String
- {
+
+  override fun callFlutterEchoString(aString: String): String {
     api?.let {
       try {
         return it.callFlutterEchoString(aString)
@@ -3280,10 +3906,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override fun callFlutterEchoUint8List(list: ByteArray): ByteArray
- {
+
+  override fun callFlutterEchoUint8List(list: ByteArray): ByteArray {
     api?.let {
       try {
         return it.callFlutterEchoUint8List(list)
@@ -3291,10 +3918,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override fun callFlutterEchoInt32List(list: IntArray): IntArray
- {
+
+  override fun callFlutterEchoInt32List(list: IntArray): IntArray {
     api?.let {
       try {
         return it.callFlutterEchoInt32List(list)
@@ -3302,10 +3930,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override fun callFlutterEchoInt64List(list: LongArray): LongArray
- {
+
+  override fun callFlutterEchoInt64List(list: LongArray): LongArray {
     api?.let {
       try {
         return it.callFlutterEchoInt64List(list)
@@ -3313,10 +3942,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override fun callFlutterEchoFloat64List(list: DoubleArray): DoubleArray
- {
+
+  override fun callFlutterEchoFloat64List(list: DoubleArray): DoubleArray {
     api?.let {
       try {
         return it.callFlutterEchoFloat64List(list)
@@ -3324,10 +3954,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override fun callFlutterEchoList(list: List<Any?>): List<Any?>
- {
+
+  override fun callFlutterEchoList(list: List<Any?>): List<Any?> {
     api?.let {
       try {
         return it.callFlutterEchoList(list)
@@ -3335,10 +3966,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override fun callFlutterEchoEnumList(enumList: List<NativeInteropAnEnum?>): List<NativeInteropAnEnum?>
- {
+
+  override fun callFlutterEchoEnumList(
+      enumList: List<NativeInteropAnEnum?>
+  ): List<NativeInteropAnEnum?> {
     api?.let {
       try {
         return it.callFlutterEchoEnumList(enumList)
@@ -3346,10 +3980,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override fun callFlutterEchoClassList(classList: List<NativeInteropAllNullableTypes?>): List<NativeInteropAllNullableTypes?>
- {
+
+  override fun callFlutterEchoClassList(
+      classList: List<NativeInteropAllNullableTypes?>
+  ): List<NativeInteropAllNullableTypes?> {
     api?.let {
       try {
         return it.callFlutterEchoClassList(classList)
@@ -3357,10 +3994,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override fun callFlutterEchoNonNullEnumList(enumList: List<NativeInteropAnEnum>): List<NativeInteropAnEnum>
- {
+
+  override fun callFlutterEchoNonNullEnumList(
+      enumList: List<NativeInteropAnEnum>
+  ): List<NativeInteropAnEnum> {
     api?.let {
       try {
         return it.callFlutterEchoNonNullEnumList(enumList)
@@ -3368,10 +4008,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override fun callFlutterEchoNonNullClassList(classList: List<NativeInteropAllNullableTypes>): List<NativeInteropAllNullableTypes>
- {
+
+  override fun callFlutterEchoNonNullClassList(
+      classList: List<NativeInteropAllNullableTypes>
+  ): List<NativeInteropAllNullableTypes> {
     api?.let {
       try {
         return it.callFlutterEchoNonNullClassList(classList)
@@ -3379,10 +4022,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override fun callFlutterEchoMap(map: Map<Any?, Any?>): Map<Any?, Any?>
- {
+
+  override fun callFlutterEchoMap(map: Map<Any?, Any?>): Map<Any?, Any?> {
     api?.let {
       try {
         return it.callFlutterEchoMap(map)
@@ -3390,10 +4034,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override fun callFlutterEchoStringMap(stringMap: Map<String?, String?>): Map<String?, String?>
- {
+
+  override fun callFlutterEchoStringMap(stringMap: Map<String?, String?>): Map<String?, String?> {
     api?.let {
       try {
         return it.callFlutterEchoStringMap(stringMap)
@@ -3401,10 +4046,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override fun callFlutterEchoIntMap(intMap: Map<Long?, Long?>): Map<Long?, Long?>
- {
+
+  override fun callFlutterEchoIntMap(intMap: Map<Long?, Long?>): Map<Long?, Long?> {
     api?.let {
       try {
         return it.callFlutterEchoIntMap(intMap)
@@ -3412,10 +4058,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override fun callFlutterEchoEnumMap(enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
- {
+
+  override fun callFlutterEchoEnumMap(
+      enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
+  ): Map<NativeInteropAnEnum?, NativeInteropAnEnum?> {
     api?.let {
       try {
         return it.callFlutterEchoEnumMap(enumMap)
@@ -3423,10 +4072,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override fun callFlutterEchoClassMap(classMap: Map<Long?, NativeInteropAllNullableTypes?>): Map<Long?, NativeInteropAllNullableTypes?>
- {
+
+  override fun callFlutterEchoClassMap(
+      classMap: Map<Long?, NativeInteropAllNullableTypes?>
+  ): Map<Long?, NativeInteropAllNullableTypes?> {
     api?.let {
       try {
         return it.callFlutterEchoClassMap(classMap)
@@ -3434,10 +4086,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override fun callFlutterEchoNonNullStringMap(stringMap: Map<String, String>): Map<String, String>
- {
+
+  override fun callFlutterEchoNonNullStringMap(
+      stringMap: Map<String, String>
+  ): Map<String, String> {
     api?.let {
       try {
         return it.callFlutterEchoNonNullStringMap(stringMap)
@@ -3445,10 +4100,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override fun callFlutterEchoNonNullIntMap(intMap: Map<Long, Long>): Map<Long, Long>
- {
+
+  override fun callFlutterEchoNonNullIntMap(intMap: Map<Long, Long>): Map<Long, Long> {
     api?.let {
       try {
         return it.callFlutterEchoNonNullIntMap(intMap)
@@ -3456,10 +4112,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override fun callFlutterEchoNonNullEnumMap(enumMap: Map<NativeInteropAnEnum, NativeInteropAnEnum>): Map<NativeInteropAnEnum, NativeInteropAnEnum>
- {
+
+  override fun callFlutterEchoNonNullEnumMap(
+      enumMap: Map<NativeInteropAnEnum, NativeInteropAnEnum>
+  ): Map<NativeInteropAnEnum, NativeInteropAnEnum> {
     api?.let {
       try {
         return it.callFlutterEchoNonNullEnumMap(enumMap)
@@ -3467,10 +4126,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override fun callFlutterEchoNonNullClassMap(classMap: Map<Long, NativeInteropAllNullableTypes>): Map<Long, NativeInteropAllNullableTypes>
- {
+
+  override fun callFlutterEchoNonNullClassMap(
+      classMap: Map<Long, NativeInteropAllNullableTypes>
+  ): Map<Long, NativeInteropAllNullableTypes> {
     api?.let {
       try {
         return it.callFlutterEchoNonNullClassMap(classMap)
@@ -3478,10 +4140,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override fun callFlutterEchoEnum(anEnum: NativeInteropAnEnum): NativeInteropAnEnum
- {
+
+  override fun callFlutterEchoEnum(anEnum: NativeInteropAnEnum): NativeInteropAnEnum {
     api?.let {
       try {
         return it.callFlutterEchoEnum(anEnum)
@@ -3489,10 +4152,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override fun callFlutterEchoNativeInteropAnotherEnum(anotherEnum: NativeInteropAnotherEnum): NativeInteropAnotherEnum
- {
+
+  override fun callFlutterEchoNativeInteropAnotherEnum(
+      anotherEnum: NativeInteropAnotherEnum
+  ): NativeInteropAnotherEnum {
     api?.let {
       try {
         return it.callFlutterEchoNativeInteropAnotherEnum(anotherEnum)
@@ -3500,10 +4166,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override fun callFlutterEchoNullableBool(aBool: Boolean?): Boolean?
- {
+
+  override fun callFlutterEchoNullableBool(aBool: Boolean?): Boolean? {
     api?.let {
       try {
         return it.callFlutterEchoNullableBool(aBool)
@@ -3511,10 +4178,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override fun callFlutterEchoNullableInt(anInt: Long?): Long?
- {
+
+  override fun callFlutterEchoNullableInt(anInt: Long?): Long? {
     api?.let {
       try {
         return it.callFlutterEchoNullableInt(anInt)
@@ -3522,10 +4190,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override fun callFlutterEchoNullableDouble(aDouble: Double?): Double?
- {
+
+  override fun callFlutterEchoNullableDouble(aDouble: Double?): Double? {
     api?.let {
       try {
         return it.callFlutterEchoNullableDouble(aDouble)
@@ -3533,10 +4202,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override fun callFlutterEchoNullableString(aString: String?): String?
- {
+
+  override fun callFlutterEchoNullableString(aString: String?): String? {
     api?.let {
       try {
         return it.callFlutterEchoNullableString(aString)
@@ -3544,10 +4214,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override fun callFlutterEchoNullableUint8List(list: ByteArray?): ByteArray?
- {
+
+  override fun callFlutterEchoNullableUint8List(list: ByteArray?): ByteArray? {
     api?.let {
       try {
         return it.callFlutterEchoNullableUint8List(list)
@@ -3555,10 +4226,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override fun callFlutterEchoNullableInt32List(list: IntArray?): IntArray?
- {
+
+  override fun callFlutterEchoNullableInt32List(list: IntArray?): IntArray? {
     api?.let {
       try {
         return it.callFlutterEchoNullableInt32List(list)
@@ -3566,10 +4238,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override fun callFlutterEchoNullableInt64List(list: LongArray?): LongArray?
- {
+
+  override fun callFlutterEchoNullableInt64List(list: LongArray?): LongArray? {
     api?.let {
       try {
         return it.callFlutterEchoNullableInt64List(list)
@@ -3577,10 +4250,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override fun callFlutterEchoNullableFloat64List(list: DoubleArray?): DoubleArray?
- {
+
+  override fun callFlutterEchoNullableFloat64List(list: DoubleArray?): DoubleArray? {
     api?.let {
       try {
         return it.callFlutterEchoNullableFloat64List(list)
@@ -3588,10 +4262,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override fun callFlutterEchoNullableList(list: List<Any?>?): List<Any?>?
- {
+
+  override fun callFlutterEchoNullableList(list: List<Any?>?): List<Any?>? {
     api?.let {
       try {
         return it.callFlutterEchoNullableList(list)
@@ -3599,10 +4274,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override fun callFlutterEchoNullableEnumList(enumList: List<NativeInteropAnEnum?>?): List<NativeInteropAnEnum?>?
- {
+
+  override fun callFlutterEchoNullableEnumList(
+      enumList: List<NativeInteropAnEnum?>?
+  ): List<NativeInteropAnEnum?>? {
     api?.let {
       try {
         return it.callFlutterEchoNullableEnumList(enumList)
@@ -3610,10 +4288,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override fun callFlutterEchoNullableClassList(classList: List<NativeInteropAllNullableTypes?>?): List<NativeInteropAllNullableTypes?>?
- {
+
+  override fun callFlutterEchoNullableClassList(
+      classList: List<NativeInteropAllNullableTypes?>?
+  ): List<NativeInteropAllNullableTypes?>? {
     api?.let {
       try {
         return it.callFlutterEchoNullableClassList(classList)
@@ -3621,10 +4302,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override fun callFlutterEchoNullableNonNullEnumList(enumList: List<NativeInteropAnEnum>?): List<NativeInteropAnEnum>?
- {
+
+  override fun callFlutterEchoNullableNonNullEnumList(
+      enumList: List<NativeInteropAnEnum>?
+  ): List<NativeInteropAnEnum>? {
     api?.let {
       try {
         return it.callFlutterEchoNullableNonNullEnumList(enumList)
@@ -3632,10 +4316,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override fun callFlutterEchoNullableNonNullClassList(classList: List<NativeInteropAllNullableTypes>?): List<NativeInteropAllNullableTypes>?
- {
+
+  override fun callFlutterEchoNullableNonNullClassList(
+      classList: List<NativeInteropAllNullableTypes>?
+  ): List<NativeInteropAllNullableTypes>? {
     api?.let {
       try {
         return it.callFlutterEchoNullableNonNullClassList(classList)
@@ -3643,10 +4330,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override fun callFlutterEchoNullableMap(map: Map<Any?, Any?>?): Map<Any?, Any?>?
- {
+
+  override fun callFlutterEchoNullableMap(map: Map<Any?, Any?>?): Map<Any?, Any?>? {
     api?.let {
       try {
         return it.callFlutterEchoNullableMap(map)
@@ -3654,10 +4342,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override fun callFlutterEchoNullableStringMap(stringMap: Map<String?, String?>?): Map<String?, String?>?
- {
+
+  override fun callFlutterEchoNullableStringMap(
+      stringMap: Map<String?, String?>?
+  ): Map<String?, String?>? {
     api?.let {
       try {
         return it.callFlutterEchoNullableStringMap(stringMap)
@@ -3665,10 +4356,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override fun callFlutterEchoNullableIntMap(intMap: Map<Long?, Long?>?): Map<Long?, Long?>?
- {
+
+  override fun callFlutterEchoNullableIntMap(intMap: Map<Long?, Long?>?): Map<Long?, Long?>? {
     api?.let {
       try {
         return it.callFlutterEchoNullableIntMap(intMap)
@@ -3676,10 +4368,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override fun callFlutterEchoNullableEnumMap(enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
- {
+
+  override fun callFlutterEchoNullableEnumMap(
+      enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
+  ): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>? {
     api?.let {
       try {
         return it.callFlutterEchoNullableEnumMap(enumMap)
@@ -3687,10 +4382,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override fun callFlutterEchoNullableClassMap(classMap: Map<Long?, NativeInteropAllNullableTypes?>?): Map<Long?, NativeInteropAllNullableTypes?>?
- {
+
+  override fun callFlutterEchoNullableClassMap(
+      classMap: Map<Long?, NativeInteropAllNullableTypes?>?
+  ): Map<Long?, NativeInteropAllNullableTypes?>? {
     api?.let {
       try {
         return it.callFlutterEchoNullableClassMap(classMap)
@@ -3698,10 +4396,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override fun callFlutterEchoNullableNonNullStringMap(stringMap: Map<String, String>?): Map<String, String>?
- {
+
+  override fun callFlutterEchoNullableNonNullStringMap(
+      stringMap: Map<String, String>?
+  ): Map<String, String>? {
     api?.let {
       try {
         return it.callFlutterEchoNullableNonNullStringMap(stringMap)
@@ -3709,10 +4410,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override fun callFlutterEchoNullableNonNullIntMap(intMap: Map<Long, Long>?): Map<Long, Long>?
- {
+
+  override fun callFlutterEchoNullableNonNullIntMap(intMap: Map<Long, Long>?): Map<Long, Long>? {
     api?.let {
       try {
         return it.callFlutterEchoNullableNonNullIntMap(intMap)
@@ -3720,10 +4422,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override fun callFlutterEchoNullableNonNullEnumMap(enumMap: Map<NativeInteropAnEnum, NativeInteropAnEnum>?): Map<NativeInteropAnEnum, NativeInteropAnEnum>?
- {
+
+  override fun callFlutterEchoNullableNonNullEnumMap(
+      enumMap: Map<NativeInteropAnEnum, NativeInteropAnEnum>?
+  ): Map<NativeInteropAnEnum, NativeInteropAnEnum>? {
     api?.let {
       try {
         return it.callFlutterEchoNullableNonNullEnumMap(enumMap)
@@ -3731,10 +4436,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override fun callFlutterEchoNullableNonNullClassMap(classMap: Map<Long, NativeInteropAllNullableTypes>?): Map<Long, NativeInteropAllNullableTypes>?
- {
+
+  override fun callFlutterEchoNullableNonNullClassMap(
+      classMap: Map<Long, NativeInteropAllNullableTypes>?
+  ): Map<Long, NativeInteropAllNullableTypes>? {
     api?.let {
       try {
         return it.callFlutterEchoNullableNonNullClassMap(classMap)
@@ -3742,10 +4450,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override fun callFlutterEchoNullableEnum(anEnum: NativeInteropAnEnum?): NativeInteropAnEnum?
- {
+
+  override fun callFlutterEchoNullableEnum(anEnum: NativeInteropAnEnum?): NativeInteropAnEnum? {
     api?.let {
       try {
         return it.callFlutterEchoNullableEnum(anEnum)
@@ -3753,10 +4462,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override fun callFlutterEchoAnotherNullableEnum(anotherEnum: NativeInteropAnotherEnum?): NativeInteropAnotherEnum?
- {
+
+  override fun callFlutterEchoAnotherNullableEnum(
+      anotherEnum: NativeInteropAnotherEnum?
+  ): NativeInteropAnotherEnum? {
     api?.let {
       try {
         return it.callFlutterEchoAnotherNullableEnum(anotherEnum)
@@ -3764,10 +4476,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override suspend fun callFlutterNoopAsync()
- {
+
+  override suspend fun callFlutterNoopAsync() {
     api?.let {
       try {
         return it.callFlutterNoopAsync()
@@ -3775,10 +4488,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override suspend fun callFlutterEchoAsyncNativeInteropAllTypes(everything: NativeInteropAllTypes): NativeInteropAllTypes
- {
+
+  override suspend fun callFlutterEchoAsyncNativeInteropAllTypes(
+      everything: NativeInteropAllTypes
+  ): NativeInteropAllTypes {
     api?.let {
       try {
         return it.callFlutterEchoAsyncNativeInteropAllTypes(everything)
@@ -3786,10 +4502,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override suspend fun callFlutterEchoAsyncNullableNativeInteropAllNullableTypes(everything: NativeInteropAllNullableTypes?): NativeInteropAllNullableTypes?
- {
+
+  override suspend fun callFlutterEchoAsyncNullableNativeInteropAllNullableTypes(
+      everything: NativeInteropAllNullableTypes?
+  ): NativeInteropAllNullableTypes? {
     api?.let {
       try {
         return it.callFlutterEchoAsyncNullableNativeInteropAllNullableTypes(everything)
@@ -3797,21 +4516,26 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override suspend fun callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(everything: NativeInteropAllNullableTypesWithoutRecursion?): NativeInteropAllNullableTypesWithoutRecursion?
- {
+
+  override suspend fun callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
+      everything: NativeInteropAllNullableTypesWithoutRecursion?
+  ): NativeInteropAllNullableTypesWithoutRecursion? {
     api?.let {
       try {
-        return it.callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(everything)
+        return it.callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
+            everything)
       } catch (e: Exception) {
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override suspend fun callFlutterEchoAsyncBool(aBool: Boolean): Boolean
- {
+
+  override suspend fun callFlutterEchoAsyncBool(aBool: Boolean): Boolean {
     api?.let {
       try {
         return it.callFlutterEchoAsyncBool(aBool)
@@ -3819,10 +4543,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override suspend fun callFlutterEchoAsyncInt(anInt: Long): Long
- {
+
+  override suspend fun callFlutterEchoAsyncInt(anInt: Long): Long {
     api?.let {
       try {
         return it.callFlutterEchoAsyncInt(anInt)
@@ -3830,10 +4555,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override suspend fun callFlutterEchoAsyncDouble(aDouble: Double): Double
- {
+
+  override suspend fun callFlutterEchoAsyncDouble(aDouble: Double): Double {
     api?.let {
       try {
         return it.callFlutterEchoAsyncDouble(aDouble)
@@ -3841,10 +4567,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override suspend fun callFlutterEchoAsyncString(aString: String): String
- {
+
+  override suspend fun callFlutterEchoAsyncString(aString: String): String {
     api?.let {
       try {
         return it.callFlutterEchoAsyncString(aString)
@@ -3852,10 +4579,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override suspend fun callFlutterEchoAsyncUint8List(list: ByteArray): ByteArray
- {
+
+  override suspend fun callFlutterEchoAsyncUint8List(list: ByteArray): ByteArray {
     api?.let {
       try {
         return it.callFlutterEchoAsyncUint8List(list)
@@ -3863,10 +4591,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override suspend fun callFlutterEchoAsyncInt32List(list: IntArray): IntArray
- {
+
+  override suspend fun callFlutterEchoAsyncInt32List(list: IntArray): IntArray {
     api?.let {
       try {
         return it.callFlutterEchoAsyncInt32List(list)
@@ -3874,10 +4603,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override suspend fun callFlutterEchoAsyncInt64List(list: LongArray): LongArray
- {
+
+  override suspend fun callFlutterEchoAsyncInt64List(list: LongArray): LongArray {
     api?.let {
       try {
         return it.callFlutterEchoAsyncInt64List(list)
@@ -3885,10 +4615,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override suspend fun callFlutterEchoAsyncFloat64List(list: DoubleArray): DoubleArray
- {
+
+  override suspend fun callFlutterEchoAsyncFloat64List(list: DoubleArray): DoubleArray {
     api?.let {
       try {
         return it.callFlutterEchoAsyncFloat64List(list)
@@ -3896,10 +4627,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override suspend fun callFlutterEchoAsyncObject(anObject: Any): Any
- {
+
+  override suspend fun callFlutterEchoAsyncObject(anObject: Any): Any {
     api?.let {
       try {
         return it.callFlutterEchoAsyncObject(anObject)
@@ -3907,10 +4639,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override suspend fun callFlutterEchoAsyncList(list: List<Any?>): List<Any?>
- {
+
+  override suspend fun callFlutterEchoAsyncList(list: List<Any?>): List<Any?> {
     api?.let {
       try {
         return it.callFlutterEchoAsyncList(list)
@@ -3918,10 +4651,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override suspend fun callFlutterEchoAsyncEnumList(enumList: List<NativeInteropAnEnum?>): List<NativeInteropAnEnum?>
- {
+
+  override suspend fun callFlutterEchoAsyncEnumList(
+      enumList: List<NativeInteropAnEnum?>
+  ): List<NativeInteropAnEnum?> {
     api?.let {
       try {
         return it.callFlutterEchoAsyncEnumList(enumList)
@@ -3929,10 +4665,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override suspend fun callFlutterEchoAsyncClassList(classList: List<NativeInteropAllNullableTypes?>): List<NativeInteropAllNullableTypes?>
- {
+
+  override suspend fun callFlutterEchoAsyncClassList(
+      classList: List<NativeInteropAllNullableTypes?>
+  ): List<NativeInteropAllNullableTypes?> {
     api?.let {
       try {
         return it.callFlutterEchoAsyncClassList(classList)
@@ -3940,10 +4679,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override suspend fun callFlutterEchoAsyncNonNullEnumList(enumList: List<NativeInteropAnEnum>): List<NativeInteropAnEnum>
- {
+
+  override suspend fun callFlutterEchoAsyncNonNullEnumList(
+      enumList: List<NativeInteropAnEnum>
+  ): List<NativeInteropAnEnum> {
     api?.let {
       try {
         return it.callFlutterEchoAsyncNonNullEnumList(enumList)
@@ -3951,10 +4693,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override suspend fun callFlutterEchoAsyncNonNullClassList(classList: List<NativeInteropAllNullableTypes>): List<NativeInteropAllNullableTypes>
- {
+
+  override suspend fun callFlutterEchoAsyncNonNullClassList(
+      classList: List<NativeInteropAllNullableTypes>
+  ): List<NativeInteropAllNullableTypes> {
     api?.let {
       try {
         return it.callFlutterEchoAsyncNonNullClassList(classList)
@@ -3962,10 +4707,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override suspend fun callFlutterEchoAsyncMap(map: Map<Any?, Any?>): Map<Any?, Any?>
- {
+
+  override suspend fun callFlutterEchoAsyncMap(map: Map<Any?, Any?>): Map<Any?, Any?> {
     api?.let {
       try {
         return it.callFlutterEchoAsyncMap(map)
@@ -3973,10 +4719,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override suspend fun callFlutterEchoAsyncStringMap(stringMap: Map<String?, String?>): Map<String?, String?>
- {
+
+  override suspend fun callFlutterEchoAsyncStringMap(
+      stringMap: Map<String?, String?>
+  ): Map<String?, String?> {
     api?.let {
       try {
         return it.callFlutterEchoAsyncStringMap(stringMap)
@@ -3984,10 +4733,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override suspend fun callFlutterEchoAsyncIntMap(intMap: Map<Long?, Long?>): Map<Long?, Long?>
- {
+
+  override suspend fun callFlutterEchoAsyncIntMap(intMap: Map<Long?, Long?>): Map<Long?, Long?> {
     api?.let {
       try {
         return it.callFlutterEchoAsyncIntMap(intMap)
@@ -3995,10 +4745,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override suspend fun callFlutterEchoAsyncEnumMap(enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
- {
+
+  override suspend fun callFlutterEchoAsyncEnumMap(
+      enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
+  ): Map<NativeInteropAnEnum?, NativeInteropAnEnum?> {
     api?.let {
       try {
         return it.callFlutterEchoAsyncEnumMap(enumMap)
@@ -4006,10 +4759,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override suspend fun callFlutterEchoAsyncClassMap(classMap: Map<Long?, NativeInteropAllNullableTypes?>): Map<Long?, NativeInteropAllNullableTypes?>
- {
+
+  override suspend fun callFlutterEchoAsyncClassMap(
+      classMap: Map<Long?, NativeInteropAllNullableTypes?>
+  ): Map<Long?, NativeInteropAllNullableTypes?> {
     api?.let {
       try {
         return it.callFlutterEchoAsyncClassMap(classMap)
@@ -4017,10 +4773,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override suspend fun callFlutterEchoAsyncEnum(anEnum: NativeInteropAnEnum): NativeInteropAnEnum
- {
+
+  override suspend fun callFlutterEchoAsyncEnum(anEnum: NativeInteropAnEnum): NativeInteropAnEnum {
     api?.let {
       try {
         return it.callFlutterEchoAsyncEnum(anEnum)
@@ -4028,10 +4785,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override suspend fun callFlutterEchoAnotherAsyncEnum(anotherEnum: NativeInteropAnotherEnum): NativeInteropAnotherEnum
- {
+
+  override suspend fun callFlutterEchoAnotherAsyncEnum(
+      anotherEnum: NativeInteropAnotherEnum
+  ): NativeInteropAnotherEnum {
     api?.let {
       try {
         return it.callFlutterEchoAnotherAsyncEnum(anotherEnum)
@@ -4039,10 +4799,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override suspend fun callFlutterEchoAsyncNullableBool(aBool: Boolean?): Boolean?
- {
+
+  override suspend fun callFlutterEchoAsyncNullableBool(aBool: Boolean?): Boolean? {
     api?.let {
       try {
         return it.callFlutterEchoAsyncNullableBool(aBool)
@@ -4050,10 +4811,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override suspend fun callFlutterEchoAsyncNullableInt(anInt: Long?): Long?
- {
+
+  override suspend fun callFlutterEchoAsyncNullableInt(anInt: Long?): Long? {
     api?.let {
       try {
         return it.callFlutterEchoAsyncNullableInt(anInt)
@@ -4061,10 +4823,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override suspend fun callFlutterEchoAsyncNullableDouble(aDouble: Double?): Double?
- {
+
+  override suspend fun callFlutterEchoAsyncNullableDouble(aDouble: Double?): Double? {
     api?.let {
       try {
         return it.callFlutterEchoAsyncNullableDouble(aDouble)
@@ -4072,10 +4835,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override suspend fun callFlutterEchoAsyncNullableString(aString: String?): String?
- {
+
+  override suspend fun callFlutterEchoAsyncNullableString(aString: String?): String? {
     api?.let {
       try {
         return it.callFlutterEchoAsyncNullableString(aString)
@@ -4083,10 +4847,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override suspend fun callFlutterEchoAsyncNullableUint8List(list: ByteArray?): ByteArray?
- {
+
+  override suspend fun callFlutterEchoAsyncNullableUint8List(list: ByteArray?): ByteArray? {
     api?.let {
       try {
         return it.callFlutterEchoAsyncNullableUint8List(list)
@@ -4094,10 +4859,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override suspend fun callFlutterEchoAsyncNullableInt32List(list: IntArray?): IntArray?
- {
+
+  override suspend fun callFlutterEchoAsyncNullableInt32List(list: IntArray?): IntArray? {
     api?.let {
       try {
         return it.callFlutterEchoAsyncNullableInt32List(list)
@@ -4105,10 +4871,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override suspend fun callFlutterEchoAsyncNullableInt64List(list: LongArray?): LongArray?
- {
+
+  override suspend fun callFlutterEchoAsyncNullableInt64List(list: LongArray?): LongArray? {
     api?.let {
       try {
         return it.callFlutterEchoAsyncNullableInt64List(list)
@@ -4116,10 +4883,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override suspend fun callFlutterEchoAsyncNullableFloat64List(list: DoubleArray?): DoubleArray?
- {
+
+  override suspend fun callFlutterEchoAsyncNullableFloat64List(list: DoubleArray?): DoubleArray? {
     api?.let {
       try {
         return it.callFlutterEchoAsyncNullableFloat64List(list)
@@ -4127,10 +4895,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override suspend fun callFlutterThrowFlutterErrorAsync(): Any?
- {
+
+  override suspend fun callFlutterThrowFlutterErrorAsync(): Any? {
     api?.let {
       try {
         return it.callFlutterThrowFlutterErrorAsync()
@@ -4138,10 +4907,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override suspend fun callFlutterEchoAsyncNullableObject(anObject: Any?): Any?
- {
+
+  override suspend fun callFlutterEchoAsyncNullableObject(anObject: Any?): Any? {
     api?.let {
       try {
         return it.callFlutterEchoAsyncNullableObject(anObject)
@@ -4149,10 +4919,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override suspend fun callFlutterEchoAsyncNullableList(list: List<Any?>?): List<Any?>?
- {
+
+  override suspend fun callFlutterEchoAsyncNullableList(list: List<Any?>?): List<Any?>? {
     api?.let {
       try {
         return it.callFlutterEchoAsyncNullableList(list)
@@ -4160,10 +4931,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override suspend fun callFlutterEchoAsyncNullableEnumList(enumList: List<NativeInteropAnEnum?>?): List<NativeInteropAnEnum?>?
- {
+
+  override suspend fun callFlutterEchoAsyncNullableEnumList(
+      enumList: List<NativeInteropAnEnum?>?
+  ): List<NativeInteropAnEnum?>? {
     api?.let {
       try {
         return it.callFlutterEchoAsyncNullableEnumList(enumList)
@@ -4171,10 +4945,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override suspend fun callFlutterEchoAsyncNullableClassList(classList: List<NativeInteropAllNullableTypes?>?): List<NativeInteropAllNullableTypes?>?
- {
+
+  override suspend fun callFlutterEchoAsyncNullableClassList(
+      classList: List<NativeInteropAllNullableTypes?>?
+  ): List<NativeInteropAllNullableTypes?>? {
     api?.let {
       try {
         return it.callFlutterEchoAsyncNullableClassList(classList)
@@ -4182,10 +4959,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override suspend fun callFlutterEchoAsyncNullableNonNullEnumList(enumList: List<NativeInteropAnEnum>?): List<NativeInteropAnEnum>?
- {
+
+  override suspend fun callFlutterEchoAsyncNullableNonNullEnumList(
+      enumList: List<NativeInteropAnEnum>?
+  ): List<NativeInteropAnEnum>? {
     api?.let {
       try {
         return it.callFlutterEchoAsyncNullableNonNullEnumList(enumList)
@@ -4193,10 +4973,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override suspend fun callFlutterEchoAsyncNullableNonNullClassList(classList: List<NativeInteropAllNullableTypes>?): List<NativeInteropAllNullableTypes>?
- {
+
+  override suspend fun callFlutterEchoAsyncNullableNonNullClassList(
+      classList: List<NativeInteropAllNullableTypes>?
+  ): List<NativeInteropAllNullableTypes>? {
     api?.let {
       try {
         return it.callFlutterEchoAsyncNullableNonNullClassList(classList)
@@ -4204,10 +4987,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override suspend fun callFlutterEchoAsyncNullableMap(map: Map<Any?, Any?>?): Map<Any?, Any?>?
- {
+
+  override suspend fun callFlutterEchoAsyncNullableMap(map: Map<Any?, Any?>?): Map<Any?, Any?>? {
     api?.let {
       try {
         return it.callFlutterEchoAsyncNullableMap(map)
@@ -4215,10 +4999,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override suspend fun callFlutterEchoAsyncNullableStringMap(stringMap: Map<String?, String?>?): Map<String?, String?>?
- {
+
+  override suspend fun callFlutterEchoAsyncNullableStringMap(
+      stringMap: Map<String?, String?>?
+  ): Map<String?, String?>? {
     api?.let {
       try {
         return it.callFlutterEchoAsyncNullableStringMap(stringMap)
@@ -4226,10 +5013,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override suspend fun callFlutterEchoAsyncNullableIntMap(intMap: Map<Long?, Long?>?): Map<Long?, Long?>?
- {
+
+  override suspend fun callFlutterEchoAsyncNullableIntMap(
+      intMap: Map<Long?, Long?>?
+  ): Map<Long?, Long?>? {
     api?.let {
       try {
         return it.callFlutterEchoAsyncNullableIntMap(intMap)
@@ -4237,10 +5027,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override suspend fun callFlutterEchoAsyncNullableEnumMap(enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
- {
+
+  override suspend fun callFlutterEchoAsyncNullableEnumMap(
+      enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
+  ): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>? {
     api?.let {
       try {
         return it.callFlutterEchoAsyncNullableEnumMap(enumMap)
@@ -4248,10 +5041,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override suspend fun callFlutterEchoAsyncNullableClassMap(classMap: Map<Long?, NativeInteropAllNullableTypes?>?): Map<Long?, NativeInteropAllNullableTypes?>?
- {
+
+  override suspend fun callFlutterEchoAsyncNullableClassMap(
+      classMap: Map<Long?, NativeInteropAllNullableTypes?>?
+  ): Map<Long?, NativeInteropAllNullableTypes?>? {
     api?.let {
       try {
         return it.callFlutterEchoAsyncNullableClassMap(classMap)
@@ -4259,10 +5055,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override suspend fun callFlutterEchoAsyncNullableEnum(anEnum: NativeInteropAnEnum?): NativeInteropAnEnum?
- {
+
+  override suspend fun callFlutterEchoAsyncNullableEnum(
+      anEnum: NativeInteropAnEnum?
+  ): NativeInteropAnEnum? {
     api?.let {
       try {
         return it.callFlutterEchoAsyncNullableEnum(anEnum)
@@ -4270,10 +5069,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  override suspend fun callFlutterEchoAnotherAsyncNullableEnum(anotherEnum: NativeInteropAnotherEnum?): NativeInteropAnotherEnum?
- {
+
+  override suspend fun callFlutterEchoAnotherAsyncNullableEnum(
+      anotherEnum: NativeInteropAnotherEnum?
+  ): NativeInteropAnotherEnum? {
     api?.let {
       try {
         return it.callFlutterEchoAnotherAsyncNullableEnum(anotherEnum)
@@ -4281,11 +5083,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns true if the handler is run on a main thread. */
-  override fun isMainThread(): Boolean
- {
+  override fun isMainThread(): Boolean {
     api?.let {
       try {
         return it.isMainThread()
@@ -4293,11 +5095,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Returns true if the async handler runs on a background thread. */
-  override suspend fun asyncIsBackgroundThread(): Boolean
- {
+  override suspend fun asyncIsBackgroundThread(): Boolean {
     api?.let {
       try {
         return it.asyncIsBackgroundThread()
@@ -4305,14 +5107,14 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /**
-   * Tests that zero-argument boolean methods starting with 'is' are correctly
-   * invoked as JNI property getters (e.g., `_jniApi.isGetter`).
+   * Tests that zero-argument boolean methods starting with 'is' are correctly invoked as JNI
+   * property getters (e.g., `_jniApi.isGetter`).
    */
-  override fun isGetter(): Boolean
- {
+  override fun isGetter(): Boolean {
     api?.let {
       try {
         return it.isGetter()
@@ -4320,14 +5122,14 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /**
-   * Tests that zero-argument methods starting with 'get' are correctly
-   * invoked as JNI property getters with decapitalized names (e.g., `_jniApi.getter`).
+   * Tests that zero-argument methods starting with 'get' are correctly invoked as JNI property
+   * getters with decapitalized names (e.g., `_jniApi.getter`).
    */
-  override fun getGetter(): Long
- {
+  override fun getGetter(): Long {
     api?.let {
       try {
         return it.getGetter()
@@ -4335,14 +5137,14 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /**
-   * Tests that single-argument void methods starting with 'set' are correctly
-   * invoked as JNI property setters with decapitalized names (e.g., `_jniApi.setter = value`).
+   * Tests that single-argument void methods starting with 'set' are correctly invoked as JNI
+   * property setters with decapitalized names (e.g., `_jniApi.setter = value`).
    */
-  override fun setSetter(value: Long)
- {
+  override fun setSetter(value: Long) {
     api?.let {
       try {
         return it.setSetter(value)
@@ -4350,15 +5152,15 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /**
    * Spawns a background thread and calls `noop` on the [NativeInteropFlutterIntegrationCoreApi].
    *
    * Returns the result of whether the flutter call was successful.
    */
-  override suspend fun callFlutterNoopOnBackgroundThread(): Boolean
- {
+  override suspend fun callFlutterNoopOnBackgroundThread(): Boolean {
     api?.let {
       try {
         return it.callFlutterNoopOnBackgroundThread()
@@ -4366,11 +5168,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Tests deregistering a Host API natively. */
-  override fun testDeregisterHostApi(): Boolean
- {
+  override fun testDeregisterHostApi(): Boolean {
     api?.let {
       try {
         return it.testDeregisterHostApi()
@@ -4378,11 +5180,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Tests deregistering a Flutter API natively. */
-  override fun testDeregisterFlutterApi(): Boolean
- {
+  override fun testDeregisterFlutterApi(): Boolean {
     api?.let {
       try {
         return it.testDeregisterFlutterApi()
@@ -4390,11 +5192,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Registers and immediately deregisters a Host API under [name]. */
-  override fun registerAndImmediatelyDeregisterHostApi(name: String)
- {
+  override fun registerAndImmediatelyDeregisterHostApi(name: String) {
     api?.let {
       try {
         return it.registerAndImmediatelyDeregisterHostApi(name)
@@ -4402,11 +5204,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Registers a separate Host API instance under [name] for detached-handle testing. */
-  override fun registerNamedHostApi(name: String)
- {
+  override fun registerNamedHostApi(name: String) {
     api?.let {
       try {
         return it.registerNamedHostApi(name)
@@ -4414,11 +5216,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
-  /** Deregisters the Host API instance previously registered by [registerNamedHostApi] under [name]. */
-  override fun deregisterNamedHostApi(name: String)
- {
+  /**
+   * Deregisters the Host API instance previously registered by [registerNamedHostApi] under [name].
+   */
+  override fun deregisterNamedHostApi(name: String) {
     api?.let {
       try {
         return it.deregisterNamedHostApi(name)
@@ -4426,11 +5230,11 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /** Tests that calling a deregistered Flutter API under [name] fails / returns null. */
-  override fun testCallDeregisteredFlutterApi(name: String): Boolean
- {
+  override fun testCallDeregisteredFlutterApi(name: String): Boolean {
     api?.let {
       try {
         return it.testCallDeregisteredFlutterApi(name)
@@ -4438,15 +5242,15 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /**
-   * Spawns secondary engines, destroys one out-of-order, executes a live Dart
-   * entrypoint on another (where supported by the embedder), and tears it down
-   * while keeping the primary engine registration intact.
+   * Spawns secondary engines, destroys one out-of-order, executes a live Dart entrypoint on another
+   * (where supported by the embedder), and tears it down while keeping the primary engine
+   * registration intact.
    */
-  override suspend fun testSecondaryEngineDartExecution(): Boolean
- {
+  override suspend fun testSecondaryEngineDartExecution(): Boolean {
     api?.let {
       try {
         return it.testSecondaryEngineDartExecution()
@@ -4454,14 +5258,14 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /**
-   * Returns whether the secondary engine's Host API registration is ready for
-   * the secondary Dart isolate to invoke.
+   * Returns whether the secondary engine's Host API registration is ready for the secondary Dart
+   * isolate to invoke.
    */
-  override fun isSecondaryEngineRegistrationReady(): Boolean
- {
+  override fun isSecondaryEngineRegistrationReady(): Boolean {
     api?.let {
       try {
         return it.isSecondaryEngineRegistrationReady()
@@ -4469,14 +5273,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /**
-   * Reports whether Native Interop Host API calls from a secondary engine's
-   * Dart isolate succeeded.
+   * Reports whether Native Interop Host API calls from a secondary engine's Dart isolate succeeded.
    */
-  override fun reportSecondaryEngineCheck(success: Boolean)
- {
+  override fun reportSecondaryEngineCheck(success: Boolean) {
     api?.let {
       try {
         return it.reportSecondaryEngineCheck(success)
@@ -4484,14 +5287,13 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /**
-   * Returns the engine key that native code stored for this plugin's
-   * default Host API registration.
+   * Returns the engine key that native code stored for this plugin's default Host API registration.
    */
-  override fun registeredEngineKey(): Long
- {
+  override fun registeredEngineKey(): Long {
     api?.let {
       try {
         return it.registeredEngineKey()
@@ -4499,14 +5301,14 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /**
-   * Returns a label unique to the Host API instance that handled the call, so
-   * tests can check which engine's registration a handle resolved to.
+   * Returns a label unique to the Host API instance that handled the call, so tests can check which
+   * engine's registration a handle resolved to.
    */
-  override fun engineLabel(): String
- {
+  override fun engineLabel(): String {
     api?.let {
       try {
         return it.engineLabel()
@@ -4514,14 +5316,14 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
   /**
-   * Returns whether this platform's plugin binding / registrar exposes an
-   * engine identifier, so registrations should use exact engine keys.
+   * Returns whether this platform's plugin binding / registrar exposes an engine identifier, so
+   * registrations should use exact engine keys.
    */
-  override fun pluginEngineIdentifierIsAvailable(): Boolean
- {
+  override fun pluginEngineIdentifierIsAvailable(): Boolean {
     api?.let {
       try {
         return it.pluginEngineIdentifierIsAvailable()
@@ -4529,39 +5331,53 @@ class NativeInteropHostIntegrationCoreApiRegistrar private constructor(private v
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropHostIntegrationCoreApi has not been registered.")
   }
 }
 /**
- * The core interface that the Dart platform_test code implements for host
- * integration tests to call into.
+ * The core interface that the Dart platform_test code implements for host integration tests to call
+ * into.
  *
  * Generated class from Pigeon that represents Flutter messages that can be called from Kotlin.
  */
-/** A registered [NativeInteropFlutterIntegrationCoreApi] and the keys of the engine it belongs to. */
-class NativeInteropFlutterIntegrationCoreApiRegistration(val api: NativeInteropFlutterIntegrationCoreApi, val engineId: Long, val affinityKey: Long)
+/**
+ * A registered [NativeInteropFlutterIntegrationCoreApi] and the keys of the engine it belongs to.
+ */
+class NativeInteropFlutterIntegrationCoreApiRegistration(
+    val api: NativeInteropFlutterIntegrationCoreApi,
+    val engineId: Long,
+    val affinityKey: Long
+)
 
 /// Map that stores instances
-val registeredNativeInteropFlutterIntegrationCoreApi: MutableMap<String, MutableList<NativeInteropFlutterIntegrationCoreApiRegistration>> = mutableMapOf()
+val registeredNativeInteropFlutterIntegrationCoreApi:
+    MutableMap<String, MutableList<NativeInteropFlutterIntegrationCoreApiRegistration>> =
+    mutableMapOf()
 
 /// Class that stores instances
 @Keep
 class NativeInteropFlutterIntegrationCoreApiRegistrar() {
   /**
-   * Registers [api] under [name] (or the default instance when [name] is omitted)
-   * for the engine identified by [engineId] and [affinityKey].
+   * Registers [api] under [name] (or the default instance when [name] is omitted) for the engine
+   * identified by [engineId] and [affinityKey].
    *
-   * Either key may be `Long.MIN_VALUE` when it is unknown. Registering an
-   * instance that is already registered under [name] updates its keys and keeps
-   * its position.
+   * Either key may be `Long.MIN_VALUE` when it is unknown. Registering an instance that is already
+   * registered under [name] updates its keys and keeps its position.
    *
    * This is called by the generated Dart code and is not intended for direct use.
    */
   @Keep
-  fun registerInstance(api: NativeInteropFlutterIntegrationCoreApi, engineId: Long, affinityKey: Long, name: String = defaultInstanceName) {
+  fun registerInstance(
+      api: NativeInteropFlutterIntegrationCoreApi,
+      engineId: Long,
+      affinityKey: Long,
+      name: String = defaultInstanceName
+  ) {
     kotlin.synchronized(registeredNativeInteropFlutterIntegrationCoreApi) {
       val list = registeredNativeInteropFlutterIntegrationCoreApi.getOrPut(name) { mutableListOf() }
-      val registration = NativeInteropFlutterIntegrationCoreApiRegistration(api, engineId, affinityKey)
+      val registration =
+          NativeInteropFlutterIntegrationCoreApiRegistration(api, engineId, affinityKey)
       val index = list.indexOfFirst { it.api === api }
       if (index >= 0) {
         list[index] = registration
@@ -4572,15 +5388,18 @@ class NativeInteropFlutterIntegrationCoreApiRegistrar() {
   }
 
   /**
-   * Removes [api] from the registrations under [name] (or the default instance
-   * when [name] is omitted), leaving other registrations in place.
+   * Removes [api] from the registrations under [name] (or the default instance when [name] is
+   * omitted), leaving other registrations in place.
    *
    * Instances are matched by identity. Does nothing if [api] is not registered.
    *
    * This is called by the generated Dart code and is not intended for direct use.
    */
   @Keep
-  fun unregisterInstance(api: NativeInteropFlutterIntegrationCoreApi, name: String = defaultInstanceName) {
+  fun unregisterInstance(
+      api: NativeInteropFlutterIntegrationCoreApi,
+      name: String = defaultInstanceName
+  ) {
     kotlin.synchronized(registeredNativeInteropFlutterIntegrationCoreApi) {
       val list = registeredNativeInteropFlutterIntegrationCoreApi[name] ?: return
       list.removeAll { it.api === api }
@@ -4591,36 +5410,47 @@ class NativeInteropFlutterIntegrationCoreApiRegistrar() {
   }
 
   /**
-   * Returns the instance registered under [name] (or the default instance when
-   * [name] is omitted) by the Dart code running on the engine of the plugin binding [binding].
+   * Returns the instance registered under [name] (or the default instance when [name] is omitted)
+   * by the Dart code running on the engine of the plugin binding [binding].
    *
-   * When no instance is known to belong to that engine, falls back to the most
-   * recent registration for [name]. Returns null if none is registered.
+   * When no instance is known to belong to that engine, falls back to the most recent registration
+   * for [name]. Returns null if none is registered.
    */
   @Keep
-  fun getInstance(binding: FlutterPlugin.FlutterPluginBinding, name: String = defaultInstanceName): NativeInteropFlutterIntegrationCoreApi? {
+  fun getInstance(
+      binding: FlutterPlugin.FlutterPluginBinding,
+      name: String = defaultInstanceName
+  ): NativeInteropFlutterIntegrationCoreApi? {
     return getInstanceWithKey(NativeInteropTestsPigeonEngineKeys.keyOf(binding), name)
   }
 
   /**
-   * Returns the instance registered under [name] (or the default instance when
-   * [name] is omitted) by the Dart code running on the engine of [engine].
+   * Returns the instance registered under [name] (or the default instance when [name] is omitted)
+   * by the Dart code running on the engine of [engine].
    *
-   * When no instance is known to belong to that engine, falls back to the most
-   * recent registration for [name]. Returns null if none is registered.
+   * When no instance is known to belong to that engine, falls back to the most recent registration
+   * for [name]. Returns null if none is registered.
    */
   @Keep
-  fun getInstance(engine: FlutterEngine, name: String = defaultInstanceName): NativeInteropFlutterIntegrationCoreApi? {
+  fun getInstance(
+      engine: FlutterEngine,
+      name: String = defaultInstanceName
+  ): NativeInteropFlutterIntegrationCoreApi? {
     return getInstanceWithKey(NativeInteropTestsPigeonEngineKeys.keyOf(engine), name)
   }
 
-  private fun getInstanceWithKey(engineKey: Long, name: String): NativeInteropFlutterIntegrationCoreApi? {
+  private fun getInstanceWithKey(
+      engineKey: Long,
+      name: String
+  ): NativeInteropFlutterIntegrationCoreApi? {
     kotlin.synchronized(registeredNativeInteropFlutterIntegrationCoreApi) {
       val list = registeredNativeInteropFlutterIntegrationCoreApi[name] ?: return null
       if (engineKey != NativeInteropTestsPigeonEngineKeys.NO_KEY) {
         // Prefer the isolate running on the engine over isolates that only
         // learned an affinity for it.
-        val match = list.lastOrNull { it.engineId == engineKey } ?: list.lastOrNull { it.affinityKey == engineKey }
+        val match =
+            list.lastOrNull { it.engineId == engineKey }
+                ?: list.lastOrNull { it.affinityKey == engineKey }
         if (match != null) {
           return match.api
         }
@@ -4629,12 +5459,10 @@ class NativeInteropFlutterIntegrationCoreApiRegistrar() {
     }
   }
 }
+
 @Keep
 interface NativeInteropFlutterIntegrationCoreApi {
-  /**
-   * A no-op function taking no arguments and returning no value, to sanity
-   * test basic calling.
-   */
+  /** A no-op function taking no arguments and returning no value, to sanity test basic calling. */
   fun noop()
   /** Returns a Flutter error, to test error handling. */
   fun throwFlutterError(): Any?
@@ -4645,7 +5473,9 @@ interface NativeInteropFlutterIntegrationCoreApi {
   /** Returns the passed object, to test serialization and deserialization. */
   fun echoNativeInteropAllTypes(everything: NativeInteropAllTypes): NativeInteropAllTypes
   /** Returns the passed object, to test serialization and deserialization. */
-  fun echoNativeInteropAllNullableTypes(everything: NativeInteropAllNullableTypes?): NativeInteropAllNullableTypes?
+  fun echoNativeInteropAllNullableTypes(
+      everything: NativeInteropAllNullableTypes?
+  ): NativeInteropAllNullableTypes?
   /** Returns the passed sealed class, to test sealed class handling. */
   fun echoNativeInteropSealedClass(sealedClass: NativeInteropSealedClass): NativeInteropSealedClass
   /**
@@ -4653,15 +5483,25 @@ interface NativeInteropFlutterIntegrationCoreApi {
    *
    * Tests multiple-arity FlutterApi handling.
    */
-  fun sendMultipleNullableTypes(aNullableBool: Boolean?, aNullableInt: Long?, aNullableString: String?): NativeInteropAllNullableTypes
+  fun sendMultipleNullableTypes(
+      aNullableBool: Boolean?,
+      aNullableInt: Long?,
+      aNullableString: String?
+  ): NativeInteropAllNullableTypes
   /** Returns the passed object, to test serialization and deserialization. */
-  fun echoNativeInteropAllNullableTypesWithoutRecursion(everything: NativeInteropAllNullableTypesWithoutRecursion?): NativeInteropAllNullableTypesWithoutRecursion?
+  fun echoNativeInteropAllNullableTypesWithoutRecursion(
+      everything: NativeInteropAllNullableTypesWithoutRecursion?
+  ): NativeInteropAllNullableTypesWithoutRecursion?
   /**
    * Returns passed in arguments of multiple types.
    *
    * Tests multiple-arity FlutterApi handling.
    */
-  fun sendMultipleNullableTypesWithoutRecursion(aNullableBool: Boolean?, aNullableInt: Long?, aNullableString: String?): NativeInteropAllNullableTypesWithoutRecursion
+  fun sendMultipleNullableTypesWithoutRecursion(
+      aNullableBool: Boolean?,
+      aNullableInt: Long?,
+      aNullableString: String?
+  ): NativeInteropAllNullableTypesWithoutRecursion
   /** Returns the passed boolean, to test serialization and deserialization. */
   fun echoBool(aBool: Boolean): Boolean
   /** Returns the passed int, to test serialization and deserialization. */
@@ -4683,11 +5523,15 @@ interface NativeInteropFlutterIntegrationCoreApi {
   /** Returns the passed list, to test serialization and deserialization. */
   fun echoEnumList(enumList: List<NativeInteropAnEnum?>): List<NativeInteropAnEnum?>
   /** Returns the passed list, to test serialization and deserialization. */
-  fun echoClassList(classList: List<NativeInteropAllNullableTypes?>): List<NativeInteropAllNullableTypes?>
+  fun echoClassList(
+      classList: List<NativeInteropAllNullableTypes?>
+  ): List<NativeInteropAllNullableTypes?>
   /** Returns the passed list, to test serialization and deserialization. */
   fun echoNonNullEnumList(enumList: List<NativeInteropAnEnum>): List<NativeInteropAnEnum>
   /** Returns the passed list, to test serialization and deserialization. */
-  fun echoNonNullClassList(classList: List<NativeInteropAllNullableTypes>): List<NativeInteropAllNullableTypes>
+  fun echoNonNullClassList(
+      classList: List<NativeInteropAllNullableTypes>
+  ): List<NativeInteropAllNullableTypes>
   /** Returns the passed map, to test serialization and deserialization. */
   fun echoMap(map: Map<Any?, Any?>): Map<Any?, Any?>
   /** Returns the passed map, to test serialization and deserialization. */
@@ -4695,17 +5539,25 @@ interface NativeInteropFlutterIntegrationCoreApi {
   /** Returns the passed map, to test serialization and deserialization. */
   fun echoIntMap(intMap: Map<Long?, Long?>): Map<Long?, Long?>
   /** Returns the passed map, to test serialization and deserialization. */
-  fun echoEnumMap(enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
+  fun echoEnumMap(
+      enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
+  ): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
   /** Returns the passed map, to test serialization and deserialization. */
-  fun echoClassMap(classMap: Map<Long?, NativeInteropAllNullableTypes?>): Map<Long?, NativeInteropAllNullableTypes?>
+  fun echoClassMap(
+      classMap: Map<Long?, NativeInteropAllNullableTypes?>
+  ): Map<Long?, NativeInteropAllNullableTypes?>
   /** Returns the passed map, to test serialization and deserialization. */
   fun echoNonNullStringMap(stringMap: Map<String, String>): Map<String, String>
   /** Returns the passed map, to test serialization and deserialization. */
   fun echoNonNullIntMap(intMap: Map<Long, Long>): Map<Long, Long>
   /** Returns the passed map, to test serialization and deserialization. */
-  fun echoNonNullEnumMap(enumMap: Map<NativeInteropAnEnum, NativeInteropAnEnum>): Map<NativeInteropAnEnum, NativeInteropAnEnum>
+  fun echoNonNullEnumMap(
+      enumMap: Map<NativeInteropAnEnum, NativeInteropAnEnum>
+  ): Map<NativeInteropAnEnum, NativeInteropAnEnum>
   /** Returns the passed map, to test serialization and deserialization. */
-  fun echoNonNullClassMap(classMap: Map<Long, NativeInteropAllNullableTypes>): Map<Long, NativeInteropAllNullableTypes>
+  fun echoNonNullClassMap(
+      classMap: Map<Long, NativeInteropAllNullableTypes>
+  ): Map<Long, NativeInteropAllNullableTypes>
   /** Returns the passed enum to test serialization and deserialization. */
   fun echoEnum(anEnum: NativeInteropAnEnum): NativeInteropAnEnum
   /** Returns the passed enum to test serialization and deserialization. */
@@ -4731,11 +5583,15 @@ interface NativeInteropFlutterIntegrationCoreApi {
   /** Returns the passed list, to test serialization and deserialization. */
   fun echoNullableEnumList(enumList: List<NativeInteropAnEnum?>?): List<NativeInteropAnEnum?>?
   /** Returns the passed list, to test serialization and deserialization. */
-  fun echoNullableClassList(classList: List<NativeInteropAllNullableTypes?>?): List<NativeInteropAllNullableTypes?>?
+  fun echoNullableClassList(
+      classList: List<NativeInteropAllNullableTypes?>?
+  ): List<NativeInteropAllNullableTypes?>?
   /** Returns the passed list, to test serialization and deserialization. */
   fun echoNullableNonNullEnumList(enumList: List<NativeInteropAnEnum>?): List<NativeInteropAnEnum>?
   /** Returns the passed list, to test serialization and deserialization. */
-  fun echoNullableNonNullClassList(classList: List<NativeInteropAllNullableTypes>?): List<NativeInteropAllNullableTypes>?
+  fun echoNullableNonNullClassList(
+      classList: List<NativeInteropAllNullableTypes>?
+  ): List<NativeInteropAllNullableTypes>?
   /** Returns the passed map, to test serialization and deserialization. */
   fun echoNullableMap(map: Map<Any?, Any?>?): Map<Any?, Any?>?
   /** Returns the passed map, to test serialization and deserialization. */
@@ -4743,74 +5599,162 @@ interface NativeInteropFlutterIntegrationCoreApi {
   /** Returns the passed map, to test serialization and deserialization. */
   fun echoNullableIntMap(intMap: Map<Long?, Long?>?): Map<Long?, Long?>?
   /** Returns the passed map, to test serialization and deserialization. */
-  fun echoNullableEnumMap(enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
+  fun echoNullableEnumMap(
+      enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
+  ): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
   /** Returns the passed map, to test serialization and deserialization. */
-  fun echoNullableClassMap(classMap: Map<Long?, NativeInteropAllNullableTypes?>?): Map<Long?, NativeInteropAllNullableTypes?>?
+  fun echoNullableClassMap(
+      classMap: Map<Long?, NativeInteropAllNullableTypes?>?
+  ): Map<Long?, NativeInteropAllNullableTypes?>?
   /** Returns the passed map, to test serialization and deserialization. */
   fun echoNullableNonNullStringMap(stringMap: Map<String, String>?): Map<String, String>?
   /** Returns the passed map, to test serialization and deserialization. */
   fun echoNullableNonNullIntMap(intMap: Map<Long, Long>?): Map<Long, Long>?
   /** Returns the passed map, to test serialization and deserialization. */
-  fun echoNullableNonNullEnumMap(enumMap: Map<NativeInteropAnEnum, NativeInteropAnEnum>?): Map<NativeInteropAnEnum, NativeInteropAnEnum>?
+  fun echoNullableNonNullEnumMap(
+      enumMap: Map<NativeInteropAnEnum, NativeInteropAnEnum>?
+  ): Map<NativeInteropAnEnum, NativeInteropAnEnum>?
   /** Returns the passed map, to test serialization and deserialization. */
-  fun echoNullableNonNullClassMap(classMap: Map<Long, NativeInteropAllNullableTypes>?): Map<Long, NativeInteropAllNullableTypes>?
+  fun echoNullableNonNullClassMap(
+      classMap: Map<Long, NativeInteropAllNullableTypes>?
+  ): Map<Long, NativeInteropAllNullableTypes>?
   /** Returns the passed enum to test serialization and deserialization. */
   fun echoNullableEnum(anEnum: NativeInteropAnEnum?): NativeInteropAnEnum?
   /** Returns the passed enum to test serialization and deserialization. */
   fun echoAnotherNullableEnum(anotherEnum: NativeInteropAnotherEnum?): NativeInteropAnotherEnum?
   /**
-   * A no-op function taking no arguments and returning no value, to sanity
-   * test basic asynchronous calling.
+   * A no-op function taking no arguments and returning no value, to sanity test basic asynchronous
+   * calling.
    */
   suspend fun noopAsync()
+
   suspend fun throwFlutterErrorAsync(): Any?
-  suspend fun echoAsyncNativeInteropAllTypes(everything: NativeInteropAllTypes): NativeInteropAllTypes
-  suspend fun echoAsyncNullableNativeInteropAllNullableTypes(everything: NativeInteropAllNullableTypes?): NativeInteropAllNullableTypes?
-  suspend fun echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(everything: NativeInteropAllNullableTypesWithoutRecursion?): NativeInteropAllNullableTypesWithoutRecursion?
+
+  suspend fun echoAsyncNativeInteropAllTypes(
+      everything: NativeInteropAllTypes
+  ): NativeInteropAllTypes
+
+  suspend fun echoAsyncNullableNativeInteropAllNullableTypes(
+      everything: NativeInteropAllNullableTypes?
+  ): NativeInteropAllNullableTypes?
+
+  suspend fun echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
+      everything: NativeInteropAllNullableTypesWithoutRecursion?
+  ): NativeInteropAllNullableTypesWithoutRecursion?
+
   suspend fun echoAsyncBool(aBool: Boolean): Boolean
+
   suspend fun echoAsyncInt(anInt: Long): Long
+
   suspend fun echoAsyncDouble(aDouble: Double): Double
+
   suspend fun echoAsyncString(aString: String): String
+
   suspend fun echoAsyncUint8List(list: ByteArray): ByteArray
+
   suspend fun echoAsyncInt32List(list: IntArray): IntArray
+
   suspend fun echoAsyncInt64List(list: LongArray): LongArray
+
   suspend fun echoAsyncFloat64List(list: DoubleArray): DoubleArray
+
   suspend fun echoAsyncObject(anObject: Any): Any
+
   suspend fun echoAsyncList(list: List<Any?>): List<Any?>
+
   suspend fun echoAsyncEnumList(enumList: List<NativeInteropAnEnum?>): List<NativeInteropAnEnum?>
-  suspend fun echoAsyncClassList(classList: List<NativeInteropAllNullableTypes?>): List<NativeInteropAllNullableTypes?>
-  suspend fun echoAsyncNonNullEnumList(enumList: List<NativeInteropAnEnum>): List<NativeInteropAnEnum>
-  suspend fun echoAsyncNonNullClassList(classList: List<NativeInteropAllNullableTypes>): List<NativeInteropAllNullableTypes>
+
+  suspend fun echoAsyncClassList(
+      classList: List<NativeInteropAllNullableTypes?>
+  ): List<NativeInteropAllNullableTypes?>
+
+  suspend fun echoAsyncNonNullEnumList(
+      enumList: List<NativeInteropAnEnum>
+  ): List<NativeInteropAnEnum>
+
+  suspend fun echoAsyncNonNullClassList(
+      classList: List<NativeInteropAllNullableTypes>
+  ): List<NativeInteropAllNullableTypes>
+
   suspend fun echoAsyncMap(map: Map<Any?, Any?>): Map<Any?, Any?>
+
   suspend fun echoAsyncStringMap(stringMap: Map<String?, String?>): Map<String?, String?>
+
   suspend fun echoAsyncIntMap(intMap: Map<Long?, Long?>): Map<Long?, Long?>
-  suspend fun echoAsyncEnumMap(enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
-  suspend fun echoAsyncClassMap(classMap: Map<Long?, NativeInteropAllNullableTypes?>): Map<Long?, NativeInteropAllNullableTypes?>
+
+  suspend fun echoAsyncEnumMap(
+      enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
+  ): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
+
+  suspend fun echoAsyncClassMap(
+      classMap: Map<Long?, NativeInteropAllNullableTypes?>
+  ): Map<Long?, NativeInteropAllNullableTypes?>
+
   suspend fun echoAsyncEnum(anEnum: NativeInteropAnEnum): NativeInteropAnEnum
+
   suspend fun echoAnotherAsyncEnum(anotherEnum: NativeInteropAnotherEnum): NativeInteropAnotherEnum
+
   suspend fun echoAsyncNullableBool(aBool: Boolean?): Boolean?
+
   suspend fun echoAsyncNullableInt(anInt: Long?): Long?
+
   suspend fun echoAsyncNullableDouble(aDouble: Double?): Double?
+
   suspend fun echoAsyncNullableString(aString: String?): String?
+
   suspend fun echoAsyncNullableUint8List(list: ByteArray?): ByteArray?
+
   suspend fun echoAsyncNullableInt32List(list: IntArray?): IntArray?
+
   suspend fun echoAsyncNullableInt64List(list: LongArray?): LongArray?
+
   suspend fun echoAsyncNullableFloat64List(list: DoubleArray?): DoubleArray?
+
   suspend fun echoAsyncNullableObject(anObject: Any?): Any?
+
   suspend fun echoAsyncNullableList(list: List<Any?>?): List<Any?>?
-  suspend fun echoAsyncNullableEnumList(enumList: List<NativeInteropAnEnum?>?): List<NativeInteropAnEnum?>?
-  suspend fun echoAsyncNullableClassList(classList: List<NativeInteropAllNullableTypes?>?): List<NativeInteropAllNullableTypes?>?
-  suspend fun echoAsyncNullableNonNullEnumList(enumList: List<NativeInteropAnEnum>?): List<NativeInteropAnEnum>?
-  suspend fun echoAsyncNullableNonNullClassList(classList: List<NativeInteropAllNullableTypes>?): List<NativeInteropAllNullableTypes>?
+
+  suspend fun echoAsyncNullableEnumList(
+      enumList: List<NativeInteropAnEnum?>?
+  ): List<NativeInteropAnEnum?>?
+
+  suspend fun echoAsyncNullableClassList(
+      classList: List<NativeInteropAllNullableTypes?>?
+  ): List<NativeInteropAllNullableTypes?>?
+
+  suspend fun echoAsyncNullableNonNullEnumList(
+      enumList: List<NativeInteropAnEnum>?
+  ): List<NativeInteropAnEnum>?
+
+  suspend fun echoAsyncNullableNonNullClassList(
+      classList: List<NativeInteropAllNullableTypes>?
+  ): List<NativeInteropAllNullableTypes>?
+
   suspend fun echoAsyncNullableMap(map: Map<Any?, Any?>?): Map<Any?, Any?>?
+
   suspend fun echoAsyncNullableStringMap(stringMap: Map<String?, String?>?): Map<String?, String?>?
+
   suspend fun echoAsyncNullableIntMap(intMap: Map<Long?, Long?>?): Map<Long?, Long?>?
-  suspend fun echoAsyncNullableEnumMap(enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
-  suspend fun echoAsyncNullableClassMap(classMap: Map<Long?, NativeInteropAllNullableTypes?>?): Map<Long?, NativeInteropAllNullableTypes?>?
+
+  suspend fun echoAsyncNullableEnumMap(
+      enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
+  ): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
+
+  suspend fun echoAsyncNullableClassMap(
+      classMap: Map<Long?, NativeInteropAllNullableTypes?>?
+  ): Map<Long?, NativeInteropAllNullableTypes?>?
+
   suspend fun echoAsyncNullableEnum(anEnum: NativeInteropAnEnum?): NativeInteropAnEnum?
-  suspend fun echoAnotherAsyncNullableEnum(anotherEnum: NativeInteropAnotherEnum?): NativeInteropAnotherEnum?
+
+  suspend fun echoAnotherAsyncNullableEnum(
+      anotherEnum: NativeInteropAnotherEnum?
+  ): NativeInteropAnotherEnum?
 }
-val NativeInteropReservedNamesHostApiInstances: MutableMap<String, MutableList<NativeInteropReservedNamesHostApiRegistrar>> = mutableMapOf()
+
+val NativeInteropReservedNamesHostApiInstances:
+    MutableMap<String, MutableList<NativeInteropReservedNamesHostApiRegistrar>> =
+    mutableMapOf()
+
 @Keep
 interface NativeInteropReservedNamesHostApi {
   /** Collides with `JObject.release`. */
@@ -4826,8 +5770,8 @@ interface NativeInteropReservedNamesHostApi {
   /** JNIgen makes this a getter. */
   fun isOpen(): Boolean
   /**
-   * JNIgen combines this and [setReference] into a property, which collides
-   * with `JObject.reference`.
+   * JNIgen combines this and [setReference] into a property, which collides with
+   * `JObject.reference`.
    */
   fun getReference(): String
   /** See [getReference]. */
@@ -4857,70 +5801,92 @@ interface NativeInteropReservedNamesHostApi {
   fun callFlutterIsNull(): Boolean
   /** Returns the result of calling [NativeInteropReservedNamesFlutterApi.getReference]. */
   fun callFlutterGetReference(): String
+  /** Returns the result of calling [NativeInteropReservedNamesFlutterApi.register]. */
+  fun callFlutterRegister(value: String): String
+  /** Returns the result of calling [NativeInteropReservedNamesFlutterApi.dartApi]. */
+  fun callFlutterDartApi(): String
 }
+
 @Keep
-class NativeInteropReservedNamesHostApiRegistrar private constructor(private val engineKey: Long) : NativeInteropReservedNamesHostApi {
+class NativeInteropReservedNamesHostApiRegistrar private constructor(private val engineKey: Long) :
+    NativeInteropReservedNamesHostApi {
   @Volatile private var api: NativeInteropReservedNamesHostApi? = null
 
   constructor() : this(NativeInteropTestsPigeonEngineKeys.NO_KEY)
 
   /**
-   * Registers [api] under [name] (or the default instance when [name] is
-   * omitted) for the engine of the plugin binding [binding].
+   * Registers [api] under [name] (or the default instance when [name] is omitted) for the engine of
+   * the plugin binding [binding].
    *
-   * The registration is tied to that engine: unregistering it for this engine
-   * leaves other engines' registrations in place, and Dart code running on an
-   * engine uses the instance registered for that engine when it is known.
+   * The registration is tied to that engine: unregistering it for this engine leaves other engines'
+   * registrations in place, and Dart code running on an engine uses the instance registered for
+   * that engine when it is known.
    */
   @Keep
-  fun register(api: NativeInteropReservedNamesHostApi, binding: FlutterPlugin.FlutterPluginBinding, name: String = defaultInstanceName) {
+  fun register(
+      api: NativeInteropReservedNamesHostApi,
+      binding: FlutterPlugin.FlutterPluginBinding,
+      name: String = defaultInstanceName
+  ) {
     registerWithKey(api, NativeInteropTestsPigeonEngineKeys.keyOf(binding), name)
   }
 
   /**
-   * Registers [api] under [name] (or the default instance when [name] is
-   * omitted) for the engine of [engine].
+   * Registers [api] under [name] (or the default instance when [name] is omitted) for the engine of
+   * [engine].
    *
-   * The registration is tied to that engine: unregistering it for this engine
-   * leaves other engines' registrations in place, and Dart code running on an
-   * engine uses the instance registered for that engine when it is known.
+   * The registration is tied to that engine: unregistering it for this engine leaves other engines'
+   * registrations in place, and Dart code running on an engine uses the instance registered for
+   * that engine when it is known.
    */
   @Keep
-  fun register(api: NativeInteropReservedNamesHostApi, engine: FlutterEngine, name: String = defaultInstanceName) {
+  fun register(
+      api: NativeInteropReservedNamesHostApi,
+      engine: FlutterEngine,
+      name: String = defaultInstanceName
+  ) {
     registerWithKey(api, NativeInteropTestsPigeonEngineKeys.keyOf(engine), name)
   }
 
   /**
-   * Removes [api] from the registrations under [name] (or the default instance
-   * when [name] is omitted) for the engine of the plugin binding [binding], leaving other
-   * registrations in place.
+   * Removes [api] from the registrations under [name] (or the default instance when [name] is
+   * omitted) for the engine of the plugin binding [binding], leaving other registrations in place.
    *
-   * Instances are matched by identity. If [api] is not registered for that
-   * engine but is registered for exactly one other engine, that registration is
-   * removed. Does nothing if [api] is not registered, or is only registered for
-   * several other engines.
+   * Instances are matched by identity. If [api] is not registered for that engine but is registered
+   * for exactly one other engine, that registration is removed. Does nothing if [api] is not
+   * registered, or is only registered for several other engines.
    */
   @Keep
-  fun unregister(api: NativeInteropReservedNamesHostApi, binding: FlutterPlugin.FlutterPluginBinding, name: String = defaultInstanceName) {
+  fun unregister(
+      api: NativeInteropReservedNamesHostApi,
+      binding: FlutterPlugin.FlutterPluginBinding,
+      name: String = defaultInstanceName
+  ) {
     unregisterWithKey(api, NativeInteropTestsPigeonEngineKeys.keyOf(binding), name)
   }
 
   /**
-   * Removes [api] from the registrations under [name] (or the default instance
-   * when [name] is omitted) for the engine of [engine], leaving other
-   * registrations in place.
+   * Removes [api] from the registrations under [name] (or the default instance when [name] is
+   * omitted) for the engine of [engine], leaving other registrations in place.
    *
-   * Instances are matched by identity. If [api] is not registered for that
-   * engine but is registered for exactly one other engine, that registration is
-   * removed. Does nothing if [api] is not registered, or is only registered for
-   * several other engines.
+   * Instances are matched by identity. If [api] is not registered for that engine but is registered
+   * for exactly one other engine, that registration is removed. Does nothing if [api] is not
+   * registered, or is only registered for several other engines.
    */
   @Keep
-  fun unregister(api: NativeInteropReservedNamesHostApi, engine: FlutterEngine, name: String = defaultInstanceName) {
+  fun unregister(
+      api: NativeInteropReservedNamesHostApi,
+      engine: FlutterEngine,
+      name: String = defaultInstanceName
+  ) {
     unregisterWithKey(api, NativeInteropTestsPigeonEngineKeys.keyOf(engine), name)
   }
 
-  private fun registerWithKey(api: NativeInteropReservedNamesHostApi, engineKey: Long, name: String) {
+  private fun registerWithKey(
+      api: NativeInteropReservedNamesHostApi,
+      engineKey: Long,
+      name: String
+  ) {
     kotlin.synchronized(NativeInteropReservedNamesHostApiInstances) {
       val list = NativeInteropReservedNamesHostApiInstances.getOrPut(name) { mutableListOf() }
       val index = list.indexOfFirst { it.api === api && it.engineKey == engineKey }
@@ -4934,15 +5900,19 @@ class NativeInteropReservedNamesHostApiRegistrar private constructor(private val
     }
   }
 
-  private fun unregisterWithKey(api: NativeInteropReservedNamesHostApi, engineKey: Long, name: String) {
+  private fun unregisterWithKey(
+      api: NativeInteropReservedNamesHostApi,
+      engineKey: Long,
+      name: String
+  ) {
     kotlin.synchronized(NativeInteropReservedNamesHostApiInstances) {
       val list = NativeInteropReservedNamesHostApiInstances[name] ?: return
       val removeKey =
-        if (list.any { it.api === api && it.engineKey == engineKey }) {
-          engineKey
-        } else {
-          list.filter { it.api === api }.map { it.engineKey }.distinct().singleOrNull() ?: return
-        }
+          if (list.any { it.api === api && it.engineKey == engineKey }) {
+            engineKey
+          } else {
+            list.filter { it.api === api }.map { it.engineKey }.distinct().singleOrNull() ?: return
+          }
       val iterator = list.iterator()
       while (iterator.hasNext()) {
         val entry = iterator.next()
@@ -4959,29 +5929,37 @@ class NativeInteropReservedNamesHostApiRegistrar private constructor(private val
 
   companion object {
     /**
-     * Returns the instance registered under [name] for the engine identified by
-     * [engineId].
+     * Returns the instance registered under [name] for the engine identified by [engineId].
      *
-     * Falls back to the most recent instance registered for [affinityKey], then to
-     * the most recent instance overall. Either key may be `Long.MIN_VALUE` when it
-     * is unknown.
+     * Falls back to the most recent instance registered for [affinityKey], then to the most recent
+     * instance overall. Either key may be `Long.MIN_VALUE` when it is unknown.
      *
      * This is called by the generated Dart code and is not intended for direct use.
      */
     @JvmStatic
     @Keep
-    fun pigeonResolveInstance(engineId: Long, affinityKey: Long, name: String = defaultInstanceName): NativeInteropReservedNamesHostApiRegistrar? {
+    fun pigeonResolveInstance(
+        engineId: Long,
+        affinityKey: Long,
+        name: String = defaultInstanceName
+    ): NativeInteropReservedNamesHostApiRegistrar? {
       return kotlin.synchronized(NativeInteropReservedNamesHostApiInstances) {
         val list = NativeInteropReservedNamesHostApiInstances[name] ?: return null
-        val exact = if (engineId != NativeInteropTestsPigeonEngineKeys.NO_KEY) list.lastOrNull { it.engineKey == engineId } else null
-        val affine = if (affinityKey != NativeInteropTestsPigeonEngineKeys.NO_KEY) list.lastOrNull { it.engineKey == affinityKey } else null
+        val exact =
+            if (engineId != NativeInteropTestsPigeonEngineKeys.NO_KEY)
+                list.lastOrNull { it.engineKey == engineId }
+            else null
+        val affine =
+            if (affinityKey != NativeInteropTestsPigeonEngineKeys.NO_KEY)
+                list.lastOrNull { it.engineKey == affinityKey }
+            else null
         exact ?: affine ?: list.lastOrNull()
       }
     }
 
     /**
-     * Returns the engine key that [instance] was registered with, or
-     * `Long.MIN_VALUE` if it is unknown.
+     * Returns the engine key that [instance] was registered with, or `Long.MIN_VALUE` if it is
+     * unknown.
      *
      * This is called by the generated Dart code and is not intended for direct use.
      */
@@ -4993,8 +5971,7 @@ class NativeInteropReservedNamesHostApiRegistrar private constructor(private val
   }
 
   /** Collides with `JObject.release`. */
-  override fun release(value: String): String
- {
+  override fun release(value: String): String {
     api?.let {
       try {
         return it.release(value)
@@ -5002,11 +5979,11 @@ class NativeInteropReservedNamesHostApiRegistrar private constructor(private val
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropReservedNamesHostApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropReservedNamesHostApi has not been registered.")
   }
   /** Collides with `JObject.use`. */
-  override fun use(value: Long): Long
- {
+  override fun use(value: Long): Long {
     api?.let {
       try {
         return it.use(value)
@@ -5014,11 +5991,11 @@ class NativeInteropReservedNamesHostApiRegistrar private constructor(private val
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropReservedNamesHostApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropReservedNamesHostApi has not been registered.")
   }
   /** Collides with the static `type` field that JNIgen adds to every class. */
-  override fun type(): String
- {
+  override fun type(): String {
     api?.let {
       try {
         return it.type()
@@ -5026,11 +6003,11 @@ class NativeInteropReservedNamesHostApiRegistrar private constructor(private val
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropReservedNamesHostApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropReservedNamesHostApi has not been registered.")
   }
   /** JNIgen makes this a getter, which collides with `JObject.isNull`. */
-  override fun isNull(): Boolean
- {
+  override fun isNull(): Boolean {
     api?.let {
       try {
         return it.isNull()
@@ -5038,11 +6015,11 @@ class NativeInteropReservedNamesHostApiRegistrar private constructor(private val
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropReservedNamesHostApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropReservedNamesHostApi has not been registered.")
   }
   /** JNIgen keeps this a method, since nullable booleans are boxed on the JVM. */
-  override fun isNullable(): Boolean?
- {
+  override fun isNullable(): Boolean? {
     api?.let {
       try {
         return it.isNullable()
@@ -5050,11 +6027,11 @@ class NativeInteropReservedNamesHostApiRegistrar private constructor(private val
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropReservedNamesHostApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropReservedNamesHostApi has not been registered.")
   }
   /** JNIgen makes this a getter. */
-  override fun isOpen(): Boolean
- {
+  override fun isOpen(): Boolean {
     api?.let {
       try {
         return it.isOpen()
@@ -5062,14 +6039,14 @@ class NativeInteropReservedNamesHostApiRegistrar private constructor(private val
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropReservedNamesHostApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropReservedNamesHostApi has not been registered.")
   }
   /**
-   * JNIgen combines this and [setReference] into a property, which collides
-   * with `JObject.reference`.
+   * JNIgen combines this and [setReference] into a property, which collides with
+   * `JObject.reference`.
    */
-  override fun getReference(): String
- {
+  override fun getReference(): String {
     api?.let {
       try {
         return it.getReference()
@@ -5077,11 +6054,11 @@ class NativeInteropReservedNamesHostApiRegistrar private constructor(private val
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropReservedNamesHostApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropReservedNamesHostApi has not been registered.")
   }
   /** See [getReference]. */
-  override fun setReference(value: String)
- {
+  override fun setReference(value: String) {
     api?.let {
       try {
         return it.setReference(value)
@@ -5089,11 +6066,11 @@ class NativeInteropReservedNamesHostApiRegistrar private constructor(private val
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropReservedNamesHostApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropReservedNamesHostApi has not been registered.")
   }
   /** JNIgen makes this a getter named after a Dart keyword, `default`. */
-  override fun getDefault(): String
- {
+  override fun getDefault(): String {
     api?.let {
       try {
         return it.getDefault()
@@ -5101,11 +6078,11 @@ class NativeInteropReservedNamesHostApiRegistrar private constructor(private val
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropReservedNamesHostApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropReservedNamesHostApi has not been registered.")
   }
   /** JNIgen keeps suspend functions as methods. */
-  override suspend fun getValueAsync(): String
- {
+  override suspend fun getValueAsync(): String {
     api?.let {
       try {
         return it.getValueAsync()
@@ -5113,11 +6090,11 @@ class NativeInteropReservedNamesHostApiRegistrar private constructor(private val
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropReservedNamesHostApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropReservedNamesHostApi has not been registered.")
   }
   /** Collides with `<Api>Registrar.register` in Kotlin bytecode. */
-  override fun register(value: String): String
- {
+  override fun register(value: String): String {
     api?.let {
       try {
         return it.register(value)
@@ -5125,11 +6102,11 @@ class NativeInteropReservedNamesHostApiRegistrar private constructor(private val
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropReservedNamesHostApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropReservedNamesHostApi has not been registered.")
   }
   /** Collides with `<Api>Registrar.unregister` in Kotlin bytecode. */
-  override fun unregister(value: String): String
- {
+  override fun unregister(value: String): String {
     api?.let {
       try {
         return it.unregister(value)
@@ -5137,14 +6114,14 @@ class NativeInteropReservedNamesHostApiRegistrar private constructor(private val
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropReservedNamesHostApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropReservedNamesHostApi has not been registered.")
   }
   /**
    * JNIgen turns this into an instance getter `getInstance`, colliding with
    * `<Api>Registrar.getInstance`.
    */
-  override fun getGetInstance(): String
- {
+  override fun getGetInstance(): String {
     api?.let {
       try {
         return it.getGetInstance()
@@ -5152,11 +6129,11 @@ class NativeInteropReservedNamesHostApiRegistrar private constructor(private val
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropReservedNamesHostApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropReservedNamesHostApi has not been registered.")
   }
   /** Returns the passed object, to test serialization and deserialization. */
-  override fun echoReservedNames(names: NativeInteropReservedNames): NativeInteropReservedNames
- {
+  override fun echoReservedNames(names: NativeInteropReservedNames): NativeInteropReservedNames {
     api?.let {
       try {
         return it.echoReservedNames(names)
@@ -5164,11 +6141,11 @@ class NativeInteropReservedNamesHostApiRegistrar private constructor(private val
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropReservedNamesHostApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropReservedNamesHostApi has not been registered.")
   }
   /** Returns the result of calling [NativeInteropReservedNamesFlutterApi.release]. */
-  override fun callFlutterRelease(value: String): String
- {
+  override fun callFlutterRelease(value: String): String {
     api?.let {
       try {
         return it.callFlutterRelease(value)
@@ -5176,11 +6153,11 @@ class NativeInteropReservedNamesHostApiRegistrar private constructor(private val
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropReservedNamesHostApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropReservedNamesHostApi has not been registered.")
   }
   /** Returns the result of calling [NativeInteropReservedNamesFlutterApi.type]. */
-  override fun callFlutterType(): String
- {
+  override fun callFlutterType(): String {
     api?.let {
       try {
         return it.callFlutterType()
@@ -5188,11 +6165,11 @@ class NativeInteropReservedNamesHostApiRegistrar private constructor(private val
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropReservedNamesHostApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropReservedNamesHostApi has not been registered.")
   }
   /** Returns the result of calling [NativeInteropReservedNamesFlutterApi.implementIn]. */
-  override fun callFlutterImplementIn(value: String): String
- {
+  override fun callFlutterImplementIn(value: String): String {
     api?.let {
       try {
         return it.callFlutterImplementIn(value)
@@ -5200,11 +6177,11 @@ class NativeInteropReservedNamesHostApiRegistrar private constructor(private val
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropReservedNamesHostApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropReservedNamesHostApi has not been registered.")
   }
   /** Returns the result of calling [NativeInteropReservedNamesFlutterApi.isNull]. */
-  override fun callFlutterIsNull(): Boolean
- {
+  override fun callFlutterIsNull(): Boolean {
     api?.let {
       try {
         return it.callFlutterIsNull()
@@ -5212,11 +6189,11 @@ class NativeInteropReservedNamesHostApiRegistrar private constructor(private val
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropReservedNamesHostApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropReservedNamesHostApi has not been registered.")
   }
   /** Returns the result of calling [NativeInteropReservedNamesFlutterApi.getReference]. */
-  override fun callFlutterGetReference(): String
- {
+  override fun callFlutterGetReference(): String {
     api?.let {
       try {
         return it.callFlutterGetReference()
@@ -5224,41 +6201,76 @@ class NativeInteropReservedNamesHostApiRegistrar private constructor(private val
         throw e
       }
     }
-    throw NativeInteropTestsError("unregistered-instance", "NativeInteropReservedNamesHostApi has not been registered.")
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropReservedNamesHostApi has not been registered.")
+  }
+  /** Returns the result of calling [NativeInteropReservedNamesFlutterApi.register]. */
+  override fun callFlutterRegister(value: String): String {
+    api?.let {
+      try {
+        return it.callFlutterRegister(value)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropReservedNamesHostApi has not been registered.")
+  }
+  /** Returns the result of calling [NativeInteropReservedNamesFlutterApi.dartApi]. */
+  override fun callFlutterDartApi(): String {
+    api?.let {
+      try {
+        return it.callFlutterDartApi()
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    throw NativeInteropTestsError(
+        "unregistered-instance", "NativeInteropReservedNamesHostApi has not been registered.")
   }
 }
 /**
  * The Flutter API counterpart of [NativeInteropReservedNamesHostApi].
  *
- * JNIgen generates interfaces for Flutter APIs, which it renames differently
- * than classes.
+ * JNIgen generates interfaces for Flutter APIs, which it renames differently than classes.
  *
  * Generated class from Pigeon that represents Flutter messages that can be called from Kotlin.
  */
 /** A registered [NativeInteropReservedNamesFlutterApi] and the keys of the engine it belongs to. */
-class NativeInteropReservedNamesFlutterApiRegistration(val api: NativeInteropReservedNamesFlutterApi, val engineId: Long, val affinityKey: Long)
+class NativeInteropReservedNamesFlutterApiRegistration(
+    val api: NativeInteropReservedNamesFlutterApi,
+    val engineId: Long,
+    val affinityKey: Long
+)
 
 /// Map that stores instances
-val registeredNativeInteropReservedNamesFlutterApi: MutableMap<String, MutableList<NativeInteropReservedNamesFlutterApiRegistration>> = mutableMapOf()
+val registeredNativeInteropReservedNamesFlutterApi:
+    MutableMap<String, MutableList<NativeInteropReservedNamesFlutterApiRegistration>> =
+    mutableMapOf()
 
 /// Class that stores instances
 @Keep
 class NativeInteropReservedNamesFlutterApiRegistrar() {
   /**
-   * Registers [api] under [name] (or the default instance when [name] is omitted)
-   * for the engine identified by [engineId] and [affinityKey].
+   * Registers [api] under [name] (or the default instance when [name] is omitted) for the engine
+   * identified by [engineId] and [affinityKey].
    *
-   * Either key may be `Long.MIN_VALUE` when it is unknown. Registering an
-   * instance that is already registered under [name] updates its keys and keeps
-   * its position.
+   * Either key may be `Long.MIN_VALUE` when it is unknown. Registering an instance that is already
+   * registered under [name] updates its keys and keeps its position.
    *
    * This is called by the generated Dart code and is not intended for direct use.
    */
   @Keep
-  fun registerInstance(api: NativeInteropReservedNamesFlutterApi, engineId: Long, affinityKey: Long, name: String = defaultInstanceName) {
+  fun registerInstance(
+      api: NativeInteropReservedNamesFlutterApi,
+      engineId: Long,
+      affinityKey: Long,
+      name: String = defaultInstanceName
+  ) {
     kotlin.synchronized(registeredNativeInteropReservedNamesFlutterApi) {
       val list = registeredNativeInteropReservedNamesFlutterApi.getOrPut(name) { mutableListOf() }
-      val registration = NativeInteropReservedNamesFlutterApiRegistration(api, engineId, affinityKey)
+      val registration =
+          NativeInteropReservedNamesFlutterApiRegistration(api, engineId, affinityKey)
       val index = list.indexOfFirst { it.api === api }
       if (index >= 0) {
         list[index] = registration
@@ -5269,15 +6281,18 @@ class NativeInteropReservedNamesFlutterApiRegistrar() {
   }
 
   /**
-   * Removes [api] from the registrations under [name] (or the default instance
-   * when [name] is omitted), leaving other registrations in place.
+   * Removes [api] from the registrations under [name] (or the default instance when [name] is
+   * omitted), leaving other registrations in place.
    *
    * Instances are matched by identity. Does nothing if [api] is not registered.
    *
    * This is called by the generated Dart code and is not intended for direct use.
    */
   @Keep
-  fun unregisterInstance(api: NativeInteropReservedNamesFlutterApi, name: String = defaultInstanceName) {
+  fun unregisterInstance(
+      api: NativeInteropReservedNamesFlutterApi,
+      name: String = defaultInstanceName
+  ) {
     kotlin.synchronized(registeredNativeInteropReservedNamesFlutterApi) {
       val list = registeredNativeInteropReservedNamesFlutterApi[name] ?: return
       list.removeAll { it.api === api }
@@ -5288,36 +6303,47 @@ class NativeInteropReservedNamesFlutterApiRegistrar() {
   }
 
   /**
-   * Returns the instance registered under [name] (or the default instance when
-   * [name] is omitted) by the Dart code running on the engine of the plugin binding [binding].
+   * Returns the instance registered under [name] (or the default instance when [name] is omitted)
+   * by the Dart code running on the engine of the plugin binding [binding].
    *
-   * When no instance is known to belong to that engine, falls back to the most
-   * recent registration for [name]. Returns null if none is registered.
+   * When no instance is known to belong to that engine, falls back to the most recent registration
+   * for [name]. Returns null if none is registered.
    */
   @Keep
-  fun getInstance(binding: FlutterPlugin.FlutterPluginBinding, name: String = defaultInstanceName): NativeInteropReservedNamesFlutterApi? {
+  fun getInstance(
+      binding: FlutterPlugin.FlutterPluginBinding,
+      name: String = defaultInstanceName
+  ): NativeInteropReservedNamesFlutterApi? {
     return getInstanceWithKey(NativeInteropTestsPigeonEngineKeys.keyOf(binding), name)
   }
 
   /**
-   * Returns the instance registered under [name] (or the default instance when
-   * [name] is omitted) by the Dart code running on the engine of [engine].
+   * Returns the instance registered under [name] (or the default instance when [name] is omitted)
+   * by the Dart code running on the engine of [engine].
    *
-   * When no instance is known to belong to that engine, falls back to the most
-   * recent registration for [name]. Returns null if none is registered.
+   * When no instance is known to belong to that engine, falls back to the most recent registration
+   * for [name]. Returns null if none is registered.
    */
   @Keep
-  fun getInstance(engine: FlutterEngine, name: String = defaultInstanceName): NativeInteropReservedNamesFlutterApi? {
+  fun getInstance(
+      engine: FlutterEngine,
+      name: String = defaultInstanceName
+  ): NativeInteropReservedNamesFlutterApi? {
     return getInstanceWithKey(NativeInteropTestsPigeonEngineKeys.keyOf(engine), name)
   }
 
-  private fun getInstanceWithKey(engineKey: Long, name: String): NativeInteropReservedNamesFlutterApi? {
+  private fun getInstanceWithKey(
+      engineKey: Long,
+      name: String
+  ): NativeInteropReservedNamesFlutterApi? {
     kotlin.synchronized(registeredNativeInteropReservedNamesFlutterApi) {
       val list = registeredNativeInteropReservedNamesFlutterApi[name] ?: return null
       if (engineKey != NativeInteropTestsPigeonEngineKeys.NO_KEY) {
         // Prefer the isolate running on the engine over isolates that only
         // learned an affinity for it.
-        val match = list.lastOrNull { it.engineId == engineKey } ?: list.lastOrNull { it.affinityKey == engineKey }
+        val match =
+            list.lastOrNull { it.engineId == engineKey }
+                ?: list.lastOrNull { it.affinityKey == engineKey }
         if (match != null) {
           return match.api
         }
@@ -5326,6 +6352,7 @@ class NativeInteropReservedNamesFlutterApiRegistrar() {
     }
   }
 }
+
 @Keep
 interface NativeInteropReservedNamesFlutterApi {
   /** Collides with `JObject.release`. */
@@ -5338,4 +6365,8 @@ interface NativeInteropReservedNamesFlutterApi {
   fun isNull(): Boolean
   /** JNIgen doesn't turn interface methods into properties. */
   fun getReference(): String
+  /** Previously collided with internal Dart JNI registrar `register` member. */
+  fun register(value: String): String
+  /** Previously collided with internal Dart JNI registrar `dartApi` field. */
+  fun dartApi(): String
 }

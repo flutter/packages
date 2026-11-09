@@ -19756,6 +19756,60 @@ extension NativeInteropReservedNamesHostApiRegistrar$$Methods
       _id_callFlutterGetReference.pointer,
     ).object<jni$_.JString>();
   }
+
+  static final _id_callFlutterRegister = NativeInteropReservedNamesHostApiRegistrar._class
+      .instanceMethodId(r'callFlutterRegister', r'(Ljava/lang/String;)Ljava/lang/String;');
+
+  static final _callFlutterRegister =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun callFlutterRegister(value: kotlin.String): kotlin.String`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JString callFlutterRegister(jni$_.JString string) {
+    final _$$selfRef = reference;
+    final _$string = string.reference;
+    return _callFlutterRegister(
+      _$$selfRef.pointer,
+      _id_callFlutterRegister.pointer,
+      _$string.pointer,
+    ).object<jni$_.JString>();
+  }
+
+  static final _id_callFlutterDartApi = NativeInteropReservedNamesHostApiRegistrar._class
+      .instanceMethodId(r'callFlutterDartApi', r'()Ljava/lang/String;');
+
+  static final _callFlutterDartApi =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
+
+  /// from: `public fun callFlutterDartApi(): kotlin.String`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JString callFlutterDartApi() {
+    final _$$selfRef = reference;
+    return _callFlutterDartApi(
+      _$$selfRef.pointer,
+      _id_callFlutterDartApi.pointer,
+    ).object<jni$_.JString>();
+  }
 }
 
 final class $NativeInteropReservedNamesHostApiRegistrar$Type$
@@ -19822,6 +19876,16 @@ extension type NativeInteropReservedNamesFlutterApi._(jni$_.JObject _$this)
       }
       if ($d == r'getReference()Ljava/lang/String;') {
         final $r = _$impls[$p]!.getReference();
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'register(Ljava/lang/String;)Ljava/lang/String;') {
+        final $r = _$impls[$p]!.register(($a![0] as jni$_.JString));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'dartApi()Ljava/lang/String;') {
+        final $r = _$impls[$p]!.dartApi();
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
@@ -19995,6 +20059,61 @@ extension NativeInteropReservedNamesFlutterApi$$Methods on NativeInteropReserved
     final _$$selfRef = reference;
     return _getReference(_$$selfRef.pointer, _id_getReference.pointer).object<jni$_.JString>();
   }
+
+  static final _id_register = NativeInteropReservedNamesFlutterApi._class.instanceMethodId(
+    r'register',
+    r'(Ljava/lang/String;)Ljava/lang/String;',
+  );
+
+  static final _register =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun register(value: kotlin.String): kotlin.String`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JString register(jni$_.JString string) {
+    final _$$selfRef = reference;
+    final _$string = string.reference;
+    return _register(
+      _$$selfRef.pointer,
+      _id_register.pointer,
+      _$string.pointer,
+    ).object<jni$_.JString>();
+  }
+
+  static final _id_dartApi = NativeInteropReservedNamesFlutterApi._class.instanceMethodId(
+    r'dartApi',
+    r'()Ljava/lang/String;',
+  );
+
+  static final _dartApi =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
+
+  /// from: `public fun dartApi(): kotlin.String`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JString dartApi() {
+    final _$$selfRef = reference;
+    return _dartApi(_$$selfRef.pointer, _id_dartApi.pointer).object<jni$_.JString>();
+  }
 }
 
 abstract base mixin class $NativeInteropReservedNamesFlutterApi {
@@ -20004,6 +20123,8 @@ abstract base mixin class $NativeInteropReservedNamesFlutterApi {
     required jni$_.JString Function(jni$_.JString string) implementIn$1,
     required core$_.bool Function() isNull$1,
     required jni$_.JString Function() getReference,
+    required jni$_.JString Function(jni$_.JString string) register,
+    required jni$_.JString Function() dartApi,
   }) = _$NativeInteropReservedNamesFlutterApi;
 
   jni$_.JString release$1(jni$_.JString string);
@@ -20011,6 +20132,8 @@ abstract base mixin class $NativeInteropReservedNamesFlutterApi {
   jni$_.JString implementIn$1(jni$_.JString string);
   core$_.bool isNull$1();
   jni$_.JString getReference();
+  jni$_.JString register(jni$_.JString string);
+  jni$_.JString dartApi();
 }
 
 final class _$NativeInteropReservedNamesFlutterApi with $NativeInteropReservedNamesFlutterApi {
@@ -20020,17 +20143,23 @@ final class _$NativeInteropReservedNamesFlutterApi with $NativeInteropReservedNa
     required jni$_.JString Function(jni$_.JString string) implementIn$1,
     required core$_.bool Function() isNull$1,
     required jni$_.JString Function() getReference,
+    required jni$_.JString Function(jni$_.JString string) register,
+    required jni$_.JString Function() dartApi,
   }) : _release$1 = release$1,
        _type$1 = type$1,
        _implementIn$1 = implementIn$1,
        _isNull$1 = isNull$1,
-       _getReference = getReference;
+       _getReference = getReference,
+       _register = register,
+       _dartApi = dartApi;
 
   final jni$_.JString Function(jni$_.JString string) _release$1;
   final jni$_.JString Function() _type$1;
   final jni$_.JString Function(jni$_.JString string) _implementIn$1;
   final core$_.bool Function() _isNull$1;
   final jni$_.JString Function() _getReference;
+  final jni$_.JString Function(jni$_.JString string) _register;
+  final jni$_.JString Function() _dartApi;
 
   jni$_.JString release$1(jni$_.JString string) {
     return _release$1(string);
@@ -20050,6 +20179,14 @@ final class _$NativeInteropReservedNamesFlutterApi with $NativeInteropReservedNa
 
   jni$_.JString getReference() {
     return _getReference();
+  }
+
+  jni$_.JString register(jni$_.JString string) {
+    return _register(string);
+  }
+
+  jni$_.JString dartApi() {
+    return _dartApi();
   }
 }
 

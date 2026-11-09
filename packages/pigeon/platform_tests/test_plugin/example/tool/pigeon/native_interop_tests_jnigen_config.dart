@@ -17,7 +17,7 @@ void main() async {
     return;
   }
 
-    Directory.current = Platform.script.resolve('../..').toFilePath();
+  Directory.current = Platform.script.resolve('../..').toFilePath();
   final generator = JniGenerator(
     input: Input(
       classes: [
@@ -41,32 +41,30 @@ void main() async {
         'com.example.test_plugin.NativeInteropAnEnum',
         'com.example.test_plugin.NativeInteropAnotherEnum',
       ],
-      androidSdk: AndroidSdk(
-        addGradleDeps: true,
-        androidExample: Uri.directory('.'),
-      ),
+      androidSdk: AndroidSdk(addGradleDeps: true, androidExample: Uri.directory('.')),
       backend: SummarizerBackend.asm,
       classPath: [Uri.directory('build/app/tmp/kotlin-classes/release')],
-
     ),
     output: Output(
-                  preamble: '''
+      preamble: '''
       // Copyright 2013 The Flutter Authors\n// Use of this source code is governed by a BSD-style license that can be\n// found in the LICENSE file.\n// 
       ''',
-                  dart: DartOutput(
-                    path: Uri.file('../../shared_test_plugin_code/lib/src/generated/native_interop_tests.gen.jni.dart'),
-                    structure: OutputStructure.singleFile,
-                  ),
-
+      dart: DartOutput(
+        path: Uri.file(
+          '../../shared_test_plugin_code/lib/src/generated/native_interop_tests.gen.jni.dart',
+        ),
+        structure: OutputStructure.singleFile,
+      ),
     ),
   );
-    await generator.generate(logger: Logger.root..level = Level.ALL);
-
+  await generator.generate(logger: Logger.root..level = Level.ALL);
 }
+
 Future<bool> _hasJava() async {
   final String? javaHome = Platform.environment['JAVA_HOME'];
-  final String javaExecutable =
-      javaHome != null && javaHome.isNotEmpty ? path.join(javaHome, 'bin', 'java') : 'java';
+  final String javaExecutable = javaHome != null && javaHome.isNotEmpty
+      ? path.join(javaHome, 'bin', 'java')
+      : 'java';
   try {
     final ProcessResult result = await Process.run(javaExecutable, <String>['-version']);
     return result.exitCode == 0;
@@ -74,4 +72,3 @@ Future<bool> _hasJava() async {
     return false;
   }
 }
-
