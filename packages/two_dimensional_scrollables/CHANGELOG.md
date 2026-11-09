@@ -1,3 +1,12 @@
+## 0.6.0
+
+* **BREAKING CHANGE**: Removes the `cacheExtent` parameter from `TableView`,
+  `TableViewport`, `RenderTableViewport`, `TreeView`, `TreeViewport`, and
+  `RenderTreeViewport`. Use `scrollCacheExtent` instead, for example
+  `scrollCacheExtent: ScrollCacheExtent.pixels(value)`.
+* Adds `scrollCacheExtent` to `TableView` and `TreeView`.
+* Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
+
 ## 0.5.6
 
 * Fixes an issue where trailing pinned cells in `TableView` were losing hit tests to underlying non-pinned cells.

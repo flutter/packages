@@ -36,7 +36,7 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
     required super.verticalAxisDirection,
     required TreeRowDelegateMixin super.delegate,
     required super.childManager,
-    super.cacheExtent,
+    super.scrollCacheExtent,
     super.clipBehavior,
     AlignmentGeometry alignment = Alignment.topLeft,
     TextDirection? textDirection,
@@ -137,6 +137,10 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
   double _furthestHorizontalExtent = 0.0;
   // How far rows should be laid out in a given frame.
   double get _targetRowPixel {
+    final double cacheExtent = switch (scrollCacheExtent.style) {
+      CacheExtentStyle.pixel => scrollCacheExtent.value,
+      CacheExtentStyle.viewport => scrollCacheExtent.value * viewportDimension.height,
+    };
     return cacheExtent + verticalOffset.pixels + viewportDimension.height;
   }
 
