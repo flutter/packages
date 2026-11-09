@@ -1,3 +1,8 @@
+## 2.4.0
+
+* Adds a configurable compiled SVG cache byte budget, defaulting to 32 MiB,
+  with byte accounting and least-recently-used eviction alongside the entry limit.
+
 ## 2.3.4
 
 * Prevents pending loads invalidated by clear or evict from repopulating the cache.

@@ -13,6 +13,7 @@ class _PendingLoad {
 class Cache {
   final Map<Object, _PendingLoad> _pending = <Object, _PendingLoad>{};
   final Map<Object, ByteData> _cache = <Object, ByteData>{};
+  int _currentByteSize = 0;
 
   /// Maximum number of entries to store in the cache.
   ///
@@ -20,6 +21,28 @@ class Cache {
   /// evicted when adding a new entry.
   int get maximumSize => _maximumSize;
   int _maximumSize = 100;
+
+  /// Maximum number of compiled SVG bytes to retain. Defaults to 32 MiB.
+  ///
+  /// The limit applies to completed cache entries; an in-flight decode and
+  /// any widget currently painting the SVG may use additional memory.
+  int get maximumByteSize => _maximumByteSize;
+  int _maximumByteSize = 32 * 1024 * 1024;
+
+  /// Sets the completed-entry byte budget and immediately evicts LRU entries
+  /// if necessary. Zero disables caching without preventing SVG rendering.
+  set maximumByteSize(int value) {
+    assert(value >= 0);
+    if (value == maximumByteSize) {
+      return;
+    }
+    _maximumByteSize = value;
+    if (value == 0) {
+      clear();
+    } else {
+      _trim();
+    }
+  }
 
   /// Changes the maximum cache size.
   ///
@@ -37,9 +60,7 @@ class Cache {
     if (maximumSize == 0) {
       clear();
     } else {
-      while (_cache.length > maximumSize) {
-        _cache.remove(_cache.keys.first);
-      }
+      _trim();
     }
   }
 
@@ -50,12 +71,13 @@ class Cache {
   void clear() {
     _pending.clear();
     _cache.clear();
+    _currentByteSize = 0;
   }
 
   /// Evicts a completed entry or invalidates its pending load, returning true if found.
   bool evict(Object key) {
     final hadPending = _pending.remove(key) != null;
-    final hadCached = _cache.remove(key) != null;
+    final hadCached = _remove(key) != null;
     return hadPending || hadCached;
   }
 
@@ -82,7 +104,7 @@ class Cache {
       return pending.future;
     }
 
-    final ByteData? cached = _cache.remove(key);
+    final ByteData? cached = _remove(key);
     if (cached != null) {
       _add(key, cached); // Update the LRU order.
       return SynchronousFuture<ByteData>(cached);
@@ -111,18 +133,35 @@ class Cache {
     return future;
   }
 
+  ByteData? _remove(Object key) {
+    final ByteData? value = _cache.remove(key);
+    if (value != null) {
+      _currentByteSize -= value.lengthInBytes;
+    }
+    return value;
+  }
+
+  void _trim() {
+    while (_cache.isNotEmpty &&
+        (_cache.length > maximumSize || _currentByteSize > maximumByteSize)) {
+      _remove(_cache.keys.first);
+    }
+  }
+
   void _add(Object key, ByteData result) {
-    if (maximumSize > 0) {
-      if (_cache.containsKey(key)) {
-        _cache.remove(key); // update LRU.
-      } else if (_cache.length == maximumSize && maximumSize > 0) {
-        _cache.remove(_cache.keys.first);
-      }
-      assert(_cache.length < maximumSize);
+    // Return oversized decodes to their callers, but do not retain them.
+    if (maximumSize > 0 && maximumByteSize > 0 && result.lengthInBytes <= maximumByteSize) {
+      _remove(key);
       _cache[key] = result;
+      _currentByteSize += result.lengthInBytes;
+      _trim();
     }
     assert(_cache.length <= maximumSize);
+    assert(_currentByteSize <= maximumByteSize);
   }
+
+  /// Number of bytes retained by completed cache entries.
+  int get currentByteSize => _currentByteSize;
 
   /// The number of entries in the cache.
   int get count => _cache.length;
