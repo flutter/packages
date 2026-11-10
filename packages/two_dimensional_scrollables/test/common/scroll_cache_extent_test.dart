@@ -13,16 +13,22 @@ import 'package:two_dimensional_scrollables/two_dimensional_scrollables.dart';
 const double _kViewportExtent = 400.0;
 const double _kSpanExtent = 100.0;
 
-Widget _wrap(Widget child) {
+Widget _wrap(Widget child, {double width = _kViewportExtent, double height = _kViewportExtent}) {
   return MaterialApp(
     home: Center(
-      child: SizedBox(width: _kViewportExtent, height: _kViewportExtent, child: child),
+      child: SizedBox(width: width, height: height, child: child),
     ),
   );
 }
 
-Widget _buildTable({ScrollCacheExtent? scrollCacheExtent}) {
+Widget _buildTable({
+  ScrollCacheExtent? scrollCacheExtent,
+  double width = _kViewportExtent,
+  double height = _kViewportExtent,
+}) {
   return _wrap(
+    width: width,
+    height: height,
     TableView.builder(
       scrollCacheExtent: scrollCacheExtent,
       rowCount: 20,
@@ -36,8 +42,14 @@ Widget _buildTable({ScrollCacheExtent? scrollCacheExtent}) {
   );
 }
 
-Widget _buildTree({ScrollCacheExtent? scrollCacheExtent}) {
+Widget _buildTree({
+  ScrollCacheExtent? scrollCacheExtent,
+  double width = _kViewportExtent,
+  double height = _kViewportExtent,
+}) {
   return _wrap(
+    width: width,
+    height: height,
     TreeView<String>(
       tree: <TreeViewNode<String>>[for (int i = 0; i < 20; i++) TreeViewNode<String>('Node $i')],
       scrollCacheExtent: scrollCacheExtent,
@@ -166,6 +178,76 @@ void main() {
         const ScrollCacheExtent.pixels(RenderAbstractViewport.defaultCacheExtent),
       );
     });
+
+    testWidgets('viewport cache extent uses width horizontally and height vertically', (
+      WidgetTester tester,
+    ) async {
+      // Width is 400 -> horizontal cache is 0.5 * 400 = 200 (trailing edge at 600, spans 0..5).
+      // Height is 200 -> vertical cache is 0.5 * 200 = 100 (trailing edge at 300, spans 0..2).
+      await tester.pumpWidget(
+        _buildTable(
+          width: 400,
+          height: 200,
+          scrollCacheExtent: const ScrollCacheExtent.viewport(0.5),
+        ),
+      );
+
+      expect(_text('R0C5'), findsOneWidget);
+      expect(_text('R0C6'), findsNothing);
+      expect(_text('R2C0'), findsOneWidget);
+      expect(_text('R3C0'), findsNothing);
+    });
+
+    test('RenderTableViewport constructor initializes defaults and explicit values', () {
+      final delegate = TableCellBuilderDelegate(
+        columnCount: 0,
+        rowCount: 0,
+        columnBuilder: (_) => const TableSpan(extent: FixedTableSpanExtent(_kSpanExtent)),
+        rowBuilder: (_) => const TableSpan(extent: FixedTableSpanExtent(_kSpanExtent)),
+        cellBuilder: (_, _) => const TableViewCell(child: SizedBox()),
+      );
+      addTearDown(delegate.dispose);
+      final verticalOffset = ViewportOffset.zero();
+      addTearDown(verticalOffset.dispose);
+      final horizontalOffset = ViewportOffset.zero();
+      addTearDown(horizontalOffset.dispose);
+
+      final defaultViewport = RenderTableViewport(
+        horizontalOffset: horizontalOffset,
+        horizontalAxisDirection: AxisDirection.right,
+        verticalOffset: verticalOffset,
+        verticalAxisDirection: AxisDirection.down,
+        delegate: delegate,
+        mainAxis: Axis.vertical,
+        childManager: _NullChildManager(),
+      );
+      addTearDown(defaultViewport.dispose);
+
+      expect(defaultViewport.alignment, Alignment.topLeft);
+      expect(defaultViewport.textDirection, isNull);
+      expect(
+        defaultViewport.scrollCacheExtent,
+        const ScrollCacheExtent.pixels(RenderAbstractViewport.defaultCacheExtent),
+      );
+
+      final customViewport = RenderTableViewport(
+        horizontalOffset: horizontalOffset,
+        horizontalAxisDirection: AxisDirection.right,
+        verticalOffset: verticalOffset,
+        verticalAxisDirection: AxisDirection.down,
+        delegate: delegate,
+        mainAxis: Axis.vertical,
+        childManager: _NullChildManager(),
+        scrollCacheExtent: const ScrollCacheExtent.viewport(0.5),
+        alignment: AlignmentDirectional.bottomEnd,
+        textDirection: TextDirection.rtl,
+      );
+      addTearDown(customViewport.dispose);
+
+      expect(customViewport.alignment, AlignmentDirectional.bottomEnd);
+      expect(customViewport.textDirection, TextDirection.rtl);
+      expect(customViewport.scrollCacheExtent, const ScrollCacheExtent.viewport(0.5));
+    });
   });
 
   group('TreeView', () {
@@ -249,7 +331,79 @@ void main() {
         const ScrollCacheExtent.pixels(RenderAbstractViewport.defaultCacheExtent),
       );
     });
+
+    testWidgets('viewport cache extent uses viewport height', (WidgetTester tester) async {
+      // Height is 200 -> vertical cache is 0.5 * 200 = 100 (trailing edge at 300, nodes 0..2).
+      await tester.pumpWidget(
+        _buildTree(
+          width: 400,
+          height: 200,
+          scrollCacheExtent: const ScrollCacheExtent.viewport(0.5),
+        ),
+      );
+
+      expect(_text('Node 2'), findsOneWidget);
+      expect(_text('Node 3'), findsNothing);
+    });
+
+    test('RenderTreeViewport constructor initializes defaults and explicit values', () {
+      final delegate = TreeRowBuilderDelegate(
+        rowCount: 0,
+        nodeBuilder: (_, _) => const SizedBox(),
+        rowBuilder: (_) => const TreeRow(extent: FixedTreeRowExtent(_kSpanExtent)),
+      );
+      addTearDown(delegate.dispose);
+      final verticalOffset = ViewportOffset.zero();
+      addTearDown(verticalOffset.dispose);
+      final horizontalOffset = ViewportOffset.zero();
+      addTearDown(horizontalOffset.dispose);
+
+      final defaultViewport = RenderTreeViewport(
+        horizontalOffset: horizontalOffset,
+        horizontalAxisDirection: AxisDirection.right,
+        verticalOffset: verticalOffset,
+        verticalAxisDirection: AxisDirection.down,
+        delegate: delegate,
+        activeAnimations: const <UniqueKey, TreeViewNodesAnimation>{},
+        rowDepths: const <int, int>{},
+        indentation: 0.0,
+        childManager: _NullChildManager(),
+      );
+      addTearDown(defaultViewport.dispose);
+
+      expect(defaultViewport.alignment, Alignment.topLeft);
+      expect(defaultViewport.textDirection, isNull);
+      expect(
+        defaultViewport.scrollCacheExtent,
+        const ScrollCacheExtent.pixels(RenderAbstractViewport.defaultCacheExtent),
+      );
+
+      final customViewport = RenderTreeViewport(
+        horizontalOffset: horizontalOffset,
+        horizontalAxisDirection: AxisDirection.right,
+        verticalOffset: verticalOffset,
+        verticalAxisDirection: AxisDirection.down,
+        delegate: delegate,
+        activeAnimations: const <UniqueKey, TreeViewNodesAnimation>{},
+        rowDepths: const <int, int>{},
+        indentation: 8.0,
+        childManager: _NullChildManager(),
+        scrollCacheExtent: const ScrollCacheExtent.viewport(0.5),
+        alignment: AlignmentDirectional.bottomEnd,
+        textDirection: TextDirection.rtl,
+      );
+      addTearDown(customViewport.dispose);
+
+      expect(customViewport.alignment, AlignmentDirectional.bottomEnd);
+      expect(customViewport.textDirection, TextDirection.rtl);
+      expect(customViewport.scrollCacheExtent, const ScrollCacheExtent.viewport(0.5));
+    });
   });
+}
+
+class _NullChildManager implements TwoDimensionalChildManager {
+  @override
+  Object? noSuchMethod(Invocation invocation) => throw UnimplementedError();
 }
 
 // Hosts a viewport built by [viewportBuilder] in a two dimensional scrollable,
