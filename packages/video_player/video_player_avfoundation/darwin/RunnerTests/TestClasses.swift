@@ -73,6 +73,7 @@ final class TestAsset: WrappedAVAsset {
 final class StubPlayerItem: WrappedAVPlayerItem {
   let asset: WrappedAVAsset
   var videoComposition: AVVideoComposition?
+  var preferredForwardBufferDuration: TimeInterval = 0
 
   init(asset: WrappedAVAsset = TestAsset()) {
     self.asset = asset

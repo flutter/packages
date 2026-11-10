@@ -26,4 +26,15 @@ void main() {
     final options = VideoPlayerOptions(backBufferDurationMs: 20000);
     expect(options.backBufferDurationMs, 20000);
   });
+  test('VideoPlayerOptions forwardBufferDurationMs defaults to null', () {
+    final options = VideoPlayerOptions();
+    expect(options.forwardBufferDurationMs, null);
+  });
+  test('VideoPlayerOptions forwardBufferDurationMs stores configured value', () {
+    final options = VideoPlayerOptions(forwardBufferDurationMs: 15000);
+    expect(options.forwardBufferDurationMs, 15000);
+  });
+  test('VideoPlayerOptions forwardBufferDurationMs rejects negative values', () {
+    expect(() => VideoPlayerOptions(forwardBufferDurationMs: -1), throwsAssertionError);
+  });
 }

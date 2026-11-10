@@ -1,3 +1,8 @@
+## 2.13.0
+
+* Adds support for `VideoPlayerOptions.forwardBufferDurationMs`, capping how far ahead of the
+  playback position ExoPlayer buffers when streaming.
+
 ## 2.12.3
 
 * Updates Robolectric to 4.17 and adds the JVM arguments it requires for unit tests.
