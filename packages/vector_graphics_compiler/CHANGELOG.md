@@ -1,3 +1,13 @@
+## 1.3.5
+
+* Resolves the Flutter artifact cache using `package:cli_util` when running as a
+  standalone AOT-compiled executable (such as via `dart install` or
+  `dart run vector_graphics_compiler@`).
+
+## 1.3.4
+
+* Fixes `em` units in text `x`, `y`, `dx` and `dy` being treated as pixels.
+
 ## 1.3.3
 
 * Throws an `UnimplementedError` instead of a `FormatException` when `text` or

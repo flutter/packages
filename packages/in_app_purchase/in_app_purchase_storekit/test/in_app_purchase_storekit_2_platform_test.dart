@@ -774,4 +774,31 @@ void main() {
       expect(transactions.first.quantity, 2);
     });
   });
+
+  group('current entitlements', () {
+    test('should return current entitlements', () async {
+      final List<SK2Transaction> transactions = await SK2Transaction.currentEntitlements();
+
+      expect(transactions, isNotEmpty);
+      expect(transactions.first.id, '123');
+      expect(transactions.first.productId, 'product_id');
+      expect(transactions.first.expirationDate, (321321.32 * 1000).round().toString());
+    });
+
+    test('should expose receiptData (JWS) in current entitlements', () async {
+      final List<SK2Transaction> transactions = await SK2Transaction.currentEntitlements();
+
+      expect(transactions, isNotEmpty);
+      expect(transactions.first.receiptData, isNotNull);
+      expect(transactions.first.receiptData, 'fake_jws_representation');
+    });
+
+    test('should expose appAccountToken in current entitlements', () async {
+      final List<SK2Transaction> transactions = await SK2Transaction.currentEntitlements();
+
+      expect(transactions, isNotEmpty);
+      expect(transactions.first.appAccountToken, isNotNull);
+      expect(transactions.first.appAccountToken, 'fake_app_account_token');
+    });
+  });
 }
