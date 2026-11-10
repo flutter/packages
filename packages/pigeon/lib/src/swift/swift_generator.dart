@@ -744,6 +744,29 @@ private class _PigeonFfiCodec {
       writeString(string)
       return
     }
+    if let data = value as? Foundation.Data {
+      writeByte($codec.typeUint8List)
+      writeSize(data.count)
+      bytes.append(contentsOf: data)
+      return
+    }
+    if let array = value as? NSArray {
+      writeByte($codec.typeList)
+      writeSize(array.count)
+      for item in array {
+        writeValue(item)
+      }
+      return
+    }
+    if let dictionary = value as? NSDictionary {
+      writeByte($codec.typeMap)
+      writeSize(dictionary.count)
+      for (key, item) in dictionary {
+        writeValue(key)
+        writeValue(item)
+      }
+      return
+    }
     if writeCustomValueFallback(value) {
       return
     }

@@ -2971,6 +2971,29 @@ private struct NativeInteropTestsPigeonInteropWriter {
       writeString(string)
       return
     }
+    if let data = value as? Foundation.Data {
+      writeByte(NativeInteropTestsPigeonInteropCodec.typeUint8List)
+      writeSize(data.count)
+      bytes.append(contentsOf: data)
+      return
+    }
+    if let array = value as? NSArray {
+      writeByte(NativeInteropTestsPigeonInteropCodec.typeList)
+      writeSize(array.count)
+      for item in array {
+        writeValue(item)
+      }
+      return
+    }
+    if let dictionary = value as? NSDictionary {
+      writeByte(NativeInteropTestsPigeonInteropCodec.typeMap)
+      writeSize(dictionary.count)
+      for (key, item) in dictionary {
+        writeValue(key)
+        writeValue(item)
+      }
+      return
+    }
     if writeCustomValueFallback(value) {
       return
     }

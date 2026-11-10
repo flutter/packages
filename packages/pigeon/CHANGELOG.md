@@ -1,3 +1,7 @@
+## 30.0.1
+
+* [swift] Fixes Native Interop FFI codec serialization for `Data`, `NSData`, `NSArray`, and `NSDictionary` values.
+
 ## 30.0.0
 
 * **BREAKING CHANGE**: [kotlin,swift] Native Interop registration now supports multiple engines:
