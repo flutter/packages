@@ -18,7 +18,7 @@ export 'package:file_selector_platform_interface/file_selector_platform_interfac
         XFile,
         XTypeGroup;
 
-/// Opens a file selection dialog and returns the path chosen by the user.
+/// Opens a file selection dialog and returns the file chosen by the user.
 ///
 /// [acceptedTypeGroups] is a list of file type groups that can be selected in
 /// the dialog. How this is displayed depends on the platform, for example:
@@ -52,7 +52,7 @@ Future<XFile?> openFile({
   );
 }
 
-/// Opens a file selection dialog and returns the list of paths chosen by the
+/// Opens a file selection dialog and returns the list of files chosen by the
 /// user.
 ///
 /// [acceptedTypeGroups] is a list of file type groups that can be selected in
@@ -86,7 +86,7 @@ Future<List<XFile>> openFiles({
   );
 }
 
-/// Opens a save dialog and returns the target path chosen by the user.
+/// Opens a save dialog and returns the target location chosen by the user.
 ///
 /// [acceptedTypeGroups] is a list of file type groups that can be selected in
 /// the dialog. How this is displayed depends on the platform, for example:
@@ -129,7 +129,8 @@ Future<FileSaveLocation?> getSaveLocation({
   );
 }
 
-/// Opens a directory selection dialog and returns the path chosen by the user.
+/// Opens a directory selection dialog and returns the directory chosen by the
+/// user.
 ///
 /// This always returns `null` on the web.
 ///
@@ -159,8 +160,8 @@ Future<XDirectory?> getDirectory({
   );
 }
 
-/// Opens a directory selection dialog and returns a list of the paths chosen
-/// by the user.
+/// Opens a directory selection dialog and returns a list of the directories
+/// chosen by the user.
 ///
 /// This always returns an empty array on the web.
 ///

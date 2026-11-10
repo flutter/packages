@@ -2,7 +2,8 @@
 
 * **BREAKING CHANGES**:
   * Updates `cross_file` dependency to `0.4.0`. 
-  * Removes `MethodChannel` implementation.
+  * Removes default `MethodChannel` implementation: `MethodChannelFileSelector`. All implementations
+    should now extend `FileSelectorPlatform`.
   * Replaces `FileSelectorPlatform`'s implementation of `PlatformInterface` with the `base` keyword.
   * Changes `FileSelectorPlatform.openFile` to take an `OpenFileDialogOptions`.
   * Changes `FileSelectorPlatform.openFiles` to take an `OpenFilesDialogOptions`.
