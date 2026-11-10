@@ -1786,6 +1786,47 @@ void main() {
     );
   });
 
+  testWidgets('Action sheet semantics label is localized', (WidgetTester tester) async {
+    // Regression test for https://github.com/flutter/flutter/issues/195019
+    await tester.pumpWidget(
+      CupertinoApp(
+        locale: const Locale('pt'),
+        localizationsDelegates: GlobalCupertinoLocalizations.delegates,
+        supportedLocales: const <Locale>[Locale('pt')],
+        home: Center(
+          child: Builder(
+            builder: (BuildContext context) {
+              return CupertinoButton(
+                onPressed: () {
+                  showCupertinoModalPopup<void>(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return CupertinoActionSheet(
+                        title: const Text('The title'),
+                        actions: <Widget>[
+                          CupertinoActionSheetAction(child: const Text('One'), onPressed: () {}),
+                        ],
+                      );
+                    },
+                  );
+                },
+                child: const Text('Go'),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('Go'));
+    await tester.pumpAndSettle();
+
+    expect(find.bySemanticsLabel('Alert'), findsNothing);
+    final SemanticsNode sheet = tester.semantics.find(find.bySemanticsLabel('Alerta'));
+    expect(sheet.role, SemanticsRole.dialog);
+    expect(sheet, isSemantics(label: 'Alerta', namesRoute: true, scopesRoute: true));
+  });
+
   testWidgets('Conflicting scrollbars are not applied by ScrollBehavior to CupertinoActionSheet', (
     WidgetTester tester,
   ) async {
