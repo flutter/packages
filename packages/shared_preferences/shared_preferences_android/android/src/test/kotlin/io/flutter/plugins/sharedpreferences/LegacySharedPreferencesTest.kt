@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding
+import io.flutter.plugin.common.BinaryMessenger
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
@@ -31,6 +32,8 @@ class LegacySharedPreferencesTest {
     flutterPluginBinding = Mockito.mock(FlutterPluginBinding::class.java)
 
     Mockito.`when`(flutterPluginBinding.applicationContext).thenReturn(context)
+    Mockito.`when`(flutterPluginBinding.binaryMessenger)
+        .thenReturn(Mockito.mock(BinaryMessenger::class.java))
     Mockito.`when`(
             context.getSharedPreferences(ArgumentMatchers.anyString(), ArgumentMatchers.anyInt()))
         .thenReturn(sharedPrefs)
@@ -44,6 +47,7 @@ class LegacySharedPreferencesTest {
     val mockContext = Mockito.mock(Context::class.java)
     val binding = Mockito.mock(FlutterPluginBinding::class.java)
     Mockito.`when`(binding.applicationContext).thenReturn(mockContext)
+    Mockito.`when`(binding.binaryMessenger).thenReturn(Mockito.mock(BinaryMessenger::class.java))
     Mockito.`when`(
             mockContext.getSharedPreferences(
                 ArgumentMatchers.anyString(), ArgumentMatchers.anyInt()))
@@ -61,6 +65,42 @@ class LegacySharedPreferencesTest {
     testPlugin.getAll("", null)
     Mockito.verify(mockContext, Mockito.times(1))
         .getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
+  }
+
+  @Test
+  fun detachingSecondaryEnginePreservesPrimaryRegistration() {
+    val context1 = Mockito.mock(Context::class.java)
+    val context2 = Mockito.mock(Context::class.java)
+    val binding1 = Mockito.mock(FlutterPluginBinding::class.java)
+    val binding2 = Mockito.mock(FlutterPluginBinding::class.java)
+    Mockito.`when`(binding1.applicationContext).thenReturn(context1)
+    Mockito.`when`(binding2.applicationContext).thenReturn(context2)
+    Mockito.`when`(binding1.binaryMessenger).thenReturn(Mockito.mock(BinaryMessenger::class.java))
+    Mockito.`when`(binding2.binaryMessenger).thenReturn(Mockito.mock(BinaryMessenger::class.java))
+
+    val primaryPlugin = LegacySharedPreferencesPlugin(ListEncoder())
+    val secondaryPlugin = LegacySharedPreferencesPlugin(ListEncoder())
+    primaryPlugin.onAttachedToEngine(binding1)
+    val primaryRegistrar =
+        SharedPreferencesApiRegistrar.pigeonResolveInstance(Long.MIN_VALUE, Long.MIN_VALUE)
+    assertTrue(primaryRegistrar != null)
+
+    secondaryPlugin.onAttachedToEngine(binding2)
+    val secondaryRegistrar =
+        SharedPreferencesApiRegistrar.pigeonResolveInstance(Long.MIN_VALUE, Long.MIN_VALUE)
+    assertTrue(secondaryRegistrar != null)
+    assertTrue(secondaryRegistrar !== primaryRegistrar)
+
+    secondaryPlugin.onDetachedFromEngine(binding2)
+    assertTrue(
+        SharedPreferencesApiRegistrar.pigeonResolveInstance(Long.MIN_VALUE, Long.MIN_VALUE) ===
+            primaryRegistrar)
+
+    primaryPlugin.onDetachedFromEngine(binding1)
+    plugin.onAttachedToEngine(flutterPluginBinding)
+    // Restore `plugin` cleanly; tearDown detaches wouldn't apply to `binding1`/`binding2`.
+    assertTrue(
+        SharedPreferencesApiRegistrar.pigeonResolveInstance(Long.MIN_VALUE, Long.MIN_VALUE) != null)
   }
 
   @Test

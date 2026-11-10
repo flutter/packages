@@ -54,24 +54,29 @@ class SharedPreferencesPlugin() : FlutterPlugin, SharedPreferencesAsyncApi {
     this.listEncoder = listEncoder
   }
 
-  private fun setUp(context: Context) {
-    this.context = context
+  private fun setUp(binding: FlutterPlugin.FlutterPluginBinding) {
+    this.context = binding.applicationContext
     try {
-      SharedPreferencesAsyncApiRegistrar().register(this, "data_store")
-      backend = SharedPreferencesBackend(context, listEncoder)
+      SharedPreferencesAsyncApiRegistrar().register(this, binding, "data_store")
+      val sharedPrefsBackend = SharedPreferencesBackend(binding.applicationContext, listEncoder)
+      SharedPreferencesAsyncApiRegistrar()
+          .register(sharedPrefsBackend, binding, "shared_preferences")
+      backend = sharedPrefsBackend
     } catch (ex: Exception) {
       Log.e(TAG, "Received exception while setting up SharedPreferencesPlugin", ex)
     }
   }
 
   override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {
-    setUp(binding.applicationContext)
+    setUp(binding)
     legacyPlugin = LegacySharedPreferencesPlugin().also { it.onAttachedToEngine(binding) }
   }
 
   override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
-    SharedPreferencesAsyncApiRegistrar().register(null, "data_store")
-    backend?.tearDown()
+    SharedPreferencesAsyncApiRegistrar().unregister(this, binding, "data_store")
+    backend?.let {
+      SharedPreferencesAsyncApiRegistrar().unregister(it, binding, "shared_preferences")
+    }
     backend = null
     legacyPlugin?.onDetachedFromEngine(binding)
     legacyPlugin = null
@@ -286,18 +291,6 @@ class SharedPreferencesBackend(
     private var listEncoder: SharedPreferencesListEncoder = ListEncoder()
 ) : SharedPreferencesAsyncApi {
   private val backgroundDispatcher = Dispatchers.IO.limitedParallelism(1)
-
-  init {
-    try {
-      SharedPreferencesAsyncApiRegistrar().register(this, "shared_preferences")
-    } catch (ex: Exception) {
-      Log.e(TAG, "Received exception while setting up SharedPreferencesBackend", ex)
-    }
-  }
-
-  fun tearDown() {
-    SharedPreferencesAsyncApiRegistrar().register(null, "shared_preferences")
-  }
 
   private fun createSharedPreferences(options: SharedPreferencesPigeonOptions): SharedPreferences {
     return if (options.fileName == null) {

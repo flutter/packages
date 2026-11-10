@@ -236,4 +236,95 @@ struct RunnerTests {
     let finalValueNotNil = try plugin.getValue(key: testKeyTwo, options: emptyOptions) as? String
     #expect(finalValueNotNil == testValue)
   }
+
+  @Test func detachingSecondaryEnginePreservesPrimaryRegistrations() throws {
+    let registrar1 = StubPluginRegistrar(engineIdentifier: 1 << 40)
+    let registrar2 = StubPluginRegistrar(engineIdentifier: (1 << 40) + 1)
+    SharedPreferencesPlugin.register(with: registrar1)
+    let primaryUserDefaults = UserDefaultsApiSetup.pigeonResolveInstance(
+      engineId: Int64.min, affinityKey: Int64.min)
+    let primaryLegacy = LegacyUserDefaultsApiSetup.pigeonResolveInstance(
+      engineId: Int64.min, affinityKey: Int64.min)
+    #expect(primaryUserDefaults != nil)
+    #expect(primaryLegacy != nil)
+
+    SharedPreferencesPlugin.register(with: registrar2)
+    #expect(
+      UserDefaultsApiSetup.pigeonResolveInstance(engineId: Int64.min, affinityKey: Int64.min)
+        !== primaryUserDefaults)
+    #expect(
+      LegacyUserDefaultsApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min)
+        !== primaryLegacy)
+
+    let secondaryPlugin = try #require(
+      registrar2.valuePublished(byPlugin: "SharedPreferencesPlugin") as? SharedPreferencesPlugin)
+    secondaryPlugin.detachFromEngine(for: registrar2)
+
+    #expect(
+      UserDefaultsApiSetup.pigeonResolveInstance(engineId: Int64.min, affinityKey: Int64.min)
+        === primaryUserDefaults)
+    #expect(
+      LegacyUserDefaultsApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min)
+        === primaryLegacy)
+
+    let primaryPlugin = try #require(
+      registrar1.valuePublished(byPlugin: "SharedPreferencesPlugin") as? SharedPreferencesPlugin)
+    primaryPlugin.detachFromEngine(for: registrar1)
+  }
+}
+
+private final class StubBinaryMessenger: NSObject, FlutterBinaryMessenger {
+  func send(onChannel channel: String, message: Data?) {}
+  func send(
+    onChannel channel: String, message: Data?, binaryReply callback: FlutterBinaryReply? = nil
+  ) {}
+  func setMessageHandlerOnChannel(
+    _ channel: String, binaryMessageHandler handler: FlutterBinaryMessageHandler? = nil
+  ) -> FlutterBinaryMessengerConnection { 0 }
+  func cleanUpConnection(_ connection: FlutterBinaryMessengerConnection) {}
+}
+
+private final class StubTextureRegistry: NSObject, FlutterTextureRegistry {
+  func register(_ texture: FlutterTexture) -> Int64 { 0 }
+  func textureFrameAvailable(_ textureId: Int64) {}
+  func unregisterTexture(_ textureId: Int64) {}
+}
+
+private final class StubPluginRegistrar: NSObject, FlutterPluginRegistrar {
+  let stubMessenger: FlutterBinaryMessenger = StubBinaryMessenger()
+  let stubTextures: FlutterTextureRegistry = StubTextureRegistry()
+  @objc var engineIdentifier: Int64
+  var published: NSObject?
+
+  init(engineIdentifier: Int64) {
+    self.engineIdentifier = engineIdentifier
+    super.init()
+  }
+
+  func publish(_ value: NSObject) { published = value }
+  func addMethodCallDelegate(_ delegate: FlutterPlugin, channel: FlutterMethodChannel) {}
+  func lookupKey(forAsset asset: String) -> String { asset }
+  func lookupKey(forAsset asset: String, fromPackage package: String) -> String { asset }
+  func valuePublished(byPlugin pluginKey: String) -> NSObject? { published }
+  func register(_ factory: FlutterPlatformViewFactory, withId factoryId: String) {}
+
+  #if os(iOS)
+    var viewController: UIViewController? { nil }
+    func messenger() -> FlutterBinaryMessenger { stubMessenger }
+    func textures() -> FlutterTextureRegistry { stubTextures }
+    func addApplicationDelegate(_ delegate: FlutterPlugin) {}
+    func addSceneDelegate(_ delegate: FlutterSceneLifeCycleDelegate) {}
+    func register(
+      _ factory: FlutterPlatformViewFactory, withId factoryId: String,
+      gestureRecognizersBlockingPolicy: FlutterPlatformViewGestureRecognizersBlockingPolicy
+    ) {}
+  #elseif os(macOS)
+    var messenger: FlutterBinaryMessenger { stubMessenger }
+    var textures: FlutterTextureRegistry { stubTextures }
+    var view: NSView? { nil }
+    var viewController: NSViewController? { nil }
+    func addApplicationDelegate(_ delegate: FlutterAppLifecycleDelegate) {}
+  #endif
 }

@@ -1,3 +1,7 @@
+## 2.6.2
+
+* Updates Pigeon to 30.0.0 to support multi-engine registration and deregistration.
+
 ## 2.6.1
 
 * Fixes web compilation of apps that import `package:shared_preferences_foundation`, for example to use `SharedPreferencesAsyncFoundationOptions`.

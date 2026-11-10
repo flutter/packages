@@ -1,3 +1,7 @@
+## 2.5.5
+
+* Updates Pigeon to 30.0.0 to support multi-engine registration and deregistration.
+
 ## 2.5.4
 
 * Fixes eager SharedPreferences fetch in `LegacySharedPreferencesPlugin` executing synchronous disk I/O on Android main thread during startup by deferring the fetch until first use.

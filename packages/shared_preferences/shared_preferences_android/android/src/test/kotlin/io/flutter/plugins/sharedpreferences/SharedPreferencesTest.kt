@@ -52,6 +52,7 @@ internal class SharedPreferencesTest {
     val plugin = SharedPreferencesPlugin()
     val flutterPluginBinding = mockk<FlutterPlugin.FlutterPluginBinding>()
     every { flutterPluginBinding.applicationContext } returns testContext
+    every { flutterPluginBinding.binaryMessenger } returns mockk(relaxed = true)
     plugin.onAttachedToEngine(flutterPluginBinding)
     val backend = SharedPreferencesBackend(flutterPluginBinding.applicationContext)
     return if (options.useDataStore) {
@@ -413,6 +414,7 @@ internal class SharedPreferencesTest {
       val plugin = SharedPreferencesPlugin(trackingEncoder)
       val flutterPluginBinding = mockk<FlutterPlugin.FlutterPluginBinding>()
       every { flutterPluginBinding.applicationContext } returns testContext
+      every { flutterPluginBinding.binaryMessenger } returns mockk(relaxed = true)
       plugin.onAttachedToEngine(flutterPluginBinding)
 
       val api: SharedPreferencesAsyncApi =
@@ -436,5 +438,58 @@ internal class SharedPreferencesTest {
       Assert.assertEquals(1, maxConcurrent.get())
       Assert.assertTrue(executionThreads.all { it != callerThread })
     }
+  }
+
+  @Test
+  fun detachingSecondaryEnginePreservesPrimaryRegistrations() = runBlocking {
+    val binding1 = mockk<FlutterPlugin.FlutterPluginBinding>()
+    val binding2 = mockk<FlutterPlugin.FlutterPluginBinding>()
+    every { binding1.applicationContext } returns testContext
+    every { binding2.applicationContext } returns testContext
+    every { binding1.binaryMessenger } returns mockk(relaxed = true)
+    every { binding2.binaryMessenger } returns mockk(relaxed = true)
+
+    val primaryPlugin = SharedPreferencesPlugin()
+    val secondaryPlugin = SharedPreferencesPlugin()
+    primaryPlugin.onAttachedToEngine(binding1)
+    val primaryDataStore =
+        SharedPreferencesAsyncApiRegistrar.pigeonResolveInstance(
+            Long.MIN_VALUE, Long.MIN_VALUE, "data_store")
+    val primaryPrefs =
+        SharedPreferencesAsyncApiRegistrar.pigeonResolveInstance(
+            Long.MIN_VALUE, Long.MIN_VALUE, "shared_preferences")
+    val primaryLegacy =
+        SharedPreferencesApiRegistrar.pigeonResolveInstance(Long.MIN_VALUE, Long.MIN_VALUE)
+    Assert.assertNotNull(primaryDataStore)
+    Assert.assertNotNull(primaryPrefs)
+    Assert.assertNotNull(primaryLegacy)
+
+    secondaryPlugin.onAttachedToEngine(binding2)
+    Assert.assertNotSame(
+        primaryDataStore,
+        SharedPreferencesAsyncApiRegistrar.pigeonResolveInstance(
+            Long.MIN_VALUE, Long.MIN_VALUE, "data_store"))
+    Assert.assertNotSame(
+        primaryPrefs,
+        SharedPreferencesAsyncApiRegistrar.pigeonResolveInstance(
+            Long.MIN_VALUE, Long.MIN_VALUE, "shared_preferences"))
+    Assert.assertNotSame(
+        primaryLegacy,
+        SharedPreferencesApiRegistrar.pigeonResolveInstance(Long.MIN_VALUE, Long.MIN_VALUE))
+
+    secondaryPlugin.onDetachedFromEngine(binding2)
+    Assert.assertSame(
+        primaryDataStore,
+        SharedPreferencesAsyncApiRegistrar.pigeonResolveInstance(
+            Long.MIN_VALUE, Long.MIN_VALUE, "data_store"))
+    Assert.assertSame(
+        primaryPrefs,
+        SharedPreferencesAsyncApiRegistrar.pigeonResolveInstance(
+            Long.MIN_VALUE, Long.MIN_VALUE, "shared_preferences"))
+    Assert.assertSame(
+        primaryLegacy,
+        SharedPreferencesApiRegistrar.pigeonResolveInstance(Long.MIN_VALUE, Long.MIN_VALUE))
+
+    primaryPlugin.onDetachedFromEngine(binding1)
   }
 }
