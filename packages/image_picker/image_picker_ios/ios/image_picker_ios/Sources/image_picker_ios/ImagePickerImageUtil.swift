@@ -49,17 +49,17 @@ enum ImagePickerImageUtil {
   /// Resizes the given image to fit within maxWidth (if non-nil) and maxHeight (if non-nil).
   static func scaledImage(
     _ image: UIImage?,
-    maxWidth: NSNumber?,
-    maxHeight: NSNumber?,
+    maxWidth: Double?,
+    maxHeight: Double?,
     isMetadataAvailable: Bool
   ) -> UIImage? {
-    let originalWidth = image?.size.width ?? 0
-    let originalHeight = image?.size.height ?? 0
+    let originalWidth = Double(image?.size.width ?? 0)
+    let originalHeight = Double(image?.size.height ?? 0)
 
     let hasMaxWidth = maxWidth != nil
     let hasMaxHeight = maxHeight != nil
 
-    if (originalWidth == maxWidth?.doubleValue && originalHeight == maxHeight?.doubleValue)
+    if (maxWidth == originalWidth && maxHeight == originalHeight)
       || (!hasMaxWidth && !hasMaxHeight)
     {
       // Nothing to scale.
@@ -69,12 +69,12 @@ enum ImagePickerImageUtil {
     let aspectRatio = originalWidth / originalHeight
 
     var width =
-      hasMaxWidth ? min(round(maxWidth!.doubleValue), originalWidth) : originalWidth
+      hasMaxWidth ? min(round(maxWidth!), originalWidth) : originalWidth
     var height =
-      hasMaxHeight ? min(round(maxHeight!.doubleValue), originalHeight) : originalHeight
+      hasMaxHeight ? min(round(maxHeight!), originalHeight) : originalHeight
 
-    let shouldDownscaleWidth = hasMaxWidth && maxWidth!.doubleValue < originalWidth
-    let shouldDownscaleHeight = hasMaxHeight && maxHeight!.doubleValue < originalHeight
+    let shouldDownscaleWidth = hasMaxWidth && maxWidth! < originalWidth
+    let shouldDownscaleHeight = hasMaxHeight && maxHeight! < originalHeight
     let shouldDownscale = shouldDownscaleWidth || shouldDownscaleHeight
 
     if shouldDownscale {
@@ -118,7 +118,7 @@ enum ImagePickerImageUtil {
   }
 
   /// Resize all gif animation frames.
-  static func scaledGIFImage(_ data: Data, maxWidth: NSNumber?, maxHeight: NSNumber?) -> GIFInfo {
+  static func scaledGIFImage(_ data: Data, maxWidth: Double?, maxHeight: Double?) -> GIFInfo {
     let options: [CFString: Any] = [
       kCGImageSourceShouldCache: true,
       kCGImageSourceTypeIdentifierHint: UTType.gif.identifier,
@@ -138,13 +138,12 @@ enum ImagePickerImageUtil {
         CGImageSourceCopyPropertiesAtIndex(imageSource, index, nil) as NSDictionary?
       let gifProperties = properties?[kCGImagePropertyGIFDictionary] as? NSDictionary
 
-      var delay = gifProperties?[kCGImagePropertyGIFUnclampedDelayTime] as? NSNumber
-      if delay == nil {
-        delay = gifProperties?[kCGImagePropertyGIFDelayTime] as? NSNumber
-      }
+      let delay =
+        gifProperties?[kCGImagePropertyGIFUnclampedDelayTime] as? Double
+        ?? gifProperties?[kCGImagePropertyGIFDelayTime] as? Double
 
       if interval == 0.0 {
-        interval = delay?.doubleValue ?? 0
+        interval = delay ?? 0
       }
 
       var image: UIImage?

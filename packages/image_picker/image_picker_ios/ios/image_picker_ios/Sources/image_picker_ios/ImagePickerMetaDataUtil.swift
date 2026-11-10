@@ -91,7 +91,7 @@ enum ImagePickerMetaDataUtil {
   /// warning and returns the image with original quality. Converting to GIF is not supported
   /// and falls back to JPEG, matching the Objective-C implementation.
   static func convert(
-    _ image: UIImage?, usingType type: ImagePickerMIMEType, quality: NSNumber?
+    _ image: UIImage?, usingType type: ImagePickerMIMEType, quality: Double?
   ) -> Data? {
     guard let image else { return nil }
     if quality != nil && type != .jpeg {
@@ -105,12 +105,12 @@ enum ImagePickerMetaDataUtil {
 
     switch type {
     case .jpeg:
-      let qualityFloat: CGFloat = quality != nil ? CGFloat(truncating: quality!) : 1
+      let qualityFloat = CGFloat(quality ?? 1)
       return image.jpegData(compressionQuality: qualityFloat)
     case .png:
       return image.pngData()
     default:
-      let qualityFloat: CGFloat = quality != nil ? CGFloat(truncating: quality!) : 1
+      let qualityFloat = CGFloat(quality ?? 1)
       return image.jpegData(compressionQuality: qualityFloat)
     }
   }

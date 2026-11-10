@@ -270,6 +270,7 @@ class PigeonOptions {
     this.fileSpecificClassNameComponent,
     String? dartPackageName,
     this.ignoreLints = true,
+    this.nativeInteropTransport,
   }) : _dartPackageName = dartPackageName;
 
   /// Path to the file which will be processed.
@@ -372,6 +373,15 @@ class PigeonOptions {
   /// A String to augment class names to avoid cross-file collisions.
   final String? fileSpecificClassNameComponent;
 
+  /// How native interop moves values between Dart and the host platform.
+  ///
+  /// Only applies to files that use `KotlinOptions.useJni` or
+  /// `SwiftOptions.useFfi`. Defaults to [NativeInteropTransport.hybrid];
+  /// [NativeInteropTransport.objects] is retained for testing, benchmarking,
+  /// and future lazy-access support.
+  @visibleForTesting
+  final NativeInteropTransport? nativeInteropTransport;
+
   /// Creates a [PigeonOptions] from a Map representation where:
   /// `x = PigeonOptions.fromMap(x.toMap())`.
   static PigeonOptions fromMap(Map<String, Object> map) {
@@ -419,6 +429,9 @@ class PigeonOptions {
       basePath: map['basePath'] as String?,
       fileSpecificClassNameComponent: map['fileSpecificClassNameComponent'] as String?,
       dartPackageName: map['dartPackageName'] as String?,
+      nativeInteropTransport: NativeInteropTransport.fromName(
+        map['nativeInteropTransport'] as String?,
+      ),
     );
   }
 
@@ -454,6 +467,7 @@ class PigeonOptions {
       if (fileSpecificClassNameComponent != null)
         'fileSpecificClassNameComponent': fileSpecificClassNameComponent!,
       if (_dartPackageName != null) 'dartPackageName': _dartPackageName,
+      if (nativeInteropTransport != null) 'nativeInteropTransport': nativeInteropTransport!.name,
     };
     return result;
   }
@@ -692,6 +706,12 @@ ${_argParser.usage}''';
       help: 'A String to augment class names to avoid cross file collisions.',
     )
     ..addOption('package_name', help: 'The package that generated code will be in.')
+    ..addOption(
+      'native_interop_transport',
+      help: 'How native interop (JNI and FFI) moves values between Dart and the host platform.',
+      allowed: NativeInteropTransport.values.map((NativeInteropTransport t) => t.name),
+      hide: true,
+    )
     ..addFlag(
       'ignore_lints',
       help: 'Ignore all lint violations in generated Dart code.',
@@ -774,6 +794,9 @@ ${_argParser.usage}''';
       fileSpecificClassNameComponent: results['file_specific_class_name_component'] as String?,
       dartPackageName: results['package_name'] as String?,
       ignoreLints: results.flag('ignore_lints'),
+      nativeInteropTransport: NativeInteropTransport.fromName(
+        results['native_interop_transport'] as String?,
+      ),
     );
     return opts;
   }
