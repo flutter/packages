@@ -27,8 +27,8 @@ typedef _PaintSegment = ({int leadingIndex, int trailingIndex});
 class RenderTreeViewport extends RenderTwoDimensionalViewport {
   /// Creates a viewport for [RenderBox] objects in a tree format of rows.
   RenderTreeViewport({
-    required Map<UniqueKey, TreeViewNodesAnimation> activeAnimations,
-    required Map<int, int> rowDepths,
+    required this._activeAnimations,
+    required this._rowDepths,
     required double indentation,
     required super.horizontalOffset,
     required super.horizontalAxisDirection,
@@ -38,13 +38,9 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
     required super.childManager,
     super.scrollCacheExtent,
     super.clipBehavior,
-    AlignmentGeometry alignment = Alignment.topLeft,
-    TextDirection? textDirection,
-  }) : _activeAnimations = activeAnimations,
-       _rowDepths = rowDepths,
-       _indentation = indentation,
-       _alignment = alignment,
-       _textDirection = textDirection,
+    this._alignment = Alignment.topLeft,
+    this._textDirection,
+  }) : _indentation = indentation,
        assert(indentation >= 0),
        assert(
          verticalAxisDirection == AxisDirection.down &&
