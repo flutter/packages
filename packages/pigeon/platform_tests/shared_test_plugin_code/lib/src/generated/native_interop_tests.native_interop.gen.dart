@@ -10025,11 +10025,11 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
 
 final class _NativeInteropFlutterIntegrationCoreApiRegistrar
     with jni_bridge.$NativeInteropFlutterIntegrationCoreApiBridge {
-  _NativeInteropFlutterIntegrationCoreApiRegistrar(this.dartApi);
+  _NativeInteropFlutterIntegrationCoreApiRegistrar(this.pigeonVar_dartApi);
 
-  final NativeInteropFlutterIntegrationCoreApi dartApi;
+  final NativeInteropFlutterIntegrationCoreApi pigeonVar_dartApi;
 
-  NativeInteropFlutterIntegrationCoreApi register({String name = defaultInstanceName}) {
+  NativeInteropFlutterIntegrationCoreApi pigeonVar_register({String name = defaultInstanceName}) {
     if (Platform.isAndroid) {
       final jni_bridge.NativeInteropFlutterIntegrationCoreApiBridge impl =
           jni_bridge.NativeInteropFlutterIntegrationCoreApiBridge.implement(this);
@@ -10046,7 +10046,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
         builder,
         (ffi_bridge.NativeInteropTestsError errorOut) {
           try {
-            dartApi.noop();
+            pigeonVar_dartApi.noop();
             return;
           } catch (e) {
             _reportFfiError(errorOut, e);
@@ -10057,7 +10057,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
       ffi_bridge.NativeInteropFlutterIntegrationCoreApiBridge$Builder.throwFlutterErrorWithError_
           .implement(builder, (ffi_bridge.NativeInteropTestsError errorOut) {
             try {
-              final Object? response = dartApi.throwFlutterError();
+              final Object? response = pigeonVar_dartApi.throwFlutterError();
               return _PigeonFfiBuffers.encodeOrNull(response);
             } catch (e) {
               _reportFfiError(errorOut, e);
@@ -10067,7 +10067,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
       ffi_bridge.NativeInteropFlutterIntegrationCoreApiBridge$Builder.throwErrorWithError_
           .implement(builder, (ffi_bridge.NativeInteropTestsError errorOut) {
             try {
-              final Object? response = dartApi.throwError();
+              final Object? response = pigeonVar_dartApi.throwError();
               return _PigeonFfiBuffers.encodeOrNull(response);
             } catch (e) {
               _reportFfiError(errorOut, e);
@@ -10077,7 +10077,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
       ffi_bridge.NativeInteropFlutterIntegrationCoreApiBridge$Builder.throwErrorFromVoidWithError_
           .implement(builder, (ffi_bridge.NativeInteropTestsError errorOut) {
             try {
-              dartApi.throwErrorFromVoid();
+              pigeonVar_dartApi.throwErrorFromVoid();
               return;
             } catch (e) {
               _reportFfiError(errorOut, e);
@@ -10091,7 +10091,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             try {
               final List<Object?> pigeonVar_decodedArgs =
                   _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
-              final NativeInteropAllTypes response = dartApi.echoNativeInteropAllTypes(
+              final NativeInteropAllTypes response = pigeonVar_dartApi.echoNativeInteropAllTypes(
                 pigeonVar_decodedArgs[0]! as NativeInteropAllTypes,
               );
               return _PigeonFfiBuffers.encodeOrNull(response);
@@ -10107,7 +10107,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             try {
               final List<Object?> pigeonVar_decodedArgs =
                   _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
-              final NativeInteropAllNullableTypes? response = dartApi
+              final NativeInteropAllNullableTypes? response = pigeonVar_dartApi
                   .echoNativeInteropAllNullableTypes(
                     pigeonVar_decodedArgs[0] as NativeInteropAllNullableTypes?,
                   );
@@ -10124,9 +10124,10 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             try {
               final List<Object?> pigeonVar_decodedArgs =
                   _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
-              final NativeInteropSealedClass response = dartApi.echoNativeInteropSealedClass(
-                pigeonVar_decodedArgs[0]! as NativeInteropSealedClass,
-              );
+              final NativeInteropSealedClass response = pigeonVar_dartApi
+                  .echoNativeInteropSealedClass(
+                    pigeonVar_decodedArgs[0]! as NativeInteropSealedClass,
+                  );
               return _PigeonFfiBuffers.encodeOrNull(response);
             } catch (e) {
               _reportFfiError(errorOut, e);
@@ -10143,11 +10144,12 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             ffi_bridge.NativeInteropTestsError errorOut,
           ) {
             try {
-              final NativeInteropAllNullableTypes response = dartApi.sendMultipleNullableTypes(
-                arg_aNullableBool?.boolValue,
-                arg_aNullableInt?.longValue,
-                arg_aNullableString?.toDartString(),
-              );
+              final NativeInteropAllNullableTypes response = pigeonVar_dartApi
+                  .sendMultipleNullableTypes(
+                    arg_aNullableBool?.boolValue,
+                    arg_aNullableInt?.longValue,
+                    arg_aNullableString?.toDartString(),
+                  );
               return _PigeonFfiBuffers.encodeOrNull(response);
             } catch (e) {
               _reportFfiError(errorOut, e);
@@ -10161,7 +10163,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             try {
               final List<Object?> pigeonVar_decodedArgs =
                   _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
-              final NativeInteropAllNullableTypesWithoutRecursion? response = dartApi
+              final NativeInteropAllNullableTypesWithoutRecursion? response = pigeonVar_dartApi
                   .echoNativeInteropAllNullableTypesWithoutRecursion(
                     pigeonVar_decodedArgs[0] as NativeInteropAllNullableTypesWithoutRecursion?,
                   );
@@ -10181,7 +10183,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             ffi_bridge.NativeInteropTestsError errorOut,
           ) {
             try {
-              final NativeInteropAllNullableTypesWithoutRecursion response = dartApi
+              final NativeInteropAllNullableTypesWithoutRecursion response = pigeonVar_dartApi
                   .sendMultipleNullableTypesWithoutRecursion(
                     arg_aNullableBool?.boolValue,
                     arg_aNullableInt?.longValue,
@@ -10196,7 +10198,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
       ffi_bridge.NativeInteropFlutterIntegrationCoreApiBridge$Builder.echoBoolWithABool_error_
           .implement(builder, (bool arg_aBool, ffi_bridge.NativeInteropTestsError errorOut) {
             try {
-              final bool response = dartApi.echoBool(arg_aBool);
+              final bool response = pigeonVar_dartApi.echoBool(arg_aBool);
               return _PigeonFfiCodec.writeValue<NSNumber?>(response);
             } catch (e) {
               _reportFfiError(errorOut, e);
@@ -10206,7 +10208,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
       ffi_bridge.NativeInteropFlutterIntegrationCoreApiBridge$Builder.echoIntWithAnInt_error_
           .implement(builder, (int arg_anInt, ffi_bridge.NativeInteropTestsError errorOut) {
             try {
-              final int response = dartApi.echoInt(arg_anInt);
+              final int response = pigeonVar_dartApi.echoInt(arg_anInt);
               return _PigeonFfiCodec.writeValue<NSNumber?>(response);
             } catch (e) {
               _reportFfiError(errorOut, e);
@@ -10216,7 +10218,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
       ffi_bridge.NativeInteropFlutterIntegrationCoreApiBridge$Builder.echoDoubleWithADouble_error_
           .implement(builder, (double arg_aDouble, ffi_bridge.NativeInteropTestsError errorOut) {
             try {
-              final double response = dartApi.echoDouble(arg_aDouble);
+              final double response = pigeonVar_dartApi.echoDouble(arg_aDouble);
               return _PigeonFfiCodec.writeValue<NSNumber?>(response);
             } catch (e) {
               _reportFfiError(errorOut, e);
@@ -10226,7 +10228,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
       ffi_bridge.NativeInteropFlutterIntegrationCoreApiBridge$Builder.echoStringWithAString_error_
           .implement(builder, (NSString arg_aString, ffi_bridge.NativeInteropTestsError errorOut) {
             try {
-              final String response = dartApi.echoString(arg_aString.toDartString());
+              final String response = pigeonVar_dartApi.echoString(arg_aString.toDartString());
               return NSString(response);
             } catch (e) {
               _reportFfiError(errorOut, e);
@@ -10236,7 +10238,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
       ffi_bridge.NativeInteropFlutterIntegrationCoreApiBridge$Builder.echoUint8ListWithList_error_
           .implement(builder, (NSData arg_list, ffi_bridge.NativeInteropTestsError errorOut) {
             try {
-              final Uint8List response = dartApi.echoUint8List(
+              final Uint8List response = pigeonVar_dartApi.echoUint8List(
                 _PigeonFfiBuffers.toUint8List(arg_list)!,
               );
               return _typedDataToNSData(response);
@@ -10248,7 +10250,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
       ffi_bridge.NativeInteropFlutterIntegrationCoreApiBridge$Builder.echoInt32ListWithList_error_
           .implement(builder, (NSData arg_list, ffi_bridge.NativeInteropTestsError errorOut) {
             try {
-              final Int32List response = dartApi.echoInt32List(
+              final Int32List response = pigeonVar_dartApi.echoInt32List(
                 _PigeonFfiBuffers.toUint8List(arg_list)!.buffer.asInt32List(),
               );
               return _typedDataToNSData(response);
@@ -10260,7 +10262,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
       ffi_bridge.NativeInteropFlutterIntegrationCoreApiBridge$Builder.echoInt64ListWithList_error_
           .implement(builder, (NSData arg_list, ffi_bridge.NativeInteropTestsError errorOut) {
             try {
-              final Int64List response = dartApi.echoInt64List(
+              final Int64List response = pigeonVar_dartApi.echoInt64List(
                 _PigeonFfiBuffers.toUint8List(arg_list)!.buffer.asInt64List(),
               );
               return _typedDataToNSData(response);
@@ -10272,7 +10274,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
       ffi_bridge.NativeInteropFlutterIntegrationCoreApiBridge$Builder.echoFloat64ListWithList_error_
           .implement(builder, (NSData arg_list, ffi_bridge.NativeInteropTestsError errorOut) {
             try {
-              final Float64List response = dartApi.echoFloat64List(
+              final Float64List response = pigeonVar_dartApi.echoFloat64List(
                 _PigeonFfiBuffers.toUint8List(arg_list)!.buffer.asFloat64List(),
               );
               return _typedDataToNSData(response);
@@ -10288,7 +10290,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             try {
               final List<Object?> pigeonVar_decodedArgs =
                   _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
-              final List<Object?> response = dartApi.echoList(
+              final List<Object?> response = pigeonVar_dartApi.echoList(
                 pigeonVar_decodedArgs[0]! as List<Object?>,
               );
               return _PigeonFfiBuffers.encodeOrNull(response);
@@ -10304,7 +10306,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             try {
               final List<Object?> pigeonVar_decodedArgs =
                   _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
-              final List<NativeInteropAnEnum?> response = dartApi.echoEnumList(
+              final List<NativeInteropAnEnum?> response = pigeonVar_dartApi.echoEnumList(
                 (pigeonVar_decodedArgs[0]! as List<Object?>).cast<NativeInteropAnEnum?>(),
               );
               return _PigeonFfiBuffers.encodeOrNull(response);
@@ -10320,7 +10322,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             try {
               final List<Object?> pigeonVar_decodedArgs =
                   _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
-              final List<NativeInteropAllNullableTypes?> response = dartApi.echoClassList(
+              final List<NativeInteropAllNullableTypes?> response = pigeonVar_dartApi.echoClassList(
                 (pigeonVar_decodedArgs[0]! as List<Object?>).cast<NativeInteropAllNullableTypes?>(),
               );
               return _PigeonFfiBuffers.encodeOrNull(response);
@@ -10336,7 +10338,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             try {
               final List<Object?> pigeonVar_decodedArgs =
                   _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
-              final List<NativeInteropAnEnum> response = dartApi.echoNonNullEnumList(
+              final List<NativeInteropAnEnum> response = pigeonVar_dartApi.echoNonNullEnumList(
                 (pigeonVar_decodedArgs[0]! as List<Object?>).cast<NativeInteropAnEnum>(),
               );
               return _PigeonFfiBuffers.encodeOrNull(response);
@@ -10352,9 +10354,11 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             try {
               final List<Object?> pigeonVar_decodedArgs =
                   _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
-              final List<NativeInteropAllNullableTypes> response = dartApi.echoNonNullClassList(
-                (pigeonVar_decodedArgs[0]! as List<Object?>).cast<NativeInteropAllNullableTypes>(),
-              );
+              final List<NativeInteropAllNullableTypes> response = pigeonVar_dartApi
+                  .echoNonNullClassList(
+                    (pigeonVar_decodedArgs[0]! as List<Object?>)
+                        .cast<NativeInteropAllNullableTypes>(),
+                  );
               return _PigeonFfiBuffers.encodeOrNull(response);
             } catch (e) {
               _reportFfiError(errorOut, e);
@@ -10368,7 +10372,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             try {
               final List<Object?> pigeonVar_decodedArgs =
                   _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
-              final Map<Object?, Object?> response = dartApi.echoMap(
+              final Map<Object?, Object?> response = pigeonVar_dartApi.echoMap(
                 pigeonVar_decodedArgs[0]! as Map<Object?, Object?>,
               );
               return _PigeonFfiBuffers.encodeOrNull(response);
@@ -10384,7 +10388,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             try {
               final List<Object?> pigeonVar_decodedArgs =
                   _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
-              final Map<String?, String?> response = dartApi.echoStringMap(
+              final Map<String?, String?> response = pigeonVar_dartApi.echoStringMap(
                 (pigeonVar_decodedArgs[0]! as Map<Object?, Object?>).cast<String?, String?>(),
               );
               return _PigeonFfiBuffers.encodeOrNull(response);
@@ -10400,7 +10404,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             try {
               final List<Object?> pigeonVar_decodedArgs =
                   _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
-              final Map<int?, int?> response = dartApi.echoIntMap(
+              final Map<int?, int?> response = pigeonVar_dartApi.echoIntMap(
                 (pigeonVar_decodedArgs[0]! as Map<Object?, Object?>).cast<int?, int?>(),
               );
               return _PigeonFfiBuffers.encodeOrNull(response);
@@ -10416,10 +10420,11 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             try {
               final List<Object?> pigeonVar_decodedArgs =
                   _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
-              final Map<NativeInteropAnEnum?, NativeInteropAnEnum?> response = dartApi.echoEnumMap(
-                (pigeonVar_decodedArgs[0]! as Map<Object?, Object?>)
-                    .cast<NativeInteropAnEnum?, NativeInteropAnEnum?>(),
-              );
+              final Map<NativeInteropAnEnum?, NativeInteropAnEnum?> response = pigeonVar_dartApi
+                  .echoEnumMap(
+                    (pigeonVar_decodedArgs[0]! as Map<Object?, Object?>)
+                        .cast<NativeInteropAnEnum?, NativeInteropAnEnum?>(),
+                  );
               return _PigeonFfiBuffers.encodeOrNull(response);
             } catch (e) {
               _reportFfiError(errorOut, e);
@@ -10433,10 +10438,11 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             try {
               final List<Object?> pigeonVar_decodedArgs =
                   _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
-              final Map<int?, NativeInteropAllNullableTypes?> response = dartApi.echoClassMap(
-                (pigeonVar_decodedArgs[0]! as Map<Object?, Object?>)
-                    .cast<int?, NativeInteropAllNullableTypes?>(),
-              );
+              final Map<int?, NativeInteropAllNullableTypes?> response = pigeonVar_dartApi
+                  .echoClassMap(
+                    (pigeonVar_decodedArgs[0]! as Map<Object?, Object?>)
+                        .cast<int?, NativeInteropAllNullableTypes?>(),
+                  );
               return _PigeonFfiBuffers.encodeOrNull(response);
             } catch (e) {
               _reportFfiError(errorOut, e);
@@ -10450,7 +10456,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             try {
               final List<Object?> pigeonVar_decodedArgs =
                   _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
-              final Map<String, String> response = dartApi.echoNonNullStringMap(
+              final Map<String, String> response = pigeonVar_dartApi.echoNonNullStringMap(
                 (pigeonVar_decodedArgs[0]! as Map<Object?, Object?>).cast<String, String>(),
               );
               return _PigeonFfiBuffers.encodeOrNull(response);
@@ -10466,7 +10472,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             try {
               final List<Object?> pigeonVar_decodedArgs =
                   _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
-              final Map<int, int> response = dartApi.echoNonNullIntMap(
+              final Map<int, int> response = pigeonVar_dartApi.echoNonNullIntMap(
                 (pigeonVar_decodedArgs[0]! as Map<Object?, Object?>).cast<int, int>(),
               );
               return _PigeonFfiBuffers.encodeOrNull(response);
@@ -10482,7 +10488,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             try {
               final List<Object?> pigeonVar_decodedArgs =
                   _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
-              final Map<NativeInteropAnEnum, NativeInteropAnEnum> response = dartApi
+              final Map<NativeInteropAnEnum, NativeInteropAnEnum> response = pigeonVar_dartApi
                   .echoNonNullEnumMap(
                     (pigeonVar_decodedArgs[0]! as Map<Object?, Object?>)
                         .cast<NativeInteropAnEnum, NativeInteropAnEnum>(),
@@ -10500,10 +10506,11 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             try {
               final List<Object?> pigeonVar_decodedArgs =
                   _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
-              final Map<int, NativeInteropAllNullableTypes> response = dartApi.echoNonNullClassMap(
-                (pigeonVar_decodedArgs[0]! as Map<Object?, Object?>)
-                    .cast<int, NativeInteropAllNullableTypes>(),
-              );
+              final Map<int, NativeInteropAllNullableTypes> response = pigeonVar_dartApi
+                  .echoNonNullClassMap(
+                    (pigeonVar_decodedArgs[0]! as Map<Object?, Object?>)
+                        .cast<int, NativeInteropAllNullableTypes>(),
+                  );
               return _PigeonFfiBuffers.encodeOrNull(response);
             } catch (e) {
               _reportFfiError(errorOut, e);
@@ -10513,7 +10520,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
       ffi_bridge.NativeInteropFlutterIntegrationCoreApiBridge$Builder.echoEnumWithAnEnum_error_
           .implement(builder, (int arg_anEnum, ffi_bridge.NativeInteropTestsError errorOut) {
             try {
-              final NativeInteropAnEnum response = dartApi.echoEnum(
+              final NativeInteropAnEnum response = pigeonVar_dartApi.echoEnum(
                 NativeInteropAnEnum.values[arg_anEnum],
               );
               return NSNumber.alloc().initWithLong(response.index);
@@ -10527,9 +10534,8 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
           .echoNativeInteropAnotherEnumWithAnotherEnum_error_
           .implement(builder, (int arg_anotherEnum, ffi_bridge.NativeInteropTestsError errorOut) {
             try {
-              final NativeInteropAnotherEnum response = dartApi.echoNativeInteropAnotherEnum(
-                NativeInteropAnotherEnum.values[arg_anotherEnum],
-              );
+              final NativeInteropAnotherEnum response = pigeonVar_dartApi
+                  .echoNativeInteropAnotherEnum(NativeInteropAnotherEnum.values[arg_anotherEnum]);
               return NSNumber.alloc().initWithLong(response.index);
             } catch (e) {
               _reportFfiError(errorOut, e);
@@ -10541,7 +10547,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
           .echoNullableBoolWithABool_error_
           .implement(builder, (NSNumber? arg_aBool, ffi_bridge.NativeInteropTestsError errorOut) {
             try {
-              final bool? response = dartApi.echoNullableBool(arg_aBool?.boolValue);
+              final bool? response = pigeonVar_dartApi.echoNullableBool(arg_aBool?.boolValue);
               return _PigeonFfiCodec.writeValue<NSNumber?>(response);
             } catch (e) {
               _reportFfiError(errorOut, e);
@@ -10553,7 +10559,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
           .echoNullableIntWithAnInt_error_
           .implement(builder, (NSNumber? arg_anInt, ffi_bridge.NativeInteropTestsError errorOut) {
             try {
-              final int? response = dartApi.echoNullableInt(arg_anInt?.longValue);
+              final int? response = pigeonVar_dartApi.echoNullableInt(arg_anInt?.longValue);
               return _PigeonFfiCodec.writeValue<NSNumber?>(response);
             } catch (e) {
               _reportFfiError(errorOut, e);
@@ -10565,7 +10571,9 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
           .echoNullableDoubleWithADouble_error_
           .implement(builder, (NSNumber? arg_aDouble, ffi_bridge.NativeInteropTestsError errorOut) {
             try {
-              final double? response = dartApi.echoNullableDouble(arg_aDouble?.doubleValue);
+              final double? response = pigeonVar_dartApi.echoNullableDouble(
+                arg_aDouble?.doubleValue,
+              );
               return _PigeonFfiCodec.writeValue<NSNumber?>(response);
             } catch (e) {
               _reportFfiError(errorOut, e);
@@ -10577,7 +10585,9 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
           .echoNullableStringWithAString_error_
           .implement(builder, (NSString? arg_aString, ffi_bridge.NativeInteropTestsError errorOut) {
             try {
-              final String? response = dartApi.echoNullableString(arg_aString?.toDartString());
+              final String? response = pigeonVar_dartApi.echoNullableString(
+                arg_aString?.toDartString(),
+              );
               return response == null ? null : NSString(response);
             } catch (e) {
               _reportFfiError(errorOut, e);
@@ -10589,7 +10599,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
           .echoNullableUint8ListWithList_error_
           .implement(builder, (NSData? arg_list, ffi_bridge.NativeInteropTestsError errorOut) {
             try {
-              final Uint8List? response = dartApi.echoNullableUint8List(
+              final Uint8List? response = pigeonVar_dartApi.echoNullableUint8List(
                 _PigeonFfiBuffers.toUint8List(arg_list),
               );
               return response == null ? null : _typedDataToNSData(response);
@@ -10603,7 +10613,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
           .echoNullableInt32ListWithList_error_
           .implement(builder, (NSData? arg_list, ffi_bridge.NativeInteropTestsError errorOut) {
             try {
-              final Int32List? response = dartApi.echoNullableInt32List(
+              final Int32List? response = pigeonVar_dartApi.echoNullableInt32List(
                 _PigeonFfiBuffers.toUint8List(arg_list)?.buffer.asInt32List(),
               );
               return response == null ? null : _typedDataToNSData(response);
@@ -10617,7 +10627,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
           .echoNullableInt64ListWithList_error_
           .implement(builder, (NSData? arg_list, ffi_bridge.NativeInteropTestsError errorOut) {
             try {
-              final Int64List? response = dartApi.echoNullableInt64List(
+              final Int64List? response = pigeonVar_dartApi.echoNullableInt64List(
                 _PigeonFfiBuffers.toUint8List(arg_list)?.buffer.asInt64List(),
               );
               return response == null ? null : _typedDataToNSData(response);
@@ -10631,7 +10641,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
           .echoNullableFloat64ListWithList_error_
           .implement(builder, (NSData? arg_list, ffi_bridge.NativeInteropTestsError errorOut) {
             try {
-              final Float64List? response = dartApi.echoNullableFloat64List(
+              final Float64List? response = pigeonVar_dartApi.echoNullableFloat64List(
                 _PigeonFfiBuffers.toUint8List(arg_list)?.buffer.asFloat64List(),
               );
               return response == null ? null : _typedDataToNSData(response);
@@ -10647,7 +10657,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             try {
               final List<Object?> pigeonVar_decodedArgs =
                   _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
-              final List<Object?>? response = dartApi.echoNullableList(
+              final List<Object?>? response = pigeonVar_dartApi.echoNullableList(
                 pigeonVar_decodedArgs[0] as List<Object?>?,
               );
               return _PigeonFfiBuffers.encodeOrNull(response);
@@ -10663,7 +10673,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             try {
               final List<Object?> pigeonVar_decodedArgs =
                   _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
-              final List<NativeInteropAnEnum?>? response = dartApi.echoNullableEnumList(
+              final List<NativeInteropAnEnum?>? response = pigeonVar_dartApi.echoNullableEnumList(
                 (pigeonVar_decodedArgs[0] as List<Object?>?)?.cast<NativeInteropAnEnum?>(),
               );
               return _PigeonFfiBuffers.encodeOrNull(response);
@@ -10679,10 +10689,11 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             try {
               final List<Object?> pigeonVar_decodedArgs =
                   _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
-              final List<NativeInteropAllNullableTypes?>? response = dartApi.echoNullableClassList(
-                (pigeonVar_decodedArgs[0] as List<Object?>?)
-                    ?.cast<NativeInteropAllNullableTypes?>(),
-              );
+              final List<NativeInteropAllNullableTypes?>? response = pigeonVar_dartApi
+                  .echoNullableClassList(
+                    (pigeonVar_decodedArgs[0] as List<Object?>?)
+                        ?.cast<NativeInteropAllNullableTypes?>(),
+                  );
               return _PigeonFfiBuffers.encodeOrNull(response);
             } catch (e) {
               _reportFfiError(errorOut, e);
@@ -10696,9 +10707,10 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             try {
               final List<Object?> pigeonVar_decodedArgs =
                   _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
-              final List<NativeInteropAnEnum>? response = dartApi.echoNullableNonNullEnumList(
-                (pigeonVar_decodedArgs[0] as List<Object?>?)?.cast<NativeInteropAnEnum>(),
-              );
+              final List<NativeInteropAnEnum>? response = pigeonVar_dartApi
+                  .echoNullableNonNullEnumList(
+                    (pigeonVar_decodedArgs[0] as List<Object?>?)?.cast<NativeInteropAnEnum>(),
+                  );
               return _PigeonFfiBuffers.encodeOrNull(response);
             } catch (e) {
               _reportFfiError(errorOut, e);
@@ -10712,7 +10724,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             try {
               final List<Object?> pigeonVar_decodedArgs =
                   _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
-              final List<NativeInteropAllNullableTypes>? response = dartApi
+              final List<NativeInteropAllNullableTypes>? response = pigeonVar_dartApi
                   .echoNullableNonNullClassList(
                     (pigeonVar_decodedArgs[0] as List<Object?>?)
                         ?.cast<NativeInteropAllNullableTypes>(),
@@ -10730,7 +10742,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             try {
               final List<Object?> pigeonVar_decodedArgs =
                   _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
-              final Map<Object?, Object?>? response = dartApi.echoNullableMap(
+              final Map<Object?, Object?>? response = pigeonVar_dartApi.echoNullableMap(
                 pigeonVar_decodedArgs[0] as Map<Object?, Object?>?,
               );
               return _PigeonFfiBuffers.encodeOrNull(response);
@@ -10746,7 +10758,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             try {
               final List<Object?> pigeonVar_decodedArgs =
                   _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
-              final Map<String?, String?>? response = dartApi.echoNullableStringMap(
+              final Map<String?, String?>? response = pigeonVar_dartApi.echoNullableStringMap(
                 (pigeonVar_decodedArgs[0] as Map<Object?, Object?>?)?.cast<String?, String?>(),
               );
               return _PigeonFfiBuffers.encodeOrNull(response);
@@ -10762,7 +10774,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             try {
               final List<Object?> pigeonVar_decodedArgs =
                   _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
-              final Map<int?, int?>? response = dartApi.echoNullableIntMap(
+              final Map<int?, int?>? response = pigeonVar_dartApi.echoNullableIntMap(
                 (pigeonVar_decodedArgs[0] as Map<Object?, Object?>?)?.cast<int?, int?>(),
               );
               return _PigeonFfiBuffers.encodeOrNull(response);
@@ -10778,7 +10790,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             try {
               final List<Object?> pigeonVar_decodedArgs =
                   _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
-              final Map<NativeInteropAnEnum?, NativeInteropAnEnum?>? response = dartApi
+              final Map<NativeInteropAnEnum?, NativeInteropAnEnum?>? response = pigeonVar_dartApi
                   .echoNullableEnumMap(
                     (pigeonVar_decodedArgs[0] as Map<Object?, Object?>?)
                         ?.cast<NativeInteropAnEnum?, NativeInteropAnEnum?>(),
@@ -10796,7 +10808,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             try {
               final List<Object?> pigeonVar_decodedArgs =
                   _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
-              final Map<int?, NativeInteropAllNullableTypes?>? response = dartApi
+              final Map<int?, NativeInteropAllNullableTypes?>? response = pigeonVar_dartApi
                   .echoNullableClassMap(
                     (pigeonVar_decodedArgs[0] as Map<Object?, Object?>?)
                         ?.cast<int?, NativeInteropAllNullableTypes?>(),
@@ -10814,7 +10826,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             try {
               final List<Object?> pigeonVar_decodedArgs =
                   _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
-              final Map<String, String>? response = dartApi.echoNullableNonNullStringMap(
+              final Map<String, String>? response = pigeonVar_dartApi.echoNullableNonNullStringMap(
                 (pigeonVar_decodedArgs[0] as Map<Object?, Object?>?)?.cast<String, String>(),
               );
               return _PigeonFfiBuffers.encodeOrNull(response);
@@ -10830,7 +10842,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             try {
               final List<Object?> pigeonVar_decodedArgs =
                   _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
-              final Map<int, int>? response = dartApi.echoNullableNonNullIntMap(
+              final Map<int, int>? response = pigeonVar_dartApi.echoNullableNonNullIntMap(
                 (pigeonVar_decodedArgs[0] as Map<Object?, Object?>?)?.cast<int, int>(),
               );
               return _PigeonFfiBuffers.encodeOrNull(response);
@@ -10846,7 +10858,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             try {
               final List<Object?> pigeonVar_decodedArgs =
                   _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
-              final Map<NativeInteropAnEnum, NativeInteropAnEnum>? response = dartApi
+              final Map<NativeInteropAnEnum, NativeInteropAnEnum>? response = pigeonVar_dartApi
                   .echoNullableNonNullEnumMap(
                     (pigeonVar_decodedArgs[0] as Map<Object?, Object?>?)
                         ?.cast<NativeInteropAnEnum, NativeInteropAnEnum>(),
@@ -10864,7 +10876,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             try {
               final List<Object?> pigeonVar_decodedArgs =
                   _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
-              final Map<int, NativeInteropAllNullableTypes>? response = dartApi
+              final Map<int, NativeInteropAllNullableTypes>? response = pigeonVar_dartApi
                   .echoNullableNonNullClassMap(
                     (pigeonVar_decodedArgs[0] as Map<Object?, Object?>?)
                         ?.cast<int, NativeInteropAllNullableTypes>(),
@@ -10880,7 +10892,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
           .echoNullableEnumWithAnEnum_error_
           .implement(builder, (int arg_anEnum, ffi_bridge.NativeInteropTestsError errorOut) {
             try {
-              final NativeInteropAnEnum? response = dartApi.echoNullableEnum(
+              final NativeInteropAnEnum? response = pigeonVar_dartApi.echoNullableEnum(
                 arg_anEnum == -1 ? null : NativeInteropAnEnum.values[arg_anEnum],
               );
               return response == null ? null : NSNumber.alloc().initWithLong(response.index);
@@ -10894,7 +10906,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
           .echoAnotherNullableEnumWithAnotherEnum_error_
           .implement(builder, (int arg_anotherEnum, ffi_bridge.NativeInteropTestsError errorOut) {
             try {
-              final NativeInteropAnotherEnum? response = dartApi.echoAnotherNullableEnum(
+              final NativeInteropAnotherEnum? response = pigeonVar_dartApi.echoAnotherNullableEnum(
                 arg_anotherEnum == -1 ? null : NativeInteropAnotherEnum.values[arg_anotherEnum],
               );
               return response == null ? null : NSNumber.alloc().initWithLong(response.index);
@@ -10911,7 +10923,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             ObjCBlock<Void Function()> completionHandler,
           ) {
             try {
-              dartApi.noopAsync().then(
+              pigeonVar_dartApi.noopAsync().then(
                 (response) {
                   ffi_bridge.ObjCBlock_ffiVoid$CallExtension(completionHandler).call();
                 },
@@ -10935,7 +10947,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             ObjCBlock<Void Function(NSData?)> completionHandler,
           ) {
             try {
-              dartApi.throwFlutterErrorAsync().then(
+              pigeonVar_dartApi.throwFlutterErrorAsync().then(
                 (response) {
                   ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
                     completionHandler,
@@ -10964,7 +10976,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             try {
               final List<Object?> pigeonVar_decodedArgs =
                   _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
-              dartApi
+              pigeonVar_dartApi
                   .echoAsyncNativeInteropAllTypes(
                     pigeonVar_decodedArgs[0]! as NativeInteropAllTypes,
                   )
@@ -10999,7 +11011,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             try {
               final List<Object?> pigeonVar_decodedArgs =
                   _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
-              dartApi
+              pigeonVar_dartApi
                   .echoAsyncNullableNativeInteropAllNullableTypes(
                     pigeonVar_decodedArgs[0] as NativeInteropAllNullableTypes?,
                   )
@@ -11034,7 +11046,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             try {
               final List<Object?> pigeonVar_decodedArgs =
                   _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
-              dartApi
+              pigeonVar_dartApi
                   .echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
                     pigeonVar_decodedArgs[0] as NativeInteropAllNullableTypesWithoutRecursion?,
                   )
@@ -11067,7 +11079,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             ObjCBlock<Void Function(NSNumber?)> completionHandler,
           ) {
             try {
-              dartApi
+              pigeonVar_dartApi
                   .echoAsyncBool(arg_aBool)
                   .then(
                     (response) {
@@ -11098,7 +11110,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             ObjCBlock<Void Function(NSNumber?)> completionHandler,
           ) {
             try {
-              dartApi
+              pigeonVar_dartApi
                   .echoAsyncInt(arg_anInt)
                   .then(
                     (response) {
@@ -11129,7 +11141,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             ObjCBlock<Void Function(NSNumber?)> completionHandler,
           ) {
             try {
-              dartApi
+              pigeonVar_dartApi
                   .echoAsyncDouble(arg_aDouble)
                   .then(
                     (response) {
@@ -11160,7 +11172,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             ObjCBlock<Void Function(NSString?)> completionHandler,
           ) {
             try {
-              dartApi
+              pigeonVar_dartApi
                   .echoAsyncString(arg_aString.toDartString())
                   .then(
                     (response) {
@@ -11191,7 +11203,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             ObjCBlock<Void Function(NSData?)> completionHandler,
           ) {
             try {
-              dartApi
+              pigeonVar_dartApi
                   .echoAsyncUint8List(_PigeonFfiBuffers.toUint8List(arg_list)!)
                   .then(
                     (response) {
@@ -11222,7 +11234,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             ObjCBlock<Void Function(NSData?)> completionHandler,
           ) {
             try {
-              dartApi
+              pigeonVar_dartApi
                   .echoAsyncInt32List(_PigeonFfiBuffers.toUint8List(arg_list)!.buffer.asInt32List())
                   .then(
                     (response) {
@@ -11253,7 +11265,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             ObjCBlock<Void Function(NSData?)> completionHandler,
           ) {
             try {
-              dartApi
+              pigeonVar_dartApi
                   .echoAsyncInt64List(_PigeonFfiBuffers.toUint8List(arg_list)!.buffer.asInt64List())
                   .then(
                     (response) {
@@ -11284,7 +11296,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             ObjCBlock<Void Function(NSData?)> completionHandler,
           ) {
             try {
-              dartApi
+              pigeonVar_dartApi
                   .echoAsyncFloat64List(
                     _PigeonFfiBuffers.toUint8List(arg_list)!.buffer.asFloat64List(),
                   )
@@ -11319,7 +11331,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             try {
               final List<Object?> pigeonVar_decodedArgs =
                   _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
-              dartApi
+              pigeonVar_dartApi
                   .echoAsyncObject(pigeonVar_decodedArgs[0]!)
                   .then(
                     (response) {
@@ -11352,7 +11364,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             try {
               final List<Object?> pigeonVar_decodedArgs =
                   _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
-              dartApi
+              pigeonVar_dartApi
                   .echoAsyncList(pigeonVar_decodedArgs[0]! as List<Object?>)
                   .then(
                     (response) {
@@ -11385,7 +11397,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             try {
               final List<Object?> pigeonVar_decodedArgs =
                   _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
-              dartApi
+              pigeonVar_dartApi
                   .echoAsyncEnumList(
                     (pigeonVar_decodedArgs[0]! as List<Object?>).cast<NativeInteropAnEnum?>(),
                   )
@@ -11420,7 +11432,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             try {
               final List<Object?> pigeonVar_decodedArgs =
                   _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
-              dartApi
+              pigeonVar_dartApi
                   .echoAsyncClassList(
                     (pigeonVar_decodedArgs[0]! as List<Object?>)
                         .cast<NativeInteropAllNullableTypes?>(),
@@ -11456,7 +11468,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             try {
               final List<Object?> pigeonVar_decodedArgs =
                   _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
-              dartApi
+              pigeonVar_dartApi
                   .echoAsyncNonNullEnumList(
                     (pigeonVar_decodedArgs[0]! as List<Object?>).cast<NativeInteropAnEnum>(),
                   )
@@ -11491,7 +11503,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             try {
               final List<Object?> pigeonVar_decodedArgs =
                   _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
-              dartApi
+              pigeonVar_dartApi
                   .echoAsyncNonNullClassList(
                     (pigeonVar_decodedArgs[0]! as List<Object?>)
                         .cast<NativeInteropAllNullableTypes>(),
@@ -11527,7 +11539,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             try {
               final List<Object?> pigeonVar_decodedArgs =
                   _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
-              dartApi
+              pigeonVar_dartApi
                   .echoAsyncMap(pigeonVar_decodedArgs[0]! as Map<Object?, Object?>)
                   .then(
                     (response) {
@@ -11560,7 +11572,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             try {
               final List<Object?> pigeonVar_decodedArgs =
                   _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
-              dartApi
+              pigeonVar_dartApi
                   .echoAsyncStringMap(
                     (pigeonVar_decodedArgs[0]! as Map<Object?, Object?>).cast<String?, String?>(),
                   )
@@ -11595,7 +11607,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             try {
               final List<Object?> pigeonVar_decodedArgs =
                   _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
-              dartApi
+              pigeonVar_dartApi
                   .echoAsyncIntMap(
                     (pigeonVar_decodedArgs[0]! as Map<Object?, Object?>).cast<int?, int?>(),
                   )
@@ -11630,7 +11642,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             try {
               final List<Object?> pigeonVar_decodedArgs =
                   _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
-              dartApi
+              pigeonVar_dartApi
                   .echoAsyncEnumMap(
                     (pigeonVar_decodedArgs[0]! as Map<Object?, Object?>)
                         .cast<NativeInteropAnEnum?, NativeInteropAnEnum?>(),
@@ -11666,7 +11678,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             try {
               final List<Object?> pigeonVar_decodedArgs =
                   _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
-              dartApi
+              pigeonVar_dartApi
                   .echoAsyncClassMap(
                     (pigeonVar_decodedArgs[0]! as Map<Object?, Object?>)
                         .cast<int?, NativeInteropAllNullableTypes?>(),
@@ -11700,7 +11712,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             ObjCBlock<Void Function(NSNumber?)> completionHandler,
           ) {
             try {
-              dartApi
+              pigeonVar_dartApi
                   .echoAsyncEnum(NativeInteropAnEnum.values[arg_anEnum])
                   .then(
                     (response) {
@@ -11731,7 +11743,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             ObjCBlock<Void Function(NSNumber?)> completionHandler,
           ) {
             try {
-              dartApi
+              pigeonVar_dartApi
                   .echoAnotherAsyncEnum(NativeInteropAnotherEnum.values[arg_anotherEnum])
                   .then(
                     (response) {
@@ -11762,7 +11774,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             ObjCBlock<Void Function(NSNumber?)> completionHandler,
           ) {
             try {
-              dartApi
+              pigeonVar_dartApi
                   .echoAsyncNullableBool(arg_aBool?.boolValue)
                   .then(
                     (response) {
@@ -11793,7 +11805,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             ObjCBlock<Void Function(NSNumber?)> completionHandler,
           ) {
             try {
-              dartApi
+              pigeonVar_dartApi
                   .echoAsyncNullableInt(arg_anInt?.longValue)
                   .then(
                     (response) {
@@ -11824,7 +11836,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             ObjCBlock<Void Function(NSNumber?)> completionHandler,
           ) {
             try {
-              dartApi
+              pigeonVar_dartApi
                   .echoAsyncNullableDouble(arg_aDouble?.doubleValue)
                   .then(
                     (response) {
@@ -11855,7 +11867,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             ObjCBlock<Void Function(NSString?)> completionHandler,
           ) {
             try {
-              dartApi
+              pigeonVar_dartApi
                   .echoAsyncNullableString(arg_aString?.toDartString())
                   .then(
                     (response) {
@@ -11886,7 +11898,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             ObjCBlock<Void Function(NSData?)> completionHandler,
           ) {
             try {
-              dartApi
+              pigeonVar_dartApi
                   .echoAsyncNullableUint8List(_PigeonFfiBuffers.toUint8List(arg_list))
                   .then(
                     (response) {
@@ -11917,7 +11929,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             ObjCBlock<Void Function(NSData?)> completionHandler,
           ) {
             try {
-              dartApi
+              pigeonVar_dartApi
                   .echoAsyncNullableInt32List(
                     _PigeonFfiBuffers.toUint8List(arg_list)?.buffer.asInt32List(),
                   )
@@ -11950,7 +11962,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             ObjCBlock<Void Function(NSData?)> completionHandler,
           ) {
             try {
-              dartApi
+              pigeonVar_dartApi
                   .echoAsyncNullableInt64List(
                     _PigeonFfiBuffers.toUint8List(arg_list)?.buffer.asInt64List(),
                   )
@@ -11983,7 +11995,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             ObjCBlock<Void Function(NSData?)> completionHandler,
           ) {
             try {
-              dartApi
+              pigeonVar_dartApi
                   .echoAsyncNullableFloat64List(
                     _PigeonFfiBuffers.toUint8List(arg_list)?.buffer.asFloat64List(),
                   )
@@ -12018,7 +12030,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             try {
               final List<Object?> pigeonVar_decodedArgs =
                   _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
-              dartApi
+              pigeonVar_dartApi
                   .echoAsyncNullableObject(pigeonVar_decodedArgs[0])
                   .then(
                     (response) {
@@ -12051,7 +12063,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             try {
               final List<Object?> pigeonVar_decodedArgs =
                   _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
-              dartApi
+              pigeonVar_dartApi
                   .echoAsyncNullableList(pigeonVar_decodedArgs[0] as List<Object?>?)
                   .then(
                     (response) {
@@ -12084,7 +12096,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             try {
               final List<Object?> pigeonVar_decodedArgs =
                   _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
-              dartApi
+              pigeonVar_dartApi
                   .echoAsyncNullableEnumList(
                     (pigeonVar_decodedArgs[0] as List<Object?>?)?.cast<NativeInteropAnEnum?>(),
                   )
@@ -12119,7 +12131,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             try {
               final List<Object?> pigeonVar_decodedArgs =
                   _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
-              dartApi
+              pigeonVar_dartApi
                   .echoAsyncNullableClassList(
                     (pigeonVar_decodedArgs[0] as List<Object?>?)
                         ?.cast<NativeInteropAllNullableTypes?>(),
@@ -12155,7 +12167,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             try {
               final List<Object?> pigeonVar_decodedArgs =
                   _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
-              dartApi
+              pigeonVar_dartApi
                   .echoAsyncNullableNonNullEnumList(
                     (pigeonVar_decodedArgs[0] as List<Object?>?)?.cast<NativeInteropAnEnum>(),
                   )
@@ -12190,7 +12202,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             try {
               final List<Object?> pigeonVar_decodedArgs =
                   _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
-              dartApi
+              pigeonVar_dartApi
                   .echoAsyncNullableNonNullClassList(
                     (pigeonVar_decodedArgs[0] as List<Object?>?)
                         ?.cast<NativeInteropAllNullableTypes>(),
@@ -12226,7 +12238,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             try {
               final List<Object?> pigeonVar_decodedArgs =
                   _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
-              dartApi
+              pigeonVar_dartApi
                   .echoAsyncNullableMap(pigeonVar_decodedArgs[0] as Map<Object?, Object?>?)
                   .then(
                     (response) {
@@ -12259,7 +12271,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             try {
               final List<Object?> pigeonVar_decodedArgs =
                   _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
-              dartApi
+              pigeonVar_dartApi
                   .echoAsyncNullableStringMap(
                     (pigeonVar_decodedArgs[0] as Map<Object?, Object?>?)?.cast<String?, String?>(),
                   )
@@ -12294,7 +12306,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             try {
               final List<Object?> pigeonVar_decodedArgs =
                   _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
-              dartApi
+              pigeonVar_dartApi
                   .echoAsyncNullableIntMap(
                     (pigeonVar_decodedArgs[0] as Map<Object?, Object?>?)?.cast<int?, int?>(),
                   )
@@ -12329,7 +12341,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             try {
               final List<Object?> pigeonVar_decodedArgs =
                   _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
-              dartApi
+              pigeonVar_dartApi
                   .echoAsyncNullableEnumMap(
                     (pigeonVar_decodedArgs[0] as Map<Object?, Object?>?)
                         ?.cast<NativeInteropAnEnum?, NativeInteropAnEnum?>(),
@@ -12365,7 +12377,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             try {
               final List<Object?> pigeonVar_decodedArgs =
                   _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
-              dartApi
+              pigeonVar_dartApi
                   .echoAsyncNullableClassMap(
                     (pigeonVar_decodedArgs[0] as Map<Object?, Object?>?)
                         ?.cast<int?, NativeInteropAllNullableTypes?>(),
@@ -12399,7 +12411,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             ObjCBlock<Void Function(NSNumber?)> completionHandler,
           ) {
             try {
-              dartApi
+              pigeonVar_dartApi
                   .echoAsyncNullableEnum(
                     arg_anEnum == -1 ? null : NativeInteropAnEnum.values[arg_anEnum],
                   )
@@ -12432,7 +12444,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
             ObjCBlock<Void Function(NSNumber?)> completionHandler,
           ) {
             try {
-              dartApi
+              pigeonVar_dartApi
                   .echoAnotherAsyncNullableEnum(
                     arg_anotherEnum == -1 ? null : NativeInteropAnotherEnum.values[arg_anotherEnum],
                   )
@@ -12466,36 +12478,36 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
         name: NSString(name),
       );
     }
-    return dartApi;
+    return pigeonVar_dartApi;
   }
 
   @override
   void noop() {
-    dartApi.noop();
+    pigeonVar_dartApi.noop();
   }
 
   @override
   JByteArray? throwFlutterError() {
-    final Object? response = dartApi.throwFlutterError();
+    final Object? response = pigeonVar_dartApi.throwFlutterError();
     return _PigeonJniBuffers.encodeOrNull(response);
   }
 
   @override
   JByteArray? throwError() {
-    final Object? response = dartApi.throwError();
+    final Object? response = pigeonVar_dartApi.throwError();
     return _PigeonJniBuffers.encodeOrNull(response);
   }
 
   @override
   void throwErrorFromVoid() {
-    dartApi.throwErrorFromVoid();
+    pigeonVar_dartApi.throwErrorFromVoid();
   }
 
   @override
   JByteArray? echoNativeInteropAllTypes(JByteArray pigeonVar_args) {
     final List<Object?> pigeonVar_decodedArgs =
         _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
-    final NativeInteropAllTypes response = dartApi.echoNativeInteropAllTypes(
+    final NativeInteropAllTypes response = pigeonVar_dartApi.echoNativeInteropAllTypes(
       pigeonVar_decodedArgs[0]! as NativeInteropAllTypes,
     );
     return _PigeonJniBuffers.encodeOrNull(response);
@@ -12505,9 +12517,10 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
   JByteArray? echoNativeInteropAllNullableTypes(JByteArray pigeonVar_args) {
     final List<Object?> pigeonVar_decodedArgs =
         _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
-    final NativeInteropAllNullableTypes? response = dartApi.echoNativeInteropAllNullableTypes(
-      pigeonVar_decodedArgs[0] as NativeInteropAllNullableTypes?,
-    );
+    final NativeInteropAllNullableTypes? response = pigeonVar_dartApi
+        .echoNativeInteropAllNullableTypes(
+          pigeonVar_decodedArgs[0] as NativeInteropAllNullableTypes?,
+        );
     return _PigeonJniBuffers.encodeOrNull(response);
   }
 
@@ -12515,7 +12528,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
   JByteArray? echoNativeInteropSealedClass(JByteArray pigeonVar_args) {
     final List<Object?> pigeonVar_decodedArgs =
         _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
-    final NativeInteropSealedClass response = dartApi.echoNativeInteropSealedClass(
+    final NativeInteropSealedClass response = pigeonVar_dartApi.echoNativeInteropSealedClass(
       pigeonVar_decodedArgs[0]! as NativeInteropSealedClass,
     );
     return _PigeonJniBuffers.encodeOrNull(response);
@@ -12527,7 +12540,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
     JLong? arg_aNullableInt,
     JString? arg_aNullableString,
   ) {
-    final NativeInteropAllNullableTypes response = dartApi.sendMultipleNullableTypes(
+    final NativeInteropAllNullableTypes response = pigeonVar_dartApi.sendMultipleNullableTypes(
       arg_aNullableBool?.toDartBool(releaseOriginal: true),
       arg_aNullableInt?.toDartInt(releaseOriginal: true),
       arg_aNullableString?.toDartString(releaseOriginal: true),
@@ -12539,7 +12552,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
   JByteArray? echoNativeInteropAllNullableTypesWithoutRecursion(JByteArray pigeonVar_args) {
     final List<Object?> pigeonVar_decodedArgs =
         _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
-    final NativeInteropAllNullableTypesWithoutRecursion? response = dartApi
+    final NativeInteropAllNullableTypesWithoutRecursion? response = pigeonVar_dartApi
         .echoNativeInteropAllNullableTypesWithoutRecursion(
           pigeonVar_decodedArgs[0] as NativeInteropAllNullableTypesWithoutRecursion?,
         );
@@ -12552,7 +12565,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
     JLong? arg_aNullableInt,
     JString? arg_aNullableString,
   ) {
-    final NativeInteropAllNullableTypesWithoutRecursion response = dartApi
+    final NativeInteropAllNullableTypesWithoutRecursion response = pigeonVar_dartApi
         .sendMultipleNullableTypesWithoutRecursion(
           arg_aNullableBool?.toDartBool(releaseOriginal: true),
           arg_aNullableInt?.toDartInt(releaseOriginal: true),
@@ -12563,49 +12576,57 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
 
   @override
   bool echoBool(bool arg_aBool) {
-    final bool response = dartApi.echoBool(arg_aBool);
+    final bool response = pigeonVar_dartApi.echoBool(arg_aBool);
     return response;
   }
 
   @override
   int echoInt(int arg_anInt) {
-    final int response = dartApi.echoInt(arg_anInt);
+    final int response = pigeonVar_dartApi.echoInt(arg_anInt);
     return response;
   }
 
   @override
   double echoDouble(double arg_aDouble) {
-    final double response = dartApi.echoDouble(arg_aDouble);
+    final double response = pigeonVar_dartApi.echoDouble(arg_aDouble);
     return response;
   }
 
   @override
   JString echoString(JString arg_aString) {
-    final String response = dartApi.echoString(arg_aString.toDartString(releaseOriginal: true));
+    final String response = pigeonVar_dartApi.echoString(
+      arg_aString.toDartString(releaseOriginal: true),
+    );
     return _PigeonJniCodec.writeValue<JString>(response);
   }
 
   @override
   JByteArray echoUint8List(JByteArray arg_list) {
-    final Uint8List response = dartApi.echoUint8List(_jByteArrayToDart(arg_list, release: true)!);
+    final Uint8List response = pigeonVar_dartApi.echoUint8List(
+      _jByteArrayToDart(arg_list, release: true)!,
+    );
     return _PigeonJniCodec.writeValue<JByteArray>(response);
   }
 
   @override
   JIntArray echoInt32List(JIntArray arg_list) {
-    final Int32List response = dartApi.echoInt32List(_jIntArrayToDart(arg_list, release: true)!);
+    final Int32List response = pigeonVar_dartApi.echoInt32List(
+      _jIntArrayToDart(arg_list, release: true)!,
+    );
     return _PigeonJniCodec.writeValue<JIntArray>(response);
   }
 
   @override
   JLongArray echoInt64List(JLongArray arg_list) {
-    final Int64List response = dartApi.echoInt64List(_jLongArrayToDart(arg_list, release: true)!);
+    final Int64List response = pigeonVar_dartApi.echoInt64List(
+      _jLongArrayToDart(arg_list, release: true)!,
+    );
     return _PigeonJniCodec.writeValue<JLongArray>(response);
   }
 
   @override
   JDoubleArray echoFloat64List(JDoubleArray arg_list) {
-    final Float64List response = dartApi.echoFloat64List(
+    final Float64List response = pigeonVar_dartApi.echoFloat64List(
       _jDoubleArrayToDart(arg_list, release: true)!,
     );
     return _PigeonJniCodec.writeValue<JDoubleArray>(response);
@@ -12615,7 +12636,9 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
   JByteArray? echoList(JByteArray pigeonVar_args) {
     final List<Object?> pigeonVar_decodedArgs =
         _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
-    final List<Object?> response = dartApi.echoList(pigeonVar_decodedArgs[0]! as List<Object?>);
+    final List<Object?> response = pigeonVar_dartApi.echoList(
+      pigeonVar_decodedArgs[0]! as List<Object?>,
+    );
     return _PigeonJniBuffers.encodeOrNull(response);
   }
 
@@ -12623,7 +12646,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
   JByteArray? echoEnumList(JByteArray pigeonVar_args) {
     final List<Object?> pigeonVar_decodedArgs =
         _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
-    final List<NativeInteropAnEnum?> response = dartApi.echoEnumList(
+    final List<NativeInteropAnEnum?> response = pigeonVar_dartApi.echoEnumList(
       (pigeonVar_decodedArgs[0]! as List<Object?>).cast<NativeInteropAnEnum?>(),
     );
     return _PigeonJniBuffers.encodeOrNull(response);
@@ -12633,7 +12656,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
   JByteArray? echoClassList(JByteArray pigeonVar_args) {
     final List<Object?> pigeonVar_decodedArgs =
         _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
-    final List<NativeInteropAllNullableTypes?> response = dartApi.echoClassList(
+    final List<NativeInteropAllNullableTypes?> response = pigeonVar_dartApi.echoClassList(
       (pigeonVar_decodedArgs[0]! as List<Object?>).cast<NativeInteropAllNullableTypes?>(),
     );
     return _PigeonJniBuffers.encodeOrNull(response);
@@ -12643,7 +12666,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
   JByteArray? echoNonNullEnumList(JByteArray pigeonVar_args) {
     final List<Object?> pigeonVar_decodedArgs =
         _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
-    final List<NativeInteropAnEnum> response = dartApi.echoNonNullEnumList(
+    final List<NativeInteropAnEnum> response = pigeonVar_dartApi.echoNonNullEnumList(
       (pigeonVar_decodedArgs[0]! as List<Object?>).cast<NativeInteropAnEnum>(),
     );
     return _PigeonJniBuffers.encodeOrNull(response);
@@ -12653,7 +12676,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
   JByteArray? echoNonNullClassList(JByteArray pigeonVar_args) {
     final List<Object?> pigeonVar_decodedArgs =
         _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
-    final List<NativeInteropAllNullableTypes> response = dartApi.echoNonNullClassList(
+    final List<NativeInteropAllNullableTypes> response = pigeonVar_dartApi.echoNonNullClassList(
       (pigeonVar_decodedArgs[0]! as List<Object?>).cast<NativeInteropAllNullableTypes>(),
     );
     return _PigeonJniBuffers.encodeOrNull(response);
@@ -12663,7 +12686,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
   JByteArray? echoMap(JByteArray pigeonVar_args) {
     final List<Object?> pigeonVar_decodedArgs =
         _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
-    final Map<Object?, Object?> response = dartApi.echoMap(
+    final Map<Object?, Object?> response = pigeonVar_dartApi.echoMap(
       pigeonVar_decodedArgs[0]! as Map<Object?, Object?>,
     );
     return _PigeonJniBuffers.encodeOrNull(response);
@@ -12673,7 +12696,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
   JByteArray? echoStringMap(JByteArray pigeonVar_args) {
     final List<Object?> pigeonVar_decodedArgs =
         _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
-    final Map<String?, String?> response = dartApi.echoStringMap(
+    final Map<String?, String?> response = pigeonVar_dartApi.echoStringMap(
       (pigeonVar_decodedArgs[0]! as Map<Object?, Object?>).cast<String?, String?>(),
     );
     return _PigeonJniBuffers.encodeOrNull(response);
@@ -12683,7 +12706,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
   JByteArray? echoIntMap(JByteArray pigeonVar_args) {
     final List<Object?> pigeonVar_decodedArgs =
         _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
-    final Map<int?, int?> response = dartApi.echoIntMap(
+    final Map<int?, int?> response = pigeonVar_dartApi.echoIntMap(
       (pigeonVar_decodedArgs[0]! as Map<Object?, Object?>).cast<int?, int?>(),
     );
     return _PigeonJniBuffers.encodeOrNull(response);
@@ -12693,7 +12716,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
   JByteArray? echoEnumMap(JByteArray pigeonVar_args) {
     final List<Object?> pigeonVar_decodedArgs =
         _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
-    final Map<NativeInteropAnEnum?, NativeInteropAnEnum?> response = dartApi.echoEnumMap(
+    final Map<NativeInteropAnEnum?, NativeInteropAnEnum?> response = pigeonVar_dartApi.echoEnumMap(
       (pigeonVar_decodedArgs[0]! as Map<Object?, Object?>)
           .cast<NativeInteropAnEnum?, NativeInteropAnEnum?>(),
     );
@@ -12704,7 +12727,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
   JByteArray? echoClassMap(JByteArray pigeonVar_args) {
     final List<Object?> pigeonVar_decodedArgs =
         _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
-    final Map<int?, NativeInteropAllNullableTypes?> response = dartApi.echoClassMap(
+    final Map<int?, NativeInteropAllNullableTypes?> response = pigeonVar_dartApi.echoClassMap(
       (pigeonVar_decodedArgs[0]! as Map<Object?, Object?>)
           .cast<int?, NativeInteropAllNullableTypes?>(),
     );
@@ -12715,7 +12738,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
   JByteArray? echoNonNullStringMap(JByteArray pigeonVar_args) {
     final List<Object?> pigeonVar_decodedArgs =
         _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
-    final Map<String, String> response = dartApi.echoNonNullStringMap(
+    final Map<String, String> response = pigeonVar_dartApi.echoNonNullStringMap(
       (pigeonVar_decodedArgs[0]! as Map<Object?, Object?>).cast<String, String>(),
     );
     return _PigeonJniBuffers.encodeOrNull(response);
@@ -12725,7 +12748,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
   JByteArray? echoNonNullIntMap(JByteArray pigeonVar_args) {
     final List<Object?> pigeonVar_decodedArgs =
         _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
-    final Map<int, int> response = dartApi.echoNonNullIntMap(
+    final Map<int, int> response = pigeonVar_dartApi.echoNonNullIntMap(
       (pigeonVar_decodedArgs[0]! as Map<Object?, Object?>).cast<int, int>(),
     );
     return _PigeonJniBuffers.encodeOrNull(response);
@@ -12735,10 +12758,11 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
   JByteArray? echoNonNullEnumMap(JByteArray pigeonVar_args) {
     final List<Object?> pigeonVar_decodedArgs =
         _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
-    final Map<NativeInteropAnEnum, NativeInteropAnEnum> response = dartApi.echoNonNullEnumMap(
-      (pigeonVar_decodedArgs[0]! as Map<Object?, Object?>)
-          .cast<NativeInteropAnEnum, NativeInteropAnEnum>(),
-    );
+    final Map<NativeInteropAnEnum, NativeInteropAnEnum> response = pigeonVar_dartApi
+        .echoNonNullEnumMap(
+          (pigeonVar_decodedArgs[0]! as Map<Object?, Object?>)
+              .cast<NativeInteropAnEnum, NativeInteropAnEnum>(),
+        );
     return _PigeonJniBuffers.encodeOrNull(response);
   }
 
@@ -12746,7 +12770,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
   JByteArray? echoNonNullClassMap(JByteArray pigeonVar_args) {
     final List<Object?> pigeonVar_decodedArgs =
         _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
-    final Map<int, NativeInteropAllNullableTypes> response = dartApi.echoNonNullClassMap(
+    final Map<int, NativeInteropAllNullableTypes> response = pigeonVar_dartApi.echoNonNullClassMap(
       (pigeonVar_decodedArgs[0]! as Map<Object?, Object?>)
           .cast<int, NativeInteropAllNullableTypes>(),
     );
@@ -12755,13 +12779,15 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
 
   @override
   int echoEnum(int arg_anEnum) {
-    final NativeInteropAnEnum response = dartApi.echoEnum(NativeInteropAnEnum.values[arg_anEnum]);
+    final NativeInteropAnEnum response = pigeonVar_dartApi.echoEnum(
+      NativeInteropAnEnum.values[arg_anEnum],
+    );
     return response.index;
   }
 
   @override
   int echoNativeInteropAnotherEnum(int arg_anotherEnum) {
-    final NativeInteropAnotherEnum response = dartApi.echoNativeInteropAnotherEnum(
+    final NativeInteropAnotherEnum response = pigeonVar_dartApi.echoNativeInteropAnotherEnum(
       NativeInteropAnotherEnum.values[arg_anotherEnum],
     );
     return response.index;
@@ -12769,19 +12795,23 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
 
   @override
   JBoolean? echoNullableBool(JBoolean? arg_aBool) {
-    final bool? response = dartApi.echoNullableBool(arg_aBool?.toDartBool(releaseOriginal: true));
+    final bool? response = pigeonVar_dartApi.echoNullableBool(
+      arg_aBool?.toDartBool(releaseOriginal: true),
+    );
     return _PigeonJniCodec.writeValue<JBoolean?>(response);
   }
 
   @override
   JLong? echoNullableInt(JLong? arg_anInt) {
-    final int? response = dartApi.echoNullableInt(arg_anInt?.toDartInt(releaseOriginal: true));
+    final int? response = pigeonVar_dartApi.echoNullableInt(
+      arg_anInt?.toDartInt(releaseOriginal: true),
+    );
     return _PigeonJniCodec.writeValue<JLong?>(response);
   }
 
   @override
   JDouble? echoNullableDouble(JDouble? arg_aDouble) {
-    final double? response = dartApi.echoNullableDouble(
+    final double? response = pigeonVar_dartApi.echoNullableDouble(
       arg_aDouble?.toDartDouble(releaseOriginal: true),
     );
     return _PigeonJniCodec.writeValue<JDouble?>(response);
@@ -12789,7 +12819,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
 
   @override
   JString? echoNullableString(JString? arg_aString) {
-    final String? response = dartApi.echoNullableString(
+    final String? response = pigeonVar_dartApi.echoNullableString(
       arg_aString?.toDartString(releaseOriginal: true),
     );
     return _PigeonJniCodec.writeValue<JString?>(response);
@@ -12797,7 +12827,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
 
   @override
   JByteArray? echoNullableUint8List(JByteArray? arg_list) {
-    final Uint8List? response = dartApi.echoNullableUint8List(
+    final Uint8List? response = pigeonVar_dartApi.echoNullableUint8List(
       _jByteArrayToDart(arg_list, release: true),
     );
     return _PigeonJniCodec.writeValue<JByteArray?>(response);
@@ -12805,7 +12835,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
 
   @override
   JIntArray? echoNullableInt32List(JIntArray? arg_list) {
-    final Int32List? response = dartApi.echoNullableInt32List(
+    final Int32List? response = pigeonVar_dartApi.echoNullableInt32List(
       _jIntArrayToDart(arg_list, release: true),
     );
     return _PigeonJniCodec.writeValue<JIntArray?>(response);
@@ -12813,7 +12843,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
 
   @override
   JLongArray? echoNullableInt64List(JLongArray? arg_list) {
-    final Int64List? response = dartApi.echoNullableInt64List(
+    final Int64List? response = pigeonVar_dartApi.echoNullableInt64List(
       _jLongArrayToDart(arg_list, release: true),
     );
     return _PigeonJniCodec.writeValue<JLongArray?>(response);
@@ -12821,7 +12851,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
 
   @override
   JDoubleArray? echoNullableFloat64List(JDoubleArray? arg_list) {
-    final Float64List? response = dartApi.echoNullableFloat64List(
+    final Float64List? response = pigeonVar_dartApi.echoNullableFloat64List(
       _jDoubleArrayToDart(arg_list, release: true),
     );
     return _PigeonJniCodec.writeValue<JDoubleArray?>(response);
@@ -12831,7 +12861,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
   JByteArray? echoNullableList(JByteArray pigeonVar_args) {
     final List<Object?> pigeonVar_decodedArgs =
         _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
-    final List<Object?>? response = dartApi.echoNullableList(
+    final List<Object?>? response = pigeonVar_dartApi.echoNullableList(
       pigeonVar_decodedArgs[0] as List<Object?>?,
     );
     return _PigeonJniBuffers.encodeOrNull(response);
@@ -12841,7 +12871,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
   JByteArray? echoNullableEnumList(JByteArray pigeonVar_args) {
     final List<Object?> pigeonVar_decodedArgs =
         _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
-    final List<NativeInteropAnEnum?>? response = dartApi.echoNullableEnumList(
+    final List<NativeInteropAnEnum?>? response = pigeonVar_dartApi.echoNullableEnumList(
       (pigeonVar_decodedArgs[0] as List<Object?>?)?.cast<NativeInteropAnEnum?>(),
     );
     return _PigeonJniBuffers.encodeOrNull(response);
@@ -12851,7 +12881,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
   JByteArray? echoNullableClassList(JByteArray pigeonVar_args) {
     final List<Object?> pigeonVar_decodedArgs =
         _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
-    final List<NativeInteropAllNullableTypes?>? response = dartApi.echoNullableClassList(
+    final List<NativeInteropAllNullableTypes?>? response = pigeonVar_dartApi.echoNullableClassList(
       (pigeonVar_decodedArgs[0] as List<Object?>?)?.cast<NativeInteropAllNullableTypes?>(),
     );
     return _PigeonJniBuffers.encodeOrNull(response);
@@ -12861,7 +12891,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
   JByteArray? echoNullableNonNullEnumList(JByteArray pigeonVar_args) {
     final List<Object?> pigeonVar_decodedArgs =
         _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
-    final List<NativeInteropAnEnum>? response = dartApi.echoNullableNonNullEnumList(
+    final List<NativeInteropAnEnum>? response = pigeonVar_dartApi.echoNullableNonNullEnumList(
       (pigeonVar_decodedArgs[0] as List<Object?>?)?.cast<NativeInteropAnEnum>(),
     );
     return _PigeonJniBuffers.encodeOrNull(response);
@@ -12871,9 +12901,10 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
   JByteArray? echoNullableNonNullClassList(JByteArray pigeonVar_args) {
     final List<Object?> pigeonVar_decodedArgs =
         _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
-    final List<NativeInteropAllNullableTypes>? response = dartApi.echoNullableNonNullClassList(
-      (pigeonVar_decodedArgs[0] as List<Object?>?)?.cast<NativeInteropAllNullableTypes>(),
-    );
+    final List<NativeInteropAllNullableTypes>? response = pigeonVar_dartApi
+        .echoNullableNonNullClassList(
+          (pigeonVar_decodedArgs[0] as List<Object?>?)?.cast<NativeInteropAllNullableTypes>(),
+        );
     return _PigeonJniBuffers.encodeOrNull(response);
   }
 
@@ -12881,7 +12912,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
   JByteArray? echoNullableMap(JByteArray pigeonVar_args) {
     final List<Object?> pigeonVar_decodedArgs =
         _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
-    final Map<Object?, Object?>? response = dartApi.echoNullableMap(
+    final Map<Object?, Object?>? response = pigeonVar_dartApi.echoNullableMap(
       pigeonVar_decodedArgs[0] as Map<Object?, Object?>?,
     );
     return _PigeonJniBuffers.encodeOrNull(response);
@@ -12891,7 +12922,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
   JByteArray? echoNullableStringMap(JByteArray pigeonVar_args) {
     final List<Object?> pigeonVar_decodedArgs =
         _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
-    final Map<String?, String?>? response = dartApi.echoNullableStringMap(
+    final Map<String?, String?>? response = pigeonVar_dartApi.echoNullableStringMap(
       (pigeonVar_decodedArgs[0] as Map<Object?, Object?>?)?.cast<String?, String?>(),
     );
     return _PigeonJniBuffers.encodeOrNull(response);
@@ -12901,7 +12932,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
   JByteArray? echoNullableIntMap(JByteArray pigeonVar_args) {
     final List<Object?> pigeonVar_decodedArgs =
         _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
-    final Map<int?, int?>? response = dartApi.echoNullableIntMap(
+    final Map<int?, int?>? response = pigeonVar_dartApi.echoNullableIntMap(
       (pigeonVar_decodedArgs[0] as Map<Object?, Object?>?)?.cast<int?, int?>(),
     );
     return _PigeonJniBuffers.encodeOrNull(response);
@@ -12911,10 +12942,11 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
   JByteArray? echoNullableEnumMap(JByteArray pigeonVar_args) {
     final List<Object?> pigeonVar_decodedArgs =
         _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
-    final Map<NativeInteropAnEnum?, NativeInteropAnEnum?>? response = dartApi.echoNullableEnumMap(
-      (pigeonVar_decodedArgs[0] as Map<Object?, Object?>?)
-          ?.cast<NativeInteropAnEnum?, NativeInteropAnEnum?>(),
-    );
+    final Map<NativeInteropAnEnum?, NativeInteropAnEnum?>? response = pigeonVar_dartApi
+        .echoNullableEnumMap(
+          (pigeonVar_decodedArgs[0] as Map<Object?, Object?>?)
+              ?.cast<NativeInteropAnEnum?, NativeInteropAnEnum?>(),
+        );
     return _PigeonJniBuffers.encodeOrNull(response);
   }
 
@@ -12922,10 +12954,11 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
   JByteArray? echoNullableClassMap(JByteArray pigeonVar_args) {
     final List<Object?> pigeonVar_decodedArgs =
         _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
-    final Map<int?, NativeInteropAllNullableTypes?>? response = dartApi.echoNullableClassMap(
-      (pigeonVar_decodedArgs[0] as Map<Object?, Object?>?)
-          ?.cast<int?, NativeInteropAllNullableTypes?>(),
-    );
+    final Map<int?, NativeInteropAllNullableTypes?>? response = pigeonVar_dartApi
+        .echoNullableClassMap(
+          (pigeonVar_decodedArgs[0] as Map<Object?, Object?>?)
+              ?.cast<int?, NativeInteropAllNullableTypes?>(),
+        );
     return _PigeonJniBuffers.encodeOrNull(response);
   }
 
@@ -12933,7 +12966,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
   JByteArray? echoNullableNonNullStringMap(JByteArray pigeonVar_args) {
     final List<Object?> pigeonVar_decodedArgs =
         _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
-    final Map<String, String>? response = dartApi.echoNullableNonNullStringMap(
+    final Map<String, String>? response = pigeonVar_dartApi.echoNullableNonNullStringMap(
       (pigeonVar_decodedArgs[0] as Map<Object?, Object?>?)?.cast<String, String>(),
     );
     return _PigeonJniBuffers.encodeOrNull(response);
@@ -12943,7 +12976,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
   JByteArray? echoNullableNonNullIntMap(JByteArray pigeonVar_args) {
     final List<Object?> pigeonVar_decodedArgs =
         _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
-    final Map<int, int>? response = dartApi.echoNullableNonNullIntMap(
+    final Map<int, int>? response = pigeonVar_dartApi.echoNullableNonNullIntMap(
       (pigeonVar_decodedArgs[0] as Map<Object?, Object?>?)?.cast<int, int>(),
     );
     return _PigeonJniBuffers.encodeOrNull(response);
@@ -12953,7 +12986,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
   JByteArray? echoNullableNonNullEnumMap(JByteArray pigeonVar_args) {
     final List<Object?> pigeonVar_decodedArgs =
         _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
-    final Map<NativeInteropAnEnum, NativeInteropAnEnum>? response = dartApi
+    final Map<NativeInteropAnEnum, NativeInteropAnEnum>? response = pigeonVar_dartApi
         .echoNullableNonNullEnumMap(
           (pigeonVar_decodedArgs[0] as Map<Object?, Object?>?)
               ?.cast<NativeInteropAnEnum, NativeInteropAnEnum>(),
@@ -12965,16 +12998,17 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
   JByteArray? echoNullableNonNullClassMap(JByteArray pigeonVar_args) {
     final List<Object?> pigeonVar_decodedArgs =
         _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
-    final Map<int, NativeInteropAllNullableTypes>? response = dartApi.echoNullableNonNullClassMap(
-      (pigeonVar_decodedArgs[0] as Map<Object?, Object?>?)
-          ?.cast<int, NativeInteropAllNullableTypes>(),
-    );
+    final Map<int, NativeInteropAllNullableTypes>? response = pigeonVar_dartApi
+        .echoNullableNonNullClassMap(
+          (pigeonVar_decodedArgs[0] as Map<Object?, Object?>?)
+              ?.cast<int, NativeInteropAllNullableTypes>(),
+        );
     return _PigeonJniBuffers.encodeOrNull(response);
   }
 
   @override
   int echoNullableEnum(int arg_anEnum) {
-    final NativeInteropAnEnum? response = dartApi.echoNullableEnum(
+    final NativeInteropAnEnum? response = pigeonVar_dartApi.echoNullableEnum(
       arg_anEnum == -1 ? null : NativeInteropAnEnum.values[arg_anEnum],
     );
     return response?.index ?? -1;
@@ -12982,7 +13016,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
 
   @override
   int echoAnotherNullableEnum(int arg_anotherEnum) {
-    final NativeInteropAnotherEnum? response = dartApi.echoAnotherNullableEnum(
+    final NativeInteropAnotherEnum? response = pigeonVar_dartApi.echoAnotherNullableEnum(
       arg_anotherEnum == -1 ? null : NativeInteropAnotherEnum.values[arg_anotherEnum],
     );
     return response?.index ?? -1;
@@ -12990,14 +13024,14 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
 
   @override
   Future<JObject> noopAsync() {
-    return dartApi.noopAsync().then((response) {
+    return pigeonVar_dartApi.noopAsync().then((response) {
       return _PigeonJniCodec._kotlinUnit;
     });
   }
 
   @override
   Future<JByteArray?> throwFlutterErrorAsync() {
-    return dartApi.throwFlutterErrorAsync().then((response) {
+    return pigeonVar_dartApi.throwFlutterErrorAsync().then((response) {
       return _PigeonJniBuffers.encodeOrNull(response);
     });
   }
@@ -13006,7 +13040,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
   Future<JByteArray?> echoAsyncNativeInteropAllTypes(JByteArray pigeonVar_args) {
     final List<Object?> pigeonVar_decodedArgs =
         _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
-    return dartApi
+    return pigeonVar_dartApi
         .echoAsyncNativeInteropAllTypes(pigeonVar_decodedArgs[0]! as NativeInteropAllTypes)
         .then((response) {
           return _PigeonJniBuffers.encodeOrNull(response);
@@ -13017,7 +13051,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
   Future<JByteArray?> echoAsyncNullableNativeInteropAllNullableTypes(JByteArray pigeonVar_args) {
     final List<Object?> pigeonVar_decodedArgs =
         _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
-    return dartApi
+    return pigeonVar_dartApi
         .echoAsyncNullableNativeInteropAllNullableTypes(
           pigeonVar_decodedArgs[0] as NativeInteropAllNullableTypes?,
         )
@@ -13032,7 +13066,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
   ) {
     final List<Object?> pigeonVar_decodedArgs =
         _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
-    return dartApi
+    return pigeonVar_dartApi
         .echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
           pigeonVar_decodedArgs[0] as NativeInteropAllNullableTypesWithoutRecursion?,
         )
@@ -13043,28 +13077,28 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
 
   @override
   Future<JBoolean> echoAsyncBool(bool arg_aBool) {
-    return dartApi.echoAsyncBool(arg_aBool).then((response) {
+    return pigeonVar_dartApi.echoAsyncBool(arg_aBool).then((response) {
       return _PigeonJniCodec.writeValue<JBoolean>(response);
     });
   }
 
   @override
   Future<JLong> echoAsyncInt(int arg_anInt) {
-    return dartApi.echoAsyncInt(arg_anInt).then((response) {
+    return pigeonVar_dartApi.echoAsyncInt(arg_anInt).then((response) {
       return _PigeonJniCodec.writeValue<JLong>(response);
     });
   }
 
   @override
   Future<JDouble> echoAsyncDouble(double arg_aDouble) {
-    return dartApi.echoAsyncDouble(arg_aDouble).then((response) {
+    return pigeonVar_dartApi.echoAsyncDouble(arg_aDouble).then((response) {
       return _PigeonJniCodec.writeValue<JDouble>(response);
     });
   }
 
   @override
   Future<JString> echoAsyncString(JString arg_aString) {
-    return dartApi.echoAsyncString(arg_aString.toDartString(releaseOriginal: true)).then((
+    return pigeonVar_dartApi.echoAsyncString(arg_aString.toDartString(releaseOriginal: true)).then((
       response,
     ) {
       return _PigeonJniCodec.writeValue<JString>(response);
@@ -13073,39 +13107,45 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
 
   @override
   Future<JByteArray> echoAsyncUint8List(JByteArray arg_list) {
-    return dartApi.echoAsyncUint8List(_jByteArrayToDart(arg_list, release: true)!).then((response) {
+    return pigeonVar_dartApi.echoAsyncUint8List(_jByteArrayToDart(arg_list, release: true)!).then((
+      response,
+    ) {
       return _PigeonJniCodec.writeValue<JByteArray>(response);
     });
   }
 
   @override
   Future<JIntArray> echoAsyncInt32List(JIntArray arg_list) {
-    return dartApi.echoAsyncInt32List(_jIntArrayToDart(arg_list, release: true)!).then((response) {
+    return pigeonVar_dartApi.echoAsyncInt32List(_jIntArrayToDart(arg_list, release: true)!).then((
+      response,
+    ) {
       return _PigeonJniCodec.writeValue<JIntArray>(response);
     });
   }
 
   @override
   Future<JLongArray> echoAsyncInt64List(JLongArray arg_list) {
-    return dartApi.echoAsyncInt64List(_jLongArrayToDart(arg_list, release: true)!).then((response) {
+    return pigeonVar_dartApi.echoAsyncInt64List(_jLongArrayToDart(arg_list, release: true)!).then((
+      response,
+    ) {
       return _PigeonJniCodec.writeValue<JLongArray>(response);
     });
   }
 
   @override
   Future<JDoubleArray> echoAsyncFloat64List(JDoubleArray arg_list) {
-    return dartApi.echoAsyncFloat64List(_jDoubleArrayToDart(arg_list, release: true)!).then((
-      response,
-    ) {
-      return _PigeonJniCodec.writeValue<JDoubleArray>(response);
-    });
+    return pigeonVar_dartApi
+        .echoAsyncFloat64List(_jDoubleArrayToDart(arg_list, release: true)!)
+        .then((response) {
+          return _PigeonJniCodec.writeValue<JDoubleArray>(response);
+        });
   }
 
   @override
   Future<JByteArray?> echoAsyncObject(JByteArray pigeonVar_args) {
     final List<Object?> pigeonVar_decodedArgs =
         _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
-    return dartApi.echoAsyncObject(pigeonVar_decodedArgs[0]!).then((response) {
+    return pigeonVar_dartApi.echoAsyncObject(pigeonVar_decodedArgs[0]!).then((response) {
       return _PigeonJniBuffers.encodeOrNull(response);
     });
   }
@@ -13114,7 +13154,9 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
   Future<JByteArray?> echoAsyncList(JByteArray pigeonVar_args) {
     final List<Object?> pigeonVar_decodedArgs =
         _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
-    return dartApi.echoAsyncList(pigeonVar_decodedArgs[0]! as List<Object?>).then((response) {
+    return pigeonVar_dartApi.echoAsyncList(pigeonVar_decodedArgs[0]! as List<Object?>).then((
+      response,
+    ) {
       return _PigeonJniBuffers.encodeOrNull(response);
     });
   }
@@ -13123,7 +13165,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
   Future<JByteArray?> echoAsyncEnumList(JByteArray pigeonVar_args) {
     final List<Object?> pigeonVar_decodedArgs =
         _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
-    return dartApi
+    return pigeonVar_dartApi
         .echoAsyncEnumList(
           (pigeonVar_decodedArgs[0]! as List<Object?>).cast<NativeInteropAnEnum?>(),
         )
@@ -13136,7 +13178,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
   Future<JByteArray?> echoAsyncClassList(JByteArray pigeonVar_args) {
     final List<Object?> pigeonVar_decodedArgs =
         _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
-    return dartApi
+    return pigeonVar_dartApi
         .echoAsyncClassList(
           (pigeonVar_decodedArgs[0]! as List<Object?>).cast<NativeInteropAllNullableTypes?>(),
         )
@@ -13149,7 +13191,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
   Future<JByteArray?> echoAsyncNonNullEnumList(JByteArray pigeonVar_args) {
     final List<Object?> pigeonVar_decodedArgs =
         _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
-    return dartApi
+    return pigeonVar_dartApi
         .echoAsyncNonNullEnumList(
           (pigeonVar_decodedArgs[0]! as List<Object?>).cast<NativeInteropAnEnum>(),
         )
@@ -13162,7 +13204,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
   Future<JByteArray?> echoAsyncNonNullClassList(JByteArray pigeonVar_args) {
     final List<Object?> pigeonVar_decodedArgs =
         _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
-    return dartApi
+    return pigeonVar_dartApi
         .echoAsyncNonNullClassList(
           (pigeonVar_decodedArgs[0]! as List<Object?>).cast<NativeInteropAllNullableTypes>(),
         )
@@ -13175,7 +13217,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
   Future<JByteArray?> echoAsyncMap(JByteArray pigeonVar_args) {
     final List<Object?> pigeonVar_decodedArgs =
         _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
-    return dartApi.echoAsyncMap(pigeonVar_decodedArgs[0]! as Map<Object?, Object?>).then((
+    return pigeonVar_dartApi.echoAsyncMap(pigeonVar_decodedArgs[0]! as Map<Object?, Object?>).then((
       response,
     ) {
       return _PigeonJniBuffers.encodeOrNull(response);
@@ -13186,7 +13228,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
   Future<JByteArray?> echoAsyncStringMap(JByteArray pigeonVar_args) {
     final List<Object?> pigeonVar_decodedArgs =
         _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
-    return dartApi
+    return pigeonVar_dartApi
         .echoAsyncStringMap(
           (pigeonVar_decodedArgs[0]! as Map<Object?, Object?>).cast<String?, String?>(),
         )
@@ -13199,7 +13241,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
   Future<JByteArray?> echoAsyncIntMap(JByteArray pigeonVar_args) {
     final List<Object?> pigeonVar_decodedArgs =
         _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
-    return dartApi
+    return pigeonVar_dartApi
         .echoAsyncIntMap((pigeonVar_decodedArgs[0]! as Map<Object?, Object?>).cast<int?, int?>())
         .then((response) {
           return _PigeonJniBuffers.encodeOrNull(response);
@@ -13210,7 +13252,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
   Future<JByteArray?> echoAsyncEnumMap(JByteArray pigeonVar_args) {
     final List<Object?> pigeonVar_decodedArgs =
         _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
-    return dartApi
+    return pigeonVar_dartApi
         .echoAsyncEnumMap(
           (pigeonVar_decodedArgs[0]! as Map<Object?, Object?>)
               .cast<NativeInteropAnEnum?, NativeInteropAnEnum?>(),
@@ -13224,7 +13266,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
   Future<JByteArray?> echoAsyncClassMap(JByteArray pigeonVar_args) {
     final List<Object?> pigeonVar_decodedArgs =
         _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
-    return dartApi
+    return pigeonVar_dartApi
         .echoAsyncClassMap(
           (pigeonVar_decodedArgs[0]! as Map<Object?, Object?>)
               .cast<int?, NativeInteropAllNullableTypes?>(),
@@ -13236,97 +13278,97 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
 
   @override
   Future<JLong> echoAsyncEnum(int arg_anEnum) {
-    return dartApi.echoAsyncEnum(NativeInteropAnEnum.values[arg_anEnum]).then((response) {
+    return pigeonVar_dartApi.echoAsyncEnum(NativeInteropAnEnum.values[arg_anEnum]).then((response) {
       return JLong(response.index);
     });
   }
 
   @override
   Future<JLong> echoAnotherAsyncEnum(int arg_anotherEnum) {
-    return dartApi.echoAnotherAsyncEnum(NativeInteropAnotherEnum.values[arg_anotherEnum]).then((
-      response,
-    ) {
-      return JLong(response.index);
-    });
+    return pigeonVar_dartApi
+        .echoAnotherAsyncEnum(NativeInteropAnotherEnum.values[arg_anotherEnum])
+        .then((response) {
+          return JLong(response.index);
+        });
   }
 
   @override
   Future<JBoolean?> echoAsyncNullableBool(JBoolean? arg_aBool) {
-    return dartApi.echoAsyncNullableBool(arg_aBool?.toDartBool(releaseOriginal: true)).then((
-      response,
-    ) {
-      return _PigeonJniCodec.writeValue<JBoolean?>(response);
-    });
+    return pigeonVar_dartApi
+        .echoAsyncNullableBool(arg_aBool?.toDartBool(releaseOriginal: true))
+        .then((response) {
+          return _PigeonJniCodec.writeValue<JBoolean?>(response);
+        });
   }
 
   @override
   Future<JLong?> echoAsyncNullableInt(JLong? arg_anInt) {
-    return dartApi.echoAsyncNullableInt(arg_anInt?.toDartInt(releaseOriginal: true)).then((
-      response,
-    ) {
-      return _PigeonJniCodec.writeValue<JLong?>(response);
-    });
+    return pigeonVar_dartApi.echoAsyncNullableInt(arg_anInt?.toDartInt(releaseOriginal: true)).then(
+      (response) {
+        return _PigeonJniCodec.writeValue<JLong?>(response);
+      },
+    );
   }
 
   @override
   Future<JDouble?> echoAsyncNullableDouble(JDouble? arg_aDouble) {
-    return dartApi.echoAsyncNullableDouble(arg_aDouble?.toDartDouble(releaseOriginal: true)).then((
-      response,
-    ) {
-      return _PigeonJniCodec.writeValue<JDouble?>(response);
-    });
+    return pigeonVar_dartApi
+        .echoAsyncNullableDouble(arg_aDouble?.toDartDouble(releaseOriginal: true))
+        .then((response) {
+          return _PigeonJniCodec.writeValue<JDouble?>(response);
+        });
   }
 
   @override
   Future<JString?> echoAsyncNullableString(JString? arg_aString) {
-    return dartApi.echoAsyncNullableString(arg_aString?.toDartString(releaseOriginal: true)).then((
-      response,
-    ) {
-      return _PigeonJniCodec.writeValue<JString?>(response);
-    });
+    return pigeonVar_dartApi
+        .echoAsyncNullableString(arg_aString?.toDartString(releaseOriginal: true))
+        .then((response) {
+          return _PigeonJniCodec.writeValue<JString?>(response);
+        });
   }
 
   @override
   Future<JByteArray?> echoAsyncNullableUint8List(JByteArray? arg_list) {
-    return dartApi.echoAsyncNullableUint8List(_jByteArrayToDart(arg_list, release: true)).then((
-      response,
-    ) {
-      return _PigeonJniCodec.writeValue<JByteArray?>(response);
-    });
+    return pigeonVar_dartApi
+        .echoAsyncNullableUint8List(_jByteArrayToDart(arg_list, release: true))
+        .then((response) {
+          return _PigeonJniCodec.writeValue<JByteArray?>(response);
+        });
   }
 
   @override
   Future<JIntArray?> echoAsyncNullableInt32List(JIntArray? arg_list) {
-    return dartApi.echoAsyncNullableInt32List(_jIntArrayToDart(arg_list, release: true)).then((
-      response,
-    ) {
-      return _PigeonJniCodec.writeValue<JIntArray?>(response);
-    });
+    return pigeonVar_dartApi
+        .echoAsyncNullableInt32List(_jIntArrayToDart(arg_list, release: true))
+        .then((response) {
+          return _PigeonJniCodec.writeValue<JIntArray?>(response);
+        });
   }
 
   @override
   Future<JLongArray?> echoAsyncNullableInt64List(JLongArray? arg_list) {
-    return dartApi.echoAsyncNullableInt64List(_jLongArrayToDart(arg_list, release: true)).then((
-      response,
-    ) {
-      return _PigeonJniCodec.writeValue<JLongArray?>(response);
-    });
+    return pigeonVar_dartApi
+        .echoAsyncNullableInt64List(_jLongArrayToDart(arg_list, release: true))
+        .then((response) {
+          return _PigeonJniCodec.writeValue<JLongArray?>(response);
+        });
   }
 
   @override
   Future<JDoubleArray?> echoAsyncNullableFloat64List(JDoubleArray? arg_list) {
-    return dartApi.echoAsyncNullableFloat64List(_jDoubleArrayToDart(arg_list, release: true)).then((
-      response,
-    ) {
-      return _PigeonJniCodec.writeValue<JDoubleArray?>(response);
-    });
+    return pigeonVar_dartApi
+        .echoAsyncNullableFloat64List(_jDoubleArrayToDart(arg_list, release: true))
+        .then((response) {
+          return _PigeonJniCodec.writeValue<JDoubleArray?>(response);
+        });
   }
 
   @override
   Future<JByteArray?> echoAsyncNullableObject(JByteArray pigeonVar_args) {
     final List<Object?> pigeonVar_decodedArgs =
         _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
-    return dartApi.echoAsyncNullableObject(pigeonVar_decodedArgs[0]).then((response) {
+    return pigeonVar_dartApi.echoAsyncNullableObject(pigeonVar_decodedArgs[0]).then((response) {
       return _PigeonJniBuffers.encodeOrNull(response);
     });
   }
@@ -13335,18 +13377,18 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
   Future<JByteArray?> echoAsyncNullableList(JByteArray pigeonVar_args) {
     final List<Object?> pigeonVar_decodedArgs =
         _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
-    return dartApi.echoAsyncNullableList(pigeonVar_decodedArgs[0] as List<Object?>?).then((
-      response,
-    ) {
-      return _PigeonJniBuffers.encodeOrNull(response);
-    });
+    return pigeonVar_dartApi.echoAsyncNullableList(pigeonVar_decodedArgs[0] as List<Object?>?).then(
+      (response) {
+        return _PigeonJniBuffers.encodeOrNull(response);
+      },
+    );
   }
 
   @override
   Future<JByteArray?> echoAsyncNullableEnumList(JByteArray pigeonVar_args) {
     final List<Object?> pigeonVar_decodedArgs =
         _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
-    return dartApi
+    return pigeonVar_dartApi
         .echoAsyncNullableEnumList(
           (pigeonVar_decodedArgs[0] as List<Object?>?)?.cast<NativeInteropAnEnum?>(),
         )
@@ -13359,7 +13401,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
   Future<JByteArray?> echoAsyncNullableClassList(JByteArray pigeonVar_args) {
     final List<Object?> pigeonVar_decodedArgs =
         _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
-    return dartApi
+    return pigeonVar_dartApi
         .echoAsyncNullableClassList(
           (pigeonVar_decodedArgs[0] as List<Object?>?)?.cast<NativeInteropAllNullableTypes?>(),
         )
@@ -13372,7 +13414,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
   Future<JByteArray?> echoAsyncNullableNonNullEnumList(JByteArray pigeonVar_args) {
     final List<Object?> pigeonVar_decodedArgs =
         _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
-    return dartApi
+    return pigeonVar_dartApi
         .echoAsyncNullableNonNullEnumList(
           (pigeonVar_decodedArgs[0] as List<Object?>?)?.cast<NativeInteropAnEnum>(),
         )
@@ -13385,7 +13427,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
   Future<JByteArray?> echoAsyncNullableNonNullClassList(JByteArray pigeonVar_args) {
     final List<Object?> pigeonVar_decodedArgs =
         _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
-    return dartApi
+    return pigeonVar_dartApi
         .echoAsyncNullableNonNullClassList(
           (pigeonVar_decodedArgs[0] as List<Object?>?)?.cast<NativeInteropAllNullableTypes>(),
         )
@@ -13398,18 +13440,18 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
   Future<JByteArray?> echoAsyncNullableMap(JByteArray pigeonVar_args) {
     final List<Object?> pigeonVar_decodedArgs =
         _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
-    return dartApi.echoAsyncNullableMap(pigeonVar_decodedArgs[0] as Map<Object?, Object?>?).then((
-      response,
-    ) {
-      return _PigeonJniBuffers.encodeOrNull(response);
-    });
+    return pigeonVar_dartApi
+        .echoAsyncNullableMap(pigeonVar_decodedArgs[0] as Map<Object?, Object?>?)
+        .then((response) {
+          return _PigeonJniBuffers.encodeOrNull(response);
+        });
   }
 
   @override
   Future<JByteArray?> echoAsyncNullableStringMap(JByteArray pigeonVar_args) {
     final List<Object?> pigeonVar_decodedArgs =
         _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
-    return dartApi
+    return pigeonVar_dartApi
         .echoAsyncNullableStringMap(
           (pigeonVar_decodedArgs[0] as Map<Object?, Object?>?)?.cast<String?, String?>(),
         )
@@ -13422,7 +13464,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
   Future<JByteArray?> echoAsyncNullableIntMap(JByteArray pigeonVar_args) {
     final List<Object?> pigeonVar_decodedArgs =
         _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
-    return dartApi
+    return pigeonVar_dartApi
         .echoAsyncNullableIntMap(
           (pigeonVar_decodedArgs[0] as Map<Object?, Object?>?)?.cast<int?, int?>(),
         )
@@ -13435,7 +13477,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
   Future<JByteArray?> echoAsyncNullableEnumMap(JByteArray pigeonVar_args) {
     final List<Object?> pigeonVar_decodedArgs =
         _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
-    return dartApi
+    return pigeonVar_dartApi
         .echoAsyncNullableEnumMap(
           (pigeonVar_decodedArgs[0] as Map<Object?, Object?>?)
               ?.cast<NativeInteropAnEnum?, NativeInteropAnEnum?>(),
@@ -13449,7 +13491,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
   Future<JByteArray?> echoAsyncNullableClassMap(JByteArray pigeonVar_args) {
     final List<Object?> pigeonVar_decodedArgs =
         _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
-    return dartApi
+    return pigeonVar_dartApi
         .echoAsyncNullableClassMap(
           (pigeonVar_decodedArgs[0] as Map<Object?, Object?>?)
               ?.cast<int?, NativeInteropAllNullableTypes?>(),
@@ -13461,7 +13503,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
 
   @override
   Future<JLong> echoAsyncNullableEnum(int arg_anEnum) {
-    return dartApi
+    return pigeonVar_dartApi
         .echoAsyncNullableEnum(arg_anEnum == -1 ? null : NativeInteropAnEnum.values[arg_anEnum])
         .then((response) {
           return JLong(response?.index ?? -1);
@@ -13470,7 +13512,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
 
   @override
   Future<JLong> echoAnotherAsyncNullableEnum(int arg_anotherEnum) {
-    return dartApi
+    return pigeonVar_dartApi
         .echoAnotherAsyncNullableEnum(
           arg_anotherEnum == -1 ? null : NativeInteropAnotherEnum.values[arg_anotherEnum],
         )
@@ -13483,7 +13525,7 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
 NativeInteropFlutterIntegrationCoreApi pigeon_register_NativeInteropFlutterIntegrationCoreApi(
   NativeInteropFlutterIntegrationCoreApi api, {
   String name = defaultInstanceName,
-}) => _NativeInteropFlutterIntegrationCoreApiRegistrar(api).register(name: name);
+}) => _NativeInteropFlutterIntegrationCoreApiRegistrar(api).pigeonVar_register(name: name);
 
 NativeInteropReservedNamesHostApiForNativeInterop?
 pigeon_getInstance_NativeInteropReservedNamesHostApi({String channelName = defaultInstanceName}) =>
@@ -13883,11 +13925,11 @@ class _NativeInteropReservedNamesHostApiForNativeInterop
 
 final class _NativeInteropReservedNamesFlutterApiRegistrar
     with jni_bridge.$NativeInteropReservedNamesFlutterApiBridge {
-  _NativeInteropReservedNamesFlutterApiRegistrar(this.dartApi);
+  _NativeInteropReservedNamesFlutterApiRegistrar(this.pigeonVar_dartApi);
 
-  final NativeInteropReservedNamesFlutterApi dartApi;
+  final NativeInteropReservedNamesFlutterApi pigeonVar_dartApi;
 
-  NativeInteropReservedNamesFlutterApi register({String name = defaultInstanceName}) {
+  NativeInteropReservedNamesFlutterApi pigeonVar_register({String name = defaultInstanceName}) {
     if (Platform.isAndroid) {
       final jni_bridge.NativeInteropReservedNamesFlutterApiBridge impl =
           jni_bridge.NativeInteropReservedNamesFlutterApiBridge.implement(this);
@@ -13903,7 +13945,7 @@ final class _NativeInteropReservedNamesFlutterApiRegistrar
       ffi_bridge.NativeInteropReservedNamesFlutterApiBridge$Builder.releaseWithValue_error_
           .implement(builder, (NSString arg_value, ffi_bridge.NativeInteropTestsError errorOut) {
             try {
-              final String response = dartApi.release(arg_value.toDartString());
+              final String response = pigeonVar_dartApi.release(arg_value.toDartString());
               return NSString(response);
             } catch (e) {
               _reportFfiError(errorOut, e);
@@ -13914,7 +13956,7 @@ final class _NativeInteropReservedNamesFlutterApiRegistrar
         builder,
         (ffi_bridge.NativeInteropTestsError errorOut) {
           try {
-            final String response = dartApi.type();
+            final String response = pigeonVar_dartApi.type();
             return NSString(response);
           } catch (e) {
             _reportFfiError(errorOut, e);
@@ -13925,7 +13967,7 @@ final class _NativeInteropReservedNamesFlutterApiRegistrar
       ffi_bridge.NativeInteropReservedNamesFlutterApiBridge$Builder.implementInValue_error_
           .implement(builder, (NSString arg_value, ffi_bridge.NativeInteropTestsError errorOut) {
             try {
-              final String response = dartApi.implementIn(arg_value.toDartString());
+              final String response = pigeonVar_dartApi.implementIn(arg_value.toDartString());
               return NSString(response);
             } catch (e) {
               _reportFfiError(errorOut, e);
@@ -13936,7 +13978,7 @@ final class _NativeInteropReservedNamesFlutterApiRegistrar
         builder,
         (ffi_bridge.NativeInteropTestsError errorOut) {
           try {
-            final bool response = dartApi.isNull();
+            final bool response = pigeonVar_dartApi.isNull();
             return _PigeonFfiCodec.writeValue<NSNumber?>(response);
           } catch (e) {
             _reportFfiError(errorOut, e);
@@ -13947,7 +13989,7 @@ final class _NativeInteropReservedNamesFlutterApiRegistrar
       ffi_bridge.NativeInteropReservedNamesFlutterApiBridge$Builder.getReferenceWithError_
           .implement(builder, (ffi_bridge.NativeInteropTestsError errorOut) {
             try {
-              final String response = dartApi.getReference();
+              final String response = pigeonVar_dartApi.getReference();
               return NSString(response);
             } catch (e) {
               _reportFfiError(errorOut, e);
@@ -13962,36 +14004,40 @@ final class _NativeInteropReservedNamesFlutterApiRegistrar
         name: NSString(name),
       );
     }
-    return dartApi;
+    return pigeonVar_dartApi;
   }
 
   @override
   JString release$1(JString arg_value) {
-    final String response = dartApi.release(arg_value.toDartString(releaseOriginal: true));
+    final String response = pigeonVar_dartApi.release(
+      arg_value.toDartString(releaseOriginal: true),
+    );
     return _PigeonJniCodec.writeValue<JString>(response);
   }
 
   @override
   JString type$1() {
-    final String response = dartApi.type();
+    final String response = pigeonVar_dartApi.type();
     return _PigeonJniCodec.writeValue<JString>(response);
   }
 
   @override
   JString implementIn$1(JString arg_value) {
-    final String response = dartApi.implementIn(arg_value.toDartString(releaseOriginal: true));
+    final String response = pigeonVar_dartApi.implementIn(
+      arg_value.toDartString(releaseOriginal: true),
+    );
     return _PigeonJniCodec.writeValue<JString>(response);
   }
 
   @override
   bool isNull$1() {
-    final bool response = dartApi.isNull();
+    final bool response = pigeonVar_dartApi.isNull();
     return response;
   }
 
   @override
   JString getReference() {
-    final String response = dartApi.getReference();
+    final String response = pigeonVar_dartApi.getReference();
     return _PigeonJniCodec.writeValue<JString>(response);
   }
 }
@@ -13999,7 +14045,7 @@ final class _NativeInteropReservedNamesFlutterApiRegistrar
 NativeInteropReservedNamesFlutterApi pigeon_register_NativeInteropReservedNamesFlutterApi(
   NativeInteropReservedNamesFlutterApi api, {
   String name = defaultInstanceName,
-}) => _NativeInteropReservedNamesFlutterApiRegistrar(api).register(name: name);
+}) => _NativeInteropReservedNamesFlutterApiRegistrar(api).pigeonVar_register(name: name);
 
 NativeInteropSealedClassHostApiForNativeInterop?
 pigeon_getInstance_NativeInteropSealedClassHostApi({String channelName = defaultInstanceName}) =>
@@ -14229,11 +14275,11 @@ class _NativeInteropSealedClassHostApiForNativeInterop
 
 final class _NativeInteropSealedClassFlutterApiRegistrar
     with jni_bridge.$NativeInteropSealedClassFlutterApiBridge {
-  _NativeInteropSealedClassFlutterApiRegistrar(this.dartApi);
+  _NativeInteropSealedClassFlutterApiRegistrar(this.pigeonVar_dartApi);
 
-  final NativeInteropSealedClassFlutterApi dartApi;
+  final NativeInteropSealedClassFlutterApi pigeonVar_dartApi;
 
-  NativeInteropSealedClassFlutterApi register({String name = defaultInstanceName}) {
+  NativeInteropSealedClassFlutterApi pigeonVar_register({String name = defaultInstanceName}) {
     if (Platform.isAndroid) {
       final jni_bridge.NativeInteropSealedClassFlutterApiBridge impl =
           jni_bridge.NativeInteropSealedClassFlutterApiBridge.implement(this);
@@ -14251,7 +14297,7 @@ final class _NativeInteropSealedClassFlutterApiRegistrar
             try {
               final List<Object?> pigeonVar_decodedArgs =
                   _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
-              final NativeInteropShape response = dartApi.echoShape(
+              final NativeInteropShape response = pigeonVar_dartApi.echoShape(
                 pigeonVar_decodedArgs[0]! as NativeInteropShape,
               );
               return _PigeonFfiBuffers.encodeOrNull(response);
@@ -14268,14 +14314,14 @@ final class _NativeInteropSealedClassFlutterApiRegistrar
         name: NSString(name),
       );
     }
-    return dartApi;
+    return pigeonVar_dartApi;
   }
 
   @override
   JByteArray? echoShape(JByteArray pigeonVar_args) {
     final List<Object?> pigeonVar_decodedArgs =
         _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
-    final NativeInteropShape response = dartApi.echoShape(
+    final NativeInteropShape response = pigeonVar_dartApi.echoShape(
       pigeonVar_decodedArgs[0]! as NativeInteropShape,
     );
     return _PigeonJniBuffers.encodeOrNull(response);
@@ -14285,4 +14331,4 @@ final class _NativeInteropSealedClassFlutterApiRegistrar
 NativeInteropSealedClassFlutterApi pigeon_register_NativeInteropSealedClassFlutterApi(
   NativeInteropSealedClassFlutterApi api, {
   String name = defaultInstanceName,
-}) => _NativeInteropSealedClassFlutterApiRegistrar(api).register(name: name);
+}) => _NativeInteropSealedClassFlutterApiRegistrar(api).pigeonVar_register(name: name);
