@@ -2,12 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:cross_file_web/cross_file_web_safe.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
-
-import 'save_file_helper.dart';
 
 /// Page for showing an example of saving with file_selector
 class SaveTextPage extends StatelessWidget {
@@ -38,14 +37,18 @@ class SaveTextPage extends StatelessWidget {
     }
 
     final String text = _contentController.text;
+    final fileData = Uint8List.fromList(text.codeUnits);
     if (kIsWeb) {
-      // TODO(bparrishMines): Use `WebScopedStorageXFileCreationParams.fromBytes`
-      // and `WebScopedStorageXFileExtension.download` once
-      // https://github.com/flutter/packages/pull/13395 lands.
-      await saveFileWeb(fileName, text);
+      final file = ScopedStorageXFile.fromCreationParams(
+        WebScopedStorageXFileCreationParams.fromBytes(fileData),
+      );
+      await file.getExtension<WebScopedStorageXFileExtension>()!.download(fileName);
     } else if (result.file case final FileSystemXFile file) {
-      final fileData = Uint8List.fromList(text.codeUnits);
       await file.writeAsBytes(fileData);
+    } else {
+      // TODO(bparrishMines): Use cross platform XFile write methods once
+      // https://github.com/flutter/packages/pull/13133 lands.
+      throw UnsupportedError('Unable to write to file.');
     }
   }
 
