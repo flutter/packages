@@ -60,9 +60,10 @@ jobs:
       with:
         ref: ${{ github.sha }}
         running-workflow-name: 'release'
+        ignore-checks: triage,noResponse
         repo-token: ${{ secrets.GITHUB_TOKEN }}
         wait-interval: 180 # seconds
-        allowed-conclusions: success,neutral
+        allowed-conclusions: success,neutral,skipped
         # verbose:true will produce too many logs that hang github actions web UI.
         verbose: false
 
