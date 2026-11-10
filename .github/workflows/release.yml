@@ -3,13 +3,22 @@ on:
   push:
     branches:
       - main
+  # Allows manually backfilling a missed release for a commit on main using
+  # the latest workflow definition (since GitHub Actions "Re-run" pins the
+  # workflow file to the original commit).
+  workflow_dispatch:
+    inputs:
+      commit_sha:
+        description: 'Full 40-char commit SHA on main to release'
+        required: true
+        type: string
 
 # Declare default permissions as read only.
 permissions: read-all
 
 jobs:
   release:
-    if: github.repository_owner == 'flutter'
+    if: github.repository_owner == 'flutter' && github.ref == 'refs/heads/main'
     name: release
     permissions:
       # Release needs to push a tag back to the repo.
@@ -24,6 +33,21 @@ jobs:
         persist-credentials: false
     - name: "Install Flutter"
       uses: ./.github/workflows/internals/install_flutter
+    - name: Validate and check out target commit
+      if: github.event_name == 'workflow_dispatch'
+      env:
+        TARGET_SHA: ${{ inputs.commit_sha }}
+      run: |
+        if [[ ! "${TARGET_SHA}" =~ ^[0-9a-f]{40}$ ]]; then
+          echo "::error::commit_sha must be a full 40-character lowercase hex SHA."
+          exit 1
+        fi
+        if ! git merge-base --is-ancestor "${TARGET_SHA}" HEAD; then
+          echo "::error::Commit ${TARGET_SHA} is not an ancestor of main HEAD."
+          exit 1
+        fi
+        git checkout --detach "${TARGET_SHA}"
+      shell: bash
     - name: Set up tools
       run: dart pub get
       working-directory: ${{ github.workspace }}/script/tool
@@ -32,6 +56,7 @@ jobs:
     # Because of latency in Github Webhooks, we need to wait for a while
     # before being able to look at checks scheduled by LUCI.
     - name: Give webhooks a minute
+      if: github.event_name == 'push'
       run: sleep 60s
       shell: bash
 
@@ -43,7 +68,7 @@ jobs:
     - name: Wait for test check-in
       uses: lewagon/wait-on-check-action@96d9100b431964d10e0136aff8b9ccb92470505e
       with:
-        ref: ${{ github.sha }}
+        ref: ${{ inputs.commit_sha || github.sha }}
         check-name: 'Linux ci_yaml packages roller'
         repo-token: ${{ secrets.GITHUB_TOKEN }}
         wait-interval: 30 # seconds
@@ -58,7 +83,7 @@ jobs:
     - name: Wait on all tests
       uses: lewagon/wait-on-check-action@96d9100b431964d10e0136aff8b9ccb92470505e
       with:
-        ref: ${{ github.sha }}
+        ref: ${{ inputs.commit_sha || github.sha }}
         running-workflow-name: 'release'
         ignore-checks: triage,noResponse
         repo-token: ${{ secrets.GITHUB_TOKEN }}
