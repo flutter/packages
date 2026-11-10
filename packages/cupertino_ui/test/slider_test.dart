@@ -466,7 +466,12 @@ void main() {
 
     expect(
       tester.getSemantics(find.byType(CupertinoSlider)),
-      matchesSemantics(hasEnabledState: true, isSlider: true),
+      matchesSemantics(
+        hasEnabledState: true,
+        isSlider: true,
+        value: '50%',
+        textDirection: TextDirection.ltr,
+      ),
     );
 
     handle.dispose();
@@ -482,7 +487,7 @@ void main() {
 
     expect(
       tester.getSemantics(find.byType(CupertinoSlider)),
-      containsSemantics(isSlider: true, hasEnabledState: true, isEnabled: false),
+      containsSemantics(isSlider: true, hasEnabledState: true, isEnabled: false, value: '50%'),
     );
     semantics.dispose();
   });
