@@ -73,7 +73,9 @@ void main() {
 
   Future<Size> captureImageSize(CameraController controller) async {
     final XFile file = await controller.takePicture();
-    final Image image = await decodeImageFromList(File(file.path).readAsBytesSync());
+    final Image image = await decodeImageFromList(
+      File.fromUri(Uri.parse(file.uri)).readAsBytesSync(),
+    );
     return Size(image.width.toDouble(), image.height.toDouble());
   }
 
@@ -93,7 +95,7 @@ void main() {
     await Future<void>.delayed(const Duration(milliseconds: 300));
     final XFile file = await controller.stopVideoRecording();
 
-    final videoController = VideoPlayerController.file(File(file.path));
+    final videoController = VideoPlayerController.file(File.fromUri(Uri.parse(file.uri)));
     await videoController.initialize();
     final Size size = videoController.value.size;
     await videoController.dispose();
@@ -147,7 +149,7 @@ void main() {
     final XFile file = await controller.stopVideoRecording();
     final int recordingTime = DateTime.now().millisecondsSinceEpoch - recordingStart;
 
-    final videoFile = File(file.path);
+    final videoFile = File.fromUri(Uri.parse(file.uri));
     final videoController = VideoPlayerController.file(videoFile);
     await videoController.initialize();
     final int duration = videoController.value.duration.inMilliseconds;
@@ -279,7 +281,7 @@ void main() {
           ImageFileFormat.jpeg => 'jpg',
           ImageFileFormat.heif => 'heif',
         };
-        expect(file.path.endsWith(expectedExtension), true);
+        expect(Uri.parse(file.uri).toFilePath().endsWith(expectedExtension), true);
       }
     }
   });

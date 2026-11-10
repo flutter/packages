@@ -1,3 +1,11 @@
+## 3.0.0
+
+* **BREAKING CHANGE**: Updates to `cross_file` 0.4.0. Captured files use the
+  new `XFile` API; use `uri` instead of `path`, and `name()` instead of `name`.
+* **BREAKING CHANGE**: Removes the legacy `MethodChannelCamera` fallback and
+  JSON serialization methods from camera and device events. Platform plugins
+  register their own `CameraPlatform` implementation and create typed events.
+
 ## 2.15.0
 
 * Adds `isZeroShutterLagSupported` and `setZeroShutterLagEnabled` for

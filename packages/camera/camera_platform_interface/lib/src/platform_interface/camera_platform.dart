@@ -10,7 +10,6 @@ import 'package:flutter/widgets.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 import '../../camera_platform_interface.dart';
-import '../method_channel/method_channel_camera.dart';
 
 /// The interface that implementations of camera must implement.
 ///
@@ -25,11 +24,12 @@ abstract class CameraPlatform extends PlatformInterface {
 
   static final Object _token = Object();
 
-  static CameraPlatform _instance = MethodChannelCamera();
+  static CameraPlatform _instance = _UnimplementedCameraPlatform();
 
   /// The default instance of [CameraPlatform] to use.
   ///
-  /// Defaults to [MethodChannelCamera].
+  /// Until a platform plugin registers an implementation, camera operations
+  /// use the default behavior documented on each method.
   static CameraPlatform get instance => _instance;
 
   /// Platform-specific plugins should set this with their own platform-specific
@@ -366,3 +366,5 @@ abstract class CameraPlatform extends PlatformInterface {
     throw UnimplementedError('setZeroShutterLagEnabled() is not implemented.');
   }
 }
+
+class _UnimplementedCameraPlatform extends CameraPlatform {}

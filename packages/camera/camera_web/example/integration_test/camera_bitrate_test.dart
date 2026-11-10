@@ -107,11 +107,11 @@ void main() {
       // First: add '--no-headless' to _targetDeviceFlags in
       // `script/tool/lib/src/drive_examples_command.dart`, then uncomment:
       // Second: uncomment next line
-      // await file.saveTo('movie.$videoBitrate.webm');
+      // await file.getExtension<WebScopedStorageXFileExtension>()!.download('movie.$videoBitrate.webm');
 
       await camera.dispose();
 
-      final int length = await file.length();
+      final int length = (await file.length())!;
 
       videoElement.remove();
 

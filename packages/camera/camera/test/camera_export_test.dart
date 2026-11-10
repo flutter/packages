@@ -20,6 +20,8 @@ void main() {
       main_file.ImageFormatGroup;
       main_file.ResolutionPreset;
       main_file.XFile;
+      main_file.FileSystemXFile;
+      main_file.ScopedStorageXFile;
     });
   });
 }

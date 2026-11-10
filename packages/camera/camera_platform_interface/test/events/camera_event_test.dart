@@ -29,49 +29,6 @@ void main() {
       expect(event.focusPointSupported, true);
     });
 
-    test('fromJson should initialize all properties', () {
-      final event = CameraInitializedEvent.fromJson(const <String, dynamic>{
-        'cameraId': 1,
-        'previewWidth': 1024.0,
-        'previewHeight': 640.0,
-        'exposureMode': 'auto',
-        'exposurePointSupported': true,
-        'focusMode': 'auto',
-        'focusPointSupported': true,
-      });
-
-      expect(event.cameraId, 1);
-      expect(event.previewWidth, 1024);
-      expect(event.previewHeight, 640);
-      expect(event.exposureMode, ExposureMode.auto);
-      expect(event.exposurePointSupported, true);
-      expect(event.focusMode, FocusMode.auto);
-      expect(event.focusPointSupported, true);
-    });
-
-    test('toJson should return a map with all fields', () {
-      const event = CameraInitializedEvent(
-        1,
-        1024,
-        640,
-        ExposureMode.auto,
-        true,
-        FocusMode.auto,
-        true,
-      );
-
-      final Map<String, dynamic> jsonMap = event.toJson();
-
-      expect(jsonMap.length, 7);
-      expect(jsonMap['cameraId'], 1);
-      expect(jsonMap['previewWidth'], 1024);
-      expect(jsonMap['previewHeight'], 640);
-      expect(jsonMap['exposureMode'], 'auto');
-      expect(jsonMap['exposurePointSupported'], true);
-      expect(jsonMap['focusMode'], 'auto');
-      expect(jsonMap['focusPointSupported'], true);
-    });
-
     test('equals should return true if objects are the same', () {
       const firstEvent = CameraInitializedEvent(
         1,
@@ -289,29 +246,6 @@ void main() {
       expect(event.captureHeight, 640);
     });
 
-    test('fromJson should initialize all properties', () {
-      final event = CameraResolutionChangedEvent.fromJson(const <String, dynamic>{
-        'cameraId': 1,
-        'captureWidth': 1024.0,
-        'captureHeight': 640.0,
-      });
-
-      expect(event.cameraId, 1);
-      expect(event.captureWidth, 1024);
-      expect(event.captureHeight, 640);
-    });
-
-    test('toJson should return a map with all fields', () {
-      const event = CameraResolutionChangedEvent(1, 1024, 640);
-
-      final Map<String, dynamic> jsonMap = event.toJson();
-
-      expect(jsonMap.length, 3);
-      expect(jsonMap['cameraId'], 1);
-      expect(jsonMap['captureWidth'], 1024);
-      expect(jsonMap['captureHeight'], 640);
-    });
-
     test('equals should return true if objects are the same', () {
       const firstEvent = CameraResolutionChangedEvent(1, 1024, 640);
       const secondEvent = CameraResolutionChangedEvent(1, 1024, 640);
@@ -359,21 +293,6 @@ void main() {
       expect(event.cameraId, 1);
     });
 
-    test('fromJson should initialize all properties', () {
-      final event = CameraClosingEvent.fromJson(const <String, dynamic>{'cameraId': 1});
-
-      expect(event.cameraId, 1);
-    });
-
-    test('toJson should return a map with all fields', () {
-      const event = CameraClosingEvent(1);
-
-      final Map<String, dynamic> jsonMap = event.toJson();
-
-      expect(jsonMap.length, 1);
-      expect(jsonMap['cameraId'], 1);
-    });
-
     test('equals should return true if objects are the same', () {
       const firstEvent = CameraClosingEvent(1);
       const secondEvent = CameraClosingEvent(1);
@@ -402,26 +321,6 @@ void main() {
 
       expect(event.cameraId, 1);
       expect(event.description, 'Error');
-    });
-
-    test('fromJson should initialize all properties', () {
-      final event = CameraErrorEvent.fromJson(const <String, dynamic>{
-        'cameraId': 1,
-        'description': 'Error',
-      });
-
-      expect(event.cameraId, 1);
-      expect(event.description, 'Error');
-    });
-
-    test('toJson should return a map with all fields', () {
-      const event = CameraErrorEvent(1, 'Error');
-
-      final Map<String, dynamic> jsonMap = event.toJson();
-
-      expect(jsonMap.length, 2);
-      expect(jsonMap['cameraId'], 1);
-      expect(jsonMap['description'], 'Error');
     });
 
     test('equals should return true if objects are the same', () {

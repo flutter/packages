@@ -94,7 +94,7 @@ void main() {
     group('takePicture', () {
       testWidgets('captures a picture', (WidgetTester tester) async {
         final camera = MockCamera();
-        final capturedPicture = XFile('/bogus/test');
+        final capturedPicture = XFile.scopedStorage(uri: '/bogus/test');
 
         when(camera.takePicture()).thenAnswer((_) async => capturedPicture);
 
@@ -286,7 +286,7 @@ void main() {
     group('stopVideoRecording', () {
       testWidgets('stops a video recording', (WidgetTester tester) async {
         final camera = MockCamera();
-        final capturedVideo = XFile('/bogus/test');
+        final capturedVideo = XFile.scopedStorage(uri: '/bogus/test');
 
         when(camera.stopVideoRecording()).thenAnswer((_) async => capturedVideo);
 
@@ -305,7 +305,7 @@ void main() {
       ) async {
         final camera = MockCamera();
         final videoRecordingErrorController = StreamController<ErrorEvent>();
-        final capturedVideo = XFile('/bogus/test');
+        final capturedVideo = XFile.scopedStorage(uri: '/bogus/test');
 
         when(camera.startVideoRecording()).thenAnswer((_) async {});
 

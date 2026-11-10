@@ -180,7 +180,7 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> _takePicture() async {
     final XFile file = await CameraPlatform.instance.takePicture(_cameraId);
-    _showInSnackBar('Picture captured to: ${file.path}');
+    _showInSnackBar('Picture captured to: ${file.uri}');
   }
 
   Future<void> _toggleRecord() async {
@@ -190,7 +190,7 @@ class _MyAppState extends State<MyApp> {
       } else {
         final XFile file = await CameraPlatform.instance.stopVideoRecording(_cameraId);
 
-        _showInSnackBar('Video captured to: ${file.path}');
+        _showInSnackBar('Video captured to: ${file.uri}');
       }
 
       if (mounted) {

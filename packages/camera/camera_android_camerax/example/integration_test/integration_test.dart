@@ -151,7 +151,7 @@ void main() {
     final XFile file = await controller.stopVideoRecording();
     final int postStopTime = DateTime.now().millisecondsSinceEpoch - recordingStart;
 
-    final videoFile = File(file.path);
+    final videoFile = File.fromUri(Uri.parse(file.uri));
     final videoController = VideoPlayerController.file(videoFile);
     await videoController.initialize();
     final int duration = videoController.value.duration.inMilliseconds;
@@ -188,10 +188,9 @@ void main() {
     await Future<void>.delayed(const Duration(milliseconds: 250));
     final XFile file = await controller.stopVideoRecording();
 
-    final int fileBytes = await file.length();
-    expect(fileBytes, greaterThan(0));
+    final videoFile = File.fromUri(Uri.parse(file.uri));
+    expect(await videoFile.length(), greaterThan(0));
 
-    final videoFile = File(file.path);
     final videoController = VideoPlayerController.file(videoFile);
     await videoController.initialize();
     expect(videoController.value.duration.inMilliseconds, greaterThan(0));
@@ -234,7 +233,7 @@ void main() {
     final XFile file = await controller.stopVideoRecording();
     final int recordingTime = DateTime.now().millisecondsSinceEpoch - recordingStart;
 
-    final videoFile = File(file.path);
+    final videoFile = File.fromUri(Uri.parse(file.uri));
     final videoController = VideoPlayerController.file(videoFile);
     await videoController.initialize();
     final int duration = videoController.value.duration.inMilliseconds;
@@ -273,7 +272,7 @@ void main() {
 
     final XFile file = await controller.stopVideoRecording();
 
-    final videoFile = File(file.path);
+    final videoFile = File.fromUri(Uri.parse(file.uri));
     final videoController = VideoPlayerController.file(videoFile);
     await videoController.initialize();
     final int duration = videoController.value.duration.inMilliseconds;
@@ -319,7 +318,7 @@ void main() {
     expect(file, isNotNull);
 
     // Ensure the video was saved correctly
-    final videoFile = File(file.path);
+    final videoFile = File.fromUri(Uri.parse(file.uri));
     expect(videoFile.existsSync(), isTrue);
     expect(videoFile.lengthSync(), greaterThan(0));
 

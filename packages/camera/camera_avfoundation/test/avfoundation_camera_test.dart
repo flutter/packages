@@ -10,6 +10,7 @@ import 'package:camera_avfoundation/src/avfoundation_camera.dart';
 import 'package:camera_avfoundation/src/messages.g.dart';
 import 'package:camera_avfoundation/src/utils.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
+import 'package:cross_file_io/cross_file_io.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -21,6 +22,8 @@ import 'avfoundation_camera_test.mocks.dart';
 @GenerateNiceMocks(<MockSpec<Object>>[MockSpec<CameraApi>()])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+
+  setUp(CrossFileIO.registerWith);
 
   test('registers instance', () async {
     AVFoundationCamera.registerWith();
@@ -377,7 +380,7 @@ void main() {
 
       final XFile file = await camera.takePicture(cameraId);
 
-      expect(file.path, stubPath);
+      expect((file as FileSystemXFile).path, stubPath);
     });
 
     test('Should prepare for video recording', () async {
@@ -409,7 +412,7 @@ void main() {
 
       final XFile file = await camera.stopVideoRecording(cameraId);
 
-      expect(file.path, stubPath);
+      expect((file as FileSystemXFile).path, stubPath);
     });
 
     test('Should pause a video recording', () async {

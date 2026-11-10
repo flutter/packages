@@ -178,7 +178,7 @@ class CameraWindows extends CameraPlatform {
   Future<XFile> takePicture(int cameraId) async {
     final String path = await _hostApi.takePicture(cameraId);
 
-    return XFile(path);
+    return XFile.fileSystem(path: path);
   }
 
   @override
@@ -210,7 +210,7 @@ class CameraWindows extends CameraPlatform {
   Future<XFile> stopVideoRecording(int cameraId) async {
     final String path = await _hostApi.stopVideoRecording(cameraId);
 
-    return XFile(path);
+    return XFile.fileSystem(path: path);
   }
 
   @override
