@@ -48,7 +48,7 @@ abstract base class FileSelectorPlatform {
   /// Opens a file dialog for loading directories and returns multiple directories.
   ///
   /// The `options` argument controls additional settings that can be passed to
-  /// the file dialog. See [FileDialogOptions] for more details.
+  /// the file dialog.
   ///
   /// Returns an empty list if the user cancels the operation.
   Future<List<XDirectory>> getDirectories({

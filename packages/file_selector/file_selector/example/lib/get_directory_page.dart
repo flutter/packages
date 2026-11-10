@@ -31,7 +31,7 @@ class GetDirectoryPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Open a text file')),
+      appBar: AppBar(title: const Text('Open a directory')),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -51,7 +51,7 @@ class GetDirectoryPage extends StatelessWidget {
   }
 }
 
-/// Widget that displays a text file in a dialog.
+/// Widget that displays a directory path in a dialog.
 class TextDisplay extends StatelessWidget {
   /// Default Constructor.
   const TextDisplay(this.directoryPath, {super.key});
