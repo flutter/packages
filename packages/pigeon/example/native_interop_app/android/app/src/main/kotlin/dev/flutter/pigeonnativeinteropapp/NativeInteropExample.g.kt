@@ -101,6 +101,11 @@ private object NativeInteropExamplePigeonEngineKeys {
   @Synchronized
   fun keyOf(engine: FlutterEngine): Long {
     val key = engine.engineId
+    if (key == 0L) {
+      // Real engine ids are never 0, but an engine without one, or a test
+      // double, reports 0, which must not be shared between engines.
+      return keyOfMessenger(engine.dartExecutor)
+    }
     // Record the exact key so later lookups through a binding for this engine
     // agree with it even when the binding cannot report the engine id.
     messengerKeys[engine.dartExecutor] = key

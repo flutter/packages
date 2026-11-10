@@ -2301,6 +2301,11 @@ private fun computeKey(binding: FlutterPlugin.FlutterPluginBinding): Long {
 @Synchronized
 fun keyOf(engine: FlutterEngine): Long {
 \tval key = engine.engineId
+\tif (key == 0L) {
+\t\t// Real engine ids are never 0, but an engine without one, or a test
+\t\t// double, reports 0, which must not be shared between engines.
+\t\treturn keyOfMessenger(engine.dartExecutor)
+\t}
 \t// Record the exact key so later lookups through a binding for this engine
 \t// agree with it even when the binding cannot report the engine id.
 \tmessengerKeys[engine.dartExecutor] = key

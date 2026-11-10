@@ -3616,6 +3616,23 @@ name: foobar
       expect(code, isNot(contains('_pigeonUpdateFlutterApiEngineAffinity')));
     });
 
+    test('omits FlutterApi affinity state without HostApis', () {
+      for (final options in <InternalDartOptions>[jniOptions, ffiOptions]) {
+        final String code = generateNativeInterop(
+          options,
+          Root(
+            apis: root.apis.whereType<AstFlutterApi>().toList(),
+            classes: root.classes,
+            enums: root.enums,
+          ),
+        );
+        expect(code, contains('const int _pigeonNoEngineKey'));
+        expect(code, contains('const int affinityKey = _pigeonNoEngineKey;'));
+        expect(code, isNot(contains('_pigeonEngineAffinity')));
+        expect(code, isNot(contains('pigeonVar_updateEngineAffinity')));
+      }
+    });
+
     test('FlutterApi re-registration keeps the setUp instance tracked', () {
       for (final options in <InternalDartOptions>[jniOptions, ffiOptions]) {
         final String code = generateNativeInterop(options, root);

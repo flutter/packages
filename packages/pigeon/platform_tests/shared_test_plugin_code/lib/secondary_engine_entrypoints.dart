@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 import 'src/generated/native_interop_tests.gen.dart';
@@ -16,15 +17,24 @@ void idleSecondaryEngineMain() {}
 @pragma('vm:entry-point')
 Future<void> secondaryEngineMain() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final hostApi = NativeInteropHostIntegrationCoreApi.createWithNativeInteropApi();
   var ready = false;
   for (var i = 0; i < 1200; i++) {
-    if (await hostApi.isSecondaryEngineRegistrationReady()) {
-      ready = true;
-      break;
+    try {
+      ready = await NativeInteropHostIntegrationCoreApi.createWithNativeInteropApi()
+          .isSecondaryEngineRegistrationReady();
+      if (ready) {
+        break;
+      }
+    } on PlatformException catch (e) {
+      // A probe created before this engine registered may hit `engine1` and
+      // fail with `unregistered-instance` once `engine1` tears down.
+      if (e.code != 'unregistered-instance') {
+        rethrow;
+      }
     }
     await Future<void>.delayed(const Duration(milliseconds: 10));
   }
+  final hostApi = NativeInteropHostIntegrationCoreApi.createWithNativeInteropApi();
   if (!ready) {
     await hostApi.reportSecondaryEngineCheck(false);
     return;

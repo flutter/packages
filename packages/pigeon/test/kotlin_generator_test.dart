@@ -2209,6 +2209,8 @@ void main() {
       expect(code, contains('return keyOfMessenger(binding.binaryMessenger)'));
       expect(code, contains('fun keyOf(engine: FlutterEngine): Long {'));
       expect(code, contains('val key = engine.engineId'));
+      expect(code, contains('if (key == 0L) {'));
+      expect(code, contains('return keyOfMessenger(engine.dartExecutor)'));
       expect(code, contains('messengerKeys[engine.dartExecutor] = key'));
       expect(code, contains('messengerKeys.getOrPut(messenger) { nextSyntheticKey-- }'));
       expect(code, isNot(contains('flutterEngine')));

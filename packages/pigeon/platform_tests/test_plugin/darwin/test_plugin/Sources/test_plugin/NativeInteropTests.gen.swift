@@ -335,17 +335,14 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
 private enum PigeonEngineKeys {
   /// The sentinel for an unknown engine.
   static let noKey: Int64 = Int64.min
-  /// Guards the key caches. Recursive because `key(for:)` calls `key(messenger:exactKey:)`.
+  /// Guards the key caches. Recursive because `key(for:)` calls `key(messenger:)`.
   private static let lock = NSRecursiveLock()
   private static let syntheticKeys = NSMapTable<AnyObject, NSNumber>.weakToStrongObjects()
   private static var nextSyntheticKey: Int64 = -1
 
-  /// Returns `exactKey` if non-nil, otherwise the key previously assigned to `messenger`, otherwise
-  /// a new synthetic key for `messenger`.
-  static func key(messenger: AnyObject, exactKey: Int64?) -> Int64 {
-    if let exactKey = exactKey {
-      return exactKey
-    }
+  /// Returns the key previously assigned to `messenger`, or assigns and returns a new synthetic
+  /// key for `messenger`.
+  static func key(messenger: AnyObject) -> Int64 {
     lock.lock()
     defer { lock.unlock() }
     if let existing = syntheticKeys.object(forKey: messenger) {
@@ -381,7 +378,7 @@ private enum PigeonEngineKeys {
       } else if let messenger = registrarObject.value(forKey: "messenger") as AnyObject? {
         // Read through KVC because the messenger can be nil while the engine is deallocating,
         // even though it is declared non-null.
-        resolved = key(messenger: messenger, exactKey: nil)
+        resolved = key(messenger: messenger)
       }
       if resolved != noKey {
         registrarKeys.setObject(NSNumber(value: resolved), forKey: registrarObject)
@@ -4400,6 +4397,9 @@ protocol NativeInteropHostIntegrationCoreApi: AnyObject {
   /// Reports whether Native Interop Host API calls from a secondary engine's
   /// Dart isolate succeeded.
   func reportSecondaryEngineCheck(success: Bool) throws
+  /// Signals that the concurrent background isolate resolved a fresh handle
+  /// while the secondary engine was registered.
+  func notifyConcurrentIsolateResolved() throws
   /// Returns the engine key that native code stored for this plugin's
   /// default Host API registration.
   func registeredEngineKey() throws -> Int64
@@ -9574,6 +9574,24 @@ protocol NativeInteropHostIntegrationCoreApi: AnyObject {
     do {
       let activeApi = try resolveApi()
       try activeApi.reportSecondaryEngineCheck(success: successArg)
+      return
+    } catch let error as NativeInteropTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(Swift.type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return
+  }
+  /// Signals that the concurrent background isolate resolved a fresh handle
+  /// while the secondary engine was registered.
+  @objc func notifyConcurrentIsolateResolved(wrappedError: NativeInteropTestsError) {
+    do {
+      let activeApi = try resolveApi()
+      try activeApi.notifyConcurrentIsolateResolved()
       return
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code

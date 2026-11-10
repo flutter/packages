@@ -489,7 +489,7 @@ const int _pigeonNoEngineKey = -9223372036854775808;
 /// The native engine key this isolate has been associated with, learned from
 /// the first native instance it resolves.
 ///
-/// Used to route lookups when [PlatformDispatcher.engineId] is unavailable.
+/// Used to route lookups when [PlatformDispatcher.instance.engineId] is unavailable.
 int? _pigeonEngineAffinity;
 void _throwIfFfiError(ffi_bridge.PigeonError error) {
   if (error.code != null) {

@@ -272,6 +272,32 @@ class NativeInteropRegistrarTest {
   }
 
   @Test
+  fun zeroEngineIdFallsBackToDistinctMessengerKeys() {
+    val name = "unitTestZeroEngineId"
+    val api = FakeReservedNamesHostApi("zero")
+    val engine1 = mockEngine(0L)
+    val engine2 = mockEngine(0L)
+
+    NativeInteropReservedNamesHostApiRegistrar().register(api, engine1, name)
+    NativeInteropReservedNamesHostApiRegistrar().register(api, engine2, name)
+    val wrapper2 =
+        NativeInteropReservedNamesHostApiRegistrar.pigeonResolveInstance(NO_KEY, NO_KEY, name)!!
+    val key2 = NativeInteropReservedNamesHostApiRegistrar.pigeonEngineKeyOf(wrapper2)
+    assertTrue(key2 < 0L)
+
+    // Unregistering engine1 removes only its synthetic-key entry and preserves engine2.
+    NativeInteropReservedNamesHostApiRegistrar().unregister(api, engine1, name)
+    val remaining =
+        NativeInteropReservedNamesHostApiRegistrar.pigeonResolveInstance(NO_KEY, NO_KEY, name)
+    assertSame(wrapper2, remaining)
+    assertEquals(key2, NativeInteropReservedNamesHostApiRegistrar.pigeonEngineKeyOf(remaining!!))
+
+    NativeInteropReservedNamesHostApiRegistrar().unregister(api, engine2, name)
+    assertNull(
+        NativeInteropReservedNamesHostApiRegistrar.pigeonResolveInstance(NO_KEY, NO_KEY, name))
+  }
+
+  @Test
   fun bindingKeyIsStableWhenItsEngineIsLaterKeyedExactly() {
     val name = "unitTestBindingThenEngine"
     val api = FakeReservedNamesHostApi("shared")

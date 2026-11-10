@@ -10842,6 +10842,29 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     ).check();
   }
 
+  static final _id_notifyConcurrentIsolateResolved = NativeInteropHostIntegrationCoreApiRegistrar
+      ._class
+      .instanceMethodId(r'notifyConcurrentIsolateResolved', r'()V');
+
+  static final _notifyConcurrentIsolateResolved =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JThrowablePtr Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_CallVoidMethod')
+          .asFunction<
+            jni$_.JThrowablePtr Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+          >();
+
+  /// from: `public fun notifyConcurrentIsolateResolved(): kotlin.Unit`
+  void notifyConcurrentIsolateResolved() {
+    final _$$selfRef = reference;
+    _notifyConcurrentIsolateResolved(
+      _$$selfRef.pointer,
+      _id_notifyConcurrentIsolateResolved.pointer,
+    ).check();
+  }
+
   static final _id_registeredEngineKey = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(r'registeredEngineKey', r'()J');
 

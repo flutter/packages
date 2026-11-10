@@ -251,6 +251,11 @@ private object NativeInteropTestsPigeonEngineKeys {
   @Synchronized
   fun keyOf(engine: FlutterEngine): Long {
     val key = engine.engineId
+    if (key == 0L) {
+      // Real engine ids are never 0, but an engine without one, or a test
+      // double, reports 0, which must not be shared between engines.
+      return keyOfMessenger(engine.dartExecutor)
+    }
     // Record the exact key so later lookups through a binding for this engine
     // agree with it even when the binding cannot report the engine id.
     messengerKeys[engine.dartExecutor] = key
@@ -2242,6 +2247,11 @@ interface NativeInteropHostIntegrationCoreApi {
    * Reports whether Native Interop Host API calls from a secondary engine's Dart isolate succeeded.
    */
   fun reportSecondaryEngineCheck(success: Boolean)
+  /**
+   * Signals that the concurrent background isolate resolved a fresh handle while the secondary
+   * engine was registered.
+   */
+  fun notifyConcurrentIsolateResolved()
   /**
    * Returns the engine key that native code stored for this plugin's default Host API registration.
    */
@@ -6624,6 +6634,21 @@ private constructor(private val engineKey: Long) {
                 "NativeInteropHostIntegrationCoreApi has not been registered.")
     try {
       pigeonVar_api.reportSecondaryEngineCheck(success)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun notifyConcurrentIsolateResolved() {
+    val pigeonVar_api =
+        this.api
+            ?: throw NativeInteropTestsError(
+                "unregistered-instance",
+                "NativeInteropHostIntegrationCoreApi has not been registered.")
+    try {
+      pigeonVar_api.notifyConcurrentIsolateResolved()
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))

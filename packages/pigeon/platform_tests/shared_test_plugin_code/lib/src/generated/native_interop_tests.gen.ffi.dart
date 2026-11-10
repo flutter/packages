@@ -18714,6 +18714,18 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
     _objc_msgSend_xtuoz7(_$$ref.pointer, _sel_noopWithWrappedError_, _$$ref$1.pointer);
   }
 
+  /// Signals that the concurrent background isolate resolved a fresh handle
+  /// while the secondary engine was registered.
+  void notifyConcurrentIsolateResolvedWithWrappedError(NativeInteropTestsError wrappedError) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = wrappedError.ref;
+    _objc_msgSend_xtuoz7(
+      _$$ref.pointer,
+      _sel_notifyConcurrentIsolateResolvedWithWrappedError_,
+      _$$ref$1.pointer,
+    );
+  }
+
   /// Returns whether this platform’s plugin binding / registrar exposes an
   /// engine identifier, so registrations should use exact engine keys.
   objc.NSNumber? pluginEngineIdentifierIsAvailableWithWrappedError(
@@ -30666,6 +30678,9 @@ late final _sel_noopAsyncWithWrappedError_completionHandler_ = objc.registerName
 );
 late final _sel_noopWithError_ = objc.registerName("noopWithError:");
 late final _sel_noopWithWrappedError_ = objc.registerName("noopWithWrappedError:");
+late final _sel_notifyConcurrentIsolateResolvedWithWrappedError_ = objc.registerName(
+  "notifyConcurrentIsolateResolvedWithWrappedError:",
+);
 late final _sel_nullableClassList = objc.registerName("nullableClassList");
 late final _sel_nullableClassMap = objc.registerName("nullableClassMap");
 late final _sel_nullableSealedClass = objc.registerName("nullableSealedClass");

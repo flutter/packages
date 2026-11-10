@@ -1648,13 +1648,18 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
           }
         },
       );
+      final bool hasHostApi = root.apis.any((Api api) => api is AstHostApi);
       indent.newln();
       indent.writeScoped('${api.name} ${varNamePrefix}register({String name = defaultInstanceName}) {', '}', () {
         indent.writeln('${varNamePrefix}removeHandle(${varNamePrefix}dartApi, name: name);');
         indent.writeln(
           'final int engineId = PlatformDispatcher.instance.engineId ?? _pigeonNoEngineKey;',
         );
-        indent.writeln('final int affinityKey = _pigeonEngineAffinity ?? _pigeonNoEngineKey;');
+        indent.writeln(
+          hasHostApi
+              ? 'final int affinityKey = _pigeonEngineAffinity ?? _pigeonNoEngineKey;'
+              : 'const int affinityKey = _pigeonNoEngineKey;',
+        );
         if (generatorOptions.useJni) {
           indent.writeScoped('if (Platform.isAndroid) {', '}', () {
             indent.writeln(
@@ -1810,58 +1815,64 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
         }
         indent.writeln('return ${varNamePrefix}dartApi;');
       });
-      indent.newln();
-      indent.writeln("/// Re-sends this isolate's registrations to native code with the current");
-      indent.writeln(
-        '/// engine affinity, which may have been learned after they were registered.',
-      );
-      indent.writeln('///');
-      indent.writeln('/// Native code updates existing registrations in place.');
-      indent.writeScoped('static void ${varNamePrefix}updateEngineAffinity() {', '}', () {
+      if (hasHostApi) {
+        indent.newln();
+        indent.writeln("/// Re-sends this isolate's registrations to native code with the current");
         indent.writeln(
-          'final int engineId = PlatformDispatcher.instance.engineId ?? _pigeonNoEngineKey;',
+          '/// engine affinity, which may have been learned after they were registered.',
         );
-        indent.writeln('final int affinityKey = _pigeonEngineAffinity ?? _pigeonNoEngineKey;');
-        indent.writeScoped(
-          'for (final MapEntry<String, List<(${api.name}, Object)>> entry in ${varNamePrefix}registeredHandles.entries) {',
-          '}',
-          () {
-            indent.writeScoped('for (final (${api.name} _, Object handle) in entry.value) {', '}', () {
-              if (generatorOptions.useJni) {
-                indent.writeScoped('if (Platform.isAndroid) {', '}', () {
-                  indent.writeln('final JString jName = entry.key.toJString();');
-                  indent.writeln(
-                    'final $_jniBridgePrefix.${api.name}Registrar registrar = $_jniBridgePrefix.${api.name}Registrar();',
-                  );
-                  indent.writeScoped('try {', '}', () {
-                    indent.writeln(
-                      'registrar.${jniRegister.name}(handle as $_jniBridgePrefix.$jniInterfaceName, engineId, affinityKey, jName);',
-                    );
-                  }, addTrailingNewline: false);
-                  indent.addScoped(' finally {', '}', () {
-                    indent.writeln('registrar.release();');
-                    indent.writeln('jName.release();');
-                  });
-                });
-              }
-              if (generatorOptions.useFfi) {
-                indent.writeScoped('if (Platform.isIOS || Platform.isMacOS) {', '}', () {
-                  indent.writeScoped(
-                    '$_ffiBridgePrefix.${api.name}Registrar.registerInstanceWithApi(',
-                    ');',
-                    () {
-                      indent.writeln('handle as $_ffiBridgePrefix.${api.name}Bridge,');
-                      indent.writeln('engineId: engineId,');
-                      indent.writeln('affinityKey: affinityKey,');
-                      indent.writeln('name: NSString(entry.key),');
-                    },
-                  );
-                });
-              }
-            });
-          },
-        );
-      });
+        indent.writeln('///');
+        indent.writeln('/// Native code updates existing registrations in place.');
+        indent.writeScoped('static void ${varNamePrefix}updateEngineAffinity() {', '}', () {
+          indent.writeln(
+            'final int engineId = PlatformDispatcher.instance.engineId ?? _pigeonNoEngineKey;',
+          );
+          indent.writeln('final int affinityKey = _pigeonEngineAffinity ?? _pigeonNoEngineKey;');
+          indent.writeScoped(
+            'for (final MapEntry<String, List<(${api.name}, Object)>> entry in ${varNamePrefix}registeredHandles.entries) {',
+            '}',
+            () {
+              indent.writeScoped(
+                'for (final (${api.name} _, Object handle) in entry.value) {',
+                '}',
+                () {
+                  if (generatorOptions.useJni) {
+                    indent.writeScoped('if (Platform.isAndroid) {', '}', () {
+                      indent.writeln('final JString jName = entry.key.toJString();');
+                      indent.writeln(
+                        'final $_jniBridgePrefix.${api.name}Registrar registrar = $_jniBridgePrefix.${api.name}Registrar();',
+                      );
+                      indent.writeScoped('try {', '}', () {
+                        indent.writeln(
+                          'registrar.${jniRegister.name}(handle as $_jniBridgePrefix.$jniInterfaceName, engineId, affinityKey, jName);',
+                        );
+                      }, addTrailingNewline: false);
+                      indent.addScoped(' finally {', '}', () {
+                        indent.writeln('registrar.release();');
+                        indent.writeln('jName.release();');
+                      });
+                    });
+                  }
+                  if (generatorOptions.useFfi) {
+                    indent.writeScoped('if (Platform.isIOS || Platform.isMacOS) {', '}', () {
+                      indent.writeScoped(
+                        '$_ffiBridgePrefix.${api.name}Registrar.registerInstanceWithApi(',
+                        ');',
+                        () {
+                          indent.writeln('handle as $_ffiBridgePrefix.${api.name}Bridge,');
+                          indent.writeln('engineId: engineId,');
+                          indent.writeln('affinityKey: affinityKey,');
+                          indent.writeln('name: NSString(entry.key),');
+                        },
+                      );
+                    });
+                  }
+                },
+              );
+            },
+          );
+        });
+      }
 
       if (generatorOptions.useJni) {
         final jniNamer = _JniBindingNamer(isInterface: true);
@@ -3598,23 +3609,28 @@ void _throwNoInstanceError(String channelName) {
       indent.format('''
 /// Native engine key meaning "no engine", matching `Long.MIN_VALUE` in Kotlin
 /// and `Int64.min` in Swift.
-const int _pigeonNoEngineKey = -9223372036854775808;
-
+const int _pigeonNoEngineKey = -9223372036854775808;''');
+      if (root.apis.any((Api api) => api is AstHostApi)) {
+        indent.newln();
+        indent.format('''
 /// The native engine key this isolate has been associated with, learned from
 /// the first native instance it resolves.
 ///
-/// Used to route lookups when [PlatformDispatcher.engineId] is unavailable.
+/// Used to route lookups when [PlatformDispatcher.instance.engineId] is unavailable.
 int? _pigeonEngineAffinity;''');
-      final Iterable<AstFlutterApi> flutterApis = root.apis.whereType<AstFlutterApi>();
-      if (flutterApis.isNotEmpty && root.apis.any((Api api) => api is AstHostApi)) {
-        indent.newln();
-        indent.writeln('/// Updates Flutter API registrations made before [_pigeonEngineAffinity]');
-        indent.writeln('/// was known.');
-        indent.writeScoped('void _pigeonUpdateFlutterApiEngineAffinity() {', '}', () {
-          for (final api in flutterApis) {
-            indent.writeln('_${api.name}Registrar.${varNamePrefix}updateEngineAffinity();');
-          }
-        });
+        final Iterable<AstFlutterApi> flutterApis = root.apis.whereType<AstFlutterApi>();
+        if (flutterApis.isNotEmpty) {
+          indent.newln();
+          indent.writeln(
+            '/// Updates Flutter API registrations made before [_pigeonEngineAffinity]',
+          );
+          indent.writeln('/// was known.');
+          indent.writeScoped('void _pigeonUpdateFlutterApiEngineAffinity() {', '}', () {
+            for (final api in flutterApis) {
+              indent.writeln('_${api.name}Registrar.${varNamePrefix}updateEngineAffinity();');
+            }
+          });
+        }
       }
     }
     _writeErrorHelpers(indent, generatorOptions);

@@ -1556,6 +1556,10 @@ abstract class NativeInteropHostIntegrationCoreApi {
   /// Dart isolate succeeded.
   void reportSecondaryEngineCheck(bool success);
 
+  /// Signals that the concurrent background isolate resolved a fresh handle
+  /// while the secondary engine was registered.
+  void notifyConcurrentIsolateResolved();
+
   /// Returns the engine key that native code stored for this plugin's
   /// default Host API registration.
   int registeredEngineKey();

@@ -1972,6 +1972,8 @@ void main() {
     expect(code, contains('value(forKey: "engineIdentifier") as? NSNumber'));
     expect(code, contains('identifier.int64Value != 0'));
     expect(code, contains('private static let lock = NSRecursiveLock()'));
+    expect(code, contains('static func key(messenger: AnyObject) -> Int64 {'));
+    expect(code, isNot(contains('exactKey')));
     // The messenger is read via KVC because it can be nil during engine
     // teardown, and keys are cached per registrar for detach.
     expect(code, contains('value(forKey: "messenger") as AnyObject?'));

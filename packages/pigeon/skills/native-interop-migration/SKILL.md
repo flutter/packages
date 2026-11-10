@@ -153,7 +153,7 @@ When implementing Native Interop host APIs directly in an application target (su
 
 ## 4. Update Native Plugin Implementations
 
-> **Main-thread registration**: As with platform channel `setUp`, Native Interop registration and unregistration (`register` / `unregister`, and Dart `setUp` / `Registrar` calls from the root isolate) are unsynchronized and must be called on the platform main thread (where plugin attach/detach callbacks and engine configuration already run).
+> **Main-thread registration**: As with platform channel `setUp`, Native Interop registration and unregistration (`register` / `unregister`, and Dart `setUp` / `Registrar` calls from the root isolate) are not intended for multi-threaded registration and must be called on the platform main thread (where plugin attach/detach callbacks and engine configuration already run).
 
 ### 4.1 Swift Implementation (`<PluginName>.swift`)
 1. **Registration & Multi-Engine Deregistration Calls**: Replace platform channel setup calls with FFI registration against the plugin's registrar, publish the instance, and unregister it for that registrar in `detachFromEngine(for:)` so detaching a secondary `FlutterEngine` does not clear other active engines (note that Swift FFI `@HostApi` protocols conform to `AnyObject`, so implementations must be classes). Store the registrar on the instance if it also makes native `@FlutterApi` lookups:

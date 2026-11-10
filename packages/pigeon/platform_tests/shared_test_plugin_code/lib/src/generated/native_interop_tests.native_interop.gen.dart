@@ -1192,7 +1192,7 @@ const int _pigeonNoEngineKey = -9223372036854775808;
 /// The native engine key this isolate has been associated with, learned from
 /// the first native instance it resolves.
 ///
-/// Used to route lookups when [PlatformDispatcher.engineId] is unavailable.
+/// Used to route lookups when [PlatformDispatcher.instance.engineId] is unavailable.
 int? _pigeonEngineAffinity;
 
 /// Updates Flutter API registrations made before [_pigeonEngineAffinity]
@@ -10178,6 +10178,25 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
         _ffiApi.reportSecondaryEngineCheckWithSuccess(success, wrappedError: pigeonVar_error);
+        _throwIfFfiError(pigeonVar_error);
+        return;
+      } else {
+        throw Exception('No JNI or FFI api available');
+      }
+    } on JThrowable catch (e) {
+      throw _wrapJniException(e);
+    }
+  }
+
+  @override
+  void notifyConcurrentIsolateResolved() {
+    try {
+      if (_jniApi != null) {
+        _jniApi.notifyConcurrentIsolateResolved();
+        return;
+      } else if (_ffiApi != null) {
+        final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        _ffiApi.notifyConcurrentIsolateResolvedWithWrappedError(pigeonVar_error);
         _throwIfFfiError(pigeonVar_error);
         return;
       } else {

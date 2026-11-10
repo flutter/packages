@@ -1999,6 +1999,8 @@ abstract class NativeInteropHostIntegrationCoreApiForNativeInterop {
 
   void reportSecondaryEngineCheck(bool success);
 
+  void notifyConcurrentIsolateResolved();
+
   int registeredEngineKey();
 
   String engineLabel();
@@ -7428,6 +7430,24 @@ class NativeInteropHostIntegrationCoreApi {
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[success]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+  }
+
+  /// Signals that the concurrent background isolate resolved a fresh handle
+  /// while the secondary engine was registered.
+  Future<void> notifyConcurrentIsolateResolved() async {
+    if (_nativeInteropApi != null) {
+      return _nativeInteropApi.notifyConcurrentIsolateResolved();
+    }
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropHostIntegrationCoreApi.notifyConcurrentIsolateResolved$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }

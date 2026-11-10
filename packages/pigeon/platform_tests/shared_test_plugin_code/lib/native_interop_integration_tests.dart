@@ -2999,30 +2999,39 @@ void runPigeonNativeInteropIntegrationTests(TargetGenerator targetGenerator) {
         // Bind a background isolate to the primary engine before secondary engines attach. While
         // a secondary engine is registered, it resolves a fresh handle, which has to come back to
         // the primary engine's instance (by affinity) rather than the most recent registration.
+        // On macOS under `flutter test`, `testSecondaryEngineDartExecution` exercises secondary
+        // engine attach/detach synchronously on `@MainActor` without a live secondary isolate,
+        // so the readiness handshake is skipped there.
         final readyPort = ReceivePort();
         final resultPort = ReceivePort();
-        await Isolate.spawn<(SendPort, SendPort)>((ports) async {
-          final (SendPort ready, SendPort result) = ports;
+        final expectSecondaryWindow = defaultTargetPlatform != TargetPlatform.macOS;
+        await Isolate.spawn<(SendPort, SendPort, bool)>((args) async {
+          final (SendPort ready, SendPort result, bool waitForSecondary) = args;
           final isolateApi = NativeInteropHostIntegrationCoreApi.createWithNativeInteropApi();
           final goPort = ReceivePort();
           ready.send(goPort.sendPort);
           await goPort.first;
           goPort.close();
           var sawSecondary = false;
-          for (var i = 0; i < 1200 && !sawSecondary; i++) {
-            sawSecondary = await isolateApi.isSecondaryEngineRegistrationReady();
-            if (!sawSecondary) {
-              await Future<void>.delayed(const Duration(milliseconds: 10));
+          if (waitForSecondary) {
+            for (var i = 0; i < 1200 && !sawSecondary; i++) {
+              sawSecondary = await isolateApi.isSecondaryEngineRegistrationReady();
+              if (!sawSecondary) {
+                await Future<void>.delayed(const Duration(milliseconds: 10));
+              }
             }
           }
           final String label = NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance()!
               .engineLabel();
+          if (waitForSecondary && sawSecondary) {
+            await isolateApi.notifyConcurrentIsolateResolved();
+          }
           result.send((
             await isolateApi.echoString('from_concurrent_isolate'),
             sawSecondary,
             label,
           ));
-        }, (readyPort.sendPort, resultPort.sendPort));
+        }, (readyPort.sendPort, resultPort.sendPort, expectSecondaryWindow));
         final goSendPort = await readyPort.first as SendPort;
         readyPort.close();
 
@@ -3033,9 +3042,10 @@ void runPigeonNativeInteropIntegrationTests(TargetGenerator targetGenerator) {
             await resultPort.first as (String, bool, String);
         resultPort.close();
         expect(echo, 'from_concurrent_isolate');
-        if (sawSecondary) {
-          expect(isolateLabel, primaryLabel);
+        if (expectSecondaryWindow) {
+          expect(sawSecondary, true);
         }
+        expect(isolateLabel, primaryLabel);
 
         // Verify existing clients, freshly created clients, and a newly spawned isolate in the
         // primary engine all continue working after secondary engines are torn down.

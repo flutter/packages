@@ -2154,22 +2154,35 @@ class NativeInteropIntegrationTests(
     if (context != null) {
       var engineCheckPassed = false
       val runEngineCheck = {
+        val preexistingHostWrapper =
+            NativeInteropHostIntegrationCoreApiRegistrar.pigeonResolveInstance(
+                Long.MIN_VALUE, Long.MIN_VALUE)
         val engine2 = FlutterEngine(context, null, false)
         val engine3 = FlutterEngine(context, null, false)
         engine2.plugins.add(TestPlugin())
         engine3.plugins.add(TestPlugin())
+        val engine3HostWrapper =
+            NativeInteropHostIntegrationCoreApiRegistrar.pigeonResolveInstance(
+                Long.MIN_VALUE, Long.MIN_VALUE)
+        val engine3ReservedWrapper =
+            NativeInteropReservedNamesHostApiRegistrar.pigeonResolveInstance(
+                Long.MIN_VALUE, Long.MIN_VALUE)
         engine2.destroy()
         val afterSecondDestroyed =
-            NativeInteropHostIntegrationCoreApiRegistrar.pigeonResolveInstance(
-                Long.MIN_VALUE, Long.MIN_VALUE) != null &&
+            engine3HostWrapper != null &&
+                engine3HostWrapper !== preexistingHostWrapper &&
+                engine3ReservedWrapper != null &&
+                engine3ReservedWrapper !== defaultReservedWrapper &&
+                NativeInteropHostIntegrationCoreApiRegistrar.pigeonResolveInstance(
+                    Long.MIN_VALUE, Long.MIN_VALUE) === engine3HostWrapper &&
                 NativeInteropReservedNamesHostApiRegistrar.pigeonResolveInstance(
-                    Long.MIN_VALUE, Long.MIN_VALUE) != null
+                    Long.MIN_VALUE, Long.MIN_VALUE) === engine3ReservedWrapper
         engine3.destroy()
         val afterThirdDestroyed =
             NativeInteropHostIntegrationCoreApiRegistrar.pigeonResolveInstance(
-                Long.MIN_VALUE, Long.MIN_VALUE) != null &&
+                Long.MIN_VALUE, Long.MIN_VALUE) === preexistingHostWrapper &&
                 NativeInteropReservedNamesHostApiRegistrar.pigeonResolveInstance(
-                    Long.MIN_VALUE, Long.MIN_VALUE) != null
+                    Long.MIN_VALUE, Long.MIN_VALUE) === defaultReservedWrapper
         engineCheckPassed = afterSecondDestroyed && afterThirdDestroyed
       }
       if (Looper.myLooper() == Looper.getMainLooper()) {
@@ -2289,7 +2302,8 @@ class NativeInteropIntegrationTests(
 
   override suspend fun testSecondaryEngineDartExecution(): Boolean {
     val appContext = context ?: return false
-    val deferred = SecondaryEngineCheckTracker.begin()
+    val (deferred, concurrentDeferred) =
+        SecondaryEngineCheckTracker.begin(expectConcurrentIsolate = true)
     var engine2: FlutterEngine? = null
     try {
       withContext(Dispatchers.Main) {
@@ -2313,7 +2327,11 @@ class NativeInteropIntegrationTests(
                 "secondaryEngineMain")
         createdEngine2.dartExecutor.executeDartEntrypoint(entrypoint)
       }
-      return withTimeoutOrNull(15_000L) { deferred.await() } == true
+      return withTimeoutOrNull(15_000L) {
+        val secondaryOk = deferred.await()
+        concurrentDeferred?.await()
+        secondaryOk
+      } == true
     } finally {
       SecondaryEngineCheckTracker.reset()
       withContext(NonCancellable + Dispatchers.Main) { engine2?.destroy() }
@@ -2326,6 +2344,10 @@ class NativeInteropIntegrationTests(
 
   override fun reportSecondaryEngineCheck(success: Boolean) {
     SecondaryEngineCheckTracker.report(success, this)
+  }
+
+  override fun notifyConcurrentIsolateResolved() {
+    SecondaryEngineCheckTracker.markConcurrentIsolateResolved()
   }
 
   override fun registeredEngineKey(): Long {
@@ -2353,12 +2375,23 @@ internal object SecondaryEngineCheckTracker {
   private var registrationReady = false
   private var expectedReceiver: WeakReference<NativeInteropIntegrationTests>? = null
   private var resultDeferred: CompletableDeferred<Boolean>? = null
+  private var concurrentIsolateDeferred: CompletableDeferred<Unit>? = null
 
-  fun begin(): CompletableDeferred<Boolean> =
+  fun begin(
+      expectConcurrentIsolate: Boolean = false
+  ): Pair<CompletableDeferred<Boolean>, CompletableDeferred<Unit>?> =
       synchronized(lock) {
         registrationReady = false
         expectedReceiver = null
-        CompletableDeferred<Boolean>().also { resultDeferred = it }
+        val result = CompletableDeferred<Boolean>().also { resultDeferred = it }
+        val concurrent =
+            if (expectConcurrentIsolate) {
+              CompletableDeferred<Unit>().also { concurrentIsolateDeferred = it }
+            } else {
+              concurrentIsolateDeferred = null
+              null
+            }
+        result to concurrent
       }
 
   fun markRegistrationReady(expected: NativeInteropIntegrationTests?) {
@@ -2380,11 +2413,18 @@ internal object SecondaryEngineCheckTracker {
     deferred?.complete(success && receiverMatches)
   }
 
+  fun markConcurrentIsolateResolved() {
+    val deferred: CompletableDeferred<Unit>?
+    synchronized(lock) { deferred = concurrentIsolateDeferred }
+    deferred?.complete(Unit)
+  }
+
   fun reset() {
     synchronized(lock) {
       registrationReady = false
       expectedReceiver = null
       resultDeferred = null
+      concurrentIsolateDeferred = null
     }
   }
 }

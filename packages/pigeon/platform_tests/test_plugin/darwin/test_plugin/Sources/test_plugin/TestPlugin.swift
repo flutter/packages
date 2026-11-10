@@ -2488,7 +2488,8 @@ class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
 
   func testSecondaryEngineDartExecution() async throws -> Bool {
     #if os(iOS)
-      return await SecondaryEngineTestRunner.verifyIOSLiveSecondaryEngineExecution()
+      return await SecondaryEngineTestRunner.verifyIOSLiveSecondaryEngineExecution(
+        expectConcurrentIsolate: true)
     #elseif os(macOS)
       // Under `flutter test`, macOS FlutterEngine's `run(withEntrypoint:)` resolves symbols only
       // from flutter_tools' synthetic bootstrap library; two-engine live Dart execution on macOS
@@ -2506,6 +2507,10 @@ class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
 
   func reportSecondaryEngineCheck(success: Bool) throws {
     SecondaryEngineCheckTracker.shared.report(success: success, receiver: self)
+  }
+
+  func notifyConcurrentIsolateResolved() throws {
+    SecondaryEngineCheckTracker.shared.markConcurrentIsolateResolved()
   }
 
   func registeredEngineKey() throws -> Int64 {
@@ -2533,14 +2538,18 @@ final class SecondaryEngineCheckTracker: @unchecked Sendable {
   private let lock = NSLock()
   private var registrationReady = false
   private var expectedReceiver: NativeInteropTestsClass?
+  private var expectConcurrentIsolate = false
+  private var concurrentIsolateResolved = false
   private var completedResult: Bool?
   private var continuation: CheckedContinuation<Bool, Never>?
 
-  func begin() {
+  func begin(expectConcurrentIsolate: Bool = false) {
     lock.lock()
     defer { lock.unlock() }
     registrationReady = false
     expectedReceiver = nil
+    self.expectConcurrentIsolate = expectConcurrentIsolate
+    concurrentIsolateResolved = false
     completedResult = nil
     continuation = nil
   }
@@ -2560,18 +2569,38 @@ final class SecondaryEngineCheckTracker: @unchecked Sendable {
 
   func report(success: Bool, receiver: NativeInteropTestsClass) {
     var pendingContinuation: CheckedContinuation<Bool, Never>?
-    let finalOutcome: Bool
+    var resumeValue: Bool?
     lock.lock()
     let receiverMatches = expectedReceiver == nil || expectedReceiver === receiver
-    finalOutcome = success && receiverMatches
-    if let cont = continuation {
+    let finalOutcome = success && receiverMatches
+    if let cont = continuation, !expectConcurrentIsolate || concurrentIsolateResolved {
       pendingContinuation = cont
       continuation = nil
+      resumeValue = finalOutcome
     } else if completedResult == nil {
       completedResult = finalOutcome
     }
     lock.unlock()
-    pendingContinuation?.resume(returning: finalOutcome)
+    if let pendingContinuation, let resumeValue {
+      pendingContinuation.resume(returning: resumeValue)
+    }
+  }
+
+  func markConcurrentIsolateResolved() {
+    var pendingContinuation: CheckedContinuation<Bool, Never>?
+    var resumeValue: Bool?
+    lock.lock()
+    concurrentIsolateResolved = true
+    if let cont = continuation, let existing = completedResult {
+      pendingContinuation = cont
+      continuation = nil
+      completedResult = nil
+      resumeValue = existing
+    }
+    lock.unlock()
+    if let pendingContinuation, let resumeValue {
+      pendingContinuation.resume(returning: resumeValue)
+    }
   }
 
   func waitForResult(timeoutNanoseconds: UInt64 = 15_000_000_000) async -> Bool {
@@ -2582,7 +2611,7 @@ final class SecondaryEngineCheckTracker: @unchecked Sendable {
     let outcome = await withCheckedContinuation { (cont: CheckedContinuation<Bool, Never>) in
       var immediateResult: Bool?
       lock.lock()
-      if let existing = completedResult {
+      if let existing = completedResult, !expectConcurrentIsolate || concurrentIsolateResolved {
         immediateResult = existing
         completedResult = nil
       } else {
@@ -2615,6 +2644,8 @@ final class SecondaryEngineCheckTracker: @unchecked Sendable {
     defer { lock.unlock() }
     registrationReady = false
     expectedReceiver = nil
+    expectConcurrentIsolate = false
+    concurrentIsolateResolved = false
     completedResult = nil
     continuation = nil
   }
@@ -2648,6 +2679,8 @@ enum SecondaryEngineTestRunner {
           engine.destroyContext()
           return false
         }
+        // `TestPlugin.register` sets up event channels that require `engine.run`
+        // to have initialized the shell first.
         TestPlugin.register(with: registrar)
         engineOut = engine
         hostSetupOut = NativeInteropHostIntegrationCoreApiSetup.pigeonResolveInstance(
@@ -2752,12 +2785,14 @@ enum SecondaryEngineTestRunner {
     }
 
     @MainActor
-    static func verifyIOSLiveSecondaryEngineExecution() async -> Bool {
+    static func verifyIOSLiveSecondaryEngineExecution(expectConcurrentIsolate: Bool = false) async
+      -> Bool
+    {
       let preexistingHostSetup = NativeInteropHostIntegrationCoreApiSetup.pigeonResolveInstance(
         engineId: Int64.min, affinityKey: Int64.min)
       let preexistingReservedSetup = NativeInteropReservedNamesHostApiSetup.pigeonResolveInstance(
         engineId: Int64.min, affinityKey: Int64.min)
-      SecondaryEngineCheckTracker.shared.begin()
+      SecondaryEngineCheckTracker.shared.begin(expectConcurrentIsolate: expectConcurrentIsolate)
       var engine1: FlutterEngine?
       var engine2: FlutterEngine?
       var setup1: NativeInteropHostIntegrationCoreApiSetup?
@@ -3185,21 +3220,64 @@ final class StubPluginRegistrar: NSObject, FlutterPluginRegistrar {
   let stubTextures: FlutterTextureRegistry = StubTextureRegistry()
   // `@objc` so that the generated runtime lookup finds it even on Flutter
   // versions whose `FlutterPluginRegistrar` doesn't declare it.
-  @objc let engineIdentifier: Int64
+  @objc var engineIdentifier: Int64
   var published: NSObject?
 
   private static let identifierLock = NSLock()
   // Large enough not to collide with the identifiers of real engines in the test process.
   private static var nextEngineIdentifier: Int64 = 1 << 40
 
-  /// Creates a registrar for a fake engine with a unique `engineIdentifier`.
-  override init() {
-    StubPluginRegistrar.identifierLock.lock()
-    engineIdentifier = StubPluginRegistrar.nextEngineIdentifier
-    StubPluginRegistrar.nextEngineIdentifier += 1
-    StubPluginRegistrar.identifierLock.unlock()
+  /// Creates a registrar for a fake engine with [engineIdentifier] (or a unique non-zero ID when `nil`).
+  init(engineIdentifier: Int64? = nil) {
+    if let engineIdentifier {
+      self.engineIdentifier = engineIdentifier
+    } else {
+      StubPluginRegistrar.identifierLock.lock()
+      self.engineIdentifier = StubPluginRegistrar.nextEngineIdentifier
+      StubPluginRegistrar.nextEngineIdentifier += 1
+      StubPluginRegistrar.identifierLock.unlock()
+    }
     super.init()
   }
+
+  func publish(_ value: NSObject) {
+    published = value
+  }
+
+  func addMethodCallDelegate(_ delegate: FlutterPlugin, channel: FlutterMethodChannel) {}
+
+  func lookupKey(forAsset asset: String) -> String { asset }
+
+  func lookupKey(forAsset asset: String, fromPackage package: String) -> String { asset }
+
+  func valuePublished(byPlugin pluginKey: String) -> NSObject? { published }
+
+  func register(_ factory: FlutterPlatformViewFactory, withId factoryId: String) {}
+
+  #if os(iOS)
+    var viewController: UIViewController? { nil }
+    func messenger() -> FlutterBinaryMessenger { stubMessenger }
+    func textures() -> FlutterTextureRegistry { stubTextures }
+    func addApplicationDelegate(_ delegate: FlutterPlugin) {}
+    func addSceneDelegate(_ delegate: FlutterSceneLifeCycleDelegate) {}
+    func register(
+      _ factory: FlutterPlatformViewFactory, withId factoryId: String,
+      gestureRecognizersBlockingPolicy: FlutterPlatformViewGestureRecognizersBlockingPolicy
+    ) {}
+  #elseif os(macOS)
+    var messenger: FlutterBinaryMessenger { stubMessenger }
+    var textures: FlutterTextureRegistry { stubTextures }
+    var view: NSView? { nil }
+    var viewController: NSViewController? { nil }
+    func addApplicationDelegate(_ delegate: FlutterAppLifecycleDelegate) {}
+  #endif
+}
+
+/// Registrar test double without `engineIdentifier`, simulating Flutter versions prior to engine ID support.
+final class StubPluginRegistrarWithoutEngineId: NSObject, FlutterPluginRegistrar {
+  let stubMessenger: FlutterBinaryMessenger = StubBinaryMessenger()
+  let stubTextures: FlutterTextureRegistry = StubTextureRegistry()
+  var published: NSObject?
 
   func publish(_ value: NSObject) {
     published = value

@@ -391,6 +391,59 @@ struct RunnerTests {
       NativeInteropHostIntegrationCoreApiSetup.pigeonResolveInstance(
         engineId: registrar2.engineIdentifier, affinityKey: Int64.min, name: name) === setup2)
   }
+
+  @Test
+  func zeroAndMissingEngineIdentifierFallBackToDistinctMessengerKeysAndCacheForTeardown() throws {
+    let name = "iosZeroAndMissingEngineIdFallback"
+    let zero1 = StubPluginRegistrar(engineIdentifier: 0)
+    let zero2 = StubPluginRegistrar(engineIdentifier: 0)
+    let noId1 = StubPluginRegistrarWithoutEngineId()
+    let noId2 = StubPluginRegistrarWithoutEngineId()
+    let api = NativeInteropTestsClass()
+
+    NativeInteropHostIntegrationCoreApiSetup.register(api: api, registrar: zero1, name: name)
+    NativeInteropHostIntegrationCoreApiSetup.register(api: api, registrar: zero2, name: name)
+    let setupZero2 = try #require(
+      NativeInteropHostIntegrationCoreApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min, name: name))
+    let zeroKey2 = NativeInteropHostIntegrationCoreApiSetup.pigeonEngineKey(of: setupZero2)
+    #expect(zeroKey2 < 0)
+
+    NativeInteropHostIntegrationCoreApiSetup.unregister(api: api, registrar: zero1, name: name)
+    #expect(
+      NativeInteropHostIntegrationCoreApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min, name: name) === setupZero2)
+    NativeInteropHostIntegrationCoreApiSetup.unregister(api: api, registrar: zero2, name: name)
+    #expect(
+      NativeInteropHostIntegrationCoreApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min, name: name) == nil)
+
+    NativeInteropHostIntegrationCoreApiSetup.register(api: api, registrar: noId1, name: name)
+    NativeInteropHostIntegrationCoreApiSetup.register(api: api, registrar: noId2, name: name)
+    let setupNoId2 = try #require(
+      NativeInteropHostIntegrationCoreApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min, name: name))
+    #expect(NativeInteropHostIntegrationCoreApiSetup.pigeonEngineKey(of: setupNoId2) < 0)
+    NativeInteropHostIntegrationCoreApiSetup.unregister(api: api, registrar: noId1, name: name)
+    #expect(
+      NativeInteropHostIntegrationCoreApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min, name: name) === setupNoId2)
+    NativeInteropHostIntegrationCoreApiSetup.unregister(api: api, registrar: noId2, name: name)
+
+    // Caching preserves the exact key from registration even if engineIdentifier drops to 0 on teardown.
+    let deallocating = StubPluginRegistrar()
+    let originalId = deallocating.engineIdentifier
+    NativeInteropHostIntegrationCoreApiSetup.register(api: api, registrar: deallocating, name: name)
+    #expect(
+      NativeInteropHostIntegrationCoreApiSetup.pigeonResolveInstance(
+        engineId: originalId, affinityKey: Int64.min, name: name) != nil)
+    deallocating.engineIdentifier = 0
+    NativeInteropHostIntegrationCoreApiSetup.unregister(
+      api: api, registrar: deallocating, name: name)
+    #expect(
+      NativeInteropHostIntegrationCoreApiSetup.pigeonResolveInstance(
+        engineId: originalId, affinityKey: Int64.min, name: name) == nil)
+  }
 }
 
 @objc

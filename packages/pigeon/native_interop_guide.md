@@ -155,16 +155,21 @@ s.source_files = 'Sources/**/*.{swift,m,h}'
 This allows CocoaPods to automatically compile the generated Objective-C bridging files into the framework.
 
 #### Swift Package Manager (SwiftPM) Configuration
-**Only if a `.m` file is generated** in `<swift_output_dir>_objc_gen`, you must configure a separate Objective-C target in your `Package.swift` file. Because Swift and Objective-C files cannot reside within the same SwiftPM target, define two separate targets:
+All SwiftPM plugins using Native Interop (`useFfi: true`) must depend on `FlutterFramework` (`path: "../FlutterFramework"`, which Flutter's SwiftPM integration resolves inside the ephemeral `.packages` directory) so the generated `#if canImport(Flutter)` / `#if canImport(FlutterMacOS)` registration APIs compile.
+
+In addition, **only if a `.m` file is generated** in `<swift_output_dir>_objc_gen`, you must configure a separate Objective-C target in your `Package.swift` file. Because Swift and Objective-C files cannot reside within the same SwiftPM target, define two separate targets:
 1. An Objective-C target for the generated bridge files (e.g., `my_plugin_objc_gen`).
 2. The main Swift target that depends on the Objective-C target.
 
-> **Important:** If your Pigeon schema only uses synchronous `@HostApi()` methods (and does not generate a `.m` file in `<swift_output_dir>_objc_gen`), **do not** add the `<plugin_name>_objc_gen` target to `Package.swift`. SwiftPM requires every `.target` to contain at least one compilable source file (`.m`, `.c`, or `.swift`). Declaring a `<plugin_name>_objc_gen` target when the directory only contains a `.h` header (or temporary `.o` file) will cause Xcode builds to fail with:
+> **Important:** If your Pigeon schema only uses synchronous `@HostApi()` methods (and does not generate a `.m` file in `<swift_output_dir>_objc_gen`), keep the `FlutterFramework` dependency on your package and main Swift target, but **do not** add the `<plugin_name>_objc_gen` target to `Package.swift`. SwiftPM requires every `.target` to contain at least one compilable source file (`.m`, `.c`, or `.swift`). Declaring a `<plugin_name>_objc_gen` target when the directory only contains a `.h` header (or temporary `.o` file) will cause Xcode builds to fail with:
 > `Build input file cannot be found: '.../<plugin_name>_objc_gen.o'`
 
 Example configuration (when `<plugin_name>_objc_gen` contains a generated `.m` file):
-<?code-excerpt "platform_tests/test_plugin/darwin/test_plugin/Package.swift (swiftpm-targets)"?>
+<?code-excerpt "platform_tests/test_plugin/darwin/test_plugin/Package.swift (swiftpm-package)"?>
 ```swift
+dependencies: [
+  .package(name: "FlutterFramework", path: "../FlutterFramework")
+],
 targets: [
   .target(
     name: "test_plugin_objc_gen",
@@ -231,7 +236,7 @@ When implementing a Flutter plugin (`FlutterPlugin`), multiple `FlutterEngine` i
 
 Each `@HostApi` registration is associated with the engine passed to `register` (a plugin binding, `FlutterEngine`, or plugin registrar). Register on attach and unregister **that specific instance** for **that engine** on detach: detaching one engine only removes that engine's registration, and Dart lookups prefer the calling engine's registration (see [Multi-Engine Routing](#multi-engine-routing)).
 
-> **Call registration APIs on the platform main thread**: As with platform channel `setUp`, Native Interop registration and unregistration (`register` / `unregister` / `registerInstance` / `unregisterInstance`, and Dart `setUp` / `Registrar` calls from the root isolate) are not synchronized and must be called on the platform main thread, which is where plugin attach/detach callbacks and engine configuration already run.
+> **Call registration APIs on the platform main thread**: As with platform channel `setUp`, Native Interop registration and unregistration (`register` / `unregister`, and Dart `setUp` / `Registrar` calls from the root isolate) are not intended for multi-threaded registration and must be called on the platform main thread, which is where plugin attach/detach callbacks and engine configuration already run.
 
 - **Kotlin (JNI)**:
   ```kotlin

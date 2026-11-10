@@ -16,10 +16,10 @@ let package = Package(
   products: [
     .library(name: "test-plugin", targets: ["test_plugin"])
   ],
+  // #docregion swiftpm-package
   dependencies: [
     .package(name: "FlutterFramework", path: "../FlutterFramework")
   ],
-  // #docregion swiftpm-targets
   targets: [
     .target(
       name: "test_plugin_objc_gen",
@@ -34,5 +34,5 @@ let package = Package(
       ]
     ),
   ]
-  // #enddocregion swiftpm-targets
+  // #enddocregion swiftpm-package
 )

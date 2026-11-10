@@ -2966,6 +2966,10 @@ SWIFT_CLASS("_TtC11test_plugin40NativeInteropHostIntegrationCoreApiSetup")
                                  wrappedError:
                                      (NativeInteropTestsError* _Nonnull)
                                          wrappedError;
+/// Signals that the concurrent background isolate resolved a fresh handle
+/// while the secondary engine was registered.
+- (void)notifyConcurrentIsolateResolvedWithWrappedError:
+    (NativeInteropTestsError* _Nonnull)wrappedError;
 /// Returns the engine key that native code stored for this plugin’s
 /// default Host API registration.
 - (NSNumber* _Nullable)registeredEngineKeyWithWrappedError:
