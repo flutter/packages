@@ -3215,7 +3215,7 @@ final class StubTextureRegistry: NSObject, FlutterTextureRegistry {
   func unregisterTexture(_ textureId: Int64) {}
 }
 
-final class StubPluginRegistrar: NSObject, FlutterPluginRegistrar {
+class StubPluginRegistrar: NSObject, FlutterPluginRegistrar {
   let stubMessenger: FlutterBinaryMessenger = StubBinaryMessenger()
   let stubTextures: FlutterTextureRegistry = StubTextureRegistry()
   // `@objc` so that the generated runtime lookup finds it even on Flutter
@@ -3273,43 +3273,19 @@ final class StubPluginRegistrar: NSObject, FlutterPluginRegistrar {
   #endif
 }
 
-/// Registrar test double without `engineIdentifier`, simulating Flutter versions prior to engine ID support.
-final class StubPluginRegistrarWithoutEngineId: NSObject, FlutterPluginRegistrar {
-  let stubMessenger: FlutterBinaryMessenger = StubBinaryMessenger()
-  let stubTextures: FlutterTextureRegistry = StubTextureRegistry()
-  var published: NSObject?
-
-  func publish(_ value: NSObject) {
-    published = value
+/// Registrar test double whose `responds(to:)` reports `engineIdentifier` as absent,
+/// simulating Flutter versions prior to engine ID support even when compiling against newer headers.
+final class StubPluginRegistrarWithoutEngineId: StubPluginRegistrar {
+  init() {
+    super.init(engineIdentifier: 0)
   }
 
-  func addMethodCallDelegate(_ delegate: FlutterPlugin, channel: FlutterMethodChannel) {}
-
-  func lookupKey(forAsset asset: String) -> String { asset }
-
-  func lookupKey(forAsset asset: String, fromPackage package: String) -> String { asset }
-
-  func valuePublished(byPlugin pluginKey: String) -> NSObject? { published }
-
-  func register(_ factory: FlutterPlatformViewFactory, withId factoryId: String) {}
-
-  #if os(iOS)
-    var viewController: UIViewController? { nil }
-    func messenger() -> FlutterBinaryMessenger { stubMessenger }
-    func textures() -> FlutterTextureRegistry { stubTextures }
-    func addApplicationDelegate(_ delegate: FlutterPlugin) {}
-    func addSceneDelegate(_ delegate: FlutterSceneLifeCycleDelegate) {}
-    func register(
-      _ factory: FlutterPlatformViewFactory, withId factoryId: String,
-      gestureRecognizersBlockingPolicy: FlutterPlatformViewGestureRecognizersBlockingPolicy
-    ) {}
-  #elseif os(macOS)
-    var messenger: FlutterBinaryMessenger { stubMessenger }
-    var textures: FlutterTextureRegistry { stubTextures }
-    var view: NSView? { nil }
-    var viewController: NSViewController? { nil }
-    func addApplicationDelegate(_ delegate: FlutterAppLifecycleDelegate) {}
-  #endif
+  override func responds(to aSelector: Selector!) -> Bool {
+    if aSelector == NSSelectorFromString("engineIdentifier") {
+      return false
+    }
+    return super.responds(to: aSelector)
+  }
 }
 
 @objc
