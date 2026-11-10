@@ -9,6 +9,7 @@ import 'dart:convert' show JsonEncoder, LineSplitter, json, utf8;
 import 'dart:io' as io;
 import 'dart:math' as math;
 
+import 'package:meta/meta.dart';
 import 'package:path/path.dart' as path;
 import 'package:webkit_inspection_protocol/webkit_inspection_protocol.dart';
 
@@ -51,6 +52,9 @@ class ChromeOptions {
   /// If null, Chrome is launched without debugging. When running in headless
   /// mode without a debug port, Chrome quits immediately. For most tests it is
   /// typical to set [headless] to true and set a non-null debug port.
+  ///
+  /// If 0, Chrome binds an ephemeral port allocated by the OS, and the bound
+  /// port is read from Chrome's "DevTools listening on ws://..." output.
   final int? debugPort;
 }
 
@@ -140,9 +144,8 @@ class Chrome {
     );
 
     WipConnection? debugConnection;
-    final int? debugPort = options.debugPort;
-    if (debugPort != null) {
-      debugConnection = await _connectToChromeDebugPort(chromeProcess, debugPort);
+    if (withDebugging) {
+      debugConnection = await _connectToChromeDebugPort(chromeProcess);
     }
 
     return Chrome._(chromeProcess, onError, debugConnection, options.headless);
@@ -282,14 +285,18 @@ String _findSystemChromeExecutable() {
 }
 
 /// Waits for Chrome to print DevTools URI and connects to it.
-Future<WipConnection> _connectToChromeDebugPort(io.Process chromeProcess, int port) async {
+///
+/// The host and port are read from the "DevTools listening on ws://..." line
+/// instead of being assumed. This supports `--remote-debugging-port=0` and
+/// connects to the exact address Chrome bound (e.g. `[::1]` vs `127.0.0.1`).
+Future<WipConnection> _connectToChromeDebugPort(io.Process chromeProcess) async {
   chromeProcess.stdout.transform(utf8.decoder).transform(const LineSplitter()).listen((
     String line,
   ) {
     print('[CHROME]: $line');
   });
 
-  await chromeProcess.stderr
+  final String devToolsLine = await chromeProcess.stderr
       .transform(utf8.decoder)
       .transform(const LineSplitter())
       .map((String line) {
@@ -306,9 +313,15 @@ Future<WipConnection> _connectToChromeDebugPort(io.Process chromeProcess, int po
         },
       );
 
-  final Uri devtoolsUri = await _getRemoteDebuggerUrl(Uri.parse('http://localhost:$port'));
+  final Uri browserUri = parseDevToolsListeningUri(devToolsLine);
+  // `Uri.host` strips the brackets from IPv6 literals, but `ChromeConnection`
+  // interpolates the host into a URL string.
+  final String host = browserUri.host.contains(':') ? '[${browserUri.host}]' : browserUri.host;
+  final int port = browserUri.port;
+
+  final Uri devtoolsUri = await _getRemoteDebuggerUrl(Uri.parse('http://$host:$port'));
   print('Connecting to DevTools: $devtoolsUri');
-  final chromeConnection = ChromeConnection('localhost', port);
+  final chromeConnection = ChromeConnection(host, port);
   final ChromeTab? tab = await chromeConnection.getTab(
     (ChromeTab tab) => tab.url.startsWith('http://localhost'),
     retryFor: const Duration(seconds: 5),
@@ -319,6 +332,17 @@ Future<WipConnection> _connectToChromeDebugPort(io.Process chromeProcess, int po
   final WipConnection debugConnection = await tab.connect();
   print('Connected to Chrome tab: ${tab.title} (${tab.url})');
   return debugConnection;
+}
+
+/// Parses the browser WebSocket URI from Chrome's
+/// `DevTools listening on ws://<host>:<port>/devtools/browser/<id>` line.
+@visibleForTesting
+Uri parseDevToolsListeningUri(String line) {
+  final RegExpMatch? match = RegExp(r'^DevTools listening on (ws://\S+)').firstMatch(line);
+  if (match == null) {
+    throw FormatException('Expected "DevTools listening on ws://..." but got: $line');
+  }
+  return Uri.parse(match.group(1)!);
 }
 
 /// Gets the Chrome debugger URL for the web page being benchmarked.
