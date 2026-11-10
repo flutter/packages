@@ -17,6 +17,9 @@ class ImageBuilder extends StatelessWidget {
   final XFile file;
 
   Future<Image> _getImage() async {
+    // TODO(bparrishMines): When returning `Image.File`, use platform agnostic
+    // feature to get a file path when https://github.com/flutter/flutter/issues/196306
+    // is implemented.
     if (kIsWeb) {
       return Image.network(file.uri);
     } else if (defaultTargetPlatform == TargetPlatform.macOS) {
