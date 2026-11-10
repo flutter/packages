@@ -5,6 +5,24 @@ import 'package:flutter_svg/src/cache.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+  test('Failed load is evicted from pending and retried', () async {
+    final cache = Cache();
+    final error = StateError('boom');
+    final completer = Completer<ByteData>();
+    final Future<ByteData> future = cache.putIfAbsent('key', () => completer.future);
+
+    completer.completeError(error);
+    await expectLater(future, throwsA(same(error)));
+    await null; // let the error handler run
+
+    var calls = 0;
+    await cache.putIfAbsent('key', () async {
+      calls++;
+      return ByteData(1);
+    });
+    expect(calls, 1);
+  });
+
   test('Sanity', () async {
     final cache = Cache();
     expect(cache.maximumSize, 100);

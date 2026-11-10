@@ -78,11 +78,23 @@ class Cache {
     } else {
       pendingResult = loader();
       _pending[key] = pendingResult;
-      pendingResult.then((ByteData data) {
-        _pending.remove(key);
-        _add(key, data);
-        result = data; // in case it was a synchronous future.
-      });
+      pendingResult.then(
+        (ByteData data) {
+          if (identical(_pending[key], pendingResult)) {
+            _pending.remove(key);
+          }
+          _add(key, data);
+          result = data; // in case it was a synchronous future.
+        },
+        onError: (Object error, StackTrace stackTrace) {
+          if (identical(_pending[key], pendingResult)) {
+            _pending.remove(key);
+          }
+          // The future returned by putIfAbsent still completes with this error
+          // for callers. Handling it here prevents the derived future from
+          // surfacing an unhandled asynchronous error.
+        },
+      );
     }
     if (result != null) {
       _add(key, result!);
