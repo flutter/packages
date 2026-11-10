@@ -1,9 +1,38 @@
-## 29.2.0
+## 30.1.0
 
 * [kotlin, swift] Adds data class default values to the generated data classes when they are
   `bool`, `int`, `double`, `String` or enum literals.
 * [dart] Fixes data class default values being dropped when the constructor is declared after the
   fields.
+
+## 30.0.0
+
+* **BREAKING CHANGE**: [kotlin,swift] Native Interop registration now supports multiple engines:
+  * `register` and `unregister` take the engine the instance belongs to (a plugin binding or `FlutterEngine` in Kotlin, a registrar in Swift). Use `unregister` instead of `register(null)`.
+  * Native `@FlutterApi` lookups take the engine (`getInstance(binding)` / `getInstance(registrar:)`) instead of a name, and the native `@HostApi` `getInstance(name)` is removed.
+  * Swift FFI `@HostApi` implementations must be classes.
+  * See the [Native Interop migration guide](./native_interop_migration_guide.md) for details.
+* [dart,kotlin,swift] Fixes detaching one engine clearing Native Interop APIs for all other engines.
+* [dart,kotlin,swift] Native Interop calls now go to the calling engine's instance where possible.
+* [kotlin,swift] Calling a Native Interop API whose instance was unregistered now throws a `PlatformException` instead of crashing.
+
+## 29.2.0
+
+* [dart] [kotlin] [swift] Passes data class, `List`, `Map` and `Object` values
+  of Kotlin JNI and Swift FFI calls in one buffer per call instead of making a
+  call across the language boundary for every field and collection element,
+  making calls with large data classes and collections many times faster while
+  keeping scalars, strings, enums and typed data direct.
+* [kotlin] Makes enum `ofRaw` constant time.
+
+## 29.1.2
+
+* [dart] Fixes `@FlutterApi` methods named `register` or `dartApi` failing with `useJni`.
+* [dart] Fixes `@FlutterApi` `implement` registering under an empty name instead of the default instance.
+
+## 29.1.1
+
+* Updates README to label Native Interop as Preview and warn about multi-engine `@HostApi` registrations.
 
 ## 29.1.0
 
