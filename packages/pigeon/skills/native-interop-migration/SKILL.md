@@ -350,7 +350,7 @@ If native interop calls work in debug builds but fail in release builds with `ja
   - To see what R8 removed or renamed, check `build/app/outputs/mapping/release/mapping.txt` in the example app directory.
 
 ### 6.11 Multi-Engine Deregistration & Per-Engine State (`ArgumentError` / `unregistered-instance`)
-If creating and destroying a secondary `FlutterEngine` causes subsequent Dart calls on a still-running engine to fail with `ArgumentError: No <Api> instance with ... found.` (when calling `createWithNativeInteropApi()`) or `PlatformException(code: 'unregistered-instance', ...)` (when calling a previously resolved handle), or calls reach another engine's instance:
+If creating and destroying a secondary `FlutterEngine` causes subsequent Dart calls on a still-running engine to fail with `ArgumentError: Invalid argument(s): No instance ... has been registered.` (when calling `createWithNativeInteropApi()`) or `PlatformException(code: 'unregistered-instance', ...)` (when calling a previously resolved handle), or calls reach another engine's instance:
 - **Cause**: One of:
   - The plugin used a Pigeon version prior to `30.0.0`, which kept a single instance per name, and called `register(null)` / `register(api: nil)` during engine teardown.
   - The handle was resolved from the detached engine's registration (for example, a lookup that ran before the engine's own registration existed, without exact engine routing).

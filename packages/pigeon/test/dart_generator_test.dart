@@ -3526,7 +3526,15 @@ name: foobar
       );
       expect(
         code,
-        contains('final int linkEngineKey = ffi_bridge.ApiSetup.pigeonEngineKeyOf(link);'),
+        contains(
+          '      if (link != null && _pigeonEngineAffinity == null) {\n'
+          '        final int linkEngineKey = ffi_bridge.ApiSetup.pigeonEngineKeyOf(link);\n'
+          '        if (linkEngineKey != _pigeonNoEngineKey && (engineId == null || linkEngineKey < 0)) {\n'
+          '          _pigeonEngineAffinity = linkEngineKey;\n'
+          '          _pigeonUpdateFlutterApiEngineAffinity();\n'
+          '        }\n'
+          '      }\n',
+        ),
       );
       expect(code, isNot(contains('getInstanceWithName')));
     });
