@@ -62,6 +62,11 @@ base class FileSelectorWeb extends FileSelectorPlatform {
     GetDirectoryDialogOptions options = const GetDirectoryDialogOptions(),
   }) async => null;
 
+  @override
+  Future<List<XDirectory>> getDirectories({
+    GetDirectoriesDialogOptions options = const GetDirectoriesDialogOptions(),
+  }) async => <XDirectory>[];
+
   Future<List<XFile>> _openFiles({
     OpenFilesDialogOptions options = const OpenFilesDialogOptions(),
     bool multiple = false,
