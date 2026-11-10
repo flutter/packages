@@ -124,7 +124,7 @@ struct PhotoAssetUtilTests {
     #expect(numberOfFrames == newNumberOfFrames)
     let properties = CGImageSourceCopyProperties(newImageSource, nil) as? [CFString: Any]
     let gifProperties = properties?[kCGImagePropertyGIFDictionary] as? [CFString: Any]
-    #expect((gifProperties?[kCGImagePropertyGIFLoopCount] as? NSNumber)?.intValue == 0)
+    #expect(gifProperties?[kCGImagePropertyGIFLoopCount] as? Int == 0)
   }
 
   @Test func saveImageWithOriginalImageDataShouldSaveAsScaledGifAnimation() throws {
@@ -146,6 +146,6 @@ struct PhotoAssetUtilTests {
     #expect(numberOfFrames == newNumberOfFrames)
     let properties = CGImageSourceCopyProperties(newImageSource, nil) as? [CFString: Any]
     let gifProperties = properties?[kCGImagePropertyGIFDictionary] as? [CFString: Any]
-    #expect((gifProperties?[kCGImagePropertyGIFLoopCount] as? NSNumber)?.intValue == 0)
+    #expect(gifProperties?[kCGImagePropertyGIFLoopCount] as? Int == 0)
   }
 }

@@ -106,7 +106,7 @@ class JnigenConfigGenerator extends Generator<InternalJnigenConfigOptions> {
         })
         .join(', ');
 
-    indent.writeln('');
+    indent.newln();
     indent.writeScoped('void main() async {', '}', () {
       indent.format('''
   if (!await _hasJava()) {
@@ -114,7 +114,7 @@ class JnigenConfigGenerator extends Generator<InternalJnigenConfigOptions> {
     return;
   }
 ''');
-      indent.writeln("  Directory.current = Platform.script.resolve('../..').toFilePath();");
+      indent.writeln("Directory.current = Platform.script.resolve('../..').toFilePath();");
       indent.writeScoped('final generator = JniGenerator(', ');', () {
         indent.writeScoped('input: Input(', '),', () {
           indent.writeScoped('classes: [', '],', () {
@@ -124,8 +124,12 @@ class JnigenConfigGenerator extends Generator<InternalJnigenConfigOptions> {
             indent.writeln(
               "'$packagePrefix${generatorOptions.kotlinOptions.errorClassName ?? 'FlutterError'}',",
             );
+            final bool hybrid = generatorOptions.kotlinOptions.useJniHybrid;
             for (final Api api in root.apis) {
-              if (api is AstFlutterApi) {
+              if (hybrid && api is AstFlutterApi) {
+                indent.writeln("'$packagePrefix${api.name}Bridge',");
+                indent.writeln("'$packagePrefix${api.name}Registrar',");
+              } else if (api is AstFlutterApi) {
                 indent.writeln("'$packagePrefix${api.name}',");
                 indent.writeln("'$packagePrefix${api.name}Registrar',");
               } else if (api is AstHostApi) {
@@ -164,7 +168,7 @@ $copyrightPreamble\'\'\',
 ''');
         });
       });
-      indent.writeln('  await generator.generate(logger: Logger.root..level = Level.ALL);');
+      indent.writeln('await generator.generate(logger: Logger.root..level = Level.ALL);');
       indent.newln();
     });
     indent.format('''
