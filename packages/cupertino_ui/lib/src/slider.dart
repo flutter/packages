@@ -620,7 +620,8 @@ class _RenderCupertinoSlider extends RenderConstrainedBox implements MouseTracke
   void describeSemanticsConfiguration(SemanticsConfiguration config) {
     super.describeSemanticsConfiguration(config);
 
-    config.isSemanticBoundary = isInteractive;
+    config.isSemanticBoundary = true;
+    config.isEnabled = isInteractive;
     config.isSlider = true;
     if (isInteractive) {
       config.textDirection = textDirection;
