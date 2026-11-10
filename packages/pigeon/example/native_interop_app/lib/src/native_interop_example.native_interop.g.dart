@@ -489,7 +489,8 @@ const int _pigeonNoEngineKey = -9223372036854775808;
 /// The native engine key this isolate has been associated with, learned from
 /// the first native instance it resolves.
 ///
-/// Used to route lookups when [PlatformDispatcher.instance.engineId] is unavailable.
+/// Used to route lookups when [PlatformDispatcher.instance.engineId] is
+/// unavailable or native code registered with a synthetic key.
 int? _pigeonEngineAffinity;
 void _throwIfFfiError(ffi_bridge.PigeonError error) {
   if (error.code != null) {
@@ -567,11 +568,11 @@ class _NativeInteropExampleApiForNativeInterop implements NativeInteropExampleAp
       if (link == null) {
         _throwNoInstanceError(channelName);
       }
-      if (link != null && engineId == null && _pigeonEngineAffinity == null) {
+      if (link != null && _pigeonEngineAffinity == null) {
         final int linkEngineKey = jni_bridge.NativeInteropExampleApiRegistrar.pigeonEngineKeyOf(
           link,
         );
-        if (linkEngineKey != _pigeonNoEngineKey) {
+        if (linkEngineKey != _pigeonNoEngineKey && (engineId == null || linkEngineKey < 0)) {
           _pigeonEngineAffinity = linkEngineKey;
         }
       }
@@ -587,9 +588,9 @@ class _NativeInteropExampleApiForNativeInterop implements NativeInteropExampleAp
       if (link == null) {
         _throwNoInstanceError(channelName);
       }
-      if (link != null && engineId == null && _pigeonEngineAffinity == null) {
+      if (link != null && _pigeonEngineAffinity == null) {
         final int linkEngineKey = ffi_bridge.NativeInteropExampleApiSetup.pigeonEngineKeyOf(link);
-        if (linkEngineKey != _pigeonNoEngineKey) {
+        if (linkEngineKey != _pigeonNoEngineKey && (engineId == null || linkEngineKey < 0)) {
           _pigeonEngineAffinity = linkEngineKey;
         }
       }

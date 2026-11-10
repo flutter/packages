@@ -299,7 +299,7 @@ Each `@HostApi` registration is associated with the engine passed to `register` 
 Native Interop looks up instances directly in process memory rather than through an engine's `BinaryMessenger`. Dart callers are unchanged: `<Api>.createWithNativeInteropApi()` / `<Api>ForNativeInterop.getInstance()` pick a registration for `name` (`messageChannelSuffix`) **at the time of the lookup**, preferring, in order:
 
 1. The registration for the calling engine (`PlatformDispatcher.instance.engineId`), when native code knows exact engine identifiers.
-2. When the calling isolate has no engine identifier, a registration for the engine that isolate first resolved a handle from. This is tracked separately for each generated Pigeon file.
+2. When step 1 does not match, a registration for the engine that isolate first resolved a handle from. This is tracked separately for each generated Pigeon file.
 3. The most recent registration.
 
 **Routing is exact** on an engine's root isolate when the engine identifier is available to native code:

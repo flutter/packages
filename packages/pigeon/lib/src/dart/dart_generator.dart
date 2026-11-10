@@ -2221,27 +2221,27 @@ $dartApiName? ${classMemberNamePrefix}getInstance_${api.name}({
         indent.writeln('final int? engineId = PlatformDispatcher.instance.engineId;');
       }
 
-      // Native registrations are matched to this isolate's engine. When the
-      // engine id is unavailable, the engine of the first resolved instance is
-      // remembered so later lookups stay on the same engine, and Flutter API
-      // registrations made before it was known are updated with it. Isolates
-      // that know their engine id never learn an affinity, because a lookup
-      // that falls back to another engine's registration doesn't make that
-      // engine theirs.
+      // Native registrations are matched to this isolate's engine. When an
+      // exact engine key match isn't available (either in a background isolate
+      // or because native code registered with a synthetic messenger key), the
+      // engine of the first resolved instance is remembered so later lookups
+      // stay on the same engine, and Flutter API registrations made before it
+      // was known are updated with it. Root isolates ignore another engine's
+      // positive exact key on fallback so a miss doesn't hijack their affinity.
       void writeRecordAffinity(String engineKeyOfCall) {
-        indent.writeScoped(
-          'if (link != null && engineId == null && _pigeonEngineAffinity == null) {',
-          '}',
-          () {
-            indent.writeln('final int linkEngineKey = $engineKeyOfCall;');
-            indent.writeScoped('if (linkEngineKey != _pigeonNoEngineKey) {', '}', () {
+        indent.writeScoped('if (link != null && _pigeonEngineAffinity == null) {', '}', () {
+          indent.writeln('final int linkEngineKey = $engineKeyOfCall;');
+          indent.writeScoped(
+            'if (linkEngineKey != _pigeonNoEngineKey && (engineId == null || linkEngineKey < 0)) {',
+            '}',
+            () {
               indent.writeln('_pigeonEngineAffinity = linkEngineKey;');
               if (root.apis.any((Api api) => api is AstFlutterApi)) {
                 indent.writeln('_pigeonUpdateFlutterApiEngineAffinity();');
               }
-            });
-          },
-        );
+            },
+          );
+        });
       }
 
       indent.writeln(
@@ -3616,7 +3616,8 @@ const int _pigeonNoEngineKey = -9223372036854775808;''');
 /// The native engine key this isolate has been associated with, learned from
 /// the first native instance it resolves.
 ///
-/// Used to route lookups when [PlatformDispatcher.instance.engineId] is unavailable.
+/// Used to route lookups when [PlatformDispatcher.instance.engineId] is
+/// unavailable or native code registered with a synthetic key.
 int? _pigeonEngineAffinity;''');
         final Iterable<AstFlutterApi> flutterApis = root.apis.whereType<AstFlutterApi>();
         if (flutterApis.isNotEmpty) {

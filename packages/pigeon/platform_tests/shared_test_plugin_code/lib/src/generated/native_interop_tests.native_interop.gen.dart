@@ -1192,7 +1192,8 @@ const int _pigeonNoEngineKey = -9223372036854775808;
 /// The native engine key this isolate has been associated with, learned from
 /// the first native instance it resolves.
 ///
-/// Used to route lookups when [PlatformDispatcher.instance.engineId] is unavailable.
+/// Used to route lookups when [PlatformDispatcher.instance.engineId] is
+/// unavailable or native code registered with a synthetic key.
 int? _pigeonEngineAffinity;
 
 /// Updates Flutter API registrations made before [_pigeonEngineAffinity]
@@ -2423,10 +2424,10 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
       if (link == null) {
         _throwNoInstanceError(channelName);
       }
-      if (link != null && engineId == null && _pigeonEngineAffinity == null) {
+      if (link != null && _pigeonEngineAffinity == null) {
         final int linkEngineKey =
             jni_bridge.NativeInteropHostIntegrationCoreApiRegistrar.pigeonEngineKeyOf(link);
-        if (linkEngineKey != _pigeonNoEngineKey) {
+        if (linkEngineKey != _pigeonNoEngineKey && (engineId == null || linkEngineKey < 0)) {
           _pigeonEngineAffinity = linkEngineKey;
           _pigeonUpdateFlutterApiEngineAffinity();
         }
@@ -2443,10 +2444,10 @@ class _NativeInteropHostIntegrationCoreApiForNativeInterop
       if (link == null) {
         _throwNoInstanceError(channelName);
       }
-      if (link != null && engineId == null && _pigeonEngineAffinity == null) {
+      if (link != null && _pigeonEngineAffinity == null) {
         final int linkEngineKey =
             ffi_bridge.NativeInteropHostIntegrationCoreApiSetup.pigeonEngineKeyOf(link);
-        if (linkEngineKey != _pigeonNoEngineKey) {
+        if (linkEngineKey != _pigeonNoEngineKey && (engineId == null || linkEngineKey < 0)) {
           _pigeonEngineAffinity = linkEngineKey;
           _pigeonUpdateFlutterApiEngineAffinity();
         }
@@ -13949,10 +13950,10 @@ class _NativeInteropReservedNamesHostApiForNativeInterop
       if (link == null) {
         _throwNoInstanceError(channelName);
       }
-      if (link != null && engineId == null && _pigeonEngineAffinity == null) {
+      if (link != null && _pigeonEngineAffinity == null) {
         final int linkEngineKey =
             jni_bridge.NativeInteropReservedNamesHostApiRegistrar.pigeonEngineKeyOf(link);
-        if (linkEngineKey != _pigeonNoEngineKey) {
+        if (linkEngineKey != _pigeonNoEngineKey && (engineId == null || linkEngineKey < 0)) {
           _pigeonEngineAffinity = linkEngineKey;
           _pigeonUpdateFlutterApiEngineAffinity();
         }
@@ -13969,10 +13970,10 @@ class _NativeInteropReservedNamesHostApiForNativeInterop
       if (link == null) {
         _throwNoInstanceError(channelName);
       }
-      if (link != null && engineId == null && _pigeonEngineAffinity == null) {
+      if (link != null && _pigeonEngineAffinity == null) {
         final int linkEngineKey =
             ffi_bridge.NativeInteropReservedNamesHostApiSetup.pigeonEngineKeyOf(link);
-        if (linkEngineKey != _pigeonNoEngineKey) {
+        if (linkEngineKey != _pigeonNoEngineKey && (engineId == null || linkEngineKey < 0)) {
           _pigeonEngineAffinity = linkEngineKey;
           _pigeonUpdateFlutterApiEngineAffinity();
         }
@@ -14797,10 +14798,10 @@ class _NativeInteropSealedClassHostApiForNativeInterop
       if (link == null) {
         _throwNoInstanceError(channelName);
       }
-      if (link != null && engineId == null && _pigeonEngineAffinity == null) {
+      if (link != null && _pigeonEngineAffinity == null) {
         final int linkEngineKey =
             jni_bridge.NativeInteropSealedClassHostApiRegistrar.pigeonEngineKeyOf(link);
-        if (linkEngineKey != _pigeonNoEngineKey) {
+        if (linkEngineKey != _pigeonNoEngineKey && (engineId == null || linkEngineKey < 0)) {
           _pigeonEngineAffinity = linkEngineKey;
           _pigeonUpdateFlutterApiEngineAffinity();
         }
@@ -14817,11 +14818,11 @@ class _NativeInteropSealedClassHostApiForNativeInterop
       if (link == null) {
         _throwNoInstanceError(channelName);
       }
-      if (link != null && engineId == null && _pigeonEngineAffinity == null) {
+      if (link != null && _pigeonEngineAffinity == null) {
         final int linkEngineKey = ffi_bridge.NativeInteropSealedClassHostApiSetup.pigeonEngineKeyOf(
           link,
         );
-        if (linkEngineKey != _pigeonNoEngineKey) {
+        if (linkEngineKey != _pigeonNoEngineKey && (engineId == null || linkEngineKey < 0)) {
           _pigeonEngineAffinity = linkEngineKey;
           _pigeonUpdateFlutterApiEngineAffinity();
         }
