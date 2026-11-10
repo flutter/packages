@@ -38,6 +38,7 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi, HostCallbackCoreApi {
   private var flutterSmallApiTwo: FlutterSmallApi? = null
   private var proxyApiRegistrar: ProxyApiRegistrar? = null
   private var niMessageApi: NativeInteropHostIntegrationCoreApiRegistrar? = null
+  private var eventChannelOne: StreamConsistentNumbersEventChannel? = null
 
   override fun onAttachedToEngine(binding: FlutterPluginBinding) {
     HostIntegrationCoreApi.setUp(binding.binaryMessenger, this)
@@ -49,6 +50,7 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi, HostCallbackCoreApi {
     niMessageApi =
         NativeInteropHostIntegrationCoreApiRegistrar().register(NativeInteropIntegrationTests())
     NativeInteropReservedNamesHostApiRegistrar().register(NativeInteropReservedNamesHostApiImpl())
+    NativeInteropSealedClassHostApiRegistrar().register(NativeInteropSealedClassHostApiImpl())
     flutterApi = FlutterIntegrationCoreApi(binding.binaryMessenger)
     flutterCallbackApi = FlutterCallbackCoreApi(binding.binaryMessenger)
     flutterSmallApiOne = FlutterSmallApi(binding.binaryMessenger, "suffixOne")
@@ -59,8 +61,13 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi, HostCallbackCoreApi {
 
     StreamEventsStreamHandler.register(binding.binaryMessenger, SendClass)
     StreamIntsStreamHandler.register(binding.binaryMessenger, SendInts)
-    StreamConsistentNumbersStreamHandler.register(
-        binding.binaryMessenger, SendConsistentNumbers(1), "1")
+    // Store one handler to exercise the handler removal codepath, and discard
+    // the other to test that the return value can be safely ignored.
+    val streamHandlerOne = SendConsistentNumbers(1)
+    eventChannelOne =
+        StreamConsistentNumbersStreamHandler.register(
+            binding.binaryMessenger, streamHandlerOne, "1")
+    streamHandlerOne.onCancelled = { eventChannelOne?.setStreamHandler(null) }
     StreamConsistentNumbersStreamHandler.register(
         binding.binaryMessenger, SendConsistentNumbers(2), "2")
   }
@@ -2326,6 +2333,7 @@ object SendClass : StreamEventsStreamHandler() {
 class SendConsistentNumbers(private val numberToSend: Long) :
     StreamConsistentNumbersStreamHandler() {
   private val handler = Handler(Looper.getMainLooper())
+  var onCancelled: (() -> Unit)? = null
 
   override fun onListen(p0: Any?, sink: PigeonEventSink<Long>) {
     var count = 0
@@ -2344,5 +2352,41 @@ class SendConsistentNumbers(private val numberToSend: Long) :
           }
         }
     handler.postDelayed(r, 10)
+  }
+
+  // Closing the stream causes the Dart side to send a "cancel" call, so any
+  // handler removal must wait until that call has been received. Removing the
+  // handler immediately after endOfStream races with the "cancel" call, which
+  // then fails with a MissingPluginException.
+  override fun onCancel(p0: Any?) {
+    onCancelled?.invoke()
+  }
+}
+
+class NativeInteropSealedClassHostApiImpl : NativeInteropSealedClassHostApi {
+  override fun echoShape(shape: NativeInteropShape): NativeInteropShape {
+    return shape
+  }
+
+  override fun echoNullableShape(shape: NativeInteropShape?): NativeInteropShape? {
+    return shape
+  }
+
+  override fun echoShapeList(shapes: List<NativeInteropShape>): List<NativeInteropShape> {
+    return shapes
+  }
+
+  override fun echoShapeMap(
+      shapes: Map<String, NativeInteropShape>
+  ): Map<String, NativeInteropShape> {
+    return shapes
+  }
+
+  override suspend fun echoAsyncShape(shape: NativeInteropShape): NativeInteropShape {
+    return shape
+  }
+
+  override fun callFlutterEchoShape(shape: NativeInteropShape): NativeInteropShape {
+    return NativeInteropSealedClassFlutterApiRegistrar().getInstance()!!.echoShape(shape)
   }
 }
