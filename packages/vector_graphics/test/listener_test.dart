@@ -216,6 +216,37 @@ void main() {
     await listener.waitForImageDecode();
     expect(() => listener.onDrawImage(2, 10, 10, 100, 100, null), throwsAssertionError);
   });
+
+  group('parseFontFamilies', () {
+    test('returns no families for a missing font-family', () {
+      expect(parseFontFamilies(null), isEmpty);
+      expect(parseFontFamilies(''), isEmpty);
+    });
+
+    test('returns a single family unchanged', () {
+      expect(parseFontFamilies('Roboto'), <String>['Roboto']);
+      expect(parseFontFamilies('Open Sans'), <String>['Open Sans']);
+    });
+
+    test('splits a list into the family and its fallbacks', () {
+      expect(parseFontFamilies('Roboto, sans-serif'), <String>['Roboto', 'sans-serif']);
+      expect(parseFontFamilies('NoSuchFont,Roboto ,  serif'), <String>[
+        'NoSuchFont',
+        'Roboto',
+        'serif',
+      ]);
+    });
+
+    test('removes quotes around family names', () {
+      expect(parseFontFamilies("'Open Sans', sans-serif"), <String>['Open Sans', 'sans-serif']);
+      expect(parseFontFamilies(' "Roboto" ,serif'), <String>['Roboto', 'serif']);
+    });
+
+    test('skips empty entries', () {
+      expect(parseFontFamilies('Roboto, , sans-serif,'), <String>['Roboto', 'sans-serif']);
+      expect(parseFontFamilies("''"), isEmpty);
+    });
+  });
 }
 
 class TestPictureFactory implements PictureFactory {

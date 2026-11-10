@@ -599,7 +599,7 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
       decorations.add(TextDecoration.lineThrough);
     }
 
-    final List<String> fontFamilies = _parseFontFamilies(fontFamily);
+    final List<String> fontFamilies = parseFontFamilies(fontFamily);
     _textConfig.add(
       _TextConfig(
         text,
@@ -865,10 +865,12 @@ class _TextPosition {
   final Float64List? transform;
 }
 
-// SVG `font-family` is a comma separated list of family names in order of
-// preference, each optionally quoted. Flutter takes the first name as the family
-// and the rest as fallbacks.
-List<String> _parseFontFamilies(String? fontFamily) {
+/// Splits an SVG `font-family` value into its family names, in order of
+/// preference, with surrounding quotes and whitespace removed.
+///
+/// Flutter takes the first name as the family and the rest as fallbacks.
+@visibleForTesting
+List<String> parseFontFamilies(String? fontFamily) {
   if (fontFamily == null) {
     return const <String>[];
   }
