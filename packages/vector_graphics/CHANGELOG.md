@@ -1,3 +1,7 @@
+## 1.2.6
+
+* Fixes `<text>` not being drawn when the ambient text direction is RTL.
+
 ## 1.2.5
 
 * Fixes a leak of the decoded picture when a `VectorGraphic` is removed before

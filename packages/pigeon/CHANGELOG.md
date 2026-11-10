@@ -1,6 +1,24 @@
-## 29.1.1
+## 29.2.1
 
 * Fixes `basePath` resolution when an output or directory path shares a string prefix with `basePath`.
+
+## 29.2.0
+
+* [dart] [kotlin] [swift] Passes data class, `List`, `Map` and `Object` values
+  of Kotlin JNI and Swift FFI calls in one buffer per call instead of making a
+  call across the language boundary for every field and collection element,
+  making calls with large data classes and collections many times faster while
+  keeping scalars, strings, enums and typed data direct.
+* [kotlin] Makes enum `ofRaw` constant time.
+
+## 29.1.2
+
+* [dart] Fixes `@FlutterApi` methods named `register` or `dartApi` failing with `useJni`.
+* [dart] Fixes `@FlutterApi` `implement` registering under an empty name instead of the default instance.
+
+## 29.1.1
+
+* Updates README to label Native Interop as Preview and warn about multi-engine `@HostApi` registrations.
 
 ## 29.1.0
 
