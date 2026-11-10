@@ -10,6 +10,7 @@
 import 'dart:typed_data';
 
 // #docregion Save
+// Cross platform safe import that can be compiled with non-web platforms.
 import 'package:cross_file_web/cross_file_web_safe.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
