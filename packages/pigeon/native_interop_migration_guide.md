@@ -11,7 +11,7 @@ For a comprehensive walkthrough on setting up Native Interop from scratch, see t
 
 | Feature | Platform Channels | Native Interop (FFI / JNI) |
 | :--- | :--- | :--- |
-| **Data Serialization** | Serialized to binary format (`StandardMessageCodec`) | Direct memory mapping or native references |
+| **Data Serialization** | Serialized to binary format (`StandardMessageCodec`) | Scalars, strings, enums and typed data cross directly; data classes, lists and maps are encoded into one buffer per call |
 | **Threading Model** | Main UI thread or custom background `TaskQueue` | Direct execution on caller thread (`TaskQueue` is not supported) |
 | **Isolate Support** | Requires `BackgroundIsolateBinaryMessenger` | Supported for Host APIs |
 | **Synchronous Calls** | Asynchronous only | Supports both synchronous and asynchronous calls |
@@ -186,29 +186,7 @@ Ensure your build system is configured appropriately:
 
 ---
 
-## 6. Android Release Build Configuration (JNI)
-
-<!-- TODO(tarrinneal): Remove this section, and renumber the next one, once package:jni ships these keep rules: https://github.com/dart-lang/native/issues/3732 -->
-
-Flutter enables R8 for Android release builds by default, and R8 removes or renames classes that JNI looks up by name. Pigeon adds `@Keep` to the generated Kotlin classes that JNI reaches, but `package:jni` and the generated Dart code also look up Kotlin standard library classes by name to call and implement `suspend` functions. Until `package:jni` includes rules for these classes, add them to a `consumer-rules.pro` file in your plugin's `android/` directory:
-
-```text
-# Kotlin classes that package:jni and the generated Dart code look up by name.
--keep class kotlin.Unit { *; }
--keep class kotlin.Result { *; }
--keep class kotlin.Result$Failure { *; }
--keep class kotlin.coroutines.Continuation { *; }
--keep class kotlin.coroutines.intrinsics.CoroutineSingletons { *; }
--keep class kotlin.coroutines.intrinsics.IntrinsicsKt { *; }
-```
-
-Then add `consumerProguardFiles("consumer-rules.pro")` to `android.defaultConfig` in the plugin's `android/build.gradle` or `android/build.gradle.kts`, so that every app using the plugin applies the rules. For a standalone application, add the rules to `android/app/proguard-rules.pro` instead.
-
-Debug builds are not minified, so test a release build (for example, by running the example app with `flutter run --release`) after migrating. See [Step 5 of the Native Interop Guide](./native_interop_guide.md#step-5-android-release-build-configuration-jni) for details.
-
----
-
-## 7. Environment Prerequisites & Tooling Versions
+## 6. Environment Prerequisites & Tooling Versions
 
 To use Native Interop and its external code generators:
 - **`jnigen` 1.0.0 or later**: Earlier versions of JNIgen cannot parse metadata from newer Kotlin compilers and fail with `IllegalArgumentException: Provided Metadata instance has version ... while maximum supported version is ...`. `jnigen` 1.0.0 supports Kotlin metadata up to 2.4, and uses the JDK bundled with Flutter by default.

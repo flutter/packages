@@ -1,3 +1,0 @@
-changelog: |
-  - Fixes `MenuAnchor` scrollbars inheriting system safe-area padding.
-version: patch

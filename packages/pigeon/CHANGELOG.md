@@ -1,3 +1,35 @@
+## 29.2.0
+
+* [dart] [kotlin] [swift] Passes data class, `List`, `Map` and `Object` values
+  of Kotlin JNI and Swift FFI calls in one buffer per call instead of making a
+  call across the language boundary for every field and collection element,
+  making calls with large data classes and collections many times faster while
+  keeping scalars, strings, enums and typed data direct.
+* [kotlin] Makes enum `ofRaw` constant time.
+
+## 29.1.2
+
+* [dart] Fixes `@FlutterApi` methods named `register` or `dartApi` failing with `useJni`.
+* [dart] Fixes `@FlutterApi` `implement` registering under an empty name instead of the default instance.
+
+## 29.1.1
+
+* Updates README to label Native Interop as Preview and warn about multi-engine `@HostApi` registrations.
+
+## 29.1.0
+
+* [kotlin,swift] Adds support for removing event channel handler registration
+  via a new event channel object returned from `register`.
+
+## 29.0.13
+
+* [dart] Separates generated Dart native interop bindings into a conditionally imported companion file (`*.native_interop.g.dart`) so that the main generated Dart file can be imported on Web without pulling in `dart:ffi` or `dart:io`.
+
+## 29.0.12
+
+* [kotlin] Warns after JNI code generation if the `jni` version constraint in `pubspec.yaml` allows versions below `1.1.1`.
+* Updates `jni` dependency to `^1.1.1` and removes manual Kotlin keep rules from native interop guides and migration skill now that `package:jni` includes them.
+
 ## 29.0.11
 
 * [swift] Warns after FFI code generation if the `objective_c` version constraint in `pubspec.yaml` does not match the generated `ObjCVersionCheck`.
