@@ -3206,6 +3206,108 @@ void main() {
     await gesture.up();
   });
 
+  testWidgets('Switch does not throw when first painted while its press reaction is reversing', (
+    WidgetTester tester,
+  ) async {
+    // Regression test for https://github.com/flutter/flutter/issues/179532.
+    var value = false;
+    var visible = false;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Material(
+          child: Center(
+            child: StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+                // Opacity(0) lays out and hit tests the switch, but does not paint it.
+                return Opacity(
+                  opacity: visible ? 1.0 : 0.0,
+                  // Switch.adaptive covers both the Material and the Cupertino
+                  // painting paths across the platform variants.
+                  child: Switch.adaptive(
+                    value: value,
+                    onChanged: (bool newValue) {
+                      setState(() {
+                        value = newValue;
+                        visible = true;
+                      });
+                    },
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+
+    // Press and hold so that the press reaction starts.
+    final TestGesture gesture = await tester.startGesture(tester.getCenter(find.byType(Switch)));
+    await tester.pump(kPressTimeout);
+    await tester.pump(const Duration(milliseconds: 50));
+
+    // Releasing the pointer reverses the press reaction and toggles the switch,
+    // which makes it visible.
+    await gesture.up();
+    final ToggleableStateMixin switchState = tester.state(
+      find.byWidgetPredicate((Widget widget) => widget.runtimeType.toString() == '_MaterialSwitch'),
+    );
+    expect(switchState.reaction.status, AnimationStatus.reverse);
+    expect(value, isTrue);
+
+    // Paint the switch for the first time.
+    await tester.pump();
+    expect(tester.takeException(), isNull);
+  }, variant: TargetPlatformVariant.all());
+
+  testWidgets('Switch does not throw when first painted during its toggle animation', (
+    WidgetTester tester,
+  ) async {
+    // Regression test for https://github.com/flutter/flutter/issues/179532.
+    var value = false;
+    var visible = false;
+    late StateSetter stateSetter;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Material(
+          child: Center(
+            child: StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+                stateSetter = setState;
+                // Opacity(0) lays out the switch, but does not paint it.
+                return Opacity(
+                  opacity: visible ? 1.0 : 0.0,
+                  // Switch.adaptive covers both the Material and the Cupertino
+                  // painting paths across the platform variants.
+                  child: Switch.adaptive(value: value, onChanged: (bool newValue) {}),
+                );
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+
+    // Start the toggle animation while the switch has never been painted.
+    stateSetter(() {
+      value = true;
+    });
+    await tester.pump();
+    await tester.pump(); // First tick of the toggle animation.
+    await tester.pump(const Duration(milliseconds: 50));
+    final ToggleableStateMixin switchState = tester.state(
+      find.byWidgetPredicate((Widget widget) => widget.runtimeType.toString() == '_MaterialSwitch'),
+    );
+    expect(switchState.position.value, greaterThan(0.0));
+    expect(switchState.position.value, lessThan(1.0));
+
+    // Paint the switch for the first time, in the middle of the toggle animation.
+    stateSetter(() {
+      visible = true;
+    });
+    await tester.pump();
+    expect(tester.takeException(), isNull);
+  }, variant: TargetPlatformVariant.all());
+
   testWidgets('disabled switch shows tooltip', (WidgetTester tester) async {
     const longPressTooltip = 'long press tooltip';
     const tapTooltip = 'tap tooltip';

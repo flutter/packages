@@ -64,6 +64,7 @@ allowed_dependencies:
     - build_config
     - build_runner
     - build_test
+    - cli_util
     - clock
     - code_builder
     - collection
