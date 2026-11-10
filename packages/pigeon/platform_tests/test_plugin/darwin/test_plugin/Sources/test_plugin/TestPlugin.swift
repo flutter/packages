@@ -3240,17 +3240,17 @@ private final class TestPluginReservedFlutterBridge: NSObject,
 {
   let label: String
   init(_ label: String) { self.label = label }
-  func release(value valueArg: NSString?, error: NativeInteropTestsError) -> NSString? {
-    "\(label):\(valueArg ?? "")" as NSString
+  func release(value valueArg: NSString, error: NativeInteropTestsError) -> NSString? {
+    "\(label):\(valueArg)" as NSString
   }
   func type(error: NativeInteropTestsError) -> NSString? { label as NSString }
-  func implementIn(value valueArg: NSString?, error: NativeInteropTestsError) -> NSString? {
-    "\(label):\(valueArg ?? "")" as NSString
+  func implementIn(value valueArg: NSString, error: NativeInteropTestsError) -> NSString? {
+    "\(label):\(valueArg)" as NSString
   }
   func isNull(error: NativeInteropTestsError) -> NSNumber? { NSNumber(value: false) }
   func getReference(error: NativeInteropTestsError) -> NSString? { label as NSString }
-  func register(value valueArg: NSString?, error: NativeInteropTestsError) -> NSString? {
-    "\(label):\(valueArg ?? "")" as NSString
+  func register(value valueArg: NSString, error: NativeInteropTestsError) -> NSString? {
+    "\(label):\(valueArg)" as NSString
   }
   func dartApi(error: NativeInteropTestsError) -> NSString? { label as NSString }
 }
