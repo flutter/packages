@@ -38,6 +38,7 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi, HostCa
   var proxyApiRegistrar: ProxyApiTestsPigeonProxyApiRegistrar?
   var niHostApiImpl: NativeInteropTestsClass?
   var niReservedImpl: NativeInteropReservedNamesHostApiImpl?
+  var niSealedImpl: NativeInteropSealedClassHostApiImpl?
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     // Workaround for https://github.com/flutter/flutter/issues/118103.
@@ -85,6 +86,9 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi, HostCa
     let reservedImpl = NativeInteropReservedNamesHostApiImpl(registrar: registrar)
     niReservedImpl = reservedImpl
     NativeInteropReservedNamesHostApiSetup.register(api: reservedImpl, registrar: registrar)
+    let sealedImpl = NativeInteropSealedClassHostApiImpl(registrar: registrar)
+    niSealedImpl = sealedImpl
+    NativeInteropSealedClassHostApiSetup.register(api: sealedImpl, registrar: registrar)
   }
 
   public func detachFromEngine(for registrar: FlutterPluginRegistrar) {
@@ -100,6 +104,10 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi, HostCa
     if let niReservedImpl {
       NativeInteropReservedNamesHostApiSetup.unregister(api: niReservedImpl, registrar: registrar)
       self.niReservedImpl = nil
+    }
+    if let niSealedImpl {
+      NativeInteropSealedClassHostApiSetup.unregister(api: niSealedImpl, registrar: registrar)
+      self.niSealedImpl = nil
     }
     proxyApiRegistrar?.tearDown()
     proxyApiRegistrar = nil
@@ -3245,4 +3253,44 @@ private final class TestPluginReservedFlutterBridge: NSObject,
     "\(label):\(valueArg ?? "")" as NSString
   }
   func dartApi(error: NativeInteropTestsError) -> NSString? { label as NSString }
+}
+
+class NativeInteropSealedClassHostApiImpl: NativeInteropSealedClassHostApi {
+  /// The registrar of the engine this instance serves; used to find that engine's Flutter APIs.
+  weak var registrar: FlutterPluginRegistrar?
+
+  init(registrar: FlutterPluginRegistrar? = nil) {
+    self.registrar = registrar
+  }
+
+  func echoShape(shape: NativeInteropShape) throws -> NativeInteropShape {
+    return shape
+  }
+
+  func echoNullableShape(shape: NativeInteropShape?) throws -> NativeInteropShape? {
+    return shape
+  }
+
+  func echoShapeList(shapes: [NativeInteropShape]) throws -> [NativeInteropShape] {
+    return shapes
+  }
+
+  func echoShapeMap(shapes: [String: NativeInteropShape]) throws -> [String: NativeInteropShape] {
+    return shapes
+  }
+
+  func echoAsyncShape(shape: NativeInteropShape) async throws -> NativeInteropShape {
+    return shape
+  }
+
+  func callFlutterEchoShape(shape: NativeInteropShape) throws -> NativeInteropShape {
+    guard let registrar,
+      let flutterApi = NativeInteropSealedClassFlutterApiRegistrar.getInstance(registrar: registrar)
+    else {
+      throw NativeInteropTestsError(
+        code: "not_registered", message: "NativeInteropSealedClassFlutterApi not registered",
+        details: nil)
+    }
+    return try flutterApi.echoShape(shape: shape)
+  }
 }

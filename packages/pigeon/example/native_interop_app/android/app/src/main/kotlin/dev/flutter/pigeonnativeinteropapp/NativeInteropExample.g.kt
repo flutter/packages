@@ -11,6 +11,9 @@ import android.util.Log
 import androidx.annotation.Keep
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.embedding.engine.plugins.FlutterPlugin
+import io.flutter.plugin.common.StandardMessageCodec
+import java.io.ByteArrayOutputStream
+import java.nio.ByteBuffer
 
 private object NativeInteropExamplePigeonUtils {
 
@@ -110,6 +113,40 @@ private object NativeInteropExamplePigeonEngineKeys {
   }
 }
 
+private open class NativeInteropExamplePigeonCodec : StandardMessageCodec() {
+  override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
+    return super.readValueOfType(type, buffer)
+  }
+
+  override fun writeValue(stream: ByteArrayOutputStream, value: Any?) {
+    super.writeValue(stream, value)
+  }
+}
+
+/**
+ * Encodes and decodes the buffers that native interop calls pass to and from Dart, in the same
+ * format as the message codec.
+ */
+private object NativeInteropExamplePigeonInteropCodec : NativeInteropExamplePigeonCodec() {
+  fun encode(value: Any?): ByteArray {
+    val stream = ByteArrayOutputStream()
+    writeValue(stream, value)
+    return stream.toByteArray()
+  }
+
+  fun encodeOrNull(value: Any?): ByteArray? {
+    return if (value == null) null else encode(value)
+  }
+
+  fun decode(bytes: ByteArray): Any? {
+    return decodeMessage(ByteBuffer.wrap(bytes))
+  }
+
+  fun decodeArguments(bytes: ByteArray): List<Any?> {
+    return decode(bytes) as List<Any?>
+  }
+}
+
 val NativeInteropExampleApiInstances:
     MutableMap<String, MutableList<NativeInteropExampleApiRegistrar>> =
     mutableMapOf()
@@ -120,8 +157,7 @@ interface NativeInteropExampleApi {
 }
 
 @Keep
-class NativeInteropExampleApiRegistrar private constructor(private val engineKey: Long) :
-    NativeInteropExampleApi {
+class NativeInteropExampleApiRegistrar private constructor(private val engineKey: Long) {
   @Volatile private var api: NativeInteropExampleApi? = null
 
   constructor() : this(NativeInteropExamplePigeonEngineKeys.NO_KEY)
@@ -274,14 +310,17 @@ class NativeInteropExampleApiRegistrar private constructor(private val engineKey
     }
   }
 
-  override fun doSomething() {
-    api?.let {
-      try {
-        return it.doSomething()
-      } catch (e: Exception) {
-        throw e
-      }
+  fun doSomething() {
+    val pigeonVar_api =
+        this.api
+            ?: throw FlutterError(
+                "unregistered-instance", "NativeInteropExampleApi has not been registered.")
+    try {
+      pigeonVar_api.doSomething()
+    } catch (e: FlutterError) {
+      throw FlutterError(
+              e.code, e.message, NativeInteropExamplePigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
     }
-    throw FlutterError("unregistered-instance", "NativeInteropExampleApi has not been registered.")
   }
 }

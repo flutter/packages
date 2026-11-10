@@ -47,6 +47,7 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi, HostCallbackCoreApi {
   private var proxyApiRegistrar: ProxyApiRegistrar? = null
   internal var niMessageApiImpl: NativeInteropIntegrationTests? = null
   private var niReservedNamesImpl: NativeInteropReservedNamesHostApiImpl? = null
+  private var niSealedClassImpl: NativeInteropSealedClassHostApiImpl? = null
   private var eventChannelOne: StreamConsistentNumbersEventChannel? = null
 
   override fun onAttachedToEngine(binding: FlutterPluginBinding) {
@@ -62,6 +63,9 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi, HostCallbackCoreApi {
     val reservedImpl = NativeInteropReservedNamesHostApiImpl(binding)
     niReservedNamesImpl = reservedImpl
     NativeInteropReservedNamesHostApiRegistrar().register(reservedImpl, binding)
+    val sealedImpl = NativeInteropSealedClassHostApiImpl(binding)
+    niSealedClassImpl = sealedImpl
+    NativeInteropSealedClassHostApiRegistrar().register(sealedImpl, binding)
     flutterApi = FlutterIntegrationCoreApi(binding.binaryMessenger)
     flutterCallbackApi = FlutterCallbackCoreApi(binding.binaryMessenger)
     flutterSmallApiOne = FlutterSmallApi(binding.binaryMessenger, "suffixOne")
@@ -92,6 +96,8 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi, HostCallbackCoreApi {
       NativeInteropReservedNamesHostApiRegistrar().unregister(it, binding)
     }
     niReservedNamesImpl = null
+    niSealedClassImpl?.let { NativeInteropSealedClassHostApiRegistrar().unregister(it, binding) }
+    niSealedClassImpl = null
     proxyApiRegistrar?.tearDown()
   }
 
@@ -2191,7 +2197,7 @@ class NativeInteropIntegrationTests(
   override fun testDeregisterFlutterApi(): Boolean {
     val name = "testDeregisterFlutterInstance"
     val makeApi = { label: String ->
-      object : NativeInteropReservedNamesFlutterApi {
+      object : NativeInteropReservedNamesFlutterApiBridge {
         override fun release(value: String): String = "$label:$value"
 
         override fun type(): String = label
@@ -2562,5 +2568,36 @@ class SendConsistentNumbers(private val numberToSend: Long) :
   // then fails with a MissingPluginException.
   override fun onCancel(p0: Any?) {
     onCancelled?.invoke()
+  }
+}
+
+class NativeInteropSealedClassHostApiImpl(private val binding: FlutterPluginBinding? = null) :
+    NativeInteropSealedClassHostApi {
+  override fun echoShape(shape: NativeInteropShape): NativeInteropShape {
+    return shape
+  }
+
+  override fun echoNullableShape(shape: NativeInteropShape?): NativeInteropShape? {
+    return shape
+  }
+
+  override fun echoShapeList(shapes: List<NativeInteropShape>): List<NativeInteropShape> {
+    return shapes
+  }
+
+  override fun echoShapeMap(
+      shapes: Map<String, NativeInteropShape>
+  ): Map<String, NativeInteropShape> {
+    return shapes
+  }
+
+  override suspend fun echoAsyncShape(shape: NativeInteropShape): NativeInteropShape {
+    return shape
+  }
+
+  override fun callFlutterEchoShape(shape: NativeInteropShape): NativeInteropShape {
+    return NativeInteropSealedClassFlutterApiRegistrar()
+        .getInstance(checkNotNull(binding))!!
+        .echoShape(shape)
   }
 }

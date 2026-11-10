@@ -582,7 +582,7 @@ class NativeInteropRegistrarTest {
 }
 
 private class FakeReservedNamesFlutterApi(private val label: String) :
-    NativeInteropReservedNamesFlutterApi {
+    NativeInteropReservedNamesFlutterApiBridge {
   override fun release(value: String): String = "$label:$value"
 
   override fun type(): String = label

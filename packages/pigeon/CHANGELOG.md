@@ -9,6 +9,15 @@
 * [dart,kotlin,swift] Native Interop calls now go to the calling engine's instance where possible.
 * [kotlin,swift] Calling a Native Interop API whose instance was unregistered now throws a `PlatformException` instead of crashing.
 
+## 29.2.0
+
+* [dart] [kotlin] [swift] Passes data class, `List`, `Map` and `Object` values
+  of Kotlin JNI and Swift FFI calls in one buffer per call instead of making a
+  call across the language boundary for every field and collection element,
+  making calls with large data classes and collections many times faster while
+  keeping scalars, strings, enums and typed data direct.
+* [kotlin] Makes enum `ofRaw` constant time.
+
 ## 29.1.2
 
 * [dart] Fixes `@FlutterApi` methods named `register` or `dartApi` failing with `useJni`.
