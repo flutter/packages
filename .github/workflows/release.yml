@@ -63,7 +63,7 @@ jobs:
         ignore-checks: triage,noResponse
         repo-token: ${{ secrets.GITHUB_TOKEN }}
         wait-interval: 180 # seconds
-        allowed-conclusions: success,neutral,skipped
+        allowed-conclusions: success,neutral
         # verbose:true will produce too many logs that hang github actions web UI.
         verbose: false
 
