@@ -681,7 +681,11 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         continue;
       }
       final Rect cellRect = cellParentData.paintOffset! & cell.size;
-      if (cellRect.contains(position)) {
+      // Intersect with the section clip rect for this cell to prevent
+      // scrollable cells from stealing hits inside the trailing pinned area.
+      // This mirrors the pushClipRect applied to each section during painting.
+      if (cellRect.contains(position) &&
+          _sectionClipRectFor(cellParentData.tableVicinity).contains(position)) {
         result.addWithPaintOffset(
           offset: cellParentData.paintOffset,
           position: position,
@@ -705,6 +709,89 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       cell = childAfter(cell);
     }
     return false;
+  }
+
+  // Returns the viewport-space clip rect that painting applies to the section
+  // a cell belongs to (leading-pinned, non-pinned, or trailing-pinned for each
+  // axis). Intersecting the raw cell rect with this rect in hitTestChildren
+  // prevents scrollable cells from capturing taps inside pinned areas.
+  //
+  // Alignment offsets must be factored in:
+  //   * Leading-pinned cells are laid out with _hAlignmentOffset /
+  //     _vAlignmentOffset applied, so their paint position (and section
+  //     boundary) shifts by those values.
+  //   * Trailing-pinned cells are always placed at the absolute viewport edge
+  //     via -(viewportDimension - trailingExtent), independent of alignment.
+  //   * Non-pinned boundaries that border the leading-pinned section inherit
+  //     the same shift; boundaries that border the trailing-pinned section
+  //     do not.
+  Rect _sectionClipRectFor(TableVicinity vicinity) {
+    final bool reversedH = axisDirectionIsReversed(horizontalAxisDirection);
+    final bool reversedV = axisDirectionIsReversed(verticalAxisDirection);
+    final Size viewportSize = viewportDimension;
+
+    final double colLeft, colRight;
+    if (vicinity.column < delegate.pinnedColumnCount) {
+      // Leading pinned column.
+      if (reversedH) {
+        colLeft = viewportSize.width - _leadingPinnedColumnsExtent - _hAlignmentOffset;
+        colRight = viewportSize.width - _hAlignmentOffset;
+      } else {
+        colLeft = _hAlignmentOffset;
+        colRight = _hAlignmentOffset + _leadingPinnedColumnsExtent;
+      }
+    } else if (_firstTrailingPinnedColumn != null &&
+        vicinity.column >= _firstTrailingPinnedColumn!) {
+      // Trailing pinned column.
+      if (reversedH) {
+        colLeft = 0.0;
+        colRight = _trailingPinnedColumnsExtent;
+      } else {
+        colLeft = viewportSize.width - _trailingPinnedColumnsExtent;
+        colRight = viewportSize.width;
+      }
+    } else {
+      // Non-pinned column.
+      if (reversedH) {
+        colLeft = _trailingPinnedColumnsExtent;
+        colRight = viewportSize.width - _leadingPinnedColumnsExtent - _hAlignmentOffset;
+      } else {
+        colLeft = _leadingPinnedColumnsExtent + _hAlignmentOffset;
+        colRight = viewportSize.width - _trailingPinnedColumnsExtent;
+      }
+    }
+
+    final double rowTop, rowBottom;
+    if (vicinity.row < delegate.pinnedRowCount) {
+      // Leading pinned row.
+      if (reversedV) {
+        rowTop = viewportSize.height - _leadingPinnedRowsExtent - _vAlignmentOffset;
+        rowBottom = viewportSize.height - _vAlignmentOffset;
+      } else {
+        rowTop = _vAlignmentOffset;
+        rowBottom = _vAlignmentOffset + _leadingPinnedRowsExtent;
+      }
+    } else if (_firstTrailingPinnedRow != null && vicinity.row >= _firstTrailingPinnedRow!) {
+      // Trailing pinned row.
+      if (reversedV) {
+        rowTop = 0.0;
+        rowBottom = _trailingPinnedRowsExtent;
+      } else {
+        rowTop = viewportSize.height - _trailingPinnedRowsExtent;
+        rowBottom = viewportSize.height;
+      }
+    } else {
+      // Non-pinned row.
+      if (reversedV) {
+        rowTop = _trailingPinnedRowsExtent;
+        rowBottom = viewportSize.height - _leadingPinnedRowsExtent - _vAlignmentOffset;
+      } else {
+        rowTop = _leadingPinnedRowsExtent + _vAlignmentOffset;
+        rowBottom = viewportSize.height - _trailingPinnedRowsExtent;
+      }
+    }
+
+    return Rect.fromLTRB(colLeft, rowTop, colRight, rowBottom);
   }
 
   // Updates the cached column metrics for the table.
@@ -1033,15 +1120,27 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     return verticalOffset.applyContentDimensions(0.0, maxVerticalScrollExtent);
   }
 
-  /// Binary search to find the first index with [_Span] matching the condition.
-  /// [map]: Index-[_Span] map, [condition]: Match rule
-  /// Returns the first matched index or null if not found.
-  int? _binarySearchFirstFromMap(Map<int, _Span> map, bool Function(_Span) condition) {
+  /// Returns the first index in the given [map] whose [_Span] satisfies the
+  /// [condition], searching only from [first] to [last].
+  ///
+  /// If no [_Span] in that range satisfies the [condition], this will return
+  /// null.
+  ///
+  /// This is a binary search, so once the [condition] is true for an index, it
+  /// must remain true for every following index in the range. Pinned spans do
+  /// not follow this order, so callers should limit the range to the regular
+  /// spans.
+  int? _binarySearchFirstFromMap(
+    Map<int, _Span> map,
+    bool Function(_Span) condition, {
+    int first = 0,
+    int? last,
+  }) {
     if (map.isEmpty) {
       return null;
     }
-    var low = 0;
-    int high = map.length - 1;
+    var low = first;
+    int high = math.min(last ?? map.length - 1, map.length - 1);
     int? result;
     while (low <= high) {
       final int mid = low + ((high - low) >> 1);
@@ -1081,13 +1180,19 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     _firstNonPinnedColumn = _binarySearchFirstFromMap(
       _columnMetrics,
       (span) => !span.isPinned && span.trailingOffset >= _targetLeadingColumnPixel,
+      first: delegate.pinnedColumnCount,
+      last: _lastRegularColumnIndex,
     );
     _lastNonPinnedColumn = _binarySearchFirstFromMap(
       _columnMetrics,
       (span) => !span.isPinned && span.trailingOffset >= _targetTrailingColumnPixel,
+      first: delegate.pinnedColumnCount,
+      last: _lastRegularColumnIndex,
     );
     if (_firstNonPinnedColumn != null) {
-      _lastNonPinnedColumn ??= _columnMetrics.length - 1;
+      // Trailing pinned columns are laid out and painted separately, so the
+      // range of regular columns must never extend into them.
+      _lastNonPinnedColumn ??= _lastRegularColumnIndex ?? _columnMetrics.length - 1;
     }
 
     if (_rowMetrics.isNotEmpty) {
@@ -1110,13 +1215,19 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     _firstNonPinnedRow = _binarySearchFirstFromMap(
       _rowMetrics,
       (span) => !span.isPinned && span.trailingOffset >= _targetLeadingRowPixel,
+      first: delegate.pinnedRowCount,
+      last: _lastRegularRowIndex,
     );
     _lastNonPinnedRow = _binarySearchFirstFromMap(
       _rowMetrics,
       (span) => !span.isPinned && span.trailingOffset >= _targetTrailingRowPixel,
+      first: delegate.pinnedRowCount,
+      last: _lastRegularRowIndex,
     );
     if (_firstNonPinnedRow != null) {
-      _lastNonPinnedRow ??= _rowMetrics.length - 1;
+      // Trailing pinned rows are laid out and painted separately, so the range
+      // of regular rows must never extend into them.
+      _lastNonPinnedRow ??= _lastRegularRowIndex ?? _rowMetrics.length - 1;
     }
   }
 

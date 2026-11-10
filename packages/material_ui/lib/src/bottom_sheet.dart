@@ -24,6 +24,8 @@ import 'motion.dart';
 import 'scaffold.dart';
 import 'theme.dart';
 
+part 'generated/bottom_sheet_defaults_m3.g.dart';
+
 const Duration _kBottomSheetEnterDuration = Duration(milliseconds: 250);
 const Duration _kBottomSheetExitDuration = Duration(milliseconds: 200);
 const Curve _kModalBottomSheetCurve = Easing.legacyDecelerate;
@@ -39,8 +41,10 @@ typedef BottomSheetDragStartHandler = void Function(DragStartDetails details);
 /// A callback for when the user stops dragging the bottom sheet.
 ///
 /// Used by [BottomSheet.onDragEnd].
-typedef BottomSheetDragEndHandler =
-    void Function(DragEndDetails details, {required bool isClosing});
+typedef BottomSheetDragEndHandler = void Function(
+  DragEndDetails details, {
+  required bool isClosing,
+});
 
 /// A Material Design bottom sheet.
 ///
@@ -323,7 +327,8 @@ class _BottomSheetState extends State<BottomSheet> {
   }
 
   bool extentChanged(DraggableScrollableNotification notification) {
-    if (notification.extent == notification.minExtent && notification.shouldCloseOnMinExtent) {
+    if ((notification.extent - notification.minExtent).abs() < precisionErrorTolerance &&
+        notification.shouldCloseOnMinExtent) {
       widget.onClosing();
     }
     return false;
@@ -680,6 +685,9 @@ class _ModalBottomSheet<T> extends StatefulWidget {
 class _ModalBottomSheetState<T> extends State<_ModalBottomSheet<T>> {
   late final ProxyAnimation _sheetAnimation;
   late final CurvedAnimation _curvedSheetAnimation;
+  // The CurvedAnimation created for the most recent drag end, tracked so it can
+  // be disposed when it is replaced or the state is disposed.
+  CurvedAnimation? _dragEndCurvedAnimation;
 
   @override
   void initState() {
@@ -711,6 +719,7 @@ class _ModalBottomSheetState<T> extends State<_ModalBottomSheet<T>> {
     // Detach to avoid leaking listeners on the route animation.
     _sheetAnimation.parent = kAlwaysDismissedAnimation;
     _curvedSheetAnimation.dispose();
+    _dragEndCurvedAnimation?.dispose();
     super.dispose();
   }
 
@@ -729,6 +738,11 @@ class _ModalBottomSheetState<T> extends State<_ModalBottomSheet<T>> {
   void handleDragStart(DragStartDetails details) {
     // Allow the bottom sheet to track the user's finger accurately.
     _sheetAnimation.parent = widget.route.animation;
+    // The CurvedAnimation from the previous drag end is no longer the parent of
+    // [_sheetAnimation], so dispose it to avoid leaking its listeners on the
+    // route animation.
+    _dragEndCurvedAnimation?.dispose();
+    _dragEndCurvedAnimation = null;
   }
 
   void handleDragEnd(DragEndDetails details, {bool? isClosing}) {
@@ -737,7 +751,8 @@ class _ModalBottomSheetState<T> extends State<_ModalBottomSheet<T>> {
     // Rebind the animation using CurvedAnimation and Split so the
     // remaining transition continues smoothly from the exact point
     // where the drag gesture ended.
-    _sheetAnimation.parent = CurvedAnimation(
+    final CurvedAnimation? oldDragEndCurvedAnimation = _dragEndCurvedAnimation;
+    _dragEndCurvedAnimation = CurvedAnimation(
       parent: widget.route.animation!,
       curve: Split(
         currentProgress,
@@ -748,6 +763,10 @@ class _ModalBottomSheetState<T> extends State<_ModalBottomSheet<T>> {
         endCurve: widget.animationStyle?.reverseCurve ?? _kModalBottomSheetCurve,
       ),
     );
+    _sheetAnimation.parent = _dragEndCurvedAnimation;
+    // Dispose the previous drag-end CurvedAnimation only after detaching it
+    // from [_sheetAnimation], so it is never disposed while still in use.
+    oldDragEndCurvedAnimation?.dispose();
   }
 
   @override
@@ -1299,6 +1318,7 @@ class ModalBottomSheetRoute<T> extends PopupRoute<T> {
 ///  * The Material 3 spec at <https://m3.material.io/components/bottom-sheets/overview>.
 ///  * [AnimationStyle], which is used to override the modal bottom sheet
 ///    animation duration and reverse animation duration.
+@awaitNotRequired
 Future<T?> showModalBottomSheet<T>({
   required BuildContext context,
   required WidgetBuilder builder,
@@ -1490,45 +1510,3 @@ class _BottomSheetGestureDetector extends StatelessWidget {
     );
   }
 }
-
-// BEGIN GENERATED TOKEN PROPERTIES - BottomSheet
-
-// Do not edit by hand. The code between the "BEGIN GENERATED" and
-// "END GENERATED" comments are generated from data in the Material
-// Design token database by the script:
-//   dev/tools/gen_defaults/bin/gen_defaults.dart.
-
-// dart format off
-class _BottomSheetDefaultsM3 extends BottomSheetThemeData {
-  _BottomSheetDefaultsM3(this.context)
-    : super(
-      elevation: 1.0,
-      modalElevation: 1.0,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(28.0))),
-      constraints: const BoxConstraints(maxWidth: 640),
-    );
-
-  final BuildContext context;
-  late final ColorScheme _colors = Theme.of(context).colorScheme;
-
-  @override
-  Color? get backgroundColor => _colors.surfaceContainerLow;
-
-  @override
-  Color? get surfaceTintColor => Colors.transparent;
-
-  @override
-  Color? get shadowColor => Colors.transparent;
-
-  @override
-  Color? get dragHandleColor => _colors.onSurfaceVariant;
-
-  @override
-  Size? get dragHandleSize => const Size(32, 4);
-
-  @override
-  BoxConstraints? get constraints => const BoxConstraints(maxWidth: 640.0);
-}
-// dart format on
-
-// END GENERATED TOKEN PROPERTIES - BottomSheet

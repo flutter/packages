@@ -30,6 +30,12 @@ class SwiftOptions {
     this.fileSpecificClassNameComponent,
     this.errorClassName,
     this.includeErrorClass = true,
+    this.useFfi = false,
+    this.ffiModuleName,
+    this.appDirectory,
+    this.configDirectory,
+    this.appleSdkPath,
+    this.appleSdkTriple,
   });
 
   /// A copyright header that will get prepended to generated code.
@@ -45,7 +51,39 @@ class SwiftOptions {
   ///
   /// This should only ever be set to false if you have another generated
   /// Swift file in the same directory.
+  ///
+  /// This can't be false with [useFfi], because the FFI bindings are generated
+  /// from each Swift file alone. Use a different [errorClassName] in each file
+  /// instead.
   final bool includeErrorClass;
+
+  /// Whether to use FFI when possible.
+  final bool useFfi;
+
+  /// The module name that the FFI classes will use. Required if useFfi is true.
+  final String? ffiModuleName;
+
+  /// The directory that the app exists in.
+  ///
+  /// Defaults to './' if not specified.
+  final String? appDirectory;
+
+  /// The directory where generated configuration files for FFIgen will be written.
+  final String? configDirectory;
+
+  /// The path to the Apple SDK to use for FFI generation.
+  ///
+  /// If not provided, Pigeon will attempt to find the iOS SDK path using
+  /// `xcrun --sdk iphoneos --show-sdk-path`.
+  final String? appleSdkPath;
+
+  /// The Apple target triple to use for FFI generation.
+  ///
+  /// If not provided, the triple is automatically derived based on the
+  /// `appleSdkPath` using `macOSX64TargetTripleLatest` or `iOSArm64TargetTripleLatest`,
+  /// falling back to `arm64-apple-ios` (or `x86_64-apple-macosx` if `appleSdkPath`
+  /// contains "macosx").
+  final String? appleSdkTriple;
 
   /// Creates a [SwiftOptions] from a Map representation where:
   /// `x = SwiftOptions.fromList(x.toMap())`.
@@ -55,6 +93,12 @@ class SwiftOptions {
       fileSpecificClassNameComponent: map['fileSpecificClassNameComponent'] as String?,
       errorClassName: map['errorClassName'] as String?,
       includeErrorClass: map['includeErrorClass'] as bool? ?? true,
+      useFfi: map['useFfi'] as bool? ?? false,
+      ffiModuleName: map['ffiModuleName'] as String?,
+      appDirectory: map['appDirectory'] as String?,
+      configDirectory: map['configDirectory'] as String?,
+      appleSdkPath: map['appleSdkPath'] as String?,
+      appleSdkTriple: map['appleSdkTriple'] as String?,
     );
   }
 
@@ -67,6 +111,12 @@ class SwiftOptions {
         'fileSpecificClassNameComponent': fileSpecificClassNameComponent!,
       if (errorClassName != null) 'errorClassName': errorClassName!,
       'includeErrorClass': includeErrorClass,
+      'useFfi': useFfi,
+      if (ffiModuleName != null) 'ffiModuleName': ffiModuleName!,
+      if (appDirectory != null) 'appDirectory': appDirectory!,
+      if (configDirectory != null) 'configDirectory': configDirectory!,
+      if (appleSdkPath != null) 'appleSdkPath': appleSdkPath!,
+      if (appleSdkTriple != null) 'appleSdkTriple': appleSdkTriple!,
     };
     return result;
   }
@@ -74,7 +124,7 @@ class SwiftOptions {
   /// Overrides any non-null parameters from [options] into this to make a new
   /// [SwiftOptions].
   SwiftOptions merge(SwiftOptions options) {
-    return SwiftOptions.fromList(mergeMaps(toMap(), options.toMap()));
+    return SwiftOptions.fromList(mergePigeonMaps(toMap(), options.toMap()));
   }
 }
 
@@ -84,29 +134,59 @@ class InternalSwiftOptions extends InternalOptions {
   const InternalSwiftOptions({
     this.copyrightHeader,
     required this.swiftOut,
+    this.swiftOuts,
     this.fileSpecificClassNameComponent,
     this.errorClassName,
     this.includeErrorClass = true,
+    this.useFfi = false,
+    this.ffiModuleName,
+    this.appDirectory,
+    this.configDirectory,
+    this.appleSdkPath,
+    this.appleSdkTriple,
+    this.nativeInteropTransport = NativeInteropTransport.hybrid,
   });
 
   /// Creates InternalSwiftOptions from SwiftOptions.
   InternalSwiftOptions.fromSwiftOptions(
     SwiftOptions options, {
-    required this.swiftOut,
+    Iterable<String>? swiftOuts,
+    String? swiftOut,
     Iterable<String>? copyrightHeader,
+    String? fileSpecificClassNameComponent,
+    this.nativeInteropTransport = NativeInteropTransport.hybrid,
   }) : copyrightHeader = options.copyrightHeader ?? copyrightHeader,
-       fileSpecificClassNameComponent =
-           options.fileSpecificClassNameComponent ??
-           swiftOut.split('/').lastOrNull?.split('.').firstOrNull ??
-           '',
+       fileSpecificClassNameComponent = toUpperCamelCase(
+         (options.useFfi
+                 ? fileSpecificClassNameComponent ?? options.fileSpecificClassNameComponent
+                 : options.fileSpecificClassNameComponent ?? fileSpecificClassNameComponent) ??
+             deduceClassNameComponent(swiftOuts?.firstOrNull ?? swiftOut),
+       ),
        errorClassName = options.errorClassName,
-       includeErrorClass = options.includeErrorClass;
+       includeErrorClass = options.includeErrorClass,
+       useFfi = options.useFfi,
+       ffiModuleName = options.ffiModuleName,
+       appDirectory = options.appDirectory,
+       configDirectory = options.configDirectory,
+       appleSdkPath = options.appleSdkPath,
+       appleSdkTriple = options.appleSdkTriple,
+       swiftOut = swiftOut ?? swiftOuts?.firstOrNull ?? '',
+       swiftOuts = swiftOuts ?? (swiftOut != null ? <String>[swiftOut] : const <String>[]);
 
   /// A copyright header that will get prepended to generated code.
   final Iterable<String>? copyrightHeader;
 
   /// Path to the swift file that will be generated.
+  ///
+  /// If multiple output paths were specified, this contains the first path.
   final String swiftOut;
+
+  /// Paths to all swift files that will be generated.
+  final Iterable<String>? swiftOuts;
+
+  /// Returns all output paths for Swift.
+  Iterable<String> get allSwiftOuts =>
+      swiftOuts ?? (swiftOut.isNotEmpty ? <String>[swiftOut] : const <String>[]);
 
   /// A String to augment class names to avoid cross file collisions.
   final String? fileSpecificClassNameComponent;
@@ -119,6 +199,37 @@ class InternalSwiftOptions extends InternalOptions {
   /// This should only ever be set to false if you have another generated
   /// Swift file in the same directory.
   final bool includeErrorClass;
+
+  /// Whether to use FFI when possible.
+  final bool useFfi;
+
+  /// Module to use for FFI.
+  final String? ffiModuleName;
+
+  /// The directory that the app exists in, this is required for FFI APIs.
+  final String? appDirectory;
+
+  /// The directory where generated configuration files for FFIgen will be written.
+  final String? configDirectory;
+
+  /// The path to the Apple SDK to use for FFI generation.
+  ///
+  /// If not provided, Pigeon will attempt to find the iOS SDK path using
+  /// `xcrun --sdk iphoneos --show-sdk-path`.
+  final String? appleSdkPath;
+
+  /// The Apple target triple to use for FFI generation.
+  ///
+  /// If not provided, the triple is automatically derived based on the
+  /// `appleSdkPath`, defaulting to `arm64-apple-ios` (or `x86_64-apple-macosx14.0`
+  /// if `appleSdkPath` contains "macosx").
+  final String? appleSdkTriple;
+
+  /// How native interop moves values between Dart and Swift.
+  final NativeInteropTransport nativeInteropTransport;
+
+  /// Whether FFI calls use the hybrid transport.
+  bool get useFfiHybrid => useFfi && nativeInteropTransport == NativeInteropTransport.hybrid;
 }
 
 /// Options that control how Swift code will be generated for a specific
@@ -181,6 +292,9 @@ class SwiftEventChannelOptions {
   final bool includeSharedClasses;
 }
 
+// Prefix used mapping prefixed class names for language outputs.
+String _classNamePrefix = '';
+
 /// Class that manages all Swift code generation.
 class SwiftGenerator extends StructuredGenerator<InternalSwiftOptions> {
   /// Instantiates a Swift Generator.
@@ -193,6 +307,7 @@ class SwiftGenerator extends StructuredGenerator<InternalSwiftOptions> {
     Indent indent, {
     required String dartPackageName,
   }) {
+    _classNamePrefix = generatorOptions.fileSpecificClassNameComponent ?? '';
     if (generatorOptions.copyrightHeader != null) {
       addLines(indent, generatorOptions.copyrightHeader!, linePrefix: '// ');
     }
@@ -212,8 +327,8 @@ class SwiftGenerator extends StructuredGenerator<InternalSwiftOptions> {
 
     _writeProxyApiImports(indent, root.apis.whereType<AstProxyApi>());
     indent.newln();
-
-    indent.format('''
+    if (!generatorOptions.useFfi) {
+      indent.format('''
 #if os(iOS)
   import Flutter
 #elseif os(macOS)
@@ -221,6 +336,7 @@ class SwiftGenerator extends StructuredGenerator<InternalSwiftOptions> {
 #else
   #error("Unsupported platform.")
 #endif''');
+    }
   }
 
   @override
@@ -262,13 +378,884 @@ class SwiftGenerator extends StructuredGenerator<InternalSwiftOptions> {
     indent.newln();
     addDocumentationComments(indent, anEnum.documentationComments, _docCommentSpec);
 
-    indent.write('enum ${anEnum.name}: Int, CaseIterable ');
+    indent.write(
+      '${generatorOptions.useFfi ? '@objc ' : ''}enum ${anEnum.name}: Int, CaseIterable ',
+    );
     indent.addScoped('{', '}', () {
       enumerate(anEnum.members, (int index, EnumMember member) {
         addDocumentationComments(indent, member.documentationComments, _docCommentSpec);
         indent.writeln('case ${_camelCase(member.name)} = $index');
       });
     });
+  }
+
+  void _writeFfiCodec(Indent indent, Root root) {
+    // Sealed classes have no bridge object of their own, and the branches for
+    // their subclasses already match every value they can hold.
+    final Iterable<Class> concreteClasses = root.classes.where((Class c) => !c.isSealed);
+    indent.newln();
+    indent.format('''
+@objc class ${_classNamePrefix}PigeonInternalNull: NSObject {}
+
+private class _PigeonFfiCodec {
+  static func readValue(value: NSObject?, type: String? = nil, type2: String? = nil) -> Any? {
+    if (${_classNamePrefix}PigeonInternal.isNullish(value)) {
+      return nil
+    }
+    if let typedData = value as? ${_classNamePrefix}PigeonTypedData {
+      switch typedData.type {
+      case ${_classNamePrefix}PigeonInternalNumberType.uint8.rawValue:
+        return typedData.toUint8Array()
+      case ${_classNamePrefix}PigeonInternalNumberType.int32.rawValue:
+        return typedData.toInt32Array()
+      case ${_classNamePrefix}PigeonInternalNumberType.int64.rawValue:
+        return typedData.toInt64Array()
+      case ${_classNamePrefix}PigeonInternalNumberType.float32.rawValue:
+        return typedData.toFloat32Array()
+      case ${_classNamePrefix}PigeonInternalNumberType.float64.rawValue:
+        return typedData.toFloat64Array()
+      default:
+        return typedData
+      }
+    }
+    if value is NSNumber {
+      let number = value as! NSNumber
+      if type == "int" || type == "int64" {
+        return number.int64Value
+      } else if type == "double" {
+        return number.doubleValue
+      } else if type == "bool" {
+        return number.boolValue
+      }
+      ${root.enums.map((Enum enumDefinition) {
+      return '''
+       else if (type == "${enumDefinition.name}") {
+        return ${enumDefinition.name}.init(rawValue: number.intValue)
+      }''';
+    }).join()}
+      
+      return number.int64Value
+    }
+    if (value is NSMutableArray || value is NSArray) {
+      var res: Array<Any?> = []
+      for item in (value as! NSArray) {
+          res.append(readValue(value: item as? NSObject, type: type))
+      }
+      return res
+    }
+    if (value is NSDictionary) {
+      var res: Dictionary<AnyHashable?, Any?> = Dictionary()
+      for (key, value) in (value as! NSDictionary) {
+          res[readValue(value: key as? NSObject, type: type) as? AnyHashable] = readValue(value: value as? NSObject, type: type2)
+      }
+      return res
+    } 
+    if (value is ${_classNamePrefix}NumberWrapper) {
+      return unwrapNumber(wrappedNumber: value as! ${_classNamePrefix}NumberWrapper)
+    }
+    if (value is NSString) {
+      return value as! NSString
+    ${concreteClasses.map((Class dataClass) {
+      return '''
+      } else if (value is ${dataClass.name}Bridge) {
+        return (value! as! ${dataClass.name}Bridge).toSwift();
+        ''';
+    }).join()}
+    }
+    return value
+  }
+
+  static func writeValue(value: Any?, isObject: Bool = false) -> Any? {
+    if (${_classNamePrefix}PigeonInternal.isNullish(value)) {
+      return ${_classNamePrefix}PigeonInternalNull()
+    }
+    if let uint8Array = value as? [UInt8] {
+      return isObject ? ${_classNamePrefix}PigeonTypedData(uint8Array) : uint8Array as NSArray
+    }
+    if let int32Array = value as? [Int32] {
+      return isObject ? ${_classNamePrefix}PigeonTypedData(int32Array) : int32Array as NSArray
+    }
+    if let int64Array = value as? [Int64] {
+      return isObject ? ${_classNamePrefix}PigeonTypedData(int64Array) : int64Array as NSArray
+    }
+    if let float32Array = value as? [Float32] {
+      return isObject ? ${_classNamePrefix}PigeonTypedData(float32Array) : float32Array as NSArray
+    }
+    if let float64Array = value as? [Double] {
+      return isObject ? ${_classNamePrefix}PigeonTypedData(float64Array) : float64Array as NSArray
+    }
+    if (value is Bool || value is Double || value is Int || value is Int64${root.enums.map((Enum enumDefinition) {
+      return ' || value is ${enumDefinition.name}';
+    }).join()}) {
+      if (isObject) {
+        return wrapNumber(number: value!)
+      }
+      if (value is Bool) {
+        return value
+      } else if (value is Double) {
+        return value
+      } else if (value is Int || value is Int64) {
+        return value
+      }
+      ${root.enums.map((Enum enumDefinition) {
+      return '''
+      else if (value is ${enumDefinition.name}) {
+        return (value as! ${enumDefinition.name}).rawValue
+      }''';
+    }).join()}
+    }
+    if (value is [Any]) {
+      let list = value as! [Any]
+      let res: NSMutableArray = NSMutableArray(capacity: list.count)
+      for item in list {
+        res.add(${_classNamePrefix}PigeonInternal.isNullish(item) ? ${_classNamePrefix}PigeonInternalNull() : writeValue(value: item, isObject: true) as! NSObject)
+      }
+      return res
+    }
+    if (value is [AnyHashable: Any]) {
+      let dict = value as! [AnyHashable: Any]
+      let res: NSMutableDictionary = NSMutableDictionary(capacity: dict.count)
+      for (key, value) in dict {
+         res.setObject(${_classNamePrefix}PigeonInternal.isNullish(value) ? ${_classNamePrefix}PigeonInternalNull() : writeValue(value: value, isObject: true) as! NSObject, forKey: writeValue(value: key, isObject: true) as! NSCopying)
+      }
+      return res
+    }
+    if (value is String) {
+      return value as! NSString
+    ${concreteClasses.map((Class dataClass) {
+      return '''
+      } else if (value is ${dataClass.name}) {
+        return ${dataClass.name}Bridge.fromSwift(value as? ${dataClass.name});
+        ''';
+    }).join()}
+    }
+    return value
+  }
+}
+    ''');
+  }
+
+  /// Writes the codec that encodes and decodes the buffers of the hybrid
+  /// native interop transport.
+  ///
+  /// It reads and writes the format of Flutter's standard message codec, but
+  /// depends only on Foundation, because swiftgen compiles this file without
+  /// Flutter. All of its types are `private`, so they add no Objective-C
+  /// symbols.
+  void _writeFfiInteropCodec(InternalSwiftOptions generatorOptions, Root root, Indent indent) {
+    final String prefix = _classNamePrefix;
+    final codec = '${prefix}PigeonInteropCodec';
+    final List<EnumeratedType> enumeratedTypes = getEnumeratedTypes(
+      root,
+      excludeSealedClasses: true,
+    ).toList();
+
+    void writeCustomBody(EnumeratedType customType, String value) {
+      final Class? dataClass = customType.associatedClass;
+      final writePayload = dataClass != null
+          ? 'write${customType.name}($value)'
+          : 'writeValue(Int64($value.rawValue))';
+      if (customType.enumeration < maximumCodecFieldKey) {
+        indent.writeln('writeByte(${customType.enumeration})');
+        indent.writeln(writePayload);
+      } else {
+        indent.writeln('writeByte($maximumCodecFieldKey)');
+        indent.writeln('writeByte($codec.typeList)');
+        indent.writeln('writeSize(2)');
+        indent.writeln('writeValue(Int64(${customType.enumeration - maximumCodecFieldKey}))');
+        indent.writeln(writePayload);
+      }
+      indent.writeln('return true');
+    }
+
+    void writeDecodeCustom(EnumeratedType customType, String value) {
+      if (customType.associatedClass != null) {
+        indent.writeln('return read${customType.name}()');
+      } else {
+        indent.writeln('guard let raw = $value as? Int64 else { return nil }');
+        indent.writeln('return ${customType.name}(rawValue: Int(raw))');
+      }
+    }
+
+    indent.newln();
+    indent.writeln("/// Writes values in the format of Flutter's standard message codec.");
+    indent.writeln('///');
+    indent.writeln(
+      '/// Implemented against Foundation rather than `FlutterStandardWriter` so that',
+    );
+    indent.writeln('/// swiftgen can compile this file without importing Flutter.');
+    indent.writeScoped('private struct ${prefix}PigeonInteropWriter {', '}', () {
+      indent.format('''
+  private(set) var bytes: [UInt8] = []
+
+  mutating func writeByte(_ byte: UInt8) {
+    bytes.append(byte)
+  }
+
+  mutating func writeRaw<T: FixedWidthInteger>(_ value: T) {
+    withUnsafeBytes(of: value.littleEndian) { bytes.append(contentsOf: \$0) }
+  }
+
+  mutating func writeSize(_ size: Int) {
+    if size < Int($codec.sizeUInt16) {
+      writeByte(UInt8(size))
+    } else if size <= Int(UInt16.max) {
+      writeByte($codec.sizeUInt16)
+      writeRaw(UInt16(size))
+    } else {
+      writeByte($codec.sizeUInt32)
+      writeRaw(UInt32(size))
+    }
+  }
+
+  mutating func writeAlignment(_ alignment: Int) {
+    let mod = bytes.count % alignment
+    if mod != 0 {
+      bytes.append(contentsOf: repeatElement(0, count: alignment - mod))
+    }
+  }
+
+  mutating func writeTypedData<T>(_ type: UInt8, _ array: [T], alignment: Int) {
+    writeByte(type)
+    writeSize(array.count)
+    writeAlignment(alignment)
+    array.withUnsafeBytes { bytes.append(contentsOf: \$0) }
+  }
+
+  mutating func writeTypedData<T>(_ type: UInt8, _ array: [T]?, alignment: Int) {
+    guard let array = array else {
+      writeByte($codec.typeNull)
+      return
+    }
+    writeTypedData(type, array, alignment: alignment)
+  }
+
+  mutating func writeString(_ string: String) {
+    writeByte($codec.typeString)
+    var string = string
+    string.withUTF8 { utf8 in
+      writeSize(utf8.count)
+      bytes.append(contentsOf: utf8)
+    }
+  }
+
+  mutating func writeValue(_ value: Any?) {
+    guard let value = value else {
+      writeByte($codec.typeNull)
+      return
+    }
+    // The most common types are matched by exact type first, because
+    // comparing metatypes is much cheaper than dynamic casts.
+    let valueType = Swift.type(of: value)
+    if valueType == String.self {
+      writeString(value as! String)
+      return
+    }
+    if valueType == Int64.self {
+      writeByte($codec.typeInt64)
+      writeRaw(value as! Int64)
+      return
+    }
+    if valueType == Bool.self {
+      writeByte((value as! Bool) ? $codec.typeTrue : $codec.typeFalse)
+      return
+    }
+    if valueType == Double.self {
+      writeByte($codec.typeFloat64)
+      writeAlignment(8)
+      writeRaw((value as! Double).bitPattern)
+      return
+    }
+    if valueType == [Any?].self {
+      writeList(value as! [Any?])
+      return
+    }
+    if writeCustomValue(value, type: valueType) {
+      return
+    }
+    // Typed data is matched by exact type, because casting an empty array of
+    // any element type to an array of numbers succeeds.
+    if valueType == [UInt8].self {
+      writeTypedData($codec.typeUint8List, value as! [UInt8], alignment: 1)
+      return
+    }
+    if valueType == [Int32].self {
+      writeTypedData($codec.typeInt32List, value as! [Int32], alignment: 4)
+      return
+    }
+    if valueType == [Int64].self {
+      writeTypedData($codec.typeInt64List, value as! [Int64], alignment: 8)
+      return
+    }
+    if valueType == [Float64].self {
+      writeTypedData($codec.typeFloat64List, value as! [Float64], alignment: 8)
+      return
+    }
+    if valueType == [Float32].self {
+      writeTypedData($codec.typeFloat32List, value as! [Float32], alignment: 4)
+      return
+    }
+    if valueType == AnyHashable.self {
+      writeValue((value as! AnyHashable).base)
+      return
+    }
+    // Collections are matched by protocol before any cast to a class, such as
+    // `NSNumber`, because those casts can bridge a whole Swift collection to
+    // Objective-C just to fail.
+    if let list = value as? ${prefix}PigeonInteropList {
+      list.pigeonWrite(to: &self)
+      return
+    }
+    if let map = value as? ${prefix}PigeonInteropMap {
+      map.pigeonWrite(to: &self)
+      return
+    }
+    if let optional = value as? ${prefix}PigeonInteropOptional {
+      writeValue(optional.pigeonWrapped)
+      return
+    }
+    if ${prefix}PigeonInternal.isNullish(value) {
+      writeByte($codec.typeNull)
+      return
+    }
+    if let number = value as? NSNumber {
+      if CFGetTypeID(number) == CFBooleanGetTypeID() {
+        writeByte(number.boolValue ? $codec.typeTrue : $codec.typeFalse)
+      } else if CFNumberIsFloatType(number) {
+        writeByte($codec.typeFloat64)
+        writeAlignment(8)
+        writeRaw(number.doubleValue.bitPattern)
+      } else {
+        writeByte($codec.typeInt64)
+        writeRaw(number.int64Value)
+      }
+      return
+    }
+    if let string = value as? String {
+      writeString(string)
+      return
+    }
+    if writeCustomValueFallback(value) {
+      return
+    }
+    preconditionFailure("Unsupported value: \\(value) of type \\(valueType)")
+  }
+
+  mutating func writeList(_ list: [Any?]) {
+    writeByte($codec.typeList)
+    writeSize(list.count)
+    for item in list {
+      writeValue(item)
+    }
+  }
+
+  mutating func writeList<T>(_ list: [T]?) {
+    guard let list = list else {
+      writeByte($codec.typeNull)
+      return
+    }
+    writeByte($codec.typeList)
+    writeSize(list.count)
+    for item in list {
+      writeValue(item)
+    }
+  }
+
+  mutating func writeList<T>(_ list: [T?]?) {
+    guard let list = list else {
+      writeByte($codec.typeNull)
+      return
+    }
+    writeByte($codec.typeList)
+    writeSize(list.count)
+    for item in list {
+      writeOptional(item)
+    }
+  }
+
+  mutating func writeList<T>(_ list: [T]?, _ writeElement: (inout Self, T) -> Void) {
+    guard let list = list else {
+      writeByte($codec.typeNull)
+      return
+    }
+    writeByte($codec.typeList)
+    writeSize(list.count)
+    for item in list {
+      writeElement(&self, item)
+    }
+  }
+
+  mutating func writeOptional<T>(_ value: T?) {
+    if let value = value {
+      writeValue(value)
+    } else {
+      writeByte($codec.typeNull)
+    }
+  }
+
+  mutating func writeMap<K, V>(_ map: [K: V]?) {
+    guard let map = map else {
+      writeByte($codec.typeNull)
+      return
+    }
+    writeByte($codec.typeMap)
+    writeSize(map.count)
+    for (key, item) in map {
+      writeValue(key)
+      writeValue(item)
+    }
+  }
+
+  mutating func writeMap<K, V>(_ map: [K?: V]?) {
+    guard let map = map else {
+      writeByte($codec.typeNull)
+      return
+    }
+    writeByte($codec.typeMap)
+    writeSize(map.count)
+    for (key, item) in map {
+      writeOptional(key)
+      writeValue(item)
+    }
+  }
+
+  mutating func writeMap<K, V>(_ map: [K: V?]?) {
+    guard let map = map else {
+      writeByte($codec.typeNull)
+      return
+    }
+    writeByte($codec.typeMap)
+    writeSize(map.count)
+    for (key, item) in map {
+      writeValue(key)
+      writeOptional(item)
+    }
+  }
+
+  mutating func writeMap<K, V>(_ map: [K?: V?]?) {
+    guard let map = map else {
+      writeByte($codec.typeNull)
+      return
+    }
+    writeByte($codec.typeMap)
+    writeSize(map.count)
+    for (key, item) in map {
+      writeOptional(key)
+      writeOptional(item)
+    }
+  }
+
+  mutating func writeMap<K, V>(_ map: [K: V]?, _ writeEntry: (inout Self, K, V) -> Void) {
+    guard let map = map else {
+      writeByte($codec.typeNull)
+      return
+    }
+    writeByte($codec.typeMap)
+    writeSize(map.count)
+    for (key, item) in map {
+      writeEntry(&self, key, item)
+    }
+  }
+''');
+      for (final customType in enumeratedTypes) {
+        final Class? dataClass = customType.associatedClass;
+        if (dataClass != null) {
+          // Fields are written by their declared types, so that a `List<int>`
+          // stays a list rather than becoming typed data, and optional fields
+          // aren't boxed.
+          final List<NamedType> fields = getFieldsInSerializationOrder(dataClass).toList();
+          indent.newln();
+          indent.writeScoped(
+            'mutating func write${customType.name}(_ value: ${customType.name}) {',
+            '}',
+            () {
+              indent.writeln('writeByte($codec.typeList)');
+              indent.writeln('writeSize(${fields.length})');
+              for (final field in fields) {
+                indent.writeln(_swiftInteropWrite('value.${field.name}', field.type, codec));
+              }
+            },
+          );
+        }
+      }
+      indent.newln();
+      // Exact type matches are checked first, because comparing metatypes is
+      // much cheaper than a failed dynamic cast for every value.
+      indent.writeScoped(
+        'mutating func writeCustomValue(_ value: Any, type valueType: Any.Type) -> Bool {',
+        '}',
+        () {
+          for (final customType in enumeratedTypes) {
+            indent.writeScoped('if valueType == ${customType.name}.self {', '}', () {
+              writeCustomBody(customType, '(value as! ${customType.name})');
+            });
+          }
+          indent.writeln('return false');
+        },
+      );
+      indent.newln();
+      indent.writeScoped('mutating func writeCustomValueFallback(_ value: Any) -> Bool {', '}', () {
+        for (final customType in enumeratedTypes) {
+          indent.writeScoped('if let value = value as? ${customType.name} {', '}', () {
+            writeCustomBody(customType, 'value');
+          });
+        }
+        indent.writeln('return false');
+      });
+    });
+
+    indent.newln();
+    indent.format('''
+/// Unwraps optionals that a generic context boxed into `Any`.
+private protocol ${prefix}PigeonInteropOptional {
+  var pigeonWrapped: Any? { get }
+}
+
+extension Optional: ${prefix}PigeonInteropOptional {
+  fileprivate var pigeonWrapped: Any? {
+    switch self {
+    case .some(let wrapped):
+      return wrapped
+    case .none:
+      return nil
+    }
+  }
+}
+
+/// Writes typed lists without converting them to `[Any?]` first.
+private protocol ${prefix}PigeonInteropList {
+  func pigeonWrite(to writer: inout ${prefix}PigeonInteropWriter)
+}
+
+extension Array: ${prefix}PigeonInteropList {
+  fileprivate func pigeonWrite(to writer: inout ${prefix}PigeonInteropWriter) {
+    writer.writeByte($codec.typeList)
+    writer.writeSize(count)
+    for item in self {
+      writer.writeValue(item)
+    }
+  }
+}
+
+/// Writes typed maps without converting them to `[AnyHashable?: Any?]` first.
+private protocol ${prefix}PigeonInteropMap {
+  func pigeonWrite(to writer: inout ${prefix}PigeonInteropWriter)
+}
+
+extension Dictionary: ${prefix}PigeonInteropMap {
+  fileprivate func pigeonWrite(to writer: inout ${prefix}PigeonInteropWriter) {
+    writer.writeByte($codec.typeMap)
+    writer.writeSize(count)
+    for (key, item) in self {
+      writer.writeValue(key)
+      writer.writeValue(item)
+    }
+  }
+}
+''');
+
+    indent.newln();
+    indent.writeln("/// Reads values in the format of Flutter's standard message codec.");
+    indent.writeScoped('private struct ${prefix}PigeonInteropReader {', '}', () {
+      indent.format('''
+  private let data: NSData
+  private let bytes: UnsafeRawBufferPointer
+  private var position = 0
+
+  init(_ data: NSData) {
+    self.data = data
+    self.bytes = UnsafeRawBufferPointer(start: data.bytes, count: data.length)
+  }
+
+  var isAtEnd: Bool { position >= bytes.count }
+
+  mutating func readByte() -> UInt8 {
+    let byte = bytes[position]
+    position += 1
+    return byte
+  }
+
+  mutating func readRaw<T: FixedWidthInteger>(_ type: T.Type) -> T {
+    let value = bytes.loadUnaligned(fromByteOffset: position, as: T.self)
+    position += MemoryLayout<T>.size
+    return T(littleEndian: value)
+  }
+
+  mutating func readSize() -> Int {
+    let byte = readByte()
+    if byte < $codec.sizeUInt16 {
+      return Int(byte)
+    } else if byte == $codec.sizeUInt16 {
+      return Int(readRaw(UInt16.self))
+    }
+    return Int(readRaw(UInt32.self))
+  }
+
+  mutating func readAlignment(_ alignment: Int) {
+    let mod = position % alignment
+    if mod != 0 {
+      position += alignment - mod
+    }
+  }
+
+  mutating func readTypedData<T>(_ type: T.Type, alignment: Int) -> [T] {
+    let count = readSize()
+    readAlignment(alignment)
+    let byteCount = count * MemoryLayout<T>.stride
+    let result = [T](unsafeUninitializedCapacity: count) { buffer, initializedCount in
+      if byteCount > 0 {
+        UnsafeMutableRawBufferPointer(buffer).copyMemory(
+          from: UnsafeRawBufferPointer(rebasing: bytes[position..<(position + byteCount)]))
+      }
+      initializedCount = count
+    }
+    position += byteCount
+    return result
+  }
+
+  mutating func readValue() -> Any? {
+    return readValue(ofType: readByte())
+  }
+
+  mutating func readValue(ofType type: UInt8) -> Any? {
+    switch type {
+    case $codec.typeNull:
+      return nil
+    case $codec.typeTrue:
+      return true
+    case $codec.typeFalse:
+      return false
+    case $codec.typeInt32:
+      return Int64(readRaw(Int32.self))
+    case $codec.typeInt64:
+      return readRaw(Int64.self)
+    case $codec.typeLargeInt, $codec.typeString:
+      let count = readSize()
+      let string = String(
+        decoding: UnsafeRawBufferPointer(rebasing: bytes[position..<(position + count)]),
+        as: UTF8.self)
+      position += count
+      return string
+    case $codec.typeFloat64:
+      readAlignment(8)
+      return Double(bitPattern: readRaw(UInt64.self))
+    case $codec.typeUint8List:
+      return readTypedData(UInt8.self, alignment: 1)
+    case $codec.typeInt32List:
+      return readTypedData(Int32.self, alignment: 4)
+    case $codec.typeInt64List:
+      return readTypedData(Int64.self, alignment: 8)
+    case $codec.typeFloat64List:
+      return readTypedData(Float64.self, alignment: 8)
+    case $codec.typeList:
+      let count = readSize()
+      var list: [Any?] = []
+      list.reserveCapacity(count)
+      for _ in 0..<count {
+        list.append(readValue())
+      }
+      return list
+    case $codec.typeMap:
+      let count = readSize()
+      var map: [AnyHashable?: Any?] = [:]
+      map.reserveCapacity(count)
+      for _ in 0..<count {
+        let key = readValue() as? AnyHashable
+        map[key] = readValue()
+      }
+      return map
+    case $codec.typeFloat32List:
+      return readTypedData(Float32.self, alignment: 4)
+    default:
+      return readCustomValue(ofType: type)
+    }
+  }
+
+  mutating func readListHeader() {
+    _ = readByte()
+    _ = readSize()
+  }
+
+  mutating func read<T>(_ type: T.Type) -> T {
+    return readValue() as! T
+  }
+
+  mutating func read<E>(_ type: [E].Type) -> [E] {
+    let tag = readByte()
+    guard tag == $codec.typeList else {
+      return readValue(ofType: tag) as! [E]
+    }
+    let count = readSize()
+    var list: [E] = []
+    list.reserveCapacity(count)
+    for _ in 0..<count {
+      list.append(readValue() as! E)
+    }
+    return list
+  }
+
+  mutating func read<E>(_ type: [E]?.Type) -> [E]? {
+    if bytes[position] == $codec.typeNull {
+      position += 1
+      return nil
+    }
+    return read([E].self)
+  }
+
+  mutating func read<K: Hashable, V>(_ type: [K: V].Type) -> [K: V] {
+    let tag = readByte()
+    guard tag == $codec.typeMap else {
+      return readValue(ofType: tag) as! [K: V]
+    }
+    let count = readSize()
+    var map: [K: V] = [:]
+    map.reserveCapacity(count)
+    for _ in 0..<count {
+      let key = readValue() as! K
+      map[key] = (readValue() as! V)
+    }
+    return map
+  }
+
+  mutating func read<K: Hashable, V>(_ type: [K: V]?.Type) -> [K: V]? {
+    if bytes[position] == $codec.typeNull {
+      position += 1
+      return nil
+    }
+    return read([K: V].self)
+  }
+''');
+      for (final customType in enumeratedTypes) {
+        final Class? dataClass = customType.associatedClass;
+        if (dataClass != null) {
+          // Fields are read by their declared types, which avoids converting
+          // untyped collections afterwards.
+          final List<NamedType> fields = getFieldsInSerializationOrder(dataClass).toList();
+          indent.newln();
+          indent.writeScoped(
+            'mutating func read${customType.name}() -> ${customType.name} {',
+            '}',
+            () {
+              indent.writeln('readListHeader()');
+              if (fields.isEmpty) {
+                indent.writeln('return ${customType.name}()');
+              } else {
+                indent.writeScoped('return ${customType.name}(', ')', () {
+                  for (final (int index, NamedType field) in fields.indexed) {
+                    final comma = index < fields.length - 1 ? ',' : '';
+                    indent.writeln('${field.name}: ${_swiftInteropRead(field.type)}$comma');
+                  }
+                });
+              }
+            },
+          );
+        }
+      }
+      indent.newln();
+      indent.writeScoped('mutating func readCustomValue(ofType type: UInt8) -> Any? {', '}', () {
+        indent.writeScoped('switch type {', '}', nestCount: 0, () {
+          for (final customType in enumeratedTypes) {
+            if (customType.enumeration < maximumCodecFieldKey) {
+              indent.writeScoped('case ${customType.enumeration}:', null, () {
+                writeDecodeCustom(customType, 'readValue()');
+              });
+            }
+          }
+          if (root.requiresOverflowClass) {
+            indent.writeScoped('case $maximumCodecFieldKey:', null, () {
+              indent.writeln('readListHeader()');
+              indent.writeScoped('switch read(Int64.self) {', '}', nestCount: 0, () {
+                for (final customType in enumeratedTypes) {
+                  if (customType.enumeration >= maximumCodecFieldKey) {
+                    indent.writeScoped(
+                      'case ${customType.enumeration - maximumCodecFieldKey}:',
+                      null,
+                      () {
+                        writeDecodeCustom(customType, 'readValue()');
+                      },
+                    );
+                  }
+                }
+                indent.writeScoped('default:', null, () {
+                  indent.writeln('return nil');
+                });
+              });
+            });
+          }
+          indent.writeScoped('default:', null, () {
+            indent.writeln(r'preconditionFailure("Unsupported type: \(type)")');
+          });
+        });
+      });
+    });
+
+    indent.newln();
+    indent.format('''
+/// Encodes and decodes the buffers that native interop calls pass to and from
+/// Dart, in the same format as the message codec.
+private enum $codec {
+  static let typeNull: UInt8 = 0
+  static let typeTrue: UInt8 = 1
+  static let typeFalse: UInt8 = 2
+  static let typeInt32: UInt8 = 3
+  static let typeInt64: UInt8 = 4
+  static let typeLargeInt: UInt8 = 5
+  static let typeFloat64: UInt8 = 6
+  static let typeString: UInt8 = 7
+  static let typeUint8List: UInt8 = 8
+  static let typeInt32List: UInt8 = 9
+  static let typeInt64List: UInt8 = 10
+  static let typeFloat64List: UInt8 = 11
+  static let typeList: UInt8 = 12
+  static let typeMap: UInt8 = 13
+  static let typeFloat32List: UInt8 = 14
+  static let sizeUInt16: UInt8 = 254
+  static let sizeUInt32: UInt8 = 255
+
+  static func encode(_ value: Any?) -> NSData {
+    var writer = ${prefix}PigeonInteropWriter()
+    writer.writeValue(value)
+    return writer.bytes.withUnsafeBytes { NSData(bytes: \$0.baseAddress, length: \$0.count) }
+  }
+
+  static func encodeOrNil(_ value: Any?) -> NSData? {
+    return ${prefix}PigeonInternal.isNullish(value) ? nil : encode(value)
+  }
+
+  static func encode(_ write: (inout ${prefix}PigeonInteropWriter) -> Void) -> NSData {
+    var writer = ${prefix}PigeonInteropWriter()
+    write(&writer)
+    return writer.bytes.withUnsafeBytes { NSData(bytes: \$0.baseAddress, length: \$0.count) }
+  }
+
+  static func decode(_ data: NSData?) -> Any? {
+    guard let data = data else {
+      return nil
+    }
+    var reader = ${prefix}PigeonInteropReader(data)
+    return reader.readValue()
+  }
+
+  static func decodeArguments(_ data: NSData) -> [Any?] {
+    return decode(data) as! [Any?]
+  }
+
+  static func typedData<T>(_ data: NSData, as type: T.Type) -> [T] {
+    let count = data.length / MemoryLayout<T>.stride
+    return [T](unsafeUninitializedCapacity: count) { buffer, initializedCount in
+      if data.length > 0 {
+        UnsafeMutableRawBufferPointer(buffer).copyMemory(
+          from: UnsafeRawBufferPointer(start: data.bytes, count: count * MemoryLayout<T>.stride))
+      }
+      initializedCount = count
+    }
+  }
+
+  static func data<T>(_ array: [T]) -> NSData {
+    return array.withUnsafeBytes { NSData(bytes: \$0.baseAddress, length: \$0.count) }
+  }
+}
+''');
   }
 
   @override
@@ -278,6 +1265,13 @@ class SwiftGenerator extends StructuredGenerator<InternalSwiftOptions> {
     Indent indent, {
     required String dartPackageName,
   }) {
+    if (generatorOptions.useFfi && !root.containsEventChannel && !root.containsProxyApi) {
+      _writeFfiCodec(indent, root);
+      if (generatorOptions.useFfiHybrid) {
+        _writeFfiInteropCodec(generatorOptions, root, indent);
+      }
+      return;
+    }
     final String codecName = _getMessageCodecName(generatorOptions);
     final readerWriterName = '${codecName}ReaderWriter';
     final readerName = '${codecName}Reader';
@@ -416,14 +1410,27 @@ class SwiftGenerator extends StructuredGenerator<InternalSwiftOptions> {
     Indent indent,
     Class classDefinition, {
     bool private = false,
+    bool useFfi = false,
+    bool useFfiTypedData = false,
     bool hashable = true,
     bool customStringConvertible = true,
   }) {
     final privateString = private ? 'private ' : '';
+    final objcString = useFfi ? '@objc ' : '';
+    final bridge = useFfi ? 'Bridge' : '';
     final protocols = <String>[];
-    if (classDefinition.superClass != null) {
-      protocols.add(classDefinition.superClass!.name);
+    if (useFfi) {
+      // A subclass's bridge extends its sealed parent's bridge, so it can cross
+      // wherever the sealed class can.
+      protocols.add(
+        classDefinition.superClass == null
+            ? 'NSObject'
+            : '${classDefinition.superClass!.name}Bridge',
+      );
     } else {
+      if (classDefinition.superClass != null) {
+        protocols.add(classDefinition.superClass!.name);
+      }
       if (hashable) {
         protocols.add('Hashable');
       }
@@ -432,8 +1439,10 @@ class SwiftGenerator extends StructuredGenerator<InternalSwiftOptions> {
       }
     }
     final extendsString = protocols.isEmpty ? '' : ': ${protocols.join(', ')}';
-    if (classDefinition.isSwiftClass) {
-      indent.write('${privateString}class ${classDefinition.name}$extendsString ');
+    if (classDefinition.isSwiftClass || useFfi) {
+      indent.write(
+        '$privateString${objcString}class ${classDefinition.name}$bridge$extendsString ',
+      );
     } else if (classDefinition.isSealed) {
       indent.write('protocol ${classDefinition.name} ');
     } else {
@@ -443,14 +1452,26 @@ class SwiftGenerator extends StructuredGenerator<InternalSwiftOptions> {
     indent.addScoped('{', '', () {
       final Iterable<NamedType> fields = getFieldsInSerializationOrder(classDefinition);
 
-      if (classDefinition.isSwiftClass) {
-        _writeClassInit(indent, fields.toList());
+      if (classDefinition.isSwiftClass || useFfi) {
+        _writeClassInit(
+          indent,
+          fields.toList(),
+          objcString,
+          useFfi: useFfi,
+          useFfiTypedData: useFfiTypedData,
+        );
       }
 
       for (final field in fields) {
         addDocumentationComments(indent, field.documentationComments, _docCommentSpec);
-        indent.write('var ');
-        _writeClassField(indent, field, addNil: !classDefinition.isSwiftClass);
+        indent.write('${objcString}var ');
+        _writeClassField(
+          indent,
+          field,
+          addNil: !classDefinition.isSwiftClass,
+          useFfi: useFfi,
+          useFfiTypedData: useFfiTypedData,
+        );
         indent.newln();
       }
     }, addTrailingNewline: false);
@@ -552,7 +1573,7 @@ if (wrapped == nil) {
       _docCommentSpec,
       generatorComments: generatedComments,
     );
-    _writeDataClassSignature(indent, classDefinition);
+    _writeDataClassSignature(indent, classDefinition, useFfiTypedData: generatorOptions.useFfi);
     indent.writeScoped('', '}', () {
       if (classDefinition.isSealed) {
         return;
@@ -564,6 +1585,7 @@ if (wrapped == nil) {
         indent,
         classDefinition,
         dartPackageName: dartPackageName,
+        useFfi: generatorOptions.useFfi,
       );
       writeClassEncode(
         generatorOptions,
@@ -588,13 +1610,232 @@ if (wrapped == nil) {
         dartPackageName: dartPackageName,
       );
     });
+    if (generatorOptions.useFfi) {
+      _writeFfiBridgeClass(
+        generatorOptions,
+        root,
+        indent,
+        classDefinition,
+        dartPackageName: dartPackageName,
+      );
+    }
   }
 
-  void _writeClassInit(Indent indent, List<NamedType> fields) {
-    indent.writeScoped('init(', ')', () {
+  void _writeFfiBridgeClass(
+    InternalSwiftOptions generatorOptions,
+    Root root,
+    Indent indent,
+    Class classDefinition, {
+    required String dartPackageName,
+  }) {
+    final generatedComments = <String>[
+      ' Generated bridge class from Pigeon that moves data from Swift to Objective-C.',
+    ];
+    indent.newln();
+    addDocumentationComments(
+      indent,
+      classDefinition.documentationComments,
+      _docCommentSpec,
+      generatorComments: generatedComments,
+    );
+    _writeDataClassSignature(indent, classDefinition, useFfi: true, hashable: false);
+    indent.writeScoped('', '}', () {
+      if (classDefinition.isSealed) {
+        _writeSealedFfiBridgeConversions(indent, classDefinition);
+        return;
+      }
+      indent.writeln('// swift-format-ignore: AlwaysUseLowerCamelCase');
+      indent.writeScoped(
+        'static func fromSwift(_ ${varNamePrefix}Class: ${classDefinition.name}?) -> ${classDefinition.name}Bridge? {',
+        '}',
+        () {
+          indent.writeScoped(
+            'if (${_classNamePrefix}PigeonInternal.isNullish(${varNamePrefix}Class)) {',
+            '}',
+            () {
+              indent.writeln('return nil');
+            },
+          );
+          indent.writeScoped('return ${classDefinition.name}Bridge(', ')', () {
+            for (final NamedType field in classDefinition.fields) {
+              indent.writeln(
+                '${field.name}: ${_varToObjc('${varNamePrefix}Class!.${field.name}', field.type)},',
+              );
+            }
+          });
+        },
+      );
+      indent.writeScoped('func toSwift() -> ${classDefinition.name} {', '}', () {
+        indent.writeScoped('return ${classDefinition.name} (', ')', () {
+          for (final NamedType field in classDefinition.fields) {
+            indent.writeln('${field.name}: ${_varToSwift(field.name, field.type)},');
+          }
+        });
+      });
+    });
+  }
+
+  /// Writes the conversions of a sealed class's bridge.
+  ///
+  /// Both pick the subclass by its runtime type. `toSwift` is static because an
+  /// instance method would make each subclass bridge's own `toSwift()`
+  /// ambiguous wherever the expected type isn't that subclass.
+  void _writeSealedFfiBridgeConversions(Indent indent, Class classDefinition) {
+    final String name = classDefinition.name;
+    indent.writeln('// swift-format-ignore: AlwaysUseLowerCamelCase');
+    indent.writeScoped(
+      'static func fromSwift(_ ${varNamePrefix}Class: $name?) -> ${name}Bridge? {',
+      '}',
+      () {
+        indent.writeScoped('switch ${varNamePrefix}Class {', '}', () {
+          for (final Class child in classDefinition.children) {
+            indent.writeScoped('case let ${varNamePrefix}value as ${child.name}:', null, () {
+              indent.writeln('return ${child.name}Bridge.fromSwift(${varNamePrefix}value)');
+            });
+          }
+          indent.writeScoped('default:', null, () {
+            indent.writeln('return nil');
+          });
+        });
+      },
+    );
+    indent.writeln('// swift-format-ignore: AlwaysUseLowerCamelCase');
+    indent.writeScoped(
+      'static func toSwift(_ ${varNamePrefix}bridge: ${name}Bridge?) -> $name? {',
+      '}',
+      () {
+        indent.writeScoped('switch ${varNamePrefix}bridge {', '}', () {
+          for (final Class child in classDefinition.children) {
+            indent.writeScoped('case let ${varNamePrefix}value as ${child.name}Bridge:', null, () {
+              indent.writeln('return ${varNamePrefix}value.toSwift()');
+            });
+          }
+          indent.writeScoped('default:', null, () {
+            indent.writeln('return nil');
+          });
+        });
+      },
+    );
+  }
+
+  String _varToObjc(String varName, TypeDeclaration type, {bool forceNullable = false}) {
+    final nullable = type.isNullable || forceNullable ? '?' : '';
+    final getter = type.isNullable ? '!' : '';
+    switch (type.baseName) {
+      case 'int':
+      case 'double':
+      case 'bool':
+        return type.isNullable || forceNullable
+            ? _numberToObjc(varName, getter: getter, isNullable: type.isNullable)
+            : varName;
+      case 'Uint8List':
+      case 'Int32List':
+      case 'Int64List':
+      case 'Float32List':
+      case 'Float64List':
+        return wrapConditionally(
+          '${_classNamePrefix}PigeonTypedData($varName${type.isNullable ? '!' : ''})',
+          '${_classNamePrefix}PigeonInternal.isNullish($varName) ? nil : ',
+          '',
+          type.isNullable || forceNullable,
+        );
+      case 'String':
+        return '$varName as NSString$nullable';
+      case 'List':
+      case 'Map':
+        return '_PigeonFfiCodec.writeValue(value: $varName) as${type.isNullable || forceNullable ? '?' : '!'} ${_swiftTypeForBuiltinDartType(type, useFfi: true)}';
+      case 'Object':
+        return '_PigeonFfiCodec.writeValue(value: $varName, isObject: true) as${type.isNullable || forceNullable ? '?' : '!'} NSObject';
+      default:
+        if (type.isEnum && (type.isNullable || forceNullable)) {
+          return _numberToObjc(
+            varName,
+            getter: getter.isEmpty ? '.rawValue' : '!.rawValue',
+            isNullable: type.isNullable,
+          );
+        }
+        if (type.isClass) {
+          return '${type.baseName}Bridge.fromSwift($varName)${type.isNullable ? '' : '!'}';
+        }
+        return varName;
+    }
+  }
+
+  String _numberToObjc(String varName, {String getter = '', bool isNullable = true}) => isNullable
+      ? '${_classNamePrefix}PigeonInternal.isNullish($varName) ? nil : NSNumber(value: $varName$getter)'
+      : 'NSNumber(value: $varName$getter)';
+
+  String _varToSwift(String varName, TypeDeclaration type, {bool forceNullable = false}) {
+    final nullable = type.isNullable ? '?' : '';
+    final checkNullish = type.isNullable || forceNullable
+        ? '${_classNamePrefix}PigeonInternal.isNullish($varName) ? nil : '
+        : '';
+    switch (type.baseName) {
+      case 'Object':
+        return '_PigeonFfiCodec.readValue(value: $varName)${type.isNullable || forceNullable ? '' : '!'}';
+      case 'int':
+        return type.isNullable || forceNullable ? '$checkNullish$varName!.int64Value' : varName;
+      case 'double':
+        return type.isNullable || forceNullable ? '$checkNullish$varName!.doubleValue' : varName;
+      case 'bool':
+        return type.isNullable || forceNullable ? '$checkNullish$varName!.boolValue' : varName;
+      case 'Uint8List':
+        return '$checkNullish$varName${type.isNullable || forceNullable ? '!' : ''}.toUint8Array()${type.isNullable || forceNullable ? '' : '!'}';
+      case 'Int32List':
+        return '$checkNullish$varName${type.isNullable || forceNullable ? '!' : ''}.toInt32Array()${type.isNullable || forceNullable ? '' : '!'}';
+      case 'Int64List':
+        return '$checkNullish$varName${type.isNullable || forceNullable ? '!' : ''}.toInt64Array()${type.isNullable || forceNullable ? '' : '!'}';
+      case 'Float32List':
+        return '$checkNullish$varName${type.isNullable || forceNullable ? '!' : ''}.toFloat32Array()${type.isNullable || forceNullable ? '' : '!'}';
+      case 'Float64List':
+        return '$checkNullish$varName${type.isNullable || forceNullable ? '!' : ''}.toFloat64Array()${type.isNullable || forceNullable ? '' : '!'}';
+      case 'String':
+        return '$varName as String$nullable';
+      case 'List':
+      case 'Map':
+        final typeArg =
+            type.typeArguments.isNotEmpty &&
+                type.typeArguments.first.baseName != 'List' &&
+                type.typeArguments.first.baseName != 'Map'
+            ? ', type: "${type.typeArguments.first.baseName}"'
+            : '';
+        final type2Arg =
+            type.typeArguments.length > 1 &&
+                type.typeArguments.last.baseName != 'List' &&
+                type.typeArguments.last.baseName != 'Map'
+            ? ', type2: "${type.typeArguments.last.baseName}"'
+            : '';
+        return '_PigeonFfiCodec.readValue(value: $varName as NSObject$nullable$typeArg$type2Arg) as${type.isNullable || forceNullable ? '?' : '!'} ${_swiftTypeForBuiltinDartType(type)}';
+      default:
+        if (type.isEnum) {
+          return type.isNullable || forceNullable
+              ? '$checkNullish${type.baseName}.init(rawValue: $varName!.intValue)'
+              : varName;
+        }
+        if (type.isClass) {
+          if (type.associatedClass!.isSealed) {
+            return '${type.baseName}Bridge.toSwift($varName)${type.isNullable || forceNullable ? '' : '!'}';
+          }
+          return '$checkNullish$varName${nullable.isEmpty ? '' : '!'}.toSwift()';
+        }
+        return varName;
+    }
+  }
+
+  //////////
+
+  void _writeClassInit(
+    Indent indent,
+    List<NamedType> fields,
+    String objc, {
+    bool useFfi = false,
+    bool useFfiTypedData = false,
+  }) {
+    final override = useFfi && fields.isEmpty ? 'override ' : '';
+    indent.writeScoped('$objc${override}init(', ')', () {
       for (var i = 0; i < fields.length; i++) {
         indent.write('');
-        _writeClassField(indent, fields[i]);
+        _writeClassField(indent, fields[i], useFfi: useFfi, useFfiTypedData: useFfiTypedData);
         if (i == fields.length - 1) {
           indent.newln();
         } else {
@@ -604,18 +1845,25 @@ if (wrapped == nil) {
     }, addTrailingNewline: false);
     indent.addScoped(' {', '}', () {
       for (final field in fields) {
-        _writeClassFieldInit(indent, field);
+        _writeClassFieldInit(indent, field, useFfiTypedData: useFfiTypedData);
       }
     });
   }
 
-  void _writeClassField(Indent indent, NamedType field, {bool addNil = true}) {
-    indent.add('${field.name}: ${_nullSafeSwiftTypeForDartType(field.type)}');
+  void _writeClassField(
+    Indent indent,
+    NamedType field, {
+    bool addNil = true,
+    bool useFfi = false,
+    bool useFfiTypedData = false,
+  }) {
     final defaultNil = field.type.isNullable && addNil ? ' = nil' : '';
-    indent.add(defaultNil);
+    indent.add(
+      '${field.name}: ${_nullSafeSwiftTypeForDartType(field.type, useFfi: useFfi, ffiTypedData: useFfiTypedData)}$defaultNil',
+    );
   }
 
-  void _writeClassFieldInit(Indent indent, NamedType field) {
+  void _writeClassFieldInit(Indent indent, NamedType field, {bool useFfiTypedData = false}) {
     indent.writeln('self.${field.name} = ${field.name}');
   }
 
@@ -714,6 +1962,7 @@ if (wrapped == nil) {
     Indent indent,
     Class classDefinition, {
     required String dartPackageName,
+    bool useFfi = false,
   }) {
     final String className = classDefinition.name;
     indent.writeln('// swift-format-ignore: AlwaysUseLowerCamelCase');
@@ -727,8 +1976,9 @@ if (wrapped == nil) {
           indent: indent,
           value: listValue,
           variableName: field.name,
-          fieldType: _swiftTypeForDartType(field.type),
+          fieldType: _swiftTypeForDartType(field.type, ffiTypedData: useFfi),
           type: field.type,
+          ffiTypedData: useFfi,
         );
       });
 
@@ -792,6 +2042,11 @@ if (wrapped == nil) {
       generatorComments: generatedComments,
     );
 
+    if (generatorOptions.useFfi) {
+      _writeFfiFlutterApi(generatorOptions, root, indent, api, dartPackageName: dartPackageName);
+      return;
+    }
+
     indent.addScoped('protocol ${api.name}Protocol {', '}', () {
       for (final Method func in api.methods) {
         addDocumentationComments(indent, func.documentationComments, _docCommentSpec);
@@ -803,6 +2058,7 @@ if (wrapped == nil) {
             errorTypeName: _getErrorClassName(generatorOptions),
             isAsynchronous: true,
             isAsynchronousCallback: func.isAsynchronousCallback,
+            isMainActor: !func.isAsynchronousCallback,
             swiftFunction: func.swiftFunction,
             getParameterName: _getSafeArgumentName,
           ),
@@ -845,6 +2101,448 @@ if (wrapped == nil) {
     });
   }
 
+  void _writeFfiFlutterApi(
+    InternalSwiftOptions generatorOptions,
+    Root root,
+    Indent indent,
+    AstFlutterApi api, {
+    required String dartPackageName,
+  }) {
+    final String errorClassName = _getErrorClassName(generatorOptions);
+    final bool hybrid = generatorOptions.useFfiHybrid;
+    final codec = '${_classNamePrefix}PigeonInteropCodec';
+    indent.write('@objc protocol ${api.name}Bridge ');
+    indent.addScoped('{', '}', () {
+      for (final Method method in api.methods) {
+        addDocumentationComments(indent, method.documentationComments, _docCommentSpec);
+        if (hybrid) {
+          if (nativeInteropEncodedParameters(method.parameters).isNotEmpty) {
+            indent.writeln('// swift-format-ignore: AlwaysUseLowerCamelCase');
+          }
+          final String parameters = _hybridSwiftEntryPointParameters(
+            method.parameters,
+            errorLabel: 'error',
+            errorType: errorClassName,
+          );
+          final async = method.isAsynchronous ? ' async' : '';
+          indent.writeln(
+            '@objc func ${method.name}($parameters)$async${_hybridSwiftEntryPointReturnType(method.returnType)}',
+          );
+          continue;
+        }
+        final List<String> parameters = indexMap(method.parameters, (int index, NamedType param) {
+          return '${_getArgumentName(index, param)} ${_getSafeArgumentName(index, param)}: ${_nullSafeFfiTypeForDartType(param.type, forceNullable: true)}';
+        }).toList();
+        parameters.add('error: $errorClassName');
+
+        if (method.isAsynchronous) {
+          final returnType = method.returnType.isVoid
+              ? ''
+              : ' -> ${_nullSafeFfiTypeForDartType(method.returnType, forceNullable: true)}';
+          indent.writeln('@objc func ${method.name}(${parameters.join(', ')}) async$returnType');
+        } else {
+          final returnType = method.returnType.isVoid
+              ? ''
+              : ' -> ${_nullSafeFfiTypeForDartType(method.returnType, forceNullable: true)}';
+          indent.writeln('@objc func ${method.name}(${parameters.join(', ')})$returnType');
+        }
+      }
+    });
+
+    indent.newln();
+    indent.write('@objc class ${api.name}Registrar: NSObject ');
+    indent.addScoped('{', '}', () {
+      indent.writeln('static var registered${api.name} = [String: ${api.name}]()');
+      indent.newln();
+      indent.write(
+        '@objc static func registerInstance(api: ${api.name}Bridge?, name: String = ${_classNamePrefix}PigeonInternal.defaultInstanceName) ',
+      );
+      indent.addScoped('{', '}', () {
+        indent.writeScoped('if let api = api {', '}', () {
+          indent.writeln(
+            '${api.name}Registrar.registered${api.name}[name] = ${api.name}(api: api)',
+          );
+        }, addTrailingNewline: false);
+        indent.addScoped(' else {', '}', () {
+          indent.writeln('${api.name}Registrar.registered${api.name}.removeValue(forKey: name)');
+        });
+      });
+      indent.newln();
+      indent.write(
+        'static func getInstance(name: String = ${_classNamePrefix}PigeonInternal.defaultInstanceName) -> ${api.name}? ',
+      );
+      indent.addScoped('{', '}', () {
+        indent.writeln('return ${api.name}Registrar.registered${api.name}[name]');
+      });
+    });
+
+    indent.newln();
+    indent.write('class ${api.name} ');
+    indent.addScoped('{', '}', () {
+      indent.writeln('private let api: ${api.name}Bridge');
+      indent.newln();
+      indent.write('fileprivate init(api: ${api.name}Bridge) ');
+      indent.addScoped('{', '}', () {
+        indent.writeln('self.api = api');
+      });
+      indent.newln();
+      indent.write(
+        'static func getInstance(name: String = ${_classNamePrefix}PigeonInternal.defaultInstanceName) -> ${api.name}? ',
+      );
+      indent.addScoped('{', '}', () {
+        indent.writeln('return ${api.name}Registrar.getInstance(name: name)');
+      });
+
+      for (final Method method in api.methods) {
+        indent.newln();
+        addDocumentationComments(indent, method.documentationComments, _docCommentSpec);
+        final returnTypeString = method.returnType.isVoid
+            ? ''
+            : ' -> ${_nullSafeSwiftTypeForDartType(method.returnType, ffiTypedData: true)}';
+        final String parameters = indexMap(method.parameters, (int index, NamedType param) {
+          return '${_getArgumentName(index, param)} ${_getSafeArgumentName(index, param)}: ${_nullSafeSwiftTypeForDartType(param.type, ffiTypedData: true)}';
+        }).join(', ');
+        final asyncString = method.isAsynchronous ? ' async' : '';
+        indent.write('func ${method.name}($parameters)$asyncString throws$returnTypeString ');
+        if (hybrid) {
+          indent.addScoped('{', '}', () {
+            _writeFfiHybridFlutterMethodBody(indent, method, errorClassName, codec);
+          });
+          continue;
+        }
+        indent.addScoped('{', '}', () {
+          indent.writeln('let error = $errorClassName()');
+          final List<String> params = indexMap(method.parameters, (int index, NamedType param) {
+            return '${_getArgumentName(index, param)}: ${_varToObjc(_getSafeArgumentName(index, param), param.type, forceNullable: true)}';
+          }).toList();
+          params.add('error: error');
+
+          if (method.isAsynchronous) {
+            if (method.returnType.isVoid) {
+              indent.writeln('await api.${method.name}(${params.join(', ')})');
+            } else {
+              indent.writeln('let res = await api.${method.name}(${params.join(', ')})');
+            }
+          } else {
+            if (method.returnType.isVoid) {
+              indent.writeln('api.${method.name}(${params.join(', ')})');
+            } else {
+              indent.writeln('let res = api.${method.name}(${params.join(', ')})');
+            }
+          }
+          indent.writeScoped('if (error.code != nil) {', '}', () {
+            indent.writeln('throw error');
+          });
+          if (!method.returnType.isVoid) {
+            final String swiftType = _nullSafeSwiftTypeForDartType(
+              method.returnType,
+              ffiTypedData: true,
+            );
+            final valueCast =
+                (method.returnType.baseName == 'List' || method.returnType.baseName == 'Map')
+                ? ' as NSObject?'
+                : '';
+            final String cast;
+            if (swiftType == 'Any') {
+              cast = '!';
+            } else if (swiftType == 'Any?') {
+              cast = '';
+            } else {
+              cast = ' as! $swiftType';
+            }
+            indent.writeln(
+              'return _PigeonFfiCodec.readValue(value: (res$valueCast), type: "${method.returnType.baseName}")$cast',
+            );
+          }
+        });
+      }
+    });
+  }
+
+  /// Writes the body of the user-facing method that calls the Flutter API
+  /// [method] through the hybrid transport.
+  void _writeFfiHybridFlutterMethodBody(
+    Indent indent,
+    Method method,
+    String errorClassName,
+    String codec,
+  ) {
+    indent.writeln('let error = $errorClassName()');
+    final List<Parameter> encodedParameters = nativeInteropEncodedParameters(method.parameters);
+    final String? encodedArgs = encodedParameters.isEmpty
+        ? null
+        : '$codec.encode { \$0.writeByte($codec.typeList); \$0.writeSize(${encodedParameters.length}); ${encodedParameters.map((Parameter p) => _swiftInteropWrite(_getSafeArgumentName(method.parameters.indexOf(p), p), p.type, codec, writer: r'$0')).join('; ')} }';
+    final String arguments = _hybridSwiftEntryPointArguments(
+      method.parameters,
+      directValue: (int index, Parameter parameter) =>
+          _swiftToHybridParameter(_getSafeArgumentName(index, parameter), parameter.type, codec),
+      encodedArgs: encodedArgs,
+      errorLabel: 'error',
+      error: 'error',
+    );
+    final await = method.isAsynchronous ? 'await ' : '';
+    final call = '${await}api.${method.name}($arguments)';
+    if (method.returnType.isVoid) {
+      indent.writeln(call);
+    } else {
+      indent.writeln('let res = $call');
+    }
+    indent.writeScoped('if (error.code != nil) {', '}', () {
+      indent.writeln('throw error');
+    });
+    if (method.returnType.isVoid) {
+      return;
+    }
+    if (nativeInteropReturnsBuffer(method.returnType)) {
+      if (method.returnType.isNullable) {
+        indent.writeScoped('guard let res = res else {', '}', () {
+          indent.writeln('return nil');
+        });
+      }
+      indent.writeln(
+        'var reader = ${_classNamePrefix}PigeonInteropReader(res${method.returnType.isNullable ? '' : '!'})',
+      );
+      indent.writeln('return ${_swiftInteropRead(method.returnType, reader: 'reader')}');
+    } else {
+      indent.writeln('return ${_hybridSwiftReturnToSwift('res', method.returnType, codec)}');
+    }
+  }
+
+  void _writeFfiHostApi(
+    InternalSwiftOptions generatorOptions,
+    Root root,
+    Indent indent,
+    AstHostApi api, {
+    required String dartPackageName,
+  }) {
+    indent.newln();
+    indent.writeln(
+      '$_docCommentPrefix Generated setup class from Pigeon to register implemented ${api.name} classes.',
+    );
+    indent.writeScoped('@objc class ${api.name}Setup: NSObject {', '}', () {
+      if (generatorOptions.useFfi) {
+        indent.writeln('private var api: ${api.name}?');
+        indent.writeln('override init() {}');
+        indent.writeScoped(
+          'static func register(api: ${api.name}?, name: String = ${_classNamePrefix}PigeonInternal.defaultInstanceName) {',
+          '}',
+          () {
+            indent.writeScoped('if let api = api {', '}', () {
+              indent.writeln('let wrapper = ${api.name}Setup()');
+              indent.writeln('wrapper.api = api');
+              indent.writeln('${api.name}InstanceTracker.instancesOf${api.name}[name] = wrapper');
+            }, addTrailingNewline: false);
+            indent.addScoped(' else {', '}', () {
+              indent.writeln(
+                '${api.name}InstanceTracker.instancesOf${api.name}.removeValue(forKey: name)',
+              );
+            });
+          },
+        );
+        indent.writeScoped(
+          '@objc static func getInstance(name: String) -> ${api.name}Setup? {',
+          '}',
+          () {
+            indent.writeln('return ${api.name}InstanceTracker.instancesOf${api.name}[name] ?? nil');
+          },
+        );
+      }
+      for (final Method method in api.methods) {
+        if (generatorOptions.useFfiHybrid) {
+          _writeFfiHybridHostEntryPoint(generatorOptions, indent, method);
+          continue;
+        }
+        addDocumentationComments(indent, method.documentationComments, _docCommentSpec);
+        final components = _SwiftFunctionComponents(
+          name: method.name,
+          parameters: method.parameters,
+          returnType: method.returnType,
+          swiftFunction: method.swiftFunction,
+        );
+        indent.write(
+          _getMethodSignature(
+            name: method.name,
+            parameters: method.parameters,
+            returnType: method.returnType,
+            errorTypeName: _getErrorClassName(generatorOptions),
+            ffiBridgeApi: generatorOptions.useFfi,
+            isAsynchronous: method.isAsynchronous,
+            swiftFunction: method.swiftFunction,
+            components: components,
+            getParameterName: _getSafeArgumentName,
+          ),
+        );
+        indent.addScoped(' {', '}', () {
+          final String arguments = indexMap(components.arguments, (
+            int index,
+            _SwiftFunctionArgument argument,
+          ) {
+            final label = argument.label == '_' ? '' : '${argument.label ?? argument.name}: ';
+            return '$label${_varToSwift(_getSafeArgumentName(index, argument.namedType), argument.type)}';
+          }).join(', ');
+          final bool returnsValue = !method.returnType.isVoid;
+          // The explicit type selects the right overload when `@SwiftFunction`
+          // maps methods that differ only in nullability to the same name.
+          final String swiftReturnType = returnsValue
+              ? _nullSafeSwiftTypeForDartType(method.returnType, ffiTypedData: true)
+              : 'Void';
+          final resultDeclaration = returnsValue ? 'let res: $swiftReturnType = ' : '';
+          indent.writeScoped('do {', '}', () {
+            if (method.isAsynchronousCallback) {
+              final completion =
+                  '${arguments.isEmpty ? '' : ', '}completion: { continuation.resume(with: \$0) }';
+              indent.writeScoped(
+                '${resultDeclaration}try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<$swiftReturnType, Error>) in',
+                '}',
+                () {
+                  indent.writeln('api!.${components.name}($arguments$completion)');
+                },
+              );
+            } else {
+              indent.writeln(
+                '${resultDeclaration}try ${method.isAsynchronous ? 'await ' : ''}api!.${components.name}($arguments)',
+              );
+            }
+            if (!returnsValue) {
+              indent.writeln('return');
+            } else if ((method.returnType.isNullable && method.returnType.isEnum) ||
+                method.returnType.baseName == 'Uint8List' ||
+                method.returnType.baseName == 'Int32List' ||
+                method.returnType.baseName == 'Int64List' ||
+                method.returnType.baseName == 'Float32List' ||
+                method.returnType.baseName == 'Float64List') {
+              indent.writeln(
+                'return ${_classNamePrefix}PigeonInternal.isNullish(res) ? nil : ${method.returnType.isEnum ? 'NSNumber(value: res!.rawValue)' : '${_classNamePrefix}PigeonTypedData(res${method.returnType.isNullable ? '!' : ''})'}',
+              );
+            } else {
+              indent.writeln('return ${_varToObjc('res', method.returnType, forceNullable: true)}');
+            }
+          }, addTrailingNewline: false);
+          indent.addScoped(
+            ' catch let error as ${_getErrorClassName(generatorOptions)} {',
+            '}',
+            () {
+              indent.writeln('wrappedError.code = error.code');
+              indent.writeln('wrappedError.message = error.message');
+              indent.writeln('wrappedError.details = error.details');
+            },
+            addTrailingNewline: false,
+          );
+          indent.addScoped(' catch let error {', '}', () {
+            indent.writeln(r'wrappedError.code = "\(error)"');
+            indent.writeln(r'wrappedError.message = "\(Swift.type(of: error))"');
+            indent.writeln(r'wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"');
+          });
+          indent.writeln('return${method.returnType.isVoid ? '' : ' nil'}');
+        });
+      }
+    });
+  }
+
+  /// Writes the hybrid transport entry point for the host API [method].
+  void _writeFfiHybridHostEntryPoint(
+    InternalSwiftOptions generatorOptions,
+    Indent indent,
+    Method method,
+  ) {
+    final codec = '${_classNamePrefix}PigeonInteropCodec';
+    final String errorClassName = _getErrorClassName(generatorOptions);
+    final components = _SwiftFunctionComponents(
+      name: method.name,
+      parameters: method.parameters,
+      returnType: method.returnType,
+      swiftFunction: method.swiftFunction,
+    );
+    final List<Parameter> encodedParameters = nativeInteropEncodedParameters(method.parameters);
+    final String parameters = _hybridSwiftEntryPointParameters(
+      method.parameters,
+      errorLabel: 'wrappedError',
+      errorType: errorClassName,
+    );
+    final async = method.isAsynchronous ? ' async' : '';
+    addDocumentationComments(indent, method.documentationComments, _docCommentSpec);
+    if (encodedParameters.isNotEmpty) {
+      indent.writeln('// swift-format-ignore: AlwaysUseLowerCamelCase');
+    }
+    indent.writeScoped(
+      '@objc func ${method.name}($parameters)$async${_hybridSwiftEntryPointReturnType(method.returnType)} {',
+      '}',
+      () {
+        indent.writeScoped('do {', '}', () {
+          if (encodedParameters.isNotEmpty) {
+            indent.writeln(
+              'var reader = ${_classNamePrefix}PigeonInteropReader($nativeInteropArgsParameterName)',
+            );
+            indent.writeln('reader.readListHeader()');
+          }
+          final argumentValues = <String>[];
+          for (final (int index, Parameter parameter) in method.parameters.indexed) {
+            if (isNativeInteropDirectType(parameter.type)) {
+              argumentValues.add(
+                _hybridSwiftParameterToSwift(
+                  _hybridSwiftParameterName(parameter),
+                  parameter.type,
+                  codec,
+                ),
+              );
+            } else {
+              final String argName = _getSafeArgumentName(index, parameter);
+              indent.writeln(
+                'let $argName = ${_swiftInteropRead(parameter.type, reader: 'reader')}',
+              );
+              argumentValues.add(argName);
+            }
+          }
+          final String arguments = indexMap(components.arguments, (
+            int index,
+            _SwiftFunctionArgument argument,
+          ) {
+            final label = argument.label == '_' ? '' : '${argument.label ?? argument.name}: ';
+            return '$label${argumentValues[index]}';
+          }).join(', ');
+          final bool returnsValue = !method.returnType.isVoid;
+          final String swiftReturnType = returnsValue
+              ? _nullSafeSwiftTypeForDartType(method.returnType, ffiTypedData: true)
+              : 'Void';
+          final resultDeclaration = returnsValue ? 'let res: $swiftReturnType = ' : '';
+          if (method.isAsynchronousCallback) {
+            final completion =
+                '${arguments.isEmpty ? '' : ', '}completion: { continuation.resume(with: \$0) }';
+            indent.writeScoped(
+              '${resultDeclaration}try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<$swiftReturnType, Error>) in',
+              '}',
+              () {
+                indent.writeln('api!.${components.name}($arguments$completion)');
+              },
+            );
+          } else {
+            indent.writeln(
+              '${resultDeclaration}try ${method.isAsynchronous ? 'await ' : ''}api!.${components.name}($arguments)',
+            );
+          }
+          if (!returnsValue) {
+            indent.writeln('return');
+          } else if (nativeInteropReturnsBuffer(method.returnType)) {
+            indent.writeln('return ${_swiftInteropEncode('res', method.returnType, codec)}');
+          } else {
+            indent.writeln('return ${_swiftToHybridReturn('res', method.returnType, codec)}');
+          }
+        }, addTrailingNewline: false);
+        indent.addScoped(' catch let error as $errorClassName {', '}', () {
+          indent.writeln('wrappedError.code = error.code');
+          indent.writeln('wrappedError.message = error.message');
+          indent.writeln('wrappedError.details = error.details');
+        }, addTrailingNewline: false);
+        indent.addScoped(' catch let error {', '}', () {
+          indent.writeln(r'wrappedError.code = "\(error)"');
+          indent.writeln(r'wrappedError.message = "\(Swift.type(of: error))"');
+          indent.writeln(r'wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"');
+        });
+        indent.writeln('return${method.returnType.isVoid ? '' : ' nil'}');
+      },
+    );
+  }
+
   /// Write the swift code that represents a host [Api], [api].
   /// Example:
   /// protocol Foo {
@@ -859,6 +2557,13 @@ if (wrapped == nil) {
     required String dartPackageName,
   }) {
     final String apiName = api.name;
+    if (generatorOptions.useFfi) {
+      indent.format('''
+        class ${apiName}InstanceTracker {
+          static var instancesOf$apiName = [String: ${apiName}Setup?]()
+        }
+        ''');
+    }
 
     const generatedComments = <String>[
       ' Generated protocol from Pigeon that represents a handler of messages from Flutter.',
@@ -883,17 +2588,20 @@ if (wrapped == nil) {
             isAsynchronous: method.isAsynchronous,
             isAsynchronousCallback: method.isAsynchronousCallback,
             swiftFunction: method.swiftFunction,
+            ffiUserApi: generatorOptions.useFfi,
           ),
         );
       }
     });
-
+    if (generatorOptions.useFfi) {
+      _writeFfiHostApi(generatorOptions, root, indent, api, dartPackageName: dartPackageName);
+      return;
+    }
     indent.newln();
     indent.writeln(
       '$_docCommentPrefix Generated setup class from Pigeon to handle messages through the `binaryMessenger`.',
     );
-    indent.write('class ${apiName}Setup ');
-    indent.addScoped('{', '}', () {
+    indent.writeScoped('class ${apiName}Setup {', '}', () {
       indent.writeln(
         'static var codec: FlutterStandardMessageCodec { ${_getMessageCodecName(generatorOptions)}.shared }',
       );
@@ -1331,7 +3039,7 @@ if (wrapped == nil) {
     });
   }
 
-  String _castForceUnwrap(String value, TypeDeclaration type) {
+  String _castForceUnwrap(String value, TypeDeclaration type, {bool ffiTypedData = false}) {
     assert(!type.isVoid);
     if (type.baseName == 'Object') {
       return value + (type.isNullable ? '' : '!');
@@ -1339,11 +3047,11 @@ if (wrapped == nil) {
       // It needs soft-casting followed by force unwrapping.
     } else if (type.baseName == 'Map' &&
         type.typeArguments.any((TypeDeclaration type) => type.isEnum)) {
-      return '$value as? ${_swiftTypeForDartType(type)}';
+      return '$value as? ${_swiftTypeForDartType(type, ffiTypedData: ffiTypedData)}';
     } else if (type.isNullable) {
       return 'nilOrValue($value)';
     } else {
-      return '$value as! ${_swiftTypeForDartType(type)}';
+      return '$value as! ${_swiftTypeForDartType(type, ffiTypedData: ffiTypedData)}';
     }
   }
 
@@ -1353,11 +3061,16 @@ if (wrapped == nil) {
     required String variableName,
     required String fieldType,
     required TypeDeclaration type,
+    bool ffiTypedData = false,
   }) {
     if (type.isNullable) {
-      indent.writeln('let $variableName: $fieldType? = ${_castForceUnwrap(value, type)}');
+      indent.writeln(
+        'let $variableName: $fieldType? = ${_castForceUnwrap(value, type, ffiTypedData: ffiTypedData)}',
+      );
     } else {
-      indent.writeln('let $variableName = ${_castForceUnwrap(value, type)}');
+      indent.writeln(
+        'let $variableName = ${_castForceUnwrap(value, type, ffiTypedData: ffiTypedData)}',
+      );
     }
   }
 
@@ -1372,7 +3085,7 @@ static func isNullish(_ value: Any?) -> Bool {
     return true
   }
 
-  return innerValue is NSNull
+  return innerValue is NSNull${generatorOptions.useFfi ? ' || innerValue is ${_classNamePrefix}PigeonInternalNull' : ''}
 }''');
   }
 
@@ -1469,19 +3182,19 @@ static func deepEquals(_ lhs: Any?, _ rhs: Any?) -> Bool {
   case is (Void, Void):
     return true
 
-  case (let lhsArray, let rhsArray) as ([Any?], [Any?]):
+  case (let lhsArray, let rhsArray) as ([Double], [Double]):
     guard lhsArray.count == rhsArray.count else { return false }
     for (index, element) in lhsArray.enumerated() {
-      if !deepEquals(element, rhsArray[index]) {
+      if !doubleEquals(element, rhsArray[index]) {
         return false
       }
     }
     return true
 
-  case (let lhsArray, let rhsArray) as ([Double], [Double]):
+  case (let lhsArray, let rhsArray) as ([Any?], [Any?]):
     guard lhsArray.count == rhsArray.count else { return false }
     for (index, element) in lhsArray.enumerated() {
-      if !doubleEquals(element, rhsArray[index]) {
+      if !deepEquals(element, rhsArray[index]) {
         return false
       }
     }
@@ -1551,10 +3264,219 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
 ''');
   }
 
+  /// Writes a custom number wrapper class (`${_classNamePrefix}NumberWrapper`).
+  ///
+  /// Objective-C's `NSNumber` erases specific primitive types (`Int`, `Double`, `Bool`)
+  /// and enum types when boxed generically as `NSObject` or `Any`. This wrapper
+  /// pairs an `NSNumber` with an explicit `type` integer discriminant (e.g. 1 = int,
+  /// 2 = double, 3 = bool, 4+ = specific enums) so the FFI bridge between Swift and Dart
+  /// can preserve and reconstruct the exact original primitive or enum type across untyped boundaries.
+  void _writeNumberWrapper(Root root, Indent indent) {
+    indent.newln();
+    indent.writeln(
+      '// A wrapper around NSNumber that preserves the original primitive/enum type across FFI.',
+    );
+    indent.writeScoped(
+      '@objc class ${_classNamePrefix}NumberWrapper: NSObject, NSCopying {',
+      '}',
+      () {
+        indent.writeScoped('@objc required init(', ')', () {
+          indent.writeln('number: NSNumber,');
+          indent.writeln('type: Int,');
+        }, addTrailingNewline: false);
+        indent.writeScoped('{', '}', () {
+          indent.writeln('self.number = number');
+          indent.writeln('self.type = type');
+        });
+        indent.writeScoped('func copy(with zone: NSZone? = nil) -> Any {', '}', () {
+          indent.writeln('return Self(number: number, type: type)');
+        });
+
+        indent.writeln('@objc var number: NSNumber');
+        indent.writeln('@objc var type: Int');
+        indent.format('''
+          static func == (lhs: ${_classNamePrefix}NumberWrapper, rhs: ${_classNamePrefix}NumberWrapper) -> Bool {
+            return lhs.number == rhs.number && lhs.type == rhs.type
+          }
+            
+          override func isEqual(_ object: Any?) -> Bool {
+            guard let other = object as? ${_classNamePrefix}NumberWrapper else {
+              return false
+            }
+            return self == other
+          }
+          
+          override var hash: Int {
+            return number.hashValue ^ type.hashValue
+          }
+    ''');
+      },
+    );
+    indent.newln();
+    indent.writeScoped(
+      'private func wrapNumber(number: Any) -> ${_classNamePrefix}NumberWrapper {',
+      '}',
+      () {
+        indent.format('''
+  if let nsNumber = number as? NSNumber {
+    if CFGetTypeID(nsNumber as CFTypeRef) == CFBooleanGetTypeID() {
+      return ${_classNamePrefix}NumberWrapper(number: nsNumber, type: 3)
+    }
+    if CFNumberIsFloatType(nsNumber) {
+      return ${_classNamePrefix}NumberWrapper(number: nsNumber, type: 2)
+    }
+    return ${_classNamePrefix}NumberWrapper(number: nsNumber, type: 1)
+  }
+''');
+        if (root.enums.isNotEmpty) {
+          indent.writeScoped('switch number {', '}', () {
+            var caseNum = 4;
+            for (final Enum anEnum in root.enums) {
+              indent.writeScoped('case let value as ${anEnum.name}:', null, () {
+                indent.writeln(
+                  'return ${_classNamePrefix}NumberWrapper(number: NSNumber(value: value.rawValue), type: ${caseNum++})',
+                );
+              });
+            }
+            indent.writeScoped('default:', null, () {
+              indent.writeln(
+                'return ${_classNamePrefix}NumberWrapper(number: NSNumber(value: 0), type: 0)',
+              );
+            });
+          });
+        } else {
+          indent.writeln(
+            'return ${_classNamePrefix}NumberWrapper(number: NSNumber(value: 0), type: 0)',
+          );
+        }
+      },
+    );
+    indent.newln();
+    indent.writeScoped(
+      'private func unwrapNumber(wrappedNumber: ${_classNamePrefix}NumberWrapper) -> Any {',
+      '}',
+      () {
+        indent.writeScoped('switch wrappedNumber.type {', '}', () {
+          var caseNum = 4;
+          indent.format('''
+    case 1:
+      return wrappedNumber.number.int64Value
+    case 2:
+      return wrappedNumber.number.doubleValue
+    case 3:
+      return wrappedNumber.number.boolValue''');
+          for (final Enum anEnum in root.enums) {
+            indent.writeScoped('case ${caseNum++}:', null, () {
+              indent.writeln('return ${anEnum.name}(rawValue: wrappedNumber.number.intValue)!');
+            });
+          }
+          indent.writeScoped('default:', null, () {
+            indent.writeln('return wrappedNumber.number.int64Value');
+          });
+        });
+      },
+    );
+
+    indent.format('''
+// Enum to represent the Dart TypedData types
+enum ${_classNamePrefix}PigeonInternalNumberType: Int {
+  case uint8 = 0
+  case int32 = 1
+  case int64 = 2
+  case float32 = 3
+  case float64 = 4
+}
+
+@objc public class ${_classNamePrefix}PigeonTypedData: NSObject {
+  @objc public let data: NSData
+  @objc public let type: Int
+
+  @objc public init(data: NSData, type: Int) {
+    self.data = data
+    self.type = type
+  }
+
+  public init(_ data: [UInt8]) {
+    self.data = NSData(bytes: data, length: data.count)
+    self.type = ${_classNamePrefix}PigeonInternalNumberType.uint8.rawValue
+  }
+
+  public init(_ data: [Int32]) {
+    self.data = NSData(bytes: data, length: data.count * MemoryLayout<Int32>.size)
+    self.type = ${_classNamePrefix}PigeonInternalNumberType.int32.rawValue
+  }
+
+  public init(_ data: [Int64]) {
+    self.data = NSData(bytes: data, length: data.count * MemoryLayout<Int64>.size)
+    self.type = ${_classNamePrefix}PigeonInternalNumberType.int64.rawValue
+  }
+
+  public init(_ data: [Float32]) {
+    self.data = NSData(bytes: data, length: data.count * MemoryLayout<Float32>.size)
+    self.type = ${_classNamePrefix}PigeonInternalNumberType.float32.rawValue
+  }
+
+  public init(_ data: [Float64]) {
+    self.data = NSData(bytes: data, length: data.count * MemoryLayout<Float64>.size)
+    self.type = ${_classNamePrefix}PigeonInternalNumberType.float64.rawValue
+  }
+
+  /// Returns the data as a [UInt8] array, if the type is .uint8
+  public func toUint8Array() -> [UInt8]? {
+    guard type == ${_classNamePrefix}PigeonInternalNumberType.uint8.rawValue else { return nil }
+    return [UInt8](data as Data)
+  }
+
+  /// Returns the data as a [Int32] array, if the type is .int32
+  public func toInt32Array() -> [Int32]? {
+    guard type == ${_classNamePrefix}PigeonInternalNumberType.int32.rawValue else { return nil }
+    guard data.length % MemoryLayout<Int32>.size == 0 else { return nil }
+    let count = data.length / MemoryLayout<Int32>.size
+    var array = [Int32](repeating: 0, count: count)
+    data.getBytes(&array, length: data.length)
+    return array
+  }
+
+  /// Returns the data as a [Int64] array, if the type is .int64
+  public func toInt64Array() -> [Int64]? {
+    guard type == ${_classNamePrefix}PigeonInternalNumberType.int64.rawValue else { return nil }
+    guard data.length % MemoryLayout<Int64>.size == 0 else { return nil }
+    let count = data.length / MemoryLayout<Int64>.size
+    var array = [Int64](repeating: 0, count: count)
+    data.getBytes(&array, length: data.length)
+    return array
+  }
+
+  /// Returns the data as a [Float32] array, if the type is .float32
+  public func toFloat32Array() -> [Float32]? {
+    guard type == ${_classNamePrefix}PigeonInternalNumberType.float32.rawValue else { return nil }
+    guard data.length % MemoryLayout<Float32>.size == 0 else { return nil }
+    let count = data.length / MemoryLayout<Float32>.size
+    var array = [Float32](repeating: 0, count: count)
+    data.getBytes(&array, length: data.length)
+    return array
+  }
+
+  /// Returns the data as a [Float64] array (Array<Double>), if the type is .float64
+  public func toFloat64Array() -> [Double]? {
+    guard type == ${_classNamePrefix}PigeonInternalNumberType.float64.rawValue else { return nil }
+    guard data.length % MemoryLayout<Double>.size == 0 else { return nil }
+    let count = data.length / MemoryLayout<Double>.size
+    var array = [Double](repeating: 0, count: count)
+    data.getBytes(&array, length: data.length)
+    return array
+  }
+}
+  ''');
+  }
+
   void _writePigeonInternal(InternalSwiftOptions generatorOptions, Root root, Indent indent) {
     indent.newln();
     final String uniqueComponent = generatorOptions.fileSpecificClassNameComponent ?? '';
     indent.writeScoped('enum ${uniqueComponent}PigeonInternal {', '}', () {
+      if (generatorOptions.useFfi) {
+        indent.writeln('static let defaultInstanceName = "$defaultNativeInteropInstanceName"');
+      }
       _writeIsNullish(generatorOptions, indent);
       if (root.classes.isNotEmpty) {
         _writeDeepEquals(generatorOptions, indent);
@@ -1573,12 +3495,15 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
       _writePigeonError(generatorOptions, indent);
     }
 
-    if (root.containsHostApi || root.containsProxyApi) {
+    if ((root.containsHostApi && !generatorOptions.useFfi) || root.containsProxyApi) {
       _writeWrapResult(indent);
       _writeWrapError(generatorOptions, indent);
     }
     if (root.containsFlutterApi || root.containsProxyApi) {
       _writeCreateConnectionError(generatorOptions, indent);
+    }
+    if (generatorOptions.useFfi) {
+      _writeNumberWrapper(root, indent);
     }
 
     _writePigeonInternal(generatorOptions, root, indent);
@@ -1594,6 +3519,7 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
     required String dartPackageName,
   }) {
     indent.newln();
+    // TODO(tarrinneal): Prefix this class to avoid name collisions.
     indent.format('''
       private class PigeonStreamHandler<ReturnType>: NSObject, FlutterStreamHandler {
         private let wrapper: PigeonEventChannelWrapper<ReturnType>
@@ -1618,6 +3544,7 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
         }
       }''');
     if (api.swiftOptions?.includeSharedClasses ?? true) {
+      // TODO(tarrinneal): Prefix these classes to avoid name collisions.
       indent.format('''
 
       class PigeonEventChannelWrapper<ReturnType> {
@@ -1649,18 +3576,44 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
     }
     addDocumentationComments(indent, api.documentationComments, _docCommentSpec);
     for (final Method func in api.methods) {
+      final channelClassName = '${toUpperCamelCase(func.name)}EventChannel';
+      final streamHandlerClassName = '${toUpperCamelCase(func.name)}StreamHandler';
       indent.format('''
-        class ${toUpperCamelCase(func.name)}StreamHandler: PigeonEventChannelWrapper<${_swiftTypeForDartType(func.returnType)}> {
-          static func register(with messenger: FlutterBinaryMessenger,
-                              instanceName: String = "",
-                              streamHandler: ${toUpperCamelCase(func.name)}StreamHandler) {
+        /// A typed channel for communicating with the Flutter application using asynchronous event streams.
+        class $channelClassName {
+          private let channel: FlutterEventChannel
+
+          init(messenger: FlutterBinaryMessenger, instanceName: String = "") {
             var channelName = "${makeChannelName(api, func, dartPackageName)}"
             if !instanceName.isEmpty {
               channelName += ".\\(instanceName)"
             }
-            let internalStreamHandler = PigeonStreamHandler<${_swiftTypeForDartType(func.returnType)}>(wrapper: streamHandler)
-            let channel = FlutterEventChannel(name: channelName, binaryMessenger: messenger, codec: ${_getMethodCodecVarName(generatorOptions)})
-            channel.setStreamHandler(internalStreamHandler)
+            channel = FlutterEventChannel(name: channelName, binaryMessenger: messenger, codec: ${_getMethodCodecVarName(generatorOptions)})
+          }
+
+          /// Sets the stream handler for this channel, replacing any previous handler.
+          /// 
+          /// Pass `nil` to remove the event channel registration.
+          func setStreamHandler(_ streamHandler: $streamHandlerClassName?) {
+            let internalHandler = streamHandler.map({ PigeonStreamHandler<${_swiftTypeForDartType(func.returnType)}>(wrapper: \$0) })
+            channel.setStreamHandler(internalHandler)
+          }
+        }
+
+        class $streamHandlerClassName: PigeonEventChannelWrapper<${_swiftTypeForDartType(func.returnType)}> {
+          /// Creates and returns a new event channel that calls the provided stream handler.
+          /// 
+          /// The returned channel can be stored to allow changing or removing the stream handler.
+          /// If the handler will not be changed for the lifetime of the engine associated with the messenger,
+          /// the return value can be ignored.
+          @discardableResult static func register(
+            with messenger: FlutterBinaryMessenger,
+            instanceName: String = "",
+            streamHandler: $streamHandlerClassName
+          ) -> $channelClassName {
+            let channel = $channelClassName(messenger: messenger, instanceName: instanceName)
+            channel.setStreamHandler(streamHandler)
+            return channel
           }
         }
       ''');
@@ -1685,6 +3638,7 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
       errorTypeName: _getErrorClassName(generatorOptions),
       isAsynchronous: isAsynchronous,
       isAsynchronousCallback: isAsynchronousCallback,
+      isMainActor: isAsynchronous && !isAsynchronousCallback,
       swiftFunction: swiftFunction,
       getParameterName: _getSafeArgumentName,
     );
@@ -1751,13 +3705,18 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
           );
         }, addTrailingNewline: false);
         if (!returnType.isNullable && !returnType.isVoid) {
-          indent.addScoped('else if listResponse[0] == nil {', '} ', () {
-            indent.writeln(
-              resumeError(
-                '${_getErrorClassName(generatorOptions)}(code: "null-error", message: "Flutter api returned null value for non-null return value.", details: "")',
-              ),
-            );
-          }, addTrailingNewline: false);
+          indent.addScoped(
+            'else if ${_classNamePrefix}PigeonInternal.isNullish(listResponse[0]) {',
+            '} ',
+            () {
+              indent.writeln(
+                resumeError(
+                  '${_getErrorClassName(generatorOptions)}(code: "null-error", message: "Flutter api returned null value for non-null return value.", details: "")',
+                ),
+              );
+            },
+            addTrailingNewline: false,
+          );
         }
         indent.addScoped('else {', '}', () {
           if (returnType.isVoid) {
@@ -2013,6 +3972,7 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
         }''');
       indent.newln();
 
+      // TODO(tarrinneal): Prefix this class to avoid name collisions.
       indent.format('''
         private class InstanceManagerApiFinalizerDelegate: ${instanceManagerFinalizerDelegateName(generatorOptions)} {
           let api: $instanceManagerApiName
@@ -2663,27 +4623,41 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
   }
 
   void _writePigeonError(InternalSwiftOptions generatorOptions, Indent indent) {
+    final objc = generatorOptions.useFfi ? '@objc ' : '';
     indent.newln();
     indent.writeln('/// Error class for passing custom error details to Dart side.');
-    indent.writeScoped('final class ${_getErrorClassName(generatorOptions)}: Error {', '}', () {
-      indent.writeln('let code: String');
-      indent.writeln('let message: String?');
-      indent.writeln('let details: Sendable?');
-      indent.newln();
-      indent.writeScoped('init(code: String, message: String?, details: Sendable?) {', '}', () {
-        indent.writeln('self.code = code');
-        indent.writeln('self.message = message');
-        indent.writeln('self.details = details');
-      });
-      indent.newln();
-      indent.writeScoped('var localizedDescription: String {', '}', () {
-        indent.writeScoped('return', '', () {
-          indent.writeln(
-            '"${_getErrorClassName(generatorOptions)}(code: \\(code), message: \\(message ?? "<nil>"), details: \\(details ?? "<nil>")"',
-          );
-        }, addTrailingNewline: false);
-      });
-    });
+    indent.writeScoped(
+      '${objc}final class ${_getErrorClassName(generatorOptions)}: ${generatorOptions.useFfi ? 'NSObject, ' : ''}Error {',
+      '}',
+      () {
+        final declaration = generatorOptions.useFfi ? '${objc}var' : 'let';
+        indent.writeln('$declaration code: String${generatorOptions.useFfi ? '?' : ''}');
+        indent.writeln('$declaration message: String?');
+        indent.writeln('$declaration details: ${generatorOptions.useFfi ? 'String' : 'Sendable'}?');
+        if (generatorOptions.useFfi) {
+          indent.newln();
+          indent.writeln('@objc override init() {}');
+        }
+        indent.newln();
+        indent.writeScoped(
+          '${objc}init(code: String${generatorOptions.useFfi ? '?' : ''}, message: String?, details: ${generatorOptions.useFfi ? 'String' : 'Sendable'}?) {',
+          '}',
+          () {
+            indent.writeln('self.code = code');
+            indent.writeln('self.message = message');
+            indent.writeln('self.details = details');
+          },
+        );
+        indent.newln();
+        indent.writeScoped('var localizedDescription: String {', '}', () {
+          indent.writeScoped('return', '', () {
+            indent.writeln(
+              '"${_getErrorClassName(generatorOptions)}(code: \\(code${generatorOptions.useFfi ? ' ?? "<nil>"' : ''}), message: \\(message ?? "<nil>"), details: \\(details ?? "<nil>"))"',
+            );
+          }, addTrailingNewline: false);
+        });
+      },
+    );
   }
 
   void _writeProxyApiImports(Indent indent, Iterable<AstProxyApi> apis) {
@@ -2835,11 +4809,14 @@ String _camelCase(String text) {
 
 /// Converts a [List] of [TypeDeclaration]s to a comma separated [String] to be
 /// used in Swift code.
-String _flattenTypeArguments(List<TypeDeclaration> args) {
-  return args.map((TypeDeclaration e) => _swiftTypeForDartType(e)).join(', ');
+String _flattenSwiftTypeArguments(List<TypeDeclaration> args, {bool useFfi = false}) {
+  return args.map((TypeDeclaration e) => _swiftTypeForDartType(e, useFfi: useFfi)).join(', ');
 }
 
-String _swiftTypeForBuiltinGenericDartType(TypeDeclaration type) {
+String _swiftTypeForBuiltinGenericDartType(TypeDeclaration type, {bool useFfi = false}) {
+  if (useFfi) {
+    return _ffiTypeForBuiltinGenericDartType(type);
+  }
   if (type.typeArguments.isEmpty) {
     if (type.baseName == 'List') {
       return '[Any?]';
@@ -2854,12 +4831,28 @@ String _swiftTypeForBuiltinGenericDartType(TypeDeclaration type) {
     } else if (type.baseName == 'Map') {
       return '[${_nullSafeSwiftTypeForDartType(type.typeArguments.first, mapKey: true)}: ${_nullSafeSwiftTypeForDartType(type.typeArguments.last)}]';
     } else {
-      return '${type.baseName}<${_flattenTypeArguments(type.typeArguments)}>';
+      return '${type.baseName}<${_flattenSwiftTypeArguments(type.typeArguments)}>';
     }
   }
 }
 
-String? _swiftTypeForBuiltinDartType(TypeDeclaration type, {bool mapKey = false}) {
+String _ffiTypeForBuiltinGenericDartType(TypeDeclaration type) {
+  // if (type.typeArguments.isEmpty) {
+  if (type.baseName == 'List') {
+    return '[NSObject]';
+  } else if (type.baseName == 'Map') {
+    return '[NSObject: NSObject]';
+  } else {
+    return 'NSObject';
+  }
+}
+
+String? _swiftTypeForBuiltinDartType(
+  TypeDeclaration type, {
+  bool mapKey = false,
+  bool useFfi = false,
+  bool ffiTypedData = false,
+}) {
   const swiftTypeForDartTypeMap = <String, String>{
     'void': 'Void',
     'bool': 'Bool',
@@ -2874,11 +4867,61 @@ String? _swiftTypeForBuiltinDartType(TypeDeclaration type, {bool mapKey = false}
     'Object': 'Any',
   };
   if (mapKey && type.baseName == 'Object') {
-    return 'AnyHashable';
+    return useFfi ? 'NSObject' : 'AnyHashable';
   } else if (swiftTypeForDartTypeMap.containsKey(type.baseName)) {
-    return swiftTypeForDartTypeMap[type.baseName];
+    if (useFfi && !type.isNullable && isPrimitiveType(type)) {
+      return swiftTypeForDartTypeMap[type.baseName];
+    }
+    if (ffiTypedData) {
+      if (type.baseName == 'Uint8List') {
+        return '[UInt8]';
+      } else if (type.baseName == 'Int32List') {
+        return '[Int32]';
+      } else if (type.baseName == 'Int64List') {
+        return '[Int64]';
+      } else if (type.baseName == 'Float32List') {
+        return '[Float32]';
+      } else if (type.baseName == 'Float64List') {
+        return '[Float64]';
+      }
+    }
+    return useFfi ? _ffiTypeForBuiltinDartType(type) : swiftTypeForDartTypeMap[type.baseName];
   } else if (type.baseName == 'List' || type.baseName == 'Map') {
-    return _swiftTypeForBuiltinGenericDartType(type);
+    return _swiftTypeForBuiltinGenericDartType(type, useFfi: useFfi);
+  } else {
+    return null;
+  }
+}
+
+String? _ffiTypeForBuiltinDartType(
+  TypeDeclaration type, {
+  bool collectionSubType = false,
+  bool forceNullable = false,
+}) {
+  final ffiTypeForDartTypeMap = <String, String>{
+    'void': 'Void',
+    'bool': 'NSNumber',
+    'String': 'NSString',
+    'int': 'NSNumber',
+    'double': 'NSNumber',
+    'Uint8List': '${_classNamePrefix}PigeonTypedData',
+    'Int32List': '${_classNamePrefix}PigeonTypedData',
+    'Int64List': '${_classNamePrefix}PigeonTypedData',
+    'Float32List': '${_classNamePrefix}PigeonTypedData',
+    'Float64List': '${_classNamePrefix}PigeonTypedData',
+    'Object': 'NSObject',
+  };
+  if (type.baseName == 'Object' && collectionSubType) {
+    return 'NSObject';
+  } else if (ffiTypeForDartTypeMap.containsKey(type.baseName)) {
+    if (!type.isNullable && !forceNullable && !collectionSubType && isPrimitiveType(type)) {
+      return _swiftTypeForDartType(type);
+    }
+    return ffiTypeForDartTypeMap[type.baseName];
+  } else if (type.baseName == 'List' || type.baseName == 'Map') {
+    return _ffiTypeForBuiltinGenericDartType(type);
+  } else if (type.isEnum && (type.isNullable || forceNullable)) {
+    return 'NSNumber';
   } else {
     return null;
   }
@@ -2892,15 +4935,54 @@ String? _swiftTypeForProxyApiType(TypeDeclaration type) {
   return null;
 }
 
-String _swiftTypeForDartType(TypeDeclaration type, {bool mapKey = false}) {
-  return _swiftTypeForBuiltinDartType(type, mapKey: mapKey) ??
+String _swiftTypeForDartType(
+  TypeDeclaration type, {
+  bool mapKey = false,
+  bool useFfi = false,
+  bool ffiTypedData = false,
+}) {
+  if (useFfi && type.isEnum && type.isNullable) {
+    return 'NSNumber';
+  }
+  return _swiftTypeForBuiltinDartType(
+        type,
+        mapKey: mapKey,
+        useFfi: useFfi,
+        ffiTypedData: ffiTypedData,
+      ) ??
       _swiftTypeForProxyApiType(type) ??
-      type.baseName;
+      (useFfi && type.isClass ? '${type.baseName}Bridge' : type.baseName);
 }
 
-String _nullSafeSwiftTypeForDartType(TypeDeclaration type, {bool mapKey = false}) {
+String _ffiTypeForDartType(
+  TypeDeclaration type, {
+  bool collectionSubType = false,
+  bool forceNullable = false,
+}) {
+  return _ffiTypeForBuiltinDartType(
+        type,
+        collectionSubType: collectionSubType,
+        forceNullable: forceNullable,
+      ) ??
+      (type.isClass ? '${type.baseName}Bridge' : type.baseName);
+}
+
+String _nullSafeSwiftTypeForDartType(
+  TypeDeclaration type, {
+  bool mapKey = false,
+  bool useFfi = false,
+  bool ffiTypedData = false,
+}) {
   final nullSafe = type.isNullable ? '?' : '';
-  return '${_swiftTypeForDartType(type, mapKey: mapKey)}$nullSafe';
+  return '${_swiftTypeForDartType(type, mapKey: mapKey, useFfi: useFfi, ffiTypedData: ffiTypedData)}$nullSafe';
+}
+
+String _nullSafeFfiTypeForDartType(
+  TypeDeclaration type, {
+  bool collectionSubType = false,
+  bool forceNullable = false,
+}) {
+  return '${_ffiTypeForDartType(type, collectionSubType: collectionSubType, forceNullable: forceNullable)}${(type.isNullable && type.baseName != 'Object' && !collectionSubType) || forceNullable ? '?' : ''}';
 }
 
 String _getMethodSignature({
@@ -2909,29 +4991,51 @@ String _getMethodSignature({
   required TypeDeclaration returnType,
   required String errorTypeName,
   bool isAsynchronous = false,
+  bool ffiUserApi = false,
   bool isAsynchronousCallback = false,
+  bool isMainActor = false,
   String? swiftFunction,
+  bool ffiBridgeApi = false,
+  _SwiftFunctionComponents? components,
   String Function(int index, NamedType argument) getParameterName = _getArgumentName,
 }) {
-  final components = _SwiftFunctionComponents(
+  components ??= _SwiftFunctionComponents(
     name: name,
     parameters: parameters,
     returnType: returnType,
     swiftFunction: swiftFunction,
   );
-  final String returnTypeString = returnType.isVoid
+  String returnTypeString = returnType.isVoid
       ? 'Void'
-      : _nullSafeSwiftTypeForDartType(returnType);
+      : _nullSafeSwiftTypeForDartType(returnType, ffiTypedData: ffiUserApi);
 
-  final Iterable<String> types = parameters.map(
-    (NamedType e) => _nullSafeSwiftTypeForDartType(e.type),
+  Iterable<String> types = parameters.map(
+    (NamedType e) => _nullSafeSwiftTypeForDartType(e.type, ffiTypedData: ffiUserApi),
   );
   final Iterable<String> labels = indexMap(components.arguments, (
     int index,
     _SwiftFunctionArgument argument,
   ) {
-    return argument.label ?? _getArgumentName(index, argument.namedType);
+    return argument.label != null && !ffiBridgeApi
+        ? argument.label!
+        : _getArgumentName(index, argument.namedType);
   });
+
+  final objc = ffiBridgeApi ? '@objc ' : '';
+  var throwString = ' throws';
+  var errorParam = '';
+  var asyncString = '';
+
+  if (ffiBridgeApi) {
+    returnTypeString = returnType.isVoid
+        ? ''
+        : _nullSafeFfiTypeForDartType(returnType, forceNullable: true);
+    types = parameters.map((NamedType e) => _nullSafeFfiTypeForDartType(e.type));
+    throwString = '';
+    errorParam = '${parameters.isEmpty ? '' : ', '}wrappedError: $errorTypeName';
+    asyncString = isAsynchronous ? ' async${returnType.isVoid ? '' : ' -> $returnTypeString'}' : '';
+  }
+
   final Iterable<String> names = indexMap(parameters, getParameterName);
   final String parameterSignature = map3(types, labels, names, (
     String type,
@@ -2941,19 +5045,31 @@ String _getMethodSignature({
     return '${label != name ? '$label ' : ''}$name: $type';
   }).join(', ');
 
+  final String methodName = ffiBridgeApi ? name : components.name;
+
+  if (ffiBridgeApi) {
+    if (isAsynchronous) {
+      return '${objc}func $methodName($parameterSignature$errorParam)$asyncString';
+    } else {
+      final returnTypeSuffix = returnType.isVoid ? '' : ' -> $returnTypeString';
+      return '${objc}func $methodName($parameterSignature$errorParam)$throwString$returnTypeSuffix';
+    }
+  }
+
   if (isAsynchronous && !isAsynchronousCallback) {
+    final mainActorPrefix = isMainActor ? '@MainActor ' : '';
     final returnTypeSuffix = returnType.isVoid ? '' : ' -> $returnTypeString';
-    return 'func ${components.name}($parameterSignature) async throws$returnTypeSuffix';
+    return '${mainActorPrefix}func ${components.name}($parameterSignature) async throws$returnTypeSuffix';
   }
 
   if (isAsynchronous) {
     final completion = 'completion: @escaping (Result<$returnTypeString, $errorTypeName>) -> Void';
     final params = parameters.isEmpty ? completion : '$parameterSignature, $completion';
-    return 'func ${components.name}($params)';
+    return 'func $methodName($params)';
   }
 
   final returnTypeSuffix = returnType.isVoid ? '' : ' -> $returnTypeString';
-  return 'func ${components.name}($parameterSignature) throws$returnTypeSuffix';
+  return 'func $methodName($parameterSignature) throws$returnTypeSuffix';
 }
 
 /// A class that represents a Swift function argument.
@@ -3036,4 +5152,267 @@ class _SwiftFunctionComponents {
   final String name;
   final List<_SwiftFunctionArgument> arguments;
   final TypeDeclaration returnType;
+}
+
+/// The Swift element type of the typed data type [typedDataName].
+String _swiftTypedDataElement(String typedDataName) => switch (typedDataName) {
+  'Uint8List' => 'UInt8',
+  'Int32List' => 'Int32',
+  'Int64List' => 'Int64',
+  'Float32List' => 'Float32',
+  'Float64List' => 'Float64',
+  _ => throw ArgumentError.value(typedDataName),
+};
+
+bool _isSwiftTypedData(TypeDeclaration type) => const <String>{
+  'Uint8List',
+  'Int32List',
+  'Int64List',
+  'Float32List',
+  'Float64List',
+}.contains(type.baseName);
+
+/// The Objective-C compatible Swift type of a parameter of [type] that the
+/// hybrid native interop transport passes directly.
+///
+/// Enums are passed as their raw index, with [nativeInteropNullEnumIndex] for
+/// null.
+String _hybridSwiftDirectParameterType(TypeDeclaration type) {
+  final nullable = type.isNullable ? '?' : '';
+  if (type.isEnum) {
+    return 'Int64';
+  }
+  if (_isSwiftTypedData(type)) {
+    return 'NSData$nullable';
+  }
+  return switch (type.baseName) {
+    'bool' => type.isNullable ? 'NSNumber?' : 'Bool',
+    'int' => type.isNullable ? 'NSNumber?' : 'Int64',
+    'double' => type.isNullable ? 'NSNumber?' : 'Double',
+    'String' => 'NSString$nullable',
+    _ => throw ArgumentError.value(type.baseName),
+  };
+}
+
+/// The Objective-C compatible Swift type of a return value of [type] that the
+/// hybrid native interop transport passes directly.
+///
+/// Return values are always optional, so that errors can return `nil`.
+String _hybridSwiftDirectReturnType(TypeDeclaration type) {
+  if (type.isEnum || const <String>{'bool', 'int', 'double'}.contains(type.baseName)) {
+    return 'NSNumber?';
+  }
+  if (_isSwiftTypedData(type)) {
+    return 'NSData?';
+  }
+  if (type.baseName == 'String') {
+    return 'NSString?';
+  }
+  throw ArgumentError.value(type.baseName);
+}
+
+/// Converts [value], a parameter of [type] passed directly by the hybrid
+/// transport, to the type the API uses.
+String _hybridSwiftParameterToSwift(String value, TypeDeclaration type, String codec) {
+  if (type.isEnum) {
+    final rawValue = '${type.baseName}(rawValue: Int($value))';
+    return type.isNullable
+        ? '$value == $nativeInteropNullEnumIndex ? nil : $rawValue'
+        : '$rawValue!';
+  }
+  if (_isSwiftTypedData(type)) {
+    final String element = _swiftTypedDataElement(type.baseName);
+    return type.isNullable
+        ? '$value.map { $codec.typedData(\$0, as: $element.self) }'
+        : '$codec.typedData($value, as: $element.self)';
+  }
+  return switch (type.baseName) {
+    'bool' => type.isNullable ? '$value?.boolValue' : value,
+    'int' => type.isNullable ? '$value?.int64Value' : value,
+    'double' => type.isNullable ? '$value?.doubleValue' : value,
+    'String' => type.isNullable ? '$value as String?' : '$value as String',
+    _ => throw ArgumentError.value(type.baseName),
+  };
+}
+
+/// Converts [value] of [type] to a parameter that the hybrid transport passes
+/// directly.
+String _swiftToHybridParameter(String value, TypeDeclaration type, String codec) {
+  if (type.isEnum) {
+    return type.isNullable
+        ? '$value.map { Int64(\$0.rawValue) } ?? $nativeInteropNullEnumIndex'
+        : 'Int64($value.rawValue)';
+  }
+  if (_isSwiftTypedData(type)) {
+    return type.isNullable ? '$value.map { $codec.data(\$0) }' : '$codec.data($value)';
+  }
+  return switch (type.baseName) {
+    'bool' || 'int' || 'double' => type.isNullable ? '$value.map { NSNumber(value: \$0) }' : value,
+    'String' => type.isNullable ? '$value as NSString?' : '$value as NSString',
+    _ => throw ArgumentError.value(type.baseName),
+  };
+}
+
+/// Converts [value] of [type] to a return value that the hybrid transport
+/// passes directly.
+String _swiftToHybridReturn(String value, TypeDeclaration type, String codec) {
+  if (type.isEnum) {
+    return type.isNullable
+        ? '$value.map { NSNumber(value: Int64(\$0.rawValue)) }'
+        : 'NSNumber(value: Int64($value.rawValue))';
+  }
+  if (_isSwiftTypedData(type)) {
+    return type.isNullable ? '$value.map { $codec.data(\$0) }' : '$codec.data($value)';
+  }
+  return switch (type.baseName) {
+    'bool' ||
+    'int' ||
+    'double' => type.isNullable ? '$value.map { NSNumber(value: \$0) }' : 'NSNumber(value: $value)',
+    'String' => type.isNullable ? '$value as NSString?' : '$value as NSString',
+    _ => throw ArgumentError.value(type.baseName),
+  };
+}
+
+/// Converts [value], a return value of [type] passed directly by the hybrid
+/// transport, to the type the API uses.
+String _hybridSwiftReturnToSwift(String value, TypeDeclaration type, String codec) {
+  final unwrap = type.isNullable ? '?' : '!';
+  if (type.isEnum) {
+    return type.isNullable
+        ? '$value.map { ${type.baseName}(rawValue: \$0.intValue)! }'
+        : '${type.baseName}(rawValue: $value!.intValue)!';
+  }
+  if (_isSwiftTypedData(type)) {
+    final String element = _swiftTypedDataElement(type.baseName);
+    return type.isNullable
+        ? '$value.map { $codec.typedData(\$0, as: $element.self) }'
+        : '$codec.typedData($value!, as: $element.self)';
+  }
+  return switch (type.baseName) {
+    'bool' => '$value$unwrap.boolValue',
+    'int' => '$value$unwrap.int64Value',
+    'double' => '$value$unwrap.doubleValue',
+    'String' => type.isNullable ? '$value as String?' : '$value! as String',
+    _ => throw ArgumentError.value(type.baseName),
+  };
+}
+
+/// The parameter list of a hybrid transport entry point for a method with
+/// [parameters], ending with an error parameter labeled [errorLabel] of type
+/// [errorType].
+String _hybridSwiftEntryPointParameters(
+  List<Parameter> parameters, {
+  required String errorLabel,
+  required String errorType,
+}) {
+  return <String>[
+    for (final Parameter parameter in parameters)
+      if (isNativeInteropDirectType(parameter.type))
+        '${parameter.name} ${_hybridSwiftParameterName(parameter)}: ${_hybridSwiftDirectParameterType(parameter.type)}',
+    if (nativeInteropEncodedParameters(parameters).isNotEmpty)
+      '$nativeInteropArgsParameterName: NSData',
+    '$errorLabel: $errorType',
+  ].join(', ');
+}
+
+/// Whether [type] is or contains a non-nullable `List<int>` or `List<double>`,
+/// which Swift represents with the same array type as `Int64List` or
+/// `Float64List`.
+bool _hasAmbiguousSwiftListType(TypeDeclaration type) {
+  if (type.baseName == 'List' && type.typeArguments.length == 1) {
+    final TypeDeclaration element = type.typeArguments.first;
+    if (!element.isNullable && (element.baseName == 'int' || element.baseName == 'double')) {
+      return true;
+    }
+  }
+  return (type.baseName == 'List' || type.baseName == 'Map') &&
+      type.typeArguments.any(_hasAmbiguousSwiftListType);
+}
+
+/// The statement that writes [value] of the declared [type] with the hybrid
+/// transport's writer, using the type tags defined by [codec].
+///
+/// Lists, maps and typed data are written by their declared types, because
+/// Swift represents `Int64List` and a `List<int>` with the same type.
+String _swiftInteropWrite(String value, TypeDeclaration type, String codec, {String writer = ''}) {
+  final prefix = writer.isEmpty ? '' : '$writer.';
+  if (_isSwiftTypedData(type)) {
+    final (String tag, int alignment) = switch (type.baseName) {
+      'Uint8List' => ('typeUint8List', 1),
+      'Int32List' => ('typeInt32List', 4),
+      'Int64List' => ('typeInt64List', 8),
+      'Float64List' => ('typeFloat64List', 8),
+      'Float32List' => ('typeFloat32List', 4),
+      _ => throw ArgumentError.value(type.baseName),
+    };
+    return '${prefix}writeTypedData($codec.$tag, $value, alignment: $alignment)';
+  }
+  if (type.baseName == 'List') {
+    if (type.typeArguments.length == 1 && _hasAmbiguousSwiftListType(type.typeArguments.first)) {
+      return '${prefix}writeList($value) { ${_swiftInteropWrite(r'$1', type.typeArguments.first, codec, writer: r'$0')} }';
+    }
+    return '${prefix}writeList($value)';
+  }
+  if (type.baseName == 'Map') {
+    if (type.typeArguments.length == 2 &&
+        (_hasAmbiguousSwiftListType(type.typeArguments[0]) ||
+            _hasAmbiguousSwiftListType(type.typeArguments[1]))) {
+      return '${prefix}writeMap($value) { '
+          '${_swiftInteropWrite(r'$1', type.typeArguments[0], codec, writer: r'$0')}; '
+          '${_swiftInteropWrite(r'$2', type.typeArguments[1], codec, writer: r'$0')} }';
+    }
+    return '${prefix}writeMap($value)';
+  }
+  return '${prefix}writeValue($value)';
+}
+
+/// The expression that reads a value of the declared [type] with the hybrid
+/// transport's reader.
+String _swiftInteropRead(TypeDeclaration type, {String reader = ''}) {
+  final prefix = reader.isEmpty ? '' : '$reader.';
+  if (type.baseName == 'Object') {
+    return type.isNullable ? '${prefix}readValue()' : '${prefix}readValue()!';
+  }
+  return '${prefix}read(${_nullSafeSwiftTypeForDartType(type, ffiTypedData: true)}.self)';
+}
+
+/// The expression that encodes [value] of the declared [type] into a buffer,
+/// or `nil` if [value] is `nil`.
+String _swiftInteropEncode(String value, TypeDeclaration type, String codec) {
+  if (type.baseName != 'List' && type.baseName != 'Map') {
+    return '$codec.encodeOrNil($value)';
+  }
+  final encode = '$codec.encode { ${_swiftInteropWrite(value, type, codec, writer: r'$0')} }';
+  return type.isNullable ? '$value == nil ? nil : $encode' : encode;
+}
+
+/// The internal name of [parameter] in hybrid transport entry points.
+String _hybridSwiftParameterName(Parameter parameter) => '${parameter.name}Arg';
+
+/// The arguments of a call to a hybrid transport entry point, where
+/// [directValue] converts each directly passed parameter, [encodedArgs] is
+/// the buffer of all other parameters, and [error] is the error argument.
+String _hybridSwiftEntryPointArguments(
+  List<Parameter> parameters, {
+  required String Function(int index, Parameter parameter) directValue,
+  required String? encodedArgs,
+  required String errorLabel,
+  required String error,
+}) {
+  return <String>[
+    for (final (int index, Parameter parameter) in parameters.indexed)
+      if (isNativeInteropDirectType(parameter.type))
+        '${parameter.name}: ${directValue(index, parameter)}',
+    if (encodedArgs != null) '$nativeInteropArgsParameterName: $encodedArgs',
+    '$errorLabel: $error',
+  ].join(', ');
+}
+
+/// The return type suffix of a hybrid transport entry point for [returnType],
+/// including the leading ` -> `, or an empty string for `void`.
+String _hybridSwiftEntryPointReturnType(TypeDeclaration returnType) {
+  if (returnType.isVoid) {
+    return '';
+  }
+  return ' -> ${nativeInteropReturnsBuffer(returnType) ? 'NSData?' : _hybridSwiftDirectReturnType(returnType)}';
 }

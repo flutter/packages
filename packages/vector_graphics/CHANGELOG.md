@@ -1,3 +1,20 @@
+## 1.2.6
+
+* Fixes `<text>` not being drawn when the ambient text direction is RTL.
+
+## 1.2.5
+
+* Fixes a leak of the decoded picture when a `VectorGraphic` is removed before
+  loading finishes.
+
+## 1.2.4
+
+* Fixes an unhandled exception reported for every asynchronous loading failure,
+  such as an asset that fails to load, even when `errorBuilder` handles it.
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+* Removes unnecessary Material imports.
+* Fixes deprecation lints.
+
 ## 1.2.3
 
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.

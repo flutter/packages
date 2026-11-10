@@ -13,8 +13,8 @@ import 'package:material_ui_examples/button_style/button_style.0.dart'
     as button_style_0;
 import 'package:material_ui_examples/floating_action_button/floating_action_button.1.dart'
     as floating_action_button_1;
-import 'package:material_ui_examples/icon_button/icon_button.3.dart'
-    as icon_button_3;
+import 'package:material_ui_examples/icon_button/icon_button.4.dart'
+    as icon_button_4;
 import 'package:material_ui_examples/segmented_button/segmented_button.0.dart'
     as segmented_button_0;
 import 'package:material_ui_examples/card/card.2.dart' as card_2;
@@ -42,6 +42,8 @@ import 'package:material_ui_examples/progress_indicator/circular_progress_indica
     as circular_progress_indicator_0;
 import 'package:material_ui_examples/dropdown_menu/dropdown_menu.1.dart'
     as dropdown_menu_1;
+import 'package:material_ui_examples/material_shapes/material_shapes.0.dart'
+    as material_shapes_0;
 import 'package:material_ui_examples/navigation_bar/navigation_bar.1.dart'
     as navigation_bar_1;
 import 'package:material_ui_examples/navigation_rail/navigation_rail.0.dart'
@@ -69,7 +71,7 @@ const Map<String, Type> _examples = <String, Type>{
   'Common buttons': button_style_0.ButtonApp,
   'Floating action buttons':
       floating_action_button_1.FloatingActionButtonExampleApp,
-  'Icon buttons': icon_button_3.IconButtonToggleApp,
+  'Icon buttons': icon_button_4.IconButtonM3EExampleApp,
   'Segmented buttons': segmented_button_0.SegmentedButtonApp,
   'Cards': card_2.CardExamplesApp,
   'Carousel': carousel_0.CarouselExampleApp,
@@ -87,6 +89,7 @@ const Map<String, Type> _examples = <String, Type>{
       linear_progress_indicator_0.ProgressIndicatorExampleApp,
   'Circular progress indicators':
       circular_progress_indicator_0.ProgressIndicatorExampleApp,
+  'Material 3 Expressive shapes': material_shapes_0.MaterialShapesExampleApp,
   'Menu': dropdown_menu_1.DropdownMenuApp,
   'Navigation bar': navigation_bar_1.NavigationBarApp,
   'Navigation rail': navigation_rail_0.NavigationRailExampleApp,

@@ -19,6 +19,7 @@ class MockPrimitiveHostApi: PrimitiveHostApi {
   func aStringIntMap(value: [String?: Int64?]) -> [String?: Int64?] { value }
 }
 
+@MainActor
 struct PrimitiveTests {
   let codec = FlutterStandardMessageCodec.sharedInstance()
 

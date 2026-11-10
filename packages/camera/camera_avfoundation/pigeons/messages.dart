@@ -236,8 +236,8 @@ abstract class CameraApi {
   /// Begins recording video, optionally enabling streaming to Dart at the same
   /// time.
   @async
-  @ObjCSelector('startVideoRecordingWithStreaming:')
-  void startVideoRecording(bool enableStream);
+  @ObjCSelector('startVideoRecordingWithStreaming:videoOutputPath:')
+  void startVideoRecording(bool enableStream, String? videoOutputPath);
 
   /// Stops recording video, and results the path to the resulting file.
   @async
@@ -343,6 +343,16 @@ abstract class CameraApi {
   @async
   @ObjCSelector('setJpegImageQuality:')
   void setJpegImageQuality(int quality);
+
+  /// Returns whether the current session configuration supports
+  /// zero-shutter-lag capture.
+  @async
+  bool isZeroShutterLagSupported();
+
+  /// Enables or disables zero-shutter-lag capture.
+  @async
+  @ObjCSelector('setZeroShutterLagEnabled:')
+  void setZeroShutterLagEnabled(bool enabled);
 }
 
 @EventChannelApi()

@@ -23,6 +23,38 @@ void main() {
     expect(TooltipThemeData.lerp(null, null, 0), null);
     const data = TooltipThemeData();
     expect(identical(TooltipThemeData.lerp(data, data, 0.5), data), true);
+
+    const a = TooltipThemeData(
+      waitDuration: Duration(milliseconds: 100),
+      showDuration: Duration(milliseconds: 200),
+      exitDuration: Duration(milliseconds: 300),
+      triggerMode: TooltipTriggerMode.tap,
+      enableFeedback: true,
+      ignorePointer: true,
+    );
+    const b = TooltipThemeData(
+      waitDuration: Duration(milliseconds: 400),
+      showDuration: Duration(milliseconds: 500),
+      exitDuration: Duration(milliseconds: 600),
+      triggerMode: TooltipTriggerMode.longPress,
+      enableFeedback: false,
+      ignorePointer: false,
+    );
+    final TooltipThemeData lerpedEarly = TooltipThemeData.lerp(a, b, 0.25)!;
+    expect(lerpedEarly.waitDuration, a.waitDuration);
+    expect(lerpedEarly.showDuration, a.showDuration);
+    expect(lerpedEarly.exitDuration, a.exitDuration);
+    expect(lerpedEarly.triggerMode, a.triggerMode);
+    expect(lerpedEarly.enableFeedback, a.enableFeedback);
+    expect(lerpedEarly.ignorePointer, a.ignorePointer);
+
+    final TooltipThemeData lerpedLate = TooltipThemeData.lerp(a, b, 0.75)!;
+    expect(lerpedLate.waitDuration, b.waitDuration);
+    expect(lerpedLate.showDuration, b.showDuration);
+    expect(lerpedLate.exitDuration, b.exitDuration);
+    expect(lerpedLate.triggerMode, b.triggerMode);
+    expect(lerpedLate.enableFeedback, b.enableFeedback);
+    expect(lerpedLate.ignorePointer, b.ignorePointer);
   });
 
   test('TooltipThemeData defaults', () {
@@ -41,6 +73,7 @@ void main() {
     expect(theme.exitDuration, null);
     expect(theme.triggerMode, null);
     expect(theme.enableFeedback, null);
+    expect(theme.ignorePointer, null);
   });
 
   testWidgets('Default TooltipThemeData debugFillProperties', (WidgetTester tester) async {
@@ -62,6 +95,7 @@ void main() {
     const exit = Duration(milliseconds: 100);
     const TooltipTriggerMode triggerMode = TooltipTriggerMode.longPress;
     const enableFeedback = true;
+    const ignorePointer = false;
     const TooltipThemeData(
       height: 15.0,
       padding: EdgeInsets.all(20.0),
@@ -76,6 +110,7 @@ void main() {
       exitDuration: exit,
       triggerMode: triggerMode,
       enableFeedback: enableFeedback,
+      ignorePointer: ignorePointer,
     ).debugFillProperties(builder);
 
     final List<String> description = builder.properties
@@ -97,6 +132,7 @@ void main() {
       'exit duration: $exit',
       'triggerMode: $triggerMode',
       'enableFeedback: true',
+      'ignorePointer: false',
     ]);
   });
 
@@ -1539,6 +1575,23 @@ void main() {
       matching: find.byWidgetPredicate((_) => true),
     );
     expect(tester.element(textAncestors.first).size, equals(themeConstraints.biggest));
+  });
+
+  testWidgets('Tooltip respects ignorePointer from the ambient theme', (WidgetTester tester) async {
+    final tooltipKey = GlobalKey<TooltipState>();
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(tooltipTheme: const TooltipThemeData(ignorePointer: false)),
+        home: Tooltip(
+          key: tooltipKey,
+          message: tooltipText,
+          child: const SizedBox(width: 100, height: 100),
+        ),
+      ),
+    );
+
+    final RawTooltip rawTooltip = tester.widget<RawTooltip>(find.byType(RawTooltip));
+    expect(rawTooltip.ignorePointer, isFalse);
   });
 }
 

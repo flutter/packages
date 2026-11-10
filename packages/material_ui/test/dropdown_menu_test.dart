@@ -3018,7 +3018,7 @@ void main() {
     await tester.tap(findMenuItemText('Item 0'));
     await tester.pumpAndSettle();
     expect(controller.text, 'Item 0 $longText');
-  });
+  }, tags: 'reduced-web-test-set');
 
   testWidgets('DropdownMenuEntry.labelWidget is Text that specifies maxLines 1 or 2', (
     WidgetTester tester,
@@ -3080,7 +3080,7 @@ void main() {
     await tester.tap(find.byType(TextField));
     await tester.pumpAndSettle();
     expect(controller.text, ''); // nothing selected
-  });
+  }, tags: 'reduced-web-test-set');
 
   // Regression test for https://github.com/flutter/flutter/issues/131350.
   testWidgets('DropdownMenuEntry.leadingIcon default layout', (WidgetTester tester) async {
@@ -3750,7 +3750,7 @@ void main() {
               textDirection: TextDirection.ltr,
             ),
     );
-  });
+  }, tags: 'reduced-web-test-set');
 
   // This is a regression test for https://github.com/flutter/flutter/issues/151854.
   testWidgets('scrollToHighlight does not scroll parent', (WidgetTester tester) async {
@@ -4450,7 +4450,7 @@ void main() {
     );
 
     semantics.dispose();
-  });
+  }, tags: 'reduced-web-test-set');
 
   testWidgets('restorationId is passed to inner TextField', (WidgetTester tester) async {
     const restorationId = 'dropdown_menu';
@@ -5401,6 +5401,189 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(controller.text, selectNoneLabel);
+  });
+
+  testWidgets('DropdownMenu retains text cursor after disable and enable', (
+    WidgetTester tester,
+  ) async {
+    final focusNode = FocusNode();
+    addTearDown(focusNode.dispose);
+    var isEnabled = true;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return Column(
+                children: <Widget>[
+                  DropdownMenu<int>(
+                    enabled: isEnabled,
+                    focusNode: focusNode,
+                    dropdownMenuEntries: const <DropdownMenuEntry<int>>[
+                      DropdownMenuEntry<int>(value: 1, label: 'One'),
+                    ],
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        isEnabled = !isEnabled;
+                      });
+                    },
+                    child: const Text('Toggle'),
+                  ),
+                ],
+              );
+            },
+          ),
+        ),
+      ),
+    );
+
+    // Initial state: enabled.
+    TextField textField = tester.widget(find.byType(TextField));
+    expect(textField.enabled, isTrue);
+    expect(textField.readOnly, isFalse);
+
+    // Disable.
+    await tester.tap(find.byType(ElevatedButton));
+    await tester.pump();
+    textField = tester.widget(find.byType(TextField));
+    expect(textField.enabled, isFalse);
+
+    // Enable again.
+    await tester.tap(find.byType(ElevatedButton));
+    await tester.pump();
+    textField = tester.widget(find.byType(TextField));
+    expect(textField.enabled, isTrue);
+    expect(textField.readOnly, isFalse);
+  });
+
+  testWidgets('DropdownMenu updates internal state when focusNode is replaced', (
+    WidgetTester tester,
+  ) async {
+    final focusNode1 = FocusNode();
+    final focusNode2 = FocusNode(canRequestFocus: false);
+    addTearDown(focusNode1.dispose);
+    addTearDown(focusNode2.dispose);
+
+    var currentFocusNode = focusNode1;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return Column(
+                children: <Widget>[
+                  DropdownMenu<int>(
+                    focusNode: currentFocusNode,
+                    dropdownMenuEntries: const <DropdownMenuEntry<int>>[
+                      DropdownMenuEntry<int>(value: 1, label: 'One'),
+                    ],
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        currentFocusNode = focusNode2;
+                      });
+                    },
+                    child: const Text('Swap FocusNode'),
+                  ),
+                ],
+              );
+            },
+          ),
+        ),
+      ),
+    );
+
+    // Initial focus node is focusable.
+    TextField textField = tester.widget(find.byType(TextField));
+    expect(textField.readOnly, isFalse);
+
+    // Swap focus node.
+    await tester.tap(find.byType(ElevatedButton));
+    await tester.pump();
+
+    // New focus node cannot request focus, so it should be readOnly.
+    textField = tester.widget(find.byType(TextField));
+    expect(textField.readOnly, isTrue);
+  });
+
+  testWidgets('DropdownMenu updates when focusNode.canRequestFocus changes while enabled', (
+    WidgetTester tester,
+  ) async {
+    final focusNode = FocusNode();
+    addTearDown(focusNode.dispose);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return Column(
+                children: <Widget>[
+                  DropdownMenu<int>(
+                    focusNode: focusNode,
+                    dropdownMenuEntries: const <DropdownMenuEntry<int>>[
+                      DropdownMenuEntry<int>(value: 1, label: 'One'),
+                    ],
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        focusNode.canRequestFocus = false;
+                      });
+                    },
+                    child: const Text('Change canRequestFocus'),
+                  ),
+                ],
+              );
+            },
+          ),
+        ),
+      ),
+    );
+
+    // Initially it can request focus.
+    TextField textField = tester.widget(find.byType(TextField));
+    expect(textField.readOnly, isFalse);
+
+    // Change canRequestFocus.
+    await tester.tap(find.byType(ElevatedButton));
+    await tester.pump();
+
+    // Should now be readOnly.
+    textField = tester.widget(find.byType(TextField));
+    expect(textField.readOnly, isTrue);
+  });
+
+  testWidgets('canRequestFocus set on the node survives an internal rebuild', (
+    WidgetTester tester,
+  ) async {
+    final focusNode = FocusNode();
+    addTearDown(focusNode.dispose);
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(platform: TargetPlatform.macOS),
+        home: Scaffold(
+          body: DropdownMenu<int>(
+            focusNode: focusNode,
+            dropdownMenuEntries: const <DropdownMenuEntry<int>>[
+              DropdownMenuEntry<int>(value: 1, label: 'One'),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    focusNode.canRequestFocus = false; // set canRequestFocus
+    await tester.tap(find.byType(IconButton).first); // Opens the menu.
+    await tester.pump();
+
+    expect(focusNode.canRequestFocus, isFalse);
+    expect(tester.widget<TextField>(find.byType(TextField)).readOnly, isTrue);
   });
 }
 

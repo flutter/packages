@@ -61,6 +61,13 @@ class FileUtils {
    */
   String getPathFromUri(final Context context, final Uri uri) {
     try (InputStream inputStream = context.getContentResolver().openInputStream(uri)) {
+      if (inputStream == null) {
+        // `ContentResolver#openInputStream()` returns null when the provider cannot serve the
+        // item (for example after the provider crashed, or for a cloud-only photo it could not
+        // fetch). Treat it like any other unreadable item: no path, so the caller reports
+        // `missing_valid_image_uri` instead of crashing on the null stream.
+        return null;
+      }
       String uuid = UUID.randomUUID().toString();
       File targetDirectory = new File(context.getCacheDir(), uuid);
       targetDirectory.mkdir();

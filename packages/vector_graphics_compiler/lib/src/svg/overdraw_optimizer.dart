@@ -276,6 +276,7 @@ class OverdrawOptimizer extends Visitor<_Result, Node> with ErrorOnUnResolvedNod
       child: childResult.node,
       mask: maskNode.mask,
       blendMode: maskNode.blendMode,
+      maskType: maskNode.maskType,
     );
     final result = _Result(newMaskNode);
     result.children.add(childResult.node);

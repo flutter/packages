@@ -11,6 +11,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
 import 'feedback_tester.dart';
+import 'finders.dart';
 import 'semantics_tester.dart';
 
 void main() {
@@ -1409,8 +1410,12 @@ void main() {
     expect(
       tester.getSemantics(find.byType(PopupMenuButton<int>)),
       matchesSemantics(
+        isButton: true,
+        hasEnabledState: true,
+        isEnabled: true,
         hasExpandedState: true,
         label: 'XXX',
+        tooltip: 'Show menu',
         hasTapAction: true,
         hasFocusAction: true,
         isFocusable: true,
@@ -1442,8 +1447,113 @@ void main() {
     expect(
       tester.getSemantics(find.byType(PopupMenuButton<int>)),
       matchesSemantics(
+        isButton: true,
+        hasEnabledState: true,
+        isEnabled: true,
         hasExpandedState: true,
         label: 'XXX',
+        tooltip: 'Show menu',
+        hasTapAction: true,
+        hasFocusAction: true,
+        isFocusable: true,
+      ),
+    );
+  });
+
+  testWidgets('PopupMenuButton with a child has button semantics', (WidgetTester tester) async {
+    // Regression test for https://github.com/flutter/flutter/issues/147043
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Material(
+          child: PopupMenuButton<int>(
+            itemBuilder: (BuildContext context) {
+              return <PopupMenuItem<int>>[
+                const PopupMenuItem<int>(value: 1, child: Text('Item 1')),
+              ];
+            },
+            child: const Text('XXX'),
+          ),
+        ),
+      ),
+    );
+
+    expect(
+      tester.getSemantics(find.byType(PopupMenuButton<int>)),
+      matchesSemantics(
+        isButton: true,
+        hasEnabledState: true,
+        isEnabled: true,
+        hasExpandedState: true,
+        label: 'XXX',
+        tooltip: 'Show menu',
+        hasTapAction: true,
+        hasFocusAction: true,
+        isFocusable: true,
+      ),
+    );
+  });
+
+  testWidgets('Disabled PopupMenuButton with a child has button semantics', (
+    WidgetTester tester,
+  ) async {
+    // Regression test for https://github.com/flutter/flutter/issues/147043
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Material(
+          child: PopupMenuButton<int>(
+            enabled: false,
+            itemBuilder: (BuildContext context) {
+              return <PopupMenuItem<int>>[
+                const PopupMenuItem<int>(value: 1, child: Text('Item 1')),
+              ];
+            },
+            child: const Text('XXX'),
+          ),
+        ),
+      ),
+    );
+
+    expect(
+      tester.getSemantics(find.byType(PopupMenuButton<int>)),
+      matchesSemantics(
+        isButton: true,
+        hasEnabledState: true,
+        hasExpandedState: true,
+        label: 'XXX',
+        tooltip: 'Show menu',
+      ),
+    );
+  });
+
+  testWidgets('PopupMenuButton with a padded tap target has button semantics', (
+    WidgetTester tester,
+  ) async {
+    // Regression test for https://github.com/flutter/flutter/issues/147043
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Material(
+          child: PopupMenuButton<int>(
+            style: const ButtonStyle(tapTargetSize: MaterialTapTargetSize.padded),
+            itemBuilder: (BuildContext context) {
+              return <PopupMenuItem<int>>[
+                const PopupMenuItem<int>(value: 1, child: Text('Item 1')),
+              ];
+            },
+            child: const Text('XXX'),
+          ),
+        ),
+      ),
+    );
+
+    expect(
+      tester.getSemantics(find.byType(PopupMenuButton<int>)),
+      matchesSemantics(
+        isButton: true,
+        hasEnabledState: true,
+        isEnabled: true,
+        hasExpandedState: true,
+        label: 'XXX',
+        tooltip: 'Show menu',
         hasTapAction: true,
         hasFocusAction: true,
         isFocusable: true,
@@ -2356,7 +2466,7 @@ void main() {
     // The default tooltip is defined as [MaterialLocalizations.showMenuTooltip]
     // and it is used when no tooltip is provided.
     expect(find.byType(Tooltip), findsNWidgets(3));
-    expect(find.byTooltip(const DefaultMaterialLocalizations().showMenuTooltip), findsNWidgets(3));
+    expect(findByTooltip(const DefaultMaterialLocalizations().showMenuTooltip), findsNWidgets(3));
   });
 
   testWidgets('PopupMenuButton custom tooltip', (WidgetTester tester) async {
@@ -2404,7 +2514,7 @@ void main() {
     );
 
     expect(find.byType(Tooltip), findsNWidgets(3));
-    expect(find.byTooltip('Test tooltip'), findsNWidgets(3));
+    expect(findByTooltip('Test tooltip'), findsNWidgets(3));
   });
 
   testWidgets('Allow Widget for PopupMenuButton.icon', (WidgetTester tester) async {
@@ -2567,7 +2677,7 @@ void main() {
       RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
       kIsWeb ? SystemMouseCursors.click : SystemMouseCursors.basic,
     );
-  });
+  }, tags: 'reduced-web-test-set');
 
   testWidgets('PopupMenuItem changes mouse cursor when hovered', (WidgetTester tester) async {
     const Key key = ValueKey<int>(1);
@@ -2661,7 +2771,7 @@ void main() {
       RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
       SystemMouseCursors.basic,
     );
-  });
+  }, tags: 'reduced-web-test-set');
 
   testWidgets('CheckedPopupMenuItem changes mouse cursor when hovered', (
     WidgetTester tester,
@@ -2763,7 +2873,7 @@ void main() {
       RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
       SystemMouseCursors.basic,
     );
-  });
+  }, tags: 'reduced-web-test-set');
 
   testWidgets('PopupMenu in AppBar does not overlap with the status bar', (
     WidgetTester tester,

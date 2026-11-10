@@ -18,7 +18,7 @@ const GoogleSignInUserData _testUser = GoogleSignInUserData(
   displayName: 'John Doe',
 );
 
-@GenerateMocks(<Type>[GoogleSignInApi])
+@GenerateNiceMocks(<MockSpec<Object>>[MockSpec<GoogleSignInApi>()])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -28,6 +28,7 @@ void main() {
   setUp(() {
     mockApi = MockGoogleSignInApi();
     googleSignIn = GoogleSignInIOS(api: mockApi);
+    provideDummy<SignInResult>(SignInFailure(type: GoogleSignInErrorCode.unknown));
   });
 
   test('registered instance', () {
@@ -71,18 +72,16 @@ void main() {
     test('passes success data to caller', () async {
       const idToken = 'idToken';
       when(mockApi.restorePreviousSignIn()).thenAnswer(
-        (_) async => SignInResult(
-          success: SignInSuccess(
-            user: UserData(
-              displayName: _testUser.displayName,
-              email: _testUser.email,
-              userId: _testUser.id,
-              photoUrl: _testUser.photoUrl,
-              idToken: idToken,
-            ),
-            accessToken: '',
-            grantedScopes: <String>[],
+        (_) async => SignInSuccess(
+          user: UserData(
+            displayName: _testUser.displayName,
+            email: _testUser.email,
+            userId: _testUser.id,
+            photoUrl: _testUser.photoUrl,
+            idToken: idToken,
           ),
+          accessToken: '',
+          grantedScopes: <String>[],
         ),
       );
 
@@ -95,10 +94,8 @@ void main() {
     });
 
     test('returns null for missing auth', () async {
-      when(mockApi.restorePreviousSignIn()).thenAnswer(
-        (_) async =>
-            SignInResult(error: SignInFailure(type: GoogleSignInErrorCode.noAuthInKeychain)),
-      );
+      when(mockApi.restorePreviousSignIn())
+          .thenAnswer((_) async => SignInFailure(type: GoogleSignInErrorCode.noAuthInKeychain));
 
       final AuthenticationResults? result = await googleSignIn.attemptLightweightAuthentication(
         const AttemptLightweightAuthenticationParameters(),
@@ -108,9 +105,8 @@ void main() {
     });
 
     test('throws for other errors', () async {
-      when(mockApi.restorePreviousSignIn()).thenAnswer(
-        (_) async => SignInResult(error: SignInFailure(type: GoogleSignInErrorCode.keychainError)),
-      );
+      when(mockApi.restorePreviousSignIn())
+          .thenAnswer((_) async => SignInFailure(type: GoogleSignInErrorCode.keychainError));
 
       expect(
         googleSignIn.attemptLightweightAuthentication(
@@ -131,18 +127,16 @@ void main() {
     test('passes nonce if provided', () async {
       const nonce = 'nonce';
       when(mockApi.signIn(any, nonce)).thenAnswer(
-        (_) async => SignInResult(
-          success: SignInSuccess(
-            user: UserData(
-              displayName: _testUser.displayName,
-              email: _testUser.email,
-              userId: _testUser.id,
-              photoUrl: _testUser.photoUrl,
-              idToken: '',
-            ),
-            accessToken: '',
-            grantedScopes: <String>[],
+        (_) async => SignInSuccess(
+          user: UserData(
+            displayName: _testUser.displayName,
+            email: _testUser.email,
+            userId: _testUser.id,
+            photoUrl: _testUser.photoUrl,
+            idToken: '',
           ),
+          accessToken: '',
+          grantedScopes: <String>[],
         ),
       );
 
@@ -155,18 +149,16 @@ void main() {
     test('passes success data to caller', () async {
       const idToken = 'idToken';
       when(mockApi.signIn(any, null)).thenAnswer(
-        (_) async => SignInResult(
-          success: SignInSuccess(
-            user: UserData(
-              displayName: _testUser.displayName,
-              email: _testUser.email,
-              userId: _testUser.id,
-              photoUrl: _testUser.photoUrl,
-              idToken: idToken,
-            ),
-            accessToken: '',
-            grantedScopes: <String>[],
+        (_) async => SignInSuccess(
+          user: UserData(
+            displayName: _testUser.displayName,
+            email: _testUser.email,
+            userId: _testUser.id,
+            photoUrl: _testUser.photoUrl,
+            idToken: idToken,
           ),
+          accessToken: '',
+          grantedScopes: <String>[],
         ),
       );
 
@@ -179,10 +171,8 @@ void main() {
     });
 
     test('throws unknown for missing auth', () async {
-      when(mockApi.signIn(any, null)).thenAnswer(
-        (_) async =>
-            SignInResult(error: SignInFailure(type: GoogleSignInErrorCode.noAuthInKeychain)),
-      );
+      when(mockApi.signIn(any, null))
+          .thenAnswer((_) async => SignInFailure(type: GoogleSignInErrorCode.noAuthInKeychain));
 
       expect(
         googleSignIn.authenticate(const AuthenticateParameters()),
@@ -203,9 +193,8 @@ void main() {
     });
 
     test('throws provider configuration error for keychain error', () async {
-      when(mockApi.signIn(any, null)).thenAnswer(
-        (_) async => SignInResult(error: SignInFailure(type: GoogleSignInErrorCode.keychainError)),
-      );
+      when(mockApi.signIn(any, null))
+          .thenAnswer((_) async => SignInFailure(type: GoogleSignInErrorCode.keychainError));
 
       expect(
         googleSignIn.authenticate(const AuthenticateParameters()),
@@ -220,9 +209,8 @@ void main() {
     });
 
     test('throws provider configuration error for EEM error', () async {
-      when(mockApi.signIn(any, null)).thenAnswer(
-        (_) async => SignInResult(error: SignInFailure(type: GoogleSignInErrorCode.eemError)),
-      );
+      when(mockApi.signIn(any, null))
+          .thenAnswer((_) async => SignInFailure(type: GoogleSignInErrorCode.eemError));
 
       expect(
         googleSignIn.authenticate(const AuthenticateParameters()),
@@ -237,9 +225,8 @@ void main() {
     });
 
     test('throws canceled from SDK', () async {
-      when(mockApi.signIn(any, null)).thenAnswer(
-        (_) async => SignInResult(error: SignInFailure(type: GoogleSignInErrorCode.canceled)),
-      );
+      when(mockApi.signIn(any, null))
+          .thenAnswer((_) async => SignInFailure(type: GoogleSignInErrorCode.canceled));
 
       expect(
         googleSignIn.authenticate(const AuthenticateParameters()),
@@ -254,9 +241,8 @@ void main() {
     });
 
     test('throws user mismatch from SDK', () async {
-      when(mockApi.signIn(any, null)).thenAnswer(
-        (_) async => SignInResult(error: SignInFailure(type: GoogleSignInErrorCode.userMismatch)),
-      );
+      when(mockApi.signIn(any, null))
+          .thenAnswer((_) async => SignInFailure(type: GoogleSignInErrorCode.userMismatch));
 
       expect(
         googleSignIn.authenticate(const AuthenticateParameters()),
@@ -271,9 +257,8 @@ void main() {
     });
 
     test('throws unknown from SDK', () async {
-      when(mockApi.signIn(any, null)).thenAnswer(
-        (_) async => SignInResult(error: SignInFailure(type: GoogleSignInErrorCode.unknown)),
-      );
+      when(mockApi.signIn(any, null))
+          .thenAnswer((_) async => SignInFailure(type: GoogleSignInErrorCode.unknown));
 
       expect(
         googleSignIn.authenticate(const AuthenticateParameters()),
@@ -301,18 +286,16 @@ void main() {
     test('passes expected values to addScopes if interaction is allowed', () async {
       const scopes = <String>['a', 'b'];
       when(mockApi.addScopes(any, _testUser.id)).thenAnswer(
-        (_) async => SignInResult(
-          success: SignInSuccess(
-            user: UserData(
-              displayName: _testUser.displayName,
-              email: _testUser.email,
-              userId: _testUser.id,
-              photoUrl: _testUser.photoUrl,
-              idToken: '',
-            ),
-            accessToken: '',
-            grantedScopes: scopes,
+        (_) async => SignInSuccess(
+          user: UserData(
+            displayName: _testUser.displayName,
+            email: _testUser.email,
+            userId: _testUser.id,
+            photoUrl: _testUser.photoUrl,
+            idToken: '',
           ),
+          accessToken: '',
+          grantedScopes: scopes,
         ),
       );
 
@@ -336,18 +319,16 @@ void main() {
         'interaction is not allowed', () async {
       const scopes = <String>['a', 'b'];
       when(mockApi.getRefreshedAuthorizationTokens(_testUser.id)).thenAnswer(
-        (_) async => SignInResult(
-          success: SignInSuccess(
-            user: UserData(
-              displayName: _testUser.displayName,
-              email: _testUser.email,
-              userId: _testUser.id,
-              photoUrl: _testUser.photoUrl,
-              idToken: '',
-            ),
-            accessToken: '',
-            grantedScopes: scopes,
+        (_) async => SignInSuccess(
+          user: UserData(
+            displayName: _testUser.displayName,
+            email: _testUser.email,
+            userId: _testUser.id,
+            photoUrl: _testUser.photoUrl,
+            idToken: '',
           ),
+          accessToken: '',
+          grantedScopes: scopes,
         ),
       );
 
@@ -367,23 +348,20 @@ void main() {
 
     test('attempts to restore previous sign in if no user is provided', () async {
       const scopes = <String>['a', 'b'];
-      final signInResult = SignInResult(
-        success: SignInSuccess(
-          user: UserData(
-            displayName: _testUser.displayName,
-            email: _testUser.email,
-            userId: _testUser.id,
-            photoUrl: _testUser.photoUrl,
-            idToken: '',
-          ),
-          accessToken: '',
-          grantedScopes: <String>[],
+      final signInResult = SignInSuccess(
+        user: UserData(
+          displayName: _testUser.displayName,
+          email: _testUser.email,
+          userId: _testUser.id,
+          photoUrl: _testUser.photoUrl,
+          idToken: '',
         ),
+        accessToken: '',
+        grantedScopes: <String>[],
       );
       when(mockApi.restorePreviousSignIn()).thenAnswer((_) async => signInResult);
-      when(
-        mockApi.getRefreshedAuthorizationTokens(_testUser.id),
-      ).thenAnswer((_) async => signInResult);
+      when(mockApi.getRefreshedAuthorizationTokens(_testUser.id))
+          .thenAnswer((_) async => signInResult);
 
       await googleSignIn.clientAuthorizationTokensForScopes(
         const ClientAuthorizationTokensForScopesParameters(
@@ -404,10 +382,8 @@ void main() {
     });
 
     test('returns null if unauthenticated and interaction is not allowed', () async {
-      when(mockApi.restorePreviousSignIn()).thenAnswer(
-        (_) async =>
-            SignInResult(error: SignInFailure(type: GoogleSignInErrorCode.noAuthInKeychain)),
-      );
+      when(mockApi.restorePreviousSignIn())
+          .thenAnswer((_) async => SignInFailure(type: GoogleSignInErrorCode.noAuthInKeychain));
 
       final ClientAuthorizationTokenData? result = await googleSignIn
           .clientAuthorizationTokensForScopes(
@@ -432,23 +408,19 @@ void main() {
     test('attempts to authenticate if no user is provided or already signed in '
         'and interaction is allowed', () async {
       const scopes = <String>['a', 'b'];
-      when(mockApi.restorePreviousSignIn()).thenAnswer(
-        (_) async =>
-            SignInResult(error: SignInFailure(type: GoogleSignInErrorCode.noAuthInKeychain)),
-      );
+      when(mockApi.restorePreviousSignIn())
+          .thenAnswer((_) async => SignInFailure(type: GoogleSignInErrorCode.noAuthInKeychain));
       when(mockApi.signIn(scopes, null)).thenAnswer(
-        (_) async => SignInResult(
-          success: SignInSuccess(
-            user: UserData(
-              displayName: _testUser.displayName,
-              email: _testUser.email,
-              userId: _testUser.id,
-              photoUrl: _testUser.photoUrl,
-              idToken: '',
-            ),
-            accessToken: '',
-            grantedScopes: <String>[],
+        (_) async => SignInSuccess(
+          user: UserData(
+            displayName: _testUser.displayName,
+            email: _testUser.email,
+            userId: _testUser.id,
+            photoUrl: _testUser.photoUrl,
+            idToken: '',
           ),
+          accessToken: '',
+          grantedScopes: <String>[],
         ),
       );
 
@@ -474,18 +446,16 @@ void main() {
       const scopes = <String>['a', 'b'];
       const accessToken = 'token';
       when(mockApi.getRefreshedAuthorizationTokens(_testUser.id)).thenAnswer(
-        (_) async => SignInResult(
-          success: SignInSuccess(
-            user: UserData(
-              displayName: _testUser.displayName,
-              email: _testUser.email,
-              userId: _testUser.id,
-              photoUrl: _testUser.photoUrl,
-              idToken: 'idToken',
-            ),
-            accessToken: accessToken,
-            grantedScopes: scopes,
+        (_) async => SignInSuccess(
+          user: UserData(
+            displayName: _testUser.displayName,
+            email: _testUser.email,
+            userId: _testUser.id,
+            photoUrl: _testUser.photoUrl,
+            idToken: 'idToken',
           ),
+          accessToken: accessToken,
+          grantedScopes: scopes,
         ),
       );
 
@@ -508,18 +478,16 @@ void main() {
       const scopes = <String>['a', 'b'];
       const accessToken = 'token';
       when(mockApi.addScopes(scopes, _testUser.id)).thenAnswer(
-        (_) async => SignInResult(
-          success: SignInSuccess(
-            user: UserData(
-              displayName: _testUser.displayName,
-              email: _testUser.email,
-              userId: _testUser.id,
-              photoUrl: _testUser.photoUrl,
-              idToken: 'idToken',
-            ),
-            accessToken: accessToken,
-            grantedScopes: scopes,
+        (_) async => SignInSuccess(
+          user: UserData(
+            displayName: _testUser.displayName,
+            email: _testUser.email,
+            userId: _testUser.id,
+            photoUrl: _testUser.photoUrl,
+            idToken: 'idToken',
           ),
+          accessToken: accessToken,
+          grantedScopes: scopes,
         ),
       );
 
@@ -542,23 +510,19 @@ void main() {
         'requested scopes are already granted', () async {
       const scopes = <String>['a', 'b'];
       const accessToken = 'token';
-      when(mockApi.addScopes(scopes, _testUser.id)).thenAnswer(
-        (_) async =>
-            SignInResult(error: SignInFailure(type: GoogleSignInErrorCode.scopesAlreadyGranted)),
-      );
+      when(mockApi.addScopes(scopes, _testUser.id))
+          .thenAnswer((_) async => SignInFailure(type: GoogleSignInErrorCode.scopesAlreadyGranted));
       when(mockApi.getRefreshedAuthorizationTokens(_testUser.id)).thenAnswer(
-        (_) async => SignInResult(
-          success: SignInSuccess(
-            user: UserData(
-              displayName: _testUser.displayName,
-              email: _testUser.email,
-              userId: _testUser.id,
-              photoUrl: _testUser.photoUrl,
-              idToken: 'idToken',
-            ),
-            accessToken: accessToken,
-            grantedScopes: scopes,
+        (_) async => SignInSuccess(
+          user: UserData(
+            displayName: _testUser.displayName,
+            email: _testUser.email,
+            userId: _testUser.id,
+            photoUrl: _testUser.photoUrl,
+            idToken: 'idToken',
           ),
+          accessToken: accessToken,
+          grantedScopes: scopes,
         ),
       );
 
@@ -585,18 +549,16 @@ void main() {
       const grantedScopes = <String>['a'];
       const accessToken = 'token';
       when(mockApi.getRefreshedAuthorizationTokens(_testUser.id)).thenAnswer(
-        (_) async => SignInResult(
-          success: SignInSuccess(
-            user: UserData(
-              displayName: _testUser.displayName,
-              email: _testUser.email,
-              userId: _testUser.id,
-              photoUrl: _testUser.photoUrl,
-              idToken: 'idToken',
-            ),
-            accessToken: accessToken,
-            grantedScopes: grantedScopes,
+        (_) async => SignInSuccess(
+          user: UserData(
+            displayName: _testUser.displayName,
+            email: _testUser.email,
+            userId: _testUser.id,
+            photoUrl: _testUser.photoUrl,
+            idToken: 'idToken',
           ),
+          accessToken: accessToken,
+          grantedScopes: grantedScopes,
         ),
       );
 
@@ -616,10 +578,8 @@ void main() {
     });
 
     test('returns null when unauthorized', () async {
-      when(mockApi.restorePreviousSignIn()).thenAnswer(
-        (_) async =>
-            SignInResult(error: SignInFailure(type: GoogleSignInErrorCode.noAuthInKeychain)),
-      );
+      when(mockApi.restorePreviousSignIn())
+          .thenAnswer((_) async => SignInFailure(type: GoogleSignInErrorCode.noAuthInKeychain));
 
       expect(
         await googleSignIn.clientAuthorizationTokensForScopes(
@@ -630,9 +590,8 @@ void main() {
     });
 
     test('thows canceled from SDK', () async {
-      when(mockApi.addScopes(any, any)).thenAnswer(
-        (_) async => SignInResult(error: SignInFailure(type: GoogleSignInErrorCode.canceled)),
-      );
+      when(mockApi.addScopes(any, any))
+          .thenAnswer((_) async => SignInFailure(type: GoogleSignInErrorCode.canceled));
 
       expect(
         googleSignIn.clientAuthorizationTokensForScopes(
@@ -656,9 +615,8 @@ void main() {
     });
 
     test('throws unknown from SDK', () async {
-      when(mockApi.addScopes(any, any)).thenAnswer(
-        (_) async => SignInResult(error: SignInFailure(type: GoogleSignInErrorCode.unknown)),
-      );
+      when(mockApi.addScopes(any, any))
+          .thenAnswer((_) async => SignInFailure(type: GoogleSignInErrorCode.unknown));
 
       expect(
         googleSignIn.clientAuthorizationTokensForScopes(
@@ -682,9 +640,8 @@ void main() {
     });
 
     test('throws user mismatch from SDK', () async {
-      when(mockApi.addScopes(any, any)).thenAnswer(
-        (_) async => SignInResult(error: SignInFailure(type: GoogleSignInErrorCode.userMismatch)),
-      );
+      when(mockApi.addScopes(any, any))
+          .thenAnswer((_) async => SignInFailure(type: GoogleSignInErrorCode.userMismatch));
 
       expect(
         googleSignIn.clientAuthorizationTokensForScopes(
@@ -721,18 +678,16 @@ void main() {
     test('passes expected values to addScopes if interaction is allowed', () async {
       const scopes = <String>['a', 'b'];
       when(mockApi.addScopes(any, _testUser.id)).thenAnswer(
-        (_) async => SignInResult(
-          success: SignInSuccess(
-            user: UserData(
-              displayName: _testUser.displayName,
-              email: _testUser.email,
-              userId: _testUser.id,
-              photoUrl: _testUser.photoUrl,
-              idToken: '',
-            ),
-            accessToken: '',
-            grantedScopes: scopes,
+        (_) async => SignInSuccess(
+          user: UserData(
+            displayName: _testUser.displayName,
+            email: _testUser.email,
+            userId: _testUser.id,
+            photoUrl: _testUser.photoUrl,
+            idToken: '',
           ),
+          accessToken: '',
+          grantedScopes: scopes,
         ),
       );
 
@@ -756,18 +711,16 @@ void main() {
         'interaction is not allowed', () async {
       const scopes = <String>['a', 'b'];
       when(mockApi.getRefreshedAuthorizationTokens(_testUser.id)).thenAnswer(
-        (_) async => SignInResult(
-          success: SignInSuccess(
-            user: UserData(
-              displayName: _testUser.displayName,
-              email: _testUser.email,
-              userId: _testUser.id,
-              photoUrl: _testUser.photoUrl,
-              idToken: '',
-            ),
-            accessToken: '',
-            grantedScopes: scopes,
+        (_) async => SignInSuccess(
+          user: UserData(
+            displayName: _testUser.displayName,
+            email: _testUser.email,
+            userId: _testUser.id,
+            photoUrl: _testUser.photoUrl,
+            idToken: '',
           ),
+          accessToken: '',
+          grantedScopes: scopes,
         ),
       );
 
@@ -787,23 +740,20 @@ void main() {
 
     test('attempts to restore previous sign in if no user is provided', () async {
       const scopes = <String>['a', 'b'];
-      final signInResult = SignInResult(
-        success: SignInSuccess(
-          user: UserData(
-            displayName: _testUser.displayName,
-            email: _testUser.email,
-            userId: _testUser.id,
-            photoUrl: _testUser.photoUrl,
-            idToken: '',
-          ),
-          accessToken: '',
-          grantedScopes: <String>[],
+      final signInResult = SignInSuccess(
+        user: UserData(
+          displayName: _testUser.displayName,
+          email: _testUser.email,
+          userId: _testUser.id,
+          photoUrl: _testUser.photoUrl,
+          idToken: '',
         ),
+        accessToken: '',
+        grantedScopes: <String>[],
       );
       when(mockApi.restorePreviousSignIn()).thenAnswer((_) async => signInResult);
-      when(
-        mockApi.getRefreshedAuthorizationTokens(_testUser.id),
-      ).thenAnswer((_) async => signInResult);
+      when(mockApi.getRefreshedAuthorizationTokens(_testUser.id))
+          .thenAnswer((_) async => signInResult);
 
       await googleSignIn.serverAuthorizationTokensForScopes(
         const ServerAuthorizationTokensForScopesParameters(
@@ -824,10 +774,8 @@ void main() {
     });
 
     test('returns null if unauthenticated and interaction is not allowed', () async {
-      when(mockApi.restorePreviousSignIn()).thenAnswer(
-        (_) async =>
-            SignInResult(error: SignInFailure(type: GoogleSignInErrorCode.noAuthInKeychain)),
-      );
+      when(mockApi.restorePreviousSignIn())
+          .thenAnswer((_) async => SignInFailure(type: GoogleSignInErrorCode.noAuthInKeychain));
 
       final ServerAuthorizationTokenData? result = await googleSignIn
           .serverAuthorizationTokensForScopes(
@@ -852,23 +800,19 @@ void main() {
     test('attempts to authenticate if no user is provided or already signed in '
         'and interaction is allowed', () async {
       const scopes = <String>['a', 'b'];
-      when(mockApi.restorePreviousSignIn()).thenAnswer(
-        (_) async =>
-            SignInResult(error: SignInFailure(type: GoogleSignInErrorCode.noAuthInKeychain)),
-      );
+      when(mockApi.restorePreviousSignIn())
+          .thenAnswer((_) async => SignInFailure(type: GoogleSignInErrorCode.noAuthInKeychain));
       when(mockApi.signIn(scopes, null)).thenAnswer(
-        (_) async => SignInResult(
-          success: SignInSuccess(
-            user: UserData(
-              displayName: _testUser.displayName,
-              email: _testUser.email,
-              userId: _testUser.id,
-              photoUrl: _testUser.photoUrl,
-              idToken: '',
-            ),
-            accessToken: '',
-            grantedScopes: <String>[],
+        (_) async => SignInSuccess(
+          user: UserData(
+            displayName: _testUser.displayName,
+            email: _testUser.email,
+            userId: _testUser.id,
+            photoUrl: _testUser.photoUrl,
+            idToken: '',
           ),
+          accessToken: '',
+          grantedScopes: <String>[],
         ),
       );
 
@@ -902,23 +846,19 @@ void main() {
       const accessToken = 'accessToken';
       const serverAuthCode = 'authCode';
       when(mockApi.signIn(scopes, null)).thenAnswer(
-        (_) async => SignInResult(
-          success: SignInSuccess(
-            user: userData,
-            accessToken: accessToken,
-            serverAuthCode: serverAuthCode,
-            grantedScopes: <String>[],
-          ),
+        (_) async => SignInSuccess(
+          user: userData,
+          accessToken: accessToken,
+          serverAuthCode: serverAuthCode,
+          grantedScopes: <String>[],
         ),
       );
       when(mockApi.getRefreshedAuthorizationTokens(_testUser.id)).thenAnswer(
-        (_) async => SignInResult(
-          success: SignInSuccess(
-            user: userData,
-            accessToken: accessToken,
-            // serverAuthCode will always be null for getRefreshedAuthorizationTokens.
-            grantedScopes: scopes,
-          ),
+        (_) async => SignInSuccess(
+          user: userData,
+          accessToken: accessToken,
+          // serverAuthCode will always be null for getRefreshedAuthorizationTokens.
+          grantedScopes: scopes,
         ),
       );
 
@@ -957,23 +897,19 @@ void main() {
         idToken: '',
       );
       when(mockApi.signIn(scopes, null)).thenAnswer(
-        (_) async => SignInResult(
-          success: SignInSuccess(
-            user: previousUser,
-            accessToken: accessToken,
-            serverAuthCode: serverAuthCode,
-            grantedScopes: <String>[],
-          ),
+        (_) async => SignInSuccess(
+          user: previousUser,
+          accessToken: accessToken,
+          serverAuthCode: serverAuthCode,
+          grantedScopes: <String>[],
         ),
       );
       when(mockApi.getRefreshedAuthorizationTokens(newUser.userId)).thenAnswer(
-        (_) async => SignInResult(
-          success: SignInSuccess(
-            user: newUser,
-            accessToken: accessToken,
-            // serverAuthCode will always be null for getRefreshedAuthorizationTokens.
-            grantedScopes: scopes,
-          ),
+        (_) async => SignInSuccess(
+          user: newUser,
+          accessToken: accessToken,
+          // serverAuthCode will always be null for getRefreshedAuthorizationTokens.
+          grantedScopes: scopes,
         ),
       );
 
@@ -1005,23 +941,19 @@ void main() {
         idToken: '',
       );
       when(mockApi.signIn(scopes, null)).thenAnswer(
-        (_) async => SignInResult(
-          success: SignInSuccess(
-            user: userData,
-            accessToken: accessToken,
-            serverAuthCode: serverAuthCode,
-            grantedScopes: <String>[],
-          ),
+        (_) async => SignInSuccess(
+          user: userData,
+          accessToken: accessToken,
+          serverAuthCode: serverAuthCode,
+          grantedScopes: <String>[],
         ),
       );
       when(mockApi.getRefreshedAuthorizationTokens(userData.userId)).thenAnswer(
-        (_) async => SignInResult(
-          success: SignInSuccess(
-            user: userData,
-            accessToken: accessToken,
-            // serverAuthCode will always be null for getRefreshedAuthorizationTokens.
-            grantedScopes: scopes,
-          ),
+        (_) async => SignInSuccess(
+          user: userData,
+          accessToken: accessToken,
+          // serverAuthCode will always be null for getRefreshedAuthorizationTokens.
+          grantedScopes: scopes,
         ),
       );
 
@@ -1054,23 +986,19 @@ void main() {
         idToken: '',
       );
       when(mockApi.signIn(scopes, null)).thenAnswer(
-        (_) async => SignInResult(
-          success: SignInSuccess(
-            user: userData,
-            accessToken: accessToken,
-            serverAuthCode: serverAuthCode,
-            grantedScopes: <String>[],
-          ),
+        (_) async => SignInSuccess(
+          user: userData,
+          accessToken: accessToken,
+          serverAuthCode: serverAuthCode,
+          grantedScopes: <String>[],
         ),
       );
       when(mockApi.getRefreshedAuthorizationTokens(userData.userId)).thenAnswer(
-        (_) async => SignInResult(
-          success: SignInSuccess(
-            user: userData,
-            accessToken: accessToken,
-            // serverAuthCode will always be null for getRefreshedAuthorizationTokens.
-            grantedScopes: scopes,
-          ),
+        (_) async => SignInSuccess(
+          user: userData,
+          accessToken: accessToken,
+          // serverAuthCode will always be null for getRefreshedAuthorizationTokens.
+          grantedScopes: scopes,
         ),
       );
 
@@ -1095,19 +1023,17 @@ void main() {
       const scopes = <String>['a', 'b'];
       const serverAuthCode = 'authCode';
       when(mockApi.addScopes(scopes, _testUser.id)).thenAnswer(
-        (_) async => SignInResult(
-          success: SignInSuccess(
-            user: UserData(
-              displayName: _testUser.displayName,
-              email: _testUser.email,
-              userId: _testUser.id,
-              photoUrl: _testUser.photoUrl,
-              idToken: 'idToken',
-            ),
-            accessToken: 'token',
-            serverAuthCode: serverAuthCode,
-            grantedScopes: scopes,
+        (_) async => SignInSuccess(
+          user: UserData(
+            displayName: _testUser.displayName,
+            email: _testUser.email,
+            userId: _testUser.id,
+            photoUrl: _testUser.photoUrl,
+            idToken: 'idToken',
           ),
+          accessToken: 'token',
+          serverAuthCode: serverAuthCode,
+          grantedScopes: scopes,
         ),
       );
 
@@ -1137,23 +1063,19 @@ void main() {
       );
       const serverAuthCode = 'authCode';
       when(mockApi.signIn(<String>[], null)).thenAnswer(
-        (_) async => SignInResult(
-          success: SignInSuccess(
-            user: userData,
-            accessToken: 'token',
-            serverAuthCode: 'no-scope-auth-code',
-            grantedScopes: <String>[],
-          ),
+        (_) async => SignInSuccess(
+          user: userData,
+          accessToken: 'token',
+          serverAuthCode: 'no-scope-auth-code',
+          grantedScopes: <String>[],
         ),
       );
       when(mockApi.addScopes(scopes, _testUser.id)).thenAnswer(
-        (_) async => SignInResult(
-          success: SignInSuccess(
-            user: userData,
-            accessToken: 'token',
-            serverAuthCode: serverAuthCode,
-            grantedScopes: scopes,
-          ),
+        (_) async => SignInSuccess(
+          user: userData,
+          accessToken: 'token',
+          serverAuthCode: serverAuthCode,
+          grantedScopes: scopes,
         ),
       );
 
@@ -1185,27 +1107,21 @@ void main() {
         idToken: 'idToken',
       );
       when(mockApi.signIn(scopes, null)).thenAnswer(
-        (_) async => SignInResult(
-          success: SignInSuccess(
-            user: userData,
-            accessToken: 'token',
-            serverAuthCode: serverAuthCode,
-            grantedScopes: scopes,
-          ),
+        (_) async => SignInSuccess(
+          user: userData,
+          accessToken: 'token',
+          serverAuthCode: serverAuthCode,
+          grantedScopes: scopes,
         ),
       );
-      when(mockApi.addScopes(scopes, _testUser.id)).thenAnswer(
-        (_) async =>
-            SignInResult(error: SignInFailure(type: GoogleSignInErrorCode.scopesAlreadyGranted)),
-      );
+      when(mockApi.addScopes(scopes, _testUser.id))
+          .thenAnswer((_) async => SignInFailure(type: GoogleSignInErrorCode.scopesAlreadyGranted));
       when(mockApi.getRefreshedAuthorizationTokens(_testUser.id)).thenAnswer(
-        (_) async => SignInResult(
-          success: SignInSuccess(
-            user: userData,
-            accessToken: 'token',
-            // serverAuthCode will always be null for getRefreshedAuthorizationTokens.
-            grantedScopes: scopes,
-          ),
+        (_) async => SignInSuccess(
+          user: userData,
+          accessToken: 'token',
+          // serverAuthCode will always be null for getRefreshedAuthorizationTokens.
+          grantedScopes: scopes,
         ),
       );
 
@@ -1240,23 +1156,19 @@ void main() {
         idToken: 'idToken',
       );
       when(mockApi.signIn(<String>[], null)).thenAnswer(
-        (_) async => SignInResult(
-          success: SignInSuccess(
-            user: userData,
-            accessToken: 'token',
-            serverAuthCode: 'no-scope-auth-code',
-            grantedScopes: <String>[],
-          ),
+        (_) async => SignInSuccess(
+          user: userData,
+          accessToken: 'token',
+          serverAuthCode: 'no-scope-auth-code',
+          grantedScopes: <String>[],
         ),
       );
       when(mockApi.getRefreshedAuthorizationTokens(_testUser.id)).thenAnswer(
-        (_) async => SignInResult(
-          success: SignInSuccess(
-            user: userData,
-            accessToken: accessToken,
-            serverAuthCode: 'wrong-scope-auth-code',
-            grantedScopes: grantedScopes,
-          ),
+        (_) async => SignInSuccess(
+          user: userData,
+          accessToken: accessToken,
+          serverAuthCode: 'wrong-scope-auth-code',
+          grantedScopes: grantedScopes,
         ),
       );
 
@@ -1277,10 +1189,8 @@ void main() {
     });
 
     test('returns null when unauthorized', () async {
-      when(mockApi.restorePreviousSignIn()).thenAnswer(
-        (_) async =>
-            SignInResult(error: SignInFailure(type: GoogleSignInErrorCode.noAuthInKeychain)),
-      );
+      when(mockApi.restorePreviousSignIn())
+          .thenAnswer((_) async => SignInFailure(type: GoogleSignInErrorCode.noAuthInKeychain));
 
       expect(
         await googleSignIn.serverAuthorizationTokensForScopes(
@@ -1291,9 +1201,8 @@ void main() {
     });
 
     test('thows canceled from SDK', () async {
-      when(mockApi.addScopes(any, any)).thenAnswer(
-        (_) async => SignInResult(error: SignInFailure(type: GoogleSignInErrorCode.canceled)),
-      );
+      when(mockApi.addScopes(any, any))
+          .thenAnswer((_) async => SignInFailure(type: GoogleSignInErrorCode.canceled));
 
       expect(
         googleSignIn.serverAuthorizationTokensForScopes(
@@ -1317,9 +1226,8 @@ void main() {
     });
 
     test('throws unknown from SDK', () async {
-      when(mockApi.addScopes(any, any)).thenAnswer(
-        (_) async => SignInResult(error: SignInFailure(type: GoogleSignInErrorCode.unknown)),
-      );
+      when(mockApi.addScopes(any, any))
+          .thenAnswer((_) async => SignInFailure(type: GoogleSignInErrorCode.unknown));
 
       expect(
         googleSignIn.serverAuthorizationTokensForScopes(
@@ -1343,9 +1251,8 @@ void main() {
     });
 
     test('throws user mismatch from SDK', () async {
-      when(mockApi.addScopes(any, any)).thenAnswer(
-        (_) async => SignInResult(error: SignInFailure(type: GoogleSignInErrorCode.userMismatch)),
-      );
+      when(mockApi.addScopes(any, any))
+          .thenAnswer((_) async => SignInFailure(type: GoogleSignInErrorCode.userMismatch));
 
       expect(
         googleSignIn.serverAuthorizationTokensForScopes(

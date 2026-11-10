@@ -29,6 +29,8 @@ import 'slider_theme.dart';
 import 'slider_value_indicator_shape.dart';
 import 'theme.dart';
 
+part 'generated/slider_defaults_m3.g.dart';
+
 // Examples can assume:
 // int _dollars = 0;
 // int _duelCommandment = 1;
@@ -430,11 +432,16 @@ class Slider extends StatefulWidget {
   /// If null, the slider is continuous.
   final int? divisions;
 
-  /// A label to show above the slider when the slider is active and
-  /// [SliderThemeData.showValueIndicator] is satisfied.
+  /// A label to show inside the value indicator above the slider's thumb.
   ///
-  /// It is used to display the value of a discrete slider, and it is displayed
-  /// as part of the value indicator shape.
+  /// By default, the label is shown while dragging a discrete slider, where
+  /// [divisions] is non-null. It can also be shown for a continuous slider, where
+  /// [divisions] is null, by setting [showValueIndicator] to
+  /// [ShowValueIndicator.onlyForContinuous], [ShowValueIndicator.onDrag], or
+  /// [ShowValueIndicator.alwaysVisible].
+  ///
+  /// If [showValueIndicator] is null, the ambient
+  /// [SliderThemeData.showValueIndicator] determines when the label is shown.
   ///
   /// The label is rendered using the active [ThemeData]'s [TextTheme.bodyLarge]
   /// text style, with the theme data's [ColorScheme.onPrimary] color. The
@@ -804,6 +811,10 @@ class _SliderState extends State<Slider> with TickerProviderStateMixin {
   double _lerp(double value) {
     assert(value >= 0.0);
     assert(value <= 1.0);
+    final int? divisions = widget.divisions;
+    if (divisions != null) {
+      return widget.min + (value * divisions).round() * (widget.max - widget.min) / divisions;
+    }
     return value * (widget.max - widget.min) + widget.min;
   }
 
@@ -1294,6 +1305,13 @@ class _RenderSlider extends RenderBox with RelayoutWhenSystemFontsChangeMixin {
     isDiscrete: false,
   );
 
+  // Tick marks and the thumb are painted in an adjusted coordinate space that
+  // reserves half a track height of padding on each end for discrete rounded
+  // tracks, so gesture math needs to account for that same padding to stay
+  // aligned with the visual tick positions.
+  double get _discreteRoundedTrackPadding =>
+      (isDiscrete && _sliderTheme.trackShape!.isRounded) ? _trackRect.height : 0.0;
+
   bool get isInteractive => onChanged != null;
 
   bool get isDiscrete => divisions != null && divisions! > 0;
@@ -1611,8 +1629,16 @@ class _RenderSlider extends RenderBox with RelayoutWhenSystemFontsChangeMixin {
   }
 
   double _getValueFromGlobalPosition(Offset globalPosition) {
-    final double visualPosition =
-        (globalToLocal(globalPosition).dx - _trackRect.left) / _trackRect.width;
+    final double localDx = globalToLocal(globalPosition).dx;
+    final double padding = _discreteRoundedTrackPadding;
+    final double adjustedWidth = _trackRect.width - padding;
+    // Invert the padded track-geometry formula (see _discreteRoundedTrackPadding)
+    // so tap coordinates align with the visual tick positions. Without this, the
+    // snap midpoints in tap space diverge from the visual midpoints between tick
+    // marks, biasing lower-half taps toward the wrong (lower) division.
+    final double visualPosition = adjustedWidth <= 0.0
+        ? 0.5
+        : (localDx - _trackRect.left - padding / 2) / adjustedWidth;
     return _getValueFromVisualPosition(visualPosition);
   }
 
@@ -1695,7 +1721,13 @@ class _RenderSlider extends RenderBox with RelayoutWhenSystemFontsChangeMixin {
       case SliderInteraction.slideOnly:
       case SliderInteraction.slideThumb:
         if (_active && isInteractive) {
-          final double valueDelta = details.primaryDelta! / _trackRect.width;
+          // Use the same coordinate width as _getValueFromGlobalPosition so
+          // that dragging immediately after a tap does not jump.
+          final double effectiveWidth = _trackRect.width - _discreteRoundedTrackPadding;
+          if (effectiveWidth <= 0.0) {
+            break;
+          }
+          final double valueDelta = details.primaryDelta! / effectiveWidth;
           _currentDragValue += switch (textDirection) {
             TextDirection.rtl => -valueDelta,
             TextDirection.ltr => valueDelta,
@@ -2305,118 +2337,3 @@ class _SliderDefaultsM3Year2023 extends SliderThemeData {
   @override
   SliderTickMarkShape? get tickMarkShape => const RoundSliderTickMarkShape();
 }
-
-// BEGIN GENERATED TOKEN PROPERTIES - Slider
-
-// Do not edit by hand. The code between the "BEGIN GENERATED" and
-// "END GENERATED" comments are generated from data in the Material
-// Design token database by the script:
-//   dev/tools/gen_defaults/bin/gen_defaults.dart.
-
-// dart format off
-class _SliderDefaultsM3 extends SliderThemeData {
-  _SliderDefaultsM3(this.context)
-    : super(trackHeight: 16.0);
-
-  final BuildContext context;
-  late final ColorScheme _colors = Theme.of(context).colorScheme;
-
-  @override
-  Color? get activeTrackColor => _colors.primary;
-
-  @override
-  Color? get inactiveTrackColor => _colors.secondaryContainer;
-
-  @override
-  Color? get secondaryActiveTrackColor => _colors.primary.withOpacity(0.54);
-
-  @override
-  Color? get disabledActiveTrackColor => _colors.onSurface.withOpacity(0.38);
-
-  @override
-  Color? get disabledInactiveTrackColor => _colors.onSurface.withOpacity(0.12);
-
-  @override
-  Color? get disabledSecondaryActiveTrackColor => _colors.onSurface.withOpacity(0.38);
-
-  @override
-  Color? get activeTickMarkColor => _colors.onPrimary.withOpacity(1.0);
-
-  @override
-  Color? get inactiveTickMarkColor => _colors.onSecondaryContainer.withOpacity(1.0);
-
-  @override
-  Color? get disabledActiveTickMarkColor => _colors.onInverseSurface;
-
-  @override
-  Color? get disabledInactiveTickMarkColor => _colors.onSurface;
-
-  @override
-  Color? get thumbColor => _colors.primary;
-
-  @override
-  Color? get disabledThumbColor => _colors.onSurface.withOpacity(0.38);
-
-  @override
-  Color? get overlayColor => WidgetStateColor.resolveWith((Set<WidgetState> states) {
-    if (states.contains(WidgetState.dragged)) {
-      return _colors.primary.withOpacity(0.1);
-    }
-    if (states.contains(WidgetState.hovered)) {
-      return _colors.primary.withOpacity(0.08);
-    }
-    if (states.contains(WidgetState.focused)) {
-      return _colors.primary.withOpacity(0.1);
-    }
-
-    return Colors.transparent;
-  });
-
-  @override
-  TextStyle? get valueIndicatorTextStyle => Theme.of(context).textTheme.labelLarge!.copyWith(
-    color: _colors.onInverseSurface,
-  );
-
-  @override
-  Color? get valueIndicatorColor => _colors.inverseSurface;
-
-  @override
-  SliderComponentShape? get valueIndicatorShape => const RoundedRectSliderValueIndicatorShape();
-
-  @override
-  SliderComponentShape? get thumbShape => const HandleThumbShape();
-
-  @override
-  SliderTrackShape? get trackShape => const GappedSliderTrackShape();
-
-  @override
-  SliderComponentShape? get overlayShape => const RoundSliderOverlayShape();
-
-  @override
-  SliderTickMarkShape? get tickMarkShape => const RoundSliderTickMarkShape(tickMarkRadius: 4.0 / 2);
-
-  @override
-  WidgetStateProperty<Size?>? get thumbSize {
-    return WidgetStateProperty.resolveWith((Set<WidgetState> states) {
-      if (states.contains(WidgetState.disabled)) {
-        return const Size(4.0, 44.0);
-      }
-      if (states.contains(WidgetState.hovered)) {
-        return const Size(4.0, 44.0);
-      }
-      if (states.contains(WidgetState.focused)) {
-        return const Size(2.0, 44.0);
-      }
-      if (states.contains(WidgetState.pressed)) {
-        return const Size(2.0, 44.0);
-      }
-      return const Size(4.0, 44.0);
-    });
-  }
-
-  @override
-  double? get trackGap => 6.0;
-}
-// dart format on
-
-// END GENERATED TOKEN PROPERTIES - Slider

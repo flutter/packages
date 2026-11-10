@@ -1,10 +1,12 @@
 ## NEXT
 
-* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 * Updates README to reflect currently supported OS versions for the latest
   versions of the endorsed platform implementations.
   * Applications built with older versions of Flutter will continue to
     use compatible versions of the platform implementations.
+* Updates README to reflect that the latest version of `google_sign_in_ios`
+  requires iOS 15 and macOS 12.
 
 ## 7.2.0
 

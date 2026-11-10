@@ -19,13 +19,13 @@ import 'util.dart';
 void main() {
   late CommandRunner<void> runner;
   late CreateAllPackagesAppCommand command;
-  late Platform mockPlatform;
+  late NativePlatform mockPlatform;
   late Directory testRoot;
   late Directory packagesDir;
   late RecordingProcessRunner processRunner;
 
   setUp(() {
-    mockPlatform = MockPlatform(isMacOS: true);
+    mockPlatform = createMockPlatform(isMacOS: true);
     (:packagesDir, :processRunner, gitProcessRunner: _, gitDir: _) = configureBaseCommandMocks(
       platform: mockPlatform,
     );
@@ -152,7 +152,7 @@ project 'Runner', {
 
   group('non-macOS host', () {
     setUp(() {
-      mockPlatform = MockPlatform(isLinux: true);
+      mockPlatform = createMockPlatform(isLinux: true);
       command = CreateAllPackagesAppCommand(
         packagesDir,
         processRunner: processRunner,
@@ -598,7 +598,7 @@ android {
       command = CreateAllPackagesAppCommand(
         packagesDir,
         processRunner: processRunner,
-        platform: MockPlatform(isMacOS: true),
+        platform: createMockPlatform(isMacOS: true),
       );
       runner = CommandRunner<void>('create_all_test', 'Test for $CreateAllPackagesAppCommand');
       runner.addCommand(command);

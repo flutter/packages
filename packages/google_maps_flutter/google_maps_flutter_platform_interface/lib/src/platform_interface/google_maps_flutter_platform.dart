@@ -337,6 +337,11 @@ abstract class GoogleMapsFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('onCircleTap() has not been implemented.');
   }
 
+  /// A point of interest has been tapped.
+  Stream<PointOfInterestTapEvent> onPointOfInterestTap({required int mapId}) {
+    return const Stream<PointOfInterestTapEvent>.empty();
+  }
+
   /// A Map has been tapped at a certain [LatLng].
   Stream<MapTapEvent> onTap({required int mapId}) {
     throw UnimplementedError('onTap() has not been implemented.');

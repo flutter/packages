@@ -35,8 +35,10 @@ import 'theme_data.dart';
 /// current applied filter.
 ///
 /// Used by [DropdownMenu.filterCallback].
-typedef FilterCallback<T> =
-    List<DropdownMenuEntry<T>> Function(List<DropdownMenuEntry<T>> entries, String filter);
+typedef FilterCallback<T> = List<DropdownMenuEntry<T>> Function(
+  List<DropdownMenuEntry<T>> entries,
+  String filter,
+);
 
 /// A callback function that returns the index of the item that matches the
 /// current contents of a text field.
@@ -53,8 +55,10 @@ typedef SearchCallback<T> = int? Function(List<DropdownMenuEntry<T>> entries, St
 ///
 /// The `controller` is the [MenuController] that can be used to open and close
 /// the menu with and query the current state.
-typedef DropdownMenuDecorationBuilder =
-    InputDecoration Function(BuildContext context, MenuController controller);
+typedef DropdownMenuDecorationBuilder = InputDecoration Function(
+  BuildContext context,
+  MenuController controller,
+);
 
 const double _kMinimumWidth = 112.0;
 
@@ -766,6 +770,7 @@ class _DropdownMenuState<T> extends State<DropdownMenu<T>> {
   TextEditingController get _effectiveTextEditingController =>
       widget.controller ?? (_localTextEditingController ??= TextEditingController());
   final FocusNode _internalFocusNode = FocusNode();
+  bool? _focusNodeCanRequestFocus;
   WidgetStatesController? _highlightedItemStatesController;
 
   FocusNode? _localTrailingIconButtonFocusNode;
@@ -775,6 +780,7 @@ class _DropdownMenuState<T> extends State<DropdownMenu<T>> {
   @override
   void initState() {
     super.initState();
+    _focusNodeCanRequestFocus = widget.focusNode?.canRequestFocus;
     _enableSearch = widget.enableSearch;
     filteredEntries = widget.dropdownMenuEntries;
     buttonItemKeys = List<GlobalKey>.generate(filteredEntries.length, (int index) => GlobalKey());
@@ -844,6 +850,17 @@ class _DropdownMenuState<T> extends State<DropdownMenu<T>> {
     if (oldWidget.menuController != widget.menuController) {
       _controller = widget.menuController ?? MenuController();
     }
+    if (widget.focusNode != oldWidget.focusNode) {
+      _focusNodeCanRequestFocus = widget.focusNode?.canRequestFocus;
+    }
+    if (oldWidget.enabled && !widget.enabled) {
+      _focusNodeCanRequestFocus = widget.focusNode?.canRequestFocus;
+    }
+    if (!oldWidget.enabled && widget.enabled) {
+      if (widget.focusNode != null && _focusNodeCanRequestFocus != null) {
+        widget.focusNode!.canRequestFocus = _focusNodeCanRequestFocus!;
+      }
+    }
   }
 
   bool canRequestFocus() {
@@ -873,9 +890,8 @@ class _DropdownMenuState<T> extends State<DropdownMenu<T>> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final BuildContext? highlightContext = buttonItemKeys[currentHighlight!].currentContext;
       if (highlightContext != null) {
-        Scrollable.of(
-          highlightContext,
-        ).position.ensureVisible(highlightContext.findRenderObject()!);
+        Scrollable.of(highlightContext).position
+            .ensureVisible(highlightContext.findRenderObject()!);
       }
     }, debugLabel: 'DropdownMenu.scrollToHighlight');
   }
