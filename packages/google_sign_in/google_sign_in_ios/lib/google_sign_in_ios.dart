@@ -81,7 +81,7 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
 
   @override
   Future<AuthenticationResults> authenticate(AuthenticateParameters params) async {
-    final SignInResult result = await _signIn(params.scopeHint, _nonce);
+    final SignInResult result = await _signIn(params.scopeHint, params.nonce ?? _nonce);
     switch (result) {
       // This should never happen; the corresponding native error code is
       // documented as being specific to restorePreviousSignIn.
