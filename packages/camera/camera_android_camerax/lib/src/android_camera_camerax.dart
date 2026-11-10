@@ -406,6 +406,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     // Determine ResolutionSelector and QualitySelector based on
     // resolutionPreset for camera UseCases.
     _resolutionPreset = mediaSettings?.resolutionPreset;
+    // Defaults to false if availableCameras was not called first.
     _zeroShutterLagSupported = await chosenCameraInfo?.isZslSupported() ?? false;
     _presetResolutionSelector = _getResolutionSelectorFromPreset(_resolutionPreset);
 
@@ -1126,26 +1127,36 @@ class AndroidCameraCameraX extends CameraPlatform {
   ///
   /// CameraX only supports setting the capture mode via `ImageCapture.Builder`
   /// at construction time, so this recreates the `ImageCapture` use case with
-  /// the requested mode. The next call to [takePicture] will bind the new
-  /// instance automatically.
+  /// the requested mode and binds it if the previous instance was bound.
   ///
   /// CameraX disables zero-shutter-lag when a use case prefers higher
-  /// resolution over capture rate, so with [ResolutionPreset.max] enabling
-  /// zero-shutter-lag limits still capture to the largest regular output size.
-  /// On devices whose largest still size is only available as a
-  /// high-resolution output size, pictures will be smaller than without
-  /// zero-shutter-lag.
+  /// resolution over capture rate (see `UseCase.mergeConfigs` in CameraX), so
+  /// with [ResolutionPreset.max] enabling zero-shutter-lag limits still capture
+  /// to the largest regular output size. On devices whose largest still size
+  /// is only available as a high-resolution output size, pictures will be
+  /// smaller than without zero-shutter-lag.
+  ///
+  /// Zero-shutter-lag also has no effect while the flash mode is on or auto.
+  /// See https://developer.android.com/media/camera/camerax/take-photo/zsl.
   ///
   /// If the selected camera does not support zero-shutter-lag, this only
   /// records the requested mode and skips recreating the use case.
   @override
   Future<void> setZeroShutterLagEnabled(int cameraId, bool enabled) async {
+    if (_zeroShutterLagEnabled == enabled) {
+      return;
+    }
     _zeroShutterLagEnabled = enabled;
     _zeroShutterLagSupported = await isZeroShutterLagSupported(cameraId);
     if (!_zeroShutterLagSupported) {
       return;
     }
+    final bool imageCaptureWasBound =
+        imageCapture != null && await processCameraProvider!.isBound(imageCapture!);
     await _recreateImageCapture();
+    if (imageCaptureWasBound) {
+      await _bindUseCaseToLifecycle(imageCapture!, cameraId);
+    }
   }
 
   /// Recreates [imageCapture] from the currently requested settings
@@ -1644,9 +1655,11 @@ class AndroidCameraCameraX extends CameraPlatform {
 
   /// Returns the [ResolutionSelector] for [imageCapture].
   ///
-  /// For [ResolutionPreset.max], still capture may use high-resolution output
-  /// sizes unless zero-shutter-lag is enabled on a camera that supports it,
-  /// since CameraX does not support zero-shutter-lag together with them.
+  /// For [ResolutionPreset.max], [imageCapture] prefers higher resolution over
+  /// capture rate, since some devices only offer their largest still size as a
+  /// high-resolution output size. This is skipped while zero-shutter-lag is
+  /// enabled on a camera that supports it, since CameraX does not support
+  /// zero-shutter-lag together with high-resolution output sizes.
   ResolutionSelector? _getImageCaptureResolutionSelector() {
     if (_resolutionPreset != ResolutionPreset.max ||
         (_zeroShutterLagEnabled && _zeroShutterLagSupported)) {
