@@ -4568,6 +4568,34 @@ void main() {
     expect(viewTextField.smartQuotesType, SmartQuotesType.disabled);
   });
 
+  // Regression test for https://github.com/flutter/flutter/issues/185889.
+  testWidgets('SearchAnchor.bar respects SearchBarThemeData.padding', (WidgetTester tester) async {
+    const customPadding = EdgeInsets.all(32.0);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SearchBarTheme(
+            data: const SearchBarThemeData(
+              padding: WidgetStatePropertyAll<EdgeInsetsGeometry>(customPadding),
+            ),
+            child: SearchAnchor.bar(
+              suggestionsBuilder: (BuildContext context, SearchController controller) {
+                return <Widget>[];
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+
+    final Padding paddingWidget = tester.widget<Padding>(
+      find.descendant(of: find.byType(SearchBar), matching: find.byType(Padding)).first,
+    );
+
+    expect(paddingWidget.padding, customPadding);
+  });
+
   testWidgets('SearchAnchor does not crash at zero area', (WidgetTester tester) async {
     tester.view.physicalSize = Size.zero;
     final controller = SearchController();
@@ -4745,20 +4773,29 @@ void main() {
   });
 
   // Regression test for https://github.com/flutter/flutter/issues/177089
-  testWidgets('SearchAnchor.bar can be found by type', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Material(
-          child: SearchAnchor.bar(
-            suggestionsBuilder: (BuildContext context, SearchController controller) {
-              return <Widget>[];
-            },
+  testWidgets('SearchAnchor.bar can be found by type and respects themed padding', (
+    WidgetTester tester,
+  ) async {
+    const themedPadding = WidgetStatePropertyAll<EdgeInsets>(EdgeInsets.all(32.0));
+    const explicitPadding = WidgetStatePropertyAll<EdgeInsets>(EdgeInsets.all(8.0));
+    for (final barPadding in <WidgetStateProperty<EdgeInsets>?>[null, explicitPadding]) {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(searchBarTheme: const SearchBarThemeData(padding: themedPadding)),
+          home: Material(
+            child: SearchAnchor.bar(
+              barPadding: barPadding,
+              suggestionsBuilder: (BuildContext context, SearchController controller) {
+                return <Widget>[];
+              },
+            ),
           ),
         ),
-      ),
-    );
+      );
 
-    expect(find.byType(SearchAnchor), findsOneWidget);
+      expect(find.byType(SearchAnchor), findsOneWidget);
+      expect(tester.widget<SearchBar>(find.byType(SearchBar)).padding, barPadding ?? themedPadding);
+    }
   });
 }
 
