@@ -11,12 +11,18 @@ abstract base class FileSelectorPlatform {
 
   /// Opens a file dialog for loading files and returns a file.
   ///
+  /// The `options` argument controls additional settings that can be passed to
+  /// file dialog.
+  ///
   /// Returns `null` if the user cancels the operation.
   Future<XFile?> openFile({OpenFileDialogOptions options = const OpenFileDialogOptions()}) {
     throw UnimplementedError('openFile() has not been implemented.');
   }
 
   /// Opens a file dialog for loading files and returns a list of files.
+  ///
+  /// The `options` argument controls additional settings that can be passed to
+  /// file dialog.
   ///
   /// Returns an empty list if the user cancels the operation.
   Future<List<XFile>> openFiles({OpenFilesDialogOptions options = const OpenFilesDialogOptions()}) {
@@ -25,6 +31,9 @@ abstract base class FileSelectorPlatform {
 
   /// Opens a file dialog for saving files and returns a file location at which
   /// to save.
+  ///
+  /// The `options` argument controls additional settings that can be passed to
+  /// file dialog.
   ///
   /// Returns `null` if the user cancels the operation.
   Future<FileSaveLocation?> getSaveLocation({
@@ -36,7 +45,7 @@ abstract base class FileSelectorPlatform {
   /// Opens a file dialog for loading directories and returns a directory.
   ///
   /// The `options` argument controls additional settings that can be passed to
-  /// file dialog. See [FileDialogOptions] for more details.
+  /// file dialog.
   ///
   /// Returns `null` if the user cancels the operation.
   Future<XDirectory?> getDirectory({
