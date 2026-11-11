@@ -46,7 +46,7 @@ const double kCupertinoFocusColorOpacity = 0.80,
 /// See also:
 ///
 /// * <https://developer.apple.com/design/human-interface-guidelines/buttons#iOS-iPadOS>
-const double kCupertinoButtonTintedOpacityLight = 0.12, kCupertinoButtonTintedOpacityDark = 0.26;
+const double kCupertinoButtonTintedOpacityLight = 0.18, kCupertinoButtonTintedOpacityDark = 0.26;
 
 /// The default value for [IconThemeData.size] of [CupertinoButton.child].
 ///
