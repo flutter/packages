@@ -441,6 +441,8 @@ void main() {
     expect(
       tester.getSemantics(find.byType(CupertinoSlider)),
       matchesSemantics(
+        hasEnabledState: true,
+        isEnabled: true,
         isSlider: true,
         hasIncreaseAction: true,
         hasDecreaseAction: true,
@@ -462,9 +464,32 @@ void main() {
       ),
     );
 
-    expect(tester.getSemantics(find.byType(CupertinoSlider)), matchesSemantics(isSlider: true));
+    expect(
+      tester.getSemantics(find.byType(CupertinoSlider)),
+      matchesSemantics(
+        hasEnabledState: true,
+        isSlider: true,
+        value: '50%',
+        textDirection: TextDirection.ltr,
+      ),
+    );
 
     handle.dispose();
+  });
+
+  testWidgets('a disabled CupertinoSlider tells screen readers it is disabled', (
+    WidgetTester tester,
+  ) async {
+    final SemanticsHandle semantics = tester.ensureSemantics();
+    await tester.pumpWidget(
+      const CupertinoApp(home: Center(child: CupertinoSlider(value: 0.5, onChanged: null))),
+    );
+
+    expect(
+      tester.getSemantics(find.byType(CupertinoSlider)),
+      containsSemantics(isSlider: true, hasEnabledState: true, isEnabled: false, value: '50%'),
+    );
+    semantics.dispose();
   });
 
   testWidgets('Slider Semantics can be updated', (WidgetTester tester) async {
@@ -482,6 +507,8 @@ void main() {
     expect(
       tester.getSemantics(find.byType(CupertinoSlider)),
       matchesSemantics(
+        hasEnabledState: true,
+        isEnabled: true,
         isSlider: true,
         hasIncreaseAction: true,
         hasDecreaseAction: true,
@@ -505,6 +532,8 @@ void main() {
     expect(
       tester.getSemantics(find.byType(CupertinoSlider)),
       matchesSemantics(
+        hasEnabledState: true,
+        isEnabled: true,
         isSlider: true,
         hasIncreaseAction: true,
         hasDecreaseAction: true,

@@ -1,0 +1,3 @@
+changelog: |
+  - Exposes disabled state in semantics for `CupertinoSlider`.
+version: patch
