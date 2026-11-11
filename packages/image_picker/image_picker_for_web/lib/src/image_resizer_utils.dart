@@ -5,8 +5,6 @@
 import 'dart:math';
 import 'dart:ui';
 
-import 'package:flutter/material.dart';
-
 ///a function that checks if an image needs to be resized or not
 bool imageResizeNeeded(double? maxWidth, double? maxHeight, int? imageQuality) {
   return imageQuality != null
