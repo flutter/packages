@@ -58,12 +58,37 @@ extension type LegacyUserDefaultsApiSetup._(objc.ObjCObject object$)
     return LegacyUserDefaultsApiSetup.fromPointer($ret, retain: false, release: true);
   }
 
-  /// getInstanceWithName:
-  static LegacyUserDefaultsApiSetup? getInstanceWithName(objc.NSString name) {
-    final _$$ref = name.ref;
-    final $ret = _objc_msgSend_1sotr3r(
+  /// new
+  static LegacyUserDefaultsApiSetup new$() {
+    final $ret = _objc_msgSend_151sglz(_class_LegacyUserDefaultsApiSetup, _sel_new);
+    return LegacyUserDefaultsApiSetup.fromPointer($ret, retain: false, release: true);
+  }
+
+  /// Returns the engine key <code>instance</code> was registered with, or <code>Int64.min</code> if unknown.
+  static int pigeonEngineKeyOf(LegacyUserDefaultsApiSetup instance) {
+    final _$$ref = instance.ref;
+    return _objc_msgSend_1oj5o8z(
       _class_LegacyUserDefaultsApiSetup,
-      _sel_getInstanceWithName_,
+      _sel_pigeonEngineKeyOf_,
+      _$$ref.pointer,
+    );
+  }
+
+  /// Returns the instance generated Dart code should use for <code>name</code> (or the default
+  /// instance).
+  /// Prefers the most recent registration whose engine key is <code>engineId</code>, then
+  /// <code>affinityKey</code>, then the most recent registration. <code>Int64.min</code> means unknown.
+  static LegacyUserDefaultsApiSetup? pigeonResolveInstanceWithEngineId(
+    int engineId, {
+    required int affinityKey,
+    required objc.NSString name,
+  }) {
+    final _$$ref = name.ref;
+    final $ret = _objc_msgSend_6vqy4b(
+      _class_LegacyUserDefaultsApiSetup,
+      _sel_pigeonResolveInstanceWithEngineId_affinityKey_name_,
+      engineId,
+      affinityKey,
       _$$ref.pointer,
     );
     return $ret.address == 0
@@ -71,57 +96,49 @@ extension type LegacyUserDefaultsApiSetup._(objc.ObjCObject object$)
         : LegacyUserDefaultsApiSetup.fromPointer($ret, retain: true, release: true);
   }
 
-  /// new
-  static LegacyUserDefaultsApiSetup new$() {
-    final $ret = _objc_msgSend_151sglz(_class_LegacyUserDefaultsApiSetup, _sel_new);
-    return LegacyUserDefaultsApiSetup.fromPointer($ret, retain: false, release: true);
-  }
-
   /// Returns a new instance of LegacyUserDefaultsApiSetup constructed with the default `new` method.
   LegacyUserDefaultsApiSetup() : this.as(new$().object$);
 }
 
 extension LegacyUserDefaultsApiSetup$Methods on LegacyUserDefaultsApiSetup {
-  /// clearWithPrefix:allowList:wrappedError:
+  /// clearWithPrefix:pigeonVar_args:wrappedError:
   objc.NSNumber? clearWithPrefix(
     objc.NSString prefixArg, {
-    objc.NSArray? allowList,
+    required objc.NSData pigeonVar_args,
     required PigeonError wrappedError,
   }) {
     final _$$ref = object$.ref;
     final _$$ref$1 = prefixArg.ref;
-    final _$$ref$2 = allowList?.ref;
+    final _$$ref$2 = pigeonVar_args.ref;
     final _$$ref$3 = wrappedError.ref;
     final $ret = _objc_msgSend_11spmsz(
       _$$ref.pointer,
-      _sel_clearWithPrefix_allowList_wrappedError_,
+      _sel_clearWithPrefix_pigeonVar_args_wrappedError_,
       _$$ref$1.pointer,
-      _$$ref$2?.pointer ?? ffi.nullptr,
+      _$$ref$2.pointer,
       _$$ref$3.pointer,
     );
     return $ret.address == 0 ? null : objc.NSNumber.fromPointer($ret, retain: true, release: true);
   }
 
-  /// getAllWithPrefix:allowList:wrappedError:
-  objc.NSDictionary? getAllWithPrefix(
+  /// getAllWithPrefix:pigeonVar_args:wrappedError:
+  objc.NSData? getAllWithPrefix(
     objc.NSString prefixArg, {
-    objc.NSArray? allowList,
+    required objc.NSData pigeonVar_args,
     required PigeonError wrappedError,
   }) {
     final _$$ref = object$.ref;
     final _$$ref$1 = prefixArg.ref;
-    final _$$ref$2 = allowList?.ref;
+    final _$$ref$2 = pigeonVar_args.ref;
     final _$$ref$3 = wrappedError.ref;
     final $ret = _objc_msgSend_11spmsz(
       _$$ref.pointer,
-      _sel_getAllWithPrefix_allowList_wrappedError_,
+      _sel_getAllWithPrefix_pigeonVar_args_wrappedError_,
       _$$ref$1.pointer,
-      _$$ref$2?.pointer ?? ffi.nullptr,
+      _$$ref$2.pointer,
       _$$ref$3.pointer,
     );
-    return $ret.address == 0
-        ? null
-        : objc.NSDictionary.fromPointer($ret, retain: true, release: true);
+    return $ret.address == 0 ? null : objc.NSData.fromPointer($ret, retain: true, release: true);
   }
 
   /// init
@@ -185,19 +202,19 @@ extension LegacyUserDefaultsApiSetup$Methods on LegacyUserDefaultsApiSetup {
     );
   }
 
-  /// setValueWithKey:value:wrappedError:
+  /// setValueWithKey:pigeonVar_args:wrappedError:
   void setValueWithKey(
     objc.NSString keyArg, {
-    required objc.NSObject value,
+    required objc.NSData pigeonVar_args,
     required PigeonError wrappedError,
   }) {
     final _$$ref = object$.ref;
     final _$$ref$1 = keyArg.ref;
-    final _$$ref$2 = value.ref;
+    final _$$ref$2 = pigeonVar_args.ref;
     final _$$ref$3 = wrappedError.ref;
     _objc_msgSend_r8gdi7(
       _$$ref.pointer,
-      _sel_setValueWithKey_value_wrappedError_,
+      _sel_setValueWithKey_pigeonVar_args_wrappedError_,
       _$$ref$1.pointer,
       _$$ref$2.pointer,
       _$$ref$3.pointer,
@@ -650,23 +667,42 @@ extension type UserDefaultsApiSetup._(objc.ObjCObject object$)
     return UserDefaultsApiSetup.fromPointer($ret, retain: false, release: true);
   }
 
-  /// getInstanceWithName:
-  static UserDefaultsApiSetup? getInstanceWithName(objc.NSString name) {
-    final _$$ref = name.ref;
-    final $ret = _objc_msgSend_1sotr3r(
+  /// new
+  static UserDefaultsApiSetup new$() {
+    final $ret = _objc_msgSend_151sglz(_class_UserDefaultsApiSetup, _sel_new);
+    return UserDefaultsApiSetup.fromPointer($ret, retain: false, release: true);
+  }
+
+  /// Returns the engine key <code>instance</code> was registered with, or <code>Int64.min</code> if unknown.
+  static int pigeonEngineKeyOf(UserDefaultsApiSetup instance) {
+    final _$$ref = instance.ref;
+    return _objc_msgSend_1oj5o8z(
       _class_UserDefaultsApiSetup,
-      _sel_getInstanceWithName_,
+      _sel_pigeonEngineKeyOf_,
+      _$$ref.pointer,
+    );
+  }
+
+  /// Returns the instance generated Dart code should use for <code>name</code> (or the default
+  /// instance).
+  /// Prefers the most recent registration whose engine key is <code>engineId</code>, then
+  /// <code>affinityKey</code>, then the most recent registration. <code>Int64.min</code> means unknown.
+  static UserDefaultsApiSetup? pigeonResolveInstanceWithEngineId(
+    int engineId, {
+    required int affinityKey,
+    required objc.NSString name,
+  }) {
+    final _$$ref = name.ref;
+    final $ret = _objc_msgSend_6vqy4b(
+      _class_UserDefaultsApiSetup,
+      _sel_pigeonResolveInstanceWithEngineId_affinityKey_name_,
+      engineId,
+      affinityKey,
       _$$ref.pointer,
     );
     return $ret.address == 0
         ? null
         : UserDefaultsApiSetup.fromPointer($ret, retain: true, release: true);
-  }
-
-  /// new
-  static UserDefaultsApiSetup new$() {
-    final $ret = _objc_msgSend_151sglz(_class_UserDefaultsApiSetup, _sel_new);
-    return UserDefaultsApiSetup.fromPointer($ret, retain: false, release: true);
   }
 
   /// Returns a new instance of UserDefaultsApiSetup constructed with the default `new` method.
@@ -675,84 +711,70 @@ extension type UserDefaultsApiSetup._(objc.ObjCObject object$)
 
 extension UserDefaultsApiSetup$Methods on UserDefaultsApiSetup {
   /// Removes all properties from shared preferences data set with matching prefix.
-  void clearWithAllowList(
-    objc.NSArray? allowListArg, {
-    required SharedPreferencesPigeonOptionsBridge options,
-    required PigeonError wrappedError,
-  }) {
+  void clearWithPigeonVar_args(objc.NSData pigeonVar_args, {required PigeonError wrappedError}) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = allowListArg?.ref;
-    final _$$ref$2 = options.ref;
-    final _$$ref$3 = wrappedError.ref;
-    _objc_msgSend_r8gdi7(
+    final _$$ref$1 = pigeonVar_args.ref;
+    final _$$ref$2 = wrappedError.ref;
+    _objc_msgSend_pfv6jd(
       _$$ref.pointer,
-      _sel_clearWithAllowList_options_wrappedError_,
-      _$$ref$1?.pointer ?? ffi.nullptr,
+      _sel_clearWithPigeonVar_args_wrappedError_,
+      _$$ref$1.pointer,
       _$$ref$2.pointer,
-      _$$ref$3.pointer,
     );
   }
 
   /// Gets all properties from shared preferences data set with matching prefix.
-  objc.NSDictionary? getAllWithAllowList(
-    objc.NSArray? allowListArg, {
-    required SharedPreferencesPigeonOptionsBridge options,
+  objc.NSData? getAllWithPigeonVar_args(
+    objc.NSData pigeonVar_args, {
     required PigeonError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = allowListArg?.ref;
-    final _$$ref$2 = options.ref;
-    final _$$ref$3 = wrappedError.ref;
-    final $ret = _objc_msgSend_11spmsz(
+    final _$$ref$1 = pigeonVar_args.ref;
+    final _$$ref$2 = wrappedError.ref;
+    final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
-      _sel_getAllWithAllowList_options_wrappedError_,
-      _$$ref$1?.pointer ?? ffi.nullptr,
+      _sel_getAllWithPigeonVar_args_wrappedError_,
+      _$$ref$1.pointer,
       _$$ref$2.pointer,
-      _$$ref$3.pointer,
     );
-    return $ret.address == 0
-        ? null
-        : objc.NSDictionary.fromPointer($ret, retain: true, release: true);
+    return $ret.address == 0 ? null : objc.NSData.fromPointer($ret, retain: true, release: true);
   }
 
   /// Gets all properties from shared preferences data set with matching prefix.
-  objc.NSArray? getKeysWithAllowList(
-    objc.NSArray? allowListArg, {
-    required SharedPreferencesPigeonOptionsBridge options,
+  objc.NSData? getKeysWithPigeonVar_args(
+    objc.NSData pigeonVar_args, {
     required PigeonError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = allowListArg?.ref;
-    final _$$ref$2 = options.ref;
-    final _$$ref$3 = wrappedError.ref;
-    final $ret = _objc_msgSend_11spmsz(
+    final _$$ref$1 = pigeonVar_args.ref;
+    final _$$ref$2 = wrappedError.ref;
+    final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
-      _sel_getKeysWithAllowList_options_wrappedError_,
-      _$$ref$1?.pointer ?? ffi.nullptr,
+      _sel_getKeysWithPigeonVar_args_wrappedError_,
+      _$$ref$1.pointer,
       _$$ref$2.pointer,
-      _$$ref$3.pointer,
     );
-    return $ret.address == 0 ? null : objc.NSArray.fromPointer($ret, retain: true, release: true);
+    return $ret.address == 0 ? null : objc.NSData.fromPointer($ret, retain: true, release: true);
   }
 
   /// Gets individual value stored with [key], if any.
-  objc.NSObject? getValueWithKey(
+  objc.NSData? getValueWithKey(
     objc.NSString keyArg, {
-    required SharedPreferencesPigeonOptionsBridge options,
+    required objc.NSData pigeonVar_args,
     required PigeonError wrappedError,
   }) {
     final _$$ref = object$.ref;
     final _$$ref$1 = keyArg.ref;
-    final _$$ref$2 = options.ref;
+    final _$$ref$2 = pigeonVar_args.ref;
     final _$$ref$3 = wrappedError.ref;
     final $ret = _objc_msgSend_11spmsz(
       _$$ref.pointer,
-      _sel_getValueWithKey_options_wrappedError_,
+      _sel_getValueWithKey_pigeonVar_args_wrappedError_,
       _$$ref$1.pointer,
       _$$ref$2.pointer,
       _$$ref$3.pointer,
     );
-    return $ret.address == 0 ? null : objc.NSObject.fromPointer($ret, retain: true, release: true);
+    return $ret.address == 0 ? null : objc.NSData.fromPointer($ret, retain: true, release: true);
   }
 
   /// init
@@ -770,22 +792,19 @@ extension UserDefaultsApiSetup$Methods on UserDefaultsApiSetup {
   /// Adds property to shared preferences data set of type String.
   void setWithKey(
     objc.NSString keyArg, {
-    required objc.NSObject value,
-    required SharedPreferencesPigeonOptionsBridge options,
+    required objc.NSData pigeonVar_args,
     required PigeonError wrappedError,
   }) {
     final _$$ref = object$.ref;
     final _$$ref$1 = keyArg.ref;
-    final _$$ref$2 = value.ref;
-    final _$$ref$3 = options.ref;
-    final _$$ref$4 = wrappedError.ref;
-    _objc_msgSend_mlcr8l(
+    final _$$ref$2 = pigeonVar_args.ref;
+    final _$$ref$3 = wrappedError.ref;
+    _objc_msgSend_r8gdi7(
       _$$ref.pointer,
-      _sel_setWithKey_value_options_wrappedError_,
+      _sel_setWithKey_pigeonVar_args_wrappedError_,
       _$$ref$1.pointer,
       _$$ref$2.pointer,
       _$$ref$3.pointer,
-      _$$ref$4.pointer,
     );
   }
 }
@@ -894,6 +913,25 @@ final _objc_msgSend_151sglz = objc.msgSendPointer
         ffi.Pointer<objc.ObjCSelector>,
       )
     >();
+final _objc_msgSend_15qeuct = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Pointer<objc.ObjCObjectImpl> Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+        )
+      >
+    >()
+    .asFunction<
+      ffi.Pointer<objc.ObjCObjectImpl> Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+      )
+    >();
 final _objc_msgSend_19nvye5 = objc.msgSendPointer
     .cast<
       ffi.NativeFunction<
@@ -935,6 +973,23 @@ final _objc_msgSend_1hz7y9r = objc.msgSendPointer
       >
     >()
     .asFunction<int Function(ffi.Pointer<objc.ObjCObjectImpl>, ffi.Pointer<objc.ObjCSelector>)>();
+final _objc_msgSend_1oj5o8z = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Int64 Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+        )
+      >
+    >()
+    .asFunction<
+      int Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+      )
+    >();
 final _objc_msgSend_1sotr3r = objc.msgSendPointer
     .cast<
       ffi.NativeFunction<
@@ -965,6 +1020,27 @@ final _objc_msgSend_4sp4xj = objc.msgSendPointer
     .asFunction<
       void Function(ffi.Pointer<objc.ObjCObjectImpl>, ffi.Pointer<objc.ObjCSelector>, int)
     >();
+final _objc_msgSend_6vqy4b = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Pointer<objc.ObjCObjectImpl> Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Int64,
+          ffi.Int64,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+        )
+      >
+    >()
+    .asFunction<
+      ffi.Pointer<objc.ObjCObjectImpl> Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+        int,
+        int,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+      )
+    >();
 final _objc_msgSend_9slupp = objc.msgSendPointer
     .cast<
       ffi.NativeFunction<
@@ -982,29 +1058,6 @@ final _objc_msgSend_9slupp = objc.msgSendPointer
         ffi.Pointer<objc.ObjCSelector>,
         ffi.Pointer<objc.ObjCObjectImpl>,
         int,
-      )
-    >();
-final _objc_msgSend_mlcr8l = objc.msgSendPointer
-    .cast<
-      ffi.NativeFunction<
-        ffi.Void Function(
-          ffi.Pointer<objc.ObjCObjectImpl>,
-          ffi.Pointer<objc.ObjCSelector>,
-          ffi.Pointer<objc.ObjCObjectImpl>,
-          ffi.Pointer<objc.ObjCObjectImpl>,
-          ffi.Pointer<objc.ObjCObjectImpl>,
-          ffi.Pointer<objc.ObjCObjectImpl>,
-        )
-      >
-    >()
-    .asFunction<
-      void Function(
-        ffi.Pointer<objc.ObjCObjectImpl>,
-        ffi.Pointer<objc.ObjCSelector>,
-        ffi.Pointer<objc.ObjCObjectImpl>,
-        ffi.Pointer<objc.ObjCObjectImpl>,
-        ffi.Pointer<objc.ObjCObjectImpl>,
-        ffi.Pointer<objc.ObjCObjectImpl>,
       )
     >();
 final _objc_msgSend_pfv6jd = objc.msgSendPointer
@@ -1115,28 +1168,27 @@ final _objc_msgSend_xw2lbc = objc.msgSendPointer
     .asFunction<int Function(ffi.Pointer<objc.ObjCObjectImpl>, ffi.Pointer<objc.ObjCSelector>)>();
 late final _sel_alloc = objc.registerName("alloc");
 late final _sel_allocWithZone_ = objc.registerName("allocWithZone:");
-late final _sel_clearWithAllowList_options_wrappedError_ = objc.registerName(
-  "clearWithAllowList:options:wrappedError:",
+late final _sel_clearWithPigeonVar_args_wrappedError_ = objc.registerName(
+  "clearWithPigeonVar_args:wrappedError:",
 );
-late final _sel_clearWithPrefix_allowList_wrappedError_ = objc.registerName(
-  "clearWithPrefix:allowList:wrappedError:",
+late final _sel_clearWithPrefix_pigeonVar_args_wrappedError_ = objc.registerName(
+  "clearWithPrefix:pigeonVar_args:wrappedError:",
 );
 late final _sel_code = objc.registerName("code");
 late final _sel_copyWithZone_ = objc.registerName("copyWithZone:");
 late final _sel_data = objc.registerName("data");
 late final _sel_details = objc.registerName("details");
-late final _sel_getAllWithAllowList_options_wrappedError_ = objc.registerName(
-  "getAllWithAllowList:options:wrappedError:",
+late final _sel_getAllWithPigeonVar_args_wrappedError_ = objc.registerName(
+  "getAllWithPigeonVar_args:wrappedError:",
 );
-late final _sel_getAllWithPrefix_allowList_wrappedError_ = objc.registerName(
-  "getAllWithPrefix:allowList:wrappedError:",
+late final _sel_getAllWithPrefix_pigeonVar_args_wrappedError_ = objc.registerName(
+  "getAllWithPrefix:pigeonVar_args:wrappedError:",
 );
-late final _sel_getInstanceWithName_ = objc.registerName("getInstanceWithName:");
-late final _sel_getKeysWithAllowList_options_wrappedError_ = objc.registerName(
-  "getKeysWithAllowList:options:wrappedError:",
+late final _sel_getKeysWithPigeonVar_args_wrappedError_ = objc.registerName(
+  "getKeysWithPigeonVar_args:wrappedError:",
 );
-late final _sel_getValueWithKey_options_wrappedError_ = objc.registerName(
-  "getValueWithKey:options:wrappedError:",
+late final _sel_getValueWithKey_pigeonVar_args_wrappedError_ = objc.registerName(
+  "getValueWithKey:pigeonVar_args:wrappedError:",
 );
 late final _sel_hash = objc.registerName("hash");
 late final _sel_init = objc.registerName("init");
@@ -1149,6 +1201,10 @@ late final _sel_isKindOfClass_ = objc.registerName("isKindOfClass:");
 late final _sel_message = objc.registerName("message");
 late final _sel_new = objc.registerName("new");
 late final _sel_number = objc.registerName("number");
+late final _sel_pigeonEngineKeyOf_ = objc.registerName("pigeonEngineKeyOf:");
+late final _sel_pigeonResolveInstanceWithEngineId_affinityKey_name_ = objc.registerName(
+  "pigeonResolveInstanceWithEngineId:affinityKey:name:",
+);
 late final _sel_removeWithKey_wrappedError_ = objc.registerName("removeWithKey:wrappedError:");
 late final _sel_setBoolWithKey_value_wrappedError_ = objc.registerName(
   "setBoolWithKey:value:wrappedError:",
@@ -1162,11 +1218,11 @@ late final _sel_setMessage_ = objc.registerName("setMessage:");
 late final _sel_setNumber_ = objc.registerName("setNumber:");
 late final _sel_setSuiteName_ = objc.registerName("setSuiteName:");
 late final _sel_setType_ = objc.registerName("setType:");
-late final _sel_setValueWithKey_value_wrappedError_ = objc.registerName(
-  "setValueWithKey:value:wrappedError:",
+late final _sel_setValueWithKey_pigeonVar_args_wrappedError_ = objc.registerName(
+  "setValueWithKey:pigeonVar_args:wrappedError:",
 );
-late final _sel_setWithKey_value_options_wrappedError_ = objc.registerName(
-  "setWithKey:value:options:wrappedError:",
+late final _sel_setWithKey_pigeonVar_args_wrappedError_ = objc.registerName(
+  "setWithKey:pigeonVar_args:wrappedError:",
 );
 late final _sel_suiteName = objc.registerName("suiteName");
 late final _sel_type = objc.registerName("type");

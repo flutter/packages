@@ -393,6 +393,16 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
     _paints.add(paint);
   }
 
+  /// Sets an image blur filter on the paint with [paintId].
+  @override
+  void onPaintBlur(int paintId, double sigmaX, double sigmaY) {
+    final clampedX = sigmaX > 0.0 ? sigmaX : 0.0;
+    final clampedY = sigmaY > 0.0 ? sigmaY : 0.0;
+    if (clampedX > 0.0 || clampedY > 0.0) {
+      _paints[paintId].imageFilter = ImageFilter.blur(sigmaX: clampedX, sigmaY: clampedY);
+    }
+  }
+
   @override
   void onPathClose() {
     _currentPath!.close();
@@ -688,7 +698,12 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
       if (patternId != null) {
         paint.shader = _patterns[patternId]!.shader;
       }
-      final builder = ParagraphBuilder(ParagraphStyle(textDirection: _textDirection));
+      final builder = ParagraphBuilder(
+        // Positioning (x, text-anchor) is done by the listener, and the paragraph
+        // is laid out at infinite width: start alignment under RTL would place
+        // the line at +infinity.
+        ParagraphStyle(textDirection: _textDirection, textAlign: TextAlign.left),
+      );
       builder.pushStyle(
         TextStyle(
           locale: _locale,

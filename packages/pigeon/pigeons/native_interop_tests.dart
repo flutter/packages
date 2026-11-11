@@ -1533,8 +1533,44 @@ abstract class NativeInteropHostIntegrationCoreApi {
   /// Registers and immediately deregisters a Host API under [name].
   void registerAndImmediatelyDeregisterHostApi(String name);
 
+  /// Registers a separate Host API instance under [name] for detached-handle testing.
+  void registerNamedHostApi(String name);
+
+  /// Deregisters the Host API instance previously registered by [registerNamedHostApi] under [name].
+  void deregisterNamedHostApi(String name);
+
   /// Tests that calling a deregistered Flutter API under [name] fails / returns null.
   bool testCallDeregisteredFlutterApi(String name);
+
+  /// Spawns secondary engines, destroys one out-of-order, executes a live Dart
+  /// entrypoint on another (where supported by the embedder), and tears it down
+  /// while keeping the primary engine registration intact.
+  @async
+  bool testSecondaryEngineDartExecution();
+
+  /// Returns whether the secondary engine's Host API registration is ready for
+  /// the secondary Dart isolate to invoke.
+  bool isSecondaryEngineRegistrationReady();
+
+  /// Reports whether Native Interop Host API calls from a secondary engine's
+  /// Dart isolate succeeded.
+  void reportSecondaryEngineCheck(bool success);
+
+  /// Signals that the concurrent background isolate resolved a fresh handle
+  /// while the secondary engine was registered.
+  void notifyConcurrentIsolateResolved();
+
+  /// Returns the engine key that native code stored for this plugin's
+  /// default Host API registration.
+  int registeredEngineKey();
+
+  /// Returns a label unique to the Host API instance that handled the call, so
+  /// tests can check which engine's registration a handle resolved to.
+  String engineLabel();
+
+  /// Returns whether this platform's plugin binding / registrar exposes an
+  /// engine identifier, so registrations should use exact engine keys.
+  bool pluginEngineIdentifierIsAvailable();
 }
 
 /// The core interface that the Dart platform_test code implements for host
@@ -2071,6 +2107,16 @@ abstract class NativeInteropReservedNamesHostApi {
   @async
   String getValueAsync();
 
+  /// Collides with `<Api>Registrar.register` in Kotlin bytecode.
+  String register(String value);
+
+  /// Collides with `<Api>Registrar.unregister` in Kotlin bytecode.
+  String unregister(String value);
+
+  /// JNIgen turns this into an instance getter `getInstance`, colliding with
+  /// `<Api>Registrar.getInstance`.
+  String getGetInstance();
+
   /// Returns the passed object, to test serialization and deserialization.
   NativeInteropReservedNames echoReservedNames(NativeInteropReservedNames names);
 
@@ -2088,6 +2134,12 @@ abstract class NativeInteropReservedNamesHostApi {
 
   /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.getReference].
   String callFlutterGetReference();
+
+  /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.register].
+  String callFlutterRegister(String value);
+
+  /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.dartApi].
+  String callFlutterDartApi();
 }
 
 /// The Flutter API counterpart of [NativeInteropReservedNamesHostApi].
@@ -2110,4 +2162,49 @@ abstract class NativeInteropReservedNamesFlutterApi {
 
   /// JNIgen doesn't turn interface methods into properties.
   String getReference();
+
+  /// Previously collided with internal Dart JNI registrar `register` member.
+  String register(String value);
+
+  /// Previously collided with internal Dart JNI registrar `dartApi` field.
+  String dartApi();
+}
+
+/// A sealed class passed in the call's buffer with the hybrid transport.
+sealed class NativeInteropShape {}
+
+class NativeInteropCircle extends NativeInteropShape {
+  NativeInteropCircle({required this.radius});
+
+  double radius;
+}
+
+class NativeInteropSquare extends NativeInteropShape {
+  NativeInteropSquare({required this.side, this.label});
+
+  double side;
+  String? label;
+}
+
+/// Echoes [NativeInteropShape] sealed class hierarchies.
+@HostApi()
+abstract class NativeInteropSealedClassHostApi {
+  NativeInteropShape echoShape(NativeInteropShape shape);
+
+  NativeInteropShape? echoNullableShape(NativeInteropShape? shape);
+
+  List<NativeInteropShape> echoShapeList(List<NativeInteropShape> shapes);
+
+  Map<String, NativeInteropShape> echoShapeMap(Map<String, NativeInteropShape> shapes);
+
+  @async
+  NativeInteropShape echoAsyncShape(NativeInteropShape shape);
+
+  NativeInteropShape callFlutterEchoShape(NativeInteropShape shape);
+}
+
+/// The Flutter API counterpart of [NativeInteropSealedClassHostApi].
+@FlutterApi()
+abstract class NativeInteropSealedClassFlutterApi {
+  NativeInteropShape echoShape(NativeInteropShape shape);
 }

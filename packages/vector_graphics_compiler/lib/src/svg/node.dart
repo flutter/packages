@@ -11,6 +11,7 @@ import '../geometry/matrix.dart';
 import '../geometry/path.dart';
 import '../image/image_info.dart';
 import '../paint.dart';
+import 'constants.dart';
 import 'parser.dart' show SvgAttributes;
 import 'visitor.dart';
 
@@ -197,21 +198,29 @@ class ParentNode extends AttributedNode {
 
   @override
   AttributedNode applyAttributes(SvgAttributes newAttributes, {bool replace = false}) {
-    return ParentNode(attributes.applyParent(newAttributes), precalculatedTransform: transform)
-      .._children.addAll(_children);
+    return ParentNode(
+      attributes.applyParent(
+        newAttributes,
+        filterIdOverride: replace ? (newAttributes.filterId ?? attributes.filterId) : null,
+      ),
+      precalculatedTransform: transform,
+    ).._children.addAll(_children);
   }
 
   /// Create the paint required to draw a save layer, or `null` if none is
   /// required.
-  Paint? createLayerPaint() {
+  Paint? createLayerPaint({double? filterBlurX, double? filterBlurY}) {
     final double? layerOpacity = attributes.fill?.opacity ?? attributes.opacity;
     final bool needsLayer =
         (attributes.blendMode != null) ||
+        (filterBlurX != null || filterBlurY != null) ||
         (layerOpacity != null && layerOpacity != 1.0 && layerOpacity != 0.0);
 
     if (needsLayer) {
       return Paint(
         blendMode: attributes.blendMode,
+        filterBlurX: filterBlurX,
+        filterBlurY: filterBlurY,
         fill:
             attributes.fill?.toFill(Rect.largest, transform) ??
             Fill(color: Color.opaqueBlack.withOpacity(layerOpacity ?? 1.0)),
@@ -241,10 +250,11 @@ class TextPositionNode extends ParentNode {
   TextPosition computeTextPosition(Rect bounds, AffineMatrix transform, {TextPosition? parent}) {
     final AffineMatrix computedTransform = concatTransform(transform);
 
-    double? x = attributes.x?.calculate(bounds.width);
-    double? y = attributes.y?.calculate(bounds.height);
-    double? dx = attributes.dx?.calculate(bounds.width);
-    double? dy = attributes.dy?.calculate(bounds.height);
+    final double fontSize = attributes.fontSize ?? kDefaultFontSize;
+    double? x = attributes.x?.calculate(bounds.width, fontSize: fontSize);
+    double? y = attributes.y?.calculate(bounds.height, fontSize: fontSize);
+    double? dx = attributes.dx?.calculate(bounds.width, fontSize: fontSize);
+    double? dy = attributes.dy?.calculate(bounds.height, fontSize: fontSize);
 
     final bool hasXY = x != null && y != null;
     final bool hasDxDy = dx != null && dy != null;
@@ -295,8 +305,13 @@ class TextPositionNode extends ParentNode {
 
   @override
   AttributedNode applyAttributes(SvgAttributes newAttributes, {bool replace = false}) {
-    return TextPositionNode(attributes.applyParent(newAttributes), reset: reset)
-      .._children.addAll(_children);
+    return TextPositionNode(
+      attributes.applyParent(
+        newAttributes,
+        filterIdOverride: replace ? (newAttributes.filterId ?? attributes.filterId) : null,
+      ),
+      reset: reset,
+    ).._children.addAll(_children);
   }
 }
 
@@ -431,7 +446,11 @@ class PathNode extends AttributedNode {
     return PathNode(
       path,
       replace
-          ? newAttributes.applyParent(attributes, transformOverride: transform)
+          ? newAttributes.applyParent(
+              attributes,
+              transformOverride: transform,
+              filterIdOverride: newAttributes.filterId ?? attributes.filterId,
+            )
           : attributes.applyParent(newAttributes),
     );
   }
@@ -509,7 +528,7 @@ class TextNode extends AttributedNode {
       attributes.textAnchorMultiplier ?? 0,
       attributes.fontFamily,
       attributes.fontWeight ?? normalFontWeight,
-      attributes.fontSize ?? 16, // default in many browsers
+      attributes.fontSize ?? kDefaultFontSize,
       attributes.textDecoration ?? TextDecoration.none,
       attributes.textDecorationStyle ?? TextDecorationStyle.solid,
       attributes.textDecorationColor ?? Color.opaqueBlack,

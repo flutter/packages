@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding
+import io.flutter.plugin.common.BinaryMessenger
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
@@ -31,12 +32,39 @@ class LegacySharedPreferencesTest {
     flutterPluginBinding = Mockito.mock(FlutterPluginBinding::class.java)
 
     Mockito.`when`(flutterPluginBinding.applicationContext).thenReturn(context)
+    Mockito.`when`(flutterPluginBinding.binaryMessenger)
+        .thenReturn(Mockito.mock(BinaryMessenger::class.java))
     Mockito.`when`(
             context.getSharedPreferences(ArgumentMatchers.anyString(), ArgumentMatchers.anyInt()))
         .thenReturn(sharedPrefs)
 
     plugin = LegacySharedPreferencesPlugin(ListEncoder())
     plugin.onAttachedToEngine(flutterPluginBinding)
+  }
+
+  @Test
+  fun onAttachedToEngine_doesNotEagerlyInitializePreferences(): Unit = runBlocking {
+    val mockContext = Mockito.mock(Context::class.java)
+    val binding = Mockito.mock(FlutterPluginBinding::class.java)
+    Mockito.`when`(binding.applicationContext).thenReturn(mockContext)
+    Mockito.`when`(binding.binaryMessenger).thenReturn(Mockito.mock(BinaryMessenger::class.java))
+    Mockito.`when`(
+            mockContext.getSharedPreferences(
+                ArgumentMatchers.anyString(), ArgumentMatchers.anyInt()))
+        .thenReturn(FakeSharedPreferences())
+
+    val testPlugin = LegacySharedPreferencesPlugin(ListEncoder())
+    testPlugin.onAttachedToEngine(binding)
+
+    // SharedPreferences should not be fetched during onAttachedToEngine to avoid main-thread disk
+    // I/O.
+    Mockito.verify(mockContext, Mockito.never())
+        .getSharedPreferences(ArgumentMatchers.anyString(), ArgumentMatchers.anyInt())
+
+    // First call to any API method lazily initializes preferences.
+    testPlugin.getAll("", null)
+    Mockito.verify(mockContext, Mockito.times(1))
+        .getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
   }
 
   @Test

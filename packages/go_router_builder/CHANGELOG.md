@@ -1,3 +1,7 @@
+## 4.5.3
+
+* Widens `package:build` dependency constraint to `>=3.0.0 <6.0.0`.
+
 ## 4.5.2
 
 - Adopts shared analyzer helpers from `package:source_helper` `^1.4.0`.
