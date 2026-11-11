@@ -1,7 +1,3 @@
-## NEXT
-
-* Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
-
 ## 0.3.0+18
 
 * Fixes unit test compilation when the Android build uses AGP's built-in Kotlin support.
