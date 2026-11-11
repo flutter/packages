@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
+
 ## 1.0.34
 
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.

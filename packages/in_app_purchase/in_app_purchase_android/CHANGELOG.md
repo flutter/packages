@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
+
 ## 0.5.5
 
 * Updates Google Play Billing Library from 8.0.0 to 9.1.0.

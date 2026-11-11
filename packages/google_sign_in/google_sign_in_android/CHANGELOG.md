@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
+
 ## 7.2.19
 
 * Renames keep.xml to google_sign_in_keep.xml to avoid collisions with app-level keep rules during resource shrinking.
