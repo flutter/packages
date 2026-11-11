@@ -273,6 +273,53 @@ final class InAppPurchase2PluginTests: XCTestCase {
     XCTAssert(jsonRepresentationString.localizedStandardContains("storefront\":\"USA"))
   }
 
+  func testRefundedTransactionHasRevocationInfo() async throws {
+    let purchaseExpectation = self.expectation(description: "Purchase request should succeed")
+    let purchaseUpdateExpectation = self.expectation(
+      description: "Purchase transaction update should be received")
+
+    callback.onUpdateExpectation = purchaseUpdateExpectation
+    plugin.purchase(id: "consumable", options: nil) { result in
+      switch result {
+      case .success:
+        purchaseExpectation.fulfill()
+      case .failure(let error):
+        XCTFail("Purchase should NOT fail. Failed with \(error)")
+        purchaseExpectation.fulfill()
+        purchaseUpdateExpectation.fulfill()
+      }
+    }
+
+    await fulfillment(
+      of: [purchaseExpectation, purchaseUpdateExpectation], timeout: purchaseTimeout)
+
+    guard let transactionId = session.allTransactions().first?.identifier else {
+      XCTFail("Purchase did not create a transaction.")
+      return
+    }
+
+    // The refund is delivered through Transaction.updates, which the plugin forwards to the callback.
+    let refundUpdateExpectation = self.expectation(
+      description: "Refund transaction update should be received")
+    callback.onUpdateExpectation = refundUpdateExpectation
+    try session.refundTransaction(identifier: transactionId)
+    await fulfillment(of: [refundUpdateExpectation], timeout: purchaseTimeout)
+
+    guard let message = callback.lastUpdate.first else {
+      XCTFail("Refund update did not contain a transaction.")
+      return
+    }
+    guard let transaction = await plugin.fetchTransaction(by: UInt64(transactionId)) else {
+      XCTFail("Transaction does not exist.")
+      return
+    }
+
+    XCTAssertEqual(message.id, Int64(transactionId))
+    XCTAssertNotNil(message.revocationDate)
+    XCTAssertEqual(message.revocationDate, transaction.revocationDate?.timeIntervalSince1970)
+    XCTAssertEqual(message.revocationReason, transaction.revocationReason?.convertToPigeon)
+  }
+
   func testSuccessfulPurchase() async throws {
     let expectation = self.expectation(description: "Purchase request should succeed")
     plugin.purchase(id: "consumable", options: nil) { result in
