@@ -95,9 +95,8 @@ class TreeRowBuilderDelegate extends TwoDimensionalChildBuilderDelegate with Tre
     required int rowCount,
     super.addAutomaticKeepAlives,
     required TwoDimensionalIndexedWidgetBuilder nodeBuilder,
-    required TreeVicinityToRowBuilder rowBuilder,
+    required this._rowBuilder,
   }) : assert(rowCount >= 0),
-       _rowBuilder = rowBuilder,
        super(
          builder: nodeBuilder,
          // No maxXIndex, since we do not know the max depth.
