@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding
+import io.flutter.plugin.common.BinaryMessenger
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
@@ -31,6 +32,8 @@ class LegacySharedPreferencesTest {
     flutterPluginBinding = Mockito.mock(FlutterPluginBinding::class.java)
 
     Mockito.`when`(flutterPluginBinding.applicationContext).thenReturn(context)
+    Mockito.`when`(flutterPluginBinding.binaryMessenger)
+        .thenReturn(Mockito.mock(BinaryMessenger::class.java))
     Mockito.`when`(
             context.getSharedPreferences(ArgumentMatchers.anyString(), ArgumentMatchers.anyInt()))
         .thenReturn(sharedPrefs)
@@ -44,6 +47,7 @@ class LegacySharedPreferencesTest {
     val mockContext = Mockito.mock(Context::class.java)
     val binding = Mockito.mock(FlutterPluginBinding::class.java)
     Mockito.`when`(binding.applicationContext).thenReturn(mockContext)
+    Mockito.`when`(binding.binaryMessenger).thenReturn(Mockito.mock(BinaryMessenger::class.java))
     Mockito.`when`(
             mockContext.getSharedPreferences(
                 ArgumentMatchers.anyString(), ArgumentMatchers.anyInt()))
