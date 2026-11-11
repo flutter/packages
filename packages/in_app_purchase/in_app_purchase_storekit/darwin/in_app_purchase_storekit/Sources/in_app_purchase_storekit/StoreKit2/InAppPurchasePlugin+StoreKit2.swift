@@ -310,7 +310,7 @@ extension InAppPurchasePlugin: InAppPurchase2API {
       guard let self = self else { return }
       do {
         var restoredTransactions: [SK2TransactionMessage] = []
-        var unverifiedPurchases: [UInt64: (receipt: String, error: Error?)] = [:]
+        var unverifiedTransactionIds: [String] = []
         for await completedPurchase in Transaction.currentEntitlements {
           switch completedPurchase {
           case .verified(let purchase):
@@ -320,21 +320,19 @@ extension InAppPurchasePlugin: InAppPurchase2API {
                 status: .restored
               )
             )
-          case .unverified(let failedPurchase, let error):
-            unverifiedPurchases[failedPurchase.id] = (
-              receipt: completedPurchase.jwsRepresentation, error: error
-            )
+          case .unverified(let failedPurchase, _):
+            unverifiedTransactionIds.append(String(failedPurchase.id))
           }
         }
         self.sendTransactionUpdates(restoredTransactions)
-        if !unverifiedPurchases.isEmpty {
+        if !unverifiedTransactionIds.isEmpty {
           completion(
             .failure(
               PigeonError(
                 code: "storekit2_restore_failed",
                 message:
                   "This purchase could not be restored.",
-                details: unverifiedPurchases)))
+                details: unverifiedTransactionIds)))
           return
         }
         completion(.success(Void()))

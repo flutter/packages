@@ -7,6 +7,12 @@ import XCTest
 
 @testable import in_app_purchase_storekit
 
+#if os(iOS)
+  import Flutter
+#elseif os(macOS)
+  import FlutterMacOS
+#endif
+
 final class FakeIAP2Callback: InAppPurchase2CallbackAPIProtocol {
 
   public var lastUpdate: [in_app_purchase_storekit.SK2TransactionMessage] = []
@@ -499,6 +505,35 @@ final class InAppPurchase2PluginTests: XCTestCase {
 
     XCTAssert(callback.lastUpdate.count == 1)
     XCTAssert(callback.lastUpdate.first?.status == .restored)
+  }
+
+  @available(iOS 17.0, macOS 14.0, *)
+  func testRestoreUnverifiedPurchaseReturnsEncodableError() async throws {
+    let transaction = try await session.buyProduct(identifier: "subscription_silver")
+    try await session.setSimulatedError(.verification(.invalidSignature), forAPI: .verification)
+
+    let restoreExpectation = expectation(description: "Restore should return a verification error")
+    var restoreError: PigeonError?
+    plugin.restorePurchases { result in
+      switch result {
+      case .success:
+        XCTFail("Restoring an unverified purchase should fail.")
+      case .failure(let error):
+        restoreError = error as? PigeonError
+      }
+      restoreExpectation.fulfill()
+    }
+    await fulfillment(of: [restoreExpectation], timeout: purchaseTimeout)
+
+    let error = try XCTUnwrap(restoreError)
+    XCTAssertEqual(error.code, "storekit2_restore_failed")
+    let details = try XCTUnwrap(error.details as? [String])
+    XCTAssertEqual(details, [String(transaction.id)])
+
+    let codec = FlutterStandardMessageCodec.sharedInstance()
+    let encodedError = try XCTUnwrap(codec.encode([error.code, error.message, error.details]))
+    let decodedError = try XCTUnwrap(codec.decode(encodedError) as? [Any])
+    XCTAssertEqual(decodedError[2] as? [String], details)
   }
 
   func testRestoreMultipleProductsEmitsSingleBatchedUpdate() async throws {
