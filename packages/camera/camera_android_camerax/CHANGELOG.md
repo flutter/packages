@@ -1,3 +1,9 @@
+## 0.7.6+3
+
+* Keeps `ResolutionPreset.max` preferring higher resolution for still image
+  capture while zero-shutter-lag is enabled but has no effect because the flash
+  mode is on or auto.
+
 ## 0.7.6+2
 
 * Fixes zero-shutter-lag having no effect with `ResolutionPreset.max`.

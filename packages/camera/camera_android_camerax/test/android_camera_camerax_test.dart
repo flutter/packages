@@ -4326,6 +4326,120 @@ void main() {
     },
   );
 
+  /// Creates a camera with [ResolutionPreset.max] on which zero-shutter-lag is
+  /// supported, enabling zero-shutter-lag if [zeroShutterLagEnabled].
+  Future<(AndroidCameraCameraX, MockProcessCameraProvider)>
+  createMaxPresetCameraWithZeroShutterLag({bool zeroShutterLagEnabled = true}) async {
+    final camera = AndroidCameraCameraX();
+    const testCameraDescription = CameraDescription(
+      name: 'cameraName',
+      lensDirection: CameraLensDirection.back,
+      sensorOrientation: 90,
+    );
+    final mockCamera = MockCamera();
+    final mockProcessCameraProvider = MockProcessCameraProvider();
+    final mockCameraInfo = MockCameraInfo();
+
+    setUpOverridesForTestingUseCaseConfiguration(mockProcessCameraProvider);
+    when(mockProcessCameraProvider.bindToLifecycle(any, any)).thenAnswer((_) async => mockCamera);
+    when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
+    when(mockCameraInfo.getCameraState()).thenAnswer((_) async => MockLiveCameraState());
+    when(mockCameraInfo.isZslSupported()).thenAnswer((_) async => true);
+
+    final int cameraId = await camera.createCamera(testCameraDescription, ResolutionPreset.max);
+    camera.cameraInfo = mockCameraInfo;
+    camera.cameraControl = MockCameraControl();
+    if (zeroShutterLagEnabled) {
+      await camera.setZeroShutterLagEnabled(cameraId, true);
+    }
+    return (camera, mockProcessCameraProvider);
+  }
+
+  test(
+    'setFlashMode with max preset and zero-shutter-lag enabled prefers higher resolution for ImageCapture only while the flash mode is not off',
+    () async {
+      final (AndroidCameraCameraX camera, _) = await createMaxPresetCameraWithZeroShutterLag();
+      expect(camera.imageCapture!.resolutionSelector!.allowedResolutionMode, isNull);
+
+      await camera.setFlashMode(0, FlashMode.auto);
+      expect(
+        camera.imageCapture!.resolutionSelector!.allowedResolutionMode,
+        ResolutionSelectorAllowedResolutionMode.preferHigherResolutionOverCaptureRate,
+      );
+
+      final ImageCapture imageCaptureWithFlash = camera.imageCapture!;
+      await camera.setFlashMode(0, FlashMode.always);
+      expect(camera.imageCapture, same(imageCaptureWithFlash));
+
+      await camera.setFlashMode(0, FlashMode.off);
+      expect(camera.imageCapture!.resolutionSelector!.allowedResolutionMode, isNull);
+    },
+  );
+
+  test(
+    'setFlashMode with max preset and zero-shutter-lag enabled treats torch mode as flash off',
+    () async {
+      final (AndroidCameraCameraX camera, _) = await createMaxPresetCameraWithZeroShutterLag();
+
+      await camera.setFlashMode(0, FlashMode.auto);
+      await camera.setFlashMode(0, FlashMode.torch);
+
+      expect(camera.imageCapture!.resolutionSelector!.allowedResolutionMode, isNull);
+    },
+  );
+
+  test('setFlashMode binds the recreated ImageCapture when the previous one was bound', () async {
+    final (AndroidCameraCameraX camera, MockProcessCameraProvider mockProcessCameraProvider) =
+        await createMaxPresetCameraWithZeroShutterLag();
+    final ImageCapture previousImageCapture = camera.imageCapture!;
+    when(mockProcessCameraProvider.isBound(previousImageCapture)).thenAnswer((_) async => true);
+
+    await camera.setFlashMode(0, FlashMode.auto);
+
+    expect(camera.imageCapture, isNot(same(previousImageCapture)));
+    verify(mockProcessCameraProvider.unbind(<UseCase>[previousImageCapture])).called(1);
+    verify(
+      mockProcessCameraProvider.bindToLifecycle(any, <UseCase>[camera.imageCapture!]),
+    ).called(1);
+  });
+
+  test(
+    'setFlashMode does not recreate ImageCapture while recording, and stopVideoRecording recreates it afterwards',
+    () async {
+      final (AndroidCameraCameraX camera, _) = await createMaxPresetCameraWithZeroShutterLag();
+      final ImageCapture previousImageCapture = camera.imageCapture!;
+      camera.recording = MockRecording();
+      camera.videoCapture = MockVideoCapture();
+      camera.videoOutputPath = '/test/output/path';
+
+      await camera.setFlashMode(0, FlashMode.auto);
+      expect(camera.imageCapture, same(previousImageCapture));
+
+      emitRecordingFinalized();
+      await camera.stopVideoRecording(0);
+
+      expect(
+        camera.imageCapture!.resolutionSelector!.allowedResolutionMode,
+        ResolutionSelectorAllowedResolutionMode.preferHigherResolutionOverCaptureRate,
+      );
+    },
+  );
+
+  test(
+    'setFlashMode does not recreate ImageCapture for max preset while zero-shutter-lag is disabled',
+    () async {
+      final (AndroidCameraCameraX camera, _) = await createMaxPresetCameraWithZeroShutterLag(
+        zeroShutterLagEnabled: false,
+      );
+      final ImageCapture previousImageCapture = camera.imageCapture!;
+
+      await camera.setFlashMode(0, FlashMode.auto);
+      await camera.setFlashMode(0, FlashMode.off);
+
+      expect(camera.imageCapture, same(previousImageCapture));
+    },
+  );
+
   test('takePicture turns non-torch flash mode off when torch mode enabled', () async {
     final camera = AndroidCameraCameraX();
     final mockProcessCameraProvider = MockProcessCameraProvider();

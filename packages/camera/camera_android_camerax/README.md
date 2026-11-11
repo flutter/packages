@@ -40,8 +40,9 @@ With `ResolutionPreset.max`, image capture may use the camera's high-resolution
 output sizes, while the preview and image streaming use the largest regular
 output size. CameraX does not support zero-shutter-lag together with
 high-resolution output sizes, so enabling zero-shutter-lag limits image capture
-to the largest regular output size. On devices whose largest still size is only
-available as a high-resolution output size, pictures will be smaller.
+to the largest regular output size while the flash mode is `FlashMode.off` or
+`FlashMode.torch`. On devices whose largest still size is only available as a
+high-resolution output size, pictures will be smaller.
 
 ## What requires Android permissions
 

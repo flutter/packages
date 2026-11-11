@@ -209,6 +209,10 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// [setZeroShutterLagEnabled].
   bool _zeroShutterLagEnabled = false;
 
+  /// Whether the current [imageCapture] was created preferring higher
+  /// resolution over capture rate.
+  bool _imageCapturePrefersHigherResolution = false;
+
   /// The JPEG compression quality requested via [setJpegImageQuality], if
   /// any.
   int? _jpegQuality;
@@ -1101,6 +1105,8 @@ class AndroidCameraCameraX extends CameraPlatform {
         await _enableTorchMode(true);
         torchEnabled = true;
     }
+
+    await _updateImageCaptureResolutionSelector(cameraId);
   }
 
   /// Sets the JPEG compression quality for still image capture.
@@ -1136,8 +1142,9 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// is only available as a high-resolution output size, pictures will be
   /// smaller than without zero-shutter-lag.
   ///
-  /// Zero-shutter-lag also has no effect while the flash mode is on or auto.
-  /// See https://developer.android.com/media/camera/camerax/take-photo/zsl.
+  /// Zero-shutter-lag also has no effect while the flash mode is on or auto,
+  /// so [ResolutionPreset.max] keeps preferring higher resolution in that
+  /// case. See https://developer.android.com/media/camera/camerax/take-photo/zsl.
   ///
   /// If the selected camera does not support zero-shutter-lag, this only
   /// records the requested mode and skips recreating the use case.
@@ -1151,6 +1158,27 @@ class AndroidCameraCameraX extends CameraPlatform {
     if (!_zeroShutterLagSupported) {
       return;
     }
+    await _recreateAndRebindImageCapture(cameraId);
+  }
+
+  /// Recreates [imageCapture] when a flash mode change flips whether
+  /// zero-shutter-lag can take effect, so [_getImageCaptureResolutionSelector]
+  /// matches the new state.
+  ///
+  /// Skipped while recording to avoid reconfiguring the camera mid-recording;
+  /// [stopVideoRecording] calls this again once the recording has stopped.
+  Future<void> _updateImageCaptureResolutionSelector(int cameraId) async {
+    if (imageCapture == null ||
+        recording != null ||
+        _shouldImageCapturePreferHigherResolution == _imageCapturePrefersHigherResolution) {
+      return;
+    }
+    await _recreateAndRebindImageCapture(cameraId);
+  }
+
+  /// Recreates [imageCapture] and binds the new instance if the previous one
+  /// was bound.
+  Future<void> _recreateAndRebindImageCapture(int cameraId) async {
     final bool imageCaptureWasBound =
         imageCapture != null && await processCameraProvider!.isBound(imageCapture!);
     await _recreateImageCapture();
@@ -1339,6 +1367,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     }
 
     await _unbindUseCaseFromLifecycle(videoCapture!);
+    await _updateImageCaptureResolutionSelector(cameraId);
 
     if (event.hasError) {
       final int errorCode = event.error;
@@ -1653,16 +1682,28 @@ class AndroidCameraCameraX extends CameraPlatform {
     }
   }
 
-  /// Returns the [ResolutionSelector] for [imageCapture].
+  /// Whether zero-shutter-lag can take effect for [imageCapture].
   ///
-  /// For [ResolutionPreset.max], [imageCapture] prefers higher resolution over
-  /// capture rate, since some devices only offer their largest still size as a
-  /// high-resolution output size. This is skipped while zero-shutter-lag is
-  /// enabled on a camera that supports it, since CameraX does not support
+  /// CameraX disables zero-shutter-lag while the flash mode is on or auto.
+  /// With torch enabled, [takePicture] sets the flash mode to off.
+  bool get _zeroShutterLagCanTakeEffect =>
+      _zeroShutterLagEnabled &&
+      _zeroShutterLagSupported &&
+      (_currentFlashMode == null || _currentFlashMode == CameraXFlashMode.off);
+
+  /// Whether [imageCapture] should prefer higher resolution over capture rate.
+  ///
+  /// For [ResolutionPreset.max] it does, since some devices only offer their
+  /// largest still size as a high-resolution output size, unless
+  /// zero-shutter-lag can take effect, since CameraX does not support
   /// zero-shutter-lag together with high-resolution output sizes.
+  bool get _shouldImageCapturePreferHigherResolution =>
+      _resolutionPreset == ResolutionPreset.max && !_zeroShutterLagCanTakeEffect;
+
+  /// Returns the [ResolutionSelector] for [imageCapture].
   ResolutionSelector? _getImageCaptureResolutionSelector() {
-    if (_resolutionPreset != ResolutionPreset.max ||
-        (_zeroShutterLagEnabled && _zeroShutterLagSupported)) {
+    _imageCapturePrefersHigherResolution = _shouldImageCapturePreferHigherResolution;
+    if (!_imageCapturePrefersHigherResolution) {
       return _presetResolutionSelector;
     }
     return ResolutionSelector(
