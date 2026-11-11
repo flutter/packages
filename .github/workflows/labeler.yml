@@ -138,6 +138,7 @@ jobs:
           # 3. Validate the PR description against .github/PULL_REQUEST_TEMPLATE.md.
           TEMPLATE=$(gh api "repos/$REPO/contents/.github/PULL_REQUEST_TEMPLATE.md" \
             -H "Accept: application/vnd.github.raw" | tr -d '\r')
+          CHECKLIST_MARKDOWN=$(sed -n '/^## Pre-Review Checklist/,$p' <<<"$TEMPLATE")
           EXPECTED_ITEMS=()
           while IFS= read -r line; do
             EXPECTED_ITEMS+=("$line")
@@ -149,37 +150,94 @@ jobs:
             exit 1
           fi
 
+          # Normalize checklist text so minor formatting differences (e.g. resolved
+          # or struck-through "or" clauses, inlined links, removed footnote markers,
+          # or trailing punctuation differences) do not trigger false positives.
+          normalize_stream() {
+            sed -E '
+              s/,?[[:space:]]*or[[:space:]]+~~[^~]+~~//g;
+              s/~~[^~]+,[[:space:]]*or~~[[:space:]]*//g;
+              s/~~[^~]+~~,?[[:space:]]*or[[:space:]]+//g;
+              s/~~//g;
+              s/\]\([^)]*\)/]/g;
+              s/\[\^[0-9]+\]//g;
+              s/\[[0-9]+\]//g;
+            ' | tr -d '[]' | tr '[:upper:]' '[:lower:]' | sed -E '
+              s/[[:space:]]+/ /g;
+              s/^[[:space:]]+//;
+              s/[.,;:[:space:]]+$//
+            '
+          }
+
+          matches_item() {
+            local haystack="$1"
+            local item="$2"
+            [ -z "$haystack" ] && return 1
+
+            local candidates=("$item")
+            if [[ "$item" == *", or "* ]]; then
+              candidates+=("${item%%, or *}" "${item#*, or }")
+            fi
+
+            local candidate norm_candidate
+            for candidate in "${candidates[@]}"; do
+              norm_candidate=$(normalize_stream <<<"$candidate")
+              if grep -Fxq -- "$norm_candidate" <<<"$haystack"; then
+                return 0
+              fi
+            done
+            return 1
+          }
+
           BODY=$(jq -r '.body // ""' "$RUNNER_TEMP/pr.json" | tr -d '\r')
-          NORMALIZED_BODY=$(sed -E '
-            s/^[[:space:]]*-[[:space:]]*\[[xX]\][[:space:]]+/- [x] /;
-            s/^[[:space:]]*-[[:space:]]*\[[[:space:]]*\][[:space:]]+/- [ ] /;
-            s/[[:space:]]*$//
-          ' <<<"$BODY")
+          NORMALIZED_CHECKED=$(
+            sed -nE 's/^[[:space:]]*[-*+][[:space:]]*\[[[:space:]]*[xX][[:space:]]*\][[:space:]]+//p' <<<"$BODY" |
+              normalize_stream
+          )
+          NORMALIZED_UNCHECKED=$(
+            sed -nE 's/^[[:space:]]*[-*+][[:space:]]*\[[[:space:]]*\][[:space:]]+//p' <<<"$BODY" |
+              normalize_stream
+          )
 
           TOTAL_COUNT="${#EXPECTED_ITEMS[@]}"
-          MISSING_COUNT=0
-          UNCHECKED_COUNT=0
+          MISSING_ITEMS=()
+          UNCHECKED_ITEMS=()
 
           for item in "${EXPECTED_ITEMS[@]}"; do
-            if grep -Fxq -- "- [x] $item" <<<"$NORMALIZED_BODY"; then
+            if matches_item "$NORMALIZED_CHECKED" "$item"; then
               continue
-            elif grep -Fq -- "$item" <<<"$NORMALIZED_BODY"; then
-              UNCHECKED_COUNT=$((UNCHECKED_COUNT + 1))
+            elif matches_item "$NORMALIZED_UNCHECKED" "$item"; then
+              UNCHECKED_ITEMS+=("$item")
             else
-              MISSING_COUNT=$((MISSING_COUNT + 1))
+              MISSING_ITEMS+=("$item")
             fi
           done
 
+          MISSING_COUNT="${#MISSING_ITEMS[@]}"
+          UNCHECKED_COUNT="${#UNCHECKED_ITEMS[@]}"
+
           REASONS=()
-          if [ "$MISSING_COUNT" -gt 0 ]; then
-            REASONS+=("- The **Pre-Review Checklist** from the [PR template](https://github.com/flutter/packages/blob/main/.github/PULL_REQUEST_TEMPLATE.md) is missing or incomplete ($MISSING_COUNT of $TOTAL_COUNT expected checklist items are missing).")
+          if [ "$MISSING_COUNT" -eq "$TOTAL_COUNT" ]; then
+            REASONS+=("- **Missing Pre-Review Checklist:** The **Pre-Review Checklist** from the [PR template](https://github.com/flutter/packages/blob/main/.github/PULL_REQUEST_TEMPLATE.md) is missing from the PR description.")
+          elif [ "$MISSING_COUNT" -gt 0 ]; then
+            MISSING_LIST=$(printf '  - `` - [ ] %s ``\n' "${MISSING_ITEMS[@]}")
+            REASONS+=("$(printf -- '- **Missing or modified checklist items (%d of %d):** The following expected items were not found in the PR description (please keep the original checklist text without deleting or rewording items):\n%s' "$MISSING_COUNT" "$TOTAL_COUNT" "$MISSING_LIST")")
           fi
           if [ "$UNCHECKED_COUNT" -gt 0 ]; then
-            REASONS+=("- Not all items in the **Pre-Review Checklist** have been completed ($UNCHECKED_COUNT of $TOTAL_COUNT items are unchecked).")
+            UNCHECKED_LIST=$(printf '  - `` - [ ] %s ``\n' "${UNCHECKED_ITEMS[@]}")
+            REASONS+=("$(printf -- '- **Unchecked checklist items (%d of %d):** All items in the **Pre-Review Checklist** must be completed and checked off (`- [x]`) before the PR can be reviewed:\n%s' "$UNCHECKED_COUNT" "$TOTAL_COUNT" "$UNCHECKED_LIST")")
           fi
-          if grep -Fq "*Replace this paragraph with a description of what this PR is changing or adding" <<<"$BODY" ||
-             grep -Fq "*List which issues are fixed by this PR. You must list at least one issue.*" <<<"$BODY"; then
-            REASONS+=("- The placeholder text at the top of the [PR template](https://github.com/flutter/packages/blob/main/.github/PULL_REQUEST_TEMPLATE.md) was not replaced.")
+
+          PLACEHOLDERS=()
+          if grep -Fq "*Replace this paragraph with a description of what this PR is changing or adding" <<<"$BODY"; then
+            PLACEHOLDERS+=("*Replace this paragraph with a description of what this PR is changing or adding, and why. Consider including before/after screenshots.*")
+          fi
+          if grep -Fq "*List which issues are fixed by this PR. You must list at least one issue.*" <<<"$BODY"; then
+            PLACEHOLDERS+=("*List which issues are fixed by this PR. You must list at least one issue.*")
+          fi
+          if [ "${#PLACEHOLDERS[@]}" -gt 0 ]; then
+            PLACEHOLDER_LIST=$(printf '  - `%s`\n' "${PLACEHOLDERS[@]}")
+            REASONS+=("$(printf -- '- **Unreplaced placeholder text:** Please replace the template placeholder text at the top of the PR description with your actual description and linked issue(s):\n%s' "$PLACEHOLDER_LIST")")
           fi
 
           if [ "${#REASONS[@]}" -eq 0 ]; then
@@ -200,8 +258,8 @@ jobs:
           # 5. Post or update the nudge comment.
           MARKER="<!-- pr-template-check -->"
           REASONS_TEXT=$(printf '%s\n' "${REASONS[@]}")
-          COMMENT_BODY=$(printf '%s\n\nHi @%s, thank you for your contribution!\n\nThis pull request has been converted to a **draft** because it does not appear to follow our [pull request template](https://github.com/flutter/packages/blob/main/.github/PULL_REQUEST_TEMPLATE.md):\n\n%s\n\nPlease update the PR description to include the full, completed checklist from the template, then click **"Ready for review"** when you are done.\n' \
-            "$MARKER" "$AUTHOR" "$REASONS_TEXT")
+          COMMENT_BODY=$(printf '%s\n\nHi @%s, thank you for your contribution!\n\nThis pull request has been converted to a **draft** because it does not appear to follow our [pull request template](https://github.com/flutter/packages/blob/main/.github/PULL_REQUEST_TEMPLATE.md):\n\n%s\n\n### How to fix this\n\n1. Click the **`...`** menu in the top-right corner of your PR description above and select **Edit**.\n2. Address the issues listed above. Make sure every item in the **Pre-Review Checklist** is present without modifications and checked off (`- [x]`).\n3. Save your changes, then click the **"Ready for review"** button at the bottom of the PR.\n\n<details>\n<summary>Click here for the raw Markdown of the Pre-Review Checklist to copy and paste</summary>\n\n````markdown\n%s\n````\n\n</details>\n' \
+            "$MARKER" "$AUTHOR" "$REASONS_TEXT" "$CHECKLIST_MARKDOWN")
 
           EXISTING_COMMENT_ID=$(gh api --paginate "repos/$REPO/issues/$PR_NUMBER/comments" |
             jq -s -r --arg marker "$MARKER" '[add[] | select((.body // "") | contains($marker))][0].id // empty')
