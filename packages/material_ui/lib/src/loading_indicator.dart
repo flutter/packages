@@ -8,6 +8,7 @@
 /// @docImport 'package:flutter/semantics.dart';
 ///
 /// @docImport 'progress_indicator.dart';
+/// @docImport 'refresh_indicator.dart';
 library;
 
 import 'dart:math' as math;
@@ -58,6 +59,10 @@ final SpringSimulation _kMorphSpring = SpringSimulation(
 /// [CircularProgressIndicator] and [LinearProgressIndicator] are better suited
 /// for longer processes.
 ///
+/// In Material 3 Expressive, a loading indicator replaces most uses of an
+/// indeterminate [CircularProgressIndicator], including the one shown by a
+/// [RefreshIndicator].
+///
 /// There are two kinds of loading indicators:
 ///
 ///  * The default loading indicator draws the morphing shape on its own.
@@ -95,9 +100,10 @@ final SpringSimulation _kMorphSpring = SpringSimulation(
 ///
 /// <callout-box>
 ///
-/// This example shows a contained loading indicator used for pull to refresh.
-/// A determinate indicator follows the pull, and hands over to an
-/// indeterminate one once the list is released to refresh.
+/// This example shows how to build pull to refresh with a contained loading
+/// indicator, in place of a [RefreshIndicator]. A determinate indicator
+/// follows the pull, and hands over to an indeterminate one once the list is
+/// released to refresh.
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
