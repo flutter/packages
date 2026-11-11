@@ -1,6 +1,6 @@
 ## 2.6.2
 
-* Updates Pigeon to 30.0.0 to support multi-engine registration and deregistration.
+* Updates Pigeon to 30.0.1 to support multi-engine registration and deregistration.
 * Removes manual web conditional FFI export workaround.
 
 ## 2.6.1
