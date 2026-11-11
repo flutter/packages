@@ -78,12 +78,13 @@ final SpringSimulation _kMorphSpring = SpringSimulation(
 ///    example, to show how far the user has pulled to refresh.
 ///
 /// By default, a loading indicator is 48 by 48 logical pixels, of which the
-/// active indicator takes up 38 by 38. If the incoming constraints require a
-/// different size, it grows or shrinks to fit them, keeping the active
-/// indicator at the same ratio to the shortest side and centered in the
-/// middle. The default determinate and indeterminate shapes are drawn at the
-/// same size, so that a determinate loading indicator can turn into an
-/// indeterminate one without a jump in size.
+/// active indicator takes up 38 by 38. Its size can be changed with
+/// [constraints]. If the incoming constraints require a different size, it
+/// grows or shrinks to fit them. At any size, the active indicator keeps the
+/// same ratio to the shortest side and is centered in the middle. The default
+/// determinate and indeterminate shapes are drawn at the same size, so that a
+/// determinate loading indicator can turn into an indeterminate one without a
+/// jump in size.
 ///
 /// <callout-box>
 ///
@@ -130,10 +131,16 @@ class LoadingIndicator extends StatefulWidget {
   ///
   /// If non-null, [polygons] must contain at least two shapes.
   /// {@endtemplate}
-  const LoadingIndicator({super.key, this.value, this.color, this.polygons, this.semanticsLabel})
-    : containerColor = null,
-      containerShape = null,
-      _contained = false;
+  const LoadingIndicator({
+    super.key,
+    this.value,
+    this.color,
+    this.polygons,
+    this.constraints,
+    this.semanticsLabel,
+  }) : containerColor = null,
+       containerShape = null,
+       _contained = false;
 
   /// Creates a loading indicator that draws the morphing shape on top of a
   /// container.
@@ -146,6 +153,7 @@ class LoadingIndicator extends StatefulWidget {
     this.containerColor,
     this.containerShape,
     this.polygons,
+    this.constraints,
     this.semanticsLabel,
   }) : _contained = true;
 
@@ -207,6 +215,12 @@ class LoadingIndicator extends StatefulWidget {
   /// If null, then [indeterminatePolygons] is used for an indeterminate
   /// loading indicator, and [determinatePolygons] for a determinate one.
   final List<RoundedPolygon>? polygons;
+
+  /// Defines minimum and maximum sizes for this loading indicator.
+  ///
+  /// If null, then [LoadingIndicatorThemeData.constraints] is used. If that is
+  /// also null, then a minimum width and height of 48.0 are used.
+  final BoxConstraints? constraints;
 
   /// {@macro material_ui.progress_indicator.ProgressIndicator.semanticsLabel}
   final String? semanticsLabel;
@@ -271,6 +285,9 @@ class LoadingIndicator extends StatefulWidget {
       DiagnosticsProperty<ShapeBorder>('containerShape', containerShape, defaultValue: null),
     );
     properties.add(IterableProperty<RoundedPolygon>('polygons', polygons, defaultValue: null));
+    properties.add(
+      DiagnosticsProperty<BoxConstraints>('constraints', constraints, defaultValue: null),
+    );
     properties.add(StringProperty('semanticsLabel', semanticsLabel, defaultValue: null));
     properties.add(FlagProperty('contained', value: _contained, ifTrue: 'contained'));
   }
@@ -510,10 +527,7 @@ class _LoadingIndicatorState extends State<LoadingIndicator> with SingleTickerPr
       maxValue: isProgressBar ? '100' : null,
       value: isProgressBar ? '${(value * 100).round()}' : null,
       child: ConstrainedBox(
-        constraints: BoxConstraints(
-          minWidth: defaults.containerSize.width,
-          minHeight: defaults.containerSize.height,
-        ),
+        constraints: widget.constraints ?? theme.constraints ?? defaults.constraints,
         child: result,
       ),
     );

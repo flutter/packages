@@ -34,6 +34,12 @@ class $className extends LoadingIndicatorThemeData {
   @override
   Color? get containerColor => ${color(TokenLoadingIndicator.containedContainerColor)};
 
+  @override
+  BoxConstraints get constraints => const BoxConstraints(
+    minWidth: ${number(TokenLoadingIndicator.containerWidth)},
+    minHeight: ${number(TokenLoadingIndicator.containerHeight)},
+  );
+
   /// The default size of the container that the active indicator is drawn in.
   Size get containerSize => const Size(${number(TokenLoadingIndicator.containerWidth)}, ${number(TokenLoadingIndicator.containerHeight)});
 

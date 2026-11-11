@@ -791,6 +791,9 @@ void main() {
       expect(contents, contains('Color? get color => _colors.primary;'));
       expect(contents, contains('Color? get containedColor => _colors.onPrimaryContainer;'));
       expect(contents, contains('Color? get containerColor => _colors.primaryContainer;'));
+      expect(contents, contains('BoxConstraints get constraints => const BoxConstraints('));
+      expect(contents, contains('minWidth: 48.0,'));
+      expect(contents, contains('minHeight: 48.0,'));
       expect(contents, contains('Size get containerSize => const Size(48.0, 48.0);'));
       expect(contents, contains('double get activeIndicatorSize => 38.0;'));
     });

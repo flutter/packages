@@ -18,6 +18,7 @@ void main() {
       color: Color(0xFFFFFFF0),
       containerColor: Color(0xFFFFFFF1),
       containerShape: CircleBorder(),
+      constraints: BoxConstraints.tightFor(width: 24, height: 24),
     );
     expect(data.copyWith(), data);
     expect(
@@ -26,9 +27,14 @@ void main() {
         color: Color(0xFFFFFFF2),
         containerColor: Color(0xFFFFFFF1),
         containerShape: CircleBorder(),
+        constraints: BoxConstraints.tightFor(width: 24, height: 24),
       ),
     );
     expect(data, isNot(data.copyWith(color: const Color(0xFFFFFFF2))));
+    expect(
+      data,
+      isNot(data.copyWith(constraints: const BoxConstraints.tightFor(width: 32, height: 32))),
+    );
   });
 
   test('LoadingIndicatorThemeData lerp special cases', () {
@@ -42,11 +48,13 @@ void main() {
       color: Color(0xFF000000),
       containerColor: Color(0xFF000000),
       containerShape: RoundedRectangleBorder(),
+      constraints: BoxConstraints.tightFor(width: 20, height: 20),
     );
     const b = LoadingIndicatorThemeData(
       color: Color(0xFFFFFFFF),
       containerColor: Color(0xFFFFFFFF),
       containerShape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10))),
+      constraints: BoxConstraints.tightFor(width: 40, height: 40),
     );
 
     final LoadingIndicatorThemeData lerped = LoadingIndicatorThemeData.lerp(a, b, 0.5)!;
@@ -56,6 +64,7 @@ void main() {
       lerped.containerShape,
       const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5))),
     );
+    expect(lerped.constraints, const BoxConstraints.tightFor(width: 30, height: 30));
   });
 
   test('LoadingIndicatorThemeData defaults', () {
@@ -63,6 +72,7 @@ void main() {
     expect(themeData.color, null);
     expect(themeData.containerColor, null);
     expect(themeData.containerShape, null);
+    expect(themeData.constraints, null);
 
     expect(ThemeData().loadingIndicatorTheme, themeData);
   });
@@ -87,6 +97,7 @@ void main() {
       color: Color(0xFFFFFFF0),
       containerColor: Color(0xFFFFFFF1),
       containerShape: CircleBorder(),
+      constraints: BoxConstraints.tightFor(width: 24, height: 24),
     ).debugFillProperties(builder);
 
     final List<String> description = builder.properties
@@ -98,6 +109,7 @@ void main() {
       'color: ${const Color(0xFFFFFFF0)}',
       'containerColor: ${const Color(0xFFFFFFF1)}',
       'containerShape: CircleBorder(BorderSide(width: 0.0, style: none))',
+      'constraints: BoxConstraints(w=24.0, h=24.0)',
     ]);
   });
 
@@ -174,6 +186,34 @@ void main() {
     expect(decoration.shape, containerShape);
     expect(find.byType(LoadingIndicator).first, paints..path(color: color));
     expect(find.byType(LoadingIndicator).last, paints..path(color: color));
+  });
+
+  testWidgets('LoadingIndicatorTheme overrides the default constraints', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(
+          loadingIndicatorTheme: const LoadingIndicatorThemeData(
+            constraints: BoxConstraints.tightFor(width: 24, height: 24),
+          ),
+        ),
+        home: const Center(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              LoadingIndicator(),
+              LoadingIndicator.contained(),
+              LoadingIndicator(constraints: BoxConstraints.tightFor(width: 32, height: 32)),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    expect(tester.getSize(find.byType(LoadingIndicator).at(0)), const Size.square(24));
+    expect(tester.getSize(find.byType(LoadingIndicator).at(1)), const Size.square(24));
+    expect(tester.getSize(find.byType(LoadingIndicator).at(2)), const Size.square(32));
   });
 
   testWidgets('Local LoadingIndicatorTheme takes precedence over ThemeData', (

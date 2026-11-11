@@ -23,6 +23,9 @@ class _LoadingIndicatorDefaultsM3E extends LoadingIndicatorThemeData {
   @override
   Color? get containerColor => _colors.primaryContainer;
 
+  @override
+  BoxConstraints get constraints => const BoxConstraints(minWidth: 48.0, minHeight: 48.0);
+
   /// The default size of the container that the active indicator is drawn in.
   Size get containerSize => const Size(48.0, 48.0);
 

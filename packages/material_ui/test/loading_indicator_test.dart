@@ -67,6 +67,16 @@ void main() {
     expect(tester.getSize(find.byType(LoadingIndicator)), const Size(200, 100));
   });
 
+  testWidgets('LoadingIndicator respects constraints', (WidgetTester tester) async {
+    const constraints = BoxConstraints.tightFor(width: 24, height: 24);
+
+    await tester.pumpWidget(buildApp(const LoadingIndicator(constraints: constraints)));
+    expect(tester.getSize(find.byType(LoadingIndicator)), const Size.square(24));
+
+    await tester.pumpWidget(buildApp(const LoadingIndicator.contained(constraints: constraints)));
+    expect(tester.getSize(find.byType(LoadingIndicator)), const Size.square(24));
+  });
+
   testWidgets('LoadingIndicator does not crash at zero area', (WidgetTester tester) async {
     await tester.pumpWidget(buildApp(const SizedBox.shrink(child: LoadingIndicator())));
     expect(tester.getSize(find.byType(LoadingIndicator)), Size.zero);
@@ -413,6 +423,7 @@ void main() {
       color: Color(0xfffffff0),
       containerColor: Color(0xfffffff1),
       containerShape: CircleBorder(),
+      constraints: BoxConstraints.tightFor(width: 24, height: 24),
       semanticsLabel: 'label',
     ).debugFillProperties(builder);
 
@@ -426,6 +437,7 @@ void main() {
       'color: ${const Color(0xfffffff0)}',
       'containerColor: ${const Color(0xfffffff1)}',
       'containerShape: CircleBorder(BorderSide(width: 0.0, style: none))',
+      'constraints: BoxConstraints(w=24.0, h=24.0)',
       'semanticsLabel: "label"',
       'contained',
     ]);
