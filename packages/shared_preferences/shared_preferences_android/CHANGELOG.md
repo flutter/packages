@@ -1,6 +1,7 @@
 ## 2.5.5
 
 * Updates Pigeon to 30.0.0 to support multi-engine registration and deregistration.
+* Updates `jni` to `^1.1.1` and removes manual web conditional FFI export and R8 consumer rules workarounds.
 
 ## 2.5.4
 
