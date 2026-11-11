@@ -206,12 +206,13 @@ class CupertinoTabScaffold extends StatefulWidget {
   /// By default uses [CupertinoTheme]'s `scaffoldBackgroundColor` when null.
   ///
   /// When [resizeToAvoidBottomInset] is true and [MediaQueryData.viewInsets]
-  /// has a non-zero `bottom` inset (such as from an onscreen keyboard), the
-  /// body is kept above the inset while this background continues to fill the
-  /// scaffold behind it. Because that area can show through a translucent or
-  /// rounded keyboard, consider matching this background (or
-  /// [CupertinoThemeData.scaffoldBackgroundColor] when null) to the active tab
-  /// page's background (for example, [CupertinoPageScaffold.backgroundColor]).
+  /// has a non-zero `bottom` inset (such as from an onscreen keyboard), tab
+  /// content ([tabBuilder]) is kept above the inset while this background
+  /// continues to fill the scaffold behind it. Because that area can show
+  /// through a translucent or rounded keyboard, consider matching this
+  /// background (or [CupertinoThemeData.scaffoldBackgroundColor] when null) to
+  /// the active tab page's background (for example,
+  /// [CupertinoPageScaffold.backgroundColor]).
   final Color? backgroundColor;
 
   /// Whether the body should size itself to avoid the window's bottom inset.
@@ -220,9 +221,10 @@ class CupertinoTabScaffold extends StatefulWidget {
   /// scaffold, the body can be resized to avoid overlapping the keyboard, which
   /// prevents widgets inside the body from being obscured by the keyboard.
   ///
-  /// When true, the scaffold's background (see [backgroundColor]) remains
-  /// visible behind a translucent or rounded keyboard if the body paints a
-  /// different background color.
+  /// When true, the scaffold's background (see [backgroundColor]) continues to
+  /// fill the area behind the bottom inset, so a translucent or rounded
+  /// keyboard shows that background rather than any background painted by the
+  /// tab content.
   ///
   /// Defaults to true.
   final bool resizeToAvoidBottomInset;
