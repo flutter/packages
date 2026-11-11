@@ -13,6 +13,18 @@ void main() {
       expect(implementation.supportsImageSource(ImageSource.camera), true);
       expect(implementation.supportsImageSource(ImageSource.gallery), true);
     });
+
+    test('supportsRecentMedia defaults to false', () {
+      final ImagePickerPlatform implementation = FakeImagePickerPlatform();
+
+      expect(implementation.supportsRecentMedia(), false);
+    });
+
+    test('getRecentMedia throws unimplemented error by default', () {
+      final ImagePickerPlatform implementation = FakeImagePickerPlatform();
+
+      expect(() => implementation.getRecentMedia(), throwsUnimplementedError);
+    });
   });
 
   group('CameraDelegatingImagePickerPlatform', () {

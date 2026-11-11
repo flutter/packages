@@ -78,6 +78,12 @@ public final class ImagePickerPlugin: NSObject, FlutterPlugin, ImagePickerApi,
   /// PHAsset image-data requests. Overridable for tests.
   var imageDataRequester: ImageDataRequesting = DefaultImageDataRequester()
 
+  /// Photo library asset fetches for recent media. Overridable for tests.
+  var recentAssetsFetcher: RecentAssetsFetching = DefaultRecentAssetsFetcher()
+
+  /// PHAsset thumbnail requests for recent media. Overridable for tests.
+  var thumbnailRequester: ThumbnailRequesting = DefaultThumbnailRequester()
+
   /// PHPicker factory. Overridable for tests. Stored as `Any` because the protocol is iOS 14+.
   private var phPickerCreatorStorage: Any?
 
@@ -320,6 +326,118 @@ public final class ImagePickerPlugin: NSObject, FlutterPlugin, ImagePickerApi,
     context.maxDuration = TimeInterval(maxDurationSeconds ?? 0)
 
     launchPHPicker(with: context)
+  }
+
+  // This intentionally does not use callContext, so that it does not cancel a picker in progress.
+  func getRecentMedia(
+    request: RecentMediaRequest,
+    completion: @escaping (Result<[RecentMediaItem], Error>) -> Void
+  ) {
+    guard request.includeImages || request.includeVideos else {
+      completion(.success([]))
+      return
+    }
+    switch photoLibraryPermissionChecker.authorizationStatus(for: .readWrite) {
+    case .authorized, .limited:
+      loadRecentMedia(with: request, completion: completion)
+    case .notDetermined:
+      photoLibraryPermissionChecker.requestAuthorization(for: .readWrite) { status in
+        if status == .authorized || status == .limited {
+          self.loadRecentMedia(with: request, completion: completion)
+        } else {
+          DispatchQueue.main.async {
+            completion(.success([]))
+          }
+        }
+      }
+    default:
+      completion(.success([]))
+    }
+  }
+
+  /// Fetches the most recent assets and writes their thumbnails on a background queue, then calls
+  /// `completion` on the main queue with the results in fetch order. Assets whose thumbnail cannot
+  /// be loaded or written are skipped.
+  private func loadRecentMedia(
+    with request: RecentMediaRequest,
+    completion: @escaping (Result<[RecentMediaItem], Error>) -> Void
+  ) {
+    let queue = DispatchQueue.global(qos: .userInitiated)
+    queue.async {
+      let assets = self.recentAssetsFetcher.fetchAssets(
+        options: Self.recentAssetsFetchOptions(for: request))
+      var results = [RecentMediaItem?](repeating: nil, count: assets.count)
+      let resultsLock = NSLock()
+      func setResult(_ item: RecentMediaItem, at index: Int) {
+        resultsLock.lock()
+        defer { resultsLock.unlock() }
+        results[index] = item
+      }
+
+      let options = PHImageRequestOptions()
+      options.deliveryMode = .highQualityFormat
+      options.resizeMode = .fast
+      // Don't download originals from iCloud just to show a thumbnail.
+      options.isNetworkAccessAllowed = false
+      let targetSize = CGSize(width: CGFloat(request.width), height: CGFloat(request.height))
+
+      let group = DispatchGroup()
+      for (index, asset) in assets.enumerated() {
+        let kind: RecentMediaKind = asset.mediaType == .video ? .video : .image
+        let path = Self.recentMediaThumbnailPath(for: asset, request: request)
+        if FileManager.default.fileExists(atPath: path) {
+          setResult(RecentMediaItem(path: path, kind: kind), at: index)
+          continue
+        }
+
+        group.enter()
+        self.thumbnailRequester.requestImage(
+          for: asset, targetSize: targetSize, contentMode: .aspectFit, options: options
+        ) { image, _ in
+          // The handler may be called on the main queue, so encode and write elsewhere.
+          queue.async {
+            if let data = image?.jpegData(compressionQuality: 0.9),
+              (try? data.write(to: URL(fileURLWithPath: path), options: .atomic)) != nil
+            {
+              setResult(RecentMediaItem(path: path, kind: kind), at: index)
+            }
+            group.leave()
+          }
+        }
+      }
+
+      group.notify(queue: .main) {
+        completion(.success(results.compactMap { $0 }))
+      }
+    }
+  }
+
+  private static func recentAssetsFetchOptions(for request: RecentMediaRequest)
+    -> PHFetchOptions
+  {
+    var mediaTypes: [Int] = []
+    if request.includeImages {
+      mediaTypes.append(PHAssetMediaType.image.rawValue)
+    }
+    if request.includeVideos {
+      mediaTypes.append(PHAssetMediaType.video.rawValue)
+    }
+    let options = PHFetchOptions()
+    options.predicate = NSPredicate(format: "mediaType IN %@", mediaTypes)
+    options.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
+    options.fetchLimit = Int(request.limit)
+    return options
+  }
+
+  /// Returns a deterministic path for the thumbnail of `asset` at the requested size, so that
+  /// repeated calls reuse the file until the asset is modified.
+  private static func recentMediaThumbnailPath(
+    for asset: PHAsset, request: RecentMediaRequest
+  ) -> String {
+    let identifier = asset.localIdentifier.replacingOccurrences(of: "/", with: "_")
+    let modified = Int64(asset.modificationDate?.timeIntervalSince1970 ?? 0)
+    let fileName = "recent_media_\(identifier)_\(request.width)x\(request.height)_\(modified).jpg"
+    return (NSTemporaryDirectory() as NSString).appendingPathComponent(fileName)
   }
 
   /// If a call is still in progress, cancels it by returning an error and then clearing state.

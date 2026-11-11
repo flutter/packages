@@ -12,6 +12,8 @@ export 'media_selection_type.dart';
 export 'multi_image_picker_options.dart';
 export 'multi_video_picker_options.dart';
 export 'picked_file/picked_file.dart';
+export 'recent_media.dart';
+export 'recent_media_options.dart';
 export 'retrieve_type.dart';
 
 /// Denotes that an image is being picked.

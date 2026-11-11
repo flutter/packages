@@ -11,5 +11,12 @@ so you do not need to add it to your `pubspec.yaml`.
 However, if you `import` this package to use any of its APIs directly, you
 should add it to your `pubspec.yaml` as usual.
 
+## Recent media
+
+`getRecentMedia` reads the photo library directly, so it requires
+`NSPhotoLibraryUsageDescription` in the app's _Info.plist_. See the
+[`image_picker` README][3] for details.
+
 [1]: https://pub.dev/packages/image_picker
 [2]: https://flutter.dev/to/endorsed-federated-plugin
+[3]: https://pub.dev/packages/image_picker#recent-media-thumbnails

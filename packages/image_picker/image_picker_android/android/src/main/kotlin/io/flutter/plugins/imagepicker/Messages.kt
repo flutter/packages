@@ -223,6 +223,17 @@ enum class CacheRetrievalType(val raw: Int) {
   }
 }
 
+enum class RecentMediaKind(val raw: Int) {
+  IMAGE(0),
+  VIDEO(1);
+
+  companion object {
+    fun ofRaw(raw: Int): RecentMediaKind? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
 /** Generated class from Pigeon that represents data sent in messages. */
 data class GeneralOptions(
     val allowMultiple: Boolean,
@@ -561,6 +572,124 @@ data class CacheRetrievalResult(
   }
 }
 
+/**
+ * Options for retrieving recent media.
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ */
+data class RecentMediaRequest(
+    /** The maximum number of items to return. */
+    val limit: Long,
+    /** Whether to include images. */
+    val includeImages: Boolean,
+    /** Whether to include videos. */
+    val includeVideos: Boolean,
+    /** The target width of each thumbnail, in pixels. */
+    val width: Long,
+    /** The target height of each thumbnail, in pixels. */
+    val height: Long
+) {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): RecentMediaRequest {
+      val limit = pigeonVar_list[0] as Long
+      val includeImages = pigeonVar_list[1] as Boolean
+      val includeVideos = pigeonVar_list[2] as Boolean
+      val width = pigeonVar_list[3] as Long
+      val height = pigeonVar_list[4] as Long
+      return RecentMediaRequest(limit, includeImages, includeVideos, width, height)
+    }
+  }
+
+  fun toList(): List<Any?> {
+    return listOf(
+        limit,
+        includeImages,
+        includeVideos,
+        width,
+        height,
+    )
+  }
+
+  override fun equals(other: Any?): Boolean {
+    if (other == null || other.javaClass != javaClass) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    val other = other as RecentMediaRequest
+    return MessagesPigeonUtils.deepEquals(this.limit, other.limit) &&
+        MessagesPigeonUtils.deepEquals(this.includeImages, other.includeImages) &&
+        MessagesPigeonUtils.deepEquals(this.includeVideos, other.includeVideos) &&
+        MessagesPigeonUtils.deepEquals(this.width, other.width) &&
+        MessagesPigeonUtils.deepEquals(this.height, other.height)
+  }
+
+  override fun hashCode(): Int {
+    var result = javaClass.hashCode()
+    result = 31 * result + MessagesPigeonUtils.deepHash(this.limit)
+    result = 31 * result + MessagesPigeonUtils.deepHash(this.includeImages)
+    result = 31 * result + MessagesPigeonUtils.deepHash(this.includeVideos)
+    result = 31 * result + MessagesPigeonUtils.deepHash(this.width)
+    result = 31 * result + MessagesPigeonUtils.deepHash(this.height)
+    return result
+  }
+
+  override fun toString(): String {
+    return "RecentMediaRequest(limit=$limit, includeImages=$includeImages, includeVideos=$includeVideos, width=$width, height=$height)"
+  }
+}
+
+/**
+ * A thumbnail of a recent item from the media library.
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ */
+data class RecentMediaItem(
+    /** The path to the JPEG thumbnail. */
+    val path: String,
+    /** The type of the original item. */
+    val kind: RecentMediaKind
+) {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): RecentMediaItem {
+      val path = pigeonVar_list[0] as String
+      val kind = pigeonVar_list[1] as RecentMediaKind
+      return RecentMediaItem(path, kind)
+    }
+  }
+
+  fun toList(): List<Any?> {
+    return listOf(
+        path,
+        kind,
+    )
+  }
+
+  override fun equals(other: Any?): Boolean {
+    if (other == null || other.javaClass != javaClass) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    val other = other as RecentMediaItem
+    return MessagesPigeonUtils.deepEquals(this.path, other.path) &&
+        MessagesPigeonUtils.deepEquals(this.kind, other.kind)
+  }
+
+  override fun hashCode(): Int {
+    var result = javaClass.hashCode()
+    result = 31 * result + MessagesPigeonUtils.deepHash(this.path)
+    result = 31 * result + MessagesPigeonUtils.deepHash(this.kind)
+    return result
+  }
+
+  override fun toString(): String {
+    return "RecentMediaItem(path=$path, kind=$kind)"
+  }
+}
+
 private open class MessagesPigeonCodec : StandardMessageCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
     return when (type) {
@@ -574,25 +703,34 @@ private open class MessagesPigeonCodec : StandardMessageCodec() {
         return (readValue(buffer) as Long?)?.let { CacheRetrievalType.ofRaw(it.toInt()) }
       }
       132.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { GeneralOptions.fromList(it) }
+        return (readValue(buffer) as Long?)?.let { RecentMediaKind.ofRaw(it.toInt()) }
       }
       133.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { ImageSelectionOptions.fromList(it) }
+        return (readValue(buffer) as? List<Any?>)?.let { GeneralOptions.fromList(it) }
       }
       134.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { MediaSelectionOptions.fromList(it) }
+        return (readValue(buffer) as? List<Any?>)?.let { ImageSelectionOptions.fromList(it) }
       }
       135.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { VideoSelectionOptions.fromList(it) }
+        return (readValue(buffer) as? List<Any?>)?.let { MediaSelectionOptions.fromList(it) }
       }
       136.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { SourceSpecification.fromList(it) }
+        return (readValue(buffer) as? List<Any?>)?.let { VideoSelectionOptions.fromList(it) }
       }
       137.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { CacheRetrievalError.fromList(it) }
+        return (readValue(buffer) as? List<Any?>)?.let { SourceSpecification.fromList(it) }
       }
       138.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let { CacheRetrievalError.fromList(it) }
+      }
+      139.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { CacheRetrievalResult.fromList(it) }
+      }
+      140.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let { RecentMediaRequest.fromList(it) }
+      }
+      141.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let { RecentMediaItem.fromList(it) }
       }
       else -> super.readValueOfType(type, buffer)
     }
@@ -612,32 +750,44 @@ private open class MessagesPigeonCodec : StandardMessageCodec() {
         stream.write(131)
         writeValue(stream, value.raw.toLong())
       }
-      is GeneralOptions -> {
+      is RecentMediaKind -> {
         stream.write(132)
-        writeValue(stream, value.toList())
+        writeValue(stream, value.raw.toLong())
       }
-      is ImageSelectionOptions -> {
+      is GeneralOptions -> {
         stream.write(133)
         writeValue(stream, value.toList())
       }
-      is MediaSelectionOptions -> {
+      is ImageSelectionOptions -> {
         stream.write(134)
         writeValue(stream, value.toList())
       }
-      is VideoSelectionOptions -> {
+      is MediaSelectionOptions -> {
         stream.write(135)
         writeValue(stream, value.toList())
       }
-      is SourceSpecification -> {
+      is VideoSelectionOptions -> {
         stream.write(136)
         writeValue(stream, value.toList())
       }
-      is CacheRetrievalError -> {
+      is SourceSpecification -> {
         stream.write(137)
         writeValue(stream, value.toList())
       }
-      is CacheRetrievalResult -> {
+      is CacheRetrievalError -> {
         stream.write(138)
+        writeValue(stream, value.toList())
+      }
+      is CacheRetrievalResult -> {
+        stream.write(139)
+        writeValue(stream, value.toList())
+      }
+      is RecentMediaRequest -> {
+        stream.write(140)
+        writeValue(stream, value.toList())
+      }
+      is RecentMediaItem -> {
+        stream.write(141)
         writeValue(stream, value.toList())
       }
       else -> super.writeValue(stream, value)
@@ -667,6 +817,8 @@ interface ImagePickerApi {
       generalOptions: GeneralOptions,
       callback: (Result<List<String>>) -> Unit
   )
+  /** Returns thumbnails of the most recent items in the media library. */
+  fun getRecentMedia(request: RecentMediaRequest, callback: (Result<List<RecentMediaItem>>) -> Unit)
   /** Returns results from a previous app session, if any. */
   fun retrieveLostResults(): CacheRetrievalResult?
 
@@ -752,6 +904,31 @@ interface ImagePickerApi {
             val generalOptionsArg = args[1] as GeneralOptions
             api.pickMedia(mediaSelectionOptionsArg, generalOptionsArg) {
                 result: Result<List<String>> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(MessagesPigeonUtils.wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(MessagesPigeonUtils.wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.image_picker_android.ImagePickerApi.getRecentMedia$separatedMessageChannelSuffix",
+                codec,
+                taskQueue)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val requestArg = args[0] as RecentMediaRequest
+            api.getRecentMedia(requestArg) { result: Result<List<RecentMediaItem>> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(MessagesPigeonUtils.wrapError(error))

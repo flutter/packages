@@ -126,6 +126,36 @@ public class ImagePickerPluginTest {
   }
 
   @Test
+  public void getRecentMedia_whenActivityIsNull_finishesWithForegroundActivityRequiredError() {
+    ImagePickerPlugin imagePickerPluginWithNullActivity =
+        new ImagePickerPlugin(mockImagePickerDelegate, null);
+    final Boolean[] callbackCalled = new Boolean[1];
+    imagePickerPluginWithNullActivity.getRecentMedia(
+        new RecentMediaRequest(1L, true, true, 256L, 256L),
+        ResultCompat.asCompatCallback(
+            reply -> {
+              callbackCalled[0] = true;
+              assertTrue(reply.isFailure());
+              FlutterError error = (FlutterError) reply.exceptionOrNull();
+              assertEquals("no_activity", error.getCode());
+              assertEquals(
+                  "image_picker plugin requires a foreground activity.", error.getMessage());
+              return null;
+            }));
+    assertTrue(callbackCalled[0]);
+    verifyNoInteractions(mockImagePickerDelegate);
+  }
+
+  @Test
+  public void getRecentMedia_whenActivityIsActive_callsDelegate() {
+    RecentMediaRequest request = new RecentMediaRequest(1L, true, true, 256L, 256L);
+
+    plugin.getRecentMedia(request, (result) -> null);
+
+    verify(mockImagePickerDelegate).getRecentMedia(eq(request), any());
+  }
+
+  @Test
   public void retrieveLostResults_whenActivityIsNull_finishesWithForegroundActivityRequiredError() {
     ImagePickerPlugin imagePickerPluginWithNullActivity =
         new ImagePickerPlugin(mockImagePickerDelegate, null);

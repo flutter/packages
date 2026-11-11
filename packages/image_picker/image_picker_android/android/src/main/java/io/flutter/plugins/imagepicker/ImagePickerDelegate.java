@@ -89,6 +89,7 @@ public class ImagePickerDelegate
   @VisibleForTesting static final int REQUEST_CODE_CHOOSE_VIDEO_FROM_GALLERY = 2352;
   @VisibleForTesting static final int REQUEST_CODE_TAKE_VIDEO_WITH_CAMERA = 2353;
   @VisibleForTesting static final int REQUEST_CAMERA_VIDEO_PERMISSION = 2355;
+  @VisibleForTesting static final int REQUEST_RECENT_MEDIA_PERMISSION = 2356;
 
   public enum CameraDevice {
     REAR,
@@ -117,6 +118,31 @@ public class ImagePickerDelegate
     }
   }
 
+  /**
+   * Holds a {@link #getRecentMedia} call that is waiting for a permission result.
+   *
+   * <p>This is separate from {@link PendingCallState} so that it is not saved for {@link
+   * #retrieveLostImage} and does not block or cancel a picker that is in progress.
+   */
+  private static class PendingRecentMediaCall {
+    final @NonNull RecentMediaRequest request;
+    final @NonNull Function1<
+            ? super @NotNull Result<? extends @NotNull List<@NotNull RecentMediaItem>>,
+            @NotNull Unit>
+        callback;
+
+    PendingRecentMediaCall(
+        @NonNull RecentMediaRequest request,
+        @NonNull
+            Function1<
+                    ? super @NotNull Result<? extends @NotNull List<@NotNull RecentMediaItem>>,
+                    @NotNull Unit>
+                callback) {
+      this.request = request;
+      this.callback = callback;
+    }
+  }
+
   @VisibleForTesting final String fileProviderName;
 
   private final @NonNull Activity activity;
@@ -126,12 +152,15 @@ public class ImagePickerDelegate
   private final FileUriResolver fileUriResolver;
   private final FileUtils fileUtils;
   private final ExecutorService executor;
+  private final RecentMediaLoader recentMediaLoader;
   private CameraDevice cameraDevice;
 
   interface PermissionManager {
     boolean isPermissionGranted(String permissionName);
 
     void askForPermission(String permissionName, int requestCode);
+
+    void askForPermissions(String[] permissionNames, int requestCode);
 
     boolean needRequestCameraPermission();
   }
@@ -149,6 +178,8 @@ public class ImagePickerDelegate
   private Uri pendingCameraMediaUri;
   private @Nullable PendingCallState pendingCallState;
   private final Object pendingCallStateLock = new Object();
+  private @Nullable PendingRecentMediaCall pendingRecentMediaCall;
+  private final Object pendingRecentMediaCallLock = new Object();
 
   public ImagePickerDelegate(
       final @NonNull Activity activity,
@@ -174,6 +205,11 @@ public class ImagePickerDelegate
           }
 
           @Override
+          public void askForPermissions(String[] permissionNames, int requestCode) {
+            ActivityCompat.requestPermissions(activity, permissionNames, requestCode);
+          }
+
+          @Override
           public boolean needRequestCameraPermission() {
             return ImagePickerUtils.needRequestCameraPermission(activity);
           }
@@ -194,7 +230,8 @@ public class ImagePickerDelegate
           }
         },
         new FileUtils(),
-        Executors.newSingleThreadExecutor());
+        Executors.newSingleThreadExecutor(),
+        new RecentMediaLoader(activity));
   }
 
   /**
@@ -214,7 +251,8 @@ public class ImagePickerDelegate
       final PermissionManager permissionManager,
       final FileUriResolver fileUriResolver,
       final FileUtils fileUtils,
-      final ExecutorService executor) {
+      final ExecutorService executor,
+      final RecentMediaLoader recentMediaLoader) {
     this.activity = activity;
     this.imageResizer = imageResizer;
     this.fileProviderName = activity.getPackageName() + ".flutter.image_provider";
@@ -227,6 +265,7 @@ public class ImagePickerDelegate
     this.fileUtils = fileUtils;
     this.cache = cache;
     this.executor = executor;
+    this.recentMediaLoader = recentMediaLoader;
   }
 
   void setCameraDevice(CameraDevice device) {
@@ -287,6 +326,134 @@ public class ImagePickerDelegate
 
     return new CacheRetrievalResult(
         type, (CacheRetrievalError) cacheMap.get(ImagePickerCache.MAP_KEY_ERROR), newPathList);
+  }
+
+  /**
+   * Returns thumbnails of the most recent media items.
+   *
+   * <p>If none of the relevant permissions has been granted yet, requests them first. If all of
+   * them are denied, finishes with an empty list. If only some are granted, such as partial access
+   * on Android 14+, returns the most recent items that the app can access.
+   */
+  public void getRecentMedia(
+      @NonNull RecentMediaRequest request,
+      @NonNull
+          Function1<
+                  ? super @NotNull Result<? extends @NotNull List<@NotNull RecentMediaItem>>,
+                  @NotNull Unit>
+              callback) {
+    String[] permissions = getRecentMediaPermissions(request);
+    boolean allPermissionsGranted = true;
+    for (String permission : permissions) {
+      if (!permission.equals(Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED)
+          && !permissionManager.isPermissionGranted(permission)) {
+        allPermissionsGranted = false;
+        break;
+      }
+    }
+    // Partial access on Android 14+ is a decision the user already made, so don't ask again.
+    boolean shouldLoad =
+        allPermissionsGranted
+            || (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE
+                && permissionManager.isPermissionGranted(
+                    Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED));
+
+    synchronized (pendingRecentMediaCallLock) {
+      if (pendingRecentMediaCall != null) {
+        ResultUtilsKt.completeWithError(
+            callback, new FlutterError("already_active", "Image picker is already active", null));
+        return;
+      }
+      if (!shouldLoad) {
+        pendingRecentMediaCall = new PendingRecentMediaCall(request, callback);
+      }
+    }
+
+    if (shouldLoad) {
+      loadRecentMedia(request, callback);
+    } else {
+      permissionManager.askForPermissions(permissions, REQUEST_RECENT_MEDIA_PERMISSION);
+    }
+  }
+
+  /**
+   * Completes a {@link #getRecentMedia} call that is waiting for a permission result with an empty
+   * list, since the result will not be delivered to this delegate.
+   */
+  void cancelPendingRecentMediaCall() {
+    PendingRecentMediaCall call;
+    synchronized (pendingRecentMediaCallLock) {
+      call = pendingRecentMediaCall;
+      pendingRecentMediaCall = null;
+    }
+    if (call != null) {
+      ResultUtilsKt.completeWithValue(call.callback, new ArrayList<RecentMediaItem>());
+    }
+  }
+
+  private static @NonNull String[] getRecentMediaPermissions(@NonNull RecentMediaRequest request) {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+      return new String[] {Manifest.permission.READ_EXTERNAL_STORAGE};
+    }
+    List<String> permissions = new ArrayList<>();
+    if (request.getIncludeImages()) {
+      permissions.add(Manifest.permission.READ_MEDIA_IMAGES);
+    }
+    if (request.getIncludeVideos()) {
+      permissions.add(Manifest.permission.READ_MEDIA_VIDEO);
+    }
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+      permissions.add(Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED);
+    }
+    return permissions.toArray(new String[0]);
+  }
+
+  private void loadRecentMedia(
+      @NonNull RecentMediaRequest request,
+      @NonNull
+          Function1<
+                  ? super @NotNull Result<? extends @NotNull List<@NotNull RecentMediaItem>>,
+                  @NotNull Unit>
+              callback) {
+    executor.execute(
+        () -> {
+          List<RecentMediaItem> items;
+          try {
+            items = recentMediaLoader.load(request);
+          } catch (RuntimeException e) {
+            ResultUtilsKt.completeWithError(
+                callback, new FlutterError("recent_media_error", e.getMessage(), null));
+            return;
+          }
+          ResultUtilsKt.completeWithValue(callback, items);
+        });
+  }
+
+  private void handleRecentMediaPermissionResult(@NonNull int[] grantResults) {
+    PendingRecentMediaCall call;
+    synchronized (pendingRecentMediaCallLock) {
+      call = pendingRecentMediaCall;
+      pendingRecentMediaCall = null;
+    }
+    if (call == null) {
+      return;
+    }
+
+    // Permissions granted before this request still count, e.g. images when only videos were
+    // missing.
+    for (String permission : getRecentMediaPermissions(call.request)) {
+      if (permissionManager.isPermissionGranted(permission)) {
+        loadRecentMedia(call.request, call.callback);
+        return;
+      }
+    }
+    for (int result : grantResults) {
+      if (result == PackageManager.PERMISSION_GRANTED) {
+        loadRecentMedia(call.request, call.callback);
+        return;
+      }
+    }
+    ResultUtilsKt.completeWithValue(call.callback, new ArrayList<RecentMediaItem>());
   }
 
   public void chooseMediaFromGallery(
@@ -649,6 +816,11 @@ public class ImagePickerDelegate
   @Override
   public boolean onRequestPermissionsResult(
       int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    if (requestCode == REQUEST_RECENT_MEDIA_PERMISSION) {
+      handleRecentMediaPermissionResult(grantResults);
+      return true;
+    }
+
     boolean permissionGranted =
         grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED;
 
