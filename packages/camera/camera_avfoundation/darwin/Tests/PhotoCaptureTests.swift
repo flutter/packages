@@ -361,6 +361,46 @@ final class PhotoCaptureTests: XCTestCase {
     waitForExpectations(timeout: 30, handler: nil)
   }
 
+  func testCaptureToFile_setsMaxPhotoDimensionsWhenPhotoResolutionPresetIsMax() throws {
+    guard #available(iOS 16.0, *) else {
+      throw XCTSkip("maxPhotoDimensions requires iOS 16.")
+    }
+
+    let settingsExpectation = expectation(
+      description: "Must set maxPhotoDimensions when photoResolutionPreset is max.")
+    let captureSessionQueue = DispatchQueue(label: "capture_session_queue")
+    captureSessionQueue.setSpecific(
+      key: captureSessionQueueSpecificKey, value: captureSessionQueueSpecificValue)
+
+    let configuration = CameraTestUtils.createTestCameraConfiguration()
+    configuration.captureSessionQueue = captureSessionQueue
+    configuration.mediaSettings = CameraTestUtils.createDefaultMediaSettings(
+      resolutionPreset: PlatformResolutionPreset.low,
+      photoResolutionPreset: PlatformResolutionPreset.max)
+    let cam = CameraTestUtils.createTestCamera(configuration)
+
+    let expectedDimensions = CMVideoDimensions(width: 4032, height: 3024)
+    let mockOutput = MockCapturePhotoOutput()
+    mockOutput.maxPhotoDimensions = expectedDimensions
+    mockOutput.capturePhotoWithSettingsStub = { settings, photoDelegate in
+      XCTAssertEqual(settings.maxPhotoDimensions.width, expectedDimensions.width)
+      XCTAssertEqual(settings.maxPhotoDimensions.height, expectedDimensions.height)
+      let delegate = cam.inProgressSavePhotoDelegates[settings.uniqueID]
+      let ioQueue = DispatchQueue(label: "io_queue")
+      ioQueue.async {
+        delegate?.completionHandler(delegate?.filePath, nil)
+      }
+      settingsExpectation.fulfill()
+    }
+    cam.capturePhotoOutput = mockOutput
+
+    captureSessionQueue.async {
+      cam.captureToFile { _ in }
+    }
+
+    waitForExpectations(timeout: 30, handler: nil)
+  }
+
   func testCaptureToFile_doesNotSetMaxPhotoDimensionsWhenResolutionPresetIsNotMax() throws {
     guard #available(iOS 16.0, *) else {
       throw XCTSkip("maxPhotoDimensions requires iOS 16.")

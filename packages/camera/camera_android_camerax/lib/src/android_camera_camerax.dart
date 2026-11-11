@@ -285,8 +285,11 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// A map to associate a [CameraInfo] with its camera name.
   final Map<String, CameraInfo> _savedCameras = <String, CameraInfo>{};
 
-  /// The preset resolution selector for the camera.
-  ResolutionSelector? _presetResolutionSelector;
+  /// The resolution selector used for photo capture UseCases.
+  ResolutionSelector? _photoResolutionSelector;
+
+  /// The resolution selector used for preview, video, and analysis UseCases.
+  ResolutionSelector? _videoResolutionSelector;
 
   /// The configured target FPS range for the camera.
   CameraIntegerRange? _targetFpsRange;
@@ -363,11 +366,13 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// uninitialized camera instance, this method retrieves a
   /// [ProcessCameraProvider] instance.
   ///
-  /// The specified `mediaSettings.resolutionPreset` is the target resolution
-  /// that CameraX will attempt to select for the [UseCase]s constructed in this
-  /// method ([preview], [imageCapture], [imageAnalysis], [videoCapture]). If
-  /// unavailable, a fallback behavior of targeting the next highest resolution
-  /// will be attempted. See https://developer.android.com/media/camera/camerax/configuration#specify-resolution.
+  /// The specified `mediaSettings.photoResolutionPreset` (falling back to
+  /// `mediaSettings.resolutionPreset`) is the target resolution that CameraX
+  /// will attempt to select for [imageCapture], while `mediaSettings.videoResolutionPreset`
+  /// (falling back to `mediaSettings.resolutionPreset`) is targeted for [preview],
+  /// [videoCapture], and [imageAnalysis]. If unavailable, a fallback behavior of
+  /// targeting the next highest resolution will be attempted. See
+  /// https://developer.android.com/media/camera/camerax/configuration#specify-resolution.
   ///
   /// To return the camera ID, which is equivalent to the ID of the surface texture
   /// that a camera preview can be drawn to, a [Preview] instance is configured
@@ -397,17 +402,23 @@ class AndroidCameraCameraX extends CameraPlatform {
     // Start listening for device orientation changes preceding camera creation.
     unawaited(deviceOrientationManager.startListeningForDeviceOrientationChange());
     // Determine ResolutionSelector and QualitySelector based on
-    // resolutionPreset for camera UseCases.
-    _presetResolutionSelector = _getResolutionSelectorFromPreset(mediaSettings?.resolutionPreset);
+    // resolution presets for camera UseCases.
+    final ResolutionPreset? photoPreset =
+        mediaSettings?.photoResolutionPreset ?? mediaSettings?.resolutionPreset;
+    final ResolutionPreset? videoPreset =
+        mediaSettings?.videoResolutionPreset ?? mediaSettings?.resolutionPreset;
+
+    _videoResolutionSelector = _getResolutionSelectorFromPreset(videoPreset);
+    _photoResolutionSelector = photoPreset == videoPreset
+        ? _videoResolutionSelector
+        : _getResolutionSelectorFromPreset(photoPreset);
 
     final int? targetFps = mediaSettings?.fps;
     if (targetFps != null) {
       _targetFpsRange = CameraIntegerRange(lower: targetFps, upper: targetFps);
     }
 
-    final QualitySelector? presetQualitySelector = _getQualitySelectorFromPreset(
-      mediaSettings?.resolutionPreset,
-    );
+    final QualitySelector? presetQualitySelector = _getQualitySelectorFromPreset(videoPreset);
 
     // Retrieve a fresh ProcessCameraProvider instance.
     processCameraProvider ??= await ProcessCameraProvider.getInstance();
@@ -415,14 +426,14 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     // Configure Preview instance.
     preview = Preview(
-      resolutionSelector: _presetResolutionSelector,
+      resolutionSelector: _videoResolutionSelector,
       targetFpsRange: _targetFpsRange,
     );
     _flutterSurfaceTextureId = await preview!.setSurfaceProvider(systemServicesManager);
 
     // Configure ImageCapture instance.
     imageCapture = ImageCapture(
-      resolutionSelector: _presetResolutionSelector,
+      resolutionSelector: _photoResolutionSelector,
       /* use CameraX default target rotation */ targetRotation: await deviceOrientationManager
           .getDefaultDisplayRotation(),
       jpegQuality: _jpegQuality,
@@ -479,7 +490,7 @@ class AndroidCameraCameraX extends CameraPlatform {
       imageFormatGroup,
     );
     imageAnalysis = ImageAnalysis(
-      resolutionSelector: _presetResolutionSelector,
+      resolutionSelector: _videoResolutionSelector,
       targetFpsRange: _targetFpsRange,
       outputImageFormat: _imageAnalysisOutputImageFormat,
     );
@@ -1154,7 +1165,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     final int targetRotation =
         _lockedCaptureOrientation ?? await deviceOrientationManager.getDefaultDisplayRotation();
     imageCapture = ImageCapture(
-      resolutionSelector: _presetResolutionSelector,
+      resolutionSelector: _photoResolutionSelector,
       targetRotation: targetRotation,
       jpegQuality: _jpegQuality,
       zeroShutterLagEnabled: _zeroShutterLagEnabled,

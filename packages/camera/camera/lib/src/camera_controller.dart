@@ -236,7 +236,9 @@ class CameraValue {
 class CameraController extends ValueNotifier<CameraValue> {
   /// Creates a new camera controller in an uninitialized state.
   ///
-  /// - [resolutionPreset] affect the quality of video recording and image capture.
+  /// - [resolutionPreset] affects the quality of video recording and image capture.
+  /// - [photoResolutionPreset] optionally overrides [resolutionPreset] specifically for photo capture.
+  /// - [videoResolutionPreset] optionally overrides [resolutionPreset] specifically for video recording.
   /// - [enableAudio] controls audio presence in recorded video.
   ///
   /// Following parameters (if present) will overwrite [resolutionPreset] settings:
@@ -252,8 +254,12 @@ class CameraController extends ValueNotifier<CameraValue> {
     int? videoBitrate,
     int? audioBitrate,
     this.imageFormatGroup,
+    ResolutionPreset? photoResolutionPreset,
+    ResolutionPreset? videoResolutionPreset,
   }) : mediaSettings = MediaSettings(
          resolutionPreset: resolutionPreset,
+         photoResolutionPreset: photoResolutionPreset,
+         videoResolutionPreset: videoResolutionPreset,
          enableAudio: enableAudio,
          fps: fps,
          videoBitrate: videoBitrate,
@@ -271,6 +277,20 @@ class CameraController extends ValueNotifier<CameraValue> {
   ///
   /// See also: [ResolutionPreset].
   ResolutionPreset get resolutionPreset => mediaSettings.resolutionPreset ?? ResolutionPreset.max;
+
+  /// The photo resolution preset this controller is targeting.
+  ///
+  /// When null, falls back to [resolutionPreset].
+  ///
+  /// See also: [ResolutionPreset].
+  ResolutionPreset? get photoResolutionPreset => mediaSettings.photoResolutionPreset;
+
+  /// The video resolution preset this controller is targeting.
+  ///
+  /// When null, falls back to [resolutionPreset].
+  ///
+  /// See also: [ResolutionPreset].
+  ResolutionPreset? get videoResolutionPreset => mediaSettings.videoResolutionPreset;
 
   /// Whether to include audio when recording a video.
   bool get enableAudio => mediaSettings.enableAudio;

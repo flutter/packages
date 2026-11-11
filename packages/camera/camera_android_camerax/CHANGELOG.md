@@ -1,3 +1,7 @@
+## 0.7.7
+
+* Supports separate `photoResolutionPreset` and `videoResolutionPreset` from `MediaSettings`.
+
 ## 0.7.6+1
 
 * Fixes video recording duration discrepancy by waiting for the first recorded frame before completing `startVideoCapturing`, and validates errors on `stopVideoRecording`.
