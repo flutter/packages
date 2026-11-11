@@ -1372,7 +1372,7 @@ class _CupertinoActionSheetState extends State<CupertinoActionSheet> {
           scopesRoute: true,
           explicitChildNodes: true,
           role: SemanticsRole.dialog,
-          label: 'Alert',
+          label: CupertinoLocalizations.of(context).alertDialogLabel,
           child: CupertinoUserInterfaceLevel(
             data: CupertinoUserInterfaceLevelData.elevated,
             child: Padding(
