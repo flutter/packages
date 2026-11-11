@@ -102,3 +102,114 @@ jobs:
         with:
           pr-number: ${{ steps.validate.outputs.pr_number }}
           sync-labels: true
+
+      - name: Check PR template
+        if: steps.validate.outputs.pr_number != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ steps.validate.outputs.pr_number }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+
+          # 1. Skip if already a draft or closed.
+          IS_DRAFT=$(jq -r '.draft' "$RUNNER_TEMP/pr.json")
+          STATE=$(jq -r '.state' "$RUNNER_TEMP/pr.json")
+          if [ "$IS_DRAFT" = "true" ] || [ "$STATE" != "open" ]; then
+            echo "::notice::PR #$PR_NUMBER is already a draft or closed; skipping template check."
+            exit 0
+          fi
+
+          # 2. Skip bots and organization members / collaborators.
+          USER_TYPE=$(jq -r '.user.type' "$RUNNER_TEMP/pr.json")
+          AUTHOR=$(jq -r '.user.login' "$RUNNER_TEMP/pr.json")
+          ASSOC=$(jq -r '.author_association' "$RUNNER_TEMP/pr.json")
+
+          if [ "$USER_TYPE" = "Bot" ]; then
+            echo "::notice::Skipping bot author $AUTHOR."
+            exit 0
+          fi
+          if [[ "$ASSOC" == "MEMBER" || "$ASSOC" == "OWNER" || "$ASSOC" == "COLLABORATOR" ]] ||
+             gh api --silent "repos/$REPO/collaborators/$AUTHOR" 2>/dev/null; then
+            echo "::notice::Author $AUTHOR is an org member/collaborator; skipping template check."
+            exit 0
+          fi
+
+          # 3. Validate the PR description against .github/PULL_REQUEST_TEMPLATE.md.
+          TEMPLATE=$(gh api "repos/$REPO/contents/.github/PULL_REQUEST_TEMPLATE.md" \
+            -H "Accept: application/vnd.github.raw" | tr -d '\r')
+          EXPECTED_ITEMS=()
+          while IFS= read -r line; do
+            EXPECTED_ITEMS+=("$line")
+          done < <(grep -E '^-[[:space:]]*\[ \][[:space:]]+' <<<"$TEMPLATE" |
+            sed -E 's/^-[[:space:]]*\[ \][[:space:]]+//; s/[[:space:]]*$//')
+
+          if [ "${#EXPECTED_ITEMS[@]}" -eq 0 ]; then
+            echo "::error::Failed to parse checklist items from .github/PULL_REQUEST_TEMPLATE.md."
+            exit 1
+          fi
+
+          BODY=$(jq -r '.body // ""' "$RUNNER_TEMP/pr.json" | tr -d '\r')
+          NORMALIZED_BODY=$(sed -E '
+            s/^[[:space:]]*-[[:space:]]*\[[xX]\][[:space:]]+/- [x] /;
+            s/^[[:space:]]*-[[:space:]]*\[[[:space:]]*\][[:space:]]+/- [ ] /;
+            s/[[:space:]]*$//
+          ' <<<"$BODY")
+
+          TOTAL_COUNT="${#EXPECTED_ITEMS[@]}"
+          MISSING_COUNT=0
+          UNCHECKED_COUNT=0
+
+          for item in "${EXPECTED_ITEMS[@]}"; do
+            if grep -Fxq -- "- [x] $item" <<<"$NORMALIZED_BODY"; then
+              continue
+            elif grep -Fq -- "$item" <<<"$NORMALIZED_BODY"; then
+              UNCHECKED_COUNT=$((UNCHECKED_COUNT + 1))
+            else
+              MISSING_COUNT=$((MISSING_COUNT + 1))
+            fi
+          done
+
+          REASONS=()
+          if [ "$MISSING_COUNT" -gt 0 ]; then
+            REASONS+=("- The **Pre-Review Checklist** from the [PR template](https://github.com/flutter/packages/blob/main/.github/PULL_REQUEST_TEMPLATE.md) is missing or incomplete ($MISSING_COUNT of $TOTAL_COUNT expected checklist items are missing).")
+          fi
+          if [ "$UNCHECKED_COUNT" -gt 0 ]; then
+            REASONS+=("- Not all items in the **Pre-Review Checklist** have been completed ($UNCHECKED_COUNT of $TOTAL_COUNT items are unchecked).")
+          fi
+          if grep -Fq "*Replace this paragraph with a description of what this PR is changing or adding" <<<"$BODY" ||
+             grep -Fq "*List which issues are fixed by this PR. You must list at least one issue.*" <<<"$BODY"; then
+            REASONS+=("- The placeholder text at the top of the [PR template](https://github.com/flutter/packages/blob/main/.github/PULL_REQUEST_TEMPLATE.md) was not replaced.")
+          fi
+
+          if [ "${#REASONS[@]}" -eq 0 ]; then
+            echo "::notice::PR #$PR_NUMBER passed template validation."
+            exit 0
+          fi
+
+          # 4. Convert the PR to a draft via GraphQL.
+          PR_NODE_ID=$(jq -r '.node_id' "$RUNNER_TEMP/pr.json")
+          gh api graphql -f query='
+            mutation($id: ID!) {
+              convertPullRequestToDraft(input: {pullRequestId: $id}) {
+                pullRequest { isDraft }
+              }
+            }
+          ' -f id="$PR_NODE_ID"
+
+          # 5. Post or update the nudge comment.
+          MARKER="<!-- pr-template-check -->"
+          REASONS_TEXT=$(printf '%s\n' "${REASONS[@]}")
+          COMMENT_BODY=$(printf '%s\n\nHi @%s, thank you for your contribution!\n\nThis pull request has been converted to a **draft** because it does not appear to follow our [pull request template](https://github.com/flutter/packages/blob/main/.github/PULL_REQUEST_TEMPLATE.md):\n\n%s\n\nPlease update the PR description to include the full, completed checklist from the template, then click **"Ready for review"** when you are done.\n' \
+            "$MARKER" "$AUTHOR" "$REASONS_TEXT")
+
+          EXISTING_COMMENT_ID=$(gh api --paginate "repos/$REPO/issues/$PR_NUMBER/comments" |
+            jq -s -r --arg marker "$MARKER" '[add[] | select((.body // "") | contains($marker))][0].id // empty')
+
+          if [ -n "$EXISTING_COMMENT_ID" ]; then
+            gh api -X PATCH "repos/$REPO/issues/comments/$EXISTING_COMMENT_ID" \
+              -f body="$COMMENT_BODY"
+          else
+            gh api -X POST "repos/$REPO/issues/$PR_NUMBER/comments" \
+              -f body="$COMMENT_BODY"
+          fi
