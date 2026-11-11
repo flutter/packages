@@ -153,7 +153,7 @@ class LoadingIndicator extends StatefulWidget {
   /// If non-null, the value of this loading indicator.
   ///
   /// A value of 0.0 means no progress and 1.0 means that progress is complete.
-  /// The value will be clamped to be in the range 0.0-1.0.
+  /// The value will be clamped to be in the range 0.0 - 1.0.
   ///
   /// If null, this loading indicator is indeterminate, which means it keeps
   /// morphing between its [polygons] without indicating how much actual
