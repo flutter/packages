@@ -566,38 +566,43 @@ void main() {
     expect(MediaQuery.of(innerContext).padding.bottom, 0);
   });
 
-  testWidgets('Scaffold backgroundColor extends behind bottom view inset in default mode', (
-    WidgetTester tester,
-  ) async {
-    const scaffoldColor = Color(0xFF123456);
-    const pageColor = Color(0xFF654321);
+  testWidgets(
+    'Scaffold background paints behind bottom view inset when resizeToAvoidBottomInset is true',
+    (WidgetTester tester) async {
+      const scaffoldColor = Color(0xFF123456);
+      const pageColor = Color(0xFF654321);
 
-    await tester.pumpWidget(
-      CupertinoApp(
-        home: MediaQuery(
-          data: const MediaQueryData(viewInsets: EdgeInsets.only(bottom: 200)),
-          child: CupertinoTabScaffold(
-            backgroundColor: scaffoldColor,
-            tabBar: _buildTabBar(),
-            tabBuilder: (BuildContext context, int index) {
-              return const CupertinoPageScaffold(
-                backgroundColor: pageColor,
-                child: Placeholder(),
-              );
-            },
+      await tester.pumpWidget(
+        CupertinoApp(
+          home: MediaQuery(
+            data: const MediaQueryData(viewInsets: EdgeInsets.only(bottom: 200.0)),
+            child: CupertinoTabScaffold(
+              backgroundColor: scaffoldColor,
+              tabBar: CupertinoTabBar(
+                items: const <BottomNavigationBarItem>[
+                  BottomNavigationBarItem(icon: Icon(CupertinoIcons.home), label: 'Tab 1'),
+                  BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Tab 2'),
+                ],
+              ),
+              tabBuilder: (BuildContext context, int index) {
+                return const CupertinoPageScaffold(
+                  backgroundColor: pageColor,
+                  child: Placeholder(),
+                );
+              },
+            ),
           ),
         ),
-      ),
-    );
+      );
 
-    final Finder scaffoldBackground = find
-        .descendant(of: find.byType(CupertinoTabScaffold), matching: find.byType(DecoratedBox))
-        .first;
-    final decoration = tester.widget<DecoratedBox>(scaffoldBackground).decoration as BoxDecoration;
-    expect(decoration.color, isSameColorAs(scaffoldColor));
-    expect(tester.getRect(scaffoldBackground), const Rect.fromLTWH(0, 0, 800, 600));
-    expect(tester.getRect(find.byType(CupertinoPageScaffold)), const Rect.fromLTWH(0, 0, 800, 400));
-  });
+      expect(
+        find.byType(CupertinoTabScaffold),
+        paints
+          ..rect(rect: const Rect.fromLTWH(0.0, 0.0, 800.0, 600.0), color: scaffoldColor)
+          ..rect(rect: const Rect.fromLTWH(0.0, 0.0, 800.0, 400.0), color: pageColor),
+      );
+    },
+  );
 
   testWidgets('Deleting tabs after selecting them should switch to the last available tab', (
     WidgetTester tester,
