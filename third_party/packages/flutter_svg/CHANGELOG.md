@@ -1,3 +1,7 @@
+## 2.3.4
+
+* Prevents pending loads invalidated by clear or evict from repopulating the cache.
+
 ## 2.3.3
 
 * Fixes `Cache.putIfAbsent` leaving rejected futures in `_pending` and leaking
