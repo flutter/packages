@@ -303,9 +303,26 @@ class SpanDecoration {
     this.color,
     this.borderRadius,
     this.consumeSpanPadding = true,
+    this.animationStyle,
+    this.splashColor,
+    this.splashAnimationStyle,
   });
 
+  /// The default duration for the tap splash (ripple) animation when
+  /// [splashColor] is non-null and [splashAnimationStyle] does not specify a
+  /// duration.
+  static const Duration defaultSplashDuration = Duration(milliseconds: 300);
+
+  /// The default curve for the tap splash (ripple) animation when
+  /// [splashColor] is non-null and [splashAnimationStyle] does not specify a
+  /// curve.
+  static const Curve defaultSplashCurve = Curves.easeOut;
+
   /// The border drawn around the span.
+  ///
+  /// This can be a [SpanBorder] whose sides use [WidgetStateBorderSide] or
+  /// [WidgetStateColor] to style interactive states such as
+  /// [WidgetState.hovered] and [WidgetState.pressed].
   final SpanBorder? border;
 
   /// The radius by which the leading and trailing ends of a row or
@@ -315,6 +332,10 @@ class SpanDecoration {
   final BorderRadius? borderRadius;
 
   /// The color to fill the bounds of the span with.
+  ///
+  /// This can be a [WidgetStateColor] to specify different colors for
+  /// interactive states such as [WidgetState.hovered] and
+  /// [WidgetState.pressed].
   final Color? color;
 
   /// Whether or not the decoration should extend to fill the space created by
@@ -360,6 +381,57 @@ class SpanDecoration {
   /// ```
   final bool consumeSpanPadding;
 
+  /// Defines the duration and curve for animating decoration transitions
+  /// when the [Span]'s interactive [WidgetState]s (such as
+  /// [WidgetState.hovered] or [WidgetState.pressed]) change.
+  ///
+  /// Defaults to null, which applies state changes instantaneously without
+  /// animation.
+  final AnimationStyle? animationStyle;
+
+  /// The color of the ripple (splash) effect drawn expanding from the
+  /// pointer contact location when the [Span] is tapped.
+  ///
+  /// This can also be a [WidgetStateColor] to resolve the splash color based on
+  /// the current [SpanDecorationPaintDetails.states].
+  ///
+  /// If null, no splash ripple effect is drawn.
+  final Color? splashColor;
+
+  /// Defines the duration and curve of the tap splash (ripple) animation
+  /// when [splashColor] is non-null.
+  ///
+  /// If null, defaults to [defaultSplashDuration] (300ms) and
+  /// [defaultSplashCurve] ([Curves.easeOut]).
+  final AnimationStyle? splashAnimationStyle;
+
+  /// Whether this decoration resolves dynamically based on interactive
+  /// [WidgetState]s or paints a tap splash animation.
+  bool get isInteractive =>
+      color is WidgetStateProperty ||
+      borderRadius is WidgetStateProperty ||
+      splashColor != null ||
+      (border?.isInteractive ?? false);
+
+  static double _calculateMaxSplashRadius(Offset center, Rect rect) {
+    return math.max(
+      math.max((center - rect.topLeft).distance, (center - rect.topRight).distance),
+      math.max((center - rect.bottomLeft).distance, (center - rect.bottomRight).distance),
+    );
+  }
+
+  static Color? _lerpColor(Color? a, Color? b, double t) {
+    if (a != null && b != null) {
+      if (a.a == 0.0 && b.a > 0.0) {
+        return Color.lerp(b.withValues(alpha: 0.0), b, t);
+      }
+      if (b.a == 0.0 && a.a > 0.0) {
+        return Color.lerp(a, a.withValues(alpha: 0.0), t);
+      }
+    }
+    return Color.lerp(a, b, t);
+  }
+
   /// Called to draw the decoration around a span.
   ///
   /// The provided [SpanDecorationPaintDetails] describes the bounds and
@@ -373,18 +445,78 @@ class SpanDecoration {
   /// [SpanDecorationPaintDetails.rect] containing all the other unpinned
   /// cells.
   void paint(SpanDecorationPaintDetails details) {
-    if (color != null) {
+    final Color? targetColor = WidgetStateProperty.resolveAs<Color?>(color, details.states);
+    final Color? resolvedColor;
+    if (details.stateAnimationProgress < 1.0) {
+      final Color? previousColor = WidgetStateProperty.resolveAs<Color?>(
+        color,
+        details.previousStates,
+      );
+      resolvedColor = _lerpColor(previousColor, targetColor, details.stateAnimationProgress);
+    } else {
+      resolvedColor = targetColor;
+    }
+
+    final BorderRadius? targetBorderRadius = WidgetStateProperty.resolveAs<BorderRadius?>(
+      borderRadius,
+      details.states,
+    );
+    final BorderRadius? resolvedBorderRadius;
+    if (details.stateAnimationProgress < 1.0) {
+      final BorderRadius? previousBorderRadius = WidgetStateProperty.resolveAs<BorderRadius?>(
+        borderRadius,
+        details.previousStates,
+      );
+      resolvedBorderRadius = BorderRadius.lerp(
+        previousBorderRadius,
+        targetBorderRadius,
+        details.stateAnimationProgress,
+      );
+    } else {
+      resolvedBorderRadius = targetBorderRadius;
+    }
+
+    if (resolvedColor != null && resolvedColor.a > 0.0) {
       final paint = Paint()
-        ..color = color!
-        ..isAntiAlias = borderRadius != null;
-      if (borderRadius == null || borderRadius == BorderRadius.zero) {
+        ..color = resolvedColor
+        ..isAntiAlias = resolvedBorderRadius != null;
+      if (resolvedBorderRadius == null || resolvedBorderRadius == BorderRadius.zero) {
         details.canvas.drawRect(details.rect, paint);
       } else {
-        details.canvas.drawRRect(borderRadius!.toRRect(details.rect), paint);
+        details.canvas.drawRRect(resolvedBorderRadius.toRRect(details.rect), paint);
       }
     }
+
+    final Color? resolvedSplashColor = WidgetStateProperty.resolveAs<Color?>(
+      splashColor,
+      details.states,
+    );
+    if (resolvedSplashColor != null &&
+        details.splashProgress > 0.0 &&
+        details.splashProgress < 1.0 &&
+        details.pointerPosition != null) {
+      final Offset center = details.pointerPosition!;
+      final double maxRadius =
+          details.maxSplashRadius ?? _calculateMaxSplashRadius(center, details.rect);
+      final double radius = maxRadius * details.splashProgress;
+      final double fadeAlpha = resolvedSplashColor.a * (1.0 - details.splashProgress);
+      if (fadeAlpha > 0.0 && radius > 0.0) {
+        final splashPaint = Paint()
+          ..color = resolvedSplashColor.withValues(alpha: fadeAlpha)
+          ..isAntiAlias = true;
+        details.canvas.save();
+        if (resolvedBorderRadius == null || resolvedBorderRadius == BorderRadius.zero) {
+          details.canvas.clipRect(details.rect);
+        } else {
+          details.canvas.clipRRect(resolvedBorderRadius.toRRect(details.rect));
+        }
+        details.canvas.drawCircle(center, radius, splashPaint);
+        details.canvas.restore();
+      }
+    }
+
     if (border != null) {
-      border!.paint(details, borderRadius);
+      border!.paint(details, resolvedBorderRadius);
     }
   }
 }
@@ -409,6 +541,59 @@ class SpanBorder {
   /// is its left side when the [Axis.horizontal] is [AxisDirection.right].
   final BorderSide leading;
 
+  /// Whether this border resolves dynamically based on interactive
+  /// [WidgetState]s.
+  bool get isInteractive =>
+      leading is WidgetStateProperty ||
+      leading.color is WidgetStateProperty ||
+      trailing is WidgetStateProperty ||
+      trailing.color is WidgetStateProperty;
+
+  BorderSide _resolveSideForStates(BorderSide side, Set<WidgetState> states) {
+    final BorderSide resolvedSide =
+        WidgetStateProperty.resolveAs<BorderSide?>(side, states) ?? BorderSide.none;
+    final Color resolvedColor = WidgetStateProperty.resolveAs<Color>(resolvedSide.color, states);
+    if (identical(resolvedColor, resolvedSide.color)) {
+      return resolvedSide;
+    }
+    return resolvedSide.copyWith(color: resolvedColor);
+  }
+
+  /// Resolves a [BorderSide] (and its [BorderSide.color]) against the provided
+  /// [WidgetState]s, interpolating from [previousStates] when
+  /// [stateAnimationProgress] is less than 1.0.
+  @protected
+  BorderSide resolveBorderSide(
+    BorderSide side,
+    Set<WidgetState> states, {
+    Set<WidgetState> previousStates = const <WidgetState>{},
+    double stateAnimationProgress = 1.0,
+  }) {
+    final BorderSide targetSide = _resolveSideForStates(side, states);
+    if (stateAnimationProgress < 1.0) {
+      final BorderSide previousSide = _resolveSideForStates(side, previousStates);
+      final BorderSide lerped = BorderSide.lerp(previousSide, targetSide, stateAnimationProgress);
+      final Color effectivePreviousColor = previousSide.style == BorderStyle.none
+          ? previousSide.color.withValues(alpha: 0.0)
+          : previousSide.color;
+      final Color effectiveTargetColor = targetSide.style == BorderStyle.none
+          ? targetSide.color.withValues(alpha: 0.0)
+          : targetSide.color;
+      if ((effectivePreviousColor.a == 0.0 && effectiveTargetColor.a > 0.0) ||
+          (effectiveTargetColor.a == 0.0 && effectivePreviousColor.a > 0.0)) {
+        return lerped.copyWith(
+          color: SpanDecoration._lerpColor(
+            effectivePreviousColor,
+            effectiveTargetColor,
+            stateAnimationProgress,
+          ),
+        );
+      }
+      return lerped;
+    }
+    return targetSide;
+  }
+
   /// Called to draw the border around a span.
   ///
   /// If the span represents a row, `axisDirection` will be [AxisDirection.left]
@@ -428,21 +613,33 @@ class SpanBorder {
   void paint(SpanDecorationPaintDetails details, BorderRadius? borderRadius) {
     final AxisDirection axisDirection = details.axisDirection;
     final AxisDirection? crossAxisDirection = details.crossAxisDirection;
+    final BorderSide resolvedLeading = resolveBorderSide(
+      leading,
+      details.states,
+      previousStates: details.previousStates,
+      stateAnimationProgress: details.stateAnimationProgress,
+    );
+    final BorderSide resolvedTrailing = resolveBorderSide(
+      trailing,
+      details.states,
+      previousStates: details.previousStates,
+      stateAnimationProgress: details.stateAnimationProgress,
+    );
     switch (axisDirectionToAxis(axisDirection)) {
       case Axis.horizontal:
         final bool isLeadingTop =
             crossAxisDirection == null || crossAxisDirection == AxisDirection.down;
         final border = Border(
-          top: isLeadingTop ? leading : trailing,
-          bottom: isLeadingTop ? trailing : leading,
+          top: isLeadingTop ? resolvedLeading : resolvedTrailing,
+          bottom: isLeadingTop ? resolvedTrailing : resolvedLeading,
         );
         border.paint(details.canvas, details.rect, borderRadius: borderRadius);
       case Axis.vertical:
         final bool isLeadingLeft =
             crossAxisDirection == null || crossAxisDirection == AxisDirection.right;
         final border = Border(
-          left: isLeadingLeft ? leading : trailing,
-          right: isLeadingLeft ? trailing : leading,
+          left: isLeadingLeft ? resolvedLeading : resolvedTrailing,
+          right: isLeadingLeft ? resolvedTrailing : resolvedLeading,
         );
         border.paint(details.canvas, details.rect, borderRadius: borderRadius);
     }
@@ -462,6 +659,12 @@ class SpanDecorationPaintDetails {
     required this.rect,
     required this.axisDirection,
     this.crossAxisDirection,
+    this.states = const <WidgetState>{},
+    this.previousStates = const <WidgetState>{},
+    this.stateAnimationProgress = 1.0,
+    this.pointerPosition,
+    this.maxSplashRadius,
+    this.splashProgress = 0.0,
   });
 
   /// The [Canvas] that the [SpanDecoration] will be painted to.
@@ -487,4 +690,36 @@ class SpanDecorationPaintDetails {
   /// Used to determine the correct leading/trailing edge when deciding how to
   /// paint borders or apply padding.
   final AxisDirection? crossAxisDirection;
+
+  /// The current interactive states (such as [WidgetState.hovered] or
+  /// [WidgetState.pressed]) of the [Span] being painted.
+  final Set<WidgetState> states;
+
+  /// The previous interactive states of the [Span] before the most recent
+  /// state transition.
+  ///
+  /// Used together with [stateAnimationProgress] when
+  /// [SpanDecoration.animationStyle] is configured.
+  final Set<WidgetState> previousStates;
+
+  /// The progress of the transition from [previousStates] to [states], from
+  /// 0.0 to 1.0.
+  ///
+  /// Defaults to 1.0 when no state transition animation is active.
+  final double stateAnimationProgress;
+
+  /// The most recent pointer down position on the [Span] in [canvas]
+  /// coordinates, used as the origin for tap splash (ripple) animations.
+  final Offset? pointerPosition;
+
+  /// The maximum radius for a tap splash (ripple) animation across the full
+  /// visible extent of the [Span].
+  ///
+  /// When null, [SpanDecoration.paint] computes the radius from [rect].
+  final double? maxSplashRadius;
+
+  /// The progress of the tap splash (ripple) animation, from 0.0 to 1.0.
+  ///
+  /// Defaults to 0.0 when no splash animation is active.
+  final double splashProgress;
 }

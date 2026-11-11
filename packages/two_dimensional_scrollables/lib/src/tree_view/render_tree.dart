@@ -4,12 +4,10 @@
 
 import 'dart:math' as math;
 
-import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
+import '../common/span_state.dart';
 import 'tree_core.dart';
 import 'tree_delegate.dart';
 import 'tree_span.dart';
@@ -230,12 +228,11 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
     // We animate only a portion of children that would be visible/in the cache
     // extent, unless all animating children would fit on the screen.
     while (currentIndex <= lastIndex && currentPosition < _targetRowPixel) {
-      _Span? span = _rowMetrics.remove(currentIndex);
+      final _Span? span = _rowMetrics[currentIndex];
       assert(needsDelegateRebuild || span != null);
       final TreeRow configuration = needsDelegateRebuild
           ? delegate.buildRow(TreeVicinity(depth: _rowDepths[currentIndex]!, row: currentIndex))
           : span!.configuration;
-      span ??= _Span();
       final double extent = configuration.extent.calculateExtent(
         TreeRowExtentDelegate(viewportExtent: viewportDimension.height, precedingExtent: position),
       );
@@ -266,7 +263,7 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
       final TreeRow configuration = needsDelegateRebuild
           ? delegate.buildRow(TreeVicinity(depth: _rowDepths[row]!, row: row))
           : span!.configuration;
-      span ??= _Span();
+      span ??= _Span(onStateChanged: markNeedsPaint);
       final double extent = configuration.extent.calculateExtent(
         TreeRowExtentDelegate(
           viewportExtent: viewportDimension.height,
@@ -396,6 +393,7 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
     }
 
     assert(_lastRow != null);
+    final bool reversedV = axisDirectionIsReversed(verticalAxisDirection);
     _Span rowSpan;
     double rowOffset =
         -verticalOffset.pixels + _rowMetrics[_firstRow!]!.leadingOffset + _vAlignmentOffset;
@@ -405,6 +403,7 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
       if (_animationLeadingIndices.keys.contains(row)) {
         rowOffset -= rowSpan.animationOffset;
       }
+      rowSpan.viewportOffset = Offset(0.0, reversedV ? -rowOffset : rowOffset);
       rowOffset += rowSpan.configuration.padding.leading;
 
       final vicinity = TreeVicinity(depth: _rowDepths[row]!, row: row);
@@ -550,8 +549,8 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
     required int trailingRow,
   }) {
     // Row decorations
-    final foregroundRows = <Rect, TreeRowDecoration>{};
-    final backgroundRows = <Rect, TreeRowDecoration>{};
+    final foregroundRows = <Rect, ({TreeRowDecoration decoration, _Span span})>{};
+    final backgroundRows = <Rect, ({TreeRowDecoration decoration, _Span span})>{};
 
     var currentRow = leadingRow;
     while (currentRow <= trailingRow) {
@@ -568,11 +567,13 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
           // Decoration rects cover the whole row from the left and right
           // edge of the viewport.
           return Rect.fromLTRB(
-            0.0,
-            parentData.paintOffset!.dy -
+            offset.dx,
+            offset.dy +
+                parentData.paintOffset!.dy -
                 (consumePadding ? rowSpan.configuration.padding.leading : 0.0),
-            viewportDimension.width,
-            parentData.paintOffset!.dy +
+            offset.dx + viewportDimension.width,
+            offset.dy +
+                parentData.paintOffset!.dy +
                 child.size.height +
                 (consumePadding ? rowSpan.configuration.padding.trailing : 0.0),
           );
@@ -580,26 +581,41 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
 
         if (configuration.backgroundDecoration != null) {
           final Rect rect = getRowRect(configuration.backgroundDecoration!.consumeSpanPadding);
-          backgroundRows[rect] = configuration.backgroundDecoration!;
+          backgroundRows[rect] = (decoration: configuration.backgroundDecoration!, span: rowSpan);
         }
         if (configuration.foregroundDecoration != null) {
           final Rect rect = getRowRect(configuration.foregroundDecoration!.consumeSpanPadding);
-          foregroundRows[rect] = configuration.foregroundDecoration!;
+          foregroundRows[rect] = (decoration: configuration.foregroundDecoration!, span: rowSpan);
         }
       }
       currentRow++;
     }
 
-    // Get to painting.
-    // Background decorations first.
-    backgroundRows.forEach((Rect rect, TreeRowDecoration decoration) {
-      final paintingDetails = TreeRowDecorationPaintDetails(
+    TreeRowDecorationPaintDetails createPaintDetails(
+      Rect rect,
+      TreeRowDecoration decoration,
+      _Span span,
+    ) {
+      final double splashProgress = span.splashProgressFor(decoration);
+      return TreeRowDecorationPaintDetails(
         canvas: context.canvas,
         rect: rect,
         axisDirection: horizontalAxisDirection,
         crossAxisDirection: verticalAxisDirection,
+        states: span.states,
+        previousStates: span.previousStates,
+        stateAnimationProgress: span.stateAnimationProgressFor(decoration),
+        pointerPosition: splashProgress > 0.0 && span.pointerPosition != null
+            ? offset + span.pointerPosition!
+            : null,
+        splashProgress: splashProgress,
       );
-      decoration.paint(paintingDetails);
+    }
+
+    // Get to painting.
+    // Background decorations first.
+    backgroundRows.forEach((Rect rect, ({TreeRowDecoration decoration, _Span span}) entry) {
+      entry.decoration.paint(createPaintDetails(rect, entry.decoration, entry.span));
     });
     // Child nodes.
     for (var row = leadingRow; row <= trailingRow; row++) {
@@ -610,122 +626,32 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
       }
     }
     // Foreground decorations.
-    foregroundRows.forEach((Rect rect, TreeRowDecoration decoration) {
-      final paintingDetails = TreeRowDecorationPaintDetails(
-        canvas: context.canvas,
-        rect: rect,
-        axisDirection: horizontalAxisDirection,
-        crossAxisDirection: verticalAxisDirection,
-      );
-      decoration.paint(paintingDetails);
+    foregroundRows.forEach((Rect rect, ({TreeRowDecoration decoration, _Span span}) entry) {
+      entry.decoration.paint(createPaintDetails(rect, entry.decoration, entry.span));
     });
   }
 }
 
-class _Span with Diagnosticable implements HitTestTarget, MouseTrackerAnnotation {
-  double get leadingOffset => _leadingOffset;
-  late double _leadingOffset;
-
-  double get extent => _extent;
-  late double _extent;
-
-  TreeRow get configuration => _configuration!;
-  TreeRow? _configuration;
+class _Span extends SpanState<TreeRow> {
+  _Span({super.onStateChanged});
 
   double get animationOffset => _animationOffset;
-  late double _animationOffset;
+  double _animationOffset = 0.0;
 
-  double get trailingOffset {
-    return leadingOffset + extent + configuration.padding.leading + configuration.padding.trailing;
-  }
-
-  // ---- Span Management ----
-
+  @override
   void update({
     required TreeRow configuration,
     required double leadingOffset,
     required double extent,
-    required double animationOffset,
+    double animationOffset = 0.0,
   }) {
-    _leadingOffset = leadingOffset;
-    _extent = extent;
     _animationOffset = animationOffset;
-    if (configuration == _configuration) {
-      return;
-    }
-    _configuration = configuration;
-    // Only sync recognizers if they are in use already.
-    if (_recognizers != null) {
-      _syncRecognizers();
-    }
+    super.update(configuration: configuration, leadingOffset: leadingOffset, extent: extent);
   }
 
-  void dispose() {
-    _disposeRecognizers();
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DoubleProperty('animationOffset', _animationOffset));
   }
-
-  // ---- Recognizers management ----
-
-  Map<Type, GestureRecognizer>? _recognizers;
-
-  void _syncRecognizers() {
-    if (configuration.recognizerFactories.isEmpty) {
-      _disposeRecognizers();
-      return;
-    }
-    final newRecognizers = <Type, GestureRecognizer>{};
-    for (final Type type in configuration.recognizerFactories.keys) {
-      assert(!newRecognizers.containsKey(type));
-      newRecognizers[type] =
-          _recognizers?.remove(type) ?? configuration.recognizerFactories[type]!.constructor();
-      assert(
-        newRecognizers[type].runtimeType == type,
-        'GestureRecognizerFactory of type $type created a GestureRecognizer of '
-        'type ${newRecognizers[type].runtimeType}. The '
-        'GestureRecognizerFactory must be specialized with the type of the '
-        'class that it returns from its constructor method.',
-      );
-      configuration.recognizerFactories[type]!.initializer(newRecognizers[type]!);
-    }
-    _disposeRecognizers(); // only disposes the ones that where not re-used above.
-    _recognizers = newRecognizers;
-  }
-
-  void _disposeRecognizers() {
-    if (_recognizers != null) {
-      for (final GestureRecognizer recognizer in _recognizers!.values) {
-        recognizer.dispose();
-      }
-      _recognizers = null;
-    }
-  }
-
-  // ---- HitTestTarget ----
-
-  @override
-  void handleEvent(PointerEvent event, HitTestEntry entry) {
-    if (event is PointerDownEvent && configuration.recognizerFactories.isNotEmpty) {
-      if (_recognizers == null) {
-        _syncRecognizers();
-      }
-      assert(_recognizers != null);
-      for (final GestureRecognizer recognizer in _recognizers!.values) {
-        recognizer.addPointer(event);
-      }
-    }
-  }
-
-  // ---- MouseTrackerAnnotation ----
-
-  @override
-  MouseCursor get cursor => configuration.cursor;
-
-  @override
-  PointerEnterEventListener? get onEnter => configuration.onEnter;
-
-  @override
-  PointerExitEventListener? get onExit => configuration.onExit;
-
-  @override
-  bool get validForMouseTracker => true;
 }
