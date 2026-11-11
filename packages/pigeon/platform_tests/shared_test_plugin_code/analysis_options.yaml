@@ -8,4 +8,6 @@ linter:
     # The Pigeon-generated code in lib/src/generated/ can't be edited by hand,
     # and it triggers this lint at language version 3.12 and later (which
     # added private named parameters).
+    # TODO(tarrinneal): Update the generated code, then remove this file and
+    # allow_custom_analysis_options from packages/pigeon/ci_config.yaml.
     prefer_initializing_formals: false
