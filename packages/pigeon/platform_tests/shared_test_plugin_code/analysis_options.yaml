@@ -1,0 +1,11 @@
+analyzer:
+  exclude:
+    - build/**
+include: ../../../../analysis_options.yaml
+
+linter:
+  rules:
+    # The Pigeon-generated code in lib/src/generated/ can't be edited by hand,
+    # and it triggers this lint at language version 3.12 and later (which
+    # added private named parameters).
+    prefer_initializing_formals: false

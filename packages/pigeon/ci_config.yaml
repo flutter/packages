@@ -1,0 +1,4 @@
+# platform_tests/shared_test_plugin_code has its own analysis_options.yaml that
+# disables prefer_initializing_formals for its Pigeon-generated code, which
+# can't be edited by hand.
+allow_custom_analysis_options: true
