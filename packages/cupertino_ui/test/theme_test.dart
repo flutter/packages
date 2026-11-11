@@ -231,12 +231,10 @@ void main() {
 
     const red = NoDefaultCupertinoThemeData(selectionHandleColor: CupertinoColors.systemRed);
     const blue = NoDefaultCupertinoThemeData(selectionHandleColor: CupertinoColors.systemBlue);
+    final NoDefaultCupertinoThemeData redCopy = red.copyWith();
     expect(red, isNot(blue));
-    expect(red, const NoDefaultCupertinoThemeData(selectionHandleColor: CupertinoColors.systemRed));
-    expect(
-      red.hashCode,
-      const NoDefaultCupertinoThemeData(selectionHandleColor: CupertinoColors.systemRed).hashCode,
-    );
+    expect(red, equals(redCopy));
+    expect(red.hashCode, redCopy.hashCode);
     expect(red.hashCode, isNot(blue.hashCode));
   });
 
