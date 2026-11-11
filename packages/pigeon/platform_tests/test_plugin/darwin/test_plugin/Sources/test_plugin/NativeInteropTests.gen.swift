@@ -2864,6 +2864,12 @@ private struct NativeInteropTestsPigeonInteropWriter {
     }
   }
 
+  mutating func writeData(_ data: Foundation.Data) {
+    writeByte(NativeInteropTestsPigeonInteropCodec.typeUint8List)
+    writeSize(data.count)
+    bytes.append(contentsOf: data)
+  }
+
   mutating func writeValue(_ value: Any?) {
     guard let value = value else {
       writeByte(NativeInteropTestsPigeonInteropCodec.typeNull)
@@ -2932,6 +2938,10 @@ private struct NativeInteropTestsPigeonInteropWriter {
       writeValue((value as! AnyHashable).base)
       return
     }
+    if valueType == Foundation.Data.self {
+      writeData(value as! Foundation.Data)
+      return
+    }
     // Collections are matched by protocol before any cast to a class, such as
     // `NSNumber`, because those casts can bridge a whole Swift collection to
     // Objective-C just to fail.
@@ -2972,9 +2982,7 @@ private struct NativeInteropTestsPigeonInteropWriter {
       return
     }
     if let data = value as? Foundation.Data {
-      writeByte(NativeInteropTestsPigeonInteropCodec.typeUint8List)
-      writeSize(data.count)
-      bytes.append(contentsOf: data)
+      writeData(data)
       return
     }
     if let array = value as? NSArray {

@@ -2298,6 +2298,7 @@ void main() {
       expect(code, contains('mutating func readData() -> Data {'));
       expect(code, contains('value: read(Int64.self)'));
       expect(code, contains('writeValue(value.value)'));
+      expect(code, contains('if valueType == Foundation.Data.self {'));
       expect(code, contains('if let data = value as? Foundation.Data {'));
       expect(code, contains('if let array = value as? NSArray {'));
       expect(code, contains('if let dictionary = value as? NSDictionary {'));
