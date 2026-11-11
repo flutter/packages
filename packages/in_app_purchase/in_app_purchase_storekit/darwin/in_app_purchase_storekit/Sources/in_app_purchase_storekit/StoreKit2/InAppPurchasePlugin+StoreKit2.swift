@@ -310,7 +310,7 @@ extension InAppPurchasePlugin: InAppPurchase2API {
       guard let self = self else { return }
       do {
         var restoredTransactions: [SK2TransactionMessage] = []
-        var unverifiedPurchases: [UInt64: (receipt: String, error: Error?)] = [:]
+        var unverifiedPurchases: [String: [String: String]] = [:]
         for await completedPurchase in Transaction.currentEntitlements {
           switch completedPurchase {
           case .verified(let purchase):
@@ -321,9 +321,10 @@ extension InAppPurchasePlugin: InAppPurchase2API {
               )
             )
           case .unverified(let failedPurchase, let error):
-            unverifiedPurchases[failedPurchase.id] = (
-              receipt: completedPurchase.jwsRepresentation, error: error
-            )
+            unverifiedPurchases[String(failedPurchase.id)] = [
+              "receipt": completedPurchase.jwsRepresentation,
+              "error": error.localizedDescription,
+            ]
           }
         }
         self.sendTransactionUpdates(restoredTransactions)
