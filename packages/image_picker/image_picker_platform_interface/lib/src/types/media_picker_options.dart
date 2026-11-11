@@ -2,16 +2,19 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart' show immutable;
 
-import '../../image_picker_platform_interface.dart';
+import 'image_options.dart';
+import 'video_options.dart';
 
-/// Specifies options for selecting items when using [ImagePickerPlatform.getMedia].
+/// Specifies options for selecting items when using
+/// [ImagePickerPlatform.pickMedia].
 @immutable
-class MediaOptions {
-  /// Construct a new MediaOptions instance.
-  const MediaOptions({
+base class MediaPickerOptions {
+  /// Construct a new MediaPickerOptions instance.
+  const MediaPickerOptions({
     this.imageOptions = const ImageOptions(),
+    this.videoOptions = const VideoOptions(),
     required this.allowMultiple,
     this.limit,
   });
@@ -20,8 +23,9 @@ class MediaOptions {
   ///
   /// Throws if limit is lower than 2,
   /// or allowMultiple is false and limit is not null.
-  MediaOptions.createAndValidate({
+  MediaPickerOptions.createAndValidate({
     this.imageOptions = const ImageOptions(),
+    this.videoOptions = const VideoOptions(),
     required this.allowMultiple,
     this.limit,
   }) {
@@ -30,6 +34,9 @@ class MediaOptions {
 
   /// Options that will apply to images upon selection.
   final ImageOptions imageOptions;
+
+  /// Options that will apply to video upon selection.
+  final VideoOptions videoOptions;
 
   /// Whether to allow for selecting multiple media.
   final bool allowMultiple;

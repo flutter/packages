@@ -6,16 +6,19 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:image_picker_platform_interface/src/types/types.dart';
 
 void main() {
-  group('MediaOptions', () {
+  group('MediaPickerOptions', () {
     test('createAndValidate does not throw when allowMultiple is true', () {
-      expect(() => MediaOptions.createAndValidate(allowMultiple: true), returnsNormally);
+      expect(() => MediaPickerOptions.createAndValidate(allowMultiple: true), returnsNormally);
     });
     test('createAndValidate does not throw when allowMultiple is false', () {
-      expect(() => MediaOptions.createAndValidate(allowMultiple: false), returnsNormally);
+      expect(() => MediaPickerOptions.createAndValidate(allowMultiple: false), returnsNormally);
     });
 
     test('createAndValidate does not throw error for correct limit', () {
-      expect(() => MediaOptions.createAndValidate(allowMultiple: true, limit: 2), returnsNormally);
+      expect(
+        () => MediaPickerOptions.createAndValidate(allowMultiple: true, limit: 2),
+        returnsNormally,
+      );
     });
 
     test('createAndValidate throws error for too small limit', () {
@@ -26,22 +29,22 @@ void main() {
       );
 
       expect(
-        () => MediaOptions.createAndValidate(allowMultiple: true, limit: 1),
+        () => MediaPickerOptions.createAndValidate(allowMultiple: true, limit: 1),
         throwsLimitArgumentError,
       );
       expect(
-        () => MediaOptions.createAndValidate(allowMultiple: true, limit: 0),
+        () => MediaPickerOptions.createAndValidate(allowMultiple: true, limit: 0),
         throwsLimitArgumentError,
       );
       expect(
-        () => MediaOptions.createAndValidate(allowMultiple: true, limit: -1),
+        () => MediaPickerOptions.createAndValidate(allowMultiple: true, limit: -1),
         throwsLimitArgumentError,
       );
     });
 
     test('createAndValidate throw error when allowMultiple is false and has limit', () {
       expect(
-        () => MediaOptions.createAndValidate(allowMultiple: false, limit: 2),
+        () => MediaPickerOptions.createAndValidate(allowMultiple: false, limit: 2),
         throwsArgumentError,
       );
     });

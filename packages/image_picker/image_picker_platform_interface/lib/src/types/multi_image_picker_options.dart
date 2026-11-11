@@ -2,10 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter/foundation.dart' show immutable;
+
 import 'image_options.dart';
 
 /// Specifies options for picking multiple images from the device's gallery.
-class MultiImagePickerOptions {
+@immutable
+base class MultiImagePickerOptions {
   /// Creates an instance with the given [imageOptions] and [limit].
   const MultiImagePickerOptions({this.imageOptions = const ImageOptions(), this.limit});
 
@@ -33,7 +36,7 @@ class MultiImagePickerOptions {
   /// Throws if limit is lower than 2.
   static void _validate({int? limit}) {
     if (limit != null && limit < 2) {
-      throw ArgumentError.value(limit, 'limit', 'cannot be lower than 2');
+      throw RangeError.range(limit, 2, null, 'limit');
     }
   }
 }

@@ -11,18 +11,14 @@ import 'package:image_picker_platform_interface/image_picker_platform_interface.
 
 /// Example of a camera delegate
 // #docregion CameraDelegate
-class MyCameraDelegate extends ImagePickerCameraDelegate {
+base class MyCameraDelegate extends ImagePickerCameraDelegate {
   @override
-  Future<XFile?> takePhoto({
-    ImagePickerCameraDelegateOptions options = const ImagePickerCameraDelegateOptions(),
-  }) async {
+  Future<XFile?> takePhoto({ImagePickerOptions options = const ImagePickerOptions()}) async {
     return _takeAPhoto(options.preferredCameraDevice);
   }
 
   @override
-  Future<XFile?> takeVideo({
-    ImagePickerCameraDelegateOptions options = const ImagePickerCameraDelegateOptions(),
-  }) async {
+  Future<XFile?> takeVideo({VideoPickerOptions options = const VideoPickerOptions()}) async {
     return _takeAVideo(options.preferredCameraDevice);
   }
 }
@@ -46,7 +42,7 @@ Future<List<XFile?>> readmePickExample() async {
   // Pick singe image or video.
   final XFile? media = await picker.pickMedia();
   // Pick multiple images and videos.
-  final List<XFile> medias = await picker.pickMultipleMedia();
+  final List<XFile> medias = await picker.pickMultiMedia();
   // #enddocregion Pick
 
   // Return everything for the sanity check test.
@@ -82,7 +78,7 @@ Future<void> getLostData() async {
 /// Example of camera delegate setup.
 // #docregion CameraDelegate
 void setUpCameraDelegate() {
-  final ImagePickerPlatform instance = ImagePickerPlatform.instance;
+  final ImagePickerPlatform instance = ImagePickerPlatform.instance!;
   if (instance is CameraDelegatingImagePickerPlatform) {
     instance.cameraDelegate = MyCameraDelegate();
   }

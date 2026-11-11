@@ -10,7 +10,7 @@ import 'package:image_picker_platform_interface/image_picker_platform_interface.
 import 'src/messages.g.dart';
 
 /// An Android implementation of [ImagePickerPlatform].
-class ImagePickerAndroid extends ImagePickerPlatform {
+base class ImagePickerAndroid extends ImagePickerPlatform {
   /// Creates a new plugin implementation instance.
   ImagePickerAndroid({@visibleForTesting ImagePickerApi? api}) : _hostApi = api ?? ImagePickerApi();
 
@@ -32,239 +32,107 @@ class ImagePickerAndroid extends ImagePickerPlatform {
   }
 
   @override
-  Future<PickedFile?> pickImage({
-    required ImageSource source,
-    double? maxWidth,
-    double? maxHeight,
-    int? imageQuality,
-    CameraDevice preferredCameraDevice = CameraDevice.rear,
-  }) async {
-    final String? path = await _getImagePath(
-      source: source,
-      maxWidth: maxWidth,
-      maxHeight: maxHeight,
-      imageQuality: imageQuality,
-      preferredCameraDevice: preferredCameraDevice,
-    );
-    return path != null ? PickedFile(path) : null;
-  }
-
-  @override
-  Future<List<PickedFile>?> pickMultiImage({
-    double? maxWidth,
-    double? maxHeight,
-    int? imageQuality,
-  }) async {
-    final List<String> paths = await _getMultiImagePath(
-      maxWidth: maxWidth,
-      maxHeight: maxHeight,
-      imageQuality: imageQuality,
-    );
-    if (paths.isEmpty) {
-      return null;
-    }
-
-    return paths.map((String path) => PickedFile(path)).toList();
-  }
-
-  Future<List<String>> _getMultiImagePath({
-    double? maxWidth,
-    double? maxHeight,
-    int? imageQuality,
-    int? limit,
-  }) {
-    if (imageQuality != null && (imageQuality < 0 || imageQuality > 100)) {
-      throw ArgumentError.value(imageQuality, 'imageQuality', 'must be between 0 and 100');
-    }
-
-    if (maxWidth != null && maxWidth < 0) {
-      throw ArgumentError.value(maxWidth, 'maxWidth', 'cannot be negative');
-    }
-
-    if (maxHeight != null && maxHeight < 0) {
-      throw ArgumentError.value(maxHeight, 'maxHeight', 'cannot be negative');
-    }
-
-    if (limit != null && limit < 2) {
-      throw ArgumentError.value(limit, 'limit', 'cannot be lower than 2');
-    }
-
-    return _hostApi.pickImages(
-      SourceSpecification(type: SourceType.gallery),
-      ImageSelectionOptions(maxWidth: maxWidth, maxHeight: maxHeight, quality: imageQuality ?? 100),
-      GeneralOptions(allowMultiple: true, usePhotoPicker: useAndroidPhotoPicker, limit: limit),
-    );
-  }
-
-  Future<String?> _getImagePath({
-    required ImageSource source,
-    double? maxWidth,
-    double? maxHeight,
-    int? imageQuality,
-    CameraDevice preferredCameraDevice = CameraDevice.rear,
-    bool requestFullMetadata = true,
-  }) async {
-    if (imageQuality != null && (imageQuality < 0 || imageQuality > 100)) {
-      throw ArgumentError.value(imageQuality, 'imageQuality', 'must be between 0 and 100');
-    }
-
-    if (maxWidth != null && maxWidth < 0) {
-      throw ArgumentError.value(maxWidth, 'maxWidth', 'cannot be negative');
-    }
-
-    if (maxHeight != null && maxHeight < 0) {
-      throw ArgumentError.value(maxHeight, 'maxHeight', 'cannot be negative');
-    }
-
-    final List<String> paths = await _hostApi.pickImages(
-      _buildSourceSpec(source, preferredCameraDevice),
-      ImageSelectionOptions(maxWidth: maxWidth, maxHeight: maxHeight, quality: imageQuality ?? 100),
-      GeneralOptions(allowMultiple: false, usePhotoPicker: useAndroidPhotoPicker),
-    );
-    return paths.isEmpty ? null : paths.first;
-  }
-
-  @override
-  Future<PickedFile?> pickVideo({
-    required ImageSource source,
-    CameraDevice preferredCameraDevice = CameraDevice.rear,
-    Duration? maxDuration,
-  }) async {
-    final String? path = await _getVideoPath(
-      source: source,
-      maxDuration: maxDuration,
-      preferredCameraDevice: preferredCameraDevice,
-    );
-    return path != null ? PickedFile(path) : null;
-  }
-
-  Future<String?> _getVideoPath({
-    required ImageSource source,
-    CameraDevice preferredCameraDevice = CameraDevice.rear,
-    Duration? maxDuration,
-  }) async {
-    final List<String> paths = await _hostApi.pickVideos(
-      _buildSourceSpec(source, preferredCameraDevice),
-      VideoSelectionOptions(maxDurationSeconds: maxDuration?.inSeconds),
-      GeneralOptions(allowMultiple: false, usePhotoPicker: useAndroidPhotoPicker),
-    );
-    return paths.isEmpty ? null : paths.first;
-  }
-
-  @override
-  Future<XFile?> getImage({
-    required ImageSource source,
-    double? maxWidth,
-    double? maxHeight,
-    int? imageQuality,
-    CameraDevice preferredCameraDevice = CameraDevice.rear,
-  }) async {
-    final String? path = await _getImagePath(
-      source: source,
-      maxWidth: maxWidth,
-      maxHeight: maxHeight,
-      imageQuality: imageQuality,
-      preferredCameraDevice: preferredCameraDevice,
-    );
-    return path != null ? XFile(path) : null;
-  }
-
-  @override
-  Future<XFile?> getImageFromSource({
+  Future<XFile?> pickImage({
     required ImageSource source,
     ImagePickerOptions options = const ImagePickerOptions(),
   }) async {
-    final String? path = await _getImagePath(
-      source: source,
-      maxHeight: options.maxHeight,
-      maxWidth: options.maxWidth,
-      imageQuality: options.imageQuality,
-      preferredCameraDevice: options.preferredCameraDevice,
-      requestFullMetadata: options.requestFullMetadata,
+    final ImageOptions imageOptions = options.imageOptions;
+    _verifyImageOptions(imageOptions);
+
+    final List<String> paths = await _hostApi.pickImages(
+      _buildSourceSpec(source, options.preferredCameraDevice),
+      ImageSelectionOptions(
+        maxWidth: imageOptions.maxWidth?.toDouble(),
+        maxHeight: imageOptions.maxHeight?.toDouble(),
+        quality: imageOptions.imageQuality ?? 100,
+      ),
+      GeneralOptions(allowMultiple: false, usePhotoPicker: useAndroidPhotoPicker),
     );
-    return path != null ? XFile(path) : null;
+    return paths.isEmpty ? null : XFile.fileSystem(path: paths.first);
   }
 
   @override
-  Future<List<XFile>?> getMultiImage({
-    double? maxWidth,
-    double? maxHeight,
-    int? imageQuality,
-  }) async {
-    final List<String> paths = await _getMultiImagePath(
-      maxWidth: maxWidth,
-      maxHeight: maxHeight,
-      imageQuality: imageQuality,
-    );
-    if (paths.isEmpty) {
-      return null;
-    }
-
-    return paths.map((String path) => XFile(path)).toList();
-  }
-
-  @override
-  Future<List<XFile>> getMultiImageWithOptions({
+  Future<List<XFile>> pickMultiImage({
     MultiImagePickerOptions options = const MultiImagePickerOptions(),
   }) async {
-    final List<String> paths = await _getMultiImagePath(
-      maxWidth: options.imageOptions.maxWidth,
-      maxHeight: options.imageOptions.maxHeight,
-      imageQuality: options.imageOptions.imageQuality,
-      limit: options.limit,
+    final ImageOptions imageOptions = options.imageOptions;
+    _verifyImageOptions(imageOptions);
+
+    final int? limit = options.limit;
+    if (limit != null && limit < 2) {
+      throw RangeError.range(limit, 2, null, 'limit');
+    }
+
+    final List<String> paths = await _hostApi.pickImages(
+      SourceSpecification(type: SourceType.gallery),
+      ImageSelectionOptions(
+        maxWidth: imageOptions.maxWidth?.toDouble(),
+        maxHeight: imageOptions.maxHeight?.toDouble(),
+        quality: imageOptions.imageQuality ?? 100,
+      ),
+      GeneralOptions(allowMultiple: true, usePhotoPicker: useAndroidPhotoPicker, limit: limit),
+    );
+    if (paths.isEmpty) {
+      return <XFile>[];
+    }
+
+    return paths.map((String path) => XFile.fileSystem(path: path)).toList();
+  }
+
+  @override
+  Future<XFile?> pickVideo({
+    required ImageSource source,
+    VideoPickerOptions options = const VideoPickerOptions(),
+  }) async {
+    final Duration? maxDuration = options.videoOptions.maxDuration;
+    if (maxDuration != null && (maxDuration.isNegative || maxDuration == Duration.zero)) {
+      throw ArgumentError.value(maxDuration, 'maxDuration', 'must be greater than zero.');
+    }
+
+    final List<String> paths = await _hostApi.pickVideos(
+      _buildSourceSpec(source, options.preferredCameraDevice),
+      VideoSelectionOptions(maxDurationSeconds: maxDuration?.inSeconds),
+      GeneralOptions(allowMultiple: false, usePhotoPicker: useAndroidPhotoPicker),
+    );
+    return paths.isEmpty ? null : XFile.fileSystem(path: paths.first);
+  }
+
+  @override
+  Future<List<XFile>> pickMultiVideo({
+    MultiVideoPickerOptions options = const MultiVideoPickerOptions(),
+  }) async {
+    final Duration? maxDuration = options.videoOptions.maxDuration;
+    if (maxDuration != null && (maxDuration.isNegative || maxDuration == Duration.zero)) {
+      throw ArgumentError.value(maxDuration, 'maxDuration', 'must be greater than zero.');
+    }
+
+    final int? limit = options.limit;
+    if (limit != null && limit < 2) {
+      throw RangeError.range(limit, 2, null, 'limit');
+    }
+
+    final List<String> paths = await _hostApi.pickVideos(
+      SourceSpecification(type: SourceType.gallery),
+      VideoSelectionOptions(maxDurationSeconds: options.videoOptions.maxDuration?.inSeconds),
+      GeneralOptions(allowMultiple: true, usePhotoPicker: useAndroidPhotoPicker, limit: limit),
     );
 
     if (paths.isEmpty) {
       return <XFile>[];
     }
 
-    return paths.map((String path) => XFile(path)).toList();
+    return paths.map((String path) => XFile.fileSystem(path: path)).toList();
   }
 
   @override
-  Future<List<XFile>> getMedia({required MediaOptions options}) async {
+  Future<List<XFile>> pickMedia({required MediaPickerOptions options}) async {
     return (await _hostApi.pickMedia(
       _mediaOptionsToMediaSelectionOptions(options),
       _mediaOptionsToGeneralOptions(options),
-    )).map((String? path) => XFile(path!)).toList();
+    )).map((String? path) => XFile.fileSystem(path: path!)).toList();
   }
 
-  @override
-  Future<XFile?> getVideo({
-    required ImageSource source,
-    CameraDevice preferredCameraDevice = CameraDevice.rear,
-    Duration? maxDuration,
-  }) async {
-    final String? path = await _getVideoPath(
-      source: source,
-      maxDuration: maxDuration,
-      preferredCameraDevice: preferredCameraDevice,
-    );
-    return path != null ? XFile(path) : null;
-  }
-
-  @override
-  Future<List<XFile>> getMultiVideoWithOptions({
-    MultiVideoPickerOptions options = const MultiVideoPickerOptions(),
-  }) async {
-    final List<String> paths = await _hostApi.pickVideos(
-      SourceSpecification(type: SourceType.gallery),
-      VideoSelectionOptions(maxDurationSeconds: options.maxDuration?.inSeconds),
-      GeneralOptions(
-        allowMultiple: true,
-        usePhotoPicker: useAndroidPhotoPicker,
-        limit: options.limit,
-      ),
-    );
-
-    if (paths.isEmpty) {
-      return <XFile>[];
-    }
-
-    return paths.map((String path) => XFile(path)).toList();
-  }
-
-  MediaSelectionOptions _mediaOptionsToMediaSelectionOptions(MediaOptions mediaOptions) {
+  MediaSelectionOptions _mediaOptionsToMediaSelectionOptions(MediaPickerOptions mediaOptions) {
     final ImageSelectionOptions imageSelectionOptions =
         _imageOptionsToImageSelectionOptionsWithValidator(mediaOptions.imageOptions);
 
@@ -272,31 +140,17 @@ class ImagePickerAndroid extends ImagePickerPlatform {
   }
 
   ImageSelectionOptions _imageOptionsToImageSelectionOptionsWithValidator(
-    ImageOptions? imageOptions,
+    ImageOptions imageOptions,
   ) {
-    final double? maxHeight = imageOptions?.maxHeight;
-    final double? maxWidth = imageOptions?.maxWidth;
-    final int? imageQuality = imageOptions?.imageQuality;
-
-    if (imageQuality != null && (imageQuality < 0 || imageQuality > 100)) {
-      throw ArgumentError.value(imageQuality, 'imageQuality', 'must be between 0 and 100');
-    }
-
-    if (maxWidth != null && maxWidth < 0) {
-      throw ArgumentError.value(maxWidth, 'maxWidth', 'cannot be negative');
-    }
-
-    if (maxHeight != null && maxHeight < 0) {
-      throw ArgumentError.value(maxHeight, 'maxHeight', 'cannot be negative');
-    }
+    _verifyImageOptions(imageOptions);
     return ImageSelectionOptions(
-      quality: imageQuality ?? 100,
-      maxHeight: maxHeight,
-      maxWidth: maxWidth,
+      quality: imageOptions.imageQuality ?? 100,
+      maxHeight: imageOptions.maxHeight?.toDouble(),
+      maxWidth: imageOptions.maxWidth?.toDouble(),
     );
   }
 
-  GeneralOptions _mediaOptionsToGeneralOptions(MediaOptions options) {
+  GeneralOptions _mediaOptionsToGeneralOptions(MediaPickerOptions options) {
     final bool allowMultiple = options.allowMultiple;
     final int? limit = options.limit;
 
@@ -320,21 +174,6 @@ class ImagePickerAndroid extends ImagePickerPlatform {
   }
 
   @override
-  Future<LostData> retrieveLostData() async {
-    final LostDataResponse result = await getLostData();
-
-    if (result.isEmpty) {
-      return LostData.empty();
-    }
-
-    return LostData(
-      file: result.file != null ? PickedFile(result.file!.path) : null,
-      exception: result.exception,
-      type: result.type,
-    );
-  }
-
-  @override
   Future<LostDataResponse> getLostData() async {
     final CacheRetrievalResult? result = await _hostApi.retrieveLostResults();
 
@@ -352,7 +191,9 @@ class ImagePickerAndroid extends ImagePickerPlatform {
 
     // Entries are guaranteed not to be null, even though that's not currently
     // expressible in Pigeon.
-    final List<XFile> pickedFileList = result.paths.map((String? path) => XFile(path!)).toList();
+    final List<XFile> pickedFileList = result.paths
+        .map((String? path) => XFile.fileSystem(path: path!))
+        .toList();
 
     return LostDataResponse(
       file: pickedFileList.isEmpty ? null : pickedFileList.last,
@@ -415,5 +256,17 @@ class ImagePickerAndroid extends ImagePickerPlatform {
     // switch as needing an update.
     // ignore: dead_code
     return RetrieveType.image;
+  }
+
+  void _verifyImageOptions(ImageOptions options) {
+    if (options.imageQuality case final int imageQuality) {
+      RangeError.checkValueInInterval(imageQuality, 0, 100, 'imageQuality');
+    }
+    if (options.maxWidth case final int maxWidth) {
+      RangeError.checkNotNegative(maxWidth, 'maxWidth');
+    }
+    if (options.maxHeight case final int maxHeight) {
+      RangeError.checkNotNegative(maxHeight, 'maxHeight');
+    }
   }
 }

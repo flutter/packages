@@ -37,11 +37,9 @@ dependencies:
   image_picker_windows: ^0.2.2
 
 dev_dependencies:
-  build_runner: ^2.1.10
-  cross_file: ^0.3.1+1 # Mockito generates a direct include.
+  cross_file_platform_interface: ^1.0.0
   flutter_test:
     sdk: flutter
-  mockito: ^5.4.4
   plugin_platform_interface: ^2.1.7
 
 topics:
@@ -49,3 +47,33 @@ topics:
   - image-picker
   - files
   - file-selection
+# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
+# See https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#changing-federated-plugins
+dependency_overrides:
+  file_selector_linux:
+    git:
+      url: git@github.com:bparrishMines/packages.git
+      ref: file_selector_2
+      path: packages/file_selector/file_selector_linux
+  file_selector_macos:
+    git:
+      url: git@github.com:bparrishMines/packages.git
+      ref: file_selector_2
+      path: packages/file_selector/file_selector_macos
+  file_selector_platform_interface:
+    git:
+      url: git@github.com:bparrishMines/packages.git
+      ref: file_selector_2
+      path: packages/file_selector/file_selector_platform_interface
+  file_selector_windows:
+    git:
+      url: git@github.com:bparrishMines/packages.git
+      ref: file_selector_2
+      path: packages/file_selector/file_selector_windows
+  image_picker_android: {path: ../../../packages/image_picker/image_picker_android}
+  image_picker_for_web: {path: ../../../packages/image_picker/image_picker_for_web}
+  image_picker_ios: {path: ../../../packages/image_picker/image_picker_ios}
+  image_picker_linux: {path: ../../../packages/image_picker/image_picker_linux}
+  image_picker_macos: {path: ../../../packages/image_picker/image_picker_macos}
+  image_picker_platform_interface: {path: ../../../packages/image_picker/image_picker_platform_interface}
+  image_picker_windows: {path: ../../../packages/image_picker/image_picker_windows}

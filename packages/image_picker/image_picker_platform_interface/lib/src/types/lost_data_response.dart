@@ -3,23 +3,26 @@
 // found in the LICENSE file.
 
 import 'package:cross_file/cross_file.dart';
+import 'package:flutter/foundation.dart' show immutable;
 import 'package:flutter/services.dart';
 
-import 'types.dart';
+import 'retrieve_type.dart';
 
-/// The response object of [ImagePicker.getLostData].
+/// The response object of [ImagePickerPlatform.getLostData].
 ///
 /// Only applies to Android.
 /// See also:
-/// * [ImagePicker.getLostData] for more details on retrieving lost data.
-class LostDataResponse {
-  /// Creates an instance with the given [file], [exception], and [type]. Any of
-  /// the params may be null, but this is never considered to be empty.
-  LostDataResponse({this.file, this.exception, this.type, this.files});
+/// * [ImagePickerPlatform.getLostData] for more details on retrieving lost data.
+@immutable
+base class LostDataResponse {
+  /// Creates an instance with the given [file], [exception], and [type].
+  ///
+  /// Any of the params may be null, but this is never considered to be empty.
+  const LostDataResponse({this.file, this.exception, this.type, this.files}) : _empty = false;
 
   /// Initializes an instance with all member params set to null and considered
   /// to be empty.
-  LostDataResponse.empty()
+  const LostDataResponse.empty()
     : file = null,
       exception = null,
       type = null,
@@ -52,7 +55,7 @@ class LostDataResponse {
   /// If the lost data is empty, this will be null.
   final RetrieveType? type;
 
-  bool _empty = false;
+  final bool _empty;
 
   /// The list of files that were lost in a previous [getMultiImage] call due to MainActivity being destroyed.
   ///

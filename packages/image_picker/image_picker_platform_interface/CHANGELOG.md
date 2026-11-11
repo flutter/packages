@@ -1,3 +1,25 @@
+## 3.0.0
+
+* **Breaking Changes**
+  * Updates `cross_file` dependency to `0.4.0`.
+  * Removes `MethodChannel` implementation.
+  * Replaces `FileSelectorPlatform`'s implementation of `PlatformInterface` with the `base` keyword.
+  * Removes `ImagePickerPlatform.getMedia`. Replaced by `ImagePickerPlatform.pickMedia`.
+  * Removes `ImagePickerPlatform.getVideo`. Replaced by `ImagePickerPlatform.pickVideo`.
+  * Removes `ImagePickerPlatform.getImageFromSource`. Replaced by `ImagePickerPlatform.pickImage`.
+  * Removes `ImagePickerPlatform.getMultiImageWithOptions`. Replaced by `ImagePickerPlatform.pickMultiImage`.
+  * Removes `ImagePickerPlatform.getMultiVideoWithOptions`. Replaced by `ImagePickerPlatform.pickMultiVideo`.
+  * Removes `PickedFile`. All references replaced by `XFile`.
+  * Removes `ImagePickerPlatform.retrieveLostData`. Replaced by `ImagePickerPlatform.getLostData`.
+  * Replaces `ImagePickerCameraDelegateOptions` taken by `ImagePickerCameraDelegate.takePhoto` and
+    `ImagePickerCameraDelegate.takeVideo` with `ImagePickerOptions` and `VideoPickerOptions`,
+    respectively.
+  * Removes `ImagePickerOptions.maxWidth`, `ImagePickerOptions.maxHeight`, `ImagePickerOptions.imageQuality`,
+    and `ImagePickerOptions.requestFullMetadata`. Replaced by fields in `ImageOptions` with same names.
+  * Changes all data classes to `base` classes.
+  * Replaces `MediaOptions` with `MediaPickerOptions`.
+  * Adds `VideoOptions` to `MediaPickerOptions`.
+
 ## 2.11.2
 
 * Documents that `getLostData` must clear the stored lost data once it is

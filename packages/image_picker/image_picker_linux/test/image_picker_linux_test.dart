@@ -2,41 +2,22 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:image_picker_linux/image_picker_linux.dart';
 import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
-import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
 
-import 'image_picker_linux_test.mocks.dart';
-
-@GenerateMocks(<Type>[FileSelectorPlatform])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  // Returns the captured type groups from a mock call result, assuming that
-  // exactly one call was made and only the type groups were captured.
-  List<XTypeGroup> capturedTypeGroups(VerificationResult result) {
-    return result.captured.single as List<XTypeGroup>;
-  }
-
   late ImagePickerLinux plugin;
-  late MockFileSelectorPlatform mockFileSelectorPlatform;
+  late FakeFileSelectorPlatform mockFileSelectorPlatform;
 
   setUp(() {
+    CrossFilePlatform.instance = FakeCrossFile();
     plugin = ImagePickerLinux();
-    mockFileSelectorPlatform = MockFileSelectorPlatform();
-
-    when(
-      mockFileSelectorPlatform.openFile(acceptedTypeGroups: anyNamed('acceptedTypeGroups')),
-    ).thenAnswer((_) async => null);
-
-    when(
-      mockFileSelectorPlatform.openFiles(acceptedTypeGroups: anyNamed('acceptedTypeGroups')),
-    ).thenAnswer((_) async => List<XFile>.empty());
-
-    ImagePickerLinux.fileSelector = mockFileSelectorPlatform;
+    ImagePickerLinux.fileSelector = mockFileSelectorPlatform = FakeFileSelectorPlatform();
   });
 
   test('registered instance', () {
@@ -46,143 +27,139 @@ void main() {
 
   group('images', () {
     test('pickImage passes the accepted type groups correctly', () async {
+      late final List<XTypeGroup>? acceptedTypeGroups;
+      mockFileSelectorPlatform.onOpenFile = ({required OpenFileDialogOptions options}) async {
+        acceptedTypeGroups = options.acceptedTypeGroups;
+        return null;
+      };
+
       await plugin.pickImage(source: ImageSource.gallery);
 
-      final VerificationResult result = verify(
-        mockFileSelectorPlatform.openFile(
-          acceptedTypeGroups: captureAnyNamed('acceptedTypeGroups'),
-        ),
-      );
-      expect(capturedTypeGroups(result)[0].mimeTypes, <String>['image/*']);
+      expect(acceptedTypeGroups?.single.mimeTypes, <String>['image/*']);
     });
 
-    test('getImage passes the accepted type groups correctly', () async {
-      await plugin.getImage(source: ImageSource.gallery);
-
-      final VerificationResult result = verify(
-        mockFileSelectorPlatform.openFile(
-          acceptedTypeGroups: captureAnyNamed('acceptedTypeGroups'),
-        ),
-      );
-      expect(capturedTypeGroups(result)[0].mimeTypes, <String>['image/*']);
+    test('pickImage calls delegate when source is camera', () async {
+      final file = FileSystemXFile('/tmp/foo');
+      plugin.cameraDelegate = FakeCameraDelegate(result: file);
+      expect(await plugin.pickImage(source: ImageSource.camera), file);
     });
 
-    test('getImageFromSource passes the accepted type groups correctly', () async {
-      await plugin.getImageFromSource(source: ImageSource.gallery);
-
-      final VerificationResult result = verify(
-        mockFileSelectorPlatform.openFile(
-          acceptedTypeGroups: captureAnyNamed('acceptedTypeGroups'),
-        ),
-      );
-      expect(capturedTypeGroups(result)[0].mimeTypes, <String>['image/*']);
+    test('pickImage throws StateError when source is camera with no delegate', () async {
+      await expectLater(plugin.pickImage(source: ImageSource.camera), throwsStateError);
     });
 
-    test('getImageFromSource calls delegate when source is camera', () async {
-      const fakePath = '/tmp/foo';
-      plugin.cameraDelegate = FakeCameraDelegate(result: XFile(fakePath));
-      expect((await plugin.getImageFromSource(source: ImageSource.camera))!.path, fakePath);
-    });
+    test('pickMultiImage passes the accepted type groups correctly', () async {
+      late final List<XTypeGroup>? acceptedTypeGroups;
+      mockFileSelectorPlatform.onOpenFiles = ({required OpenFilesDialogOptions options}) async {
+        acceptedTypeGroups = options.acceptedTypeGroups;
+        return <XFile>[];
+      };
 
-    test('getImageFromSource throws StateError when source is camera with no delegate', () async {
-      await expectLater(plugin.getImageFromSource(source: ImageSource.camera), throwsStateError);
-    });
+      await plugin.pickMultiImage();
 
-    test('getMultiImage passes the accepted type groups correctly', () async {
-      await plugin.getMultiImage();
-
-      final VerificationResult result = verify(
-        mockFileSelectorPlatform.openFiles(
-          acceptedTypeGroups: captureAnyNamed('acceptedTypeGroups'),
-        ),
-      );
-      expect(capturedTypeGroups(result)[0].mimeTypes, <String>['image/*']);
+      expect(acceptedTypeGroups?.single.mimeTypes, <String>['image/*']);
     });
   });
 
   group('videos', () {
     test('pickVideo passes the accepted type groups correctly', () async {
+      late final List<XTypeGroup>? acceptedTypeGroups;
+      mockFileSelectorPlatform.onOpenFile = ({required OpenFileDialogOptions options}) async {
+        acceptedTypeGroups = options.acceptedTypeGroups;
+        return null;
+      };
+
       await plugin.pickVideo(source: ImageSource.gallery);
 
-      final VerificationResult result = verify(
-        mockFileSelectorPlatform.openFile(
-          acceptedTypeGroups: captureAnyNamed('acceptedTypeGroups'),
-        ),
-      );
-      expect(capturedTypeGroups(result)[0].mimeTypes, <String>['video/*']);
+      expect(acceptedTypeGroups?.single.mimeTypes, <String>['video/*']);
     });
 
-    test('getVideo passes the accepted type groups correctly', () async {
-      await plugin.getVideo(source: ImageSource.gallery);
-
-      final VerificationResult result = verify(
-        mockFileSelectorPlatform.openFile(
-          acceptedTypeGroups: captureAnyNamed('acceptedTypeGroups'),
-        ),
-      );
-      expect(capturedTypeGroups(result)[0].mimeTypes, <String>['video/*']);
+    test('pickVideo calls delegate when source is camera', () async {
+      final file = FileSystemXFile('/tmp/foo');
+      plugin.cameraDelegate = FakeCameraDelegate(result: file);
+      expect(await plugin.pickVideo(source: ImageSource.camera), file);
     });
 
-    test('getVideo calls delegate when source is camera', () async {
-      const fakePath = '/tmp/foo';
-      plugin.cameraDelegate = FakeCameraDelegate(result: XFile(fakePath));
-      expect((await plugin.getVideo(source: ImageSource.camera))!.path, fakePath);
+    test('pickVideo throws StateError when source is camera with no delegate', () async {
+      await expectLater(plugin.pickVideo(source: ImageSource.camera), throwsStateError);
     });
 
-    test('getVideo throws StateError when source is camera with no delegate', () async {
-      await expectLater(plugin.getVideo(source: ImageSource.camera), throwsStateError);
-    });
+    test('pickMultiVideo passes the accepted type groups correctly', () async {
+      late final List<XTypeGroup>? acceptedTypeGroups;
+      mockFileSelectorPlatform.onOpenFiles = ({required OpenFilesDialogOptions options}) async {
+        acceptedTypeGroups = options.acceptedTypeGroups;
+        return <XFile>[];
+      };
 
-    test('getMultiVideoWithOptions passes the accepted type groups correctly', () async {
-      await plugin.getMultiVideoWithOptions();
+      await plugin.pickMultiVideo();
 
-      final VerificationResult result = verify(
-        mockFileSelectorPlatform.openFiles(
-          acceptedTypeGroups: captureAnyNamed('acceptedTypeGroups'),
-        ),
-      );
-      expect(capturedTypeGroups(result)[0].mimeTypes, <String>['video/*']);
+      expect(acceptedTypeGroups?.single.mimeTypes, <String>['video/*']);
     });
   });
 
   group('media', () {
-    test('getMedia passes the accepted type groups correctly', () async {
-      await plugin.getMedia(options: const MediaOptions(allowMultiple: true));
+    test('pickMedia passes the accepted type groups correctly', () async {
+      late final List<XTypeGroup>? acceptedTypeGroups;
+      mockFileSelectorPlatform.onOpenFiles = ({required OpenFilesDialogOptions options}) async {
+        acceptedTypeGroups = options.acceptedTypeGroups;
+        return <XFile>[];
+      };
 
-      final VerificationResult result = verify(
-        mockFileSelectorPlatform.openFiles(
-          acceptedTypeGroups: captureAnyNamed('acceptedTypeGroups'),
-        ),
-      );
-      expect(capturedTypeGroups(result)[0].mimeTypes, <String>['image/*', 'video/*']);
+      await plugin.pickMedia(options: const MediaPickerOptions(allowMultiple: true));
+
+      expect(acceptedTypeGroups?.single.mimeTypes, <String>['image/*', 'video/*']);
     });
 
     test('multiple media handles an empty path response gracefully', () async {
-      expect(await plugin.getMedia(options: const MediaOptions(allowMultiple: true)), <String>[]);
+      mockFileSelectorPlatform.onOpenFiles = ({required OpenFilesDialogOptions options}) async =>
+          <XFile>[];
+      expect(
+        await plugin.pickMedia(options: const MediaPickerOptions(allowMultiple: true)),
+        <String>[],
+      );
     });
 
     test('single media handles an empty path response gracefully', () async {
-      expect(await plugin.getMedia(options: const MediaOptions(allowMultiple: false)), <String>[]);
+      mockFileSelectorPlatform.onOpenFile = ({required OpenFileDialogOptions options}) async =>
+          null;
+      expect(
+        await plugin.pickMedia(options: const MediaPickerOptions(allowMultiple: false)),
+        <String>[],
+      );
     });
   });
 }
 
-class FakeCameraDelegate extends ImagePickerCameraDelegate {
+final class FakeCameraDelegate extends ImagePickerCameraDelegate {
   FakeCameraDelegate({this.result});
 
   XFile? result;
 
   @override
-  Future<XFile?> takePhoto({
-    ImagePickerCameraDelegateOptions options = const ImagePickerCameraDelegateOptions(),
-  }) async {
+  Future<XFile?> takePhoto({ImagePickerOptions options = const ImagePickerOptions()}) async {
     return result;
   }
 
   @override
-  Future<XFile?> takeVideo({
-    ImagePickerCameraDelegateOptions options = const ImagePickerCameraDelegateOptions(),
-  }) async {
+  Future<XFile?> takeVideo({VideoPickerOptions options = const VideoPickerOptions()}) async {
     return result;
   }
+}
+
+final class FakeCrossFile extends CrossFilePlatform {}
+
+final class FakeFileSelectorPlatform extends FileSelectorPlatform {
+  FakeFileSelectorPlatform();
+
+  late Future<XFile?> Function({required OpenFileDialogOptions options}) onOpenFile;
+  late Future<List<XFile>> Function({required OpenFilesDialogOptions options}) onOpenFiles;
+
+  @override
+  Future<XFile?> openFile({OpenFileDialogOptions options = const OpenFileDialogOptions()}) =>
+      onOpenFile(options: options);
+
+  @override
+  Future<List<XFile>> openFiles({
+    OpenFilesDialogOptions options = const OpenFilesDialogOptions(),
+  }) => onOpenFiles(options: options);
 }
