@@ -86,6 +86,11 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
     exoPlayerEventListener = createExoPlayerEventListener(exoPlayer, surfaceProducer);
     exoPlayer.addListener(exoPlayerEventListener);
     setAudioAttributes(exoPlayer, options.mixWithOthers);
+    if (options.allowBackgroundPlayback) {
+      // Keeps the CPU and Wi-Fi awake while playing, so that streaming does not
+      // stall once the screen is off. Requires the WAKE_LOCK permission.
+      exoPlayer.setWakeMode(C.WAKE_MODE_NETWORK);
+    }
   }
 
   public void setDisposeHandler(@Nullable DisposeHandler handler) {

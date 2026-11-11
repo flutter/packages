@@ -170,6 +170,11 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
     return _api.setMixWithOthers(mixWithOthers);
   }
 
+  /// No setup is needed here on iOS and macOS if the app has the `audio` 
+  /// background mode activated.
+  @override
+  Future<void> setAllowBackgroundPlayback(bool allowBackgroundPlayback) async {}
+
   @override
   Future<void> setPreventsDisplaySleepDuringVideoPlayback(
     int playerId,

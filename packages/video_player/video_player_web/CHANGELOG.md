@@ -1,5 +1,6 @@
-## NEXT
+## 2.5.0
 
+* Adds `setAllowBackgroundPlayback`, which is ignored on web.
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 * Updates the minimum supported `package:web` version to 1.0.0.
 

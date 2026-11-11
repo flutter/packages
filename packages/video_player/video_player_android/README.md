@@ -11,6 +11,16 @@ so you do not need to add it to your `pubspec.yaml`.
 However, if you `import` this package to use any of its APIs directly, you
 should add it to your `pubspec.yaml` as usual.
 
+## Background playback
+
+If you set `allowBackgroundPlayback` in `VideoPlayerOptions`, add the following
+permission to your Android Manifest so that network streams keep playing while
+the screen is off:
+
+```xml
+<uses-permission android:name="android.permission.WAKE_LOCK"/>
+```
+
 ## Known issues
 
 Using `VideoViewType.platformView` is not currently recommended on Android due to a known [issue][3] affecting platform views on Android.
