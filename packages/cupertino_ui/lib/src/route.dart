@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// ignore_for_file: uri_does_not_exist_in_doc_import
 /// @docImport 'dart:ui';
 ///
 /// @docImport 'package:flutter/services.dart';
