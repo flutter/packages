@@ -15,6 +15,10 @@ class FileSaveLocation {
 
   /// The file to save to.
   ///
+  /// If the returned [XFile] is a [ScopedStorageXFile], it is recommended that
+  /// the [ScopedStorageXFile.dispose] is called when the app no longer needs
+  /// access to the resource.
+  ///
   /// See [FileSystemXFile] and [ScopedStorageXFile] for more details on file
   /// implementations.
   final XFile file;

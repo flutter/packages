@@ -37,6 +37,10 @@ export 'package:file_selector_platform_interface/file_selector_platform_interfac
 /// When not provided, the default OS label is used (for example, "Open").
 /// This is ignored on the Web platform.
 ///
+/// If the returned [XFile] is a [ScopedStorageXFile], it is recommended that
+/// the [ScopedStorageXFile.dispose] is called when the app no longer needs
+/// access to the resource.
+///
 /// Returns `null` if the user cancels the operation.
 Future<XFile?> openFile({
   List<XTypeGroup> acceptedTypeGroups = const <XTypeGroup>[],
@@ -70,6 +74,10 @@ Future<XFile?> openFile({
 ///
 /// [confirmButtonText] is the text in the confirmation button of the dialog.
 /// When not provided, the default OS label is used (for example, "Open").
+///
+/// If a returned [XFile] is a [ScopedStorageXFile], it is recommended that
+/// the [ScopedStorageXFile.dispose] is called when the app no longer needs
+/// access to the resource.
 ///
 /// Returns an empty list if the user cancels the operation.
 Future<List<XFile>> openFiles({
@@ -145,6 +153,10 @@ Future<FileSaveLocation?> getSaveLocation({
 /// directories in the dialog. When not provided, uses the platform default.
 /// May not be supported on all platforms.
 ///
+/// If the returned [XDirectory] is a [ScopedStorageXDirectory], it is
+/// recommended that the [ScopedStorageXDirectory.dispose] is called when the
+/// app no longer needs access to the resource.
+///
 /// Returns `null` if the user cancels the operation.
 Future<XDirectory?> getDirectory({
   String? initialDirectory,
@@ -175,6 +187,10 @@ Future<XDirectory?> getDirectory({
 /// [canCreateDirectories] controls whether the user is allowed to create new
 /// directories in the dialog. When not provided, uses the platform default.
 /// May not be supported on all platforms.
+///
+/// If a returned [XDirectory] is a [ScopedStorageXDirectory], it is
+/// recommended that the [ScopedStorageXDirectory.dispose] is called when the
+/// app no longer needs access to the resource.
 ///
 /// Returns an empty array if the user cancels the operation.
 Future<List<XDirectory>> getDirectories({
