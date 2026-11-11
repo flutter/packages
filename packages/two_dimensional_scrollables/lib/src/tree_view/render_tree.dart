@@ -27,8 +27,8 @@ typedef _PaintSegment = ({int leadingIndex, int trailingIndex});
 class RenderTreeViewport extends RenderTwoDimensionalViewport {
   /// Creates a viewport for [RenderBox] objects in a tree format of rows.
   RenderTreeViewport({
-    required Map<UniqueKey, TreeViewNodesAnimation> activeAnimations,
-    required Map<int, int> rowDepths,
+    required this._activeAnimations,
+    required this._rowDepths,
     required double indentation,
     required super.horizontalOffset,
     required super.horizontalAxisDirection,
@@ -36,15 +36,11 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
     required super.verticalAxisDirection,
     required TreeRowDelegateMixin super.delegate,
     required super.childManager,
-    super.cacheExtent,
+    super.scrollCacheExtent,
     super.clipBehavior,
-    AlignmentGeometry alignment = Alignment.topLeft,
-    TextDirection? textDirection,
-  }) : _activeAnimations = activeAnimations,
-       _rowDepths = rowDepths,
-       _indentation = indentation,
-       _alignment = alignment,
-       _textDirection = textDirection,
+    this._alignment = Alignment.topLeft,
+    this._textDirection,
+  }) : _indentation = indentation,
        assert(indentation >= 0),
        assert(
          verticalAxisDirection == AxisDirection.down &&
@@ -137,6 +133,10 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
   double _furthestHorizontalExtent = 0.0;
   // How far rows should be laid out in a given frame.
   double get _targetRowPixel {
+    final double cacheExtent = switch (scrollCacheExtent.style) {
+      CacheExtentStyle.pixel => scrollCacheExtent.value,
+      CacheExtentStyle.viewport => scrollCacheExtent.value * viewportDimension.height,
+    };
     return cacheExtent + verticalOffset.pixels + viewportDimension.height;
   }
 

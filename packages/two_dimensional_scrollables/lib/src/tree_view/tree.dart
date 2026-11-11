@@ -275,7 +275,7 @@ class TreeViewController {
 ///
 /// The rows of the tree are laid out on demand by the [TreeViewport]'s render
 /// object, using [TreeView.treeNodeBuilder]. This will only be called for the
-/// nodes that are visible, or within the [TreeViewport.cacheExtent].
+/// nodes that are visible, or within the [TreeViewport.scrollCacheExtent].
 ///
 /// The [TreeView.treeNodeBuilder] returns the [Widget] that represents the
 /// given [TreeViewNode].
@@ -310,7 +310,7 @@ class TreeView<T> extends StatefulWidget {
     this.mainAxis = Axis.vertical,
     this.verticalDetails = const ScrollableDetails.vertical(),
     this.horizontalDetails = const ScrollableDetails.horizontal(),
-    this.cacheExtent,
+    this.scrollCacheExtent,
     this.diagonalDragBehavior = DiagonalDragBehavior.none,
     this.dragStartBehavior = DragStartBehavior.start,
     this.keyboardDismissBehavior = ScrollViewKeyboardDismissBehavior.manual,
@@ -428,15 +428,17 @@ class TreeView<T> extends StatefulWidget {
   /// rows that are about to become visible when the user scrolls.
   ///
   /// [TreeRow]s that fall in this cache area are laid out even though they are
-  /// not (yet) visible on screen. The [cacheExtent] describes how many pixels
+  /// not (yet) visible on screen. The [scrollCacheExtent] describes how far
   /// the cache area extends before the leading edge and after the trailing edge
-  /// of the viewport.
+  /// of the viewport, either in pixels or as a multiple of the viewport height.
+  ///
+  /// If null, [RenderAbstractViewport.defaultCacheExtent] pixels are used.
   ///
   /// See also:
   ///
-  ///   * [TwoDimensionalScrollView.cacheExtent], the area beyond the viewport
-  ///     bounds where soon-to-be-visible children are rendered.
-  final double? cacheExtent;
+  ///   * [TwoDimensionalScrollView.scrollCacheExtent], the area beyond the
+  ///     viewport bounds where soon-to-be-visible children are rendered.
+  final ScrollCacheExtent? scrollCacheExtent;
 
   /// Whether scrolling gestures should lock to one axes, allow free movement
   /// in both axes, or be evaluated on a weighted scale.
@@ -759,7 +761,7 @@ class _TreeViewState<T> extends State<TreeView<T>>
       mainAxis: widget.mainAxis,
       horizontalDetails: widget.horizontalDetails,
       verticalDetails: widget.verticalDetails,
-      cacheExtent: widget.cacheExtent,
+      scrollCacheExtent: widget.scrollCacheExtent,
       diagonalDragBehavior: widget.diagonalDragBehavior,
       dragStartBehavior: widget.dragStartBehavior,
       keyboardDismissBehavior: widget.keyboardDismissBehavior,
@@ -976,7 +978,7 @@ class _TreeView extends TwoDimensionalScrollView {
     super.mainAxis,
     super.horizontalDetails,
     super.verticalDetails,
-    super.cacheExtent,
+    super.scrollCacheExtent,
     super.diagonalDragBehavior = DiagonalDragBehavior.none,
     super.dragStartBehavior,
     super.keyboardDismissBehavior,
@@ -1006,7 +1008,7 @@ class _TreeView extends TwoDimensionalScrollView {
       horizontalOffset: horizontalOffset,
       horizontalAxisDirection: horizontalDetails.direction,
       delegate: delegate as TreeRowDelegateMixin,
-      cacheExtent: cacheExtent,
+      scrollCacheExtent: scrollCacheExtent,
       clipBehavior: clipBehavior,
       activeAnimations: activeAnimations,
       rowDepths: rowDepths,
@@ -1028,7 +1030,7 @@ class TreeViewport extends TwoDimensionalViewport {
     required super.horizontalOffset,
     required super.horizontalAxisDirection,
     required TreeRowDelegateMixin super.delegate,
-    super.cacheExtent,
+    super.scrollCacheExtent,
     super.clipBehavior,
     required this.activeAnimations,
     required this.rowDepths,
@@ -1071,7 +1073,7 @@ class TreeViewport extends TwoDimensionalViewport {
       horizontalAxisDirection: horizontalAxisDirection,
       verticalOffset: verticalOffset,
       verticalAxisDirection: verticalAxisDirection,
-      cacheExtent: cacheExtent,
+      scrollCacheExtent: scrollCacheExtent,
       clipBehavior: clipBehavior,
       delegate: delegate as TreeRowDelegateMixin,
       childManager: context as TwoDimensionalChildManager,
@@ -1090,7 +1092,7 @@ class TreeViewport extends TwoDimensionalViewport {
       ..horizontalAxisDirection = horizontalAxisDirection
       ..verticalOffset = verticalOffset
       ..verticalAxisDirection = verticalAxisDirection
-      ..cacheExtent = cacheExtent
+      ..scrollCacheExtent = scrollCacheExtent
       ..clipBehavior = clipBehavior
       ..delegate = delegate as TreeRowDelegateMixin
       ..alignment = alignment
