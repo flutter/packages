@@ -88,6 +88,8 @@ enum ExpansionPanelIconVisibility {
 /// This example demonstrates how to use [trailingIconVisibility] to control
 /// the visibility of the expand/collapse icon.
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/expansion_panel/expansion_panel_list.1.dart#body}

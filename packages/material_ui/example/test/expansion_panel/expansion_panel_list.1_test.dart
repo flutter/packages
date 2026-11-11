@@ -15,28 +15,20 @@ void main() {
       const example.ExpansionPanelIconVisibilityExampleApp(),
     );
 
-    expect(find.byType(ExpandIcon), findsNWidgets(3));
-
-    final Finder visibilityFinder = find
-        .ancestor(
-          of: find.byType(ExpandIcon).first,
-          matching: find.byType(Visibility),
-        )
-        .first;
-
-    Visibility visibility = tester.widget(visibilityFinder);
-    expect(visibility.visible, isTrue);
+    final Finder firstHeader = find.widgetWithText(ListTile, 'Panel 1');
+    final double visibleHeaderWidth = tester.getSize(firstHeader).width;
+    expect(find.byType(ExpandIcon).hitTestable(), findsNWidgets(3));
 
     await tester.tap(find.text('Hidden'));
     await tester.pumpAndSettle();
 
-    visibility = tester.widget(visibilityFinder);
-    expect(visibility.visible, isFalse);
-    expect(visibility.maintainSize, isTrue);
+    expect(find.byType(ExpandIcon).hitTestable(), findsNothing);
+    expect(tester.getSize(firstHeader).width, visibleHeaderWidth);
 
     await tester.tap(find.text('Gone'));
     await tester.pumpAndSettle();
 
-    expect(find.byType(ExpandIcon), findsNothing);
+    expect(find.byType(ExpandIcon).hitTestable(), findsNothing);
+    expect(tester.getSize(firstHeader).width, greaterThan(visibleHeaderWidth));
   });
 }
