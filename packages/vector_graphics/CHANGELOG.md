@@ -1,3 +1,7 @@
+## 1.3.0
+
+* Adds support for SVG filters (`feGaussianBlur`, `feOffset`, `feMerge`, and `feMergeNode`).
+
 ## 1.2.7
 
 * Fixes uncaught surface-creation throwables (such as bare JavaScript strings

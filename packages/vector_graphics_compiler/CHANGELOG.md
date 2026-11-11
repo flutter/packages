@@ -1,3 +1,7 @@
+## 1.3.6
+
+* Adds support for SVG filters (`feGaussianBlur`, `feOffset`, `feMerge`, and `feMergeNode`).
+
 ## 1.3.5
 
 * Resolves the Flutter artifact cache using `package:cli_util` when running as a
