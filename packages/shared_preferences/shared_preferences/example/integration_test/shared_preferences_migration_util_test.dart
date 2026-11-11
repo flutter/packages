@@ -4,7 +4,6 @@
 
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -78,9 +77,7 @@ void runAllGroups(
 
   group('file name (or equivalent) sharedPreferencesAsyncOptions', () {
     final SharedPreferencesOptions sharedPreferencesAsyncOptions;
-    if (kIsWeb) {
-      sharedPreferencesAsyncOptions = const SharedPreferencesOptions();
-    } else if (Platform.isAndroid) {
+    if (Platform.isAndroid) {
       sharedPreferencesAsyncOptions = const SharedPreferencesAsyncAndroidOptions(
         backend: SharedPreferencesAndroidBackendLibrary.SharedPreferences,
         originalSharedPreferencesOptions: AndroidSharedPreferencesStoreOptions(
@@ -102,7 +99,7 @@ void runAllGroups(
     runTests(sharedPreferencesAsyncOptions, legacySharedPrefsConfig, stringValue: stringValue);
   });
 
-  if (!kIsWeb && Platform.isAndroid) {
+  if (Platform.isAndroid) {
     group('Android default sharedPreferences', () {
       const SharedPreferencesOptions sharedPreferencesAsyncOptions =
           SharedPreferencesAsyncAndroidOptions(
@@ -191,6 +188,6 @@ void runTests(
     // Skips platforms that would be adding the preferences to the same file.
     skip:
         keysAndNamesCollide &&
-        (kIsWeb || Platform.isWindows || Platform.isLinux || Platform.isMacOS || Platform.isIOS),
+        (Platform.isWindows || Platform.isLinux || Platform.isMacOS || Platform.isIOS),
   );
 }
