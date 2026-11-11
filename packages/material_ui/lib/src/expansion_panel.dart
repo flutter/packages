@@ -201,7 +201,8 @@ class ExpansionPanelList extends StatefulWidget {
     this.elevation = 2,
     this.expandIconColor,
     this.materialGapSize = 16.0,
-  }) : _allowOnlyOnePanelOpen = false,
+  }) : assert(materialGapSize >= 0.0),
+       _allowOnlyOnePanelOpen = false,
        initialOpenPanelValue = null;
 
   /// Creates a radio expansion panel list widget.
@@ -233,7 +234,8 @@ class ExpansionPanelList extends StatefulWidget {
     this.elevation = 2,
     this.expandIconColor,
     this.materialGapSize = 16.0,
-  }) : _allowOnlyOnePanelOpen = true;
+  }) : assert(materialGapSize >= 0.0),
+       _allowOnlyOnePanelOpen = true;
 
   /// The children of the expansion panel list. They are laid out in a similar
   /// fashion to [ListBody].
@@ -275,7 +277,11 @@ class ExpansionPanelList extends StatefulWidget {
   /// during expansion.
   final EdgeInsets expandedHeaderPadding;
 
-  /// Defines color for the divider when [ExpansionPanel.isExpanded] is false.
+  /// Defines the color of the dividers between adjacent panels.
+  ///
+  /// A divider is drawn between two panels that are not separated by a
+  /// [MaterialGap]: between two collapsed panels, and on both sides of an
+  /// expanded panel when [materialGapSize] is zero.
   ///
   /// If [dividerColor] is null, then [DividerThemeData.color] is used. If that
   /// is null, then [ThemeData.dividerColor] is used.
@@ -290,22 +296,25 @@ class ExpansionPanelList extends StatefulWidget {
   final Color? expandIconColor;
 
   /// Defines the [MaterialGap.size] of the [MaterialGap] which is placed
-  /// between the [ExpansionPanelList.children] when they're expanded.
+  /// between an expanded panel and its adjacent panels.
   ///
-  /// When set to zero, no [MaterialGap] is inserted between expanded panels
-  /// and dividers are preserved, allowing a flat, divider-separated appearance.
+  /// When set to zero, no [MaterialGap] is inserted around expanded panels, so
+  /// the dividers on both sides of an expanded panel remain visible, creating a
+  /// flat, divider-separated list.
   ///
   /// <callout-box>
   ///
   /// Here is an example with [materialGapSize] set to zero.
   ///
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/expansion_panel/expansion_panel_list.2.dart#body}
+  /// {@example /example/lib/expansion_panel/expansion_panel_list.material_gap_size.0.dart#body}
   ///
   /// </callout-box>
   ///
-  /// Defaults to `16.0`.
+  /// Defaults to `16.0`. Must be non-negative.
   final double materialGapSize;
 
   @override

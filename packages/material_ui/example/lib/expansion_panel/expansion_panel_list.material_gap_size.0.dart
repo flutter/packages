@@ -45,13 +45,15 @@ class _FlatExpansionPanelListExampleState
             const Padding(
               padding: .only(bottom: 16.0),
               child: Text(
-                'With materialGapSize set to 0, dividers between expanded panels are '
+                'With materialGapSize set to 0, dividers around expanded panels are '
                 'preserved, creating a flat list appearance.',
                 textAlign: .center,
               ),
             ),
             Card(
+              clipBehavior: .antiAlias,
               child: ExpansionPanelList(
+                elevation: 0,
                 materialGapSize: 0,
                 expandedHeaderPadding: .zero,
                 expansionCallback: (int index, bool isExpanded) {
