@@ -23,7 +23,8 @@ class MainFlutterWindow: NSWindow {
     RegisterGeneratedPlugins(registry: flutterViewController)
 
     let api = PigeonApiImplementation()
-    NativeInteropExampleApiSetup.register(api: api)
+    NativeInteropExampleApiSetup.register(
+      api: api, registrar: flutterViewController.registrar(forPlugin: "NativeInteropExampleApi"))
 
     super.awakeFromNib()
   }
