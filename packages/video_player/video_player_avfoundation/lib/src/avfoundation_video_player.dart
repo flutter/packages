@@ -9,8 +9,7 @@ import 'package:flutter/widgets.dart';
 import 'package:video_player_platform_interface/video_player_platform_interface.dart';
 
 import 'fair_play_drm_configuration.dart';
-import 'video_player_instance_messages.g.dart';
-import 'video_player_plugin_messages.g.dart';
+import 'messages.g.dart';
 
 /// The non-test implementation of `_apiProvider`.
 VideoPlayerInstanceApi _productionApiProvider(int playerId) {
@@ -217,16 +216,14 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
     int playerId,
     bool preventsDisplaySleepDuringVideoPlayback,
   ) {
-    return _playerWith(
-      id: playerId,
-    ).setPreventsDisplaySleepDuringVideoPlayback(preventsDisplaySleepDuringVideoPlayback);
+    return _playerWith(id: playerId)
+        .setPreventsDisplaySleepDuringVideoPlayback(preventsDisplaySleepDuringVideoPlayback);
   }
 
   @override
   Future<List<VideoAudioTrack>> getAudioTracks(int playerId) async {
-    final List<MediaSelectionAudioTrackData> nativeData = await _playerWith(
-      id: playerId,
-    ).getAudioTracks();
+    final List<MediaSelectionAudioTrackData> nativeData = await _playerWith(id: playerId)
+        .getAudioTracks();
     final tracks = <VideoAudioTrack>[];
 
     for (final track in nativeData) {
@@ -372,8 +369,7 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
 /// An instance of a video player, corresponding to a single player ID in
 /// [AVFoundationVideoPlayer].
 class _PlayerInstance {
-  _PlayerInstance(this._api, this.viewState, {required EventChannel eventChannel})
-    : _eventChannel = eventChannel;
+  _PlayerInstance(this._api, this.viewState, {required this._eventChannel});
 
   final VideoPlayerInstanceApi _api;
   final VideoPlayerViewState viewState;

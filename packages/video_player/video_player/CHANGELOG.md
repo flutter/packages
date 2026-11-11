@@ -4,6 +4,10 @@
   DRM-protected streams. Widevine uses `WidevineDrmConfiguration`, which is
   exported by this package. FairPlay uses `FairPlayDrmConfiguration` from
   `video_player_avfoundation`.
+* Updates README to reflect currently supported OS versions for the latest
+  versions of the endorsed iOS and macOS platform implementations.
+  * Applications built with older versions of Flutter will continue to
+    use compatible versions of the platform implementations.
 
 ## 2.14.1
 

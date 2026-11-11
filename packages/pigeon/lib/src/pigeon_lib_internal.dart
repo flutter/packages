@@ -93,6 +93,9 @@ class InternalPigeonOptions {
               fileSpecificClassNameComponent:
                   options.swiftOptions?.fileSpecificClassNameComponent ??
                   options.fileSpecificClassNameComponent,
+              nativeInteropTransport:
+                  // ignore: invalid_use_of_visible_for_testing_member
+                  options.nativeInteropTransport ?? NativeInteropTransport.hybrid,
             ),
       kotlinOptions = options.kotlinOut == null
           ? null
@@ -103,6 +106,9 @@ class InternalPigeonOptions {
               fileSpecificClassNameComponent:
                   options.kotlinOptions?.fileSpecificClassNameComponent ??
                   options.fileSpecificClassNameComponent,
+              nativeInteropTransport:
+                  // ignore: invalid_use_of_visible_for_testing_member
+                  options.nativeInteropTransport ?? NativeInteropTransport.hybrid,
             ),
       cppOptions = (options.cppHeaderOut == null || options.cppSourceOut == null)
           ? null
@@ -132,6 +138,9 @@ class InternalPigeonOptions {
               ffiErrorClassName: options.swiftOptions?.errorClassName ?? 'PigeonError',
               jniErrorClassName: options.kotlinOptions?.errorClassName ?? 'FlutterError',
               fileSpecificClassNameComponent: _dartNativeInteropClassNameComponent(options),
+              nativeInteropTransport:
+                  // ignore: invalid_use_of_visible_for_testing_member
+                  options.nativeInteropTransport ?? NativeInteropTransport.hybrid,
             ),
       copyrightHeader = options.copyrightHeader != null
           ? _lineReader(path.posix.join(options.basePath ?? '', options.copyrightHeader))
@@ -432,6 +441,15 @@ void _errorOnSwiftFfiUnsupportedFeatures(
             ),
           );
         }
+        if (method.isAsynchronous &&
+            method.parameters.any((Parameter parameter) => parameter.name == 'completionHandler')) {
+          errors.add(
+            Error(
+              message:
+                  'Parameter "completionHandler" in asynchronous method "${method.name}" in API "${api.name}" conflicts with the completion handler parameter that Swift FFI adds to asynchronous host API methods. Rename the parameter.',
+            ),
+          );
+        }
       }
     }
   }
@@ -521,6 +539,23 @@ class DartGeneratorAdapter implements GeneratorAdapter {
 
     const generator = DartGenerator();
     generator.generate(options.dartOptions!, root, sink, dartPackageName: options.dartPackageName);
+    if (usesNativeInterop(options.dartOptions!) &&
+        options.dartOptions!.dartOut != null &&
+        options.dartOptions!.dartOut!.isNotEmpty &&
+        options.dartOptions!.dartOut != 'stdout') {
+      final buffer = StringBuffer();
+      generator.generateNativeInterop(
+        options.dartOptions!,
+        root,
+        buffer,
+        dartPackageName: options.dartPackageName,
+      );
+      _writeToOutput(
+        getNativeInteropDartPath(options.dartOptions!.dartOut!),
+        buffer.toString(),
+        basePath: options.basePath ?? '',
+      );
+    }
   }
 
   @override
@@ -533,23 +568,34 @@ class DartGeneratorAdapter implements GeneratorAdapter {
     if (dartOptions == null || !usesNativeInterop(dartOptions)) {
       return <Error>[];
     }
-    return _errorOnNativeInteropReservedMethodNames(root, useJni: dartOptions.useJni);
+    final errors = <Error>[];
+    if (dartOptions.dartOut != null &&
+        (dartOptions.dartOut!.isEmpty || dartOptions.dartOut == 'stdout')) {
+      errors.add(
+        Error(
+          message: 'Native interop requires a file path for dartOut (cannot be empty or "stdout").',
+        ),
+      );
+    }
+    errors.addAll(_errorOnNativeInteropReservedMethodNames(root));
+    return errors;
   }
 }
 
 /// Returns errors for API methods whose names conflict with members of the
 /// Dart classes that native interop generates for the API.
-List<Error> _errorOnNativeInteropReservedMethodNames(Root root, {required bool useJni}) {
+List<Error> _errorOnNativeInteropReservedMethodNames(Root root) {
   final errors = <Error>[];
   for (final Api api in root.apis) {
     final Set<String> reservedNames = switch (api) {
-      AstHostApi() => const <String>{'createWithNativeInteropApi', 'getInstance'},
-      // The JNI registrar implements the JNIgen interface for the API, so it
-      // shares a namespace with the API's methods.
-      AstFlutterApi() => <String>{
-        'implement',
-        if (useJni) ...<String>{'dartApi', 'register'},
+      AstHostApi() => const <String>{
+        'createWithNativeInteropApi',
+        'getInstance',
+        'pigeonResolveInstance',
+        'pigeonEngineKey',
+        'pigeonEngineKeyOf',
       },
+      AstFlutterApi() => const <String>{'implement'},
       _ => const <String>{},
     };
     for (final Method method in api.methods) {
@@ -1807,6 +1853,11 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       return expression.value;
     } else if (expression is dart_ast.SimpleIdentifier) {
       return expression.name;
+    } else if (expression is dart_ast.PrefixedIdentifier &&
+        expression.prefix.name == 'NativeInteropTransport') {
+      // `NativeInteropTransport` values are stored by name. Any other prefixed
+      // identifier is reported as unrecognized below.
+      return expression.identifier.name;
     } else if (expression is dart_ast.ListLiteral) {
       final list = <dynamic>[];
       for (final dart_ast.CollectionElement element in expression.elements) {
@@ -2668,27 +2719,21 @@ int calculateLineNumber(String contents, int offset) {
   return result;
 }
 
-List<Error> _validateDependencies({
+String? _findTargetPubspecPath({
   required String? appDirectory,
   required String? dartOutPath,
   String? basePath,
-  required String apiName,
-  required List<String> requiredDeps,
-  List<String> requiredDevDeps = const <String>[],
 }) {
-  final errors = <Error>[];
-
   String? pubspecPath;
   if (dartOutPath != null && dartOutPath.isNotEmpty) {
-    final String fullDartOut =
-        (basePath != null && basePath.isNotEmpty && !dartOutPath.startsWith(basePath))
+    final String fullDartOut = (basePath != null && basePath.isNotEmpty)
         ? path.join(basePath, dartOutPath)
         : dartOutPath;
     pubspecPath = findPubspecPath(File(fullDartOut).parent);
   }
   if (pubspecPath == null && appDirectory != null && appDirectory.isNotEmpty) {
     final String fullAppDir =
-        (basePath != null && basePath.isNotEmpty && !appDirectory.startsWith(basePath))
+        (basePath != null && basePath.isNotEmpty && !isWithinOrEquals(basePath, appDirectory))
         ? path.join(basePath, appDirectory)
         : appDirectory;
     pubspecPath = findPubspecPath(Directory(fullAppDir));
@@ -2701,6 +2746,174 @@ List<Error> _validateDependencies({
       (dartOutPath == null || dartOutPath.isEmpty)) {
     pubspecPath = findPubspecPath(Directory.current);
   }
+  return pubspecPath;
+}
+
+/// Checks whether the `objective_c` dependency constraint in `pubspec.yaml`
+/// matches the `ObjCVersionCheck(major, minor)` emitted by `ffigen` in the
+/// generated `.ffi.dart` file.
+///
+/// Returns a warning message if the constraint allows incompatible versions, or
+/// `null` if the constraint is compatible or cannot be checked.
+String? checkObjectiveCPubspecVersion(InternalPigeonOptions options) {
+  return _checkGeneratedBindingsPubspecVersion(
+    options: options,
+    appDirectory: options.swiftOptions?.appDirectory ?? options.appDirectory,
+    generatedFileSuffix: '.ffi.dart',
+    versionCheckName: 'ObjCVersionCheck',
+    packageName: 'objective_c',
+    bindingTypeLabel: 'FFI',
+  );
+}
+
+/// Checks whether the `jni` dependency constraint in `pubspec.yaml`
+/// matches the `JniVersionCheck(major, minor)` emitted by `jnigen` in the
+/// generated `.jni.dart` file (and is at least `1.1.1`, which includes the
+/// required Android R8 keep rules).
+///
+/// Returns a warning message if the constraint allows incompatible versions, or
+/// `null` if the constraint is compatible or cannot be checked.
+String? checkJniPubspecVersion(InternalPigeonOptions options) {
+  return _checkGeneratedBindingsPubspecVersion(
+    options: options,
+    appDirectory: options.kotlinOptions?.appDirectory ?? options.appDirectory,
+    generatedFileSuffix: '.jni.dart',
+    versionCheckName: 'JniVersionCheck',
+    packageName: 'jni',
+    bindingTypeLabel: 'JNI',
+    minimumVersionFloor: Version(1, 1, 1),
+  );
+}
+
+String? _checkGeneratedBindingsPubspecVersion({
+  required InternalPigeonOptions options,
+  required String? appDirectory,
+  required String generatedFileSuffix,
+  required String versionCheckName,
+  required String packageName,
+  required String bindingTypeLabel,
+  Version? minimumVersionFloor,
+}) {
+  final String? dartOutPath = options.dartOptions?.dartOut;
+  if (dartOutPath == null || dartOutPath.isEmpty) {
+    return null;
+  }
+  final String basePath = options.basePath ?? '';
+  final String fullDartOut = basePath.isNotEmpty ? path.join(basePath, dartOutPath) : dartOutPath;
+  final bindingsDartFile = File('${path.withoutExtension(fullDartOut)}$generatedFileSuffix');
+  if (!bindingsDartFile.existsSync()) {
+    return null;
+  }
+
+  final String bindingsContent;
+  try {
+    bindingsContent = bindingsDartFile.readAsStringSync();
+  } catch (_) {
+    return null;
+  }
+
+  final RegExpMatch? match = RegExp(
+    '$versionCheckName\\(\\s*(\\d+)\\s*,\\s*(\\d+)\\s*\\)',
+  ).firstMatch(bindingsContent);
+  if (match == null) {
+    return null;
+  }
+
+  final int major = int.parse(match.group(1)!);
+  final int minor = int.parse(match.group(2)!);
+  final versionCheckMinVersion = Version(major, minor, 0);
+  final Version requiredMinVersion =
+      (minimumVersionFloor != null && versionCheckMinVersion < minimumVersionFloor)
+      ? minimumVersionFloor
+      : versionCheckMinVersion;
+  final nextMajorVersion = Version(requiredMinVersion.major + 1, 0, 0);
+
+  final String? pubspecPath = _findTargetPubspecPath(
+    appDirectory: appDirectory,
+    dartOutPath: dartOutPath,
+    basePath: options.basePath,
+  );
+  if (pubspecPath == null) {
+    return null;
+  }
+
+  final resolvedPubspec = File(pubspecPath);
+  if (!resolvedPubspec.existsSync()) {
+    return null;
+  }
+
+  try {
+    final dynamic doc = yaml.loadYaml(resolvedPubspec.readAsStringSync());
+    if (doc is! yaml.YamlMap) {
+      return null;
+    }
+    final dependencies = doc['dependencies'] as yaml.YamlMap?;
+    final dependencyOverrides = doc['dependency_overrides'] as yaml.YamlMap?;
+    final bool hasOverride =
+        dependencyOverrides != null && dependencyOverrides.containsKey(packageName);
+    final bool hasDependency =
+        hasOverride || (dependencies != null && dependencies.containsKey(packageName));
+    if (!hasDependency) {
+      return null;
+    }
+    final Object? rawDependency = hasOverride
+        ? dependencyOverrides[packageName]
+        : dependencies![packageName];
+    final Object? rawConstraint;
+    if (rawDependency == null) {
+      rawConstraint = 'any';
+    } else if (rawDependency is Map) {
+      if (!rawDependency.containsKey('version') &&
+          (rawDependency.containsKey('path') ||
+              rawDependency.containsKey('git') ||
+              rawDependency.containsKey('sdk'))) {
+        return null;
+      }
+      rawConstraint = rawDependency['version'] ?? 'any';
+    } else {
+      rawConstraint = rawDependency;
+    }
+    if (rawConstraint is! String) {
+      return null;
+    }
+
+    final constraint = VersionConstraint.parse(rawConstraint);
+    final bool allowsValidVersion = constraint.allowsAny(
+      VersionRange(min: requiredMinVersion, max: nextMajorVersion, includeMin: true),
+    );
+    final bool allowsLowerVersion = constraint.allowsAny(VersionRange(max: requiredMinVersion));
+    final bool allowsHigherMajorVersion = constraint.allowsAny(
+      VersionRange(min: nextMajorVersion.firstPreRelease, includeMin: true),
+    );
+
+    if (!allowsValidVersion || allowsLowerVersion || allowsHigherMajorVersion) {
+      return 'Generated $bindingTypeLabel bindings in "${path.basename(bindingsDartFile.path)}" require '
+          'package:$packageName ^$requiredMinVersion (from $versionCheckName($major, $minor)), '
+          'but "$pubspecPath" specifies "$packageName: $rawConstraint". '
+          'Consider updating pubspec.yaml to "$packageName: ^$requiredMinVersion".';
+    }
+  } catch (_) {
+    return null;
+  }
+
+  return null;
+}
+
+List<Error> _validateDependencies({
+  required String? appDirectory,
+  required String? dartOutPath,
+  String? basePath,
+  required String apiName,
+  required List<String> requiredDeps,
+  List<String> requiredDevDeps = const <String>[],
+}) {
+  final errors = <Error>[];
+
+  final String? pubspecPath = _findTargetPubspecPath(
+    appDirectory: appDirectory,
+    dartOutPath: dartOutPath,
+    basePath: basePath,
+  );
 
   if (pubspecPath == null) {
     errors.add(

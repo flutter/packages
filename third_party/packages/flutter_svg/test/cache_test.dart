@@ -120,4 +120,53 @@ void main() {
     await null;
     expect(cache.count, 2);
   });
+
+  test('Failed async load does not poison pending cache or leak uncaught zone errors', () async {
+    final cache = Cache();
+    final uncaughtErrors = <Object>[];
+    var loaderCalls = 0;
+
+    await runZonedGuarded(
+      () async {
+        final failingCompleter = Completer<ByteData>();
+        final Future<ByteData> first = cache.putIfAbsent(1, () {
+          loaderCalls++;
+          return failingCompleter.future;
+        });
+        final Future<ByteData> concurrent = cache.putIfAbsent(1, () {
+          loaderCalls++;
+          return Completer<ByteData>().future;
+        });
+
+        expect(loaderCalls, 1);
+        expect(concurrent, same(first));
+
+        final Future<void> firstExpectation = expectLater(first, throwsA(isA<StateError>()));
+        final Future<void> concurrentExpectation = expectLater(
+          concurrent,
+          throwsA(isA<StateError>()),
+        );
+        failingCompleter.completeError(StateError('transient HTTP failure'));
+        await firstExpectation;
+        await concurrentExpectation;
+        await Future<void>.delayed(Duration.zero);
+
+        expect(cache.count, 0);
+
+        final expected = ByteData(4);
+        final ByteData recovered = await cache.putIfAbsent(1, () {
+          loaderCalls++;
+          return SynchronousFuture<ByteData>(expected);
+        });
+        expect(loaderCalls, 2);
+        expect(recovered, same(expected));
+        expect(cache.count, 1);
+      },
+      (Object error, StackTrace stackTrace) {
+        uncaughtErrors.add(error);
+      },
+    );
+
+    expect(uncaughtErrors, isEmpty);
+  });
 }

@@ -5,8 +5,15 @@
 import 'dart:io' show Platform;
 
 import 'package:shared_test_plugin_code/integration_tests.dart';
+import 'package:shared_test_plugin_code/secondary_engine_entrypoints.dart' as secondary_entrypoints;
 
 void main() => runPigeonIntegrationTests(_getTarget());
+
+@pragma('vm:entry-point')
+void idleSecondaryEngineMain() => secondary_entrypoints.idleSecondaryEngineMain();
+
+@pragma('vm:entry-point')
+Future<void> secondaryEngineMain() => secondary_entrypoints.secondaryEngineMain();
 
 TargetGenerator _getTarget() {
   if (Platform.isAndroid) {
