@@ -5,3 +5,4 @@
 import 'package:flutter/animation.dart';
 
 part 'generated/motion_defaults_m3.g.dart';
+part 'generated/motion_defaults_m3e.g.dart';

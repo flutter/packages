@@ -10,6 +10,7 @@ library;
 
 import 'dart:ui';
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/widgets.dart';
 
 import 'color_scheme.dart';
@@ -20,6 +21,8 @@ import 'navigation_bar.dart';
 import 'navigation_rail_theme.dart';
 import 'text_theme.dart';
 import 'theme.dart';
+
+part 'generated/navigation_rail_defaults_m3.g.dart';
 
 const double _kCircularIndicatorDiameter = 56;
 const double _kIndicatorHeight = 32;
@@ -517,37 +520,49 @@ class _NavigationRailState extends State<NavigationRail> with TickerProviderStat
           widget.leading!,
           _verticalSpacer,
         ],
-        for (int i = 0; i < widget.destinations.length; i += 1)
-          _RailDestination(
-            minWidth: minWidth,
-            minExtendedWidth: minExtendedWidth,
-            extendedTransitionAnimation: _extendedAnimation,
-            selected: widget.selectedIndex == i,
-            icon: widget.selectedIndex == i
-                ? widget.destinations[i].selectedIcon
-                : widget.destinations[i].icon,
-            label: widget.destinations[i].label,
-            destinationAnimation: _destinationAnimations[i],
-            labelType: labelType,
-            iconTheme: widget.selectedIndex == i ? selectedIconTheme : effectiveUnselectedIconTheme,
-            labelTextStyle: widget.selectedIndex == i
-                ? selectedLabelTextStyle
-                : unselectedLabelTextStyle,
-            padding: widget.destinations[i].padding,
-            useIndicator: useIndicator,
-            indicatorColor: useIndicator ? indicatorColor : null,
-            indicatorShape: useIndicator ? indicatorShape : null,
-            onTap: () {
-              if (widget.onDestinationSelected != null) {
-                widget.onDestinationSelected!(i);
-              }
-            },
-            indexLabel: localizations.tabLabel(
-              tabIndex: i + 1,
-              tabCount: widget.destinations.length,
-            ),
-            disabled: widget.destinations[i].disabled,
+        Semantics(
+          role: SemanticsRole.tabBar,
+          explicitChildNodes: true,
+          container: true,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              for (int i = 0; i < widget.destinations.length; i += 1)
+                _RailDestination(
+                  minWidth: minWidth,
+                  minExtendedWidth: minExtendedWidth,
+                  extendedTransitionAnimation: _extendedAnimation,
+                  selected: widget.selectedIndex == i,
+                  icon: widget.selectedIndex == i
+                      ? widget.destinations[i].selectedIcon
+                      : widget.destinations[i].icon,
+                  label: widget.destinations[i].label,
+                  destinationAnimation: _destinationAnimations[i],
+                  labelType: labelType,
+                  iconTheme: widget.selectedIndex == i
+                      ? selectedIconTheme
+                      : effectiveUnselectedIconTheme,
+                  labelTextStyle: widget.selectedIndex == i
+                      ? selectedLabelTextStyle
+                      : unselectedLabelTextStyle,
+                  padding: widget.destinations[i].padding,
+                  useIndicator: useIndicator,
+                  indicatorColor: useIndicator ? indicatorColor : null,
+                  indicatorShape: useIndicator ? indicatorShape : null,
+                  onTap: () {
+                    if (widget.onDestinationSelected != null) {
+                      widget.onDestinationSelected!(i);
+                    }
+                  },
+                  indexLabel: localizations.tabLabel(
+                    tabIndex: i + 1,
+                    tabCount: widget.destinations.length,
+                  ),
+                  disabled: widget.destinations[i].disabled,
+                ),
+            ],
           ),
+        ),
         if (!widget.trailingAtBottom && widget.trailing != null) widget.trailing!,
       ],
     );
@@ -958,28 +973,31 @@ class _RailDestinationState extends State<_RailDestination> {
     final Color effectiveHoverColor = primaryColorAlphaModified
         ? colors.primary
         : colors.primary.withOpacity(0.04);
-    return Semantics(
-      container: true,
-      selected: widget.selected,
-      child: Stack(
-        children: <Widget>[
-          Material(
-            type: MaterialType.transparency,
-            child: _IndicatorInkWell(
-              onTap: widget.disabled ? null : widget.onTap,
-              borderRadius: BorderRadius.all(Radius.circular(widget.minWidth / 2.0)),
-              customBorder: widget.indicatorShape,
-              splashColor: effectiveSplashColor,
-              hoverColor: effectiveHoverColor,
-              useMaterial3: material3,
-              indicatorOffset: indicatorOffset,
-              applyXOffset: applyXOffset,
-              textDirection: textDirection,
-              child: content,
+    return MergeSemantics(
+      child: Semantics(
+        role: SemanticsRole.tab,
+        selected: widget.selected,
+        enabled: widget.disabled ? false : null,
+        child: Stack(
+          children: <Widget>[
+            Material(
+              type: MaterialType.transparency,
+              child: _IndicatorInkWell(
+                onTap: widget.disabled ? null : widget.onTap,
+                borderRadius: BorderRadius.all(Radius.circular(widget.minWidth / 2.0)),
+                customBorder: widget.indicatorShape,
+                splashColor: effectiveSplashColor,
+                hoverColor: effectiveHoverColor,
+                useMaterial3: material3,
+                indicatorOffset: indicatorOffset,
+                applyXOffset: applyXOffset,
+                textDirection: textDirection,
+                child: content,
+              ),
             ),
-          ),
-          Semantics(label: widget.indexLabel),
-        ],
+            if (!kIsWeb) Semantics(label: widget.indexLabel),
+          ],
+        ),
       ),
     );
   }
@@ -1233,58 +1251,3 @@ class _NavigationRailDefaultsM2 extends NavigationRailThemeData {
     return IconThemeData(size: 24.0, color: _colors.primary, opacity: 1.0);
   }
 }
-
-// BEGIN GENERATED TOKEN PROPERTIES - NavigationRail
-
-// Do not edit by hand. The code between the "BEGIN GENERATED" and
-// "END GENERATED" comments are generated from data in the Material
-// Design token database by the script:
-//   dev/tools/gen_defaults/bin/gen_defaults.dart.
-
-// dart format off
-class _NavigationRailDefaultsM3 extends NavigationRailThemeData {
-  _NavigationRailDefaultsM3(this.context)
-    : super(
-        elevation: 0.0,
-        groupAlignment: -1,
-        labelType: NavigationRailLabelType.none,
-        useIndicator: true,
-        minWidth: 80.0,
-        minExtendedWidth: 256,
-      );
-
-  final BuildContext context;
-  late final ColorScheme _colors = Theme.of(context).colorScheme;
-  late final TextTheme _textTheme = Theme.of(context).textTheme;
-
-  @override Color? get backgroundColor => _colors.surface;
-
-  @override TextStyle? get unselectedLabelTextStyle {
-    return _textTheme.labelMedium!.copyWith(color: _colors.onSurface);
-  }
-
-  @override TextStyle? get selectedLabelTextStyle {
-    return _textTheme.labelMedium!.copyWith(color: _colors.onSurface);
-  }
-
-  @override IconThemeData? get unselectedIconTheme {
-    return IconThemeData(
-      size: 24.0,
-      color: _colors.onSurfaceVariant,
-    );
-  }
-
-  @override IconThemeData? get selectedIconTheme {
-    return IconThemeData(
-      size: 24.0,
-      color: _colors.onSecondaryContainer,
-    );
-  }
-
-  @override Color? get indicatorColor => _colors.secondaryContainer;
-
-  @override ShapeBorder? get indicatorShape => const StadiumBorder();
-}
-// dart format on
-
-// END GENERATED TOKEN PROPERTIES - NavigationRail
