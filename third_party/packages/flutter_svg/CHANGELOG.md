@@ -1,3 +1,8 @@
+## 2.3.3
+
+* Fixes `Cache.putIfAbsent` leaving rejected futures in `_pending` and leaking
+  uncaught `Zone` errors when an asynchronous SVG load fails.
+
 ## 2.3.2
 
 * Fixes `SvgNetworkLoader` parsing the body of a non-2xx HTTP response as SVG.

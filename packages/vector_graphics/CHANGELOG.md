@@ -1,7 +1,14 @@
-## 1.2.7
+## 1.2.8
 
 * Fixes a `font-family` list, such as `"Roboto, sans-serif"`, being used as a
   single family name. The first family is used and the others become fallbacks.
+
+## 1.2.7
+
+* Fixes uncaught surface-creation throwables (such as bare JavaScript strings
+  or engine errors) from `useHtmlRenderObject()` so `VectorGraphic` widgets
+  reliably fall back to the HTML render object and cache the fallback instead
+  of crashing repeatedly (flutter/flutter#189451).
 
 ## 1.2.6
 

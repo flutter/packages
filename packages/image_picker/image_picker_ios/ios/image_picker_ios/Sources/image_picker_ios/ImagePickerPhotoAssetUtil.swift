@@ -33,9 +33,9 @@ enum ImagePickerPhotoAssetUtil {
   static func saveImageWithOriginalImageData(
     _ originalImageData: Data?,
     image: UIImage?,
-    maxWidth: NSNumber?,
-    maxHeight: NSNumber?,
-    imageQuality: NSNumber?
+    maxWidth: Double?,
+    maxHeight: Double?,
+    imageQuality: Double?
   ) -> String {
     var suffix = kImagePickerDefaultSuffix
     var type = kImagePickerMIMETypeDefault
@@ -58,7 +58,7 @@ enum ImagePickerPhotoAssetUtil {
 
   /// Save image with correct metadata and extension copied from image picker result info.
   static func saveImage(
-    withPickerInfo info: [String: Any]?, image: UIImage, imageQuality: NSNumber?
+    withPickerInfo info: [String: Any]?, image: UIImage, imageQuality: Double?
   ) -> String {
     let metaData =
       info?[UIImagePickerController.InfoKey.mediaMetadata.rawValue] as? [String: Any]
@@ -79,7 +79,7 @@ enum ImagePickerPhotoAssetUtil {
     image: UIImage?,
     suffix: String,
     type: ImagePickerMIMEType,
-    imageQuality: NSNumber?
+    imageQuality: Double?
   ) -> String {
     var data =
       ImagePickerMetaDataUtil.convert(image, usingType: type, quality: imageQuality) ?? Data()
