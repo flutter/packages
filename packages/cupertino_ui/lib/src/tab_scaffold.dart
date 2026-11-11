@@ -207,12 +207,13 @@ class CupertinoTabScaffold extends StatefulWidget {
   ///
   /// When [resizeToAvoidBottomInset] is true and [MediaQueryData.viewInsets]
   /// has a non-zero `bottom` inset (such as from an onscreen keyboard), tab
-  /// content ([tabBuilder]) is kept above the inset while this background
-  /// continues to fill the scaffold behind it. Because that area can show
-  /// through a translucent or rounded keyboard, consider matching this
+  /// content ([tabBuilder]) is kept above the inset while this background and
+  /// [tabBar] remain behind it. Because that area can be visible through a
+  /// translucent keyboard or around its rounded corners, when the active tab
+  /// page paints a different background (for example,
+  /// [CupertinoPageScaffold.backgroundColor]), consider matching this
   /// background (or [CupertinoThemeData.scaffoldBackgroundColor] when null) to
-  /// the active tab page's background (for example,
-  /// [CupertinoPageScaffold.backgroundColor]).
+  /// it.
   final Color? backgroundColor;
 
   /// Whether the body should size itself to avoid the window's bottom inset.
@@ -222,9 +223,9 @@ class CupertinoTabScaffold extends StatefulWidget {
   /// prevents widgets inside the body from being obscured by the keyboard.
   ///
   /// When true, the scaffold's background (see [backgroundColor]) continues to
-  /// fill the area behind the bottom inset, so a translucent or rounded
-  /// keyboard shows that background rather than any background painted by the
-  /// tab content.
+  /// fill the scaffold behind the bottom inset (beneath [tabBar]), where it can
+  /// remain visible through a translucent keyboard or around its rounded
+  /// corners instead of any background painted by [tabBuilder].
   ///
   /// Defaults to true.
   final bool resizeToAvoidBottomInset;
