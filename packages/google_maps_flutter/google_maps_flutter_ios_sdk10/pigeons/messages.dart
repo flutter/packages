@@ -614,6 +614,18 @@ class PlatformBitmapPinConfig extends PlatformBitmap {
   final PlatformBitmap? glyphBitmap;
 }
 
+/// Controls marker update animation behavior for properties that the native iOS
+/// SDK implicitly animates.
+class PlatformMarkerUpdateAnimationConfiguration {
+  PlatformMarkerUpdateAnimationConfiguration({
+    required this.positionAnimationsEnabled,
+    required this.rotationAnimationsEnabled,
+  });
+
+  final bool positionAnimationsEnabled;
+  final bool rotationAnimationsEnabled;
+}
+
 /// Interface for non-test interactions with the native SDK.
 ///
 /// For test-only state queries, see [MapsInspectorApi].
@@ -628,6 +640,12 @@ abstract class MapsApi {
   /// null values will remain unchanged.
   @SwiftFunction('updateWithMapConfiguration(_:)')
   void updateMapConfiguration(PlatformMapConfiguration configuration);
+
+  /// Sets the marker update animation configuration.
+  @SwiftFunction('setMarkerUpdateAnimationConfiguration(configuration:)')
+  void setMarkerUpdateAnimationConfiguration(
+    PlatformMarkerUpdateAnimationConfiguration configuration,
+  );
 
   /// Updates the set of circles on the map.
   @SwiftFunction('updateCircles(adding:changing:removing:)')
