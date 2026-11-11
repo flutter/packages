@@ -1,0 +1,3 @@
+changelog: |
+  - Documents that `CupertinoTabScaffold.backgroundColor` fills the area behind bottom view insets such as the keyboard in default mode.
+version: patch

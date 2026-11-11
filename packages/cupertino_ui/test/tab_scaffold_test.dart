@@ -566,6 +566,39 @@ void main() {
     expect(MediaQuery.of(innerContext).padding.bottom, 0);
   });
 
+  testWidgets('Scaffold backgroundColor extends behind bottom view inset in default mode', (
+    WidgetTester tester,
+  ) async {
+    const scaffoldColor = Color(0xFF123456);
+    const pageColor = Color(0xFF654321);
+
+    await tester.pumpWidget(
+      CupertinoApp(
+        home: MediaQuery(
+          data: const MediaQueryData(viewInsets: EdgeInsets.only(bottom: 200)),
+          child: CupertinoTabScaffold(
+            backgroundColor: scaffoldColor,
+            tabBar: _buildTabBar(),
+            tabBuilder: (BuildContext context, int index) {
+              return const CupertinoPageScaffold(
+                backgroundColor: pageColor,
+                child: Placeholder(),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+
+    final Finder scaffoldBackground = find
+        .descendant(of: find.byType(CupertinoTabScaffold), matching: find.byType(DecoratedBox))
+        .first;
+    final decoration = tester.widget<DecoratedBox>(scaffoldBackground).decoration as BoxDecoration;
+    expect(decoration.color, isSameColorAs(scaffoldColor));
+    expect(tester.getRect(scaffoldBackground), const Rect.fromLTWH(0, 0, 800, 600));
+    expect(tester.getRect(find.byType(CupertinoPageScaffold)), const Rect.fromLTWH(0, 0, 800, 400));
+  });
+
   testWidgets('Deleting tabs after selecting them should switch to the last available tab', (
     WidgetTester tester,
   ) async {
