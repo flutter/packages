@@ -39,7 +39,7 @@ internal constructor(private val listEncoder: SharedPreferencesListEncoder) :
   constructor() : this(ListEncoder())
 
   private fun setUp(binding: FlutterPluginBinding) {
-    this.context = binding.applicationContext
+    context = binding.applicationContext
     try {
       SharedPreferencesApiRegistrar().register(this, binding)
     } catch (ex: Exception) {

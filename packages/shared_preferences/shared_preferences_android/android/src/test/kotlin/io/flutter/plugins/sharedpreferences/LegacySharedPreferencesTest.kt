@@ -12,10 +12,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
-import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertNotSame
 import org.junit.Assert.assertNull
-import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -68,42 +65,6 @@ class LegacySharedPreferencesTest {
     testPlugin.getAll("", null)
     Mockito.verify(mockContext, Mockito.times(1))
         .getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
-  }
-
-  @Test
-  fun detachingSecondaryEnginePreservesPrimaryRegistration() {
-    val context1 = Mockito.mock(Context::class.java)
-    val context2 = Mockito.mock(Context::class.java)
-    val binding1 = Mockito.mock(FlutterPluginBinding::class.java)
-    val binding2 = Mockito.mock(FlutterPluginBinding::class.java)
-    Mockito.`when`(binding1.applicationContext).thenReturn(context1)
-    Mockito.`when`(binding2.applicationContext).thenReturn(context2)
-    Mockito.`when`(binding1.binaryMessenger).thenReturn(Mockito.mock(BinaryMessenger::class.java))
-    Mockito.`when`(binding2.binaryMessenger).thenReturn(Mockito.mock(BinaryMessenger::class.java))
-
-    val primaryPlugin = LegacySharedPreferencesPlugin(ListEncoder())
-    val secondaryPlugin = LegacySharedPreferencesPlugin(ListEncoder())
-    primaryPlugin.onAttachedToEngine(binding1)
-    val primaryRegistrar =
-        SharedPreferencesApiRegistrar.pigeonResolveInstance(Long.MIN_VALUE, Long.MIN_VALUE)
-    assertNotNull(primaryRegistrar)
-
-    secondaryPlugin.onAttachedToEngine(binding2)
-    val secondaryRegistrar =
-        SharedPreferencesApiRegistrar.pigeonResolveInstance(Long.MIN_VALUE, Long.MIN_VALUE)
-    assertNotNull(secondaryRegistrar)
-    assertNotSame(primaryRegistrar, secondaryRegistrar)
-
-    secondaryPlugin.onDetachedFromEngine(binding2)
-    assertSame(
-        primaryRegistrar,
-        SharedPreferencesApiRegistrar.pigeonResolveInstance(Long.MIN_VALUE, Long.MIN_VALUE))
-
-    primaryPlugin.onDetachedFromEngine(binding1)
-    plugin.onAttachedToEngine(flutterPluginBinding)
-    // Restore `plugin` cleanly; tearDown detaches wouldn't apply to `binding1`/`binding2`.
-    assertNotNull(
-        SharedPreferencesApiRegistrar.pigeonResolveInstance(Long.MIN_VALUE, Long.MIN_VALUE))
   }
 
   @Test

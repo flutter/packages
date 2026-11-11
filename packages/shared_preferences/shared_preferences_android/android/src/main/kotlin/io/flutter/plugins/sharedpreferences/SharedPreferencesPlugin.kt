@@ -36,6 +36,8 @@ const val LIST_PREFIX = "VGhpcyBpcyB0aGUgcHJlZml4IGZvciBhIGxpc3Qu"
 // The symbol `!` was chosen as it cannot be created by the base 64 encoding used with LIST_PREFIX.
 const val JSON_LIST_PREFIX = "$LIST_PREFIX!"
 const val DOUBLE_PREFIX = "VGhpcyBpcyB0aGUgcHJlZml4IGZvciBEb3VibGUu"
+private const val DATA_STORE_INSTANCE_NAME = "data_store"
+private const val SHARED_PREFERENCES_INSTANCE_NAME = "shared_preferences"
 
 /*package private*/ val Context.sharedPreferencesDataStore: DataStore<Preferences> by
     preferencesDataStore(SHARED_PREFERENCES_NAME)
@@ -55,12 +57,12 @@ class SharedPreferencesPlugin() : FlutterPlugin, SharedPreferencesAsyncApi {
   }
 
   private fun setUp(binding: FlutterPlugin.FlutterPluginBinding) {
-    this.context = binding.applicationContext
+    context = binding.applicationContext
     try {
-      SharedPreferencesAsyncApiRegistrar().register(this, binding, "data_store")
+      SharedPreferencesAsyncApiRegistrar().register(this, binding, DATA_STORE_INSTANCE_NAME)
       val sharedPrefsBackend = SharedPreferencesBackend(binding.applicationContext, listEncoder)
       SharedPreferencesAsyncApiRegistrar()
-          .register(sharedPrefsBackend, binding, "shared_preferences")
+          .register(sharedPrefsBackend, binding, SHARED_PREFERENCES_INSTANCE_NAME)
       backend = sharedPrefsBackend
     } catch (ex: Exception) {
       Log.e(TAG, "Received exception while setting up SharedPreferencesPlugin", ex)
@@ -73,9 +75,9 @@ class SharedPreferencesPlugin() : FlutterPlugin, SharedPreferencesAsyncApi {
   }
 
   override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
-    SharedPreferencesAsyncApiRegistrar().unregister(this, binding, "data_store")
+    SharedPreferencesAsyncApiRegistrar().unregister(this, binding, DATA_STORE_INSTANCE_NAME)
     backend?.let {
-      SharedPreferencesAsyncApiRegistrar().unregister(it, binding, "shared_preferences")
+      SharedPreferencesAsyncApiRegistrar().unregister(it, binding, SHARED_PREFERENCES_INSTANCE_NAME)
     }
     backend = null
     legacyPlugin?.onDetachedFromEngine(binding)
