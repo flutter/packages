@@ -4,8 +4,8 @@
 
 import 'package:flutter/src/services/binary_messenger.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences_foundation/shared_preferences_foundation.dart';
 import 'package:shared_preferences_foundation/src/messages.g.dart';
-import 'package:shared_preferences_foundation/src/shared_preferences_foundation_real.dart';
 import 'package:shared_preferences_platform_interface/types.dart';
 
 void main() {

@@ -1,6 +1,8 @@
 ---
 name: "pre-push-skill"
 description: "Executes the required pre-push steps for the flutter/packages repository. Call this tool immediately whenever the user asks to push, asks if the user/you are ready to push, or wants to validate their local changes are ready to become a pull request."
+metadata:
+  internal: true
 ---
 
 # Pre-Push Skill Checks to Verify
