@@ -648,6 +648,12 @@ private class _PigeonFfiCodec {
     }
   }
 
+  mutating func writeData(_ data: Foundation.Data) {
+    writeByte($codec.typeUint8List)
+    writeSize(data.count)
+    bytes.append(contentsOf: data)
+  }
+
   mutating func writeValue(_ value: Any?) {
     guard let value = value else {
       writeByte($codec.typeNull)
@@ -708,6 +714,10 @@ private class _PigeonFfiCodec {
       writeValue((value as! AnyHashable).base)
       return
     }
+    if valueType == Foundation.Data.self {
+      writeData(value as! Foundation.Data)
+      return
+    }
     // Collections are matched by protocol before any cast to a class, such as
     // `NSNumber`, because those casts can bridge a whole Swift collection to
     // Objective-C just to fail.
@@ -742,6 +752,27 @@ private class _PigeonFfiCodec {
     }
     if let string = value as? String {
       writeString(string)
+      return
+    }
+    if let data = value as? Foundation.Data {
+      writeData(data)
+      return
+    }
+    if let array = value as? NSArray {
+      writeByte($codec.typeList)
+      writeSize(array.count)
+      for item in array {
+        writeValue(item)
+      }
+      return
+    }
+    if let dictionary = value as? NSDictionary {
+      writeByte($codec.typeMap)
+      writeSize(dictionary.count)
+      for (key, item) in dictionary {
+        writeValue(key)
+        writeValue(item)
+      }
       return
     }
     if writeCustomValueFallback(value) {

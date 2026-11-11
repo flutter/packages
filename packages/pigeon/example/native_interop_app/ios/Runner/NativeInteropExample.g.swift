@@ -442,6 +442,12 @@ private struct NativeInteropExamplePigeonInteropWriter {
     }
   }
 
+  mutating func writeData(_ data: Foundation.Data) {
+    writeByte(NativeInteropExamplePigeonInteropCodec.typeUint8List)
+    writeSize(data.count)
+    bytes.append(contentsOf: data)
+  }
+
   mutating func writeValue(_ value: Any?) {
     guard let value = value else {
       writeByte(NativeInteropExamplePigeonInteropCodec.typeNull)
@@ -510,6 +516,10 @@ private struct NativeInteropExamplePigeonInteropWriter {
       writeValue((value as! AnyHashable).base)
       return
     }
+    if valueType == Foundation.Data.self {
+      writeData(value as! Foundation.Data)
+      return
+    }
     // Collections are matched by protocol before any cast to a class, such as
     // `NSNumber`, because those casts can bridge a whole Swift collection to
     // Objective-C just to fail.
@@ -547,6 +557,27 @@ private struct NativeInteropExamplePigeonInteropWriter {
     }
     if let string = value as? String {
       writeString(string)
+      return
+    }
+    if let data = value as? Foundation.Data {
+      writeData(data)
+      return
+    }
+    if let array = value as? NSArray {
+      writeByte(NativeInteropExamplePigeonInteropCodec.typeList)
+      writeSize(array.count)
+      for item in array {
+        writeValue(item)
+      }
+      return
+    }
+    if let dictionary = value as? NSDictionary {
+      writeByte(NativeInteropExamplePigeonInteropCodec.typeMap)
+      writeSize(dictionary.count)
+      for (key, item) in dictionary {
+        writeValue(key)
+        writeValue(item)
+      }
       return
     }
     if writeCustomValueFallback(value) {

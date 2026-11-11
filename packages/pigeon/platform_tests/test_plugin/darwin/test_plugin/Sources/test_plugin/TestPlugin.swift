@@ -1068,18 +1068,45 @@ class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
     return aNullableFloat64List
   }
 
-  func echoNullable(_ aNullableObject: Any?) throws -> Any? {
-    // Return boxed NSNumber instances to test NSNumber/CFBoolean/CFNumber bridging across FFI.
-    if let boolValue = aNullableObject as? Bool {
+  private static func foundationBoxed(_ value: Any?, nested: Bool = false) -> Any {
+    guard let value else {
+      return NSNull()
+    }
+    if let boolValue = value as? Bool {
       return NSNumber(value: boolValue)
     }
-    if let doubleValue = aNullableObject as? Double {
+    if let doubleValue = value as? Double {
       return NSNumber(value: doubleValue)
     }
-    if let intValue = aNullableObject as? Int64 {
+    if let intValue = value as? Int64 {
       return NSNumber(value: intValue)
     }
-    return aNullableObject
+    if let bytes = value as? [UInt8] {
+      // Exercise both Swift Data and Objective-C NSData bridging across FFI.
+      return nested ? NSData(data: Data(bytes)) : Data(bytes)
+    }
+    if let list = value as? [Any?] {
+      let boxed = list.map { foundationBoxed($0, nested: true) }
+      return nested ? NSMutableArray(array: boxed) : NSArray(array: boxed)
+    }
+    if let map = value as? [AnyHashable?: Any?] {
+      let dict = NSMutableDictionary(capacity: map.count)
+      for (key, item) in map {
+        let boxedKey = foundationBoxed(key, nested: true) as! NSCopying
+        dict[boxedKey] = foundationBoxed(item, nested: true)
+      }
+      return nested ? dict : NSDictionary(dictionary: dict)
+    }
+    return value
+  }
+
+  func echoNullable(_ aNullableObject: Any?) throws -> Any? {
+    // Return Foundation / Objective-C boxed instances to test NSNumber, Data/NSData,
+    // NSNull, NSArray/NSMutableArray, and NSDictionary/NSMutableDictionary across FFI.
+    guard let aNullableObject else {
+      return nil
+    }
+    return NativeInteropTestsClass.foundationBoxed(aNullableObject)
   }
 
   func echoNullable(_ aNullableList: [Any?]?) throws -> [Any?]? {
