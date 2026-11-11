@@ -10,6 +10,7 @@ import 'dart:async';
 import 'dart:ffi';
 import 'dart:io' show Platform;
 import 'dart:typed_data' show Float32List, Float64List, Int32List, Int64List, Int8List, TypedData;
+import 'dart:ui' show PlatformDispatcher;
 
 import 'package:ffi/ffi.dart';
 import 'package:flutter/services.dart';
@@ -481,6 +482,16 @@ void _throwNoInstanceError(String channelName) {
   throw ArgumentError(error);
 }
 
+/// Native engine key meaning "no engine", matching `Long.MIN_VALUE` in Kotlin
+/// and `Int64.min` in Swift.
+const int _pigeonNoEngineKey = -9223372036854775808;
+
+/// The native engine key this isolate has been associated with, learned from
+/// the first native instance it resolves.
+///
+/// Used to route lookups when [PlatformDispatcher.instance.engineId] is
+/// unavailable or native code registered with a synthetic key.
+int? _pigeonEngineAffinity;
 void _throwIfFfiError(ffi_bridge.PigeonError error) {
   if (error.code != null) {
     throw _wrapFfiError(error);
@@ -535,30 +546,60 @@ class _NativeInteropExampleApiForNativeInterop implements NativeInteropExampleAp
        _ffiApi = ffiApi;
 
   /// Returns instance of NativeInteropExampleApiForNativeInterop with specified [channelName] if one has been registered.
+  ///
+  /// Returns the instance registered by this isolate's engine when it is known,
+  /// and otherwise the most recent registration.
   static NativeInteropExampleApiForNativeInterop? getInstance({
     String channelName = defaultInstanceName,
   }) {
-    final NativeInteropExampleApiForNativeInterop res;
     if (Platform.isAndroid) {
-      final jni_bridge.NativeInteropExampleApiRegistrar? link =
-          jni_bridge.NativeInteropExampleApiRegistrar().getInstance(channelName.toJString());
+      final int? engineId = PlatformDispatcher.instance.engineId;
+      final JString jName = channelName.toJString();
+      final jni_bridge.NativeInteropExampleApiRegistrar? link;
+      try {
+        link = jni_bridge.NativeInteropExampleApiRegistrar.pigeonResolveInstance(
+          engineId ?? _pigeonNoEngineKey,
+          _pigeonEngineAffinity ?? _pigeonNoEngineKey,
+          jName,
+        );
+      } finally {
+        jName.release();
+      }
       if (link == null) {
         _throwNoInstanceError(channelName);
       }
-      res = _NativeInteropExampleApiForNativeInterop._withRegistrar(jniApi: link);
+      if (link != null && _pigeonEngineAffinity == null) {
+        final int linkEngineKey = jni_bridge.NativeInteropExampleApiRegistrar.pigeonEngineKeyOf(
+          link,
+        );
+        if (linkEngineKey != _pigeonNoEngineKey && (engineId == null || linkEngineKey < 0)) {
+          _pigeonEngineAffinity = linkEngineKey;
+        }
+      }
+      return _NativeInteropExampleApiForNativeInterop._withRegistrar(jniApi: link);
     } else if (Platform.isIOS || Platform.isMacOS) {
+      final int? engineId = PlatformDispatcher.instance.engineId;
       final ffi_bridge.NativeInteropExampleApiSetup? link =
-          ffi_bridge.NativeInteropExampleApiSetup.getInstanceWithName(NSString(channelName));
+          ffi_bridge.NativeInteropExampleApiSetup.pigeonResolveInstanceWithEngineId(
+            engineId ?? _pigeonNoEngineKey,
+            affinityKey: _pigeonEngineAffinity ?? _pigeonNoEngineKey,
+            name: NSString(channelName),
+          );
       if (link == null) {
         _throwNoInstanceError(channelName);
       }
-      res = _NativeInteropExampleApiForNativeInterop._withRegistrar(ffiApi: link);
+      if (link != null && _pigeonEngineAffinity == null) {
+        final int linkEngineKey = ffi_bridge.NativeInteropExampleApiSetup.pigeonEngineKeyOf(link);
+        if (linkEngineKey != _pigeonNoEngineKey && (engineId == null || linkEngineKey < 0)) {
+          _pigeonEngineAffinity = linkEngineKey;
+        }
+      }
+      return _NativeInteropExampleApiForNativeInterop._withRegistrar(ffiApi: link);
     } else {
       throw UnsupportedError(
         'Native Interop is not supported on this platform. Use NativeInteropExampleApi instead.',
       );
     }
-    return res;
   }
 
   late final jni_bridge.NativeInteropExampleApiRegistrar? _jniApi;

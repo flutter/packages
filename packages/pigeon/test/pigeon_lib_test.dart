@@ -3164,6 +3164,10 @@ abstract class Proxy {
 @HostApi()
 abstract class Api {
   int getInstance();
+  void createWithNativeInteropApi();
+  void pigeonResolveInstance();
+  int pigeonEngineKey();
+  int pigeonEngineKeyOf();
 }
 
 @FlutterApi()
@@ -3171,8 +3175,18 @@ abstract class Callbacks {
   void implement();
   void register();
   void dartApi();
+  void pigeonResolveInstance();
 }
 ''';
+
+    final reservedMethodNameMatchers = <Matcher>[
+      contains('Method name "getInstance" in API "Api"'),
+      contains('Method name "createWithNativeInteropApi" in API "Api"'),
+      contains('Method name "pigeonResolveInstance" in API "Api"'),
+      contains('Method name "pigeonEngineKey" in API "Api"'),
+      contains('Method name "pigeonEngineKeyOf" in API "Api"'),
+      contains('Method name "implement" in API "Callbacks"'),
+    ];
 
     test(
       'Dart rejects method names reserved by JNI interop code and allows register/dartApi on FlutterApi',
@@ -3182,24 +3196,21 @@ abstract class Callbacks {
           reservedMethodNamesSource,
           swiftOptions: const SwiftOptions(),
         );
-        expect(errors.map((Error e) => e.message), <Matcher>[
-          contains('Method name "getInstance" in API "Api"'),
-          contains('Method name "implement" in API "Callbacks"'),
-        ]);
+        expect(errors.map((Error e) => e.message), reservedMethodNameMatchers);
       },
     );
 
-    test('Dart rejects method names reserved by FFI interop code', () {
-      final List<Error> errors = validate(
-        const DartGeneratorAdapter(),
-        reservedMethodNamesSource,
-        kotlinOptions: const KotlinOptions(),
-      );
-      expect(errors.map((Error e) => e.message), <Matcher>[
-        contains('Method name "getInstance" in API "Api"'),
-        contains('Method name "implement" in API "Callbacks"'),
-      ]);
-    });
+    test(
+      'Dart rejects method names reserved by FFI interop code and allows register/dartApi on FlutterApi',
+      () {
+        final List<Error> errors = validate(
+          const DartGeneratorAdapter(),
+          reservedMethodNamesSource,
+          kotlinOptions: const KotlinOptions(),
+        );
+        expect(errors.map((Error e) => e.message), reservedMethodNameMatchers);
+      },
+    );
 
     test('Dart allows those method names without native interop', () {
       final List<Error> errors = validate(

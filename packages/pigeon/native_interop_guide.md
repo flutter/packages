@@ -46,7 +46,7 @@ Using Native Interop in pigeon follows the standard pigeon workflow, with a few 
 To use Native Interop, your development environment and the corresponding external tools must be configured:
 
 ### Android (JNI / JNIgen)
-- **Android SDK**: Must be installed and configured in your path. JNIgen uses the JDK bundled with Flutter by default, so a separate JDK installation is not required.
+- **Android SDK**: Must be installed with `ANDROID_HOME` (or `ANDROID_SDK_ROOT`) set in your environment; otherwise Pigeon skips `jnigen`. JNIgen uses the JDK bundled with Flutter by default, so a separate JDK installation is not required.
 - **`jnigen` 1.0.0 or later**: Earlier versions of JNIgen cannot parse metadata from newer Kotlin compilers and fail with `IllegalArgumentException: Provided Metadata instance has version ... while maximum supported version is ...`. `jnigen` 1.0.0 supports Kotlin metadata up to 2.4.
 
 ### iOS/macOS (FFI / FFIgen)
@@ -155,16 +155,21 @@ s.source_files = 'Sources/**/*.{swift,m,h}'
 This allows CocoaPods to automatically compile the generated Objective-C bridging files into the framework.
 
 #### Swift Package Manager (SwiftPM) Configuration
-**Only if a `.m` file is generated** in `<swift_output_dir>_objc_gen`, you must configure a separate Objective-C target in your `Package.swift` file. Because Swift and Objective-C files cannot reside within the same SwiftPM target, define two separate targets:
+All SwiftPM plugins using Native Interop (`useFfi: true`) must depend on `FlutterFramework` (`path: "../FlutterFramework"`, which Flutter's SwiftPM integration resolves inside the ephemeral `.packages` directory) so the generated `#if canImport(Flutter)` / `#if canImport(FlutterMacOS)` registration APIs compile.
+
+In addition, **only if a `.m` file is generated** in `<swift_output_dir>_objc_gen`, you must configure a separate Objective-C target in your `Package.swift` file. Because Swift and Objective-C files cannot reside within the same SwiftPM target, define two separate targets:
 1. An Objective-C target for the generated bridge files (e.g., `my_plugin_objc_gen`).
 2. The main Swift target that depends on the Objective-C target.
 
-> **Important:** If your Pigeon schema only uses synchronous `@HostApi()` methods (and does not generate a `.m` file in `<swift_output_dir>_objc_gen`), **do not** add the `<plugin_name>_objc_gen` target to `Package.swift`. SwiftPM requires every `.target` to contain at least one compilable source file (`.m`, `.c`, or `.swift`). Declaring a `<plugin_name>_objc_gen` target when the directory only contains a `.h` header (or temporary `.o` file) will cause Xcode builds to fail with:
+> **Important:** If your Pigeon schema only uses synchronous `@HostApi()` methods (and does not generate a `.m` file in `<swift_output_dir>_objc_gen`), keep the `FlutterFramework` dependency on your package and main Swift target, but **do not** add the `<plugin_name>_objc_gen` target to `Package.swift`. SwiftPM requires every `.target` to contain at least one compilable source file (`.m`, `.c`, or `.swift`). Declaring a `<plugin_name>_objc_gen` target when the directory only contains a `.h` header (or temporary `.o` file) will cause Xcode builds to fail with:
 > `Build input file cannot be found: '.../<plugin_name>_objc_gen.o'`
 
 Example configuration (when `<plugin_name>_objc_gen` contains a generated `.m` file):
-<?code-excerpt "platform_tests/test_plugin/darwin/test_plugin/Package.swift (swiftpm-targets)"?>
+<?code-excerpt "platform_tests/test_plugin/darwin/test_plugin/Package.swift (swiftpm-package)"?>
 ```swift
+dependencies: [
+  .package(name: "FlutterFramework", path: "../FlutterFramework")
+],
 targets: [
   .target(
     name: "test_plugin_objc_gen",
@@ -173,7 +178,10 @@ targets: [
   ),
   .target(
     name: "test_plugin",
-    dependencies: ["test_plugin_objc_gen"]
+    dependencies: [
+      "test_plugin_objc_gen",
+      .product(name: "FlutterFramework", package: "FlutterFramework"),
+    ]
   ),
 ]
 ```
@@ -191,15 +199,121 @@ When implementing Native Interop host APIs directly in an application target rat
   ```
   *(Note: If iOS and macOS use separate Pigeon generation outputs or you only target one platform, unifying module names between platforms is not required.)*
 
+* **Native Registration in iOS (`AppDelegate.swift`)**:
+  Register the host implementation in `AppDelegate.swift` within `didInitializeImplicitFlutterEngine`:
+  ```swift
+  GeneratedPluginRegistrant.register(with: engineBridge.pluginRegistry)
+
+  let api = PigeonApiImplementation()
+  if let registrar = engineBridge.pluginRegistry.registrar(forPlugin: "MyApi") {
+    MyApiSetup.register(api: api, registrar: registrar)
+  }
+  ```
+
 * **Native Registration in macOS (`MainFlutterWindow.swift`)**:
-  While iOS registers the host implementation in `AppDelegate.swift` within `didInitializeImplicitFlutterEngine`, macOS applications should register it in `MainFlutterWindow.swift` within `awakeFromNib()`:
+  Register the host implementation in `MainFlutterWindow.swift` within `awakeFromNib()`:
   ```swift
   RegisterGeneratedPlugins(registry: flutterViewController)
 
   let api = PigeonApiImplementation()
-  MyApiSetup.register(api: api)
+  MyApiSetup.register(
+    api: api, registrar: flutterViewController.registrar(forPlugin: "MyApi"))
   ```
-  Calling `register(api:)` in native code also prevents the Xcode linker (`-dead_strip`) from stripping the setup class from the compiled binary.
+  Calling `register(api:registrar:)` in native code on iOS and macOS also prevents the Xcode linker (`-dead_strip`) from stripping the setup class from the compiled binary.
+
+* **Native Registration in Android Apps (`MainActivity.kt`)**:
+  Register the host implementation against the engine in `configureFlutterEngine`:
+  ```kotlin
+  override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
+    super.configureFlutterEngine(flutterEngine)
+    MyApiRegistrar().register(MyApiImplementation(), flutterEngine)
+  }
+  ```
+
+### Step 5: Plugin Registration, Deregistration, and Multi-Engine Support
+
+When implementing a Flutter plugin (`FlutterPlugin`), multiple `FlutterEngine` instances may attach and detach in any order (for example, in add-to-app scenarios, `FlutterEngineGroup`, background isolates/headless engines, or integration tests).
+
+Each `@HostApi` registration is associated with the engine passed to `register` (a plugin binding, `FlutterEngine`, or plugin registrar). Register on attach and unregister **that specific instance** for **that engine** on detach: detaching one engine only removes that engine's registration, and Dart lookups prefer the calling engine's registration (see [Multi-Engine Routing](#multi-engine-routing)).
+
+> **Call registration APIs on the platform main thread**: As with platform channel `setUp`, Native Interop registration and unregistration (`register` / `unregister`, and Dart `setUp` / `Registrar` calls from the root isolate) are not intended for multi-threaded registration and must be called on the platform main thread, which is where plugin attach/detach callbacks and engine configuration already run.
+
+- **Kotlin (JNI)**:
+  ```kotlin
+  class MyPlugin : FlutterPlugin, MyApi {
+    override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {
+      MyApiRegistrar().register(this, binding)
+    }
+
+    override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
+      // Removes only `this` instance for this engine, so other attached engines stay registered:
+      MyApiRegistrar().unregister(this, binding)
+    }
+  }
+  ```
+  *(If your `MyApi` implementation is a separate object rather than `this`, store that implementation reference on a plugin property and pass it to `MyApiRegistrar().unregister(impl, binding)` on detach. Apps that own a `FlutterEngine` directly can use `register(api, flutterEngine)` / `unregister(api, flutterEngine)`.)*
+
+- **Swift (FFI)**:
+  ```swift
+  public class MyPlugin: NSObject, FlutterPlugin, MyApi {
+    private let registrar: FlutterPluginRegistrar
+
+    init(registrar: FlutterPluginRegistrar) {
+      self.registrar = registrar
+    }
+
+    public static func register(with registrar: FlutterPluginRegistrar) {
+      let instance = MyPlugin(registrar: registrar)
+      registrar.publish(instance)
+      MyApiSetup.register(api: instance, registrar: registrar)
+    }
+
+    public func detachFromEngine(for registrar: FlutterPluginRegistrar) {
+      // Removes only `self` for this engine, so other attached engines stay registered:
+      MyApiSetup.unregister(api: self, registrar: registrar)
+    }
+  }
+  ```
+  *(Generated Swift FFI `@HostApi` protocols conform to `AnyObject`, so implementations must be reference types so `MyApiSetup.unregister(api:registrar:)` can match instances by identity. Store the registrar if the plugin also needs it for native `@FlutterApi` lookups.)*
+
+  > **`registrar.publish(instance)` enables detach on iOS**: iOS only calls `detachFromEngine(for:)` on a plugin instance that was published with `registrar.publish(instance)`. Without it, the registration is not removed when the engine is destroyed.
+
+  > **macOS has no detach callback**: `FlutterMacOS`'s `FlutterPlugin` protocol does not declare or invoke `detachFromEngine(for:)`, so macOS plugins have no point at which to unregister, and macOS registrations currently outlive their engine. Plugins that hold engine-specific state on macOS should stay on platform channels for now.
+
+- **Dart (`@FlutterApi`)**:
+  `@FlutterApi` registrations (`MyFlutterApi.setUp(api)` or `MyFlutterApiRegistrar().register(api)`) are also tracked per engine. Calling `MyFlutterApi.setUp(null)` (or `MyFlutterApiRegistrar().unregister(myApi)` for `register` registrations) removes **only** that isolate's instance so other active engines stay registered.
+
+  Native code looks up the Dart implementation for a specific engine:
+  - **Kotlin**: `MyFlutterApiRegistrar().getInstance(binding)` in a plugin, or `MyFlutterApiRegistrar().getInstance(flutterEngine)` in an app.
+  - **Swift**: `MyFlutterApiRegistrar.getInstance(registrar: registrar)`.
+
+  These return the instance registered by that engine's Dart isolate when it can be identified (see [Multi-Engine Routing](#multi-engine-routing) below), otherwise the most recent registration, or `null` / `nil` if none is registered.
+
+  > **Stale `@FlutterApi` registrations**: Dart has no hook that runs when an isolate shuts down, so a registration is only removed when Dart code explicitly calls `setUp(null)` or `unregister`. If an isolate goes away without doing so (for example, after a hot restart, or when an engine is destroyed while its `@FlutterApi` is still registered), its registration stays in native memory and can still be returned by `<FlutterApi>Registrar.getInstance(...)`. Native code that calls `@FlutterApi` methods should be prepared for those calls to fail, and Dart code should unregister before shutting down an isolate or engine whenever possible.
+
+- **Custom Headless `FlutterEngine`s on Android (`JniPlugin`)**:
+  If you spawn a custom or background `FlutterEngine` on Android (e.g., in a `Service`, `BroadcastReceiver`, or `FlutterEngineGroup`) **without** calling `GeneratedPluginRegistrant.registerWith(flutterEngine)`, register `JniPlugin` (`flutterEngine.plugins.add(com.github.dart_lang.jni.JniPlugin())`) before executing Dart code that uses JNI so `DartJNI` is guaranteed to be initialized even when no main `FlutterActivity` has started yet.
+
+#### Multi-Engine Routing
+
+Native Interop looks up instances directly in process memory rather than through an engine's `BinaryMessenger`. Dart callers are unchanged: `<Api>.createWithNativeInteropApi()` / `<Api>ForNativeInterop.getInstance()` pick a registration for `name` (`messageChannelSuffix`) **at the time of the lookup**, preferring, in order:
+
+1. The registration for the calling engine (`PlatformDispatcher.instance.engineId`), when native code knows exact engine identifiers.
+2. When step 1 does not match, a registration for the engine that isolate first resolved a handle from. This is tracked separately for each generated Pigeon file.
+3. The most recent registration.
+
+**Routing is exact** on an engine's root isolate when the engine identifier is available to native code:
+- Kotlin `register(api, flutterEngine)`, always.
+- Kotlin `register(api, binding)` and Swift `register(api:registrar:)`, on Flutter versions whose plugin binding / registrar exposes `engineId` / `engineIdentifier`. This is detected at runtime; Pigeon does not use deprecated APIs to obtain it.
+
+**Otherwise routing is best-effort.** It is correct when each engine's Dart code resolves its first handle from each Pigeon file early in startup, before any other engine registers. Resolve it, for example, at the start of `main()` or during app initialization. On Android, don't resolve handles in your plugin's `registerWith`, because JNI isn't initialized yet (see [5.5](#55-startup-crash-on-android-vmservicedisappearedexception--jni-is-not-initialized)). Later lazy lookups from the same file in the same isolate reuse that first engine. It may pick another engine's registration when:
+- Engines are created back-to-back before their Dart code starts.
+- A file's first lookup happens lazily while another engine's registration is the most recent one, for example while a secondary engine is attached. APIs created from that file are then bound to the other engine's instance and throw `unregistered-instance` after that engine detaches.
+- Lookups come from background isolates (`Isolate.spawn` / `Isolate.run`), which do not have a `PlatformDispatcher.engineId`.
+
+Native `@FlutterApi` lookups by engine (`getInstance(binding)` / `getInstance(flutterEngine)` / `getInstance(registrar:)`) find that engine's Dart registration when the registering isolate either has an engine identifier native code can match, or has resolved a `@HostApi` handle from that engine that is defined in the same Pigeon input file. The `@FlutterApi` can be registered before or after that `@HostApi` handle is resolved. A Pigeon file that defines only `@FlutterApi`s can't learn its engine this way, so without an exact engine identifier its lookups fall back to the most recent registration.
+
+A Dart `<Api>` created with `createWithNativeInteropApi()` stays bound to the instance it resolved for its lifetime: later registrations don't change which instance it calls, and if that instance is unregistered (for example, because its engine detached), calls through the existing object throw a `PlatformException` with code `unregistered-instance` rather than switching to another registered instance. Stateless or process-wide plugins work across any number of engines. If an API holds **engine-specific state** (such as an Android `Activity` from `ActivityAware`, a per-engine `TextureRegistry`, or a specific `UIViewController`) and you can't rely on exact routing, pass a distinct `name` / `messageChannelSuffix` per engine or keep engine-scoped operations on platform channels / `@ProxyApi`.
 
 ---
 
@@ -246,7 +360,7 @@ Pigeon writes the interop configuration scripts to `tool/pigeon/<input_name>_jni
 
 If your app crashes at startup with `FailedToLoadClassException: Failed to load Objective-C class`:
 - **Module Name Mismatch**: Ensure `ffiModuleName` matches your app's Swift module name. If iOS and macOS share the same generated Dart FFI file, ensure both platforms use the same module name (e.g., align macOS by setting `PRODUCT_MODULE_NAME` in `macos/Runner/Configs/AppInfo.xcconfig`).
-- **Linker Dead-Code Stripping**: Ensure your native host code instantiates and registers the implementation (e.g. `MyApiSetup.register(api: api)` in `MainFlutterWindow.swift` on macOS or `AppDelegate.swift` on iOS) so the linker does not strip the class.
+- **Linker Dead-Code Stripping**: Ensure your native host code instantiates and registers the implementation (e.g. `MyApiSetup.register(api: api, registrar: registrar)` in `MainFlutterWindow.swift` on macOS or `AppDelegate.swift` on iOS) so the linker does not strip the class.
 
 ### 5.5 Startup Crash on Android (`VmServiceDisappearedException` / `JNI is not initialized`)
 
