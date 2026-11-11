@@ -8,7 +8,7 @@ import 'x_type_group.dart';
 
 /// Configuration options for any file selector dialog.
 @immutable
-class FileDialogOptions {
+base class FileDialogOptions {
   /// Creates a new options set with the given settings.
   const FileDialogOptions({
     this.initialDirectory,
@@ -32,7 +32,7 @@ class FileDialogOptions {
 
 /// Configuration options to open a file.
 @immutable
-class OpenFileDialogOptions extends FileDialogOptions {
+base class OpenFileDialogOptions extends FileDialogOptions {
   /// Creates a new options set with the given settings.
   const OpenFileDialogOptions({
     super.initialDirectory,
@@ -47,7 +47,7 @@ class OpenFileDialogOptions extends FileDialogOptions {
 
 /// Configuration options to open multiple files.
 @immutable
-class OpenFilesDialogOptions extends FileDialogOptions {
+base class OpenFilesDialogOptions extends FileDialogOptions {
   /// Creates a new options set with the given settings.
   const OpenFilesDialogOptions({
     super.initialDirectory,
@@ -62,7 +62,7 @@ class OpenFilesDialogOptions extends FileDialogOptions {
 
 /// Configuration options to open a directory.
 @immutable
-class GetDirectoryDialogOptions extends FileDialogOptions {
+base class GetDirectoryDialogOptions extends FileDialogOptions {
   /// Creates a new options set with the given settings.
   const GetDirectoryDialogOptions({
     super.initialDirectory,
@@ -73,7 +73,7 @@ class GetDirectoryDialogOptions extends FileDialogOptions {
 
 /// Configuration options to open multiple directories.
 @immutable
-class GetDirectoriesDialogOptions extends FileDialogOptions {
+base class GetDirectoriesDialogOptions extends FileDialogOptions {
   /// Creates a new options set with the given settings.
   const GetDirectoriesDialogOptions({
     super.initialDirectory,
@@ -84,7 +84,7 @@ class GetDirectoriesDialogOptions extends FileDialogOptions {
 
 /// Configuration options for a save location.
 @immutable
-class SaveLocationOptions extends FileDialogOptions {
+base class SaveLocationOptions extends FileDialogOptions {
   /// Creates a new options set with the given settings.
   const SaveLocationOptions({
     super.initialDirectory,

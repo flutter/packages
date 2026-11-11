@@ -9,7 +9,7 @@ import 'x_type_group.dart';
 
 /// The response from a save dialog.
 @immutable
-class FileSaveLocation {
+base class FileSaveLocation {
   /// Creates a result with the given [file] and optional other dialog state.
   const FileSaveLocation(this.file, {this.activeFilter});
 
