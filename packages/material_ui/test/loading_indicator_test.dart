@@ -381,22 +381,6 @@ void main() {
       ),
     );
     expect(tester.getSemantics(find.byType(LoadingIndicator)).role, SemanticsRole.progressBar);
-
-    await tester.pumpWidget(
-      buildApp(
-        const LoadingIndicator(value: 0.25, semanticsLabel: 'Progress', semanticsValue: '30'),
-      ),
-    );
-    expect(
-      tester.getSemantics(find.byType(LoadingIndicator)),
-      matchesSemantics(
-        label: 'Progress',
-        value: '30',
-        minValue: '0',
-        maxValue: '100',
-        textDirection: TextDirection.ltr,
-      ),
-    );
     handle.dispose();
   });
 
@@ -430,7 +414,6 @@ void main() {
       containerColor: Color(0xfffffff1),
       containerShape: CircleBorder(),
       semanticsLabel: 'label',
-      semanticsValue: 'value',
     ).debugFillProperties(builder);
 
     final List<String> description = builder.properties
@@ -444,7 +427,6 @@ void main() {
       'containerColor: ${const Color(0xfffffff1)}',
       'containerShape: CircleBorder(BorderSide(width: 0.0, style: none))',
       'semanticsLabel: "label"',
-      'semanticsValue: "value"',
       'contained',
     ]);
   });

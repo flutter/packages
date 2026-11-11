@@ -130,16 +130,10 @@ class LoadingIndicator extends StatefulWidget {
   ///
   /// If non-null, [polygons] must contain at least two shapes.
   /// {@endtemplate}
-  const LoadingIndicator({
-    super.key,
-    this.value,
-    this.color,
-    this.polygons,
-    this.semanticsLabel,
-    this.semanticsValue,
-  }) : containerColor = null,
-       containerShape = null,
-       _contained = false;
+  const LoadingIndicator({super.key, this.value, this.color, this.polygons, this.semanticsLabel})
+    : containerColor = null,
+      containerShape = null,
+      _contained = false;
 
   /// Creates a loading indicator that draws the morphing shape on top of a
   /// container.
@@ -153,7 +147,6 @@ class LoadingIndicator extends StatefulWidget {
     this.containerShape,
     this.polygons,
     this.semanticsLabel,
-    this.semanticsValue,
   }) : _contained = true;
 
   /// If non-null, the value of this loading indicator.
@@ -219,9 +212,6 @@ class LoadingIndicator extends StatefulWidget {
   /// {@macro material_ui.progress_indicator.ProgressIndicator.semanticsLabel}
   final String? semanticsLabel;
 
-  /// {@macro material_ui.progress_indicator.ProgressIndicator.semanticsValue}
-  final String? semanticsValue;
-
   final bool _contained;
 
   /// The default sequence of shapes that an indeterminate loading indicator
@@ -283,7 +273,6 @@ class LoadingIndicator extends StatefulWidget {
     );
     properties.add(IterableProperty<RoundedPolygon>('polygons', polygons, defaultValue: null));
     properties.add(StringProperty('semanticsLabel', semanticsLabel, defaultValue: null));
-    properties.add(StringProperty('semanticsValue', semanticsValue, defaultValue: null));
     properties.add(FlagProperty('contained', value: _contained, ifTrue: 'contained'));
   }
 }
@@ -520,7 +509,7 @@ class _LoadingIndicatorState extends State<LoadingIndicator> with SingleTickerPr
       role: isProgressBar ? SemanticsRole.progressBar : SemanticsRole.loadingSpinner,
       minValue: isProgressBar ? '0' : null,
       maxValue: isProgressBar ? '100' : null,
-      value: widget.semanticsValue ?? (isProgressBar ? '${(value * 100).round()}' : null),
+      value: isProgressBar ? '${(value * 100).round()}' : null,
       child: ConstrainedBox(
         constraints: BoxConstraints(
           minWidth: defaults.containerSize.width,
