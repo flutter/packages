@@ -168,11 +168,10 @@ class LoadingIndicator extends StatefulWidget {
 
   /// The color of the active indicator, the morphing shape.
   ///
-  /// If null, then [LoadingIndicatorThemeData.color] is used for the default
-  /// loading indicator, and [LoadingIndicatorThemeData.containedColor] for the
-  /// [LoadingIndicator.contained] one. If that is also null, then
-  /// [ColorScheme.primary] is used for the default loading indicator, and
-  /// [ColorScheme.onPrimaryContainer] for the contained one.
+  /// If null, then [LoadingIndicatorThemeData.color] is used. If that is also
+  /// null, then [ColorScheme.primary] is used for the default loading
+  /// indicator, and [ColorScheme.onPrimaryContainer] for the
+  /// [LoadingIndicator.contained] one.
   final Color? color;
 
   /// The color of the container that the active indicator is drawn on.
@@ -476,7 +475,7 @@ class _LoadingIndicatorState extends State<LoadingIndicator> with SingleTickerPr
     final LoadingIndicatorThemeData theme = LoadingIndicatorTheme.of(context);
     final defaults = _LoadingIndicatorDefaultsM3E(context);
     final Color color = widget._contained
-        ? widget.color ?? theme.containedColor ?? defaults.containedColor!
+        ? widget.color ?? theme.color ?? defaults.containedColor!
         : widget.color ?? theme.color ?? defaults.color!;
 
     Widget result = CustomPaint(

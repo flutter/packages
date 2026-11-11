@@ -32,20 +32,10 @@ import 'theme.dart';
 @immutable
 class LoadingIndicatorThemeData with Diagnosticable {
   /// Creates the set of properties used to configure [LoadingIndicator]s.
-  const LoadingIndicatorThemeData({
-    this.color,
-    this.containedColor,
-    this.containerColor,
-    this.containerShape,
-  });
+  const LoadingIndicatorThemeData({this.color, this.containerColor, this.containerShape});
 
-  /// Overrides the default value for [LoadingIndicator.color] of a default
-  /// loading indicator.
+  /// Overrides the default value for [LoadingIndicator.color].
   final Color? color;
-
-  /// Overrides the default value for [LoadingIndicator.color] of a
-  /// [LoadingIndicator.contained] loading indicator.
-  final Color? containedColor;
 
   /// Overrides the default value for [LoadingIndicator.containerColor].
   final Color? containerColor;
@@ -57,13 +47,11 @@ class LoadingIndicatorThemeData with Diagnosticable {
   /// new values.
   LoadingIndicatorThemeData copyWith({
     Color? color,
-    Color? containedColor,
     Color? containerColor,
     ShapeBorder? containerShape,
   }) {
     return LoadingIndicatorThemeData(
       color: color ?? this.color,
-      containedColor: containedColor ?? this.containedColor,
       containerColor: containerColor ?? this.containerColor,
       containerShape: containerShape ?? this.containerShape,
     );
@@ -80,14 +68,13 @@ class LoadingIndicatorThemeData with Diagnosticable {
     }
     return LoadingIndicatorThemeData(
       color: Color.lerp(a?.color, b?.color, t),
-      containedColor: Color.lerp(a?.containedColor, b?.containedColor, t),
       containerColor: Color.lerp(a?.containerColor, b?.containerColor, t),
       containerShape: ShapeBorder.lerp(a?.containerShape, b?.containerShape, t),
     );
   }
 
   @override
-  int get hashCode => Object.hash(color, containedColor, containerColor, containerShape);
+  int get hashCode => Object.hash(color, containerColor, containerShape);
 
   @override
   bool operator ==(Object other) {
@@ -99,7 +86,6 @@ class LoadingIndicatorThemeData with Diagnosticable {
     }
     return other is LoadingIndicatorThemeData &&
         other.color == color &&
-        other.containedColor == containedColor &&
         other.containerColor == containerColor &&
         other.containerShape == containerShape;
   }
@@ -108,7 +94,6 @@ class LoadingIndicatorThemeData with Diagnosticable {
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties.add(ColorProperty('color', color, defaultValue: null));
-    properties.add(ColorProperty('containedColor', containedColor, defaultValue: null));
     properties.add(ColorProperty('containerColor', containerColor, defaultValue: null));
     properties.add(
       DiagnosticsProperty<ShapeBorder>('containerShape', containerShape, defaultValue: null),

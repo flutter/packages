@@ -16,7 +16,6 @@ void main() {
 
     const data = LoadingIndicatorThemeData(
       color: Color(0xFFFFFFF0),
-      containedColor: Color(0xFFFFFFF3),
       containerColor: Color(0xFFFFFFF1),
       containerShape: CircleBorder(),
     );
@@ -25,21 +24,11 @@ void main() {
       data.copyWith(color: const Color(0xFFFFFFF2)),
       const LoadingIndicatorThemeData(
         color: Color(0xFFFFFFF2),
-        containedColor: Color(0xFFFFFFF3),
         containerColor: Color(0xFFFFFFF1),
         containerShape: CircleBorder(),
       ),
     );
-    expect(
-      data.copyWith(containedColor: const Color(0xFFFFFFF4)),
-      const LoadingIndicatorThemeData(
-        color: Color(0xFFFFFFF0),
-        containedColor: Color(0xFFFFFFF4),
-        containerColor: Color(0xFFFFFFF1),
-        containerShape: CircleBorder(),
-      ),
-    );
-    expect(data, isNot(data.copyWith(containedColor: const Color(0xFFFFFFF4))));
+    expect(data, isNot(data.copyWith(color: const Color(0xFFFFFFF2))));
   });
 
   test('LoadingIndicatorThemeData lerp special cases', () {
@@ -51,20 +40,17 @@ void main() {
   test('LoadingIndicatorThemeData lerp', () {
     const a = LoadingIndicatorThemeData(
       color: Color(0xFF000000),
-      containedColor: Color(0xFF000000),
       containerColor: Color(0xFF000000),
       containerShape: RoundedRectangleBorder(),
     );
     const b = LoadingIndicatorThemeData(
       color: Color(0xFFFFFFFF),
-      containedColor: Color(0xFFFFFFFF),
       containerColor: Color(0xFFFFFFFF),
       containerShape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10))),
     );
 
     final LoadingIndicatorThemeData lerped = LoadingIndicatorThemeData.lerp(a, b, 0.5)!;
     expect(lerped.color, isSameColorAs(const Color(0xFF7F7F7F)));
-    expect(lerped.containedColor, isSameColorAs(const Color(0xFF7F7F7F)));
     expect(lerped.containerColor, isSameColorAs(const Color(0xFF7F7F7F)));
     expect(
       lerped.containerShape,
@@ -75,7 +61,6 @@ void main() {
   test('LoadingIndicatorThemeData defaults', () {
     const themeData = LoadingIndicatorThemeData();
     expect(themeData.color, null);
-    expect(themeData.containedColor, null);
     expect(themeData.containerColor, null);
     expect(themeData.containerShape, null);
 
@@ -100,7 +85,6 @@ void main() {
     final builder = DiagnosticPropertiesBuilder();
     const LoadingIndicatorThemeData(
       color: Color(0xFFFFFFF0),
-      containedColor: Color(0xFFFFFFF2),
       containerColor: Color(0xFFFFFFF1),
       containerShape: CircleBorder(),
     ).debugFillProperties(builder);
@@ -112,7 +96,6 @@ void main() {
 
     expect(description, <String>[
       'color: ${const Color(0xFFFFFFF0)}',
-      'containedColor: ${const Color(0xFFFFFFF2)}',
       'containerColor: ${const Color(0xFFFFFFF1)}',
       'containerShape: CircleBorder(BorderSide(width: 0.0, style: none))',
     ]);
@@ -159,7 +142,6 @@ void main() {
     WidgetTester tester,
   ) async {
     const color = Color(0xFFFFFFF0);
-    const containedColor = Color(0xFFFFFFF2);
     const containerColor = Color(0xFFFFFFF1);
     const containerShape = RoundedRectangleBorder(
       borderRadius: BorderRadius.all(Radius.circular(8)),
@@ -170,7 +152,6 @@ void main() {
         theme: ThemeData(
           loadingIndicatorTheme: const LoadingIndicatorThemeData(
             color: color,
-            containedColor: containedColor,
             containerColor: containerColor,
             containerShape: containerShape,
           ),
@@ -192,7 +173,7 @@ void main() {
     expect(decoration.color, containerColor);
     expect(decoration.shape, containerShape);
     expect(find.byType(LoadingIndicator).first, paints..path(color: color));
-    expect(find.byType(LoadingIndicator).last, paints..path(color: containedColor));
+    expect(find.byType(LoadingIndicator).last, paints..path(color: color));
   });
 
   testWidgets('Local LoadingIndicatorTheme takes precedence over ThemeData', (
