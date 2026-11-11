@@ -1,3 +1,0 @@
-changelog: |
-  - Fixes a listener leak in modal bottom sheets that accumulated animation listeners each time the sheet was dragged.
-version: patch
