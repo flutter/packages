@@ -64,12 +64,23 @@ extension InAppPurchasePlugin: InAppPurchase2API {
           purchaseOptions.insert(.quantity(Int(quantity)))
         }
 
-        if #available(iOS 17.4, macOS 14.4, *) {
-          if let promotionalOffer = options?.promotionalOffer {
+        if let promotionalOffer = options?.promotionalOffer {
+          let signature = promotionalOffer.promotionalOfferSignature
+          if #available(iOS 17.4, macOS 14.4, *) {
             purchaseOptions.insert(
               .promotionalOffer(
                 offerID: promotionalOffer.promotionalOfferId,
-                signature: promotionalOffer.promotionalOfferSignature.convertToSignature
+                signature: signature.convertToSignature
+              )
+            )
+          } else {
+            purchaseOptions.insert(
+              .promotionalOffer(
+                offerID: promotionalOffer.promotionalOfferId,
+                keyID: signature.keyID,
+                nonce: signature.nonceAsUUID,
+                signature: signature.signatureAsData,
+                timestamp: Int(signature.timestamp)
               )
             )
           }

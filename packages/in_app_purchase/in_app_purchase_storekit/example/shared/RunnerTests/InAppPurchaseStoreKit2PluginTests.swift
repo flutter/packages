@@ -387,12 +387,12 @@ final class InAppPurchase2PluginTests: XCTestCase {
     await fulfillment(of: [expectation], timeout: purchaseTimeout)
   }
 
-  @available(iOS 17.4, macOS 14.4, *)
-  func testPurchaseWithPromotionalOffer() async throws {
-    let expectation = self.expectation(description: "Purchase with promotionalOffer should succeed")
+  func testPurchaseWithInvalidPromotionalOfferFails() async throws {
+    try skipIfFailedPurchasesHang()
+    let expectation = self.expectation(description: "Invalid promotional offer should fail")
 
     let promotionalOffer = SK2SubscriptionOfferPurchaseMessage(
-      promotionalOfferId: "promo_123",
+      promotionalOfferId: "subscription_silver_big_promo",
       promotionalOfferSignature: SK2SubscriptionOfferSignatureMessage(
         keyID: "key123",
         nonce: UUID().uuidString,
@@ -403,17 +403,35 @@ final class InAppPurchase2PluginTests: XCTestCase {
     let options = SK2ProductPurchaseOptionsMessage(
       appAccountToken: nil, promotionalOffer: promotionalOffer, winBackOfferId: nil)
 
-    plugin.purchase(id: "consumable", options: options) { result in
+    plugin.purchase(id: "subscription_silver", options: options) { result in
       switch result {
       case .success:
+        XCTFail("An invalid promotional signature should not allow a full-price purchase.")
         expectation.fulfill()
-      case .failure(let error):
-        XCTFail("Purchase should NOT fail. Failed with \(error)")
+      case .failure:
         expectation.fulfill()
       }
     }
 
     await fulfillment(of: [expectation], timeout: purchaseTimeout)
+
+    let latestTransaction = await Transaction.latest(for: "subscription_silver")
+    XCTAssertNil(latestTransaction)
+
+    let purchaseExpectation = self.expectation(
+      description: "Purchase without an offer should succeed")
+    plugin.purchase(id: "subscription_silver", options: nil) { result in
+      switch result {
+      case .success:
+        purchaseExpectation.fulfill()
+      case .failure(let error):
+        XCTFail("Purchase without an offer failed: \(error)")
+        purchaseExpectation.fulfill()
+      }
+    }
+    await fulfillment(of: [purchaseExpectation], timeout: purchaseTimeout)
+    let purchasedTransaction = await Transaction.latest(for: "subscription_silver")
+    XCTAssertNotNil(purchasedTransaction)
   }
 
   @available(iOS 18.0, macOS 15.0, *)
