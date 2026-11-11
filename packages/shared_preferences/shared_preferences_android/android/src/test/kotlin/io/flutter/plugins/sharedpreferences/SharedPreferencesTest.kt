@@ -441,7 +441,7 @@ internal class SharedPreferencesTest {
   }
 
   @Test
-  fun detachingSecondaryEnginePreservesPrimaryRegistrations() = runBlocking {
+  fun detachingSecondaryEnginePreservesPrimaryRegistrations() {
     val binding1 = mockk<FlutterPlugin.FlutterPluginBinding>()
     val binding2 = mockk<FlutterPlugin.FlutterPluginBinding>()
     every { binding1.applicationContext } returns testContext

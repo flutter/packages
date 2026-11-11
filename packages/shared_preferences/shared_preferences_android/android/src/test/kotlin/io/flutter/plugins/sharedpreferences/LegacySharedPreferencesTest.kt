@@ -12,7 +12,10 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNotSame
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -83,24 +86,24 @@ class LegacySharedPreferencesTest {
     primaryPlugin.onAttachedToEngine(binding1)
     val primaryRegistrar =
         SharedPreferencesApiRegistrar.pigeonResolveInstance(Long.MIN_VALUE, Long.MIN_VALUE)
-    assertTrue(primaryRegistrar != null)
+    assertNotNull(primaryRegistrar)
 
     secondaryPlugin.onAttachedToEngine(binding2)
     val secondaryRegistrar =
         SharedPreferencesApiRegistrar.pigeonResolveInstance(Long.MIN_VALUE, Long.MIN_VALUE)
-    assertTrue(secondaryRegistrar != null)
-    assertTrue(secondaryRegistrar !== primaryRegistrar)
+    assertNotNull(secondaryRegistrar)
+    assertNotSame(primaryRegistrar, secondaryRegistrar)
 
     secondaryPlugin.onDetachedFromEngine(binding2)
-    assertTrue(
-        SharedPreferencesApiRegistrar.pigeonResolveInstance(Long.MIN_VALUE, Long.MIN_VALUE) ===
-            primaryRegistrar)
+    assertSame(
+        primaryRegistrar,
+        SharedPreferencesApiRegistrar.pigeonResolveInstance(Long.MIN_VALUE, Long.MIN_VALUE))
 
     primaryPlugin.onDetachedFromEngine(binding1)
     plugin.onAttachedToEngine(flutterPluginBinding)
     // Restore `plugin` cleanly; tearDown detaches wouldn't apply to `binding1`/`binding2`.
-    assertTrue(
-        SharedPreferencesApiRegistrar.pigeonResolveInstance(Long.MIN_VALUE, Long.MIN_VALUE) != null)
+    assertNotNull(
+        SharedPreferencesApiRegistrar.pigeonResolveInstance(Long.MIN_VALUE, Long.MIN_VALUE))
   }
 
   @Test
