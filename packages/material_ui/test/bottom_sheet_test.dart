@@ -998,6 +998,132 @@ void main() {
     },
   );
 
+  testWidgets(
+    'showModalBottomSheet(useSafeArea: true, isScrollControlled: true) in tabletop posture does not apply top safe area to lower sub-screen',
+    (WidgetTester tester) async {
+      // Regression test for https://github.com/flutter/flutter/issues/195218
+      late BuildContext outerContext;
+
+      // Simulate a device in tabletop posture: size 800x600, with a horizontal hinge from y=290 to 310.
+      // The device has a safe area on the top edge (padding.top = 40.0), but none on the bottom edge.
+      const hinge = Rect.fromLTWH(0.0, 290.0, 800.0, 20.0);
+      const displayFeature = DisplayFeature(
+        bounds: hinge,
+        type: DisplayFeatureType.hinge,
+        state: DisplayFeatureState.postureHalfOpened,
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: MediaQuery(
+            data: const MediaQueryData(
+              size: Size(800.0, 600.0),
+              padding: EdgeInsets.only(top: 40.0),
+              displayFeatures: <DisplayFeature>[displayFeature],
+            ),
+            child: Navigator(
+              onGenerateRoute: (_) {
+                return PageRouteBuilder<void>(
+                  pageBuilder: (BuildContext context, _, _) {
+                    outerContext = context;
+                    return const SizedBox();
+                  },
+                );
+              },
+            ),
+          ),
+        ),
+      );
+
+      // Display on the LOWER sub-screen (anchorPoint on bottom half: y > 310).
+      unawaited(
+        showModalBottomSheet<void>(
+          context: outerContext,
+          useSafeArea: true,
+          isScrollControlled: true,
+          anchorPoint: const Offset(400.0, 450.0),
+          builder: (BuildContext context) {
+            // A tall widget that fills all available height up to the hinge.
+            return const SizedBox(height: 500.0);
+          },
+        ),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
+
+      // The modal bottom sheet on the lower sub-screen should span from y=310 to 600.
+      // Its top position must be at y=310 (the bottom edge of the hinge), NOT pushed
+      // down by the upper sub-screen's 40px top safe area (which would be y=350).
+      final Finder sheetFinder = find.byType(BottomSheet);
+      expect(sheetFinder, findsOneWidget);
+      final Rect sheetRect = tester.getRect(sheetFinder);
+      expect(sheetRect.top, 310.0);
+      expect(sheetRect.bottom, 600.0);
+      expect(sheetRect.height, 290.0);
+    },
+  );
+
+  testWidgets(
+    'showModalBottomSheet(useSafeArea: true) still applies safe area on sub-screen that touches the inset',
+    (WidgetTester tester) async {
+      late BuildContext outerContext;
+
+      // Simulate a foldable device: size 800x600, with a vertical hinge from x=390 to 410.
+      // The device has a safe area on the left edge (padding.left = 40.0).
+      const hinge = Rect.fromLTWH(390.0, 0.0, 20.0, 600.0);
+      const displayFeature = DisplayFeature(
+        bounds: hinge,
+        type: DisplayFeatureType.hinge,
+        state: DisplayFeatureState.postureFlat,
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: MediaQuery(
+            data: const MediaQueryData(
+              size: Size(800.0, 600.0),
+              padding: EdgeInsets.only(left: 40.0, top: 20.0),
+              displayFeatures: <DisplayFeature>[displayFeature],
+            ),
+            child: Navigator(
+              onGenerateRoute: (_) {
+                return PageRouteBuilder<void>(
+                  pageBuilder: (BuildContext context, _, _) {
+                    outerContext = context;
+                    return const SizedBox();
+                  },
+                );
+              },
+            ),
+          ),
+        ),
+      );
+
+      // Display on the LEFT sub-screen (anchorPoint on left half: x < 390).
+      unawaited(
+        showModalBottomSheet<void>(
+          context: outerContext,
+          useSafeArea: true,
+          anchorPoint: const Offset(100.0, 300.0),
+          builder: (BuildContext context) {
+            return const SizedBox(height: 200.0);
+          },
+        ),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
+
+      // The modal bottom sheet on the left sub-screen should span from x=40 to 390,
+      // correctly applying the 40px safe area where it belongs.
+      final Finder sheetFinder = find.byType(BottomSheet);
+      expect(sheetFinder, findsOneWidget);
+      final Rect sheetRect = tester.getRect(sheetFinder);
+      expect(sheetRect.left, 40.0);
+      expect(sheetRect.right, 390.0);
+      expect(sheetRect.width, 350.0);
+    },
+  );
+
   testWidgets('modal BottomSheet has semantics', (WidgetTester tester) async {
     final semantics = SemanticsTester(tester);
     final scaffoldKey = GlobalKey<ScaffoldState>();
