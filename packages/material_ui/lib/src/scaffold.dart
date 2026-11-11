@@ -992,6 +992,46 @@ class _BodyBoxConstraints extends BoxConstraints {
       Object.hash(super.hashCode, materialBannerHeight, bottomWidgetsHeight, appBarHeight);
 }
 
+// Used to communicate the keyboard inset computed by _ScaffoldLayout to the
+// persistent bottom sheet, in the same way _BodyBoxConstraints communicates
+// layout information to the body.
+class _BottomSheetBoxConstraints extends BoxConstraints {
+  const _BottomSheetBoxConstraints({super.maxWidth, super.maxHeight, required this.keyboardInset})
+    : assert(keyboardInset >= 0);
+
+  // The distance between the bottom of the sheet's content, which avoids the
+  // keyboard, and the bottom edge of the sheet's Material, which extends
+  // behind it. Zero when the keyboard is closed or when
+  // Scaffold.resizeToAvoidBottomInset is false.
+  final double keyboardInset;
+
+  @override
+  bool operator ==(Object other) {
+    if (super != other) {
+      return false;
+    }
+    return other is _BottomSheetBoxConstraints && other.keyboardInset == keyboardInset;
+  }
+
+  @override
+  int get hashCode => Object.hash(super.hashCode, keyboardInset);
+}
+
+// Provides _BottomSheetBoxConstraints.keyboardInset to the _StandardBottomSheets
+// in the Scaffold's bottom sheet slot, which are built before layout.
+class _BottomSheetKeyboardInset extends InheritedWidget {
+  const _BottomSheetKeyboardInset({required this.inset, required super.child});
+
+  final double inset;
+
+  static double of(BuildContext context) {
+    return context.dependOnInheritedWidgetOfExactType<_BottomSheetKeyboardInset>()?.inset ?? 0.0;
+  }
+
+  @override
+  bool updateShouldNotify(_BottomSheetKeyboardInset oldWidget) => inset != oldWidget.inset;
+}
+
 // Used when Scaffold.extendBody is true to wrap the scaffold's body in a MediaQuery
 // whose padding accounts for the height of the bottomNavigationBar and/or the
 // persistentFooterButtons.
@@ -1144,6 +1184,15 @@ class _ScaffoldLayout extends MultiChildLayoutDelegate {
       bottom - math.max(minInsets.bottom, bottomWidgetsHeight),
     );
 
+    // When the keyboard lifts the bottom sheet's content above it, the sheet's
+    // Material keeps extending down to the edge otherwise available to the
+    // sheet (above any bottom bars), so that a translucent keyboard shows the
+    // sheet's color rather than the Scaffold's background.
+    final double bottomSheetKeyboardInset = math.max(
+      0.0,
+      bottom - bottomWidgetsHeight - contentBottom,
+    );
+
     if (hasChild(_ScaffoldSlot.body)) {
       double bodyMaxHeight = math.max(0.0, contentBottom - contentTop);
 
@@ -1198,14 +1247,23 @@ class _ScaffoldLayout extends MultiChildLayoutDelegate {
     }
 
     if (hasChild(_ScaffoldSlot.bottomSheet)) {
-      final bottomSheetConstraints = BoxConstraints(
+      final double bottomSheetBottom = contentBottom + bottomSheetKeyboardInset;
+      final bottomSheetConstraints = _BottomSheetBoxConstraints(
         maxWidth: fullWidthConstraints.maxWidth,
-        maxHeight: math.max(0.0, contentBottom - contentTop),
+        maxHeight: math.max(0.0, bottomSheetBottom - contentTop),
+        keyboardInset: bottomSheetKeyboardInset,
       );
-      bottomSheetSize = layoutChild(_ScaffoldSlot.bottomSheet, bottomSheetConstraints);
+      final Size sheetSize = layoutChild(_ScaffoldSlot.bottomSheet, bottomSheetConstraints);
       positionChild(
         _ScaffoldSlot.bottomSheet,
-        Offset((size.width - bottomSheetSize.width) / 2.0, contentBottom - bottomSheetSize.height),
+        Offset((size.width - sheetSize.width) / 2.0, bottomSheetBottom - sheetSize.height),
+      );
+      // The floating action button is positioned relative to the sheet's
+      // content, which ends at contentBottom, not to the Material behind the
+      // keyboard.
+      bottomSheetSize = Size(
+        sheetSize.width,
+        math.max(0.0, sheetSize.height - bottomSheetKeyboardInset),
       );
     }
 
@@ -2006,6 +2064,13 @@ class Scaffold extends StatefulWidget {
   /// [showBottomSheet] and [showModalBottomSheet]. Typically it's a widget
   /// that includes [Material].
   ///
+  /// When [resizeToAvoidBottomInset] is true and the software keyboard is
+  /// shown, the sheet's content is kept above the keyboard while the sheet's
+  /// [Material] continues behind it, so that a translucent keyboard shows the
+  /// sheet's surface rather than the scaffold's [backgroundColor]. That surface
+  /// is configured with [BottomSheetThemeData]; decorations painted by the
+  /// [bottomSheet] widget itself do not extend behind the keyboard.
+  ///
   /// See also:
   ///
   ///  * [showBottomSheet], which displays a bottom sheet as a route that can
@@ -2201,8 +2266,10 @@ class Scaffold extends StatefulWidget {
   /// the listener, and register a listener to the new [ScaffoldGeometry]
   /// listenable.
   static ValueListenable<ScaffoldGeometry> geometryOf(BuildContext context) {
-    final _ScaffoldScope? scaffoldScope = context
-        .dependOnInheritedWidgetOfExactType<_ScaffoldScope>();
+    final _ScaffoldScope? scaffoldScope = InheritedModel.inheritFrom<_ScaffoldScope>(
+      context,
+      aspect: _ScaffoldAspect.geometry,
+    );
     if (scaffoldScope == null) {
       throw FlutterError.fromParts(<DiagnosticsNode>[
         ErrorSummary(
@@ -2247,7 +2314,10 @@ class Scaffold extends StatefulWidget {
   ///    whole, from which you can show bottom sheets, and so forth.
   static bool hasDrawer(BuildContext context, {bool registerForUpdates = true}) {
     if (registerForUpdates) {
-      final _ScaffoldScope? scaffold = context.dependOnInheritedWidgetOfExactType<_ScaffoldScope>();
+      final _ScaffoldScope? scaffold = InheritedModel.inheritFrom<_ScaffoldScope>(
+        context,
+        aspect: _ScaffoldAspect.hasDrawer,
+      );
       return scaffold?.hasDrawer ?? false;
     } else {
       final ScaffoldState? scaffold = context.findAncestorStateOfType<ScaffoldState>();
@@ -2744,6 +2814,12 @@ class ScaffoldState extends State<Scaffold>
   ///
   /// </callout-box>
   ///
+  /// When [Scaffold.resizeToAvoidBottomInset] is true and the software keyboard
+  /// is shown, the sheet's content is kept above the keyboard while the sheet's
+  /// [Material] continues behind it, so that a translucent keyboard shows the
+  /// sheet's surface rather than the scaffold's background. Use
+  /// [backgroundColor] or [BottomSheetThemeData] to configure that surface.
+  ///
   /// See also:
   ///
   ///  * [BottomSheet], which becomes the parent of the widget returned by the
@@ -3173,9 +3249,16 @@ class ScaffoldState extends State<Scaffold>
     double? snackBarWidth;
 
     if (_currentBottomSheet != null || _dismissedBottomSheets.isNotEmpty) {
-      final Widget stack = Stack(
-        alignment: Alignment.bottomCenter,
-        children: <Widget>[..._dismissedBottomSheets, ?_currentBottomSheet?._widget],
+      final Widget stack = LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+          return _BottomSheetKeyboardInset(
+            inset: (constraints as _BottomSheetBoxConstraints).keyboardInset,
+            child: Stack(
+              alignment: Alignment.bottomCenter,
+              children: <Widget>[..._dismissedBottomSheets, ?_currentBottomSheet?._widget],
+            ),
+          );
+        },
       );
       _addIfNonNull(
         children,
@@ -3333,6 +3416,9 @@ class ScaffoldState extends State<Scaffold>
 
     return _ScaffoldScope(
       hasDrawer: hasDrawer,
+      hasEndDrawer: hasEndDrawer,
+      isDrawerOpen: isDrawerOpen,
+      isEndDrawerOpen: isEndDrawerOpen,
       geometryNotifier: _geometryNotifier,
       child: ScrollNotificationObserver(
         child: Material(
@@ -3504,7 +3590,7 @@ class _StandardBottomSheetState extends State<_StandardBottomSheet> {
       scaffold.showBodyScrim(false, 0.0);
     }
     // If the Scaffold.bottomSheet != null, we're a persistent bottom sheet.
-    if (notification.extent == notification.minExtent &&
+    if ((notification.extent - notification.minExtent).abs() < precisionErrorTolerance &&
         scaffold.widget.bottomSheet == null &&
         notification.shouldCloseOnMinExtent) {
       close();
@@ -3514,6 +3600,14 @@ class _StandardBottomSheetState extends State<_StandardBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
+    // Non-zero only while the keyboard lifts this sheet, see _ScaffoldLayout.
+    final double keyboardInset = _BottomSheetKeyboardInset.of(context);
+    // The constraints describe the content, so they grow by the part of the
+    // Material that extends behind the keyboard. This mirrors BottomSheet's own
+    // lookup; its defaults, used when both are null, don't limit the height.
+    final BoxConstraints? constraints =
+        widget.constraints ?? Theme.of(context).bottomSheetTheme.constraints;
+
     return AnimatedBuilder(
       animation: widget.animationController,
       builder: (BuildContext context, Widget? child) {
@@ -3535,12 +3629,20 @@ class _StandardBottomSheetState extends State<_StandardBottomSheet> {
             onDragStart: _handleDragStart,
             onDragEnd: _handleDragEnd,
             onClosing: widget.onClosing!,
-            builder: widget.builder,
+            // Extends the Material behind the keyboard. Always present, so the
+            // content keeps its state when the keyboard shows or hides.
+            builder: (BuildContext context) => Padding(
+              padding: EdgeInsets.only(bottom: keyboardInset),
+              child: widget.builder(context),
+            ),
             backgroundColor: widget.backgroundColor,
             elevation: widget.elevation,
             shape: widget.shape,
             clipBehavior: widget.clipBehavior,
-            constraints: widget.constraints,
+            constraints: constraints?.copyWith(
+              minHeight: constraints.minHeight + keyboardInset,
+              maxHeight: constraints.maxHeight + keyboardInset,
+            ),
           ),
         ),
       ),
@@ -3568,19 +3670,67 @@ class PersistentBottomSheetController
   final bool _isLocalHistoryEntry;
 }
 
-class _ScaffoldScope extends InheritedWidget {
+enum _ScaffoldAspect { geometry, hasDrawer, drawerExpanded, endDrawerExpanded }
+
+/// Returns whether the enclosing [Scaffold]'s start drawer is open, or `null`
+/// if there is no enclosing [Scaffold] or it has no [Scaffold.drawer], and
+/// registers [context] to rebuild when that value changes.
+@internal
+bool? scaffoldDrawerExpandedOf(BuildContext context) {
+  return InheritedModel.inheritFrom<_ScaffoldScope>(
+    context,
+    aspect: _ScaffoldAspect.drawerExpanded,
+  )?.drawerExpanded;
+}
+
+/// Returns whether the enclosing [Scaffold]'s end drawer is open, or `null` if
+/// there is no enclosing [Scaffold] or it has no [Scaffold.endDrawer], and
+/// registers [context] to rebuild when that value changes.
+@internal
+bool? scaffoldEndDrawerExpandedOf(BuildContext context) {
+  return InheritedModel.inheritFrom<_ScaffoldScope>(
+    context,
+    aspect: _ScaffoldAspect.endDrawerExpanded,
+  )?.endDrawerExpanded;
+}
+
+class _ScaffoldScope extends InheritedModel<_ScaffoldAspect> {
   const _ScaffoldScope({
     required this.hasDrawer,
+    required this.hasEndDrawer,
+    required this.isDrawerOpen,
+    required this.isEndDrawerOpen,
     required this.geometryNotifier,
     required super.child,
   });
 
   final bool hasDrawer;
+  final bool hasEndDrawer;
+  final bool isDrawerOpen;
+  final bool isEndDrawerOpen;
   final _ScaffoldGeometryNotifier geometryNotifier;
+
+  bool? get drawerExpanded => hasDrawer ? isDrawerOpen : null;
+  bool? get endDrawerExpanded => hasEndDrawer ? isEndDrawerOpen : null;
 
   @override
   bool updateShouldNotify(_ScaffoldScope oldWidget) {
-    return hasDrawer != oldWidget.hasDrawer;
+    return geometryNotifier != oldWidget.geometryNotifier ||
+        hasDrawer != oldWidget.hasDrawer ||
+        hasEndDrawer != oldWidget.hasEndDrawer ||
+        isDrawerOpen != oldWidget.isDrawerOpen ||
+        isEndDrawerOpen != oldWidget.isEndDrawerOpen;
+  }
+
+  @override
+  bool updateShouldNotifyDependent(_ScaffoldScope oldWidget, Set<_ScaffoldAspect> dependencies) {
+    return (dependencies.contains(_ScaffoldAspect.geometry) &&
+            geometryNotifier != oldWidget.geometryNotifier) ||
+        (dependencies.contains(_ScaffoldAspect.hasDrawer) && hasDrawer != oldWidget.hasDrawer) ||
+        (dependencies.contains(_ScaffoldAspect.drawerExpanded) &&
+            drawerExpanded != oldWidget.drawerExpanded) ||
+        (dependencies.contains(_ScaffoldAspect.endDrawerExpanded) &&
+            endDrawerExpanded != oldWidget.endDrawerExpanded);
   }
 }
 

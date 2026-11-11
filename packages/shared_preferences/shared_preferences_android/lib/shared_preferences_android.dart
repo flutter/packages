@@ -4,3 +4,4 @@
 
 export 'src/shared_preferences_android.dart';
 export 'src/shared_preferences_async_android.dart';
+export 'src/shared_preferences_async_android_options.dart';

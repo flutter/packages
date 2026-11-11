@@ -4,6 +4,11 @@
 
 #import <StoreKit/StoreKit.h>
 
+// StoreKit 1 is intentionally used as the fallback on iOS < 15 and macOS < 12,
+// where StoreKit 2 is unavailable. Suppress its deprecation warnings.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+
 NS_ASSUME_NONNULL_BEGIN
 typedef void (^ProductRequestCompletion)(SKProductsResponse *_Nullable response,
                                          NSError *_Nullable errror);
@@ -15,3 +20,5 @@ typedef void (^ProductRequestCompletion)(SKProductsResponse *_Nullable response,
 - (void)startProductRequestWithCompletionHandler:(ProductRequestCompletion)completion;
 @end
 NS_ASSUME_NONNULL_END
+
+#pragma clang diagnostic pop
