@@ -1,6 +1,6 @@
 ## 30.0.1
 
-* [swift] Fixes Native Interop FFI codec serialization for `Data`, `NSData`, `NSArray`, and `NSDictionary` values.
+* [swift] Adds support for Native Interop FFI codec serialization of `Data`, `NSData`, `NSArray`, and `NSDictionary` values.
 
 ## 30.0.0
 
