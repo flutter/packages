@@ -5,7 +5,6 @@
 import 'dart:io';
 
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 /// Screen that allows the user to select multiple image files using
@@ -25,8 +24,10 @@ class OpenMultipleImagesPage extends StatelessWidget {
       extensions: <String>['png'],
       uniformTypeIdentifiers: <String>['public.png'],
     );
-    final List<XFile> files = await FileSelectorPlatform.instance.openFiles(
-      acceptedTypeGroups: <XTypeGroup>[jpgsTypeGroup, pngTypeGroup],
+    final List<XFile> files = await FileSelectorPlatform.instance!.openFiles(
+      options: const OpenFilesDialogOptions(
+        acceptedTypeGroups: <XTypeGroup>[jpgsTypeGroup, pngTypeGroup],
+      ),
     );
     if (files.isEmpty) {
       // Operation was canceled by the user.
@@ -75,14 +76,11 @@ class MultipleImagesDisplay extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text('Gallery'),
-      // On web the filePath is a blob url
-      // while on other platforms it is a system path.
       content: Center(
         child: Row(
           children: <Widget>[
             ...files.map(
-              (XFile file) =>
-                  Flexible(child: kIsWeb ? Image.network(file.path) : Image.file(File(file.path))),
+              (XFile file) => Flexible(child: Image.file(File(Uri.parse(file.uri).toFilePath()))),
             ),
           ],
         ),

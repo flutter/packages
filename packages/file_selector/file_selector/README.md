@@ -66,25 +66,46 @@ final List<XFile> files = await openFiles(
 
 <?code-excerpt "readme_standalone_excerpts.dart (Save)"?>
 ```dart
-const fileName = 'suggested_name.txt';
-final FileSaveLocation? result = await getSaveLocation(suggestedName: fileName);
-if (result == null) {
-  // Operation was canceled by the user.
-  return;
-}
+// Cross platform safe import that can be compiled with non-web platforms.
+import 'package:cross_file_web/cross_file_web_safe.dart';
+import 'package:file_selector/file_selector.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+// ···
+  Future<void> saveFile() async {
+    final fileData = Uint8List.fromList('Hello World!'.codeUnits);
+    const fileName = 'suggested_name.txt';
 
-final fileData = Uint8List.fromList('Hello World!'.codeUnits);
-const mimeType = 'text/plain';
-final textFile = XFile.fromData(fileData, mimeType: mimeType, name: fileName);
-await textFile.saveTo(result.path);
+    // A save location can't be retrieved on web because the platform doesn't
+    // provide access to the filesystem. This instead downloads the file using
+    // the web specific `download` method.
+    if (kIsWeb) {
+      final file = ScopedStorageXFile.fromCreationParams(
+        WebScopedStorageXFileCreationParams.fromBytes(fileData),
+      );
+      await file.getExtension<WebScopedStorageXFileExtension>()!.download(fileName);
+    }
+
+    final FileSaveLocation? result = await getSaveLocation(suggestedName: fileName);
+    if (result == null) {
+      // Operation was canceled by the user.
+      return;
+    }
+
+    if (result.file case final FileSystemXFile file) {
+      final fileData = Uint8List.fromList('Hello World!'.codeUnits);
+      await file.writeAsBytes(fileData);
+    }
+  }
 ```
 
-#### Get a directory path
+#### Get a directory
+
+Open a directory selection dialog to access all files and directories within:
 
 <?code-excerpt "readme_standalone_excerpts.dart (GetDirectory)"?>
 ```dart
-final String? directoryPath = await getDirectoryPath();
-if (directoryPath == null) {
+final XDirectory? directory = await getDirectory();
+if (directory == null) {
   // Operation was canceled by the user.
   return;
 }

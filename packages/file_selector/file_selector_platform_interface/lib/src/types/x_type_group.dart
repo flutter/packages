@@ -14,15 +14,9 @@ class XTypeGroup {
     this.label,
     List<String>? extensions,
     this.mimeTypes,
-    List<String>? uniformTypeIdentifiers,
+    this.uniformTypeIdentifiers,
     this.webWildCards,
-    @Deprecated('Use uniformTypeIdentifiers instead') List<String>? macUTIs,
-  }) : _extensions = extensions,
-       assert(
-         uniformTypeIdentifiers == null || macUTIs == null,
-         'Only one of uniformTypeIdentifiers or macUTIs can be non-null',
-       ),
-       uniformTypeIdentifiers = uniformTypeIdentifiers ?? macUTIs;
+  }) : _extensions = extensions;
 
   /// The 'name' or reference to this group of types.
   final String? label;
@@ -51,10 +45,6 @@ class XTypeGroup {
       'mimeTypes': mimeTypes,
       'uniformTypeIdentifiers': uniformTypeIdentifiers,
       'webWildCards': webWildCards,
-      // This is kept for backwards compatibility with anything that was
-      // relying on it, including implementers of `MethodChannelFileSelector`
-      // (since toJSON is used in the method channel parameter serialization).
-      'macUTIs': uniformTypeIdentifiers,
     };
   }
 
@@ -65,10 +55,6 @@ class XTypeGroup {
         (uniformTypeIdentifiers?.isEmpty ?? true) &&
         (webWildCards?.isEmpty ?? true);
   }
-
-  /// Returns the list of uniform type identifiers for this group
-  @Deprecated('Use uniformTypeIdentifiers instead')
-  List<String>? get macUTIs => uniformTypeIdentifiers;
 
   static List<String>? _removeLeadingDots(List<String>? exts) =>
       exts?.map((String ext) => ext.startsWith('.') ? ext.substring(1) : ext).toList();
