@@ -1,3 +1,7 @@
+## 30.0.2
+
+* Fixes `basePath` resolution when an output or directory path shares a string prefix with `basePath`.
+
 ## 30.0.1
 
 * [swift] Adds support for Native Interop FFI codec serialization of `Data`, `NSData`, `NSArray`, and `NSDictionary` values.
