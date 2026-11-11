@@ -19,6 +19,8 @@ private class PigeonApiImplementation: NativeInteropExampleApi {
     GeneratedPluginRegistrant.register(with: engineBridge.pluginRegistry)
 
     let api = PigeonApiImplementation()
-    NativeInteropExampleApiSetup.register(api: api)
+    if let registrar = engineBridge.pluginRegistry.registrar(forPlugin: "NativeInteropExampleApi") {
+      NativeInteropExampleApiSetup.register(api: api, registrar: registrar)
+    }
   }
 }

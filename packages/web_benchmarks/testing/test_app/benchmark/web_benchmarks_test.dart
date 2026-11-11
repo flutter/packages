@@ -23,7 +23,7 @@ Future<void> main() async {
       ],
       entryPoint: 'benchmark/test_infra/client/app_client.dart',
     );
-  }, timeout: Timeout.none);
+  }, timeout: const Timeout(Duration(minutes: 15)));
 
   test('Can run a web benchmark with an alternate benchmarkPath', () async {
     final BenchmarkResults results = await _runBenchmarks(
@@ -43,7 +43,7 @@ Future<void> main() async {
       (BenchmarkScore score) => score.metric == 'expectedUrl',
     );
     expect(expectedUrlScore.value, 1);
-  }, timeout: Timeout.none);
+  }, timeout: const Timeout(Duration(minutes: 15)));
 
   test('Can run a web benchmark with wasm', () async {
     final BenchmarkResults results = await _runBenchmarks(
@@ -61,7 +61,7 @@ Future<void> main() async {
       (BenchmarkScore score) => score.metric == 'isWasm',
     );
     expect(isWasmScore.value, 1);
-  }, timeout: Timeout.none);
+  }, timeout: const Timeout(Duration(minutes: 15)));
 }
 
 Future<BenchmarkResults> _runBenchmarks({

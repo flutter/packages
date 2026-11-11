@@ -588,7 +588,13 @@ List<Error> _errorOnNativeInteropReservedMethodNames(Root root) {
   final errors = <Error>[];
   for (final Api api in root.apis) {
     final Set<String> reservedNames = switch (api) {
-      AstHostApi() => const <String>{'createWithNativeInteropApi', 'getInstance'},
+      AstHostApi() => const <String>{
+        'createWithNativeInteropApi',
+        'getInstance',
+        'pigeonResolveInstance',
+        'pigeonEngineKey',
+        'pigeonEngineKeyOf',
+      },
       AstFlutterApi() => const <String>{'implement'},
       _ => const <String>{},
     };
