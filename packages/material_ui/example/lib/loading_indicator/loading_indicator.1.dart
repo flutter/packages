@@ -296,7 +296,6 @@ class _PullToRefreshScrollPhysics extends BouncingScrollPhysics {
   }
 
   @override
-  SpringDescription get spring =>
-      SpringDescription.withDampingRatio(mass: 1, stiffness: 500, ratio: 0.6);
+  SpringDescription get spring => Springs.expressiveFastSpatial;
 }
 // #endregion body
