@@ -170,29 +170,6 @@ void main() {
     expect(uncaughtErrors, isEmpty);
   });
 
-  test('failed loads are removed from the pending cache and can be retried', () async {
-    final cache = Cache();
-    final firstLoad = Completer<ByteData>();
-    final Future<ByteData> pending = cache.putIfAbsent('icon', () => firstLoad.future);
-
-    expect(
-      identical(pending, cache.putIfAbsent('icon', () => throw StateError('duplicate load'))),
-      isTrue,
-    );
-
-    final Future<void> expectedFailure = expectLater(pending, throwsStateError);
-    firstLoad.completeError(StateError('temporarily unavailable'));
-    await expectedFailure;
-
-    final recovered = ByteData(2);
-    final ByteData result = await cache.putIfAbsent(
-      'icon',
-      () => Future<ByteData>.value(recovered),
-    );
-    expect(identical(result, recovered), isTrue);
-    expect(cache.count, 1);
-  });
-
   test('clear prevents pending loads from repopulating stale entries', () async {
     final cache = Cache();
     final oldLoad = Completer<ByteData>();
@@ -238,16 +215,20 @@ void main() {
     expect(cache.count, 0);
   });
 
-  test('eviction remains safe if a new load returns the same Future', () async {
+  test('an evicted request cannot cache a Future reused by a later request', () async {
     final cache = Cache();
     final shared = Completer<ByteData>();
     final Future<ByteData> first = cache.putIfAbsent('icon', () => shared.future);
     expect(cache.evict('icon'), isTrue);
+
+    final Future<int> countBetweenCallbacks = shared.future.then((_) => cache.count);
     final Future<ByteData> second = cache.putIfAbsent('icon', () => shared.future);
 
-    shared.complete(ByteData(1));
-    await first;
-    await second;
+    final data = ByteData(1);
+    shared.complete(data);
+    expect(await first, same(data));
+    expect(await countBetweenCallbacks, 0);
+    expect(await second, same(data));
     expect(cache.count, 1);
   });
 

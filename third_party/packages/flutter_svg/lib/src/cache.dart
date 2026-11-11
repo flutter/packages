@@ -1,10 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 
-/// An in-flight load and its identity, independent of the returned Future.
-///
-/// Distinct requests can return the same Future after an eviction. The identity
-/// prevents an earlier request from populating the cache for a later one.
+// Eviction can be followed by another request that reuses the same Future.
+// Track request identity separately so obsolete callbacks are ignored.
 class _PendingLoad {
   _PendingLoad(this.future);
 
