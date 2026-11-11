@@ -498,7 +498,7 @@ void main() {
                 )
                 .decoration
             as ShapeDecoration;
-    expect(decoration.color, isSameColorAs(CupertinoColors.activeBlue.withOpacity(0.12)));
+    expect(decoration.color, isSameColorAs(CupertinoColors.activeBlue.withOpacity(0.18)));
 
     await tester.pumpWidget(
       CupertinoApp(
