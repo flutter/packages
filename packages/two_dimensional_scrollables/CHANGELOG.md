@@ -1,3 +1,11 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
+
+## 0.5.6
+
+* Fixes an issue where trailing pinned cells in `TableView` were losing hit tests to underlying non-pinned cells.
+
 ## 0.5.5
 
 * Fixes `TableView` laying out and painting trailing pinned rows and columns twice, which could throw when the table was scrolled to the end.

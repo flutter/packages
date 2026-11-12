@@ -128,6 +128,7 @@ class TestFlutterTextureRegistry: NSObject, FlutterTextureRegistry {
 
 class TestFlutterPluginRegistrar: NSObject, FlutterPluginRegistrar {
   var publishedValue: NSObject? = nil
+  var engineIdentifier: Int64 { 0 }
 
   #if os(iOS)
     var viewController: UIViewController?

@@ -12,4 +12,12 @@ void main() {
     await pumpsUseCase(tester, AppBarUseCase());
     expect(find.text('AppBar'), findsOneWidget);
   });
+
+  testWidgets('app bar snackbar stays until closed', (WidgetTester tester) async {
+    await pumpsUseCase(tester, AppBarUseCase());
+    await tester.tap(find.text('2. App bar with actions'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('Show Snackbar'));
+    await expectSnackBarStaysUntilClosed(tester, 'This is a snackbar');
+  });
 }
