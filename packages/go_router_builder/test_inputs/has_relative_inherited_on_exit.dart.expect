@@ -1,0 +1,33 @@
+RouteBase get $hasRelativeInheritedOnExitRoute => RelativeGoRouteData.$route(
+      path: 'has-relative-inherited-on-exit-route',
+      hasOverriddenOnExit: true,
+      factory: $HasRelativeInheritedOnExitRoute._fromState,
+    );
+
+mixin $HasRelativeInheritedOnExitRoute on RelativeGoRouteData {
+  static HasRelativeInheritedOnExitRoute _fromState(GoRouterState state) =>
+      HasRelativeInheritedOnExitRoute();
+
+  @override
+  String get subLocation => RelativeGoRouteData.$location(
+        'has-relative-inherited-on-exit-route',
+      );
+
+  @override
+  String get relativeLocation => './$subLocation';
+
+  @override
+  void goRelative(BuildContext context) => context.go(relativeLocation);
+
+  @override
+  Future<T?> pushRelative<T>(BuildContext context) =>
+      context.push<T>(relativeLocation);
+
+  @override
+  void pushReplacementRelative(BuildContext context) =>
+      context.pushReplacement(relativeLocation);
+
+  @override
+  void replaceRelative(BuildContext context) =>
+      context.replace(relativeLocation);
+}
