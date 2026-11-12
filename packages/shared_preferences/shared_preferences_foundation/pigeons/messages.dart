@@ -7,8 +7,9 @@ import 'package:pigeon/pigeon.dart';
 @ConfigurePigeon(
   PigeonOptions(
     dartOut: 'lib/src/messages.g.dart',
-    swiftOut:
-        'darwin/shared_preferences_foundation/Sources/shared_preferences_foundation/messages.g.swift',
+    swiftOut: 'darwin/shared_preferences_foundation/Sources/shared_preferences_foundation/messages.g.swift',
+    swiftOptions: SwiftOptions(useFfi: true, ffiModuleName: 'shared_preferences_foundation'),
+    fileSpecificClassNameComponent: 'Messages',
     copyrightHeader: 'pigeons/copyright_header.txt',
   ),
 )

@@ -1,6 +1,16 @@
-## NEXT
+## 2.6.2
 
-* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+* Updates Pigeon to 30.0.1 to support multi-engine registration and deregistration.
+* Removes manual web conditional FFI export workaround.
+
+## 2.6.1
+
+* Fixes web compilation of apps that import `package:shared_preferences_foundation`, for example to use `SharedPreferencesAsyncFoundationOptions`.
+
+## 2.6.0
+
+* Updates internal implementation to use Pigeon FFI.
+* Updates minimum supported SDK version to Flutter 3.47/Dart 3.13.
 
 ## 2.5.7
 
