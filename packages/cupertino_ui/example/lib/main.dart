@@ -11,6 +11,7 @@ import 'activity_indicator/cupertino_linear_activity_indicator.0.dart'
 import 'bottom_tab_bar/cupertino_tab_bar.0.dart' as cupertino_tab_bar_0;
 import 'button/cupertino_button.0.dart' as cupertino_button_0;
 import 'checkbox/cupertino_checkbox.0.dart' as cupertino_checkbox_0;
+import 'color_picker/cupertino_color_picker.0.dart' as cupertino_color_picker_0;
 import 'context_menu/cupertino_context_menu.0.dart' as cupertino_context_menu_0;
 import 'context_menu/cupertino_context_menu.1.dart' as cupertino_context_menu_1;
 import 'date_picker/cupertino_date_picker.0.dart' as cupertino_date_picker_0;
@@ -107,6 +108,12 @@ class ExampleApp extends StatelessWidget {
       title: 'CupertinoCheckbox',
       builder: (BuildContext context) =>
           const cupertino_checkbox_0.CupertinoCheckboxApp(),
+    ),
+    _Example(
+      filepath: 'color_picker/cupertino_color_picker.0.dart',
+      title: 'CupertinoColorPicker',
+      builder: (BuildContext context) =>
+          const cupertino_color_picker_0.CupertinoColorPickerApp(),
     ),
     _Example(
       filepath: 'context_menu/cupertino_context_menu.0.dart',
