@@ -3490,9 +3490,10 @@ void main() {
       await tester.pumpAndSettle();
       expect(
         getOverlayColor(tester),
+        // Hover, focus (requested on hover), and pressed highlights.
         paints
           ..rect(color: overlayColor.withOpacity(0.08))
-          ..rect(color: overlayColor.withOpacity(0.08))
+          ..rect(color: overlayColor.withOpacity(0.1))
           ..rect(color: overlayColor.withOpacity(0.1)),
       );
     });
@@ -5216,9 +5217,10 @@ void main() {
       await tester.pumpAndSettle();
       expect(
         getOverlayColor(tester),
+        // Hover, focus (requested on hover), and pressed highlights.
         paints
           ..rect(color: overlayColor.withOpacity(0.08))
-          ..rect(color: overlayColor.withOpacity(0.08))
+          ..rect(color: overlayColor.withOpacity(0.1))
           ..rect(color: overlayColor.withOpacity(0.1)),
       );
     });
