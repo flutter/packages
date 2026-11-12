@@ -937,6 +937,46 @@ void runPigeonNativeInteropIntegrationTests(TargetGenerator targetGenerator) {
       expect(receivedNullObject, null);
     });
 
+    testWidgets(
+      'generic nullable Foundation and collection Objects serialize and deserialize correctly',
+      (WidgetTester _) async {
+        final NativeInteropHostIntegrationCoreApiForNativeInterop? api =
+            NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance();
+
+        final Object sentBytes = Uint8List.fromList(<int>[1, 2, 3, 255]);
+        final Object? receivedBytes = api!.echoNullableObject(sentBytes);
+        expect(receivedBytes, sentBytes);
+
+        final Object sentList = <Object?>[
+          'string',
+          regularInt,
+          true,
+          false,
+          2.0694,
+          null,
+          Uint8List.fromList(<int>[4, 5, 6]),
+          <Object?>['nested', null, regularInt],
+          <Object?, Object?>{'nestedKey': 'value', 7: null},
+        ];
+        final Object? receivedList = api.echoNullableObject(sentList);
+        expect(receivedList, sentList);
+
+        final Object sentMap = <Object?, Object?>{
+          'string': 'value',
+          'int': regularInt,
+          'bool': true,
+          'double': 2.0694,
+          'null': null,
+          'bytes': Uint8List.fromList(<int>[7, 8]),
+          'list': <Object?>['a', null, 1],
+          'map': <Object?, Object?>{'inner': null, 2: false},
+          42: 'intKey',
+        };
+        final Object? receivedMap = api.echoNullableObject(sentMap);
+        expect(receivedMap, sentMap);
+      },
+    );
+
     testWidgets('nullable lists serialize and deserialize correctly', (WidgetTester _) async {
       final NativeInteropHostIntegrationCoreApiForNativeInterop? api =
           NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance();
