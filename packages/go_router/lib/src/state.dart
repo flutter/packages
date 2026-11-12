@@ -47,12 +47,19 @@ class GoRouterState {
 
   /// The optional name of the route associated with this app.
   ///
-  /// This can be null for GoRouterState pass into top level redirect.
+  /// This is null when the route has no name, and also when the state is not
+  /// tied to a single [GoRoute]: the state passed to the top level
+  /// `GoRouter.redirect` or `onException` callback, the state built for a
+  /// [ShellRoute] or [StatefulShellRoute], and the state used for the error
+  /// page.
   final String? name;
 
   /// The path of the route associated with this app. e.g. family/:fid
   ///
-  /// This can be null for GoRouterState pass into top level redirect.
+  /// This is null when the state is not tied to a single [GoRoute]: the state
+  /// passed to the top level `GoRouter.redirect` or `onException` callback,
+  /// the state built for a [ShellRoute] or [StatefulShellRoute] (which has no
+  /// path of its own), and the state used for the error page.
   final String? path;
 
   /// The full path to this sub-route, e.g. /family/:fid
