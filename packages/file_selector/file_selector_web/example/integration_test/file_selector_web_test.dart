@@ -100,11 +100,10 @@ void main() {
 
 class MockDomHelper implements DomHelper {
   MockDomHelper({
-    List<XFile> files = const <XFile>[],
+    this._files = const <XFile>[],
     String expectAccept = '',
     bool expectMultiple = false,
-  }) : _files = files,
-       _expectedAccept = expectAccept,
+  }) : _expectedAccept = expectAccept,
        _expectedMultiple = expectMultiple;
 
   final List<XFile> _files;
