@@ -553,6 +553,44 @@ void main() {
       expect(find.byKey(const Key('page-builder')), findsOneWidget);
     });
 
+    test('Forwards notifyRootObserver', () {
+      List<StatefulShellBranch> branches() => <StatefulShellBranch>[
+        StatefulShellBranchData.$branch(
+          routes: <RouteBase>[
+            GoRouteData.$route(
+              path: '/child',
+              factory: (GoRouterState state) => const _GoRouteDataBuild(),
+            ),
+          ],
+        ),
+      ];
+
+      expect(
+        StatefulShellRouteData.$route(
+          factory: (GoRouterState state) => const _StatefulShellRouteDataPageBuilder(),
+          branches: branches(),
+        ).notifyRootObserver,
+        isTrue,
+      );
+      expect(
+        StatefulShellRouteData.$route(
+          factory: (GoRouterState state) => const _StatefulShellRouteDataPageBuilder(),
+          branches: branches(),
+          notifyRootObserver: false,
+        ).notifyRootObserver,
+        isFalse,
+      );
+      expect(
+        StatefulShellRouteData.$route(
+          factory: (GoRouterState state) => const _StatefulShellRouteDataPageBuilder(),
+          branches: branches(),
+          navigatorContainerBuilder: (_, navigationShell, _) => navigationShell,
+          notifyRootObserver: false,
+        ).notifyRootObserver,
+        isFalse,
+      );
+    });
+
     test('Can assign parent navigator key', () {
       final key = GlobalKey<NavigatorState>();
       final StatefulShellRoute route = StatefulShellRouteData.$route(
