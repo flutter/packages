@@ -810,7 +810,7 @@ class FfigenConfigGeneratorAdapter implements GeneratorAdapter {
   void generate(StringSink sink, InternalPigeonOptions options, Root root, FileType fileType) {
     final InternalSwiftOptions? swiftOptions = options.swiftOptions;
     final InternalDartOptions? dartOptions = options.dartOptions;
-    if (swiftOptions == null || dartOptions == null) {
+    if (swiftOptions == null || dartOptions == null || dartOptions.dartOut == null) {
       return;
     }
     final generator = FfigenConfigGenerator();
@@ -829,7 +829,7 @@ class FfigenConfigGeneratorAdapter implements GeneratorAdapter {
 
   @override
   IOSink? shouldGenerate(InternalPigeonOptions options, FileType _) {
-    if (!(options.swiftOptions?.useFfi ?? false)) {
+    if (!(options.swiftOptions?.useFfi ?? false) || options.dartOptions?.dartOut == null) {
       return null;
     }
     final String targetDir =
@@ -1003,7 +1003,7 @@ class JnigenConfigGeneratorAdapter implements GeneratorAdapter {
 
   @override
   void generate(StringSink sink, InternalPigeonOptions options, Root root, FileType fileType) {
-    if (options.kotlinOptions == null || options.dartOptions == null) {
+    if (options.kotlinOptions == null || options.dartOptions?.dartOut == null) {
       return;
     }
     final generator = JnigenConfigGenerator();
@@ -1020,7 +1020,9 @@ class JnigenConfigGeneratorAdapter implements GeneratorAdapter {
 
   @override
   IOSink? shouldGenerate(InternalPigeonOptions options, FileType _) {
-    if (options.kotlinOptions?.kotlinOut == null || !(options.kotlinOptions?.useJni ?? false)) {
+    if (options.kotlinOptions?.kotlinOut == null ||
+        !(options.kotlinOptions?.useJni ?? false) ||
+        options.dartOptions?.dartOut == null) {
       return null;
     }
     final String targetDir =

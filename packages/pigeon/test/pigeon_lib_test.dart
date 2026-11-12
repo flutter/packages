@@ -3690,5 +3690,64 @@ void main() {
         tempDir.deleteSync(recursive: true);
       }
     });
+
+    test(
+      'runWithOptions skips JNIgen and FFIgen config generation and execution when dartOut is null',
+      () async {
+        final Directory tempDir = Directory.systemTemp.createTempSync('pigeon_host_only_interop_');
+        try {
+          final inputFile = File(path.join(tempDir.path, 'messages.dart'))
+            ..writeAsStringSync('''
+import 'package:pigeon/pigeon.dart';
+
+@HostApi()
+abstract class Api {
+  int ping();
+}
+''');
+
+          final errorBuffer = StringBuffer();
+          final int kotlinExitCode = await Pigeon.runWithOptions(
+            PigeonOptions(
+              input: inputFile.path,
+              basePath: tempDir.path,
+              kotlinOut: 'android/Messages.g.kt',
+              kotlinOptions: const KotlinOptions(useJni: true),
+            ),
+            errorSink: errorBuffer,
+          );
+          expect(kotlinExitCode, equals(0));
+          expect(errorBuffer.toString(), isEmpty);
+          expect(File(path.join(tempDir.path, 'android', 'Messages.g.kt')).existsSync(), isTrue);
+          expect(
+            File(
+              path.join(tempDir.path, 'tool', 'pigeon', 'messages_jnigen_config.dart'),
+            ).existsSync(),
+            isFalse,
+          );
+
+          final int swiftExitCode = await Pigeon.runWithOptions(
+            PigeonOptions(
+              input: inputFile.path,
+              basePath: tempDir.path,
+              swiftOut: 'ios/Messages.g.swift',
+              swiftOptions: const SwiftOptions(useFfi: true),
+            ),
+            errorSink: errorBuffer,
+          );
+          expect(swiftExitCode, equals(0));
+          expect(errorBuffer.toString(), isEmpty);
+          expect(File(path.join(tempDir.path, 'ios', 'Messages.g.swift')).existsSync(), isTrue);
+          expect(
+            File(
+              path.join(tempDir.path, 'tool', 'pigeon', 'messages_ffigen_config.dart'),
+            ).existsSync(),
+            isFalse,
+          );
+        } finally {
+          tempDir.deleteSync(recursive: true);
+        }
+      },
+    );
   });
 }

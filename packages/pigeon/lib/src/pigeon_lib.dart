@@ -911,8 +911,9 @@ ${_argParser.usage}''';
       return 1;
     }
 
-    final bool useFfi = internalOptions.swiftOptions?.useFfi ?? false;
-    final bool useJni = internalOptions.kotlinOptions?.useJni ?? false;
+    final hasDartOut = internalOptions.dartOptions?.dartOut != null;
+    final bool useFfi = hasDartOut && (internalOptions.swiftOptions?.useFfi ?? false);
+    final bool useJni = hasDartOut && (internalOptions.kotlinOptions?.useJni ?? false);
 
     final String dartExecutable = Platform.resolvedExecutable;
     for (final adapter in safeGeneratorAdapters) {
