@@ -445,6 +445,67 @@ void main() {
       expect(callbackRealm, expectedRealm);
     });
 
+    test('onHttpDigestAuthRequest emits host and realm', () async {
+      PigeonOverrides.wKNavigationDelegate_new = CapturingNavigationDelegate.new;
+      PigeonOverrides.authenticationChallengeResponse_createAsync =
+          (UrlSessionAuthChallengeDisposition disposition, URLCredential? credential) async {
+            return AuthenticationChallengeResponse.pigeon_detached(
+              disposition: disposition,
+              credential: credential,
+            );
+          };
+      final iosNavigationDelegate = WebKitNavigationDelegate(
+        const WebKitNavigationDelegateCreationParams(),
+      );
+
+      final requestCompleter = Completer<HttpAuthRequest>();
+      await iosNavigationDelegate.setOnHttpAuthRequest(requestCompleter.complete);
+
+      const expectedHost = 'expectedHost';
+      const expectedRealm = 'expectedRealm';
+
+      final mockChallenge = MockURLAuthenticationChallenge();
+      when(mockChallenge.getProtectionSpace()).thenAnswer((_) async {
+        return URLProtectionSpace.pigeon_detached(
+          port: 0,
+          host: expectedHost,
+          realm: expectedRealm,
+          authenticationMethod: NSUrlAuthenticationMethod.httpDigest,
+        );
+      });
+
+      final Future<AuthenticationChallengeResponse> authReplyFuture = CapturingNavigationDelegate
+          .lastCreatedDelegate
+          .didReceiveAuthenticationChallenge(
+            WKNavigationDelegate.pigeon_detached(
+              decidePolicyForNavigationAction: (_, _, _) async {
+                return NavigationActionPolicy.cancel;
+              },
+              decidePolicyForNavigationResponse: (_, _, _) async {
+                return NavigationResponsePolicy.cancel;
+              },
+              didReceiveAuthenticationChallenge: (_, _, _) async {
+                return AuthenticationChallengeResponse.pigeon_detached(
+                  disposition: UrlSessionAuthChallengeDisposition.performDefaultHandling,
+                );
+              },
+            ),
+            WKWebView.pigeon_detached(),
+            mockChallenge,
+          );
+
+      final HttpAuthRequest request = await requestCompleter.future;
+      expect(request.host, expectedHost);
+      expect(request.realm, expectedRealm);
+      request.onCancel();
+
+      final AuthenticationChallengeResponse authReply = await authReplyFuture;
+      expect(
+        authReply.disposition,
+        UrlSessionAuthChallengeDisposition.cancelAuthenticationChallenge,
+      );
+    });
+
     test('onHttpNtlmAuthRequest emits host and realm', () async {
       const expectedUser = 'user';
       const expectedPassword = 'password';
