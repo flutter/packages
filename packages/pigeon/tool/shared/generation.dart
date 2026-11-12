@@ -93,7 +93,7 @@ Future<({bool canBuild, Map<String, String> environment})> _getAndroidToolchain(
             androidSdk = sdk;
           }
           final Object? jdk = decoded['jdk-dir'];
-          if (jdk is String && jdk.isNotEmpty && Directory(jdk).existsSync()) {
+          if (javaHome == null && jdk is String && jdk.isNotEmpty && Directory(jdk).existsSync()) {
             javaHome = jdk;
           }
         }
