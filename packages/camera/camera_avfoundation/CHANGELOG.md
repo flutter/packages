@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
+
 ## 0.11.1
 
 * Adds support for zero-shutter-lag still image capture via
