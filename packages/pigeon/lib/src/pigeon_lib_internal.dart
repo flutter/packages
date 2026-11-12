@@ -588,7 +588,13 @@ List<Error> _errorOnNativeInteropReservedMethodNames(Root root) {
   final errors = <Error>[];
   for (final Api api in root.apis) {
     final Set<String> reservedNames = switch (api) {
-      AstHostApi() => const <String>{'createWithNativeInteropApi', 'getInstance'},
+      AstHostApi() => const <String>{
+        'createWithNativeInteropApi',
+        'getInstance',
+        'pigeonResolveInstance',
+        'pigeonEngineKey',
+        'pigeonEngineKeyOf',
+      },
       AstFlutterApi() => const <String>{'implement'},
       _ => const <String>{},
     };
@@ -2720,15 +2726,14 @@ String? _findTargetPubspecPath({
 }) {
   String? pubspecPath;
   if (dartOutPath != null && dartOutPath.isNotEmpty) {
-    final String fullDartOut =
-        (basePath != null && basePath.isNotEmpty && !dartOutPath.startsWith(basePath))
+    final String fullDartOut = (basePath != null && basePath.isNotEmpty)
         ? path.join(basePath, dartOutPath)
         : dartOutPath;
     pubspecPath = findPubspecPath(File(fullDartOut).parent);
   }
   if (pubspecPath == null && appDirectory != null && appDirectory.isNotEmpty) {
     final String fullAppDir =
-        (basePath != null && basePath.isNotEmpty && !appDirectory.startsWith(basePath))
+        (basePath != null && basePath.isNotEmpty && !isWithinOrEquals(basePath, appDirectory))
         ? path.join(basePath, appDirectory)
         : appDirectory;
     pubspecPath = findPubspecPath(Directory(fullAppDir));
@@ -2794,9 +2799,7 @@ String? _checkGeneratedBindingsPubspecVersion({
     return null;
   }
   final String basePath = options.basePath ?? '';
-  final String fullDartOut = (basePath.isNotEmpty && !dartOutPath.startsWith(basePath))
-      ? path.join(basePath, dartOutPath)
-      : dartOutPath;
+  final String fullDartOut = basePath.isNotEmpty ? path.join(basePath, dartOutPath) : dartOutPath;
   final bindingsDartFile = File('${path.withoutExtension(fullDartOut)}$generatedFileSuffix');
   if (!bindingsDartFile.existsSync()) {
     return null;
@@ -2827,7 +2830,7 @@ String? _checkGeneratedBindingsPubspecVersion({
 
   final String? pubspecPath = _findTargetPubspecPath(
     appDirectory: appDirectory,
-    dartOutPath: fullDartOut,
+    dartOutPath: dartOutPath,
     basePath: options.basePath,
   );
   if (pubspecPath == null) {

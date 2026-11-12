@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
+
 ## 0.3.0+1
 
 * Fixes `CameraException(camera_error, Failed to initialize video preview)` on
