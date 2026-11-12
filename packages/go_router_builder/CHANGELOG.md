@@ -1,3 +1,7 @@
+## 4.5.4
+
+* Fixes path parameter regex parsing to support nested parentheses, grouping constructs, and lookahead assertions in `TypedGoRoute` paths. **Requires go_router >= 18.1.3** for these paths to be parsed correctly at runtime.
+
 ## 4.5.3
 
 * Widens `package:build` dependency constraint to `>=3.0.0 <6.0.0`.
