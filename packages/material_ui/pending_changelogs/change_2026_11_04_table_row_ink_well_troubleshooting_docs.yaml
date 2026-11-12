@@ -1,0 +1,4 @@
+changelog: |
+  - Documents why `TableRowInkWell` ink effects are hidden by an opaque `TableRow.decoration` color, and how to keep them visible.
+version: patch
+

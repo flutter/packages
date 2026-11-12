@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+/// @docImport 'ink_decoration.dart';
 /// @docImport 'paginated_data_table.dart';
 /// @docImport 'text_theme.dart';
 library;
@@ -1310,11 +1311,35 @@ class DataTable extends StatelessWidget {
 /// achieve: just put the [TableRowInkWell] as the direct child of the
 /// [Table], and put the other contents of the cell inside it.)
 ///
+/// ## Troubleshooting
+///
+/// ### The ink highlights and splashes aren't visible!
+///
+/// Like other ink responses, [TableRowInkWell] paints its highlights and
+/// splashes on the nearest ancestor [Material], which is painted beneath the
+/// [Table]. A [TableRow.decoration] is painted by the [Table] itself, and
+/// opaque widgets inside the cells (such as a [Container] or [DecoratedBox])
+/// are painted above the [Table], so an opaque color in either place covers
+/// the ink effects, including those resolved from [InkResponse.overlayColor].
+///
+/// To keep the ink effects visible, either use a translucent color in the
+/// [TableRow.decoration], or leave the decoration without a color and give
+/// the ancestor [Material] the background color instead. Similarly, [Ink] can
+/// be used instead of an opaque [Container] or [DecoratedBox] (either wrapping
+/// the [Table] or inside the cells) so the decoration paints on the ancestor
+/// [Material] beneath the ink.
+///
+/// Wrapping the [TableRowInkWell] in its own [Material] is not recommended,
+/// because the ink effects would then be clipped to that cell instead of
+/// covering the whole row.
+///
 /// See also:
 ///
 ///  * [DataTable], which makes use of [TableRowInkWell] when
 ///    [DataRow.onSelectChanged] is defined and [DataCell.onTap]
 ///    is not.
+///  * [Ink], which paints decorations on a [Material] so that ink effects
+///    remain visible on top of them.
 class TableRowInkWell extends InkResponse {
   /// Creates an ink well for a table row.
   const TableRowInkWell({
