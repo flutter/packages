@@ -48,7 +48,7 @@ android {
     dependencies {
         implementation("androidx.documentfile:documentfile:1.1.0")
         implementation("androidx.annotation:annotation:1.9.1")
-        implementation("androidx.core:core-ktx:1.13.0")
+        implementation("androidx.core:core-ktx:1.19.0")
         testImplementation("junit:junit:4.13.2")
         testImplementation("org.jetbrains.kotlin:kotlin-test")
         testImplementation("org.mockito.kotlin:mockito-kotlin:6.1.0")
