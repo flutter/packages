@@ -35,5 +35,10 @@
   "expansionTileExpandedTapHint": "Ahenda",
   "expansionTileCollapsedTapHint": "Laiendage lisateabe nägemiseks",
   "expandedHint": "Ahendatud",
-  "collapsedHint": "Laiendatud"
+  "collapsedHint": "Laiendatud",
+  "splitViewSidebarLabel": "Sidebar",
+  "splitViewDetailLabel": "Detail",
+  "splitViewShowSidebarButtonLabel": "Show sidebar",
+  "splitViewHideSidebarButtonLabel": "Hide sidebar",
+  "splitViewDismissSidebarButtonLabel": "Dismiss sidebar"
 }

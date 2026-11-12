@@ -11,6 +11,8 @@ import 'activity_indicator/cupertino_linear_activity_indicator.0.dart'
 import 'bottom_tab_bar/cupertino_tab_bar.0.dart' as cupertino_tab_bar_0;
 import 'button/cupertino_button.0.dart' as cupertino_button_0;
 import 'checkbox/cupertino_checkbox.0.dart' as cupertino_checkbox_0;
+import 'cupertino_split_view/cupertino_split_view.0.dart'
+    as cupertino_split_view_0;
 import 'context_menu/cupertino_context_menu.0.dart' as cupertino_context_menu_0;
 import 'context_menu/cupertino_context_menu.1.dart' as cupertino_context_menu_1;
 import 'date_picker/cupertino_date_picker.0.dart' as cupertino_date_picker_0;
@@ -131,6 +133,12 @@ class ExampleApp extends StatelessWidget {
       title: 'CupertinoTimerPicker',
       builder: (BuildContext context) =>
           const cupertino_timer_picker_0.TimerPickerApp(),
+    ),
+    _Example(
+      filepath: 'cupertino_split_view/cupertino_split_view.0.dart',
+      title: 'CupertinoSplitView',
+      builder: (BuildContext context) =>
+          const cupertino_split_view_0.CupertinoSplitViewApp(),
     ),
     _Example(
       filepath: 'dialog/cupertino_action_sheet.0.dart',

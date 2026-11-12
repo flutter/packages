@@ -35,5 +35,10 @@
   "expansionTileExpandedTapHint": "Tolestu",
   "expansionTileCollapsedTapHint": "Zabaldu hau xehetasun gehiago lortzeko",
   "expandedHint": "Tolestuta",
-  "collapsedHint": "Zabalduta"
+  "collapsedHint": "Zabalduta",
+  "splitViewSidebarLabel": "Sidebar",
+  "splitViewDetailLabel": "Detail",
+  "splitViewShowSidebarButtonLabel": "Show sidebar",
+  "splitViewHideSidebarButtonLabel": "Hide sidebar",
+  "splitViewDismissSidebarButtonLabel": "Dismiss sidebar"
 }

@@ -40,6 +40,12 @@ void main() {
     expect(localizations.cancelButtonLabel, isNotNull);
     expect(localizations.backButtonLabel, isNotNull);
 
+    expect(localizations.splitViewSidebarLabel, isNotNull);
+    expect(localizations.splitViewDetailLabel, isNotNull);
+    expect(localizations.splitViewShowSidebarButtonLabel, isNotNull);
+    expect(localizations.splitViewHideSidebarButtonLabel, isNotNull);
+    expect(localizations.splitViewDismissSidebarButtonLabel, isNotNull);
+
     expect(localizations.expansionTileExpandedHint, isNotNull);
     expect(localizations.expansionTileCollapsedHint, isNotNull);
     expect(localizations.expansionTileExpandedTapHint, isNotNull);

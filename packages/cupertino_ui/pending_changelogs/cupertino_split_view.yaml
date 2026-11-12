@@ -1,0 +1,6 @@
+changelog: |
+  - Adds `CupertinoSplitView` for building adaptive two-column navigation with
+    compact, overlay, and side-by-side layouts.
+  - Adds `CupertinoSplitViewController`, `CupertinoSplitViewToggleButton`, and
+    localized accessibility labels for split view navigation.
+version: minor

@@ -35,5 +35,10 @@
   "expansionTileExpandedTapHint": "ຫຍໍ້ລົງ",
   "expansionTileCollapsedTapHint": "ຂະຫຍາຍສຳລັບຂໍ້ມູນເພີ່ມເຕີມ",
   "expandedHint": "ຫຍໍ້ລົງແລ້ວ",
-  "collapsedHint": "ຂະຫຍາຍແລ້ວ"
+  "collapsedHint": "ຂະຫຍາຍແລ້ວ",
+  "splitViewSidebarLabel": "Sidebar",
+  "splitViewDetailLabel": "Detail",
+  "splitViewShowSidebarButtonLabel": "Show sidebar",
+  "splitViewHideSidebarButtonLabel": "Hide sidebar",
+  "splitViewDismissSidebarButtonLabel": "Dismiss sidebar"
 }
