@@ -1,0 +1,103 @@
+{
+  "repo_criteria": [],
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Run the camera_android_camerax integration tests on an emulator.",
+      "expected_chat_output": [
+        "The agent followed the run-on-emulator skill: it granted permissions with 'android install --install-options=-g' before running the integration tests.",
+        "The agent reported whether the integration tests passed, naming any failing tests."
+      ],
+      "expected_repo_state": [
+        "No files were modified in the repository."
+      ],
+      "agent_config": "reidbaker-agent"
+    },
+    {
+      "id": 2,
+      "prompt": "Launch the camera example app on an emulator and show me what it looks like.",
+      "expected_chat_output": [
+        "The agent launched the example app with 'android run' as described in the run-on-emulator skill.",
+        "The agent captured a screenshot (with 'adb exec-out screencap' or 'android screen capture') and shared it."
+      ],
+      "expected_repo_state": [
+        "No files were modified in the repository."
+      ],
+      "agent_config": "reidbaker-agent"
+    },
+    {
+      "id": 3,
+      "prompt": "Run the integration tests on an emulator, but run every command with PATH set to only the directory containing 'dart' plus /usr/bin and /bin, so that the Android CLI is not found.",
+      "expected_chat_output": [
+        "The agent reported that the Android CLI is not installed or not on the PATH.",
+        "The agent relayed the installation instructions (https://developer.android.com/tools/agents).",
+        "The agent did not attempt to start an emulator or run 'flutter test' by other means."
+      ],
+      "expected_repo_state": [
+        "No files were modified in the repository."
+      ],
+      "agent_config": "reidbaker-agent"
+    },
+    {
+      "id": 4,
+      "prompt": "I changed how the camera preview is initialized. Manually verify that the preview still shows up in the example app.",
+      "expected_chat_output": [
+        "The agent launched the example app with 'android run' as described in the run-on-emulator skill.",
+        "The agent inspected the screen with a screenshot ('adb exec-out screencap' or 'android screen capture') or 'android layout' and reported what it observed."
+      ],
+      "expected_repo_state": [
+        "No files were modified in the repository."
+      ],
+      "agent_config": "reidbaker-agent"
+    },
+    {
+      "id": 5,
+      "prompt": "Manually verify that the flash fires when taking a picture with FlashMode.always.",
+      "expected_chat_output": [
+        "The agent explained that the emulator has no flash hardware, so this requires a physical device.",
+        "The agent did not claim that the flash behavior was verified."
+      ],
+      "expected_repo_state": [
+        "No files were modified in the repository."
+      ],
+      "agent_config": "reidbaker-agent"
+    },
+    {
+      "id": 6,
+      "prompt": "Write an implementation plan (do not implement it) for making the example app show a SnackBar with the saved file path after a picture is taken. Include a verification section.",
+      "expected_chat_output": [
+        "The plan's verification section states that the agent will verify the change itself on an emulator using the run-on-emulator skill (app and/or integration-test).",
+        "The plan does not ask the user to launch an emulator, run the example app, or run integration tests by hand."
+      ],
+      "expected_repo_state": [
+        "No files were modified in the repository."
+      ],
+      "agent_config": "reidbaker-agent"
+    },
+    {
+      "id": 7,
+      "prompt": "Execute only the verification section of this plan and report the results: '## Manual Verification\n1. Launch the example app on an emulator.\n2. Confirm the camera selector and capture controls are visible.'",
+      "expected_chat_output": [
+        "The agent launched the example app itself with 'android run' instead of asking the user to do it.",
+        "The agent captured a screenshot and reported whether the camera selector and capture controls are visible."
+      ],
+      "expected_repo_state": [
+        "No files were modified in the repository."
+      ],
+      "agent_config": "reidbaker-agent"
+    },
+    {
+      "id": 8,
+      "prompt": "Write an implementation plan (do not implement it) to fix https://github.com/flutter/flutter/issues/195832, where the camera preview cannot be resumed after pausing it while recording video with image streaming enabled. Include a verification section.",
+      "expected_chat_output": [
+        "The plan reproduces the bug on an emulator itself with the run-on-emulator skill (e.g., an integration test that pauses and resumes the preview while recording with image streaming) rather than assigning the reproduction to the user.",
+        "The plan does not assign any verification to the user unconditionally; any user verification is limited to hardware-dependent behavior, or is conditional on the emulator failing to reproduce the bug.",
+        "If the plan checks that video recording continued, it does not rely only on the recorded file's duration."
+      ],
+      "expected_repo_state": [
+        "No files were modified in the repository."
+      ],
+      "agent_config": "reidbaker-agent"
+    }
+  ]
+}
