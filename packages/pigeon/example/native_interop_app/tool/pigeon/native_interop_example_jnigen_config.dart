@@ -7,15 +7,8 @@
 
 import 'dart:io';
 import 'package:jnigen/jnigen.dart';
-import 'package:logging/logging.dart';
-import 'package:path/path.dart' as path;
 
 void main() async {
-  if (!await _hasJava()) {
-    print('JNI generation requires a Java runtime. Skipping.');
-    return;
-  }
-
   Directory.current = Platform.script.resolve('../..').toFilePath();
   final generator = JniGenerator(
     input: Input(
@@ -37,18 +30,5 @@ void main() async {
       ),
     ),
   );
-  await generator.generate(logger: Logger.root..level = Level.ALL);
-}
-
-Future<bool> _hasJava() async {
-  final String? javaHome = Platform.environment['JAVA_HOME'];
-  final String javaExecutable = javaHome != null && javaHome.isNotEmpty
-      ? path.join(javaHome, 'bin', 'java')
-      : 'java';
-  try {
-    final ProcessResult result = await Process.run(javaExecutable, <String>['-version']);
-    return result.exitCode == 0;
-  } catch (_) {
-    return false;
-  }
+  await generator.generate();
 }

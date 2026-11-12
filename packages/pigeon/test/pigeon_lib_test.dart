@@ -3604,4 +3604,91 @@ abstract class MyFlutterApi {
       }
     },
   );
+
+  group('JNIgen execution and error reporting', () {
+    test('JnigenConfigGenerator does not emit a Java pre-skip guard', () {
+      final root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+      final sink = StringBuffer();
+      const JnigenConfigGeneratorAdapter().generate(
+        sink,
+        InternalPigeonOptions.fromPigeonOptions(
+          const PigeonOptions(
+            input: 'pigeons/messages.dart',
+            dartOut: 'lib/messages.g.dart',
+            kotlinOut: 'android/Messages.g.kt',
+            kotlinOptions: KotlinOptions(useJni: true),
+          ),
+        ),
+        root,
+        FileType.na,
+      );
+      final generated = sink.toString();
+      expect(generated, isNot(contains('_hasJava')));
+      expect(generated, contains('await generator.generate();'));
+    });
+
+    test('runWithOptions surfaces clear JNIgen failure and SDK hint to errorSink', () async {
+      final Directory tempDir = Directory.systemTemp.createTempSync('pigeon_jnigen_error_test_');
+      try {
+        File(path.join(tempDir.path, 'pubspec.yaml')).writeAsStringSync('''
+name: my_package
+dependencies:
+  jni: ^1.1.1
+dev_dependencies:
+  jnigen: ^1.0.0
+''');
+        final inputFile = File(path.join(tempDir.path, 'messages.dart'))
+          ..writeAsStringSync('''
+import 'package:pigeon/pigeon.dart';
+
+@HostApi()
+abstract class Api {
+  int ping();
+}
+''');
+        // Write a failing JNIgen config script and invoke runWithOptions with no
+        // JnigenConfigGeneratorAdapter so _runJnigen executes our failing script.
+        final configFile = File(
+          path.join(tempDir.path, 'tool', 'pigeon', 'messages_jnigen_config.dart'),
+        )..createSync(recursive: true);
+        configFile.writeAsStringSync('''
+import 'dart:io';
+
+void main() {
+  stderr.writeln('SDK location not found. Define a valid SDK location.');
+  exit(1);
+}
+''');
+
+        final errorBuffer = StringBuffer();
+        final int exitCode = await Pigeon.runWithOptions(
+          PigeonOptions(
+            input: inputFile.path,
+            basePath: tempDir.path,
+            dartOut: 'lib/messages.g.dart',
+            kotlinOut: 'android/Messages.g.kt',
+            kotlinOptions: const KotlinOptions(useJni: true),
+            dartPackageName: 'my_package',
+          ),
+          adapters: const <GeneratorAdapter>[KotlinGeneratorAdapter()],
+          errorSink: errorBuffer,
+        );
+
+        expect(exitCode, equals(1));
+        final errorOutput = errorBuffer.toString();
+        expect(errorOutput, contains('Error: JNIgen failed while running'));
+        expect(errorOutput, contains('SDK location not found.'));
+        expect(errorOutput, contains('Possible causes and settings to check:'));
+        expect(errorOutput, contains('ANDROID_HOME'));
+        expect(errorOutput, contains('ANDROID_SDK_ROOT'));
+        expect(errorOutput, contains('JAVA_HOME'));
+        expect(errorOutput, contains('appDirectory'));
+        expect(errorOutput, contains("currently '${tempDir.path}'"));
+        expect(errorOutput, contains('jniClassPaths'));
+        expect(errorOutput, contains('KotlinOptions.package'));
+      } finally {
+        tempDir.deleteSync(recursive: true);
+      }
+    });
+  });
 }

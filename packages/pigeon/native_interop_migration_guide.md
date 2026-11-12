@@ -37,10 +37,10 @@ flutter pub add ffi objective_c meta
 # Code generators and packages imported by tool/pigeon/*_ffigen_config.dart:
 flutter pub add dev:ffigen dev:swift2objc dev:swiftgen dev:path dev:pub_semver
 
-# For Android Kotlin JNI:
-flutter pub add jni
-# Code generator and packages imported by tool/pigeon/*_jnigen_config.dart:
-flutter pub add dev:jnigen dev:logging dev:path
+# For Android Kotlin JNI (jni 1.1.1+ required for Android R8 keep rules):
+flutter pub add 'jni:^1.1.1' meta
+# Code generator imported by tool/pigeon/*_jnigen_config.dart:
+flutter pub add dev:jnigen
 ```
 
 ### 2.2 Update Pigeon Configuration Options
@@ -142,6 +142,10 @@ final String result = await Isolate.run(() => api.doSomething(value));
 ```
 *Note: Callers must ensure the isolate stays alive while there are pending asynchronous calls, as attempting to execute a callback after the isolate has terminated will cause a crash.*
 
+### 3.4 Splitting Unsupported Pigeon Features (`@EventChannelApi`, `@ProxyApi`)
+
+`@EventChannelApi` and `@ProxyApi` are not supported with Native Interop (`useFfi` / `useJni`). If your existing Pigeon file declares event channels or proxy APIs alongside `@HostApi` / `@FlutterApi`, move the `@EventChannelApi` / `@ProxyApi` declarations into a separate Pigeon file that does not enable `useFfi` or `useJni`. In addition, Swift FFI requires `SwiftOptions.includeErrorClass: true` (if you have multiple Swift FFI files in the same module, give each file a distinct `errorClassName` instead of setting `includeErrorClass: false`).
+
 ---
 
 ## 4. Dart Client Adaptation
@@ -163,7 +167,7 @@ From the Dart side, instantiate your generated Host API using `<MyApi>.createWit
 - **Multi-Engine Plugin Deregistration (`unregister`)**: Unlike platform channels (where `MyApi.setUp(messenger, null)` clears a single engine's `BinaryMessenger`), Native Interop tracks registered `@HostApi` and `@FlutterApi` instances in process memory, with each native registration associated with an engine. Register and unregister on the platform main thread, as with platform channel `setUp`:
   - For `@HostApi` in `FlutterPlugin` implementations, `register` requires a non-null API instance and the engine it belongs to (and Swift FFI `@HostApi` protocols conform to `AnyObject`, requiring class implementations). Register with `MyApiRegistrar().register(this, binding)` on Android and `MyApiSetup.register(api: instance, registrar: registrar)` on iOS/macOS, and deregister on engine detach with `MyApiRegistrar().unregister(this, binding)` / `MyApiSetup.unregister(api: self, registrar: registrar)`, so detaching a secondary `FlutterEngine` does not clear registrations for other active engines. Apps that own a `FlutterEngine` can use `register(api, flutterEngine)` / `unregister(api, flutterEngine)`. *(If upgrading from Pigeon `29.x` Native Interop: `unregister` replaces `register(null)` / `register(api: nil)`, and the name-only native `@HostApi` `getInstance(name)` is removed.)* On iOS, `detachFromEngine(for:)` is only called for instances published with `registrar.publish(instance)`. macOS plugins get no detach callback, so macOS registrations currently outlive their engine.
   - For `@FlutterApi` in Dart, `MyFlutterApi.setUp(null)` deregisters that isolate's Native Interop callback in addition to clearing its `BasicMessageChannel` handler (or call `MyFlutterApiRegistrar().unregister(api)` when registering via `MyFlutterApiRegistrar().register(api)`), leaving other engines' `@FlutterApi` registrations intact. Native code replaces `MyFlutterApi(binaryMessenger:)` (or Pigeon `29.x`'s name-only `getInstance(name)`) with `MyFlutterApiRegistrar().getInstance(binding)` / `getInstance(flutterEngine)` in Kotlin or `MyFlutterApiRegistrar.getInstance(registrar: registrar)` in Swift. Because Dart has no isolate-shutdown hook, `@FlutterApi` registrations are only removed when Dart calls `setUp(null)` or `unregister`; if an isolate disappears without doing so (for example, after a hot restart or when its engine is destroyed), its stale registration stays in native memory and calls to it fail.
-  - Lookups on an engine's root isolate are exact when native code knows the engine identifier (always for Kotlin `register(api, flutterEngine)`, and for plugin bindings/registrars on Flutter versions that expose it), and are otherwise best-effort (including in background isolates created with `Isolate.spawn` / `Isolate.run`, which have no `PlatformDispatcher.engineId`). Plugins with per-engine state (such as `ActivityAware` or `TextureRegistry`) may not route to the right engine when routing is best-effort; see the routing limits in [Multi-Engine Routing](./native_interop_guide.md#multi-engine-routing). For macOS with multiple engines, or custom headless `FlutterEngine`s on Android without `GeneratedPluginRegistrant`, see [Multi-Engine Support in the Native Interop Guide](./native_interop_guide.md#step-5-plugin-registration-deregistration-and-multi-engine-support).
+  - Lookups on an engine's root isolate are exact when native code knows the engine identifier (always for Kotlin `register(api, flutterEngine)`, and for plugin bindings/registrars on **Flutter 3.50.0 or higher**), and are otherwise best-effort (including on Flutter < 3.50.0 and in background isolates created with `Isolate.spawn` / `Isolate.run`, which have no `PlatformDispatcher.engineId`). **Using Flutter 3.50.0 or higher is strongly recommended** — if you run into multi-engine routing issues on an earlier Flutter version, upgrade to Flutter 3.50.0+. Plugins with per-engine state (such as `ActivityAware` or `TextureRegistry`) may not route to the right engine when routing is best-effort; see the routing limits in [Multi-Engine Routing](./native_interop_guide.md#multi-engine-routing). For macOS with multiple engines, or custom headless `FlutterEngine`s on Android without `GeneratedPluginRegistrant`, see [Multi-Engine Support in the Native Interop Guide](./native_interop_guide.md#step-5-plugin-registration-deregistration-and-multi-engine-support).
 - **Dart Isolates**: Host API calls can be made directly from any background Dart isolate without initializing `BackgroundIsolateBinaryMessenger` or passing a `RootIsolateToken`. Callers must ensure the isolate stays alive while there are pending asynchronous calls, as attempting to execute a callback after the isolate has terminated will cause a crash.
 - **Platform UI Thread Affinity**: If native code interacts with platform UI elements (such as UIKit views on iOS/macOS or `Activity`/view hierarchies on Android), that work must execute on the platform's main thread. If an interop call is initiated from a background isolate or dispatches work to a background queue, the native implementation must explicitly dispatch to the main thread (`DispatchQueue.main.async` in Swift, `Handler(Looper.getMainLooper()).post` in Kotlin) before interacting with UI APIs.
 - **`FlutterApi` Synchronous Callbacks**: Synchronous callbacks into Dart are isolate-local and must be invoked on the isolate that registered them.
@@ -194,6 +198,7 @@ Ensure your build system is configured appropriately:
 ## 6. Environment Prerequisites & Tooling Versions
 
 To use Native Interop and its external code generators:
-- **Android SDK**: Must be installed with `ANDROID_HOME` (or `ANDROID_SDK_ROOT`) set in your environment; otherwise Pigeon skips `jnigen`.
-- **`jnigen` 1.0.0 or later**: Earlier versions of JNIgen cannot parse metadata from newer Kotlin compilers and fail with `IllegalArgumentException: Provided Metadata instance has version ... while maximum supported version is ...`. `jnigen` 1.0.0 supports Kotlin metadata up to 2.4, and uses the JDK bundled with Flutter by default.
+- **Flutter 3.50.0 or higher (strongly recommended)**: Exposes engine identifiers on plugin bindings and registrars for exact multi-engine routing. Upgrade to Flutter 3.50.0+ if you encounter multi-engine issues on earlier versions.
+- **Android SDK & JDK 17–21**: An Android SDK must be installed and configured (via Flutter, `android/local.properties`, or `ANDROID_HOME`). JNIgen uses the JDK configured for Flutter (`flutter config --machine` → `jdk-dir`, which defaults to Android Studio's bundled JBR or `JAVA_HOME`), so no separate JDK setup is needed if Android Studio is installed; otherwise install a JDK (17–21) and configure it via `flutter config --jdk-dir` or `JAVA_HOME`.
+- **`jnigen` 1.0.0+ and `jni` 1.1.1+**: Pigeon's generated `*_jnigen_config.dart` uses the `JniGenerator` Dart config API introduced in `jnigen` 1.0.0 (which also supports Kotlin metadata up to 2.4), and requires `jni: ^1.1.1` so Android release builds include the required R8 keep rules.
 - **LLVM / Xcode Command Line Tools**: Required by FFIgen to parse C/Objective-C headers (`xcode-select --install`).
