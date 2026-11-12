@@ -2107,12 +2107,11 @@ class ThemeData with Diagnosticable {
         }
         if (_isDefaultIconTheme(a.iconTheme, a.brightness) &&
             _isDefaultIconTheme(b.iconTheme, b.brightness)) {
-          if (a.brightness == b.brightness) {
-            return switch (a.brightness) {
-              Brightness.light => _defaultLightIconTheme,
-              Brightness.dark => _defaultDarkIconTheme,
-            };
-          }
+          final Brightness brightness = t < 0.5 ? a.brightness : b.brightness;
+          return switch (brightness) {
+            Brightness.light => _defaultLightIconTheme,
+            Brightness.dark => _defaultDarkIconTheme,
+          };
         }
         return IconThemeData.lerp(a.iconTheme, b.iconTheme, t);
       }(),

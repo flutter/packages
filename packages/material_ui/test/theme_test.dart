@@ -45,17 +45,17 @@ void main() {
     final ThemeData lerpedEnd = ThemeData.lerp(darkA, lightA, 1.0);
     expect(identical(lerpedEnd.iconTheme.color, kDefaultIconDarkColor), isTrue);
 
-    // Cross brightness (dark to light / light to dark) smoothly interpolates color
-    final ThemeData lerpedDarkToLight = ThemeData.lerp(darkA, lightA, 0.5);
-    expect(
-      lerpedDarkToLight.iconTheme.color,
-      Color.lerp(kDefaultIconLightColor, kDefaultIconDarkColor, 0.5),
-    );
-    final ThemeData lerpedLightToDark = ThemeData.lerp(lightA, darkA, 0.5);
-    expect(
-      lerpedLightToDark.iconTheme.color,
-      Color.lerp(kDefaultIconDarkColor, kDefaultIconLightColor, 0.5),
-    );
+    // Cross brightness (dark to light) preserves default iconTheme identity
+    final ThemeData lerpedDarkToLightEarly = ThemeData.lerp(darkA, lightA, 0.25);
+    expect(identical(lerpedDarkToLightEarly.iconTheme.color, kDefaultIconLightColor), isTrue);
+    final ThemeData lerpedDarkToLightLate = ThemeData.lerp(darkA, lightA, 0.75);
+    expect(identical(lerpedDarkToLightLate.iconTheme.color, kDefaultIconDarkColor), isTrue);
+
+    // Cross brightness (light to dark) preserves default iconTheme identity
+    final ThemeData lerpedLightToDarkEarly = ThemeData.lerp(lightA, darkA, 0.25);
+    expect(identical(lerpedLightToDarkEarly.iconTheme.color, kDefaultIconDarkColor), isTrue);
+    final ThemeData lerpedLightToDarkLate = ThemeData.lerp(lightA, darkA, 0.75);
+    expect(identical(lerpedLightToDarkLate.iconTheme.color, kDefaultIconLightColor), isTrue);
 
     // Custom iconTheme is linearly interpolated normally
     final customA = ThemeData(iconTheme: const IconThemeData(color: Colors.red));
@@ -63,65 +63,6 @@ void main() {
     final ThemeData lerpedCustom = ThemeData.lerp(customA, customB, 0.5);
     expect(lerpedCustom.iconTheme.color, Color.lerp(Colors.red, Colors.blue, 0.5));
   });
-
-  testWidgets(
-    'Plain Icon smoothly interpolates color across dark-to-light and light-to-dark transitions',
-    (WidgetTester tester) async {
-      const IconData testIcon = Icons.star;
-      final lightTheme = ThemeData(brightness: Brightness.light);
-      final darkTheme = ThemeData(brightness: Brightness.dark);
-
-      TextStyle? iconStyle() {
-        final RichText iconRichText = tester.widget<RichText>(
-          find.descendant(of: find.byIcon(testIcon), matching: find.byType(RichText)),
-        );
-        return iconRichText.text.style;
-      }
-
-      Widget buildApp(ThemeData theme) {
-        return MaterialApp(
-          theme: theme,
-          home: const Scaffold(body: Icon(testIcon)),
-        );
-      }
-
-      // 1. Dark to Light transition
-      await tester.pumpWidget(buildApp(darkTheme));
-      await tester.pumpAndSettle();
-      expect(iconStyle()?.color, kDefaultIconLightColor);
-
-      await tester.pumpWidget(buildApp(lightTheme));
-      // Midpoint of the 200ms theme animation (at 100ms)
-      await tester.pump(const Duration(milliseconds: 100));
-      final Color? darkToLightMidColor = iconStyle()?.color;
-      final Color expectedMidColor = Color.lerp(
-        kDefaultIconLightColor,
-        kDefaultIconDarkColor,
-        0.5,
-      )!;
-      expect(darkToLightMidColor, expectedMidColor);
-
-      // End of animation
-      await tester.pumpAndSettle();
-      expect(iconStyle()?.color, kDefaultIconDarkColor);
-
-      // 2. Light to Dark transition
-      await tester.pumpWidget(buildApp(darkTheme));
-      // Midpoint of animation (at 100ms)
-      await tester.pump(const Duration(milliseconds: 100));
-      final Color? lightToDarkMidColor = iconStyle()?.color;
-      final Color expectedMidColorLightToDark = Color.lerp(
-        kDefaultIconDarkColor,
-        kDefaultIconLightColor,
-        0.5,
-      )!;
-      expect(lightToDarkMidColor, expectedMidColorLightToDark);
-
-      // End of animation
-      await tester.pumpAndSettle();
-      expect(iconStyle()?.color, kDefaultIconLightColor);
-    },
-  );
 
   testWidgets('PopupMenu inherits app theme', (WidgetTester tester) async {
     final Key popupMenuButtonKey = UniqueKey();
