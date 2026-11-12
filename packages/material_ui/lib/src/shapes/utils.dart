@@ -138,9 +138,8 @@ int binarySearchBy<E, K>(
   int start = 0,
   int? end,
 ]) {
-  end = RangeError.checkValidRange(start, end, sortedList.length);
   var min = start;
-  int max = end;
+  int max = RangeError.checkValidRange(start, end, sortedList.length);
   final key = value;
   while (min < max) {
     final int mid = min + ((max - min) >> 1);

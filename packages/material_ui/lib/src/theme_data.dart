@@ -461,31 +461,33 @@ class ThemeData with Diagnosticable {
     Color? indicatorColor,
   }) {
     // GENERAL CONFIGURATION
-    cupertinoOverrideTheme = cupertinoOverrideTheme?.noDefault();
+    final NoDefaultCupertinoThemeData? effectiveCupertinoOverrideTheme = cupertinoOverrideTheme
+        ?.noDefault();
     extensions ??= <ThemeExtension<dynamic>>[];
     adaptations ??= <Adaptation<Object>>[];
     // TODO(bleroux): Clean this up once the type of `inputDecorationTheme` is changed to `InputDecorationThemeData`
-    if (inputDecorationTheme != null) {
-      if (inputDecorationTheme is InputDecorationTheme) {
-        inputDecorationTheme = inputDecorationTheme.data;
-      } else if (inputDecorationTheme is! InputDecorationThemeData) {
+    var effectiveInputDecorationTheme = inputDecorationTheme;
+    if (effectiveInputDecorationTheme != null) {
+      if (effectiveInputDecorationTheme is InputDecorationTheme) {
+        effectiveInputDecorationTheme = effectiveInputDecorationTheme.data;
+      } else if (effectiveInputDecorationTheme is! InputDecorationThemeData) {
         throw ArgumentError(
           'inputDecorationTheme must be either a InputDecorationThemeData or a InputDecorationTheme',
         );
       }
     }
-    inputDecorationTheme ??= const InputDecorationThemeData();
+    effectiveInputDecorationTheme ??= const InputDecorationThemeData();
     platform ??= defaultTargetPlatform;
-    switch (platform) {
-      case TargetPlatform.android:
-      case TargetPlatform.fuchsia:
-      case TargetPlatform.iOS:
-        materialTapTargetSize ??= MaterialTapTargetSize.padded;
-      case TargetPlatform.linux:
-      case TargetPlatform.macOS:
-      case TargetPlatform.windows:
-        materialTapTargetSize ??= MaterialTapTargetSize.shrinkWrap;
-    }
+    final MaterialTapTargetSize effectiveMaterialTapTargetSize =
+        materialTapTargetSize ??
+        switch (platform) {
+          TargetPlatform.android ||
+          TargetPlatform.fuchsia ||
+          TargetPlatform.iOS => MaterialTapTargetSize.padded,
+          TargetPlatform.linux ||
+          TargetPlatform.macOS ||
+          TargetPlatform.windows => MaterialTapTargetSize.shrinkWrap,
+        };
     pageTransitionsTheme ??= const PageTransitionsTheme();
     scrollbarTheme ??= const ScrollbarThemeData();
     visualDensity ??= VisualDensity.defaultDensityForPlatform(platform);
@@ -527,50 +529,65 @@ class ThemeData with Diagnosticable {
     final Brightness effectiveBrightness =
         brightness ?? colorScheme?.brightness ?? Brightness.light;
     final isDark = effectiveBrightness == Brightness.dark;
+    var effectiveColorScheme = colorScheme;
+    var effectiveApplyElevationOverlayColor = applyElevationOverlayColor;
+    var effectivePrimaryColor = primaryColor;
+    var effectiveCanvasColor = canvasColor;
+    var effectiveScaffoldBackgroundColor = scaffoldBackgroundColor;
+    var effectiveCardColor = cardColor;
+    var effectiveDividerColor = dividerColor;
+    var effectiveDialogBackgroundColor = dialogBackgroundColor;
+    var effectiveIndicatorColor = indicatorColor;
     if (colorSchemeSeed != null || useMaterial3) {
       if (colorSchemeSeed != null) {
-        colorScheme = ColorScheme.fromSeed(
+        effectiveColorScheme = ColorScheme.fromSeed(
           seedColor: colorSchemeSeed,
           brightness: effectiveBrightness,
           contrastLevel: contrastLevel,
         );
       }
-      colorScheme ??= _defaultM3ColorScheme(effectiveBrightness, contrastLevel);
+      effectiveColorScheme ??= _defaultM3ColorScheme(effectiveBrightness, contrastLevel);
 
       // For surfaces that use primary color in light themes and surface color in dark
-      final Color primarySurfaceColor = isDark ? colorScheme.surface : colorScheme.primary;
-      final Color onPrimarySurfaceColor = isDark ? colorScheme.onSurface : colorScheme.onPrimary;
+      final Color primarySurfaceColor = isDark
+          ? effectiveColorScheme.surface
+          : effectiveColorScheme.primary;
+      final Color onPrimarySurfaceColor = isDark
+          ? effectiveColorScheme.onSurface
+          : effectiveColorScheme.onPrimary;
 
       // Default some of the color settings to values from the color scheme
-      primaryColor ??= primarySurfaceColor;
-      canvasColor ??= colorScheme.surface;
-      scaffoldBackgroundColor ??= colorScheme.surface;
-      cardColor ??= colorScheme.surface;
-      dividerColor ??= colorScheme.outline;
-      dialogBackgroundColor ??= colorScheme.surface;
-      indicatorColor ??= onPrimarySurfaceColor;
-      applyElevationOverlayColor ??= brightness == Brightness.dark;
+      effectivePrimaryColor ??= primarySurfaceColor;
+      effectiveCanvasColor ??= effectiveColorScheme.surface;
+      effectiveScaffoldBackgroundColor ??= effectiveColorScheme.surface;
+      effectiveCardColor ??= effectiveColorScheme.surface;
+      effectiveDividerColor ??= effectiveColorScheme.outline;
+      effectiveDialogBackgroundColor ??= effectiveColorScheme.surface;
+      effectiveIndicatorColor ??= onPrimarySurfaceColor;
+      effectiveApplyElevationOverlayColor ??= brightness == Brightness.dark;
     }
-    applyElevationOverlayColor ??= false;
+    effectiveApplyElevationOverlayColor ??= false;
     primarySwatch ??= Colors.blue;
-    primaryColor ??= isDark ? Colors.grey[900]! : primarySwatch;
-    final Brightness estimatedPrimaryColorBrightness = estimateBrightnessForColor(primaryColor);
+    effectivePrimaryColor ??= isDark ? Colors.grey[900]! : primarySwatch;
+    final Brightness estimatedPrimaryColorBrightness = estimateBrightnessForColor(
+      effectivePrimaryColor,
+    );
     primaryColorLight ??= isDark ? Colors.grey[500]! : primarySwatch[100]!;
     primaryColorDark ??= isDark ? Colors.black : primarySwatch[700]!;
     final primaryIsDark = estimatedPrimaryColorBrightness == Brightness.dark;
     focusColor ??= isDark ? Colors.white.withOpacity(0.12) : Colors.black.withOpacity(0.12);
     hoverColor ??= isDark ? Colors.white.withOpacity(0.04) : Colors.black.withOpacity(0.04);
     shadowColor ??= Colors.black;
-    canvasColor ??= isDark ? Colors.grey[850]! : Colors.grey[50]!;
-    scaffoldBackgroundColor ??= canvasColor;
-    cardColor ??= isDark ? Colors.grey[800]! : Colors.white;
-    dividerColor ??= isDark ? const Color(0x1FFFFFFF) : const Color(0x1F000000);
+    effectiveCanvasColor ??= isDark ? Colors.grey[850]! : Colors.grey[50]!;
+    effectiveScaffoldBackgroundColor ??= effectiveCanvasColor;
+    effectiveCardColor ??= isDark ? Colors.grey[800]! : Colors.white;
+    effectiveDividerColor ??= isDark ? const Color(0x1FFFFFFF) : const Color(0x1F000000);
     // Create a ColorScheme that is backwards compatible as possible
     // with the existing default ThemeData color values.
-    colorScheme ??= ColorScheme.fromSwatch(
+    effectiveColorScheme ??= ColorScheme.fromSwatch(
       primarySwatch: primarySwatch,
       accentColor: isDark ? Colors.tealAccent[200]! : primarySwatch[500]!,
-      cardColor: cardColor,
+      cardColor: effectiveCardColor,
       backgroundColor: isDark ? Colors.grey[700]! : primarySwatch[200]!,
       errorColor: Colors.red[700],
       brightness: effectiveBrightness,
@@ -582,14 +599,14 @@ class ThemeData with Diagnosticable {
     // The default [buttonTheme] is here because it doesn't use the defaults for
     // [disabledColor], [highlightColor], and [splashColor].
     buttonTheme ??= ButtonThemeData(
-      colorScheme: colorScheme,
+      colorScheme: effectiveColorScheme,
       buttonColor: isDark ? primarySwatch[600]! : Colors.grey[300]!,
       disabledColor: disabledColor,
       focusColor: focusColor,
       hoverColor: hoverColor,
       highlightColor: highlightColor,
       splashColor: splashColor,
-      materialTapTargetSize: materialTapTargetSize,
+      materialTapTargetSize: effectiveMaterialTapTargetSize,
     );
     disabledColor ??= isDark ? Colors.white38 : Colors.black38;
     highlightColor ??= isDark ? const Color(0x40CCCCCC) : const Color(0x66BCBCBC);
@@ -597,7 +614,7 @@ class ThemeData with Diagnosticable {
 
     // TYPOGRAPHY & ICONOGRAPHY
     typography ??= useMaterial3
-        ? Typography.material2021(platform: platform, colorScheme: colorScheme)
+        ? Typography.material2021(platform: platform, colorScheme: effectiveColorScheme)
         : Typography.material2014(platform: platform);
     TextTheme defaultTextTheme = isDark ? typography.white : typography.black;
     TextTheme defaultPrimaryTextTheme = primaryIsDark ? typography.white : typography.black;
@@ -615,8 +632,8 @@ class ThemeData with Diagnosticable {
       defaultTextTheme = defaultTextTheme.apply(package: package);
       defaultPrimaryTextTheme = defaultPrimaryTextTheme.apply(package: package);
     }
-    textTheme = defaultTextTheme.merge(textTheme);
-    primaryTextTheme = defaultPrimaryTextTheme.merge(primaryTextTheme);
+    final TextTheme effectiveTextTheme = defaultTextTheme.merge(textTheme);
+    final TextTheme effectivePrimaryTextTheme = defaultPrimaryTextTheme.merge(primaryTextTheme);
     iconTheme ??= isDark
         ? IconThemeData(color: kDefaultIconLightColor)
         : IconThemeData(color: kDefaultIconDarkColor);
@@ -626,10 +643,11 @@ class ThemeData with Diagnosticable {
 
     // COMPONENT THEMES
     // TODO(huycozy): Clean this up once the type of `appBarTheme` is changed to `appBarThemeData`
-    if (appBarTheme != null) {
-      if (appBarTheme is AppBarTheme) {
-        appBarTheme = appBarTheme.data;
-      } else if (appBarTheme is! AppBarThemeData) {
+    var effectiveAppBarTheme = appBarTheme;
+    if (effectiveAppBarTheme != null) {
+      if (effectiveAppBarTheme is AppBarTheme) {
+        effectiveAppBarTheme = effectiveAppBarTheme.data;
+      } else if (effectiveAppBarTheme is! AppBarThemeData) {
         throw ArgumentError('appBarTheme must be either a AppBarThemeData or a AppBarTheme');
       }
     }
@@ -678,8 +696,10 @@ class ThemeData with Diagnosticable {
     tooltipTheme ??= const TooltipThemeData();
     // DEPRECATED (newest deprecations at the bottom)
     buttonBarTheme ??= const ButtonBarThemeData();
-    dialogBackgroundColor ??= isDark ? Colors.grey[800]! : Colors.white;
-    indicatorColor ??= colorScheme.secondary == primaryColor ? Colors.white : colorScheme.secondary;
+    effectiveDialogBackgroundColor ??= isDark ? Colors.grey[800]! : Colors.white;
+    effectiveIndicatorColor ??= effectiveColorScheme.secondary == effectivePrimaryColor
+        ? Colors.white
+        : effectiveColorScheme.secondary;
 
     var theme = ThemeData.raw(
       // For the sanity of the reader, make sure these properties are in the same
@@ -689,11 +709,11 @@ class ThemeData with Diagnosticable {
 
       // GENERAL CONFIGURATION
       adaptationMap: _createAdaptationMap(adaptations),
-      applyElevationOverlayColor: applyElevationOverlayColor,
-      cupertinoOverrideTheme: cupertinoOverrideTheme,
+      applyElevationOverlayColor: effectiveApplyElevationOverlayColor,
+      cupertinoOverrideTheme: effectiveCupertinoOverrideTheme,
       extensions: _themeExtensionIterableToMap(extensions),
-      inputDecorationTheme: inputDecorationTheme as InputDecorationThemeData,
-      materialTapTargetSize: materialTapTargetSize,
+      inputDecorationTheme: effectiveInputDecorationTheme as InputDecorationThemeData,
+      materialTapTargetSize: effectiveMaterialTapTargetSize,
       pageTransitionsTheme: pageTransitionsTheme,
       platform: platform,
       scrollbarTheme: scrollbarTheme,
@@ -701,33 +721,33 @@ class ThemeData with Diagnosticable {
       useMaterial3: useMaterial3,
       visualDensity: visualDensity,
       // COLOR
-      canvasColor: canvasColor,
-      cardColor: cardColor,
-      colorScheme: colorScheme,
+      canvasColor: effectiveCanvasColor,
+      cardColor: effectiveCardColor,
+      colorScheme: effectiveColorScheme,
       disabledColor: disabledColor,
-      dividerColor: dividerColor,
+      dividerColor: effectiveDividerColor,
       focusColor: focusColor,
       highlightColor: highlightColor,
       hintColor: hintColor,
       hoverColor: hoverColor,
-      primaryColor: primaryColor,
+      primaryColor: effectivePrimaryColor,
       primaryColorDark: primaryColorDark,
       primaryColorLight: primaryColorLight,
-      scaffoldBackgroundColor: scaffoldBackgroundColor,
+      scaffoldBackgroundColor: effectiveScaffoldBackgroundColor,
       secondaryHeaderColor: secondaryHeaderColor,
       shadowColor: shadowColor,
       splashColor: splashColor,
       unselectedWidgetColor: unselectedWidgetColor,
       // TYPOGRAPHY & ICONOGRAPHY
       iconTheme: iconTheme,
-      primaryTextTheme: primaryTextTheme,
-      textTheme: textTheme,
+      primaryTextTheme: effectivePrimaryTextTheme,
+      textTheme: effectiveTextTheme,
       typography: typography,
       primaryIconTheme: primaryIconTheme,
       // COMPONENT THEMES
       actionIconTheme: actionIconTheme,
       // TODO(huycozy): Remove this type cast when appBarTheme is explicitly set to appBarThemeData
-      appBarTheme: (appBarTheme as AppBarThemeData?) ?? const AppBarThemeData(),
+      appBarTheme: (effectiveAppBarTheme as AppBarThemeData?) ?? const AppBarThemeData(),
       badgeTheme: badgeTheme,
       bannerTheme: bannerTheme,
       bottomAppBarTheme: bottomAppBarTheme,
@@ -774,8 +794,8 @@ class ThemeData with Diagnosticable {
       tooltipTheme: tooltipTheme,
       // DEPRECATED (newest deprecations at the bottom)
       buttonBarTheme: buttonBarTheme,
-      dialogBackgroundColor: dialogBackgroundColor,
-      indicatorColor: indicatorColor,
+      dialogBackgroundColor: effectiveDialogBackgroundColor,
+      indicatorColor: effectiveIndicatorColor,
     );
 
     if (useSystemColors) {
@@ -1705,13 +1725,15 @@ class ThemeData with Diagnosticable {
     )
     Color? indicatorColor,
   }) {
-    cupertinoOverrideTheme = cupertinoOverrideTheme?.noDefault();
+    final NoDefaultCupertinoThemeData? effectiveCupertinoOverrideTheme = cupertinoOverrideTheme
+        ?.noDefault();
 
     // TODO(bleroux): Clean this up once the type of `inputDecorationTheme` is changed to `InputDecorationThemeData`
-    if (inputDecorationTheme != null) {
-      if (inputDecorationTheme is InputDecorationTheme) {
-        inputDecorationTheme = inputDecorationTheme.data;
-      } else if (inputDecorationTheme is! InputDecorationThemeData) {
+    var effectiveInputDecorationTheme = inputDecorationTheme;
+    if (effectiveInputDecorationTheme != null) {
+      if (effectiveInputDecorationTheme is InputDecorationTheme) {
+        effectiveInputDecorationTheme = effectiveInputDecorationTheme.data;
+      } else if (effectiveInputDecorationTheme is! InputDecorationThemeData) {
         throw ArgumentError(
           'inputDecorationTheme must be either a InputDecorationThemeData or a InputDecorationTheme',
         );
@@ -1727,10 +1749,10 @@ class ThemeData with Diagnosticable {
       // GENERAL CONFIGURATION
       adaptationMap: adaptations != null ? _createAdaptationMap(adaptations) : adaptationMap,
       applyElevationOverlayColor: applyElevationOverlayColor ?? this.applyElevationOverlayColor,
-      cupertinoOverrideTheme: cupertinoOverrideTheme ?? this.cupertinoOverrideTheme,
+      cupertinoOverrideTheme: effectiveCupertinoOverrideTheme ?? this.cupertinoOverrideTheme,
       extensions: (extensions != null) ? _themeExtensionIterableToMap(extensions) : this.extensions,
       inputDecorationTheme:
-          inputDecorationTheme as InputDecorationThemeData? ?? this.inputDecorationTheme,
+          effectiveInputDecorationTheme as InputDecorationThemeData? ?? this.inputDecorationTheme,
       materialTapTargetSize: materialTapTargetSize ?? this.materialTapTargetSize,
       pageTransitionsTheme: pageTransitionsTheme ?? this.pageTransitionsTheme,
       platform: platform ?? this.platform,
