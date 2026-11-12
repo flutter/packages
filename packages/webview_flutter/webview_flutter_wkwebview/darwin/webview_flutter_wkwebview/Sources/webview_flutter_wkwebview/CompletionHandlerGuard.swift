@@ -11,7 +11,7 @@ import Foundation
 /// without being called. A reply from Dart may never arrive, e.g. when the Flutter engine is
 /// destroyed while a call is pending, which releases the reply closure that holds the handler. If
 /// this object is deallocated before it is called, it calls the handler with `defaultValue`.
-final class CompletionHandlerGuard<Value> {
+final class CompletionHandlerGuard<Value: Sendable> {
   private var handler: (@MainActor (Value) -> Void)?
   private let defaultValue: Value
 
@@ -34,7 +34,7 @@ final class CompletionHandlerGuard<Value> {
       return
     }
     let value = defaultValue
-    DispatchQueue.main.async {
+    DispatchQueue.main.async { @MainActor in
       handler(value)
     }
   }
@@ -52,14 +52,16 @@ extension CompletionHandlerGuard where Value == Void {
 }
 
 extension CompletionHandlerGuard {
-  convenience init<First, Second>(
+  convenience init<First: Sendable, Second: Sendable>(
     defaultValue: (First, Second), handler: @escaping @MainActor (First, Second) -> Void
   ) where Value == (First, Second) {
     self.init(defaultValue: defaultValue) { value in handler(value.0, value.1) }
   }
 
   /// Calls the handler with `first` and `second` if it has not been called yet.
-  @MainActor func callAsFunction<First, Second>(_ first: First, _ second: Second)
+  @MainActor func callAsFunction<First: Sendable, Second: Sendable>(
+    _ first: First, _ second: Second
+  )
   where Value == (First, Second) {
     self((first, second))
   }
