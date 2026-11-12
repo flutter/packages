@@ -1375,6 +1375,84 @@ void main() {
     },
   );
 
+  // Regression test for https://github.com/flutter/flutter/issues/156980.
+  testWidgets('Dropdown menu follows the button when the window is resized', (
+    WidgetTester tester,
+  ) async {
+    addTearDown(tester.view.reset);
+    tester.view.devicePixelRatio = 1.0;
+    tester.view.physicalSize = const Size(800, 600);
+
+    final buttonKey = UniqueKey();
+    await tester.pumpWidget(buildFrame(buttonKey: buttonKey, onChanged: onChanged));
+    await tester.tap(find.byKey(buttonKey));
+    await tester.pumpAndSettle();
+
+    final Rect initialButtonRect = tester.getRect(find.byKey(buttonKey));
+    final Rect initialMenuRect = getMenuRect(tester);
+
+    // Resize the window without changing its orientation. The button is
+    // centered, so it moves.
+    tester.view.physicalSize = const Size(1000, 700);
+    await tester.pumpAndSettle();
+
+    final Rect newButtonRect = tester.getRect(find.byKey(buttonKey));
+    expect(newButtonRect.center, isNot(initialButtonRect.center));
+
+    // The menu is still showing, and it moved along with the button.
+    expect(find.byType(ListView), findsOneWidget);
+    final Rect newMenuRect = getMenuRect(tester);
+    expect(
+      newMenuRect.topLeft - newButtonRect.topLeft,
+      initialMenuRect.topLeft - initialButtonRect.topLeft,
+    );
+    expect(newMenuRect.size, initialMenuRect.size);
+  });
+
+  testWidgets('Dropdown menu does not throw when a window resize removes the button', (
+    WidgetTester tester,
+  ) async {
+    addTearDown(tester.view.reset);
+    tester.view.devicePixelRatio = 1.0;
+    tester.view.physicalSize = const Size(800, 600);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: LayoutBuilder(
+            builder: (BuildContext context, BoxConstraints constraints) {
+              // The button is only part of the layout when the window is wide enough.
+              if (constraints.maxWidth < 600) {
+                return const SizedBox.shrink();
+              }
+              return Center(
+                child: DropdownButton<String>(
+                  value: 'one',
+                  onChanged: onChanged,
+                  items: menuItems.map((String item) {
+                    return DropdownMenuItem<String>(value: item, child: Text(item));
+                  }).toList(),
+                ),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+    await tester.tap(find.byType(dropdownButtonType));
+    await tester.pumpAndSettle();
+    expect(find.byType(ListView), findsOneWidget);
+
+    // Shrink the window without changing its orientation, so that the button
+    // is removed while the menu is showing.
+    tester.view.physicalSize = const Size(500, 400);
+    await tester.pumpAndSettle();
+
+    expect(tester.takeException(), isNull);
+    expect(find.byType(dropdownButtonType), findsNothing);
+    expect(find.byType(ListView), findsNothing);
+  });
+
   testWidgets('Semantics Tree contains only selected element', (WidgetTester tester) async {
     final semantics = SemanticsTester(tester);
     await tester.pumpWidget(buildFrame(onChanged: onChanged));
