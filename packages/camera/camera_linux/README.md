@@ -94,12 +94,11 @@ The unit tests cover the pixel-format conversions, the encoder and the MJPEG
 repair without hardware, and the platform implementation against a fake
 capture session. One test streams from a real camera and is skipped when
 none is attached. To exercise it without a webcam, load `v4l2loopback` and
-feed it frames with `tool/v4l2loopback_feed.py` (needs numpy and Pillow;
-`qrcode` for a real QR code):
+feed it frames with `tool/v4l2loopback_feed.dart`:
 
 ```sh
 sudo modprobe v4l2loopback video_nr=42 card_label=test exclusive_caps=1
-python3 tool/v4l2loopback_feed.py /dev/video42 --format yuyv --text 'hello' &
+dart run tool/v4l2loopback_feed.dart /dev/video42 --format yuyv --text hello &
 CAMERA_LINUX_DEVICE=/dev/video42 flutter test
 ```
 
