@@ -170,7 +170,7 @@ abstract class SvgLoader<T> extends BytesLoader {
   /// The [ColorMapper] used to transform colors from the SVG, if any.
   final ColorMapper? colorMapper;
 
-  /// Will be called in [compute] with the result of [prepareMessage].
+  /// Produces SVG text from the result of [prepareMessage].
   @protected
   String provideSvg(T? message);
 
