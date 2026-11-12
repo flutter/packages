@@ -24,9 +24,40 @@ import WebKit
     let controller = WKUserContentController()
     let message = WKScriptMessage()
 
-    instance.userContentController(controller, didReceive: message)
+    withExtendedLifetime(registrar) {
+      instance.userContentController(controller, didReceive: message)
+    }
 
     #expect(api.didReceiveScriptMessageArgs == [controller, message])
+  }
+
+  @MainActor @Test func ignoresScriptMessageAfterRegistrarDeallocation() throws {
+    let api = TestScriptMessageHandlerApi()
+    weak var registrarReference: ProxyAPIRegistrar?
+    let instance: ScriptMessageHandlerImpl
+    do {
+      let registrar = TestProxyApiRegistrar()
+      registrarReference = registrar
+      instance = ScriptMessageHandlerImpl(api: api, registrar: registrar)
+    }
+    try #require(registrarReference == nil)
+
+    instance.userContentController(WKUserContentController(), didReceive: WKScriptMessage())
+
+    #expect(api.didReceiveScriptMessageArgs == nil)
+  }
+
+  @MainActor @Test func ignoresScriptMessageWhenCallsToDartAreDisabled() {
+    let api = TestScriptMessageHandlerApi()
+    let registrar = TestProxyApiRegistrar()
+    let instance = ScriptMessageHandlerImpl(api: api, registrar: registrar)
+    registrar.ignoreCallsToDart = true
+
+    withExtendedLifetime(registrar) {
+      instance.userContentController(WKUserContentController(), didReceive: WKScriptMessage())
+    }
+
+    #expect(api.didReceiveScriptMessageArgs == nil)
   }
 }
 

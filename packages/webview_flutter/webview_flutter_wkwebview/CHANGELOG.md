@@ -1,3 +1,7 @@
+## 3.27.3
+
+* Fixes a crash when WebKit delivers a JavaScript channel message after plugin teardown.
+
 ## 3.27.2
 
 * Restores the minimum iOS version to 13 and minimum macOS version to 10.15.
