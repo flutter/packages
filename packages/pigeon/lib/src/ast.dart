@@ -37,6 +37,7 @@ class Method extends Node {
     this.isRequired = true,
     this.isAsynchronous = false,
     this.isAsynchronousCallback = false,
+    this.isStream = false,
     this.isStatic = false,
     this.offset,
     this.objcSelector = '',
@@ -59,6 +60,9 @@ class Method extends Node {
 
   /// Whether this asynchronous method uses callback-based completions instead of native async/await or suspend functions.
   bool isAsynchronousCallback;
+
+  /// Whether this method returns a `Stream<T>` of events rather than a single value.
+  bool isStream;
 
   /// The offset in the source file where the field appears.
   int? offset;
@@ -93,9 +97,10 @@ class Method extends Node {
 
   @override
   String toString() {
+    final isStreamStr = isStream ? ' isStream:true' : '';
     final objcSelectorStr = objcSelector.isEmpty ? '' : ' objcSelector:$objcSelector';
     final swiftFunctionStr = swiftFunction.isEmpty ? '' : ' swiftFunction:$swiftFunction';
-    return '(Method name:$name returnType:$returnType parameters:$parameters isAsynchronous:$isAsynchronous$objcSelectorStr$swiftFunctionStr documentationComments:$documentationComments)';
+    return '(Method name:$name returnType:$returnType parameters:$parameters isAsynchronous:$isAsynchronous$isStreamStr$objcSelectorStr$swiftFunctionStr documentationComments:$documentationComments)';
   }
 }
 
@@ -899,6 +904,14 @@ class Root extends Node {
 
   /// Whether the root has any event channel definitions.
   bool containsEventChannel;
+
+  /// Whether any API in the root declares a `Stream<T>` method.
+  bool get containsStream => apis.any((Api api) => api.methods.any((Method m) => m.isStream));
+
+  /// Whether any `@HostApi` in the root declares a `Stream<T>` method.
+  bool get containsHostStream => apis.whereType<AstHostApi>().any(
+    (AstHostApi api) => api.methods.any((Method m) => m.isStream),
+  );
 
   /// Returns true if the number of custom types would exceed the available enumerations
   /// on the standard codec.

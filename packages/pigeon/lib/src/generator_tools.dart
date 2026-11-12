@@ -17,7 +17,7 @@ import 'generator.dart';
 /// The current version of pigeon.
 ///
 /// This must match the version in pubspec.yaml.
-const String pigeonVersion = '30.0.2';
+const String pigeonVersion = '30.1.0';
 
 /// Default plugin package name.
 const String defaultPluginPackageName = 'dev.flutter.pigeon';

@@ -18,6 +18,9 @@ import kotlin.coroutines.resumeWithException
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
@@ -85,11 +88,17 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi, HostCallbackCoreApi {
     streamHandlerOne.onCancelled = { eventChannelOne?.setStreamHandler(null) }
     StreamConsistentNumbersStreamHandler.register(
         binding.binaryMessenger, SendConsistentNumbers(2), "2")
+    StreamHostTestApi.setUp(binding.binaryMessenger, StreamHostTestApiImpl())
+    StreamHostTestApi.setUp(binding.binaryMessenger, StreamHostTestApiImpl(100), "1")
+    StreamHostTestApi.setUp(binding.binaryMessenger, StreamHostTestApiImpl(200), "2")
   }
 
   override fun onDetachedFromEngine(binding: FlutterPluginBinding) {
     HostIntegrationCoreApi.setUp(binding.binaryMessenger, null)
     HostCallbackCoreApi.setUp(binding.binaryMessenger, null)
+    StreamHostTestApi.setUp(binding.binaryMessenger, null)
+    StreamHostTestApi.setUp(binding.binaryMessenger, null, "1")
+    StreamHostTestApi.setUp(binding.binaryMessenger, null, "2")
     niMessageApiImpl?.let { NativeInteropHostIntegrationCoreApiRegistrar().unregister(it, binding) }
     niMessageApiImpl = null
     niReservedNamesImpl?.let {
@@ -2639,5 +2648,64 @@ class NativeInteropSealedClassHostApiImpl(private val binding: FlutterPluginBind
     return NativeInteropSealedClassFlutterApiRegistrar()
         .getInstance(checkNotNull(binding))!!
         .echoShape(shape)
+  }
+}
+
+class StreamHostTestApiImpl(private val offset: Long = 0) : StreamHostTestApi {
+  override fun streamNumbers(count: Long, start: Long): Flow<Long> = flow {
+    for (i in 0 until count) {
+      emit(offset + start + i)
+      delay(5)
+    }
+  }
+
+  override fun streamPlatformEvents(): Flow<PlatformEvent> = flow {
+    for (event in SendClass.eventList) {
+      emit(event)
+      delay(5)
+    }
+  }
+
+  override fun streamNullableInts(): Flow<Long?> = flow {
+    emit(1L)
+    emit(null)
+    emit(2L)
+  }
+
+  override fun streamError(customError: Boolean): Flow<Long> = flow {
+    emit(1L)
+    if (customError) {
+      throw EventChannelTestsError("error_code", "error_message", "error_details")
+    } else {
+      throw IllegalStateException("boom")
+    }
+  }
+
+  override fun streamViaCallback(
+      prefix: String,
+      count: Long,
+      sink: EventChannelTestsPigeonEventSink<String>
+  ): AutoCloseable? {
+    val handler = Handler(Looper.getMainLooper())
+    var index = 0L
+    var cancelled = false
+    val runnable =
+        object : Runnable {
+          override fun run() {
+            if (cancelled) return
+            if (index >= count) {
+              sink.endOfStream()
+            } else {
+              sink.success("$prefix:$index")
+              index++
+              handler.postDelayed(this, 5)
+            }
+          }
+        }
+    handler.postDelayed(runnable, 5)
+    return AutoCloseable {
+      cancelled = true
+      handler.removeCallbacks(runnable)
+    }
   }
 }

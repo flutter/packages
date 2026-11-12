@@ -14,6 +14,9 @@ import io.mockk.verify
 import java.nio.ByteBuffer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.awaitCancellation
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -22,6 +25,7 @@ import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
@@ -130,5 +134,76 @@ internal class AsyncHandlersTest {
 
     verify { binaryMessenger.setMessageHandler(channelName, handlerSlot.captured) }
     coVerify { api.voidVoid() }
+  }
+
+  @Test
+  fun testHostStreamFlowAndTeardownCancellation() {
+    val binaryMessenger = mockk<BinaryMessenger>(relaxed = true)
+    val api = mockk<StreamHostTestApi>()
+    val numbersHandler = slot<BinaryMessenger.BinaryMessageHandler>()
+    val callbackHandler = slot<BinaryMessenger.BinaryMessageHandler>()
+    val sentFrames = mutableListOf<List<Any?>>()
+    val codec = StreamHostTestApi.codec
+
+    val numbersChannel =
+        "dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.streamNumbers"
+    val callbackChannel =
+        "dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.streamViaCallback"
+
+    every { binaryMessenger.setMessageHandler(numbersChannel, capture(numbersHandler)) } returns
+        Unit
+    every { binaryMessenger.setMessageHandler(callbackChannel, capture(callbackHandler)) } returns
+        Unit
+    every { binaryMessenger.send(any(), any(), any()) } answers
+        {
+          val buffer = arg<ByteBuffer>(1)
+          buffer.rewind()
+          @Suppress("UNCHECKED_CAST") val decoded = codec.decodeMessage(buffer) as List<Any?>
+          sentFrames.add(decoded)
+        }
+
+    var flowCancelled = false
+    every { api.streamNumbers(2L, 10L) } returns flowOf(10L, 11L)
+    every { api.streamNumbers(99L, 0L) } returns
+        flow {
+          try {
+            emit(0L)
+            awaitCancellation()
+          } finally {
+            flowCancelled = true
+          }
+        }
+    var callbackClosed = false
+    every { api.streamViaCallback("p", 1L, any()) } answers
+        {
+          val sink = arg<EventChannelTestsPigeonEventSink<String>>(2)
+          sink.success("p:0")
+          AutoCloseable { callbackClosed = true }
+        }
+
+    StreamHostTestApi.setUp(binaryMessenger, api)
+
+    val listenFinite = codec.encodeMessage(listOf("listen", 1L, 2L, 10L))
+    listenFinite?.rewind()
+    numbersHandler.captured.onMessage(listenFinite) {}
+    assertEquals(
+        listOf(listOf(1L, 0L, 10L), listOf(1L, 0L, 11L), listOf(1L, 2L)),
+        sentFrames,
+    )
+
+    sentFrames.clear()
+    val listenInfinite = codec.encodeMessage(listOf("listen", 2L, 99L, 0L))
+    listenInfinite?.rewind()
+    numbersHandler.captured.onMessage(listenInfinite) {}
+
+    val listenCallback = codec.encodeMessage(listOf("listen", 3L, "p", 1L))
+    listenCallback?.rewind()
+    callbackHandler.captured.onMessage(listenCallback) {}
+    assertEquals(listOf(listOf(2L, 0L, 0L), listOf(3L, 0L, "p:0")), sentFrames)
+
+    // Tearing down via setUp(binaryMessenger, null) cancels both active subscriptions.
+    StreamHostTestApi.setUp(binaryMessenger, null)
+    assertTrue(flowCancelled)
+    assertTrue(callbackClosed)
   }
 }

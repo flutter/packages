@@ -2492,4 +2492,71 @@ void main() {
       );
     });
   });
+
+  group('HostApi Stream<T>', () {
+    test(
+      'generates non-throwing AsyncThrowingStream<T, Error> and @asyncCallback sink handlers',
+      () {
+        final root = Root(
+          apis: <Api>[
+            AstHostApi(
+              name: 'SensorApi',
+              methods: <Method>[
+                Method(
+                  name: 'readings',
+                  location: ApiLocation.host,
+                  isStream: true,
+                  swiftFunction: 'readings(every:)',
+                  parameters: <Parameter>[
+                    Parameter(
+                      name: 'intervalMs',
+                      type: const TypeDeclaration(baseName: 'int', isNullable: false),
+                    ),
+                  ],
+                  returnType: const TypeDeclaration(baseName: 'double', isNullable: false),
+                ),
+                Method(
+                  name: 'rawEvents',
+                  location: ApiLocation.host,
+                  isStream: true,
+                  isAsynchronousCallback: true,
+                  parameters: <Parameter>[],
+                  returnType: const TypeDeclaration(baseName: 'String', isNullable: true),
+                ),
+              ],
+            ),
+          ],
+          classes: <Class>[],
+          enums: <Enum>[],
+          containsHostApi: true,
+        );
+        final sink = StringBuffer();
+        const SwiftGenerator().generate(
+          const InternalSwiftOptions(
+            swiftOut: 'Sensor.g.swift',
+            fileSpecificClassNameComponent: 'Sensor',
+          ),
+          root,
+          sink,
+          dartPackageName: DEFAULT_PACKAGE_NAME,
+        );
+        final code = sink.toString();
+        expect(
+          code,
+          contains('func readings(every intervalMs: Int64) -> AsyncThrowingStream<Double, Error>'),
+        );
+        expect(
+          code,
+          contains('func rawEvents(sink: SensorPigeonEventSink<String?>) -> (() -> Void)?'),
+        );
+        expect(
+          code,
+          contains('private final class SensorPigeonStreamRegistry: @unchecked Sendable'),
+        );
+        expect(code, contains('class SensorPigeonEventSink<ReturnType>: @unchecked Sendable'));
+        expect(code, contains('streamRegistry.cancelAll(channelName: readingsEventsChannelName)'));
+        expect(code, contains('let task = Task { @MainActor in'));
+      },
+    );
+  });
 }

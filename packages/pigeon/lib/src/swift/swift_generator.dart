@@ -2957,6 +2957,8 @@ if (wrapped == nil) {
             errorTypeName: 'Error',
             isAsynchronous: method.isAsynchronous,
             isAsynchronousCallback: method.isAsynchronousCallback,
+            isStream: method.isStream,
+            classNamePrefix: _classNamePrefix,
             swiftFunction: method.swiftFunction,
             ffiUserApi: generatorOptions.useFfi,
           ),
@@ -2972,6 +2974,11 @@ if (wrapped == nil) {
       '$_docCommentPrefix Generated setup class from Pigeon to handle messages through the `binaryMessenger`.',
     );
     indent.writeScoped('class ${apiName}Setup {', '}', () {
+      if (api.methods.any((Method m) => m.isStream)) {
+        indent.writeln(
+          'private static let streamRegistry = ${_classNamePrefix}PigeonStreamRegistry()',
+        );
+      }
       indent.writeln(
         'static var codec: FlutterStandardMessageCodec { ${_getMessageCodecName(generatorOptions)}.shared }',
       );
@@ -3002,20 +3009,37 @@ if (wrapped == nil) {
 #endif''');
         }
         for (final Method method in api.methods) {
-          _writeHostMethodMessageHandler(
-            indent,
-            name: method.name,
-            channelName: '${makeChannelName(api, method, dartPackageName)}\\(channelSuffix)',
-            parameters: method.parameters,
-            returnType: method.returnType,
-            isAsynchronous: method.isAsynchronous,
-            isAsynchronousCallback: method.isAsynchronousCallback,
-            swiftFunction: method.swiftFunction,
-            documentationComments: method.documentationComments,
-            serialBackgroundQueue: method.taskQueueType == TaskQueueType.serialBackgroundThread
-                ? serialBackgroundQueue
-                : null,
-          );
+          final channelName = '${makeChannelName(api, method, dartPackageName)}\\(channelSuffix)';
+          if (method.isStream) {
+            _writeHostStreamMessageHandler(
+              indent,
+              name: method.name,
+              channelName: channelName,
+              parameters: method.parameters,
+              returnType: method.returnType,
+              isAsynchronousCallback: method.isAsynchronousCallback,
+              swiftFunction: method.swiftFunction,
+              documentationComments: method.documentationComments,
+              serialBackgroundQueue: method.taskQueueType == TaskQueueType.serialBackgroundThread
+                  ? serialBackgroundQueue
+                  : null,
+            );
+          } else {
+            _writeHostMethodMessageHandler(
+              indent,
+              name: method.name,
+              channelName: channelName,
+              parameters: method.parameters,
+              returnType: method.returnType,
+              isAsynchronous: method.isAsynchronous,
+              isAsynchronousCallback: method.isAsynchronousCallback,
+              swiftFunction: method.swiftFunction,
+              documentationComments: method.documentationComments,
+              serialBackgroundQueue: method.taskQueueType == TaskQueueType.serialBackgroundThread
+                  ? serialBackgroundQueue
+                  : null,
+            );
+          }
         }
       });
     });
@@ -3878,6 +3902,9 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
 
     _writePigeonInternal(generatorOptions, root, indent);
     _writeNilOrValue(indent);
+    if (!generatorOptions.useFfi && root.containsHostStream) {
+      _writeChannelStreamUtilities(root, indent);
+    }
     if (_needsEngineKeys(generatorOptions, root)) {
       _writePigeonEngineKeys(indent);
     }
@@ -4207,6 +4234,386 @@ fileprivate enum PigeonEngineKeys {
         },
       );
     }
+  }
+
+  void _writeChannelStreamUtilities(Root root, Indent indent) {
+    final String prefix = _classNamePrefix;
+    indent.newln();
+    indent.format('''
+private final class ${prefix}PigeonMessageBox: @unchecked Sendable {
+\tlet value: [Any?]
+\tinit(_ value: [Any?]) {
+\t\tself.value = value
+\t}
+}
+
+private final class ${prefix}PigeonChannelBox: @unchecked Sendable {
+\tprivate let channel: FlutterBasicMessageChannel
+\tprivate let lock = NSLock()
+\tprivate var closed = false
+
+\tinit(_ channel: FlutterBasicMessageChannel) {
+\t\tself.channel = channel
+\t}
+
+\tfunc close() {
+\t\tlock.lock()
+\t\tclosed = true
+\t\tlock.unlock()
+\t}
+
+\tprivate var isClosed: Bool {
+\t\tlock.lock()
+\t\tdefer { lock.unlock() }
+\t\treturn closed
+\t}
+
+\t@MainActor
+\tfunc sendOnMain(_ message: [Any?]) {
+\t\tguard !isClosed else { return }
+\t\tchannel.sendMessage(message)
+\t}
+
+\tfunc send(_ message: [Any?]) {
+\t\tguard !isClosed else { return }
+\t\tif Thread.isMainThread {
+\t\t\tchannel.sendMessage(message)
+\t\t} else {
+\t\t\tlet boxed = ${prefix}PigeonMessageBox(message)
+\t\t\tDispatchQueue.main.async {
+\t\t\t\tguard !self.isClosed else { return }
+\t\t\t\tself.channel.sendMessage(boxed.value)
+\t\t\t}
+\t\t}
+\t}
+}
+
+private final class ${prefix}PigeonStreamRegistry: @unchecked Sendable {
+\tprivate let lock = NSLock()
+\tprivate var subscriptions: [String: [Int64: () -> Void]] = [:]
+
+\tfunc register(channelName: String, subscriptionId: Int64, onCancel: @escaping () -> Void) {
+\t\tvar previous: (() -> Void)?
+\t\tdo {
+\t\t\tlock.lock()
+\t\t\tdefer { lock.unlock() }
+\t\t\tvar channelMap = subscriptions[channelName] ?? [:]
+\t\t\tprevious = channelMap.updateValue(onCancel, forKey: subscriptionId)
+\t\t\tsubscriptions[channelName] = channelMap
+\t\t}
+\t\tprevious?()
+\t}
+
+\tfunc isActive(channelName: String, subscriptionId: Int64) -> Bool {
+\t\tlock.lock()
+\t\tdefer { lock.unlock() }
+\t\treturn subscriptions[channelName]?[subscriptionId] != nil
+\t}
+
+\t@discardableResult
+\tfunc remove(channelName: String, subscriptionId: Int64) -> Bool {
+\t\tvar removed: (() -> Void)?
+\t\tdo {
+\t\t\tlock.lock()
+\t\t\tdefer { lock.unlock() }
+\t\t\tguard var channelMap = subscriptions[channelName] else {
+\t\t\t\treturn false
+\t\t\t}
+\t\t\tremoved = channelMap.removeValue(forKey: subscriptionId)
+\t\t\tif channelMap.isEmpty {
+\t\t\t\tsubscriptions.removeValue(forKey: channelName)
+\t\t\t} else {
+\t\t\t\tsubscriptions[channelName] = channelMap
+\t\t\t}
+\t\t}
+\t\tlet didRemove = removed != nil
+\t\twithExtendedLifetime(removed) {}
+\t\treturn didRemove
+\t}
+
+\tfunc cancel(channelName: String, subscriptionId: Int64) {
+\t\tvar action: (() -> Void)?
+\t\tdo {
+\t\t\tlock.lock()
+\t\t\tdefer { lock.unlock() }
+\t\t\tguard var channelMap = subscriptions[channelName] else {
+\t\t\t\treturn
+\t\t\t}
+\t\t\taction = channelMap.removeValue(forKey: subscriptionId)
+\t\t\tif channelMap.isEmpty {
+\t\t\t\tsubscriptions.removeValue(forKey: channelName)
+\t\t\t} else {
+\t\t\t\tsubscriptions[channelName] = channelMap
+\t\t\t}
+\t\t}
+\t\taction?()
+\t}
+
+\tfunc cancelAll(channelName: String) {
+\t\tvar actions: [() -> Void] = []
+\t\tdo {
+\t\t\tlock.lock()
+\t\t\tdefer { lock.unlock() }
+\t\t\tif let channelMap = subscriptions.removeValue(forKey: channelName) {
+\t\t\t\tactions = Array(channelMap.values)
+\t\t\t}
+\t\t}
+\t\tfor action in actions {
+\t\t\taction()
+\t\t}
+\t}
+}''');
+    final bool hasCallbackStreams = root.apis.whereType<AstHostApi>().any(
+      (AstHostApi api) =>
+          api.methods.any((Method method) => method.isStream && method.isAsynchronousCallback),
+    );
+    if (hasCallbackStreams) {
+      indent.newln();
+      indent.format('''
+/// Sink passed to `@asyncCallback` stream methods to emit typed events, errors, or completion.
+class ${prefix}PigeonEventSink<ReturnType>: @unchecked Sendable {
+\tprivate let subscriptionId: Int64
+\tprivate let lock = NSLock()
+\tprivate var channelBox: ${prefix}PigeonChannelBox?
+\tprivate var onClosed: (() -> Void)?
+\tprivate var terminated = false
+
+\tfileprivate init(
+\t\tsubscriptionId: Int64,
+\t\tchannelBox: ${prefix}PigeonChannelBox,
+\t\tonClosed: @escaping () -> Void
+\t) {
+\t\tself.subscriptionId = subscriptionId
+\t\tself.channelBox = channelBox
+\t\tself.onClosed = onClosed
+\t}
+
+\tfileprivate var isOpen: Bool {
+\t\tlock.lock()
+\t\tdefer { lock.unlock() }
+\t\treturn !terminated && channelBox != nil
+\t}
+
+\tfunc success(_ value: ReturnType) {
+\t\tlet currentBox: ${prefix}PigeonChannelBox?
+\t\tdo {
+\t\t\tlock.lock()
+\t\t\tdefer { lock.unlock() }
+\t\t\tguard !terminated else { return }
+\t\t\tcurrentBox = channelBox
+\t\t}
+\t\tcurrentBox?.send([subscriptionId, Int64(0), value])
+\t}
+
+\tfunc error(code: String, message: String?, details: Any?) {
+\t\tlet currentBox: ${prefix}PigeonChannelBox?
+\t\tlet closedAction: (() -> Void)?
+\t\tdo {
+\t\t\tlock.lock()
+\t\t\tdefer { lock.unlock() }
+\t\t\tguard !terminated else { return }
+\t\t\tterminated = true
+\t\t\tcurrentBox = channelBox
+\t\t\tclosedAction = onClosed
+\t\t\tonClosed = nil
+\t\t}
+\t\tclosedAction?()
+\t\tcurrentBox?.send([subscriptionId, Int64(1), code, message, details])
+\t}
+
+\tfunc endOfStream() {
+\t\tlet currentBox: ${prefix}PigeonChannelBox?
+\t\tlet closedAction: (() -> Void)?
+\t\tdo {
+\t\t\tlock.lock()
+\t\t\tdefer { lock.unlock() }
+\t\t\tguard !terminated else { return }
+\t\t\tterminated = true
+\t\t\tcurrentBox = channelBox
+\t\t\tclosedAction = onClosed
+\t\t\tonClosed = nil
+\t\t}
+\t\tclosedAction?()
+\t\tcurrentBox?.send([subscriptionId, Int64(2)])
+\t}
+
+\tfileprivate func close() {
+\t\tvar displaced: (${prefix}PigeonChannelBox?, (() -> Void)?) = (nil, nil)
+\t\tdo {
+\t\t\tlock.lock()
+\t\t\tdefer { lock.unlock() }
+\t\t\tterminated = true
+\t\t\tdisplaced = (channelBox, onClosed)
+\t\t\tchannelBox = nil
+\t\t\tonClosed = nil
+\t\t}
+\t\tdisplaced.0?.close()
+\t\twithExtendedLifetime(displaced) {}
+\t}
+}''');
+    }
+  }
+
+  void _writeHostStreamMessageHandler(
+    Indent indent, {
+    required String name,
+    required String channelName,
+    required Iterable<Parameter> parameters,
+    required TypeDeclaration returnType,
+    required bool isAsynchronousCallback,
+    required String? swiftFunction,
+    String? serialBackgroundQueue,
+    List<String> documentationComments = const <String>[],
+  }) {
+    final components = _SwiftFunctionComponents(
+      name: name,
+      parameters: parameters,
+      returnType: returnType,
+      swiftFunction: swiftFunction,
+    );
+    final String prefix = _classNamePrefix;
+    final String returnTypeString = _nullSafeSwiftTypeForDartType(returnType);
+    final varChannelName = '${name}Channel';
+    final varEventsChannelName = '${name}EventsChannelName';
+    addDocumentationComments(indent, documentationComments, _docCommentSpec);
+    indent.writeln('let $varEventsChannelName = "$channelName.events"');
+    final baseArgs = 'name: "$channelName", binaryMessenger: binaryMessenger, codec: codec';
+    final channelCreationWithoutTaskQueue = 'FlutterBasicMessageChannel($baseArgs)';
+    if (serialBackgroundQueue == null) {
+      indent.writeln('let $varChannelName = $channelCreationWithoutTaskQueue');
+    } else {
+      final channelCreationWithTaskQueue =
+          'FlutterBasicMessageChannel($baseArgs, taskQueue: $serialBackgroundQueue)';
+      indent.write('let $varChannelName = $serialBackgroundQueue == nil');
+      indent.addScoped('', '', () {
+        indent.writeln('? $channelCreationWithoutTaskQueue');
+        indent.writeln(': $channelCreationWithTaskQueue');
+      });
+    }
+    indent.writeln('streamRegistry.cancelAll(channelName: $varEventsChannelName)');
+    indent.writeScoped('if let api = api {', '}', () {
+      indent.writeln(
+        'let eventsChannel = FlutterBasicMessageChannel(name: $varEventsChannelName, binaryMessenger: binaryMessenger, codec: codec)',
+      );
+      indent.writeScoped('$varChannelName.setMessageHandler { message, reply in', '}', () {
+        indent.writeln('let request = message as! [Any?]');
+        indent.writeln('let action = request[0] as! String');
+        indent.writeln(
+          'let subscriptionId = request[1] as? Int64 ?? (request[1] as! NSNumber).int64Value',
+        );
+        indent.writeScoped('if action == "cancel" {', '}', () {
+          indent.writeln(
+            'streamRegistry.cancel(channelName: $varEventsChannelName, subscriptionId: subscriptionId)',
+          );
+          indent.writeln('reply(wrapResult(nil))');
+          indent.writeln('return');
+        });
+        final methodArgument = <String>[];
+        enumerate(components.arguments, (int index, _SwiftFunctionArgument arg) {
+          final String argName = _getSafeArgumentName(index, arg.namedType);
+          final argIndex = 'request[${index + 2}]';
+          final String fieldType = _swiftTypeForDartType(arg.type);
+          final enumMapForceUnwrap =
+              arg.type.baseName == 'Map' &&
+                  arg.type.typeArguments.any((TypeDeclaration type) => type.isEnum)
+              ? '!'
+              : '';
+          _writeGenericCasting(
+            indent: indent,
+            value: argIndex,
+            variableName: argName,
+            fieldType: fieldType,
+            type: arg.type,
+          );
+          if (arg.label == '_') {
+            methodArgument.add('$argName$enumMapForceUnwrap');
+          } else {
+            methodArgument.add('${arg.label ?? arg.name}: $argName$enumMapForceUnwrap');
+          }
+        });
+        if (isAsynchronousCallback) {
+          indent.writeln('let channelBox = ${prefix}PigeonChannelBox(eventsChannel)');
+          indent.writeScoped(
+            'let sink = ${prefix}PigeonEventSink<$returnTypeString>(subscriptionId: subscriptionId, channelBox: channelBox) {',
+            '}',
+            () {
+              indent.writeln(
+                '_ = streamRegistry.remove(channelName: $varEventsChannelName, subscriptionId: subscriptionId)',
+              );
+            },
+          );
+          final callArgs = <String>[...methodArgument, 'sink: sink'];
+          indent.writeln('var cancelCallback: (() -> Void)?');
+          indent.writeScoped(
+            'streamRegistry.register(channelName: $varEventsChannelName, subscriptionId: subscriptionId) {',
+            '}',
+            () {
+              indent.writeln('sink.close()');
+              indent.writeln('cancelCallback?()');
+            },
+          );
+          indent.writeln('cancelCallback = api.${components.name}(${callArgs.join(', ')})');
+          indent.writeScoped('if !sink.isOpen {', '}', () {
+            indent.writeln(
+              '_ = streamRegistry.remove(channelName: $varEventsChannelName, subscriptionId: subscriptionId)',
+            );
+          });
+          indent.writeln('reply(wrapResult(nil))');
+        } else {
+          indent.writeln('let channelBox = ${prefix}PigeonChannelBox(eventsChannel)');
+          indent.writeln('let stream = api.${components.name}(${methodArgument.join(', ')})');
+          indent.writeScoped('let task = Task { @MainActor in', '}', () {
+            indent.writeScoped('do {', '}', () {
+              indent.writeScoped('for try await event in stream {', '}', () {
+                indent.writeScoped(
+                  'guard !Task.isCancelled, streamRegistry.isActive(channelName: $varEventsChannelName, subscriptionId: subscriptionId) else {',
+                  '}',
+                  () {
+                    indent.writeln('return');
+                  },
+                );
+                indent.writeln('channelBox.sendOnMain([subscriptionId, Int64(0), event])');
+              });
+              indent.writeScoped(
+                'if !Task.isCancelled, streamRegistry.remove(channelName: $varEventsChannelName, subscriptionId: subscriptionId) {',
+                '}',
+                () {
+                  indent.writeln('channelBox.sendOnMain([subscriptionId, Int64(2)])');
+                },
+              );
+            }, addTrailingNewline: false);
+            indent.addScoped(' catch is CancellationError {', '}', () {
+              indent.writeln(
+                '_ = streamRegistry.remove(channelName: $varEventsChannelName, subscriptionId: subscriptionId)',
+              );
+            }, addTrailingNewline: false);
+            indent.addScoped(' catch {', '}', () {
+              indent.writeScoped(
+                'if !Task.isCancelled, streamRegistry.remove(channelName: $varEventsChannelName, subscriptionId: subscriptionId) {',
+                '}',
+                () {
+                  indent.writeln(
+                    'channelBox.sendOnMain([subscriptionId, Int64(1)] + wrapError(error))',
+                  );
+                },
+              );
+            });
+          });
+          indent.writeScoped(
+            'streamRegistry.register(channelName: $varEventsChannelName, subscriptionId: subscriptionId) {',
+            '}',
+            () {
+              indent.writeln('channelBox.close()');
+              indent.writeln('task.cancel()');
+            },
+          );
+          indent.writeln('reply(wrapResult(nil))');
+        }
+      });
+    }, addTrailingNewline: false);
+    indent.addScoped(' else {', '}', () {
+      indent.writeln('$varChannelName.setMessageHandler(nil)');
+    });
   }
 
   void _writeHostMethodMessageHandler(
@@ -5447,6 +5854,8 @@ String _getMethodSignature({
   bool isAsynchronous = false,
   bool ffiUserApi = false,
   bool isAsynchronousCallback = false,
+  bool isStream = false,
+  String classNamePrefix = '',
   bool isMainActor = false,
   String? swiftFunction,
   bool ffiBridgeApi = false,
@@ -5508,6 +5917,15 @@ String _getMethodSignature({
       final returnTypeSuffix = returnType.isVoid ? '' : ' -> $returnTypeString';
       return '${objc}func $methodName($parameterSignature$errorParam)$throwString$returnTypeSuffix';
     }
+  }
+
+  if (isStream) {
+    if (isAsynchronousCallback) {
+      final sinkParam = 'sink: ${classNamePrefix}PigeonEventSink<$returnTypeString>';
+      final params = parameters.isEmpty ? sinkParam : '$parameterSignature, $sinkParam';
+      return 'func $methodName($params) -> (() -> Void)?';
+    }
+    return 'func ${components.name}($parameterSignature) -> AsyncThrowingStream<$returnTypeString, Error>';
   }
 
   if (isAsynchronous && !isAsynchronousCallback) {

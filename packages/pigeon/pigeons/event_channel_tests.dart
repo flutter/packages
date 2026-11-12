@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// ignore_for_file: deprecated_member_use
+
 import 'package:pigeon/pigeon.dart';
 
 enum EventEnum { one, two, three, fortyTwo, fourHundredTwentyTwo }
@@ -136,4 +138,15 @@ abstract class EventChannelMethods {
   int streamInts();
   PlatformEvent streamEvents();
   int streamConsistentNumbers();
+}
+
+@HostApi()
+abstract class StreamHostTestApi {
+  Stream<int> streamNumbers({int count = 5, int start = 0});
+  Stream<PlatformEvent> streamPlatformEvents();
+  Stream<int?> streamNullableInts();
+  Stream<int> streamError(bool customError);
+
+  @asyncCallback
+  Stream<String> streamViaCallback(String prefix, int count);
 }

@@ -2682,4 +2682,66 @@ void main() {
       expect(code, isNot(contains('firstOrNull { it.raw == raw }')));
     });
   });
+
+  group('HostApi Stream<T>', () {
+    test('generates Flow<T> and @asyncCallback sink signatures and handlers', () {
+      final root = Root(
+        apis: <Api>[
+          AstHostApi(
+            name: 'SensorApi',
+            methods: <Method>[
+              Method(
+                name: 'readings',
+                location: ApiLocation.host,
+                isStream: true,
+                parameters: <Parameter>[
+                  Parameter(
+                    name: 'intervalMs',
+                    type: const TypeDeclaration(baseName: 'int', isNullable: false),
+                  ),
+                ],
+                returnType: const TypeDeclaration(baseName: 'double', isNullable: false),
+              ),
+              Method(
+                name: 'rawEvents',
+                location: ApiLocation.host,
+                isStream: true,
+                isAsynchronousCallback: true,
+                parameters: <Parameter>[],
+                returnType: const TypeDeclaration(baseName: 'String', isNullable: true),
+              ),
+            ],
+          ),
+        ],
+        classes: <Class>[],
+        enums: <Enum>[],
+        containsHostApi: true,
+      );
+      final sink = StringBuffer();
+      const KotlinGenerator().generate(
+        const InternalKotlinOptions(
+          kotlinOut: 'Sensor.g.kt',
+          fileSpecificClassNameComponent: 'Sensor',
+        ),
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+      final code = sink.toString();
+      expect(code, contains('import kotlinx.coroutines.flow.Flow'));
+      expect(code, contains('import kotlinx.coroutines.CoroutineStart'));
+      expect(code, contains('import android.os.Handler'));
+      expect(code, contains('import android.os.Looper'));
+      expect(code, isNot(contains('import kotlinx.coroutines.suspendCancellableCoroutine')));
+      expect(code, contains('fun readings(intervalMs: Long): Flow<Double>'));
+      expect(code, contains('fun rawEvents(sink: SensorPigeonEventSink<String?>): AutoCloseable?'));
+      expect(code, contains('private class SensorPigeonStreamRegistry {'));
+      expect(code, contains('class SensorPigeonEventSink<T>'));
+      expect(code, contains('streamRegistry.cancelAll(eventsChannelName)'));
+      expect(
+        code,
+        contains('CoroutineScope(Dispatchers.Main).launch(start = CoroutineStart.LAZY)'),
+      );
+    });
+  });
 }

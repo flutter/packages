@@ -2401,6 +2401,89 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         (targetGenerator == TargetGenerator.swift && defaultTargetPlatform == TargetPlatform.macOS),
   );
 
+  group('HostApi Stream<T>', () {
+    testWidgets('streams typed parameters and concurrent subscriptions without clobbering', (
+      WidgetTester _,
+    ) async {
+      final api = StreamHostTestApi();
+      final List<List<int>> results = await Future.wait<List<int>>(<Future<List<int>>>[
+        api.streamNumbers(count: 4, start: 10).toList(),
+        api.streamNumbers(count: 3, start: 50).toList(),
+      ]);
+      expect(results[0], <int>[10, 11, 12, 13]);
+      expect(results[1], <int>[50, 51, 52]);
+    }, skip: !eventChannelSupported.contains(targetGenerator));
+
+    testWidgets('streams sealed classes and nullable values', (WidgetTester _) async {
+      final api = StreamHostTestApi();
+      final List<PlatformEvent> events = await api.streamPlatformEvents().toList();
+      expect(events, hasLength(8));
+      expect(events[0], isA<IntEvent>().having((IntEvent e) => e.value, 'value', 1));
+      expect(events[1], isA<StringEvent>().having((StringEvent e) => e.value, 'value', 'string'));
+      expect(events[2], isA<BoolEvent>().having((BoolEvent e) => e.value, 'value', false));
+      expect(events[3], isA<DoubleEvent>().having((DoubleEvent e) => e.value, 'value', 3.14));
+      expect(events[4], isA<ObjectsEvent>().having((ObjectsEvent e) => e.value, 'value', true));
+      expect(
+        events[5],
+        isA<EnumEvent>().having((EnumEvent e) => e.value, 'value', EventEnum.fortyTwo),
+      );
+      expect(
+        events[6],
+        isA<ClassEvent>().having((ClassEvent e) => e.value.aNullableInt, 'aNullableInt', 0),
+      );
+      expect(events[7], isA<EmptyEvent>());
+
+      final List<int?> nullableInts = await api.streamNullableInts().toList();
+      expect(nullableInts, <int?>[1, null, 2]);
+    }, skip: !eventChannelSupported.contains(targetGenerator));
+
+    testWidgets('handles terminal errors, mid-stream cancel, suffixes, and @asyncCallback', (
+      WidgetTester _,
+    ) async {
+      final api = StreamHostTestApi();
+
+      final receivedBeforeError = <int>[];
+      Object? caughtError;
+      final doneCompleter = Completer<void>();
+      api
+          .streamError(true)
+          .listen(
+            receivedBeforeError.add,
+            onError: (Object e) {
+              caughtError = e;
+            },
+            onDone: doneCompleter.complete,
+          );
+      await doneCompleter.future;
+      expect(receivedBeforeError, <int>[1]);
+      expect(
+        caughtError,
+        isA<PlatformException>()
+            .having((PlatformException e) => e.code, 'code', 'error_code')
+            .having((PlatformException e) => e.message, 'message', 'error_message')
+            .having((PlatformException e) => e.details, 'details', 'error_details'),
+      );
+
+      // Mid-stream cancellation via .take(2) must cancel the native task cleanly.
+      final List<int> partial = await api.streamNumbers(count: 500, start: 1).take(2).toList();
+      expect(partial, <int>[1, 2]);
+
+      // Suffixed instances isolate stream routing.
+      final apiOne = StreamHostTestApi(messageChannelSuffix: '1');
+      final apiTwo = StreamHostTestApi(messageChannelSuffix: '2');
+      expect(await apiOne.streamNumbers(count: 2, start: 5).toList(), <int>[105, 106]);
+      expect(await apiTwo.streamNumbers(count: 2, start: 5).toList(), <int>[205, 206]);
+
+      // @asyncCallback stream emits from background task and supports cancellation.
+      expect(await api.streamViaCallback('item', 3).toList(), <String>[
+        'item:0',
+        'item:1',
+        'item:2',
+      ]);
+      expect(await api.streamViaCallback('cut', 200).take(2).toList(), <String>['cut:0', 'cut:1']);
+    }, skip: !eventChannelSupported.contains(targetGenerator));
+  });
+
   testWidgets('constants are generated correctly', (WidgetTester _) async {
     expect(aStringConstant, 'stringConstantValue');
     expect(aStringConstantWithEscapes, r'''string\'\"\$ConstantValue''');

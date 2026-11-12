@@ -184,6 +184,7 @@ class ProxyApi {
 /// defined return type of the method definition.
 class EventChannelApi {
   /// Constructor.
+  @Deprecated('Use Stream<T> return types on @HostApi methods instead.')
   const EventChannelApi({this.kotlinOptions, this.swiftOptions});
 
   /// Options for Kotlin generated code for Event Channels.

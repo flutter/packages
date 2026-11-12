@@ -2968,8 +2968,13 @@ $dartApiName? ${classMemberNamePrefix}getInstance_${api.name}({
       );
       for (final Method method in api.methods) {
         indent.newln();
+        final String returnType = method.isStream
+            ? 'Stream<${addGenericTypes(method.returnType)}>'
+            : method.isAsynchronous
+            ? 'Future<${addGenericTypes(method.returnType)}>'
+            : addGenericTypes(method.returnType);
         indent.writeln(
-          '${method.isAsynchronous ? 'Future<' : ''}${addGenericTypes(method.returnType)}${method.isAsynchronous ? '>' : ''} ${method.name}(${_getMethodParameterSignature(method.parameters)});',
+          '$returnType ${method.name}(${_getMethodParameterSignature(method.parameters)});',
         );
       }
     });
@@ -3068,17 +3073,30 @@ ${api.name}({
       for (final Method func in api.methods) {
         indent.newln();
 
-        _writeHostMethod(
-          indent,
-          name: func.name,
-          parameters: func.parameters,
-          returnType: func.returnType,
-          documentationComments: func.documentationComments,
-          channelName: makeChannelName(api, func, dartPackageName),
-          addSuffixVariable: true,
-          useJni: generatorOptions.useJni,
-          useFfi: generatorOptions.useFfi,
-        );
+        if (func.isStream) {
+          _writeHostStreamMethod(
+            indent,
+            name: func.name,
+            parameters: func.parameters,
+            returnType: func.returnType,
+            documentationComments: func.documentationComments,
+            channelName: makeChannelName(api, func, dartPackageName),
+            useJni: generatorOptions.useJni,
+            useFfi: generatorOptions.useFfi,
+          );
+        } else {
+          _writeHostMethod(
+            indent,
+            name: func.name,
+            parameters: func.parameters,
+            returnType: func.returnType,
+            documentationComments: func.documentationComments,
+            channelName: makeChannelName(api, func, dartPackageName),
+            addSuffixVariable: true,
+            useJni: generatorOptions.useJni,
+            useFfi: generatorOptions.useFfi,
+          );
+        }
       }
     });
   }
@@ -3506,7 +3524,7 @@ ${api.name}({
       if (api.dartHostTestHandler != null) {
         final mockApi = AstFlutterApi(
           name: api.dartHostTestHandler!,
-          methods: api.methods,
+          methods: api.methods.where((Method m) => !m.isStream).toList(),
           documentationComments: api.documentationComments,
         );
         writeFlutterApi(
@@ -3555,6 +3573,9 @@ ${api.name}({
   }) {
     if (root.containsHostApi || root.containsProxyApi) {
       _writeExtractReplyValueOrThrow(indent);
+    }
+    if (root.containsHostStream) {
+      _writeChannelStreamHelpers(indent);
     }
     if (root.containsFlutterApi || root.containsProxyApi || generatorOptions.testOut != null) {
       _writeWrapResponse(generatorOptions, root, indent);
@@ -4442,6 +4463,245 @@ if (wrapped == null) {
         indent.writeln('return null;');
       });
     });
+  }
+
+  void _writeHostStreamMethod(
+    Indent indent, {
+    required String name,
+    required Iterable<Parameter> parameters,
+    required TypeDeclaration returnType,
+    required List<String> documentationComments,
+    required String channelName,
+    bool useJni = false,
+    bool useFfi = false,
+  }) {
+    addDocumentationComments(indent, documentationComments, docCommentSpec);
+    final String argSignature = _getMethodParameterSignature(parameters);
+    final String returnTypeString = addGenericTypes(returnType);
+    final String? arguments = _getArgumentsForMethodCall(parameters);
+    final listArgs = arguments == null ? 'const <Object?>[]' : '<Object?>[$arguments]';
+    final String eventCast = _castValue('event', returnType);
+    indent.writeScoped('Stream<$returnTypeString> $name($argSignature) {', '}', () {
+      if (useJni || useFfi) {
+        indent.writeScoped('if (_nativeInteropApi != null) {', '}', () {
+          indent.writeln(
+            'return _nativeInteropApi.$name(${parameters.map((Parameter e) => '${e.isNamed ? '${e.name}: ' : ''}${e.name}').join(', ')});',
+          );
+        });
+      }
+      indent.writeln("final ${varNamePrefix}channelName = '$channelName\$$_suffixVarName';");
+      indent.writeScoped('return _pigeonChannelStream<$returnTypeString>(', ');', () {
+        indent.writeln('controlChannelName: ${varNamePrefix}channelName,');
+        indent.writeln('codec: $pigeonChannelCodec,');
+        indent.writeln('binaryMessenger: ${varNamePrefix}binaryMessenger,');
+        indent.writeln('arguments: $listArgs,');
+        indent.writeln('decodeEvent: (Object? event) => $eventCast,');
+      });
+    });
+  }
+
+  static void _writeChannelStreamHelpers(Indent indent) {
+    indent.newln();
+    indent.format('''
+class _PigeonStreamSubscriptionHandler {
+\t_PigeonStreamSubscriptionHandler({
+\t\trequired this.onData,
+\t\trequired this.onError,
+\t\trequired this.onDone,
+\t});
+
+\tfinal void Function(Object? event) onData;
+\tfinal void Function(String code, String? message, Object? details) onError;
+\tfinal void Function() onDone;
+}
+
+class _PigeonChannelStreamRouter {
+\t_PigeonChannelStreamRouter(this.channel);
+
+\tstatic int _nextSubscriptionId = 0;
+\tstatic final Map<(BinaryMessenger, String), _PigeonChannelStreamRouter> _routers =
+\t\t\t<(BinaryMessenger, String), _PigeonChannelStreamRouter>{};
+
+\tfinal BasicMessageChannel<Object?> channel;
+\tfinal Map<int, _PigeonStreamSubscriptionHandler> _subscriptions =
+\t\t\t<int, _PigeonStreamSubscriptionHandler>{};
+
+\tstatic int register({
+\t\trequired String eventsChannelName,
+\t\trequired MessageCodec<Object?> codec,
+\t\trequired BinaryMessenger? binaryMessenger,
+\t\trequired _PigeonStreamSubscriptionHandler handler,
+\t}) {
+\t\tfinal BinaryMessenger resolvedMessenger =
+\t\t\t\tbinaryMessenger ?? ServicesBinding.instance.defaultBinaryMessenger;
+\t\tfinal (BinaryMessenger, String) key = (resolvedMessenger, eventsChannelName);
+\t\tfinal _PigeonChannelStreamRouter router = _routers.putIfAbsent(key, () {
+\t\t\tfinal _PigeonChannelStreamRouter created = _PigeonChannelStreamRouter(
+\t\t\t\tBasicMessageChannel<Object?>(
+\t\t\t\t\teventsChannelName,
+\t\t\t\t\tcodec,
+\t\t\t\t\tbinaryMessenger: binaryMessenger,
+\t\t\t\t),
+\t\t\t);
+\t\t\tcreated._attach(key);
+\t\t\treturn created;
+\t\t});
+\t\tfinal int subscriptionId = _nextSubscriptionId++;
+\t\trouter._subscriptions[subscriptionId] = handler;
+\t\treturn subscriptionId;
+\t}
+
+\tstatic bool unregister({
+\t\trequired String eventsChannelName,
+\t\trequired BinaryMessenger? binaryMessenger,
+\t\trequired int subscriptionId,
+\t}) {
+\t\tfinal BinaryMessenger resolvedMessenger =
+\t\t\t\tbinaryMessenger ?? ServicesBinding.instance.defaultBinaryMessenger;
+\t\tfinal (BinaryMessenger, String) key = (resolvedMessenger, eventsChannelName);
+\t\tfinal _PigeonChannelStreamRouter? router = _routers[key];
+\t\tif (router == null) {
+\t\t\treturn false;
+\t\t}
+\t\tfinal bool removed = router._subscriptions.remove(subscriptionId) != null;
+\t\tif (router._subscriptions.isEmpty) {
+\t\t\t_routers.remove(key);
+\t\t\trouter.channel.setMessageHandler(null);
+\t\t}
+\t\treturn removed;
+\t}
+
+\tvoid _attach((BinaryMessenger, String) key) {
+\t\tchannel.setMessageHandler((Object? message) async {
+\t\t\tfinal List<Object?> frame = message! as List<Object?>;
+\t\t\tfinal int subscriptionId = frame[0]! as int;
+\t\t\tfinal int kind = frame[1]! as int;
+\t\t\tif (kind == 0) {
+\t\t\t\tfinal _PigeonStreamSubscriptionHandler? handler = _subscriptions[subscriptionId];
+\t\t\t\thandler?.onData(frame[2]);
+\t\t\t} else if (kind == 1) {
+\t\t\t\tfinal _PigeonStreamSubscriptionHandler? handler = _subscriptions.remove(subscriptionId);
+\t\t\t\tif (_subscriptions.isEmpty) {
+\t\t\t\t\t_routers.remove(key);
+\t\t\t\t\tchannel.setMessageHandler(null);
+\t\t\t\t}
+\t\t\t\thandler?.onError(
+\t\t\t\t\tframe[2]! as String,
+\t\t\t\t\tframe[3] as String?,
+\t\t\t\t\tframe[4],
+\t\t\t\t);
+\t\t\t} else if (kind == 2) {
+\t\t\t\tfinal _PigeonStreamSubscriptionHandler? handler = _subscriptions.remove(subscriptionId);
+\t\t\t\tif (_subscriptions.isEmpty) {
+\t\t\t\t\t_routers.remove(key);
+\t\t\t\t\tchannel.setMessageHandler(null);
+\t\t\t\t}
+\t\t\t\thandler?.onDone();
+\t\t\t}
+\t\t\treturn null;
+\t\t});
+\t}
+}
+
+Stream<T> _pigeonChannelStream<T>({
+\trequired String controlChannelName,
+\trequired MessageCodec<Object?> codec,
+\trequired BinaryMessenger? binaryMessenger,
+\trequired List<Object?> arguments,
+\trequired T Function(Object? event) decodeEvent,
+}) {
+\tfinal String eventsChannelName = '\$controlChannelName.events';
+\tfinal BasicMessageChannel<Object?> controlChannel = BasicMessageChannel<Object?>(
+\t\tcontrolChannelName,
+\t\tcodec,
+\t\tbinaryMessenger: binaryMessenger,
+\t);
+\tlate final StreamController<T> controller;
+\tint? subscriptionId;
+\tbool terminatedFromHost = false;
+\tcontroller = StreamController<T>(
+\t\tonListen: () {
+\t\t\tfinal int id = _PigeonChannelStreamRouter.register(
+\t\t\t\teventsChannelName: eventsChannelName,
+\t\t\t\tcodec: codec,
+\t\t\t\tbinaryMessenger: binaryMessenger,
+\t\t\t\thandler: _PigeonStreamSubscriptionHandler(
+\t\t\t\t\tonData: (Object? event) {
+\t\t\t\t\t\tif (controller.isClosed) {
+\t\t\t\t\t\t\treturn;
+\t\t\t\t\t\t}
+\t\t\t\t\t\ttry {
+\t\t\t\t\t\t\tcontroller.add(decodeEvent(event));
+\t\t\t\t\t\t} catch (e, st) {
+\t\t\t\t\t\t\tcontroller.addError(e, st);
+\t\t\t\t\t\t}
+\t\t\t\t\t},
+\t\t\t\t\tonError: (String code, String? message, Object? details) {
+\t\t\t\t\t\tterminatedFromHost = true;
+\t\t\t\t\t\tif (!controller.isClosed) {
+\t\t\t\t\t\t\tcontroller.addError(
+\t\t\t\t\t\t\t\tPlatformException(code: code, message: message, details: details),
+\t\t\t\t\t\t\t);
+\t\t\t\t\t\t\tunawaited(controller.close());
+\t\t\t\t\t\t}
+\t\t\t\t\t},
+\t\t\t\t\tonDone: () {
+\t\t\t\t\t\tterminatedFromHost = true;
+\t\t\t\t\t\tif (!controller.isClosed) {
+\t\t\t\t\t\t\tunawaited(controller.close());
+\t\t\t\t\t\t}
+\t\t\t\t\t},
+\t\t\t\t),
+\t\t\t);
+\t\t\tsubscriptionId = id;
+\t\t\t() async {
+\t\t\t\ttry {
+\t\t\t\t\tfinal List<Object?>? replyList =
+\t\t\t\t\t\t\tawait controlChannel.send(<Object?>['listen', id, ...arguments]) as List<Object?>?;
+\t\t\t\t\t_extractReplyValueOrThrow(
+\t\t\t\t\t\treplyList,
+\t\t\t\t\t\tcontrolChannelName,
+\t\t\t\t\t\tisNullValid: true,
+\t\t\t\t\t);
+\t\t\t\t} catch (e, st) {
+\t\t\t\t\tfinal bool wasActive = _PigeonChannelStreamRouter.unregister(
+\t\t\t\t\t\teventsChannelName: eventsChannelName,
+\t\t\t\t\t\tbinaryMessenger: binaryMessenger,
+\t\t\t\t\t\tsubscriptionId: id,
+\t\t\t\t\t);
+\t\t\t\t\tif (wasActive && !controller.isClosed) {
+\t\t\t\t\t\tterminatedFromHost = true;
+\t\t\t\t\t\tcontroller.addError(e, st);
+\t\t\t\t\t\tunawaited(controller.close());
+\t\t\t\t\t}
+\t\t\t\t}
+\t\t\t}();
+\t\t},
+\t\tonCancel: () async {
+\t\t\tfinal int? id = subscriptionId;
+\t\t\tsubscriptionId = null;
+\t\t\tif (id == null || terminatedFromHost) {
+\t\t\t\treturn;
+\t\t\t}
+\t\t\t_PigeonChannelStreamRouter.unregister(
+\t\t\t\teventsChannelName: eventsChannelName,
+\t\t\t\tbinaryMessenger: binaryMessenger,
+\t\t\t\tsubscriptionId: id,
+\t\t\t);
+\t\t\tfinal List<Object?>? replyList =
+\t\t\t\t\tawait controlChannel.send(<Object?>['cancel', id]) as List<Object?>?;
+\t\t\tif (replyList != null && replyList.length > 1) {
+\t\t\t\tthrow PlatformException(
+\t\t\t\t\tcode: replyList[0]! as String,
+\t\t\t\t\tmessage: replyList[1] as String?,
+\t\t\t\t\tdetails: replyList[2],
+\t\t\t\t);
+\t\t\t}
+\t\t},
+\t);
+\treturn controller.stream;
+}
+''');
   }
 
   void _writeHostMethod(

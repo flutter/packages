@@ -8,14 +8,42 @@
 
 package com.example.test_plugin
 
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
+import io.flutter.plugin.common.BasicMessageChannel
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.EventChannel
+import io.flutter.plugin.common.MessageCodec
 import io.flutter.plugin.common.StandardMessageCodec
 import io.flutter.plugin.common.StandardMethodCodec
 import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
+import java.util.concurrent.atomic.AtomicReference
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 
 private object EventChannelTestsPigeonUtils {
+
+  fun wrapResult(result: Any?): List<Any?> {
+    return listOf(result)
+  }
+
+  fun wrapError(exception: Throwable): List<Any?> {
+    return if (exception is EventChannelTestsError) {
+      listOf(exception.code, exception.message, exception.details)
+    } else {
+      listOf(
+          exception.javaClass.simpleName,
+          exception.toString(),
+          "Cause: " + exception.cause + ", Stacktrace: " + Log.getStackTraceString(exception))
+    }
+  }
+
   fun doubleEquals(a: Double, b: Double): Boolean {
     // Normalize -0.0 to 0.0 and handle NaN equality.
     return (if (a == 0.0) 0.0 else a) == (if (b == 0.0) 0.0 else b) || (a.isNaN() && b.isNaN())
@@ -173,6 +201,124 @@ class EventChannelTestsError(
     override val message: String? = null,
     val details: Any? = null
 ) : RuntimeException()
+
+private class EventChannelTestsPigeonStreamRegistry {
+  private val subscriptions = mutableMapOf<String, MutableMap<Long, () -> Unit>>()
+
+  fun register(channelName: String, subscriptionId: Long, onCancel: () -> Unit) {
+    val previous =
+        kotlin.synchronized(subscriptions) {
+          val channelMap = subscriptions.getOrPut(channelName) { mutableMapOf() }
+          channelMap.put(subscriptionId, onCancel)
+        }
+    previous?.invoke()
+  }
+
+  fun remove(channelName: String, subscriptionId: Long): Boolean {
+    return kotlin.synchronized(subscriptions) {
+      val channelMap = subscriptions[channelName] ?: return@synchronized false
+      val removed = channelMap.remove(subscriptionId) != null
+      if (channelMap.isEmpty()) {
+        subscriptions.remove(channelName)
+      }
+      removed
+    }
+  }
+
+  fun cancel(channelName: String, subscriptionId: Long) {
+    val onCancel =
+        kotlin.synchronized(subscriptions) {
+          val channelMap = subscriptions[channelName] ?: return@synchronized null
+          val action = channelMap.remove(subscriptionId)
+          if (channelMap.isEmpty()) {
+            subscriptions.remove(channelName)
+          }
+          action
+        }
+    onCancel?.invoke()
+  }
+
+  fun cancelAll(channelName: String) {
+    val actions =
+        kotlin.synchronized(subscriptions) {
+          subscriptions.remove(channelName)?.values?.toList().orEmpty()
+        }
+    for (action in actions) {
+      try {
+        action.invoke()
+      } catch (_: Throwable) {}
+    }
+  }
+}
+
+/** Sink passed to `@asyncCallback` stream methods to emit typed events, errors, or completion. */
+class EventChannelTestsPigeonEventSink<T>
+internal constructor(
+    private val subscriptionId: Long,
+    channel: BasicMessageChannel<Any?>,
+    onClosed: () -> Unit,
+) {
+  private val channelRef = AtomicReference<BasicMessageChannel<Any?>?>(channel)
+  private val onClosedRef = AtomicReference<(() -> Unit)?>(onClosed)
+  @Volatile private var terminated = false
+
+  internal val isOpen: Boolean
+    get() = !terminated && channelRef.get() != null
+
+  fun success(value: T) {
+    if (terminated) return
+    val ch = channelRef.get() ?: return
+    dispatchToMain {
+      if (channelRef.get() != null) {
+        ch.send(listOf(subscriptionId, 0L, value))
+      }
+    }
+  }
+
+  fun error(code: String, message: String?, details: Any?) {
+    if (terminated) return
+    terminated = true
+    onClosedRef.getAndSet(null)?.invoke() ?: return
+    val ch = channelRef.get() ?: return
+    dispatchToMain {
+      if (channelRef.getAndSet(null) != null) {
+        ch.send(listOf(subscriptionId, 1L, code, message, details))
+      }
+    }
+  }
+
+  fun endOfStream() {
+    if (terminated) return
+    terminated = true
+    onClosedRef.getAndSet(null)?.invoke() ?: return
+    val ch = channelRef.get() ?: return
+    dispatchToMain {
+      if (channelRef.getAndSet(null) != null) {
+        ch.send(listOf(subscriptionId, 2L))
+      }
+    }
+  }
+
+  internal fun close() {
+    terminated = true
+    onClosedRef.set(null)
+    channelRef.set(null)
+  }
+
+  private fun dispatchToMain(action: () -> Unit) {
+    val mainLooper =
+        try {
+          Looper.getMainLooper()
+        } catch (_: RuntimeException) {
+          null
+        }
+    if (mainLooper == null || Looper.myLooper() == mainLooper) {
+      action()
+    } else {
+      Handler(mainLooper).post(action)
+    }
+  }
+}
 
 enum class EventEnum(val raw: Int) {
   ONE(0),
@@ -1012,4 +1158,317 @@ abstract class StreamConsistentNumbersStreamHandler :
   override fun onListen(p0: Any?, sink: PigeonEventSink<Long>) {}
 
   override fun onCancel(p0: Any?) {}
+}
+
+/** Generated interface from Pigeon that represents a handler of messages from Flutter. */
+interface StreamHostTestApi {
+  fun streamNumbers(count: Long, start: Long): Flow<Long>
+
+  fun streamPlatformEvents(): Flow<PlatformEvent>
+
+  fun streamNullableInts(): Flow<Long?>
+
+  fun streamError(customError: Boolean): Flow<Long>
+
+  fun streamViaCallback(
+      prefix: String,
+      count: Long,
+      sink: EventChannelTestsPigeonEventSink<String>
+  ): AutoCloseable?
+
+  companion object {
+    private val streamRegistry = EventChannelTestsPigeonStreamRegistry()
+
+    /** The codec used by StreamHostTestApi. */
+    val codec: MessageCodec<Any?> by lazy { EventChannelTestsPigeonCodec() }
+    /**
+     * Sets up an instance of `StreamHostTestApi` to handle messages through the `binaryMessenger`.
+     */
+    @JvmOverloads
+    fun setUp(
+        binaryMessenger: BinaryMessenger,
+        api: StreamHostTestApi?,
+        messageChannelSuffix: String = ""
+    ) {
+      val separatedMessageChannelSuffix =
+          if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+      run {
+        val controlChannelName =
+            "dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.streamNumbers$separatedMessageChannelSuffix"
+        val eventsChannelName = "$controlChannelName.events"
+        val controlChannel = BasicMessageChannel<Any?>(binaryMessenger, controlChannelName, codec)
+        streamRegistry.cancelAll(eventsChannelName)
+        if (api != null) {
+          val eventsChannel = BasicMessageChannel<Any?>(binaryMessenger, eventsChannelName, codec)
+          controlChannel.setMessageHandler { message, reply ->
+            val request = message as List<Any?>
+            val action = request[0] as String
+            val subscriptionId = (request[1] as Number).toLong()
+            if (action == "cancel") {
+              val wrapped: List<Any?> =
+                  try {
+                    streamRegistry.cancel(eventsChannelName, subscriptionId)
+                    listOf(null)
+                  } catch (exception: Throwable) {
+                    EventChannelTestsPigeonUtils.wrapError(exception)
+                  }
+              reply.reply(wrapped)
+              return@setMessageHandler
+            }
+            val countArg = request[2] as Long
+            val startArg = request[3] as Long
+            val flow =
+                try {
+                  api.streamNumbers(countArg, startArg)
+                } catch (exception: Throwable) {
+                  reply.reply(EventChannelTestsPigeonUtils.wrapError(exception))
+                  return@setMessageHandler
+                }
+            val job =
+                CoroutineScope(Dispatchers.Main).launch(start = CoroutineStart.LAZY) {
+                  try {
+                    flow.collect { event -> eventsChannel.send(listOf(subscriptionId, 0L, event)) }
+                    if (streamRegistry.remove(eventsChannelName, subscriptionId)) {
+                      eventsChannel.send(listOf(subscriptionId, 2L))
+                    }
+                  } catch (e: CancellationException) {
+                    streamRegistry.remove(eventsChannelName, subscriptionId)
+                    throw e
+                  } catch (exception: Throwable) {
+                    if (streamRegistry.remove(eventsChannelName, subscriptionId)) {
+                      eventsChannel.send(
+                          listOf(subscriptionId, 1L) +
+                              EventChannelTestsPigeonUtils.wrapError(exception))
+                    }
+                  }
+                }
+            streamRegistry.register(eventsChannelName, subscriptionId) { job.cancel() }
+            job.start()
+            reply.reply(listOf(null))
+          }
+        } else {
+          controlChannel.setMessageHandler(null)
+        }
+      }
+      run {
+        val controlChannelName =
+            "dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.streamPlatformEvents$separatedMessageChannelSuffix"
+        val eventsChannelName = "$controlChannelName.events"
+        val controlChannel = BasicMessageChannel<Any?>(binaryMessenger, controlChannelName, codec)
+        streamRegistry.cancelAll(eventsChannelName)
+        if (api != null) {
+          val eventsChannel = BasicMessageChannel<Any?>(binaryMessenger, eventsChannelName, codec)
+          controlChannel.setMessageHandler { message, reply ->
+            val request = message as List<Any?>
+            val action = request[0] as String
+            val subscriptionId = (request[1] as Number).toLong()
+            if (action == "cancel") {
+              val wrapped: List<Any?> =
+                  try {
+                    streamRegistry.cancel(eventsChannelName, subscriptionId)
+                    listOf(null)
+                  } catch (exception: Throwable) {
+                    EventChannelTestsPigeonUtils.wrapError(exception)
+                  }
+              reply.reply(wrapped)
+              return@setMessageHandler
+            }
+            val flow =
+                try {
+                  api.streamPlatformEvents()
+                } catch (exception: Throwable) {
+                  reply.reply(EventChannelTestsPigeonUtils.wrapError(exception))
+                  return@setMessageHandler
+                }
+            val job =
+                CoroutineScope(Dispatchers.Main).launch(start = CoroutineStart.LAZY) {
+                  try {
+                    flow.collect { event -> eventsChannel.send(listOf(subscriptionId, 0L, event)) }
+                    if (streamRegistry.remove(eventsChannelName, subscriptionId)) {
+                      eventsChannel.send(listOf(subscriptionId, 2L))
+                    }
+                  } catch (e: CancellationException) {
+                    streamRegistry.remove(eventsChannelName, subscriptionId)
+                    throw e
+                  } catch (exception: Throwable) {
+                    if (streamRegistry.remove(eventsChannelName, subscriptionId)) {
+                      eventsChannel.send(
+                          listOf(subscriptionId, 1L) +
+                              EventChannelTestsPigeonUtils.wrapError(exception))
+                    }
+                  }
+                }
+            streamRegistry.register(eventsChannelName, subscriptionId) { job.cancel() }
+            job.start()
+            reply.reply(listOf(null))
+          }
+        } else {
+          controlChannel.setMessageHandler(null)
+        }
+      }
+      run {
+        val controlChannelName =
+            "dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.streamNullableInts$separatedMessageChannelSuffix"
+        val eventsChannelName = "$controlChannelName.events"
+        val controlChannel = BasicMessageChannel<Any?>(binaryMessenger, controlChannelName, codec)
+        streamRegistry.cancelAll(eventsChannelName)
+        if (api != null) {
+          val eventsChannel = BasicMessageChannel<Any?>(binaryMessenger, eventsChannelName, codec)
+          controlChannel.setMessageHandler { message, reply ->
+            val request = message as List<Any?>
+            val action = request[0] as String
+            val subscriptionId = (request[1] as Number).toLong()
+            if (action == "cancel") {
+              val wrapped: List<Any?> =
+                  try {
+                    streamRegistry.cancel(eventsChannelName, subscriptionId)
+                    listOf(null)
+                  } catch (exception: Throwable) {
+                    EventChannelTestsPigeonUtils.wrapError(exception)
+                  }
+              reply.reply(wrapped)
+              return@setMessageHandler
+            }
+            val flow =
+                try {
+                  api.streamNullableInts()
+                } catch (exception: Throwable) {
+                  reply.reply(EventChannelTestsPigeonUtils.wrapError(exception))
+                  return@setMessageHandler
+                }
+            val job =
+                CoroutineScope(Dispatchers.Main).launch(start = CoroutineStart.LAZY) {
+                  try {
+                    flow.collect { event -> eventsChannel.send(listOf(subscriptionId, 0L, event)) }
+                    if (streamRegistry.remove(eventsChannelName, subscriptionId)) {
+                      eventsChannel.send(listOf(subscriptionId, 2L))
+                    }
+                  } catch (e: CancellationException) {
+                    streamRegistry.remove(eventsChannelName, subscriptionId)
+                    throw e
+                  } catch (exception: Throwable) {
+                    if (streamRegistry.remove(eventsChannelName, subscriptionId)) {
+                      eventsChannel.send(
+                          listOf(subscriptionId, 1L) +
+                              EventChannelTestsPigeonUtils.wrapError(exception))
+                    }
+                  }
+                }
+            streamRegistry.register(eventsChannelName, subscriptionId) { job.cancel() }
+            job.start()
+            reply.reply(listOf(null))
+          }
+        } else {
+          controlChannel.setMessageHandler(null)
+        }
+      }
+      run {
+        val controlChannelName =
+            "dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.streamError$separatedMessageChannelSuffix"
+        val eventsChannelName = "$controlChannelName.events"
+        val controlChannel = BasicMessageChannel<Any?>(binaryMessenger, controlChannelName, codec)
+        streamRegistry.cancelAll(eventsChannelName)
+        if (api != null) {
+          val eventsChannel = BasicMessageChannel<Any?>(binaryMessenger, eventsChannelName, codec)
+          controlChannel.setMessageHandler { message, reply ->
+            val request = message as List<Any?>
+            val action = request[0] as String
+            val subscriptionId = (request[1] as Number).toLong()
+            if (action == "cancel") {
+              val wrapped: List<Any?> =
+                  try {
+                    streamRegistry.cancel(eventsChannelName, subscriptionId)
+                    listOf(null)
+                  } catch (exception: Throwable) {
+                    EventChannelTestsPigeonUtils.wrapError(exception)
+                  }
+              reply.reply(wrapped)
+              return@setMessageHandler
+            }
+            val customErrorArg = request[2] as Boolean
+            val flow =
+                try {
+                  api.streamError(customErrorArg)
+                } catch (exception: Throwable) {
+                  reply.reply(EventChannelTestsPigeonUtils.wrapError(exception))
+                  return@setMessageHandler
+                }
+            val job =
+                CoroutineScope(Dispatchers.Main).launch(start = CoroutineStart.LAZY) {
+                  try {
+                    flow.collect { event -> eventsChannel.send(listOf(subscriptionId, 0L, event)) }
+                    if (streamRegistry.remove(eventsChannelName, subscriptionId)) {
+                      eventsChannel.send(listOf(subscriptionId, 2L))
+                    }
+                  } catch (e: CancellationException) {
+                    streamRegistry.remove(eventsChannelName, subscriptionId)
+                    throw e
+                  } catch (exception: Throwable) {
+                    if (streamRegistry.remove(eventsChannelName, subscriptionId)) {
+                      eventsChannel.send(
+                          listOf(subscriptionId, 1L) +
+                              EventChannelTestsPigeonUtils.wrapError(exception))
+                    }
+                  }
+                }
+            streamRegistry.register(eventsChannelName, subscriptionId) { job.cancel() }
+            job.start()
+            reply.reply(listOf(null))
+          }
+        } else {
+          controlChannel.setMessageHandler(null)
+        }
+      }
+      run {
+        val controlChannelName =
+            "dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.streamViaCallback$separatedMessageChannelSuffix"
+        val eventsChannelName = "$controlChannelName.events"
+        val controlChannel = BasicMessageChannel<Any?>(binaryMessenger, controlChannelName, codec)
+        streamRegistry.cancelAll(eventsChannelName)
+        if (api != null) {
+          val eventsChannel = BasicMessageChannel<Any?>(binaryMessenger, eventsChannelName, codec)
+          controlChannel.setMessageHandler { message, reply ->
+            val request = message as List<Any?>
+            val action = request[0] as String
+            val subscriptionId = (request[1] as Number).toLong()
+            if (action == "cancel") {
+              val wrapped: List<Any?> =
+                  try {
+                    streamRegistry.cancel(eventsChannelName, subscriptionId)
+                    listOf(null)
+                  } catch (exception: Throwable) {
+                    EventChannelTestsPigeonUtils.wrapError(exception)
+                  }
+              reply.reply(wrapped)
+              return@setMessageHandler
+            }
+            val prefixArg = request[2] as String
+            val countArg = request[3] as Long
+            var closeable: AutoCloseable? = null
+            val sink =
+                EventChannelTestsPigeonEventSink<String>(subscriptionId, eventsChannel) {
+                  streamRegistry.remove(eventsChannelName, subscriptionId)
+                }
+            streamRegistry.register(eventsChannelName, subscriptionId) {
+              sink.close()
+              closeable?.close()
+            }
+            try {
+              closeable = api.streamViaCallback(prefixArg, countArg, sink)
+              if (!sink.isOpen) {
+                streamRegistry.remove(eventsChannelName, subscriptionId)
+              }
+              reply.reply(listOf(null))
+            } catch (exception: Throwable) {
+              sink.close()
+              streamRegistry.remove(eventsChannelName, subscriptionId)
+              reply.reply(EventChannelTestsPigeonUtils.wrapError(exception))
+            }
+          }
+        } else {
+          controlChannel.setMessageHandler(null)
+        }
+      }
+    }
+  }
 }

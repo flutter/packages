@@ -3760,6 +3760,83 @@ name: foobar
     expect(code, contains('@override\n  void unregister()'));
     expect(code, contains('@override\n  void dartApi()'));
   });
+
+  test('generates HostApi Stream<T> methods with parameters and router helpers', () {
+    final root = Root(
+      apis: <Api>[
+        AstHostApi(
+          name: 'SensorApi',
+          dartHostTestHandler: 'TestSensorApi',
+          methods: <Method>[
+            Method(
+              name: 'calibrate',
+              location: ApiLocation.host,
+              parameters: <Parameter>[],
+              returnType: const TypeDeclaration.voidDeclaration(),
+            ),
+            Method(
+              name: 'readings',
+              location: ApiLocation.host,
+              isStream: true,
+              parameters: <Parameter>[
+                Parameter(
+                  name: 'intervalMs',
+                  type: const TypeDeclaration(baseName: 'int', isNullable: false),
+                  isNamed: true,
+                  isPositional: false,
+                  isOptional: true,
+                  isRequired: false,
+                  defaultValue: '16',
+                ),
+              ],
+              returnType: const TypeDeclaration(
+                baseName: 'List',
+                isNullable: false,
+                typeArguments: <TypeDeclaration>[
+                  TypeDeclaration(baseName: 'double', isNullable: false),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final sink = StringBuffer();
+    const generator = DartGenerator();
+    generator.generate(
+      const InternalDartOptions(ignoreLints: false, dartOut: 'lib/sensor.g.dart'),
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final code = sink.toString();
+    expect(code, contains('Stream<List<double>> readings({int intervalMs = 16}) {'));
+    expect(code, contains('return _pigeonChannelStream<List<double>>('));
+    expect(code, contains('arguments: <Object?>[intervalMs],'));
+    expect(
+      code,
+      contains('decodeEvent: (Object? event) => (event! as List<Object?>).cast<double>(),'),
+    );
+    expect(code, contains('class _PigeonChannelStreamRouter {'));
+
+    final testSink = StringBuffer();
+    generator.generateTest(
+      const InternalDartOptions(
+        ignoreLints: false,
+        dartOut: 'lib/sensor.g.dart',
+        testOut: 'test/sensor_test.g.dart',
+      ),
+      root,
+      testSink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+      dartOutputPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final testCode = testSink.toString();
+    expect(testCode, contains('void calibrate();'));
+    expect(testCode, isNot(contains('readings')));
+  });
 }
 
 /// Builds a root with a sealed class `Shape`, its subclasses `Circle` (one

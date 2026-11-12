@@ -77,6 +77,13 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi, HostCa
       with: binaryMessenger,
       instanceName: "2",
       streamHandler: SendConsistentNumbers(numberToSend: 2))
+    StreamHostTestApiSetup.setUp(binaryMessenger: binaryMessenger, api: StreamHostTestApiImpl())
+    StreamHostTestApiSetup.setUp(
+      binaryMessenger: binaryMessenger, api: StreamHostTestApiImpl(offset: 100),
+      messageChannelSuffix: "1")
+    StreamHostTestApiSetup.setUp(
+      binaryMessenger: binaryMessenger, api: StreamHostTestApiImpl(offset: 200),
+      messageChannelSuffix: "2")
     proxyApiRegistrar = ProxyApiTestsPigeonProxyApiRegistrar(
       binaryMessenger: binaryMessenger, apiDelegate: ProxyApiDelegate())
     proxyApiRegistrar!.setUp()
@@ -96,6 +103,9 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi, HostCa
       let messenger = registrar.messenger
       HostIntegrationCoreApiSetup.setUp(binaryMessenger: messenger, api: nil)
       HostCallbackCoreApiSetup.setUp(binaryMessenger: messenger, api: nil)
+      StreamHostTestApiSetup.setUp(binaryMessenger: messenger, api: nil)
+      StreamHostTestApiSetup.setUp(binaryMessenger: messenger, api: nil, messageChannelSuffix: "1")
+      StreamHostTestApiSetup.setUp(binaryMessenger: messenger, api: nil, messageChannelSuffix: "2")
     #endif
     if let niHostApiImpl {
       NativeInteropHostIntegrationCoreApiSetup.unregister(api: niHostApiImpl, registrar: registrar)
@@ -3373,5 +3383,90 @@ class NativeInteropSealedClassHostApiImpl: NativeInteropSealedClassHostApi {
         details: nil)
     }
     return try flutterApi.echoShape(shape: shape)
+  }
+}
+
+class StreamHostTestApiImpl: StreamHostTestApi {
+  private let offset: Int64
+
+  init(offset: Int64 = 0) {
+    self.offset = offset
+  }
+
+  func streamNumbers(count: Int64, start: Int64) -> AsyncThrowingStream<Int64, Error> {
+    let baseOffset = offset
+    return AsyncThrowingStream { continuation in
+      let task = Task {
+        for i in 0..<count {
+          if Task.isCancelled { break }
+          continuation.yield(baseOffset + start + i)
+          try? await Task.sleep(nanoseconds: 5_000_000)
+        }
+        continuation.finish()
+      }
+      continuation.onTermination = { _ in task.cancel() }
+    }
+  }
+
+  func streamPlatformEvents() -> AsyncThrowingStream<PlatformEvent, Error> {
+    let events: [PlatformEvent] = [
+      IntEvent(value: 1),
+      StringEvent(value: "string"),
+      BoolEvent(value: false),
+      DoubleEvent(value: 3.14),
+      ObjectsEvent(value: true),
+      EnumEvent(value: EventEnum.fortyTwo),
+      ClassEvent(value: EventAllNullableTypes(aNullableInt: 0)),
+      EmptyEvent(),
+    ]
+    return AsyncThrowingStream { continuation in
+      let task = Task {
+        for event in events {
+          if Task.isCancelled { break }
+          continuation.yield(event)
+          try? await Task.sleep(nanoseconds: 5_000_000)
+        }
+        continuation.finish()
+      }
+      continuation.onTermination = { _ in task.cancel() }
+    }
+  }
+
+  func streamNullableInts() -> AsyncThrowingStream<Int64?, Error> {
+    AsyncThrowingStream { continuation in
+      continuation.yield(1)
+      continuation.yield(nil)
+      continuation.yield(2)
+      continuation.finish()
+    }
+  }
+
+  func streamError(customError: Bool) -> AsyncThrowingStream<Int64, Error> {
+    AsyncThrowingStream { continuation in
+      continuation.yield(1)
+      if customError {
+        continuation.finish(
+          throwing: EventChannelTestsError(
+            code: "error_code", message: "error_message", details: "error_details"))
+      } else {
+        continuation.finish(throwing: NSError(domain: "test", code: 42))
+      }
+    }
+  }
+
+  func streamViaCallback(
+    prefix: String, count: Int64, sink: EventChannelTestsPigeonEventSink<String>
+  ) -> (() -> Void)? {
+    let task = Task.detached {
+      for i in 0..<count {
+        if Task.isCancelled { return }
+        sink.success("\(prefix):\(i)")
+        try? await Task.sleep(nanoseconds: 5_000_000)
+      }
+      if !Task.isCancelled {
+        sink.endOfStream()
+      }
+    }
+    return { task.cancel() }
   }
 }
