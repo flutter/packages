@@ -785,8 +785,9 @@ class RouteMatchList with Diagnosticable {
   /// This method returns a new list as long as the target is found in the
   /// matches' subtree.
   ///
-  /// If a target is found, the target and every node after the target in tree
-  /// order is removed.
+  /// If a target is found, the target, every node after the target in tree
+  /// order, and any redirect-only routes immediately before the target in tree
+  /// order are removed.
   static List<RouteMatchBase> _removeRouteMatchFromList(
     List<RouteMatchBase> matches,
     RouteMatchBase target,
@@ -795,15 +796,7 @@ class RouteMatchList with Diagnosticable {
     for (int index = matches.length - 1; index >= 0; index -= 1) {
       final RouteMatchBase match = matches[index];
       if (match == target) {
-        // Remove any redirect only route immediately before the target.
-        while (index > 0) {
-          final RouteMatchBase lookBefore = matches[index - 1];
-          if (lookBefore is! RouteMatch || !lookBefore.route.redirectOnly) {
-            break;
-          }
-          index -= 1;
-        }
-        return matches.sublist(0, index);
+        return _removeTrailingRedirectOnlyMatches(matches.sublist(0, index));
       }
       if (match is ShellRouteMatch) {
         final List<RouteMatchBase> newSubMatches = _removeRouteMatchFromList(match.matches, target);
@@ -820,6 +813,28 @@ class RouteMatchList with Diagnosticable {
     }
     // Target is not in the match subtree.
     return matches;
+  }
+
+  /// Returns a new List from the input matches without the redirect-only routes
+  /// at the end of its tree order.
+  ///
+  /// A redirect-only route can be nested in a ShellRouteMatch while the route
+  /// after it targets an ancestor navigator.
+  static List<RouteMatchBase> _removeTrailingRedirectOnlyMatches(List<RouteMatchBase> matches) {
+    for (int index = matches.length - 1; index >= 0; index -= 1) {
+      final RouteMatchBase match = matches[index];
+      if (match is RouteMatch && match.route.redirectOnly) {
+        continue;
+      }
+      if (match is! ShellRouteMatch) {
+        return matches.sublist(0, index + 1);
+      }
+      return <RouteMatchBase>[
+        ...matches.sublist(0, index),
+        match.copyWith(matches: _removeTrailingRedirectOnlyMatches(match.matches)),
+      ];
+    }
+    return <RouteMatchBase>[];
   }
 
   /// The last leaf route.
