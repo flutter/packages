@@ -268,10 +268,10 @@ class PigeonOptions {
     this.debugGenerators,
     this.basePath,
     this.fileSpecificClassNameComponent,
-    String? dartPackageName,
+    this._dartPackageName,
     this.ignoreLints = true,
     this.nativeInteropTransport,
-  }) : _dartPackageName = dartPackageName;
+  });
 
   /// Path to the file which will be processed.
   final String? input;

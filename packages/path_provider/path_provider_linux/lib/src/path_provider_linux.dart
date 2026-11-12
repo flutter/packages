@@ -21,12 +21,10 @@ class PathProviderLinux extends PathProviderPlatform {
   /// Constructs an instance of [PathProviderLinux] with the given [environment]
   @visibleForTesting
   PathProviderLinux.private({
-    Map<String, String> environment = const <String, String>{},
-    String? executableName,
-    String? applicationId,
-  }) : _environment = environment,
-       _executableName = executableName,
-       _applicationId = applicationId;
+    this._environment = const <String, String>{},
+    this._executableName,
+    this._applicationId,
+  });
 
   final Map<String, String> _environment;
   String? _executableName;
