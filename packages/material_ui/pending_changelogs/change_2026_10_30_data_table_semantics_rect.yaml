@@ -1,0 +1,3 @@
+changelog: |
+  - Updates the DataTable cell semantics regression test to assert the cell's composed rect, so it holds regardless of how the table distributes transforms between its synthesized nodes and the cell's own node.
+version: skip
