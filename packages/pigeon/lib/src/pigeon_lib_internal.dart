@@ -1675,7 +1675,9 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       }
     }
     for (final Class classDefinition in _classes) {
-      classDefinition.fields = _attachAssociatedDefinitions(classDefinition.fields);
+      classDefinition.fields = _attachAssociatedDefinitions(
+        classDefinition.fields,
+      ).map((NamedType field) => _resolveEnumDefaultValue(field, totalErrors)).toList();
       classDefinition.superClass = _attachSuperClass(classDefinition);
     }
 
@@ -1805,6 +1807,38 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     }
 
     return type;
+  }
+
+  /// Keeps an [EnumMember] default value of a data class field only when the
+  /// field's type is an enum with that member.
+  ///
+  /// The parser can't tell whether `Type.name` or `.name` names an enum member,
+  /// because the enum may be declared after the class.
+  NamedType _resolveEnumDefaultValue(NamedType field, List<Error> errors) {
+    final Object? value = field.literalDefaultValue;
+    if (value is! EnumMember) {
+      return field;
+    }
+    final Enum? associatedEnum = field.type.associatedEnum;
+    final bool isMember =
+        associatedEnum?.members.any((EnumMember member) => member.name == value.name) ?? false;
+    if (associatedEnum != null && !isMember) {
+      errors.add(
+        Error(
+          message:
+              'Default value "${field.defaultValue}" of field "${field.name}" isn\'t a member of enum "${associatedEnum.name}".',
+          lineNumber: field.offset == null ? null : calculateLineNumber(source, field.offset!),
+        ),
+      );
+    }
+    return NamedType(
+      name: field.name,
+      type: field.type,
+      offset: field.offset,
+      defaultValue: field.defaultValue,
+      literalDefaultValue: isMember ? value : null,
+      documentationComments: field.documentationComments,
+    );
   }
 
   List<T> _attachAssociatedDefinitions<T extends NamedType>(Iterable<T> types) {
@@ -2520,7 +2554,7 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           _errors.add(
             Error(
               message:
-                  'Initialization isn\'t supported for fields in Pigeon data classes ("$node"), just use nullable types with no initializer (example "int? x;").',
+                  'Initialization isn\'t supported for fields in Pigeon data classes ("$node"), use a constructor parameter default instead (example "MyClass({this.x = 0});") or a nullable type with no initializer (example "int? x;").',
               lineNumber: calculateLineNumber(source, node.offset),
             ),
           );
@@ -2638,12 +2672,14 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
   /// Other default values are left to the Dart generator, so they don't add
   /// errors here.
   static Object? _literalDefaultValue(dart_ast.Expression defaultValue, String typeName) {
-    // The type may be an enum that is declared later in the file, so whether
-    // it is an enum is checked by the generators.
-    if (defaultValue is dart_ast.PrefixedIdentifier) {
-      return defaultValue.prefix.name == typeName
-          ? EnumMember(name: defaultValue.identifier.name)
-          : null;
+    // The type may be an enum that is declared later in the file, so
+    // `_resolveEnumDefaultValue` checks the member once every enum is parsed.
+    switch (defaultValue) {
+      case dart_ast.PrefixedIdentifier(:final dart_ast.SimpleIdentifier prefix)
+          when prefix.name == typeName:
+        return EnumMember(name: defaultValue.identifier.name);
+      case dart_ast.DotShorthandPropertyAccess(:final dart_ast.SimpleIdentifier propertyName):
+        return EnumMember(name: propertyName.name);
     }
     final Object? value = _literalValue(defaultValue);
     return switch (value) {
@@ -2665,9 +2701,16 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       dart_ast.StringLiteral(:final String? stringValue) => stringValue,
       dart_ast.PrefixExpression(:final dart_ast.Expression operand)
           when expression.operator.lexeme == '-' =>
-        switch (_literalValue(operand)) {
-          final num value => -value,
-          _ => null,
+        switch (operand) {
+          // The minimum int only fits once it is negated, so the unnegated
+          // literal has no value and is parsed with its sign.
+          dart_ast.IntegerLiteral(value: null, :final Token literal) => int.tryParse(
+            '-${literal.lexeme.replaceAll('_', '')}',
+          ),
+          _ => switch (_literalValue(operand)) {
+            final num value => -value,
+            _ => null,
+          },
         },
       _ => null,
     };

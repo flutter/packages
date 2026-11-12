@@ -364,6 +364,9 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
 
   String _formatKotlinValue(String type, Object value) => switch (type) {
     'String' => '"${escapeStringDoubleQuotes(value.toString()).replaceAll(r'$', r'\$')}"',
+    // Kotlin reads `-9223372036854775808L` as the negation of a literal that is
+    // out of range.
+    'int' when value == -9223372036854775808 => 'Long.MIN_VALUE',
     'int' => '${value}L',
     _ => value.toString(),
   };
@@ -627,9 +630,8 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
 
   /// The Kotlin default value of a data class field, if it has one.
   String? _kotlinDefaultValue(NamedType field) => switch (field.literalDefaultValue) {
-    EnumMember(:final String name) when field.type.isEnum =>
-      '${field.type.baseName}.${toScreamingSnakeCase(name)}',
-    null || EnumMember() => field.type.isNullable ? 'null' : null,
+    EnumMember(:final String name) => '${field.type.baseName}.${toScreamingSnakeCase(name)}',
+    null => field.type.isNullable ? 'null' : null,
     final Object value => _formatKotlinValue(field.type.baseName, value),
   };
 

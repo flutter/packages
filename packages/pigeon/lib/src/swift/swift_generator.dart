@@ -1907,8 +1907,8 @@ if (wrapped == nil) {
   String? _swiftDefaultValue(NamedType field, {required bool useFfi}) {
     // Native interop bridge classes use other Swift types for the fields.
     return switch (useFfi ? null : field.literalDefaultValue) {
-      EnumMember(:final String name) when field.type.isEnum => '.${_camelCase(name)}',
-      null || EnumMember() => field.type.isNullable ? 'nil' : null,
+      EnumMember(:final String name) => '.${_camelCase(name)}',
+      null => field.type.isNullable ? 'nil' : null,
       final Object value => _formatSwiftValue(field.type.baseName, value),
     };
   }

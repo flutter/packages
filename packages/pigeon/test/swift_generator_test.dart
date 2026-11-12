@@ -49,7 +49,7 @@ void main() {
     expect(code, isNot(contains('if (')));
   });
 
-  test('gen struct with default values', () {
+  Root defaultValuesRoot() {
     final anEnum = Enum(
       name: 'Color',
       members: <EnumMember>[
@@ -101,13 +101,27 @@ void main() {
           name: 'aList',
           defaultValue: 'const <Object?>[]',
         ),
+        NamedType(
+          type: const TypeDeclaration(baseName: 'int', isNullable: false),
+          name: 'aMinInt',
+          defaultValue: '-9223372036854775808',
+          literalDefaultValue: -9223372036854775808,
+        ),
       ],
     );
-    final root = Root(apis: <Api>[], classes: <Class>[classDefinition], enums: <Enum>[anEnum]);
+    return Root(apis: <Api>[], classes: <Class>[classDefinition], enums: <Enum>[anEnum]);
+  }
+
+  test('gen struct with default values', () {
     final sink = StringBuffer();
     const swiftOptions = InternalSwiftOptions(swiftOut: '');
     const generator = SwiftGenerator();
-    generator.generate(swiftOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    generator.generate(
+      swiftOptions,
+      defaultValuesRoot(),
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final code = sink.toString();
     expect(code, contains('var anInt: Int64 = -5\n'));
     expect(code, contains('var aDouble: Double = 0.0\n'));
@@ -116,6 +130,30 @@ void main() {
     expect(code, contains('var aColor: Color = .darkBlue\n'));
     expect(code, contains('var aNullableInt: Int64? = 7\n'));
     expect(code, contains('var aList: [Any?]\n'));
+    expect(code, contains('var aMinInt: Int64 = -9223372036854775808\n'));
+  });
+
+  test('gen struct with default values and an FFI bridge without them', () {
+    final sink = StringBuffer();
+    const swiftOptions = InternalSwiftOptions(swiftOut: '', useFfi: true);
+    const generator = SwiftGenerator();
+    generator.generate(
+      swiftOptions,
+      defaultValuesRoot(),
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final code = sink.toString();
+    expect(code, contains('var anInt: Int64 = -5\n'));
+    expect(code, contains('var aColor: Color = .darkBlue\n'));
+    expect(code, contains('var aNullableInt: Int64? = 7\n'));
+    expect(code, contains('@objc class FoobarBridge'));
+    expect(code, contains('    anInt: Int64,\n'));
+    expect(code, contains('    aColor: Color,\n'));
+    expect(code, contains('    aNullableInt: NSNumber? = nil,\n'));
+    expect(code, contains('@objc var anInt: Int64\n'));
+    expect(code, contains('@objc var aColor: Color\n'));
+    expect(code, contains('@objc var aNullableInt: NSNumber? = nil\n'));
   });
 
   test('gen class with default values in the initializer', () {

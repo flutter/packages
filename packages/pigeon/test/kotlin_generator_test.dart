@@ -102,6 +102,12 @@ void main() {
           name: 'aList',
           defaultValue: 'const <Object?>[]',
         ),
+        NamedType(
+          type: const TypeDeclaration(baseName: 'int', isNullable: false),
+          name: 'aMinInt',
+          defaultValue: '-9223372036854775808',
+          literalDefaultValue: -9223372036854775808,
+        ),
       ],
     );
     final root = Root(apis: <Api>[], classes: <Class>[classDefinition], enums: <Enum>[anEnum]);
@@ -116,7 +122,8 @@ void main() {
     expect(code, contains(r'val aString: String = "\$5 \"a\"",'));
     expect(code, contains('val aColor: Color = Color.DARK_BLUE,'));
     expect(code, contains('val aNullableInt: Long? = 7L,'));
-    expect(code, contains('val aList: List<Any?>\n'));
+    expect(code, contains('val aList: List<Any?>,\n'));
+    expect(code, contains('val aMinInt: Long = Long.MIN_VALUE\n'));
   });
 
   test('fileSpecificClassNameComponent defaults to UpperCamelCase from kotlinOut', () {

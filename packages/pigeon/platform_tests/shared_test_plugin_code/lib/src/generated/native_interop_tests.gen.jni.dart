@@ -20918,6 +20918,186 @@ extension type NativeInteropAllTypes._(jni$_.JObject _$this) implements jni$_.JO
       _$map6.pointer,
     ).object<NativeInteropAllTypes>();
   }
+
+  static final _id_new$1 = _class.constructorId(
+    r'(ZJJD[B[I[J[DLcom/example/test_plugin/NativeInteropAnEnum;Lcom/example/test_plugin/NativeInteropAnotherEnum;Ljava/lang/String;Ljava/lang/Object;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V',
+  );
+
+  static final _new$1 =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<
+                  (
+                    jni$_.Int32,
+                    jni$_.Int64,
+                    jni$_.Int64,
+                    jni$_.Double,
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Int32,
+                    jni$_.Pointer<jni$_.Void>,
+                  )
+                >,
+              )
+            >
+          >('globalEnv_NewObject')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              core$_.int,
+              core$_.int,
+              core$_.int,
+              core$_.double,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+              core$_.int,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `synthetic public void <init>(boolean z, long j, long j1, double d, byte[] bs, int[] is, long[] js, double[] ds, com.example.test_plugin.NativeInteropAnEnum nativeInteropAnEnum, com.example.test_plugin.NativeInteropAnotherEnum nativeInteropAnotherEnum, java.lang.String string, java.lang.Object object, java.util.List list, java.util.List list1, java.util.List list2, java.util.List list3, java.util.List list4, java.util.List list5, java.util.List list6, java.util.List list7, java.util.List list8, java.util.Map map, java.util.Map map1, java.util.Map map2, java.util.Map map3, java.util.Map map4, java.util.Map map5, java.util.Map map6, int i, kotlin.jvm.internal.DefaultConstructorMarker defaultConstructorMarker)`
+  /// The returned object must be released after use, by calling the [release] method.
+  factory NativeInteropAllTypes.new$1(
+    core$_.bool z,
+    core$_.int j,
+    core$_.int j1,
+    core$_.double d,
+    jni$_.JByteArray? bs,
+    jni$_.JIntArray? is$,
+    jni$_.JLongArray? js,
+    jni$_.JDoubleArray? ds,
+    NativeInteropAnEnum? nativeInteropAnEnum,
+    NativeInteropAnotherEnum? nativeInteropAnotherEnum,
+    jni$_.JString? string,
+    jni$_.JObject? object,
+    jni$_.JList<jni$_.JObject?>? list,
+    jni$_.JList<jni$_.JObject?>? list1,
+    jni$_.JList<jni$_.JObject?>? list2,
+    jni$_.JList<jni$_.JObject?>? list3,
+    jni$_.JList<jni$_.JObject?>? list4,
+    jni$_.JList<jni$_.JObject?>? list5,
+    jni$_.JList<jni$_.JObject?>? list6,
+    jni$_.JList<jni$_.JObject?>? list7,
+    jni$_.JList<jni$_.JObject?>? list8,
+    jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? map,
+    jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? map1,
+    jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? map2,
+    jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? map3,
+    jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? map4,
+    jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? map5,
+    jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? map6,
+    core$_.int i,
+    DefaultConstructorMarker? defaultConstructorMarker,
+  ) {
+    final _$$classRef = _class.reference;
+    final _$bs = bs?.reference ?? jni$_.jNullReference;
+    final _$is$ = is$?.reference ?? jni$_.jNullReference;
+    final _$js = js?.reference ?? jni$_.jNullReference;
+    final _$ds = ds?.reference ?? jni$_.jNullReference;
+    final _$nativeInteropAnEnum = nativeInteropAnEnum?.reference ?? jni$_.jNullReference;
+    final _$nativeInteropAnotherEnum = nativeInteropAnotherEnum?.reference ?? jni$_.jNullReference;
+    final _$string = string?.reference ?? jni$_.jNullReference;
+    final _$object = object?.reference ?? jni$_.jNullReference;
+    final _$list = list?.reference ?? jni$_.jNullReference;
+    final _$list1 = list1?.reference ?? jni$_.jNullReference;
+    final _$list2 = list2?.reference ?? jni$_.jNullReference;
+    final _$list3 = list3?.reference ?? jni$_.jNullReference;
+    final _$list4 = list4?.reference ?? jni$_.jNullReference;
+    final _$list5 = list5?.reference ?? jni$_.jNullReference;
+    final _$list6 = list6?.reference ?? jni$_.jNullReference;
+    final _$list7 = list7?.reference ?? jni$_.jNullReference;
+    final _$list8 = list8?.reference ?? jni$_.jNullReference;
+    final _$map = map?.reference ?? jni$_.jNullReference;
+    final _$map1 = map1?.reference ?? jni$_.jNullReference;
+    final _$map2 = map2?.reference ?? jni$_.jNullReference;
+    final _$map3 = map3?.reference ?? jni$_.jNullReference;
+    final _$map4 = map4?.reference ?? jni$_.jNullReference;
+    final _$map5 = map5?.reference ?? jni$_.jNullReference;
+    final _$map6 = map6?.reference ?? jni$_.jNullReference;
+    final _$defaultConstructorMarker = defaultConstructorMarker?.reference ?? jni$_.jNullReference;
+    return _new$1(
+      _$$classRef.pointer,
+      _id_new$1.pointer,
+      z ? 1 : 0,
+      j,
+      j1,
+      d,
+      _$bs.pointer,
+      _$is$.pointer,
+      _$js.pointer,
+      _$ds.pointer,
+      _$nativeInteropAnEnum.pointer,
+      _$nativeInteropAnotherEnum.pointer,
+      _$string.pointer,
+      _$object.pointer,
+      _$list.pointer,
+      _$list1.pointer,
+      _$list2.pointer,
+      _$list3.pointer,
+      _$list4.pointer,
+      _$list5.pointer,
+      _$list6.pointer,
+      _$list7.pointer,
+      _$list8.pointer,
+      _$map.pointer,
+      _$map1.pointer,
+      _$map2.pointer,
+      _$map3.pointer,
+      _$map4.pointer,
+      _$map5.pointer,
+      _$map6.pointer,
+      i,
+      _$defaultConstructorMarker.pointer,
+    ).object<NativeInteropAllTypes>();
+  }
 }
 
 extension NativeInteropAllTypes$$Methods on NativeInteropAllTypes {
@@ -29004,6 +29184,23 @@ extension type NativeInteropReservedNames._(jni$_.JObject _$this) implements jni
       i,
       _$defaultConstructorMarker.pointer,
     ).object<NativeInteropReservedNames>();
+  }
+
+  static final _id_new$2 = _class.constructorId(r'()V');
+
+  static final _new$2 =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_NewObject')
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
+
+  /// from: `public void <init>()`
+  /// The returned object must be released after use, by calling the [release] method.
+  factory NativeInteropReservedNames.new$2() {
+    final _$$classRef = _class.reference;
+    return _new$2(_$$classRef.pointer, _id_new$2.pointer).object<NativeInteropReservedNames>();
   }
 }
 
