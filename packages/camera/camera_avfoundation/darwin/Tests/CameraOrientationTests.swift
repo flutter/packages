@@ -117,7 +117,6 @@ final class CameraOrientationTests: XCTestCase {
     let (_, mockCamera, mockEventAPI, mockDevice, mockDeviceDiscoverer, _) = createCameraPlugin()
     let captureSessionQueue = DispatchQueue(label: "capture_session_queue")
     weak var weakPlugin: CameraPlugin?
-    weak var weakDevice = mockDevice
 
     autoreleasepool {
       let cameraPlugin = CameraPlugin(
@@ -126,7 +125,7 @@ final class CameraOrientationTests: XCTestCase {
         globalAPI: mockEventAPI,
         deviceDiscoverer: mockDeviceDiscoverer,
         permissionManager: MockCameraPermissionManager(),
-        deviceFactory: { _ in weakDevice! },
+        deviceFactory: { _ in mockDevice },
         captureSessionFactory: { MockCaptureSession() },
         captureDeviceInputFactory: MockCaptureDeviceInputFactory(),
         captureSessionQueue: captureSessionQueue
@@ -154,12 +153,11 @@ final class CameraOrientationTests: XCTestCase {
       }
     }
 
-    weak var weakEventAPI = mockEventAPI
     // Must check in captureSessionQueue since orientationChanged dispatches to this queue.
     let expectation = self.expectation(description: "Dispatched to capture session queue")
     captureSessionQueue.async {
       XCTAssertFalse(setDeviceOrientationCalled)
-      XCTAssertFalse(weakEventAPI?.deviceOrientationChangedCalled ?? false)
+      XCTAssertFalse(mockEventAPI.deviceOrientationChangedCalled)
       expectation.fulfill()
     }
 

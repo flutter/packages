@@ -61,6 +61,7 @@ class Tessellator extends Visitor<Node, void>
       child: maskNode.child.accept(this, data),
       mask: maskNode.mask,
       blendMode: maskNode.blendMode,
+      maskType: maskNode.maskType,
     );
   }
 
@@ -103,7 +104,12 @@ class Tessellator extends Visitor<Node, void>
         final IndexedVertices indexedVertices = vertices.createIndex();
         children.add(
           ResolvedVerticesNode(
-            paint: Paint(blendMode: pathNode.paint.blendMode, fill: fill),
+            paint: Paint(
+              blendMode: pathNode.paint.blendMode,
+              fill: fill,
+              filterBlurX: pathNode.paint.filterBlurX,
+              filterBlurY: pathNode.paint.filterBlurY,
+            ),
             vertices: indexedVertices,
             bounds: pathNode.bounds,
           ),
@@ -113,7 +119,12 @@ class Tessellator extends Visitor<Node, void>
     if (stroke != null) {
       children.add(
         ResolvedPathNode(
-          paint: Paint(blendMode: pathNode.paint.blendMode, stroke: stroke),
+          paint: Paint(
+            blendMode: pathNode.paint.blendMode,
+            stroke: stroke,
+            filterBlurX: pathNode.paint.filterBlurX,
+            filterBlurY: pathNode.paint.filterBlurY,
+          ),
           bounds: pathNode.bounds,
           path: pathNode.path,
         ),

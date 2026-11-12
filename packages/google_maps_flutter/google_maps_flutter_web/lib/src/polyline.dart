@@ -9,10 +9,9 @@ class PolylineController {
   /// Creates a `PolylineController` that wraps a [gmaps.Polyline] object and its `onTap` behavior.
   PolylineController({
     required gmaps.Polyline polyline,
-    bool consumeTapEvents = false,
+    this._consumeTapEvents = false,
     VoidCallback? onTap,
-  }) : _polyline = polyline,
-       _consumeTapEvents = consumeTapEvents {
+  }) : _polyline = polyline {
     if (onTap != null) {
       polyline.onClick.listen((gmaps.PolyMouseEvent event) {
         onTap.call();

@@ -738,6 +738,7 @@ class _SnackBarState extends State<SnackBar> {
       ),
       maxLines: 1,
       textDirection: TextDirection.ltr,
+      textScaler: MediaQuery.textScalerOf(context),
     )..layout();
     final double actionAndIconWidth =
         actionTextPainter.size.width +
@@ -795,7 +796,7 @@ class _SnackBarState extends State<SnackBar> {
                 ),
               ),
               if (!willOverflowAction) ...maybeActionAndIcon,
-              if (willOverflowAction) SizedBox(width: snackBarWidth * 0.4),
+              if (willOverflowAction && widget.padding == null) SizedBox(width: horizontalPadding),
             ],
           ),
           if (willOverflowAction)

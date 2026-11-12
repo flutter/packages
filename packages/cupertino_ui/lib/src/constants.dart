@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// TODO(QuncCccccc): Remove ignore once https://github.com/flutter/flutter/issues/196406 is fixed.
+// ignore: uri_does_not_exist_in_doc_import
 /// @docImport 'package:material_ui/material_ui.dart';
 ///
 /// @docImport 'checkbox.dart';
@@ -46,7 +48,7 @@ const double kCupertinoFocusColorOpacity = 0.80,
 /// See also:
 ///
 /// * <https://developer.apple.com/design/human-interface-guidelines/buttons#iOS-iPadOS>
-const double kCupertinoButtonTintedOpacityLight = 0.12, kCupertinoButtonTintedOpacityDark = 0.26;
+const double kCupertinoButtonTintedOpacityLight = 0.18, kCupertinoButtonTintedOpacityDark = 0.26;
 
 /// The default value for [IconThemeData.size] of [CupertinoButton.child].
 ///

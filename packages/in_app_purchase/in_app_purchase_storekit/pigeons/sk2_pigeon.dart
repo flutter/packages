@@ -252,6 +252,9 @@ abstract class InAppPurchase2API {
   List<SK2TransactionMessage> unfinishedTransactions();
 
   @async
+  List<SK2TransactionMessage> currentEntitlements();
+
+  @async
   void finish(int id);
 
   void startListeningToTransactions();
@@ -269,6 +272,9 @@ abstract class InAppPurchase2API {
 
   @async
   void presentOfferCodeRedeemSheet();
+
+  @async
+  void showManageSubscriptions();
 }
 
 @FlutterApi()

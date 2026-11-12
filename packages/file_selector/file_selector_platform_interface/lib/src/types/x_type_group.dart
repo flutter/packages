@@ -12,13 +12,12 @@ class XTypeGroup {
   /// allowed.
   const XTypeGroup({
     this.label,
-    List<String>? extensions,
+    this._extensions,
     this.mimeTypes,
     List<String>? uniformTypeIdentifiers,
     this.webWildCards,
     @Deprecated('Use uniformTypeIdentifiers instead') List<String>? macUTIs,
-  }) : _extensions = extensions,
-       assert(
+  }) : assert(
          uniformTypeIdentifiers == null || macUTIs == null,
          'Only one of uniformTypeIdentifiers or macUTIs can be non-null',
        ),
