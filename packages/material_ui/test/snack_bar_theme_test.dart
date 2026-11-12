@@ -18,6 +18,15 @@ void main() {
     expect(identical(SnackBarThemeData.lerp(data, data, 0.5), data), true);
   });
 
+  test('SnackBarThemeData lerp keeps showCloseIcon', () {
+    const a = SnackBarThemeData(showCloseIcon: true);
+    const b = SnackBarThemeData(showCloseIcon: false);
+    expect(SnackBarThemeData.lerp(a, b, 0.25).showCloseIcon, true);
+    expect(SnackBarThemeData.lerp(a, b, 0.75).showCloseIcon, false);
+    expect(SnackBarThemeData.lerp(a, null, 0.25).showCloseIcon, true);
+    expect(SnackBarThemeData.lerp(null, a, 0.75).showCloseIcon, true);
+  });
+
   test('SnackBarThemeData null fields by default', () {
     const snackBarTheme = SnackBarThemeData();
     expect(snackBarTheme.backgroundColor, null);
