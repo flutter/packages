@@ -2,6 +2,7 @@
 
 * Fixes `VideoRecordedEvent` equality and `hashCode` to compare the recorded file's path,
   so equal events always have equal hash codes.
+* Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
 
 ## 2.15.0
 
