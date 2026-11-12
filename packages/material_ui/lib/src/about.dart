@@ -819,11 +819,15 @@ class _PackagesViewState extends State<_PackagesView> {
               case ConnectionState.waiting:
                 return Material(
                   color: Theme.of(context).cardColor,
-                  child: Column(
-                    children: <Widget>[
-                      widget.about,
-                      const Center(child: CircularProgressIndicator()),
-                    ],
+                  // Scrolls like the loaded list, so that a short screen or
+                  // large text doesn't overflow while the licenses load.
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: <Widget>[
+                        widget.about,
+                        const Center(child: CircularProgressIndicator()),
+                      ],
+                    ),
                   ),
                 );
             }
