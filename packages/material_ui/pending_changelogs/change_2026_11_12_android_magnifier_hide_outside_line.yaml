@@ -1,0 +1,3 @@
+changelog: |
+  - Hides the Android `TextMagnifier` when a drag moves too far past either end of the current line, matching native Android.
+version: patch
