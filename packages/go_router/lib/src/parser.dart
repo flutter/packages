@@ -64,6 +64,8 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
   /// Stores the last successful match list to enable "stay" on the same route.
   RouteMatchList? _lastMatchList;
 
+  RouteInfoState? _lastGoState;
+
   /// Instance of [_OnEnterHandler] to process top-level onEnter logic.
   final _OnEnterHandler _onEnterHandler;
 
@@ -211,6 +213,12 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
                 completer: infoState.completer,
                 type: infoState.type,
               );
+
+              // A refresh re-parses the same state, so only a new state is a new go.
+              if (infoState.type == NavigatingType.go && !identical(infoState, _lastGoState)) {
+                _lastGoState = infoState;
+                router.routerDelegate.newGoConfiguration = updated;
+              }
 
               // Cache the successful match list.
               _lastMatchList = updated;
