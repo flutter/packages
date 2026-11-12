@@ -9,10 +9,9 @@ class CircleController {
   /// Creates a `CircleController`, which wraps a [gmaps.Circle] object and its `onTap` behavior.
   CircleController({
     required gmaps.Circle circle,
-    bool consumeTapEvents = false,
+    this._consumeTapEvents = false,
     VoidCallback? onTap,
-  }) : _circle = circle,
-       _consumeTapEvents = consumeTapEvents {
+  }) : _circle = circle {
     if (onTap != null) {
       circle.onClick.listen((_) {
         onTap.call();
