@@ -1,0 +1,3 @@
+changelog: |
+  - Updates a `DropdownMenu` test to check that long labels wrap without overflow instead of a fixed height.
+version: skip
