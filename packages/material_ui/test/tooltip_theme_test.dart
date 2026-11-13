@@ -31,6 +31,7 @@ void main() {
       triggerMode: TooltipTriggerMode.tap,
       enableFeedback: true,
       ignorePointer: true,
+      showOnFocus: true,
     );
     const b = TooltipThemeData(
       waitDuration: Duration(milliseconds: 400),
@@ -39,6 +40,7 @@ void main() {
       triggerMode: TooltipTriggerMode.longPress,
       enableFeedback: false,
       ignorePointer: false,
+      showOnFocus: false,
     );
     final TooltipThemeData lerpedEarly = TooltipThemeData.lerp(a, b, 0.25)!;
     expect(lerpedEarly.waitDuration, a.waitDuration);
@@ -47,6 +49,7 @@ void main() {
     expect(lerpedEarly.triggerMode, a.triggerMode);
     expect(lerpedEarly.enableFeedback, a.enableFeedback);
     expect(lerpedEarly.ignorePointer, a.ignorePointer);
+    expect(lerpedEarly.showOnFocus, a.showOnFocus);
 
     final TooltipThemeData lerpedLate = TooltipThemeData.lerp(a, b, 0.75)!;
     expect(lerpedLate.waitDuration, b.waitDuration);
@@ -55,6 +58,7 @@ void main() {
     expect(lerpedLate.triggerMode, b.triggerMode);
     expect(lerpedLate.enableFeedback, b.enableFeedback);
     expect(lerpedLate.ignorePointer, b.ignorePointer);
+    expect(lerpedLate.showOnFocus, b.showOnFocus);
   });
 
   test('TooltipThemeData defaults', () {
@@ -74,6 +78,7 @@ void main() {
     expect(theme.triggerMode, null);
     expect(theme.enableFeedback, null);
     expect(theme.ignorePointer, null);
+    expect(theme.showOnFocus, null);
   });
 
   testWidgets('Default TooltipThemeData debugFillProperties', (WidgetTester tester) async {
@@ -111,6 +116,7 @@ void main() {
       triggerMode: triggerMode,
       enableFeedback: enableFeedback,
       ignorePointer: ignorePointer,
+      showOnFocus: true,
     ).debugFillProperties(builder);
 
     final List<String> description = builder.properties
@@ -133,6 +139,7 @@ void main() {
       'triggerMode: $triggerMode',
       'enableFeedback: true',
       'ignorePointer: false',
+      'showOnFocus: true',
     ]);
   });
 

@@ -39,6 +39,15 @@ void main() {
     expect(app.darkTheme!.brightness, equals(Brightness.dark));
   });
 
+  testWidgets('All themes show tooltips on keyboard focus', (WidgetTester tester) async {
+    await tester.pumpWidget(const App());
+    final app = find.byType(MaterialApp).evaluate().first.widget as MaterialApp;
+    expect(app.theme!.tooltipTheme.showOnFocus, isTrue);
+    expect(app.darkTheme!.tooltipTheme.showOnFocus, isTrue);
+    expect(app.highContrastTheme!.tooltipTheme.showOnFocus, isTrue);
+    expect(app.highContrastDarkTheme!.tooltipTheme.showOnFocus, isTrue);
+  });
+
   testWidgets('App can generate high-contrast color scheme', (WidgetTester tester) async {
     await tester.pumpWidget(
       const MediaQuery(data: MediaQueryData(highContrast: true), child: App()),
