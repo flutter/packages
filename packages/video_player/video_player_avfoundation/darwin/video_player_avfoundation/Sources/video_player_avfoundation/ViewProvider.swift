@@ -26,15 +26,15 @@ protocol ViewProvider {
 /// A default implementation of the ViewProvider protocol.
 class DefaultViewProvider: ViewProvider {
   /// The backing registrar.
-  private let registrar: FlutterPluginRegistrar
+  private weak var registrar: FlutterPluginRegistrar?
 
   init(registrar: FlutterPluginRegistrar) {
     self.registrar = registrar
   }
 
   #if os(macOS)
-    var view: NSView? { registrar.view }
+    var view: NSView? { registrar?.view }
   #else
-    var viewController: UIViewController? { registrar.viewController }
+    var viewController: UIViewController? { registrar?.viewController }
   #endif
 }
