@@ -96,7 +96,7 @@ abstract base class PlatformXDirectory extends PlatformXEntity {
     throw UnimplementedError('`createFile` is not implemented on the current platform.');
   }
 
-  /// Creates a container in this the container.
+  /// Creates a container in this container.
   ///
   /// Platforms may throw an exception if there is an error creating the
   /// container.
