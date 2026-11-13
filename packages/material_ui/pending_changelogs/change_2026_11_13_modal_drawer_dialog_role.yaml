@@ -1,0 +1,3 @@
+changelog: |
+  - Exposes a `Drawer` shown by a `DrawerController`, such as `Scaffold.drawer`, with the dialog semantics role, and always applies the default drawer label on the web so the drawer has an accessible name.
+version: minor
