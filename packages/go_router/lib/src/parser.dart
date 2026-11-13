@@ -91,7 +91,10 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
       incomingUri = routeInformation.uri;
     } else if (raw is! RouteInformationState) {
       // Restoration/back-forward: decode the stored match list and treat as restore.
-      final RouteMatchList decoded = _routeMatchListCodec.decode(raw as Map<Object?, Object?>);
+      final RouteMatchList decoded = _routeMatchListCodec.decodeOver(
+        raw as Map<Object?, Object?>,
+        router.routerDelegate.currentConfiguration,
+      );
       infoState = RouteInformationState.restore(base: decoded);
       incomingUri = decoded.uri;
     } else {
@@ -301,9 +304,22 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
         if (baseRouteMatchList!.uri.toString() != newMatchList.uri.toString()) {
           return newMatchList;
         } else {
-          return baseRouteMatchList;
+          return _withoutClosedPages(baseRouteMatchList);
         }
     }
+  }
+
+  /// Removes the pages of [matchList] that closed while it was being parsed,
+  /// as during an asynchronous redirect.
+  RouteMatchList _withoutClosedPages(RouteMatchList matchList) {
+    var result = matchList;
+    matchList.visitRouteMatches((RouteMatchBase match) {
+      if (match is ImperativeRouteMatch && match.completer.isCompleted) {
+        result = result.remove(match);
+      }
+      return true;
+    });
+    return result;
   }
 
   /// Returns a unique [ValueKey<String>] for a new route.
