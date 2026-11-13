@@ -1,3 +1,8 @@
+## 2.4.1
+
+* Fixes SVG compilation sending asset bundles or HTTP clients to compute isolates.
+  Preserves `provideSvg` overrides on custom loader subclasses.
+
 ## 2.4.0
 
 * Adds a configurable compiled SVG cache byte budget, defaulting to 32 MiB,
