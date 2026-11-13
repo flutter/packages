@@ -2284,6 +2284,7 @@ private constructor(private val engineKey: Long) {
    * that engine when it is known.
    */
   @Keep
+  @JvmOverloads
   fun register(
       api: NativeInteropHostIntegrationCoreApi,
       binding: FlutterPlugin.FlutterPluginBinding,
@@ -2301,6 +2302,7 @@ private constructor(private val engineKey: Long) {
    * that engine when it is known.
    */
   @Keep
+  @JvmOverloads
   fun register(
       api: NativeInteropHostIntegrationCoreApi,
       engine: FlutterEngine,
@@ -2318,6 +2320,7 @@ private constructor(private val engineKey: Long) {
    * registered, or is only registered for several other engines.
    */
   @Keep
+  @JvmOverloads
   fun unregister(
       api: NativeInteropHostIntegrationCoreApi,
       binding: FlutterPlugin.FlutterPluginBinding,
@@ -2335,6 +2338,7 @@ private constructor(private val engineKey: Long) {
    * registered, or is only registered for several other engines.
    */
   @Keep
+  @JvmOverloads
   fun unregister(
       api: NativeInteropHostIntegrationCoreApi,
       engine: FlutterEngine,
@@ -2399,6 +2403,7 @@ private constructor(private val engineKey: Long) {
      */
     @JvmStatic
     @Keep
+    @JvmOverloads
     fun pigeonResolveInstance(
         engineId: Long,
         affinityKey: Long,
@@ -6734,6 +6739,7 @@ class NativeInteropFlutterIntegrationCoreApiRegistrar() {
    * This is called by the generated Dart code and is not intended for direct use.
    */
   @Keep
+  @JvmOverloads
   fun registerInstance(
       api: NativeInteropFlutterIntegrationCoreApiBridge,
       engineId: Long,
@@ -6766,6 +6772,7 @@ class NativeInteropFlutterIntegrationCoreApiRegistrar() {
    * This is called by the generated Dart code and is not intended for direct use.
    */
   @Keep
+  @JvmOverloads
   fun unregisterInstance(
       api: NativeInteropFlutterIntegrationCoreApiBridge,
       name: String = defaultInstanceName
@@ -6789,6 +6796,7 @@ class NativeInteropFlutterIntegrationCoreApiRegistrar() {
    * for [name]. Returns null if none is registered.
    */
   @Keep
+  @JvmOverloads
   fun getInstance(
       binding: FlutterPlugin.FlutterPluginBinding,
       name: String = defaultInstanceName
@@ -6804,6 +6812,7 @@ class NativeInteropFlutterIntegrationCoreApiRegistrar() {
    * for [name]. Returns null if none is registered.
    */
   @Keep
+  @JvmOverloads
   fun getInstance(
       engine: FlutterEngine,
       name: String = defaultInstanceName
@@ -8332,6 +8341,7 @@ class NativeInteropReservedNamesHostApiRegistrar private constructor(private val
    * that engine when it is known.
    */
   @Keep
+  @JvmOverloads
   fun register(
       api: NativeInteropReservedNamesHostApi,
       binding: FlutterPlugin.FlutterPluginBinding,
@@ -8349,6 +8359,7 @@ class NativeInteropReservedNamesHostApiRegistrar private constructor(private val
    * that engine when it is known.
    */
   @Keep
+  @JvmOverloads
   fun register(
       api: NativeInteropReservedNamesHostApi,
       engine: FlutterEngine,
@@ -8366,6 +8377,7 @@ class NativeInteropReservedNamesHostApiRegistrar private constructor(private val
    * registered, or is only registered for several other engines.
    */
   @Keep
+  @JvmOverloads
   fun unregister(
       api: NativeInteropReservedNamesHostApi,
       binding: FlutterPlugin.FlutterPluginBinding,
@@ -8383,6 +8395,7 @@ class NativeInteropReservedNamesHostApiRegistrar private constructor(private val
    * registered, or is only registered for several other engines.
    */
   @Keep
+  @JvmOverloads
   fun unregister(
       api: NativeInteropReservedNamesHostApi,
       engine: FlutterEngine,
@@ -8447,6 +8460,7 @@ class NativeInteropReservedNamesHostApiRegistrar private constructor(private val
      */
     @JvmStatic
     @Keep
+    @JvmOverloads
     fun pigeonResolveInstance(
         engineId: Long,
         affinityKey: Long,
@@ -8830,6 +8844,7 @@ class NativeInteropReservedNamesFlutterApiRegistrar() {
    * This is called by the generated Dart code and is not intended for direct use.
    */
   @Keep
+  @JvmOverloads
   fun registerInstance(
       api: NativeInteropReservedNamesFlutterApiBridge,
       engineId: Long,
@@ -8862,6 +8877,7 @@ class NativeInteropReservedNamesFlutterApiRegistrar() {
    * This is called by the generated Dart code and is not intended for direct use.
    */
   @Keep
+  @JvmOverloads
   fun unregisterInstance(
       api: NativeInteropReservedNamesFlutterApiBridge,
       name: String = defaultInstanceName
@@ -8885,6 +8901,7 @@ class NativeInteropReservedNamesFlutterApiRegistrar() {
    * for [name]. Returns null if none is registered.
    */
   @Keep
+  @JvmOverloads
   fun getInstance(
       binding: FlutterPlugin.FlutterPluginBinding,
       name: String = defaultInstanceName
@@ -8900,6 +8917,7 @@ class NativeInteropReservedNamesFlutterApiRegistrar() {
    * for [name]. Returns null if none is registered.
    */
   @Keep
+  @JvmOverloads
   fun getInstance(
       engine: FlutterEngine,
       name: String = defaultInstanceName
@@ -9042,6 +9060,7 @@ class NativeInteropSealedClassHostApiRegistrar private constructor(private val e
    * that engine when it is known.
    */
   @Keep
+  @JvmOverloads
   fun register(
       api: NativeInteropSealedClassHostApi,
       binding: FlutterPlugin.FlutterPluginBinding,
@@ -9059,6 +9078,7 @@ class NativeInteropSealedClassHostApiRegistrar private constructor(private val e
    * that engine when it is known.
    */
   @Keep
+  @JvmOverloads
   fun register(
       api: NativeInteropSealedClassHostApi,
       engine: FlutterEngine,
@@ -9076,6 +9096,7 @@ class NativeInteropSealedClassHostApiRegistrar private constructor(private val e
    * registered, or is only registered for several other engines.
    */
   @Keep
+  @JvmOverloads
   fun unregister(
       api: NativeInteropSealedClassHostApi,
       binding: FlutterPlugin.FlutterPluginBinding,
@@ -9093,6 +9114,7 @@ class NativeInteropSealedClassHostApiRegistrar private constructor(private val e
    * registered, or is only registered for several other engines.
    */
   @Keep
+  @JvmOverloads
   fun unregister(
       api: NativeInteropSealedClassHostApi,
       engine: FlutterEngine,
@@ -9153,6 +9175,7 @@ class NativeInteropSealedClassHostApiRegistrar private constructor(private val e
      */
     @JvmStatic
     @Keep
+    @JvmOverloads
     fun pigeonResolveInstance(
         engineId: Long,
         affinityKey: Long,
@@ -9323,6 +9346,7 @@ class NativeInteropSealedClassFlutterApiRegistrar() {
    * This is called by the generated Dart code and is not intended for direct use.
    */
   @Keep
+  @JvmOverloads
   fun registerInstance(
       api: NativeInteropSealedClassFlutterApiBridge,
       engineId: Long,
@@ -9355,6 +9379,7 @@ class NativeInteropSealedClassFlutterApiRegistrar() {
    * This is called by the generated Dart code and is not intended for direct use.
    */
   @Keep
+  @JvmOverloads
   fun unregisterInstance(
       api: NativeInteropSealedClassFlutterApiBridge,
       name: String = defaultInstanceName
@@ -9378,6 +9403,7 @@ class NativeInteropSealedClassFlutterApiRegistrar() {
    * for [name]. Returns null if none is registered.
    */
   @Keep
+  @JvmOverloads
   fun getInstance(
       binding: FlutterPlugin.FlutterPluginBinding,
       name: String = defaultInstanceName
@@ -9393,6 +9419,7 @@ class NativeInteropSealedClassFlutterApiRegistrar() {
    * for [name]. Returns null if none is registered.
    */
   @Keep
+  @JvmOverloads
   fun getInstance(
       engine: FlutterEngine,
       name: String = defaultInstanceName

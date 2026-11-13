@@ -2243,8 +2243,44 @@ void main() {
             'override fun doSomething()',
         ]);
         // Only the Dart-facing internal helpers are static.
-        expect('@JvmStatic\n    @Keep\n    fun '.allMatches(code).length, 2);
+        expect('@JvmStatic'.allMatches(code).length, 2);
+        expect(
+          code,
+          contains('@JvmStatic\n    @Keep\n    @JvmOverloads\n    fun pigeonResolveInstance'),
+        );
+        expect(code, contains('@JvmStatic\n    @Keep\n    fun pigeonEngineKeyOf'));
       });
+
+      test(
+        'host API register and unregister are annotated @JvmOverloads so Java callers can omit name (${transport.name})',
+        () {
+          final String code = generate(buildRoot(flutter: false), transport: transport);
+          expect(
+            code,
+            contains(
+              '@Keep\n  @JvmOverloads\n  fun register(api: HostApi, binding: FlutterPlugin.FlutterPluginBinding, name: String = defaultInstanceName) {',
+            ),
+          );
+          expect(
+            code,
+            contains(
+              '@Keep\n  @JvmOverloads\n  fun register(api: HostApi, engine: FlutterEngine, name: String = defaultInstanceName) {',
+            ),
+          );
+          expect(
+            code,
+            contains(
+              '@Keep\n  @JvmOverloads\n  fun unregister(api: HostApi, binding: FlutterPlugin.FlutterPluginBinding, name: String = defaultInstanceName) {',
+            ),
+          );
+          expect(
+            code,
+            contains(
+              '@Keep\n  @JvmOverloads\n  fun unregister(api: HostApi, engine: FlutterEngine, name: String = defaultInstanceName) {',
+            ),
+          );
+        },
+      );
     }
 
     test('host API register and unregister compute engine keys', () {
@@ -2289,6 +2325,19 @@ void main() {
       expect(code, contains('return instance.engineKey'));
     });
 
+    test(
+      'host API pigeonResolveInstance is annotated @JvmOverloads so Java callers can omit name',
+      () {
+        final String code = generate(buildRoot(flutter: false));
+        expect(
+          code,
+          contains(
+            '@JvmStatic\n    @Keep\n    @JvmOverloads\n    fun pigeonResolveInstance(engineId: Long, affinityKey: Long, name: String = defaultInstanceName): HostApiRegistrar? {',
+          ),
+        );
+      },
+    );
+
     for (final NativeInteropTransport transport in NativeInteropTransport.values) {
       // In hybrid mode Dart registers a `FlutterApiBridge`, but native lookups
       // still return `FlutterApi`.
@@ -2311,6 +2360,35 @@ void main() {
           expect(code, isNot(contains('companion object')));
         },
       );
+
+      test('Flutter API registerInstance, unregisterInstance, and getInstance are annotated '
+          '@JvmOverloads so Java callers can omit name (${transport.name})', () {
+        final String code = generate(buildRoot(host: false), transport: transport);
+        expect(
+          code,
+          contains(
+            '@Keep\n  @JvmOverloads\n  fun registerInstance(api: $dartApiType, engineId: Long, affinityKey: Long, name: String = defaultInstanceName) {',
+          ),
+        );
+        expect(
+          code,
+          contains(
+            '@Keep\n  @JvmOverloads\n  fun unregisterInstance(api: $dartApiType, name: String = defaultInstanceName) {',
+          ),
+        );
+        expect(
+          code,
+          contains(
+            '@Keep\n  @JvmOverloads\n  fun getInstance(binding: FlutterPlugin.FlutterPluginBinding, name: String = defaultInstanceName): FlutterApi? {',
+          ),
+        );
+        expect(
+          code,
+          contains(
+            '@Keep\n  @JvmOverloads\n  fun getInstance(engine: FlutterEngine, name: String = defaultInstanceName): FlutterApi? {',
+          ),
+        );
+      });
 
       test(
         'Flutter API registration dedups by identity and looks up by engine (${transport.name})',
