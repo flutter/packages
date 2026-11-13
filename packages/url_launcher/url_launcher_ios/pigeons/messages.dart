@@ -8,6 +8,7 @@ import 'package:pigeon/pigeon.dart';
   PigeonOptions(
     dartOut: 'lib/src/messages.g.dart',
     swiftOut: 'ios/url_launcher_ios/Sources/url_launcher_ios/messages.g.swift',
+    swiftOptions: SwiftOptions(useFfi: true, ffiModuleName: 'url_launcher_ios'),
     copyrightHeader: 'pigeons/copyright.txt',
   ),
 )

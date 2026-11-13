@@ -46,13 +46,13 @@ struct URLLauncherTests {
     ("good://url", LaunchResult.success),
     ("bad://url", .failure),
   ])
-  func canLaunch(url: String, expected: LaunchResult) {
-    let result = createPlugin().canLaunchUrl(url: url)
+  func canLaunch(url: String, expected: LaunchResult) throws {
+    let result = try createPlugin().canLaunchUrl(url: url)
     #expect(result == expected)
   }
 
-  @Test func canLaunchFailureWithInvalidURL() {
-    let result = createPlugin().canLaunchUrl(url: "urls can't have spaces")
+  @Test func canLaunchFailureWithInvalidURL() throws {
+    let result = try createPlugin().canLaunchUrl(url: "urls can't have spaces")
     if urlParsingIsStrict() {
       #expect(result == .invalidUrl)
     } else {
@@ -64,35 +64,18 @@ struct URLLauncherTests {
     ("good://url", LaunchResult.success),
     ("bad://url", .failure),
   ])
-  func launch(url: String, expected: LaunchResult) async {
-    await confirmation("completion called") { confirmed in
-      createPlugin().launchUrl(url: url, universalLinksOnly: false) { result in
-        switch result {
-        case .success(let details):
-          #expect(details == expected)
-        case .failure(let error):
-          Issue.record("Unexpected error: \(error)")
-        }
-        confirmed()
-      }
-    }
+  func launch(url: String, expected: LaunchResult) async throws {
+    let result = try await createPlugin().launchUrl(url: url, universalLinksOnly: false)
+    #expect(result == expected)
   }
 
-  @Test func launchFailureWithInvalidURL() async {
-    await confirmation("completion called") { confirmed in
-      createPlugin().launchUrl(url: "urls can't have spaces", universalLinksOnly: false) { result in
-        switch result {
-        case .success(let details):
-          if urlParsingIsStrict() {
-            #expect(details == .invalidUrl)
-          } else {
-            #expect(details == .failure)
-          }
-        case .failure(let error):
-          Issue.record("Unexpected error: \(error)")
-        }
-        confirmed()
-      }
+  @Test func launchFailureWithInvalidURL() async throws {
+    let result = try await createPlugin().launchUrl(
+      url: "urls can't have spaces", universalLinksOnly: false)
+    if urlParsingIsStrict() {
+      #expect(result == .invalidUrl)
+    } else {
+      #expect(result == .failure)
     }
   }
 
@@ -100,17 +83,8 @@ struct URLLauncherTests {
     let launcher = FakeLauncher()
     let plugin = createPlugin(launcher: launcher)
 
-    await confirmation("completion called") { confirmed in
-      plugin.launchUrl(url: "good://url", universalLinksOnly: false) { result in
-        switch result {
-        case .success(let details):
-          #expect(details == .success)
-        case .failure(let error):
-          Issue.record("Unexpected error: \(error)")
-        }
-        confirmed()
-      }
-    }
+    let result = try await plugin.launchUrl(url: "good://url", universalLinksOnly: false)
+    #expect(result == .success)
     let passedOptions = try #require(launcher.passedOptions)
     #expect(passedOptions[.universalLinksOnly] as? Bool == false)
   }
@@ -119,54 +93,33 @@ struct URLLauncherTests {
     let launcher = FakeLauncher()
     let plugin = createPlugin(launcher: launcher)
 
-    await confirmation("completion called") { confirmed in
-      plugin.launchUrl(url: "good://url", universalLinksOnly: true) { result in
-        switch result {
-        case .success(let details):
-          #expect(details == .success)
-        case .failure(let error):
-          Issue.record("Unexpected error: \(error)")
-        }
-        confirmed()
-      }
-    }
+    let result = try await plugin.launchUrl(url: "good://url", universalLinksOnly: true)
+    #expect(result == .success)
     let passedOptions = try #require(launcher.passedOptions)
     #expect(passedOptions[.universalLinksOnly] as? Bool == true)
   }
 
-  @Test func launchSafariViewControllerWithClose() async {
+  @Test func launchSafariViewControllerWithClose() async throws {
     let launcher = FakeLauncher()
     let viewPresenter = TestViewPresenter()
     let plugin = createPlugin(launcher: launcher, viewPresenter: viewPresenter)
 
-    await confirmation("completion called") { confirmed in
-      plugin.openUrlInSafariViewController(url: "https://flutter.dev") { result in
-        switch result {
-        case .success(let details):
-          #expect(details == .dismissed)
-        case .failure(let error):
-          Issue.record("Unexpected error: \(error)")
-        }
-        confirmed()
-      }
-      plugin.closeSafariViewController()
+    let resultTask = Task {
+      try await plugin.openUrlInSafariViewController(url: "https://flutter.dev")
     }
+    while viewPresenter.presentedController == nil {
+      await Task.yield()
+    }
+    try plugin.closeSafariViewController()
+    let result = try await resultTask.value
+    #expect(result == .dismissed)
     #expect(viewPresenter.presentedController != nil)
   }
 
-  @Test func launchSafariViewControllerFailureWithNoViewPresenter() async {
-    await confirmation("completion called") { confirmed in
-      createPlugin(viewPresenter: nil).openUrlInSafariViewController(url: "https://flutter.dev") {
-        result in
-        switch result {
-        case .success(let details):
-          #expect(details == .noUI)
-        case .failure(let error):
-          Issue.record("Unexpected error: \(error)")
-        }
-        confirmed()
-      }
-    }
+  @Test func launchSafariViewControllerFailureWithNoViewPresenter() async throws {
+    let result = try await createPlugin(viewPresenter: nil).openUrlInSafariViewController(
+      url: "https://flutter.dev")
+    #expect(result == .noUI)
   }
 
 }

@@ -1,3 +1,7 @@
+## 6.3.35
+
+* Migrates to Pigeon's native interop (JNI) as an internal implementation detail; no public API changes.
+
 ## 6.3.34
 
 * Updates Robolectric to 4.17 and adds the JVM arguments it requires for unit tests.
