@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes the Sinhala (`si`) time of day format to use `HH.mm`, matching CLDR and `DateFormat.Hm('si')`.
+version: patch
