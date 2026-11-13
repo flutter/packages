@@ -923,6 +923,9 @@ its position.
 
 This is called by the generated Dart code and is not intended for direct use.''');
       indent.writeln('@Keep');
+      // Kotlin default parameters don't produce a Java-callable overload on
+      // their own, so this is needed for Java callers to omit [name].
+      indent.writeln('@JvmOverloads');
       indent.writeScoped(
         'fun registerInstance(api: $dartApiType, engineId: Long, affinityKey: Long, name: String = defaultInstanceName) {',
         '}',
@@ -951,6 +954,7 @@ Instances are matched by identity. Does nothing if [api] is not registered.
 
 This is called by the generated Dart code and is not intended for direct use.''');
       indent.writeln('@Keep');
+      indent.writeln('@JvmOverloads');
       indent.writeScoped(
         'fun unregisterInstance(api: $dartApiType, name: String = defaultInstanceName) {',
         '}',
@@ -976,6 +980,7 @@ Returns the instance registered under [name] (or the default instance when
 When no instance is known to belong to that engine, falls back to the most
 recent registration for [name]. Returns null if none is registered.''');
         indent.writeln('@Keep');
+        indent.writeln('@JvmOverloads');
         indent.writeScoped(
           'fun getInstance($paramName: $paramType, name: String = defaultInstanceName): ${api.name}? {',
           '}',
@@ -1225,6 +1230,7 @@ kotlin.synchronized($registered) {
             ]) {
           _writeNativeInteropHostRegisterDocs(indent, engineSource: source);
           indent.writeln('@Keep');
+          indent.writeln('@JvmOverloads');
           indent.writeScoped(
             'fun register(api: ${api.name}, $paramName: $paramType, name: String = defaultInstanceName) {',
             '}',
@@ -1241,6 +1247,7 @@ kotlin.synchronized($registered) {
             ]) {
           _writeNativeInteropHostUnregisterDocs(indent, engineSource: source);
           indent.writeln('@Keep');
+          indent.writeln('@JvmOverloads');
           indent.writeScoped(
             'fun unregister(api: ${api.name}, $paramName: $paramType, name: String = defaultInstanceName) {',
             '}',
@@ -1323,6 +1330,7 @@ is unknown.
 This is called by the generated Dart code and is not intended for direct use.''');
           indent.writeln('@JvmStatic');
           indent.writeln('@Keep');
+          indent.writeln('@JvmOverloads');
           indent.writeScoped(
             'fun pigeonResolveInstance(engineId: Long, affinityKey: Long, name: String = defaultInstanceName): $registrarName? {',
             '}',
