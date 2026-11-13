@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes `DropdownButton` menu not following the button when the window is resized.
+version: patch
