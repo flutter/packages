@@ -207,8 +207,9 @@ class _PlaceholderImplementation extends VideoPlayerPlatform {}
 /// implementation are defined in that implementation's package, such as
 /// `FairPlayDrmConfiguration` from `video_player_avfoundation`.
 ///
-/// Platform implementations are expected to recognize only the subclasses for
-/// the DRM systems they support, and to reject any other subclass.
+/// Platform implementations should recognize only the subclasses for the DRM
+/// systems they support, and should throw an [UnsupportedError] for any other
+/// subclass.
 @immutable
 abstract class VideoDrmConfiguration {
   /// Allows subclasses to be const constructed.
@@ -219,7 +220,7 @@ abstract class VideoDrmConfiguration {
 ///
 /// Widevine is not tied to a single platform, so this configuration is shared
 /// by every platform implementation that supports it. Implementations that do
-/// not support Widevine reject it like any other unsupported
+/// not support Widevine should reject it like any other unsupported
 /// [VideoDrmConfiguration].
 ///
 /// The license exchange itself is performed by the platform implementation,
@@ -292,8 +293,8 @@ class DataSource {
   ///
   /// Only supported for [DataSourceType.network] videos. Implementations
   /// should throw an [ArgumentError] if a configuration is provided for
-  /// another source type, or if it is a subclass of [VideoDrmConfiguration]
-  /// that the implementation does not support.
+  /// another source type, and an [UnsupportedError] if it is a subclass of
+  /// [VideoDrmConfiguration] that the implementation does not support.
   final VideoDrmConfiguration? drmConfiguration;
 
   /// The name of the asset. Only set for [DataSourceType.asset] videos.
