@@ -1339,11 +1339,14 @@ void main() {
 
       // Test label semantics.
       final Finder drawerLabelFinder = find.bySemanticsLabel(localizations.drawerLabel);
-      if (defaultTargetPlatform == TargetPlatform.iOS ||
-          defaultTargetPlatform == TargetPlatform.macOS) {
-        expect(drawerLabelFinder, findsNothing); // Apple platforms don't show drawer label.
+      if (!kIsWeb &&
+          (defaultTargetPlatform == TargetPlatform.iOS ||
+              defaultTargetPlatform == TargetPlatform.macOS)) {
+        expect(drawerLabelFinder, findsNothing); // Native Apple platforms don't show drawer label.
       } else {
-        expect(drawerLabelFinder, findsOneWidget); // Non-Apple platforms show drawer label.
+        // Non-Apple platforms and the web show drawer label, which the web
+        // uses as the drawer's accessible name.
+        expect(drawerLabelFinder, findsOneWidget);
       }
 
       // Test barrier semantics.
@@ -1465,6 +1468,35 @@ void main() {
 
     handle.dispose();
   });
+
+  testWidgets(
+    'Modal drawer on Apple platforms is named on the web only',
+    (WidgetTester tester) async {
+      final SemanticsHandle handle = tester.ensureSemantics();
+      final scaffoldKey = GlobalKey<ScaffoldState>();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(key: scaffoldKey, drawer: const Drawer(), body: Container()),
+        ),
+      );
+
+      scaffoldKey.currentState!.openDrawer();
+      await tester.pumpAndSettle();
+
+      // A dialog needs an accessible name on the web. Native Apple platforms
+      // keep their convention of not announcing a drawer label.
+      final SemanticsNode node = tester.getSemantics(find.byType(Drawer));
+      expect(node.role, SemanticsRole.dialog);
+      expect(node.label, kIsWeb ? 'Navigation menu' : '');
+
+      handle.dispose();
+    },
+    variant: const TargetPlatformVariant(<TargetPlatform>{
+      TargetPlatform.iOS,
+      TargetPlatform.macOS,
+    }),
+    tags: 'reduced-web-test-set',
+  );
 
   testWidgets('Drawer outside a DrawerController has no semantics role', (
     WidgetTester tester,
