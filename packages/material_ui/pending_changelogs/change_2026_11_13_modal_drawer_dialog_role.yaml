@@ -1,0 +1,3 @@
+changelog: |
+  - Exposes a `Drawer` shown by a `DrawerController`, such as `Scaffold.drawer`, with the dialog semantics role.
+version: minor

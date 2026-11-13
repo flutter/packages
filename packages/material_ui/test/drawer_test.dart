@@ -1410,6 +1410,75 @@ void main() {
     semantics.dispose();
   });
 
+  testWidgets('Drawer opened by Scaffold has the dialog semantics role', (
+    WidgetTester tester,
+  ) async {
+    final SemanticsHandle handle = tester.ensureSemantics();
+    final scaffoldKey = GlobalKey<ScaffoldState>();
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          key: scaffoldKey,
+          drawer: const Drawer(),
+          endDrawer: const Drawer(),
+          body: Container(),
+        ),
+      ),
+    );
+
+    scaffoldKey.currentState!.openDrawer();
+    await tester.pumpAndSettle();
+    expect(tester.getSemantics(find.byType(Drawer)).role, SemanticsRole.dialog);
+
+    scaffoldKey.currentState!.closeDrawer();
+    await tester.pumpAndSettle();
+    scaffoldKey.currentState!.openEndDrawer();
+    await tester.pumpAndSettle();
+    expect(tester.getSemantics(find.byType(Drawer)).role, SemanticsRole.dialog);
+
+    handle.dispose();
+  });
+
+  testWidgets('NavigationDrawer opened by Scaffold has the dialog semantics role', (
+    WidgetTester tester,
+  ) async {
+    final SemanticsHandle handle = tester.ensureSemantics();
+    final scaffoldKey = GlobalKey<ScaffoldState>();
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          key: scaffoldKey,
+          drawer: const NavigationDrawer(
+            children: <Widget>[
+              NavigationDrawerDestination(icon: Icon(Icons.message), label: Text('Messages')),
+              NavigationDrawerDestination(icon: Icon(Icons.person), label: Text('Profile')),
+            ],
+          ),
+          body: Container(),
+        ),
+      ),
+    );
+
+    scaffoldKey.currentState!.openDrawer();
+    await tester.pumpAndSettle();
+    expect(tester.getSemantics(find.byType(Drawer)).role, SemanticsRole.dialog);
+
+    handle.dispose();
+  });
+
+  testWidgets('Drawer outside a DrawerController has no semantics role', (
+    WidgetTester tester,
+  ) async {
+    final SemanticsHandle handle = tester.ensureSemantics();
+    await tester.pumpWidget(const MaterialApp(home: Scaffold(body: Drawer())));
+
+    final SemanticsNode node = tester.getSemantics(find.byType(Drawer));
+    expect(node.role, SemanticsRole.none);
+    expect(node.label, 'Navigation menu');
+
+    handle.dispose();
+  });
+
   group('Material 2', () {
     // These tests are only relevant for Material 2. Once Material 2
     // support is deprecated and the APIs are removed, these tests

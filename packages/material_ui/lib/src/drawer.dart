@@ -14,6 +14,8 @@
 /// @docImport 'scaffold.dart';
 library;
 
+import 'dart:ui' show SemanticsRole;
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart' show DragStartBehavior;
 import 'package:flutter/widgets.dart';
@@ -285,6 +287,9 @@ class Drawer extends StatelessWidget {
       scopesRoute: true,
       namesRoute: true,
       explicitChildNodes: true,
+      // A drawer shown by a DrawerController is modal, so expose it as a
+      // dialog rather than a plain named route.
+      role: DrawerController.maybeOf(context) != null ? SemanticsRole.dialog : null,
       label: label,
       child: ConstrainedBox(
         constraints: BoxConstraints.expand(width: width ?? drawerTheme.width ?? _kWidth),
