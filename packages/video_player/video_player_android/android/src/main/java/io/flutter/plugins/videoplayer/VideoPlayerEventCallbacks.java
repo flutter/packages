@@ -13,11 +13,25 @@ final class VideoPlayerEventCallbacks implements VideoPlayerCallbacks {
   private final QueuingEventSink eventSink;
   private final @Nullable VideoEventsEventChannel eventChannel;
 
+  @VisibleForTesting
+  interface EventChannelFactory {
+    VideoEventsEventChannel create(
+        BinaryMessenger messenger, VideoEventsStreamHandler handler, String identifier);
+  }
+
   static VideoPlayerEventCallbacks bindTo(
       @NonNull BinaryMessenger binaryMessenger, @NonNull String identifier) {
+    return bindTo(binaryMessenger, identifier, VideoEventsStreamHandler.Companion::register);
+  }
+
+  @VisibleForTesting
+  static VideoPlayerEventCallbacks bindTo(
+      @NonNull BinaryMessenger binaryMessenger,
+      @NonNull String identifier,
+      EventChannelFactory factory) {
     QueuingEventSink eventSink = new QueuingEventSink();
     final VideoEventsEventChannel eventChannel =
-        VideoEventsStreamHandler.Companion.register(
+        factory.create(
             binaryMessenger,
             new VideoEventsStreamHandler() {
               @Override
