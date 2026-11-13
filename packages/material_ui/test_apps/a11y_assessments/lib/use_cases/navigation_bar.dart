@@ -44,7 +44,6 @@ class MainWidgetState extends State<MainWidget> {
             currentPageIndex = index;
           });
         },
-        indicatorColor: Colors.amber[800],
         selectedIndex: currentPageIndex,
         destinations: const <Widget>[
           NavigationDestination(
