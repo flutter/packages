@@ -1,0 +1,3 @@
+changelog: |
+  - Calculates menu item animation offsets without accumulating floating-point error.
+version: patch
