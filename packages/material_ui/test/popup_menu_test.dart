@@ -4504,6 +4504,118 @@ void main() {
     );
   });
 
+  testWidgets('PopupMenuButton updates active menu animation style', (WidgetTester tester) async {
+    final Key buttonKey = UniqueKey();
+    var animationStyle = const AnimationStyle(duration: Duration(milliseconds: 200));
+    var actions = 0;
+
+    Widget buildMenu() {
+      return MaterialApp(
+        home: Material(
+          child: PopupMenuButton<int>(
+            key: buttonKey,
+            popUpAnimationStyle: animationStyle,
+            onSelected: (_) => actions++,
+            itemBuilder: (BuildContext context) {
+              return <PopupMenuEntry<int>>[
+                const PopupMenuItem<int>(value: 1, child: Text('Action')),
+              ];
+            },
+          ),
+        ),
+      );
+    }
+
+    await tester.pumpWidget(buildMenu());
+    await tester.tap(find.byKey(buttonKey));
+    await tester.pumpAndSettle();
+
+    animationStyle = AnimationStyle.noAnimation;
+    await tester.pumpWidget(buildMenu());
+
+    await tester.tap(find.text('Action'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 1));
+
+    expect(actions, 1);
+    expect(find.text('Action'), findsNothing);
+  });
+
+  testWidgets('PopupMenuButton clears the active menu route when the menu is dismissed', (
+    WidgetTester tester,
+  ) async {
+    final Key buttonKey = UniqueKey();
+    var animationStyle = const AnimationStyle(duration: Duration(milliseconds: 200));
+
+    Widget buildMenu() {
+      return MaterialApp(
+        home: Material(
+          child: PopupMenuButton<int>(
+            key: buttonKey,
+            popUpAnimationStyle: animationStyle,
+            itemBuilder: (BuildContext context) {
+              return <PopupMenuEntry<int>>[
+                const PopupMenuItem<int>(value: 1, child: Text('Action')),
+              ];
+            },
+          ),
+        ),
+      );
+    }
+
+    await tester.pumpWidget(buildMenu());
+    await tester.tap(find.byKey(buttonKey));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Action'));
+    await tester.pumpAndSettle();
+
+    animationStyle = AnimationStyle.noAnimation;
+    await tester.pumpWidget(buildMenu());
+  });
+
+  testWidgets(
+    'PopupMenuButton completes an active opening animation when animations are disabled',
+    (WidgetTester tester) async {
+      final Key buttonKey = UniqueKey();
+      final observer = _PopupMenuTestObserver();
+      var animationStyle = const AnimationStyle(duration: Duration(milliseconds: 200));
+
+      Widget buildMenu() {
+        return MaterialApp(
+          navigatorObservers: <NavigatorObserver>[observer],
+          home: Material(
+            child: PopupMenuButton<int>(
+              key: buttonKey,
+              popUpAnimationStyle: animationStyle,
+              itemBuilder: (BuildContext context) {
+                return <PopupMenuEntry<int>>[
+                  const PopupMenuItem<int>(value: 1, child: Text('Action')),
+                  const PopupMenuItem<int>(value: 2, child: Text('Another action')),
+                  const PopupMenuItem<int>(value: 3, child: Text('Third action')),
+                ];
+              },
+            ),
+          ),
+        );
+      }
+
+      await tester.pumpWidget(buildMenu());
+
+      await tester.tap(find.byKey(buttonKey));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 30));
+
+      expect(observer.popup!.animation!.status, AnimationStatus.forward);
+
+      animationStyle = AnimationStyle.noAnimation;
+      await tester.pumpWidget(buildMenu());
+      await tester.pump();
+
+      expect(observer.popup!.animation!.status, AnimationStatus.completed);
+    },
+  );
+
   testWidgets('PopupMenuButton scrolls initial value/selected value to visible', (
     WidgetTester tester,
   ) async {
@@ -5244,4 +5356,16 @@ TextStyle? _iconStyle(WidgetTester tester, IconData icon) {
       .widget<RichText>(find.descendant(of: find.byIcon(icon), matching: find.byType(RichText)))
       .text
       .style;
+}
+
+class _PopupMenuTestObserver extends NavigatorObserver {
+  PopupRoute<Object?>? popup;
+
+  @override
+  void didPush(Route<Object?> route, Route<Object?>? previousRoute) {
+    if (route is PopupRoute<Object?>) {
+      popup = route;
+    }
+    super.didPush(route, previousRoute);
+  }
 }
