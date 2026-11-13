@@ -16,8 +16,12 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import org.mockito.ArgumentMatchers
-import org.mockito.Mockito
+import org.mockito.kotlin.any
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.never
+import org.mockito.kotlin.times
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 
 class LegacySharedPreferencesTest {
   private lateinit var plugin: LegacySharedPreferencesPlugin
@@ -26,17 +30,14 @@ class LegacySharedPreferencesTest {
 
   @Before
   fun before() {
-    val context = Mockito.mock(Context::class.java)
+    val context = mock<Context>()
     val sharedPrefs: SharedPreferences = FakeSharedPreferences()
 
-    flutterPluginBinding = Mockito.mock(FlutterPluginBinding::class.java)
+    flutterPluginBinding = mock<FlutterPluginBinding>()
 
-    Mockito.`when`(flutterPluginBinding.applicationContext).thenReturn(context)
-    Mockito.`when`(flutterPluginBinding.binaryMessenger)
-        .thenReturn(Mockito.mock(BinaryMessenger::class.java))
-    Mockito.`when`(
-            context.getSharedPreferences(ArgumentMatchers.anyString(), ArgumentMatchers.anyInt()))
-        .thenReturn(sharedPrefs)
+    whenever(flutterPluginBinding.applicationContext).thenReturn(context)
+    whenever(flutterPluginBinding.binaryMessenger).thenReturn(mock<BinaryMessenger>())
+    whenever(context.getSharedPreferences(any(), any())).thenReturn(sharedPrefs)
 
     plugin = LegacySharedPreferencesPlugin(ListEncoder())
     plugin.onAttachedToEngine(flutterPluginBinding)
@@ -44,26 +45,22 @@ class LegacySharedPreferencesTest {
 
   @Test
   fun onAttachedToEngine_doesNotEagerlyInitializePreferences(): Unit = runBlocking {
-    val mockContext = Mockito.mock(Context::class.java)
-    val binding = Mockito.mock(FlutterPluginBinding::class.java)
-    Mockito.`when`(binding.applicationContext).thenReturn(mockContext)
-    Mockito.`when`(binding.binaryMessenger).thenReturn(Mockito.mock(BinaryMessenger::class.java))
-    Mockito.`when`(
-            mockContext.getSharedPreferences(
-                ArgumentMatchers.anyString(), ArgumentMatchers.anyInt()))
-        .thenReturn(FakeSharedPreferences())
+    val mockContext = mock<Context>()
+    val binding = mock<FlutterPluginBinding>()
+    whenever(binding.applicationContext).thenReturn(mockContext)
+    whenever(binding.binaryMessenger).thenReturn(mock<BinaryMessenger>())
+    whenever(mockContext.getSharedPreferences(any(), any())).thenReturn(FakeSharedPreferences())
 
     val testPlugin = LegacySharedPreferencesPlugin(ListEncoder())
     testPlugin.onAttachedToEngine(binding)
 
     // SharedPreferences should not be fetched during onAttachedToEngine to avoid main-thread disk
     // I/O.
-    Mockito.verify(mockContext, Mockito.never())
-        .getSharedPreferences(ArgumentMatchers.anyString(), ArgumentMatchers.anyInt())
+    verify(mockContext, never()).getSharedPreferences(any(), any())
 
     // First call to any API method lazily initializes preferences.
     testPlugin.getAll("", null)
-    Mockito.verify(mockContext, Mockito.times(1))
+    verify(mockContext, times(1))
         .getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
   }
 
@@ -264,8 +261,8 @@ class LegacySharedPreferencesTest {
   }
 
   /** A dummy implementation for tests for use with FakeSharedPreferences */
-  private class FakeSharedPreferencesEditor
-  constructor(private val sharedPrefData: MutableMap<String, Any?>) : SharedPreferences.Editor {
+  private class FakeSharedPreferencesEditor(private val sharedPrefData: MutableMap<String, Any?>) :
+      SharedPreferences.Editor {
     override fun putString(key: String, value: String?): SharedPreferences.Editor {
       sharedPrefData[key] = value
       return this

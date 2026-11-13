@@ -9,11 +9,17 @@ import 'package:flutter/widgets.dart';
 import 'package:video_player_platform_interface/video_player_platform_interface.dart';
 
 import 'fair_play_drm_configuration.dart';
-import 'messages.g.dart';
+import 'messages.g.dart' hide videoEvents;
+import 'messages.g.dart' as pigeon show videoEvents;
 
 /// The non-test implementation of `_apiProvider`.
 VideoPlayerInstanceApi _productionApiProvider(int playerId) {
   return VideoPlayerInstanceApi(messageChannelSuffix: playerId.toString());
+}
+
+/// The non-test implementation of `_videoEventStreamProvider`.
+Stream<PlatformVideoEvent> _productionVideoEventStreamProvider(String streamIdentifier) {
+  return pigeon.videoEvents(instanceName: streamIdentifier);
 }
 
 /// An iOS implementation of [VideoPlayerPlatform] that uses the
@@ -23,13 +29,19 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   AVFoundationVideoPlayer({
     @visibleForTesting AVFoundationVideoPlayerApi? pluginApi,
     @visibleForTesting VideoPlayerInstanceApi Function(int playerId)? playerApiProvider,
+    @visibleForTesting
+    Stream<PlatformVideoEvent> Function(String streamIdentifier)? videoEventStreamProvider,
   }) : _api = pluginApi ?? AVFoundationVideoPlayerApi(),
-       _playerApiProvider = playerApiProvider ?? _productionApiProvider;
+       _playerApiProvider = playerApiProvider ?? _productionApiProvider,
+       _videoEventStreamProvider = videoEventStreamProvider ?? _productionVideoEventStreamProvider;
 
   final AVFoundationVideoPlayerApi _api;
   // A method to create VideoPlayerInstanceApi instances, which can be
   // overridden for testing.
   final VideoPlayerInstanceApi Function(int mapId) _playerApiProvider;
+  // A method to create video event stream instances, which can be
+  // overridden for testing.
+  final Stream<PlatformVideoEvent> Function(String streamIdentifier) _videoEventStreamProvider;
 
   final Map<int, _PlayerInstance> _players = <int, _PlayerInstance>{};
 
@@ -153,10 +165,7 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
       return _PlayerInstance(
         _playerApiProvider(playerId),
         viewState,
-        eventChannel: EventChannel(
-          // This must match the channel name used in FVPVideoPlayerPlugin.m.
-          'flutter.dev/videoPlayer/videoEvents$playerId',
-        ),
+        videoEventStream: _videoEventStreamProvider(playerId.toString()),
       );
     });
   }
@@ -366,11 +375,11 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
 /// An instance of a video player, corresponding to a single player ID in
 /// [AVFoundationVideoPlayer].
 class _PlayerInstance {
-  _PlayerInstance(this._api, this.viewState, {required this._eventChannel});
+  _PlayerInstance(this._api, this.viewState, {required this._videoEventStream});
 
   final VideoPlayerInstanceApi _api;
   final VideoPlayerViewState viewState;
-  final EventChannel _eventChannel;
+  final Stream<PlatformVideoEvent> _videoEventStream;
   final StreamController<VideoEvent> _eventStreamController =
       StreamController<VideoEvent>.broadcast();
   StreamSubscription<dynamic>? _eventSubscription;
@@ -402,7 +411,7 @@ class _PlayerInstance {
   Future<void> selectAudioTrack(int trackIndex) => _api.selectAudioTrack(trackIndex);
 
   Stream<VideoEvent> get videoEvents {
-    _eventSubscription ??= _eventChannel.receiveBroadcastStream().listen(
+    _eventSubscription ??= _videoEventStream.listen(
       _onStreamEvent,
       onError: (Object e) {
         _eventStreamController.addError(e);
@@ -426,40 +435,36 @@ class _PlayerInstance {
     await _api.dispose();
   }
 
-  void _onStreamEvent(dynamic event) {
-    final map = event as Map<dynamic, dynamic>;
-    // The strings here must all match the strings in FVPEventBridge.m.
-    _eventStreamController.add(switch (map['event']) {
-      'initialized' => VideoEvent(
-        eventType: VideoEventType.initialized,
-        duration: Duration(milliseconds: map['duration'] as int),
-        size: Size(
-          (map['width'] as num?)?.toDouble() ?? 0.0,
-          (map['height'] as num?)?.toDouble() ?? 0.0,
+  void _onStreamEvent(PlatformVideoEvent event) {
+    _eventStreamController.add(switch (event) {
+      InitializationEvent(
+        :final int durationMilliseconds,
+        :final double width,
+        :final double height,
+      ) =>
+        VideoEvent(
+          eventType: VideoEventType.initialized,
+          duration: Duration(milliseconds: durationMilliseconds),
+          size: Size(width, height),
         ),
-      ),
-      'completed' => VideoEvent(eventType: VideoEventType.completed),
-      'bufferingUpdate' => VideoEvent(
-        buffered: (map['values'] as List<dynamic>).map<DurationRange>(_toDurationRange).toList(),
+      PlaybackCompleteEvent() => VideoEvent(eventType: VideoEventType.completed),
+      BufferingUpdateEvent(:final List<PlatformDurationRange> bufferedRanges) => VideoEvent(
+        buffered: bufferedRanges.map<DurationRange>(_toDurationRange).toList(),
         eventType: VideoEventType.bufferingUpdate,
       ),
-      'bufferingStart' => VideoEvent(eventType: VideoEventType.bufferingStart),
-      'bufferingEnd' => VideoEvent(eventType: VideoEventType.bufferingEnd),
-      'isPlayingStateUpdate' => VideoEvent(
+      BufferingStartEvent() => VideoEvent(eventType: VideoEventType.bufferingStart),
+      BufferingEndEvent() => VideoEvent(eventType: VideoEventType.bufferingEnd),
+      IsPlayingStateEvent(:final bool isPlaying) => VideoEvent(
         eventType: VideoEventType.isPlayingStateUpdate,
-        isPlaying: map['isPlaying'] as bool,
+        isPlaying: isPlaying,
       ),
-      _ => VideoEvent(eventType: VideoEventType.unknown),
     });
   }
 
-  DurationRange _toDurationRange(dynamic value) {
-    final pair = value as List<dynamic>;
-    final startMilliseconds = pair[0] as int;
-    final durationMilliseconds = pair[1] as int;
+  DurationRange _toDurationRange(PlatformDurationRange range) {
     return DurationRange(
-      Duration(milliseconds: startMilliseconds),
-      Duration(milliseconds: startMilliseconds + durationMilliseconds),
+      Duration(milliseconds: range.startMilliseconds),
+      Duration(milliseconds: range.startMilliseconds + range.durationMilliseconds),
     );
   }
 }
