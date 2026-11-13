@@ -1,3 +1,7 @@
+## 0.8.13+16
+
+* Returns an `invalid_image` error instead of an empty or missing file when a picked image cannot be saved.
+
 ## 0.8.13+15
 
 * Switches Pigeon to Swift.

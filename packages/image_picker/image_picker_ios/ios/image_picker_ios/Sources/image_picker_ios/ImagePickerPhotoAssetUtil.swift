@@ -30,13 +30,14 @@ enum ImagePickerPhotoAssetUtil {
 
   /// Saves image with correct metadata and extension copied from the original asset.
   /// maxWidth and maxHeight are used only for GIF images.
+  /// Returns nil if the image cannot be encoded or saved.
   static func saveImageWithOriginalImageData(
     _ originalImageData: Data?,
     image: UIImage?,
     maxWidth: Double?,
     maxHeight: Double?,
     imageQuality: Double?
-  ) -> String {
+  ) -> String? {
     var suffix = kImagePickerDefaultSuffix
     var type = kImagePickerMIMETypeDefault
     var metaData: [String: Any]?
@@ -57,9 +58,10 @@ enum ImagePickerPhotoAssetUtil {
   }
 
   /// Save image with correct metadata and extension copied from image picker result info.
+  /// Returns nil if the image cannot be encoded or saved.
   static func saveImage(
     withPickerInfo info: [String: Any]?, image: UIImage, imageQuality: Double?
-  ) -> String {
+  ) -> String? {
     let metaData =
       info?[UIImagePickerController.InfoKey.mediaMetadata.rawValue] as? [String: Any]
     return saveImage(
@@ -69,7 +71,7 @@ enum ImagePickerPhotoAssetUtil {
 
   private static func saveImage(
     withMetaData metaData: [String: Any]?, gifInfo: GIFInfo, suffix: String
-  ) -> String {
+  ) -> String? {
     let path = temporaryFilePath(suffix)
     return saveImage(withMetaData: metaData, gifInfo: gifInfo, path: path)
   }
@@ -80,23 +82,32 @@ enum ImagePickerPhotoAssetUtil {
     suffix: String,
     type: ImagePickerMIMEType,
     imageQuality: Double?
-  ) -> String {
-    var data =
-      ImagePickerMetaDataUtil.convert(image, usingType: type, quality: imageQuality) ?? Data()
+  ) -> String? {
+    // Without encoded data there is nothing to save; an empty file is not a usable image.
+    guard
+      var data = ImagePickerMetaDataUtil.convert(image, usingType: type, quality: imageQuality),
+      !data.isEmpty
+    else {
+      return nil
+    }
     if let metaData {
       if let updatedData = ImagePickerMetaDataUtil.image(fromImage: data, withMetaData: metaData) {
         data = updatedData
       }
     }
-    return createFile(data, suffix: suffix)
+    return createFile(data, atPath: temporaryFilePath(suffix))
   }
 
-  private static func saveImage(
+  static func saveImage(
     withMetaData metaData: [String: Any]?, gifInfo: GIFInfo, path: String
-  ) -> String {
-    let destination = CGImageDestinationCreateWithURL(
-      URL(fileURLWithPath: path) as CFURL, UTType.gif.identifier as CFString, gifInfo.images.count,
-      nil)!
+  ) -> String? {
+    guard
+      let destination = CGImageDestinationCreateWithURL(
+        URL(fileURLWithPath: path) as CFURL, UTType.gif.identifier as CFString,
+        gifInfo.images.count, nil)
+    else {
+      return nil
+    }
 
     let frameProperties: [CFString: Any] = [
       kCGImagePropertyGIFDictionary: [
@@ -126,7 +137,11 @@ enum ImagePickerPhotoAssetUtil {
       }
     }
 
-    CGImageDestinationFinalize(destination)
+    guard CGImageDestinationFinalize(destination) else {
+      // Don't leave a partially written file behind.
+      try? FileManager.default.removeItem(atPath: path)
+      return nil
+    }
     return path
   }
 
@@ -137,10 +152,10 @@ enum ImagePickerPhotoAssetUtil {
     return (NSTemporaryDirectory() as NSString).appendingPathComponent(tmpFile)
   }
 
-  private static func createFile(_ data: Data, suffix: String) -> String {
-    let tmpPath = temporaryFilePath(suffix)
-    FileManager.default.createFile(atPath: tmpPath, contents: data, attributes: nil)
-    // The Objective-C implementation returned tmpPath even when createFile failed.
-    return tmpPath
+  static func createFile(_ data: Data, atPath path: String) -> String? {
+    guard FileManager.default.createFile(atPath: path, contents: data, attributes: nil) else {
+      return nil
+    }
+    return path
   }
 }

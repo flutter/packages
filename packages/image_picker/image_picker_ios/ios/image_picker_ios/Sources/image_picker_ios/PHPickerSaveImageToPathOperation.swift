@@ -119,6 +119,15 @@ final class PHPickerSaveImageToPathOperation: Operation, @unchecked Sendable {
       maxWidth: maxWidth,
       maxHeight: maxHeight,
       imageQuality: desiredImageQuality)
+    guard let savedPath else {
+      completeOperation(
+        path: nil,
+        error: PigeonError(
+          code: "invalid_image",
+          message: "Could not save the image.",
+          details: nil))
+      return
+    }
     completeOperation(path: savedPath, error: nil)
   }
 
