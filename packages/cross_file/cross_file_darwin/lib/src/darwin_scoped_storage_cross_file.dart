@@ -75,7 +75,7 @@ base class SecurityScopedDarwinScopedStorageXFile extends DarwinScopedStorageXFi
     with SecurityScopedDarwinScopedStorageXFileExtension {
   /// Constructs a [SecurityScopedDarwinScopedStorageXFile].
   SecurityScopedDarwinScopedStorageXFile(super.params) : super._() {
-    finalizer.attach(this, params.uri);
+    finalizer.attach(this, params.uri, detach: this);
   }
 
   /// Handles revoking access to the resource pointed to by a security-scoped
