@@ -1,0 +1,4 @@
+changelog: |
+  - Fixes `AppBar` changing to its scrolled-under appearance when content painted in an `Overlay`, such as `Autocomplete` options or a `MenuAnchor` menu, is scrolled.
+version: patch
+
