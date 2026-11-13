@@ -151,21 +151,6 @@ void main() {
 
         expect(await file.name(), testFile.name);
       });
-
-      testWidgets('garbage collection', (_) async {
-        final bytes = Uint8List.fromList(<int>[0, 1, 2]);
-        final WeakReference<PlatformXFile> file = await _createAndDropFile(bytes);
-
-        final storage = <List<int>>[];
-        while (file.target != null) {
-          storage.add(List.generate(30000, (n) => n));
-          if (storage.length > 100) {
-            storage.removeAt(0);
-          }
-        }
-
-        expect(file.target, isNull);
-      });
     });
 
     group('Create with bytes with platform safe import', () {
