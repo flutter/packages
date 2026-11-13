@@ -52,8 +52,8 @@
     }
 
     deinit {
-      if let link = displayLink {
-        CVDisplayLinkStop(link)
+      if let displayLink {
+        CVDisplayLinkStop(displayLink)
       }
       displayLinkSource.cancel()
     }
