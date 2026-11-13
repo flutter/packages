@@ -176,6 +176,7 @@ class NativeInteropExampleApiRegistrar private constructor(private val engineKey
    * that engine when it is known.
    */
   @Keep
+  @JvmOverloads
   fun register(
       api: NativeInteropExampleApi,
       binding: FlutterPlugin.FlutterPluginBinding,
@@ -193,6 +194,7 @@ class NativeInteropExampleApiRegistrar private constructor(private val engineKey
    * that engine when it is known.
    */
   @Keep
+  @JvmOverloads
   fun register(
       api: NativeInteropExampleApi,
       engine: FlutterEngine,
@@ -210,6 +212,7 @@ class NativeInteropExampleApiRegistrar private constructor(private val engineKey
    * registered, or is only registered for several other engines.
    */
   @Keep
+  @JvmOverloads
   fun unregister(
       api: NativeInteropExampleApi,
       binding: FlutterPlugin.FlutterPluginBinding,
@@ -227,6 +230,7 @@ class NativeInteropExampleApiRegistrar private constructor(private val engineKey
    * registered, or is only registered for several other engines.
    */
   @Keep
+  @JvmOverloads
   fun unregister(
       api: NativeInteropExampleApi,
       engine: FlutterEngine,
@@ -283,6 +287,7 @@ class NativeInteropExampleApiRegistrar private constructor(private val engineKey
      */
     @JvmStatic
     @Keep
+    @JvmOverloads
     fun pigeonResolveInstance(
         engineId: Long,
         affinityKey: Long,
