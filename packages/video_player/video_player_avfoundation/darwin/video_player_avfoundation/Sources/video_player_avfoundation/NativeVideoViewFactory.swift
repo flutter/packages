@@ -61,9 +61,9 @@ final class NativeVideoViewFactory: NSObject, FlutterPlatformViewFactory {
   private func createNativeVideoView(
     arguments args: PlatformVideoViewCreationParams
   ) -> NativeVideoView {
-    // The Dart code should never attempt to create a platform view for a player that doesn't exist,
-    // and there's no mechanism to report an error, so just force-unwrap.
-    let player = playerByIdentifierProvider(args.playerId)!
-    return NativeVideoView(player: player.player)
+    // Ignore null, since that indicates the player was disposed before
+    // reaching this part of the bringup.
+    let player = playerByIdentifierProvider(args.playerId)
+    return NativeVideoView(player: player?.player)
   }
 }

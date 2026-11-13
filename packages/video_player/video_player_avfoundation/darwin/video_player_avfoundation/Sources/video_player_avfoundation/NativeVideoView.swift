@@ -22,10 +22,10 @@ import AVFoundation
 
     var player: AVPlayer? {
       get {
-        (layer as! AVPlayerLayer).player
+        (layer as? AVPlayerLayer)?.player
       }
       set {
-        (layer as! AVPlayerLayer).player = newValue
+        (layer as? AVPlayerLayer)?.player = newValue
       }
     }
 
@@ -38,7 +38,7 @@ import AVFoundation
 
     /// Initializes a new instance of a native view.
     /// It creates a video view instance and sets the provided AVPlayer instance to it.
-    init(player: AVPlayer) {
+    init(player: AVPlayer?) {
       playerView = PlayerView()
       playerView.player = player
     }
@@ -55,7 +55,7 @@ import AVFoundation
   class NativeVideoView: NSView {
     /// Initializes a new instance of a native view.
     /// It creates a video view instance and sets the provided AVPlayer instance to it.
-    init(player: AVPlayer) {
+    init(player: AVPlayer?) {
       super.init(frame: .zero)
       self.wantsLayer = true
       (layer as? AVPlayerLayer)?.player = player

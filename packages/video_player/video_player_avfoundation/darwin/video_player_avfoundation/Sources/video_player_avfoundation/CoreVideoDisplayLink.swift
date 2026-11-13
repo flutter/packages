@@ -94,7 +94,9 @@
       guard CVDisplayLinkGetCurrentTime(link, &timestamp) == kCVReturnSuccess else {
         return .zero
       }
-      return CFTimeInterval(timestamp.videoRefreshPeriod) / CFTimeInterval(timestamp.videoTimeScale)
+      let timeScale = timestamp.videoTimeScale
+      return timeScale == 0
+        ? .zero : CFTimeInterval(timestamp.videoRefreshPeriod) / CFTimeInterval(timeScale)
     }
   }
 #endif
