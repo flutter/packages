@@ -91,6 +91,9 @@ import GoogleSignIn
 // In application(_:didFinishLaunchingWithOptions:):
 #if targetEnvironment(simulator)
   // App Attest is not available on the simulator, so use the debug provider.
+  // Use your project's iOS API key from the Credentials page of the Google
+  // Cloud console. See the SDK's debug provider instructions:
+  // https://developers.google.com/identity/sign-in/ios/appcheck/debug-provider
   GIDSignIn.sharedInstance.configureDebugProvider(withAPIKey: "[YOUR API KEY]") { error in
     if let error {
       print("Error configuring GIDSignIn for App Check: \(error)")
