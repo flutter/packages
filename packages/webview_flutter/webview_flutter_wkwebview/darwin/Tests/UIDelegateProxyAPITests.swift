@@ -112,6 +112,83 @@ import WebKit
     #expect(api.runJavaScriptTextInputPanelArgs == [webView, prompt, defaultText, frame])
     #expect(inputResult == "myString2")
   }
+
+  @available(iOS 15.0, macOS 12.0, *)
+  @MainActor @Test func requestMediaCapturePermissionDeniesWhenReplyIsDropped() async throws {
+    let api = TestDelegateApi()
+    api.dropsReplies = true
+    let registrar = TestProxyApiRegistrar()
+    let instance = UIDelegateImpl(api: api, registrar: registrar)
+    let webView = WKWebView(frame: .zero)
+    let origin = SecurityOriginProxyAPITests.testSecurityOrigin
+    let frame = TestFrameInfo.instance
+
+    let resultDecision = await withCheckedContinuation { continuation in
+      instance.webView(
+        webView, requestMediaCapturePermissionFor: origin, initiatedByFrame: frame, type: .camera
+      ) { decision in
+        continuation.resume(returning: decision)
+      }
+    }
+
+    #expect(resultDecision == .deny)
+  }
+
+  @MainActor @Test func runJavaScriptAlertPanelCompletesWhenReplyIsDropped() async throws {
+    let api = TestDelegateApi()
+    api.dropsReplies = true
+    let registrar = TestProxyApiRegistrar()
+    let instance = UIDelegateImpl(api: api, registrar: registrar)
+    let webView = WKWebView(frame: .zero)
+    let frame = TestFrameInfo.instance
+
+    await withCheckedContinuation { continuation in
+      instance.webView(
+        webView, runJavaScriptAlertPanelWithMessage: "myString", initiatedByFrame: frame
+      ) {
+        continuation.resume()
+      }
+    }
+  }
+
+  @MainActor @Test func runJavaScriptConfirmPanelReturnsFalseWhenReplyIsDropped() async throws {
+    let api = TestDelegateApi()
+    api.dropsReplies = true
+    let registrar = TestProxyApiRegistrar()
+    let instance = UIDelegateImpl(api: api, registrar: registrar)
+    let webView = WKWebView(frame: .zero)
+    let frame = TestFrameInfo.instance
+
+    let confirmedResult = await withCheckedContinuation { continuation in
+      instance.webView(
+        webView, runJavaScriptConfirmPanelWithMessage: "myString", initiatedByFrame: frame
+      ) { confirmed in
+        continuation.resume(returning: confirmed)
+      }
+    }
+
+    #expect(confirmedResult == false)
+  }
+
+  @MainActor @Test func runJavaScriptTextInputPanelReturnsNilWhenReplyIsDropped() async throws {
+    let api = TestDelegateApi()
+    api.dropsReplies = true
+    let registrar = TestProxyApiRegistrar()
+    let instance = UIDelegateImpl(api: api, registrar: registrar)
+    let webView = WKWebView(frame: .zero)
+    let frame = TestFrameInfo.instance
+
+    let inputResult = await withCheckedContinuation { continuation in
+      instance.webView(
+        webView, runJavaScriptTextInputPanelWithPrompt: "myString", defaultText: "myString3",
+        initiatedByFrame: frame
+      ) { input in
+        continuation.resume(returning: input)
+      }
+    }
+
+    #expect(inputResult == nil)
+  }
 }
 
 class TestDelegateApi: PigeonApiProtocolWKUIDelegate {
@@ -120,6 +197,9 @@ class TestDelegateApi: PigeonApiProtocolWKUIDelegate {
   var runJavaScriptAlertPanelArgs: [AnyHashable?]? = nil
   var runJavaScriptConfirmPanelArgs: [AnyHashable?]? = nil
   var runJavaScriptTextInputPanelArgs: [AnyHashable?]? = nil
+  /// Whether methods that expect a reply release `completion` without calling it, like when the
+  /// Flutter engine is destroyed while a call is pending.
+  var dropsReplies = false
 
   func onCreateWebView(
     pigeonInstance pigeonInstanceArg: WKUIDelegate, webView webViewArg: WKWebView,
@@ -136,6 +216,9 @@ class TestDelegateApi: PigeonApiProtocolWKUIDelegate {
     completion: @escaping (Result<PermissionDecision, PigeonError>) -> Void
   ) {
     requestMediaCapturePermissionArgs = [webViewArg, originArg, frameArg, typeArg]
+    if dropsReplies {
+      return
+    }
     completion(.success(.prompt))
   }
 
@@ -153,6 +236,9 @@ class TestDelegateApi: PigeonApiProtocolWKUIDelegate {
     completion: @escaping (Result<Bool, PigeonError>) -> Void
   ) {
     runJavaScriptConfirmPanelArgs = [webViewArg, messageArg, frameArg]
+    if dropsReplies {
+      return
+    }
     completion(.success(true))
   }
 
@@ -162,6 +248,9 @@ class TestDelegateApi: PigeonApiProtocolWKUIDelegate {
     completion: @escaping (Result<String?, PigeonError>) -> Void
   ) {
     runJavaScriptTextInputPanelArgs = [webViewArg, promptArg, defaultTextArg, frameArg]
+    if dropsReplies {
+      return
+    }
     completion(.success("myString2"))
   }
 }

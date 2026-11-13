@@ -1,3 +1,9 @@
+## 3.27.3
+
+* Fixes an `NSInternalInconsistencyException` crash when the Flutter engine is destroyed
+  while a WebKit delegate method is waiting for a reply from Dart, such as when a JavaScript
+  dialog is showing as the app moves to the background.
+
 ## 3.27.2
 
 * Restores the minimum iOS version to 13 and minimum macOS version to 10.15.
