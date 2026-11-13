@@ -1,6 +1,7 @@
 ## NEXT
 
 * Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
+* Migrates to Pigeon's native interop (FFI) as an internal implementation detail; no public API changes.
 
 ## 6.4.2
 

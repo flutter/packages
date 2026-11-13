@@ -12,9 +12,11 @@ import 'src/messages.g.dart';
 /// An implementation of [UrlLauncherPlatform] for iOS.
 class UrlLauncherIOS extends UrlLauncherPlatform {
   /// Creates a new plugin implementation instance.
-  UrlLauncherIOS({@visibleForTesting UrlLauncherApi? api}) : _hostApi = api ?? UrlLauncherApi();
+  UrlLauncherIOS({@visibleForTesting UrlLauncherApi? api}) : _apiOverride = api;
 
-  final UrlLauncherApi _hostApi;
+  final UrlLauncherApi? _apiOverride;
+
+  late final UrlLauncherApi _hostApi = _apiOverride ?? UrlLauncherApi.createWithNativeInteropApi();
 
   /// Registers this class as the default instance of [UrlLauncherPlatform].
   static void registerWith() {

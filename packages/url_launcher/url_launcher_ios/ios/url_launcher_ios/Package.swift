@@ -18,11 +18,16 @@ let package = Package(
   dependencies: [],
   targets: [
     .target(
-      name: "url_launcher_ios",
+      name: "url_launcher_ios_objc_gen",
       dependencies: [],
+      publicHeadersPath: "."
+    ),
+    .target(
+      name: "url_launcher_ios",
+      dependencies: ["url_launcher_ios_objc_gen"],
       resources: [
         .process("Resources")
       ]
-    )
+    ),
   ]
 )

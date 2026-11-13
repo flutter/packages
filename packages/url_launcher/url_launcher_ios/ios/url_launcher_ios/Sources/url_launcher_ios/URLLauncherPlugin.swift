@@ -10,8 +10,12 @@ public final class URLLauncherPlugin: NSObject, FlutterPlugin, UrlLauncherApi {
   public static func register(with registrar: FlutterPluginRegistrar) {
     let plugin = URLLauncherPlugin(
       viewPresenterProvider: DefaultViewPresenterProvider(registrar: registrar))
-    UrlLauncherApiSetup.setUp(binaryMessenger: registrar.messenger(), api: plugin)
+    UrlLauncherApiSetup.register(api: plugin, registrar: registrar)
     registrar.publish(plugin)
+  }
+
+  public func detachFromEngine(for registrar: FlutterPluginRegistrar) {
+    UrlLauncherApiSetup.unregister(api: self, registrar: registrar)
   }
 
   private var currentSession: URLLaunchSession?
@@ -24,7 +28,7 @@ public final class URLLauncherPlugin: NSObject, FlutterPlugin, UrlLauncherApi {
     self.viewPresenterProvider = viewPresenterProvider
   }
 
-  func canLaunchUrl(url: String) -> LaunchResult {
+  func canLaunchUrl(url: String) throws -> LaunchResult {
     guard let url = URL(string: url) else {
       return .invalidUrl
     }
@@ -32,45 +36,59 @@ public final class URLLauncherPlugin: NSObject, FlutterPlugin, UrlLauncherApi {
     return canOpen ? .success : .failure
   }
 
-  func launchUrl(
-    url: String,
-    universalLinksOnly: Bool,
-    completion: @escaping (Result<LaunchResult, Error>) -> Void
-  ) {
+  func launchUrl(url: String, universalLinksOnly: Bool) async throws -> LaunchResult {
     guard let url = URL(string: url) else {
-      completion(.success(.invalidUrl))
-      return
+      return .invalidUrl
     }
     let options = [UIApplication.OpenExternalURLOptionsKey.universalLinksOnly: universalLinksOnly]
-    launcher.open(url, options: options) { result in
-      completion(.success(result ? .success : .failure))
+    // `UIApplication.open` must be called on the main thread, which native interop calls aren't
+    // guaranteed to already be running on for `async` methods.
+    let opened = await withCheckedContinuation { continuation in
+      DispatchQueue.main.async {
+        self.launcher.open(url, options: options) { result in
+          continuation.resume(returning: result)
+        }
+      }
     }
+    return opened ? .success : .failure
   }
 
-  func openUrlInSafariViewController(
-    url: String,
-    completion: @escaping (Result<InAppLoadResult, Error>) -> Void
-  ) {
+  func openUrlInSafariViewController(url: String) async throws -> InAppLoadResult {
     guard let url = URL(string: url) else {
-      completion(.success(.invalidUrl))
-      return
+      return .invalidUrl
     }
 
-    guard let presenter = viewPresenterProvider.viewPresenter else {
-      completion(.success(.noUI))
-      return
-    }
+    // Presenting a view controller must happen on the main thread, which native interop calls
+    // aren't guaranteed to already be running on for `async` methods.
+    return await withCheckedContinuation { continuation in
+      DispatchQueue.main.async {
+        guard let presenter = self.viewPresenterProvider.viewPresenter else {
+          continuation.resume(returning: .noUI)
+          return
+        }
 
-    let session = URLLaunchSession(url: url, completion: completion)
-    currentSession = session
+        let session = URLLaunchSession(url: url) { result in
+          switch result {
+          case .success(let value):
+            continuation.resume(returning: value)
+          case .failure:
+            continuation.resume(returning: .failedToLoad)
+          }
+        }
+        self.currentSession = session
 
-    session.didFinish = { [weak self] in
-      self?.currentSession = nil
+        session.didFinish = { [weak self] in
+          self?.currentSession = nil
+        }
+        presenter.present(session.safariViewController, animated: true, completion: nil)
+      }
     }
-    presenter.present(session.safariViewController, animated: true, completion: nil)
   }
 
-  func closeSafariViewController() {
-    currentSession?.close()
+  func closeSafariViewController() throws {
+    // Dismissing a view controller must happen on the main thread.
+    DispatchQueue.main.async {
+      self.currentSession?.close()
+    }
   }
 }

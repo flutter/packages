@@ -6,9 +6,10 @@ import 'package:pigeon/pigeon.dart';
 
 @ConfigurePigeon(
   PigeonOptions(
+    appDirectory: 'example/',
     dartOut: 'lib/src/messages.g.dart',
     kotlinOut: 'android/src/main/kotlin/io/flutter/plugins/urllauncher/Messages.kt',
-    kotlinOptions: KotlinOptions(package: 'io.flutter.plugins.urllauncher'),
+    kotlinOptions: KotlinOptions(package: 'io.flutter.plugins.urllauncher', useJni: true),
     copyrightHeader: 'pigeons/copyright.txt',
   ),
 )
