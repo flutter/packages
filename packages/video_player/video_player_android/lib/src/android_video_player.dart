@@ -127,9 +127,8 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
   // Returns the Pigeon representation of the DRM configuration in [dataSource],
   // or null if it has none.
   //
-  // Throws an [ArgumentError] if the configuration can't be used on Android,
-  // either because it isn't a Widevine configuration or because the source
-  // isn't a network source.
+  // Throws an [ArgumentError] if the source isn't a network source, and an
+  // [UnsupportedError] if the configuration isn't a Widevine configuration.
   PlatformWidevineDrmConfiguration? _widevineDrmFromDataSource(DataSource dataSource) {
     final VideoDrmConfiguration? drmConfiguration = dataSource.drmConfiguration;
     if (drmConfiguration == null) {
@@ -143,11 +142,9 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
       );
     }
     if (drmConfiguration is! WidevineDrmConfiguration) {
-      throw ArgumentError.value(
-        drmConfiguration,
-        'dataSource.drmConfiguration',
+      throw UnsupportedError(
         'The Android implementation of video_player only supports '
-            'WidevineDrmConfiguration',
+        'WidevineDrmConfiguration, not ${drmConfiguration.runtimeType}',
       );
     }
     return PlatformWidevineDrmConfiguration(

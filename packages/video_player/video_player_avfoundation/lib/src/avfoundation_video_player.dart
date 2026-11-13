@@ -117,9 +117,8 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   // Returns the Pigeon representation of the DRM configuration in [dataSource],
   // or null if it has none.
   //
-  // Throws an [ArgumentError] if the configuration can't be used on iOS or
-  // macOS, either because it isn't a FairPlay configuration or because the
-  // source isn't a network source.
+  // Throws an [ArgumentError] if the source isn't a network source, and an
+  // [UnsupportedError] if the configuration isn't a FairPlay configuration.
   PlatformFairPlayDrmConfiguration? _fairPlayDrmFromDataSource(DataSource dataSource) {
     final VideoDrmConfiguration? drmConfiguration = dataSource.drmConfiguration;
     if (drmConfiguration == null) {
@@ -133,11 +132,9 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
       );
     }
     if (drmConfiguration is! FairPlayDrmConfiguration) {
-      throw ArgumentError.value(
-        drmConfiguration,
-        'dataSource.drmConfiguration',
+      throw UnsupportedError(
         'The AVFoundation implementation of video_player only supports '
-            'FairPlayDrmConfiguration',
+        'FairPlayDrmConfiguration, not ${drmConfiguration.runtimeType}',
       );
     }
     return PlatformFairPlayDrmConfiguration(

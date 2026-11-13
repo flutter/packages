@@ -461,8 +461,8 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// exports, or a platform-specific configuration such as
   /// `FairPlayDrmConfiguration` from `video_player_avfoundation`, which an
   /// application imports from that package directly. Passing a configuration
-  /// that the current platform doesn't support throws an [ArgumentError] from
-  /// [initialize].
+  /// that the current platform doesn't support throws an [UnsupportedError]
+  /// from [initialize].
   ///
   /// DRM-protected video is currently only rendered correctly with
   /// [platform_interface.VideoViewType.platformView]; in texture view mode the

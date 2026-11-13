@@ -207,7 +207,7 @@ void main() {
             drmConfiguration: const _OtherDrmConfiguration(),
           ),
         ),
-        throwsArgumentError,
+        throwsUnsupportedError,
       );
     });
 
