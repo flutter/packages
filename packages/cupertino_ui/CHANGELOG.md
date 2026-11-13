@@ -1,3 +1,7 @@
+## 1.1.6
+
+- Documents that the default background of `CupertinoSlidingSegmentedControl` is translucent.
+
 ## 1.1.5
 
 - Fixes the installation command in README.md

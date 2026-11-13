@@ -228,6 +228,14 @@ void main() {
     final NoDefaultCupertinoThemeData c = a.copyWith(brightness: Brightness.light);
     expect(a, equals(b));
     expect(a, isNot(c));
+
+    const red = NoDefaultCupertinoThemeData(selectionHandleColor: CupertinoColors.systemRed);
+    const blue = NoDefaultCupertinoThemeData(selectionHandleColor: CupertinoColors.systemBlue);
+    final NoDefaultCupertinoThemeData redCopy = red.copyWith();
+    expect(red, isNot(blue));
+    expect(red, equals(redCopy));
+    expect(red.hashCode, redCopy.hashCode);
+    expect(red.hashCode, isNot(blue.hashCode));
   });
 
   late Brightness currentBrightness;

@@ -29,7 +29,7 @@ const String _kDefaultErrorMessage =
 class CameraPlugin extends CameraPlatform {
   /// Creates a new instance of [CameraPlugin]
   /// with the given [cameraService].
-  CameraPlugin({required CameraService cameraService}) : _cameraService = cameraService;
+  CameraPlugin({required this._cameraService});
 
   /// Registers this class as the default instance of [CameraPlatform].
   static void registerWith(Registrar registrar) {
@@ -620,6 +620,21 @@ class CameraPlugin extends CameraPlatform {
   }
 
   @override
+  Stream<CameraImageData> onStreamedFrameAvailable(
+    int cameraId, {
+    CameraImageStreamOptions? options,
+  }) {
+    try {
+      return getCamera(cameraId).cameraFrameStream(options: options);
+    } on web.DOMException catch (e) {
+      throw PlatformException(code: e.name, message: e.message);
+    } on CameraWebException catch (e) {
+      _addCameraErrorEvent(e);
+      throw PlatformException(code: e.code.toString(), message: e.description);
+    }
+  }
+
+  @override
   Future<void> pausePreview(int cameraId) async {
     try {
       getCamera(cameraId).pause();
@@ -699,4 +714,7 @@ class CameraPlugin extends CameraPlatform {
       ),
     );
   }
+
+  @override
+  bool supportsImageStreaming() => true;
 }

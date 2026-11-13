@@ -17,6 +17,9 @@ import 'thumb_painter.dart';
 
 typedef _SliderValueChanged = void Function(double value, bool isFastDrag)?;
 
+// Matches the disabled visual opacity of the native iOS UISlider.
+const double _kDisabledOpacity = 0.5;
+
 /// Defines the threshold for determining a "fast" slider drag.
 ///
 /// Measured in slider extent per second.
@@ -292,18 +295,21 @@ class _CupertinoSliderState extends State<CupertinoSlider> with TickerProviderSt
 
   @override
   Widget build(BuildContext context) {
-    return _CupertinoSliderRenderObjectWidget(
-      value: (widget.value - widget.min) / (widget.max - widget.min),
-      divisions: widget.divisions,
-      activeColor: CupertinoDynamicColor.resolve(
-        widget.activeColor ?? CupertinoTheme.of(context).primaryColor,
-        context,
+    return Opacity(
+      opacity: widget.onChanged == null ? _kDisabledOpacity : 1.0,
+      child: _CupertinoSliderRenderObjectWidget(
+        value: (widget.value - widget.min) / (widget.max - widget.min),
+        divisions: widget.divisions,
+        activeColor: CupertinoDynamicColor.resolve(
+          widget.activeColor ?? CupertinoTheme.of(context).primaryColor,
+          context,
+        ),
+        thumbColor: widget.thumbColor,
+        onChanged: widget.onChanged != null ? _handleChanged : null,
+        onChangeStart: widget.onChangeStart != null ? _handleDragStart : null,
+        onChangeEnd: widget.onChangeEnd != null ? _handleDragEnd : null,
+        vsync: this,
       ),
-      thumbColor: widget.thumbColor,
-      onChanged: widget.onChanged != null ? _handleChanged : null,
-      onChangeStart: widget.onChangeStart != null ? _handleDragStart : null,
-      onChangeEnd: widget.onChangeEnd != null ? _handleDragEnd : null,
-      vsync: this,
     );
   }
 }
