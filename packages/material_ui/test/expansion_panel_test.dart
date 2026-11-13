@@ -2087,4 +2087,188 @@ void main() {
     final IgnorePointer ignorePointerTrue = tester.widget(ignorePointerFinder);
     expect(ignorePointerTrue.ignoring, isTrue);
   });
+
+  Widget buildIconVisibilityPanel({
+    required ExpansionPanelIconVisibility visibility,
+    Key? headerKey,
+    Widget? header,
+    bool? isExpanded,
+    ExpansionPanelCallback? expansionCallback,
+  }) {
+    return MaterialApp(
+      home: SingleChildScrollView(
+        child: ExpansionPanelList(
+          expansionCallback: expansionCallback,
+          children: <ExpansionPanel>[
+            ExpansionPanel(
+              isExpanded: isExpanded ?? false,
+              trailingIconVisibility: visibility,
+              headerBuilder: (BuildContext context, bool isExpanded) {
+                return header ?? SizedBox(key: headerKey);
+              },
+              body: const SizedBox.shrink(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  test('ExpansionPanel.trailingIconVisibility defaults to visible', () {
+    final panel = ExpansionPanel(
+      headerBuilder: (BuildContext context, bool isExpanded) => const SizedBox.shrink(),
+      body: const SizedBox.shrink(),
+    );
+    final radioPanel = ExpansionPanelRadio(
+      value: 0,
+      headerBuilder: (BuildContext context, bool isExpanded) => const SizedBox.shrink(),
+      body: const SizedBox.shrink(),
+    );
+
+    expect(panel.trailingIconVisibility, ExpansionPanelIconVisibility.visible);
+    expect(radioPanel.trailingIconVisibility, ExpansionPanelIconVisibility.visible);
+  });
+
+  testWidgets('ExpansionPanel shows icon with trailingIconVisibility.visible', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(buildIconVisibilityPanel(visibility: .visible));
+
+    expect(find.byType(ExpandIcon).hitTestable(), findsOneWidget);
+  });
+
+  testWidgets(
+    'ExpansionPanel calls expansionCallback when expand icon is tapped with trailingIconVisibility.visible',
+    (WidgetTester tester) async {
+      var callbackCount = 0;
+
+      await tester.pumpWidget(
+        buildIconVisibilityPanel(
+          visibility: .visible,
+          expansionCallback: (int index, bool isExpanded) {
+            callbackCount += 1;
+          },
+        ),
+      );
+
+      await tester.tap(find.byType(ExpandIcon));
+      await tester.pump();
+      expect(callbackCount, 1);
+    },
+  );
+
+  testWidgets(
+    'ExpansionPanel icon has semantics label with trailingIconVisibility.visible when canTapOnHeader is false',
+    (WidgetTester tester) async {
+      final SemanticsHandle handle = tester.ensureSemantics();
+
+      await tester.pumpWidget(
+        buildIconVisibilityPanel(
+          visibility: .visible,
+          isExpanded: false,
+          header: const ListTile(title: Text('Panel')),
+        ),
+      );
+      expect(find.bySemanticsLabel('Expand'), findsOneWidget);
+
+      await tester.pumpWidget(
+        buildIconVisibilityPanel(
+          visibility: .visible,
+          isExpanded: true,
+          header: const ListTile(title: Text('Panel')),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.bySemanticsLabel('Collapse'), findsOneWidget);
+
+      handle.dispose();
+    },
+  );
+
+  testWidgets('ExpansionPanel hides icon but preserves space with trailingIconVisibility.hidden', (
+    WidgetTester tester,
+  ) async {
+    final Key headerKey = UniqueKey();
+
+    await tester.pumpWidget(buildIconVisibilityPanel(visibility: .visible, headerKey: headerKey));
+    final double visibleWidth = tester.getSize(find.byKey(headerKey)).width;
+
+    await tester.pumpWidget(buildIconVisibilityPanel(visibility: .hidden, headerKey: headerKey));
+
+    expect(find.byType(ExpandIcon).hitTestable(), findsNothing);
+    expect(tester.getSize(find.byKey(headerKey)).width, visibleWidth);
+  });
+
+  testWidgets(
+    'ExpansionPanel does not call expansionCallback when hidden expand icon space is tapped',
+    (WidgetTester tester) async {
+      var callbackCount = 0;
+
+      await tester.pumpWidget(buildIconVisibilityPanel(visibility: .visible));
+      final Offset iconCenter = tester.getCenter(find.byType(ExpandIcon));
+
+      await tester.pumpWidget(
+        buildIconVisibilityPanel(
+          visibility: .hidden,
+          expansionCallback: (int index, bool isExpanded) {
+            callbackCount += 1;
+          },
+        ),
+      );
+
+      await tester.tapAt(iconCenter);
+      await tester.pump();
+      expect(callbackCount, 0);
+    },
+  );
+
+  testWidgets('ExpansionPanel icon has no semantics label with trailingIconVisibility.hidden', (
+    WidgetTester tester,
+  ) async {
+    final SemanticsHandle handle = tester.ensureSemantics();
+
+    await tester.pumpWidget(
+      buildIconVisibilityPanel(
+        visibility: .hidden,
+        header: const ListTile(title: Text('Panel')),
+      ),
+    );
+    expect(find.bySemanticsLabel('Expand'), findsNothing);
+    expect(find.bySemanticsLabel('Collapse'), findsNothing);
+
+    handle.dispose();
+  });
+
+  testWidgets('ExpansionPanel removes icon and space with trailingIconVisibility.gone', (
+    WidgetTester tester,
+  ) async {
+    final Key headerKey = UniqueKey();
+
+    await tester.pumpWidget(buildIconVisibilityPanel(visibility: .visible, headerKey: headerKey));
+    final double panelWidth = tester.getSize(find.byType(ExpansionPanelList)).width;
+    final double visibleWidth = tester.getSize(find.byKey(headerKey)).width;
+
+    await tester.pumpWidget(buildIconVisibilityPanel(visibility: .gone, headerKey: headerKey));
+
+    expect(find.byType(ExpandIcon), findsNothing);
+    expect(tester.getSize(find.byKey(headerKey)).width, greaterThan(visibleWidth));
+    expect(tester.getSize(find.byKey(headerKey)).width, panelWidth);
+  });
+
+  testWidgets('ExpansionPanel icon has no semantics label with trailingIconVisibility.gone', (
+    WidgetTester tester,
+  ) async {
+    final SemanticsHandle handle = tester.ensureSemantics();
+
+    await tester.pumpWidget(
+      buildIconVisibilityPanel(
+        visibility: .gone,
+        header: const ListTile(title: Text('Panel')),
+      ),
+    );
+    expect(find.bySemanticsLabel('Expand'), findsNothing);
+    expect(find.bySemanticsLabel('Collapse'), findsNothing);
+
+    handle.dispose();
+  });
 }
