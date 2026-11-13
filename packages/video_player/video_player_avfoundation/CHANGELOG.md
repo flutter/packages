@@ -1,3 +1,7 @@
+## 2.12.5
+
+* Converts remaining Objective-C code to Swift.".
+
 ## 2.12.4
 
 * Converts internal event channel implementation to Swift.
