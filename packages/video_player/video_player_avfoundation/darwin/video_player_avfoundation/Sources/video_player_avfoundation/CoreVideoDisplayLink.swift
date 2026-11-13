@@ -75,7 +75,7 @@
           // likely require new plugin registrar APIs.
           if let screen = viewProvider.view?.window?.screen,
             let displayID = screen.deviceDescription[
-              NSDeviceDescriptionKey(rawValue: "NSScreenNumber")] as? CGDirectDisplayID
+              NSDeviceDescriptionKey("NSScreenNumber")] as? CGDirectDisplayID
           {
             CVDisplayLinkSetCurrentCGDisplay(link, displayID)
           }

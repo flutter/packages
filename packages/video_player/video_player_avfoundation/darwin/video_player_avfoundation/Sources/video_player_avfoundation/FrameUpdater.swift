@@ -16,17 +16,35 @@ import Foundation
 /// when a new video frame is available.
 class FrameUpdater {
   /// The Flutter texture registry used to notify about new frames.
-  weak var registry: FlutterTextureRegistry?
+  private(set) weak var registry: FlutterTextureRegistry?
   /// The texture identifier associated with the video output.
   var textureIdentifier: Int64 = 0
   /// The display link that drives frameUpdater.
   weak var displayLink: DisplayLink?
-  /// The time interval between screen refresh updates. Display link duration is in an undefined state
-  /// until displayLinkFired is called at least once so it should not be used directly.
-  var frameDuration: CFTimeInterval = .zero
+  /// The time interval between screen refresh updates.
+  private var frameDurationInternal: CFTimeInterval = .zero
+  /// Controls access to frameDurationInternal
+  private let frameDurationLock = NSLock()
 
   init(registry: FlutterTextureRegistry) {
     self.registry = registry
+  }
+
+  /// The time interval between screen refresh updates.
+  ///
+  /// This is intended to be written from the main thread, and accessed from the
+  /// engine's raster thread, so it is internally locked.
+  var frameDuration: CFTimeInterval {
+    get {
+      frameDurationLock.lock()
+      defer { frameDurationLock.unlock() }
+      return frameDurationInternal
+    }
+    set {
+      frameDurationLock.lock()
+      defer { frameDurationLock.unlock() }
+      frameDurationInternal = newValue
+    }
   }
 
   /// Called when the display link fires.

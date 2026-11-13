@@ -14,8 +14,8 @@ import QuartzCore
 // An implementation of DisplayLink using CADisplayLink.
 @available(iOS 4.0, macOS 14.0, *)
 class CoreAnimationDisplayLink: DisplayLink {
-  private var displayLink: CADisplayLink?
-  private var target: CoreAnimationDisplayLinkTarget
+  private let displayLink: CADisplayLink?
+  private let target: CoreAnimationDisplayLinkTarget
 
   /// Initializes a display link that calls the given callback when fired.
   ///
@@ -60,8 +60,8 @@ class CoreAnimationDisplayLink: DisplayLink {
 /// A proxy object to act as a CADisplayLink target, to avoid retain loops, since
 /// CoreAnimationDisplayLink owns its CADisplayLink, but CADisplayLink retains its target.
 @available(iOS 4.0, macOS 14.0, *)
-class CoreAnimationDisplayLinkTarget {
-  private var callback: (() -> Void)
+class CoreAnimationDisplayLinkTarget: NSObject {
+  private let callback: (() -> Void)
 
   /// Initializes a target object that runs the given callback when onDisplayLink: is called.
   init(callback: @escaping (() -> Void)) {
