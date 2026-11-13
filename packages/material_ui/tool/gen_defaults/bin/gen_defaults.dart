@@ -119,4 +119,5 @@ Future<void> main(List<String> args) async {
   const TextFieldTemplateM3().generateFile(verbose: verbose);
   const TimePickerTemplateM3().generateFile(verbose: verbose);
   const TypographyTemplateM3().generateFile(verbose: verbose);
+  const TypographyTemplateM3E().generateFile(verbose: verbose);
 }

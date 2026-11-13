@@ -566,4 +566,196 @@ void main() {
 
     expect(nonDefaultPropertyNames, <String>['bodyMedium']);
   });
+
+  group('TextTheme emphasized styles', () {
+    // A text theme where every emphasized style is distinct from its baseline
+    // style and from every other style.
+    TextTheme distinctTheme({double offset = 0.0}) {
+      var size = offset;
+      TextStyle next() => TextStyle(fontSize: ++size);
+      return TextTheme(
+        displayLarge: next(),
+        displayMedium: next(),
+        displaySmall: next(),
+        headlineLarge: next(),
+        headlineMedium: next(),
+        headlineSmall: next(),
+        titleLarge: next(),
+        titleMedium: next(),
+        titleSmall: next(),
+        bodyLarge: next(),
+        bodyMedium: next(),
+        bodySmall: next(),
+        labelLarge: next(),
+        labelMedium: next(),
+        labelSmall: next(),
+        displayLargeEmphasized: next(),
+        displayMediumEmphasized: next(),
+        displaySmallEmphasized: next(),
+        headlineLargeEmphasized: next(),
+        headlineMediumEmphasized: next(),
+        headlineSmallEmphasized: next(),
+        titleLargeEmphasized: next(),
+        titleMediumEmphasized: next(),
+        titleSmallEmphasized: next(),
+        bodyLargeEmphasized: next(),
+        bodyMediumEmphasized: next(),
+        bodySmallEmphasized: next(),
+        labelLargeEmphasized: next(),
+        labelMediumEmphasized: next(),
+        labelSmallEmphasized: next(),
+      );
+    }
+
+    test('default to null', () {
+      expect(_emphasizedStyles(const TextTheme()), everyElement(isNull));
+      expect(_emphasizedStyles(Typography.material2021().black), everyElement(isNull));
+    });
+
+    test('copyWith replaces each emphasized style', () {
+      final TextTheme source = distinctTheme(offset: 100.0);
+      final TextTheme copy = const TextTheme().copyWith(
+        displayLargeEmphasized: source.displayLargeEmphasized,
+        displayMediumEmphasized: source.displayMediumEmphasized,
+        displaySmallEmphasized: source.displaySmallEmphasized,
+        headlineLargeEmphasized: source.headlineLargeEmphasized,
+        headlineMediumEmphasized: source.headlineMediumEmphasized,
+        headlineSmallEmphasized: source.headlineSmallEmphasized,
+        titleLargeEmphasized: source.titleLargeEmphasized,
+        titleMediumEmphasized: source.titleMediumEmphasized,
+        titleSmallEmphasized: source.titleSmallEmphasized,
+        bodyLargeEmphasized: source.bodyLargeEmphasized,
+        bodyMediumEmphasized: source.bodyMediumEmphasized,
+        bodySmallEmphasized: source.bodySmallEmphasized,
+        labelLargeEmphasized: source.labelLargeEmphasized,
+        labelMediumEmphasized: source.labelMediumEmphasized,
+        labelSmallEmphasized: source.labelSmallEmphasized,
+      );
+      expect(_emphasizedStyles(copy), _emphasizedStyles(source));
+      expect(_baselineStyles(copy), everyElement(isNull));
+
+      // Emphasized styles are preserved when not overridden.
+      expect(source.copyWith(), source);
+    });
+
+    test('merge merges each emphasized style', () {
+      final TextTheme base = distinctTheme();
+      const color = Color(0xFF123456);
+      const other = TextTheme(
+        titleMediumEmphasized: TextStyle(color: color),
+        labelSmallEmphasized: TextStyle(color: color),
+      );
+      final TextTheme merged = base.merge(other);
+      expect(merged.titleMediumEmphasized, base.titleMediumEmphasized!.copyWith(color: color));
+      expect(merged.labelSmallEmphasized, base.labelSmallEmphasized!.copyWith(color: color));
+      expect(merged.bodyMediumEmphasized, base.bodyMediumEmphasized);
+
+      // Null emphasized styles take the other theme's style.
+      final TextTheme fromEmpty = const TextTheme().merge(base);
+      expect(_emphasizedStyles(fromEmpty), _emphasizedStyles(base));
+    });
+
+    test('apply uses the same color as the baseline style', () {
+      const displayColor = Color(0x00000001);
+      const bodyColor = Color(0x00000002);
+      final TextTheme applied = distinctTheme().apply(
+        displayColor: displayColor,
+        bodyColor: bodyColor,
+        fontFamily: 'fontFamily',
+        fontSizeFactor: 2.0,
+      );
+
+      final List<TextStyle?> baseline = _baselineStyles(applied);
+      final List<TextStyle?> emphasized = _emphasizedStyles(applied);
+      for (var i = 0; i < baseline.length; i++) {
+        expect(emphasized[i]!.color, baseline[i]!.color);
+        expect(emphasized[i]!.fontFamily, 'fontFamily');
+      }
+      expect(applied.displayLargeEmphasized!.color, displayColor);
+      expect(applied.bodySmallEmphasized!.color, displayColor);
+      expect(applied.bodyLargeEmphasized!.color, bodyColor);
+      expect(applied.labelSmallEmphasized!.color, bodyColor);
+      expect(applied.displayLargeEmphasized!.fontSize, 32.0);
+
+      // Null emphasized styles stay null.
+      expect(
+        _emphasizedStyles(const TextTheme().apply(bodyColor: bodyColor)),
+        everyElement(isNull),
+      );
+    });
+
+    test('lerp interpolates each emphasized style', () {
+      final TextTheme a = distinctTheme();
+      final TextTheme b = distinctTheme(offset: 100.0);
+      final TextTheme lerped = TextTheme.lerp(a, b, 0.25);
+
+      final List<TextStyle?> aStyles = _emphasizedStyles(a);
+      final List<TextStyle?> bStyles = _emphasizedStyles(b);
+      final List<TextStyle?> lerpedStyles = _emphasizedStyles(lerped);
+      for (var i = 0; i < lerpedStyles.length; i++) {
+        expect(lerpedStyles[i], TextStyle.lerp(aStyles[i], bStyles[i], 0.25));
+      }
+    });
+
+    test('equality and hashCode account for emphasized styles', () {
+      final TextTheme theme = distinctTheme();
+      expect(theme, distinctTheme());
+      expect(theme.hashCode, distinctTheme().hashCode);
+
+      final TextTheme changed = theme.copyWith(
+        labelSmallEmphasized: theme.labelSmallEmphasized!.copyWith(color: const Color(0xFF123456)),
+      );
+      expect(changed, isNot(theme));
+      expect(changed.hashCode, isNot(theme.hashCode));
+    });
+
+    test('debugFillProperties reports emphasized styles', () {
+      final builder = DiagnosticPropertiesBuilder();
+      const TextTheme(titleMediumEmphasized: TextStyle(fontSize: 16.0))
+          .debugFillProperties(builder);
+
+      final List<String> nonDefaultPropertyNames = builder.properties
+          .where((DiagnosticsNode node) => !node.isFiltered(DiagnosticLevel.info))
+          .map((DiagnosticsNode node) => node.name!)
+          .toList();
+
+      expect(nonDefaultPropertyNames, <String>['titleMediumEmphasized']);
+    });
+  });
 }
+
+List<TextStyle?> _baselineStyles(TextTheme theme) => <TextStyle?>[
+  theme.displayLarge,
+  theme.displayMedium,
+  theme.displaySmall,
+  theme.headlineLarge,
+  theme.headlineMedium,
+  theme.headlineSmall,
+  theme.titleLarge,
+  theme.titleMedium,
+  theme.titleSmall,
+  theme.bodyLarge,
+  theme.bodyMedium,
+  theme.bodySmall,
+  theme.labelLarge,
+  theme.labelMedium,
+  theme.labelSmall,
+];
+
+List<TextStyle?> _emphasizedStyles(TextTheme theme) => <TextStyle?>[
+  theme.displayLargeEmphasized,
+  theme.displayMediumEmphasized,
+  theme.displaySmallEmphasized,
+  theme.headlineLargeEmphasized,
+  theme.headlineMediumEmphasized,
+  theme.headlineSmallEmphasized,
+  theme.titleLargeEmphasized,
+  theme.titleMediumEmphasized,
+  theme.titleSmallEmphasized,
+  theme.bodyLargeEmphasized,
+  theme.bodyMediumEmphasized,
+  theme.bodySmallEmphasized,
+  theme.labelLargeEmphasized,
+  theme.labelMediumEmphasized,
+  theme.labelSmallEmphasized,
+];
