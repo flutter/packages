@@ -62,6 +62,8 @@ class _PigeonCodec extends StandardMessageCodec {
   }
 }
 
+@internal
+const StandardMessageCodec pigeon_NativeInteropExamplemessageCodec = _PigeonCodec();
 const String defaultInstanceName = 'PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u';
 
 @internal
@@ -105,25 +107,18 @@ class NativeInteropExampleApi {
     BinaryMessenger? binaryMessenger,
     String messageChannelSuffix = '',
   }) {
-    NativeInteropExampleApiForNativeInterop? nativeInteropApi;
-    String nativeInteropApiInstanceName = '';
-    if (!kIsWeb) {
-      if (messageChannelSuffix.isEmpty) {
-        nativeInteropApi = NativeInteropExampleApiForNativeInterop.getInstance();
-      } else {
-        nativeInteropApiInstanceName = messageChannelSuffix;
-        nativeInteropApi = NativeInteropExampleApiForNativeInterop.getInstance(
-          channelName: messageChannelSuffix,
-        );
-      }
-    } else {
+    if (kIsWeb) {
       throw UnsupportedError(
         'Native Interop is not supported on this platform. Use the default constructor of NativeInteropExampleApi instead.',
       );
     }
+    final NativeInteropExampleApiForNativeInterop? nativeInteropApi =
+        NativeInteropExampleApiForNativeInterop.getInstance(
+          channelName: messageChannelSuffix.isEmpty ? defaultInstanceName : messageChannelSuffix,
+        );
     if (nativeInteropApi == null) {
       throw ArgumentError(
-        'No NativeInteropExampleApi instance with ${nativeInteropApiInstanceName.isEmpty ? 'no ' : ''} instance name ${nativeInteropApiInstanceName.isNotEmpty ? '"$nativeInteropApiInstanceName" ' : ''}found.',
+        'No NativeInteropExampleApi instance with ${messageChannelSuffix.isEmpty ? 'no ' : ''}instance name ${messageChannelSuffix.isNotEmpty ? '"$messageChannelSuffix" ' : ''}found.',
       );
     }
     return NativeInteropExampleApi(
@@ -153,7 +148,6 @@ class NativeInteropExampleApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
     _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 }

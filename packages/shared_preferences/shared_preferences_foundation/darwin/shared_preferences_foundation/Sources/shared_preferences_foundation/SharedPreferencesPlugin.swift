@@ -16,7 +16,12 @@ public class LegacySharedPreferencesPlugin: NSObject, FlutterPlugin, LegacyUserD
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     let instance = LegacySharedPreferencesPlugin()
-    LegacyUserDefaultsApiSetup.register(api: instance)
+    registrar.publish(instance)
+    LegacyUserDefaultsApiSetup.register(api: instance, registrar: registrar)
+  }
+
+  public func detachFromEngine(for registrar: FlutterPluginRegistrar) {
+    LegacyUserDefaultsApiSetup.unregister(api: self, registrar: registrar)
   }
 
   func getAll(prefix: String, allowList: [String]?) -> [String: Any] {
@@ -65,11 +70,18 @@ public class LegacySharedPreferencesPlugin: NSObject, FlutterPlugin, LegacyUserD
 }
 
 public class SharedPreferencesPlugin: NSObject, FlutterPlugin, UserDefaultsApi {
+  private let legacyPlugin = LegacySharedPreferencesPlugin()
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     let instance = SharedPreferencesPlugin()
-    UserDefaultsApiSetup.register(api: instance)
-    LegacySharedPreferencesPlugin.register(with: registrar)
+    registrar.publish(instance)
+    UserDefaultsApiSetup.register(api: instance, registrar: registrar)
+    LegacyUserDefaultsApiSetup.register(api: instance.legacyPlugin, registrar: registrar)
+  }
+
+  public func detachFromEngine(for registrar: FlutterPluginRegistrar) {
+    UserDefaultsApiSetup.unregister(api: self, registrar: registrar)
+    LegacyUserDefaultsApiSetup.unregister(api: legacyPlugin, registrar: registrar)
   }
 
   static private func getUserDefaults(options: SharedPreferencesPigeonOptions) throws

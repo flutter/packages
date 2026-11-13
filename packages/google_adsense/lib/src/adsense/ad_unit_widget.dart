@@ -33,9 +33,8 @@ class AdUnitWidget extends StatefulWidget {
     super.key,
     required AdUnitConfiguration configuration,
     @visibleForTesting String? adClient,
-    @visibleForTesting void Function()? onInjected,
+    @visibleForTesting this._onInjected,
   }) : _adClient = adClient ?? adSense.adClient,
-       _onInjected = onInjected,
        _adUnitConfiguration = configuration {
     assert(
       _adClient != null,
