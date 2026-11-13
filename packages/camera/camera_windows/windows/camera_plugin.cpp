@@ -85,33 +85,15 @@ std::string GetCurrentTimeString() {
   return time_start + std::to_string(ms);
 }
 
-// Builds file path for picture capture.
-std::optional<std::string> GetFilePathForPicture() {
-  ComHeapPtr<wchar_t> known_folder_path;
-  HRESULT hr = SHGetKnownFolderPath(FOLDERID_Pictures, KF_FLAG_CREATE, nullptr,
-                                    &known_folder_path);
-  if (FAILED(hr)) {
-    return std::nullopt;
-  }
-
-  std::string path = Utf8FromUtf16(std::wstring(known_folder_path));
-
-  return path + "\\" + "PhotoCapture_" + GetCurrentTimeString() + "." +
+// Builds file path for picture capture in the given directory.
+std::string GetFilePathForPicture(const std::string& directory) {
+  return directory + "PhotoCapture_" + GetCurrentTimeString() + "." +
          kPictureCaptureExtension;
 }
 
-// Builds file path for video capture.
-std::optional<std::string> GetFilePathForVideo() {
-  ComHeapPtr<wchar_t> known_folder_path;
-  HRESULT hr = SHGetKnownFolderPath(FOLDERID_Videos, KF_FLAG_CREATE, nullptr,
-                                    &known_folder_path);
-  if (FAILED(hr)) {
-    return std::nullopt;
-  }
-
-  std::string path = Utf8FromUtf16(std::wstring(known_folder_path));
-
-  return path + "\\" + "VideoCapture_" + GetCurrentTimeString() + "." +
+// Builds file path for video capture in the given directory.
+std::string GetFilePathForVideo(const std::string& directory) {
+  return directory + "VideoCapture_" + GetCurrentTimeString() + "." +
          kVideoCaptureExtension;
 }
 }  // namespace
@@ -194,6 +176,37 @@ bool CameraPlugin::EnumerateVideoCaptureDeviceSources(IMFActivate*** devices,
                                                       UINT32* count) {
   return CaptureControllerImpl::EnumerateVideoCaptureDeviceSources(devices,
                                                                    count);
+}
+
+std::optional<std::wstring> CameraPlugin::GetKnownFolderPath(
+    REFKNOWNFOLDERID folder_id) {
+  ComHeapPtr<wchar_t> known_folder_path;
+  // KF_FLAG_CREATE opens the folder with write intent even if it already
+  // exists, so this acts also as write permission check.
+  HRESULT hr = SHGetKnownFolderPath(folder_id, KF_FLAG_CREATE, nullptr,
+                                    &known_folder_path);
+  if (FAILED(hr)) {
+    return std::nullopt;
+  }
+
+  return std::wstring(known_folder_path);
+}
+
+std::optional<std::string> CameraPlugin::GetCaptureDirectory(
+    REFKNOWNFOLDERID folder_id) {
+  std::optional<std::wstring> known_folder_path = GetKnownFolderPath(folder_id);
+  if (known_folder_path) {
+    return Utf8FromUtf16(*known_folder_path) + "\\";
+  }
+
+  wchar_t temp_path[MAX_PATH + 1];
+  // The returned length includes the trailing backslash.
+  DWORD length = GetTempPathW(MAX_PATH + 1, temp_path);
+  if (length == 0 || length > MAX_PATH) {
+    return std::nullopt;
+  }
+
+  return Utf8FromUtf16(std::wstring(temp_path, length));
 }
 
 void CameraPlugin::Create(const std::string& camera_name,
@@ -310,8 +323,9 @@ void CameraPlugin::StartVideoRecording(
   std::optional<std::string> path;
   if (video_output_path && !video_output_path->empty()) {
     path = *video_output_path;
-  } else {
-    path = GetFilePathForVideo();
+  } else if (std::optional<std::string> directory =
+                 GetCaptureDirectory(FOLDERID_Videos)) {
+    path = GetFilePathForVideo(*directory);
   }
 
   if (path) {
@@ -359,13 +373,13 @@ void CameraPlugin::TakePicture(
         FlutterError("camera_error", "Pending take picture request exists"));
   }
 
-  std::optional<std::string> path = GetFilePathForPicture();
-  if (path) {
+  std::optional<std::string> directory = GetCaptureDirectory(FOLDERID_Pictures);
+  if (directory) {
     if (camera->AddPendingStringResult(PendingResultType::kTakePicture,
                                        std::move(result))) {
       auto cc = camera->GetCaptureController();
       assert(cc);
-      cc->TakePicture(*path);
+      cc->TakePicture(GetFilePathForPicture(*directory));
     }
   } else {
     return result(
