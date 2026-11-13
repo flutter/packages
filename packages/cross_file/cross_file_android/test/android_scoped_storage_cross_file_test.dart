@@ -413,7 +413,7 @@ void main() {
       verify(mockOutputStream.close()).called(1);
     });
 
-    test('openWrite throws exception if OutputStream when ', () async {
+    test('openWrite throws exception if OutputStream is null and nothing is written', () async {
       const uri = 'uri';
       final mockDocumentFile = MockDocumentFile();
       android.PigeonOverrides.documentFile_fromSingleUri = ({required String singleUri}) {
