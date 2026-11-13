@@ -12,10 +12,6 @@ import Foundation
   #error("Unsupported platform.")
 #endif
 
-#if canImport(video_player_avfoundation_objc)
-  import video_player_avfoundation_objc
-#endif
-
 /// A factory class responsible for creating native video views that can be embedded in a
 /// Flutter app.
 final class NativeVideoViewFactory: NSObject, FlutterPlatformViewFactory {
@@ -64,10 +60,10 @@ final class NativeVideoViewFactory: NSObject, FlutterPlatformViewFactory {
   /// Creates a native video view for the given arguments.
   private func createNativeVideoView(
     arguments args: PlatformVideoViewCreationParams
-  ) -> FVPNativeVideoView {
-    // The Dart code should never attempt to create a platform view for a player that doesn't exist,
-    // and there's no mechanism to report an error, so just force-unwrap.
-    let player = playerByIdentifierProvider(args.playerId)!
-    return FVPNativeVideoView(player: player.player)
+  ) -> NativeVideoView {
+    // Ignore null, since that indicates the player was disposed before
+    // reaching this part of the bringup.
+    let player = playerByIdentifierProvider(args.playerId)
+    return NativeVideoView(player: player?.player)
   }
 }

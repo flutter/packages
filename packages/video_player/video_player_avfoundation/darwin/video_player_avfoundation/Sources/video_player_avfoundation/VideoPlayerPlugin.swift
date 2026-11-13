@@ -12,43 +12,38 @@ import AVFoundation
   #error("Unsupported platform.")
 #endif
 
-#if canImport(video_player_avfoundation_objc)
-  import video_player_avfoundation_objc
-#endif
-
 // Protocol for an display link factory. Used for injecting display links in tests.
 protocol DisplayLinkFactory {
   func displayLink(
-    with viewProvider: FVPViewProvider,
+    with viewProvider: ViewProvider,
     callback: @escaping () -> Void
-  ) -> FVPDisplayLink
+  ) -> DisplayLink
 }
 
 /// Non-test implementation of the display link factory.
 final class DefaultDisplayLinkFactory: DisplayLinkFactory {
   func displayLink(
-    with viewProvider: FVPViewProvider,
+    with viewProvider: ViewProvider,
     callback: @escaping () -> Void
-  ) -> FVPDisplayLink {
+  ) -> DisplayLink {
     #if os(iOS)
-      return FVPCADisplayLink(viewProvider: viewProvider, callback: callback)
+      return CoreAnimationDisplayLink(viewProvider: viewProvider, callback: callback)
     #elseif os(macOS)
       if #available(macOS 14.0, *) {
-        return FVPCADisplayLink(viewProvider: viewProvider, callback: callback)
+        return CoreAnimationDisplayLink(viewProvider: viewProvider, callback: callback)
       }
-      return FVPCoreVideoDisplayLink(viewProvider: viewProvider, callback: callback)
+      return CoreVideoDisplayLink(viewProvider: viewProvider, callback: callback)
     #endif
   }
 }
 
-/// Non-test implementation of FVPAssetProvider, wrapping a Flutter plugin
+/// Non-test implementation of AssetProvider, wrapping a Flutter plugin
 /// registrar.
-final class DefaultAssetProvider: NSObject, FVPAssetProvider {
+final class DefaultAssetProvider: AssetProvider {
   private weak var registrar: FlutterPluginRegistrar?
 
   init(registrar: FlutterPluginRegistrar) {
     self.registrar = registrar
-    super.init()
   }
 
   func lookupKey(forAsset asset: String) -> String? {
@@ -68,8 +63,8 @@ public final class VideoPlayerPlugin: NSObject, FlutterPlugin, AVFoundationVideo
   private let textureRegistry: FlutterTextureRegistry
   private let displayLinkFactory: DisplayLinkFactory
   private let avFactory: WrappedAVObjectFactory
-  private let viewProvider: FVPViewProvider
-  private let assetProvider: FVPAssetProvider
+  private let viewProvider: ViewProvider
+  private let assetProvider: AssetProvider
   private var nextPlayerIdentifier: Int64 = 1
   private(set) var playersByIdentifier: [Int64: VideoPlayer] = [:]
 
@@ -108,7 +103,7 @@ public final class VideoPlayerPlugin: NSObject, FlutterPlugin, AVFoundationVideo
       displayLinkFactory: DefaultDisplayLinkFactory(),
       binaryMessenger: messenger,
       textureRegistry: textures,
-      viewProvider: FVPDefaultViewProvider(registrar: registrar),
+      viewProvider: DefaultViewProvider(registrar: registrar),
       assetProvider: DefaultAssetProvider(registrar: registrar)
     )
   }
@@ -118,8 +113,8 @@ public final class VideoPlayerPlugin: NSObject, FlutterPlugin, AVFoundationVideo
     displayLinkFactory: DisplayLinkFactory,
     binaryMessenger: FlutterBinaryMessenger,
     textureRegistry: FlutterTextureRegistry,
-    viewProvider: FVPViewProvider,
-    assetProvider: FVPAssetProvider
+    viewProvider: ViewProvider,
+    assetProvider: AssetProvider
   ) {
     self.binaryMessenger = binaryMessenger
     self.textureRegistry = textureRegistry
@@ -200,7 +195,7 @@ public final class VideoPlayerPlugin: NSObject, FlutterPlugin, AVFoundationVideo
     async throws -> TexturePlayerIds
   {
     let item = try playerItem(with: creationOptions)
-    let frameUpdater = FVPFrameUpdater(registry: textureRegistry)
+    let frameUpdater = FrameUpdater(registry: textureRegistry)
     let displayLink = displayLinkFactory.displayLink(with: viewProvider) {
       frameUpdater.displayLinkFired()
     }
