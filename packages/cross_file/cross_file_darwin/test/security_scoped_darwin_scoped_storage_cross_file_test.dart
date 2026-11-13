@@ -101,7 +101,6 @@ void main() {
       await forceGC();
       expect(file.target, isNull);
     },
-
     skip: !Platform.isMacOS
         ? 'The ObjectiveC method called in `dispose` only works on macOS.'
         : false,
