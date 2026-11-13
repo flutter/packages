@@ -86,12 +86,12 @@ abstract base class PlatformXFile extends PlatformXEntity {
   /// Date and time when the resource was last modified, if the information is
   /// available.
   ///
-  /// Returns null if resource doesn't exist or information is not available.
+  /// Returns null if the resource doesn't exist or information is not available.
   Future<DateTime?> lastModified();
 
   /// The length of the data represented by this uri, in bytes.
   ///
-  /// Returns null if resource doesn't exist or information is not available.
+  /// Returns null if the resource doesn't exist or information is not available.
   Future<int?> length();
 
   /// Creates a new independent Stream for the contents of this resource.
