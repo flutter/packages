@@ -199,6 +199,49 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
 
 class _PlaceholderImplementation extends VideoPlayerPlatform {}
 
+/// Base class for DRM configuration passed to [DataSource.drmConfiguration].
+///
+/// Each subclass describes one DRM system. Systems that can be supported by
+/// more than one platform implementation, such as [WidevineDrmConfiguration],
+/// are defined in this package. Systems that are specific to a single platform
+/// implementation are defined in that implementation's package, such as
+/// `FairPlayDrmConfiguration` from `video_player_avfoundation`.
+///
+/// Platform implementations should recognize only the subclasses for the DRM
+/// systems they support, and should throw an [UnsupportedError] for any other
+/// subclass.
+@immutable
+abstract class VideoDrmConfiguration {
+  /// Allows subclasses to be const constructed.
+  const VideoDrmConfiguration();
+}
+
+/// Configuration for playing Widevine-protected content.
+///
+/// Widevine is not tied to a single platform, so this configuration is shared
+/// by every platform implementation that supports it. Implementations that do
+/// not support Widevine should reject it like any other unsupported
+/// [VideoDrmConfiguration].
+///
+/// The license exchange itself is performed by the platform implementation,
+/// using [licenseUri] and [licenseHeaders].
+@immutable
+class WidevineDrmConfiguration extends VideoDrmConfiguration {
+  /// Creates a configuration for Widevine playback.
+  const WidevineDrmConfiguration({
+    required this.licenseUri,
+    this.licenseHeaders = const <String, String>{},
+  });
+
+  /// The license acquisition URL of the Widevine license server.
+  final Uri licenseUri;
+
+  /// Headers to attach to each license request sent to [licenseUri].
+  ///
+  /// This is typically where provider-specific authorization tokens go.
+  final Map<String, String> licenseHeaders;
+}
+
 /// Description of the data source used to create an instance of
 /// the video player.
 class DataSource {
@@ -222,6 +265,7 @@ class DataSource {
     this.asset,
     this.package,
     this.httpHeaders = const <String, String>{},
+    this.drmConfiguration,
   });
 
   /// The way in which the video was originally loaded.
@@ -244,6 +288,14 @@ class DataSource {
   /// Only for [DataSourceType.network] videos.
   /// Always empty for other video types.
   Map<String, String> httpHeaders;
+
+  /// DRM configuration for the video.
+  ///
+  /// Only supported for [DataSourceType.network] videos. Implementations
+  /// should throw an [ArgumentError] if a configuration is provided for
+  /// another source type, and an [UnsupportedError] if it is a subclass of
+  /// [VideoDrmConfiguration] that the implementation does not support.
+  final VideoDrmConfiguration? drmConfiguration;
 
   /// The name of the asset. Only set for [DataSourceType.asset] videos.
   final String? asset;

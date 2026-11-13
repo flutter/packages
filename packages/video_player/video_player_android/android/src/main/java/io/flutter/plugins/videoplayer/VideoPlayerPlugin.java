@@ -146,8 +146,15 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
             break;
         }
       }
+      WidevineDrmConfiguration widevineDrm = null;
+      PlatformWidevineDrmConfiguration drmOptions = options.getWidevineDrm();
+      if (drmOptions != null) {
+        widevineDrm =
+            new WidevineDrmConfiguration(
+                drmOptions.getLicenseUri(), drmOptions.getLicenseHeaders());
+      }
       return VideoAsset.fromRemoteUrl(
-          uri, streamingFormat, options.getHttpHeaders(), options.getUserAgent());
+          uri, streamingFormat, options.getHttpHeaders(), options.getUserAgent(), widevineDrm);
     }
   }
 

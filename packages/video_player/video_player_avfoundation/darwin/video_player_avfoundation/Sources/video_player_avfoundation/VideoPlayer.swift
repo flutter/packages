@@ -118,6 +118,9 @@ class VideoPlayerInstanceBridge: VideoPlayerInstanceApi {
 class VideoPlayer: NSObject {
   /// The AVPlayer instance used for video playback.
   let player: AVPlayer
+  /// The wrapped player item. This is retained because the wrapper owns objects that have to
+  /// outlive player creation, such as the resource loader delegate used for DRM.
+  private var playerItem: WrappedAVPlayerItem?
   /// The VideoPlayerInstanceApi implementation that forwards calls to this object.
   private(set) var hostApiBridge: VideoPlayerInstanceBridge!
   /// Indicates whether the video player has been disposed.
@@ -160,6 +163,7 @@ class VideoPlayer: NSObject {
     viewProvider: FVPViewProvider
   ) {
     self.viewProvider = viewProvider
+    self.playerItem = playerItem
 
     let asset = playerItem.asset
 
@@ -376,6 +380,10 @@ class VideoPlayer: NSObject {
     keyValueObservations.removeAll()
 
     player.replaceCurrentItem(with: nil)
+    // Release the wrapper as well as the player's reference to the item. The wrapper owns the
+    // resource loader delegate for DRM playback, which in turn owns any key exchange still in
+    // flight, so holding it until this player is deallocated would keep that work alive.
+    playerItem = nil
 
     onDisposed?()
     eventListener?.videoPlayerWasDisposed()

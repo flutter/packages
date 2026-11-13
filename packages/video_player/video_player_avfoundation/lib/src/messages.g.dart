@@ -139,15 +139,77 @@ class PlatformVideoViewCreationParams {
   }
 }
 
+/// Pigeon equivalent of video_player_avfoundation's FairPlayDrmConfiguration.
+class PlatformFairPlayDrmConfiguration {
+  PlatformFairPlayDrmConfiguration({
+    required this.certificateUri,
+    required this.licenseUri,
+    required this.licenseHeaders,
+    this.contentId,
+  });
+
+  String certificateUri;
+
+  String licenseUri;
+
+  Map<String, String> licenseHeaders;
+
+  String? contentId;
+
+  List<Object?> _toList() {
+    return <Object?>[certificateUri, licenseUri, licenseHeaders, contentId];
+  }
+
+  Object encode() {
+    return _toList();
+  }
+
+  static PlatformFairPlayDrmConfiguration decode(Object result) {
+    result as List<Object?>;
+    return PlatformFairPlayDrmConfiguration(
+      certificateUri: result[0]! as String,
+      licenseUri: result[1]! as String,
+      licenseHeaders: (result[2]! as Map<Object?, Object?>).cast<String, String>(),
+      contentId: result[3] as String?,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PlatformFairPlayDrmConfiguration || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(certificateUri, other.certificateUri) &&
+        _deepEquals(licenseUri, other.licenseUri) &&
+        _deepEquals(licenseHeaders, other.licenseHeaders) &&
+        _deepEquals(contentId, other.contentId);
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'PlatformFairPlayDrmConfiguration(certificateUri: $certificateUri, licenseUri: $licenseUri, licenseHeaders: $licenseHeaders, contentId: $contentId)';
+  }
+}
+
 class CreationOptions {
-  CreationOptions({required this.uri, required this.httpHeaders});
+  CreationOptions({required this.uri, required this.httpHeaders, this.fairPlayDrm});
 
   String uri;
 
   Map<String, String> httpHeaders;
 
+  PlatformFairPlayDrmConfiguration? fairPlayDrm;
+
   List<Object?> _toList() {
-    return <Object?>[uri, httpHeaders];
+    return <Object?>[uri, httpHeaders, fairPlayDrm];
   }
 
   Object encode() {
@@ -159,6 +221,7 @@ class CreationOptions {
     return CreationOptions(
       uri: result[0]! as String,
       httpHeaders: (result[1]! as Map<Object?, Object?>).cast<String, String>(),
+      fairPlayDrm: result[2] as PlatformFairPlayDrmConfiguration?,
     );
   }
 
@@ -171,7 +234,9 @@ class CreationOptions {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(uri, other.uri) && _deepEquals(httpHeaders, other.httpHeaders);
+    return _deepEquals(uri, other.uri) &&
+        _deepEquals(httpHeaders, other.httpHeaders) &&
+        _deepEquals(fairPlayDrm, other.fairPlayDrm);
   }
 
   @override
@@ -180,7 +245,7 @@ class CreationOptions {
 
   @override
   String toString() {
-    return 'CreationOptions(uri: $uri, httpHeaders: $httpHeaders)';
+    return 'CreationOptions(uri: $uri, httpHeaders: $httpHeaders, fairPlayDrm: $fairPlayDrm)';
   }
 }
 
@@ -803,44 +868,47 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is PlatformVideoViewCreationParams) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
-    } else if (value is CreationOptions) {
+    } else if (value is PlatformFairPlayDrmConfiguration) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    } else if (value is TexturePlayerIds) {
+    } else if (value is CreationOptions) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
-    } else if (value is MediaSelectionAudioTrackData) {
+    } else if (value is TexturePlayerIds) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
-    } else if (value is MediaSelectionVideoTrackData) {
+    } else if (value is MediaSelectionAudioTrackData) {
       buffer.putUint8(133);
       writeValue(buffer, value.encode());
-    } else if (value is AssetVideoTrackData) {
+    } else if (value is MediaSelectionVideoTrackData) {
       buffer.putUint8(134);
       writeValue(buffer, value.encode());
-    } else if (value is NativeVideoTrackData) {
+    } else if (value is AssetVideoTrackData) {
       buffer.putUint8(135);
       writeValue(buffer, value.encode());
-    } else if (value is InitializationEvent) {
+    } else if (value is NativeVideoTrackData) {
       buffer.putUint8(136);
       writeValue(buffer, value.encode());
-    } else if (value is BufferingStartEvent) {
+    } else if (value is InitializationEvent) {
       buffer.putUint8(137);
       writeValue(buffer, value.encode());
-    } else if (value is BufferingEndEvent) {
+    } else if (value is BufferingStartEvent) {
       buffer.putUint8(138);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformDurationRange) {
+    } else if (value is BufferingEndEvent) {
       buffer.putUint8(139);
       writeValue(buffer, value.encode());
-    } else if (value is BufferingUpdateEvent) {
+    } else if (value is PlatformDurationRange) {
       buffer.putUint8(140);
       writeValue(buffer, value.encode());
-    } else if (value is PlaybackCompleteEvent) {
+    } else if (value is BufferingUpdateEvent) {
       buffer.putUint8(141);
       writeValue(buffer, value.encode());
-    } else if (value is IsPlayingStateEvent) {
+    } else if (value is PlaybackCompleteEvent) {
       buffer.putUint8(142);
+      writeValue(buffer, value.encode());
+    } else if (value is IsPlayingStateEvent) {
+      buffer.putUint8(143);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -853,30 +921,32 @@ class _PigeonCodec extends StandardMessageCodec {
       case 129:
         return PlatformVideoViewCreationParams.decode(readValue(buffer)!);
       case 130:
-        return CreationOptions.decode(readValue(buffer)!);
+        return PlatformFairPlayDrmConfiguration.decode(readValue(buffer)!);
       case 131:
-        return TexturePlayerIds.decode(readValue(buffer)!);
+        return CreationOptions.decode(readValue(buffer)!);
       case 132:
-        return MediaSelectionAudioTrackData.decode(readValue(buffer)!);
+        return TexturePlayerIds.decode(readValue(buffer)!);
       case 133:
-        return MediaSelectionVideoTrackData.decode(readValue(buffer)!);
+        return MediaSelectionAudioTrackData.decode(readValue(buffer)!);
       case 134:
-        return AssetVideoTrackData.decode(readValue(buffer)!);
+        return MediaSelectionVideoTrackData.decode(readValue(buffer)!);
       case 135:
-        return NativeVideoTrackData.decode(readValue(buffer)!);
+        return AssetVideoTrackData.decode(readValue(buffer)!);
       case 136:
-        return InitializationEvent.decode(readValue(buffer)!);
+        return NativeVideoTrackData.decode(readValue(buffer)!);
       case 137:
-        return BufferingStartEvent.decode(readValue(buffer)!);
+        return InitializationEvent.decode(readValue(buffer)!);
       case 138:
-        return BufferingEndEvent.decode(readValue(buffer)!);
+        return BufferingStartEvent.decode(readValue(buffer)!);
       case 139:
-        return PlatformDurationRange.decode(readValue(buffer)!);
+        return BufferingEndEvent.decode(readValue(buffer)!);
       case 140:
-        return BufferingUpdateEvent.decode(readValue(buffer)!);
+        return PlatformDurationRange.decode(readValue(buffer)!);
       case 141:
-        return PlaybackCompleteEvent.decode(readValue(buffer)!);
+        return BufferingUpdateEvent.decode(readValue(buffer)!);
       case 142:
+        return PlaybackCompleteEvent.decode(readValue(buffer)!);
+      case 143:
         return IsPlayingStateEvent.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
