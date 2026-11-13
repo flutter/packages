@@ -2,11 +2,67 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:convert';
+
+import 'dart:typed_data';
+
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('CrossFilePlatform', () {
+    group('XFile', () {
+      test('calling openWrite throws UnsupportedError', () {
+        final file = TestXFile(const PlatformXFileCreationParams(uri: ''));
+        expect(
+          () => file.openWrite(const PlatformOpenWriteParams()),
+          throwsA(isA<UnsupportedError>()),
+        );
+      });
+
+      test('calling writeAsString throws UnsupportedError', () {
+        final file = TestXFile(const PlatformXFileCreationParams(uri: ''));
+        expect(
+          () => file.writeAsString(const PlatformWriteAsStringParams('')),
+          throwsA(isA<UnsupportedError>()),
+        );
+      });
+
+      test('calling delete throws UnsupportedError', () {
+        final file = TestXFile(const PlatformXFileCreationParams(uri: ''));
+        expect(
+          () => file.delete(const PlatformFileDeleteParams()),
+          throwsA(isA<UnsupportedError>()),
+        );
+      });
+    });
+
+    group('XDirectory', () {
+      test('calling createFile throws UnsupportedError', () {
+        final dir = TestXDirectory(const PlatformXDirectoryCreationParams(uri: ''));
+        expect(
+          () => dir.createFile(const PlatformCreateParams('')),
+          throwsA(isA<UnsupportedError>()),
+        );
+      });
+
+      test('calling createDirectory throws UnsupportedError', () {
+        final dir = TestXDirectory(const PlatformXDirectoryCreationParams(uri: ''));
+        expect(
+          () => dir.createDirectory(const PlatformCreateParams('')),
+          throwsA(isA<UnsupportedError>()),
+        );
+      });
+
+      test('calling delete throws UnsupportedError', () {
+        final dir = TestXDirectory(const PlatformXDirectoryCreationParams(uri: ''));
+        expect(
+          () => dir.delete(const PlatformDirectoryDeleteParams()),
+          throwsA(isA<UnsupportedError>()),
+        );
+      });
+    });
+
     group('FileSystem', () {
       test('PlatformFileSystemXFile returns correct uri', () {
         final platform = TestCrossFilePlatform();
@@ -183,3 +239,56 @@ void main() {
 }
 
 final class TestCrossFilePlatform extends CrossFilePlatform {}
+
+final class TestXFile extends PlatformXFile {
+  TestXFile(super.params);
+
+  @override
+  Future<bool> exists() {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<DateTime?> lastModified() {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<int?> length() {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String?> name() {
+    throw UnimplementedError();
+  }
+
+  @override
+  Stream<Uint8List> openRead([int? start, int? end]) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Uint8List> readAsBytes() {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String> readAsString({Encoding encoding = utf8}) {
+    throw UnimplementedError();
+  }
+}
+
+final class TestXDirectory extends PlatformXDirectory {
+  TestXDirectory(super.params);
+
+  @override
+  Future<bool> exists() {
+    throw UnimplementedError();
+  }
+
+  @override
+  Stream<PlatformXEntity> list(PlatformListParams params) {
+    throw UnimplementedError();
+  }
+}
