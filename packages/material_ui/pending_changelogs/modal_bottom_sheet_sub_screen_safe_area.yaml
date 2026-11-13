@@ -1,0 +1,4 @@
+changelog: |
+  - Fixes `showModalBottomSheet(useSafeArea: true)` incorrectly subtracting opposite safe area insets on display-feature sub-screens.
+version: patch
+
