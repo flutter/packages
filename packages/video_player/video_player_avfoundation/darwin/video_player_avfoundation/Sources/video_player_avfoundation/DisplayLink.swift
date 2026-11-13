@@ -7,7 +7,7 @@ import Foundation
 // A display link abstraction that supports both Core Animation-based
 // display links (for iOS and recent macOS versions) and Core Video-based
 // display links (for older macOS versions).
-protocol DisplayLink {
+protocol DisplayLink: AnyObject {
 
   /// Whether the display link is currently running (i.e., firing events).
   ///

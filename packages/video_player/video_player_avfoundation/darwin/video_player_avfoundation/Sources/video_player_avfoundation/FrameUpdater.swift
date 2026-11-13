@@ -20,7 +20,7 @@ class FrameUpdater {
   /// The texture identifier associated with the video output.
   var textureIdentifier: Int64 = 0
   /// The display link that drives frameUpdater.
-  var displayLink: DisplayLink?
+  weak var displayLink: DisplayLink?
   /// The time interval between screen refresh updates. Display link duration is in an undefined state
   /// until displayLinkFired is called at least once so it should not be used directly.
   var frameDuration: CFTimeInterval = .zero
