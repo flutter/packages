@@ -58,7 +58,7 @@ import AVFoundation
     init(player: AVPlayer) {
       super.init(frame: .zero)
       self.wantsLayer = true
-      (layer as! AVPlayerLayer).player = player
+      (layer as? AVPlayerLayer)?.player = player
     }
 
     // This will never be used, but is required for NSView subclasses.
