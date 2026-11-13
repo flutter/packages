@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes `CupertinoTextSelectionToolbar` throwing when paginating rapidly while the page transition animation is in progress.
+version: patch
