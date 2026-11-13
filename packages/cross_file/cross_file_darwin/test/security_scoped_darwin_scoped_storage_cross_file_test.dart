@@ -74,18 +74,24 @@ void main() {
     expect(await file.name(), 'test_file.txt');
   });
 
-  test('finalizer callback is made when file is garbage collected', () async {
-    SecurityScopedDarwinScopedStorageXFile.finalizer = Finalizer<String>(
-      expectAsync1((String uri) {
-        expect(uri, testFile.uri.toString());
-      }),
-    );
+  test(
+    'finalizer callback is made when file is garbage collected',
+    () async {
+      SecurityScopedDarwinScopedStorageXFile.finalizer = Finalizer<String>(
+        expectAsync1((String uri) {
+          expect(uri, testFile.uri.toString());
+        }),
+      );
 
-    final WeakReference<SecurityScopedDarwinScopedStorageXFile> file = await _createAndDropFile();
+      final WeakReference<SecurityScopedDarwinScopedStorageXFile> file = await _createAndDropFile();
 
-    await forceGC();
-    expect(file.target, isNull);
-  });
+      await forceGC();
+      expect(file.target, isNull);
+    },
+    skip: !Platform.isMacOS
+        ? 'The ObjectiveC method called in `dispose` only works on macOS'
+        : false,
+  );
 
   test(
     'finalizer callback is not made when file is garbage collected after being disposed',
@@ -101,6 +107,10 @@ void main() {
       await forceGC();
       expect(file.target, isNull);
     },
+
+    skip: !Platform.isMacOS
+        ? 'The ObjectiveC method called in `dispose` only works on macOS.'
+        : false,
   );
 }
 
