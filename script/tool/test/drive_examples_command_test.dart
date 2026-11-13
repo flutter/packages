@@ -21,17 +21,32 @@ import 'util.dart';
 
 const String _fakeIOSDevice = '67d5c3d1-8bdf-46ad-8f6b-b00e2a972dda';
 const String _fakeAndroidDevice = 'emulator-1234';
+const List<String> _defaultWebBrowserFlags = <String>[
+  '--web-browser-flag=--no-sandbox',
+  '--web-browser-flag=--disable-background-timer-throttling',
+  '--web-browser-flag=--disable-renderer-backgrounding',
+  '--web-browser-flag=--disable-background-networking',
+  '--web-browser-flag=--disable-search-engine-choice-screen',
+  '--web-browser-flag=--disable-extensions',
+  '--web-browser-flag=--disable-popup-blocking',
+  '--web-browser-flag=--disable-translate',
+  '--web-browser-flag=--disable-default-apps',
+  '--web-browser-flag=--no-default-browser-check',
+  '--web-browser-flag=--no-first-run',
+  '--web-browser-flag=--password-store=basic',
+  '--web-browser-flag=--bwsi',
+];
 
 void main() {
   group('test drive_example_command', () {
-    late Platform mockPlatform;
+    late NativePlatform mockPlatform;
     late Directory packagesDir;
     late CommandRunner<void> runner;
     late RecordingProcessRunner processRunner;
     late RecordingProcessRunner gitProcessRunner;
 
     setUp(() {
-      mockPlatform = MockPlatform();
+      mockPlatform = createMockPlatform();
       final GitDir gitDir;
       (:packagesDir, :processRunner, :gitProcessRunner, :gitDir) = configureBaseCommandMocks(
         platform: mockPlatform,
@@ -776,6 +791,7 @@ void main() {
             'web-server',
             '--web-port=7357',
             '--browser-name=chrome',
+            ..._defaultWebBrowserFlags,
             '--screenshot=/path/to/logs/plugin_example-drive',
             '--driver',
             'test_driver/integration_test.dart',
@@ -823,6 +839,7 @@ void main() {
             '--web-port=7357',
             '--browser-name=chrome',
             '--wasm',
+            ..._defaultWebBrowserFlags,
             '--screenshot=/path/to/logs/plugin_example-drive',
             '--driver',
             'test_driver/integration_test.dart',
@@ -847,6 +864,17 @@ void main() {
         },
       );
 
+      processRunner.mockProcessesForExecutable['chromedriver'] = <FakeProcessInfo>[
+        FakeProcessInfo(
+          MockProcess(
+            stdout:
+                'Starting ChromeDriver on port 0\n'
+                'ChromeDriver was started successfully on port 12345.\n',
+          ),
+          <String>['--port=0'],
+        ),
+      ];
+
       final Directory pluginExampleDirectory = getExampleDir(plugin);
 
       final List<String> output = await runCapturingPrint(runner, <String>[
@@ -857,25 +885,199 @@ void main() {
 
       expect(
         output,
-        containsAllInOrder(<Matcher>[contains('Running for plugin'), contains('No issues found!')]),
+        containsAllInOrder(<Matcher>[
+          contains('Running for plugin'),
+          contains('Started chromedriver on port 12345'),
+          contains('No issues found!'),
+        ]),
       );
 
       expect(
         processRunner.recordedCalls,
         orderedEquals(<ProcessCall>[
-          const ProcessCall('chromedriver', <String>['--port=4444'], null),
+          const ProcessCall('chromedriver', <String>['--port=0'], null),
           ProcessCall(getFlutterCommand(mockPlatform), const <String>[
             'drive',
             '-d',
             'web-server',
             '--web-port=7357',
             '--browser-name=chrome',
+            ..._defaultWebBrowserFlags,
+            '--driver-port=12345',
             '--screenshot=/path/to/logs/plugin_example-drive',
             '--driver',
             'test_driver/integration_test.dart',
             '--target',
             'integration_test/plugin_test.dart',
           ], pluginExampleDirectory.path),
+        ]),
+      );
+    });
+
+    test('waits for chromedriver to exit between examples', () async {
+      final RepositoryPackage plugin = createFakePlugin(
+        'plugin',
+        packagesDir,
+        examples: <String>['example_1', 'example_2'],
+        extraFiles: <String>[
+          'example/example_1/integration_test/plugin_test.dart',
+          'example/example_1/test_driver/integration_test.dart',
+          'example/example_1/web/index.html',
+          'example/example_2/integration_test/plugin_test.dart',
+          'example/example_2/test_driver/integration_test.dart',
+          'example/example_2/web/index.html',
+        ],
+        platformSupport: <String, PlatformDetails>{
+          platformWeb: const PlatformDetails(PlatformSupport.inline),
+        },
+      );
+
+      final firstChromeDriver = _SlowExitMockProcess(
+        stdout: 'ChromeDriver was started successfully on port 12345.\n',
+      );
+      var firstChromeDriverExitedBeforeSecondStart = false;
+      processRunner.mockProcessesForExecutable['chromedriver'] = <FakeProcessInfo>[
+        FakeProcessInfo(firstChromeDriver, <String>['--port=0']),
+        FakeProcessInfo(
+          MockProcess(stdout: 'ChromeDriver was started successfully on port 12346.\n'),
+          <String>['--port=0'],
+          () {
+            firstChromeDriverExitedBeforeSecondStart =
+                firstChromeDriver.killed && firstChromeDriver.exited;
+          },
+        ),
+      ];
+
+      final Directory example1Dir = getExampleDir(plugin).childDirectory('example_1');
+      final Directory example2Dir = getExampleDir(plugin).childDirectory('example_2');
+
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'drive-examples',
+        '--web',
+        '--run-chromedriver',
+      ]);
+
+      expect(firstChromeDriverExitedBeforeSecondStart, isTrue);
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Running for plugin'),
+          contains('Started chromedriver on port 12345'),
+          contains('Stopping chromedriver'),
+          contains('Started chromedriver on port 12346'),
+          contains('Stopping chromedriver'),
+          contains('No issues found!'),
+        ]),
+      );
+
+      expect(
+        processRunner.recordedCalls,
+        orderedEquals(<ProcessCall>[
+          const ProcessCall('chromedriver', <String>['--port=0'], null),
+          ProcessCall(getFlutterCommand(mockPlatform), const <String>[
+            'drive',
+            '-d',
+            'web-server',
+            '--web-port=7357',
+            '--browser-name=chrome',
+            ..._defaultWebBrowserFlags,
+            '--driver-port=12345',
+            '--screenshot=/path/to/logs/plugin_example_example_1-drive',
+            '--driver',
+            'test_driver/integration_test.dart',
+            '--target',
+            'integration_test/plugin_test.dart',
+          ], example1Dir.path),
+          const ProcessCall('chromedriver', <String>['--port=0'], null),
+          ProcessCall(getFlutterCommand(mockPlatform), const <String>[
+            'drive',
+            '-d',
+            'web-server',
+            '--web-port=7357',
+            '--browser-name=chrome',
+            ..._defaultWebBrowserFlags,
+            '--driver-port=12346',
+            '--screenshot=/path/to/logs/plugin_example_example_2-drive',
+            '--driver',
+            'test_driver/integration_test.dart',
+            '--target',
+            'integration_test/plugin_test.dart',
+          ], example2Dir.path),
+        ]),
+      );
+    });
+
+    test('fails when chromedriver exits without reporting a port', () async {
+      final RepositoryPackage plugin = createFakePlugin(
+        'plugin',
+        packagesDir,
+        examples: <String>['example_1', 'example_2'],
+        extraFiles: <String>[
+          'example/example_1/integration_test/plugin_test.dart',
+          'example/example_1/test_driver/integration_test.dart',
+          'example/example_1/web/index.html',
+          'example/example_2/integration_test/plugin_test.dart',
+          'example/example_2/test_driver/integration_test.dart',
+          'example/example_2/web/index.html',
+        ],
+        platformSupport: <String, PlatformDetails>{
+          platformWeb: const PlatformDetails(PlatformSupport.inline),
+        },
+      );
+
+      processRunner.mockProcessesForExecutable['chromedriver'] = <FakeProcessInfo>[
+        FakeProcessInfo(_LateStderrMockProcess(), <String>['--port=0']),
+        FakeProcessInfo(
+          MockProcess(stdout: 'ChromeDriver was started successfully on port 12346.\n'),
+          <String>['--port=0'],
+        ),
+      ];
+
+      final Directory example2Dir = getExampleDir(plugin).childDirectory('example_2');
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+        runner,
+        <String>['drive-examples', '--web', '--run-chromedriver'],
+        errorHandler: (Error e) {
+          commandError = e;
+        },
+      );
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Running for plugin'),
+          allOf(
+            contains('chromedriver exited before reporting its port.'),
+            contains('bind() failed: Address already in use'),
+          ),
+          contains('Started chromedriver on port 12346'),
+          contains('The following packages had errors:'),
+          contains('chromedriver failed to start for plugin/example/example_1'),
+        ]),
+      );
+      expect(output, isNot(contains(contains('Unhandled exception'))));
+      expect(
+        processRunner.recordedCalls,
+        orderedEquals(<ProcessCall>[
+          const ProcessCall('chromedriver', <String>['--port=0'], null),
+          const ProcessCall('chromedriver', <String>['--port=0'], null),
+          ProcessCall(getFlutterCommand(mockPlatform), const <String>[
+            'drive',
+            '-d',
+            'web-server',
+            '--web-port=7357',
+            '--browser-name=chrome',
+            ..._defaultWebBrowserFlags,
+            '--driver-port=12346',
+            '--screenshot=/path/to/logs/plugin_example_example_2-drive',
+            '--driver',
+            'test_driver/integration_test.dart',
+            '--target',
+            'integration_test/plugin_test.dart',
+          ], example2Dir.path),
         ]),
       );
     });
@@ -918,6 +1120,7 @@ void main() {
             '--web-port=7357',
             '--browser-name=chrome',
             '--chrome-binary=/path/to/chrome',
+            ..._defaultWebBrowserFlags,
             '--screenshot=/path/to/logs/plugin_example-drive',
             '--driver',
             'test_driver/integration_test.dart',
@@ -1370,6 +1573,7 @@ void main() {
             'web-server',
             '--web-port=7357',
             '--browser-name=chrome',
+            ..._defaultWebBrowserFlags,
             '--screenshot=/path/to/logs/plugin_example-drive',
             '--driver',
             'test_driver/integration_test.dart',
@@ -1382,6 +1586,7 @@ void main() {
             'web-server',
             '--web-port=7357',
             '--browser-name=chrome',
+            ..._defaultWebBrowserFlags,
             '--screenshot=/path/to/logs/plugin_example-drive',
             '--driver',
             'test_driver/integration_test.dart',
@@ -1488,6 +1693,7 @@ void main() {
               'web-server',
               '--web-port=7357',
               '--browser-name=chrome',
+              ..._defaultWebBrowserFlags,
               '--screenshot=/path/to/logs/a_package_example-drive',
               '--driver',
               'test_driver/integration_test.dart',
@@ -1534,6 +1740,7 @@ void main() {
               'web-server',
               '--web-port=7357',
               '--browser-name=chrome',
+              ..._defaultWebBrowserFlags,
               '--driver',
               'test_driver/integration_test.dart',
               '--target',
@@ -1617,6 +1824,7 @@ void main() {
               'web-server',
               '--web-port=7357',
               '--browser-name=chrome',
+              ..._defaultWebBrowserFlags,
               '--screenshot=/path/to/logs/a_package_example_with_web-drive',
               '--driver',
               'test_driver/integration_test.dart',
@@ -1716,6 +1924,79 @@ packages/package_a/CHANGELOG.md
       });
     });
   });
+
+  group('on macOS', () {
+    late NativePlatform mockPlatform;
+    late Directory packagesDir;
+    late CommandRunner<void> runner;
+    late RecordingProcessRunner processRunner;
+
+    setUp(() {
+      mockPlatform = createMockPlatform(isMacOS: true);
+      final GitDir gitDir;
+      (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) = configureBaseCommandMocks(
+        platform: mockPlatform,
+      );
+      final command = DriveExamplesCommand(
+        packagesDir,
+        processRunner: processRunner,
+        platform: mockPlatform,
+        gitDir: gitDir,
+      );
+
+      runner = CommandRunner<void>('drive_examples_command', 'Test for drive_example_command');
+      runner.addCommand(command);
+
+      mockPlatform.environment['FLUTTER_LOGS_DIR'] = '/path/to/logs';
+    });
+
+    test('drives a web plugin on macOS with mock keychain', () async {
+      final RepositoryPackage plugin = createFakePlugin(
+        'plugin',
+        packagesDir,
+        extraFiles: <String>[
+          'example/integration_test/plugin_test.dart',
+          'example/test_driver/integration_test.dart',
+          'example/web/index.html',
+        ],
+        platformSupport: <String, PlatformDetails>{
+          platformWeb: const PlatformDetails(PlatformSupport.inline),
+        },
+      );
+
+      final Directory pluginExampleDirectory = getExampleDir(plugin);
+
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'drive-examples',
+        '--web',
+      ]);
+
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[contains('Running for plugin'), contains('No issues found!')]),
+      );
+
+      expect(
+        processRunner.recordedCalls,
+        orderedEquals(<ProcessCall>[
+          ProcessCall(getFlutterCommand(mockPlatform), const <String>[
+            'drive',
+            '-d',
+            'web-server',
+            '--web-port=7357',
+            '--browser-name=chrome',
+            ..._defaultWebBrowserFlags,
+            '--web-browser-flag=--use-mock-keychain',
+            '--screenshot=/path/to/logs/plugin_example-drive',
+            '--driver',
+            'test_driver/integration_test.dart',
+            '--target',
+            'integration_test/plugin_test.dart',
+          ], pluginExampleDirectory.path),
+        ]),
+      );
+    });
+  });
 }
 
 class _FakeDelayingProcess extends Fake implements io.Process {
@@ -1731,5 +2012,37 @@ class _FakeDelayingProcess extends Fake implements io.Process {
   Future<int> get exitCode async {
     _fakeAsync.elapse(_delayDuration);
     return 0;
+  }
+}
+
+class _SlowExitMockProcess extends MockProcess {
+  _SlowExitMockProcess({super.stdout});
+
+  bool killed = false;
+  bool exited = false;
+
+  @override
+  bool kill([io.ProcessSignal signal = io.ProcessSignal.sigterm]) {
+    killed = true;
+    return true;
+  }
+
+  @override
+  Future<int> get exitCode async {
+    await Future<void>.delayed(Duration.zero);
+    exited = true;
+    return 0;
+  }
+}
+
+/// A failed `chromedriver` whose stderr arrives after its stdout has closed,
+/// as can happen with real pipes.
+class _LateStderrMockProcess extends MockProcess {
+  _LateStderrMockProcess() : super(exitCode: 1);
+
+  @override
+  Stream<List<int>> get stderr async* {
+    await Future<void>.delayed(Duration.zero);
+    yield utf8.encode('bind() failed: Address already in use\n');
   }
 }

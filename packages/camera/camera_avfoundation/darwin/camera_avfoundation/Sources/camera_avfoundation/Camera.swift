@@ -49,6 +49,7 @@ protocol Camera: FlutterTexture, AVCaptureVideoDataOutputSampleBufferDelegate,
   ///
   /// @param messenger Nullable messenger for capturing each frame.
   func startVideoRecording(
+    videoOutputPath: String?,
     completion: @escaping (Result<Void, any Error>) -> Void,
     messengerForStreaming: FlutterBinaryMessenger?
   )
@@ -63,6 +64,9 @@ protocol Camera: FlutterTexture, AVCaptureVideoDataOutputSampleBufferDelegate,
 
   func setImageFileFormat(_ fileFormat: PlatformImageFileFormat)
   func setJpegImageQuality(_ quality: Int64)
+
+  func isZeroShutterLagSupported() -> Bool
+  func setZeroShutterLagEnabled(_ enabled: Bool)
 
   func setExposureMode(_ mode: PlatformExposureMode)
   func setExposureOffset(_ offset: Double)
@@ -130,4 +134,17 @@ protocol Camera: FlutterTexture, AVCaptureVideoDataOutputSampleBufferDelegate,
   )
 
   func close()
+}
+
+extension Camera {
+  func startVideoRecording(
+    completion: @escaping (Result<Void, any Error>) -> Void,
+    messengerForStreaming messenger: FlutterBinaryMessenger?
+  ) {
+    self.startVideoRecording(
+      videoOutputPath: nil,
+      completion: completion,
+      messengerForStreaming: messenger
+    )
+  }
 }

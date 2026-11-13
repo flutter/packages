@@ -306,6 +306,7 @@ abstract class ShellRouteData extends RouteData {
     bool notifyRootObserver = true,
     List<NavigatorObserver>? observers,
     String? restorationScopeId,
+    Clip clipBehavior = Clip.hardEdge,
   }) {
     T factoryImpl(GoRouterState state) {
       return (_stateObjectExpando[state] ??= factory(state)) as T;
@@ -330,6 +331,7 @@ abstract class ShellRouteData extends RouteData {
       observers: observers,
       restorationScopeId: restorationScopeId,
       redirect: redirect,
+      clipBehavior: clipBehavior,
     );
   }
 
@@ -440,6 +442,7 @@ abstract class StatefulShellBranchData {
     String? initialLocation,
     String? restorationScopeId,
     bool preload = false,
+    Clip clipBehavior = Clip.hardEdge,
   }) {
     return StatefulShellBranch(
       routes: routes,
@@ -448,6 +451,7 @@ abstract class StatefulShellBranchData {
       initialLocation: initialLocation,
       restorationScopeId: restorationScopeId,
       preload: preload,
+      clipBehavior: clipBehavior,
     );
   }
 }

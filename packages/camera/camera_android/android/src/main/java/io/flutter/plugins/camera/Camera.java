@@ -135,7 +135,15 @@ class Camera
   /** True when the preview is paused. */
   @VisibleForTesting boolean pausedPreview;
 
+  /** File used for still image capture (takePicture). */
   private File captureFile;
+
+  /**
+   * File used for video recording. Kept separate from {@link #captureFile} so that calling
+   * takePicture() during an active recording does not overwrite the video path returned by
+   * stopVideoRecording().
+   */
+  private File videoCaptureFile;
 
   /** Holds the current capture timeouts */
   private CaptureTimeoutsWrapper captureTimeouts;
@@ -870,8 +878,9 @@ class Camera
             dartMessenger.error(flutterResult, errorCode, errorMessage, null));
   }
 
-  public void startVideoRecording(@Nullable EventChannel imageStreamChannel) {
-    prepareRecording();
+  public void startVideoRecording(
+      @Nullable EventChannel imageStreamChannel, @Nullable String videoOutputPath) {
+    prepareRecording(videoOutputPath);
 
     if (imageStreamChannel != null) {
       setStreamHandler(imageStreamChannel);
@@ -882,7 +891,7 @@ class Camera
       startCapture(true, imageStreamChannel != null);
     } catch (CameraAccessException e) {
       recordingVideo = false;
-      captureFile = null;
+      videoCaptureFile = null;
       throw new Messages.FlutterError("videoRecordingFailed", e.getMessage(), null);
     }
   }
@@ -919,8 +928,14 @@ class Camera
     } catch (CameraAccessException | IllegalStateException | InterruptedException e) {
       throw new Messages.FlutterError("videoRecordingFailed", e.getMessage(), null);
     }
-    String path = captureFile.getAbsolutePath();
-    captureFile = null;
+    if (videoCaptureFile == null) {
+      throw new Messages.FlutterError(
+          "videoRecordingFailed",
+          "stopVideoRecording was called but videoCaptureFile was null.",
+          null);
+    }
+    String path = videoCaptureFile.getAbsolutePath();
+    videoCaptureFile = null;
     return path;
   }
 
@@ -1297,18 +1312,24 @@ class Camera
   }
 
   @VisibleForTesting
-  void prepareRecording() {
-    final File outputDir = applicationContext.getCacheDir();
-    try {
-      captureFile = File.createTempFile("REC", ".mp4", outputDir);
-    } catch (IOException | SecurityException e) {
-      throw new Messages.FlutterError("cannotCreateFile", e.getMessage(), null);
+  void prepareRecording(@Nullable String videoOutputPath) {
+    if (videoOutputPath != null) {
+      validateOutputPath(videoOutputPath);
+      videoCaptureFile = new File(videoOutputPath);
+    } else {
+      final File outputDir = applicationContext.getCacheDir();
+      try {
+        videoCaptureFile = File.createTempFile("REC", ".mp4", outputDir);
+      } catch (IOException | SecurityException e) {
+        throw new Messages.FlutterError("cannotCreateFile", e.getMessage(), null);
+      }
     }
+
     try {
-      prepareMediaRecorder(captureFile.getAbsolutePath());
+      prepareMediaRecorder(videoCaptureFile.getAbsolutePath());
     } catch (IOException e) {
       recordingVideo = false;
-      captureFile = null;
+      videoCaptureFile = null;
       throw new Messages.FlutterError("videoRecordingFailed", e.getMessage(), null);
     }
     // Re-create autofocus feature so it's using video focus mode now.
@@ -1316,6 +1337,24 @@ class Camera
         cameraFeatureFactory.createAutoFocusFeature(cameraProperties, true));
     // Update camera features with the desired fps range
     setFpsCameraFeatureForRecording(cameraProperties);
+  }
+
+  private void validateOutputPath(String path) {
+    File file = new File(path);
+    if (file.isDirectory()) {
+      throw new Messages.FlutterError("IOError", "The output path is a directory: " + path, null);
+    }
+    File parent = file.getParentFile();
+    if (parent != null && !parent.exists()) {
+      throw new Messages.FlutterError(
+          "IOError", "The parent directory does not exist: " + parent.getAbsolutePath(), null);
+    }
+
+    String lowerPath = path.toLowerCase(Locale.ROOT);
+    if (!lowerPath.endsWith(".mp4")) {
+      throw new Messages.FlutterError(
+          "IOError", "Invalid video extension. Supported extensions: .mp4", null);
+    }
   }
 
   private void setStreamHandler(EventChannel imageStreamChannel) {

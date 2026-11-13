@@ -18,17 +18,14 @@ abstract class MarkerController<T, O> {
   /// associated [gmaps.InfoWindow].
   MarkerController({
     required T marker,
-    gmaps.InfoWindow? infoWindow,
-    bool consumeTapEvents = false,
+    this._infoWindow,
+    this._consumeTapEvents = false,
     LatLngCallback? onDragStart,
     LatLngCallback? onDrag,
     LatLngCallback? onDragEnd,
     VoidCallback? onTap,
-    ClusterManagerId? clusterManagerId,
-  }) : _marker = marker,
-       _infoWindow = infoWindow,
-       _consumeTapEvents = consumeTapEvents,
-       _clusterManagerId = clusterManagerId {
+    this._clusterManagerId,
+  }) : _marker = marker {
     addMarkerListener(
       marker: marker,
       onDragStart: onDragStart,
@@ -303,15 +300,26 @@ class AdvancedMarkerController
 
   @override
   void update(gmaps.AdvancedMarkerElementOptions options, {web.HTMLElement? newInfoWindowContent}) {
+    _update(options, isContentUpdateRequired: true, newInfoWindowContent: newInfoWindowContent);
+  }
+
+  void _update(
+    gmaps.AdvancedMarkerElementOptions options, {
+    required bool isContentUpdateRequired,
+    web.HTMLElement? newInfoWindowContent,
+  }) {
     assert(_marker != null, 'Cannot `update` Marker after calling `remove`.');
 
     final gmaps.AdvancedMarkerElement marker = _marker!;
     marker.collisionBehavior = options.collisionBehavior;
-    marker.content = options.content;
+    if (isContentUpdateRequired) {
+      marker.content = options.content;
+    }
     marker.gmpDraggable = options.gmpDraggable;
     marker.position = options.position;
     marker.title = options.title ?? '';
     marker.zIndex = options.zIndex;
+    _copyAdvancedMarkerOptionsAnchor(marker, options);
 
     if (_infoWindow != null && newInfoWindowContent != null) {
       _infoWindow.content = newInfoWindowContent;

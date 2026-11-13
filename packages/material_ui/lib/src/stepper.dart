@@ -403,7 +403,7 @@ class Stepper extends StatefulWidget {
   /// The padding around the header row in both [StepperType.vertical] and
   /// [StepperType.horizontal] steppers.
   ///
-  /// Defaults to to `EdgeInsets.symmetric(horizontal: 24.0)`.
+  /// Defaults to `EdgeInsets.symmetric(horizontal: 24.0)`.
   final EdgeInsetsGeometry? headerPadding;
 
   /// The padding around the content area in both [StepperType.vertical] and

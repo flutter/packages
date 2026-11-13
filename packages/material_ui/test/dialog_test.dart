@@ -1665,6 +1665,44 @@ void main() {
     );
   });
 
+  testWidgets('Dialog.fullscreen Material extends behind the keyboard, child stays above it', (
+    WidgetTester tester,
+  ) async {
+    late BuildContext childContext;
+    final Widget dialog = Dialog.fullscreen(
+      child: Builder(
+        builder: (BuildContext context) {
+          childContext = context;
+          return const Placeholder();
+        },
+      ),
+    );
+    final Finder material = find.descendant(
+      of: find.byType(Dialog),
+      matching: find.byType(Material),
+    );
+
+    await tester.pumpWidget(
+      MediaQuery(
+        data: const MediaQueryData(viewInsets: EdgeInsets.only(bottom: 200.0)),
+        child: dialog,
+      ),
+    );
+    await tester.pumpAndSettle();
+    // The child is kept above the keyboard and does not see the inset.
+    expect(tester.getRect(find.byType(Placeholder)), const Rect.fromLTRB(0.0, 0.0, 800.0, 400.0));
+    expect(MediaQuery.viewInsetsOf(childContext), EdgeInsets.zero);
+    // The dialog's surface keeps covering the whole screen, including the
+    // area behind the keyboard.
+    expect(tester.getRect(material), const Rect.fromLTRB(0.0, 0.0, 800.0, 600.0));
+
+    // Hiding the keyboard gives the child the whole screen back.
+    await tester.pumpWidget(MediaQuery(data: const MediaQueryData(), child: dialog));
+    await tester.pumpAndSettle();
+    expect(tester.getRect(find.byType(Placeholder)), const Rect.fromLTRB(0.0, 0.0, 800.0, 600.0));
+    expect(tester.getRect(material), const Rect.fromLTRB(0.0, 0.0, 800.0, 600.0));
+  });
+
   // Regression test for https://github.com/flutter/flutter/issues/78229.
   testWidgets('AlertDialog has correct semantics for content in iOS', (WidgetTester tester) async {
     final semantics = SemanticsTester(tester);

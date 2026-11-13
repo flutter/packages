@@ -13,6 +13,8 @@ import 'package:flutter/widgets.dart';
 import 'divider_theme.dart';
 import 'theme.dart';
 
+part 'generated/divider_defaults_m3.g.dart';
+
 // Examples can assume:
 // late BuildContext context;
 
@@ -131,7 +133,8 @@ class Divider extends StatelessWidget {
   /// The color to use when painting the line.
   ///
   /// If this is null, then the [DividerThemeData.color] is used. If that is
-  /// also null, then [ThemeData.dividerColor] is used.
+  /// also null, then this defaults to [ColorScheme.outlineVariant], or to
+  /// [ThemeData.dividerColor] if [ThemeData.useMaterial3] is false.
   /// {@endtemplate}
   ///
   /// <callout-box>
@@ -321,10 +324,7 @@ class VerticalDivider extends StatelessWidget {
   /// also null, then this defaults to 0.0.
   final double? endIndent;
 
-  /// The color to use when painting the line.
-  ///
-  /// If this is null, then the [DividerThemeData.color] is used. If that is
-  /// also null, then [ThemeData.dividerColor] is used.
+  /// {@macro material_ui.Divider.color}
   ///
   /// <callout-box>
   ///
@@ -383,27 +383,3 @@ class _DividerDefaultsM2 extends DividerThemeData {
   @override
   Color? get color => Theme.of(context).dividerColor;
 }
-
-// BEGIN GENERATED TOKEN PROPERTIES - Divider
-
-// Do not edit by hand. The code between the "BEGIN GENERATED" and
-// "END GENERATED" comments are generated from data in the Material
-// Design token database by the script:
-//   dev/tools/gen_defaults/bin/gen_defaults.dart.
-
-// dart format off
-class _DividerDefaultsM3 extends DividerThemeData {
-  const _DividerDefaultsM3(this.context) : super(
-    space: 16,
-    thickness: 1.0,
-    indent: 0,
-    endIndent: 0,
-  );
-
-  final BuildContext context;
-
-  @override Color? get color => Theme.of(context).colorScheme.outlineVariant;
-}
-// dart format on
-
-// END GENERATED TOKEN PROPERTIES - Divider

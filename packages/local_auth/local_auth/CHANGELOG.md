@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
+
 ## 3.0.2
 
 * Clarifies the `getAvailableBiometrics` documentation regarding iOS permission requirements.

@@ -24,6 +24,8 @@ import 'theme.dart';
 
 /// A Material Design carousel widget.
 ///
+/// Learn more about [CarouselView] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=GQ8ajYVF0bo).
+///
 /// The [CarouselView] presents a scrollable list of items, each of which can dynamically
 /// change size based on the chosen layout.
 ///
@@ -1438,6 +1440,7 @@ class _RenderSliverWeightedCarousel extends RenderSliverFixedExtentBoxAdaptor {
         _buildItemExtent(lastIndex, layoutDimensions),
       );
       trailingScrollOffset += extraLayoutOffset;
+      estimatedMaxScrollOffset = trailingScrollOffset;
     } else {
       trailingScrollOffset = indexToLayoutOffset(deprecatedExtraItemExtent, lastIndex + 1);
     }
@@ -1976,6 +1979,7 @@ class CarouselController extends ScrollController {
   /// direction.
   ///
   /// Does nothing if the carousel is not attached to this controller.
+  @awaitNotRequired
   Future<void> animateToItem(
     int index, {
     Duration duration = const Duration(milliseconds: 300),

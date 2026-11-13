@@ -46,10 +46,10 @@ final class AvailableCamerasTest: XCTestCase {
       telephotoCamera.uniqueID = "3"
       telephotoCamera.position = .back
 
-      var requiredTypes: [AVCaptureDevice.DeviceType] = [
+      let requiredTypes: [AVCaptureDevice.DeviceType] = [
         .builtInWideAngleCamera, .builtInTelephotoCamera, .builtInUltraWideCamera,
       ]
-      var cameras = [wideAngleCamera, frontFacingCamera, telephotoCamera, ultraWideCamera]
+      let cameras = [wideAngleCamera, frontFacingCamera, telephotoCamera, ultraWideCamera]
 
       XCTAssertEqual(deviceTypes, requiredTypes)
       XCTAssertEqual(mediaType, .video)
@@ -83,7 +83,7 @@ final class AvailableCamerasTest: XCTestCase {
       frontFacingCamera.uniqueID = "1"
       frontFacingCamera.position = .front
 
-      var requiredTypes: [AVCaptureDevice.DeviceType] = [
+      let requiredTypes: [AVCaptureDevice.DeviceType] = [
         .builtInWideAngleCamera, .builtInTelephotoCamera, .builtInUltraWideCamera,
       ]
       let cameras = [wideAngleCamera, frontFacingCamera]
@@ -115,7 +115,7 @@ final class AvailableCamerasTest: XCTestCase {
       unspecifiedCamera.uniqueID = "0"
       unspecifiedCamera.position = .unspecified
 
-      var requiredTypes: [AVCaptureDevice.DeviceType] = [
+      let requiredTypes: [AVCaptureDevice.DeviceType] = [
         .builtInWideAngleCamera, .builtInTelephotoCamera, .builtInUltraWideCamera,
       ]
       let cameras = [unspecifiedCamera]

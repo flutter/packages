@@ -27,7 +27,7 @@ void main() {
       final project = GradleProject(
         plugin,
         processRunner: processRunner,
-        platform: MockPlatform(isWindows: true),
+        platform: createMockPlatform(isWindows: true),
       );
 
       expect(project.isConfigured(), true);
@@ -42,7 +42,7 @@ void main() {
       final project = GradleProject(
         plugin,
         processRunner: processRunner,
-        platform: MockPlatform(isMacOS: true),
+        platform: createMockPlatform(isMacOS: true),
       );
 
       expect(project.isConfigured(), true);
@@ -57,7 +57,7 @@ void main() {
       final project = GradleProject(
         plugin,
         processRunner: processRunner,
-        platform: MockPlatform(isWindows: true),
+        platform: createMockPlatform(isWindows: true),
       );
 
       expect(project.isConfigured(), false);
@@ -72,7 +72,7 @@ void main() {
       final project = GradleProject(
         plugin,
         processRunner: processRunner,
-        platform: MockPlatform(isMacOS: true),
+        platform: createMockPlatform(isMacOS: true),
       );
 
       expect(project.isConfigured(), false);
@@ -89,7 +89,7 @@ void main() {
       final project = GradleProject(
         plugin,
         processRunner: processRunner,
-        platform: MockPlatform(isMacOS: true),
+        platform: createMockPlatform(isMacOS: true),
       );
 
       final int exitCode = await project.runCommand('foo');
@@ -116,7 +116,7 @@ void main() {
       final project = GradleProject(
         plugin,
         processRunner: processRunner,
-        platform: MockPlatform(isMacOS: true),
+        platform: createMockPlatform(isMacOS: true),
       );
 
       final int exitCode = await project.runCommand('foo', arguments: <String>['--bar', '--baz']);
@@ -143,7 +143,7 @@ void main() {
       final project = GradleProject(
         plugin,
         processRunner: processRunner,
-        platform: MockPlatform(isWindows: true),
+        platform: createMockPlatform(isWindows: true),
       );
 
       final int exitCode = await project.runCommand('foo');
@@ -170,7 +170,7 @@ void main() {
       final project = GradleProject(
         plugin,
         processRunner: processRunner,
-        platform: MockPlatform(isWindows: true),
+        platform: createMockPlatform(isWindows: true),
       );
 
       processRunner.mockProcessesForExecutable[project.gradleWrapper.path] = <FakeProcessInfo>[

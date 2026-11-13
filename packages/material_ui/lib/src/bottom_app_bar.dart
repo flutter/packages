@@ -20,6 +20,8 @@ import 'material.dart';
 import 'scaffold.dart';
 import 'theme.dart';
 
+part 'generated/bottom_app_bar_defaults_m3.g.dart';
+
 // Examples can assume:
 // late Widget bottomAppBarContents;
 
@@ -29,18 +31,7 @@ import 'theme.dart';
 ///
 /// <callout-box>
 ///
-// TODO(framework): Add unit tests to this code snippet.
-// https://github.com/flutter/flutter/issues/188530
-///
-/// ```dart
-/// Scaffold(
-///   bottomNavigationBar: BottomAppBar(
-///     color: Colors.white,
-///     child: bottomAppBarContents,
-///   ),
-///   floatingActionButton: const FloatingActionButton(onPressed: null),
-/// )
-/// ```
+/// {@example /example/lib/bottom_app_bar/bottom_app_bar.snippet.0.dart#body indent=strip}
 ///
 /// </callout-box>
 ///
@@ -320,35 +311,3 @@ class _BottomAppBarDefaultsM2 extends BottomAppBarThemeData {
   @override
   Color get shadowColor => const Color(0xFF000000);
 }
-
-// BEGIN GENERATED TOKEN PROPERTIES - BottomAppBar
-
-// Do not edit by hand. The code between the "BEGIN GENERATED" and
-// "END GENERATED" comments are generated from data in the Material
-// Design token database by the script:
-//   dev/tools/gen_defaults/bin/gen_defaults.dart.
-
-// dart format off
-class _BottomAppBarDefaultsM3 extends BottomAppBarThemeData {
-  _BottomAppBarDefaultsM3(this.context)
-    : super(
-      elevation: 3.0,
-      height: 80.0,
-      shape: const AutomaticNotchedShape(RoundedRectangleBorder()),
-    );
-
-  final BuildContext context;
-  late final ColorScheme _colors = Theme.of(context).colorScheme;
-
-  @override
-  Color? get color => _colors.surfaceContainer;
-
-  @override
-  Color? get surfaceTintColor => Colors.transparent;
-
-  @override
-  Color? get shadowColor => Colors.transparent;
-}
-// dart format on
-
-// END GENERATED TOKEN PROPERTIES - BottomAppBar

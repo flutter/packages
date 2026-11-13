@@ -17,7 +17,7 @@ import 'repository_package.dart';
 Future<bool> runPubGet(
   RepositoryPackage package,
   ProcessRunner processRunner,
-  Platform platform, {
+  NativePlatform platform, {
   bool streamOutput = true,
 }) async {
   return runPubCommand(
@@ -39,7 +39,7 @@ Future<bool> runPubCommand(
   List<String> commandArgs,
   RepositoryPackage package,
   ProcessRunner processRunner,
-  Platform platform, {
+  NativePlatform platform, {
   bool streamOutput = true,
   String? dartSdkPathOverride,
   bool recursiveFlutterCheck = false,
@@ -77,7 +77,7 @@ Future<io.Process> startPubCommand(
   List<String> commandArgs,
   RepositoryPackage package,
   ProcessRunner processRunner,
-  Platform platform,
+  NativePlatform platform,
 ) async {
   return processRunner.start(_pubCommand(package, platform), <String>[
     'pub',
@@ -87,16 +87,16 @@ Future<io.Process> startPubCommand(
 
 String _pubCommand(
   RepositoryPackage package,
-  Platform platform, {
+  NativePlatform platform, {
   String? dartSdkPathOverride,
   bool recursiveFlutterCheck = false,
 }) {
   // Running `dart pub get` on a Flutter package can fail if a non-Flutter Dart
   // is first in the path, so use `flutter pub get` for any Flutter package.
-  bool useFlutter = package.requiresFlutter();
+  bool useFlutter = _requiresFlutterForPub(package);
   if (!useFlutter && recursiveFlutterCheck) {
     for (final RepositoryPackage example in package.getExamples()) {
-      if (example.requiresFlutter()) {
+      if (_requiresFlutterForPub(example)) {
         useFlutter = true;
         break;
       }
@@ -105,4 +105,17 @@ String _pubCommand(
   return useFlutter
       ? (platform.isWindows ? 'flutter.bat' : 'flutter')
       : (dartSdkPathOverride ?? 'dart');
+}
+
+bool _requiresFlutterForPub(RepositoryPackage package) {
+  if (package.requiresFlutter()) {
+    return true;
+  }
+  // Some packages declare a `flutter` constraint in their `pubspec.yaml`
+  // environment section, which causes `dart pub` to fail version solving unless
+  // run via `flutter pub`, even when depended on by a non-Flutter package.
+  const flutterRequiringPackages = <String>{'jni'};
+  final Pubspec pubspec = package.parsePubspec();
+  return flutterRequiringPackages.any(pubspec.dependencies.containsKey) ||
+      flutterRequiringPackages.any(pubspec.devDependencies.containsKey);
 }

@@ -124,6 +124,11 @@ public class FileUtils {
   public static String getPathFromCopyOfFileFromUri(@NonNull Context context, @NonNull Uri uri)
       throws IOException, SecurityException, IllegalArgumentException {
     try (InputStream inputStream = context.getContentResolver().openInputStream(uri)) {
+      if (inputStream == null) {
+        // The provider cannot serve the file (see `FileSelectorApiImpl#toFileResponse`); surface
+        // it as the IO failure it is instead of dereferencing the null stream in `copy()`.
+        throw new IOException("The content provider returned no stream for the file.");
+      }
       String uuid = UUID.nameUUIDFromBytes(uri.toString().getBytes()).toString();
       File targetDirectory = new File(context.getCacheDir(), uuid);
       targetDirectory.mkdir();

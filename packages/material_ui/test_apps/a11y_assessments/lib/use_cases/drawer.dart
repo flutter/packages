@@ -1,0 +1,86 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+import 'package:material_ui/material_ui.dart';
+import '../utils.dart';
+import 'use_cases.dart';
+
+class DrawerUseCase extends UseCase {
+  DrawerUseCase();
+
+  @override
+  String get name => 'drawer';
+
+  @override
+  String get route => '/drawer';
+
+  @override
+  List<Tag> get tags => <Tag>[Tag.batch1, Tag.core];
+
+  @override
+  Widget build(BuildContext context) => const DrawerExample();
+}
+
+class DrawerExample extends StatefulWidget {
+  const DrawerExample({super.key});
+
+  @override
+  State<DrawerExample> createState() => _DrawerExampleState();
+}
+
+class _DrawerExampleState extends State<DrawerExample> {
+  String selectedPage = '';
+
+  String pageTitle = getUseCaseName(DrawerUseCase());
+
+  @override
+  Widget build(BuildContext context) {
+    final ColorScheme colors = Theme.of(context).colorScheme;
+    return Scaffold(
+      appBar: AppBar(title: Semantics(headingLevel: 1, child: Text('$pageTitle Demo'))),
+      endDrawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            DrawerHeader(
+              decoration: BoxDecoration(color: colors.primary),
+              child: Text('Drawer Header', style: TextStyle(color: colors.onPrimary, fontSize: 24)),
+            ),
+            ListTile(
+              leading: const Icon(Icons.message),
+              title: const Text('Messages'),
+              selected: selectedPage == 'Messages',
+              onTap: () {
+                setState(() {
+                  selectedPage = 'Messages';
+                });
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.account_circle),
+              title: const Text('Profile'),
+              selected: selectedPage == 'Profile',
+              onTap: () {
+                setState(() {
+                  selectedPage = 'Profile';
+                });
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.settings),
+              title: const Text('Settings'),
+              selected: selectedPage == 'Settings',
+              onTap: () {
+                setState(() {
+                  selectedPage = 'Settings';
+                });
+              },
+            ),
+          ],
+        ),
+      ),
+      body: Center(child: Text('Page: $selectedPage')),
+    );
+  }
+}

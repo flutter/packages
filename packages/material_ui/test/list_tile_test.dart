@@ -2775,7 +2775,7 @@ void main() {
         'See also:\n'
         'https://api.flutter.dev/flutter/material/ListTile-class.html#material.ListTile.4\n',
       );
-    });
+    }, tags: 'reduced-web-test-set');
 
     testWidgets('trailing', (WidgetTester tester) async {
       // Test a trailing widget that exceeds the list tile width.
@@ -2802,7 +2802,7 @@ void main() {
         'See also:\n'
         'https://api.flutter.dev/flutter/material/ListTile-class.html#material.ListTile.4\n',
       );
-    });
+    }, tags: 'reduced-web-test-set');
   });
 
   group('Material 2', () {
@@ -4772,8 +4772,7 @@ void main() {
           body: Center(
             child: Container(
               color: Colors.amber,
-              height:
-                  200, // This is to remove the lint on Container. Otherwise, linter suggests to use ColoredBox instead.
+              height: 200, // This is to remove the lint on Container. Otherwise, linter suggests to use ColoredBox instead.
               child: const ListTile(tileColor: Colors.red, title: Text('ListTile')),
             ),
           ),

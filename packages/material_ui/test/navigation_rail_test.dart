@@ -6173,32 +6173,41 @@ void main() {
 TestSemantics _expectedSemantics({bool scrollable = false}) {
   var destinations = <TestSemantics>[
     TestSemantics(
-      flags: <SemanticsFlag>[
-        SemanticsFlag.hasSelectedState,
-        SemanticsFlag.isSelected,
-        SemanticsFlag.isFocusable,
+      role: SemanticsRole.tabBar,
+      children: <TestSemantics>[
+        TestSemantics(
+          role: SemanticsRole.tab,
+          flags: <SemanticsFlag>[
+            SemanticsFlag.hasSelectedState,
+            SemanticsFlag.isSelected,
+            SemanticsFlag.isFocusable,
+          ],
+          actions: <SemanticsAction>[SemanticsAction.tap, SemanticsAction.focus],
+          label: 'Abc${kIsWeb ? '' : '\nTab 1 of 4'}',
+          textDirection: TextDirection.ltr,
+        ),
+        TestSemantics(
+          role: SemanticsRole.tab,
+          flags: <SemanticsFlag>[SemanticsFlag.isFocusable, SemanticsFlag.hasSelectedState],
+          actions: <SemanticsAction>[SemanticsAction.tap, SemanticsAction.focus],
+          label: 'Def${kIsWeb ? '' : '\nTab 2 of 4'}',
+          textDirection: TextDirection.ltr,
+        ),
+        TestSemantics(
+          role: SemanticsRole.tab,
+          flags: <SemanticsFlag>[SemanticsFlag.isFocusable, SemanticsFlag.hasSelectedState],
+          actions: <SemanticsAction>[SemanticsAction.tap, SemanticsAction.focus],
+          label: 'Ghi${kIsWeb ? '' : '\nTab 3 of 4'}',
+          textDirection: TextDirection.ltr,
+        ),
+        TestSemantics(
+          role: SemanticsRole.tab,
+          flags: <SemanticsFlag>[SemanticsFlag.isFocusable, SemanticsFlag.hasSelectedState],
+          actions: <SemanticsAction>[SemanticsAction.tap, SemanticsAction.focus],
+          label: 'Jkl${kIsWeb ? '' : '\nTab 4 of 4'}',
+          textDirection: TextDirection.ltr,
+        ),
       ],
-      actions: <SemanticsAction>[SemanticsAction.tap, SemanticsAction.focus],
-      label: 'Abc\nTab 1 of 4',
-      textDirection: TextDirection.ltr,
-    ),
-    TestSemantics(
-      flags: <SemanticsFlag>[SemanticsFlag.isFocusable, SemanticsFlag.hasSelectedState],
-      actions: <SemanticsAction>[SemanticsAction.tap, SemanticsAction.focus],
-      label: 'Def\nTab 2 of 4',
-      textDirection: TextDirection.ltr,
-    ),
-    TestSemantics(
-      flags: <SemanticsFlag>[SemanticsFlag.isFocusable, SemanticsFlag.hasSelectedState],
-      actions: <SemanticsAction>[SemanticsAction.tap, SemanticsAction.focus],
-      label: 'Ghi\nTab 3 of 4',
-      textDirection: TextDirection.ltr,
-    ),
-    TestSemantics(
-      flags: <SemanticsFlag>[SemanticsFlag.isFocusable, SemanticsFlag.hasSelectedState],
-      actions: <SemanticsAction>[SemanticsAction.tap, SemanticsAction.focus],
-      label: 'Jkl\nTab 4 of 4',
-      textDirection: TextDirection.ltr,
     ),
   ];
 
@@ -6360,9 +6369,7 @@ double? _labelOpacity(WidgetTester tester, String text) {
   }
 
   final FadeTransition fadeTransitionWidget = tester.widget<FadeTransition>(
-    find
-        .ancestor(of: find.text(text), matching: find.byType(FadeTransition))
-        .first, // first because there's also a FadeTransition from the MaterialPageRoute, which is up the tree
+    find.ancestor(of: find.text(text), matching: find.byType(FadeTransition)).first, // first because there's also a FadeTransition from the MaterialPageRoute, which is up the tree
   );
   return fadeTransitionWidget.opacity.value;
 }

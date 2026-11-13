@@ -9,65 +9,33 @@ import Testing
 
 @MainActor struct PolylineControllerTests {
 
-  /// Returns GoogleMapPolylineController object instantiated with a mocked map instance
-  ///
-  ///  @return An object of FGMPolylineController
-  func polylineControllerWithMockedMap() -> FGMPolylineController {
-    let polyline = FGMPlatformPolyline.make(
-      withPolylineId: "polyline_id_0",
+  @Test func patternsSetSpans() {
+    let mapView = PolylineControllerTests.mapView()
+
+    let polyline = PlatformPolyline(
+      polylineId: "polyline_id_0",
       consumesTapEvents: false,
-      color: FGMPlatformColor.make(withRed: 0, green: 0, blue: 0, alpha: 0),
+      color: PlatformColor(red: 0, green: 0, blue: 0, alpha: 0),
       geodesic: false,
       jointType: .round,
-      patterns: [],
+      patterns: [
+        PlatformPatternItem(type: .dot, length: 10),
+        PlatformPatternItem(type: .dash, length: 10),
+      ],
       points: PolylineControllerTests.polylinePoints(),
-      visible: false,
+      visible: true,
       width: 1,
       zIndex: 0
     )
 
-    let frame = CGRect(x: 0, y: 0, width: 100, height: 100)
-    let camera = GMSCameraPosition(latitude: 0, longitude: 0, zoom: 0)
-
-    let mapViewOptions = GMSMapViewOptions()
-    mapViewOptions.frame = frame
-    mapViewOptions.camera = camera
-
-    let mapView = PartiallyMockedMapView(options: mapViewOptions)
-
-    let path = FGMGetPathFromPoints(FGMGetPointsForPigeonLatLngs(polyline.points))
-
-    let polylineControllerWithMockedMap = FGMPolylineController(
-      path: path,
+    let polylineController = PolylineController(
       identifier: polyline.polylineId,
       mapView: mapView
     )
 
-    return polylineControllerWithMockedMap
-  }
-
-  @Test func patternsSetSpans() {
-    let polylineController = polylineControllerWithMockedMap()
-
     #expect(polylineController.polyline.spans == nil)
 
-    polylineController.update(
-      from: FGMPlatformPolyline.make(
-        withPolylineId: "polyline_id_0",
-        consumesTapEvents: false,
-        color: FGMPlatformColor.make(withRed: 0, green: 0, blue: 0, alpha: 0),
-        geodesic: false,
-        jointType: .round,
-        patterns: [
-          FGMPlatformPatternItem.make(with: .dot, length: 10),
-          FGMPlatformPatternItem.make(with: .dash, length: 10),
-        ],
-        points: PolylineControllerTests.polylinePoints(),
-        visible: true,
-        width: 1,
-        zIndex: 0
-      )
-    )
+    polylineController.update(from: polyline)
 
     // `GMSStyleSpan` doesn't implement `isEqual` so cannot be compared by value at present.
     #expect(polylineController.polyline.spans != nil)
@@ -75,12 +43,12 @@ import Testing
 
   @Test func updatePolylineSetsVisibilityLast() {
     let polyline = PropertyOrderValidatingPolyline()
-    FGMPolylineController.update(
+    PolylineController.update(
       polyline,
-      from: FGMPlatformPolyline.make(
-        withPolylineId: "polyline",
+      from: PlatformPolyline(
+        polylineId: "polyline",
         consumesTapEvents: false,
-        color: FGMPlatformColor.make(withRed: 0, green: 0, blue: 0, alpha: 0),
+        color: PlatformColor(red: 0, green: 0, blue: 0, alpha: 0),
         geodesic: false,
         jointType: .round,
         patterns: [],
@@ -103,12 +71,12 @@ import Testing
   }
 
   /// Returns a set of points to use for tests that need a valid but arbitrary line.
-  static func polylinePoints() -> [FGMPlatformLatLng] {
+  static func polylinePoints() -> [PlatformLatLng] {
     return [
-      FGMPlatformLatLng.make(withLatitude: 52.4816, longitude: -3.1791),
-      FGMPlatformLatLng.make(withLatitude: 54.043, longitude: -2.9925),
-      FGMPlatformLatLng.make(withLatitude: 54.1396, longitude: -4.2739),
-      FGMPlatformLatLng.make(withLatitude: 53.4153, longitude: -4.0829),
+      PlatformLatLng(latitude: 52.4816, longitude: -3.1791),
+      PlatformLatLng(latitude: 54.043, longitude: -2.9925),
+      PlatformLatLng(latitude: 54.1396, longitude: -4.2739),
+      PlatformLatLng(latitude: 53.4153, longitude: -4.0829),
     ]
   }
 }

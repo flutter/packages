@@ -7,6 +7,7 @@ import 'package:flutter/widgets.dart';
 import 'configuration.dart';
 import 'logging.dart';
 import 'match.dart';
+import 'misc/active_branch_scope.dart';
 import 'misc/error_screen.dart';
 import 'misc/errors.dart';
 import 'pages/cupertino.dart';
@@ -40,6 +41,28 @@ typedef _ErrorBuilderForAppType = Widget Function(BuildContext context, GoRouter
 /// Used by of [RouteBuilder.onPopPageWithRouteMatch].
 typedef PopPageWithRouteMatchCallback =
     bool Function(Route<dynamic> route, dynamic result, RouteMatchBase match);
+
+/// The clip behavior of the [Navigator] identified by [navigatorKey].
+///
+/// A [ShellRoute] builds a single Navigator and carries the clip behavior
+/// itself, while a [StatefulShellRoute] builds one per branch, so the branch
+/// owning [navigatorKey] carries it. [ShellRouteBase] cannot be subclassed
+/// outside of this library, so those are the only two cases.
+Clip _clipBehaviorFor(ShellRouteBase route, GlobalKey<NavigatorState> navigatorKey) {
+  switch (route) {
+    case ShellRoute():
+      return route.clipBehavior;
+    case StatefulShellRoute():
+      for (final StatefulShellBranch branch in route.branches) {
+        if (branch.navigatorKey == navigatorKey) {
+          return branch.clipBehavior;
+        }
+      }
+      return Clip.hardEdge;
+    default:
+      return Clip.hardEdge;
+  }
+}
 
 /// Builds the top-level Navigator for GoRouter.
 class RouteBuilder {
@@ -137,10 +160,25 @@ class _CustomNavigator extends StatefulWidget {
     required this.errorBuilder,
     required this.errorPageBuilder,
     required this.requestFocus,
+    this.isShellNavigator = false,
+    this.clipBehavior = Clip.hardEdge,
   });
 
   final GlobalKey<NavigatorState> navigatorKey;
   final List<NavigatorObserver> observers;
+
+  /// Whether this navigator builds the nested Navigator for a
+  /// [ShellRoute]/[StatefulShellRoute] branch, as opposed to the root
+  /// [GoRouter] navigator.
+  ///
+  /// Shell navigators are wrapped in `Semantics(container: true)` so that
+  /// each route's [ModalBarrier] (which blocks the semantics of
+  /// previously-painted siblings up to the nearest semantics boundary)
+  /// cannot reach past the shell's Navigator and drop shell chrome that
+  /// paints before it (e.g. a side rail or app bar in a `Row`/`Column`
+  /// shell). The root navigator has no earlier-painted siblings by
+  /// construction, so it does not need the same containment.
+  final bool isShellNavigator;
 
   /// The actual [RouteMatchBase]s to be built.
   ///
@@ -156,6 +194,11 @@ class _CustomNavigator extends StatefulWidget {
   final GoRouterWidgetBuilder? errorBuilder;
   final GoRouterPageBuilder? errorPageBuilder;
   final bool requestFocus;
+
+  /// The clip behavior of the [Navigator] built by this widget.
+  ///
+  /// {@macro go_router.ShellRoute.clipBehavior}
+  final Clip clipBehavior;
 
   @override
   State<StatefulWidget> createState() => _CustomNavigatorState();
@@ -294,28 +337,45 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
             List<NavigatorObserver>? observers,
             String? restorationScopeId,
           ) {
-            return PopScope(
-              // Prevent ShellRoute from being popped, for example
-              // by an iOS back gesture, when the route has active sub-routes.
-              // TODO(LukasMirbt): Remove when minimum flutter version includes
-              // https://github.com/flutter/flutter/pull/152330.
-              canPop: match.matches.length == 1,
-              child: _CustomNavigator(
-                // The state needs to persist across rebuild.
-                key: GlobalObjectKey(navigatorKey.hashCode),
-                navigatorRestorationId: restorationScopeId,
-                navigatorKey: navigatorKey,
-                matches: match.matches,
-                matchList: matchList,
-                inheritedMetadata: state.metadata,
-                configuration: widget.configuration,
-                observers: observers ?? const <NavigatorObserver>[],
-                onPopPageWithRouteMatch: widget.onPopPageWithRouteMatch,
-                // This is used to recursively build pages under this shell route.
-                errorBuilder: widget.errorBuilder,
-                errorPageBuilder: widget.errorPageBuilder,
-                requestFocus: widget.requestFocus,
-              ),
+            final Widget navigator = _CustomNavigator(
+              // The state needs to persist across rebuild.
+              key: ValueKey<GlobalKey<NavigatorState>>(navigatorKey),
+              navigatorRestorationId: restorationScopeId,
+              navigatorKey: navigatorKey,
+              matches: match.matches,
+              matchList: matchList,
+              inheritedMetadata: state.metadata,
+              configuration: widget.configuration,
+              observers: observers ?? const <NavigatorObserver>[],
+              onPopPageWithRouteMatch: widget.onPopPageWithRouteMatch,
+              // This is used to recursively build pages under this shell route.
+              errorBuilder: widget.errorBuilder,
+              errorPageBuilder: widget.errorPageBuilder,
+              requestFocus: widget.requestFocus,
+              isShellNavigator: true,
+              clipBehavior: _clipBehaviorFor(match.route, navigatorKey),
+            );
+            // The Builder gives the PopScope a context below the
+            // ActiveBranchScope of the branch this Navigator belongs to, so
+            // that canPop is kept up to date when the active branch changes.
+            return Builder(
+              builder: (BuildContext context) {
+                return PopScope(
+                  // Prevent ShellRoute from being popped, for example
+                  // by an iOS back gesture, when the route has active
+                  // sub-routes.
+                  //
+                  // Inactive StatefulShellRoute branches stay mounted, and
+                  // their PopScope is registered on the same enclosing route
+                  // as the one of the active branch. Since a single doNotPop
+                  // vote suppresses the pop for all of them, only the active
+                  // branch may hold back a pop.
+                  // TODO(LukasMirbt): Remove when minimum flutter version includes
+                  // https://github.com/flutter/flutter/pull/152330.
+                  canPop: match.matches.length == 1 || !ActiveBranchScope.isActiveBranchOf(context),
+                  child: navigator,
+                );
+              },
             );
           },
     );
@@ -443,18 +503,27 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
       _updatePages(context);
     }
     assert(_pages != null);
+    final navigator = Navigator(
+      key: widget.navigatorKey,
+      requestFocus: widget.requestFocus,
+      restorationScopeId: widget.navigatorRestorationId,
+      pages: _pages!,
+      observers: widget.observers,
+      onPopPage: _handlePopPage,
+      clipBehavior: widget.clipBehavior,
+    );
     return GoRouterStateRegistryScope(
       registry: _registry,
       child: HeroControllerScope(
         controller: _controller!,
-        child: Navigator(
-          key: widget.navigatorKey,
-          requestFocus: widget.requestFocus,
-          restorationScopeId: widget.navigatorRestorationId,
-          pages: _pages!,
-          observers: widget.observers,
-          onPopPage: _handlePopPage,
-        ),
+        // A Navigator does not establish a semantics boundary, so a route's
+        // ModalBarrier (wrapped in BlockSemantics) can otherwise drop the
+        // semantics of shell chrome painted before this navigator (e.g. a
+        // side rail in a Row-based ShellRoute shell). See
+        // https://github.com/flutter/flutter/issues/135656.
+        child: widget.isShellNavigator
+            ? Semantics(container: true, explicitChildNodes: true, child: navigator)
+            : navigator,
       ),
     );
   }

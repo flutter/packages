@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
+
 ## 4.14.1
 
 * Adds documentation for `NavigationDelegate` callback parameters.

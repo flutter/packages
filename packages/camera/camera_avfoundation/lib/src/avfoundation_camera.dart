@@ -189,15 +189,19 @@ class AVFoundationCamera extends CameraPlatform {
   }
 
   @override
-  Future<void> startVideoRecording(int cameraId, {Duration? maxVideoDuration}) async {
+  Future<void> startVideoRecording(
+    int cameraId, {
+    Duration? maxVideoDuration,
+    String? videoOutputPath,
+  }) async {
     // Ignore maxVideoDuration, as it is unimplemented and deprecated.
-    return startVideoCapturing(VideoCaptureOptions(cameraId));
+    return startVideoCapturing(VideoCaptureOptions(cameraId, videoOutputPath: videoOutputPath));
   }
 
   @override
   Future<void> startVideoCapturing(VideoCaptureOptions options) async {
     // Max video duration is currently not supported.
-    await _hostApi.startVideoRecording(options.streamCallback != null);
+    await _hostApi.startVideoRecording(options.streamCallback != null, options.videoOutputPath);
 
     if (options.streamCallback != null) {
       _frameStreamController = _createStreamController();
@@ -415,6 +419,16 @@ class AVFoundationCamera extends CameraPlatform {
   @override
   Future<void> setJpegImageQuality(int cameraId, int quality) async {
     await _hostApi.setJpegImageQuality(quality);
+  }
+
+  @override
+  Future<bool> isZeroShutterLagSupported(int cameraId) {
+    return _hostApi.isZeroShutterLagSupported();
+  }
+
+  @override
+  Future<void> setZeroShutterLagEnabled(int cameraId, bool enabled) async {
+    await _hostApi.setZeroShutterLagEnabled(enabled);
   }
 
   @override

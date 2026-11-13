@@ -88,7 +88,7 @@ class ObjcOptions {
   /// Overrides any non-null parameters from [options] into this to make a new
   /// [ObjcOptions].
   ObjcOptions merge(ObjcOptions options) {
-    return ObjcOptions.fromMap(mergeMaps(toMap(), options.toMap()));
+    return ObjcOptions.fromMap(mergePigeonMaps(toMap(), options.toMap()));
   }
 }
 

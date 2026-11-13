@@ -34,6 +34,8 @@ import 'tabs.dart';
 import 'text_theme.dart';
 import 'theme.dart';
 
+part 'generated/app_bar_defaults_m3.g.dart';
+
 // Examples can assume:
 // late String _logoAsset;
 // double _myToolbarHeight = 250.0;
@@ -41,8 +43,7 @@ import 'theme.dart';
 typedef _FlexibleConfigBuilder = _ScrollUnderFlexibleConfig Function(BuildContext);
 
 const double _kLeadingWidth = kToolbarHeight; // So the leading button is square.
-const double _kMaxTitleTextScaleFactor =
-    1.34; // TODO(perc): Add link to Material spec when available, https://github.com/flutter/flutter/issues/58769.
+const double _kMaxTitleTextScaleFactor = 1.34; // TODO(perc): Add link to Material spec when available, https://github.com/flutter/flutter/issues/58769.
 
 enum _SliverAppVariant { small, medium, large }
 
@@ -287,25 +288,10 @@ class AppBar extends StatefulWidget implements PreferredSizeWidget {
   ///
   /// <callout-box>
   ///
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
-  ///
   /// The following code shows how the drawer button could be manually specified
   /// instead of relying on [automaticallyImplyLeading]:
   ///
-  /// ```dart
-  /// AppBar(
-  ///   leading: Builder(
-  ///     builder: (BuildContext context) {
-  ///       return IconButton(
-  ///         icon: const Icon(Icons.menu),
-  ///         onPressed: () { Scaffold.of(context).openDrawer(); },
-  ///         tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
-  ///       );
-  ///     },
-  ///   ),
-  /// )
-  /// ```
+  /// {@example /example/lib/app_bar/app_bar.snippet.0.dart#body indent=strip}
   ///
   /// </callout-box>
   ///
@@ -388,31 +374,7 @@ class AppBar extends StatefulWidget implements PreferredSizeWidget {
   ///
   /// <callout-box>
   ///
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
-  ///
-  /// ```dart
-  /// Scaffold(
-  ///   body: CustomScrollView(
-  ///     primary: true,
-  ///     slivers: <Widget>[
-  ///       SliverAppBar(
-  ///         title: const Text('Hello World'),
-  ///         actions: <Widget>[
-  ///           IconButton(
-  ///             icon: const Icon(Icons.shopping_cart),
-  ///             tooltip: 'Open shopping cart',
-  ///             onPressed: () {
-  ///               // handle the press
-  ///             },
-  ///           ),
-  ///         ],
-  ///       ),
-  ///       // ...rest of body...
-  ///     ],
-  ///   ),
-  /// )
-  /// ```
+  /// {@example /example/lib/app_bar/app_bar.snippet.1.dart#body indent=strip}
   ///
   /// </callout-box>
   final List<Widget>? actions;
@@ -1534,27 +1496,10 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
 ///
 /// <callout-box>
 ///
-// TODO(framework): Add unit tests to this code snippet.
-// https://github.com/flutter/flutter/issues/188530
-///
 /// This is an example that could be included in a [CustomScrollView]'s
 /// [CustomScrollView.slivers] list:
 ///
-/// ```dart
-/// SliverAppBar(
-///   expandedHeight: 150.0,
-///   flexibleSpace: const FlexibleSpaceBar(
-///     title: Text('Available seats'),
-///   ),
-///   actions: <Widget>[
-///     IconButton(
-///       icon: const Icon(Icons.add_circle),
-///       tooltip: 'Add new entry',
-///       onPressed: () { /* ... */ },
-///     ),
-///   ]
-/// )
-/// ```
+/// {@example /example/lib/app_bar/sliver_app_bar.snippet.0.dart#body indent=strip}
 ///
 /// </callout-box>
 ///
@@ -2576,112 +2521,3 @@ class _AppBarDefaultsM2 extends AppBarThemeData {
   @override
   EdgeInsets? get actionsPadding => EdgeInsets.zero;
 }
-
-// BEGIN GENERATED TOKEN PROPERTIES - AppBar
-
-// Do not edit by hand. The code between the "BEGIN GENERATED" and
-// "END GENERATED" comments are generated from data in the Material
-// Design token database by the script:
-//   dev/tools/gen_defaults/bin/gen_defaults.dart.
-
-// dart format off
-class _AppBarDefaultsM3 extends AppBarThemeData {
-  _AppBarDefaultsM3(this.context)
-    : super(
-      elevation: 0.0,
-      scrolledUnderElevation: 3.0,
-      titleSpacing: NavigationToolbar.kMiddleSpacing,
-      toolbarHeight: 64.0,
-    );
-
-  final BuildContext context;
-  late final ThemeData _theme = Theme.of(context);
-  late final ColorScheme _colors = _theme.colorScheme;
-  late final TextTheme _textTheme = _theme.textTheme;
-
-  @override
-  Color? get backgroundColor => _colors.surface;
-
-  @override
-  Color? get foregroundColor => _colors.onSurface;
-
-  @override
-  Color? get shadowColor => Colors.transparent;
-
-  @override
-  Color? get surfaceTintColor => Colors.transparent;
-
-  @override
-  IconThemeData? get iconTheme => IconThemeData(
-    color: _colors.onSurface,
-    size: 24.0,
-  );
-
-  @override
-  IconThemeData? get actionsIconTheme => IconThemeData(
-    color: _colors.onSurfaceVariant,
-    size: 24.0,
-  );
-
-  @override
-  TextStyle? get toolbarTextStyle => _textTheme.bodyMedium;
-
-  @override
-  TextStyle? get titleTextStyle => _textTheme.titleLarge;
-
-  // TODO(Craftplacer): Consider using EdgeInsets.only(right: 8.0) instead of
-  // EdgeInsets.zero for Material 3 in the future,
-  // https://github.com/flutter/flutter/issues/155747
-  @override
-  EdgeInsets? get actionsPadding => EdgeInsets.zero;
-}
-
-// Variant configuration
-class _MediumScrollUnderFlexibleConfig with _ScrollUnderFlexibleConfig {
-  _MediumScrollUnderFlexibleConfig(this.context);
-
-  final BuildContext context;
-  late final ThemeData _theme = Theme.of(context);
-  late final ColorScheme _colors = _theme.colorScheme;
-  late final TextTheme _textTheme = _theme.textTheme;
-
-  static const double collapsedHeight = 64.0;
-  static const double expandedHeight = 112.0;
-
-  @override
-  TextStyle? get collapsedTextStyle =>
-    _textTheme.titleLarge?.apply(color: _colors.onSurface);
-
-  @override
-  TextStyle? get expandedTextStyle =>
-    _textTheme.headlineSmall?.apply(color: _colors.onSurface);
-
-  @override
-  EdgeInsetsGeometry get expandedTitlePadding => const EdgeInsets.fromLTRB(16, 0, 16, 20);
-}
-
-class _LargeScrollUnderFlexibleConfig with _ScrollUnderFlexibleConfig {
-  _LargeScrollUnderFlexibleConfig(this.context);
-
-  final BuildContext context;
-  late final ThemeData _theme = Theme.of(context);
-  late final ColorScheme _colors = _theme.colorScheme;
-  late final TextTheme _textTheme = _theme.textTheme;
-
-  static const double collapsedHeight = 64.0;
-  static const double expandedHeight = 152.0;
-
-  @override
-  TextStyle? get collapsedTextStyle =>
-    _textTheme.titleLarge?.apply(color: _colors.onSurface);
-
-  @override
-  TextStyle? get expandedTextStyle =>
-    _textTheme.headlineMedium?.apply(color: _colors.onSurface);
-
-  @override
-  EdgeInsetsGeometry get expandedTitlePadding => const EdgeInsets.fromLTRB(16, 0, 16, 28);
-}
-// dart format on
-
-// END GENERATED TOKEN PROPERTIES - AppBar

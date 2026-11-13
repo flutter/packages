@@ -5,6 +5,7 @@
 import 'dart:async' show unawaited;
 
 import 'package:cupertino_ui/cupertino_ui.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart' show GlobalWidgetsLocalizations;
 import 'package:flutter_test/flutter_test.dart';
@@ -166,6 +167,56 @@ void main() {
     expect(sheetContentOffset.dy, greaterThan(dragHandleOffset.dy));
   });
 
+  for (final useNestedNavigation in <bool>[false, true]) {
+    testWidgets(
+      'showCupertinoSheet forwards showDragHandle to the sheet route - use nested navigation $useNestedNavigation',
+      (WidgetTester tester) async {
+        // Regression test for https://github.com/flutter/flutter/issues/187693.
+        final Finder dragHandleFinder = find.byWidgetPredicate((Widget widget) {
+          return widget is DecoratedBox &&
+              widget.decoration is ShapeDecoration &&
+              (widget.decoration as ShapeDecoration).color == CupertinoColors.tertiaryLabel;
+        });
+        final GlobalKey scaffoldKey = GlobalKey();
+
+        await tester.pumpWidget(
+          CupertinoApp(
+            home: CupertinoPageScaffold(
+              key: scaffoldKey,
+              child: Center(
+                child: Column(
+                  children: <Widget>[
+                    const Text('Page 1'),
+                    CupertinoButton(
+                      onPressed: () {
+                        showCupertinoSheet<void>(
+                          context: scaffoldKey.currentContext!,
+                          useNestedNavigation: useNestedNavigation,
+                          showDragHandle: true,
+                          scrollableBuilder:
+                              (BuildContext context, ScrollController scrollController) {
+                                return const CupertinoPageScaffold(child: Text('Page 2'));
+                              },
+                        );
+                      },
+                      child: const Text('Push Page 2'),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+
+        await tester.tap(find.text('Push Page 2'));
+        await tester.pumpAndSettle();
+
+        expect(find.text('Page 2'), findsOneWidget);
+        expect(dragHandleFinder, findsOneWidget);
+      },
+    );
+  }
+
   testWidgets('Previous route moves slight downward when sheet route is pushed', (
     WidgetTester tester,
   ) async {
@@ -315,6 +366,85 @@ void main() {
             .dy,
       ),
     );
+  });
+
+  testWidgets('covered sheet does not reveal the root route through its top gap', (
+    WidgetTester tester,
+  ) async {
+    final GlobalKey scaffoldKey = GlobalKey();
+
+    await tester.pumpWidget(
+      CupertinoApp(
+        home: CupertinoPageScaffold(
+          key: scaffoldKey,
+          child: Column(
+            children: <Widget>[
+              const Text('Page 1'),
+              CupertinoButton(
+                onPressed: () {
+                  Navigator.push<void>(
+                    scaffoldKey.currentContext!,
+                    CupertinoSheetRoute<void>(
+                      builder: (BuildContext context) {
+                        return CupertinoPageScaffold(
+                          child: Column(
+                            children: <Widget>[
+                              const Text('Page 2'),
+                              CupertinoButton(
+                                onPressed: () {
+                                  Navigator.push<void>(
+                                    context,
+                                    CupertinoSheetRoute<void>(
+                                      builder: (BuildContext context) {
+                                        return const CupertinoPageScaffold(child: Text('Page 3'));
+                                      },
+                                    ),
+                                  );
+                                },
+                                child: const Text('Push Page 3'),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                },
+                child: const Text('Push Page 2'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('Push Page 2'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Push Page 3'));
+    await tester.pumpAndSettle();
+
+    final double page1Top = tester
+        .getTopLeft(
+          find.ancestor(of: find.text('Page 1'), matching: find.byType(CupertinoPageScaffold)),
+        )
+        .dy;
+    final double page2Top = tester
+        .getTopLeft(
+          find.ancestor(of: find.text('Page 2'), matching: find.byType(CupertinoPageScaffold)),
+        )
+        .dy;
+    final double page3Top = tester
+        .getTopLeft(
+          find.ancestor(of: find.text('Page 3'), matching: find.byType(CupertinoPageScaffold)),
+        )
+        .dy;
+
+    // Sheet 2 moves up above Page 1 so that the root route (Page 1) is completely hidden behind
+    // Sheet 2.
+    expect(page2Top, lessThanOrEqualTo(page1Top));
+    // Sheet 3 is stacked on top of Sheet 2, with Sheet 2 peeking out above Sheet 3.
+    expect(page2Top, lessThanOrEqualTo(page3Top));
   });
 
   testWidgets('by default showCupertinoSheet does not enable nested navigation', (
@@ -1495,6 +1625,45 @@ void main() {
       final double finalPosition = box.localToGlobal(Offset.zero).dy;
       expect(finalPosition, initialPosition);
     });
+
+    testWidgets('drag can end while a relayout of the sheet is pending', (
+      WidgetTester tester,
+    ) async {
+      // Regression test for https://github.com/flutter/flutter/issues/194681.
+      final GlobalKey homeKey = GlobalKey();
+      final GlobalKey sheetKey = GlobalKey();
+
+      await tester.pumpWidget(dragGestureApp(homeKey, sheetKey));
+
+      await tester.tap(find.text('Push Page 2'));
+      await tester.pumpAndSettle();
+
+      var box = tester.renderObject(find.byKey(sheetKey)) as RenderBox;
+      final double initialPosition = box.localToGlobal(Offset.zero).dy;
+
+      final TestGesture gesture = await tester.startGesture(const Offset(100, 200));
+      await gesture.moveBy(const Offset(0, 100));
+      await tester.pump();
+
+      // The sheet measures the drag against the height of the box the drag
+      // gesture detector renders. Mark it dirty so the drag ends before the
+      // next layout.
+      final Finder dragGestureDetector = find.ancestor(
+        of: find.byKey(sheetKey),
+        matching: find.byWidgetPredicate(
+          (Widget widget) => '${widget.runtimeType}'.startsWith('_CupertinoDragGestureDetector'),
+        ),
+      );
+      tester.renderObject(dragGestureDetector).markNeedsLayout();
+
+      await gesture.up();
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+      expect(find.text('Page 2'), findsOneWidget);
+      box = tester.renderObject(find.byKey(sheetKey)) as RenderBox;
+      expect(box.localToGlobal(Offset.zero).dy, initialPosition);
+    });
   });
 
   group('draggable scrollable CupertinoSheetRoute', () {
@@ -1734,6 +1903,44 @@ void main() {
 
       // Scrollable sheet should not be open.
       expect(find.text('Scroll Item 3'), findsNothing);
+    });
+
+    testWidgets('drag can end while a relayout of the sheet content is pending', (
+      WidgetTester tester,
+    ) async {
+      // Regression test for https://github.com/flutter/flutter/issues/194681.
+      final GlobalKey homeKey = GlobalKey();
+      final GlobalKey sheetKey = GlobalKey();
+
+      await tester.pumpWidget(draggableScrollableApp(homeKey, sheetKey));
+
+      await tester.tap(find.text('Push Page 2'));
+      await tester.pumpAndSettle();
+
+      var box = tester.renderObject(find.byKey(sheetKey)) as RenderBox;
+      final double initialPosition = box.localToGlobal(Offset.zero).dy;
+
+      // Drag the sheet down while its content is scrolled to the top.
+      final TestGesture gesture = await tester.startGesture(const Offset(100, 300));
+      // Do a small drag first to win the gesture arena.
+      await gesture.moveBy(const Offset(0, 30));
+      await gesture.moveBy(const Offset(0, 50));
+      await tester.pump();
+
+      box = tester.renderObject(find.byKey(sheetKey)) as RenderBox;
+      expect(box.localToGlobal(Offset.zero).dy, greaterThan(initialPosition));
+
+      // The sheet measures the drag against the height of its content. Mark
+      // the content dirty so the drag ends before the next layout.
+      box.markNeedsLayout();
+
+      await gesture.up();
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+      expect(find.text('Scroll Item 3'), findsOneWidget);
+      box = tester.renderObject(find.byKey(sheetKey)) as RenderBox;
+      expect(box.localToGlobal(Offset.zero).dy, initialPosition);
     });
   });
 
@@ -2219,6 +2426,98 @@ void main() {
       await tester.pumpAndSettle();
     });
   });
+
+  group('hasPlatformViews parameter tests', () {
+    final GlobalKey scaffoldKey = GlobalKey();
+
+    bool checkHasImageFilterLayer() {
+      // The transition widget is the ancestor of the scaffold.
+      final BuildContext context = scaffoldKey.currentContext!;
+      var found = false;
+      context.visitAncestorElements((element) {
+        final RenderObject? renderObject = element.findRenderObject();
+        if (renderObject?.debugLayer is ImageFilterLayer) {
+          found = true;
+          return false;
+        }
+        return true;
+      });
+      return found;
+    }
+
+    Widget dragGestureApp(bool hasPlatformViews) {
+      return CupertinoApp(
+        home: CupertinoPageScaffold(
+          key: scaffoldKey,
+          child: Center(
+            child: Column(
+              children: <Widget>[
+                const Text('Page 1'),
+                CupertinoButton(
+                  onPressed: () {
+                    showCupertinoSheet<void>(
+                      context: scaffoldKey.currentContext!,
+                      hasPlatformViews: hasPlatformViews,
+                      scrollableBuilder: (BuildContext context, ScrollController controller) {
+                        return const CupertinoPageScaffold(child: Center(child: Text('Page 2')));
+                      },
+                    );
+                  },
+                  child: const Text('Push Page 2'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    Future<void> pumpSheet(WidgetTester tester, bool hasPlatformViews) async {
+      await tester.pumpWidget(dragGestureApp(hasPlatformViews));
+      await tester.tap(find.text('Push Page 2'));
+      await tester.pumpAndSettle();
+      expect(find.text('Page 2'), findsOneWidget);
+    }
+
+    testWidgets('hasPlatformViews=false should add ImageFilterLayer during transition', (
+      WidgetTester tester,
+    ) async {
+      await pumpSheet(tester, false);
+
+      // ImageFilterLayer should not be found after the transition is completed
+      // because ScaleTransition will set the Transform.filterQuality to null.
+      expect(checkHasImageFilterLayer(), false);
+
+      final TestGesture gesture = await tester.startGesture(const Offset(100, 300));
+      await gesture.moveBy(const Offset(0, 100));
+      await tester.pump();
+
+      // ImageFilterLayer should be found when the sheet is dragged.
+      expect(checkHasImageFilterLayer(), true);
+
+      await gesture.up();
+      await tester.pumpAndSettle();
+    });
+
+    testWidgets('hasPlatformViews=true should not add ImageFilterLayer during transition', (
+      WidgetTester tester,
+    ) async {
+      await pumpSheet(tester, true);
+
+      expect(checkHasImageFilterLayer(), false);
+
+      final TestGesture gesture = await tester.startGesture(const Offset(100, 300));
+      await gesture.moveBy(const Offset(0, 100));
+      await tester.pump();
+
+      // ImageFilterLayer should not be found even when the sheet is dragged.
+      expect(checkHasImageFilterLayer(), false);
+
+      await gesture.up();
+      await tester.pumpAndSettle();
+    });
+  });
+
   testWidgets('didUpdateWidget in sheet transition does not try and use multiple tickers', (
     WidgetTester tester,
   ) async {

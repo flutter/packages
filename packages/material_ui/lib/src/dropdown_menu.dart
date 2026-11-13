@@ -35,8 +35,10 @@ import 'theme_data.dart';
 /// current applied filter.
 ///
 /// Used by [DropdownMenu.filterCallback].
-typedef FilterCallback<T> =
-    List<DropdownMenuEntry<T>> Function(List<DropdownMenuEntry<T>> entries, String filter);
+typedef FilterCallback<T> = List<DropdownMenuEntry<T>> Function(
+  List<DropdownMenuEntry<T>> entries,
+  String filter,
+);
 
 /// A callback function that returns the index of the item that matches the
 /// current contents of a text field.
@@ -53,8 +55,10 @@ typedef SearchCallback<T> = int? Function(List<DropdownMenuEntry<T>> entries, St
 ///
 /// The `controller` is the [MenuController] that can be used to open and close
 /// the menu with and query the current state.
-typedef DropdownMenuDecorationBuilder =
-    InputDecoration Function(BuildContext context, MenuController controller);
+typedef DropdownMenuDecorationBuilder = InputDecoration Function(
+  BuildContext context,
+  MenuController controller,
+);
 
 const double _kMinimumWidth = 112.0;
 
@@ -444,6 +448,33 @@ class DropdownMenu<T> extends StatefulWidget {
   /// Controls the text being edited or selected in the menu.
   ///
   /// If null, this widget will create its own [TextEditingController].
+  ///
+  /// A [TextEditingController] can be provided to programmatically clear or modify
+  /// the displayed selection. For example, calling [TextEditingController.clear]
+  /// clears the text displayed in the dropdown menu.
+  ///
+  /// When tracking the selected value in a state variable, calling
+  /// [TextEditingController.clear] alongside updating the state variable to null
+  /// is required to clear the displayed selection, as setting [initialSelection]
+  /// to null does not clear the text field.
+  ///
+  /// <callout-box>
+  ///
+  /// This sample demonstrates how to programmatically clear the selection in a
+  /// [DropdownMenu] using a [TextEditingController].
+  ///
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
+  /// {@example /example/lib/dropdown_menu/dropdown_menu.3.dart#body}
+  ///
+  /// </callout-box>
+  ///
+  /// See also:
+  ///
+  ///  * [initialSelection], which sets the initial selection when the widget is
+  ///    first created.
   final TextEditingController? controller;
 
   /// The value used for an initial selection.
@@ -452,12 +483,28 @@ class DropdownMenu<T> extends StatefulWidget {
   /// is first created. If the value matches one of the [dropdownMenuEntries],
   /// the corresponding label will be displayed in the text field.
   ///
-  /// Setting this to null does not clear the text field.
+  /// Setting this to null on a rebuild does not clear the text field, because
+  /// [DropdownMenu] only updates the text field when [initialSelection] changes
+  /// to a value that matches one of the [dropdownMenuEntries].
   ///
-  /// To programmatically clear the text field, use a [TextEditingController]
-  /// and call [TextEditingController.clear] on it.
+  /// To programmatically clear or reset the selection, provide a [controller]
+  /// and call [TextEditingController.clear] on it alongside resetting the state
+  /// variable to null.
   ///
   /// Defaults to null.
+  ///
+  /// <callout-box>
+  ///
+  /// This sample demonstrates how to programmatically clear the selection in a
+  /// [DropdownMenu] using a [TextEditingController].
+  ///
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
+  /// {@example /example/lib/dropdown_menu/dropdown_menu.3.dart#body}
+  ///
+  /// </callout-box>
   ///
   /// See also:
   ///
@@ -763,6 +810,7 @@ class _DropdownMenuState<T> extends State<DropdownMenu<T>> {
   TextEditingController get _effectiveTextEditingController =>
       widget.controller ?? (_localTextEditingController ??= TextEditingController());
   final FocusNode _internalFocusNode = FocusNode();
+  bool? _focusNodeCanRequestFocus;
   WidgetStatesController? _highlightedItemStatesController;
 
   FocusNode? _localTrailingIconButtonFocusNode;
@@ -772,6 +820,7 @@ class _DropdownMenuState<T> extends State<DropdownMenu<T>> {
   @override
   void initState() {
     super.initState();
+    _focusNodeCanRequestFocus = widget.focusNode?.canRequestFocus;
     _enableSearch = widget.enableSearch;
     filteredEntries = widget.dropdownMenuEntries;
     buttonItemKeys = List<GlobalKey>.generate(filteredEntries.length, (int index) => GlobalKey());
@@ -841,6 +890,17 @@ class _DropdownMenuState<T> extends State<DropdownMenu<T>> {
     if (oldWidget.menuController != widget.menuController) {
       _controller = widget.menuController ?? MenuController();
     }
+    if (widget.focusNode != oldWidget.focusNode) {
+      _focusNodeCanRequestFocus = widget.focusNode?.canRequestFocus;
+    }
+    if (oldWidget.enabled && !widget.enabled) {
+      _focusNodeCanRequestFocus = widget.focusNode?.canRequestFocus;
+    }
+    if (!oldWidget.enabled && widget.enabled) {
+      if (widget.focusNode != null && _focusNodeCanRequestFocus != null) {
+        widget.focusNode!.canRequestFocus = _focusNodeCanRequestFocus!;
+      }
+    }
   }
 
   bool canRequestFocus() {
@@ -870,9 +930,8 @@ class _DropdownMenuState<T> extends State<DropdownMenu<T>> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final BuildContext? highlightContext = buttonItemKeys[currentHighlight!].currentContext;
       if (highlightContext != null) {
-        Scrollable.of(
-          highlightContext,
-        ).position.ensureVisible(highlightContext.findRenderObject()!);
+        Scrollable.of(highlightContext).position
+            .ensureVisible(highlightContext.findRenderObject()!);
       }
     }, debugLabel: 'DropdownMenu.scrollToHighlight');
   }
@@ -1287,7 +1346,7 @@ class _DropdownMenuState<T> extends State<DropdownMenu<T>> {
         final MaterialLocalizations localizations = MaterialLocalizations.of(context);
         final Widget textField = Semantics(
           button: isButton,
-          // This is set specificly for iOS because iOS does not have any native
+          // This is set specifically for iOS because iOS does not have any native
           // APIs to show whether the menu is expanded or collapsed.
           hint: Theme.of(context).platform == TargetPlatform.iOS
               ? _controller.isOpen

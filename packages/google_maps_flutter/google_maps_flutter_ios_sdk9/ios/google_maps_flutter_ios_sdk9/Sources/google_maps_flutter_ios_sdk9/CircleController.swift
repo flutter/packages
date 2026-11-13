@@ -1,0 +1,94 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+import GoogleMaps
+
+/// Defines circle controllable by Flutter.
+class CircleController {
+  let circle: GMSCircle
+  private weak var mapView: GMSMapView?
+
+  init(circle: PlatformCircle, mapView: GMSMapView) {
+    self.circle = GMSCircle()
+    self.mapView = mapView
+    self.circle.userData = [circle.circleId]
+    CircleController.update(self.circle, from: circle, with: mapView)
+  }
+
+  func removeCircle() {
+    circle.map = nil
+  }
+
+  /// Updates the controller's circle with the properties from a PlatformCircle.
+  ///
+  /// Setting the circle to visible will set its map to the given mapView.
+  func update(from platformCircle: PlatformCircle) {
+    if let mapView = mapView {
+      CircleController.update(circle, from: platformCircle, with: mapView)
+    }
+  }
+
+  /// Updates the given GMSCircle with the properties from a PlatformCircle.
+  ///
+  /// Setting the circle to visible will set its map to the given mapView.
+  static func update(
+    _ circle: GMSCircle, from platformCircle: PlatformCircle, with mapView: GMSMapView
+  ) {
+    circle.isTappable = platformCircle.consumeTapEvents
+    circle.zIndex = Int32(platformCircle.zIndex)
+    circle.position = platformCircle.center.toCLLocationCoordinate2D()
+    circle.radius = platformCircle.radius
+    circle.strokeColor = platformCircle.strokeColor.toUIColor()
+    circle.strokeWidth = CGFloat(platformCircle.strokeWidth)
+    circle.fillColor = platformCircle.fillColor.toUIColor()
+
+    // This must be done last, to avoid visual flickers of default property values.
+    circle.map = platformCircle.visible ? mapView : nil
+  }
+}
+
+class CirclesController {
+  private weak var eventDelegate: MapEventDelegate?
+  private weak var mapView: GMSMapView?
+  private var circleIdToController: [String: CircleController] = [:]
+
+  init(mapView: GMSMapView, eventDelegate: MapEventDelegate) {
+    self.mapView = mapView
+    self.eventDelegate = eventDelegate
+  }
+
+  func add(_ circles: [PlatformCircle]) {
+    guard let mapView = mapView else { return }
+    for circle in circles {
+      circleIdToController[circle.circleId] = CircleController(circle: circle, mapView: mapView)
+    }
+  }
+
+  func change(_ circles: [PlatformCircle]) {
+    for circle in circles {
+      circleIdToController[circle.circleId]?.update(from: circle)
+    }
+  }
+
+  func removeCircles(withIdentifiers identifiers: [String]) {
+    for identifier in identifiers {
+      if let controller = circleIdToController[identifier] {
+        controller.removeCircle()
+        circleIdToController.removeValue(forKey: identifier)
+      }
+    }
+  }
+
+  func hasCircle(withIdentifier identifier: String) -> Bool {
+    return circleIdToController[identifier] != nil
+  }
+
+  func didTapCircle(withIdentifier identifier: String) {
+    if hasCircle(withIdentifier: identifier) {
+      Task {
+        try await eventDelegate?.didTapCircle(withIdentifier: identifier)
+      }
+    }
+  }
+}

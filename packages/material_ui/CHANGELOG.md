@@ -1,3 +1,142 @@
+## 1.11.0
+
+- Keeps the `Material` of a `Dialog.fullscreen` covering the whole screen while the software keyboard is shown, so that a translucent keyboard shows the dialog's surface instead of the modal barrier behind it.
+- Fixes `InputDecorator` hit testing of a floating label, so taps hit the label where it is painted.
+- Makes `SearchAnchor.bar` use `SearchBarThemeData.padding` when `barPadding` is null.
+- Adds Material 3 Expressive support and selectable states for ElevatedButton.
+- Adds `ElevatedButtonTheme.variantOf`, which returns the closest non-null `ElevatedButtonThemeData.variant`, or `StyleVariant.material3` if none is set.
+- Extends the `Material` of a `Scaffold` persistent bottom sheet behind the software keyboard when `resizeToAvoidBottomInset` is true, so that a translucent keyboard shows the sheet's surface instead of the scaffold's background color.
+- Fixes `RoundedRectSliderTrackShape` painting the inactive track segment over the end of the active one in right-to-left layouts.
+- Documents why `RefreshIndicator` does not respond to a mouse on desktop and web, and how to support mouse input.
+- Fixes `Switch` and `Switch.adaptive` throwing a `LateInitializationError` or a null check error when first painted during their press or toggle animation.
+- Adds `IconButtonTheme.variantOf`, which returns the closest non-null `IconButtonThemeData.variant`, or `StyleVariant.material3` if none is set.
+- Makes the default Material 3 primary TabBar indicator at least 24dp wide. Use a custom indicator to keep the previous width.
+- Fixes DropdownMenu text cursor getting lost when disabled and re-enabled.
+- Updates `InkSparkle` to set its shader uniforms by name instead of with `FragmentShader.setFloat`.
+- Fix bottom sheet dismissal when its extent is within floating-point precision of its minimum extent.
+- Fixes discrete `Slider` and `RangeSlider` with a rounded track selecting the neighboring division when tapping ticks near the ends of the track.
+- Fixes `InputDecorator` intrinsic height not matching its laid out height when `isDense` or `isCollapsed` is true.
+- Adds `Springs`, the Material 3 Expressive spring tokens for the standard and expressive motion schemes.
+- Adds `SemanticsRole.tabBar` and `SemanticsRole.tab` semantics to `NavigationRail` and its destinations.
+- Exposes `expanded` state semantics on `DrawerButton`, `EndDrawerButton`, and the `CalendarDatePicker` year-mode toggle button.
+- Fixes a disabled `DropdownButtonFormField` showing its decoration as enabled and reacting to hover.
+- Fixes a listener leak in modal bottom sheets that accumulated animation listeners each time the sheet was dragged.
+
+## 1.10.0
+
+- Updates the `Typography` documentation to describe the 2021 (Material 3) geometry themes and the current `ThemeData.typography` defaults.
+- Deprecates the `black` and `white` parameters of `Typography.material2021`, and documents that their colors are replaced with colors from the `colorScheme`.
+- Fixes `MenuAnchor` and `MenuBar` shortcut labels for unlocalized non-Unicode keys (such as `Tab` and `F1`) on JavaScript web builds.
+- Adds `Checkbox.markInsets` and `CheckboxThemeData.markInsets`, which inset the
+  check mark (and the indeterminate dash) within the checkbox without changing the
+  size of the box itself. The mark and its stroke shrink proportionally.
+- Fixes an issue where pressing Escape does not close a MenuAnchor opened by a tap or click.
+- Fixes `TextTheme.debugFillProperties` to use the default `ThemeData` text theme, instead of `Typography.material2018(...).black`.
+- Fixes `Typography.debugFillProperties` to use the default `ThemeData` typography, instead of `Typography.material2014`.
+- Fixes `GappedSliderTrackShape` painting the secondary track with the wrong position and corners in right-to-left layouts.
+
+## 1.9.0
+
+- Adds a `barFocusNode` parameter to `SearchAnchor.bar` to allow external control over the focus of the underlying `SearchBar`.
+- Fixes showTimePicker input mode failing to parse localized digits (e.g. Farsi, Arabic, Bengali, Myanmar, Thai, Nepali, French, German, Portuguese locales) by parsing hour/minute via MaterialLocalizations and handling localized leading zeros.
+- Corrects the `Divider.color` and `VerticalDivider.color` documentation to describe the Material 3 fallback (`ColorScheme.outlineVariant`).
+- Fixes `MenuAnchor` scrollbars inheriting system safe-area padding.
+- Fixes unlabeled tap target semantics in `SearchBar`.
+- Adds `enableTapHandling` to `SearchAnchor`.
+- Adds `dayBuilder` and `weekdayBuilder` callbacks to `CalendarDatePicker`, `DatePickerDialog`, and `showDatePicker`.
+- Adds `CalendarDatePickerDayDetails` and `CalendarDatePickerWeekdayDetails` to provide metadata and default widgets to the builders.
+
+## 1.8.0
+
+- Adds `RoundedPolygon` and `CornerRounding` for creating rounded polygonal shapes.
+- Adds `MaterialShapes`, the catalog of predefined Material Design shapes.
+- Adds `MaterialShapeBorder` for drawing a `RoundedPolygon` as an `OutlinedBorder`, which morphs between shapes when lerped.
+- Adds an example that morphs through the shapes in `MaterialShapes.all`.
+- Adds `enableInlinePrediction` to `TextFormField`.
+- Adds the `supportingTextPadding` property to `InputDecoration` and `InputDecorationThemeData`.
+- Adds an `enabled` parameter to `DropdownButtonFormField` and makes its
+  `onChanged` parameter optional. When `enabled` is true, the field is
+  interactive without an `onChanged` callback.
+- Adds a Material 3 Expressive IconButton example.
+- Fix `GridTile` crash when the incoming constraints are unbounded (e.g. inside a horizontally scrolling `ListView`).
+- Adds `onTertiaryTapDown`, `onTertiaryTapUp` and `onTertiaryTapCancel` to `InkResponse` and `InkWell`, so a tertiary (middle) button click can be handled directly.
+- Clarifies how `Slider.label` can be displayed for continuous sliders.
+- The FadeForwards page transition on Android now takes 20-40% less time to render thanks to snapshotting.
+- Fixes the installation command in README.md
+- Fixes `Theme.of` returning a fallback `ThemeData` whose `platform` was frozen to the first `defaultTargetPlatform` seen by the process. A subtree without a `Theme` ancestor now adapts when `defaultTargetPlatform` changes, for example under a `TargetPlatformVariant` or the platform override.
+
+## 1.7.0
+
+- Accounts for `MediaQuery`'s `TextScaler` when calculating `SnackBar` action overflow and removes unnecessary blank right spacing in multi-line layout.
+- Allows `TabBar.indicatorWeight` of 0 when the indicator is supplied by `TabBarThemeData`.
+- Fixes showTimePicker input mode rejecting or misreading hours in locales that use a 24-hour format.
+- Adds the `scrollPadding` property to `DropdownMenuFormField`, forwarding it to the underlying `DropdownMenu`.
+- Fixes an Android semantics assertion when an `ExpansionTile` is embedded in a `WidgetSpan`.
+
+## 1.6.0
+
+- Documents that `TextField.decoration` is merged with the ambient
+  `InputDecorationTheme` rather than replacing it.
+- Fixes unresolved doc comment references.
+- Fixes `NavigationIndicator` not repainting when the selected destination changes without pointer interaction.
+- Removes the unconditional `dart:io` import from `AboutDialog`, so that `material_ui` is correctly detected as supporting the web platform and `showAboutDialog` no longer throws on the web when no application name is available.
+- Fix DropdownButtonFormField underline alignment at bottom.
+- Fixes floating-point rounding errors when calculating values for discrete `Slider` and `RangeSlider`.
+- Added `fontFeatures` and `fontVariations` parameters to `TextTheme.apply()`.
+
+## 1.5.0
+
+- Adds Material 3 Expressive support for IconButton.
+- Exposes `selected` state on `Autocomplete` option semantics.
+- Wraps `DrawerHeader` in `Semantics(header: true)`.
+- Adds `ignorePointer` to `TooltipThemeData` for WCAG 1.4.13 Hoverable support.
+- Fixes decorations on `MenuItemButton.leadingIcon`, such as `Badge`, being clipped to the icon's bounds in vertically expanding menus.
+- Introduces labelTextDirection property to InputDecoration.
+- Adds support for standard, medium, and high contrast Material 3 color scheme baselines.
+- Fixes LocalHistoryEntry leak when double tapping Drawer scrim
+
+## 1.4.0
+
+- Updates minimum supported SDK version to Flutter 3.47/Dart 3.13.
+- Adds sortIconBuilder parameter to DataTable, PaginatedDataTable, and DataTableThemeData for custom sorting indicators.
+- Fix `PopupMenuButton` not announcing button semantics (enabled state, expanded state) when built with a `child` instead of the default icon.
+- Fixes `DatePickerThemeData.todayBorder` color being overridden by `todayForegroundColor` in the year selector.
+- Adds an alternative keyboard input method for RangeSlider in NavigationMode.directional.
+
+## 1.3.0
+
+- Adds `@awaitNotRequired` annotations to asynchronous functions that do not need to be awaited.
+- Adds an option for `MaterialPageRoute` and `MaterialPage` to opt out of introducing a semantics route scope.
+- Fixes SliverGeometry maxPaintExtent assertion in CarouselView.weighted
+- Corrects the Material 3 default style documentation for FilledButton to match its implementation.
+- Adds support for customizing date input formatters via
+  `CalendarDelegate.keyboardInputFormatters`, allowing custom date input
+  behavior in the Material date picker.
+- Adds a semanticLabel to MenuAnchor for the expanded menu overlay.
+
+## 1.2.0
+
+- Adds the `StyleVariant` enum defining the Material 3 and Material 3 Expressive style variants.
+
+## 1.1.1
+
+- Constrains Slider and RangeSlider value indicator labels to the screen width, truncating with an ellipsis instead of clipping.
+- Prevents stale asynchronous suggestions from replacing newer `SearchAnchor` results.
+- Fix RangeSlider thumb overlay remaining visible after touch interaction
+
+## 1.1.0
+
+- Add missing Widget of the Week videos to widget API docs.
+- Exposes ink_sparkle shader asset in pubspec.yaml and removes stretch_effect shader.
+- Fix Typo in Readme
+- Fixes typos in library code and tests.
+- SearchAnchor overlay expands to full-screen on viewport size change (e.g., on device rotation).
+- Fixes https://github.com/flutter/flutter/issues/186154.
+
+## 1.0.1
+
+- Updates cupertino_ui dependency constraint to ^1.0.0.
+
 ## 1.0.0
 
 - README updated for the full release of material_ui.
