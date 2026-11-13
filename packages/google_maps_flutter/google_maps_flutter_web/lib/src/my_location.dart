@@ -9,7 +9,7 @@ const _kMyLocationButtonId = 'my_location_button';
 /// This class manages the current location and the my location button.
 class MyLocationController {
   /// Creates a [MyLocationController] with the given [GeolocationApi].
-  MyLocationController({required GeolocationApi geolocationApi}) : _geolocationApi = geolocationApi;
+  MyLocationController({required this._geolocationApi});
 
   final GeolocationApi _geolocationApi;
 
