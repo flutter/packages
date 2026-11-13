@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes `CupertinoButton.tinted` and `CupertinoActionSheetAction`'s focus highlight filling with 12% of the accent color in light mode instead of iOS's 18%.
+version: patch
