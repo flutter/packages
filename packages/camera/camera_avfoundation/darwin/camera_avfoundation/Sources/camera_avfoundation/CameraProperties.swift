@@ -82,21 +82,11 @@ func getPixelFormat(for imageFormat: PlatformImageFormatGroup) -> OSType {
 func getAvCaptureVideoStabilizationMode(
   _ videoStabilizationMode: PlatformVideoStabilizationMode
 ) -> AVCaptureVideoStabilizationMode {
-
   switch videoStabilizationMode {
-  case .off:
-    return .off
-  case .standard:
-    return .standard
-  case .cinematic:
-    return .cinematic
-  case .cinematicExtended:
-    if #available(iOS 13.0, *) {
-      return .cinematicExtended
-    } else {
-      return .cinematic
-    }
-  @unknown default:
-    return .off
+  case .off: .off
+  case .standard: .standard
+  case .cinematic: .cinematic
+  case .cinematicExtended: .cinematicExtended
+  @unknown default: .off
   }
 }

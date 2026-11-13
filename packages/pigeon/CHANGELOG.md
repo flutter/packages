@@ -1,3 +1,103 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
+
+## 30.0.2
+
+* Fixes `basePath` resolution when an output or directory path shares a string prefix with `basePath`.
+
+## 30.0.1
+
+* [swift] Adds support for Native Interop FFI codec serialization of `Data`, `NSData`, `NSArray`, and `NSDictionary` values.
+
+## 30.0.0
+
+* **BREAKING CHANGE**: [kotlin,swift] Native Interop registration now supports multiple engines:
+  * `register` and `unregister` take the engine the instance belongs to (a plugin binding or `FlutterEngine` in Kotlin, a registrar in Swift). Use `unregister` instead of `register(null)`.
+  * Native `@FlutterApi` lookups take the engine (`getInstance(binding)` / `getInstance(registrar:)`) instead of a name, and the native `@HostApi` `getInstance(name)` is removed.
+  * Swift FFI `@HostApi` implementations must be classes.
+  * See the [Native Interop migration guide](./native_interop_migration_guide.md) for details.
+* [dart,kotlin,swift] Fixes detaching one engine clearing Native Interop APIs for all other engines.
+* [dart,kotlin,swift] Native Interop calls now go to the calling engine's instance where possible.
+* [kotlin,swift] Calling a Native Interop API whose instance was unregistered now throws a `PlatformException` instead of crashing.
+
+## 29.2.0
+
+* [dart] [kotlin] [swift] Passes data class, `List`, `Map` and `Object` values
+  of Kotlin JNI and Swift FFI calls in one buffer per call instead of making a
+  call across the language boundary for every field and collection element,
+  making calls with large data classes and collections many times faster while
+  keeping scalars, strings, enums and typed data direct.
+* [kotlin] Makes enum `ofRaw` constant time.
+
+## 29.1.2
+
+* [dart] Fixes `@FlutterApi` methods named `register` or `dartApi` failing with `useJni`.
+* [dart] Fixes `@FlutterApi` `implement` registering under an empty name instead of the default instance.
+
+## 29.1.1
+
+* Updates README to label Native Interop as Preview and warn about multi-engine `@HostApi` registrations.
+
+## 29.1.0
+
+* [kotlin,swift] Adds support for removing event channel handler registration
+  via a new event channel object returned from `register`.
+
+## 29.0.13
+
+* [dart] Separates generated Dart native interop bindings into a conditionally imported companion file (`*.native_interop.g.dart`) so that the main generated Dart file can be imported on Web without pulling in `dart:ffi` or `dart:io`.
+
+## 29.0.12
+
+* [kotlin] Warns after JNI code generation if the `jni` version constraint in `pubspec.yaml` allows versions below `1.1.1`.
+* Updates `jni` dependency to `^1.1.1` and removes manual Kotlin keep rules from native interop guides and migration skill now that `package:jni` includes them.
+
+## 29.0.11
+
+* [swift] Warns after FFI code generation if the `objective_c` version constraint in `pubspec.yaml` does not match the generated `ObjCVersionCheck`.
+* [kotlin] Warns after JNI code generation if the `jni` version constraint in `pubspec.yaml` does not match the generated `JniVersionCheck`.
+
+## 29.0.10
+
+* [swift] [kotlin] Allows `sealed` classes in native interop files.
+
+## 29.0.9
+
+* [kotlin] Stops generating unused JNI bindings for host API interfaces, significantly
+  reducing the size of the generated `.jni.dart` file.
+
+## 29.0.8
+
+* [swift] Adds validation errors for code that Swift FFI doesn't support:
+  event channels, ProxyApis, sealed classes, data class fields that conflict with
+  `NSObject` members, host API parameters named `wrappedError`, and
+  `includeErrorClass: false`.
+* [swift] Fixes Swift FFI code that didn't compile for classes without fields,
+  `@asyncCallback` methods, `@SwiftFunction` overloads, methods named `type`,
+  parameters named `error`, and multiple FFI files in the same module.
+* [kotlin] Adds validation errors for code that Kotlin JNI doesn't support:
+  event channels, ProxyApis, and sealed classes. Files that use Kotlin JNI
+  previously generated method channel code for event channels and ProxyApis;
+  move them to a separate pigeon file that doesn't use Kotlin JNI.
+* [dart] Adds a validation error for API method names that conflict with
+  generated native interop members.
+* [dart] Fixes native interop code that didn't compile for JNI member names that
+  JNIgen renames, parameter names that match generated local variables, lists or
+  maps of ProxyApis, a `fileSpecificClassNameComponent` that isn't
+  UpperCamelCase or is set only in `SwiftOptions`, and Dart test files.
+* [dart] Fixes a crash converting classes without fields with Swift FFI.
+* [dart] Fixes Swift FFI code that didn't compile for method names that end
+  with a preposition, like `signIn`, or first parameter and field names that
+  start with one, like `forKey`.
+
+## 29.0.7
+
+* [kotlin] Fixes native interop calls failing with `ClassNotFoundException` in minified
+  Android release builds, by adding `@Keep` to every generated class that JNI reaches by name.
+* Updates native interop guides and migration skill with the keep rules that Android
+  release builds need for the Kotlin classes that `package:jni` looks up by name.
+
 ## 29.0.6
 
 * Updates native interop guides and migration skill with SwiftPM `<plugin_name>_objc_gen` target guidance.

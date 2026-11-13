@@ -42,7 +42,7 @@ reviewed by someone else.
   - @loic-sharma
 
 `flutter_plugin_android_lifecycle`:
-  - @reidbaker
+  - @camsim99
 
 `flutter_svg, flutter_svg_test`:
   - @domesticmouse
@@ -64,13 +64,13 @@ reviewed by someone else.
 
 `google_maps_flutter`:
   - **Cross-platform**: @tarrinneal, @bparrishMines
-  - **Android**: @reidbaker
+  - **Android**: @gmackall
   - **iOS**: @vashworth, @LongCatIsLooong
   - **Web**: @mdebbar
 
 `google_sign_in`:
   - **Cross-platform**: @elliette
-  - **Android**: @reidbaker
+  - **Android**: @mboetger
   - **iOS**: @LongCatIsLooong, @okorohelijah
   - **Web**: @mdebbar
 
@@ -89,12 +89,12 @@ reviewed by someone else.
 `in_app_purchase`:
   - **Cross-platform**: @pjkammer
   - **Android**: @gmackall
-  - **iOS**: @louisehsu, @LongCatIsLooong
+  - **iOS**: @louisehsu, @cbracken
 
 `local_auth`:
   - **Cross-platform**: @loic-sharma
   - **Android**: @mboetger
-  - **iOS/macOS**: @louisehsu, @okorohelijah
+  - **iOS/macOS**: @louisehsu, @cbracken
   - **Windows**: @flutter/windows-reviewers
 
 `material_ui`:
@@ -115,7 +115,7 @@ reviewed by someone else.
 `path_provider`:
   - **Cross-platform**: @pjkammer
   - **Android**: @camsim99
-  - **iOS/macOS**: @LongCatIsLooong, @vashworth
+  - **iOS/macOS**: @cbracken, @okorohelijah
   - **Linux**: @robert-ancell
   - **Windows**: @flutter/windows-reviewers
 
@@ -133,7 +133,7 @@ reviewed by someone else.
 `quick_actions`:
   - **Cross-platform**: @Piinks
   - **Android**: @jesswrd
-  - **iOS**: @louisehsu, @LongCatIsLooong
+  - **iOS**: @hellohuanlin, @louisehsu
 
 `rfw`:
   - @Hixie
@@ -156,7 +156,7 @@ reviewed by someone else.
 `url_launcher`:
   - **Cross-platform**: @qunccccccc
   - **Android**: @gmackall
-  - **iOS**: @vashworth, @LongCatIsLooong
+  - **iOS**: @vashworth, @hellohuanlin
   - **Linux**: @robert-ancell
   - **macOS**: @vashworth, @LongCatIsLooong
   - **Windows**: @flutter/windows-reviewers
@@ -168,7 +168,7 @@ reviewed by someone else.
 `video_player`:
   - **Cross-platform**: @tarrinneal
   - **Android**: @mboetger
-  - **iOS/macOS**: @hellohuanlin, @louisehsu
+  - **iOS/macOS**: @LongCatIsLooong, @hellohuanlin
   - **Web**: @mdebbar
 
 `web_benchmarks`:
@@ -177,7 +177,7 @@ reviewed by someone else.
 `webview_flutter`:
   - **Cross-platform**: @bparrishMines
   - **Android**: @bparrishMines
-  - **iOS/macOS**: @bparrishMines, @LongCatIsLooong, @hellohuanlin
+  - **iOS/macOS**: @bparrishMines, @cbracken, @LongCatIsLooong
   - **Web**: @mdebbar
 
 `xdg_directories`:

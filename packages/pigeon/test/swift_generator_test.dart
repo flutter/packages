@@ -4,6 +4,7 @@
 
 import 'package:pigeon/pigeon.dart' show TaskQueueType;
 import 'package:pigeon/src/ast.dart';
+import 'package:pigeon/src/generator_tools.dart' show NativeInteropTransport;
 import 'package:pigeon/src/swift/swift_generator.dart';
 import 'package:test/test.dart';
 
@@ -1775,7 +1776,7 @@ void main() {
     );
   });
 
-  test('swift generator handles HostApi and FlutterApi deregistration with nil', () {
+  test('swift generator handles HostApi and FlutterApi multi-instance registration and unregister', () {
     final root = Root(
       apis: <Api>[
         AstHostApi(
@@ -1809,9 +1810,686 @@ void main() {
     const generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
     final code = sink.toString();
-    expect(code, contains('static func register(api: HostApi?, name: String = '));
+    expect(code, contains('  static let defaultInstanceName'));
+    expect(code, isNot(contains('fileprivate static let defaultInstanceName')));
+    expect(code, contains('protocol HostApi: AnyObject {'));
+    expect(code, contains('\nclass HostApiInstanceTracker {'));
+    expect(code, contains('static let lock = NSLock()'));
+    expect(code, contains('static var instancesOfHostApi = [String: [HostApiSetup]]()'));
+    expect(code, isNot(contains('@discardableResult')));
+    expect(code, contains('\n  override init() {}'));
+    expect(code, isNot(contains('private override init() {}')));
+    expect(code, isNot(contains('name: String?')));
+    expect(
+      code,
+      contains(
+        'static func register(api: HostApi, registrar: FlutterPluginRegistrar, name: String = PigeonInternal.defaultInstanceName) {',
+      ),
+    );
+    expect(
+      code,
+      contains(
+        'static func unregister(api: HostApi, registrar: FlutterPluginRegistrar, name: String = PigeonInternal.defaultInstanceName) {',
+      ),
+    );
+    expect(
+      code,
+      contains('fileprivate static func register(api: HostApi, engineKey: Int64, name: String) {'),
+    );
+    expect(
+      code,
+      contains(
+        'fileprivate static func unregister(api: HostApi, engineKey: Int64, name: String) {',
+      ),
+    );
+    expect(code, isNot(contains('@objc static func register(api: HostApi')));
+    expect(code, isNot(contains('static func unregister(setup:')));
+    expect(code, isNot(contains('static func getInstance(name: String')));
+    expect(
+      code,
+      contains(
+        '@objc static func pigeonResolveInstance(engineId: Int64, affinityKey: Int64, name: String = PigeonInternal.defaultInstanceName) -> HostApiSetup? {',
+      ),
+    );
+    expect(
+      code,
+      contains('@objc static func pigeonEngineKey(of instance: HostApiSetup) -> Int64 {'),
+    );
+    expect(code, contains('private var engineKey: Int64 = Int64.min'));
+    expect(
+      code,
+      contains(
+        r'if engineId != Int64.min, let match = list.last(where: { $0.engineKey == engineId }) {',
+      ),
+    );
+    expect(
+      code,
+      contains(
+        r'if affinityKey != Int64.min, let match = list.last(where: { $0.engineKey == affinityKey }) {',
+      ),
+    );
+    expect(
+      code,
+      contains(r'if list.contains(where: { $0.api === api && $0.engineKey == engineKey }) {'),
+    );
+    expect(code, contains(r'let keys = Set(list.filter { $0.api === api }.map { $0.engineKey })'));
+    expect(code, contains('guard keys.count == 1, let onlyKey = keys.first else {'));
+    expect(code, contains('if existing === api && entry.engineKey == removeKey {'));
+    expect(code, isNot(contains('resolvedName')));
+    expect(code, contains('private func resolveApi() throws -> HostApi'));
+    expect(code, contains('code: "unregistered-instance"'));
+    expect(code, isNot(contains('api!.')));
+    expect(code, isNot(contains('Swift.type(of: api) is AnyClass')));
     expect(code, contains('HostApiInstanceTracker.instancesOfHostApi.removeValue(forKey: name)'));
-    expect(code, contains('registerInstance(api: FlutterApiBridge?, name: String = '));
+    expect(code, isNot(contains('return HostApiInstanceTracker.instancesOfHostApi[name]?.last')));
+    expect(
+      code,
+      contains('@objc class FlutterApiRegistrar: NSObject {\n  static var registeredFlutterApi'),
+    );
+    expect(code, contains('  static var registeredFlutterApi = [String: [FlutterApi]]()'));
+    expect(code, isNot(contains('private static var registeredFlutterApi')));
+    expect(
+      code,
+      contains(
+        '@objc static func registerInstance(api: FlutterApiBridge, engineId: Int64, affinityKey: Int64, name: String = PigeonInternal.defaultInstanceName)',
+      ),
+    );
+    expect(code, isNot(contains('@objc static func register(api: FlutterApiBridge')));
+    expect(
+      code,
+      contains(r'if let index = list.firstIndex(where: { ($0.api as AnyObject) === apiObject }) {'),
+    );
+    expect(code, contains('list[index] = registration'));
+    expect(
+      code,
+      contains(
+        '@objc static func unregisterInstance(api: FlutterApiBridge, name: String = PigeonInternal.defaultInstanceName)',
+      ),
+    );
+    expect(
+      code,
+      contains(
+        'static func getInstance(registrar: FlutterPluginRegistrar, name: String = PigeonInternal.defaultInstanceName) -> FlutterApi? {',
+      ),
+    );
+    expect(
+      code,
+      isNot(
+        contains(
+          'static func getInstance(name: String = PigeonInternal.defaultInstanceName) -> FlutterApi?',
+        ),
+      ),
+    );
+    expect(code, isNot(contains('FlutterApiRegistrar.getInstance(name: name)')));
+    expect(
+      code,
+      contains(
+        r'if engineKey != Int64.min, let match = list.last(where: { $0.engineId == engineKey }) ?? list.last(where: { $0.affinityKey == engineKey }) {',
+      ),
+    );
+    expect(code, isNot(contains(r'$0.engineId == engineKey || $0.affinityKey == engineKey')));
+    expect(code, contains('fileprivate let engineId: Int64'));
+    expect(code, contains('fileprivate let affinityKey: Int64'));
     expect(code, contains('FlutterApiRegistrar.registeredFlutterApi.removeValue(forKey: name)'));
+    expect(
+      code,
+      contains(
+        r'if let index = list.firstIndex(where: { $0.api === api && $0.engineKey == engineKey }) {',
+      ),
+    );
+    expect(code, contains('list.append(list.remove(at: index))'));
+    expect(code, contains('/// Registers `api` under `name`'));
+    expect(code, contains('/// Instances are matched by identity.'));
+    expect(code, isNot(contains('/// Returns an instance registered under `name`')));
+
+    // Flutter-typed members must compile without the Flutter module (swiftgen).
+    expect(
+      code,
+      contains(
+        '#if canImport(Flutter)\n  import Flutter\n#elseif canImport(FlutterMacOS)\n  import FlutterMacOS\n#endif',
+      ),
+    );
+    expect(code, isNot(contains('#error("Unsupported platform.")')));
+    final flutterTypedMember = RegExp(r'^.*FlutterPluginRegistrar.*$', multiLine: true);
+    final guard = RegExp(r'^\s*#if canImport\(Flutter\) \|\| canImport\(FlutterMacOS\)$');
+    final List<String> lines = code.split('\n');
+    for (final RegExpMatch match in flutterTypedMember.allMatches(code)) {
+      final int lineIndex = code.substring(0, match.start).split('\n').length - 1;
+      final int guardIndex = lines.lastIndexWhere(guard.hasMatch, lineIndex);
+      final int endIndex = lines.lastIndexWhere(
+        (String line) => line.trim() == '#endif',
+        lineIndex,
+      );
+      expect(guardIndex, greaterThan(endIndex), reason: 'Unguarded: ${match.group(0)}');
+      expect(match.group(0), isNot(contains('@objc')));
+    }
+
+    // Engine key helper.
+    expect(code, contains('fileprivate enum PigeonEngineKeys {'));
+    expect(code, contains('NSMapTable<AnyObject, NSNumber>.weakToStrongObjects()'));
+    expect(code, contains('private static var nextSyntheticKey: Int64 = -1'));
+    expect(code, contains('NSSelectorFromString("engineIdentifier")'));
+    expect(code, contains('value(forKey: "engineIdentifier") as? NSNumber'));
+    expect(code, contains('identifier.int64Value != 0'));
+    expect(code, contains('private static let lock = NSRecursiveLock()'));
+    expect(code, contains('static func key(messenger: AnyObject) -> Int64 {'));
+    expect(code, isNot(contains('exactKey')));
+    // The messenger is read via KVC because it can be nil during engine
+    // teardown, and keys are cached per registrar for detach.
+    expect(code, contains('value(forKey: "messenger") as AnyObject?'));
+    expect(code, isNot(contains('registrar.messenger() as AnyObject')));
+    expect(code, contains('private static let registrarKeys'));
+    expect(
+      code,
+      contains('registrarKeys.setObject(NSNumber(value: resolved), forKey: registrarObject)'),
+    );
+
+    final nonFfiSink = StringBuffer();
+    generator.generate(
+      const InternalSwiftOptions(swiftOut: ''),
+      root,
+      nonFfiSink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    expect(nonFfiSink.toString(), contains('protocol HostApi {'));
+    expect(nonFfiSink.toString(), isNot(contains('protocol HostApi: AnyObject')));
+  });
+
+  test('ffi bridges of sealed class subclasses extend the sealed bridge', () {
+    final sink = StringBuffer();
+    const swiftOptions = InternalSwiftOptions(swiftOut: '', useFfi: true);
+    const generator = SwiftGenerator();
+    generator.generate(
+      swiftOptions,
+      buildSealedClassRoot(),
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final code = sink.toString();
+
+    expect(code, contains('protocol Shape {'));
+    expect(code, contains('struct Circle: Shape, Hashable, CustomStringConvertible {'));
+    expect(code, contains('@objc class ShapeBridge: NSObject {'));
+    expect(code, contains('@objc class CircleBridge: ShapeBridge {'));
+    expect(code, contains('@objc class EmptyShapeBridge: ShapeBridge {'));
+    expect(code, isNot(contains('NSObject, Shape')));
+  });
+
+  test('ffi bridge of a sealed class dispatches to its subclasses', () {
+    final sink = StringBuffer();
+    const swiftOptions = InternalSwiftOptions(
+      swiftOut: '',
+      useFfi: true,
+      nativeInteropTransport: NativeInteropTransport.objects,
+    );
+    const generator = SwiftGenerator();
+    generator.generate(
+      swiftOptions,
+      buildSealedClassRoot(),
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final code = sink.toString();
+
+    expect(code, contains('static func fromSwift(_ pigeonVar_Class: Shape?) -> ShapeBridge? {'));
+    expect(code, contains('case let pigeonVar_value as Circle:'));
+    expect(code, contains('return CircleBridge.fromSwift(pigeonVar_value)'));
+    expect(code, contains('static func toSwift(_ pigeonVar_bridge: ShapeBridge?) -> Shape? {'));
+    expect(code, contains('case let pigeonVar_value as CircleBridge:'));
+    expect(code, contains('return pigeonVar_value.toSwift()'));
+    expect(code, contains('ShapeBridge.toSwift(shapeArg)!'));
+    expect(code, contains('ShapeBridge.toSwift(shapeArg))'));
+    expect(code, contains('ShapeBridge.fromSwift(res)'));
+  });
+
+  test('ffi codec has no branch for sealed classes', () {
+    final sink = StringBuffer();
+    const swiftOptions = InternalSwiftOptions(swiftOut: '', useFfi: true);
+    const generator = SwiftGenerator();
+    generator.generate(
+      swiftOptions,
+      buildSealedClassRoot(),
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final code = sink.toString();
+
+    expect(code, contains('} else if (value is CircleBridge) {'));
+    expect(code, isNot(contains('} else if (value is ShapeBridge) {')));
+    expect(code, contains('} else if (value is Circle) {'));
+    expect(code, isNot(contains('} else if (value is Shape) {')));
+  });
+
+  test('ffi bridge without fields inherits init', () {
+    final sink = StringBuffer();
+    const swiftOptions = InternalSwiftOptions(swiftOut: '', useFfi: true);
+    const generator = SwiftGenerator();
+    generator.generate(
+      swiftOptions,
+      buildSealedClassRoot(),
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final code = sink.toString();
+
+    expect(code, contains(RegExp(r'@objc class CircleBridge: ShapeBridge \{\s*@objc init\(')));
+    expect(code, isNot(contains(RegExp(r'@objc class ShapeBridge: NSObject \{\s*@objc init\('))));
+    expect(
+      code,
+      isNot(contains(RegExp(r'@objc class EmptyShapeBridge: ShapeBridge \{\s*@objc init\('))),
+    );
+  });
+
+  test('ffi codec is private to its file', () {
+    final root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+    final sink = StringBuffer();
+    const swiftOptions = InternalSwiftOptions(swiftOut: '', useFfi: true);
+    const generator = SwiftGenerator();
+    generator.generate(swiftOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    final code = sink.toString();
+    expect(code, contains('private class _PigeonFfiCodec {'));
+    expect(code, isNot(contains('PigeonEngineKeys')));
+    expect(code, isNot(contains('import Flutter')));
+  });
+
+  test('ffi bridge for a class without fields overrides the NSObject initializer', () {
+    final root = Root(
+      apis: <Api>[],
+      classes: <Class>[Class(name: 'Empty', fields: <NamedType>[])],
+      enums: <Enum>[],
+    );
+    final sink = StringBuffer();
+    const swiftOptions = InternalSwiftOptions(swiftOut: '', useFfi: true);
+    const generator = SwiftGenerator();
+    generator.generate(swiftOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    final code = sink.toString();
+    expect(code, contains('@objc class EmptyBridge: NSObject {\n  @objc override init(\n  ) {'));
+  });
+
+  test('ffi host api bridge', () {
+    const string = TypeDeclaration(baseName: 'String', isNullable: false);
+    final root = Root(
+      apis: <Api>[
+        AstHostApi(
+          name: 'Api',
+          methods: <Method>[
+            Method(
+              name: 'echo',
+              location: ApiLocation.host,
+              parameters: <Parameter>[Parameter(name: 'error', type: string)],
+              returnType: string,
+            ),
+            Method(
+              name: 'later',
+              location: ApiLocation.host,
+              isAsynchronous: true,
+              isAsynchronousCallback: true,
+              parameters: <Parameter>[Parameter(name: 'value', type: string)],
+              returnType: string,
+            ),
+          ],
+        ),
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final sink = StringBuffer();
+    const swiftOptions = InternalSwiftOptions(
+      swiftOut: '',
+      useFfi: true,
+      nativeInteropTransport: NativeInteropTransport.objects,
+    );
+    const generator = SwiftGenerator();
+    generator.generate(swiftOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    final code = sink.toString();
+    expect(code, contains('protocol Api: AnyObject {'));
+    expect(code, contains('\nclass ApiInstanceTracker {'));
+    expect(
+      code,
+      contains(
+        'static func register(api: Api, registrar: FlutterPluginRegistrar, name: String = PigeonInternal.defaultInstanceName) {',
+      ),
+    );
+    expect(code, contains('withExtendedLifetime(displaced) {}'));
+    expect(
+      code,
+      contains(
+        '@objc func echo(error errorArg: NSString, wrappedError: PigeonError) -> NSString? {',
+      ),
+    );
+    expect(code, contains('let activeApi = try resolveApi()'));
+    expect(code, contains('let res: String = try activeApi.echo(error: errorArg as String)'));
+    expect(
+      code,
+      contains(
+        'let res: String = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<String, Error>) in',
+      ),
+    );
+    expect(
+      code,
+      contains(
+        r'activeApi.later(value: valueArg as String, completion: { continuation.resume(with: $0) })',
+      ),
+    );
+    expect(code, contains(r'wrappedError.message = "\(Swift.type(of: error))"'));
+  });
+
+  test('ffi flutter api parameters do not shadow the error parameter', () {
+    final root = Root(
+      apis: <Api>[
+        AstFlutterApi(
+          name: 'Api',
+          methods: <Method>[
+            Method(
+              name: 'report',
+              location: ApiLocation.flutter,
+              parameters: <Parameter>[
+                Parameter(
+                  name: 'error',
+                  type: const TypeDeclaration(baseName: 'String', isNullable: false),
+                ),
+              ],
+              returnType: const TypeDeclaration(baseName: 'String', isNullable: false),
+            ),
+          ],
+        ),
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final sink = StringBuffer();
+    const swiftOptions = InternalSwiftOptions(
+      swiftOut: '',
+      useFfi: true,
+      nativeInteropTransport: NativeInteropTransport.objects,
+    );
+    const generator = SwiftGenerator();
+    generator.generate(swiftOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    final code = sink.toString();
+    expect(code, contains('  static var registeredApi = [String: [Api]]()'));
+    expect(
+      code,
+      contains(
+        '@objc static func registerInstance(api: ApiBridge, engineId: Int64, affinityKey: Int64, name: String = PigeonInternal.defaultInstanceName)',
+      ),
+    );
+    expect(
+      code,
+      contains('@objc func report(error errorArg: NSString?, error: PigeonError) -> NSString?'),
+    );
+    expect(code, contains('func report(error errorArg: String) throws -> String {'));
+  });
+
+  group('hybrid native interop transport', () {
+    final dataClass = Class(
+      name: 'Data',
+      fields: <NamedType>[
+        NamedType(
+          name: 'value',
+          type: const TypeDeclaration(baseName: 'int', isNullable: false),
+        ),
+      ],
+    );
+    final dataType = TypeDeclaration(
+      baseName: 'Data',
+      isNullable: true,
+      associatedClass: dataClass,
+    );
+    const intType = TypeDeclaration(baseName: 'int', isNullable: false);
+    const bytesType = TypeDeclaration(baseName: 'Uint8List', isNullable: false);
+
+    List<Method> methods(ApiLocation location) => <Method>[
+      Method(
+        name: 'echoData',
+        location: location,
+        parameters: <Parameter>[
+          Parameter(name: 'count', type: intType),
+          Parameter(name: 'data', type: dataType),
+        ],
+        returnType: dataType,
+      ),
+      Method(
+        name: 'echoBytes',
+        location: location,
+        parameters: <Parameter>[Parameter(name: 'bytes', type: bytesType)],
+        returnType: bytesType,
+      ),
+      Method(
+        name: 'echoAsyncData',
+        location: location,
+        isAsynchronous: true,
+        parameters: <Parameter>[Parameter(name: 'data', type: dataType)],
+        returnType: dataType,
+      ),
+    ];
+
+    String generate({required bool hybrid}) {
+      final root = Root(
+        apis: <Api>[
+          AstHostApi(name: 'HostApi', methods: methods(ApiLocation.host)),
+          AstFlutterApi(name: 'FlutterApi', methods: methods(ApiLocation.flutter)),
+        ],
+        classes: <Class>[dataClass],
+        enums: <Enum>[],
+      );
+      final sink = StringBuffer();
+      const SwiftGenerator().generate(
+        InternalSwiftOptions(
+          swiftOut: '',
+          useFfi: true,
+          fileSpecificClassNameComponent: 'Foo',
+          nativeInteropTransport: hybrid
+              ? NativeInteropTransport.hybrid
+              : NativeInteropTransport.objects,
+        ),
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+      return sink.toString();
+    }
+
+    test('generates a Foundation-only private codec', () {
+      final String code = generate(hybrid: true);
+      expect(code, contains('private struct FooPigeonInteropWriter {'));
+      expect(code, contains('private struct FooPigeonInteropReader {'));
+      expect(code, contains('private enum FooPigeonInteropCodec {'));
+      expect(code, contains('if let value = value as? Data {'));
+      expect(code, contains('mutating func readData() -> Data {'));
+      expect(code, contains('value: read(Int64.self)'));
+      expect(code, contains('writeValue(value.value)'));
+      expect(code, contains('if valueType == Foundation.Data.self {'));
+      expect(code, contains('if let data = value as? Foundation.Data {'));
+      expect(code, contains('if let array = value as? NSArray {'));
+      expect(code, contains('if let dictionary = value as? NSDictionary {'));
+    });
+
+    test('host api setup exposes entry points', () {
+      final String code = generate(hybrid: true);
+      expect(
+        code,
+        contains(
+          '@objc func echoData(count countArg: Int64, pigeonVar_args: NSData, wrappedError: PigeonError) -> NSData? {',
+        ),
+      );
+      expect(code, contains('return FooPigeonInteropCodec.encodeOrNil(res)'));
+      expect(
+        code,
+        contains(
+          '@objc func echoBytes(bytes bytesArg: NSData, wrappedError: PigeonError) -> NSData? {',
+        ),
+      );
+      expect(code, contains('FooPigeonInteropCodec.typedData(bytesArg, as: UInt8.self)'));
+      expect(
+        code,
+        contains(
+          '@objc func echoAsyncData(pigeonVar_args: NSData, wrappedError: PigeonError) async -> NSData? {',
+        ),
+      );
+    });
+
+    test('flutter api protocol takes and returns buffers', () {
+      final String code = generate(hybrid: true);
+      expect(
+        code,
+        contains(
+          '@objc func echoData(count countArg: Int64, pigeonVar_args: NSData, error: PigeonError) -> NSData?',
+        ),
+      );
+      expect(
+        code,
+        contains(
+          r'api.echoData(count: countArg, pigeonVar_args: FooPigeonInteropCodec.encode { $0.writeByte(FooPigeonInteropCodec.typeList); $0.writeSize(1); $0.writeValue(dataArg) }, error: error)',
+        ),
+      );
+    });
+
+    test('codec writes lists and typed data by their declared types', () {
+      final numbers = Class(
+        name: 'Numbers',
+        fields: <NamedType>[
+          NamedType(
+            name: 'ints',
+            type: const TypeDeclaration(
+              baseName: 'List',
+              isNullable: false,
+              typeArguments: <TypeDeclaration>[intType],
+            ),
+          ),
+          NamedType(
+            name: 'longs',
+            type: const TypeDeclaration(baseName: 'Int64List', isNullable: true),
+          ),
+          NamedType(
+            name: 'nestedInts',
+            type: const TypeDeclaration(
+              baseName: 'List',
+              isNullable: false,
+              typeArguments: <TypeDeclaration>[
+                TypeDeclaration(
+                  baseName: 'List',
+                  isNullable: false,
+                  typeArguments: <TypeDeclaration>[intType],
+                ),
+              ],
+            ),
+          ),
+        ],
+      );
+      final root = Root(
+        apis: <Api>[
+          AstHostApi(
+            name: 'Api',
+            methods: <Method>[
+              Method(
+                name: 'echo',
+                location: ApiLocation.host,
+                parameters: <Parameter>[
+                  Parameter(
+                    name: 'numbers',
+                    type: TypeDeclaration(
+                      baseName: 'Numbers',
+                      isNullable: false,
+                      associatedClass: numbers,
+                    ),
+                  ),
+                ],
+                returnType: TypeDeclaration(
+                  baseName: 'Numbers',
+                  isNullable: false,
+                  associatedClass: numbers,
+                ),
+              ),
+            ],
+          ),
+        ],
+        classes: <Class>[numbers],
+        enums: <Enum>[],
+      );
+      final sink = StringBuffer();
+      const SwiftGenerator().generate(
+        const InternalSwiftOptions(swiftOut: '', useFfi: true),
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+      final code = sink.toString();
+      // Swift represents both `List<int>` and `Int64List` as `[Int64]`.
+      expect(code, contains('mutating func writeNumbers(_ value: Numbers)'));
+      expect(
+        code,
+        contains('mutating func writeTypedData<T>(_ type: UInt8, _ array: [T], alignment: Int)'),
+      );
+      expect(
+        code,
+        contains('mutating func writeTypedData<T>(_ type: UInt8, _ array: [T]?, alignment: Int)'),
+      );
+      expect(code, contains('writeList(value.ints)'));
+      expect(
+        code,
+        contains('writeTypedData(PigeonInteropCodec.typeInt64List, value.longs, alignment: 8)'),
+      );
+      expect(code, isNot(matches(RegExp(r'writeTypedData\(\d'))));
+      expect(code, contains(r'writeList(value.nestedInts) { $0.writeList($1) }'));
+      expect(code, contains('ints: read([Int64].self)'));
+      expect(code, contains('longs: read([Int64]?.self)'));
+    });
+
+    test('codec encodes custom type tags >= 125 with extended 255 tag byte', () {
+      final classes = List<Class>.generate(
+        127,
+        (int index) => Class(
+          name: 'Class$index',
+          fields: <NamedType>[NamedType(name: 'value', type: intType)],
+        ),
+      );
+      final Class lastClass = classes.last;
+      final lastClassType = TypeDeclaration(
+        baseName: lastClass.name,
+        isNullable: false,
+        associatedClass: lastClass,
+      );
+      final root = Root(
+        apis: <Api>[
+          AstHostApi(
+            name: 'Api',
+            methods: <Method>[
+              Method(
+                name: 'echo',
+                location: ApiLocation.host,
+                parameters: <Parameter>[Parameter(name: 'item', type: lastClassType)],
+                returnType: lastClassType,
+              ),
+            ],
+          ),
+        ],
+        classes: classes,
+        enums: <Enum>[],
+      );
+      final sink = StringBuffer();
+      const SwiftGenerator().generate(
+        const InternalSwiftOptions(swiftOut: '', useFfi: true),
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+      final code = sink.toString();
+      expect(code, contains('writeByte(255)'));
+      expect(code, contains('writeValue(Int64(0))'));
+      expect(code, contains('case 255:'));
+      expect(code, contains('switch read(Int64.self) {'));
+      expect(code, contains('return readClass126()'));
+    });
+
+    test('objects transport keeps the object graph bridges', () {
+      final String code = generate(hybrid: false);
+      expect(code, isNot(contains('PigeonInteropCodec')));
+      expect(
+        code,
+        contains(
+          '@objc func echoData(count countArg: Int64, data dataArg: DataBridge?, wrappedError: PigeonError) -> DataBridge? {',
+        ),
+      );
+    });
   });
 }

@@ -112,7 +112,7 @@ Path toVectorGraphicsPath(path_ops.Path path) {
 ResolvedPathNode? getSingleChild(Node node) {
   if (node is ResolvedPathNode) {
     return node;
-  } else if (node is ParentNode && node.children.length == 1) {
+  } else if (node is ParentNode && node is! SaveLayerNode && node.children.length == 1) {
     return getSingleChild(node.children.first);
   }
   return null;
@@ -215,8 +215,16 @@ class MaskingOptimizer extends Visitor<_Result, Node> with ErrorOnUnResolvedNode
   _Result visitResolvedMaskNode(ResolvedMaskNode maskNode, void data) {
     var result = _Result(maskNode);
     final ResolvedPathNode? singleMaskPathNode = getSingleChild(maskNode.mask);
+    final bool canOptimizeSingleMaskPath =
+        singleMaskPathNode != null &&
+        singleMaskPathNode.paint.filterBlurX == null &&
+        singleMaskPathNode.paint.filterBlurY == null &&
+        (maskNode.maskType != MaskType.alpha ||
+            (singleMaskPathNode.paint.fill?.shader == null &&
+                singleMaskPathNode.paint.fill?.color.a == 255 &&
+                singleMaskPathNode.paint.stroke == null));
 
-    if (singleMaskPathNode != null) {
+    if (canOptimizeSingleMaskPath) {
       masksToApply.add(singleMaskPathNode);
       final _Result childResult = maskNode.child.accept(this, maskNode);
       masksToApply.removeLast();
@@ -228,6 +236,7 @@ class MaskingOptimizer extends Visitor<_Result, Node> with ErrorOnUnResolvedNode
           child: childResult.node,
           mask: maskNode.mask,
           blendMode: maskNode.blendMode,
+          maskType: maskNode.maskType,
         );
         result = _Result(newMaskNode);
       }
@@ -237,6 +246,7 @@ class MaskingOptimizer extends Visitor<_Result, Node> with ErrorOnUnResolvedNode
         child: childResult.node,
         mask: maskNode.mask,
         blendMode: maskNode.blendMode,
+        maskType: maskNode.maskType,
       );
       result = _Result(newMaskNode);
     }
@@ -260,7 +270,9 @@ class MaskingOptimizer extends Visitor<_Result, Node> with ErrorOnUnResolvedNode
   _Result visitResolvedPath(ResolvedPathNode pathNode, Node data) {
     var result = _Result(pathNode);
 
-    if (pathNode.paint.stroke?.width != null) {
+    if (pathNode.paint.stroke?.width != null ||
+        pathNode.paint.filterBlurX != null ||
+        pathNode.paint.filterBlurY != null) {
       return _Result(pathNode, deleteMaskNode: false);
     }
 
@@ -297,10 +309,16 @@ class MaskingOptimizer extends Visitor<_Result, Node> with ErrorOnUnResolvedNode
   @override
   // ignore: library_private_types_in_public_api
   _Result visitSaveLayerNode(SaveLayerNode layerNode, Node data) {
+    if (layerNode.paint.filterBlurX != null || layerNode.paint.filterBlurY != null) {
+      return _Result(layerNode, deleteMaskNode: false);
+    }
     final newChildren = <Node>[];
     for (final Node child in layerNode.children) {
       final _Result childResult = child.accept(this, layerNode);
       newChildren.add(childResult.node);
+      if (!childResult.deleteMaskNode) {
+        return _Result(layerNode, deleteMaskNode: false);
+      }
     }
     final newLayerNode = SaveLayerNode(
       layerNode.attributes,

@@ -6,6 +6,12 @@
 
 import Foundation
 
+#if canImport(Flutter)
+  import Flutter
+#elseif canImport(FlutterMacOS)
+  import FlutterMacOS
+#endif
+
 /// Error class for passing custom error details to Dart side.
 @objc final class PigeonError: NSObject, Error {
   @objc var code: String?
@@ -195,9 +201,69 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
   return value as! T?
 }
 
+/// Computes the keys that associate Native Interop registrations with a Flutter engine.
+///
+/// `Int64.min` means "no key". Exact keys match Dart's `PlatformDispatcher.instance.engineId`.
+/// When an exact key is unavailable, each engine messenger is assigned a negative synthetic key.
+private enum PigeonEngineKeys {
+  /// The sentinel for an unknown engine.
+  static let noKey: Int64 = Int64.min
+  /// Guards the key caches. Recursive because `key(for:)` calls `key(messenger:)`.
+  private static let lock = NSRecursiveLock()
+  private static let syntheticKeys = NSMapTable<AnyObject, NSNumber>.weakToStrongObjects()
+  private static var nextSyntheticKey: Int64 = -1
+
+  /// Returns the key previously assigned to `messenger`, or assigns and returns a new synthetic
+  /// key for `messenger`.
+  static func key(messenger: AnyObject) -> Int64 {
+    lock.lock()
+    defer { lock.unlock() }
+    if let existing = syntheticKeys.object(forKey: messenger) {
+      return existing.int64Value
+    }
+    let key = nextSyntheticKey
+    nextSyntheticKey -= 1
+    syntheticKeys.setObject(NSNumber(value: key), forKey: messenger)
+    return key
+  }
+
+  #if canImport(Flutter) || canImport(FlutterMacOS)
+    /// Keys already computed for each registrar, so `unregister` during engine teardown reuses the
+    /// key from registration even after the registrar's engine and messenger are gone.
+    private static let registrarKeys = NSMapTable<AnyObject, NSNumber>.weakToStrongObjects()
+
+    /// Returns the key for the engine that owns `registrar`, or `noKey` if it can't be determined.
+    static func key(for registrar: FlutterPluginRegistrar) -> Int64 {
+      let registrarObject = registrar as AnyObject
+      lock.lock()
+      defer { lock.unlock() }
+      if let cached = registrarKeys.object(forKey: registrarObject) {
+        return cached.int64Value
+      }
+      var resolved = noKey
+      if registrarObject.responds(to: NSSelectorFromString("engineIdentifier")),
+        let identifier = registrarObject.value(forKey: "engineIdentifier") as? NSNumber,
+        identifier.int64Value != 0
+      {
+        // Real engine identifiers are never 0. 0 comes from a registrar whose engine is already
+        // deallocating, or from a test double, and must not be shared between engines.
+        resolved = identifier.int64Value
+      } else if let messenger = registrarObject.value(forKey: "messenger") as AnyObject? {
+        // Read through KVC because the messenger can be nil while the engine is deallocating,
+        // even though it is declared non-null.
+        resolved = key(messenger: messenger)
+      }
+      if resolved != noKey {
+        registrarKeys.setObject(NSNumber(value: resolved), forKey: registrarObject)
+      }
+      return resolved
+    }
+  #endif
+}
+
 @objc class NativeInteropExamplePigeonInternalNull: NSObject {}
 
-class _PigeonFfiCodec {
+private class _PigeonFfiCodec {
   static func readValue(value: NSObject?, type: String? = nil, type2: String? = nil) -> Any? {
     if NativeInteropExamplePigeonInternal.isNullish(value) {
       return nil
@@ -318,12 +384,630 @@ class _PigeonFfiCodec {
   }
 }
 
-class NativeInteropExampleApiInstanceTracker {
-  static var instancesOfNativeInteropExampleApi = [String: NativeInteropExampleApiSetup?]()
+/// Writes values in the format of Flutter's standard message codec.
+///
+/// Implemented against Foundation rather than `FlutterStandardWriter` so that
+/// swiftgen can compile this file without importing Flutter.
+private struct NativeInteropExamplePigeonInteropWriter {
+  private(set) var bytes: [UInt8] = []
+
+  mutating func writeByte(_ byte: UInt8) {
+    bytes.append(byte)
+  }
+
+  mutating func writeRaw<T: FixedWidthInteger>(_ value: T) {
+    withUnsafeBytes(of: value.littleEndian) { bytes.append(contentsOf: $0) }
+  }
+
+  mutating func writeSize(_ size: Int) {
+    if size < Int(NativeInteropExamplePigeonInteropCodec.sizeUInt16) {
+      writeByte(UInt8(size))
+    } else if size <= Int(UInt16.max) {
+      writeByte(NativeInteropExamplePigeonInteropCodec.sizeUInt16)
+      writeRaw(UInt16(size))
+    } else {
+      writeByte(NativeInteropExamplePigeonInteropCodec.sizeUInt32)
+      writeRaw(UInt32(size))
+    }
+  }
+
+  mutating func writeAlignment(_ alignment: Int) {
+    let mod = bytes.count % alignment
+    if mod != 0 {
+      bytes.append(contentsOf: repeatElement(0, count: alignment - mod))
+    }
+  }
+
+  mutating func writeTypedData<T>(_ type: UInt8, _ array: [T], alignment: Int) {
+    writeByte(type)
+    writeSize(array.count)
+    writeAlignment(alignment)
+    array.withUnsafeBytes { bytes.append(contentsOf: $0) }
+  }
+
+  mutating func writeTypedData<T>(_ type: UInt8, _ array: [T]?, alignment: Int) {
+    guard let array = array else {
+      writeByte(NativeInteropExamplePigeonInteropCodec.typeNull)
+      return
+    }
+    writeTypedData(type, array, alignment: alignment)
+  }
+
+  mutating func writeString(_ string: String) {
+    writeByte(NativeInteropExamplePigeonInteropCodec.typeString)
+    var string = string
+    string.withUTF8 { utf8 in
+      writeSize(utf8.count)
+      bytes.append(contentsOf: utf8)
+    }
+  }
+
+  mutating func writeData(_ data: Foundation.Data) {
+    writeByte(NativeInteropExamplePigeonInteropCodec.typeUint8List)
+    writeSize(data.count)
+    bytes.append(contentsOf: data)
+  }
+
+  mutating func writeValue(_ value: Any?) {
+    guard let value = value else {
+      writeByte(NativeInteropExamplePigeonInteropCodec.typeNull)
+      return
+    }
+    // The most common types are matched by exact type first, because
+    // comparing metatypes is much cheaper than dynamic casts.
+    let valueType = Swift.type(of: value)
+    if valueType == String.self {
+      writeString(value as! String)
+      return
+    }
+    if valueType == Int64.self {
+      writeByte(NativeInteropExamplePigeonInteropCodec.typeInt64)
+      writeRaw(value as! Int64)
+      return
+    }
+    if valueType == Bool.self {
+      writeByte(
+        (value as! Bool)
+          ? NativeInteropExamplePigeonInteropCodec.typeTrue
+          : NativeInteropExamplePigeonInteropCodec.typeFalse)
+      return
+    }
+    if valueType == Double.self {
+      writeByte(NativeInteropExamplePigeonInteropCodec.typeFloat64)
+      writeAlignment(8)
+      writeRaw((value as! Double).bitPattern)
+      return
+    }
+    if valueType == [Any?].self {
+      writeList(value as! [Any?])
+      return
+    }
+    if writeCustomValue(value, type: valueType) {
+      return
+    }
+    // Typed data is matched by exact type, because casting an empty array of
+    // any element type to an array of numbers succeeds.
+    if valueType == [UInt8].self {
+      writeTypedData(
+        NativeInteropExamplePigeonInteropCodec.typeUint8List, value as! [UInt8], alignment: 1)
+      return
+    }
+    if valueType == [Int32].self {
+      writeTypedData(
+        NativeInteropExamplePigeonInteropCodec.typeInt32List, value as! [Int32], alignment: 4)
+      return
+    }
+    if valueType == [Int64].self {
+      writeTypedData(
+        NativeInteropExamplePigeonInteropCodec.typeInt64List, value as! [Int64], alignment: 8)
+      return
+    }
+    if valueType == [Float64].self {
+      writeTypedData(
+        NativeInteropExamplePigeonInteropCodec.typeFloat64List, value as! [Float64], alignment: 8)
+      return
+    }
+    if valueType == [Float32].self {
+      writeTypedData(
+        NativeInteropExamplePigeonInteropCodec.typeFloat32List, value as! [Float32], alignment: 4)
+      return
+    }
+    if valueType == AnyHashable.self {
+      writeValue((value as! AnyHashable).base)
+      return
+    }
+    if valueType == Foundation.Data.self {
+      writeData(value as! Foundation.Data)
+      return
+    }
+    // Collections are matched by protocol before any cast to a class, such as
+    // `NSNumber`, because those casts can bridge a whole Swift collection to
+    // Objective-C just to fail.
+    if let list = value as? NativeInteropExamplePigeonInteropList {
+      list.pigeonWrite(to: &self)
+      return
+    }
+    if let map = value as? NativeInteropExamplePigeonInteropMap {
+      map.pigeonWrite(to: &self)
+      return
+    }
+    if let optional = value as? NativeInteropExamplePigeonInteropOptional {
+      writeValue(optional.pigeonWrapped)
+      return
+    }
+    if NativeInteropExamplePigeonInternal.isNullish(value) {
+      writeByte(NativeInteropExamplePigeonInteropCodec.typeNull)
+      return
+    }
+    if let number = value as? NSNumber {
+      if CFGetTypeID(number) == CFBooleanGetTypeID() {
+        writeByte(
+          number.boolValue
+            ? NativeInteropExamplePigeonInteropCodec.typeTrue
+            : NativeInteropExamplePigeonInteropCodec.typeFalse)
+      } else if CFNumberIsFloatType(number) {
+        writeByte(NativeInteropExamplePigeonInteropCodec.typeFloat64)
+        writeAlignment(8)
+        writeRaw(number.doubleValue.bitPattern)
+      } else {
+        writeByte(NativeInteropExamplePigeonInteropCodec.typeInt64)
+        writeRaw(number.int64Value)
+      }
+      return
+    }
+    if let string = value as? String {
+      writeString(string)
+      return
+    }
+    if let data = value as? Foundation.Data {
+      writeData(data)
+      return
+    }
+    if let array = value as? NSArray {
+      writeByte(NativeInteropExamplePigeonInteropCodec.typeList)
+      writeSize(array.count)
+      for item in array {
+        writeValue(item)
+      }
+      return
+    }
+    if let dictionary = value as? NSDictionary {
+      writeByte(NativeInteropExamplePigeonInteropCodec.typeMap)
+      writeSize(dictionary.count)
+      for (key, item) in dictionary {
+        writeValue(key)
+        writeValue(item)
+      }
+      return
+    }
+    if writeCustomValueFallback(value) {
+      return
+    }
+    preconditionFailure("Unsupported value: \(value) of type \(valueType)")
+  }
+
+  mutating func writeList(_ list: [Any?]) {
+    writeByte(NativeInteropExamplePigeonInteropCodec.typeList)
+    writeSize(list.count)
+    for item in list {
+      writeValue(item)
+    }
+  }
+
+  mutating func writeList<T>(_ list: [T]?) {
+    guard let list = list else {
+      writeByte(NativeInteropExamplePigeonInteropCodec.typeNull)
+      return
+    }
+    writeByte(NativeInteropExamplePigeonInteropCodec.typeList)
+    writeSize(list.count)
+    for item in list {
+      writeValue(item)
+    }
+  }
+
+  mutating func writeList<T>(_ list: [T?]?) {
+    guard let list = list else {
+      writeByte(NativeInteropExamplePigeonInteropCodec.typeNull)
+      return
+    }
+    writeByte(NativeInteropExamplePigeonInteropCodec.typeList)
+    writeSize(list.count)
+    for item in list {
+      writeOptional(item)
+    }
+  }
+
+  mutating func writeList<T>(_ list: [T]?, _ writeElement: (inout Self, T) -> Void) {
+    guard let list = list else {
+      writeByte(NativeInteropExamplePigeonInteropCodec.typeNull)
+      return
+    }
+    writeByte(NativeInteropExamplePigeonInteropCodec.typeList)
+    writeSize(list.count)
+    for item in list {
+      writeElement(&self, item)
+    }
+  }
+
+  mutating func writeOptional<T>(_ value: T?) {
+    if let value = value {
+      writeValue(value)
+    } else {
+      writeByte(NativeInteropExamplePigeonInteropCodec.typeNull)
+    }
+  }
+
+  mutating func writeMap<K, V>(_ map: [K: V]?) {
+    guard let map = map else {
+      writeByte(NativeInteropExamplePigeonInteropCodec.typeNull)
+      return
+    }
+    writeByte(NativeInteropExamplePigeonInteropCodec.typeMap)
+    writeSize(map.count)
+    for (key, item) in map {
+      writeValue(key)
+      writeValue(item)
+    }
+  }
+
+  mutating func writeMap<K, V>(_ map: [K?: V]?) {
+    guard let map = map else {
+      writeByte(NativeInteropExamplePigeonInteropCodec.typeNull)
+      return
+    }
+    writeByte(NativeInteropExamplePigeonInteropCodec.typeMap)
+    writeSize(map.count)
+    for (key, item) in map {
+      writeOptional(key)
+      writeValue(item)
+    }
+  }
+
+  mutating func writeMap<K, V>(_ map: [K: V?]?) {
+    guard let map = map else {
+      writeByte(NativeInteropExamplePigeonInteropCodec.typeNull)
+      return
+    }
+    writeByte(NativeInteropExamplePigeonInteropCodec.typeMap)
+    writeSize(map.count)
+    for (key, item) in map {
+      writeValue(key)
+      writeOptional(item)
+    }
+  }
+
+  mutating func writeMap<K, V>(_ map: [K?: V?]?) {
+    guard let map = map else {
+      writeByte(NativeInteropExamplePigeonInteropCodec.typeNull)
+      return
+    }
+    writeByte(NativeInteropExamplePigeonInteropCodec.typeMap)
+    writeSize(map.count)
+    for (key, item) in map {
+      writeOptional(key)
+      writeOptional(item)
+    }
+  }
+
+  mutating func writeMap<K, V>(_ map: [K: V]?, _ writeEntry: (inout Self, K, V) -> Void) {
+    guard let map = map else {
+      writeByte(NativeInteropExamplePigeonInteropCodec.typeNull)
+      return
+    }
+    writeByte(NativeInteropExamplePigeonInteropCodec.typeMap)
+    writeSize(map.count)
+    for (key, item) in map {
+      writeEntry(&self, key, item)
+    }
+  }
+
+  mutating func writeCustomValue(_ value: Any, type valueType: Any.Type) -> Bool {
+    return false
+  }
+
+  mutating func writeCustomValueFallback(_ value: Any) -> Bool {
+    return false
+  }
 }
 
+/// Unwraps optionals that a generic context boxed into `Any`.
+private protocol NativeInteropExamplePigeonInteropOptional {
+  var pigeonWrapped: Any? { get }
+}
+
+extension Optional: NativeInteropExamplePigeonInteropOptional {
+  fileprivate var pigeonWrapped: Any? {
+    switch self {
+    case .some(let wrapped):
+      return wrapped
+    case .none:
+      return nil
+    }
+  }
+}
+
+/// Writes typed lists without converting them to `[Any?]` first.
+private protocol NativeInteropExamplePigeonInteropList {
+  func pigeonWrite(to writer: inout NativeInteropExamplePigeonInteropWriter)
+}
+
+extension Array: NativeInteropExamplePigeonInteropList {
+  fileprivate func pigeonWrite(to writer: inout NativeInteropExamplePigeonInteropWriter) {
+    writer.writeByte(NativeInteropExamplePigeonInteropCodec.typeList)
+    writer.writeSize(count)
+    for item in self {
+      writer.writeValue(item)
+    }
+  }
+}
+
+/// Writes typed maps without converting them to `[AnyHashable?: Any?]` first.
+private protocol NativeInteropExamplePigeonInteropMap {
+  func pigeonWrite(to writer: inout NativeInteropExamplePigeonInteropWriter)
+}
+
+extension Dictionary: NativeInteropExamplePigeonInteropMap {
+  fileprivate func pigeonWrite(to writer: inout NativeInteropExamplePigeonInteropWriter) {
+    writer.writeByte(NativeInteropExamplePigeonInteropCodec.typeMap)
+    writer.writeSize(count)
+    for (key, item) in self {
+      writer.writeValue(key)
+      writer.writeValue(item)
+    }
+  }
+}
+
+/// Reads values in the format of Flutter's standard message codec.
+private struct NativeInteropExamplePigeonInteropReader {
+  private let data: NSData
+  private let bytes: UnsafeRawBufferPointer
+  private var position = 0
+
+  init(_ data: NSData) {
+    self.data = data
+    self.bytes = UnsafeRawBufferPointer(start: data.bytes, count: data.length)
+  }
+
+  var isAtEnd: Bool { position >= bytes.count }
+
+  mutating func readByte() -> UInt8 {
+    let byte = bytes[position]
+    position += 1
+    return byte
+  }
+
+  mutating func readRaw<T: FixedWidthInteger>(_ type: T.Type) -> T {
+    let value = bytes.loadUnaligned(fromByteOffset: position, as: T.self)
+    position += MemoryLayout<T>.size
+    return T(littleEndian: value)
+  }
+
+  mutating func readSize() -> Int {
+    let byte = readByte()
+    if byte < NativeInteropExamplePigeonInteropCodec.sizeUInt16 {
+      return Int(byte)
+    } else if byte == NativeInteropExamplePigeonInteropCodec.sizeUInt16 {
+      return Int(readRaw(UInt16.self))
+    }
+    return Int(readRaw(UInt32.self))
+  }
+
+  mutating func readAlignment(_ alignment: Int) {
+    let mod = position % alignment
+    if mod != 0 {
+      position += alignment - mod
+    }
+  }
+
+  mutating func readTypedData<T>(_ type: T.Type, alignment: Int) -> [T] {
+    let count = readSize()
+    readAlignment(alignment)
+    let byteCount = count * MemoryLayout<T>.stride
+    let result = [T](unsafeUninitializedCapacity: count) { buffer, initializedCount in
+      if byteCount > 0 {
+        UnsafeMutableRawBufferPointer(buffer).copyMemory(
+          from: UnsafeRawBufferPointer(rebasing: bytes[position..<(position + byteCount)]))
+      }
+      initializedCount = count
+    }
+    position += byteCount
+    return result
+  }
+
+  mutating func readValue() -> Any? {
+    return readValue(ofType: readByte())
+  }
+
+  mutating func readValue(ofType type: UInt8) -> Any? {
+    switch type {
+    case NativeInteropExamplePigeonInteropCodec.typeNull:
+      return nil
+    case NativeInteropExamplePigeonInteropCodec.typeTrue:
+      return true
+    case NativeInteropExamplePigeonInteropCodec.typeFalse:
+      return false
+    case NativeInteropExamplePigeonInteropCodec.typeInt32:
+      return Int64(readRaw(Int32.self))
+    case NativeInteropExamplePigeonInteropCodec.typeInt64:
+      return readRaw(Int64.self)
+    case NativeInteropExamplePigeonInteropCodec.typeLargeInt,
+      NativeInteropExamplePigeonInteropCodec.typeString:
+      let count = readSize()
+      let string = String(
+        decoding: UnsafeRawBufferPointer(rebasing: bytes[position..<(position + count)]),
+        as: UTF8.self)
+      position += count
+      return string
+    case NativeInteropExamplePigeonInteropCodec.typeFloat64:
+      readAlignment(8)
+      return Double(bitPattern: readRaw(UInt64.self))
+    case NativeInteropExamplePigeonInteropCodec.typeUint8List:
+      return readTypedData(UInt8.self, alignment: 1)
+    case NativeInteropExamplePigeonInteropCodec.typeInt32List:
+      return readTypedData(Int32.self, alignment: 4)
+    case NativeInteropExamplePigeonInteropCodec.typeInt64List:
+      return readTypedData(Int64.self, alignment: 8)
+    case NativeInteropExamplePigeonInteropCodec.typeFloat64List:
+      return readTypedData(Float64.self, alignment: 8)
+    case NativeInteropExamplePigeonInteropCodec.typeList:
+      let count = readSize()
+      var list: [Any?] = []
+      list.reserveCapacity(count)
+      for _ in 0..<count {
+        list.append(readValue())
+      }
+      return list
+    case NativeInteropExamplePigeonInteropCodec.typeMap:
+      let count = readSize()
+      var map: [AnyHashable?: Any?] = [:]
+      map.reserveCapacity(count)
+      for _ in 0..<count {
+        let key = readValue() as? AnyHashable
+        map[key] = readValue()
+      }
+      return map
+    case NativeInteropExamplePigeonInteropCodec.typeFloat32List:
+      return readTypedData(Float32.self, alignment: 4)
+    default:
+      return readCustomValue(ofType: type)
+    }
+  }
+
+  mutating func readListHeader() {
+    _ = readByte()
+    _ = readSize()
+  }
+
+  mutating func read<T>(_ type: T.Type) -> T {
+    return readValue() as! T
+  }
+
+  mutating func read<E>(_ type: [E].Type) -> [E] {
+    let tag = readByte()
+    guard tag == NativeInteropExamplePigeonInteropCodec.typeList else {
+      return readValue(ofType: tag) as! [E]
+    }
+    let count = readSize()
+    var list: [E] = []
+    list.reserveCapacity(count)
+    for _ in 0..<count {
+      list.append(readValue() as! E)
+    }
+    return list
+  }
+
+  mutating func read<E>(_ type: [E]?.Type) -> [E]? {
+    if bytes[position] == NativeInteropExamplePigeonInteropCodec.typeNull {
+      position += 1
+      return nil
+    }
+    return read([E].self)
+  }
+
+  mutating func read<K: Hashable, V>(_ type: [K: V].Type) -> [K: V] {
+    let tag = readByte()
+    guard tag == NativeInteropExamplePigeonInteropCodec.typeMap else {
+      return readValue(ofType: tag) as! [K: V]
+    }
+    let count = readSize()
+    var map: [K: V] = [:]
+    map.reserveCapacity(count)
+    for _ in 0..<count {
+      let key = readValue() as! K
+      map[key] = (readValue() as! V)
+    }
+    return map
+  }
+
+  mutating func read<K: Hashable, V>(_ type: [K: V]?.Type) -> [K: V]? {
+    if bytes[position] == NativeInteropExamplePigeonInteropCodec.typeNull {
+      position += 1
+      return nil
+    }
+    return read([K: V].self)
+  }
+
+  mutating func readCustomValue(ofType type: UInt8) -> Any? {
+    switch type {
+    default:
+      preconditionFailure("Unsupported type: \(type)")
+    }
+  }
+}
+
+/// Encodes and decodes the buffers that native interop calls pass to and from
+/// Dart, in the same format as the message codec.
+private enum NativeInteropExamplePigeonInteropCodec {
+  static let typeNull: UInt8 = 0
+  static let typeTrue: UInt8 = 1
+  static let typeFalse: UInt8 = 2
+  static let typeInt32: UInt8 = 3
+  static let typeInt64: UInt8 = 4
+  static let typeLargeInt: UInt8 = 5
+  static let typeFloat64: UInt8 = 6
+  static let typeString: UInt8 = 7
+  static let typeUint8List: UInt8 = 8
+  static let typeInt32List: UInt8 = 9
+  static let typeInt64List: UInt8 = 10
+  static let typeFloat64List: UInt8 = 11
+  static let typeList: UInt8 = 12
+  static let typeMap: UInt8 = 13
+  static let typeFloat32List: UInt8 = 14
+  static let sizeUInt16: UInt8 = 254
+  static let sizeUInt32: UInt8 = 255
+
+  static func encode(_ value: Any?) -> NSData {
+    var writer = NativeInteropExamplePigeonInteropWriter()
+    writer.writeValue(value)
+    return writer.bytes.withUnsafeBytes { NSData(bytes: $0.baseAddress, length: $0.count) }
+  }
+
+  static func encodeOrNil(_ value: Any?) -> NSData? {
+    return NativeInteropExamplePigeonInternal.isNullish(value) ? nil : encode(value)
+  }
+
+  static func encode(_ write: (inout NativeInteropExamplePigeonInteropWriter) -> Void) -> NSData {
+    var writer = NativeInteropExamplePigeonInteropWriter()
+    write(&writer)
+    return writer.bytes.withUnsafeBytes { NSData(bytes: $0.baseAddress, length: $0.count) }
+  }
+
+  static func decode(_ data: NSData?) -> Any? {
+    guard let data = data else {
+      return nil
+    }
+    var reader = NativeInteropExamplePigeonInteropReader(data)
+    return reader.readValue()
+  }
+
+  static func decodeArguments(_ data: NSData) -> [Any?] {
+    return decode(data) as! [Any?]
+  }
+
+  static func typedData<T>(_ data: NSData, as type: T.Type) -> [T] {
+    let count = data.length / MemoryLayout<T>.stride
+    return [T](unsafeUninitializedCapacity: count) { buffer, initializedCount in
+      if data.length > 0 {
+        UnsafeMutableRawBufferPointer(buffer).copyMemory(
+          from: UnsafeRawBufferPointer(start: data.bytes, count: count * MemoryLayout<T>.stride))
+      }
+      initializedCount = count
+    }
+  }
+
+  static func data<T>(_ array: [T]) -> NSData {
+    return array.withUnsafeBytes { NSData(bytes: $0.baseAddress, length: $0.count) }
+  }
+}
+
+class NativeInteropExampleApiInstanceTracker {
+  static var instancesOfNativeInteropExampleApi = [String: [NativeInteropExampleApiSetup]]()
+  /// Guards the registrations, which Native Interop calls can read from any thread.
+  static let lock = NSLock()
+}
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
-protocol NativeInteropExampleApi {
+protocol NativeInteropExampleApi: AnyObject {
   func doSomething() throws
 }
 
@@ -331,32 +1015,153 @@ protocol NativeInteropExampleApi {
 @objc class NativeInteropExampleApiSetup: NSObject {
   private var api: NativeInteropExampleApi?
   override init() {}
-  static func register(
-    api: NativeInteropExampleApi?,
-    name: String = NativeInteropExamplePigeonInternal.defaultInstanceName
-  ) {
-    if let api = api {
-      let wrapper = NativeInteropExampleApiSetup()
-      wrapper.api = api
-      NativeInteropExampleApiInstanceTracker.instancesOfNativeInteropExampleApi[name] = wrapper
-    } else {
-      NativeInteropExampleApiInstanceTracker.instancesOfNativeInteropExampleApi.removeValue(
-        forKey: name)
+  private func resolveApi() throws -> NativeInteropExampleApi {
+    NativeInteropExampleApiInstanceTracker.lock.lock()
+    let registeredApi = api
+    NativeInteropExampleApiInstanceTracker.lock.unlock()
+    guard let currentApi = registeredApi else {
+      throw PigeonError(
+        code: "unregistered-instance",
+        message: "NativeInteropExampleApi has not been registered.",
+        details: nil
+      )
     }
+    return currentApi
   }
-  @objc static func getInstance(name: String) -> NativeInteropExampleApiSetup? {
-    return NativeInteropExampleApiInstanceTracker.instancesOfNativeInteropExampleApi[name] ?? nil
+  /// The engine key this wrapper was registered with. Set before the wrapper is published.
+  private var engineKey: Int64 = Int64.min
+
+  #if canImport(Flutter) || canImport(FlutterMacOS)
+    /// Registers `api` under `name` (or the default instance when `name` is omitted).
+    ///
+    /// The registration is tied to its engine: unregistering it for one engine leaves
+    /// other engines' registrations in place, and Dart code running on an engine uses
+    /// the instance registered for that engine when it is known.
+    ///
+    /// The registration is associated with the engine that owns `registrar`. The same
+    /// `api` registered from different engines is tracked as separate registrations.
+    static func register(
+      api: NativeInteropExampleApi, registrar: FlutterPluginRegistrar,
+      name: String = NativeInteropExamplePigeonInternal.defaultInstanceName
+    ) {
+      register(api: api, engineKey: PigeonEngineKeys.key(for: registrar), name: name)
+    }
+
+    /// Removes `api` from the registrations under `name` (or the default instance
+    /// when `name` is omitted), leaving other registrations in place.
+    ///
+    /// Instances are matched by identity. Does nothing if `api` is not registered.
+    ///
+    /// Prefers the registration made from the engine that owns `registrar`, and
+    /// otherwise removes the registration of `api` under `name` if exactly one engine
+    /// holds it.
+    static func unregister(
+      api: NativeInteropExampleApi, registrar: FlutterPluginRegistrar,
+      name: String = NativeInteropExamplePigeonInternal.defaultInstanceName
+    ) {
+      unregister(api: api, engineKey: PigeonEngineKeys.key(for: registrar), name: name)
+    }
+  #endif
+
+  fileprivate static func register(api: NativeInteropExampleApi, engineKey: Int64, name: String) {
+    NativeInteropExampleApiInstanceTracker.lock.lock()
+    defer { NativeInteropExampleApiInstanceTracker.lock.unlock() }
+    var list = NativeInteropExampleApiInstanceTracker.instancesOfNativeInteropExampleApi[name] ?? []
+    if let index = list.firstIndex(where: { $0.api === api && $0.engineKey == engineKey }) {
+      list.append(list.remove(at: index))
+    } else {
+      let wrapper = NativeInteropExampleApiSetup()
+      wrapper.engineKey = engineKey
+      wrapper.api = api
+      list.append(wrapper)
+    }
+    NativeInteropExampleApiInstanceTracker.instancesOfNativeInteropExampleApi[name] = list
+  }
+
+  fileprivate static func unregister(api: NativeInteropExampleApi, engineKey: Int64, name: String) {
+    // Removed entries are kept alive until after unlocking so their deinit cannot run while the
+    // non-recursive lock is held.
+    var displaced: [Any] = []
+    do {
+      NativeInteropExampleApiInstanceTracker.lock.lock()
+      defer { NativeInteropExampleApiInstanceTracker.lock.unlock() }
+      guard
+        var list = NativeInteropExampleApiInstanceTracker.instancesOfNativeInteropExampleApi[name]
+      else {
+        return
+      }
+      let removeKey: Int64
+      if list.contains(where: { $0.api === api && $0.engineKey == engineKey }) {
+        removeKey = engineKey
+      } else {
+        let keys = Set(list.filter { $0.api === api }.map { $0.engineKey })
+        guard keys.count == 1, let onlyKey = keys.first else {
+          return
+        }
+        removeKey = onlyKey
+      }
+      list.removeAll { entry in
+        guard let existing = entry.api else {
+          return false
+        }
+        if existing === api && entry.engineKey == removeKey {
+          displaced.append(existing)
+          displaced.append(entry)
+          entry.api = nil
+          return true
+        }
+        return false
+      }
+      if list.isEmpty {
+        NativeInteropExampleApiInstanceTracker.instancesOfNativeInteropExampleApi.removeValue(
+          forKey: name)
+      } else {
+        NativeInteropExampleApiInstanceTracker.instancesOfNativeInteropExampleApi[name] = list
+      }
+    }
+    withExtendedLifetime(displaced) {}
+  }
+
+  /// Returns the instance generated Dart code should use for `name` (or the default
+  /// instance).
+  ///
+  /// Prefers the most recent registration whose engine key is `engineId`, then
+  /// `affinityKey`, then the most recent registration. `Int64.min` means unknown.
+  @objc static func pigeonResolveInstance(
+    engineId: Int64, affinityKey: Int64,
+    name: String = NativeInteropExamplePigeonInternal.defaultInstanceName
+  ) -> NativeInteropExampleApiSetup? {
+    NativeInteropExampleApiInstanceTracker.lock.lock()
+    defer { NativeInteropExampleApiInstanceTracker.lock.unlock() }
+    guard let list = NativeInteropExampleApiInstanceTracker.instancesOfNativeInteropExampleApi[name]
+    else {
+      return nil
+    }
+    if engineId != Int64.min, let match = list.last(where: { $0.engineKey == engineId }) {
+      return match
+    }
+    if affinityKey != Int64.min, let match = list.last(where: { $0.engineKey == affinityKey }) {
+      return match
+    }
+    return list.last
+  }
+
+  /// Returns the engine key `instance` was registered with, or `Int64.min` if unknown.
+  @objc static func pigeonEngineKey(of instance: NativeInteropExampleApiSetup) -> Int64 {
+    return instance.engineKey
   }
   @objc func doSomething(wrappedError: PigeonError) {
     do {
-      return try api!.doSomething()
+      let activeApi = try resolveApi()
+      try activeApi.doSomething()
+      return
     } catch let error as PigeonError {
       wrappedError.code = error.code
       wrappedError.message = error.message
       wrappedError.details = error.details
     } catch let error {
       wrappedError.code = "\(error)"
-      wrappedError.message = "\(type(of: error))"
+      wrappedError.message = "\(Swift.type(of: error))"
       wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
     }
     return

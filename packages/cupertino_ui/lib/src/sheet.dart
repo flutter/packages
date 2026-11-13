@@ -218,6 +218,7 @@ Future<T?> showCupertinoSheet<T>({
       enableDrag: enableDrag,
       topGap: topGap,
       hasPlatformViews: hasPlatformViews,
+      showDragHandle: showDragHandle,
     );
 
     return Navigator.of(context, rootNavigator: true).push<T>(route);
@@ -263,6 +264,7 @@ Future<T?> showCupertinoSheet<T>({
       enableDrag: enableDrag,
       topGap: topGap,
       hasPlatformViews: hasPlatformViews,
+      showDragHandle: showDragHandle,
     );
     return Navigator.of(context, rootNavigator: true).push<T>(route);
   }
@@ -1012,6 +1014,13 @@ mixin _CupertinoSheetRouteTransitionMixin<T> on PageRoute<T> {
   }
 }
 
+// Reads the height from the render box instead of context.size, which throws
+// in debug mode when the box is dirty for layout. A drag can end while a
+// relayout is pending, and the last laid out height is the one the drag was
+// made against.
+double _sheetHeightOf(BuildContext context) =>
+    (context.findRenderObject()! as RenderBox).size.height;
+
 class _CupertinoDragGestureDetector<T> extends StatefulWidget {
   const _CupertinoDragGestureDetector({
     required this.enabledCallback,
@@ -1037,8 +1046,6 @@ class _CupertinoDragGestureDetectorState<T> extends State<_CupertinoDragGestureD
 
   static VelocityTracker _cupertinoVelocityBuilder(PointerEvent event) =>
       IOSScrollViewFlingVelocityTracker(event.kind);
-
-  double get sheetHeight => context.size!.height;
 
   @override
   void initState() {
@@ -1087,6 +1094,7 @@ class _CupertinoDragGestureDetectorState<T> extends State<_CupertinoDragGestureD
     if (_stretchDragController == null) {
       return;
     }
+    final double sheetHeight = _sheetHeightOf(context);
     final double delta = sheetHeight > 0 ? details.primaryDelta! / sheetHeight : 0.0;
     _dragGestureController!.dragUpdate(
       // Divide by size of the sheet.
@@ -1102,6 +1110,7 @@ class _CupertinoDragGestureDetectorState<T> extends State<_CupertinoDragGestureD
       _dragGestureController = null;
       return;
     }
+    final double sheetHeight = _sheetHeightOf(context);
     final double velocity = sheetHeight > 0
         ? details.velocity.pixelsPerSecond.dy / sheetHeight
         : 0.0;
@@ -1448,8 +1457,9 @@ class _CupertinoDraggableScrollableSheetState<T>
   void _dragUpdate(double delta) {
     assert(mounted);
     if (_dragGestureController != null) {
+      final double sheetHeight = _sheetHeightOf(context);
       _dragGestureController!.dragUpdate(
-        delta / (context.size!.height - (context.size!.height * _kTopGapRatio)),
+        delta / (sheetHeight - (sheetHeight * _kTopGapRatio)),
         null,
       );
     }
@@ -1458,7 +1468,7 @@ class _CupertinoDraggableScrollableSheetState<T>
   void _handleDragEnd(double velocity) {
     assert(mounted);
     if (_dragGestureController != null) {
-      _dragGestureController!.dragEnd(-velocity / context.size!.height, null);
+      _dragGestureController!.dragEnd(-velocity / _sheetHeightOf(context), null);
       _dragGestureController = null;
     }
   }

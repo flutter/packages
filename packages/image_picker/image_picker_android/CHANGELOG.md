@@ -1,3 +1,8 @@
+## 0.8.13+25
+
+* Fixes resizing with `maxWidth` or `maxHeight` always decoding the full-size
+  image; large images are now subsampled while decoding.
+
 ## 0.8.13+24
 
 * Updates Robolectric to 4.17 and adds the JVM arguments it requires for unit tests.

@@ -7,6 +7,7 @@ import 'package:yaml/yaml.dart';
 
 import 'common/core.dart';
 import 'common/file_filters.dart';
+import 'common/file_utils.dart';
 import 'common/output_utils.dart';
 import 'common/package_looping_command.dart';
 import 'common/plugin_utils.dart';
@@ -45,8 +46,9 @@ class DartTestCommand extends PackageLoopingCommand {
     argParser.addOption(
       _packageTagsFlag,
       help:
-          'Path to a YAML file that maps package names to tags to run for that '
-          'package.',
+          'Path to a YAML file that maps packages to tags to run for that '
+          'package. Packages are identified by their path relative to the '
+          'packages directory (e.g., "foo" or "foo/foo_android").',
     );
   }
 
@@ -232,18 +234,21 @@ class DartTestCommand extends PackageLoopingCommand {
   /// Returns the tag to apply for [package] based on `--package-tags`, or null
   /// if none.
   ///
-  /// This checks the package's [RepositoryPackage.displayName], and falls back
-  /// to checking the [RepositoryPackage.displayName] of any enclosing packages
+  /// This checks the package's [_packageTagKey], and falls back
+  /// to checking the [_packageTagKey] of any enclosing packages
   /// up the directory tree. This allows tagging an entire plugin (including its
   /// nested examples) by simply tagging the enclosing package.
   String? _getTagForPackage(RepositoryPackage package) {
     final Map<String, String>? packageTags = _packageTags;
     if (packageTags != null && packageTags.isNotEmpty) {
-      final candidates = <String>{package.displayName};
-      RepositoryPackage? enclosing = package.getEnclosingPackage();
-      while (enclosing != null) {
-        candidates.add(enclosing.displayName);
-        enclosing = enclosing.getEnclosingPackage();
+      final candidates = <String>{};
+      RepositoryPackage? current = package;
+      while (current != null) {
+        final String? key = _packageTagKey(current);
+        if (key != null) {
+          candidates.add(key);
+        }
+        current = current.getEnclosingPackage();
       }
 
       for (final candidate in candidates) {
@@ -253,6 +258,21 @@ class DartTestCommand extends PackageLoopingCommand {
       }
     }
 
+    return null;
+  }
+
+  /// Returns the key that a `--package-tags` entry uses to identify [package],
+  /// or null if [package] is not in a packages directory.
+  ///
+  /// The key is the package's path relative to the packages directory that
+  /// contains it, using POSIX separators (e.g., `foo`, `foo/example`, or
+  /// `foo/foo_android`).
+  String? _packageTagKey(RepositoryPackage package) {
+    for (final root in <Directory>[packagesDir, thirdPartyPackagesDir]) {
+      if (path.isWithin(root.absolute.path, package.directory.absolute.path)) {
+        return relativePosixPath(package.directory, from: root, platformContext: path);
+      }
+    }
     return null;
   }
 

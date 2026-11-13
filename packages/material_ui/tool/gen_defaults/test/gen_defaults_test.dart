@@ -5,6 +5,7 @@
 import 'dart:io';
 
 import 'package:test/test.dart';
+
 import '../data/color_role.dart';
 import '../data/shape_struct.dart';
 import '../data/typescale.dart';
@@ -13,7 +14,7 @@ import '../templates/action_chip_template.dart';
 import '../templates/app_bar_template.dart';
 import '../templates/badge_template.dart';
 import '../templates/banner_template.dart';
-// import '../templates/bottom_app_bar_template.dart';
+import '../templates/bottom_app_bar_template.dart';
 import '../templates/bottom_sheet_template.dart';
 import '../templates/button_template.dart';
 import '../templates/card_template.dart';
@@ -31,27 +32,26 @@ import '../templates/icon_button_template.dart' as icon_button;
 import '../templates/input_chip_template.dart';
 import '../templates/input_decorator_template.dart';
 import '../templates/list_tile_template.dart';
-// import '../templates/menu_template.dart';
-// import '../templates/motion_template.dart';
-// import '../templates/navigation_bar_template.dart';
-// import '../templates/navigation_drawer_template.dart';
-// import '../templates/navigation_rail_template.dart';
-// import '../templates/popup_menu_template.dart';
-// import '../templates/progress_indicator_template.dart';
-// import '../templates/radio_template.dart';
-// import '../templates/range_slider_template.dart';
-// import '../templates/search_bar_template.dart';
-// import '../templates/search_view_template.dart';
-// import '../templates/segmented_button_template.dart';
-// import '../templates/slider_template.dart';
+import '../templates/menu_template.dart';
+import '../templates/motion_template.dart';
+import '../templates/navigation_bar_template.dart';
+import '../templates/navigation_drawer_template.dart';
+import '../templates/navigation_rail_template.dart';
+import '../templates/popup_menu_template.dart';
+import '../templates/progress_indicator_template.dart';
+import '../templates/radio_template.dart';
+import '../templates/range_slider_template.dart';
+import '../templates/search_bar_template.dart';
+import '../templates/search_view_template.dart';
+import '../templates/segmented_button_template.dart';
+import '../templates/slider_template.dart';
 import '../templates/snackbar_template.dart';
-// import '../templates/surface_tint_template.dart';
-// import '../templates/switch_template.dart';
-// import '../templates/tabs_template.dart';
-// import '../templates/text_field_template.dart';
-// import '../templates/time_picker_template.dart';
-// import '../templates/typography_template.dart';
+import '../templates/switch_template.dart';
+import '../templates/tabs_template.dart';
 import '../templates/template.dart';
+import '../templates/text_field_template.dart';
+import '../templates/time_picker_template.dart';
+import '../templates/typography_template.dart';
 import 'test_fixtures/test_templates.dart';
 
 void main() {
@@ -298,8 +298,16 @@ void main() {
     });
 
     test('BottomAppBarTemplateM3 emits M3 BottomAppBar defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      final String contents = const BottomAppBarTemplateM3().generateContents(
+        '_BottomAppBarDefaultsM3',
+      );
+      expect(contents, contains('class _BottomAppBarDefaultsM3 extends BottomAppBarThemeData'));
+      expect(contents, contains('elevation: 3.0'));
+      expect(contents, contains('height: 80.0'));
+      expect(contents, contains('shape: const AutomaticNotchedShape(RoundedRectangleBorder())'));
+      expect(contents, contains('Color? get color => _colors.surfaceContainer'));
+      expect(contents, contains('Color? get surfaceTintColor => Colors.transparent'));
+      expect(contents, contains('Color? get shadowColor => Colors.transparent'));
     });
 
     test('BottomSheetTemplateM3 emits M3 BottomSheet defaults from tokens', () {
@@ -361,6 +369,29 @@ void main() {
       expect(contents, contains('const MaterialStatePropertyAll<Size>(Size(64.0, 40.0))'));
       expect(contents, contains('const MaterialStatePropertyAll<double>(18.0)'));
       expect(contents, contains('const MaterialStatePropertyAll<OutlinedBorder>(StadiumBorder())'));
+    });
+
+    test('ButtonTemplateM3E emits M3E ElevatedButton defaults from tokens', () {
+      const template = ButtonTemplateM3E('Elevated Button');
+      expect(template.name, 'Elevated Button');
+      expect(template.parentFilePath, 'elevated_button.dart');
+
+      final String contents = _generateContents(template);
+      expect(contents, contains('class _ElevatedButtonDefaultsM3E extends ButtonStyle'));
+      expect(contents, contains('final bool toggleable;'));
+      expect(contents, contains('ButtonSizeVariant get sizeVariant'));
+      expect(contents, contains('ButtonShapeVariant get shapeVariant'));
+      expect(contents, contains('ButtonSizeVariant.xSmall => const Size(64.0, 32.0)'));
+      expect(contents, contains('ButtonSizeVariant.xLarge => 40.0'));
+      expect(contents, contains('static double iconLabelSpace(ButtonSizeVariant sizeVariant)'));
+      expect(
+        contents,
+        contains('ButtonSizeVariant.medium => const EdgeInsets.symmetric(horizontal: 24.0)'),
+      );
+      expect(contents, contains('return _colors.primary;'));
+      expect(contents, contains('return _colors.onPrimary;'));
+      expect(contents, contains('states.contains(WidgetState.selected)'));
+      expect(contents, contains('states.contains(WidgetState.pressed)'));
     });
 
     test('ButtonTemplateM3 emits M3 FilledButton defaults from tokens', () {
@@ -626,6 +657,42 @@ void main() {
       expect(contents, contains('BorderSide(color: _colors.outlineVariant)'));
     });
 
+    test('IconButtonTemplateM3 emits M3 IconButton defaults from tokens', () {
+      const template = icon_button.IconButtonTemplateM3('Icon Button');
+      final String contents = _generateContents(template);
+      expect(contents, contains('class _IconButtonDefaultsM3 extends ButtonStyle'));
+      expect(contents, contains('return _colors.onSurface.withOpacity(0.38);'));
+      expect(contents, contains('return _colors.primary;'));
+      expect(contents, contains('return _colors.primary.withOpacity(0.1);'));
+    });
+
+    test('IconButtonTemplateM3 emits M3 FilledIconButton defaults from tokens', () {
+      const template = icon_button.IconButtonTemplateM3('Filled Icon Button');
+      final String contents = _generateContents(template);
+      expect(contents, contains('class _FilledIconButtonDefaultsM3 extends ButtonStyle'));
+      expect(contents, contains('return _colors.onSurface.withOpacity(0.12);'));
+      expect(contents, contains('return _colors.surfaceContainerHighest;'));
+      expect(contents, contains('return _colors.primary.withOpacity(0.1);'));
+    });
+
+    test('IconButtonTemplateM3 emits M3 FilledTonalIconButton defaults from tokens', () {
+      const template = icon_button.IconButtonTemplateM3('Filled Tonal Icon Button');
+      final String contents = _generateContents(template);
+      expect(contents, contains('class _FilledTonalIconButtonDefaultsM3 extends ButtonStyle'));
+      expect(contents, contains('return _colors.secondaryContainer;'));
+      expect(contents, contains('return _colors.onSurfaceVariant;'));
+      expect(contents, contains('return _colors.onSecondaryContainer.withOpacity(0.1);'));
+    });
+
+    test('IconButtonTemplateM3 emits M3 OutlinedIconButton defaults from tokens', () {
+      const template = icon_button.IconButtonTemplateM3('Outlined Icon Button');
+      final String contents = _generateContents(template);
+      expect(contents, contains('class _OutlinedIconButtonDefaultsM3 extends ButtonStyle'));
+      expect(contents, contains('return _colors.inverseSurface;'));
+      expect(contents, contains('return _colors.onInverseSurface.withOpacity(0.1);'));
+      expect(contents, contains('return BorderSide(color: _colors.onSurface.withOpacity(0.12));'));
+    });
+
     test('IconButtonTemplateM3E emits M3E IconButton defaults from tokens', () {
       const template = icon_button.IconButtonTemplateM3E('Icon Button');
       final String contents = _generateContents(template);
@@ -711,68 +778,263 @@ void main() {
     });
 
     test('MenuTemplateM3 emits M3 Menu defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      final String contents = _generateContents(const MenuTemplateM3());
+      expect(contents, contains('class _MenuBarDefaultsM3 extends MenuStyle'));
+      expect(contents, contains('class _MenuButtonDefaultsM3 extends ButtonStyle'));
+      expect(contents, contains('class _MenuDefaultsM3 extends MenuStyle'));
+      expect(contents, contains('MaterialStatePropertyAll<Color?>(_colors.surfaceContainer)'));
+      expect(contents, contains('return _colors.onSurface.withOpacity(0.38);'));
+      expect(contents, contains('return _colors.onSurface.withOpacity(0.1);'));
     });
 
     test('MotionTemplateM3 emits M3 Motion defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      final String contents = _generateContents(const MotionTemplateM3());
+      expect(contents, contains('short1 = Duration(milliseconds: 50)'));
+      expect(contents, contains('extralong4 = Duration(milliseconds: 1000)'));
+      expect(contents, contains('emphasizedAccelerate = Cubic(0.3, 0.0, 0.8, 0.15)'));
+      expect(contents, contains('legacy = Cubic(0.4, 0.0, 0.2, 1.0)'));
+    });
+
+    test('MotionTemplateM3E emits M3E motion springs from tokens', () {
+      const template = MotionTemplateM3E();
+      final String contents = _generateContents(template);
+      expect(template.className, isEmpty);
+      expect(template.outputFileName, 'motion_defaults_m3e.g.dart');
+      expect(template.parentFilePath, 'motion.dart');
+      expect(contents, contains('abstract final class Springs'));
+      expect(
+        contents,
+        contains(
+          'standardDefaultSpatial = SpringDescription(mass: 1.0, stiffness: 700.0, damping: 47.62352359916263)',
+        ),
+      );
+      expect(
+        contents,
+        contains(
+          'expressiveFastSpatial = SpringDescription(mass: 1.0, stiffness: 800.0, damping: 33.94112549695428)',
+        ),
+      );
     });
 
     test('NavigationBarTemplateM3 emits M3 NavigationBar defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      const template = NavigationBarTemplateM3();
+      final String contents = _generateContents(template);
+      expect(contents, contains('class _NavigationBarDefaultsM3 extends NavigationBarThemeData'));
+      expect(contents, contains('height: 80.0'));
+      expect(contents, contains('_colors.surfaceContainer'));
+      expect(contents, contains('_colors.onSurfaceVariant.withOpacity(0.38)'));
+      expect(contents, contains('ShapeBorder? get indicatorShape => const StadiumBorder()'));
     });
 
     test('NavigationDrawerTemplateM3 emits M3 NavigationDrawer defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      const template = NavigationDrawerTemplateM3();
+      final String contents = _generateContents(template);
+      expect(
+        contents,
+        contains('class _NavigationDrawerDefaultsM3 extends NavigationDrawerThemeData'),
+      );
+      expect(contents, contains('indicatorSize: const Size(336.0, 56.0)'));
+      expect(contents, contains('_colors.surfaceContainerLow'));
+      expect(contents, contains('_colors.onSurfaceVariant.withOpacity(0.38)'));
+      expect(contents, contains('_textTheme.labelLarge!'));
     });
 
     test('NavigationRailTemplateM3 emits M3 NavigationRail defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      const template = NavigationRailTemplateM3();
+      final String contents = _generateContents(template);
+      expect(contents, contains('class _NavigationRailDefaultsM3 extends NavigationRailThemeData'));
+      expect(contents, contains('minWidth: 80.0'));
+      expect(contents, contains('Color? get backgroundColor => _colors.surface'));
+      expect(contents, contains('color: _colors.onSurfaceVariant'));
+      expect(contents, contains('ShapeBorder? get indicatorShape => const StadiumBorder()'));
     });
 
     test('PopupMenuTemplateM3 emits M3 PopupMenu defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      final String contents = _generateContents(const PopupMenuTemplateM3());
+      expect(contents, contains('super(elevation: 3.0)'));
+      expect(contents, contains('_colors.onSurface.withOpacity(0.38)'));
+      expect(contents, contains('Color? get color => _colors.surfaceContainer;'));
+      expect(
+        contents,
+        contains(
+          'ShapeBorder? get shape => const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(4.0)))',
+        ),
+      );
     });
 
     test('ProgressIndicatorTemplateM3 emits M3 ProgressIndicator defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      final String contents = _generateContents(const ProgressIndicatorTemplateM3());
+      expect(
+        contents,
+        contains('class _CircularProgressIndicatorDefaultsM3 extends ProgressIndicatorThemeData'),
+      );
+      expect(contents, contains('Color get color => _colors.primary'));
+      expect(
+        contents,
+        contains(
+          'Color? get circularTrackColor => indeterminate ? null : _colors.secondaryContainer',
+        ),
+      );
+      expect(contents, contains('double get strokeWidth => 4.0'));
+      expect(
+        contents,
+        contains('double? get strokeAlign => CircularProgressIndicator.strokeAlignInside;'),
+      );
+      expect(contents, contains('double? get trackGap => 4.0'));
+      expect(
+        contents,
+        contains('EdgeInsetsGeometry? get circularTrackPadding => const EdgeInsets.all(4.0)'),
+      );
+      expect(
+        contents,
+        contains('class _LinearProgressIndicatorDefaultsM3 extends ProgressIndicatorThemeData'),
+      );
+      expect(contents, contains('Color get linearTrackColor => _colors.secondaryContainer'));
+      expect(contents, contains('double get linearMinHeight => 4.0'));
+      expect(
+        contents,
+        contains(
+          'BorderRadius get borderRadius => const BorderRadius.all(Radius.circular(4.0 / 2))',
+        ),
+      );
+      expect(contents, contains('Color get stopIndicatorColor => _colors.primary'));
+      expect(contents, contains('double? get stopIndicatorRadius => 4.0 / 2'));
     });
 
     test('RadioTemplateM3 emits M3 Radio defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      final String contents = _generateContents(const RadioTemplateM3());
+      expect(contents, contains('class _RadioDefaultsM3 extends RadioThemeData'));
+      expect(contents, contains('_colors.onSurface.withOpacity(0.38)'));
+      expect(contents, contains('_colors.onSurface.withOpacity(0.1)'));
+      expect(contents, contains('_colors.onSurfaceVariant'));
     });
 
     test('RangeSliderTemplateM3 emits M3 RangeSlider defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      const template = RangeSliderTemplateM3();
+      final String contents = _generateContents(template);
+      expect(contents, contains('class _RangeSliderDefaultsM3 extends SliderThemeData'));
+      expect(
+        contents,
+        contains('Color? get disabledActiveTrackColor => _colors.onSurface.withOpacity(0.38);'),
+      );
+      expect(
+        contents,
+        contains('Color? get activeTickMarkColor => _colors.onPrimary.withOpacity(1.0);'),
+      );
+      expect(contents, contains('Theme.of(context).textTheme.labelLarge!.copyWith'));
     });
 
     test('SearchBarTemplateM3 emits M3 SearchBar defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      final String contents = _generateContents(const SearchBarTemplateM3());
+      expect(contents, contains('class _SearchBarDefaultsM3 extends SearchBarThemeData'));
+      expect(contents, contains('_colors.surfaceContainerHigh'));
+      expect(contents, contains('_colors.onSurface.withOpacity(0.1)'));
+      expect(contents, contains('const MaterialStatePropertyAll<OutlinedBorder>(StadiumBorder())'));
     });
 
     test('SearchViewTemplateM3 emits M3 SearchView defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      final String contents = _generateContents(const SearchViewTemplateM3());
+      expect(contents, contains('class _SearchViewDefaultsM3 extends SearchViewThemeData'));
+      expect(contents, contains('Color? get backgroundColor => _colors.surfaceContainerHigh'));
+      expect(contents, contains('static double fullScreenBarHeight = 72.0'));
+      expect(
+        contents,
+        contains(
+          'TextStyle? get headerHintStyle => _textTheme.bodyLarge?.copyWith(color: _colors.onSurfaceVariant)',
+        ),
+      );
+      expect(contents, contains('Color? get dividerColor => _colors.outline'));
     });
 
     test('SegmentedButtonTemplateM3 emits M3 SegmentedButton defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      const template = SegmentedButtonTemplateM3();
+      expect(template.parentFilePath, 'segmented_button.dart');
+      expect(template.outputFileName, 'segmented_button_defaults_m3.g.dart');
+
+      final String contents = _generateContents(template);
+      expect(
+        contents,
+        contains('class _SegmentedButtonDefaultsM3 extends SegmentedButtonThemeData'),
+      );
+      expect(contents, contains('WidgetStatePropertyAll<TextStyle?>(_theme.textTheme.labelLarge)'));
+      expect(contents, contains('return _colors.secondaryContainer;'));
+      expect(contents, contains('return _colors.onSurface.withOpacity(0.38);'));
+      expect(contents, contains('return _colors.onSecondaryContainer;'));
+      expect(contents, contains('return _colors.onSurface;'));
+      expect(contents, contains('return _colors.onSecondaryContainer.withOpacity(0.1);'));
+      expect(contents, contains('return _colors.onSecondaryContainer.withOpacity(0.08);'));
+      expect(contents, contains('return _colors.onSurface.withOpacity(0.1);'));
+      expect(contents, contains('return _colors.onSurface.withOpacity(0.08);'));
+      expect(contents, contains('const WidgetStatePropertyAll<double?>(18.0)'));
+      expect(contents, contains('return BorderSide(color: _colors.onSurface.withOpacity(0.12));'));
+      expect(contents, contains('return BorderSide(color: _colors.outline);'));
+      expect(contents, contains('const WidgetStatePropertyAll<OutlinedBorder>(StadiumBorder())'));
+      expect(contents, contains('const WidgetStatePropertyAll<Size?>(Size.fromHeight(40.0))'));
+      expect(contents, contains('Widget? get selectedIcon => const Icon(Icons.check)'));
+      expect(
+        contents,
+        contains('WidgetState.selected & WidgetState.pressed: selected?.withOpacity(0.1)'),
+      );
+      expect(contents, contains('WidgetState.hovered: unselected?.withOpacity(0.08)'));
     });
 
     test('SliderTemplateM3 emits M3 Slider defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      const template = SliderTemplateM3();
+      expect(template.parentFilePath, 'slider.dart');
+      expect(template.outputFileName, 'slider_defaults_m3.g.dart');
+
+      final String contents = _generateContents(template);
+      expect(contents, contains('class _SliderDefaultsM3 extends SliderThemeData'));
+      expect(contents, contains('super(trackHeight: 16.0)'));
+      expect(contents, contains('Color? get activeTrackColor => _colors.primary'));
+      expect(contents, contains('Color? get inactiveTrackColor => _colors.secondaryContainer'));
+      expect(
+        contents,
+        contains('Color? get secondaryActiveTrackColor => _colors.primary.withOpacity(0.54)'),
+      );
+      expect(
+        contents,
+        contains('Color? get disabledActiveTrackColor => _colors.onSurface.withOpacity(0.38)'),
+      );
+      expect(
+        contents,
+        contains('Color? get disabledInactiveTrackColor => _colors.onSurface.withOpacity(0.12)'),
+      );
+      expect(
+        contents,
+        contains(
+          'Color? get disabledSecondaryActiveTrackColor => _colors.onSurface.withOpacity(0.38)',
+        ),
+      );
+      expect(
+        contents,
+        contains('Color? get activeTickMarkColor => _colors.onPrimary.withOpacity(1.0)'),
+      );
+      expect(
+        contents,
+        contains(
+          'Color? get inactiveTickMarkColor => _colors.onSecondaryContainer.withOpacity(1.0)',
+        ),
+      );
+      expect(
+        contents,
+        contains('Color? get disabledActiveTickMarkColor => _colors.onInverseSurface'),
+      );
+      expect(contents, contains('Color? get disabledInactiveTickMarkColor => _colors.onSurface'));
+      expect(contents, contains('Color? get thumbColor => _colors.primary'));
+      expect(
+        contents,
+        contains('Color? get disabledThumbColor => _colors.onSurface.withOpacity(0.38)'),
+      );
+      expect(contents, contains('return _colors.primary.withOpacity(0.1);'));
+      expect(contents, contains('return _colors.primary.withOpacity(0.08);'));
+      expect(contents, contains('Theme.of(context).textTheme.labelLarge!.copyWith('));
+      expect(contents, contains('color: _colors.onInverseSurface'));
+      expect(contents, contains('Color? get valueIndicatorColor => _colors.inverseSurface'));
+      expect(contents, contains('const RoundSliderTickMarkShape(tickMarkRadius: 4.0 / 2)'));
+      expect(contents, contains('return const Size(4.0, 44.0);'));
+      expect(contents, contains('return const Size(2.0, 44.0);'));
+      expect(contents, contains('double? get trackGap => 6.0'));
     });
 
     test('SnackbarTemplateM3 emits M3 Snackbar defaults from tokens', () {
@@ -791,34 +1053,94 @@ void main() {
       expect(contents, contains('double get actionOverflowThreshold => 0.25'));
     });
 
-    test('SurfaceTintTemplateM3 emits M3 SurfaceTint defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
-    });
-
     test('SwitchTemplateM3 emits M3 Switch defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      final String contents = _generateContents(const SwitchTemplateM3());
+      expect(contents, contains('class _SwitchDefaultsM3 extends SwitchThemeData'));
+      expect(contents, contains('return _colors.surface;'));
+      expect(contents, contains('return _colors.onSurface.withOpacity(0.12)'));
+      expect(contents, contains('class _SwitchConfigM3 with _SwitchConfig'));
+      expect(contents, contains('return _colors.onPrimaryContainer'));
+      expect(contents, contains('double get trackWidth => 52.0'));
     });
 
     test('TabsTemplateM3 emits M3 Tabs defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      final String contents = const TabsTemplateM3().generateContents('');
+      expect(contents, contains('class _TabsPrimaryDefaultsM3 extends TabBarThemeData'));
+      expect(contents, contains('Color? get indicatorColor => _colors.primary;'));
+      expect(contents, contains('Color? get labelColor => _colors.primary;'));
+
+      expect(contents, contains('class _TabsSecondaryDefaultsM3 extends TabBarThemeData'));
+      expect(contents, contains('Color? get indicatorColor => _colors.primary;'));
+      expect(contents, contains('Color? get labelColor => _colors.onSurface;'));
     });
 
     test('TextFieldTemplateM3 emits M3 TextField defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      final String contents = _generateContents(const TextFieldTemplateM3());
+      expect(contents, contains('TextStyle? _m3StateInputStyle(BuildContext context)'));
+      expect(contents, contains('Theme.of(context).textTheme.bodyLarge!.color?.withOpacity(0.38)'));
+      expect(
+        contents,
+        contains(
+          'TextStyle _m3InputStyle(BuildContext context) => Theme.of(context).textTheme.bodyLarge!',
+        ),
+      );
+      expect(
+        contents,
+        contains(
+          'Theme.of(context).textTheme.bodySmall!.copyWith(color: Theme.of(context).colorScheme.error)',
+        ),
+      );
     });
 
     test('TimePickerTemplateM3 emits M3 TimePicker defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      const template = TimePickerTemplateM3();
+      final String contents = _generateContents(template);
+      expect(contents, contains('class _TimePickerDefaultsM3 extends _TimePickerDefaults'));
+      expect(
+        contents,
+        contains('''
+  Size get dayPeriodPortraitSize {
+    return const Size(52.0, 80.0);
+  }'''),
+      );
+
+      expect(
+        contents,
+        contains('''
+  double get dotRadius {
+    return 48.0 / 2;
+  }'''),
+      );
+
+      expect(
+        contents,
+        contains('''
+  ShapeBorder get hourMinuteShape {
+    return const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0)));
+  }'''),
+      );
     });
 
     test('TypographyTemplateM3 emits M3 Typography defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      const template = TypographyTemplateM3();
+      final String contents = _generateContents(template);
+      expect(contents, contains('abstract final class _M3Typography'));
+      expect(contents, contains('displayLarge: TextStyle('));
+      expect(contents, contains("debugLabel: 'englishLike displayLarge 2021'"));
+      expect(contents, contains('static const TextTheme englishLike = TextTheme('));
+      expect(contents, contains('static const TextTheme dense = TextTheme('));
+      expect(contents, contains('static const TextTheme tall = TextTheme('));
+      expect(
+        contents,
+        contains(
+          "displayLarge: TextStyle(debugLabel: 'englishLike displayLarge 2021', inherit: false, "
+          'fontSize: 57.0, fontWeight: FontWeight.w400, letterSpacing: -0.25, height: 1.12, '
+          'textBaseline: TextBaseline.alphabetic, leadingDistribution: TextLeadingDistribution.even)',
+        ),
+      );
+      expect(contents, contains("debugLabel: 'dense bodySmall 2021'"));
+      expect(contents, contains('textBaseline: TextBaseline.ideographic'));
+      expect(contents, contains('fontWeight: FontWeight.w500'));
     });
 
     test('will run dart format over the generated file', () {
