@@ -1829,22 +1829,28 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     return null;
   }
 
+  Map<String, Object> _argumentListToMap(dart_ast.ArgumentList argumentList) {
+    final result = <String, Object>{};
+    for (final dart_ast.Argument argument in argumentList.arguments) {
+      if (argument is dart_ast.NamedArgument) {
+        result[argument.name.lexeme] = _expressionToMap(argument.argumentExpression);
+      } else {
+        _errors.add(
+          Error(
+            message: 'expected NamedArgument but found $argument',
+            lineNumber: calculateLineNumber(source, argument.offset),
+          ),
+        );
+      }
+    }
+    return result;
+  }
+
   Object _expressionToMap(dart_ast.Expression expression) {
     if (expression is dart_ast.MethodInvocation) {
-      final result = <String, Object>{};
-      for (final dart_ast.Argument argument in expression.argumentList.arguments) {
-        if (argument is dart_ast.NamedArgument) {
-          result[argument.name.lexeme] = _expressionToMap(argument.argumentExpression);
-        } else {
-          _errors.add(
-            Error(
-              message: 'expected NamedArgument but found $argument',
-              lineNumber: calculateLineNumber(source, argument.offset),
-            ),
-          );
-        }
-      }
-      return result;
+      return _argumentListToMap(expression.argumentList);
+    } else if (expression is dart_ast.InstanceCreationExpression) {
+      return _argumentListToMap(expression.argumentList);
     } else if (expression is dart_ast.SimpleStringLiteral) {
       return expression.value;
     } else if (expression is dart_ast.IntegerLiteral) {
@@ -2082,6 +2088,7 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           (dart_ast.Annotation element) => element.name.name == 'HostApi',
         );
         String? dartHostTestHandler;
+        dart_ast.ArgumentList? swiftOptionsArgumentList;
         final dart_ast.ArgumentList? arguments = hostApi.arguments;
         if (arguments != null) {
           for (final dart_ast.Argument argument in arguments.arguments) {
@@ -2092,15 +2099,75 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
                 if (dartHostTestHandlerExpression is dart_ast.SimpleStringLiteral) {
                   dartHostTestHandler = dartHostTestHandlerExpression.value;
                 }
+              } else if (argument.name.lexeme == 'swiftOptions') {
+                final dart_ast.Expression swiftOptionsExpression = argument.argumentExpression;
+                final String? constructorName;
+                final dart_ast.ArgumentList? argumentList;
+                if (swiftOptionsExpression is dart_ast.MethodInvocation) {
+                  constructorName = swiftOptionsExpression.methodName.name;
+                  argumentList = swiftOptionsExpression.argumentList;
+                } else if (swiftOptionsExpression is dart_ast.InstanceCreationExpression) {
+                  constructorName = swiftOptionsExpression.constructorName.type.name.lexeme;
+                  argumentList = swiftOptionsExpression.argumentList;
+                } else {
+                  constructorName = null;
+                  argumentList = null;
+                }
+                if (constructorName == 'SwiftHostApiOptions') {
+                  swiftOptionsArgumentList = argumentList;
+                } else {
+                  _errors.add(
+                    Error(
+                      message: 'swiftOptions expects a SwiftHostApiOptions() call.',
+                      lineNumber: calculateLineNumber(source, argument.argumentExpression.offset),
+                    ),
+                  );
+                }
               }
             }
           }
+        }
+
+        SwiftHostApiOptions? swiftOptions;
+        if (swiftOptionsArgumentList != null) {
+          var isMainActor = false;
+          final dart_ast.Argument? isMainActorArgument = swiftOptionsArgumentList.arguments
+              .firstWhereOrNull(
+                (dart_ast.Argument argument) =>
+                    argument is dart_ast.NamedArgument && argument.name.lexeme == 'isMainActor',
+              );
+          if (isMainActorArgument is dart_ast.NamedArgument) {
+            final dart_ast.Expression isMainActorExpression =
+                isMainActorArgument.argumentExpression;
+            if (isMainActorExpression is dart_ast.BooleanLiteral) {
+              isMainActor = isMainActorExpression.value;
+            } else {
+              _errors.add(
+                Error(
+                  message: 'isMainActor expects a bool literal.',
+                  lineNumber: calculateLineNumber(source, isMainActorExpression.offset),
+                ),
+              );
+            }
+          }
+          for (final dart_ast.Argument argument in swiftOptionsArgumentList.arguments) {
+            if (argument != isMainActorArgument) {
+              _errors.add(
+                Error(
+                  message: 'SwiftHostApiOptions expects a named isMainActor argument.',
+                  lineNumber: calculateLineNumber(source, argument.offset),
+                ),
+              );
+            }
+          }
+          swiftOptions = SwiftHostApiOptions(isMainActor: isMainActor);
         }
 
         _currentApi = AstHostApi(
           name: node.namePart.typeName.lexeme,
           methods: <Method>[],
           dartHostTestHandler: dartHostTestHandler,
+          swiftOptions: swiftOptions,
           documentationComments: _documentationCommentsParser(node.documentationComment?.tokens),
         );
       } else if (_hasMetadata(node.metadata, 'FlutterApi')) {

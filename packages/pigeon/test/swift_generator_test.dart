@@ -882,6 +882,110 @@ void main() {
     expect(code, isNot(contains('@MainActor func callbackMethod')));
   });
 
+  test('host api methods use @MainActor for async when isMainActor is set', () {
+    final root = Root(
+      apis: <Api>[
+        AstHostApi(
+          name: 'Api',
+          swiftOptions: const SwiftHostApiOptions(isMainActor: true),
+          methods: <Method>[
+            Method(
+              name: 'asyncMethod',
+              location: ApiLocation.host,
+              parameters: <Parameter>[],
+              returnType: const TypeDeclaration.voidDeclaration(),
+              isAsynchronous: true,
+            ),
+            Method(
+              name: 'callbackMethod',
+              location: ApiLocation.host,
+              parameters: <Parameter>[],
+              returnType: const TypeDeclaration.voidDeclaration(),
+              isAsynchronous: true,
+              isAsynchronousCallback: true,
+            ),
+            Method(
+              name: 'syncMethod',
+              location: ApiLocation.host,
+              parameters: <Parameter>[],
+              returnType: const TypeDeclaration.voidDeclaration(),
+            ),
+          ],
+        ),
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final sink = StringBuffer();
+    const swiftOptions = InternalSwiftOptions(swiftOut: '');
+    const generator = SwiftGenerator();
+    generator.generate(swiftOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    final code = sink.toString();
+    expect(code, contains('@MainActor func asyncMethod() async throws'));
+    expect(code, isNot(contains('@MainActor func callbackMethod')));
+    expect(code, isNot(contains('@MainActor func syncMethod')));
+  });
+
+  test(
+    'host api methods on a serial background task queue omit @MainActor even when isMainActor is set',
+    () {
+      final root = Root(
+        apis: <Api>[
+          AstHostApi(
+            name: 'Api',
+            swiftOptions: const SwiftHostApiOptions(isMainActor: true),
+            methods: <Method>[
+              Method(
+                name: 'backgroundMethod',
+                location: ApiLocation.host,
+                parameters: <Parameter>[],
+                returnType: const TypeDeclaration.voidDeclaration(),
+                isAsynchronous: true,
+                taskQueueType: TaskQueueType.serialBackgroundThread,
+              ),
+            ],
+          ),
+        ],
+        classes: <Class>[],
+        enums: <Enum>[],
+      );
+      final sink = StringBuffer();
+      const swiftOptions = InternalSwiftOptions(swiftOut: '');
+      const generator = SwiftGenerator();
+      generator.generate(swiftOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+      final code = sink.toString();
+      expect(code, isNot(contains('@MainActor func backgroundMethod')));
+      expect(code, contains('func backgroundMethod() async throws'));
+    },
+  );
+
+  test('host api methods omit @MainActor when swiftOptions is not set', () {
+    final root = Root(
+      apis: <Api>[
+        AstHostApi(
+          name: 'Api',
+          methods: <Method>[
+            Method(
+              name: 'asyncMethod',
+              location: ApiLocation.host,
+              parameters: <Parameter>[],
+              returnType: const TypeDeclaration.voidDeclaration(),
+              isAsynchronous: true,
+            ),
+          ],
+        ),
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final sink = StringBuffer();
+    const swiftOptions = InternalSwiftOptions(swiftOut: '');
+    const generator = SwiftGenerator();
+    generator.generate(swiftOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    final code = sink.toString();
+    expect(code, isNot(contains('@MainActor func asyncMethod')));
+  });
+
   test('gen one enum class', () {
     final anEnum = Enum(
       name: 'Enum1',
@@ -2302,6 +2406,37 @@ void main() {
       expect(code, contains('if let data = value as? Foundation.Data {'));
       expect(code, contains('if let array = value as? NSArray {'));
       expect(code, contains('if let dictionary = value as? NSDictionary {'));
+    });
+
+    test('host api protocol is @MainActor-isolated when isMainActor is set', () {
+      final root = Root(
+        apis: <Api>[
+          AstHostApi(
+            name: 'HostApi',
+            swiftOptions: const SwiftHostApiOptions(isMainActor: true),
+            methods: methods(ApiLocation.host),
+          ),
+        ],
+        classes: <Class>[dataClass],
+        enums: <Enum>[],
+      );
+      final sink = StringBuffer();
+      const SwiftGenerator().generate(
+        const InternalSwiftOptions(
+          swiftOut: '',
+          useFfi: true,
+          fileSpecificClassNameComponent: 'Foo',
+        ),
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+      final code = sink.toString();
+      expect(
+        code,
+        matches(r'@MainActor func echoAsyncData\(data: Data\?\) async throws -> Data\?'),
+      );
+      expect(code, isNot(contains('@MainActor func echoData')));
     });
 
     test('host api setup exposes entry points', () {

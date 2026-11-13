@@ -25,4 +25,9 @@ void main() {
     const kotlinOptions = KotlinOptions();
     expect(kotlinOptions, isNotNull);
   });
+
+  test('Should be able to import SwiftHostApiOptions', () async {
+    const swiftHostApiOptions = SwiftHostApiOptions();
+    expect(swiftHostApiOptions, isNotNull);
+  });
 }

@@ -100,6 +100,7 @@ class HostApi {
   /// Parametric constructor for [HostApi].
   const HostApi({
     @Deprecated('Mock/fake the generated Dart API instead.') this.dartHostTestHandler,
+    this.swiftOptions,
   });
 
   /// The name of an interface generated for tests. Implement this
@@ -117,6 +118,9 @@ class HostApi {
   /// Defaults to `null` in which case no handler will be generated.
   @Deprecated('Mock/fake the generated Dart API instead.')
   final String? dartHostTestHandler;
+
+  /// Options that control how Swift code will be generated for this HostApi.
+  final SwiftHostApiOptions? swiftOptions;
 }
 
 /// Metadata to annotate a pigeon API implemented by Flutter.

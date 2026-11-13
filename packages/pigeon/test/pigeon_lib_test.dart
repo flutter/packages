@@ -695,6 +695,138 @@ abstract class ApiWithMockDartClass {
     );
   });
 
+  test('swiftOptions isMainActor', () {
+    const code = '''
+class Output1 {
+  String? output;
+}
+
+@HostApi(swiftOptions: SwiftHostApiOptions(isMainActor: true))
+abstract class ApiWithSwiftOptions {
+  Output1 doit();
+}
+''';
+    final ParseResults results = parseSource(code);
+    expect(results.errors, isEmpty);
+    expect(results.root.apis, hasLength(1));
+    expect((results.root.apis[0] as AstHostApi).swiftOptions?.isMainActor, isTrue);
+  });
+
+  test('swiftOptions isMainActor with const constructor', () {
+    const code = '''
+class Output1 {
+  String? output;
+}
+
+@HostApi(swiftOptions: const SwiftHostApiOptions(isMainActor: true))
+abstract class ApiWithConstSwiftOptions {
+  Output1 doit();
+}
+''';
+    final ParseResults results = parseSource(code);
+    expect(results.errors, isEmpty);
+    expect(results.root.apis, hasLength(1));
+    expect((results.root.apis[0] as AstHostApi).swiftOptions?.isMainActor, isTrue);
+  });
+
+  test('swiftOptions malformed argument reports an error instead of crashing', () {
+    const code = '''
+class Output1 {
+  String? output;
+}
+
+@HostApi(swiftOptions: someSwiftOptionsVariable)
+abstract class ApiWithBadSwiftOptions {
+  Output1 doit();
+}
+''';
+    final ParseResults results = parseSource(code);
+    expect(results.errors, isNotEmpty);
+  });
+
+  test('swiftOptions isMainActor with non-bool value reports an error instead of crashing', () {
+    const code = '''
+class Output1 {
+  String? output;
+}
+
+@HostApi(swiftOptions: SwiftHostApiOptions(isMainActor: someVariable))
+abstract class ApiWithBadIsMainActor {
+  Output1 doit();
+}
+''';
+    final ParseResults results = parseSource(code);
+    expect(results.errors, isNotEmpty);
+    expect(results.errors[0].message, contains('isMainActor expects a bool literal'));
+  });
+
+  test("swiftOptions isMainActor with non-bool value reports the argument's line", () {
+    const code = '''
+class Output1 {
+  String? output;
+}
+
+@HostApi(
+  swiftOptions: SwiftHostApiOptions(
+    isMainActor: someVariable,
+  ),
+)
+abstract class ApiWithBadIsMainActor {
+  Output1 doit();
+}
+''';
+    final ParseResults results = parseSource(code);
+    expect(results.errors, isNotEmpty);
+    expect(results.errors[0].message, contains('isMainActor expects a bool literal'));
+    // Line 7 is `    isMainActor: someVariable,`, not line 5 (`@HostApi(`).
+    expect(results.errors[0].lineNumber, equals(7));
+  });
+
+  test('swiftOptions isMainActor with misspelled argument name reports an error', () {
+    const code = '''
+class Output1 {
+  String? output;
+}
+
+@HostApi(swiftOptions: SwiftHostApiOptions(isMainActr: true))
+abstract class ApiWithMisspelledIsMainActor {
+  Output1 doit();
+}
+''';
+    final ParseResults results = parseSource(code);
+    expect(results.errors, isNotEmpty);
+  });
+
+  test('swiftOptions isMainActor with positional argument reports an error', () {
+    const code = '''
+class Output1 {
+  String? output;
+}
+
+@HostApi(swiftOptions: SwiftHostApiOptions(true))
+abstract class ApiWithPositionalIsMainActor {
+  Output1 doit();
+}
+''';
+    final ParseResults results = parseSource(code);
+    expect(results.errors, isNotEmpty);
+  });
+
+  test('swiftOptions wrong constructor call reports an error', () {
+    const code = '''
+class Output1 {
+  String? output;
+}
+
+@HostApi(swiftOptions: SwiftProxyApiOptions())
+abstract class ApiWithWrongSwiftOptionsType {
+  Output1 doit();
+}
+''';
+    final ParseResults results = parseSource(code);
+    expect(results.errors, isNotEmpty);
+  });
+
   test('only visible from nesting', () {
     const code = '''
 class OnlyVisibleFromNesting {
