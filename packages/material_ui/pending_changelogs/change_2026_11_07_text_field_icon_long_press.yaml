@@ -1,0 +1,3 @@
+changelog: |
+  - Stops a long press on an enabled `InkWell`-based widget in a `TextField`'s decoration, such as an `IconButton` in `InputDecoration.suffixIcon`, from focusing the field, changing the selection, or showing the selection toolbar.
+version: patch
