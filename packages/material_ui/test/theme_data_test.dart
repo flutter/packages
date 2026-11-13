@@ -1408,6 +1408,7 @@ void main() {
         style: IconButton.styleFrom(foregroundColor: Colors.pink),
       ),
       listTileTheme: const ListTileThemeData(),
+      loadingIndicatorTheme: const LoadingIndicatorThemeData(),
       menuBarTheme: const MenuBarThemeData(
         style: MenuStyle(backgroundColor: MaterialStatePropertyAll<Color>(Colors.black)),
       ),
@@ -1531,6 +1532,7 @@ void main() {
       floatingActionButtonTheme: const FloatingActionButtonThemeData(backgroundColor: Colors.white),
       iconButtonTheme: const IconButtonThemeData(),
       listTileTheme: const ListTileThemeData(),
+      loadingIndicatorTheme: const LoadingIndicatorThemeData(color: Colors.black),
       menuBarTheme: const MenuBarThemeData(
         style: MenuStyle(backgroundColor: MaterialStatePropertyAll<Color>(Colors.white)),
       ),
@@ -1631,6 +1633,7 @@ void main() {
       floatingActionButtonTheme: otherTheme.floatingActionButtonTheme,
       iconButtonTheme: otherTheme.iconButtonTheme,
       listTileTheme: otherTheme.listTileTheme,
+      loadingIndicatorTheme: otherTheme.loadingIndicatorTheme,
       menuBarTheme: otherTheme.menuBarTheme,
       menuButtonTheme: otherTheme.menuButtonTheme,
       menuTheme: otherTheme.menuTheme,
@@ -1723,6 +1726,7 @@ void main() {
     expect(themeDataCopy.floatingActionButtonTheme, equals(otherTheme.floatingActionButtonTheme));
     expect(themeDataCopy.iconButtonTheme, equals(otherTheme.iconButtonTheme));
     expect(themeDataCopy.listTileTheme, equals(otherTheme.listTileTheme));
+    expect(themeDataCopy.loadingIndicatorTheme, equals(otherTheme.loadingIndicatorTheme));
     expect(themeDataCopy.menuBarTheme, equals(otherTheme.menuBarTheme));
     expect(themeDataCopy.menuButtonTheme, equals(otherTheme.menuButtonTheme));
     expect(themeDataCopy.menuTheme, equals(otherTheme.menuTheme));
@@ -1871,6 +1875,7 @@ void main() {
       'floatingActionButtonTheme',
       'iconButtonTheme',
       'listTileTheme',
+      'loadingIndicatorTheme',
       'menuBarTheme',
       'menuButtonTheme',
       'menuTheme',

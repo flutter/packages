@@ -1,0 +1,5 @@
+changelog: |
+  - Adds `LoadingIndicator`, the Material 3 Expressive loading indicator, in default and contained variants that can be indeterminate or determinate.
+  - Adds `LoadingIndicatorTheme`, `LoadingIndicatorThemeData` and `ThemeData.loadingIndicatorTheme` to customize loading indicators.
+  - Adds examples of the loading indicators, including their use for pull to refresh.
+version: minor
