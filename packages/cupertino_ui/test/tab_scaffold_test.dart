@@ -566,6 +566,59 @@ void main() {
     expect(MediaQuery.of(innerContext).padding.bottom, 0);
   });
 
+  testWidgets(
+    'Scaffold background paints behind bottom view inset when resizeToAvoidBottomInset is true',
+    (WidgetTester tester) async {
+      const scaffoldColor = Color(0xFF123456);
+      const themeScaffoldColor = Color(0xFF2468AC);
+      const pageColor = Color(0xFF654321);
+
+      Widget buildApp({Color? backgroundColor}) {
+        return CupertinoApp(
+          theme: const CupertinoThemeData(scaffoldBackgroundColor: themeScaffoldColor),
+          home: MediaQuery(
+            data: const MediaQueryData(viewInsets: EdgeInsets.only(bottom: 200.0)),
+            child: CupertinoTabScaffold(
+              backgroundColor: backgroundColor,
+              tabBar: CupertinoTabBar(
+                items: const <BottomNavigationBarItem>[
+                  BottomNavigationBarItem(icon: Icon(CupertinoIcons.home), label: 'Tab 1'),
+                  BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Tab 2'),
+                ],
+              ),
+              tabBuilder: (BuildContext context, int index) {
+                return const CupertinoPageScaffold(
+                  backgroundColor: pageColor,
+                  child: Placeholder(),
+                );
+              },
+            ),
+          ),
+        );
+      }
+
+      await tester.pumpWidget(buildApp(backgroundColor: scaffoldColor));
+      expect(
+        tester.getRect(find.byType(CupertinoPageScaffold)),
+        const Rect.fromLTWH(0.0, 0.0, 800.0, 400.0),
+      );
+      expect(
+        find.byType(CupertinoTabScaffold),
+        paints
+          ..rect(rect: const Rect.fromLTWH(0.0, 0.0, 800.0, 600.0), color: scaffoldColor)
+          ..rect(rect: const Rect.fromLTWH(0.0, 0.0, 800.0, 400.0), color: pageColor),
+      );
+
+      await tester.pumpWidget(buildApp());
+      expect(
+        find.byType(CupertinoTabScaffold),
+        paints
+          ..rect(rect: const Rect.fromLTWH(0.0, 0.0, 800.0, 600.0), color: themeScaffoldColor)
+          ..rect(rect: const Rect.fromLTWH(0.0, 0.0, 800.0, 400.0), color: pageColor),
+      );
+    },
+  );
+
   testWidgets('Deleting tabs after selecting them should switch to the last available tab', (
     WidgetTester tester,
   ) async {
