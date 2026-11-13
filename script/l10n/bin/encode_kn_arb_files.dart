@@ -3,12 +3,12 @@
 // found in the LICENSE file.
 
 // The utility function `encodeKnArbFiles` replaces the material_kn.arb
-// and cupertino_kn.arb files in flutter_localizations/packages/lib/src/l10n
-// with versions where the contents of the localized strings have been
-// replaced by JSON escapes. This is done because some of those strings
-// contain characters that can crash Emacs on Linux. There is more information
-// here: https://github.com/flutter/flutter/issues/36704 and in the README
-// in flutter_localizations/packages/lib/src/l10n in the Flutter SDK.
+// and cupertino_kn.arb files in packages/material_ui/lib/src/l10n and
+// packages/cupertino_ui/lib/src/l10n with versions where the contents of the
+// localized strings have been replaced by JSON escapes. This is done because
+// some of those strings contain characters that can crash Emacs on Linux.
+// There is more information here: https://github.com/flutter/flutter/issues/36704
+// and in script/l10n/README.md.
 //
 // This utility is run by `gen_localizations.dart` if --overwrite is passed
 // in as an option.
