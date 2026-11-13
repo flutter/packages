@@ -158,6 +158,7 @@ class Tooltip extends StatefulWidget {
     this.onTriggered,
     this.mouseCursor,
     this.ignorePointer,
+    this.showOnFocus,
     this.positionDelegate,
     this.child,
   }) : assert(
@@ -330,6 +331,17 @@ class Tooltip extends StatefulWidget {
   /// handled or ignored.
   final bool? ignorePointer;
 
+  /// Whether the tooltip is shown when [child] receives keyboard focus.
+  ///
+  /// When true, the tooltip appears when focus moves into [child] while
+  /// [FocusManager.highlightMode] is [FocusHighlightMode.traditional], and
+  /// hides when focus leaves. Focus from touch does not show it. Pressing
+  /// Escape dismisses it without moving focus.
+  ///
+  /// If null, [TooltipThemeData.showOnFocus] is used. If that is also null,
+  /// the default is false.
+  final bool? showOnFocus;
+
   /// {@macro flutter.widgets.RawTooltip.positionDelegate}
   final TooltipPositionDelegate? positionDelegate;
 
@@ -395,6 +407,7 @@ class Tooltip extends StatefulWidget {
       FlagProperty('enableFeedback', value: enableFeedback, ifTrue: 'true', showName: true),
     );
     properties.add(DiagnosticsProperty<TextAlign>('textAlign', textAlign, defaultValue: null));
+    properties.add(DiagnosticsProperty<bool>('showOnFocus', showOnFocus, defaultValue: null));
     properties.add(
       DiagnosticsProperty<TooltipPositionDelegate>(
         'positionDelegate',
@@ -420,8 +433,15 @@ class TooltipState extends State<Tooltip> with SingleTickerProviderStateMixin {
   static const TooltipTriggerMode _defaultTriggerMode = TooltipTriggerMode.longPress;
   static const bool _defaultEnableFeedback = true;
   static const TextAlign _defaultTextAlign = TextAlign.start;
+  static const bool _defaultShowOnFocus = false;
 
   final GlobalKey<RawTooltipState> _tooltipKey = GlobalKey<RawTooltipState>();
+
+  // Whether the child subtree currently has focus.
+  bool _hasFocus = false;
+
+  // Whether the tooltip was shown because the child gained keyboard focus.
+  bool _shownForFocus = false;
 
   // From InheritedWidgets
   late bool _visible;
@@ -436,6 +456,28 @@ class TooltipState extends State<Tooltip> with SingleTickerProviderStateMixin {
   /// {@macro flutter.widgets.RawTooltipState.ensureTooltipVisible}
   bool ensureTooltipVisible() {
     return _tooltipKey.currentState?.ensureTooltipVisible() ?? false;
+  }
+
+  void _handleFocusChange(bool hasFocus) {
+    _hasFocus = hasFocus;
+    if (!hasFocus) {
+      if (_shownForFocus) {
+        _shownForFocus = false;
+        Tooltip.dismissAllToolTips();
+      }
+      return;
+    }
+    if (FocusManager.instance.highlightMode != FocusHighlightMode.traditional) {
+      return;
+    }
+    // Show after the frame so that, when focus moves between two tooltips,
+    // the dismiss from the one losing focus runs first.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && _hasFocus) {
+        _shownForFocus = ensureTooltipVisible();
+      }
+    });
+    WidgetsBinding.instance.ensureVisualUpdate();
   }
 
   @protected
@@ -562,6 +604,17 @@ class TooltipState extends State<Tooltip> with SingleTickerProviderStateMixin {
         _defaultExcludeFromSemantics;
 
     if (_visible) {
+      final bool showOnFocus =
+          widget.showOnFocus ?? _tooltipTheme.showOnFocus ?? _defaultShowOnFocus;
+      if (showOnFocus) {
+        effectiveChild = Focus(
+          canRequestFocus: false,
+          skipTraversal: true,
+          includeSemantics: false,
+          onFocusChange: _handleFocusChange,
+          child: effectiveChild,
+        );
+      }
       effectiveChild = RawTooltip(
         key: _tooltipKey,
         semanticsTooltip: excludeFromSemantics ? null : _tooltipMessage,
