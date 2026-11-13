@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes `ButtonThemeData` equality, `hashCode` and diagnostics ignoring `layoutBehavior`.
+version: patch
