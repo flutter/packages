@@ -77,8 +77,10 @@ public final class URLLauncherPlugin: NSObject, FlutterPlugin, UrlLauncherApi {
         }
         self.currentSession = session
 
-        session.didFinish = { [weak self] in
-          self?.currentSession = nil
+        session.didFinish = { [weak self, weak session] in
+          if self?.currentSession === session {
+            self?.currentSession = nil
+          }
         }
         presenter.present(session.safariViewController, animated: true, completion: nil)
       }

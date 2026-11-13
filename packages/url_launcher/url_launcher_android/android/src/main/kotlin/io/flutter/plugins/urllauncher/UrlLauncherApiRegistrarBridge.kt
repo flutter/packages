@@ -12,11 +12,13 @@ import io.flutter.embedding.engine.plugins.FlutterPlugin
  * instance name is private.
  */
 internal object UrlLauncherApiRegistrarBridge {
+  private val registrar = UrlLauncherApiRegistrar()
+
   fun register(api: UrlLauncherApi, binding: FlutterPlugin.FlutterPluginBinding) {
-    UrlLauncherApiRegistrar().register(api, binding)
+    registrar.register(api, binding)
   }
 
   fun unregister(api: UrlLauncherApi, binding: FlutterPlugin.FlutterPluginBinding) {
-    UrlLauncherApiRegistrar().unregister(api, binding)
+    registrar.unregister(api, binding)
   }
 }
