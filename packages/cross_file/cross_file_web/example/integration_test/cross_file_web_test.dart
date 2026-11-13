@@ -262,5 +262,13 @@ void main() {
         });
       });
     });
+
+    testWidgets('canWrite returns false', (_) async {
+      final file = PlatformScopedStorageXFile(
+        PlatformScopedStorageXFileCreationParams(uri: testFileUrl),
+      );
+
+      expect(await file.canWrite(), false);
+    });
   });
 }

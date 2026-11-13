@@ -11,6 +11,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import org.mockito.ArgumentCaptor
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 class InputStreamTest {
@@ -50,5 +51,14 @@ class InputStreamTest {
     whenever(instance.skip(n)).thenReturn(value)
 
     assertEquals(value, api.skip(instance, n))
+  }
+
+  @Test
+  fun close() {
+    val api = TestProxyApiRegistrar().getPigeonApiInputStream()
+    val instance = mock<InputStream>()
+
+    api.close(instance)
+    verify(instance).close()
   }
 }

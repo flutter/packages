@@ -1,6 +1,10 @@
-## NEXT
+## 1.1.0
 
-* Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
+* Adds implementation for `PlatformXFile.openWrite`, `PlatformXFile.writeAsString`,
+  `PlatformXFile.delete`, `PlatformXDirectory.createFile`, `PlatformXDirectory.createDirectory`,
+  `PlatformXDirectory.delete`, `PlatformScopedStorageXFile.canWrite`, and
+  `PlatformScopedStorageXDirectory.canWrite`.
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 
 ## 1.0.0
 

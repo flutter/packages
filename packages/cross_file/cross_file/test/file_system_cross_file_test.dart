@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
@@ -102,18 +103,6 @@ void main() {
       expect(await file.name(), name);
     });
 
-    test('name', () async {
-      const name = 'name';
-      CrossFilePlatform.instance = TestCrossFilePlatform(
-        onCreatePlatformFileSystemXFile: (PlatformFileSystemXFileCreationParams params) =>
-            TestFileSystemXFile(params, onName: () async => name),
-      );
-
-      final file = XFile.fileSystem(path: 'to/myFile.txt');
-
-      expect(await file.name(), name);
-    });
-
     test('writeAsBytes', () async {
       final testBytes = Uint8List.fromList(<int>[0, 1, 2, 3]);
       CrossFilePlatform.instance = TestCrossFilePlatform(
@@ -130,6 +119,59 @@ void main() {
       final file = FileSystemXFile('to/myFile.txt');
 
       await file.writeAsBytes(testBytes);
+    });
+
+    test('writeAsString', () async {
+      const testString = 'Hello, World!';
+      CrossFilePlatform.instance = TestCrossFilePlatform(
+        onCreatePlatformFileSystemXFile: (PlatformFileSystemXFileCreationParams params) =>
+            TestFileSystemXFile(
+              params,
+              onWriteAsString: expectAsync1((PlatformWriteAsStringParams writeParams) async {
+                expect(writeParams.contents, testString);
+                expect(writeParams.encoding, utf8);
+                return TestFileSystemXFile(params);
+              }),
+            ),
+      );
+
+      final file = FileSystemXFile('to/myFile.txt');
+
+      await file.writeAsString(testString);
+    });
+
+    test('openWrite', () async {
+      final StreamSink<Uint8List> mockSink = StreamController<Uint8List>().sink;
+
+      CrossFilePlatform.instance = TestCrossFilePlatform(
+        onCreatePlatformFileSystemXFile: (PlatformFileSystemXFileCreationParams params) =>
+            TestFileSystemXFile(
+              params,
+              onOpenWrite: expectAsync1((PlatformOpenWriteParams params) {
+                return mockSink;
+              }),
+            ),
+      );
+
+      final file = FileSystemXFile('to/myFile.txt');
+
+      expect(file.openWrite(), mockSink);
+    });
+
+    test('delete', () async {
+      CrossFilePlatform.instance = TestCrossFilePlatform(
+        onCreatePlatformFileSystemXFile: (PlatformFileSystemXFileCreationParams params) =>
+            TestFileSystemXFile(
+              params,
+              onDelete: expectAsync1((PlatformFileDeleteParams params) async {
+                return true;
+              }),
+            ),
+      );
+
+      final file = FileSystemXFile('to/myFile.txt');
+
+      expect(await file.delete(), true);
     });
   });
 }

@@ -1,5 +1,8 @@
-## NEXT
+## 0.4.1
 
+* Adds support to modify files and directories. See `XFile.openWrite`, `XFile.writeAsString`,
+  `XFile.delete`, `XDirectory.createFile`, `XDirectory.createDirectory`, `XDirectory.delete`,
+  `ScopedStorageXFile.canWrite`, and `ScopedStorageXDirectory.canWrite`.
 * Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
 
 ## 0.4.0

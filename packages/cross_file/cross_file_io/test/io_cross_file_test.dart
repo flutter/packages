@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -63,12 +64,63 @@ void main() {
     test('writeAsBytes', () async {
       final Directory tempDir = Directory.systemTemp;
       final tempFile = File(path.join(tempDir.path, 'test_file.txt'));
+      addTearDown(() => tempFile.deleteSync());
 
       final bytes = Uint8List.fromList([0, 1, 2, 3]);
       final file = PlatformFileSystemXFile(PlatformFileSystemXFileCreationParams(tempFile.path));
       await file.writeAsBytes(PlatformWriteAsBytesParams(bytes));
 
       expect(await file.readAsBytes(), bytes);
+    });
+
+    test('writeAsString', () async {
+      final Directory tempDir = Directory.systemTemp;
+      final tempFile = File(path.join(tempDir.path, 'test_write_as_string.txt'));
+      addTearDown(() => tempFile.deleteSync());
+
+      final file = PlatformFileSystemXFile(PlatformFileSystemXFileCreationParams(tempFile.path));
+      await file.writeAsString(const PlatformWriteAsStringParams('Hello, world!'));
+
+      expect(await file.readAsString(), 'Hello, world!');
+    });
+
+    test('openWrite', () async {
+      final Directory tempDir = Directory.systemTemp;
+      final tempFile = File(path.join(tempDir.path, 'test_open_write.txt'));
+      addTearDown(() => tempFile.deleteSync());
+
+      final file = PlatformFileSystemXFile(PlatformFileSystemXFileCreationParams(tempFile.path));
+      final StreamSink<Uint8List> sink = file.openWrite(const PlatformOpenWriteParams());
+
+      final bytes = Uint8List.fromList([10, 20, 30]);
+      sink.add(bytes);
+      await sink.close();
+
+      expect(await file.readAsBytes(), bytes);
+    });
+
+    test('delete', () async {
+      final Directory tempDir = Directory.systemTemp;
+      final tempFile = File(path.join(tempDir.path, 'test_delete.txt'));
+      tempFile.writeAsStringSync('delete me');
+
+      final file = PlatformFileSystemXFile(PlatformFileSystemXFileCreationParams(tempFile.path));
+      expect(await file.exists(), true);
+
+      final bool result = await file.delete(const PlatformFileDeleteParams());
+      expect(result, true);
+      expect(await file.exists(), false);
+    });
+
+    test('delete non-existent file returns false', () async {
+      final Directory tempDir = Directory.systemTemp;
+      final tempFile = File(path.join(tempDir.path, 'non_existent.txt'));
+
+      final file = PlatformFileSystemXFile(PlatformFileSystemXFileCreationParams(tempFile.path));
+      expect(await file.exists(), false);
+
+      final bool result = await file.delete(const PlatformFileDeleteParams());
+      expect(result, false);
     });
   });
 }

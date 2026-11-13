@@ -1,5 +1,6 @@
-## NEXT
+## 1.2.0
 
+* Adds implementation for `PlatformScopedStorageXFile.canWrite` that always returns false.
 * Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
 
 ## 1.1.0
