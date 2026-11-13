@@ -231,7 +231,7 @@ class VideoPlayer: NSObject {
   }
 
   deinit {
-    if let playToEndObserver = playToEndObserver {
+    if let playToEndObserver {
       NotificationCenter.default.removeObserver(playToEndObserver)
     }
   }
@@ -369,7 +369,7 @@ class VideoPlayer: NSObject {
     disposed = true
 
     // Remove all observers.
-    if let playToEndObserver = playToEndObserver {
+    if let playToEndObserver {
       NotificationCenter.default.removeObserver(playToEndObserver)
       self.playToEndObserver = nil
     }
@@ -642,7 +642,7 @@ class VideoPlayer: NSObject {
     }
     let details = NSMutableOrderedSet(object: "Failed to load video")
     let addToDetails: (String?) -> Void = { detail in
-      if let detail = detail {
+      if let detail {
         details.add(detail)
       }
     }

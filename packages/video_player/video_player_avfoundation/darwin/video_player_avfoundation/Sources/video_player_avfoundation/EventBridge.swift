@@ -49,7 +49,7 @@ private enum QueueableEvent {
       eventSink = sink
 
       // Send any events that came in before the sink was ready.
-      if let queuedEvents = queuedEvents {
+      if let queuedEvents {
         for event in queuedEvents {
           switch event {
           case .event(let videoEvent):
