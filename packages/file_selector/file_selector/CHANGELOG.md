@@ -1,6 +1,6 @@
 ## NEXT
 
-* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+* Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
 * Updates README to reflect that the latest versions of `file_selector_ios`
   and `file_selector_macos` require iOS 15 and macOS 12.
   * Applications built with older versions of Flutter will continue to use

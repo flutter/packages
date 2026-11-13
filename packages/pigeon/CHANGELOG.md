@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
+
 ## 30.0.2
 
 * Fixes `basePath` resolution when an output or directory path shares a string prefix with `basePath`.

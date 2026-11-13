@@ -531,6 +531,15 @@ class ScaffoldMessengerState extends State<ScaffoldMessenger> with TickerProvide
   /// [ScaffoldFeatureController]. To remove a [MaterialBanner] suddenly (without an
   /// animation), use [removeCurrentMaterialBanner].
   ///
+  /// When this [ScaffoldMessenger] is above the [Navigator], such as the one
+  /// created by [MaterialApp], a [MaterialBanner] stays visible after the route
+  /// that showed it is popped, and that route's [BuildContext] is deactivated.
+  /// Because of this, callbacks in [MaterialBanner.actions] should not call
+  /// [ScaffoldMessenger.of] with a [BuildContext] from the route that showed the
+  /// banner. Instead, wrap the action widget in a [Builder] to obtain an active
+  /// [BuildContext], or save the [ScaffoldMessengerState] reference before calling
+  /// [showMaterialBanner].
+  ///
   /// See [ScaffoldMessenger.of] for information about how to obtain the
   /// [ScaffoldMessengerState].
   ///
