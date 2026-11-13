@@ -102,3 +102,44 @@ jobs:
         with:
           pr-number: ${{ steps.validate.outputs.pr_number }}
           sync-labels: true
+
+      - name: Apply priority label from closing issues
+        if: steps.validate.outputs.pr_number != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ steps.validate.outputs.pr_number }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          ISSUE_URLS=$(gh pr view "$PR_NUMBER" --repo "$REPO" --json closingIssuesReferences \
+            --jq '.closingIssuesReferences[].url')
+          if [ -z "$ISSUE_URLS" ]; then
+            exit 0
+          fi
+
+          PRIORITIES=""
+          for ISSUE_URL in $ISSUE_URLS; do
+            ISSUE_PRIORITIES=$(gh issue view "$ISSUE_URL" --json labels \
+              --jq '.labels[].name | select(test("^P[0-3]$"))' || true)
+            if [ -n "$ISSUE_PRIORITIES" ]; then
+              PRIORITIES=$(printf '%s\n%s' "$PRIORITIES" "$ISSUE_PRIORITIES")
+            fi
+          done
+
+          # P0..P3 sort lexicographically from highest (P0) to lowest (P3) priority.
+          HIGHEST_PRIORITY=$(printf '%s\n' "$PRIORITIES" | grep -E '^P[0-3]$' | sort | head -n 1 || true)
+          if [ -z "$HIGHEST_PRIORITY" ]; then
+            exit 0
+          fi
+
+          # Remove any other P0..P3 labels already on the PR before applying the highest priority.
+          EXISTING_PRIORITIES=$(jq -r '.labels[].name | select(test("^P[0-3]$"))' "$RUNNER_TEMP/pr.json")
+          for LABEL in $EXISTING_PRIORITIES; do
+            if [ "$LABEL" != "$HIGHEST_PRIORITY" ]; then
+              gh pr edit "$PR_NUMBER" --repo "$REPO" --remove-label "$LABEL"
+            fi
+          done
+
+          if ! printf '%s\n' "$EXISTING_PRIORITIES" | grep -qx "$HIGHEST_PRIORITY"; then
+            gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "$HIGHEST_PRIORITY"
+          fi
