@@ -74,6 +74,40 @@ await signIn.init(
 
 Note that step 6 is still required.
 
+#### App Check
+
+The GoogleSignIn SDK can attach an [App Check](https://firebase.google.com/docs/app-check)
+token to its requests, so that an OAuth client that enforces App Check can
+verify that they come from your app. To set up App Check for your OAuth client,
+follow [the GoogleSignIn SDK instructions](https://developers.google.com/identity/sign-in/ios/appcheck/get-started).
+
+`GIDSignIn.sharedInstance` is shared with this plugin, so you can configure App
+Check in your app's `AppDelegate`. The SDK recommends doing this as early as
+possible, in `application(_:didFinishLaunchingWithOptions:)`:
+
+```swift
+import GoogleSignIn
+
+// In application(_:didFinishLaunchingWithOptions:):
+#if targetEnvironment(simulator)
+  // App Attest is not available on the simulator, so use the debug provider.
+  GIDSignIn.sharedInstance.configureDebugProvider(withAPIKey: "[YOUR API KEY]") { error in
+    if let error {
+      print("Error configuring GIDSignIn for App Check: \(error)")
+    }
+  }
+#else
+  GIDSignIn.sharedInstance.configure { error in
+    if let error {
+      print("Error configuring GIDSignIn for App Check: \(error)")
+    }
+  }
+#endif
+```
+
+App Check reads the client ID from the `GIDClientID` key in `Info.plist` (step 4),
+so that key is required even if you pass `clientId` from Dart.
+
 #### App Store requirements
 
 Apple's App Review Guidelines impose
