@@ -1395,6 +1395,9 @@ void main() {
                                 increasedValue: '55%',
                                 decreasedValue: '45%',
                                 textDirection: TextDirection.ltr,
+                                role: SemanticsRole.slider,
+                                minValue: '0.0',
+                                maxValue: '1.0',
                               ),
                             ],
                           ),
@@ -1452,6 +1455,7 @@ void main() {
                                 increasedValue: '55%',
                                 decreasedValue: '45%',
                                 textDirection: TextDirection.ltr,
+                                role: SemanticsRole.slider,
                               ),
                             ],
                           ),
@@ -1500,6 +1504,7 @@ void main() {
                                 increasedValue: '55%',
                                 decreasedValue: '45%',
                                 textDirection: TextDirection.ltr,
+                                role: SemanticsRole.slider,
                               ),
                             ],
                           ),
@@ -1580,6 +1585,9 @@ void main() {
                                 increasedValue: '60%',
                                 decreasedValue: '40%',
                                 textDirection: TextDirection.ltr,
+                                role: SemanticsRole.slider,
+                                minValue: '0.0',
+                                maxValue: '200.0',
                               ),
                             ],
                           ),
@@ -1637,6 +1645,7 @@ void main() {
                                 increasedValue: '60%',
                                 decreasedValue: '40%',
                                 textDirection: TextDirection.ltr,
+                                role: SemanticsRole.slider,
                               ),
                             ],
                           ),
@@ -1715,6 +1724,7 @@ void main() {
                                 increasedValue: '55%',
                                 decreasedValue: '45%',
                                 textDirection: TextDirection.ltr,
+                                role: SemanticsRole.slider,
                               ),
                             ],
                           ),
@@ -1775,6 +1785,7 @@ void main() {
                                 increasedValue: '55%',
                                 decreasedValue: '45%',
                                 textDirection: TextDirection.ltr,
+                                role: SemanticsRole.slider,
                               ),
                             ],
                           ),
@@ -1827,6 +1838,7 @@ void main() {
                                 increasedValue: '55%',
                                 decreasedValue: '45%',
                                 textDirection: TextDirection.ltr,
+                                role: SemanticsRole.slider,
                               ),
                             ],
                           ),
@@ -1905,6 +1917,7 @@ void main() {
                               increasedValue: '60',
                               decreasedValue: '20',
                               textDirection: TextDirection.ltr,
+                              role: SemanticsRole.slider,
                             ),
                             TestSemantics(id: 6),
                           ],
@@ -1984,6 +1997,7 @@ void main() {
                               increasedValue: '60',
                               decreasedValue: '20',
                               textDirection: TextDirection.ltr,
+                              role: SemanticsRole.slider,
                             ),
                             TestSemantics(id: 6),
                           ],
@@ -2002,6 +2016,36 @@ void main() {
     );
     semantics.dispose();
   }, skip: kIsWeb); // [intended] the web traversal order by using ARIA-OWNS.
+
+  testWidgets('Slider semantics supports formatted values', (WidgetTester tester) async {
+    final semantics = SemanticsTester(tester);
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Material(
+          child: Slider(
+            value: 40,
+            max: 100,
+            semanticFormatterCallback: (double value) => '${value.round()} dollars',
+            onChanged: (double value) {},
+          ),
+        ),
+      ),
+    );
+    expect(tester.takeException(), isNull);
+    expect(semantics, includesNodeWith(value: '40 dollars'));
+    semantics.dispose();
+  });
+
+  testWidgets('Slider semantics supports equal min and max', (WidgetTester tester) async {
+    final SemanticsHandle handle = tester.ensureSemantics();
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Material(child: Slider(value: 0, min: 0, max: 0, onChanged: (double value) {})),
+      ),
+    );
+    expect(tester.takeException(), isNull);
+    handle.dispose();
+  });
 
   testWidgets('Material3 - Slider is focusable and has correct focus color', (
     WidgetTester tester,
@@ -2939,6 +2983,7 @@ void main() {
                                 increasedValue: '55%',
                                 decreasedValue: '45%',
                                 textDirection: TextDirection.ltr,
+                                role: SemanticsRole.slider,
                               ),
                             ],
                           ),
