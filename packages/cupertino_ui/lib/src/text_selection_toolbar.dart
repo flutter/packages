@@ -587,6 +587,7 @@ class _CupertinoTextSelectionToolbarContentState
 
     if (renderToolbar is _RenderCupertinoTextSelectionToolbarItems && renderToolbar.hasNextPage) {
       _controller.reverse();
+      _controller.removeStatusListener(_statusListener);
       _controller.addStatusListener(_statusListener);
       _nextPage = _page + 1;
     }
@@ -598,6 +599,7 @@ class _CupertinoTextSelectionToolbarContentState
     if (renderToolbar is _RenderCupertinoTextSelectionToolbarItems &&
         renderToolbar.hasPreviousPage) {
       _controller.reverse();
+      _controller.removeStatusListener(_statusListener);
       _controller.addStatusListener(_statusListener);
       _nextPage = _page - 1;
     }
@@ -608,12 +610,17 @@ class _CupertinoTextSelectionToolbarContentState
       return;
     }
 
+    _controller.removeStatusListener(_statusListener);
+    final int? nextPage = _nextPage;
+    if (nextPage == null) {
+      return;
+    }
+
     setState(() {
-      _page = _nextPage!;
+      _page = nextPage;
       _nextPage = null;
     });
     _controller.forward();
-    _controller.removeStatusListener(_statusListener);
   }
 
   @override
