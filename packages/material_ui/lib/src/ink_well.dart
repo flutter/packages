@@ -1069,19 +1069,11 @@ class _InkResponseState extends State<_InkResponseStateWidget>
 
     if (value) {
       if (highlight == null) {
-        final Color resolvedOverlayColor =
-            widget.overlayColor?.resolve(statesController.value) ??
-            switch (type) {
-              // Use the backwards compatible defaults
-              _HighlightType.pressed => widget.highlightColor ?? Theme.of(context).highlightColor,
-              _HighlightType.focus => widget.focusColor ?? Theme.of(context).focusColor,
-              _HighlightType.hover => widget.hoverColor ?? Theme.of(context).hoverColor,
-            };
         final referenceBox = context.findRenderObject()! as RenderBox;
         _highlights[type] = InkHighlight(
           controller: Material.of(context),
           referenceBox: referenceBox,
-          color: enabled ? resolvedOverlayColor : resolvedOverlayColor.withAlpha(0),
+          color: _getHighlightColorForType(type),
           shape: widget.highlightShape,
           radius: widget.radius,
           borderRadius: widget.borderRadius,
@@ -1399,11 +1391,7 @@ class _InkResponseState extends State<_InkResponseStateWidget>
     NavigationMode.directional => true,
   };
 
-  @override
-  Widget build(BuildContext context) {
-    assert(widget.debugCheckContext(context));
-    super.build(context); // See AutomaticKeepAliveClientMixin.
-
+  Color _getHighlightColorForType(_HighlightType type) {
     final ThemeData theme = Theme.of(context);
     const highlightableStates = <WidgetState>{
       WidgetState.focused,
@@ -1419,22 +1407,27 @@ class _InkResponseState extends State<_InkResponseStateWidget>
     final focused = <WidgetState>{...nonHighlightableStates, WidgetState.focused};
     final hovered = <WidgetState>{...nonHighlightableStates, WidgetState.hovered};
 
-    Color getHighlightColorForType(_HighlightType type) {
-      return switch (type) {
-        // The pressed state triggers a ripple (ink splash), per the current
-        // Material Design spec. A separate highlight is no longer used.
-        // See https://material.io/design/interaction/states.html#pressed
-        _HighlightType.pressed =>
-          widget.overlayColor?.resolve(pressed) ?? widget.highlightColor ?? theme.highlightColor,
-        _HighlightType.focus =>
-          widget.overlayColor?.resolve(focused) ?? widget.focusColor ?? theme.focusColor,
-        _HighlightType.hover =>
-          widget.overlayColor?.resolve(hovered) ?? widget.hoverColor ?? theme.hoverColor,
-      };
-    }
+    final Color color = switch (type) {
+      // The pressed state triggers a ripple (ink splash), per the current
+      // Material Design spec. A separate highlight is no longer used.
+      // See https://material.io/design/interaction/states.html#pressed
+      _HighlightType.pressed =>
+        widget.overlayColor?.resolve(pressed) ?? widget.highlightColor ?? theme.highlightColor,
+      _HighlightType.focus =>
+        widget.overlayColor?.resolve(focused) ?? widget.focusColor ?? theme.focusColor,
+      _HighlightType.hover =>
+        widget.overlayColor?.resolve(hovered) ?? widget.hoverColor ?? theme.hoverColor,
+    };
+    return enabled ? color : color.withAlpha(0);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    assert(widget.debugCheckContext(context));
+    super.build(context); // See AutomaticKeepAliveClientMixin.
 
     for (final _HighlightType type in _highlights.keys) {
-      _highlights[type]?.color = getHighlightColorForType(type);
+      _highlights[type]?.color = _getHighlightColorForType(type);
     }
 
     _currentSplash?.color =
