@@ -14,7 +14,7 @@ name: Pull Request Labeler Trigger
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened]
+    types: [opened, edited, synchronize, reopened]
 
 # Declare default permissions as read only.
 permissions:
