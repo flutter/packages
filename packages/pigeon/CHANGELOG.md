@@ -1,5 +1,6 @@
-## NEXT
+## 30.0.3
 
+* Adds @JvmOverloads to generated Kotlin native-interop (JNI) registration functions so Java callers can omit the optional instance name argument.
 * Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
 
 ## 30.0.2
