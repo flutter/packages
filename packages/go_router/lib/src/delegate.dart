@@ -52,6 +52,12 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList> with ChangeNotifie
 
   final RouteConfiguration _configuration;
 
+  /// Called with the new [currentConfiguration] after a page is popped.
+  ///
+  /// [GoRouter] uses it to keep its route information provider in sync.
+  @internal
+  ValueChanged<RouteMatchList>? onRouteMatchListPopped;
+
   @override
   Future<bool> popRoute() async {
     final Iterable<NavigatorState> states = _findCurrentNavigators();
@@ -192,6 +198,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList> with ChangeNotifie
 
     // Unconditionally remove the match from the current configuration
     currentConfiguration = currentConfiguration.remove(match);
+    onRouteMatchListPopped?.call(currentConfiguration);
 
     notifyListeners();
 
