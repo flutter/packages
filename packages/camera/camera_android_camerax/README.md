@@ -31,6 +31,19 @@ Calling `startVideoCapturing` with `VideoCaptureOptions` configured with
 limitations of the platform interface,
 and thus that parameter will silently be ignored.
 
+### Zero-shutter-lag
+
+Zero-shutter-lag has no effect while the flash mode is `FlashMode.auto` or
+`FlashMode.always`. See the CameraX [zero-shutter-lag documentation][14].
+
+With `ResolutionPreset.max`, image capture may use the camera's high-resolution
+output sizes, while the preview and image streaming use the largest regular
+output size. CameraX does not support zero-shutter-lag together with
+high-resolution output sizes, so enabling zero-shutter-lag limits image capture
+to the largest regular output size while the flash mode is `FlashMode.off` or
+`FlashMode.torch`. On devices whose largest still size is only available as a
+high-resolution output size, pictures will be smaller.
+
 ## What requires Android permissions
 
 ### Writing to external storage to save image files
@@ -107,4 +120,5 @@ For more information on contributing to this plugin, see [`CONTRIBUTING.md`](CON
 [11]: https://developer.android.com/reference/android/Manifest.permission#WRITE_EXTERNAL_STORAGE
 [12]: https://developer.android.com/reference/android/Manifest.permission#FOREGROUND_SERVICE_CAMERA
 [13]: https://developer.android.com/reference/android/Manifest.permission#READ_EXTERNAL_STORAGE
+[14]: https://developer.android.com/media/camera/camerax/take-photo/zsl
 [148013]: https://github.com/flutter/flutter/issues/148013
