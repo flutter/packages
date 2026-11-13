@@ -24,6 +24,7 @@ import 'package:a11y_assessments/use_cases/text_button.dart';
 import 'package:a11y_assessments/use_cases/text_field.dart';
 import 'package:a11y_assessments/use_cases/text_field_password.dart';
 import 'package:a11y_assessments/use_cases/use_cases.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_color_utilities/material_color_utilities.dart';
@@ -46,6 +47,50 @@ void main() {
     expect(app.darkTheme!.tooltipTheme.showOnFocus, isTrue);
     expect(app.highContrastTheme!.tooltipTheme.showOnFocus, isTrue);
     expect(app.highContrastDarkTheme!.tooltipTheme.showOnFocus, isTrue);
+  });
+
+  testWidgets('All themes keep tooltips open while hovered', (WidgetTester tester) async {
+    await tester.pumpWidget(const App());
+    final app = find.byType(MaterialApp).evaluate().first.widget as MaterialApp;
+    expect(app.theme!.tooltipTheme.ignorePointer, isFalse);
+    expect(app.darkTheme!.tooltipTheme.ignorePointer, isFalse);
+    expect(app.highContrastTheme!.tooltipTheme.ignorePointer, isFalse);
+    expect(app.highContrastDarkTheme!.tooltipTheme.ignorePointer, isFalse);
+  });
+
+  testWidgets('Tooltip stays open when the mouse moves onto it', (WidgetTester tester) async {
+    await tester.pumpWidget(const App());
+    final app = find.byType(MaterialApp).evaluate().first.widget as MaterialApp;
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: app.theme,
+        home: Scaffold(
+          appBar: AppBar(
+            actions: <Widget>[
+              IconButton(
+                tooltip: 'Go to the next page',
+                icon: const Icon(Icons.navigate_next),
+                onPressed: () {},
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    final TestGesture gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
+    await gesture.addPointer(location: Offset.zero);
+    addTearDown(gesture.removePointer);
+    await gesture.moveTo(tester.getCenter(find.byIcon(Icons.navigate_next)));
+    await tester.pumpAndSettle();
+    expect(find.text('Go to the next page'), findsOneWidget);
+
+    // Leaving the button for the tooltip starts its exit timer, which must
+    // not dismiss a tooltip that is itself hovered.
+    await gesture.moveTo(tester.getCenter(find.text('Go to the next page')));
+    await tester.pump(const Duration(seconds: 1));
+    await tester.pumpAndSettle();
+    expect(find.text('Go to the next page'), findsOneWidget);
   });
 
   testWidgets('App can generate high-contrast color scheme', (WidgetTester tester) async {
