@@ -53,6 +53,7 @@ When authoring examples, first place a block in the Dartdoc documentation for
 the symbol you would like to attach it to. Here's what it might look like if you
 wanted to add a new example to the `CupertinoActivityIndicator` class:
 
+<?code-excerpt "lib/readme_excerpts.dart (DartdocComment)"?>
 ```dart
 /// {@example /example/lib/activity_indicator/cupertino_activity_indicator.0.dart}
 /// Write a description of the example here. This description will appear in the
