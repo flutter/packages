@@ -1174,6 +1174,40 @@ void main() {
       expect(theme.primaryColor, Colors.blue);
       expect(theme.primaryContrastingColor, CupertinoColors.destructiveRed);
     });
+
+    testWidgets(
+      'Theme.of does not depend on InheritedCupertinoTheme when Theme ancestor is present',
+      (WidgetTester tester) async {
+        testBuildCalled = 0;
+        final themeData = ThemeData(primaryColor: const Color(0xFF000000));
+
+        Widget buildTree(CupertinoThemeData cupertinoTheme) {
+          return Theme(
+            data: themeData,
+            child: CupertinoTheme(data: cupertinoTheme, child: const Test()),
+          );
+        }
+
+        await tester.pumpWidget(
+          buildTree(const CupertinoThemeData(primaryColor: CupertinoColors.activeBlue)),
+        );
+        expect(testBuildCalled, 1);
+
+        await tester.pumpWidget(
+          buildTree(const CupertinoThemeData(primaryColor: CupertinoColors.activeGreen)),
+        );
+        expect(testBuildCalled, 1);
+      },
+    );
+
+    test('CupertinoBasedMaterialThemeData returns underlying ThemeData for MaterialBasedCupertinoThemeData', () {
+      final materialTheme = ThemeData(colorScheme: const ColorScheme.light(primary: Colors.purple));
+      final cupertinoTheme = MaterialBasedCupertinoThemeData(materialTheme: materialTheme);
+      expect(
+        CupertinoBasedMaterialThemeData(themeData: cupertinoTheme).materialTheme,
+        same(materialTheme),
+      );
+    });
   });
 }
 
