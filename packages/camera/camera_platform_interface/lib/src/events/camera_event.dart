@@ -267,8 +267,9 @@ class VideoRecordedEvent extends CameraEvent {
       super == other &&
           other is VideoRecordedEvent &&
           runtimeType == other.runtimeType &&
+          file.path == other.file.path &&
           maxVideoDuration == other.maxVideoDuration;
 
   @override
-  int get hashCode => Object.hash(super.hashCode, file, maxVideoDuration);
+  int get hashCode => Object.hash(super.hashCode, file.path, maxVideoDuration);
 }
