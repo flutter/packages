@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes the Sinhala (`si`) time format to use `HH.mm` (for example, `09.32`), matching CLDR.
+version: patch
