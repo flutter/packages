@@ -366,6 +366,16 @@ class _TextFormFieldState extends FormFieldState<String> {
 
   TextFormField get _textFormField => super.widget as TextFormField;
 
+  // The text editing controller is the source of truth for this field's value.
+  //
+  // Reading the value from the controller rather than from the value cached by
+  // [FormFieldState] guarantees that validators (and [FormField.onSaved]) see
+  // the current text even when they run before this state has been notified of
+  // a controller change, for example when [FormState.validate] is called from
+  // a controller listener that was registered before this field's own listener.
+  @override
+  String? get value => _effectiveController.text;
+
   @override
   void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
     super.restoreState(oldBucket, initialRestore);
@@ -460,7 +470,7 @@ class _TextFormFieldState extends FormFieldState<String> {
     // notifications for changes originating from within this class -- for
     // example, the reset() method. In such cases, the FormField value will
     // already have been set.
-    if (_effectiveController.text != value) {
+    if (_effectiveController.text != super.value) {
       didChange(_effectiveController.text);
     }
   }
