@@ -18,37 +18,39 @@ import java.util.Objects
 class PlatformVideoViewFactory
 /**
  * Constructs a new PlatformVideoViewFactory.
- * 
+ *
  * @param videoPlayerProvider The provider used to retrieve the video player associated with the
- * view.
- */(private val videoPlayerProvider: VideoPlayerProvider) : PlatformViewFactory(codec) {
-    /** Functional interface for providing a VideoPlayer instance based on the player ID.  */
-    fun interface VideoPlayerProvider {
-        /**
-         * Retrieves a VideoPlayer instance based on the provided player ID.
-         * 
-         * @param playerId The unique identifier for the video player.
-         * @return A VideoPlayer instance associated with the given player ID.
-         */
-        fun getVideoPlayer(playerId: Long): VideoPlayer
-    }
-
+ *   view.
+ */
+(private val videoPlayerProvider: VideoPlayerProvider) : PlatformViewFactory(codec) {
+  /** Functional interface for providing a VideoPlayer instance based on the player ID. */
+  fun interface VideoPlayerProvider {
     /**
-     * Creates a new instance of platform view.
-     * 
-     * @param context The context in which the view is running.
-     * @param id The unique identifier for the view.
-     * @param args The arguments for creating the view.
-     * @return A new instance of PlatformVideoView.
+     * Retrieves a VideoPlayer instance based on the provided player ID.
+     *
+     * @param playerId The unique identifier for the video player.
+     * @return A VideoPlayer instance associated with the given player ID.
      */
-    override fun create(context: Context, id: Int, args: Any?): PlatformView {
-        val params =
-            Objects.requireNonNull<PlatformVideoViewCreationParams>(args as PlatformVideoViewCreationParams?)
-        val playerId = params.playerId
+    fun getVideoPlayer(playerId: Long): VideoPlayer
+  }
 
-        val player = videoPlayerProvider.getVideoPlayer(playerId)
-        val exoPlayer = player.exoPlayer
+  /**
+   * Creates a new instance of platform view.
+   *
+   * @param context The context in which the view is running.
+   * @param id The unique identifier for the view.
+   * @param args The arguments for creating the view.
+   * @return A new instance of PlatformVideoView.
+   */
+  override fun create(context: Context, id: Int, args: Any?): PlatformView {
+    val params =
+        Objects.requireNonNull<PlatformVideoViewCreationParams>(
+            args as PlatformVideoViewCreationParams?)
+    val playerId = params.playerId
 
-        return PlatformVideoView(context, exoPlayer)
-    }
+    val player = videoPlayerProvider.getVideoPlayer(playerId)
+    val exoPlayer = player.exoPlayer
+
+    return PlatformVideoView(context, exoPlayer)
+  }
 }

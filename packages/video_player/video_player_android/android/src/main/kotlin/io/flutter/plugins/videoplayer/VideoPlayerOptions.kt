@@ -4,20 +4,18 @@
 package io.flutter.plugins.videoplayer
 
 class VideoPlayerOptions {
-    @JvmField
-    var mixWithOthers: Boolean = false
+  @JvmField var mixWithOthers: Boolean = false
 
-    /**
-     * The duration of the back buffer in milliseconds, used to configure ExoPlayer's load control.
-     */
-    @JvmField
-    var backBufferDurationMs: Long? = null
+  /**
+   * The duration of the back buffer in milliseconds, used to configure ExoPlayer's load control.
+   */
+  @JvmField var backBufferDurationMs: Long? = null
 
-    constructor()
+  constructor()
 
-    /** Copy constructor to ensure all options are reliably copied.  */
-    constructor(other: VideoPlayerOptions) {
-        this.mixWithOthers = other.mixWithOthers
-        this.backBufferDurationMs = other.backBufferDurationMs
-    }
+  /** Copy constructor to ensure all options are reliably copied. */
+  constructor(other: VideoPlayerOptions) {
+    this.mixWithOthers = other.mixWithOthers
+    this.backBufferDurationMs = other.backBufferDurationMs
+  }
 }

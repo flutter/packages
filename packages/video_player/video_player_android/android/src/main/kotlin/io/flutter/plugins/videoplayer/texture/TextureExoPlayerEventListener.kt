@@ -18,47 +18,50 @@ class TextureExoPlayerEventListener(
     events: VideoPlayerCallbacks,
     private val surfaceProducerHandlesCropAndRotation: Boolean
 ) : ExoPlayerEventListener(exoPlayer, events) {
-    override fun sendInitialized() {
-        val videoSize = exoPlayer.getVideoSize()
-        var rotationCorrection = RotationDegrees.ROTATE_0
-        var width = videoSize.width
-        val height = videoSize.height
-        if (width != 0 && height != 0) {
-            // Anamorphic content is stored with non-square pixels, so the coded width has to be
-            // scaled by the pixel aspect ratio to obtain the display width. ExoPlayer reports a
-            // pixelWidthHeightRatio that already accounts for any applied rotation, so this is
-            // correct regardless of the rotation correction computed below.
-            // Clamped to at least one pixel so that a malformed ratio cannot report a zero width.
-            val pixelWidthHeightRatio = videoSize.pixelWidthHeightRatio
-            if (pixelWidthHeightRatio > 0 && pixelWidthHeightRatio != 1f) {
-                width = max(1, Math.round(width * pixelWidthHeightRatio))
-            }
+  override fun sendInitialized() {
+    val videoSize = exoPlayer.getVideoSize()
+    var rotationCorrection = RotationDegrees.ROTATE_0
+    var width = videoSize.width
+    val height = videoSize.height
+    if (width != 0 && height != 0) {
+      // Anamorphic content is stored with non-square pixels, so the coded width has to be
+      // scaled by the pixel aspect ratio to obtain the display width. ExoPlayer reports a
+      // pixelWidthHeightRatio that already accounts for any applied rotation, so this is
+      // correct regardless of the rotation correction computed below.
+      // Clamped to at least one pixel so that a malformed ratio cannot report a zero width.
+      val pixelWidthHeightRatio = videoSize.pixelWidthHeightRatio
+      if (pixelWidthHeightRatio > 0 && pixelWidthHeightRatio != 1f) {
+        width = max(1, Math.round(width * pixelWidthHeightRatio))
+      }
 
-            // When the SurfaceTexture backend for Impeller is used, the preview should already
-            // be correctly rotated.
-            if (!surfaceProducerHandlesCropAndRotation) {
-                // The video's Format also provides a rotation correction that may be used to
-                // correct the rotation, so we try to use that to correct the video rotation
-                // when the ImageReader backend for Impeller is used.
-                val rawVideoFormatRotation = getRotationCorrectionFromFormat(exoPlayer)
+      // When the SurfaceTexture backend for Impeller is used, the preview should already
+      // be correctly rotated.
+      if (!surfaceProducerHandlesCropAndRotation) {
+        // The video's Format also provides a rotation correction that may be used to
+        // correct the rotation, so we try to use that to correct the video rotation
+        // when the ImageReader backend for Impeller is used.
+        val rawVideoFormatRotation = getRotationCorrectionFromFormat(exoPlayer)
 
-                try {
-                    rotationCorrection = fromDegrees(rawVideoFormatRotation)
-                } catch (e: IllegalArgumentException) {
-                    // Rotation correction other than 0, 90, 180, 270 reported by Format. Because this is
-                    // unexpected we apply no rotation correction.
-                    rotationCorrection = RotationDegrees.ROTATE_0
-                }
-            }
+        try {
+          rotationCorrection = fromDegrees(rawVideoFormatRotation)
+        } catch (e: IllegalArgumentException) {
+          // Rotation correction other than 0, 90, 180, 270 reported by Format. Because this is
+          // unexpected we apply no rotation correction.
+          rotationCorrection = RotationDegrees.ROTATE_0
         }
-        events.onInitialized(width, height, exoPlayer.getDuration(), rotationCorrection.degrees)
+      }
     }
+    events.onInitialized(width, height, exoPlayer.getDuration(), rotationCorrection.degrees)
+  }
 
-    @OptIn(markerClass = UnstableApi::class) // A video's Format and its rotation degrees are unstable because they are not guaranteed
-    // the same implementation across API versions. It is possible that this logic may need
-    // revisiting should the implementation change across versions of the Exoplayer API.
-    private fun getRotationCorrectionFromFormat(exoPlayer: ExoPlayer): Int {
-        val videoFormat = Objects.requireNonNull<Format>(exoPlayer.getVideoFormat())
-        return videoFormat.rotationDegrees
-    }
+  @OptIn(
+      markerClass =
+          UnstableApi::class) // A video's Format and its rotation degrees are unstable because they
+                              // are not guaranteed
+  // the same implementation across API versions. It is possible that this logic may need
+  // revisiting should the implementation change across versions of the Exoplayer API.
+  private fun getRotationCorrectionFromFormat(exoPlayer: ExoPlayer): Int {
+    val videoFormat = Objects.requireNonNull<Format>(exoPlayer.getVideoFormat())
+    return videoFormat.rotationDegrees
+  }
 }

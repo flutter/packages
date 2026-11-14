@@ -16,168 +16,164 @@ abstract class ExoPlayerEventListener(
     @JvmField protected val exoPlayer: ExoPlayer,
     @JvmField protected val events: VideoPlayerCallbacks
 ) : Player.Listener {
-    private var isInitialized = false
-    private var isWaitingForValidDuration = false
-    private val mainHandler = Handler(Looper.getMainLooper())
-    private val initializationFallback = Runnable {
-        if (!isInitialized && isWaitingForValidDuration) {
-            isWaitingForValidDuration = false
-            isInitialized = true
-            sendInitialized()
-        }
+  private var isInitialized = false
+  private var isWaitingForValidDuration = false
+  private val mainHandler = Handler(Looper.getMainLooper())
+  private val initializationFallback = Runnable {
+    if (!isInitialized && isWaitingForValidDuration) {
+      isWaitingForValidDuration = false
+      isInitialized = true
+      sendInitialized()
     }
+  }
 
-    protected enum class RotationDegrees(@JvmField val degrees: Int) {
-        ROTATE_0(0),
-        ROTATE_90(90),
-        ROTATE_180(180),
-        ROTATE_270(270);
-
-        companion object {
-            @JvmStatic
-            fun fromDegrees(degrees: Int): RotationDegrees {
-                for (rotationDegrees in entries) {
-                    if (rotationDegrees.degrees == degrees) {
-                        return rotationDegrees
-                    }
-                }
-                throw IllegalArgumentException("Invalid rotation degrees specified: " + degrees)
-            }
-        }
-    }
-
-    protected abstract fun sendInitialized()
-
-    /** Cancels pending initialization callbacks when the player is disposed.  */
-    fun dispose() {
-        isWaitingForValidDuration = false
-        mainHandler.removeCallbacks(initializationFallback)
-        events.onDisposed()
-    }
-
-    private fun hasValidDuration(): Boolean {
-        return exoPlayer.getDuration() != C.TIME_UNSET
-    }
-
-    private fun shouldWaitForValidDuration(): Boolean {
-        return !exoPlayer.isCurrentMediaItemLive() && !exoPlayer.isCurrentMediaItemDynamic()
-    }
-
-    private fun maybeSendInitialized() {
-        if (isInitialized) {
-            return
-        }
-
-        if (!hasValidDuration() && shouldWaitForValidDuration()) {
-            if (!isWaitingForValidDuration) {
-                isWaitingForValidDuration = true
-                mainHandler.postDelayed(
-                    initializationFallback,
-                    DURATION_UNSET_INITIALIZATION_TIMEOUT_MS
-                )
-            }
-            return
-        }
-
-        isWaitingForValidDuration = false
-        isInitialized = true
-        mainHandler.removeCallbacks(initializationFallback)
-        sendInitialized()
-    }
-
-    override fun onPlaybackStateChanged(playbackState: Int) {
-        var platformState = PlatformPlaybackState.UNKNOWN
-        when (playbackState) {
-            Player.STATE_BUFFERING -> platformState = PlatformPlaybackState.BUFFERING
-            Player.STATE_READY -> {
-                platformState = PlatformPlaybackState.READY
-                maybeSendInitialized()
-            }
-
-            Player.STATE_ENDED -> platformState = PlatformPlaybackState.ENDED
-            Player.STATE_IDLE -> platformState = PlatformPlaybackState.IDLE
-        }
-        events.onPlaybackStateChanged(platformState)
-    }
-
-    override fun onTimelineChanged(timeline: Timeline, reason: Int) {
-        if (isWaitingForValidDuration && exoPlayer.getPlaybackState() == Player.STATE_READY) {
-            maybeSendInitialized()
-        }
-    }
-
-    override fun onPlayerError(error: PlaybackException) {
-        if (error.errorCode == PlaybackException.ERROR_CODE_BEHIND_LIVE_WINDOW) {
-            // See
-            // https://exoplayer.dev/live-streaming.html#behindlivewindowexception-and-error_code_behind_live_window
-            exoPlayer.seekToDefaultPosition()
-            exoPlayer.prepare()
-        } else {
-            events.onError("VideoError", "Video player had error " + error, null)
-        }
-    }
-
-    override fun onIsPlayingChanged(isPlaying: Boolean) {
-        events.onIsPlayingStateUpdate(isPlaying)
-    }
-
-    override fun onTracksChanged(tracks: Tracks) {
-        // Find the currently selected audio track and notify
-        val selectedAudioTrackId = findSelectedAudioTrackId(tracks)
-        events.onAudioTrackChanged(selectedAudioTrackId)
-
-        // Find the currently selected video track and notify
-        val selectedVideoTrackId = findSelectedVideoTrackId(tracks)
-        events.onVideoTrackChanged(selectedVideoTrackId)
-    }
-
-    /**
-     * Finds the ID of the currently selected audio track.
-     * 
-     * @param tracks The current tracks
-     * @return The track ID in format "groupIndex_trackIndex", or null if no audio track is selected
-     */
-    private fun findSelectedAudioTrackId(tracks: Tracks): String? {
-        // Keep this ID format in sync with android_video_player.dart::_parseAndroidTrackId.
-        var groupIndex = 0
-        for (group in tracks.getGroups()) {
-            if (group.getType() == C.TRACK_TYPE_AUDIO && group.isSelected()) {
-                // Find the selected track within this group
-                for (i in 0..<group.length) {
-                    if (group.isTrackSelected(i)) {
-                        return groupIndex.toString() + "_" + i
-                    }
-                }
-            }
-            groupIndex++
-        }
-        return null
-    }
-
-    /**
-     * Finds the ID of the currently selected video track.
-     * 
-     * @param tracks The current tracks
-     * @return The track ID in format "groupIndex_trackIndex", or null if no video track is selected
-     */
-    private fun findSelectedVideoTrackId(tracks: Tracks): String? {
-        // Keep this ID format in sync with android_video_player.dart::_parseAndroidTrackId.
-        var groupIndex = 0
-        for (group in tracks.getGroups()) {
-            if (group.getType() == C.TRACK_TYPE_VIDEO && group.isSelected()) {
-                // Find the selected track within this group
-                for (i in 0..<group.length) {
-                    if (group.isTrackSelected(i)) {
-                        return groupIndex.toString() + "_" + i
-                    }
-                }
-            }
-            groupIndex++
-        }
-        return null
-    }
+  protected enum class RotationDegrees(@JvmField val degrees: Int) {
+    ROTATE_0(0),
+    ROTATE_90(90),
+    ROTATE_180(180),
+    ROTATE_270(270);
 
     companion object {
-        const val DURATION_UNSET_INITIALIZATION_TIMEOUT_MS: Long = 2000
+      @JvmStatic
+      fun fromDegrees(degrees: Int): RotationDegrees {
+        for (rotationDegrees in entries) {
+          if (rotationDegrees.degrees == degrees) {
+            return rotationDegrees
+          }
+        }
+        throw IllegalArgumentException("Invalid rotation degrees specified: " + degrees)
+      }
     }
+  }
+
+  protected abstract fun sendInitialized()
+
+  /** Cancels pending initialization callbacks when the player is disposed. */
+  fun dispose() {
+    isWaitingForValidDuration = false
+    mainHandler.removeCallbacks(initializationFallback)
+    events.onDisposed()
+  }
+
+  private fun hasValidDuration(): Boolean {
+    return exoPlayer.getDuration() != C.TIME_UNSET
+  }
+
+  private fun shouldWaitForValidDuration(): Boolean {
+    return !exoPlayer.isCurrentMediaItemLive() && !exoPlayer.isCurrentMediaItemDynamic()
+  }
+
+  private fun maybeSendInitialized() {
+    if (isInitialized) {
+      return
+    }
+
+    if (!hasValidDuration() && shouldWaitForValidDuration()) {
+      if (!isWaitingForValidDuration) {
+        isWaitingForValidDuration = true
+        mainHandler.postDelayed(initializationFallback, DURATION_UNSET_INITIALIZATION_TIMEOUT_MS)
+      }
+      return
+    }
+
+    isWaitingForValidDuration = false
+    isInitialized = true
+    mainHandler.removeCallbacks(initializationFallback)
+    sendInitialized()
+  }
+
+  override fun onPlaybackStateChanged(playbackState: Int) {
+    var platformState = PlatformPlaybackState.UNKNOWN
+    when (playbackState) {
+      Player.STATE_BUFFERING -> platformState = PlatformPlaybackState.BUFFERING
+      Player.STATE_READY -> {
+        platformState = PlatformPlaybackState.READY
+        maybeSendInitialized()
+      }
+      Player.STATE_ENDED -> platformState = PlatformPlaybackState.ENDED
+      Player.STATE_IDLE -> platformState = PlatformPlaybackState.IDLE
+    }
+    events.onPlaybackStateChanged(platformState)
+  }
+
+  override fun onTimelineChanged(timeline: Timeline, reason: Int) {
+    if (isWaitingForValidDuration && exoPlayer.getPlaybackState() == Player.STATE_READY) {
+      maybeSendInitialized()
+    }
+  }
+
+  override fun onPlayerError(error: PlaybackException) {
+    if (error.errorCode == PlaybackException.ERROR_CODE_BEHIND_LIVE_WINDOW) {
+      // See
+      // https://exoplayer.dev/live-streaming.html#behindlivewindowexception-and-error_code_behind_live_window
+      exoPlayer.seekToDefaultPosition()
+      exoPlayer.prepare()
+    } else {
+      events.onError("VideoError", "Video player had error " + error, null)
+    }
+  }
+
+  override fun onIsPlayingChanged(isPlaying: Boolean) {
+    events.onIsPlayingStateUpdate(isPlaying)
+  }
+
+  override fun onTracksChanged(tracks: Tracks) {
+    // Find the currently selected audio track and notify
+    val selectedAudioTrackId = findSelectedAudioTrackId(tracks)
+    events.onAudioTrackChanged(selectedAudioTrackId)
+
+    // Find the currently selected video track and notify
+    val selectedVideoTrackId = findSelectedVideoTrackId(tracks)
+    events.onVideoTrackChanged(selectedVideoTrackId)
+  }
+
+  /**
+   * Finds the ID of the currently selected audio track.
+   *
+   * @param tracks The current tracks
+   * @return The track ID in format "groupIndex_trackIndex", or null if no audio track is selected
+   */
+  private fun findSelectedAudioTrackId(tracks: Tracks): String? {
+    // Keep this ID format in sync with android_video_player.dart::_parseAndroidTrackId.
+    var groupIndex = 0
+    for (group in tracks.getGroups()) {
+      if (group.getType() == C.TRACK_TYPE_AUDIO && group.isSelected()) {
+        // Find the selected track within this group
+        for (i in 0 ..< group.length) {
+          if (group.isTrackSelected(i)) {
+            return groupIndex.toString() + "_" + i
+          }
+        }
+      }
+      groupIndex++
+    }
+    return null
+  }
+
+  /**
+   * Finds the ID of the currently selected video track.
+   *
+   * @param tracks The current tracks
+   * @return The track ID in format "groupIndex_trackIndex", or null if no video track is selected
+   */
+  private fun findSelectedVideoTrackId(tracks: Tracks): String? {
+    // Keep this ID format in sync with android_video_player.dart::_parseAndroidTrackId.
+    var groupIndex = 0
+    for (group in tracks.getGroups()) {
+      if (group.getType() == C.TRACK_TYPE_VIDEO && group.isSelected()) {
+        // Find the selected track within this group
+        for (i in 0 ..< group.length) {
+          if (group.isTrackSelected(i)) {
+            return groupIndex.toString() + "_" + i
+          }
+        }
+      }
+      groupIndex++
+    }
+    return null
+  }
+
+  companion object {
+    const val DURATION_UNSET_INITIALIZATION_TIMEOUT_MS: Long = 2000
+  }
 }

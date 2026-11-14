@@ -18,99 +18,100 @@ import io.flutter.plugin.platform.PlatformView
  * A class used to create a native video view that can be embedded in a Flutter app. It wraps an
  * [ExoPlayer] instance and displays its video content.
  */
-class PlatformVideoView @OptIn(markerClass = UnstableApi::class) constructor(
-    context: Context,
-    exoPlayer: ExoPlayer
-) : PlatformView {
-    private val surfaceView: SurfaceView
+class PlatformVideoView
+@OptIn(markerClass = UnstableApi::class)
+constructor(context: Context, exoPlayer: ExoPlayer) : PlatformView {
+  private val surfaceView: SurfaceView
+
+  /**
+   * Constructs a new PlatformVideoView.
+   *
+   * @param context The context in which the view is running.
+   * @param exoPlayer The ExoPlayer instance used to play the video.
+   */
+  init {
+    this.surfaceView = VideoSurfaceView(context, exoPlayer)
+
+    setupSurfaceWithCallback(exoPlayer)
+
+    if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.N_MR1) {
+      // Avoid blank space instead of a video on Android versions below 8 by adjusting video's
+      // z-layer within the Android view hierarchy:
+      surfaceView.setZOrderMediaOverlay(true)
+    }
+  }
+
+  private fun setupSurfaceWithCallback(exoPlayer: ExoPlayer) {
+    surfaceView
+        .getHolder()
+        .addCallback(
+            object : SurfaceHolder.Callback {
+              override fun surfaceCreated(holder: SurfaceHolder) {
+                bindPlayerToSurface(exoPlayer, holder.getSurface())
+                forceFirstFrameForAndroid9(exoPlayer)
+              }
+
+              override fun surfaceChanged(
+                  holder: SurfaceHolder,
+                  format: Int,
+                  width: Int,
+                  height: Int
+              ) {}
+
+              override fun surfaceDestroyed(holder: SurfaceHolder) {
+                // Use clearVideoSurface to ensure we only unbind if this surface is currently
+                // active.
+                exoPlayer.clearVideoSurface(holder.getSurface())
+              }
+            })
+  }
+
+  /**
+   * A custom SurfaceView that re-attaches the player surface when the view becomes visible again,
+   * such as after returning from a full-screen route transition.
+   */
+  private class VideoSurfaceView(context: Context?, private val exoPlayer: ExoPlayer) :
+      SurfaceView(context) {
+    protected override fun onVisibilityChanged(changedView: View, visibility: Int) {
+      super.onVisibilityChanged(changedView, visibility)
+      // When the view becomes visible again, re-attach the current surface.
+      if (visibility == VISIBLE && isShown()) {
+        bindPlayerToSurface(exoPlayer, getHolder().getSurface())
+      }
+    }
+  }
+
+  /**
+   * Returns the view associated with this PlatformView.
+   *
+   * @return The SurfaceView used to display the video.
+   */
+  override fun getView(): View {
+    return surfaceView
+  }
+
+  /** Disposes of the resources used by this PlatformView. */
+  override fun dispose() {
+    surfaceView.getHolder().getSurface().release()
+  }
+
+  companion object {
+    /** Binds the ExoPlayer to the provided surface. */
+    fun bindPlayerToSurface(exoPlayer: ExoPlayer, surface: Surface) {
+      if (surface.isValid()) {
+        exoPlayer.setVideoSurface(surface)
+      }
+    }
 
     /**
-     * Constructs a new PlatformVideoView.
-     * 
-     * @param context The context in which the view is running.
-     * @param exoPlayer The ExoPlayer instance used to play the video.
+     * Workaround for a rendering bug on Android 9 (API 28) where the decoder does not flush its
+     * output buffer when a new surface is attached while the player is paused.
      */
-    init {
-        this.surfaceView = VideoSurfaceView(context, exoPlayer)
-
-        setupSurfaceWithCallback(exoPlayer)
-
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.N_MR1) {
-            // Avoid blank space instead of a video on Android versions below 8 by adjusting video's
-            // z-layer within the Android view hierarchy:
-            surfaceView.setZOrderMediaOverlay(true)
-        }
+    fun forceFirstFrameForAndroid9(exoPlayer: ExoPlayer) {
+      if (Build.VERSION.SDK_INT == Build.VERSION_CODES.P && !exoPlayer.getPlayWhenReady()) {
+        val position = exoPlayer.getCurrentPosition()
+        exoPlayer.seekTo(if (position == 0L) 1 else position)
+      }
     }
-
-    private fun setupSurfaceWithCallback(exoPlayer: ExoPlayer) {
-        surfaceView
-            .getHolder()
-            .addCallback(
-                object : SurfaceHolder.Callback {
-                    override fun surfaceCreated(holder: SurfaceHolder) {
-                        bindPlayerToSurface(exoPlayer, holder.getSurface())
-                        forceFirstFrameForAndroid9(exoPlayer)
-                    }
-
-                    override fun surfaceChanged(
-                        holder: SurfaceHolder, format: Int, width: Int, height: Int
-                    ) {
-                    }
-
-                    override fun surfaceDestroyed(holder: SurfaceHolder) {
-                        // Use clearVideoSurface to ensure we only unbind if this surface is currently
-                        // active.
-                        exoPlayer.clearVideoSurface(holder.getSurface())
-                    }
-                })
-    }
-
-    /**
-     * A custom SurfaceView that re-attaches the player surface when the view becomes visible again,
-     * such as after returning from a full-screen route transition.
-     */
-    private class VideoSurfaceView(context: Context?, private val exoPlayer: ExoPlayer) :
-        SurfaceView(context) {
-        protected override fun onVisibilityChanged(changedView: View, visibility: Int) {
-            super.onVisibilityChanged(changedView, visibility)
-            // When the view becomes visible again, re-attach the current surface.
-            if (visibility == VISIBLE && isShown()) {
-                bindPlayerToSurface(exoPlayer, getHolder().getSurface())
-            }
-        }
-    }
-
-    /**
-     * Returns the view associated with this PlatformView.
-     * 
-     * @return The SurfaceView used to display the video.
-     */
-    override fun getView(): View {
-        return surfaceView
-    }
-
-    /** Disposes of the resources used by this PlatformView.  */
-    override fun dispose() {
-        surfaceView.getHolder().getSurface().release()
-    }
-
-    companion object {
-        /** Binds the ExoPlayer to the provided surface.  */
-        fun bindPlayerToSurface(exoPlayer: ExoPlayer, surface: Surface) {
-            if (surface.isValid()) {
-                exoPlayer.setVideoSurface(surface)
-            }
-        }
-
-        /**
-         * Workaround for a rendering bug on Android 9 (API 28) where the decoder does not flush its
-         * output buffer when a new surface is attached while the player is paused.
-         */
-        fun forceFirstFrameForAndroid9(exoPlayer: ExoPlayer) {
-            if (Build.VERSION.SDK_INT == Build.VERSION_CODES.P && !exoPlayer.getPlayWhenReady()) {
-                val position = exoPlayer.getCurrentPosition()
-                exoPlayer.seekTo(if (position == 0L) 1 else position)
-            }
-        }
-    }
+  }
 }
