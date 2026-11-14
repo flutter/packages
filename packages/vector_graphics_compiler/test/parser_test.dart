@@ -3010,6 +3010,19 @@ ${[for (var i = 2; i <= 30; i++) '    <pattern id="lvl$i" width="10" height="10"
       LineToCommand(100.0, 100.0),
     ]);
   });
+
+  test('Parses an empty self-closing defs element', () {
+    const svgStr = '''
+<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 10 10">
+  <defs/>
+  <rect width="10" height="10" fill="red" />
+</svg>
+    ''';
+
+    final VectorInstructions instructions = parseWithoutOptimizers(svgStr, warningsAsErrors: true);
+
+    expect(instructions.paints, const <Paint>[Paint(fill: Fill(color: Color(0xffff0000)))]);
+  });
 }
 
 const List<Paint> ghostScriptTigerPaints = <Paint>[
