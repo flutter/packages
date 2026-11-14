@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import '../data/color_role.dart';
 import '../data/dialog.dart';
 import '../data/full_screen_dialog.dart';
 import 'template.dart';
@@ -42,6 +43,9 @@ class $className extends DialogThemeData {
 
   @override
   Color? get surfaceTintColor => Colors.transparent;
+
+  @override
+  Color? get barrierColor => ${colorWithOpacity(TokenColorRole.scrim, 0.32)};
 
   @override
   TextStyle? get titleTextStyle => ${textStyle(TokenDialog.headlineType, '_textTheme')};
