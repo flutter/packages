@@ -1,3 +1,8 @@
+## 4.5.4
+
+- Fixes conditional redirect-only parent routes throwing when a descendant is matched.
+- Supports conditional redirect-only routes with go_router 18.2.0 or later while preserving generated output with older go_router versions.
+
 ## 4.5.3
 
 * Widens `package:build` dependency constraint to `>=3.0.0 <6.0.0`.

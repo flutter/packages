@@ -1,0 +1,156 @@
+RouteBase get $redirectRoute => GoRouteData.$route(
+  path: '/redirect',
+  hasOverriddenOnExit: false,
+  redirectOnly: true,
+  factory: $RedirectRoute._fromState,
+);
+
+mixin $RedirectRoute on GoRouteData {
+  static RedirectRoute _fromState(GoRouterState state) => RedirectRoute();
+
+  @override
+  String get location => GoRouteData.$location('/redirect');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) => context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $inheritedRedirectRoute => GoRouteData.$route(
+  path: '/inherited-redirect',
+  hasOverriddenOnExit: false,
+  redirectOnly: true,
+  factory: $InheritedRedirectRoute._fromState,
+);
+
+mixin $InheritedRedirectRoute on GoRouteData {
+  static InheritedRedirectRoute _fromState(GoRouterState state) => InheritedRedirectRoute();
+
+  @override
+  String get location => GoRouteData.$location('/inherited-redirect');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) => context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $inheritedBuildRoute => GoRouteData.$route(
+  path: '/inherited-build',
+  hasOverriddenOnExit: false,
+  factory: $InheritedBuildRoute._fromState,
+);
+
+mixin $InheritedBuildRoute on GoRouteData {
+  static InheritedBuildRoute _fromState(GoRouterState state) => InheritedBuildRoute();
+
+  @override
+  String get location => GoRouteData.$location('/inherited-build');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) => context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $mixinPageRoute => GoRouteData.$route(
+  path: '/mixin-page',
+  hasOverriddenOnExit: false,
+  factory: $MixinPageRoute._fromState,
+);
+
+mixin $MixinPageRoute on GoRouteData {
+  static MixinPageRoute _fromState(GoRouterState state) => MixinPageRoute();
+
+  @override
+  String get location => GoRouteData.$location('/mixin-page');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) => context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $mixinRedirectRoute => GoRouteData.$route(
+  path: '/mixin-redirect',
+  hasOverriddenOnExit: false,
+  redirectOnly: true,
+  factory: $MixinRedirectRoute._fromState,
+);
+
+mixin $MixinRedirectRoute on GoRouteData {
+  static MixinRedirectRoute _fromState(GoRouterState state) => MixinRedirectRoute();
+
+  @override
+  String get location => GoRouteData.$location('/mixin-redirect');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) => context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $relativeRedirectRoute => RelativeGoRouteData.$route(
+  path: 'relative-redirect',
+  hasOverriddenOnExit: false,
+  redirectOnly: true,
+  factory: $RelativeRedirectRoute._fromState,
+);
+
+mixin $RelativeRedirectRoute on RelativeGoRouteData {
+  static RelativeRedirectRoute _fromState(GoRouterState state) => RelativeRedirectRoute();
+
+  @override
+  String get subLocation => RelativeGoRouteData.$location('relative-redirect');
+
+  @override
+  String get relativeLocation => './$subLocation';
+
+  @override
+  void goRelative(BuildContext context) => context.go(relativeLocation);
+
+  @override
+  Future<T?> pushRelative<T>(BuildContext context) => context.push<T>(relativeLocation);
+
+  @override
+  void pushReplacementRelative(BuildContext context) => context.pushReplacement(relativeLocation);
+
+  @override
+  void replaceRelative(BuildContext context) => context.replace(relativeLocation);
+}
