@@ -52,7 +52,7 @@ class JnigenConfigGenerator extends Generator<InternalJnigenConfigOptions> {
     }
     indent.writeln('// ${getGeneratedCodeWarning()}');
     indent.writeln('// $seeAlsoWarning');
-    indent.writeln('// ignore_for_file: avoid_print, depend_on_referenced_packages');
+    indent.writeln('// ignore_for_file: depend_on_referenced_packages');
     indent.newln();
     indent.writeln("import 'dart:io';");
     indent.writeln("import 'package:jnigen/jnigen.dart';");

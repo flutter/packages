@@ -896,6 +896,8 @@ ${_argParser.usage}''';
       }
     }
 
+    final StringSink effectiveErrorSink = errorSink ?? stderr;
+
     if (errors.isNotEmpty) {
       printErrors(
         errors
@@ -907,11 +909,12 @@ ${_argParser.usage}''';
               ),
             )
             .toList(),
+        errorSink: effectiveErrorSink,
       );
       return 1;
     }
 
-    final hasDartOut = internalOptions.dartOptions?.dartOut != null;
+    final bool hasDartOut = hasFileOutput(internalOptions.dartOptions?.dartOut);
     final bool useFfi = hasDartOut && (internalOptions.swiftOptions?.useFfi ?? false);
     final bool useJni = hasDartOut && (internalOptions.kotlinOptions?.useJni ?? false);
 
@@ -927,25 +930,24 @@ ${_argParser.usage}''';
       }
     }
 
-    final StringSink effectiveErrorSink = errorSink ?? stderr;
+    var exitCode = 0;
 
     if (useFfi) {
       if (!Platform.isMacOS) {
         print('FFI Multi-step: Skipping FFIgen on non-macOS platform.');
       } else {
-        final String? targetConfigDir =
-            internalOptions.swiftOptions?.configDirectory ?? internalOptions.configDirectory;
-        final String fullConfigDir =
-            (internalOptions.basePath != null &&
-                internalOptions.basePath!.isNotEmpty &&
-                targetConfigDir != null &&
-                targetConfigDir.isNotEmpty &&
-                !isWithinOrEquals(internalOptions.basePath!, targetConfigDir))
-            ? path.join(internalOptions.basePath!, targetConfigDir)
-            : (targetConfigDir ?? internalOptions.basePath ?? '');
-        final int exitCode = await _runFfigen(fullConfigDir, internalOptions.input, dartExecutable);
-        if (exitCode != 0) {
-          return exitCode;
+        final String fullConfigDir = resolveInteropConfigDir(
+          internalOptions.swiftOptions?.configDirectory,
+          internalOptions,
+        );
+        final int ffigenExitCode = await _runFfigen(
+          fullConfigDir,
+          internalOptions.input,
+          dartExecutable,
+          errorSink: effectiveErrorSink,
+        );
+        if (ffigenExitCode != 0) {
+          exitCode = ffigenExitCode;
         }
       }
       final String? objcVersionWarning = checkObjectiveCPubspecVersion(internalOptions);
@@ -956,16 +958,10 @@ ${_argParser.usage}''';
 
     if (useJni) {
       if (!skipJnigen) {
-        final String? targetConfigDir =
-            internalOptions.kotlinOptions?.configDirectory ?? internalOptions.configDirectory;
-        final String fullConfigDir =
-            (internalOptions.basePath != null &&
-                internalOptions.basePath!.isNotEmpty &&
-                targetConfigDir != null &&
-                targetConfigDir.isNotEmpty &&
-                !isWithinOrEquals(internalOptions.basePath!, targetConfigDir))
-            ? path.join(internalOptions.basePath!, targetConfigDir)
-            : (targetConfigDir ?? internalOptions.basePath ?? '');
+        final String fullConfigDir = resolveInteropConfigDir(
+          internalOptions.kotlinOptions?.configDirectory,
+          internalOptions,
+        );
         final bool success = await _runJnigen(
           fullConfigDir,
           internalOptions,
@@ -973,7 +969,7 @@ ${_argParser.usage}''';
           errorSink: effectiveErrorSink,
         );
         if (!success) {
-          return 1;
+          exitCode = 1;
         }
       }
       final String? jniVersionWarning = checkJniPubspecVersion(internalOptions);
@@ -982,86 +978,90 @@ ${_argParser.usage}''';
       }
     }
 
-    return 0;
+    return exitCode;
   }
 
-  /// Print a list of errors to stderr.
-  static void printErrors(List<Error> errors) {
+  /// Print a list of errors to [errorSink] (defaults to [stderr]).
+  static void printErrors(List<Error> errors, {StringSink? errorSink}) {
+    final StringSink sink = errorSink ?? stderr;
     for (final err in errors) {
       if (err.filename != null) {
         if (err.lineNumber != null) {
-          stderr.writeln('Error: ${err.filename}:${err.lineNumber}: ${err.message}');
+          sink.writeln('Error: ${err.filename}:${err.lineNumber}: ${err.message}');
         } else {
-          stderr.writeln('Error: ${err.filename}: ${err.message}');
+          sink.writeln('Error: ${err.filename}: ${err.message}');
         }
       } else {
-        stderr.writeln('Error: ${err.message}');
+        sink.writeln('Error: ${err.message}');
       }
     }
   }
 
   /// Runs FFIgen in FFI multi-step generation.
   static Future<int> _runFfigen(
-    String swiftAppDir,
+    String configDir,
     String? inputPath,
-    String dartExecutable,
-  ) async {
+    String dartExecutable, {
+    StringSink? errorSink,
+  }) async {
     if (!Platform.isMacOS) {
       print('FFI Multi-step: Skipping FFIgen on non-macOS platform.');
       return 0;
     }
-    final String configFile = getFfigenConfigPath(swiftAppDir, inputPath);
-    if (File(configFile).existsSync()) {
-      print('FFI Multi-step: Running FFIgen for $configFile...');
-      final ProcessResult ffigenResult = await Process.run(dartExecutable, ['run', configFile]);
-      if (ffigenResult.exitCode != 0) {
-        print('Error running FFIgen: ${ffigenResult.stderr}');
-        return 1;
-      }
-      print('FFI Multi-step: FFIgen completed successfully.');
-      return 0;
-    } else {
-      print('Error: FFIgen config file $configFile does not exist.');
+    final StringSink sink = errorSink ?? stderr;
+    final String configFile = getFfigenConfigPath(configDir, inputPath);
+    if (!File(configFile).existsSync()) {
+      sink.writeln('Error: FFIgen config file $configFile does not exist.');
       return 1;
     }
+    print('FFI Multi-step: Running FFIgen for $configFile...');
+    final ProcessResult ffigenResult;
+    try {
+      ffigenResult = await Process.run(dartExecutable, <String>['run', configFile]);
+    } on ProcessException catch (e) {
+      sink.writeln('Error: Failed to start FFIgen ($configFile): $e');
+      return 1;
+    }
+    if (ffigenResult.exitCode != 0) {
+      final String stdoutText = ffigenResult.stdout.toString().trim();
+      final String stderrText = ffigenResult.stderr.toString().trim();
+      sink.writeln(
+        'Error: FFIgen failed while running $configFile (exit code ${ffigenResult.exitCode}).',
+      );
+      if (stdoutText.isNotEmpty) {
+        sink.writeln(stdoutText);
+      }
+      if (stderrText.isNotEmpty) {
+        sink.writeln(stderrText);
+      }
+      return 1;
+    }
+    print('FFI Multi-step: FFIgen completed successfully.');
+    return 0;
   }
 
-  static Future<Map<String, String>> _getJniEnvironment(String dartExecutable) async {
-    final env = <String, String>{};
-    if (dartExecutable != 'dart' && dartExecutable != 'dart.exe') {
-      final separator = Platform.isWindows ? ';' : ':';
-      final String dartDir = path.dirname(dartExecutable);
-      final String flutterBinDir = path.normalize(path.join(dartDir, '..', '..', '..'));
-      final flutterExe = Platform.isWindows ? 'flutter.bat' : 'flutter';
-      final dirs = <String>[
-        if (File(path.join(flutterBinDir, flutterExe)).existsSync()) flutterBinDir,
-        dartDir,
-      ];
-      final String currentPath = Platform.environment['PATH'] ?? '';
-      env['PATH'] = currentPath.isEmpty
+  static Map<String, String> _getJniEnvironment(String dartExecutable) {
+    if (dartExecutable == 'dart' || dartExecutable == 'dart.exe') {
+      return const <String, String>{};
+    }
+    final separator = Platform.isWindows ? ';' : ':';
+    final String dartDir = path.dirname(dartExecutable);
+    final bool isFlutterCachedDart = path
+        .normalize(dartDir)
+        .endsWith(path.join('bin', 'cache', 'dart-sdk', 'bin'));
+    final String flutterBinDir = path.normalize(path.join(dartDir, '..', '..', '..'));
+    final flutterExe = Platform.isWindows ? 'flutter.bat' : 'flutter';
+    final dirs = <String>[
+      if (isFlutterCachedDart && File(path.join(flutterBinDir, flutterExe)).existsSync())
+        flutterBinDir,
+      dartDir,
+    ];
+    final String currentPath = Platform.environment['PATH'] ?? '';
+    return <String, String>{
+      'PATH': currentPath.isEmpty
           ? dirs.join(separator)
-          : '${dirs.join(separator)}$separator$currentPath';
-    }
-    // If JAVA_HOME is unset on macOS, prefer an installed JDK 21 or 17 (with -F so
-    // it does not fall back to an unsupported newer default JVM like JDK 25+ when
-    // Android Studio's bundled JBR is not present).
-    if (Platform.isMacOS && (Platform.environment['JAVA_HOME'] ?? '').isEmpty) {
-      for (final version in const <String>['21', '17']) {
-        final ProcessResult result = await Process.run('/usr/libexec/java_home', <String>[
-          '-F',
-          '-v',
-          version,
-        ]);
-        if (result.exitCode == 0) {
-          final String javaHome = result.stdout.toString().trim();
-          if (javaHome.isNotEmpty) {
-            env['JAVA_HOME'] = javaHome;
-            break;
-          }
-        }
-      }
-    }
-    return env;
+          : '${dirs.join(separator)}$separator$currentPath',
+    };
   }
 
   /// Runs JNIgen in JNI multi-step generation.
@@ -1082,7 +1082,7 @@ ${_argParser.usage}''';
       jnigenResult = await Process.run(dartExecutable, <String>[
         'run',
         configFile,
-      ], environment: await _getJniEnvironment(dartExecutable));
+      ], environment: _getJniEnvironment(dartExecutable));
     } on ProcessException catch (e) {
       errorSink.writeln('Error: Failed to start JNIgen ($configFile): $e');
       return false;
@@ -1105,6 +1105,9 @@ ${_argParser.usage}''';
           (Platform.environment['ANDROID_SDK_ROOT'] ?? '').isEmpty;
       final bool javaHomeUnset = (Platform.environment['JAVA_HOME'] ?? '').isEmpty;
       final String? configuredAppDir = options.kotlinOptions?.appDirectory ?? options.appDirectory;
+      final String displayAppDir = (configuredAppDir != null && configuredAppDir.isNotEmpty)
+          ? configuredAppDir
+          : './';
 
       errorSink.writeln('\nPossible causes and settings to check:');
       errorSink.writeln(
@@ -1122,7 +1125,7 @@ ${_argParser.usage}''';
         '  - `appDirectory` (`PigeonOptions.appDirectory` / `KotlinOptions.appDirectory` '
         'or `--app_directory` / `--kotlin_app_directory`): Must point to a Flutter '
         "application directory with an `android/` app project (e.g., `'example/'` for "
-        "plugins, or `'./'` for standalone apps; currently '${configuredAppDir ?? './'}').",
+        "plugins, or `'./'` for standalone apps; currently '$displayAppDir').",
       );
       errorSink.writeln(
         '  - `jniClassPaths` & `package` (`KotlinOptions.jniClassPaths` / `--kotlin_jni_classpaths`, '
@@ -1131,7 +1134,7 @@ ${_argParser.usage}''';
         '`KotlinOptions.package` must match the Kotlin package, and if you changed your '
         'Pigeon API surface, update your native Android code first and re-run Pigeon.',
       );
-      errorSink.writeln('Run `dart run $configFile` directly for full JNIgen output.');
+      errorSink.writeln('Run `dart run $configFile` directly to re-run JNIgen in isolation.');
       return false;
     }
     print('JNI Multi-step: JNIgen completed successfully.');

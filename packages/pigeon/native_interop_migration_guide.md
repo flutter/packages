@@ -40,7 +40,7 @@ flutter pub add dev:ffigen dev:swift2objc dev:swiftgen dev:path dev:pub_semver
 # For Android Kotlin JNI (jni 1.1.1+ required for Android R8 keep rules):
 flutter pub add 'jni:^1.1.1' meta
 # Code generator imported by tool/pigeon/*_jnigen_config.dart:
-flutter pub add dev:jnigen
+flutter pub add 'dev:jnigen:^1.0.0'
 ```
 
 ### 2.2 Update Pigeon Configuration Options

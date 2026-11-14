@@ -28,7 +28,7 @@ flutter pub add dev:ffigen dev:swift2objc dev:swiftgen dev:path dev:pub_semver
 # For Android Kotlin JNI (jni 1.1.1+ required for Android R8 keep rules):
 flutter pub add 'jni:^1.1.1' meta
 # Code generator imported by tool/pigeon/*_jnigen_config.dart:
-flutter pub add dev:jnigen
+flutter pub add 'dev:jnigen:^1.0.0'
 ```
 
 ---
@@ -320,7 +320,7 @@ For standalone Flutter applications, JNIgen defaults to searching `build/app/tmp
   ```
 
 ### 6.4 Direct Interop Config Script Execution (Debugging)
-Pigeon automatically generates input-specific config scripts under `tool/pigeon/` named `<input_name>_jnigen_config.dart` and `<input_name>_ffigen_config.dart` (for example, `messages_jnigen_config.dart` for `pigeons/messages.dart`). `dart run pigeon` surfaces `jnigen` / `ffigen` errors directly, and you can also execute these generated configuration scripts directly to iterate on toolchain errors in isolation (JNIgen also writes full debug logs to `.dart_tool/jnigen/logs/`):
+Pigeon automatically generates input-specific config scripts under `tool/pigeon/` named `<input_name>_jnigen_config.dart` and `<input_name>_ffigen_config.dart` (for example, `messages_jnigen_config.dart` for `pigeons/messages.dart`). `dart run pigeon` surfaces `jnigen` / `ffigen` errors directly, and you can also execute these generated configuration scripts directly to iterate on toolchain errors in isolation:
 ```bash
 # Debug JNIgen (Android):
 dart run tool/pigeon/<input_name>_jnigen_config.dart
@@ -371,9 +371,9 @@ If creating and destroying a secondary `FlutterEngine` causes subsequent Dart ca
   - The plugin used a Pigeon version prior to `30.0.0`, which kept a single instance per name, and called `register(null)` / `register(api: nil)` during engine teardown.
   - The handle was resolved from the detached engine's registration (for example, a lookup that ran before the engine's own registration existed, without exact engine routing).
 - **Solution**:
-  - Regenerate with Pigeon `30.0.0` or later, which keeps each engine's registration separate so detaching one engine only removes its own registration.
+  - Upgrade to **Flutter 3.50.0 or higher** (strongly recommended) if calls reach another engine's instance on earlier Flutter versions, and regenerate with Pigeon `30.0.0` or later, which keeps each engine's registration separate so detaching one engine only removes its own registration.
   - Register and unregister with the engine: `MyApiRegistrar().register(this, binding)` / `MyApiRegistrar().unregister(this, binding)` in Kotlin (or `register(api, flutterEngine)` / `unregister(api, flutterEngine)` in an app), and `MyApiSetup.register(api: instance, registrar: registrar)` / `MyApiSetup.unregister(api: self, registrar: registrar)` in Swift. On iOS, call `registrar.publish(instance)` so `detachFromEngine(for:)` runs.
   - Resolve the first Dart handle early in startup (for example at the start of `main()`; on Android not in `registerWith`, where JNI isn't initialized yet) so each engine's isolate binds to its own engine when exact engine identifiers aren't available.
   - In native code, look up `@FlutterApi` instances with `MyFlutterApiRegistrar().getInstance(binding)` / `getInstance(flutterEngine)` (Kotlin) or `getInstance(registrar:)` (Swift).
-  - **Per-Engine State Caveat**: Routing to the calling engine is exact on an engine's root isolate when native code knows the engine identifier (always for Kotlin `register(api, flutterEngine)`; for plugin bindings/registrars on Flutter versions exposing `engineId` / `engineIdentifier`). Otherwise—and in background isolates (`Isolate.spawn` / `Isolate.run`), which have no `PlatformDispatcher.engineId`—routing is best-effort and can misroute engines created back-to-back before their Dart starts, a Pigeon file whose first lookup happens lazily while another engine is attached, or calls from background isolates. macOS plugins get no detach callback, so macOS registrations outlive their engine. Plugins holding engine-specific state (such as `ActivityAware` activities, `TextureRegistry`, or view controllers) in these cases should register under a unique `messageChannelSuffix` per engine or keep engine-scoped operations on platform channels / `@ProxyApi` (and on macOS, stay on platform channels for now). See [Step 5 of the Native Interop Guide](../../native_interop_guide.md#step-5-plugin-registration-deregistration-and-multi-engine-support).
+  - **Per-Engine State Caveat**: Routing to the calling engine is exact on an engine's root isolate when native code knows the engine identifier (always for Kotlin `register(api, flutterEngine)`, and for plugin bindings/registrars on **Flutter 3.50.0 or higher**). Otherwise (on Flutter < 3.50.0, and in background isolates via `Isolate.spawn` / `Isolate.run`, which have no `PlatformDispatcher.engineId`), routing is best-effort and can misroute engines created back-to-back before their Dart starts, a Pigeon file whose first lookup happens lazily while another engine is attached, or calls from background isolates. macOS plugins get no detach callback, so macOS registrations outlive their engine. Plugins holding engine-specific state (such as `ActivityAware` activities, `TextureRegistry`, or view controllers) in these cases should register under a unique `messageChannelSuffix` per engine or keep engine-scoped operations on platform channels / `@ProxyApi` (and on macOS, stay on platform channels for now). See [Step 5 of the Native Interop Guide](../../native_interop_guide.md#step-5-plugin-registration-deregistration-and-multi-engine-support).
 

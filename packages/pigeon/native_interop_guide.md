@@ -76,7 +76,7 @@ flutter pub add dev:ffigen dev:swift2objc dev:swiftgen dev:path dev:pub_semver
 # For Android Kotlin JNI (jni 1.1.1+ required for Android R8 keep rules):
 flutter pub add 'jni:^1.1.1' meta
 # Code generator imported by tool/pigeon/*_jnigen_config.dart:
-flutter pub add dev:jnigen
+flutter pub add 'dev:jnigen:^1.0.0'
 ```
 
 ### Step 2: Configure Pigeon Options
@@ -349,7 +349,7 @@ For standalone Flutter Applications, JNIgen defaults to searching `build/app/tmp
 
 Pigeon writes the interop configuration scripts to `tool/pigeon/<input_name>_jnigen_config.dart` and `tool/pigeon/<input_name>_ffigen_config.dart`.
 
-- **Solution**: Run the generated config scripts directly to reproduce and iterate on toolchain errors in isolation (JNIgen also writes full debug logs to `.dart_tool/jnigen/logs/`):
+- **Solution**: Run the generated config scripts directly to reproduce and iterate on toolchain errors in isolation:
   ```bash
   # Debug JNIgen (Android):
   dart run tool/pigeon/<input_name>_jnigen_config.dart
