@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:convert' show jsonDecode;
 import 'dart:io' show Directory, File, Platform, Process, ProcessResult;
 
 import 'package:path/path.dart' as p;
@@ -59,61 +60,57 @@ String _javaFilenameForName(String inputName) {
   return specialCases[inputName] ?? _snakeToPascalCase(inputName);
 }
 
-bool _hasAndroidSdk() {
-  final String? androidHome =
-      Platform.environment['ANDROID_HOME'] ?? Platform.environment['ANDROID_SDK_ROOT'];
-  return androidHome != null && androidHome.isNotEmpty && Directory(androidHome).existsSync();
-}
+String? _existingDir(Object? value) =>
+    value is String && value.isNotEmpty && Directory(value).existsSync() ? value : null;
 
-Future<String?> _getJavaHome() async {
-  final String? currentJavaHome = Platform.environment['JAVA_HOME'];
-  if (currentJavaHome != null && currentJavaHome.isNotEmpty) {
-    return currentJavaHome;
+({bool hasAndroidSdk, Map<String, String> environment})? _cachedAndroidSdk;
+
+Future<({bool hasAndroidSdk, Map<String, String> environment})> _resolveAndroidSdk() async {
+  if (_cachedAndroidSdk != null) {
+    return _cachedAndroidSdk!;
   }
-  if (Platform.isMacOS) {
+  String? androidSdk =
+      _existingDir(Platform.environment['ANDROID_HOME']) ??
+      _existingDir(Platform.environment['ANDROID_SDK_ROOT']);
+  String? javaHome = _existingDir(Platform.environment['JAVA_HOME']);
+  if (androidSdk == null || javaHome == null) {
     try {
-      final ProcessResult result = await Process.run('/usr/libexec/java_home', <String>[
-        '-v',
-        '17',
-      ]);
-      if (result.exitCode == 0) {
-        final String javaHome = result.stdout.toString().trim();
-        if (javaHome.isNotEmpty) {
-          return javaHome;
+      final ProcessResult result = await Process.run(
+        Platform.isWindows ? 'flutter.bat' : 'flutter',
+        const <String>['config', '--machine'],
+        runInShell: Platform.isWindows,
+      );
+      final String stdout = result.stdout.toString();
+      final start = stdout.indexOf('{');
+      final end = stdout.lastIndexOf('}');
+      if (result.exitCode == 0 && start != -1 && end > start) {
+        final Object? decoded = jsonDecode(stdout.substring(start, end + 1));
+        if (decoded is Map<String, Object?>) {
+          androidSdk ??= _existingDir(decoded['android-sdk']);
+          javaHome ??= _existingDir(decoded['jdk-dir']);
         }
       }
     } catch (_) {}
   }
-  return null;
-}
 
-Future<bool> _hasJavaRuntime([String? javaHome]) async {
-  final Map<String, String>? env = javaHome != null && javaHome.isNotEmpty
-      ? <String, String>{'JAVA_HOME': javaHome}
-      : null;
-  final String javaExecutable = javaHome != null && javaHome.isNotEmpty
-      ? p.join(javaHome, 'bin', 'java')
-      : 'java';
-  try {
-    final ProcessResult result = await Process.run(javaExecutable, <String>[
-      '-version',
-    ], environment: env);
-    return result.exitCode == 0;
-  } catch (_) {
-    return false;
-  }
+  return _cachedAndroidSdk = (
+    hasAndroidSdk: androidSdk != null,
+    environment: <String, String>{
+      if (androidSdk != null) 'ANDROID_HOME': androidSdk,
+      if (androidSdk != null) 'ANDROID_SDK_ROOT': androidSdk,
+      if (javaHome != null) 'JAVA_HOME': javaHome,
+      if (javaHome == null && Platform.environment.containsKey('JAVA_HOME')) 'JAVA_HOME': '',
+    },
+  );
 }
 
 Future<int> _compileNativeInteropExampleApp() async {
-  if (!_hasAndroidSdk()) {
-    return 0;
-  }
-  final String? javaHome = await _getJavaHome();
-  if (!await _hasJavaRuntime(javaHome)) {
+  final ({bool hasAndroidSdk, Map<String, String> environment}) sdk = await _resolveAndroidSdk();
+  if (!sdk.hasAndroidSdk) {
     return 0;
   }
 
-  final environment = <String, String>{if (javaHome != null) 'JAVA_HOME': javaHome};
+  final Map<String, String> environment = sdk.environment;
 
   const appDir = './example/native_interop_app';
   final String androidDir = p.join(appDir, 'android');
@@ -439,6 +436,10 @@ Future<int> runPigeon({
     ),
     // ignore: invalid_use_of_visible_for_testing_member
     parseResults: injectOverflowTypes ? parseResults : null,
+    // Non-Android CI shards (e.g., Mac_arm64 and Windows_x64) validate Swift/C++
+    // generation without an Android SDK installed.
+    // ignore: invalid_use_of_visible_for_testing_member
+    skipJnigen: !(await _resolveAndroidSdk()).hasAndroidSdk,
     mergeDefinitionFileOptions: mergeDefinitionFileOptions,
   );
   includeVersionInGeneratedWarning = originalWarningSetting;

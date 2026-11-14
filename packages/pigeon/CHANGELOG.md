@@ -1,5 +1,6 @@
-## NEXT
+## 30.0.3
 
+* Stops silently skipping `jnigen` when `ANDROID_HOME` / `ANDROID_SDK_ROOT` or `JAVA_HOME` are unset, surfaces `jnigen` errors and troubleshooting hints on `stderr` without aborting remaining generation steps.
 * Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
 
 ## 30.0.2

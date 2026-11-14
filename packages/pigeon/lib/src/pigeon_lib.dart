@@ -838,6 +838,8 @@ ${_argParser.usage}''';
     String? sdkPath,
     bool mergeDefinitionFileOptions = true,
     @visibleForTesting ParseResults? parseResults,
+    @visibleForTesting bool skipJnigen = false,
+    @visibleForTesting StringSink? errorSink,
   }) async {
     final Pigeon pigeon = Pigeon.setup();
     if (options.debugGenerators ?? false) {
@@ -894,6 +896,8 @@ ${_argParser.usage}''';
       }
     }
 
+    final StringSink effectiveErrorSink = errorSink ?? stderr;
+
     if (errors.isNotEmpty) {
       printErrors(
         errors
@@ -905,12 +909,14 @@ ${_argParser.usage}''';
               ),
             )
             .toList(),
+        errorSink: effectiveErrorSink,
       );
       return 1;
     }
 
-    final bool useFfi = internalOptions.swiftOptions?.useFfi ?? false;
-    final bool useJni = internalOptions.kotlinOptions?.useJni ?? false;
+    final bool hasDartOut = hasFileOutput(internalOptions.dartOptions?.dartOut);
+    final bool useFfi = hasDartOut && (internalOptions.swiftOptions?.useFfi ?? false);
+    final bool useJni = hasDartOut && (internalOptions.kotlinOptions?.useJni ?? false);
 
     final String dartExecutable = Platform.resolvedExecutable;
     for (final adapter in safeGeneratorAdapters) {
@@ -924,218 +930,215 @@ ${_argParser.usage}''';
       }
     }
 
+    var exitCode = 0;
+
     if (useFfi) {
       if (!Platform.isMacOS) {
         print('FFI Multi-step: Skipping FFIgen on non-macOS platform.');
       } else {
-        final String? targetConfigDir =
-            internalOptions.swiftOptions?.configDirectory ?? internalOptions.configDirectory;
-        final String fullConfigDir =
-            (internalOptions.basePath != null &&
-                internalOptions.basePath!.isNotEmpty &&
-                targetConfigDir != null &&
-                targetConfigDir.isNotEmpty &&
-                !isWithinOrEquals(internalOptions.basePath!, targetConfigDir))
-            ? path.join(internalOptions.basePath!, targetConfigDir)
-            : (targetConfigDir ?? internalOptions.basePath ?? '');
-        final int exitCode = await _runFfigen(fullConfigDir, internalOptions.input, dartExecutable);
-        if (exitCode != 0) {
-          return exitCode;
+        final String fullConfigDir = resolveInteropConfigDir(
+          internalOptions.swiftOptions?.configDirectory,
+          internalOptions,
+        );
+        final int ffigenExitCode = await _runFfigen(
+          fullConfigDir,
+          internalOptions.input,
+          dartExecutable,
+          errorSink: effectiveErrorSink,
+        );
+        if (ffigenExitCode != 0) {
+          exitCode = ffigenExitCode;
         }
       }
       final String? objcVersionWarning = checkObjectiveCPubspecVersion(internalOptions);
       if (objcVersionWarning != null) {
-        stderr.writeln('Warning: $objcVersionWarning');
+        effectiveErrorSink.writeln('Warning: $objcVersionWarning');
       }
     }
 
     if (useJni) {
-      final Map<String, String> env = await _getJniEnvironment(dartExecutable);
-      if (!await _hasJavaRuntime(env)) {
-        print('JNI Multi-step: Skipping JNIgen because no Java runtime was found.');
-      } else if (!_hasAndroidSdk()) {
-        print('JNI Multi-step: Skipping JNIgen because no Android SDK was found.');
-      } else {
-        final String? targetConfigDir =
-            internalOptions.kotlinOptions?.configDirectory ?? internalOptions.configDirectory;
-        final String fullConfigDir =
-            (internalOptions.basePath != null &&
-                internalOptions.basePath!.isNotEmpty &&
-                targetConfigDir != null &&
-                targetConfigDir.isNotEmpty &&
-                !isWithinOrEquals(internalOptions.basePath!, targetConfigDir))
-            ? path.join(internalOptions.basePath!, targetConfigDir)
-            : (targetConfigDir ?? internalOptions.basePath ?? '');
+      if (!skipJnigen) {
+        final String fullConfigDir = resolveInteropConfigDir(
+          internalOptions.kotlinOptions?.configDirectory,
+          internalOptions,
+        );
         final bool success = await _runJnigen(
           fullConfigDir,
-          internalOptions.input,
+          internalOptions,
           dartExecutable,
-          env,
+          errorSink: effectiveErrorSink,
         );
         if (!success) {
-          return 1;
+          exitCode = 1;
         }
       }
       final String? jniVersionWarning = checkJniPubspecVersion(internalOptions);
       if (jniVersionWarning != null) {
-        stderr.writeln('Warning: $jniVersionWarning');
+        effectiveErrorSink.writeln('Warning: $jniVersionWarning');
       }
     }
 
-    return 0;
+    return exitCode;
   }
 
-  /// Print a list of errors to stderr.
-  static void printErrors(List<Error> errors) {
+  /// Print a list of errors to [errorSink] (defaults to [stderr]).
+  static void printErrors(List<Error> errors, {StringSink? errorSink}) {
+    final StringSink sink = errorSink ?? stderr;
     for (final err in errors) {
       if (err.filename != null) {
         if (err.lineNumber != null) {
-          stderr.writeln('Error: ${err.filename}:${err.lineNumber}: ${err.message}');
+          sink.writeln('Error: ${err.filename}:${err.lineNumber}: ${err.message}');
         } else {
-          stderr.writeln('Error: ${err.filename}: ${err.message}');
+          sink.writeln('Error: ${err.filename}: ${err.message}');
         }
       } else {
-        stderr.writeln('Error: ${err.message}');
+        sink.writeln('Error: ${err.message}');
       }
     }
   }
 
   /// Runs FFIgen in FFI multi-step generation.
   static Future<int> _runFfigen(
-    String swiftAppDir,
+    String configDir,
     String? inputPath,
-    String dartExecutable,
-  ) async {
+    String dartExecutable, {
+    StringSink? errorSink,
+  }) async {
     if (!Platform.isMacOS) {
       print('FFI Multi-step: Skipping FFIgen on non-macOS platform.');
       return 0;
     }
-    final String configFile = getFfigenConfigPath(swiftAppDir, inputPath);
-    if (File(configFile).existsSync()) {
-      print('FFI Multi-step: Running FFIgen for $configFile...');
-      final ProcessResult ffigenResult = await Process.run(dartExecutable, ['run', configFile]);
-      if (ffigenResult.exitCode != 0) {
-        print('Error running FFIgen: ${ffigenResult.stderr}');
-        return 1;
-      }
-      print('FFI Multi-step: FFIgen completed successfully.');
-      return 0;
-    } else {
-      print('Error: FFIgen config file $configFile does not exist.');
+    final StringSink sink = errorSink ?? stderr;
+    final String configFile = getFfigenConfigPath(configDir, inputPath);
+    if (!File(configFile).existsSync()) {
+      sink.writeln('Error: FFIgen config file $configFile does not exist.');
       return 1;
     }
-  }
-
-  /// Gets the environment map for JNI multi-step generation.
-  static Future<Map<String, String>> _getJniEnvironment(String dartExecutable) async {
-    final env = <String, String>{};
-
-    // Try to find Java 17 on macOS
-    if (Platform.isMacOS) {
-      final ProcessResult javaHomeResult = await Process.run('/usr/libexec/java_home', [
-        '-v',
-        '17',
-      ]);
-      if (javaHomeResult.exitCode == 0) {
-        final String javaHome = javaHomeResult.stdout.toString().trim();
-        if (javaHome.isNotEmpty) {
-          env['JAVA_HOME'] = javaHome;
-          print('JNI Multi-step: Using Java 17 from $javaHome');
-        }
-      }
-    }
-
-    // Fallback to current environment's JAVA_HOME if not set or lookup failed
-    if (!env.containsKey('JAVA_HOME')) {
-      final String? currentJavaHome = Platform.environment['JAVA_HOME'];
-      if (currentJavaHome != null && currentJavaHome.isNotEmpty) {
-        env['JAVA_HOME'] = currentJavaHome;
-        print('JNI Multi-step: Using default JAVA_HOME from environment: $currentJavaHome');
-      }
-    }
-
-    // Add dart to PATH if it was found via login shell or full path
-    if (dartExecutable != 'dart') {
-      final String dartDir = path.dirname(dartExecutable);
-      final String currentPath = Platform.environment['PATH'] ?? '';
-      env['PATH'] = '$dartDir:$currentPath';
-      print('Adding $dartDir to PATH for JNIgen due to missing path!');
-    }
-    return env;
-  }
-
-  /// Checks whether a Java runtime is available to execute JNIgen.
-  static Future<bool> _hasJavaRuntime(Map<String, String> env) async {
-    final String? javaHome = env['JAVA_HOME'];
-    if (javaHome != null && javaHome.isNotEmpty) {
-      final String javaExecutable = path.join(javaHome, 'bin', 'java');
-      try {
-        final ProcessResult result = await Process.run(javaExecutable, <String>[
-          '-version',
-        ], environment: env);
-        return result.exitCode == 0;
-      } catch (_) {
-        return false;
-      }
-    }
+    print('FFI Multi-step: Running FFIgen for $configFile...');
+    final ProcessResult ffigenResult;
     try {
-      final ProcessResult result = await Process.run('java', <String>[
-        '-version',
-      ], environment: env);
-      return result.exitCode == 0;
-    } catch (_) {
-      return false;
+      ffigenResult = await Process.run(dartExecutable, <String>['run', configFile]);
+    } on ProcessException catch (e) {
+      sink.writeln('Error: Failed to start FFIgen ($configFile): $e');
+      return 1;
     }
+    if (ffigenResult.exitCode != 0) {
+      final String stdoutText = ffigenResult.stdout.toString().trim();
+      final String stderrText = ffigenResult.stderr.toString().trim();
+      sink.writeln(
+        'Error: FFIgen failed while running $configFile (exit code ${ffigenResult.exitCode}).',
+      );
+      if (stdoutText.isNotEmpty) {
+        sink.writeln(stdoutText);
+      }
+      if (stderrText.isNotEmpty) {
+        sink.writeln(stderrText);
+      }
+      return 1;
+    }
+    print('FFI Multi-step: FFIgen completed successfully.');
+    return 0;
   }
 
-  /// Checks whether an Android SDK is available to execute JNIgen.
-  static bool _hasAndroidSdk() {
-    final String? androidHome =
-        Platform.environment['ANDROID_HOME'] ?? Platform.environment['ANDROID_SDK_ROOT'];
-    return androidHome != null && androidHome.isNotEmpty && Directory(androidHome).existsSync();
+  static Map<String, String> _getJniEnvironment(String dartExecutable) {
+    if (dartExecutable == 'dart' || dartExecutable == 'dart.exe') {
+      return const <String, String>{};
+    }
+    final separator = Platform.isWindows ? ';' : ':';
+    final String dartDir = path.dirname(dartExecutable);
+    final bool isFlutterCachedDart = path
+        .normalize(dartDir)
+        .endsWith(path.join('bin', 'cache', 'dart-sdk', 'bin'));
+    final String flutterBinDir = path.normalize(path.join(dartDir, '..', '..', '..'));
+    final flutterExe = Platform.isWindows ? 'flutter.bat' : 'flutter';
+    final dirs = <String>[
+      if (isFlutterCachedDart && File(path.join(flutterBinDir, flutterExe)).existsSync())
+        flutterBinDir,
+      dartDir,
+    ];
+    final String currentPath = Platform.environment['PATH'] ?? '';
+    return <String, String>{
+      'PATH': currentPath.isEmpty
+          ? dirs.join(separator)
+          : '${dirs.join(separator)}$separator$currentPath',
+    };
   }
 
   /// Runs JNIgen in JNI multi-step generation.
   static Future<bool> _runJnigen(
-    String appDir,
-    String? inputPath,
-    String dartExecutable,
-    Map<String, String> env,
-  ) async {
-    if (!await _hasJavaRuntime(env)) {
-      print('JNI Multi-step: Skipping JNIgen because no Java runtime was found.');
-      return true;
-    }
-    if (!_hasAndroidSdk()) {
-      print('JNI Multi-step: Skipping JNIgen because no Android SDK was found.');
-      return true;
-    }
-    final String configFile = getJnigenConfigPath(appDir, inputPath);
-    print('JNI Multi-step: Running JNIgen for $configFile...');
-    final ProcessResult jnigenResult = await Process.run(dartExecutable, [
-      'run',
-      configFile,
-    ], environment: env);
-    if (jnigenResult.exitCode != 0) {
-      print('Error running JNIgen:\n${jnigenResult.stderr}');
-      print('''
-
-================================================================================
-
-PIGEON USERS: If you have changed your pigeon api surface and haven't updated your native code that uses it, you may need to do that before running JNIgen.
-
-Once you have updated the code to use the newly generated API surface, re-run Pigeon and JNIgen will be run as well.
-
-If you have updated the native code and JNIgen still fails to run, review the error output above.
-
-================================================================================
-
-''');
+    String configDir,
+    InternalPigeonOptions options,
+    String dartExecutable, {
+    required StringSink errorSink,
+  }) async {
+    final String configFile = getJnigenConfigPath(configDir, options.input);
+    if (!File(configFile).existsSync()) {
+      errorSink.writeln('Error: JNIgen config file $configFile does not exist.');
       return false;
-    } else {
-      print('JNI Multi-step: JNIgen completed successfully.');
-      return true;
     }
+    print('JNI Multi-step: Running JNIgen for $configFile...');
+    final ProcessResult jnigenResult;
+    try {
+      jnigenResult = await Process.run(dartExecutable, <String>[
+        'run',
+        configFile,
+      ], environment: _getJniEnvironment(dartExecutable));
+    } on ProcessException catch (e) {
+      errorSink.writeln('Error: Failed to start JNIgen ($configFile): $e');
+      return false;
+    }
+    if (jnigenResult.exitCode != 0) {
+      final String stdoutText = jnigenResult.stdout.toString().trim();
+      final String stderrText = jnigenResult.stderr.toString().trim();
+      errorSink.writeln(
+        'Error: JNIgen failed while running $configFile (exit code ${jnigenResult.exitCode}).',
+      );
+      if (stdoutText.isNotEmpty) {
+        errorSink.writeln(stdoutText);
+      }
+      if (stderrText.isNotEmpty) {
+        errorSink.writeln(stderrText);
+      }
+
+      final bool androidEnvUnset =
+          (Platform.environment['ANDROID_HOME'] ?? '').isEmpty &&
+          (Platform.environment['ANDROID_SDK_ROOT'] ?? '').isEmpty;
+      final bool javaHomeUnset = (Platform.environment['JAVA_HOME'] ?? '').isEmpty;
+      final String? configuredAppDir = options.kotlinOptions?.appDirectory ?? options.appDirectory;
+      final String displayAppDir = (configuredAppDir != null && configuredAppDir.isNotEmpty)
+          ? configuredAppDir
+          : './';
+
+      errorSink.writeln('\nPossible causes and settings to check:');
+      errorSink.writeln(
+        '  - Android SDK: Ensure an Android SDK is installed and configured via '
+        '`ANDROID_HOME`, `ANDROID_SDK_ROOT`, `sdk.dir` in `android/local.properties`, '
+        'or `flutter config --android-sdk`'
+        '${androidEnvUnset ? ' (ANDROID_HOME and ANDROID_SDK_ROOT are currently unset)' : ''}.',
+      );
+      errorSink.writeln(
+        '  - Java / JDK: Ensure a compatible JDK (17-21) is configured via '
+        '`JAVA_HOME` or `flutter config --jdk-dir`'
+        '${javaHomeUnset ? ' (JAVA_HOME is currently unset)' : ''}.',
+      );
+      errorSink.writeln(
+        '  - `appDirectory` (`PigeonOptions.appDirectory` / `KotlinOptions.appDirectory` '
+        'or `--app_directory` / `--kotlin_app_directory`): Must point to a Flutter '
+        "application directory with an `android/` app project (e.g., `'example/'` for "
+        "plugins, or `'./'` for standalone apps; currently '$displayAppDir').",
+      );
+      errorSink.writeln(
+        '  - `jniClassPaths` & `package` (`KotlinOptions.jniClassPaths` / `--kotlin_jni_classpaths`, '
+        '`KotlinOptions.package` / `--kotlin_package`): Standalone apps must be compiled before '
+        'JNIgen runs (default classpath: `build/app/tmp/kotlin-classes/release`), '
+        '`KotlinOptions.package` must match the Kotlin package, and if you changed your '
+        'Pigeon API surface, update your native Android code first and re-run Pigeon.',
+      );
+      errorSink.writeln('Run `dart run $configFile` directly to re-run JNIgen in isolation.');
+      return false;
+    }
+    print('JNI Multi-step: JNIgen completed successfully.');
+    return true;
   }
 }
 
