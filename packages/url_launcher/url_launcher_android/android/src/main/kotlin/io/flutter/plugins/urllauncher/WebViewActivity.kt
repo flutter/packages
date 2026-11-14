@@ -25,7 +25,7 @@ class WebViewActivity : Activity() {
   private val broadcastReceiver: BroadcastReceiver =
       object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent) {
-          val action = intent.getAction()
+          val action = intent.action
           if (ACTION_CLOSE == action) {
             finish()
           }
@@ -35,7 +35,7 @@ class WebViewActivity : Activity() {
   private val webViewClient: WebViewClient =
       object : WebViewClient() {
         override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
-          view.loadUrl(request.getUrl().toString())
+          view.loadUrl(request.url.toString())
           return false
         }
       }
@@ -59,16 +59,16 @@ class WebViewActivity : Activity() {
                 view: WebView,
                 request: WebResourceRequest
             ): Boolean {
-              webview.loadUrl(request.getUrl().toString())
+              webview.loadUrl(request.url.toString())
               return true
             }
           }
 
-      val newWebView = WebView(webview.getContext())
-      newWebView.setWebViewClient(webViewClient)
+      val newWebView = WebView(webview.context)
+      newWebView.webViewClient = webViewClient
 
       val transport = resultMsg.obj as WebViewTransport
-      transport.setWebView(newWebView)
+      transport.webView = newWebView
       resultMsg.sendToTarget()
 
       return true
@@ -89,16 +89,16 @@ class WebViewActivity : Activity() {
     val headersMap: Map<String, String> = extractHeaders(headersBundle)
     webview.loadUrl(url, headersMap)
 
-    webview.getSettings().setJavaScriptEnabled(enableJavaScript)
-    webview.getSettings().setDomStorageEnabled(enableDomStorage)
+    webview.settings.javaScriptEnabled = enableJavaScript
+    webview.settings.domStorageEnabled = enableDomStorage
 
     // Open new urls inside the webview itself.
-    webview.setWebViewClient(webViewClient)
+    webview.webViewClient = webViewClient
 
     // Multi windows is set with FlutterWebChromeClient by default to handle internal bug:
     // b/159892679.
-    webview.getSettings().setSupportMultipleWindows(true)
-    webview.setWebChromeClient(FlutterWebChromeClient())
+    webview.settings.setSupportMultipleWindows(true)
+    webview.webChromeClient = FlutterWebChromeClient()
 
     // Register receiver that may finish this Activity.
     ContextCompat.registerReceiver(
@@ -130,7 +130,7 @@ class WebViewActivity : Activity() {
       if (headersBundle == null) {
         return emptyMap()
       }
-      val headersMap: MutableMap<String, String> = HashMap<String, String>()
+      val headersMap: MutableMap<String, String> = HashMap()
       for (key in headersBundle.keySet()) {
         headersBundle.getString(key)?.let { headersMap.put(key, it) }
       }

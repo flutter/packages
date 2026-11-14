@@ -19,8 +19,8 @@ class UrlLauncherPlugin : FlutterPlugin, ActivityAware {
   private var urlLauncher: UrlLauncher? = null
 
   override fun onAttachedToEngine(binding: FlutterPluginBinding) {
-    urlLauncher = UrlLauncher(binding.getApplicationContext())
-    setUp(binding.getBinaryMessenger(), urlLauncher)
+    urlLauncher = UrlLauncher(binding.applicationContext)
+    setUp(binding.binaryMessenger, urlLauncher)
   }
 
   override fun onDetachedFromEngine(binding: FlutterPluginBinding) {
@@ -29,7 +29,7 @@ class UrlLauncherPlugin : FlutterPlugin, ActivityAware {
       return
     }
 
-    setUp(binding.getBinaryMessenger(), null)
+    setUp(binding.binaryMessenger, null)
     urlLauncher = null
   }
 
@@ -40,7 +40,7 @@ class UrlLauncherPlugin : FlutterPlugin, ActivityAware {
               Log.wtf(TAG, "urlLauncher was never set.")
               return
             }
-    launcher.setActivity(binding.getActivity())
+    launcher.setActivity(binding.activity)
   }
 
   override fun onDetachedFromActivity() {

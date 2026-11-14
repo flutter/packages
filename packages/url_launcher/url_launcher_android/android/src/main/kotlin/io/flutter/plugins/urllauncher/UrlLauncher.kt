@@ -15,6 +15,8 @@ import android.util.Log
 import androidx.annotation.VisibleForTesting
 import androidx.browser.customtabs.CustomTabsClient
 import androidx.browser.customtabs.CustomTabsIntent
+import androidx.core.net.toUri
+import io.flutter.BuildConfig
 
 /** Implements the Pigeon-defined interface for calls from Dart. */
 internal class UrlLauncher
@@ -23,12 +25,10 @@ internal class UrlLauncher
  * allow injecting an alternate resolver for unit testing.
  */
 @VisibleForTesting
-constructor(private val applicationContext: Context, private val intentResolver: IntentResolver) :
-    UrlLauncherApi {
-  @VisibleForTesting
-  internal interface IntentResolver {
-    fun getHandlerComponentName(intent: Intent): String?
-  }
+constructor(
+    private val applicationContext: Context,
+    private val getHandlerComponentName: (Intent) -> String?
+) : UrlLauncherApi {
 
   private var activity: Activity? = null
 
@@ -36,8 +36,8 @@ constructor(private val applicationContext: Context, private val intentResolver:
       context: Context
   ) : this(
       context,
-      IntentResolver { intent: Intent ->
-        val componentName = intent.resolveActivity(context.getPackageManager())
+      { intent ->
+        val componentName = intent.resolveActivity(context.packageManager)
         if (componentName == null) null else componentName.toShortString()
       })
 
@@ -47,16 +47,16 @@ constructor(private val applicationContext: Context, private val intentResolver:
 
   override fun canLaunchUrl(url: String): Boolean {
     val launchIntent = Intent(Intent.ACTION_VIEW)
-    launchIntent.setData(Uri.parse(url))
-    val componentName = intentResolver.getHandlerComponentName(launchIntent)
+    launchIntent.data = url.toUri()
+    val componentName = getHandlerComponentName(launchIntent)
     if (BuildConfig.DEBUG) {
-      Log.i(TAG, "component name for " + url + " is " + componentName)
+      Log.i(TAG, "component name for $url is $componentName")
     }
-    if (componentName == null) {
-      return false
+    return if (componentName == null) {
+      false
     } else {
       // Ignore the emulator fallback activity.
-      return "{com.android.fallback/com.android.fallback.Fallback}" != componentName
+      "{com.android.fallback/com.android.fallback.Fallback}" != componentName
     }
   }
 
@@ -70,14 +70,14 @@ constructor(private val applicationContext: Context, private val intentResolver:
 
     val launchIntent: Intent =
         Intent(Intent.ACTION_VIEW)
-            .setData(Uri.parse(url))
+            .setData(url.toUri())
             .putExtra(Browser.EXTRA_HEADERS, extractBundle(headers))
     if (requireNonBrowser && Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
       launchIntent.addFlags(Intent.FLAG_ACTIVITY_REQUIRE_NON_BROWSER)
     }
     try {
       activity.startActivity(launchIntent)
-    } catch (e: ActivityNotFoundException) {
+    } catch (_: ActivityNotFoundException) {
       return false
     }
 
@@ -93,13 +93,12 @@ constructor(private val applicationContext: Context, private val intentResolver:
     ensureActivity()
     val activity = checkNotNull(activity)
 
-    val headersBundle: Bundle = Companion.extractBundle(webViewOptions.headers)
+    val headersBundle: Bundle = extractBundle(webViewOptions.headers)
 
     // Try to launch using Custom Tabs if they have the necessary functionality, unless the caller
     // specifically requested a web view.
-    if (allowCustomTab && !Companion.containsRestrictedHeader(webViewOptions.headers)) {
-      val uri = Uri.parse(url)
-      if (Companion.openCustomTab(activity, uri, headersBundle, browserOptions)) {
+    if (allowCustomTab && !containsRestrictedHeader(webViewOptions.headers)) {
+      if (openCustomTab(activity, url.toUri(), headersBundle, browserOptions)) {
         return true
       }
     }
@@ -114,7 +113,7 @@ constructor(private val applicationContext: Context, private val intentResolver:
             headersBundle)
     try {
       activity.startActivity(launchIntent)
-    } catch (e: ActivityNotFoundException) {
+    } catch (_: ActivityNotFoundException) {
       return false
     }
 
@@ -149,7 +148,7 @@ constructor(private val applicationContext: Context, private val intentResolver:
 
       try {
         customTabsIntent.launchUrl(context, uri)
-      } catch (ex: ActivityNotFoundException) {
+      } catch (_: ActivityNotFoundException) {
         return false
       }
       return true
@@ -173,7 +172,7 @@ constructor(private val applicationContext: Context, private val intentResolver:
     private fun extractBundle(headersMap: Map<String, String>): Bundle {
       val headersBundle = Bundle()
       for (key in headersMap.keys) {
-        val value = headersMap.get(key)
+        val value = headersMap[key]
         headersBundle.putString(key, value)
       }
       return headersBundle
