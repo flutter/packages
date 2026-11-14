@@ -1,3 +1,7 @@
+## 6.3.35
+
+* Converts native implementation code to Kotlin.".
+
 ## 6.3.34
 
 * Updates Robolectric to 4.17 and adds the JVM arguments it requires for unit tests.
