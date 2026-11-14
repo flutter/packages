@@ -8,6 +8,7 @@ import 'dart:typed_data';
 import 'package:meta/meta.dart';
 import '../../vector_graphics_compiler.dart';
 
+import '../util.dart';
 import 'basic_types.dart';
 
 /// An immutable affine matrix, a 3x3 column-major-order matrix in which the
@@ -51,12 +52,19 @@ class AffineMatrix {
 
   /// Calculates the scale for a stroke width based on the average of the x- and
   /// y-axis scales of this matrix.
+  ///
+  /// A null [width] is the initial SVG stroke width of 1, which also scales. It
+  /// stays null if this matrix has no scale to apply.
   double? scaleStrokeWidth(double? width) {
-    if (width == null || (a == 1 && d == 1)) {
+    if (a == 1 && d == 1 && b == 0 && c == 0) {
       return width;
     }
 
-    return (xScale + yScale) / 2 * width;
+    final double scale = (xScale + yScale) / 2;
+    if ((scale - 1).abs() < precisionErrorTolerance) {
+      return width;
+    }
+    return scale * (width ?? 1);
   }
 
   /// Creates a new affine matrix rotated by `radians`.

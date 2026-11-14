@@ -2,6 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+/// The tolerance for floating point comparisons, matching
+/// `precisionErrorTolerance` from `package:flutter/foundation.dart`.
+const double precisionErrorTolerance = 1e-10;
+
 /// A utility method for comparing lists for equality.
 ///
 /// This method assumes that [T] implements a meaningful equality operator.

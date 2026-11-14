@@ -6,6 +6,7 @@ import 'dart:math' as math;
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vector_graphics_compiler/src/svg/parsers.dart';
+import 'package:vector_graphics_compiler/src/util.dart';
 import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 import 'package:vector_math/vector_math_64.dart';
 
@@ -26,6 +27,30 @@ void main() {
     expect(AffineMatrix.identity.scaled(2.0, 1.0).scaleStrokeWidth(2), 3);
     expect(AffineMatrix.identity.scaled(2.0, 1.0).rotated(1.2).scaleStrokeWidth(1), 1.5);
     expect(AffineMatrix.identity.scaled(2.0, 1.0).rotated(1.2).scaleStrokeWidth(2), 3);
+
+    expect(AffineMatrix.identity.scaled(2.0).scaleStrokeWidth(null), 2);
+    expect(AffineMatrix.identity.scaled(0.25).scaleStrokeWidth(null), 0.25);
+    expect(AffineMatrix.identity.scaled(2.0, 1.0).scaleStrokeWidth(null), 1.5);
+    expect(AffineMatrix.identity.rotated(1.2).scaleStrokeWidth(null), null);
+    expect(AffineMatrix.identity.rotated(radians(10)).scaleStrokeWidth(2), 2);
+
+    final double skewScale = (1 + math.sqrt(1 + math.pow(math.tan(radians(30)), 2))) / 2;
+    expect(
+      AffineMatrix.identity.xSkewed(radians(30)).scaleStrokeWidth(null),
+      closeTo(skewScale, precisionErrorTolerance),
+    );
+    expect(
+      AffineMatrix.identity.xSkewed(radians(30)).scaleStrokeWidth(2),
+      closeTo(2 * skewScale, precisionErrorTolerance),
+    );
+    expect(
+      AffineMatrix.identity.ySkewed(radians(30)).scaleStrokeWidth(null),
+      closeTo(skewScale, precisionErrorTolerance),
+    );
+    expect(
+      AffineMatrix.identity.ySkewed(radians(30)).scaleStrokeWidth(2),
+      closeTo(2 * skewScale, precisionErrorTolerance),
+    );
   });
 
   test('Parse rotate and scale', () {
