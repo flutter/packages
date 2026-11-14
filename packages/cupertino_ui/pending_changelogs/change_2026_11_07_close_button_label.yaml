@@ -1,0 +1,3 @@
+changelog: |
+  - Adds `CupertinoLocalizations.closeButtonLabel`, the label for a close button.
+version: minor

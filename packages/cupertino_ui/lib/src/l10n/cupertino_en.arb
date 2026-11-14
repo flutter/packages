@@ -210,6 +210,11 @@
     "description": "Label for the cancel button in modal views."
   },
 
+  "closeButtonLabel": "Close",
+  "@closeButtonLabel": {
+    "description": "Label for the close button. Unlike cancel, it does not imply discarding anything."
+  },
+
   "backButtonLabel": "Back",
   "@backButtonLabel": {
     "description": "Label for the back button. Used as the semantic label for the back button in CupertinoNavigationBar and CupertinoSliverNavigationBar and as a fallback display when the previous page title is truncated."

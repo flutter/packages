@@ -60,6 +60,9 @@ class CupertinoLocalizationAf extends GlobalCupertinoLocalizations {
   String get clearButtonLabel => 'Vee uit';
 
   @override
+  String get closeButtonLabel => 'Close';
+
+  @override
   String get collapsedHint => 'Uitgevou';
 
   @override
@@ -248,6 +251,9 @@ class CupertinoLocalizationAm extends GlobalCupertinoLocalizations {
 
   @override
   String get clearButtonLabel => 'አጽዳ';
+
+  @override
+  String get closeButtonLabel => 'Close';
 
   @override
   String get collapsedHint => 'ተዘርግቷል';
@@ -440,6 +446,9 @@ class CupertinoLocalizationAr extends GlobalCupertinoLocalizations {
   String get clearButtonLabel => 'محو';
 
   @override
+  String get closeButtonLabel => 'Close';
+
+  @override
   String get collapsedHint => 'موسَّع';
 
   @override
@@ -628,6 +637,9 @@ class CupertinoLocalizationAs extends GlobalCupertinoLocalizations {
 
   @override
   String get clearButtonLabel => 'মচক';
+
+  @override
+  String get closeButtonLabel => 'Close';
 
   @override
   String get collapsedHint => 'বিস্তাৰ কৰা আছে';
@@ -820,6 +832,9 @@ class CupertinoLocalizationAz extends GlobalCupertinoLocalizations {
   String get clearButtonLabel => 'Silin';
 
   @override
+  String get closeButtonLabel => 'Close';
+
+  @override
   String get collapsedHint => 'Genişləndirildi';
 
   @override
@@ -1008,6 +1023,9 @@ class CupertinoLocalizationBe extends GlobalCupertinoLocalizations {
 
   @override
   String get clearButtonLabel => 'Ачысціць';
+
+  @override
+  String get closeButtonLabel => 'Close';
 
   @override
   String get collapsedHint => 'Разгорнута';
@@ -1200,6 +1218,9 @@ class CupertinoLocalizationBg extends GlobalCupertinoLocalizations {
   String get clearButtonLabel => 'Изчистване';
 
   @override
+  String get closeButtonLabel => 'Close';
+
+  @override
   String get collapsedHint => 'Разгънато';
 
   @override
@@ -1388,6 +1409,9 @@ class CupertinoLocalizationBn extends GlobalCupertinoLocalizations {
 
   @override
   String get clearButtonLabel => 'মুছুন';
+
+  @override
+  String get closeButtonLabel => 'Close';
 
   @override
   String get collapsedHint => 'বড় করা হয়েছে';
@@ -1580,6 +1604,9 @@ class CupertinoLocalizationBo extends GlobalCupertinoLocalizations {
   String get clearButtonLabel => 'གཙང་བཟོ།';
 
   @override
+  String get closeButtonLabel => 'Close';
+
+  @override
   String get collapsedHint => 'ཁྱབ་སྤེལ་ཟིན།';
 
   @override
@@ -1768,6 +1795,9 @@ class CupertinoLocalizationBs extends GlobalCupertinoLocalizations {
 
   @override
   String get clearButtonLabel => 'Obriši';
+
+  @override
+  String get closeButtonLabel => 'Close';
 
   @override
   String get collapsedHint => 'Prošireno';
@@ -1960,6 +1990,9 @@ class CupertinoLocalizationCa extends GlobalCupertinoLocalizations {
   String get clearButtonLabel => 'Esborra';
 
   @override
+  String get closeButtonLabel => 'Close';
+
+  @override
   String get collapsedHint => "S'ha desplegat";
 
   @override
@@ -2148,6 +2181,9 @@ class CupertinoLocalizationCs extends GlobalCupertinoLocalizations {
 
   @override
   String get clearButtonLabel => 'Vymazat';
+
+  @override
+  String get closeButtonLabel => 'Close';
 
   @override
   String get collapsedHint => 'Rozbaleno';
@@ -2340,6 +2376,9 @@ class CupertinoLocalizationCy extends GlobalCupertinoLocalizations {
   String get clearButtonLabel => 'Clirio';
 
   @override
+  String get closeButtonLabel => 'Close';
+
+  @override
   String get collapsedHint => "Wedi'i ehangu";
 
   @override
@@ -2530,6 +2569,9 @@ class CupertinoLocalizationDa extends GlobalCupertinoLocalizations {
   String get clearButtonLabel => 'Ryd';
 
   @override
+  String get closeButtonLabel => 'Close';
+
+  @override
   String get collapsedHint => 'Udvidet';
 
   @override
@@ -2718,6 +2760,9 @@ class CupertinoLocalizationDe extends GlobalCupertinoLocalizations {
 
   @override
   String get clearButtonLabel => 'Löschen';
+
+  @override
+  String get closeButtonLabel => 'Close';
 
   @override
   String get collapsedHint => 'Maximiert';
@@ -2938,6 +2983,9 @@ class CupertinoLocalizationEl extends GlobalCupertinoLocalizations {
   String get clearButtonLabel => 'Διαγραφή';
 
   @override
+  String get closeButtonLabel => 'Close';
+
+  @override
   String get collapsedHint => 'Αναπτύχθηκε';
 
   @override
@@ -3126,6 +3174,9 @@ class CupertinoLocalizationEn extends GlobalCupertinoLocalizations {
 
   @override
   String get clearButtonLabel => 'Clear';
+
+  @override
+  String get closeButtonLabel => 'Close';
 
   @override
   String get collapsedHint => 'Expanded';
@@ -3600,6 +3651,9 @@ class CupertinoLocalizationEs extends GlobalCupertinoLocalizations {
 
   @override
   String get clearButtonLabel => 'Borrar';
+
+  @override
+  String get closeButtonLabel => 'Close';
 
   @override
   String get collapsedHint => 'Desplegado';
@@ -4952,6 +5006,9 @@ class CupertinoLocalizationEt extends GlobalCupertinoLocalizations {
   String get clearButtonLabel => 'Kustutamine';
 
   @override
+  String get closeButtonLabel => 'Close';
+
+  @override
   String get collapsedHint => 'Laiendatud';
 
   @override
@@ -5140,6 +5197,9 @@ class CupertinoLocalizationEu extends GlobalCupertinoLocalizations {
 
   @override
   String get clearButtonLabel => 'Garbitu';
+
+  @override
+  String get closeButtonLabel => 'Close';
 
   @override
   String get collapsedHint => 'Zabalduta';
@@ -5332,6 +5392,9 @@ class CupertinoLocalizationFa extends GlobalCupertinoLocalizations {
   String get clearButtonLabel => 'پاک کردن';
 
   @override
+  String get closeButtonLabel => 'Close';
+
+  @override
   String get collapsedHint => 'ازهم بازشده';
 
   @override
@@ -5520,6 +5583,9 @@ class CupertinoLocalizationFi extends GlobalCupertinoLocalizations {
 
   @override
   String get clearButtonLabel => 'Tyhjennä';
+
+  @override
+  String get closeButtonLabel => 'Close';
 
   @override
   String get collapsedHint => 'Laajennettu';
@@ -5712,6 +5778,9 @@ class CupertinoLocalizationFil extends GlobalCupertinoLocalizations {
   String get clearButtonLabel => 'I-clear';
 
   @override
+  String get closeButtonLabel => 'Close';
+
+  @override
   String get collapsedHint => 'Naka-expand';
 
   @override
@@ -5900,6 +5969,9 @@ class CupertinoLocalizationFr extends GlobalCupertinoLocalizations {
 
   @override
   String get clearButtonLabel => 'Effacer';
+
+  @override
+  String get closeButtonLabel => 'Close';
 
   @override
   String get collapsedHint => 'Développé';
@@ -6147,6 +6219,9 @@ class CupertinoLocalizationGa extends GlobalCupertinoLocalizations {
   String get clearButtonLabel => 'Glan';
 
   @override
+  String get closeButtonLabel => 'Close';
+
+  @override
   String get collapsedHint => 'Leathnaithe';
 
   @override
@@ -6335,6 +6410,9 @@ class CupertinoLocalizationGl extends GlobalCupertinoLocalizations {
 
   @override
   String get clearButtonLabel => 'Borrar';
+
+  @override
+  String get closeButtonLabel => 'Close';
 
   @override
   String get collapsedHint => 'Despregado';
@@ -6527,6 +6605,9 @@ class CupertinoLocalizationGsw extends GlobalCupertinoLocalizations {
   String get clearButtonLabel => 'Löschen';
 
   @override
+  String get closeButtonLabel => 'Close';
+
+  @override
   String get collapsedHint => 'Maximiert';
 
   @override
@@ -6715,6 +6796,9 @@ class CupertinoLocalizationGu extends GlobalCupertinoLocalizations {
 
   @override
   String get clearButtonLabel => 'સાફ કરો';
+
+  @override
+  String get closeButtonLabel => 'Close';
 
   @override
   String get collapsedHint => 'મોટી કરી';
@@ -6907,6 +6991,9 @@ class CupertinoLocalizationHe extends GlobalCupertinoLocalizations {
   String get clearButtonLabel => 'ניקוי';
 
   @override
+  String get closeButtonLabel => 'Close';
+
+  @override
   String get collapsedHint => 'מורחב';
 
   @override
@@ -7095,6 +7182,9 @@ class CupertinoLocalizationHi extends GlobalCupertinoLocalizations {
 
   @override
   String get clearButtonLabel => 'हटाएं';
+
+  @override
+  String get closeButtonLabel => 'Close';
 
   @override
   String get collapsedHint => 'बड़ा किया गया';
@@ -7287,6 +7377,9 @@ class CupertinoLocalizationHr extends GlobalCupertinoLocalizations {
   String get clearButtonLabel => 'Izbriši';
 
   @override
+  String get closeButtonLabel => 'Close';
+
+  @override
   String get collapsedHint => 'Prošireno';
 
   @override
@@ -7475,6 +7568,9 @@ class CupertinoLocalizationHu extends GlobalCupertinoLocalizations {
 
   @override
   String get clearButtonLabel => 'Törlés';
+
+  @override
+  String get closeButtonLabel => 'Close';
 
   @override
   String get collapsedHint => 'Kibontva';
@@ -7667,6 +7763,9 @@ class CupertinoLocalizationHy extends GlobalCupertinoLocalizations {
   String get clearButtonLabel => 'Մաքրել';
 
   @override
+  String get closeButtonLabel => 'Close';
+
+  @override
   String get collapsedHint => 'Ծավալված է';
 
   @override
@@ -7855,6 +7954,9 @@ class CupertinoLocalizationId extends GlobalCupertinoLocalizations {
 
   @override
   String get clearButtonLabel => 'Hapus';
+
+  @override
+  String get closeButtonLabel => 'Close';
 
   @override
   String get collapsedHint => 'Diluaskan';
@@ -8047,6 +8149,9 @@ class CupertinoLocalizationIs extends GlobalCupertinoLocalizations {
   String get clearButtonLabel => 'Hreinsa';
 
   @override
+  String get closeButtonLabel => 'Close';
+
+  @override
   String get collapsedHint => 'Stækkað';
 
   @override
@@ -8235,6 +8340,9 @@ class CupertinoLocalizationIt extends GlobalCupertinoLocalizations {
 
   @override
   String get clearButtonLabel => 'Cancella';
+
+  @override
+  String get closeButtonLabel => 'Close';
 
   @override
   String get collapsedHint => 'Espanso';
@@ -8427,6 +8535,9 @@ class CupertinoLocalizationJa extends GlobalCupertinoLocalizations {
   String get clearButtonLabel => '消去';
 
   @override
+  String get closeButtonLabel => 'Close';
+
+  @override
   String get collapsedHint => '開きました';
 
   @override
@@ -8615,6 +8726,9 @@ class CupertinoLocalizationKa extends GlobalCupertinoLocalizations {
 
   @override
   String get clearButtonLabel => 'გასუფთავება';
+
+  @override
+  String get closeButtonLabel => 'Close';
 
   @override
   String get collapsedHint => 'გაფართოებულია';
@@ -8807,6 +8921,9 @@ class CupertinoLocalizationKk extends GlobalCupertinoLocalizations {
   String get clearButtonLabel => 'Өшіру';
 
   @override
+  String get closeButtonLabel => 'Close';
+
+  @override
   String get collapsedHint => 'Жайылды';
 
   @override
@@ -8995,6 +9112,9 @@ class CupertinoLocalizationKm extends GlobalCupertinoLocalizations {
 
   @override
   String get clearButtonLabel => 'សម្អាត';
+
+  @override
+  String get closeButtonLabel => 'Close';
 
   @override
   String get collapsedHint => 'បាន​ពង្រីក';
@@ -9187,6 +9307,9 @@ class CupertinoLocalizationKn extends GlobalCupertinoLocalizations {
   String get clearButtonLabel => '\u{ca4}\u{cc6}\u{cb0}\u{cb5}\u{cc1}\u{c97}\u{cca}\u{cb3}\u{cbf}\u{cb8}\u{cbf}';
 
   @override
+  String get closeButtonLabel => 'Close';
+
+  @override
   String get collapsedHint => '\u{cb5}\u{cbf}\u{cb8}\u{ccd}\u{ca4}\u{cb0}\u{cbf}\u{cb8}\u{cb2}\u{cbe}\u{c97}\u{cbf}\u{ca6}\u{cc6}';
 
   @override
@@ -9375,6 +9498,9 @@ class CupertinoLocalizationKo extends GlobalCupertinoLocalizations {
 
   @override
   String get clearButtonLabel => '삭제';
+
+  @override
+  String get closeButtonLabel => 'Close';
 
   @override
   String get collapsedHint => '펼침';
@@ -9567,6 +9693,9 @@ class CupertinoLocalizationKy extends GlobalCupertinoLocalizations {
   String get clearButtonLabel => 'Тазалоо';
 
   @override
+  String get closeButtonLabel => 'Close';
+
+  @override
   String get collapsedHint => 'Жайылып көрсөтүлдү';
 
   @override
@@ -9755,6 +9884,9 @@ class CupertinoLocalizationLo extends GlobalCupertinoLocalizations {
 
   @override
   String get clearButtonLabel => 'ລຶບລ້າງ';
+
+  @override
+  String get closeButtonLabel => 'Close';
 
   @override
   String get collapsedHint => 'ຂະຫຍາຍແລ້ວ';
@@ -9947,6 +10079,9 @@ class CupertinoLocalizationLt extends GlobalCupertinoLocalizations {
   String get clearButtonLabel => 'Išvalyti';
 
   @override
+  String get closeButtonLabel => 'Close';
+
+  @override
   String get collapsedHint => 'Išskleista';
 
   @override
@@ -10135,6 +10270,9 @@ class CupertinoLocalizationLv extends GlobalCupertinoLocalizations {
 
   @override
   String get clearButtonLabel => 'Notīrīt';
+
+  @override
+  String get closeButtonLabel => 'Close';
 
   @override
   String get collapsedHint => 'Izvērsts';
@@ -10327,6 +10465,9 @@ class CupertinoLocalizationMk extends GlobalCupertinoLocalizations {
   String get clearButtonLabel => 'Избриши';
 
   @override
+  String get closeButtonLabel => 'Close';
+
+  @override
   String get collapsedHint => 'Проширено';
 
   @override
@@ -10515,6 +10656,9 @@ class CupertinoLocalizationMl extends GlobalCupertinoLocalizations {
 
   @override
   String get clearButtonLabel => 'മായ്ക്കുക';
+
+  @override
+  String get closeButtonLabel => 'Close';
 
   @override
   String get collapsedHint => 'വികസിപ്പിച്ചു';
@@ -10707,6 +10851,9 @@ class CupertinoLocalizationMn extends GlobalCupertinoLocalizations {
   String get clearButtonLabel => 'Арилгах';
 
   @override
+  String get closeButtonLabel => 'Close';
+
+  @override
   String get collapsedHint => 'Дэлгэсэн';
 
   @override
@@ -10895,6 +11042,9 @@ class CupertinoLocalizationMr extends GlobalCupertinoLocalizations {
 
   @override
   String get clearButtonLabel => 'साफ करा';
+
+  @override
+  String get closeButtonLabel => 'Close';
 
   @override
   String get collapsedHint => 'विस्तार केले';
@@ -11087,6 +11237,9 @@ class CupertinoLocalizationMs extends GlobalCupertinoLocalizations {
   String get clearButtonLabel => 'Kosongkan';
 
   @override
+  String get closeButtonLabel => 'Close';
+
+  @override
   String get collapsedHint => 'Dikembangkan';
 
   @override
@@ -11275,6 +11428,9 @@ class CupertinoLocalizationMy extends GlobalCupertinoLocalizations {
 
   @override
   String get clearButtonLabel => 'ဖယ်ရှားရန်';
+
+  @override
+  String get closeButtonLabel => 'Close';
 
   @override
   String get collapsedHint => 'ဖြန့်ထားသည်';
@@ -11467,6 +11623,9 @@ class CupertinoLocalizationNb extends GlobalCupertinoLocalizations {
   String get clearButtonLabel => 'Slett';
 
   @override
+  String get closeButtonLabel => 'Close';
+
+  @override
   String get collapsedHint => 'Vises';
 
   @override
@@ -11655,6 +11814,9 @@ class CupertinoLocalizationNe extends GlobalCupertinoLocalizations {
 
   @override
   String get clearButtonLabel => 'हटाउनुहोस्';
+
+  @override
+  String get closeButtonLabel => 'Close';
 
   @override
   String get collapsedHint => 'एक्स्पान्ड गरियो';
@@ -11847,6 +12009,9 @@ class CupertinoLocalizationNl extends GlobalCupertinoLocalizations {
   String get clearButtonLabel => 'Wissen';
 
   @override
+  String get closeButtonLabel => 'Close';
+
+  @override
   String get collapsedHint => 'Uitgevouwen';
 
   @override
@@ -12035,6 +12200,9 @@ class CupertinoLocalizationNo extends GlobalCupertinoLocalizations {
 
   @override
   String get clearButtonLabel => 'Slett';
+
+  @override
+  String get closeButtonLabel => 'Close';
 
   @override
   String get collapsedHint => 'Vises';
@@ -12227,6 +12395,9 @@ class CupertinoLocalizationOr extends GlobalCupertinoLocalizations {
   String get clearButtonLabel => 'ଖାଲି କରନ୍ତୁ';
 
   @override
+  String get closeButtonLabel => 'Close';
+
+  @override
   String get collapsedHint => 'ବିସ୍ତାର କରାଯାଇଛି';
 
   @override
@@ -12415,6 +12586,9 @@ class CupertinoLocalizationPa extends GlobalCupertinoLocalizations {
 
   @override
   String get clearButtonLabel => 'ਕਲੀਅਰ ਕਰੋ';
+
+  @override
+  String get closeButtonLabel => 'Close';
 
   @override
   String get collapsedHint => 'ਵਿਸਤਾਰ ਕੀਤਾ ਗਿਆ';
@@ -12607,6 +12781,9 @@ class CupertinoLocalizationPl extends GlobalCupertinoLocalizations {
   String get clearButtonLabel => 'Wyczyść';
 
   @override
+  String get closeButtonLabel => 'Close';
+
+  @override
   String get collapsedHint => 'Rozwinięto';
 
   @override
@@ -12795,6 +12972,9 @@ class CupertinoLocalizationPt extends GlobalCupertinoLocalizations {
 
   @override
   String get clearButtonLabel => 'Limpar';
+
+  @override
+  String get closeButtonLabel => 'Close';
 
   @override
   String get collapsedHint => 'Aberto.';
@@ -13057,6 +13237,9 @@ class CupertinoLocalizationRo extends GlobalCupertinoLocalizations {
   String get clearButtonLabel => 'Ștergeți';
 
   @override
+  String get closeButtonLabel => 'Close';
+
+  @override
   String get collapsedHint => 'Extins';
 
   @override
@@ -13245,6 +13428,9 @@ class CupertinoLocalizationRu extends GlobalCupertinoLocalizations {
 
   @override
   String get clearButtonLabel => 'Очистить';
+
+  @override
+  String get closeButtonLabel => 'Close';
 
   @override
   String get collapsedHint => 'Развернуто';
@@ -13437,6 +13623,9 @@ class CupertinoLocalizationSi extends GlobalCupertinoLocalizations {
   String get clearButtonLabel => 'හිස් කරන්න';
 
   @override
+  String get closeButtonLabel => 'Close';
+
+  @override
   String get collapsedHint => 'දිග හරින ලදි';
 
   @override
@@ -13625,6 +13814,9 @@ class CupertinoLocalizationSk extends GlobalCupertinoLocalizations {
 
   @override
   String get clearButtonLabel => 'Vymazať';
+
+  @override
+  String get closeButtonLabel => 'Close';
 
   @override
   String get collapsedHint => 'Rozbalené';
@@ -13817,6 +14009,9 @@ class CupertinoLocalizationSl extends GlobalCupertinoLocalizations {
   String get clearButtonLabel => 'Počisti';
 
   @override
+  String get closeButtonLabel => 'Close';
+
+  @override
   String get collapsedHint => 'Razširjeno';
 
   @override
@@ -14007,6 +14202,9 @@ class CupertinoLocalizationSq extends GlobalCupertinoLocalizations {
   String get clearButtonLabel => 'Pastro';
 
   @override
+  String get closeButtonLabel => 'Close';
+
+  @override
   String get collapsedHint => 'U zgjerua';
 
   @override
@@ -14195,6 +14393,9 @@ class CupertinoLocalizationSr extends GlobalCupertinoLocalizations {
 
   @override
   String get clearButtonLabel => 'Обриши';
+
+  @override
+  String get closeButtonLabel => 'Close';
 
   @override
   String get collapsedHint => 'Проширено је';
@@ -14545,6 +14746,9 @@ class CupertinoLocalizationSv extends GlobalCupertinoLocalizations {
   String get clearButtonLabel => 'Rensa';
 
   @override
+  String get closeButtonLabel => 'Close';
+
+  @override
   String get collapsedHint => 'Utökades';
 
   @override
@@ -14733,6 +14937,9 @@ class CupertinoLocalizationSw extends GlobalCupertinoLocalizations {
 
   @override
   String get clearButtonLabel => 'Futa';
+
+  @override
+  String get closeButtonLabel => 'Close';
 
   @override
   String get collapsedHint => 'Imepanuliwa';
@@ -14925,6 +15132,9 @@ class CupertinoLocalizationTa extends GlobalCupertinoLocalizations {
   String get clearButtonLabel => 'அழி';
 
   @override
+  String get closeButtonLabel => 'Close';
+
+  @override
   String get collapsedHint => 'விரிவாக்கப்பட்டது';
 
   @override
@@ -15113,6 +15323,9 @@ class CupertinoLocalizationTe extends GlobalCupertinoLocalizations {
 
   @override
   String get clearButtonLabel => 'క్లియర్ చేయండి';
+
+  @override
+  String get closeButtonLabel => 'Close';
 
   @override
   String get collapsedHint => 'విస్తరించబడింది';
@@ -15305,6 +15518,9 @@ class CupertinoLocalizationTh extends GlobalCupertinoLocalizations {
   String get clearButtonLabel => 'ล้าง';
 
   @override
+  String get closeButtonLabel => 'Close';
+
+  @override
   String get collapsedHint => 'ขยาย';
 
   @override
@@ -15493,6 +15709,9 @@ class CupertinoLocalizationTl extends GlobalCupertinoLocalizations {
 
   @override
   String get clearButtonLabel => 'I-clear';
+
+  @override
+  String get closeButtonLabel => 'Close';
 
   @override
   String get collapsedHint => 'Naka-expand';
@@ -15685,6 +15904,9 @@ class CupertinoLocalizationTr extends GlobalCupertinoLocalizations {
   String get clearButtonLabel => 'Temizle';
 
   @override
+  String get closeButtonLabel => 'Close';
+
+  @override
   String get collapsedHint => 'Genişletildi';
 
   @override
@@ -15873,6 +16095,9 @@ class CupertinoLocalizationUg extends GlobalCupertinoLocalizations {
 
   @override
   String get clearButtonLabel => 'تازىلاش';
+
+  @override
+  String get closeButtonLabel => 'Close';
 
   @override
   String get collapsedHint => 'يېيىلدى';
@@ -16065,6 +16290,9 @@ class CupertinoLocalizationUk extends GlobalCupertinoLocalizations {
   String get clearButtonLabel => 'Очистити';
 
   @override
+  String get closeButtonLabel => 'Close';
+
+  @override
   String get collapsedHint => 'Розгорнуто';
 
   @override
@@ -16253,6 +16481,9 @@ class CupertinoLocalizationUr extends GlobalCupertinoLocalizations {
 
   @override
   String get clearButtonLabel => 'صاف کریں';
+
+  @override
+  String get closeButtonLabel => 'Close';
 
   @override
   String get collapsedHint => 'پھیلا ہوا';
@@ -16445,6 +16676,9 @@ class CupertinoLocalizationUz extends GlobalCupertinoLocalizations {
   String get clearButtonLabel => 'Tozalash';
 
   @override
+  String get closeButtonLabel => 'Close';
+
+  @override
   String get collapsedHint => 'Yoyilgan';
 
   @override
@@ -16635,6 +16869,9 @@ class CupertinoLocalizationVi extends GlobalCupertinoLocalizations {
   String get clearButtonLabel => 'Xoá';
 
   @override
+  String get closeButtonLabel => 'Close';
+
+  @override
   String get collapsedHint => 'Đã mở rộng';
 
   @override
@@ -16823,6 +17060,9 @@ class CupertinoLocalizationZh extends GlobalCupertinoLocalizations {
 
   @override
   String get clearButtonLabel => '清除';
+
+  @override
+  String get closeButtonLabel => 'Close';
 
   @override
   String get collapsedHint => '已展开';
@@ -17212,6 +17452,9 @@ class CupertinoLocalizationZu extends GlobalCupertinoLocalizations {
 
   @override
   String get clearButtonLabel => 'Sula';
+
+  @override
+  String get closeButtonLabel => 'Close';
 
   @override
   String get collapsedHint => 'Kunwetshiwe';
