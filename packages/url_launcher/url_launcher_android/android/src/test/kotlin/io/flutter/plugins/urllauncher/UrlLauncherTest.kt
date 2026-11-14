@@ -11,7 +11,6 @@ import android.net.Uri
 import android.provider.Browser
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.test.core.app.ApplicationProvider
-import io.flutter.plugins.urllauncher.UrlLauncher.IntentResolver
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -32,16 +31,17 @@ import org.robolectric.annotation.Config
 class UrlLauncherTest {
   @Test
   fun canLaunch_createsIntentWithPassedUrl() {
-    val resolver = mock<IntentResolver>()
-    val api = UrlLauncher(ApplicationProvider.getApplicationContext(), resolver)
+    var resolvedIntent: Intent? = null
+    val api =
+        UrlLauncher(ApplicationProvider.getApplicationContext()) { intent ->
+          resolvedIntent = intent
+          null
+        }
     val url = Uri.parse("https://flutter.dev")
-    whenever(resolver.getHandlerComponentName(any())).thenReturn(null)
 
     api.canLaunchUrl(url.toString())
 
-    val intentCaptor = argumentCaptor<Intent>()
-    verify(resolver).getHandlerComponentName(intentCaptor.capture())
-    assertEquals(url, intentCaptor.firstValue.data)
+    assertEquals(url, resolvedIntent?.data)
   }
 
   @Test
