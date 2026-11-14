@@ -41,8 +41,7 @@ constructor(
   }
 
   override fun canLaunchUrl(url: String): Boolean {
-    val launchIntent = Intent(Intent.ACTION_VIEW)
-    launchIntent.data = url.toUri()
+    val launchIntent = Intent(Intent.ACTION_VIEW, url.toUri())
     val componentName = getHandlerComponentName(launchIntent)
     if (BuildConfig.DEBUG) {
       Log.i(TAG, "component name for $url is $componentName")
