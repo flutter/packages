@@ -29,7 +29,7 @@ void main() {
         '''
 <svg viewBox="0 0 100 100">
   <defs>
-    <path id="leaf" d="M 0,0 L 10,10" />
+    <path id="leaf" d="M 0,0 L 10,10 L 0,10 Z" />
     <g id="lvl1"><use href="#leaf" /><use href="#leaf" /></g>
 ${[for (var i = 2; i <= 30; i++) '    <g id="lvl$i"><use href="#lvl${i - 1}" /><use href="#lvl${i - 1}" /></g>'].join('\n')}
   </defs>
@@ -53,7 +53,7 @@ ${[for (var i = 2; i <= 30; i++) '    <g id="lvl$i"><use href="#lvl${i - 1}" /><
         '''
 <svg viewBox="0 0 100 100">
   <defs>
-    <path id="leaf" d="M 0,0 L 10,10" />
+    <path id="leaf" d="M 0,0 L 10,10 L 0,10 Z" />
     <g id="lvl1"><use href="#leaf" /><use href="#leaf" /></g>
 ${[for (var i = 2; i <= 30; i++) '    <g id="lvl$i"><use href="#lvl${i - 1}" /><use href="#lvl${i - 1}" /></g>'].join('\n')}
     <clipPath id="clip1"><use href="#lvl30" /></clipPath>
@@ -78,7 +78,7 @@ ${[for (var i = 2; i <= 30; i++) '    <g id="lvl$i"><use href="#lvl${i - 1}" /><
         '''
 <svg viewBox="0 0 100 100">
   <defs>
-    <path id="leaf" d="M 0,0 L 10,10" />
+    <path id="leaf" d="M 0,0 L 10,10 L 0,10 Z" />
     <g id="lvl1"><use href="#leaf" /><use href="#leaf" /></g>
 ${[for (var i = 2; i <= 8; i++) '    <g id="lvl$i"><use href="#lvl${i - 1}" /><use href="#lvl${i - 1}" /></g>'].join('\n')}
     <clipPath id="clip1"><use href="#lvl8" /></clipPath>
@@ -106,7 +106,7 @@ ${[for (var i = 2; i <= 8; i++) '    <g id="lvl$i"><use href="#lvl${i - 1}" /><u
         '''
 <svg viewBox="0 0 100 100">
   <defs>
-    <path id="leaf" d="M 0,0 L 10,10" />
+    <path id="leaf" d="M 0,0 L 10,10 L 0,10 Z" />
     <mask id="lvl1"><use href="#leaf" /><use href="#leaf" /></mask>
 ${[for (var i = 2; i <= 30; i++) '    <mask id="lvl$i"><g mask="url(#lvl${i - 1})"><use href="#lvl${i - 1}" /></g></mask>'].join('\n')}
   </defs>
@@ -130,7 +130,7 @@ ${[for (var i = 2; i <= 30; i++) '    <mask id="lvl$i"><g mask="url(#lvl${i - 1}
         '''
 <svg viewBox="0 0 100 100">
   <defs>
-    <path id="leaf" d="M 0,0 L 10,10" />
+    <path id="leaf" d="M 0,0 L 10,10 L 0,10 Z" />
     <pattern id="lvl1" width="10" height="10"><use href="#leaf" /><use href="#leaf" /></pattern>
 ${[for (var i = 2; i <= 30; i++) '    <pattern id="lvl$i" width="10" height="10"><g fill="url(#lvl${i - 1})"><use href="#lvl${i - 1}" /></g></pattern>'].join('\n')}
   </defs>
@@ -306,7 +306,7 @@ ${[for (var i = 2; i <= 30; i++) '    <pattern id="lvl$i" width="10" height="10"
     final VectorInstructions instructions = parseWithoutOptimizers('''
 <svg viewBox="0 0 100 100">
   <defs>
-    <path id="leaf" d="M 0,0 L 10,10" />
+    <path id="leaf" d="M 0,0 L 10,10 L 0,10 Z" />
     <g id="shared">
       <use href="#leaf" />
     </g>
@@ -330,7 +330,7 @@ ${[for (var i = 2; i <= 30; i++) '    <pattern id="lvl$i" width="10" height="10"
     final VectorInstructions distinctInstructions = parseWithoutOptimizers('''
 <svg viewBox="0 0 100 100">
   <defs>
-    <path id="leaf" d="M 0,0 L 10,10" />
+    <path id="leaf" d="M 0,0 L 10,10 L 0,10 Z" />
     <g id="shared">
       <use href="#leaf" />
     </g>
@@ -908,7 +908,7 @@ ${[for (var i = 2; i <= 30; i++) '    <pattern id="lvl$i" width="10" height="10"
   test('Opacity on a default fill', () {
     final VectorInstructions instructions = parseWithoutOptimizers('''
 <svg viewBox="0 0 10 10">
-  <path d="M10 10 L20 20" opacity=".4" />
+  <path d="M10 10 L20 20 L10 20 Z" opacity=".4" />
 </svg>
 ''');
 
