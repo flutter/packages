@@ -86,7 +86,7 @@ class WebViewActivity : Activity() {
     val enableDomStorage = intent.getBooleanExtra(ENABLE_DOM_EXTRA, false)
     val headersBundle = intent.getBundleExtra(Browser.EXTRA_HEADERS)
 
-    val headersMap: MutableMap<String?, String?> = extractHeaders(headersBundle)
+    val headersMap: Map<String, String> = extractHeaders(headersBundle)
     webview!!.loadUrl(url!!, headersMap)
 
     webview!!.getSettings().setJavaScriptEnabled(enableJavaScript)
@@ -126,14 +126,13 @@ class WebViewActivity : Activity() {
     const val ACTION_CLOSE: String = "close action"
 
     @VisibleForTesting
-    fun extractHeaders(headersBundle: Bundle?): MutableMap<String?, String?> {
+    fun extractHeaders(headersBundle: Bundle?): Map<String, String> {
       if (headersBundle == null) {
-        return mutableMapOf<String?, String?>()
+        return emptyMap()
       }
-      val headersMap: MutableMap<String?, String?> = HashMap<String?, String?>()
+      val headersMap: MutableMap<String, String> = HashMap<String, String>()
       for (key in headersBundle.keySet()) {
-        val value = headersBundle.getString(key)
-        headersMap.put(key, value)
+        headersBundle.getString(key)?.let { headersMap.put(key, it) }
       }
       return headersMap
     }

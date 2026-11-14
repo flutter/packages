@@ -62,7 +62,7 @@ constructor(private val applicationContext: Context, private val intentResolver:
 
   override fun launchUrl(
       url: String,
-      headers: MutableMap<String, String?>,
+      headers: Map<String, String>,
       requireNonBrowser: Boolean
   ): Boolean {
     ensureActivity()
@@ -126,7 +126,7 @@ constructor(private val applicationContext: Context, private val intentResolver:
   }
 
   override fun supportsCustomTabs(): Boolean {
-    return CustomTabsClient.getPackageName(applicationContext, mutableListOf<String?>()) != null
+    return CustomTabsClient.getPackageName(applicationContext, emptyList()) != null
   }
 
   private fun ensureActivity() {
@@ -157,7 +157,7 @@ constructor(private val applicationContext: Context, private val intentResolver:
 
     // Checks if headers contains a CORS restricted header.
     //  https://developer.mozilla.org/en-US/docs/Glossary/CORS-safelisted_request_header
-    private fun containsRestrictedHeader(headersMap: MutableMap<String, String?>): Boolean {
+    private fun containsRestrictedHeader(headersMap: Map<String, String>): Boolean {
       for (key in headersMap.keys) {
         when (key.lowercase()) {
           "accept",
@@ -170,7 +170,7 @@ constructor(private val applicationContext: Context, private val intentResolver:
       return false
     }
 
-    private fun extractBundle(headersMap: MutableMap<String, String?>): Bundle {
+    private fun extractBundle(headersMap: Map<String, String>): Bundle {
       val headersBundle = Bundle()
       for (key in headersMap.keys) {
         val value = headersMap.get(key)
