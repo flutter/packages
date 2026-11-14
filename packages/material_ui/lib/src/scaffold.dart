@@ -723,6 +723,7 @@ class ScaffoldPrelayoutGeometry {
   /// Abstract const constructor. This constructor enables subclasses to provide
   /// const constructors so that they can be used in const expressions.
   const ScaffoldPrelayoutGeometry({
+    this.bottomNavigationBarTop,
     required this.bottomSheetSize,
     required this.contentBottom,
     required this.contentTop,
@@ -745,6 +746,16 @@ class ScaffoldPrelayoutGeometry {
   /// If the [Scaffold] is not currently showing a [BottomSheet],
   /// this will be [Size.zero].
   final Size bottomSheetSize;
+
+  /// The distance from the [Scaffold]'s top edge to the top edge of the
+  /// rectangle in which the [Scaffold.bottomNavigationBar] is laid out.
+  ///
+  /// Unlike [contentBottom], this does not account for
+  /// [Scaffold.persistentFooterButtons], which are laid out above the
+  /// [Scaffold.bottomNavigationBar], or for the keyboard.
+  ///
+  /// Null if [Scaffold.bottomNavigationBar] is null.
+  final double? bottomNavigationBarTop;
 
   /// The vertical distance from the Scaffold's origin to the bottom of
   /// [Scaffold.body].
@@ -1274,6 +1285,7 @@ class _ScaffoldLayout extends MultiChildLayoutDelegate {
       // To account for the FAB position being changed, we'll animate between
       // the old and new positions.
       final currentGeometry = ScaffoldPrelayoutGeometry(
+        bottomNavigationBarTop: bottomNavigationBarTop,
         bottomSheetSize: bottomSheetSize,
         contentBottom: contentBottom,
 

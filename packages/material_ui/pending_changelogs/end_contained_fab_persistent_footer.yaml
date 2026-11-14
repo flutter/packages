@@ -1,0 +1,4 @@
+changelog: |
+  - Adds `ScaffoldPrelayoutGeometry.bottomNavigationBarTop`.
+  - Fixes `FloatingActionButtonLocation.endContained` not centering the floating action button on the `BottomAppBar` when `Scaffold.persistentFooterButtons` is set.
+version: minor
