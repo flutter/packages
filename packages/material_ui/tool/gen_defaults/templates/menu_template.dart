@@ -262,6 +262,9 @@ class $className extends MenuStyle {
 
   @override
   VisualDensity get visualDensity => Theme.of(context).visualDensity;
+
+  @override
+  AlignmentGeometry get menuAlignment => AlignmentDirectional.bottomStart;
 }
 ''';
 }
