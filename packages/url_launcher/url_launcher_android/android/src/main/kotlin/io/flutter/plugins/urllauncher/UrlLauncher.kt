@@ -32,6 +32,7 @@ constructor(
 
   private var activity: Activity? = null
 
+  @Suppress("QueryPermissionsNeeded")
   constructor(
       context: Context
   ) : this(context, { intent -> intent.resolveActivity(context.packageManager)?.toShortString() })
@@ -125,7 +126,7 @@ constructor(
   companion object {
     private const val TAG = "UrlLauncher"
 
-    private fun openCustomTab(
+    internal fun openCustomTab(
         context: Context,
         uri: Uri,
         headersBundle: Bundle,
@@ -147,11 +148,11 @@ constructor(
 
     // Checks if headers contains a CORS restricted header.
     //  https://developer.mozilla.org/en-US/docs/Glossary/CORS-safelisted_request_header
-    private fun containsRestrictedHeader(headersMap: Map<String, String>): Boolean {
+    internal fun containsRestrictedHeader(headersMap: Map<String, String>): Boolean {
       return headersMap.keys.any { it.lowercase(Locale.US) !in CORS_SAFELISTED_HEADERS }
     }
 
-    private fun extractBundle(headersMap: Map<String, String>): Bundle {
+    internal fun extractBundle(headersMap: Map<String, String>): Bundle {
       return Bundle().apply { headersMap.forEach { (key, value) -> putString(key, value) } }
     }
   }
