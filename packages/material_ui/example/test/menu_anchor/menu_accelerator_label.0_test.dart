@@ -28,9 +28,9 @@ void main() {
     await tester.pump();
 
     expect(find.text('About', findRichText: true), findsOneWidget);
-    expect(tester.getRect(findMenu('About')).left, equals(4.0));
+    expect(tester.getRect(findMenu('About')).left, equals(8.0));
     expect(tester.getRect(findMenu('About')).top, equals(48.0));
-    expect(tester.getRect(findMenu('About')).right, closeTo(98.5, 0.1));
+    expect(tester.getRect(findMenu('About')).right, closeTo(102.5, 0.1));
     expect(tester.getRect(findMenu('About')).bottom, equals(208.0));
 
     expect(find.text('Save', findRichText: true), findsOneWidget);
