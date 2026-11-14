@@ -66,7 +66,7 @@ constructor(private val applicationContext: Context, private val intentResolver:
       requireNonBrowser: Boolean
   ): Boolean {
     ensureActivity()
-    checkNotNull(activity)
+    val activity = checkNotNull(activity)
 
     val launchIntent: Intent =
         Intent(Intent.ACTION_VIEW)
@@ -76,7 +76,7 @@ constructor(private val applicationContext: Context, private val intentResolver:
       launchIntent.addFlags(Intent.FLAG_ACTIVITY_REQUIRE_NON_BROWSER)
     }
     try {
-      activity!!.startActivity(launchIntent)
+      activity.startActivity(launchIntent)
     } catch (e: ActivityNotFoundException) {
       return false
     }
@@ -91,7 +91,7 @@ constructor(private val applicationContext: Context, private val intentResolver:
       browserOptions: BrowserOptions
   ): Boolean {
     ensureActivity()
-    checkNotNull(activity)
+    val activity = checkNotNull(activity)
 
     val headersBundle: Bundle = Companion.extractBundle(webViewOptions.headers)
 
@@ -99,7 +99,7 @@ constructor(private val applicationContext: Context, private val intentResolver:
     // specifically requested a web view.
     if (allowCustomTab && !Companion.containsRestrictedHeader(webViewOptions.headers)) {
       val uri = Uri.parse(url)
-      if (Companion.openCustomTab(activity!!, uri, headersBundle, browserOptions)) {
+      if (Companion.openCustomTab(activity, uri, headersBundle, browserOptions)) {
         return true
       }
     }
@@ -107,13 +107,13 @@ constructor(private val applicationContext: Context, private val intentResolver:
     // Fall back to a web view if necessary.
     val launchIntent =
         WebViewActivity.createIntent(
-            activity!!,
+            activity,
             url,
             webViewOptions.enableJavaScript,
             webViewOptions.enableDomStorage,
             headersBundle)
     try {
-      activity!!.startActivity(launchIntent)
+      activity.startActivity(launchIntent)
     } catch (e: ActivityNotFoundException) {
       return false
     }

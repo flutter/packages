@@ -34,19 +34,23 @@ class UrlLauncherPlugin : FlutterPlugin, ActivityAware {
   }
 
   override fun onAttachedToActivity(binding: ActivityPluginBinding) {
-    if (urlLauncher == null) {
-      Log.wtf(TAG, "urlLauncher was never set.")
-      return
-    }
-    urlLauncher!!.setActivity(binding.getActivity())
+    val launcher =
+        urlLauncher
+            ?: run {
+              Log.wtf(TAG, "urlLauncher was never set.")
+              return
+            }
+    launcher.setActivity(binding.getActivity())
   }
 
   override fun onDetachedFromActivity() {
-    if (urlLauncher == null) {
-      Log.wtf(TAG, "urlLauncher was never set.")
-      return
-    }
-    urlLauncher!!.setActivity(null)
+    val launcher =
+        urlLauncher
+            ?: run {
+              Log.wtf(TAG, "urlLauncher was never set.")
+              return
+            }
+    launcher.setActivity(null)
   }
 
   override fun onDetachedFromActivityForConfigChanges() {

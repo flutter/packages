@@ -41,7 +41,7 @@ class WebViewActivity : Activity() {
       }
 
   // Uses default (package-private) access since it's used by inner class implementations.
-  var webview: WebView? = null
+  lateinit var webview: WebView
 
   private val closeIntentFilter: IntentFilter = IntentFilter(ACTION_CLOSE)
 
@@ -59,12 +59,12 @@ class WebViewActivity : Activity() {
                 view: WebView,
                 request: WebResourceRequest
             ): Boolean {
-              webview!!.loadUrl(request.getUrl().toString())
+              webview.loadUrl(request.getUrl().toString())
               return true
             }
           }
 
-      val newWebView = WebView(webview!!.getContext())
+      val newWebView = WebView(webview.getContext())
       newWebView.setWebViewClient(webViewClient)
 
       val transport = resultMsg.obj as WebViewTransport
@@ -81,24 +81,24 @@ class WebViewActivity : Activity() {
     setContentView(webview)
     // Get the Intent that started this activity and extract the string
     val intent = getIntent()
-    val url = intent.getStringExtra(URL_EXTRA)
+    val url = intent.getStringExtra(URL_EXTRA) ?: "about:blank"
     val enableJavaScript = intent.getBooleanExtra(ENABLE_JS_EXTRA, false)
     val enableDomStorage = intent.getBooleanExtra(ENABLE_DOM_EXTRA, false)
     val headersBundle = intent.getBundleExtra(Browser.EXTRA_HEADERS)
 
     val headersMap: Map<String, String> = extractHeaders(headersBundle)
-    webview!!.loadUrl(url!!, headersMap)
+    webview.loadUrl(url, headersMap)
 
-    webview!!.getSettings().setJavaScriptEnabled(enableJavaScript)
-    webview!!.getSettings().setDomStorageEnabled(enableDomStorage)
+    webview.getSettings().setJavaScriptEnabled(enableJavaScript)
+    webview.getSettings().setDomStorageEnabled(enableDomStorage)
 
     // Open new urls inside the webview itself.
-    webview!!.setWebViewClient(webViewClient)
+    webview.setWebViewClient(webViewClient)
 
     // Multi windows is set with FlutterWebChromeClient by default to handle internal bug:
     // b/159892679.
-    webview!!.getSettings().setSupportMultipleWindows(true)
-    webview!!.setWebChromeClient(FlutterWebChromeClient())
+    webview.getSettings().setSupportMultipleWindows(true)
+    webview.setWebChromeClient(FlutterWebChromeClient())
 
     // Register receiver that may finish this Activity.
     ContextCompat.registerReceiver(
@@ -111,8 +111,8 @@ class WebViewActivity : Activity() {
   }
 
   override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-    if (keyCode == KeyEvent.KEYCODE_BACK && webview!!.canGoBack()) {
-      webview!!.goBack()
+    if (keyCode == KeyEvent.KEYCODE_BACK && webview.canGoBack()) {
+      webview.goBack()
       return true
     }
     return super.onKeyDown(keyCode, event)
