@@ -323,7 +323,10 @@ class PopupMenuItem<T> extends PopupMenuEntry<T> {
   ///
   /// If this is null and [ThemeData.useMaterial3] is false, the horizontal padding
   /// defaults to 16.0 on both sides.
-  final EdgeInsets? padding;
+  ///
+  /// This can be an [EdgeInsetsDirectional] to specify the padding relative to
+  /// the reading direction, so it is flipped in right-to-left layouts.
+  final EdgeInsetsGeometry? padding;
 
   /// The text style of the popup menu item.
   ///
