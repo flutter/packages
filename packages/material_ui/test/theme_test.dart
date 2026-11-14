@@ -19,6 +19,51 @@ void main() {
     expect(tween.lerp(0.25), equals(ThemeData.lerp(light, dark, 0.25)));
   });
 
+  test('ThemeData.lerp preserves default iconTheme identity', () {
+    final lightA = ThemeData(brightness: Brightness.light);
+    final lightB = ThemeData(
+      brightness: Brightness.light,
+      colorScheme: const ColorScheme.light(primary: Colors.blue),
+    );
+    final darkA = ThemeData(brightness: Brightness.dark);
+    final darkB = ThemeData(
+      brightness: Brightness.dark,
+      colorScheme: const ColorScheme.dark(primary: Colors.blue),
+    );
+
+    // Same brightness (light to light)
+    final ThemeData lerpedLight = ThemeData.lerp(lightA, lightB, 0.5);
+    expect(identical(lerpedLight.iconTheme.color, kDefaultIconDarkColor), isTrue);
+
+    // Same brightness (dark to dark)
+    final ThemeData lerpedDark = ThemeData.lerp(darkA, darkB, 0.5);
+    expect(identical(lerpedDark.iconTheme.color, kDefaultIconLightColor), isTrue);
+
+    // Endpoints preserve default iconTheme identity
+    final ThemeData lerpedStart = ThemeData.lerp(darkA, lightA, 0.0);
+    expect(identical(lerpedStart.iconTheme.color, kDefaultIconLightColor), isTrue);
+    final ThemeData lerpedEnd = ThemeData.lerp(darkA, lightA, 1.0);
+    expect(identical(lerpedEnd.iconTheme.color, kDefaultIconDarkColor), isTrue);
+
+    // Cross brightness (dark to light) preserves default iconTheme identity
+    final ThemeData lerpedDarkToLightEarly = ThemeData.lerp(darkA, lightA, 0.25);
+    expect(identical(lerpedDarkToLightEarly.iconTheme.color, kDefaultIconLightColor), isTrue);
+    final ThemeData lerpedDarkToLightLate = ThemeData.lerp(darkA, lightA, 0.75);
+    expect(identical(lerpedDarkToLightLate.iconTheme.color, kDefaultIconDarkColor), isTrue);
+
+    // Cross brightness (light to dark) preserves default iconTheme identity
+    final ThemeData lerpedLightToDarkEarly = ThemeData.lerp(lightA, darkA, 0.25);
+    expect(identical(lerpedLightToDarkEarly.iconTheme.color, kDefaultIconDarkColor), isTrue);
+    final ThemeData lerpedLightToDarkLate = ThemeData.lerp(lightA, darkA, 0.75);
+    expect(identical(lerpedLightToDarkLate.iconTheme.color, kDefaultIconLightColor), isTrue);
+
+    // Custom iconTheme is linearly interpolated normally
+    final customA = ThemeData(iconTheme: const IconThemeData(color: Colors.red));
+    final customB = ThemeData(iconTheme: const IconThemeData(color: Colors.blue));
+    final ThemeData lerpedCustom = ThemeData.lerp(customA, customB, 0.5);
+    expect(lerpedCustom.iconTheme.color, Color.lerp(Colors.red, Colors.blue, 0.5));
+  });
+
   testWidgets('PopupMenu inherits app theme', (WidgetTester tester) async {
     final Key popupMenuButtonKey = UniqueKey();
     await tester.pumpWidget(
