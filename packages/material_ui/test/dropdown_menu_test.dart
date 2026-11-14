@@ -5585,6 +5585,296 @@ void main() {
     expect(focusNode.canRequestFocus, isFalse);
     expect(tester.widget<TextField>(find.byType(TextField)).readOnly, isTrue);
   });
+
+  group('Material 3 Expressive', () {
+    final themeData = ThemeData(
+      menuTheme: const MenuThemeData(variant: StyleVariant.material3Expressive),
+    );
+
+    Widget buildExpressive({
+      TestMenu? initialSelection,
+      List<DropdownMenuEntry<TestMenu>>? entries,
+      MenuStyle? menuStyle,
+      ThemeData? theme,
+      bool? requestFocusOnTap,
+    }) {
+      return MaterialApp(
+        theme: theme ?? themeData,
+        home: Scaffold(
+          body: DropdownMenu<TestMenu>(
+            requestFocusOnTap: requestFocusOnTap,
+            initialSelection: initialSelection,
+            menuStyle: menuStyle,
+            dropdownMenuEntries: entries ?? menuChildrenWithIcons,
+          ),
+        ),
+      );
+    }
+
+    RenderObject overlayPainter(WidgetTester tester, TestMenu menuItem) {
+      return tester.renderObject(
+        find
+            .descendant(
+              of: findMenuItemButton(menuItem.label),
+              matching: find.byElementPredicate(
+                (Element element) =>
+                    element.renderObject.runtimeType.toString() == '_RenderInkFeatures',
+              ),
+            )
+            .last,
+      );
+    }
+
+    final Color selectedHighlightedColor = themeData.colorScheme.tertiaryContainer;
+
+    Color? leadingIconColor(WidgetTester tester, TestMenu menuItem) {
+      return tester
+          .widget<RichText>(
+            find
+                .descendant(
+                  of: find.byKey(leadingIconKey(menuItem)),
+                  matching: find.byType(RichText),
+                )
+                .last,
+          )
+          .text
+          .style
+          ?.color;
+    }
+
+    testWidgets('menu container uses surfaceContainerLow', (WidgetTester tester) async {
+      await tester.pumpWidget(buildExpressive());
+      await tester.tap(find.byType(DropdownMenu<TestMenu>));
+      await tester.pump();
+
+      final Material material = tester.widget<Material>(findMenuMaterial());
+      expect(material.color, themeData.colorScheme.surfaceContainerLow);
+      expect(material.shadowColor, themeData.colorScheme.shadow);
+      // Sizes and shapes still use the Material 3 defaults.
+      expect(material.elevation, 3.0);
+    });
+
+    testWidgets('selected entry uses the selected container colors', (WidgetTester tester) async {
+      const TestMenu selectedItem = TestMenu.mainMenu3;
+      const TestMenu nonSelectedItem = TestMenu.mainMenu2;
+      await tester.pumpWidget(buildExpressive(initialSelection: selectedItem));
+      await tester.tap(find.byType(DropdownMenu<TestMenu>));
+      await tester.pump();
+
+      final ColorScheme colors = themeData.colorScheme;
+      // The selected entry is also highlighted, but it only paints the
+      // selected container.
+      final Material selectedMaterial = getButtonMaterial(tester, selectedItem.label);
+      expect(selectedMaterial.color, selectedHighlightedColor);
+      expect(selectedMaterial.textStyle?.color, colors.onTertiaryContainer);
+      expect(leadingIconColor(tester, selectedItem), colors.onTertiaryContainer);
+
+      // Hovering the selected entry paints the selected hovered state layer.
+      final TestGesture gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
+      addTearDown(gesture.removePointer);
+      await gesture.addPointer();
+      await gesture.moveTo(tester.getCenter(findMenuItemButton(selectedItem.label)));
+      await tester.pumpAndSettle();
+      expect(
+        overlayPainter(tester, selectedItem),
+        paints..rect(color: colors.onTertiaryContainer.withValues(alpha: 0.08)),
+      );
+
+      final Material nonSelectedMaterial = getButtonMaterial(tester, nonSelectedItem.label);
+      expect(nonSelectedMaterial.color, Colors.transparent);
+      expect(nonSelectedMaterial.textStyle?.color, colors.onSurface);
+      expect(leadingIconColor(tester, nonSelectedItem), colors.onSurfaceVariant);
+    });
+
+    testWidgets('selected colors follow keyboard navigation', (WidgetTester tester) async {
+      await tester.pumpWidget(buildExpressive(initialSelection: TestMenu.mainMenu0));
+      await tester.tap(find.byType(DropdownMenu<TestMenu>));
+      await tester.pump();
+
+      expect(getButtonMaterial(tester, TestMenu.mainMenu0.label).color, selectedHighlightedColor);
+
+      // Arrow keys update the text field, so the highlighted entry becomes the
+      // selected one.
+      await simulateKeyDownEvent(LogicalKeyboardKey.arrowDown);
+      await simulateKeyUpEvent(LogicalKeyboardKey.arrowDown);
+      await tester.pump();
+
+      expect(getButtonMaterial(tester, TestMenu.mainMenu0.label).color, Colors.transparent);
+      expect(getButtonMaterial(tester, TestMenu.mainMenu1.label).color, selectedHighlightedColor);
+    });
+
+    testWidgets('entry highlighted by a partial search is not selected', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(buildExpressive(requestFocusOnTap: true));
+      await tester.tap(find.byType(DropdownMenu<TestMenu>));
+      await tester.pump();
+
+      await tester.enterText(find.byType(TextField).first, 'Menu');
+      await tester.pump();
+
+      final ColorScheme colors = themeData.colorScheme;
+      final Material highlighted = getButtonMaterial(tester, TestMenu.mainMenu1.label);
+      expect(highlighted.color, isSameColorAs(colors.onSurface.withValues(alpha: 0.1)));
+      expect(highlighted.textStyle?.color, colors.onSurface);
+
+      // Typing the full label selects the entry.
+      await tester.enterText(find.byType(TextField).first, TestMenu.mainMenu1.label);
+      await tester.pump();
+      expect(getButtonMaterial(tester, TestMenu.mainMenu1.label).color, selectedHighlightedColor);
+    });
+
+    testWidgets('entry style overrides the selected colors', (WidgetTester tester) async {
+      final entries = <DropdownMenuEntry<TestMenu>>[
+        for (final TestMenu value in TestMenu.values)
+          DropdownMenuEntry<TestMenu>(
+            value: value,
+            label: value.label,
+            style: MenuItemButton.styleFrom(
+              backgroundColor: Colors.red,
+              foregroundColor: Colors.green,
+            ),
+          ),
+      ];
+      await tester.pumpWidget(
+        buildExpressive(initialSelection: TestMenu.mainMenu3, entries: entries),
+      );
+      await tester.tap(find.byType(DropdownMenu<TestMenu>));
+      await tester.pump();
+
+      final Material selectedMaterial = getButtonMaterial(tester, TestMenu.mainMenu3.label);
+      expect(selectedMaterial.color, Colors.red);
+      expect(selectedMaterial.textStyle?.color, Colors.green);
+    });
+
+    testWidgets('MenuButtonTheme overrides the selected colors', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        buildExpressive(
+          initialSelection: TestMenu.mainMenu3,
+          theme: themeData.copyWith(
+            menuButtonTheme: MenuButtonThemeData(
+              style: MenuItemButton.styleFrom(backgroundColor: Colors.orange),
+            ),
+          ),
+        ),
+      );
+      await tester.tap(find.byType(DropdownMenu<TestMenu>));
+      await tester.pump();
+
+      expect(getButtonMaterial(tester, TestMenu.mainMenu3.label).color, Colors.orange);
+    });
+
+    testWidgets('menuStyle overrides the container color', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        buildExpressive(
+          menuStyle: const MenuStyle(backgroundColor: WidgetStatePropertyAll<Color>(Colors.teal)),
+        ),
+      );
+      await tester.tap(find.byType(DropdownMenu<TestMenu>));
+      await tester.pump();
+
+      expect(tester.widget<Material>(findMenuMaterial()).color, Colors.teal);
+    });
+
+    testWidgets('disabled selected entry uses the selected disabled colors', (
+      WidgetTester tester,
+    ) async {
+      final entries = <DropdownMenuEntry<TestMenu>>[
+        for (final TestMenu value in TestMenu.values)
+          DropdownMenuEntry<TestMenu>(
+            value: value,
+            label: value.label,
+            enabled: value != TestMenu.mainMenu3,
+          ),
+      ];
+      await tester.pumpWidget(
+        buildExpressive(initialSelection: TestMenu.mainMenu3, entries: entries),
+      );
+      await tester.tap(find.byType(DropdownMenu<TestMenu>));
+      await tester.pump();
+
+      final ColorScheme colors = themeData.colorScheme;
+      final Material material = getButtonMaterial(tester, TestMenu.mainMenu3.label);
+      expect(material.color, colors.tertiaryContainer.withValues(alpha: 0.38));
+      expect(material.textStyle?.color, colors.onTertiaryContainer.withValues(alpha: 0.38));
+    });
+
+    testWidgets('only the first entry with a matching label is selected', (
+      WidgetTester tester,
+    ) async {
+      const entries = <DropdownMenuEntry<TestMenu>>[
+        DropdownMenuEntry<TestMenu>(value: TestMenu.mainMenu0, label: 'Same'),
+        DropdownMenuEntry<TestMenu>(value: TestMenu.mainMenu1, label: 'Same'),
+      ];
+      await tester.pumpWidget(
+        buildExpressive(initialSelection: TestMenu.mainMenu0, entries: entries),
+      );
+      await tester.tap(find.byType(DropdownMenu<TestMenu>));
+      await tester.pump();
+
+      final Finder items = find.widgetWithText(MenuItemButton, 'Same');
+      Color? colorAt(int index) => tester
+          .widget<Material>(find.descendant(of: items.at(index), matching: find.byType(Material)))
+          .color;
+      // The first two buttons belong to the invisible menu used for sizing.
+      expect(colorAt(2), themeData.colorScheme.tertiaryContainer);
+      expect(colorAt(3), Colors.transparent);
+    });
+
+    testWidgets('selected entry is found in the filtered entries', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: themeData,
+          home: Scaffold(
+            body: DropdownMenu<TestMenu>(
+              enableFilter: true,
+              requestFocusOnTap: true,
+              dropdownMenuEntries: menuChildren,
+            ),
+          ),
+        ),
+      );
+      await tester.tap(find.byType(DropdownMenu<TestMenu>));
+      await tester.pump();
+      await tester.enterText(find.byType(TextField).first, TestMenu.mainMenu4.label);
+      await tester.pump();
+
+      // Only the invisible menu used for sizing still has the filtered out entry.
+      expect(find.widgetWithText(MenuItemButton, TestMenu.mainMenu2.label), findsOneWidget);
+      expect(
+        getButtonMaterial(tester, TestMenu.mainMenu4.label).color,
+        themeData.colorScheme.tertiaryContainer,
+      );
+    });
+
+    testWidgets('a nested MenuTheme with material3 opts out', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: themeData,
+          home: Scaffold(
+            body: MenuTheme(
+              data: const MenuThemeData(variant: StyleVariant.material3),
+              child: DropdownMenu<TestMenu>(
+                initialSelection: TestMenu.mainMenu3,
+                dropdownMenuEntries: menuChildren,
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.tap(find.byType(DropdownMenu<TestMenu>));
+      await tester.pump();
+
+      expect(
+        tester.widget<Material>(findMenuMaterial()).color,
+        themeData.colorScheme.surfaceContainer,
+      );
+      expect(
+        getButtonMaterial(tester, TestMenu.mainMenu3.label).color,
+        themeData.colorScheme.onSurface.withOpacity(0.12),
+      );
+    });
+  });
 }
 
 enum TestMenu {

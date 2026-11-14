@@ -44,6 +44,25 @@ import 'theme.dart';
 import 'theme_data.dart';
 
 part 'generated/menu_defaults_m3.g.dart';
+part 'generated/menu_defaults_m3e.g.dart';
+
+/// Returns the default [MenuStyle] of vertical menus for the
+/// [MenuTheme.variantOf] the given [context].
+MenuStyle _menuDefaultsOf(BuildContext context) {
+  return switch (MenuTheme.variantOf(context)) {
+    StyleVariant.material3 => _MenuDefaultsM3(context),
+    StyleVariant.material3Expressive => _MenuDefaultsM3E(context),
+  };
+}
+
+/// Returns the default [ButtonStyle] of menu buttons for the
+/// [MenuTheme.variantOf] the given [context].
+ButtonStyle _menuButtonDefaultsOf(BuildContext context) {
+  return switch (MenuTheme.variantOf(context)) {
+    StyleVariant.material3 => _MenuButtonDefaultsM3(context),
+    StyleVariant.material3Expressive => _MenuButtonDefaultsM3E(context),
+  };
+}
 
 // Examples can assume:
 // bool _throwShotAway = false;
@@ -1132,8 +1151,11 @@ class MenuItemButton extends StatefulWidget {
   /// {@macro material_ui.text_button.default_style_of}
   ///
   /// {@macro material_ui.text_button.material3_defaults}
+  ///
+  /// If [MenuTheme.variantOf] returns [StyleVariant.material3Expressive], the
+  /// colors follow the Material 3 Expressive menu specification instead.
   ButtonStyle defaultStyleOf(BuildContext context) {
-    return _MenuButtonDefaultsM3(context);
+    return _menuButtonDefaultsOf(context);
   }
 
   /// Returns the [MenuButtonThemeData.style] of the closest
@@ -1988,8 +2010,11 @@ class SubmenuButton extends StatefulWidget {
   /// {@macro material_ui.text_button.default_style_of}
   ///
   /// {@macro material_ui.text_button.material3_defaults}
+  ///
+  /// If [MenuTheme.variantOf] returns [StyleVariant.material3Expressive], the
+  /// colors follow the Material 3 Expressive menu specification instead.
   ButtonStyle defaultStyleOf(BuildContext context) {
-    return _MenuButtonDefaultsM3(context);
+    return _menuButtonDefaultsOf(context);
   }
 
   /// Returns the [MenuButtonThemeData.style] of the closest [MenuButtonTheme]
@@ -2368,7 +2393,7 @@ class _SubmenuButtonState extends State<SubmenuButton> {
     final WidgetStateProperty<EdgeInsetsGeometry?> insets =
         widget.menuStyle?.padding ??
         MenuTheme.of(context).style?.padding ??
-        _MenuDefaultsM3(context).padding!;
+        _menuDefaultsOf(context).padding!;
     return insets
         .resolve(widget.statesController?.value ?? const <WidgetState>{})!
         .resolve(Directionality.of(context));
@@ -3696,7 +3721,7 @@ class _MenuPanelState extends State<_MenuPanel> {
   Widget build(BuildContext context) {
     final (MenuStyle? themeStyle, MenuStyle defaultStyle) = switch (widget.orientation) {
       Axis.horizontal => (MenuBarTheme.of(context).style, _MenuBarDefaultsM3(context)),
-      Axis.vertical => (MenuTheme.of(context).style, _MenuDefaultsM3(context)),
+      Axis.vertical => (MenuTheme.of(context).style, _menuDefaultsOf(context)),
     };
     final MenuStyle? widgetStyle = widget.menuStyle;
 
@@ -3909,8 +3934,11 @@ class _Submenu extends StatelessWidget {
     // Use the text direction of the context where the button is.
     final TextDirection textDirection = Directionality.of(context);
     final (MenuStyle? themeStyle, MenuStyle defaultStyle) = switch (anchor._parent?._orientation) {
+      // TODO(chunhtai): Use the Material 3 Expressive defaults for root menus
+      // once sizes and shapes are migrated. Only non-color properties are read
+      // here, so the colors are already correct.
       Axis.horizontal || null => (MenuBarTheme.of(context).style, _MenuBarDefaultsM3(context)),
-      Axis.vertical => (MenuTheme.of(context).style, _MenuDefaultsM3(context)),
+      Axis.vertical => (MenuTheme.of(context).style, _menuDefaultsOf(context)),
     };
     T? effectiveValue<T>(T? Function(MenuStyle? style) getProperty) {
       return getProperty(menuStyle) ?? getProperty(themeStyle) ?? getProperty(defaultStyle);
