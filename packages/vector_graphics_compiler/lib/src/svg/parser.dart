@@ -1113,10 +1113,11 @@ class SvgParser {
   /// `<defs>` element.
   bool startElement(XmlStartElementEvent event) {
     if (event.name == 'defs') {
+      // An empty, self-closing <defs/> defines nothing.
       if (!event.isSelfClosing) {
         addGroup(event, ParentNode(_currentAttributes));
-        return true;
       }
+      return true;
     }
     return addShape(event);
   }
