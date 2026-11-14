@@ -1115,8 +1115,9 @@ class SvgParser {
     if (event.name == 'defs') {
       if (!event.isSelfClosing) {
         addGroup(event, ParentNode(_currentAttributes));
-        return true;
       }
+      // An empty, self-closing <defs/> defines nothing.
+      return true;
     }
     return addShape(event);
   }

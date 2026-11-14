@@ -1,3 +1,7 @@
+## 1.3.8
+
+* Fixes an empty, self-closing `<defs/>` element being reported as unhandled, which threw when `warningsAsErrors` is set.
+
 ## 1.3.7
 
 * Fixes the initial `stroke-width` not being scaled by transforms.
