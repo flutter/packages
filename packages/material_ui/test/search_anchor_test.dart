@@ -3342,6 +3342,7 @@ void main() {
       ),
     );
 
+    expect(find.byType(SearchAnchor), findsOneWidget);
     final TextField textField = tester.widget(find.byType(TextField));
     expect(textField.focusNode, focusNode);
   });
@@ -4769,6 +4770,32 @@ void main() {
     size = getSearchViewSize(tester);
     expect(size.height, 300.0);
     expect(size.width, 400.0);
+  });
+
+  // Regression test for https://github.com/flutter/flutter/issues/177089
+  testWidgets('SearchAnchor.bar can be found by type and respects themed padding', (
+    WidgetTester tester,
+  ) async {
+    const themedPadding = WidgetStatePropertyAll<EdgeInsets>(EdgeInsets.all(32.0));
+    const explicitPadding = WidgetStatePropertyAll<EdgeInsets>(EdgeInsets.all(8.0));
+    for (final barPadding in <WidgetStateProperty<EdgeInsets>?>[null, explicitPadding]) {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(searchBarTheme: const SearchBarThemeData(padding: themedPadding)),
+          home: Material(
+            child: SearchAnchor.bar(
+              barPadding: barPadding,
+              suggestionsBuilder: (BuildContext context, SearchController controller) {
+                return <Widget>[];
+              },
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byType(SearchAnchor), findsOneWidget);
+      expect(tester.widget<SearchBar>(find.byType(SearchBar)).padding, barPadding ?? themedPadding);
+    }
   });
 }
 
