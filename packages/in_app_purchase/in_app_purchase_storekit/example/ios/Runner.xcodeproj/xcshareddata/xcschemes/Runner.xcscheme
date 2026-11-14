@@ -47,6 +47,24 @@
       customLLDBInitFile = "$(SRCROOT)/Flutter/ephemeral/flutter_lldbinit"
       shouldUseLaunchSchemeArgsEnv = "YES"
       codeCoverageEnabled = "YES">
+      <PreActions>
+         <ExecutionAction
+            ActionType = "Xcode.IDEStandardExecutionActionsCore.ExecutionActionType.ShellScriptAction">
+            <ActionContent
+               title = "Warm up StoreKit Testing on cold simulators"
+               scriptText = "# Seed the StoreKit test configuration on fresh simulators (Apple FB24651858).&#10;if [ -z &quot;$STOREKIT_WARMUP&quot; ] &amp;&amp; [ &quot;$TARGET_DEVICE_PLATFORM_NAME&quot; = &quot;iphonesimulator&quot; ]; then&#10;  env -i HOME=&quot;$HOME&quot; PATH=&quot;$PATH&quot; DEVELOPER_DIR=&quot;$DEVELOPER_DIR&quot; STOREKIT_WARMUP=1 \&#10;    xcodebuild test-without-building \&#10;      -workspace &quot;$PROJECT_DIR/Runner.xcworkspace&quot; -scheme Runner \&#10;      -configuration &quot;$CONFIGURATION&quot; -destination &quot;id=$TARGET_DEVICE_IDENTIFIER&quot; \&#10;      -derivedDataPath &quot;$BUILD_DIR/../..&quot; \&#10;      -only-testing:RunnerTests/InAppPurchase2PluginTests/testCanMakePayments \&#10;      &gt; &quot;$TMPDIR/storekit_warmup.log&quot; 2&gt;&amp;1 || true&#10;fi&#10;">
+               <EnvironmentBuildable>
+                  <BuildableReference
+                     BuildableIdentifier = "primary"
+                     BlueprintIdentifier = "97C146ED1CF9000F007C117D"
+                     BuildableName = "Runner.app"
+                     BlueprintName = "Runner"
+                     ReferencedContainer = "container:Runner.xcodeproj">
+                  </BuildableReference>
+               </EnvironmentBuildable>
+            </ActionContent>
+         </ExecutionAction>
+      </PreActions>
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
