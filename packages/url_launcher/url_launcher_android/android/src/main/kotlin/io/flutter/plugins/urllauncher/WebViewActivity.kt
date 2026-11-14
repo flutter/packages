@@ -25,8 +25,7 @@ class WebViewActivity : Activity() {
   private val broadcastReceiver: BroadcastReceiver =
       object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent) {
-          val action = intent.action
-          if (ACTION_CLOSE == action) {
+          if (intent.action == ACTION_CLOSE) {
             finish()
           }
         }
@@ -41,12 +40,12 @@ class WebViewActivity : Activity() {
       }
 
   // Uses default (package-private) access since it's used by inner class implementations.
-  lateinit var webview: WebView
+  private lateinit var webview: WebView
 
   private val closeIntentFilter: IntentFilter = IntentFilter(ACTION_CLOSE)
 
   // Verifies that a url opened by `Window.open` has a secure url.
-  internal inner class FlutterWebChromeClient : WebChromeClient() {
+  private inner class FlutterWebChromeClient : WebChromeClient() {
     override fun onCreateWindow(
         view: WebView?,
         isDialog: Boolean,
@@ -75,12 +74,11 @@ class WebViewActivity : Activity() {
     }
   }
 
-  public override fun onCreate(savedInstanceState: Bundle?) {
+  override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     webview = WebView(this)
     setContentView(webview)
-    // Get the Intent that started this activity and extract the string
-    val intent = getIntent()
+
     val url = intent.getStringExtra(URL_EXTRA) ?: "about:blank"
     val enableJavaScript = intent.getBooleanExtra(ENABLE_JS_EXTRA, false)
     val enableDomStorage = intent.getBooleanExtra(ENABLE_DOM_EXTRA, false)
@@ -89,8 +87,10 @@ class WebViewActivity : Activity() {
     val headersMap: Map<String, String> = extractHeaders(headersBundle)
     webview.loadUrl(url, headersMap)
 
-    webview.settings.javaScriptEnabled = enableJavaScript
-    webview.settings.domStorageEnabled = enableDomStorage
+    webview.settings.apply {
+      javaScriptEnabled = enableJavaScript
+      domStorageEnabled = enableDomStorage
+    }
 
     // Open new urls inside the webview itself.
     webview.webViewClient = webViewClient
@@ -123,25 +123,23 @@ class WebViewActivity : Activity() {
      * Use this to trigger a BroadcastReceiver inside WebViewActivity
      * that will request the current instance to finish.
      * */
-    const val ACTION_CLOSE: String = "close action"
+    const val ACTION_CLOSE = "close action"
 
     @VisibleForTesting
     fun extractHeaders(headersBundle: Bundle?): Map<String, String> {
-      if (headersBundle == null) {
-        return emptyMap()
+      headersBundle ?: return emptyMap()
+      return buildMap {
+        for (key in headersBundle.keySet()) {
+          headersBundle.getString(key)?.let { put(key, it) }
+        }
       }
-      val headersMap: MutableMap<String, String> = HashMap()
-      for (key in headersBundle.keySet()) {
-        headersBundle.getString(key)?.let { headersMap.put(key, it) }
-      }
-      return headersMap
     }
 
-    @VisibleForTesting const val URL_EXTRA: String = "url"
+    @VisibleForTesting internal const val URL_EXTRA = "url"
 
-    @VisibleForTesting const val ENABLE_JS_EXTRA: String = "enableJavaScript"
+    @VisibleForTesting internal const val ENABLE_JS_EXTRA = "enableJavaScript"
 
-    @VisibleForTesting const val ENABLE_DOM_EXTRA: String = "enableDomStorage"
+    @VisibleForTesting internal const val ENABLE_DOM_EXTRA = "enableDomStorage"
 
     /* Hides the constants used to forward data to the Activity instance. */
     fun createIntent(

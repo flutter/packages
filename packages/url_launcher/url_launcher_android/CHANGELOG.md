@@ -1,6 +1,6 @@
 ## 6.3.35
 
-* Converts native implementation code to Kotlin.".
+* Converts native implementation code to Kotlin.
 
 ## 6.3.34
 

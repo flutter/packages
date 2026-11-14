@@ -8,7 +8,6 @@ import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
-import io.flutter.plugins.urllauncher.UrlLauncherApi.Companion.setUp
 
 /**
  * Plugin implementation that uses the new `io.flutter.embedding` package.
@@ -20,7 +19,7 @@ class UrlLauncherPlugin : FlutterPlugin, ActivityAware {
 
   override fun onAttachedToEngine(binding: FlutterPluginBinding) {
     urlLauncher = UrlLauncher(binding.applicationContext)
-    setUp(binding.binaryMessenger, urlLauncher)
+    UrlLauncherApi.setUp(binding.binaryMessenger, urlLauncher)
   }
 
   override fun onDetachedFromEngine(binding: FlutterPluginBinding) {
@@ -29,7 +28,7 @@ class UrlLauncherPlugin : FlutterPlugin, ActivityAware {
       return
     }
 
-    setUp(binding.binaryMessenger, null)
+    UrlLauncherApi.setUp(binding.binaryMessenger, null)
     urlLauncher = null
   }
 
@@ -53,13 +52,10 @@ class UrlLauncherPlugin : FlutterPlugin, ActivityAware {
     launcher.setActivity(null)
   }
 
-  override fun onDetachedFromActivityForConfigChanges() {
-    onDetachedFromActivity()
-  }
+  override fun onDetachedFromActivityForConfigChanges() = onDetachedFromActivity()
 
-  override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
-    onAttachedToActivity(binding)
-  }
+  override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) =
+      onAttachedToActivity(binding)
 
   companion object {
     private const val TAG = "UrlLauncherPlugin"

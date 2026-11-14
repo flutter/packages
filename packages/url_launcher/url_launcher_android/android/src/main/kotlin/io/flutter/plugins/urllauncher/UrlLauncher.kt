@@ -16,7 +16,7 @@ import androidx.annotation.VisibleForTesting
 import androidx.browser.customtabs.CustomTabsClient
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.net.toUri
-import io.flutter.BuildConfig
+import java.util.Locale
 
 /** Implements the Pigeon-defined interface for calls from Dart. */
 internal class UrlLauncher
@@ -34,12 +34,7 @@ constructor(
 
   constructor(
       context: Context
-  ) : this(
-      context,
-      { intent ->
-        val componentName = intent.resolveActivity(context.packageManager)
-        if (componentName == null) null else componentName.toShortString()
-      })
+  ) : this(context, { intent -> intent.resolveActivity(context.packageManager)?.toShortString() })
 
   fun setActivity(activity: Activity?) {
     this.activity = activity
@@ -52,12 +47,9 @@ constructor(
     if (BuildConfig.DEBUG) {
       Log.i(TAG, "component name for $url is $componentName")
     }
-    return if (componentName == null) {
-      false
-    } else {
-      // Ignore the emulator fallback activity.
-      "{com.android.fallback/com.android.fallback.Fallback}" != componentName
-    }
+    return componentName != null &&
+        // Ignore the emulator fallback activity.
+        componentName != "{com.android.fallback/com.android.fallback.Fallback}"
   }
 
   override fun launchUrl(
@@ -68,19 +60,18 @@ constructor(
     val activity = ensureActivity()
 
     val launchIntent: Intent =
-        Intent(Intent.ACTION_VIEW)
-            .setData(url.toUri())
-            .putExtra(Browser.EXTRA_HEADERS, extractBundle(headers))
-    if (requireNonBrowser && Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-      launchIntent.addFlags(Intent.FLAG_ACTIVITY_REQUIRE_NON_BROWSER)
-    }
-    try {
+        Intent(Intent.ACTION_VIEW, url.toUri()).apply {
+          putExtra(Browser.EXTRA_HEADERS, extractBundle(headers))
+          if (requireNonBrowser && Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            addFlags(Intent.FLAG_ACTIVITY_REQUIRE_NON_BROWSER)
+          }
+        }
+    return try {
       activity.startActivity(launchIntent)
+      true
     } catch (_: ActivityNotFoundException) {
-      return false
+      false
     }
-
-    return true
   }
 
   override fun openUrlInApp(
@@ -152,17 +143,17 @@ constructor(
       return true
     }
 
+    private val CORS_SAFELISTED_HEADERS =
+        setOf("accept", "accept-language", "content-language", "content-type")
+
     // Checks if headers contains a CORS restricted header.
     //  https://developer.mozilla.org/en-US/docs/Glossary/CORS-safelisted_request_header
     private fun containsRestrictedHeader(headersMap: Map<String, String>): Boolean {
-      val allowedKeys = setOf("accept", "accept-language", "content-language", "content-type")
-      return headersMap.keys.any { !allowedKeys.contains(it.lowercase()) }
+      return headersMap.keys.any { it.lowercase(Locale.US) !in CORS_SAFELISTED_HEADERS }
     }
 
     private fun extractBundle(headersMap: Map<String, String>): Bundle {
-      val headersBundle = Bundle()
-      headersMap.forEach { (key, value) -> headersBundle.putString(key, value) }
-      return headersBundle
+      return Bundle().apply { headersMap.forEach { (key, value) -> putString(key, value) } }
     }
   }
 }
