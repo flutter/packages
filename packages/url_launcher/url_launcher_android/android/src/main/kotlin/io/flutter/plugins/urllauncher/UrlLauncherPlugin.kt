@@ -12,53 +12,52 @@ import io.flutter.plugins.urllauncher.UrlLauncherApi.Companion.setUp
 
 /**
  * Plugin implementation that uses the new `io.flutter.embedding` package.
- * 
- * 
+ *
  * Instantiate this in an add to app scenario to gracefully handle activity and context changes.
  */
 class UrlLauncherPlugin : FlutterPlugin, ActivityAware {
-    private var urlLauncher: UrlLauncher? = null
+  private var urlLauncher: UrlLauncher? = null
 
-    override fun onAttachedToEngine(binding: FlutterPluginBinding) {
-        urlLauncher = UrlLauncher(binding.getApplicationContext())
-        setUp(binding.getBinaryMessenger(), urlLauncher)
+  override fun onAttachedToEngine(binding: FlutterPluginBinding) {
+    urlLauncher = UrlLauncher(binding.getApplicationContext())
+    setUp(binding.getBinaryMessenger(), urlLauncher)
+  }
+
+  override fun onDetachedFromEngine(binding: FlutterPluginBinding) {
+    if (urlLauncher == null) {
+      Log.wtf(TAG, "Already detached from the engine.")
+      return
     }
 
-    override fun onDetachedFromEngine(binding: FlutterPluginBinding) {
-        if (urlLauncher == null) {
-            Log.wtf(TAG, "Already detached from the engine.")
-            return
-        }
+    setUp(binding.getBinaryMessenger(), null)
+    urlLauncher = null
+  }
 
-        setUp(binding.getBinaryMessenger(), null)
-        urlLauncher = null
+  override fun onAttachedToActivity(binding: ActivityPluginBinding) {
+    if (urlLauncher == null) {
+      Log.wtf(TAG, "urlLauncher was never set.")
+      return
     }
+    urlLauncher!!.setActivity(binding.getActivity())
+  }
 
-    override fun onAttachedToActivity(binding: ActivityPluginBinding) {
-        if (urlLauncher == null) {
-            Log.wtf(TAG, "urlLauncher was never set.")
-            return
-        }
-        urlLauncher!!.setActivity(binding.getActivity())
+  override fun onDetachedFromActivity() {
+    if (urlLauncher == null) {
+      Log.wtf(TAG, "urlLauncher was never set.")
+      return
     }
+    urlLauncher!!.setActivity(null)
+  }
 
-    override fun onDetachedFromActivity() {
-        if (urlLauncher == null) {
-            Log.wtf(TAG, "urlLauncher was never set.")
-            return
-        }
-        urlLauncher!!.setActivity(null)
-    }
+  override fun onDetachedFromActivityForConfigChanges() {
+    onDetachedFromActivity()
+  }
 
-    override fun onDetachedFromActivityForConfigChanges() {
-        onDetachedFromActivity()
-    }
+  override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
+    onAttachedToActivity(binding)
+  }
 
-    override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
-        onAttachedToActivity(binding)
-    }
-
-    companion object {
-        private const val TAG = "UrlLauncherPlugin"
-    }
+  companion object {
+    private const val TAG = "UrlLauncherPlugin"
+  }
 }
