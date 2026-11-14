@@ -1593,7 +1593,7 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
   final String source;
 
   Class? _currentClass;
-  Map<String, String> _currentClassDefaultValues = <String, String>{};
+  Map<String, dart_ast.Expression> _currentClassDefaultValues = <String, dart_ast.Expression>{};
   Api? _currentApi;
   Map<String, Object>? _pigeonOptions;
 
@@ -1608,7 +1608,7 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     if (_currentClass != null) {
       _classes.add(_currentClass!);
       _currentClass = null;
-      _currentClassDefaultValues = <String, String>{};
+      _currentClassDefaultValues = <String, dart_ast.Expression>{};
     }
   }
 
@@ -1675,7 +1675,9 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       }
     }
     for (final Class classDefinition in _classes) {
-      classDefinition.fields = _attachAssociatedDefinitions(classDefinition.fields);
+      classDefinition.fields = _attachAssociatedDefinitions(
+        classDefinition.fields,
+      ).map((NamedType field) => _resolveEnumDefaultValue(field, totalErrors)).toList();
       classDefinition.superClass = _attachSuperClass(classDefinition);
     }
 
@@ -1805,6 +1807,38 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     }
 
     return type;
+  }
+
+  /// Keeps an [EnumMember] default value of a data class field only when the
+  /// field's type is an enum with that member.
+  ///
+  /// The parser can't tell whether `Type.name` or `.name` names an enum member,
+  /// because the enum may be declared after the class.
+  NamedType _resolveEnumDefaultValue(NamedType field, List<Error> errors) {
+    final Object? value = field.literalDefaultValue;
+    if (value is! EnumMember) {
+      return field;
+    }
+    final Enum? associatedEnum = field.type.associatedEnum;
+    final bool isMember =
+        associatedEnum?.members.any((EnumMember member) => member.name == value.name) ?? false;
+    if (associatedEnum != null && !isMember) {
+      errors.add(
+        Error(
+          message:
+              'Default value "${field.defaultValue}" of field "${field.name}" isn\'t a member of enum "${associatedEnum.name}".',
+          lineNumber: field.offset == null ? null : calculateLineNumber(source, field.offset!),
+        ),
+      );
+    }
+    return NamedType(
+      name: field.name,
+      type: field.type,
+      offset: field.offset,
+      defaultValue: field.defaultValue,
+      literalDefaultValue: isMember ? value : null,
+      documentationComments: field.documentationComments,
+    );
   }
 
   List<T> _attachAssociatedDefinitions<T extends NamedType>(Iterable<T> types) {
@@ -2251,6 +2285,9 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         isSwiftClass: _hasMetadata(node.metadata, 'SwiftClass'),
         documentationComments: _documentationCommentsParser(node.documentationComment?.tokens),
       );
+      // Fields are usually declared before the constructor, so the defaults
+      // have to be known before the fields are visited.
+      _currentClassDefaultValues = _constructorDefaultValues(node);
     }
 
     node.visitChildren(this);
@@ -2517,22 +2554,27 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           _errors.add(
             Error(
               message:
-                  'Initialization isn\'t supported for fields in Pigeon data classes ("$node"), just use nullable types with no initializer (example "int? x;").',
+                  'Initialization isn\'t supported for fields in Pigeon data classes ("$node"), use a constructor parameter default instead (example "MyClass({this.x = 0});") or a nullable type with no initializer (example "int? x;").',
               lineNumber: calculateLineNumber(source, node.offset),
             ),
           );
         } else {
           final dart_ast.TypeArgumentList? typeArguments = type.typeArguments;
           final String name = node.fields.variables[0].name.lexeme;
+          final String typeName = _getNamedTypeQualifiedName(type);
+          final dart_ast.Expression? defaultValue = _currentClassDefaultValues[name];
           final field = NamedType(
             type: TypeDeclaration(
-              baseName: _getNamedTypeQualifiedName(type),
+              baseName: typeName,
               isNullable: type.question != null,
               typeArguments: _typeAnnotationsToTypeArguments(typeArguments),
             ),
             name: name,
             offset: node.offset,
-            defaultValue: _currentClassDefaultValues[name],
+            defaultValue: defaultValue?.toString(),
+            literalDefaultValue: defaultValue == null
+                ? null
+                : _literalDefaultValue(defaultValue, typeName),
             documentationComments: _documentationCommentsParser(node.documentationComment?.tokens),
           );
           _currentClass!.fields.add(field);
@@ -2605,16 +2647,73 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
             lineNumber: calculateLineNumber(source, node.offset),
           ),
         );
-      } else {
-        for (final dart_ast.FormalParameter param in node.parameters.parameters) {
-          if (param.name != null && param.defaultClause != null) {
-            _currentClassDefaultValues[param.name!.lexeme] = param.defaultClause!.value.toString();
-          }
-        }
       }
     }
     node.visitChildren(this);
     return null;
+  }
+
+  /// The default values of the data class constructor parameters, by name.
+  static Map<String, dart_ast.Expression> _constructorDefaultValues(
+    dart_ast.ClassDeclaration node,
+  ) {
+    return <String, dart_ast.Expression>{
+      for (final dart_ast.ConstructorDeclaration constructor
+          in node.body.members.whereType<dart_ast.ConstructorDeclaration>())
+        for (final dart_ast.FormalParameter param in constructor.parameters.parameters)
+          if (param.name != null && param.defaultClause != null)
+            param.name!.lexeme: param.defaultClause!.value,
+    };
+  }
+
+  /// The value of a data class field's default value, when it is a literal of
+  /// the field's type or a member of the field's enum.
+  ///
+  /// Other default values are left to the Dart generator, so they don't add
+  /// errors here.
+  static Object? _literalDefaultValue(dart_ast.Expression defaultValue, String typeName) {
+    // The type may be an enum that is declared later in the file, so
+    // `_resolveEnumDefaultValue` checks the member once every enum is parsed.
+    switch (defaultValue) {
+      case dart_ast.PrefixedIdentifier(:final dart_ast.SimpleIdentifier prefix)
+          when prefix.name == typeName:
+        return EnumMember(name: defaultValue.identifier.name);
+      case dart_ast.DotShorthandPropertyAccess(:final dart_ast.SimpleIdentifier propertyName):
+        return EnumMember(name: propertyName.name);
+    }
+    final Object? value = _literalValue(defaultValue);
+    return switch (value) {
+      bool() when typeName == 'bool' => value,
+      int() when typeName == 'int' => value,
+      num() when typeName == 'double' => value.toDouble(),
+      String() when typeName == 'String' => value,
+      _ => null,
+    };
+  }
+
+  /// The value of a bool, int, double or String literal, including a negative
+  /// number. Null for any other expression.
+  static Object? _literalValue(dart_ast.Expression expression) {
+    return switch (expression) {
+      dart_ast.BooleanLiteral(:final bool value) => value,
+      dart_ast.IntegerLiteral(:final int? value) => value,
+      dart_ast.DoubleLiteral(:final double value) => value,
+      dart_ast.StringLiteral(:final String? stringValue) => stringValue,
+      dart_ast.PrefixExpression(:final dart_ast.Expression operand)
+          when expression.operator.lexeme == '-' =>
+        switch (operand) {
+          // The minimum int only fits once it is negated, so the unnegated
+          // literal has no value and is parsed with its sign.
+          dart_ast.IntegerLiteral(value: null, :final Token literal) => int.tryParse(
+            '-${literal.lexeme.replaceAll('_', '')}',
+          ),
+          _ => switch (_literalValue(operand)) {
+            final num value => -value,
+            _ => null,
+          },
+        },
+      _ => null,
+    };
   }
 
   static String _getNamedTypeQualifiedName(dart_ast.NamedType node) {

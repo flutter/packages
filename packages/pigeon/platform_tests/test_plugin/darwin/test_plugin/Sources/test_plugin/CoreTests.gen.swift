@@ -249,17 +249,17 @@ struct UnusedClass: Hashable, CustomStringConvertible {
 ///
 /// Generated class from Pigeon that represents data sent in messages.
 struct AllTypes: Hashable, CustomStringConvertible {
-  var aBool: Bool
-  var anInt: Int64
-  var anInt64: Int64
-  var aDouble: Double
+  var aBool: Bool = false
+  var anInt: Int64 = 0
+  var anInt64: Int64 = 0
+  var aDouble: Double = 0.0
   var aByteArray: FlutterStandardTypedData
   var a4ByteArray: FlutterStandardTypedData
   var a8ByteArray: FlutterStandardTypedData
   var aFloatArray: FlutterStandardTypedData
-  var anEnum: AnEnum
-  var anotherEnum: AnotherEnum
-  var aString: String
+  var anEnum: AnEnum = .one
+  var anotherEnum: AnotherEnum = .justInCase
+  var aString: String = ""
   var anObject: Any
   var list: [Any?]
   var stringList: [String]

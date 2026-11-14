@@ -364,6 +364,9 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
 
   String _formatKotlinValue(String type, Object value) => switch (type) {
     'String' => '"${escapeStringDoubleQuotes(value.toString()).replaceAll(r'$', r'\$')}"',
+    // Kotlin reads `-9223372036854775808L` as the negation of a literal that is
+    // out of range.
+    'int' when value == -9223372036854775808 => 'Long.MIN_VALUE',
     'int' => '${value}L',
     _ => value.toString(),
   };
@@ -619,9 +622,18 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
   void _writeClassField(Indent indent, NamedType field) {
     addDocumentationComments(indent, field.documentationComments, _docCommentSpec);
     indent.write('val ${field.name}: ${_nullSafeKotlinTypeForDartType(field.type)}');
-    final defaultNil = field.type.isNullable ? ' = null' : '';
-    indent.add(defaultNil);
+    final String? defaultValue = _kotlinDefaultValue(field);
+    if (defaultValue != null) {
+      indent.add(' = $defaultValue');
+    }
   }
+
+  /// The Kotlin default value of a data class field, if it has one.
+  String? _kotlinDefaultValue(NamedType field) => switch (field.literalDefaultValue) {
+    EnumMember(:final String name) => '${field.type.baseName}.${toScreamingSnakeCase(name)}',
+    null => field.type.isNullable ? 'null' : null,
+    final Object value => _formatKotlinValue(field.type.baseName, value),
+  };
 
   @override
   void writeApis(

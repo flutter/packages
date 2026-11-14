@@ -965,6 +965,122 @@ abstract class Api {
     expect(results.errors, isEmpty);
   });
 
+  test('data class default values do not depend on member order', () {
+    const code = '''
+class FieldsFirst {
+  int x;
+  String y;
+  int? z;
+  FieldsFirst({this.x = 5, this.y = 'hi', this.z});
+}
+
+class ConstructorFirst {
+  ConstructorFirst({this.x = 5, this.y = 'hi', this.z});
+  int x;
+  String y;
+  int? z;
+}
+
+@HostApi()
+abstract class Api {
+  FieldsFirst doit(FieldsFirst a, ConstructorFirst b);
+}
+''';
+    final ParseResults results = parseSource(code);
+    expect(results.errors, isEmpty);
+    expect(results.root.classes, hasLength(2));
+    for (final Class classDefinition in results.root.classes) {
+      expect(classDefinition.fields.map((NamedType field) => field.defaultValue), <String?>[
+        '5',
+        "'hi'",
+        null,
+      ], reason: classDefinition.name);
+    }
+  });
+
+  test('literal values of data class default values', () {
+    const code = '''
+class Foo {
+  Foo({
+    this.anInt = -5,
+    this.aDouble = 1,
+    this.aNegativeDouble = -2.5,
+    this.aBool = true,
+    this.aString = 'a' "b",
+    this.aColor = Color.darkBlue,
+    this.aShorthandColor = .red,
+    this.aList = const <int>[],
+    this.aNullableInt,
+    this.aMinInt = -9223372036854775808,
+    this.anInfiniteDouble = double.infinity,
+  });
+
+  int anInt;
+  double aDouble;
+  double aNegativeDouble;
+  bool aBool;
+  String aString;
+  Color aColor;
+  Color? aShorthandColor;
+  List<int> aList;
+  int? aNullableInt;
+  int aMinInt;
+  double anInfiniteDouble;
+}
+
+enum Color { red, darkBlue }
+
+@HostApi()
+abstract class Api {
+  Foo doit(Foo foo);
+}
+''';
+    final ParseResults results = parseSource(code);
+    expect(results.errors, isEmpty);
+    final List<NamedType> fields = results.root.classes.single.fields;
+    expect(fields[0].literalDefaultValue, -5);
+    expect(fields[1].literalDefaultValue, isA<double>());
+    expect(fields[1].literalDefaultValue, 1.0);
+    expect(fields[2].literalDefaultValue, -2.5);
+    expect(fields[3].literalDefaultValue, true);
+    expect(fields[4].literalDefaultValue, 'ab');
+    expect(
+      fields[5].literalDefaultValue,
+      isA<EnumMember>().having((EnumMember member) => member.name, 'name', 'darkBlue'),
+    );
+    expect(
+      fields[6].literalDefaultValue,
+      isA<EnumMember>().having((EnumMember member) => member.name, 'name', 'red'),
+    );
+    expect(fields[7].defaultValue, 'const <int>[]');
+    expect(fields[7].literalDefaultValue, isNull);
+    expect(fields[8].literalDefaultValue, isNull);
+    expect(fields[9].literalDefaultValue, -9223372036854775808);
+    expect(fields[10].defaultValue, 'double.infinity');
+    expect(fields[10].literalDefaultValue, isNull);
+  });
+
+  test('data class default value that is not a member of its enum', () {
+    const code = '''
+enum Color { red, darkBlue }
+
+class Foo {
+  Foo({this.aColor = Color.typo});
+
+  Color aColor;
+}
+
+@HostApi()
+abstract class Api {
+  Foo doit(Foo foo);
+}
+''';
+    final ParseResults results = parseSource(code);
+    expect(results.errors, hasLength(1));
+    expect(results.errors[0].lineNumber, 6);
+    expect(results.errors[0].message, contains('isn\'t a member of enum "Color"'));
+  });
+
   test('constructor body in data class', () {
     const code = '''
 class Foo {

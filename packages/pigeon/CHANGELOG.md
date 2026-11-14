@@ -1,5 +1,13 @@
-## NEXT
+## 31.0.0
 
+* **BREAKING CHANGE**: [kotlin, swift] Adds data class default values to the generated data
+  classes when they are `bool`, `int`, `double` or `String` literals or enum values (`Color.red`
+  or `.red`). A nullable field with such a default now gets that value instead of `null` when the
+  argument is omitted. Pass `null` explicitly to keep the previous value.
+* **BREAKING CHANGE**: [dart] Fixes data class default values being dropped when the constructor
+  is declared after the fields. A nullable field in such a class now gets its default value instead
+  of `null` when the argument is omitted. Pass `null` explicitly to keep the previous value.
+* Reports an error when a data class default value names a member that its enum doesn't have.
 * Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
 
 ## 30.0.2
