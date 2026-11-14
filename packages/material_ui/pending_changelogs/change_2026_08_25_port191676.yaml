@@ -1,0 +1,3 @@
+changelog: |
+  - Add regression coverage for a `Checkbox` outline self-intersecting with a large `ContinuousRectangleBorder` radius, fixed in the framework's `ContinuousRectangleBorder`.
+version: patch
