@@ -1205,54 +1205,73 @@ void main() {
         },
       );
 
+      for (final isM3 in <bool>[true, false]) {
+        testWidgets(
+          'AlertDialog padding is correct when only content and actions are specified [textScaleFactor]=$textScaleFactor [isM3]=$isM3',
+          (WidgetTester tester) async {
+            final dialog = AlertDialog(content: content, actions: actions);
+
+            await openDialog(tester, dialog, textScaleFactor, isM3: isM3);
+
+            expectTopEdgePadding(
+              tester,
+              finder: contentFinder,
+              textScaleFactor: textScaleFactor,
+              unscaledValue: isM3 ? 24.0 : 20.0,
+            );
+            expectLeftEdgePadding(
+              tester,
+              finder: contentFinder,
+              textScaleFactor: textScaleFactor,
+              unscaledValue: 24.0,
+            );
+            expectRightEdgePadding(
+              tester,
+              finder: contentFinder,
+              textScaleFactor: textScaleFactor,
+              unscaledValue: 24.0,
+            );
+            expectVerticalInnerPadding(
+              tester,
+              top: contentFinder,
+              bottom: actionsFinder,
+              value: 24.0,
+            );
+            expectLeftEdgePadding(
+              tester,
+              finder: actionsFinder,
+              textScaleFactor: textScaleFactor,
+              unscaledValue: 0.0,
+            );
+            expectRightEdgePadding(
+              tester,
+              finder: actionsFinder,
+              textScaleFactor: textScaleFactor,
+              unscaledValue: 0.0,
+            );
+            expectBottomEdgePadding(
+              tester,
+              finder: actionsFinder,
+              textScaleFactor: textScaleFactor,
+              unscaledValue: 0.0,
+            );
+          },
+        );
+      }
+
       testWidgets(
-        'AlertDialog padding is correct when only content and actions are specified [textScaleFactor]=$textScaleFactor',
+        'AlertDialog content with no icon or title is inset from the top as much as from the sides [textScaleFactor]=$textScaleFactor',
         (WidgetTester tester) async {
-          final dialog = AlertDialog(content: content, actions: actions);
+          final dialog = AlertDialog(content: content);
 
-          await openDialog(tester, dialog, textScaleFactor);
+          await openDialog(tester, dialog, textScaleFactor, isM3: true);
 
-          expectTopEdgePadding(
-            tester,
-            finder: contentFinder,
-            textScaleFactor: textScaleFactor,
-            unscaledValue: 20.0,
-          );
-          expectLeftEdgePadding(
-            tester,
-            finder: contentFinder,
-            textScaleFactor: textScaleFactor,
-            unscaledValue: 24.0,
-          );
-          expectRightEdgePadding(
-            tester,
-            finder: contentFinder,
-            textScaleFactor: textScaleFactor,
-            unscaledValue: 24.0,
-          );
-          expectVerticalInnerPadding(
-            tester,
-            top: contentFinder,
-            bottom: actionsFinder,
-            value: 24.0,
-          );
-          expectLeftEdgePadding(
-            tester,
-            finder: actionsFinder,
-            textScaleFactor: textScaleFactor,
-            unscaledValue: 0.0,
-          );
-          expectRightEdgePadding(
-            tester,
-            finder: actionsFinder,
-            textScaleFactor: textScaleFactor,
-            unscaledValue: 0.0,
-          );
-          expectBottomEdgePadding(
-            tester,
-            finder: actionsFinder,
-            textScaleFactor: textScaleFactor,
-            unscaledValue: 0.0,
+          final Rect surface = tester.getRect(dialogFinder);
+          final Rect contentRect = tester.getRect(contentFinder);
+          expect(contentRect.top - surface.top, moreOrLessEquals(contentRect.left - surface.left));
+          expect(
+            contentRect.top - surface.top,
+            moreOrLessEquals(surface.right - contentRect.right),
           );
         },
       );
