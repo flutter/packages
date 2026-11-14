@@ -1,0 +1,4 @@
+changelog: |
+  - `ExpansionPanelList` no longer inserts a `MaterialGap` next to expanded panels when `materialGapSize` is 0, so their dividers stay visible. Set `dividerColor` to `Colors.transparent` to hide them.
+version: minor
+

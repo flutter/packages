@@ -1938,14 +1938,9 @@ void main() {
     await tester.pumpWidget(buildWidgetForTest(materialGapSize: 0));
     await tester.pumpAndSettle();
     final MergeableMaterial mergeableMaterial = tester.widget(find.byType(MergeableMaterial));
-    expect(mergeableMaterial.children.length, 3);
-    expect(mergeableMaterial.children.whereType<MaterialGap>().length, 1);
+    expect(mergeableMaterial.children.length, 2);
+    expect(mergeableMaterial.children.whereType<MaterialGap>().length, 0);
     expect(mergeableMaterial.children.whereType<MaterialSlice>().length, 2);
-    for (final MergeableMaterialItem e in mergeableMaterial.children) {
-      if (e is MaterialGap) {
-        expect(e.size, 0);
-      }
-    }
 
     await tester.pumpWidget(buildWidgetForTest(materialGapSize: 20));
     await tester.pumpAndSettle();
@@ -1971,6 +1966,75 @@ void main() {
       }
     }
   });
+
+  test('ExpansionPanelList asserts non-negative materialGapSize', () {
+    expect(() => ExpansionPanelList(materialGapSize: -1), throwsAssertionError);
+    expect(() => ExpansionPanelList.radio(materialGapSize: -1), throwsAssertionError);
+  });
+
+  testWidgets(
+    'ExpansionPanelList keeps dividers around expanded panels when materialGapSize is 0',
+    (WidgetTester tester) async {
+      Widget buildWidgetForTest({required double materialGapSize}) {
+        return MaterialApp(
+          home: SingleChildScrollView(
+            child: ExpansionPanelList(
+              materialGapSize: materialGapSize,
+              children: <ExpansionPanel>[
+                for (int index = 0; index < 3; index += 1)
+                  ExpansionPanel(
+                    isExpanded: index == 1,
+                    body: const SizedBox.shrink(),
+                    headerBuilder: (BuildContext context, bool isExpanded) {
+                      return const SizedBox.shrink();
+                    },
+                  ),
+              ],
+            ),
+          ),
+        );
+      }
+
+      // The borders that MergeableMaterial draws as dividers, one per panel.
+      List<Border> panelBorders() {
+        return tester
+            .widgetList<AnimatedContainer>(
+              find.descendant(
+                of: find.byType(MergeableMaterial),
+                matching: find.byType(AnimatedContainer),
+              ),
+            )
+            .where((AnimatedContainer container) => container.decoration != null)
+            .map(
+              (AnimatedContainer container) =>
+                  (container.decoration! as BoxDecoration).border! as Border,
+            )
+            .toList();
+      }
+
+      await tester.pumpWidget(buildWidgetForTest(materialGapSize: 0));
+      await tester.pumpAndSettle();
+
+      // Without a gap, dividers separate the expanded panel from its neighbors.
+      List<Border> borders = panelBorders();
+      expect(borders, hasLength(3));
+      expect(borders[0].bottom.style, BorderStyle.solid);
+      expect(borders[1].top.style, BorderStyle.solid);
+      expect(borders[1].bottom.style, BorderStyle.solid);
+      expect(borders[2].top.style, BorderStyle.solid);
+
+      await tester.pumpWidget(buildWidgetForTest(materialGapSize: 16));
+      await tester.pumpAndSettle();
+
+      // With a gap, the gap separates the panels and there are no dividers.
+      borders = panelBorders();
+      expect(borders, hasLength(3));
+      expect(borders[0].bottom, BorderSide.none);
+      expect(borders[1].top, BorderSide.none);
+      expect(borders[1].bottom, BorderSide.none);
+      expect(borders[2].top, BorderSide.none);
+    },
+  );
 
   testWidgets(
     'Ensure IconButton splashColor and highlightColor are correctly set when canTapOnHeader is false',
