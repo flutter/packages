@@ -47,7 +47,7 @@ public final class VideoAssetTest {
   @Test
   public void localVideoCreatesMediaItem() {
     VideoAsset asset = VideoAsset.fromAssetUrl("asset:///asset-key");
-    MediaItem mediaItem = asset.getMediaItem();
+    MediaItem mediaItem = asset.mediaItem;
 
     assert mediaItem.localConfiguration != null;
     assertEquals(mediaItem.localConfiguration.uri, Uri.parse("asset:///asset-key"));
@@ -97,7 +97,7 @@ public final class VideoAssetTest {
     MediaSource source =
         asset
             .getMediaSourceFactory(ApplicationProvider.getApplicationContext())
-            .createMediaSource(asset.getMediaItem());
+            .createMediaSource(asset.mediaItem);
     assertEquals(
         Uri.parse("https://flutter.dev/video.mp4"),
         Objects.requireNonNull(source.getMediaItem().localConfiguration).uri);
@@ -131,7 +131,7 @@ public final class VideoAssetTest {
   @Test
   public void rtspVideoCreatesMediaItem() {
     VideoAsset asset = VideoAsset.fromRtspUrl("rtsp://test:pass@flutter.dev/stream");
-    MediaItem mediaItem = asset.getMediaItem();
+    MediaItem mediaItem = asset.mediaItem;
 
     assert mediaItem.localConfiguration != null;
     assertEquals(
