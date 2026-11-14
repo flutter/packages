@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// TODO(QuncCccccc): Remove ignore once https://github.com/flutter/flutter/issues/196406 is fixed.
+// ignore: uri_does_not_exist_in_doc_import
 /// @docImport 'package:material_ui/material_ui.dart';
 ///
 /// @docImport 'app.dart';
@@ -593,6 +595,7 @@ class NoDefaultCupertinoThemeData {
         other.textTheme == textTheme &&
         other.barBackgroundColor == barBackgroundColor &&
         other.scaffoldBackgroundColor == scaffoldBackgroundColor &&
+        other.selectionHandleColor == selectionHandleColor &&
         other.applyThemeToAll == applyThemeToAll;
   }
 
@@ -604,6 +607,7 @@ class NoDefaultCupertinoThemeData {
     textTheme,
     barBackgroundColor,
     scaffoldBackgroundColor,
+    selectionHandleColor,
     applyThemeToAll,
   );
 }

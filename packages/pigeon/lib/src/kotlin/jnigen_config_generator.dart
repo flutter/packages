@@ -65,14 +65,14 @@ class JnigenConfigGenerator extends Generator<InternalJnigenConfigOptions> {
     final String rawConfigDir =
         (basePath.isNotEmpty &&
             configDirSetting.isNotEmpty &&
-            !configDirSetting.startsWith(basePath))
+            !isWithinOrEquals(basePath, configDirSetting))
         ? path.posix.join(basePath, configDirSetting)
         : (configDirSetting.isNotEmpty ? configDirSetting : basePath);
 
     final String appDir =
         generatorOptions.kotlinOptions.appDirectory ?? generatorOptions.appDirectory ?? '';
     final String rawAppDir =
-        (basePath.isNotEmpty && appDir.isNotEmpty && !appDir.startsWith(basePath))
+        (basePath.isNotEmpty && appDir.isNotEmpty && !isWithinOrEquals(basePath, appDir))
         ? path.posix.join(basePath, appDir)
         : appDir;
 
@@ -86,8 +86,7 @@ class JnigenConfigGenerator extends Generator<InternalJnigenConfigOptions> {
     }
 
     final String dartOutPath = generatorOptions.dartOptions.dartOut ?? '';
-    final String rawDartOut =
-        (basePath.isNotEmpty && dartOutPath.isNotEmpty && !dartOutPath.startsWith(basePath))
+    final String rawDartOut = (basePath.isNotEmpty && dartOutPath.isNotEmpty)
         ? path.posix.join(basePath, dartOutPath)
         : dartOutPath;
     final String fullDartOut = rawConfigDir.isNotEmpty
@@ -106,7 +105,7 @@ class JnigenConfigGenerator extends Generator<InternalJnigenConfigOptions> {
         })
         .join(', ');
 
-    indent.writeln('');
+    indent.newln();
     indent.writeScoped('void main() async {', '}', () {
       indent.format('''
   if (!await _hasJava()) {
@@ -114,7 +113,7 @@ class JnigenConfigGenerator extends Generator<InternalJnigenConfigOptions> {
     return;
   }
 ''');
-      indent.writeln("  Directory.current = Platform.script.resolve('../..').toFilePath();");
+      indent.writeln("Directory.current = Platform.script.resolve('../..').toFilePath();");
       indent.writeScoped('final generator = JniGenerator(', ');', () {
         indent.writeScoped('input: Input(', '),', () {
           indent.writeScoped('classes: [', '],', () {
@@ -124,8 +123,12 @@ class JnigenConfigGenerator extends Generator<InternalJnigenConfigOptions> {
             indent.writeln(
               "'$packagePrefix${generatorOptions.kotlinOptions.errorClassName ?? 'FlutterError'}',",
             );
+            final bool hybrid = generatorOptions.kotlinOptions.useJniHybrid;
             for (final Api api in root.apis) {
-              if (api is AstFlutterApi) {
+              if (hybrid && api is AstFlutterApi) {
+                indent.writeln("'$packagePrefix${api.name}Bridge',");
+                indent.writeln("'$packagePrefix${api.name}Registrar',");
+              } else if (api is AstFlutterApi) {
                 indent.writeln("'$packagePrefix${api.name}',");
                 indent.writeln("'$packagePrefix${api.name}Registrar',");
               } else if (api is AstHostApi) {
@@ -164,7 +167,7 @@ $copyrightPreamble\'\'\',
 ''');
         });
       });
-      indent.writeln('  await generator.generate(logger: Logger.root..level = Level.ALL);');
+      indent.writeln('await generator.generate(logger: Logger.root..level = Level.ALL);');
       indent.newln();
     });
     indent.format('''

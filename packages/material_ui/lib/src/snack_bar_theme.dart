@@ -255,6 +255,7 @@ class SnackBarThemeData with Diagnosticable {
         t,
       ),
       dismissDirection: t < 0.5 ? a?.dismissDirection : b?.dismissDirection,
+      showCloseIcon: t < 0.5 ? a?.showCloseIcon : b?.showCloseIcon,
     );
   }
 
