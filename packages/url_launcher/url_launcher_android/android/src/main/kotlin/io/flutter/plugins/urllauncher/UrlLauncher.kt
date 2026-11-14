@@ -65,8 +65,7 @@ constructor(
       headers: Map<String, String>,
       requireNonBrowser: Boolean
   ): Boolean {
-    ensureActivity()
-    val activity = checkNotNull(activity)
+    val activity = ensureActivity()
 
     val launchIntent: Intent =
         Intent(Intent.ACTION_VIEW)
@@ -90,8 +89,7 @@ constructor(
       webViewOptions: WebViewOptions,
       browserOptions: BrowserOptions
   ): Boolean {
-    ensureActivity()
-    val activity = checkNotNull(activity)
+    val activity = ensureActivity()
 
     val headersBundle: Bundle = extractBundle(webViewOptions.headers)
 
@@ -128,10 +126,10 @@ constructor(
     return CustomTabsClient.getPackageName(applicationContext, emptyList()) != null
   }
 
-  private fun ensureActivity() {
-    if (activity == null) {
-      throw FlutterError("NO_ACTIVITY", "Launching a URL requires a foreground activity.", null)
-    }
+  private fun ensureActivity(): Activity {
+    return activity
+        ?: throw FlutterError(
+            "NO_ACTIVITY", "Launching a URL requires a foreground activity.", null)
   }
 
   companion object {
@@ -157,24 +155,13 @@ constructor(
     // Checks if headers contains a CORS restricted header.
     //  https://developer.mozilla.org/en-US/docs/Glossary/CORS-safelisted_request_header
     private fun containsRestrictedHeader(headersMap: Map<String, String>): Boolean {
-      for (key in headersMap.keys) {
-        when (key.lowercase()) {
-          "accept",
-          "accept-language",
-          "content-language",
-          "content-type" -> continue
-          else -> return true
-        }
-      }
-      return false
+      val allowedKeys = setOf("accept", "accept-language", "content-language", "content-type")
+      return headersMap.keys.any { !allowedKeys.contains(it.lowercase()) }
     }
 
     private fun extractBundle(headersMap: Map<String, String>): Bundle {
       val headersBundle = Bundle()
-      for (key in headersMap.keys) {
-        val value = headersMap[key]
-        headersBundle.putString(key, value)
-      }
+      headersMap.forEach { (key, value) -> headersBundle.putString(key, value) }
       return headersBundle
     }
   }
