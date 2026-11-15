@@ -34,7 +34,7 @@ class FrameUpdater {
   ///
   /// This is intended to be written from the main thread, and accessed from the
   /// engine's raster thread, so it is internally locked.
-  var frameDuration: CFTimeInterval {
+  private(set) var frameDuration: CFTimeInterval {
     get {
       frameDurationLock.lock()
       defer { frameDurationLock.unlock() }
@@ -49,7 +49,13 @@ class FrameUpdater {
 
   /// Called when the display link fires.
   func displayLinkFired() {
-    frameDuration = displayLink?.duration ?? .zero
+    let duration = displayLink?.duration ?? .zero
+    // Only set the duration if it has changed, to minimize lock contention.
+    // It is safe to read the internal value without a lock here since this is
+    // the only place where it is changed.
+    if duration != frameDurationInternal {
+      frameDuration = duration
+    }
     registry?.textureFrameAvailable(textureIdentifier)
   }
 }
