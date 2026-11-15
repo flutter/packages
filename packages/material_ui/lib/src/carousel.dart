@@ -9,7 +9,6 @@ import 'dart:math' as math;
 
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 
@@ -1175,8 +1174,8 @@ class _RenderSliverWeightedCarousel extends RenderSliverFixedExtentBoxAdaptor {
     }
     int index;
 
-    final double actual = constraints.scrollOffset / firstChildExtent;
-    final int round = (constraints.scrollOffset / firstChildExtent).round();
+    final double actual = constraints.scrollOffset / maxChildExtent;
+    final int round = (constraints.scrollOffset / maxChildExtent).round();
     if ((actual - round).abs() < precisionErrorTolerance) {
       index = round;
     } else {
@@ -1189,19 +1188,18 @@ class _RenderSliverWeightedCarousel extends RenderSliverFixedExtentBoxAdaptor {
   // item. It informs them how much the first item has moved off-screen,
   // enabling them to adjust their sizes (grow or shrink) accordingly.
   double get _firstVisibleItemOffscreenExtent {
-    // If constraints.viewportMainAxisExtent is 0, firstChildExtent will be 0 and cause division error.
+    // If constraints.viewportMainAxisExtent is 0, maxChildExtent will be 0 and cause division error.
     if (constraints.viewportMainAxisExtent == 0.0) {
       return 0;
     }
-    int index;
-    final double actual = constraints.scrollOffset / firstChildExtent;
-    final int round = (constraints.scrollOffset / firstChildExtent).round();
+    final double actual = constraints.scrollOffset / maxChildExtent;
+    final int round = actual.round();
     if ((actual - round).abs() < precisionErrorTolerance) {
-      index = round;
-    } else {
-      index = actual.floor();
+      return 0.0;
     }
-    return constraints.scrollOffset - index * firstChildExtent;
+    final int index = actual.floor();
+    final double progress = (constraints.scrollOffset - index * maxChildExtent) / maxChildExtent;
+    return progress * firstChildExtent;
   }
 
   // Given the off-screen extent for the first visible item, we can know the
@@ -1301,7 +1299,7 @@ class _RenderSliverWeightedCarousel extends RenderSliverFixedExtentBoxAdaptor {
     if (infinite) {
       return double.infinity;
     }
-    return childManager.childCount * firstChildExtent;
+    return childManager.childCount * maxChildExtent;
   }
 
   BoxConstraints _getChildConstraints(int index) {
@@ -1391,14 +1389,23 @@ class _RenderSliverWeightedCarousel extends RenderSliverFixedExtentBoxAdaptor {
     }
 
     // From the last item to the firstly encountered max item
-    double extraLayoutOffset = 0;
+    var trailingWeightCount = 0;
     if (consumeMaxWeight) {
       for (int i = weights.length - 1; i >= 0; i--) {
         if (weights[i] == weights.max) {
           break;
         }
-        extraLayoutOffset += weights[i] * extentUnit;
+        trailingWeightCount += 1;
       }
+    }
+    final int leadingWeightCount = consumeMaxWeight ? weights.indexOf(weights.max) : 0;
+
+    double maxScrollOffsetForCount(int count) {
+      final int maxStep = math.max(
+        0,
+        count - weights.length + leadingWeightCount + trailingWeightCount,
+      );
+      return maxStep * maxChildExtent + constraints.viewportMainAxisExtent;
     }
 
     double estimatedMaxScrollOffset = double.infinity;
@@ -1413,8 +1420,7 @@ class _RenderSliverWeightedCarousel extends RenderSliverFixedExtentBoxAdaptor {
         child = insertAndLayoutChild(_getChildConstraints(index), after: trailingChildWithLayout);
         if (child == null) {
           // We have run out of children.
-          estimatedMaxScrollOffset =
-              indexToLayoutOffset(deprecatedExtraItemExtent, index) + extraLayoutOffset;
+          estimatedMaxScrollOffset = maxScrollOffsetForCount(index);
           break;
         }
       } else {
@@ -1434,13 +1440,7 @@ class _RenderSliverWeightedCarousel extends RenderSliverFixedExtentBoxAdaptor {
     double trailingScrollOffset;
 
     if (!infinite && lastIndex + 1 == childManager.childCount) {
-      trailingScrollOffset = indexToLayoutOffset(deprecatedExtraItemExtent, lastIndex);
-
-      trailingScrollOffset += math.max(
-        weights.last * extentUnit,
-        _buildItemExtent(lastIndex, layoutDimensions),
-      );
-      trailingScrollOffset += extraLayoutOffset;
+      trailingScrollOffset = maxScrollOffsetForCount(lastIndex + 1);
     } else {
       trailingScrollOffset = indexToLayoutOffset(deprecatedExtraItemExtent, lastIndex + 1);
     }
@@ -1449,16 +1449,20 @@ class _RenderSliverWeightedCarousel extends RenderSliverFixedExtentBoxAdaptor {
     assert(indexOf(firstChild!) == firstIndex);
     assert(targetLastIndex == null || lastIndex <= targetLastIndex);
 
-    estimatedMaxScrollOffset = math.min(
-      estimatedMaxScrollOffset,
-      estimateMaxScrollOffset(
-        constraints,
-        firstIndex: firstIndex,
-        lastIndex: lastIndex,
-        leadingScrollOffset: leadingScrollOffset,
-        trailingScrollOffset: trailingScrollOffset,
-      ),
-    );
+    if (!infinite && childManager.estimatedChildCount != null) {
+      estimatedMaxScrollOffset = maxScrollOffsetForCount(childManager.estimatedChildCount!);
+    } else {
+      estimatedMaxScrollOffset = math.min(
+        estimatedMaxScrollOffset,
+        estimateMaxScrollOffset(
+          constraints,
+          firstIndex: firstIndex,
+          lastIndex: lastIndex,
+          leadingScrollOffset: leadingScrollOffset,
+          trailingScrollOffset: trailingScrollOffset,
+        ),
+      );
+    }
 
     final double paintExtent = calculatePaintOffset(
       constraints,
@@ -1526,24 +1530,6 @@ class CarouselScrollPhysics extends ScrollPhysics {
     return CarouselScrollPhysics(parent: buildParent(ancestor));
   }
 
-  double _getSpeedRatio(_CarouselPosition position) {
-    if (position.flexWeights == null || position.flexWeights!.isEmpty) {
-      return 1.0;
-    }
-    final List<int> weights = position.flexWeights!;
-    return weights.first / weights.max;
-  }
-
-  @override
-  double applyPhysicsToUserOffset(ScrollMetrics position, double offset) {
-    if (position is _CarouselPosition) {
-      final double ratio = _getSpeedRatio(position);
-      final double effectiveOffset = offset * ratio;
-      return super.applyPhysicsToUserOffset(position, effectiveOffset);
-    }
-    return super.applyPhysicsToUserOffset(position, offset);
-  }
-
   double _getTargetPixels(_CarouselPosition position, Tolerance tolerance, double velocity) {
     double fraction;
 
@@ -1551,7 +1537,7 @@ class CarouselScrollPhysics extends ScrollPhysics {
       fraction = position.itemExtent! / position.viewportDimension;
     } else {
       assert(position.flexWeights != null);
-      fraction = position.flexWeights!.first / position.flexWeights!.sum;
+      fraction = position.flexWeights!.max / position.flexWeights!.sum;
     }
 
     final double itemWidth = position.viewportDimension * fraction;
@@ -1564,23 +1550,11 @@ class CarouselScrollPhysics extends ScrollPhysics {
     } else {
       item = actual;
     }
-
-    final double? dragStartPixels = position._dragStartPixels;
-    if (dragStartPixels != null && velocity.abs() > tolerance.velocity) {
-      final double startItem = (dragStartPixels / itemWidth).roundToDouble();
-      if (velocity < -tolerance.velocity) {
-        item = math.max(startItem - 1.0, 0.0);
-      } else if (velocity > tolerance.velocity) {
-        item = startItem + 1.0;
-      }
-    } else {
-      if (velocity < -tolerance.velocity) {
-        item -= 0.5;
-      } else if (velocity > tolerance.velocity) {
-        item += 0.5;
-      }
+    if (velocity < -tolerance.velocity) {
+      item -= 0.5;
+    } else if (velocity > tolerance.velocity) {
+      item += 0.5;
     }
-
     return item.roundToDouble() * itemWidth;
   }
 
@@ -1595,16 +1569,11 @@ class CarouselScrollPhysics extends ScrollPhysics {
     final metrics = position as _CarouselPosition;
     if ((velocity <= 0.0 && metrics.pixels <= metrics.minScrollExtent) ||
         (velocity >= 0.0 && metrics.pixels >= metrics.maxScrollExtent)) {
-      metrics._dragStartPixels = null;
       return super.createBallisticSimulation(metrics, velocity);
     }
 
-    // Do not scale the velocity down. Scaling it causes exponential decay
-    // when the framework restarts the ballistic simulation during layout shifts.
     final Tolerance tolerance = toleranceFor(metrics);
     final double target = _getTargetPixels(metrics, tolerance, velocity);
-    metrics._dragStartPixels = null;
-
     if (target != metrics.pixels) {
       return ScrollSpringSimulation(spring, metrics.pixels, target, velocity, tolerance: tolerance);
     }
@@ -1690,13 +1659,6 @@ class _CarouselPosition extends ScrollPositionWithSingleContext implements _Caro
 
   int initialItem;
   final double _itemToShowOnStartup;
-  double? _dragStartPixels;
-
-  @override
-  Drag drag(DragStartDetails details, VoidCallback dragCancelCallback) {
-    _dragStartPixels = hasPixels ? pixels : null;
-    return super.drag(details, dragCancelCallback);
-  }
 
   /// The number of items in the carousel for infinite scrolling wrapping.
   int? get itemCount => _itemCount;
@@ -1828,7 +1790,7 @@ class _CarouselPosition extends ScrollPositionWithSingleContext implements _Caro
     } else {
       // If itemExtent is null, flexWeights cannot be null.
       assert(flexWeights != null);
-      fraction = flexWeights!.first / flexWeights!.sum;
+      fraction = flexWeights!.max / flexWeights!.sum;
     }
 
     final double actual = math.max(0.0, pixels) / (viewportDimension * fraction);
@@ -1849,20 +1811,10 @@ class _CarouselPosition extends ScrollPositionWithSingleContext implements _Caro
     } else {
       // If itemExtent is null, flexWeights cannot be null.
       assert(flexWeights != null);
-      fraction = flexWeights!.first / flexWeights.sum;
+      fraction = flexWeights!.max / flexWeights.sum;
     }
 
     return item * viewportDimension * fraction;
-  }
-
-  @override
-  void pointerScroll(double delta) {
-    if (flexWeights != null && flexWeights!.isNotEmpty) {
-      final double ratio = flexWeights!.first / flexWeights!.max;
-      super.pointerScroll(delta * ratio);
-      return;
-    }
-    super.pointerScroll(delta);
   }
 
   @override
@@ -1917,7 +1869,7 @@ class _CarouselPosition extends ScrollPositionWithSingleContext implements _Caro
     if (itemExtent != null) {
       fraction = itemExtent! / viewportDimension;
     } else if (flexWeights != null) {
-      fraction = flexWeights!.first / flexWeights!.sum;
+      fraction = flexWeights!.max / flexWeights!.sum;
     } else {
       return 0.0;
     }
@@ -2082,7 +2034,7 @@ class CarouselController extends ScrollController {
       leadingIndex = leadingIndex.clamp(0, itemCount - 1);
     }
 
-    final double targetInFirstCycle = dimension * (weights.first / totalWeight) * leadingIndex;
+    final double targetInFirstCycle = dimension * (weights.max / totalWeight) * leadingIndex;
     if (!carouselState.widget.infinite) {
       return targetInFirstCycle;
     }

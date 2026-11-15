@@ -459,7 +459,7 @@ void main() {
     checkOriginalExpectations();
 
     // Snap to the next item.
-    await tester.drag(getItem(0), const Offset(-70, 0));
+    await tester.drag(find.byType(CarouselView), const Offset(-400, 0));
     await tester.pumpAndSettle();
 
     expect(getItem(0), findsNothing);
@@ -548,8 +548,8 @@ void main() {
     expect(getItem(2), findsOneWidget);
     expect(getItem(3), findsNothing);
 
-    // Should snap to item 2 because of a long drag(-100). Show item 2, 3 and 4.
-    await tester.fling(getItem(0), const Offset(-100, 0), 800);
+    // Should snap to item 2 because of a long drag(-700). Show item 2, 3 and 4.
+    await tester.fling(find.byType(CarouselView), const Offset(-700, 0), 800);
     await tester.pumpAndSettle();
 
     expect(getItem(0), findsNothing);
@@ -559,7 +559,7 @@ void main() {
     expect(getItem(4), findsOneWidget);
 
     // Fling to the next item (item 3). Show item 3, 4 and 5.
-    await tester.fling(getItem(2), const Offset(-50, 0), 800);
+    await tester.fling(find.byType(CarouselView), const Offset(-200, 0), 800);
     await tester.pumpAndSettle();
 
     expect(getItem(2), findsNothing);
@@ -568,7 +568,7 @@ void main() {
     expect(getItem(5), findsOneWidget);
 
     // Fling back to the previous item. Show item 2, 3 and 4.
-    await tester.fling(getItem(3), const Offset(50, 0), 800);
+    await tester.fling(find.byType(CarouselView), const Offset(200, 0), 800);
     await tester.pumpAndSettle();
 
     expect(getItem(2), findsOneWidget);
@@ -578,7 +578,7 @@ void main() {
   });
 
   testWidgets(
-    'CarouselView.weighted pointerScroll scales delta by flexWeights ratio (regression test for #160350)',
+    'CarouselView.weighted uses maxChildExtent as scroll step (regression test for #160350)',
     (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
@@ -603,9 +603,17 @@ void main() {
       expect(getItem(1), findsOneWidget);
       expect(getItem(2), findsNothing);
 
-      // Scroll with a mouse wheel / trackpad gesture of 100px.
-      // With scaling (1/7 ratio), a 100px gesture produces an effective delta of ~14.3px,
-      // which remains within item 0 bounds and snaps back cleanly without skipping items.
+      // With flexWeights [1, 7] on an 800px viewport, firstChildExtent is 100px
+      // and maxChildExtent is 700px. A 100px drag or pointer scroll is less than
+      // half of maxChildExtent (350px), so it snaps back to item 0 instead of
+      // advancing a full item.
+      await tester.drag(find.byType(CarouselView), const Offset(-100, 0));
+      await tester.pumpAndSettle();
+
+      expect(getItem(0), findsOneWidget);
+      expect(getItem(1), findsOneWidget);
+      expect(getItem(2), findsNothing);
+
       final testPointer = TestPointer(1, PointerDeviceKind.mouse);
       testPointer.hover(tester.getCenter(find.byType(CarouselView)));
       await tester.sendEventToBinding(testPointer.scroll(const Offset(100.0, 0.0)));
@@ -1020,7 +1028,7 @@ void main() {
     expect(rect0, const Rect.fromLTRB(240.0, 0.0, 560.0, 600.0));
 
     for (var i = 0; i < 7; i++) {
-      await tester.drag(find.byType(CarouselView), const Offset(-80.0, 0.0));
+      await tester.drag(find.byType(CarouselView), const Offset(-320.0, 0.0));
       await tester.pumpAndSettle();
     }
 
@@ -1031,7 +1039,7 @@ void main() {
 
     // Keep snapping twice. Item 9 should be fully expanded to the max size.
     for (var i = 0; i < 2; i++) {
-      await tester.drag(find.byType(CarouselView), const Offset(-80.0, 0.0));
+      await tester.drag(find.byType(CarouselView), const Offset(-320.0, 0.0));
       await tester.pumpAndSettle();
     }
     expect(getItem(9), findsOneWidget);
@@ -1113,7 +1121,7 @@ void main() {
     expect(rect3.center.dy, 300.0);
 
     // Simulate scroll to right and show item 4 to be the centered max item.
-    await tester.drag(find.byType(CarouselView), const Offset(-80.0, 0.0));
+    await tester.drag(find.byType(CarouselView), const Offset(-480.0, 0.0));
     await tester.pumpAndSettle();
 
     expect(find.text('Item 1'), findsNothing);
@@ -1197,8 +1205,8 @@ void main() {
       }
 
       // Drag the first item to the middle. So the progress for the first item size change
-      // is 50%, original width is 80.
-      await tester.drag(getItem(0), const Offset(-40.0, 0.0), kind: PointerDeviceKind.trackpad);
+      // is 50%, original width is 80, max extent is 320.
+      await tester.drag(getItem(0), const Offset(-160.0, 0.0), kind: PointerDeviceKind.trackpad);
       await tester.pump();
       expect(tester.getRect(getItem(0)).width, 40.0);
 
@@ -2172,7 +2180,11 @@ void main() {
     expect(rect1, const Rect.fromLTRB(600.0, 0.0, 800.0, 600.0));
 
     // Scroll forward by 400 pixels (one large item width).
-    await tester.drag(find.byType(CarouselView), const Offset(-400, 0));
+    await tester.drag(
+      find.byType(CarouselView),
+      const Offset(-400, 0),
+      kind: PointerDeviceKind.trackpad,
+    );
     await tester.pumpAndSettle();
 
     // After scrolling, items shift and cycle infinitely.
@@ -2702,7 +2714,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await tester.drag(find.byType(CarouselView), const Offset(-300, 0));
+      await tester.drag(find.byType(CarouselView), const Offset(-700, 0));
       await tester.pumpAndSettle();
 
       expect(controller.leadingItem, equals(1));
@@ -2758,7 +2770,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await tester.drag(find.byType(CarouselView), const Offset(300, 0));
+      await tester.drag(find.byType(CarouselView), const Offset(700, 0));
       await tester.pumpAndSettle();
 
       expect(controller.leadingItem, equals(1));
