@@ -82,7 +82,9 @@ void main() {
 
         expect(
           platform
-              .createPlatformFileSystemXFile(PlatformFileSystemXFileCreationParams('/my/path/'))
+              .createPlatformFileSystemXDirectory(
+                PlatformFileSystemXDirectoryCreationParams('/my/path/'),
+              )
               .toFilePath,
           '/my/path/',
         );
