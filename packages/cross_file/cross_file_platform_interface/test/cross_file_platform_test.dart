@@ -35,14 +35,14 @@ void main() {
           platform
               .createPlatformFileSystemXFile(PlatformFileSystemXFileCreationParams('my/path.txt'))
               .toFilePath,
-          'my/path.txt',
+          Uri.file('my/path.txt').toFilePath(),
         );
 
         expect(
           platform
               .createPlatformFileSystemXFile(PlatformFileSystemXFileCreationParams('/my/path.txt'))
               .toFilePath,
-          '/my/path.txt',
+          Uri.file('/my/path.txt').toFilePath(),
         );
       });
 
@@ -77,7 +77,7 @@ void main() {
                 PlatformFileSystemXDirectoryCreationParams('my/path'),
               )
               .toFilePath,
-          'my/path/',
+          Uri.directory('my/path').toFilePath(),
         );
 
         expect(
@@ -86,7 +86,7 @@ void main() {
                 PlatformFileSystemXDirectoryCreationParams('/my/path/'),
               )
               .toFilePath,
-          '/my/path/',
+          Uri.directory('/my/path/').toFilePath(),
         );
       });
 
