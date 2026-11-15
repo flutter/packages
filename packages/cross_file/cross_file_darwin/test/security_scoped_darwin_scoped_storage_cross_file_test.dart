@@ -107,6 +107,9 @@ void main() {
   );
 }
 
+// Allocate and register the instance inside a non-inlined helper so the
+// async test frame does not retain a hidden stack/register reference to
+// the object across `await forceGC()`.
 @pragma('vm:never-inline')
 Future<WeakReference<SecurityScopedDarwinScopedStorageXFile>> _createAndDropFile({
   bool dispose = false,
