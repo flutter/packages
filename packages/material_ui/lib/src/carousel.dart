@@ -9,6 +9,7 @@ import 'dart:math' as math;
 
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 
@@ -1300,7 +1301,7 @@ class _RenderSliverWeightedCarousel extends RenderSliverFixedExtentBoxAdaptor {
     if (infinite) {
       return double.infinity;
     }
-    return childManager.childCount * maxChildExtent;
+    return childManager.childCount * firstChildExtent;
   }
 
   BoxConstraints _getChildConstraints(int index) {
@@ -1526,6 +1527,24 @@ class CarouselScrollPhysics extends ScrollPhysics {
     return CarouselScrollPhysics(parent: buildParent(ancestor));
   }
 
+  double _getSpeedRatio(_CarouselPosition position) {
+    if (position.flexWeights == null || position.flexWeights!.isEmpty) {
+      return 1.0;
+    }
+    final List<int> weights = position.flexWeights!;
+    return weights.first / weights.max;
+  }
+
+  @override
+  double applyPhysicsToUserOffset(ScrollMetrics position, double offset) {
+    if (position is _CarouselPosition) {
+      final double ratio = _getSpeedRatio(position);
+      final double effectiveOffset = offset * ratio;
+      return super.applyPhysicsToUserOffset(position, effectiveOffset);
+    }
+    return super.applyPhysicsToUserOffset(position, offset);
+  }
+
   double _getTargetPixels(_CarouselPosition position, Tolerance tolerance, double velocity) {
     double fraction;
 
@@ -1546,11 +1565,23 @@ class CarouselScrollPhysics extends ScrollPhysics {
     } else {
       item = actual;
     }
-    if (velocity < -tolerance.velocity) {
-      item -= 0.5;
-    } else if (velocity > tolerance.velocity) {
-      item += 0.5;
+
+    final double? dragStartPixels = position._dragStartPixels;
+    if (dragStartPixels != null && velocity.abs() > tolerance.velocity) {
+      final double startItem = (dragStartPixels / itemWidth).roundToDouble();
+      if (velocity < -tolerance.velocity) {
+        item = math.max(startItem - 1.0, 0.0);
+      } else if (velocity > tolerance.velocity) {
+        item = startItem + 1.0;
+      }
+    } else {
+      if (velocity < -tolerance.velocity) {
+        item -= 0.5;
+      } else if (velocity > tolerance.velocity) {
+        item += 0.5;
+      }
     }
+
     return item.roundToDouble() * itemWidth;
   }
 
@@ -1565,11 +1596,16 @@ class CarouselScrollPhysics extends ScrollPhysics {
     final metrics = position as _CarouselPosition;
     if ((velocity <= 0.0 && metrics.pixels <= metrics.minScrollExtent) ||
         (velocity >= 0.0 && metrics.pixels >= metrics.maxScrollExtent)) {
+      metrics._dragStartPixels = null;
       return super.createBallisticSimulation(metrics, velocity);
     }
 
+    // Do not scale the velocity down. Scaling it causes exponential decay
+    // when the framework restarts the ballistic simulation during layout shifts.
     final Tolerance tolerance = toleranceFor(metrics);
     final double target = _getTargetPixels(metrics, tolerance, velocity);
+    metrics._dragStartPixels = null;
+
     if (target != metrics.pixels) {
       return ScrollSpringSimulation(spring, metrics.pixels, target, velocity, tolerance: tolerance);
     }
@@ -1655,6 +1691,13 @@ class _CarouselPosition extends ScrollPositionWithSingleContext implements _Caro
 
   int initialItem;
   final double _itemToShowOnStartup;
+  double? _dragStartPixels;
+
+  @override
+  Drag drag(DragStartDetails details, VoidCallback dragCancelCallback) {
+    _dragStartPixels = hasPixels ? pixels : null;
+    return super.drag(details, dragCancelCallback);
+  }
 
   /// The number of items in the carousel for infinite scrolling wrapping.
   int? get itemCount => _itemCount;
@@ -1811,6 +1854,16 @@ class _CarouselPosition extends ScrollPositionWithSingleContext implements _Caro
     }
 
     return item * viewportDimension * fraction;
+  }
+
+  @override
+  void pointerScroll(double delta) {
+    if (flexWeights != null && flexWeights!.isNotEmpty) {
+      final double ratio = flexWeights!.first / flexWeights!.max;
+      super.pointerScroll(delta * ratio);
+      return;
+    }
+    super.pointerScroll(delta);
   }
 
   @override
