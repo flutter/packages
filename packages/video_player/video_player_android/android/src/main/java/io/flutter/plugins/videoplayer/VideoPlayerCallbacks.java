@@ -28,4 +28,7 @@ public interface VideoPlayerCallbacks {
   void onAudioTrackChanged(@Nullable String selectedTrackId);
 
   void onVideoTrackChanged(@Nullable String selectedTrackId);
+
+  /* Called when the player is disposed and the channel is no longer needed. */
+  void onDisposed();
 }
