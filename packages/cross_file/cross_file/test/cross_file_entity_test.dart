@@ -13,7 +13,10 @@ void main() {
     test('toFilePath', () {
       const path = '/my/file.txt';
       final entity = XEntity(
-        TestXEntity(const PlatformXFileCreationParams(uri: 'some/other/path.txt'), onToFilePath: () => path),
+        TestXEntity(
+          const PlatformXFileCreationParams(uri: 'some/other/path.txt'),
+          onToFilePath: () => path,
+        ),
       );
 
       expect(entity.toFilePath, path);
