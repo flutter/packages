@@ -36,8 +36,8 @@ base class XEntity {
   /// resource.
   ///
   /// Result of calling this is platform implementation dependent. This can do
-  /// nothing on some platforms while calling this can remove access to a
-  /// resource referenced by [uri] even if it is used with a new instance.
+  /// nothing on some platforms while on other platforms it can remove access to
+  /// a resource referenced by [uri] even if it is used with a new instance.
   ///
   /// Accessing other methods after calling dispose will cause an
   /// `AssertionError`.
