@@ -30,10 +30,9 @@ base class XEntity {
   /// Whether the resource represented by this reference exists.
   Future<bool> exists() => platform.exists();
 
-  /// Attempt to return a valid file path that is compatible with `File` from
-  /// the `dart:io` path.
+  /// Attempt to return a valid file path.
   ///
-  /// Returns null if the entity doesn't support being accessed with `dart:io`
+  /// Returns null if the entity doesn't support being accessed as a file path
   /// or the platform doesn't support creating a file path for it.
   String? get toFilePath => platform.toFilePath;
 
