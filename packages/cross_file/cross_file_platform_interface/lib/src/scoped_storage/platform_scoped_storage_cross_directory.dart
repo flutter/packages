@@ -103,7 +103,4 @@ abstract base class PlatformScopedStorageXDirectory extends PlatformXDirectory {
   /// Whether the files in this directory represented by this reference can be
   /// viewed.
   Future<bool> canRead();
-
-  /// Release the reference this represents.
-  Future<void> dispose();
 }

@@ -30,6 +30,19 @@ base class XEntity {
   /// Whether the resource represented by this reference exists.
   Future<bool> exists() => platform.exists();
 
+  /// Releases the underlying reference to the resource, if necessary.
+  ///
+  /// This is expected to be called when the app no longer needs to access the
+  /// resource.
+  ///
+  /// Result of calling this is platform implementation dependent. This can do
+  /// nothing on some platforms while calling this can remove access to a
+  /// resource referenced by [uri] even if it is used with a new instance.
+  ///
+  /// Accessing other methods after calling dispose will cause an
+  /// `AssertionError`.
+  Future<void> dispose() => platform.dispose();
+
   @override
   bool operator ==(Object other) => other is XEntity && other.platform == platform;
 
