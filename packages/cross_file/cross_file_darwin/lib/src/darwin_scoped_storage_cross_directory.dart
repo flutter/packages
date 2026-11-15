@@ -74,6 +74,9 @@ base class SecurityScopedDarwinScopedStorageXDirectory extends DarwinScopedStora
   SecurityScopedDarwinScopedStorageXDirectoryExtension? get extension => this;
 
   @override
+  String? get toFilePath => Uri.parse(params.uri).toFilePath();
+
+  @override
   Future<bool> exists() async => _directory.existsSync();
 
   @override

@@ -28,6 +28,24 @@ void main() {
         );
       });
 
+      test('PlatformFileSystemXFile.toFilePath returns correct path', () {
+        final platform = TestCrossFilePlatform();
+
+        expect(
+          platform
+              .createPlatformFileSystemXFile(PlatformFileSystemXFileCreationParams('my/path.txt'))
+              .toFilePath,
+          'my/path.txt',
+        );
+
+        expect(
+          platform
+              .createPlatformFileSystemXFile(PlatformFileSystemXFileCreationParams('/my/path.txt'))
+              .toFilePath,
+          '/my/path.txt',
+        );
+      });
+
       test('PlatformFileSystemXDirectory returns correct URI', () {
         final platform = TestCrossFilePlatform();
 
@@ -47,6 +65,26 @@ void main() {
               .params
               .uri,
           'file:///my/path/',
+        );
+      });
+
+      test('PlatformFileSystemXDirectory.toFilePath returns correct path', () {
+        final platform = TestCrossFilePlatform();
+
+        expect(
+          platform
+              .createPlatformFileSystemXDirectory(
+                PlatformFileSystemXDirectoryCreationParams('my/path'),
+              )
+              .toFilePath,
+          'my/path/',
+        );
+
+        expect(
+          platform
+              .createPlatformFileSystemXFile(PlatformFileSystemXFileCreationParams('/my/path/'))
+              .toFilePath,
+          '/my/path/',
         );
       });
 

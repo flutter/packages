@@ -255,9 +255,14 @@ final class TestScopedStorageXDirectory extends PlatformScopedStorageXDirectory 
 }
 
 final class TestXEntity extends PlatformXEntity {
-  TestXEntity(super.params, {this.onExists});
+  TestXEntity(super.params, {this.onExists, this.onToFilePath});
 
   Future<bool> Function()? onExists;
+
+  String? Function()? onToFilePath;
+
+  @override
+  String? get toFilePath => onToFilePath?.call();
 
   @override
   Future<bool> exists() async {
