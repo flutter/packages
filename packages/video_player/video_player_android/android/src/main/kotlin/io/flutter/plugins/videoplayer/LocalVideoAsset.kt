@@ -9,7 +9,7 @@ import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.exoplayer.source.MediaSource
 
 internal class LocalVideoAsset(assetUrl: String) : VideoAsset(assetUrl) {
-  val mediaItem: MediaItem
+  override val mediaItem: MediaItem
     get() = MediaItem.Builder().setUri(assetUrl).build()
 
   public override fun getMediaSourceFactory(context: Context): MediaSource.Factory {

@@ -11,14 +11,6 @@ private constructor(
     private val eventSink: QueuingEventSink,
     private val eventChannel: VideoEventsEventChannel?
 ) : VideoPlayerCallbacks {
-  @VisibleForTesting
-  internal interface EventChannelFactory {
-    fun create(
-        messenger: BinaryMessenger?,
-        handler: VideoEventsStreamHandler?,
-        identifier: String?
-    ): VideoEventsEventChannel?
-  }
 
   override fun onInitialized(
       width: Int,
@@ -62,7 +54,7 @@ private constructor(
       return bindTo(
           binaryMessenger,
           identifier,
-          EventChannelFactory {
+          {
               messenger: BinaryMessenger?,
               streamHandler: VideoEventsStreamHandler?,
               instanceName: String? ->
@@ -76,16 +68,20 @@ private constructor(
     fun bindTo(
         binaryMessenger: BinaryMessenger,
         identifier: String,
-        factory: EventChannelFactory
+        eventChannelFactory:
+            (
+                messenger: BinaryMessenger,
+                handler: VideoEventsStreamHandler,
+                identifier: String) -> VideoEventsEventChannel
     ): VideoPlayerEventCallbacks {
       val eventSink = QueuingEventSink()
       val eventChannel =
-          factory.create(
+          eventChannelFactory(
               binaryMessenger,
               object : VideoEventsStreamHandler() {
                 public override fun onListen(
                     arguments: Any?,
-                    events: PigeonEventSink<PlatformVideoEvent?>
+                    events: PigeonEventSink<PlatformVideoEvent>
                 ) {
                   eventSink.setDelegate(events)
                 }

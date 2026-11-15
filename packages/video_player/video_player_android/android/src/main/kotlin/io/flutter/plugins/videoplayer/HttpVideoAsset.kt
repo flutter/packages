@@ -18,18 +18,19 @@ import androidx.media3.exoplayer.source.MediaSource
 internal class HttpVideoAsset(
     assetUrl: String?,
     private val streamingFormat: StreamingFormat,
-    private val httpHeaders: MutableMap<String?, String?>,
+    private val httpHeaders: Map<String, String>,
     private val userAgent: String?
 ) : VideoAsset(assetUrl) {
-  val mediaItem: MediaItem
+  override val mediaItem: MediaItem
     get() {
       val builder = MediaItem.Builder().setUri(assetUrl)
-      var mimeType: String? = null
-      when (streamingFormat) {
-        StreamingFormat.SMOOTH -> mimeType = MimeTypes.APPLICATION_SS
-        StreamingFormat.DYNAMIC_ADAPTIVE -> mimeType = MimeTypes.APPLICATION_MPD
-        StreamingFormat.HTTP_LIVE -> mimeType = MimeTypes.APPLICATION_M3U8
-      }
+      val mimeType: String? =
+          when (streamingFormat) {
+            StreamingFormat.SMOOTH -> MimeTypes.APPLICATION_SS
+            StreamingFormat.DYNAMIC_ADAPTIVE -> MimeTypes.APPLICATION_MPD
+            StreamingFormat.HTTP_LIVE -> MimeTypes.APPLICATION_M3U8
+            else -> null
+          }
       if (mimeType != null) {
         builder.setMimeType(mimeType)
       }
@@ -61,10 +62,10 @@ internal class HttpVideoAsset(
 
   companion object {
     // TODO: Migrate to stable API, see https://github.com/flutter/flutter/issues/147039.
-    @OptIn(markerClass = UnstableApi::class)
+    @OptIn(UnstableApi::class)
     private fun unstableUpdateDataSourceFactory(
         factory: DefaultHttpDataSource.Factory,
-        httpHeaders: MutableMap<String?, String?>,
+        httpHeaders: Map<String, String>,
         userAgent: String?
     ) {
       factory.setUserAgent(userAgent).setAllowCrossProtocolRedirects(true)

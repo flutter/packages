@@ -6,6 +6,8 @@ package io.flutter.plugins.videoplayer
 import android.content.Context
 import android.util.LongSparseArray
 import androidx.annotation.OptIn
+import androidx.core.util.isEmpty
+import androidx.core.util.size
 import androidx.media3.common.util.UnstableApi
 import io.flutter.FlutterInjector
 import io.flutter.Log
@@ -13,7 +15,6 @@ import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugins.videoplayer.AndroidVideoPlayerApi.Companion.setUp
-import io.flutter.plugins.videoplayer.VideoPlayer.DisposeHandler
 import io.flutter.plugins.videoplayer.VideoPlayerInstanceApi.Companion.setUp
 import io.flutter.plugins.videoplayer.platformview.PlatformVideoViewFactory
 import io.flutter.plugins.videoplayer.platformview.PlatformVideoViewFactory.VideoPlayerProvider
@@ -25,7 +26,7 @@ import io.flutter.view.TextureRegistry
 class VideoPlayerPlugin
 /** Register this with the v2 embedding for the plugin to respond to lifecycle callbacks. */
 : FlutterPlugin, AndroidVideoPlayerApi {
-  private val videoPlayers = LongSparseArray<VideoPlayer?>()
+  private val videoPlayers = LongSparseArray<VideoPlayer>()
   private var flutterState: FlutterState? = null
   private val sharedOptions = VideoPlayerOptions()
   private var nextPlayerIdentifier: Long = 1
@@ -36,11 +37,9 @@ class VideoPlayerPlugin
         FlutterState(
             binding.getApplicationContext(),
             binding.getBinaryMessenger(),
-            KeyForAssetFn { asset: String? ->
-              injector.flutterLoader().getLookupKeyForAsset(asset!!)
-            },
-            KeyForAssetAndPackageName { asset: String?, packageName: String? ->
-              injector.flutterLoader().getLookupKeyForAsset(asset!!, packageName!!)
+            { asset: String -> injector.flutterLoader().getLookupKeyForAsset(asset) },
+            { asset: String, packageName: String ->
+              injector.flutterLoader().getLookupKeyForAsset(asset, packageName)
             },
             binding.getTextureRegistry())
     flutterState!!.startListening(this, binding.getBinaryMessenger())
@@ -63,7 +62,7 @@ class VideoPlayerPlugin
   }
 
   private fun disposeAllPlayers() {
-    for (i in 0 ..< videoPlayers.size()) {
+    for (i in 0 ..< videoPlayers.size) {
       videoPlayers.valueAt(i)!!.dispose()
     }
     videoPlayers.clear()
@@ -82,7 +81,7 @@ class VideoPlayerPlugin
     disposeAllPlayers()
   }
 
-  @OptIn(markerClass = UnstableApi::class)
+  @OptIn(UnstableApi::class)
   override fun createForPlatformView(options: CreationOptions): Long {
     val videoAsset = videoAssetWithOptions(options)
 
@@ -102,7 +101,7 @@ class VideoPlayerPlugin
     return id
   }
 
-  @OptIn(markerClass = UnstableApi::class)
+  @OptIn(UnstableApi::class)
   override fun createForTextureView(options: CreationOptions): TexturePlayerIds {
     val videoAsset = videoAssetWithOptions(options)
 
@@ -150,8 +149,7 @@ class VideoPlayerPlugin
     val messenger = flutterState!!.binaryMessenger
     val channelSuffix = id.toString()
     setUp(messenger, player, channelSuffix)
-    player.setDisposeHandler(
-        DisposeHandler { VideoPlayerInstanceApi.setUp(messenger, null, channelSuffix) })
+    player.setDisposeHandler({ VideoPlayerInstanceApi.setUp(messenger, null, channelSuffix) })
 
     videoPlayers.put(id, player)
   }
@@ -162,7 +160,7 @@ class VideoPlayerPlugin
     // Avoid a very ugly un-debuggable NPE that results in returning a null player.
     if (player == null) {
       var message = "No player found with playerId <" + playerId + ">"
-      if (videoPlayers.size() == 0) {
+      if (videoPlayers.isEmpty()) {
         message += " and no active players created by the plugin."
       }
       throw IllegalStateException(message)
@@ -182,23 +180,19 @@ class VideoPlayerPlugin
   }
 
   override fun getLookupKeyForAsset(asset: String, packageName: String?): String {
-    return (if (packageName == null) flutterState.keyForAsset.get(asset)
-    else flutterState.keyForAssetAndPackageName.get(asset, packageName))!!
-  }
-
-  private interface KeyForAssetFn {
-    fun get(asset: String?): String
-  }
-
-  private interface KeyForAssetAndPackageName {
-    fun get(asset: String?, packageName: String?): String?
+    flutterState?.let {
+      return (if (packageName == null) it.keyForAsset(asset)
+      else it.keyForAssetAndPackageName(asset, packageName))!!
+    }
+    Log.wtf(TAG, "Called lookupKeyForAsset without an engine attached.")
+    return ""
   }
 
   private class FlutterState(
       val applicationContext: Context,
       val binaryMessenger: BinaryMessenger,
-      val keyForAsset: KeyForAssetFn,
-      val keyForAssetAndPackageName: KeyForAssetAndPackageName,
+      val keyForAsset: (String) -> String,
+      val keyForAssetAndPackageName: (asset: String, packageName: String) -> String,
       val textureRegistry: TextureRegistry
   ) {
     fun startListening(methodCallHandler: VideoPlayerPlugin?, messenger: BinaryMessenger) {

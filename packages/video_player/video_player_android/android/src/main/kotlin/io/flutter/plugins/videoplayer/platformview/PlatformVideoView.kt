@@ -19,7 +19,7 @@ import io.flutter.plugin.platform.PlatformView
  * [ExoPlayer] instance and displays its video content.
  */
 class PlatformVideoView
-@OptIn(markerClass = UnstableApi::class)
+@OptIn(UnstableApi::class)
 constructor(context: Context, exoPlayer: ExoPlayer) : PlatformView {
   private val surfaceView: SurfaceView
 

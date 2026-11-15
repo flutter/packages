@@ -13,11 +13,11 @@ package io.flutter.plugins.videoplayer
  * externally.
  */
 internal class QueuingEventSink {
-  private var delegate: PigeonEventSink<PlatformVideoEvent?>? = null
-  private val eventQueue = ArrayList<Any?>()
+  private var delegate: PigeonEventSink<PlatformVideoEvent>? = null
+  private val eventQueue = ArrayList<Any>()
   private var done = false
 
-  fun setDelegate(delegate: PigeonEventSink<PlatformVideoEvent?>?) {
+  fun setDelegate(delegate: PigeonEventSink<PlatformVideoEvent>?) {
     this.delegate = delegate
     maybeFlush()
   }
@@ -33,12 +33,12 @@ internal class QueuingEventSink {
     maybeFlush()
   }
 
-  fun success(event: PlatformVideoEvent?) {
+  fun success(event: PlatformVideoEvent) {
     enqueue(event)
     maybeFlush()
   }
 
-  private fun enqueue(event: Any?) {
+  private fun enqueue(event: Any) {
     if (done) {
       return
     }
@@ -56,7 +56,7 @@ internal class QueuingEventSink {
         val errorEvent: ErrorEvent = event
         delegate!!.error(errorEvent.code, errorEvent.message, errorEvent.details)
       } else {
-        delegate!!.success(event as PlatformVideoEvent?)
+        delegate!!.success(event as PlatformVideoEvent)
       }
     }
     eventQueue.clear()

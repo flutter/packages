@@ -54,12 +54,10 @@ class TextureExoPlayerEventListener(
     events.onInitialized(width, height, exoPlayer.getDuration(), rotationCorrection.degrees)
   }
 
-  @OptIn(
-      markerClass =
-          UnstableApi::class) // A video's Format and its rotation degrees are unstable because they
-                              // are not guaranteed
+  // A video's Format and its rotation degrees are unstable because they are not guaranteed
   // the same implementation across API versions. It is possible that this logic may need
   // revisiting should the implementation change across versions of the Exoplayer API.
+  @OptIn(UnstableApi::class)
   private fun getRotationCorrectionFromFormat(exoPlayer: ExoPlayer): Int {
     val videoFormat = Objects.requireNonNull<Format>(exoPlayer.getVideoFormat())
     return videoFormat.rotationDegrees

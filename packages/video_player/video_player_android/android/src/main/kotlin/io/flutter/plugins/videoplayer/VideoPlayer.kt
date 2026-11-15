@@ -34,9 +34,9 @@ constructor(
     mediaItem: MediaItem,
     options: VideoPlayerOptions,
     @JvmField protected val surfaceProducer: SurfaceProducer?,
-    exoPlayerProvider: ExoPlayerProvider
+    exoPlayerProvider: () -> ExoPlayer
 ) : VideoPlayerInstanceApi {
-  private var disposeHandler: DisposeHandler? = null
+  private var disposeHandler: (() -> Unit)? = null
   private var exoPlayerEventListener: ExoPlayerEventListener?
   var exoPlayer: ExoPlayer
     protected set
@@ -47,24 +47,9 @@ constructor(
   private val mainHandler = Handler(Looper.getMainLooper())
   private var isDisposed = false
 
-  /** A closure-compatible signature since [java.util.function.Supplier] is API level 24. */
-  interface ExoPlayerProvider {
-    /**
-     * Returns a new [ExoPlayer].
-     *
-     * @return new instance.
-     */
-    fun get(): ExoPlayer
-  }
-
-  /** A handler to run when dispose is called. */
-  interface DisposeHandler {
-    fun onDispose()
-  }
-
   // TODO: Migrate to stable API, see https://github.com/flutter/flutter/issues/147039.
   init {
-    exoPlayer = exoPlayerProvider.get()
+    exoPlayer = exoPlayerProvider()
 
     // Try to get the track selector from the ExoPlayer if it was built with one
     if (exoPlayer.getTrackSelector() is DefaultTrackSelector) {
@@ -78,7 +63,7 @@ constructor(
     setAudioAttributes(exoPlayer, options.mixWithOthers)
   }
 
-  fun setDisposeHandler(handler: DisposeHandler?) {
+  fun setDisposeHandler(handler: (() -> Unit)?) {
     disposeHandler = handler
   }
 
@@ -127,7 +112,7 @@ constructor(
   // TODO: Migrate to stable API, see https://github.com/flutter/flutter/issues/147039.
   @UnstableApi
   override fun getAudioTracks(): NativeAudioTrackData {
-    val audioTracks: MutableList<ExoPlayerAudioTrackData?> = ArrayList<ExoPlayerAudioTrackData?>()
+    val audioTracks: MutableList<ExoPlayerAudioTrackData> = ArrayList<ExoPlayerAudioTrackData>()
 
     // Get the current tracks from ExoPlayer
     val tracks = exoPlayer.getCurrentTracks()
@@ -210,7 +195,7 @@ constructor(
   // TODO: Migrate to stable API, see https://github.com/flutter/flutter/issues/147039.
   @UnstableApi
   override fun getVideoTracks(): NativeVideoTrackData {
-    val videoTracks: MutableList<ExoPlayerVideoTrackData?> = ArrayList<ExoPlayerVideoTrackData?>()
+    val videoTracks: MutableList<ExoPlayerVideoTrackData> = ArrayList<ExoPlayerVideoTrackData>()
 
     // Get the current tracks from ExoPlayer
     val tracks = exoPlayer.getCurrentTracks()
@@ -357,7 +342,7 @@ constructor(
             // is the authoritative check; the trackSelector null-check is kept for
             // safety even though it is set in the constructor.
             if (isDisposed || trackSelector == null) {
-              return@postDelayed
+              return@Runnable
             }
 
             trackSelector!!.setParameters(
@@ -386,7 +371,7 @@ constructor(
     isDisposed = true
     mainHandler.removeCallbacksAndMessages(null)
     if (disposeHandler != null) {
-      disposeHandler!!.onDispose()
+      disposeHandler!!()
     }
     if (exoPlayerEventListener != null) {
       exoPlayerEventListener!!.dispose()

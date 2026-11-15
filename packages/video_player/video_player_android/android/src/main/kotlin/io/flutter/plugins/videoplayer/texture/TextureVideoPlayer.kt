@@ -34,7 +34,7 @@ constructor(
     surfaceProducer: SurfaceProducer,
     mediaItem: MediaItem,
     options: VideoPlayerOptions,
-    exoPlayerProvider: ExoPlayerProvider
+    exoPlayerProvider: () -> ExoPlayer
 ) :
     VideoPlayer(events, mediaItem, options, surfaceProducer, exoPlayerProvider),
     SurfaceProducer.Callback {
@@ -114,7 +114,7 @@ constructor(
           surfaceProducer,
           asset.mediaItem,
           options,
-          ExoPlayerProvider {
+          {
             val builder = ExoPlayer.Builder(context)
             if (options.backBufferDurationMs != null) {
               require(options.backBufferDurationMs!! >= 0) {

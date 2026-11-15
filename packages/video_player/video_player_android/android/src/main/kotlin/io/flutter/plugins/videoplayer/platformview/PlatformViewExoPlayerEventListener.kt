@@ -15,13 +15,13 @@ import kotlin.math.max
 
 class PlatformViewExoPlayerEventListener(exoPlayer: ExoPlayer, events: VideoPlayerCallbacks) :
     ExoPlayerEventListener(exoPlayer, events) {
-  @OptIn(markerClass = UnstableApi::class)
+  @OptIn(UnstableApi::class)
   override fun sendInitialized() {
     // We can't rely on VideoSize here, because at this point it is not available - the platform
     // view was not created yet. We use the video format instead.
     val videoFormat = exoPlayer.getVideoFormat()
     var rotationCorrection =
-        fromDegrees(Objects.requireNonNull<Format?>(videoFormat).rotationDegrees)
+        fromDegrees(Objects.requireNonNull<Format>(videoFormat).rotationDegrees)
     var width = videoFormat!!.width
     var height = videoFormat.height
 

@@ -4,6 +4,7 @@
 package io.flutter.plugins.videoplayer
 
 import android.content.Context
+import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.source.MediaSource
 
 /** A video to be played by [VideoPlayer]. */
@@ -13,7 +14,7 @@ abstract class VideoAsset protected constructor(@JvmField protected val assetUrl
    *
    * @return media item.
    */
-  @JvmField abstract val mediaItem: MediaItem
+  abstract val mediaItem: MediaItem
 
   /**
    * Returns the configured media source factory, if needed for this asset type.
@@ -38,7 +39,7 @@ abstract class VideoAsset protected constructor(@JvmField protected val assetUrl
     HTTP_LIVE
   }
 
-  companion object {
+  internal companion object {
     /**
      * Returns an asset from a local `asset:///` URL, i.e. an on-device asset.
      *
@@ -62,11 +63,11 @@ abstract class VideoAsset protected constructor(@JvmField protected val assetUrl
     fun fromRemoteUrl(
         remoteUrl: String?,
         streamingFormat: StreamingFormat,
-        httpHeaders: MutableMap<String?, String?>,
+        httpHeaders: Map<String, String>,
         userAgent: String?
     ): VideoAsset {
       return HttpVideoAsset(
-          remoteUrl, streamingFormat, HashMap<String?, String?>(httpHeaders), userAgent)
+          remoteUrl, streamingFormat, HashMap<String, String>(httpHeaders), userAgent)
     }
 
     /**

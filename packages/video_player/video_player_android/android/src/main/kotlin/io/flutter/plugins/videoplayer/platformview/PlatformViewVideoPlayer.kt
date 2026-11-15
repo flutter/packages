@@ -23,14 +23,14 @@ import kotlin.math.min
  * displaying the video in the app.
  */
 class PlatformViewVideoPlayer // TODO: Migrate to stable API, see
-                              // https://github.com/flutter/flutter/issues/147039.
+// https://github.com/flutter/flutter/issues/147039.
 @UnstableApi
 @VisibleForTesting
 constructor(
     events: VideoPlayerCallbacks,
     mediaItem: MediaItem,
     options: VideoPlayerOptions,
-    exoPlayerProvider: ExoPlayerProvider
+    exoPlayerProvider: () -> ExoPlayer
 ) : VideoPlayer(events, mediaItem, options, /* surfaceProducer */ null, exoPlayerProvider) {
   override fun createExoPlayerEventListener(
       exoPlayer: ExoPlayer,
@@ -62,7 +62,7 @@ constructor(
           events,
           asset.mediaItem,
           options,
-          ExoPlayerProvider {
+          {
             val builder = ExoPlayer.Builder(context)
             if (options.backBufferDurationMs != null) {
               require(options.backBufferDurationMs!! >= 0) {

@@ -11,11 +11,11 @@ import androidx.media3.exoplayer.rtsp.RtspMediaSource
 import androidx.media3.exoplayer.source.MediaSource
 
 internal class RtspVideoAsset(assetUrl: String) : VideoAsset(assetUrl) {
-  val mediaItem: MediaItem
+  override val mediaItem: MediaItem
     get() = MediaItem.Builder().setUri(assetUrl).build()
 
   // TODO: Migrate to stable API, see https://github.com/flutter/flutter/issues/147039.
-  @OptIn(markerClass = UnstableApi::class)
+  @OptIn(UnstableApi::class)
   public override fun getMediaSourceFactory(context: Context): MediaSource.Factory {
     return RtspMediaSource.Factory()
   }
