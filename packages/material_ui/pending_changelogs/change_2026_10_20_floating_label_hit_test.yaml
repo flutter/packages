@@ -1,3 +1,0 @@
-changelog: |
-  - Fixes `InputDecorator` hit testing of a floating label, so taps hit the label where it is painted.
-version: patch
