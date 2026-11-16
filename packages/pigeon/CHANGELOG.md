@@ -1,3 +1,7 @@
+## 30.0.4
+
+* [swift] Marks generated event-channel APIs as `@MainActor`-isolated.
+
 ## 30.0.3
 
 * Removes remaining unused `dart:mirrors` usage.
