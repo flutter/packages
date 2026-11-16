@@ -118,7 +118,7 @@ class _ExampleRouterDelegate extends RouterDelegate<_RoutePath>
           ),
       ],
       onDidRemovePage: (Page<Object?> page) {
-        if (_pageId != 0) {
+        if (page.key == const ValueKey<String>('details')) {
           _pageId = 0;
           notifyListeners();
         }
