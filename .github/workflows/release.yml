@@ -42,8 +42,11 @@ jobs:
           echo "::error::commit_sha must be a full 40-character lowercase hex SHA."
           exit 1
         fi
-        if ! git merge-base --is-ancestor "${TARGET_SHA}" HEAD; then
-          echo "::error::Commit ${TARGET_SHA} is not an ancestor of main HEAD."
+        # Only accept commits on main's first-parent history, so that HEAD~
+        # below is the previous main commit. Don't use `grep -q`: it can make
+        # `git rev-list` fail with SIGPIPE, which pipefail treats as an error.
+        if ! git rev-list --first-parent HEAD | grep -Fx "${TARGET_SHA}" > /dev/null; then
+          echo "::error::Commit ${TARGET_SHA} is not a commit on main."
           exit 1
         fi
         git checkout --detach "${TARGET_SHA}"
