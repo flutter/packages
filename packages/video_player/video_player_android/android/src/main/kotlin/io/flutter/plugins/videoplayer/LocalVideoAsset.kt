@@ -12,7 +12,7 @@ internal class LocalVideoAsset(assetUrl: String) : VideoAsset(assetUrl) {
   override val mediaItem: MediaItem
     get() = MediaItem.Builder().setUri(assetUrl).build()
 
-  public override fun getMediaSourceFactory(context: Context): MediaSource.Factory {
+  override fun getMediaSourceFactory(context: Context): MediaSource.Factory {
     return DefaultMediaSourceFactory(context)
   }
 }

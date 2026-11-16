@@ -50,13 +50,17 @@ internal class QueuingEventSink {
       return
     }
     for (event in eventQueue) {
-      if (event is EndOfStreamEvent) {
-        delegate!!.endOfStream()
-      } else if (event is ErrorEvent) {
-        val errorEvent: ErrorEvent = event
-        delegate!!.error(errorEvent.code, errorEvent.message, errorEvent.details)
-      } else {
-        delegate!!.success(event as PlatformVideoEvent)
+      when (event) {
+        is EndOfStreamEvent -> {
+          delegate!!.endOfStream()
+        }
+        is ErrorEvent -> {
+          val errorEvent: ErrorEvent = event
+          delegate!!.error(errorEvent.code, errorEvent.message, errorEvent.details)
+        }
+        else -> {
+          delegate!!.success(event as PlatformVideoEvent)
+        }
       }
     }
     eventQueue.clear()

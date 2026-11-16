@@ -37,7 +37,7 @@ internal class HttpVideoAsset(
       return builder.build()
     }
 
-  public override fun getMediaSourceFactory(context: Context): MediaSource.Factory {
+  override fun getMediaSourceFactory(context: Context): MediaSource.Factory {
     return getMediaSourceFactory(context, DefaultHttpDataSource.Factory())
   }
 

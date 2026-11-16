@@ -20,18 +20,16 @@ import io.flutter.plugin.platform.PlatformView
  */
 class PlatformVideoView
 @OptIn(UnstableApi::class)
+/**
+ * Constructs a new PlatformVideoView.
+ *
+ * @param context The context in which the view is running.
+ * @param exoPlayer The ExoPlayer instance used to play the video.
+ */
 constructor(context: Context, exoPlayer: ExoPlayer) : PlatformView {
-  private val surfaceView: SurfaceView
+  private val surfaceView: SurfaceView = VideoSurfaceView(context, exoPlayer)
 
-  /**
-   * Constructs a new PlatformVideoView.
-   *
-   * @param context The context in which the view is running.
-   * @param exoPlayer The ExoPlayer instance used to play the video.
-   */
   init {
-    this.surfaceView = VideoSurfaceView(context, exoPlayer)
-
     setupSurfaceWithCallback(exoPlayer)
 
     if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.N_MR1) {
@@ -42,28 +40,26 @@ constructor(context: Context, exoPlayer: ExoPlayer) : PlatformView {
   }
 
   private fun setupSurfaceWithCallback(exoPlayer: ExoPlayer) {
-    surfaceView
-        .getHolder()
-        .addCallback(
-            object : SurfaceHolder.Callback {
-              override fun surfaceCreated(holder: SurfaceHolder) {
-                bindPlayerToSurface(exoPlayer, holder.getSurface())
-                forceFirstFrameForAndroid9(exoPlayer)
-              }
+    surfaceView.holder.addCallback(
+        object : SurfaceHolder.Callback {
+          override fun surfaceCreated(holder: SurfaceHolder) {
+            bindPlayerToSurface(exoPlayer, holder.surface)
+            forceFirstFrameForAndroid9(exoPlayer)
+          }
 
-              override fun surfaceChanged(
-                  holder: SurfaceHolder,
-                  format: Int,
-                  width: Int,
-                  height: Int
-              ) {}
+          override fun surfaceChanged(
+              holder: SurfaceHolder,
+              format: Int,
+              width: Int,
+              height: Int
+          ) {}
 
-              override fun surfaceDestroyed(holder: SurfaceHolder) {
-                // Use clearVideoSurface to ensure we only unbind if this surface is currently
-                // active.
-                exoPlayer.clearVideoSurface(holder.getSurface())
-              }
-            })
+          override fun surfaceDestroyed(holder: SurfaceHolder) {
+            // Use clearVideoSurface to ensure we only unbind if this surface is currently
+            // active.
+            exoPlayer.clearVideoSurface(holder.surface)
+          }
+        })
   }
 
   /**
@@ -75,8 +71,8 @@ constructor(context: Context, exoPlayer: ExoPlayer) : PlatformView {
     protected override fun onVisibilityChanged(changedView: View, visibility: Int) {
       super.onVisibilityChanged(changedView, visibility)
       // When the view becomes visible again, re-attach the current surface.
-      if (visibility == VISIBLE && isShown()) {
-        bindPlayerToSurface(exoPlayer, getHolder().getSurface())
+      if (visibility == VISIBLE && isShown) {
+        bindPlayerToSurface(exoPlayer, holder.surface)
       }
     }
   }
@@ -92,13 +88,13 @@ constructor(context: Context, exoPlayer: ExoPlayer) : PlatformView {
 
   /** Disposes of the resources used by this PlatformView. */
   override fun dispose() {
-    surfaceView.getHolder().getSurface().release()
+    surfaceView.holder.surface.release()
   }
 
   companion object {
     /** Binds the ExoPlayer to the provided surface. */
     fun bindPlayerToSurface(exoPlayer: ExoPlayer, surface: Surface) {
-      if (surface.isValid()) {
+      if (surface.isValid) {
         exoPlayer.setVideoSurface(surface)
       }
     }
@@ -108,8 +104,8 @@ constructor(context: Context, exoPlayer: ExoPlayer) : PlatformView {
      * output buffer when a new surface is attached while the player is paused.
      */
     fun forceFirstFrameForAndroid9(exoPlayer: ExoPlayer) {
-      if (Build.VERSION.SDK_INT == Build.VERSION_CODES.P && !exoPlayer.getPlayWhenReady()) {
-        val position = exoPlayer.getCurrentPosition()
+      if (Build.VERSION.SDK_INT == Build.VERSION_CODES.P && !exoPlayer.playWhenReady) {
+        val position = exoPlayer.currentPosition
         exoPlayer.seekTo(if (position == 0L) 1 else position)
       }
     }

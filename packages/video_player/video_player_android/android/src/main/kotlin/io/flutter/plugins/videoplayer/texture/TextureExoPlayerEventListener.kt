@@ -12,6 +12,7 @@ import io.flutter.plugins.videoplayer.ExoPlayerEventListener.RotationDegrees.Com
 import io.flutter.plugins.videoplayer.VideoPlayerCallbacks
 import java.util.Objects
 import kotlin.math.max
+import kotlin.math.roundToInt
 
 class TextureExoPlayerEventListener(
     exoPlayer: ExoPlayer,
@@ -19,7 +20,7 @@ class TextureExoPlayerEventListener(
     private val surfaceProducerHandlesCropAndRotation: Boolean
 ) : ExoPlayerEventListener(exoPlayer, events) {
   override fun sendInitialized() {
-    val videoSize = exoPlayer.getVideoSize()
+    val videoSize = exoPlayer.videoSize
     var rotationCorrection = RotationDegrees.ROTATE_0
     var width = videoSize.width
     val height = videoSize.height
@@ -31,7 +32,7 @@ class TextureExoPlayerEventListener(
       // Clamped to at least one pixel so that a malformed ratio cannot report a zero width.
       val pixelWidthHeightRatio = videoSize.pixelWidthHeightRatio
       if (pixelWidthHeightRatio > 0 && pixelWidthHeightRatio != 1f) {
-        width = max(1, Math.round(width * pixelWidthHeightRatio))
+        width = max(1, (width * pixelWidthHeightRatio).roundToInt())
       }
 
       // When the SurfaceTexture backend for Impeller is used, the preview should already
@@ -42,16 +43,17 @@ class TextureExoPlayerEventListener(
         // when the ImageReader backend for Impeller is used.
         val rawVideoFormatRotation = getRotationCorrectionFromFormat(exoPlayer)
 
-        try {
-          rotationCorrection = fromDegrees(rawVideoFormatRotation)
-        } catch (e: IllegalArgumentException) {
-          // Rotation correction other than 0, 90, 180, 270 reported by Format. Because this is
-          // unexpected we apply no rotation correction.
-          rotationCorrection = RotationDegrees.ROTATE_0
-        }
+        rotationCorrection =
+            try {
+              fromDegrees(rawVideoFormatRotation)
+            } catch (_: IllegalArgumentException) {
+              // Rotation correction other than 0, 90, 180, 270 reported by Format. Because this is
+              // unexpected we apply no rotation correction.
+              RotationDegrees.ROTATE_0
+            }
       }
     }
-    events.onInitialized(width, height, exoPlayer.getDuration(), rotationCorrection.degrees)
+    events.onInitialized(width, height, exoPlayer.duration, rotationCorrection.degrees)
   }
 
   // A video's Format and its rotation degrees are unstable because they are not guaranteed
@@ -59,7 +61,7 @@ class TextureExoPlayerEventListener(
   // revisiting should the implementation change across versions of the Exoplayer API.
   @OptIn(UnstableApi::class)
   private fun getRotationCorrectionFromFormat(exoPlayer: ExoPlayer): Int {
-    val videoFormat = Objects.requireNonNull<Format>(exoPlayer.getVideoFormat())
+    val videoFormat = Objects.requireNonNull<Format>(exoPlayer.videoFormat)
     return videoFormat.rotationDegrees
   }
 }

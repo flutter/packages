@@ -52,8 +52,8 @@ constructor(
     exoPlayer = exoPlayerProvider()
 
     // Try to get the track selector from the ExoPlayer if it was built with one
-    if (exoPlayer.getTrackSelector() is DefaultTrackSelector) {
-      trackSelector = exoPlayer.getTrackSelector() as DefaultTrackSelector?
+    if (exoPlayer.trackSelector is DefaultTrackSelector) {
+      trackSelector = exoPlayer.trackSelector as DefaultTrackSelector?
     }
 
     exoPlayer.setMediaItem(mediaItem)
@@ -81,12 +81,12 @@ constructor(
   }
 
   override fun setLooping(looping: Boolean) {
-    exoPlayer.setRepeatMode(if (looping) Player.REPEAT_MODE_ALL else Player.REPEAT_MODE_OFF)
+    exoPlayer.repeatMode = if (looping) Player.REPEAT_MODE_ALL else Player.REPEAT_MODE_OFF
   }
 
   override fun setVolume(volume: Double) {
     val bracketedValue = max(0.0, min(1.0, volume)).toFloat()
-    exoPlayer.setVolume(bracketedValue)
+    exoPlayer.volume = bracketedValue
   }
 
   override fun setPlaybackSpeed(speed: Double) {
@@ -94,15 +94,15 @@ constructor(
     // therefore never diverge from the default values.
     val playbackParameters = PlaybackParameters(speed.toFloat())
 
-    exoPlayer.setPlaybackParameters(playbackParameters)
+    exoPlayer.playbackParameters = playbackParameters
   }
 
   override fun getCurrentPosition(): Long {
-    return exoPlayer.getCurrentPosition()
+    return exoPlayer.currentPosition
   }
 
   override fun getBufferedPosition(): Long {
-    return exoPlayer.getBufferedPosition()
+    return exoPlayer.bufferedPosition
   }
 
   override fun seekTo(position: Long) {
@@ -112,17 +112,17 @@ constructor(
   // TODO: Migrate to stable API, see https://github.com/flutter/flutter/issues/147039.
   @UnstableApi
   override fun getAudioTracks(): NativeAudioTrackData {
-    val audioTracks: MutableList<ExoPlayerAudioTrackData> = ArrayList<ExoPlayerAudioTrackData>()
+    val audioTracks: MutableList<ExoPlayerAudioTrackData> = ArrayList()
 
     // Get the current tracks from ExoPlayer
-    val tracks = exoPlayer.getCurrentTracks()
+    val tracks = exoPlayer.currentTracks
 
     // Iterate through all track groups
-    for (groupIndex in tracks.getGroups().indices) {
-      val group = tracks.getGroups().get(groupIndex)
+    for (groupIndex in tracks.groups.indices) {
+      val group = tracks.groups[groupIndex]
 
       // Only process audio tracks
-      if (group.getType() == C.TRACK_TYPE_AUDIO) {
+      if (group.type == C.TRACK_TYPE_AUDIO) {
         for (trackIndex in 0 ..< group.length) {
           val format = group.getTrackFormat(trackIndex)
           val isSelected = group.isTrackSelected(trackIndex)
@@ -153,24 +153,24 @@ constructor(
     checkNotNull(trackSelector) { "Cannot select audio track: track selector is null" }
 
     // Get current tracks
-    val tracks = exoPlayer.getCurrentTracks()
+    val tracks = exoPlayer.currentTracks
 
-    require(!(groupIndex < 0 || groupIndex >= tracks.getGroups().size)) {
+    require(!(groupIndex < 0 || groupIndex >= tracks.groups.size)) {
       ("Cannot select audio track: groupIndex " +
           groupIndex +
           " is out of bounds (available groups: " +
-          tracks.getGroups().size +
+          tracks.groups.size +
           ")")
     }
 
-    val group = tracks.getGroups().get(groupIndex.toInt())
+    val group = tracks.groups[groupIndex.toInt()]
 
     // Verify it's an audio track
-    require(group.getType() == C.TRACK_TYPE_AUDIO) {
+    require(group.type == C.TRACK_TYPE_AUDIO) {
       ("Cannot select audio track: group at index " +
           groupIndex +
           " is not an audio track (type: " +
-          group.getType() +
+          group.type +
           ")")
     }
 
@@ -184,7 +184,7 @@ constructor(
     }
 
     // Get the track group and create a selection override
-    val trackGroup = group.getMediaTrackGroup()
+    val trackGroup = group.mediaTrackGroup
     val override = TrackSelectionOverride(trackGroup, trackIndex.toInt())
 
     // Apply the track selection override
@@ -195,17 +195,17 @@ constructor(
   // TODO: Migrate to stable API, see https://github.com/flutter/flutter/issues/147039.
   @UnstableApi
   override fun getVideoTracks(): NativeVideoTrackData {
-    val videoTracks: MutableList<ExoPlayerVideoTrackData> = ArrayList<ExoPlayerVideoTrackData>()
+    val videoTracks: MutableList<ExoPlayerVideoTrackData> = ArrayList()
 
     // Get the current tracks from ExoPlayer
-    val tracks = exoPlayer.getCurrentTracks()
+    val tracks = exoPlayer.currentTracks
 
     // Iterate through all track groups
-    for (groupIndex in tracks.getGroups().indices) {
-      val group = tracks.getGroups().get(groupIndex)
+    for (groupIndex in tracks.groups.indices) {
+      val group = tracks.groups[groupIndex]
 
       // Only process video tracks
-      if (group.getType() == C.TRACK_TYPE_VIDEO) {
+      if (group.type == C.TRACK_TYPE_VIDEO) {
         for (trackIndex in 0 ..< group.length) {
           val format = group.getTrackFormat(trackIndex)
           val isSelected = group.isTrackSelected(trackIndex)
@@ -246,24 +246,24 @@ constructor(
     checkNotNull(trackSelector) { "Cannot select video track: track selector is null" }
 
     // Get current tracks
-    val tracks = exoPlayer.getCurrentTracks()
+    val tracks = exoPlayer.currentTracks
 
-    require(!(groupIndex < 0 || groupIndex >= tracks.getGroups().size)) {
+    require(!(groupIndex < 0 || groupIndex >= tracks.groups.size)) {
       ("Cannot select video track: groupIndex " +
           groupIndex +
           " is out of bounds (available groups: " +
-          tracks.getGroups().size +
+          tracks.groups.size +
           ")")
     }
 
-    val group = tracks.getGroups().get(groupIndex.toInt())
+    val group = tracks.groups[groupIndex.toInt()]
 
     // Verify it's a video track
-    require(group.getType() == C.TRACK_TYPE_VIDEO) {
+    require(group.type == C.TRACK_TYPE_VIDEO) {
       ("Cannot select video track: group at index " +
           groupIndex +
           " is not a video track (type: " +
-          group.getType() +
+          group.type +
           ")")
     }
 
@@ -277,11 +277,11 @@ constructor(
     }
 
     // Get the track group and create a selection override
-    val trackGroup = group.getMediaTrackGroup()
+    val trackGroup = group.mediaTrackGroup
     val override = TrackSelectionOverride(trackGroup, trackIndex.toInt())
 
     // Check if the new track has different dimensions than the current track
-    val currentFormat = exoPlayer.getVideoFormat()
+    val currentFormat = exoPlayer.videoFormat
     val newFormat = trackGroup.getFormat(trackIndex.toInt())
     val dimensionsChanged =
         currentFormat == null ||
@@ -315,8 +315,8 @@ constructor(
     // renderer reset path or reliable resolution-changing track switches.
     // https://github.com/flutter/flutter/issues/183824
     if (dimensionsChanged) {
-      val wasPlaying = exoPlayer.isPlaying()
-      val currentPosition = exoPlayer.getCurrentPosition()
+      val wasPlaying = exoPlayer.isPlaying
+      val currentPosition = exoPlayer.currentPosition
 
       // Disable video track type to force renderer release
       trackSelector!!.setParameters(

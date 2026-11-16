@@ -16,7 +16,7 @@ internal class RtspVideoAsset(assetUrl: String) : VideoAsset(assetUrl) {
 
   // TODO: Migrate to stable API, see https://github.com/flutter/flutter/issues/147039.
   @OptIn(UnstableApi::class)
-  public override fun getMediaSourceFactory(context: Context): MediaSource.Factory {
+  override fun getMediaSourceFactory(context: Context): MediaSource.Factory {
     return RtspMediaSource.Factory()
   }
 }

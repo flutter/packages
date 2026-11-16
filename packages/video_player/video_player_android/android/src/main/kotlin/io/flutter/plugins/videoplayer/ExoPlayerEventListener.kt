@@ -41,7 +41,7 @@ abstract class ExoPlayerEventListener(
             return rotationDegrees
           }
         }
-        throw IllegalArgumentException("Invalid rotation degrees specified: " + degrees)
+        throw IllegalArgumentException("Invalid rotation degrees specified: $degrees")
       }
     }
   }
@@ -56,11 +56,11 @@ abstract class ExoPlayerEventListener(
   }
 
   private fun hasValidDuration(): Boolean {
-    return exoPlayer.getDuration() != C.TIME_UNSET
+    return exoPlayer.duration != C.TIME_UNSET
   }
 
   private fun shouldWaitForValidDuration(): Boolean {
-    return !exoPlayer.isCurrentMediaItemLive() && !exoPlayer.isCurrentMediaItemDynamic()
+    return !exoPlayer.isCurrentMediaItemLive && !exoPlayer.isCurrentMediaItemDynamic
   }
 
   private fun maybeSendInitialized() {
@@ -97,7 +97,7 @@ abstract class ExoPlayerEventListener(
   }
 
   override fun onTimelineChanged(timeline: Timeline, reason: Int) {
-    if (isWaitingForValidDuration && exoPlayer.getPlaybackState() == Player.STATE_READY) {
+    if (isWaitingForValidDuration && exoPlayer.playbackState == Player.STATE_READY) {
       maybeSendInitialized()
     }
   }
@@ -109,7 +109,7 @@ abstract class ExoPlayerEventListener(
       exoPlayer.seekToDefaultPosition()
       exoPlayer.prepare()
     } else {
-      events.onError("VideoError", "Video player had error " + error, null)
+      events.onError("VideoError", "Video player had error $error", null)
     }
   }
 
@@ -135,9 +135,8 @@ abstract class ExoPlayerEventListener(
    */
   private fun findSelectedAudioTrackId(tracks: Tracks): String? {
     // Keep this ID format in sync with android_video_player.dart::_parseAndroidTrackId.
-    var groupIndex = 0
-    for (group in tracks.getGroups()) {
-      if (group.getType() == C.TRACK_TYPE_AUDIO && group.isSelected()) {
+    for ((groupIndex, group) in tracks.groups.withIndex()) {
+      if (group.type == C.TRACK_TYPE_AUDIO && group.isSelected) {
         // Find the selected track within this group
         for (i in 0 ..< group.length) {
           if (group.isTrackSelected(i)) {
@@ -145,7 +144,6 @@ abstract class ExoPlayerEventListener(
           }
         }
       }
-      groupIndex++
     }
     return null
   }
@@ -158,9 +156,8 @@ abstract class ExoPlayerEventListener(
    */
   private fun findSelectedVideoTrackId(tracks: Tracks): String? {
     // Keep this ID format in sync with android_video_player.dart::_parseAndroidTrackId.
-    var groupIndex = 0
-    for (group in tracks.getGroups()) {
-      if (group.getType() == C.TRACK_TYPE_VIDEO && group.isSelected()) {
+    for ((groupIndex, group) in tracks.groups.withIndex()) {
+      if (group.type == C.TRACK_TYPE_VIDEO && group.isSelected) {
         // Find the selected track within this group
         for (i in 0 ..< group.length) {
           if (group.isTrackSelected(i)) {
@@ -168,7 +165,6 @@ abstract class ExoPlayerEventListener(
           }
         }
       }
-      groupIndex++
     }
     return null
   }

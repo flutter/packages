@@ -44,23 +44,17 @@ private constructor(
   }
 
   override fun onDisposed() {
-    if (eventChannel != null) {
-      eventChannel.setStreamHandler(null)
-    }
+    eventChannel?.setStreamHandler(null)
   }
 
   companion object {
     fun bindTo(binaryMessenger: BinaryMessenger, identifier: String): VideoPlayerEventCallbacks {
-      return bindTo(
-          binaryMessenger,
-          identifier,
-          {
-              messenger: BinaryMessenger?,
-              streamHandler: VideoEventsStreamHandler?,
-              instanceName: String? ->
-            VideoEventsStreamHandler.Companion.register(
-                messenger!!, streamHandler!!, instanceName!!)
-          })
+      return bindTo(binaryMessenger, identifier) {
+          messenger: BinaryMessenger?,
+          streamHandler: VideoEventsStreamHandler?,
+          instanceName: String? ->
+        VideoEventsStreamHandler.register(messenger!!, streamHandler!!, instanceName!!)
+      }
     }
 
     @JvmStatic
@@ -79,14 +73,11 @@ private constructor(
           eventChannelFactory(
               binaryMessenger,
               object : VideoEventsStreamHandler() {
-                public override fun onListen(
-                    arguments: Any?,
-                    events: PigeonEventSink<PlatformVideoEvent>
-                ) {
-                  eventSink.setDelegate(events)
+                override fun onListen(p0: Any?, sink: PigeonEventSink<PlatformVideoEvent>) {
+                  eventSink.setDelegate(sink)
                 }
 
-                public override fun onCancel(arguments: Any?) {
+                override fun onCancel(p0: Any?) {
                   eventSink.setDelegate(null)
                 }
               },

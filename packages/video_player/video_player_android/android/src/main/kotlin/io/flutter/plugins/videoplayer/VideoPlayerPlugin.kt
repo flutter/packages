@@ -18,7 +18,6 @@ import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugins.videoplayer.AndroidVideoPlayerApi.Companion.setUp
 import io.flutter.plugins.videoplayer.VideoPlayerInstanceApi.Companion.setUp
 import io.flutter.plugins.videoplayer.platformview.PlatformVideoViewFactory
-import io.flutter.plugins.videoplayer.platformview.PlatformVideoViewFactory.VideoPlayerProvider
 import io.flutter.plugins.videoplayer.platformview.PlatformViewVideoPlayer
 import io.flutter.plugins.videoplayer.texture.TextureVideoPlayer
 import io.flutter.view.TextureRegistry
@@ -66,28 +65,25 @@ class VideoPlayerPlugin
     val injector = FlutterInjector.instance()
     this.flutterState =
         FlutterState(
-            binding.getApplicationContext(),
-            binding.getBinaryMessenger(),
+            binding.applicationContext,
+            binding.binaryMessenger,
             { asset: String -> injector.flutterLoader().getLookupKeyForAsset(asset) },
             { asset: String, packageName: String ->
               injector.flutterLoader().getLookupKeyForAsset(asset, packageName)
             },
-            binding.getTextureRegistry())
-    flutterState!!.startListening(this, binding.getBinaryMessenger())
+            binding.textureRegistry)
+    flutterState!!.startListening(this, binding.binaryMessenger)
 
-    binding
-        .getPlatformViewRegistry()
-        .registerViewFactory(
-            "plugins.flutter.dev/video_player_android",
-            PlatformVideoViewFactory(
-                VideoPlayerProvider { key: Long? -> videoPlayers.get(key!!)!! }))
+    binding.platformViewRegistry.registerViewFactory(
+        "plugins.flutter.dev/video_player_android",
+        PlatformVideoViewFactory { key: Long? -> videoPlayers.get(key!!)!! })
   }
 
   override fun onDetachedFromEngine(binding: FlutterPluginBinding) {
     if (flutterState == null) {
       Log.wtf(TAG, "Detached from the engine before registering to it.")
     }
-    flutterState!!.stopListening(binding.getBinaryMessenger())
+    flutterState!!.stopListening(binding.binaryMessenger)
     flutterState = null
     onDestroy()
   }
@@ -164,11 +160,12 @@ class VideoPlayerPlugin
       var streamingFormat = VideoAsset.StreamingFormat.UNKNOWN
       val formatHint = options.formatHint
       if (formatHint != null) {
-        when (formatHint) {
-          PlatformVideoFormat.SS -> streamingFormat = VideoAsset.StreamingFormat.SMOOTH
-          PlatformVideoFormat.DASH -> streamingFormat = VideoAsset.StreamingFormat.DYNAMIC_ADAPTIVE
-          PlatformVideoFormat.HLS -> streamingFormat = VideoAsset.StreamingFormat.HTTP_LIVE
-        }
+        streamingFormat =
+            when (formatHint) {
+              PlatformVideoFormat.SS -> VideoAsset.StreamingFormat.SMOOTH
+              PlatformVideoFormat.DASH -> VideoAsset.StreamingFormat.DYNAMIC_ADAPTIVE
+              PlatformVideoFormat.HLS -> VideoAsset.StreamingFormat.HTTP_LIVE
+            }
       }
       return VideoAsset.fromRemoteUrl(uri, streamingFormat, options.httpHeaders, options.userAgent)
     }
@@ -180,7 +177,7 @@ class VideoPlayerPlugin
     val messenger = flutterState!!.binaryMessenger
     val channelSuffix = id.toString()
     setUp(messenger, player, channelSuffix)
-    player.setDisposeHandler({ VideoPlayerInstanceApi.setUp(messenger, null, channelSuffix) })
+    player.setDisposeHandler { VideoPlayerInstanceApi.setUp(messenger, null, channelSuffix) }
 
     videoPlayers.put(id, player)
   }
@@ -190,7 +187,7 @@ class VideoPlayerPlugin
 
     // Avoid a very ugly un-debuggable NPE that results in returning a null player.
     if (player == null) {
-      var message = "No player found with playerId <" + playerId + ">"
+      var message = "No player found with playerId <$playerId>"
       if (videoPlayers.isEmpty()) {
         message += " and no active players created by the plugin."
       }
@@ -213,7 +210,7 @@ class VideoPlayerPlugin
   override fun getLookupKeyForAsset(asset: String, packageName: String?): String {
     flutterState?.let {
       return (if (packageName == null) it.keyForAsset(asset)
-      else it.keyForAssetAndPackageName(asset, packageName))!!
+      else it.keyForAssetAndPackageName(asset, packageName))
     }
     Log.wtf(TAG, "Called lookupKeyForAsset without an engine attached.")
     return ""

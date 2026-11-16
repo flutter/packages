@@ -46,7 +46,7 @@ constructor(
   init {
     surfaceProducer.setCallback(this)
 
-    val surface = surfaceProducer.getSurface()
+    val surface = surfaceProducer.surface
     this.exoPlayer.setVideoSurface(surface)
     needsSurface = surface == null
   }
@@ -69,7 +69,7 @@ constructor(
     if (needsSurface) {
       // TextureVideoPlayer must always set a surfaceProducer.
       checkNotNull(surfaceProducer)
-      exoPlayer.setVideoSurface(surfaceProducer.getSurface())
+      exoPlayer.setVideoSurface(surfaceProducer.surface)
       needsSurface = false
     }
   }
@@ -80,7 +80,7 @@ constructor(
     needsSurface = true
   }
 
-  public override fun dispose() {
+  override fun dispose() {
     // Super must be called first to ensure the player is released before the surface.
     super.dispose()
 
@@ -110,35 +110,27 @@ constructor(
         asset: VideoAsset,
         options: VideoPlayerOptions
     ): TextureVideoPlayer {
-      return TextureVideoPlayer(
-          events,
-          surfaceProducer,
-          asset.mediaItem,
-          options,
-          {
-            val builder = ExoPlayer.Builder(context)
-            if (options.backBufferDurationMs != null) {
-              require(options.backBufferDurationMs!! >= 0) {
-                "backBufferDurationMs must be at least 0"
-              }
-              if (options.backBufferDurationMs!! > 0) {
-                // Clamp the value to ensure it fits within the int range expected by
-                // DefaultLoadControl.
-                val backBufferInt =
-                    min(options.backBufferDurationMs!!, Int.MAX_VALUE.toLong()).toInt()
-                val loadControl =
-                    DefaultLoadControl.Builder()
-                        .setBackBuffer(backBufferInt, /* retainBackBufferFromKeyframe= */ true)
-                        .build()
-                builder.setLoadControl(loadControl)
-              }
-            }
-            val trackSelector = DefaultTrackSelector(context)
-            builder
-                .setTrackSelector(trackSelector)
-                .setMediaSourceFactory(asset.getMediaSourceFactory(context))
-            builder.build()
-          })
+      return TextureVideoPlayer(events, surfaceProducer, asset.mediaItem, options) {
+        val builder = ExoPlayer.Builder(context)
+        if (options.backBufferDurationMs != null) {
+          require(options.backBufferDurationMs!! >= 0) { "backBufferDurationMs must be at least 0" }
+          if (options.backBufferDurationMs!! > 0) {
+            // Clamp the value to ensure it fits within the int range expected by
+            // DefaultLoadControl.
+            val backBufferInt = min(options.backBufferDurationMs!!, Int.MAX_VALUE.toLong()).toInt()
+            val loadControl =
+                DefaultLoadControl.Builder()
+                    .setBackBuffer(backBufferInt, /* retainBackBufferFromKeyframe= */ true)
+                    .build()
+            builder.setLoadControl(loadControl)
+          }
+        }
+        val trackSelector = DefaultTrackSelector(context)
+        builder
+            .setTrackSelector(trackSelector)
+            .setMediaSourceFactory(asset.getMediaSourceFactory(context))
+        builder.build()
+      }
     }
   }
 }

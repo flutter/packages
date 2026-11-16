@@ -12,6 +12,7 @@ import io.flutter.plugins.videoplayer.ExoPlayerEventListener.RotationDegrees.Com
 import io.flutter.plugins.videoplayer.VideoPlayerCallbacks
 import java.util.Objects
 import kotlin.math.max
+import kotlin.math.roundToInt
 
 class PlatformViewExoPlayerEventListener(exoPlayer: ExoPlayer, events: VideoPlayerCallbacks) :
     ExoPlayerEventListener(exoPlayer, events) {
@@ -19,7 +20,7 @@ class PlatformViewExoPlayerEventListener(exoPlayer: ExoPlayer, events: VideoPlay
   override fun sendInitialized() {
     // We can't rely on VideoSize here, because at this point it is not available - the platform
     // view was not created yet. We use the video format instead.
-    val videoFormat = exoPlayer.getVideoFormat()
+    val videoFormat = exoPlayer.videoFormat
     var rotationCorrection =
         fromDegrees(Objects.requireNonNull<Format>(videoFormat).rotationDegrees)
     var width = videoFormat!!.width
@@ -32,7 +33,7 @@ class PlatformViewExoPlayerEventListener(exoPlayer: ExoPlayer, events: VideoPlay
     // least one pixel so that a malformed ratio cannot report a zero width.
     val pixelWidthHeightRatio = videoFormat.pixelWidthHeightRatio
     if (width > 0 && pixelWidthHeightRatio > 0 && pixelWidthHeightRatio != 1f) {
-      width = max(1, Math.round(width * pixelWidthHeightRatio))
+      width = max(1, (width * pixelWidthHeightRatio).roundToInt())
     }
 
     // Switch the width/height if video was taken in portrait mode and a rotation
@@ -46,6 +47,6 @@ class PlatformViewExoPlayerEventListener(exoPlayer: ExoPlayer, events: VideoPlay
       rotationCorrection = fromDegrees(0)
     }
 
-    events.onInitialized(width, height, exoPlayer.getDuration(), rotationCorrection.degrees)
+    events.onInitialized(width, height, exoPlayer.duration, rotationCorrection.degrees)
   }
 }
