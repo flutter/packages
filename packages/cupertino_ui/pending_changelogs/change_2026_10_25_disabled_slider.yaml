@@ -1,3 +1,0 @@
-changelog: |
-  - Dims `CupertinoSlider` when disabled to match native iOS appearance.
-version: patch

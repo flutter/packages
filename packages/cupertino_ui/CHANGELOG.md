@@ -1,3 +1,11 @@
+## 1.1.7
+
+- Dims `CupertinoSlider` when disabled to match native iOS appearance.
+- Fixes `CupertinoSheetRoute` throwing when a drag ends while a relayout of the sheet is pending.
+- Fixes `CupertinoButton.tinted` and `CupertinoActionSheetAction`'s focus highlight filling with 12% of the accent color in light mode instead of iOS's 18%.
+- Fixes `CupertinoActionSheet` semantics label not being localized.
+- Fixes `NoDefaultCupertinoThemeData` equality and `hashCode` ignoring `selectionHandleColor`.
+
 ## 1.1.6
 
 - Documents that the default background of `CupertinoSlidingSegmentedControl` is translucent.
