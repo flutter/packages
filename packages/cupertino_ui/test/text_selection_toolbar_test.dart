@@ -305,10 +305,7 @@ void main() {
     await tester.pumpAndSettle();
 
     final FadeTransition fade = tester.widget<FadeTransition>(
-      find.ancestor(
-        of: find.byType(AnimatedSize),
-        matching: find.byType(FadeTransition),
-      ),
+      find.ancestor(of: find.byType(AnimatedSize), matching: find.byType(FadeTransition)),
     );
     expect(fade.opacity.value, 1.0);
     expect(findOverflowNextButton(), findsNothing);
