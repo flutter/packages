@@ -27,6 +27,8 @@ import 'material.dart';
 import 'material_localizations.dart';
 import 'theme.dart';
 
+part 'generated/drawer_defaults_m3.g.dart';
+
 // Examples can assume:
 // late BuildContext context;
 
@@ -513,10 +515,13 @@ class DrawerControllerState extends State<DrawerController> with SingleTickerPro
       ..addStatusListener(_animationStatusChanged);
   }
 
+  bool _disposed = false;
+
   @protected
   @override
   void dispose() {
-    _historyEntry?.remove();
+    _disposed = true;
+    _removeHistoryEntry();
     _controller.dispose();
     _focusScopeNode.dispose();
     super.dispose();
@@ -558,14 +563,18 @@ class DrawerControllerState extends State<DrawerController> with SingleTickerPro
     }
   }
 
+  void _removeHistoryEntry() {
+    _historyEntry?.remove();
+    _historyEntry = null;
+  }
+
   void _animationStatusChanged(AnimationStatus status) {
     switch (status) {
       case AnimationStatus.forward:
         _ensureHistoryEntry();
       case AnimationStatus.reverse:
-        _historyEntry?.remove();
-        _historyEntry = null;
       case AnimationStatus.dismissed:
+        _removeHistoryEntry();
       case AnimationStatus.completed:
         break;
     }
@@ -573,7 +582,12 @@ class DrawerControllerState extends State<DrawerController> with SingleTickerPro
 
   void _handleHistoryEntryRemoved() {
     _historyEntry = null;
-    close();
+    if (_disposed || !mounted) {
+      return;
+    }
+    if (!_controller.isDismissed && _controller.status != AnimationStatus.reverse) {
+      close();
+    }
   }
 
   late AnimationController _controller;
@@ -632,6 +646,13 @@ class DrawerControllerState extends State<DrawerController> with SingleTickerPro
       final double visualVelocity = xVelocity / _width * _directionFactor;
 
       _controller.fling(velocity: visualVelocity);
+      if (visualVelocity < 0.0) {
+        // We explicitly remove the history entry here because the drawer may already be
+        // animating closed (status == AnimationStatus.reverse) when the drag begins.
+        // In that case, flinging it closed again does not change the animation status,
+        // so the status listener will not fire.
+        _removeHistoryEntry();
+      }
       widget.drawerCallback?.call(visualVelocity > 0.0);
     } else if (_controller.value < 0.5) {
       close();
@@ -651,6 +672,8 @@ class DrawerControllerState extends State<DrawerController> with SingleTickerPro
   /// Starts an animation to close the drawer.
   void close() {
     _controller.fling(velocity: -1.0);
+    // Explicitly removed here for the same reason as in _settle.
+    _removeHistoryEntry();
     widget.drawerCallback?.call(false);
   }
 
@@ -788,52 +811,3 @@ class _DrawerDefaultsM2 extends DrawerThemeData {
   @override
   Color? get shadowColor => Theme.of(context).shadowColor;
 }
-
-// BEGIN GENERATED TOKEN PROPERTIES - Drawer
-
-// Do not edit by hand. The code between the "BEGIN GENERATED" and
-// "END GENERATED" comments are generated from data in the Material
-// Design token database by the script:
-//   dev/tools/gen_defaults/bin/gen_defaults.dart.
-
-// dart format off
-class _DrawerDefaultsM3 extends DrawerThemeData {
-  _DrawerDefaultsM3(this.context)
-      : super(
-          elevation: 1.0,
-          clipBehavior: Clip.hardEdge,
-        );
-
-  final BuildContext context;
-  late final TextDirection direction = Directionality.of(context);
-
-  @override
-  Color? get backgroundColor => Theme.of(context).colorScheme.surfaceContainerLow;
-
-  @override
-  Color? get surfaceTintColor => Colors.transparent;
-
-  @override
-  Color? get shadowColor => Colors.transparent;
-
-  // There isn't currently a token for this value, but it is shown in the spec,
-  // so hard coding here for now.
-  @override
-  ShapeBorder? get shape => RoundedRectangleBorder(
-    borderRadius: const BorderRadiusDirectional.horizontal(
-      end: Radius.circular(16.0),
-    ).resolve(direction),
-  );
-
-  // There isn't currently a token for this value, but it is shown in the spec,
-  // so hard coding here for now.
-  @override
-  ShapeBorder? get endShape => RoundedRectangleBorder(
-    borderRadius: const BorderRadiusDirectional.horizontal(
-      start: Radius.circular(16.0),
-    ).resolve(direction),
-  );
-}
-// dart format on
-
-// END GENERATED TOKEN PROPERTIES - Drawer

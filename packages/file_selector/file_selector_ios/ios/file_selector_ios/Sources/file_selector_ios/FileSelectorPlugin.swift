@@ -5,6 +5,7 @@
 import Flutter
 import ObjectiveC
 import UIKit
+import UniformTypeIdentifiers
 
 /// Bridge between a UIDocumentPickerViewController and its Pigeon callback.
 class PickerCompletionBridge: NSObject, UIDocumentPickerDelegate {
@@ -64,8 +65,8 @@ public class FileSelectorPlugin: NSObject, FlutterPlugin, FileSelectorApi {
     let documentPicker =
       documentPickerViewControllerOverride
       ?? UIDocumentPickerViewController(
-        documentTypes: config.utis,
-        in: .import)
+        forOpeningContentTypes: config.utis.compactMap { UTType($0) },
+        asCopy: true)
     documentPicker.allowsMultipleSelection = config.allowMultiSelection
     documentPicker.delegate = completionBridge
 

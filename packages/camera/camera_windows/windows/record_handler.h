@@ -48,9 +48,10 @@ class RecordHandler {
   //                  the actual recording.
   // base_media_type: A pointer to base media type used as a base
   //                  for the actual video capture media type.
+  // source_stream_index: The source stream to connect to the record sink.
   HRESULT StartRecord(const std::string& file_path,
                       IMFCaptureEngine* capture_engine,
-                      IMFMediaType* base_media_type);
+                      IMFMediaType* base_media_type, DWORD source_stream_index);
 
   // Stops existing recording.
   //
@@ -83,7 +84,8 @@ class RecordHandler {
  private:
   // Initializes record sink for video file capture.
   HRESULT InitRecordSink(IMFCaptureEngine* capture_engine,
-                         IMFMediaType* base_media_type);
+                         IMFMediaType* base_media_type,
+                         DWORD source_stream_index);
 
   const PlatformMediaSettings media_settings_;
   int64_t recording_start_timestamp_us_ = -1;

@@ -30,10 +30,10 @@ class $className extends BadgeThemeData {
   late final ColorScheme _colors = _theme.colorScheme;
 
   @override
-  Color? get backgroundColor => ${color(TokenBadge.color, '_colors')};
+  Color? get backgroundColor => ${color(TokenBadge.color)};
 
   @override
-  Color? get textColor => ${color(TokenBadge.largeLabelTextColor, '_colors')};
+  Color? get textColor => ${color(TokenBadge.largeLabelTextColor)};
 
   @override
   TextStyle? get textStyle => ${textStyle(TokenBadge.largeLabelTextType, 'Theme.of(context).textTheme')};

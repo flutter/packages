@@ -298,5 +298,6 @@ void main() {
         isNull,
       );
     },
+    tags: 'reduced-web-test-set',
   );
 }

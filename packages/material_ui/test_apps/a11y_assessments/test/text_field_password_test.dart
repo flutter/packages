@@ -56,4 +56,22 @@ void main() {
     await tester.pumpAndSettle();
     expect(findHeadingLevelOnes, findsOne);
   });
+
+  testWidgets('password fields expose their input purpose', (WidgetTester tester) async {
+    await pumpsUseCase(tester, TextFieldPasswordUseCase());
+
+    for (final key in <Key>[const Key('enabled password'), const Key('disabled password')]) {
+      final EditableText editableText = tester.widget<EditableText>(
+        find.descendant(of: find.byKey(key), matching: find.byType(EditableText)),
+      );
+      expect(editableText.autofillHints, contains(AutofillHints.password));
+    }
+  });
+
+  testWidgets('text field password use case content is not a semantic list', (
+    WidgetTester tester,
+  ) async {
+    await pumpsUseCase(tester, TextFieldPasswordUseCase());
+    expect(hasSemanticsList(tester, find.byType(ListView)), isFalse);
+  });
 }

@@ -38,7 +38,7 @@ class CameraValue {
     required this.isRecordingVideo,
     required this.isTakingPicture,
     required this.isStreamingImages,
-    required bool isRecordingPaused,
+    required this._isRecordingPaused,
     required this.flashMode,
     required this.exposureMode,
     required this.focusMode,
@@ -50,7 +50,7 @@ class CameraValue {
     this.recordingOrientation,
     this.isPreviewPaused = false,
     this.previewPauseOrientation,
-  }) : _isRecordingPaused = isRecordingPaused;
+  });
 
   /// Creates a new camera controller state for an uninitialized controller.
   const CameraValue.uninitialized(CameraDescription description)
@@ -496,6 +496,7 @@ class CameraController extends ValueNotifier<CameraValue> {
   Future<void> startVideoRecording({
     onLatestImageAvailable? onAvailable,
     bool enablePersistentRecording = true,
+    String? videoOutputPath,
   }) async {
     _throwIfNotInitialized('startVideoRecording');
     if (value.isRecordingVideo) {
@@ -503,6 +504,13 @@ class CameraController extends ValueNotifier<CameraValue> {
         'A video recording is already started.',
         'startVideoRecording was called when a recording is already started.',
       );
+    }
+
+    if (videoOutputPath != null) {
+      final String lowerPath = videoOutputPath.toLowerCase();
+      if (!lowerPath.endsWith('.mp4')) {
+        throw CameraException('InvalidFilePath', 'Invalid video extension. Supported: .mp4');
+      }
     }
 
     void Function(CameraImageData image)? streamCallback;
@@ -518,6 +526,7 @@ class CameraController extends ValueNotifier<CameraValue> {
           _cameraId,
           streamCallback: streamCallback,
           enablePersistentRecording: enablePersistentRecording,
+          videoOutputPath: videoOutputPath,
         ),
       );
       value = value.copyWith(

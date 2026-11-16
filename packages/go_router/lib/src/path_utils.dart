@@ -5,7 +5,95 @@
 import 'misc/errors.dart';
 import 'route.dart';
 
-final RegExp _parameterRegExp = RegExp(r':(\w+)(\((?:\\.|[^\\()])+\))?');
+final RegExp _parameterNameRegExp = RegExp(r':(\w+)');
+
+/// A `:name` occurrence in a path pattern, with its optional constraint.
+class _PathParameter {
+  const _PathParameter({
+    required this.start,
+    required this.end,
+    required this.name,
+    this.constraint,
+  });
+
+  /// Index of the leading `:`.
+  final int start;
+
+  /// Exclusive end of the whole occurrence, constraint included.
+  final int end;
+
+  final String name;
+
+  /// The parenthesised regular expression constraining this parameter, parens
+  /// included (`(\d+)`), or null when the parameter is unconstrained.
+  final String? constraint;
+}
+
+/// Scans [pattern] for `:name` occurrences, each optionally followed by a
+/// `(...)` constraint.
+List<_PathParameter> _pathParametersOf(String pattern) {
+  final parameters = <_PathParameter>[];
+  RegExpMatch? match = _parameterNameRegExp.firstMatch(pattern);
+  while (match != null) {
+    final int closingParen = _closingParenIndex(pattern, match.end);
+    final int end = closingParen != -1 ? closingParen + 1 : match.end;
+    final String? name = match[1];
+
+    if (name != null) {
+      parameters.add(
+        _PathParameter(
+          start: match.start,
+          end: end,
+          name: name,
+          constraint: closingParen != -1 ? pattern.substring(match.end, end) : null,
+        ),
+      );
+    }
+    match = _parameterNameRegExp.allMatches(pattern, end).firstOrNull;
+  }
+  return parameters;
+}
+
+/// The index of the `)` that closes the `(` at [start], or -1 when [start] is
+/// not a `(` or the group is never closed.
+///
+/// Escaped characters and character classes never open or close a group, so
+/// `(\()` and `([()])` are both single groups.
+int _closingParenIndex(String pattern, int start) {
+  if (start >= pattern.length || pattern[start] != '(') {
+    return -1;
+  }
+
+  var depth = 0;
+  var inCharacterClass = false;
+  for (var currentIndex = start; currentIndex < pattern.length; currentIndex++) {
+    final String character = pattern[currentIndex];
+    if (character == r'\') {
+      // The next character is a literal: skip it together with the backslash.
+      currentIndex++;
+      continue;
+    }
+    if (inCharacterClass) {
+      if (character == ']') {
+        inCharacterClass = false;
+      }
+      continue;
+    }
+    switch (character) {
+      case '[':
+        inCharacterClass = true;
+      case '(':
+        depth++;
+      case ')':
+        depth--;
+        if (depth == 0) {
+          return currentIndex;
+        }
+    }
+  }
+
+  return -1;
+}
 
 /// Converts a [pattern] such as `/user/:id` into [RegExp].
 ///
@@ -26,18 +114,14 @@ final RegExp _parameterRegExp = RegExp(r':(\w+)(\((?:\\.|[^\\()])+\))?');
 RegExp patternToRegExp(String pattern, List<String> parameters, {required bool caseSensitive}) {
   final buffer = StringBuffer('^');
   var start = 0;
-  for (final RegExpMatch match in _parameterRegExp.allMatches(pattern)) {
-    if (match.start > start) {
-      buffer.write(RegExp.escape(pattern.substring(start, match.start)));
+  for (final _PathParameter parameter in _pathParametersOf(pattern)) {
+    if (parameter.start > start) {
+      buffer.write(RegExp.escape(pattern.substring(start, parameter.start)));
     }
-    final String name = match[1]!;
-    final String? optionalPattern = match[2];
-    final String regex = optionalPattern != null
-        ? _escapeGroup(optionalPattern, name)
-        : '(?<$name>[^/]+)';
-    buffer.write(regex);
-    parameters.add(name);
-    start = match.end;
+
+    buffer.write('(?<${parameter.name}>${parameter.constraint ?? '[^/]+'})');
+    parameters.add(parameter.name);
+    start = parameter.end;
   }
 
   if (start < pattern.length) {
@@ -48,17 +132,6 @@ RegExp patternToRegExp(String pattern, List<String> parameters, {required bool c
     buffer.write(r'(?=/|$)');
   }
   return RegExp(buffer.toString(), caseSensitive: caseSensitive);
-}
-
-String _escapeGroup(String group, [String? name]) {
-  final String escapedGroup = group.replaceFirstMapped(
-    RegExp(r'[:=!]'),
-    (Match match) => '\\${match[0]}',
-  );
-  if (name != null) {
-    return '(?<$name>$escapedGroup)';
-  }
-  return escapedGroup;
 }
 
 /// Reconstructs the full path from a [pattern] and path parameters.
@@ -76,13 +149,12 @@ String _escapeGroup(String group, [String? name]) {
 String patternToPath(String pattern, Map<String, String> pathParameters) {
   final buffer = StringBuffer();
   var start = 0;
-  for (final RegExpMatch match in _parameterRegExp.allMatches(pattern)) {
-    if (match.start > start) {
-      buffer.write(pattern.substring(start, match.start));
+  for (final _PathParameter parameter in _pathParametersOf(pattern)) {
+    if (parameter.start > start) {
+      buffer.write(pattern.substring(start, parameter.start));
     }
-    final String name = match[1]!;
-    buffer.write(pathParameters[name]);
-    start = match.end;
+    buffer.write(pathParameters[parameter.name]);
+    start = parameter.end;
   }
 
   if (start < pattern.length) {

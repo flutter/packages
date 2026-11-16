@@ -16,6 +16,8 @@ import 'package:pigeon/src/pigeon_lib_internal.dart';
 import 'package:pigeon/src/swift/swift_generator.dart';
 import 'package:test/test.dart';
 
+import '../tool/benchmark.dart';
+
 class _ValidatorGeneratorAdapter implements GeneratorAdapter {
   _ValidatorGeneratorAdapter(this.sink);
 
@@ -183,6 +185,51 @@ void main() {
   test('parse args - app_directory', () {
     final PigeonOptions opts = Pigeon.parseArgs(<String>['--app_directory', './foo/']);
     expect(opts.appDirectory, equals('./foo/'));
+  });
+
+  test('parse args - native_interop_transport', () {
+    final PigeonOptions opts = Pigeon.parseArgs(<String>['--native_interop_transport', 'hybrid']);
+    expect(opts.nativeInteropTransport, NativeInteropTransport.hybrid);
+    expect(Pigeon.parseArgs(<String>[]).nativeInteropTransport, isNull);
+  });
+
+  test('native interop transport round trips through a map', () {
+    const options = PigeonOptions(nativeInteropTransport: NativeInteropTransport.hybrid);
+    expect(options.toMap()['nativeInteropTransport'], 'hybrid');
+    expect(
+      PigeonOptions.fromMap(options.toMap()).nativeInteropTransport,
+      NativeInteropTransport.hybrid,
+    );
+  });
+
+  test('ConfigurePigeon parses the native interop transport', () {
+    const code = '''
+@ConfigurePigeon(PigeonOptions(nativeInteropTransport: NativeInteropTransport.hybrid))
+@HostApi()
+abstract class Api {
+  void doSomething();
+}
+''';
+    final ParseResults results = parseSource(code);
+    expect(results.errors, isEmpty);
+    expect(
+      PigeonOptions.fromMap(results.pigeonOptions!).nativeInteropTransport,
+      NativeInteropTransport.hybrid,
+    );
+  });
+
+  test('ConfigurePigeon reports other prefixed identifiers as unrecognized', () {
+    const code = '''
+@ConfigurePigeon(PigeonOptions(dartOut: Paths.dartOut))
+@HostApi()
+abstract class Api {
+  void doSomething();
+}
+''';
+    final ParseResults results = parseSource(code);
+    expect(results.errors, hasLength(1));
+    expect(results.errors[0].message, contains('unrecognized expression type'));
+    expect(results.errors[0].message, contains('Paths.dartOut'));
   });
 
   test('parse args - swift options', () {
@@ -2364,6 +2411,255 @@ dev_dependencies:
       }
     });
 
+    test('checkObjectiveCPubspecVersion returns null when constraint matches ObjCVersionCheck', () {
+      final Directory tempDir = Directory.systemTemp.createTempSync('pigeon_objc_version_test_');
+      try {
+        File('${tempDir.path}/pubspec.yaml').writeAsStringSync('''
+name: my_package
+dependencies:
+  ffi: ^2.0.0
+  objective_c: ^9.6.2
+''');
+        final libDir = Directory('${tempDir.path}/lib')..createSync(recursive: true);
+        File('${libDir.path}/messages.g.ffi.dart').writeAsStringSync(r'''
+const _$objcVersionCheck = objc.ObjCVersionCheck(9, 6);
+''');
+        final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+          PigeonOptions(
+            input: 'foo.dart',
+            dartOut: '${libDir.path}/messages.g.dart',
+            swiftOut: '${libDir.path}/messages.g.swift',
+            swiftOptions: const SwiftOptions(useFfi: true),
+            dartPackageName: 'my_package',
+          ),
+        );
+        expect(checkObjectiveCPubspecVersion(options), isNull);
+      } finally {
+        tempDir.deleteSync(recursive: true);
+      }
+    });
+
+    test(
+      'checkObjectiveCPubspecVersion warns when constraint allows lower minor version than ObjCVersionCheck',
+      () {
+        final Directory tempDir = Directory.systemTemp.createTempSync('pigeon_objc_version_test_');
+        try {
+          File('${tempDir.path}/pubspec.yaml').writeAsStringSync('''
+name: my_package
+dependencies:
+  ffi: ^2.0.0
+  objective_c: ^9.5.0
+''');
+          final libDir = Directory('${tempDir.path}/lib')..createSync(recursive: true);
+          File('${libDir.path}/messages.g.ffi.dart').writeAsStringSync(r'''
+const _$objcVersionCheck = objc.ObjCVersionCheck(9, 6);
+''');
+          final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+            PigeonOptions(
+              input: 'foo.dart',
+              dartOut: '${libDir.path}/messages.g.dart',
+              swiftOut: '${libDir.path}/messages.g.swift',
+              swiftOptions: const SwiftOptions(useFfi: true),
+              dartPackageName: 'my_package',
+            ),
+          );
+          final String? warning = checkObjectiveCPubspecVersion(options);
+          expect(warning, isNotNull);
+          expect(warning, contains('require package:objective_c ^9.6.0'));
+          expect(warning, contains('ObjCVersionCheck(9, 6)'));
+          expect(warning, contains('objective_c: ^9.5.0'));
+        } finally {
+          tempDir.deleteSync(recursive: true);
+        }
+      },
+    );
+
+    test(
+      'checkJniPubspecVersion returns null when constraint matches JniVersionCheck and >=1.1.1',
+      () {
+        final Directory tempDir = Directory.systemTemp.createTempSync('pigeon_jni_version_test_');
+        try {
+          File('${tempDir.path}/pubspec.yaml').writeAsStringSync('''
+name: my_package
+dependencies:
+  jni: ^1.1.1
+''');
+          final libDir = Directory('${tempDir.path}/lib')..createSync(recursive: true);
+          File('${libDir.path}/messages.g.jni.dart').writeAsStringSync(r'''
+const _$jniVersionCheck = jni$_.JniVersionCheck(1, 1);
+''');
+          final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+            PigeonOptions(
+              input: 'foo.dart',
+              dartOut: '${libDir.path}/messages.g.dart',
+              kotlinOut: '${libDir.path}/Messages.g.kt',
+              kotlinOptions: const KotlinOptions(useJni: true),
+              dartPackageName: 'my_package',
+            ),
+          );
+          expect(checkJniPubspecVersion(options), isNull);
+        } finally {
+          tempDir.deleteSync(recursive: true);
+        }
+      },
+    );
+
+    test(
+      'checkJniPubspecVersion warns when constraint allows version below 1.1.1 floor or JniVersionCheck',
+      () {
+        final Directory tempDir = Directory.systemTemp.createTempSync('pigeon_jni_version_test_');
+        try {
+          File('${tempDir.path}/pubspec.yaml').writeAsStringSync('''
+name: my_package
+dependencies:
+  jni: ^1.1.0
+''');
+          final libDir = Directory('${tempDir.path}/lib')..createSync(recursive: true);
+          File('${libDir.path}/messages.g.jni.dart').writeAsStringSync(r'''
+const _$jniVersionCheck = jni$_.JniVersionCheck(1, 1);
+''');
+          final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+            PigeonOptions(
+              input: 'foo.dart',
+              dartOut: '${libDir.path}/messages.g.dart',
+              kotlinOut: '${libDir.path}/Messages.g.kt',
+              kotlinOptions: const KotlinOptions(useJni: true),
+              dartPackageName: 'my_package',
+            ),
+          );
+          final String? warning = checkJniPubspecVersion(options);
+          expect(warning, isNotNull);
+          expect(warning, contains('require package:jni ^1.1.1'));
+          expect(warning, contains('JniVersionCheck(1, 1)'));
+          expect(warning, contains('jni: ^1.1.0'));
+        } finally {
+          tempDir.deleteSync(recursive: true);
+        }
+      },
+    );
+
+    test('checkObjectiveCPubspecVersion checks version key when dependency is a map', () {
+      final Directory tempDir = Directory.systemTemp.createTempSync('pigeon_objc_version_test_');
+      try {
+        File('${tempDir.path}/pubspec.yaml').writeAsStringSync('''
+name: my_package
+dependencies:
+  ffi: ^2.0.0
+  objective_c:
+    hosted: https://some-package-server.com
+    version: ^9.5.0
+''');
+        final libDir = Directory('${tempDir.path}/lib')..createSync(recursive: true);
+        File('${libDir.path}/messages.g.ffi.dart').writeAsStringSync(r'''
+const _$objcVersionCheck = objc.ObjCVersionCheck(9, 6);
+''');
+        final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+          PigeonOptions(
+            input: 'foo.dart',
+            dartOut: '${libDir.path}/messages.g.dart',
+            swiftOut: '${libDir.path}/messages.g.swift',
+            swiftOptions: const SwiftOptions(useFfi: true),
+            dartPackageName: 'my_package',
+          ),
+        );
+        final String? warning = checkObjectiveCPubspecVersion(options);
+        expect(warning, isNotNull);
+        expect(warning, contains('require package:objective_c ^9.6.0'));
+        expect(warning, contains('objective_c: ^9.5.0'));
+      } finally {
+        tempDir.deleteSync(recursive: true);
+      }
+    });
+
+    test(
+      'checkObjectiveCPubspecVersion warns on disjoint major, higher major range, bare, and versionless hosted dependencies, and skips path dependencies',
+      () {
+        final Directory tempDir = Directory.systemTemp.createTempSync('pigeon_objc_version_test_');
+        try {
+          final libDir = Directory('${tempDir.path}/lib')..createSync(recursive: true);
+          File('${libDir.path}/messages.g.ffi.dart').writeAsStringSync(r'''
+const _$objcVersionCheck = objc.ObjCVersionCheck(9, 6);
+''');
+          final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+            PigeonOptions(
+              input: 'foo.dart',
+              dartOut: 'lib/messages.g.dart',
+              swiftOut: 'lib/messages.g.swift',
+              swiftOptions: const SwiftOptions(useFfi: true),
+              dartPackageName: 'my_package',
+              basePath: tempDir.path,
+            ),
+          );
+
+          // Constraint allowing no valid version (^10.0.0)
+          File('${tempDir.path}/pubspec.yaml').writeAsStringSync('''
+name: my_package
+dependencies:
+  objective_c: ^10.0.0
+''');
+          expect(
+            checkObjectiveCPubspecVersion(options),
+            allOf(isNotNull, contains('objective_c: ^10.0.0')),
+          );
+
+          // Constraint allowing a higher major (>=9.6.0 <11.0.0)
+          File('${tempDir.path}/pubspec.yaml').writeAsStringSync('''
+name: my_package
+dependencies:
+  objective_c: ">=9.6.0 <11.0.0"
+''');
+          expect(
+            checkObjectiveCPubspecVersion(options),
+            allOf(isNotNull, contains('objective_c: >=9.6.0 <11.0.0')),
+          );
+
+          // Bare dependency (parsed as null -> treated as 'any')
+          File('${tempDir.path}/pubspec.yaml').writeAsStringSync('''
+name: my_package
+dependencies:
+  objective_c:
+''');
+          expect(
+            checkObjectiveCPubspecVersion(options),
+            allOf(isNotNull, contains('objective_c: any')),
+          );
+
+          // Versionless hosted dependency (treated as 'any')
+          File('${tempDir.path}/pubspec.yaml').writeAsStringSync('''
+name: my_package
+dependencies:
+  objective_c:
+    hosted: https://some-package-server.com
+''');
+          expect(
+            checkObjectiveCPubspecVersion(options),
+            allOf(isNotNull, contains('objective_c: any')),
+          );
+
+          // Path dependency without version is skipped
+          File('${tempDir.path}/pubspec.yaml').writeAsStringSync('''
+name: my_package
+dependencies:
+  objective_c:
+    path: ../objective_c
+''');
+          expect(checkObjectiveCPubspecVersion(options), isNull);
+
+          // dependency_overrides takes precedence over dependencies
+          File('${tempDir.path}/pubspec.yaml').writeAsStringSync('''
+name: my_package
+dependencies:
+  objective_c: ^9.5.0
+dependency_overrides:
+  objective_c: ^9.6.0
+''');
+          expect(checkObjectiveCPubspecVersion(options), isNull);
+        } finally {
+          tempDir.deleteSync(recursive: true);
+        }
+      },
+    );
+
     test('KotlinOptions serialization/deserialization with jniClassPaths', () {
       const options = KotlinOptions(jniClassPaths: <String>['foo/bar', 'baz.jar']);
       final Map<String, Object> map = options.toMap();
@@ -2389,6 +2685,31 @@ dev_dependencies:
       generator.generate(options, root, sink, dartPackageName: 'foo_package');
       final output = sink.toString();
       expect(output, contains("classPath: [Uri.directory('foo/bar'), Uri.file('baz.jar')]"));
+    });
+
+    test('JnigenConfigGenerator only binds the Registrar for host APIs', () {
+      final root = Root(
+        apis: <Api>[
+          AstHostApi(name: 'MyHostApi', methods: <Method>[]),
+          AstFlutterApi(name: 'MyFlutterApi', methods: <Method>[]),
+        ],
+        classes: <Class>[],
+        enums: <Enum>[],
+      );
+      final sink = StringBuffer();
+      final generator = JnigenConfigGenerator();
+      final options = InternalJnigenConfigOptions(
+        const InternalDartOptions(dartOut: 'lib/messages.dart', ignoreLints: false),
+        const InternalKotlinOptions(kotlinOut: 'android/Messages.kt', package: 'com.example'),
+        null,
+        null,
+      );
+      generator.generate(options, root, sink, dartPackageName: 'foo_package');
+      final output = sink.toString();
+      expect(output, isNot(contains("'com.example.MyHostApi',")));
+      expect(output, contains("'com.example.MyHostApiRegistrar',"));
+      expect(output, contains("'com.example.MyFlutterApi',"));
+      expect(output, contains("'com.example.MyFlutterApiRegistrar',"));
     });
 
     test(
@@ -2434,6 +2755,114 @@ dev_dependencies:
         expect(code, contains("dartFile: Uri.file('../lib/src/messages.g.ffi.dart')"));
       },
     );
+
+    test(
+      'FfigenConfigGeneratorAdapter and JnigenConfigGeneratorAdapter prepend basePath when paths share a prefix or directory name with basePath',
+      () {
+        final root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+
+        final ffiSink = StringBuffer();
+        const ffiAdapter = FfigenConfigGeneratorAdapter();
+        final InternalPigeonOptions ffiOptions = InternalPigeonOptions.fromPigeonOptions(
+          const PigeonOptions(
+            input: 'pigeons/messages.dart',
+            basePath: 'app',
+            dartOut: 'app/lib/src/messages.g.dart',
+            swiftOut: 'app_darwin/Messages.g.swift',
+            swiftOptions: SwiftOptions(useFfi: true, configDirectory: 'app_config'),
+          ),
+        );
+        ffiAdapter.generate(ffiSink, ffiOptions, root, FileType.na);
+        final ffiCode = ffiSink.toString();
+        expect(ffiCode, contains("dartFile: Uri.file('../app/lib/src/messages.g.ffi.dart')"));
+        expect(ffiCode, contains("Uri.file('../app_darwin/Messages.g.swift')"));
+
+        final jniSink = StringBuffer();
+        const jniAdapter = JnigenConfigGeneratorAdapter();
+        final InternalPigeonOptions jniOptions = InternalPigeonOptions.fromPigeonOptions(
+          const PigeonOptions(
+            input: 'pigeons/messages.dart',
+            basePath: 'app',
+            dartOut: 'app_bindings/lib/src/messages.g.dart',
+            kotlinOut: 'app_android/Messages.g.kt',
+            kotlinOptions: KotlinOptions(
+              useJni: true,
+              appDirectory: 'app_example',
+              configDirectory: 'app_config',
+            ),
+          ),
+        );
+        jniAdapter.generate(jniSink, jniOptions, root, FileType.na);
+        final jniCode = jniSink.toString();
+        expect(jniCode, contains("path: Uri.file('../app_bindings/lib/src/messages.g.jni.dart')"));
+        expect(jniCode, contains("androidExample: Uri.directory('../app_example')"));
+      },
+    );
+
+    test(
+      'checkObjectiveCPubspecVersion resolves dartOut when it shares a string prefix with basePath',
+      () {
+        final Directory tempDir = Directory.systemTemp.createTempSync('pigeon_objc_prefix_test_');
+        try {
+          final baseDir = Directory('${tempDir.path}/app')..createSync(recursive: true);
+          File('${baseDir.path}/pubspec.yaml').writeAsStringSync('''
+name: my_package
+dependencies:
+  ffi: ^2.0.0
+  objective_c: ^9.5.0
+''');
+          final libDir = Directory('${baseDir.path}/app_bindings/lib')..createSync(recursive: true);
+          File('${libDir.path}/messages.g.ffi.dart').writeAsStringSync(r'''
+const _$objcVersionCheck = objc.ObjCVersionCheck(9, 6);
+''');
+          final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+            PigeonOptions(
+              input: 'foo.dart',
+              basePath: baseDir.path,
+              dartOut: 'app_bindings/lib/messages.g.dart',
+              swiftOut: 'app_bindings/lib/messages.g.swift',
+              swiftOptions: const SwiftOptions(useFfi: true),
+              dartPackageName: 'my_package',
+            ),
+          );
+          final String? warning = checkObjectiveCPubspecVersion(options);
+          expect(warning, isNotNull);
+          expect(warning, contains('require package:objective_c ^9.6.0'));
+        } finally {
+          tempDir.deleteSync(recursive: true);
+        }
+      },
+    );
+
+    test('FfigenConfigGeneratorAdapter only lists the Setup class for host APIs', () {
+      final root = Root(
+        apis: <Api>[
+          AstHostApi(name: 'MyHostApi', methods: <Method>[]),
+          AstFlutterApi(name: 'MyFlutterApi', methods: <Method>[]),
+        ],
+        classes: <Class>[],
+        enums: <Enum>[],
+      );
+      final sink = StringBuffer();
+      const adapter = FfigenConfigGeneratorAdapter();
+      final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+        const PigeonOptions(
+          input: 'pigeons/messages.dart',
+          dartOut: 'lib/src/messages.g.dart',
+          swiftOut: 'darwin/Messages.g.swift',
+          swiftOptions: SwiftOptions(useFfi: true, appDirectory: 'example/'),
+        ),
+      );
+
+      adapter.generate(sink, options, root, FileType.na);
+      final code = sink.toString();
+
+      expect(code, isNot(contains("'MyHostApi',")));
+      expect(code, contains("'MyHostApiSetup',"));
+      expect(code, isNot(contains("'MyFlutterApi',")));
+      expect(code, contains("'MyFlutterApiBridge',"));
+      expect(code, contains("'MyFlutterApiRegistrar',"));
+    });
 
     test('SwiftGeneratorAdapter errors on TaskQueue when useFfi is true', () {
       final root = Root(
@@ -2587,6 +3016,210 @@ dev_dependencies:
       } finally {
         tempDir.deleteSync(recursive: true);
       }
+    });
+  });
+
+  group('native interop validation', () {
+    List<Error> validate(
+      GeneratorAdapter adapter,
+      String source, {
+      SwiftOptions swiftOptions = const SwiftOptions(useFfi: true),
+      KotlinOptions kotlinOptions = const KotlinOptions(useJni: true),
+      NativeInteropTransport? nativeInteropTransport,
+    }) {
+      final ParseResults results = parseSource(source);
+      expect(results.errors, isEmpty);
+      final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+        PigeonOptions(
+          dartOut: 'lib/messages.g.dart',
+          swiftOut: 'darwin/Messages.g.swift',
+          swiftOptions: swiftOptions,
+          kotlinOut: 'android/Messages.g.kt',
+          kotlinOptions: kotlinOptions,
+          nativeInteropTransport: nativeInteropTransport,
+        ),
+      );
+      return adapter.validate(options, results.root);
+    }
+
+    const unsupportedFeaturesSource = '''
+@EventChannelApi()
+abstract class Events {
+  int numbers();
+}
+''';
+
+    test('Swift FFI rejects event channels', () {
+      final List<Error> errors = validate(const SwiftGeneratorAdapter(), unsupportedFeaturesSource);
+      expect(
+        errors.map((Error e) => e.message),
+        containsAll(<Matcher>[
+          contains('Swift FFI does not support event channels yet (in API "Events")'),
+        ]),
+      );
+    });
+
+    test('Swift without FFI allows event channels', () {
+      final List<Error> errors = validate(
+        const SwiftGeneratorAdapter(),
+        unsupportedFeaturesSource,
+        swiftOptions: const SwiftOptions(),
+      );
+      expect(errors, isEmpty);
+    });
+
+    test('Swift FFI rejects ProxyApis', () {
+      final List<Error> errors = validate(const SwiftGeneratorAdapter(), '''
+@ProxyApi()
+abstract class Proxy {
+  Proxy();
+}
+''');
+      expect(errors, hasLength(1));
+      expect(
+        errors[0].message,
+        contains('Swift FFI does not support ProxyApis yet (in API "Proxy")'),
+      );
+    });
+
+    test('Swift FFI rejects fields named after NSObject members', () {
+      final List<Error> errors = validate(const SwiftGeneratorAdapter(), '''
+class Data {
+  Data(this.hash, this.isProxy, this.value);
+  int hash;
+  bool isProxy;
+  String value;
+}
+
+@HostApi()
+abstract class Api {
+  Data data();
+}
+''');
+      expect(errors.map((Error e) => e.message), <Matcher>[
+        contains('Field "hash" is not allowed in class "Data" with Swift FFI'),
+        contains('Field "isProxy" is not allowed in class "Data" with Swift FFI'),
+      ]);
+    });
+
+    test('Swift FFI rejects host API parameters named wrappedError', () {
+      final List<Error> errors = validate(const SwiftGeneratorAdapter(), '''
+@HostApi()
+abstract class Api {
+  void report(String error, int wrappedError);
+}
+''');
+      expect(errors, hasLength(1));
+      expect(errors[0].message, contains('Parameter "wrappedError" in method "report"'));
+    });
+
+    test('Swift FFI requires includeErrorClass', () {
+      final List<Error> errors = validate(const SwiftGeneratorAdapter(), '''
+@HostApi()
+abstract class Api {
+  void doIt();
+}
+''', swiftOptions: const SwiftOptions(useFfi: true, includeErrorClass: false));
+      expect(errors, hasLength(1));
+      expect(errors[0].message, contains('Swift FFI requires `includeErrorClass: true`'));
+    });
+
+    test('Kotlin JNI rejects event channels', () {
+      final List<Error> errors = validate(
+        const KotlinGeneratorAdapter(),
+        unsupportedFeaturesSource,
+      );
+      expect(
+        errors.map((Error e) => e.message),
+        containsAll(<Matcher>[
+          contains('Kotlin JNI does not support event channels yet (in API "Events")'),
+        ]),
+      );
+    });
+
+    test('Kotlin without JNI allows event channels', () {
+      final List<Error> errors = validate(
+        const KotlinGeneratorAdapter(),
+        unsupportedFeaturesSource,
+        kotlinOptions: const KotlinOptions(),
+      );
+      expect(errors, isEmpty);
+    });
+
+    test('Kotlin JNI rejects ProxyApis', () {
+      final List<Error> errors = validate(const KotlinGeneratorAdapter(), '''
+@ProxyApi()
+abstract class Proxy {
+  Proxy();
+}
+''');
+      expect(errors, hasLength(1));
+      expect(
+        errors[0].message,
+        contains('Kotlin JNI does not support ProxyApis yet (in API "Proxy")'),
+      );
+    });
+
+    const reservedMethodNamesSource = '''
+@HostApi()
+abstract class Api {
+  int getInstance();
+  void createWithNativeInteropApi();
+  void pigeonResolveInstance();
+  int pigeonEngineKey();
+  int pigeonEngineKeyOf();
+}
+
+@FlutterApi()
+abstract class Callbacks {
+  void implement();
+  void register();
+  void dartApi();
+  void pigeonResolveInstance();
+}
+''';
+
+    final reservedMethodNameMatchers = <Matcher>[
+      contains('Method name "getInstance" in API "Api"'),
+      contains('Method name "createWithNativeInteropApi" in API "Api"'),
+      contains('Method name "pigeonResolveInstance" in API "Api"'),
+      contains('Method name "pigeonEngineKey" in API "Api"'),
+      contains('Method name "pigeonEngineKeyOf" in API "Api"'),
+      contains('Method name "implement" in API "Callbacks"'),
+    ];
+
+    test(
+      'Dart rejects method names reserved by JNI interop code and allows register/dartApi on FlutterApi',
+      () {
+        final List<Error> errors = validate(
+          const DartGeneratorAdapter(),
+          reservedMethodNamesSource,
+          swiftOptions: const SwiftOptions(),
+        );
+        expect(errors.map((Error e) => e.message), reservedMethodNameMatchers);
+      },
+    );
+
+    test(
+      'Dart rejects method names reserved by FFI interop code and allows register/dartApi on FlutterApi',
+      () {
+        final List<Error> errors = validate(
+          const DartGeneratorAdapter(),
+          reservedMethodNamesSource,
+          kotlinOptions: const KotlinOptions(),
+        );
+        expect(errors.map((Error e) => e.message), reservedMethodNameMatchers);
+      },
+    );
+
+    test('Dart allows those method names without native interop', () {
+      final List<Error> errors = validate(
+        const DartGeneratorAdapter(),
+        reservedMethodNamesSource,
+        swiftOptions: const SwiftOptions(),
+        kotlinOptions: const KotlinOptions(),
+      );
+      expect(errors, isEmpty);
     });
   });
 
@@ -2779,5 +3412,196 @@ const String myConst = 'hello ${1 + 2}';
       final String configPath = getFfigenConfigPath(targetDir, options.input);
       expect(configPath, equals('example/tool/pigeon/messages_ffigen_config.dart'));
     });
+
+    test('JnigenConfigGenerator binds Registrar and Bridge in hybrid mode', () {
+      final ParseResults parseResult = parseSource('''
+enum MyEnum { one }
+class MyData { int? x; }
+@HostApi()
+abstract class MyHostApi {
+  int ping();
+}
+@FlutterApi()
+abstract class MyFlutterApi {
+  int pong();
+}
+''');
+      expect(parseResult.errors, isEmpty);
+
+      String generateConfig(NativeInteropTransport transport) {
+        final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+          PigeonOptions(
+            input: 'pigeons/messages.dart',
+            dartOut: 'lib/messages.dart',
+            kotlinOut: 'android/src/main/kotlin/com/example/Messages.kt',
+            kotlinOptions: const KotlinOptions(package: 'com.example', useJni: true),
+            nativeInteropTransport: transport,
+          ),
+        );
+        final buffer = StringBuffer();
+        const JnigenConfigGeneratorAdapter().generate(
+          buffer,
+          options,
+          parseResult.root,
+          FileType.na,
+        );
+        return buffer.toString();
+      }
+
+      final String objectsConfig = generateConfig(NativeInteropTransport.objects);
+      expect(objectsConfig, isNot(contains("'com.example.MyHostApi',")));
+      expect(objectsConfig, contains("'com.example.MyHostApiRegistrar',"));
+      expect(objectsConfig, contains("'com.example.MyFlutterApi',"));
+      expect(objectsConfig, isNot(contains("'com.example.MyFlutterApiBridge',")));
+      expect(objectsConfig, contains("'com.example.MyFlutterApiRegistrar',"));
+      expect(objectsConfig, contains("'com.example.MyData',"));
+      expect(objectsConfig, contains("'com.example.MyEnum',"));
+
+      final String hybridConfig = generateConfig(NativeInteropTransport.hybrid);
+      expect(hybridConfig, isNot(contains("'com.example.MyHostApi',")));
+      expect(hybridConfig, contains("'com.example.MyHostApiRegistrar',"));
+      expect(hybridConfig, isNot(contains("'com.example.MyFlutterApi',")));
+      expect(hybridConfig, contains("'com.example.MyFlutterApiBridge',"));
+      expect(hybridConfig, contains("'com.example.MyFlutterApiRegistrar',"));
+      expect(hybridConfig, contains("'com.example.MyData',"));
+      expect(hybridConfig, contains("'com.example.MyEnum',"));
+    });
+
+    test(
+      'SwiftGeneratorAdapter errors on async HostApi parameter named completionHandler when useFfi is true',
+      () {
+        final root = Root(
+          apis: <Api>[
+            AstHostApi(
+              name: 'Api',
+              methods: <Method>[
+                Method(
+                  name: 'doWork',
+                  isAsynchronous: true,
+                  returnType: const TypeDeclaration.voidDeclaration(),
+                  parameters: <Parameter>[
+                    Parameter(
+                      name: 'completionHandler',
+                      type: const TypeDeclaration(baseName: 'int', isNullable: false),
+                    ),
+                  ],
+                  location: ApiLocation.host,
+                ),
+              ],
+            ),
+          ],
+          classes: <Class>[],
+          enums: <Enum>[],
+        );
+        const adapter = SwiftGeneratorAdapter();
+        final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+          const PigeonOptions(
+            swiftOut: 'darwin/Messages.g.swift',
+            swiftOptions: SwiftOptions(useFfi: true),
+          ),
+        );
+        final List<Error> errors = adapter.validate(options, root);
+        expect(errors, hasLength(1));
+        expect(
+          errors[0].message,
+          contains(
+            'Parameter "completionHandler" in asynchronous method "doWork" in API "Api" '
+            'conflicts with the completion handler parameter that Swift FFI adds',
+          ),
+        );
+      },
+    );
+
+    test('benchmark tool parses output lines and formats comparison table', () {
+      expect(parseBenchmarkLine('unrelated log line'), isNull);
+      final BenchmarkResult? channelResult = parseBenchmarkLine(
+        'I/flutter (1234): PIGEON_BENCHMARK|{"name":"large_class","transport":"channel","median":1250.5,"p90":1500.0,"samples":200}',
+      );
+      final BenchmarkResult? interopResult = parseBenchmarkLine(
+        'flutter: PIGEON_BENCHMARK|{"name":"large_class","transport":"native_interop","median":250.1,"p90":300.25,"samples":200}',
+      );
+      expect(channelResult, isNotNull);
+      expect(channelResult!.name, 'large_class');
+      expect(channelResult.transport, 'channel');
+      expect(channelResult.median, 1250.5);
+      expect(channelResult.p90, 1500.0);
+      expect(channelResult.samples, 200);
+      expect(interopResult, isNotNull);
+
+      final List<String> tableLines = formatBenchmarkTable(<BenchmarkResult>[
+        channelResult,
+        interopResult!,
+      ]);
+      expect(
+        tableLines,
+        equals(<String>[
+          '| Case | Channel median | Native interop median | Native interop p90 | Ratio |',
+          '| :--- | ---: | ---: | ---: | ---: |',
+          '| large_class | 1.25 ms | 250.10 µs | 300.25 µs | 5.00x |',
+        ]),
+      );
+    });
   });
+
+  test(
+    'DartGeneratorAdapter writes .native_interop.g.dart companion file when native interop is enabled',
+    () {
+      final Directory dir = Directory.systemTemp.createTempSync();
+      try {
+        final String dartOutPath = path.join(dir.path, 'messages.g.dart');
+        final String nativeInteropPath = path.join(dir.path, 'messages.native_interop.g.dart');
+        final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+          PigeonOptions(
+            dartOut: dartOutPath,
+            swiftOut: path.join(dir.path, 'Messages.swift'),
+            swiftOptions: const SwiftOptions(useFfi: true),
+            dartPackageName: 'test_package',
+          ),
+        );
+        const adapter = DartGeneratorAdapter();
+        final sink = StringBuffer();
+        adapter.generate(
+          sink,
+          options,
+          Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]),
+          FileType.na,
+        );
+
+        expect(
+          sink.toString(),
+          contains(
+            "import './messages.g.dart'\n"
+            "    if (dart.library.ffi) './messages.native_interop.g.dart'\n"
+            '    as pigeon_native;',
+          ),
+        );
+        final companionFile = File(nativeInteropPath);
+        expect(companionFile.existsSync(), isTrue);
+        expect(companionFile.readAsStringSync(), contains('class _PigeonFfiCodec'));
+
+        // Verify validate rejects 'stdout' and empty dartOut when native interop is enabled.
+        final emptyRoot = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+        expect(
+          adapter.validate(
+            InternalPigeonOptions.fromPigeonOptions(
+              const PigeonOptions(dartOut: 'stdout', swiftOptions: SwiftOptions(useFfi: true)),
+            ),
+            emptyRoot,
+          ),
+          isNotEmpty,
+        );
+        expect(
+          adapter.validate(
+            InternalPigeonOptions.fromPigeonOptions(
+              const PigeonOptions(dartOut: '', swiftOptions: SwiftOptions(useFfi: true)),
+            ),
+            emptyRoot,
+          ),
+          isNotEmpty,
+        );
+      } finally {
+        dir.deleteSync(recursive: true);
+      }
+    },
+  );
 }

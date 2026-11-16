@@ -566,6 +566,86 @@ void main() {
     expect(find.byType(Scrollbar).last, paints..rrect(color: const Color(0xff00ff00)));
   }, variant: TargetPlatformVariant.desktop());
 
+  // Regression test for https://github.com/flutter/flutter/issues/188155.
+  testWidgets('Menu scrollbar does not inherit MediaQuery padding', (WidgetTester tester) async {
+    addTearDown(tester.view.reset);
+    tester.view.devicePixelRatio = 1.0;
+    tester.view.padding = const FakeViewPadding(left: 8.0, top: 16.0, right: 32.0, bottom: 24.0);
+    EdgeInsets? menuItemPadding;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Material(
+          child: MenuAnchor(
+            controller: controller,
+            style: const MenuStyle(
+              maximumSize: WidgetStatePropertyAll<Size>(Size.fromHeight(100.0)),
+            ),
+            menuChildren: <Widget>[
+              Builder(
+                builder: (BuildContext context) {
+                  menuItemPadding = MediaQuery.paddingOf(context);
+                  return MenuItemButton(onPressed: () {}, child: const Text('Item 0'));
+                },
+              ),
+              for (int i = 1; i < 4; i++) MenuItemButton(onPressed: () {}, child: Text('Item $i')),
+            ],
+            builder: (BuildContext context, MenuController controller, Widget? child) {
+              return TextButton(onPressed: controller.open, child: const Text('Open menu'));
+            },
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('Open menu'));
+    await tester.pumpAndSettle();
+
+    final CustomPaint scrollbarPaint = tester.widget<CustomPaint>(
+      find.descendant(
+        of: find.byType(Scrollbar),
+        matching: find.byWidgetPredicate(
+          (Widget widget) => widget is CustomPaint && widget.foregroundPainter is ScrollbarPainter,
+        ),
+      ),
+    );
+    // The scrollbar ignores the view padding, but the menu children still
+    // observe it.
+    final scrollbarPainter = scrollbarPaint.foregroundPainter! as ScrollbarPainter;
+    expect(scrollbarPainter.padding, EdgeInsets.zero);
+    expect(menuItemPadding, const EdgeInsets.fromLTRB(8.0, 16.0, 32.0, 24.0));
+
+    // The menu scrolls all the way to the bottom and the scrollbar thumb
+    // reaches the end of its track instead of stopping short of it.
+    final ScrollableState scrollable = tester.state<ScrollableState>(
+      find.descendant(of: find.byType(Scrollbar), matching: find.byType(Scrollable)),
+    );
+    expect(scrollable.position.maxScrollExtent, greaterThan(0.0));
+    await tester.drag(find.byType(Scrollbar), const Offset(0.0, -200.0));
+    await tester.pumpAndSettle();
+    expect(scrollable.position.pixels, scrollable.position.maxScrollExtent);
+
+    // The thumb is painted at the very end of the track rather than stopping
+    // short of it by the height of the removed bottom padding.
+    final double scrollbarExtent = tester.getSize(find.byType(Scrollbar)).height;
+    expect(
+      find.byType(Scrollbar),
+      paints..something((Symbol method, List<dynamic> arguments) {
+        // The thumb is a rect on Android and a rounded rect elsewhere. The
+        // track shares the same shape but always starts at the top, so only
+        // the thumb is considered here.
+        final Rect? shape = switch (method) {
+          #drawRect => arguments[0] as Rect,
+          #drawRRect => (arguments[0] as RRect).outerRect,
+          _ => null,
+        };
+        return shape != null &&
+            shape.top > 0.0 &&
+            (shape.bottom - scrollbarExtent).abs() < precisionErrorTolerance;
+      }),
+    );
+  });
+
   testWidgets('Focus is returned to previous focus before invoking onPressed', (
     WidgetTester tester,
   ) async {
@@ -2477,7 +2557,7 @@ void main() {
       await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
       await tester.pump();
       expect(focusedMenu, equals('MenuItemButton(Text("Submenu item 1"))'));
-    });
+    }, tags: 'reduced-web-test-set');
   });
 
   group('Accelerators', () {
@@ -3337,6 +3417,50 @@ void main() {
       expect(exception, isAssertionError);
     });
 
+    // This is a regression test for https://github.com/flutter/flutter/issues/192732.
+    testWidgets('MenuItemButton does not clip leadingIcon', (WidgetTester tester) async {
+      const label = 'This is a very long menu item label that must be clipped';
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: MenuAnchor(
+              menuChildren: <Widget>[
+                SizedBox(
+                  width: 200.0,
+                  child: MenuItemButton(
+                    leadingIcon: const Badge(
+                      label: Text('1'),
+                      child: Icon(Icons.add, key: Key('leading')),
+                    ),
+                    onPressed: () {},
+                    child: const Text(label, maxLines: 1),
+                  ),
+                ),
+              ],
+              builder: (BuildContext context, MenuController controller, Widget? child) {
+                return TextButton(onPressed: controller.open, child: const Text('Open'));
+              },
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('Open'));
+      await tester.pumpAndSettle();
+
+      // Decorations that paint outside the leading icon's bounds stay visible.
+      expect(
+        find.ancestor(of: find.byKey(const Key('leading')), matching: find.byType(ClipRect)),
+        findsNothing,
+      );
+
+      // The label itself is still clipped so that long labels truncate.
+      final Finder labelFinder = find.text(label);
+      expect(find.ancestor(of: labelFinder, matching: find.byType(ClipRect)), findsOneWidget);
+      final RenderParagraph paragraph = tester.renderObject<RenderParagraph>(labelFinder);
+      expect(paragraph.didExceedMaxLines, isTrue);
+    });
+
     testWidgets('MenuItemButton.styleFrom overlayColor overrides default overlay color', (
       WidgetTester tester,
     ) async {
@@ -4068,9 +4192,8 @@ void main() {
         MaterialApp(
           builder: (BuildContext context, Widget? child) {
             return MediaQuery(
-              data: MediaQuery.of(
-                context,
-              ).copyWith(viewInsets: const EdgeInsets.only(bottom: keyboardHeight)),
+              data: MediaQuery.of(context)
+                  .copyWith(viewInsets: const EdgeInsets.only(bottom: keyboardHeight)),
               child: child!,
             );
           },
@@ -4338,6 +4461,51 @@ void main() {
         expect(find.text(allExpected), findsOneWidget);
         expect(find.text(charExpected), findsOneWidget);
       }, variant: TargetPlatformVariant.all());
+
+      testWidgets(
+        'getShortcutLabel formats unlocalized non-Unicode keys',
+        (WidgetTester tester) async {
+          final (String expectedCtrl, String expectedSeparator) = switch (defaultTargetPlatform) {
+            TargetPlatform.android ||
+            TargetPlatform.fuchsia ||
+            TargetPlatform.linux ||
+            TargetPlatform.windows => ('Ctrl', '+'),
+            TargetPlatform.iOS || TargetPlatform.macOS => ('⌃', ' '),
+          };
+
+          await tester.pumpWidget(
+            MaterialApp(
+              home: Material(
+                child: MenuBar(
+                  controller: controller,
+                  children: <Widget>[
+                    SubmenuButton(
+                      menuChildren: <Widget>[
+                        MenuItemButton(
+                          shortcut: const SingleActivator(LogicalKeyboardKey.tab, control: true),
+                          child: Text(TestMenu.subMenu10.label),
+                        ),
+                        MenuItemButton(
+                          shortcut: const SingleActivator(LogicalKeyboardKey.f1, control: true),
+                          child: Text(TestMenu.subMenu11.label),
+                        ),
+                      ],
+                      child: Text(TestMenu.mainMenu0.label),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+          await tester.tap(find.text(TestMenu.mainMenu0.label));
+          await tester.pump();
+
+          expect(find.text('$expectedCtrl${expectedSeparator}Tab'), findsOneWidget);
+          expect(find.text('$expectedCtrl${expectedSeparator}F1'), findsOneWidget);
+        },
+        variant: TargetPlatformVariant.all(),
+        tags: 'reduced-web-test-set',
+      );
     });
 
     group('CheckboxMenuButton', () {
@@ -4508,7 +4676,7 @@ void main() {
         );
 
         semantics.dispose();
-      });
+      }, tags: 'reduced-web-test-set');
 
       testWidgets('MenuItemButton semantics respects label', (WidgetTester tester) async {
         final semantics = SemanticsTester(tester);
@@ -4578,7 +4746,7 @@ void main() {
         );
 
         semantics.dispose();
-      });
+      }, tags: 'reduced-web-test-set');
 
       testWidgets('SubmenuButton expanded/collapsed state', (WidgetTester tester) async {
         final semantics = SemanticsTester(tester);
@@ -4742,7 +4910,7 @@ void main() {
         );
 
         semantics.dispose();
-      });
+      }, tags: 'reduced-web-test-set');
 
       testWidgets('Animated SubmenuButton expanded/collapsed state', (WidgetTester tester) async {
         final semantics = SemanticsTester(tester);
@@ -5486,7 +5654,7 @@ void main() {
         RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
         kIsWeb ? SystemMouseCursors.click : SystemMouseCursors.basic,
       );
-    });
+    }, tags: 'reduced-web-test-set');
 
     testWidgets('MenuItemButton has expected default mouse cursor on hover', (
       WidgetTester tester,
@@ -5530,7 +5698,7 @@ void main() {
         RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
         kIsWeb ? SystemMouseCursors.click : SystemMouseCursors.basic,
       );
-    });
+    }, tags: 'reduced-web-test-set');
 
     testWidgets('CheckboxMenuButton has expected default mouse cursor on hover', (
       WidgetTester tester,
@@ -5566,7 +5734,7 @@ void main() {
         RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
         kIsWeb ? SystemMouseCursors.click : SystemMouseCursors.basic,
       );
-    });
+    }, tags: 'reduced-web-test-set');
 
     testWidgets('RadioMenuButton has expected default mouse cursor on hover', (
       WidgetTester tester,
@@ -5603,7 +5771,7 @@ void main() {
         RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
         kIsWeb ? SystemMouseCursors.click : SystemMouseCursors.basic,
       );
-    });
+    }, tags: 'reduced-web-test-set');
 
     testWidgets('MenuItemButton has expected mouse cursor when explicitly configured', (
       WidgetTester tester,
@@ -7034,6 +7202,137 @@ void main() {
 
     handle.dispose();
   });
+
+  // Regression test for https://github.com/flutter/flutter/issues/195059.
+  testWidgets('Escape closes MenuAnchor opened by tap without childFocusNode', (
+    WidgetTester tester,
+  ) async {
+    final outsideFocusNode = FocusNode(debugLabel: 'Outside Focus');
+    addTearDown(outsideFocusNode.dispose);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Column(
+            children: <Widget>[
+              TextButton(
+                focusNode: outsideFocusNode,
+                autofocus: true,
+                onPressed: () {},
+                child: const Text('Outside'),
+              ),
+              MenuAnchor(
+                menuChildren: <Widget>[
+                  MenuItemButton(onPressed: () {}, child: const Text('Item 1')),
+                  MenuItemButton(onPressed: () {}, child: const Text('Item 2')),
+                ],
+                builder: (BuildContext context, MenuController controller, Widget? child) {
+                  return TextButton(
+                    onPressed: () {
+                      if (controller.isOpen) {
+                        controller.close();
+                      } else {
+                        controller.open();
+                      }
+                    },
+                    child: const Text('Open menu'),
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    await tester.pump();
+    expect(outsideFocusNode.hasPrimaryFocus, isTrue);
+
+    await tester.tap(find.text('Open menu'));
+    await tester.pumpAndSettle();
+    expect(find.text('Item 1'), findsOneWidget);
+
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pumpAndSettle();
+    expect(find.text('Item 1'), findsNothing);
+    expect(outsideFocusNode.hasPrimaryFocus, isTrue);
+
+    // Reopen by tap, traverse with arrow key, and close with Escape.
+    await tester.tap(find.text('Open menu'));
+    await tester.pumpAndSettle();
+    expect(find.text('Item 1'), findsOneWidget);
+
+    listenForFocusChanges();
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    await tester.pump();
+    expect(focusedMenu, equals('MenuItemButton(Text("Item 1"))'));
+
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pumpAndSettle();
+    expect(find.text('Item 1'), findsNothing);
+    expect(outsideFocusNode.hasPrimaryFocus, isTrue);
+  });
+
+  // Regression test for https://github.com/flutter/flutter/issues/195059.
+  testWidgets(
+    'Escape closes MenuAnchor opened by tap inside a Dialog before dismissing the Dialog',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Builder(
+              builder: (BuildContext context) {
+                return TextButton(
+                  onPressed: () {
+                    showDialog<void>(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: const Text('Dialog Title'),
+                          content: MenuAnchor(
+                            menuChildren: <Widget>[
+                              MenuItemButton(onPressed: () {}, child: const Text('Menu Item 1')),
+                            ],
+                            builder:
+                                (BuildContext context, MenuController controller, Widget? child) {
+                                  return TextButton(
+                                    onPressed: controller.open,
+                                    child: const Text('Open menu'),
+                                  );
+                                },
+                          ),
+                        );
+                      },
+                    );
+                  },
+                  child: const Text('Show Dialog'),
+                );
+              },
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('Show Dialog'));
+      await tester.pumpAndSettle();
+      expect(find.text('Dialog Title'), findsOneWidget);
+
+      await tester.tap(find.text('Open menu'));
+      await tester.pumpAndSettle();
+      expect(find.text('Menu Item 1'), findsOneWidget);
+
+      // First Escape closes only the MenuAnchor menu, keeping the Dialog open.
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.pumpAndSettle();
+      expect(find.text('Menu Item 1'), findsNothing);
+      expect(find.text('Dialog Title'), findsOneWidget);
+
+      // Second Escape dismisses the Dialog.
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.pumpAndSettle();
+      expect(find.text('Dialog Title'), findsNothing);
+    },
+  );
 }
 
 List<Widget> createTestMenus({

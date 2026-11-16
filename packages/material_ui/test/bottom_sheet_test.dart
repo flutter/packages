@@ -765,6 +765,43 @@ void main() {
     expect(find.text('BottomSheet'), findsNothing);
   });
 
+  testWidgets('Standard BottomSheet closes when its extent is nearly its minimum', (
+    WidgetTester tester,
+  ) async {
+    final scaffoldKey = GlobalKey<ScaffoldState>();
+    late BuildContext notificationContext;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          key: scaffoldKey,
+          body: const Center(child: Text('body')),
+        ),
+      ),
+    );
+
+    scaffoldKey.currentState!.showBottomSheet((BuildContext context) {
+      return Builder(
+        builder: (BuildContext context) {
+          notificationContext = context;
+          return const Text('BottomSheet');
+        },
+      );
+    });
+    await tester.pumpAndSettle();
+
+    DraggableScrollableNotification(
+      extent: 0.20000000001,
+      minExtent: 0.2,
+      maxExtent: 1.0,
+      initialExtent: 0.5,
+      context: notificationContext,
+    ).dispatch(notificationContext);
+    await tester.pumpAndSettle();
+
+    expect(find.text('BottomSheet'), findsNothing);
+  });
+
   testWidgets('modal BottomSheet has no top MediaQuery', (WidgetTester tester) async {
     late BuildContext outerContext;
     late BuildContext innerContext;
@@ -1076,6 +1113,46 @@ void main() {
       find.descendant(of: find.byType(BottomSheet), matching: find.byType(Material)),
     );
     expect(material.shadowColor, Colors.transparent);
+  });
+
+  testWidgets('Modal BottomSheet closes when its extent is nearly its minimum', (
+    WidgetTester tester,
+  ) async {
+    final scaffoldKey = GlobalKey<ScaffoldState>();
+    late BuildContext notificationContext;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          key: scaffoldKey,
+          body: const Center(child: Text('body')),
+        ),
+      ),
+    );
+
+    showModalBottomSheet<void>(
+      context: scaffoldKey.currentContext!,
+      builder: (BuildContext context) {
+        return Builder(
+          builder: (BuildContext context) {
+            notificationContext = context;
+            return const Text('BottomSheet');
+          },
+        );
+      },
+    );
+    await tester.pumpAndSettle();
+
+    DraggableScrollableNotification(
+      extent: 0.20000000001,
+      minExtent: 0.2,
+      maxExtent: 1.0,
+      initialExtent: 0.5,
+      context: notificationContext,
+    ).dispatch(notificationContext);
+    await tester.pumpAndSettle();
+
+    expect(find.text('BottomSheet'), findsNothing);
   });
 
   testWidgets('Material2 - Modal BottomSheet with ScrollController has semantics', (
@@ -1846,6 +1923,68 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  // Regression test for https://github.com/flutter/flutter/issues/193944
+  testWidgets('Modal bottom sheet disposes the CurvedAnimations it creates while dragging', (
+    WidgetTester tester,
+  ) async {
+    final created = <CurvedAnimation>[];
+    final disposed = <CurvedAnimation>{};
+    void listener(ObjectEvent event) {
+      final Object object = event.object;
+      if (object is CurvedAnimation) {
+        if (event is ObjectCreated) {
+          created.add(object);
+        } else if (event is ObjectDisposed) {
+          disposed.add(object);
+        }
+      }
+    }
+
+    FlutterMemoryAllocations.instance.addListener(listener);
+    addTearDown(() => FlutterMemoryAllocations.instance.removeListener(listener));
+
+    late BuildContext savedContext;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Builder(
+          builder: (BuildContext context) {
+            savedContext = context;
+            return const Center(child: Text('body'));
+          },
+        ),
+      ),
+    );
+
+    unawaited(
+      showModalBottomSheet<void>(
+        context: savedContext,
+        builder: (BuildContext context) => const SizedBox(height: 300, child: Text('BottomSheet')),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    // Each non-closing drag rebinds the sheet animation to a new CurvedAnimation
+    // in handleDragEnd; these must not accumulate without being disposed.
+    for (var i = 0; i < 3; i++) {
+      await tester.drag(find.text('BottomSheet'), const Offset(0.0, 40.0));
+      await tester.pumpAndSettle();
+    }
+
+    // Dismiss the sheet and tear down the tree so all state is disposed.
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pumpAndSettle();
+
+    // Every CurvedAnimation created by the sheet must have been disposed; before
+    // the fix the drag-end animations leaked their listeners on the route
+    // animation.
+    expect(created, isNotEmpty);
+    expect(
+      created.where((CurvedAnimation animation) => !disposed.contains(animation)),
+      isEmpty,
+      reason: 'A CurvedAnimation created by the modal bottom sheet was not disposed.',
+    );
+  });
+
   // Regression test for https://github.com/flutter/flutter/issues/99627
   testWidgets('The old route entry should be removed when a new sheet popup', (
     WidgetTester tester,
@@ -2247,9 +2386,8 @@ void main() {
                   child: ElevatedButton(
                     child: const Text('Press me'),
                     onPressed: () {
-                      Scaffold.of(
-                        context,
-                      ).showBottomSheet((BuildContext context) => const Text('BottomSheet'));
+                      Scaffold.of(context)
+                          .showBottomSheet((BuildContext context) => const Text('BottomSheet'));
                     },
                   ),
                 );
@@ -2373,9 +2511,8 @@ void main() {
                   child: ElevatedButton(
                     child: const Text('Press me'),
                     onPressed: () {
-                      Scaffold.of(
-                        context,
-                      ).showBottomSheet((BuildContext context) => const Text('BottomSheet'));
+                      Scaffold.of(context)
+                          .showBottomSheet((BuildContext context) => const Text('BottomSheet'));
                     },
                   ),
                 );

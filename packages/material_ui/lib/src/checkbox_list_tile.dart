@@ -63,22 +63,7 @@ enum _CheckboxType { material, adaptive }
 ///
 /// <callout-box>
 ///
-// TODO(framework): Add unit tests to this code snippet.
-// https://github.com/flutter/flutter/issues/188530
-///
-/// ```dart
-/// ColoredBox(
-///   color: Colors.green,
-///   child: Material(
-///     child: CheckboxListTile(
-///       tileColor: Colors.red,
-///       title: const Text('CheckboxListTile with red background'),
-///       value: true,
-///       onChanged:(bool? value) { },
-///     ),
-///   ),
-/// )
-/// ```
+/// {@example /example/lib/checkbox_list_tile/checkbox_list_tile.snippet.0.dart#body indent=strip}
 ///
 /// </callout-box>
 ///
@@ -310,24 +295,11 @@ class CheckboxListTile extends StatelessWidget {
   ///
   /// <callout-box>
   ///
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
-  ///
   /// The callback provided to [onChanged] should update the state of the parent
   /// [StatefulWidget] using the [State.setState] method, so that the parent
   /// gets rebuilt; for example:
   ///
-  /// ```dart
-  /// CheckboxListTile(
-  ///   value: _throwShotAway,
-  ///   onChanged: (bool? newValue) {
-  ///     setState(() {
-  ///       _throwShotAway = newValue;
-  ///     });
-  ///   },
-  ///   title: const Text('Throw away your shot'),
-  /// )
-  /// ```
+  /// {@example /example/lib/checkbox_list_tile/checkbox_list_tile.snippet.1.dart#body indent=strip}
   ///
   /// </callout-box>
   final ValueChanged<bool?>? onChanged;

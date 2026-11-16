@@ -3455,6 +3455,8 @@ protocol MapsCallbackApiProtocol {
   @MainActor func didTapInfoWindowOfMarker(withIdentifier markerIdArg: String) async throws
   /// Called when a circle is tapped.
   @MainActor func didTapCircle(withIdentifier circleIdArg: String) async throws
+  /// Called when a point of interest is tapped.
+  @MainActor func didTapPointOfInterest(withPlaceIdentifier placeIdArg: String) async throws
   /// Called when a marker cluster is tapped.
   @MainActor func didTapCluster(_ clusterArg: PlatformCluster) async throws
   /// Called when a polygon is tapped.
@@ -3723,6 +3725,29 @@ class MapsCallbackApi: MapsCallbackApiProtocol {
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([circleIdArg] as [Any?]) { response in
+        guard let listResponse = response as? [Any?] else {
+          continuation.resume(throwing: createConnectionError(withChannelName: channelName))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          continuation.resume(throwing: PigeonError(code: code, message: message, details: details))
+        } else {
+          continuation.resume()
+        }
+      }
+    }
+  }
+  /// Called when a point of interest is tapped.
+  @MainActor func didTapPointOfInterest(withPlaceIdentifier placeIdArg: String) async throws {
+    return try await withCheckedThrowingContinuation { continuation in
+      let channelName: String =
+        "dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onPointOfInterestTap\(messageChannelSuffix)"
+      let channel = FlutterBasicMessageChannel(
+        name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+      channel.sendMessage([placeIdArg] as [Any?]) { response in
         guard let listResponse = response as? [Any?] else {
           continuation.resume(throwing: createConnectionError(withChannelName: channelName))
           return

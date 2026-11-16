@@ -12,10 +12,7 @@ Enables Google Sign-In in Flutter apps.
   s.license          = { :type => 'BSD', :file => '../LICENSE' }
   s.author           = { 'Flutter Team' => 'flutter-dev@googlegroups.com' }
   s.source           = { :http => 'https://github.com/flutter/packages/tree/main/packages/google_sign_in/google_sign_in_ios' }
-  # Combine google_sign_in_ios and google_sign_in_ios_objc sources into a single
-  # pod, unlike SwiftPM, where separate Swift and Objective-C targets are required.
-  s.source_files = 'google_sign_in_ios/Sources/google_sign_in_ios*/**/*.{h,m,swift}'
-  s.public_header_files = 'google_sign_in_ios/Sources/google_sign_in_ios_objc/include/**/*.h'
+  s.source_files = 'google_sign_in_ios/Sources/google_sign_in_ios/**/*.swift'
   s.swift_version = '5.0'
   s.xcconfig = {
     'LIBRARY_SEARCH_PATHS' => '$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)/ $(SDKROOT)/usr/lib/swift',
@@ -25,12 +22,12 @@ Enables Google Sign-In in Flutter apps.
   # GTMSessionFetcher is a GoogleSignIn transitive dependency, added here as a
   # direct dependency to ensure a version which defines modules.
   s.dependency 'GTMSessionFetcher', '>= 3.4.0'
-  s.dependency 'GoogleSignIn', '~> 9.0'
+  s.dependency 'GoogleSignIn', '>= 9.0', '< 11.0'
   s.static_framework = true
   s.ios.dependency 'Flutter'
   s.osx.dependency 'FlutterMacOS'
-  s.ios.deployment_target = '13.0'
-  s.osx.deployment_target = '10.15'
+  s.ios.deployment_target = '15.0'
+  s.osx.deployment_target = '12.0'
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
 
   s.resource_bundles = {'google_sign_in_ios_privacy' => ['google_sign_in_ios/Sources/google_sign_in_ios/Resources/PrivacyInfo.xcprivacy']}
