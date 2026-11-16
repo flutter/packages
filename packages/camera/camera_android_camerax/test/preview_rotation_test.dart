@@ -119,7 +119,11 @@ void main() {
         ({int? aspectRatio, int? targetVideoEncodingBitRate, QualitySelector? qualitySelector}) =>
             MockRecorder();
     PigeonOverrides.videoCapture_withOutput =
-        ({required VideoOutput videoOutput, CameraIntegerRange? targetFpsRange, DynamicRangeType? dynamicRange}) {
+        ({
+          required VideoOutput videoOutput,
+          CameraIntegerRange? targetFpsRange,
+          DynamicRangeType? dynamicRange,
+        }) {
           return MockVideoCapture();
         };
     PigeonOverrides.imageAnalysis_new =

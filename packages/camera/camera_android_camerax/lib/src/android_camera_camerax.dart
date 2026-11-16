@@ -59,8 +59,8 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// Returns the `InstanceManager` identifier of a [PreviewView], which the
   /// platform view uses to find the native view.
   @visibleForTesting
-  int Function(PreviewView view) previewViewIdentifier =
-      (PreviewView view) => PigeonInstanceManager.instance.getIdentifier(view)!;
+  int Function(PreviewView view) previewViewIdentifier = (PreviewView view) =>
+      PigeonInstanceManager.instance.getIdentifier(view)!;
 
   /// The [VideoCapture] instance that can be instantiated and configured to
   /// handle video recording

@@ -98,6 +98,7 @@ Here is a list of all permission error codes that can be thrown:
 To show an HDR preview, check that the camera supports it and request it when creating the
 controller:
 
+<?code-excerpt "readme_hdr_preview.dart (HdrPreview)"?>
 ```dart
 final Iterable<PreviewDynamicRange> ranges = await availablePreviewDynamicRanges(description);
 final controller = CameraController(

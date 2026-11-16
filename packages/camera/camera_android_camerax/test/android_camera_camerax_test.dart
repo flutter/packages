@@ -153,7 +153,11 @@ void main() {
       DynamicRangeType? dynamicRange,
     })?
     newPreview,
-    VideoCapture Function({required VideoOutput videoOutput, CameraIntegerRange? targetFpsRange, DynamicRangeType? dynamicRange})?
+    VideoCapture Function({
+      required VideoOutput videoOutput,
+      CameraIntegerRange? targetFpsRange,
+      DynamicRangeType? dynamicRange,
+    })?
     withOutputVideoCapture,
     ImageAnalysis Function({
       ResolutionSelector? resolutionSelector,
@@ -222,7 +226,11 @@ void main() {
         };
     PigeonOverrides.videoCapture_withOutput =
         withOutputVideoCapture ??
-        ({required VideoOutput videoOutput, CameraIntegerRange? targetFpsRange, DynamicRangeType? dynamicRange}) {
+        ({
+          required VideoOutput videoOutput,
+          CameraIntegerRange? targetFpsRange,
+          DynamicRangeType? dynamicRange,
+        }) {
           return MockVideoCapture();
         };
     PigeonOverrides.imageAnalysis_new =
@@ -580,7 +588,11 @@ void main() {
             return mockRecorder;
           };
       PigeonOverrides.videoCapture_withOutput =
-          ({required VideoOutput videoOutput, CameraIntegerRange? targetFpsRange, DynamicRangeType? dynamicRange}) {
+          ({
+            required VideoOutput videoOutput,
+            CameraIntegerRange? targetFpsRange,
+            DynamicRangeType? dynamicRange,
+          }) {
             return mockVideoCapture;
           };
       PigeonOverrides.imageAnalysis_new =
@@ -1118,7 +1130,11 @@ void main() {
             return mockRecorder;
           };
       PigeonOverrides.videoCapture_withOutput =
-          ({required VideoOutput videoOutput, CameraIntegerRange? targetFpsRange, DynamicRangeType? dynamicRange}) {
+          ({
+            required VideoOutput videoOutput,
+            CameraIntegerRange? targetFpsRange,
+            DynamicRangeType? dynamicRange,
+          }) {
             return mockVideoCapture;
           };
       PigeonOverrides.imageAnalysis_new =
@@ -1409,7 +1425,11 @@ void main() {
             return mockPreview;
           },
       withOutputVideoCapture:
-          ({CameraIntegerRange? targetFpsRange, required VideoOutput videoOutput, DynamicRangeType? dynamicRange}) {
+          ({
+            CameraIntegerRange? targetFpsRange,
+            required VideoOutput videoOutput,
+            DynamicRangeType? dynamicRange,
+          }) {
             targetVideoCaptureFpsRange = targetFpsRange;
             return MockVideoCapture();
           },
@@ -1533,7 +1553,11 @@ void main() {
           return mockRecorder;
         };
     PigeonOverrides.videoCapture_withOutput =
-        ({required VideoOutput videoOutput, CameraIntegerRange? targetFpsRange, DynamicRangeType? dynamicRange}) {
+        ({
+          required VideoOutput videoOutput,
+          CameraIntegerRange? targetFpsRange,
+          DynamicRangeType? dynamicRange,
+        }) {
           return mockVideoCapture;
         };
     PigeonOverrides.imageAnalysis_new =
@@ -1883,8 +1907,11 @@ void main() {
         ({int? aspectRatio, int? targetVideoEncodingBitRate, QualitySelector? qualitySelector}) =>
             MockRecorder();
     PigeonOverrides.videoCapture_withOutput =
-        ({required VideoOutput videoOutput, CameraIntegerRange? targetFpsRange, DynamicRangeType? dynamicRange}) =>
-            MockVideoCapture();
+        ({
+          required VideoOutput videoOutput,
+          CameraIntegerRange? targetFpsRange,
+          DynamicRangeType? dynamicRange,
+        }) => MockVideoCapture();
     PigeonOverrides.imageAnalysis_new =
         ({
           int? targetRotation,
@@ -3209,7 +3236,11 @@ void main() {
             return mockRecorder;
           };
       PigeonOverrides.videoCapture_withOutput =
-          ({required VideoOutput videoOutput, CameraIntegerRange? targetFpsRange, DynamicRangeType? dynamicRange}) {
+          ({
+            required VideoOutput videoOutput,
+            CameraIntegerRange? targetFpsRange,
+            DynamicRangeType? dynamicRange,
+          }) {
             return mockVideoCapture;
           };
       PigeonOverrides.imageAnalysis_new =
@@ -3423,7 +3454,11 @@ void main() {
             return mockRecorder;
           };
       PigeonOverrides.videoCapture_withOutput =
-          ({required VideoOutput videoOutput, CameraIntegerRange? targetFpsRange, DynamicRangeType? dynamicRange}) {
+          ({
+            required VideoOutput videoOutput,
+            CameraIntegerRange? targetFpsRange,
+            DynamicRangeType? dynamicRange,
+          }) {
             return mockVideoCapture;
           };
       PigeonOverrides.imageAnalysis_new =
@@ -6428,18 +6463,20 @@ void main() {
       return camera;
     }
 
-    test('getSupportedPreviewDynamicRanges includes hlg10 on Android 14+ when the camera has it',
-        () async {
-      final AndroidCameraCameraX camera = await setUpCameraWithBackCamera(
-        sdkVersion: 34,
-        cameraRanges: <DynamicRangeType>[DynamicRangeType.hlg10],
-      );
+    test(
+      'getSupportedPreviewDynamicRanges includes hlg10 on Android 14+ when the camera has it',
+      () async {
+        final AndroidCameraCameraX camera = await setUpCameraWithBackCamera(
+          sdkVersion: 34,
+          cameraRanges: <DynamicRangeType>[DynamicRangeType.hlg10],
+        );
 
-      expect(await camera.getSupportedPreviewDynamicRanges(backCamera), <PreviewDynamicRange>[
-        PreviewDynamicRange.sdr,
-        PreviewDynamicRange.hlg10,
-      ]);
-    });
+        expect(await camera.getSupportedPreviewDynamicRanges(backCamera), <PreviewDynamicRange>[
+          PreviewDynamicRange.sdr,
+          PreviewDynamicRange.hlg10,
+        ]);
+      },
+    );
 
     test('getSupportedPreviewDynamicRanges is sdr only below Android 14', () async {
       final AndroidCameraCameraX camera = await setUpCameraWithBackCamera(
@@ -6488,7 +6525,9 @@ void main() {
         mockProcessCameraProvider = MockProcessCameraProvider();
         final mockCamera = MockCamera();
         final mockCameraInfo = MockCameraInfo();
-        when(mockProcessCameraProvider.bindToLifecycle(any, any)).thenAnswer((_) async => mockCamera);
+        when(
+          mockProcessCameraProvider.bindToLifecycle(any, any),
+        ).thenAnswer((_) async => mockCamera);
         when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
         when(mockCameraInfo.getCameraState()).thenAnswer((_) async => MockLiveCameraState());
         previewRanges = <DynamicRangeType?>[];
@@ -6539,9 +6578,9 @@ void main() {
           return capabilities;
         };
         mockPreviewView = MockPreviewView();
-        when(mockPreviewView.getSurfaceProvider()).thenAnswer(
-          (_) async => PreviewSurfaceProvider.pigeon_detached(),
-        );
+        when(
+          mockPreviewView.getSurfaceProvider(),
+        ).thenAnswer((_) async => PreviewSurfaceProvider.pigeon_detached());
         PigeonOverrides.previewView_new = () => mockPreviewView;
         camera.previewViewIdentifier = (PreviewView view) => 42;
 

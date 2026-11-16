@@ -386,5 +386,4 @@ abstract class CameraPlatform extends PlatformInterface {
   ///
   /// The default implementation returns [PreviewDynamicRange.sdr].
   Future<PreviewDynamicRange> getPreviewDynamicRange(int cameraId) async => PreviewDynamicRange.sdr;
-
 }
