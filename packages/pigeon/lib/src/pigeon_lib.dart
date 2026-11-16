@@ -5,14 +5,9 @@
 // ignore_for_file: avoid_print
 
 import 'dart:io';
-import 'dart:mirrors';
 
-import 'package:analyzer/dart/analysis/analysis_context.dart' show AnalysisContext;
-import 'package:analyzer/dart/analysis/analysis_context_collection.dart'
-    show AnalysisContextCollection;
-import 'package:analyzer/dart/analysis/results.dart' show ParsedUnitResult;
-import 'package:analyzer/dart/analysis/session.dart' show AnalysisSession;
-import 'package:analyzer/dart/ast/ast.dart' as dart_ast;
+import 'package:analyzer/dart/analysis/results.dart' show ParseStringResult;
+import 'package:analyzer/dart/analysis/utilities.dart' show parseString;
 import 'package:analyzer/diagnostic/diagnostic.dart' show Diagnostic;
 import 'package:args/args.dart';
 import 'package:cli_util/cli_util.dart' as cli_util;
@@ -269,9 +264,10 @@ class PigeonOptions {
     this.debugGenerators,
     this.basePath,
     this.fileSpecificClassNameComponent,
-    String? dartPackageName,
+    this._dartPackageName,
     this.ignoreLints = true,
-  }) : _dartPackageName = dartPackageName;
+    this.nativeInteropTransport,
+  });
 
   /// Path to the file which will be processed.
   final String? input;
@@ -373,6 +369,15 @@ class PigeonOptions {
   /// A String to augment class names to avoid cross-file collisions.
   final String? fileSpecificClassNameComponent;
 
+  /// How native interop moves values between Dart and the host platform.
+  ///
+  /// Only applies to files that use `KotlinOptions.useJni` or
+  /// `SwiftOptions.useFfi`. Defaults to [NativeInteropTransport.hybrid];
+  /// [NativeInteropTransport.objects] is retained for testing, benchmarking,
+  /// and future lazy-access support.
+  @visibleForTesting
+  final NativeInteropTransport? nativeInteropTransport;
+
   /// Creates a [PigeonOptions] from a Map representation where:
   /// `x = PigeonOptions.fromMap(x.toMap())`.
   static PigeonOptions fromMap(Map<String, Object> map) {
@@ -420,6 +425,9 @@ class PigeonOptions {
       basePath: map['basePath'] as String?,
       fileSpecificClassNameComponent: map['fileSpecificClassNameComponent'] as String?,
       dartPackageName: map['dartPackageName'] as String?,
+      nativeInteropTransport: NativeInteropTransport.fromName(
+        map['nativeInteropTransport'] as String?,
+      ),
     );
   }
 
@@ -455,6 +463,7 @@ class PigeonOptions {
       if (fileSpecificClassNameComponent != null)
         'fileSpecificClassNameComponent': fileSpecificClassNameComponent!,
       if (_dartPackageName != null) 'dartPackageName': _dartPackageName,
+      if (nativeInteropTransport != null) 'nativeInteropTransport': nativeInteropTransport!.name,
     };
     return result;
   }
@@ -486,37 +495,33 @@ class Pigeon {
     return Pigeon();
   }
 
-  /// Reads the file located at [path] and generates [ParseResults] by parsing
-  /// it. [types] optionally filters out what datatypes are actually parsed.
-  /// [sdkPath] for specifying the Dart SDK path for
-  /// [AnalysisContextCollection].
+  /// Reads the file located at [inputPath] and generates [ParseResults] by
+  /// parsing it.
+  ///
+  /// [sdkPath] is retained for backwards compatibility and is no longer needed
+  /// for syntactic parsing.
   ParseResults parseFile(String inputPath, {String? sdkPath}) {
-    final includedPaths = <String>[path.absolute(path.normalize(inputPath))];
-    final collection = AnalysisContextCollection(
-      includedPaths: includedPaths,
-      sdkPath: sdkPath ?? cli_util.sdkPath,
+    final String source = File(inputPath).readAsStringSync();
+    final String normalizedPath = path.normalize(path.absolute(inputPath));
+    final ParseStringResult result = parseString(
+      content: source,
+      path: normalizedPath,
+      throwIfDiagnostics: false,
     );
 
     final compilationErrors = <Error>[];
-    final rootBuilder = RootBuilder(File(inputPath).readAsStringSync());
-    for (final AnalysisContext context in collection.contexts) {
-      for (final String path in context.contextRoot.analyzedFiles()) {
-        final AnalysisSession session = context.currentSession;
-        final result = session.getParsedUnit(path) as ParsedUnitResult;
-        if (result.diagnostics.isEmpty) {
-          final dart_ast.CompilationUnit unit = result.unit;
-          unit.accept(rootBuilder);
-        } else {
-          for (final Diagnostic diagnostic in result.diagnostics) {
-            compilationErrors.add(
-              Error(
-                message: diagnostic.message,
-                filename: diagnostic.source.fullName,
-                lineNumber: calculateLineNumber(diagnostic.source.contents.data, diagnostic.offset),
-              ),
-            );
-          }
-        }
+    final rootBuilder = RootBuilder(source);
+    if (result.errors.isEmpty) {
+      result.unit.accept(rootBuilder);
+    } else {
+      for (final Diagnostic diagnostic in result.errors) {
+        compilationErrors.add(
+          Error(
+            message: diagnostic.message,
+            filename: diagnostic.source.fullName,
+            lineNumber: calculateLineNumber(source, diagnostic.offset),
+          ),
+        );
       }
     }
 
@@ -696,6 +701,12 @@ ${_argParser.usage}''';
       help: 'A String to augment class names to avoid cross file collisions.',
     )
     ..addOption('package_name', help: 'The package that generated code will be in.')
+    ..addOption(
+      'native_interop_transport',
+      help: 'How native interop (JNI and FFI) moves values between Dart and the host platform.',
+      allowed: NativeInteropTransport.values.map((NativeInteropTransport t) => t.name),
+      hide: true,
+    )
     ..addFlag(
       'ignore_lints',
       help: 'Ignore all lint violations in generated Dart code.',
@@ -778,33 +789,54 @@ ${_argParser.usage}''';
       fileSpecificClassNameComponent: results['file_specific_class_name_component'] as String?,
       dartPackageName: results['package_name'] as String?,
       ignoreLints: results.flag('ignore_lints'),
+      nativeInteropTransport: NativeInteropTransport.fromName(
+        results['native_interop_transport'] as String?,
+      ),
     );
     return opts;
   }
 
-  /// Crawls through the reflection system looking for a configurePigeon method and
-  /// executing it.
-  static void _executeConfigurePigeon(PigeonOptions options) {
-    for (final LibraryMirror library in currentMirrorSystem().libraries.values) {
-      for (final DeclarationMirror declaration in library.declarations.values) {
-        if (declaration is MethodMirror &&
-            MirrorSystem.getName(declaration.simpleName) == 'configurePigeon') {
-          if (declaration.parameters.length == 1 &&
-              declaration.parameters[0].type == reflectClass(PigeonOptions)) {
-            library.invoke(declaration.simpleName, <dynamic>[options]);
-          } else {
-            print("warning: invalid 'configurePigeon' method defined.");
-          }
-        }
+  /// Resolves the `dart` executable to use for running FFIgen/JNIgen scripts.
+  ///
+  /// Prefers an explicit [sdkPath], then validates the SDK path discovered by
+  /// `package:cli_util` (checking that `bin/dart` exists so `<0.6.0` versions
+  /// of `cli_util` do not return an invalid parent directory in AOT mode), then
+  /// falls back to [Platform.resolvedExecutable] when running under `dart`,
+  /// and finally `'dart'` on `PATH`.
+  @visibleForTesting
+  static String resolveDartExecutable({
+    String? sdkPath,
+    String? Function()? discoverSdkPath,
+    String? resolvedExecutable,
+    bool? isWindows,
+    bool Function(String path)? fileExists,
+  }) {
+    final bool windows = isWindows ?? Platform.isWindows;
+    final dartName = windows ? 'dart.exe' : 'dart';
+    final bool Function(String) exists = fileExists ?? (String p) => File(p).existsSync();
+
+    if (sdkPath != null && sdkPath.isNotEmpty) {
+      return path.join(path.normalize(path.absolute(sdkPath)), 'bin', dartName);
+    }
+
+    final String? discoveredSdk = (discoverSdkPath ?? () => cli_util.sdkPath)();
+    if (discoveredSdk != null && discoveredSdk.isNotEmpty) {
+      final String candidate = path.join(
+        path.normalize(path.absolute(discoveredSdk)),
+        'bin',
+        dartName,
+      );
+      if (exists(candidate)) {
+        return candidate;
       }
     }
-  }
 
-  static String _resolveDartExecutable(String? sdkPath) {
-    if (sdkPath != null) {
-      return path.join(sdkPath, 'bin', Platform.isWindows ? 'dart.exe' : 'dart');
+    final String executable = resolvedExecutable ?? Platform.resolvedExecutable;
+    if (path.basename(executable).toLowerCase() == dartName) {
+      return executable;
     }
-    return Platform.resolvedExecutable;
+
+    return 'dart';
   }
 
   /// The 'main' entrypoint used by the command-line tool. [args] are the
@@ -846,7 +878,6 @@ ${_argParser.usage}''';
           const ObjcGeneratorAdapter(),
           const AstGeneratorAdapter(),
         ];
-    _executeConfigurePigeon(options);
 
     if (options.input == null) {
       print(usage);
@@ -900,7 +931,7 @@ ${_argParser.usage}''';
     final bool useFfi = internalOptions.swiftOptions?.useFfi ?? false;
     final bool useJni = internalOptions.kotlinOptions?.useJni ?? false;
 
-    final String dartExecutable = _resolveDartExecutable(cli_util.sdkPath);
+    late final String dartExecutable = resolveDartExecutable(sdkPath: sdkPath);
     for (final adapter in safeGeneratorAdapters) {
       for (final FileType fileType in adapter.fileTypeList) {
         final IOSink? sink = adapter.shouldGenerate(internalOptions, fileType);
@@ -920,9 +951,10 @@ ${_argParser.usage}''';
             internalOptions.swiftOptions?.configDirectory ?? internalOptions.configDirectory;
         final String fullConfigDir =
             (internalOptions.basePath != null &&
+                internalOptions.basePath!.isNotEmpty &&
                 targetConfigDir != null &&
                 targetConfigDir.isNotEmpty &&
-                !targetConfigDir.startsWith(internalOptions.basePath!))
+                !isWithinOrEquals(internalOptions.basePath!, targetConfigDir))
             ? path.join(internalOptions.basePath!, targetConfigDir)
             : (targetConfigDir ?? internalOptions.basePath ?? '');
         final int exitCode = await _runFfigen(fullConfigDir, internalOptions.input, dartExecutable);
@@ -947,9 +979,10 @@ ${_argParser.usage}''';
             internalOptions.kotlinOptions?.configDirectory ?? internalOptions.configDirectory;
         final String fullConfigDir =
             (internalOptions.basePath != null &&
+                internalOptions.basePath!.isNotEmpty &&
                 targetConfigDir != null &&
                 targetConfigDir.isNotEmpty &&
-                !targetConfigDir.startsWith(internalOptions.basePath!))
+                !isWithinOrEquals(internalOptions.basePath!, targetConfigDir))
             ? path.join(internalOptions.basePath!, targetConfigDir)
             : (targetConfigDir ?? internalOptions.basePath ?? '');
         final bool success = await _runJnigen(

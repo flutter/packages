@@ -182,8 +182,10 @@ enum class EventEnum(val raw: Int) {
   FOUR_HUNDRED_TWENTY_TWO(4);
 
   companion object {
+    private val pigeonValues = values()
+
     fun ofRaw(raw: Int): EventEnum? {
-      return values().firstOrNull { it.raw == raw }
+      return pigeonValues.getOrNull(raw)
     }
   }
 }
@@ -192,8 +194,10 @@ enum class AnotherEventEnum(val raw: Int) {
   JUST_IN_CASE(0);
 
   companion object {
+    private val pigeonValues = values()
+
     fun ofRaw(raw: Int): AnotherEventEnum? {
-      return values().firstOrNull { it.raw == raw }
+      return pigeonValues.getOrNull(raw)
     }
   }
 }

@@ -395,8 +395,8 @@ class SvgNetworkLoader extends SvgLoader<Uint8List> {
     this.headers,
     super.theme,
     super.colorMapper,
-    http.Client? httpClient,
-  }) : _httpClient = httpClient;
+    this._httpClient,
+  });
 
   /// The [Uri] encoded resource address.
   final String url;

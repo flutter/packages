@@ -1,8 +1,50 @@
+## 30.1.0
+
+* Adds `pigeon` to `executables` in `pubspec.yaml` and updates parsing and
+  `dart` executable resolution so `pigeon` can run as a standalone AOT-compiled
+  executable (such as via `dart install` or `dart run pigeon@`).
+
+## 30.0.3
+
+* Removes remaining unused `dart:mirrors` usage.
+* Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
+
+## 30.0.2
+
+* Fixes `basePath` resolution when an output or directory path shares a string prefix with `basePath`.
+
+## 30.0.1
+
+* [swift] Adds support for Native Interop FFI codec serialization of `Data`, `NSData`, `NSArray`, and `NSDictionary` values.
+
+## 30.0.0
+
+* **BREAKING CHANGE**: [kotlin,swift] Native Interop registration now supports multiple engines:
+  * `register` and `unregister` take the engine the instance belongs to (a plugin binding or `FlutterEngine` in Kotlin, a registrar in Swift). Use `unregister` instead of `register(null)`.
+  * Native `@FlutterApi` lookups take the engine (`getInstance(binding)` / `getInstance(registrar:)`) instead of a name, and the native `@HostApi` `getInstance(name)` is removed.
+  * Swift FFI `@HostApi` implementations must be classes.
+  * See the [Native Interop migration guide](./native_interop_migration_guide.md) for details.
+* [dart,kotlin,swift] Fixes detaching one engine clearing Native Interop APIs for all other engines.
+* [dart,kotlin,swift] Native Interop calls now go to the calling engine's instance where possible.
+* [kotlin,swift] Calling a Native Interop API whose instance was unregistered now throws a `PlatformException` instead of crashing.
+
+## 29.2.0
+
+* [dart] [kotlin] [swift] Passes data class, `List`, `Map` and `Object` values
+  of Kotlin JNI and Swift FFI calls in one buffer per call instead of making a
+  call across the language boundary for every field and collection element,
+  making calls with large data classes and collections many times faster while
+  keeping scalars, strings, enums and typed data direct.
+* [kotlin] Makes enum `ofRaw` constant time.
+
+## 29.1.2
+
+* [dart] Fixes `@FlutterApi` methods named `register` or `dartApi` failing with `useJni`.
+* [dart] Fixes `@FlutterApi` `implement` registering under an empty name instead of the default instance.
+
 ## 29.1.1
 
-* Adds `pigeon` to `executables` in `pubspec.yaml` and resolves the Dart SDK and
-  executable via `package:cli_util` so `pigeon` can run as a standalone
-  AOT-compiled executable (such as via `dart install` or `dart run pigeon@`).
+* Updates README to label Native Interop as Preview and warn about multi-engine `@HostApi` registrations.
 
 ## 29.1.0
 

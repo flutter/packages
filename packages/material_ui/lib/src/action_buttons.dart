@@ -292,14 +292,17 @@ class DrawerButtonIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _ActionIcon(
-      iconBuilderCallback: (ActionIconThemeData? actionIconTheme) {
-        return actionIconTheme?.drawerButtonIconBuilder;
-      },
-      getIcon: (BuildContext context) => Icons.menu,
-      getAndroidSemanticsLabel: (MaterialLocalizations materialLocalization) {
-        return materialLocalization.openAppDrawerTooltip;
-      },
+    return Semantics(
+      expanded: scaffoldDrawerExpandedOf(context),
+      child: _ActionIcon(
+        iconBuilderCallback: (ActionIconThemeData? actionIconTheme) {
+          return actionIconTheme?.drawerButtonIconBuilder;
+        },
+        getIcon: (BuildContext context) => Icons.menu,
+        getAndroidSemanticsLabel: (MaterialLocalizations materialLocalization) {
+          return materialLocalization.openAppDrawerTooltip;
+        },
+      ),
     );
   }
 }
@@ -354,14 +357,17 @@ class EndDrawerButtonIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _ActionIcon(
-      iconBuilderCallback: (ActionIconThemeData? actionIconTheme) {
-        return actionIconTheme?.endDrawerButtonIconBuilder;
-      },
-      getIcon: (BuildContext context) => Icons.menu,
-      getAndroidSemanticsLabel: (MaterialLocalizations materialLocalization) {
-        return materialLocalization.openAppDrawerTooltip;
-      },
+    return Semantics(
+      expanded: scaffoldEndDrawerExpandedOf(context),
+      child: _ActionIcon(
+        iconBuilderCallback: (ActionIconThemeData? actionIconTheme) {
+          return actionIconTheme?.endDrawerButtonIconBuilder;
+        },
+        getIcon: (BuildContext context) => Icons.menu,
+        getAndroidSemanticsLabel: (MaterialLocalizations materialLocalization) {
+          return materialLocalization.openAppDrawerTooltip;
+        },
+      ),
     );
   }
 }
