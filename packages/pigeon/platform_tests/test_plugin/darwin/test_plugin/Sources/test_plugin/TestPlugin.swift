@@ -604,7 +604,9 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi, HostCa
   func taskQueueIsBackgroundThread() -> Bool {
     return !Thread.isMainThread
   }
-
+  // Added a synchronous isMainThread() helper because 
+  // Thread.isMainThread cannot be accessed directly
+  // from an async context.
   private func isMainThread() -> Bool {
     return Thread.isMainThread
   }
