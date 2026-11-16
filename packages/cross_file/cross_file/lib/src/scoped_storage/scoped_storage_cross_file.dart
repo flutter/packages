@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
-import 'package:flutter/foundation.dart' show  internal;
+import 'package:flutter/foundation.dart' show internal;
 
 import '../cross_file.dart';
 
