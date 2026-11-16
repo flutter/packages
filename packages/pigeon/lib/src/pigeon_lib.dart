@@ -809,11 +809,9 @@ ${_argParser.usage}''';
     String? Function()? discoverSdkPath,
     String? resolvedExecutable,
     bool? isWindows,
-    bool Function(String path)? fileExists,
   }) {
     final bool windows = isWindows ?? Platform.isWindows;
     final dartName = windows ? 'dart.exe' : 'dart';
-    final bool Function(String) exists = fileExists ?? (String p) => File(p).existsSync();
 
     if (sdkPath != null && sdkPath.isNotEmpty) {
       return path.join(path.normalize(path.absolute(sdkPath)), 'bin', dartName);
@@ -826,7 +824,7 @@ ${_argParser.usage}''';
         'bin',
         dartName,
       );
-      if (exists(candidate)) {
+      if (File(candidate).existsSync()) {
         return candidate;
       }
     }
