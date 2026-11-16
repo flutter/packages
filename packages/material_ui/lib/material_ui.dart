@@ -156,7 +156,7 @@ export 'src/range_slider.dart';
 export 'src/range_slider_parts.dart';
 export 'src/refresh_indicator.dart';
 export 'src/reorderable_list.dart';
-export 'src/scaffold.dart';
+export 'src/scaffold.dart' hide scaffoldDrawerExpandedOf, scaffoldEndDrawerExpandedOf;
 export 'src/scrollbar.dart';
 export 'src/scrollbar_theme.dart';
 export 'src/search.dart';

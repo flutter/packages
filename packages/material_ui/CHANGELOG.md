@@ -1,3 +1,51 @@
+## 1.11.0
+
+- Keeps the `Material` of a `Dialog.fullscreen` covering the whole screen while the software keyboard is shown, so that a translucent keyboard shows the dialog's surface instead of the modal barrier behind it.
+- Fixes `InputDecorator` hit testing of a floating label, so taps hit the label where it is painted.
+- Makes `SearchAnchor.bar` use `SearchBarThemeData.padding` when `barPadding` is null.
+- Adds Material 3 Expressive support and selectable states for ElevatedButton.
+- Adds `ElevatedButtonTheme.variantOf`, which returns the closest non-null `ElevatedButtonThemeData.variant`, or `StyleVariant.material3` if none is set.
+- Extends the `Material` of a `Scaffold` persistent bottom sheet behind the software keyboard when `resizeToAvoidBottomInset` is true, so that a translucent keyboard shows the sheet's surface instead of the scaffold's background color.
+- Fixes `RoundedRectSliderTrackShape` painting the inactive track segment over the end of the active one in right-to-left layouts.
+- Documents why `RefreshIndicator` does not respond to a mouse on desktop and web, and how to support mouse input.
+- Fixes `Switch` and `Switch.adaptive` throwing a `LateInitializationError` or a null check error when first painted during their press or toggle animation.
+- Adds `IconButtonTheme.variantOf`, which returns the closest non-null `IconButtonThemeData.variant`, or `StyleVariant.material3` if none is set.
+- Makes the default Material 3 primary TabBar indicator at least 24dp wide. Use a custom indicator to keep the previous width.
+- Fixes DropdownMenu text cursor getting lost when disabled and re-enabled.
+- Updates `InkSparkle` to set its shader uniforms by name instead of with `FragmentShader.setFloat`.
+- Fix bottom sheet dismissal when its extent is within floating-point precision of its minimum extent.
+- Fixes discrete `Slider` and `RangeSlider` with a rounded track selecting the neighboring division when tapping ticks near the ends of the track.
+- Fixes `InputDecorator` intrinsic height not matching its laid out height when `isDense` or `isCollapsed` is true.
+- Adds `Springs`, the Material 3 Expressive spring tokens for the standard and expressive motion schemes.
+- Adds `SemanticsRole.tabBar` and `SemanticsRole.tab` semantics to `NavigationRail` and its destinations.
+- Exposes `expanded` state semantics on `DrawerButton`, `EndDrawerButton`, and the `CalendarDatePicker` year-mode toggle button.
+- Fixes a disabled `DropdownButtonFormField` showing its decoration as enabled and reacting to hover.
+- Fixes a listener leak in modal bottom sheets that accumulated animation listeners each time the sheet was dragged.
+
+## 1.10.0
+
+- Updates the `Typography` documentation to describe the 2021 (Material 3) geometry themes and the current `ThemeData.typography` defaults.
+- Deprecates the `black` and `white` parameters of `Typography.material2021`, and documents that their colors are replaced with colors from the `colorScheme`.
+- Fixes `MenuAnchor` and `MenuBar` shortcut labels for unlocalized non-Unicode keys (such as `Tab` and `F1`) on JavaScript web builds.
+- Adds `Checkbox.markInsets` and `CheckboxThemeData.markInsets`, which inset the
+  check mark (and the indeterminate dash) within the checkbox without changing the
+  size of the box itself. The mark and its stroke shrink proportionally.
+- Fixes an issue where pressing Escape does not close a MenuAnchor opened by a tap or click.
+- Fixes `TextTheme.debugFillProperties` to use the default `ThemeData` text theme, instead of `Typography.material2018(...).black`.
+- Fixes `Typography.debugFillProperties` to use the default `ThemeData` typography, instead of `Typography.material2014`.
+- Fixes `GappedSliderTrackShape` painting the secondary track with the wrong position and corners in right-to-left layouts.
+
+## 1.9.0
+
+- Adds a `barFocusNode` parameter to `SearchAnchor.bar` to allow external control over the focus of the underlying `SearchBar`.
+- Fixes showTimePicker input mode failing to parse localized digits (e.g. Farsi, Arabic, Bengali, Myanmar, Thai, Nepali, French, German, Portuguese locales) by parsing hour/minute via MaterialLocalizations and handling localized leading zeros.
+- Corrects the `Divider.color` and `VerticalDivider.color` documentation to describe the Material 3 fallback (`ColorScheme.outlineVariant`).
+- Fixes `MenuAnchor` scrollbars inheriting system safe-area padding.
+- Fixes unlabeled tap target semantics in `SearchBar`.
+- Adds `enableTapHandling` to `SearchAnchor`.
+- Adds `dayBuilder` and `weekdayBuilder` callbacks to `CalendarDatePicker`, `DatePickerDialog`, and `showDatePicker`.
+- Adds `CalendarDatePickerDayDetails` and `CalendarDatePickerWeekdayDetails` to provide metadata and default widgets to the builders.
+
 ## 1.8.0
 
 - Adds `RoundedPolygon` and `CornerRounding` for creating rounded polygonal shapes.

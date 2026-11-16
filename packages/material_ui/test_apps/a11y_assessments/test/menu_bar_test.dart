@@ -73,4 +73,9 @@ void main() {
     await tester.pumpAndSettle();
     expect(findHeadingLevelOnes, findsOne);
   });
+
+  testWidgets('menu bar use case content is not a semantic list', (WidgetTester tester) async {
+    await pumpsUseCase(tester, MenuBarUseCase());
+    expect(hasSemanticsList(tester, find.byType(ListView)), isFalse);
+  });
 }

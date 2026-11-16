@@ -685,6 +685,26 @@ void myMethod() {
       );
     });
   });
+
+  group('isWithinOrEquals', () {
+    test('returns true for exact match and child paths', () {
+      expect(isWithinOrEquals('app', 'app'), isTrue);
+      expect(isWithinOrEquals('app', 'app/lib/messages.g.dart'), isTrue);
+    });
+
+    test('returns false when child only shares a string prefix with parent', () {
+      expect(isWithinOrEquals('app', 'app_bindings/lib/messages.g.dart'), isFalse);
+      expect(isWithinOrEquals('app', 'app_bindings'), isFalse);
+    });
+
+    test('normalizes trailing slashes, relative segments, and Windows separators', () {
+      expect(isWithinOrEquals('app/', 'app'), isTrue);
+      expect(isWithinOrEquals('app/', 'app/lib/'), isTrue);
+      expect(isWithinOrEquals('./app', 'app/lib'), isTrue);
+      expect(isWithinOrEquals(r'app\sub', r'app\sub\file.dart'), isTrue);
+      expect(isWithinOrEquals(r'app\sub', r'app\sub_other\file.dart'), isFalse);
+    });
+  });
   test('deduceClassNameComponent extracts class name component', () {
     expect(deduceClassNameComponent('ios/Classes/messages.g.swift'), 'messages');
     expect(deduceClassNameComponent('Foo.swift'), 'Foo');

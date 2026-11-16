@@ -10,13 +10,9 @@ import PhotosUI
 import UIKit
 import UniformTypeIdentifiers
 
-#if canImport(image_picker_ios_objc)
-  import image_picker_ios_objc
-#endif
-
 /// The return handler used for all method calls, which internally adapts the provided result list
 /// to return either a list or a single element depending on the original call.
-typealias FlutterResultAdapter = (_ paths: [String]?, _ error: FlutterError?) -> Void
+typealias FlutterResultAdapter = (_ paths: [String]?, _ error: PigeonError?) -> Void
 
 /// A container class for context to use when handling a method call from the Dart side.
 final class ImagePickerMethodCallContext {
@@ -31,12 +27,12 @@ final class ImagePickerMethodCallContext {
   /// The maximum size to enforce on the results.
   ///
   /// If nil, no resizing is done.
-  var maxSize: FLTMaxSize?
+  var maxSize: MaxSize?
 
   /// The image quality to resample the results to.
   ///
   /// If nil, no resampling is done.
-  var imageQuality: NSNumber?
+  var imageQuality: Int64?
 
   /// Maximum number of items to select. 0 indicates no maximum.
   var maxItemCount = 0
@@ -55,7 +51,7 @@ final class ImagePickerMethodCallContext {
 }
 
 /// iOS implementation of the image_picker plugin.
-public final class ImagePickerPlugin: NSObject, FlutterPlugin, FLTImagePickerApi,
+public final class ImagePickerPlugin: NSObject, FlutterPlugin, ImagePickerApi,
   UINavigationControllerDelegate, UIImagePickerControllerDelegate,
   UIAdaptivePresentationControllerDelegate
 {
@@ -67,7 +63,7 @@ public final class ImagePickerPlugin: NSObject, FlutterPlugin, FLTImagePickerApi
   var imagePickerControllerOverrides: [UIImagePickerController]?
 
   /// The view provider to use for displaying native view controllers.
-  let viewProvider: FIPViewProvider
+  let viewProvider: ViewProvider
 
   /// Camera source/device availability. Overridable for tests.
   var cameraAvailability: CameraAvailabilityChecking = DefaultCameraAvailabilityChecker()
@@ -94,11 +90,11 @@ public final class ImagePickerPlugin: NSObject, FlutterPlugin, FLTImagePickerApi
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     let instance = ImagePickerPlugin(
-      viewProvider: FIPDefaultViewProvider(registrar: registrar))
-    SetUpFLTImagePickerApi(registrar.messenger(), instance)
+      viewProvider: DefaultViewProvider(registrar: registrar))
+    ImagePickerApiSetup.setUp(binaryMessenger: registrar.messenger(), api: instance)
   }
 
-  init(viewProvider: FIPViewProvider) {
+  init(viewProvider: ViewProvider) {
     self.viewProvider = viewProvider
   }
 
@@ -117,8 +113,7 @@ public final class ImagePickerPlugin: NSObject, FlutterPlugin, FLTImagePickerApi
     imagePickerControllerOverrides = imagePickerControllers
   }
 
-  private func cameraDevice(for source: FLTSourceSpecification)
-    -> UIImagePickerController.CameraDevice
+  private func cameraDevice(for source: SourceSpecification) -> UIImagePickerController.CameraDevice
   {
     switch source.camera {
     case .front:
@@ -156,7 +151,7 @@ public final class ImagePickerPlugin: NSObject, FlutterPlugin, FLTImagePickerApi
   }
 
   func launchUIImagePicker(
-    with source: FLTSourceSpecification, context: ImagePickerMethodCallContext
+    with source: SourceSpecification, context: ImagePickerMethodCallContext
   ) {
     let imagePickerController = createImagePickerController()
     imagePickerController.modalPresentationStyle = .currentContext
@@ -186,39 +181,37 @@ public final class ImagePickerPlugin: NSObject, FlutterPlugin, FLTImagePickerApi
       } else {
         showPhotoLibrary(with: imagePickerController)
       }
-    @unknown default:
-      sendCallResult(
-        with: FlutterError(
-          code: "invalid_source",
-          message: "Invalid image source.",
-          details: nil))
     }
   }
 
-  public func pickImage(
-    withSource source: FLTSourceSpecification,
-    maxSize: FLTMaxSize,
-    quality imageQuality: NSNumber?,
-    fullMetadata: Bool,
-    completion: @escaping (String?, FlutterError?) -> Void
+  func pickImage(
+    source: SourceSpecification,
+    maxSize: MaxSize,
+    imageQuality: Int64?,
+    requestFullMetadata: Bool,
+    completion: @escaping (Result<String?, Error>) -> Void
   ) {
     cancelInProgressCall()
     let context = ImagePickerMethodCallContext { paths, error in
       if (paths?.count ?? 0) > 1 {
-        let invalidResult = FlutterError(
+        let invalidResult = PigeonError(
           code: "invalid_result",
           message: "Incorrect number of return paths provided",
           details: nil)
-        completion(nil, invalidResult)
+        completion(.failure(invalidResult))
         return
       }
-      completion(paths?.first, error)
+      if let error {
+        completion(.failure(error))
+      } else {
+        completion(.success(paths?.first))
+      }
     }
     context.includeImages = true
     context.maxSize = maxSize
     context.imageQuality = imageQuality
     context.maxItemCount = 1
-    context.requestFullMetadata = fullMetadata
+    context.requestFullMetadata = requestFullMetadata
 
     if source.type == .gallery {
       launchPHPicker(with: context)
@@ -227,33 +220,41 @@ public final class ImagePickerPlugin: NSObject, FlutterPlugin, FLTImagePickerApi
     }
   }
 
-  public func pickMultiImage(
-    with maxSize: FLTMaxSize,
-    quality imageQuality: NSNumber?,
-    fullMetadata: Bool,
-    limit: NSNumber?,
-    completion: @escaping ([String]?, FlutterError?) -> Void
+  func pickMultiImage(
+    maxSize: MaxSize,
+    imageQuality: Int64?,
+    requestFullMetadata: Bool,
+    limit: Int64?,
+    completion: @escaping (Result<[String], Error>) -> Void
   ) {
     cancelInProgressCall()
     let context = ImagePickerMethodCallContext { paths, error in
-      completion(paths, error)
+      if let error {
+        completion(.failure(error))
+      } else {
+        completion(.success(paths ?? []))
+      }
     }
     context.includeImages = true
     context.maxSize = maxSize
     context.imageQuality = imageQuality
-    context.requestFullMetadata = fullMetadata
-    context.maxItemCount = limit?.intValue ?? 0
+    context.requestFullMetadata = requestFullMetadata
+    context.maxItemCount = Int(limit ?? 0)
 
     launchPHPicker(with: context)
   }
 
-  public func pickMedia(
-    with mediaSelectionOptions: FLTMediaSelectionOptions,
-    completion: @escaping ([String]?, FlutterError?) -> Void
+  func pickMedia(
+    mediaSelectionOptions: MediaSelectionOptions,
+    completion: @escaping (Result<[String], Error>) -> Void
   ) {
     cancelInProgressCall()
     let context = ImagePickerMethodCallContext { paths, error in
-      completion(paths, error)
+      if let error {
+        completion(.failure(error))
+      } else {
+        completion(.success(paths ?? []))
+      }
     }
     context.maxSize = mediaSelectionOptions.maxSize
     context.imageQuality = mediaSelectionOptions.imageQuality
@@ -264,32 +265,36 @@ public final class ImagePickerPlugin: NSObject, FlutterPlugin, FLTImagePickerApi
     if !mediaSelectionOptions.allowMultiple {
       context.maxItemCount = 1
     } else if let limit {
-      context.maxItemCount = limit.intValue
+      context.maxItemCount = Int(limit)
     }
 
     launchPHPicker(with: context)
   }
 
-  public func pickVideo(
-    withSource source: FLTSourceSpecification,
-    maxDuration maxDurationSeconds: NSNumber?,
-    completion: @escaping (String?, FlutterError?) -> Void
+  func pickVideo(
+    source: SourceSpecification,
+    maxDurationSeconds: Int64?,
+    completion: @escaping (Result<String?, Error>) -> Void
   ) {
     cancelInProgressCall()
     let context = ImagePickerMethodCallContext { paths, error in
       if (paths?.count ?? 0) > 1 {
-        let invalidResult = FlutterError(
+        let invalidResult = PigeonError(
           code: "invalid_result",
           message: "Incorrect number of return paths provided",
           details: nil)
-        completion(nil, invalidResult)
+        completion(.failure(invalidResult))
         return
       }
-      completion(paths?.first, error)
+      if let error {
+        completion(.failure(error))
+      } else {
+        completion(.success(paths?.first))
+      }
     }
     context.includeVideo = true
     context.maxItemCount = 1
-    context.maxDuration = maxDurationSeconds?.doubleValue ?? 0
+    context.maxDuration = TimeInterval(maxDurationSeconds ?? 0)
 
     if source.type == .gallery {
       launchPHPicker(with: context)
@@ -298,17 +303,21 @@ public final class ImagePickerPlugin: NSObject, FlutterPlugin, FLTImagePickerApi
     }
   }
 
-  public func pickMultiVideo(
-    withMaxDuration maxDurationSeconds: NSNumber?, limit: NSNumber?,
-    completion: @escaping ([String]?, FlutterError?) -> Void
+  func pickMultiVideo(
+    maxDurationSeconds: Int64?, limit: Int64?,
+    completion: @escaping (Result<[String], Error>) -> Void
   ) {
     cancelInProgressCall()
     let context = ImagePickerMethodCallContext { paths, error in
-      completion(paths, error)
+      if let error {
+        completion(.failure(error))
+      } else {
+        completion(.success(paths ?? []))
+      }
     }
     context.includeVideo = true
-    context.maxItemCount = limit?.intValue ?? 0
-    context.maxDuration = maxDurationSeconds?.doubleValue ?? 0
+    context.maxItemCount = Int(limit ?? 0)
+    context.maxDuration = TimeInterval(maxDurationSeconds ?? 0)
 
     launchPHPicker(with: context)
   }
@@ -317,7 +326,7 @@ public final class ImagePickerPlugin: NSObject, FlutterPlugin, FLTImagePickerApi
   func cancelInProgressCall() {
     if callContext != nil {
       sendCallResult(
-        with: FlutterError(
+        with: PigeonError(
           code: "multiple_request",
           message: "Cancelled by a second request",
           details: nil))
@@ -411,13 +420,13 @@ public final class ImagePickerPlugin: NSObject, FlutterPlugin, FLTImagePickerApi
     switch status {
     case .restricted:
       sendCallResult(
-        with: FlutterError(
+        with: PigeonError(
           code: "camera_access_restricted",
           message: "The user is not allowed to use the camera.",
           details: nil))
     default:
       sendCallResult(
-        with: FlutterError(
+        with: PigeonError(
           code: "camera_access_denied",
           message: "The user did not allow camera access.",
           details: nil))
@@ -428,13 +437,13 @@ public final class ImagePickerPlugin: NSObject, FlutterPlugin, FLTImagePickerApi
     switch status {
     case .restricted:
       sendCallResult(
-        with: FlutterError(
+        with: PigeonError(
           code: "photo_access_restricted",
           message: "The user is not allowed to use the photo.",
           details: nil))
     default:
       sendCallResult(
-        with: FlutterError(
+        with: PigeonError(
           code: "photo_access_denied",
           message: "The user did not allow photo access.",
           details: nil))
@@ -451,14 +460,14 @@ public final class ImagePickerPlugin: NSObject, FlutterPlugin, FLTImagePickerApi
     viewProvider.viewController?.present(imagePickerController, animated: true, completion: nil)
   }
 
-  func desiredImageQuality(_ imageQuality: NSNumber?) -> NSNumber {
+  func desiredImageQuality(_ imageQuality: Int64?) -> Double {
     guard let imageQuality else {
       return 1
     }
-    if imageQuality.intValue < 0 || imageQuality.intValue > 100 {
+    if imageQuality < 0 || imageQuality > 100 {
       return 1
     }
-    return NSNumber(value: imageQuality.floatValue / 100)
+    return Double(imageQuality) / 100.0
   }
 
   public func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
@@ -467,7 +476,7 @@ public final class ImagePickerPlugin: NSObject, FlutterPlugin, FLTImagePickerApi
 
   /// Processes picker results. Exposed for tests that cannot construct PHPickerResult.
   @available(iOS 14, *)
-  func processPickerItems(_ results: [PickerItem], fromPicker picker: PHPickerViewController) {
+  func processPickerResults(_ results: [PickerItem], from picker: PHPickerViewController) {
     picker.dismiss(animated: true, completion: nil)
     if results.isEmpty {
       sendCallResult(withSavedPathList: nil)
@@ -483,7 +492,7 @@ public final class ImagePickerPlugin: NSObject, FlutterPlugin, FLTImagePickerApi
     let desiredImageQuality = self.desiredImageQuality(currentCallContext?.imageQuality)
     let requestFullMetadata = currentCallContext?.requestFullMetadata ?? false
     var pathList = [String?](repeating: nil, count: results.count)
-    var saveError: FlutterError?
+    var saveError: PigeonError?
     // savedPathBlock runs concurrently on PHPicker's private queue, and the
     // main-queue operation reads both values. The Objective-C implementation
     // wrote them without a lock.
@@ -504,7 +513,7 @@ public final class ImagePickerPlugin: NSObject, FlutterPlugin, FLTImagePickerApi
 
     for (index, result) in results.enumerated() {
       guard
-        let saveOperation = FLTPHPickerSaveImageToPathOperation(
+        let saveOperation = PHPickerSaveImageToPathOperation(
           result: result,
           maxHeight: maxHeight,
           maxWidth: maxWidth,
@@ -541,9 +550,9 @@ public final class ImagePickerPlugin: NSObject, FlutterPlugin, FLTImagePickerApi
       return
     }
     if let videoURL {
-      guard let destination = FLTImagePickerPhotoAssetUtil.saveVideo(from: videoURL) else {
+      guard let destination = ImagePickerPhotoAssetUtil.saveVideo(from: videoURL) else {
         sendCallResult(
-          with: FlutterError(
+          with: PigeonError(
             code: "flutter_image_picker_copy_video_error",
             message: "Could not cache the video file.",
             details: nil))
@@ -562,14 +571,14 @@ public final class ImagePickerPlugin: NSObject, FlutterPlugin, FLTImagePickerApi
 
       var originalAsset: PHAsset?
       if callContext?.requestFullMetadata == true {
-        originalAsset = FLTImagePickerPhotoAssetUtil.getAssetFromImagePickerInfo(
-          info.reduce(into: [:]) { result, item in
+        originalAsset = ImagePickerPhotoAssetUtil.getAsset(
+          fromImagePickerInfo: info.reduce(into: [:]) { result, item in
             result[item.key.rawValue] = item.value
           })
       }
 
       if maxWidth != nil || maxHeight != nil {
-        image = FLTImagePickerImageUtil.scaledImage(
+        image = ImagePickerImageUtil.scaledImage(
           image, maxWidth: maxWidth, maxHeight: maxHeight, isMetadataAvailable: true)
       }
 
@@ -598,24 +607,29 @@ public final class ImagePickerPlugin: NSObject, FlutterPlugin, FLTImagePickerApi
   }
 
   func saveImage(
-    withOriginalImageData originalImageData: Data?, image: UIImage?, maxWidth: NSNumber?,
-    maxHeight: NSNumber?, imageQuality: NSNumber?
+    withOriginalImageData originalImageData: Data?, image: UIImage?, maxWidth: Double?,
+    maxHeight: Double?, imageQuality: Double?
   ) {
-    let savedPath = FLTImagePickerPhotoAssetUtil.saveImage(
-      withOriginalImageData: originalImageData, image: image ?? UIImage(),
-      maxWidth: maxWidth, maxHeight: maxHeight, imageQuality: imageQuality)
+    let savedPath = ImagePickerPhotoAssetUtil.saveImageWithOriginalImageData(
+      originalImageData, image: image, maxWidth: maxWidth, maxHeight: maxHeight,
+      imageQuality: imageQuality)
     sendCallResult(withSavedPathList: [savedPath])
   }
 
   func saveImage(
-    withPickerInfo info: [String: Any]?, image: UIImage, imageQuality: NSNumber?
+    withPickerInfo info: [String: Any]?, image: UIImage, imageQuality: Double?
   ) {
-    let savedPath = FLTImagePickerPhotoAssetUtil.saveImage(
+    let savedPath = ImagePickerPhotoAssetUtil.saveImage(
       withPickerInfo: info, image: image, imageQuality: imageQuality)
     sendCallResult(withSavedPathList: [savedPath])
   }
 
   /// Validates the provided paths list, then sends it via `callContext.result`.
+  ///
+  /// TODO: `requestImageDataAndOrientation`'s result handler can call this off the
+  /// main queue when full metadata is requested. The picker delegate and the
+  /// PHPicker completion operation run on the main queue. This stays synchronous
+  /// so unit tests can read the callback on the calling thread.
   func sendCallResult(withSavedPathList pathList: [String?]?) {
     guard let callContext else {
       return
@@ -624,7 +638,7 @@ public final class ImagePickerPlugin: NSObject, FlutterPlugin, FLTImagePickerApi
     if let pathList, pathList.contains(where: { $0 == nil }) {
       callContext.result(
         nil,
-        FlutterError(
+        PigeonError(
           code: "create_error",
           message: "pathList's items should not be null",
           details: nil))
@@ -635,7 +649,7 @@ public final class ImagePickerPlugin: NSObject, FlutterPlugin, FLTImagePickerApi
     self.callContext = nil
   }
 
-  func sendCallResult(with error: FlutterError) {
+  func sendCallResult(with error: PigeonError) {
     guard let callContext else {
       return
     }
@@ -695,19 +709,8 @@ public final class ImagePickerPlugin: NSObject, FlutterPlugin, FLTImagePickerApi
 }
 
 @available(iOS 14, *)
-private final class BridgedPickerItem: NSObject, PickerItem {
-  let itemProvider: NSItemProvider
-  let assetIdentifier: String?
-
-  init(_ result: PHPickerResult) {
-    self.itemProvider = result.itemProvider
-    self.assetIdentifier = result.assetIdentifier
-  }
-}
-
-@available(iOS 14, *)
 extension ImagePickerPlugin: PHPickerViewControllerDelegate {
   public func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
-    processPickerItems(results.map { BridgedPickerItem($0) }, fromPicker: picker)
+    processPickerResults(results, from: picker)
   }
 }

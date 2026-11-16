@@ -36,15 +36,16 @@ class _DrawerExampleState extends State<DrawerExample> {
 
   @override
   Widget build(BuildContext context) {
+    final ColorScheme colors = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(title: Semantics(headingLevel: 1, child: Text('$pageTitle Demo'))),
       endDrawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
-            const DrawerHeader(
-              decoration: BoxDecoration(color: Colors.blue),
-              child: Text('Drawer Header', style: TextStyle(color: Colors.white, fontSize: 24)),
+            DrawerHeader(
+              decoration: BoxDecoration(color: colors.primary),
+              child: Text('Drawer Header', style: TextStyle(color: colors.onPrimary, fontSize: 24)),
             ),
             ListTile(
               leading: const Icon(Icons.message),

@@ -6,8 +6,10 @@ package io.flutter.plugins.videoplayer;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
+import io.flutter.plugin.common.BinaryMessenger;
 import java.util.Map;
 import org.junit.Before;
 import org.junit.Rule;
@@ -111,5 +113,19 @@ public final class VideoPlayerEventCallbacksTest {
     PlatformVideoEvent actual = eventCaptor.getValue();
     VideoTrackChangedEvent expected = new VideoTrackChangedEvent(trackId);
     assertEquals(expected, actual);
+  }
+
+  @Test
+  public void dispose_removesHandlerFromEventChannel() {
+    BinaryMessenger mockMessenger = mock(BinaryMessenger.class);
+    VideoEventsEventChannel mockEventChannel = mock(VideoEventsEventChannel.class);
+    VideoPlayerEventCallbacks callbacks =
+        VideoPlayerEventCallbacks.bindTo(
+            mockMessenger, "1", (messenger, handler, identifier) -> mockEventChannel);
+
+    callbacks.onDisposed();
+
+    // Disposing the callback handler should unregister it as the stream handler to avoid leaking.
+    verify(mockEventChannel).setStreamHandler(null);
   }
 }

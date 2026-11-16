@@ -32,6 +32,8 @@ class _MainWidget extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Semantics(headingLevel: 1, child: Text('$pageTitle Demo'))),
       body: ListView(
+        semanticChildCount: 0,
+        addSemanticIndexes: false,
         children: <Widget>[
           const TextField(
             key: Key('enabled text field'),

@@ -11,7 +11,7 @@ For a comprehensive walkthrough on setting up Native Interop from scratch, see t
 
 | Feature | Platform Channels | Native Interop (FFI / JNI) |
 | :--- | :--- | :--- |
-| **Data Serialization** | Serialized to binary format (`StandardMessageCodec`) | Direct memory mapping or native references |
+| **Data Serialization** | Serialized to binary format (`StandardMessageCodec`) | Scalars, strings, enums and typed data cross directly; data classes, lists and maps are encoded into one buffer per call |
 | **Threading Model** | Main UI thread or custom background `TaskQueue` | Direct execution on caller thread (`TaskQueue` is not supported) |
 | **Isolate Support** | Requires `BackgroundIsolateBinaryMessenger` | Supported for Host APIs |
 | **Synchronous Calls** | Asynchronous only | Supports both synchronous and asynchronous calls |
@@ -160,6 +160,10 @@ From the Dart side, instantiate your generated Host API using `<MyApi>.createWit
   }
   ```
 - **Synchronous execution**: Host API methods that are synchronous now block the calling thread until completion, bypassing any message loop scheduling latency.
+- **Multi-Engine Plugin Deregistration (`unregister`)**: Unlike platform channels (where `MyApi.setUp(messenger, null)` clears a single engine's `BinaryMessenger`), Native Interop tracks registered `@HostApi` and `@FlutterApi` instances in process memory, with each native registration associated with an engine. Register and unregister on the platform main thread, as with platform channel `setUp`:
+  - For `@HostApi` in `FlutterPlugin` implementations, `register` requires a non-null API instance and the engine it belongs to (and Swift FFI `@HostApi` protocols conform to `AnyObject`, requiring class implementations). Register with `MyApiRegistrar().register(this, binding)` on Android and `MyApiSetup.register(api: instance, registrar: registrar)` on iOS/macOS, and deregister on engine detach with `MyApiRegistrar().unregister(this, binding)` / `MyApiSetup.unregister(api: self, registrar: registrar)`, so detaching a secondary `FlutterEngine` does not clear registrations for other active engines. Apps that own a `FlutterEngine` can use `register(api, flutterEngine)` / `unregister(api, flutterEngine)`. *(If upgrading from Pigeon `29.x` Native Interop: `unregister` replaces `register(null)` / `register(api: nil)`, and the name-only native `@HostApi` `getInstance(name)` is removed.)* On iOS, `detachFromEngine(for:)` is only called for instances published with `registrar.publish(instance)`. macOS plugins get no detach callback, so macOS registrations currently outlive their engine.
+  - For `@FlutterApi` in Dart, `MyFlutterApi.setUp(null)` deregisters that isolate's Native Interop callback in addition to clearing its `BasicMessageChannel` handler (or call `MyFlutterApiRegistrar().unregister(api)` when registering via `MyFlutterApiRegistrar().register(api)`), leaving other engines' `@FlutterApi` registrations intact. Native code replaces `MyFlutterApi(binaryMessenger:)` (or Pigeon `29.x`'s name-only `getInstance(name)`) with `MyFlutterApiRegistrar().getInstance(binding)` / `getInstance(flutterEngine)` in Kotlin or `MyFlutterApiRegistrar.getInstance(registrar: registrar)` in Swift. Because Dart has no isolate-shutdown hook, `@FlutterApi` registrations are only removed when Dart calls `setUp(null)` or `unregister`; if an isolate disappears without doing so (for example, after a hot restart or when its engine is destroyed), its stale registration stays in native memory and calls to it fail.
+  - Lookups on an engine's root isolate are exact when native code knows the engine identifier (always for Kotlin `register(api, flutterEngine)`, and for plugin bindings/registrars on Flutter versions that expose it), and are otherwise best-effort (including in background isolates created with `Isolate.spawn` / `Isolate.run`, which have no `PlatformDispatcher.engineId`). Plugins with per-engine state (such as `ActivityAware` or `TextureRegistry`) may not route to the right engine when routing is best-effort; see the routing limits in [Multi-Engine Routing](./native_interop_guide.md#multi-engine-routing). For macOS with multiple engines, or custom headless `FlutterEngine`s on Android without `GeneratedPluginRegistrant`, see [Multi-Engine Support in the Native Interop Guide](./native_interop_guide.md#step-5-plugin-registration-deregistration-and-multi-engine-support).
 - **Dart Isolates**: Host API calls can be made directly from any background Dart isolate without initializing `BackgroundIsolateBinaryMessenger` or passing a `RootIsolateToken`. Callers must ensure the isolate stays alive while there are pending asynchronous calls, as attempting to execute a callback after the isolate has terminated will cause a crash.
 - **Platform UI Thread Affinity**: If native code interacts with platform UI elements (such as UIKit views on iOS/macOS or `Activity`/view hierarchies on Android), that work must execute on the platform's main thread. If an interop call is initiated from a background isolate or dispatches work to a background queue, the native implementation must explicitly dispatch to the main thread (`DispatchQueue.main.async` in Swift, `Handler(Looper.getMainLooper()).post` in Kotlin) before interacting with UI APIs.
 - **`FlutterApi` Synchronous Callbacks**: Synchronous callbacks into Dart are isolate-local and must be invoked on the isolate that registered them.
@@ -178,38 +182,18 @@ Ensure your build system is configured appropriately:
 
 - **CocoaPods**: Ensure `s.source_files = 'Sources/**/*.{swift,m,h}'` in your `.podspec`.
 - **SwiftPM (`Package.swift`)**:
+  - Depend on `FlutterFramework` (`dependencies: [.package(name: "FlutterFramework", path: "../FlutterFramework")]` and `.product(name: "FlutterFramework", package: "FlutterFramework")` on your Swift target) for all `useFfi: true` SwiftPM plugins so the generated `#if canImport(Flutter)` / `#if canImport(FlutterMacOS)` registration APIs compile.
   - **Only if a `.m` file is generated** in `<swift_output_dir>_objc_gen`: Add a separate Objective-C target for `<plugin_name>_objc_gen` in `Package.swift` and depend on it from your main Swift target.
-  - **If no `.m` file is generated** (e.g., your schema only has synchronous `@HostApi()` methods and `<swift_output_dir>_objc_gen` only contains a `.h` header): **Do not** add the `<plugin_name>_objc_gen` target to `Package.swift`. SwiftPM requires at least one compilable source file (`.m`, `.c`, or `.swift`) per target; an empty/header-only target causes Xcode builds to fail with `Build input file cannot be found: '.../<plugin_name>_objc_gen.o'`.
+  - **If no `.m` file is generated** (e.g., your schema only has synchronous `@HostApi()` methods and `<swift_output_dir>_objc_gen` only contains a `.h` header): Keep the `FlutterFramework` dependency, but **do not** add the `<plugin_name>_objc_gen` target to `Package.swift`. SwiftPM requires at least one compilable source file (`.m`, `.c`, or `.swift`) per target; an empty/header-only target causes Xcode builds to fail with `Build input file cannot be found: '.../<plugin_name>_objc_gen.o'`.
 - **Application & Example App Targets**:
   - **Swift Module Name**: Set `ffiModuleName` in `SwiftOptions` to match your application's Swift module name (defaults to `'Runner'`). If iOS and macOS share the same generated Dart FFI file, both platforms must compile under that same module name. Since Flutter's default macOS template sets the module name to the app name rather than `Runner`, you can unify them by setting `PRODUCT_MODULE_NAME = Runner` in `macos/Runner/Configs/AppInfo.xcconfig` (or by matching whatever module name you configure). If iOS and macOS use separate Pigeon generation outputs or you only target one platform, unifying module names across platforms is not required.
-  - **Native Registration**: Register the native API implementation in native code (e.g., `MainFlutterWindow.swift` in `awakeFromNib()` on macOS, or `AppDelegate.swift` on iOS via `MyApiSetup.register(api: api)`). This also ensures the setup class is referenced so the Xcode linker does not strip it (`-dead_strip`).
+  - **Native Registration (iOS/macOS)**: Register the native API implementation in native code (e.g., `MainFlutterWindow.swift` in `awakeFromNib()` on macOS, or `AppDelegate.swift` on iOS via `MyApiSetup.register(api: api, registrar: registrar)`, passing the registrar from `registrar(forPlugin:)`). This also ensures the setup class is referenced so the Xcode linker does not strip it (`-dead_strip`).
 
 ---
 
-## 6. Android Release Build Configuration (JNI)
-
-<!-- TODO(tarrinneal): Remove this section, and renumber the next one, once package:jni ships these keep rules: https://github.com/dart-lang/native/issues/3732 -->
-
-Flutter enables R8 for Android release builds by default, and R8 removes or renames classes that JNI looks up by name. Pigeon adds `@Keep` to the generated Kotlin classes that JNI reaches, but `package:jni` and the generated Dart code also look up Kotlin standard library classes by name to call and implement `suspend` functions. Until `package:jni` includes rules for these classes, add them to a `consumer-rules.pro` file in your plugin's `android/` directory:
-
-```text
-# Kotlin classes that package:jni and the generated Dart code look up by name.
--keep class kotlin.Unit { *; }
--keep class kotlin.Result { *; }
--keep class kotlin.Result$Failure { *; }
--keep class kotlin.coroutines.Continuation { *; }
--keep class kotlin.coroutines.intrinsics.CoroutineSingletons { *; }
--keep class kotlin.coroutines.intrinsics.IntrinsicsKt { *; }
-```
-
-Then add `consumerProguardFiles("consumer-rules.pro")` to `android.defaultConfig` in the plugin's `android/build.gradle` or `android/build.gradle.kts`, so that every app using the plugin applies the rules. For a standalone application, add the rules to `android/app/proguard-rules.pro` instead.
-
-Debug builds are not minified, so test a release build (for example, by running the example app with `flutter run --release`) after migrating. See [Step 5 of the Native Interop Guide](./native_interop_guide.md#step-5-android-release-build-configuration-jni) for details.
-
----
-
-## 7. Environment Prerequisites & Tooling Versions
+## 6. Environment Prerequisites & Tooling Versions
 
 To use Native Interop and its external code generators:
+- **Android SDK**: Must be installed with `ANDROID_HOME` (or `ANDROID_SDK_ROOT`) set in your environment; otherwise Pigeon skips `jnigen`.
 - **`jnigen` 1.0.0 or later**: Earlier versions of JNIgen cannot parse metadata from newer Kotlin compilers and fail with `IllegalArgumentException: Provided Metadata instance has version ... while maximum supported version is ...`. `jnigen` 1.0.0 supports Kotlin metadata up to 2.4, and uses the JDK bundled with Flutter by default.
 - **LLVM / Xcode Command Line Tools**: Required by FFIgen to parse C/Objective-C headers (`xcode-select --install`).
