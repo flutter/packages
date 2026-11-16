@@ -50,10 +50,10 @@ private constructor(
   companion object {
     fun bindTo(binaryMessenger: BinaryMessenger, identifier: String): VideoPlayerEventCallbacks {
       return bindTo(binaryMessenger, identifier) {
-          messenger: BinaryMessenger?,
-          streamHandler: VideoEventsStreamHandler?,
-          instanceName: String? ->
-        VideoEventsStreamHandler.register(messenger!!, streamHandler!!, instanceName!!)
+          messenger: BinaryMessenger,
+          streamHandler: VideoEventsStreamHandler,
+          instanceName: String ->
+        VideoEventsStreamHandler.register(messenger, streamHandler, instanceName)
       }
     }
 

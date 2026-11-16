@@ -61,12 +61,13 @@ constructor(
     ): PlatformViewVideoPlayer {
       return PlatformViewVideoPlayer(events, asset.mediaItem, options) {
         val builder = ExoPlayer.Builder(context)
-        if (options.backBufferDurationMs != null) {
-          require(options.backBufferDurationMs!! >= 0) { "backBufferDurationMs must be at least 0" }
-          if (options.backBufferDurationMs!! > 0) {
+        val backBufferDurationMs = options.backBufferDurationMs
+        if (backBufferDurationMs != null) {
+          require(backBufferDurationMs >= 0) { "backBufferDurationMs must be at least 0" }
+          if (backBufferDurationMs > 0) {
             // Clamp the value to ensure it fits within the int range expected by
             // DefaultLoadControl.
-            val backBufferInt = min(options.backBufferDurationMs!!, Int.MAX_VALUE.toLong()).toInt()
+            val backBufferInt = min(backBufferDurationMs, Int.MAX_VALUE.toLong()).toInt()
             val loadControl =
                 DefaultLoadControl.Builder()
                     .setBackBuffer(backBufferInt, /* retainBackBufferFromKeyframe= */ true)

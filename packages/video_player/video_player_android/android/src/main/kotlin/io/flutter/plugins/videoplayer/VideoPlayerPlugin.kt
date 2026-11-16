@@ -5,11 +5,9 @@ package io.flutter.plugins.videoplayer
 
 import android.content.Context
 import android.util.LongSparseArray
-import androidx.annotation.OptIn
 import androidx.annotation.VisibleForTesting
+import androidx.core.util.forEach
 import androidx.core.util.isEmpty
-import androidx.core.util.size
-import androidx.media3.common.util.UnstableApi
 import io.flutter.FlutterInjector
 import io.flutter.Log
 import io.flutter.embedding.engine.plugins.FlutterPlugin
@@ -63,7 +61,7 @@ class VideoPlayerPlugin
 
   override fun onAttachedToEngine(binding: FlutterPluginBinding) {
     val injector = FlutterInjector.instance()
-    this.flutterState =
+    val flutterState =
         FlutterState(
             binding.applicationContext,
             binding.binaryMessenger,
@@ -72,26 +70,25 @@ class VideoPlayerPlugin
               injector.flutterLoader().getLookupKeyForAsset(asset, packageName)
             },
             binding.textureRegistry)
-    flutterState!!.startListening(this, binding.binaryMessenger)
+    this.flutterState = flutterState
+    flutterState.startListening(this, binding.binaryMessenger)
 
     binding.platformViewRegistry.registerViewFactory(
         "plugins.flutter.dev/video_player_android",
-        PlatformVideoViewFactory { key: Long? -> videoPlayers.get(key!!)!! })
+        PlatformVideoViewFactory { key: Long -> videoPlayers.get(key) })
   }
 
   override fun onDetachedFromEngine(binding: FlutterPluginBinding) {
     if (flutterState == null) {
       Log.wtf(TAG, "Detached from the engine before registering to it.")
     }
-    flutterState!!.stopListening(binding.binaryMessenger)
+    flutterState?.stopListening(binding.binaryMessenger)
     flutterState = null
     onDestroy()
   }
 
   private fun disposeAllPlayers() {
-    for (i in 0 ..< videoPlayers.size) {
-      videoPlayers.valueAt(i)!!.dispose()
-    }
+    videoPlayers.forEach { _, value -> value.dispose() }
     videoPlayers.clear()
   }
 
@@ -108,8 +105,10 @@ class VideoPlayerPlugin
     disposeAllPlayers()
   }
 
-  @OptIn(UnstableApi::class)
   override fun createForPlatformView(options: CreationOptions): Long {
+    val flutterState =
+        this.flutterState
+            ?: throw IllegalStateException("Cannot create a player when no engine is attached")
     val videoAsset = videoAssetWithOptions(options)
 
     val id = nextPlayerIdentifier++
@@ -119,34 +118,36 @@ class VideoPlayerPlugin
 
     val videoPlayer: VideoPlayer =
         createPlatformViewPlayer(
-            flutterState!!.applicationContext,
-            VideoPlayerEventCallbacks.bindTo(flutterState!!.binaryMessenger, streamInstance),
+            flutterState.applicationContext,
+            VideoPlayerEventCallbacks.bindTo(flutterState.binaryMessenger, streamInstance),
             videoAsset,
             playerOptions)
 
-    registerPlayerInstance(videoPlayer, id)
+    registerPlayerInstance(videoPlayer, id, flutterState.binaryMessenger)
     return id
   }
 
-  @OptIn(UnstableApi::class)
   override fun createForTextureView(options: CreationOptions): TexturePlayerIds {
+    val flutterState =
+        this.flutterState
+            ?: throw IllegalStateException("Cannot create a player when no engine is attached")
     val videoAsset = videoAssetWithOptions(options)
 
     val id = nextPlayerIdentifier++
     val streamInstance = id.toString()
-    val handle = flutterState!!.textureRegistry.createSurfaceProducer()
+    val handle = flutterState.textureRegistry.createSurfaceProducer()
     val playerOptions = VideoPlayerOptions(sharedOptions)
     playerOptions.backBufferDurationMs = options.backBufferDurationMs
 
     val videoPlayer: VideoPlayer =
         createTexturePlayer(
-            flutterState!!.applicationContext,
-            VideoPlayerEventCallbacks.bindTo(flutterState!!.binaryMessenger, streamInstance),
+            flutterState.applicationContext,
+            VideoPlayerEventCallbacks.bindTo(flutterState.binaryMessenger, streamInstance),
             handle,
             videoAsset,
             playerOptions)
 
-    registerPlayerInstance(videoPlayer, id)
+    registerPlayerInstance(videoPlayer, id, flutterState.binaryMessenger)
     return TexturePlayerIds(id, handle.id())
   }
 
@@ -171,10 +172,9 @@ class VideoPlayerPlugin
     }
   }
 
-  private fun registerPlayerInstance(player: VideoPlayer, id: Long) {
+  private fun registerPlayerInstance(player: VideoPlayer, id: Long, messenger: BinaryMessenger) {
     // Set up the instance-specific API handler, and make sure it is removed when the player is
     // disposed.
-    val messenger = flutterState!!.binaryMessenger
     val channelSuffix = id.toString()
     setUp(messenger, player, channelSuffix)
     player.setDisposeHandler { VideoPlayerInstanceApi.setUp(messenger, null, channelSuffix) }

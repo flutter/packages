@@ -58,8 +58,9 @@ constructor(
 
     exoPlayer.setMediaItem(mediaItem)
     exoPlayer.prepare()
-    exoPlayerEventListener = createExoPlayerEventListener(exoPlayer, surfaceProducer)
-    exoPlayer.addListener(exoPlayerEventListener!!)
+    val listener = createExoPlayerEventListener(exoPlayer, surfaceProducer)
+    exoPlayerEventListener = listener
+    exoPlayer.addListener(listener)
     setAudioAttributes(exoPlayer, options.mixWithOthers)
   }
 
@@ -150,6 +151,7 @@ constructor(
   // TODO: Migrate to stable API, see https://github.com/flutter/flutter/issues/147039.
   @UnstableApi
   override fun selectAudioTrack(groupIndex: Long, trackIndex: Long) {
+    val trackSelector = this.trackSelector
     checkNotNull(trackSelector) { "Cannot select audio track: track selector is null" }
 
     // Get current tracks
@@ -188,8 +190,8 @@ constructor(
     val override = TrackSelectionOverride(trackGroup, trackIndex.toInt())
 
     // Apply the track selection override
-    trackSelector!!.setParameters(
-        trackSelector!!.buildUponParameters().setOverrideForType(override).build())
+    trackSelector.setParameters(
+        trackSelector.buildUponParameters().setOverrideForType(override).build())
   }
 
   // TODO: Migrate to stable API, see https://github.com/flutter/flutter/issues/147039.
@@ -233,16 +235,18 @@ constructor(
   // TODO: Migrate to stable API, see https://github.com/flutter/flutter/issues/147039.
   @UnstableApi
   override fun enableAutoVideoQuality() {
+    val trackSelector = this.trackSelector
     checkNotNull(trackSelector) { "Cannot enable auto video quality: track selector is null" }
 
     // Clear video track override to enable adaptive streaming
-    trackSelector!!.setParameters(
-        trackSelector!!.buildUponParameters().clearOverridesOfType(C.TRACK_TYPE_VIDEO).build())
+    trackSelector.setParameters(
+        trackSelector.buildUponParameters().clearOverridesOfType(C.TRACK_TYPE_VIDEO).build())
   }
 
   // TODO: Migrate to stable API, see https://github.com/flutter/flutter/issues/147039.
   @UnstableApi
   override fun selectVideoTrack(groupIndex: Long, trackIndex: Long) {
+    val trackSelector = this.trackSelector
     checkNotNull(trackSelector) { "Cannot select video track: track selector is null" }
 
     // Get current tracks
@@ -319,8 +323,8 @@ constructor(
       val currentPosition = exoPlayer.currentPosition
 
       // Disable video track type to force renderer release
-      trackSelector!!.setParameters(
-          trackSelector!!
+      trackSelector.setParameters(
+          trackSelector
               .buildUponParameters()
               .setTrackTypeDisabled(C.TRACK_TYPE_VIDEO, true)
               .build())
@@ -345,8 +349,8 @@ constructor(
               return@Runnable
             }
 
-            trackSelector!!.setParameters(
-                trackSelector!!
+            trackSelector.setParameters(
+                trackSelector
                     .buildUponParameters()
                     .setTrackTypeDisabled(C.TRACK_TYPE_VIDEO, false)
                     .setOverrideForType(override)
@@ -363,20 +367,16 @@ constructor(
     }
 
     // Apply the track selection override normally if dimensions haven't changed
-    trackSelector!!.setParameters(
-        trackSelector!!.buildUponParameters().setOverrideForType(override).build())
+    trackSelector.setParameters(
+        trackSelector.buildUponParameters().setOverrideForType(override).build())
   }
 
   open fun dispose() {
     isDisposed = true
     mainHandler.removeCallbacksAndMessages(null)
-    if (disposeHandler != null) {
-      disposeHandler!!()
-    }
-    if (exoPlayerEventListener != null) {
-      exoPlayerEventListener!!.dispose()
-      exoPlayerEventListener = null
-    }
+    disposeHandler?.invoke()
+    exoPlayerEventListener?.dispose()
+    exoPlayerEventListener = null
     exoPlayer.release()
   }
 

@@ -21,9 +21,14 @@ class PlatformViewExoPlayerEventListener(exoPlayer: ExoPlayer, events: VideoPlay
     // We can't rely on VideoSize here, because at this point it is not available - the platform
     // view was not created yet. We use the video format instead.
     val videoFormat = exoPlayer.videoFormat
+    // If somehow a video isn't actually playing, send dummy values.
+    if (videoFormat == null) {
+      events.onInitialized(0, 0, 0, 0)
+      return
+    }
     var rotationCorrection =
         fromDegrees(Objects.requireNonNull<Format>(videoFormat).rotationDegrees)
-    var width = videoFormat!!.width
+    var width = videoFormat.width
     var height = videoFormat.height
 
     // Anamorphic content is stored with non-square pixels, so the coded width has to be

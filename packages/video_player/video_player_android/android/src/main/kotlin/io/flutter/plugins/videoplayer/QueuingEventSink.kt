@@ -46,24 +46,23 @@ internal class QueuingEventSink {
   }
 
   private fun maybeFlush() {
-    if (delegate == null) {
-      return
-    }
-    for (event in eventQueue) {
-      when (event) {
-        is EndOfStreamEvent -> {
-          delegate!!.endOfStream()
-        }
-        is ErrorEvent -> {
-          val errorEvent: ErrorEvent = event
-          delegate!!.error(errorEvent.code, errorEvent.message, errorEvent.details)
-        }
-        else -> {
-          delegate!!.success(event as PlatformVideoEvent)
+    delegate?.let {
+      for (event in eventQueue) {
+        when (event) {
+          is EndOfStreamEvent -> {
+            it.endOfStream()
+          }
+          is ErrorEvent -> {
+            val errorEvent: ErrorEvent = event
+            it.error(errorEvent.code, errorEvent.message, errorEvent.details)
+          }
+          else -> {
+            it.success(event as PlatformVideoEvent)
+          }
         }
       }
+      eventQueue.clear()
     }
-    eventQueue.clear()
   }
 
   internal class EndOfStreamEvent
