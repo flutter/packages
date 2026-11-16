@@ -3975,7 +3975,8 @@ fileprivate enum PigeonEngineKeys {
     indent.newln();
     // TODO(tarrinneal): Prefix this class to avoid name collisions.
     indent.format('''
-      private class PigeonStreamHandler<ReturnType>: NSObject, FlutterStreamHandler {
+      @MainActor
+      private class PigeonStreamHandler<ReturnType>: NSObject, @preconcurrency FlutterStreamHandler {
         private let wrapper: PigeonEventChannelWrapper<ReturnType>
         private var pigeonSink: PigeonEventSink<ReturnType>? = nil
 
@@ -4000,7 +4001,7 @@ fileprivate enum PigeonEngineKeys {
     if (api.swiftOptions?.includeSharedClasses ?? true) {
       // TODO(tarrinneal): Prefix these classes to avoid name collisions.
       indent.format('''
-
+      @MainActor
       class PigeonEventChannelWrapper<ReturnType> {
         func onListen(withArguments arguments: Any?, sink: PigeonEventSink<ReturnType>) {}
         func onCancel(withArguments arguments: Any?) {}
@@ -4048,6 +4049,7 @@ fileprivate enum PigeonEngineKeys {
           /// Sets the stream handler for this channel, replacing any previous handler.
           /// 
           /// Pass `nil` to remove the event channel registration.
+          @MainActor
           func setStreamHandler(_ streamHandler: $streamHandlerClassName?) {
             let internalHandler = streamHandler.map({ PigeonStreamHandler<${_swiftTypeForDartType(func.returnType)}>(wrapper: \$0) })
             channel.setStreamHandler(internalHandler)
@@ -4060,6 +4062,7 @@ fileprivate enum PigeonEngineKeys {
           /// The returned channel can be stored to allow changing or removing the stream handler.
           /// If the handler will not be changed for the lifetime of the engine associated with the messenger,
           /// the return value can be ignored.
+          @MainActor
           @discardableResult static func register(
             with messenger: FlutterBinaryMessenger,
             instanceName: String = "",

@@ -8,7 +8,7 @@ import Foundation
   import Flutter
   import UIKit
 #elseif os(macOS)
-  import FlutterMacOS
+  @preconcurrency import FlutterMacOS
 #endif
 
 /// Helper to adapt callback-based Flutter API calls into Swift async/await,
@@ -42,19 +42,21 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi, HostCa
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     // Workaround for https://github.com/flutter/flutter/issues/118103.
-    #if os(iOS)
-      let messenger = registrar.messenger()
-    #else
-      let messenger = registrar.messenger
-    #endif
-    let plugin = TestPlugin(binaryMessenger: messenger, registrar: registrar)
-    HostIntegrationCoreApiSetup.setUp(binaryMessenger: messenger, api: plugin)
-    HostCallbackCoreApiSetup.setUp(binaryMessenger: messenger, api: plugin)
-    TestPluginWithSuffix.register(with: registrar, suffix: "suffixOne")
-    TestPluginWithSuffix.register(with: registrar, suffix: "suffixTwo")
-    registrar.publish(plugin)
+    MainActor.assumeIsolated{
+      #if os(iOS)
+        let messenger = registrar.messenger()
+      #else
+        let messenger = registrar.messenger
+      #endif
+      let plugin = TestPlugin(binaryMessenger: messenger, registrar: registrar)
+      HostIntegrationCoreApiSetup.setUp(binaryMessenger: messenger, api: plugin)
+      HostCallbackCoreApiSetup.setUp(binaryMessenger: messenger, api: plugin)
+      TestPluginWithSuffix.register(with: registrar, suffix: "suffixOne")
+      TestPluginWithSuffix.register(with: registrar, suffix: "suffixTwo")
+      registrar.publish(plugin)
+    }
   }
-
+  @MainActor
   init(binaryMessenger: FlutterBinaryMessenger, registrar: FlutterPluginRegistrar) {
     flutterAPI = FlutterIntegrationCoreApi(binaryMessenger: binaryMessenger)
     flutterCallbackAPI = FlutterCallbackCoreApi(binaryMessenger: binaryMessenger)
@@ -90,7 +92,7 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi, HostCa
     niSealedImpl = sealedImpl
     NativeInteropSealedClassHostApiSetup.register(api: sealedImpl, registrar: registrar)
   }
-
+  @MainActor
   public func detachFromEngine(for registrar: FlutterPluginRegistrar) {
     #if os(macOS)
       let messenger = registrar.messenger
@@ -603,8 +605,11 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi, HostCa
     return !Thread.isMainThread
   }
 
+  private func isMainThread() -> Bool {
+    return Thread.isMainThread
+  }
   func asyncTaskQueueIsBackgroundThread() async throws -> Bool {
-    return !Thread.isMainThread
+    return !isMainThread()
   }
 
   func callFlutterNoop() async throws {
@@ -863,11 +868,11 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi, HostCa
 
   @MainActor
   func callFlutterIsAsyncFlutterApiOnRoot() async throws -> Bool {
-    guard Thread.isMainThread else {
+    guard isMainThread() else {
       return false
     }
     let result = try await self.flutterAPI.isAsyncFlutterApiOnRoot()
-    guard Thread.isMainThread else {
+    guard isMainThread() else {
       return false
     }
     return result
@@ -878,7 +883,7 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi, HostCa
   }
 }
 
-class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
+class NativeInteropTestsClass: NSObject, @preconcurrency NativeInteropHostIntegrationCoreApi {
   private static var nextLabelId = 1
   /// Unique to this instance; see `engineLabel()`.
   private let label: String = {
@@ -2148,11 +2153,12 @@ class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
   }
 
   func callFlutterNoopOnBackgroundThread() async throws -> Bool {
+    let localRegistrar = self.registrar
     return await withCheckedContinuation { continuation in
       DispatchQueue.global(qos: .background).async {
         Task {
           do {
-            guard let registrar = self.registrar,
+            guard let registrar = localRegistrar,
               let flutterApi = NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance(
                 registrar: registrar)
             else {
@@ -2168,7 +2174,7 @@ class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
       }
     }
   }
-
+  @MainActor
   func testDeregisterHostApi() throws -> Bool {
     let name = "testDeregisterHostInstance"
     let stub = StubPluginRegistrar()
@@ -2301,7 +2307,6 @@ class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
       return true
     #endif
   }
-
   func testDeregisterFlutterApi() throws -> Bool {
     let name = "testDeregisterFlutterInstance"
     let stub = StubPluginRegistrar()

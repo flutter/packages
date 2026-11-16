@@ -882,6 +882,49 @@ void main() {
     expect(code, isNot(contains('@MainActor func callbackMethod')));
   });
 
+  test('event channel api classes use @MainActor', () {
+    final root = Root(
+      apis: <Api>[
+        AstEventChannelApi(
+          name: 'EventApi',
+          methods: <Method>[
+            Method(
+              name: 'streamEvents',
+              location: ApiLocation.host,
+              returnType: const TypeDeclaration(baseName: 'int', isNullable: false),
+              parameters: <Parameter>[],
+            ),
+          ],
+        ),
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+
+    final sink = StringBuffer();
+    const swiftOptions = InternalSwiftOptions(swiftOut: '');
+    const generator = SwiftGenerator();
+
+    generator.generate(swiftOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+
+    final code = sink.toString();
+
+    // The base event-channel wrapper must be main-actor isolated.
+    expect(code, contains('@MainActor\nclass PigeonEventChannelWrapper'));
+
+    // The Flutter stream-handler adapter must be main-actor isolated.
+    expect(code, contains('@MainActor\nprivate class PigeonStreamHandler'));
+
+    // The Objective-C protocol conformance needs preconcurrency compatibility.
+    expect(code, contains('@preconcurrency FlutterStreamHandler'));
+
+    // Registering a stream handler must happen on the main actor.
+    expect(code, matches(RegExp(r'@MainActor\s+@discardableResult static func register\(')));
+
+    // Setting or replacing a stream handler must happen on the main actor.
+    expect(code, contains('@MainActor\n  func setStreamHandler'));
+  });
+
   test('gen one enum class', () {
     final anEnum = Enum(
       name: 'Enum1',

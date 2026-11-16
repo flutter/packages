@@ -161,6 +161,7 @@ struct BasicCompileTest {
   }
 
   @Test
+  @MainActor
   func pluginDetachPreservesOtherEngineRegistrations() {
     let preexistingSetup = NativeInteropHostIntegrationCoreApiSetup.pigeonResolveInstance(
       engineId: Int64.min, affinityKey: Int64.min)
