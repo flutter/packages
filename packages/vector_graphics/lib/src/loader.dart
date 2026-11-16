@@ -132,8 +132,7 @@ class _AssetByteLoaderCacheKey {
 /// This loader does not cache bytes requested from the network.
 class NetworkBytesLoader extends BytesLoader {
   /// Creates a new loading context for network bytes.
-  const NetworkBytesLoader(this.url, {this.headers, http.Client? httpClient})
-    : _httpClient = httpClient;
+  const NetworkBytesLoader(this.url, {this.headers, this._httpClient});
 
   /// The HTTP headers to use for the network request.
   final Map<String, String>? headers;

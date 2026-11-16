@@ -2,6 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:io';
+
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:shared_preferences_foundation/shared_preferences_foundation.dart';
@@ -692,4 +695,38 @@ void main() {
       expect(await preferences.getStringList(listKey, emptyOptions), testList);
     });
   });
+
+  testWidgets('detaching a secondary FlutterEngine preserves primary engine APIs', (
+    WidgetTester _,
+  ) async {
+    const channel = MethodChannel('dev.flutter.plugins.shared_preferences_example/multi_engine');
+    final existingLegacy = SharedPreferencesFoundation();
+    final existingAsync = SharedPreferencesAsyncFoundation();
+    final options = SharedPreferencesAsyncFoundationOptions();
+
+    // Pre-populate / resolve handles before the secondary engine attaches.
+    expect(await existingLegacy.setValue('String', 'flutter.beforeDetach', 'keptLegacy'), isTrue);
+    await existingAsync.setString('beforeDetachAsync', 'keptAsync', options);
+
+    await channel.invokeMethod<void>('attachAndDetachSecondaryEngine');
+
+    // Fresh instances (like `SharedPreferences.getInstance()` after a background
+    // engine detaches) as well as existing handles still work.
+    final freshLegacy = SharedPreferencesFoundation();
+    final Map<String, Object> legacyAll = await freshLegacy.getAllWithParameters(
+      GetAllParameters(filter: PreferencesFilter(prefix: 'flutter.')),
+    );
+    expect(legacyAll['flutter.beforeDetach'], 'keptLegacy');
+    expect(await existingLegacy.setValue('String', 'flutter.afterDetach', 'works'), isTrue);
+
+    final freshAsync = SharedPreferencesAsyncFoundation();
+    expect(await freshAsync.getString('beforeDetachAsync', options), 'keptAsync');
+    await existingAsync.setString('afterDetachAsync', 'worksAsync', options);
+    expect(await freshAsync.getString('afterDetachAsync', options), 'worksAsync');
+
+    await existingAsync.clear(
+      const ClearPreferencesParameters(filter: PreferencesFilters()),
+      options,
+    );
+  }, skip: !Platform.isIOS);
 }
