@@ -586,10 +586,10 @@ class _CupertinoTextSelectionToolbarContentState
     final renderToolbar = _toolbarItemsKey.currentContext?.findRenderObject() as RenderBox?;
 
     if (renderToolbar is _RenderCupertinoTextSelectionToolbarItems && renderToolbar.hasNextPage) {
-      _controller.reverse();
+      _nextPage = _page + 1;
       _controller.removeStatusListener(_statusListener);
       _controller.addStatusListener(_statusListener);
-      _nextPage = _page + 1;
+      _controller.reverse();
     }
   }
 
@@ -598,10 +598,10 @@ class _CupertinoTextSelectionToolbarContentState
 
     if (renderToolbar is _RenderCupertinoTextSelectionToolbarItems &&
         renderToolbar.hasPreviousPage) {
-      _controller.reverse();
+      _nextPage = _page - 1;
       _controller.removeStatusListener(_statusListener);
       _controller.addStatusListener(_statusListener);
-      _nextPage = _page - 1;
+      _controller.reverse();
     }
   }
 
@@ -612,14 +612,12 @@ class _CupertinoTextSelectionToolbarContentState
 
     _controller.removeStatusListener(_statusListener);
     final int? nextPage = _nextPage;
-    if (nextPage == null) {
-      return;
+    if (nextPage != null) {
+      setState(() {
+        _page = nextPage;
+        _nextPage = null;
+      });
     }
-
-    setState(() {
-      _page = nextPage;
-      _nextPage = null;
-    });
     _controller.forward();
   }
 
