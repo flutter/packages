@@ -52,7 +52,7 @@
             ActionType = "Xcode.IDEStandardExecutionActionsCore.ExecutionActionType.ShellScriptAction">
             <ActionContent
                title = "Warm up StoreKit Testing on cold simulators"
-               scriptText = "# Seed the StoreKit test configuration on fresh simulators (Apple FB24651858).&#10;if [ -z &quot;$STOREKIT_WARMUP&quot; ] &amp;&amp; [ &quot;$TARGET_DEVICE_PLATFORM_NAME&quot; = &quot;iphonesimulator&quot; ]; then&#10;  env -i HOME=&quot;$HOME&quot; PATH=&quot;$PATH&quot; DEVELOPER_DIR=&quot;$DEVELOPER_DIR&quot; STOREKIT_WARMUP=1 \&#10;    xcodebuild test-without-building \&#10;      -workspace &quot;$PROJECT_DIR/Runner.xcworkspace&quot; -scheme Runner \&#10;      -configuration &quot;$CONFIGURATION&quot; -destination &quot;id=$TARGET_DEVICE_IDENTIFIER&quot; \&#10;      -derivedDataPath &quot;$BUILD_DIR/../..&quot; \&#10;      -only-testing:RunnerTests/InAppPurchase2PluginTests/testCanMakePayments \&#10;      &gt; &quot;$TMPDIR/storekit_warmup.log&quot; 2&gt;&amp;1 || true&#10;fi&#10;">
+               scriptText = "# TODO(LouiseHsu): Remove once CI simulators include the iOS 27.3 StoreKit Testing fix (FB24651858).&#10;/bin/sh &quot;$SRCROOT/scripts/ios_27_simulator_workaround.sh&quot;&#10;">
                <EnvironmentBuildable>
                   <BuildableReference
                      BuildableIdentifier = "primary"
