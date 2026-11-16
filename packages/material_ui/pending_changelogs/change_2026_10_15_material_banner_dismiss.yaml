@@ -1,0 +1,4 @@
+changelog: |
+  - Updates `MaterialBanner` documentation and examples to demonstrate safe dismissal across routes.
+version: patch
+
