@@ -2510,6 +2510,75 @@ void main() {
       expect(find.text('2-$initialMarker'), findsNothing);
       expect(find.text('2-$updatedMarker'), findsOneWidget);
     });
+
+    testWidgets('TabBarView stays in sync with TabBar when tabs are added in-place', (
+      WidgetTester tester,
+    ) async {
+      // Regression test for https://github.com/flutter/flutter/issues/170090.
+      late TabController tabController;
+      final tabs = <Tab>[const Tab(text: 'Main Tab')];
+      final tabViews = <Widget>[];
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              if (tabViews.isEmpty) {
+                tabController = createTabController(vsync: const TestVSync(), length: 1);
+                tabViews.add(
+                  TextButton(
+                    onPressed: () {
+                      tabViews.add(Center(child: Text('Content for Tab ${tabs.length}')));
+                      tabController = createTabController(
+                        animationDuration: const Duration(milliseconds: 300),
+                        length: tabViews.length,
+                        vsync: const TestVSync(),
+                      );
+                      tabs.add(Tab(text: 'Tab ${tabs.length}'));
+                      setState(() {});
+                      tabController.animateTo(1);
+                    },
+                    child: const Text('Add Tab'),
+                  ),
+                );
+              }
+              return Scaffold(
+                appBar: AppBar(
+                  bottom: TabBar(controller: tabController, tabs: tabs),
+                ),
+                body: TabBarView(controller: tabController, children: tabViews),
+              );
+            },
+          ),
+        ),
+      );
+
+      expect(find.text('Add Tab'), findsOneWidget);
+      expect(find.text('Content for Tab 1'), findsNothing);
+
+      // Add Tab 1 and animate to it.
+      await tester.tap(find.text('Add Tab'));
+      await tester.pumpAndSettle();
+
+      expect(tabController.index, 1);
+      expect(find.text('Content for Tab 1'), findsOneWidget);
+
+      // Switch back to Main Tab, add Tab 2, and tap Tab 2 in the TabBar.
+      await tester.tap(find.text('Main Tab'));
+      await tester.pumpAndSettle();
+      expect(find.text('Add Tab'), findsOneWidget);
+
+      await tester.tap(find.text('Add Tab'));
+      await tester.pumpAndSettle();
+      expect(tabController.index, 1);
+      expect(find.text('Content for Tab 1'), findsOneWidget);
+
+      // Tapping the newly added Tab 2 should immediately show its content on the first tap.
+      await tester.tap(find.text('Tab 2'));
+      await tester.pumpAndSettle();
+      expect(tabController.index, 2);
+      expect(find.text('Content for Tab 2'), findsOneWidget);
+    });
   });
 
   testWidgets('TabBarView scrolls end close to a new page', (WidgetTester tester) async {
