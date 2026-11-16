@@ -1,9 +1,17 @@
+## 0.4.0
+
+* **BREAKING CHANGE**: Changes the default storage location for captured
+  pictures and videos from the user's Pictures and Videos folders to
+  `camera\pictures` and `camera\videos` in the user's temp directory, matching
+  the other platform implementations. Apps that need to keep a capture should
+  move or copy it, for example with `XFile.saveTo`.
+
 ## 0.3.1
 
-* Changes the default storage location for captured pictures and videos from
-  the user's Pictures and Videos folders to `camera\pictures` and
-  `camera\videos` in the user's temp directory, matching the other platform
-  implementations.
+* Falls back to the system temp directory for captured pictures and videos when
+  the Pictures / Videos known folder cannot be used, e.g. when blocked by
+  Controlled Folder Access.
+* Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
 
 ## 0.3.0+1
 

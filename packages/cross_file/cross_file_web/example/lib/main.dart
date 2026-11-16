@@ -2,7 +2,16 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// Required to add imports for README excerpts.
+// ignore_for_file: unused_import
+
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
+// #docregion web_import
+import 'package:cross_file_web/cross_file_web.dart';
+// #enddocregion web_import
+// #docregion web_safe_import
+import 'package:cross_file_web/cross_file_web_safe.dart';
+// #enddocregion web_safe_import
 import 'package:flutter/material.dart';
 import 'package:mime/mime.dart' as mime;
 
