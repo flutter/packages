@@ -6,6 +6,7 @@ package io.flutter.plugins.videoplayer
 import android.content.Context
 import android.util.LongSparseArray
 import androidx.annotation.OptIn
+import androidx.annotation.VisibleForTesting
 import androidx.core.util.isEmpty
 import androidx.core.util.size
 import androidx.media3.common.util.UnstableApi
@@ -21,6 +22,22 @@ import io.flutter.plugins.videoplayer.platformview.PlatformVideoViewFactory.Vide
 import io.flutter.plugins.videoplayer.platformview.PlatformViewVideoPlayer
 import io.flutter.plugins.videoplayer.texture.TextureVideoPlayer
 import io.flutter.view.TextureRegistry
+import io.flutter.view.TextureRegistry.SurfaceProducer
+
+typealias PlatformViewPlayerConstructor =
+    (
+        context: Context,
+        events: VideoPlayerCallbacks,
+        asset: VideoAsset,
+        options: VideoPlayerOptions) -> PlatformViewVideoPlayer
+
+typealias TexturePlayerConstructor =
+    (
+        context: Context,
+        events: VideoPlayerCallbacks,
+        surfaceProducer: SurfaceProducer,
+        asset: VideoAsset,
+        options: VideoPlayerOptions) -> TextureVideoPlayer
 
 /** Android platform implementation of the VideoPlayerPlugin. */
 class VideoPlayerPlugin
@@ -30,6 +47,20 @@ class VideoPlayerPlugin
   private var flutterState: FlutterState? = null
   private val sharedOptions = VideoPlayerOptions()
   private var nextPlayerIdentifier: Long = 1
+
+  private val createPlatformViewPlayer: PlatformViewPlayerConstructor
+  private val createTexturePlayer: TexturePlayerConstructor
+
+  constructor() : this(null, null)
+
+  @VisibleForTesting
+  constructor(
+      createPlatformViewPlayer: PlatformViewPlayerConstructor?,
+      createTexturePlayer: TexturePlayerConstructor?
+  ) {
+    this.createPlatformViewPlayer = createPlatformViewPlayer ?: PlatformViewVideoPlayer::create
+    this.createTexturePlayer = createTexturePlayer ?: TextureVideoPlayer::create
+  }
 
   override fun onAttachedToEngine(binding: FlutterPluginBinding) {
     val injector = FlutterInjector.instance()
@@ -91,7 +122,7 @@ class VideoPlayerPlugin
     playerOptions.backBufferDurationMs = options.backBufferDurationMs
 
     val videoPlayer: VideoPlayer =
-        PlatformViewVideoPlayer.create(
+        createPlatformViewPlayer(
             flutterState!!.applicationContext,
             VideoPlayerEventCallbacks.bindTo(flutterState!!.binaryMessenger, streamInstance),
             videoAsset,
@@ -112,7 +143,7 @@ class VideoPlayerPlugin
     playerOptions.backBufferDurationMs = options.backBufferDurationMs
 
     val videoPlayer: VideoPlayer =
-        TextureVideoPlayer.create(
+        createTexturePlayer(
             flutterState!!.applicationContext,
             VideoPlayerEventCallbacks.bindTo(flutterState!!.binaryMessenger, streamInstance),
             handle,

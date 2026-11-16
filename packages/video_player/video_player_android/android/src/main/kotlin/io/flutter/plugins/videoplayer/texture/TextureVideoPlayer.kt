@@ -4,6 +4,7 @@
 package io.flutter.plugins.videoplayer.texture
 
 import android.content.Context
+import androidx.annotation.OptIn
 import androidx.annotation.RestrictTo
 import androidx.annotation.VisibleForTesting
 import androidx.media3.common.MediaItem
@@ -101,7 +102,7 @@ constructor(
      */
     // TODO: Migrate to stable API, see https://github.com/flutter/flutter/issues/147039.
     @JvmStatic
-    @UnstableApi
+    @OptIn(UnstableApi::class)
     fun create(
         context: Context,
         events: VideoPlayerCallbacks,
