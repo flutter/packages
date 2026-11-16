@@ -2449,6 +2449,9 @@ class _TabBarViewState extends State<TabBarView> {
     }
     // While a warp is under way, we stop updating the tab page contents.
     // This is tracked in https://github.com/flutter/flutter/issues/31269.
+    // Checking the length against _childrenWithKey also detects in-place
+    // additions or removals of tabs; in-place replacements that do not change
+    // the list length still require passing a new list instance.
     if ((widget.children != oldWidget.children ||
             widget.children.length != _childrenWithKey.length) &&
         _warpUnderwayCount == 0) {

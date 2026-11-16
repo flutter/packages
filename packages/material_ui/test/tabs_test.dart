@@ -2524,12 +2524,13 @@ void main() {
           home: StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
               if (tabViews.isEmpty) {
-                tabController = createTabController(vsync: const TestVSync(), length: 1);
+                tabController = TabController(vsync: const TestVSync(), length: 1);
                 tabViews.add(
                   TextButton(
                     onPressed: () {
                       tabViews.add(Center(child: Text('Content for Tab ${tabs.length}')));
-                      tabController = createTabController(
+                      tabController.dispose();
+                      tabController = TabController(
                         animationDuration: const Duration(milliseconds: 300),
                         length: tabViews.length,
                         vsync: const TestVSync(),
@@ -2578,6 +2579,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(tabController.index, 2);
       expect(find.text('Content for Tab 2'), findsOneWidget);
+      tabController.dispose();
     });
   });
 
