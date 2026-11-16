@@ -6695,6 +6695,48 @@ class HostTrivialApiSetup {
     }
   }
 }
+/// A Host API using `SwiftHostApiOptions(isMainActor: true)`, which marks
+/// the generated Swift protocol's asynchronous methods `@MainActor` so a
+/// `@MainActor`-isolated class can implement it directly.
+///
+/// Generated protocol from Pigeon that represents a handler of messages from Flutter.
+protocol HostMainActorApi {
+  /// Returns true if the handler is run on the main thread, which should
+  /// always be true given the `@MainActor` isolation.
+  @MainActor func isMainThread() async throws -> Bool
+}
+
+/// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
+class HostMainActorApiSetup {
+  static var codec: FlutterStandardMessageCodec { CoreTestsPigeonCodec.shared }
+  /// Sets up an instance of `HostMainActorApi` to handle messages through the `binaryMessenger`.
+  static func setUp(
+    binaryMessenger: FlutterBinaryMessenger, api: HostMainActorApi?,
+    messageChannelSuffix: String = ""
+  ) {
+    let channelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""
+    /// Returns true if the handler is run on the main thread, which should
+    /// always be true given the `@MainActor` isolation.
+    let isMainThreadChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.pigeon_integration_tests.HostMainActorApi.isMainThread\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      isMainThreadChannel.setMessageHandler { _, reply in
+        Task { @MainActor in
+          do {
+            let result = try await api.isMainThread()
+            reply(wrapResult(result))
+          } catch {
+            reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      isMainThreadChannel.setMessageHandler(nil)
+    }
+  }
+}
 /// A simple API implemented in some unit tests.
 ///
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.

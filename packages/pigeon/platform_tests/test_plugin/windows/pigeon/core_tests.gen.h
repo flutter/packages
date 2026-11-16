@@ -67,6 +67,7 @@ class ErrorOr {
   friend class FlutterIntegrationCoreApi;
   friend class HostCallbackCoreApi;
   friend class HostTrivialApi;
+  friend class HostMainActorApi;
   friend class HostSmallApi;
   friend class FlutterSmallApi;
   ErrorOr() = default;
@@ -114,6 +115,7 @@ class UnusedClass {
   friend class FlutterIntegrationCoreApi;
   friend class HostCallbackCoreApi;
   friend class HostTrivialApi;
+  friend class HostMainActorApi;
   friend class HostSmallApi;
   friend class FlutterSmallApi;
   friend class PigeonInternalCodecSerializer;
@@ -253,6 +255,7 @@ class AllTypes {
   friend class FlutterIntegrationCoreApi;
   friend class HostCallbackCoreApi;
   friend class HostTrivialApi;
+  friend class HostMainActorApi;
   friend class HostSmallApi;
   friend class FlutterSmallApi;
   friend class PigeonInternalCodecSerializer;
@@ -474,6 +477,7 @@ class AllNullableTypes {
   friend class FlutterIntegrationCoreApi;
   friend class HostCallbackCoreApi;
   friend class HostTrivialApi;
+  friend class HostMainActorApi;
   friend class HostSmallApi;
   friend class FlutterSmallApi;
   friend class PigeonInternalCodecSerializer;
@@ -680,6 +684,7 @@ class AllNullableTypesWithoutRecursion {
   friend class FlutterIntegrationCoreApi;
   friend class HostCallbackCoreApi;
   friend class HostTrivialApi;
+  friend class HostMainActorApi;
   friend class HostSmallApi;
   friend class FlutterSmallApi;
   friend class PigeonInternalCodecSerializer;
@@ -739,6 +744,7 @@ class AnEmptyClass {
   friend class FlutterIntegrationCoreApi;
   friend class HostCallbackCoreApi;
   friend class HostTrivialApi;
+  friend class HostMainActorApi;
   friend class HostSmallApi;
   friend class FlutterSmallApi;
   friend class PigeonInternalCodecSerializer;
@@ -825,6 +831,7 @@ class AllClassesWrapper {
   friend class FlutterIntegrationCoreApi;
   friend class HostCallbackCoreApi;
   friend class HostTrivialApi;
+  friend class HostMainActorApi;
   friend class HostSmallApi;
   friend class FlutterSmallApi;
   friend class PigeonInternalCodecSerializer;
@@ -871,6 +878,7 @@ class TestMessage {
   friend class FlutterIntegrationCoreApi;
   friend class HostCallbackCoreApi;
   friend class HostTrivialApi;
+  friend class HostMainActorApi;
   friend class HostSmallApi;
   friend class FlutterSmallApi;
   friend class PigeonInternalCodecSerializer;
@@ -1874,6 +1882,37 @@ class HostTrivialApi {
 
  protected:
   HostTrivialApi() = default;
+};
+// A Host API using `SwiftHostApiOptions(isMainActor: true)`, which marks
+// the generated Swift protocol's asynchronous methods `@MainActor` so a
+// `@MainActor`-isolated class can implement it directly.
+//
+// Generated interface from Pigeon that represents a handler of messages from
+// Flutter.
+class HostMainActorApi {
+ public:
+  HostMainActorApi(const HostMainActorApi&) = delete;
+  HostMainActorApi& operator=(const HostMainActorApi&) = delete;
+  virtual ~HostMainActorApi() {}
+  // Returns true if the handler is run on the main thread, which should
+  // always be true given the `@MainActor` isolation.
+  virtual void IsMainThread(
+      std::function<void(ErrorOr<bool> reply)> result) = 0;
+
+  // The codec used by HostMainActorApi.
+  static const ::flutter::StandardMessageCodec& GetCodec();
+  // Sets up an instance of `HostMainActorApi` to handle messages through the
+  // `binary_messenger`.
+  static void SetUp(::flutter::BinaryMessenger* binary_messenger,
+                    HostMainActorApi* api);
+  static void SetUp(::flutter::BinaryMessenger* binary_messenger,
+                    HostMainActorApi* api,
+                    const std::string& message_channel_suffix);
+  static ::flutter::EncodableValue WrapError(std::string_view error_message);
+  static ::flutter::EncodableValue WrapError(const FlutterError& error);
+
+ protected:
+  HostMainActorApi() = default;
 };
 // A simple API implemented in some unit tests.
 //

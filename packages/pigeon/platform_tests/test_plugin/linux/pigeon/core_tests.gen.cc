@@ -38895,6 +38895,254 @@ void core_tests_pigeon_test_host_trivial_api_clear_method_handlers(
                                                nullptr);
 }
 
+struct _CoreTestsPigeonTestHostMainActorApiResponseHandle {
+  GObject parent_instance;
+
+  FlBasicMessageChannel* channel;
+  FlBasicMessageChannelResponseHandle* response_handle;
+};
+
+G_DEFINE_TYPE(CoreTestsPigeonTestHostMainActorApiResponseHandle,
+              core_tests_pigeon_test_host_main_actor_api_response_handle,
+              G_TYPE_OBJECT)
+
+static void core_tests_pigeon_test_host_main_actor_api_response_handle_dispose(
+    GObject* object) {
+  CoreTestsPigeonTestHostMainActorApiResponseHandle* self =
+      CORE_TESTS_PIGEON_TEST_HOST_MAIN_ACTOR_API_RESPONSE_HANDLE(object);
+  g_clear_object(&self->channel);
+  g_clear_object(&self->response_handle);
+  G_OBJECT_CLASS(
+      core_tests_pigeon_test_host_main_actor_api_response_handle_parent_class)
+      ->dispose(object);
+}
+
+static void core_tests_pigeon_test_host_main_actor_api_response_handle_init(
+    CoreTestsPigeonTestHostMainActorApiResponseHandle* self) {}
+
+static void
+core_tests_pigeon_test_host_main_actor_api_response_handle_class_init(
+    CoreTestsPigeonTestHostMainActorApiResponseHandleClass* klass) {
+  G_OBJECT_CLASS(klass)->dispose =
+      core_tests_pigeon_test_host_main_actor_api_response_handle_dispose;
+}
+
+static CoreTestsPigeonTestHostMainActorApiResponseHandle*
+core_tests_pigeon_test_host_main_actor_api_response_handle_new(
+    FlBasicMessageChannel* channel,
+    FlBasicMessageChannelResponseHandle* response_handle) {
+  CoreTestsPigeonTestHostMainActorApiResponseHandle* self =
+      CORE_TESTS_PIGEON_TEST_HOST_MAIN_ACTOR_API_RESPONSE_HANDLE(g_object_new(
+          core_tests_pigeon_test_host_main_actor_api_response_handle_get_type(),
+          nullptr));
+  self->channel = FL_BASIC_MESSAGE_CHANNEL(g_object_ref(channel));
+  self->response_handle =
+      FL_BASIC_MESSAGE_CHANNEL_RESPONSE_HANDLE(g_object_ref(response_handle));
+  return self;
+}
+
+G_DECLARE_FINAL_TYPE(
+    CoreTestsPigeonTestHostMainActorApiIsMainThreadResponse,
+    core_tests_pigeon_test_host_main_actor_api_is_main_thread_response,
+    CORE_TESTS_PIGEON_TEST, HOST_MAIN_ACTOR_API_IS_MAIN_THREAD_RESPONSE,
+    GObject)
+
+struct _CoreTestsPigeonTestHostMainActorApiIsMainThreadResponse {
+  GObject parent_instance;
+
+  FlValue* value;
+};
+
+G_DEFINE_TYPE(
+    CoreTestsPigeonTestHostMainActorApiIsMainThreadResponse,
+    core_tests_pigeon_test_host_main_actor_api_is_main_thread_response,
+    G_TYPE_OBJECT)
+
+static void
+core_tests_pigeon_test_host_main_actor_api_is_main_thread_response_dispose(
+    GObject* object) {
+  CoreTestsPigeonTestHostMainActorApiIsMainThreadResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_MAIN_ACTOR_API_IS_MAIN_THREAD_RESPONSE(
+          object);
+  g_clear_pointer(&self->value, fl_value_unref);
+  G_OBJECT_CLASS(
+      core_tests_pigeon_test_host_main_actor_api_is_main_thread_response_parent_class)
+      ->dispose(object);
+}
+
+static void
+core_tests_pigeon_test_host_main_actor_api_is_main_thread_response_init(
+    CoreTestsPigeonTestHostMainActorApiIsMainThreadResponse* self) {}
+
+static void
+core_tests_pigeon_test_host_main_actor_api_is_main_thread_response_class_init(
+    CoreTestsPigeonTestHostMainActorApiIsMainThreadResponseClass* klass) {
+  G_OBJECT_CLASS(klass)->dispose =
+      core_tests_pigeon_test_host_main_actor_api_is_main_thread_response_dispose;
+}
+
+static CoreTestsPigeonTestHostMainActorApiIsMainThreadResponse*
+core_tests_pigeon_test_host_main_actor_api_is_main_thread_response_new(
+    gboolean return_value) {
+  CoreTestsPigeonTestHostMainActorApiIsMainThreadResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_MAIN_ACTOR_API_IS_MAIN_THREAD_RESPONSE(g_object_new(
+          core_tests_pigeon_test_host_main_actor_api_is_main_thread_response_get_type(),
+          nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, fl_value_new_bool(return_value));
+  return self;
+}
+
+static CoreTestsPigeonTestHostMainActorApiIsMainThreadResponse*
+core_tests_pigeon_test_host_main_actor_api_is_main_thread_response_new_error(
+    const gchar* code, const gchar* message, FlValue* details) {
+  CoreTestsPigeonTestHostMainActorApiIsMainThreadResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_MAIN_ACTOR_API_IS_MAIN_THREAD_RESPONSE(g_object_new(
+          core_tests_pigeon_test_host_main_actor_api_is_main_thread_response_get_type(),
+          nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, fl_value_new_string(code));
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
+  return self;
+}
+
+struct _CoreTestsPigeonTestHostMainActorApi {
+  GObject parent_instance;
+
+  const CoreTestsPigeonTestHostMainActorApiVTable* vtable;
+  gpointer user_data;
+  GDestroyNotify user_data_free_func;
+};
+
+G_DEFINE_TYPE(CoreTestsPigeonTestHostMainActorApi,
+              core_tests_pigeon_test_host_main_actor_api, G_TYPE_OBJECT)
+
+static void core_tests_pigeon_test_host_main_actor_api_dispose(
+    GObject* object) {
+  CoreTestsPigeonTestHostMainActorApi* self =
+      CORE_TESTS_PIGEON_TEST_HOST_MAIN_ACTOR_API(object);
+  if (self->user_data != nullptr) {
+    self->user_data_free_func(self->user_data);
+  }
+  self->user_data = nullptr;
+  G_OBJECT_CLASS(core_tests_pigeon_test_host_main_actor_api_parent_class)
+      ->dispose(object);
+}
+
+static void core_tests_pigeon_test_host_main_actor_api_init(
+    CoreTestsPigeonTestHostMainActorApi* self) {}
+
+static void core_tests_pigeon_test_host_main_actor_api_class_init(
+    CoreTestsPigeonTestHostMainActorApiClass* klass) {
+  G_OBJECT_CLASS(klass)->dispose =
+      core_tests_pigeon_test_host_main_actor_api_dispose;
+}
+
+static CoreTestsPigeonTestHostMainActorApi*
+core_tests_pigeon_test_host_main_actor_api_new(
+    const CoreTestsPigeonTestHostMainActorApiVTable* vtable, gpointer user_data,
+    GDestroyNotify user_data_free_func) {
+  CoreTestsPigeonTestHostMainActorApi* self =
+      CORE_TESTS_PIGEON_TEST_HOST_MAIN_ACTOR_API(g_object_new(
+          core_tests_pigeon_test_host_main_actor_api_get_type(), nullptr));
+  self->vtable = vtable;
+  self->user_data = user_data;
+  self->user_data_free_func = user_data_free_func;
+  return self;
+}
+
+static void core_tests_pigeon_test_host_main_actor_api_is_main_thread_cb(
+    FlBasicMessageChannel* channel, FlValue* message_,
+    FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
+  CoreTestsPigeonTestHostMainActorApi* self =
+      CORE_TESTS_PIGEON_TEST_HOST_MAIN_ACTOR_API(user_data);
+
+  if (self->vtable == nullptr || self->vtable->is_main_thread == nullptr) {
+    return;
+  }
+
+  g_autoptr(CoreTestsPigeonTestHostMainActorApiResponseHandle) handle =
+      core_tests_pigeon_test_host_main_actor_api_response_handle_new(
+          channel, response_handle);
+  self->vtable->is_main_thread(handle, self->user_data);
+}
+
+void core_tests_pigeon_test_host_main_actor_api_set_method_handlers(
+    FlBinaryMessenger* messenger, const gchar* suffix,
+    const CoreTestsPigeonTestHostMainActorApiVTable* vtable, gpointer user_data,
+    GDestroyNotify user_data_free_func) {
+  g_autofree gchar* dot_suffix =
+      suffix != nullptr ? g_strdup_printf(".%s", suffix) : g_strdup("");
+  g_autoptr(CoreTestsPigeonTestHostMainActorApi) api_data =
+      core_tests_pigeon_test_host_main_actor_api_new(vtable, user_data,
+                                                     user_data_free_func);
+
+  g_autoptr(CoreTestsPigeonTestMessageCodec) codec =
+      core_tests_pigeon_test_message_codec_new();
+  g_autofree gchar* is_main_thread_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostMainActorApi."
+      "isMainThread%s",
+      dot_suffix);
+  g_autoptr(FlBasicMessageChannel) is_main_thread_channel =
+      fl_basic_message_channel_new(messenger, is_main_thread_channel_name,
+                                   FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(
+      is_main_thread_channel,
+      core_tests_pigeon_test_host_main_actor_api_is_main_thread_cb,
+      g_object_ref(api_data), g_object_unref);
+}
+
+void core_tests_pigeon_test_host_main_actor_api_clear_method_handlers(
+    FlBinaryMessenger* messenger, const gchar* suffix) {
+  g_autofree gchar* dot_suffix =
+      suffix != nullptr ? g_strdup_printf(".%s", suffix) : g_strdup("");
+
+  g_autoptr(CoreTestsPigeonTestMessageCodec) codec =
+      core_tests_pigeon_test_message_codec_new();
+  g_autofree gchar* is_main_thread_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostMainActorApi."
+      "isMainThread%s",
+      dot_suffix);
+  g_autoptr(FlBasicMessageChannel) is_main_thread_channel =
+      fl_basic_message_channel_new(messenger, is_main_thread_channel_name,
+                                   FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(is_main_thread_channel, nullptr,
+                                               nullptr, nullptr);
+}
+
+void core_tests_pigeon_test_host_main_actor_api_respond_is_main_thread(
+    CoreTestsPigeonTestHostMainActorApiResponseHandle* response_handle,
+    gboolean return_value) {
+  g_autoptr(CoreTestsPigeonTestHostMainActorApiIsMainThreadResponse) response =
+      core_tests_pigeon_test_host_main_actor_api_is_main_thread_response_new(
+          return_value);
+  g_autoptr(GError) error = nullptr;
+  if (!fl_basic_message_channel_respond(response_handle->channel,
+                                        response_handle->response_handle,
+                                        response->value, &error)) {
+    g_warning("Failed to send response to %s.%s: %s", "HostMainActorApi",
+              "isMainThread", error->message);
+  }
+}
+
+void core_tests_pigeon_test_host_main_actor_api_respond_error_is_main_thread(
+    CoreTestsPigeonTestHostMainActorApiResponseHandle* response_handle,
+    const gchar* code, const gchar* message, FlValue* details) {
+  g_autoptr(CoreTestsPigeonTestHostMainActorApiIsMainThreadResponse) response =
+      core_tests_pigeon_test_host_main_actor_api_is_main_thread_response_new_error(
+          code, message, details);
+  g_autoptr(GError) error = nullptr;
+  if (!fl_basic_message_channel_respond(response_handle->channel,
+                                        response_handle->response_handle,
+                                        response->value, &error)) {
+    g_warning("Failed to send response to %s.%s: %s", "HostMainActorApi",
+              "isMainThread", error->message);
+  }
+}
+
 struct _CoreTestsPigeonTestHostSmallApiResponseHandle {
   GObject parent_instance;
 

@@ -13483,6 +13483,79 @@ void core_tests_pigeon_test_host_trivial_api_set_method_handlers(
 void core_tests_pigeon_test_host_trivial_api_clear_method_handlers(
     FlBinaryMessenger* messenger, const gchar* suffix);
 
+G_DECLARE_FINAL_TYPE(CoreTestsPigeonTestHostMainActorApi,
+                     core_tests_pigeon_test_host_main_actor_api,
+                     CORE_TESTS_PIGEON_TEST, HOST_MAIN_ACTOR_API, GObject)
+
+G_DECLARE_FINAL_TYPE(CoreTestsPigeonTestHostMainActorApiResponseHandle,
+                     core_tests_pigeon_test_host_main_actor_api_response_handle,
+                     CORE_TESTS_PIGEON_TEST,
+                     HOST_MAIN_ACTOR_API_RESPONSE_HANDLE, GObject)
+
+/**
+ * CoreTestsPigeonTestHostMainActorApiVTable:
+ *
+ * Table of functions exposed by HostMainActorApi to be implemented by the API
+ * provider.
+ */
+typedef struct {
+  void (*is_main_thread)(
+      CoreTestsPigeonTestHostMainActorApiResponseHandle* response_handle,
+      gpointer user_data);
+} CoreTestsPigeonTestHostMainActorApiVTable;
+
+/**
+ * core_tests_pigeon_test_host_main_actor_api_set_method_handlers:
+ *
+ * @messenger: an #FlBinaryMessenger.
+ * @suffix: (allow-none): a suffix to add to the API or %NULL for none.
+ * @vtable: implementations of the methods in this API.
+ * @user_data: (closure): user data to pass to the functions in @vtable.
+ * @user_data_free_func: (allow-none): a function which gets called to free
+ * @user_data, or %NULL.
+ *
+ * Connects the method handlers in the HostMainActorApi API.
+ */
+void core_tests_pigeon_test_host_main_actor_api_set_method_handlers(
+    FlBinaryMessenger* messenger, const gchar* suffix,
+    const CoreTestsPigeonTestHostMainActorApiVTable* vtable, gpointer user_data,
+    GDestroyNotify user_data_free_func);
+
+/**
+ * core_tests_pigeon_test_host_main_actor_api_clear_method_handlers:
+ *
+ * @messenger: an #FlBinaryMessenger.
+ * @suffix: (allow-none): a suffix to add to the API or %NULL for none.
+ *
+ * Clears the method handlers in the HostMainActorApi API.
+ */
+void core_tests_pigeon_test_host_main_actor_api_clear_method_handlers(
+    FlBinaryMessenger* messenger, const gchar* suffix);
+
+/**
+ * core_tests_pigeon_test_host_main_actor_api_respond_is_main_thread:
+ * @response_handle: a #CoreTestsPigeonTestHostMainActorApiResponseHandle.
+ * @return_value: location to write the value returned by this method.
+ *
+ * Responds to HostMainActorApi.isMainThread.
+ */
+void core_tests_pigeon_test_host_main_actor_api_respond_is_main_thread(
+    CoreTestsPigeonTestHostMainActorApiResponseHandle* response_handle,
+    gboolean return_value);
+
+/**
+ * core_tests_pigeon_test_host_main_actor_api_respond_error_is_main_thread:
+ * @response_handle: a #CoreTestsPigeonTestHostMainActorApiResponseHandle.
+ * @code: error code.
+ * @message: error message.
+ * @details: (allow-none): error details or %NULL.
+ *
+ * Responds with an error to HostMainActorApi.isMainThread.
+ */
+void core_tests_pigeon_test_host_main_actor_api_respond_error_is_main_thread(
+    CoreTestsPigeonTestHostMainActorApiResponseHandle* response_handle,
+    const gchar* code, const gchar* message, FlValue* details);
+
 G_DECLARE_FINAL_TYPE(CoreTestsPigeonTestHostSmallApi,
                      core_tests_pigeon_test_host_small_api,
                      CORE_TESTS_PIGEON_TEST, HOST_SMALL_API, GObject)

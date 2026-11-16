@@ -1,6 +1,6 @@
 ## 30.1.0
 
-* [swift] Adds `SwiftHostApiOptions(isMainActor: true)` to `@HostApi`, which marks the generated protocol's asynchronous methods `@MainActor`, guaranteeing implementations are called on the main thread without manual `DispatchQueue.main.async` dispatch. Methods using a serial background task queue are exempted. Supports both `SwiftHostApiOptions(...)` and `const SwiftHostApiOptions(...)`, and reports a parse error instead of crashing on an invalid `isMainActor` value.
+* [swift] Adds `SwiftHostApiOptions(isMainActor: true)` to `@HostApi`, marking the generated protocol's asynchronous methods `@MainActor`.
 
 ## 30.0.3
 

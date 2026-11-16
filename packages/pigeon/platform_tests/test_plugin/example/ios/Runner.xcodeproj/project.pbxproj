@@ -20,6 +20,7 @@
 		33A341D3291ECDFD00D34E0F /* PrimitiveTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A341C7291ECDFD00D34E0F /* PrimitiveTests.swift */; };
 		33A341D4291ECDFD00D34E0F /* HandlerBinaryMessenger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A341C8291ECDFD00D34E0F /* HandlerBinaryMessenger.swift */; };
 		33A341D5291ECDFD00D34E0F /* AsyncHandlersTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A341C9291ECDFD00D34E0F /* AsyncHandlersTest.swift */; };
+		33A341D8291ECDFD00D34E0F /* MainActorApiTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A341D7291ECDFD00D34E0F /* MainActorApiTest.swift */; };
 		33A341D6291ECDFD00D34E0F /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A341CA291ECDFD00D34E0F /* Utils.swift */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
 		74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74858FAE1ED2DC5600515810 /* AppDelegate.swift */; };
@@ -71,6 +72,7 @@
 		33A341C7291ECDFD00D34E0F /* PrimitiveTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PrimitiveTests.swift; sourceTree = "<group>"; };
 		33A341C8291ECDFD00D34E0F /* HandlerBinaryMessenger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HandlerBinaryMessenger.swift; sourceTree = "<group>"; };
 		33A341C9291ECDFD00D34E0F /* AsyncHandlersTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AsyncHandlersTest.swift; sourceTree = "<group>"; };
+		33A341D7291ECDFD00D34E0F /* MainActorApiTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainActorApiTest.swift; sourceTree = "<group>"; };
 		33A341CA291ECDFD00D34E0F /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppFrameworkInfo.plist; path = Flutter/AppFrameworkInfo.plist; sourceTree = "<group>"; };
 		74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Runner-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -115,6 +117,7 @@
 			children = (
 				33A341C0291ECDFD00D34E0F /* DataClassMethodsTests.swift */,
 				33A341C9291ECDFD00D34E0F /* AsyncHandlersTest.swift */,
+				33A341D7291ECDFD00D34E0F /* MainActorApiTest.swift */,
 				33A341C4291ECDFD00D34E0F /* EchoBinaryMessenger.swift */,
 				33A341C2291ECDFD00D34E0F /* EnumTests.swift */,
 				33A341C8291ECDFD00D34E0F /* HandlerBinaryMessenger.swift */,
@@ -343,6 +346,7 @@
 				33A341B8291ECCA100D34E0F /* RunnerTests.swift in Sources */,
 				33A341D6291ECDFD00D34E0F /* Utils.swift in Sources */,
 				33A341D5291ECDFD00D34E0F /* AsyncHandlersTest.swift in Sources */,
+				33A341D8291ECDFD00D34E0F /* MainActorApiTest.swift in Sources */,
 				33A341CE291ECDFD00D34E0F /* EnumTests.swift in Sources */,
 				33A341CD291ECDFD00D34E0F /* ListTests.swift in Sources */,
 				E04641FA2A46270400661C9E /* NSNullFieldTests.swift in Sources */,

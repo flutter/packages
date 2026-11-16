@@ -7129,6 +7129,59 @@ interface HostTrivialApi {
   }
 }
 /**
+ * A Host API using `SwiftHostApiOptions(isMainActor: true)`, which marks the generated Swift
+ * protocol's asynchronous methods `@MainActor` so a `@MainActor`-isolated class can implement it
+ * directly.
+ *
+ * Generated interface from Pigeon that represents a handler of messages from Flutter.
+ */
+interface HostMainActorApi {
+  /**
+   * Returns true if the handler is run on the main thread, which should always be true given the
+   * `@MainActor` isolation.
+   */
+  suspend fun isMainThread(): Boolean
+
+  companion object {
+    /** The codec used by HostMainActorApi. */
+    val codec: MessageCodec<Any?> by lazy { CoreTestsPigeonCodec() }
+    /**
+     * Sets up an instance of `HostMainActorApi` to handle messages through the `binaryMessenger`.
+     */
+    @JvmOverloads
+    fun setUp(
+        binaryMessenger: BinaryMessenger,
+        api: HostMainActorApi?,
+        messageChannelSuffix: String = ""
+    ) {
+      val separatedMessageChannelSuffix =
+          if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostMainActorApi.isMainThread$separatedMessageChannelSuffix",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { _, reply ->
+            CoroutineScope(Dispatchers.Main).launch {
+              val wrapped: List<Any?> =
+                  try {
+                    listOf(api.isMainThread())
+                  } catch (exception: Throwable) {
+                    CoreTestsPigeonUtils.wrapError(exception)
+                  }
+              reply.reply(wrapped)
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+    }
+  }
+}
+/**
  * A simple API implemented in some unit tests.
  *
  * Generated interface from Pigeon that represents a handler of messages from Flutter.

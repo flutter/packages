@@ -12307,6 +12307,69 @@ EncodableValue HostTrivialApi::WrapError(const FlutterError& error) {
                                       error.details()});
 }
 
+/// The codec used by HostMainActorApi.
+const ::flutter::StandardMessageCodec& HostMainActorApi::GetCodec() {
+  return ::flutter::StandardMessageCodec::GetInstance(
+      &PigeonInternalCodecSerializer::GetInstance());
+}
+
+// Sets up an instance of `HostMainActorApi` to handle messages through the
+// `binary_messenger`.
+void HostMainActorApi::SetUp(::flutter::BinaryMessenger* binary_messenger,
+                             HostMainActorApi* api) {
+  HostMainActorApi::SetUp(binary_messenger, api, "");
+}
+
+void HostMainActorApi::SetUp(::flutter::BinaryMessenger* binary_messenger,
+                             HostMainActorApi* api,
+                             const std::string& message_channel_suffix) {
+  const std::string prepended_suffix =
+      message_channel_suffix.length() > 0
+          ? std::string(".") + message_channel_suffix
+          : "";
+  {
+    BasicMessageChannel<> channel(binary_messenger,
+                                  "dev.flutter.pigeon.pigeon_integration_tests."
+                                  "HostMainActorApi.isMainThread" +
+                                      prepended_suffix,
+                                  &GetCodec());
+    if (api != nullptr) {
+      channel.SetMessageHandler(
+          [api](const EncodableValue& message,
+                const ::flutter::MessageReply<EncodableValue>& reply) {
+            try {
+              api->IsMainThread([reply](ErrorOr<bool>&& output) {
+                if (output.has_error()) {
+                  reply(WrapError(output.error()));
+                  return;
+                }
+                EncodableList wrapped;
+                wrapped.push_back(
+                    EncodableValue(std::move(output).TakeValue()));
+                reply(EncodableValue(std::move(wrapped)));
+              });
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel.SetMessageHandler(nullptr);
+    }
+  }
+}
+
+EncodableValue HostMainActorApi::WrapError(std::string_view error_message) {
+  return EncodableValue(
+      EncodableList{EncodableValue(std::string(error_message)),
+                    EncodableValue("Error"), EncodableValue()});
+}
+
+EncodableValue HostMainActorApi::WrapError(const FlutterError& error) {
+  return EncodableValue(EncodableList{EncodableValue(error.code()),
+                                      EncodableValue(error.message()),
+                                      error.details()});
+}
+
 /// The codec used by HostSmallApi.
 const ::flutter::StandardMessageCodec& HostSmallApi::GetCodec() {
   return ::flutter::StandardMessageCodec::GetInstance(
