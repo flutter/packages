@@ -113,35 +113,30 @@ constructor(
   // TODO: Migrate to stable API, see https://github.com/flutter/flutter/issues/147039.
   @UnstableApi
   override fun getAudioTracks(): NativeAudioTrackData {
-    val audioTracks: MutableList<ExoPlayerAudioTrackData> = ArrayList()
+    val audioTracks: List<ExoPlayerAudioTrackData> = buildList {
+      // Iterate through all track groups
+      exoPlayer.currentTracks.groups.forEachIndexed { groupIndex, group ->
+        // Only process audio tracks
+        if (group.type == C.TRACK_TYPE_AUDIO) {
+          for (trackIndex in 0 ..< group.length) {
+            val format = group.getTrackFormat(trackIndex)
+            val isSelected = group.isTrackSelected(trackIndex)
 
-    // Get the current tracks from ExoPlayer
-    val tracks = exoPlayer.currentTracks
+            // Create audio track data with metadata
+            val audioTrack =
+                ExoPlayerAudioTrackData(
+                    groupIndex.toLong(),
+                    trackIndex.toLong(),
+                    format.label,
+                    format.language,
+                    isSelected,
+                    getFormatValue(format.bitrate),
+                    getFormatValue(format.sampleRate),
+                    getFormatValue(format.channelCount),
+                    if (format.codecs != null) format.codecs else null)
 
-    // Iterate through all track groups
-    for (groupIndex in tracks.groups.indices) {
-      val group = tracks.groups[groupIndex]
-
-      // Only process audio tracks
-      if (group.type == C.TRACK_TYPE_AUDIO) {
-        for (trackIndex in 0 ..< group.length) {
-          val format = group.getTrackFormat(trackIndex)
-          val isSelected = group.isTrackSelected(trackIndex)
-
-          // Create audio track data with metadata
-          val audioTrack =
-              ExoPlayerAudioTrackData(
-                  groupIndex.toLong(),
-                  trackIndex.toLong(),
-                  format.label,
-                  format.language,
-                  isSelected,
-                  getFormatValue(format.bitrate),
-                  getFormatValue(format.sampleRate),
-                  getFormatValue(format.channelCount),
-                  if (format.codecs != null) format.codecs else null)
-
-          audioTracks.add(audioTrack)
+            add(audioTrack)
+          }
         }
       }
     }
@@ -197,35 +192,30 @@ constructor(
   // TODO: Migrate to stable API, see https://github.com/flutter/flutter/issues/147039.
   @UnstableApi
   override fun getVideoTracks(): NativeVideoTrackData {
-    val videoTracks: MutableList<ExoPlayerVideoTrackData> = ArrayList()
+    val videoTracks: List<ExoPlayerVideoTrackData> = buildList {
+      // Iterate through all track groups
+      exoPlayer.currentTracks.groups.forEachIndexed { groupIndex, group ->
+        // Only process video tracks
+        if (group.type == C.TRACK_TYPE_VIDEO) {
+          for (trackIndex in 0 ..< group.length) {
+            val format = group.getTrackFormat(trackIndex)
+            val isSelected = group.isTrackSelected(trackIndex)
 
-    // Get the current tracks from ExoPlayer
-    val tracks = exoPlayer.currentTracks
+            // Create video track data with metadata
+            val videoTrack =
+                ExoPlayerVideoTrackData(
+                    groupIndex.toLong(),
+                    trackIndex.toLong(),
+                    format.label,
+                    isSelected,
+                    getFormatValue(format.bitrate),
+                    getFormatValue(format.width),
+                    getFormatValue(format.height),
+                    getFormatValue(format.frameRate.toDouble()),
+                    if (format.codecs != null) format.codecs else null)
 
-    // Iterate through all track groups
-    for (groupIndex in tracks.groups.indices) {
-      val group = tracks.groups[groupIndex]
-
-      // Only process video tracks
-      if (group.type == C.TRACK_TYPE_VIDEO) {
-        for (trackIndex in 0 ..< group.length) {
-          val format = group.getTrackFormat(trackIndex)
-          val isSelected = group.isTrackSelected(trackIndex)
-
-          // Create video track data with metadata
-          val videoTrack =
-              ExoPlayerVideoTrackData(
-                  groupIndex.toLong(),
-                  trackIndex.toLong(),
-                  format.label,
-                  isSelected,
-                  getFormatValue(format.bitrate),
-                  getFormatValue(format.width),
-                  getFormatValue(format.height),
-                  getFormatValue(format.frameRate.toDouble()),
-                  if (format.codecs != null) format.codecs else null)
-
-          videoTracks.add(videoTrack)
+            add(videoTrack)
+          }
         }
       }
     }
