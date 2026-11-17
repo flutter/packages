@@ -86,7 +86,7 @@ base class ScopedStorageXFile extends XFile {
 
   /// Whether the resource represented by this reference can be read.
   Future<bool> canRead() {
-    assertNotDisposed();
+    assert(assertNotDisposed());
     return platform.canRead();
   }
 }

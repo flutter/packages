@@ -39,7 +39,7 @@ abstract base class XDirectory extends XEntity {
 
   /// Lists the sub-directories and files of this directory.
   Stream<XEntity> list() {
-    assertNotDisposed();
+    assert(assertNotDisposed());
     // Converts PlatformXEntities to XEntities.
     return platform.list(const PlatformListParams()).map<XEntity>((PlatformXEntity entity) {
       switch (entity) {

@@ -85,7 +85,7 @@ base class ScopedStorageXDirectory extends XDirectory {
   /// Whether the files in this directory represented by this reference can be
   /// viewed.
   Future<bool> canRead() {
-    assertNotDisposed();
+    assert(assertNotDisposed());
     return platform.canRead();
   }
 }

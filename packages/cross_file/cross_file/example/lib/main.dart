@@ -46,7 +46,6 @@ class FileOpenScreen extends StatelessWidget {
           debugPrint('Filename: $filename');
           debugPrint('File Length: ${await file.length()}');
           debugPrint('File Last Modified: ${await file.lastModified()}');
-          return;
       }
 
       await file.dispose();
