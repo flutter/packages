@@ -96,6 +96,31 @@ the threading model for handling HostApi methods can be selected with the
 
 > **Note**: `TaskQueue` is only supported with platform channels. Native Interop (FFI/JNI) calls execute directly on the caller's thread; specifying `@TaskQueue` with Native Interop will result in a code generation error.
 
+### Swift Main Actor Isolation
+
+By default, Pigeon's generated Swift protocol for a `HostApi` has no actor
+isolation, so Swift's actor isolation only hops onto the main actor when the
+callee is itself actor-isolated. That means a class marked `@MainActor` that
+implements the protocol still doesn't guarantee its async methods are called
+on the main thread, and generally can't conform to the protocol without
+compiler warnings.
+
+Passing `SwiftHostApiOptions(isMainActor: true)` to `@HostApi` marks the
+generated protocol's asynchronous methods `@MainActor`, so implementations
+are guaranteed to be called on the main thread without manually dispatching
+with `DispatchQueue.main.async`:
+
+```dart
+@HostApi(swiftOptions: SwiftHostApiOptions(isMainActor: true))
+abstract class MyApi {
+  @async
+  void doSomething();
+}
+```
+
+Methods using a serial background `@TaskQueue` are exempted, since forcing
+them onto the main actor would defeat the point of the background queue.
+
 ### Multi-Instance Support
 
 Host and Flutter APIs support the ability to provide a unique message channel suffix string

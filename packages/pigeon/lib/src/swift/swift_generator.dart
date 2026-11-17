@@ -233,6 +233,36 @@ class InternalSwiftOptions extends InternalOptions {
 }
 
 /// Options that control how Swift code will be generated for a specific
+/// HostApi.
+class SwiftHostApiOptions {
+  /// Constructs a [SwiftHostApiOptions].
+  const SwiftHostApiOptions({this.isMainActor = false});
+
+  /// Whether the generated protocol's asynchronous methods are isolated to
+  /// the main actor.
+  ///
+  /// Swift's actor isolation only hops onto the main actor when the callee
+  /// (not just the caller) is actor-isolated, so marking the protocol
+  /// requirement itself `@MainActor` is what guarantees implementations of
+  /// this API are called on the main thread, removing the need to manually
+  /// dispatch UI-touching work with `DispatchQueue.main.async` inside each
+  /// method.
+  ///
+  /// Only affects asynchronous, non-callback methods.
+  final bool isMainActor;
+}
+
+/// Whether the generated Swift protocol method for [method] should be
+/// marked `@MainActor`, given its enclosing HostApi's [swiftOptions].
+///
+/// Methods dispatched on a serial background task queue are exempted, since
+/// marking them `@MainActor` would force them back onto the main thread and
+/// defeat the point of the background queue.
+bool _isMainActorFor(Method method, SwiftHostApiOptions? swiftOptions) =>
+    (swiftOptions?.isMainActor ?? false) &&
+    method.taskQueueType != TaskQueueType.serialBackgroundThread;
+
+/// Options that control how Swift code will be generated for a specific
 /// ProxyApi.
 class SwiftProxyApiOptions {
   /// Constructs a [SwiftProxyApiOptions].
@@ -2957,6 +2987,7 @@ if (wrapped == nil) {
             errorTypeName: 'Error',
             isAsynchronous: method.isAsynchronous,
             isAsynchronousCallback: method.isAsynchronousCallback,
+            isMainActor: _isMainActorFor(method, api.swiftOptions),
             swiftFunction: method.swiftFunction,
             ffiUserApi: generatorOptions.useFfi,
           ),

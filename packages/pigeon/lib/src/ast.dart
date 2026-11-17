@@ -8,7 +8,8 @@ import 'package:meta/meta.dart';
 import 'generator_tools.dart';
 import 'kotlin/kotlin_generator.dart' show KotlinEventChannelOptions, KotlinProxyApiOptions;
 import 'pigeon_lib.dart';
-import 'swift/swift_generator.dart' show SwiftEventChannelOptions, SwiftProxyApiOptions;
+import 'swift/swift_generator.dart'
+    show SwiftEventChannelOptions, SwiftHostApiOptions, SwiftProxyApiOptions;
 
 typedef _ListEquals = bool Function(List<Object?>, List<Object?>);
 
@@ -108,14 +109,18 @@ class AstHostApi extends Api {
     required super.methods,
     super.documentationComments = const <String>[],
     this.dartHostTestHandler,
+    this.swiftOptions,
   });
 
   /// The name of the Dart test interface to generate to help with testing.
   String? dartHostTestHandler;
 
+  /// Options that control how Swift code will be generated for this HostApi.
+  SwiftHostApiOptions? swiftOptions;
+
   @override
   String toString() {
-    return '(HostApi name:$name methods:$methods documentationComments:$documentationComments dartHostTestHandler:$dartHostTestHandler)';
+    return '(HostApi name:$name methods:$methods documentationComments:$documentationComments dartHostTestHandler:$dartHostTestHandler swiftOptions:$swiftOptions)';
   }
 }
 

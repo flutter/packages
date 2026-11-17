@@ -12,6 +12,15 @@ class MyApi: HostTrivialApi {
   func noop() {}
 }
 
+/// Proves a `@MainActor`-isolated class can implement a HostApi generated
+/// with `SwiftHostApiOptions(isMainActor: true)`.
+@MainActor
+final class MyMainActorApi: HostMainActorApi {
+  func isMainThread() async throws -> Bool {
+    return Thread.isMainThread
+  }
+}
+
 final class FakeClassReservedApi: NativeInteropReservedNamesHostApi {
   let label: String
   init(_ label: String) { self.label = label }
@@ -47,6 +56,13 @@ struct BasicCompileTest {
   func makeApi() {
     let api = MyApi()
     #expect(api as Any? != nil)
+  }
+
+  @Test
+  @MainActor
+  func mainActorApiRunsOnMainThread() async throws {
+    let api = MyMainActorApi()
+    #expect(try await api.isMainThread())
   }
 
   @Test

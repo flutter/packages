@@ -7466,6 +7466,43 @@ void SetUpFLTHostTrivialApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger
     }
   }
 }
+void SetUpFLTHostMainActorApi(id<FlutterBinaryMessenger> binaryMessenger,
+                              NSObject<FLTHostMainActorApi> *api) {
+  SetUpFLTHostMainActorApiWithSuffix(binaryMessenger, api, @"");
+}
+
+void SetUpFLTHostMainActorApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
+                                        NSObject<FLTHostMainActorApi> *api,
+                                        NSString *messageChannelSuffix) {
+  messageChannelSuffix = messageChannelSuffix.length > 0
+                             ? [NSString stringWithFormat:@".%@", messageChannelSuffix]
+                             : @"";
+  /// Returns true if the handler is run on the main thread, which should
+  /// always be true given the `@MainActor` isolation.
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString stringWithFormat:@"%@%@",
+                                                   @"dev.flutter.pigeon.pigeon_integration_tests."
+                                                   @"HostMainActorApi.isMainThread",
+                                                   messageChannelSuffix]
+        binaryMessenger:binaryMessenger
+                  codec:FLTGetCoreTestsCodec()];
+    if (api) {
+      NSCAssert(
+          [api respondsToSelector:@selector(isMainThreadWithCompletion:)],
+          @"FLTHostMainActorApi api (%@) doesn't respond to @selector(isMainThreadWithCompletion:)",
+          api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        [api isMainThreadWithCompletion:^(NSNumber *_Nullable output,
+                                          FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
+        }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+}
 void SetUpFLTHostSmallApi(id<FlutterBinaryMessenger> binaryMessenger,
                           NSObject<FLTHostSmallApi> *api) {
   SetUpFLTHostSmallApiWithSuffix(binaryMessenger, api, @"");

@@ -11002,6 +11002,70 @@ public class CoreTests {
   }
 
   /**
+   * A Host API using `SwiftHostApiOptions(isMainActor: true)`, which marks the generated Swift
+   * protocol's asynchronous methods `@MainActor` so a `@MainActor`-isolated class can implement it
+   * directly.
+   *
+   * <p>Generated interface from Pigeon that represents a handler of messages from Flutter.
+   */
+  public interface HostMainActorApi {
+    /**
+     * Returns true if the handler is run on the main thread, which should always be true given the
+     * `@MainActor` isolation.
+     */
+    void isMainThread(@NonNull Result<Boolean> result);
+
+    /** The codec used by HostMainActorApi. */
+    static @NonNull MessageCodec<Object> getCodec() {
+      return PigeonCodec.INSTANCE;
+    }
+
+    /**
+     * Sets up an instance of `HostMainActorApi` to handle messages through the `binaryMessenger`.
+     */
+    static void setUp(@NonNull BinaryMessenger binaryMessenger, @Nullable HostMainActorApi api) {
+      setUp(binaryMessenger, "", api);
+    }
+
+    static void setUp(
+        @NonNull BinaryMessenger binaryMessenger,
+        @NonNull String messageChannelSuffix,
+        @Nullable HostMainActorApi api) {
+      messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostMainActorApi.isMainThread"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                Result<Boolean> resultCallback =
+                    new Result<Boolean>() {
+                      public void success(Boolean result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.isMainThread(resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+    }
+  }
+
+  /**
    * A simple API implemented in some unit tests.
    *
    * <p>Generated interface from Pigeon that represents a handler of messages from Flutter.

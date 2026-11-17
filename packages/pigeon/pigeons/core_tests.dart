@@ -1509,6 +1509,17 @@ abstract class HostTrivialApi {
   void noop();
 }
 
+/// A Host API using `SwiftHostApiOptions(isMainActor: true)`, which marks
+/// the generated Swift protocol's asynchronous methods `@MainActor` so a
+/// `@MainActor`-isolated class can implement it directly.
+@HostApi(swiftOptions: SwiftHostApiOptions(isMainActor: true))
+abstract class HostMainActorApi {
+  /// Returns true if the handler is run on the main thread, which should
+  /// always be true given the `@MainActor` isolation.
+  @async
+  bool isMainThread();
+}
+
 /// A simple API implemented in some unit tests.
 //
 // This is separate from HostIntegrationCoreApi to avoid having to update a

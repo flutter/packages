@@ -1207,6 +1207,23 @@ extern void SetUpFLTHostTrivialApiWithSuffix(id<FlutterBinaryMessenger> binaryMe
                                              NSObject<FLTHostTrivialApi> *_Nullable api,
                                              NSString *messageChannelSuffix);
 
+/// A Host API using `SwiftHostApiOptions(isMainActor: true)`, which marks
+/// the generated Swift protocol's asynchronous methods `@MainActor` so a
+/// `@MainActor`-isolated class can implement it directly.
+@protocol FLTHostMainActorApi
+/// Returns true if the handler is run on the main thread, which should
+/// always be true given the `@MainActor` isolation.
+- (void)isMainThreadWithCompletion:(void (^)(NSNumber *_Nullable,
+                                             FlutterError *_Nullable))completion;
+@end
+
+extern void SetUpFLTHostMainActorApi(id<FlutterBinaryMessenger> binaryMessenger,
+                                     NSObject<FLTHostMainActorApi> *_Nullable api);
+
+extern void SetUpFLTHostMainActorApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
+                                               NSObject<FLTHostMainActorApi> *_Nullable api,
+                                               NSString *messageChannelSuffix);
+
 /// A simple API implemented in some unit tests.
 @protocol FLTHostSmallApi
 - (void)echoString:(NSString *)aString

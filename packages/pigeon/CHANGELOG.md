@@ -1,3 +1,7 @@
+## 30.1.0
+
+* [swift] Adds `SwiftHostApiOptions(isMainActor: true)` to `@HostApi`, marking the generated protocol's asynchronous methods `@MainActor`.
+
 ## 30.0.3
 
 * Removes remaining unused `dart:mirrors` usage.
