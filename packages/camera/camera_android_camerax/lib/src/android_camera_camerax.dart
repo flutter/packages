@@ -194,6 +194,11 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// set for the camera in use.
   static const String zoomStateNotSetErrorCode = 'zoomStateNotSet';
 
+  /// Constant representing the Ultra HDR output format of `ImageCapture`.
+  ///
+  /// See https://developer.android.com/reference/androidx/camera/core/ImageCapture#OUTPUT_FORMAT_JPEG_ULTRA_HDR().
+  static const int imageCaptureOutputFormatJpegUltraHdr = 1;
+
   /// Whether or not the capture orientation is locked.
   ///
   /// Indicates a new target rotation should not be set as it has been locked by
@@ -208,6 +213,14 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// Whether zero-shutter-lag capture was requested via
   /// [setZeroShutterLagEnabled].
   bool _zeroShutterLagEnabled = false;
+
+  /// Whether gain map photo capture was requested via
+  /// [setGainMapPhotoEnabled].
+  bool _gainMapPhotoEnabled = false;
+
+  /// Whether [imageCapture] was built with the Ultra HDR output format, which
+  /// some devices cannot bind together with an [imageAnalysis] use case.
+  bool _imageCaptureUsesUltraHdr = false;
 
   /// The JPEG compression quality requested via [setJpegImageQuality], if
   /// any.
@@ -421,12 +434,15 @@ class AndroidCameraCameraX extends CameraPlatform {
     _flutterSurfaceTextureId = await preview!.setSurfaceProvider(systemServicesManager);
 
     // Configure ImageCapture instance.
+    final int? outputFormat = await _imageCaptureOutputFormat(chosenCameraInfo);
+    _imageCaptureUsesUltraHdr = outputFormat != null;
     imageCapture = ImageCapture(
       resolutionSelector: _presetResolutionSelector,
       /* use CameraX default target rotation */ targetRotation: await deviceOrientationManager
           .getDefaultDisplayRotation(),
       jpegQuality: _jpegQuality,
-      zeroShutterLagEnabled: _zeroShutterLagEnabled,
+      zeroShutterLagEnabled: _zeroShutterLagEnabled && outputFormat == null,
+      outputFormat: outputFormat,
     );
 
     // Configure VideoCapture and Recorder instances.
@@ -490,7 +506,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     camera = await processCameraProvider!.bindToLifecycle(cameraSelector!, <UseCase>[
       preview!,
       imageCapture!,
-      imageAnalysis!,
+      if (!_imageCaptureUsesUltraHdr) imageAnalysis!,
     ]);
     await _updateCameraInfoAndLiveCameraState(_flutterSurfaceTextureId);
     previewInitiallyBound = true;
@@ -969,12 +985,20 @@ class AndroidCameraCameraX extends CameraPlatform {
     cameraIsFrontFacing = cameraSelectorLensDirection == LensFacing.front;
     cameraSelector = CameraSelector(cameraInfoForFilter: chosenCameraInfo);
 
+    // The Ultra HDR output format fails to bind on a camera that lacks it, so
+    // the ImageCapture is rebuilt for the new camera when gain map photos are on.
+    final bool imageCaptureWasBound =
+        imageCapture != null && await processCameraProvider!.isBound(imageCapture!);
+    if (_gainMapPhotoEnabled && imageCapture != null) {
+      await _recreateImageCapture(chosenCameraInfo);
+    }
+
     // Unbind all use cases and rebind to new CameraSelector
     final useCases = <UseCase>[videoCapture!];
     if (!_previewIsPaused) {
       useCases.add(preview!);
     }
-    if (imageCapture != null && await processCameraProvider!.isBound(imageCapture!)) {
+    if (imageCaptureWasBound) {
       useCases.add(imageCapture!);
     }
     if (imageAnalysis != null && await processCameraProvider!.isBound(imageAnalysis!)) {
@@ -1131,8 +1155,34 @@ class AndroidCameraCameraX extends CameraPlatform {
     await _recreateImageCapture();
   }
 
+  /// Returns whether the selected camera can capture gain map photos, which CameraX
+  /// saves as Ultra HDR JPEGs (`ImageCapture.OUTPUT_FORMAT_JPEG_ULTRA_HDR`).
+  @override
+  Future<bool> isGainMapPhotoSupported(int cameraId) async {
+    final CameraInfo? info = cameraInfo;
+    return info != null && await _supportsUltraHdr(info);
+  }
+
+  /// Enables or disables gain map photo capture.
+  ///
+  /// CameraX only supports setting the output format via `ImageCapture.Builder`
+  /// at construction time, so this recreates the `ImageCapture` use case. If
+  /// the selected camera does not support gain map photos, photos stay JPEG.
+  ///
+  /// Zero-shutter-lag does not apply while photos are captured as Ultra HDR.
+  /// Some devices cannot capture gain map photos while an image stream is
+  /// running, so the idle `ImageAnalysis` is unbound while this is enabled.
+  @override
+  Future<void> setGainMapPhotoEnabled(int cameraId, bool enabled) async {
+    _gainMapPhotoEnabled = enabled;
+    if (!await isGainMapPhotoSupported(cameraId)) {
+      return;
+    }
+    await _recreateImageCapture();
+  }
+
   /// Recreates [imageCapture] from the currently requested settings
-  /// ([_jpegQuality], [_zeroShutterLagEnabled]).
+  /// ([_jpegQuality], [_zeroShutterLagEnabled], [_gainMapPhotoEnabled]).
   ///
   /// CameraX only supports several `ImageCapture` settings via
   /// `ImageCapture.Builder` at construction time, so any change to one of
@@ -1141,10 +1191,15 @@ class AndroidCameraCameraX extends CameraPlatform {
   ///
   /// If no camera has been created yet, this only updates the requested
   /// settings; [createCamera] applies them when the camera is created.
-  Future<void> _recreateImageCapture() async {
+  ///
+  /// [info] is the camera the use case will be bound to; it defaults to the
+  /// current [cameraInfo]. Zero-shutter-lag is not requested while the Ultra
+  /// HDR output format is used.
+  Future<void> _recreateImageCapture([CameraInfo? cameraInfoOverride]) async {
     if (imageCapture == null) {
       return;
     }
+    final CameraInfo? info = cameraInfoOverride ?? cameraInfo;
 
     // Unbind the current ImageCapture if it exists and is bound.
     await _unbindUseCaseFromLifecycle(imageCapture!);
@@ -1153,11 +1208,46 @@ class AndroidCameraCameraX extends CameraPlatform {
     // Preserve locked orientation if set, otherwise use default display rotation.
     final int targetRotation =
         _lockedCaptureOrientation ?? await deviceOrientationManager.getDefaultDisplayRotation();
+    final int? outputFormat = await _imageCaptureOutputFormat(info);
+    _imageCaptureUsesUltraHdr = outputFormat != null;
     imageCapture = ImageCapture(
       resolutionSelector: _presetResolutionSelector,
       targetRotation: targetRotation,
       jpegQuality: _jpegQuality,
-      zeroShutterLagEnabled: _zeroShutterLagEnabled,
+      zeroShutterLagEnabled: _zeroShutterLagEnabled && outputFormat == null,
+      outputFormat: outputFormat,
+    );
+    await _unbindIdleImageAnalysisForUltraHdr();
+  }
+
+  /// Unbinds [imageAnalysis] while Ultra HDR photos are on and no image stream
+  /// is running, since some devices cannot bind both. [onStreamedFrameAvailable]
+  /// binds it again on demand.
+  Future<void> _unbindIdleImageAnalysisForUltraHdr() async {
+    final bool imageStreamActive = cameraImageDataStreamController?.hasListener ?? false;
+    if (!_imageCaptureUsesUltraHdr || imageStreamActive || imageAnalysis == null) {
+      return;
+    }
+    await _unbindUseCaseFromLifecycle(imageAnalysis!);
+  }
+
+  /// Returns the Ultra HDR output format when gain map photos were requested and
+  /// [info] supports them, or null for the default JPEG output.
+  ///
+  /// An unsupported output format fails the bind, so support is checked first.
+  Future<int?> _imageCaptureOutputFormat(CameraInfo? info) async {
+    if (!_gainMapPhotoEnabled || info == null || !await _supportsUltraHdr(info)) {
+      return null;
+    }
+    return imageCaptureOutputFormatJpegUltraHdr;
+  }
+
+  Future<bool> _supportsUltraHdr(CameraInfo info) async {
+    final ImageCaptureCapabilities capabilities = await ImageCapture.getImageCaptureCapabilities(
+      info,
+    );
+    return (await capabilities.getSupportedOutputFormats()).contains(
+      imageCaptureOutputFormatJpegUltraHdr,
     );
   }
 
@@ -1497,6 +1587,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// image information should no longer be streamed.
   FutureOr<void> _onFrameStreamCancel() async {
     await imageAnalysis!.clearAnalyzer();
+    await _unbindIdleImageAnalysisForUltraHdr();
   }
 
   /// Converts [ImageFormatGroup]s to Android ImageAnalysis output format constants.

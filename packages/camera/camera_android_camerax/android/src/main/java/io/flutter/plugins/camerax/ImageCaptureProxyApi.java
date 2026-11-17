@@ -7,8 +7,10 @@ package io.flutter.plugins.camerax;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.OptIn;
+import androidx.camera.core.CameraInfo;
 import androidx.camera.core.ExperimentalZeroShutterLag;
 import androidx.camera.core.ImageCapture;
+import androidx.camera.core.ImageCaptureCapabilities;
 import androidx.camera.core.ImageCaptureException;
 import androidx.camera.core.resolutionselector.ResolutionSelector;
 import androidx.core.content.ContextCompat;
@@ -45,8 +47,12 @@ class ImageCaptureProxyApi extends PigeonApiImageCapture {
       @Nullable Long targetRotation,
       @Nullable CameraXFlashMode flashMode,
       @Nullable Long jpegQuality,
-      @Nullable Boolean zeroShutterLagEnabled) {
+      @Nullable Boolean zeroShutterLagEnabled,
+      @Nullable Long outputFormat) {
     final ImageCapture.Builder builder = new ImageCapture.Builder();
+    if (outputFormat != null) {
+      builder.setOutputFormat(outputFormat.intValue());
+    }
     if (targetRotation != null) {
       builder.setTargetRotation(targetRotation.intValue());
     }
@@ -74,6 +80,12 @@ class ImageCaptureProxyApi extends PigeonApiImageCapture {
       builder.setJpegQuality(jpegQuality.intValue());
     }
     return builder.build();
+  }
+
+  @NonNull
+  @Override
+  public ImageCaptureCapabilities getImageCaptureCapabilities(@NonNull CameraInfo cameraInfo) {
+    return ImageCapture.getImageCaptureCapabilities(cameraInfo);
   }
 
   @Override

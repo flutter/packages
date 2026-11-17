@@ -825,6 +825,34 @@ class CameraController extends ValueNotifier<CameraValue> {
     }
   }
 
+  /// Returns whether the selected camera supports gain map photo capture.
+  ///
+  /// A gain map photo is an SDR JPEG plus a gain map that lets HDR displays
+  /// show highlights brighter than SDR content.
+  Future<bool> isGainMapPhotoSupported() async {
+    _throwIfNotInitialized('isGainMapPhotoSupported');
+    try {
+      return await CameraPlatform.instance.isGainMapPhotoSupported(_cameraId);
+    } on PlatformException catch (e) {
+      throw CameraException(e.code, e.message);
+    }
+  }
+
+  /// Enables or disables gain map photo capture for still image capture.
+  ///
+  /// [isGainMapPhotoSupported] must be called first; only call this method
+  /// when it returns `true`.
+  ///
+  /// When enabled, [takePicture] saves an SDR JPEG together with a gain map.
+  Future<void> setGainMapPhotoEnabled(bool enabled) async {
+    _throwIfNotInitialized('setGainMapPhotoEnabled');
+    try {
+      await CameraPlatform.instance.setGainMapPhotoEnabled(_cameraId, enabled);
+    } on PlatformException catch (e) {
+      throw CameraException(e.code, e.message);
+    }
+  }
+
   /// Sets the flash mode for taking pictures.
   Future<void> setFlashMode(FlashMode mode) async {
     try {

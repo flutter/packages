@@ -1,3 +1,9 @@
+## 0.7.7
+
+* Adds support for gain map photos (`isGainMapPhotoSupported` and
+  `setGainMapPhotoEnabled`) as Ultra HDR JPEGs on cameras that support them.
+* Updates minimum supported `camera_platform_interface` to 2.16.0.
+
 ## 0.7.6+1
 
 * Fixes video recording duration discrepancy by waiting for the first recorded frame before completing `startVideoCapturing`, and validates errors on `stopVideoRecording`.

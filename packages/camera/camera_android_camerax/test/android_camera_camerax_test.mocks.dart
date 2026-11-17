@@ -248,6 +248,12 @@ class _FakeZoomState_45 extends _i1.SmartFake implements _i2.ZoomState {
   _FakeZoomState_45(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
 }
 
+class _FakeImageCaptureCapabilities_46 extends _i1.SmartFake
+    implements _i2.ImageCaptureCapabilities {
+  _FakeImageCaptureCapabilities_46(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
 /// A class which mocks [Analyzer].
 ///
 /// See the documentation for Mockito's code generation for more information.
@@ -1329,6 +1335,50 @@ class MockImageCapture extends _i1.Mock implements _i2.ImageCapture {
             ),
           )
           as _i2.ImageCapture);
+}
+
+/// A class which mocks [ImageCaptureCapabilities].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockImageCaptureCapabilities extends _i1.Mock implements _i2.ImageCaptureCapabilities {
+  @override
+  _i2.PigeonInstanceManager get pigeon_instanceManager =>
+      (super.noSuchMethod(
+            Invocation.getter(#pigeon_instanceManager),
+            returnValue: _FakePigeonInstanceManager_0(
+              this,
+              Invocation.getter(#pigeon_instanceManager),
+            ),
+            returnValueForMissingStub: _FakePigeonInstanceManager_0(
+              this,
+              Invocation.getter(#pigeon_instanceManager),
+            ),
+          )
+          as _i2.PigeonInstanceManager);
+
+  @override
+  _i5.Future<List<int>> getSupportedOutputFormats() =>
+      (super.noSuchMethod(
+            Invocation.method(#getSupportedOutputFormats, []),
+            returnValue: _i5.Future<List<int>>.value(<int>[]),
+            returnValueForMissingStub: _i5.Future<List<int>>.value(<int>[]),
+          )
+          as _i5.Future<List<int>>);
+
+  @override
+  _i2.ImageCaptureCapabilities pigeon_copy() =>
+      (super.noSuchMethod(
+            Invocation.method(#pigeon_copy, []),
+            returnValue: _FakeImageCaptureCapabilities_46(
+              this,
+              Invocation.method(#pigeon_copy, []),
+            ),
+            returnValueForMissingStub: _FakeImageCaptureCapabilities_46(
+              this,
+              Invocation.method(#pigeon_copy, []),
+            ),
+          )
+          as _i2.ImageCaptureCapabilities);
 }
 
 /// A class which mocks [ImageProxy].

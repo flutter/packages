@@ -1,5 +1,7 @@
-## NEXT
+## 2.16.0
 
+* Adds `isGainMapPhotoSupported` and `setGainMapPhotoEnabled` to capture photos
+  with a gain map on platforms that support it.
 * Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
 
 ## 2.15.0

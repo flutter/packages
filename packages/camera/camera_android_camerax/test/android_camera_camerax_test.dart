@@ -37,6 +37,7 @@ import 'android_camera_camerax_test.mocks.dart';
   MockSpec<FocusMeteringResult>(),
   MockSpec<ImageAnalysis>(),
   MockSpec<ImageCapture>(),
+  MockSpec<ImageCaptureCapabilities>(),
   MockSpec<ImageProxy>(),
   MockSpec<Observer<CameraState>>(),
   MockSpec<PendingRecording>(),
@@ -203,6 +204,7 @@ void main() {
           ResolutionSelector? resolutionSelector,
           int? jpegQuality,
           bool? zeroShutterLagEnabled,
+          int? outputFormat,
         }) {
           final mockImageCapture = MockImageCapture();
           when(mockImageCapture.resolutionSelector).thenReturn(resolutionSelector);
@@ -565,6 +567,7 @@ void main() {
             ResolutionSelector? resolutionSelector,
             int? jpegQuality,
             bool? zeroShutterLagEnabled,
+            int? outputFormat,
           }) {
             return mockImageCapture;
           };
@@ -1104,6 +1107,7 @@ void main() {
             ResolutionSelector? resolutionSelector,
             int? jpegQuality,
             bool? zeroShutterLagEnabled,
+            int? outputFormat,
           }) {
             return mockImageCapture;
           };
@@ -1512,6 +1516,7 @@ void main() {
           ResolutionSelector? resolutionSelector,
           int? jpegQuality,
           bool? zeroShutterLagEnabled,
+          int? outputFormat,
         }) {
           return mockImageCapture;
         };
@@ -1866,6 +1871,7 @@ void main() {
           ResolutionSelector? resolutionSelector,
           int? jpegQuality,
           bool? zeroShutterLagEnabled,
+          int? outputFormat,
         }) => mockImageCapture;
     PigeonOverrides.recorder_new =
         ({int? aspectRatio, int? targetVideoEncodingBitRate, QualitySelector? qualitySelector}) =>
@@ -3185,6 +3191,7 @@ void main() {
             int? targetRotation,
             int? jpegQuality,
             bool? zeroShutterLagEnabled,
+            int? outputFormat,
           }) {
             return mockImageCapture;
           };
@@ -3398,6 +3405,7 @@ void main() {
             int? targetRotation,
             int? jpegQuality,
             bool? zeroShutterLagEnabled,
+            int? outputFormat,
           }) {
             return mockImageCapture;
           };
@@ -3653,6 +3661,7 @@ void main() {
           ResolutionSelector? resolutionSelector,
           int? jpegQuality,
           bool? zeroShutterLagEnabled,
+          int? outputFormat,
         }) {
           actualTargetRotation = targetRotation;
           actualJpegQuality = jpegQuality;
@@ -3709,6 +3718,7 @@ void main() {
             ResolutionSelector? resolutionSelector,
             int? jpegQuality,
             bool? zeroShutterLagEnabled,
+            int? outputFormat,
           }) {
             actualTargetRotation = targetRotation;
             actualJpegQuality = jpegQuality;
@@ -3758,6 +3768,7 @@ void main() {
             ResolutionSelector? resolutionSelector,
             int? jpegQuality,
             bool? zeroShutterLagEnabled,
+            int? outputFormat,
           }) {
             return mockNewImageCapture;
           };
@@ -3847,6 +3858,7 @@ void main() {
             ResolutionSelector? resolutionSelector,
             int? jpegQuality,
             bool? zeroShutterLagEnabled,
+            int? outputFormat,
           }) {
             actualZeroShutterLagEnabled = zeroShutterLagEnabled;
             return mockNewImageCapture;
@@ -3884,6 +3896,7 @@ void main() {
             ResolutionSelector? resolutionSelector,
             int? jpegQuality,
             bool? zeroShutterLagEnabled,
+            int? outputFormat,
           }) {
             imageCaptureCreated = true;
             return MockImageCapture();
@@ -3896,6 +3909,409 @@ void main() {
       expect(camera.imageCapture, same(mockImageCapture));
     },
   );
+
+  group('gain map photo', () {
+    late AndroidCameraCameraX camera;
+    late MockImageCapture mockNewImageCapture;
+    late MockCameraInfo mockCameraInfo;
+    late List<int?> outputFormats;
+    late List<bool?> zslRequests;
+
+    void setUpCamera({required List<int> supportedOutputFormats}) {
+      camera = AndroidCameraCameraX();
+      final mockProcessCameraProvider = MockProcessCameraProvider();
+      final mockDeviceOrientationManager = MockDeviceOrientationManager();
+      mockNewImageCapture = MockImageCapture();
+      mockCameraInfo = MockCameraInfo();
+      outputFormats = <int?>[];
+      zslRequests = <bool?>[];
+      camera.processCameraProvider = mockProcessCameraProvider;
+      camera.imageCapture = MockImageCapture();
+      camera.cameraInfo = mockCameraInfo;
+
+      final ImageCaptureCapabilities capabilities = MockImageCaptureCapabilities();
+      when(
+        capabilities.getSupportedOutputFormats(),
+      ).thenAnswer((_) async => supportedOutputFormats);
+      PigeonOverrides.imageCapture_getImageCaptureCapabilities = (_) async => capabilities;
+      PigeonOverrides.deviceOrientationManager_new =
+          ({required void Function(DeviceOrientationManager, String) onDeviceOrientationChanged}) {
+            when(
+              mockDeviceOrientationManager.getDefaultDisplayRotation(),
+            ).thenAnswer((_) async => Surface.rotation0);
+            return mockDeviceOrientationManager;
+          };
+      PigeonOverrides.imageCapture_new =
+          ({
+            int? targetRotation,
+            CameraXFlashMode? flashMode,
+            ResolutionSelector? resolutionSelector,
+            int? jpegQuality,
+            bool? zeroShutterLagEnabled,
+            int? outputFormat,
+          }) {
+            outputFormats.add(outputFormat);
+            zslRequests.add(zeroShutterLagEnabled);
+            return mockNewImageCapture;
+          };
+    }
+
+    test('isGainMapPhotoSupported reports the Ultra HDR output format', () async {
+      setUpCamera(supportedOutputFormats: <int>[0, 1]);
+      expect(await camera.isGainMapPhotoSupported(3), isTrue);
+
+      setUpCamera(supportedOutputFormats: <int>[0]);
+      expect(await camera.isGainMapPhotoSupported(3), isFalse);
+    });
+
+    test(
+      'setGainMapPhotoEnabled recreates ImageCapture with the Ultra HDR output format',
+      () async {
+        setUpCamera(supportedOutputFormats: <int>[0, 1]);
+
+        await camera.setGainMapPhotoEnabled(3, true);
+        await camera.setGainMapPhotoEnabled(3, false);
+
+        expect(outputFormats, <int?>[
+          AndroidCameraCameraX.imageCaptureOutputFormatJpegUltraHdr,
+          null,
+        ]);
+        expect(camera.imageCapture, mockNewImageCapture);
+      },
+    );
+
+    test('setGainMapPhotoEnabled keeps JPEG photos on a camera without Ultra HDR', () async {
+      setUpCamera(supportedOutputFormats: <int>[0]);
+
+      await camera.setGainMapPhotoEnabled(3, true);
+
+      expect(outputFormats, isEmpty);
+    });
+
+    test('the Ultra HDR request is kept when ImageCapture is recreated', () async {
+      setUpCamera(supportedOutputFormats: <int>[0, 1]);
+      when(mockCameraInfo.isZslSupported()).thenAnswer((_) async => true);
+
+      await camera.setGainMapPhotoEnabled(3, true);
+      await camera.setZeroShutterLagEnabled(3, true);
+
+      expect(outputFormats.last, AndroidCameraCameraX.imageCaptureOutputFormatJpegUltraHdr);
+      expect(zslRequests.last, isFalse);
+    });
+
+    test('zero-shutter-lag is requested again after gain map photos are disabled', () async {
+      setUpCamera(supportedOutputFormats: <int>[0, 1]);
+      when(mockCameraInfo.isZslSupported()).thenAnswer((_) async => true);
+
+      await camera.setZeroShutterLagEnabled(3, true);
+      expect(zslRequests.last, isTrue);
+
+      await camera.setGainMapPhotoEnabled(3, true);
+      expect(zslRequests.last, isFalse);
+
+      await camera.setGainMapPhotoEnabled(3, false);
+      expect(outputFormats.last, isNull);
+      expect(zslRequests.last, isTrue);
+    });
+  });
+
+  group('gain map photo with camera creation', () {
+    const testBackCameraDescription = CameraDescription(
+      name: '0',
+      lensDirection: CameraLensDirection.back,
+      sensorOrientation: 90,
+    );
+    const testFrontCameraDescription = CameraDescription(
+      name: '1',
+      lensDirection: CameraLensDirection.front,
+      sensorOrientation: 90,
+    );
+    late AndroidCameraCameraX camera;
+    late MockProcessCameraProvider mockProcessCameraProvider;
+    late MockCameraSelector mockFrontCameraSelector;
+    late MockVideoCapture mockVideoCapture;
+    late MockPreview mockPreview;
+    late MockImageAnalysis mockImageAnalysis;
+    late List<MockImageCapture> imageCaptures;
+    late List<int?> outputFormats;
+
+    Future<int> setUpAndCreateCamera({
+      required bool backSupportsUltraHdr,
+      required bool frontSupportsUltraHdr,
+      bool enableGainMapFirst = false,
+    }) async {
+      camera = AndroidCameraCameraX();
+      mockProcessCameraProvider = MockProcessCameraProvider();
+      mockFrontCameraSelector = MockCameraSelector();
+      mockVideoCapture = MockVideoCapture();
+      mockPreview = MockPreview();
+      mockImageAnalysis = MockImageAnalysis();
+      imageCaptures = <MockImageCapture>[];
+      outputFormats = <int?>[];
+      final mockCamera = MockCamera();
+      final mockCameraInfo = MockCameraInfo();
+      final mockBackCameraInfo = MockCameraInfo();
+      final mockFrontCameraInfo = MockCameraInfo();
+      final mockBackCameraSelector = MockCameraSelector();
+      final mockRecorder = MockRecorder();
+
+      ImageCaptureCapabilities capabilities(bool ultraHdr) {
+        final ImageCaptureCapabilities result = MockImageCaptureCapabilities();
+        when(
+          result.getSupportedOutputFormats(),
+        ).thenAnswer((_) async => ultraHdr ? <int>[0, 1] : <int>[0]);
+        return result;
+      }
+
+      final ImageCaptureCapabilities backCapabilities = capabilities(backSupportsUltraHdr);
+      final ImageCaptureCapabilities frontCapabilities = capabilities(frontSupportsUltraHdr);
+      PigeonOverrides.imageCapture_getImageCaptureCapabilities = (dynamic info) async =>
+          info == mockFrontCameraInfo ? frontCapabilities : backCapabilities;
+      PigeonOverrides.preview_new =
+          ({
+            ResolutionSelector? resolutionSelector,
+            int? targetRotation,
+            CameraIntegerRange? targetFpsRange,
+          }) {
+            when(mockPreview.setSurfaceProvider(any)).thenAnswer((_) async => 19);
+            final testResolutionInfo = ResolutionInfo.pigeon_detached(resolution: MockCameraSize());
+            when(
+              mockPreview.surfaceProducerHandlesCropAndRotation(),
+            ).thenAnswer((_) async => false);
+            when(mockPreview.resolutionSelector).thenReturn(resolutionSelector);
+            when(mockPreview.getResolutionInfo()).thenAnswer((_) async => testResolutionInfo);
+            return mockPreview;
+          };
+      PigeonOverrides.imageCapture_new =
+          ({
+            CameraXFlashMode? flashMode,
+            ResolutionSelector? resolutionSelector,
+            int? targetRotation,
+            int? jpegQuality,
+            bool? zeroShutterLagEnabled,
+            int? outputFormat,
+          }) {
+            final imageCapture = MockImageCapture();
+            when(mockProcessCameraProvider.isBound(imageCapture)).thenAnswer((_) async => true);
+            imageCaptures.add(imageCapture);
+            outputFormats.add(outputFormat);
+            return imageCapture;
+          };
+      PigeonOverrides.recorder_new =
+          ({int? aspectRatio, QualitySelector? qualitySelector, int? targetVideoEncodingBitRate}) {
+            when(
+              mockRecorder.prepareRecording(any),
+            ).thenAnswer((_) async => MockPendingRecording());
+            return mockRecorder;
+          };
+      PigeonOverrides.videoCapture_withOutput =
+          ({required VideoOutput videoOutput, CameraIntegerRange? targetFpsRange}) =>
+              mockVideoCapture;
+      PigeonOverrides.imageAnalysis_new =
+          ({
+            int? outputImageFormat,
+            ResolutionSelector? resolutionSelector,
+            int? targetRotation,
+            CameraIntegerRange? targetFpsRange,
+          }) => mockImageAnalysis;
+      PigeonOverrides.cameraSelector_new =
+          ({LensFacing? requireLensFacing, dynamic cameraInfoForFilter}) {
+            return cameraInfoForFilter == mockFrontCameraInfo
+                ? mockFrontCameraSelector
+                : mockBackCameraSelector;
+          };
+      PigeonOverrides.deviceOrientationManager_new =
+          ({required void Function(DeviceOrientationManager, String) onDeviceOrientationChanged}) {
+            final manager = MockDeviceOrientationManager();
+            when(manager.getUiOrientation()).thenAnswer((_) async => 'PORTRAIT_UP');
+            when(manager.getDefaultDisplayRotation()).thenAnswer((_) async => Surface.rotation0);
+            return manager;
+          };
+      PigeonOverrides.camera2CameraInfo_from = ({required dynamic cameraInfo}) {
+        final camera2cameraInfo = MockCamera2CameraInfo();
+        final cameraId = cameraInfo == mockFrontCameraInfo ? '1' : '0';
+        when(camera2cameraInfo.getCameraId()).thenAnswer((_) async => cameraId);
+        when(
+          camera2cameraInfo.getCameraCharacteristic(any),
+        ).thenAnswer((_) async => InfoSupportedHardwareLevel.limited);
+        return camera2cameraInfo;
+      };
+      PigeonOverrides.cameraCharacteristics_sensorOrientation = MockCameraCharacteristicsKey();
+      PigeonOverrides.cameraCharacteristics_infoSupportedHardwareLevel =
+          MockCameraCharacteristicsKey();
+      GenericsPigeonOverrides.observerNew =
+          <T>({required void Function(Observer<T>, T) onChanged}) {
+            return Observer<T>.detached(onChanged: onChanged);
+          };
+      PigeonOverrides.systemServicesManager_new =
+          ({required void Function(SystemServicesManager, String) onCameraError}) {
+            final mockSystemServicesManager = MockSystemServicesManager();
+            when(
+              mockSystemServicesManager.getTempFilePath(any, any),
+            ).thenAnswer((_) async => 'file/output.mp4');
+            return mockSystemServicesManager;
+          };
+
+      when(
+        mockProcessCameraProvider.getAvailableCameraInfos(),
+      ).thenAnswer((_) async => <MockCameraInfo>[mockBackCameraInfo, mockFrontCameraInfo]);
+      when(mockProcessCameraProvider.bindToLifecycle(any, any)).thenAnswer((_) async => mockCamera);
+      when(mockProcessCameraProvider.isBound(mockImageAnalysis)).thenAnswer((_) async => true);
+      when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
+      when(mockCameraInfo.getCameraState()).thenAnswer((_) async => MockLiveCameraState());
+      when(mockCamera.cameraControl).thenAnswer((_) => MockCameraControl());
+
+      camera.processCameraProvider = mockProcessCameraProvider;
+      camera.enableRecordingAudio = false;
+      await camera.availableCameras();
+      if (enableGainMapFirst) {
+        await camera.setGainMapPhotoEnabled(0, true);
+      }
+      final int id = await camera.createCameraWithSettings(
+        testBackCameraDescription,
+        const MediaSettings(enableAudio: true),
+      );
+      await camera.initializeCamera(id);
+      return id;
+    }
+
+    test('createCameraWithSettings uses Ultra HDR when the chosen camera supports it', () async {
+      await setUpAndCreateCamera(
+        backSupportsUltraHdr: true,
+        frontSupportsUltraHdr: false,
+        enableGainMapFirst: true,
+      );
+
+      expect(outputFormats, <int?>[AndroidCameraCameraX.imageCaptureOutputFormatJpegUltraHdr]);
+    });
+
+    test('createCameraWithSettings keeps JPEG when the chosen camera lacks Ultra HDR', () async {
+      await setUpAndCreateCamera(
+        backSupportsUltraHdr: false,
+        frontSupportsUltraHdr: true,
+        enableGainMapFirst: true,
+      );
+
+      expect(outputFormats, <int?>[null]);
+    });
+
+    test('setDescriptionWhileRecording recreates ImageCapture for the new camera', () async {
+      await setUpAndCreateCamera(
+        backSupportsUltraHdr: true,
+        frontSupportsUltraHdr: false,
+        enableGainMapFirst: true,
+      );
+      expect(outputFormats, <int?>[AndroidCameraCameraX.imageCaptureOutputFormatJpegUltraHdr]);
+
+      // Simulate a recording being active.
+      camera.recording = MockRecording();
+      await camera.setDescriptionWhileRecording(testFrontCameraDescription);
+
+      expect(outputFormats, hasLength(2));
+      expect(outputFormats.last, isNull);
+      verify(
+        mockProcessCameraProvider.bindToLifecycle(mockFrontCameraSelector, <UseCase>[
+          mockVideoCapture,
+          mockPreview,
+          imageCaptures.last,
+          mockImageAnalysis,
+        ]),
+      ).called(1);
+      expect(camera.imageCapture, imageCaptures.last);
+    });
+
+    test('initializeCamera binds ImageAnalysis when gain map photos are disabled', () async {
+      await setUpAndCreateCamera(backSupportsUltraHdr: true, frontSupportsUltraHdr: false);
+
+      verify(
+        mockProcessCameraProvider.bindToLifecycle(any, <UseCase>[
+          mockPreview,
+          imageCaptures.last,
+          mockImageAnalysis,
+        ]),
+      ).called(1);
+    });
+
+    test('initializeCamera does not bind ImageAnalysis when gain map photos are enabled', () async {
+      await setUpAndCreateCamera(
+        backSupportsUltraHdr: true,
+        frontSupportsUltraHdr: false,
+        enableGainMapFirst: true,
+      );
+
+      verify(
+        mockProcessCameraProvider.bindToLifecycle(any, <UseCase>[mockPreview, imageCaptures.last]),
+      ).called(1);
+    });
+
+    test('setGainMapPhotoEnabled unbinds an idle ImageAnalysis', () async {
+      final int id = await setUpAndCreateCamera(
+        backSupportsUltraHdr: true,
+        frontSupportsUltraHdr: false,
+      );
+      verifyNever(mockProcessCameraProvider.unbind(<UseCase>[mockImageAnalysis]));
+
+      await camera.setGainMapPhotoEnabled(id, true);
+
+      verify(mockProcessCameraProvider.unbind(<UseCase>[mockImageAnalysis])).called(1);
+    });
+
+    test(
+      'setGainMapPhotoEnabled leaves ImageAnalysis bound on a camera without Ultra HDR',
+      () async {
+        final int id = await setUpAndCreateCamera(
+          backSupportsUltraHdr: false,
+          frontSupportsUltraHdr: false,
+        );
+
+        await camera.setGainMapPhotoEnabled(id, true);
+
+        verifyNever(mockProcessCameraProvider.unbind(<UseCase>[mockImageAnalysis]));
+      },
+    );
+
+    Future<void> startAndStopImageStream(int id) async {
+      PigeonOverrides.analyzer_new = ({required void Function(Analyzer, ImageProxy) analyze}) {
+        return Analyzer.pigeon_detached(analyze: analyze);
+      };
+      camera.captureOrientationLocked = true;
+      final StreamSubscription<CameraImageData> subscription = camera
+          .onStreamedFrameAvailable(id)
+          .listen((CameraImageData data) {});
+      await Future<void>.delayed(Duration.zero);
+      await subscription.cancel();
+    }
+
+    test(
+      'stopping the image stream unbinds ImageAnalysis when gain map photos are enabled',
+      () async {
+        final int id = await setUpAndCreateCamera(
+          backSupportsUltraHdr: true,
+          frontSupportsUltraHdr: false,
+          enableGainMapFirst: true,
+        );
+        clearInteractions(mockProcessCameraProvider);
+
+        await startAndStopImageStream(id);
+
+        verify(mockProcessCameraProvider.unbind(<UseCase>[mockImageAnalysis])).called(1);
+      },
+    );
+
+    test(
+      'stopping the image stream keeps ImageAnalysis bound when gain map photos are disabled',
+      () async {
+        final int id = await setUpAndCreateCamera(
+          backSupportsUltraHdr: true,
+          frontSupportsUltraHdr: false,
+        );
+
+        await startAndStopImageStream(id);
+
+        verifyNever(mockProcessCameraProvider.unbind(<UseCase>[mockImageAnalysis]));
+      },
+    );
+  });
 
   test('setZeroShutterLagEnabled preserves a previously requested JPEG quality', () async {
     final camera = AndroidCameraCameraX();
@@ -3928,6 +4344,7 @@ void main() {
           ResolutionSelector? resolutionSelector,
           int? jpegQuality,
           bool? zeroShutterLagEnabled,
+          int? outputFormat,
         }) {
           actualJpegQuality = jpegQuality;
           return mockNewImageCapture;
@@ -3971,6 +4388,7 @@ void main() {
           ResolutionSelector? resolutionSelector,
           int? jpegQuality,
           bool? zeroShutterLagEnabled,
+          int? outputFormat,
         }) {
           actualZeroShutterLagEnabled = zeroShutterLagEnabled;
           return mockNewImageCapture;
@@ -4012,6 +4430,7 @@ void main() {
           ResolutionSelector? resolutionSelector,
           int? jpegQuality,
           bool? zeroShutterLagEnabled,
+          int? outputFormat,
         }) {
           actualZeroShutterLagEnabled = zeroShutterLagEnabled;
           final mockImageCapture = MockImageCapture();
