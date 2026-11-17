@@ -6,16 +6,17 @@ import Testing
 
 @testable import test_plugin
 
-/// A `@MainActor`-isolated implementation of `HostMainActorApi`.
-///
-/// This exists to prove that `SwiftHostApiOptions(isMainActor: true)`
-/// generates a protocol a `@MainActor` class can implement directly, with no
-/// manual `DispatchQueue.main.async` dispatch needed to touch main-actor
-/// state from within the method body.
+/// Proves `SwiftHostApiOptions(isMainActor: true)` lets a `@MainActor` class
+/// implement `HostMainActorApi` directly, with no manual main-thread dispatch.
 @MainActor
 final class MockHostMainActorApi: HostMainActorApi {
   func isMainThread() async throws -> Bool {
-    return Thread.isMainThread
+    return Self.isCurrentlyOnMainThread()
+  }
+
+  // `Thread.isMainThread` is `noasync`; read it via a sync helper.
+  private static func isCurrentlyOnMainThread() -> Bool {
+    Thread.isMainThread
   }
 }
 
