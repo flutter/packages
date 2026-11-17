@@ -423,9 +423,9 @@ class FilledButton extends ButtonStyleButton {
   /// * `surfaceTintColor` - Colors.transparent
   /// * `elevation`
   ///   * disabled - 0
-  ///   * default - 1
-  ///   * hovered - 3
-  ///   * focused or pressed - 1
+  ///   * default - 0
+  ///   * hovered - 1
+  ///   * focused or pressed - 0
   /// * `padding`
   ///   * `default font size <= 14` - horizontal(24)
   ///   * `14 < default font size <= 28` - lerp(horizontal(24), horizontal(12))
