@@ -80,10 +80,15 @@ void main() {
         expect(uri, testFile.uri.toString());
       }),
     );
+    addTearDown(
+      () => SecurityScopedDarwinScopedStorageXFile.finalizer =
+          SecurityScopedDarwinScopedStorageXFile.defaultFinalizer,
+    );
 
     final WeakReference<SecurityScopedDarwinScopedStorageXFile> file = await _createAndDropFile();
 
-    await forceGC();
+    await forceGC(fullGcCycles: defaultNumberOfGcCycles);
+    await pumpEventQueue();
     expect(file.target, isNull);
   });
 
@@ -93,12 +98,17 @@ void main() {
       SecurityScopedDarwinScopedStorageXFile.finalizer = Finalizer<String>(
         expectAsync1((_) {}, count: 0),
       );
+      addTearDown(
+        () => SecurityScopedDarwinScopedStorageXFile.finalizer =
+            SecurityScopedDarwinScopedStorageXFile.defaultFinalizer,
+      );
 
       final WeakReference<SecurityScopedDarwinScopedStorageXFile> file = await _createAndDropFile(
         dispose: true,
       );
 
-      await forceGC();
+      await forceGC(fullGcCycles: defaultNumberOfGcCycles);
+      await pumpEventQueue();
       expect(file.target, isNull);
     },
     skip: !Platform.isMacOS

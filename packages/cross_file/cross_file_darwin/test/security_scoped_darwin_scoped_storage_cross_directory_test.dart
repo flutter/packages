@@ -45,11 +45,16 @@ void main() {
         expect(uri, testDirectory.uri.toString());
       }),
     );
+    addTearDown(
+      () => SecurityScopedDarwinScopedStorageXDirectory.finalizer =
+          SecurityScopedDarwinScopedStorageXDirectory.defaultFinalizer,
+    );
 
     final WeakReference<SecurityScopedDarwinScopedStorageXDirectory> dir =
         await _createAndDropDirectory();
 
-    await forceGC();
+    await forceGC(fullGcCycles: defaultNumberOfGcCycles);
+    await pumpEventQueue();
     expect(dir.target, isNull);
   });
 
@@ -59,11 +64,16 @@ void main() {
       SecurityScopedDarwinScopedStorageXDirectory.finalizer = Finalizer<String>(
         expectAsync1((_) {}, count: 0),
       );
+      addTearDown(
+        () => SecurityScopedDarwinScopedStorageXDirectory.finalizer =
+            SecurityScopedDarwinScopedStorageXDirectory.defaultFinalizer,
+      );
 
       final WeakReference<SecurityScopedDarwinScopedStorageXDirectory> dir =
           await _createAndDropDirectory(dispose: true);
 
-      await forceGC();
+      await forceGC(fullGcCycles: defaultNumberOfGcCycles);
+      await pumpEventQueue();
       expect(dir.target, isNull);
     },
     skip: !Platform.isMacOS

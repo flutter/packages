@@ -83,13 +83,21 @@ base class SecurityScopedDarwinScopedStorageXFile extends DarwinScopedStorageXFi
   ///
   /// Only visible for testing purposes.
   @visibleForTesting
-  static Finalizer<String> finalizer = Finalizer((String uri) {
+  static Finalizer<String> finalizer = defaultFinalizer;
+
+  /// Default [Finalizer] instance for [finalizer].
+  ///
+  /// Only visible for testing purposes.
+  @visibleForTesting
+  static Finalizer<String> defaultFinalizer = Finalizer((String uri) {
     // Check that this is not called during a unit test.
     if (Platform.environment['FLUTTER_TEST'] != 'true') {
       final NSURL? url = NSURL.URLWithString(uri.toNSString());
       url?.stopAccessingSecurityScopedResource();
     }
   });
+
+  bool _isDisposed = false;
 
   late final _file = File.fromUri(Uri.parse(params.uri));
 
@@ -158,9 +166,12 @@ base class SecurityScopedDarwinScopedStorageXFile extends DarwinScopedStorageXFi
   }
 
   @override
-  Future<void> dispose() {
-    finalizer.detach(this);
-    return stopAccessingSecurityScopedResource();
+  Future<void> dispose() async {
+    if (!_isDisposed) {
+      _isDisposed = true;
+      finalizer.detach(this);
+      await stopAccessingSecurityScopedResource();
+    }
   }
 }
 
