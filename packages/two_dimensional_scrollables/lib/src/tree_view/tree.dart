@@ -310,6 +310,11 @@ class TreeView<T> extends StatefulWidget {
     this.mainAxis = Axis.vertical,
     this.verticalDetails = const ScrollableDetails.vertical(),
     this.horizontalDetails = const ScrollableDetails.horizontal(),
+    @Deprecated(
+      'Use scrollCacheExtent instead. '
+      'This feature was deprecated after v0.5.6.',
+    )
+    this.cacheExtent,
     this.scrollCacheExtent,
     this.diagonalDragBehavior = DiagonalDragBehavior.none,
     this.dragStartBehavior = DragStartBehavior.start,
@@ -428,11 +433,29 @@ class TreeView<T> extends StatefulWidget {
   /// rows that are about to become visible when the user scrolls.
   ///
   /// [TreeRow]s that fall in this cache area are laid out even though they are
+  /// not (yet) visible on screen. The [cacheExtent] describes how many pixels
+  /// the cache area extends before the leading edge and after the trailing edge
+  /// of the viewport.
+  ///
+  /// See also:
+  ///
+  ///   * [scrollCacheExtent], the replacement for this property.
+  @Deprecated(
+    'Use scrollCacheExtent instead. '
+    'This feature was deprecated after v0.5.6.',
+  )
+  final double? cacheExtent;
+
+  /// The [TreeViewport] has an area before and after the visible area to cache
+  /// rows that are about to become visible when the user scrolls.
+  ///
+  /// [TreeRow]s that fall in this cache area are laid out even though they are
   /// not (yet) visible on screen. The [scrollCacheExtent] describes how far
   /// the cache area extends before the leading edge and after the trailing edge
   /// of the viewport, either in pixels or as a multiple of the viewport height.
   ///
-  /// If null, [RenderAbstractViewport.defaultCacheExtent] pixels are used.
+  /// If null, defaults to [RenderTwoDimensionalViewport]'s default
+  /// [RenderTwoDimensionalViewport.scrollCacheExtent].
   ///
   /// See also:
   ///
@@ -756,12 +779,15 @@ class _TreeViewState<T> extends State<TreeView<T>>
 
   @override
   Widget build(BuildContext context) {
+    final ScrollCacheExtent? effectiveScrollCacheExtent =
+        widget.scrollCacheExtent ??
+        (widget.cacheExtent != null ? ScrollCacheExtent.pixels(widget.cacheExtent!) : null);
     return _TreeView(
       primary: widget.primary,
       mainAxis: widget.mainAxis,
       horizontalDetails: widget.horizontalDetails,
       verticalDetails: widget.verticalDetails,
-      scrollCacheExtent: widget.scrollCacheExtent,
+      scrollCacheExtent: effectiveScrollCacheExtent,
       diagonalDragBehavior: widget.diagonalDragBehavior,
       dragStartBehavior: widget.dragStartBehavior,
       keyboardDismissBehavior: widget.keyboardDismissBehavior,
@@ -1030,6 +1056,11 @@ class TreeViewport extends TwoDimensionalViewport {
     required super.horizontalOffset,
     required super.horizontalAxisDirection,
     required TreeRowDelegateMixin super.delegate,
+    @Deprecated(
+      'Use scrollCacheExtent instead. '
+      'This feature was deprecated after v0.5.6.',
+    )
+    this._cacheExtent,
     super.scrollCacheExtent,
     super.clipBehavior,
     required this.activeAnimations,
@@ -1042,6 +1073,26 @@ class TreeViewport extends TwoDimensionalViewport {
        ),
        // This is fixed as there is currently only one traversal pattern, https://github.com/flutter/flutter/issues/148357
        super(mainAxis: Axis.vertical);
+
+  /// The number of logical pixels before the leading edge and after the
+  /// trailing edge of the viewport to cache rows.
+  ///
+  /// See also:
+  ///
+  ///   * [scrollCacheExtent], the replacement for this property.
+  @Deprecated(
+    'Use scrollCacheExtent instead. '
+    'This feature was deprecated after v0.5.6.',
+  )
+  // Intentionally omits @override so this continues to compile after
+  // TwoDimensionalViewport.cacheExtent is removed from Flutter.
+  // ignore: annotate_overrides
+  double? get cacheExtent => _cacheExtent;
+  @Deprecated(
+    'Use scrollCacheExtent instead. '
+    'This feature was deprecated after v0.5.6.',
+  )
+  final double? _cacheExtent;
 
   /// The currently active [TreeViewNode] animations.
   ///
@@ -1063,6 +1114,9 @@ class TreeViewport extends TwoDimensionalViewport {
   /// The alignment of the tree within the viewport when there is extra space.
   final AlignmentGeometry alignment;
 
+  ScrollCacheExtent? get _effectiveScrollCacheExtent =>
+      scrollCacheExtent ?? (_cacheExtent != null ? ScrollCacheExtent.pixels(_cacheExtent) : null);
+
   @override
   RenderTreeViewport createRenderObject(BuildContext context) {
     return RenderTreeViewport(
@@ -1073,7 +1127,7 @@ class TreeViewport extends TwoDimensionalViewport {
       horizontalAxisDirection: horizontalAxisDirection,
       verticalOffset: verticalOffset,
       verticalAxisDirection: verticalAxisDirection,
-      scrollCacheExtent: scrollCacheExtent,
+      scrollCacheExtent: _effectiveScrollCacheExtent,
       clipBehavior: clipBehavior,
       delegate: delegate as TreeRowDelegateMixin,
       childManager: context as TwoDimensionalChildManager,
@@ -1092,7 +1146,7 @@ class TreeViewport extends TwoDimensionalViewport {
       ..horizontalAxisDirection = horizontalAxisDirection
       ..verticalOffset = verticalOffset
       ..verticalAxisDirection = verticalAxisDirection
-      ..scrollCacheExtent = scrollCacheExtent
+      ..scrollCacheExtent = _effectiveScrollCacheExtent
       ..clipBehavior = clipBehavior
       ..delegate = delegate as TreeRowDelegateMixin
       ..alignment = alignment

@@ -1,0 +1,3 @@
+# Has test files in test_fixes/ that intentionally use deprecated APIs to
+# conduct dart fix tests.
+allow_custom_analysis_options: true

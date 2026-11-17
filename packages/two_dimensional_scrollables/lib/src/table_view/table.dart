@@ -120,6 +120,11 @@ class TableView extends StatefulWidget {
     this.mainAxis = Axis.vertical,
     this.verticalDetails = const ScrollableDetails.vertical(),
     this.horizontalDetails = const ScrollableDetails.horizontal(),
+    @Deprecated(
+      'Use scrollCacheExtent instead. '
+      'This feature was deprecated after v0.5.6.',
+    )
+    this.cacheExtent,
     this.scrollCacheExtent,
     required this.delegate,
     this.diagonalDragBehavior = DiagonalDragBehavior.none,
@@ -155,6 +160,11 @@ class TableView extends StatefulWidget {
     this.mainAxis = Axis.vertical,
     this.verticalDetails = const ScrollableDetails.vertical(),
     this.horizontalDetails = const ScrollableDetails.horizontal(),
+    @Deprecated(
+      'Use scrollCacheExtent instead. '
+      'This feature was deprecated after v0.5.6.',
+    )
+    this.cacheExtent,
     this.scrollCacheExtent,
     this.diagonalDragBehavior = DiagonalDragBehavior.none,
     this.dragStartBehavior = DragStartBehavior.start,
@@ -207,6 +217,11 @@ class TableView extends StatefulWidget {
     this.mainAxis = Axis.vertical,
     this.verticalDetails = const ScrollableDetails.vertical(),
     this.horizontalDetails = const ScrollableDetails.horizontal(),
+    @Deprecated(
+      'Use scrollCacheExtent instead. '
+      'This feature was deprecated after v0.5.6.',
+    )
+    this.cacheExtent,
     this.scrollCacheExtent,
     this.diagonalDragBehavior = DiagonalDragBehavior.none,
     this.dragStartBehavior = DragStartBehavior.start,
@@ -259,9 +274,27 @@ class TableView extends StatefulWidget {
   /// [ScrollController], [ScrollPhysics] and more for the vertical axis.
   final ScrollableDetails verticalDetails;
 
+  /// The number of logical pixels before the leading edge and after the
+  /// trailing edge of the viewport to cache children.
+  ///
+  /// See also:
+  ///
+  ///   * [scrollCacheExtent], the replacement for this property.
+  @Deprecated(
+    'Use scrollCacheExtent instead. '
+    'This feature was deprecated after v0.5.6.',
+  )
+  final double? cacheExtent;
+
   /// {@macro flutter.rendering.RenderViewportBase.scrollCacheExtent}
   ///
-  /// If null, [RenderAbstractViewport.defaultCacheExtent] pixels are used.
+  /// When using [CacheExtentStyle.viewport] (via
+  /// [ScrollCacheExtent.viewport]), the multiplier is applied to the viewport
+  /// width horizontally and the viewport height vertically, independent of
+  /// [mainAxis].
+  ///
+  /// If null, defaults to [RenderTwoDimensionalViewport]'s default
+  /// [RenderTwoDimensionalViewport.scrollCacheExtent].
   final ScrollCacheExtent? scrollCacheExtent;
 
   /// A delegate that provides the children for the [TwoDimensionalScrollView].
@@ -320,12 +353,15 @@ class _TableViewState extends State<TableView> {
 
   @override
   Widget build(BuildContext context) {
+    final ScrollCacheExtent? effectiveScrollCacheExtent =
+        widget.scrollCacheExtent ??
+        (widget.cacheExtent != null ? ScrollCacheExtent.pixels(widget.cacheExtent!) : null);
     return _TableView(
       primary: widget.primary,
       mainAxis: widget.mainAxis,
       horizontalDetails: widget.horizontalDetails,
       verticalDetails: widget.verticalDetails,
-      scrollCacheExtent: widget.scrollCacheExtent,
+      scrollCacheExtent: effectiveScrollCacheExtent,
       diagonalDragBehavior: widget.diagonalDragBehavior,
       dragStartBehavior: widget.dragStartBehavior,
       keyboardDismissBehavior: widget.keyboardDismissBehavior,
@@ -389,13 +425,41 @@ class TableViewport extends TwoDimensionalViewport {
     required super.horizontalAxisDirection,
     required TableCellDelegateMixin super.delegate,
     required super.mainAxis,
+    @Deprecated(
+      'Use scrollCacheExtent instead. '
+      'This feature was deprecated after v0.5.6.',
+    )
+    this._cacheExtent,
     super.scrollCacheExtent,
     super.clipBehavior,
     this.alignment = Alignment.topLeft,
   });
 
+  /// The number of logical pixels before the leading edge and after the
+  /// trailing edge of the viewport to cache children.
+  ///
+  /// See also:
+  ///
+  ///   * [scrollCacheExtent], the replacement for this property.
+  @Deprecated(
+    'Use scrollCacheExtent instead. '
+    'This feature was deprecated after v0.5.6.',
+  )
+  // Intentionally omits @override so this continues to compile after
+  // TwoDimensionalViewport.cacheExtent is removed from Flutter.
+  // ignore: annotate_overrides
+  double? get cacheExtent => _cacheExtent;
+  @Deprecated(
+    'Use scrollCacheExtent instead. '
+    'This feature was deprecated after v0.5.6.',
+  )
+  final double? _cacheExtent;
+
   /// The alignment of the table within the viewport when there is extra space.
   final AlignmentGeometry alignment;
+
+  ScrollCacheExtent? get _effectiveScrollCacheExtent =>
+      scrollCacheExtent ?? (_cacheExtent != null ? ScrollCacheExtent.pixels(_cacheExtent) : null);
 
   @override
   RenderTwoDimensionalViewport createRenderObject(BuildContext context) {
@@ -405,7 +469,7 @@ class TableViewport extends TwoDimensionalViewport {
       verticalOffset: verticalOffset,
       verticalAxisDirection: verticalAxisDirection,
       mainAxis: mainAxis,
-      scrollCacheExtent: scrollCacheExtent,
+      scrollCacheExtent: _effectiveScrollCacheExtent,
       clipBehavior: clipBehavior,
       delegate: delegate as TableCellDelegateMixin,
       childManager: context as TwoDimensionalChildManager,
@@ -422,7 +486,7 @@ class TableViewport extends TwoDimensionalViewport {
       ..verticalOffset = verticalOffset
       ..verticalAxisDirection = verticalAxisDirection
       ..mainAxis = mainAxis
-      ..scrollCacheExtent = scrollCacheExtent
+      ..scrollCacheExtent = _effectiveScrollCacheExtent
       ..clipBehavior = clipBehavior
       ..delegate = delegate as TableCellDelegateMixin
       ..alignment = alignment
@@ -448,11 +512,20 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     required TableCellDelegateMixin super.delegate,
     required super.mainAxis,
     required super.childManager,
-    super.scrollCacheExtent,
+    @Deprecated(
+      'Use scrollCacheExtent instead. '
+      'This feature was deprecated after v0.5.6.',
+    )
+    double? cacheExtent,
+    ScrollCacheExtent? scrollCacheExtent,
     super.clipBehavior,
     this._alignment = Alignment.topLeft,
     this._textDirection,
-  });
+  }) : super(
+         scrollCacheExtent:
+             scrollCacheExtent ??
+             (cacheExtent != null ? ScrollCacheExtent.pixels(cacheExtent) : null),
+       );
 
   @override
   TableCellDelegateMixin get delegate => super.delegate as TableCellDelegateMixin;

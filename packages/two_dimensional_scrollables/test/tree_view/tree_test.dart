@@ -821,6 +821,7 @@ void main() {
           home: TreeView<String>(
             tree: tree,
             controller: controller,
+            scrollCacheExtent: const ScrollCacheExtent.pixels(0),
             toggleAnimationStyle: AnimationStyle.noAnimation,
             verticalDetails: ScrollableDetails.vertical(controller: verticalController),
             treeNodeBuilder:
