@@ -3,6 +3,11 @@
 // found in the LICENSE file.
 
 import 'package:animations/src/open_container.dart';
+// TODO(chunhtai): Remove once Flutter 3.50 reaches stable, as widgets.dart
+// (via material_ui.dart) re-exports ScrollCacheExtent
+// (https://github.com/flutter/flutter/pull/189483).
+// ignore: unnecessary_import
+import 'package:flutter/rendering.dart' show ScrollCacheExtent;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
