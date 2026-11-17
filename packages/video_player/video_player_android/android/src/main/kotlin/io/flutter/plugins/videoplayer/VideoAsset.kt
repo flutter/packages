@@ -8,7 +8,8 @@ import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.source.MediaSource
 
 /** A video to be played by [VideoPlayer]. */
-abstract class VideoAsset protected constructor(@JvmField protected val assetUrl: String?) {
+internal abstract class VideoAsset
+protected constructor(@JvmField protected val assetUrl: String?) {
   /**
    * Returns the configured media item to be played.
    *
@@ -39,14 +40,13 @@ abstract class VideoAsset protected constructor(@JvmField protected val assetUrl
     HTTP_LIVE
   }
 
-  internal companion object {
+  companion object {
     /**
      * Returns an asset from a local `asset:///` URL, i.e. an on-device asset.
      *
      * @param assetUrl local asset, beginning in `asset:///`.
      * @return the asset.
      */
-    @JvmStatic
     fun fromAssetUrl(assetUrl: String): VideoAsset {
       require(assetUrl.startsWith("asset:///")) { "assetUrl must start with 'asset:///'" }
       return LocalVideoAsset(assetUrl)
@@ -76,7 +76,6 @@ abstract class VideoAsset protected constructor(@JvmField protected val assetUrl
      * @param rtspUrl remote asset, beginning with `rtsp://`.
      * @return the asset.
      */
-    @JvmStatic
     fun fromRtspUrl(rtspUrl: String): VideoAsset {
       require(rtspUrl.startsWith("rtsp://")) { "rtspUrl must start with 'rtsp://'" }
       return RtspVideoAsset(rtspUrl)

@@ -9,13 +9,12 @@ import io.flutter.plugin.platform.PlatformViewFactory
 import io.flutter.plugins.videoplayer.AndroidVideoPlayerApi.Companion.codec
 import io.flutter.plugins.videoplayer.PlatformVideoViewCreationParams
 import io.flutter.plugins.videoplayer.VideoPlayer
-import java.util.Objects
 
 /**
  * A factory class responsible for creating platform video views that can be embedded in a Flutter
  * app.
  */
-class PlatformVideoViewFactory
+internal class PlatformVideoViewFactory
 /**
  * Constructs a new PlatformVideoViewFactory.
  *
@@ -43,9 +42,7 @@ class PlatformVideoViewFactory
    * @return A new instance of PlatformVideoView.
    */
   override fun create(context: Context, id: Int, args: Any?): PlatformView {
-    val params =
-        Objects.requireNonNull<PlatformVideoViewCreationParams>(
-            args as PlatformVideoViewCreationParams?)
+    val params = args as PlatformVideoViewCreationParams
     val playerId = params.playerId
 
     val player = videoPlayerProvider.getVideoPlayer(playerId)

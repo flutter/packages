@@ -4,17 +4,15 @@
 package io.flutter.plugins.videoplayer.texture
 
 import androidx.annotation.OptIn
-import androidx.media3.common.Format
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import io.flutter.plugins.videoplayer.ExoPlayerEventListener
 import io.flutter.plugins.videoplayer.ExoPlayerEventListener.RotationDegrees.Companion.fromDegrees
 import io.flutter.plugins.videoplayer.VideoPlayerCallbacks
-import java.util.Objects
 import kotlin.math.max
 import kotlin.math.roundToInt
 
-class TextureExoPlayerEventListener(
+internal class TextureExoPlayerEventListener(
     exoPlayer: ExoPlayer,
     events: VideoPlayerCallbacks,
     private val surfaceProducerHandlesCropAndRotation: Boolean
@@ -61,7 +59,6 @@ class TextureExoPlayerEventListener(
   // revisiting should the implementation change across versions of the Exoplayer API.
   @OptIn(UnstableApi::class)
   private fun getRotationCorrectionFromFormat(exoPlayer: ExoPlayer): Int {
-    val videoFormat = Objects.requireNonNull<Format>(exoPlayer.videoFormat)
-    return videoFormat.rotationDegrees
+    return exoPlayer.videoFormat?.rotationDegrees ?: 0
   }
 }

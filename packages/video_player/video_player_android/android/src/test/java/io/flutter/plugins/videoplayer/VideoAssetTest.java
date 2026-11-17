@@ -41,12 +41,12 @@ public final class VideoAssetTest {
   public void localVideoRequiresAssetUrl() {
     assertThrows(
         IllegalArgumentException.class,
-        () -> VideoAsset.fromAssetUrl("https://not.local/video.mp4"));
+        () -> VideoAsset.Companion.fromAssetUrl("https://not.local/video.mp4"));
   }
 
   @Test
   public void localVideoCreatesMediaItem() {
-    VideoAsset asset = VideoAsset.fromAssetUrl("asset:///asset-key");
+    VideoAsset asset = VideoAsset.Companion.fromAssetUrl("asset:///asset-key");
     MediaItem mediaItem = asset.getMediaItem();
 
     assert mediaItem.localConfiguration != null;
@@ -125,12 +125,13 @@ public final class VideoAssetTest {
   @Test
   public void rtspVideoRequiresRtspUrl() {
     assertThrows(
-        IllegalArgumentException.class, () -> VideoAsset.fromRtspUrl("https://not.rtsp/video.mp4"));
+        IllegalArgumentException.class,
+        () -> VideoAsset.Companion.fromRtspUrl("https://not.rtsp/video.mp4"));
   }
 
   @Test
   public void rtspVideoCreatesMediaItem() {
-    VideoAsset asset = VideoAsset.fromRtspUrl("rtsp://test:pass@flutter.dev/stream");
+    VideoAsset asset = VideoAsset.Companion.fromRtspUrl("rtsp://test:pass@flutter.dev/stream");
     MediaItem mediaItem = asset.getMediaItem();
 
     assert mediaItem.localConfiguration != null;

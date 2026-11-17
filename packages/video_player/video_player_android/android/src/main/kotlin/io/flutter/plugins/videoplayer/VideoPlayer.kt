@@ -24,22 +24,21 @@ import kotlin.math.min
  *
  * It provides methods to control playback, adjust volume, and handle seeking.
  */
-abstract class VideoPlayer
+internal abstract class VideoPlayer
 @UnstableApi // Error thrown for this-escape warning on JDK 21+ due to
 // https://bugs.openjdk.org/browse/JDK-8015831.
 // Keeping behavior as-is and addressing the warning could cause a regression:
 // https://github.com/flutter/packages/pull/10193
 constructor(
-    @JvmField protected val videoPlayerEvents: VideoPlayerCallbacks,
+    protected val videoPlayerEvents: VideoPlayerCallbacks,
     mediaItem: MediaItem,
     options: VideoPlayerOptions,
-    @JvmField protected val surfaceProducer: SurfaceProducer?,
+    protected val surfaceProducer: SurfaceProducer?,
     exoPlayerProvider: () -> ExoPlayer
 ) : VideoPlayerInstanceApi {
   private var disposeHandler: (() -> Unit)? = null
   private var exoPlayerEventListener: ExoPlayerEventListener?
-  var exoPlayer: ExoPlayer
-    protected set
+  val exoPlayer: ExoPlayer = exoPlayerProvider()
 
   // TODO: Migrate to stable API, see https://github.com/flutter/flutter/issues/147039.
   @UnstableApi protected var trackSelector: DefaultTrackSelector? = null
@@ -49,12 +48,8 @@ constructor(
 
   // TODO: Migrate to stable API, see https://github.com/flutter/flutter/issues/147039.
   init {
-    exoPlayer = exoPlayerProvider()
-
     // Try to get the track selector from the ExoPlayer if it was built with one
-    if (exoPlayer.trackSelector is DefaultTrackSelector) {
-      trackSelector = exoPlayer.trackSelector as DefaultTrackSelector?
-    }
+    trackSelector = exoPlayer.trackSelector as? DefaultTrackSelector
 
     exoPlayer.setMediaItem(mediaItem)
     exoPlayer.prepare()
@@ -133,7 +128,7 @@ constructor(
                     getFormatValue(format.bitrate),
                     getFormatValue(format.sampleRate),
                     getFormatValue(format.channelCount),
-                    if (format.codecs != null) format.codecs else null)
+                    format.codecs)
 
             add(audioTrack)
           }
@@ -212,7 +207,7 @@ constructor(
                     getFormatValue(format.width),
                     getFormatValue(format.height),
                     getFormatValue(format.frameRate.toDouble()),
-                    if (format.codecs != null) format.codecs else null)
+                    format.codecs)
 
             add(videoTrack)
           }
@@ -242,12 +237,9 @@ constructor(
     // Get current tracks
     val tracks = exoPlayer.currentTracks
 
-    require(!(groupIndex < 0 || groupIndex >= tracks.groups.size)) {
-      ("Cannot select video track: groupIndex " +
-          groupIndex +
-          " is out of bounds (available groups: " +
-          tracks.groups.size +
-          ")")
+    require(groupIndex in tracks.groups.indices) {
+      ("Cannot select video track: groupIndex $groupIndex is out of bounds " +
+          "(available groups: ${tracks.groups.size})")
     }
 
     val group = tracks.groups[groupIndex.toInt()]
@@ -262,12 +254,9 @@ constructor(
     }
 
     // Verify the track index is valid
-    require(!(trackIndex < 0 || trackIndex.toInt() >= group.length)) {
-      ("Cannot select video track: trackIndex " +
-          trackIndex +
-          " is out of bounds (available tracks in group: " +
-          group.length +
-          ")")
+    require(trackIndex.toInt() in 0 ..< group.length) {
+      ("Cannot select video track: trackIndex $trackIndex is out of bounds " +
+          "(available tracks in group: ${group.length})")
     }
 
     // Get the track group and create a selection override
@@ -335,7 +324,7 @@ constructor(
             // Guard against player disposal during the delay. The isDisposed flag
             // is the authoritative check; the trackSelector null-check is kept for
             // safety even though it is set in the constructor.
-            if (isDisposed || trackSelector == null) {
+            if (isDisposed) {
               return@Runnable
             }
 

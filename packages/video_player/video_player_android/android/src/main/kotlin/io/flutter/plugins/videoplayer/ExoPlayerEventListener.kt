@@ -12,9 +12,9 @@ import androidx.media3.common.Timeline
 import androidx.media3.common.Tracks
 import androidx.media3.exoplayer.ExoPlayer
 
-abstract class ExoPlayerEventListener(
-    @JvmField protected val exoPlayer: ExoPlayer,
-    @JvmField protected val events: VideoPlayerCallbacks
+internal abstract class ExoPlayerEventListener(
+    protected val exoPlayer: ExoPlayer,
+    protected val events: VideoPlayerCallbacks
 ) : Player.Listener {
   private var isInitialized = false
   private var isWaitingForValidDuration = false
@@ -27,14 +27,13 @@ abstract class ExoPlayerEventListener(
     }
   }
 
-  protected enum class RotationDegrees(@JvmField val degrees: Int) {
+  protected enum class RotationDegrees(val degrees: Int) {
     ROTATE_0(0),
     ROTATE_90(90),
     ROTATE_180(180),
     ROTATE_270(270);
 
     companion object {
-      @JvmStatic
       fun fromDegrees(degrees: Int): RotationDegrees {
         for (rotationDegrees in entries) {
           if (rotationDegrees.degrees == degrees) {
@@ -83,16 +82,17 @@ abstract class ExoPlayerEventListener(
   }
 
   override fun onPlaybackStateChanged(playbackState: Int) {
-    var platformState = PlatformPlaybackState.UNKNOWN
-    when (playbackState) {
-      Player.STATE_BUFFERING -> platformState = PlatformPlaybackState.BUFFERING
-      Player.STATE_READY -> {
-        platformState = PlatformPlaybackState.READY
-        maybeSendInitialized()
-      }
-      Player.STATE_ENDED -> platformState = PlatformPlaybackState.ENDED
-      Player.STATE_IDLE -> platformState = PlatformPlaybackState.IDLE
-    }
+    val platformState =
+        when (playbackState) {
+          Player.STATE_BUFFERING -> PlatformPlaybackState.BUFFERING
+          Player.STATE_READY -> {
+            maybeSendInitialized()
+            PlatformPlaybackState.READY
+          }
+          Player.STATE_ENDED -> PlatformPlaybackState.ENDED
+          Player.STATE_IDLE -> PlatformPlaybackState.IDLE
+          else -> PlatformPlaybackState.UNKNOWN
+        }
     events.onPlaybackStateChanged(platformState)
   }
 
@@ -140,7 +140,7 @@ abstract class ExoPlayerEventListener(
         // Find the selected track within this group
         for (i in 0 ..< group.length) {
           if (group.isTrackSelected(i)) {
-            return groupIndex.toString() + "_" + i
+            return "${groupIndex.toString()}_$i"
           }
         }
       }
@@ -170,6 +170,6 @@ abstract class ExoPlayerEventListener(
   }
 
   companion object {
-    const val DURATION_UNSET_INITIALIZATION_TIMEOUT_MS: Long = 2000
+    internal const val DURATION_UNSET_INITIALIZATION_TIMEOUT_MS: Long = 2000
   }
 }

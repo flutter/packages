@@ -23,7 +23,7 @@ import kotlin.math.min
  * A subclass of [VideoPlayer] that adds functionality related to platform view as a way of
  * displaying the video in the app.
  */
-class PlatformViewVideoPlayer // TODO: Migrate to stable API, see
+internal class PlatformViewVideoPlayer // TODO: Migrate to stable API, see
 // https://github.com/flutter/flutter/issues/147039.
 @UnstableApi
 @VisibleForTesting
@@ -51,7 +51,6 @@ constructor(
      * @return a video player instance.
      */
     // TODO: Migrate to stable API, see https://github.com/flutter/flutter/issues/147039.
-    @JvmStatic
     @OptIn(UnstableApi::class)
     fun create(
         context: Context,

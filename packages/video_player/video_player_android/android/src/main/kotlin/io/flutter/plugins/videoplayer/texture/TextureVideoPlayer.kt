@@ -27,7 +27,7 @@ import kotlin.math.min
  * It manages the lifecycle of the texture and ensures that the video is properly displayed on the
  * texture.
  */
-class TextureVideoPlayer
+internal class TextureVideoPlayer
 @UnstableApi
 @VisibleForTesting
 constructor(
@@ -101,7 +101,6 @@ constructor(
      * @return a video player instance.
      */
     // TODO: Migrate to stable API, see https://github.com/flutter/flutter/issues/147039.
-    @JvmStatic
     @OptIn(UnstableApi::class)
     fun create(
         context: Context,

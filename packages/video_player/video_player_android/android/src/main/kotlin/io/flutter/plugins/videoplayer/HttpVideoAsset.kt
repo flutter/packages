@@ -69,7 +69,7 @@ internal class HttpVideoAsset(
         userAgent: String?
     ) {
       factory.setUserAgent(userAgent).setAllowCrossProtocolRedirects(true)
-      if (!httpHeaders.isEmpty()) {
+      if (httpHeaders.isNotEmpty()) {
         factory.setDefaultRequestProperties(httpHeaders)
       }
     }

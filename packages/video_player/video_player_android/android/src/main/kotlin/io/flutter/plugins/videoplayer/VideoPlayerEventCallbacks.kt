@@ -48,16 +48,9 @@ private constructor(
   }
 
   companion object {
-    fun bindTo(binaryMessenger: BinaryMessenger, identifier: String): VideoPlayerEventCallbacks {
-      return bindTo(binaryMessenger, identifier) {
-          messenger: BinaryMessenger,
-          streamHandler: VideoEventsStreamHandler,
-          instanceName: String ->
-        VideoEventsStreamHandler.register(messenger, streamHandler, instanceName)
-      }
-    }
+    fun bindTo(binaryMessenger: BinaryMessenger, identifier: String): VideoPlayerEventCallbacks =
+        bindTo(binaryMessenger, identifier, VideoEventsStreamHandler::register)
 
-    @JvmStatic
     @VisibleForTesting
     fun bindTo(
         binaryMessenger: BinaryMessenger,
@@ -85,7 +78,6 @@ private constructor(
       return VideoPlayerEventCallbacks(eventSink, eventChannel)
     }
 
-    @JvmStatic
     @VisibleForTesting
     fun withSink(eventSink: QueuingEventSink): VideoPlayerEventCallbacks {
       return VideoPlayerEventCallbacks(eventSink, null)

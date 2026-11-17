@@ -21,14 +21,14 @@ import io.flutter.plugins.videoplayer.texture.TextureVideoPlayer
 import io.flutter.view.TextureRegistry
 import io.flutter.view.TextureRegistry.SurfaceProducer
 
-typealias PlatformViewPlayerConstructor =
+internal typealias PlatformViewPlayerConstructor =
     (
         context: Context,
         events: VideoPlayerCallbacks,
         asset: VideoAsset,
         options: VideoPlayerOptions) -> PlatformViewVideoPlayer
 
-typealias TexturePlayerConstructor =
+internal typealias TexturePlayerConstructor =
     (
         context: Context,
         events: VideoPlayerCallbacks,
@@ -51,7 +51,7 @@ class VideoPlayerPlugin
   constructor() : this(null, null)
 
   @VisibleForTesting
-  constructor(
+  internal constructor(
       createPlatformViewPlayer: PlatformViewPlayerConstructor?,
       createTexturePlayer: TexturePlayerConstructor?
   ) {
@@ -74,8 +74,7 @@ class VideoPlayerPlugin
     flutterState.startListening(this, binding.binaryMessenger)
 
     binding.platformViewRegistry.registerViewFactory(
-        "plugins.flutter.dev/video_player_android",
-        PlatformVideoViewFactory { key: Long -> videoPlayers.get(key) })
+        "plugins.flutter.dev/video_player_android", PlatformVideoViewFactory(videoPlayers::get))
   }
 
   override fun onDetachedFromEngine(binding: FlutterPluginBinding) {
@@ -92,7 +91,7 @@ class VideoPlayerPlugin
     videoPlayers.clear()
   }
 
-  fun onDestroy() {
+  private fun onDestroy() {
     // The whole FlutterView is being destroyed. Here we release resources acquired for all
     // instances
     // of VideoPlayer. Once https://github.com/flutter/flutter/issues/19358 is resolved this may
@@ -158,16 +157,13 @@ class VideoPlayerPlugin
     } else if (uri.startsWith("rtsp:")) {
       return VideoAsset.fromRtspUrl(uri)
     } else {
-      var streamingFormat = VideoAsset.StreamingFormat.UNKNOWN
-      val formatHint = options.formatHint
-      if (formatHint != null) {
-        streamingFormat =
-            when (formatHint) {
-              PlatformVideoFormat.SS -> VideoAsset.StreamingFormat.SMOOTH
-              PlatformVideoFormat.DASH -> VideoAsset.StreamingFormat.DYNAMIC_ADAPTIVE
-              PlatformVideoFormat.HLS -> VideoAsset.StreamingFormat.HTTP_LIVE
-            }
-      }
+      val streamingFormat =
+          when (options.formatHint) {
+            PlatformVideoFormat.SS -> VideoAsset.StreamingFormat.SMOOTH
+            PlatformVideoFormat.DASH -> VideoAsset.StreamingFormat.DYNAMIC_ADAPTIVE
+            PlatformVideoFormat.HLS -> VideoAsset.StreamingFormat.HTTP_LIVE
+            null -> VideoAsset.StreamingFormat.UNKNOWN
+          }
       return VideoAsset.fromRemoteUrl(uri, streamingFormat, options.httpHeaders, options.userAgent)
     }
   }

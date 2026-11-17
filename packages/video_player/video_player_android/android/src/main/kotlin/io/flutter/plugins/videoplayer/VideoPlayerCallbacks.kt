@@ -12,7 +12,7 @@ package io.flutter.plugins.videoplayer
  *
  * See [androidx.media3.common.Player.Listener] for details.
  */
-interface VideoPlayerCallbacks {
+internal interface VideoPlayerCallbacks {
   fun onInitialized(width: Int, height: Int, durationInMs: Long, rotationCorrectionInDegrees: Int)
 
   fun onPlaybackStateChanged(state: PlatformPlaybackState)

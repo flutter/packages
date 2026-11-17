@@ -18,7 +18,7 @@ import io.flutter.plugin.platform.PlatformView
  * A class used to create a native video view that can be embedded in a Flutter app. It wraps an
  * [ExoPlayer] instance and displays its video content.
  */
-class PlatformVideoView
+internal class PlatformVideoView
 @OptIn(UnstableApi::class)
 /**
  * Constructs a new PlatformVideoView.
@@ -93,7 +93,7 @@ constructor(context: Context, exoPlayer: ExoPlayer) : PlatformView {
 
   companion object {
     /** Binds the ExoPlayer to the provided surface. */
-    fun bindPlayerToSurface(exoPlayer: ExoPlayer, surface: Surface) {
+    private fun bindPlayerToSurface(exoPlayer: ExoPlayer, surface: Surface) {
       if (surface.isValid) {
         exoPlayer.setVideoSurface(surface)
       }
@@ -103,7 +103,7 @@ constructor(context: Context, exoPlayer: ExoPlayer) : PlatformView {
      * Workaround for a rendering bug on Android 9 (API 28) where the decoder does not flush its
      * output buffer when a new surface is attached while the player is paused.
      */
-    fun forceFirstFrameForAndroid9(exoPlayer: ExoPlayer) {
+    private fun forceFirstFrameForAndroid9(exoPlayer: ExoPlayer) {
       if (Build.VERSION.SDK_INT == Build.VERSION_CODES.P && !exoPlayer.playWhenReady) {
         val position = exoPlayer.currentPosition
         exoPlayer.seekTo(if (position == 0L) 1 else position)

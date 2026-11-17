@@ -23,7 +23,7 @@ internal class QueuingEventSink {
   }
 
   fun endOfStream() {
-    enqueue(EndOfStreamEvent())
+    enqueue(EndOfStreamEvent)
     maybeFlush()
     done = true
   }
@@ -53,19 +53,19 @@ internal class QueuingEventSink {
             it.endOfStream()
           }
           is ErrorEvent -> {
-            val errorEvent: ErrorEvent = event
-            it.error(errorEvent.code, errorEvent.message, errorEvent.details)
+            it.error(event.code, event.message, event.details)
           }
-          else -> {
-            it.success(event as PlatformVideoEvent)
+          is PlatformVideoEvent -> {
+            it.success(event)
           }
+          else -> throw IllegalStateException()
         }
       }
       eventQueue.clear()
     }
   }
 
-  internal class EndOfStreamEvent
+  private object EndOfStreamEvent
 
-  private class ErrorEvent(var code: String, var message: String?, var details: Any?)
+  private class ErrorEvent(val code: String, val message: String?, val details: Any?)
 }

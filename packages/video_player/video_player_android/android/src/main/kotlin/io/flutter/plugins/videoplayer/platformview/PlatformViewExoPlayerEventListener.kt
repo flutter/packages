@@ -4,30 +4,26 @@
 package io.flutter.plugins.videoplayer.platformview
 
 import androidx.annotation.OptIn
-import androidx.media3.common.Format
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import io.flutter.plugins.videoplayer.ExoPlayerEventListener
 import io.flutter.plugins.videoplayer.ExoPlayerEventListener.RotationDegrees.Companion.fromDegrees
 import io.flutter.plugins.videoplayer.VideoPlayerCallbacks
-import java.util.Objects
 import kotlin.math.max
 import kotlin.math.roundToInt
 
-class PlatformViewExoPlayerEventListener(exoPlayer: ExoPlayer, events: VideoPlayerCallbacks) :
-    ExoPlayerEventListener(exoPlayer, events) {
+internal class PlatformViewExoPlayerEventListener(
+    exoPlayer: ExoPlayer,
+    events: VideoPlayerCallbacks
+) : ExoPlayerEventListener(exoPlayer, events) {
   @OptIn(UnstableApi::class)
   override fun sendInitialized() {
     // We can't rely on VideoSize here, because at this point it is not available - the platform
     // view was not created yet. We use the video format instead.
-    val videoFormat = exoPlayer.videoFormat
-    // If somehow a video isn't actually playing, send dummy values.
-    if (videoFormat == null) {
-      events.onInitialized(0, 0, 0, 0)
-      return
-    }
-    var rotationCorrection =
-        fromDegrees(Objects.requireNonNull<Format>(videoFormat).rotationDegrees)
+    val videoFormat =
+        exoPlayer.videoFormat
+            ?: throw IllegalStateException("sendInitialized called with no video playing")
+    var rotationCorrection = fromDegrees(videoFormat.rotationDegrees)
     var width = videoFormat.width
     var height = videoFormat.height
 
@@ -49,7 +45,7 @@ class PlatformViewExoPlayerEventListener(exoPlayer: ExoPlayer, events: VideoPlay
       width = height
       height = displayWidth
 
-      rotationCorrection = fromDegrees(0)
+      rotationCorrection = RotationDegrees.ROTATE_0
     }
 
     events.onInitialized(width, height, exoPlayer.duration, rotationCorrection.degrees)
