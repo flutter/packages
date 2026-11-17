@@ -136,12 +136,14 @@ pass different `XTypeGroup`s based on `Platform`.
 
 ### Unit Testing
 
-To use this plugin in unit tests, apps can wrap the API methods in a wrapper class and mock the
-wrapper class.
+To use this plugin in unit tests, apps can wrap the API methods in a wrapper class and use
+[mockito](https://pub.dev/packages/mockito) to create a mock of the wrapper class.
 
 <?code-excerpt "readme_standalone_excerpts.dart (TestWrapper)"?>
 ```dart
 class FileSelectorWrapper {
+  const FileSelectorWrapper();
+
   Future<XFile?> callOpenFile({
     List<XTypeGroup> acceptedTypeGroups = const <XTypeGroup>[],
     String? initialDirectory,
@@ -153,6 +155,18 @@ class FileSelectorWrapper {
       initialDirectory: initialDirectory,
       confirmButtonText: confirmButtonText,
     );
+  }
+}
+
+// Example of using the wrapper in an app.
+class MyWidget extends StatelessWidget {
+  const MyWidget({super.key, this.fileSelector = const FileSelectorWrapper()});
+
+  final FileSelectorWrapper fileSelector;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container();
   }
 }
 ```

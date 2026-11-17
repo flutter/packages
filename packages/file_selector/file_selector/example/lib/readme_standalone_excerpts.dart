@@ -84,6 +84,8 @@ class _MyAppState extends State<MyApp> {
 /// Example of an API wrapper that is mockable for tests.
 // #docregion TestWrapper
 class FileSelectorWrapper {
+  const FileSelectorWrapper();
+
   Future<XFile?> callOpenFile({
     List<XTypeGroup> acceptedTypeGroups = const <XTypeGroup>[],
     String? initialDirectory,
@@ -95,6 +97,18 @@ class FileSelectorWrapper {
       initialDirectory: initialDirectory,
       confirmButtonText: confirmButtonText,
     );
+  }
+}
+
+// Example of injecting the wrapper in an app.
+class MyWidget extends StatelessWidget {
+  const MyWidget({super.key, this.fileSelector = const FileSelectorWrapper()});
+
+  final FileSelectorWrapper fileSelector;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container();
   }
 }
 // #enddocregion TestWrapper
