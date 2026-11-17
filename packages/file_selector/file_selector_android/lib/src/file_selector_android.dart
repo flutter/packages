@@ -5,7 +5,7 @@
 // ignore_for_file: public_member_api_docs
 
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart' show visibleForTesting;
 
 import 'file_selector_api.g.dart';
 
