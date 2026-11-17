@@ -30,10 +30,10 @@ struct MainActorApiTest {
     let mockHostMainActorApi = MockHostMainActorApi()
     HostMainActorApiSetup.setUp(binaryMessenger: binaryMessenger, api: mockHostMainActorApi)
     let channelName = "dev.flutter.pigeon.pigeon_integration_tests.HostMainActorApi.isMainThread"
-    #expect(binaryMessenger.handlers[channelName] != nil)
+    let handler = try #require(binaryMessenger.handlers[channelName])
 
     let data = await withCheckedContinuation { continuation in
-      binaryMessenger.handlers[channelName]?(nil) { replyData in
+      handler(nil) { replyData in
         continuation.resume(returning: replyData)
       }
     }
