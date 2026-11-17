@@ -60,12 +60,12 @@ const double kCupertinoButtonDefaultIconSize = 20.0;
 
 /// The padding values for the different [CupertinoButtonSize]s.
 ///
-/// Based on the iOS (17) [Human Interface Guidelines](https://developer.apple.com/design/human-interface-guidelines/buttons#iOS-iPadOS).
+/// The insets UIKit and SwiftUI both apply at each tier on iOS 18.
 const Map<CupertinoButtonSize, EdgeInsetsGeometry> kCupertinoButtonPadding =
     <CupertinoButtonSize, EdgeInsetsGeometry>{
-      CupertinoButtonSize.small: EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-      CupertinoButtonSize.medium: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-      CupertinoButtonSize.large: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+      CupertinoButtonSize.small: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+      CupertinoButtonSize.medium: EdgeInsets.symmetric(vertical: 7, horizontal: 12),
+      CupertinoButtonSize.large: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
     };
 
 /// The border radius values for the different [CupertinoButtonSize]s.
