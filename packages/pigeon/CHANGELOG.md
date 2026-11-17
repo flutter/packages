@@ -3,6 +3,11 @@
 * [dart,kotlin,swift] Adds support for idiomatic `Stream<T>` return types (and `@asyncCallback` stream sinks) on `@HostApi` methods.
 * Deprecates `@EventChannelApi` in favor of `Stream<T>` return types on `@HostApi` methods.
 
+## 30.0.3
+
+* Removes remaining unused `dart:mirrors` usage.
+* Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
+
 ## 30.0.2
 
 * Fixes `basePath` resolution when an output or directory path shares a string prefix with `basePath`.

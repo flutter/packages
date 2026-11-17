@@ -5,7 +5,6 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
-import 'dart:mirrors';
 
 import 'package:meta/meta.dart';
 import 'package:path/path.dart' as path;
@@ -537,11 +536,6 @@ class Keys {
 
   /// The key in an error hash for the 'details' value.
   static const String errorDetails = 'details';
-}
-
-/// Returns true if `type` represents 'void'.
-bool isVoid(TypeMirror type) {
-  return MirrorSystem.getName(type.simpleName) == 'void';
 }
 
 /// Adds the [lines] to [indent].

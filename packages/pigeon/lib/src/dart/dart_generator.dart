@@ -56,8 +56,8 @@ class DartOptions {
     this.sourceOutPath,
     this.testOutPath,
     this.dartOut,
-    bool ignoreLints = true,
-  }) : _ignoreLints = ignoreLints;
+    this._ignoreLints = true,
+  });
 
   /// A copyright header that will get prepended to generated code.
   final Iterable<String>? copyrightHeader;
@@ -750,8 +750,8 @@ class InternalDartOptions extends InternalOptions {
     this.ffiErrorClassName,
     this.jniErrorClassName,
     this.nativeInteropTransport = NativeInteropTransport.hybrid,
-    required bool ignoreLints,
-  }) : _ignoreLints = ignoreLints;
+    required this._ignoreLints,
+  });
 
   /// Creates InternalDartOptions from DartOptions.
   InternalDartOptions.fromDartOptions(
