@@ -183,7 +183,7 @@ void main() {
       ),
     );
     final RenderBox buttonBox = tester.renderObject(find.byType(CupertinoButton));
-    expect(buttonBox.size, const Size(34.0, 28.0));
+    expect(buttonBox.size, const Size(30.0, 28.0));
 
     await tester.pumpWidget(
       boilerplate(
@@ -194,12 +194,32 @@ void main() {
         ),
       ),
     );
-    expect(buttonBox.size, const Size(40.0, 32.0));
+    expect(buttonBox.size, const Size(34.0, 32.0));
 
     await tester.pumpWidget(
       boilerplate(child: const CupertinoButton(onPressed: null, child: child)),
     );
     expect(buttonBox.size, const Size(50.0, 44.0));
+  });
+
+  testWidgets('Each size tier pads its child by the iOS insets for that tier', (
+    WidgetTester tester,
+  ) async {
+    // Tall enough that kCupertinoButtonMinSize never clamps, so the padding is what is measured.
+    const Widget child = SizedBox(width: 60, height: 30);
+
+    Future<Size> sizeOf(CupertinoButtonSize sizeStyle) async {
+      await tester.pumpWidget(
+        boilerplate(
+          child: CupertinoButton(onPressed: null, sizeStyle: sizeStyle, child: child),
+        ),
+      );
+      return tester.renderObject<RenderBox>(find.byType(CupertinoButton)).size;
+    }
+
+    expect(await sizeOf(CupertinoButtonSize.small), const Size(80.0, 40.0));
+    expect(await sizeOf(CupertinoButtonSize.medium), const Size(84.0, 44.0));
+    expect(await sizeOf(CupertinoButtonSize.large), const Size(100.0, 60.0));
   });
 
   testWidgets('Custom padding', (WidgetTester tester) async {
