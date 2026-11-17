@@ -72,7 +72,7 @@ class CppOptions {
     return CppOptions(
       headerIncludePath: map['headerIncludePath'] as String?,
       namespace: map['namespace'] as String?,
-      copyrightHeader: map['copyrightHeader'] as Iterable<String>?,
+      copyrightHeader: (map['copyrightHeader'] as Iterable<dynamic>?)?.cast<String>(),
       headerOutPath: map['cppHeaderOut'] as String?,
     );
   }

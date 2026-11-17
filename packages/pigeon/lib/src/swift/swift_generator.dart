@@ -89,7 +89,7 @@ class SwiftOptions {
   /// `x = SwiftOptions.fromList(x.toMap())`.
   static SwiftOptions fromList(Map<String, Object> map) {
     return SwiftOptions(
-      copyrightHeader: map['copyrightHeader'] as Iterable<String>?,
+      copyrightHeader: (map['copyrightHeader'] as Iterable<dynamic>?)?.cast<String>(),
       fileSpecificClassNameComponent: map['fileSpecificClassNameComponent'] as String?,
       errorClassName: map['errorClassName'] as String?,
       includeErrorClass: map['includeErrorClass'] as bool? ?? true,
