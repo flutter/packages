@@ -1,3 +1,7 @@
+## 30.0.4
+
+* Fixes a `TypeError` when `copyrightHeader` is set in `KotlinOptions`, `SwiftOptions` or `CppOptions`.
+
 ## 30.0.3
 
 * Removes remaining unused `dart:mirrors` usage.

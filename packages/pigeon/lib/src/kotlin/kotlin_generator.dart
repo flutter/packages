@@ -103,7 +103,7 @@ class KotlinOptions {
       useJni: map['useJni'] as bool? ?? false,
       appDirectory: map['appDirectory'] as String?,
       configDirectory: map['configDirectory'] as String?,
-      copyrightHeader: map['copyrightHeader'] as Iterable<String>?,
+      copyrightHeader: (map['copyrightHeader'] as Iterable<dynamic>?)?.cast<String>(),
       errorClassName: map['errorClassName'] as String?,
       includeErrorClass: map['includeErrorClass'] as bool? ?? true,
       fileSpecificClassNameComponent: map['fileSpecificClassNameComponent'] as String?,

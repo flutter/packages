@@ -1547,6 +1547,51 @@ class Message {
     expect(options.objcOptions!.copyrightHeader, <String>['A', 'Header']);
   });
 
+  test('@ConfigurePigeon KotlinOptions.copyrightHeader', () {
+    const code = '''
+@ConfigurePigeon(PigeonOptions(
+  kotlinOptions: KotlinOptions(copyrightHeader: <String>['A', 'Header']),
+))
+class Message {
+  int? id;
+}
+''';
+
+    final ParseResults results = parseSource(code);
+    final PigeonOptions options = PigeonOptions.fromMap(results.pigeonOptions!);
+    expect(options.kotlinOptions!.copyrightHeader, <String>['A', 'Header']);
+  });
+
+  test('@ConfigurePigeon SwiftOptions.copyrightHeader', () {
+    const code = '''
+@ConfigurePigeon(PigeonOptions(
+  swiftOptions: SwiftOptions(copyrightHeader: <String>['A', 'Header']),
+))
+class Message {
+  int? id;
+}
+''';
+
+    final ParseResults results = parseSource(code);
+    final PigeonOptions options = PigeonOptions.fromMap(results.pigeonOptions!);
+    expect(options.swiftOptions!.copyrightHeader, <String>['A', 'Header']);
+  });
+
+  test('@ConfigurePigeon CppOptions.copyrightHeader', () {
+    const code = '''
+@ConfigurePigeon(PigeonOptions(
+  cppOptions: CppOptions(copyrightHeader: <String>['A', 'Header']),
+))
+class Message {
+  int? id;
+}
+''';
+
+    final ParseResults results = parseSource(code);
+    final PigeonOptions options = PigeonOptions.fromMap(results.pigeonOptions!);
+    expect(options.cppOptions!.copyrightHeader, <String>['A', 'Header']);
+  });
+
   test('@ConfigurePigeon ObjcOptions.headerIncludePath', () {
     const code = '''
 @ConfigurePigeon(PigeonOptions(
