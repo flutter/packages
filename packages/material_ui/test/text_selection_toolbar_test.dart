@@ -126,6 +126,38 @@ void main() {
     expect(findOverflowButton(), findsOneWidget);
   });
 
+  // Regression test for https://github.com/flutter/flutter/issues/196649.
+  testWidgets('reports overflowed children as not painted', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: TextSelectionToolbar(
+            anchorAbove: const Offset(50.0, 100.0),
+            anchorBelow: const Offset(50.0, 200.0),
+            children: List<Widget>.generate(8, (int i) => const TestBox()),
+          ),
+        ),
+      ),
+    );
+
+    bool paintedByToolbarItems(Element element) {
+      RenderObject child = element.renderObject!;
+      RenderObject parent = child.parent!;
+      while ('${parent.runtimeType}' != '_RenderTextSelectionToolbarItemsLayout') {
+        child = parent;
+        parent = parent.parent!;
+      }
+      return parent.paintsChild(child);
+    }
+
+    final List<bool> painted = find
+        .byType(TestBox, skipOffstage: false)
+        .evaluate()
+        .map(paintedByToolbarItems)
+        .toList();
+    expect(painted, <bool>[...List<bool>.filled(7, true), false]);
+  });
+
   testWidgets('positions itself at anchorAbove if it fits', (WidgetTester tester) async {
     late StateSetter setState;
     const height = 44.0;
