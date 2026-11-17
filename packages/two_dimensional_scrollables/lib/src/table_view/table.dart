@@ -286,15 +286,32 @@ class TableView extends StatefulWidget {
   )
   final double? cacheExtent;
 
-  /// {@macro flutter.rendering.RenderViewportBase.scrollCacheExtent}
+  /// The [TableViewport] has an area before the leading edge and after the
+  /// trailing edge of the visible area in both axes to cache cells that are
+  /// about to become visible when the user scrolls.
   ///
-  /// When using [CacheExtentStyle.viewport] (via
-  /// [ScrollCacheExtent.viewport]), the multiplier is applied to the viewport
-  /// width horizontally and the viewport height vertically, independent of
-  /// [mainAxis].
+  /// Cells that fall in this cache area are laid out even though they are not
+  /// (yet) visible on screen. The [scrollCacheExtent] describes how far the
+  /// cache area extends beyond the viewport bounds, either in logical pixels
+  /// (via [ScrollCacheExtent.pixels]) or as a multiple of the viewport extent
+  /// (via [ScrollCacheExtent.viewport]).
+  ///
+  /// When using [CacheExtentStyle.viewport], the multiplier is applied to the
+  /// viewport width horizontally and the viewport height vertically,
+  /// independent of [mainAxis].
+  ///
+  /// The cache area is also used to implement implicit accessibility scrolling
+  /// on iOS: when the accessibility focus moves from a cell in the visible
+  /// viewport to an invisible cell in the cache area, the framework brings
+  /// that cell into view with an implicit scroll action.
   ///
   /// If null, defaults to [RenderTwoDimensionalViewport]'s default
   /// [RenderTwoDimensionalViewport.scrollCacheExtent].
+  ///
+  /// See also:
+  ///
+  ///   * [TwoDimensionalScrollView.scrollCacheExtent], the area beyond the
+  ///     viewport bounds where soon-to-be-visible children are rendered.
   final ScrollCacheExtent? scrollCacheExtent;
 
   /// A delegate that provides the children for the [TwoDimensionalScrollView].

@@ -1,10 +1,7 @@
 ## 0.5.7
 
-* Adds `scrollCacheExtent` to `TableView`, `TableViewport`, `RenderTableViewport`,
-  `TreeView`, `TreeViewport`, and `RenderTreeViewport`, and deprecates `cacheExtent`
-  in favor of `scrollCacheExtent`.
-* Adds `dart fix` support for migrating `cacheExtent` to `scrollCacheExtent`.
-* Re-exports `ScrollCacheExtent` from `package:two_dimensional_scrollables/two_dimensional_scrollables.dart`.
+* Deprecates `cacheExtent` in favor of `scrollCacheExtent` on `TableView`, `TreeView`,
+  and their viewports (with `dart fix` support and `ScrollCacheExtent` re-exported).
 * Fixes missing leading cache extent in `TreeView`.
 * Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
 
