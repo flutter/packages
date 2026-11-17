@@ -371,6 +371,29 @@ void main() {
       expect(contents, contains('const MaterialStatePropertyAll<OutlinedBorder>(StadiumBorder())'));
     });
 
+    test('ButtonTemplateM3E emits M3E ElevatedButton defaults from tokens', () {
+      const template = ButtonTemplateM3E('Elevated Button');
+      expect(template.name, 'Elevated Button');
+      expect(template.parentFilePath, 'elevated_button.dart');
+
+      final String contents = _generateContents(template);
+      expect(contents, contains('class _ElevatedButtonDefaultsM3E extends ButtonStyle'));
+      expect(contents, contains('final bool toggleable;'));
+      expect(contents, contains('ButtonSizeVariant get sizeVariant'));
+      expect(contents, contains('ButtonShapeVariant get shapeVariant'));
+      expect(contents, contains('ButtonSizeVariant.xSmall => const Size(64.0, 32.0)'));
+      expect(contents, contains('ButtonSizeVariant.xLarge => 40.0'));
+      expect(contents, contains('static double iconLabelSpace(ButtonSizeVariant sizeVariant)'));
+      expect(
+        contents,
+        contains('ButtonSizeVariant.medium => const EdgeInsets.symmetric(horizontal: 24.0)'),
+      );
+      expect(contents, contains('return _colors.primary;'));
+      expect(contents, contains('return _colors.onPrimary;'));
+      expect(contents, contains('states.contains(WidgetState.selected)'));
+      expect(contents, contains('states.contains(WidgetState.pressed)'));
+    });
+
     test('ButtonTemplateM3 emits M3 FilledButton defaults from tokens', () {
       const template = ButtonTemplateM3('Filled Button');
       expect(template.parentFilePath, 'filled_button.dart');
@@ -770,6 +793,27 @@ void main() {
       expect(contents, contains('extralong4 = Duration(milliseconds: 1000)'));
       expect(contents, contains('emphasizedAccelerate = Cubic(0.3, 0.0, 0.8, 0.15)'));
       expect(contents, contains('legacy = Cubic(0.4, 0.0, 0.2, 1.0)'));
+    });
+
+    test('MotionTemplateM3E emits M3E motion springs from tokens', () {
+      const template = MotionTemplateM3E();
+      final String contents = _generateContents(template);
+      expect(template.className, isEmpty);
+      expect(template.outputFileName, 'motion_defaults_m3e.g.dart');
+      expect(template.parentFilePath, 'motion.dart');
+      expect(contents, contains('abstract final class Springs'));
+      expect(
+        contents,
+        contains(
+          'standardDefaultSpatial = SpringDescription(mass: 1.0, stiffness: 700.0, damping: 47.62352359916263)',
+        ),
+      );
+      expect(
+        contents,
+        contains(
+          'expressiveFastSpatial = SpringDescription(mass: 1.0, stiffness: 800.0, damping: 33.94112549695428)',
+        ),
+      );
     });
 
     test('NavigationBarTemplateM3 emits M3 NavigationBar defaults from tokens', () {

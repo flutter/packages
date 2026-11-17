@@ -21,6 +21,12 @@ class _FakeReservedNamesFlutterApi extends NativeInteropReservedNamesFlutterApi 
 
   @override
   String type() => 'type';
+
+  @override
+  String register(String value) => value;
+
+  @override
+  String dartApi() => 'dartApi';
 }
 
 void main() {
@@ -49,6 +55,18 @@ void main() {
       );
       expect(
         () => NativeInteropReservedNamesFlutterApi.implement(_FakeReservedNamesFlutterApi()),
+        throwsUnsupportedError,
+      );
+      expect(
+        () => NativeInteropReservedNamesFlutterApiRegistrar().register(
+          _FakeReservedNamesFlutterApi(),
+        ),
+        throwsUnsupportedError,
+      );
+      expect(
+        () => NativeInteropReservedNamesFlutterApiRegistrar().unregister(
+          _FakeReservedNamesFlutterApi(),
+        ),
         throwsUnsupportedError,
       );
     }

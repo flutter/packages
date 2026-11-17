@@ -540,8 +540,10 @@ enum class ProxyApiTestEnum(val raw: Int) {
   THREE(2);
 
   companion object {
+    private val pigeonValues = values()
+
     fun ofRaw(raw: Int): ProxyApiTestEnum? {
-      return values().firstOrNull { it.raw == raw }
+      return pigeonValues.getOrNull(raw)
     }
   }
 }

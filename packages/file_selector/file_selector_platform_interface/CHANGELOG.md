@@ -19,7 +19,7 @@
   * Replaces `FileSelectorPlatform.getDirectoryPathsWithOptions` with `FileSelectorPlatform.getDirectories` and
     it now takes a `GetDirectoriesDialogOptions` and returns a `List<XDirectory>`.
   * Removes `XTypeGroup.macUTIs`. Use `XTypeGroup.uniformTypeIdentifiers` instead.
-* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+* Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
 
 ## 2.7.0
 

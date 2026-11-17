@@ -33,8 +33,8 @@ struct MetaDataUtilTests {
     let metaData = ImagePickerMetaDataUtil.getMetaData(
       fromImageData: ImagePickerTestImages.jpgTestData)
     let exif = metaData?[kCGImagePropertyExifDictionary as String] as? [String: Any]
-    let dimension = exif?[kCGImagePropertyExifPixelXDimension as String] as? NSNumber
-    #expect(dimension?.intValue == 12)
+    let dimension = exif?[kCGImagePropertyExifPixelXDimension as String] as? Int
+    #expect(dimension == 12)
   }
 
   @Test func writeMetaData() throws {

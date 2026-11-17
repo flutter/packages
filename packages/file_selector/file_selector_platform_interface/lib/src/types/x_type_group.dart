@@ -12,11 +12,11 @@ class XTypeGroup {
   /// allowed.
   const XTypeGroup({
     this.label,
-    List<String>? extensions,
+    this._extensions,
     this.mimeTypes,
     this.uniformTypeIdentifiers,
     this.webWildCards,
-  }) : _extensions = extensions;
+  });
 
   /// The 'name' or reference to this group of types.
   final String? label;

@@ -275,6 +275,8 @@ class MockCameraPlugin : public CameraPlugin {
 
   MOCK_METHOD(bool, EnumerateVideoCaptureDeviceSources,
               (IMFActivate * **devices, UINT32* count), (override));
+  MOCK_METHOD(std::optional<std::wstring>, GetKnownFolderPath,
+              (REFKNOWNFOLDERID folder_id), (override));
 
   // Helper to add camera without creating it via CameraFactory for testing
   // purposes
