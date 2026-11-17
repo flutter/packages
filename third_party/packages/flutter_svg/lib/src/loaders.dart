@@ -102,48 +102,18 @@ class _DelegateVgColorMapper extends vg.ColorMapper {
   }
 }
 
-// Transfer only source data: loaders can retain non-sendable bundles or clients.
-sealed class _SvgSource {
-  const _SvgSource();
-}
-
-class _SvgTextSource extends _SvgSource {
-  const _SvgTextSource(this.xml);
-
-  final String xml;
-}
-
-class _SvgByteSource extends _SvgSource {
-  const _SvgByteSource(this.bytes);
-
-  final Uint8List bytes;
-}
-
-class _SvgFileSource extends _SvgSource {
-  const _SvgFileSource(this.file);
-
-  final File file;
-}
-
 class _SvgCompileRequest {
-  const _SvgCompileRequest(this.source, this.theme, this.colorMapper);
+  const _SvgCompileRequest(this.svg, this.theme, this.colorMapper);
 
-  final _SvgSource source;
+  final String svg;
   final vg.SvgTheme theme;
   final ColorMapper? colorMapper;
 }
 
-// Top-level callback: unlike an instance-method closure, it cannot capture a
-// loader (and its possibly non-sendable asset bundle or HTTP client).
 ByteData _compileSvg(_SvgCompileRequest request) {
-  final String xml = switch (request.source) {
-    _SvgTextSource(:final String xml) => xml,
-    _SvgByteSource(:final Uint8List bytes) => utf8.decode(bytes, allowMalformed: true),
-    _SvgFileSource(:final File file) => utf8.decode(file.readAsBytesSync(), allowMalformed: true),
-  };
   return vg
       .encodeSvg(
-        xml: xml,
+        xml: request.svg,
         theme: request.theme,
         colorMapper: request.colorMapper == null
             ? null
@@ -170,17 +140,14 @@ abstract class SvgLoader<T> extends BytesLoader {
   /// The [ColorMapper] used to transform colors from the SVG, if any.
   final ColorMapper? colorMapper;
 
-  /// Produces SVG text from the result of [prepareMessage].
+  /// Will be called in [compute] with the result of [prepareMessage], or on
+  /// the calling isolate if this loader cannot be sent to another isolate.
   @protected
   String provideSvg(T? message);
 
   /// Will be called
   @protected
   Future<T?> prepareMessage(BuildContext? context) => SynchronousFuture<T?>(null);
-
-  // Custom loaders can provide a String as before. Built-in loaders override
-  // this to keep file I/O and UTF-8 decoding off the UI isolate in release.
-  _SvgSource _sourceFor(T? message) => _SvgTextSource(provideSvg(message));
 
   /// Returns the svg theme.
   @visibleForTesting
@@ -200,24 +167,20 @@ abstract class SvgLoader<T> extends BytesLoader {
 
   Future<ByteData> _load(BuildContext? context) {
     final vg.SvgTheme theme = getTheme(context).toVgTheme();
-    final ColorMapper? mapper = colorMapper;
     return prepareMessage(context).then((T? message) {
-      // Subclasses may override provideSvg; only exact built-ins can bypass it.
-      final bool isBuiltIn =
-          runtimeType == SvgStringLoader ||
-          runtimeType == SvgBytesLoader ||
-          runtimeType == SvgFileLoader ||
-          runtimeType == SvgAssetLoader ||
-          runtimeType == SvgNetworkLoader;
       return compute(
-        _compileSvg,
-        _SvgCompileRequest(
-          isBuiltIn ? _sourceFor(message) : _SvgTextSource(provideSvg(message)),
-          theme,
-          mapper,
-        ),
+        (T? message) => _compileSvg(_SvgCompileRequest(provideSvg(message), theme, colorMapper)),
+        message,
         debugLabel: 'Load Bytes',
-      );
+      ).onError((_, _) {
+        // The loader may not be sendable to an isolate (for example, an asset
+        // bundle or HTTP client holding a Future): provide the SVG here instead.
+        return compute(
+          _compileSvg,
+          _SvgCompileRequest(provideSvg(message), theme, colorMapper),
+          debugLabel: 'Load Bytes',
+        );
+      });
     });
   }
 
@@ -281,9 +244,6 @@ class SvgStringLoader extends SvgLoader<void> {
   }
 
   @override
-  _SvgSource _sourceFor(void message) => _SvgTextSource(_svg);
-
-  @override
   int get hashCode => Object.hash(_svg, theme, colorMapper);
 
   @override
@@ -307,9 +267,6 @@ class SvgBytesLoader extends SvgLoader<void> {
 
   @override
   String provideSvg(void message) => utf8.decode(bytes, allowMalformed: true);
-
-  @override
-  _SvgSource _sourceFor(void message) => _SvgByteSource(bytes);
 
   @override
   int get hashCode => Object.hash(bytes, theme, colorMapper);
@@ -337,9 +294,6 @@ class SvgFileLoader extends SvgLoader<void> {
     final Uint8List bytes = file.readAsBytesSync();
     return utf8.decode(bytes, allowMalformed: true);
   }
-
-  @override
-  _SvgSource _sourceFor(void message) => _SvgFileSource(file);
 
   @override
   int get hashCode => Object.hash(file, theme, colorMapper);
@@ -424,9 +378,6 @@ class SvgAssetLoader extends SvgLoader<ByteData> {
       utf8.decode(Uint8List.sublistView(message!), allowMalformed: true);
 
   @override
-  _SvgSource _sourceFor(ByteData? message) => _SvgByteSource(Uint8List.sublistView(message!));
-
-  @override
   SvgCacheKey cacheKey(BuildContext? context) {
     final SvgTheme theme = getTheme(context);
     return SvgCacheKey(
@@ -496,9 +447,6 @@ class SvgNetworkLoader extends SvgLoader<Uint8List> {
 
   @override
   String provideSvg(Uint8List? message) => utf8.decode(message!, allowMalformed: true);
-
-  @override
-  _SvgSource _sourceFor(Uint8List? message) => _SvgByteSource(message!);
 
   @override
   int get hashCode => Object.hash(url, headers, theme, colorMapper);

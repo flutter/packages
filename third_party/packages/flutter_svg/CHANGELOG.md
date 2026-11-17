@@ -1,7 +1,8 @@
 ## 2.4.1
 
-* Fixes SVG compilation sending asset bundles or HTTP clients to compute isolates.
-  Preserves `provideSvg` overrides on custom loader subclasses.
+* Fixes SVG loading failing in profile and release builds when a loader cannot
+  be sent to an isolate, such as one holding an asset bundle or HTTP client
+  that retains a `Future`.
 
 ## 2.4.0
 

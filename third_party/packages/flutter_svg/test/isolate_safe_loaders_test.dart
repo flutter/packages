@@ -2,15 +2,22 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart' as foundation;
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_svg/src/utilities/compute.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 
 const String _svg = '<svg width="12" height="12"><rect width="12" height="12"/></svg>';
 
 void main() {
-  setUp(svg.cache.clear);
+  setUp(() {
+    svg.cache.clear();
+    // The package's compute runs inline in debug builds; spawn real isolates.
+    debugComputeOverride = foundation.compute;
+  });
+  tearDown(() => debugComputeOverride = null);
 
   test('the asset loader can parse from a bundle retaining an unsendable Future', () async {
     final bundle = _FutureHoldingBundle();
@@ -52,6 +59,12 @@ void main() {
     } finally {
       await dir.delete(recursive: true);
     }
+  });
+
+  test('an invalid SVG from an unsendable loader still reports an error', () async {
+    final loader = SvgAssetLoader('icon.svg', assetBundle: _FutureHoldingBundle('not SVG'));
+
+    await expectLater(loader.loadBytes(null), throwsA(anything));
   });
 
   test('built-in loader subclasses retain their provideSvg override', () async {
@@ -125,6 +138,9 @@ class _InvalidClient extends Fake implements http.Client {
 }
 
 class _FutureHoldingBundle extends Fake implements AssetBundle {
+  _FutureHoldingBundle([this.content = _svg]);
+
+  final String content;
   final Completer<void> _unsendableState = Completer<void>();
   int loads = 0;
 
@@ -132,7 +148,7 @@ class _FutureHoldingBundle extends Fake implements AssetBundle {
   Future<ByteData> load(String key) async {
     assert(!_unsendableState.isCompleted);
     loads++;
-    return Uint8List.fromList(utf8.encode(_svg)).buffer.asByteData();
+    return Uint8List.fromList(utf8.encode(content)).buffer.asByteData();
   }
 }
 
