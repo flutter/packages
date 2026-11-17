@@ -44,8 +44,7 @@ class LiquidGlassWidgets {
 
   // ── Global accessors ───────────────────────────────────────────────────────
 
-  /// Whether glass widgets automatically respect system accessibility settings
-  /// (Reduce Motion, Reduce Transparency / High Contrast).
+  /// Whether glass widgets follow the system Reduce Motion and Reduce Transparency settings.
   ///
   /// Set via [wrap]. Defaults to `true`. Read by glass widgets at build time
   /// via [GlassAccessibilityScope] or a direct [MediaQuery] fallback.

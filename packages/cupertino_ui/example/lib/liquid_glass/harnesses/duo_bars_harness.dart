@@ -130,12 +130,9 @@ class _App extends StatelessWidget {
         theme: const CupertinoThemeData(brightness: Brightness.light),
         builder: (context, child) => Directionality(
           textDirection: _rtl ? TextDirection.rtl : TextDirection.ltr,
-          // The package reads Reduce Transparency from highContrast until
-          // Flutter surfaces it (flutter/flutter#190318).
           child: MediaQuery(
             data: MediaQuery.of(context).copyWith(
-              highContrast:
-                  _reduceTransparency || MediaQuery.highContrastOf(context),
+              reduceTransparency: _reduceTransparency ? true : null,
             ),
             child: GlassNavigationShell(
               verticalBarBehavior: _barsDisabled

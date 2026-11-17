@@ -2,9 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:cupertino_ui/src/liquid_glass/utils/accessibility_config.dart' as glass_config;
+import 'package:cupertino_ui/src/liquid_glass/widgets/shared/glass_accessibility_scope.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:liquid_glass_widgets/liquid_glass_widgets.dart';
 
 void main() {
   // -------------------------------------------------------------------------
@@ -159,6 +160,44 @@ void main() {
     });
   });
 
+  testWidgets('Glass follows Reduce Transparency independently of Increase Contrast', (
+    WidgetTester tester,
+  ) async {
+    addTearDown(tester.platformDispatcher.clearAccessibilityFeaturesTestValue);
+    final Widget reader = Builder(
+      builder: (BuildContext context) {
+        final bool reduced = GlassAccessibilityData.of(context).reduceTransparency;
+        return Text(reduced ? 'reduced' : 'normal');
+      },
+    );
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: Column(
+          children: <Widget>[
+            reader,
+            GlassAccessibilityScope(child: reader),
+          ],
+        ),
+      ),
+    );
+
+    for (final highContrast in <bool>[false, true]) {
+      for (final reduceTransparency in <bool>[false, true]) {
+        tester.platformDispatcher.accessibilityFeaturesTestValue = FakeAccessibilityFeatures(
+          highContrast: highContrast,
+          reduceTransparency: reduceTransparency,
+        );
+        await tester.pump();
+        expect(
+          find.text(reduceTransparency ? 'reduced' : 'normal'),
+          findsNWidgets(2),
+          reason: 'highContrast=$highContrast, reduceTransparency=$reduceTransparency',
+        );
+      }
+    }
+  });
+
   // -------------------------------------------------------------------------
   // GlassAccessibilityScope — explicit overrides
   // -------------------------------------------------------------------------
@@ -189,16 +228,18 @@ void main() {
       expect(captured?.reduceMotion, isTrue);
     });
 
-    testWidgets('explicit reduceMotion=false overrides MediaQuery true',
-        (tester) async {
+    testWidgets('explicit false overrides system Reduce Motion and Reduce Transparency', (
+      tester,
+    ) async {
       GlassAccessibilityData? captured;
 
       await tester.pumpWidget(
         MediaQuery(
-          data: const MediaQueryData(disableAnimations: true),
+          data: const MediaQueryData(disableAnimations: true, reduceTransparency: true),
           child: MaterialApp(
             home: GlassAccessibilityScope(
-              reduceMotion: false, // explicit opt-out
+              reduceMotion: false,
+              reduceTransparency: false,
               child: Builder(
                 builder: (context) {
                   captured = GlassAccessibilityData.of(context);
@@ -211,6 +252,7 @@ void main() {
       );
 
       expect(captured?.reduceMotion, isFalse);
+      expect(captured?.reduceTransparency, isFalse);
     });
 
     testWidgets('null reduceMotion delegates to MediaQuery.disableAnimations',
@@ -235,30 +277,6 @@ void main() {
       );
 
       expect(captured?.reduceMotion, isTrue);
-    });
-
-    testWidgets('null reduceTransparency delegates to MediaQuery.highContrast',
-        (tester) async {
-      GlassAccessibilityData? captured;
-
-      await tester.pumpWidget(
-        MediaQuery(
-          data: const MediaQueryData(highContrast: true),
-          child: MaterialApp(
-            home: GlassAccessibilityScope(
-              // reduceTransparency not provided → reads from MediaQuery
-              child: Builder(
-                builder: (context) {
-                  captured = GlassAccessibilityData.of(context);
-                  return const SizedBox.shrink();
-                },
-              ),
-            ),
-          ),
-        ),
-      );
-
-      expect(captured?.reduceTransparency, isTrue);
     });
   });
 
@@ -363,24 +381,23 @@ void main() {
   });
 
   // -------------------------------------------------------------------------
-  // LiquidGlassWidgets.respectSystemAccessibility global flag
+  // Global accessibility preference
   // -------------------------------------------------------------------------
 
-  group('LiquidGlassWidgets.respectSystemAccessibility global flag', () {
+  group('respectSystemAccessibility', () {
     // Always reset to safe default after each test so state doesn't bleed.
-    tearDown(() => LiquidGlassWidgets.respectSystemAccessibility = true);
+    tearDown(() => glass_config.respectSystemAccessibility = true);
 
     testWidgets(
         'when false, of() returns defaults even if MediaQuery has reduce-motion',
         (tester) async {
-      LiquidGlassWidgets.respectSystemAccessibility = false;
+      glass_config.respectSystemAccessibility = false;
 
       GlassAccessibilityData? captured;
 
       await tester.pumpWidget(
         MediaQuery(
-          data:
-              const MediaQueryData(disableAnimations: true, highContrast: true),
+          data: const MediaQueryData(disableAnimations: true, reduceTransparency: true),
           child: MaterialApp(
             home: Builder(
               builder: (context) {
@@ -401,7 +418,7 @@ void main() {
     testWidgets(
         'when false, an explicit GlassAccessibilityScope still overrides',
         (tester) async {
-      LiquidGlassWidgets.respectSystemAccessibility = false;
+      glass_config.respectSystemAccessibility = false;
 
       GlassAccessibilityData? captured;
 
@@ -425,8 +442,8 @@ void main() {
 
     testWidgets('can be restored to true after being set to false',
         (tester) async {
-      LiquidGlassWidgets.respectSystemAccessibility = false;
-      LiquidGlassWidgets.respectSystemAccessibility = true;
+      glass_config.respectSystemAccessibility = false;
+      glass_config.respectSystemAccessibility = true;
 
       GlassAccessibilityData? captured;
 

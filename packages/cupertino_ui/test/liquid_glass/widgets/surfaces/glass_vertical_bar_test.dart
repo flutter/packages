@@ -1732,7 +1732,7 @@ void main() {
         (tester) async {
       setScreen(tester);
       tester.platformDispatcher.accessibilityFeaturesTestValue =
-          const FakeAccessibilityFeatures(highContrast: true);
+          const FakeAccessibilityFeatures(reduceTransparency: true);
       addTearDown(
           tester.platformDispatcher.clearAccessibilityFeaturesTestValue);
       await tester.pumpWidget(shellApp(const _Screen(title: 'Root')));
@@ -1756,8 +1756,12 @@ void main() {
       expect(row, const Rect.fromLTRB(0, 0, 382 + 5, 24 + 48 + 10));
     });
 
-    testDuo('leaves the strip clear otherwise', (tester) async {
+    testDuo('leaves the strip clear with Increase Contrast alone', (tester) async {
       setScreen(tester);
+      tester.platformDispatcher.accessibilityFeaturesTestValue = const FakeAccessibilityFeatures(
+        highContrast: true,
+      );
+      addTearDown(tester.platformDispatcher.clearAccessibilityFeaturesTestValue);
       await tester.pumpWidget(shellApp(const _Screen(title: 'Root')));
       await settle(tester);
 
