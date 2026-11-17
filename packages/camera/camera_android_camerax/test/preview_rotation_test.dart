@@ -113,6 +113,7 @@ void main() {
           ResolutionSelector? resolutionSelector,
           int? jpegQuality,
           bool? zeroShutterLagEnabled,
+          int? outputFormat,
         }) => MockImageCapture();
     PigeonOverrides.recorder_new =
         ({int? aspectRatio, int? targetVideoEncodingBitRate, QualitySelector? qualitySelector}) =>

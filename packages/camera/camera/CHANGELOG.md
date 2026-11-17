@@ -1,3 +1,11 @@
+## 0.12.3
+
+* Adds `CameraController.isGainMapPhotoSupported` and
+  `CameraController.setGainMapPhotoEnabled` to capture photos with a gain map
+  on platforms that support it.
+* Updates minimum supported `camera_platform_interface` to 2.16.0 and
+  `camera_android_camerax` to 0.7.7.
+
 ## 0.12.2
 
 * Adds `CameraController.isZeroShutterLagSupported` and

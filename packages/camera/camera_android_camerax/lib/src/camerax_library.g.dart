@@ -126,6 +126,7 @@ class PigeonOverrides {
     CameraXFlashMode? flashMode,
     int? jpegQuality,
     bool? zeroShutterLagEnabled,
+    int? outputFormat,
   })?
   imageCapture_new;
 
@@ -264,6 +265,10 @@ class PigeonOverrides {
   /// Overrides [ProcessCameraProvider.getInstance].
   static Future<ProcessCameraProvider> Function()? processCameraProvider_getInstance;
 
+  /// Overrides [ImageCapture.getImageCaptureCapabilities].
+  static Future<ImageCaptureCapabilities> Function(CameraInfo)?
+  imageCapture_getImageCaptureCapabilities;
+
   /// Overrides [ImageProxyUtils.getNv21Buffer].
   static Future<Uint8List> Function(int, int, List<PlaneProxy>)? imageProxyUtils_getNv21Buffer;
 
@@ -286,6 +291,7 @@ class PigeonOverrides {
     recorder_new = null;
     videoRecordEventListener_new = null;
     imageCapture_new = null;
+    imageCapture_getImageCaptureCapabilities = null;
     resolutionStrategy_new = null;
     resolutionStrategy_highestAvailableStrategy = null;
     resolutionSelector_new = null;
@@ -449,6 +455,7 @@ class PigeonInstanceManager {
     PendingRecording.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     Recording.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     ImageCapture.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    ImageCaptureCapabilities.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     ResolutionStrategy.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     ResolutionSelector.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     AspectRatioStrategy.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
@@ -4300,6 +4307,7 @@ class ImageCapture extends UseCase {
     CameraXFlashMode? flashMode,
     int? jpegQuality,
     bool? zeroShutterLagEnabled,
+    int? outputFormat,
   }) {
     if (PigeonOverrides.imageCapture_new != null) {
       return PigeonOverrides.imageCapture_new!(
@@ -4308,6 +4316,7 @@ class ImageCapture extends UseCase {
         flashMode: flashMode,
         jpegQuality: jpegQuality,
         zeroShutterLagEnabled: zeroShutterLagEnabled,
+        outputFormat: outputFormat,
       );
     }
     return ImageCapture.pigeon_new(
@@ -4318,6 +4327,7 @@ class ImageCapture extends UseCase {
       flashMode: flashMode,
       jpegQuality: jpegQuality,
       zeroShutterLagEnabled: zeroShutterLagEnabled,
+      outputFormat: outputFormat,
     );
   }
 
@@ -4330,6 +4340,7 @@ class ImageCapture extends UseCase {
     CameraXFlashMode? flashMode,
     int? jpegQuality,
     bool? zeroShutterLagEnabled,
+    int? outputFormat,
   }) : super.pigeon_detached() {
     final int pigeonVar_instanceIdentifier = pigeon_instanceManager.addDartCreatedInstance(this);
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecImageCapture;
@@ -4348,6 +4359,7 @@ class ImageCapture extends UseCase {
       flashMode,
       jpegQuality,
       zeroShutterLagEnabled,
+      outputFormat,
     ]);
     () async {
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
@@ -4477,12 +4489,138 @@ class ImageCapture extends UseCase {
     _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
+  /// Returns the image capture capabilities of the camera described by
+  /// [cameraInfo].
+  static Future<ImageCaptureCapabilities> getImageCaptureCapabilities(
+    CameraInfo cameraInfo, {
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+  }) async {
+    if (PigeonOverrides.imageCapture_getImageCaptureCapabilities != null) {
+      return PigeonOverrides.imageCapture_getImageCaptureCapabilities!(cameraInfo);
+    }
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _PigeonInternalProxyApiBaseCodec(
+      pigeon_instanceManager ?? PigeonInstanceManager.instance,
+    );
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const pigeonVar_channelName =
+        'dev.flutter.pigeon.camera_android_camerax.ImageCapture.getImageCaptureCapabilities';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[cameraInfo]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return pigeonVar_replyValue! as ImageCaptureCapabilities;
+  }
+
   @override
   ImageCapture pigeon_copy() {
     return ImageCapture.pigeon_detached(
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,
       resolutionSelector: resolutionSelector,
+    );
+  }
+}
+
+/// The image capture capabilities of a camera.
+///
+/// See https://developer.android.com/reference/androidx/camera/core/ImageCaptureCapabilities.
+class ImageCaptureCapabilities extends PigeonInternalProxyApiBaseClass {
+  /// Constructs [ImageCaptureCapabilities] without creating the associated native object.
+  ///
+  /// This should only be used by subclasses created by this library or to
+  /// create copies for an [PigeonInstanceManager].
+  @protected
+  ImageCaptureCapabilities.pigeon_detached({
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+  });
+
+  late final _PigeonInternalProxyApiBaseCodec _pigeonVar_codecImageCaptureCapabilities =
+      _PigeonInternalProxyApiBaseCodec(pigeon_instanceManager);
+
+  static void pigeon_setUpMessageHandlers({
+    bool pigeon_clearHandlers = false,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+    ImageCaptureCapabilities Function()? pigeon_newInstance,
+  }) {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _PigeonInternalProxyApiBaseCodec(
+      pigeon_instanceManager ?? PigeonInstanceManager.instance,
+    );
+    final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
+    {
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.camera_android_camerax.ImageCaptureCapabilities.pigeon_newInstance',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
+      if (pigeon_clearHandlers) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          final List<Object?> args = message! as List<Object?>;
+          final int arg_pigeon_instanceIdentifier = args[0]! as int;
+          try {
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance).addHostCreatedInstance(
+              pigeon_newInstance?.call() ??
+                  ImageCaptureCapabilities.pigeon_detached(
+                    pigeon_binaryMessenger: pigeon_binaryMessenger,
+                    pigeon_instanceManager: pigeon_instanceManager,
+                  ),
+              arg_pigeon_instanceIdentifier,
+            );
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
+          }
+        });
+      }
+    }
+  }
+
+  /// Gets the output formats that image capture supports, as
+  /// `ImageCapture.OUTPUT_FORMAT_*` values.
+  Future<List<int>> getSupportedOutputFormats() async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecImageCaptureCapabilities;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const pigeonVar_channelName =
+        'dev.flutter.pigeon.camera_android_camerax.ImageCaptureCapabilities.getSupportedOutputFormats';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return (pigeonVar_replyValue! as List<Object?>).cast<int>();
+  }
+
+  @override
+  ImageCaptureCapabilities pigeon_copy() {
+    return ImageCaptureCapabilities.pigeon_detached(
+      pigeon_binaryMessenger: pigeon_binaryMessenger,
+      pigeon_instanceManager: pigeon_instanceManager,
     );
   }
 }

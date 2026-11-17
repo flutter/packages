@@ -580,6 +580,7 @@ abstract class ImageCapture extends UseCase {
     CameraXFlashMode? flashMode,
     int? jpegQuality,
     bool? zeroShutterLagEnabled,
+    int? outputFormat,
   );
 
   late final ResolutionSelector? resolutionSelector;
@@ -593,6 +594,25 @@ abstract class ImageCapture extends UseCase {
 
   /// Sets the desired rotation of the output image.
   void setTargetRotation(int rotation);
+
+  /// Returns the image capture capabilities of the camera described by
+  /// [cameraInfo].
+  @static
+  ImageCaptureCapabilities getImageCaptureCapabilities(CameraInfo cameraInfo);
+}
+
+/// The image capture capabilities of a camera.
+///
+/// See https://developer.android.com/reference/androidx/camera/core/ImageCaptureCapabilities.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'androidx.camera.core.ImageCaptureCapabilities',
+  ),
+)
+abstract class ImageCaptureCapabilities {
+  /// Gets the output formats that image capture supports, as
+  /// `ImageCapture.OUTPUT_FORMAT_*` values.
+  List<int> getSupportedOutputFormats();
 }
 
 /// Fallback rule for choosing an alternate size when the specified bound size

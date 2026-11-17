@@ -361,6 +361,20 @@ void main() {
       expect(cameraPlatform.setJpegImageQuality(1, 50), completes);
     });
 
+    test('Default implementation of isGainMapPhotoSupported() should return false', () async {
+      CameraPlatform.instance = ExtendsCameraPlatform();
+      final CameraPlatform cameraPlatform = CameraPlatform.instance;
+
+      expect(await cameraPlatform.isGainMapPhotoSupported(1), isFalse);
+    });
+
+    test('Default implementation of setGainMapPhotoEnabled() should throw unimplemented error', () {
+      CameraPlatform.instance = ExtendsCameraPlatform();
+      final CameraPlatform cameraPlatform = CameraPlatform.instance;
+
+      expect(() => cameraPlatform.setGainMapPhotoEnabled(1, true), throwsUnimplementedError);
+    });
+
     test('Default implementation of isZeroShutterLagSupported() should return false', () async {
       // Arrange
       final cameraPlatform = ExtendsCameraPlatform();

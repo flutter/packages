@@ -727,6 +727,100 @@ void main() {
       verify(CameraPlatform.instance.setZoomLevel(mockInitializeCamera, 42.0)).called(1);
     });
 
+    test('isGainMapPhotoSupported() returns the platform value.', () async {
+      final cameraController = CameraController(
+        const CameraDescription(
+          name: 'cam',
+          lensDirection: CameraLensDirection.back,
+          sensorOrientation: 90,
+        ),
+        ResolutionPreset.max,
+      );
+
+      await cameraController.initialize();
+      when(
+        CameraPlatform.instance.isGainMapPhotoSupported(mockInitializeCamera),
+      ).thenAnswer((_) async => true);
+
+      expect(await cameraController.isGainMapPhotoSupported(), isTrue);
+
+      reset(CameraPlatform.instance);
+    });
+
+    test('setGainMapPhotoEnabled() calls the platform.', () async {
+      final cameraController = CameraController(
+        const CameraDescription(
+          name: 'cam',
+          lensDirection: CameraLensDirection.back,
+          sensorOrientation: 90,
+        ),
+        ResolutionPreset.max,
+      );
+
+      await cameraController.initialize();
+      await cameraController.setGainMapPhotoEnabled(true);
+
+      verify(CameraPlatform.instance.setGainMapPhotoEnabled(mockInitializeCamera, true)).called(1);
+
+      reset(CameraPlatform.instance);
+    });
+
+    test('isGainMapPhotoSupported() throws $CameraException when uninitialized.', () async {
+      final cameraController = CameraController(
+        const CameraDescription(
+          name: 'cam',
+          lensDirection: CameraLensDirection.back,
+          sensorOrientation: 90,
+        ),
+        ResolutionPreset.max,
+      );
+
+      expect(
+        () => cameraController.isGainMapPhotoSupported(),
+        throwsA(
+          isA<CameraException>()
+              .having(
+                (CameraException error) => error.code,
+                'code',
+                'Uninitialized CameraController',
+              )
+              .having(
+                (CameraException error) => error.description,
+                'description',
+                'isGainMapPhotoSupported() was called on an uninitialized CameraController.',
+              ),
+        ),
+      );
+    });
+
+    test('setGainMapPhotoEnabled() throws $CameraException when uninitialized.', () async {
+      final cameraController = CameraController(
+        const CameraDescription(
+          name: 'cam',
+          lensDirection: CameraLensDirection.back,
+          sensorOrientation: 90,
+        ),
+        ResolutionPreset.max,
+      );
+
+      expect(
+        () => cameraController.setGainMapPhotoEnabled(true),
+        throwsA(
+          isA<CameraException>()
+              .having(
+                (CameraException error) => error.code,
+                'code',
+                'Uninitialized CameraController',
+              )
+              .having(
+                (CameraException error) => error.description,
+                'description',
+                'setGainMapPhotoEnabled() was called on an uninitialized CameraController.',
+              ),
+        ),
+      );
+    });
+
     test('isZeroShutterLagSupported() returns the platform value.', () async {
       final cameraController = CameraController(
         const CameraDescription(
@@ -3816,6 +3910,18 @@ class MockCameraPlatform extends Mock with MockPlatformInterfaceMixin implements
             returnValue: Future<bool>.value(false),
           )
           as Future<bool>;
+
+  @override
+  Future<bool> isGainMapPhotoSupported(int cameraId) async =>
+      super.noSuchMethod(
+            Invocation.method(#isGainMapPhotoSupported, <Object?>[cameraId]),
+            returnValue: Future<bool>.value(false),
+          )
+          as Future<bool>;
+
+  @override
+  Future<void> setGainMapPhotoEnabled(int cameraId, bool enabled) async =>
+      super.noSuchMethod(Invocation.method(#setGainMapPhotoEnabled, <Object?>[cameraId, enabled]));
 
   @override
   Future<void> setZeroShutterLagEnabled(int cameraId, bool enabled) async => super.noSuchMethod(

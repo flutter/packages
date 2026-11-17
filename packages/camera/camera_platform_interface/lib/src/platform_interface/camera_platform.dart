@@ -365,4 +365,26 @@ abstract class CameraPlatform extends PlatformInterface {
   Future<void> setZeroShutterLagEnabled(int cameraId, bool enabled) {
     throw UnimplementedError('setZeroShutterLagEnabled() is not implemented.');
   }
+
+  /// Returns whether the selected camera supports gain map photo capture.
+  ///
+  /// A gain map photo is an SDR JPEG plus a gain map (for example Android
+  /// Ultra HDR) that lets HDR displays show highlights brighter than SDR
+  /// content.
+  ///
+  /// The default implementation returns `false`.
+  Future<bool> isGainMapPhotoSupported(int cameraId) async => false;
+
+  /// Enables or disables gain map photo capture for still image capture.
+  ///
+  /// [isGainMapPhotoSupported] must be called first; only call this method on
+  /// a camera that reports support for gain map photos.
+  ///
+  /// When enabled, [takePicture] saves an SDR JPEG together with a gain map.
+  /// Implementations may leave photos unchanged on cameras that do not support
+  /// gain map photos. Some devices cannot capture gain map photos while an
+  /// image stream is running.
+  Future<void> setGainMapPhotoEnabled(int cameraId, bool enabled) {
+    throw UnimplementedError('setGainMapPhotoEnabled() is not implemented.');
+  }
 }
