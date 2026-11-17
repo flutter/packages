@@ -8,6 +8,7 @@ import 'dart:math' show Point;
 import 'package:async/async.dart';
 import 'package:camera_android_camerax/camera_android_camerax.dart';
 import 'package:camera_android_camerax/src/camerax_library.dart';
+import 'package:camera_android_camerax/src/preview_view_preview.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/services.dart' show DeviceOrientation, PlatformException, Uint8List;
 import 'package:flutter_test/flutter_test.dart';
@@ -6436,6 +6437,7 @@ void main() {
     Future<AndroidCameraCameraX> setUpCameraWithBackCamera({
       required int sdkVersion,
       required List<DynamicRangeType> cameraRanges,
+      bool recorderSupportsHlg = true,
     }) async {
       final camera = AndroidCameraCameraX();
       final mockProcessCameraProvider = MockProcessCameraProvider();
@@ -6459,6 +6461,14 @@ void main() {
       when(
         mockBackCameraInfo.querySupportedDynamicRanges(any),
       ).thenAnswer((_) async => cameraRanges);
+      final mockRecorderCapabilities = MockVideoCapabilities();
+      when(mockRecorderCapabilities.getSupportedDynamicRanges()).thenAnswer(
+        (_) async => <DynamicRangeType>[
+          DynamicRangeType.sdr,
+          if (recorderSupportsHlg) DynamicRangeType.hlg10,
+        ],
+      );
+      PigeonOverrides.recorder_getVideoCapabilities = (_) async => mockRecorderCapabilities;
       await camera.availableCameras();
       return camera;
     }
@@ -6482,6 +6492,18 @@ void main() {
       final AndroidCameraCameraX camera = await setUpCameraWithBackCamera(
         sdkVersion: 33,
         cameraRanges: <DynamicRangeType>[DynamicRangeType.hlg10],
+      );
+
+      expect(await camera.getSupportedPreviewDynamicRanges(backCamera), <PreviewDynamicRange>[
+        PreviewDynamicRange.sdr,
+      ]);
+    });
+
+    test('getSupportedPreviewDynamicRanges is sdr only when the recorder lacks HLG', () async {
+      final AndroidCameraCameraX camera = await setUpCameraWithBackCamera(
+        sdkVersion: 34,
+        cameraRanges: <DynamicRangeType>[DynamicRangeType.hlg10],
+        recorderSupportsHlg: false,
       );
 
       expect(await camera.getSupportedPreviewDynamicRanges(backCamera), <PreviewDynamicRange>[
@@ -6602,16 +6624,39 @@ void main() {
         expect(await camera.getPreviewDynamicRange(42), PreviewDynamicRange.hlg10);
       });
 
+      test('buildPreview shows the PreviewView with an HLG preview', () async {
+        final AndroidCameraCameraX camera = await createHlgCamera(recorderSupportsHlg: true);
+        await camera.initializeCamera(42);
+
+        expect(camera.buildPreview(42), isA<PreviewViewPreview>());
+      });
+
+      test('dispose keeps the PreviewView surface provider and reports sdr', () async {
+        final AndroidCameraCameraX camera = await createHlgCamera(recorderSupportsHlg: true);
+        await camera.initializeCamera(42);
+
+        await camera.dispose(42);
+
+        verifyNever(previews.single.releaseSurfaceProvider());
+        expect(camera.previewView, isNull);
+        expect(await camera.getPreviewDynamicRange(42), PreviewDynamicRange.sdr);
+      });
+
+      test('uses an SDR texture when HLG is requested but not supported', () async {
+        final AndroidCameraCameraX camera = await createHlgCamera(recorderSupportsHlg: false);
+        await camera.initializeCamera(42);
+
+        expect(previewRanges, <DynamicRangeType?>[null]);
+        expect(videoRanges, <DynamicRangeType?>[null]);
+        expect(camera.previewView, isNull);
+        expect(camera.buildPreview(42), isNot(isA<PreviewViewPreview>()));
+        expect(await camera.getPreviewDynamicRange(42), PreviewDynamicRange.sdr);
+      });
+
       test('records in HLG when the recorder supports it', () async {
         await createHlgCamera(recorderSupportsHlg: true);
 
         expect(videoRanges, <DynamicRangeType?>[DynamicRangeType.hlg10]);
-      });
-
-      test('records in SDR when the recorder lacks HLG', () async {
-        await createHlgCamera(recorderSupportsHlg: false);
-
-        expect(videoRanges, <DynamicRangeType?>[null]);
       });
 
       test('initializeCamera does not bind ImageAnalysis with an HLG preview', () async {
@@ -6628,42 +6673,40 @@ void main() {
         expect(useCases, isNot(contains(camera.imageAnalysis)));
       });
 
-      test('falls back to SDR when the HLG preview cannot be bound', () async {
-        final AndroidCameraCameraX camera = await createHlgCamera(recorderSupportsHlg: true);
-        var calls = 0;
-        when(mockProcessCameraProvider.bindToLifecycle(any, any)).thenAnswer((_) async {
-          calls++;
-          if (calls == 1) {
-            throw PlatformException(code: 'IllegalArgumentException');
-          }
-          final mockCamera = MockCamera();
-          final mockCameraInfo = MockCameraInfo();
-          when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
-          when(mockCameraInfo.getCameraState()).thenAnswer((_) async => MockLiveCameraState());
-          return mockCamera;
-        });
-
-        await camera.initializeCamera(42);
-
-        expect(previewRanges, <DynamicRangeType?>[DynamicRangeType.hlg10, null]);
-        expect(await camera.getPreviewDynamicRange(42), PreviewDynamicRange.sdr);
-        verify(previews.last.setViewSurfaceProvider(any));
-        // The HLG VideoCapture is replaced, since it cannot be bound with an SDR preview.
-        expect(videoRanges, <DynamicRangeType?>[DynamicRangeType.hlg10, null]);
-      });
-
-      test('does not fall back to SDR when binding fails for another reason', () async {
+      test('initializeCamera fails without switching to SDR when HLG cannot be bound', () async {
         final AndroidCameraCameraX camera = await createHlgCamera(recorderSupportsHlg: true);
         when(
           mockProcessCameraProvider.bindToLifecycle(any, any),
-        ).thenThrow(PlatformException(code: 'CameraInUseException'));
+        ).thenThrow(PlatformException(code: 'IllegalArgumentException'));
 
         await expectLater(camera.initializeCamera(42), throwsA(isA<PlatformException>()));
 
         expect(previewRanges, <DynamicRangeType?>[DynamicRangeType.hlg10]);
+        expect(videoRanges, <DynamicRangeType?>[DynamicRangeType.hlg10]);
         expect(await camera.getPreviewDynamicRange(42), PreviewDynamicRange.hlg10);
       });
 
+      test('the image stream reports an error when ImageAnalysis cannot be bound', () async {
+        final AndroidCameraCameraX camera = await createHlgCamera(recorderSupportsHlg: true);
+        await camera.initializeCamera(42);
+        when(
+          mockProcessCameraProvider.bindToLifecycle(any, <UseCase>[camera.imageAnalysis!]),
+        ).thenThrow(PlatformException(code: 'IllegalArgumentException'));
+
+        await expectLater(
+          camera.onStreamedFrameAvailable(42).first,
+          throwsA(
+            isA<CameraException>().having(
+              (CameraException e) => e.code,
+              'code',
+              'imageStreamUnsupported',
+            ),
+          ),
+        );
+
+        expect(previewRanges, <DynamicRangeType?>[DynamicRangeType.hlg10]);
+        expect(await camera.getPreviewDynamicRange(42), PreviewDynamicRange.hlg10);
+      });
       test('setDescriptionWhileRecording rejects a camera without HLG', () async {
         final AndroidCameraCameraX camera = await createHlgCamera(recorderSupportsHlg: true);
         await camera.initializeCamera(42);
@@ -6683,16 +6726,19 @@ void main() {
         verifyNever(mockProcessCameraProvider.unbindAll());
       });
 
-      test('lockCaptureOrientation moves the preview to an SDR texture', () async {
+      test('lockCaptureOrientation throws and keeps the HLG preview', () async {
         final AndroidCameraCameraX camera = await createHlgCamera(recorderSupportsHlg: true);
         await camera.initializeCamera(42);
 
-        await camera.lockCaptureOrientation(42, DeviceOrientation.portraitUp);
+        await expectLater(
+          camera.lockCaptureOrientation(42, DeviceOrientation.portraitUp),
+          throwsA(isA<CameraException>()),
+        );
 
-        expect(camera.previewView, isNull);
-        expect(await camera.getPreviewDynamicRange(42), PreviewDynamicRange.sdr);
-        verify(previews.last.setSurfaceProvider(any));
-        expect(videoRanges.last, isNull);
+        expect(camera.previewView, mockPreviewView);
+        expect(camera.captureOrientationLocked, isFalse);
+        expect(await camera.getPreviewDynamicRange(42), PreviewDynamicRange.hlg10);
+        verifyNever(previews.single.setSurfaceProvider(any));
       });
     });
   });

@@ -34,20 +34,20 @@ and thus that parameter will silently be ignored.
 ### HDR preview
 
 Requesting `PreviewDynamicRange.hlg10` (see `MediaSettings.previewDynamicRange`) is supported on
-Android 14 and later, on cameras that report 10-bit HLG support. The preview is then shown with a
+Android 14 and later, on cameras that report 10-bit HLG support for both the preview and recording.
+The camera stays in HLG while it is in use. The preview is then shown with a
 `PreviewView` in `PERFORMANCE` mode through a Hybrid Composition platform view, because a Flutter
 texture cannot show HDR content. While the HDR preview is active:
 
 * Flutter clips (such as `ClipRRect`) are not applied to the preview.
-* `lockCaptureOrientation` switches the preview back to an SDR texture, because a `PreviewView`
-  follows the display rotation on its own. While recording, the switch happens when the recording
-  stops.
-* `setDescriptionWhileRecording` fails for a camera without HLG support.
-* Video is recorded in HLG when the camera supports it; otherwise starting a recording switches the
-  preview to SDR. Image streaming switches the preview to SDR when the camera cannot combine it
-  with an HLG preview.
+* Video is recorded in HLG.
+* `lockCaptureOrientation` throws a `CameraException`, because a `PreviewView` follows the display
+  rotation on its own.
+* `setDescriptionWhileRecording` throws a `CameraException` for a camera without HLG support.
+* Image streaming delivers 8-bit frames. On cameras that cannot combine image analysis with an HLG
+  preview, the image stream reports a `CameraException` instead.
 
-`getPreviewDynamicRange` reports the dynamic range that is currently applied. `hlg10` means the
+`getPreviewDynamicRange` reports the dynamic range that the camera was created with. `hlg10` means the
 camera delivers a 10-bit HLG stream. Whether it is shown as HDR also depends on the display, and on
 `PreviewView` using a `SurfaceView` (it can fall back to a `TextureView` on some devices).
 

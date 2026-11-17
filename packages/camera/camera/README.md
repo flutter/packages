@@ -110,9 +110,9 @@ final controller = CameraController(
 );
 ```
 
-HDR changes the whole capture session, not only the preview, and some operations switch the camera
-back to SDR. `CameraController.getPreviewDynamicRange` reports what is applied. See the platform
-implementation READMEs (`camera_android_camerax`, `camera_avfoundation`) for details.
+HDR changes the whole capture session, not only the preview, and some operations are not
+supported with it. `CameraController.getPreviewDynamicRange` reports what is applied. See the
+platform implementation READMEs (`camera_android_camerax`, `camera_avfoundation`) for details.
 
 ### Example
 

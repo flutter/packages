@@ -105,8 +105,9 @@ class AVFoundationCamera extends CameraPlatform {
         ),
       );
       if (requestedRange != PreviewDynamicRange.sdr) {
-        // The native side falls back to SDR when the range cannot be applied,
-        // and the preview widget depends on which range was actually applied.
+        // The native side uses SDR when the range cannot be applied. The
+        // applied range does not change afterwards, and the preview widget
+        // depends on it.
         _appliedPreviewRanges[cameraId] = previewDynamicRangeFromPlatform(
           await _hostApi.getPreviewDynamicRange(),
         );
@@ -464,13 +465,7 @@ class AVFoundationCamera extends CameraPlatform {
   @override
   Future<PreviewDynamicRange> getPreviewDynamicRange(int cameraId) async {
     try {
-      final PreviewDynamicRange range = previewDynamicRangeFromPlatform(
-        await _hostApi.getPreviewDynamicRange(),
-      );
-      if (_appliedPreviewRanges.containsKey(cameraId)) {
-        _appliedPreviewRanges[cameraId] = range;
-      }
-      return range;
+      return previewDynamicRangeFromPlatform(await _hostApi.getPreviewDynamicRange());
     } on PlatformException catch (e) {
       throw CameraException(e.code, e.message);
     }

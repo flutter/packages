@@ -45,4 +45,6 @@ so while it is active:
 * Image streaming keeps the session in HLG. Frames are narrowed to the requested 8-bit format
   (`yuv420` or `bgra8888`); their values stay HLG BT.2020 encoded and are not tone mapped.
 
-`getPreviewDynamicRange` reports the dynamic range that is currently applied.
+* `setDescriptionWhileRecording` fails for a camera that has no HLG format.
+
+`getPreviewDynamicRange` reports the dynamic range that the camera was created with.

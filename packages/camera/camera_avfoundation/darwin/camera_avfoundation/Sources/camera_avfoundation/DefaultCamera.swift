@@ -1399,7 +1399,34 @@ final class DefaultCamera: NSObject, Camera {
       return
     }
 
-    captureDevice = videoCaptureDeviceFactory(cameraName)
+    let newCaptureDevice = videoCaptureDeviceFactory(cameraName)
+    // The range is fixed for the life of the camera and the writer keeps its format and size, so
+    // an HLG recording continues only on an HLG format of the same size. Anything else is refused
+    // before the session is touched.
+    var newHLGFormat: CaptureDeviceFormat?
+    if previewDynamicRange == .hlg10 {
+      let size = videoDimensionsConverter(captureDevice.flutterActiveFormat)
+      newHLGFormat = newCaptureDevice.flutterFormats.first {
+        let candidate = videoDimensionsConverter($0)
+        return FormatUtils.isHLGCapable($0) && candidate.width == size.width
+          && candidate.height == size.height
+      }
+      guard newHLGFormat != nil, (try? newCaptureDevice.lockForConfiguration()) != nil else {
+        completion(
+          .failure(
+            PigeonError(
+              code: "setDescriptionWhileRecordingFailed",
+              message: "The camera cannot continue a recording with an HDR (hlg10) preview.",
+              details: nil)))
+        return
+      }
+    }
+    defer {
+      if newHLGFormat != nil {
+        newCaptureDevice.unlockForConfiguration()
+      }
+    }
+    captureDevice = newCaptureDevice
 
     let oldConnection = captureVideoOutput.connection(with: .video)
 
@@ -1475,24 +1502,15 @@ final class DefaultCamera: NSObject, Camera {
             details: nil)))
     }
     videoCaptureSession.addConnection(newConnection)
+    if let newHLGFormat {
+      // The new device starts with its own default format.
+      videoCaptureSession.sessionPreset = .inputPriority
+      captureDevice.flutterActiveFormat = newHLGFormat
+      FormatUtils.setHLGColorSpace(on: captureDevice)
+    }
     videoCaptureSession.commitConfiguration()
 
     configureMaxPhotoDimensions()
-
-    // The new device starts with its own default format, so the preset and HLG are applied to it
-    // again, in one configuration change. Only an HLG session does this, because the Dart side
-    // keeps the preview widget it chose for the applied range.
-    if previewDynamicRange == .hlg10 {
-      previewDynamicRange = .sdr
-      videoCaptureSession.beginConfiguration()
-      do {
-        try setCaptureSessionPreset(mediaSettings.resolutionPreset)
-      } catch {
-        reportErrorMessage("Unable to apply the resolution preset to the new camera: \(error)")
-      }
-      applyRequestedHLGFormat()
-      videoCaptureSession.commitConfiguration()
-    }
     applyVideoSettings()
     if let layer = hdrPreviewLayer {
       attachPreviewLayer(layer)

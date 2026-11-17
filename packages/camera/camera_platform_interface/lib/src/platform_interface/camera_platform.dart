@@ -372,22 +372,21 @@ abstract class CameraPlatform extends PlatformInterface {
   /// values with [MediaSettings.previewDynamicRange].
   ///
   /// Support is reported per camera. A camera that supports
-  /// [PreviewDynamicRange.hlg10] can still fall back to
-  /// [PreviewDynamicRange.sdr] for some resolution presets, so read
-  /// [getPreviewDynamicRange] after the camera is initialized.
+  /// [PreviewDynamicRange.hlg10] can still use [PreviewDynamicRange.sdr] for
+  /// some resolution presets, so read [getPreviewDynamicRange] after the
+  /// camera is initialized.
   ///
   /// The default implementation returns only [PreviewDynamicRange.sdr].
   Future<Iterable<PreviewDynamicRange>> getSupportedPreviewDynamicRanges(
     CameraDescription description,
   ) async => <PreviewDynamicRange>[PreviewDynamicRange.sdr];
 
-  /// Returns the dynamic range currently applied to the selected camera.
+  /// Returns the dynamic range applied to the selected camera.
   ///
-  /// This can differ from the requested [MediaSettings.previewDynamicRange]:
-  /// the camera falls back to [PreviewDynamicRange.sdr] when the request
-  /// cannot be satisfied, or later when an operation that cannot run with
-  /// HDR is started (for example image streaming on some platforms). Read it
-  /// again after starting such an operation.
+  /// The range is set when the camera is created and does not change while it
+  /// is in use. It is [PreviewDynamicRange.sdr] when the requested
+  /// [MediaSettings.previewDynamicRange] is not supported, for example by the
+  /// camera or, on some platforms, by the resolution preset.
   ///
   /// The default implementation returns [PreviewDynamicRange.sdr].
   Future<PreviewDynamicRange> getPreviewDynamicRange(int cameraId) async => PreviewDynamicRange.sdr;

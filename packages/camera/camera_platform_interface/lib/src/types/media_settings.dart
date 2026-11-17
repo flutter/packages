@@ -53,8 +53,12 @@ class MediaSettings {
   /// image streaming, and zero-shutter-lag support. See the platform
   /// implementation for the exact behavior.
   ///
-  /// This is a request: if the camera or the platform does not support it, the
-  /// camera falls back to [PreviewDynamicRange.sdr]. Use
+  /// This is a request: if the camera or the platform does not support it, or
+  /// on some platforms the resolution preset has no HDR format, the camera
+  /// uses [PreviewDynamicRange.sdr]. The applied range is set when the camera
+  /// is created and does not change while it is in use; operations that
+  /// cannot keep it fail with a `CameraException`, which an image stream
+  /// reports as a stream error. Use
   /// `CameraPlatform.getSupportedPreviewDynamicRanges` to check support before
   /// creating the camera, and `CameraPlatform.getPreviewDynamicRange` to read
   /// the dynamic range that is applied.

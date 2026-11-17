@@ -596,4 +596,99 @@ final class CameraSampleBufferTests: XCTestCase {
     XCTAssertEqual(mockPhotoOutput.maxPhotoDimensions.width, 4032)
     XCTAssertEqual(mockPhotoOutput.maxPhotoDimensions.height, 3024)
   }
+
+  private func makeHLGFormat(_ width: Int32, _ height: Int32) -> MockCaptureDeviceFormat {
+    let format = MockCaptureDeviceFormat(
+      codecType: kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange, width: width, height: height)
+    format.flutterSupportedColorSpaces = [.sRGB, .HLG_BT2020]
+    return format
+  }
+
+  private func makeDevice(formats: [MockCaptureDeviceFormat]) -> MockCaptureDevice {
+    var activeFormat: CaptureDeviceFormat = formats[0]
+    let device = MockCaptureDevice()
+    device.flutterFormats = formats
+    device.activeFormatStub = { activeFormat }
+    device.setActiveFormatStub = { activeFormat = $0 }
+    return device
+  }
+
+  /// Starts an HLG recording on a 1920x1440 HLG camera and switches to `newDevice`.
+  private func switchDuringHLGRecording(
+    to newDevice: MockCaptureDevice
+  ) -> (camera: DefaultCamera, hlgDevice: MockCaptureDevice, result: Result<Void, any Error>?) {
+    let configuration = CameraTestUtils.createTestCameraConfiguration()
+    configuration.mediaSettingsWrapper = FakeMediaSettingsAVWrapper(
+      inputMock: MockAssetWriterInput())
+    configuration.mediaSettings = PlatformMediaSettings(
+      resolutionPreset: .max, framesPerSecond: nil, videoBitrate: nil, audioBitrate: nil,
+      enableAudio: false, previewDynamicRange: .hlg10)
+
+    let videoSessionMock = MockCaptureSession()
+    videoSessionMock.canSetSessionPresetStub = { _ in true }
+    // A real session keeps the preset it is given; the HLG format choice depends on it.
+    videoSessionMock.setSessionPresetStub = { [unowned videoSessionMock] in
+      videoSessionMock._sessionPreset = $0
+    }
+    configuration.videoCaptureSession = videoSessionMock
+
+    let hlgDevice = makeDevice(formats: [makeHLGFormat(1920, 1440)])
+    configuration.videoCaptureDeviceFactory = { name in
+      return name == "new_camera" ? newDevice : hlgDevice
+    }
+
+    let camera = CameraTestUtils.createTestCamera(configuration)
+    XCTAssertEqual(camera.previewDynamicRange, .hlg10)
+    camera.startVideoRecording(completion: { _ in }, messengerForStreaming: nil)
+
+    var result: Result<Void, any Error>?
+    let expectation = self.expectation(description: "setDescriptionWhileRecording completed")
+    camera.setDescriptionWhileRecording("new_camera") {
+      result = $0
+      expectation.fulfill()
+    }
+    waitForExpectations(timeout: 1.0, handler: nil)
+    return (camera, hlgDevice, result)
+  }
+
+  private func assertRefused(_ result: Result<Void, any Error>?) {
+    if case .failure(let error as PigeonError) = result {
+      XCTAssertEqual(error.code, "setDescriptionWhileRecordingFailed")
+    } else {
+      XCTFail("Expected a failure")
+    }
+  }
+
+  func testSetDescriptionWhileRecording_refusesACameraWithoutHLGDuringAnHLGRecording() {
+    let (camera, hlgDevice, result) = switchDuringHLGRecording(
+      to: makeDevice(formats: [MockCaptureDeviceFormat()]))
+
+    assertRefused(result)
+    XCTAssertTrue(camera.captureDevice === hlgDevice)
+    XCTAssertEqual(camera.previewDynamicRange, .hlg10)
+  }
+
+  func testSetDescriptionWhileRecording_refusesAnHLGCameraWithoutTheRecordingSize() {
+    let (camera, hlgDevice, result) = switchDuringHLGRecording(
+      to: makeDevice(formats: [makeHLGFormat(1920, 1080)]))
+
+    assertRefused(result)
+    XCTAssertTrue(camera.captureDevice === hlgDevice)
+    XCTAssertEqual(camera.previewDynamicRange, .hlg10)
+  }
+
+  func testSetDescriptionWhileRecording_keepsHLGOnACameraWithTheRecordingSize() {
+    let sameSize = makeHLGFormat(1920, 1440)
+    let newDevice = makeDevice(formats: [MockCaptureDeviceFormat(), sameSize])
+
+    let (camera, _, result) = switchDuringHLGRecording(to: newDevice)
+
+    if case .failure(let error) = result {
+      XCTFail("Unexpected failure: \(error)")
+    }
+    XCTAssertTrue(camera.captureDevice === newDevice)
+    XCTAssertTrue(newDevice.flutterActiveFormat === sameSize)
+    XCTAssertEqual(newDevice.activeColorSpace, .HLG_BT2020)
+    XCTAssertEqual(camera.previewDynamicRange, .hlg10)
+  }
 }

@@ -33,7 +33,7 @@ Future<List<CameraDescription>> availableCameras() async {
 ///
 /// Pass one of them as `previewDynamicRange` when creating a
 /// [CameraController]. Support is reported per camera, and some resolution
-/// presets can still fall back to [PreviewDynamicRange.sdr]; read
+/// presets can still use [PreviewDynamicRange.sdr]; read
 /// [CameraController.getPreviewDynamicRange] after initializing.
 Future<Iterable<PreviewDynamicRange>> availablePreviewDynamicRanges(
   CameraDescription description,
@@ -257,8 +257,8 @@ class CameraController extends ValueNotifier<CameraValue> {
   /// - [videoBitrate] controls the video encoding bit rate for recording.
   /// - [audioBitrate] controls the audio encoding bit rate for recording.
   ///
-  /// [previewDynamicRange] requests an HDR preview. It falls back to
-  /// [PreviewDynamicRange.sdr] when unsupported; check
+  /// [previewDynamicRange] requests an HDR preview. The camera uses
+  /// [PreviewDynamicRange.sdr] when it is unsupported; check
   /// [availablePreviewDynamicRanges] first and read the applied value with
   /// [getPreviewDynamicRange].
 
