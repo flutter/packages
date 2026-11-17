@@ -1,5 +1,7 @@
-## NEXT
+## 0.11.2
 
+* Supports `MediaSettings.aspectRatio`, choosing the capture format by aspect ratio and resolution tier, and, when `framesPerSecond` is not set, preferring a format of the same size that supports zero-shutter-lag when it is enabled.
+* Updates minimum supported `camera_platform_interface` version to 2.16.0.
 * Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
 
 ## 0.11.1

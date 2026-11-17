@@ -194,6 +194,11 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// set for the camera in use.
   static const String zoomStateNotSetErrorCode = 'zoomStateNotSet';
 
+  /// The values of CameraX `AspectRatio.RATIO_4_3` and `AspectRatio.RATIO_16_9`,
+  /// which `Recorder` takes as integers.
+  static const int _cameraXAspectRatio4x3 = 0;
+  static const int _cameraXAspectRatio16x9 = 1;
+
   /// Whether or not the capture orientation is locked.
   ///
   /// Indicates a new target rotation should not be set as it has been locked by
@@ -398,7 +403,10 @@ class AndroidCameraCameraX extends CameraPlatform {
     unawaited(deviceOrientationManager.startListeningForDeviceOrientationChange());
     // Determine ResolutionSelector and QualitySelector based on
     // resolutionPreset for camera UseCases.
-    _presetResolutionSelector = _getResolutionSelectorFromPreset(mediaSettings?.resolutionPreset);
+    final CameraAspectRatio? aspectRatio = mediaSettings?.aspectRatio;
+    _presetResolutionSelector = aspectRatio == null
+        ? _getResolutionSelectorFromPreset(mediaSettings?.resolutionPreset)
+        : _getResolutionSelectorForAspectRatio(mediaSettings?.resolutionPreset, aspectRatio);
 
     final int? targetFps = mediaSettings?.fps;
     if (targetFps != null) {
@@ -431,6 +439,7 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     // Configure VideoCapture and Recorder instances.
     recorder = Recorder(
+      aspectRatio: aspectRatio == null ? null : _recorderAspectRatio(aspectRatio),
       qualitySelector: presetQualitySelector,
       targetVideoEncodingBitRate: mediaSettings?.videoBitrate,
     );
@@ -1682,6 +1691,84 @@ class AndroidCameraCameraX extends CameraPlatform {
       resolutionFilter: resolutionFilter,
       aspectRatioStrategy: aspectRatioStrategy,
     );
+  }
+
+  /// Returns the [ResolutionSelector] for [preset] within [aspectRatio], for
+  /// the preview, image capture and image analysis.
+  ///
+  /// The preset is a tier of the shorter side: the smallest resolution with the
+  /// aspect ratio whose shorter side is at least the tier, else the largest.
+  /// `max` is the largest, and no preset keeps CameraX's default resolution.
+  ResolutionSelector _getResolutionSelectorForAspectRatio(
+    ResolutionPreset? preset,
+    CameraAspectRatio aspectRatio,
+  ) {
+    final aspectRatioStrategy = AspectRatioStrategy(
+      preferredAspectRatio: _cameraXAspectRatio(aspectRatio),
+      fallbackRule: AspectRatioStrategyFallbackRule.auto,
+    );
+    if (preset == null) {
+      return ResolutionSelector(aspectRatioStrategy: aspectRatioStrategy);
+    }
+    final int? shortSide = switch (preset) {
+      ResolutionPreset.low => 240,
+      ResolutionPreset.medium => 480,
+      ResolutionPreset.high => 720,
+      ResolutionPreset.veryHigh => 1080,
+      ResolutionPreset.ultraHigh => 2160,
+      ResolutionPreset.max => null,
+    };
+    if (shortSide == null) {
+      return ResolutionSelector(
+        resolutionStrategy: ResolutionStrategy.highestAvailableStrategy,
+        aspectRatioStrategy: aspectRatioStrategy,
+        allowedResolutionMode:
+            ResolutionSelectorAllowedResolutionMode.preferHigherResolutionOverCaptureRate,
+      );
+    }
+    final boundSize = CameraSize(
+      width: _cameraXAspectRatio(aspectRatio) == AspectRatio.ratio4To3
+          ? shortSide * 4 ~/ 3
+          : (shortSide * 16 / 9).round(),
+      height: shortSide,
+    );
+    return ResolutionSelector(
+      resolutionStrategy: ResolutionStrategy(
+        boundSize: boundSize,
+        fallbackRule: ResolutionStrategyFallbackRule.closestHigherThenLower,
+      ),
+      aspectRatioStrategy: aspectRatioStrategy,
+    );
+  }
+
+  /// Returns the CameraX [AspectRatio] for [aspectRatio].
+  AspectRatio _cameraXAspectRatio(CameraAspectRatio aspectRatio) {
+    switch (aspectRatio) {
+      case CameraAspectRatio.ratio4x3:
+        return AspectRatio.ratio4To3;
+      case CameraAspectRatio.ratio16x9:
+        return AspectRatio.ratio16To9;
+    }
+    // The enum comes from a different package, which could get a new value at
+    // any time, so provide a fallback that ensures this won't break when used
+    // with a version that contains new values. This is deliberately outside
+    // the switch rather than a `default` so that the linter will flag the
+    // switch as needing an update.
+    // ignore: dead_code
+    return AspectRatio.ratio4To3;
+  }
+
+  /// Returns the integer value of CameraX `AspectRatio` that `Recorder` takes.
+  int _recorderAspectRatio(CameraAspectRatio aspectRatio) {
+    switch (aspectRatio) {
+      case CameraAspectRatio.ratio4x3:
+        return _cameraXAspectRatio4x3;
+      case CameraAspectRatio.ratio16x9:
+        return _cameraXAspectRatio16x9;
+    }
+    // See _cameraXAspectRatio for why the fallback is outside the switch.
+    // ignore: dead_code
+    return _cameraXAspectRatio4x3;
   }
 
   /// Returns the [QualitySelector] that maps to the specified resolution

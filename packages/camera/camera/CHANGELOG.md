@@ -1,3 +1,8 @@
+## 0.12.3
+
+* Adds the `aspectRatio` parameter of `CameraController` to choose the aspect ratio of the preview, photos and recorded video.
+* Updates minimum supported `camera_platform_interface` to 2.16.0, `camera_android_camerax` to 0.7.7 and `camera_avfoundation` to 0.11.2.
+
 ## 0.12.2
 
 * Adds `CameraController.isZeroShutterLagSupported` and

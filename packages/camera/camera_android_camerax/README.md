@@ -31,6 +31,14 @@ Calling `startVideoCapturing` with `VideoCaptureOptions` configured with
 limitations of the platform interface,
 and thus that parameter will silently be ignored.
 
+### Aspect ratio
+
+With `MediaSettings.aspectRatio`, the preview, photos and image analysis use the resolution preset
+as a tier within the aspect ratio (the smallest resolution whose shorter side is at least the
+preset's when the camera supports it, else the largest; `max` is the largest), and video is
+recorded with the aspect ratio through `Recorder`, following CameraX's video quality steps for the
+preset (`low` records at SD (480p), because CameraX has no lower video quality).
+
 ## What requires Android permissions
 
 ### Writing to external storage to save image files

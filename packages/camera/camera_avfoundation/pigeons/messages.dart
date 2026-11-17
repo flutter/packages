@@ -61,6 +61,9 @@ enum PlatformResolutionPreset { low, medium, high, veryHigh, ultraHigh, max }
 
 enum PlatformVideoStabilizationMode { off, standard, cinematic, cinematicExtended }
 
+// Pigeon version of CameraAspectRatio.
+enum PlatformCameraAspectRatio { ratio4x3, ratio16x9 }
+
 // Pigeon version of CameraDescription.
 class PlatformCameraDescription {
   PlatformCameraDescription({
@@ -151,6 +154,7 @@ class PlatformMediaSettings {
     required this.videoBitrate,
     required this.audioBitrate,
     required this.enableAudio,
+    required this.aspectRatio,
   });
 
   final PlatformResolutionPreset resolutionPreset;
@@ -158,6 +162,7 @@ class PlatformMediaSettings {
   final int? videoBitrate;
   final int? audioBitrate;
   final bool enableAudio;
+  final PlatformCameraAspectRatio? aspectRatio;
 }
 
 // Pigeon equivalent of CGPoint.

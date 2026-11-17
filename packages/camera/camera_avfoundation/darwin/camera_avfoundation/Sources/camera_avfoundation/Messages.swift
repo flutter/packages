@@ -263,6 +263,11 @@ enum PlatformVideoStabilizationMode: Int, CaseIterable {
   case cinematicExtended = 3
 }
 
+enum PlatformCameraAspectRatio: Int, CaseIterable {
+  case ratio4x3 = 0
+  case ratio16x9 = 1
+}
+
 /// Generated class from Pigeon that represents data sent in messages.
 struct PlatformCameraDescription: Hashable, CustomStringConvertible {
   /// The name of the camera device.
@@ -510,6 +515,7 @@ struct PlatformMediaSettings: Hashable, CustomStringConvertible {
   var videoBitrate: Int64? = nil
   var audioBitrate: Int64? = nil
   var enableAudio: Bool
+  var aspectRatio: PlatformCameraAspectRatio? = nil
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> PlatformMediaSettings? {
@@ -518,13 +524,15 @@ struct PlatformMediaSettings: Hashable, CustomStringConvertible {
     let videoBitrate: Int64? = nilOrValue(pigeonVar_list[2])
     let audioBitrate: Int64? = nilOrValue(pigeonVar_list[3])
     let enableAudio = pigeonVar_list[4] as! Bool
+    let aspectRatio: PlatformCameraAspectRatio? = nilOrValue(pigeonVar_list[5])
 
     return PlatformMediaSettings(
       resolutionPreset: resolutionPreset,
       framesPerSecond: framesPerSecond,
       videoBitrate: videoBitrate,
       audioBitrate: audioBitrate,
-      enableAudio: enableAudio
+      enableAudio: enableAudio,
+      aspectRatio: aspectRatio
     )
   }
   func toList() -> [Any?] {
@@ -534,6 +542,7 @@ struct PlatformMediaSettings: Hashable, CustomStringConvertible {
       videoBitrate,
       audioBitrate,
       enableAudio,
+      aspectRatio,
     ]
   }
   static func == (lhs: PlatformMediaSettings, rhs: PlatformMediaSettings) -> Bool {
@@ -545,6 +554,7 @@ struct PlatformMediaSettings: Hashable, CustomStringConvertible {
       && MessagesPigeonInternal.deepEquals(lhs.videoBitrate, rhs.videoBitrate)
       && MessagesPigeonInternal.deepEquals(lhs.audioBitrate, rhs.audioBitrate)
       && MessagesPigeonInternal.deepEquals(lhs.enableAudio, rhs.enableAudio)
+      && MessagesPigeonInternal.deepEquals(lhs.aspectRatio, rhs.aspectRatio)
   }
 
   func hash(into hasher: inout Hasher) {
@@ -554,11 +564,12 @@ struct PlatformMediaSettings: Hashable, CustomStringConvertible {
     MessagesPigeonInternal.deepHash(value: videoBitrate, hasher: &hasher)
     MessagesPigeonInternal.deepHash(value: audioBitrate, hasher: &hasher)
     MessagesPigeonInternal.deepHash(value: enableAudio, hasher: &hasher)
+    MessagesPigeonInternal.deepHash(value: aspectRatio, hasher: &hasher)
   }
 
   public var description: String {
     return
-      "PlatformMediaSettings(resolutionPreset: \(String(describing: resolutionPreset)), framesPerSecond: \(String(describing: framesPerSecond)), videoBitrate: \(String(describing: videoBitrate)), audioBitrate: \(String(describing: audioBitrate)), enableAudio: \(String(describing: enableAudio)))"
+      "PlatformMediaSettings(resolutionPreset: \(String(describing: resolutionPreset)), framesPerSecond: \(String(describing: framesPerSecond)), videoBitrate: \(String(describing: videoBitrate)), audioBitrate: \(String(describing: audioBitrate)), enableAudio: \(String(describing: enableAudio)), aspectRatio: \(String(describing: aspectRatio)))"
   }
 }
 
@@ -707,18 +718,24 @@ private class MessagesPigeonCodecReader: FlutterStandardReader {
       }
       return nil
     case 139:
-      return PlatformCameraDescription.fromList(self.readValue() as! [Any?])
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as! Int?)
+      if let enumResultAsInt = enumResultAsInt {
+        return PlatformCameraAspectRatio(rawValue: enumResultAsInt)
+      }
+      return nil
     case 140:
-      return PlatformCameraState.fromList(self.readValue() as! [Any?])
+      return PlatformCameraDescription.fromList(self.readValue() as! [Any?])
     case 141:
-      return PlatformCameraImageData.fromList(self.readValue() as! [Any?])
+      return PlatformCameraState.fromList(self.readValue() as! [Any?])
     case 142:
-      return PlatformCameraImagePlane.fromList(self.readValue() as! [Any?])
+      return PlatformCameraImageData.fromList(self.readValue() as! [Any?])
     case 143:
-      return PlatformMediaSettings.fromList(self.readValue() as! [Any?])
+      return PlatformCameraImagePlane.fromList(self.readValue() as! [Any?])
     case 144:
-      return PlatformPoint.fromList(self.readValue() as! [Any?])
+      return PlatformMediaSettings.fromList(self.readValue() as! [Any?])
     case 145:
+      return PlatformPoint.fromList(self.readValue() as! [Any?])
+    case 146:
       return PlatformSize.fromList(self.readValue() as! [Any?])
     default:
       return super.readValue(ofType: type)
@@ -758,26 +775,29 @@ private class MessagesPigeonCodecWriter: FlutterStandardWriter {
     } else if let value = value as? PlatformVideoStabilizationMode {
       super.writeByte(138)
       super.writeValue(value.rawValue)
-    } else if let value = value as? PlatformCameraDescription {
+    } else if let value = value as? PlatformCameraAspectRatio {
       super.writeByte(139)
-      super.writeValue(value.toList())
-    } else if let value = value as? PlatformCameraState {
+      super.writeValue(value.rawValue)
+    } else if let value = value as? PlatformCameraDescription {
       super.writeByte(140)
       super.writeValue(value.toList())
-    } else if let value = value as? PlatformCameraImageData {
+    } else if let value = value as? PlatformCameraState {
       super.writeByte(141)
       super.writeValue(value.toList())
-    } else if let value = value as? PlatformCameraImagePlane {
+    } else if let value = value as? PlatformCameraImageData {
       super.writeByte(142)
       super.writeValue(value.toList())
-    } else if let value = value as? PlatformMediaSettings {
+    } else if let value = value as? PlatformCameraImagePlane {
       super.writeByte(143)
       super.writeValue(value.toList())
-    } else if let value = value as? PlatformPoint {
+    } else if let value = value as? PlatformMediaSettings {
       super.writeByte(144)
       super.writeValue(value.toList())
-    } else if let value = value as? PlatformSize {
+    } else if let value = value as? PlatformPoint {
       super.writeByte(145)
+      super.writeValue(value.toList())
+    } else if let value = value as? PlatformSize {
+      super.writeByte(146)
       super.writeValue(value.toList())
     } else {
       super.writeValue(value)

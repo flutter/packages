@@ -243,6 +243,11 @@ class CameraController extends ValueNotifier<CameraValue> {
   /// - [fps] controls rate at which frames should be captured by the camera in frames per second.
   /// - [videoBitrate] controls the video encoding bit rate for recording.
   /// - [audioBitrate] controls the audio encoding bit rate for recording.
+  ///
+  /// [aspectRatio] sets the aspect ratio of the preview, photos and recorded
+  /// video together; [resolutionPreset] then chooses the resolution within
+  /// it (see [MediaSettings.resolutionPreset]). When null, the aspect ratio
+  /// follows [resolutionPreset].
 
   CameraController(
     CameraDescription description,
@@ -251,6 +256,7 @@ class CameraController extends ValueNotifier<CameraValue> {
     int? fps,
     int? videoBitrate,
     int? audioBitrate,
+    CameraAspectRatio? aspectRatio,
     this.imageFormatGroup,
   }) : mediaSettings = MediaSettings(
          resolutionPreset: resolutionPreset,
@@ -258,6 +264,7 @@ class CameraController extends ValueNotifier<CameraValue> {
          fps: fps,
          videoBitrate: videoBitrate,
          audioBitrate: audioBitrate,
+         aspectRatio: aspectRatio,
        ),
        super(CameraValue.uninitialized(description));
 
