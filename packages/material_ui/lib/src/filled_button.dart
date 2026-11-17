@@ -206,6 +206,9 @@ class FilledButton extends ButtonStyleButton {
   /// Otherwise a [WidgetStateProperty] with the same opacities as the
   /// default is created.
   ///
+  /// The [backgroundColor] and [disabledBackgroundColor] colors are
+  /// used to create a [WidgetStateProperty] [ButtonStyle.backgroundColor].
+  ///
   /// Similarly, the [enabledMouseCursor] and [disabledMouseCursor]
   /// parameters are used to construct [ButtonStyle.mouseCursor].
   ///

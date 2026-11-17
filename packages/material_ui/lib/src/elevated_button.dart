@@ -49,7 +49,7 @@ part 'generated/elevated_button_defaults_m3e.g.dart';
 /// buttons in an app can be overridden with the [Theme]'s
 /// [ThemeData.elevatedButtonTheme] property.
 ///
-/// The static [styleFrom] method is a convenient way to create a
+/// The static [styleFrom] method is a convenient way to create an
 /// elevated button [ButtonStyle] from simple values.
 ///
 /// If [onPressed] and [onLongPress] callbacks are null, then the
@@ -342,7 +342,7 @@ class ElevatedButton extends ButtonStyleButton {
   ///
   /// ## Material 2 defaults
   ///
-  /// * `textStyle` - Theme.textTheme.button
+  /// * `textStyle` - Theme.textTheme.labelLarge
   /// * `backgroundColor`
   ///   * disabled - Theme.colorScheme.onSurface(0.12)
   ///   * others - Theme.colorScheme.primary
@@ -351,7 +351,7 @@ class ElevatedButton extends ButtonStyleButton {
   ///   * others - Theme.colorScheme.onPrimary
   /// * `overlayColor`
   ///   * hovered - Theme.colorScheme.onPrimary(0.08)
-  ///   * focused or pressed - Theme.colorScheme.onPrimary(0.12)
+  ///   * focused or pressed - Theme.colorScheme.onPrimary(0.1)
   /// * `shadowColor` - Theme.shadowColor
   /// * `elevation`
   ///   * disabled - 0
@@ -381,8 +381,8 @@ class ElevatedButton extends ButtonStyleButton {
   /// * `padding`
   ///   * `default font size <= 14` - start(12) end(16)
   ///   * `14 < default font size <= 28` - lerp(start(12) end(16), horizontal(8))
-  ///   * `28 < default font size <= 42` - lerp(horizontal(8), horizontal(4))
-  ///   * `42 < default font size` - horizontal(4)
+  ///   * `28 < default font size <= 42` - lerp(horizontal(8), start(8) end(4))
+  ///   * `42 < default font size` - start(8) end(4)
   ///
   /// The default value for `side`, which defines the appearance of the button's
   /// outline, is null. That means that the outline is defined by the button
@@ -391,8 +391,9 @@ class ElevatedButton extends ButtonStyleButton {
   ///
   /// ## Material 3 defaults
   ///
-  /// If [ThemeData.useMaterial3] is set to true the following defaults will
-  /// be used:
+  /// If [ThemeData.useMaterial3] is true and [ElevatedButtonThemeData.variant]
+  /// isn't [StyleVariant.material3Expressive], the following defaults will be
+  /// used:
   ///
   /// * `textStyle` - Theme.textTheme.labelLarge
   /// * `backgroundColor`

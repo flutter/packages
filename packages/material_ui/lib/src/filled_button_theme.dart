@@ -36,7 +36,7 @@ import 'theme.dart';
 ///    [ButtonStyle] for [FilledButton]s below the overall [Theme].
 @immutable
 class FilledButtonThemeData with Diagnosticable {
-  /// Creates an [FilledButtonThemeData].
+  /// Creates a [FilledButtonThemeData].
   ///
   /// The [style] may be null.
   const FilledButtonThemeData({this.style});
