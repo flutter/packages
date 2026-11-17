@@ -259,7 +259,7 @@ private open class GeneratedFileSelectorApiPigeonCodec : StandardMessageCodec() 
  */
 interface FileSelectorApi {
   /**
-   * Opens a file dialog for loading files and returns a file uri.
+   * Opens a file dialog for loading files and returns a file URI.
    *
    * Returns `null` if user cancels the operation.
    */
@@ -268,14 +268,14 @@ interface FileSelectorApi {
       allowedTypes: FileTypes,
       callback: (Result<String?>) -> Unit
   )
-  /** Opens a file dialog for loading files and returns a list of file uris chosen by the user. */
+  /** Opens a file dialog for loading files and returns a list of file URIs chosen by the user. */
   fun openFiles(
       initialDirectory: String?,
       allowedTypes: FileTypes,
       callback: (Result<List<String>>) -> Unit
   )
   /**
-   * Opens a file dialog for loading directories and returns a directory uri.
+   * Opens a file dialog for loading directories and returns a directory URI.
    *
    * Returns `null` if user cancels the operation.
    */

@@ -21,18 +21,18 @@ class FileTypes {
 /// An API to call to native code to select files or directories.
 @HostApi()
 abstract class FileSelectorApi {
-  /// Opens a file dialog for loading files and returns a file uri.
+  /// Opens a file dialog for loading files and returns a file URI.
   ///
   /// Returns `null` if user cancels the operation.
   @async
   String? openFile(String? initialDirectory, FileTypes allowedTypes);
 
-  /// Opens a file dialog for loading files and returns a list of file uris
+  /// Opens a file dialog for loading files and returns a list of file URIs
   /// chosen by the user.
   @async
   List<String> openFiles(String? initialDirectory, FileTypes allowedTypes);
 
-  /// Opens a file dialog for loading directories and returns a directory uri.
+  /// Opens a file dialog for loading directories and returns a directory URI.
   ///
   /// Returns `null` if user cancels the operation.
   @async

@@ -185,7 +185,7 @@ class FileSelectorApi {
 
   final String pigeonVar_messageChannelSuffix;
 
-  /// Opens a file dialog for loading files and returns a file uri.
+  /// Opens a file dialog for loading files and returns a file URI.
   ///
   /// Returns `null` if user cancels the operation.
   Future<String?> openFile(String? initialDirectory, FileTypes allowedTypes) async {
@@ -210,7 +210,7 @@ class FileSelectorApi {
     return pigeonVar_replyValue as String?;
   }
 
-  /// Opens a file dialog for loading files and returns a list of file uris
+  /// Opens a file dialog for loading files and returns a list of file URIs
   /// chosen by the user.
   Future<List<String>> openFiles(String? initialDirectory, FileTypes allowedTypes) async {
     final pigeonVar_channelName =
@@ -234,7 +234,7 @@ class FileSelectorApi {
     return (pigeonVar_replyValue! as List<Object?>).cast<String>();
   }
 
-  /// Opens a file dialog for loading directories and returns a directory uri.
+  /// Opens a file dialog for loading directories and returns a directory URI.
   ///
   /// Returns `null` if user cancels the operation.
   Future<String?> getDirectoryUri(String? initialDirectory) async {
