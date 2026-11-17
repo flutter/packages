@@ -84,7 +84,7 @@ void main() {
   test(
     'finalizer is not detached after disposed is called once',
     () async {
-      // Creates file and detach from finalizer in dispose.
+      // Creates directory and detach from finalizer in dispose.
       final WeakReference<SecurityScopedDarwinScopedStorageXDirectory> file =
           await _createAndDropDirectory(dispose: true);
 
@@ -95,7 +95,7 @@ void main() {
         () => SecurityScopedDarwinScopedStorageXDirectory.finalizer =
             SecurityScopedDarwinScopedStorageXDirectory.defaultFinalizer,
       );
-      // Attach finalizer to file again. This finalizer callback should trigger
+      // Attach finalizer to directory again. This finalizer callback should trigger
       // because it isn't removed after the second dispose.
       SecurityScopedDarwinScopedStorageXDirectory.finalizer.attach(
         file.target!,
