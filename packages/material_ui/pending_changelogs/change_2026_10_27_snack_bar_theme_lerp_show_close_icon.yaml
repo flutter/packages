@@ -1,3 +1,0 @@
-changelog: |
-  - Fixes `SnackBarThemeData.lerp` dropping `showCloseIcon`.
-version: patch

@@ -80,9 +80,9 @@ Future<({bool hasAndroidSdk, Map<String, String> environment})> _resolveAndroidS
         const <String>['config', '--machine'],
         runInShell: Platform.isWindows,
       );
-      final String stdout = result.stdout.toString();
-      final start = stdout.indexOf('{');
-      final end = stdout.lastIndexOf('}');
+      final stdout = result.stdout.toString();
+      final int start = stdout.indexOf('{');
+      final int end = stdout.lastIndexOf('}');
       if (result.exitCode == 0 && start != -1 && end > start) {
         final Object? decoded = jsonDecode(stdout.substring(start, end + 1));
         if (decoded is Map<String, Object?>) {
