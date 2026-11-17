@@ -529,6 +529,40 @@ void main() {
     expect(find.byKey(homeKey), findsNothing);
   });
 
+  // Regression test for https://github.com/flutter/flutter/issues/187326
+  testWidgets('popping twice before onExit resolves does not throw', (WidgetTester tester) async {
+    final homeKey = UniqueKey();
+    final detailKey = UniqueKey();
+
+    final GoRouter router = await createRouter(<RouteBase>[
+      GoRoute(
+        path: '/',
+        builder: (_, _) => DummyScreen(key: homeKey),
+        routes: <RouteBase>[
+          GoRoute(
+            path: 'detail',
+            onExit: (_, _) => true,
+            builder: (_, _) => DummyScreen(key: detailKey),
+          ),
+        ],
+      ),
+    ], tester);
+
+    final Future<String?> result = router.push<String>('/detail');
+    await tester.pumpAndSettle();
+    expect(find.byKey(detailKey), findsOneWidget);
+
+    // The second pop arrives before the first onExit has run, as when the iOS
+    // back gesture calls onPopPage twice for the same page.
+    router.pop('first');
+    router.pop('second');
+    await tester.pumpAndSettle();
+
+    expect(await result, 'first');
+    expect(find.byKey(detailKey), findsNothing);
+    expect(find.byKey(homeKey), findsOneWidget);
+  });
+
   // Regression test for https://github.com/flutter/flutter/issues/137829
   testWidgets('back button works synchronously with ShellRoute', (WidgetTester tester) async {
     var allow = false;
