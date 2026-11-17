@@ -3,6 +3,10 @@
 * [dart,kotlin,swift] Adds support for idiomatic `Stream<T>` return types (and `@asyncCallback` stream sinks) on `@HostApi` methods.
 * Deprecates `@EventChannelApi` in favor of `Stream<T>` return types on `@HostApi` methods.
 
+## 30.0.4
+
+* Stops silently skipping `jnigen` when `ANDROID_HOME` / `ANDROID_SDK_ROOT` or `JAVA_HOME` are unset, and surfaces `jnigen` errors and troubleshooting hints on `stderr` without aborting remaining generation steps.
+
 ## 30.0.3
 
 * Removes remaining unused `dart:mirrors` usage.
