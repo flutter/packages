@@ -143,32 +143,23 @@ constructor(
     // Get current tracks
     val tracks = exoPlayer.currentTracks
 
-    require(!(groupIndex < 0 || groupIndex >= tracks.groups.size)) {
-      ("Cannot select audio track: groupIndex " +
-          groupIndex +
-          " is out of bounds (available groups: " +
-          tracks.groups.size +
-          ")")
+    require(groupIndex >= 0 && groupIndex < tracks.groups.size) {
+      ("Cannot select audio track: groupIndex $groupIndex is out of bounds " +
+          "(available groups: ${tracks.groups.size})")
     }
 
     val group = tracks.groups[groupIndex.toInt()]
 
     // Verify it's an audio track
     require(group.type == C.TRACK_TYPE_AUDIO) {
-      ("Cannot select audio track: group at index " +
-          groupIndex +
-          " is not an audio track (type: " +
-          group.type +
-          ")")
+      ("Cannot select audio track: group at index $groupIndex is not an audio track " +
+          "(type: ${group.type})")
     }
 
     // Verify the track index is valid
-    require(!(trackIndex < 0 || trackIndex.toInt() >= group.length)) {
-      ("Cannot select audio track: trackIndex " +
-          trackIndex +
-          " is out of bounds (available tracks in group: " +
-          group.length +
-          ")")
+    require(trackIndex >= 0 && trackIndex < group.length) {
+      ("Cannot select audio track: trackIndex $trackIndex is out of bounds " +
+          "(available tracks in group: ${group.length})")
     }
 
     // Get the track group and create a selection override
@@ -233,7 +224,7 @@ constructor(
     // Get current tracks
     val tracks = exoPlayer.currentTracks
 
-    require(groupIndex in tracks.groups.indices) {
+    require(groupIndex >= 0 && groupIndex < tracks.groups.size) {
       ("Cannot select video track: groupIndex $groupIndex is out of bounds " +
           "(available groups: ${tracks.groups.size})")
     }
@@ -242,15 +233,12 @@ constructor(
 
     // Verify it's a video track
     require(group.type == C.TRACK_TYPE_VIDEO) {
-      ("Cannot select video track: group at index " +
-          groupIndex +
-          " is not a video track (type: " +
-          group.type +
-          ")")
+      ("Cannot select video track: group at index $groupIndex is not a video track " +
+          "(type: ${group.type})")
     }
 
     // Verify the track index is valid
-    require(trackIndex.toInt() in 0 ..< group.length) {
+    require(trackIndex >= 0 && trackIndex < group.length) {
       ("Cannot select video track: trackIndex $trackIndex is out of bounds " +
           "(available tracks in group: ${group.length})")
     }
