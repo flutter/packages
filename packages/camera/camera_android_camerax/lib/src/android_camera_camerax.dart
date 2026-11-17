@@ -1107,12 +1107,12 @@ class AndroidCameraCameraX extends CameraPlatform {
   ///
   /// CameraX only supports setting JPEG quality via `ImageCapture.Builder`
   /// at construction time, so this recreates the `ImageCapture` use case
-  /// with the requested quality. The next call to [takePicture] will bind
-  /// the new instance automatically.
+  /// with the requested quality and binds it if the previous instance was
+  /// bound.
   @override
   Future<void> setJpegImageQuality(int cameraId, int quality) async {
     _jpegQuality = quality;
-    await _recreateImageCapture();
+    await _recreateImageCapture(cameraId);
   }
 
   /// Returns whether the selected camera supports zero-shutter-lag capture.
@@ -1132,7 +1132,8 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// CameraX disables zero-shutter-lag when a use case prefers higher
   /// resolution over capture rate (see `UseCase.mergeConfigs` in CameraX), so
   /// with [ResolutionPreset.max] enabling zero-shutter-lag limits still capture
-  /// to the largest regular output size. On devices whose largest still size
+  /// to the largest regular output size that CameraX can select under its
+  /// constraints. On devices whose largest still size
   /// is only available as a high-resolution output size, pictures will be
   /// smaller than without zero-shutter-lag.
   ///
@@ -1151,12 +1152,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     if (!_zeroShutterLagSupported) {
       return;
     }
-    final bool imageCaptureWasBound =
-        imageCapture != null && await processCameraProvider!.isBound(imageCapture!);
-    await _recreateImageCapture();
-    if (imageCaptureWasBound) {
-      await _bindUseCaseToLifecycle(imageCapture!, cameraId);
-    }
+    await _recreateImageCapture(cameraId);
   }
 
   /// Recreates [imageCapture] from the currently requested settings
@@ -1164,17 +1160,18 @@ class AndroidCameraCameraX extends CameraPlatform {
   ///
   /// CameraX only supports several `ImageCapture` settings via
   /// `ImageCapture.Builder` at construction time, so any change to one of
-  /// them requires unbinding and recreating the whole use case. The next
-  /// call to [takePicture] will bind the new instance automatically.
+  /// them requires unbinding and recreating the whole use case. The new
+  /// instance is bound right away if the previous one was bound, so the next
+  /// [takePicture] does not wait for the camera to reconfigure.
   ///
   /// If no camera has been created yet, this only updates the requested
   /// settings; [createCamera] applies them when the camera is created.
-  Future<void> _recreateImageCapture() async {
+  Future<void> _recreateImageCapture(int cameraId) async {
     if (imageCapture == null) {
       return;
     }
 
-    // Unbind the current ImageCapture if it exists and is bound.
+    final bool imageCaptureWasBound = await processCameraProvider!.isBound(imageCapture!);
     await _unbindUseCaseFromLifecycle(imageCapture!);
 
     // Recreate ImageCapture with the requested settings.
@@ -1187,6 +1184,10 @@ class AndroidCameraCameraX extends CameraPlatform {
       jpegQuality: _jpegQuality,
       zeroShutterLagEnabled: _zeroShutterLagEnabled,
     );
+
+    if (imageCaptureWasBound) {
+      await _bindUseCaseToLifecycle(imageCapture!, cameraId);
+    }
   }
 
   /// Prepare the capture session for video recording.
@@ -1660,6 +1661,11 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// high-resolution output size. This is skipped while zero-shutter-lag is
   /// enabled on a camera that supports it, since CameraX does not support
   /// zero-shutter-lag together with high-resolution output sizes.
+  ///
+  /// [preview] and [imageAnalysis] do not prefer higher resolution, since they
+  /// are currently bound together with [imageCapture] and are not expected to
+  /// get high-resolution output sizes anyway. Revisit this if the use cases
+  /// stop being bound together.
   ResolutionSelector? _getImageCaptureResolutionSelector() {
     if (_resolutionPreset != ResolutionPreset.max ||
         (_zeroShutterLagEnabled && _zeroShutterLagSupported)) {
