@@ -36,8 +36,8 @@ part 'generated/elevated_button_defaults_m3e.g.dart';
 /// such as dialogs or cards.
 ///
 /// An elevated button is a label [child] displayed on a [Material]
-/// widget whose [Material.elevation] increases when the button is
-/// pressed. The label's [Text] and [Icon] widgets are displayed in
+/// widget whose [Material.elevation] gives it a shadow. The label's
+/// [Text] and [Icon] widgets are displayed in
 /// [style]'s [ButtonStyle.foregroundColor] and the button's filled
 /// background is the [ButtonStyle.backgroundColor].
 ///
@@ -80,7 +80,7 @@ part 'generated/elevated_button_defaults_m3e.g.dart';
 ///
 /// See also:
 ///
-///  * [FilledButton], a filled button that doesn't elevate when pressed.
+///  * [FilledButton], a filled button that uses a primary fill color.
 ///  * [FilledButton.tonal], a filled button variant that uses a secondary fill color.
 ///  * [OutlinedButton], a button with an outlined border and no fill color.
 ///  * [TextButton], a button with no outline or fill color.
@@ -106,8 +106,10 @@ class ElevatedButton extends ButtonStyleButton {
   /// Create an elevated button from a pair of widgets that serve as the button's
   /// [icon] and [label].
   ///
-  /// The icon and label are arranged in a row and padded by 12 logical pixels
-  /// at the start, and 16 at the end, with an 8 pixel gap in between.
+  /// The icon and label are arranged in a row and padded by 16 logical pixels
+  /// at the start, and 24 at the end, with an 8 pixel gap in between. If
+  /// [ThemeData.useMaterial3] is false, the padding is 12 at the start and 16
+  /// at the end.
   ///
   /// With the Material 3 Expressive style, the padding and the gap between the
   /// icon and the label depend on [ButtonStyle.sizeVariant]. See
@@ -359,8 +361,8 @@ class ElevatedButton extends ButtonStyleButton {
   /// * `padding`
   ///   * `default font size <= 14` - horizontal(16)
   ///   * `14 < default font size <= 28` - lerp(horizontal(16), horizontal(8))
-  ///   * `28 < default font size <= 36` - lerp(horizontal(8), horizontal(4))
-  ///   * `36 < default font size` - horizontal(4)
+  ///   * `28 < default font size <= 42` - lerp(horizontal(8), horizontal(4))
+  ///   * `42 < default font size` - horizontal(4)
   /// * `minimumSize` - Size(64, 36)
   /// * `fixedSize` - null
   /// * `maximumSize` - Size.infinite
@@ -379,8 +381,8 @@ class ElevatedButton extends ButtonStyleButton {
   /// * `padding`
   ///   * `default font size <= 14` - start(12) end(16)
   ///   * `14 < default font size <= 28` - lerp(start(12) end(16), horizontal(8))
-  ///   * `28 < default font size <= 36` - lerp(horizontal(8), horizontal(4))
-  ///   * `36 < default font size` - horizontal(4)
+  ///   * `28 < default font size <= 42` - lerp(horizontal(8), horizontal(4))
+  ///   * `42 < default font size` - horizontal(4)
   ///
   /// The default value for `side`, which defines the appearance of the button's
   /// outline, is null. That means that the outline is defined by the button
@@ -412,11 +414,13 @@ class ElevatedButton extends ButtonStyleButton {
   /// * `padding`
   ///   * `default font size <= 14` - horizontal(24)
   ///   * `14 < default font size <= 28` - lerp(horizontal(24), horizontal(12))
-  ///   * `28 < default font size <= 36` - lerp(horizontal(12), horizontal(6))
-  ///   * `36 < default font size` - horizontal(6)
+  ///   * `28 < default font size <= 42` - lerp(horizontal(12), horizontal(6))
+  ///   * `42 < default font size` - horizontal(6)
   /// * `minimumSize` - Size(64, 40)
   /// * `fixedSize` - null
   /// * `maximumSize` - Size.infinite
+  /// * `iconSize` - 18
+  /// * `iconColor` - same as `foregroundColor`
   /// * `side` - null
   /// * `shape` - StadiumBorder()
   /// * `mouseCursor` - WidgetStateMouseCursor.adaptiveClickable

@@ -1,3 +1,3 @@
 changelog: |
-  - Fixes the elevation values in the `FilledButton`, `FilledButton.styleFrom`, and `ElevatedButton.styleFrom` documentation.
+  - Fixes several errors in the `ElevatedButton` and `FilledButton` documentation.
 version: patch

@@ -28,7 +28,7 @@ import 'theme_data.dart';
 ///
 ///  * [ElevatedButtonTheme], the theme which is configured with this class.
 ///  * [ElevatedButton.defaultStyleOf], which returns the default [ButtonStyle]
-///    for text buttons.
+///    for elevated buttons.
 ///  * [ElevatedButton.styleFrom], which converts simple values into a
 ///    [ButtonStyle] that's consistent with [ElevatedButton]'s defaults.
 ///  * [WidgetStateProperty.resolve], "resolve" a material state property
