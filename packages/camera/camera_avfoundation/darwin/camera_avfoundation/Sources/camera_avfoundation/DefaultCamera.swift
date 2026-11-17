@@ -1480,15 +1480,18 @@ final class DefaultCamera: NSObject, Camera {
     configureMaxPhotoDimensions()
 
     // The new device starts with its own default format, so the preset and HLG are applied to it
-    // again.
-    if mediaSettings.previewDynamicRange == .hlg10 {
+    // again, in one configuration change. Only an HLG session does this, because the Dart side
+    // keeps the preview widget it chose for the applied range.
+    if previewDynamicRange == .hlg10 {
       previewDynamicRange = .sdr
+      videoCaptureSession.beginConfiguration()
       do {
         try setCaptureSessionPreset(mediaSettings.resolutionPreset)
       } catch {
         reportErrorMessage("Unable to apply the resolution preset to the new camera: \(error)")
       }
       applyRequestedHLGFormat()
+      videoCaptureSession.commitConfiguration()
     }
     applyVideoSettings()
     if let layer = hdrPreviewLayer {

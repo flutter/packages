@@ -1102,7 +1102,10 @@ class AndroidCameraCameraX extends CameraPlatform {
     // The HLG use cases of the recording cannot be bound to a camera without
     // HLG, so the switch is rejected before the current camera is unbound.
     if (_appliedPreviewDynamicRange == PreviewDynamicRange.hlg10 &&
-        !(await getSupportedPreviewDynamicRanges(description)).contains(PreviewDynamicRange.hlg10)) {
+        (!(await getSupportedPreviewDynamicRanges(
+              description,
+            )).contains(PreviewDynamicRange.hlg10) ||
+            (!_recordingNeedsSdrPreview && !await _recordsHlg(chosenCameraInfo!)))) {
       throw CameraException(
         'setDescriptionWhileRecordingFailed',
         'The camera cannot continue a recording with an HDR (hlg10) preview.',
@@ -1570,10 +1573,12 @@ class AndroidCameraCameraX extends CameraPlatform {
           !_isUnsupportedCombination(e)) {
         rethrow;
       }
+      final VideoCapture? previousVideoCapture = videoCapture;
       await _rebindPreviewAsSdr();
       camera = await processCameraProvider!.bindToLifecycle(cameraSelector!, <UseCase>[
         if (!_previewIsPaused) preview!,
-        useCase,
+        // The HLG VideoCapture was replaced by an SDR one.
+        if (identical(useCase, previousVideoCapture)) videoCapture! else useCase,
       ]);
       await _updateCameraInfoAndLiveCameraState(cameraId);
     }
@@ -1604,6 +1609,15 @@ class AndroidCameraCameraX extends CameraPlatform {
     await _unbindUseCaseFromLifecycle(videoCapture!);
     videoCapture = VideoCapture.withOutput(videoOutput: recorder!, targetFpsRange: _targetFpsRange);
     _recordingNeedsSdrPreview = true;
+    if (_lockedCaptureOrientation != null) {
+      await videoCapture!.setTargetRotation(_lockedCaptureOrientation!);
+    }
+  }
+
+  /// Whether the recorder can record 10-bit HLG video from [cameraInfo].
+  Future<bool> _recordsHlg(CameraInfo cameraInfo) async {
+    final VideoCapabilities capabilities = await Recorder.getVideoCapabilities(cameraInfo);
+    return (await capabilities.getSupportedDynamicRanges()).contains(DynamicRangeType.hlg10);
   }
 
   /// Whether [e] reports that CameraX cannot bind the requested combination
