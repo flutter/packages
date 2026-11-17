@@ -36,7 +36,8 @@ final class CameraMethodChannelTests: XCTestCase {
         framesPerSecond: nil,
         videoBitrate: nil,
         audioBitrate: nil,
-        enableAudio: true
+        enableAudio: true,
+        previewDynamicRange: .sdr
       )
     ) { result in
       resultValue = self.assertSuccess(result)
@@ -60,7 +61,8 @@ final class CameraMethodChannelTests: XCTestCase {
         framesPerSecond: nil,
         videoBitrate: nil,
         audioBitrate: nil,
-        enableAudio: true
+        enableAudio: true,
+        previewDynamicRange: .sdr
       )
     ) { result in
       createExpectation.fulfill()

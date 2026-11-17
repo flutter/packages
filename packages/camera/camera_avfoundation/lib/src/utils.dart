@@ -36,6 +36,14 @@ CameraLensType cameraLensTypeFromPlatform(PlatformCameraLensType type) {
   };
 }
 
+/// Converts a Pigeon [PlatformPreviewDynamicRange] to a [PreviewDynamicRange].
+PreviewDynamicRange previewDynamicRangeFromPlatform(PlatformPreviewDynamicRange range) {
+  return switch (range) {
+    PlatformPreviewDynamicRange.sdr => PreviewDynamicRange.sdr,
+    PlatformPreviewDynamicRange.hlg10 => PreviewDynamicRange.hlg10,
+  };
+}
+
 /// Convents the given device orientation to Pigeon.
 PlatformDeviceOrientation serializeDeviceOrientation(DeviceOrientation orientation) {
   switch (orientation) {

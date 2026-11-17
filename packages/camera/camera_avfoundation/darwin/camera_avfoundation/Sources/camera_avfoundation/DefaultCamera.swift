@@ -3,20 +3,30 @@
 // found in the LICENSE file.
 
 import AVFoundation
+import CoreImage
 import CoreMotion
 import Flutter
+import ImageIO
 
 final class DefaultCamera: NSObject, Camera {
   var dartAPI: CameraEventApi?
   var onFrameAvailable: (() -> Void)?
 
-  var videoFormat: FourCharCode = kCVPixelFormatType_32BGRA {
-    didSet {
-      captureVideoOutput.videoSettings = [
-        kCVPixelBufferPixelFormatTypeKey as String: videoFormat
-      ]
+  /// The pixel format of the buffers delivered to image streaming and recording. Setting it
+  /// requests a format; the value read back is the one actually applied, which is the 10-bit
+  /// format while an HLG format is active.
+  var videoFormat: FourCharCode {
+    get { appliedVideoFormat }
+    set {
+      requestedVideoFormat = newValue
+      applyVideoSettings()
     }
   }
+
+  private var requestedVideoFormat: FourCharCode = kCVPixelFormatType_32BGRA
+  private var appliedVideoFormat: FourCharCode = kCVPixelFormatType_32BGRA
+
+  private(set) var previewDynamicRange = PlatformPreviewDynamicRange.sdr
 
   private(set) var isPreviewPaused = false
 
@@ -79,6 +89,7 @@ final class DefaultCamera: NSObject, Camera {
   private(set) var inProgressSavePhotoDelegates = [Int64: SavePhotoDelegate]()
 
   private var imageStreamHandler: ImageStreamHandler?
+  private let hdrFrameConverter = HDRFrameConverter()
 
   private var previewSize: CGSize?
   var deviceOrientation: UIDeviceOrientation {
@@ -91,6 +102,10 @@ final class DefaultCamera: NSObject, Camera {
   /// Tracks the latest pixel buffer sent from AVFoundation's sample buffer delegate callback.
   /// Used to deliver the latest pixel buffer to the flutter engine via the `copyPixelBuffer` API.
   private var latestPixelBuffer: CVPixelBuffer?
+
+  /// The layer that renders the HLG preview, if the platform view attached one.
+  private weak var hdrPreviewLayer: AVCaptureVideoPreviewLayer?
+  private var hdrPreviewConnection: AVCaptureConnection?
 
   private var videoRecordingPath: String?
   private(set) var isRecording = false
@@ -140,6 +155,16 @@ final class DefaultCamera: NSObject, Camera {
       details: error.domain)
   }
 
+  /// Prepares the photo output when the session starts. In HDR mode a deferred photo output is set
+  /// up by the first capture request, and that request fails.
+  private static func disableDeferredStart(of output: AVCapturePhotoOutput) {
+    #if compiler(>=6.2)
+      if #available(iOS 26.0, macOS 26.0, *), output.isDeferredStartSupported {
+        output.isDeferredStartEnabled = false
+      }
+    #endif
+  }
+
   private static func createConnection(
     captureDevice: CaptureDevice,
     videoFormat: FourCharCode,
@@ -150,9 +175,17 @@ final class DefaultCamera: NSObject, Camera {
 
     // Setup video capture output.
     let captureVideoOutput = AVCaptureVideoDataOutput()
-    captureVideoOutput.videoSettings = [
-      kCVPixelBufferPixelFormatTypeKey as String: videoFormat
-    ]
+    // The output is not attached to a session yet, so it offers the default formats; the format is
+    // checked again once the session configuration is final.
+    if let format = FormatUtils.resolveVideoPixelFormat(
+      requested: videoFormat,
+      available: captureVideoOutput.availableVideoPixelFormatTypes,
+      hlgActive: false)
+    {
+      captureVideoOutput.videoSettings = [
+        kCVPixelBufferPixelFormatTypeKey as String: format
+      ]
+    }
     captureVideoOutput.alwaysDiscardsLateVideoFrames = true
 
     // Setup video capture connection.
@@ -194,7 +227,7 @@ final class DefaultCamera: NSObject, Camera {
     let connection: AVCaptureConnection
     (captureVideoInput, captureVideoOutput, connection) = try DefaultCamera.createConnection(
       captureDevice: captureDevice,
-      videoFormat: videoFormat,
+      videoFormat: kCVPixelFormatType_32BGRA,
       captureDeviceInputFactory: configuration.captureDeviceInputFactory)
 
     super.init()
@@ -205,6 +238,9 @@ final class DefaultCamera: NSObject, Camera {
     videoCaptureSession.addOutputWithNoConnections(captureVideoOutput.avOutput)
     videoCaptureSession.addConnection(connection)
 
+    if configuration.mediaSettings.previewDynamicRange == .hlg10 {
+      DefaultCamera.disableDeferredStart(of: capturePhotoOutput.avOutput)
+    }
     videoCaptureSession.addOutput(capturePhotoOutput.avOutput)
 
     motionManager.startAccelerometerUpdates()
@@ -218,11 +254,16 @@ final class DefaultCamera: NSObject, Camera {
       defer { mediaSettingsAVWrapper.commitConfiguration(for: videoCaptureSession) }
 
       try setCaptureSessionPreset(mediaSettings.resolutionPreset)
+      let isHLGFormatApplied = applyHLGFormat()
 
       (captureDevice.flutterActiveFormat, framesPerSecond) = FormatUtils.findBestFormat(
         for: captureDevice,
         mediaSettings: mediaSettings,
-        videoDimensionsConverter: videoDimensionsConverter)
+        videoDimensionsConverter: videoDimensionsConverter,
+        formatFilter: isHLGFormatApplied ? FormatUtils.isHLGCapable : nil)
+      if isHLGFormatApplied {
+        FormatUtils.setHLGColorSpace(on: captureDevice)
+      }
 
       if let framesPerSecond = framesPerSecond {
         // Set frame rate with 1/10 precision allowing non-integral values.
@@ -236,8 +277,11 @@ final class DefaultCamera: NSObject, Camera {
       // If the frame rate is not important fall to a less restrictive
       // behavior (no configuration locking).
       try setCaptureSessionPreset(mediaSettings.resolutionPreset)
+      applyRequestedHLGFormat()
     }
 
+    // The offered pixel formats depend on the active format, which is final at this point.
+    applyVideoSettings()
     updateOrientation()
 
     // Handle video and audio interruptions and errors. Interruption can happen for example by
@@ -386,6 +430,91 @@ final class DefaultCamera: NSObject, Camera {
       }
     }
     return bestFormat
+  }
+
+  /// Applies an HLG format for the resolution preset if `hlg10` was requested. The preview stays
+  /// SDR if the device cannot be locked or has no suitable HLG format.
+  private func applyRequestedHLGFormat() {
+    guard mediaSettings.previewDynamicRange == .hlg10 else { return }
+    do {
+      try captureDevice.lockForConfiguration()
+      defer { captureDevice.unlockForConfiguration() }
+      _ = applyHLGFormat()
+    } catch {
+      reportErrorMessage("Unable to lock the camera for the HDR preview: \(error)")
+    }
+  }
+
+  /// Switches the device to an HLG format that matches the active format's aspect ratio and size,
+  /// sets the HLG color space, and stops the session from choosing the color space itself. The
+  /// caller must have locked the device for configuration. Returns false and leaves the device
+  /// untouched if the HLG range was not requested or no suitable format exists, in which case the
+  /// preview stays SDR.
+  private func applyHLGFormat() -> Bool {
+    guard mediaSettings.previewDynamicRange == .hlg10,
+      let format = FormatUtils.findHLGFormat(
+        for: captureDevice,
+        sessionPreset: videoCaptureSession.sessionPreset,
+        reference: captureDevice.flutterActiveFormat,
+        videoDimensionsConverter: videoDimensionsConverter)
+    else {
+      return false
+    }
+
+    videoCaptureSession.automaticallyConfiguresCaptureDeviceForWideColor = false
+    videoCaptureSession.sessionPreset = .inputPriority
+    captureDevice.flutterActiveFormat = format
+    FormatUtils.setHLGColorSpace(on: captureDevice)
+    previewDynamicRange = .hlg10
+
+    let size = videoDimensionsConverter(format)
+    previewSize = CGSize(width: CGFloat(size.width), height: CGFloat(size.height))
+    audioCaptureSession.sessionPreset = videoCaptureSession.sessionPreset
+    return true
+  }
+
+  /// Sets `videoSettings` to the requested pixel format, or to the 10-bit format while an HLG
+  /// format is active. Setting a format that `availableVideoPixelFormatTypes` does not list throws
+  /// an exception, and that list changes with the active format, so it is read every time.
+  private func applyVideoSettings() {
+    guard
+      let format = FormatUtils.resolveVideoPixelFormat(
+        requested: requestedVideoFormat,
+        available: captureVideoOutput.availableVideoPixelFormatTypes,
+        hlgActive: previewDynamicRange == .hlg10)
+    else {
+      reportErrorMessage("The requested video pixel format is not supported by the active format.")
+      return
+    }
+    captureVideoOutput.videoSettings = [kCVPixelBufferPixelFormatTypeKey as String: format]
+    appliedVideoFormat = format
+  }
+
+  func attachPreviewLayer(_ layer: AVCaptureVideoPreviewLayer) {
+    guard let session = videoCaptureSession as? AVCaptureSession,
+      let port = captureVideoInput.ports.first(where: { $0.mediaType == .video })
+    else {
+      return
+    }
+
+    videoCaptureSession.beginConfiguration()
+    // Removing the input of a camera switch already removed the old connection.
+    if let oldConnection = hdrPreviewConnection, session.connections.contains(oldConnection) {
+      session.removeConnection(oldConnection)
+    }
+    layer.setSessionWithNoConnection(session)
+    let connection = AVCaptureConnection(inputPort: port, videoPreviewLayer: layer)
+    connection.automaticallyAdjustsVideoMirroring = false
+    connection.isVideoMirrored = captureDevice.position == .front
+    connection.isEnabled = !isPreviewPaused
+    if videoCaptureSession.canAddConnection(connection) {
+      videoCaptureSession.addConnection(connection)
+      hdrPreviewConnection = connection
+    }
+    videoCaptureSession.commitConfiguration()
+
+    hdrPreviewLayer = layer
+    updateOrientation()
   }
 
   func setUpCaptureSessionForAudioIfNeeded() {
@@ -874,13 +1003,21 @@ final class DefaultCamera: NSObject, Camera {
 
     updateOrientation(orientation, forCaptureOutput: capturePhotoOutput)
     updateOrientation(orientation, forCaptureOutput: captureVideoOutput)
+    if let connection = hdrPreviewConnection {
+      updateOrientation(orientation, of: connection)
+    }
   }
 
   private func updateOrientation(
     _ orientation: UIDeviceOrientation, forCaptureOutput captureOutput: CaptureOutput
   ) {
     guard let connection = captureOutput.connection(with: .video) else { return }
+    updateOrientation(orientation, of: connection)
+  }
 
+  private func updateOrientation(
+    _ orientation: UIDeviceOrientation, of connection: CaptureConnection
+  ) {
     if #available(iOS 17.0, *) {
       let angle = videoRotationAngle(forDeviceOrientation: orientation)
       if connection.isVideoRotationAngleSupported(angle) {
@@ -1239,10 +1376,14 @@ final class DefaultCamera: NSObject, Camera {
 
   func pausePreview() {
     isPreviewPaused = true
+    // The texture path stops at the next frame through `isPreviewPaused`; the preview layer draws
+    // straight from the session, so its connection is disabled instead.
+    hdrPreviewConnection?.isEnabled = false
   }
 
   func resumePreview() {
     isPreviewPaused = false
+    hdrPreviewConnection?.isEnabled = true
   }
 
   func setDescriptionWhileRecording(
@@ -1258,7 +1399,34 @@ final class DefaultCamera: NSObject, Camera {
       return
     }
 
-    captureDevice = videoCaptureDeviceFactory(cameraName)
+    let newCaptureDevice = videoCaptureDeviceFactory(cameraName)
+    // The range is fixed for the life of the camera and the writer keeps its format and size, so
+    // an HLG recording continues only on an HLG format of the same size. Anything else is refused
+    // before the session is touched.
+    var newHLGFormat: CaptureDeviceFormat?
+    if previewDynamicRange == .hlg10 {
+      let size = videoDimensionsConverter(captureDevice.flutterActiveFormat)
+      newHLGFormat = newCaptureDevice.flutterFormats.first {
+        let candidate = videoDimensionsConverter($0)
+        return FormatUtils.isHLGCapable($0) && candidate.width == size.width
+          && candidate.height == size.height
+      }
+      guard newHLGFormat != nil, (try? newCaptureDevice.lockForConfiguration()) != nil else {
+        completion(
+          .failure(
+            PigeonError(
+              code: "setDescriptionWhileRecordingFailed",
+              message: "The camera cannot continue a recording with an HDR (hlg10) preview.",
+              details: nil)))
+        return
+      }
+    }
+    defer {
+      if newHLGFormat != nil {
+        newCaptureDevice.unlockForConfiguration()
+      }
+    }
+    captureDevice = newCaptureDevice
 
     let oldConnection = captureVideoOutput.connection(with: .video)
 
@@ -1275,7 +1443,7 @@ final class DefaultCamera: NSObject, Camera {
     do {
       (captureVideoInput, captureVideoOutput, newConnection) = try DefaultCamera.createConnection(
         captureDevice: captureDevice,
-        videoFormat: videoFormat,
+        videoFormat: requestedVideoFormat,
         captureDeviceInputFactory: captureDeviceInputFactory)
 
       captureVideoOutput.setSampleBufferDelegate(self, queue: captureSessionQueue)
@@ -1334,9 +1502,19 @@ final class DefaultCamera: NSObject, Camera {
             details: nil)))
     }
     videoCaptureSession.addConnection(newConnection)
+    if let newHLGFormat {
+      // The new device starts with its own default format.
+      videoCaptureSession.sessionPreset = .inputPriority
+      captureDevice.flutterActiveFormat = newHLGFormat
+      FormatUtils.setHLGColorSpace(on: captureDevice)
+    }
     videoCaptureSession.commitConfiguration()
 
     configureMaxPhotoDimensions()
+    applyVideoSettings()
+    if let layer = hdrPreviewLayer {
+      attachPreviewLayer(layer)
+    }
 
     // Reconfiguring the session silently resets `isZeroShutterLagEnabled`;
     // reapply the state the caller last requested.
@@ -1403,11 +1581,13 @@ final class DefaultCamera: NSObject, Camera {
     if output == captureVideoOutput.avOutput {
       if let newBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) {
 
-        pixelBufferSynchronizationQueue.sync {
-          latestPixelBuffer = newBuffer
+        // The HLG preview is rendered by the preview layer, not by the texture.
+        if previewDynamicRange != .hlg10 {
+          pixelBufferSynchronizationQueue.sync {
+            latestPixelBuffer = newBuffer
+          }
+          onFrameAvailable?()
         }
-
-        onFrameAvailable?()
       }
     }
 
@@ -1513,6 +1693,36 @@ final class DefaultCamera: NSObject, Camera {
 
     // Must lock base address before accessing the pixel data
     CVPixelBufferLockBaseAddress(pixelBuffer, .readOnly)
+
+    // An HDR session keeps running in 10 bits, and its frames are delivered in the requested
+    // 8-bit format.
+    if previewDynamicRange == .hlg10,
+      let converted = hdrFrameConverter.convert(pixelBuffer, to: requestedVideoFormat)
+    {
+      let imageWidth = CVPixelBufferGetWidth(pixelBuffer)
+      let imageHeight = CVPixelBufferGetHeight(pixelBuffer)
+      CVPixelBufferUnlockBaseAddress(pixelBuffer, .readOnly)
+      let imageBuffer = PlatformCameraImageData(
+        formatCode: Int64(requestedVideoFormat),
+        width: Int64(imageWidth),
+        height: Int64(imageHeight),
+        planes: converted.map {
+          PlatformCameraImagePlane(
+            bytes: FlutterStandardTypedData(bytes: $0.bytes),
+            bytesPerRow: Int64($0.bytesPerRow),
+            width: Int64($0.width),
+            height: Int64($0.height))
+        },
+        lensAperture: Double(captureDevice.lensAperture),
+        sensorExposureTimeNanoseconds: Int64(
+          captureDevice.exposureDuration.seconds * 1_000_000_000),
+        sensorSensitivity: Double(captureDevice.iso)
+      )
+      DispatchQueue.main.async {
+        eventSink.success(imageBuffer)
+      }
+      return
+    }
 
     let imageWidth = CVPixelBufferGetWidth(pixelBuffer)
     let imageHeight = CVPixelBufferGetHeight(pixelBuffer)

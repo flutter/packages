@@ -25,6 +25,10 @@ protocol CaptureDevice: NSObjectProtocol {
   var flutterActiveFormat: CaptureDeviceFormat { get set }
   var flutterFormats: [CaptureDeviceFormat] { get }
 
+  /// Corresponds to the `activeColorSpace` property of `AVCaptureDevice`. Must be set while the
+  /// device is locked for configuration.
+  var activeColorSpace: AVCaptureColorSpace { get set }
+
   // Flash/Torch
   var hasFlash: Bool { get }
   var hasTorch: Bool { get }

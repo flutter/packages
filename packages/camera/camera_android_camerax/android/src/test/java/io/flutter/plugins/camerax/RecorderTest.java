@@ -7,16 +7,20 @@ package io.flutter.plugins.camerax;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 
 import android.content.Context;
+import androidx.camera.core.CameraInfo;
 import androidx.camera.video.FileOutputOptions;
 import androidx.camera.video.PendingRecording;
 import androidx.camera.video.Quality;
 import androidx.camera.video.QualitySelector;
 import androidx.camera.video.Recorder;
+import androidx.camera.video.VideoCapabilities;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.MockedStatic;
 import org.robolectric.RobolectricTestRunner;
 
 @RunWith(RobolectricTestRunner.class)
@@ -108,5 +112,18 @@ public class RecorderTest {
     // valid parent like current directory, or mock it. Actually, `new
     // File("file.txt").getParentFile()` is null, which bypasses the parent existence check!)
     api.prepareRecording(mockRecorder, "file.txt");
+  }
+
+  @Test
+  public void getVideoCapabilities_returnsTheCapabilitiesOfTheCamera() {
+    final PigeonApiRecorder api = new TestProxyApiRegistrar().getPigeonApiRecorder();
+    final CameraInfo cameraInfo = mock(CameraInfo.class);
+    final VideoCapabilities capabilities = mock(VideoCapabilities.class);
+
+    try (MockedStatic<Recorder> mockedRecorder = mockStatic(Recorder.class)) {
+      mockedRecorder.when(() -> Recorder.getVideoCapabilities(cameraInfo)).thenReturn(capabilities);
+
+      assertEquals(capabilities, api.getVideoCapabilities(cameraInfo));
+    }
   }
 }

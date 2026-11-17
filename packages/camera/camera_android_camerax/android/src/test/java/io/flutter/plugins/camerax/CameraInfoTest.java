@@ -6,6 +6,7 @@ package io.flutter.plugins.camerax;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -13,12 +14,15 @@ import androidx.annotation.OptIn;
 import androidx.camera.core.CameraInfo;
 import androidx.camera.core.CameraSelector;
 import androidx.camera.core.CameraState;
+import androidx.camera.core.DynamicRange;
 import androidx.camera.core.ExperimentalZeroShutterLag;
 import androidx.camera.core.ExposureState;
 import androidx.camera.core.ZoomState;
 import androidx.lifecycle.LiveData;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import org.junit.Test;
 
 public class CameraInfoTest {
@@ -112,5 +116,33 @@ public class CameraInfoTest {
     when(instance.getZoomState()).thenReturn(value);
 
     assertEquals(value, api.getZoomState(instance).getLiveData());
+  }
+
+  @Test
+  public void querySupportedDynamicRanges_mapsCandidatesAndResult() {
+    final PigeonApiCameraInfo api = new TestProxyApiRegistrar().getPigeonApiCameraInfo();
+
+    final CameraInfo instance = mock(CameraInfo.class);
+    final Set<DynamicRange> candidates = new HashSet<>(Arrays.asList(DynamicRange.HLG_10_BIT));
+    when(instance.querySupportedDynamicRanges(candidates))
+        .thenReturn(new HashSet<>(Arrays.asList(DynamicRange.HLG_10_BIT)));
+
+    assertEquals(
+        Arrays.asList(DynamicRangeType.HLG10),
+        api.querySupportedDynamicRanges(instance, Arrays.asList(DynamicRangeType.HLG10)));
+  }
+
+  @Test
+  public void querySupportedDynamicRanges_omitsRangesTheCameraDoesNotSupport() {
+    final PigeonApiCameraInfo api = new TestProxyApiRegistrar().getPigeonApiCameraInfo();
+
+    final CameraInfo instance = mock(CameraInfo.class);
+    when(instance.querySupportedDynamicRanges(any()))
+        .thenReturn(new HashSet<>(Arrays.asList(DynamicRange.SDR)));
+
+    assertEquals(
+        Arrays.asList(DynamicRangeType.SDR),
+        api.querySupportedDynamicRanges(
+            instance, Arrays.asList(DynamicRangeType.SDR, DynamicRangeType.HLG10)));
   }
 }

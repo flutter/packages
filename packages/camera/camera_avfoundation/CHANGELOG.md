@@ -1,5 +1,7 @@
-## NEXT
+## 0.11.2
 
+* Adds an HDR (10-bit HLG) preview through `MediaSettings.previewDynamicRange`.
+* Checks `availableVideoPixelFormatTypes` before setting `AVCaptureVideoDataOutput.videoSettings`.
 * Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
 
 ## 0.11.1

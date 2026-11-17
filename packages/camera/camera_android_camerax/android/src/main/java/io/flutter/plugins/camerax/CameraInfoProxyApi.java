@@ -8,9 +8,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.OptIn;
 import androidx.camera.core.CameraInfo;
 import androidx.camera.core.CameraSelector;
+import androidx.camera.core.DynamicRange;
 import androidx.camera.core.ExperimentalLensFacing;
 import androidx.camera.core.ExperimentalZeroShutterLag;
 import androidx.camera.core.ExposureState;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * ProxyApi implementation for {@link CameraInfo}. This class may handle instantiating native object
@@ -67,5 +72,32 @@ class CameraInfoProxyApi extends PigeonApiCameraInfo {
   @OptIn(markerClass = ExperimentalZeroShutterLag.class)
   public boolean isZslSupported(CameraInfo pigeonInstance) {
     return pigeonInstance.isZslSupported();
+  }
+
+  @NonNull
+  @Override
+  public List<DynamicRangeType> querySupportedDynamicRanges(
+      @NonNull CameraInfo pigeonInstance, @NonNull List<? extends DynamicRangeType> candidates) {
+    final Set<DynamicRange> candidateRanges = new HashSet<>();
+    for (DynamicRangeType candidate : candidates) {
+      switch (candidate) {
+        case SDR:
+          candidateRanges.add(DynamicRange.SDR);
+          break;
+        case HLG10:
+          candidateRanges.add(DynamicRange.HLG_10_BIT);
+          break;
+      }
+    }
+
+    final Set<DynamicRange> supported = pigeonInstance.querySupportedDynamicRanges(candidateRanges);
+    final List<DynamicRangeType> result = new ArrayList<>();
+    if (supported.contains(DynamicRange.SDR)) {
+      result.add(DynamicRangeType.SDR);
+    }
+    if (supported.contains(DynamicRange.HLG_10_BIT)) {
+      result.add(DynamicRangeType.HLG10);
+    }
+    return result;
   }
 }

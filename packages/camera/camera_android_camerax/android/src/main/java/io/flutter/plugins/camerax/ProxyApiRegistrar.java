@@ -234,6 +234,12 @@ public class ProxyApiRegistrar extends CameraXLibraryPigeonProxyApiRegistrar {
 
   @NonNull
   @Override
+  public PigeonApiPreviewView getPigeonApiPreviewView() {
+    return new PreviewViewProxyApi(this);
+  }
+
+  @NonNull
+  @Override
   public PigeonApiVideoCapture getPigeonApiVideoCapture() {
     return new VideoCaptureProxyApi(this);
   }
@@ -242,6 +248,12 @@ public class ProxyApiRegistrar extends CameraXLibraryPigeonProxyApiRegistrar {
   @Override
   public PigeonApiRecorder getPigeonApiRecorder() {
     return new RecorderProxyApi(this);
+  }
+
+  @NonNull
+  @Override
+  public PigeonApiVideoCapabilities getPigeonApiVideoCapabilities() {
+    return new VideoCapabilitiesProxyApi(this);
   }
 
   @NonNull

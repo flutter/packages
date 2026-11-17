@@ -117,7 +117,8 @@ final class CameraSettingsTests: XCTestCase {
       framesPerSecond: testFramesPerSecond,
       videoBitrate: testVideoBitrate,
       audioBitrate: testAudioBitrate,
-      enableAudio: enableAudio
+      enableAudio: enableAudio,
+      previewDynamicRange: .sdr
     )
     let injectedWrapper = TestMediaSettingsAVWrapper(test: self, expectAudio: enableAudio)
 
@@ -171,7 +172,8 @@ final class CameraSettingsTests: XCTestCase {
       framesPerSecond: testFramesPerSecond,
       videoBitrate: testVideoBitrate,
       audioBitrate: testAudioBitrate,
-      enableAudio: false
+      enableAudio: false,
+      previewDynamicRange: .sdr
     )
     var resultValue: Int64?
     camera.createCameraOnSessionQueue(
@@ -192,7 +194,8 @@ final class CameraSettingsTests: XCTestCase {
       framesPerSecond: 60,
       videoBitrate: testVideoBitrate,
       audioBitrate: testAudioBitrate,
-      enableAudio: false
+      enableAudio: false,
+      previewDynamicRange: .sdr
     )
 
     let configuration = CameraTestUtils.createTestCameraConfiguration()
@@ -210,7 +213,8 @@ final class CameraSettingsTests: XCTestCase {
       framesPerSecond: testFramesPerSecond,
       videoBitrate: testVideoBitrate,
       audioBitrate: testAudioBitrate,
-      enableAudio: false
+      enableAudio: false,
+      previewDynamicRange: .sdr
     )
 
     let wrapper = TestMediaSettingsAVWrapper(test: self, expectAudio: false)
@@ -257,7 +261,8 @@ final class CameraSettingsTests: XCTestCase {
       framesPerSecond: testFramesPerSecond,
       videoBitrate: testVideoBitrate,
       audioBitrate: testAudioBitrate,
-      enableAudio: true
+      enableAudio: true,
+      previewDynamicRange: .sdr
     )
 
     let wrapper = TestMediaSettingsAVWrapper(test: self, expectAudio: true)

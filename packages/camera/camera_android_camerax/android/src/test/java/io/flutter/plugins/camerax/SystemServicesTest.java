@@ -169,4 +169,14 @@ public class SystemServicesTest {
 
     verify(mockApi).onCameraError(eq(instance), eq(errorDescription), any());
   }
+
+  @Test
+  public void getAndroidSdkVersion_returnsTheSdkVersion() {
+    final SystemServicesManagerProxyApi api =
+        new TestProxyApiRegistrar().getPigeonApiSystemServicesManager();
+
+    assertEquals(
+        android.os.Build.VERSION.SDK_INT,
+        api.getAndroidSdkVersion(mock(SystemServicesManager.class)));
+  }
 }

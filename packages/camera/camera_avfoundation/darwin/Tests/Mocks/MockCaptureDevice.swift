@@ -41,6 +41,7 @@ class MockCaptureDevice: NSObject, CaptureDevice {
   }
 
   var flutterFormats: [CaptureDeviceFormat] = []
+  var activeColorSpace = AVCaptureColorSpace.sRGB
   var hasFlash = false
   var hasTorch = false
   var isTorchAvailable = false

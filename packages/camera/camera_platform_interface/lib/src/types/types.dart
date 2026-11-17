@@ -11,6 +11,7 @@ export 'focus_mode.dart';
 export 'image_file_format.dart';
 export 'image_format_group.dart';
 export 'media_settings.dart';
+export 'preview_dynamic_range.dart';
 export 'resolution_preset.dart';
 export 'video_capture_options.dart';
 export 'video_stabilization_mode.dart';

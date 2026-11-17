@@ -110,6 +110,42 @@ enum CameraStateType {
 /// The types (T) properly wrapped to be used as a `LiveData<T>`.
 enum LiveDataSupportedType { cameraState, zoomState }
 
+/// The dynamic ranges that this plugin can request.
+///
+/// `DynamicRange` is a class with constants in CameraX; this plugin only uses
+/// the two constants below, so it is represented as an enum.
+///
+/// See https://developer.android.com/reference/androidx/camera/core/DynamicRange.
+enum DynamicRangeType {
+  /// Standard dynamic range (`DynamicRange.SDR`).
+  sdr,
+
+  /// 10-bit HLG high dynamic range (`DynamicRange.HLG_10_BIT`).
+  hlg10,
+}
+
+/// The implementation mode of a `PreviewView`.
+///
+/// See https://developer.android.com/reference/androidx/camera/view/PreviewView.ImplementationMode.
+enum PreviewViewImplementationMode {
+  /// Uses a `SurfaceView`.
+  performance,
+
+  /// Uses a `TextureView`.
+  compatible,
+}
+
+/// The scale type of a `PreviewView`.
+///
+/// See https://developer.android.com/reference/androidx/camera/view/PreviewView.ScaleType.
+enum PreviewViewScaleType {
+  /// Scales the preview to fill the view, cropping it, centered.
+  fillCenter,
+
+  /// Scales the preview to fit inside the view, centered.
+  fitCenter,
+}
+
 /// Immutable class for describing the range of two integer values.
 ///
 /// This is the equivalent to `android.util.Range<Integer>`.
@@ -283,6 +319,11 @@ abstract class CameraInfo {
   ///
   /// See https://developer.android.com/reference/androidx/camera/core/CameraInfo#isZslSupported().
   bool isZslSupported();
+
+  /// Returns the subset of [candidateDynamicRanges] that this camera supports.
+  ///
+  /// See https://developer.android.com/reference/androidx/camera/core/CameraInfo#querySupportedDynamicRanges(java.util.Set%3Candroidx.camera.core.DynamicRange%3E).
+  List<DynamicRangeType> querySupportedDynamicRanges(List<DynamicRangeType> candidateDynamicRanges);
 }
 
 /// Direction of lens of a camera.
@@ -392,6 +433,9 @@ abstract class SystemServicesManager {
   /// Returns a path to be used to create a temp file in the current cache
   /// directory.
   String getTempFilePath(String prefix, String suffix);
+
+  /// Returns `Build.VERSION.SDK_INT`.
+  int getAndroidSdkVersion();
 }
 
 /// Contains data when an attempt to retrieve camera permissions fails.
@@ -423,7 +467,7 @@ abstract class DeviceOrientationManager {
 /// See https://developer.android.com/reference/kotlin/androidx/camera/core/Preview.
 @ProxyApi(kotlinOptions: KotlinProxyApiOptions(fullClassName: 'androidx.camera.core.Preview'))
 abstract class Preview extends UseCase {
-  Preview(int? targetRotation, CameraIntegerRange? targetFpsRange);
+  Preview(int? targetRotation, CameraIntegerRange? targetFpsRange, DynamicRangeType? dynamicRange);
 
   late final ResolutionSelector? resolutionSelector;
 
@@ -441,6 +485,12 @@ abstract class Preview extends UseCase {
   /// created.
   void releaseSurfaceProvider();
 
+  /// Sets [provider] as the `SurfaceProvider` of this preview.
+  ///
+  /// Named differently from `setSurfaceProvider` above, which creates its own
+  /// provider from a Flutter `SurfaceProducer`.
+  void setViewSurfaceProvider(PreviewSurfaceProvider provider);
+
   /// Gets selected resolution information of the `Preview`.
   ResolutionInfo? getResolutionInfo();
 
@@ -452,6 +502,33 @@ abstract class Preview extends UseCase {
   bool surfaceProducerHandlesCropAndRotation();
 }
 
+/// Provides a `Surface` for a `Preview`.
+///
+/// See https://developer.android.com/reference/androidx/camera/core/Preview.SurfaceProvider.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'androidx.camera.core.Preview.SurfaceProvider',
+  ),
+)
+abstract class PreviewSurfaceProvider {}
+
+/// A view that displays a `Preview`.
+///
+/// See https://developer.android.com/reference/androidx/camera/view/PreviewView.
+@ProxyApi(kotlinOptions: KotlinProxyApiOptions(fullClassName: 'androidx.camera.view.PreviewView'))
+abstract class PreviewView {
+  PreviewView();
+
+  /// Sets the implementation mode of this view.
+  void setImplementationMode(PreviewViewImplementationMode mode);
+
+  /// Sets the scale type of this view.
+  void setScaleType(PreviewViewScaleType scaleType);
+
+  /// Returns the `SurfaceProvider` that renders a `Preview` into this view.
+  PreviewSurfaceProvider getSurfaceProvider();
+}
+
 /// A use case that provides camera stream suitable for video application.
 ///
 /// See https://developer.android.com/reference/kotlin/androidx/camera/video/VideoCapture.
@@ -460,7 +537,11 @@ abstract class Preview extends UseCase {
 )
 abstract class VideoCapture extends UseCase {
   /// Create a `VideoCapture` associated with the given `VideoOutput`.
-  VideoCapture.withOutput(VideoOutput videoOutput, CameraIntegerRange? targetFpsRange);
+  VideoCapture.withOutput(
+    VideoOutput videoOutput,
+    CameraIntegerRange? targetFpsRange,
+    DynamicRangeType? dynamicRange,
+  );
 
   /// Gets the VideoOutput associated with this VideoCapture.
   VideoOutput getOutput();
@@ -494,6 +575,22 @@ abstract class Recorder implements VideoOutput {
 
   /// Prepares a recording that will be saved to a File.
   PendingRecording prepareRecording(String path);
+
+  /// Gets the video capabilities of the camera described by [cameraInfo].
+  @static
+  VideoCapabilities getVideoCapabilities(CameraInfo cameraInfo);
+}
+
+/// The video recording capabilities of a camera.
+///
+/// See https://developer.android.com/reference/androidx/camera/video/VideoCapabilities.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(fullClassName: 'androidx.camera.video.VideoCapabilities'),
+)
+abstract class VideoCapabilities {
+  /// Gets the dynamic ranges that video recording supports, among the ones
+  /// that this plugin can request.
+  List<DynamicRangeType> getSupportedDynamicRanges();
 }
 
 /// Listens for `VideoRecordEvent`s from a `PendingRecording`.

@@ -19,7 +19,8 @@ enum CameraTestUtils {
       framesPerSecond: nil,
       videoBitrate: nil,
       audioBitrate: nil,
-      enableAudio: true)
+      enableAudio: true,
+      previewDynamicRange: .sdr)
   }
 
   /// Creates a test `CameraConfiguration` with a default mock setup.

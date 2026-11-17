@@ -29,3 +29,22 @@ By default, files saved within the application sandbox are private. If you want 
 
 [1]: https://pub.dev/packages/camera
 [2]: https://flutter.dev/to/endorsed-federated-plugin
+
+## HDR preview
+
+Requesting `PreviewDynamicRange.hlg10` (see `MediaSettings.previewDynamicRange`) is supported on
+devices that have a 10-bit format with the HLG BT.2020 color space. The preview is then shown with
+an `AVCaptureVideoPreviewLayer` in a platform view. HLG is a setting of the whole capture session,
+so while it is active:
+
+* The `max` resolution preset uses the largest HLG format with the same aspect ratio, which can be
+  smaller than the largest SDR format. Other presets use HLG only when an HLG format of exactly
+  their size exists.
+* Video is recorded in HLG (10-bit HEVC).
+* Zero-shutter-lag can be unavailable; check `isZeroShutterLagSupported`.
+* Image streaming keeps the session in HLG. Frames are narrowed to the requested 8-bit format
+  (`yuv420` or `bgra8888`); their values stay HLG BT.2020 encoded and are not tone mapped.
+
+* `setDescriptionWhileRecording` fails for a camera that has no HLG format.
+
+`getPreviewDynamicRange` reports the dynamic range that the camera was created with.

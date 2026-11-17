@@ -11,6 +11,10 @@ protocol CaptureSession: NSObjectProtocol {
   var inputs: [AVCaptureInput] { get }
   var outputs: [AVCaptureOutput] { get }
   var automaticallyConfiguresApplicationAudioSession: Bool { get set }
+
+  /// Corresponds to the `automaticallyConfiguresCaptureDeviceForWideColor` property of
+  /// `AVCaptureSession`.
+  var automaticallyConfiguresCaptureDeviceForWideColor: Bool { get set }
   var isRunning: Bool { get }
 
   func beginConfiguration()

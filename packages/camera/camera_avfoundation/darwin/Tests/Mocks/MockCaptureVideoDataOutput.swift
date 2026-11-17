@@ -11,8 +11,15 @@ import AVFoundation
 class MockCaptureVideoDataOutput: NSObject, CaptureVideoDataOutput {
   var avOutput = AVCaptureVideoDataOutput()
   var alwaysDiscardsLateVideoFrames = false
-  var videoSettings: [String: Any]! = [:]
-  var availableVideoPixelFormatTypes: [FourCharCode] = []
+  var videoSettings: [String: Any]! = [:] {
+    didSet { videoSettingsHistory.append(videoSettings) }
+  }
+  private(set) var videoSettingsHistory: [[String: Any]?] = []
+  var availableVideoPixelFormatTypes: [FourCharCode] = [
+    kCVPixelFormatType_32BGRA,
+    kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange,
+    kCVPixelFormatType_420YpCbCr8BiPlanarFullRange,
+  ]
 
   var connectionWithMediaTypeStub: ((AVMediaType) -> CaptureConnection?)?
 

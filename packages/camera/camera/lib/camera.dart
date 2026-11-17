@@ -12,6 +12,7 @@ export 'package:camera_platform_interface/camera_platform_interface.dart'
         FlashMode,
         FocusMode,
         ImageFormatGroup,
+        PreviewDynamicRange,
         ResolutionPreset,
         VideoStabilizationMode,
         XFile;

@@ -1,3 +1,7 @@
+## 0.12.3
+
+* Adds the `previewDynamicRange` parameter of `CameraController`, `availablePreviewDynamicRanges`, and `CameraController.getPreviewDynamicRange` for an HDR (10-bit HLG) camera preview.
+
 ## 0.12.2
 
 * Adds `CameraController.isZeroShutterLagSupported` and

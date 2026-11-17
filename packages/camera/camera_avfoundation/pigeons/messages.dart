@@ -61,6 +61,9 @@ enum PlatformResolutionPreset { low, medium, high, veryHigh, ultraHigh, max }
 
 enum PlatformVideoStabilizationMode { off, standard, cinematic, cinematicExtended }
 
+// Pigeon version of PreviewDynamicRange.
+enum PlatformPreviewDynamicRange { sdr, hlg10 }
+
 // Pigeon version of CameraDescription.
 class PlatformCameraDescription {
   PlatformCameraDescription({
@@ -151,6 +154,7 @@ class PlatformMediaSettings {
     required this.videoBitrate,
     required this.audioBitrate,
     required this.enableAudio,
+    required this.previewDynamicRange,
   });
 
   final PlatformResolutionPreset resolutionPreset;
@@ -158,6 +162,7 @@ class PlatformMediaSettings {
   final int? videoBitrate;
   final int? audioBitrate;
   final bool enableAudio;
+  final PlatformPreviewDynamicRange previewDynamicRange;
 }
 
 // Pigeon equivalent of CGPoint.
@@ -182,6 +187,17 @@ abstract class CameraApi {
   @async
   @ObjCSelector('availableCamerasWithCompletion')
   List<PlatformCameraDescription> getAvailableCameras();
+
+  /// Returns the preview dynamic ranges the camera device with the given
+  /// [cameraName] supports. Always contains `sdr`.
+  @async
+  @ObjCSelector('getSupportedPreviewDynamicRangesForCameraName:')
+  List<PlatformPreviewDynamicRange> getSupportedPreviewDynamicRanges(String cameraName);
+
+  /// Returns the preview dynamic range that was actually applied to the
+  /// current camera (`sdr` if a requested range had to be dropped).
+  @async
+  PlatformPreviewDynamicRange getPreviewDynamicRange();
 
   /// Create a new camera with the given settings, and returns its ID.
   @async

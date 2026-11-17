@@ -16,6 +16,7 @@ A Flutter plugin for iOS, Android and Web allowing access to the device cameras.
 * Snapshots can be captured and saved to a file.
 * Record video.
 * Add access to the image stream from Dart.
+* Show an HDR (10-bit HLG) preview on supported devices.
 
 ## Setup
 
@@ -91,6 +92,27 @@ Here is a list of all permission error codes that can be thrown:
 - `AudioAccessDeniedWithoutPrompt`: iOS only for now. Thrown when user has previously denied the permission. iOS does not allow prompting alert dialog a second time. Users will have to go to Settings > Privacy > Microphone in order to enable audio access.
 
 - `AudioAccessRestricted`: iOS only for now. Thrown when audio access is restricted and users cannot grant permission (parental control).
+
+### HDR preview
+
+To show an HDR preview, check that the camera supports it and request it when creating the
+controller:
+
+<?code-excerpt "readme_hdr_preview.dart (HdrPreview)"?>
+```dart
+final Iterable<PreviewDynamicRange> ranges = await availablePreviewDynamicRanges(description);
+final controller = CameraController(
+  description,
+  ResolutionPreset.max,
+  previewDynamicRange: ranges.contains(PreviewDynamicRange.hlg10)
+      ? PreviewDynamicRange.hlg10
+      : PreviewDynamicRange.sdr,
+);
+```
+
+HDR changes the whole capture session, not only the preview, and some operations are not
+supported with it. `CameraController.getPreviewDynamicRange` reports what is applied. See the
+platform implementation READMEs (`camera_android_camerax`, `camera_avfoundation`) for details.
 
 ### Example
 

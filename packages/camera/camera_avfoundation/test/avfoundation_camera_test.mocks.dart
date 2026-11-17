@@ -3,6 +3,7 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
+
 import 'dart:async' as _i4;
 
 import 'package:camera_avfoundation/src/messages.g.dart' as _i2;
@@ -55,6 +56,34 @@ class MockCameraApi extends _i1.Mock implements _i2.CameraApi {
             ),
           )
           as _i4.Future<List<_i2.PlatformCameraDescription>>);
+
+  @override
+  _i4.Future<List<_i2.PlatformPreviewDynamicRange>> getSupportedPreviewDynamicRanges(
+    String? cameraName,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#getSupportedPreviewDynamicRanges, [cameraName]),
+            returnValue: _i4.Future<List<_i2.PlatformPreviewDynamicRange>>.value(
+              <_i2.PlatformPreviewDynamicRange>[],
+            ),
+            returnValueForMissingStub: _i4.Future<List<_i2.PlatformPreviewDynamicRange>>.value(
+              <_i2.PlatformPreviewDynamicRange>[],
+            ),
+          )
+          as _i4.Future<List<_i2.PlatformPreviewDynamicRange>>);
+
+  @override
+  _i4.Future<_i2.PlatformPreviewDynamicRange> getPreviewDynamicRange() =>
+      (super.noSuchMethod(
+            Invocation.method(#getPreviewDynamicRange, []),
+            returnValue: _i4.Future<_i2.PlatformPreviewDynamicRange>.value(
+              _i2.PlatformPreviewDynamicRange.sdr,
+            ),
+            returnValueForMissingStub: _i4.Future<_i2.PlatformPreviewDynamicRange>.value(
+              _i2.PlatformPreviewDynamicRange.sdr,
+            ),
+          )
+          as _i4.Future<_i2.PlatformPreviewDynamicRange>);
 
   @override
   _i4.Future<int> create(String? cameraName, _i2.PlatformMediaSettings? settings) =>

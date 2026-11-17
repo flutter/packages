@@ -263,6 +263,11 @@ enum PlatformVideoStabilizationMode: Int, CaseIterable {
   case cinematicExtended = 3
 }
 
+enum PlatformPreviewDynamicRange: Int, CaseIterable {
+  case sdr = 0
+  case hlg10 = 1
+}
+
 /// Generated class from Pigeon that represents data sent in messages.
 struct PlatformCameraDescription: Hashable, CustomStringConvertible {
   /// The name of the camera device.
@@ -510,6 +515,7 @@ struct PlatformMediaSettings: Hashable, CustomStringConvertible {
   var videoBitrate: Int64? = nil
   var audioBitrate: Int64? = nil
   var enableAudio: Bool
+  var previewDynamicRange: PlatformPreviewDynamicRange
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> PlatformMediaSettings? {
@@ -518,13 +524,15 @@ struct PlatformMediaSettings: Hashable, CustomStringConvertible {
     let videoBitrate: Int64? = nilOrValue(pigeonVar_list[2])
     let audioBitrate: Int64? = nilOrValue(pigeonVar_list[3])
     let enableAudio = pigeonVar_list[4] as! Bool
+    let previewDynamicRange = pigeonVar_list[5] as! PlatformPreviewDynamicRange
 
     return PlatformMediaSettings(
       resolutionPreset: resolutionPreset,
       framesPerSecond: framesPerSecond,
       videoBitrate: videoBitrate,
       audioBitrate: audioBitrate,
-      enableAudio: enableAudio
+      enableAudio: enableAudio,
+      previewDynamicRange: previewDynamicRange
     )
   }
   func toList() -> [Any?] {
@@ -534,6 +542,7 @@ struct PlatformMediaSettings: Hashable, CustomStringConvertible {
       videoBitrate,
       audioBitrate,
       enableAudio,
+      previewDynamicRange,
     ]
   }
   static func == (lhs: PlatformMediaSettings, rhs: PlatformMediaSettings) -> Bool {
@@ -545,6 +554,7 @@ struct PlatformMediaSettings: Hashable, CustomStringConvertible {
       && MessagesPigeonInternal.deepEquals(lhs.videoBitrate, rhs.videoBitrate)
       && MessagesPigeonInternal.deepEquals(lhs.audioBitrate, rhs.audioBitrate)
       && MessagesPigeonInternal.deepEquals(lhs.enableAudio, rhs.enableAudio)
+      && MessagesPigeonInternal.deepEquals(lhs.previewDynamicRange, rhs.previewDynamicRange)
   }
 
   func hash(into hasher: inout Hasher) {
@@ -554,11 +564,12 @@ struct PlatformMediaSettings: Hashable, CustomStringConvertible {
     MessagesPigeonInternal.deepHash(value: videoBitrate, hasher: &hasher)
     MessagesPigeonInternal.deepHash(value: audioBitrate, hasher: &hasher)
     MessagesPigeonInternal.deepHash(value: enableAudio, hasher: &hasher)
+    MessagesPigeonInternal.deepHash(value: previewDynamicRange, hasher: &hasher)
   }
 
   public var description: String {
     return
-      "PlatformMediaSettings(resolutionPreset: \(String(describing: resolutionPreset)), framesPerSecond: \(String(describing: framesPerSecond)), videoBitrate: \(String(describing: videoBitrate)), audioBitrate: \(String(describing: audioBitrate)), enableAudio: \(String(describing: enableAudio)))"
+      "PlatformMediaSettings(resolutionPreset: \(String(describing: resolutionPreset)), framesPerSecond: \(String(describing: framesPerSecond)), videoBitrate: \(String(describing: videoBitrate)), audioBitrate: \(String(describing: audioBitrate)), enableAudio: \(String(describing: enableAudio)), previewDynamicRange: \(String(describing: previewDynamicRange)))"
   }
 }
 
@@ -707,18 +718,24 @@ private class MessagesPigeonCodecReader: FlutterStandardReader {
       }
       return nil
     case 139:
-      return PlatformCameraDescription.fromList(self.readValue() as! [Any?])
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as! Int?)
+      if let enumResultAsInt = enumResultAsInt {
+        return PlatformPreviewDynamicRange(rawValue: enumResultAsInt)
+      }
+      return nil
     case 140:
-      return PlatformCameraState.fromList(self.readValue() as! [Any?])
+      return PlatformCameraDescription.fromList(self.readValue() as! [Any?])
     case 141:
-      return PlatformCameraImageData.fromList(self.readValue() as! [Any?])
+      return PlatformCameraState.fromList(self.readValue() as! [Any?])
     case 142:
-      return PlatformCameraImagePlane.fromList(self.readValue() as! [Any?])
+      return PlatformCameraImageData.fromList(self.readValue() as! [Any?])
     case 143:
-      return PlatformMediaSettings.fromList(self.readValue() as! [Any?])
+      return PlatformCameraImagePlane.fromList(self.readValue() as! [Any?])
     case 144:
-      return PlatformPoint.fromList(self.readValue() as! [Any?])
+      return PlatformMediaSettings.fromList(self.readValue() as! [Any?])
     case 145:
+      return PlatformPoint.fromList(self.readValue() as! [Any?])
+    case 146:
       return PlatformSize.fromList(self.readValue() as! [Any?])
     default:
       return super.readValue(ofType: type)
@@ -758,26 +775,29 @@ private class MessagesPigeonCodecWriter: FlutterStandardWriter {
     } else if let value = value as? PlatformVideoStabilizationMode {
       super.writeByte(138)
       super.writeValue(value.rawValue)
-    } else if let value = value as? PlatformCameraDescription {
+    } else if let value = value as? PlatformPreviewDynamicRange {
       super.writeByte(139)
-      super.writeValue(value.toList())
-    } else if let value = value as? PlatformCameraState {
+      super.writeValue(value.rawValue)
+    } else if let value = value as? PlatformCameraDescription {
       super.writeByte(140)
       super.writeValue(value.toList())
-    } else if let value = value as? PlatformCameraImageData {
+    } else if let value = value as? PlatformCameraState {
       super.writeByte(141)
       super.writeValue(value.toList())
-    } else if let value = value as? PlatformCameraImagePlane {
+    } else if let value = value as? PlatformCameraImageData {
       super.writeByte(142)
       super.writeValue(value.toList())
-    } else if let value = value as? PlatformMediaSettings {
+    } else if let value = value as? PlatformCameraImagePlane {
       super.writeByte(143)
       super.writeValue(value.toList())
-    } else if let value = value as? PlatformPoint {
+    } else if let value = value as? PlatformMediaSettings {
       super.writeByte(144)
       super.writeValue(value.toList())
-    } else if let value = value as? PlatformSize {
+    } else if let value = value as? PlatformPoint {
       super.writeByte(145)
+      super.writeValue(value.toList())
+    } else if let value = value as? PlatformSize {
+      super.writeByte(146)
       super.writeValue(value.toList())
     } else {
       super.writeValue(value)
@@ -807,6 +827,15 @@ protocol CameraApi {
   /// Returns the list of available cameras.
   func getAvailableCameras(
     completion: @escaping (Result<[PlatformCameraDescription], Error>) -> Void)
+  /// Returns the preview dynamic ranges the camera device with the given
+  /// [cameraName] supports. Always contains `sdr`.
+  func getSupportedPreviewDynamicRanges(
+    cameraName: String, completion: @escaping (Result<[PlatformPreviewDynamicRange], Error>) -> Void
+  )
+  /// Returns the preview dynamic range that was actually applied to the
+  /// current camera (`sdr` if a requested range had to be dropped).
+  func getPreviewDynamicRange(
+    completion: @escaping (Result<PlatformPreviewDynamicRange, Error>) -> Void)
   /// Create a new camera with the given settings, and returns its ID.
   func create(
     cameraName: String, settings: PlatformMediaSettings,
@@ -928,6 +957,48 @@ class CameraApiSetup {
       }
     } else {
       getAvailableCamerasChannel.setMessageHandler(nil)
+    }
+    /// Returns the preview dynamic ranges the camera device with the given
+    /// [cameraName] supports. Always contains `sdr`.
+    let getSupportedPreviewDynamicRangesChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.camera_avfoundation.CameraApi.getSupportedPreviewDynamicRanges\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      getSupportedPreviewDynamicRangesChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let cameraNameArg = args[0] as! String
+        api.getSupportedPreviewDynamicRanges(cameraName: cameraNameArg) { result in
+          switch result {
+          case .success(let res):
+            reply(wrapResult(res))
+          case .failure(let error):
+            reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      getSupportedPreviewDynamicRangesChannel.setMessageHandler(nil)
+    }
+    /// Returns the preview dynamic range that was actually applied to the
+    /// current camera (`sdr` if a requested range had to be dropped).
+    let getPreviewDynamicRangeChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.camera_avfoundation.CameraApi.getPreviewDynamicRange\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      getPreviewDynamicRangeChannel.setMessageHandler { _, reply in
+        api.getPreviewDynamicRange { result in
+          switch result {
+          case .success(let res):
+            reply(wrapResult(res))
+          case .failure(let error):
+            reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      getPreviewDynamicRangeChannel.setMessageHandler(nil)
     }
     /// Create a new camera with the given settings, and returns its ID.
     let createChannel = FlutterBasicMessageChannel(

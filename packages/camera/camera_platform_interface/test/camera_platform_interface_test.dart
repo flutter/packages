@@ -361,6 +361,26 @@ void main() {
       expect(cameraPlatform.setJpegImageQuality(1, 50), completes);
     });
 
+    test('Default implementation of getSupportedPreviewDynamicRanges() returns only sdr', () async {
+      final cameraPlatform = ExtendsCameraPlatform();
+      const description = CameraDescription(
+        name: 'test',
+        lensDirection: CameraLensDirection.back,
+        sensorOrientation: 0,
+      );
+
+      expect(
+        await cameraPlatform.getSupportedPreviewDynamicRanges(description),
+        <PreviewDynamicRange>[PreviewDynamicRange.sdr],
+      );
+    });
+
+    test('Default implementation of getPreviewDynamicRange() returns sdr', () async {
+      final cameraPlatform = ExtendsCameraPlatform();
+
+      expect(await cameraPlatform.getPreviewDynamicRange(1), PreviewDynamicRange.sdr);
+    });
+
     test('Default implementation of isZeroShutterLagSupported() should return false', () async {
       // Arrange
       final cameraPlatform = ExtendsCameraPlatform();

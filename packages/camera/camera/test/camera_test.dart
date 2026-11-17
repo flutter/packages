@@ -727,6 +727,59 @@ void main() {
       verify(CameraPlatform.instance.setZoomLevel(mockInitializeCamera, 42.0)).called(1);
     });
 
+    test('availablePreviewDynamicRanges() returns the platform value.', () async {
+      const description = CameraDescription(
+        name: 'cam',
+        lensDirection: CameraLensDirection.back,
+        sensorOrientation: 90,
+      );
+      when(CameraPlatform.instance.getSupportedPreviewDynamicRanges(description)).thenAnswer(
+        (_) async => <PreviewDynamicRange>[PreviewDynamicRange.sdr, PreviewDynamicRange.hlg10],
+      );
+
+      expect(await availablePreviewDynamicRanges(description), <PreviewDynamicRange>[
+        PreviewDynamicRange.sdr,
+        PreviewDynamicRange.hlg10,
+      ]);
+
+      reset(CameraPlatform.instance);
+    });
+
+    test('previewDynamicRange is passed to the platform in mediaSettings.', () {
+      final cameraController = CameraController(
+        const CameraDescription(
+          name: 'cam',
+          lensDirection: CameraLensDirection.back,
+          sensorOrientation: 90,
+        ),
+        ResolutionPreset.max,
+        previewDynamicRange: PreviewDynamicRange.hlg10,
+      );
+
+      expect(cameraController.mediaSettings.previewDynamicRange, PreviewDynamicRange.hlg10);
+    });
+
+    test('getPreviewDynamicRange() returns the platform value.', () async {
+      final cameraController = CameraController(
+        const CameraDescription(
+          name: 'cam',
+          lensDirection: CameraLensDirection.back,
+          sensorOrientation: 90,
+        ),
+        ResolutionPreset.max,
+        previewDynamicRange: PreviewDynamicRange.hlg10,
+      );
+
+      await cameraController.initialize();
+      when(
+        CameraPlatform.instance.getPreviewDynamicRange(mockInitializeCamera),
+      ).thenAnswer((_) async => PreviewDynamicRange.hlg10);
+
+      expect(await cameraController.getPreviewDynamicRange(), PreviewDynamicRange.hlg10);
+
+      reset(CameraPlatform.instance);
+    });
+
     test('isZeroShutterLagSupported() returns the platform value.', () async {
       final cameraController = CameraController(
         const CameraDescription(
@@ -3816,6 +3869,24 @@ class MockCameraPlatform extends Mock with MockPlatformInterfaceMixin implements
             returnValue: Future<bool>.value(false),
           )
           as Future<bool>;
+
+  @override
+  Future<Iterable<PreviewDynamicRange>> getSupportedPreviewDynamicRanges(
+    CameraDescription description,
+  ) async =>
+      super.noSuchMethod(
+            Invocation.method(#getSupportedPreviewDynamicRanges, <Object?>[description]),
+            returnValue: Future<Iterable<PreviewDynamicRange>>.value(<PreviewDynamicRange>[]),
+          )
+          as Future<Iterable<PreviewDynamicRange>>;
+
+  @override
+  Future<PreviewDynamicRange> getPreviewDynamicRange(int cameraId) async =>
+      super.noSuchMethod(
+            Invocation.method(#getPreviewDynamicRange, <Object?>[cameraId]),
+            returnValue: Future<PreviewDynamicRange>.value(PreviewDynamicRange.sdr),
+          )
+          as Future<PreviewDynamicRange>;
 
   @override
   Future<void> setZeroShutterLagEnabled(int cameraId, bool enabled) async => super.noSuchMethod(

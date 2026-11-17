@@ -40,6 +40,20 @@ void main() {
       isFalse,
       reason: 'MediaSettings constructor should have false default enableAudio',
     );
+
+    expect(
+      settingsWithNoParameters.previewDynamicRange,
+      PreviewDynamicRange.sdr,
+      reason: 'MediaSettings constructor should have sdr default previewDynamicRange',
+    );
+  });
+
+  test('MediaSettings should hold previewDynamicRange and compare it', () {
+    const hlg = MediaSettings(previewDynamicRange: PreviewDynamicRange.hlg10);
+
+    expect(hlg.previewDynamicRange, PreviewDynamicRange.hlg10);
+    expect(hlg == const MediaSettings(), isFalse);
+    expect(hlg == const MediaSettings(previewDynamicRange: PreviewDynamicRange.hlg10), isTrue);
   });
 
   test('MediaSettings fps should hold parameters', () {
@@ -89,7 +103,7 @@ void main() {
 
     expect(
       settings.hashCode,
-      Object.hash(ResolutionPreset.low, 20, 128000, 32000, true),
+      Object.hash(ResolutionPreset.low, 20, 128000, 32000, true, PreviewDynamicRange.sdr),
       reason: 'MediaSettings hash() should be equal to Object.hash of parameters',
     );
   });

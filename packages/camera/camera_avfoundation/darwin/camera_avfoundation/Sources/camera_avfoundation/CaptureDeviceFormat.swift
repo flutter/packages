@@ -21,6 +21,9 @@ protocol CaptureDeviceFormat: NSObjectProtocol {
   var formatDescription: CMFormatDescription { get }
   var flutterVideoSupportedFrameRateRanges: [FrameRateRange] { get }
 
+  /// Corresponds to the `supportedColorSpaces` property of `AVCaptureDevice.Format`.
+  var flutterSupportedColorSpaces: [AVCaptureColorSpace] { get }
+
   /// Corresponds to the `supportedMaxPhotoDimensions` property of `AVCaptureDevice.Format`.
   @available(iOS 16.0, *)
   var supportedMaxPhotoDimensions: [CMVideoDimensions] { get }
@@ -32,4 +35,6 @@ extension AVCaptureDevice.Format: CaptureDeviceFormat {
   var avFormat: AVCaptureDevice.Format { self }
 
   var flutterVideoSupportedFrameRateRanges: [FrameRateRange] { videoSupportedFrameRateRanges }
+
+  var flutterSupportedColorSpaces: [AVCaptureColorSpace] { supportedColorSpaces }
 }

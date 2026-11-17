@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.OptIn;
 import androidx.camera.camera2.interop.Camera2Interop;
 import androidx.camera.camera2.interop.ExperimentalCamera2Interop;
+import androidx.camera.core.DynamicRange;
 import androidx.camera.core.Preview;
 import androidx.camera.core.ResolutionInfo;
 import androidx.camera.core.SurfaceRequest;
@@ -48,8 +49,12 @@ class PreviewProxyApi extends PigeonApiPreview {
   public Preview pigeon_defaultConstructor(
       @Nullable ResolutionSelector resolutionSelector,
       @Nullable Long targetRotation,
-      @Nullable Range<?> targetFpsRange) {
+      @Nullable Range<?> targetFpsRange,
+      @Nullable DynamicRangeType dynamicRange) {
     final Preview.Builder builder = new Preview.Builder();
+    if (dynamicRange == DynamicRangeType.HLG10) {
+      builder.setDynamicRange(DynamicRange.HLG_10_BIT);
+    }
     if (targetRotation != null) {
       builder.setTargetRotation(targetRotation.intValue());
     }
@@ -90,6 +95,12 @@ class PreviewProxyApi extends PigeonApiPreview {
     throw new IllegalStateException(
         "releaseFlutterSurfaceTexture() cannot be called if the flutterSurfaceProducer for the"
             + " camera preview has not yet been initialized.");
+  }
+
+  @Override
+  public void setViewSurfaceProvider(
+      @NonNull Preview pigeonInstance, @NonNull Preview.SurfaceProvider provider) {
+    pigeonInstance.setSurfaceProvider(provider);
   }
 
   @Override

@@ -67,6 +67,7 @@ final class MockCamera: NSObject, Camera {
   }
 
   var videoFormat: FourCharCode = kCVPixelFormatType_32BGRA
+  var previewDynamicRange = PlatformPreviewDynamicRange.sdr
 
   var isPreviewPaused: Bool = false
   var isStreamingImages: Bool = false
@@ -101,6 +102,8 @@ final class MockCamera: NSObject, Camera {
   }
 
   func reportInitializationState() {}
+
+  func attachPreviewLayer(_ layer: AVCaptureVideoPreviewLayer) {}
 
   func receivedImageStreamData() {
     receivedImageStreamDataStub?()

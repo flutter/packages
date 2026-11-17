@@ -19,6 +19,10 @@ protocol Camera: FlutterTexture, AVCaptureVideoDataOutputSampleBufferDelegate,
   /// Format used for video and image streaming.
   var videoFormat: FourCharCode { get set }
 
+  /// The preview dynamic range that was actually applied. `.sdr` if a requested HLG range had to
+  /// be dropped.
+  var previewDynamicRange: PlatformPreviewDynamicRange { get }
+
   var isPreviewPaused: Bool { get }
   var isStreamingImages: Bool { get }
 
@@ -30,6 +34,10 @@ protocol Camera: FlutterTexture, AVCaptureVideoDataOutputSampleBufferDelegate,
   var maximumExposureOffset: CGFloat { get }
 
   func setUpCaptureSessionForAudioIfNeeded()
+
+  /// Connects `layer` to the camera session so it renders the preview. Used for the HLG preview,
+  /// which cannot go through the Flutter texture. Must be called on the capture session queue.
+  func attachPreviewLayer(_ layer: AVCaptureVideoPreviewLayer)
 
   /// Informs the Dart side of the plugin of the current camera state and capabilities.
   func reportInitializationState()

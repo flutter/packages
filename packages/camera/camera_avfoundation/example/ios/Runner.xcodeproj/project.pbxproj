@@ -3,10 +3,12 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 60;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AB0000000000000000000001 /* HDRPreviewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB0000000000000000000002 /* HDRPreviewTests.swift */; };
+		AB0000000000000000000003 /* HDRFrameConverterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB0000000000000000000004 /* HDRFrameConverterTests.swift */; };
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
 		335A7B032F6B061D005902FE /* CameraZoomTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 335A7AE82F6B061D005902FE /* CameraZoomTests.swift */; };
 		335A7B042F6B061D005902FE /* AvailableCamerasTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 335A7AD72F6B061D005902FE /* AvailableCamerasTests.swift */; };
@@ -85,6 +87,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		AB0000000000000000000002 /* HDRPreviewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HDRPreviewTests.swift; sourceTree = "<group>"; };
+		AB0000000000000000000004 /* HDRFrameConverterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HDRFrameConverterTests.swift; sourceTree = "<group>"; };
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
 		331C8081294A63A400263BE5 /* RunnerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RunnerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -181,6 +185,8 @@
 				335A7AE62F6B061D005902FE /* CameraSetDeviceOrientationTests.swift */,
 				335A7AE72F6B061D005902FE /* CameraSetFlashModeTests.swift */,
 				4F0FB15D14F347278D8F9FB4 /* CameraStartTests.swift */,
+				AB0000000000000000000002 /* HDRPreviewTests.swift */,
+				AB0000000000000000000004 /* HDRFrameConverterTests.swift */,
 				335A7AE32F6B061D005902FE /* CameraTestUtils.swift */,
 				335A7AE82F6B061D005902FE /* CameraZoomTests.swift */,
 				335A7AFE2F6B061D005902FE /* PhotoCaptureTests.swift */,
@@ -419,6 +425,8 @@
 				335A7B042F6B061D005902FE /* AvailableCamerasTests.swift in Sources */,
 				335A7B052F6B061D005902FE /* PhotoCaptureTests.swift in Sources */,
 				3097B748B18C43AFBCA006FF /* CameraStartTests.swift in Sources */,
+				AB0000000000000000000001 /* HDRPreviewTests.swift in Sources */,
+				AB0000000000000000000003 /* HDRFrameConverterTests.swift in Sources */,
 				335A7B062F6B061D005902FE /* SavePhotoDelegateTests.swift in Sources */,
 				335A7B072F6B061D005902FE /* MockCameraDeviceDiscoverer.swift in Sources */,
 				335A7B082F6B061D005902FE /* MockFlutterTextureRegistry.swift in Sources */,

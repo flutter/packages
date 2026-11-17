@@ -19,6 +19,7 @@ import android.util.Size;
 import android.view.Surface;
 import androidx.annotation.NonNull;
 import androidx.camera.camera2.interop.Camera2Interop;
+import androidx.camera.core.DynamicRange;
 import androidx.camera.core.Preview;
 import androidx.camera.core.ResolutionInfo;
 import androidx.camera.core.SurfaceRequest;
@@ -56,12 +57,26 @@ public class PreviewTest {
                   .thenReturn(mock);
             })) {
       final Preview instance =
-          api.pigeon_defaultConstructor(mockResolutionSelector, targetResolution, targetFpsRange);
+          api.pigeon_defaultConstructor(
+              mockResolutionSelector, targetResolution, targetFpsRange, null);
 
       assertEquals(mockResolutionSelector, instance.getResolutionSelector());
       assertEquals(Surface.ROTATION_0, instance.getTargetRotation());
       assertEquals(1, mockCamera2InteropExtender.constructed().size());
     }
+  }
+
+  @Test
+  public void pigeon_defaultConstructor_requestsHlgDynamicRangeOnlyWhenAsked() {
+    final PigeonApiPreview api = new TestProxyApiRegistrar().getPigeonApiPreview();
+
+    final Preview hlg = api.pigeon_defaultConstructor(null, null, null, DynamicRangeType.HLG10);
+    final Preview sdr = api.pigeon_defaultConstructor(null, null, null, DynamicRangeType.SDR);
+    final Preview unspecified = api.pigeon_defaultConstructor(null, null, null, null);
+
+    assertEquals(DynamicRange.HLG_10_BIT, hlg.getDynamicRange());
+    assertEquals(DynamicRange.UNSPECIFIED, sdr.getDynamicRange());
+    assertEquals(DynamicRange.UNSPECIFIED, unspecified.getDynamicRange());
   }
 
   @Test
@@ -309,5 +324,16 @@ public class PreviewTest {
   @SuppressWarnings({"deprecation", "removal"})
   void simulateSurfaceCleanup(TextureRegistry.SurfaceProducer.Callback producerLifecycle) {
     producerLifecycle.onSurfaceCleanup();
+  }
+
+  @Test
+  public void setViewSurfaceProvider_setsTheProviderOnThePreview() {
+    final PigeonApiPreview api = new TestProxyApiRegistrar().getPigeonApiPreview();
+    final Preview instance = mock(Preview.class);
+    final Preview.SurfaceProvider provider = mock(Preview.SurfaceProvider.class);
+
+    api.setViewSurfaceProvider(instance, provider);
+
+    verify(instance).setSurfaceProvider(provider);
   }
 }

@@ -807,4 +807,87 @@ void main() {
       verify(mockApi.setZeroShutterLagEnabled(true));
     });
   });
+
+  group('Preview dynamic range', () {
+    const description = CameraDescription(
+      name: 'Test',
+      lensDirection: CameraLensDirection.back,
+      sensorOrientation: 0,
+    );
+    late MockCameraApi mockApi;
+    late AVFoundationCamera camera;
+
+    setUp(() {
+      mockApi = MockCameraApi();
+      when(mockApi.create(any, any)).thenAnswer((_) async => 1);
+      camera = AVFoundationCamera(api: mockApi);
+    });
+
+    test('Should query the supported ranges of the named camera', () async {
+      when(mockApi.getSupportedPreviewDynamicRanges('Test')).thenAnswer(
+        (_) async => <PlatformPreviewDynamicRange>[
+          PlatformPreviewDynamicRange.sdr,
+          PlatformPreviewDynamicRange.hlg10,
+        ],
+      );
+
+      final Iterable<PreviewDynamicRange> ranges = await camera.getSupportedPreviewDynamicRanges(
+        description,
+      );
+
+      expect(ranges, <PreviewDynamicRange>[PreviewDynamicRange.sdr, PreviewDynamicRange.hlg10]);
+    });
+
+    test('Should send the requested range and not query the applied one for sdr', () async {
+      await camera.createCameraWithSettings(description, const MediaSettings());
+
+      final settings =
+          verify(mockApi.create(any, captureAny)).captured.single as PlatformMediaSettings;
+      expect(settings.previewDynamicRange, PlatformPreviewDynamicRange.sdr);
+      verifyNever(mockApi.getPreviewDynamicRange());
+    });
+
+    test('Should build a platform view when hlg10 is applied', () async {
+      when(
+        mockApi.getPreviewDynamicRange(),
+      ).thenAnswer((_) async => PlatformPreviewDynamicRange.hlg10);
+
+      final int cameraId = await camera.createCameraWithSettings(
+        description,
+        const MediaSettings(previewDynamicRange: PreviewDynamicRange.hlg10),
+      );
+
+      final settings =
+          verify(mockApi.create(any, captureAny)).captured.single as PlatformMediaSettings;
+      expect(settings.previewDynamicRange, PlatformPreviewDynamicRange.hlg10);
+      final Widget widget = camera.buildPreview(cameraId);
+      expect(widget, isA<UiKitView>());
+      expect((widget as UiKitView).viewType, AVFoundationCamera.hdrPreviewViewType);
+      // A new camera gets a new platform view.
+      expect(widget.key, ValueKey<int>(cameraId));
+      expect(widget.creationParams, cameraId);
+    });
+
+    test('Should build a texture when hlg10 was requested but sdr was applied', () async {
+      when(
+        mockApi.getPreviewDynamicRange(),
+      ).thenAnswer((_) async => PlatformPreviewDynamicRange.sdr);
+
+      final int cameraId = await camera.createCameraWithSettings(
+        description,
+        const MediaSettings(previewDynamicRange: PreviewDynamicRange.hlg10),
+      );
+
+      expect(camera.buildPreview(cameraId), isA<Texture>());
+      expect(await camera.getPreviewDynamicRange(cameraId), PreviewDynamicRange.sdr);
+    });
+
+    test('Should return the applied range from the host', () async {
+      when(
+        mockApi.getPreviewDynamicRange(),
+      ).thenAnswer((_) async => PlatformPreviewDynamicRange.hlg10);
+
+      expect(await camera.getPreviewDynamicRange(1), PreviewDynamicRange.hlg10);
+    });
+  });
 }

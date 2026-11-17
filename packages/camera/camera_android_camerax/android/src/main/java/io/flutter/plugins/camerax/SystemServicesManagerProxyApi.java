@@ -5,6 +5,7 @@
 package io.flutter.plugins.camerax;
 
 import android.content.Context;
+import android.os.Build;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import java.io.IOException;
@@ -106,5 +107,10 @@ public class SystemServicesManagerProxyApi extends PigeonApiSystemServicesManage
           new Throwable(
               "SystemServicesHostApiImpl.getTempFilePath encountered an exception: " + e, e));
     }
+  }
+
+  @Override
+  public long getAndroidSdkVersion(@NonNull SystemServicesManager pigeonInstance) {
+    return Build.VERSION.SDK_INT;
   }
 }

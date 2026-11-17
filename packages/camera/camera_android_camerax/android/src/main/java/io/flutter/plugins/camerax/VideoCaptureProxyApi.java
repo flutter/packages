@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.OptIn;
 import androidx.camera.camera2.interop.Camera2Interop;
 import androidx.camera.camera2.interop.ExperimentalCamera2Interop;
+import androidx.camera.core.DynamicRange;
 import androidx.camera.video.VideoCapture;
 import androidx.camera.video.VideoOutput;
 
@@ -30,8 +31,13 @@ class VideoCaptureProxyApi extends PigeonApiVideoCapture {
   @NonNull
   @Override
   public VideoCapture<?> withOutput(
-      @NonNull VideoOutput videoOutput, @Nullable Range<?> targetFpsRange) {
+      @NonNull VideoOutput videoOutput,
+      @Nullable Range<?> targetFpsRange,
+      @Nullable DynamicRangeType dynamicRange) {
     VideoCapture.Builder<VideoOutput> builder = new VideoCapture.Builder<>(videoOutput);
+    if (dynamicRange == DynamicRangeType.HLG10) {
+      builder.setDynamicRange(DynamicRange.HLG_10_BIT);
+    }
 
     if (targetFpsRange != null) {
       Camera2Interop.Extender<VideoCapture<VideoOutput>> extender =

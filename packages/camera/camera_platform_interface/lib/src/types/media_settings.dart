@@ -4,6 +4,7 @@
 
 // ignore_for_file: avoid_equals_and_hash_code_on_mutable_classes
 
+import 'preview_dynamic_range.dart';
 import 'resolution_preset.dart';
 
 /// Recording media settings.
@@ -19,6 +20,7 @@ class MediaSettings {
     this.videoBitrate,
     this.audioBitrate,
     this.enableAudio = false,
+    this.previewDynamicRange = PreviewDynamicRange.sdr,
   }) : assert(fps == null || fps > 0, 'fps must be null or greater than zero'),
        assert(
          videoBitrate == null || videoBitrate > 0,
@@ -44,6 +46,24 @@ class MediaSettings {
   /// Controls audio presence in recorded video.
   final bool enableAudio;
 
+  /// The dynamic range requested for the camera session.
+  ///
+  /// [PreviewDynamicRange.hlg10] shows an HDR preview, and it can also change
+  /// other outputs of the session, for example the format of recorded video,
+  /// image streaming, and zero-shutter-lag support. See the platform
+  /// implementation for the exact behavior.
+  ///
+  /// This is a request: if the camera or the platform does not support it, or
+  /// on some platforms the resolution preset has no HDR format, the camera
+  /// uses [PreviewDynamicRange.sdr]. The applied range is set when the camera
+  /// is created and does not change while it is in use; operations that
+  /// cannot keep it fail with a `CameraException`, which an image stream
+  /// reports as a stream error. Use
+  /// `CameraPlatform.getSupportedPreviewDynamicRanges` to check support before
+  /// creating the camera, and `CameraPlatform.getPreviewDynamicRange` to read
+  /// the dynamic range that is applied.
+  final PreviewDynamicRange previewDynamicRange;
+
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) {
@@ -57,11 +77,19 @@ class MediaSettings {
         fps == other.fps &&
         videoBitrate == other.videoBitrate &&
         audioBitrate == other.audioBitrate &&
-        enableAudio == other.enableAudio;
+        enableAudio == other.enableAudio &&
+        previewDynamicRange == other.previewDynamicRange;
   }
 
   @override
-  int get hashCode => Object.hash(resolutionPreset, fps, videoBitrate, audioBitrate, enableAudio);
+  int get hashCode => Object.hash(
+    resolutionPreset,
+    fps,
+    videoBitrate,
+    audioBitrate,
+    enableAudio,
+    previewDynamicRange,
+  );
 
   @override
   String toString() {
@@ -70,6 +98,7 @@ class MediaSettings {
         'fps: $fps, '
         'videoBitrate: $videoBitrate, '
         'audioBitrate: $audioBitrate, '
-        'enableAudio: $enableAudio}';
+        'enableAudio: $enableAudio, '
+        'previewDynamicRange: $previewDynamicRange}';
   }
 }

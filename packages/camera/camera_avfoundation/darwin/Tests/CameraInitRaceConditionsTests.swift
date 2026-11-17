@@ -43,7 +43,8 @@ final class CameraInitRaceConditionsTests: XCTestCase {
         framesPerSecond: nil,
         videoBitrate: nil,
         audioBitrate: nil,
-        enableAudio: true
+        enableAudio: true,
+        previewDynamicRange: .sdr
       )
     ) { result in
       createExpectation.fulfill()
@@ -69,7 +70,8 @@ final class CameraInitRaceConditionsTests: XCTestCase {
         framesPerSecond: nil,
         videoBitrate: nil,
         audioBitrate: nil,
-        enableAudio: true
+        enableAudio: true,
+        previewDynamicRange: .sdr
       )
     ) { result in
       createExpectation.fulfill()

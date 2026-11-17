@@ -52,6 +52,11 @@ class AVFoundationCamera extends CameraPlatform {
   @visibleForTesting
   final Map<int, HostCameraMessageHandler> hostCameraHandlers = <int, HostCameraMessageHandler>{};
 
+  /// The preview dynamic range applied to each camera created with a
+  /// non-default [MediaSettings.previewDynamicRange]. Cameras that are not in
+  /// this map render through a [Texture].
+  final Map<int, PreviewDynamicRange> _appliedPreviewRanges = <int, PreviewDynamicRange>{};
+
   // The stream to receive frames from the native code.
   StreamSubscription<dynamic>? _platformImageStreamSubscription;
 
@@ -86,7 +91,9 @@ class AVFoundationCamera extends CameraPlatform {
     MediaSettings? mediaSettings,
   ) async {
     try {
-      return await _hostApi.create(
+      final PreviewDynamicRange requestedRange =
+          mediaSettings?.previewDynamicRange ?? PreviewDynamicRange.sdr;
+      final int cameraId = await _hostApi.create(
         cameraDescription.name,
         PlatformMediaSettings(
           resolutionPreset: _pigeonResolutionPreset(mediaSettings?.resolutionPreset),
@@ -94,8 +101,18 @@ class AVFoundationCamera extends CameraPlatform {
           videoBitrate: mediaSettings?.videoBitrate,
           audioBitrate: mediaSettings?.audioBitrate,
           enableAudio: mediaSettings?.enableAudio ?? true,
+          previewDynamicRange: _pigeonPreviewDynamicRange(requestedRange),
         ),
       );
+      if (requestedRange != PreviewDynamicRange.sdr) {
+        // The native side uses SDR when the range cannot be applied. The
+        // applied range does not change afterwards, and the preview widget
+        // depends on it.
+        _appliedPreviewRanges[cameraId] = previewDynamicRangeFromPlatform(
+          await _hostApi.getPreviewDynamicRange(),
+        );
+      }
+      return cameraId;
     } on PlatformException catch (e) {
       throw CameraException(e.code, e.message);
     }
@@ -130,6 +147,7 @@ class AVFoundationCamera extends CameraPlatform {
 
   @override
   Future<void> dispose(int cameraId) async {
+    _appliedPreviewRanges.remove(cameraId);
     final HostCameraMessageHandler? handler = hostCameraHandlers.remove(cameraId);
     handler?.dispose();
 
@@ -432,8 +450,64 @@ class AVFoundationCamera extends CameraPlatform {
   }
 
   @override
+  Future<Iterable<PreviewDynamicRange>> getSupportedPreviewDynamicRanges(
+    CameraDescription description,
+  ) async {
+    try {
+      final List<PlatformPreviewDynamicRange> ranges = await _hostApi
+          .getSupportedPreviewDynamicRanges(description.name);
+      return ranges.map(previewDynamicRangeFromPlatform).toList();
+    } on PlatformException catch (e) {
+      throw CameraException(e.code, e.message);
+    }
+  }
+
+  @override
+  Future<PreviewDynamicRange> getPreviewDynamicRange(int cameraId) async {
+    try {
+      return previewDynamicRangeFromPlatform(await _hostApi.getPreviewDynamicRange());
+    } on PlatformException catch (e) {
+      throw CameraException(e.code, e.message);
+    }
+  }
+
+  @override
   Widget buildPreview(int cameraId) {
+    if (_appliedPreviewRanges[cameraId] == PreviewDynamicRange.hlg10) {
+      // An HLG preview is rendered by an AVCaptureVideoPreviewLayer, since
+      // the Flutter texture path cannot carry 10-bit HLG frames.
+      // A platform view keeps showing the camera it was created for, so a new
+      // camera needs a new platform view.
+      return UiKitView(
+        key: ValueKey<int>(cameraId),
+        viewType: hdrPreviewViewType,
+        creationParams: cameraId,
+        creationParamsCodec: const StandardMessageCodec(),
+      );
+    }
     return Texture(textureId: cameraId);
+  }
+
+  /// The platform view type of the HLG preview. Must match the view type the
+  /// native plugin registers.
+  @visibleForTesting
+  static const String hdrPreviewViewType = 'plugins.flutter.io/camera_avfoundation/hdr_preview';
+
+  /// Returns a [PreviewDynamicRange]'s Pigeon representation.
+  PlatformPreviewDynamicRange _pigeonPreviewDynamicRange(PreviewDynamicRange range) {
+    switch (range) {
+      case PreviewDynamicRange.sdr:
+        return PlatformPreviewDynamicRange.sdr;
+      case PreviewDynamicRange.hlg10:
+        return PlatformPreviewDynamicRange.hlg10;
+    }
+    // The enum comes from a different package, which could get a new value at
+    // any time, so provide a fallback that ensures this won't break when used
+    // with a version that contains new values. This is deliberately outside
+    // the switch rather than a `default` so that the linter will flag the
+    // switch as needing an update.
+    // ignore: dead_code
+    return PlatformPreviewDynamicRange.sdr;
   }
 
   /// Returns an [FocusMode]'s Pigeon representation.

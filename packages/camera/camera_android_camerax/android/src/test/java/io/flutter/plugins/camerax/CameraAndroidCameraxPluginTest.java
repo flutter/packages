@@ -8,7 +8,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
 
@@ -19,6 +22,7 @@ import androidx.lifecycle.LifecycleOwner;
 import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.BinaryMessenger;
+import io.flutter.plugin.platform.PlatformViewRegistry;
 import io.flutter.view.TextureRegistry;
 import org.junit.Rule;
 import org.junit.Test;
@@ -40,6 +44,8 @@ public class CameraAndroidCameraxPluginTest {
     when(flutterPluginBinding.getBinaryMessenger()).thenReturn(mock(BinaryMessenger.class));
     when(flutterPluginBinding.getApplicationContext()).thenReturn(mock(Context.class));
     when(flutterPluginBinding.getTextureRegistry()).thenReturn(mock(TextureRegistry.class));
+    when(flutterPluginBinding.getPlatformViewRegistry())
+        .thenReturn(mock(PlatformViewRegistry.class));
     when(activityPluginBinding.getActivity()).thenReturn(mockActivity);
 
     final CameraAndroidCameraxPlugin plugin = new CameraAndroidCameraxPlugin();
@@ -60,6 +66,8 @@ public class CameraAndroidCameraxPluginTest {
     when(flutterPluginBinding.getBinaryMessenger()).thenReturn(mock(BinaryMessenger.class));
     when(flutterPluginBinding.getApplicationContext()).thenReturn(mock(Context.class));
     when(flutterPluginBinding.getTextureRegistry()).thenReturn(mock(TextureRegistry.class));
+    when(flutterPluginBinding.getPlatformViewRegistry())
+        .thenReturn(mock(PlatformViewRegistry.class));
     when(activityPluginBinding.getActivity()).thenReturn(mockActivity);
 
     final CameraAndroidCameraxPlugin plugin = new CameraAndroidCameraxPlugin();
@@ -78,6 +86,8 @@ public class CameraAndroidCameraxPluginTest {
     when(flutterPluginBinding.getBinaryMessenger()).thenReturn(mock(BinaryMessenger.class));
     when(flutterPluginBinding.getApplicationContext()).thenReturn(mock(Context.class));
     when(flutterPluginBinding.getTextureRegistry()).thenReturn(mock(TextureRegistry.class));
+    when(flutterPluginBinding.getPlatformViewRegistry())
+        .thenReturn(mock(PlatformViewRegistry.class));
     when(activityPluginBinding.getActivity()).thenReturn(mockActivity);
 
     final CameraAndroidCameraxPlugin plugin = new CameraAndroidCameraxPlugin();
@@ -99,6 +109,8 @@ public class CameraAndroidCameraxPluginTest {
     when(flutterPluginBinding.getBinaryMessenger()).thenReturn(mock(BinaryMessenger.class));
     when(flutterPluginBinding.getApplicationContext()).thenReturn(mock(Context.class));
     when(flutterPluginBinding.getTextureRegistry()).thenReturn(mock(TextureRegistry.class));
+    when(flutterPluginBinding.getPlatformViewRegistry())
+        .thenReturn(mock(PlatformViewRegistry.class));
     when(activityPluginBinding.getActivity()).thenReturn(mockActivity);
 
     final CameraAndroidCameraxPlugin plugin = new CameraAndroidCameraxPlugin();
@@ -121,6 +133,8 @@ public class CameraAndroidCameraxPluginTest {
     when(flutterPluginBinding.getBinaryMessenger()).thenReturn(mock(BinaryMessenger.class));
     when(flutterPluginBinding.getApplicationContext()).thenReturn(mockContext);
     when(flutterPluginBinding.getTextureRegistry()).thenReturn(mock(TextureRegistry.class));
+    when(flutterPluginBinding.getPlatformViewRegistry())
+        .thenReturn(mock(PlatformViewRegistry.class));
     when(activityPluginBinding.getActivity()).thenReturn(mockActivity);
 
     final CameraAndroidCameraxPlugin plugin = new CameraAndroidCameraxPlugin();
@@ -143,6 +157,8 @@ public class CameraAndroidCameraxPluginTest {
     when(flutterPluginBinding.getBinaryMessenger()).thenReturn(mock(BinaryMessenger.class));
     when(flutterPluginBinding.getApplicationContext()).thenReturn(mock(Context.class));
     when(flutterPluginBinding.getTextureRegistry()).thenReturn(mock(TextureRegistry.class));
+    when(flutterPluginBinding.getPlatformViewRegistry())
+        .thenReturn(mock(PlatformViewRegistry.class));
     when(activityPluginBinding.getActivity()).thenReturn(mockActivity);
 
     final CameraAndroidCameraxPlugin plugin = new CameraAndroidCameraxPlugin();
@@ -163,6 +179,8 @@ public class CameraAndroidCameraxPluginTest {
     when(flutterPluginBinding.getBinaryMessenger()).thenReturn(mock(BinaryMessenger.class));
     when(flutterPluginBinding.getApplicationContext()).thenReturn(mock(Context.class));
     when(flutterPluginBinding.getTextureRegistry()).thenReturn(mock(TextureRegistry.class));
+    when(flutterPluginBinding.getPlatformViewRegistry())
+        .thenReturn(mock(PlatformViewRegistry.class));
     when(activityPluginBinding.getActivity()).thenReturn(mockActivity);
 
     final CameraAndroidCameraxPlugin plugin = new CameraAndroidCameraxPlugin();
@@ -181,6 +199,8 @@ public class CameraAndroidCameraxPluginTest {
     when(flutterPluginBinding.getBinaryMessenger()).thenReturn(mock(BinaryMessenger.class));
     when(flutterPluginBinding.getApplicationContext()).thenReturn(mock(Context.class));
     when(flutterPluginBinding.getTextureRegistry()).thenReturn(mock(TextureRegistry.class));
+    when(flutterPluginBinding.getPlatformViewRegistry())
+        .thenReturn(mock(PlatformViewRegistry.class));
     when(activityPluginBinding.getActivity()).thenReturn(mockActivity);
 
     final CameraAndroidCameraxPlugin plugin = new CameraAndroidCameraxPlugin();
@@ -202,6 +222,8 @@ public class CameraAndroidCameraxPluginTest {
     when(flutterPluginBinding.getBinaryMessenger()).thenReturn(mock(BinaryMessenger.class));
     when(flutterPluginBinding.getApplicationContext()).thenReturn(mockContext);
     when(flutterPluginBinding.getTextureRegistry()).thenReturn(mock(TextureRegistry.class));
+    when(flutterPluginBinding.getPlatformViewRegistry())
+        .thenReturn(mock(PlatformViewRegistry.class));
     when(activityPluginBinding.getActivity()).thenReturn(mockActivity);
 
     final CameraAndroidCameraxPlugin plugin = new CameraAndroidCameraxPlugin();
@@ -213,5 +235,19 @@ public class CameraAndroidCameraxPluginTest {
     assertEquals(plugin.proxyApiRegistrar.getContext(), mockContext);
     assertNull(plugin.proxyApiRegistrar.getActivity());
     assertNull(plugin.proxyApiRegistrar.getLifecycleOwner());
+  }
+
+  @Test
+  public void onAttachedToEngine_registersPreviewViewFactory() {
+    final PlatformViewRegistry platformViewRegistry = mock(PlatformViewRegistry.class);
+    when(flutterPluginBinding.getBinaryMessenger()).thenReturn(mock(BinaryMessenger.class));
+    when(flutterPluginBinding.getApplicationContext()).thenReturn(mock(Context.class));
+    when(flutterPluginBinding.getTextureRegistry()).thenReturn(mock(TextureRegistry.class));
+    when(flutterPluginBinding.getPlatformViewRegistry()).thenReturn(platformViewRegistry);
+
+    new CameraAndroidCameraxPlugin().onAttachedToEngine(flutterPluginBinding);
+
+    verify(platformViewRegistry)
+        .registerViewFactory(eq(PreviewViewFactory.VIEW_TYPE), any(PreviewViewFactory.class));
   }
 }

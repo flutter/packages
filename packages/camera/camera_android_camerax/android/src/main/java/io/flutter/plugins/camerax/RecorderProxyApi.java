@@ -6,10 +6,12 @@ package io.flutter.plugins.camerax;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.camera.core.CameraInfo;
 import androidx.camera.video.FileOutputOptions;
 import androidx.camera.video.PendingRecording;
 import androidx.camera.video.QualitySelector;
 import androidx.camera.video.Recorder;
+import androidx.camera.video.VideoCapabilities;
 import java.io.File;
 import java.util.Locale;
 
@@ -56,6 +58,12 @@ class RecorderProxyApi extends PigeonApiRecorder {
   @Override
   public long getTargetVideoEncodingBitRate(Recorder pigeonInstance) {
     return pigeonInstance.getTargetVideoEncodingBitRate();
+  }
+
+  @NonNull
+  @Override
+  public VideoCapabilities getVideoCapabilities(@NonNull CameraInfo cameraInfo) {
+    return Recorder.getVideoCapabilities(cameraInfo);
   }
 
   @NonNull

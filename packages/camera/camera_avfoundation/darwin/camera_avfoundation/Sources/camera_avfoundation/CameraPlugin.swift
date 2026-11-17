@@ -44,6 +44,12 @@ public final class CameraPlugin: NSObject, FlutterPlugin {
     )
 
     CameraApiSetup.setUp(binaryMessenger: registrar.messenger(), api: instance)
+
+    registrar.register(
+      HDRPreviewViewFactory(
+        captureSessionQueue: instance.captureSessionQueue,
+        cameraProvider: { [weak instance] in instance?.camera }),
+      withId: hdrPreviewViewType)
   }
 
   init(
@@ -185,6 +191,25 @@ extension CameraPlugin: CameraApi {
       return .wide
     default:
       return .unknown
+    }
+  }
+
+  func getSupportedPreviewDynamicRanges(
+    cameraName: String,
+    completion: @escaping (Result<[PlatformPreviewDynamicRange], any Error>) -> Void
+  ) {
+    captureSessionQueue.async { [weak self] in
+      guard let strongSelf = self else { return }
+      let device = strongSelf.captureDeviceFactory(cameraName)
+      completion(.success(FormatUtils.supportedPreviewDynamicRanges(for: device)))
+    }
+  }
+
+  func getPreviewDynamicRange(
+    completion: @escaping (Result<PlatformPreviewDynamicRange, any Error>) -> Void
+  ) {
+    captureSessionQueue.async { [weak self] in
+      completion(.success(self?.camera?.previewDynamicRange ?? .sdr))
     }
   }
 

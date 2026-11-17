@@ -41,7 +41,7 @@ public class VideoCaptureTest {
                       CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, targetFpsRange))
                   .thenReturn(mock);
             })) {
-      final VideoCapture videoCapture = api.withOutput(videoOutput, targetFpsRange);
+      final VideoCapture videoCapture = api.withOutput(videoOutput, targetFpsRange, null);
 
       assertEquals(1, mockCamera2InteropExtender.constructed().size());
       assertEquals(videoOutput, videoCapture.getOutput());

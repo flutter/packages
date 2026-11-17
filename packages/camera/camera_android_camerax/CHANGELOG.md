@@ -1,3 +1,8 @@
+## 0.7.7
+
+* Adds an HDR (10-bit HLG) preview through `MediaSettings.previewDynamicRange` on Android 14+.
+* Updates minimum supported `camera_platform_interface` to 2.16.0.
+
 ## 0.7.6+1
 
 * Fixes video recording duration discrepancy by waiting for the first recorded frame before completing `startVideoCapturing`, and validates errors on `stopVideoRecording`.
