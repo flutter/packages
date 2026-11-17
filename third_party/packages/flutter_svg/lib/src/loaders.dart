@@ -168,13 +168,16 @@ abstract class SvgLoader<T> extends BytesLoader {
   Future<ByteData> _load(BuildContext? context) {
     final vg.SvgTheme theme = getTheme(context).toVgTheme();
     return prepareMessage(context).then((T? message) {
+      // This sends the whole loader to the compute isolate to call provideSvg
+      // there, which fails if the loader is not sendable. See
+      // https://github.com/flutter/flutter/issues/158835.
       return compute(
         (T? message) => _compileSvg(_SvgCompileRequest(provideSvg(message), theme, colorMapper)),
         message,
         debugLabel: 'Load Bytes',
       ).onError((_, _) {
-        // The loader may not be sendable to an isolate (for example, an asset
-        // bundle or HTTP client holding a Future): provide the SVG here instead.
+        // The loader may not be sendable (for example, an asset bundle or HTTP
+        // client holding a Future): provide the SVG here and send only the result.
         return compute(
           _compileSvg,
           _SvgCompileRequest(provideSvg(message), theme, colorMapper),
