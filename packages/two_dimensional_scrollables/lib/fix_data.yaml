@@ -25,7 +25,7 @@ transforms:
       constructor: ''
       inClass: 'TableView'
     oneOf:
-      - if: "scrollCacheExtent != ''"
+      - if: "cacheExtent != '' && scrollCacheExtent != '' && scrollCacheExtent != 'null'"
         changes:
           - kind: 'removeParameter'
             name: 'cacheExtent'
@@ -33,7 +33,20 @@ transforms:
         changes:
           - kind: 'removeParameter'
             name: 'cacheExtent'
-      - if: "cacheExtent != ''"
+      - if: "cacheExtent != '' && scrollCacheExtent == 'null'"
+        changes:
+          - kind: 'removeParameter'
+            name: 'scrollCacheExtent'
+          - kind: 'addParameter'
+            index: 0
+            name: 'scrollCacheExtent'
+            style: optional_named
+            argumentValue:
+              expression: 'ScrollCacheExtent.pixels({% cacheExtent %})'
+              requiredIf: "cacheExtent != ''"
+          - kind: 'removeParameter'
+            name: 'cacheExtent'
+      - if: "cacheExtent != '' && scrollCacheExtent == ''"
         changes:
           - kind: 'addParameter'
             index: 0
@@ -60,7 +73,7 @@ transforms:
       constructor: 'builder'
       inClass: 'TableView'
     oneOf:
-      - if: "scrollCacheExtent != ''"
+      - if: "cacheExtent != '' && scrollCacheExtent != '' && scrollCacheExtent != 'null'"
         changes:
           - kind: 'removeParameter'
             name: 'cacheExtent'
@@ -68,7 +81,20 @@ transforms:
         changes:
           - kind: 'removeParameter'
             name: 'cacheExtent'
-      - if: "cacheExtent != ''"
+      - if: "cacheExtent != '' && scrollCacheExtent == 'null'"
+        changes:
+          - kind: 'removeParameter'
+            name: 'scrollCacheExtent'
+          - kind: 'addParameter'
+            index: 0
+            name: 'scrollCacheExtent'
+            style: optional_named
+            argumentValue:
+              expression: 'ScrollCacheExtent.pixels({% cacheExtent %})'
+              requiredIf: "cacheExtent != ''"
+          - kind: 'removeParameter'
+            name: 'cacheExtent'
+      - if: "cacheExtent != '' && scrollCacheExtent == ''"
         changes:
           - kind: 'addParameter'
             index: 0
@@ -95,7 +121,7 @@ transforms:
       constructor: 'list'
       inClass: 'TableView'
     oneOf:
-      - if: "scrollCacheExtent != ''"
+      - if: "cacheExtent != '' && scrollCacheExtent != '' && scrollCacheExtent != 'null'"
         changes:
           - kind: 'removeParameter'
             name: 'cacheExtent'
@@ -103,7 +129,20 @@ transforms:
         changes:
           - kind: 'removeParameter'
             name: 'cacheExtent'
-      - if: "cacheExtent != ''"
+      - if: "cacheExtent != '' && scrollCacheExtent == 'null'"
+        changes:
+          - kind: 'removeParameter'
+            name: 'scrollCacheExtent'
+          - kind: 'addParameter'
+            index: 0
+            name: 'scrollCacheExtent'
+            style: optional_named
+            argumentValue:
+              expression: 'ScrollCacheExtent.pixels({% cacheExtent %})'
+              requiredIf: "cacheExtent != ''"
+          - kind: 'removeParameter'
+            name: 'cacheExtent'
+      - if: "cacheExtent != '' && scrollCacheExtent == ''"
         changes:
           - kind: 'addParameter'
             index: 0
@@ -130,7 +169,7 @@ transforms:
       constructor: ''
       inClass: 'TableViewport'
     oneOf:
-      - if: "scrollCacheExtent != ''"
+      - if: "cacheExtent != '' && scrollCacheExtent != '' && scrollCacheExtent != 'null'"
         changes:
           - kind: 'removeParameter'
             name: 'cacheExtent'
@@ -138,7 +177,20 @@ transforms:
         changes:
           - kind: 'removeParameter'
             name: 'cacheExtent'
-      - if: "cacheExtent != ''"
+      - if: "cacheExtent != '' && scrollCacheExtent == 'null'"
+        changes:
+          - kind: 'removeParameter'
+            name: 'scrollCacheExtent'
+          - kind: 'addParameter'
+            index: 0
+            name: 'scrollCacheExtent'
+            style: optional_named
+            argumentValue:
+              expression: 'ScrollCacheExtent.pixels({% cacheExtent %})'
+              requiredIf: "cacheExtent != ''"
+          - kind: 'removeParameter'
+            name: 'cacheExtent'
+      - if: "cacheExtent != '' && scrollCacheExtent == ''"
         changes:
           - kind: 'addParameter'
             index: 0
@@ -165,7 +217,7 @@ transforms:
       constructor: ''
       inClass: 'RenderTableViewport'
     oneOf:
-      - if: "scrollCacheExtent != ''"
+      - if: "cacheExtent != '' && scrollCacheExtent != '' && scrollCacheExtent != 'null'"
         changes:
           - kind: 'removeParameter'
             name: 'cacheExtent'
@@ -173,7 +225,20 @@ transforms:
         changes:
           - kind: 'removeParameter'
             name: 'cacheExtent'
-      - if: "cacheExtent != ''"
+      - if: "cacheExtent != '' && scrollCacheExtent == 'null'"
+        changes:
+          - kind: 'removeParameter'
+            name: 'scrollCacheExtent'
+          - kind: 'addParameter'
+            index: 0
+            name: 'scrollCacheExtent'
+            style: optional_named
+            argumentValue:
+              expression: 'ScrollCacheExtent.pixels({% cacheExtent %})'
+              requiredIf: "cacheExtent != ''"
+          - kind: 'removeParameter'
+            name: 'cacheExtent'
+      - if: "cacheExtent != '' && scrollCacheExtent == ''"
         changes:
           - kind: 'addParameter'
             index: 0
@@ -200,7 +265,7 @@ transforms:
       constructor: ''
       inClass: 'TreeView'
     oneOf:
-      - if: "scrollCacheExtent != ''"
+      - if: "cacheExtent != '' && scrollCacheExtent != '' && scrollCacheExtent != 'null'"
         changes:
           - kind: 'removeParameter'
             name: 'cacheExtent'
@@ -208,7 +273,20 @@ transforms:
         changes:
           - kind: 'removeParameter'
             name: 'cacheExtent'
-      - if: "cacheExtent != ''"
+      - if: "cacheExtent != '' && scrollCacheExtent == 'null'"
+        changes:
+          - kind: 'removeParameter'
+            name: 'scrollCacheExtent'
+          - kind: 'addParameter'
+            index: 0
+            name: 'scrollCacheExtent'
+            style: optional_named
+            argumentValue:
+              expression: 'ScrollCacheExtent.pixels({% cacheExtent %})'
+              requiredIf: "cacheExtent != ''"
+          - kind: 'removeParameter'
+            name: 'cacheExtent'
+      - if: "cacheExtent != '' && scrollCacheExtent == ''"
         changes:
           - kind: 'addParameter'
             index: 0
@@ -235,7 +313,7 @@ transforms:
       constructor: ''
       inClass: 'TreeViewport'
     oneOf:
-      - if: "scrollCacheExtent != ''"
+      - if: "cacheExtent != '' && scrollCacheExtent != '' && scrollCacheExtent != 'null'"
         changes:
           - kind: 'removeParameter'
             name: 'cacheExtent'
@@ -243,7 +321,20 @@ transforms:
         changes:
           - kind: 'removeParameter'
             name: 'cacheExtent'
-      - if: "cacheExtent != ''"
+      - if: "cacheExtent != '' && scrollCacheExtent == 'null'"
+        changes:
+          - kind: 'removeParameter'
+            name: 'scrollCacheExtent'
+          - kind: 'addParameter'
+            index: 0
+            name: 'scrollCacheExtent'
+            style: optional_named
+            argumentValue:
+              expression: 'ScrollCacheExtent.pixels({% cacheExtent %})'
+              requiredIf: "cacheExtent != ''"
+          - kind: 'removeParameter'
+            name: 'cacheExtent'
+      - if: "cacheExtent != '' && scrollCacheExtent == ''"
         changes:
           - kind: 'addParameter'
             index: 0
@@ -270,7 +361,7 @@ transforms:
       constructor: ''
       inClass: 'RenderTreeViewport'
     oneOf:
-      - if: "scrollCacheExtent != ''"
+      - if: "cacheExtent != '' && scrollCacheExtent != '' && scrollCacheExtent != 'null'"
         changes:
           - kind: 'removeParameter'
             name: 'cacheExtent'
@@ -278,7 +369,20 @@ transforms:
         changes:
           - kind: 'removeParameter'
             name: 'cacheExtent'
-      - if: "cacheExtent != ''"
+      - if: "cacheExtent != '' && scrollCacheExtent == 'null'"
+        changes:
+          - kind: 'removeParameter'
+            name: 'scrollCacheExtent'
+          - kind: 'addParameter'
+            index: 0
+            name: 'scrollCacheExtent'
+            style: optional_named
+            argumentValue:
+              expression: 'ScrollCacheExtent.pixels({% cacheExtent %})'
+              requiredIf: "cacheExtent != ''"
+          - kind: 'removeParameter'
+            name: 'cacheExtent'
+      - if: "cacheExtent != '' && scrollCacheExtent == ''"
         changes:
           - kind: 'addParameter'
             index: 0

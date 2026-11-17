@@ -596,15 +596,19 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
   int? _lastNonPinnedRow;
   int? _lastNonPinnedColumn;
 
-  // The cache extent in pixels for each axis.
-  double get _horizontalCacheExtent => switch (scrollCacheExtent.style) {
-    CacheExtentStyle.pixel => scrollCacheExtent.value,
-    CacheExtentStyle.viewport => scrollCacheExtent.value * viewportDimension.width,
-  };
-  double get _verticalCacheExtent => switch (scrollCacheExtent.style) {
-    CacheExtentStyle.pixel => scrollCacheExtent.value,
-    CacheExtentStyle.viewport => scrollCacheExtent.value * viewportDimension.height,
-  };
+  // The cache extent in pixels for each axis, clamped to be non-negative (and
+  // treating NaN, such as infinity * 0 on a zero-sized viewport, as 0) so
+  // invalid values cannot shrink the visible layout range.
+  double _resolveCacheExtent(double viewportExtent) {
+    final double raw = switch (scrollCacheExtent.style) {
+      CacheExtentStyle.pixel => scrollCacheExtent.value,
+      CacheExtentStyle.viewport => scrollCacheExtent.value * viewportExtent,
+    };
+    return raw > 0.0 ? raw : 0.0;
+  }
+
+  double get _horizontalCacheExtent => _resolveCacheExtent(viewportDimension.width);
+  double get _verticalCacheExtent => _resolveCacheExtent(viewportDimension.height);
 
   int? _columnNullTerminatedIndex;
   bool get _columnsAreInfinite => delegate.columnCount == null;

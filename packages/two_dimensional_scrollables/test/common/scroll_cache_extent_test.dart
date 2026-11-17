@@ -2,9 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart' show ViewportOffset;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:two_dimensional_scrollables/two_dimensional_scrollables.dart';
 
 // The viewport is 400x400 and every row and column is 100 pixels, so a cache
@@ -268,16 +268,57 @@ void main() {
     testWidgets('TableView.builder deprecated cacheExtent fallback and precedence', (
       WidgetTester tester,
     ) async {
-      await tester.pumpWidget(_buildTable(cacheExtent: 150));
+      await tester.pumpWidget(_buildTable(cacheExtent: 50));
       final RenderTableViewport viewport = tester.renderObject(find.byType(TableViewport));
-      expect(viewport.scrollCacheExtent, const ScrollCacheExtent.pixels(150));
-      expect(_text('R5C0'), findsOneWidget);
-      expect(_text('R6C0'), findsNothing);
+      expect(viewport.scrollCacheExtent, const ScrollCacheExtent.pixels(50));
+      expect(_text('R4C0'), findsOneWidget);
+      expect(_text('R5C0'), findsNothing);
 
       await tester.pumpWidget(
-        _buildTable(cacheExtent: 50, scrollCacheExtent: const ScrollCacheExtent.pixels(150)),
+        _buildTable(cacheExtent: 50, scrollCacheExtent: const ScrollCacheExtent.viewport(0.375)),
       );
-      expect(viewport.scrollCacheExtent, const ScrollCacheExtent.pixels(150));
+      expect(viewport.scrollCacheExtent, const ScrollCacheExtent.viewport(0.375));
+      expect(_text('R5C0'), findsOneWidget);
+      expect(_text('R6C0'), findsNothing);
+    });
+
+    testWidgets('negative and NaN scrollCacheExtent clamp to zero', (WidgetTester tester) async {
+      for (final scrollCacheExtent in const <ScrollCacheExtent>[
+        ScrollCacheExtent.pixels(-500),
+        ScrollCacheExtent.viewport(-2.0),
+        ScrollCacheExtent.pixels(double.nan),
+      ]) {
+        await tester.pumpWidget(_buildTable(height: 200, scrollCacheExtent: scrollCacheExtent));
+        final RenderTableViewport viewport = tester.renderObject(find.byType(TableViewport));
+        viewport.verticalOffset.jumpTo(0);
+        viewport.horizontalOffset.jumpTo(0);
+        await tester.pump();
+        expect(_text('R0C0'), findsOneWidget);
+        expect(_text('R1C0'), findsOneWidget);
+        expect(_text('R2C0'), findsNothing);
+        expect(_text('R0C3'), findsOneWidget);
+        expect(_text('R0C4'), findsNothing);
+
+        viewport.verticalOffset.jumpTo(1000);
+        viewport.horizontalOffset.jumpTo(1000);
+        await tester.pump();
+
+        expect(_text('R10C10'), findsOneWidget);
+        expect(_text('R11C10'), findsOneWidget);
+        expect(_text('R12C10'), findsNothing);
+        expect(_text('R10C13'), findsOneWidget);
+        expect(_text('R10C14'), findsNothing);
+      }
+
+      // Infinite viewport multiplier on a 0x0 viewport produces infinity * 0 = NaN.
+      await tester.pumpWidget(
+        _buildTable(
+          width: 0,
+          height: 0,
+          scrollCacheExtent: const ScrollCacheExtent.viewport(double.infinity),
+        ),
+      );
+      expect(tester.takeException(), isNull);
     });
 
     testWidgets('TableViewport forwards scrollCacheExtent and deprecated cacheExtent', (
@@ -485,6 +526,39 @@ void main() {
       viewport.verticalOffset.jumpTo(50);
       await tester.pump();
       expect(_text('Node 0'), findsOneWidget);
+    });
+
+    testWidgets('negative and NaN scrollCacheExtent clamp to zero', (WidgetTester tester) async {
+      for (final scrollCacheExtent in const <ScrollCacheExtent>[
+        ScrollCacheExtent.pixels(-150),
+        ScrollCacheExtent.viewport(-0.75),
+        ScrollCacheExtent.pixels(double.nan),
+      ]) {
+        await tester.pumpWidget(_buildTree(height: 200, scrollCacheExtent: scrollCacheExtent));
+        final RenderTreeViewport viewport = tester.renderObject(find.byType(TreeViewport));
+        viewport.verticalOffset.jumpTo(0);
+        await tester.pump();
+        expect(_text('Node 0'), findsOneWidget);
+        expect(_text('Node 1'), findsOneWidget);
+        expect(_text('Node 2'), findsNothing);
+
+        viewport.verticalOffset.jumpTo(1000);
+        await tester.pump();
+
+        expect(_text('Node 10'), findsOneWidget);
+        expect(_text('Node 11'), findsOneWidget);
+        expect(_text('Node 12'), findsNothing);
+      }
+
+      // Infinite viewport multiplier on a 0x0 viewport produces infinity * 0 = NaN.
+      await tester.pumpWidget(
+        _buildTree(
+          width: 0,
+          height: 0,
+          scrollCacheExtent: const ScrollCacheExtent.viewport(double.infinity),
+        ),
+      );
+      expect(tester.takeException(), isNull);
     });
 
     testWidgets('updates the render object', (WidgetTester tester) async {

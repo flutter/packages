@@ -33,6 +33,15 @@ void testFixes(TwoDimensionalChildManager childManager, double extent) {
     scrollCacheExtent: const ScrollCacheExtent.viewport(1.0),
     delegate: tableDelegate,
   );
+  TableView(
+    cacheExtent: 100.0,
+    scrollCacheExtent: null,
+    delegate: tableDelegate,
+  );
+  TableView(
+    scrollCacheExtent: const ScrollCacheExtent.viewport(1.0),
+    delegate: tableDelegate,
+  );
   TableView.builder(
     cacheExtent: 100.0,
     columnBuilder: (int index) =>

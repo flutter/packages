@@ -141,11 +141,18 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
   int? _firstRow;
   int? _lastRow;
   double _furthestHorizontalExtent = 0.0;
-  // The cache extent in pixels along the vertical axis.
-  double get _cacheExtent => switch (scrollCacheExtent.style) {
-    CacheExtentStyle.pixel => scrollCacheExtent.value,
-    CacheExtentStyle.viewport => scrollCacheExtent.value * viewportDimension.height,
-  };
+
+  // The cache extent in pixels along the vertical axis, clamped to be
+  // non-negative (and treating NaN, such as infinity * 0 on a zero-sized
+  // viewport, as 0) so invalid values cannot invert the leading and trailing
+  // layout bounds.
+  double get _cacheExtent {
+    final double raw = switch (scrollCacheExtent.style) {
+      CacheExtentStyle.pixel => scrollCacheExtent.value,
+      CacheExtentStyle.viewport => scrollCacheExtent.value * viewportDimension.height,
+    };
+    return raw > 0.0 ? raw : 0.0;
+  }
 
   // Where row layout begins, potentially outside of the visible area.
   double get _targetLeadingRowPixel {

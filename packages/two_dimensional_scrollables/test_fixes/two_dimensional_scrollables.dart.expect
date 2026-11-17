@@ -32,6 +32,13 @@ void testFixes(TwoDimensionalChildManager childManager, double extent) {
     scrollCacheExtent: const ScrollCacheExtent.viewport(1.0),
     delegate: tableDelegate,
   );
+  TableView(
+    scrollCacheExtent: ScrollCacheExtent.pixels(100.0), delegate: tableDelegate,
+  );
+  TableView(
+    scrollCacheExtent: const ScrollCacheExtent.viewport(1.0),
+    delegate: tableDelegate,
+  );
   TableView.builder(
     scrollCacheExtent: ScrollCacheExtent.pixels(100.0), columnBuilder: (int index) =>
         const TableSpan(extent: FixedTableSpanExtent(100)),
