@@ -1288,21 +1288,24 @@ class _RenderDecoration extends RenderBox
     final double iconHeight = _minHeight(icon, width);
     final double iconWidth = _minWidth(icon, iconHeight);
 
-    width = math.max(width - iconWidth, 0.0);
+    final double widthWithoutIcon = math.max(width - iconWidth, 0.0);
     final double supportingTextWidth = math.max(
-      width -
+      widthWithoutIcon -
           (supportingTextPadding?.horizontal ?? contentPadding.horizontal) -
           decoration.inputGap * 2,
       0.0,
     );
 
-    final double prefixIconHeight = _minHeight(prefixIcon, width);
+    final double prefixIconHeight = _minHeight(prefixIcon, widthWithoutIcon);
     final double prefixIconWidth = _minWidth(prefixIcon, prefixIconHeight);
 
-    final double suffixIconHeight = _minHeight(suffixIcon, width);
+    final double suffixIconHeight = _minHeight(suffixIcon, widthWithoutIcon);
     final double suffixIconWidth = _minWidth(suffixIcon, suffixIconHeight);
 
-    width = math.max(width - contentPadding.horizontal - decoration.inputGap * 2, 0.0);
+    final double inputRowWidth = math.max(
+      widthWithoutIcon - contentPadding.horizontal - decoration.inputGap * 2,
+      0.0,
+    );
 
     // TODO(LongCatIsLooong): use _computeSupportingTextSizes for supportingText intrinsic sizes.
     // See https://github.com/flutter/flutter/issues/13715.
@@ -1323,14 +1326,14 @@ class _RenderDecoration extends RenderBox
       supportingTextHeight += topPadding + bottomPadding;
     }
 
-    final double prefixHeight = _minHeight(prefix, width);
+    final double prefixHeight = _minHeight(prefix, inputRowWidth);
     final double prefixWidth = _minWidth(prefix, prefixHeight);
 
-    final double suffixHeight = _minHeight(suffix, width);
+    final double suffixHeight = _minHeight(suffix, inputRowWidth);
     final double suffixWidth = _minWidth(suffix, suffixHeight);
 
     final double availableInputWidth = math.max(
-      width - prefixWidth - suffixWidth - prefixIconWidth - suffixIconWidth,
+      inputRowWidth - prefixWidth - suffixWidth - prefixIconWidth - suffixIconWidth,
       0.0,
     );
     final double inputHeight = _lineHeight(availableInputWidth, <RenderBox?>[
