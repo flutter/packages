@@ -259,7 +259,7 @@ private open class GeneratedFileSelectorApiPigeonCodec : StandardMessageCodec() 
  */
 interface FileSelectorApi {
   /**
-   * Opens a file dialog for loading files and returns a file path.
+   * Opens a file dialog for loading files and returns a file uri.
    *
    * Returns `null` if user cancels the operation.
    */
@@ -268,20 +268,18 @@ interface FileSelectorApi {
       allowedTypes: FileTypes,
       callback: (Result<String?>) -> Unit
   )
-  /**
-   * Opens a file dialog for loading files and returns a list of file responses chosen by the user.
-   */
+  /** Opens a file dialog for loading files and returns a list of file uris chosen by the user. */
   fun openFiles(
       initialDirectory: String?,
       allowedTypes: FileTypes,
       callback: (Result<List<String>>) -> Unit
   )
   /**
-   * Opens a file dialog for loading directories and returns a directory path.
+   * Opens a file dialog for loading directories and returns a directory uri.
    *
    * Returns `null` if user cancels the operation.
    */
-  fun getDirectoryPath(initialDirectory: String?, callback: (Result<String?>) -> Unit)
+  fun getDirectoryUri(initialDirectory: String?, callback: (Result<String?>) -> Unit)
 
   companion object {
     /** The codec used by FileSelectorApi. */
@@ -351,13 +349,13 @@ interface FileSelectorApi {
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.file_selector_android.FileSelectorApi.getDirectoryPath$separatedMessageChannelSuffix",
+                "dev.flutter.pigeon.file_selector_android.FileSelectorApi.getDirectoryUri$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val initialDirectoryArg = args[0] as String?
-            api.getDirectoryPath(initialDirectoryArg) { result: Result<String?> ->
+            api.getDirectoryUri(initialDirectoryArg) { result: Result<String?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(GeneratedFileSelectorApiPigeonUtils.wrapError(error))

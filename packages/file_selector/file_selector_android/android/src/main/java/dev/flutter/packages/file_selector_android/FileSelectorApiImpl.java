@@ -160,7 +160,7 @@ public class FileSelectorApiImpl implements FileSelectorApi {
   }
 
   @Override
-  public void getDirectoryPath(
+  public void getDirectoryUri(
       @Nullable String initialDirectory,
       @NonNull Function1<? super @NotNull Result<String>, @NotNull Unit> callback) {
     final Intent intent = objectFactory.newIntent(Intent.ACTION_OPEN_DOCUMENT_TREE);

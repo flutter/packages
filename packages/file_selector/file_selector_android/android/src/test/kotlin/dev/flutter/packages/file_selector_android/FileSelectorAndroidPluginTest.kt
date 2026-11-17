@@ -101,7 +101,7 @@ class FileSelectorAndroidPluginTest {
   }
 
   @Test
-  fun getDirectoryPathReturnsSuccessfully() {
+  fun getDirectoryUriReturnsSuccessfully() {
     val mockUriPath = "some/path/"
     val mockUri = mock<Uri> { on { toString() } doReturn mockUriPath }
 
@@ -115,7 +115,7 @@ class FileSelectorAndroidPluginTest {
     val fileSelectorApi = FileSelectorApiImpl(mockActivityBinding, mockObjectFactory)
 
     var callbackCalled = false
-    fileSelectorApi.getDirectoryPath(null) { reply ->
+    fileSelectorApi.getDirectoryUri(null) { reply ->
       callbackCalled = true
       assertEquals(mockUriPath, reply.getOrNull())
     }

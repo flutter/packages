@@ -185,7 +185,7 @@ class FileSelectorApi {
 
   final String pigeonVar_messageChannelSuffix;
 
-  /// Opens a file dialog for loading files and returns a file path.
+  /// Opens a file dialog for loading files and returns a file uri.
   ///
   /// Returns `null` if user cancels the operation.
   Future<String?> openFile(String? initialDirectory, FileTypes allowedTypes) async {
@@ -210,7 +210,7 @@ class FileSelectorApi {
     return pigeonVar_replyValue as String?;
   }
 
-  /// Opens a file dialog for loading files and returns a list of file responses
+  /// Opens a file dialog for loading files and returns a list of file uris
   /// chosen by the user.
   Future<List<String>> openFiles(String? initialDirectory, FileTypes allowedTypes) async {
     final pigeonVar_channelName =
@@ -234,12 +234,12 @@ class FileSelectorApi {
     return (pigeonVar_replyValue! as List<Object?>).cast<String>();
   }
 
-  /// Opens a file dialog for loading directories and returns a directory path.
+  /// Opens a file dialog for loading directories and returns a directory uri.
   ///
   /// Returns `null` if user cancels the operation.
-  Future<String?> getDirectoryPath(String? initialDirectory) async {
+  Future<String?> getDirectoryUri(String? initialDirectory) async {
     final pigeonVar_channelName =
-        'dev.flutter.pigeon.file_selector_android.FileSelectorApi.getDirectoryPath$pigeonVar_messageChannelSuffix';
+        'dev.flutter.pigeon.file_selector_android.FileSelectorApi.getDirectoryUri$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
