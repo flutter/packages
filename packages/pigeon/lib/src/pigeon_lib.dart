@@ -895,8 +895,14 @@ ${_argParser.usage}''';
     }
 
     final bool hasDartOut = hasFileOutput(internalOptions.dartOptions?.dartOut);
-    final bool useFfi = hasDartOut && (internalOptions.swiftOptions?.useFfi ?? false);
-    final bool useJni = hasDartOut && (internalOptions.kotlinOptions?.useJni ?? false);
+    final bool useFfi =
+        hasDartOut &&
+        hasFileOutput(internalOptions.swiftOptions?.allSwiftOuts.firstOrNull) &&
+        (internalOptions.swiftOptions?.useFfi ?? false);
+    final bool useJni =
+        hasDartOut &&
+        hasFileOutput(internalOptions.kotlinOptions?.kotlinOut) &&
+        (internalOptions.kotlinOptions?.useJni ?? false);
 
     final String dartExecutable = Platform.resolvedExecutable;
     for (final adapter in safeGeneratorAdapters) {
@@ -962,7 +968,7 @@ ${_argParser.usage}''';
   }
 
   /// Print a list of errors to [errorSink] (defaults to [stderr]).
-  static void printErrors(List<Error> errors, {StringSink? errorSink}) {
+  static void printErrors(List<Error> errors, {@visibleForTesting StringSink? errorSink}) {
     final StringSink sink = errorSink ?? stderr;
     for (final err in errors) {
       if (err.filename != null) {

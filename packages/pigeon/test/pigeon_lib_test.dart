@@ -3715,7 +3715,7 @@ void main() {
     );
 
     test(
-      'runWithOptions skips JNIgen and FFIgen config generation and execution when dartOut is missing or stdout',
+      'runWithOptions skips JNIgen and FFIgen config generation and execution when dartOut or host output is missing or stdout',
       () async {
         final Directory tempDir = Directory.systemTemp.createTempSync('pigeon_host_only_interop_');
         try {
@@ -3761,6 +3761,47 @@ abstract class Api {
           expect(swiftExitCode, equals(0));
           expect(errorBuffer.toString(), isEmpty);
           expect(File(path.join(tempDir.path, 'ios', 'Messages.g.swift')).existsSync(), isTrue);
+          expect(
+            File(
+              path.join(tempDir.path, 'tool', 'pigeon', 'messages_ffigen_config.dart'),
+            ).existsSync(),
+            isFalse,
+          );
+
+          final int kotlinStdoutExitCode = await Pigeon.runWithOptions(
+            PigeonOptions(
+              input: inputFile.path,
+              basePath: tempDir.path,
+              dartOut: 'lib/messages.g.dart',
+              kotlinOut: 'stdout',
+              kotlinOptions: const KotlinOptions(useJni: true),
+              dartPackageName: 'my_package',
+            ),
+            errorSink: errorBuffer,
+          );
+          expect(kotlinStdoutExitCode, equals(0));
+          expect(errorBuffer.toString(), isEmpty);
+          expect(File(path.join(tempDir.path, 'lib', 'messages.g.dart')).existsSync(), isTrue);
+          expect(
+            File(
+              path.join(tempDir.path, 'tool', 'pigeon', 'messages_jnigen_config.dart'),
+            ).existsSync(),
+            isFalse,
+          );
+
+          final int swiftStdoutExitCode = await Pigeon.runWithOptions(
+            PigeonOptions(
+              input: inputFile.path,
+              basePath: tempDir.path,
+              dartOut: 'lib/messages.g.dart',
+              swiftOut: 'stdout',
+              swiftOptions: const SwiftOptions(useFfi: true),
+              dartPackageName: 'my_package',
+            ),
+            errorSink: errorBuffer,
+          );
+          expect(swiftStdoutExitCode, equals(0));
+          expect(errorBuffer.toString(), isEmpty);
           expect(
             File(
               path.join(tempDir.path, 'tool', 'pigeon', 'messages_ffigen_config.dart'),
