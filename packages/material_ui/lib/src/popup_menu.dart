@@ -1105,7 +1105,7 @@ class _DismissOnScrollOutsideMenuState extends State<_DismissOnScrollOutsideMenu
   final Map<int, Offset> _outsideStartPositions = <int, Offset>{};
   final Set<int> _draggedPointers = <int>{};
   DeviceGestureSettings? _gestureSettings;
-  int? _viewId;
+  late int _viewId;
 
   @override
   void initState() {
@@ -1117,7 +1117,7 @@ class _DismissOnScrollOutsideMenuState extends State<_DismissOnScrollOutsideMenu
   void didChangeDependencies() {
     super.didChangeDependencies();
     _gestureSettings = MediaQuery.maybeGestureSettingsOf(context);
-    _viewId = View.maybeOf(context)?.viewId;
+    _viewId = View.of(context).viewId;
   }
 
   @override
@@ -1176,8 +1176,9 @@ class _DismissOnScrollOutsideMenuState extends State<_DismissOnScrollOutsideMenu
   }
 
   void _dismiss() {
-    if (widget.route.isCurrent) {
-      unawaited(widget.route.navigator!.maybePop());
+    final NavigatorState? navigator = widget.route.navigator;
+    if (navigator != null && widget.route.isCurrent) {
+      unawaited(navigator.maybePop());
     }
   }
 
