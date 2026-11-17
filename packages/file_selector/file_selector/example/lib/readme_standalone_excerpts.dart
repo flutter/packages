@@ -5,7 +5,7 @@
 // This file exists solely to host compiled excerpts for README.md, and is not
 // intended for use as an actual example application.
 
-// ignore_for_file: public_member_api_docs
+// ignore_for_file: unreachable_from_main, public_member_api_docs
 
 import 'dart:typed_data';
 
@@ -80,3 +80,21 @@ class _MyAppState extends State<MyApp> {
     // #enddocregion GetDirectory
   }
 }
+
+/// Example of an API wrapper that is mockable for tests.
+// #docregion TestWrapper
+class FileSelectorWrapper {
+  Future<XFile?> callOpenFile({
+    List<XTypeGroup> acceptedTypeGroups = const <XTypeGroup>[],
+    String? initialDirectory,
+    String? confirmButtonText,
+  }) {
+    // From `file_selector`:
+    return openFile(
+      acceptedTypeGroups: acceptedTypeGroups,
+      initialDirectory: initialDirectory,
+      confirmButtonText: confirmButtonText,
+    );
+  }
+}
+// #enddocregion TestWrapper

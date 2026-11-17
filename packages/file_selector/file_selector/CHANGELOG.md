@@ -7,6 +7,7 @@
   * Replaces `getDirectoryPath` with `getDirectory` and now returns a `XDirectory`.
   * Replaces `getDirectoryPaths` with `getDirectories` and now returns a `List<XDirectory>`.
   * Removes `XTypeGroup.macUTIs`. Use `XTypeGroup.uniformTypeIdentifiers` instead.
+* Added a section on unit testing in the `README`.
 * Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
 * Updates README to reflect that the latest versions of `file_selector_ios`
   and `file_selector_macos` require iOS 15 and macOS 12.

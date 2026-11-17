@@ -134,5 +134,28 @@ pass different `XTypeGroup`s based on `Platform`.
 | Choose a save location | Pick a directory to save a file in | ❌       | ❌       | ✔️        | ✔️       | ✔️          | ❌          |
 | Choose a directory     | Pick a directory and get its path  | ✔️       | ❌       | ✔️        | ✔️       | ✔️          | ❌          |
 
+### Unit Testing
+
+To use this plugin in unit tests, apps can wrap the API methods in a wrapper class and mock the
+wrapper class.
+
+<?code-excerpt "readme_standalone_excerpts.dart (TestWrapper)"?>
+```dart
+class FileSelectorWrapper {
+  Future<XFile?> callOpenFile({
+    List<XTypeGroup> acceptedTypeGroups = const <XTypeGroup>[],
+    String? initialDirectory,
+    String? confirmButtonText,
+  }) {
+    // From `file_selector`:
+    return openFile(
+      acceptedTypeGroups: acceptedTypeGroups,
+      initialDirectory: initialDirectory,
+      confirmButtonText: confirmButtonText,
+    );
+  }
+}
+```
+
 [example]:./example
 [entitlement]: https://docs.flutter.dev/desktop#entitlements-and-the-app-sandbox
