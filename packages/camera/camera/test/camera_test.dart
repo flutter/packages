@@ -138,6 +138,20 @@ void main() {
       expect(cameraController.mediaSettings.audioBitrate, isNull);
     });
 
+    test('aspectRatio is passed to the platform in mediaSettings.', () {
+      final cameraController = CameraController(
+        const CameraDescription(
+          name: 'cam',
+          lensDirection: CameraLensDirection.back,
+          sensorOrientation: 90,
+        ),
+        ResolutionPreset.max,
+        aspectRatio: CameraAspectRatio.ratio4x3,
+      );
+
+      expect(cameraController.mediaSettings.aspectRatio, CameraAspectRatio.ratio4x3);
+    });
+
     test('can be disposed', () async {
       final cameraController = CameraController(
         const CameraDescription(

@@ -4,6 +4,7 @@
 
 export 'package:camera_platform_interface/camera_platform_interface.dart'
     show
+        CameraAspectRatio,
         CameraDescription,
         CameraException,
         CameraLensDirection,

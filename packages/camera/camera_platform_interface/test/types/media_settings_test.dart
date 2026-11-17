@@ -42,6 +42,20 @@ void main() {
     );
   });
 
+  test('MediaSettings should hold aspectRatio and compare it', () {
+    const fourByThree = MediaSettings(aspectRatio: CameraAspectRatio.ratio4x3);
+
+    expect(const MediaSettings().aspectRatio, isNull);
+    expect(fourByThree.aspectRatio, CameraAspectRatio.ratio4x3);
+    expect(fourByThree == const MediaSettings(), isFalse);
+    expect(fourByThree == const MediaSettings(aspectRatio: CameraAspectRatio.ratio4x3), isTrue);
+    expect(
+      fourByThree.hashCode,
+      const MediaSettings(aspectRatio: CameraAspectRatio.ratio4x3).hashCode,
+    );
+    expect(fourByThree.toString(), contains('aspectRatio: CameraAspectRatio.ratio4x3'));
+  });
+
   test('MediaSettings fps should hold parameters', () {
     const settings = MediaSettings(
       resolutionPreset: ResolutionPreset.low,
@@ -89,7 +103,7 @@ void main() {
 
     expect(
       settings.hashCode,
-      Object.hash(ResolutionPreset.low, 20, 128000, 32000, true),
+      Object.hash(ResolutionPreset.low, 20, 128000, 32000, true, null),
       reason: 'MediaSettings hash() should be equal to Object.hash of parameters',
     );
   });

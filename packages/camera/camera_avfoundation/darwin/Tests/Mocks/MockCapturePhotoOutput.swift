@@ -14,7 +14,13 @@ final class MockCapturePhotoOutput: NSObject, CapturePhotoOutput {
   var isHighResolutionCaptureEnabled = false
   var maxPhotoDimensions = CMVideoDimensions()
   var supportedFlashModes: [AVCaptureDevice.FlashMode] = []
-  var flutterZeroShutterLagSupported = false
+  /// Stub that decides `flutterZeroShutterLagSupported`, for example from the active format.
+  var flutterZeroShutterLagSupportedStub: (() -> Bool)?
+  private var zeroShutterLagSupported = false
+  var flutterZeroShutterLagSupported: Bool {
+    get { flutterZeroShutterLagSupportedStub?() ?? zeroShutterLagSupported }
+    set { zeroShutterLagSupported = newValue }
+  }
   var flutterZeroShutterLagEnabled = false
 
   // Stub that is called when the corresponding public method is called.

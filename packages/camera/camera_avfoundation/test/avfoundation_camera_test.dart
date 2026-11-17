@@ -96,6 +96,30 @@ void main() {
       },
     );
 
+    test('createCameraWithSettings sends the aspect ratio', () async {
+      final mockApi = MockCameraApi();
+      when(mockApi.create(any, any)).thenAnswer((_) async => 1);
+      final camera = AVFoundationCamera(api: mockApi);
+      const description = CameraDescription(
+        name: 'Test',
+        lensDirection: CameraLensDirection.back,
+        sensorOrientation: 0,
+      );
+
+      await camera.createCameraWithSettings(
+        description,
+        const MediaSettings(aspectRatio: CameraAspectRatio.ratio4x3),
+      );
+      await camera.createCameraWithSettings(description, const MediaSettings());
+
+      final List<dynamic> captured = verify(mockApi.create(any, captureAny)).captured;
+      expect(
+        (captured[0] as PlatformMediaSettings).aspectRatio,
+        PlatformCameraAspectRatio.ratio4x3,
+      );
+      expect((captured[1] as PlatformMediaSettings).aspectRatio, isNull);
+    });
+
     test('Should throw CameraException when create throws a PlatformException', () {
       // Arrange
       const exceptionCode = 'TESTING_ERROR_CODE';

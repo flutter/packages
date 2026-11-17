@@ -1,5 +1,6 @@
-## NEXT
+## 2.16.0
 
+* Adds `MediaSettings.aspectRatio` (`CameraAspectRatio`) to choose the aspect ratio of the preview, photos and recorded video, with the resolution preset as a tier within it.
 * Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
 
 ## 2.15.0

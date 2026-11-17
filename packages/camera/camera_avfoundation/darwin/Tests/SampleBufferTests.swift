@@ -595,4 +595,62 @@ final class CameraSampleBufferTests: XCTestCase {
     XCTAssertEqual(mockPhotoOutput.maxPhotoDimensions.width, 4032)
     XCTAssertEqual(mockPhotoOutput.maxPhotoDimensions.height, 3024)
   }
+
+  func testSetDescriptionWhileRecording_withAspectRatioKeepsTheVideoSize() {
+    func format(
+      _ codecType: OSType, _ width: Int32, _ height: Int32, photoScale: Int32 = 1
+    ) -> MockCaptureDeviceFormat {
+      let format = MockCaptureDeviceFormat(codecType: codecType, width: width, height: height)
+      format.supportedMaxPhotoDimensions = [
+        CMVideoDimensions(width: width * photoScale, height: height * photoScale)
+      ]
+      return format
+    }
+    func device(_ formats: [MockCaptureDeviceFormat]) -> MockCaptureDevice {
+      let device = MockCaptureDevice()
+      device.flutterFormats = formats
+      var active: CaptureDeviceFormat = formats[0]
+      device.activeFormatStub = { active }
+      device.setActiveFormatStub = { active = $0 }
+      return device
+    }
+    let video8 = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange
+    let video10 = kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange
+    let bayer: OSType = 1_651_798_066
+    let initialDevice = device([format(video8, 1280, 720), format(video8, 1920, 1440)])
+    let wanted = format(video8, 1920, 1440, photoScale: 2)
+    let newDevice = device([
+      format(video8, 1280, 720), format(bayer, 1920, 1440), format(video10, 1920, 1440),
+      format(video8, 1920, 1440), wanted,
+    ])
+
+    let configuration = CameraTestUtils.createTestCameraConfiguration()
+    configuration.mediaSettingsWrapper = FakeMediaSettingsAVWrapper(
+      inputMock: MockAssetWriterInput())
+    configuration.videoCaptureSession = {
+      let session = MockCaptureSession()
+      session.canSetSessionPresetStub = { _ in true }
+      return session
+    }()
+    configuration.mediaSettings = PlatformMediaSettings(
+      resolutionPreset: .veryHigh, framesPerSecond: nil, videoBitrate: nil, audioBitrate: nil,
+      enableAudio: false, aspectRatio: .ratio4x3)
+    configuration.videoCaptureDeviceFactory = { name in
+      name == "new_camera" ? newDevice : initialDevice
+    }
+    let camera = CameraTestUtils.createTestCamera(configuration)
+    let mockPhotoOutput = MockCapturePhotoOutput()
+    mockPhotoOutput.avOutput = camera.capturePhotoOutput.avOutput
+    camera.capturePhotoOutput = mockPhotoOutput
+    camera.startVideoRecording(completion: { _ in }, messengerForStreaming: nil)
+
+    let expectation = self.expectation(description: "setDescriptionWhileRecording completed")
+    camera.setDescriptionWhileRecording("new_camera") { result in
+      let _ = self.assertSuccess(result)
+      expectation.fulfill()
+    }
+    waitForExpectations(timeout: 1.0, handler: nil)
+
+    XCTAssertTrue(newDevice.flutterActiveFormat === wanted)
+  }
 }

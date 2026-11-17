@@ -1,3 +1,8 @@
+## 0.7.7
+
+* Supports `MediaSettings.aspectRatio` for the preview, image capture, image analysis and video recording.
+* Updates minimum supported `camera_platform_interface` to 2.16.0.
+
 ## 0.7.6+1
 
 * Fixes video recording duration discrepancy by waiting for the first recorded frame before completing `startVideoCapturing`, and validates errors on `stopVideoRecording`.

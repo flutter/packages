@@ -4,6 +4,7 @@
 
 // ignore_for_file: avoid_equals_and_hash_code_on_mutable_classes
 
+import 'camera_aspect_ratio.dart';
 import 'resolution_preset.dart';
 
 /// Recording media settings.
@@ -19,6 +20,7 @@ class MediaSettings {
     this.videoBitrate,
     this.audioBitrate,
     this.enableAudio = false,
+    this.aspectRatio,
   }) : assert(fps == null || fps > 0, 'fps must be null or greater than zero'),
        assert(
          videoBitrate == null || videoBitrate > 0,
@@ -30,6 +32,13 @@ class MediaSettings {
        );
 
   /// [ResolutionPreset] affect the quality of video recording and image capture.
+  ///
+  /// With an [aspectRatio], the preset is a resolution tier within that aspect
+  /// ratio. For the preview, photos and image stream, the resolution is the
+  /// smallest one whose shorter side is at least 240, 480, 720, 1080 or 2160 for
+  /// `low` to `ultraHigh`, otherwise the largest available; `max` is the
+  /// largest. On Android, video recording follows the platform's video quality
+  /// steps for the preset.
   final ResolutionPreset? resolutionPreset;
 
   /// Rate at which frames should be captured by the camera in frames per second.
@@ -44,6 +53,17 @@ class MediaSettings {
   /// Controls audio presence in recorded video.
   final bool enableAudio;
 
+  /// The aspect ratio of the preview, photos and recorded video.
+  ///
+  /// All three outputs use the same aspect ratio, and [resolutionPreset]
+  /// chooses the resolution within it. When null, the platform chooses the
+  /// aspect ratio from [resolutionPreset], as in earlier versions.
+  ///
+  /// This is a request: when the camera has no output with this aspect ratio,
+  /// the platform falls back to another one. Platforms that do not support it
+  /// ignore it.
+  final CameraAspectRatio? aspectRatio;
+
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) {
@@ -57,11 +77,13 @@ class MediaSettings {
         fps == other.fps &&
         videoBitrate == other.videoBitrate &&
         audioBitrate == other.audioBitrate &&
-        enableAudio == other.enableAudio;
+        enableAudio == other.enableAudio &&
+        aspectRatio == other.aspectRatio;
   }
 
   @override
-  int get hashCode => Object.hash(resolutionPreset, fps, videoBitrate, audioBitrate, enableAudio);
+  int get hashCode =>
+      Object.hash(resolutionPreset, fps, videoBitrate, audioBitrate, enableAudio, aspectRatio);
 
   @override
   String toString() {
@@ -70,6 +92,7 @@ class MediaSettings {
         'fps: $fps, '
         'videoBitrate: $videoBitrate, '
         'audioBitrate: $audioBitrate, '
-        'enableAudio: $enableAudio}';
+        'enableAudio: $enableAudio, '
+        'aspectRatio: $aspectRatio}';
   }
 }

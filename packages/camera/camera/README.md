@@ -16,6 +16,7 @@ A Flutter plugin for iOS, Android and Web allowing access to the device cameras.
 * Snapshots can be captured and saved to a file.
 * Record video.
 * Add access to the image stream from Dart.
+* Choose the aspect ratio (4:3 or 16:9) of the preview, photos and video.
 
 ## Setup
 
@@ -91,6 +92,31 @@ Here is a list of all permission error codes that can be thrown:
 - `AudioAccessDeniedWithoutPrompt`: iOS only for now. Thrown when user has previously denied the permission. iOS does not allow prompting alert dialog a second time. Users will have to go to Settings > Privacy > Microphone in order to enable audio access.
 
 - `AudioAccessRestricted`: iOS only for now. Thrown when audio access is restricted and users cannot grant permission (parental control).
+
+### Aspect ratio
+
+`aspectRatio` sets the aspect ratio of the preview, photos and recorded video together, and the
+resolution preset then chooses the resolution within it. For the preview, photos and image stream,
+that is the smallest resolution of that aspect ratio whose shorter side is at least the preset's
+(240, 480, 720, 1080 or 2160 for `low` to `ultraHigh`), else the largest; `max` is the largest. On
+Android, video recording follows the platform's video quality steps for the preset.
+
+<?code-excerpt "readme_aspect_ratio.dart (AspectRatio)"?>
+```dart
+final photoController = CameraController(
+  description,
+  ResolutionPreset.max,
+  aspectRatio: CameraAspectRatio.ratio4x3,
+);
+final videoController = CameraController(
+  description,
+  ResolutionPreset.veryHigh,
+  aspectRatio: CameraAspectRatio.ratio16x9,
+);
+```
+
+Without `aspectRatio`, the aspect ratio follows the resolution preset as before. It is supported
+by `camera_avfoundation` and `camera_android_camerax`.
 
 ### Example
 

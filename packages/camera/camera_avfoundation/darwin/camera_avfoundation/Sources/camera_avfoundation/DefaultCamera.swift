@@ -128,6 +128,9 @@ final class DefaultCamera: NSObject, Camera {
   /// `isZeroShutterLagEnabled`, so the requested state is kept here and
   /// reapplied afterwards.
   private var zeroShutterLagRequested: Bool?
+  /// The formats that the aspect ratio and the resolution preset chose, best first. They have the
+  /// same size and dynamic range, so any of them can replace the active one.
+  private var aspectRatioFormats: [CaptureDeviceFormat] = []
   private var lockedCaptureOrientation = UIDeviceOrientation.unknown
   private var exposureMode = PlatformExposureMode.auto
   private var focusMode = PlatformFocusMode.auto
@@ -217,12 +220,20 @@ final class DefaultCamera: NSObject, Camera {
       mediaSettingsAVWrapper.beginConfiguration(for: videoCaptureSession)
       defer { mediaSettingsAVWrapper.commitConfiguration(for: videoCaptureSession) }
 
-      try setCaptureSessionPreset(mediaSettings.resolutionPreset)
+      var isAspectRatioFormatApplied = false
+      if let aspectRatio = mediaSettings.aspectRatio, applyAspectRatioFormat(aspectRatio) {
+        isAspectRatioFormatApplied = true
+        // The frame rate search below can pick another format of the same size.
+        aspectRatioFormats = []
+      } else {
+        try setCaptureSessionPreset(mediaSettings.resolutionPreset)
+      }
 
       (captureDevice.flutterActiveFormat, framesPerSecond) = FormatUtils.findBestFormat(
         for: captureDevice,
         mediaSettings: mediaSettings,
-        videoDimensionsConverter: videoDimensionsConverter)
+        videoDimensionsConverter: videoDimensionsConverter,
+        formatFilter: isAspectRatioFormatApplied ? FormatUtils.isAspectRatioCandidate : nil)
 
       if let framesPerSecond = framesPerSecond {
         // Set frame rate with 1/10 precision allowing non-integral values.
@@ -232,6 +243,9 @@ final class DefaultCamera: NSObject, Camera {
         mediaSettingsAVWrapper.setMinFrameDuration(duration, on: captureDevice)
         mediaSettingsAVWrapper.setMaxFrameDuration(duration, on: captureDevice)
       }
+    } else if let aspectRatio = mediaSettings.aspectRatio, applyAspectRatioFormatLocked(aspectRatio)
+    {
+      // The format was chosen for the aspect ratio.
     } else {
       // If the frame rate is not important fall to a less restrictive
       // behavior (no configuration locking).
@@ -352,16 +366,11 @@ final class DefaultCamera: NSObject, Camera {
     var maxPixelCount: UInt = 0
     var isBestSubTypePreferred = false
 
-    // These formats are compressed and lossy, and unsupported by the Flutter Engine.
-    let unsupportedSubTypes: [FourCharCode] = [
-      1_651_798_066  // Hex for 'btp2', or kCVPixelFormatType_96VersatileBayerPacked12
-    ]
-
     for format in captureDevice.flutterFormats {
       let subType = CMFormatDescriptionGetMediaSubType(format.formatDescription)
 
       // Skip formats that will crash the Flutter Engine
-      if unsupportedSubTypes.contains(subType) {
+      if FormatUtils.hasUnsupportedSubType(format) {
         continue
       }
 
@@ -386,6 +395,60 @@ final class DefaultCamera: NSObject, Camera {
       }
     }
     return bestFormat
+  }
+
+  /// Locks the device and applies `applyAspectRatioFormat`. Returns false if the device cannot be
+  /// locked or has no format with the aspect ratio.
+  private func applyAspectRatioFormatLocked(_ aspectRatio: PlatformCameraAspectRatio) -> Bool {
+    do {
+      try captureDevice.lockForConfiguration()
+      defer { captureDevice.unlockForConfiguration() }
+      return applyAspectRatioFormat(aspectRatio)
+    } catch {
+      reportErrorMessage("Unable to lock the camera to choose its format: \(error)")
+      return false
+    }
+  }
+
+  /// Applies the best format for the aspect ratio and the resolution preset. The caller must have
+  /// locked the device for configuration. Returns false, leaving the device untouched, when the
+  /// device has no format with the aspect ratio.
+  private func applyAspectRatioFormat(_ aspectRatio: PlatformCameraAspectRatio) -> Bool {
+    let formats = FormatUtils.findAspectRatioFormats(
+      for: captureDevice, aspectRatio: aspectRatio, preset: mediaSettings.resolutionPreset,
+      videoDimensionsConverter: videoDimensionsConverter)
+    guard let format = formats.first else { return false }
+
+    videoCaptureSession.sessionPreset = .inputPriority
+    captureDevice.flutterActiveFormat = format
+    aspectRatioFormats = formats
+    let size = videoDimensionsConverter(format)
+    previewSize = CGSize(width: CGFloat(size.width), height: CGFloat(size.height))
+    audioCaptureSession.sessionPreset = videoCaptureSession.sessionPreset
+    return true
+  }
+
+  /// Switches to another format of `aspectRatioFormats` that supports zero-shutter-lag, if the
+  /// active one does not. All of them have the same size.
+  private func preferZeroShutterLagFormat() {
+    guard aspectRatioFormats.count > 1, !capturePhotoOutput.flutterZeroShutterLagSupported,
+      (try? captureDevice.lockForConfiguration()) != nil
+    else {
+      return
+    }
+    defer { captureDevice.unlockForConfiguration() }
+    videoCaptureSession.beginConfiguration()
+    defer { videoCaptureSession.commitConfiguration() }
+
+    let current = captureDevice.flutterActiveFormat
+    for format in aspectRatioFormats where format !== current {
+      captureDevice.flutterActiveFormat = format
+      if capturePhotoOutput.flutterZeroShutterLagSupported {
+        configureMaxPhotoDimensions()
+        return
+      }
+    }
+    captureDevice.flutterActiveFormat = current
   }
 
   func setUpCaptureSessionForAudioIfNeeded() {
@@ -961,6 +1024,9 @@ final class DefaultCamera: NSObject, Camera {
   /// `beginConfiguration`/`commitConfiguration`.
   func setZeroShutterLagEnabled(_ enabled: Bool) {
     zeroShutterLagRequested = enabled
+    if enabled {
+      preferZeroShutterLagFormat()
+    }
     applyZeroShutterLag(enabled)
   }
 
@@ -1258,7 +1324,31 @@ final class DefaultCamera: NSObject, Camera {
       return
     }
 
-    captureDevice = videoCaptureDeviceFactory(cameraName)
+    let newCaptureDevice = videoCaptureDeviceFactory(cameraName)
+    // The writer keeps its format and size, so a camera whose format was chosen for an aspect ratio
+    // continues on a format of the same size; otherwise the new camera keeps its default format.
+    var newFormat: CaptureDeviceFormat?
+    if mediaSettings.aspectRatio != nil {
+      let size = videoDimensionsConverter(captureDevice.flutterActiveFormat)
+      newFormat =
+        FormatUtils.orderedByPhotoSize(
+          newCaptureDevice.flutterFormats.filter {
+            let candidate = videoDimensionsConverter($0)
+            return candidate.width == size.width && candidate.height == size.height
+              && FormatUtils.isAspectRatioCandidate($0)
+          }
+        ).first
+      if newFormat != nil, (try? newCaptureDevice.lockForConfiguration()) == nil {
+        newFormat = nil
+      }
+    }
+    defer {
+      if newFormat != nil {
+        newCaptureDevice.unlockForConfiguration()
+      }
+    }
+    captureDevice = newCaptureDevice
+    aspectRatioFormats = []
 
     let oldConnection = captureVideoOutput.connection(with: .video)
 
@@ -1334,6 +1424,11 @@ final class DefaultCamera: NSObject, Camera {
             details: nil)))
     }
     videoCaptureSession.addConnection(newConnection)
+    if let newFormat {
+      // The new device starts with its own default format.
+      videoCaptureSession.sessionPreset = .inputPriority
+      captureDevice.flutterActiveFormat = newFormat
+    }
     videoCaptureSession.commitConfiguration()
 
     configureMaxPhotoDimensions()
