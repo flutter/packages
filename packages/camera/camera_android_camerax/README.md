@@ -40,12 +40,16 @@ texture cannot show HDR content. While the HDR preview is active:
 
 * Flutter clips (such as `ClipRRect`) are not applied to the preview.
 * `lockCaptureOrientation` switches the preview back to an SDR texture, because a `PreviewView`
-  follows the display rotation on its own.
+  follows the display rotation on its own. While recording, the switch happens when the recording
+  stops.
+* `setDescriptionWhileRecording` fails for a camera without HLG support.
 * Video is recorded in HLG when the camera supports it; otherwise starting a recording switches the
   preview to SDR. Image streaming switches the preview to SDR when the camera cannot combine it
   with an HLG preview.
 
-`getPreviewDynamicRange` reports the dynamic range that is currently applied.
+`getPreviewDynamicRange` reports the dynamic range that is currently applied. `hlg10` means the
+camera delivers a 10-bit HLG stream. Whether it is shown as HDR also depends on the display, and on
+`PreviewView` using a `SurfaceView` (it can fall back to a `TextureView` on some devices).
 
 ## What requires Android permissions
 

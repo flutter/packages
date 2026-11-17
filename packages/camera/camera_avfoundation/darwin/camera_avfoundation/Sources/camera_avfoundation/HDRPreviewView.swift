@@ -24,17 +24,18 @@ final class HDRPreviewUIView: UIView {
 final class HDRPreviewPlatformView: NSObject, FlutterPlatformView {
   private let previewView = HDRPreviewUIView()
 
-  init(frame: CGRect, captureSessionQueue: DispatchQueue, camera: Camera?) {
+  init(frame: CGRect, captureSessionQueue: DispatchQueue, cameraProvider: @escaping () -> Camera?) {
     super.init()
     previewView.frame = frame
     previewView.backgroundColor = .black
     previewView.previewLayer.videoGravity = .resizeAspectFill
 
     // Session changes must never block the main thread, so the connection is made on the capture
-    // session queue, behind any `startRunning` call that is in progress.
+    // session queue, behind any `startRunning` call that is in progress. The camera is read there
+    // too, because the plugin changes it on that queue.
     let layer = previewView.previewLayer
     captureSessionQueue.async {
-      camera?.attachPreviewLayer(layer)
+      cameraProvider()?.attachPreviewLayer(layer)
     }
   }
 
@@ -48,7 +49,8 @@ final class HDRPreviewViewFactory: NSObject, FlutterPlatformViewFactory {
   private let captureSessionQueue: DispatchQueue
   private let cameraProvider: () -> Camera?
 
-  /// `cameraProvider` returns the plugin's current camera and is called on the main thread.
+  /// `cameraProvider` returns the plugin's current camera and is called on the capture session
+  /// queue.
   init(captureSessionQueue: DispatchQueue, cameraProvider: @escaping () -> Camera?) {
     self.captureSessionQueue = captureSessionQueue
     self.cameraProvider = cameraProvider
@@ -59,7 +61,7 @@ final class HDRPreviewViewFactory: NSObject, FlutterPlatformViewFactory {
     withFrame frame: CGRect, viewIdentifier viewId: Int64, arguments args: Any?
   ) -> FlutterPlatformView {
     return HDRPreviewPlatformView(
-      frame: frame, captureSessionQueue: captureSessionQueue, camera: cameraProvider())
+      frame: frame, captureSessionQueue: captureSessionQueue, cameraProvider: cameraProvider)
   }
 
   func createArgsCodec() -> FlutterMessageCodec & NSObjectProtocol {

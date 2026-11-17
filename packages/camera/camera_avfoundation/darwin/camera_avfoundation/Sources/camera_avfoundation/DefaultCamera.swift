@@ -277,18 +277,7 @@ final class DefaultCamera: NSObject, Camera {
       // If the frame rate is not important fall to a less restrictive
       // behavior (no configuration locking).
       try setCaptureSessionPreset(mediaSettings.resolutionPreset)
-
-      if mediaSettings.previewDynamicRange == .hlg10 {
-        do {
-          try captureDevice.lockForConfiguration()
-          defer { captureDevice.unlockForConfiguration() }
-          if applyHLGFormat() {
-            FormatUtils.setHLGColorSpace(on: captureDevice)
-          }
-        } catch {
-          // The device could not be locked, so the preview stays SDR.
-        }
-      }
+      applyRequestedHLGFormat()
     }
 
     // The offered pixel formats depend on the active format, which is final at this point.
@@ -443,11 +432,24 @@ final class DefaultCamera: NSObject, Camera {
     return bestFormat
   }
 
+  /// Applies an HLG format for the resolution preset if `hlg10` was requested. The preview stays
+  /// SDR if the device cannot be locked or has no suitable HLG format.
+  private func applyRequestedHLGFormat() {
+    guard mediaSettings.previewDynamicRange == .hlg10 else { return }
+    do {
+      try captureDevice.lockForConfiguration()
+      defer { captureDevice.unlockForConfiguration() }
+      _ = applyHLGFormat()
+    } catch {
+      reportErrorMessage("Unable to lock the camera for the HDR preview: \(error)")
+    }
+  }
+
   /// Switches the device to an HLG format that matches the active format's aspect ratio and size,
-  /// and stops the session from choosing the color space itself. The caller must have locked the
-  /// device for configuration and must set `activeColorSpace` after the final format is chosen.
-  /// Returns false and leaves the device untouched if the HLG range was not requested or no
-  /// suitable format exists, in which case the preview stays SDR.
+  /// sets the HLG color space, and stops the session from choosing the color space itself. The
+  /// caller must have locked the device for configuration. Returns false and leaves the device
+  /// untouched if the HLG range was not requested or no suitable format exists, in which case the
+  /// preview stays SDR.
   private func applyHLGFormat() -> Bool {
     guard mediaSettings.previewDynamicRange == .hlg10,
       let format = FormatUtils.findHLGFormat(
@@ -496,7 +498,8 @@ final class DefaultCamera: NSObject, Camera {
     }
 
     videoCaptureSession.beginConfiguration()
-    if let oldConnection = hdrPreviewConnection {
+    // Removing the input of a camera switch already removed the old connection.
+    if let oldConnection = hdrPreviewConnection, session.connections.contains(oldConnection) {
       session.removeConnection(oldConnection)
     }
     layer.setSessionWithNoConnection(session)
@@ -1476,18 +1479,16 @@ final class DefaultCamera: NSObject, Camera {
 
     configureMaxPhotoDimensions()
 
-    // The new device starts with its own default format, so HLG has to be applied to it again.
-    if previewDynamicRange == .hlg10 {
+    // The new device starts with its own default format, so the preset and HLG are applied to it
+    // again.
+    if mediaSettings.previewDynamicRange == .hlg10 {
       previewDynamicRange = .sdr
       do {
-        try captureDevice.lockForConfiguration()
-        defer { captureDevice.unlockForConfiguration() }
-        if applyHLGFormat() {
-          FormatUtils.setHLGColorSpace(on: captureDevice)
-        }
+        try setCaptureSessionPreset(mediaSettings.resolutionPreset)
       } catch {
-        // The device could not be locked, so the preview stays SDR.
+        reportErrorMessage("Unable to apply the resolution preset to the new camera: \(error)")
       }
+      applyRequestedHLGFormat()
     }
     applyVideoSettings()
     if let layer = hdrPreviewLayer {

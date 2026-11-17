@@ -863,6 +863,8 @@ void main() {
       final Widget widget = camera.buildPreview(cameraId);
       expect(widget, isA<UiKitView>());
       expect((widget as UiKitView).viewType, AVFoundationCamera.hdrPreviewViewType);
+      // A new camera gets a new platform view.
+      expect(widget.key, ValueKey<int>(cameraId));
       expect(widget.creationParams, cameraId);
     });
 

@@ -371,6 +371,11 @@ abstract class CameraPlatform extends PlatformInterface {
   /// Call this before creating the camera, then request one of the returned
   /// values with [MediaSettings.previewDynamicRange].
   ///
+  /// Support is reported per camera. A camera that supports
+  /// [PreviewDynamicRange.hlg10] can still fall back to
+  /// [PreviewDynamicRange.sdr] for some resolution presets, so read
+  /// [getPreviewDynamicRange] after the camera is initialized.
+  ///
   /// The default implementation returns only [PreviewDynamicRange.sdr].
   Future<Iterable<PreviewDynamicRange>> getSupportedPreviewDynamicRanges(
     CameraDescription description,

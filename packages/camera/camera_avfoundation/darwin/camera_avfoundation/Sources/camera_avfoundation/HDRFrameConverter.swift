@@ -43,8 +43,8 @@ final class HDRFrameConverter {
     }
   }
 
-  /// Keeps the high 8 of the 10 significant bits, which maps 10-bit video range onto 8-bit video
-  /// range.
+  /// Scales the 16-bit samples, which hold 10-bit values in their high bits, to 8 bits. This maps
+  /// 10-bit video range onto 8-bit video range to within one code value.
   private func narrow(_ pixelBuffer: CVPixelBuffer, plane: Int, samplesPerPixel: Int) -> Plane? {
     guard let base = CVPixelBufferGetBaseAddressOfPlane(pixelBuffer, plane) else { return nil }
     let width = CVPixelBufferGetWidthOfPlane(pixelBuffer, plane)

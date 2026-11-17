@@ -602,7 +602,10 @@ class AndroidCameraCameraX extends CameraPlatform {
           preview!,
           imageCapture!,
         ]);
-      } on PlatformException {
+      } on PlatformException catch (e) {
+        if (!_isUnsupportedCombination(e)) {
+          rethrow;
+        }
         await _rebindPreviewAsSdr();
         camera = await processCameraProvider!.bindToLifecycle(cameraSelector!, <UseCase>[
           preview!,
@@ -1096,6 +1099,16 @@ class AndroidCameraCameraX extends CameraPlatform {
     }
     final CameraInfo? chosenCameraInfo = _savedCameras[description.name];
 
+    // The HLG use cases of the recording cannot be bound to a camera without
+    // HLG, so the switch is rejected before the current camera is unbound.
+    if (_appliedPreviewDynamicRange == PreviewDynamicRange.hlg10 &&
+        !(await getSupportedPreviewDynamicRanges(description)).contains(PreviewDynamicRange.hlg10)) {
+      throw CameraException(
+        'setDescriptionWhileRecordingFailed',
+        'The camera cannot continue a recording with an HDR (hlg10) preview.',
+      );
+    }
+
     // Save CameraSelector that matches cameraDescription.
     final LensFacing cameraSelectorLensDirection = _getCameraSelectorLensDirection(
       description.lensDirection,
@@ -1458,6 +1471,12 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     await _unbindUseCaseFromLifecycle(videoCapture!);
 
+    // An orientation locked while recording could not move the preview out of
+    // the `PreviewView` then.
+    if (captureOrientationLocked && previewView != null) {
+      await _switchPreviewToTexture(cameraId);
+    }
+
     if (event.hasError) {
       final int errorCode = event.error;
       throw CameraException(
@@ -1546,8 +1565,9 @@ class AndroidCameraCameraX extends CameraPlatform {
   Future<void> _bindUseCaseWithSdrFallback(UseCase useCase, int cameraId) async {
     try {
       await _bindUseCaseToLifecycle(useCase, cameraId);
-    } on PlatformException {
-      if (_appliedPreviewDynamicRange != PreviewDynamicRange.hlg10) {
+    } on PlatformException catch (e) {
+      if (_appliedPreviewDynamicRange != PreviewDynamicRange.hlg10 ||
+          !_isUnsupportedCombination(e)) {
         rethrow;
       }
       await _rebindPreviewAsSdr();
@@ -1572,7 +1592,23 @@ class AndroidCameraCameraX extends CameraPlatform {
     );
     await preview!.setViewSurfaceProvider(await previewView!.getSurfaceProvider());
     _appliedPreviewDynamicRange = PreviewDynamicRange.sdr;
+    await _recreateVideoCaptureAsSdr();
   }
+
+  /// Replaces an HLG [videoCapture] that is not recording with an SDR one,
+  /// since it cannot be bound with an SDR preview.
+  Future<void> _recreateVideoCaptureAsSdr() async {
+    if (_recordingNeedsSdrPreview || videoCapture == null || recording != null) {
+      return;
+    }
+    await _unbindUseCaseFromLifecycle(videoCapture!);
+    videoCapture = VideoCapture.withOutput(videoOutput: recorder!, targetFpsRange: _targetFpsRange);
+    _recordingNeedsSdrPreview = true;
+  }
+
+  /// Whether [e] reports that CameraX cannot bind the requested combination
+  /// of use cases, which is the failure an SDR preview can avoid.
+  bool _isUnsupportedCombination(PlatformException e) => e.code == 'IllegalArgumentException';
 
   /// Moves the preview from [previewView] to an SDR Flutter texture, which
   /// [buildPreview] shows from then on.
@@ -1586,14 +1622,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     _handlesCropAndRotation = await preview!.surfaceProducerHandlesCropAndRotation();
     previewView = null;
     _appliedPreviewDynamicRange = PreviewDynamicRange.sdr;
-    if (!_recordingNeedsSdrPreview && videoCapture != null) {
-      // The HLG VideoCapture cannot be bound with an SDR preview.
-      await _unbindUseCaseFromLifecycle(videoCapture!);
-      videoCapture = VideoCapture.withOutput(
-        videoOutput: recorder!,
-        targetFpsRange: _targetFpsRange,
-      );
-    }
+    await _recreateVideoCaptureAsSdr();
     if (!_previewIsPaused) {
       await _bindUseCaseToLifecycle(preview!, cameraId);
     }

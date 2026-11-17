@@ -32,7 +32,9 @@ Future<List<CameraDescription>> availableCameras() async {
 /// supports.
 ///
 /// Pass one of them as `previewDynamicRange` when creating a
-/// [CameraController].
+/// [CameraController]. Support is reported per camera, and some resolution
+/// presets can still fall back to [PreviewDynamicRange.sdr]; read
+/// [CameraController.getPreviewDynamicRange] after initializing.
 Future<Iterable<PreviewDynamicRange>> availablePreviewDynamicRanges(
   CameraDescription description,
 ) async {

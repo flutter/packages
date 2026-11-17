@@ -481,7 +481,10 @@ class AVFoundationCamera extends CameraPlatform {
     if (_appliedPreviewRanges[cameraId] == PreviewDynamicRange.hlg10) {
       // An HLG preview is rendered by an AVCaptureVideoPreviewLayer, since
       // the Flutter texture path cannot carry 10-bit HLG frames.
+      // A platform view keeps showing the camera it was created for, so a new
+      // camera needs a new platform view.
       return UiKitView(
+        key: ValueKey<int>(cameraId),
         viewType: hdrPreviewViewType,
         creationParams: cameraId,
         creationParamsCodec: const StandardMessageCodec(),
