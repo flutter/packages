@@ -123,6 +123,8 @@ base class WebScopedStorageXFile extends PlatformScopedStorageXFile
       ? super.params as WebScopedStorageXFileCreationParams
       : UrlWebScopedStorageXFileCreationParams(objectUrl: super.params.uri);
 
+  bool _isDisposed = false;
+
   @override
   Future<Blob> getBlob() async {
     return _cachedBlob ??= switch (params) {
@@ -203,10 +205,13 @@ base class WebScopedStorageXFile extends PlatformScopedStorageXFile
 
   @override
   Future<void> dispose() async {
-    // Only revoke the object URL if the XFile was the one that created it.
-    if (params is BlobWebScopedStorageXFileCreationParams) {
-      BlobWebScopedStorageXFileCreationParams._finalizer.detach(params);
-      URL.revokeObjectURL(params.uri);
+    if (!_isDisposed) {
+      _isDisposed = true;
+      // Only revoke the object URL if the XFile was the one that created it.
+      if (params is BlobWebScopedStorageXFileCreationParams) {
+        BlobWebScopedStorageXFileCreationParams._finalizer.detach(params);
+        URL.revokeObjectURL(params.uri);
+      }
     }
   }
 }
