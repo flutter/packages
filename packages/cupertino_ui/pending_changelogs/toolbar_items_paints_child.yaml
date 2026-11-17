@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes `CupertinoTextSelectionToolbar` reporting children on other pages as painted via `paintsChild`.
+version: patch
