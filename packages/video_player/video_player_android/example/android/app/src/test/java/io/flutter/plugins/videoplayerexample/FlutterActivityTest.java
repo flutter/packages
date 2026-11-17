@@ -16,7 +16,6 @@ import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.platform.PlatformViewRegistry;
 import io.flutter.plugins.videoplayer.VideoPlayerPlugin;
 import io.flutter.view.TextureRegistry;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
