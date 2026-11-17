@@ -42,7 +42,7 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi, HostCa
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     // Workaround for https://github.com/flutter/flutter/issues/118103.
-    MainActor.assumeIsolated{
+    MainActor.assumeIsolated {
       #if os(iOS)
         let messenger = registrar.messenger()
       #else
@@ -604,14 +604,9 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi, HostCa
   func taskQueueIsBackgroundThread() -> Bool {
     return !Thread.isMainThread
   }
-  // Added a synchronous isMainThread() helper because 
-  // Thread.isMainThread cannot be accessed directly
-  // from an async context.
-  private func isMainThread() -> Bool {
-    return Thread.isMainThread
-  }
+
   func asyncTaskQueueIsBackgroundThread() async throws -> Bool {
-    return !isMainThread()
+    return !Thread.isMainThread
   }
 
   func callFlutterNoop() async throws {
@@ -870,11 +865,11 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi, HostCa
 
   @MainActor
   func callFlutterIsAsyncFlutterApiOnRoot() async throws -> Bool {
-    guard isMainThread() else {
+    guard Thread.isMainThread else {
       return false
     }
     let result = try await self.flutterAPI.isAsyncFlutterApiOnRoot()
-    guard isMainThread() else {
+    guard Thread.isMainThread else {
       return false
     }
     return result
