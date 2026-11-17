@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes `CupertinoButton` padding being larger than iOS's at every `CupertinoButtonSize`.
+version: patch
