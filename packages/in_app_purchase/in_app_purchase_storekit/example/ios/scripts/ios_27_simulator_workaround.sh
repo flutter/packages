@@ -9,8 +9,8 @@
 # connects to storekitd before the test configuration is pushed to the device,
 # so storekitd decides it is in the sandbox environment and every StoreKit
 # Testing call hangs until it times out. Subsequent processes work because the
-# configuration now exists on the device. Apple tracks this as FB24651858
-# (186670057) and lists it as fixed in the iOS 27.3 release notes:
+# configuration now exists on the device. Apple lists this as fixed in the
+# iOS 27.3 release notes ("StoreKit Testing in Xcode" > "Resolved Issues"):
 # https://developer.apple.com/documentation/ios-ipados-release-notes/ios-ipados-27_3-release-notes
 #
 # As a workaround, this runs a single non-purchase test in a throwaway process
@@ -34,7 +34,9 @@ if [ "$TARGET_DEVICE_PLATFORM_NAME" != "iphonesimulator" ]; then
   exit 0
 fi
 
-log_file="${TMPDIR:-/tmp}/storekit_warmup.log"
+# On CI, FLUTTER_LOGS_DIR is uploaded as a build artifact (see
+# script/tool/lib/src/common/core.dart), so the log survives the run.
+log_file="${FLUTTER_LOGS_DIR:-${TMPDIR:-/tmp}}/storekit_warmup.log"
 # A healthy warm-up takes well under a minute. Bound it so a hung nested
 # xcodebuild cannot stall the real test run.
 timeout_seconds=300
@@ -49,6 +51,8 @@ timeout_seconds=300
   env -i HOME="$HOME" PATH="$PATH" DEVELOPER_DIR="$DEVELOPER_DIR" \
     xcrun simctl bootstatus "$TARGET_DEVICE_IDENTIFIER" -b
 
+  # Any test whose setUp creates an SKTestSession works here; keep the name in
+  # sync if that test is renamed, or the warm-up silently stops working.
   exec env -i HOME="$HOME" PATH="$PATH" DEVELOPER_DIR="$DEVELOPER_DIR" STOREKIT_WARMUP=1 \
     xcodebuild test-without-building \
       -workspace "$PROJECT_DIR/Runner.xcworkspace" -scheme Runner \
@@ -64,14 +68,23 @@ while kill -0 "$warmup_pid" 2>/dev/null && [ "$elapsed" -lt "$timeout_seconds" ]
   elapsed=$((elapsed + 5))
 done
 
-# Never fail the real test run because of the warm-up; the worst case is the
-# original hang, which the real tests will report.
+# xcodebuild does not surface pre-action output, so record the outcome in the
+# log file as well as on stdout.
+report() {
+  echo "$1"
+  echo "$1" >> "$log_file"
+}
+
 if kill -0 "$warmup_pid" 2>/dev/null; then
   kill "$warmup_pid" 2>/dev/null
   wait "$warmup_pid" 2>/dev/null
-  echo "warning: StoreKit Testing warm-up timed out after ${timeout_seconds}s; see $log_file"
+  report "warning: StoreKit Testing warm-up timed out after ${timeout_seconds}s; see $log_file"
 elif wait "$warmup_pid"; then
-  echo "StoreKit Testing warm-up succeeded in ${elapsed}s (log: $log_file)"
+  report "StoreKit Testing warm-up succeeded in ${elapsed}s (log: $log_file)"
 else
-  echo "warning: StoreKit Testing warm-up failed; see $log_file"
+  report "warning: StoreKit Testing warm-up failed; see $log_file"
 fi
+
+# Never fail the real test run because of the warm-up; the worst case is the
+# original hang, which the real tests will report.
+exit 0

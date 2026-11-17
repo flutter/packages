@@ -52,7 +52,7 @@
             ActionType = "Xcode.IDEStandardExecutionActionsCore.ExecutionActionType.ShellScriptAction">
             <ActionContent
                title = "Warm up StoreKit Testing on cold simulators"
-               scriptText = "# TODO(LouiseHsu): Remove once CI simulators include the iOS 27.3 StoreKit Testing fix (FB24651858).&#10;/bin/sh &quot;$SRCROOT/scripts/ios_27_simulator_workaround.sh&quot;&#10;">
+               scriptText = "# TODO(LouiseHsu): Remove once CI simulators include the iOS 27.3 StoreKit Testing fix.&#10;/bin/sh &quot;$SRCROOT/scripts/ios_27_simulator_workaround.sh&quot;&#10;">
                <EnvironmentBuildable>
                   <BuildableReference
                      BuildableIdentifier = "primary"
