@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes the elevation values in the `FilledButton` and `FilledButton.styleFrom` documentation.
+version: patch

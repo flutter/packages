@@ -216,11 +216,6 @@ class FilledButton extends ButtonStyleButton {
   /// If [iconColor] is null, the button icon will use [foregroundColor]. If [foregroundColor] is also
   /// null, the button icon will use the default icon color.
   ///
-  /// The button's elevations are defined relative to the [elevation]
-  /// parameter. The disabled elevation is the same as the parameter
-  /// value, [elevation] + 2 is used when the button is hovered
-  /// or focused, and elevation + 6 is used when the button is pressed.
-  ///
   /// All of the other parameters are either used directly or used to
   /// create a [WidgetStateProperty] with a single value for all
   /// states.

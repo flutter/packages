@@ -1,3 +1,0 @@
-changelog: |
-  - Fixes the Material 3 elevation defaults listed in the `FilledButton` documentation.
-version: patch
