@@ -124,5 +124,56 @@ void main() {
 
       await file.dispose();
     });
+
+    group('calling methods after dispose', () {
+      setUp(() async {
+        CrossFilePlatform.instance = TestCrossFilePlatform(
+          onCreatePlatformScopedStorageXFile: (PlatformScopedStorageXFileCreationParams params) =>
+              TestScopedStorageXFile(params),
+        );
+      });
+
+      test('lastModified throws StateError', () async {
+        final file = ScopedStorageXFile(uri: 'to/myFile.txt');
+        await file.dispose();
+        await expectLater(() => file.lastModified(), throwsStateError);
+      });
+
+      test('length throws StateError', () async {
+        final file = ScopedStorageXFile(uri: 'to/myFile.txt');
+        await file.dispose();
+        await expectLater(() => file.length(), throwsStateError);
+      });
+
+      test('openRead throws StateError', () async {
+        final file = ScopedStorageXFile(uri: 'to/myFile.txt');
+        await file.dispose();
+        await expectLater(() => file.openRead(), throwsStateError);
+      });
+
+      test('readAsBytes throws StateError', () async {
+        final file = ScopedStorageXFile(uri: 'to/myFile.txt');
+        await file.dispose();
+        await expectLater(() => file.readAsBytes(), throwsStateError);
+      });
+
+      test('readAsString throws StateError', () async {
+        final file = ScopedStorageXFile(uri: 'to/myFile.txt');
+        await file.dispose();
+        await expectLater(() => file.readAsString(), throwsStateError);
+      });
+
+      test('name throws StateError', () async {
+        final file = ScopedStorageXFile(uri: 'to/myFile.txt');
+        await file.dispose();
+        await expectLater(() => file.name(), throwsStateError);
+      });
+
+      test('canRead throws StateError', () async {
+        final file = ScopedStorageXFile(uri: 'uri');
+        await file.dispose();
+        await expectLater(() => file.canRead(), throwsStateError);
+      });
+    });
   });
 }
