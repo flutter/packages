@@ -1,3 +1,7 @@
+## 30.0.4
+
+* Adds @JvmOverloads to generated Kotlin native-interop (JNI) registration functions so Java callers can omit the optional instance name argument.
+
 ## 30.0.3
 
 * Removes remaining unused `dart:mirrors` usage.
