@@ -158,7 +158,7 @@ class FileSelectorWrapper {
   }
 }
 
-// Example of using the wrapper in an app.
+// Example of injecting the wrapper in an app.
 class MyWidget extends StatelessWidget {
   const MyWidget({super.key, this.fileSelector = const FileSelectorWrapper()});
 
