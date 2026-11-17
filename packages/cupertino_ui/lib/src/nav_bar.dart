@@ -1854,6 +1854,8 @@ class _PersistentNavigationBar extends StatelessWidget {
     if (middle != null) {
       middle = DefaultTextStyle(
         style: CupertinoTheme.of(context).textTheme.navTitleTextStyle,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
         child: Semantics(header: true, child: middle),
       );
       // When the middle's visibility can change on the fly like with large title
@@ -3051,6 +3053,8 @@ class _NavigationBarComponentsTransition {
               style: animation.drive(
                 TextStyleTween(begin: bottomTitleTextStyle, end: topBackButtonTextStyle),
               ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               child: bottomMiddle.child,
             ),
           ),
@@ -3067,7 +3071,12 @@ class _NavigationBarComponentsTransition {
         child: FadeTransition(
           opacity: fadeOutBy(bottomHasUserMiddle ? 0.4 : 0.7),
           // Keep the font when transitioning into a non-back label leading.
-          child: DefaultTextStyle(style: bottomTitleTextStyle, child: bottomMiddle.child),
+          child: DefaultTextStyle(
+            style: bottomTitleTextStyle,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            child: bottomMiddle.child,
+          ),
         ),
       );
     }
@@ -3129,7 +3138,12 @@ class _NavigationBarComponentsTransition {
       child: FadeTransition(
         opacity: fadeOutBy(0.4),
         // Keep the font when transitioning into a non-back-label leading.
-        child: DefaultTextStyle(style: bottomLargeTitleTextStyle!, child: bottomLargeTitle.child),
+        child: DefaultTextStyle(
+          style: bottomLargeTitleTextStyle!,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          child: bottomLargeTitle.child,
+        ),
       ),
     );
   }
@@ -3403,7 +3417,12 @@ class _NavigationBarComponentsTransition {
       height: toBox.size.height,
       child: FadeTransition(
         opacity: fadeInFrom(0.25),
-        child: DefaultTextStyle(style: topTitleTextStyle, child: topMiddle.child),
+        child: DefaultTextStyle(
+          style: topTitleTextStyle,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          child: topMiddle.child,
+        ),
       ),
     );
   }

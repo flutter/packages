@@ -74,6 +74,18 @@ void main() {
     expect(tester.getCenter(find.text('Page 2')).dx, 400.0);
   });
 
+  testWidgets('Middle too long for the bar stays on one line', (WidgetTester tester) async {
+    const title = 'A middle title that is far too long to fit on one line of the navigation bar';
+    await tester.pumpWidget(const CupertinoApp(home: CupertinoNavigationBar(middle: Text(title))));
+
+    final RenderParagraph paragraph = tester.renderObject(find.text(title));
+    final Set<double> lineTops = paragraph
+        .getBoxesForSelection(const TextSelection(baseOffset: 0, extentOffset: title.length))
+        .map((TextBox box) => box.top)
+        .toSet();
+    expect(lineTops, hasLength(1));
+  });
+
   testWidgets('largeTitle still aligned with back button', (WidgetTester tester) async {
     await tester.pumpWidget(
       const CupertinoApp(home: CupertinoNavigationBar.large(largeTitle: Text('Title'))),
