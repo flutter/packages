@@ -115,6 +115,37 @@ void main() {
         ? 'The ObjectiveC method called in `dispose` only works on macOS.'
         : false,
   );
+
+  test(
+    'finalizer is not detached after disposed is called once',
+    () async {
+      // Creates file and detach from finalizer in dispose.
+      final WeakReference<SecurityScopedDarwinScopedStorageXFile> file = await _createAndDropFile(
+        dispose: true,
+      );
+
+      SecurityScopedDarwinScopedStorageXFile.finalizer = Finalizer<String>(expectAsync1((_) {}));
+      addTearDown(
+        () => SecurityScopedDarwinScopedStorageXFile.finalizer =
+            SecurityScopedDarwinScopedStorageXFile.defaultFinalizer,
+      );
+      // Attach finalizer to file again. This finalizer callback should trigger
+      // because it isn't removed after the second dispose.
+      SecurityScopedDarwinScopedStorageXFile.finalizer.attach(
+        file.target!,
+        '',
+        detach: file.target,
+      );
+      await file.target!.dispose();
+
+      await forceGC(fullGcCycles: defaultNumberOfGcCycles);
+      await pumpEventQueue();
+      expect(file.target, isNull);
+    },
+    skip: !Platform.isMacOS
+        ? 'The ObjectiveC method called in `dispose` only works on macOS.'
+        : false,
+  );
 }
 
 // Allocate and register the instance inside a non-inlined helper so the
