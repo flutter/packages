@@ -31,11 +31,10 @@ export 'package:file_selector_platform_interface/file_selector_platform_interfac
 ///
 /// [initialDirectory] is the full path to the directory that will be displayed
 /// when the dialog is opened. When not provided, the platform will pick an
-/// initial location. This is ignored on the Web platform.
+/// initial location.
 ///
 /// [confirmButtonText] is the text in the confirmation button of the dialog.
 /// When not provided, the default OS label is used (for example, "Open").
-/// This is ignored on the Web platform.
 ///
 /// Returns `null` if the user cancels the operation.
 Future<XFile?> openFile({
@@ -132,8 +131,6 @@ Future<FileSaveLocation?> getSaveLocation({
 /// Opens a directory selection dialog and returns the directory chosen by the
 /// user.
 ///
-/// This always returns `null` on the web.
-///
 /// [initialDirectory] is the full path to the directory that will be displayed
 /// when the dialog is opened. When not provided, the platform will pick an
 /// initial location.
@@ -162,8 +159,6 @@ Future<XDirectory?> getDirectory({
 
 /// Opens a directory selection dialog and returns a list of the directories
 /// chosen by the user.
-///
-/// This always returns an empty array on the web.
 ///
 /// [initialDirectory] is the full path to the directory that will be displayed
 /// when the dialog is opened. When not provided, the platform will pick an

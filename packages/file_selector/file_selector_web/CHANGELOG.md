@@ -3,6 +3,8 @@
 * **Breaking Changes**
   * Updates `file_selector_platform_interface` to `3.0.0`.
   * Updates `web` dependency to `1.0.0`.
+  * Removes implementations for `getSaveLocation` and `getDirectory` so the plugin now throws an
+    `UnimplementedError` to indicate they are not supported.
 * Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
 
 ## 0.9.5
