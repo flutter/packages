@@ -62,9 +62,9 @@ class MockFileSelectorApi extends _i1.Mock implements _i2.FileSelectorApi {
           as _i4.Future<List<String>>);
 
   @override
-  _i4.Future<String?> getDirectoryPath(String? initialDirectory) =>
+  _i4.Future<String?> getDirectoryUri(String? initialDirectory) =>
       (super.noSuchMethod(
-            Invocation.method(#getDirectoryPath, [initialDirectory]),
+            Invocation.method(#getDirectoryUri, [initialDirectory]),
             returnValue: _i4.Future<String?>.value(),
           )
           as _i4.Future<String?>);

@@ -104,7 +104,7 @@ void main() {
 
   test('getDirectory', () async {
     when(
-      mockApi.getDirectoryPath('some/path'),
+      mockApi.getDirectoryUri('some/path'),
     ).thenAnswer((_) => Future<String?>.value('some/path/chosen/'));
 
     final XDirectory? dir = await plugin.getDirectory(
