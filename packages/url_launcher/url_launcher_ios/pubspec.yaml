@@ -17,18 +17,25 @@ flutter:
         dartPluginClass: UrlLauncherIOS
 
 dependencies:
+  ffi: ^2.1.4
   flutter:
     sdk: flutter
   meta: ^1.10.0
+  objective_c: ^9.6.2
   url_launcher_platform_interface: ^2.2.0
 
 dev_dependencies:
   build_runner: ^2.3.3
+  ffigen: ^22.0.0
   flutter_test:
     sdk: flutter
   mockito: ^5.4.4
-  pigeon: ^27.3.2
+  path: ^1.9.0
+  pigeon: ^30.0.1
   plugin_platform_interface: ^2.1.7
+  pub_semver: ^2.1.4
+  swift2objc: ^0.3.0
+  swiftgen: ^0.2.0
 
 topics:
   - links
