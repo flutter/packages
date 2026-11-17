@@ -5139,6 +5139,347 @@ void main() {
     // Test with theme.platform = iOS on different real platforms.
     await pumpPopupMenuWithTheme(TargetPlatform.iOS);
   }, variant: TargetPlatformVariant.all());
+
+  group('PopupMenuButton.dismissOnScrollOutside', () {
+    const outside = Offset(100, 400);
+    late int cancels;
+    late int? selected;
+    late ScrollController scrollController;
+    late BuildContext buttonContext;
+
+    setUp(() {
+      cancels = 0;
+      selected = null;
+    });
+
+    Future<void> openMenu(
+      WidgetTester tester, {
+      int itemCount = 3,
+      bool? dismissOnScrollOutside = true,
+      bool? themeDismissOnScrollOutside,
+    }) async {
+      scrollController = ScrollController();
+      addTearDown(scrollController.dispose);
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(
+            popupMenuTheme: PopupMenuThemeData(dismissOnScrollOutside: themeDismissOnScrollOutside),
+          ),
+          home: Builder(
+            builder: (BuildContext context) => Scaffold(
+              body: TextButton(
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (BuildContext context) => Scaffold(
+                      appBar: AppBar(
+                        actions: <Widget>[
+                          PopupMenuButton<int>(
+                            dismissOnScrollOutside: dismissOnScrollOutside,
+                            onCanceled: () => cancels++,
+                            onSelected: (int value) => selected = value,
+                            itemBuilder: (BuildContext context) {
+                              buttonContext = context;
+                              return <PopupMenuEntry<int>>[
+                                for (var i = 0; i < itemCount; i++)
+                                  PopupMenuItem<int>(value: i, child: Text('Item $i')),
+                              ];
+                            },
+                          ),
+                        ],
+                      ),
+                      body: ListView.builder(
+                        controller: scrollController,
+                        itemCount: 100,
+                        itemBuilder: (BuildContext context, int index) =>
+                            SizedBox(height: 50, child: Text('Row $index')),
+                      ),
+                    ),
+                  ),
+                ),
+                child: const Text('Home'),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.tap(find.text('Home'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byType(PopupMenuButton<int>));
+      await tester.pumpAndSettle();
+      expect(find.text('Item 0'), findsOneWidget);
+    }
+
+    testWidgets('stays open by default', (WidgetTester tester) async {
+      await openMenu(tester, dismissOnScrollOutside: null);
+
+      await tester.dragFrom(outside, const Offset(0, -200));
+      final pointer = TestPointer(1, PointerDeviceKind.mouse);
+      await tester.sendEventToBinding(pointer.hover(outside));
+      await tester.sendEventToBinding(pointer.scroll(const Offset(0, 50)));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Item 0'), findsOneWidget);
+      expect(cancels, 0);
+    });
+
+    testWidgets('can be turned on for all menus with PopupMenuThemeData', (
+      WidgetTester tester,
+    ) async {
+      await openMenu(tester, dismissOnScrollOutside: null, themeDismissOnScrollOutside: true);
+
+      await tester.dragFrom(outside, const Offset(0, -200));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Item 0'), findsNothing);
+      expect(cancels, 1);
+    });
+
+    testWidgets('PopupMenuButton.dismissOnScrollOutside overrides the theme', (
+      WidgetTester tester,
+    ) async {
+      await openMenu(tester, dismissOnScrollOutside: false, themeDismissOnScrollOutside: true);
+
+      await tester.dragFrom(outside, const Offset(0, -200));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Item 0'), findsOneWidget);
+      expect(cancels, 0);
+    });
+
+    testWidgets('showMenu accepts dismissOnScrollOutside', (WidgetTester tester) async {
+      int? result = -1;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Builder(
+              builder: (BuildContext context) => TextButton(
+                onPressed: () async {
+                  result = await showMenu<int>(
+                    context: context,
+                    position: const RelativeRect.fromLTRB(600, 0, 0, 0),
+                    dismissOnScrollOutside: true,
+                    items: const <PopupMenuEntry<int>>[
+                      PopupMenuItem<int>(value: 0, child: Text('Item 0')),
+                    ],
+                  );
+                },
+                child: const Text('Open'),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.tap(find.text('Open'));
+      await tester.pumpAndSettle();
+      expect(find.text('Item 0'), findsOneWidget);
+
+      await tester.dragFrom(outside, const Offset(0, -200));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Item 0'), findsNothing);
+      expect(result, isNull);
+    });
+
+    for (final kind in <PointerDeviceKind>[
+      PointerDeviceKind.touch,
+      PointerDeviceKind.mouse,
+      PointerDeviceKind.stylus,
+    ]) {
+      testWidgets('closes on a ${kind.name} drag outside without scrolling or popping the page', (
+        WidgetTester tester,
+      ) async {
+        await openMenu(tester);
+
+        await tester.dragFrom(outside, const Offset(0, -200), kind: kind);
+        await tester.pumpAndSettle();
+
+        expect(find.text('Item 0'), findsNothing);
+        expect(cancels, 1);
+        expect(scrollController.offset, 0);
+        expect(find.text('Row 0'), findsOneWidget);
+      });
+    }
+
+    testWidgets('the next drag after closing scrolls the page', (WidgetTester tester) async {
+      await openMenu(tester);
+
+      await tester.dragFrom(outside, const Offset(0, -200));
+      await tester.pumpAndSettle();
+      await tester.dragFrom(outside, const Offset(0, -200));
+      await tester.pumpAndSettle();
+
+      expect(scrollController.offset, greaterThan(0));
+    });
+
+    testWidgets('stays open until the dragging pointer lifts', (WidgetTester tester) async {
+      await openMenu(tester);
+
+      final TestGesture gesture = await tester.startGesture(outside);
+      await gesture.moveBy(const Offset(0, -100));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Item 0'), findsOneWidget);
+
+      await gesture.up();
+      await tester.pumpAndSettle();
+
+      expect(find.text('Item 0'), findsNothing);
+      expect(cancels, 1);
+    });
+
+    testWidgets('stays open when the system cancels the drag', (WidgetTester tester) async {
+      await openMenu(tester);
+
+      final TestGesture gesture = await tester.startGesture(const Offset(1, 400));
+      await gesture.moveBy(const Offset(200, 0));
+      await gesture.cancel();
+      await tester.pumpAndSettle();
+
+      expect(find.text('Item 0'), findsOneWidget);
+      expect(find.text('Row 0'), findsOneWidget);
+      expect(cancels, 0);
+    });
+
+    testWidgets('a short movement outside still closes as a tap', (WidgetTester tester) async {
+      await openMenu(tester);
+
+      final TestGesture gesture = await tester.startGesture(outside);
+      await gesture.moveBy(const Offset(0, 2));
+      await gesture.up();
+      await tester.pumpAndSettle();
+
+      expect(find.text('Item 0'), findsNothing);
+      expect(cancels, 1);
+      expect(find.text('Row 0'), findsOneWidget);
+    });
+
+    testWidgets('stays open when the drag starts inside the menu', (WidgetTester tester) async {
+      await openMenu(tester);
+
+      await tester.dragFrom(tester.getCenter(find.text('Item 0')), const Offset(-300, 200));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Item 0'), findsOneWidget);
+      expect(cancels, 0);
+      expect(selected, isNull);
+    });
+
+    testWidgets('a drag inside a long menu scrolls the menu and keeps it open', (
+      WidgetTester tester,
+    ) async {
+      await openMenu(tester, itemCount: 30);
+      final ScrollableState menuScrollable = tester.state<ScrollableState>(
+        find.descendant(of: find.byType(SingleChildScrollView), matching: find.byType(Scrollable)),
+      );
+
+      await tester.dragFrom(tester.getCenter(find.text('Item 2')), const Offset(0, -200));
+      await tester.pumpAndSettle();
+
+      expect(menuScrollable.position.pixels, greaterThan(0));
+      expect(find.text('Item 2'), findsOneWidget);
+      expect(cancels, 0);
+    });
+
+    testWidgets('a pointer held outside while an item is chosen does not pop the page', (
+      WidgetTester tester,
+    ) async {
+      await openMenu(tester);
+
+      final TestGesture held = await tester.startGesture(outside);
+      await tester.tap(find.text('Item 1'));
+      await tester.pump();
+      await held.moveBy(const Offset(0, -200));
+      await held.up();
+      await tester.pumpAndSettle();
+
+      expect(selected, 1);
+      expect(cancels, 0);
+      expect(find.text('Row 0'), findsOneWidget);
+      expect(find.text('Home'), findsNothing);
+    });
+
+    testWidgets('a drag while another route covers the menu pops neither', (
+      WidgetTester tester,
+    ) async {
+      await openMenu(tester);
+      unawaited(
+        showDialog<void>(
+          context: buttonContext,
+          builder: (BuildContext context) => const AlertDialog(content: Text('Dialog')),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.dragFrom(outside, const Offset(0, -200));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Dialog'), findsOneWidget);
+      expect(find.text('Item 0'), findsOneWidget);
+      expect(cancels, 0);
+    });
+
+    testWidgets('ignores drags in another view', (WidgetTester tester) async {
+      await openMenu(tester);
+      const otherViewId = 99;
+      const pointer = 42;
+
+      tester.binding.handlePointerEvent(
+        const PointerDownEvent(viewId: otherViewId, pointer: pointer, position: outside),
+      );
+      tester.binding.handlePointerEvent(
+        PointerMoveEvent(
+          viewId: otherViewId,
+          pointer: pointer,
+          position: outside + const Offset(0, -200),
+          delta: const Offset(0, -200),
+        ),
+      );
+      tester.binding.handlePointerEvent(
+        PointerUpEvent(
+          viewId: otherViewId,
+          pointer: pointer,
+          position: outside + const Offset(0, -200),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Item 0'), findsOneWidget);
+      expect(cancels, 0);
+    });
+
+    testWidgets('closes on a mouse wheel scroll outside, not inside', (WidgetTester tester) async {
+      await openMenu(tester);
+      final pointer = TestPointer(1, PointerDeviceKind.mouse);
+
+      await tester.sendEventToBinding(pointer.hover(tester.getCenter(find.text('Item 0'))));
+      await tester.sendEventToBinding(pointer.scroll(const Offset(0, 50)));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Item 0'), findsOneWidget);
+
+      await tester.sendEventToBinding(pointer.hover(outside));
+      await tester.sendEventToBinding(pointer.scroll(const Offset(0, 50)));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Item 0'), findsNothing);
+      expect(cancels, 1);
+      expect(scrollController.offset, 0);
+    });
+
+    testWidgets('closes on a trackpad pan outside', (WidgetTester tester) async {
+      await openMenu(tester);
+      final TestGesture gesture = await tester.createGesture(kind: PointerDeviceKind.trackpad);
+
+      await gesture.panZoomStart(outside);
+      await gesture.panZoomUpdate(outside, pan: const Offset(0, -100));
+      await gesture.panZoomEnd();
+      await tester.pumpAndSettle();
+
+      expect(find.text('Item 0'), findsNothing);
+      expect(cancels, 1);
+      expect(scrollController.offset, 0);
+    });
+  });
 }
 
 Matcher overlaps(Rect other) => OverlapsMatcher(other);

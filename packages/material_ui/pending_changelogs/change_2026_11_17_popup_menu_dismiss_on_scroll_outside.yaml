@@ -1,0 +1,3 @@
+changelog: |
+  - Adds `dismissOnScrollOutside` to `PopupMenuButton`, `showMenu`, and `PopupMenuThemeData`. When true, a drag, mouse wheel scroll, or trackpad pan that starts outside the menu closes it, matching native Android popup menus. Defaults to false.
+version: minor
