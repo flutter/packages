@@ -1,3 +1,0 @@
-changelog: |
-  - Fixes a disabled `DropdownButtonFormField` showing its decoration as enabled and reacting to hover.
-version: patch

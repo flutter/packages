@@ -109,9 +109,27 @@ Pigeon supports two distinct models for communication between Dart and native co
 2. **Native Interop (Direct FFI & JNI) \*Preview\***: A direct, memory-bound function call model utilizing Dart FFI (for Swift/Objective-C on iOS/macOS) and JNI (for Kotlin/Java on Android).
 
 > [!WARNING]
-> Native Interop `@HostApi` registrations are process-wide, not per-engine. In apps that run multiple
-> `FlutterEngine`s, one engine can overwrite or unregister another engine's implementation. See
-> [flutter/flutter#195877](https://github.com/flutter/flutter/issues/195877).
+> Native Interop associates each registration with the `FlutterEngine` that made it, but in apps
+> that run multiple engines, routing on an engine's root isolate is only exact when the engine
+> identifier is available to native code (always for Kotlin `register(api, flutterEngine)`; for
+> plugin bindings and registrars, only on Flutter versions that expose it). See
+> [Multi-Engine Routing](./native_interop_guide.md#multi-engine-routing) and
+> [flutter/flutter#195877](https://github.com/flutter/flutter/issues/195877). Known limitations:
+> - Until engine identifiers are available to plugins on stable Flutter, each generated Pigeon file
+>   binds to the engine of its first resolved `@HostApi` handle. If that first lookup happens while
+>   another engine's registration is the most recent one, for example when engines are created
+>   back-to-back before their Dart code starts, or when an API is first used lazily while a
+>   secondary engine is attached, that file's APIs may be bound to the other engine's instance and
+>   throw `unregistered-instance` after that engine detaches.
+> - Background isolates (`Isolate.spawn` / `Isolate.run`) do not have a `PlatformDispatcher.engineId`,
+>   so in multi-engine apps their lookups may resolve another engine's registration.
+> - APIs that hold engine-specific state (such as an Android `Activity`, a `TextureRegistry`, or a
+>   `UIViewController`) may act on the wrong engine; use a distinct `messageChannelSuffix` per
+>   engine, or platform channels / `@ProxyApi`, for those APIs.
+> - On macOS, plugins receive no detach callback, so registrations outlive their engine.
+> - `@FlutterApi` registrations are only removed when Dart calls `setUp(null)` / `unregister`. If an
+>   isolate goes away without doing so (for example, after a hot restart or when its engine is
+>   destroyed), native lookups can still return its stale registration, and calls to it fail.
 
 #### Quick Comparison
 
@@ -121,7 +139,7 @@ Pigeon supports two distinct models for communication between Dart and native co
 | **Platform Support** | All supported platforms (Android, iOS, macOS, Windows, Linux) | Android, iOS, and macOS |
 | **Threading Model** | Main UI thread or custom background `TaskQueue` | Direct execution on caller thread (`TaskQueue` is not supported) |
 | **Dart Isolate Support** | Requires `BackgroundIsolateBinaryMessenger` | Supported for Host APIs |
-| **Serialization Overhead** | High (serialization and multiple copies) | Low (minimal copying) |
+| **Serialization Overhead** | Every value is encoded into one message and copied | Scalars, strings, enums and typed data cross directly; data classes, lists and maps are encoded into one buffer per call |
 | **Latency** | Higher (requires message loop scheduling) | Extremely low (direct execution) |
 | **Synchronous Host Calls** | Not supported | Fully supported |
 | **Setup Complexity** | Simple | Complex (requires external tools) |
@@ -133,7 +151,6 @@ Pigeon supports two distinct models for communication between Dart and native co
   - Your plugin targets Windows or Linux (Native Interop is not supported on these platforms, though you can generate platform channel code for them from the same pigeon file alongside Native Interop).
   - Your plugin primarily passes simple data objects or has low-frequency communication.
   - You want a simpler setup with no external dependencies or additional command-line tools.
-  - Your data classes contain many nested fields or custom collections where conversion overhead might offset performance gains. There are plans to address this issue in the future.
 - **Consider Native Interop if**:
   - Your plugin handles high-frequency messaging, large typed arrays (e.g., image processing, sensor data streams), or latency-sensitive communication where serialization overhead is a bottleneck.
   - You need synchronous execution for platform APIs on the host thread.

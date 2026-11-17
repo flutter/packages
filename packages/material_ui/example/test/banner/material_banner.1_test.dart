@@ -43,6 +43,11 @@ void main() {
     expect(find.text('Hello, I am a Material Banner'), findsOne);
     expect(find.byIcon(Icons.agriculture_outlined), findsOne);
     expect(find.widgetWithText(TextButton, 'DISMISS'), findsOne);
+
+    await tester.tap(find.widgetWithText(TextButton, 'DISMISS'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(MaterialBanner), findsNothing);
   });
 
   testWidgets('The banner is below the text saying so', (
