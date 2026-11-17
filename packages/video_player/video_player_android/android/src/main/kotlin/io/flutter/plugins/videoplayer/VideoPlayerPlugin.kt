@@ -91,7 +91,7 @@ class VideoPlayerPlugin
     videoPlayers.clear()
   }
 
-  private fun onDestroy() {
+  internal fun onDestroy() {
     // The whole FlutterView is being destroyed. Here we release resources acquired for all
     // instances
     // of VideoPlayer. Once https://github.com/flutter/flutter/issues/19358 is resolved this may
