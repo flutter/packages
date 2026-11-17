@@ -21,8 +21,8 @@ import java.util.Locale
 /** Implements the Pigeon-defined interface for calls from Dart. */
 internal class UrlLauncher
 /**
- * Creates an instance that uses `intentResolver` to look up the handler for intents. This is to
- * allow injecting an alternate resolver for unit testing.
+ * Creates an instance that uses [getHandlerComponentName] to look up the handler for intents. This
+ * is to allow injecting an alternate resolver for unit testing.
  */
 @VisibleForTesting
 constructor(

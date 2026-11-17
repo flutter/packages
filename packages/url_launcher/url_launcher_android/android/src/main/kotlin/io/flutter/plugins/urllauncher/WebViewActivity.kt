@@ -39,7 +39,6 @@ class WebViewActivity : Activity() {
         }
       }
 
-  // Uses default (package-private) access since it's used by inner class implementations.
   private lateinit var webview: WebView
 
   private val closeIntentFilter: IntentFilter = IntentFilter(ACTION_CLOSE)
