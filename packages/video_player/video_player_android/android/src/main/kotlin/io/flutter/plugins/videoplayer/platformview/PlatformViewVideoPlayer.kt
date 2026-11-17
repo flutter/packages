@@ -25,7 +25,7 @@ import kotlin.math.min
  */
 internal class PlatformViewVideoPlayer // TODO: Migrate to stable API, see
 // https://github.com/flutter/flutter/issues/147039.
-@UnstableApi
+@OptIn(UnstableApi::class)
 @VisibleForTesting
 constructor(
     events: VideoPlayerCallbacks,

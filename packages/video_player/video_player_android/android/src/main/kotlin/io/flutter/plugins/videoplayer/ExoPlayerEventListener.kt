@@ -140,7 +140,7 @@ internal abstract class ExoPlayerEventListener(
         // Find the selected track within this group
         for (i in 0 ..< group.length) {
           if (group.isTrackSelected(i)) {
-            return "${groupIndex.toString()}_$i"
+            return "${groupIndex}_$i"
           }
         }
       }

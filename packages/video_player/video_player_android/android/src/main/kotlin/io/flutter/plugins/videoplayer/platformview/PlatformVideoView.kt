@@ -91,9 +91,9 @@ constructor(context: Context, exoPlayer: ExoPlayer) : PlatformView {
     surfaceView.holder.surface.release()
   }
 
-  companion object {
+  private companion object {
     /** Binds the ExoPlayer to the provided surface. */
-    private fun bindPlayerToSurface(exoPlayer: ExoPlayer, surface: Surface) {
+    fun bindPlayerToSurface(exoPlayer: ExoPlayer, surface: Surface) {
       if (surface.isValid) {
         exoPlayer.setVideoSurface(surface)
       }
@@ -103,7 +103,7 @@ constructor(context: Context, exoPlayer: ExoPlayer) : PlatformView {
      * Workaround for a rendering bug on Android 9 (API 28) where the decoder does not flush its
      * output buffer when a new surface is attached while the player is paused.
      */
-    private fun forceFirstFrameForAndroid9(exoPlayer: ExoPlayer) {
+    fun forceFirstFrameForAndroid9(exoPlayer: ExoPlayer) {
       if (Build.VERSION.SDK_INT == Build.VERSION_CODES.P && !exoPlayer.playWhenReady) {
         val position = exoPlayer.currentPosition
         exoPlayer.seekTo(if (position == 0L) 1 else position)

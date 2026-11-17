@@ -5,6 +5,7 @@ package io.flutter.plugins.videoplayer
 
 import android.os.Handler
 import android.os.Looper
+import androidx.annotation.OptIn
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.common.Format
@@ -25,10 +26,11 @@ import kotlin.math.min
  * It provides methods to control playback, adjust volume, and handle seeking.
  */
 internal abstract class VideoPlayer
-@UnstableApi // Error thrown for this-escape warning on JDK 21+ due to
+// Error thrown for this-escape warning on JDK 21+ due to
 // https://bugs.openjdk.org/browse/JDK-8015831.
 // Keeping behavior as-is and addressing the warning could cause a regression:
 // https://github.com/flutter/packages/pull/10193
+@Suppress("this-escape")
 constructor(
     protected val videoPlayerEvents: VideoPlayerCallbacks,
     mediaItem: MediaItem,
@@ -40,17 +42,11 @@ constructor(
   private var exoPlayerEventListener: ExoPlayerEventListener?
   val exoPlayer: ExoPlayer = exoPlayerProvider()
 
-  // TODO: Migrate to stable API, see https://github.com/flutter/flutter/issues/147039.
-  @UnstableApi protected var trackSelector: DefaultTrackSelector? = null
-
   private val mainHandler = Handler(Looper.getMainLooper())
   private var isDisposed = false
 
   // TODO: Migrate to stable API, see https://github.com/flutter/flutter/issues/147039.
   init {
-    // Try to get the track selector from the ExoPlayer if it was built with one
-    trackSelector = exoPlayer.trackSelector as? DefaultTrackSelector
-
     exoPlayer.setMediaItem(mediaItem)
     exoPlayer.prepare()
     val listener = createExoPlayerEventListener(exoPlayer, surfaceProducer)
@@ -106,7 +102,7 @@ constructor(
   }
 
   // TODO: Migrate to stable API, see https://github.com/flutter/flutter/issues/147039.
-  @UnstableApi
+  @OptIn(UnstableApi::class)
   override fun getAudioTracks(): NativeAudioTrackData {
     val audioTracks: List<ExoPlayerAudioTrackData> = buildList {
       // Iterate through all track groups
@@ -139,9 +135,9 @@ constructor(
   }
 
   // TODO: Migrate to stable API, see https://github.com/flutter/flutter/issues/147039.
-  @UnstableApi
+  @OptIn(UnstableApi::class)
   override fun selectAudioTrack(groupIndex: Long, trackIndex: Long) {
-    val trackSelector = this.trackSelector
+    val trackSelector = exoPlayer.trackSelector as? DefaultTrackSelector
     checkNotNull(trackSelector) { "Cannot select audio track: track selector is null" }
 
     // Get current tracks
@@ -185,7 +181,7 @@ constructor(
   }
 
   // TODO: Migrate to stable API, see https://github.com/flutter/flutter/issues/147039.
-  @UnstableApi
+  @OptIn(UnstableApi::class)
   override fun getVideoTracks(): NativeVideoTrackData {
     val videoTracks: List<ExoPlayerVideoTrackData> = buildList {
       // Iterate through all track groups
@@ -218,9 +214,9 @@ constructor(
   }
 
   // TODO: Migrate to stable API, see https://github.com/flutter/flutter/issues/147039.
-  @UnstableApi
+  @OptIn(UnstableApi::class)
   override fun enableAutoVideoQuality() {
-    val trackSelector = this.trackSelector
+    val trackSelector = exoPlayer.trackSelector as? DefaultTrackSelector
     checkNotNull(trackSelector) { "Cannot enable auto video quality: track selector is null" }
 
     // Clear video track override to enable adaptive streaming
@@ -229,9 +225,9 @@ constructor(
   }
 
   // TODO: Migrate to stable API, see https://github.com/flutter/flutter/issues/147039.
-  @UnstableApi
+  @OptIn(UnstableApi::class)
   override fun selectVideoTrack(groupIndex: Long, trackIndex: Long) {
-    val trackSelector = this.trackSelector
+    val trackSelector = exoPlayer.trackSelector as? DefaultTrackSelector
     checkNotNull(trackSelector) { "Cannot select video track: track selector is null" }
 
     // Get current tracks
@@ -359,8 +355,8 @@ constructor(
     exoPlayer.release()
   }
 
-  companion object {
-    private fun setAudioAttributes(exoPlayer: ExoPlayer, isMixMode: Boolean) {
+  private companion object {
+    fun setAudioAttributes(exoPlayer: ExoPlayer, isMixMode: Boolean) {
       exoPlayer.setAudioAttributes(
           AudioAttributes.Builder().setContentType(C.AUDIO_CONTENT_TYPE_MOVIE).build(), !isMixMode)
     }
@@ -372,7 +368,7 @@ constructor(
      * @param value The format value to check.
      * @return The value as a Long, or null if it's Format.NO_VALUE.
      */
-    private fun getFormatValue(value: Int): Long? {
+    fun getFormatValue(value: Int): Long? {
       return if (value != Format.NO_VALUE) value.toLong() else null
     }
 
@@ -383,7 +379,7 @@ constructor(
      * @param value The format value to check.
      * @return The value as a Double, or null if it's Format.NO_VALUE.
      */
-    private fun getFormatValue(value: Double): Double? {
+    fun getFormatValue(value: Double): Double? {
       return if (value != Format.NO_VALUE.toDouble()) value else null
     }
   }

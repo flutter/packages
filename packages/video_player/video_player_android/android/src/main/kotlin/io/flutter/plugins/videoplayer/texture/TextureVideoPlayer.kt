@@ -28,7 +28,7 @@ import kotlin.math.min
  * texture.
  */
 internal class TextureVideoPlayer
-@UnstableApi
+@OptIn(UnstableApi::class)
 @VisibleForTesting
 constructor(
     events: VideoPlayerCallbacks,

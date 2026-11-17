@@ -60,10 +60,10 @@ internal class HttpVideoAsset(
     return DefaultMediaSourceFactory(context).setDataSourceFactory(dataSourceFactory)
   }
 
-  companion object {
+  private companion object {
     // TODO: Migrate to stable API, see https://github.com/flutter/flutter/issues/147039.
     @OptIn(UnstableApi::class)
-    private fun unstableUpdateDataSourceFactory(
+    fun unstableUpdateDataSourceFactory(
         factory: DefaultHttpDataSource.Factory,
         httpHeaders: Map<String, String>,
         userAgent: String?
