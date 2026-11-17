@@ -16,12 +16,8 @@ import '../../utils/accessibility_config.dart' as glass_config;
 //     Affects: GlassSegmentedControl, GlassTabBar, GlassSwitch,
 //              GlassSlider — every widget that uses GlassSpring internally.
 //
-//   • Reduce Transparency — MediaQuery.highContrastOf(context)
-//     Flutter does not expose UIAccessibility.isReduceTransparencyEnabled
-//     directly. highContrast is the closest platform signal available.
-//     When true, AdaptiveGlass replaces the glass shader with a solid frosted
-//     surface (a plain BackdropFilter blur + opaque tinted panel), eliminating
-//     all refraction, specular, and chromatic aberration.
+//   • Reduce Transparency — MediaQuery.reduceTransparencyOf(context)
+//     When enabled, AdaptiveGlass uses its frosted fallback.
 //
 // ## Default behaviour — no setup required
 //
@@ -95,8 +91,7 @@ class GlassAccessibilityData {
 
   /// When true, the glass shader should degrade to a plain frosted surface.
   ///
-  /// Sourced from [MediaQuery.highContrastOf] as the closest available
-  /// Flutter proxy for iOS "Reduce Transparency".
+  /// Sourced from [MediaQuery.reduceTransparencyOf].
   final bool reduceTransparency;
 
   /// The no-accessibility-restriction default used when no scope is in tree.
@@ -129,7 +124,7 @@ class GlassAccessibilityData {
     // 3. Read system flags so accessibility is respected with no dev setup.
     return GlassAccessibilityData(
       reduceMotion: _systemReduceMotion(context),
-      reduceTransparency: MediaQuery.highContrastOf(context),
+      reduceTransparency: MediaQuery.reduceTransparencyOf(context),
     );
   }
 
@@ -179,7 +174,7 @@ class GlassAccessibilityScope extends StatelessWidget {
 
   /// Override for the reduce-transparency preference.
   ///
-  /// When null, the value is sourced from [MediaQuery.highContrastOf].
+  /// When null, the value is sourced from [MediaQuery.reduceTransparencyOf].
   final bool? reduceTransparency;
 
   /// The widget subtree that will have access to the glass accessibility data.
@@ -189,8 +184,7 @@ class GlassAccessibilityScope extends StatelessWidget {
   Widget build(BuildContext context) {
     final data = GlassAccessibilityData(
       reduceMotion: reduceMotion ?? _systemReduceMotion(context),
-      reduceTransparency:
-          reduceTransparency ?? MediaQuery.highContrastOf(context),
+      reduceTransparency: reduceTransparency ?? MediaQuery.reduceTransparencyOf(context),
     );
 
     return _InheritedGlassAccessibility(

@@ -65,7 +65,7 @@ First-party rendering extensions developed specifically for `liquid_glass_widget
   - `GlassQuality.flat`: Solid Cupertino fallback for low-power or legacy hardware.
   - Auto-downgrades in real time when frame budget exceedances or thermal throttling are detected.
 * **Accessibility Engine (`GlassAccessibilityScope`)**:
-  - Automatically queries and respects `MediaQuery.reduceMotionOf(context)`, `highContrast`, and `reduceTransparency`.
+  - Reads the system Reduce Motion and Reduce Transparency preferences and supports overrides for a widget subtree.
 * **`GlassSpring` (`lib/src/third_party/liquid_glass_renderer/glass_spring.dart`)**:
   - Pure Flutter physics implementation adapted from Tim Lehmann's `motor` package (`CupertinoMotion` bouncy, snappy, smooth, interactive presets).
 

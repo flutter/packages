@@ -17,9 +17,6 @@ import 'vertical_bar_title_row.dart';
 /// title row across the content down to where the content starts, 10pt below
 /// the row, each behind a hairline where it meets the content. The row is only drawn with
 /// [titleRow], and follows [controller]'s large title as it scrolls away.
-///
-/// Flutter does not surface Reduce Transparency yet (flutter/flutter#190318);
-/// [GlassAccessibilityData.reduceTransparency] approximates it.
 class VerticalBarBackground extends StatelessWidget {
   /// Creates the background for [bar].
   const VerticalBarBackground({

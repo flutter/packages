@@ -292,19 +292,7 @@ class AdaptiveGlass extends StatelessWidget {
       );
     }
 
-    // ---- IP1: ACCESSIBILITY FAST-PATH ----------------------------------------
-    // iOS 26 glass degrades to a solid frosted panel when "Reduce Transparency"
-    // is enabled. We honour the equivalent Flutter signal (highContrast, which
-    // is the closest available platform proxy for isReduceTransparencyEnabled).
-    //
-    // When triggered, the entire glass shader pipeline is bypassed. The fallback
-    // is a ClipRRect + BackdropFilter(blur) + semi-opaque tinted container —
-    // still visually layered, but with no refraction, no specular, and no
-    // chromatic aberration. Zero GPU shader cost.
-    //
-    // GlassAccessibilityScope must be in the widget tree for this to activate;
-    // without it, defaults.reduceTransparency = false and we proceed normally.
-    // --------------------------------------------------------------------------
+    // Reduce Transparency uses a frosted surface in place of the glass shader.
     final accessibilityData = GlassAccessibilityData.of(context);
     if (accessibilityData.reduceTransparency) {
       return _wrapWithDecorations(
