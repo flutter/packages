@@ -437,8 +437,9 @@ class FilledButton extends ButtonStyleButton {
   ///
   /// ## Material 3 defaults
   ///
-  /// If [ThemeData.useMaterial3] is set to true the following defaults will
-  /// be used:
+  /// If [ThemeData.useMaterial3] is true and [FilledButtonThemeData.variant]
+  /// isn't [StyleVariant.material3Expressive], the following defaults will be
+  /// used:
   ///
   /// * `textStyle` - Theme.textTheme.labelLarge
   /// * `backgroundColor`
