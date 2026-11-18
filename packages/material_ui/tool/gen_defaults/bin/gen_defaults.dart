@@ -73,6 +73,7 @@ Future<void> main(List<String> args) async {
   const ButtonTemplateM3('Filled Button').generateFile(verbose: verbose);
   const ButtonTemplateM3('Filled Tonal Button').generateFile(verbose: verbose);
   const ButtonTemplateM3('Outlined Button').generateFile(verbose: verbose);
+  const ButtonTemplateM3E('Outlined Button').generateFile(verbose: verbose);
   const ButtonTemplateM3('Text Button').generateFile(verbose: verbose);
   const CardTemplateM3('Card').generateFile(verbose: verbose);
   const CardTemplateM3('Filled Card').generateFile(verbose: verbose);
