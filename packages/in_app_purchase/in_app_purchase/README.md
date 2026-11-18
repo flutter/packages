@@ -61,6 +61,13 @@ can start using the plugin. Two basic options are available:
 
 See also the codelab for [in-app purchases in Flutter](https://codelabs.developers.google.com/codelabs/flutter-in-app-purchases) for a detailed guide on adding in-app purchase support to a Flutter App.
 
+### Testing in-app purchases
+
+* **iOS and macOS:** To test purchases locally, follow Apple’s guide to
+  [setting up StoreKit Testing in Xcode](https://developer.apple.com/documentation/xcode/setting-up-storekit-testing-in-xcode).
+* **Android:** To test purchases with a license tester account, follow Google’s guide to
+  [testing your Google Play Billing Library integration](https://developer.android.com/google/play/billing/test).
+
 ## Usage
 
 This section has examples of code for the following tasks:
