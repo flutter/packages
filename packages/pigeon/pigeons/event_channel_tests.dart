@@ -133,13 +133,6 @@ class ClassEvent extends PlatformEvent {
 
 class EmptyEvent extends PlatformEvent {}
 
-@EventChannelApi()
-abstract class EventChannelMethods {
-  int streamInts();
-  PlatformEvent streamEvents();
-  int streamConsistentNumbers();
-}
-
 @HostApi()
 abstract class StreamHostTestApi {
   Stream<int> streamNumbers({int count = 5, int start = 0});

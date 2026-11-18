@@ -51,7 +51,6 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi, HostCallbackCoreApi {
   internal var niMessageApiImpl: NativeInteropIntegrationTests? = null
   private var niReservedNamesImpl: NativeInteropReservedNamesHostApiImpl? = null
   private var niSealedClassImpl: NativeInteropSealedClassHostApiImpl? = null
-  private var eventChannelOne: StreamConsistentNumbersEventChannel? = null
 
   override fun onAttachedToEngine(binding: FlutterPluginBinding) {
     HostIntegrationCoreApi.setUp(binding.binaryMessenger, this)
@@ -77,17 +76,6 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi, HostCallbackCoreApi {
     proxyApiRegistrar = ProxyApiRegistrar(binding.binaryMessenger)
     proxyApiRegistrar!!.setUp()
 
-    StreamEventsStreamHandler.register(binding.binaryMessenger, SendClass)
-    StreamIntsStreamHandler.register(binding.binaryMessenger, SendInts)
-    // Store one handler to exercise the handler removal codepath, and discard
-    // the other to test that the return value can be safely ignored.
-    val streamHandlerOne = SendConsistentNumbers(1)
-    eventChannelOne =
-        StreamConsistentNumbersStreamHandler.register(
-            binding.binaryMessenger, streamHandlerOne, "1")
-    streamHandlerOne.onCancelled = { eventChannelOne?.setStreamHandler(null) }
-    StreamConsistentNumbersStreamHandler.register(
-        binding.binaryMessenger, SendConsistentNumbers(2), "2")
     StreamHostTestApi.setUp(binding.binaryMessenger, StreamHostTestApiImpl())
     StreamHostTestApi.setUp(binding.binaryMessenger, StreamHostTestApiImpl(100), "1")
     StreamHostTestApi.setUp(binding.binaryMessenger, StreamHostTestApiImpl(200), "2")
@@ -2531,95 +2519,6 @@ class NativeInteropReservedNamesHostApiImpl(private val binding: FlutterPluginBi
   }
 }
 
-object SendInts : StreamIntsStreamHandler() {
-  val handler = Handler(Looper.getMainLooper())
-
-  override fun onListen(p0: Any?, sink: PigeonEventSink<Long>) {
-    var count: Long = 0
-    val r: Runnable =
-        object : Runnable {
-          override fun run() {
-            handler.post {
-              if (count >= 5) {
-                sink.endOfStream()
-              } else {
-                sink.success(count)
-                count++
-                handler.postDelayed(this, 10)
-              }
-            }
-          }
-        }
-    handler.postDelayed(r, 10)
-  }
-}
-
-object SendClass : StreamEventsStreamHandler() {
-  val handler = Handler(Looper.getMainLooper())
-  val eventList =
-      listOf(
-          IntEvent(1),
-          StringEvent("string"),
-          BoolEvent(false),
-          DoubleEvent(3.14),
-          ObjectsEvent(true),
-          EnumEvent(EventEnum.FORTY_TWO),
-          ClassEvent(EventAllNullableTypes(aNullableInt = 0)),
-          EmptyEvent())
-
-  override fun onListen(p0: Any?, sink: PigeonEventSink<PlatformEvent>) {
-    var count = 0
-    val r: Runnable =
-        object : Runnable {
-          override fun run() {
-            if (count >= eventList.size) {
-              sink.endOfStream()
-            } else {
-              handler.post {
-                sink.success(eventList[count])
-                count++
-              }
-              handler.postDelayed(this, 10)
-            }
-          }
-        }
-    handler.postDelayed(r, 10)
-  }
-}
-
-class SendConsistentNumbers(private val numberToSend: Long) :
-    StreamConsistentNumbersStreamHandler() {
-  private val handler = Handler(Looper.getMainLooper())
-  var onCancelled: (() -> Unit)? = null
-
-  override fun onListen(p0: Any?, sink: PigeonEventSink<Long>) {
-    var count = 0
-    val r: Runnable =
-        object : Runnable {
-          override fun run() {
-            if (count >= 10) {
-              sink.endOfStream()
-            } else {
-              handler.post {
-                sink.success(numberToSend)
-                count++
-              }
-              handler.postDelayed(this, 10)
-            }
-          }
-        }
-    handler.postDelayed(r, 10)
-  }
-
-  // Closing the stream causes the Dart side to send a "cancel" call, so any
-  // handler removal must wait until that call has been received. Removing the
-  // handler immediately after endOfStream races with the "cancel" call, which
-  // then fails with a MissingPluginException.
-  override fun onCancel(p0: Any?) {
-    onCancelled?.invoke()
-  }
-}
-
 class NativeInteropSealedClassHostApiImpl(private val binding: FlutterPluginBinding? = null) :
     NativeInteropSealedClassHostApi {
   override fun echoShape(shape: NativeInteropShape): NativeInteropShape {
@@ -2660,7 +2559,17 @@ class StreamHostTestApiImpl(private val offset: Long = 0) : StreamHostTestApi {
   }
 
   override fun streamPlatformEvents(): Flow<PlatformEvent> = flow {
-    for (event in SendClass.eventList) {
+    val events =
+        listOf(
+            IntEvent(1),
+            StringEvent("string"),
+            BoolEvent(false),
+            DoubleEvent(3.14),
+            ObjectsEvent(true),
+            EnumEvent(EventEnum.FORTY_TWO),
+            ClassEvent(EventAllNullableTypes(aNullableInt = 0)),
+            EmptyEvent())
+    for (event in events) {
       emit(event)
       delay(5)
     }

@@ -2317,89 +2317,9 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     expect(await api.asyncTaskQueueIsBackgroundThread(), taskQueuesSupported);
   });
 
-  /// Event channels
+  /// HostApi streams
 
-  const eventChannelSupported = <TargetGenerator>[TargetGenerator.kotlin, TargetGenerator.swift];
-
-  testWidgets('event channel sends continuous ints', (_) async {
-    final Stream<int> events = streamInts();
-    final List<int> listEvents = await events.toList();
-    for (final value in listEvents) {
-      expect(listEvents[value], value);
-    }
-  }, skip: !eventChannelSupported.contains(targetGenerator));
-
-  testWidgets('event channel handles extended sealed classes', (_) async {
-    final completer = Completer<void>();
-    var count = 0;
-    final Stream<PlatformEvent> events = streamEvents();
-    events.listen((PlatformEvent event) {
-      switch (event) {
-        case IntEvent():
-          expect(event.value, 1);
-          expect(count, 0);
-          count++;
-        case StringEvent():
-          expect(event.value, 'string');
-          expect(count, 1);
-          count++;
-        case BoolEvent():
-          expect(event.value, false);
-          expect(count, 2);
-          count++;
-        case DoubleEvent():
-          expect(event.value, 3.14);
-          expect(count, 3);
-          count++;
-        case ObjectsEvent():
-          expect(event.value, true);
-          expect(count, 4);
-          count++;
-        case EnumEvent():
-          expect(event.value, EventEnum.fortyTwo);
-          expect(count, 5);
-          count++;
-        case ClassEvent():
-          expect(event.value.aNullableInt, 0);
-          expect(count, 6);
-          count++;
-        case EmptyEvent():
-          expect(count, 7);
-          count++;
-          completer.complete();
-      }
-    });
-    await completer.future;
-  }, skip: !eventChannelSupported.contains(targetGenerator));
-
-  testWidgets(
-    'event channels handle multiple instances',
-    (_) async {
-      final completer1 = Completer<void>();
-      final completer2 = Completer<void>();
-      final Stream<int> events1 = streamConsistentNumbers(instanceName: '1');
-      final Stream<int> events2 = streamConsistentNumbers(instanceName: '2');
-
-      events1
-          .listen((int event) {
-            expect(event, 1);
-          })
-          .onDone(() => completer1.complete());
-
-      events2
-          .listen((int event) {
-            expect(event, 2);
-          })
-          .onDone(() => completer2.complete());
-
-      await completer1.future;
-      await completer2.future;
-    },
-    skip:
-        !eventChannelSupported.contains(targetGenerator) ||
-        // Flaky on macOS Swift, see https://github.com/flutter/flutter/issues/179154
-        (targetGenerator == TargetGenerator.swift && defaultTargetPlatform == TargetPlatform.macOS),
-  );
+  const streamSupported = <TargetGenerator>[TargetGenerator.kotlin, TargetGenerator.swift];
 
   group('HostApi Stream<T>', () {
     testWidgets('streams typed parameters and concurrent subscriptions without clobbering', (
@@ -2412,7 +2332,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       ]);
       expect(results[0], <int>[10, 11, 12, 13]);
       expect(results[1], <int>[50, 51, 52]);
-    }, skip: !eventChannelSupported.contains(targetGenerator));
+    }, skip: !streamSupported.contains(targetGenerator));
 
     testWidgets('streams sealed classes and nullable values', (WidgetTester _) async {
       final api = StreamHostTestApi();
@@ -2435,7 +2355,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
       final List<int?> nullableInts = await api.streamNullableInts().toList();
       expect(nullableInts, <int?>[1, null, 2]);
-    }, skip: !eventChannelSupported.contains(targetGenerator));
+    }, skip: !streamSupported.contains(targetGenerator));
 
     testWidgets('handles terminal errors, mid-stream cancel, suffixes, and @asyncCallback', (
       WidgetTester _,
@@ -2481,7 +2401,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         'item:2',
       ]);
       expect(await api.streamViaCallback('cut', 200).take(2).toList(), <String>['cut:0', 'cut:1']);
-    }, skip: !eventChannelSupported.contains(targetGenerator));
+    }, skip: !streamSupported.contains(targetGenerator));
   });
 
   testWidgets('constants are generated correctly', (WidgetTester _) async {

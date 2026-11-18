@@ -69,9 +69,6 @@ method arguments and per-subscription cancellation:
   `(() -> Void)?` in Swift) that runs when the Dart `StreamSubscription` is cancelled — useful when
   bridging callback- or listener-based platform SDKs.
 
-> [!NOTE]
-> `@EventChannelApi()` is deprecated in favor of `Stream<T>` return types on `@HostApi()` methods.
-
 [Example](./example/README.md#event-channel-example).
 
 ### Error Handling
@@ -220,8 +217,7 @@ These constants will be translated into static constants or final variables in t
    value whose types are defined in the file, are supported datatypes, or are
    `void`.
 1) Method declarations on `@HostApi()` classes may also return `Stream<T>` (supported on the Swift,
-   Kotlin, and Dart generators) to stream events from the host platform to Flutter (`@EventChannelApi`
-   is deprecated in favor of `Stream<T>` return types on `@HostApi()`).
+   Kotlin, and Dart generators) to stream events from the host platform to Flutter.
 1) Objective-C and Swift have special naming conventions that can be utilized with the
    `@ObjCSelector` and `@SwiftFunction` respectively.
 

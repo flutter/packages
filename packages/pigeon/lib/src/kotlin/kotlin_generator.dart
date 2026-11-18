@@ -29,9 +29,6 @@ const DocumentCommentSpecification _docCommentSpec = DocumentCommentSpecificatio
 
 const String _codecName = 'PigeonCodec';
 
-/// Name of field used for host API codec.
-const String _pigeonMethodCodec = 'PigeonMethodCodec';
-
 const String _overflowClassName = '${classNamePrefix}CodecOverflow';
 
 /// Kotlin file-level annotation for generated code.
@@ -241,22 +238,6 @@ class KotlinProxyApiOptions {
   final int? minAndroidApi;
 }
 
-/// Options for Kotlin implementation of deprecated `@EventChannelApi` definitions.
-///
-/// Prefer `Stream<T>` return types on `@HostApi` methods instead of `@EventChannelApi`.
-@Deprecated('Use Stream<T> return types on @HostApi methods instead.')
-class KotlinEventChannelOptions {
-  /// Construct a [KotlinEventChannelOptions].
-  @Deprecated('Use Stream<T> return types on @HostApi methods instead.')
-  const KotlinEventChannelOptions({this.includeSharedClasses = true});
-
-  /// Whether to include the shared Event Channel classes in generation.
-  ///
-  /// This should only ever be set to false if you have another generated
-  /// Kotlin file with Event Channels in the same directory.
-  final bool includeSharedClasses;
-}
-
 /// Class that manages all Kotlin code generation.
 class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
   /// Instantiates a Kotlin Generator.
@@ -314,12 +295,10 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
       indent.writeln('import io.flutter.embedding.engine.FlutterEngine');
       indent.writeln('import io.flutter.embedding.engine.plugins.FlutterPlugin');
     }
-    if (!generatorOptions.useJni || root.containsEventChannel || root.containsProxyApi) {
+    if (!generatorOptions.useJni || root.containsProxyApi) {
       indent.writeln('import io.flutter.plugin.common.BasicMessageChannel');
       indent.writeln('import io.flutter.plugin.common.BinaryMessenger');
-      indent.writeln('import io.flutter.plugin.common.EventChannel');
       indent.writeln('import io.flutter.plugin.common.MessageCodec');
-      indent.writeln('import io.flutter.plugin.common.StandardMethodCodec');
       indent.writeln('import io.flutter.plugin.common.StandardMessageCodec');
       indent.writeln('import java.io.ByteArrayOutputStream');
       indent.writeln('import java.nio.ByteBuffer');
@@ -678,10 +657,7 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
     Indent indent, {
     required String dartPackageName,
   }) {
-    if (generatorOptions.useJni &&
-        !generatorOptions.useJniHybrid &&
-        !root.containsEventChannel &&
-        !root.containsProxyApi) {
+    if (generatorOptions.useJni && !generatorOptions.useJniHybrid && !root.containsProxyApi) {
       return;
     }
     final List<EnumeratedType> enumeratedTypes = getEnumeratedTypes(
@@ -782,12 +758,6 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
     indent.newln();
     if (generatorOptions.useJniHybrid) {
       _writeInteropCodec(generatorOptions, indent);
-    }
-    if (root.containsEventChannel) {
-      indent.writeln(
-        'val ${generatorOptions.fileSpecificClassNameComponent}$_pigeonMethodCodec = StandardMethodCodec(${generatorOptions.fileSpecificClassNameComponent}$_codecName())',
-      );
-      indent.newln();
     }
   }
 
@@ -1924,110 +1894,6 @@ This is called by the generated Dart code and is not intended for direct use.'''
         _writeProxyApiInheritedApiMethods(indent, api);
       },
     );
-  }
-
-  @override
-  void writeEventChannelApi(
-    InternalKotlinOptions generatorOptions,
-    Root root,
-    Indent indent,
-    AstEventChannelApi api, {
-    required String dartPackageName,
-  }) {
-    indent.newln();
-    indent.format('''
-        private class ${generatorOptions.fileSpecificClassNameComponent}PigeonStreamHandler<T>(
-            val wrapper: ${generatorOptions.fileSpecificClassNameComponent}PigeonEventChannelWrapper<T>
-        ) : EventChannel.StreamHandler {
-          var pigeonSink: PigeonEventSink<T>? = null
-
-          override fun onListen(p0: Any?, sink: EventChannel.EventSink) {
-            pigeonSink = PigeonEventSink<T>(sink)
-            wrapper.onListen(p0, pigeonSink!!)
-          }
-
-          override fun onCancel(p0: Any?) {
-            pigeonSink = null
-            wrapper.onCancel(p0)
-          }
-        }
-
-        interface ${generatorOptions.fileSpecificClassNameComponent}PigeonEventChannelWrapper<T> {
-          fun onListen(p0: Any?, sink: PigeonEventSink<T>) {}
-
-          fun onCancel(p0: Any?) {}
-        }
-        ''');
-
-    if (api.kotlinOptions?.includeSharedClasses ?? true) {
-      // TODO(tarrinneal): Prefix this class to avoid name collisions.
-      indent.format('''
-        class PigeonEventSink<T>(private val sink: EventChannel.EventSink) {
-          fun success(value: T) {
-            sink.success(value)
-          }
-
-          fun error(errorCode: String, errorMessage: String?, errorDetails: Any?) {
-            sink.error(errorCode, errorMessage, errorDetails)
-          }
-
-          fun endOfStream() {
-            sink.endOfStream()
-          }
-        }
-      ''');
-    }
-    addDocumentationComments(indent, api.documentationComments, _docCommentSpec);
-    for (final Method func in api.methods) {
-      final channelClassName = '${toUpperCamelCase(func.name)}EventChannel';
-      final streamHandlerClassName = '${toUpperCamelCase(func.name)}StreamHandler';
-      indent.format('''
-        /** A typed channel for communicating with the Flutter application using asynchronous event streams. */
-        class $channelClassName(messenger: BinaryMessenger, instanceName: String = "") {
-          private val channel: EventChannel
-
-          init {
-            var channelName = "${makeChannelName(api, func, dartPackageName)}"
-            if (instanceName.isNotEmpty()) {
-              channelName += ".\$instanceName"
-            }
-            channel = EventChannel(messenger, channelName, ${generatorOptions.fileSpecificClassNameComponent}$_pigeonMethodCodec)
-          }
-
-          /**
-           * Sets the stream handler for this channel, replacing any previous handler.
-           *
-           * Pass `null` to remove the event channel registration.
-           */
-          fun setStreamHandler(streamHandler: $streamHandlerClassName?) {
-            val internalHandler = streamHandler?.let { ${generatorOptions.fileSpecificClassNameComponent}PigeonStreamHandler<${_kotlinTypeForDartType(func.returnType)}>(it) }
-            channel.setStreamHandler(internalHandler)
-          }
-        }
-
-        abstract class $streamHandlerClassName : ${generatorOptions.fileSpecificClassNameComponent}PigeonEventChannelWrapper<${_kotlinTypeForDartType(func.returnType)}> {
-          companion object {
-            /**
-             * Creates and returns a new event channel that calls the provided stream handler.
-             *
-             * The returned channel can be stored to allow changing or removing the stream handler.
-             * If the handler will not be changed for the lifetime of the engine associated with the messenger,
-             * the return value can be ignored.
-             */
-            fun register(messenger: BinaryMessenger, streamHandler: $streamHandlerClassName, instanceName: String = ""): $channelClassName {
-              val channel = $channelClassName(messenger, instanceName)
-              channel.setStreamHandler(streamHandler)
-              return channel
-            }
-          }
-
-          // Implement methods from ${generatorOptions.fileSpecificClassNameComponent}PigeonEventChannelWrapper
-          override fun onListen(p0: Any?, sink: PigeonEventSink<${_kotlinTypeForDartType(func.returnType)}>) {}
-
-          override fun onCancel(p0: Any?) {}
-        }
-      ''');
-    }
   }
 
   void _writeWrapResult(Indent indent) {

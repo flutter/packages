@@ -1,7 +1,7 @@
-## 30.1.0
+## 31.0.0
 
+* **BREAKING CHANGE**: Removes `@EventChannelApi`, `KotlinEventChannelOptions`, and `SwiftEventChannelOptions` in favor of `Stream<T>` return types on `@HostApi` methods.
 * [dart,kotlin,swift] Adds support for idiomatic `Stream<T>` return types (and `@asyncCallback` stream sinks) on `@HostApi` methods.
-* Deprecates `@EventChannelApi` in favor of `Stream<T>` return types on `@HostApi` methods.
 
 ## 30.0.4
 

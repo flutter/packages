@@ -280,22 +280,6 @@ class SwiftProxyApiOptions {
   final bool supportsMacos;
 }
 
-/// Options for Swift implementation of deprecated `@EventChannelApi` definitions.
-///
-/// Prefer `Stream<T>` return types on `@HostApi` methods instead of `@EventChannelApi`.
-@Deprecated('Use Stream<T> return types on @HostApi methods instead.')
-class SwiftEventChannelOptions {
-  /// Constructs a [SwiftEventChannelOptions].
-  @Deprecated('Use Stream<T> return types on @HostApi methods instead.')
-  const SwiftEventChannelOptions({this.includeSharedClasses = true});
-
-  /// Whether to include the error class in generation.
-  ///
-  /// This should only ever be set to false if you have another generated
-  /// Swift file with Event Channels in the same directory.
-  final bool includeSharedClasses;
-}
-
 // Prefix used mapping prefixed class names for language outputs.
 String _classNamePrefix = '';
 
@@ -1309,7 +1293,7 @@ private enum $codec {
     Indent indent, {
     required String dartPackageName,
   }) {
-    if (generatorOptions.useFfi && !root.containsEventChannel && !root.containsProxyApi) {
+    if (generatorOptions.useFfi && !root.containsProxyApi) {
       _writeFfiCodec(indent, root);
       if (generatorOptions.useFfiHybrid) {
         _writeFfiInteropCodec(generatorOptions, root, indent);
@@ -1442,12 +1426,6 @@ private enum $codec {
       indent.writeln('static let shared = $codecName(readerWriter: $readerWriterName())');
     });
     indent.newln();
-    if (root.containsEventChannel) {
-      indent.writeln(
-        'var ${_getMethodCodecVarName(generatorOptions)} = FlutterStandardMethodCodec(readerWriter: $readerWriterName());',
-      );
-      indent.newln();
-    }
   }
 
   void _writeDataClassSignature(
@@ -3995,116 +3973,6 @@ fileprivate enum PigeonEngineKeys {
 }''');
   }
 
-  @override
-  void writeEventChannelApi(
-    InternalSwiftOptions generatorOptions,
-    Root root,
-    Indent indent,
-    AstEventChannelApi api, {
-    required String dartPackageName,
-  }) {
-    indent.newln();
-    // TODO(tarrinneal): Prefix this class to avoid name collisions.
-    indent.format('''
-      private class PigeonStreamHandler<ReturnType>: NSObject, FlutterStreamHandler {
-        private let wrapper: PigeonEventChannelWrapper<ReturnType>
-        private var pigeonSink: PigeonEventSink<ReturnType>? = nil
-
-        init(wrapper: PigeonEventChannelWrapper<ReturnType>) {
-          self.wrapper = wrapper
-        }
-
-        func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink)
-          -> FlutterError?
-        {
-          pigeonSink = PigeonEventSink<ReturnType>(events)
-          wrapper.onListen(withArguments: arguments, sink: pigeonSink!)
-          return nil
-        }
-
-        func onCancel(withArguments arguments: Any?) -> FlutterError? {
-          pigeonSink = nil
-          wrapper.onCancel(withArguments: arguments)
-          return nil
-        }
-      }''');
-    if (api.swiftOptions?.includeSharedClasses ?? true) {
-      // TODO(tarrinneal): Prefix these classes to avoid name collisions.
-      indent.format('''
-
-      class PigeonEventChannelWrapper<ReturnType> {
-        func onListen(withArguments arguments: Any?, sink: PigeonEventSink<ReturnType>) {}
-        func onCancel(withArguments arguments: Any?) {}
-      }
-
-      class PigeonEventSink<ReturnType> {
-        private let sink: FlutterEventSink
-
-        init(_ sink: @escaping FlutterEventSink) {
-          self.sink = sink
-        }
-
-        func success(_ value: ReturnType) {
-          sink(value)
-        }
-
-        func error(code: String, message: String?, details: Any?) {
-          sink(FlutterError(code: code, message: message, details: details))
-        }
-
-        func endOfStream() {
-          sink(FlutterEndOfEventStream)
-        }
-
-      }
-      ''');
-    }
-    addDocumentationComments(indent, api.documentationComments, _docCommentSpec);
-    for (final Method func in api.methods) {
-      final channelClassName = '${toUpperCamelCase(func.name)}EventChannel';
-      final streamHandlerClassName = '${toUpperCamelCase(func.name)}StreamHandler';
-      indent.format('''
-        /// A typed channel for communicating with the Flutter application using asynchronous event streams.
-        class $channelClassName {
-          private let channel: FlutterEventChannel
-
-          init(messenger: FlutterBinaryMessenger, instanceName: String = "") {
-            var channelName = "${makeChannelName(api, func, dartPackageName)}"
-            if !instanceName.isEmpty {
-              channelName += ".\\(instanceName)"
-            }
-            channel = FlutterEventChannel(name: channelName, binaryMessenger: messenger, codec: ${_getMethodCodecVarName(generatorOptions)})
-          }
-
-          /// Sets the stream handler for this channel, replacing any previous handler.
-          /// 
-          /// Pass `nil` to remove the event channel registration.
-          func setStreamHandler(_ streamHandler: $streamHandlerClassName?) {
-            let internalHandler = streamHandler.map({ PigeonStreamHandler<${_swiftTypeForDartType(func.returnType)}>(wrapper: \$0) })
-            channel.setStreamHandler(internalHandler)
-          }
-        }
-
-        class $streamHandlerClassName: PigeonEventChannelWrapper<${_swiftTypeForDartType(func.returnType)}> {
-          /// Creates and returns a new event channel that calls the provided stream handler.
-          /// 
-          /// The returned channel can be stored to allow changing or removing the stream handler.
-          /// If the handler will not be changed for the lifetime of the engine associated with the messenger,
-          /// the return value can be ignored.
-          @discardableResult static func register(
-            with messenger: FlutterBinaryMessenger,
-            instanceName: String = "",
-            streamHandler: $streamHandlerClassName
-          ) -> $channelClassName {
-            let channel = $channelClassName(messenger: messenger, instanceName: instanceName)
-            channel.setStreamHandler(streamHandler)
-            return channel
-          }
-        }
-      ''');
-    }
-  }
-
   void _writeFlutterMethod(
     Indent indent, {
     required InternalSwiftOptions generatorOptions,
@@ -5645,11 +5513,6 @@ String? _tryGetUnsupportedPlatformsCondition(Iterable<TypeDeclaration> types) {
 /// Calculates the name of the codec that will be generated for [api].
 String _getMessageCodecName(InternalSwiftOptions options) {
   return toUpperCamelCase('${options.fileSpecificClassNameComponent}PigeonCodec');
-}
-
-/// Calculates the name of the codec that will be generated for [api].
-String _getMethodCodecVarName(InternalSwiftOptions options) {
-  return '${toLowerCamelCase(options.fileSpecificClassNameComponent ?? '')}PigeonMethodCodec';
 }
 
 String _getErrorClassName(InternalSwiftOptions generatorOptions) {

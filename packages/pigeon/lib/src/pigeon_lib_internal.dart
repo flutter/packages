@@ -283,12 +283,6 @@ abstract class GeneratorAdapter {
   List<Error> validate(InternalPigeonOptions options, Root root);
 }
 
-void _errorOnEventChannelApi(List<Error> errors, String generator, Root root) {
-  if (root.containsEventChannel) {
-    errors.add(Error(message: '$generator does not support event channels'));
-  }
-}
-
 void _errorOnStreamMethod(List<Error> errors, String generator, Root root) {
   for (final Api api in root.apis) {
     for (final Method method in api.methods) {
@@ -432,14 +426,7 @@ void _errorOnSwiftFfiUnsupportedFeatures(
   Root root,
 ) {
   for (final Api api in root.apis) {
-    if (api is AstEventChannelApi) {
-      errors.add(
-        Error(
-          message:
-              'Swift FFI does not support event channels yet (in API "${api.name}"). $_moveToNonFfiFileSuggestion',
-        ),
-      );
-    } else if (api is AstProxyApi) {
+    if (api is AstProxyApi) {
       errors.add(
         Error(
           message:
@@ -504,14 +491,7 @@ const String _moveToNonJniFileSuggestion =
 
 void _errorOnKotlinJniUnsupportedFeatures(List<Error> errors, Root root) {
   for (final Api api in root.apis) {
-    if (api is AstEventChannelApi) {
-      errors.add(
-        Error(
-          message:
-              'Kotlin JNI does not support event channels yet (in API "${api.name}"). $_moveToNonJniFileSuggestion',
-        ),
-      );
-    } else if (api is AstProxyApi) {
+    if (api is AstProxyApi) {
       errors.add(
         Error(
           message:
@@ -721,7 +701,6 @@ class ObjcGeneratorAdapter implements GeneratorAdapter {
   @override
   List<Error> validate(InternalPigeonOptions options, Root root) {
     final errors = <Error>[];
-    _errorOnEventChannelApi(errors, languageString, root);
     _errorOnStreamMethod(errors, languageString, root);
     _errorOnSealedClass(errors, languageString, root);
     _errorOnInheritedClass(errors, languageString, root);
@@ -756,7 +735,6 @@ class JavaGeneratorAdapter implements GeneratorAdapter {
   @override
   List<Error> validate(InternalPigeonOptions options, Root root) {
     final errors = <Error>[];
-    _errorOnEventChannelApi(errors, languageString, root);
     _errorOnStreamMethod(errors, languageString, root);
     _errorOnSealedClass(errors, languageString, root);
     _errorOnInheritedClass(errors, languageString, root);
@@ -951,7 +929,6 @@ class CppGeneratorAdapter implements GeneratorAdapter {
   @override
   List<Error> validate(InternalPigeonOptions options, Root root) {
     final errors = <Error>[];
-    _errorOnEventChannelApi(errors, languageString, root);
     _errorOnStreamMethod(errors, languageString, root);
     _errorOnSealedClass(errors, languageString, root);
     _errorOnInheritedClass(errors, languageString, root);
@@ -1005,7 +982,6 @@ class GObjectGeneratorAdapter implements GeneratorAdapter {
         ),
       );
     }
-    _errorOnEventChannelApi(errors, languageString, root);
     _errorOnStreamMethod(errors, languageString, root);
     _errorOnSealedClass(errors, languageString, root);
     _errorOnInheritedClass(errors, languageString, root);
@@ -1221,8 +1197,6 @@ List<Error> _validateAst(Root root, String source) {
     }
   }
 
-  var containsEventChannelApi = false;
-
   for (final Api api in root.apis) {
     final String? matchingPrefix = _findMatchingPrefixOrNull(
       api.name,
@@ -1232,14 +1206,6 @@ List<Error> _validateAst(Root root, String source) {
       result.add(
         Error(message: 'API name must not begin with "$matchingPrefix" in API "${api.name}"'),
       );
-    }
-    if (api is AstEventChannelApi) {
-      if (containsEventChannelApi) {
-        result.add(
-          Error(message: 'Event Channel methods must all be included in a single EventChannelApi'),
-        );
-      }
-      containsEventChannelApi = true;
     }
     if (api is AstProxyApi) {
       result.addAll(
@@ -1265,15 +1231,6 @@ List<Error> _validateAst(Root root, String source) {
           ),
         );
       }
-      if (api is AstEventChannelApi && method.parameters.isNotEmpty) {
-        result.add(
-          Error(
-            message:
-                'event channel methods must not be contain parameters, in method "${method.name}" in API: "${api.name}"',
-            lineNumber: _calculateLineNumberNullable(source, method.offset),
-          ),
-        );
-      }
       if (method.isStream) {
         if (api is AstFlutterApi) {
           result.add(
@@ -1288,14 +1245,6 @@ List<Error> _validateAst(Root root, String source) {
             Error(
               message:
                   'Stream return types are not supported in @ProxyApi, in method "${method.name}" in API: "${api.name}"',
-              lineNumber: _calculateLineNumberNullable(source, method.offset),
-            ),
-          );
-        } else if (api is AstEventChannelApi) {
-          result.add(
-            Error(
-              message:
-                  'Methods in @EventChannelApi should declare the event type directly (or move Stream<${method.returnType.getFullName()}> ${method.name} to @HostApi), in API: "${api.name}"',
               lineNumber: _calculateLineNumberNullable(source, method.offset),
             ),
           );
@@ -1733,7 +1682,6 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     var containsHostApi = false;
     var containsFlutterApi = false;
     var containsProxyApi = false;
-    var containsEventChannel = false;
 
     for (final Api api in _apis) {
       switch (api) {
@@ -1743,10 +1691,8 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           containsFlutterApi = true;
         case AstProxyApi():
           containsProxyApi = true;
-        case AstEventChannelApi():
-          containsEventChannel = true;
       }
-      if (containsEventChannel && containsFlutterApi && containsProxyApi && containsHostApi) {
+      if (containsFlutterApi && containsProxyApi && containsHostApi) {
         break;
       }
     }
@@ -1834,7 +1780,6 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       containsHostApi: containsHostApi,
       containsFlutterApi: containsFlutterApi,
       containsProxyApi: containsProxyApi,
-      containsEventChannel: containsEventChannel,
     );
 
     final List<Error> validateErrors = _validateAst(completeRoot, source);
@@ -2312,40 +2257,12 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           documentationComments: _documentationCommentsParser(node.documentationComment?.tokens),
         );
       } else if (_hasMetadata(node.metadata, 'EventChannelApi')) {
-        final dart_ast.Annotation annotation = node.metadata.firstWhere(
-          (dart_ast.Annotation element) => element.name.name == 'EventChannelApi',
-        );
-
-        final annotationMap = <String, Object?>{};
-        final dart_ast.ArgumentList? arguments = annotation.arguments;
-        if (arguments != null) {
-          for (final dart_ast.Argument argument in arguments.arguments) {
-            if (argument is dart_ast.NamedArgument) {
-              annotationMap[argument.name.lexeme] = _expressionToMap(argument.argumentExpression);
-            }
-          }
-        }
-
-        SwiftEventChannelOptions? swiftOptions;
-        KotlinEventChannelOptions? kotlinOptions;
-        final swiftOptionsMap = annotationMap['swiftOptions'] as Map<String, Object?>?;
-        if (swiftOptionsMap != null) {
-          swiftOptions = SwiftEventChannelOptions(
-            includeSharedClasses: swiftOptionsMap['includeSharedClasses'] as bool? ?? true,
-          );
-        }
-        final kotlinOptionsMap = annotationMap['kotlinOptions'] as Map<String, Object?>?;
-        if (kotlinOptionsMap != null) {
-          kotlinOptions = KotlinEventChannelOptions(
-            includeSharedClasses: kotlinOptionsMap['includeSharedClasses'] as bool? ?? true,
-          );
-        }
-        _currentApi = AstEventChannelApi(
-          name: node.namePart.typeName.lexeme,
-          methods: <Method>[],
-          swiftOptions: swiftOptions,
-          kotlinOptions: kotlinOptions,
-          documentationComments: _documentationCommentsParser(node.documentationComment?.tokens),
+        _errors.add(
+          Error(
+            message:
+                '@EventChannelApi has been removed (in API "${node.namePart.typeName.lexeme}"). Declare Stream<T> return types on @HostApi() methods instead.',
+            lineNumber: calculateLineNumber(source, node.offset),
+          ),
         );
       }
     } else {
@@ -2570,7 +2487,6 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
               AstHostApi() => ApiLocation.host,
               AstProxyApi() => ApiLocation.host,
               AstFlutterApi() => ApiLocation.flutter,
-              AstEventChannelApi() => ApiLocation.host,
             },
             isAsynchronous: !isStream && isAsynchronous,
             isAsynchronousCallback: isAsynchronousCallback,

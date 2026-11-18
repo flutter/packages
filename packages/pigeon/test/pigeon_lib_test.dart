@@ -2071,12 +2071,12 @@ abstract class MyClass {
     });
   });
 
-  group('event channel validation', () {
-    test('methods cannot contain parameters', () {
+  group('removed EventChannelApi validation', () {
+    test('reports actionable error when @EventChannelApi is used', () {
       const code = '''
 @EventChannelApi()
 abstract class EventChannelApi {
-  int streamInts(int event);
+  int streamInts();
 }
 ''';
       final ParseResults parseResult = parseSource(code);
@@ -2084,7 +2084,7 @@ abstract class EventChannelApi {
       expect(
         parseResult.errors.single.message,
         contains(
-          'event channel methods must not be contain parameters, in method "streamInts" in API: "EventChannelApi"',
+          '@EventChannelApi has been removed (in API "EventChannelApi"). Declare Stream<T> return types on @HostApi() methods instead.',
         ),
       );
     });
@@ -2099,7 +2099,7 @@ class ChildClass extends DataClass {
   int input;
 }
 
-@EventChannelApi()
+@HostApi()
 abstract class events {
   void aMethod(ChildClass param);
 }
@@ -2123,7 +2123,7 @@ class ChildClass extends DataClass {
   int input;
 }
 
-@EventChannelApi()
+@HostApi()
 abstract class events {
   void aMethod(ChildClass param);
 }
@@ -3043,23 +3043,25 @@ dev_dependencies:
     }
 
     const unsupportedFeaturesSource = '''
-@EventChannelApi()
+@HostApi()
 abstract class Events {
-  int numbers();
+  Stream<int> numbers();
 }
 ''';
 
-    test('Swift FFI rejects event channels', () {
+    test('Swift FFI rejects Stream return types', () {
       final List<Error> errors = validate(const SwiftGeneratorAdapter(), unsupportedFeaturesSource);
       expect(
         errors.map((Error e) => e.message),
         containsAll(<Matcher>[
-          contains('Swift FFI does not support event channels yet (in API "Events")'),
+          contains(
+            'Swift FFI does not support Stream return types yet (in method "numbers" in API "Events")',
+          ),
         ]),
       );
     });
 
-    test('Swift without FFI allows event channels', () {
+    test('Swift without FFI allows Stream return types', () {
       final List<Error> errors = validate(
         const SwiftGeneratorAdapter(),
         unsupportedFeaturesSource,
@@ -3124,7 +3126,7 @@ abstract class Api {
       expect(errors[0].message, contains('Swift FFI requires `includeErrorClass: true`'));
     });
 
-    test('Kotlin JNI rejects event channels', () {
+    test('Kotlin JNI rejects Stream return types', () {
       final List<Error> errors = validate(
         const KotlinGeneratorAdapter(),
         unsupportedFeaturesSource,
@@ -3132,12 +3134,14 @@ abstract class Api {
       expect(
         errors.map((Error e) => e.message),
         containsAll(<Matcher>[
-          contains('Kotlin JNI does not support event channels yet (in API "Events")'),
+          contains(
+            'Kotlin JNI does not support Stream return types yet (in method "numbers" in API "Events")',
+          ),
         ]),
       );
     });
 
-    test('Kotlin without JNI allows event channels', () {
+    test('Kotlin without JNI allows Stream return types', () {
       final List<Error> errors = validate(
         const KotlinGeneratorAdapter(),
         unsupportedFeaturesSource,

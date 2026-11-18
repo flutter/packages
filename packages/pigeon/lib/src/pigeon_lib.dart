@@ -181,30 +181,6 @@ class ProxyApi {
   final KotlinProxyApiOptions? kotlinOptions;
 }
 
-/// Deprecated metadata to annotate a pigeon API that contains event channels.
-///
-/// Deprecated: Define `Stream<T>` return types directly on [HostApi] methods
-/// instead (generating `Flow<T>` in Kotlin and `AsyncThrowingStream<T, Error>`
-/// in Swift, or a callback event sink with [asyncCallback]).
-///
-/// This class is a tool to designate a set of event channel methods,
-/// the class itself will not be generated.
-///
-/// All methods contained within the class will return a `Stream` of the
-/// defined return type of the method definition.
-@Deprecated('Use Stream<T> return types on @HostApi methods instead.')
-class EventChannelApi {
-  /// Constructor.
-  @Deprecated('Use Stream<T> return types on @HostApi methods instead.')
-  const EventChannelApi({this.kotlinOptions, this.swiftOptions});
-
-  /// Options for Kotlin generated code for Event Channels.
-  final KotlinEventChannelOptions? kotlinOptions;
-
-  /// Options for Swift generated code for Event Channels.
-  final SwiftEventChannelOptions? swiftOptions;
-}
-
 /// Metadata to annotation methods to control the selector used for objc output.
 /// The number of components in the provided selector must match the number of
 /// arguments in the annotated method.

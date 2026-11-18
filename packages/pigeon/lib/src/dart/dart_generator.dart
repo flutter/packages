@@ -33,9 +33,6 @@ const DocumentCommentSpecification docCommentSpec = DocumentCommentSpecification
 /// The custom codec used for all pigeon APIs.
 const String _pigeonMessageCodec = '_PigeonCodec';
 
-/// Name of field used for host API codec.
-const String _pigeonMethodCodec = 'pigeonMethodCodec';
-
 const String _overflowClassName = '_PigeonCodecOverflow';
 
 /// The default library import prefix for generated Dart FFI bridge code.
@@ -1500,12 +1497,6 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
         });
       });
     });
-    if (root.containsEventChannel) {
-      indent.newln();
-      indent.writeln(
-        'const StandardMethodCodec $_pigeonMethodCodec = StandardMethodCodec($_pigeonMessageCodec());',
-      );
-    }
     if (usesNativeInterop(generatorOptions)) {
       indent.newln();
       indent.writeln('@internal');
@@ -3099,45 +3090,6 @@ ${api.name}({
         }
       }
     });
-  }
-
-  @override
-  void writeEventChannelApi(
-    InternalDartOptions generatorOptions,
-    Root root,
-    Indent indent,
-    AstEventChannelApi api, {
-    required String dartPackageName,
-  }) {
-    indent.newln();
-    addDocumentationComments(indent, api.documentationComments, docCommentSpec);
-    for (final Method func in api.methods) {
-      addDocumentationComments(
-        indent,
-        func.documentationComments,
-        docCommentSpec,
-        generatorComments: <String>[
-          'Returns a broadcast [Stream] of events from the `${func.name}` event channel.',
-          '',
-          'Each call to this method creates a new [EventChannel], so it should',
-          'not be called multiple times for the same `instanceName`. To deliver',
-          'events to multiple listeners, call this method once and listen to the',
-          'returned broadcast stream multiple times instead.',
-        ],
-      );
-      indent.format('''
-      Stream<${func.returnType.baseName}> ${func.name}(${_getMethodParameterSignature(func.parameters, addTrailingComma: true)} {String instanceName = ''}) {
-        if (instanceName.isNotEmpty) {
-          instanceName = '.\$instanceName';
-        }
-        final EventChannel ${func.name}Channel =
-            EventChannel('${makeChannelName(api, func, dartPackageName)}\$instanceName', $_pigeonMethodCodec);
-        return ${func.name}Channel.receiveBroadcastStream().map((dynamic event) {
-          return event as ${func.returnType.baseName};
-        });
-      }
-    ''');
-    }
   }
 
   @override

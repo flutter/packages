@@ -6,9 +6,9 @@ import 'package:collection/collection.dart' show ListEquality;
 import 'package:meta/meta.dart';
 
 import 'generator_tools.dart';
-import 'kotlin/kotlin_generator.dart' show KotlinEventChannelOptions, KotlinProxyApiOptions;
+import 'kotlin/kotlin_generator.dart' show KotlinProxyApiOptions;
 import 'pigeon_lib.dart';
-import 'swift/swift_generator.dart' show SwiftEventChannelOptions, SwiftProxyApiOptions;
+import 'swift/swift_generator.dart' show SwiftProxyApiOptions;
 
 typedef _ListEquals = bool Function(List<Object?>, List<Object?>);
 
@@ -340,29 +340,6 @@ class AstProxyApi extends Api {
     return '(ProxyApi name:$name methods:$methods field:$fields '
         'documentationComments:$documentationComments '
         'superClassName:$superClass interfacesNames:$interfaces)';
-  }
-}
-
-/// Represents a collection of [Method]s that are wrappers for Event
-class AstEventChannelApi extends Api {
-  /// Parametric constructor for [AstEventChannelApi].
-  AstEventChannelApi({
-    required super.name,
-    required super.methods,
-    this.kotlinOptions,
-    this.swiftOptions,
-    super.documentationComments = const <String>[],
-  });
-
-  /// Options for Kotlin generated code for Event Channels.
-  final KotlinEventChannelOptions? kotlinOptions;
-
-  /// Options for Swift generated code for Event Channels.
-  final SwiftEventChannelOptions? swiftOptions;
-
-  @override
-  String toString() {
-    return '(EventChannelApi name:$name methods:$methods documentationComments:$documentationComments)';
   }
 }
 
@@ -858,7 +835,6 @@ class Root extends Node {
     this.containsHostApi = false,
     this.containsFlutterApi = false,
     this.containsProxyApi = false,
-    this.containsEventChannel = false,
   });
 
   /// Factory function for generating an empty root, usually used when early errors are encountered.
@@ -901,9 +877,6 @@ class Root extends Node {
 
   /// Whether the root has any Proxy API definitions.
   bool containsProxyApi;
-
-  /// Whether the root has any event channel definitions.
-  bool containsEventChannel;
 
   /// Whether any API in the root declares a `Stream<T>` method.
   bool get containsStream => apis.any((Api api) => api.methods.any((Method m) => m.isStream));

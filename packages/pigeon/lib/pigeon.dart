@@ -9,8 +9,7 @@ export 'src/dart/dart_generator.dart' show DartOptions;
 export 'src/gobject/gobject_generator.dart' show GObjectOptions;
 export 'src/java/java_generator.dart' show JavaOptions;
 export 'src/kotlin/kotlin_generator.dart'
-    show KotlinEventChannelOptions, KotlinOptions, KotlinProxyApiOptions;
+    show KotlinOptions, KotlinProxyApiOptions;
 export 'src/objc/objc_generator.dart' show ObjcOptions;
 export 'src/pigeon_lib.dart';
-export 'src/swift/swift_generator.dart'
-    show SwiftEventChannelOptions, SwiftOptions, SwiftProxyApiOptions;
+export 'src/swift/swift_generator.dart' show SwiftOptions, SwiftProxyApiOptions;
