@@ -186,4 +186,19 @@ Future<void> main(List<String> args) async {
     }
     print('$indent${row['url']}');
   }
+
+  // Prints the summarize_failures command to run for the failed builds, on a
+  // line of its own so it can be copied and pasted as is.
+  final List<Map<String, dynamic>> failedRows = rows
+      .where((Map<String, dynamic> r) => _terminalFailed.contains(r['status']))
+      .toList();
+  if (failedRows.isNotEmpty) {
+    final String firstIds = failedRows.take(5).map((Map<String, dynamic> r) => r['id']).join(' ');
+    print(
+      failedRows.length <= 5
+          ? '\nNext:'
+          : '\nNext (the first 5 of ${failedRows.length} failed builds):',
+    );
+    print('  script/ci_info/run.sh summarize_failures $firstIds');
+  }
 }
