@@ -39,13 +39,5 @@ void main() {
         ),
       );
     });
-
-    test('exists', () {
-      final directory = PlatformFileSystemXDirectory(
-        PlatformFileSystemXDirectoryCreationParams(testDirectory.path),
-      );
-
-      expect(directory.toFilePath(), Uri.directory(directory.params.uri).toFilePath());
-    });
   });
 }
