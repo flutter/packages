@@ -106,6 +106,67 @@ void main() {
     });
   });
 
+  group('fetchLog', () {
+    const url =
+        'https://logs.chromium.org/logs/flutter/buildbucket/cr-buildbucket/1/+/u/step/stdout';
+    late Directory tempCache;
+    late int requests;
+
+    setUp(() {
+      tempCache = Directory.systemTemp.createTempSync('ci_info_test_');
+      cacheDirOverride = tempCache.path;
+      requests = 0;
+    });
+
+    tearDown(() {
+      cacheDirOverride = null;
+      tempCache.deleteSync(recursive: true);
+    });
+
+    MockClient clientReturning(String body, int statusCode) {
+      return MockClient((http.Request request) async {
+        requests++;
+        expect(request.url.queryParameters['format'], 'raw');
+        return http.Response(body, statusCode);
+      });
+    }
+
+    test('returns and caches the log text', () async {
+      expect(await fetchLog(url, client: clientReturning('log text', 200)), 'log text');
+      expect(await fetchLog(url, client: clientReturning('other', 200)), 'log text');
+      expect(requests, 1);
+    });
+
+    test('treats a purged stream as missing', () async {
+      expect(
+        await fetchLog(url, client: clientReturning('stream path not found', 200)),
+        logMissing,
+      );
+    });
+
+    test('treats a 404 as missing and caches it', () async {
+      expect(await fetchLog(url, client: clientReturning('', 404)), logMissing);
+      expect(await fetchLog(url, client: clientReturning('log text', 200)), logMissing);
+      expect(requests, 1);
+    });
+
+    test('does not cache a 403', () async {
+      expect(await fetchLog(url, client: clientReturning('', 403)), logInaccessible);
+      expect(await fetchLog(url, client: clientReturning('log text', 200)), 'log text');
+      expect(requests, 2);
+    });
+  });
+
+  group('stepLogUrl', () {
+    test('turns each step name part into a URL segment', () {
+      expect(
+        stepLogUrl('123', 'Run package tests|process logs (6)'),
+        'https://logs.chromium.org/logs/flutter/buildbucket/cr-buildbucket/'
+        '123/+/u/Run_package_tests/process_logs__6_/stdout?format=raw',
+      );
+    });
+  });
+
   group('truncate', () {
     test('returns text unchanged when within maxLength', () {
       expect(truncate('hello', 10), 'hello');

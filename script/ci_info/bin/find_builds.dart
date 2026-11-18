@@ -186,4 +186,15 @@ Future<void> main(List<String> args) async {
     }
     print('$indent${row['url']}');
   }
+
+  final List<Map<String, dynamic>> failedRows = rows
+      .where((Map<String, dynamic> r) => _terminalFailed.contains(r['status']))
+      .toList();
+  if (failedRows.isNotEmpty) {
+    final String firstIds = failedRows.take(5).map((Map<String, dynamic> r) => r['id']).join(' ');
+    print(
+      '\nNext: script/ci_info/run.sh summarize_failures '
+      '$firstIds${failedRows.length <= 5 ? '' : '  # (first 5)'}',
+    );
+  }
 }

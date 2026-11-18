@@ -2,7 +2,7 @@
 
 This directory contains Dart scripts for interacting with LUCI/Buildbucket to analyze CI runs in `flutter/packages`. These scripts are useful for diagnosing CI failures and flakes.
 
-No credentials or LUCI access are needed. Flutter's builds are public, and the scripts make only unauthenticated requests to Buildbucket.
+No credentials or LUCI access are needed. Flutter's builds and logs are public, and the scripts make only unauthenticated requests to Buildbucket and LogDog.
 
 ## Usage
 
@@ -41,6 +41,20 @@ script/ci_info/run.sh find_builds [options]
 - `--project`: LUCI project (defaults to `flutter`).
 - `--limit`: Max builds to retrieve (defaults to `400`).
 - `--[no-]failed-only`: Only show failed builds (`FAILURE` or `INFRA_FAILURE`).
+- `--[no-]json`: Output as JSON.
+- `-h`, `--help`: Print usage information.
+
+#### `bin/summarize_failures.dart`
+
+Condenses failure logs from one or more Buildbucket IDs.
+
+**Usage:**
+```bash
+script/ci_info/run.sh summarize_failures <build_id> [<build_id> ...] [options]
+```
+
+**Options:**
+- `--max-lines`: Signature lines to keep per step (defaults to `12`).
 - `--[no-]json`: Output as JSON.
 - `-h`, `--help`: Print usage information.
 

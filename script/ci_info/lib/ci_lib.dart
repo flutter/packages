@@ -12,6 +12,9 @@ import 'package:path/path.dart' as p;
 /// Host of the Buildbucket pRPC API.
 const String buildbucketHost = 'cr-buildbucket.appspot.com';
 
+/// Host of the LogDog log server.
+const String logdogHost = 'logs.chromium.org';
+
 /// Host of the Milo build UI.
 const String miloHost = 'ci.chromium.org';
 
@@ -23,6 +26,12 @@ const Map<String, List<String>> gitilesMirrors = <String, List<String>>{
 
 /// The repository analyzed when `--repo` is not given.
 const String defaultRepo = 'flutter/packages';
+
+/// Sentinel stored in place of a log that LogDog no longer has.
+const String logMissing = '__LOG_PURGED__';
+
+/// Sentinel returned (never cached) when LogDog refuses access to a log.
+const String logInaccessible = '__LOG_INACCESSIBLE__';
 
 /// Returns [text] cut to at most [maxLength] characters.
 String truncate(String text, int maxLength) =>
@@ -43,7 +52,7 @@ String get cacheDir {
       p.join(Directory.systemTemp.path, 'ci_info_cache');
 }
 
-/// How long to wait for a single Buildbucket request before retrying it.
+/// How long to wait for a single Buildbucket or LogDog request.
 const Duration _requestTimeout = Duration(seconds: 30);
 
 String _cachePath(String kind, String key) {
@@ -84,6 +93,11 @@ void _writeCache(String kind, String key, String value) {
   } on FileSystemException {
     // Caching is only an optimization.
   }
+}
+
+/// Writes a diagnostic message to stderr, keeping stdout machine-readable.
+void log(String message) {
+  stderr.writeln(message);
 }
 
 /// Calls the Buildbucket `buildbucket.v2.Builds/<method>` pRPC endpoint.
@@ -204,6 +218,85 @@ Future<List<Map<String, dynamic>>> searchBuilds(
   }
 
   return collected.take(limit).toList();
+}
+
+/// Fetches a single build by Buildbucket ID.
+Future<Map<String, dynamic>> getBuild(
+  String buildId,
+  String fields, {
+  Duration? cacheAge = const Duration(hours: 1),
+}) async {
+  return prpc('GetBuild', <String, dynamic>{'id': buildId, 'fields': fields}, cacheAge: cacheAge);
+}
+
+/// Constructs the raw LogDog URL for [stepName]'s [logName] log.
+String stepLogUrl(String buildId, String stepName, {String logName = 'stdout'}) {
+  // LUCI derives URL segments from step names by splitting on `|` and replacing
+  // every non-alphanumeric character with `_` (e.g. `process logs (6)` becomes
+  // `process_logs__6_`).
+  final String segments = stepName
+      .split('|')
+      .map((String part) => part.replaceAll(RegExp('[^A-Za-z0-9]'), '_'))
+      .join('/');
+
+  return 'https://$logdogHost/logs/flutter/buildbucket/cr-buildbucket/'
+      '$buildId/+/u/$segments/$logName?format=raw';
+}
+
+String _normalizeLogUrl(String url) {
+  if (url.endsWith('format=raw')) {
+    return url;
+  }
+  return '$url${url.contains('?') ? '&' : '?'}format=raw';
+}
+
+/// Path at which the log for [url] is (or will be) cached.
+String logCachePath(String url) {
+  return _cachePath('log', _normalizeLogUrl(url));
+}
+
+/// Fetches a raw LogDog log, returning [logMissing] if it no longer exists
+/// or [logInaccessible] if LogDog refuses access.
+///
+/// [client] is used for the request if given, otherwise a default client is
+/// used.
+Future<String> fetchLog(String url, {Duration? cacheAge, http.Client? client}) async {
+  url = _normalizeLogUrl(url);
+  final String? cached = _readCache('log', url, cacheAge);
+  if (cached != null) {
+    return cached;
+  }
+
+  final http.Response response;
+  try {
+    response = await (client?.get ?? http.get)(Uri.parse(url)).timeout(_requestTimeout);
+  } on Exception catch (e) {
+    throw Exception('Failed to fetch $url: $e');
+  }
+
+  switch (response.statusCode) {
+    case 200:
+      String text = response.body;
+      // LogDog keeps logs for roughly six months. Older streams come back as a
+      // 200 whose body is an error message rather than as a 404.
+      if (truncate(text, 400).contains('stream path not found') ||
+          text.startsWith('ERROR: start fetch')) {
+        text = logMissing;
+      }
+      _writeCache('log', url, text);
+      return text;
+    case 404:
+      _writeCache('log', url, logMissing);
+      return logMissing;
+    case 403:
+      if (response.body.contains('not allowed by policy')) {
+        log('Warning: $logdogHost blocked by sandbox/proxy policy: ${response.body.trim()}');
+      }
+      // Not cached: this can be a transient auth or rate-limit error.
+      return logInaccessible;
+    default:
+      throw Exception('Failed to fetch $url: HTTP ${response.statusCode}');
+  }
 }
 
 /// Milo URL for a single build.
