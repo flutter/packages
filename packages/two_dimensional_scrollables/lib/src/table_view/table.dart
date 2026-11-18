@@ -286,7 +286,7 @@ class TableView extends StatefulWidget {
   )
   final double? cacheExtent;
 
-  /// The additional cache distance for [TableViewport] before or adfter the
+  /// The additional cache distance for [TableViewport] before or after the
   /// trailing edges of the visible area.
   ///
   /// Cells that fall in this cache area are laid out even though they are not
