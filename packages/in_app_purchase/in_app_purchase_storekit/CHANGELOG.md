@@ -1,5 +1,6 @@
-## NEXT
+## 0.4.17+1
 
+* Fixes StoreKit 2 purchases and restores with transaction ID `0` having no purchase ID, which made `completePurchase` throw and left the transaction unfinished.
 * Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
 
 ## 0.4.17
