@@ -66,7 +66,7 @@ See also the codelab for [in-app purchases in Flutter](https://codelabs.develope
 * On **iOS and macOS**, [set up StoreKit Testing in Xcode](https://developer.apple.com/documentation/xcode/setting-up-storekit-testing-in-xcode)
   to test purchases locally.
 * On **Android**, follow [Google Play's testing guide](https://developer.android.com/google/play/billing/test)
-  to make test purchases without spending real money.
+  to make test purchases without spending real funds.
 
 ## Usage
 
