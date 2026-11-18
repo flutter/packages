@@ -48,7 +48,8 @@ class _Static {
 /// Metadata to annotate an Api method as asynchronous using native coroutines/async-await.
 const Object async = _Asynchronous();
 
-/// Metadata to annotate an Api method as asynchronous using callback-based completions.
+/// Metadata to annotate an Api method as asynchronous using callback-based completions,
+/// or (on `Stream<T>` `@HostApi` methods) using a callback-based event sink and cancellation handle.
 const Object asyncCallback = _Asynchronous(useCallback: true);
 
 /// Metadata to annotate the field of a ProxyApi as an Attached Field.
@@ -96,6 +97,12 @@ class ConfigurePigeon {
 /// interop methods. These methods are invoked by Dart and are received by a
 /// host-platform (such as in Android or iOS) by a class implementing the
 /// generated host-platform interface.
+///
+/// Methods on a [HostApi] can return synchronous/asynchronous values (exposed
+/// as `Future`s in Dart) or `Stream<T>` (supported in the Dart, Kotlin, and
+/// Swift generators, generating `Flow<T>` in Kotlin and
+/// `AsyncThrowingStream<T, Error>` in Swift, or an event sink when annotated
+/// with [asyncCallback]).
 class HostApi {
   /// Parametric constructor for [HostApi].
   const HostApi({
@@ -174,13 +181,18 @@ class ProxyApi {
   final KotlinProxyApiOptions? kotlinOptions;
 }
 
-/// Metadata to annotate a pigeon API that contains event channels.
+/// Deprecated metadata to annotate a pigeon API that contains event channels.
+///
+/// Deprecated: Define `Stream<T>` return types directly on [HostApi] methods
+/// instead (generating `Flow<T>` in Kotlin and `AsyncThrowingStream<T, Error>`
+/// in Swift, or a callback event sink with [asyncCallback]).
 ///
 /// This class is a tool to designate a set of event channel methods,
 /// the class itself will not be generated.
 ///
 /// All methods contained within the class will return a `Stream` of the
 /// defined return type of the method definition.
+@Deprecated('Use Stream<T> return types on @HostApi methods instead.')
 class EventChannelApi {
   /// Constructor.
   @Deprecated('Use Stream<T> return types on @HostApi methods instead.')

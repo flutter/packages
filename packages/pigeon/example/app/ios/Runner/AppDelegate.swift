@@ -42,51 +42,26 @@ private class PigeonFlutterApi {
 // #enddocregion swift-class-flutter
 
 // #docregion swift-class-event
-class EventListener: StreamEventsStreamHandler {
-  var eventSink: PigeonEventSink<PlatformEvent>?
-
-  override func onListen(withArguments arguments: Any?, sink: PigeonEventSink<PlatformEvent>) {
-    eventSink = sink
-  }
-
-  func onIntEvent(event: Int64) {
-    if let eventSink = eventSink {
-      eventSink.success(IntEvent(data: event))
+private class EventStreamImplementation: EventStreamHostApi {
+  func streamEvents() -> AsyncThrowingStream<PlatformEvent, Error> {
+    AsyncThrowingStream { continuation in
+      let task = Task {
+        for count: Int64 in 0..<100 {
+          if Task.isCancelled { break }
+          if (count % 2) == 0 {
+            continuation.yield(IntEvent(data: count))
+          } else {
+            continuation.yield(StringEvent(data: String(count)))
+          }
+          try? await Task.sleep(nanoseconds: 1_000_000_000)
+        }
+        continuation.finish()
+      }
+      continuation.onTermination = { _ in task.cancel() }
     }
-  }
-
-  func onStringEvent(event: String) {
-    if let eventSink = eventSink {
-      eventSink.success(StringEvent(data: event))
-    }
-  }
-
-  func onEventsDone() {
-    eventSink?.endOfStream()
-    eventSink = nil
   }
 }
 // #enddocregion swift-class-event
-
-func sendEvents(_ eventListener: EventListener) {
-  var timer: Timer?
-  var count: Int64 = 0
-  timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
-    DispatchQueue.main.async {
-      if count >= 100 {
-        eventListener.onEventsDone()
-        timer?.invalidate()
-      } else {
-        if (count % 2) == 0 {
-          eventListener.onIntEvent(event: Int64(count))
-        } else {
-          eventListener.onStringEvent(event: String(count))
-        }
-        count += 1
-      }
-    }
-  }
-}
 
 @main
 @objc class AppDelegate: FlutterAppDelegate, FlutterImplicitEngineDelegate {
@@ -97,9 +72,8 @@ func sendEvents(_ eventListener: EventListener) {
     let binaryMessenger = engineBridge.applicationRegistrar.messenger()
     ExampleHostApiSetup.setUp(binaryMessenger: binaryMessenger, api: api)
     // #docregion swift-init-event
-    let eventListener = EventListener()
-    StreamEventsStreamHandler.register(with: binaryMessenger, streamHandler: eventListener)
+    EventStreamHostApiSetup.setUp(
+      binaryMessenger: binaryMessenger, api: EventStreamImplementation())
     // #enddocregion swift-init-event
-    sendEvents(eventListener)
   }
 }

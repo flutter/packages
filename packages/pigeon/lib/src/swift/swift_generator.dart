@@ -280,9 +280,13 @@ class SwiftProxyApiOptions {
   final bool supportsMacos;
 }
 
-/// Options for Swift implementation of Event Channels.
+/// Options for Swift implementation of deprecated `@EventChannelApi` definitions.
+///
+/// Prefer `Stream<T>` return types on `@HostApi` methods instead of `@EventChannelApi`.
+@Deprecated('Use Stream<T> return types on @HostApi methods instead.')
 class SwiftEventChannelOptions {
   /// Constructs a [SwiftEventChannelOptions].
+  @Deprecated('Use Stream<T> return types on @HostApi methods instead.')
   const SwiftEventChannelOptions({this.includeSharedClasses = true});
 
   /// Whether to include the error class in generation.

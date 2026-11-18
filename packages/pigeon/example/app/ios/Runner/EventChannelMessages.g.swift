@@ -14,6 +14,32 @@ import Foundation
   #error("Unsupported platform.")
 #endif
 
+private func wrapResult(_ result: Any?) -> [Any?] {
+  return [result]
+}
+
+private func wrapError(_ error: Any) -> [Any?] {
+  if let pigeonError = error as? PigeonError {
+    return [
+      pigeonError.code,
+      pigeonError.message,
+      pigeonError.details,
+    ]
+  }
+  if let flutterError = error as? FlutterError {
+    return [
+      flutterError.code,
+      flutterError.message,
+      flutterError.details,
+    ]
+  }
+  return [
+    "\(error)",
+    "\(Swift.type(of: error))",
+    "Stacktrace: \(Thread.callStackSymbols)",
+  ]
+}
+
 enum EventChannelMessagesPigeonInternal {
   static func isNullish(_ value: Any?) -> Bool {
     guard let innerValue = value else {
@@ -142,6 +168,130 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
   return value as! T?
 }
 
+private final class EventChannelMessagesPigeonMessageBox: @unchecked Sendable {
+  let value: [Any?]
+  init(_ value: [Any?]) {
+    self.value = value
+  }
+}
+
+private final class EventChannelMessagesPigeonChannelBox: @unchecked Sendable {
+  private let channel: FlutterBasicMessageChannel
+  private let lock = NSLock()
+  private var closed = false
+
+  init(_ channel: FlutterBasicMessageChannel) {
+    self.channel = channel
+  }
+
+  func close() {
+    lock.lock()
+    closed = true
+    lock.unlock()
+  }
+
+  private var isClosed: Bool {
+    lock.lock()
+    defer { lock.unlock() }
+    return closed
+  }
+
+  @MainActor
+  func sendOnMain(_ message: [Any?]) {
+    guard !isClosed else { return }
+    channel.sendMessage(message)
+  }
+
+  func send(_ message: [Any?]) {
+    guard !isClosed else { return }
+    if Thread.isMainThread {
+      channel.sendMessage(message)
+    } else {
+      let boxed = EventChannelMessagesPigeonMessageBox(message)
+      DispatchQueue.main.async {
+        guard !self.isClosed else { return }
+        self.channel.sendMessage(boxed.value)
+      }
+    }
+  }
+}
+
+private final class EventChannelMessagesPigeonStreamRegistry: @unchecked Sendable {
+  private let lock = NSLock()
+  private var subscriptions: [String: [Int64: () -> Void]] = [:]
+
+  func register(channelName: String, subscriptionId: Int64, onCancel: @escaping () -> Void) {
+    var previous: (() -> Void)?
+    do {
+      lock.lock()
+      defer { lock.unlock() }
+      var channelMap = subscriptions[channelName] ?? [:]
+      previous = channelMap.updateValue(onCancel, forKey: subscriptionId)
+      subscriptions[channelName] = channelMap
+    }
+    previous?()
+  }
+
+  func isActive(channelName: String, subscriptionId: Int64) -> Bool {
+    lock.lock()
+    defer { lock.unlock() }
+    return subscriptions[channelName]?[subscriptionId] != nil
+  }
+
+  @discardableResult
+  func remove(channelName: String, subscriptionId: Int64) -> Bool {
+    var removed: (() -> Void)?
+    do {
+      lock.lock()
+      defer { lock.unlock() }
+      guard var channelMap = subscriptions[channelName] else {
+        return false
+      }
+      removed = channelMap.removeValue(forKey: subscriptionId)
+      if channelMap.isEmpty {
+        subscriptions.removeValue(forKey: channelName)
+      } else {
+        subscriptions[channelName] = channelMap
+      }
+    }
+    let didRemove = removed != nil
+    withExtendedLifetime(removed) {}
+    return didRemove
+  }
+
+  func cancel(channelName: String, subscriptionId: Int64) {
+    var action: (() -> Void)?
+    do {
+      lock.lock()
+      defer { lock.unlock() }
+      guard var channelMap = subscriptions[channelName] else {
+        return
+      }
+      action = channelMap.removeValue(forKey: subscriptionId)
+      if channelMap.isEmpty {
+        subscriptions.removeValue(forKey: channelName)
+      } else {
+        subscriptions[channelName] = channelMap
+      }
+    }
+    action?()
+  }
+
+  func cancelAll(channelName: String) {
+    var actions: [() -> Void] = []
+    do {
+      lock.lock()
+      defer { lock.unlock() }
+      if let channelMap = subscriptions.removeValue(forKey: channelName) {
+        actions = Array(channelMap.values)
+      }
+    }
+    for action in actions {
+      action()
+    }
+  }
+}
+
 /// Generated class from Pigeon that represents data sent in messages.
 /// This protocol should not be extended by any user class outside of the generated file.
 protocol PlatformEvent {
@@ -258,93 +408,82 @@ class EventChannelMessagesPigeonCodec: FlutterStandardMessageCodec, @unchecked S
     readerWriter: EventChannelMessagesPigeonCodecReaderWriter())
 }
 
-var eventChannelMessagesPigeonMethodCodec = FlutterStandardMethodCodec(
-  readerWriter: EventChannelMessagesPigeonCodecReaderWriter())
-
-private class PigeonStreamHandler<ReturnType>: NSObject, FlutterStreamHandler {
-  private let wrapper: PigeonEventChannelWrapper<ReturnType>
-  private var pigeonSink: PigeonEventSink<ReturnType>? = nil
-
-  init(wrapper: PigeonEventChannelWrapper<ReturnType>) {
-    self.wrapper = wrapper
-  }
-
-  func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink)
-    -> FlutterError?
-  {
-    pigeonSink = PigeonEventSink<ReturnType>(events)
-    wrapper.onListen(withArguments: arguments, sink: pigeonSink!)
-    return nil
-  }
-
-  func onCancel(withArguments arguments: Any?) -> FlutterError? {
-    pigeonSink = nil
-    wrapper.onCancel(withArguments: arguments)
-    return nil
-  }
+/// Generated protocol from Pigeon that represents a handler of messages from Flutter.
+protocol EventStreamHostApi {
+  func streamEvents() -> AsyncThrowingStream<PlatformEvent, Error>
 }
 
-class PigeonEventChannelWrapper<ReturnType> {
-  func onListen(withArguments arguments: Any?, sink: PigeonEventSink<ReturnType>) {}
-  func onCancel(withArguments arguments: Any?) {}
-}
-
-class PigeonEventSink<ReturnType> {
-  private let sink: FlutterEventSink
-
-  init(_ sink: @escaping FlutterEventSink) {
-    self.sink = sink
-  }
-
-  func success(_ value: ReturnType) {
-    sink(value)
-  }
-
-  func error(code: String, message: String?, details: Any?) {
-    sink(FlutterError(code: code, message: message, details: details))
-  }
-
-  func endOfStream() {
-    sink(FlutterEndOfEventStream)
-  }
-
-}
-
-/// A typed channel for communicating with the Flutter application using asynchronous event streams.
-class StreamEventsEventChannel {
-  private let channel: FlutterEventChannel
-
-  init(messenger: FlutterBinaryMessenger, instanceName: String = "") {
-    var channelName = "dev.flutter.pigeon.pigeon_example_package.EventChannelMethods.streamEvents"
-    if !instanceName.isEmpty {
-      channelName += ".\(instanceName)"
+/// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
+class EventStreamHostApiSetup {
+  private static let streamRegistry = EventChannelMessagesPigeonStreamRegistry()
+  static var codec: FlutterStandardMessageCodec { EventChannelMessagesPigeonCodec.shared }
+  /// Sets up an instance of `EventStreamHostApi` to handle messages through the `binaryMessenger`.
+  static func setUp(
+    binaryMessenger: FlutterBinaryMessenger, api: EventStreamHostApi?,
+    messageChannelSuffix: String = ""
+  ) {
+    let channelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""
+    let streamEventsEventsChannelName =
+      "dev.flutter.pigeon.pigeon_example_package.EventStreamHostApi.streamEvents\(channelSuffix).events"
+    let streamEventsChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.pigeon_example_package.EventStreamHostApi.streamEvents\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
+    streamRegistry.cancelAll(channelName: streamEventsEventsChannelName)
+    if let api = api {
+      let eventsChannel = FlutterBasicMessageChannel(
+        name: streamEventsEventsChannelName, binaryMessenger: binaryMessenger, codec: codec)
+      streamEventsChannel.setMessageHandler { message, reply in
+        let request = message as! [Any?]
+        let action = request[0] as! String
+        let subscriptionId = request[1] as? Int64 ?? (request[1] as! NSNumber).int64Value
+        if action == "cancel" {
+          streamRegistry.cancel(
+            channelName: streamEventsEventsChannelName, subscriptionId: subscriptionId)
+          reply(wrapResult(nil))
+          return
+        }
+        let channelBox = EventChannelMessagesPigeonChannelBox(eventsChannel)
+        let stream = api.streamEvents()
+        let task = Task { @MainActor in
+          do {
+            for try await event in stream {
+              guard !Task.isCancelled,
+                streamRegistry.isActive(
+                  channelName: streamEventsEventsChannelName, subscriptionId: subscriptionId)
+              else {
+                return
+              }
+              channelBox.sendOnMain([subscriptionId, Int64(0), event])
+            }
+            if !Task.isCancelled,
+              streamRegistry.remove(
+                channelName: streamEventsEventsChannelName, subscriptionId: subscriptionId)
+            {
+              channelBox.sendOnMain([subscriptionId, Int64(2)])
+            }
+          } catch is CancellationError {
+            _ = streamRegistry.remove(
+              channelName: streamEventsEventsChannelName, subscriptionId: subscriptionId)
+          } catch {
+            if !Task.isCancelled,
+              streamRegistry.remove(
+                channelName: streamEventsEventsChannelName, subscriptionId: subscriptionId)
+            {
+              channelBox.sendOnMain([subscriptionId, Int64(1)] + wrapError(error))
+            }
+          }
+        }
+        streamRegistry.register(
+          channelName: streamEventsEventsChannelName, subscriptionId: subscriptionId
+        ) {
+          channelBox.close()
+          task.cancel()
+        }
+        reply(wrapResult(nil))
+      }
+    } else {
+      streamEventsChannel.setMessageHandler(nil)
     }
-    channel = FlutterEventChannel(
-      name: channelName, binaryMessenger: messenger, codec: eventChannelMessagesPigeonMethodCodec)
-  }
-
-  /// Sets the stream handler for this channel, replacing any previous handler.
-  ///
-  /// Pass `nil` to remove the event channel registration.
-  func setStreamHandler(_ streamHandler: StreamEventsStreamHandler?) {
-    let internalHandler = streamHandler.map({ PigeonStreamHandler<PlatformEvent>(wrapper: $0) })
-    channel.setStreamHandler(internalHandler)
-  }
-}
-
-class StreamEventsStreamHandler: PigeonEventChannelWrapper<PlatformEvent> {
-  /// Creates and returns a new event channel that calls the provided stream handler.
-  ///
-  /// The returned channel can be stored to allow changing or removing the stream handler.
-  /// If the handler will not be changed for the lifetime of the engine associated with the messenger,
-  /// the return value can be ignored.
-  @discardableResult static func register(
-    with messenger: FlutterBinaryMessenger,
-    instanceName: String = "",
-    streamHandler: StreamEventsStreamHandler
-  ) -> StreamEventsEventChannel {
-    let channel = StreamEventsEventChannel(messenger: messenger, instanceName: instanceName)
-    channel.setStreamHandler(streamHandler)
-    return channel
   }
 }

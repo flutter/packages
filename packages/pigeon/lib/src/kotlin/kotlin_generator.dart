@@ -241,9 +241,13 @@ class KotlinProxyApiOptions {
   final int? minAndroidApi;
 }
 
-/// Options for Kotlin implementation of Event Channels.
+/// Options for Kotlin implementation of deprecated `@EventChannelApi` definitions.
+///
+/// Prefer `Stream<T>` return types on `@HostApi` methods instead of `@EventChannelApi`.
+@Deprecated('Use Stream<T> return types on @HostApi methods instead.')
 class KotlinEventChannelOptions {
   /// Construct a [KotlinEventChannelOptions].
+  @Deprecated('Use Stream<T> return types on @HostApi methods instead.')
   const KotlinEventChannelOptions({this.includeSharedClasses = true});
 
   /// Whether to include the shared Event Channel classes in generation.

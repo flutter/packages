@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// ignore_for_file: deprecated_member_use
-
 import 'package:pigeon/pigeon.dart';
 
 @ConfigurePigeon(
@@ -36,9 +34,9 @@ class StringEvent extends PlatformEvent {
 // #enddocregion sealed-definitions
 
 // #docregion event-definitions
-@EventChannelApi()
-abstract class EventChannelMethods {
-  PlatformEvent streamEvents();
+@HostApi()
+abstract class EventStreamHostApi {
+  Stream<PlatformEvent> streamEvents();
 }
 
 // #enddocregion event-definitions

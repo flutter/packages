@@ -55,15 +55,36 @@ If asynchronous methods are needed, two annotations are available:
 
 [Example](./example/README.md#HostApi_Example).
 
+### Streaming Data (`Stream<T>`)
+
+`@HostApi()` methods can return `Stream<T>` (supported on the Dart, Kotlin, and Swift generators)
+to stream sequences of values from the host platform to Flutter, with full support for typed
+method arguments and per-subscription cancellation:
+
+* **Default (Structured Concurrency)**: Generates `Flow<T>` in Kotlin and
+  `AsyncThrowingStream<T, Error>` in Swift. Cancelling the Dart `StreamSubscription` cancels the
+  underlying Kotlin coroutine or Swift `Task`.
+* **`@asyncCallback` (Callback Event Sink)**: Generates a `PigeonEventSink<T>` (`success`, `error`,
+  `endOfStream`) parameter and returns an optional cancellation handle (`AutoCloseable?` in Kotlin,
+  `(() -> Void)?` in Swift) that runs when the Dart `StreamSubscription` is cancelled — useful when
+  bridging callback- or listener-based platform SDKs.
+
+> [!NOTE]
+> `@EventChannelApi()` is deprecated in favor of `Stream<T>` return types on `@HostApi()` methods.
+
+[Example](./example/README.md#event-channel-example).
+
 ### Error Handling
 
 #### Kotlin and Swift
 
 All Host API exceptions are translated into Flutter `PlatformException`.
-* For synchronous methods and modern `@async` methods, thrown exceptions (`FlutterError` in
-  Kotlin, `PigeonError` in Swift) will be caught and translated automatically.
-* For callback-style `@asyncCallback` methods, errors should be returned via the provided
-  result callback (e.g., `Result.failure(...)`).
+* For synchronous methods, modern `@async` methods, and `Stream<T>` methods (`Flow<T>` in Kotlin /
+  `AsyncThrowingStream` in Swift), thrown exceptions (`FlutterError` in Kotlin, `PigeonError` in
+  Swift) will be caught and translated automatically.
+* For callback-style `@asyncCallback` methods (including `@asyncCallback` `Stream<T>` event sinks),
+  errors should be returned via the provided result callback (e.g., `Result.failure(...)`) or
+  `sink.error(...)`.
 
 To pass custom details into `PlatformException` for error handling, use `FlutterError` in
 Kotlin and `PigeonError` in Swift. [Example](./example/README.md#HostApi_Example).
@@ -198,9 +219,9 @@ These constants will be translated into static constants or final variables in t
 1) Method declarations on the API classes should have arguments and a return
    value whose types are defined in the file, are supported datatypes, or are
    `void`.
-1) Event channels are supported only on the Swift, Kotlin, and Dart generators.
-1) Event channel methods should be wrapped in an `abstract class` with the metadata `@EventChannelApi`.
-1) Event channel definitions should not include the `Stream` return type, just the type that is being streamed.
+1) Method declarations on `@HostApi()` classes may also return `Stream<T>` (supported on the Swift,
+   Kotlin, and Dart generators) to stream events from the host platform to Flutter (`@EventChannelApi`
+   is deprecated in favor of `Stream<T>` return types on `@HostApi()`).
 1) Objective-C and Swift have special naming conventions that can be utilized with the
    `@ObjCSelector` and `@SwiftFunction` respectively.
 

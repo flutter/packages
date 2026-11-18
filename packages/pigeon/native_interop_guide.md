@@ -21,9 +21,9 @@ Native Interop calls are direct in-process function calls across the C ABI (FFI)
   * **Platform UI Affinity**: Native APIs that manipulate UI (such as UIKit views or Android `Activity`/views) must run on the platform's main thread. If invoked from a background isolate, native code must explicitly dispatch to the main thread (`DispatchQueue.main.async` in Swift, `Handler(Looper.getMainLooper()).post` in Kotlin) before interacting with UI APIs.
 * **Flutter APIs (Native → Dart)**:
   * Synchronous callbacks into Dart are isolate-local and must be invoked from the isolate that registered them.
-* **Unsupported Pigeon Features (`@TaskQueue`, `@EventChannelApi`, `@ProxyApi`)**:
+* **Unsupported Pigeon Features (`@TaskQueue`, `Stream<T>` / `@EventChannelApi`, `@ProxyApi`)**:
   * Platform channels queue work onto engine background threads; Native Interop executes directly on the caller thread. Specifying `@TaskQueue` results in a code generation error. To run host operations on background threads, annotate the method with `@async` in the Pigeon file and implement it using Swift `async` or Kotlin `suspend` functions (with `DispatchQueue.global` or `Dispatchers.IO`).
-  * `@EventChannelApi` and `@ProxyApi` are not supported with Native Interop (`useFfi` / `useJni`); move them to a separate Pigeon file without `useFfi` / `useJni`. Swift FFI also requires `SwiftOptions.includeErrorClass: true` (use a distinct `errorClassName` per file when using multiple Swift FFI files in the same module).
+  * `@HostApi` `Stream<T>` methods (as well as deprecated `@EventChannelApi`) and `@ProxyApi` are not supported with Native Interop (`useFfi` / `useJni`); move them to a separate Pigeon file without `useFfi` / `useJni`. Swift FFI also requires `SwiftOptions.includeErrorClass: true` (use a distinct `errorClassName` per file when using multiple Swift FFI files in the same module).
 
 ---
 
