@@ -1307,7 +1307,7 @@ void main() {
     expect(widget, isA<PlatformViewLink>());
   });
 
-  testWidgets('Defaults to AndroidView', (WidgetTester tester) async {
+  testWidgets('Defaults to PlatformViewLink', (WidgetTester tester) async {
     final maps = GoogleMapsFlutterAndroid();
 
     final Widget widget = maps.buildViewWithConfiguration(
@@ -1319,7 +1319,7 @@ void main() {
       ),
     );
 
-    expect(widget, isA<AndroidView>());
+    expect(widget, isA<PlatformViewLink>());
   });
 
   testWidgets('mapId is passed', (WidgetTester tester) async {
@@ -1372,6 +1372,7 @@ void main() {
 
   test('Correct marker type is passed to platform view', () async {
     final maps = GoogleMapsFlutterAndroid();
+    maps.useAndroidViewSurface = false;
     final Widget widget = maps.buildViewWithConfiguration(
       1,
       (int _) {},
@@ -1410,6 +1411,7 @@ void main() {
 
   test('marker type defaults to legacy if unset', () async {
     final maps = GoogleMapsFlutterAndroid();
+    maps.useAndroidViewSurface = false;
     final Widget widget = maps.buildViewWithConfiguration(
       1,
       (int _) {},

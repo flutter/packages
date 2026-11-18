@@ -50,17 +50,12 @@ void main() {
 
 #### Texture Layer Hybrid Composition
 
-This is the current default mode and corresponds to `useAndroidViewSurface = false`.
-This mode is more performant than Hybrid Composition and we recommend that you use this mode.
+This mode is available by setting `useAndroidViewSurface = false`.
+This mode can be more performant than Hybrid Composition on some Android versions, but may have rendering issues on some devices (such as blank surfaces on Huawei EMUI devices).
 
 #### Hybrid Composition
 
-This mode is available for backwards compatibility and corresponds to `useAndroidViewSurface = true`.
-We do not recommend its use as it is less performant than Texture Layer Hybrid Composition and
-certain flutter rendering effects are not supported.
-
-If you require this mode for correctness, please file a bug so we can investigate and fix
-the issue in the TLHC mode.
+This is the current default mode and corresponds to `useAndroidViewSurface = true`.
 
 ## Supported Heatmap Options
 
