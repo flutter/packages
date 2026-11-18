@@ -33,6 +33,9 @@ It cannot verify behavior that depends on specific hardware, for example:
   cameras, or camera extensions.
 - Exact resolution preset sizes (emulated cameras do not support every preset).
 - Device-specific sensor orientations, OEM quirks, or performance.
+- Video recording on API 28 (on Apple silicon hosts, the arm64 API 28 images'
+  video encoder crashes as soon as recording starts). To cover the
+  `SurfaceTexture` preview backend that API 28 uses, see 3b.
 
 If the behavior depends on specific hardware, it needs a physical device: tell
 the user, and do not claim it was verified. You may still run the example app
@@ -53,11 +56,21 @@ lists commands for some of these.
 2. **Reuse a running emulator:** run `adb devices` (if `adb` is not on the
    PATH, use `"$(android info sdk)/platform-tools/adb"`). If it lists
    `emulator-<port>    device`, note that serial and skip to 3a or 3b.
-3. **Pick an AVD:** run `android emulator list`. If it lists none, stop and
-   suggest `android emulator create medium_phone`. Otherwise use the AVD the
-   user named, or the first one. If the task needs an API level that no AVD
-   has, stop and ask the user to create one (to test the `SurfaceTexture`
-   preview backend, you do not need an older API level; see 3b).
+3. **Pick an AVD:** run `android emulator list --long`. If it lists none, stop
+   and suggest `android emulator create medium_phone`. Otherwise use the AVD
+   the user named, or the one with the highest API level. To test the
+   `SurfaceTexture` preview backend, you do not need an older API level (see
+   3b). If the task needs an API level that no AVD has, stop and ask the user
+   to approve creating one. Once they approve, run (for example, for API 30):
+
+   ```bash
+   android sdk install system-images/android-30/google_apis/arm64-v8a
+   "$(android info sdk)/cmdline-tools/latest/bin/avdmanager" create avd -n Pixel_API_30 -k "system-images;android-30;google_apis;arm64-v8a" -d pixel_6
+   ```
+
+   Use `x86_64` instead of `arm64-v8a` on Intel hosts. Then set
+   `hw.camera.back` and `hw.camera.front` to `emulated` in the new AVD's
+   `config.ini` (see step 4).
 4. **Check that the AVD has a camera:** run
    `grep hw.camera ~/.android/avd/<avd>.avd/config.ini`. If `hw.camera.back`
    and `hw.camera.front` are both `none`, stop: camera tests would pass without
@@ -92,6 +105,10 @@ Continue with the subsection that matches your task:
    android install --apks=example/build/app/outputs/flutter-apk/app-debug.apk --device=<serial> --install-options=-g
    ```
 
+   On older API levels, `android install` may log a crash from its on-device
+   installer before falling back to a standard install. That is harmless if
+   the command succeeds.
+
 2. **Run the tests.**
    - While iterating, run only the relevant tests:
      `(cd example && flutter test integration_test/integration_test.dart -d <serial> --plain-name "<test name>")`
@@ -102,7 +119,9 @@ Continue with the subsection that matches your task:
 
    The full suite takes several minutes, so run it in the background. If it
    stops making progress, take a screenshot (3b) to see what is
-   blocking the app.
+   blocking the app. If you kill a test run, delete `example/build/test/`
+   afterwards: the generated test files left there fail the repo's
+   pre-commit analysis.
 3. **Report** each failing test and its error. Re-run each failure once with
    `--plain-name` to tell flakes (common right after a cold boot) from real
    failures, and report both results. Failures in the resolution preset tests
