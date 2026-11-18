@@ -91,7 +91,7 @@ void main() {
     expect(await tempFile.readAsString(), 'hello openWrite');
   });
 
-  test('writeAsString', () async {
+  test('writeAsString completes normally', () async {
     final Directory tempDir = Directory.systemTemp.createTempSync();
     final tempFile = File(path.join(tempDir.path, 'temp_file.txt'));
     addTearDown(() => tempDir.deleteSync(recursive: true));
@@ -106,6 +106,7 @@ void main() {
 
     expect(writtenFile.params.uri, tempFile.uri.toString());
     expect(await tempFile.readAsString(), 'hello writeAsString');
+    expect(writtenFile, file);
   });
 
   test('delete', () async {
