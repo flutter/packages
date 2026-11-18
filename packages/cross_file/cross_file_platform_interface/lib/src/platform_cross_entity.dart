@@ -31,7 +31,7 @@ abstract base class PlatformXEntity {
   /// Extension for providing platform-specific features.
   PlatformXEntityExtension? get extension => null;
 
-  /// Attempt to return a valid filesystem path.
+  /// The filesystem path of this entity, if available.
   ///
   /// Returns null if the entity doesn't support being accessed as a filesystem
   /// path or the platform doesn't support creating a filesystem path for it.
