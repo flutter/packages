@@ -38,19 +38,27 @@ void main() {
   });
 
   test('toFilePath', () async {
-    final directory = PlatformScopedStorageXFile(
-      PlatformScopedStorageXFileCreationParams(uri: testDirectory.uri.toString()),
+    final directory = PlatformScopedStorageXDirectory(
+      PlatformScopedStorageXDirectoryCreationParams(uri: testDirectory.uri.toString()),
     );
 
     expect(directory.toFilePath(), Uri.parse(directory.params.uri).toFilePath());
   });
 
   test('toFilePath path does not contain a scheme', () async {
-    final file = PlatformScopedStorageXFile(
-      PlatformScopedStorageXFileCreationParams(uri: testDirectory.uri.toString()),
+    final file = PlatformScopedStorageXDirectory(
+      PlatformScopedStorageXDirectoryCreationParams(uri: testDirectory.uri.toString()),
     );
 
     expect(Uri.parse(file.params.uri).hasScheme, isTrue);
     expect(Uri.parse(file.toFilePath()!).hasScheme, isFalse);
+  });
+
+  test('toFilePath adds trailing slash', () async {
+    final directory = PlatformScopedStorageXDirectory(
+      const PlatformScopedStorageXDirectoryCreationParams(uri: 'my/dir'),
+    );
+
+    expect(directory.toFilePath(), endsWith('/'));
   });
 }

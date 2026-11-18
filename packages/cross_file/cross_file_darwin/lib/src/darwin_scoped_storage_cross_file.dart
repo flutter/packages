@@ -98,7 +98,7 @@ base class SecurityScopedDarwinScopedStorageXFile extends DarwinScopedStorageXFi
   SecurityScopedDarwinScopedStorageXFileExtension? get extension => this;
 
   @override
-  String? toFilePath() => Uri.parse(params.uri).toFilePath();
+  String? toFilePath() => _file.uri.toFilePath();
 
   @override
   Future<DateTime?> lastModified() async {
@@ -130,7 +130,7 @@ base class SecurityScopedDarwinScopedStorageXFile extends DarwinScopedStorageXFi
   @override
   Future<bool> canRead() async {
     return NSFileManager.getDefaultManager().isReadableFileAtPath(
-      Uri.parse(params.uri).toFilePath().toNSString(),
+      toFilePath()!.toNSString(),
     );
   }
 
