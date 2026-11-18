@@ -46,6 +46,16 @@ void main() {
         );
       });
 
+      test('PlatformFileSystemXFile.toFilePath does not contain a scheme', () {
+        final platform = TestCrossFilePlatform();
+
+        final PlatformFileSystemXFile file = platform.createPlatformFileSystemXFile(
+          PlatformFileSystemXFileCreationParams('/my/path.txt'),
+        );
+        expect(Uri.parse(file.params.uri).hasScheme, isTrue);
+        expect(Uri.parse(file.toFilePath()!).hasScheme, isFalse);
+      });
+
       test('PlatformFileSystemXDirectory returns correct URI', () {
         final platform = TestCrossFilePlatform();
 
@@ -88,6 +98,16 @@ void main() {
               .toFilePath(),
           Uri.directory('/my/path/').toFilePath(),
         );
+      });
+
+      test('PlatformFileSystemXDirectory.toFilePath does not contain a scheme', () {
+        final platform = TestCrossFilePlatform();
+
+        final PlatformFileSystemXDirectory directory = platform.createPlatformFileSystemXDirectory(
+          PlatformFileSystemXDirectoryCreationParams('/my/dir'),
+        );
+        expect(Uri.parse(directory.params.uri).hasScheme, isTrue);
+        expect(Uri.parse(directory.toFilePath()!).hasScheme, isFalse);
       });
 
       test('_DefaultFileSystemXFile.exists() returns false', () async {
