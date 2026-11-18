@@ -83,7 +83,7 @@ import 'dialog.dart';
 /// See also:
 ///
 ///  * [TextButton], a simple flat button without a shadow.
-///  * [ElevatedButton], a filled button with a shadow.
+///  * [ElevatedButton], a filled button whose material elevates when pressed.
 ///  * [OutlinedButton], a [TextButton] with a border outline.
 ///  * [Card], at the bottom of which it is common to place a [ButtonBar].
 ///  * [Dialog], which uses a [ButtonBar] for its actions.
