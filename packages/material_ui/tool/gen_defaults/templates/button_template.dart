@@ -39,6 +39,107 @@ class _StateColors {
   final TokenColorRole focused;
 }
 
+// The outline tokens of a button. Only outlined buttons have them.
+class _ButtonOutlineTokens {
+  const _ButtonOutlineTokens({
+    required this.colors,
+    required this.unselectedColors,
+    required this.disabledColor,
+    required this.unselectedDisabledColor,
+  });
+
+  final _StateColors colors;
+  final _StateColors unselectedColors;
+  final TokenColorRole disabledColor;
+  final TokenColorRole unselectedDisabledColor;
+}
+
+// The tokens of one Material 3 Expressive button variant, so that
+// ButtonTemplateM3E only switches on the variant once.
+class _ButtonVariantData {
+  const _ButtonVariantData({
+    required this.parentFilePath,
+    required this.containerColor,
+    required this.disabledContainerColor,
+    required this.disabledContainerOpacity,
+    required this.selectedContainerColor,
+    required this.selectedDisabledContainerColor,
+    required this.unselectedContainerColor,
+    required this.containerShadowColor,
+    required this.containerElevation,
+    required this.disabledContainerElevation,
+    required this.pressedContainerElevation,
+    required this.focusedContainerElevation,
+    required this.labelTextColors,
+    required this.selectedLabelTextColors,
+    required this.unselectedLabelTextColors,
+    required this.disabledLabelTextColor,
+    required this.disabledLabelTextOpacity,
+    required this.iconColors,
+    required this.selectedIconColors,
+    required this.unselectedIconColors,
+    required this.disabledIconColor,
+    required this.disabledIconOpacity,
+    required this.stateLayerColors,
+    required this.selectedStateLayerColors,
+    required this.unselectedStateLayerColors,
+    required this.pressedStateLayerOpacity,
+    required this.hoveredStateLayerOpacity,
+    required this.focusedStateLayerOpacity,
+    required this.outline,
+  });
+
+  // The library file that the generated defaults are part of.
+  final String parentFilePath;
+
+  // Null if the button has no container color token, which makes the container
+  // transparent.
+  final TokenColorRole? containerColor;
+  final TokenColorRole? disabledContainerColor;
+  final double disabledContainerOpacity;
+
+  // Null if the button has no selected container color token.
+  final TokenColorRole? selectedContainerColor;
+  // Only outlined buttons have a container color for disabled selected toggle
+  // buttons.
+  final TokenColorRole? selectedDisabledContainerColor;
+  // Null if the button has no unselected container color token.
+  final TokenColorRole? unselectedContainerColor;
+
+  final TokenColorRole containerShadowColor;
+  final double containerElevation;
+  final double disabledContainerElevation;
+  final double pressedContainerElevation;
+  final double focusedContainerElevation;
+
+  final _StateColors labelTextColors;
+  // The selected and unselected colors are null for buttons that have no
+  // selected or unselected tokens, so they can't be toggle buttons.
+  final _StateColors? selectedLabelTextColors;
+  final _StateColors? unselectedLabelTextColors;
+  final TokenColorRole disabledLabelTextColor;
+  final double disabledLabelTextOpacity;
+
+  final _StateColors iconColors;
+  final _StateColors? selectedIconColors;
+  final _StateColors? unselectedIconColors;
+  final TokenColorRole disabledIconColor;
+  final double disabledIconOpacity;
+
+  // The overlay colors of a button that isn't toggleable.
+  final _StateColors stateLayerColors;
+  // The overlay colors of a selected toggle button.
+  final _StateColors? selectedStateLayerColors;
+  // The overlay colors of an unselected toggle button.
+  final _StateColors? unselectedStateLayerColors;
+  final double pressedStateLayerOpacity;
+  final double hoveredStateLayerOpacity;
+  final double focusedStateLayerOpacity;
+
+  // Only outlined buttons have outline tokens.
+  final _ButtonOutlineTokens? outline;
+}
+
 class ButtonTemplateM3 extends TokenTemplateM3 {
   const ButtonTemplateM3(this.name);
 
@@ -358,432 +459,387 @@ class ButtonTemplateM3E extends TokenTemplateM3E {
   };
 
   @override
-  String get parentFilePath => switch (_variant) {
-    _ButtonVariant.elevated => 'elevated_button.dart',
-    _ButtonVariant.filled || _ButtonVariant.filledTonal => 'filled_button.dart',
-    _ButtonVariant.outlined => 'outlined_button.dart',
-    _ButtonVariant.text => 'text_button.dart',
-  };
+  String get parentFilePath => _data.parentFilePath;
 
   // Text buttons have no selected or unselected tokens, so they can't be
   // toggle buttons.
   bool get _hasToggleTokens => _variant != _ButtonVariant.text;
 
-  // Outlined and text buttons have no container color tokens, so their
-  // containers are transparent.
-  TokenColorRole? get _containerColor => switch (_variant) {
-    _ButtonVariant.elevated => TokenButtonElevated.containerColor,
-    _ButtonVariant.filled => TokenButtonFilled.containerColor,
-    _ButtonVariant.filledTonal => TokenButtonTonal.containerColor,
-    _ButtonVariant.outlined || _ButtonVariant.text => null,
+  _ButtonVariantData get _data => switch (_variant) {
+    _ButtonVariant.elevated => _elevated,
+    _ButtonVariant.filled => _filled,
+    _ButtonVariant.filledTonal => _filledTonal,
+    _ButtonVariant.outlined => _outlined,
+    _ButtonVariant.text => _text,
   };
 
-  TokenColorRole? get _disabledContainerColor => switch (_variant) {
-    _ButtonVariant.elevated => TokenButtonElevated.disabledContainerColor,
-    _ButtonVariant.filled => TokenButtonFilled.disabledContainerColor,
-    _ButtonVariant.filledTonal => TokenButtonTonal.disabledContainerColor,
-    _ButtonVariant.outlined => null,
-    _ButtonVariant.text => TokenButtonText.disabledContainerColor,
-  };
-
-  double get _disabledContainerOpacity => switch (_variant) {
-    _ButtonVariant.elevated => TokenButtonElevated.disabledContainerOpacity,
-    _ButtonVariant.filled => TokenButtonFilled.disabledContainerOpacity,
-    _ButtonVariant.filledTonal => TokenButtonTonal.disabledContainerOpacity,
-    _ButtonVariant.outlined => TokenButtonOutlined.disabledContainerOpacity,
-    _ButtonVariant.text => TokenButtonText.disabledContainerOpacity,
-  };
-
-  TokenColorRole? get _selectedContainerColor => switch (_variant) {
-    _ButtonVariant.elevated => TokenButtonElevated.selectedContainerColor,
-    _ButtonVariant.filled => TokenButtonFilled.selectedContainerColor,
-    _ButtonVariant.filledTonal => TokenButtonTonal.selectedContainerColor,
-    _ButtonVariant.outlined => TokenButtonOutlined.selectedContainerColor,
-    _ButtonVariant.text => null,
-  };
-
-  // Only outlined buttons have a container color for disabled selected toggle
-  // buttons.
-  TokenColorRole? get _selectedDisabledContainerColor => switch (_variant) {
-    _ButtonVariant.outlined => TokenButtonOutlined.selectedDisabledContainerColor,
-    _ButtonVariant.elevated ||
-    _ButtonVariant.filled ||
-    _ButtonVariant.filledTonal ||
-    _ButtonVariant.text => null,
-  };
-
-  TokenColorRole? get _unselectedContainerColor => switch (_variant) {
-    _ButtonVariant.elevated => TokenButtonElevated.unselectedContainerColor,
-    _ButtonVariant.filled => TokenButtonFilled.unselectedContainerColor,
-    _ButtonVariant.filledTonal => TokenButtonTonal.unselectedContainerColor,
-    _ButtonVariant.outlined || _ButtonVariant.text => null,
-  };
-
-  // Outlined and text buttons have no shadow color or elevation tokens, so
-  // they use the common button tokens.
-  TokenColorRole get _containerShadowColor => switch (_variant) {
-    _ButtonVariant.elevated => TokenButtonElevated.containerShadowColor,
-    _ButtonVariant.filled => TokenButtonFilled.containerShadowColor,
-    _ButtonVariant.filledTonal => TokenButtonTonal.containerShadowColor,
-    _ButtonVariant.outlined || _ButtonVariant.text => TokenButton.containerShadowColor,
-  };
-
-  double get _containerElevation => switch (_variant) {
-    _ButtonVariant.elevated => TokenButtonElevated.containerElevation,
-    _ButtonVariant.filled => TokenButtonFilled.containerElevation,
-    _ButtonVariant.filledTonal => TokenButtonTonal.containerElevation,
-    _ButtonVariant.outlined || _ButtonVariant.text => TokenButton.containerElevation,
-  };
-
-  double get _disabledContainerElevation => switch (_variant) {
-    _ButtonVariant.elevated => TokenButtonElevated.disabledContainerElevation,
-    _ButtonVariant.filled => TokenButtonFilled.disabledContainerElevation,
-    _ButtonVariant.filledTonal => TokenButtonTonal.disabledContainerElevation,
-    _ButtonVariant.outlined || _ButtonVariant.text => TokenButton.disabledContainerElevation,
-  };
-
-  double get _pressedContainerElevation => switch (_variant) {
-    _ButtonVariant.elevated => TokenButtonElevated.pressedContainerElevation,
-    _ButtonVariant.filled => TokenButtonFilled.pressedContainerElevation,
-    _ButtonVariant.filledTonal => TokenButtonTonal.pressedContainerElevation,
-    _ButtonVariant.outlined || _ButtonVariant.text => TokenButton.pressedContainerElevation,
-  };
-
-  double get _focusedContainerElevation => switch (_variant) {
-    _ButtonVariant.elevated => TokenButtonElevated.focusedContainerElevation,
-    _ButtonVariant.filled => TokenButtonFilled.focusedContainerElevation,
-    _ButtonVariant.filledTonal => TokenButtonTonal.focusedContainerElevation,
-    _ButtonVariant.outlined || _ButtonVariant.text => TokenButton.focusedContainerElevation,
-  };
-
-  _StateColors get _labelTextColors => switch (_variant) {
-    _ButtonVariant.elevated => const _StateColors(
+  static const _ButtonVariantData _elevated = _ButtonVariantData(
+    parentFilePath: 'elevated_button.dart',
+    containerColor: TokenButtonElevated.containerColor,
+    disabledContainerColor: TokenButtonElevated.disabledContainerColor,
+    disabledContainerOpacity: TokenButtonElevated.disabledContainerOpacity,
+    selectedContainerColor: TokenButtonElevated.selectedContainerColor,
+    selectedDisabledContainerColor: null,
+    unselectedContainerColor: TokenButtonElevated.unselectedContainerColor,
+    containerShadowColor: TokenButtonElevated.containerShadowColor,
+    containerElevation: TokenButtonElevated.containerElevation,
+    disabledContainerElevation: TokenButtonElevated.disabledContainerElevation,
+    pressedContainerElevation: TokenButtonElevated.pressedContainerElevation,
+    focusedContainerElevation: TokenButtonElevated.focusedContainerElevation,
+    labelTextColors: _StateColors(
       resting: TokenButtonElevated.labelTextColor,
       pressed: TokenButtonElevated.pressedLabelTextColor,
       hovered: TokenButtonElevated.hoveredLabelTextColor,
       focused: TokenButtonElevated.focusedLabelTextColor,
     ),
-    _ButtonVariant.filled => const _StateColors(
-      resting: TokenButtonFilled.labelTextColor,
-      pressed: TokenButtonFilled.pressedLabelTextColor,
-      hovered: TokenButtonFilled.hoveredLabelTextColor,
-      focused: TokenButtonFilled.focusedLabelTextColor,
-    ),
-    _ButtonVariant.filledTonal => const _StateColors(
-      resting: TokenButtonTonal.labelTextColor,
-      pressed: TokenButtonTonal.pressedLabelTextColor,
-      hovered: TokenButtonTonal.hoveredLabelTextColor,
-      focused: TokenButtonTonal.focusedLabelTextColor,
-    ),
-    _ButtonVariant.outlined => const _StateColors(
-      resting: TokenButtonOutlined.labelTextColor,
-      pressed: TokenButtonOutlined.pressedLabelTextColor,
-      hovered: TokenButtonOutlined.hoveredLabelTextColor,
-      focused: TokenButtonOutlined.focusedLabelTextColor,
-    ),
-    _ButtonVariant.text => const _StateColors(
-      resting: TokenButtonText.labelTextColor,
-      pressed: TokenButtonText.pressedLabelTextColor,
-      hovered: TokenButtonText.hoveredLabelTextColor,
-      focused: TokenButtonText.focusedLabelTextColor,
-    ),
-  };
-
-  _StateColors? get _selectedLabelTextColors => switch (_variant) {
-    _ButtonVariant.elevated => const _StateColors(
+    selectedLabelTextColors: _StateColors(
       resting: TokenButtonElevated.selectedLabelTextColor,
       pressed: TokenButtonElevated.selectedPressedLabelTextColor,
       hovered: TokenButtonElevated.selectedHoveredLabelTextColor,
       focused: TokenButtonElevated.selectedFocusedLabelTextColor,
     ),
-    _ButtonVariant.filled => const _StateColors(
-      resting: TokenButtonFilled.selectedLabelTextColor,
-      pressed: TokenButtonFilled.selectedPressedLabelTextColor,
-      hovered: TokenButtonFilled.selectedHoveredLabelTextColor,
-      focused: TokenButtonFilled.selectedFocusedLabelTextColor,
-    ),
-    _ButtonVariant.filledTonal => const _StateColors(
-      resting: TokenButtonTonal.selectedLabelTextColor,
-      pressed: TokenButtonTonal.selectedPressedLabelTextColor,
-      hovered: TokenButtonTonal.selectedHoveredLabelTextColor,
-      focused: TokenButtonTonal.selectedFocusedLabelTextColor,
-    ),
-    _ButtonVariant.outlined => const _StateColors(
-      resting: TokenButtonOutlined.selectedLabelTextColor,
-      pressed: TokenButtonOutlined.selectedPressedLabelTextColor,
-      hovered: TokenButtonOutlined.selectedHoveredLabelTextColor,
-      focused: TokenButtonOutlined.selectedFocusedLabelTextColor,
-    ),
-    _ButtonVariant.text => null,
-  };
-
-  _StateColors? get _unselectedLabelTextColors => switch (_variant) {
-    _ButtonVariant.elevated => const _StateColors(
+    unselectedLabelTextColors: _StateColors(
       resting: TokenButtonElevated.unselectedLabelTextColor,
       pressed: TokenButtonElevated.unselectedPressedLabelTextColor,
       hovered: TokenButtonElevated.unselectedHoveredLabelTextColor,
       focused: TokenButtonElevated.unselectedFocusedLabelTextColor,
     ),
-    _ButtonVariant.filled => const _StateColors(
-      resting: TokenButtonFilled.unselectedLabelTextColor,
-      pressed: TokenButtonFilled.unselectedPressedLabelTextColor,
-      hovered: TokenButtonFilled.unselectedHoveredLabelTextColor,
-      focused: TokenButtonFilled.unselectedFocusedLabelTextColor,
-    ),
-    _ButtonVariant.filledTonal => const _StateColors(
-      resting: TokenButtonTonal.unselectedLabelTextColor,
-      pressed: TokenButtonTonal.unselectedPressedLabelTextColor,
-      hovered: TokenButtonTonal.unselectedHoveredLabelTextColor,
-      focused: TokenButtonTonal.unselectedFocusedLabelTextColor,
-    ),
-    _ButtonVariant.outlined => const _StateColors(
-      resting: TokenButtonOutlined.unselectedLabelTextColor,
-      pressed: TokenButtonOutlined.unselectedPressedLabelTextColor,
-      hovered: TokenButtonOutlined.unselectedHoveredLabelTextColor,
-      focused: TokenButtonOutlined.unselectedFocusedLabelTextColor,
-    ),
-    _ButtonVariant.text => null,
-  };
-
-  TokenColorRole get _disabledLabelTextColor => switch (_variant) {
-    _ButtonVariant.elevated => TokenButtonElevated.disabledLabelTextColor,
-    _ButtonVariant.filled => TokenButtonFilled.disabledLabelTextColor,
-    _ButtonVariant.filledTonal => TokenButtonTonal.disabledLabelTextColor,
-    _ButtonVariant.outlined => TokenButtonOutlined.disabledLabelTextColor,
-    _ButtonVariant.text => TokenButtonText.disabledLabelTextColor,
-  };
-
-  double get _disabledLabelTextOpacity => switch (_variant) {
-    _ButtonVariant.elevated => TokenButtonElevated.disabledLabelTextOpacity,
-    _ButtonVariant.filled => TokenButtonFilled.disabledLabelTextOpacity,
-    _ButtonVariant.filledTonal => TokenButtonTonal.disabledLabelTextOpacity,
-    _ButtonVariant.outlined => TokenButtonOutlined.disabledLabelTextOpacity,
-    _ButtonVariant.text => TokenButtonText.disabledLabelTextOpacity,
-  };
-
-  _StateColors get _iconColors => switch (_variant) {
-    _ButtonVariant.elevated => const _StateColors(
+    disabledLabelTextColor: TokenButtonElevated.disabledLabelTextColor,
+    disabledLabelTextOpacity: TokenButtonElevated.disabledLabelTextOpacity,
+    iconColors: _StateColors(
       resting: TokenButtonElevated.iconColor,
       pressed: TokenButtonElevated.pressedIconColor,
       hovered: TokenButtonElevated.hoveredIconColor,
       focused: TokenButtonElevated.focusedIconColor,
     ),
-    _ButtonVariant.filled => const _StateColors(
-      resting: TokenButtonFilled.iconColor,
-      pressed: TokenButtonFilled.pressedIconColor,
-      hovered: TokenButtonFilled.hoveredIconColor,
-      focused: TokenButtonFilled.focusedIconColor,
-    ),
-    _ButtonVariant.filledTonal => const _StateColors(
-      resting: TokenButtonTonal.iconColor,
-      pressed: TokenButtonTonal.pressedIconColor,
-      hovered: TokenButtonTonal.hoveredIconColor,
-      focused: TokenButtonTonal.focusedIconColor,
-    ),
-    _ButtonVariant.outlined => const _StateColors(
-      resting: TokenButtonOutlined.iconColor,
-      pressed: TokenButtonOutlined.pressedIconColor,
-      hovered: TokenButtonOutlined.hoveredIconColor,
-      focused: TokenButtonOutlined.focusedIconColor,
-    ),
-    _ButtonVariant.text => const _StateColors(
-      resting: TokenButtonText.iconColor,
-      pressed: TokenButtonText.pressedIconColor,
-      hovered: TokenButtonText.hoveredIconColor,
-      focused: TokenButtonText.focusedIconColor,
-    ),
-  };
-
-  _StateColors? get _selectedIconColors => switch (_variant) {
-    _ButtonVariant.elevated => const _StateColors(
+    selectedIconColors: _StateColors(
       resting: TokenButtonElevated.selectedIconColor,
       pressed: TokenButtonElevated.selectedPressedIconColor,
       hovered: TokenButtonElevated.selectedHoveredIconColor,
       focused: TokenButtonElevated.selectedFocusedIconColor,
     ),
-    _ButtonVariant.filled => const _StateColors(
-      resting: TokenButtonFilled.selectedIconColor,
-      pressed: TokenButtonFilled.selectedPressedIconColor,
-      hovered: TokenButtonFilled.selectedHoveredIconColor,
-      focused: TokenButtonFilled.selectedFocusedIconColor,
-    ),
-    _ButtonVariant.filledTonal => const _StateColors(
-      resting: TokenButtonTonal.selectedIconColor,
-      pressed: TokenButtonTonal.selectedPressedIconColor,
-      hovered: TokenButtonTonal.selectedHoveredIconColor,
-      focused: TokenButtonTonal.selectedFocusedIconColor,
-    ),
-    _ButtonVariant.outlined => const _StateColors(
-      resting: TokenButtonOutlined.selectedIconColor,
-      pressed: TokenButtonOutlined.selectedPressedIconColor,
-      hovered: TokenButtonOutlined.selectedHoveredIconColor,
-      focused: TokenButtonOutlined.selectedFocusedIconColor,
-    ),
-    _ButtonVariant.text => null,
-  };
-
-  _StateColors? get _unselectedIconColors => switch (_variant) {
-    _ButtonVariant.elevated => const _StateColors(
+    unselectedIconColors: _StateColors(
       resting: TokenButtonElevated.unselectedIconColor,
       pressed: TokenButtonElevated.unselectedPressedIconColor,
       hovered: TokenButtonElevated.unselectedHoveredIconColor,
       focused: TokenButtonElevated.unselectedFocusedIconColor,
     ),
-    _ButtonVariant.filled => const _StateColors(
+    disabledIconColor: TokenButtonElevated.disabledIconColor,
+    disabledIconOpacity: TokenButtonElevated.disabledIconOpacity,
+    stateLayerColors: _StateColors(
+      pressed: TokenButtonElevated.pressedStateLayerColor,
+      hovered: TokenButtonElevated.hoveredStateLayerColor,
+      focused: TokenButtonElevated.focusedStateLayerColor,
+    ),
+    selectedStateLayerColors: _StateColors(
+      pressed: TokenButtonElevated.selectedPressedStateLayerColor,
+      hovered: TokenButtonElevated.selectedHoveredStateLayerColor,
+      focused: TokenButtonElevated.selectedFocusedStateLayerColor,
+    ),
+    unselectedStateLayerColors: _StateColors(
+      pressed: TokenButtonElevated.unselectedPressedStateLayerColor,
+      hovered: TokenButtonElevated.unselectedHoveredStateLayerColor,
+      focused: TokenButtonElevated.unselectedFocusedStateLayerColor,
+    ),
+    pressedStateLayerOpacity: TokenButtonElevated.pressedStateLayerOpacity,
+    hoveredStateLayerOpacity: TokenButtonElevated.hoveredStateLayerOpacity,
+    focusedStateLayerOpacity: TokenButtonElevated.focusedStateLayerOpacity,
+    outline: null,
+  );
+
+  static const _ButtonVariantData _filled = _ButtonVariantData(
+    parentFilePath: 'filled_button.dart',
+    containerColor: TokenButtonFilled.containerColor,
+    disabledContainerColor: TokenButtonFilled.disabledContainerColor,
+    disabledContainerOpacity: TokenButtonFilled.disabledContainerOpacity,
+    selectedContainerColor: TokenButtonFilled.selectedContainerColor,
+    selectedDisabledContainerColor: null,
+    unselectedContainerColor: TokenButtonFilled.unselectedContainerColor,
+    containerShadowColor: TokenButtonFilled.containerShadowColor,
+    containerElevation: TokenButtonFilled.containerElevation,
+    disabledContainerElevation: TokenButtonFilled.disabledContainerElevation,
+    pressedContainerElevation: TokenButtonFilled.pressedContainerElevation,
+    focusedContainerElevation: TokenButtonFilled.focusedContainerElevation,
+    labelTextColors: _StateColors(
+      resting: TokenButtonFilled.labelTextColor,
+      pressed: TokenButtonFilled.pressedLabelTextColor,
+      hovered: TokenButtonFilled.hoveredLabelTextColor,
+      focused: TokenButtonFilled.focusedLabelTextColor,
+    ),
+    selectedLabelTextColors: _StateColors(
+      resting: TokenButtonFilled.selectedLabelTextColor,
+      pressed: TokenButtonFilled.selectedPressedLabelTextColor,
+      hovered: TokenButtonFilled.selectedHoveredLabelTextColor,
+      focused: TokenButtonFilled.selectedFocusedLabelTextColor,
+    ),
+    unselectedLabelTextColors: _StateColors(
+      resting: TokenButtonFilled.unselectedLabelTextColor,
+      pressed: TokenButtonFilled.unselectedPressedLabelTextColor,
+      hovered: TokenButtonFilled.unselectedHoveredLabelTextColor,
+      focused: TokenButtonFilled.unselectedFocusedLabelTextColor,
+    ),
+    disabledLabelTextColor: TokenButtonFilled.disabledLabelTextColor,
+    disabledLabelTextOpacity: TokenButtonFilled.disabledLabelTextOpacity,
+    iconColors: _StateColors(
+      resting: TokenButtonFilled.iconColor,
+      pressed: TokenButtonFilled.pressedIconColor,
+      hovered: TokenButtonFilled.hoveredIconColor,
+      focused: TokenButtonFilled.focusedIconColor,
+    ),
+    selectedIconColors: _StateColors(
+      resting: TokenButtonFilled.selectedIconColor,
+      pressed: TokenButtonFilled.selectedPressedIconColor,
+      hovered: TokenButtonFilled.selectedHoveredIconColor,
+      focused: TokenButtonFilled.selectedFocusedIconColor,
+    ),
+    unselectedIconColors: _StateColors(
       resting: TokenButtonFilled.unselectedIconColor,
       pressed: TokenButtonFilled.unselectedPressedIconColor,
       hovered: TokenButtonFilled.unselectedHoveredIconColor,
       focused: TokenButtonFilled.unselectedFocusedIconColor,
     ),
-    _ButtonVariant.filledTonal => const _StateColors(
+    disabledIconColor: TokenButtonFilled.disabledIconColor,
+    disabledIconOpacity: TokenButtonFilled.disabledIconOpacity,
+    stateLayerColors: _StateColors(
+      pressed: TokenButtonFilled.pressedStateLayerColor,
+      hovered: TokenButtonFilled.hoveredStateLayerColor,
+      focused: TokenButtonFilled.focusedStateLayerColor,
+    ),
+    selectedStateLayerColors: _StateColors(
+      pressed: TokenButtonFilled.selectedPressedStateLayerColor,
+      hovered: TokenButtonFilled.selectedHoveredStateLayerColor,
+      focused: TokenButtonFilled.selectedFocusedStateLayerColor,
+    ),
+    unselectedStateLayerColors: _StateColors(
+      pressed: TokenButtonFilled.unselectedPressedStateLayerColor,
+      hovered: TokenButtonFilled.unselectedHoveredStateLayerColor,
+      focused: TokenButtonFilled.unselectedFocusedStateLayerColor,
+    ),
+    pressedStateLayerOpacity: TokenButtonFilled.pressedStateLayerOpacity,
+    hoveredStateLayerOpacity: TokenButtonFilled.hoveredStateLayerOpacity,
+    focusedStateLayerOpacity: TokenButtonFilled.focusedStateLayerOpacity,
+    outline: null,
+  );
+
+  static const _ButtonVariantData _filledTonal = _ButtonVariantData(
+    parentFilePath: 'filled_button.dart',
+    containerColor: TokenButtonTonal.containerColor,
+    disabledContainerColor: TokenButtonTonal.disabledContainerColor,
+    disabledContainerOpacity: TokenButtonTonal.disabledContainerOpacity,
+    selectedContainerColor: TokenButtonTonal.selectedContainerColor,
+    selectedDisabledContainerColor: null,
+    unselectedContainerColor: TokenButtonTonal.unselectedContainerColor,
+    containerShadowColor: TokenButtonTonal.containerShadowColor,
+    containerElevation: TokenButtonTonal.containerElevation,
+    disabledContainerElevation: TokenButtonTonal.disabledContainerElevation,
+    pressedContainerElevation: TokenButtonTonal.pressedContainerElevation,
+    focusedContainerElevation: TokenButtonTonal.focusedContainerElevation,
+    labelTextColors: _StateColors(
+      resting: TokenButtonTonal.labelTextColor,
+      pressed: TokenButtonTonal.pressedLabelTextColor,
+      hovered: TokenButtonTonal.hoveredLabelTextColor,
+      focused: TokenButtonTonal.focusedLabelTextColor,
+    ),
+    selectedLabelTextColors: _StateColors(
+      resting: TokenButtonTonal.selectedLabelTextColor,
+      pressed: TokenButtonTonal.selectedPressedLabelTextColor,
+      hovered: TokenButtonTonal.selectedHoveredLabelTextColor,
+      focused: TokenButtonTonal.selectedFocusedLabelTextColor,
+    ),
+    unselectedLabelTextColors: _StateColors(
+      resting: TokenButtonTonal.unselectedLabelTextColor,
+      pressed: TokenButtonTonal.unselectedPressedLabelTextColor,
+      hovered: TokenButtonTonal.unselectedHoveredLabelTextColor,
+      focused: TokenButtonTonal.unselectedFocusedLabelTextColor,
+    ),
+    disabledLabelTextColor: TokenButtonTonal.disabledLabelTextColor,
+    disabledLabelTextOpacity: TokenButtonTonal.disabledLabelTextOpacity,
+    iconColors: _StateColors(
+      resting: TokenButtonTonal.iconColor,
+      pressed: TokenButtonTonal.pressedIconColor,
+      hovered: TokenButtonTonal.hoveredIconColor,
+      focused: TokenButtonTonal.focusedIconColor,
+    ),
+    selectedIconColors: _StateColors(
+      resting: TokenButtonTonal.selectedIconColor,
+      pressed: TokenButtonTonal.selectedPressedIconColor,
+      hovered: TokenButtonTonal.selectedHoveredIconColor,
+      focused: TokenButtonTonal.selectedFocusedIconColor,
+    ),
+    unselectedIconColors: _StateColors(
       resting: TokenButtonTonal.unselectedIconColor,
       pressed: TokenButtonTonal.unselectedPressedIconColor,
       hovered: TokenButtonTonal.unselectedHoveredIconColor,
       focused: TokenButtonTonal.unselectedFocusedIconColor,
     ),
-    _ButtonVariant.outlined => const _StateColors(
+    disabledIconColor: TokenButtonTonal.disabledIconColor,
+    disabledIconOpacity: TokenButtonTonal.disabledIconOpacity,
+    stateLayerColors: _StateColors(
+      pressed: TokenButtonTonal.pressedStateLayerColor,
+      hovered: TokenButtonTonal.hoveredStateLayerColor,
+      focused: TokenButtonTonal.focusedStateLayerColor,
+    ),
+    selectedStateLayerColors: _StateColors(
+      pressed: TokenButtonTonal.selectedPressedStateLayerColor,
+      hovered: TokenButtonTonal.selectedHoveredStateLayerColor,
+      focused: TokenButtonTonal.selectedFocusedStateLayerColor,
+    ),
+    unselectedStateLayerColors: _StateColors(
+      pressed: TokenButtonTonal.unselectedPressedStateLayerColor,
+      hovered: TokenButtonTonal.unselectedHoveredStateLayerColor,
+      focused: TokenButtonTonal.unselectedFocusedStateLayerColor,
+    ),
+    pressedStateLayerOpacity: TokenButtonTonal.pressedStateLayerOpacity,
+    hoveredStateLayerOpacity: TokenButtonTonal.hoveredStateLayerOpacity,
+    focusedStateLayerOpacity: TokenButtonTonal.focusedStateLayerOpacity,
+    outline: null,
+  );
+
+  static const _ButtonVariantData _outlined = _ButtonVariantData(
+    parentFilePath: 'outlined_button.dart',
+    // Outlined buttons have no container color token, so the container is
+    // transparent.
+    containerColor: null,
+    disabledContainerColor: null,
+    disabledContainerOpacity: TokenButtonOutlined.disabledContainerOpacity,
+    selectedContainerColor: TokenButtonOutlined.selectedContainerColor,
+    selectedDisabledContainerColor: TokenButtonOutlined.selectedDisabledContainerColor,
+    unselectedContainerColor: null,
+    // Outlined buttons have no shadow color or elevation tokens, so they use the
+    // common button tokens.
+    containerShadowColor: TokenButton.containerShadowColor,
+    containerElevation: TokenButton.containerElevation,
+    disabledContainerElevation: TokenButton.disabledContainerElevation,
+    pressedContainerElevation: TokenButton.pressedContainerElevation,
+    focusedContainerElevation: TokenButton.focusedContainerElevation,
+    labelTextColors: _StateColors(
+      resting: TokenButtonOutlined.labelTextColor,
+      pressed: TokenButtonOutlined.pressedLabelTextColor,
+      hovered: TokenButtonOutlined.hoveredLabelTextColor,
+      focused: TokenButtonOutlined.focusedLabelTextColor,
+    ),
+    selectedLabelTextColors: _StateColors(
+      resting: TokenButtonOutlined.selectedLabelTextColor,
+      pressed: TokenButtonOutlined.selectedPressedLabelTextColor,
+      hovered: TokenButtonOutlined.selectedHoveredLabelTextColor,
+      focused: TokenButtonOutlined.selectedFocusedLabelTextColor,
+    ),
+    unselectedLabelTextColors: _StateColors(
+      resting: TokenButtonOutlined.unselectedLabelTextColor,
+      pressed: TokenButtonOutlined.unselectedPressedLabelTextColor,
+      hovered: TokenButtonOutlined.unselectedHoveredLabelTextColor,
+      focused: TokenButtonOutlined.unselectedFocusedLabelTextColor,
+    ),
+    disabledLabelTextColor: TokenButtonOutlined.disabledLabelTextColor,
+    disabledLabelTextOpacity: TokenButtonOutlined.disabledLabelTextOpacity,
+    iconColors: _StateColors(
+      resting: TokenButtonOutlined.iconColor,
+      pressed: TokenButtonOutlined.pressedIconColor,
+      hovered: TokenButtonOutlined.hoveredIconColor,
+      focused: TokenButtonOutlined.focusedIconColor,
+    ),
+    selectedIconColors: _StateColors(
+      resting: TokenButtonOutlined.selectedIconColor,
+      pressed: TokenButtonOutlined.selectedPressedIconColor,
+      hovered: TokenButtonOutlined.selectedHoveredIconColor,
+      focused: TokenButtonOutlined.selectedFocusedIconColor,
+    ),
+    unselectedIconColors: _StateColors(
       resting: TokenButtonOutlined.unselectedIconColor,
       pressed: TokenButtonOutlined.unselectedPressedIconColor,
       hovered: TokenButtonOutlined.unselectedHoveredIconColor,
       focused: TokenButtonOutlined.unselectedFocusedIconColor,
     ),
-    _ButtonVariant.text => null,
-  };
-
-  TokenColorRole get _disabledIconColor => switch (_variant) {
-    _ButtonVariant.elevated => TokenButtonElevated.disabledIconColor,
-    _ButtonVariant.filled => TokenButtonFilled.disabledIconColor,
-    _ButtonVariant.filledTonal => TokenButtonTonal.disabledIconColor,
-    _ButtonVariant.outlined => TokenButtonOutlined.disabledIconColor,
-    _ButtonVariant.text => TokenButtonText.disabledIconColor,
-  };
-
-  double get _disabledIconOpacity => switch (_variant) {
-    _ButtonVariant.elevated => TokenButtonElevated.disabledIconOpacity,
-    _ButtonVariant.filled => TokenButtonFilled.disabledIconOpacity,
-    _ButtonVariant.filledTonal => TokenButtonTonal.disabledIconOpacity,
-    _ButtonVariant.outlined => TokenButtonOutlined.disabledIconOpacity,
-    _ButtonVariant.text => TokenButtonText.disabledIconOpacity,
-  };
-
-  // The overlay colors of a button that isn't toggleable.
-  _StateColors get _stateLayerColors => switch (_variant) {
-    _ButtonVariant.elevated => const _StateColors(
-      pressed: TokenButtonElevated.pressedStateLayerColor,
-      hovered: TokenButtonElevated.hoveredStateLayerColor,
-      focused: TokenButtonElevated.focusedStateLayerColor,
-    ),
-    _ButtonVariant.filled => const _StateColors(
-      pressed: TokenButtonFilled.pressedStateLayerColor,
-      hovered: TokenButtonFilled.hoveredStateLayerColor,
-      focused: TokenButtonFilled.focusedStateLayerColor,
-    ),
-    _ButtonVariant.filledTonal => const _StateColors(
-      pressed: TokenButtonTonal.pressedStateLayerColor,
-      hovered: TokenButtonTonal.hoveredStateLayerColor,
-      focused: TokenButtonTonal.focusedStateLayerColor,
-    ),
-    _ButtonVariant.outlined => const _StateColors(
+    disabledIconColor: TokenButtonOutlined.disabledIconColor,
+    disabledIconOpacity: TokenButtonOutlined.disabledIconOpacity,
+    stateLayerColors: _StateColors(
       pressed: TokenButtonOutlined.pressedStateLayerColor,
       hovered: TokenButtonOutlined.hoveredStateLayerColor,
       focused: TokenButtonOutlined.focusedStateLayerColor,
     ),
-    _ButtonVariant.text => const _StateColors(
-      pressed: TokenButtonText.pressedStateLayerColor,
-      hovered: TokenButtonText.hoveredStateLayerColor,
-      focused: TokenButtonText.focusedStateLayerColor,
-    ),
-  };
-
-  // The overlay colors of a selected toggle button.
-  _StateColors? get _selectedStateLayerColors => switch (_variant) {
-    _ButtonVariant.elevated => const _StateColors(
-      pressed: TokenButtonElevated.selectedPressedStateLayerColor,
-      hovered: TokenButtonElevated.selectedHoveredStateLayerColor,
-      focused: TokenButtonElevated.selectedFocusedStateLayerColor,
-    ),
-    _ButtonVariant.filled => const _StateColors(
-      pressed: TokenButtonFilled.selectedPressedStateLayerColor,
-      hovered: TokenButtonFilled.selectedHoveredStateLayerColor,
-      focused: TokenButtonFilled.selectedFocusedStateLayerColor,
-    ),
-    _ButtonVariant.filledTonal => const _StateColors(
-      pressed: TokenButtonTonal.selectedPressedStateLayerColor,
-      hovered: TokenButtonTonal.selectedHoveredStateLayerColor,
-      focused: TokenButtonTonal.selectedFocusedStateLayerColor,
-    ),
-    _ButtonVariant.outlined => const _StateColors(
+    selectedStateLayerColors: _StateColors(
       pressed: TokenButtonOutlined.selectedPressedStateLayerColor,
       hovered: TokenButtonOutlined.selectedHoveredStateLayerColor,
       focused: TokenButtonOutlined.selectedFocusedStateLayerColor,
     ),
-    _ButtonVariant.text => null,
-  };
-
-  // The overlay colors of an unselected toggle button.
-  _StateColors? get _unselectedStateLayerColors => switch (_variant) {
-    _ButtonVariant.elevated => const _StateColors(
-      pressed: TokenButtonElevated.unselectedPressedStateLayerColor,
-      hovered: TokenButtonElevated.unselectedHoveredStateLayerColor,
-      focused: TokenButtonElevated.unselectedFocusedStateLayerColor,
-    ),
-    _ButtonVariant.filled => const _StateColors(
-      pressed: TokenButtonFilled.unselectedPressedStateLayerColor,
-      hovered: TokenButtonFilled.unselectedHoveredStateLayerColor,
-      focused: TokenButtonFilled.unselectedFocusedStateLayerColor,
-    ),
-    _ButtonVariant.filledTonal => const _StateColors(
-      pressed: TokenButtonTonal.unselectedPressedStateLayerColor,
-      hovered: TokenButtonTonal.unselectedHoveredStateLayerColor,
-      focused: TokenButtonTonal.unselectedFocusedStateLayerColor,
-    ),
-    _ButtonVariant.outlined => const _StateColors(
+    unselectedStateLayerColors: _StateColors(
       pressed: TokenButtonOutlined.unselectedPressedStateLayerColor,
       hovered: TokenButtonOutlined.unselectedHoveredStateLayerColor,
       focused: TokenButtonOutlined.unselectedFocusedStateLayerColor,
     ),
-    _ButtonVariant.text => null,
-  };
-
-  double get _pressedStateLayerOpacity => switch (_variant) {
-    _ButtonVariant.elevated => TokenButtonElevated.pressedStateLayerOpacity,
-    _ButtonVariant.filled => TokenButtonFilled.pressedStateLayerOpacity,
-    _ButtonVariant.filledTonal => TokenButtonTonal.pressedStateLayerOpacity,
-    _ButtonVariant.outlined => TokenButtonOutlined.pressedStateLayerOpacity,
-    _ButtonVariant.text => TokenButtonText.pressedStateLayerOpacity,
-  };
-
-  double get _hoveredStateLayerOpacity => switch (_variant) {
-    _ButtonVariant.elevated => TokenButtonElevated.hoveredStateLayerOpacity,
-    _ButtonVariant.filled => TokenButtonFilled.hoveredStateLayerOpacity,
-    _ButtonVariant.filledTonal => TokenButtonTonal.hoveredStateLayerOpacity,
-    _ButtonVariant.outlined => TokenButtonOutlined.hoveredStateLayerOpacity,
-    _ButtonVariant.text => TokenButtonText.hoveredStateLayerOpacity,
-  };
-
-  double get _focusedStateLayerOpacity => switch (_variant) {
-    _ButtonVariant.elevated => TokenButtonElevated.focusedStateLayerOpacity,
-    _ButtonVariant.filled => TokenButtonFilled.focusedStateLayerOpacity,
-    _ButtonVariant.filledTonal => TokenButtonTonal.focusedStateLayerOpacity,
-    _ButtonVariant.outlined => TokenButtonOutlined.focusedStateLayerOpacity,
-    _ButtonVariant.text => TokenButtonText.focusedStateLayerOpacity,
-  };
-
-  // Only outlined buttons have outline tokens.
-  static const _StateColors _outlineColors = _StateColors(
-    resting: TokenButtonOutlined.outlineColor,
-    pressed: TokenButtonOutlined.pressedOutlineColor,
-    hovered: TokenButtonOutlined.hoveredOutlineColor,
-    focused: TokenButtonOutlined.focusedOutlineColor,
+    pressedStateLayerOpacity: TokenButtonOutlined.pressedStateLayerOpacity,
+    hoveredStateLayerOpacity: TokenButtonOutlined.hoveredStateLayerOpacity,
+    focusedStateLayerOpacity: TokenButtonOutlined.focusedStateLayerOpacity,
+    outline: _ButtonOutlineTokens(
+      colors: _StateColors(
+        resting: TokenButtonOutlined.outlineColor,
+        pressed: TokenButtonOutlined.pressedOutlineColor,
+        hovered: TokenButtonOutlined.hoveredOutlineColor,
+        focused: TokenButtonOutlined.focusedOutlineColor,
+      ),
+      // There is no unselected outline color token for the resting state, so an
+      // unselected toggle button at rest uses the outline color.
+      unselectedColors: _StateColors(
+        resting: TokenButtonOutlined.outlineColor,
+        pressed: TokenButtonOutlined.unselectedPressedOutlineColor,
+        hovered: TokenButtonOutlined.unselectedHoveredOutlineColor,
+        focused: TokenButtonOutlined.unselectedFocusedOutlineColor,
+      ),
+      disabledColor: TokenButtonOutlined.disabledOutlineColor,
+      unselectedDisabledColor: TokenButtonOutlined.unselectedDisabledOutlineColor,
+    ),
   );
 
-  // There is no unselected outline color token for the resting state, so an
-  // unselected toggle button at rest uses the outline color.
-  static const _StateColors _unselectedOutlineColors = _StateColors(
-    resting: TokenButtonOutlined.outlineColor,
-    pressed: TokenButtonOutlined.unselectedPressedOutlineColor,
-    hovered: TokenButtonOutlined.unselectedHoveredOutlineColor,
-    focused: TokenButtonOutlined.unselectedFocusedOutlineColor,
+  static const _ButtonVariantData _text = _ButtonVariantData(
+    parentFilePath: 'text_button.dart',
+    // Text buttons have no container color token, so the container is
+    // transparent.
+    containerColor: null,
+    disabledContainerColor: TokenButtonText.disabledContainerColor,
+    disabledContainerOpacity: TokenButtonText.disabledContainerOpacity,
+    // Text buttons have no selected or unselected tokens, so they can't be
+    // toggle buttons.
+    selectedContainerColor: null,
+    selectedDisabledContainerColor: null,
+    unselectedContainerColor: null,
+    // Text buttons have no shadow color or elevation tokens, so they use the
+    // common button tokens.
+    containerShadowColor: TokenButton.containerShadowColor,
+    containerElevation: TokenButton.containerElevation,
+    disabledContainerElevation: TokenButton.disabledContainerElevation,
+    pressedContainerElevation: TokenButton.pressedContainerElevation,
+    focusedContainerElevation: TokenButton.focusedContainerElevation,
+    labelTextColors: _StateColors(
+      resting: TokenButtonText.labelTextColor,
+      pressed: TokenButtonText.pressedLabelTextColor,
+      hovered: TokenButtonText.hoveredLabelTextColor,
+      focused: TokenButtonText.focusedLabelTextColor,
+    ),
+    selectedLabelTextColors: null,
+    unselectedLabelTextColors: null,
+    disabledLabelTextColor: TokenButtonText.disabledLabelTextColor,
+    disabledLabelTextOpacity: TokenButtonText.disabledLabelTextOpacity,
+    iconColors: _StateColors(
+      resting: TokenButtonText.iconColor,
+      pressed: TokenButtonText.pressedIconColor,
+      hovered: TokenButtonText.hoveredIconColor,
+      focused: TokenButtonText.focusedIconColor,
+    ),
+    selectedIconColors: null,
+    unselectedIconColors: null,
+    disabledIconColor: TokenButtonText.disabledIconColor,
+    disabledIconOpacity: TokenButtonText.disabledIconOpacity,
+    stateLayerColors: _StateColors(
+      pressed: TokenButtonText.pressedStateLayerColor,
+      hovered: TokenButtonText.hoveredStateLayerColor,
+      focused: TokenButtonText.focusedStateLayerColor,
+    ),
+    selectedStateLayerColors: null,
+    unselectedStateLayerColors: null,
+    pressedStateLayerOpacity: TokenButtonText.pressedStateLayerOpacity,
+    hoveredStateLayerOpacity: TokenButtonText.hoveredStateLayerOpacity,
+    focusedStateLayerOpacity: TokenButtonText.focusedStateLayerOpacity,
+    outline: null,
   );
 
   // Returns the code that resolves [colors] for the pressed, hovered, focused,
@@ -840,19 +896,19 @@ return ${resting == null ? 'null' : format(resting, null)};''';
   String get _backgroundColor {
     final buffer = StringBuffer();
     buffer.writeln('if (states.contains(WidgetState.disabled)) {');
-    final TokenColorRole? selectedDisabledContainerColor = _selectedDisabledContainerColor;
+    final TokenColorRole? selectedDisabledContainerColor = _data.selectedDisabledContainerColor;
     if (selectedDisabledContainerColor != null) {
       buffer.writeln('if (toggleable && states.contains(WidgetState.selected)) {');
       buffer.writeln(
-        '  return ${colorWithOpacity(selectedDisabledContainerColor, _disabledContainerOpacity)};',
+        '  return ${colorWithOpacity(selectedDisabledContainerColor, _data.disabledContainerOpacity)};',
       );
       buffer.writeln('}');
     }
     buffer.writeln(
-      '  return ${colorWithOpacity(_disabledContainerColor, _disabledContainerOpacity)};',
+      '  return ${colorWithOpacity(_data.disabledContainerColor, _data.disabledContainerOpacity)};',
     );
     buffer.writeln('}');
-    final TokenColorRole? selectedContainerColor = _selectedContainerColor;
+    final TokenColorRole? selectedContainerColor = _data.selectedContainerColor;
     if (selectedContainerColor != null) {
       buffer.writeln('if (toggleable && states.contains(WidgetState.selected)) {');
       buffer.writeln('  return ${color(selectedContainerColor)};');
@@ -860,10 +916,10 @@ return ${resting == null ? 'null' : format(resting, null)};''';
     }
     if (_hasToggleTokens) {
       buffer.writeln('if (toggleable) {');
-      buffer.writeln('  return ${color(_unselectedContainerColor)};');
+      buffer.writeln('  return ${color(_data.unselectedContainerColor)};');
       buffer.writeln('}');
     }
-    buffer.write('return ${color(_containerColor)};');
+    buffer.write('return ${color(_data.containerColor)};');
     return buffer.toString();
   }
 
@@ -871,31 +927,32 @@ return ${resting == null ? 'null' : format(resting, null)};''';
     String resolve(_StateColors colors) => _resolveStateColors(
       colors,
       (TokenColorRole role, _InteractiveState? state) => colorWithOpacity(role, switch (state) {
-        _InteractiveState.pressed => _pressedStateLayerOpacity,
-        _InteractiveState.hovered => _hoveredStateLayerOpacity,
-        _InteractiveState.focused || null => _focusedStateLayerOpacity,
+        _InteractiveState.pressed => _data.pressedStateLayerOpacity,
+        _InteractiveState.hovered => _data.hoveredStateLayerOpacity,
+        _InteractiveState.focused || null => _data.focusedStateLayerOpacity,
       }),
     );
     final buffer = StringBuffer();
-    final _StateColors? selectedStateLayerColors = _selectedStateLayerColors;
+    final _StateColors? selectedStateLayerColors = _data.selectedStateLayerColors;
     if (selectedStateLayerColors != null) {
       buffer.writeln('if (toggleable && states.contains(WidgetState.selected)) {');
       buffer.writeln(resolve(selectedStateLayerColors));
       buffer.writeln('}');
     }
-    final _StateColors? unselectedStateLayerColors = _unselectedStateLayerColors;
+    final _StateColors? unselectedStateLayerColors = _data.unselectedStateLayerColors;
     if (unselectedStateLayerColors != null) {
       buffer.writeln('if (toggleable) {');
       buffer.writeln(resolve(unselectedStateLayerColors));
       buffer.writeln('}');
     }
-    buffer.write(resolve(_stateLayerColors));
+    buffer.write(resolve(_data.stateLayerColors));
     return buffer.toString();
   }
 
   // Selected toggle buttons have no outline tokens, so they have no outline.
   String get _side {
-    if (_variant != _ButtonVariant.outlined) {
+    final _ButtonOutlineTokens? outline = _data.outline;
+    if (outline == null) {
       return '';
     }
     String resolve(_StateColors colors) => _resolveStateColors(
@@ -912,14 +969,14 @@ return ${resting == null ? 'null' : format(resting, null)};''';
         final double width = $_outlineWidthSwitch;
         if (toggleable) {
           if (states.contains(WidgetState.disabled)) {
-            return BorderSide(color: ${color(TokenButtonOutlined.unselectedDisabledOutlineColor)}, width: width);
+            return BorderSide(color: ${color(outline.unselectedDisabledColor)}, width: width);
           }
-          ${resolve(_unselectedOutlineColors)}
+          ${resolve(outline.unselectedColors)}
         }
         if (states.contains(WidgetState.disabled)) {
-          return BorderSide(color: ${color(TokenButtonOutlined.disabledOutlineColor)}, width: width);
+          return BorderSide(color: ${color(outline.disabledColor)}, width: width);
         }
-        ${resolve(_outlineColors)}
+        ${resolve(outline.colors)}
       });
 ''';
   }
@@ -1097,7 +1154,7 @@ class $className extends ButtonStyle {
   @override
   WidgetStateProperty<Color?>? get foregroundColor =>
       WidgetStateProperty.resolveWith((Set<WidgetState> states) {
-        ${_resolveContentColor(disabled: colorWithOpacity(_disabledLabelTextColor, _disabledLabelTextOpacity), colors: _labelTextColors, selectedColors: _selectedLabelTextColors, unselectedColors: _unselectedLabelTextColors)}
+        ${_resolveContentColor(disabled: colorWithOpacity(_data.disabledLabelTextColor, _data.disabledLabelTextOpacity), colors: _data.labelTextColors, selectedColors: _data.selectedLabelTextColors, unselectedColors: _data.unselectedLabelTextColors)}
       });
 
   @override
@@ -1108,7 +1165,7 @@ class $className extends ButtonStyle {
 
   @override
   WidgetStateProperty<Color>? get shadowColor =>
-      WidgetStatePropertyAll<Color>(${color(_containerShadowColor)});
+      WidgetStatePropertyAll<Color>(${color(_data.containerShadowColor)});
 
   @override
   WidgetStateProperty<Color>? get surfaceTintColor =>
@@ -1118,15 +1175,15 @@ class $className extends ButtonStyle {
   WidgetStateProperty<double>? get elevation =>
       WidgetStateProperty.resolveWith((Set<WidgetState> states) {
         if (states.contains(WidgetState.disabled)) {
-          return $_disabledContainerElevation;
+          return ${_data.disabledContainerElevation};
         }
         if (states.contains(WidgetState.pressed)) {
-          return $_pressedContainerElevation;
+          return ${_data.pressedContainerElevation};
         }
         if (states.contains(WidgetState.focused)) {
-          return $_focusedContainerElevation;
+          return ${_data.focusedContainerElevation};
         }
-        return $_containerElevation;
+        return ${_data.containerElevation};
       });
 
   @override
@@ -1149,7 +1206,7 @@ $_side
   @override
   WidgetStateProperty<Color>? get iconColor =>
       WidgetStateProperty.resolveWith((Set<WidgetState> states) {
-        ${_resolveContentColor(disabled: colorWithOpacity(_disabledIconColor, _disabledIconOpacity), colors: _iconColors, selectedColors: _selectedIconColors, unselectedColors: _unselectedIconColors)}
+        ${_resolveContentColor(disabled: colorWithOpacity(_data.disabledIconColor, _data.disabledIconOpacity), colors: _data.iconColors, selectedColors: _data.selectedIconColors, unselectedColors: _data.unselectedIconColors)}
       });
 
   @override
