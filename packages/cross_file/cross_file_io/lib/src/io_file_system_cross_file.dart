@@ -94,8 +94,8 @@ base class IOFileSystemXFile extends PlatformFileSystemXFile with IOFileSystemXF
 
   @override
   Future<PlatformXFile> writeAsString(PlatformWriteAsStringParams params) async {
-    final File newFile = await file.writeAsString(params.contents, encoding: params.encoding);
-    return IOFileSystemXFile(IOFileSystemXFileCreationParams.fromFile(newFile));
+    await file.writeAsString(params.contents, encoding: params.encoding);
+    return this;
   }
 
   @override
