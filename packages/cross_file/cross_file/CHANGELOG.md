@@ -1,6 +1,6 @@
 ## 0.4.1
 
-* Adds support to provide a file path for all implementations. See `XEntity.toFilePath`.
+* Adds `XEntity.toFilePath` to provide a file path when supported by a platform implementation.
 * Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
 
 ## 0.4.0
