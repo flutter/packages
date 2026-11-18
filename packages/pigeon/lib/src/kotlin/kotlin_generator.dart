@@ -657,7 +657,9 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
     Indent indent, {
     required String dartPackageName,
   }) {
-    if (generatorOptions.useJni && !generatorOptions.useJniHybrid && !root.containsProxyApi) {
+    if (generatorOptions.useJni &&
+        !generatorOptions.useJniHybrid &&
+        !root.containsProxyApi) {
       return;
     }
     final List<EnumeratedType> enumeratedTypes = getEnumeratedTypes(
