@@ -98,7 +98,7 @@ base class SecurityScopedDarwinScopedStorageXFile extends DarwinScopedStorageXFi
   SecurityScopedDarwinScopedStorageXFileExtension? get extension => this;
 
   @override
-  String? get toFilePath => Uri.parse(params.uri).toFilePath();
+  String? toFilePath() => Uri.file(params.uri).toFilePath();
 
   @override
   Future<DateTime?> lastModified() async {

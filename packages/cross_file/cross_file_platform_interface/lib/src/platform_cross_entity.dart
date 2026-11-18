@@ -31,11 +31,11 @@ abstract base class PlatformXEntity {
   /// Extension for providing platform-specific features.
   PlatformXEntityExtension? get extension => null;
 
-  /// Attempt to return a valid file path.
+  /// Attempt to return a valid filesystem path.
   ///
   /// Returns null if the entity doesn't support being accessed as a file path
   /// or the platform doesn't support creating a file path for it.
-  String? get toFilePath => null;
+  String? toFilePath() => null;
 
   /// Whether the resource represented by this reference exists.
   Future<bool> exists();

@@ -71,4 +71,12 @@ void main() {
 
     expect(await file.name(), 'test_file.txt');
   });
+
+  test('toFilePath', () async {
+    final file = PlatformScopedStorageXFile(
+      PlatformScopedStorageXFileCreationParams(uri: testFile.uri.toString()),
+    );
+
+    expect(file.toFilePath(), Uri.file(testFile.uri.toString()).toFilePath());
+  });
 }

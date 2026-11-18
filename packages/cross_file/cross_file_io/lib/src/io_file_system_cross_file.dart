@@ -85,6 +85,9 @@ base class IOFileSystemXFile extends PlatformFileSystemXFile with IOFileSystemXF
     final File ioFile = await file.writeAsBytes(params.bytes);
     return IOFileSystemXFile(IOFileSystemXFileCreationParams.fromFile(ioFile));
   }
+
+  @override
+  String? toFilePath() => Uri.file(params.uri).toFilePath();
 }
 
 /// Provides platform-specific features for [IOFileSystemXFile].

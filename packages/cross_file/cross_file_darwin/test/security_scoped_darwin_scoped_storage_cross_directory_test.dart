@@ -36,4 +36,12 @@ void main() {
       (await testDirectory.list().toList()).map((FileSystemEntity entity) => entity.uri.toString()),
     );
   });
+
+  test('toFilePath', () async {
+    final directory = PlatformScopedStorageXFile(
+      PlatformScopedStorageXFileCreationParams(uri: testDirectory.uri.toString()),
+    );
+
+    expect(directory.toFilePath(), Uri.directory(testDirectory.uri.toString()).toFilePath());
+  });
 }

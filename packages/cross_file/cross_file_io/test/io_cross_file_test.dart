@@ -70,5 +70,11 @@ void main() {
 
       expect(await file.readAsBytes(), bytes);
     });
+
+    test('toFilePath', () async {
+      final file = PlatformFileSystemXFile(PlatformFileSystemXFileCreationParams(testFile.path));
+
+      expect(file.toFilePath(), Uri.file(file.params.uri).toFilePath());
+    });
   });
 }

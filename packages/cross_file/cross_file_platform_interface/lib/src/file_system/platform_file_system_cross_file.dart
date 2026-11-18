@@ -101,7 +101,7 @@ abstract base class PlatformFileSystemXFile extends PlatformXFile {
   PlatformFileSystemXFileExtension? get extension => null;
 
   @override
-  String? get toFilePath => Uri.parse(params.uri).toFilePath();
+  String? toFilePath() => Uri.parse(params.uri).toFilePath();
 
   /// Writes a list of bytes to a file.
   ///

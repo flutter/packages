@@ -262,7 +262,7 @@ final class TestXEntity extends PlatformXEntity {
   String? Function()? onToFilePath;
 
   @override
-  String? get toFilePath => onToFilePath?.call();
+  String? toFilePath() => onToFilePath?.call();
 
   @override
   Future<bool> exists() async {

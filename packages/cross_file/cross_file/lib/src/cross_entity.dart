@@ -30,11 +30,11 @@ base class XEntity {
   /// Whether the resource represented by this reference exists.
   Future<bool> exists() => platform.exists();
 
-  /// Attempt to return a valid file path.
+  /// Attempt to return a valid filesystem path.
   ///
   /// Returns null if the entity doesn't support being accessed as a file path
   /// or the platform doesn't support creating a file path for it.
-  String? get toFilePath => platform.toFilePath;
+  String? toFilePath() => platform.toFilePath();
 
   @override
   bool operator ==(Object other) => other is XEntity && other.platform == platform;

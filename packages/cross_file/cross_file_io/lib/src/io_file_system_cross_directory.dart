@@ -64,6 +64,9 @@ base class IOFileSystemXDirectory extends PlatformFileSystemXDirectory
       }
     }
   }
+
+  @override
+  String? toFilePath() => Uri.directory(params.uri).toFilePath();
 }
 
 /// Provides platform-specific features for [IOFileSystemXDirectory].

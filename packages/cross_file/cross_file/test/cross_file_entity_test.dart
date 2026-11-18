@@ -19,7 +19,7 @@ void main() {
         ),
       );
 
-      expect(entity.toFilePath, path);
+      expect(entity.toFilePath(), path);
     });
   });
 }
