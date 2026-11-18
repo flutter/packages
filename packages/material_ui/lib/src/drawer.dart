@@ -727,15 +727,6 @@ class DrawerControllerState extends State<DrawerController> with SingleTickerPro
         return const SizedBox.shrink();
       }
     } else {
-      final bool platformHasBackButton = switch (defaultTargetPlatform) {
-        TargetPlatform.android => true,
-        TargetPlatform.iOS ||
-        TargetPlatform.macOS ||
-        TargetPlatform.fuchsia ||
-        TargetPlatform.linux ||
-        TargetPlatform.windows => false,
-      };
-
       final Color scrimColor =
           widget.scrimColor ??
           DrawerTheme.of(context).scrimColor ??
@@ -757,8 +748,7 @@ class DrawerControllerState extends State<DrawerController> with SingleTickerPro
             children: <Widget>[
               BlockSemantics(
                 child: ExcludeSemantics(
-                  // On Android, the back button is used to dismiss a modal.
-                  excluding: platformHasBackButton,
+                  excluding: !widget.drawerBarrierDismissible,
                   child: GestureDetector(
                     onTap: widget.drawerBarrierDismissible ? close : null,
                     child: Semantics(
