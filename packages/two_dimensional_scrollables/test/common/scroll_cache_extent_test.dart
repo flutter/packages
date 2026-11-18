@@ -2,6 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// This test file exercises the deprecated `cacheExtent` parameters.
+// ignore_for_file: deprecated_member_use_from_same_package
+
 import 'package:flutter/rendering.dart' show ViewportOffset;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';

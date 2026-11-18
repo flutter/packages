@@ -16,13 +16,8 @@ analyzer:
     - windows/**
     - macos/**
     - linux/**
-  # These are repeated from ../../analysis_options.yaml because pana cannot see
-  # the shared options when the package is published.
-  errors:
-    deprecated_member_use: ignore
-    deprecated_member_use_from_same_package: ignore
 
-# These are repeated from ../../analysis_options.yaml because pana cannot see
-# the shared options when the package is published.
+# Repeated from ../../analysis_options.yaml because pana cannot see the shared
+# options when the package is published.
 formatter:
   page_width: 100

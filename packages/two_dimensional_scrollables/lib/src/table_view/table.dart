@@ -368,9 +368,11 @@ class _TableViewState extends State<TableView> {
 
   @override
   Widget build(BuildContext context) {
+    // ignore: deprecated_member_use_from_same_package
+    final double? cacheExtent = widget.cacheExtent;
     final ScrollCacheExtent? effectiveScrollCacheExtent =
         widget.scrollCacheExtent ??
-        (widget.cacheExtent != null ? ScrollCacheExtent.pixels(widget.cacheExtent!) : null);
+        (cacheExtent != null ? ScrollCacheExtent.pixels(cacheExtent) : null);
     return _TableView(
       primary: widget.primary,
       mainAxis: widget.mainAxis,
@@ -462,7 +464,7 @@ class TableViewport extends TwoDimensionalViewport {
   )
   // Intentionally omits @override so this continues to compile after
   // TwoDimensionalViewport.cacheExtent is removed from Flutter.
-  // ignore: annotate_overrides
+  // ignore: annotate_overrides, deprecated_member_use_from_same_package
   double? get cacheExtent => _cacheExtent;
   @Deprecated(
     'Use scrollCacheExtent instead. '
@@ -473,8 +475,12 @@ class TableViewport extends TwoDimensionalViewport {
   /// The alignment of the table within the viewport when there is extra space.
   final AlignmentGeometry alignment;
 
-  ScrollCacheExtent? get _effectiveScrollCacheExtent =>
-      scrollCacheExtent ?? (_cacheExtent != null ? ScrollCacheExtent.pixels(_cacheExtent) : null);
+  ScrollCacheExtent? get _effectiveScrollCacheExtent {
+    // ignore: deprecated_member_use_from_same_package
+    final double? cacheExtent = _cacheExtent;
+    return scrollCacheExtent ??
+        (cacheExtent != null ? ScrollCacheExtent.pixels(cacheExtent) : null);
+  }
 
   @override
   RenderTwoDimensionalViewport createRenderObject(BuildContext context) {

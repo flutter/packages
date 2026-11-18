@@ -429,7 +429,7 @@ class TreeView<T> extends StatefulWidget {
   /// [ScrollController], [ScrollPhysics] and more for the horizontal axis.
   final ScrollableDetails horizontalDetails;
 
-  /// The [TreeViewport] has an area before and after the visible area to cache
+  /// The additional cache distance before and after the visible area to cache
   /// rows that are about to become visible when the user scrolls.
   ///
   /// [TreeRow]s that fall in this cache area are laid out even though they are
@@ -446,7 +446,7 @@ class TreeView<T> extends StatefulWidget {
   )
   final double? cacheExtent;
 
-  /// The [TreeViewport] has an area before and after the visible area to cache
+  /// The additional cache distance before and after the visible area to cache
   /// rows that are about to become visible when the user scrolls.
   ///
   /// [TreeRow]s that fall in this cache area are laid out even though they are
@@ -779,9 +779,11 @@ class _TreeViewState<T> extends State<TreeView<T>>
 
   @override
   Widget build(BuildContext context) {
+    // ignore: deprecated_member_use_from_same_package
+    final double? cacheExtent = widget.cacheExtent;
     final ScrollCacheExtent? effectiveScrollCacheExtent =
         widget.scrollCacheExtent ??
-        (widget.cacheExtent != null ? ScrollCacheExtent.pixels(widget.cacheExtent!) : null);
+        (cacheExtent != null ? ScrollCacheExtent.pixels(cacheExtent) : null);
     return _TreeView(
       primary: widget.primary,
       mainAxis: widget.mainAxis,
@@ -1086,7 +1088,7 @@ class TreeViewport extends TwoDimensionalViewport {
   )
   // Intentionally omits @override so this continues to compile after
   // TwoDimensionalViewport.cacheExtent is removed from Flutter.
-  // ignore: annotate_overrides
+  // ignore: annotate_overrides, deprecated_member_use_from_same_package
   double? get cacheExtent => _cacheExtent;
   @Deprecated(
     'Use scrollCacheExtent instead. '
@@ -1114,8 +1116,12 @@ class TreeViewport extends TwoDimensionalViewport {
   /// The alignment of the tree within the viewport when there is extra space.
   final AlignmentGeometry alignment;
 
-  ScrollCacheExtent? get _effectiveScrollCacheExtent =>
-      scrollCacheExtent ?? (_cacheExtent != null ? ScrollCacheExtent.pixels(_cacheExtent) : null);
+  ScrollCacheExtent? get _effectiveScrollCacheExtent {
+    // ignore: deprecated_member_use_from_same_package
+    final double? cacheExtent = _cacheExtent;
+    return scrollCacheExtent ??
+        (cacheExtent != null ? ScrollCacheExtent.pixels(cacheExtent) : null);
+  }
 
   @override
   RenderTreeViewport createRenderObject(BuildContext context) {

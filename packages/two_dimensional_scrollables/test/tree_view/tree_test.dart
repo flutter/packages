@@ -821,7 +821,6 @@ void main() {
           home: TreeView<String>(
             tree: tree,
             controller: controller,
-            scrollCacheExtent: const ScrollCacheExtent.pixels(0),
             toggleAnimationStyle: AnimationStyle.noAnimation,
             verticalDetails: ScrollableDetails.vertical(controller: verticalController),
             treeNodeBuilder:
@@ -841,12 +840,14 @@ void main() {
       await tester.tap(find.text('delta'));
       await tester.pumpAndSettle();
 
-      // Scroll down to hide some of them
+      // Scroll down to hide some of them. `alpha` is scrolled above the
+      // viewport, but remains laid out in the leading cache extent.
       expect(verticalController.position.pixels, 0.0);
       const double defaultRowExtent = 40;
       verticalController.jumpTo(3 * defaultRowExtent + 10);
       await tester.pump();
-      expect(find.text('alpha'), findsNothing);
+      expect(find.text('alpha'), findsOneWidget);
+      expect(tester.getBottomLeft(find.text('alpha')).dy, lessThanOrEqualTo(0.0));
 
       // Collapse the bottommost node
       expect(find.text('j'), findsOneWidget);
