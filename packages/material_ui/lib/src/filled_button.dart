@@ -437,9 +437,9 @@ class FilledButton extends ButtonStyleButton {
   ///
   /// ## Material 3 defaults
   ///
-  /// If [ThemeData.useMaterial3] is true and [FilledButtonThemeData.variant]
-  /// isn't [StyleVariant.material3Expressive], the following defaults will be
-  /// used:
+  /// With the Material 3 style, that is, when [ThemeData.useMaterial3] is true
+  /// and [FilledButtonThemeData.variant] isn't
+  /// [StyleVariant.material3Expressive], the following defaults will be used:
   ///
   /// * `textStyle` - Theme.textTheme.labelLarge
   /// * `backgroundColor`
@@ -490,9 +490,10 @@ class FilledButton extends ButtonStyleButton {
   /// ## Material 3 Expressive defaults
   ///
   // TODO(QuncCccccc): Clean up [ThemeData.useMaterial3] once useMaterial3 is removed.
-  /// If [ThemeData.useMaterial3] is true and [FilledButtonThemeData.variant]
-  /// is [StyleVariant.material3Expressive], the following defaults will be
-  /// used. Values listed per size are for [ButtonSizeVariant.xSmall],
+  /// With the Material 3 Expressive style, that is, when
+  /// [ThemeData.useMaterial3] is true and [FilledButtonThemeData.variant] is
+  /// [StyleVariant.material3Expressive], the following defaults will be used.
+  /// Values listed per size are for [ButtonSizeVariant.xSmall],
   /// [ButtonSizeVariant.small], [ButtonSizeVariant.medium],
   /// [ButtonSizeVariant.large], and [ButtonSizeVariant.xLarge] respectively.
   /// The selected and unselected values only apply when [isSelected] is
