@@ -1615,6 +1615,9 @@ void main() {
             },
             itemCount: 1000,
             onReorderItem: (_, _) {},
+            // Pin the cache extent so the expectation below does not depend on
+            // the framework's default cache extent.
+            scrollCacheExtent: const ScrollCacheExtent.pixels(250.0),
           ),
         ),
       );

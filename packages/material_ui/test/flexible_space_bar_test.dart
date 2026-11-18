@@ -233,6 +233,9 @@ void main() {
       MaterialApp(
         home: Scaffold(
           body: CustomScrollView(
+            // Pin the cache extent so the expected semantics do not depend on the
+            // framework's default cache extent.
+            scrollCacheExtent: const ScrollCacheExtent.pixels(250.0),
             slivers: <Widget>[
               const SliverAppBar(
                 pinned: true,
@@ -499,6 +502,9 @@ void main() {
         theme: ThemeData(useMaterial3: false),
         home: Scaffold(
           body: CustomScrollView(
+            // Pin the cache extent so the expected semantics do not depend on the
+            // framework's default cache extent.
+            scrollCacheExtent: const ScrollCacheExtent.pixels(250.0),
             slivers: <Widget>[
               const SliverAppBar(
                 pinned: true,

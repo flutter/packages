@@ -84,6 +84,9 @@ void main() {
           child: MediaQuery(
             data: const MediaQueryData(),
             child: CustomScrollView(
+              // Pin the cache extent so the expected semantics do not depend on the
+              // framework's default cache extent.
+              scrollCacheExtent: const ScrollCacheExtent.pixels(250.0),
               slivers: <Widget>[
                 const SliverAppBar(
                   title: Text('Hello'),
