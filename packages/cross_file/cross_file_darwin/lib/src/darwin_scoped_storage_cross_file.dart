@@ -145,10 +145,8 @@ base class SecurityScopedDarwinScopedStorageXFile extends DarwinScopedStorageXFi
 
   @override
   Future<PlatformXFile> writeAsString(PlatformWriteAsStringParams params) async {
-    final File file = await _file.writeAsString(params.contents, encoding: params.encoding);
-    return DarwinScopedStorageXFile(
-      DarwinScopedStorageXFileCreationParams.securityScoped(uri: file.uri.toString()),
-    );
+    await _file.writeAsString(params.contents, encoding: params.encoding);
+    return this;
   }
 
   @override
