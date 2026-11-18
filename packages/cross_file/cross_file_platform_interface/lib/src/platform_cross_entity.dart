@@ -33,8 +33,8 @@ abstract base class PlatformXEntity {
 
   /// Attempt to return a valid filesystem path.
   ///
-  /// Returns null if the entity doesn't support being accessed as a file path
-  /// or the platform doesn't support creating a file path for it.
+  /// Returns null if the entity doesn't support being accessed as a filesystem
+  /// path or the platform doesn't support creating a filesystem path for it.
   String? toFilePath() => null;
 
   /// Whether the resource represented by this reference exists.
