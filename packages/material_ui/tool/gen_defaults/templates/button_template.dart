@@ -37,12 +37,6 @@ class _StateColors {
   final TokenColorRole pressed;
   final TokenColorRole hovered;
   final TokenColorRole focused;
-
-  TokenColorRole forState(_InteractiveState state) => switch (state) {
-    _InteractiveState.pressed => pressed,
-    _InteractiveState.hovered => hovered,
-    _InteractiveState.focused => focused,
-  };
 }
 
 class ButtonTemplateM3 extends TokenTemplateM3 {
@@ -793,23 +787,27 @@ class ButtonTemplateM3E extends TokenTemplateM3E {
   );
 
   // Returns the code that resolves [colors] for the pressed, hovered, focused,
-  // and resting states, in that order. Every state has its own branch, even
-  // when its token has the same value as the resting color, so that the
-  // generated code follows the tokens if their values change. [format] converts
-  // a color to code, and gets the state, or null for the resting state.
+  // and resting states, in that order. Every state gets its own branch from its
+  // own token, even when the token has the same value as the resting color, so
+  // that the generated code mirrors the tokens and a token change only updates
+  // the value in its branch. [format] converts a color to code, and gets the
+  // state, or null for the resting state.
   String _resolveStateColors(
     _StateColors colors,
     String Function(TokenColorRole role, _InteractiveState? state) format,
   ) {
-    final buffer = StringBuffer();
-    for (final _InteractiveState state in _InteractiveState.values) {
-      buffer.writeln('if (states.contains(WidgetState.${state.name})) {');
-      buffer.writeln('  return ${format(colors.forState(state), state)};');
-      buffer.writeln('}');
-    }
     final TokenColorRole? resting = colors.resting;
-    buffer.write('return ${resting == null ? 'null' : format(resting, null)};');
-    return buffer.toString();
+    return '''
+if (states.contains(WidgetState.pressed)) {
+  return ${format(colors.pressed, _InteractiveState.pressed)};
+}
+if (states.contains(WidgetState.hovered)) {
+  return ${format(colors.hovered, _InteractiveState.hovered)};
+}
+if (states.contains(WidgetState.focused)) {
+  return ${format(colors.focused, _InteractiveState.focused)};
+}
+return ${resting == null ? 'null' : format(resting, null)};''';
   }
 
   // Returns the code that resolves the color of the label or the icon.
