@@ -708,7 +708,10 @@ class SegmentedButtonState<T> extends State<SegmentedButton<T>> {
       shadowColor: resolve<Color?>((ButtonStyle? style) => style?.shadowColor),
       surfaceTintColor: resolve<Color?>((ButtonStyle? style) => style?.surfaceTintColor),
       child: TextButtonTheme(
-        data: TextButtonThemeData(style: segmentThemeStyle),
+        // SegmentedButton doesn't have a Material 3 Expressive style, so its
+        // segments keep the Material 3 TextButton defaults even when an
+        // ancestor opts text buttons into Material 3 Expressive.
+        data: TextButtonThemeData(style: segmentThemeStyle, variant: StyleVariant.material3),
         child: Padding(
           padding: widget.expandedInsets ?? EdgeInsets.zero,
           child: _SegmentedButtonRenderWidget<T>(

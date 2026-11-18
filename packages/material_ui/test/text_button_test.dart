@@ -2679,4 +2679,427 @@ void main() {
     );
     expect(tester.getSize(find.byType(TextButton)), Size.zero);
   });
+
+  testWidgets('M3E TextButton keeps size-specific padding when text scales', (
+    WidgetTester tester,
+  ) async {
+    const style = ButtonStyle(sizeVariant: ButtonSizeVariant.medium);
+    final buttons = <Widget>[
+      TextButton(style: style, onPressed: () {}, child: const Text('Button')),
+      TextButton.icon(
+        style: style,
+        onPressed: () {},
+        icon: const Icon(Icons.add),
+        label: const Text('Button'),
+      ),
+    ];
+
+    for (final textScaleFactor in const <double>[1.0, 2.0, 3.0]) {
+      for (final button in buttons) {
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: ThemeData(
+              textButtonTheme: const TextButtonThemeData(variant: StyleVariant.material3Expressive),
+            ),
+            home: MediaQuery.withClampedTextScaling(
+              minScaleFactor: textScaleFactor,
+              maxScaleFactor: textScaleFactor,
+              child: Center(child: button),
+            ),
+          ),
+        );
+
+        final Padding paddingWidget = tester.widget<Padding>(
+          find.descendant(of: find.byType(TextButton), matching: find.byType(Padding)),
+        );
+        expect(
+          paddingWidget.padding,
+          const EdgeInsets.symmetric(horizontal: 24.0),
+          reason: '$button at $textScaleFactor',
+        );
+      }
+    }
+  });
+
+  testWidgets('M3E TextButton.icon uses size-specific icon-label spacing', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(
+          textButtonTheme: const TextButtonThemeData(variant: StyleVariant.material3Expressive),
+        ),
+        home: Center(
+          child: TextButton.icon(
+            style: const ButtonStyle(sizeVariant: ButtonSizeVariant.large),
+            onPressed: () {},
+            icon: const Icon(Icons.add),
+            label: const Text('Button'),
+          ),
+        ),
+      ),
+    );
+
+    final Row row = tester.widget<Row>(
+      find.descendant(of: find.byType(TextButton), matching: find.byType(Row)),
+    );
+    expect(row.spacing, 12.0);
+  });
+
+  testWidgets('TextButton.styleFrom supports M3E size and shape variants', (
+    WidgetTester tester,
+  ) async {
+    final ButtonStyle style = TextButton.styleFrom(
+      sizeVariant: ButtonSizeVariant.large,
+      shapeVariant: ButtonShapeVariant.square,
+    );
+    expect(style.sizeVariant, ButtonSizeVariant.large);
+    expect(style.shapeVariant, ButtonShapeVariant.square);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(
+          textButtonTheme: const TextButtonThemeData(variant: StyleVariant.material3Expressive),
+        ),
+        home: Center(
+          child: TextButton(style: style, onPressed: () {}, child: const Text('Button')),
+        ),
+      ),
+    );
+
+    expect(tester.getSize(find.byType(TextButton)).height, 96.0);
+    final Material material = tester.widget<Material>(
+      find.descendant(of: find.byType(TextButton), matching: find.byType(Material)),
+    );
+    expect(
+      material.shape,
+      const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(28.0))),
+    );
+  });
+
+  group('M3E TextButton', () {
+    ThemeData m3eTheme({ButtonStyle? style}) {
+      return ThemeData(
+        textButtonTheme: TextButtonThemeData(
+          variant: StyleVariant.material3Expressive,
+          style: style,
+        ),
+      );
+    }
+
+    final ThemeData theme = m3eTheme();
+
+    Finder buttonMaterial() {
+      return find.descendant(of: find.byType(TextButton), matching: find.byType(Material));
+    }
+
+    Future<ButtonStyle> defaultStyle(WidgetTester tester, TextButton button) async {
+      late BuildContext context;
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: theme,
+          home: Builder(
+            builder: (BuildContext innerContext) {
+              context = innerContext;
+              return const SizedBox();
+            },
+          ),
+        ),
+      );
+      return button.defaultStyleOf(context);
+    }
+
+    RoundedRectangleBorder rounded(double radius) {
+      return RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(radius)));
+    }
+
+    const disabled = <WidgetState>{WidgetState.disabled};
+    const hovered = <WidgetState>{WidgetState.hovered};
+    const focused = <WidgetState>{WidgetState.focused};
+    const pressed = <WidgetState>{WidgetState.pressed};
+    const selected = <WidgetState>{WidgetState.selected};
+
+    testWidgets('uses size-specific height, icon size, and label font size', (
+      WidgetTester tester,
+    ) async {
+      // Font sizes of labelLarge, titleMedium, headlineSmall, and headlineLarge.
+      const expectations = <ButtonSizeVariant, (double, double, double)>{
+        ButtonSizeVariant.xSmall: (32.0, 20.0, 14.0),
+        ButtonSizeVariant.small: (40.0, 20.0, 14.0),
+        ButtonSizeVariant.medium: (56.0, 24.0, 16.0),
+        ButtonSizeVariant.large: (96.0, 32.0, 24.0),
+        ButtonSizeVariant.xLarge: (136.0, 40.0, 32.0),
+      };
+
+      for (final MapEntry<ButtonSizeVariant, (double, double, double)> entry
+          in expectations.entries) {
+        final (double height, double iconSize, double fontSize) = entry.value;
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: theme,
+            home: Center(
+              child: TextButton.icon(
+                style: ButtonStyle(sizeVariant: entry.key),
+                onPressed: () {},
+                icon: const Icon(Icons.add),
+                label: const Text('Button'),
+              ),
+            ),
+          ),
+        );
+        // The icon size and text style animate between size variants.
+        await tester.pumpAndSettle();
+
+        final reason = '${entry.key}';
+        expect(tester.getSize(buttonMaterial()).height, height, reason: reason);
+        expect(iconStyle(tester, Icons.add).fontSize, iconSize, reason: reason);
+        final RichText label = tester.widget<RichText>(
+          find.descendant(of: find.text('Button'), matching: find.byType(RichText)),
+        );
+        expect(label.text.style?.fontSize, fontSize, reason: reason);
+      }
+    });
+
+    testWidgets('xSmall keeps a 48dp tap target when the theme shrink-wraps', (
+      WidgetTester tester,
+    ) async {
+      var pressCount = 0;
+      Widget buildApp({MaterialTapTargetSize? tapTargetSize}) {
+        return MaterialApp(
+          theme: theme.copyWith(materialTapTargetSize: MaterialTapTargetSize.shrinkWrap),
+          home: Center(
+            child: TextButton(
+              style: ButtonStyle(
+                sizeVariant: ButtonSizeVariant.xSmall,
+                tapTargetSize: tapTargetSize,
+              ),
+              onPressed: () {
+                pressCount += 1;
+              },
+              child: const Text('Button'),
+            ),
+          ),
+        );
+      }
+
+      await tester.pumpWidget(buildApp());
+      expect(tester.getSize(buttonMaterial()).height, 32.0);
+      expect(tester.getSize(find.byType(TextButton)).height, 48.0);
+
+      // Taps just above and below the 32dp button still reach it.
+      final Offset center = tester.getCenter(find.byType(TextButton));
+      for (final offset in const <Offset>[Offset(0.0, 23.0), Offset(0.0, -23.0)]) {
+        await tester.tapAt(center + offset);
+        await tester.pump();
+      }
+      expect(pressCount, 2);
+
+      // An explicit tap target size in the style overrides the default.
+      await tester.pumpWidget(buildApp(tapTargetSize: MaterialTapTargetSize.shrinkWrap));
+      expect(tester.getSize(find.byType(TextButton)).height, 32.0);
+    });
+
+    testWidgets('ignores the theme visual density', (WidgetTester tester) async {
+      Widget buildApp({VisualDensity? visualDensity}) {
+        return MaterialApp(
+          // Compact is the default density on desktop platforms.
+          theme: theme.copyWith(visualDensity: VisualDensity.compact),
+          home: Center(
+            child: TextButton(
+              style: ButtonStyle(visualDensity: visualDensity),
+              onPressed: () {},
+              child: const Text('Button'),
+            ),
+          ),
+        );
+      }
+
+      await tester.pumpWidget(buildApp());
+      expect(tester.getSize(buttonMaterial()).height, 40.0);
+      expect(tester.getSize(find.byType(TextButton)).height, 48.0);
+
+      // An explicit visual density in the style overrides the default.
+      await tester.pumpWidget(buildApp(visualDensity: VisualDensity.compact));
+      expect(tester.getSize(buttonMaterial()).height, 32.0);
+      expect(tester.getSize(find.byType(TextButton)).height, 40.0);
+    });
+
+    testWidgets('resolves shapes for shape variants and states', (WidgetTester tester) async {
+      TextButton button({ButtonShapeVariant? shapeVariant}) {
+        return TextButton(
+          style: ButtonStyle(sizeVariant: ButtonSizeVariant.medium, shapeVariant: shapeVariant),
+          onPressed: () {},
+          child: const Text('Button'),
+        );
+      }
+
+      ButtonStyle style = await defaultStyle(tester, button());
+      expect(style.shape?.resolve(<WidgetState>{}), const StadiumBorder());
+      expect(style.shape?.resolve(pressed), rounded(12.0));
+
+      style = await defaultStyle(tester, button(shapeVariant: ButtonShapeVariant.square));
+      expect(style.shape?.resolve(<WidgetState>{}), rounded(16.0));
+      expect(style.shape?.resolve(pressed), rounded(12.0));
+
+      // Text buttons have no selected shape.
+      expect(style.shape?.resolve(selected), rounded(16.0));
+    });
+
+    testWidgets('resolves colors and elevation for each state', (WidgetTester tester) async {
+      final ButtonStyle style = await defaultStyle(
+        tester,
+        TextButton(onPressed: () {}, child: const Text('Button')),
+      );
+      final ColorScheme colors = theme.colorScheme;
+
+      for (final states in <Set<WidgetState>>[<WidgetState>{}, hovered, focused, pressed]) {
+        expect(style.backgroundColor?.resolve(states), Colors.transparent, reason: '$states');
+        expect(style.foregroundColor?.resolve(states), colors.primary, reason: '$states');
+        expect(style.iconColor?.resolve(states), colors.primary, reason: '$states');
+      }
+
+      expect(style.backgroundColor?.resolve(disabled), colors.onSurface.withValues(alpha: 0.1));
+      expect(style.foregroundColor?.resolve(disabled), colors.onSurface.withValues(alpha: 0.38));
+      expect(style.iconColor?.resolve(disabled), colors.onSurface.withValues(alpha: 0.38));
+      expect(style.side, isNull);
+
+      expect(style.overlayColor?.resolve(<WidgetState>{}), isNull);
+      expect(style.overlayColor?.resolve(hovered), colors.primary.withValues(alpha: 0.08));
+      expect(style.overlayColor?.resolve(focused), colors.primary.withValues(alpha: 0.1));
+      expect(style.overlayColor?.resolve(pressed), colors.primary.withValues(alpha: 0.1));
+
+      // Text buttons have no selected colors.
+      expect(style.backgroundColor?.resolve(selected), Colors.transparent);
+      expect(style.foregroundColor?.resolve(selected), colors.primary);
+
+      expect(style.shadowColor?.resolve(<WidgetState>{}), colors.shadow);
+      for (final states in <Set<WidgetState>>[
+        <WidgetState>{},
+        hovered,
+        focused,
+        pressed,
+        disabled,
+      ]) {
+        expect(style.elevation?.resolve(states), 0.0, reason: '$states');
+      }
+    });
+
+    testWidgets('uses theme-level size and shape variants', (WidgetTester tester) async {
+      Widget buildApp({ButtonStyle? style}) {
+        return MaterialApp(
+          theme: m3eTheme(
+            style: const ButtonStyle(
+              sizeVariant: ButtonSizeVariant.large,
+              shapeVariant: ButtonShapeVariant.square,
+            ),
+          ),
+          home: Center(
+            child: TextButton(style: style, onPressed: () {}, child: const Text('Button')),
+          ),
+        );
+      }
+
+      await tester.pumpWidget(buildApp());
+      await tester.pumpAndSettle();
+      expect(tester.getSize(buttonMaterial()).height, 96.0);
+      expect(tester.widget<Material>(buttonMaterial()).shape, rounded(28.0));
+
+      // The widget style overrides the theme style.
+      await tester.pumpWidget(
+        buildApp(style: const ButtonStyle(sizeVariant: ButtonSizeVariant.xSmall)),
+      );
+      await tester.pumpAndSettle();
+      expect(tester.getSize(buttonMaterial()).height, 32.0);
+      expect(tester.widget<Material>(buttonMaterial()).shape, rounded(12.0));
+    });
+
+    testWidgets('TextButton.icon uses theme-level size for icon-label spacing', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: m3eTheme(style: const ButtonStyle(sizeVariant: ButtonSizeVariant.xLarge)),
+          home: Center(
+            child: TextButton.icon(
+              onPressed: () {},
+              icon: const Icon(Icons.add),
+              label: const Text('Button'),
+            ),
+          ),
+        ),
+      );
+
+      final Row row = tester.widget<Row>(
+        find.descendant(of: find.byType(TextButton), matching: find.byType(Row)),
+      );
+      expect(row.spacing, 16.0);
+    });
+
+    testWidgets('variant is ignored when useMaterial3 is false', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(
+            useMaterial3: false,
+            textButtonTheme: const TextButtonThemeData(variant: StyleVariant.material3Expressive),
+          ),
+          home: Center(
+            child: TextButton(
+              style: const ButtonStyle(sizeVariant: ButtonSizeVariant.large),
+              onPressed: () {},
+              child: const Text('Button'),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(tester.getSize(buttonMaterial()).height, 36.0);
+      expect(
+        tester.widget<Material>(buttonMaterial()).shape,
+        const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(4))),
+      );
+    });
+
+    testWidgets('does not crash at zero area', (WidgetTester tester) async {
+      for (final ButtonSizeVariant size in ButtonSizeVariant.values) {
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: m3eTheme(style: ButtonStyle(sizeVariant: size)),
+            home: Center(
+              child: SizedBox.shrink(
+                child: TextButton.icon(
+                  onPressed: () {},
+                  icon: const Icon(Icons.add),
+                  label: const Text('X'),
+                ),
+              ),
+            ),
+          ),
+        );
+        expect(tester.getSize(find.byType(TextButton)), Size.zero);
+      }
+    });
+
+    testWidgets('MenuItemButton keeps its own style', (WidgetTester tester) async {
+      Future<(Size, Color?, ShapeBorder?)> menuItem({required bool expressive}) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: expressive ? theme : ThemeData(),
+            home: Center(
+              child: MenuItemButton(onPressed: () {}, child: const Text('Item')),
+            ),
+          ),
+        );
+        final Material material = tester.widget<Material>(
+          find.descendant(of: find.byType(MenuItemButton), matching: find.byType(Material)),
+        );
+        return (tester.getSize(find.byType(MenuItemButton)), material.color, material.shape);
+      }
+
+      // MenuItemButton passes its complete style to the TextButton that it
+      // builds, so the Material 3 Expressive TextButton defaults don't change
+      // the menu item.
+      expect(await menuItem(expressive: true), await menuItem(expressive: false));
+    });
+  });
 }
