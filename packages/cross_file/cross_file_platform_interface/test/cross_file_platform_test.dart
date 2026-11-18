@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:io';
+
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -108,6 +110,20 @@ void main() {
         );
         expect(Uri.parse(directory.params.uri).hasScheme, isTrue);
         expect(Uri.parse(directory.toFilePath()!).hasScheme, isFalse);
+      });
+
+      test('PlatformFileSystemXDirectory.toFilePath adds a trailing slash', () {
+        final platform = TestCrossFilePlatform();
+
+        final PlatformFileSystemXDirectory directory = platform.createPlatformFileSystemXDirectory(
+          PlatformFileSystemXDirectoryCreationParams('my/dir'),
+        );
+
+        if (Platform.isWindows) {
+          expect(directory.toFilePath(), endsWith(r'\'));
+        } else {
+          expect(directory.toFilePath(), endsWith('/'));
+        }
       });
 
       test('_DefaultFileSystemXFile.exists() returns false', () async {

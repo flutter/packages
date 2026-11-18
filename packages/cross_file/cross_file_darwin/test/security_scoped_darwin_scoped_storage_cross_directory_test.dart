@@ -59,6 +59,10 @@ void main() {
       const PlatformScopedStorageXDirectoryCreationParams(uri: 'my/dir'),
     );
 
-    expect(directory.toFilePath(), endsWith('/'));
+    if (Platform.isWindows) {
+      expect(directory.toFilePath(), endsWith(r'\'));
+    } else {
+      expect(directory.toFilePath(), endsWith('/'));
+    }
   });
 }
