@@ -323,35 +323,66 @@ void main() {
     expect(await file.delete(const PlatformFileDeleteParams()), true);
   });
 
-  test('writeAsString', () async {
-    const testString = 'Hello, World!';
-    final Uint8List testBytes = utf8.encode(testString);
+  group('writeAsString', () {
+    test('writeAsString complete normally', () async {
+      const testString = 'Hello, World!';
+      final Uint8List testBytes = utf8.encode(testString);
 
-    final mockDocumentFile = MockDocumentFile();
+      final mockDocumentFile = MockDocumentFile();
 
-    const uri = 'uri';
-    android.PigeonOverrides.documentFile_fromSingleUri = ({required String singleUri}) {
-      expect(singleUri, uri);
-      return mockDocumentFile;
-    };
+      const uri = 'uri';
+      android.PigeonOverrides.documentFile_fromSingleUri = ({required String singleUri}) {
+        expect(singleUri, uri);
+        return mockDocumentFile;
+      };
 
-    final mockOutputStream = MockOutputStream();
-    final mockContentResolver = MockContentResolver();
-    when(mockContentResolver.openOutputStream(uri, 'w')).thenAnswer((_) async => mockOutputStream);
-    android.PigeonOverrides.contentResolver_instance = mockContentResolver;
+      final mockOutputStream = MockOutputStream();
+      final mockContentResolver = MockContentResolver();
+      when(
+        mockContentResolver.openOutputStream(uri, 'w'),
+      ).thenAnswer((_) async => mockOutputStream);
+      android.PigeonOverrides.contentResolver_instance = mockContentResolver;
 
-    final file = AndroidScopedStorageXFile(
-      const PlatformScopedStorageXFileCreationParams(uri: uri),
-    );
+      final file = AndroidScopedStorageXFile(
+        const PlatformScopedStorageXFileCreationParams(uri: uri),
+      );
 
-    final PlatformXFile result = await file.writeAsString(
-      const PlatformWriteAsStringParams(testString),
-    );
+      final PlatformXFile result = await file.writeAsString(
+        const PlatformWriteAsStringParams(testString),
+      );
 
-    expect(result, file);
-    verify(mockOutputStream.write(argThat(equals(testBytes)))).called(1);
-    verify(mockOutputStream.flush()).called(1);
-    verify(mockOutputStream.close()).called(1);
+      expect(result, file);
+      verify(mockOutputStream.write(argThat(equals(testBytes)))).called(1);
+      verify(mockOutputStream.flush()).called(1);
+      verify(mockOutputStream.close()).called(1);
+    });
+
+    test('writeAsString does not leak OutputStream when encoding throws', () async {
+      const uri = 'uri';
+      final mockDocumentFile = MockDocumentFile();
+      android.PigeonOverrides.documentFile_fromSingleUri = ({required String singleUri}) {
+        return mockDocumentFile;
+      };
+
+      final mockOutputStream = MockOutputStream();
+      final mockContentResolver = MockContentResolver();
+      when(
+        mockContentResolver.openOutputStream(uri, 'w'),
+      ).thenAnswer((_) async => mockOutputStream);
+      android.PigeonOverrides.contentResolver_instance = mockContentResolver;
+
+      final file = AndroidScopedStorageXFile(
+        const PlatformScopedStorageXFileCreationParams(uri: uri),
+      );
+
+      await expectLater(
+        file.writeAsString(const PlatformWriteAsStringParams('héllo', encoding: ascii)),
+        throwsArgumentError,
+      );
+
+      verifyNever(mockOutputStream.write(any));
+      verify(mockOutputStream.close());
+    });
   });
 
   group('openWrite', () {

@@ -142,11 +142,13 @@ base class AndroidScopedStorageXFile extends PlatformScopedStorageXFile {
       throw NullOutputStreamException(this.params.uri);
     }
 
-    await Future.wait(<Future<void>>[
-      outputStream.write(Uint8List.fromList(params.encoding.encode(params.contents))),
-      outputStream.flush(),
-      outputStream.close(),
-    ]);
+    try {
+      final List<int> contents = params.encoding.encode(params.contents);
+      await outputStream.write(Uint8List.fromList(contents));
+      await outputStream.flush();
+    } finally {
+      await outputStream.close();
+    }
 
     return this;
   }
