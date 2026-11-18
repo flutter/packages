@@ -4,13 +4,10 @@
 
 import Foundation
 
-/// Wraps a WebKit completion handler that is resolved by a reply from Dart and ensures it is
-/// eventually called exactly once.
+/// Wraps a WebKit completion handler to ensure it is called exactly once.
 ///
-/// WebKit raises an `NSInternalInconsistencyException` if a completion handler is deallocated
-/// without being called. A reply from Dart may never arrive, e.g. when the Flutter engine is
-/// destroyed while a call is pending, which releases the reply closure that holds the handler. If
-/// this object is deallocated before it is called, it calls the handler with `defaultValue`.
+/// WebKit throws an exception if a completion handler is released without being called, which
+/// happens when the Flutter engine is destroyed before Dart replies.
 final class CompletionHandlerGuard<Value: Sendable> {
   private var handler: (@MainActor (Value) -> Void)?
   private let defaultValue: Value
