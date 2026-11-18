@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:io';
-
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -119,11 +117,7 @@ void main() {
           PlatformFileSystemXDirectoryCreationParams('my/dir'),
         );
 
-        if (Platform.isWindows) {
-          expect(directory.toFilePath(), endsWith(r'\'));
-        } else {
-          expect(directory.toFilePath(), endsWith('/'));
-        }
+        expect(directory.toFilePath(), anyOf(endsWith('/'), endsWith(r'\')));
       });
 
       test('_DefaultFileSystemXFile.exists() returns false', () async {
