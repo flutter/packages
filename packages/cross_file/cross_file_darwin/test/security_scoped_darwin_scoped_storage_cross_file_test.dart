@@ -80,12 +80,20 @@ void main() {
     expect(file.toFilePath(), Uri.parse(file.params.uri).toFilePath());
   });
 
-  test('toFilePath path does not contain a scheme', () async {
-    final file = PlatformScopedStorageXFile(
-      PlatformScopedStorageXFileCreationParams(uri: testFile.uri.toString()),
-    );
+  test(
+    'toFilePath path does not contain a scheme',
+    () async {
+      final file = PlatformScopedStorageXFile(
+        PlatformScopedStorageXFileCreationParams(uri: testFile.uri.toString()),
+      );
 
-    expect(Uri.parse(file.params.uri).hasScheme, isTrue);
-    expect(Uri.parse(file.toFilePath()!).hasScheme, isFalse);
-  });
+      expect(Uri.parse(file.params.uri).hasScheme, isTrue);
+      expect(Uri.parse(file.toFilePath()!).hasScheme, isFalse);
+    },
+    onPlatform: <String, dynamic>{
+      'windows': const Skip(
+        'This plugin does not run on windows and has different file semantics.',
+      ),
+    },
+  );
 }

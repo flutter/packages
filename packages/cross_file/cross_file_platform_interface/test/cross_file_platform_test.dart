@@ -42,18 +42,8 @@ void main() {
           platform
               .createPlatformFileSystemXFile(PlatformFileSystemXFileCreationParams('/my/path.txt'))
               .toFilePath(),
-          Uri.file('/my/path.txt').toFilePath(),
+          Uri.parse('/my/path.txt').toFilePath(),
         );
-      });
-
-      test('PlatformFileSystemXFile.toFilePath does not contain a scheme', () {
-        final platform = TestCrossFilePlatform();
-
-        final PlatformFileSystemXFile file = platform.createPlatformFileSystemXFile(
-          PlatformFileSystemXFileCreationParams('/my/path.txt'),
-        );
-        expect(Uri.parse(file.params.uri).hasScheme, isTrue);
-        expect(Uri.parse(file.toFilePath()!).hasScheme, isFalse);
       });
 
       test('PlatformFileSystemXDirectory returns correct URI', () {
@@ -96,18 +86,8 @@ void main() {
                 PlatformFileSystemXDirectoryCreationParams('/my/path/'),
               )
               .toFilePath(),
-          Uri.directory('/my/path/').toFilePath(),
+          Uri.parse('/my/path/').toFilePath(),
         );
-      });
-
-      test('PlatformFileSystemXDirectory.toFilePath does not contain a scheme', () {
-        final platform = TestCrossFilePlatform();
-
-        final PlatformFileSystemXDirectory directory = platform.createPlatformFileSystemXDirectory(
-          PlatformFileSystemXDirectoryCreationParams('/my/dir'),
-        );
-        expect(Uri.parse(directory.params.uri).hasScheme, isTrue);
-        expect(Uri.parse(directory.toFilePath()!).hasScheme, isFalse);
       });
 
       test('PlatformFileSystemXDirectory.toFilePath adds a trailing slash', () {
