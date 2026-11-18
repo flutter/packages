@@ -79,7 +79,9 @@ void main() {
       addTearDown(() => tempFile.deleteSync());
 
       final file = PlatformFileSystemXFile(PlatformFileSystemXFileCreationParams(tempFile.path));
-      final PlatformXFile writtenFile = await file.writeAsString(const PlatformWriteAsStringParams('Hello, world!'));
+      final PlatformXFile writtenFile = await file.writeAsString(
+        const PlatformWriteAsStringParams('Hello, world!'),
+      );
 
       expect(await file.readAsString(), 'Hello, world!');
       expect(writtenFile, file);
