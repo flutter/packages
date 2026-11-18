@@ -42,6 +42,15 @@ void main() {
       PlatformScopedStorageXFileCreationParams(uri: testDirectory.uri.toString()),
     );
 
-    expect(directory.toFilePath(), Uri.directory(testDirectory.uri.toString()).toFilePath());
+    expect(directory.toFilePath(), Uri.parse(directory.params.uri).toFilePath());
+  });
+
+  test('toFilePath path does not contain a scheme', () async {
+    final file = PlatformScopedStorageXFile(
+      PlatformScopedStorageXFileCreationParams(uri: testDirectory.uri.toString()),
+    );
+
+    expect(Uri.parse(file.params.uri).hasScheme, isTrue);
+    expect(Uri.parse(file.toFilePath()!).hasScheme, isFalse);
   });
 }
