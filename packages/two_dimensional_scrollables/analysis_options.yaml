@@ -16,8 +16,3 @@ analyzer:
     - windows/**
     - macos/**
     - linux/**
-
-# Repeated from ../../analysis_options.yaml because pana cannot see the shared
-# options when the package is published.
-formatter:
-  page_width: 100
