@@ -46,7 +46,8 @@ jobs:
     permissions:
       actions: read
       checks: read
-      contents: read
+      # Required for convertPullRequestToDraft and collaborator membership checks.
+      contents: write
       pull-requests: write
     runs-on: ubuntu-latest
     steps:
@@ -230,10 +231,17 @@ jobs:
             echo "::notice::Skipping bot author $AUTHOR."
             exit 0
           fi
-          if [[ "$ASSOC" == "MEMBER" || "$ASSOC" == "OWNER" || "$ASSOC" == "COLLABORATOR" ]] ||
-             gh api --silent "repos/$REPO/collaborators/$AUTHOR" 2>/dev/null; then
+          if [[ "$ASSOC" == "MEMBER" || "$ASSOC" == "OWNER" || "$ASSOC" == "COLLABORATOR" ]]; then
             echo "::notice::Author $AUTHOR is an org member/collaborator; skipping template check."
             exit 0
+          fi
+          COLLAB_STATUS=$(gh api -i "repos/$REPO/collaborators/$AUTHOR" 2>/dev/null | awk 'NR==1 {print $2}' || true)
+          if [ "$COLLAB_STATUS" = "204" ]; then
+            echo "::notice::Author $AUTHOR is an org member/collaborator; skipping template check."
+            exit 0
+          elif [ "$COLLAB_STATUS" != "404" ]; then
+            echo "::error::Unexpected HTTP status '${COLLAB_STATUS:-empty}' checking collaborator status for $AUTHOR."
+            exit 1
           fi
 
           # 3. Validate the PR description against .github/PULL_REQUEST_TEMPLATE.md.
