@@ -52,12 +52,10 @@ class JnigenConfigGenerator extends Generator<InternalJnigenConfigOptions> {
     }
     indent.writeln('// ${getGeneratedCodeWarning()}');
     indent.writeln('// $seeAlsoWarning');
-    indent.writeln('// ignore_for_file: avoid_print, depend_on_referenced_packages');
+    indent.writeln('// ignore_for_file: depend_on_referenced_packages');
     indent.newln();
     indent.writeln("import 'dart:io';");
     indent.writeln("import 'package:jnigen/jnigen.dart';");
-    indent.writeln("import 'package:logging/logging.dart';");
-    indent.writeln("import 'package:path/path.dart' as path;");
 
     final String basePath = generatorOptions.basePath ?? '';
     final String configDirSetting =
@@ -107,12 +105,6 @@ class JnigenConfigGenerator extends Generator<InternalJnigenConfigOptions> {
 
     indent.newln();
     indent.writeScoped('void main() async {', '}', () {
-      indent.format('''
-  if (!await _hasJava()) {
-    print('JNI generation requires a Java runtime. Skipping.');
-    return;
-  }
-''');
       indent.writeln("Directory.current = Platform.script.resolve('../..').toFilePath();");
       indent.writeScoped('final generator = JniGenerator(', ');', () {
         indent.writeScoped('input: Input(', '),', () {
@@ -167,22 +159,8 @@ $copyrightPreamble\'\'\',
 ''');
         });
       });
-      indent.writeln('await generator.generate(logger: Logger.root..level = Level.ALL);');
-      indent.newln();
+      indent.writeln('await generator.generate();');
     });
-    indent.format('''
-Future<bool> _hasJava() async {
-  final String? javaHome = Platform.environment['JAVA_HOME'];
-  final String javaExecutable =
-      javaHome != null && javaHome.isNotEmpty ? path.join(javaHome, 'bin', 'java') : 'java';
-  try {
-    final ProcessResult result = await Process.run(javaExecutable, <String>['-version']);
-    return result.exitCode == 0;
-  } catch (_) {
-    return false;
-  }
-}
-''');
     sink.write(indent.toString());
   }
 }
