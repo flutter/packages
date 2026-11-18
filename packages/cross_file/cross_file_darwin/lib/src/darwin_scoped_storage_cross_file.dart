@@ -129,9 +129,7 @@ base class SecurityScopedDarwinScopedStorageXFile extends DarwinScopedStorageXFi
 
   @override
   Future<bool> canRead() async {
-    return NSFileManager.getDefaultManager().isReadableFileAtPath(
-      toFilePath()!.toNSString(),
-    );
+    return NSFileManager.getDefaultManager().isReadableFileAtPath(toFilePath()!.toNSString());
   }
 
   @override
