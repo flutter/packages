@@ -1324,7 +1324,10 @@ void main() {
     await tester.pump(const Duration(milliseconds: 100));
 
     expect(semantics, includesNodeWith(actions: <SemanticsAction>[SemanticsAction.tap]));
-    expect(semantics, includesNodeWith(label: 'Dismiss'));
+    expect(
+      semantics,
+      includesNodeWith(label: const DefaultMaterialLocalizations().modalBarrierDismissLabel),
+    );
 
     semantics.dispose();
   }, variant: TargetPlatformVariant.all());
@@ -1359,7 +1362,10 @@ void main() {
         includesNodeWith(actions: <SemanticsAction>[SemanticsAction.tap, SemanticsAction.focus]),
       ),
     );
-    expect(semantics, isNot(includesNodeWith(label: 'Dismiss')));
+    expect(
+      semantics,
+      isNot(includesNodeWith(label: const DefaultMaterialLocalizations().modalBarrierDismissLabel)),
+    );
 
     semantics.dispose();
   }, variant: TargetPlatformVariant.all());
