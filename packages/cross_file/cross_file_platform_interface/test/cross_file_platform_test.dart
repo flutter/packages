@@ -31,6 +31,7 @@ void main() {
       test('PlatformFileSystemXFile.toFilePath returns correct path', () {
         final platform = TestCrossFilePlatform();
 
+        // Match relative path to `Uri.file`.
         expect(
           platform
               .createPlatformFileSystemXFile(PlatformFileSystemXFileCreationParams('my/path.txt'))
@@ -38,6 +39,8 @@ void main() {
           Uri.file('my/path.txt').toFilePath(),
         );
 
+        // Match absolute path to Uri.parse because it doesn't add `file://`
+        // scheme to start.
         expect(
           platform
               .createPlatformFileSystemXFile(PlatformFileSystemXFileCreationParams('/my/path.txt'))
@@ -71,6 +74,8 @@ void main() {
       test('PlatformFileSystemXDirectory.toFilePath returns correct path', () {
         final platform = TestCrossFilePlatform();
 
+        // Match relative path to `Uri.directory` which normalizes with
+        // trailing slash.
         expect(
           platform
               .createPlatformFileSystemXDirectory(
@@ -80,6 +85,8 @@ void main() {
           Uri.directory('my/path').toFilePath(),
         );
 
+        // Match absolute path to `Uri.parse` which doesn't add the `file://`
+        // scheme to start.
         expect(
           platform
               .createPlatformFileSystemXDirectory(
