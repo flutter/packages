@@ -4454,204 +4454,204 @@ if (wrapped == null) {
 
   static void _writeChannelStreamHelpers(Indent indent) {
     indent.newln();
-    indent.format('''
+    indent.format(r'''
 class _PigeonStreamSubscriptionHandler {
-\t_PigeonStreamSubscriptionHandler({
-\t\trequired this.onData,
-\t\trequired this.onError,
-\t\trequired this.onDone,
-\t});
+  _PigeonStreamSubscriptionHandler({
+    required this.onData,
+    required this.onError,
+    required this.onDone,
+  });
 
-\tfinal void Function(Object? event) onData;
-\tfinal void Function(String code, String? message, Object? details) onError;
-\tfinal void Function() onDone;
+  final void Function(Object? event) onData;
+  final void Function(String code, String? message, Object? details) onError;
+  final void Function() onDone;
 }
 
 class _PigeonChannelStreamRouter {
-\t_PigeonChannelStreamRouter(this.channel);
+  _PigeonChannelStreamRouter(this.channel);
 
-\tstatic int _nextSubscriptionId = 0;
-\tstatic final Map<(BinaryMessenger, String), _PigeonChannelStreamRouter> _routers =
-\t\t\t<(BinaryMessenger, String), _PigeonChannelStreamRouter>{};
+  static int _nextSubscriptionId = 0;
+  static final Map<(BinaryMessenger, String), _PigeonChannelStreamRouter> _routers =
+      <(BinaryMessenger, String), _PigeonChannelStreamRouter>{};
 
-\tfinal BasicMessageChannel<Object?> channel;
-\tfinal Map<int, _PigeonStreamSubscriptionHandler> _subscriptions =
-\t\t\t<int, _PigeonStreamSubscriptionHandler>{};
+  final BasicMessageChannel<Object?> channel;
+  final Map<int, _PigeonStreamSubscriptionHandler> _subscriptions =
+      <int, _PigeonStreamSubscriptionHandler>{};
 
-\tstatic int register({
-\t\trequired String eventsChannelName,
-\t\trequired MessageCodec<Object?> codec,
-\t\trequired BinaryMessenger? binaryMessenger,
-\t\trequired _PigeonStreamSubscriptionHandler handler,
-\t}) {
-\t\tfinal BinaryMessenger resolvedMessenger =
-\t\t\t\tbinaryMessenger ?? ServicesBinding.instance.defaultBinaryMessenger;
-\t\tfinal (BinaryMessenger, String) key = (resolvedMessenger, eventsChannelName);
-\t\tfinal _PigeonChannelStreamRouter router = _routers.putIfAbsent(key, () {
-\t\t\tfinal _PigeonChannelStreamRouter created = _PigeonChannelStreamRouter(
-\t\t\t\tBasicMessageChannel<Object?>(
-\t\t\t\t\teventsChannelName,
-\t\t\t\t\tcodec,
-\t\t\t\t\tbinaryMessenger: binaryMessenger,
-\t\t\t\t),
-\t\t\t);
-\t\t\tcreated._attach(key);
-\t\t\treturn created;
-\t\t});
-\t\tfinal int subscriptionId = _nextSubscriptionId++;
-\t\trouter._subscriptions[subscriptionId] = handler;
-\t\treturn subscriptionId;
-\t}
+  static int register({
+    required String eventsChannelName,
+    required MessageCodec<Object?> codec,
+    required BinaryMessenger? binaryMessenger,
+    required _PigeonStreamSubscriptionHandler handler,
+  }) {
+    final BinaryMessenger resolvedMessenger =
+        binaryMessenger ?? ServicesBinding.instance.defaultBinaryMessenger;
+    final (BinaryMessenger, String) key = (resolvedMessenger, eventsChannelName);
+    final _PigeonChannelStreamRouter router = _routers.putIfAbsent(key, () {
+      final _PigeonChannelStreamRouter created = _PigeonChannelStreamRouter(
+        BasicMessageChannel<Object?>(
+          eventsChannelName,
+          codec,
+          binaryMessenger: binaryMessenger,
+        ),
+      );
+      created._attach(key);
+      return created;
+    });
+    final int subscriptionId = _nextSubscriptionId++;
+    router._subscriptions[subscriptionId] = handler;
+    return subscriptionId;
+  }
 
-\tstatic bool unregister({
-\t\trequired String eventsChannelName,
-\t\trequired BinaryMessenger? binaryMessenger,
-\t\trequired int subscriptionId,
-\t}) {
-\t\tfinal BinaryMessenger resolvedMessenger =
-\t\t\t\tbinaryMessenger ?? ServicesBinding.instance.defaultBinaryMessenger;
-\t\tfinal (BinaryMessenger, String) key = (resolvedMessenger, eventsChannelName);
-\t\tfinal _PigeonChannelStreamRouter? router = _routers[key];
-\t\tif (router == null) {
-\t\t\treturn false;
-\t\t}
-\t\tfinal bool removed = router._subscriptions.remove(subscriptionId) != null;
-\t\tif (router._subscriptions.isEmpty) {
-\t\t\t_routers.remove(key);
-\t\t\trouter.channel.setMessageHandler(null);
-\t\t}
-\t\treturn removed;
-\t}
+  static bool unregister({
+    required String eventsChannelName,
+    required BinaryMessenger? binaryMessenger,
+    required int subscriptionId,
+  }) {
+    final BinaryMessenger resolvedMessenger =
+        binaryMessenger ?? ServicesBinding.instance.defaultBinaryMessenger;
+    final (BinaryMessenger, String) key = (resolvedMessenger, eventsChannelName);
+    final _PigeonChannelStreamRouter? router = _routers[key];
+    if (router == null) {
+      return false;
+    }
+    final bool removed = router._subscriptions.remove(subscriptionId) != null;
+    if (router._subscriptions.isEmpty) {
+      _routers.remove(key);
+      router.channel.setMessageHandler(null);
+    }
+    return removed;
+  }
 
-\tvoid _attach((BinaryMessenger, String) key) {
-\t\tchannel.setMessageHandler((Object? message) async {
-\t\t\tfinal List<Object?> frame = message! as List<Object?>;
-\t\t\tfinal int subscriptionId = frame[0]! as int;
-\t\t\tfinal int kind = frame[1]! as int;
-\t\t\tif (kind == 0) {
-\t\t\t\tfinal _PigeonStreamSubscriptionHandler? handler = _subscriptions[subscriptionId];
-\t\t\t\thandler?.onData(frame[2]);
-\t\t\t} else if (kind == 1) {
-\t\t\t\tfinal _PigeonStreamSubscriptionHandler? handler = _subscriptions.remove(subscriptionId);
-\t\t\t\tif (_subscriptions.isEmpty) {
-\t\t\t\t\t_routers.remove(key);
-\t\t\t\t\tchannel.setMessageHandler(null);
-\t\t\t\t}
-\t\t\t\thandler?.onError(
-\t\t\t\t\tframe[2]! as String,
-\t\t\t\t\tframe[3] as String?,
-\t\t\t\t\tframe[4],
-\t\t\t\t);
-\t\t\t} else if (kind == 2) {
-\t\t\t\tfinal _PigeonStreamSubscriptionHandler? handler = _subscriptions.remove(subscriptionId);
-\t\t\t\tif (_subscriptions.isEmpty) {
-\t\t\t\t\t_routers.remove(key);
-\t\t\t\t\tchannel.setMessageHandler(null);
-\t\t\t\t}
-\t\t\t\thandler?.onDone();
-\t\t\t}
-\t\t\treturn null;
-\t\t});
-\t}
+  void _attach((BinaryMessenger, String) key) {
+    channel.setMessageHandler((Object? message) async {
+      final List<Object?> frame = message! as List<Object?>;
+      final int subscriptionId = frame[0]! as int;
+      final int kind = frame[1]! as int;
+      if (kind == 0) {
+        final _PigeonStreamSubscriptionHandler? handler = _subscriptions[subscriptionId];
+        handler?.onData(frame[2]);
+      } else if (kind == 1) {
+        final _PigeonStreamSubscriptionHandler? handler = _subscriptions.remove(subscriptionId);
+        if (_subscriptions.isEmpty) {
+          _routers.remove(key);
+          channel.setMessageHandler(null);
+        }
+        handler?.onError(
+          frame[2]! as String,
+          frame[3] as String?,
+          frame[4],
+        );
+      } else if (kind == 2) {
+        final _PigeonStreamSubscriptionHandler? handler = _subscriptions.remove(subscriptionId);
+        if (_subscriptions.isEmpty) {
+          _routers.remove(key);
+          channel.setMessageHandler(null);
+        }
+        handler?.onDone();
+      }
+      return null;
+    });
+  }
 }
 
 Stream<T> _pigeonChannelStream<T>({
-\trequired String controlChannelName,
-\trequired MessageCodec<Object?> codec,
-\trequired BinaryMessenger? binaryMessenger,
-\trequired List<Object?> arguments,
-\trequired T Function(Object? event) decodeEvent,
+  required String controlChannelName,
+  required MessageCodec<Object?> codec,
+  required BinaryMessenger? binaryMessenger,
+  required List<Object?> arguments,
+  required T Function(Object? event) decodeEvent,
 }) {
-\tfinal String eventsChannelName = '\$controlChannelName.events';
-\tfinal BasicMessageChannel<Object?> controlChannel = BasicMessageChannel<Object?>(
-\t\tcontrolChannelName,
-\t\tcodec,
-\t\tbinaryMessenger: binaryMessenger,
-\t);
-\tlate final StreamController<T> controller;
-\tint? subscriptionId;
-\tbool terminatedFromHost = false;
-\tcontroller = StreamController<T>(
-\t\tonListen: () {
-\t\t\tfinal int id = _PigeonChannelStreamRouter.register(
-\t\t\t\teventsChannelName: eventsChannelName,
-\t\t\t\tcodec: codec,
-\t\t\t\tbinaryMessenger: binaryMessenger,
-\t\t\t\thandler: _PigeonStreamSubscriptionHandler(
-\t\t\t\t\tonData: (Object? event) {
-\t\t\t\t\t\tif (controller.isClosed) {
-\t\t\t\t\t\t\treturn;
-\t\t\t\t\t\t}
-\t\t\t\t\t\ttry {
-\t\t\t\t\t\t\tcontroller.add(decodeEvent(event));
-\t\t\t\t\t\t} catch (e, st) {
-\t\t\t\t\t\t\tcontroller.addError(e, st);
-\t\t\t\t\t\t}
-\t\t\t\t\t},
-\t\t\t\t\tonError: (String code, String? message, Object? details) {
-\t\t\t\t\t\tterminatedFromHost = true;
-\t\t\t\t\t\tif (!controller.isClosed) {
-\t\t\t\t\t\t\tcontroller.addError(
-\t\t\t\t\t\t\t\tPlatformException(code: code, message: message, details: details),
-\t\t\t\t\t\t\t);
-\t\t\t\t\t\t\tunawaited(controller.close());
-\t\t\t\t\t\t}
-\t\t\t\t\t},
-\t\t\t\t\tonDone: () {
-\t\t\t\t\t\tterminatedFromHost = true;
-\t\t\t\t\t\tif (!controller.isClosed) {
-\t\t\t\t\t\t\tunawaited(controller.close());
-\t\t\t\t\t\t}
-\t\t\t\t\t},
-\t\t\t\t),
-\t\t\t);
-\t\t\tsubscriptionId = id;
-\t\t\t() async {
-\t\t\t\ttry {
-\t\t\t\t\tfinal List<Object?>? replyList =
-\t\t\t\t\t\t\tawait controlChannel.send(<Object?>['listen', id, ...arguments]) as List<Object?>?;
-\t\t\t\t\t_extractReplyValueOrThrow(
-\t\t\t\t\t\treplyList,
-\t\t\t\t\t\tcontrolChannelName,
-\t\t\t\t\t\tisNullValid: true,
-\t\t\t\t\t);
-\t\t\t\t} catch (e, st) {
-\t\t\t\t\tfinal bool wasActive = _PigeonChannelStreamRouter.unregister(
-\t\t\t\t\t\teventsChannelName: eventsChannelName,
-\t\t\t\t\t\tbinaryMessenger: binaryMessenger,
-\t\t\t\t\t\tsubscriptionId: id,
-\t\t\t\t\t);
-\t\t\t\t\tif (wasActive && !controller.isClosed) {
-\t\t\t\t\t\tterminatedFromHost = true;
-\t\t\t\t\t\tcontroller.addError(e, st);
-\t\t\t\t\t\tunawaited(controller.close());
-\t\t\t\t\t}
-\t\t\t\t}
-\t\t\t}();
-\t\t},
-\t\tonCancel: () async {
-\t\t\tfinal int? id = subscriptionId;
-\t\t\tsubscriptionId = null;
-\t\t\tif (id == null || terminatedFromHost) {
-\t\t\t\treturn;
-\t\t\t}
-\t\t\t_PigeonChannelStreamRouter.unregister(
-\t\t\t\teventsChannelName: eventsChannelName,
-\t\t\t\tbinaryMessenger: binaryMessenger,
-\t\t\t\tsubscriptionId: id,
-\t\t\t);
-\t\t\tfinal List<Object?>? replyList =
-\t\t\t\t\tawait controlChannel.send(<Object?>['cancel', id]) as List<Object?>?;
-\t\t\tif (replyList != null && replyList.length > 1) {
-\t\t\t\tthrow PlatformException(
-\t\t\t\t\tcode: replyList[0]! as String,
-\t\t\t\t\tmessage: replyList[1] as String?,
-\t\t\t\t\tdetails: replyList[2],
-\t\t\t\t);
-\t\t\t}
-\t\t},
-\t);
-\treturn controller.stream;
+  final String eventsChannelName = '$controlChannelName.events';
+  final BasicMessageChannel<Object?> controlChannel = BasicMessageChannel<Object?>(
+    controlChannelName,
+    codec,
+    binaryMessenger: binaryMessenger,
+  );
+  late final StreamController<T> controller;
+  int? subscriptionId;
+  bool terminatedFromHost = false;
+  controller = StreamController<T>(
+    onListen: () {
+      final int id = _PigeonChannelStreamRouter.register(
+        eventsChannelName: eventsChannelName,
+        codec: codec,
+        binaryMessenger: binaryMessenger,
+        handler: _PigeonStreamSubscriptionHandler(
+          onData: (Object? event) {
+            if (controller.isClosed) {
+              return;
+            }
+            try {
+              controller.add(decodeEvent(event));
+            } catch (e, st) {
+              controller.addError(e, st);
+            }
+          },
+          onError: (String code, String? message, Object? details) {
+            terminatedFromHost = true;
+            if (!controller.isClosed) {
+              controller.addError(
+                PlatformException(code: code, message: message, details: details),
+              );
+              unawaited(controller.close());
+            }
+          },
+          onDone: () {
+            terminatedFromHost = true;
+            if (!controller.isClosed) {
+              unawaited(controller.close());
+            }
+          },
+        ),
+      );
+      subscriptionId = id;
+      () async {
+        try {
+          final List<Object?>? replyList =
+              await controlChannel.send(<Object?>['listen', id, ...arguments]) as List<Object?>?;
+          _extractReplyValueOrThrow(
+            replyList,
+            controlChannelName,
+            isNullValid: true,
+          );
+        } catch (e, st) {
+          final bool wasActive = _PigeonChannelStreamRouter.unregister(
+            eventsChannelName: eventsChannelName,
+            binaryMessenger: binaryMessenger,
+            subscriptionId: id,
+          );
+          if (wasActive && !controller.isClosed) {
+            terminatedFromHost = true;
+            controller.addError(e, st);
+            unawaited(controller.close());
+          }
+        }
+      }();
+    },
+    onCancel: () async {
+      final int? id = subscriptionId;
+      subscriptionId = null;
+      if (id == null || terminatedFromHost) {
+        return;
+      }
+      _PigeonChannelStreamRouter.unregister(
+        eventsChannelName: eventsChannelName,
+        binaryMessenger: binaryMessenger,
+        subscriptionId: id,
+      );
+      final List<Object?>? replyList =
+          await controlChannel.send(<Object?>['cancel', id]) as List<Object?>?;
+      if (replyList != null && replyList.length > 1) {
+        throw PlatformException(
+          code: replyList[0]! as String,
+          message: replyList[1] as String?,
+          details: replyList[2],
+        );
+      }
+    },
+  );
+  return controller.stream;
 }
 ''');
   }

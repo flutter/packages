@@ -4113,127 +4113,127 @@ fileprivate enum PigeonEngineKeys {
     indent.newln();
     indent.format('''
 private final class ${prefix}PigeonMessageBox: @unchecked Sendable {
-\tlet value: [Any?]
-\tinit(_ value: [Any?]) {
-\t\tself.value = value
-\t}
+  let value: [Any?]
+  init(_ value: [Any?]) {
+    self.value = value
+  }
 }
 
 private final class ${prefix}PigeonChannelBox: @unchecked Sendable {
-\tprivate let channel: FlutterBasicMessageChannel
-\tprivate let lock = NSLock()
-\tprivate var closed = false
+  private let channel: FlutterBasicMessageChannel
+  private let lock = NSLock()
+  private var closed = false
 
-\tinit(_ channel: FlutterBasicMessageChannel) {
-\t\tself.channel = channel
-\t}
+  init(_ channel: FlutterBasicMessageChannel) {
+    self.channel = channel
+  }
 
-\tfunc close() {
-\t\tlock.lock()
-\t\tclosed = true
-\t\tlock.unlock()
-\t}
+  func close() {
+    lock.lock()
+    closed = true
+    lock.unlock()
+  }
 
-\tprivate var isClosed: Bool {
-\t\tlock.lock()
-\t\tdefer { lock.unlock() }
-\t\treturn closed
-\t}
+  private var isClosed: Bool {
+    lock.lock()
+    defer { lock.unlock() }
+    return closed
+  }
 
-\t@MainActor
-\tfunc sendOnMain(_ message: [Any?]) {
-\t\tguard !isClosed else { return }
-\t\tchannel.sendMessage(message)
-\t}
+  @MainActor
+  func sendOnMain(_ message: [Any?]) {
+    guard !isClosed else { return }
+    channel.sendMessage(message)
+  }
 
-\tfunc send(_ message: [Any?]) {
-\t\tguard !isClosed else { return }
-\t\tif Thread.isMainThread {
-\t\t\tchannel.sendMessage(message)
-\t\t} else {
-\t\t\tlet boxed = ${prefix}PigeonMessageBox(message)
-\t\t\tDispatchQueue.main.async {
-\t\t\t\tguard !self.isClosed else { return }
-\t\t\t\tself.channel.sendMessage(boxed.value)
-\t\t\t}
-\t\t}
-\t}
+  func send(_ message: [Any?]) {
+    guard !isClosed else { return }
+    if Thread.isMainThread {
+      channel.sendMessage(message)
+    } else {
+      let boxed = ${prefix}PigeonMessageBox(message)
+      DispatchQueue.main.async {
+        guard !self.isClosed else { return }
+        self.channel.sendMessage(boxed.value)
+      }
+    }
+  }
 }
 
 private final class ${prefix}PigeonStreamRegistry: @unchecked Sendable {
-\tprivate let lock = NSLock()
-\tprivate var subscriptions: [String: [Int64: () -> Void]] = [:]
+  private let lock = NSLock()
+  private var subscriptions: [String: [Int64: () -> Void]] = [:]
 
-\tfunc register(channelName: String, subscriptionId: Int64, onCancel: @escaping () -> Void) {
-\t\tvar previous: (() -> Void)?
-\t\tdo {
-\t\t\tlock.lock()
-\t\t\tdefer { lock.unlock() }
-\t\t\tvar channelMap = subscriptions[channelName] ?? [:]
-\t\t\tprevious = channelMap.updateValue(onCancel, forKey: subscriptionId)
-\t\t\tsubscriptions[channelName] = channelMap
-\t\t}
-\t\tprevious?()
-\t}
+  func register(channelName: String, subscriptionId: Int64, onCancel: @escaping () -> Void) {
+    var previous: (() -> Void)?
+    do {
+      lock.lock()
+      defer { lock.unlock() }
+      var channelMap = subscriptions[channelName] ?? [:]
+      previous = channelMap.updateValue(onCancel, forKey: subscriptionId)
+      subscriptions[channelName] = channelMap
+    }
+    previous?()
+  }
 
-\tfunc isActive(channelName: String, subscriptionId: Int64) -> Bool {
-\t\tlock.lock()
-\t\tdefer { lock.unlock() }
-\t\treturn subscriptions[channelName]?[subscriptionId] != nil
-\t}
+  func isActive(channelName: String, subscriptionId: Int64) -> Bool {
+    lock.lock()
+    defer { lock.unlock() }
+    return subscriptions[channelName]?[subscriptionId] != nil
+  }
 
-\t@discardableResult
-\tfunc remove(channelName: String, subscriptionId: Int64) -> Bool {
-\t\tvar removed: (() -> Void)?
-\t\tdo {
-\t\t\tlock.lock()
-\t\t\tdefer { lock.unlock() }
-\t\t\tguard var channelMap = subscriptions[channelName] else {
-\t\t\t\treturn false
-\t\t\t}
-\t\t\tremoved = channelMap.removeValue(forKey: subscriptionId)
-\t\t\tif channelMap.isEmpty {
-\t\t\t\tsubscriptions.removeValue(forKey: channelName)
-\t\t\t} else {
-\t\t\t\tsubscriptions[channelName] = channelMap
-\t\t\t}
-\t\t}
-\t\tlet didRemove = removed != nil
-\t\twithExtendedLifetime(removed) {}
-\t\treturn didRemove
-\t}
+  @discardableResult
+  func remove(channelName: String, subscriptionId: Int64) -> Bool {
+    var removed: (() -> Void)?
+    do {
+      lock.lock()
+      defer { lock.unlock() }
+      guard var channelMap = subscriptions[channelName] else {
+        return false
+      }
+      removed = channelMap.removeValue(forKey: subscriptionId)
+      if channelMap.isEmpty {
+        subscriptions.removeValue(forKey: channelName)
+      } else {
+        subscriptions[channelName] = channelMap
+      }
+    }
+    let didRemove = removed != nil
+    withExtendedLifetime(removed) {}
+    return didRemove
+  }
 
-\tfunc cancel(channelName: String, subscriptionId: Int64) {
-\t\tvar action: (() -> Void)?
-\t\tdo {
-\t\t\tlock.lock()
-\t\t\tdefer { lock.unlock() }
-\t\t\tguard var channelMap = subscriptions[channelName] else {
-\t\t\t\treturn
-\t\t\t}
-\t\t\taction = channelMap.removeValue(forKey: subscriptionId)
-\t\t\tif channelMap.isEmpty {
-\t\t\t\tsubscriptions.removeValue(forKey: channelName)
-\t\t\t} else {
-\t\t\t\tsubscriptions[channelName] = channelMap
-\t\t\t}
-\t\t}
-\t\taction?()
-\t}
+  func cancel(channelName: String, subscriptionId: Int64) {
+    var action: (() -> Void)?
+    do {
+      lock.lock()
+      defer { lock.unlock() }
+      guard var channelMap = subscriptions[channelName] else {
+        return
+      }
+      action = channelMap.removeValue(forKey: subscriptionId)
+      if channelMap.isEmpty {
+        subscriptions.removeValue(forKey: channelName)
+      } else {
+        subscriptions[channelName] = channelMap
+      }
+    }
+    action?()
+  }
 
-\tfunc cancelAll(channelName: String) {
-\t\tvar actions: [() -> Void] = []
-\t\tdo {
-\t\t\tlock.lock()
-\t\t\tdefer { lock.unlock() }
-\t\t\tif let channelMap = subscriptions.removeValue(forKey: channelName) {
-\t\t\t\tactions = Array(channelMap.values)
-\t\t\t}
-\t\t}
-\t\tfor action in actions {
-\t\t\taction()
-\t\t}
-\t}
+  func cancelAll(channelName: String) {
+    var actions: [() -> Void] = []
+    do {
+      lock.lock()
+      defer { lock.unlock() }
+      if let channelMap = subscriptions.removeValue(forKey: channelName) {
+        actions = Array(channelMap.values)
+      }
+    }
+    for action in actions {
+      action()
+    }
+  }
 }''');
     final bool hasCallbackStreams = root.apis.whereType<AstHostApi>().any(
       (AstHostApi api) =>
@@ -4244,84 +4244,84 @@ private final class ${prefix}PigeonStreamRegistry: @unchecked Sendable {
       indent.format('''
 /// Sink passed to `@asyncCallback` stream methods to emit typed events, errors, or completion.
 class ${prefix}PigeonEventSink<ReturnType>: @unchecked Sendable {
-\tprivate let subscriptionId: Int64
-\tprivate let lock = NSLock()
-\tprivate var channelBox: ${prefix}PigeonChannelBox?
-\tprivate var onClosed: (() -> Void)?
-\tprivate var terminated = false
+  private let subscriptionId: Int64
+  private let lock = NSLock()
+  private var channelBox: ${prefix}PigeonChannelBox?
+  private var onClosed: (() -> Void)?
+  private var terminated = false
 
-\tfileprivate init(
-\t\tsubscriptionId: Int64,
-\t\tchannelBox: ${prefix}PigeonChannelBox,
-\t\tonClosed: @escaping () -> Void
-\t) {
-\t\tself.subscriptionId = subscriptionId
-\t\tself.channelBox = channelBox
-\t\tself.onClosed = onClosed
-\t}
+  fileprivate init(
+    subscriptionId: Int64,
+    channelBox: ${prefix}PigeonChannelBox,
+    onClosed: @escaping () -> Void
+  ) {
+    self.subscriptionId = subscriptionId
+    self.channelBox = channelBox
+    self.onClosed = onClosed
+  }
 
-\tfileprivate var isOpen: Bool {
-\t\tlock.lock()
-\t\tdefer { lock.unlock() }
-\t\treturn !terminated && channelBox != nil
-\t}
+  fileprivate var isOpen: Bool {
+    lock.lock()
+    defer { lock.unlock() }
+    return !terminated && channelBox != nil
+  }
 
-\tfunc success(_ value: ReturnType) {
-\t\tlet currentBox: ${prefix}PigeonChannelBox?
-\t\tdo {
-\t\t\tlock.lock()
-\t\t\tdefer { lock.unlock() }
-\t\t\tguard !terminated else { return }
-\t\t\tcurrentBox = channelBox
-\t\t}
-\t\tcurrentBox?.send([subscriptionId, Int64(0), value])
-\t}
+  func success(_ value: ReturnType) {
+    let currentBox: ${prefix}PigeonChannelBox?
+    do {
+      lock.lock()
+      defer { lock.unlock() }
+      guard !terminated else { return }
+      currentBox = channelBox
+    }
+    currentBox?.send([subscriptionId, Int64(0), value])
+  }
 
-\tfunc error(code: String, message: String?, details: Any?) {
-\t\tlet currentBox: ${prefix}PigeonChannelBox?
-\t\tlet closedAction: (() -> Void)?
-\t\tdo {
-\t\t\tlock.lock()
-\t\t\tdefer { lock.unlock() }
-\t\t\tguard !terminated else { return }
-\t\t\tterminated = true
-\t\t\tcurrentBox = channelBox
-\t\t\tclosedAction = onClosed
-\t\t\tonClosed = nil
-\t\t}
-\t\tclosedAction?()
-\t\tcurrentBox?.send([subscriptionId, Int64(1), code, message, details])
-\t}
+  func error(code: String, message: String?, details: Any?) {
+    let currentBox: ${prefix}PigeonChannelBox?
+    let closedAction: (() -> Void)?
+    do {
+      lock.lock()
+      defer { lock.unlock() }
+      guard !terminated else { return }
+      terminated = true
+      currentBox = channelBox
+      closedAction = onClosed
+      onClosed = nil
+    }
+    closedAction?()
+    currentBox?.send([subscriptionId, Int64(1), code, message, details])
+  }
 
-\tfunc endOfStream() {
-\t\tlet currentBox: ${prefix}PigeonChannelBox?
-\t\tlet closedAction: (() -> Void)?
-\t\tdo {
-\t\t\tlock.lock()
-\t\t\tdefer { lock.unlock() }
-\t\t\tguard !terminated else { return }
-\t\t\tterminated = true
-\t\t\tcurrentBox = channelBox
-\t\t\tclosedAction = onClosed
-\t\t\tonClosed = nil
-\t\t}
-\t\tclosedAction?()
-\t\tcurrentBox?.send([subscriptionId, Int64(2)])
-\t}
+  func endOfStream() {
+    let currentBox: ${prefix}PigeonChannelBox?
+    let closedAction: (() -> Void)?
+    do {
+      lock.lock()
+      defer { lock.unlock() }
+      guard !terminated else { return }
+      terminated = true
+      currentBox = channelBox
+      closedAction = onClosed
+      onClosed = nil
+    }
+    closedAction?()
+    currentBox?.send([subscriptionId, Int64(2)])
+  }
 
-\tfileprivate func close() {
-\t\tvar displaced: (${prefix}PigeonChannelBox?, (() -> Void)?) = (nil, nil)
-\t\tdo {
-\t\t\tlock.lock()
-\t\t\tdefer { lock.unlock() }
-\t\t\tterminated = true
-\t\t\tdisplaced = (channelBox, onClosed)
-\t\t\tchannelBox = nil
-\t\t\tonClosed = nil
-\t\t}
-\t\tdisplaced.0?.close()
-\t\twithExtendedLifetime(displaced) {}
-\t}
+  fileprivate func close() {
+    var displaced: (${prefix}PigeonChannelBox?, (() -> Void)?) = (nil, nil)
+    do {
+      lock.lock()
+      defer { lock.unlock() }
+      terminated = true
+      displaced = (channelBox, onClosed)
+      channelBox = nil
+      onClosed = nil
+    }
+    displaced.0?.close()
+    withExtendedLifetime(displaced) {}
+  }
 }''');
     }
   }

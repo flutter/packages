@@ -2257,52 +2257,52 @@ private fun keyOfMessenger(messenger: Any): Long {
     indent.newln();
     indent.format('''
 private class ${prefix}PigeonStreamRegistry {
-\tprivate val subscriptions = mutableMapOf<String, MutableMap<Long, () -> Unit>>()
+  private val subscriptions = mutableMapOf<String, MutableMap<Long, () -> Unit>>()
 
-\tfun register(channelName: String, subscriptionId: Long, onCancel: () -> Unit) {
-\t\tval previous =
-\t\t\t\tkotlin.synchronized(subscriptions) {
-\t\t\t\t\tval channelMap = subscriptions.getOrPut(channelName) { mutableMapOf() }
-\t\t\t\t\tchannelMap.put(subscriptionId, onCancel)
-\t\t\t\t}
-\t\tprevious?.invoke()
-\t}
+  fun register(channelName: String, subscriptionId: Long, onCancel: () -> Unit) {
+    val previous =
+        kotlin.synchronized(subscriptions) {
+          val channelMap = subscriptions.getOrPut(channelName) { mutableMapOf() }
+          channelMap.put(subscriptionId, onCancel)
+        }
+    previous?.invoke()
+  }
 
-\tfun remove(channelName: String, subscriptionId: Long): Boolean {
-\t\treturn kotlin.synchronized(subscriptions) {
-\t\t\tval channelMap = subscriptions[channelName] ?: return@synchronized false
-\t\t\tval removed = channelMap.remove(subscriptionId) != null
-\t\t\tif (channelMap.isEmpty()) {
-\t\t\t\tsubscriptions.remove(channelName)
-\t\t\t}
-\t\t\tremoved
-\t\t}
-\t}
+  fun remove(channelName: String, subscriptionId: Long): Boolean {
+    return kotlin.synchronized(subscriptions) {
+      val channelMap = subscriptions[channelName] ?: return@synchronized false
+      val removed = channelMap.remove(subscriptionId) != null
+      if (channelMap.isEmpty()) {
+        subscriptions.remove(channelName)
+      }
+      removed
+    }
+  }
 
-\tfun cancel(channelName: String, subscriptionId: Long) {
-\t\tval onCancel =
-\t\t\t\tkotlin.synchronized(subscriptions) {
-\t\t\t\t\tval channelMap = subscriptions[channelName] ?: return@synchronized null
-\t\t\t\t\tval action = channelMap.remove(subscriptionId)
-\t\t\t\t\tif (channelMap.isEmpty()) {
-\t\t\t\t\t\tsubscriptions.remove(channelName)
-\t\t\t\t\t}
-\t\t\t\t\taction
-\t\t\t\t}
-\t\tonCancel?.invoke()
-\t}
+  fun cancel(channelName: String, subscriptionId: Long) {
+    val onCancel =
+        kotlin.synchronized(subscriptions) {
+          val channelMap = subscriptions[channelName] ?: return@synchronized null
+          val action = channelMap.remove(subscriptionId)
+          if (channelMap.isEmpty()) {
+            subscriptions.remove(channelName)
+          }
+          action
+        }
+    onCancel?.invoke()
+  }
 
-\tfun cancelAll(channelName: String) {
-\t\tval actions =
-\t\t\t\tkotlin.synchronized(subscriptions) {
-\t\t\t\t\tsubscriptions.remove(channelName)?.values?.toList().orEmpty()
-\t\t\t\t}
-\t\tfor (action in actions) {
-\t\t\ttry {
-\t\t\t\taction.invoke()
-\t\t\t} catch (_: Throwable) {}
-\t\t}
-\t}
+  fun cancelAll(channelName: String) {
+    val actions =
+        kotlin.synchronized(subscriptions) {
+          subscriptions.remove(channelName)?.values?.toList().orEmpty()
+        }
+    for (action in actions) {
+      try {
+        action.invoke()
+      } catch (_: Throwable) {}
+    }
+  }
 }''');
     final bool hasCallbackStreams = root.apis.whereType<AstHostApi>().any(
       (AstHostApi api) =>
@@ -2314,70 +2314,70 @@ private class ${prefix}PigeonStreamRegistry {
 /** Sink passed to `@asyncCallback` stream methods to emit typed events, errors, or completion. */
 class ${prefix}PigeonEventSink<T>
 internal constructor(
-\t\tprivate val subscriptionId: Long,
-\t\tchannel: BasicMessageChannel<Any?>,
-\t\tonClosed: () -> Unit,
+    private val subscriptionId: Long,
+    channel: BasicMessageChannel<Any?>,
+    onClosed: () -> Unit,
 ) {
-\tprivate val channelRef = AtomicReference<BasicMessageChannel<Any?>?>(channel)
-\tprivate val onClosedRef = AtomicReference<(() -> Unit)?>(onClosed)
-\t@Volatile private var terminated = false
+  private val channelRef = AtomicReference<BasicMessageChannel<Any?>?>(channel)
+  private val onClosedRef = AtomicReference<(() -> Unit)?>(onClosed)
+  @Volatile private var terminated = false
 
-\tinternal val isOpen: Boolean
-\t\tget() = !terminated && channelRef.get() != null
+  internal val isOpen: Boolean
+    get() = !terminated && channelRef.get() != null
 
-\tfun success(value: T) {
-\t\tif (terminated) return
-\t\tval ch = channelRef.get() ?: return
-\t\tdispatchToMain {
-\t\t\tif (channelRef.get() != null) {
-\t\t\t\tch.send(listOf(subscriptionId, 0L, value))
-\t\t\t}
-\t\t}
-\t}
+  fun success(value: T) {
+    if (terminated) return
+    val ch = channelRef.get() ?: return
+    dispatchToMain {
+      if (channelRef.get() != null) {
+        ch.send(listOf(subscriptionId, 0L, value))
+      }
+    }
+  }
 
-\tfun error(code: String, message: String?, details: Any?) {
-\t\tif (terminated) return
-\t\tterminated = true
-\t\tonClosedRef.getAndSet(null)?.invoke() ?: return
-\t\tval ch = channelRef.get() ?: return
-\t\tdispatchToMain {
-\t\t\tif (channelRef.getAndSet(null) != null) {
-\t\t\t\tch.send(listOf(subscriptionId, 1L, code, message, details))
-\t\t\t}
-\t\t}
-\t}
+  fun error(code: String, message: String?, details: Any?) {
+    if (terminated) return
+    terminated = true
+    onClosedRef.getAndSet(null)?.invoke() ?: return
+    val ch = channelRef.get() ?: return
+    dispatchToMain {
+      if (channelRef.getAndSet(null) != null) {
+        ch.send(listOf(subscriptionId, 1L, code, message, details))
+      }
+    }
+  }
 
-\tfun endOfStream() {
-\t\tif (terminated) return
-\t\tterminated = true
-\t\tonClosedRef.getAndSet(null)?.invoke() ?: return
-\t\tval ch = channelRef.get() ?: return
-\t\tdispatchToMain {
-\t\t\tif (channelRef.getAndSet(null) != null) {
-\t\t\t\tch.send(listOf(subscriptionId, 2L))
-\t\t\t}
-\t\t}
-\t}
+  fun endOfStream() {
+    if (terminated) return
+    terminated = true
+    onClosedRef.getAndSet(null)?.invoke() ?: return
+    val ch = channelRef.get() ?: return
+    dispatchToMain {
+      if (channelRef.getAndSet(null) != null) {
+        ch.send(listOf(subscriptionId, 2L))
+      }
+    }
+  }
 
-\tinternal fun close() {
-\t\tterminated = true
-\t\tonClosedRef.set(null)
-\t\tchannelRef.set(null)
-\t}
+  internal fun close() {
+    terminated = true
+    onClosedRef.set(null)
+    channelRef.set(null)
+  }
 
-\tprivate fun dispatchToMain(action: () -> Unit) {
-\t\tval mainLooper =
-\t\t\t\ttry {
-\t\t\t\t\tLooper.getMainLooper()
-\t\t\t\t} catch (_: RuntimeException) {
-\t\t\t\t\tnull
-\t\t\t\t}
-\t\tif (mainLooper == null || Looper.myLooper() == mainLooper) {
-\t\t\taction()
-\t\t} else {
-\t\t\tHandler(mainLooper).post(action)
-\t\t}
-\t}
+  private fun dispatchToMain(action: () -> Unit) {
+    val mainLooper =
+        try {
+          Looper.getMainLooper()
+        } catch (_: RuntimeException) {
+          null
+        }
+    if (mainLooper == null || Looper.myLooper() == mainLooper) {
+      action()
+    } else {
+      Handler(mainLooper).post(action)
+    }
+  }
 }''');
     }
   }
