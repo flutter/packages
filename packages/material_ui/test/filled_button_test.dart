@@ -3030,14 +3030,13 @@ void main() {
   testWidgets('M3E FilledButton resolves selected and unselected colors', (
     WidgetTester tester,
   ) async {
+    final theme = ThemeData(
+      filledButtonTheme: const FilledButtonThemeData(variant: StyleVariant.material3Expressive),
+    );
     Future<Color?> backgroundColor({required bool tonal, required bool isSelected}) async {
       await tester.pumpWidget(
         MaterialApp(
-          theme: ThemeData(
-            filledButtonTheme: const FilledButtonThemeData(
-              variant: StyleVariant.material3Expressive,
-            ),
-          ),
+          theme: theme,
           home: Center(
             child: tonal
                 ? FilledButton.tonal(
@@ -3060,7 +3059,7 @@ void main() {
           .color;
     }
 
-    final ColorScheme colors = ThemeData().colorScheme;
+    final ColorScheme colors = theme.colorScheme;
     expect(await backgroundColor(tonal: false, isSelected: false), colors.surfaceContainer);
     expect(await backgroundColor(tonal: false, isSelected: true), colors.primary);
     expect(await backgroundColor(tonal: true, isSelected: false), colors.secondaryContainer);
@@ -3231,6 +3230,8 @@ void main() {
       );
     }
 
+    final ThemeData theme = m3eTheme();
+
     Finder buttonMaterial() {
       return find.descendant(of: find.byType(FilledButton), matching: find.byType(Material));
     }
@@ -3239,7 +3240,7 @@ void main() {
       late BuildContext context;
       await tester.pumpWidget(
         MaterialApp(
-          theme: m3eTheme(),
+          theme: theme,
           home: Builder(
             builder: (BuildContext innerContext) {
               context = innerContext;
@@ -3264,7 +3265,6 @@ void main() {
     testWidgets('uses size-specific height, icon size, and label font size', (
       WidgetTester tester,
     ) async {
-      final ThemeData theme = m3eTheme();
       // Font sizes of labelLarge, titleMedium, headlineSmall, and headlineLarge.
       const expectations = <ButtonSizeVariant, (double, double, double)>{
         ButtonSizeVariant.xSmall: (32.0, 20.0, 14.0),
@@ -3308,7 +3308,7 @@ void main() {
       var pressCount = 0;
       Widget buildApp({MaterialTapTargetSize? tapTargetSize}) {
         return MaterialApp(
-          theme: m3eTheme().copyWith(materialTapTargetSize: MaterialTapTargetSize.shrinkWrap),
+          theme: theme.copyWith(materialTapTargetSize: MaterialTapTargetSize.shrinkWrap),
           home: Center(
             child: FilledButton(
               style: ButtonStyle(
@@ -3345,7 +3345,7 @@ void main() {
       Widget buildApp({VisualDensity? visualDensity}) {
         return MaterialApp(
           // Compact is the default density on desktop platforms.
-          theme: m3eTheme().copyWith(visualDensity: VisualDensity.compact),
+          theme: theme.copyWith(visualDensity: VisualDensity.compact),
           home: Center(
             child: FilledButton(
               style: ButtonStyle(visualDensity: visualDensity),
@@ -3414,7 +3414,7 @@ void main() {
         tester,
         FilledButton(onPressed: () {}, child: const Text('Button')),
       );
-      final ColorScheme colors = m3eTheme().colorScheme;
+      final ColorScheme colors = theme.colorScheme;
 
       expect(style.backgroundColor?.resolve(<WidgetState>{}), colors.primary);
       expect(style.backgroundColor?.resolve(disabled), colors.onSurface.withValues(alpha: 0.1));
@@ -3454,7 +3454,7 @@ void main() {
         tester,
         FilledButton.tonal(onPressed: () {}, child: const Text('Button')),
       );
-      final ColorScheme colors = m3eTheme().colorScheme;
+      final ColorScheme colors = theme.colorScheme;
 
       expect(style.backgroundColor?.resolve(<WidgetState>{}), colors.secondaryContainer);
       expect(style.backgroundColor?.resolve(disabled), colors.onSurface.withValues(alpha: 0.1));
@@ -3496,7 +3496,7 @@ void main() {
         tester,
         FilledButton(isSelected: true, onPressed: () {}, child: const Text('Button')),
       );
-      final ColorScheme colors = m3eTheme().colorScheme;
+      final ColorScheme colors = theme.colorScheme;
 
       expect(style.backgroundColor?.resolve(selected), colors.primary);
       expect(style.foregroundColor?.resolve(selected), colors.onPrimary);
@@ -3532,7 +3532,7 @@ void main() {
         tester,
         FilledButton.tonal(isSelected: true, onPressed: () {}, child: const Text('Button')),
       );
-      final ColorScheme colors = m3eTheme().colorScheme;
+      final ColorScheme colors = theme.colorScheme;
 
       expect(style.backgroundColor?.resolve(selected), colors.secondary);
       expect(style.foregroundColor?.resolve(selected), colors.onSecondary);
