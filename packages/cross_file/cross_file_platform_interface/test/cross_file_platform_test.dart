@@ -138,6 +138,15 @@ void main() {
     });
 
     group('ScopedStorage', () {
+      test('_DefaultScopedStorageXFile.toFilePath returns null by default', () {
+        final platform = TestCrossFilePlatform();
+        final PlatformScopedStorageXFile file = platform.createPlatformScopedStorageXFile(
+          const PlatformScopedStorageXFileCreationParams(uri: 'test'),
+        );
+
+        expect(file.toFilePath(), null);
+      });
+
       test('_DefaultScopedStorageXFile.exists() returns false', () async {
         final platform = TestCrossFilePlatform();
 
@@ -164,6 +173,16 @@ void main() {
           await expectLater(file.openRead().drain, throwsUnsupportedError);
         },
       );
+
+      test('_DefaultScopedStorageXDirectory.toFilePath returns null by default', () {
+        final platform = TestCrossFilePlatform();
+        final PlatformScopedStorageXDirectory directory = platform
+            .createPlatformScopedStorageXDirectory(
+              const PlatformScopedStorageXDirectoryCreationParams(uri: 'test'),
+            );
+
+        expect(directory.toFilePath(), null);
+      });
 
       test('_DefaultScopedStorageXDirectory.exists() returns false', () async {
         final platform = TestCrossFilePlatform();
