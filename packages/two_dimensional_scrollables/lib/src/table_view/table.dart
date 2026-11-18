@@ -286,9 +286,8 @@ class TableView extends StatefulWidget {
   )
   final double? cacheExtent;
 
-  /// The [TableViewport] has an area before the leading edge and after the
-  /// trailing edge of the visible area in both axes to cache cells that are
-  /// about to become visible when the user scrolls.
+  /// The additional cache distance for [TableViewport] before or adfter the
+  /// trailing edges of the visible area.
   ///
   /// Cells that fall in this cache area are laid out even though they are not
   /// (yet) visible on screen. The [scrollCacheExtent] describes how far the
@@ -305,8 +304,7 @@ class TableView extends StatefulWidget {
   /// viewport to an invisible cell in the cache area, the framework brings
   /// that cell into view with an implicit scroll action.
   ///
-  /// If null, defaults to [RenderTwoDimensionalViewport]'s default
-  /// [RenderTwoDimensionalViewport.scrollCacheExtent].
+  /// If null, defaults to 250 pixels.
   ///
   /// See also:
   ///
