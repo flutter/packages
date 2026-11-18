@@ -109,9 +109,29 @@ Pigeon supports two distinct models for communication between Dart and native co
 2. **Native Interop (Direct FFI & JNI) \*Preview\***: A direct, memory-bound function call model utilizing Dart FFI (for Swift/Objective-C on iOS/macOS) and JNI (for Kotlin/Java on Android).
 
 > [!WARNING]
-> Native Interop `@HostApi` registrations are process-wide, not per-engine. In apps that run multiple
-> `FlutterEngine`s, one engine can overwrite or unregister another engine's implementation. See
-> [flutter/flutter#195877](https://github.com/flutter/flutter/issues/195877).
+> **Flutter 3.50.0 or higher is strongly recommended** when using Native Interop. Native Interop
+> associates each registration with the `FlutterEngine` that made it, and routing on an engine's
+> root isolate is exact when the engine identifier is available to native code (always for Kotlin
+> `register(api, flutterEngine)`, and for plugin bindings and registrars in **Flutter 3.50.0+**). If
+> you run into multi-engine routing issues on an earlier Flutter version, upgrade to Flutter 3.50.0
+> or higher. See [Multi-Engine Routing](./native_interop_guide.md#multi-engine-routing) and
+> [flutter/flutter#195877](https://github.com/flutter/flutter/issues/195877). Known limitations:
+> - On Flutter versions earlier than 3.50.0 (where engine identifiers are not exposed on plugin
+>   bindings/registrars), each generated Pigeon file binds to the engine of its first resolved
+>   `@HostApi` handle. If that first lookup happens while another engine's registration is the most
+>   recent one, for example when engines are created back-to-back before their Dart code starts, or
+>   when an API is first used lazily while a secondary engine is attached, that file's APIs may be
+>   bound to the other engine's instance and throw `unregistered-instance` after that engine
+>   detaches.
+> - Background isolates (`Isolate.spawn` / `Isolate.run`) do not have a `PlatformDispatcher.engineId`,
+>   so in multi-engine apps their lookups may resolve another engine's registration.
+> - APIs that hold engine-specific state (such as an Android `Activity`, a `TextureRegistry`, or a
+>   `UIViewController`) may act on the wrong engine; use a distinct `messageChannelSuffix` per
+>   engine, or platform channels / `@ProxyApi`, for those APIs.
+> - On macOS, plugins receive no detach callback, so registrations outlive their engine.
+> - `@FlutterApi` registrations are only removed when Dart calls `setUp(null)` / `unregister`. If an
+>   isolate goes away without doing so (for example, after a hot restart or when its engine is
+>   destroyed), native lookups can still return its stale registration, and calls to it fail.
 
 #### Quick Comparison
 

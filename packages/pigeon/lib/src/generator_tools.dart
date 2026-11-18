@@ -5,7 +5,6 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
-import 'dart:mirrors';
 
 import 'package:meta/meta.dart';
 import 'package:path/path.dart' as path;
@@ -17,7 +16,7 @@ import 'generator.dart';
 /// The current version of pigeon.
 ///
 /// This must match the version in pubspec.yaml.
-const String pigeonVersion = '29.2.0';
+const String pigeonVersion = '30.0.4';
 
 /// Default plugin package name.
 const String defaultPluginPackageName = 'dev.flutter.pigeon';
@@ -121,6 +120,14 @@ String makeRelative(String targetPath, String fromPath) {
       ? posixPath(path.normalize(fromPath))
       : posixPath(path.normalize(path.absolute(fromPath)));
   return path.posix.relative(absTarget, from: absFrom);
+}
+
+/// Returns true if [child] is the same path as or inside [parent].
+bool isWithinOrEquals(String parent, String child) {
+  final String normalizedParent = posixPath(parent);
+  final String normalizedChild = posixPath(child);
+  return path.posix.equals(normalizedParent, normalizedChild) ||
+      path.posix.isWithin(normalizedParent, normalizedChild);
 }
 
 /// Read all the content from [stdin] to a String.
@@ -529,11 +536,6 @@ class Keys {
 
   /// The key in an error hash for the 'details' value.
   static const String errorDetails = 'details';
-}
-
-/// Returns true if `type` represents 'void'.
-bool isVoid(TypeMirror type) {
-  return MirrorSystem.getName(type.simpleName) == 'void';
 }
 
 /// Adds the [lines] to [indent].

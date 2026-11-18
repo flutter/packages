@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
+
 ## 1.1.0
 
 * Adds a library that can be compiled when imported on non-web platforms. Includes

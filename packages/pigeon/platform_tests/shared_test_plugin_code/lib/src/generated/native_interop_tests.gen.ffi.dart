@@ -14628,17 +14628,43 @@ extension type NativeInteropFlutterIntegrationCoreApiRegistrar._(objc.ObjCObject
     );
   }
 
-  /// registerInstanceWithApi:name:
+  /// Registers the Dart implementation <code>api</code> under <code>name</code> (or the default instance
+  /// when <code>name</code> is omitted).
+  /// Called by generated Dart code. <code>engineId</code> and <code>affinityKey</code> identify the engine
+  /// that registered <code>api</code>, or are <code>Int64.min</code> when unknown.
+  /// Registering an instance that is already registered under <code>name</code> updates its
+  /// keys and keeps its position.
   static void registerInstanceWithApi(
-    NativeInteropFlutterIntegrationCoreApiBridge? api, {
+    NativeInteropFlutterIntegrationCoreApiBridge api, {
+    required int engineId,
+    required int affinityKey,
     required objc.NSString name,
   }) {
-    final _$$ref = api?.ref;
+    final _$$ref = api.ref;
+    final _$$ref$1 = name.ref;
+    _objc_msgSend_1hz5td9(
+      _class_NativeInteropFlutterIntegrationCoreApiRegistrar,
+      _sel_registerInstanceWithApi_engineId_affinityKey_name_,
+      _$$ref.pointer,
+      engineId,
+      affinityKey,
+      _$$ref$1.pointer,
+    );
+  }
+
+  /// Removes <code>api</code> from the registrations under <code>name</code> (or the default instance
+  /// when <code>name</code> is omitted), leaving other registrations in place.
+  /// Instances are matched by identity. Does nothing if <code>api</code> is not registered.
+  static void unregisterInstanceWithApi(
+    NativeInteropFlutterIntegrationCoreApiBridge api, {
+    required objc.NSString name,
+  }) {
+    final _$$ref = api.ref;
     final _$$ref$1 = name.ref;
     _objc_msgSend_pfv6jd(
       _class_NativeInteropFlutterIntegrationCoreApiRegistrar,
-      _sel_registerInstanceWithApi_name_,
-      _$$ref?.pointer ?? ffi.nullptr,
+      _sel_unregisterInstanceWithApi_name_,
+      _$$ref.pointer,
       _$$ref$1.pointer,
     );
   }
@@ -14708,23 +14734,42 @@ extension type NativeInteropHostIntegrationCoreApiSetup._(objc.ObjCObject object
     return NativeInteropHostIntegrationCoreApiSetup.fromPointer($ret, retain: false, release: true);
   }
 
-  /// getInstanceWithName:
-  static NativeInteropHostIntegrationCoreApiSetup? getInstanceWithName(objc.NSString name) {
-    final _$$ref = name.ref;
-    final $ret = _objc_msgSend_1sotr3r(
+  /// new
+  static NativeInteropHostIntegrationCoreApiSetup new$() {
+    final $ret = _objc_msgSend_151sglz(_class_NativeInteropHostIntegrationCoreApiSetup, _sel_new);
+    return NativeInteropHostIntegrationCoreApiSetup.fromPointer($ret, retain: false, release: true);
+  }
+
+  /// Returns the engine key <code>instance</code> was registered with, or <code>Int64.min</code> if unknown.
+  static int pigeonEngineKeyOf(NativeInteropHostIntegrationCoreApiSetup instance) {
+    final _$$ref = instance.ref;
+    return _objc_msgSend_1oj5o8z(
       _class_NativeInteropHostIntegrationCoreApiSetup,
-      _sel_getInstanceWithName_,
+      _sel_pigeonEngineKeyOf_,
+      _$$ref.pointer,
+    );
+  }
+
+  /// Returns the instance generated Dart code should use for <code>name</code> (or the default
+  /// instance).
+  /// Prefers the most recent registration whose engine key is <code>engineId</code>, then
+  /// <code>affinityKey</code>, then the most recent registration. <code>Int64.min</code> means unknown.
+  static NativeInteropHostIntegrationCoreApiSetup? pigeonResolveInstanceWithEngineId(
+    int engineId, {
+    required int affinityKey,
+    required objc.NSString name,
+  }) {
+    final _$$ref = name.ref;
+    final $ret = _objc_msgSend_6vqy4b(
+      _class_NativeInteropHostIntegrationCoreApiSetup,
+      _sel_pigeonResolveInstanceWithEngineId_affinityKey_name_,
+      engineId,
+      affinityKey,
       _$$ref.pointer,
     );
     return $ret.address == 0
         ? null
         : NativeInteropHostIntegrationCoreApiSetup.fromPointer($ret, retain: true, release: true);
-  }
-
-  /// new
-  static NativeInteropHostIntegrationCoreApiSetup new$() {
-    final $ret = _objc_msgSend_151sglz(_class_NativeInteropHostIntegrationCoreApiSetup, _sel_new);
-    return NativeInteropHostIntegrationCoreApiSetup.fromPointer($ret, retain: false, release: true);
   }
 
   /// Returns a new instance of NativeInteropHostIntegrationCoreApiSetup constructed with the default `new` method.
@@ -16615,6 +16660,22 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
       _$$ref$2.pointer,
     );
     return $ret.address == 0 ? null : objc.NSData.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// Deregisters the Host API instance previously registered by [registerNamedHostApi] under [name].
+  void deregisterNamedHostApiWithName(
+    objc.NSString nameArg, {
+    required NativeInteropTestsError wrappedError,
+  }) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = nameArg.ref;
+    final _$$ref$2 = wrappedError.ref;
+    _objc_msgSend_pfv6jd(
+      _$$ref.pointer,
+      _sel_deregisterNamedHostApiWithName_wrappedError_,
+      _$$ref$1.pointer,
+      _$$ref$2.pointer,
+    );
   }
 
   /// Returns the passed object, to test serialization and deserialization.
@@ -18532,6 +18593,19 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
     return $ret.address == 0 ? null : objc.NSData.fromPointer($ret, retain: true, release: true);
   }
 
+  /// Returns a label unique to the Host API instance that handled the call, so
+  /// tests can check which engine’s registration a handle resolved to.
+  objc.NSString? engineLabelWithWrappedError(NativeInteropTestsError wrappedError) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = wrappedError.ref;
+    final $ret = _objc_msgSend_1sotr3r(
+      _$$ref.pointer,
+      _sel_engineLabelWithWrappedError_,
+      _$$ref$1.pointer,
+    );
+    return $ret.address == 0 ? null : objc.NSString.fromPointer($ret, retain: true, release: true);
+  }
+
   /// Returns the inner <code>aString</code> value from the wrapped object, to test
   /// sending of nested objects.
   objc.NSString? extractNestedNullableStringWithPigeonVar_args(
@@ -18600,6 +18674,21 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
     return $ret.address == 0 ? null : objc.NSNumber.fromPointer($ret, retain: true, release: true);
   }
 
+  /// Returns whether the secondary engine’s Host API registration is ready for
+  /// the secondary Dart isolate to invoke.
+  objc.NSNumber? isSecondaryEngineRegistrationReadyWithWrappedError(
+    NativeInteropTestsError wrappedError,
+  ) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = wrappedError.ref;
+    final $ret = _objc_msgSend_1sotr3r(
+      _$$ref.pointer,
+      _sel_isSecondaryEngineRegistrationReadyWithWrappedError_,
+      _$$ref$1.pointer,
+    );
+    return $ret.address == 0 ? null : objc.NSNumber.fromPointer($ret, retain: true, release: true);
+  }
+
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic asynchronous calling.
   void noopAsyncWithWrappedError(
@@ -18625,6 +18714,33 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
     _objc_msgSend_xtuoz7(_$$ref.pointer, _sel_noopWithWrappedError_, _$$ref$1.pointer);
   }
 
+  /// Signals that the concurrent background isolate resolved a fresh handle
+  /// while the secondary engine was registered.
+  void notifyConcurrentIsolateResolvedWithWrappedError(NativeInteropTestsError wrappedError) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = wrappedError.ref;
+    _objc_msgSend_xtuoz7(
+      _$$ref.pointer,
+      _sel_notifyConcurrentIsolateResolvedWithWrappedError_,
+      _$$ref$1.pointer,
+    );
+  }
+
+  /// Returns whether this platform’s plugin binding / registrar exposes an
+  /// engine identifier, so registrations should use exact engine keys.
+  objc.NSNumber? pluginEngineIdentifierIsAvailableWithWrappedError(
+    NativeInteropTestsError wrappedError,
+  ) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = wrappedError.ref;
+    final $ret = _objc_msgSend_1sotr3r(
+      _$$ref.pointer,
+      _sel_pluginEngineIdentifierIsAvailableWithWrappedError_,
+      _$$ref$1.pointer,
+    );
+    return $ret.address == 0 ? null : objc.NSNumber.fromPointer($ret, retain: true, release: true);
+  }
+
   /// Registers and immediately deregisters a Host API under [name].
   void registerAndImmediatelyDeregisterHostApiWithName(
     objc.NSString nameArg, {
@@ -18638,6 +18754,51 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
       _sel_registerAndImmediatelyDeregisterHostApiWithName_wrappedError_,
       _$$ref$1.pointer,
       _$$ref$2.pointer,
+    );
+  }
+
+  /// Registers a separate Host API instance under [name] for detached-handle testing.
+  void registerNamedHostApiWithName(
+    objc.NSString nameArg, {
+    required NativeInteropTestsError wrappedError,
+  }) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = nameArg.ref;
+    final _$$ref$2 = wrappedError.ref;
+    _objc_msgSend_pfv6jd(
+      _$$ref.pointer,
+      _sel_registerNamedHostApiWithName_wrappedError_,
+      _$$ref$1.pointer,
+      _$$ref$2.pointer,
+    );
+  }
+
+  /// Returns the engine key that native code stored for this plugin’s
+  /// default Host API registration.
+  objc.NSNumber? registeredEngineKeyWithWrappedError(NativeInteropTestsError wrappedError) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = wrappedError.ref;
+    final $ret = _objc_msgSend_1sotr3r(
+      _$$ref.pointer,
+      _sel_registeredEngineKeyWithWrappedError_,
+      _$$ref$1.pointer,
+    );
+    return $ret.address == 0 ? null : objc.NSNumber.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// Reports whether Native Interop Host API calls from a secondary engine’s
+  /// Dart isolate succeeded.
+  void reportSecondaryEngineCheckWithSuccess(
+    bool successArg, {
+    required NativeInteropTestsError wrappedError,
+  }) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = wrappedError.ref;
+    _objc_msgSend_hk7n97(
+      _$$ref.pointer,
+      _sel_reportSecondaryEngineCheckWithSuccess_wrappedError_,
+      successArg,
+      _$$ref$1.pointer,
     );
   }
 
@@ -18739,6 +18900,24 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
       _$$ref$1.pointer,
     );
     return $ret.address == 0 ? null : objc.NSNumber.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// Spawns secondary engines, destroys one out-of-order, executes a live Dart
+  /// entrypoint on another (where supported by the embedder), and tears it down
+  /// while keeping the primary engine registration intact.
+  void testSecondaryEngineDartExecutionWithWrappedError(
+    NativeInteropTestsError wrappedError, {
+    required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
+  }) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = wrappedError.ref;
+    final _$$ref$2 = completionHandler.ref;
+    _objc_msgSend_o762yo(
+      _$$ref.pointer,
+      _sel_testSecondaryEngineDartExecutionWithWrappedError_completionHandler_,
+      _$$ref$1.pointer,
+      _$$ref$2.pointer,
+    );
   }
 
   /// Responds with an error from an async void function.
@@ -19145,6 +19324,14 @@ extension type NativeInteropReservedNamesFlutterApiBridge._(objc.ObjCProtocol ob
 
 extension NativeInteropReservedNamesFlutterApiBridge$Methods
     on NativeInteropReservedNamesFlutterApiBridge {
+  /// Previously collided with internal Dart JNI registrar <code>dartApi</code> field.
+  objc.NSString? dartApiWithError(NativeInteropTestsError error) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = error.ref;
+    final $ret = _objc_msgSend_1sotr3r(_$$ref.pointer, _sel_dartApiWithError_, _$$ref$1.pointer);
+    return $ret.address == 0 ? null : objc.NSString.fromPointer($ret, retain: true, release: true);
+  }
+
   /// JNIgen doesn’t turn interface methods into properties.
   objc.NSString? getReferenceWithError(NativeInteropTestsError error) {
     final _$$ref = object$.ref;
@@ -19180,6 +19367,23 @@ extension NativeInteropReservedNamesFlutterApiBridge$Methods
     final _$$ref$1 = error.ref;
     final $ret = _objc_msgSend_1sotr3r(_$$ref.pointer, _sel_isNullWithError_, _$$ref$1.pointer);
     return $ret.address == 0 ? null : objc.NSNumber.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// Previously collided with internal Dart JNI registrar <code>register</code> member.
+  objc.NSString? registerWithValue(
+    objc.NSString valueArg, {
+    required NativeInteropTestsError error,
+  }) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = valueArg.ref;
+    final _$$ref$2 = error.ref;
+    final $ret = _objc_msgSend_15qeuct(
+      _$$ref.pointer,
+      _sel_registerWithValue_error_,
+      _$$ref$1.pointer,
+      _$$ref$2.pointer,
+    );
+    return $ret.address == 0 ? null : objc.NSString.fromPointer($ret, retain: true, release: true);
   }
 
   /// Collides with <code>JObject.release</code>.
@@ -19219,10 +19423,13 @@ interface class NativeInteropReservedNamesFlutterApiBridge$Builder {
   /// If `$keepIsolateAlive` is true, this protocol will keep this isolate
   /// alive until it is garbage collected by both Dart and ObjC.
   static NativeInteropReservedNamesFlutterApiBridge implement({
+    required objc.NSString? Function(NativeInteropTestsError) dartApiWithError_,
     required objc.NSString? Function(NativeInteropTestsError) getReferenceWithError_,
     required objc.NSString? Function(objc.NSString, NativeInteropTestsError)
     implementInValue_error_,
     required objc.NSNumber? Function(NativeInteropTestsError) isNullWithError_,
+    required objc.NSString? Function(objc.NSString, NativeInteropTestsError)
+    registerWithValue_error_,
     required objc.NSString? Function(objc.NSString, NativeInteropTestsError)
     releaseWithValue_error_,
     required objc.NSString? Function(NativeInteropTestsError) typeWithError_,
@@ -19230,6 +19437,10 @@ interface class NativeInteropReservedNamesFlutterApiBridge$Builder {
   }) {
     final builder = objc.ObjCProtocolBuilder(
       debugName: 'NativeInteropReservedNamesFlutterApiBridge',
+    );
+    NativeInteropReservedNamesFlutterApiBridge$Builder.dartApiWithError_.implement(
+      builder,
+      dartApiWithError_,
     );
     NativeInteropReservedNamesFlutterApiBridge$Builder.getReferenceWithError_.implement(
       builder,
@@ -19242,6 +19453,10 @@ interface class NativeInteropReservedNamesFlutterApiBridge$Builder {
     NativeInteropReservedNamesFlutterApiBridge$Builder.isNullWithError_.implement(
       builder,
       isNullWithError_,
+    );
+    NativeInteropReservedNamesFlutterApiBridge$Builder.registerWithValue_error_.implement(
+      builder,
+      registerWithValue_error_,
     );
     NativeInteropReservedNamesFlutterApiBridge$Builder.releaseWithValue_error_.implement(
       builder,
@@ -19263,15 +19478,22 @@ interface class NativeInteropReservedNamesFlutterApiBridge$Builder {
   /// Note: You cannot call this method after you have called `builder.build`.
   static void addToBuilder(
     objc.ObjCProtocolBuilder builder, {
+    required objc.NSString? Function(NativeInteropTestsError) dartApiWithError_,
     required objc.NSString? Function(NativeInteropTestsError) getReferenceWithError_,
     required objc.NSString? Function(objc.NSString, NativeInteropTestsError)
     implementInValue_error_,
     required objc.NSNumber? Function(NativeInteropTestsError) isNullWithError_,
     required objc.NSString? Function(objc.NSString, NativeInteropTestsError)
+    registerWithValue_error_,
+    required objc.NSString? Function(objc.NSString, NativeInteropTestsError)
     releaseWithValue_error_,
     required objc.NSString? Function(NativeInteropTestsError) typeWithError_,
     bool $keepIsolateAlive = true,
   }) {
+    NativeInteropReservedNamesFlutterApiBridge$Builder.dartApiWithError_.implement(
+      builder,
+      dartApiWithError_,
+    );
     NativeInteropReservedNamesFlutterApiBridge$Builder.getReferenceWithError_.implement(
       builder,
       getReferenceWithError_,
@@ -19284,6 +19506,10 @@ interface class NativeInteropReservedNamesFlutterApiBridge$Builder {
       builder,
       isNullWithError_,
     );
+    NativeInteropReservedNamesFlutterApiBridge$Builder.registerWithValue_error_.implement(
+      builder,
+      registerWithValue_error_,
+    );
     NativeInteropReservedNamesFlutterApiBridge$Builder.releaseWithValue_error_.implement(
       builder,
       releaseWithValue_error_,
@@ -19294,6 +19520,33 @@ interface class NativeInteropReservedNamesFlutterApiBridge$Builder {
     );
     builder.addProtocol($protocol);
   }
+
+  /// Previously collided with internal Dart JNI registrar <code>dartApi</code> field.
+  static final dartApiWithError_ =
+      objc.ObjCProtocolMethod<objc.NSString? Function(NativeInteropTestsError)>(
+        _protocol_NativeInteropReservedNamesFlutterApiBridge,
+        _sel_dartApiWithError_,
+        ffi.Native.addressOf<
+              ffi.NativeFunction<
+                ffi.Pointer<objc.ObjCObjectImpl> Function(
+                  ffi.Pointer<objc.ObjCObjectImpl>,
+                  ffi.Pointer<ffi.Void>,
+                  ffi.Pointer<objc.ObjCObjectImpl>,
+                )
+              >
+            >(_julz8q_protocolTrampoline_xr62hr)
+            .cast(),
+        objc.getProtocolMethodSignature(
+          _protocol_NativeInteropReservedNamesFlutterApiBridge,
+          _sel_dartApiWithError_,
+          isRequired: true,
+          isInstanceMethod: true,
+        ),
+        (objc.NSString? Function(NativeInteropTestsError) func) =>
+            ObjCBlock_NSString_ffiVoid_NativeInteropTestsError.fromFunction(
+              (ffi.Pointer<ffi.Void> _, NativeInteropTestsError arg1) => func(arg1),
+            ),
+      );
 
   /// JNIgen doesn’t turn interface methods into properties.
   static final getReferenceWithError_ =
@@ -19375,6 +19628,35 @@ interface class NativeInteropReservedNamesFlutterApiBridge$Builder {
         (objc.NSNumber? Function(NativeInteropTestsError) func) =>
             ObjCBlock_NSNumber_ffiVoid_NativeInteropTestsError.fromFunction(
               (ffi.Pointer<ffi.Void> _, NativeInteropTestsError arg1) => func(arg1),
+            ),
+      );
+
+  /// Previously collided with internal Dart JNI registrar <code>register</code> member.
+  static final registerWithValue_error_ =
+      objc.ObjCProtocolMethod<objc.NSString? Function(objc.NSString, NativeInteropTestsError)>(
+        _protocol_NativeInteropReservedNamesFlutterApiBridge,
+        _sel_registerWithValue_error_,
+        ffi.Native.addressOf<
+              ffi.NativeFunction<
+                ffi.Pointer<objc.ObjCObjectImpl> Function(
+                  ffi.Pointer<objc.ObjCObjectImpl>,
+                  ffi.Pointer<ffi.Void>,
+                  ffi.Pointer<objc.ObjCObjectImpl>,
+                  ffi.Pointer<objc.ObjCObjectImpl>,
+                )
+              >
+            >(_julz8q_protocolTrampoline_zi5eed)
+            .cast(),
+        objc.getProtocolMethodSignature(
+          _protocol_NativeInteropReservedNamesFlutterApiBridge,
+          _sel_registerWithValue_error_,
+          isRequired: true,
+          isInstanceMethod: true,
+        ),
+        (objc.NSString? Function(objc.NSString, NativeInteropTestsError) func) =>
+            ObjCBlock_NSString_ffiVoid_NSString_NativeInteropTestsError.fromFunction(
+              (ffi.Pointer<ffi.Void> _, objc.NSString arg1, NativeInteropTestsError arg2) =>
+                  func(arg1, arg2),
             ),
       );
 
@@ -19503,17 +19785,43 @@ extension type NativeInteropReservedNamesFlutterApiRegistrar._(objc.ObjCObject o
     );
   }
 
-  /// registerInstanceWithApi:name:
+  /// Registers the Dart implementation <code>api</code> under <code>name</code> (or the default instance
+  /// when <code>name</code> is omitted).
+  /// Called by generated Dart code. <code>engineId</code> and <code>affinityKey</code> identify the engine
+  /// that registered <code>api</code>, or are <code>Int64.min</code> when unknown.
+  /// Registering an instance that is already registered under <code>name</code> updates its
+  /// keys and keeps its position.
   static void registerInstanceWithApi(
-    NativeInteropReservedNamesFlutterApiBridge? api, {
+    NativeInteropReservedNamesFlutterApiBridge api, {
+    required int engineId,
+    required int affinityKey,
     required objc.NSString name,
   }) {
-    final _$$ref = api?.ref;
+    final _$$ref = api.ref;
+    final _$$ref$1 = name.ref;
+    _objc_msgSend_1hz5td9(
+      _class_NativeInteropReservedNamesFlutterApiRegistrar,
+      _sel_registerInstanceWithApi_engineId_affinityKey_name_,
+      _$$ref.pointer,
+      engineId,
+      affinityKey,
+      _$$ref$1.pointer,
+    );
+  }
+
+  /// Removes <code>api</code> from the registrations under <code>name</code> (or the default instance
+  /// when <code>name</code> is omitted), leaving other registrations in place.
+  /// Instances are matched by identity. Does nothing if <code>api</code> is not registered.
+  static void unregisterInstanceWithApi(
+    NativeInteropReservedNamesFlutterApiBridge api, {
+    required objc.NSString name,
+  }) {
+    final _$$ref = api.ref;
     final _$$ref$1 = name.ref;
     _objc_msgSend_pfv6jd(
       _class_NativeInteropReservedNamesFlutterApiRegistrar,
-      _sel_registerInstanceWithApi_name_,
-      _$$ref?.pointer ?? ffi.nullptr,
+      _sel_unregisterInstanceWithApi_name_,
+      _$$ref.pointer,
       _$$ref$1.pointer,
     );
   }
@@ -19583,12 +19891,37 @@ extension type NativeInteropReservedNamesHostApiSetup._(objc.ObjCObject object$)
     return NativeInteropReservedNamesHostApiSetup.fromPointer($ret, retain: false, release: true);
   }
 
-  /// getInstanceWithName:
-  static NativeInteropReservedNamesHostApiSetup? getInstanceWithName(objc.NSString name) {
-    final _$$ref = name.ref;
-    final $ret = _objc_msgSend_1sotr3r(
+  /// new
+  static NativeInteropReservedNamesHostApiSetup new$() {
+    final $ret = _objc_msgSend_151sglz(_class_NativeInteropReservedNamesHostApiSetup, _sel_new);
+    return NativeInteropReservedNamesHostApiSetup.fromPointer($ret, retain: false, release: true);
+  }
+
+  /// Returns the engine key <code>instance</code> was registered with, or <code>Int64.min</code> if unknown.
+  static int pigeonEngineKeyOf(NativeInteropReservedNamesHostApiSetup instance) {
+    final _$$ref = instance.ref;
+    return _objc_msgSend_1oj5o8z(
       _class_NativeInteropReservedNamesHostApiSetup,
-      _sel_getInstanceWithName_,
+      _sel_pigeonEngineKeyOf_,
+      _$$ref.pointer,
+    );
+  }
+
+  /// Returns the instance generated Dart code should use for <code>name</code> (or the default
+  /// instance).
+  /// Prefers the most recent registration whose engine key is <code>engineId</code>, then
+  /// <code>affinityKey</code>, then the most recent registration. <code>Int64.min</code> means unknown.
+  static NativeInteropReservedNamesHostApiSetup? pigeonResolveInstanceWithEngineId(
+    int engineId, {
+    required int affinityKey,
+    required objc.NSString name,
+  }) {
+    final _$$ref = name.ref;
+    final $ret = _objc_msgSend_6vqy4b(
+      _class_NativeInteropReservedNamesHostApiSetup,
+      _sel_pigeonResolveInstanceWithEngineId_affinityKey_name_,
+      engineId,
+      affinityKey,
       _$$ref.pointer,
     );
     return $ret.address == 0
@@ -19596,17 +19929,23 @@ extension type NativeInteropReservedNamesHostApiSetup._(objc.ObjCObject object$)
         : NativeInteropReservedNamesHostApiSetup.fromPointer($ret, retain: true, release: true);
   }
 
-  /// new
-  static NativeInteropReservedNamesHostApiSetup new$() {
-    final $ret = _objc_msgSend_151sglz(_class_NativeInteropReservedNamesHostApiSetup, _sel_new);
-    return NativeInteropReservedNamesHostApiSetup.fromPointer($ret, retain: false, release: true);
-  }
-
   /// Returns a new instance of NativeInteropReservedNamesHostApiSetup constructed with the default `new` method.
   NativeInteropReservedNamesHostApiSetup() : this.as(new$().object$);
 }
 
 extension NativeInteropReservedNamesHostApiSetup$Methods on NativeInteropReservedNamesHostApiSetup {
+  /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.dartApi].
+  objc.NSString? callFlutterDartApiWithWrappedError(NativeInteropTestsError wrappedError) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = wrappedError.ref;
+    final $ret = _objc_msgSend_1sotr3r(
+      _$$ref.pointer,
+      _sel_callFlutterDartApiWithWrappedError_,
+      _$$ref$1.pointer,
+    );
+    return $ret.address == 0 ? null : objc.NSString.fromPointer($ret, retain: true, release: true);
+  }
+
   /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.getReference].
   objc.NSString? callFlutterGetReferenceWithWrappedError(NativeInteropTestsError wrappedError) {
     final _$$ref = object$.ref;
@@ -19646,6 +19985,23 @@ extension NativeInteropReservedNamesHostApiSetup$Methods on NativeInteropReserve
       _$$ref$1.pointer,
     );
     return $ret.address == 0 ? null : objc.NSNumber.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.register].
+  objc.NSString? callFlutterRegisterWithValue(
+    objc.NSString valueArg, {
+    required NativeInteropTestsError wrappedError,
+  }) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = valueArg.ref;
+    final _$$ref$2 = wrappedError.ref;
+    final $ret = _objc_msgSend_15qeuct(
+      _$$ref.pointer,
+      _sel_callFlutterRegisterWithValue_wrappedError_,
+      _$$ref$1.pointer,
+      _$$ref$2.pointer,
+    );
+    return $ret.address == 0 ? null : objc.NSString.fromPointer($ret, retain: true, release: true);
   }
 
   /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.release].
@@ -19701,6 +20057,19 @@ extension NativeInteropReservedNamesHostApiSetup$Methods on NativeInteropReserve
     final $ret = _objc_msgSend_1sotr3r(
       _$$ref.pointer,
       _sel_getDefaultWithWrappedError_,
+      _$$ref$1.pointer,
+    );
+    return $ret.address == 0 ? null : objc.NSString.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// JNIgen turns this into an instance getter <code>getInstance</code>, colliding with
+  /// <code><Api>Registrar.getInstance</code>.
+  objc.NSString? getGetInstanceWithWrappedError(NativeInteropTestsError wrappedError) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = wrappedError.ref;
+    final $ret = _objc_msgSend_1sotr3r(
+      _$$ref.pointer,
+      _sel_getGetInstanceWithWrappedError_,
       _$$ref$1.pointer,
     );
     return $ret.address == 0 ? null : objc.NSString.fromPointer($ret, retain: true, release: true);
@@ -19783,6 +20152,23 @@ extension NativeInteropReservedNamesHostApiSetup$Methods on NativeInteropReserve
     return $ret.address == 0 ? null : objc.NSNumber.fromPointer($ret, retain: true, release: true);
   }
 
+  /// Collides with <code><Api>Registrar.register</code> in Kotlin bytecode.
+  objc.NSString? registerWithValue(
+    objc.NSString valueArg, {
+    required NativeInteropTestsError wrappedError,
+  }) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = valueArg.ref;
+    final _$$ref$2 = wrappedError.ref;
+    final $ret = _objc_msgSend_15qeuct(
+      _$$ref.pointer,
+      _sel_registerWithValue_wrappedError_,
+      _$$ref$1.pointer,
+      _$$ref$2.pointer,
+    );
+    return $ret.address == 0 ? null : objc.NSString.fromPointer($ret, retain: true, release: true);
+  }
+
   /// Collides with <code>JObject.release</code>.
   objc.NSString? releaseWithValue(
     objc.NSString valueArg, {
@@ -19824,6 +20210,23 @@ extension NativeInteropReservedNamesHostApiSetup$Methods on NativeInteropReserve
       _$$ref.pointer,
       _sel_typeWithWrappedError_,
       _$$ref$1.pointer,
+    );
+    return $ret.address == 0 ? null : objc.NSString.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// Collides with <code><Api>Registrar.unregister</code> in Kotlin bytecode.
+  objc.NSString? unregisterWithValue(
+    objc.NSString valueArg, {
+    required NativeInteropTestsError wrappedError,
+  }) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = valueArg.ref;
+    final _$$ref$2 = wrappedError.ref;
+    final $ret = _objc_msgSend_15qeuct(
+      _$$ref.pointer,
+      _sel_unregisterWithValue_wrappedError_,
+      _$$ref$1.pointer,
+      _$$ref$2.pointer,
     );
     return $ret.address == 0 ? null : objc.NSString.fromPointer($ret, retain: true, release: true);
   }
@@ -20092,17 +20495,43 @@ extension type NativeInteropSealedClassFlutterApiRegistrar._(objc.ObjCObject obj
     );
   }
 
-  /// registerInstanceWithApi:name:
+  /// Registers the Dart implementation <code>api</code> under <code>name</code> (or the default instance
+  /// when <code>name</code> is omitted).
+  /// Called by generated Dart code. <code>engineId</code> and <code>affinityKey</code> identify the engine
+  /// that registered <code>api</code>, or are <code>Int64.min</code> when unknown.
+  /// Registering an instance that is already registered under <code>name</code> updates its
+  /// keys and keeps its position.
   static void registerInstanceWithApi(
-    NativeInteropSealedClassFlutterApiBridge? api, {
+    NativeInteropSealedClassFlutterApiBridge api, {
+    required int engineId,
+    required int affinityKey,
     required objc.NSString name,
   }) {
-    final _$$ref = api?.ref;
+    final _$$ref = api.ref;
+    final _$$ref$1 = name.ref;
+    _objc_msgSend_1hz5td9(
+      _class_NativeInteropSealedClassFlutterApiRegistrar,
+      _sel_registerInstanceWithApi_engineId_affinityKey_name_,
+      _$$ref.pointer,
+      engineId,
+      affinityKey,
+      _$$ref$1.pointer,
+    );
+  }
+
+  /// Removes <code>api</code> from the registrations under <code>name</code> (or the default instance
+  /// when <code>name</code> is omitted), leaving other registrations in place.
+  /// Instances are matched by identity. Does nothing if <code>api</code> is not registered.
+  static void unregisterInstanceWithApi(
+    NativeInteropSealedClassFlutterApiBridge api, {
+    required objc.NSString name,
+  }) {
+    final _$$ref = api.ref;
     final _$$ref$1 = name.ref;
     _objc_msgSend_pfv6jd(
       _class_NativeInteropSealedClassFlutterApiRegistrar,
-      _sel_registerInstanceWithApi_name_,
-      _$$ref?.pointer ?? ffi.nullptr,
+      _sel_unregisterInstanceWithApi_name_,
+      _$$ref.pointer,
       _$$ref$1.pointer,
     );
   }
@@ -20172,23 +20601,42 @@ extension type NativeInteropSealedClassHostApiSetup._(objc.ObjCObject object$)
     return NativeInteropSealedClassHostApiSetup.fromPointer($ret, retain: false, release: true);
   }
 
-  /// getInstanceWithName:
-  static NativeInteropSealedClassHostApiSetup? getInstanceWithName(objc.NSString name) {
-    final _$$ref = name.ref;
-    final $ret = _objc_msgSend_1sotr3r(
+  /// new
+  static NativeInteropSealedClassHostApiSetup new$() {
+    final $ret = _objc_msgSend_151sglz(_class_NativeInteropSealedClassHostApiSetup, _sel_new);
+    return NativeInteropSealedClassHostApiSetup.fromPointer($ret, retain: false, release: true);
+  }
+
+  /// Returns the engine key <code>instance</code> was registered with, or <code>Int64.min</code> if unknown.
+  static int pigeonEngineKeyOf(NativeInteropSealedClassHostApiSetup instance) {
+    final _$$ref = instance.ref;
+    return _objc_msgSend_1oj5o8z(
       _class_NativeInteropSealedClassHostApiSetup,
-      _sel_getInstanceWithName_,
+      _sel_pigeonEngineKeyOf_,
+      _$$ref.pointer,
+    );
+  }
+
+  /// Returns the instance generated Dart code should use for <code>name</code> (or the default
+  /// instance).
+  /// Prefers the most recent registration whose engine key is <code>engineId</code>, then
+  /// <code>affinityKey</code>, then the most recent registration. <code>Int64.min</code> means unknown.
+  static NativeInteropSealedClassHostApiSetup? pigeonResolveInstanceWithEngineId(
+    int engineId, {
+    required int affinityKey,
+    required objc.NSString name,
+  }) {
+    final _$$ref = name.ref;
+    final $ret = _objc_msgSend_6vqy4b(
+      _class_NativeInteropSealedClassHostApiSetup,
+      _sel_pigeonResolveInstanceWithEngineId_affinityKey_name_,
+      engineId,
+      affinityKey,
       _$$ref.pointer,
     );
     return $ret.address == 0
         ? null
         : NativeInteropSealedClassHostApiSetup.fromPointer($ret, retain: true, release: true);
-  }
-
-  /// new
-  static NativeInteropSealedClassHostApiSetup new$() {
-    final $ret = _objc_msgSend_151sglz(_class_NativeInteropSealedClassHostApiSetup, _sel_new);
-    return NativeInteropSealedClassHostApiSetup.fromPointer($ret, retain: false, release: true);
   }
 
   /// Returns a new instance of NativeInteropSealedClassHostApiSetup constructed with the default `new` method.
@@ -28314,6 +28762,29 @@ final _objc_msgSend_1cwp428 = objc.msgSendPointer
         ffi.Pointer<objc.NSZone>,
       )
     >();
+final _objc_msgSend_1hz5td9 = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Void Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Int64,
+          ffi.Int64,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+        )
+      >
+    >()
+    .asFunction<
+      void Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        int,
+        int,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+      )
+    >();
 final _objc_msgSend_1hz7y9r = objc.msgSendPointer
     .cast<
       ffi.NativeFunction<
@@ -28359,6 +28830,23 @@ final _objc_msgSend_1oby3xk = objc.msgSendPointer
         bool,
         ffi.Pointer<objc.ObjCObjectImpl>,
         ffi.Pointer<objc.ObjCBlockImpl>,
+      )
+    >();
+final _objc_msgSend_1oj5o8z = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Int64 Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+        )
+      >
+    >()
+    .asFunction<
+      int Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
       )
     >();
 final _objc_msgSend_1ozwf6k = objc.msgSendPointer
@@ -28600,6 +29088,27 @@ final _objc_msgSend_6ex6p5 = objc.msgSendPointer
         ffi.Pointer<objc.ObjCSelector>,
       )
     >();
+final _objc_msgSend_6vqy4b = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Pointer<objc.ObjCObjectImpl> Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Int64,
+          ffi.Int64,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+        )
+      >
+    >()
+    .asFunction<
+      ffi.Pointer<objc.ObjCObjectImpl> Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+        int,
+        int,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+      )
+    >();
 final _objc_msgSend_91o635 = objc.msgSendPointer
     .cast<
       ffi.NativeFunction<
@@ -28819,6 +29328,25 @@ final _objc_msgSend_f15nnv = objc.msgSendPointer
         double,
         ffi.Pointer<objc.ObjCObjectImpl>,
         ffi.Pointer<objc.ObjCBlockImpl>,
+      )
+    >();
+final _objc_msgSend_hk7n97 = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Void Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Bool,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+        )
+      >
+    >()
+    .asFunction<
+      void Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+        bool,
+        ffi.Pointer<objc.ObjCObjectImpl>,
       )
     >();
 final _objc_msgSend_hwm8nu = objc.msgSendPointer
@@ -29120,6 +29648,9 @@ late final _sel_asyncIsBackgroundThreadWithWrappedError_completionHandler_ = obj
   "asyncIsBackgroundThreadWithWrappedError:completionHandler:",
 );
 late final _sel_boolList = objc.registerName("boolList");
+late final _sel_callFlutterDartApiWithWrappedError_ = objc.registerName(
+  "callFlutterDartApiWithWrappedError:",
+);
 late final _sel_callFlutterEchoAnotherAsyncEnumWithAnotherEnum_wrappedError_completionHandler_ =
     objc.registerName(
       "callFlutterEchoAnotherAsyncEnumWithAnotherEnum:wrappedError:completionHandler:",
@@ -29422,6 +29953,9 @@ late final _sel_callFlutterNoopOnBackgroundThreadWithWrappedError_completionHand
 late final _sel_callFlutterNoopWithWrappedError_ = objc.registerName(
   "callFlutterNoopWithWrappedError:",
 );
+late final _sel_callFlutterRegisterWithValue_wrappedError_ = objc.registerName(
+  "callFlutterRegisterWithValue:wrappedError:",
+);
 late final _sel_callFlutterReleaseWithValue_wrappedError_ = objc.registerName(
   "callFlutterReleaseWithValue:wrappedError:",
 );
@@ -29460,7 +29994,11 @@ late final _sel_credentialWithIdentity_certificates_persistence_ = objc.register
 late final _sel_credentialWithUser_password_persistence_ = objc.registerName(
   "credentialWithUser:password:persistence:",
 );
+late final _sel_dartApiWithError_ = objc.registerName("dartApiWithError:");
 late final _sel_data = objc.registerName("data");
+late final _sel_deregisterNamedHostApiWithName_wrappedError_ = objc.registerName(
+  "deregisterNamedHostApiWithName:wrappedError:",
+);
 late final _sel_details = objc.registerName("details");
 late final _sel_doubleList = objc.registerName("doubleList");
 late final _sel_echoAllNullableTypesWithPigeonVar_args_wrappedError_ = objc.registerName(
@@ -30046,6 +30584,7 @@ late final _sel_echoUint8ListWithAUint8List_wrappedError_ = objc.registerName(
 );
 late final _sel_echoUint8ListWithList_error_ = objc.registerName("echoUint8ListWithList:error:");
 late final _sel_encodeWithCoder_ = objc.registerName("encodeWithCoder:");
+late final _sel_engineLabelWithWrappedError_ = objc.registerName("engineLabelWithWrappedError:");
 late final _sel_enumList = objc.registerName("enumList");
 late final _sel_enumMap = objc.registerName("enumMap");
 late final _sel_equals = objc.registerName("equals");
@@ -30054,8 +30593,10 @@ late final _sel_extractNestedNullableStringWithPigeonVar_args_wrappedError_ = ob
 );
 late final _sel_fromReference = objc.registerName("fromReference");
 late final _sel_getDefaultWithWrappedError_ = objc.registerName("getDefaultWithWrappedError:");
+late final _sel_getGetInstanceWithWrappedError_ = objc.registerName(
+  "getGetInstanceWithWrappedError:",
+);
 late final _sel_getGetterWithWrappedError_ = objc.registerName("getGetterWithWrappedError:");
-late final _sel_getInstanceWithName_ = objc.registerName("getInstanceWithName:");
 late final _sel_getReferenceWithError_ = objc.registerName("getReferenceWithError:");
 late final _sel_getReferenceWithWrappedError_ = objc.registerName("getReferenceWithWrappedError:");
 late final _sel_getValue = objc.registerName("getValue");
@@ -30116,6 +30657,9 @@ late final _sel_isNullWithWrappedError_ = objc.registerName("isNullWithWrappedEr
 late final _sel_isNullableWithWrappedError_ = objc.registerName("isNullableWithWrappedError:");
 late final _sel_isOpenWithWrappedError_ = objc.registerName("isOpenWithWrappedError:");
 late final _sel_isReleased = objc.registerName("isReleased");
+late final _sel_isSecondaryEngineRegistrationReadyWithWrappedError_ = objc.registerName(
+  "isSecondaryEngineRegistrationReadyWithWrappedError:",
+);
 late final _sel_jClass = objc.registerName("jClass");
 late final _sel_label = objc.registerName("label");
 late final _sel_list = objc.registerName("list");
@@ -30134,6 +30678,9 @@ late final _sel_noopAsyncWithWrappedError_completionHandler_ = objc.registerName
 );
 late final _sel_noopWithError_ = objc.registerName("noopWithError:");
 late final _sel_noopWithWrappedError_ = objc.registerName("noopWithWrappedError:");
+late final _sel_notifyConcurrentIsolateResolvedWithWrappedError_ = objc.registerName(
+  "notifyConcurrentIsolateResolvedWithWrappedError:",
+);
 late final _sel_nullableClassList = objc.registerName("nullableClassList");
 late final _sel_nullableClassMap = objc.registerName("nullableClassMap");
 late final _sel_nullableSealedClass = objc.registerName("nullableSealedClass");
@@ -30142,6 +30689,13 @@ late final _sel_objectList = objc.registerName("objectList");
 late final _sel_objectMap = objc.registerName("objectMap");
 late final _sel_password = objc.registerName("password");
 late final _sel_persistence = objc.registerName("persistence");
+late final _sel_pigeonEngineKeyOf_ = objc.registerName("pigeonEngineKeyOf:");
+late final _sel_pigeonResolveInstanceWithEngineId_affinityKey_name_ = objc.registerName(
+  "pigeonResolveInstanceWithEngineId:affinityKey:name:",
+);
+late final _sel_pluginEngineIdentifierIsAvailableWithWrappedError_ = objc.registerName(
+  "pluginEngineIdentifierIsAvailableWithWrappedError:",
+);
 late final _sel_radius = objc.registerName("radius");
 late final _sel_recursiveClassList = objc.registerName("recursiveClassList");
 late final _sel_recursiveClassMap = objc.registerName("recursiveClassMap");
@@ -30149,12 +30703,27 @@ late final _sel_reference = objc.registerName("reference");
 late final _sel_registerAndImmediatelyDeregisterHostApiWithName_wrappedError_ = objc.registerName(
   "registerAndImmediatelyDeregisterHostApiWithName:wrappedError:",
 );
-late final _sel_registerInstanceWithApi_name_ = objc.registerName("registerInstanceWithApi:name:");
+late final _sel_registerInstanceWithApi_engineId_affinityKey_name_ = objc.registerName(
+  "registerInstanceWithApi:engineId:affinityKey:name:",
+);
+late final _sel_registerNamedHostApiWithName_wrappedError_ = objc.registerName(
+  "registerNamedHostApiWithName:wrappedError:",
+);
+late final _sel_registerWithValue_error_ = objc.registerName("registerWithValue:error:");
+late final _sel_registerWithValue_wrappedError_ = objc.registerName(
+  "registerWithValue:wrappedError:",
+);
+late final _sel_registeredEngineKeyWithWrappedError_ = objc.registerName(
+  "registeredEngineKeyWithWrappedError:",
+);
 late final _sel_releaseWithValue_error_ = objc.registerName("releaseWithValue:error:");
 late final _sel_releaseWithValue_wrappedError_ = objc.registerName(
   "releaseWithValue:wrappedError:",
 );
 late final _sel_releasedBy = objc.registerName("releasedBy");
+late final _sel_reportSecondaryEngineCheckWithSuccess_wrappedError_ = objc.registerName(
+  "reportSecondaryEngineCheckWithSuccess:wrappedError:",
+);
 late final _sel_sealedClass = objc.registerName("sealedClass");
 late final _sel_sealedClassList = objc.registerName("sealedClassList");
 late final _sel_sendMultipleNullableTypesWithANullableBool_aNullableInt_aNullableString_error_ =
@@ -30269,6 +30838,8 @@ late final _sel_testDeregisterFlutterApiWithWrappedError_ = objc.registerName(
 late final _sel_testDeregisterHostApiWithWrappedError_ = objc.registerName(
   "testDeregisterHostApiWithWrappedError:",
 );
+late final _sel_testSecondaryEngineDartExecutionWithWrappedError_completionHandler_ = objc
+    .registerName("testSecondaryEngineDartExecutionWithWrappedError:completionHandler:");
 late final _sel_throwAsyncErrorFromVoidWithWrappedError_completionHandler_ = objc.registerName(
   "throwAsyncErrorFromVoidWithWrappedError:completionHandler:",
 );
@@ -30294,6 +30865,12 @@ late final _sel_throwFlutterErrorWithWrappedError_ = objc.registerName(
 late final _sel_type = objc.registerName("type");
 late final _sel_typeWithError_ = objc.registerName("typeWithError:");
 late final _sel_typeWithWrappedError_ = objc.registerName("typeWithWrappedError:");
+late final _sel_unregisterInstanceWithApi_name_ = objc.registerName(
+  "unregisterInstanceWithApi:name:",
+);
+late final _sel_unregisterWithValue_wrappedError_ = objc.registerName(
+  "unregisterWithValue:wrappedError:",
+);
 late final _sel_use = objc.registerName("use");
 late final _sel_useWithValue_wrappedError_ = objc.registerName("useWithValue:wrappedError:");
 late final _sel_user = objc.registerName("user");

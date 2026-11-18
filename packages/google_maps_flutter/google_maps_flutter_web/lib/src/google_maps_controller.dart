@@ -17,12 +17,11 @@ class GoogleMapController {
   /// Initializes the GMap, and the sub-controllers related to it. Wires events.
   GoogleMapController({
     required int mapId,
-    required StreamController<MapEvent<Object?>> streamController,
+    required this._streamController,
     required MapWidgetConfiguration widgetConfiguration,
     MapObjects mapObjects = const MapObjects(),
     MapConfiguration mapConfiguration = const MapConfiguration(),
   }) : _mapId = mapId,
-       _streamController = streamController,
        _initialCameraPosition = widgetConfiguration.initialCameraPosition,
        _markers = mapObjects.markers,
        _polygons = mapObjects.polygons,
