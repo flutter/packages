@@ -3274,96 +3274,117 @@ void main() {
         ButtonSizeVariant.xLarge: (136.0, 40.0, 32.0),
       };
 
-      for (final MapEntry<ButtonSizeVariant, (double, double, double)> entry
-          in expectations.entries) {
-        final (double height, double iconSize, double fontSize) = entry.value;
-        await tester.pumpWidget(
-          MaterialApp(
-            theme: theme,
-            home: Center(
-              child: FilledButton.icon(
-                style: ButtonStyle(sizeVariant: entry.key),
-                onPressed: () {},
-                icon: const Icon(Icons.add),
-                label: const Text('Button'),
+      for (final tonal in <bool>[false, true]) {
+        for (final MapEntry<ButtonSizeVariant, (double, double, double)> entry
+            in expectations.entries) {
+          final (double height, double iconSize, double fontSize) = entry.value;
+          final style = ButtonStyle(sizeVariant: entry.key);
+          await tester.pumpWidget(
+            MaterialApp(
+              theme: theme,
+              home: Center(
+                child: tonal
+                    ? FilledButton.tonalIcon(
+                        style: style,
+                        onPressed: () {},
+                        icon: const Icon(Icons.add),
+                        label: const Text('Button'),
+                      )
+                    : FilledButton.icon(
+                        style: style,
+                        onPressed: () {},
+                        icon: const Icon(Icons.add),
+                        label: const Text('Button'),
+                      ),
               ),
             ),
-          ),
-        );
-        // The icon size and text style animate between size variants.
-        await tester.pumpAndSettle();
+          );
+          // The icon size and text style animate between size variants.
+          await tester.pumpAndSettle();
 
-        expect(tester.getSize(buttonMaterial()).height, height, reason: '${entry.key}');
-        expect(iconStyle(tester, Icons.add).fontSize, iconSize, reason: '${entry.key}');
-        final RichText label = tester.widget<RichText>(
-          find.descendant(of: find.text('Button'), matching: find.byType(RichText)),
-        );
-        expect(label.text.style?.fontSize, fontSize, reason: '${entry.key}');
+          final reason = '${tonal ? 'tonal' : 'filled'} ${entry.key}';
+          expect(tester.getSize(buttonMaterial()).height, height, reason: reason);
+          expect(iconStyle(tester, Icons.add).fontSize, iconSize, reason: reason);
+          final RichText label = tester.widget<RichText>(
+            find.descendant(of: find.text('Button'), matching: find.byType(RichText)),
+          );
+          expect(label.text.style?.fontSize, fontSize, reason: reason);
+        }
       }
     });
 
     testWidgets('xSmall keeps a 48dp tap target when the theme shrink-wraps', (
       WidgetTester tester,
     ) async {
-      var pressCount = 0;
-      Widget buildApp({MaterialTapTargetSize? tapTargetSize}) {
-        return MaterialApp(
-          theme: theme.copyWith(materialTapTargetSize: MaterialTapTargetSize.shrinkWrap),
-          home: Center(
-            child: FilledButton(
-              style: ButtonStyle(
-                sizeVariant: ButtonSizeVariant.xSmall,
-                tapTargetSize: tapTargetSize,
-              ),
-              onPressed: () {
-                pressCount += 1;
-              },
-              child: const Text('Button'),
+      for (final tonal in <bool>[false, true]) {
+        var pressCount = 0;
+        Widget buildApp({MaterialTapTargetSize? tapTargetSize}) {
+          final style = ButtonStyle(
+            sizeVariant: ButtonSizeVariant.xSmall,
+            tapTargetSize: tapTargetSize,
+          );
+          void onPressed() {
+            pressCount += 1;
+          }
+
+          return MaterialApp(
+            theme: theme.copyWith(materialTapTargetSize: MaterialTapTargetSize.shrinkWrap),
+            home: Center(
+              child: tonal
+                  ? FilledButton.tonal(
+                      style: style,
+                      onPressed: onPressed,
+                      child: const Text('Button'),
+                    )
+                  : FilledButton(style: style, onPressed: onPressed, child: const Text('Button')),
             ),
-          ),
-        );
+          );
+        }
+
+        final reason = tonal ? 'tonal' : 'filled';
+        await tester.pumpWidget(buildApp());
+        expect(tester.getSize(buttonMaterial()).height, 32.0, reason: reason);
+        expect(tester.getSize(find.byType(FilledButton)).height, 48.0, reason: reason);
+
+        // Taps just above and below the 32dp button still reach it.
+        final Offset center = tester.getCenter(find.byType(FilledButton));
+        for (final offset in const <Offset>[Offset(0.0, 23.0), Offset(0.0, -23.0)]) {
+          await tester.tapAt(center + offset);
+          await tester.pump();
+        }
+        expect(pressCount, 2, reason: reason);
+
+        // An explicit tap target size in the style overrides the default.
+        await tester.pumpWidget(buildApp(tapTargetSize: MaterialTapTargetSize.shrinkWrap));
+        expect(tester.getSize(find.byType(FilledButton)).height, 32.0, reason: reason);
       }
-
-      await tester.pumpWidget(buildApp());
-      expect(tester.getSize(buttonMaterial()).height, 32.0);
-      expect(tester.getSize(find.byType(FilledButton)).height, 48.0);
-
-      // Taps just above and below the 32dp button still reach it.
-      final Offset center = tester.getCenter(find.byType(FilledButton));
-      for (final offset in const <Offset>[Offset(0.0, 23.0), Offset(0.0, -23.0)]) {
-        await tester.tapAt(center + offset);
-        await tester.pump();
-      }
-      expect(pressCount, 2);
-
-      // An explicit tap target size in the style overrides the default.
-      await tester.pumpWidget(buildApp(tapTargetSize: MaterialTapTargetSize.shrinkWrap));
-      expect(tester.getSize(find.byType(FilledButton)).height, 32.0);
     });
 
     testWidgets('ignores the theme visual density', (WidgetTester tester) async {
-      Widget buildApp({VisualDensity? visualDensity}) {
-        return MaterialApp(
-          // Compact is the default density on desktop platforms.
-          theme: theme.copyWith(visualDensity: VisualDensity.compact),
-          home: Center(
-            child: FilledButton(
-              style: ButtonStyle(visualDensity: visualDensity),
-              onPressed: () {},
-              child: const Text('Button'),
+      for (final tonal in <bool>[false, true]) {
+        Widget buildApp({VisualDensity? visualDensity}) {
+          final style = ButtonStyle(visualDensity: visualDensity);
+          return MaterialApp(
+            // Compact is the default density on desktop platforms.
+            theme: theme.copyWith(visualDensity: VisualDensity.compact),
+            home: Center(
+              child: tonal
+                  ? FilledButton.tonal(style: style, onPressed: () {}, child: const Text('Button'))
+                  : FilledButton(style: style, onPressed: () {}, child: const Text('Button')),
             ),
-          ),
-        );
+          );
+        }
+
+        final reason = tonal ? 'tonal' : 'filled';
+        await tester.pumpWidget(buildApp());
+        expect(tester.getSize(buttonMaterial()).height, 40.0, reason: reason);
+        expect(tester.getSize(find.byType(FilledButton)).height, 48.0, reason: reason);
+
+        // An explicit visual density in the style overrides the default.
+        await tester.pumpWidget(buildApp(visualDensity: VisualDensity.compact));
+        expect(tester.getSize(buttonMaterial()).height, 32.0, reason: reason);
+        expect(tester.getSize(find.byType(FilledButton)).height, 40.0, reason: reason);
       }
-
-      await tester.pumpWidget(buildApp());
-      expect(tester.getSize(buttonMaterial()).height, 40.0);
-      expect(tester.getSize(find.byType(FilledButton)).height, 48.0);
-
-      // An explicit visual density in the style overrides the default.
-      await tester.pumpWidget(buildApp(visualDensity: VisualDensity.compact));
-      expect(tester.getSize(buttonMaterial()).height, 32.0);
-      expect(tester.getSize(find.byType(FilledButton)).height, 40.0);
     });
 
     testWidgets('resolves shapes for shape variants and states', (WidgetTester tester) async {
@@ -3557,31 +3578,37 @@ void main() {
     });
 
     testWidgets('uses theme-level size and shape variants', (WidgetTester tester) async {
-      Widget buildApp({ButtonStyle? style}) {
-        return MaterialApp(
-          theme: m3eTheme(
-            style: const ButtonStyle(
-              sizeVariant: ButtonSizeVariant.large,
-              shapeVariant: ButtonShapeVariant.square,
+      for (final tonal in <bool>[false, true]) {
+        Widget buildApp({ButtonStyle? style}) {
+          return MaterialApp(
+            theme: m3eTheme(
+              style: const ButtonStyle(
+                sizeVariant: ButtonSizeVariant.large,
+                shapeVariant: ButtonShapeVariant.square,
+              ),
             ),
-          ),
-          home: Center(
-            child: FilledButton(style: style, onPressed: () {}, child: const Text('Button')),
-          ),
+            home: Center(
+              child: tonal
+                  ? FilledButton.tonal(style: style, onPressed: () {}, child: const Text('Button'))
+                  : FilledButton(style: style, onPressed: () {}, child: const Text('Button')),
+            ),
+          );
+        }
+
+        final reason = tonal ? 'tonal' : 'filled';
+        await tester.pumpWidget(buildApp());
+        await tester.pumpAndSettle();
+        expect(tester.getSize(buttonMaterial()).height, 96.0, reason: reason);
+        expect(tester.widget<Material>(buttonMaterial()).shape, rounded(28.0), reason: reason);
+
+        // The widget style overrides the theme style.
+        await tester.pumpWidget(
+          buildApp(style: const ButtonStyle(sizeVariant: ButtonSizeVariant.xSmall)),
         );
+        await tester.pumpAndSettle();
+        expect(tester.getSize(buttonMaterial()).height, 32.0, reason: reason);
+        expect(tester.widget<Material>(buttonMaterial()).shape, rounded(12.0), reason: reason);
       }
-
-      await tester.pumpWidget(buildApp());
-      expect(tester.getSize(buttonMaterial()).height, 96.0);
-      expect(tester.widget<Material>(buttonMaterial()).shape, rounded(28.0));
-
-      // The widget style overrides the theme style.
-      await tester.pumpWidget(
-        buildApp(style: const ButtonStyle(sizeVariant: ButtonSizeVariant.xSmall)),
-      );
-      await tester.pumpAndSettle();
-      expect(tester.getSize(buttonMaterial()).height, 32.0);
-      expect(tester.widget<Material>(buttonMaterial()).shape, rounded(12.0));
     });
 
     testWidgets('FilledButton.icon uses theme-level size for icon-label spacing', (
@@ -3607,27 +3634,34 @@ void main() {
     });
 
     testWidgets('variant is ignored when useMaterial3 is false', (WidgetTester tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: ThemeData(
-            useMaterial3: false,
-            filledButtonTheme: const FilledButtonThemeData(
-              variant: StyleVariant.material3Expressive,
+      for (final tonal in <bool>[false, true]) {
+        const style = ButtonStyle(sizeVariant: ButtonSizeVariant.large);
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: ThemeData(
+              useMaterial3: false,
+              filledButtonTheme: const FilledButtonThemeData(
+                variant: StyleVariant.material3Expressive,
+              ),
+            ),
+            home: Center(
+              child: tonal
+                  ? FilledButton.tonal(style: style, onPressed: () {}, child: const Text('Button'))
+                  : FilledButton(style: style, onPressed: () {}, child: const Text('Button')),
             ),
           ),
-          home: Center(
-            child: FilledButton(
-              style: const ButtonStyle(sizeVariant: ButtonSizeVariant.large),
-              onPressed: () {},
-              child: const Text('Button'),
-            ),
-          ),
-        ),
-      );
+        );
+        await tester.pumpAndSettle();
 
-      // FilledButton uses its Material 3 defaults when useMaterial3 is false.
-      expect(tester.getSize(buttonMaterial()).height, 40.0);
-      expect(tester.widget<Material>(buttonMaterial()).shape, const StadiumBorder());
+        // FilledButton uses its Material 3 defaults when useMaterial3 is false.
+        final reason = tonal ? 'tonal' : 'filled';
+        expect(tester.getSize(buttonMaterial()).height, 40.0, reason: reason);
+        expect(
+          tester.widget<Material>(buttonMaterial()).shape,
+          const StadiumBorder(),
+          reason: reason,
+        );
+      }
     });
 
     testWidgets('does not crash at zero area', (WidgetTester tester) async {
