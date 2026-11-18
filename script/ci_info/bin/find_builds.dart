@@ -21,7 +21,6 @@ const String _fields =
     'builds.*.id,builds.*.number,builds.*.status,builds.*.builder,'
     'builds.*.endTime,builds.*.summaryMarkdown';
 
-const Set<String> _terminalBad = <String>{'FAILURE', 'INFRA_FAILURE', 'CANCELED'};
 const Set<String> _terminalFailed = <String>{'FAILURE', 'INFRA_FAILURE'};
 
 /// Default for `--limit`.
@@ -68,7 +67,7 @@ Future<void> main(List<String> args) async {
     )
     ..addOption(_projectOption, defaultsTo: 'flutter', help: "LUCI project, default 'flutter'.")
     ..addOption(_limitOption, defaultsTo: '$_defaultLimit', help: 'Max builds to retrieve.')
-    ..addFlag(_failedOnlyFlag, help: 'Only show non-successful builds.')
+    ..addFlag(_failedOnlyFlag, help: 'Only show failed builds (FAILURE or INFRA_FAILURE).')
     ..addFlag(_jsonFlag, help: 'Output as JSON.')
     ..addFlag(_helpFlag, abbr: 'h', negatable: false, help: 'Print usage information.');
 
@@ -120,7 +119,7 @@ Future<void> main(List<String> args) async {
   final rows = <Map<String, dynamic>>[];
   for (final build in builds) {
     final String status = ci_lib.stringField(build, 'status');
-    if (failedOnly && !_terminalBad.contains(status)) {
+    if (failedOnly && !_terminalFailed.contains(status)) {
       continue;
     }
     final Map<String, dynamic> builder =
@@ -132,7 +131,7 @@ Future<void> main(List<String> args) async {
     final id = build['id'] as String;
     final String summary = ci_lib
         .stringField(build, 'summaryMarkdown', defaultValue: '')
-        .replaceAll('\n', ' ')
+        .replaceAll(RegExp(r'[\r\n]+'), ' ')
         .trim();
 
     rows.add(<String, dynamic>{

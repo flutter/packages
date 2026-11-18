@@ -8,12 +8,16 @@ No credentials or LUCI access are needed. Flutter's builds are public, and the s
 
 ### Setup
 
-Run the scripts from the repository root through `run.sh`, which fetches
-dependencies on first use:
+Fetch dependencies once, then run the scripts from the repository root through
+`run.sh`:
 
 ```bash
+dart pub get -C script/ci_info
 script/ci_info/run.sh <script> [args...]
 ```
+
+If dependencies are missing or `pubspec.yaml` has changed since they were
+fetched, `run.sh` exits and asks you to run `dart pub get` again.
 
 `run.sh` uses the Dart SDK bundled with Flutter directly rather than Flutter's
 `dart` wrapper, so several scripts can run in parallel without waiting on
@@ -36,7 +40,7 @@ script/ci_info/run.sh find_builds [options]
 - `--repo`: Repository `owner/name` (defaults to `flutter/packages`).
 - `--project`: LUCI project (defaults to `flutter`).
 - `--limit`: Max builds to retrieve (defaults to `400`).
-- `--[no-]failed-only`: Only show non-successful builds.
+- `--[no-]failed-only`: Only show failed builds (`FAILURE` or `INFRA_FAILURE`).
 - `--[no-]json`: Output as JSON.
 - `-h`, `--help`: Print usage information.
 

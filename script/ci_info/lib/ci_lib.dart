@@ -33,11 +33,18 @@ String truncate(String text, int maxLength) =>
 String stringField(Map<String, dynamic> map, String key, {String defaultValue = '?'}) =>
     map[key] as String? ?? defaultValue;
 
+/// Overrides [cacheDir] when set. Used by tests.
+String? cacheDirOverride;
+
 /// Directory holding cached network responses.
 String get cacheDir {
-  return Platform.environment['CI_INFO_CACHE'] ??
+  return cacheDirOverride ??
+      Platform.environment['CI_INFO_CACHE'] ??
       p.join(Directory.systemTemp.path, 'ci_info_cache');
 }
+
+/// How long to wait for a single Buildbucket request before retrying it.
+const Duration _requestTimeout = Duration(seconds: 30);
 
 String _cachePath(String kind, String key) {
   final String digest = sha256.convert(utf8.encode(key)).toString().substring(0, 24);
@@ -46,36 +53,51 @@ String _cachePath(String kind, String key) {
   return p.join(directory, digest);
 }
 
+/// Returns the cached value, or null on a miss. A cache that can't be read
+/// counts as a miss.
 String? _readCache(String kind, String key, Duration? maxAge) {
-  final file = File(_cachePath(kind, key));
-  if (!file.existsSync()) {
-    return null;
-  }
-  if (maxAge != null) {
-    final Duration age = DateTime.now().difference(file.lastModifiedSync());
-    if (age > maxAge) {
+  try {
+    final file = File(_cachePath(kind, key));
+    if (!file.existsSync()) {
       return null;
     }
+    if (maxAge != null) {
+      final Duration age = DateTime.now().difference(file.lastModifiedSync());
+      if (age > maxAge) {
+        return null;
+      }
+    }
+    return file.readAsStringSync();
+  } on FileSystemException {
+    return null;
   }
-  return file.readAsStringSync();
 }
 
+/// Caches [value]. If the cache can't be written, the value isn't cached.
 void _writeCache(String kind, String key, String value) {
-  // Write-then-rename so that a concurrent run never reads a partial file.
-  final String path = _cachePath(kind, key);
-  final temp = File('$path.$pid.tmp');
-  temp.writeAsStringSync(value);
-  temp.renameSync(path);
+  try {
+    // Write-then-rename so that a concurrent run never reads a partial file.
+    final String path = _cachePath(kind, key);
+    final temp = File('$path.$pid.tmp');
+    temp.writeAsStringSync(value);
+    temp.renameSync(path);
+  } on FileSystemException {
+    // Caching is only an optimization.
+  }
 }
 
 /// Calls the Buildbucket `buildbucket.v2.Builds/<method>` pRPC endpoint.
 ///
-/// Network errors and 5xx responses are retried; other failures are not,
-/// since e.g. a misspelled builder name will never succeed.
+/// Network errors, timeouts and 5xx responses are retried; other failures are
+/// not, since e.g. a misspelled builder name will never succeed. Only valid
+/// JSON responses are cached.
+///
+/// [client] is used for requests if given, otherwise a default client is used.
 Future<Map<String, dynamic>> prpc(
   String method,
   Map<String, dynamic> payload, {
   Duration? cacheAge = const Duration(minutes: 5),
+  http.Client? client,
 }) async {
   final String body = jsonEncode(payload);
   final cacheKey = '$method:$body';
@@ -83,7 +105,11 @@ Future<Map<String, dynamic>> prpc(
   if (cacheAge != null) {
     final String? cached = _readCache('prpc', cacheKey, cacheAge);
     if (cached != null) {
-      return jsonDecode(cached) as Map<String, dynamic>;
+      try {
+        return jsonDecode(cached) as Map<String, dynamic>;
+      } on FormatException {
+        // A corrupt cache entry counts as a miss; refetch below.
+      }
     }
   }
 
@@ -97,14 +123,14 @@ Future<Map<String, dynamic>> prpc(
 
     final http.Response response;
     try {
-      response = await http.post(
+      response = await (client?.post ?? http.post)(
         url,
         headers: const <String, String>{
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
         body: body,
-      );
+      ).timeout(_requestTimeout);
     } on Exception catch (e) {
       lastError = e;
       continue;
@@ -127,11 +153,19 @@ Future<Map<String, dynamic>> prpc(
     if (brace == -1) {
       throw Exception('Unexpected Buildbucket response: ${truncate(raw, 200)}');
     }
-    final String decoded = raw.substring(brace);
-    if (cacheAge != null) {
-      _writeCache('prpc', cacheKey, decoded);
+    final Object? json;
+    try {
+      json = jsonDecode(raw.substring(brace));
+    } on FormatException {
+      throw Exception('Unexpected Buildbucket response: ${truncate(raw, 200)}');
     }
-    return jsonDecode(decoded) as Map<String, dynamic>;
+    if (json is! Map<String, dynamic>) {
+      throw Exception('Unexpected Buildbucket response: ${truncate(raw, 200)}');
+    }
+    if (cacheAge != null) {
+      _writeCache('prpc', cacheKey, jsonEncode(json));
+    }
+    return json;
   }
   throw Exception('Buildbucket $method failed after $maxAttempts attempts: $lastError');
 }

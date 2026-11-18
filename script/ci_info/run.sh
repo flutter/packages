@@ -36,8 +36,11 @@ if [[ -x "$sdk_dart" ]]; then
   dart="$sdk_dart"
 fi
 
-if [[ ! -f "$dir/.dart_tool/package_config.json" ]]; then
-  "$dart" pub get -C "$dir" >&2
+config="$dir/.dart_tool/package_config.json"
+if [[ ! -f "$config" || "$dir/pubspec.yaml" -nt "$config" ]]; then
+  echo "Dependencies for $dir are missing or out of date. Run this first:" >&2
+  echo "  dart pub get -C $dir" >&2
+  exit 1
 fi
 
 exec "$dart" run "$dir/bin/$script.dart" "$@"

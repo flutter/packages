@@ -2,9 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:ci_info/ci_lib.dart';
+import 'package:http/http.dart' as http;
+import 'package:http/testing.dart';
 import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
 
@@ -17,6 +20,89 @@ void main() {
       } else {
         expect(cacheDir, p.join(Directory.systemTemp.path, 'ci_info_cache'));
       }
+    });
+  });
+
+  group('prpc', () {
+    late Directory tempCache;
+    late int requests;
+
+    setUp(() {
+      tempCache = Directory.systemTemp.createTempSync('ci_info_test_');
+      cacheDirOverride = tempCache.path;
+      requests = 0;
+    });
+
+    tearDown(() {
+      cacheDirOverride = null;
+      tempCache.deleteSync(recursive: true);
+    });
+
+    MockClient clientReturning(String body) {
+      return MockClient((http.Request request) async {
+        requests++;
+        return http.Response(body, 200);
+      });
+    }
+
+    List<File> cachedFiles() {
+      final dir = Directory(p.join(tempCache.path, 'prpc'));
+      return dir.existsSync() ? dir.listSync().whereType<File>().toList() : <File>[];
+    }
+
+    test('strips the XSSI guard and caches valid responses', () async {
+      final Map<String, dynamic> first = await prpc(
+        'SearchBuilds',
+        <String, dynamic>{},
+        client: clientReturning(")]}'\n{\"builds\": []}"),
+      );
+      final Map<String, dynamic> second = await prpc(
+        'SearchBuilds',
+        <String, dynamic>{},
+        client: clientReturning('{"unexpected": true}'),
+      );
+
+      expect(first, <String, dynamic>{'builds': <dynamic>[]});
+      expect(second, first, reason: 'second call should be served from the cache');
+      expect(requests, 1);
+    });
+
+    test('treats a corrupt cache entry as a miss', () async {
+      await prpc('SearchBuilds', <String, dynamic>{}, client: clientReturning('{"n": 1}'));
+      for (final File file in cachedFiles()) {
+        file.writeAsStringSync('{not json');
+      }
+
+      final Map<String, dynamic> result = await prpc(
+        'SearchBuilds',
+        <String, dynamic>{},
+        client: clientReturning('{"n": 2}'),
+      );
+
+      expect(result, <String, dynamic>{'n': 2});
+      expect(requests, 2);
+    });
+
+    test('does not cache a response that is not valid JSON', () async {
+      await expectLater(
+        prpc('SearchBuilds', <String, dynamic>{}, client: clientReturning('<html>{oops')),
+        throwsA(
+          isA<Exception>().having(
+            (Exception e) => e.toString(),
+            'message',
+            contains('Unexpected Buildbucket response'),
+          ),
+        ),
+      );
+      expect(cachedFiles(), isEmpty);
+    });
+
+    test('does not cache a JSON response that is not an object', () async {
+      await expectLater(
+        prpc('SearchBuilds', <String, dynamic>{}, client: clientReturning(jsonEncode(<int>[1]))),
+        throwsException,
+      );
+      expect(cachedFiles(), isEmpty);
     });
   });
 
