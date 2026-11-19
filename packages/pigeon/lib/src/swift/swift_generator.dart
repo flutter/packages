@@ -4286,9 +4286,8 @@ private final class ${prefix}PigeonStreamRegistry: @unchecked Sendable {
       defer { lock.unlock() }
       token = nextToken
       nextToken &+= 1
-      var channelMap = subscriptions[key] ?? [:]
-      previous = channelMap.updateValue(Entry(token: token, onCancel: onCancel), forKey: subscriptionId)
-      subscriptions[key] = channelMap
+      previous = subscriptions[key, default: [:]].updateValue(
+        Entry(token: token, onCancel: onCancel), forKey: subscriptionId)
     }
     previous?.onCancel()
     return token
@@ -4306,16 +4305,12 @@ private final class ${prefix}PigeonStreamRegistry: @unchecked Sendable {
     do {
       lock.lock()
       defer { lock.unlock() }
-      guard var channelMap = subscriptions[key],
-            let current = channelMap[subscriptionId],
-            current.token == token else {
+      guard subscriptions[key]?[subscriptionId]?.token == token else {
         return false
       }
-      removed = channelMap.removeValue(forKey: subscriptionId)
-      if channelMap.isEmpty {
+      removed = subscriptions[key]?.removeValue(forKey: subscriptionId)
+      if subscriptions[key]?.isEmpty == true {
         subscriptions.removeValue(forKey: key)
-      } else {
-        subscriptions[key] = channelMap
       }
     }
     let didRemove = removed != nil
@@ -4330,14 +4325,9 @@ private final class ${prefix}PigeonStreamRegistry: @unchecked Sendable {
     do {
       lock.lock()
       defer { lock.unlock() }
-      guard var channelMap = subscriptions[key] else {
-        return
-      }
-      action = channelMap.removeValue(forKey: subscriptionId)?.onCancel
-      if channelMap.isEmpty {
+      action = subscriptions[key]?.removeValue(forKey: subscriptionId)?.onCancel
+      if subscriptions[key]?.isEmpty == true {
         subscriptions.removeValue(forKey: key)
-      } else {
-        subscriptions[key] = channelMap
       }
     }
     action?()
@@ -4403,10 +4393,12 @@ class ${prefix}PigeonEventSink<ReturnType>: @unchecked Sendable {
     do {
       lock.lock()
       defer { lock.unlock() }
-      if cancelled || terminated {
+      if cancelled {
         shouldCancel = true
       } else {
-        cancelCallback = cancel
+        if !terminated {
+          cancelCallback = cancel
+        }
         shouldCancel = false
       }
     }

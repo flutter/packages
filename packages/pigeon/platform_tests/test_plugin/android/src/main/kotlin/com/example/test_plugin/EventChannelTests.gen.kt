@@ -335,10 +335,12 @@ internal constructor(
     if (handle == null) return
     val shouldClose =
         kotlin.synchronized(cancelLock) {
-          if (closed || terminated) {
+          if (closed) {
             true
           } else {
-            closeable = handle
+            if (!terminated) {
+              closeable = handle
+            }
             false
           }
         }
@@ -1121,7 +1123,8 @@ interface StreamHostTestApi {
             if (action != "listen") {
               reply.reply(
                   EventChannelTestsPigeonUtils.wrapError(
-                      IllegalArgumentException("Unknown stream control action: $action")))
+                      EventChannelTestsError(
+                          "invalid-action", "Unknown stream control action: $action", null)))
               return@setMessageHandler
             }
             val countArg = request[2] as Long
@@ -1209,7 +1212,8 @@ interface StreamHostTestApi {
             if (action != "listen") {
               reply.reply(
                   EventChannelTestsPigeonUtils.wrapError(
-                      IllegalArgumentException("Unknown stream control action: $action")))
+                      EventChannelTestsError(
+                          "invalid-action", "Unknown stream control action: $action", null)))
               return@setMessageHandler
             }
             val flow =
@@ -1295,7 +1299,8 @@ interface StreamHostTestApi {
             if (action != "listen") {
               reply.reply(
                   EventChannelTestsPigeonUtils.wrapError(
-                      IllegalArgumentException("Unknown stream control action: $action")))
+                      EventChannelTestsError(
+                          "invalid-action", "Unknown stream control action: $action", null)))
               return@setMessageHandler
             }
             val flow =
@@ -1381,7 +1386,8 @@ interface StreamHostTestApi {
             if (action != "listen") {
               reply.reply(
                   EventChannelTestsPigeonUtils.wrapError(
-                      IllegalArgumentException("Unknown stream control action: $action")))
+                      EventChannelTestsError(
+                          "invalid-action", "Unknown stream control action: $action", null)))
               return@setMessageHandler
             }
             val customErrorArg = request[2] as Boolean
@@ -1468,7 +1474,8 @@ interface StreamHostTestApi {
             if (action != "listen") {
               reply.reply(
                   EventChannelTestsPigeonUtils.wrapError(
-                      IllegalArgumentException("Unknown stream control action: $action")))
+                      EventChannelTestsError(
+                          "invalid-action", "Unknown stream control action: $action", null)))
               return@setMessageHandler
             }
             val prefixArg = request[2] as String

@@ -2401,11 +2401,22 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(receivedBeforeNonCustomError, <int>[1]);
       expect(caughtNonCustomError, isA<PlatformException>());
 
+      Future<int> waitForCancelledCount() async {
+        for (var attempt = 0; attempt < 20; attempt++) {
+          final int count = await api.getCancelledStreamCount();
+          if (count >= 1) {
+            return count;
+          }
+          await Future<void>.delayed(const Duration(milliseconds: 10));
+        }
+        return api.getCancelledStreamCount();
+      }
+
       // Mid-stream cancellation via .take(2) must cancel the native task cleanly.
       await api.resetCancelledStreamCount();
       final List<int> partial = await api.streamNumbers(count: 500, start: 1).take(2).toList();
       expect(partial, <int>[1, 2]);
-      expect(await api.getCancelledStreamCount(), greaterThanOrEqualTo(1));
+      expect(await waitForCancelledCount(), greaterThanOrEqualTo(1));
 
       // Suffixed instances isolate stream routing.
       final apiOne = StreamHostTestApi(messageChannelSuffix: '1');
@@ -2421,7 +2432,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       ]);
       await api.resetCancelledStreamCount();
       expect(await api.streamViaCallback('cut', 200).take(2).toList(), <String>['cut:0', 'cut:1']);
-      expect(await api.getCancelledStreamCount(), greaterThanOrEqualTo(1));
+      expect(await waitForCancelledCount(), greaterThanOrEqualTo(1));
     }, skip: !streamSupported.contains(targetGenerator));
   });
 

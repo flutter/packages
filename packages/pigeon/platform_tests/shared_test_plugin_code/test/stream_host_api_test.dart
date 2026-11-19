@@ -264,4 +264,59 @@ void main() {
     );
     expect(messenger.incomingHandlers, isNot(contains(eventsChannel)));
   });
+
+  test('isolates stream routers across distinct BinaryMessenger instances', () async {
+    final messengerA = _FakeBinaryMessenger();
+    final messengerB = _FakeBinaryMessenger();
+    late int subIdA;
+    late int subIdB;
+    messengerA.outgoingHandlers[controlChannel] = (ByteData? raw) async {
+      final request = codec.decodeMessage(raw)! as List<Object?>;
+      if (request[0] == 'listen') {
+        subIdA = request[1]! as int;
+      }
+      return codec.encodeMessage(<Object?>[null]);
+    };
+    messengerB.outgoingHandlers[controlChannel] = (ByteData? raw) async {
+      final request = codec.decodeMessage(raw)! as List<Object?>;
+      if (request[0] == 'listen') {
+        subIdB = request[1]! as int;
+      }
+      return codec.encodeMessage(<Object?>[null]);
+    };
+
+    final apiA = StreamHostTestApi(binaryMessenger: messengerA);
+    final apiB = StreamHostTestApi(binaryMessenger: messengerB);
+    final eventsA = <int>[];
+    final eventsB = <int>[];
+    final doneA = Completer<void>();
+    final doneB = Completer<void>();
+
+    final StreamSubscription<int> subA = apiA
+        .streamNumbers(start: 1)
+        .listen(eventsA.add, onDone: doneA.complete);
+    final StreamSubscription<int> subB = apiB
+        .streamNumbers(start: 100)
+        .listen(eventsB.add, onDone: doneB.complete);
+
+    await Future<void>.microtask(() {});
+    expect(messengerA.incomingHandlers, contains(eventsChannel));
+    expect(messengerB.incomingHandlers, contains(eventsChannel));
+
+    // Completing messengerA's stream must not detach messengerB's router.
+    await messengerA.emitToDart(eventsChannel, codec.encodeMessage(<Object?>[subIdA, 0, 1]));
+    await messengerA.emitToDart(eventsChannel, codec.encodeMessage(<Object?>[subIdA, 2]));
+    await doneA.future;
+    expect(eventsA, <int>[1]);
+    expect(messengerA.incomingHandlers, isNot(contains(eventsChannel)));
+    expect(messengerB.incomingHandlers, contains(eventsChannel));
+
+    await messengerB.emitToDart(eventsChannel, codec.encodeMessage(<Object?>[subIdB, 0, 100]));
+    await messengerB.emitToDart(eventsChannel, codec.encodeMessage(<Object?>[subIdB, 2]));
+    await doneB.future;
+    expect(eventsB, <int>[100]);
+    expect(messengerB.incomingHandlers, isNot(contains(eventsChannel)));
+    await subA.cancel();
+    await subB.cancel();
+  });
 }

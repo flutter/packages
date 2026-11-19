@@ -434,7 +434,8 @@ interface EventStreamHostApi {
             if (action != "listen") {
               reply.reply(
                   EventChannelMessagesPigeonUtils.wrapError(
-                      IllegalArgumentException("Unknown stream control action: $action")))
+                      FlutterError(
+                          "invalid-action", "Unknown stream control action: $action", null)))
               return@setMessageHandler
             }
             val flow =
