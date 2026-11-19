@@ -35,36 +35,26 @@ void main() {
     expect(client.requests, 1);
   });
 
-  test('different headers or injected clients cannot share network data', () async {
-    final firstClient = _CountingSvgClient();
-    final secondClient = _CountingSvgClient();
+  test('different headers cannot share network data', () async {
+    final client = _CountingSvgClient();
     final first = SvgNetworkLoader(
       'https://example.com/logo.svg',
       headers: const <String, String>{'Authorization': 'A'},
-      httpClient: firstClient,
+      httpClient: client,
     );
     final differentHeader = SvgNetworkLoader(
       'https://example.com/logo.svg',
       headers: const <String, String>{'Authorization': 'B'},
-      httpClient: firstClient,
-    );
-    final differentClient = SvgNetworkLoader(
-      'https://example.com/logo.svg',
-      headers: const <String, String>{'Authorization': 'A'},
-      httpClient: secondClient,
+      httpClient: client,
     );
 
     expect(first, isNot(equals(differentHeader)));
     expect(first.cacheKey(null), isNot(equals(differentHeader.cacheKey(null))));
-    expect(first, isNot(equals(differentClient)));
-    expect(first.cacheKey(null), isNot(equals(differentClient.cacheKey(null))));
 
     await first.loadBytes(null);
     await differentHeader.loadBytes(null);
-    await differentClient.loadBytes(null);
-    expect(firstClient.requests, 2);
-    expect(secondClient.requests, 1);
-    expect(svg.cache.count, 3);
+    expect(client.requests, 2);
+    expect(svg.cache.count, 2);
   });
 
   test('cache keys snapshot mutable request headers', () {
@@ -82,21 +72,6 @@ void main() {
       headers: <String, String>{'Authorization': 'old'},
     ).cacheKey(null);
     expect(original, originalAgain);
-  });
-
-  test('client identity stays stable when its custom hash changes', () async {
-    final client = _MutableHashClient();
-    final loader = SvgNetworkLoader('https://example.com/logo.svg', httpClient: client);
-    final SvgCacheKey originalKey = loader.cacheKey(null);
-    final originalHash = loader.hashCode;
-    final ByteData original = await loader.loadBytes(null);
-    client.customHash++;
-
-    expect(loader.cacheKey(null), originalKey);
-    expect(loader.hashCode, originalHash);
-    expect(identical(await loader.loadBytes(null), original), isTrue);
-    expect(client.requests, 1);
-    expect(svg.cache.evict(originalKey), isTrue);
   });
 
   test('mutating headers preserves existing cache entries and eviction', () async {
@@ -160,16 +135,4 @@ class _CountingSvgClient extends http.BaseClient {
       200,
     );
   }
-}
-
-class _MutableHashClient extends _CountingSvgClient {
-  int customHash = 0;
-
-  @override
-  // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => customHash;
-
-  @override
-  // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  bool operator ==(Object other) => other is _MutableHashClient && other.customHash == customHash;
 }

@@ -1,7 +1,7 @@
 ## 2.3.5
 
-* Fixes network cache keys to compare header values, snapshot mutable headers,
-  and distinguish explicitly supplied HTTP clients.
+* Fixes network cache keys to compare header values and snapshot mutable
+  headers.
 * Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
 
 ## 2.3.4

@@ -397,27 +397,19 @@ int _headersHashCode(Map<String, String>? headers) {
 /// their header Map between requests without corrupting the cache's hash table.
 @immutable
 class _NetworkLoaderCacheKey {
-  _NetworkLoaderCacheKey(this.url, Map<String, String>? headers, this.httpClient)
+  _NetworkLoaderCacheKey(this.url, Map<String, String>? headers)
     : headers = headers == null ? null : Map<String, String>.unmodifiable(headers);
 
   final String url;
   final Map<String, String>? headers;
-  final http.Client? httpClient;
-  late final int _hashCode = Object.hash(
-    url,
-    _headersHashCode(headers),
-    identityHashCode(httpClient),
-  );
+  late final int _hashCode = Object.hash(url, _headersHashCode(headers));
 
   @override
   int get hashCode => _hashCode;
 
   @override
   bool operator ==(Object other) {
-    return other is _NetworkLoaderCacheKey &&
-        other.url == url &&
-        mapEquals(other.headers, headers) &&
-        identical(other.httpClient, httpClient);
+    return other is _NetworkLoaderCacheKey && other.url == url && mapEquals(other.headers, headers);
   }
 }
 
@@ -468,20 +460,14 @@ class SvgNetworkLoader extends SvgLoader<Uint8List> {
   @override
   SvgCacheKey cacheKey(BuildContext? context) {
     return SvgCacheKey(
-      keyData: _NetworkLoaderCacheKey(url, headers, _httpClient),
+      keyData: _NetworkLoaderCacheKey(url, headers),
       theme: getTheme(context),
       colorMapper: colorMapper,
     );
   }
 
   @override
-  int get hashCode => Object.hash(
-    url,
-    _headersHashCode(headers),
-    theme,
-    colorMapper,
-    identityHashCode(_httpClient),
-  );
+  int get hashCode => Object.hash(url, _headersHashCode(headers), theme, colorMapper);
 
   @override
   bool operator ==(Object other) {
@@ -489,8 +475,7 @@ class SvgNetworkLoader extends SvgLoader<Uint8List> {
         other.url == url &&
         mapEquals(other.headers, headers) &&
         other.theme == theme &&
-        other.colorMapper == colorMapper &&
-        identical(other._httpClient, _httpClient);
+        other.colorMapper == colorMapper;
   }
 
   @override
