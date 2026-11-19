@@ -97,16 +97,7 @@ class _SelectableTextSelectionGestureDetectorBuilder extends TextSelectionGestur
 ///
 /// <callout-box>
 ///
-// TODO(framework): Add unit tests to this code snippet.
-// https://github.com/flutter/flutter/issues/188530
-///
-/// ```dart
-/// const SelectableText(
-///   'Hello! How are you?',
-///   textAlign: TextAlign.center,
-///   style: TextStyle(fontWeight: FontWeight.bold),
-/// )
-/// ```
+/// {@example /example/lib/selectable_text/selectable_text.snippet.0.dart#body indent=strip}
 ///
 /// </callout-box>
 ///
@@ -117,20 +108,7 @@ class _SelectableTextSelectionGestureDetectorBuilder extends TextSelectionGestur
 ///
 /// <callout-box>
 ///
-// TODO(framework): Add unit tests to this code snippet.
-// https://github.com/flutter/flutter/issues/188530
-///
-/// ```dart
-/// const SelectableText.rich(
-///   TextSpan(
-///     text: 'Hello', // default text style
-///     children: <TextSpan>[
-///       TextSpan(text: ' beautiful ', style: TextStyle(fontStyle: FontStyle.italic)),
-///       TextSpan(text: 'world', style: TextStyle(fontWeight: FontWeight.bold)),
-///     ],
-///   ),
-/// )
-/// ```
+/// {@example /example/lib/selectable_text/selectable_text.rich.snippet.0.dart#body indent=strip}
 ///
 /// </callout-box>
 ///

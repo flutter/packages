@@ -832,24 +832,7 @@ class TextField extends StatefulWidget {
   ///
   /// <callout-box>
   ///
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
-  ///
-  /// ```dart
-  /// Widget counter(
-  ///   BuildContext context,
-  ///   {
-  ///     required int currentLength,
-  ///     required int? maxLength,
-  ///     required bool isFocused,
-  ///   }
-  /// ) {
-  ///   return Text(
-  ///     '$currentLength of $maxLength characters',
-  ///     semanticsLabel: 'character count',
-  ///   );
-  /// }
-  /// ```
+  /// {@example /example/lib/text_field/text_field.build_counter.snippet.0.dart#body indent=strip}
   ///
   /// </callout-box>
   ///
