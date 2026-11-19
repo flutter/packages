@@ -4,7 +4,8 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:material_ui_examples/slider/slider.snippet.1.dart' as example;
+import 'package:material_ui_examples/slider/slider.on_change_start.snippet.0.dart'
+    as example;
 
 void main() {
   testWidgets('Slider onChangeStart prints initial value before change', (

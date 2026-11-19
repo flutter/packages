@@ -68,7 +68,7 @@ class SliderTheme extends InheritedTheme {
   ///
   /// <callout-box>
   ///
-  /// {@example /example/lib/slider_theme/slider_theme.snippet.0.dart#body indent=strip}
+  /// {@example /example/lib/slider_theme/slider_theme.of.snippet.0.dart#body indent=strip}
   ///
   /// </callout-box>
   ///
@@ -231,7 +231,7 @@ class SliderThemeData with Diagnosticable {
   ///
   /// <callout-box>
   ///
-  /// {@example /example/lib/slider_theme/slider_theme.snippet.1.dart#body indent=strip}
+  /// {@example /example/lib/slider_theme/slider_theme_data.snippet.0.dart#body indent=strip}
   ///
   /// </callout-box>
   const SliderThemeData({

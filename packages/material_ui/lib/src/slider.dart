@@ -306,7 +306,7 @@ class Slider extends StatefulWidget {
   ///
   /// <callout-box>
   ///
-  /// {@example /example/lib/slider/slider.snippet.0.dart#body indent=strip}
+  /// {@example /example/lib/slider/slider.on_changed.snippet.0.dart#body indent=strip}
   ///
   /// </callout-box>
   ///
@@ -329,7 +329,7 @@ class Slider extends StatefulWidget {
   ///
   /// <callout-box>
   ///
-  /// {@example /example/lib/slider/slider.snippet.1.dart#body indent=strip}
+  /// {@example /example/lib/slider/slider.on_change_start.snippet.0.dart#body indent=strip}
   ///
   /// </callout-box>
   ///
@@ -347,7 +347,7 @@ class Slider extends StatefulWidget {
   ///
   /// <callout-box>
   ///
-  /// {@example /example/lib/slider/slider.snippet.2.dart#body indent=strip}
+  /// {@example /example/lib/slider/slider.on_change_end.snippet.0.dart#body indent=strip}
   ///
   /// </callout-box>
   ///
@@ -503,7 +503,7 @@ class Slider extends StatefulWidget {
   /// In the example below, a slider for currency values is configured to
   /// announce a value with a currency label.
   ///
-  /// {@example /example/lib/slider/slider.snippet.3.dart#body indent=strip}
+  /// {@example /example/lib/slider/slider.semantic_formatter_callback.snippet.0.dart#body indent=strip}
   ///
   /// </callout-box>
   ///

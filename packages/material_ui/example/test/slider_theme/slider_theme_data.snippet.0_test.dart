@@ -4,16 +4,16 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:material_ui_examples/slider_theme/slider_theme.snippet.0.dart'
+import 'package:material_ui_examples/slider_theme/slider_theme_data.snippet.0.dart'
     as example;
 
 void main() {
-  testWidgets('Launch applies custom activeTrackColor via SliderTheme.of', (
+  testWidgets('Blissful applies custom activeTrackColor via SliderThemeData', (
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(
       const MaterialApp(
-        home: Scaffold(body: Center(child: example.Launch())),
+        home: Scaffold(body: Center(child: example.Blissful())),
       ),
     );
 
@@ -30,7 +30,7 @@ void main() {
       material,
       paints
         ..rrect()
-        ..rrect(color: const Color(0xff804040)),
+        ..rrect(color: const Color(0xff404080)),
     );
   });
 }

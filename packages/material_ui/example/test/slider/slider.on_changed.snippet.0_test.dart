@@ -4,10 +4,11 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:material_ui_examples/slider/slider.snippet.2.dart' as example;
+import 'package:material_ui_examples/slider/slider.on_changed.snippet.0.dart'
+    as example;
 
 void main() {
-  testWidgets('Slider onChangeEnd prints final value after change', (
+  testWidgets('Slider onChanged updates rounded value and label', (
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(
@@ -16,12 +17,15 @@ void main() {
       ),
     );
 
-    await expectLater(
-      () => tester.tap(find.byType(Slider)),
-      prints('Ended change on 5.5\n'),
-    );
+    Slider slider = tester.widget<Slider>(find.byType(Slider));
+    expect(slider.value, 1.0);
+    expect(slider.label, '1');
+
+    await tester.tap(find.byType(Slider));
     await tester.pumpAndSettle();
 
-    expect(tester.widget<Slider>(find.byType(Slider)).value, 6.0);
+    slider = tester.widget<Slider>(find.byType(Slider));
+    expect(slider.value, 6.0);
+    expect(slider.label, '6');
   });
 }
