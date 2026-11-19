@@ -1,4 +1,4 @@
-## 2.4.1
+## 2.5.0
 
 * Adds support for SVG filters (`feGaussianBlur`, `feOffset`, and `feMerge`).
 

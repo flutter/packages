@@ -885,10 +885,26 @@ void main() {
   });
 
   group('SvgPicture filters', () {
-    testWidgets('feGaussianBlur', (WidgetTester tester) async {
-      final GlobalKey key = GlobalKey();
+    Future<void> pumpFilterSvg(WidgetTester tester, String svgStr, {Key? key}) async {
+      final Widget svg = SvgPicture.string(svgStr, width: 100.0, height: 100.0);
+      await tester.pumpWidget(key == null ? svg : RepaintBoundary(key: key, child: svg));
+      await tester.pumpAndSettle();
+    }
 
-      const svgStr = '''
+    Future<void> checkFilterGolden(WidgetTester tester, String svgStr, String goldenName) async {
+      final GlobalKey key = GlobalKey();
+      await pumpFilterSvg(tester, svgStr, key: key);
+      await _checkWidgetAndGolden(key, goldenName);
+    }
+
+    Future<void> checkFilterRendersCleanly(WidgetTester tester, String svgStr) async {
+      await pumpFilterSvg(tester, svgStr);
+      expect(find.byType(SvgPicture), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    }
+
+    testWidgets('feGaussianBlur', (WidgetTester tester) async {
+      await checkFilterGolden(tester, '''
 <svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <filter id="blur">
@@ -897,20 +913,11 @@ void main() {
   </defs>
   <rect x="20" y="20" width="60" height="60" fill="#FF8800" filter="url(#blur)" />
 </svg>
-''';
-
-      await tester.pumpWidget(
-        RepaintBoundary(key: key, child: SvgPicture.string(svgStr, width: 100.0, height: 100.0)),
-      );
-
-      await tester.pumpAndSettle();
-      await _checkWidgetAndGolden(key, 'filter.gaussian_blur.png');
+''', 'filter.gaussian_blur.png');
     });
 
     testWidgets('feOffset', (WidgetTester tester) async {
-      final GlobalKey key = GlobalKey();
-
-      const svgStr = '''
+      await checkFilterGolden(tester, '''
 <svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <filter id="offset">
@@ -919,20 +926,11 @@ void main() {
   </defs>
   <rect x="15" y="15" width="50" height="50" fill="#FF8800" filter="url(#offset)" />
 </svg>
-''';
-
-      await tester.pumpWidget(
-        RepaintBoundary(key: key, child: SvgPicture.string(svgStr, width: 100.0, height: 100.0)),
-      );
-
-      await tester.pumpAndSettle();
-      await _checkWidgetAndGolden(key, 'filter.offset.png');
+''', 'filter.offset.png');
     });
 
     testWidgets('feMerge drop shadow with SourceAlpha', (WidgetTester tester) async {
-      final GlobalKey key = GlobalKey();
-
-      const svgStr = '''
+      await checkFilterGolden(tester, '''
 <svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <filter id="drop-shadow">
@@ -946,20 +944,11 @@ void main() {
   </defs>
   <circle cx="45" cy="45" r="30" fill="#FF8800" filter="url(#drop-shadow)" />
 </svg>
-''';
-
-      await tester.pumpWidget(
-        RepaintBoundary(key: key, child: SvgPicture.string(svgStr, width: 100.0, height: 100.0)),
-      );
-
-      await tester.pumpAndSettle();
-      await _checkWidgetAndGolden(key, 'filter.drop_shadow.png');
+''', 'filter.drop_shadow.png');
     });
 
     testWidgets('gradient shape drop shadow with SourceAlpha', (WidgetTester tester) async {
-      final GlobalKey key = GlobalKey();
-
-      const svgStr = '''
+      await checkFilterGolden(tester, '''
 <svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <linearGradient id="fade" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -977,20 +966,11 @@ void main() {
   </defs>
   <rect x="15" y="15" width="60" height="60" fill="url(#fade)" filter="url(#shadow)" />
 </svg>
-''';
-
-      await tester.pumpWidget(
-        RepaintBoundary(key: key, child: SvgPicture.string(svgStr, width: 100.0, height: 100.0)),
-      );
-
-      await tester.pumpAndSettle();
-      await _checkWidgetAndGolden(key, 'filter.gradient_drop_shadow.png');
+''', 'filter.gradient_drop_shadow.png');
     });
 
     testWidgets('group opacity with feMerge drop shadow', (WidgetTester tester) async {
-      final GlobalKey key = GlobalKey();
-
-      const svgStr = '''
+      await checkFilterGolden(tester, '''
 <svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <filter id="drop-shadow">
@@ -1007,20 +987,11 @@ void main() {
     <circle cx="55" cy="55" r="25" fill="#FF8800" />
   </g>
 </svg>
-''';
-
-      await tester.pumpWidget(
-        RepaintBoundary(key: key, child: SvgPicture.string(svgStr, width: 100.0, height: 100.0)),
-      );
-
-      await tester.pumpAndSettle();
-      await _checkWidgetAndGolden(key, 'filter.group_opacity.png');
+''', 'filter.group_opacity.png');
     });
 
     testWidgets('anisotropic feGaussianBlur', (WidgetTester tester) async {
-      final GlobalKey key = GlobalKey();
-
-      const svgStr = '''
+      await checkFilterGolden(tester, '''
 <svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <filter id="hblur">
@@ -1029,20 +1000,11 @@ void main() {
   </defs>
   <rect x="35" y="25" width="30" height="50" fill="#FF3333" filter="url(#hblur)" />
 </svg>
-''';
-
-      await tester.pumpWidget(
-        RepaintBoundary(key: key, child: SvgPicture.string(svgStr, width: 100.0, height: 100.0)),
-      );
-
-      await tester.pumpAndSettle();
-      await _checkWidgetAndGolden(key, 'filter.anisotropic_blur.png');
+''', 'filter.anisotropic_blur.png');
     });
 
     testWidgets('scaled transform filter', (WidgetTester tester) async {
-      final GlobalKey key = GlobalKey();
-
-      const svgStr = '''
+      await checkFilterGolden(tester, '''
 <svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <filter id="shadow">
@@ -1058,18 +1020,11 @@ void main() {
     <rect x="10" y="10" width="25" height="25" fill="#FF8800" filter="url(#shadow)" />
   </g>
 </svg>
-''';
-
-      await tester.pumpWidget(
-        RepaintBoundary(key: key, child: SvgPicture.string(svgStr, width: 100.0, height: 100.0)),
-      );
-
-      await tester.pumpAndSettle();
-      await _checkWidgetAndGolden(key, 'filter.scaled_transform.png');
+''', 'filter.scaled_transform.png');
     });
 
     testWidgets('feGaussianBlur with stdDeviation 0 renders cleanly', (WidgetTester tester) async {
-      const svgStr = '''
+      await checkFilterRendersCleanly(tester, '''
 <svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <filter id="zero-blur">
@@ -1078,17 +1033,11 @@ void main() {
   </defs>
   <rect x="20" y="20" width="60" height="60" fill="#FF8800" filter="url(#zero-blur)" />
 </svg>
-''';
-
-      await tester.pumpWidget(SvgPicture.string(svgStr, width: 100.0, height: 100.0));
-      await tester.pumpAndSettle();
-
-      expect(find.byType(SvgPicture), findsOneWidget);
-      expect(tester.takeException(), isNull);
+''');
     });
 
     testWidgets('feOffset with negative dx and dy renders cleanly', (WidgetTester tester) async {
-      const svgStr = '''
+      await checkFilterRendersCleanly(tester, '''
 <svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <filter id="neg-offset">
@@ -1097,19 +1046,13 @@ void main() {
   </defs>
   <rect x="30" y="30" width="50" height="50" fill="#FF8800" filter="url(#neg-offset)" />
 </svg>
-''';
-
-      await tester.pumpWidget(SvgPicture.string(svgStr, width: 100.0, height: 100.0));
-      await tester.pumpAndSettle();
-
-      expect(find.byType(SvgPicture), findsOneWidget);
-      expect(tester.takeException(), isNull);
+''');
     });
 
     testWidgets('mixed unsupported filter primitive falls back gracefully', (
       WidgetTester tester,
     ) async {
-      const svgStr = '''
+      await checkFilterRendersCleanly(tester, '''
 <svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <filter id="mixed">
@@ -1119,13 +1062,7 @@ void main() {
   </defs>
   <rect x="20" y="20" width="60" height="60" fill="#FF8800" filter="url(#mixed)" />
 </svg>
-''';
-
-      await tester.pumpWidget(SvgPicture.string(svgStr, width: 100.0, height: 100.0));
-      await tester.pumpAndSettle();
-
-      expect(find.byType(SvgPicture), findsOneWidget);
-      expect(tester.takeException(), isNull);
+''');
     });
   });
 
