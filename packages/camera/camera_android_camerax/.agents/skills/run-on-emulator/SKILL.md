@@ -121,7 +121,10 @@ Continue with the subsection that matches your task:
    stops making progress, take a screenshot (3b) to see what is
    blocking the app. If you kill a test run, delete `example/build/test/`
    afterwards: the generated test files left there fail the repo's
-   pre-commit analysis.
+   pre-commit analysis. If logcat shows
+   `Failed to close CameraDevice ... The camera is likely in a bad state`,
+   the emulator's camera service is stuck, not the code under test: stop and
+   start the emulator again (section 2, step 5), grant permissions, and rerun.
 3. **Report** each failing test and its error. Re-run each failure once with
    `--plain-name` to tell flakes (common right after a cold boot) from real
    failures, and report both results. Failures in the resolution preset tests
@@ -164,7 +167,10 @@ for CameraX errors: run `adb -s <serial> logcat -c` before the test and search
    the preview is live or frozen, compare two screenshots of the front camera
    taken a few seconds apart: its test pattern changes over time. A screenshot
    cannot show aspect ratio, mirroring, cropping, exposure, color, or frame
-   rate: assert those in a test, or report them as not verified.
+   rate: assert those in a test, or report them as not verified. To check
+   short-lived effects (e.g., a flash when pausing), record the screen with
+   `adb -s <serial> shell screenrecord --time-limit <sec> /sdcard/<name>.mp4`,
+   pull it with `adb -s <serial> pull`, and inspect its frames.
 4. **For lifecycle bugs**, background and resume the app with
    `adb -s <serial> shell input keyevent KEYCODE_HOME`, then
    `adb -s <serial> shell am start -n io.flutter.plugins.cameraxexample/.MainActivity`.
