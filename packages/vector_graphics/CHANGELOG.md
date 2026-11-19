@@ -1,5 +1,36 @@
 ## NEXT
 
+* Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
+
+## 1.3.1
+
+* Fixes a `font-family` list, such as `"Roboto, sans-serif"`, being used as a
+  single family name. The first family is used and the others become fallbacks.
+
+## 1.3.0
+
+* Adds support for SVG filters (`feGaussianBlur`, `feOffset`, `feMerge`, and `feMergeNode`).
+
+## 1.2.7
+
+* Fixes uncaught surface-creation throwables (such as bare JavaScript strings
+  or engine errors) from `useHtmlRenderObject()` so `VectorGraphic` widgets
+  reliably fall back to the HTML render object and cache the fallback instead
+  of crashing repeatedly (flutter/flutter#189451).
+
+## 1.2.6
+
+* Fixes `<text>` not being drawn when the ambient text direction is RTL.
+
+## 1.2.5
+
+* Fixes a leak of the decoded picture when a `VectorGraphic` is removed before
+  loading finishes.
+
+## 1.2.4
+
+* Fixes an unhandled exception reported for every asynchronous loading failure,
+  such as an asset that fails to load, even when `errorBuilder` handles it.
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 * Removes unnecessary Material imports.
 * Fixes deprecation lints.

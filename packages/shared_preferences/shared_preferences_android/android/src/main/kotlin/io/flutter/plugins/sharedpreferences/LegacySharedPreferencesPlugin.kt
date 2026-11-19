@@ -29,26 +29,30 @@ class LegacySharedPreferencesPlugin
 @VisibleForTesting
 internal constructor(private val listEncoder: SharedPreferencesListEncoder) :
     FlutterPlugin, SharedPreferencesApi {
-  private lateinit var preferences: SharedPreferences
+  private lateinit var context: Context
+  private val preferences: SharedPreferences by lazy {
+    context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
+  }
+
   private val backgroundDispatcher = Dispatchers.IO.limitedParallelism(1)
 
   constructor() : this(ListEncoder())
 
-  private fun setUp(context: Context) {
-    preferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
+  private fun setUp(binding: FlutterPluginBinding) {
+    context = binding.applicationContext
     try {
-      SharedPreferencesApiRegistrar().register(this)
+      SharedPreferencesApiRegistrar().register(this, binding)
     } catch (ex: Exception) {
       Log.e(TAG, "Received exception while setting up SharedPreferencesPlugin", ex)
     }
   }
 
   override fun onAttachedToEngine(binding: FlutterPluginBinding) {
-    setUp(binding.applicationContext)
+    setUp(binding)
   }
 
   override fun onDetachedFromEngine(binding: FlutterPluginBinding) {
-    SharedPreferencesApiRegistrar().register(null)
+    SharedPreferencesApiRegistrar().unregister(this, binding)
   }
 
   override suspend fun setBool(key: String, value: Boolean): Boolean =

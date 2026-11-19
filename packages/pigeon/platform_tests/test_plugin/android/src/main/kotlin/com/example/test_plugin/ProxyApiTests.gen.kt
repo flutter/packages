@@ -540,8 +540,10 @@ enum class ProxyApiTestEnum(val raw: Int) {
   THREE(2);
 
   companion object {
+    private val pigeonValues = values()
+
     fun ofRaw(raw: Int): ProxyApiTestEnum? {
-      return values().firstOrNull { it.raw == raw }
+      return pigeonValues.getOrNull(raw)
     }
   }
 }
@@ -550,7 +552,7 @@ private open class ProxyApiTestsPigeonCodec : StandardMessageCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
     return when (type) {
       129.toByte() -> {
-        return (readValue(buffer) as Long?)?.let { ProxyApiTestEnum.ofRaw(it.toInt()) }
+        (readValue(buffer) as Long?)?.let { ProxyApiTestEnum.ofRaw(it.toInt()) }
       }
       else -> super.readValueOfType(type, buffer)
     }

@@ -586,7 +586,10 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    expect(tester.widget<ModalBarrier>(find.byType(ModalBarrier).last).color, Colors.black54);
+    expect(
+      tester.widget<ModalBarrier>(find.byType(ModalBarrier).last).color,
+      Theme.of(context).colorScheme.scrim.withAlpha(0x52),
+    );
 
     // Dismiss it and test a custom barrier color
     await tester.tapAt(const Offset(10.0, 10.0));
@@ -601,6 +604,142 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(tester.widget<ModalBarrier>(find.byType(ModalBarrier).last).color, Colors.pink);
+  });
+
+  testWidgets('Barrier color uses ColorScheme.scrim', (WidgetTester tester) async {
+    const Color scrim = Colors.red;
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple, scrim: scrim),
+        ),
+        home: const Center(child: Text('Test')),
+      ),
+    );
+    final BuildContext context = tester.element(find.text('Test'));
+
+    unawaited(
+      showDialog<void>(
+        context: context,
+        builder: (BuildContext context) {
+          return const Text('Dialog');
+        },
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(
+      tester.widget<ModalBarrier>(find.byType(ModalBarrier).last).color,
+      scrim.withAlpha(0x52),
+    );
+  });
+
+  testWidgets('DialogTheme.barrierColor takes precedence over ColorScheme.scrim', (
+    WidgetTester tester,
+  ) async {
+    const Color scrim = Colors.red;
+    const Color themeBarrierColor = Colors.blue;
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple, scrim: scrim),
+          dialogTheme: const DialogThemeData(barrierColor: themeBarrierColor),
+        ),
+        home: const Center(child: Text('Test')),
+      ),
+    );
+    final BuildContext context = tester.element(find.text('Test'));
+
+    unawaited(
+      showDialog<void>(
+        context: context,
+        builder: (BuildContext context) {
+          return const Text('Dialog');
+        },
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(tester.widget<ModalBarrier>(find.byType(ModalBarrier).last).color, themeBarrierColor);
+  });
+
+  testWidgets('Explicit barrierColor takes precedence over ColorScheme.scrim', (
+    WidgetTester tester,
+  ) async {
+    const Color scrim = Colors.red;
+    const Color explicitBarrierColor = Colors.green;
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple, scrim: scrim),
+          dialogTheme: const DialogThemeData(barrierColor: Colors.blue),
+        ),
+        home: const Center(child: Text('Test')),
+      ),
+    );
+    final BuildContext context = tester.element(find.text('Test'));
+
+    unawaited(
+      showDialog<void>(
+        context: context,
+        barrierColor: explicitBarrierColor,
+        builder: (BuildContext context) {
+          return const Text('Dialog');
+        },
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(tester.widget<ModalBarrier>(find.byType(ModalBarrier).last).color, explicitBarrierColor);
+  });
+
+  testWidgets('Material 3 ColorScheme.scrim uses 32% opacity', (WidgetTester tester) async {
+    final Color scrim = Colors.red.withValues(alpha: 0.2);
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple, scrim: scrim),
+        ),
+        home: const Center(child: Text('Test')),
+      ),
+    );
+    final BuildContext context = tester.element(find.text('Test'));
+
+    unawaited(
+      showDialog<void>(
+        context: context,
+        builder: (BuildContext context) {
+          return const Text('Dialog');
+        },
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(
+      tester.widget<ModalBarrier>(find.byType(ModalBarrier).last).color,
+      scrim.withAlpha(0x52),
+    );
+  });
+
+  testWidgets('Material 2 dialog barrier uses Colors.black54', (WidgetTester tester) async {
+    const Color scrim = Colors.red;
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(
+          useMaterial3: false,
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple, scrim: scrim),
+        ),
+        home: const Center(child: Text('Test')),
+      ),
+    );
+    final BuildContext context = tester.element(find.text('Test'));
+
+    unawaited(
+      showDialog<void>(
+        context: context,
+        builder: (BuildContext context) {
+          return const Text('Dialog');
+        },
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(tester.widget<ModalBarrier>(find.byType(ModalBarrier).last).color, Colors.black54);
   });
 
   testWidgets('Dialog hides underlying semantics tree', (WidgetTester tester) async {
@@ -1663,6 +1802,44 @@ void main() {
         screenRect.bottom - 40.0,
       ),
     );
+  });
+
+  testWidgets('Dialog.fullscreen Material extends behind the keyboard, child stays above it', (
+    WidgetTester tester,
+  ) async {
+    late BuildContext childContext;
+    final Widget dialog = Dialog.fullscreen(
+      child: Builder(
+        builder: (BuildContext context) {
+          childContext = context;
+          return const Placeholder();
+        },
+      ),
+    );
+    final Finder material = find.descendant(
+      of: find.byType(Dialog),
+      matching: find.byType(Material),
+    );
+
+    await tester.pumpWidget(
+      MediaQuery(
+        data: const MediaQueryData(viewInsets: EdgeInsets.only(bottom: 200.0)),
+        child: dialog,
+      ),
+    );
+    await tester.pumpAndSettle();
+    // The child is kept above the keyboard and does not see the inset.
+    expect(tester.getRect(find.byType(Placeholder)), const Rect.fromLTRB(0.0, 0.0, 800.0, 400.0));
+    expect(MediaQuery.viewInsetsOf(childContext), EdgeInsets.zero);
+    // The dialog's surface keeps covering the whole screen, including the
+    // area behind the keyboard.
+    expect(tester.getRect(material), const Rect.fromLTRB(0.0, 0.0, 800.0, 600.0));
+
+    // Hiding the keyboard gives the child the whole screen back.
+    await tester.pumpWidget(MediaQuery(data: const MediaQueryData(), child: dialog));
+    await tester.pumpAndSettle();
+    expect(tester.getRect(find.byType(Placeholder)), const Rect.fromLTRB(0.0, 0.0, 800.0, 600.0));
+    expect(tester.getRect(material), const Rect.fromLTRB(0.0, 0.0, 800.0, 600.0));
   });
 
   // Regression test for https://github.com/flutter/flutter/issues/78229.

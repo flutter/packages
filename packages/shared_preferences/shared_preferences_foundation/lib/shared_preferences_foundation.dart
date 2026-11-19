@@ -3,4 +3,5 @@
 // found in the LICENSE file.
 
 export 'src/shared_preferences_async_foundation.dart';
+export 'src/shared_preferences_async_foundation_options.dart';
 export 'src/shared_preferences_foundation.dart';

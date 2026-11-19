@@ -2,20 +2,19 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import Flutter
 import ImageIO
+import PhotosUI
 import Testing
-import UIKit
+import UniformTypeIdentifiers
 
 @testable import image_picker_ios
 
 @Suite
 struct PickerSaveImageToPathOperationTests {
-  private var testBundle: Bundle {
-    ImagePickerTestImages.bundle
-  }
-
   private func pickerItem(forResource name: String, ext: String) throws -> FakePickerItem {
-    let imageURL = try #require(testBundle.url(forResource: name, withExtension: ext))
+    let imageURL = try #require(
+      ImagePickerTestImages.bundle.url(forResource: name, withExtension: ext))
     let itemProvider = NSItemProvider(contentsOf: imageURL)!
     return FakePickerItem(
       itemProvider: itemProvider,
@@ -29,17 +28,17 @@ struct PickerSaveImageToPathOperationTests {
   /// are not stored across that boundary.
   private func runSaveOperation(
     result: PickerItem,
-    maxHeight: NSNumber = 100,
-    maxWidth: NSNumber = 100,
-    desiredImageQuality: NSNumber = 100,
+    maxHeight: Double = 100,
+    maxWidth: Double = 100,
+    desiredImageQuality: Double = 100,
     fullMetadata: Bool
-  ) async throws -> (savedPath: String?, error: FlutterError?) {
+  ) async throws -> (savedPath: String?, error: PigeonError?) {
     let outcome = await withCheckedContinuation {
       (
-        continuation: CheckedContinuation<(savedPath: String?, error: FlutterError?)?, Never>
+        continuation: CheckedContinuation<(savedPath: String?, error: PigeonError?)?, Never>
       ) in
       guard
-        let operation = FLTPHPickerSaveImageToPathOperation(
+        let operation = PHPickerSaveImageToPathOperation(
           result: result,
           maxHeight: maxHeight,
           maxWidth: maxWidth,
@@ -91,7 +90,8 @@ struct PickerSaveImageToPathOperationTests {
   }
 
   @Test func saveGIFImage() async throws {
-    let imageURL = try #require(testBundle.url(forResource: "gifImage", withExtension: "gif"))
+    let imageURL = try #require(
+      ImagePickerTestImages.bundle.url(forResource: "gifImage", withExtension: "gif"))
     let itemProvider = NSItemProvider(contentsOf: imageURL)!
     let result = FakePickerItem(
       itemProvider: itemProvider,
@@ -130,7 +130,7 @@ struct PickerSaveImageToPathOperationTests {
   @Test func nonexistentImage() async throws {
     let itemProvider =
       NSItemProvider(
-        contentsOf: testBundle.url(forResource: "bogus", withExtension: "png"))
+        contentsOf: ImagePickerTestImages.bundle.url(forResource: "bogus", withExtension: "png"))
       ?? NSItemProvider()
     let result = FakePickerItem(itemProvider: itemProvider, assetIdentifier: nil)
     let (_, savedError) = try await runSaveOperation(result: result, fullMetadata: true)
@@ -157,7 +157,7 @@ struct PickerSaveImageToPathOperationTests {
   }
 
   @Test func initWithNilResultReturnsNil() {
-    let operation = FLTPHPickerSaveImageToPathOperation(
+    let operation = PHPickerSaveImageToPathOperation(
       result: nil,
       maxHeight: 100,
       maxWidth: 100,
@@ -171,7 +171,7 @@ struct PickerSaveImageToPathOperationTests {
     let result = try pickerItem(forResource: "pngImage", ext: "png")
     var savedPathCalled = false
     let operation = try #require(
-      FLTPHPickerSaveImageToPathOperation(
+      PHPickerSaveImageToPathOperation(
         result: result,
         maxHeight: 100,
         maxWidth: 100,

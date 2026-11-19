@@ -1,6 +1,0 @@
-changelog: |
-  - Adds `RoundedPolygon` and `CornerRounding` for creating rounded polygonal shapes.
-  - Adds `MaterialShapes`, the catalog of predefined Material Design shapes.
-  - Adds `MaterialShapeBorder` for drawing a `RoundedPolygon` as an `OutlinedBorder`, which morphs between shapes when lerped.
-  - Adds an example that morphs through the shapes in `MaterialShapes.all`.
-version: minor

@@ -2,13 +2,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:video_player_avfoundation/src/video_player_instance_messages.g.dart';
-import 'package:video_player_avfoundation/src/video_player_plugin_messages.g.dart';
+import 'package:video_player_avfoundation/src/messages.g.dart';
 import 'package:video_player_avfoundation/video_player_avfoundation.dart';
 import 'package:video_player_platform_interface/video_player_platform_interface.dart';
 
@@ -38,6 +39,30 @@ void main() {
     return (player, pluginApi, instanceApi);
   }
 
+  (
+    AVFoundationVideoPlayer,
+    MockAVFoundationVideoPlayerApi,
+    MockVideoPlayerInstanceApi,
+    StreamController<PlatformVideoEvent>,
+  )
+  setUpMockPlayerWithStream({required int playerId, int? textureId}) {
+    final pluginApi = MockAVFoundationVideoPlayerApi();
+    final instanceApi = MockVideoPlayerInstanceApi();
+    final streamController = StreamController<PlatformVideoEvent>();
+    final player = AVFoundationVideoPlayer(
+      pluginApi: pluginApi,
+      playerApiProvider: (_) => instanceApi,
+      videoEventStreamProvider: (_) => streamController.stream.asBroadcastStream(),
+    );
+    player.ensurePlayerInitialized(
+      playerId,
+      textureId == null
+          ? const VideoPlayerPlatformViewState()
+          : VideoPlayerTextureViewState(textureId: textureId),
+    );
+    return (player, pluginApi, instanceApi, streamController);
+  }
+
   test('registration', () async {
     AVFoundationVideoPlayer.registerWith();
     expect(VideoPlayerPlatform.instance, isA<AVFoundationVideoPlayer>());
@@ -64,9 +89,8 @@ void main() {
       final (AVFoundationVideoPlayer player, MockAVFoundationVideoPlayerApi api, _) =
           setUpMockPlayer(playerId: 1, textureId: 101);
       const newPlayerId = 2;
-      when(
-        api.createForTextureView(any),
-      ).thenAnswer((_) async => TexturePlayerIds(playerId: newPlayerId, textureId: 102));
+      when(api.createForTextureView(any))
+          .thenAnswer((_) async => TexturePlayerIds(playerId: newPlayerId, textureId: 102));
 
       const asset = 'someAsset';
       const package = 'somePackage';
@@ -102,9 +126,8 @@ void main() {
       final (AVFoundationVideoPlayer player, MockAVFoundationVideoPlayerApi api, _) =
           setUpMockPlayer(playerId: 1, textureId: 101);
       const newPlayerId = 2;
-      when(
-        api.createForTextureView(any),
-      ).thenAnswer((_) async => TexturePlayerIds(playerId: newPlayerId, textureId: 102));
+      when(api.createForTextureView(any))
+          .thenAnswer((_) async => TexturePlayerIds(playerId: newPlayerId, textureId: 102));
 
       const uri = 'https://example.com';
       final int? playerId = await player.create(
@@ -122,9 +145,8 @@ void main() {
     test('create with network passes headers', () async {
       final (AVFoundationVideoPlayer player, MockAVFoundationVideoPlayerApi api, _) =
           setUpMockPlayer(playerId: 1, textureId: 101);
-      when(
-        api.createForTextureView(any),
-      ).thenAnswer((_) async => TexturePlayerIds(playerId: 2, textureId: 102));
+      when(api.createForTextureView(any))
+          .thenAnswer((_) async => TexturePlayerIds(playerId: 2, textureId: 102));
 
       const headers = <String, String>{'Authorization': 'Bearer token'};
       await player.create(
@@ -143,9 +165,8 @@ void main() {
       final (AVFoundationVideoPlayer player, MockAVFoundationVideoPlayerApi api, _) =
           setUpMockPlayer(playerId: 1, textureId: 101);
       const newPlayerId = 2;
-      when(
-        api.createForTextureView(any),
-      ).thenAnswer((_) async => TexturePlayerIds(playerId: newPlayerId, textureId: 102));
+      when(api.createForTextureView(any))
+          .thenAnswer((_) async => TexturePlayerIds(playerId: newPlayerId, textureId: 102));
 
       const fileUri = 'file:///foo/bar';
       final int? playerId = await player.create(
@@ -162,9 +183,8 @@ void main() {
       final (AVFoundationVideoPlayer player, MockAVFoundationVideoPlayerApi api, _) =
           setUpMockPlayer(playerId: 1, textureId: 101);
       const newPlayerId = 2;
-      when(
-        api.createForTextureView(any),
-      ).thenAnswer((_) async => TexturePlayerIds(playerId: newPlayerId, textureId: 102));
+      when(api.createForTextureView(any))
+          .thenAnswer((_) async => TexturePlayerIds(playerId: newPlayerId, textureId: 102));
 
       const asset = 'someAsset';
       const package = 'somePackage';
@@ -188,9 +208,8 @@ void main() {
       final (AVFoundationVideoPlayer player, MockAVFoundationVideoPlayerApi api, _) =
           setUpMockPlayer(playerId: 1, textureId: 101);
       const newPlayerId = 2;
-      when(
-        api.createForTextureView(any),
-      ).thenAnswer((_) async => TexturePlayerIds(playerId: newPlayerId, textureId: 102));
+      when(api.createForTextureView(any))
+          .thenAnswer((_) async => TexturePlayerIds(playerId: newPlayerId, textureId: 102));
 
       const uri = 'https://example.com';
       final int? playerId = await player.createWithOptions(
@@ -216,9 +235,8 @@ void main() {
       final (AVFoundationVideoPlayer player, MockAVFoundationVideoPlayerApi api, _) =
           setUpMockPlayer(playerId: 1, textureId: 101);
       const newPlayerId = 2;
-      when(
-        api.createForTextureView(any),
-      ).thenAnswer((_) async => TexturePlayerIds(playerId: newPlayerId, textureId: 102));
+      when(api.createForTextureView(any))
+          .thenAnswer((_) async => TexturePlayerIds(playerId: newPlayerId, textureId: 102));
 
       const headers = <String, String>{'Authorization': 'Bearer token'};
       final int? playerId = await player.createWithOptions(
@@ -243,9 +261,8 @@ void main() {
           setUpMockPlayer(playerId: 1);
       const newPlayerId = 2;
       const textureId = 100;
-      when(
-        api.createForTextureView(any),
-      ).thenAnswer((_) async => TexturePlayerIds(playerId: newPlayerId, textureId: textureId));
+      when(api.createForTextureView(any))
+          .thenAnswer((_) async => TexturePlayerIds(playerId: newPlayerId, textureId: textureId));
 
       const fileUri = 'file:///foo/bar';
       final int? playerId = await player.createWithOptions(
@@ -379,121 +396,128 @@ void main() {
       expect(position, const Duration(milliseconds: positionMilliseconds));
     });
 
-    test('videoEventsFor', () async {
-      const playerId = 1;
-      final (AVFoundationVideoPlayer player, MockAVFoundationVideoPlayerApi api, _) =
-          setUpMockPlayer(playerId: playerId);
-      const mockChannel = 'flutter.dev/videoPlayer/videoEvents$playerId';
-      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMessageHandler(
-        mockChannel,
-        (ByteData? message) async {
-          final MethodCall methodCall = const StandardMethodCodec().decodeMethodCall(message);
-          if (methodCall.method == 'listen') {
-            await TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-                .handlePlatformMessage(
-                  mockChannel,
-                  const StandardMethodCodec().encodeSuccessEnvelope(<String, dynamic>{
-                    'event': 'initialized',
-                    'duration': 98765,
-                    'width': 1920,
-                    'height': 1080,
-                  }),
-                  (ByteData? data) {},
-                );
+    group('video events', () {
+      // Sets up a mock player that emits the given event structure as a success
+      // callback on the internal platform channel event stream, and returns
+      // the player's videoEventsFor(...) stream.
+      Stream<VideoEvent> mockPlayerEmittingEvents(List<PlatformVideoEvent> events) {
+        const playerId = 1;
+        final (
+          AVFoundationVideoPlayer player,
+          _,
+          _,
+          StreamController<PlatformVideoEvent> streamController,
+        ) = setUpMockPlayerWithStream(
+          playerId: playerId,
+        );
 
-            await TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-                .handlePlatformMessage(
-                  mockChannel,
-                  const StandardMethodCodec().encodeSuccessEnvelope(<String, dynamic>{
-                    'event': 'completed',
-                  }),
-                  (ByteData? data) {},
-                );
+        events.forEach(streamController.add);
 
-            await TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-                .handlePlatformMessage(
-                  mockChannel,
-                  const StandardMethodCodec().encodeSuccessEnvelope(<String, dynamic>{
-                    'event': 'bufferingUpdate',
-                    'values': <List<dynamic>>[
-                      <int>[0, 1234],
-                      <int>[1235, 4000],
-                    ],
-                  }),
-                  (ByteData? data) {},
-                );
+        return player.videoEventsFor(playerId);
+      }
 
-            await TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-                .handlePlatformMessage(
-                  mockChannel,
-                  const StandardMethodCodec().encodeSuccessEnvelope(<String, dynamic>{
-                    'event': 'bufferingStart',
-                  }),
-                  (ByteData? data) {},
-                );
+      test('initialize', () async {
+        final Stream<VideoEvent> eventStream = mockPlayerEmittingEvents(<PlatformVideoEvent>[
+          InitializationEvent(durationMilliseconds: 98765, width: 1920, height: 1080),
+        ]);
 
-            await TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-                .handlePlatformMessage(
-                  mockChannel,
-                  const StandardMethodCodec().encodeSuccessEnvelope(<String, dynamic>{
-                    'event': 'bufferingEnd',
-                  }),
-                  (ByteData? data) {},
-                );
+        expect(
+          eventStream,
+          emitsInOrder(<dynamic>[
+            VideoEvent(
+              eventType: VideoEventType.initialized,
+              duration: const Duration(milliseconds: 98765),
+              size: const Size(1920, 1080),
+            ),
+          ]),
+        );
+      });
 
-            await TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-                .handlePlatformMessage(
-                  mockChannel,
-                  const StandardMethodCodec().encodeSuccessEnvelope(<String, dynamic>{
-                    'event': 'isPlayingStateUpdate',
-                    'isPlaying': true,
-                  }),
-                  (ByteData? data) {},
-                );
+      test('completed', () async {
+        final Stream<VideoEvent> eventStream = mockPlayerEmittingEvents(<PlatformVideoEvent>[
+          PlaybackCompleteEvent(),
+        ]);
 
-            await TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-                .handlePlatformMessage(
-                  mockChannel,
-                  const StandardMethodCodec().encodeSuccessEnvelope(<String, dynamic>{
-                    'event': 'isPlayingStateUpdate',
-                    'isPlaying': false,
-                  }),
-                  (ByteData? data) {},
-                );
+        expect(
+          eventStream,
+          emitsInOrder(<dynamic>[VideoEvent(eventType: VideoEventType.completed)]),
+        );
+      });
 
-            return const StandardMethodCodec().encodeSuccessEnvelope(null);
-          } else if (methodCall.method == 'cancel') {
-            return const StandardMethodCodec().encodeSuccessEnvelope(null);
-          } else {
-            fail('Expected listen or cancel');
-          }
-        },
-      );
-      expect(
-        player.videoEventsFor(playerId),
-        emitsInOrder(<dynamic>[
-          VideoEvent(
-            eventType: VideoEventType.initialized,
-            duration: const Duration(milliseconds: 98765),
-            size: const Size(1920, 1080),
-          ),
-          VideoEvent(eventType: VideoEventType.completed),
-          VideoEvent(
-            eventType: VideoEventType.bufferingUpdate,
-            buffered: <DurationRange>[
-              DurationRange(Duration.zero, const Duration(milliseconds: 1234)),
-              DurationRange(
-                const Duration(milliseconds: 1235),
-                const Duration(milliseconds: 1235 + 4000),
-              ),
+      test('buffering update', () async {
+        final Stream<VideoEvent> eventStream = mockPlayerEmittingEvents(<PlatformVideoEvent>[
+          BufferingUpdateEvent(
+            bufferedRanges: [
+              PlatformDurationRange(startMilliseconds: 0, durationMilliseconds: 1234),
+              PlatformDurationRange(startMilliseconds: 1235, durationMilliseconds: 4000),
             ],
           ),
-          VideoEvent(eventType: VideoEventType.bufferingStart),
-          VideoEvent(eventType: VideoEventType.bufferingEnd),
-          VideoEvent(eventType: VideoEventType.isPlayingStateUpdate, isPlaying: true),
-          VideoEvent(eventType: VideoEventType.isPlayingStateUpdate, isPlaying: false),
-        ]),
-      );
+        ]);
+
+        expect(
+          eventStream,
+          emitsInOrder(<dynamic>[
+            VideoEvent(
+              eventType: VideoEventType.bufferingUpdate,
+              buffered: <DurationRange>[
+                DurationRange(Duration.zero, const Duration(milliseconds: 1234)),
+                DurationRange(
+                  const Duration(milliseconds: 1235),
+                  const Duration(milliseconds: 1235 + 4000),
+                ),
+              ],
+            ),
+          ]),
+        );
+      });
+
+      test('buffering start', () async {
+        final Stream<VideoEvent> eventStream = mockPlayerEmittingEvents(<PlatformVideoEvent>[
+          BufferingStartEvent(),
+        ]);
+
+        expect(
+          eventStream,
+          emitsInOrder(<dynamic>[VideoEvent(eventType: VideoEventType.bufferingStart)]),
+        );
+      });
+
+      test('buffering end', () async {
+        final Stream<VideoEvent> eventStream = mockPlayerEmittingEvents(<PlatformVideoEvent>[
+          BufferingEndEvent(),
+        ]);
+
+        expect(
+          eventStream,
+          emitsInOrder(<dynamic>[VideoEvent(eventType: VideoEventType.bufferingEnd)]),
+        );
+      });
+
+      test('playback start', () async {
+        final Stream<VideoEvent> eventStream = mockPlayerEmittingEvents(<PlatformVideoEvent>[
+          IsPlayingStateEvent(isPlaying: true),
+        ]);
+
+        expect(
+          eventStream,
+          emitsInOrder(<dynamic>[
+            VideoEvent(eventType: VideoEventType.isPlayingStateUpdate, isPlaying: true),
+          ]),
+        );
+      });
+
+      test('playback stop', () async {
+        final Stream<VideoEvent> eventStream = mockPlayerEmittingEvents(<PlatformVideoEvent>[
+          IsPlayingStateEvent(isPlaying: false),
+        ]);
+
+        expect(
+          eventStream,
+          emitsInOrder(<dynamic>[
+            VideoEvent(eventType: VideoEventType.isPlayingStateUpdate, isPlaying: false),
+          ]),
+        );
+      });
     });
 
     group('video tracks', () {
