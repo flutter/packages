@@ -2,6 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:convert';
+
+import 'dart:typed_data';
+
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -29,23 +33,17 @@ void main() {
       });
 
       test('PlatformFileSystemXFile.toFilePath returns correct path', () {
-        final platform = TestCrossFilePlatform();
-
         // Match relative path.
-        expect(
-          platform
-              .createPlatformFileSystemXFile(PlatformFileSystemXFileCreationParams('my/path.txt'))
-              .toFilePath(),
-          Uri.file('my/path.txt').toFilePath(),
+        final relativeFile = TestFileSystemXFile(
+          PlatformFileSystemXFileCreationParams('my/path.txt'),
         );
+        expect(relativeFile.toFilePath(), Uri.file('my/path.txt').toFilePath());
 
         // Match absolute path.
-        expect(
-          platform
-              .createPlatformFileSystemXFile(PlatformFileSystemXFileCreationParams('/my/path.txt'))
-              .toFilePath(),
-          Uri.parse('/my/path.txt').toFilePath(),
+        final absoluteFile = TestFileSystemXFile(
+          PlatformFileSystemXFileCreationParams('/my/path.txt'),
         );
+        expect(absoluteFile.toFilePath(), Uri.parse('/my/path.txt').toFilePath());
       });
 
       test('PlatformFileSystemXDirectory returns correct URI', () {
@@ -71,33 +69,22 @@ void main() {
       });
 
       test('PlatformFileSystemXDirectory.toFilePath returns correct path', () {
-        final platform = TestCrossFilePlatform();
+        final relativeDirectory = TestFileSystemXDirectory(
+          PlatformFileSystemXDirectoryCreationParams('my/path'),
+        );
 
         // Match relative path.
-        expect(
-          platform
-              .createPlatformFileSystemXDirectory(
-                PlatformFileSystemXDirectoryCreationParams('my/path'),
-              )
-              .toFilePath(),
-          Uri.directory('my/path').toFilePath(),
-        );
+        expect(relativeDirectory.toFilePath(), Uri.directory('my/path').toFilePath());
 
         // Match absolute path.
-        expect(
-          platform
-              .createPlatformFileSystemXDirectory(
-                PlatformFileSystemXDirectoryCreationParams('/my/path/'),
-              )
-              .toFilePath(),
-          Uri.parse('/my/path/').toFilePath(),
+        final absoluteDirectory = TestFileSystemXDirectory(
+          PlatformFileSystemXDirectoryCreationParams('/my/path/'),
         );
+        expect(absoluteDirectory.toFilePath(), Uri.parse('/my/path/').toFilePath());
       });
 
       test('PlatformFileSystemXDirectory.toFilePath adds a trailing slash', () {
-        final platform = TestCrossFilePlatform();
-
-        final PlatformFileSystemXDirectory directory = platform.createPlatformFileSystemXDirectory(
+        final directory = TestFileSystemXDirectory(
           PlatformFileSystemXDirectoryCreationParams('my/dir'),
         );
 
@@ -126,6 +113,17 @@ void main() {
         await expectLater(file.openRead().drain, throwsUnsupportedError);
       });
 
+      test('_DefaultFileSystemXFile.toFilePath returns null', () {
+        final platform = TestCrossFilePlatform();
+
+        expect(
+          platform
+              .createPlatformFileSystemXFile(PlatformFileSystemXFileCreationParams('my/path.txt'))
+              .toFilePath(),
+          null,
+        );
+      });
+
       test('_DefaultFileSystemXDirectory.exists() returns false', () async {
         final platform = TestCrossFilePlatform();
 
@@ -148,6 +146,19 @@ void main() {
 
         // Ensures the error is caught and added to the stream.
         await expectLater(dir.list(const PlatformListParams()).drain, throwsUnsupportedError);
+      });
+
+      test('_DefaultFileSystemXDirectory.toFilePath returns null', () {
+        final platform = TestCrossFilePlatform();
+
+        expect(
+          platform
+              .createPlatformFileSystemXDirectory(
+                PlatformFileSystemXDirectoryCreationParams('my/dir/'),
+              )
+              .toFilePath(),
+          null,
+        );
       });
     });
 
@@ -230,3 +241,61 @@ void main() {
 }
 
 final class TestCrossFilePlatform extends CrossFilePlatform {}
+
+final class TestFileSystemXFile extends PlatformFileSystemXFile {
+  TestFileSystemXFile(super.params) : super.implementation();
+
+  @override
+  Future<bool> exists() {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<DateTime?> lastModified() {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<int?> length() {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String?> name() {
+    throw UnimplementedError();
+  }
+
+  @override
+  Stream<Uint8List> openRead([int? start, int? end]) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Uint8List> readAsBytes() {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String> readAsString({Encoding encoding = utf8}) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<PlatformFileSystemXFile> writeAsBytes(PlatformWriteAsBytesParams params) {
+    throw UnimplementedError();
+  }
+}
+
+final class TestFileSystemXDirectory extends PlatformFileSystemXDirectory {
+  TestFileSystemXDirectory(super.params) : super.implementation();
+
+  @override
+  Future<bool> exists() {
+    throw UnimplementedError();
+  }
+
+  @override
+  Stream<PlatformXEntity> list(PlatformListParams params) {
+    throw UnimplementedError();
+  }
+}
