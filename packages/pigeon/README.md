@@ -64,10 +64,12 @@ method arguments and per-subscription cancellation:
 * **Default (Structured Concurrency)**: Generates `Flow<T>` in Kotlin and
   `AsyncThrowingStream<T, Error>` in Swift. Cancelling the Dart `StreamSubscription` cancels the
   underlying Kotlin coroutine or Swift `Task`.
-* **`@asyncCallback` (Callback Event Sink)**: Generates a `PigeonEventSink<T>` (`success`, `error`,
-  `endOfStream`) parameter and returns an optional cancellation handle (`AutoCloseable?` in Kotlin,
-  `(() -> Void)?` in Swift) that runs when the Dart `StreamSubscription` is cancelled — useful when
-  bridging callback- or listener-based platform SDKs.
+* **`@asyncCallback` (Callback Event Sink)**: Generates a `<FilePrefix>PigeonEventSink<T>`
+  (`success`, `error`, `endOfStream`) parameter—prefixed with `fileSpecificClassNameComponent`
+  (which defaults to the output filename, e.g., `MessagesPigeonEventSink<T>`)—and returns an
+  optional cancellation handle (`AutoCloseable?` in Kotlin, `(() -> Void)?` in Swift) that runs
+  when the Dart `StreamSubscription` is cancelled — useful when bridging callback- or
+  listener-based platform SDKs.
 
 [Example](./example/README.md#event-channel-example).
 

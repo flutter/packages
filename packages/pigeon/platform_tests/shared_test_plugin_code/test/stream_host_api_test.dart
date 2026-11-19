@@ -150,4 +150,118 @@ void main() {
     expect(cancelledIds, isEmpty);
     expect(messenger.incomingHandlers, isNot(contains(errorEvents)));
   });
+
+  test('cancelling one of two concurrent subscriptions keeps the other active', () async {
+    final messenger = _FakeBinaryMessenger();
+    final subIds = <int>[];
+    final cancelledIds = <int>[];
+    messenger.outgoingHandlers[controlChannel] = (ByteData? raw) async {
+      final request = codec.decodeMessage(raw)! as List<Object?>;
+      if (request[0] == 'listen') {
+        subIds.add(request[1]! as int);
+      } else if (request[0] == 'cancel') {
+        cancelledIds.add(request[1]! as int);
+      }
+      return codec.encodeMessage(<Object?>[null]);
+    };
+
+    final api = StreamHostTestApi(binaryMessenger: messenger);
+    final firstEvents = <int>[];
+    final secondEvents = <int>[];
+    final secondDone = Completer<void>();
+
+    final StreamSubscription<int> sub1 = api.streamNumbers(start: 1).listen(firstEvents.add);
+    final StreamSubscription<int> sub2 = api
+        .streamNumbers(start: 100)
+        .listen(secondEvents.add, onDone: secondDone.complete);
+
+    await Future<void>.microtask(() {});
+    expect(subIds.length, 2);
+    expect(messenger.incomingHandlers, contains(eventsChannel));
+
+    // Cancel the first subscription; the shared .events handler must stay attached for sub2.
+    await sub1.cancel();
+    expect(cancelledIds, <int>[subIds[0]]);
+    expect(messenger.incomingHandlers, contains(eventsChannel));
+
+    await messenger.emitToDart(eventsChannel, codec.encodeMessage(<Object?>[subIds[1], 0, 100]));
+    await messenger.emitToDart(eventsChannel, codec.encodeMessage(<Object?>[subIds[1], 2]));
+    await secondDone.future;
+
+    expect(firstEvents, isEmpty);
+    expect(secondEvents, <int>[100]);
+    expect(messenger.incomingHandlers, isNot(contains(eventsChannel)));
+    await sub2.cancel();
+  });
+
+  test('propagates listen failure (channel-error and host error) and detaches handler', () async {
+    // 1. Unregistered host channel returns null -> channel-error PlatformException.
+    final unregisteredMessenger = _FakeBinaryMessenger();
+    final unregisteredApi = StreamHostTestApi(binaryMessenger: unregisteredMessenger);
+    await expectLater(
+      unregisteredApi.streamNumbers(count: 1).toList(),
+      throwsA(
+        isA<PlatformException>().having((PlatformException e) => e.code, 'code', 'channel-error'),
+      ),
+    );
+    expect(unregisteredMessenger.incomingHandlers, isNot(contains(eventsChannel)));
+
+    // 2. Host error reply on listen -> PlatformException and no cancel message sent.
+    final errorMessenger = _FakeBinaryMessenger();
+    final actions = <String>[];
+    errorMessenger.outgoingHandlers[controlChannel] = (ByteData? raw) async {
+      final request = codec.decodeMessage(raw)! as List<Object?>;
+      actions.add(request[0]! as String);
+      return codec.encodeMessage(<Object?>['listen-failed', 'denied', null]);
+    };
+    final errorApi = StreamHostTestApi(binaryMessenger: errorMessenger);
+    await expectLater(
+      errorApi.streamNumbers(count: 1).toList(),
+      throwsA(
+        isA<PlatformException>()
+            .having((PlatformException e) => e.code, 'code', 'listen-failed')
+            .having((PlatformException e) => e.message, 'message', 'denied'),
+      ),
+    );
+    expect(actions, <String>['listen']);
+    expect(errorMessenger.incomingHandlers, isNot(contains(eventsChannel)));
+  });
+
+  test('propagates cancel error reply and decodeEvent cast errors', () async {
+    final messenger = _FakeBinaryMessenger();
+    late int activeSubId;
+    messenger.outgoingHandlers[controlChannel] = (ByteData? raw) async {
+      final request = codec.decodeMessage(raw)! as List<Object?>;
+      if (request[0] == 'listen') {
+        activeSubId = request[1]! as int;
+        return codec.encodeMessage(<Object?>[null]);
+      }
+      return codec.encodeMessage(<Object?>['cancel-failed', 'close error', 'info']);
+    };
+
+    final api = StreamHostTestApi(binaryMessenger: messenger);
+    final errors = <Object>[];
+    final StreamSubscription<int> sub = api.streamNumbers().listen((_) {}, onError: errors.add);
+
+    await Future<void>.microtask(() {});
+    // Emit a wrong-typed event (String instead of int) to exercise decodeEvent error routing.
+    await messenger.emitToDart(
+      eventsChannel,
+      codec.encodeMessage(<Object?>[activeSubId, 0, 'not-an-int']),
+    );
+    expect(errors, hasLength(1));
+    expect(errors.single, isA<TypeError>());
+
+    // Cancelling propagates the host's error reply from 'cancel'.
+    await expectLater(
+      sub.cancel(),
+      throwsA(
+        isA<PlatformException>()
+            .having((PlatformException e) => e.code, 'code', 'cancel-failed')
+            .having((PlatformException e) => e.message, 'message', 'close error')
+            .having((PlatformException e) => e.details, 'details', 'info'),
+      ),
+    );
+    expect(messenger.incomingHandlers, isNot(contains(eventsChannel)));
+  });
 }

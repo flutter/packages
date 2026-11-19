@@ -3280,11 +3280,31 @@ class NativeInteropSealedClassHostApiImpl: NativeInteropSealedClassHostApi {
   }
 }
 
-class StreamHostTestApiImpl: StreamHostTestApi {
+class StreamHostTestApiImpl: StreamHostTestApi, @unchecked Sendable {
   private let offset: Int64
+  private let cancelLock = NSLock()
+  private var cancelledStreamCount: Int64 = 0
 
   init(offset: Int64 = 0) {
     self.offset = offset
+  }
+
+  private func incrementCancelledStreamCount() {
+    cancelLock.lock()
+    cancelledStreamCount += 1
+    cancelLock.unlock()
+  }
+
+  func getCancelledStreamCount() throws -> Int64 {
+    cancelLock.lock()
+    defer { cancelLock.unlock() }
+    return cancelledStreamCount
+  }
+
+  func resetCancelledStreamCount() throws {
+    cancelLock.lock()
+    cancelledStreamCount = 0
+    cancelLock.unlock()
   }
 
   func streamNumbers(count: Int64, start: Int64) -> AsyncThrowingStream<Int64, Error> {
@@ -3298,7 +3318,12 @@ class StreamHostTestApiImpl: StreamHostTestApi {
         }
         continuation.finish()
       }
-      continuation.onTermination = { _ in task.cancel() }
+      continuation.onTermination = { [weak self] termination in
+        if case .cancelled = termination {
+          self?.incrementCancelledStreamCount()
+        }
+        task.cancel()
+      }
     }
   }
 
@@ -3361,6 +3386,9 @@ class StreamHostTestApiImpl: StreamHostTestApi {
         sink.endOfStream()
       }
     }
-    return { task.cancel() }
+    return { [weak self] in
+      self?.incrementCancelledStreamCount()
+      task.cancel()
+    }
   }
 }

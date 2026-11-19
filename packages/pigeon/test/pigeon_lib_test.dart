@@ -3730,6 +3730,22 @@ abstract class Api {
         const GObjectGeneratorAdapter().validate(internalOptions, root).single.message,
         contains('GObject does not support Stream return types'),
       );
+
+      final InternalPigeonOptions dartJniOptions = InternalPigeonOptions.fromPigeonOptions(
+        const PigeonOptions(dartOut: 'lib/foo.g.dart', kotlinOptions: KotlinOptions(useJni: true)),
+      );
+      expect(
+        const DartGeneratorAdapter().validate(dartJniOptions, root).single.message,
+        contains('Dart native interop does not support Stream return types'),
+      );
+
+      final InternalPigeonOptions dartFfiOptions = InternalPigeonOptions.fromPigeonOptions(
+        const PigeonOptions(dartOut: 'lib/foo.g.dart', swiftOptions: SwiftOptions(useFfi: true)),
+      );
+      expect(
+        const DartGeneratorAdapter().validate(dartFfiOptions, root).single.message,
+        contains('Dart native interop does not support Stream return types'),
+      );
     });
   });
 

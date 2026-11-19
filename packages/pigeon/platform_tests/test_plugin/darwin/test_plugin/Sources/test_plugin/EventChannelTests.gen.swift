@@ -77,7 +77,7 @@ enum EventChannelTestsPigeonInternal {
 
   static func doubleHash(_ value: Double, _ hasher: inout Hasher) {
     if value.isNaN {
-      hasher.combine(0x7FF8_0000_0000_0000)
+      hasher.combine(0x7FF8000000000000)
     } else {
       // Normalize -0.0 to 0.0
       hasher.combine(value == 0 ? 0 : value)
@@ -187,10 +187,55 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
   return value as! T?
 }
 
+
 private final class EventChannelTestsPigeonMessageBox: @unchecked Sendable {
   let value: [Any?]
   init(_ value: [Any?]) {
     self.value = value
+  }
+}
+
+private final class EventChannelTestsPigeonStreamBox<Element>: @unchecked Sendable {
+  let stream: AsyncThrowingStream<Element, Error>
+  init(_ stream: AsyncThrowingStream<Element, Error>) {
+    self.stream = stream
+  }
+}
+
+private final class EventChannelTestsPigeonStreamTaskHandle: @unchecked Sendable {
+  private let lock = NSLock()
+  private var task: Task<Void, Never>?
+  private var cancelled = false
+
+  func attach(_ task: Task<Void, Never>) {
+    let shouldCancel: Bool
+    do {
+      lock.lock()
+      defer { lock.unlock() }
+      if cancelled {
+        shouldCancel = true
+      } else {
+        self.task = task
+        shouldCancel = false
+      }
+    }
+    if shouldCancel {
+      task.cancel()
+    }
+  }
+
+  func cancel() {
+    var currentTask: Task<Void, Never>?
+    do {
+      lock.lock()
+      defer { lock.unlock() }
+      cancelled = true
+      currentTask = task
+      task = nil
+    }
+    currentTask?.cancel()
+    // Keep currentTask alive past lock.unlock() so deallocation never runs while holding lock.
+    withExtendedLifetime(currentTask) {}
   }
 }
 
@@ -216,93 +261,154 @@ private final class EventChannelTestsPigeonChannelBox: @unchecked Sendable {
   }
 
   @MainActor
-  func sendOnMain(_ message: [Any?]) {
-    guard !isClosed else { return }
+  @discardableResult
+  func sendOnMain(_ message: [Any?]) -> Bool {
+    guard !isClosed else { return false }
     channel.sendMessage(message)
+    return true
   }
 
-  func send(_ message: [Any?]) {
+  func send(_ message: [Any?], closeAfterSend: Bool = false) {
     guard !isClosed else { return }
     if Thread.isMainThread {
       channel.sendMessage(message)
+      if closeAfterSend {
+        close()
+      }
     } else {
       let boxed = EventChannelTestsPigeonMessageBox(message)
       DispatchQueue.main.async {
         guard !self.isClosed else { return }
         self.channel.sendMessage(boxed.value)
+        if closeAfterSend {
+          self.close()
+        }
       }
     }
   }
 }
 
 private final class EventChannelTestsPigeonStreamRegistry: @unchecked Sendable {
-  private let lock = NSLock()
-  private var subscriptions: [String: [Int64: () -> Void]] = [:]
+  static let dataFrameKind: Int64 = 0
+  static let errorFrameKind: Int64 = 1
+  static let doneFrameKind: Int64 = 2
 
-  func register(channelName: String, subscriptionId: Int64, onCancel: @escaping () -> Void) {
-    var previous: (() -> Void)?
-    do {
-      lock.lock()
-      defer { lock.unlock() }
-      var channelMap = subscriptions[channelName] ?? [:]
-      previous = channelMap.updateValue(onCancel, forKey: subscriptionId)
-      subscriptions[channelName] = channelMap
-    }
-    previous?()
+  private struct StreamKey: Hashable {
+    let messengerKey: Int64
+    let channelName: String
   }
 
-  func isActive(channelName: String, subscriptionId: Int64) -> Bool {
+  private struct Entry {
+    let token: UInt64
+    let onCancel: () -> Void
+  }
+
+  private let lock = NSLock()
+  private let messengerKeys = NSMapTable<AnyObject, NSNumber>(
+    keyOptions: [.weakMemory, .objectPointerPersonality],
+    valueOptions: [.strongMemory]
+  )
+  private var nextMessengerKey: Int64 = 1
+  private var nextToken: UInt64 = 1
+  private var subscriptions: [StreamKey: [Int64: Entry]] = [:]
+
+  func messengerKey(for messenger: FlutterBinaryMessenger) -> Int64 {
+    let obj = messenger as AnyObject
     lock.lock()
     defer { lock.unlock() }
-    return subscriptions[channelName]?[subscriptionId] != nil
+    if let existing = messengerKeys.object(forKey: obj) {
+      return existing.int64Value
+    }
+    let key = nextMessengerKey
+    nextMessengerKey += 1
+    messengerKeys.setObject(NSNumber(value: key), forKey: obj)
+    return key
   }
 
   @discardableResult
-  func remove(channelName: String, subscriptionId: Int64) -> Bool {
-    var removed: (() -> Void)?
+  func register(
+    messengerKey: Int64,
+    channelName: String,
+    subscriptionId: Int64,
+    onCancel: @escaping () -> Void
+  ) -> UInt64 {
+    let key = StreamKey(messengerKey: messengerKey, channelName: channelName)
+    let token: UInt64
+    var previous: Entry?
     do {
       lock.lock()
       defer { lock.unlock() }
-      guard var channelMap = subscriptions[channelName] else {
+      token = nextToken
+      nextToken &+= 1
+      var channelMap = subscriptions[key] ?? [:]
+      previous = channelMap.updateValue(Entry(token: token, onCancel: onCancel), forKey: subscriptionId)
+      subscriptions[key] = channelMap
+    }
+    previous?.onCancel()
+    return token
+  }
+
+  @discardableResult
+  func remove(
+    messengerKey: Int64,
+    channelName: String,
+    subscriptionId: Int64,
+    token: UInt64
+  ) -> Bool {
+    let key = StreamKey(messengerKey: messengerKey, channelName: channelName)
+    var removed: Entry?
+    do {
+      lock.lock()
+      defer { lock.unlock() }
+      guard var channelMap = subscriptions[key],
+            let current = channelMap[subscriptionId],
+            current.token == token else {
         return false
       }
       removed = channelMap.removeValue(forKey: subscriptionId)
       if channelMap.isEmpty {
-        subscriptions.removeValue(forKey: channelName)
+        subscriptions.removeValue(forKey: key)
       } else {
-        subscriptions[channelName] = channelMap
+        subscriptions[key] = channelMap
       }
     }
     let didRemove = removed != nil
+    // Keep removed alive past lock.unlock() so closure deallocation cannot re-enter lock.
     withExtendedLifetime(removed) {}
     return didRemove
   }
 
-  func cancel(channelName: String, subscriptionId: Int64) {
+  func cancel(messengerKey: Int64, channelName: String, subscriptionId: Int64) {
+    let key = StreamKey(messengerKey: messengerKey, channelName: channelName)
     var action: (() -> Void)?
     do {
       lock.lock()
       defer { lock.unlock() }
-      guard var channelMap = subscriptions[channelName] else {
+      guard var channelMap = subscriptions[key] else {
         return
       }
-      action = channelMap.removeValue(forKey: subscriptionId)
+      action = channelMap.removeValue(forKey: subscriptionId)?.onCancel
       if channelMap.isEmpty {
-        subscriptions.removeValue(forKey: channelName)
+        subscriptions.removeValue(forKey: key)
       } else {
-        subscriptions[channelName] = channelMap
+        subscriptions[key] = channelMap
       }
     }
     action?()
   }
 
-  func cancelAll(channelName: String) {
+  func cancelAll(messenger: FlutterBinaryMessenger, channelName: String) {
+    let obj = messenger as AnyObject
     var actions: [() -> Void] = []
     do {
       lock.lock()
       defer { lock.unlock() }
-      if let channelMap = subscriptions.removeValue(forKey: channelName) {
-        actions = Array(channelMap.values)
+      guard let messengerKey = messengerKeys.object(forKey: obj)?.int64Value else {
+        return
+      }
+      let key = StreamKey(messengerKey: messengerKey, channelName: channelName)
+      if let channelMap = subscriptions.removeValue(forKey: key) {
+        actions = channelMap.values.map(\.onCancel)
       }
     }
     for action in actions {
@@ -317,22 +423,48 @@ class EventChannelTestsPigeonEventSink<ReturnType>: @unchecked Sendable {
   private let lock = NSLock()
   private var channelBox: EventChannelTestsPigeonChannelBox?
   private var onClosed: (() -> Void)?
+  private var cancelCallback: (() -> Void)?
+  private var cancelled = false
   private var terminated = false
 
   fileprivate init(
     subscriptionId: Int64,
-    channelBox: EventChannelTestsPigeonChannelBox,
-    onClosed: @escaping () -> Void
+    channelBox: EventChannelTestsPigeonChannelBox
   ) {
     self.subscriptionId = subscriptionId
     self.channelBox = channelBox
-    self.onClosed = onClosed
   }
 
   fileprivate var isOpen: Bool {
     lock.lock()
     defer { lock.unlock() }
     return !terminated && channelBox != nil
+  }
+
+  fileprivate func attachOnClosed(_ onClosed: @escaping () -> Void) {
+    lock.lock()
+    defer { lock.unlock() }
+    if !cancelled && !terminated {
+      self.onClosed = onClosed
+    }
+  }
+
+  fileprivate func attachCancel(_ cancel: (() -> Void)?) {
+    guard let cancel = cancel else { return }
+    let shouldCancel: Bool
+    do {
+      lock.lock()
+      defer { lock.unlock() }
+      if cancelled || terminated {
+        shouldCancel = true
+      } else {
+        cancelCallback = cancel
+        shouldCancel = false
+      }
+    }
+    if shouldCancel {
+      cancel()
+    }
   }
 
   func success(_ value: ReturnType) {
@@ -343,12 +475,13 @@ class EventChannelTestsPigeonEventSink<ReturnType>: @unchecked Sendable {
       guard !terminated else { return }
       currentBox = channelBox
     }
-    currentBox?.send([subscriptionId, Int64(0), value])
+    currentBox?.send([subscriptionId, EventChannelTestsPigeonStreamRegistry.dataFrameKind, value])
   }
 
   func error(code: String, message: String?, details: Any?) {
     let currentBox: EventChannelTestsPigeonChannelBox?
     let closedAction: (() -> Void)?
+    let displacedCancel: (() -> Void)?
     do {
       lock.lock()
       defer { lock.unlock() }
@@ -356,15 +489,24 @@ class EventChannelTestsPigeonEventSink<ReturnType>: @unchecked Sendable {
       terminated = true
       currentBox = channelBox
       closedAction = onClosed
+      displacedCancel = cancelCallback
+      channelBox = nil
       onClosed = nil
+      cancelCallback = nil
     }
     closedAction?()
-    currentBox?.send([subscriptionId, Int64(1), code, message, details])
+    currentBox?.send(
+      [subscriptionId, EventChannelTestsPigeonStreamRegistry.errorFrameKind, code, message, details],
+      closeAfterSend: true
+    )
+    // Keep displacedCancel alive past lock.unlock() so deallocation cannot re-enter lock.
+    withExtendedLifetime(displacedCancel) {}
   }
 
   func endOfStream() {
     let currentBox: EventChannelTestsPigeonChannelBox?
     let closedAction: (() -> Void)?
+    let displacedCancel: (() -> Void)?
     do {
       lock.lock()
       defer { lock.unlock() }
@@ -372,23 +514,37 @@ class EventChannelTestsPigeonEventSink<ReturnType>: @unchecked Sendable {
       terminated = true
       currentBox = channelBox
       closedAction = onClosed
+      displacedCancel = cancelCallback
+      channelBox = nil
       onClosed = nil
+      cancelCallback = nil
     }
     closedAction?()
-    currentBox?.send([subscriptionId, Int64(2)])
+    currentBox?.send(
+      [subscriptionId, EventChannelTestsPigeonStreamRegistry.doneFrameKind],
+      closeAfterSend: true
+    )
+    // Keep displacedCancel alive past lock.unlock() so deallocation cannot re-enter lock.
+    withExtendedLifetime(displacedCancel) {}
   }
 
   fileprivate func close() {
     var displaced: (EventChannelTestsPigeonChannelBox?, (() -> Void)?) = (nil, nil)
+    var cancel: (() -> Void)?
     do {
       lock.lock()
       defer { lock.unlock() }
       terminated = true
+      cancelled = true
       displaced = (channelBox, onClosed)
+      cancel = cancelCallback
       channelBox = nil
       onClosed = nil
+      cancelCallback = nil
     }
     displaced.0?.close()
+    cancel?()
+    // Keep displaced objects alive past lock.unlock() so deallocation cannot re-enter lock.
     withExtendedLifetime(displaced) {}
   }
 }
@@ -506,6 +662,7 @@ class EventAllNullableTypes: Hashable, CustomStringConvertible {
   var mapMap: [Int64?: [AnyHashable?: Any?]?]?
   var recursiveClassMap: [Int64?: EventAllNullableTypes?]?
 
+
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> EventAllNullableTypes? {
     let aNullableBool: Bool? = nilOrValue(pigeonVar_list[0])
@@ -613,44 +770,10 @@ class EventAllNullableTypes: Hashable, CustomStringConvertible {
     if Swift.type(of: lhs) != Swift.type(of: rhs) {
       return false
     }
-    if lhs === rhs {
+    if (lhs === rhs) {
       return true
     }
-    return EventChannelTestsPigeonInternal.deepEquals(lhs.aNullableBool, rhs.aNullableBool)
-      && EventChannelTestsPigeonInternal.deepEquals(lhs.aNullableInt, rhs.aNullableInt)
-      && EventChannelTestsPigeonInternal.deepEquals(lhs.aNullableInt64, rhs.aNullableInt64)
-      && EventChannelTestsPigeonInternal.deepEquals(lhs.aNullableDouble, rhs.aNullableDouble)
-      && EventChannelTestsPigeonInternal.deepEquals(lhs.aNullableByteArray, rhs.aNullableByteArray)
-      && EventChannelTestsPigeonInternal.deepEquals(
-        lhs.aNullable4ByteArray, rhs.aNullable4ByteArray)
-      && EventChannelTestsPigeonInternal.deepEquals(
-        lhs.aNullable8ByteArray, rhs.aNullable8ByteArray)
-      && EventChannelTestsPigeonInternal.deepEquals(
-        lhs.aNullableFloatArray, rhs.aNullableFloatArray)
-      && EventChannelTestsPigeonInternal.deepEquals(lhs.aNullableEnum, rhs.aNullableEnum)
-      && EventChannelTestsPigeonInternal.deepEquals(
-        lhs.anotherNullableEnum, rhs.anotherNullableEnum)
-      && EventChannelTestsPigeonInternal.deepEquals(lhs.aNullableString, rhs.aNullableString)
-      && EventChannelTestsPigeonInternal.deepEquals(lhs.aNullableObject, rhs.aNullableObject)
-      && EventChannelTestsPigeonInternal.deepEquals(lhs.allNullableTypes, rhs.allNullableTypes)
-      && EventChannelTestsPigeonInternal.deepEquals(lhs.list, rhs.list)
-      && EventChannelTestsPigeonInternal.deepEquals(lhs.stringList, rhs.stringList)
-      && EventChannelTestsPigeonInternal.deepEquals(lhs.intList, rhs.intList)
-      && EventChannelTestsPigeonInternal.deepEquals(lhs.doubleList, rhs.doubleList)
-      && EventChannelTestsPigeonInternal.deepEquals(lhs.boolList, rhs.boolList)
-      && EventChannelTestsPigeonInternal.deepEquals(lhs.enumList, rhs.enumList)
-      && EventChannelTestsPigeonInternal.deepEquals(lhs.objectList, rhs.objectList)
-      && EventChannelTestsPigeonInternal.deepEquals(lhs.listList, rhs.listList)
-      && EventChannelTestsPigeonInternal.deepEquals(lhs.mapList, rhs.mapList)
-      && EventChannelTestsPigeonInternal.deepEquals(lhs.recursiveClassList, rhs.recursiveClassList)
-      && EventChannelTestsPigeonInternal.deepEquals(lhs.map, rhs.map)
-      && EventChannelTestsPigeonInternal.deepEquals(lhs.stringMap, rhs.stringMap)
-      && EventChannelTestsPigeonInternal.deepEquals(lhs.intMap, rhs.intMap)
-      && EventChannelTestsPigeonInternal.deepEquals(lhs.enumMap, rhs.enumMap)
-      && EventChannelTestsPigeonInternal.deepEquals(lhs.objectMap, rhs.objectMap)
-      && EventChannelTestsPigeonInternal.deepEquals(lhs.listMap, rhs.listMap)
-      && EventChannelTestsPigeonInternal.deepEquals(lhs.mapMap, rhs.mapMap)
-      && EventChannelTestsPigeonInternal.deepEquals(lhs.recursiveClassMap, rhs.recursiveClassMap)
+    return EventChannelTestsPigeonInternal.deepEquals(lhs.aNullableBool, rhs.aNullableBool) && EventChannelTestsPigeonInternal.deepEquals(lhs.aNullableInt, rhs.aNullableInt) && EventChannelTestsPigeonInternal.deepEquals(lhs.aNullableInt64, rhs.aNullableInt64) && EventChannelTestsPigeonInternal.deepEquals(lhs.aNullableDouble, rhs.aNullableDouble) && EventChannelTestsPigeonInternal.deepEquals(lhs.aNullableByteArray, rhs.aNullableByteArray) && EventChannelTestsPigeonInternal.deepEquals(lhs.aNullable4ByteArray, rhs.aNullable4ByteArray) && EventChannelTestsPigeonInternal.deepEquals(lhs.aNullable8ByteArray, rhs.aNullable8ByteArray) && EventChannelTestsPigeonInternal.deepEquals(lhs.aNullableFloatArray, rhs.aNullableFloatArray) && EventChannelTestsPigeonInternal.deepEquals(lhs.aNullableEnum, rhs.aNullableEnum) && EventChannelTestsPigeonInternal.deepEquals(lhs.anotherNullableEnum, rhs.anotherNullableEnum) && EventChannelTestsPigeonInternal.deepEquals(lhs.aNullableString, rhs.aNullableString) && EventChannelTestsPigeonInternal.deepEquals(lhs.aNullableObject, rhs.aNullableObject) && EventChannelTestsPigeonInternal.deepEquals(lhs.allNullableTypes, rhs.allNullableTypes) && EventChannelTestsPigeonInternal.deepEquals(lhs.list, rhs.list) && EventChannelTestsPigeonInternal.deepEquals(lhs.stringList, rhs.stringList) && EventChannelTestsPigeonInternal.deepEquals(lhs.intList, rhs.intList) && EventChannelTestsPigeonInternal.deepEquals(lhs.doubleList, rhs.doubleList) && EventChannelTestsPigeonInternal.deepEquals(lhs.boolList, rhs.boolList) && EventChannelTestsPigeonInternal.deepEquals(lhs.enumList, rhs.enumList) && EventChannelTestsPigeonInternal.deepEquals(lhs.objectList, rhs.objectList) && EventChannelTestsPigeonInternal.deepEquals(lhs.listList, rhs.listList) && EventChannelTestsPigeonInternal.deepEquals(lhs.mapList, rhs.mapList) && EventChannelTestsPigeonInternal.deepEquals(lhs.recursiveClassList, rhs.recursiveClassList) && EventChannelTestsPigeonInternal.deepEquals(lhs.map, rhs.map) && EventChannelTestsPigeonInternal.deepEquals(lhs.stringMap, rhs.stringMap) && EventChannelTestsPigeonInternal.deepEquals(lhs.intMap, rhs.intMap) && EventChannelTestsPigeonInternal.deepEquals(lhs.enumMap, rhs.enumMap) && EventChannelTestsPigeonInternal.deepEquals(lhs.objectMap, rhs.objectMap) && EventChannelTestsPigeonInternal.deepEquals(lhs.listMap, rhs.listMap) && EventChannelTestsPigeonInternal.deepEquals(lhs.mapMap, rhs.mapMap) && EventChannelTestsPigeonInternal.deepEquals(lhs.recursiveClassMap, rhs.recursiveClassMap)
   }
 
   func hash(into hasher: inout Hasher) {
@@ -689,8 +812,7 @@ class EventAllNullableTypes: Hashable, CustomStringConvertible {
   }
 
   public var description: String {
-    return
-      "EventAllNullableTypes(aNullableBool: \(String(describing: aNullableBool)), aNullableInt: \(String(describing: aNullableInt)), aNullableInt64: \(String(describing: aNullableInt64)), aNullableDouble: \(String(describing: aNullableDouble)), aNullableByteArray: \(String(describing: aNullableByteArray)), aNullable4ByteArray: \(String(describing: aNullable4ByteArray)), aNullable8ByteArray: \(String(describing: aNullable8ByteArray)), aNullableFloatArray: \(String(describing: aNullableFloatArray)), aNullableEnum: \(String(describing: aNullableEnum)), anotherNullableEnum: \(String(describing: anotherNullableEnum)), aNullableString: \(String(describing: aNullableString)), aNullableObject: \(String(describing: aNullableObject)), allNullableTypes: \(String(describing: allNullableTypes)), list: \(String(describing: list)), stringList: \(String(describing: stringList)), intList: \(String(describing: intList)), doubleList: \(String(describing: doubleList)), boolList: \(String(describing: boolList)), enumList: \(String(describing: enumList)), objectList: \(String(describing: objectList)), listList: \(String(describing: listList)), mapList: \(String(describing: mapList)), recursiveClassList: \(String(describing: recursiveClassList)), map: \(String(describing: map)), stringMap: \(String(describing: stringMap)), intMap: \(String(describing: intMap)), enumMap: \(String(describing: enumMap)), objectMap: \(String(describing: objectMap)), listMap: \(String(describing: listMap)), mapMap: \(String(describing: mapMap)), recursiveClassMap: \(String(describing: recursiveClassMap)))"
+    return "EventAllNullableTypes(aNullableBool: \(String(describing: aNullableBool)), aNullableInt: \(String(describing: aNullableInt)), aNullableInt64: \(String(describing: aNullableInt64)), aNullableDouble: \(String(describing: aNullableDouble)), aNullableByteArray: \(String(describing: aNullableByteArray)), aNullable4ByteArray: \(String(describing: aNullable4ByteArray)), aNullable8ByteArray: \(String(describing: aNullable8ByteArray)), aNullableFloatArray: \(String(describing: aNullableFloatArray)), aNullableEnum: \(String(describing: aNullableEnum)), anotherNullableEnum: \(String(describing: anotherNullableEnum)), aNullableString: \(String(describing: aNullableString)), aNullableObject: \(String(describing: aNullableObject)), allNullableTypes: \(String(describing: allNullableTypes)), list: \(String(describing: list)), stringList: \(String(describing: stringList)), intList: \(String(describing: intList)), doubleList: \(String(describing: doubleList)), boolList: \(String(describing: boolList)), enumList: \(String(describing: enumList)), objectList: \(String(describing: objectList)), listList: \(String(describing: listList)), mapList: \(String(describing: mapList)), recursiveClassList: \(String(describing: recursiveClassList)), map: \(String(describing: map)), stringMap: \(String(describing: stringMap)), intMap: \(String(describing: intMap)), enumMap: \(String(describing: enumMap)), objectMap: \(String(describing: objectMap)), listMap: \(String(describing: listMap)), mapMap: \(String(describing: mapMap)), recursiveClassMap: \(String(describing: recursiveClassMap)))"
   }
 }
 
@@ -703,6 +825,7 @@ protocol PlatformEvent {
 /// Generated class from Pigeon that represents data sent in messages.
 struct IntEvent: PlatformEvent, Hashable, CustomStringConvertible {
   var value: Int64
+
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> IntEvent? {
@@ -738,6 +861,7 @@ struct IntEvent: PlatformEvent, Hashable, CustomStringConvertible {
 struct StringEvent: PlatformEvent, Hashable, CustomStringConvertible {
   var value: String
 
+
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> StringEvent? {
     let value = pigeonVar_list[0] as! String
@@ -771,6 +895,7 @@ struct StringEvent: PlatformEvent, Hashable, CustomStringConvertible {
 /// Generated class from Pigeon that represents data sent in messages.
 struct BoolEvent: PlatformEvent, Hashable, CustomStringConvertible {
   var value: Bool
+
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> BoolEvent? {
@@ -806,6 +931,7 @@ struct BoolEvent: PlatformEvent, Hashable, CustomStringConvertible {
 struct DoubleEvent: PlatformEvent, Hashable, CustomStringConvertible {
   var value: Double
 
+
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> DoubleEvent? {
     let value = pigeonVar_list[0] as! Double
@@ -839,6 +965,7 @@ struct DoubleEvent: PlatformEvent, Hashable, CustomStringConvertible {
 /// Generated class from Pigeon that represents data sent in messages.
 struct ObjectsEvent: PlatformEvent, Hashable, CustomStringConvertible {
   var value: Any
+
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> ObjectsEvent? {
@@ -874,6 +1001,7 @@ struct ObjectsEvent: PlatformEvent, Hashable, CustomStringConvertible {
 struct EnumEvent: PlatformEvent, Hashable, CustomStringConvertible {
   var value: EventEnum
 
+
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> EnumEvent? {
     let value = pigeonVar_list[0] as! EventEnum
@@ -908,6 +1036,7 @@ struct EnumEvent: PlatformEvent, Hashable, CustomStringConvertible {
 struct ClassEvent: PlatformEvent, Hashable, CustomStringConvertible {
   var value: EventAllNullableTypes
 
+
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> ClassEvent? {
     let value = pigeonVar_list[0] as! EventAllNullableTypes
@@ -941,13 +1070,16 @@ struct ClassEvent: PlatformEvent, Hashable, CustomStringConvertible {
 /// Generated class from Pigeon that represents data sent in messages.
 struct EmptyEvent: PlatformEvent, Hashable, CustomStringConvertible {
 
+
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> EmptyEvent? {
 
-    return EmptyEvent()
+    return EmptyEvent(
+    )
   }
   func toList() -> [Any?] {
-    return []
+    return [
+    ]
   }
   static func == (lhs: EmptyEvent, rhs: EmptyEvent) -> Bool {
     if Swift.type(of: lhs) != Swift.type(of: rhs) {
@@ -1056,8 +1188,7 @@ private class EventChannelTestsPigeonCodecReaderWriter: FlutterStandardReaderWri
 }
 
 class EventChannelTestsPigeonCodec: FlutterStandardMessageCodec, @unchecked Sendable {
-  static let shared = EventChannelTestsPigeonCodec(
-    readerWriter: EventChannelTestsPigeonCodecReaderWriter())
+  static let shared = EventChannelTestsPigeonCodec(readerWriter: EventChannelTestsPigeonCodecReaderWriter())
 }
 
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
@@ -1066,9 +1197,9 @@ protocol StreamHostTestApi {
   func streamPlatformEvents() -> AsyncThrowingStream<PlatformEvent, Error>
   func streamNullableInts() -> AsyncThrowingStream<Int64?, Error>
   func streamError(customError: Bool) -> AsyncThrowingStream<Int64, Error>
-  func streamViaCallback(
-    prefix: String, count: Int64, sink: EventChannelTestsPigeonEventSink<String>
-  ) -> (() -> Void)?
+  func streamViaCallback(prefix: String, count: Int64, sink: EventChannelTestsPigeonEventSink<String>) -> (() -> Void)?
+  func getCancelledStreamCount() throws -> Int64
+  func resetCancelledStreamCount() throws
 }
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
@@ -1076,308 +1207,271 @@ class StreamHostTestApiSetup {
   private static let streamRegistry = EventChannelTestsPigeonStreamRegistry()
   static var codec: FlutterStandardMessageCodec { EventChannelTestsPigeonCodec.shared }
   /// Sets up an instance of `StreamHostTestApi` to handle messages through the `binaryMessenger`.
-  static func setUp(
-    binaryMessenger: FlutterBinaryMessenger, api: StreamHostTestApi?,
-    messageChannelSuffix: String = ""
-  ) {
+  static func setUp(binaryMessenger: FlutterBinaryMessenger, api: StreamHostTestApi?, messageChannelSuffix: String = "") {
     let channelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""
-    let streamNumbersEventsChannelName =
-      "dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.streamNumbers\(channelSuffix).events"
-    let streamNumbersChannel = FlutterBasicMessageChannel(
-      name:
-        "dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.streamNumbers\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
-    streamRegistry.cancelAll(channelName: streamNumbersEventsChannelName)
+    let streamNumbersEventsChannelName = "dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.streamNumbers\(channelSuffix).events"
+    let streamNumbersChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.streamNumbers\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    streamRegistry.cancelAll(messenger: binaryMessenger, channelName: streamNumbersEventsChannelName)
     if let api = api {
-      let eventsChannel = FlutterBasicMessageChannel(
-        name: streamNumbersEventsChannelName, binaryMessenger: binaryMessenger, codec: codec)
+      let messengerKey = streamRegistry.messengerKey(for: binaryMessenger)
+      let streamNumbersEventsChannel = FlutterBasicMessageChannel(name: streamNumbersEventsChannelName, binaryMessenger: binaryMessenger, codec: codec)
       streamNumbersChannel.setMessageHandler { message, reply in
         let request = message as! [Any?]
         let action = request[0] as! String
         let subscriptionId = request[1] as? Int64 ?? (request[1] as! NSNumber).int64Value
         if action == "cancel" {
-          streamRegistry.cancel(
-            channelName: streamNumbersEventsChannelName, subscriptionId: subscriptionId)
+          streamRegistry.cancel(messengerKey: messengerKey, channelName: streamNumbersEventsChannelName, subscriptionId: subscriptionId)
           reply(wrapResult(nil))
+          return
+        }
+        guard action == "listen" else {
+          reply(wrapError(FlutterError(code: "invalid-action", message: "Unknown stream control action: \(action)", details: nil)))
           return
         }
         let countArg = request[2] as! Int64
         let startArg = request[3] as! Int64
-        let channelBox = EventChannelTestsPigeonChannelBox(eventsChannel)
-        let stream = api.streamNumbers(count: countArg, start: startArg)
+        let channelBox = EventChannelTestsPigeonChannelBox(streamNumbersEventsChannel)
+        let streamBox = EventChannelTestsPigeonStreamBox(api.streamNumbers(count: countArg, start: startArg))
+        let taskHandle = EventChannelTestsPigeonStreamTaskHandle()
+        let registrationToken = streamRegistry.register(messengerKey: messengerKey, channelName: streamNumbersEventsChannelName, subscriptionId: subscriptionId) {
+          channelBox.close()
+          taskHandle.cancel()
+        }
         let task = Task { @MainActor in
           do {
-            for try await event in stream {
-              guard !Task.isCancelled,
-                streamRegistry.isActive(
-                  channelName: streamNumbersEventsChannelName, subscriptionId: subscriptionId)
-              else {
+            for try await event in streamBox.stream {
+              guard !Task.isCancelled, channelBox.sendOnMain([subscriptionId, EventChannelTestsPigeonStreamRegistry.dataFrameKind, event]) else {
                 return
               }
-              channelBox.sendOnMain([subscriptionId, Int64(0), event])
             }
-            if !Task.isCancelled,
-              streamRegistry.remove(
-                channelName: streamNumbersEventsChannelName, subscriptionId: subscriptionId)
-            {
-              channelBox.sendOnMain([subscriptionId, Int64(2)])
+            if !Task.isCancelled, streamRegistry.remove(messengerKey: messengerKey, channelName: streamNumbersEventsChannelName, subscriptionId: subscriptionId, token: registrationToken) {
+              channelBox.sendOnMain([subscriptionId, EventChannelTestsPigeonStreamRegistry.doneFrameKind])
             }
-          } catch is CancellationError {
-            _ = streamRegistry.remove(
-              channelName: streamNumbersEventsChannelName, subscriptionId: subscriptionId)
           } catch {
-            if !Task.isCancelled,
-              streamRegistry.remove(
-                channelName: streamNumbersEventsChannelName, subscriptionId: subscriptionId)
-            {
-              channelBox.sendOnMain([subscriptionId, Int64(1)] + wrapError(error))
+            let wasActive = streamRegistry.remove(messengerKey: messengerKey, channelName: streamNumbersEventsChannelName, subscriptionId: subscriptionId, token: registrationToken)
+            if !Task.isCancelled, wasActive {
+              channelBox.sendOnMain([subscriptionId, EventChannelTestsPigeonStreamRegistry.errorFrameKind] + wrapError(error))
             }
           }
         }
-        streamRegistry.register(
-          channelName: streamNumbersEventsChannelName, subscriptionId: subscriptionId
-        ) {
-          channelBox.close()
-          task.cancel()
-        }
+        taskHandle.attach(task)
         reply(wrapResult(nil))
       }
     } else {
       streamNumbersChannel.setMessageHandler(nil)
     }
-    let streamPlatformEventsEventsChannelName =
-      "dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.streamPlatformEvents\(channelSuffix).events"
-    let streamPlatformEventsChannel = FlutterBasicMessageChannel(
-      name:
-        "dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.streamPlatformEvents\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
-    streamRegistry.cancelAll(channelName: streamPlatformEventsEventsChannelName)
+    let streamPlatformEventsEventsChannelName = "dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.streamPlatformEvents\(channelSuffix).events"
+    let streamPlatformEventsChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.streamPlatformEvents\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    streamRegistry.cancelAll(messenger: binaryMessenger, channelName: streamPlatformEventsEventsChannelName)
     if let api = api {
-      let eventsChannel = FlutterBasicMessageChannel(
-        name: streamPlatformEventsEventsChannelName, binaryMessenger: binaryMessenger, codec: codec)
+      let messengerKey = streamRegistry.messengerKey(for: binaryMessenger)
+      let streamPlatformEventsEventsChannel = FlutterBasicMessageChannel(name: streamPlatformEventsEventsChannelName, binaryMessenger: binaryMessenger, codec: codec)
       streamPlatformEventsChannel.setMessageHandler { message, reply in
         let request = message as! [Any?]
         let action = request[0] as! String
         let subscriptionId = request[1] as? Int64 ?? (request[1] as! NSNumber).int64Value
         if action == "cancel" {
-          streamRegistry.cancel(
-            channelName: streamPlatformEventsEventsChannelName, subscriptionId: subscriptionId)
+          streamRegistry.cancel(messengerKey: messengerKey, channelName: streamPlatformEventsEventsChannelName, subscriptionId: subscriptionId)
           reply(wrapResult(nil))
           return
         }
-        let channelBox = EventChannelTestsPigeonChannelBox(eventsChannel)
-        let stream = api.streamPlatformEvents()
+        guard action == "listen" else {
+          reply(wrapError(FlutterError(code: "invalid-action", message: "Unknown stream control action: \(action)", details: nil)))
+          return
+        }
+        let channelBox = EventChannelTestsPigeonChannelBox(streamPlatformEventsEventsChannel)
+        let streamBox = EventChannelTestsPigeonStreamBox(api.streamPlatformEvents())
+        let taskHandle = EventChannelTestsPigeonStreamTaskHandle()
+        let registrationToken = streamRegistry.register(messengerKey: messengerKey, channelName: streamPlatformEventsEventsChannelName, subscriptionId: subscriptionId) {
+          channelBox.close()
+          taskHandle.cancel()
+        }
         let task = Task { @MainActor in
           do {
-            for try await event in stream {
-              guard !Task.isCancelled,
-                streamRegistry.isActive(
-                  channelName: streamPlatformEventsEventsChannelName, subscriptionId: subscriptionId
-                )
-              else {
+            for try await event in streamBox.stream {
+              guard !Task.isCancelled, channelBox.sendOnMain([subscriptionId, EventChannelTestsPigeonStreamRegistry.dataFrameKind, event]) else {
                 return
               }
-              channelBox.sendOnMain([subscriptionId, Int64(0), event])
             }
-            if !Task.isCancelled,
-              streamRegistry.remove(
-                channelName: streamPlatformEventsEventsChannelName, subscriptionId: subscriptionId)
-            {
-              channelBox.sendOnMain([subscriptionId, Int64(2)])
+            if !Task.isCancelled, streamRegistry.remove(messengerKey: messengerKey, channelName: streamPlatformEventsEventsChannelName, subscriptionId: subscriptionId, token: registrationToken) {
+              channelBox.sendOnMain([subscriptionId, EventChannelTestsPigeonStreamRegistry.doneFrameKind])
             }
-          } catch is CancellationError {
-            _ = streamRegistry.remove(
-              channelName: streamPlatformEventsEventsChannelName, subscriptionId: subscriptionId)
           } catch {
-            if !Task.isCancelled,
-              streamRegistry.remove(
-                channelName: streamPlatformEventsEventsChannelName, subscriptionId: subscriptionId)
-            {
-              channelBox.sendOnMain([subscriptionId, Int64(1)] + wrapError(error))
+            let wasActive = streamRegistry.remove(messengerKey: messengerKey, channelName: streamPlatformEventsEventsChannelName, subscriptionId: subscriptionId, token: registrationToken)
+            if !Task.isCancelled, wasActive {
+              channelBox.sendOnMain([subscriptionId, EventChannelTestsPigeonStreamRegistry.errorFrameKind] + wrapError(error))
             }
           }
         }
-        streamRegistry.register(
-          channelName: streamPlatformEventsEventsChannelName, subscriptionId: subscriptionId
-        ) {
-          channelBox.close()
-          task.cancel()
-        }
+        taskHandle.attach(task)
         reply(wrapResult(nil))
       }
     } else {
       streamPlatformEventsChannel.setMessageHandler(nil)
     }
-    let streamNullableIntsEventsChannelName =
-      "dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.streamNullableInts\(channelSuffix).events"
-    let streamNullableIntsChannel = FlutterBasicMessageChannel(
-      name:
-        "dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.streamNullableInts\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
-    streamRegistry.cancelAll(channelName: streamNullableIntsEventsChannelName)
+    let streamNullableIntsEventsChannelName = "dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.streamNullableInts\(channelSuffix).events"
+    let streamNullableIntsChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.streamNullableInts\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    streamRegistry.cancelAll(messenger: binaryMessenger, channelName: streamNullableIntsEventsChannelName)
     if let api = api {
-      let eventsChannel = FlutterBasicMessageChannel(
-        name: streamNullableIntsEventsChannelName, binaryMessenger: binaryMessenger, codec: codec)
+      let messengerKey = streamRegistry.messengerKey(for: binaryMessenger)
+      let streamNullableIntsEventsChannel = FlutterBasicMessageChannel(name: streamNullableIntsEventsChannelName, binaryMessenger: binaryMessenger, codec: codec)
       streamNullableIntsChannel.setMessageHandler { message, reply in
         let request = message as! [Any?]
         let action = request[0] as! String
         let subscriptionId = request[1] as? Int64 ?? (request[1] as! NSNumber).int64Value
         if action == "cancel" {
-          streamRegistry.cancel(
-            channelName: streamNullableIntsEventsChannelName, subscriptionId: subscriptionId)
+          streamRegistry.cancel(messengerKey: messengerKey, channelName: streamNullableIntsEventsChannelName, subscriptionId: subscriptionId)
           reply(wrapResult(nil))
           return
         }
-        let channelBox = EventChannelTestsPigeonChannelBox(eventsChannel)
-        let stream = api.streamNullableInts()
+        guard action == "listen" else {
+          reply(wrapError(FlutterError(code: "invalid-action", message: "Unknown stream control action: \(action)", details: nil)))
+          return
+        }
+        let channelBox = EventChannelTestsPigeonChannelBox(streamNullableIntsEventsChannel)
+        let streamBox = EventChannelTestsPigeonStreamBox(api.streamNullableInts())
+        let taskHandle = EventChannelTestsPigeonStreamTaskHandle()
+        let registrationToken = streamRegistry.register(messengerKey: messengerKey, channelName: streamNullableIntsEventsChannelName, subscriptionId: subscriptionId) {
+          channelBox.close()
+          taskHandle.cancel()
+        }
         let task = Task { @MainActor in
           do {
-            for try await event in stream {
-              guard !Task.isCancelled,
-                streamRegistry.isActive(
-                  channelName: streamNullableIntsEventsChannelName, subscriptionId: subscriptionId)
-              else {
+            for try await event in streamBox.stream {
+              guard !Task.isCancelled, channelBox.sendOnMain([subscriptionId, EventChannelTestsPigeonStreamRegistry.dataFrameKind, event]) else {
                 return
               }
-              channelBox.sendOnMain([subscriptionId, Int64(0), event])
             }
-            if !Task.isCancelled,
-              streamRegistry.remove(
-                channelName: streamNullableIntsEventsChannelName, subscriptionId: subscriptionId)
-            {
-              channelBox.sendOnMain([subscriptionId, Int64(2)])
+            if !Task.isCancelled, streamRegistry.remove(messengerKey: messengerKey, channelName: streamNullableIntsEventsChannelName, subscriptionId: subscriptionId, token: registrationToken) {
+              channelBox.sendOnMain([subscriptionId, EventChannelTestsPigeonStreamRegistry.doneFrameKind])
             }
-          } catch is CancellationError {
-            _ = streamRegistry.remove(
-              channelName: streamNullableIntsEventsChannelName, subscriptionId: subscriptionId)
           } catch {
-            if !Task.isCancelled,
-              streamRegistry.remove(
-                channelName: streamNullableIntsEventsChannelName, subscriptionId: subscriptionId)
-            {
-              channelBox.sendOnMain([subscriptionId, Int64(1)] + wrapError(error))
+            let wasActive = streamRegistry.remove(messengerKey: messengerKey, channelName: streamNullableIntsEventsChannelName, subscriptionId: subscriptionId, token: registrationToken)
+            if !Task.isCancelled, wasActive {
+              channelBox.sendOnMain([subscriptionId, EventChannelTestsPigeonStreamRegistry.errorFrameKind] + wrapError(error))
             }
           }
         }
-        streamRegistry.register(
-          channelName: streamNullableIntsEventsChannelName, subscriptionId: subscriptionId
-        ) {
-          channelBox.close()
-          task.cancel()
-        }
+        taskHandle.attach(task)
         reply(wrapResult(nil))
       }
     } else {
       streamNullableIntsChannel.setMessageHandler(nil)
     }
-    let streamErrorEventsChannelName =
-      "dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.streamError\(channelSuffix).events"
-    let streamErrorChannel = FlutterBasicMessageChannel(
-      name:
-        "dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.streamError\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
-    streamRegistry.cancelAll(channelName: streamErrorEventsChannelName)
+    let streamErrorEventsChannelName = "dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.streamError\(channelSuffix).events"
+    let streamErrorChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.streamError\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    streamRegistry.cancelAll(messenger: binaryMessenger, channelName: streamErrorEventsChannelName)
     if let api = api {
-      let eventsChannel = FlutterBasicMessageChannel(
-        name: streamErrorEventsChannelName, binaryMessenger: binaryMessenger, codec: codec)
+      let messengerKey = streamRegistry.messengerKey(for: binaryMessenger)
+      let streamErrorEventsChannel = FlutterBasicMessageChannel(name: streamErrorEventsChannelName, binaryMessenger: binaryMessenger, codec: codec)
       streamErrorChannel.setMessageHandler { message, reply in
         let request = message as! [Any?]
         let action = request[0] as! String
         let subscriptionId = request[1] as? Int64 ?? (request[1] as! NSNumber).int64Value
         if action == "cancel" {
-          streamRegistry.cancel(
-            channelName: streamErrorEventsChannelName, subscriptionId: subscriptionId)
+          streamRegistry.cancel(messengerKey: messengerKey, channelName: streamErrorEventsChannelName, subscriptionId: subscriptionId)
           reply(wrapResult(nil))
           return
         }
+        guard action == "listen" else {
+          reply(wrapError(FlutterError(code: "invalid-action", message: "Unknown stream control action: \(action)", details: nil)))
+          return
+        }
         let customErrorArg = request[2] as! Bool
-        let channelBox = EventChannelTestsPigeonChannelBox(eventsChannel)
-        let stream = api.streamError(customError: customErrorArg)
+        let channelBox = EventChannelTestsPigeonChannelBox(streamErrorEventsChannel)
+        let streamBox = EventChannelTestsPigeonStreamBox(api.streamError(customError: customErrorArg))
+        let taskHandle = EventChannelTestsPigeonStreamTaskHandle()
+        let registrationToken = streamRegistry.register(messengerKey: messengerKey, channelName: streamErrorEventsChannelName, subscriptionId: subscriptionId) {
+          channelBox.close()
+          taskHandle.cancel()
+        }
         let task = Task { @MainActor in
           do {
-            for try await event in stream {
-              guard !Task.isCancelled,
-                streamRegistry.isActive(
-                  channelName: streamErrorEventsChannelName, subscriptionId: subscriptionId)
-              else {
+            for try await event in streamBox.stream {
+              guard !Task.isCancelled, channelBox.sendOnMain([subscriptionId, EventChannelTestsPigeonStreamRegistry.dataFrameKind, event]) else {
                 return
               }
-              channelBox.sendOnMain([subscriptionId, Int64(0), event])
             }
-            if !Task.isCancelled,
-              streamRegistry.remove(
-                channelName: streamErrorEventsChannelName, subscriptionId: subscriptionId)
-            {
-              channelBox.sendOnMain([subscriptionId, Int64(2)])
+            if !Task.isCancelled, streamRegistry.remove(messengerKey: messengerKey, channelName: streamErrorEventsChannelName, subscriptionId: subscriptionId, token: registrationToken) {
+              channelBox.sendOnMain([subscriptionId, EventChannelTestsPigeonStreamRegistry.doneFrameKind])
             }
-          } catch is CancellationError {
-            _ = streamRegistry.remove(
-              channelName: streamErrorEventsChannelName, subscriptionId: subscriptionId)
           } catch {
-            if !Task.isCancelled,
-              streamRegistry.remove(
-                channelName: streamErrorEventsChannelName, subscriptionId: subscriptionId)
-            {
-              channelBox.sendOnMain([subscriptionId, Int64(1)] + wrapError(error))
+            let wasActive = streamRegistry.remove(messengerKey: messengerKey, channelName: streamErrorEventsChannelName, subscriptionId: subscriptionId, token: registrationToken)
+            if !Task.isCancelled, wasActive {
+              channelBox.sendOnMain([subscriptionId, EventChannelTestsPigeonStreamRegistry.errorFrameKind] + wrapError(error))
             }
           }
         }
-        streamRegistry.register(
-          channelName: streamErrorEventsChannelName, subscriptionId: subscriptionId
-        ) {
-          channelBox.close()
-          task.cancel()
-        }
+        taskHandle.attach(task)
         reply(wrapResult(nil))
       }
     } else {
       streamErrorChannel.setMessageHandler(nil)
     }
-    let streamViaCallbackEventsChannelName =
-      "dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.streamViaCallback\(channelSuffix).events"
-    let streamViaCallbackChannel = FlutterBasicMessageChannel(
-      name:
-        "dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.streamViaCallback\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
-    streamRegistry.cancelAll(channelName: streamViaCallbackEventsChannelName)
+    let streamViaCallbackEventsChannelName = "dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.streamViaCallback\(channelSuffix).events"
+    let streamViaCallbackChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.streamViaCallback\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    streamRegistry.cancelAll(messenger: binaryMessenger, channelName: streamViaCallbackEventsChannelName)
     if let api = api {
-      let eventsChannel = FlutterBasicMessageChannel(
-        name: streamViaCallbackEventsChannelName, binaryMessenger: binaryMessenger, codec: codec)
+      let messengerKey = streamRegistry.messengerKey(for: binaryMessenger)
+      let streamViaCallbackEventsChannel = FlutterBasicMessageChannel(name: streamViaCallbackEventsChannelName, binaryMessenger: binaryMessenger, codec: codec)
       streamViaCallbackChannel.setMessageHandler { message, reply in
         let request = message as! [Any?]
         let action = request[0] as! String
         let subscriptionId = request[1] as? Int64 ?? (request[1] as! NSNumber).int64Value
         if action == "cancel" {
-          streamRegistry.cancel(
-            channelName: streamViaCallbackEventsChannelName, subscriptionId: subscriptionId)
+          streamRegistry.cancel(messengerKey: messengerKey, channelName: streamViaCallbackEventsChannelName, subscriptionId: subscriptionId)
           reply(wrapResult(nil))
+          return
+        }
+        guard action == "listen" else {
+          reply(wrapError(FlutterError(code: "invalid-action", message: "Unknown stream control action: \(action)", details: nil)))
           return
         }
         let prefixArg = request[2] as! String
         let countArg = request[3] as! Int64
-        let channelBox = EventChannelTestsPigeonChannelBox(eventsChannel)
-        let sink = EventChannelTestsPigeonEventSink<String>(
-          subscriptionId: subscriptionId, channelBox: channelBox
-        ) {
-          _ = streamRegistry.remove(
-            channelName: streamViaCallbackEventsChannelName, subscriptionId: subscriptionId)
-        }
-        var cancelCallback: (() -> Void)?
-        streamRegistry.register(
-          channelName: streamViaCallbackEventsChannelName, subscriptionId: subscriptionId
-        ) {
+        let channelBox = EventChannelTestsPigeonChannelBox(streamViaCallbackEventsChannel)
+        let sink = EventChannelTestsPigeonEventSink<String>(subscriptionId: subscriptionId, channelBox: channelBox)
+        let registrationToken = streamRegistry.register(messengerKey: messengerKey, channelName: streamViaCallbackEventsChannelName, subscriptionId: subscriptionId) {
           sink.close()
-          cancelCallback?()
         }
-        cancelCallback = api.streamViaCallback(prefix: prefixArg, count: countArg, sink: sink)
+        sink.attachOnClosed {
+          _ = streamRegistry.remove(messengerKey: messengerKey, channelName: streamViaCallbackEventsChannelName, subscriptionId: subscriptionId, token: registrationToken)
+        }
+        let cancelCallback = api.streamViaCallback(prefix: prefixArg, count: countArg, sink: sink)
+        sink.attachCancel(cancelCallback)
         if !sink.isOpen {
-          _ = streamRegistry.remove(
-            channelName: streamViaCallbackEventsChannelName, subscriptionId: subscriptionId)
+          _ = streamRegistry.remove(messengerKey: messengerKey, channelName: streamViaCallbackEventsChannelName, subscriptionId: subscriptionId, token: registrationToken)
         }
         reply(wrapResult(nil))
       }
     } else {
       streamViaCallbackChannel.setMessageHandler(nil)
+    }
+    let getCancelledStreamCountChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.getCancelledStreamCount\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      getCancelledStreamCountChannel.setMessageHandler { _, reply in
+        do {
+          let result = try api.getCancelledStreamCount()
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      getCancelledStreamCountChannel.setMessageHandler(nil)
+    }
+    let resetCancelledStreamCountChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.resetCancelledStreamCount\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      resetCancelledStreamCountChannel.setMessageHandler { _, reply in
+        do {
+          try api.resetCancelledStreamCount()
+          reply(wrapResult(nil))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      resetCancelledStreamCountChannel.setMessageHandler(nil)
     }
   }
 }

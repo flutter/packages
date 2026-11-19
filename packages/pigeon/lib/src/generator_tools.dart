@@ -25,6 +25,15 @@ const String defaultPluginPackageName = 'dev.flutter.pigeon';
 const String defaultNativeInteropInstanceName =
     'PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u';
 
+/// Wire-format frame kind tag for a data event on a multiplexed `@HostApi` stream.
+const int streamDataFrameKind = 0;
+
+/// Wire-format frame kind tag for a terminal error on a multiplexed `@HostApi` stream.
+const int streamErrorFrameKind = 1;
+
+/// Wire-format frame kind tag for end-of-stream on a multiplexed `@HostApi` stream.
+const int streamDoneFrameKind = 2;
+
 /// How native interop (`KotlinOptions.useJni` and `SwiftOptions.useFfi`) moves
 /// values between Dart and the host platform.
 ///

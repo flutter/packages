@@ -591,6 +591,7 @@ class DartGeneratorAdapter implements GeneratorAdapter {
         ),
       );
     }
+    _errorOnStreamMethod(errors, 'Dart native interop', root);
     errors.addAll(_errorOnNativeInteropReservedMethodNames(root));
     return errors;
   }

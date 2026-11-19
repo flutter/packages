@@ -2959,9 +2959,7 @@ $dartApiName? ${classMemberNamePrefix}getInstance_${api.name}({
       );
       for (final Method method in api.methods) {
         indent.newln();
-        final String returnType = method.isStream
-            ? 'Stream<${addGenericTypes(method.returnType)}>'
-            : method.isAsynchronous
+        final String returnType = method.isAsynchronous
             ? 'Future<${addGenericTypes(method.returnType)}>'
             : addGenericTypes(method.returnType);
         indent.writeln(
@@ -3072,8 +3070,6 @@ ${api.name}({
             returnType: func.returnType,
             documentationComments: func.documentationComments,
             channelName: makeChannelName(api, func, dartPackageName),
-            useJni: generatorOptions.useJni,
-            useFfi: generatorOptions.useFfi,
           );
         } else {
           _writeHostMethod(
@@ -3523,7 +3519,7 @@ ${api.name}({
     Indent indent, {
     required String dartPackageName,
   }) {
-    if (root.containsHostApi || root.containsProxyApi) {
+    if (root.containsHostApi || root.containsProxyApi || root.containsHostStream) {
       _writeExtractReplyValueOrThrow(indent);
     }
     if (root.containsHostStream) {
@@ -4424,8 +4420,6 @@ if (wrapped == null) {
     required TypeDeclaration returnType,
     required List<String> documentationComments,
     required String channelName,
-    bool useJni = false,
-    bool useFfi = false,
   }) {
     addDocumentationComments(indent, documentationComments, docCommentSpec);
     final String argSignature = _getMethodParameterSignature(parameters);
@@ -4434,13 +4428,6 @@ if (wrapped == null) {
     final listArgs = arguments == null ? 'const <Object?>[]' : '<Object?>[$arguments]';
     final String eventCast = _castValue('event', returnType);
     indent.writeScoped('Stream<$returnTypeString> $name($argSignature) {', '}', () {
-      if (useJni || useFfi) {
-        indent.writeScoped('if (_nativeInteropApi != null) {', '}', () {
-          indent.writeln(
-            'return _nativeInteropApi.$name(${parameters.map((Parameter e) => '${e.isNamed ? '${e.name}: ' : ''}${e.name}').join(', ')});',
-          );
-        });
-      }
       indent.writeln("final ${varNamePrefix}channelName = '$channelName\$$_suffixVarName';");
       indent.writeScoped('return _pigeonChannelStream<$returnTypeString>(', ');', () {
         indent.writeln('controlChannelName: ${varNamePrefix}channelName,');
@@ -4454,7 +4441,7 @@ if (wrapped == null) {
 
   static void _writeChannelStreamHelpers(Indent indent) {
     indent.newln();
-    indent.format(r'''
+    indent.format('''
 class _PigeonStreamSubscriptionHandler {
   _PigeonStreamSubscriptionHandler({
     required this.onData,
@@ -4469,6 +4456,10 @@ class _PigeonStreamSubscriptionHandler {
 
 class _PigeonChannelStreamRouter {
   _PigeonChannelStreamRouter(this.channel);
+
+  static const int _dataFrameKind = $streamDataFrameKind;
+  static const int _errorFrameKind = $streamErrorFrameKind;
+  static const int _doneFrameKind = $streamDoneFrameKind;
 
   static int _nextSubscriptionId = 0;
   static final Map<(BinaryMessenger, String), _PigeonChannelStreamRouter> _routers =
@@ -4528,27 +4519,28 @@ class _PigeonChannelStreamRouter {
       final List<Object?> frame = message! as List<Object?>;
       final int subscriptionId = frame[0]! as int;
       final int kind = frame[1]! as int;
-      if (kind == 0) {
-        final _PigeonStreamSubscriptionHandler? handler = _subscriptions[subscriptionId];
-        handler?.onData(frame[2]);
-      } else if (kind == 1) {
-        final _PigeonStreamSubscriptionHandler? handler = _subscriptions.remove(subscriptionId);
-        if (_subscriptions.isEmpty) {
-          _routers.remove(key);
-          channel.setMessageHandler(null);
-        }
-        handler?.onError(
-          frame[2]! as String,
-          frame[3] as String?,
-          frame[4],
-        );
-      } else if (kind == 2) {
-        final _PigeonStreamSubscriptionHandler? handler = _subscriptions.remove(subscriptionId);
-        if (_subscriptions.isEmpty) {
-          _routers.remove(key);
-          channel.setMessageHandler(null);
-        }
-        handler?.onDone();
+      switch (kind) {
+        case _dataFrameKind:
+          final _PigeonStreamSubscriptionHandler? handler = _subscriptions[subscriptionId];
+          handler?.onData(frame[2]);
+        case _errorFrameKind:
+          final _PigeonStreamSubscriptionHandler? handler = _subscriptions.remove(subscriptionId);
+          if (_subscriptions.isEmpty) {
+            _routers.remove(key);
+            channel.setMessageHandler(null);
+          }
+          handler?.onError(
+            frame[2]! as String,
+            frame[3] as String?,
+            frame[4],
+          );
+        case _doneFrameKind:
+          final _PigeonStreamSubscriptionHandler? handler = _subscriptions.remove(subscriptionId);
+          if (_subscriptions.isEmpty) {
+            _routers.remove(key);
+            channel.setMessageHandler(null);
+          }
+          handler?.onDone();
       }
       return null;
     });
@@ -4562,7 +4554,7 @@ Stream<T> _pigeonChannelStream<T>({
   required List<Object?> arguments,
   required T Function(Object? event) decodeEvent,
 }) {
-  final String eventsChannelName = '$controlChannelName.events';
+  final String eventsChannelName = '\$controlChannelName.events';
   final BasicMessageChannel<Object?> controlChannel = BasicMessageChannel<Object?>(
     controlChannelName,
     codec,

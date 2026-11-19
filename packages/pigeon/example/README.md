@@ -365,7 +365,7 @@ pigeon_example_package_message_flutter_api_flutter_method(
 
 This example shows how to stream events from the host platform to Flutter by declaring a `Stream<T>` return type on a `@HostApi()` method (supported in the Dart, Kotlin, and Swift generators).
 
-By default, Pigeon generates idiomatic structured-concurrency streams (`Flow<T>` in Kotlin and `AsyncThrowingStream<T, Error>` in Swift). If you are bridging a callback- or listener-based platform SDK, annotate the method with `@asyncCallback` to receive a `PigeonEventSink<T>` and return an optional cancellation handle (`AutoCloseable?` in Kotlin, `(() -> Void)?` in Swift).
+By default, Pigeon generates idiomatic structured-concurrency streams (`Flow<T>` in Kotlin and `AsyncThrowingStream<T, Error>` in Swift). If you are bridging a callback- or listener-based platform SDK, annotate the method with `@asyncCallback` to receive a `<FilePrefix>PigeonEventSink<T>` (prefixed with `fileSpecificClassNameComponent`, which defaults to the output filename) and return an optional cancellation handle (`AutoCloseable?` in Kotlin, `(() -> Void)?` in Swift).
 
 ### Dart input
 

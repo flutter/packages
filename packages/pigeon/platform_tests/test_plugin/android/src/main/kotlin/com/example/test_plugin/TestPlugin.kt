@@ -2551,10 +2551,17 @@ class NativeInteropSealedClassHostApiImpl(private val binding: FlutterPluginBind
 }
 
 class StreamHostTestApiImpl(private val offset: Long = 0) : StreamHostTestApi {
+  private val cancelledStreamCount = java.util.concurrent.atomic.AtomicLong(0)
+
   override fun streamNumbers(count: Long, start: Long): Flow<Long> = flow {
-    for (i in 0 until count) {
-      emit(offset + start + i)
-      delay(5)
+    try {
+      for (i in 0 until count) {
+        emit(offset + start + i)
+        delay(5)
+      }
+    } catch (e: kotlinx.coroutines.CancellationException) {
+      cancelledStreamCount.incrementAndGet()
+      throw e
     }
   }
 
@@ -2595,15 +2602,20 @@ class StreamHostTestApiImpl(private val offset: Long = 0) : StreamHostTestApi {
       count: Long,
       sink: EventChannelTestsPigeonEventSink<String>
   ): AutoCloseable? {
-    val handler = Handler(Looper.getMainLooper())
+    val handlerThread = android.os.HandlerThread("pigeon-callback-stream").apply { start() }
+    val handler = Handler(handlerThread.looper)
     var index = 0L
-    var cancelled = false
+    val cancelled = java.util.concurrent.atomic.AtomicBoolean(false)
     val runnable =
         object : Runnable {
           override fun run() {
-            if (cancelled) return
+            if (cancelled.get()) {
+              handlerThread.quitSafely()
+              return
+            }
             if (index >= count) {
               sink.endOfStream()
+              handlerThread.quitSafely()
             } else {
               sink.success("$prefix:$index")
               index++
@@ -2613,8 +2625,16 @@ class StreamHostTestApiImpl(private val offset: Long = 0) : StreamHostTestApi {
         }
     handler.postDelayed(runnable, 5)
     return AutoCloseable {
-      cancelled = true
+      cancelled.set(true)
+      cancelledStreamCount.incrementAndGet()
       handler.removeCallbacks(runnable)
+      handlerThread.quitSafely()
     }
+  }
+
+  override fun getCancelledStreamCount(): Long = cancelledStreamCount.get()
+
+  override fun resetCancelledStreamCount() {
+    cancelledStreamCount.set(0)
   }
 }

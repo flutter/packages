@@ -52,6 +52,10 @@ class _PigeonStreamSubscriptionHandler {
 class _PigeonChannelStreamRouter {
   _PigeonChannelStreamRouter(this.channel);
 
+  static const int _dataFrameKind = 0;
+  static const int _errorFrameKind = 1;
+  static const int _doneFrameKind = 2;
+
   static int _nextSubscriptionId = 0;
   static final Map<(BinaryMessenger, String), _PigeonChannelStreamRouter> _routers =
       <(BinaryMessenger, String), _PigeonChannelStreamRouter>{};
@@ -106,23 +110,24 @@ class _PigeonChannelStreamRouter {
       final List<Object?> frame = message! as List<Object?>;
       final int subscriptionId = frame[0]! as int;
       final int kind = frame[1]! as int;
-      if (kind == 0) {
-        final _PigeonStreamSubscriptionHandler? handler = _subscriptions[subscriptionId];
-        handler?.onData(frame[2]);
-      } else if (kind == 1) {
-        final _PigeonStreamSubscriptionHandler? handler = _subscriptions.remove(subscriptionId);
-        if (_subscriptions.isEmpty) {
-          _routers.remove(key);
-          channel.setMessageHandler(null);
-        }
-        handler?.onError(frame[2]! as String, frame[3] as String?, frame[4]);
-      } else if (kind == 2) {
-        final _PigeonStreamSubscriptionHandler? handler = _subscriptions.remove(subscriptionId);
-        if (_subscriptions.isEmpty) {
-          _routers.remove(key);
-          channel.setMessageHandler(null);
-        }
-        handler?.onDone();
+      switch (kind) {
+        case _dataFrameKind:
+          final _PigeonStreamSubscriptionHandler? handler = _subscriptions[subscriptionId];
+          handler?.onData(frame[2]);
+        case _errorFrameKind:
+          final _PigeonStreamSubscriptionHandler? handler = _subscriptions.remove(subscriptionId);
+          if (_subscriptions.isEmpty) {
+            _routers.remove(key);
+            channel.setMessageHandler(null);
+          }
+          handler?.onError(frame[2]! as String, frame[3] as String?, frame[4]);
+        case _doneFrameKind:
+          final _PigeonStreamSubscriptionHandler? handler = _subscriptions.remove(subscriptionId);
+          if (_subscriptions.isEmpty) {
+            _routers.remove(key);
+            channel.setMessageHandler(null);
+          }
+          handler?.onDone();
       }
       return null;
     });

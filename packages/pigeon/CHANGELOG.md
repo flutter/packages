@@ -1,7 +1,9 @@
 ## 31.0.0
 
-* **BREAKING CHANGE**: Removes `@EventChannelApi`, `KotlinEventChannelOptions`, and `SwiftEventChannelOptions` in favor of `Stream<T>` return types on `@HostApi` methods.
-* [dart,kotlin,swift] Adds support for idiomatic `Stream<T>` return types (and `@asyncCallback` stream sinks) on `@HostApi` methods.
+* **BREAKING CHANGE**: Removes `@EventChannelApi`, `KotlinEventChannelOptions`, and `SwiftEventChannelOptions` in favor of `Stream<T>` return types on `@HostApi` methods:
+  * Generated Dart streams are now single-subscription `@HostApi` methods using `messageChannelSuffix` (use `.asBroadcastStream()` to share a subscription; replaces top-level broadcast stream functions and `instanceName`).
+  * Generated native `*StreamHandler`, `*EventChannel`, and unprefixed `PigeonEventSink` classes are replaced by `Flow<T>` (Kotlin) / `AsyncThrowingStream<T, Error>` (Swift) by default, or `@asyncCallback` with `<FilePrefix>PigeonEventSink<T>` (Kotlin `error(code, message, details)`) and optional cancellation handles (`AutoCloseable?` / `(() -> Void)?`).
+  * See the [Event Channel example](./example/README.md#event-channel-example) for updated usage.
 
 ## 30.0.4
 

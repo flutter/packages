@@ -121,6 +121,8 @@ class HostApi {
   /// tests. Generating this Dart handler is sometimes useful in integration
   /// testing.
   ///
+  /// `Stream<T>` methods are omitted from the generated test handler.
+  ///
   /// Defaults to `null` in which case no handler will be generated.
   @Deprecated('Mock/fake the generated Dart API instead.')
   final String? dartHostTestHandler;

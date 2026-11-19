@@ -878,9 +878,6 @@ class Root extends Node {
   /// Whether the root has any Proxy API definitions.
   bool containsProxyApi;
 
-  /// Whether any API in the root declares a `Stream<T>` method.
-  bool get containsStream => apis.any((Api api) => api.methods.any((Method m) => m.isStream));
-
   /// Whether any `@HostApi` in the root declares a `Stream<T>` method.
   bool get containsHostStream => apis.whereType<AstHostApi>().any(
     (AstHostApi api) => api.methods.any((Method m) => m.isStream),

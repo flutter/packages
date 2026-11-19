@@ -2384,9 +2384,28 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
             .having((PlatformException e) => e.details, 'details', 'error_details'),
       );
 
+      // Non-custom platform exception from a stream must also propagate as PlatformException.
+      final receivedBeforeNonCustomError = <int>[];
+      Object? caughtNonCustomError;
+      final nonCustomDoneCompleter = Completer<void>();
+      api
+          .streamError(false)
+          .listen(
+            receivedBeforeNonCustomError.add,
+            onError: (Object e) {
+              caughtNonCustomError = e;
+            },
+            onDone: nonCustomDoneCompleter.complete,
+          );
+      await nonCustomDoneCompleter.future;
+      expect(receivedBeforeNonCustomError, <int>[1]);
+      expect(caughtNonCustomError, isA<PlatformException>());
+
       // Mid-stream cancellation via .take(2) must cancel the native task cleanly.
+      await api.resetCancelledStreamCount();
       final List<int> partial = await api.streamNumbers(count: 500, start: 1).take(2).toList();
       expect(partial, <int>[1, 2]);
+      expect(await api.getCancelledStreamCount(), greaterThanOrEqualTo(1));
 
       // Suffixed instances isolate stream routing.
       final apiOne = StreamHostTestApi(messageChannelSuffix: '1');
@@ -2400,7 +2419,9 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         'item:1',
         'item:2',
       ]);
+      await api.resetCancelledStreamCount();
       expect(await api.streamViaCallback('cut', 200).take(2).toList(), <String>['cut:0', 'cut:1']);
+      expect(await api.getCancelledStreamCount(), greaterThanOrEqualTo(1));
     }, skip: !streamSupported.contains(targetGenerator));
   });
 

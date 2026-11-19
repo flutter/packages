@@ -2494,34 +2494,148 @@ void main() {
   });
 
   group('HostApi Stream<T>', () {
+    test('generates non-throwing AsyncThrowingStream<T, Error> and @asyncCallback sink handlers', () {
+      final root = Root(
+        apis: <Api>[
+          AstHostApi(
+            name: 'SensorApi',
+            methods: <Method>[
+              Method(
+                name: 'readings',
+                location: ApiLocation.host,
+                isStream: true,
+                swiftFunction: 'readings(every:)',
+                parameters: <Parameter>[
+                  Parameter(
+                    name: 'intervalMs',
+                    type: const TypeDeclaration(baseName: 'int', isNullable: false),
+                  ),
+                ],
+                returnType: const TypeDeclaration(baseName: 'double', isNullable: false),
+              ),
+              Method(
+                name: 'rawEvents',
+                location: ApiLocation.host,
+                isStream: true,
+                isAsynchronousCallback: true,
+                parameters: <Parameter>[],
+                returnType: const TypeDeclaration(baseName: 'String', isNullable: true),
+              ),
+            ],
+          ),
+        ],
+        classes: <Class>[],
+        enums: <Enum>[],
+        containsHostApi: true,
+      );
+      final sink = StringBuffer();
+      const SwiftGenerator().generate(
+        const InternalSwiftOptions(
+          swiftOut: 'Sensor.g.swift',
+          fileSpecificClassNameComponent: 'Sensor',
+        ),
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+      final code = sink.toString();
+      expect(
+        code,
+        contains('func readings(every intervalMs: Int64) -> AsyncThrowingStream<Double, Error>'),
+      );
+      expect(
+        code,
+        contains('func rawEvents(sink: SensorPigeonEventSink<String?>) -> (() -> Void)?'),
+      );
+      expect(code, contains('private final class SensorPigeonStreamRegistry: @unchecked Sendable'));
+      expect(
+        code,
+        contains('private final class SensorPigeonStreamBox<Element>: @unchecked Sendable'),
+      );
+      expect(
+        code,
+        contains('private final class SensorPigeonStreamTaskHandle: @unchecked Sendable'),
+      );
+      expect(code, contains('NSMapTable<AnyObject, NSNumber>'));
+      expect(code, contains('static let dataFrameKind: Int64 = 0'));
+      expect(code, contains('static let errorFrameKind: Int64 = 1'));
+      expect(code, contains('static let doneFrameKind: Int64 = 2'));
+      expect(code, contains('class SensorPigeonEventSink<ReturnType>: @unchecked Sendable'));
+      expect(
+        code,
+        contains(
+          'streamRegistry.cancelAll(messenger: binaryMessenger, channelName: readingsEventsChannelName)',
+        ),
+      );
+      expect(code, contains('let task = Task { @MainActor in'));
+      expect(code, contains('taskHandle.attach(task)'));
+      expect(code, contains('func sendOnMain(_ message: [Any?]) -> Bool'));
+      expect(code, contains('guard !Task.isCancelled, channelBox.sendOnMain('));
+      expect(code, contains('closeAfterSend: true'));
+      expect(code, contains('token: UInt64'));
+      expect(code, contains('guard action == "listen" else {'));
+      expect(code, isNot(contains('isActive(')));
+    });
+
+    test('AsyncThrowingStream-only HostApi omits PigeonEventSink and PigeonMessageBox', () {
+      final root = Root(
+        apis: <Api>[
+          AstHostApi(
+            name: 'StreamOnlyApi',
+            methods: <Method>[
+              Method(
+                name: 'ticks',
+                location: ApiLocation.host,
+                isStream: true,
+                parameters: <Parameter>[],
+                returnType: const TypeDeclaration(baseName: 'int', isNullable: false),
+              ),
+            ],
+          ),
+        ],
+        classes: <Class>[],
+        enums: <Enum>[],
+        containsHostApi: true,
+      );
+      final sink = StringBuffer();
+      const SwiftGenerator().generate(
+        const InternalSwiftOptions(
+          swiftOut: 'StreamOnly.g.swift',
+          fileSpecificClassNameComponent: 'StreamOnly',
+        ),
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+      final code = sink.toString();
+      expect(code, contains('StreamOnlyPigeonStreamBox'));
+      expect(code, contains('StreamOnlyPigeonStreamTaskHandle'));
+      expect(code, isNot(contains('PigeonEventSink')));
+      expect(code, isNot(contains('PigeonMessageBox')));
+      expect(code, isNot(contains('func send(_ message: [Any?]')));
+    });
+
     test(
-      'generates non-throwing AsyncThrowingStream<T, Error> and @asyncCallback sink handlers',
+      '@asyncCallback-only HostApi omits PigeonStreamBox and supports @SwiftFunction and events name',
       () {
         final root = Root(
           apis: <Api>[
             AstHostApi(
-              name: 'SensorApi',
+              name: 'CallbackOnlyApi',
               methods: <Method>[
                 Method(
-                  name: 'readings',
-                  location: ApiLocation.host,
-                  isStream: true,
-                  swiftFunction: 'readings(every:)',
-                  parameters: <Parameter>[
-                    Parameter(
-                      name: 'intervalMs',
-                      type: const TypeDeclaration(baseName: 'int', isNullable: false),
-                    ),
-                  ],
-                  returnType: const TypeDeclaration(baseName: 'double', isNullable: false),
-                ),
-                Method(
-                  name: 'rawEvents',
+                  name: 'events',
                   location: ApiLocation.host,
                   isStream: true,
                   isAsynchronousCallback: true,
-                  parameters: <Parameter>[],
-                  returnType: const TypeDeclaration(baseName: 'String', isNullable: true),
+                  swiftFunction: 'listenEvents(for:)',
+                  parameters: <Parameter>[
+                    Parameter(
+                      name: 'topic',
+                      type: const TypeDeclaration(baseName: 'String', isNullable: false),
+                    ),
+                  ],
+                  returnType: const TypeDeclaration(baseName: 'String', isNullable: false),
                 ),
               ],
             ),
@@ -2533,29 +2647,28 @@ void main() {
         final sink = StringBuffer();
         const SwiftGenerator().generate(
           const InternalSwiftOptions(
-            swiftOut: 'Sensor.g.swift',
-            fileSpecificClassNameComponent: 'Sensor',
+            swiftOut: 'CallbackOnly.g.swift',
+            fileSpecificClassNameComponent: 'CallbackOnly',
           ),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
         );
         final code = sink.toString();
+        expect(code, contains('CallbackOnlyPigeonEventSink'));
+        expect(code, contains('CallbackOnlyPigeonMessageBox'));
         expect(
           code,
-          contains('func readings(every intervalMs: Int64) -> AsyncThrowingStream<Double, Error>'),
+          contains(
+            'func listenEvents(for topic: String, sink: CallbackOnlyPigeonEventSink<String>) -> (() -> Void)?',
+          ),
         );
-        expect(
-          code,
-          contains('func rawEvents(sink: SensorPigeonEventSink<String?>) -> (() -> Void)?'),
-        );
-        expect(
-          code,
-          contains('private final class SensorPigeonStreamRegistry: @unchecked Sendable'),
-        );
-        expect(code, contains('class SensorPigeonEventSink<ReturnType>: @unchecked Sendable'));
-        expect(code, contains('streamRegistry.cancelAll(channelName: readingsEventsChannelName)'));
-        expect(code, contains('let task = Task { @MainActor in'));
+        expect(code, contains('let cancelCallback = api.listenEvents(for: topicArg, sink: sink)'));
+        expect(code, contains('let eventsEventsChannel = FlutterBasicMessageChannel('));
+        expect(code, contains('eventsChannel.setMessageHandler { message, reply in'));
+        expect(code, isNot(contains('PigeonStreamBox')));
+        expect(code, isNot(contains('PigeonStreamTaskHandle')));
+        expect(code, isNot(contains('func sendOnMain(')));
       },
     );
   });

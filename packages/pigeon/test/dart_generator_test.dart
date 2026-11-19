@@ -3812,6 +3812,10 @@ name: foobar
       contains('decodeEvent: (Object? event) => (event! as List<Object?>).cast<double>(),'),
     );
     expect(code, contains('class _PigeonChannelStreamRouter {'));
+    expect(code, contains('static const int _dataFrameKind = 0;'));
+    expect(code, contains('static const int _errorFrameKind = 1;'));
+    expect(code, contains('static const int _doneFrameKind = 2;'));
+    expect(code, contains('Object? _extractReplyValueOrThrow('));
 
     final testSink = StringBuffer();
     generator.generateTest(
@@ -3828,6 +3832,36 @@ name: foobar
     final testCode = testSink.toString();
     expect(testCode, contains('void calibrate();'));
     expect(testCode, isNot(contains('readings')));
+  });
+
+  test('omits stream router helpers when HostApi has no Stream<T> methods', () {
+    final root = Root(
+      apis: <Api>[
+        AstHostApi(
+          name: 'PlainApi',
+          methods: <Method>[
+            Method(
+              name: 'ping',
+              location: ApiLocation.host,
+              parameters: <Parameter>[],
+              returnType: const TypeDeclaration.voidDeclaration(),
+            ),
+          ],
+        ),
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final sink = StringBuffer();
+    const DartGenerator().generate(
+      const InternalDartOptions(ignoreLints: false, dartOut: 'lib/plain.g.dart'),
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final code = sink.toString();
+    expect(code, isNot(contains('_PigeonChannelStreamRouter')));
+    expect(code, isNot(contains('_pigeonChannelStream')));
   });
 }
 
