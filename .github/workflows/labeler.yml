@@ -46,7 +46,8 @@ jobs:
     permissions:
       actions: read
       checks: read
-      contents: read
+      # Required by the convertPullRequestToDraft GraphQL mutation.
+      contents: write
       pull-requests: write
     runs-on: ubuntu-latest
     steps:
@@ -230,9 +231,21 @@ jobs:
             echo "::notice::Skipping bot author $AUTHOR."
             exit 0
           fi
-          if [[ "$ASSOC" == "MEMBER" || "$ASSOC" == "OWNER" || "$ASSOC" == "COLLABORATOR" ]] ||
-             gh api --silent "repos/$REPO/collaborators/$AUTHOR" 2>/dev/null; then
+          if [[ "$ASSOC" == "MEMBER" || "$ASSOC" == "OWNER" || "$ASSOC" == "COLLABORATOR" ]]; then
             echo "::notice::Author $AUTHOR is an org member/collaborator; skipping template check."
+            exit 0
+          fi
+          # GITHUB_TOKEN cannot see private org membership in author_association
+          # or team-granted access via /collaborators/{username}, so also check
+          # effective repository permissions across teams via /permission.
+          if ! PERM_JSON=$(gh api "repos/$REPO/collaborators/$AUTHOR/permission"); then
+            echo "::error::Failed to query repository permission for $AUTHOR."
+            exit 1
+          fi
+          PERMISSION=$(jq -r '.permission // empty' <<<"$PERM_JSON")
+          ROLE_NAME=$(jq -r '.role_name // empty' <<<"$PERM_JSON")
+          if [[ "$PERMISSION" == "admin" || "$PERMISSION" == "write" || "$ROLE_NAME" == "triage" ]]; then
+            echo "::notice::Author $AUTHOR has '$ROLE_NAME' ($PERMISSION) access; skipping template check."
             exit 0
           fi
 

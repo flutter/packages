@@ -1,8 +1,13 @@
-## 2.4.1
+## 2.4.2
 
 * Fixes SVG loading failing in profile and release builds when a loader cannot
   be sent to an isolate, such as one holding an asset bundle or HTTP client
   that retains a `Future`.
+
+## 2.4.1
+
+* Fixes network cache keys to compare header values and snapshot mutable
+  headers.
 
 ## 2.4.0
 
