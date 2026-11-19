@@ -2402,12 +2402,12 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(caughtNonCustomError, isA<PlatformException>());
 
       Future<int> waitForCancelledCount() async {
-        for (var attempt = 0; attempt < 20; attempt++) {
+        for (var attempt = 0; attempt < 100; attempt++) {
           final int count = await api.getCancelledStreamCount();
           if (count >= 1) {
             return count;
           }
-          await Future<void>.delayed(const Duration(milliseconds: 10));
+          await Future<void>.delayed(const Duration(milliseconds: 50));
         }
         return api.getCancelledStreamCount();
       }

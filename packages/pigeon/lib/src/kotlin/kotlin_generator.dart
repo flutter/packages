@@ -2448,16 +2448,16 @@ internal constructor(
   }
 
   internal fun close() {
-    terminated = true
-    onClosedRef.set(null)
-    channelRef.set(null)
     val toClose =
         kotlin.synchronized(cancelLock) {
+          terminated = true
           closed = true
           val current = closeable
           closeable = null
           current
         }
+    onClosedRef.set(null)
+    channelRef.set(null)
     toClose?.close()
   }
 
