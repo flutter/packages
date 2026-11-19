@@ -4,15 +4,22 @@
 
 [![pub package](https://img.shields.io/pub/v/video_player.svg)](https://pub.dev/packages/video_player)
 
-A Flutter plugin for iOS, Android and Web for playing back video on a Widget surface.
+A Flutter plugin for iOS, Android, macOS, Windows and Web for playing back video on a Widget surface.
 
-|             | Android | iOS   | macOS | Web   |
-|-------------|---------|-------|-------|-------|
-| **Support** | SDK 24+ | 15.0+ | 12.0+ | Any\* |
+|             | Android | iOS   | macOS | Windows | Web   |
+|-------------|---------|-------|-------|---------|-------|
+| **Support** | SDK 24+ | 15.0+ | 12.0+ | 10+     | Any\* |
 
 ![The example app running in iOS](https://github.com/flutter/packages/blob/main/packages/video_player/video_player/doc/demo_ipod.gif?raw=true)
 
 ## Setup
+
+### Windows
+
+Windows playback is provided by the included `video_player_windows` package.
+See its [setup, codec requirements and limitations](../video_player_windows/README.md).
+The public controller API is unchanged. The implementation uses Media Foundation
+and Flutter textures, and supports custom HTTP headers and audio/video stream selection.
 
 ### iOS
 

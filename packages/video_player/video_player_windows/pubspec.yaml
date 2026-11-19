@@ -1,0 +1,31 @@
+name: video_player_windows
+description: Windows implementation of the video_player plugin using Media Foundation.
+repository: https://github.com/flutter/packages/tree/main/packages/video_player/video_player_windows
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: ^3.12.0
+  flutter: ">=3.44.0"
+
+flutter:
+  plugin:
+    implements: video_player
+    platforms:
+      windows:
+        dartPluginClass: WindowsVideoPlayer
+        pluginClass: VideoPlayerWindows
+
+dependencies:
+  flutter:
+    sdk: flutter
+  video_player_platform_interface: ^6.9.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  pigeon: ^27.3.2
+
+topics:
+  - video
+  - video-player
