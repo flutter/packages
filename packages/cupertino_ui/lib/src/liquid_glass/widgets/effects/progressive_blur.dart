@@ -97,7 +97,9 @@ class ProgressiveBlur extends StatefulWidget {
   /// initialized. Never throws — on failure the widget falls back to a uniform
   /// blur.
   static Future<void> preload() async {
-    if (_program != null) return;
+    if (_program != null) {
+      return;
+    }
     // Package-qualified asset path (this shader ships with the package); the
     // bare path is the fallback for unit tests where the package prefix may not
     // resolve.
@@ -109,16 +111,11 @@ class ProgressiveBlur extends StatefulWidget {
       // Graceful degradation: the widget falls back to a uniform blur. (Also the
       // path taken in unit tests, where compiled shaders aren't bundled.)
       _loading = null;
-      debugPrint(
-        'progressive_blur.frag load failed, using uniform-blur fallback: $e',
-      );
+      debugPrint('progressive_blur.frag load failed, using uniform-blur fallback: $e');
     }
   }
 
-  static Future<ui.FragmentProgram> _loadProgram(
-    String path,
-    String testPath,
-  ) async {
+  static Future<ui.FragmentProgram> _loadProgram(String path, String testPath) async {
     try {
       return await ui.FragmentProgram.fromAsset(path);
     } catch (_) {
@@ -142,13 +139,15 @@ class _ProgressiveBlurState extends State<ProgressiveBlur> {
     if (_hShader == null) {
       // Not pre-compiled yet — load, then rebuild with the shaders.
       ProgressiveBlur.preload().then((_) {
-        if (mounted) setState(_makeShaders);
+        if (mounted) {
+          setState(_makeShaders);
+        }
       });
     }
   }
 
   void _makeShaders() {
-    final p = ProgressiveBlur._program;
+    final ui.FragmentProgram? p = ProgressiveBlur._program;
     if (p != null && _hShader == null) {
       _hShader = p.fragmentShader(); // coverage:ignore-line
       _vShader = p.fragmentShader(); // coverage:ignore-line
@@ -164,10 +163,12 @@ class _ProgressiveBlurState extends State<ProgressiveBlur> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.maxSigma <= 0) return const SizedBox.expand();
+    if (widget.maxSigma <= 0) {
+      return const SizedBox.expand();
+    }
 
-    final h = _hShader;
-    final v = _vShader;
+    final ui.FragmentShader? h = _hShader;
+    final ui.FragmentShader? v = _vShader;
     // Fallback — the shaders aren't ready yet, or the backend can't run shader
     // filters (Skia / web: isShaderFilterSupported == false). A single uniform
     // backdrop blur is a cheap stand-in; the translucent scrim above the bar
@@ -175,10 +176,7 @@ class _ProgressiveBlurState extends State<ProgressiveBlur> {
     if (h == null || v == null || !ui.ImageFilter.isShaderFilterSupported) {
       return ClipRect(
         child: BackdropFilter(
-          filter: ui.ImageFilter.blur(
-            sigmaX: widget.maxSigma * 0.6,
-            sigmaY: widget.maxSigma * 0.6,
-          ),
+          filter: ui.ImageFilter.blur(sigmaX: widget.maxSigma * 0.6, sigmaY: widget.maxSigma * 0.6),
           child: const SizedBox.expand(),
         ),
       );
@@ -228,17 +226,16 @@ List<double> progressiveBlurUniforms({
   required double falloff,
   required ProgressiveBlurDirection direction,
   required double axis,
-}) =>
-    <double>[
-      maxSigma * devicePixelRatio,
-      falloff,
-      direction._uniform,
-      axis, // 0 = horizontal, 1 = vertical
-      origin.dx * devicePixelRatio,
-      origin.dy * devicePixelRatio,
-      size.width * devicePixelRatio,
-      size.height * devicePixelRatio,
-    ];
+}) => <double>[
+  maxSigma * devicePixelRatio,
+  falloff,
+  direction._uniform,
+  axis, // 0 = horizontal, 1 = vertical
+  origin.dx * devicePixelRatio,
+  origin.dy * devicePixelRatio,
+  size.width * devicePixelRatio,
+  size.height * devicePixelRatio,
+];
 
 // Everything below is reachable only with a compiled FragmentProgram, which a
 // headless VM never provides — so it cannot be exercised by `flutter test`, and
@@ -280,21 +277,17 @@ class _ProgressiveBlurLayer extends SingleChildRenderObjectWidget {
   final double devicePixelRatio;
 
   @override
-  RenderObject createRenderObject(BuildContext context) =>
-      _RenderProgressiveBlur(
-        hShader: hShader,
-        vShader: vShader,
-        maxSigma: maxSigma,
-        falloff: falloff,
-        direction: direction,
-        devicePixelRatio: devicePixelRatio,
-      );
+  RenderObject createRenderObject(BuildContext context) => _RenderProgressiveBlur(
+    hShader: hShader,
+    vShader: vShader,
+    maxSigma: maxSigma,
+    falloff: falloff,
+    direction: direction,
+    devicePixelRatio: devicePixelRatio,
+  );
 
   @override
-  void updateRenderObject(
-    BuildContext context,
-    _RenderProgressiveBlur renderObject,
-  ) =>
+  void updateRenderObject(BuildContext context, _RenderProgressiveBlur renderObject) =>
       renderObject.update(
         hShader: hShader,
         vShader: vShader,
@@ -307,18 +300,13 @@ class _ProgressiveBlurLayer extends SingleChildRenderObjectWidget {
 
 class _RenderProgressiveBlur extends RenderProxyBox {
   _RenderProgressiveBlur({
-    required ui.FragmentShader hShader,
-    required ui.FragmentShader vShader,
-    required double maxSigma,
-    required double falloff,
-    required ProgressiveBlurDirection direction,
-    required double devicePixelRatio,
-  })  : _hShader = hShader,
-        _vShader = vShader,
-        _maxSigma = maxSigma,
-        _falloff = falloff,
-        _direction = direction,
-        _devicePixelRatio = devicePixelRatio;
+    required this._hShader,
+    required this._vShader,
+    required this._maxSigma,
+    required this._falloff,
+    required this._direction,
+    required this._devicePixelRatio,
+  });
 
   ui.FragmentShader _hShader;
   ui.FragmentShader _vShader;
@@ -370,7 +358,7 @@ class _RenderProgressiveBlur extends RenderProxyBox {
     }
     // The offset in the backdrop layer's own coordinate space — which is what
     // the shader's FlutterFragCoord() is expressed in.
-    final origin = localToGlobal(Offset.zero);
+    final ui.Offset origin = localToGlobal(Offset.zero);
     _configure(_hShader, 0, origin);
     _configure(_vShader, 1, origin);
 
@@ -384,7 +372,7 @@ class _RenderProgressiveBlur extends RenderProxyBox {
   }
 
   void _configure(ui.FragmentShader shader, double axis, Offset origin) {
-    final uniforms = progressiveBlurUniforms(
+    final List<double> uniforms = progressiveBlurUniforms(
       origin: origin,
       size: size,
       devicePixelRatio: _devicePixelRatio,

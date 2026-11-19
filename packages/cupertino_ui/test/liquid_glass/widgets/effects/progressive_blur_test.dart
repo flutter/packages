@@ -20,15 +20,15 @@ import 'package:liquid_glass_widgets/liquid_glass_widgets.dart';
 /// bottom.
 void main() {
   Widget host(Widget child) => MaterialApp(
-        home: Scaffold(
-          body: Stack(
-            children: [
-              const Positioned.fill(child: ColoredBox(color: Colors.blue)),
-              Positioned(top: 0, left: 0, right: 0, height: 96, child: child),
-            ],
-          ),
-        ),
-      );
+    home: Scaffold(
+      body: Stack(
+        children: [
+          const Positioned.fill(child: ColoredBox(color: Colors.blue)),
+          Positioned(top: 0, left: 0, right: 0, height: 96, child: child),
+        ],
+      ),
+    ),
+  );
 
   testWidgets('renders a backdrop filter when blurring', (tester) async {
     await tester.pumpWidget(host(const ProgressiveBlur(maxSigma: 20)));
@@ -41,8 +41,7 @@ void main() {
     expect(find.byType(ClipRect), findsWidgets);
   });
 
-  testWidgets('maxSigma <= 0 is a passthrough (no backdrop filter)',
-      (tester) async {
+  testWidgets('maxSigma <= 0 is a passthrough (no backdrop filter)', (tester) async {
     await tester.pumpWidget(host(const ProgressiveBlur(maxSigma: 0)));
     await tester.pump();
 
@@ -50,8 +49,7 @@ void main() {
     expect(find.byType(BackdropFilter), findsNothing);
   });
 
-  testWidgets('dropping maxSigma to 0 removes the backdrop filter',
-      (tester) async {
+  testWidgets('dropping maxSigma to 0 removes the backdrop filter', (tester) async {
     await tester.pumpWidget(host(const ProgressiveBlur(maxSigma: 20)));
     await tester.pump();
     expect(find.byType(BackdropFilter), findsOneWidget);
@@ -66,11 +64,7 @@ void main() {
     await tester.pumpWidget(
       const Directionality(
         textDirection: TextDirection.ltr,
-        child: SizedBox(
-          width: 300,
-          height: 96,
-          child: ProgressiveBlur(maxSigma: 16),
-        ),
+        child: SizedBox(width: 300, height: 96, child: ProgressiveBlur(maxSigma: 16)),
       ),
     );
     await tester.pump();
@@ -80,9 +74,8 @@ void main() {
   });
 
   testWidgets('honours the direction without throwing', (tester) async {
-    for (final dir in ProgressiveBlurDirection.values) {
-      await tester
-          .pumpWidget(host(ProgressiveBlur(maxSigma: 18, direction: dir)));
+    for (final ProgressiveBlurDirection dir in ProgressiveBlurDirection.values) {
+      await tester.pumpWidget(host(ProgressiveBlur(direction: dir)));
       await tester.pump();
       expect(tester.takeException(), isNull);
     }
@@ -104,9 +97,7 @@ void main() {
   });
 
   testWidgets('custom falloff parameter renders without error', (tester) async {
-    await tester.pumpWidget(
-      host(const ProgressiveBlur(maxSigma: 20, falloff: 2.5)),
-    );
+    await tester.pumpWidget(host(const ProgressiveBlur(maxSigma: 20, falloff: 2.5)));
     await tester.pump();
     expect(tester.takeException(), isNull);
     expect(find.byType(BackdropFilter), findsOneWidget);
@@ -146,49 +137,45 @@ void main() {
       double falloff = 1,
       ProgressiveBlurDirection direction = ProgressiveBlurDirection.topToBottom,
       double axis = 0,
-    }) =>
-        progressiveBlurUniforms(
-          origin: origin,
-          size: size,
-          devicePixelRatio: devicePixelRatio,
-          maxSigma: maxSigma,
-          falloff: falloff,
-          direction: direction,
-          axis: axis,
-        );
+    }) => progressiveBlurUniforms(
+      origin: origin,
+      size: size,
+      devicePixelRatio: devicePixelRatio,
+      maxSigma: maxSigma,
+      falloff: falloff,
+      direction: direction,
+      axis: axis,
+    );
 
     test('carries the region origin through, in device pixels', () {
       // The regression: the origin used to be hard-coded to (0, 0), so the
       // gradient was normalised over the wrong rectangle anywhere but the
       // top-left of the backdrop layer.
-      final u = uniforms(origin: const Offset(24, 180), devicePixelRatio: 3);
+      final List<double> u = uniforms(origin: const Offset(24, 180), devicePixelRatio: 3);
       expect(u[4], 72); // float 6 — origin x
       expect(u[5], 540); // float 7 — origin y
     });
 
     test('a top-left blur still reports a zero origin', () {
-      final u = uniforms(devicePixelRatio: 3);
+      final List<double> u = uniforms(devicePixelRatio: 3);
       expect(u[4], 0);
       expect(u[5], 0);
     });
 
     test('region size is the widget size in device pixels', () {
-      final u = uniforms(size: const Size(200, 50), devicePixelRatio: 2);
+      final List<double> u = uniforms(size: const Size(200, 50), devicePixelRatio: 2);
       expect(u[6], 400); // float 8 — region width
       expect(u[7], 100); // float 9 — region height
     });
 
     test('sigma scales with the device pixel ratio, falloff does not', () {
-      final u = uniforms(maxSigma: 10, falloff: 2.5, devicePixelRatio: 3);
+      final List<double> u = uniforms(maxSigma: 10, falloff: 2.5, devicePixelRatio: 3);
       expect(u[0], 30); // float 2 — sigma
       expect(u[1], 2.5); // float 3 — falloff
     });
 
     test('direction and axis are passed as declared', () {
-      final u = uniforms(
-        direction: ProgressiveBlurDirection.values.last,
-        axis: 1,
-      );
+      final List<double> u = uniforms(direction: ProgressiveBlurDirection.values.last, axis: 1);
       expect(u[2], (ProgressiveBlurDirection.values.length - 1).toDouble());
       expect(u[3], 1);
     });
