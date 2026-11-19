@@ -1,0 +1,3 @@
+changelog: |
+  - Adds an internal `ProgressiveBlur` widget and its shader from the liquid glass contribution. It isn't exported yet.
+version: skip
