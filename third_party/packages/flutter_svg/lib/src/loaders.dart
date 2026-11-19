@@ -102,6 +102,31 @@ class _DelegateVgColorMapper extends vg.ColorMapper {
   }
 }
 
+class _SvgCompileRequest {
+  const _SvgCompileRequest(this.svg, this.theme, this.colorMapper);
+
+  final String svg;
+  final vg.SvgTheme theme;
+  final ColorMapper? colorMapper;
+}
+
+ByteData _compileSvg(_SvgCompileRequest request) {
+  return vg
+      .encodeSvg(
+        xml: request.svg,
+        theme: request.theme,
+        colorMapper: request.colorMapper == null
+            ? null
+            : _DelegateVgColorMapper(request.colorMapper!),
+        debugName: 'Svg loader',
+        enableClippingOptimizer: false,
+        enableMaskingOptimizer: false,
+        enableOverdrawOptimizer: false,
+      )
+      .buffer
+      .asByteData();
+}
+
 /// A [BytesLoader] that parses a SVG data in an isolate and creates a
 /// vector_graphics binary representation.
 @immutable
@@ -115,9 +140,18 @@ abstract class SvgLoader<T> extends BytesLoader {
   /// The [ColorMapper] used to transform colors from the SVG, if any.
   final ColorMapper? colorMapper;
 
-  /// Will be called in [compute] with the result of [prepareMessage].
+  /// Will be called with the result of [prepareMessage], in [compute] if
+  /// [provideSvgInIsolate] is true and on the calling isolate otherwise.
   @protected
   String provideSvg(T? message);
+
+  /// Whether [provideSvg] is called in the [compute] isolate.
+  ///
+  /// If true, this loader is sent to that isolate, so it must be sendable (see
+  /// `SendPort.send`). Loaders holding an [AssetBundle] or [http.Client]
+  /// return false, since those may retain unsendable objects such as futures.
+  @protected
+  bool get provideSvgInIsolate => true;
 
   /// Will be called
   @protected
@@ -140,23 +174,19 @@ abstract class SvgLoader<T> extends BytesLoader {
   }
 
   Future<ByteData> _load(BuildContext? context) {
-    final SvgTheme theme = getTheme(context);
+    final vg.SvgTheme theme = getTheme(context).toVgTheme();
     return prepareMessage(context).then((T? message) {
+      if (!provideSvgInIsolate) {
+        return compute(
+          _compileSvg,
+          _SvgCompileRequest(provideSvg(message), theme, colorMapper),
+          debugLabel: 'Load Bytes',
+        );
+      }
+      // Sends the whole loader to the isolate. See
+      // https://github.com/flutter/flutter/issues/158835.
       return compute(
-        (T? message) {
-          return vg
-              .encodeSvg(
-                xml: provideSvg(message),
-                theme: theme.toVgTheme(),
-                colorMapper: colorMapper == null ? null : _DelegateVgColorMapper(colorMapper!),
-                debugName: 'Svg loader',
-                enableClippingOptimizer: false,
-                enableMaskingOptimizer: false,
-                enableOverdrawOptimizer: false,
-              )
-              .buffer
-              .asByteData();
-        },
+        (T? message) => _compileSvg(_SvgCompileRequest(provideSvg(message), theme, colorMapper)),
         message,
         debugLabel: 'Load Bytes',
       );
@@ -353,6 +383,9 @@ class SvgAssetLoader extends SvgLoader<ByteData> {
   }
 
   @override
+  bool get provideSvgInIsolate => false;
+
+  @override
   String provideSvg(ByteData? message) =>
       utf8.decode(Uint8List.sublistView(message!), allowMalformed: true);
 
@@ -453,6 +486,9 @@ class SvgNetworkLoader extends SvgLoader<Uint8List> {
       }
     }
   }
+
+  @override
+  bool get provideSvgInIsolate => false;
 
   @override
   String provideSvg(Uint8List? message) => utf8.decode(message!, allowMalformed: true);
