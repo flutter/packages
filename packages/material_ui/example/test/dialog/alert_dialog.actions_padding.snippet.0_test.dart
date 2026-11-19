@@ -4,7 +4,7 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:material_ui_examples/dialog/alert_dialog.snippet.1.dart'
+import 'package:material_ui_examples/dialog/alert_dialog.actions_padding.snippet.0.dart'
     as example;
 
 void main() {

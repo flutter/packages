@@ -10,10 +10,10 @@ class AlertDialogExample extends StatefulWidget {
   const AlertDialogExample({super.key});
 
   @override
-  State<AlertDialogExample> createState() => _AlertDialogExampleState();
+  State<AlertDialogExample> createState() => AlertDialogExampleState();
 }
 
-class _AlertDialogExampleState extends State<AlertDialogExample> {
+class AlertDialogExampleState extends State<AlertDialogExample> {
   // #region body
   Future<void> _showMyDialog() async {
     return showDialog<void>(
@@ -44,11 +44,8 @@ class _AlertDialogExampleState extends State<AlertDialogExample> {
   }
   // #endregion body
 
+  Future<void> showMyDialog() => _showMyDialog();
+
   @override
-  Widget build(BuildContext context) {
-    return TextButton(
-      onPressed: _showMyDialog,
-      child: const Text('Show Dialog'),
-    );
-  }
+  Widget build(BuildContext context) => const SizedBox.shrink();
 }

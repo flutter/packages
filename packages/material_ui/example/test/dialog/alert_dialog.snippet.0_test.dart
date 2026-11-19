@@ -9,7 +9,7 @@ import 'package:material_ui_examples/dialog/alert_dialog.snippet.0.dart'
 
 void main() {
   testWidgets(
-    'AlertDialog shows non-barrier-dismissible dialog and closes on Approve',
+    'AlertDialog shows non-barrier-dismissible dialog and completes Future on Approve',
     (WidgetTester tester) async {
       await tester.pumpWidget(
         const MaterialApp(home: Scaffold(body: example.AlertDialogExample())),
@@ -17,7 +17,13 @@ void main() {
 
       expect(find.byType(AlertDialog), findsNothing);
 
-      await tester.tap(find.text('Show Dialog'));
+      final example.AlertDialogExampleState state = tester.state(
+        find.byType(example.AlertDialogExample),
+      );
+      bool dialogCompleted = false;
+      final Future<void> dialogFuture = state.showMyDialog().then((_) {
+        dialogCompleted = true;
+      });
       await tester.pumpAndSettle();
 
       expect(find.byType(AlertDialog), findsOneWidget);
@@ -27,16 +33,20 @@ void main() {
         find.text('Would you like to approve of this message?'),
         findsOneWidget,
       );
+      expect(dialogCompleted, isFalse);
 
-      // Tapping outside the dialog does not dismiss it because barrierDismissible is false.
+      // Tapping outside the dialog does not dismiss it or complete the Future.
       await tester.tapAt(const Offset(10, 10));
       await tester.pumpAndSettle();
       expect(find.byType(AlertDialog), findsOneWidget);
+      expect(dialogCompleted, isFalse);
 
-      // Tapping Approve dismisses the dialog.
+      // Tapping Approve dismisses the dialog and completes the returned Future.
       await tester.tap(find.text('Approve'));
       await tester.pumpAndSettle();
       expect(find.byType(AlertDialog), findsNothing);
+      expect(dialogCompleted, isTrue);
+      await dialogFuture;
     },
   );
 }

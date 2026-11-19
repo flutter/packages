@@ -641,7 +641,7 @@ class AlertDialog extends StatelessWidget {
   ///
   /// This is an example of a set of actions aligned with the content widget.
   ///
-  /// {@example /example/lib/dialog/alert_dialog.snippet.1.dart#body indent=strip}
+  /// {@example /example/lib/dialog/alert_dialog.actions_padding.snippet.0.dart#body indent=strip}
   ///
   /// </callout-box>
   ///

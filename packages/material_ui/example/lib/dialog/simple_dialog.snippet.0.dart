@@ -8,17 +8,10 @@ import 'package:material_ui/material_ui.dart';
 
 enum Department { treasury, state }
 
-class SimpleDialogExample extends StatefulWidget {
-  const SimpleDialogExample({super.key, this.onSelected});
+class SimpleDialogExample {
+  SimpleDialogExample(this.context);
 
-  final ValueChanged<Department?>? onSelected;
-
-  @override
-  State<SimpleDialogExample> createState() => _SimpleDialogExampleState();
-}
-
-class _SimpleDialogExampleState extends State<SimpleDialogExample> {
-  ValueChanged<Department?>? get onSelected => widget.onSelected;
+  final BuildContext context;
 
   // #region body
   Future<void> _askedToLead() async {
@@ -47,22 +40,16 @@ class _SimpleDialogExampleState extends State<SimpleDialogExample> {
       case Department.treasury:
         // Let's go.
         // ...
-        onSelected?.call(Department.treasury);
+        break;
       case Department.state:
         // ...
-        onSelected?.call(Department.state);
+        break;
       case null:
         // dialog dismissed
-        onSelected?.call(null);
+        break;
     }
   }
   // #endregion body
 
-  @override
-  Widget build(BuildContext context) {
-    return TextButton(
-      onPressed: _askedToLead,
-      child: const Text('Select assignment'),
-    );
-  }
+  Future<void> askedToLead() => _askedToLead();
 }
