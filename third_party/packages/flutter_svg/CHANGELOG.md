@@ -1,7 +1,12 @@
-## 2.3.5
+## 2.4.1
 
 * Fixes network cache keys to compare header values and snapshot mutable
   headers.
+
+## 2.4.0
+
+* Adds a configurable compiled SVG cache byte budget, defaulting to 32 MiB,
+  with byte accounting and least-recently-used eviction alongside the entry limit.
 * Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
 
 ## 2.3.4
