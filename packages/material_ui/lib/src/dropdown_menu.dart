@@ -640,7 +640,7 @@ class DropdownMenu<T> extends StatefulWidget {
   /// In this example the `filterCallback` returns the items that contains the
   /// trimmed query.
   ///
-  /// {@example /example/lib/dropdown_menu/dropdown_menu.snippet.0.dart#body indent=strip}
+  /// {@example /example/lib/dropdown_menu/dropdown_menu.filter_callback.snippet.0.dart#body indent=strip}
   ///
   /// </callout-box>
   ///
@@ -659,7 +659,7 @@ class DropdownMenu<T> extends StatefulWidget {
   /// In this example the `searchCallback` returns the index of the search result
   /// that exactly matches the query.
   ///
-  /// {@example /example/lib/dropdown_menu/dropdown_menu.snippet.1.dart#body indent=strip}
+  /// {@example /example/lib/dropdown_menu/dropdown_menu.search_callback.snippet.0.dart#body indent=strip}
   ///
   /// </callout-box>
   ///

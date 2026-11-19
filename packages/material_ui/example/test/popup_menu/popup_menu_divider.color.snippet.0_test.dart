@@ -4,7 +4,7 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:material_ui_examples/popup_menu/popup_menu_divider.snippet.0.dart'
+import 'package:material_ui_examples/popup_menu/popup_menu_divider.color.snippet.0.dart'
     as example;
 
 void main() {

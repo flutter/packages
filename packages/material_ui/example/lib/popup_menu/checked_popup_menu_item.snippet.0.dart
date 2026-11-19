@@ -9,9 +9,7 @@ import 'package:material_ui/material_ui.dart';
 enum Commands { heroAndScholar, hurricaneCame }
 
 class CheckedPopupMenuItemExample extends StatefulWidget {
-  const CheckedPopupMenuItemExample({super.key, this.onHurricane});
-
-  final VoidCallback? onHurricane;
+  const CheckedPopupMenuItemExample({super.key});
 
   @override
   State<CheckedPopupMenuItemExample> createState() =>
@@ -35,7 +33,7 @@ class _CheckedPopupMenuItemExampleState
             });
           case Commands.hurricaneCame:
             // ...handle hurricane option
-            widget.onHurricane?.call();
+            break;
           // ...other items handled here
         }
       },

@@ -7,7 +7,12 @@ import 'package:material_ui/material_ui.dart';
 /// Flutter code sample for [DropdownMenu.filterCallback].
 
 class DropdownMenuExample extends StatelessWidget {
-  const DropdownMenuExample({super.key});
+  const DropdownMenuExample({
+    super.key,
+    this.entries = const <DropdownMenuEntry<Text>>[],
+  });
+
+  final List<DropdownMenuEntry<Text>> entries;
 
   @override
   Widget build(BuildContext context) {
@@ -28,11 +33,7 @@ class DropdownMenuExample extends StatelessWidget {
             )
             .toList();
       },
-      dropdownMenuEntries: const <DropdownMenuEntry<Text>>[
-        DropdownMenuEntry<Text>(value: Text('All'), label: 'All'),
-        DropdownMenuEntry<Text>(value: Text('Unread'), label: 'Unread'),
-        DropdownMenuEntry<Text>(value: Text('Read'), label: 'Read'),
-      ],
+      dropdownMenuEntries: entries,
     )
     // #endregion body
     ;

@@ -152,7 +152,7 @@ class PopupMenuDivider extends PopupMenuEntry<Never> {
   ///
   /// <callout-box>
   ///
-  /// {@example /example/lib/popup_menu/popup_menu_divider.snippet.0.dart#body indent=strip}
+  /// {@example /example/lib/popup_menu/popup_menu_divider.color.snippet.0.dart#body indent=strip}
   ///
   /// </callout-box>
   final Color? color;

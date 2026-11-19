@@ -4,7 +4,7 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:material_ui_examples/menu_anchor/menu_anchor.snippet.0.dart'
+import 'package:material_ui_examples/menu_anchor/menu_anchor.on_animation_status_changed.snippet.0.dart'
     as example;
 
 void main() {

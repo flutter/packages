@@ -432,7 +432,7 @@ class MenuAnchor extends StatefulWidget {
   /// This example shows how to use the [onAnimationStatusChanged] callback to
   /// create a [MenuAnchor] that will toggle between opening and closing.
   ///
-  /// {@example /example/lib/menu_anchor/menu_anchor.snippet.0.dart#body indent=strip}
+  /// {@example /example/lib/menu_anchor/menu_anchor.on_animation_status_changed.snippet.0.dart#body indent=strip}
   ///
   /// </callout-box>
   ///

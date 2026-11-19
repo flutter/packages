@@ -4,17 +4,25 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:material_ui_examples/dropdown_menu/dropdown_menu.snippet.0.dart'
+import 'package:material_ui_examples/dropdown_menu/dropdown_menu.filter_callback.snippet.0.dart'
     as example;
 
 void main() {
   testWidgets(
     'DropdownMenu.filterCallback filters entries using trimmed lowercase query',
     (WidgetTester tester) async {
+      const List<DropdownMenuEntry<Text>> entries = <DropdownMenuEntry<Text>>[
+        DropdownMenuEntry<Text>(value: Text('All'), label: 'All'),
+        DropdownMenuEntry<Text>(value: Text('Unread'), label: 'Unread'),
+        DropdownMenuEntry<Text>(value: Text('Read'), label: 'Read'),
+      ];
+
       await tester.pumpWidget(
         MaterialApp(
           theme: ThemeData(platform: TargetPlatform.macOS),
-          home: const Scaffold(body: example.DropdownMenuExample()),
+          home: const Scaffold(
+            body: example.DropdownMenuExample(entries: entries),
+          ),
         ),
       );
 
