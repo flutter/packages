@@ -3076,6 +3076,8 @@ void main() {
             ),
           ),
         );
+        // Let the theme change animation finish.
+        await tester.pumpAndSettle();
         expect(tester.getSize(find.byType(TextButton)), Size.zero);
       }
     });
