@@ -506,6 +506,8 @@ struct PlatformCameraImagePlane: Hashable, CustomStringConvertible {
 /// Generated class from Pigeon that represents data sent in messages.
 struct PlatformMediaSettings: Hashable, CustomStringConvertible {
   var resolutionPreset: PlatformResolutionPreset
+  var photoResolutionPreset: PlatformResolutionPreset? = nil
+  var videoResolutionPreset: PlatformResolutionPreset? = nil
   var framesPerSecond: Int64? = nil
   var videoBitrate: Int64? = nil
   var audioBitrate: Int64? = nil
@@ -514,13 +516,17 @@ struct PlatformMediaSettings: Hashable, CustomStringConvertible {
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> PlatformMediaSettings? {
     let resolutionPreset = pigeonVar_list[0] as! PlatformResolutionPreset
-    let framesPerSecond: Int64? = nilOrValue(pigeonVar_list[1])
-    let videoBitrate: Int64? = nilOrValue(pigeonVar_list[2])
-    let audioBitrate: Int64? = nilOrValue(pigeonVar_list[3])
-    let enableAudio = pigeonVar_list[4] as! Bool
+    let photoResolutionPreset: PlatformResolutionPreset? = nilOrValue(pigeonVar_list[1])
+    let videoResolutionPreset: PlatformResolutionPreset? = nilOrValue(pigeonVar_list[2])
+    let framesPerSecond: Int64? = nilOrValue(pigeonVar_list[3])
+    let videoBitrate: Int64? = nilOrValue(pigeonVar_list[4])
+    let audioBitrate: Int64? = nilOrValue(pigeonVar_list[5])
+    let enableAudio = pigeonVar_list[6] as! Bool
 
     return PlatformMediaSettings(
       resolutionPreset: resolutionPreset,
+      photoResolutionPreset: photoResolutionPreset,
+      videoResolutionPreset: videoResolutionPreset,
       framesPerSecond: framesPerSecond,
       videoBitrate: videoBitrate,
       audioBitrate: audioBitrate,
@@ -530,6 +536,8 @@ struct PlatformMediaSettings: Hashable, CustomStringConvertible {
   func toList() -> [Any?] {
     return [
       resolutionPreset,
+      photoResolutionPreset,
+      videoResolutionPreset,
       framesPerSecond,
       videoBitrate,
       audioBitrate,
@@ -541,6 +549,8 @@ struct PlatformMediaSettings: Hashable, CustomStringConvertible {
       return false
     }
     return MessagesPigeonInternal.deepEquals(lhs.resolutionPreset, rhs.resolutionPreset)
+      && MessagesPigeonInternal.deepEquals(lhs.photoResolutionPreset, rhs.photoResolutionPreset)
+      && MessagesPigeonInternal.deepEquals(lhs.videoResolutionPreset, rhs.videoResolutionPreset)
       && MessagesPigeonInternal.deepEquals(lhs.framesPerSecond, rhs.framesPerSecond)
       && MessagesPigeonInternal.deepEquals(lhs.videoBitrate, rhs.videoBitrate)
       && MessagesPigeonInternal.deepEquals(lhs.audioBitrate, rhs.audioBitrate)
@@ -550,6 +560,8 @@ struct PlatformMediaSettings: Hashable, CustomStringConvertible {
   func hash(into hasher: inout Hasher) {
     hasher.combine("PlatformMediaSettings")
     MessagesPigeonInternal.deepHash(value: resolutionPreset, hasher: &hasher)
+    MessagesPigeonInternal.deepHash(value: photoResolutionPreset, hasher: &hasher)
+    MessagesPigeonInternal.deepHash(value: videoResolutionPreset, hasher: &hasher)
     MessagesPigeonInternal.deepHash(value: framesPerSecond, hasher: &hasher)
     MessagesPigeonInternal.deepHash(value: videoBitrate, hasher: &hasher)
     MessagesPigeonInternal.deepHash(value: audioBitrate, hasher: &hasher)
@@ -558,7 +570,7 @@ struct PlatformMediaSettings: Hashable, CustomStringConvertible {
 
   public var description: String {
     return
-      "PlatformMediaSettings(resolutionPreset: \(String(describing: resolutionPreset)), framesPerSecond: \(String(describing: framesPerSecond)), videoBitrate: \(String(describing: videoBitrate)), audioBitrate: \(String(describing: audioBitrate)), enableAudio: \(String(describing: enableAudio)))"
+      "PlatformMediaSettings(resolutionPreset: \(String(describing: resolutionPreset)), photoResolutionPreset: \(String(describing: photoResolutionPreset)), videoResolutionPreset: \(String(describing: videoResolutionPreset)), framesPerSecond: \(String(describing: framesPerSecond)), videoBitrate: \(String(describing: videoBitrate)), audioBitrate: \(String(describing: audioBitrate)), enableAudio: \(String(describing: enableAudio)))"
   }
 }
 

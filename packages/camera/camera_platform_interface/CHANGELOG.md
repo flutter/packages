@@ -1,3 +1,7 @@
+## 2.16.0
+
+* Adds `photoResolutionPreset` and `videoResolutionPreset` to `MediaSettings`.
+
 ## 2.15.1
 
 * Fixes `VideoRecordedEvent` equality and `hashCode` to compare the recorded file's path,

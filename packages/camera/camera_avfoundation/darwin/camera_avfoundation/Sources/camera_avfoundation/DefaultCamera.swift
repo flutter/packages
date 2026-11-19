@@ -209,6 +209,9 @@ final class DefaultCamera: NSObject, Camera {
 
     motionManager.startAccelerometerUpdates()
 
+    let videoResolutionPreset =
+      mediaSettings.videoResolutionPreset ?? mediaSettings.resolutionPreset
+
     if configuration.mediaSettings.framesPerSecond != nil {
       // The frame rate can be changed only on a locked for configuration device.
       try mediaSettingsAVWrapper.lockDevice(captureDevice)
@@ -217,7 +220,7 @@ final class DefaultCamera: NSObject, Camera {
       mediaSettingsAVWrapper.beginConfiguration(for: videoCaptureSession)
       defer { mediaSettingsAVWrapper.commitConfiguration(for: videoCaptureSession) }
 
-      try setCaptureSessionPreset(mediaSettings.resolutionPreset)
+      try setCaptureSessionPreset(videoResolutionPreset)
 
       (captureDevice.flutterActiveFormat, framesPerSecond) = FormatUtils.findBestFormat(
         for: captureDevice,
@@ -235,7 +238,7 @@ final class DefaultCamera: NSObject, Camera {
     } else {
       // If the frame rate is not important fall to a less restrictive
       // behavior (no configuration locking).
-      try setCaptureSessionPreset(mediaSettings.resolutionPreset)
+      try setCaptureSessionPreset(videoResolutionPreset)
     }
 
     updateOrientation()
@@ -791,7 +794,9 @@ final class DefaultCamera: NSObject, Camera {
       }
     }
 
-    if mediaSettings.resolutionPreset == .max {
+    let photoResolutionPreset =
+      mediaSettings.photoResolutionPreset ?? mediaSettings.resolutionPreset
+    if photoResolutionPreset == .max {
       if #available(iOS 16.0, *) {
         settings.maxPhotoDimensions = capturePhotoOutput.maxPhotoDimensions
       } else {

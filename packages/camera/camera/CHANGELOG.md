@@ -1,3 +1,7 @@
+## 0.12.3
+
+* Adds `photoResolutionPreset` and `videoResolutionPreset` to `CameraController` to support separate photo and video resolution presets.
+
 ## 0.12.2
 
 * Adds `CameraController.isZeroShutterLagSupported` and

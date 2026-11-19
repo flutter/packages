@@ -1,3 +1,7 @@
+## 0.3.2
+
+* Adds support for separate photo and video resolution presets.
+
 ## 0.3.1
 
 * Falls back to the system temp directory for captured pictures and videos when
