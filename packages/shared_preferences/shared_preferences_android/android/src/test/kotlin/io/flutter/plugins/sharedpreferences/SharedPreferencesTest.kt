@@ -52,6 +52,7 @@ internal class SharedPreferencesTest {
     val plugin = SharedPreferencesPlugin()
     val flutterPluginBinding = mockk<FlutterPlugin.FlutterPluginBinding>()
     every { flutterPluginBinding.applicationContext } returns testContext
+    every { flutterPluginBinding.binaryMessenger } returns mockk(relaxed = true)
     plugin.onAttachedToEngine(flutterPluginBinding)
     val backend = SharedPreferencesBackend(flutterPluginBinding.applicationContext)
     return if (options.useDataStore) {
@@ -413,6 +414,7 @@ internal class SharedPreferencesTest {
       val plugin = SharedPreferencesPlugin(trackingEncoder)
       val flutterPluginBinding = mockk<FlutterPlugin.FlutterPluginBinding>()
       every { flutterPluginBinding.applicationContext } returns testContext
+      every { flutterPluginBinding.binaryMessenger } returns mockk(relaxed = true)
       plugin.onAttachedToEngine(flutterPluginBinding)
 
       val api: SharedPreferencesAsyncApi =

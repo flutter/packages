@@ -15,6 +15,7 @@ import 'package:meta/meta.dart' as meta;
 
 import 'configuration.dart';
 import 'match.dart';
+import 'misc/active_branch_scope.dart';
 import 'path_utils.dart';
 import 'router.dart';
 import 'state.dart';
@@ -370,8 +371,7 @@ class GoRoute extends RouteBase {
   /// does not satisfy the regular expression, route matching continues with
   /// other route candidates.
   ///
-  /// The regular expression is interpreted as a Dart [RegExp] pattern and must
-  /// not contain nested parentheses.
+  /// The regular expression is interpreted as a Dart [RegExp] pattern.
   ///
   /// The query parameter are also capture during the route parsing and stored
   /// in [GoRouterState].
@@ -1636,13 +1636,17 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> with R
 
   @override
   Widget build(BuildContext context) {
+    // A nested StatefulShellRoute is only active if the branch hosting it is
+    // active as well.
+    final bool isActiveShell = ActiveBranchScope.isActiveBranchOf(context);
     final List<Widget> children = route.branches
-        .map(
-          (StatefulShellBranch branch) => _BranchNavigatorProxy(
+        .mapIndexed(
+          (int index, StatefulShellBranch branch) => _BranchNavigatorProxy(
             key: ValueKey<GlobalKey<NavigatorState>>(branch.navigatorKey),
             branch: branch,
             navigatorForBranch: (StatefulShellBranch branch) =>
                 _branchState[branch.navigatorKey]?.navigator,
+            isActive: isActiveShell && index == currentIndex,
           ),
         )
         .toList();
@@ -1713,10 +1717,18 @@ typedef _NavigatorForBranch = Widget? Function(StatefulShellBranch);
 /// important for container implementations that cache child widgets,
 /// such as [TabBarView].
 class _BranchNavigatorProxy extends StatefulWidget {
-  const _BranchNavigatorProxy({super.key, required this.branch, required this.navigatorForBranch});
+  const _BranchNavigatorProxy({
+    super.key,
+    required this.branch,
+    required this.navigatorForBranch,
+    required this.isActive,
+  });
 
   final StatefulShellBranch branch;
   final _NavigatorForBranch navigatorForBranch;
+
+  /// Whether [branch] is the currently active branch.
+  final bool isActive;
 
   @override
   State<StatefulWidget> createState() => _BranchNavigatorProxyState();
@@ -1730,7 +1742,10 @@ class _BranchNavigatorProxyState extends State<_BranchNavigatorProxy>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return widget.navigatorForBranch(widget.branch) ?? const SizedBox.shrink();
+    return ActiveBranchScope(
+      isActive: widget.isActive,
+      child: widget.navigatorForBranch(widget.branch) ?? const SizedBox.shrink(),
+    );
   }
 
   @override

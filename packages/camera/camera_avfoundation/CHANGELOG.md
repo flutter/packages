@@ -1,6 +1,7 @@
 ## 0.11.2
 
 * Adds support for separate photo and video resolution presets. Still photo capture dimensions follow the active capture session format (governed by the video preset), with `ResolutionPreset.max` enabling maximum high-resolution photo dimensions.
+* Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
 
 ## 0.11.1
 

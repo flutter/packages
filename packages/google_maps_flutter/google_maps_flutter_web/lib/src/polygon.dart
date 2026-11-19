@@ -9,10 +9,9 @@ class PolygonController {
   /// Creates a `PolygonController` that wraps a [gmaps.Polygon] object and its `onTap` behavior.
   PolygonController({
     required gmaps.Polygon polygon,
-    bool consumeTapEvents = false,
+    this._consumeTapEvents = false,
     VoidCallback? onTap,
-  }) : _polygon = polygon,
-       _consumeTapEvents = consumeTapEvents {
+  }) : _polygon = polygon {
     if (onTap != null) {
       polygon.onClick.listen((gmaps.PolyMouseEvent event) {
         onTap.call();
