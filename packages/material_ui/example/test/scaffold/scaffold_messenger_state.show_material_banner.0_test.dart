@@ -33,5 +33,10 @@ void main() {
       ),
       findsOne,
     );
+
+    await tester.tap(find.widgetWithText(TextButton, 'DISMISS'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(MaterialBanner), findsNothing);
   });
 }

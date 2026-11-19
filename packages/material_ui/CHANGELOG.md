@@ -1,3 +1,9 @@
+## 1.11.1
+
+- Fixes `SnackBarThemeData.lerp` dropping `showCloseIcon`.
+- Clarifies how to programmatically clear or reset the selection in `DropdownMenu`.
+- Updates `MaterialBanner` documentation and examples to demonstrate safe dismissal across routes.
+
 ## 1.11.0
 
 - Keeps the `Material` of a `Dialog.fullscreen` covering the whole screen while the software keyboard is shown, so that a translucent keyboard shows the dialog's surface instead of the modal barrier behind it.

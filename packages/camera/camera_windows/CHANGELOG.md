@@ -1,5 +1,8 @@
-## NEXT
+## 0.3.1
 
+* Falls back to the system temp directory for captured pictures and videos when
+  the Pictures / Videos known folder cannot be used, e.g. when blocked by
+  Controlled Folder Access.
 * Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
 
 ## 0.3.0+1
