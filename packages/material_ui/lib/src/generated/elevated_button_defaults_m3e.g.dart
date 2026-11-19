@@ -74,9 +74,36 @@ class _ElevatedButtonDefaultsM3E extends ButtonStyle {
           return _colors.onSurface.withValues(alpha: 0.38);
         }
         if (toggleable && states.contains(WidgetState.selected)) {
+          if (states.contains(WidgetState.pressed)) {
+            return _colors.onPrimary;
+          }
+          if (states.contains(WidgetState.hovered)) {
+            return _colors.onPrimary;
+          }
+          if (states.contains(WidgetState.focused)) {
+            return _colors.onPrimary;
+          }
           return _colors.onPrimary;
         }
         if (toggleable) {
+          if (states.contains(WidgetState.pressed)) {
+            return _colors.primary;
+          }
+          if (states.contains(WidgetState.hovered)) {
+            return _colors.primary;
+          }
+          if (states.contains(WidgetState.focused)) {
+            return _colors.primary;
+          }
+          return _colors.primary;
+        }
+        if (states.contains(WidgetState.pressed)) {
+          return _colors.primary;
+        }
+        if (states.contains(WidgetState.hovered)) {
+          return _colors.primary;
+        }
+        if (states.contains(WidgetState.focused)) {
           return _colors.primary;
         }
         return _colors.primary;
@@ -181,9 +208,36 @@ class _ElevatedButtonDefaultsM3E extends ButtonStyle {
           return _colors.onSurface.withValues(alpha: 0.38);
         }
         if (toggleable && states.contains(WidgetState.selected)) {
+          if (states.contains(WidgetState.pressed)) {
+            return _colors.onPrimary;
+          }
+          if (states.contains(WidgetState.hovered)) {
+            return _colors.onPrimary;
+          }
+          if (states.contains(WidgetState.focused)) {
+            return _colors.onPrimary;
+          }
           return _colors.onPrimary;
         }
         if (toggleable) {
+          if (states.contains(WidgetState.pressed)) {
+            return _colors.primary;
+          }
+          if (states.contains(WidgetState.hovered)) {
+            return _colors.primary;
+          }
+          if (states.contains(WidgetState.focused)) {
+            return _colors.primary;
+          }
+          return _colors.primary;
+        }
+        if (states.contains(WidgetState.pressed)) {
+          return _colors.primary;
+        }
+        if (states.contains(WidgetState.hovered)) {
+          return _colors.primary;
+        }
+        if (states.contains(WidgetState.focused)) {
           return _colors.primary;
         }
         return _colors.primary;
