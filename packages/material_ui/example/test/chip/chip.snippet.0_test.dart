@@ -7,24 +7,18 @@ import 'package:material_ui/material_ui.dart';
 import 'package:material_ui_examples/chip/chip.snippet.0.dart' as example;
 
 void main() {
-  testWidgets('Wood InputChip toggles selected state when tapped', (
+  testWidgets('Chip renders CircleAvatar and label', (
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(
-      const MaterialApp(home: Scaffold(body: example.Wood())),
+      const MaterialApp(home: Scaffold(body: example.ChipExample())),
     );
 
-    expect(find.text('Use Chisel'), findsOneWidget);
-    expect(tester.widget<InputChip>(find.byType(InputChip)).selected, isFalse);
-
-    await tester.tap(find.byType(InputChip));
-    await tester.pumpAndSettle();
-
-    expect(tester.widget<InputChip>(find.byType(InputChip)).selected, isTrue);
-
-    await tester.tap(find.byType(InputChip));
-    await tester.pumpAndSettle();
-
-    expect(tester.widget<InputChip>(find.byType(InputChip)).selected, isFalse);
+    expect(find.widgetWithText(Chip, 'Aaron Burr'), findsOneWidget);
+    expect(find.widgetWithText(CircleAvatar, 'AB'), findsOneWidget);
+    expect(
+      find.byType(CircleAvatar),
+      paints..circle(color: Colors.grey.shade800),
+    );
   });
 }

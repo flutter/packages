@@ -4,7 +4,7 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:material_ui_examples/chip_theme/chip_theme.snippet.1.dart'
+import 'package:material_ui_examples/chip_theme/chip_theme_data.snippet.0.dart'
     as example;
 
 void main() {

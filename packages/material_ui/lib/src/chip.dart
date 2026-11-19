@@ -478,7 +478,7 @@ abstract interface class SelectableChipAttributes {
   ///
   /// A [StatefulWidget] that illustrates use of onSelected in an [InputChip].
   ///
-  /// {@example /example/lib/chip/chip.snippet.0.dart#body indent=strip}
+  /// {@example /example/lib/chip/selectable_chip_attributes.on_selected.snippet.0.dart#body indent=strip}
   ///
   /// </callout-box>
   ValueChanged<bool>? get onSelected;
@@ -584,7 +584,7 @@ abstract interface class TappableChipAttributes {
   ///
   /// <callout-box>
   ///
-  /// {@example /example/lib/chip/chip.snippet.1.dart#body indent=strip}
+  /// {@example /example/lib/chip/tappable_chip_attributes.on_pressed.snippet.0.dart#body indent=strip}
   ///
   /// </callout-box>
   VoidCallback? get onPressed;
@@ -648,7 +648,7 @@ class ChipAnimationStyle {
 ///
 /// <callout-box>
 ///
-/// {@example /example/lib/chip/chip.snippet.2.dart#body indent=strip}
+/// {@example /example/lib/chip/chip.snippet.0.dart#body indent=strip}
 ///
 /// </callout-box>
 ///

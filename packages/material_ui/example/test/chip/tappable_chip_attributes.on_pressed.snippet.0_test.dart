@@ -4,7 +4,8 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:material_ui_examples/chip/chip.snippet.1.dart' as example;
+import 'package:material_ui_examples/chip/tappable_chip_attributes.on_pressed.snippet.0.dart'
+    as example;
 
 void main() {
   testWidgets('Blacksmith InputChip calls startHammering when tapped', (

@@ -4,30 +4,23 @@
 
 import 'package:material_ui/material_ui.dart';
 
-/// Flutter code sample for [SelectableChipAttributes.onSelected].
+/// Flutter code sample for [Chip].
 
-// #region body
-class Wood extends StatefulWidget {
-  const Wood({super.key});
-
-  @override
-  State<StatefulWidget> createState() => WoodState();
-}
-
-class WoodState extends State<Wood> {
-  bool _useChisel = false;
+class ChipExample extends StatelessWidget {
+  const ChipExample({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return InputChip(
-      label: const Text('Use Chisel'),
-      selected: _useChisel,
-      onSelected: (bool newValue) {
-        setState(() {
-          _useChisel = newValue;
-        });
-      },
-    );
+    return
+    // #region body
+    Chip(
+      avatar: CircleAvatar(
+        backgroundColor: Colors.grey.shade800,
+        child: const Text('AB'),
+      ),
+      label: const Text('Aaron Burr'),
+    )
+    // #endregion body
+    ;
   }
 }
-// #endregion body

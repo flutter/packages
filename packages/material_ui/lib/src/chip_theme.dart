@@ -64,7 +64,7 @@ class ChipTheme extends InheritedTheme {
   ///
   /// <callout-box>
   ///
-  /// {@example /example/lib/chip_theme/chip_theme.snippet.0.dart#body indent=strip}
+  /// {@example /example/lib/chip_theme/chip_theme.of.snippet.0.dart#body indent=strip}
   ///
   /// </callout-box>
   ///
@@ -110,7 +110,7 @@ class ChipTheme extends InheritedTheme {
 ///
 /// <callout-box>
 ///
-/// {@example /example/lib/chip_theme/chip_theme.snippet.1.dart#body indent=strip}
+/// {@example /example/lib/chip_theme/chip_theme_data.snippet.0.dart#body indent=strip}
 ///
 /// </callout-box>
 ///
