@@ -1,3 +1,7 @@
+## 3.1.0
+
+* Adds `scrimColor` to `OpenContainer` to customize the colour of the scrim drawn over the underlying route.
+
 ## 3.0.0
 
 * Migrates to material_ui.
