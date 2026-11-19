@@ -69,6 +69,7 @@ public abstract class ExoPlayerEventListener implements Player.Listener {
   public void dispose() {
     isWaitingForValidDuration = false;
     mainHandler.removeCallbacks(initializationFallback);
+    events.onDisposed();
   }
 
   private boolean hasValidDuration() {

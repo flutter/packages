@@ -216,6 +216,267 @@ void main() {
     await listener.waitForImageDecode();
     expect(() => listener.onDrawImage(2, 10, 10, 100, 100, null), throwsAssertionError);
   });
+
+  group('parseFontFamilies', () {
+    test('returns no families for a missing font-family', () {
+      expect(parseFontFamilies(null), isEmpty);
+      expect(parseFontFamilies(''), isEmpty);
+    });
+
+    test('returns a single family unchanged', () {
+      expect(parseFontFamilies('Roboto'), <String>['Roboto']);
+      expect(parseFontFamilies('Open Sans'), <String>['Open Sans']);
+    });
+
+    test('splits a list into the family and its fallbacks', () {
+      expect(parseFontFamilies('Roboto, sans-serif'), <String>['Roboto', 'sans-serif']);
+      expect(parseFontFamilies('NoSuchFont,Roboto ,  serif'), <String>[
+        'NoSuchFont',
+        'Roboto',
+        'serif',
+      ]);
+    });
+
+    test('removes quotes around family names', () {
+      expect(parseFontFamilies("'Open Sans', sans-serif"), <String>['Open Sans', 'sans-serif']);
+      expect(parseFontFamilies(' "Roboto" ,serif'), <String>['Roboto', 'serif']);
+    });
+
+    test('skips empty entries', () {
+      expect(parseFontFamilies('Roboto, , sans-serif,'), <String>['Roboto', 'sans-serif']);
+      expect(parseFontFamilies("''"), isEmpty);
+    });
+  });
+
+  test('Paint blur is applied to paint', () async {
+    final factory = TestPictureFactory();
+    final listener = FlutterVectorGraphicsListener(pictureFactory: factory);
+
+    listener.onPaintObject(
+      color: const ui.Color(0xff000000).toARGB32(),
+      strokeCap: null,
+      strokeJoin: null,
+      blendMode: BlendMode.srcIn.index,
+      strokeMiterLimit: null,
+      strokeWidth: null,
+      paintStyle: ui.PaintingStyle.fill.index,
+      id: 0,
+      shaderId: null,
+    );
+
+    listener.onPaintBlur(0, 5.0, 10.0);
+
+    listener.onPathStart(0, 0);
+    listener.onPathMoveTo(0, 0);
+    listener.onPathLineTo(10, 10);
+    listener.onPathFinished();
+
+    await listener.onDrawPath(0, 0, null);
+
+    final Invocation drawPath = factory.fakeCanvases.single.invocations.single;
+    expect(drawPath.isMethod, true);
+    expect(drawPath.memberName, #drawPath);
+    final paint = drawPath.positionalArguments[1] as ui.Paint;
+    expect(paint.imageFilter, isNotNull);
+    expect(paint.imageFilter, ui.ImageFilter.blur(sigmaX: 5.0, sigmaY: 10.0));
+  });
+
+  test('onPaintBlur with 0.0 standard deviations does not set imageFilter', () async {
+    final factory = TestPictureFactory();
+    final listener = FlutterVectorGraphicsListener(pictureFactory: factory);
+
+    listener.onPaintObject(
+      color: const ui.Color(0xff000000).toARGB32(),
+      strokeCap: null,
+      strokeJoin: null,
+      blendMode: BlendMode.srcIn.index,
+      strokeMiterLimit: null,
+      strokeWidth: null,
+      paintStyle: ui.PaintingStyle.fill.index,
+      id: 0,
+      shaderId: null,
+    );
+
+    listener.onPaintBlur(0, 0.0, 0.0);
+
+    listener.onPathStart(0, 0);
+    listener.onPathMoveTo(0, 0);
+    listener.onPathLineTo(10, 10);
+    listener.onPathFinished();
+
+    await listener.onDrawPath(0, 0, null);
+
+    final Invocation drawPath = factory.fakeCanvases.single.invocations.single;
+    expect(drawPath.isMethod, true);
+    expect(drawPath.memberName, #drawPath);
+    final paint = drawPath.positionalArguments[1] as ui.Paint;
+    expect(paint.imageFilter, isNull);
+  });
+
+  test('onPaintBlur with negative standard deviations clamps them to 0.0', () async {
+    final factory = TestPictureFactory();
+    final listener = FlutterVectorGraphicsListener(pictureFactory: factory);
+
+    listener.onPaintObject(
+      color: const ui.Color(0xff000000).toARGB32(),
+      strokeCap: null,
+      strokeJoin: null,
+      blendMode: BlendMode.srcIn.index,
+      strokeMiterLimit: null,
+      strokeWidth: null,
+      paintStyle: ui.PaintingStyle.fill.index,
+      id: 0,
+      shaderId: null,
+    );
+
+    // One negative, one positive -> positive preserved, negative clamped to 0.0
+    listener.onPaintBlur(0, -5.0, 10.0);
+
+    listener.onPathStart(0, 0);
+    listener.onPathMoveTo(0, 0);
+    listener.onPathLineTo(10, 10);
+    listener.onPathFinished();
+
+    await listener.onDrawPath(0, 0, null);
+
+    final Invocation drawPath = factory.fakeCanvases.single.invocations.single;
+    expect(drawPath.isMethod, true);
+    expect(drawPath.memberName, #drawPath);
+    final paint = drawPath.positionalArguments[1] as ui.Paint;
+    expect(paint.imageFilter, isNotNull);
+    expect(paint.imageFilter, ui.ImageFilter.blur(sigmaY: 10.0));
+  });
+
+  test('onPaintBlur with both negative standard deviations does not set imageFilter', () async {
+    final factory = TestPictureFactory();
+    final listener = FlutterVectorGraphicsListener(pictureFactory: factory);
+
+    listener.onPaintObject(
+      color: const ui.Color(0xff000000).toARGB32(),
+      strokeCap: null,
+      strokeJoin: null,
+      blendMode: BlendMode.srcIn.index,
+      strokeMiterLimit: null,
+      strokeWidth: null,
+      paintStyle: ui.PaintingStyle.fill.index,
+      id: 0,
+      shaderId: null,
+    );
+
+    // Both negative -> both clamped to 0.0 -> no filter
+    listener.onPaintBlur(0, -5.0, -10.0);
+
+    listener.onPathStart(0, 0);
+    listener.onPathMoveTo(0, 0);
+    listener.onPathLineTo(10, 10);
+    listener.onPathFinished();
+
+    await listener.onDrawPath(0, 0, null);
+
+    final Invocation drawPath = factory.fakeCanvases.single.invocations.single;
+    expect(drawPath.isMethod, true);
+    expect(drawPath.memberName, #drawPath);
+    final paint = drawPath.positionalArguments[1] as ui.Paint;
+    expect(paint.imageFilter, isNull);
+  });
+
+  test('onPaintBlur with NaN sigmaX clamps sigmaX to 0.0', () async {
+    final factory = TestPictureFactory();
+    final listener = FlutterVectorGraphicsListener(pictureFactory: factory);
+
+    listener.onPaintObject(
+      color: const ui.Color(0xff000000).toARGB32(),
+      strokeCap: null,
+      strokeJoin: null,
+      blendMode: BlendMode.srcIn.index,
+      strokeMiterLimit: null,
+      strokeWidth: null,
+      paintStyle: ui.PaintingStyle.fill.index,
+      id: 0,
+      shaderId: null,
+    );
+
+    listener.onPaintBlur(0, double.nan, 10.0);
+
+    listener.onPathStart(0, 0);
+    listener.onPathMoveTo(0, 0);
+    listener.onPathLineTo(10, 10);
+    listener.onPathFinished();
+
+    await listener.onDrawPath(0, 0, null);
+
+    final Invocation drawPath = factory.fakeCanvases.single.invocations.single;
+    expect(drawPath.isMethod, true);
+    expect(drawPath.memberName, #drawPath);
+    final paint = drawPath.positionalArguments[1] as ui.Paint;
+    expect(paint.imageFilter, isNotNull);
+    expect(paint.imageFilter, ui.ImageFilter.blur(sigmaY: 10.0));
+  });
+
+  test('onPaintBlur with NaN sigmaY clamps sigmaY to 0.0', () async {
+    final factory = TestPictureFactory();
+    final listener = FlutterVectorGraphicsListener(pictureFactory: factory);
+
+    listener.onPaintObject(
+      color: const ui.Color(0xff000000).toARGB32(),
+      strokeCap: null,
+      strokeJoin: null,
+      blendMode: BlendMode.srcIn.index,
+      strokeMiterLimit: null,
+      strokeWidth: null,
+      paintStyle: ui.PaintingStyle.fill.index,
+      id: 0,
+      shaderId: null,
+    );
+
+    listener.onPaintBlur(0, 5.0, double.nan);
+
+    listener.onPathStart(0, 0);
+    listener.onPathMoveTo(0, 0);
+    listener.onPathLineTo(10, 10);
+    listener.onPathFinished();
+
+    await listener.onDrawPath(0, 0, null);
+
+    final Invocation drawPath = factory.fakeCanvases.single.invocations.single;
+    expect(drawPath.isMethod, true);
+    expect(drawPath.memberName, #drawPath);
+    final paint = drawPath.positionalArguments[1] as ui.Paint;
+    expect(paint.imageFilter, isNotNull);
+    expect(paint.imageFilter, ui.ImageFilter.blur(sigmaX: 5.0));
+  });
+
+  test('onPaintBlur with both NaN standard deviations does not set imageFilter', () async {
+    final factory = TestPictureFactory();
+    final listener = FlutterVectorGraphicsListener(pictureFactory: factory);
+
+    listener.onPaintObject(
+      color: const ui.Color(0xff000000).toARGB32(),
+      strokeCap: null,
+      strokeJoin: null,
+      blendMode: BlendMode.srcIn.index,
+      strokeMiterLimit: null,
+      strokeWidth: null,
+      paintStyle: ui.PaintingStyle.fill.index,
+      id: 0,
+      shaderId: null,
+    );
+
+    listener.onPaintBlur(0, double.nan, double.nan);
+
+    listener.onPathStart(0, 0);
+    listener.onPathMoveTo(0, 0);
+    listener.onPathLineTo(10, 10);
+    listener.onPathFinished();
+
+    await listener.onDrawPath(0, 0, null);
+
+    final Invocation drawPath = factory.fakeCanvases.single.invocations.single;
+    expect(drawPath.isMethod, true);
+    expect(drawPath.memberName, #drawPath);
+    final paint = drawPath.positionalArguments[1] as ui.Paint;
+    expect(paint.imageFilter, isNull);
+  });
 }
 
 class TestPictureFactory implements PictureFactory {

@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+/// @docImport 'package:flutter/gestures.dart';
+///
 /// @docImport 'color_scheme.dart';
 library;
 
@@ -142,6 +144,42 @@ enum _IndicatorType { material, adaptive, noSpinner }
 /// ```
 ///
 /// A [RefreshIndicator] can only be used with a vertical scroll view.
+///
+/// ### Refresh indicator does not respond to a mouse
+///
+/// The refresh indicator is triggered by a drag gesture that overscrolls its
+/// scrollable descendant, and a scrollable only accepts drag gestures from
+/// the pointer devices in [ScrollBehavior.dragDevices]. By default,
+/// [ScrollBehavior.dragDevices] does not include [PointerDeviceKind.mouse], so
+/// on desktop and web, clicking and dragging with a mouse does not show the
+/// refresh indicator. Scrolling with a mouse wheel does not show it either,
+/// because mouse wheel scrolling is not a drag gesture.
+///
+/// Touch screens can trigger the refresh indicator on all platforms, and so
+/// can trackpads in desktop apps. On the web, trackpad scrolling is handled
+/// like mouse wheel scrolling, so it does not trigger the refresh indicator.
+///
+/// To let users refresh with a mouse, consider providing another way to
+/// refresh, such as a button or keyboard shortcut that calls
+/// [RefreshIndicatorState.show]. Alternatively, allow scrollables to be
+/// dragged with a mouse by adding [PointerDeviceKind.mouse] to
+/// [ScrollBehavior.dragDevices], for example, for the whole app:
+///
+/// ```dart
+/// MaterialApp(
+///   scrollBehavior: const MaterialScrollBehavior().copyWith(
+///     dragDevices: <PointerDeviceKind>{
+///       ...const MaterialScrollBehavior().dragDevices,
+///       PointerDeviceKind.mouse,
+///     },
+///   ),
+///   // ...
+/// )
+/// ```
+///
+/// Allowing a mouse to drag scrollables can make it difficult to select text
+/// inside them. To limit this to part of the app, wrap that part in a
+/// [ScrollConfiguration] instead.
 ///
 /// See also:
 ///
