@@ -71,7 +71,7 @@ method arguments and per-subscription cancellation:
   when the Dart `StreamSubscription` is cancelled — useful when bridging callback- or
   listener-based platform SDKs.
 
-[Example](./example/README.md#event-channel-example).
+[Example](./example/README.md#event-channel-example) | [Migrating from `@EventChannelApi`](./skills/event-channel-to-stream-migration/SKILL.md).
 
 ### Error Handling
 
