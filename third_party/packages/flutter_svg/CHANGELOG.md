@@ -1,3 +1,8 @@
+## 2.4.1
+
+* Fixes network cache keys to compare header values and snapshot mutable
+  headers.
+
 ## 2.4.0
 
 * Adds a configurable compiled SVG cache byte budget, defaulting to 32 MiB,

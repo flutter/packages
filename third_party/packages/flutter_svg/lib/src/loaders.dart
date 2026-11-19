@@ -383,6 +383,36 @@ class SvgAssetLoader extends SvgLoader<ByteData> {
   String toString() => 'SvgAssetLoader($assetName)';
 }
 
+// Hash header names and values without depending on their insertion order.
+int _headersHashCode(Map<String, String>? headers) {
+  if (headers == null) {
+    return 0;
+  }
+  return Object.hashAllUnordered(
+    headers.entries.map((MapEntry<String, String> entry) => Object.hash(entry.key, entry.value)),
+  );
+}
+
+/// A stable snapshot for network cache lookups. Callers may reuse or modify
+/// their header Map between requests without corrupting the cache's hash table.
+@immutable
+class _NetworkLoaderCacheKey {
+  _NetworkLoaderCacheKey(this.url, Map<String, String>? headers)
+    : headers = headers == null ? null : Map<String, String>.unmodifiable(headers);
+
+  final String url;
+  final Map<String, String>? headers;
+  late final int _hashCode = Object.hash(url, _headersHashCode(headers));
+
+  @override
+  int get hashCode => _hashCode;
+
+  @override
+  bool operator ==(Object other) {
+    return other is _NetworkLoaderCacheKey && other.url == url && mapEquals(other.headers, headers);
+  }
+}
+
 /// A [BytesLoader] that decodes and parses a UTF-8 encoded SVG string the
 /// network in an isolate and creates a vector_graphics binary representation.
 ///
@@ -428,13 +458,22 @@ class SvgNetworkLoader extends SvgLoader<Uint8List> {
   String provideSvg(Uint8List? message) => utf8.decode(message!, allowMalformed: true);
 
   @override
-  int get hashCode => Object.hash(url, headers, theme, colorMapper);
+  SvgCacheKey cacheKey(BuildContext? context) {
+    return SvgCacheKey(
+      keyData: _NetworkLoaderCacheKey(url, headers),
+      theme: getTheme(context),
+      colorMapper: colorMapper,
+    );
+  }
+
+  @override
+  int get hashCode => Object.hash(url, _headersHashCode(headers), theme, colorMapper);
 
   @override
   bool operator ==(Object other) {
     return other is SvgNetworkLoader &&
         other.url == url &&
-        other.headers == headers &&
+        mapEquals(other.headers, headers) &&
         other.theme == theme &&
         other.colorMapper == colorMapper;
   }
