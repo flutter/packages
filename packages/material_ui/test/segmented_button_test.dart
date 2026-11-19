@@ -1661,6 +1661,8 @@ void main() {
             ),
           ),
         );
+        // Let the theme change animation finish.
+        await tester.pumpAndSettle();
         return <EdgeInsetsGeometry>[
           for (final Element button in find.byType(TextButton).evaluate())
             tester

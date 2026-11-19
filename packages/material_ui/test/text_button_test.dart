@@ -3081,7 +3081,9 @@ void main() {
     });
 
     testWidgets('MenuItemButton keeps its own style', (WidgetTester tester) async {
-      Future<(Size, Color?, ShapeBorder?)> menuItem({required bool expressive}) async {
+      Future<(Size, Color?, ShapeBorder?, EdgeInsetsGeometry)> menuItem({
+        required bool expressive,
+      }) async {
         await tester.pumpWidget(
           MaterialApp(
             theme: expressive ? theme : ThemeData(),
@@ -3090,10 +3092,19 @@ void main() {
             ),
           ),
         );
-        final Material material = tester.widget<Material>(
-          find.descendant(of: find.byType(MenuItemButton), matching: find.byType(Material)),
+        // Let the theme change animation finish.
+        await tester.pumpAndSettle();
+        final Finder button = find.descendant(
+          of: find.byType(MenuItemButton),
+          matching: find.byType(TextButton),
         );
-        return (tester.getSize(find.byType(MenuItemButton)), material.color, material.shape);
+        final Material material = tester.widget<Material>(
+          find.descendant(of: button, matching: find.byType(Material)),
+        );
+        final Padding padding = tester.widget<Padding>(
+          find.descendant(of: button, matching: find.byType(Padding)).first,
+        );
+        return (tester.getSize(button), material.color, material.shape, padding.padding);
       }
 
       // MenuItemButton passes its complete style to the TextButton that it
