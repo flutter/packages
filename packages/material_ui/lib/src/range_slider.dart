@@ -208,21 +208,7 @@ class RangeSlider extends StatefulWidget {
   ///
   /// <callout-box>
   ///
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
-  ///
-  /// ```dart
-  /// RangeSlider(
-  ///   values: _rangeValues,
-  ///   min: 1.0,
-  ///   max: 10.0,
-  ///   onChanged: (RangeValues newValues) {
-  ///     setState(() {
-  ///       _rangeValues = newValues;
-  ///     });
-  ///   },
-  /// )
-  /// ```
+  /// {@example /example/lib/range_slider/range_slider.snippet.0.dart#body indent=strip}
   ///
   /// </callout-box>
   ///
@@ -244,24 +230,7 @@ class RangeSlider extends StatefulWidget {
   ///
   /// <callout-box>
   ///
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
-  ///
-  /// ```dart
-  /// RangeSlider(
-  ///   values: _rangeValues,
-  ///   min: 1.0,
-  ///   max: 10.0,
-  ///   onChanged: (RangeValues newValues) {
-  ///     setState(() {
-  ///       _rangeValues = newValues;
-  ///     });
-  ///   },
-  ///   onChangeStart: (RangeValues startValues) {
-  ///     print('Started change at $startValues');
-  ///   },
-  /// )
-  /// ```
+  /// {@example /example/lib/range_slider/range_slider.snippet.1.dart#body indent=strip}
   ///
   /// </callout-box>
   ///
@@ -283,24 +252,7 @@ class RangeSlider extends StatefulWidget {
   ///
   /// <callout-box>
   ///
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
-  ///
-  /// ```dart
-  /// RangeSlider(
-  ///   values: _rangeValues,
-  ///   min: 1.0,
-  ///   max: 10.0,
-  ///   onChanged: (RangeValues newValues) {
-  ///     setState(() {
-  ///       _rangeValues = newValues;
-  ///     });
-  ///   },
-  ///   onChangeEnd: (RangeValues endValues) {
-  ///     print('Ended change at $endValues');
-  ///   },
-  /// )
-  /// ```
+  /// {@example /example/lib/range_slider/range_slider.snippet.2.dart#body indent=strip}
   ///
   /// </callout-box>
   ///
@@ -400,27 +352,10 @@ class RangeSlider extends StatefulWidget {
   ///
   /// <callout-box>
   ///
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
-  ///
   /// In the example below, a slider for currency values is configured to
   /// announce a value with a currency label.
   ///
-  /// ```dart
-  /// RangeSlider(
-  ///   values: _dollarsRange,
-  ///   min: 20.0,
-  ///   max: 330.0,
-  ///   onChanged: (RangeValues newValues) {
-  ///     setState(() {
-  ///       _dollarsRange = newValues;
-  ///     });
-  ///   },
-  ///   semanticFormatterCallback: (double newValue) {
-  ///     return '${newValue.round()} dollars';
-  ///   }
-  ///  )
-  /// ```
+  /// {@example /example/lib/range_slider/range_slider.snippet.3.dart#body indent=strip}
   ///
   /// </callout-box>
   final SemanticFormatterCallback? semanticFormatterCallback;
