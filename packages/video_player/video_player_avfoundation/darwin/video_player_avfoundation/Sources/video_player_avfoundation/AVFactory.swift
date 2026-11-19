@@ -60,7 +60,15 @@ protocol WrappedAVPlayerItem: AnyObject {
 /// tests.
 protocol WrappedAVObjectFactory {
   /// Creates and returns a wrapped AVAsset instance with the specified URL and options.
-  func urlAsset(with url: URL, options: [String: Any]?) -> any WrappedAVAsset
+  ///
+  /// If `resourceLoaderDelegate` is non-nil it is installed as the asset's resource loader delegate,
+  /// and the returned asset takes ownership of it. This is needed for DRM, where the plugin has to
+  /// service the key requests that AVFoundation makes for protected content.
+  func urlAsset(
+    with url: URL,
+    options: [String: Any]?,
+    resourceLoaderDelegate: AVAssetResourceLoaderDelegate?
+  ) -> any WrappedAVAsset
 
   /// Creates and returns a wrapped AVPlayerItem instance with the specified asset.
   func playerItem(with asset: any WrappedAVAsset) -> any WrappedAVPlayerItem
@@ -82,13 +90,26 @@ protocol WrappedAVObjectFactory {
 
 /// A default implementation of the WrappedAVObjectFactory protocol, using real AVFoundation objects.
 class DefaultAVFactory: WrappedAVObjectFactory {
-  func urlAsset(with url: URL, options: [String: Any]?) -> any WrappedAVAsset {
-    return DefaultAVAsset(asset: AVURLAsset(url: url, options: options))
+  func urlAsset(
+    with url: URL,
+    options: [String: Any]?,
+    resourceLoaderDelegate: AVAssetResourceLoaderDelegate?
+  ) -> any WrappedAVAsset {
+    let asset = AVURLAsset(url: url, options: options)
+    if let resourceLoaderDelegate {
+      asset.resourceLoader.setDelegate(
+        resourceLoaderDelegate,
+        queue: DispatchQueue(label: "dev.flutter.video_player.resourceLoader"))
+    }
+    return DefaultAVAsset(asset: asset, resourceLoaderDelegate: resourceLoaderDelegate)
   }
 
   func playerItem(with asset: any WrappedAVAsset) -> any WrappedAVPlayerItem {
     // The default factory always vends Default* implementations, so it is safe to cast back.
-    return DefaultAVPlayerItem(playerItem: AVPlayerItem(asset: (asset as! DefaultAVAsset).avAsset))
+    let defaultAsset = asset as! DefaultAVAsset
+    return DefaultAVPlayerItem(
+      playerItem: AVPlayerItem(asset: defaultAsset.avAsset),
+      resourceLoaderDelegate: defaultAsset.resourceLoaderDelegate)
   }
 
   func player(with playerItem: any WrappedAVPlayerItem) -> AVPlayer {
@@ -109,9 +130,15 @@ class DefaultAVFactory: WrappedAVObjectFactory {
 
 class DefaultAVAsset: WrappedAVAsset {
   let avAsset: AVAsset
+  /// The asset's resource loader delegate, if any.
+  ///
+  /// AVAssetResourceLoader holds its delegate weakly, so ownership of the delegate has to live
+  /// alongside the asset.
+  let resourceLoaderDelegate: AVAssetResourceLoaderDelegate?
 
-  init(asset: AVAsset) {
+  init(asset: AVAsset, resourceLoaderDelegate: AVAssetResourceLoaderDelegate? = nil) {
     self.avAsset = asset
+    self.resourceLoaderDelegate = resourceLoaderDelegate
   }
 
   func load<T>(_ property: AVAsyncProperty<AVAsset, T>, isolation: isolated (any Actor)?)
@@ -123,13 +150,16 @@ class DefaultAVAsset: WrappedAVAsset {
 
 class DefaultAVPlayerItem: WrappedAVPlayerItem {
   let avPlayerItem: AVPlayerItem
+  /// The resource loader delegate of the item's asset, if any. See DefaultAVAsset.
+  let resourceLoaderDelegate: AVAssetResourceLoaderDelegate?
 
-  init(playerItem: AVPlayerItem) {
+  init(playerItem: AVPlayerItem, resourceLoaderDelegate: AVAssetResourceLoaderDelegate? = nil) {
     self.avPlayerItem = playerItem
+    self.resourceLoaderDelegate = resourceLoaderDelegate
   }
 
   var asset: WrappedAVAsset {
-    return DefaultAVAsset(asset: avPlayerItem.asset)
+    return DefaultAVAsset(asset: avPlayerItem.asset, resourceLoaderDelegate: resourceLoaderDelegate)
   }
 
   var videoComposition: AVVideoComposition? {

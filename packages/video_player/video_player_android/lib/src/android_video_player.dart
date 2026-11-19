@@ -80,6 +80,7 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
     PlatformVideoFormat? formatHint;
     final Map<String, String> httpHeaders = dataSource.httpHeaders;
     final String? userAgent = _userAgentFromHeaders(httpHeaders);
+    final PlatformWidevineDrmConfiguration? widevineDrm = _widevineDrmFromDataSource(dataSource);
     switch (dataSource.sourceType) {
       case DataSourceType.asset:
         final String? asset = dataSource.asset;
@@ -104,6 +105,7 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
       userAgent: userAgent,
       formatHint: formatHint,
       backBufferDurationMs: options.videoPlayerOptions?.backBufferDurationMs,
+      widevineDrm: widevineDrm,
     );
 
     final int playerId;
@@ -120,6 +122,35 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
     ensurePlayerInitialized(playerId, state);
 
     return playerId;
+  }
+
+  // Returns the Pigeon representation of the DRM configuration in [dataSource],
+  // or null if it has none.
+  //
+  // Throws an [ArgumentError] if the source isn't a network source, and an
+  // [UnsupportedError] if the configuration isn't a Widevine configuration.
+  PlatformWidevineDrmConfiguration? _widevineDrmFromDataSource(DataSource dataSource) {
+    final VideoDrmConfiguration? drmConfiguration = dataSource.drmConfiguration;
+    if (drmConfiguration == null) {
+      return null;
+    }
+    if (dataSource.sourceType != DataSourceType.network) {
+      throw ArgumentError.value(
+        dataSource.sourceType,
+        'dataSource.sourceType',
+        'DRM is only supported for network data sources',
+      );
+    }
+    if (drmConfiguration is! WidevineDrmConfiguration) {
+      throw UnsupportedError(
+        'The Android implementation of video_player only supports '
+        'WidevineDrmConfiguration, not ${drmConfiguration.runtimeType}',
+      );
+    }
+    return PlatformWidevineDrmConfiguration(
+      licenseUri: drmConfiguration.licenseUri.toString(),
+      licenseHeaders: drmConfiguration.licenseHeaders,
+    );
   }
 
   // Returns the user agent to use with ExoPlayer for the given headers.

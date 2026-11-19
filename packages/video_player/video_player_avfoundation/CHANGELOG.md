@@ -1,3 +1,8 @@
+## 2.13.0
+
+* Adds `FairPlayDrmConfiguration`, allowing playback of FairPlay-protected
+  network streams on iOS and macOS.
+
 ## 2.12.4
 
 * Converts internal event channel implementation to Swift.

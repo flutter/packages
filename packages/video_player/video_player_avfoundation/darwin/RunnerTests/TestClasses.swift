@@ -198,6 +198,7 @@ final class StubAVFactory: WrappedAVObjectFactory {
   let playerItem: WrappedAVPlayerItem
   let pixelBufferSource: PixelBufferSource?
   private(set) var lastOutputSettings: [String: Any]?
+  private(set) var lastResourceLoaderDelegate: AVAssetResourceLoaderDelegate?
   #if os(iOS)
     var audioSession: WrappedAVAudioSession
   #endif
@@ -219,7 +220,12 @@ final class StubAVFactory: WrappedAVObjectFactory {
     #endif
   }
 
-  func urlAsset(with url: URL, options: [String: Any]?) -> WrappedAVAsset {
+  func urlAsset(
+    with url: URL,
+    options: [String: Any]?,
+    resourceLoaderDelegate: AVAssetResourceLoaderDelegate?
+  ) -> WrappedAVAsset {
+    lastResourceLoaderDelegate = resourceLoaderDelegate
     return playerItem.asset
   }
 

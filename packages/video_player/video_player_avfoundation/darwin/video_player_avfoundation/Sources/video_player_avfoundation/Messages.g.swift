@@ -224,25 +224,86 @@ struct PlatformVideoViewCreationParams: Hashable, CustomStringConvertible {
   }
 }
 
+/// Pigeon equivalent of video_player_avfoundation's FairPlayDrmConfiguration.
+///
+/// Generated class from Pigeon that represents data sent in messages.
+struct PlatformFairPlayDrmConfiguration: Hashable, CustomStringConvertible {
+  var certificateUri: String
+  var licenseUri: String
+  var licenseHeaders: [String: String]
+  var contentId: String? = nil
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ pigeonVar_list: [Any?]) -> PlatformFairPlayDrmConfiguration? {
+    let certificateUri = pigeonVar_list[0] as! String
+    let licenseUri = pigeonVar_list[1] as! String
+    let licenseHeaders = pigeonVar_list[2] as! [String: String]
+    let contentId: String? = nilOrValue(pigeonVar_list[3])
+
+    return PlatformFairPlayDrmConfiguration(
+      certificateUri: certificateUri,
+      licenseUri: licenseUri,
+      licenseHeaders: licenseHeaders,
+      contentId: contentId
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      certificateUri,
+      licenseUri,
+      licenseHeaders,
+      contentId,
+    ]
+  }
+  static func == (lhs: PlatformFairPlayDrmConfiguration, rhs: PlatformFairPlayDrmConfiguration)
+    -> Bool
+  {
+    if Swift.type(of: lhs) != Swift.type(of: rhs) {
+      return false
+    }
+    return MessagesPigeonInternal.deepEquals(lhs.certificateUri, rhs.certificateUri)
+      && MessagesPigeonInternal.deepEquals(lhs.licenseUri, rhs.licenseUri)
+      && MessagesPigeonInternal.deepEquals(lhs.licenseHeaders, rhs.licenseHeaders)
+      && MessagesPigeonInternal.deepEquals(lhs.contentId, rhs.contentId)
+  }
+
+  func hash(into hasher: inout Hasher) {
+    hasher.combine("PlatformFairPlayDrmConfiguration")
+    MessagesPigeonInternal.deepHash(value: certificateUri, hasher: &hasher)
+    MessagesPigeonInternal.deepHash(value: licenseUri, hasher: &hasher)
+    MessagesPigeonInternal.deepHash(value: licenseHeaders, hasher: &hasher)
+    MessagesPigeonInternal.deepHash(value: contentId, hasher: &hasher)
+  }
+
+  public var description: String {
+    return
+      "PlatformFairPlayDrmConfiguration(certificateUri: \(String(describing: certificateUri)), licenseUri: \(String(describing: licenseUri)), licenseHeaders: \(String(describing: licenseHeaders)), contentId: \(String(describing: contentId)))"
+  }
+}
+
 /// Generated class from Pigeon that represents data sent in messages.
 struct CreationOptions: Hashable, CustomStringConvertible {
   var uri: String
   var httpHeaders: [String: String]
+  var fairPlayDrm: PlatformFairPlayDrmConfiguration? = nil
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> CreationOptions? {
     let uri = pigeonVar_list[0] as! String
     let httpHeaders = pigeonVar_list[1] as! [String: String]
+    let fairPlayDrm: PlatformFairPlayDrmConfiguration? = nilOrValue(pigeonVar_list[2])
 
     return CreationOptions(
       uri: uri,
-      httpHeaders: httpHeaders
+      httpHeaders: httpHeaders,
+      fairPlayDrm: fairPlayDrm
     )
   }
   func toList() -> [Any?] {
     return [
       uri,
       httpHeaders,
+      fairPlayDrm,
     ]
   }
   static func == (lhs: CreationOptions, rhs: CreationOptions) -> Bool {
@@ -251,17 +312,19 @@ struct CreationOptions: Hashable, CustomStringConvertible {
     }
     return MessagesPigeonInternal.deepEquals(lhs.uri, rhs.uri)
       && MessagesPigeonInternal.deepEquals(lhs.httpHeaders, rhs.httpHeaders)
+      && MessagesPigeonInternal.deepEquals(lhs.fairPlayDrm, rhs.fairPlayDrm)
   }
 
   func hash(into hasher: inout Hasher) {
     hasher.combine("CreationOptions")
     MessagesPigeonInternal.deepHash(value: uri, hasher: &hasher)
     MessagesPigeonInternal.deepHash(value: httpHeaders, hasher: &hasher)
+    MessagesPigeonInternal.deepHash(value: fairPlayDrm, hasher: &hasher)
   }
 
   public var description: String {
     return
-      "CreationOptions(uri: \(String(describing: uri)), httpHeaders: \(String(describing: httpHeaders)))"
+      "CreationOptions(uri: \(String(describing: uri)), httpHeaders: \(String(describing: httpHeaders)), fairPlayDrm: \(String(describing: fairPlayDrm)))"
   }
 }
 
@@ -828,30 +891,32 @@ private class MessagesPigeonCodecReader: FlutterStandardReader {
     case 129:
       return PlatformVideoViewCreationParams.fromList(self.readValue() as! [Any?])
     case 130:
-      return CreationOptions.fromList(self.readValue() as! [Any?])
+      return PlatformFairPlayDrmConfiguration.fromList(self.readValue() as! [Any?])
     case 131:
-      return TexturePlayerIds.fromList(self.readValue() as! [Any?])
+      return CreationOptions.fromList(self.readValue() as! [Any?])
     case 132:
-      return MediaSelectionAudioTrackData.fromList(self.readValue() as! [Any?])
+      return TexturePlayerIds.fromList(self.readValue() as! [Any?])
     case 133:
-      return MediaSelectionVideoTrackData.fromList(self.readValue() as! [Any?])
+      return MediaSelectionAudioTrackData.fromList(self.readValue() as! [Any?])
     case 134:
-      return AssetVideoTrackData.fromList(self.readValue() as! [Any?])
+      return MediaSelectionVideoTrackData.fromList(self.readValue() as! [Any?])
     case 135:
-      return NativeVideoTrackData.fromList(self.readValue() as! [Any?])
+      return AssetVideoTrackData.fromList(self.readValue() as! [Any?])
     case 136:
-      return InitializationEvent.fromList(self.readValue() as! [Any?])
+      return NativeVideoTrackData.fromList(self.readValue() as! [Any?])
     case 137:
-      return BufferingStartEvent.fromList(self.readValue() as! [Any?])
+      return InitializationEvent.fromList(self.readValue() as! [Any?])
     case 138:
-      return BufferingEndEvent.fromList(self.readValue() as! [Any?])
+      return BufferingStartEvent.fromList(self.readValue() as! [Any?])
     case 139:
-      return PlatformDurationRange.fromList(self.readValue() as! [Any?])
+      return BufferingEndEvent.fromList(self.readValue() as! [Any?])
     case 140:
-      return BufferingUpdateEvent.fromList(self.readValue() as! [Any?])
+      return PlatformDurationRange.fromList(self.readValue() as! [Any?])
     case 141:
-      return PlaybackCompleteEvent.fromList(self.readValue() as! [Any?])
+      return BufferingUpdateEvent.fromList(self.readValue() as! [Any?])
     case 142:
+      return PlaybackCompleteEvent.fromList(self.readValue() as! [Any?])
+    case 143:
       return IsPlayingStateEvent.fromList(self.readValue() as! [Any?])
     default:
       return super.readValue(ofType: type)
@@ -864,44 +929,47 @@ private class MessagesPigeonCodecWriter: FlutterStandardWriter {
     if let value = value as? PlatformVideoViewCreationParams {
       super.writeByte(129)
       super.writeValue(value.toList())
-    } else if let value = value as? CreationOptions {
+    } else if let value = value as? PlatformFairPlayDrmConfiguration {
       super.writeByte(130)
       super.writeValue(value.toList())
-    } else if let value = value as? TexturePlayerIds {
+    } else if let value = value as? CreationOptions {
       super.writeByte(131)
       super.writeValue(value.toList())
-    } else if let value = value as? MediaSelectionAudioTrackData {
+    } else if let value = value as? TexturePlayerIds {
       super.writeByte(132)
       super.writeValue(value.toList())
-    } else if let value = value as? MediaSelectionVideoTrackData {
+    } else if let value = value as? MediaSelectionAudioTrackData {
       super.writeByte(133)
       super.writeValue(value.toList())
-    } else if let value = value as? AssetVideoTrackData {
+    } else if let value = value as? MediaSelectionVideoTrackData {
       super.writeByte(134)
       super.writeValue(value.toList())
-    } else if let value = value as? NativeVideoTrackData {
+    } else if let value = value as? AssetVideoTrackData {
       super.writeByte(135)
       super.writeValue(value.toList())
-    } else if let value = value as? InitializationEvent {
+    } else if let value = value as? NativeVideoTrackData {
       super.writeByte(136)
       super.writeValue(value.toList())
-    } else if let value = value as? BufferingStartEvent {
+    } else if let value = value as? InitializationEvent {
       super.writeByte(137)
       super.writeValue(value.toList())
-    } else if let value = value as? BufferingEndEvent {
+    } else if let value = value as? BufferingStartEvent {
       super.writeByte(138)
       super.writeValue(value.toList())
-    } else if let value = value as? PlatformDurationRange {
+    } else if let value = value as? BufferingEndEvent {
       super.writeByte(139)
       super.writeValue(value.toList())
-    } else if let value = value as? BufferingUpdateEvent {
+    } else if let value = value as? PlatformDurationRange {
       super.writeByte(140)
       super.writeValue(value.toList())
-    } else if let value = value as? PlaybackCompleteEvent {
+    } else if let value = value as? BufferingUpdateEvent {
       super.writeByte(141)
       super.writeValue(value.toList())
-    } else if let value = value as? IsPlayingStateEvent {
+    } else if let value = value as? PlaybackCompleteEvent {
       super.writeByte(142)
+      super.writeValue(value.toList())
+    } else if let value = value as? IsPlayingStateEvent {
+      super.writeByte(143)
       super.writeValue(value.toList())
     } else {
       super.writeValue(value)

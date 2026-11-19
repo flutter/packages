@@ -514,13 +514,62 @@ data class PlatformVideoViewCreationParams(val playerId: Long) {
   }
 }
 
+/**
+ * Pigeon equivalent of the platform interface's WidevineDrmConfiguration.
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ */
+data class PlatformWidevineDrmConfiguration(
+    val licenseUri: String,
+    val licenseHeaders: Map<String, String>
+) {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): PlatformWidevineDrmConfiguration {
+      val licenseUri = pigeonVar_list[0] as String
+      val licenseHeaders = pigeonVar_list[1] as Map<String, String>
+      return PlatformWidevineDrmConfiguration(licenseUri, licenseHeaders)
+    }
+  }
+
+  fun toList(): List<Any?> {
+    return listOf(
+        licenseUri,
+        licenseHeaders,
+    )
+  }
+
+  override fun equals(other: Any?): Boolean {
+    if (other == null || other.javaClass != javaClass) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    val other = other as PlatformWidevineDrmConfiguration
+    return MessagesPigeonUtils.deepEquals(this.licenseUri, other.licenseUri) &&
+        MessagesPigeonUtils.deepEquals(this.licenseHeaders, other.licenseHeaders)
+  }
+
+  override fun hashCode(): Int {
+    var result = javaClass.hashCode()
+    result = 31 * result + MessagesPigeonUtils.deepHash(this.licenseUri)
+    result = 31 * result + MessagesPigeonUtils.deepHash(this.licenseHeaders)
+    return result
+  }
+
+  override fun toString(): String {
+    return "PlatformWidevineDrmConfiguration(licenseUri=$licenseUri, licenseHeaders=$licenseHeaders)"
+  }
+}
+
 /** Generated class from Pigeon that represents data sent in messages. */
 data class CreationOptions(
     val uri: String,
     val formatHint: PlatformVideoFormat? = null,
     val httpHeaders: Map<String, String>,
     val userAgent: String? = null,
-    val backBufferDurationMs: Long? = null
+    val backBufferDurationMs: Long? = null,
+    val widevineDrm: PlatformWidevineDrmConfiguration? = null
 ) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): CreationOptions {
@@ -529,7 +578,9 @@ data class CreationOptions(
       val httpHeaders = pigeonVar_list[2] as Map<String, String>
       val userAgent = pigeonVar_list[3] as String?
       val backBufferDurationMs = pigeonVar_list[4] as Long?
-      return CreationOptions(uri, formatHint, httpHeaders, userAgent, backBufferDurationMs)
+      val widevineDrm = pigeonVar_list[5] as PlatformWidevineDrmConfiguration?
+      return CreationOptions(
+          uri, formatHint, httpHeaders, userAgent, backBufferDurationMs, widevineDrm)
     }
   }
 
@@ -540,6 +591,7 @@ data class CreationOptions(
         httpHeaders,
         userAgent,
         backBufferDurationMs,
+        widevineDrm,
     )
   }
 
@@ -555,7 +607,8 @@ data class CreationOptions(
         MessagesPigeonUtils.deepEquals(this.formatHint, other.formatHint) &&
         MessagesPigeonUtils.deepEquals(this.httpHeaders, other.httpHeaders) &&
         MessagesPigeonUtils.deepEquals(this.userAgent, other.userAgent) &&
-        MessagesPigeonUtils.deepEquals(this.backBufferDurationMs, other.backBufferDurationMs)
+        MessagesPigeonUtils.deepEquals(this.backBufferDurationMs, other.backBufferDurationMs) &&
+        MessagesPigeonUtils.deepEquals(this.widevineDrm, other.widevineDrm)
   }
 
   override fun hashCode(): Int {
@@ -565,11 +618,12 @@ data class CreationOptions(
     result = 31 * result + MessagesPigeonUtils.deepHash(this.httpHeaders)
     result = 31 * result + MessagesPigeonUtils.deepHash(this.userAgent)
     result = 31 * result + MessagesPigeonUtils.deepHash(this.backBufferDurationMs)
+    result = 31 * result + MessagesPigeonUtils.deepHash(this.widevineDrm)
     return result
   }
 
   override fun toString(): String {
-    return "CreationOptions(uri=$uri, formatHint=$formatHint, httpHeaders=$httpHeaders, userAgent=$userAgent, backBufferDurationMs=$backBufferDurationMs)"
+    return "CreationOptions(uri=$uri, formatHint=$formatHint, httpHeaders=$httpHeaders, userAgent=$userAgent, backBufferDurationMs=$backBufferDurationMs, widevineDrm=$widevineDrm)"
   }
 }
 
@@ -1031,27 +1085,30 @@ private open class MessagesPigeonCodec : StandardMessageCodec() {
         (readValue(buffer) as? List<Any?>)?.let { PlatformVideoViewCreationParams.fromList(it) }
       }
       137.toByte() -> {
-        (readValue(buffer) as? List<Any?>)?.let { CreationOptions.fromList(it) }
+        (readValue(buffer) as? List<Any?>)?.let { PlatformWidevineDrmConfiguration.fromList(it) }
       }
       138.toByte() -> {
-        (readValue(buffer) as? List<Any?>)?.let { TexturePlayerIds.fromList(it) }
+        (readValue(buffer) as? List<Any?>)?.let { CreationOptions.fromList(it) }
       }
       139.toByte() -> {
-        (readValue(buffer) as? List<Any?>)?.let { PlaybackState.fromList(it) }
+        (readValue(buffer) as? List<Any?>)?.let { TexturePlayerIds.fromList(it) }
       }
       140.toByte() -> {
-        (readValue(buffer) as? List<Any?>)?.let { AudioTrackMessage.fromList(it) }
+        (readValue(buffer) as? List<Any?>)?.let { PlaybackState.fromList(it) }
       }
       141.toByte() -> {
-        (readValue(buffer) as? List<Any?>)?.let { ExoPlayerAudioTrackData.fromList(it) }
+        (readValue(buffer) as? List<Any?>)?.let { AudioTrackMessage.fromList(it) }
       }
       142.toByte() -> {
-        (readValue(buffer) as? List<Any?>)?.let { NativeAudioTrackData.fromList(it) }
+        (readValue(buffer) as? List<Any?>)?.let { ExoPlayerAudioTrackData.fromList(it) }
       }
       143.toByte() -> {
-        (readValue(buffer) as? List<Any?>)?.let { ExoPlayerVideoTrackData.fromList(it) }
+        (readValue(buffer) as? List<Any?>)?.let { NativeAudioTrackData.fromList(it) }
       }
       144.toByte() -> {
+        (readValue(buffer) as? List<Any?>)?.let { ExoPlayerVideoTrackData.fromList(it) }
+      }
+      145.toByte() -> {
         (readValue(buffer) as? List<Any?>)?.let { NativeVideoTrackData.fromList(it) }
       }
       else -> super.readValueOfType(type, buffer)
@@ -1092,36 +1149,40 @@ private open class MessagesPigeonCodec : StandardMessageCodec() {
         stream.write(136)
         writeValue(stream, value.toList())
       }
-      is CreationOptions -> {
+      is PlatformWidevineDrmConfiguration -> {
         stream.write(137)
         writeValue(stream, value.toList())
       }
-      is TexturePlayerIds -> {
+      is CreationOptions -> {
         stream.write(138)
         writeValue(stream, value.toList())
       }
-      is PlaybackState -> {
+      is TexturePlayerIds -> {
         stream.write(139)
         writeValue(stream, value.toList())
       }
-      is AudioTrackMessage -> {
+      is PlaybackState -> {
         stream.write(140)
         writeValue(stream, value.toList())
       }
-      is ExoPlayerAudioTrackData -> {
+      is AudioTrackMessage -> {
         stream.write(141)
         writeValue(stream, value.toList())
       }
-      is NativeAudioTrackData -> {
+      is ExoPlayerAudioTrackData -> {
         stream.write(142)
         writeValue(stream, value.toList())
       }
-      is ExoPlayerVideoTrackData -> {
+      is NativeAudioTrackData -> {
         stream.write(143)
         writeValue(stream, value.toList())
       }
-      is NativeVideoTrackData -> {
+      is ExoPlayerVideoTrackData -> {
         stream.write(144)
+        writeValue(stream, value.toList())
+      }
+      is NativeVideoTrackData -> {
+        stream.write(145)
         writeValue(stream, value.toList())
       }
       else -> super.writeValue(stream, value)

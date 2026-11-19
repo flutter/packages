@@ -1,5 +1,9 @@
-## NEXT
+## 2.15.0
 
+* Adds `drmConfiguration` to the network constructors, to allow playback of
+  DRM-protected streams. Widevine uses `WidevineDrmConfiguration`, which is
+  exported by this package. FairPlay uses `FairPlayDrmConfiguration` from
+  `video_player_avfoundation`.
 * Updates README to reflect currently supported OS versions for the latest
   versions of the endorsed iOS and macOS platform implementations.
   * Applications built with older versions of Flutter will continue to

@@ -1,3 +1,9 @@
+## 2.13.0
+
+* Adds support for `WidevineDrmConfiguration` from the platform interface,
+  allowing playback of Widevine-protected network streams via Media3's DRM
+  support.
+
 ## 2.12.4
 
 * Fixes a minor native object leak when disposing a player instance.

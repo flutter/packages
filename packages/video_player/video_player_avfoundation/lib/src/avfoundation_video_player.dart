@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:video_player_platform_interface/video_player_platform_interface.dart';
 
+import 'fair_play_drm_configuration.dart';
 import 'messages.g.dart' hide videoEvents;
 import 'messages.g.dart' as pigeon show videoEvents;
 
@@ -77,6 +78,8 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
     final DataSource dataSource = options.dataSource;
     final VideoViewType viewType = options.viewType;
 
+    final PlatformFairPlayDrmConfiguration? fairPlayDrm = _fairPlayDrmFromDataSource(dataSource);
+
     String? uri;
     switch (dataSource.sourceType) {
       case DataSourceType.asset:
@@ -101,7 +104,11 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
     if (uri == null) {
       throw ArgumentError('Unable to construct a video asset from $options');
     }
-    final pigeonCreationOptions = CreationOptions(uri: uri, httpHeaders: dataSource.httpHeaders);
+    final pigeonCreationOptions = CreationOptions(
+      uri: uri,
+      httpHeaders: dataSource.httpHeaders,
+      fairPlayDrm: fairPlayDrm,
+    );
 
     final int playerId;
     final VideoPlayerViewState state;
@@ -117,6 +124,37 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
     ensurePlayerInitialized(playerId, state);
 
     return playerId;
+  }
+
+  // Returns the Pigeon representation of the DRM configuration in [dataSource],
+  // or null if it has none.
+  //
+  // Throws an [ArgumentError] if the source isn't a network source, and an
+  // [UnsupportedError] if the configuration isn't a FairPlay configuration.
+  PlatformFairPlayDrmConfiguration? _fairPlayDrmFromDataSource(DataSource dataSource) {
+    final VideoDrmConfiguration? drmConfiguration = dataSource.drmConfiguration;
+    if (drmConfiguration == null) {
+      return null;
+    }
+    if (dataSource.sourceType != DataSourceType.network) {
+      throw ArgumentError.value(
+        dataSource.sourceType,
+        'dataSource.sourceType',
+        'DRM is only supported for network data sources',
+      );
+    }
+    if (drmConfiguration is! FairPlayDrmConfiguration) {
+      throw UnsupportedError(
+        'The AVFoundation implementation of video_player only supports '
+        'FairPlayDrmConfiguration, not ${drmConfiguration.runtimeType}',
+      );
+    }
+    return PlatformFairPlayDrmConfiguration(
+      certificateUri: drmConfiguration.certificateUri.toString(),
+      licenseUri: drmConfiguration.licenseUri.toString(),
+      licenseHeaders: drmConfiguration.licenseHeaders,
+      contentId: drmConfiguration.contentId,
+    );
   }
 
   /// Returns the API instance for [playerId], creating it if it doesn't already
