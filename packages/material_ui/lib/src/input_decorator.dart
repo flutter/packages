@@ -1355,8 +1355,9 @@ class _RenderDecoration extends RenderBox
       prefixIconHeight,
       suffixIconHeight,
     ].reduce(math.max);
-    final double minContainerHeight = decoration.isDense! || expands
-        ? 0.0
+    // Keep in sync with the minimum container height computed in _layout.
+    final double minContainerHeight = decoration.isDense! || decoration.isCollapsed || expands
+        ? inputHeight
         : kMinInteractiveDimension;
 
     return math.max(containerHeight, minContainerHeight) + supportingTextHeight;
@@ -1727,6 +1728,20 @@ class _RenderDecoration extends RenderBox
   bool hitTestChildren(BoxHitTestResult result, {required Offset position}) {
     for (final RenderBox child in children) {
       // The label must be handled specially since we've transformed it.
+      if (child == label && _labelTransform != null) {
+        final transform = Matrix4.identity();
+        applyPaintTransform(child, transform);
+        if (result.addWithPaintTransform(
+          transform: transform,
+          position: position,
+          hitTest: (BoxHitTestResult result, Offset transformed) {
+            return child.hitTest(result, position: transformed);
+          },
+        )) {
+          return true;
+        }
+        continue;
+      }
       final Offset offset = _boxParentData(child).offset;
       final bool isHit = result.addWithPaintOffset(
         offset: offset,

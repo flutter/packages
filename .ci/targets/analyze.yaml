@@ -6,6 +6,8 @@ tasks:
     script: .ci/scripts/analyze_repo_tools.sh
   - name: analyze flutter_goldens
     script: .ci/scripts/analyze_flutter_goldens.sh
+  - name: analyze ci_info
+    script: .ci/scripts/analyze_ci_info.sh
   - name: download Dart deps
     script: .ci/scripts/tool_runner.sh
     args: ["fetch-deps"]

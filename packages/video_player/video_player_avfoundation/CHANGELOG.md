@@ -1,3 +1,11 @@
+## 2.12.4
+
+* Converts internal event channel implementation to Swift.
+
+## 2.12.3
+
+* Fixes a potential crash when a player is disposed while an async method is in progress.
+
 ## 2.12.2
 
 * Converts native player implementation to Swift.

@@ -4,7 +4,6 @@
 
 /// @docImport 'material_localizations.dart';
 /// @docImport 'theme.dart';
-/// @docImport 'theme_data.dart';
 library;
 
 import 'package:flutter/foundation.dart';
@@ -13,6 +12,7 @@ import 'package:flutter/painting.dart';
 import 'color_scheme.dart';
 import 'colors.dart';
 import 'text_theme.dart';
+import 'theme_data.dart';
 
 part 'generated/typography_defaults_m3.g.dart';
 
@@ -70,15 +70,16 @@ enum ScriptCategory {
 /// font](https://developer.apple.com/design/human-interface-guidelines/typography/)
 /// fonts as used by Apple on iOS.
 ///
-/// Two sets of geometry themes are provided: 2014 and 2018. The 2014 themes
-/// correspond to the original version of the Material Design spec and are
-/// the defaults. The 2018 themes correspond the second iteration of the
-/// specification and feature different font sizes, font weights, and
-/// letter spacing values.
+/// Three sets of geometry themes are provided: 2014, 2018, and 2021. The 2014
+/// themes correspond to the original version of the Material Design spec. The
+/// 2018 themes correspond to the second iteration of the specification and
+/// feature different font sizes, font weights, and letter spacing values. The
+/// 2021 themes correspond to the Material Design 3 specification.
 ///
-/// By default, [ThemeData.typography] is `Typography.material2014(platform:
-/// platform)` which uses [englishLike2014], [dense2014] and [tall2014]. To use
-/// the 2018 text theme geometries, specify a value using the [Typography.material2018]
+/// By default, [ThemeData.typography] is `Typography.material2021(platform:
+/// platform, colorScheme: colorScheme)` (or `Typography.material2014(platform:
+/// platform)` when [ThemeData.useMaterial3] is false). To use the 2018 text
+/// theme geometries, specify a value using the [Typography.material2018]
 /// constructor:
 ///
 /// ```dart
@@ -163,21 +164,52 @@ class Typography with Diagnosticable {
 
   /// Creates a typography instance using Material Design 3 2021 defaults.
   ///
-  /// If [platform] is [TargetPlatform.iOS] or [TargetPlatform.macOS], the
-  /// default values for [black] and [white] are [blackCupertino] and
-  /// [whiteCupertino] respectively. Otherwise they are [blackMountainView] and
-  /// [whiteMountainView]. If [platform] is null then both [black] and [white]
-  /// must be specified.
+  /// Text colors are derived from [colorScheme]. For a light [colorScheme],
+  /// every style in the resulting [Typography.black] uses
+  /// [ColorScheme.onSurface] and every style in [Typography.white] uses
+  /// [ColorScheme.surface]. For a dark [colorScheme], these are reversed. The
+  /// same colors are used for [TextStyle.decorationColor].
+  ///
+  /// The default values for [black] and [white] depend on [platform]:
+  /// [blackCupertino] and [whiteCupertino] on iOS, [blackRedwoodCity] and
+  /// [whiteRedwoodCity] on macOS, [blackRedmond] and [whiteRedmond] on
+  /// Windows, [blackHelsinki] and [whiteHelsinki] on Linux, and
+  /// [blackMountainView] and [whiteMountainView] otherwise. If [platform] is
+  /// null then both [black] and [white] must be specified.
   ///
   /// The default values for [englishLike], [dense], and [tall] are
   /// [englishLike2021], [dense2021], and [tall2021].
+  ///
+  /// The [black] and [white] parameters are deprecated. Only their non-color
+  /// properties (such as font family) are used. Any [TextStyle.color] or
+  /// [TextStyle.decorationColor] they specify is replaced with a color from
+  /// [colorScheme] as described above. To customize the text theme's colors,
+  /// call [copyWith] on the result:
+  ///
+  /// ```dart
+  /// final Typography base = Typography.material2021(colorScheme: colorScheme);
+  /// final Typography typography = base.copyWith(
+  ///   black: base.black.merge(myBlack),
+  ///   white: base.white.merge(myWhite),
+  /// );
+  /// ```
   ///
   /// See also:
   ///  * <https://m3.material.io/styles/typography>
   factory Typography.material2021({
     TargetPlatform? platform = TargetPlatform.android,
     ColorScheme colorScheme = const ColorScheme.light(),
+    @Deprecated(
+      'Text colors are derived from colorScheme, so colors in this text theme are ignored. '
+      'Use copyWith on the result to customize the black text theme. '
+      'This feature was deprecated after material_ui v1.8.0.',
+    )
     TextTheme? black,
+    @Deprecated(
+      'Text colors are derived from colorScheme, so colors in this text theme are ignored. '
+      'Use copyWith on the result to customize the white text theme. '
+      'This feature was deprecated after material_ui v1.8.0.',
+    )
     TextTheme? white,
     TextTheme? englishLike,
     TextTheme? dense,
@@ -350,7 +382,7 @@ class Typography with Diagnosticable {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    final defaultTypography = Typography.material2014();
+    final Typography defaultTypography = ThemeData.fallback().typography;
     properties.add(
       DiagnosticsProperty<TextTheme>('black', black, defaultValue: defaultTypography.black),
     );

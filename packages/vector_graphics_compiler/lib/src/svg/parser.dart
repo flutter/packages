@@ -40,6 +40,7 @@ typedef _ParseFunc = void Function(SvgParser parserState, bool warningsAsErrors)
 typedef _PathFunc = Path? Function(SvgParser parserState);
 
 final RegExp _whitespacePattern = RegExp(r'\s');
+final RegExp _stdDeviationDelimiter = RegExp(r'[\s,]+');
 
 const Map<String, _ParseFunc> _svgElementParsers = <String, _ParseFunc>{
   'svg': _Elements.svg,
@@ -55,6 +56,7 @@ const Map<String, _ParseFunc> _svgElementParsers = <String, _ParseFunc>{
   'image': _Elements.image,
   'text': _Elements.textOrTspan,
   'tspan': _Elements.textOrTspan,
+  'filter': _Elements.filter,
 };
 
 const Map<String, _PathFunc> _svgPathFuncs = <String, _PathFunc>{
@@ -153,7 +155,199 @@ class _Elements {
     return;
   }
 
+  static void filter(SvgParser parserState, bool warningsAsErrors) {
+    if (parserState._currentStartElement?.isSelfClosing ?? false) {
+      return;
+    }
+    final String id = parserState.buildUrlIri();
+
+    final primitives = <String, _FilterPrimitive>{};
+    String? lastResult;
+    var primitiveCount = 0;
+
+    List<String>? currentMergeInputs;
+    String? currentMergeResult;
+    var hasUnsupportedPrimitive = false;
+
+    for (final XmlEvent event in parserState._readSubtree()) {
+      if (event is XmlEndElementEvent) {
+        if (event.localName == 'feMerge') {
+          if (currentMergeResult != null && currentMergeInputs != null) {
+            primitives[currentMergeResult] = _FilterPrimitive(
+              type: 'merge',
+              inputs: currentMergeInputs,
+            );
+            lastResult = currentMergeResult;
+            currentMergeResult = null;
+            currentMergeInputs = null;
+          }
+        }
+        continue;
+      }
+      if (event is XmlStartElementEvent) {
+        final String localName = event.localName;
+
+        if (localName == 'feGaussianBlur' || localName == 'feOffset' || localName == 'feMerge') {
+          final String result =
+              parserState.attribute('result') ?? 'implicit_result_${primitiveCount++}';
+          final String defaultInput = lastResult ?? 'SourceGraphic';
+          final String input = parserState.attribute('in') ?? defaultInput;
+
+          if (localName == 'feGaussianBlur') {
+            final String? rawStdDeviation = parserState.attribute('stdDeviation');
+            double? parsedX = 0.0;
+            double? parsedY = 0.0;
+            if (rawStdDeviation != null) {
+              final List<String> parts = rawStdDeviation
+                  .trim()
+                  .split(_stdDeviationDelimiter)
+                  .where((String s) => s.isNotEmpty)
+                  .toList();
+              if (parts.isNotEmpty) {
+                parsedX = parseDouble(parts.first, tryParse: true);
+                parsedY = parts.length > 1 ? parseDouble(parts[1], tryParse: true) : parsedX;
+              }
+            }
+            if (parsedX != null && parsedX >= 0 && parsedY != null && parsedY >= 0) {
+              primitives[result] = _FilterPrimitive(
+                type: 'blur',
+                input: input,
+                sigmaX: parsedX,
+                sigmaY: parsedY,
+              );
+              lastResult = result;
+            }
+          } else if (localName == 'feOffset') {
+            final String? rawDx = parserState.attribute('dx');
+            final String? rawDy = parserState.attribute('dy');
+            final double dx = rawDx != null ? (parseDouble(rawDx, tryParse: true) ?? 0.0) : 0.0;
+            final double dy = rawDy != null ? (parseDouble(rawDy, tryParse: true) ?? 0.0) : 0.0;
+
+            primitives[result] = _FilterPrimitive(type: 'offset', input: input, dx: dx, dy: dy);
+            lastResult = result;
+          } else if (localName == 'feMerge') {
+            if (event.isSelfClosing) {
+              primitives[result] = _FilterPrimitive(type: 'merge');
+              lastResult = result;
+            } else {
+              currentMergeResult = result;
+              currentMergeInputs = <String>[];
+            }
+          }
+        } else if (localName == 'feMergeNode') {
+          final String input = parserState.attribute('in') ?? lastResult ?? 'SourceGraphic';
+          currentMergeInputs?.add(input);
+        } else {
+          if (!event.isSelfClosing) {
+            parserState._discardSubtree();
+          }
+          assert(() {
+            parserState.unhandledElement(event);
+            return true;
+          }());
+          hasUnsupportedPrimitive = true;
+        }
+      }
+    }
+
+    if (hasUnsupportedPrimitive) {
+      return;
+    }
+
+    final visiting = <String>{};
+    List<SvgFilterLayer>? trace(String input) {
+      if (input == 'SourceGraphic') {
+        return const <SvgFilterLayer>[
+          SvgFilterLayer(isSourceAlpha: false, sigmaX: 0, sigmaY: 0, dx: 0, dy: 0),
+        ];
+      }
+      if (input == 'SourceAlpha') {
+        return const <SvgFilterLayer>[
+          SvgFilterLayer(isSourceAlpha: true, sigmaX: 0, sigmaY: 0, dx: 0, dy: 0),
+        ];
+      }
+      if (visiting.contains(input)) {
+        return null;
+      }
+      final _FilterPrimitive? primitive = primitives[input];
+      if (primitive == null) {
+        return null;
+      }
+      visiting.add(input);
+
+      if (primitive.type == 'merge') {
+        final mergedLayers = <SvgFilterLayer>[];
+        for (final String mergeInput in primitive.inputs) {
+          final List<SvgFilterLayer>? parentLayers = trace(mergeInput);
+          if (parentLayers == null) {
+            visiting.remove(input);
+            return null;
+          }
+          mergedLayers.addAll(parentLayers);
+        }
+        visiting.remove(input);
+        return mergedLayers;
+      }
+
+      final List<SvgFilterLayer>? parentLayers = trace(primitive.input);
+      visiting.remove(input);
+      if (parentLayers == null) {
+        return null;
+      }
+
+      final results = <SvgFilterLayer>[];
+      for (final SvgFilterLayer parentLayer in parentLayers) {
+        if (primitive.type == 'blur') {
+          results.add(
+            SvgFilterLayer(
+              isSourceAlpha: parentLayer.isSourceAlpha,
+              sigmaX: math.sqrt(
+                parentLayer.sigmaX * parentLayer.sigmaX + primitive.sigmaX * primitive.sigmaX,
+              ),
+              sigmaY: math.sqrt(
+                parentLayer.sigmaY * parentLayer.sigmaY + primitive.sigmaY * primitive.sigmaY,
+              ),
+              dx: parentLayer.dx,
+              dy: parentLayer.dy,
+            ),
+          );
+        } else {
+          assert(primitive.type == 'offset');
+          results.add(
+            SvgFilterLayer(
+              isSourceAlpha: parentLayer.isSourceAlpha,
+              sigmaX: parentLayer.sigmaX,
+              sigmaY: parentLayer.sigmaY,
+              dx: parentLayer.dx + primitive.dx,
+              dy: parentLayer.dy + primitive.dy,
+            ),
+          );
+        }
+      }
+      return results;
+    }
+
+    if (lastResult == null) {
+      return;
+    }
+
+    final List<SvgFilterLayer>? layers = trace(lastResult);
+    if (layers == null || layers.isEmpty) {
+      return;
+    }
+
+    if (layers.length == 1 && !layers.first.isSourceAlpha && !layers.first.hasEffect) {
+      return;
+    }
+
+    parserState._definitions.addFilter(id, SvgFilter(layers));
+    return;
+  }
+
   static void pattern(SvgParser parserState, bool warningsAsErrors) {
+    if (parserState._currentStartElement?.isSelfClosing ?? false) {
+      return;
+    }
     final SvgAttributes attributes = parserState._currentAttributes;
     final String rawWidth = parserState.attribute('width') ?? '';
     final String rawHeight = parserState.attribute('height') ?? '';
@@ -807,7 +1001,7 @@ class SvgParser {
     _parseTree();
 
     /// Resolve the tree
-    final resolvingVisitor = ResolvingVisitor();
+    final resolvingVisitor = ResolvingVisitor(_definitions.getFilter);
     final tessellator = Tessellator();
     final maskingOptimizer = MaskingOptimizer();
     final clippingOptimizer = ClippingOptimizer();
@@ -1570,17 +1764,32 @@ class SvgParser {
     return attributeMap['display'] != 'none' && attributeMap['visibility'] != 'hidden';
   }
 
+  static final RegExp _listSeparator = RegExp(r'[\s,]');
+
+  // Text and tspan can list one coordinate per character, which isn't
+  // supported. Fail with a clear message instead of a FormatException.
+  String? _singleCoordinate(String name, String? raw) {
+    if (raw == null) {
+      return null;
+    }
+    final String trimmed = raw.trim();
+    if (trimmed.contains(_listSeparator)) {
+      throw UnimplementedError('A list of values for "$name" is not supported: "$trimmed"');
+    }
+    return trimmed;
+  }
+
   SvgAttributes _createSvgAttributes(Map<String, String> attributeMap, {Color? currentColor}) {
     final String? id = attributeMap['id'];
     final double? opacity = parseDouble(attributeMap['opacity'])?.clamp(0.0, 1.0);
     final Color? color =
         parseColor(attributeMap['color'], attributeName: 'color', id: id) ?? currentColor;
 
-    final String? rawX = attributeMap['x'];
-    final String? rawY = attributeMap['y'];
+    final String? rawX = _singleCoordinate('x', attributeMap['x']);
+    final String? rawY = _singleCoordinate('y', attributeMap['y']);
 
-    final String? rawDx = attributeMap['dx'];
-    final String? rawDy = attributeMap['dy'];
+    final String? rawDx = _singleCoordinate('dx', attributeMap['dx']);
+    final String? rawDy = _singleCoordinate('dy', attributeMap['dy']);
 
     return SvgAttributes._(
       raw: attributeMap,
@@ -1613,6 +1822,7 @@ class SvgParser {
       textAnchorMultiplier: parseTextAnchor(attributeMap['text-anchor']),
       maskType: parseMaskType(attributeMap['mask-type']),
       opacity: opacity,
+      filterId: attributeMap['filter'],
     );
   }
 }
@@ -1625,6 +1835,7 @@ class _Resolver {
   final Map<String, AttributedNode> _drawables = <String, AttributedNode>{};
   final Map<String, Gradient> _shaders = <String, Gradient>{};
   final Map<String, List<Node>> _clips = <String, List<Node>>{};
+  final Map<String, SvgFilter> _filters = <String, SvgFilter>{};
   int _deferredExpansionCount = 0;
 
   bool _sealed = false;
@@ -1638,6 +1849,18 @@ class _Resolver {
   AttributedNode? getDrawable(String ref) {
     assert(_sealed);
     return _drawables[ref];
+  }
+
+  /// Add the filter defined by [ref] to the resolver.
+  void addFilter(String ref, SvgFilter filter) {
+    assert(!_sealed);
+    _filters[ref] = filter;
+  }
+
+  /// Retrieve the filter defined by [ref], or `null` if it is undefined.
+  SvgFilter? getFilter(String ref) {
+    assert(_sealed);
+    return _filters[ref];
   }
 
   /// Retrieve the clip defined by [ref], or `null` if it is undefined.
@@ -1796,6 +2019,7 @@ class SvgAttributes {
     this.height,
     this.maskType,
     this.opacity,
+    this.filterId,
   });
 
   /// For use in tests to construct arbitrary attributes.
@@ -1827,6 +2051,7 @@ class SvgAttributes {
     this.height,
     this.maskType,
     this.opacity,
+    this.filterId,
   });
 
   /// The empty set of properties.
@@ -1988,6 +2213,9 @@ class SvgAttributes {
   /// The element or group-level `opacity` attribute, clamped to 0.0..1.0.
   final double? opacity;
 
+  /// The raw identifier for the filter to apply.
+  final String? filterId;
+
   /// A copy of these attributes after absorbing a saveLayer.
   ///
   /// Specifically, this will null out `blendMode` and any opacity related
@@ -2031,6 +2259,7 @@ class SvgAttributes {
     bool includePosition = false,
     AffineMatrix? transformOverride,
     String? hrefOverride,
+    String? filterIdOverride,
   }) {
     final newRaw = <String, String>{
       ...Map<String, String>.fromEntries(parent.heritable),
@@ -2066,15 +2295,28 @@ class SvgAttributes {
       dy: dy,
       maskType: maskType ?? parent.maskType,
       opacity: opacity,
+      filterId: filterIdOverride ?? filterId,
     );
   }
 }
 
-/// A value that represents either an absolute pixel coordinate or a percentage
-/// of a bounding dimension.
+/// The unit of a [DoubleOrPercentage].
+enum _DoubleOrPercentageUnit {
+  /// An absolute pixel coordinate.
+  pixels,
+
+  /// A fraction of a bounding dimension.
+  percentage,
+
+  /// A multiple of the font size.
+  em,
+}
+
+/// A value that represents either an absolute pixel coordinate, a percentage
+/// of a bounding dimension, or a multiple of the font size (`em`).
 @immutable
 class DoubleOrPercentage {
-  const DoubleOrPercentage._(this._value, this._isPercentage);
+  const DoubleOrPercentage._(this._value, this._unit);
 
   /// Constructs a [DoubleOrPercentage] from a raw SVG attribute string.
   static DoubleOrPercentage? fromString(String? raw) {
@@ -2083,33 +2325,36 @@ class DoubleOrPercentage {
     }
 
     if (isPercentage(raw)) {
-      return DoubleOrPercentage._(parsePercentage(raw), true);
+      return DoubleOrPercentage._(parsePercentage(raw), _DoubleOrPercentageUnit.percentage);
     }
-    return DoubleOrPercentage._(parseDouble(raw)!, false);
+    if (isEm(raw)) {
+      return DoubleOrPercentage._(parseEm(raw), _DoubleOrPercentageUnit.em);
+    }
+    return DoubleOrPercentage._(parseDouble(raw)!, _DoubleOrPercentageUnit.pixels);
   }
 
   final double _value;
-  final bool _isPercentage;
+  final _DoubleOrPercentageUnit _unit;
 
   /// Calculates the result of applying this dimension within [bound].
   ///
-  /// If this is a percentage, it will return a percentage of bound. Otherwise,
-  /// it returns the value of this.
-  double calculate(double bound) {
-    if (_isPercentage) {
-      return _value * bound;
-    }
-    return _value;
+  /// If this is a percentage, it will return a percentage of bound. If this is
+  /// an `em` value, it will return a multiple of [fontSize]. Otherwise, it
+  /// returns the value of this.
+  double calculate(double bound, {double fontSize = kDefaultFontSize}) {
+    return switch (_unit) {
+      _DoubleOrPercentageUnit.pixels => _value,
+      _DoubleOrPercentageUnit.percentage => _value * bound,
+      _DoubleOrPercentageUnit.em => _value * fontSize,
+    };
   }
 
   @override
-  int get hashCode => Object.hash(_value, _isPercentage);
+  int get hashCode => Object.hash(_value, _unit);
 
   @override
   bool operator ==(Object other) {
-    return other is DoubleOrPercentage &&
-        other._isPercentage == _isPercentage &&
-        other._value == _value;
+    return other is DoubleOrPercentage && other._unit == _unit && other._value == _value;
   }
 }
 
@@ -2365,4 +2610,23 @@ class ColorOrNone {
 
   @override
   String toString() => isNone ? '"none"' : (color?.toString() ?? 'null');
+}
+
+class _FilterPrimitive {
+  _FilterPrimitive({
+    required this.type,
+    this.input = '',
+    this.inputs = const <String>[],
+    this.sigmaX = 0.0,
+    this.sigmaY = 0.0,
+    this.dx = 0.0,
+    this.dy = 0.0,
+  });
+  final String type;
+  final String input;
+  final List<String> inputs;
+  final double sigmaX;
+  final double sigmaY;
+  final double dx;
+  final double dy;
 }

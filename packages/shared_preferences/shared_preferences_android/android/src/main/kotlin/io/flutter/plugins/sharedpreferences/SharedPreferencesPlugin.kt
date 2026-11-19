@@ -36,6 +36,8 @@ const val LIST_PREFIX = "VGhpcyBpcyB0aGUgcHJlZml4IGZvciBhIGxpc3Qu"
 // The symbol `!` was chosen as it cannot be created by the base 64 encoding used with LIST_PREFIX.
 const val JSON_LIST_PREFIX = "$LIST_PREFIX!"
 const val DOUBLE_PREFIX = "VGhpcyBpcyB0aGUgcHJlZml4IGZvciBEb3VibGUu"
+private const val DATA_STORE_INSTANCE_NAME = "data_store"
+private const val SHARED_PREFERENCES_INSTANCE_NAME = "shared_preferences"
 
 /*package private*/ val Context.sharedPreferencesDataStore: DataStore<Preferences> by
     preferencesDataStore(SHARED_PREFERENCES_NAME)
@@ -54,24 +56,29 @@ class SharedPreferencesPlugin() : FlutterPlugin, SharedPreferencesAsyncApi {
     this.listEncoder = listEncoder
   }
 
-  private fun setUp(context: Context) {
-    this.context = context
+  private fun setUp(binding: FlutterPlugin.FlutterPluginBinding) {
+    context = binding.applicationContext
     try {
-      SharedPreferencesAsyncApiRegistrar().register(this, "data_store")
-      backend = SharedPreferencesBackend(context, listEncoder)
+      SharedPreferencesAsyncApiRegistrar().register(this, binding, DATA_STORE_INSTANCE_NAME)
+      val sharedPrefsBackend = SharedPreferencesBackend(binding.applicationContext, listEncoder)
+      SharedPreferencesAsyncApiRegistrar()
+          .register(sharedPrefsBackend, binding, SHARED_PREFERENCES_INSTANCE_NAME)
+      backend = sharedPrefsBackend
     } catch (ex: Exception) {
       Log.e(TAG, "Received exception while setting up SharedPreferencesPlugin", ex)
     }
   }
 
   override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {
-    setUp(binding.applicationContext)
+    setUp(binding)
     legacyPlugin = LegacySharedPreferencesPlugin().also { it.onAttachedToEngine(binding) }
   }
 
   override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
-    SharedPreferencesAsyncApiRegistrar().register(null, "data_store")
-    backend?.tearDown()
+    SharedPreferencesAsyncApiRegistrar().unregister(this, binding, DATA_STORE_INSTANCE_NAME)
+    backend?.let {
+      SharedPreferencesAsyncApiRegistrar().unregister(it, binding, SHARED_PREFERENCES_INSTANCE_NAME)
+    }
     backend = null
     legacyPlugin?.onDetachedFromEngine(binding)
     legacyPlugin = null
@@ -286,18 +293,6 @@ class SharedPreferencesBackend(
     private var listEncoder: SharedPreferencesListEncoder = ListEncoder()
 ) : SharedPreferencesAsyncApi {
   private val backgroundDispatcher = Dispatchers.IO.limitedParallelism(1)
-
-  init {
-    try {
-      SharedPreferencesAsyncApiRegistrar().register(this, "shared_preferences")
-    } catch (ex: Exception) {
-      Log.e(TAG, "Received exception while setting up SharedPreferencesBackend", ex)
-    }
-  }
-
-  fun tearDown() {
-    SharedPreferencesAsyncApiRegistrar().register(null, "shared_preferences")
-  }
 
   private fun createSharedPreferences(options: SharedPreferencesPigeonOptions): SharedPreferences {
     return if (options.fileName == null) {

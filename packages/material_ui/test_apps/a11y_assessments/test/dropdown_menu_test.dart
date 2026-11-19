@@ -40,4 +40,9 @@ void main() {
     await tester.pumpAndSettle();
     expect(findHeadingLevelOnes, findsOne);
   });
+
+  testWidgets('dropdown menu use case content is not a semantic list', (WidgetTester tester) async {
+    await pumpsUseCase(tester, DropdownMenuUseCase());
+    expect(hasSemanticsList(tester, find.byType(ListView)), isFalse);
+  });
 }

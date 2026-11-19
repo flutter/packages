@@ -84,7 +84,7 @@ class _SvgFinder extends MatchFinder {
 }
 
 class _SvgAssetWithPathFinder extends MatchFinder {
-  _SvgAssetWithPathFinder({required String svgPath, super.skipOffstage}) : _svgPath = svgPath;
+  _SvgAssetWithPathFinder({required this._svgPath, super.skipOffstage});
   final String _svgPath;
 
   @override
@@ -97,7 +97,7 @@ class _SvgAssetWithPathFinder extends MatchFinder {
 }
 
 class _SvgNetworkWithUrlFinder extends MatchFinder {
-  _SvgNetworkWithUrlFinder({required String url, super.skipOffstage}) : _url = url;
+  _SvgNetworkWithUrlFinder({required this._url, super.skipOffstage});
   final String _url;
 
   @override
@@ -110,7 +110,7 @@ class _SvgNetworkWithUrlFinder extends MatchFinder {
 }
 
 class _SvgFileWithPathFinder extends MatchFinder {
-  _SvgFileWithPathFinder({required String path, super.skipOffstage}) : _path = path;
+  _SvgFileWithPathFinder({required this._path, super.skipOffstage});
   final String _path;
 
   @override
@@ -123,7 +123,7 @@ class _SvgFileWithPathFinder extends MatchFinder {
 }
 
 class _SvgMemoryWithBytesFinder extends MatchFinder {
-  _SvgMemoryWithBytesFinder({required Uint8List bytes, super.skipOffstage}) : _bytes = bytes;
+  _SvgMemoryWithBytesFinder({required this._bytes, super.skipOffstage});
   final Uint8List _bytes;
 
   @override

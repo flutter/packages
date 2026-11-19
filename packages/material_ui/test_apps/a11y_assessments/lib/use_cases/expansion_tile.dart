@@ -38,7 +38,7 @@ class _ExpansionTileExampleState extends State<ExpansionTileExample> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Semantics(headingLevel: 1, child: Text('$pageTitle Demo'))),
-      body: Column(
+      body: ListView(
         children: <Widget>[
           const ExpansionTile(
             title: Text('ExpansionTile 1'),
