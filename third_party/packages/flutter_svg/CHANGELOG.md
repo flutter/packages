@@ -1,6 +1,14 @@
-## 2.4.2
+## 2.5.1
 
 * Uses the configured default placeholder builder when no widget-specific placeholder is supplied.
+
+## 2.5.0
+
+* Adds `SvgLoader.provideSvgInIsolate`, which controls whether `provideSvg` runs
+  in the compute isolate.
+* Fixes SVG loading failing in profile and release builds when an asset bundle
+  or HTTP client retains a `Future`, by calling `provideSvg` for `SvgAssetLoader`
+  and `SvgNetworkLoader` on the calling isolate.
 
 ## 2.4.1
 
