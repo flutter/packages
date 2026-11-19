@@ -164,30 +164,11 @@ class Tab extends StatelessWidget implements PreferredSizeWidget {
   ///
   /// <callout-box>
   ///
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
-  ///
   /// The provided tab height cannot be lower than the default height. Use
   /// [PreferredSize] widget to adjust the overall [TabBar] height and match
   /// the provided tab [height]:
   ///
-  /// ```dart
-  /// bottom: const PreferredSize(
-  ///   preferredSize: Size.fromHeight(20.0),
-  ///   child: TabBar(
-  ///     tabs: <Widget>[
-  ///       Tab(
-  ///         text: 'Tab 1',
-  ///         height: 20.0,
-  ///       ),
-  ///       Tab(
-  ///         text: 'Tab 2',
-  ///         height: 20.0,
-  ///       ),
-  ///     ],
-  ///   ),
-  /// ),
-  /// ```
+  /// {@example /example/lib/tabs/tab.height.snippet.0.dart#body indent=strip}
   ///
   /// </callout-box>
   final double? height;
