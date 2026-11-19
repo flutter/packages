@@ -45,9 +45,9 @@ emulator can reproduce a bug, try it on the emulator before deciding.
 ## 2. Start an emulator
 
 Do these steps in order. If a step says to stop, stop and tell the user what is
-required. Do not install or update tools, create AVDs, or start an emulator
-another way, even though the [android-cli](../android-cli/SKILL.md) skill
-lists commands for some of these.
+required. Do not install or update tools, create AVDs without the user's
+approval (step 3), or start an emulator another way, even though the
+[android-cli](../android-cli/SKILL.md) skill lists commands for some of these.
 
 1. **Check the Android CLI:** run `android --version`. It must print version
    1.1 or newer. If the command is not found or prints no version, stop: the
@@ -161,7 +161,8 @@ for CameraX errors: run `adb -s <serial> logcat -c` before the test and search
    the first camera. If a flow needs more than about five taps, write an
    integration test instead. Do not add Flutter Driver to the example app.
 3. **For visual changes, include a screenshot as evidence** in your report:
-   `android screen capture --device=<serial> -o <artifact dir>/scratch/<name>.png`.
+   `android screen capture --device=<serial> -o <file>.png`, saved to a
+   scratch directory outside the repository.
    A screenshot can show that the preview is visible (not black), that it is
    rotated by 90° or 180°, or that a control or error appeared. To tell whether
    the preview is live or frozen, compare two screenshots of the front camera
@@ -189,6 +190,10 @@ for CameraX errors: run `adb -s <serial> logcat -c` before the test and search
    and rebuild. Do not commit this change:
 
    ```kotlin
+   import android.os.Bundle
+   import io.flutter.embedding.engine.renderer.FlutterRenderer
+
+   // In MainActivity:
    override fun onCreate(savedInstanceState: Bundle?) {
      FlutterRenderer.debugForceSurfaceProducerGlTextures = true
      super.onCreate(savedInstanceState)
@@ -196,4 +201,5 @@ for CameraX errors: run `adb -s <serial> logcat -c` before the test and search
    ```
 
    This covers the backend, not other API-level differences. If those matter,
-   ask the user for an AVD with the API level you need.
+   ask the user to approve an AVD with the API level you need (section 2,
+   step 3).
