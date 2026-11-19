@@ -1,8 +1,10 @@
-## 2.4.2
+## 2.5.0
 
-* Fixes SVG loading failing in profile and release builds when a loader cannot
-  be sent to an isolate, such as one holding an asset bundle or HTTP client
-  that retains a `Future`.
+* Adds `SvgLoader.provideSvgInIsolate`, which controls whether `provideSvg` runs
+  in the compute isolate.
+* Fixes SVG loading failing in profile and release builds when an asset bundle
+  or HTTP client retains a `Future`, by calling `provideSvg` for `SvgAssetLoader`
+  and `SvgNetworkLoader` on the calling isolate.
 
 ## 2.4.1
 

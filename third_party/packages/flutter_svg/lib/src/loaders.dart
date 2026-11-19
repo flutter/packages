@@ -140,10 +140,18 @@ abstract class SvgLoader<T> extends BytesLoader {
   /// The [ColorMapper] used to transform colors from the SVG, if any.
   final ColorMapper? colorMapper;
 
-  /// Will be called in [compute] with the result of [prepareMessage], or on
-  /// the calling isolate if this loader cannot be sent to another isolate.
+  /// Will be called with the result of [prepareMessage], in [compute] if
+  /// [provideSvgInIsolate] is true and on the calling isolate otherwise.
   @protected
   String provideSvg(T? message);
+
+  /// Whether [provideSvg] is called in the [compute] isolate.
+  ///
+  /// If true, this loader is sent to that isolate, so it must be sendable (see
+  /// `SendPort.send`). Loaders holding an [AssetBundle] or [http.Client]
+  /// return false, since those may retain unsendable objects such as futures.
+  @protected
+  bool get provideSvgInIsolate => true;
 
   /// Will be called
   @protected
@@ -168,22 +176,20 @@ abstract class SvgLoader<T> extends BytesLoader {
   Future<ByteData> _load(BuildContext? context) {
     final vg.SvgTheme theme = getTheme(context).toVgTheme();
     return prepareMessage(context).then((T? message) {
-      // This sends the whole loader to the compute isolate to call provideSvg
-      // there, which fails if the loader is not sendable. See
-      // https://github.com/flutter/flutter/issues/158835.
-      return compute(
-        (T? message) => _compileSvg(_SvgCompileRequest(provideSvg(message), theme, colorMapper)),
-        message,
-        debugLabel: 'Load Bytes',
-      ).onError((_, _) {
-        // The loader may not be sendable (for example, an asset bundle or HTTP
-        // client holding a Future): provide the SVG here and send only the result.
+      if (!provideSvgInIsolate) {
         return compute(
           _compileSvg,
           _SvgCompileRequest(provideSvg(message), theme, colorMapper),
           debugLabel: 'Load Bytes',
         );
-      });
+      }
+      // Sends the whole loader to the isolate. See
+      // https://github.com/flutter/flutter/issues/158835.
+      return compute(
+        (T? message) => _compileSvg(_SvgCompileRequest(provideSvg(message), theme, colorMapper)),
+        message,
+        debugLabel: 'Load Bytes',
+      );
     });
   }
 
@@ -377,6 +383,9 @@ class SvgAssetLoader extends SvgLoader<ByteData> {
   }
 
   @override
+  bool get provideSvgInIsolate => false;
+
+  @override
   String provideSvg(ByteData? message) =>
       utf8.decode(Uint8List.sublistView(message!), allowMalformed: true);
 
@@ -477,6 +486,9 @@ class SvgNetworkLoader extends SvgLoader<Uint8List> {
       }
     }
   }
+
+  @override
+  bool get provideSvgInIsolate => false;
 
   @override
   String provideSvg(Uint8List? message) => utf8.decode(message!, allowMalformed: true);

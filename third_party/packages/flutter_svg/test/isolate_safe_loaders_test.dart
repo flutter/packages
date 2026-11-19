@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_svg/src/utilities/compute.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart' as http;
 
 const String _svg = '<svg width="12" height="12"><rect width="12" height="12"/></svg>';
 const String _invalidSvg = 'not SVG';
@@ -20,15 +21,15 @@ void main() {
   });
   tearDown(() => debugRunComputeInline = true);
 
-  test('a sendable loader provides the SVG in the compute isolate', () async {
-    final loader = _CountingAssetLoader(_SendableBundle(_svg));
+  test('loaders provide the SVG in the compute isolate by default', () async {
+    const loader = _CountingStringLoader(_svg);
     final ByteData bytes = await loader.loadBytes(null);
 
     expect(bytes.lengthInBytes, greaterThan(0));
     expect(_provideSvgCalls, 0);
   });
 
-  test('an unsendable loader provides the SVG on the calling isolate', () async {
+  test('the asset loader provides the SVG on the calling isolate', () async {
     final loader = _CountingAssetLoader(_FutureHoldingBundle(_svg));
     final ByteData bytes = await loader.loadBytes(null);
 
@@ -36,11 +37,32 @@ void main() {
     expect(_provideSvgCalls, 1);
   });
 
-  test('an invalid SVG from an unsendable loader still reports an error', () async {
+  test('the network loader works with a client holding a Future', () async {
+    final loader = SvgNetworkLoader(
+      'https://example.com/icon.svg',
+      httpClient: _FutureHoldingClient(_svg),
+    );
+    final ByteData bytes = await loader.loadBytes(null);
+
+    expect(bytes.lengthInBytes, greaterThan(0));
+  });
+
+  test('an invalid SVG from the asset loader reports an error', () async {
     final loader = _CountingAssetLoader(_FutureHoldingBundle(_invalidSvg));
 
     await expectLater(loader.loadBytes(null), throwsA(anything));
+    expect(_provideSvgCalls, 1);
   });
+}
+
+class _CountingStringLoader extends SvgStringLoader {
+  const _CountingStringLoader(super.svg);
+
+  @override
+  String provideSvg(void message) {
+    _provideSvgCalls++;
+    return super.provideSvg(message);
+  }
 }
 
 class _CountingAssetLoader extends SvgAssetLoader {
@@ -53,16 +75,6 @@ class _CountingAssetLoader extends SvgAssetLoader {
   }
 }
 
-class _SendableBundle extends Fake implements AssetBundle {
-  _SendableBundle(this.content);
-
-  final String content;
-
-  @override
-  Future<ByteData> load(String key) async =>
-      Uint8List.fromList(utf8.encode(content)).buffer.asByteData();
-}
-
 class _FutureHoldingBundle extends Fake implements AssetBundle {
   _FutureHoldingBundle(this.content);
 
@@ -73,5 +85,18 @@ class _FutureHoldingBundle extends Fake implements AssetBundle {
   Future<ByteData> load(String key) async {
     assert(!_unsendableState.isCompleted);
     return Uint8List.fromList(utf8.encode(content)).buffer.asByteData();
+  }
+}
+
+class _FutureHoldingClient extends Fake implements http.Client {
+  _FutureHoldingClient(this.content);
+
+  final String content;
+  final Completer<void> _unsendableState = Completer<void>();
+
+  @override
+  Future<http.Response> get(Uri url, {Map<String, String>? headers}) async {
+    assert(!_unsendableState.isCompleted);
+    return http.Response(content, 200);
   }
 }
