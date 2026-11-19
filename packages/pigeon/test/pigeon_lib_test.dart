@@ -3049,16 +3049,9 @@ abstract class Events {
 }
 ''';
 
-    test('Swift FFI rejects Stream return types', () {
+    test('Swift FFI allows Stream return types', () {
       final List<Error> errors = validate(const SwiftGeneratorAdapter(), unsupportedFeaturesSource);
-      expect(
-        errors.map((Error e) => e.message),
-        containsAll(<Matcher>[
-          contains(
-            'Swift FFI does not support Stream return types yet (in method "numbers" in API "Events")',
-          ),
-        ]),
-      );
+      expect(errors, isEmpty);
     });
 
     test('Swift without FFI allows Stream return types', () {
@@ -3126,19 +3119,12 @@ abstract class Api {
       expect(errors[0].message, contains('Swift FFI requires `includeErrorClass: true`'));
     });
 
-    test('Kotlin JNI rejects Stream return types', () {
+    test('Kotlin JNI allows Stream return types', () {
       final List<Error> errors = validate(
         const KotlinGeneratorAdapter(),
         unsupportedFeaturesSource,
       );
-      expect(
-        errors.map((Error e) => e.message),
-        containsAll(<Matcher>[
-          contains(
-            'Kotlin JNI does not support Stream return types yet (in method "numbers" in API "Events")',
-          ),
-        ]),
-      );
+      expect(errors, isEmpty);
     });
 
     test('Kotlin without JNI allows Stream return types', () {
@@ -3738,18 +3724,12 @@ abstract class Api {
       final InternalPigeonOptions dartJniOptions = InternalPigeonOptions.fromPigeonOptions(
         const PigeonOptions(dartOut: 'lib/foo.g.dart', kotlinOptions: KotlinOptions(useJni: true)),
       );
-      expect(
-        const DartGeneratorAdapter().validate(dartJniOptions, root).single.message,
-        contains('Dart native interop does not support Stream return types'),
-      );
+      expect(const DartGeneratorAdapter().validate(dartJniOptions, root), isEmpty);
 
       final InternalPigeonOptions dartFfiOptions = InternalPigeonOptions.fromPigeonOptions(
         const PigeonOptions(dartOut: 'lib/foo.g.dart', swiftOptions: SwiftOptions(useFfi: true)),
       );
-      expect(
-        const DartGeneratorAdapter().validate(dartFfiOptions, root).single.message,
-        contains('Dart native interop does not support Stream return types'),
-      );
+      expect(const DartGeneratorAdapter().validate(dartFfiOptions, root), isEmpty);
     });
   });
 

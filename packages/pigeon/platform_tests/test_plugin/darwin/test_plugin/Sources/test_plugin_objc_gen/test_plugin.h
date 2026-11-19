@@ -3337,6 +3337,82 @@ SWIFT_CLASS("_TtC11test_plugin25NativeInteropSquareBridge")
 + (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
 @end
 
+@class NativeInteropTestsPigeonStreamCancelHandle;
+/// Generated setup class from Pigeon to register implemented
+/// NativeInteropStreamHostApi classes.
+SWIFT_CLASS("_TtC11test_plugin31NativeInteropStreamHostApiSetup")
+@interface NativeInteropStreamHostApiSetup : NSObject
+- (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
+/// Returns the instance generated Dart code should use for <code>name</code>
+/// (or the default instance). Prefers the most recent registration whose engine
+/// key is <code>engineId</code>, then <code>affinityKey</code>, then the most
+/// recent registration. <code>Int64.min</code> means unknown.
++ (NativeInteropStreamHostApiSetup* _Nullable)
+    pigeonResolveInstanceWithEngineId:(int64_t)engineId
+                          affinityKey:(int64_t)affinityKey
+                                 name:(NSString* _Nonnull)name
+    SWIFT_WARN_UNUSED_RESULT;
+/// Returns the engine key <code>instance</code> was registered with, or
+/// <code>Int64.min</code> if unknown.
++ (int64_t)pigeonEngineKeyOf:(NativeInteropStreamHostApiSetup* _Nonnull)instance
+    SWIFT_WARN_UNUSED_RESULT;
+- (NativeInteropTestsPigeonStreamCancelHandle* _Nullable)
+    streamNumbersWithCount:(int64_t)countArg
+                     start:(int64_t)startArg
+              pigeonOnData:(void (^_Nonnull)(NSData* _Nullable))pigeonOnData
+             pigeonOnError:(void (^_Nonnull)(NSString* _Nonnull,
+                                             NSString* _Nullable,
+                                             NSData* _Nullable))pigeonOnError
+              pigeonOnDone:(void (^_Nonnull)(void))pigeonOnDone
+              wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+- (NativeInteropTestsPigeonStreamCancelHandle* _Nullable)
+    streamNullableIntsWithPigeonOnData:
+        (void (^_Nonnull)(NSData* _Nullable))pigeonOnData
+                         pigeonOnError:
+                             (void (^_Nonnull)(NSString* _Nonnull,
+                                               NSString* _Nullable,
+                                               NSData* _Nullable))pigeonOnError
+                          pigeonOnDone:(void (^_Nonnull)(void))pigeonOnDone
+                          wrappedError:
+                              (NativeInteropTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+- (NativeInteropTestsPigeonStreamCancelHandle* _Nullable)
+    streamShapesWithPigeonOnData:
+        (void (^_Nonnull)(NSData* _Nullable))pigeonOnData
+                   pigeonOnError:
+                       (void (^_Nonnull)(NSString* _Nonnull,
+                                         NSString* _Nullable,
+                                         NSData* _Nullable))pigeonOnError
+                    pigeonOnDone:(void (^_Nonnull)(void))pigeonOnDone
+                    wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+- (NativeInteropTestsPigeonStreamCancelHandle* _Nullable)
+    streamErrorWithCustomError:(BOOL)customErrorArg
+                  pigeonOnData:(void (^_Nonnull)(NSData* _Nullable))pigeonOnData
+                 pigeonOnError:
+                     (void (^_Nonnull)(NSString* _Nonnull, NSString* _Nullable,
+                                       NSData* _Nullable))pigeonOnError
+                  pigeonOnDone:(void (^_Nonnull)(void))pigeonOnDone
+                  wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+- (NativeInteropTestsPigeonStreamCancelHandle* _Nullable)
+    streamViaCallbackWithPrefix:(NSString* _Nonnull)prefixArg
+                          count:(int64_t)countArg
+                   pigeonOnData:
+                       (void (^_Nonnull)(NSData* _Nullable))pigeonOnData
+                  pigeonOnError:
+                      (void (^_Nonnull)(NSString* _Nonnull, NSString* _Nullable,
+                                        NSData* _Nullable))pigeonOnError
+                   pigeonOnDone:(void (^_Nonnull)(void))pigeonOnDone
+                   wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+- (NSNumber* _Nullable)getCancelledStreamCountWithWrappedError:
+    (NativeInteropTestsError* _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
+- (void)resetCancelledStreamCountWithWrappedError:
+    (NativeInteropTestsError* _Nonnull)wrappedError;
+@end
+
 /// Error class for passing custom error details to Dart side.
 SWIFT_CLASS("_TtC11test_plugin23NativeInteropTestsError")
 @interface NativeInteropTestsError : NSObject
@@ -3368,6 +3444,13 @@ SWIFT_CLASS("_TtC11test_plugin31NativeInteropTestsNumberWrapper")
 SWIFT_CLASS("_TtC11test_plugin36NativeInteropTestsPigeonInternalNull")
 @interface NativeInteropTestsPigeonInternalNull : NSObject
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
+@end
+
+SWIFT_CLASS("_TtC11test_plugin42NativeInteropTestsPigeonStreamCancelHandle")
+@interface NativeInteropTestsPigeonStreamCancelHandle : NSObject
+- (void)cancel;
+- (nonnull instancetype)init SWIFT_UNAVAILABLE;
++ (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
 @end
 
 SWIFT_CLASS("_TtC11test_plugin33NativeInteropTestsPigeonTypedData")

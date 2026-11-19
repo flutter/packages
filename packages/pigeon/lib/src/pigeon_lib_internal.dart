@@ -138,6 +138,7 @@ class InternalPigeonOptions {
               ffiErrorClassName: options.swiftOptions?.errorClassName ?? 'PigeonError',
               jniErrorClassName: options.kotlinOptions?.errorClassName ?? 'FlutterError',
               fileSpecificClassNameComponent: _dartNativeInteropClassNameComponent(options),
+              jniFileSpecificClassNameComponent: _dartJniClassNameComponent(options),
               nativeInteropTransport:
                   // ignore: invalid_use_of_visible_for_testing_member
                   options.nativeInteropTransport ?? NativeInteropTransport.hybrid,
@@ -236,6 +237,17 @@ String? _dartNativeInteropClassNameComponent(PigeonOptions options) {
     component = options.fileSpecificClassNameComponent;
   }
   return component == null ? null : toUpperCamelCase(component);
+}
+
+String? _dartJniClassNameComponent(PigeonOptions options) {
+  if (!(options.kotlinOptions?.useJni ?? false)) {
+    return null;
+  }
+  final String component =
+      options.kotlinOptions?.fileSpecificClassNameComponent ??
+      options.fileSpecificClassNameComponent ??
+      deduceClassNameComponent(options.kotlinOut);
+  return toUpperCamelCase(component);
 }
 
 File _getFile(String output, {String basePath = ''}) {
@@ -435,14 +447,6 @@ void _errorOnSwiftFfiUnsupportedFeatures(
       );
     } else if (api is AstHostApi) {
       for (final Method method in api.methods) {
-        if (method.isStream) {
-          errors.add(
-            Error(
-              message:
-                  'Swift FFI does not support Stream return types yet (in method "${method.name}" in API "${api.name}"). $_moveToNonFfiFileSuggestion',
-            ),
-          );
-        }
         if (method.parameters.any((Parameter parameter) => parameter.name == 'wrappedError')) {
           errors.add(
             Error(
@@ -498,17 +502,6 @@ void _errorOnKotlinJniUnsupportedFeatures(List<Error> errors, Root root) {
               'Kotlin JNI does not support ProxyApis yet (in API "${api.name}"). $_moveToNonJniFileSuggestion',
         ),
       );
-    } else if (api is AstHostApi) {
-      for (final Method method in api.methods) {
-        if (method.isStream) {
-          errors.add(
-            Error(
-              message:
-                  'Kotlin JNI does not support Stream return types yet (in method "${method.name}" in API "${api.name}"). $_moveToNonJniFileSuggestion',
-            ),
-          );
-        }
-      }
     }
   }
 }
@@ -591,7 +584,6 @@ class DartGeneratorAdapter implements GeneratorAdapter {
         ),
       );
     }
-    _errorOnStreamMethod(errors, 'Dart native interop', root);
     errors.addAll(_errorOnNativeInteropReservedMethodNames(root));
     return errors;
   }

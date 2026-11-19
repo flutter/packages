@@ -143,6 +143,9 @@ import 'package:swiftgen/swiftgen.dart';
         indent.writeln("'${prefix}PigeonInternalNull',");
         indent.writeln("'${prefix}PigeonTypedData',");
         indent.writeln("'${prefix}NumberWrapper',");
+        if (root.containsHostStream) {
+          indent.writeln("'${prefix}PigeonStreamCancelHandle',");
+        }
         if (hasAsyncFlutterApi) {
           indent.writeln("'NSURLCredential',");
         }

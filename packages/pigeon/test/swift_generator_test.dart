@@ -2671,5 +2671,60 @@ void main() {
         expect(code, isNot(contains('func sendOnMain(')));
       },
     );
+
+    test('generates FFI AsyncThrowingStream and @asyncCallback stream entry points', () {
+      final root = Root(
+        apis: <Api>[
+          AstHostApi(
+            name: 'StreamApi',
+            methods: <Method>[
+              Method(
+                name: 'numbers',
+                location: ApiLocation.host,
+                parameters: <Parameter>[
+                  Parameter(
+                    name: 'count',
+                    type: const TypeDeclaration(baseName: 'int', isNullable: false),
+                  ),
+                ],
+                returnType: const TypeDeclaration(baseName: 'int', isNullable: false),
+                isStream: true,
+              ),
+              Method(
+                name: 'events',
+                location: ApiLocation.host,
+                parameters: <Parameter>[],
+                returnType: const TypeDeclaration(baseName: 'String', isNullable: false),
+                isStream: true,
+                isAsynchronousCallback: true,
+              ),
+            ],
+          ),
+        ],
+        classes: <Class>[],
+        enums: <Enum>[],
+      );
+      final sink = StringBuffer();
+      const SwiftGenerator().generate(
+        const InternalSwiftOptions(
+          swiftOut: 'FfiStreams.g.swift',
+          fileSpecificClassNameComponent: 'FfiStreams',
+          useFfi: true,
+        ),
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+      final code = sink.toString();
+      expect(code, contains('@objc public class FfiStreamsPigeonStreamCancelHandle'));
+      expect(code, contains('class FfiStreamsPigeonEventSink<ReturnType>'));
+      expect(code, contains('func numbers(count: Int64) -> AsyncThrowingStream<Int64, Error>'));
+      expect(
+        code,
+        contains('func events(sink: FfiStreamsPigeonEventSink<String>) -> (() -> Void)?'),
+      );
+      expect(code, contains('setup.cancelAllStreams()'));
+      expect(code, isNot(contains('FlutterBasicMessageChannel')));
+    });
   });
 }

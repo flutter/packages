@@ -328,6 +328,310 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
   return value as! T?
 }
 
+@objc public class NativeInteropTestsPigeonStreamCancelHandle: NSObject, @unchecked Sendable {
+  private let lock = NSLock()
+  private var finished = false
+  private var onCancel: (() -> Void)?
+  private var onFinish: (() -> Void)?
+
+  internal init(onCancel: @escaping () -> Void, onFinish: @escaping () -> Void) {
+    self.onCancel = onCancel
+    self.onFinish = onFinish
+  }
+
+  @objc public func cancel() {
+    let cancelAction: (() -> Void)?
+    let finishAction: (() -> Void)?
+    do {
+      lock.lock()
+      defer { lock.unlock() }
+      guard !finished else { return }
+      finished = true
+      cancelAction = onCancel
+      finishAction = onFinish
+      onCancel = nil
+      onFinish = nil
+    }
+    finishAction?()
+    cancelAction?()
+  }
+
+  fileprivate func markFinished() {
+    let finishAction: (() -> Void)?
+    let displacedCancel: (() -> Void)?
+    do {
+      lock.lock()
+      defer { lock.unlock() }
+      guard !finished else { return }
+      finished = true
+      finishAction = onFinish
+      displacedCancel = onCancel
+      onCancel = nil
+      onFinish = nil
+    }
+    finishAction?()
+    // Keep displacedCancel alive past lock.unlock() so deallocation cannot re-enter lock.
+    withExtendedLifetime(displacedCancel) {}
+  }
+}
+
+private final class NativeInteropTestsPigeonStreamBox<Element>: @unchecked Sendable {
+  let stream: AsyncThrowingStream<Element, Error>
+  init(_ stream: AsyncThrowingStream<Element, Error>) {
+    self.stream = stream
+  }
+}
+
+private final class NativeInteropTestsPigeonStreamTaskHandle: @unchecked Sendable {
+  private let lock = NSLock()
+  private var task: Task<Void, Never>?
+  private var cancelled = false
+
+  func attach(_ task: Task<Void, Never>) {
+    let shouldCancel: Bool
+    do {
+      lock.lock()
+      defer { lock.unlock() }
+      if cancelled {
+        shouldCancel = true
+      } else {
+        self.task = task
+        shouldCancel = false
+      }
+    }
+    if shouldCancel {
+      task.cancel()
+    }
+  }
+
+  func cancel() {
+    let currentTask: Task<Void, Never>?
+    do {
+      lock.lock()
+      defer { lock.unlock() }
+      cancelled = true
+      currentTask = task
+      task = nil
+    }
+    currentTask?.cancel()
+  }
+}
+
+private final class NativeInteropTestsPigeonFfiStreamCallbacks: @unchecked Sendable {
+  private let lock = NSLock()
+  private var terminated = false
+  private var onData: ((NSData?) -> Void)?
+  private var onError: ((String, String?, NSData?) -> Void)?
+  private var onDone: (() -> Void)?
+
+  init(
+    onData: @escaping (NSData?) -> Void,
+    onError: @escaping (String, String?, NSData?) -> Void,
+    onDone: @escaping () -> Void
+  ) {
+    self.onData = onData
+    self.onError = onError
+    self.onDone = onDone
+  }
+
+  func sendData(_ data: NSData?) {
+    let callback: ((NSData?) -> Void)?
+    do {
+      lock.lock()
+      defer { lock.unlock() }
+      guard !terminated else { return }
+      callback = onData
+    }
+    callback?(data)
+  }
+
+  func sendError(code: String, message: String?, details: NSData?) {
+    let callback: ((String, String?, NSData?) -> Void)?
+    let displacedData: ((NSData?) -> Void)?
+    let displacedDone: (() -> Void)?
+    do {
+      lock.lock()
+      defer { lock.unlock() }
+      guard !terminated else { return }
+      terminated = true
+      callback = onError
+      displacedData = onData
+      displacedDone = onDone
+      onData = nil
+      onError = nil
+      onDone = nil
+    }
+    callback?(code, message, details)
+    withExtendedLifetime((displacedData, displacedDone)) {}
+  }
+
+  func sendDone() {
+    let callback: (() -> Void)?
+    let displacedData: ((NSData?) -> Void)?
+    let displacedError: ((String, String?, NSData?) -> Void)?
+    do {
+      lock.lock()
+      defer { lock.unlock() }
+      guard !terminated else { return }
+      terminated = true
+      callback = onDone
+      displacedData = onData
+      displacedError = onError
+      onData = nil
+      onError = nil
+      onDone = nil
+    }
+    callback?()
+    withExtendedLifetime((displacedData, displacedError)) {}
+  }
+
+  func clear() {
+    let displaced: (((NSData?) -> Void)?, ((String, String?, NSData?) -> Void)?, (() -> Void)?)
+    do {
+      lock.lock()
+      defer { lock.unlock() }
+      terminated = true
+      displaced = (onData, onError, onDone)
+      onData = nil
+      onError = nil
+      onDone = nil
+    }
+    withExtendedLifetime(displaced) {}
+  }
+}
+
+/// Sink used by `@asyncCallback` streaming `@HostApi` methods to push values,
+/// errors, or completion back to Dart over FFI.
+class NativeInteropTestsPigeonEventSink<ReturnType>: @unchecked Sendable {
+  private let lock = NSLock()
+  private let encode: (ReturnType) -> NSData?
+  private var onData: ((NSData?) -> Void)?
+  private var onError: ((String, String?, NSData?) -> Void)?
+  private var onDone: (() -> Void)?
+  private var onClosed: (() -> Void)?
+  private var cancelCallback: (() -> Void)?
+  private var terminated = false
+  private var cancelled = false
+
+  fileprivate init(
+    onData: @escaping (NSData?) -> Void,
+    onError: @escaping (String, String?, NSData?) -> Void,
+    onDone: @escaping () -> Void,
+    encode: @escaping (ReturnType) -> NSData?
+  ) {
+    self.onData = onData
+    self.onError = onError
+    self.onDone = onDone
+    self.encode = encode
+  }
+
+  fileprivate func attachOnClosed(_ onClosed: @escaping () -> Void) {
+    lock.lock()
+    defer { lock.unlock() }
+    if !cancelled && !terminated {
+      self.onClosed = onClosed
+    }
+  }
+
+  fileprivate func attachCancel(_ cancel: (() -> Void)?) {
+    guard let cancel = cancel else { return }
+    let shouldCancel: Bool
+    do {
+      lock.lock()
+      defer { lock.unlock() }
+      if cancelled {
+        shouldCancel = true
+      } else {
+        if !terminated {
+          cancelCallback = cancel
+        }
+        shouldCancel = false
+      }
+    }
+    if shouldCancel {
+      cancel()
+    }
+  }
+
+  func success(_ value: ReturnType) {
+    let callback: ((NSData?) -> Void)?
+    do {
+      lock.lock()
+      defer { lock.unlock() }
+      guard !terminated else { return }
+      callback = onData
+    }
+    callback?(encode(value))
+  }
+
+  func error(code: String, message: String?, details: Any?) {
+    let callback: ((String, String?, NSData?) -> Void)?
+    let closedAction: (() -> Void)?
+    let displaced: (((NSData?) -> Void)?, (() -> Void)?, (() -> Void)?)
+    do {
+      lock.lock()
+      defer { lock.unlock() }
+      guard !terminated else { return }
+      terminated = true
+      callback = onError
+      closedAction = onClosed
+      displaced = (onData, onDone, cancelCallback)
+      onData = nil
+      onError = nil
+      onDone = nil
+      onClosed = nil
+      cancelCallback = nil
+    }
+    closedAction?()
+    callback?(code, message, NativeInteropTestsPigeonInteropCodec.encodeOrNil(details))
+    withExtendedLifetime(displaced) {}
+  }
+
+  func endOfStream() {
+    let callback: (() -> Void)?
+    let closedAction: (() -> Void)?
+    let displaced: (((NSData?) -> Void)?, ((String, String?, NSData?) -> Void)?, (() -> Void)?)
+    do {
+      lock.lock()
+      defer { lock.unlock() }
+      guard !terminated else { return }
+      terminated = true
+      callback = onDone
+      closedAction = onClosed
+      displaced = (onData, onError, cancelCallback)
+      onData = nil
+      onError = nil
+      onDone = nil
+      onClosed = nil
+      cancelCallback = nil
+    }
+    closedAction?()
+    callback?()
+    withExtendedLifetime(displaced) {}
+  }
+
+  fileprivate func close() {
+    let cancel: (() -> Void)?
+    let displaced:
+      (((NSData?) -> Void)?, ((String, String?, NSData?) -> Void)?, (() -> Void)?, (() -> Void)?)
+    do {
+      lock.lock()
+      defer { lock.unlock() }
+      terminated = true
+      cancelled = true
+      cancel = cancelCallback
+      displaced = (onData, onError, onDone, onClosed)
+      onData = nil
+      onError = nil
+      onDone = nil
+      onClosed = nil
+      cancelCallback = nil
+    }
+    cancel?()
+    withExtendedLifetime(displaced) {}
+  }
+}
+
 /// Computes the keys that associate Native Interop registrations with a Flutter engine.
 ///
 /// `Int64.min` means "no key". Exact keys match Dart's `PlatformDispatcher.instance.engineId`.
@@ -12947,5 +13251,538 @@ class NativeInteropSealedClassFlutterApi {
     }
     var reader = NativeInteropTestsPigeonInteropReader(res!)
     return reader.read(NativeInteropShape.self)
+  }
+}
+class NativeInteropStreamHostApiInstanceTracker {
+  static var instancesOfNativeInteropStreamHostApi = [String: [NativeInteropStreamHostApiSetup]]()
+  /// Guards the registrations, which Native Interop calls can read from any thread.
+  static let lock = NSLock()
+}
+/// Host API with streaming methods for native interop integration tests.
+///
+/// Generated protocol from Pigeon that represents a handler of messages from Flutter.
+protocol NativeInteropStreamHostApi: AnyObject {
+  func streamNumbers(count: Int64, start: Int64) -> AsyncThrowingStream<Int64, Error>
+  func streamNullableInts() -> AsyncThrowingStream<Int64?, Error>
+  func streamShapes() -> AsyncThrowingStream<NativeInteropShape, Error>
+  func streamError(customError: Bool) -> AsyncThrowingStream<Int64, Error>
+  func streamViaCallback(
+    prefix: String, count: Int64, sink: NativeInteropTestsPigeonEventSink<String>
+  ) -> (() -> Void)?
+  func getCancelledStreamCount() throws -> Int64
+  func resetCancelledStreamCount() throws
+}
+
+/// Generated setup class from Pigeon to register implemented NativeInteropStreamHostApi classes.
+@objc class NativeInteropStreamHostApiSetup: NSObject {
+  private var api: NativeInteropStreamHostApi?
+  private var activeStreams: [ObjectIdentifier: NativeInteropTestsPigeonStreamCancelHandle] = [:]
+  override init() {}
+  private func resolveApi() throws -> NativeInteropStreamHostApi {
+    NativeInteropStreamHostApiInstanceTracker.lock.lock()
+    let registeredApi = api
+    NativeInteropStreamHostApiInstanceTracker.lock.unlock()
+    guard let currentApi = registeredApi else {
+      throw NativeInteropTestsError(
+        code: "unregistered-instance",
+        message: "NativeInteropStreamHostApi has not been registered.",
+        details: nil
+      )
+    }
+    return currentApi
+  }
+  private func trackStream(_ handle: NativeInteropTestsPigeonStreamCancelHandle) {
+    NativeInteropStreamHostApiInstanceTracker.lock.lock()
+    activeStreams[ObjectIdentifier(handle)] = handle
+    NativeInteropStreamHostApiInstanceTracker.lock.unlock()
+  }
+  private func untrackStream(_ handle: NativeInteropTestsPigeonStreamCancelHandle) {
+    let displaced: NativeInteropTestsPigeonStreamCancelHandle?
+    do {
+      NativeInteropStreamHostApiInstanceTracker.lock.lock()
+      defer { NativeInteropStreamHostApiInstanceTracker.lock.unlock() }
+      displaced = activeStreams.removeValue(forKey: ObjectIdentifier(handle))
+    }
+    withExtendedLifetime(displaced) {}
+  }
+  fileprivate func cancelAllStreams() {
+    let handles: [NativeInteropTestsPigeonStreamCancelHandle]
+    do {
+      NativeInteropStreamHostApiInstanceTracker.lock.lock()
+      defer { NativeInteropStreamHostApiInstanceTracker.lock.unlock() }
+      handles = Array(activeStreams.values)
+      activeStreams.removeAll()
+    }
+    for handle in handles {
+      handle.cancel()
+    }
+  }
+  /// The engine key this wrapper was registered with. Set before the wrapper is published.
+  private var engineKey: Int64 = Int64.min
+
+  #if canImport(Flutter) || canImport(FlutterMacOS)
+    /// Registers `api` under `name` (or the default instance when `name` is omitted).
+    ///
+    /// The registration is tied to its engine: unregistering it for one engine leaves
+    /// other engines' registrations in place, and Dart code running on an engine uses
+    /// the instance registered for that engine when it is known.
+    ///
+    /// The registration is associated with the engine that owns `registrar`. The same
+    /// `api` registered from different engines is tracked as separate registrations.
+    static func register(
+      api: NativeInteropStreamHostApi, registrar: FlutterPluginRegistrar,
+      name: String = NativeInteropTestsPigeonInternal.defaultInstanceName
+    ) {
+      register(api: api, engineKey: PigeonEngineKeys.key(for: registrar), name: name)
+    }
+
+    /// Removes `api` from the registrations under `name` (or the default instance
+    /// when `name` is omitted), leaving other registrations in place.
+    ///
+    /// Instances are matched by identity. Does nothing if `api` is not registered.
+    ///
+    /// Prefers the registration made from the engine that owns `registrar`, and
+    /// otherwise removes the registration of `api` under `name` if exactly one engine
+    /// holds it.
+    static func unregister(
+      api: NativeInteropStreamHostApi, registrar: FlutterPluginRegistrar,
+      name: String = NativeInteropTestsPigeonInternal.defaultInstanceName
+    ) {
+      unregister(api: api, engineKey: PigeonEngineKeys.key(for: registrar), name: name)
+    }
+  #endif
+
+  fileprivate static func register(api: NativeInteropStreamHostApi, engineKey: Int64, name: String)
+  {
+    NativeInteropStreamHostApiInstanceTracker.lock.lock()
+    defer { NativeInteropStreamHostApiInstanceTracker.lock.unlock() }
+    var list =
+      NativeInteropStreamHostApiInstanceTracker.instancesOfNativeInteropStreamHostApi[name] ?? []
+    if let index = list.firstIndex(where: { $0.api === api && $0.engineKey == engineKey }) {
+      list.append(list.remove(at: index))
+    } else {
+      let wrapper = NativeInteropStreamHostApiSetup()
+      wrapper.engineKey = engineKey
+      wrapper.api = api
+      list.append(wrapper)
+    }
+    NativeInteropStreamHostApiInstanceTracker.instancesOfNativeInteropStreamHostApi[name] = list
+  }
+
+  fileprivate static func unregister(
+    api: NativeInteropStreamHostApi, engineKey: Int64, name: String
+  ) {
+    // Removed entries are kept alive until after unlocking so their deinit cannot run while the
+    // non-recursive lock is held.
+    var displaced: [Any] = []
+    var removedSetups: [NativeInteropStreamHostApiSetup] = []
+    do {
+      NativeInteropStreamHostApiInstanceTracker.lock.lock()
+      defer { NativeInteropStreamHostApiInstanceTracker.lock.unlock() }
+      guard
+        var list = NativeInteropStreamHostApiInstanceTracker.instancesOfNativeInteropStreamHostApi[
+          name]
+      else {
+        return
+      }
+      let removeKey: Int64
+      if list.contains(where: { $0.api === api && $0.engineKey == engineKey }) {
+        removeKey = engineKey
+      } else {
+        let keys = Set(list.filter { $0.api === api }.map { $0.engineKey })
+        guard keys.count == 1, let onlyKey = keys.first else {
+          return
+        }
+        removeKey = onlyKey
+      }
+      list.removeAll { entry in
+        guard let existing = entry.api else {
+          return false
+        }
+        if existing === api && entry.engineKey == removeKey {
+          displaced.append(existing)
+          displaced.append(entry)
+          removedSetups.append(entry)
+          entry.api = nil
+          return true
+        }
+        return false
+      }
+      if list.isEmpty {
+        NativeInteropStreamHostApiInstanceTracker.instancesOfNativeInteropStreamHostApi.removeValue(
+          forKey: name)
+      } else {
+        NativeInteropStreamHostApiInstanceTracker.instancesOfNativeInteropStreamHostApi[name] = list
+      }
+    }
+    for setup in removedSetups {
+      setup.cancelAllStreams()
+    }
+    withExtendedLifetime(displaced) {}
+  }
+
+  /// Returns the instance generated Dart code should use for `name` (or the default
+  /// instance).
+  ///
+  /// Prefers the most recent registration whose engine key is `engineId`, then
+  /// `affinityKey`, then the most recent registration. `Int64.min` means unknown.
+  @objc static func pigeonResolveInstance(
+    engineId: Int64, affinityKey: Int64,
+    name: String = NativeInteropTestsPigeonInternal.defaultInstanceName
+  ) -> NativeInteropStreamHostApiSetup? {
+    NativeInteropStreamHostApiInstanceTracker.lock.lock()
+    defer { NativeInteropStreamHostApiInstanceTracker.lock.unlock() }
+    guard
+      let list = NativeInteropStreamHostApiInstanceTracker.instancesOfNativeInteropStreamHostApi[
+        name]
+    else {
+      return nil
+    }
+    if engineId != Int64.min, let match = list.last(where: { $0.engineKey == engineId }) {
+      return match
+    }
+    if affinityKey != Int64.min, let match = list.last(where: { $0.engineKey == affinityKey }) {
+      return match
+    }
+    return list.last
+  }
+
+  /// Returns the engine key `instance` was registered with, or `Int64.min` if unknown.
+  @objc static func pigeonEngineKey(of instance: NativeInteropStreamHostApiSetup) -> Int64 {
+    return instance.engineKey
+  }
+  @objc func streamNumbers(
+    count countArg: Int64, start startArg: Int64, pigeonOnData: @escaping (NSData?) -> Void,
+    pigeonOnError: @escaping (String, String?, NSData?) -> Void, pigeonOnDone: @escaping () -> Void,
+    wrappedError: NativeInteropTestsError
+  ) -> NativeInteropTestsPigeonStreamCancelHandle? {
+    do {
+      let activeApi = try resolveApi()
+      let streamBox = NativeInteropTestsPigeonStreamBox(
+        activeApi.streamNumbers(count: countArg, start: startArg))
+      let callbacks = NativeInteropTestsPigeonFfiStreamCallbacks(
+        onData: pigeonOnData, onError: pigeonOnError, onDone: pigeonOnDone)
+      let taskHandle = NativeInteropTestsPigeonStreamTaskHandle()
+      var handleRef: NativeInteropTestsPigeonStreamCancelHandle?
+      let cancelHandle = NativeInteropTestsPigeonStreamCancelHandle(
+        onCancel: {
+          callbacks.clear()
+          taskHandle.cancel()
+        },
+        onFinish: { [weak self] in
+          if let handle = handleRef {
+            self?.untrackStream(handle)
+          }
+        }
+      )
+      handleRef = cancelHandle
+      trackStream(cancelHandle)
+      let task = Task {
+        do {
+          for try await event in streamBox.stream {
+            if Task.isCancelled { break }
+            callbacks.sendData(NativeInteropTestsPigeonInteropCodec.encodeOrNil(event))
+          }
+          if !Task.isCancelled {
+            callbacks.sendDone()
+          }
+          cancelHandle.markFinished()
+        } catch let error as NativeInteropTestsError {
+          if !Task.isCancelled {
+            callbacks.sendError(
+              code: error.code ?? "", message: error.message,
+              details: NativeInteropTestsPigeonInteropCodec.encodeOrNil(error.details))
+          }
+          cancelHandle.markFinished()
+        } catch {
+          if !Task.isCancelled {
+            callbacks.sendError(
+              code: "\(error)", message: "\(Swift.type(of: error))",
+              details: NativeInteropTestsPigeonInteropCodec.encodeOrNil(
+                "Stacktrace: \(Thread.callStackSymbols)"))
+          }
+          cancelHandle.markFinished()
+        }
+      }
+      taskHandle.attach(task)
+      return cancelHandle
+    } catch let error as NativeInteropTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(Swift.type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
+  @objc func streamNullableInts(
+    pigeonOnData: @escaping (NSData?) -> Void,
+    pigeonOnError: @escaping (String, String?, NSData?) -> Void, pigeonOnDone: @escaping () -> Void,
+    wrappedError: NativeInteropTestsError
+  ) -> NativeInteropTestsPigeonStreamCancelHandle? {
+    do {
+      let activeApi = try resolveApi()
+      let streamBox = NativeInteropTestsPigeonStreamBox(activeApi.streamNullableInts())
+      let callbacks = NativeInteropTestsPigeonFfiStreamCallbacks(
+        onData: pigeonOnData, onError: pigeonOnError, onDone: pigeonOnDone)
+      let taskHandle = NativeInteropTestsPigeonStreamTaskHandle()
+      var handleRef: NativeInteropTestsPigeonStreamCancelHandle?
+      let cancelHandle = NativeInteropTestsPigeonStreamCancelHandle(
+        onCancel: {
+          callbacks.clear()
+          taskHandle.cancel()
+        },
+        onFinish: { [weak self] in
+          if let handle = handleRef {
+            self?.untrackStream(handle)
+          }
+        }
+      )
+      handleRef = cancelHandle
+      trackStream(cancelHandle)
+      let task = Task {
+        do {
+          for try await event in streamBox.stream {
+            if Task.isCancelled { break }
+            callbacks.sendData(NativeInteropTestsPigeonInteropCodec.encodeOrNil(event))
+          }
+          if !Task.isCancelled {
+            callbacks.sendDone()
+          }
+          cancelHandle.markFinished()
+        } catch let error as NativeInteropTestsError {
+          if !Task.isCancelled {
+            callbacks.sendError(
+              code: error.code ?? "", message: error.message,
+              details: NativeInteropTestsPigeonInteropCodec.encodeOrNil(error.details))
+          }
+          cancelHandle.markFinished()
+        } catch {
+          if !Task.isCancelled {
+            callbacks.sendError(
+              code: "\(error)", message: "\(Swift.type(of: error))",
+              details: NativeInteropTestsPigeonInteropCodec.encodeOrNil(
+                "Stacktrace: \(Thread.callStackSymbols)"))
+          }
+          cancelHandle.markFinished()
+        }
+      }
+      taskHandle.attach(task)
+      return cancelHandle
+    } catch let error as NativeInteropTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(Swift.type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
+  @objc func streamShapes(
+    pigeonOnData: @escaping (NSData?) -> Void,
+    pigeonOnError: @escaping (String, String?, NSData?) -> Void, pigeonOnDone: @escaping () -> Void,
+    wrappedError: NativeInteropTestsError
+  ) -> NativeInteropTestsPigeonStreamCancelHandle? {
+    do {
+      let activeApi = try resolveApi()
+      let streamBox = NativeInteropTestsPigeonStreamBox(activeApi.streamShapes())
+      let callbacks = NativeInteropTestsPigeonFfiStreamCallbacks(
+        onData: pigeonOnData, onError: pigeonOnError, onDone: pigeonOnDone)
+      let taskHandle = NativeInteropTestsPigeonStreamTaskHandle()
+      var handleRef: NativeInteropTestsPigeonStreamCancelHandle?
+      let cancelHandle = NativeInteropTestsPigeonStreamCancelHandle(
+        onCancel: {
+          callbacks.clear()
+          taskHandle.cancel()
+        },
+        onFinish: { [weak self] in
+          if let handle = handleRef {
+            self?.untrackStream(handle)
+          }
+        }
+      )
+      handleRef = cancelHandle
+      trackStream(cancelHandle)
+      let task = Task {
+        do {
+          for try await event in streamBox.stream {
+            if Task.isCancelled { break }
+            callbacks.sendData(NativeInteropTestsPigeonInteropCodec.encodeOrNil(event))
+          }
+          if !Task.isCancelled {
+            callbacks.sendDone()
+          }
+          cancelHandle.markFinished()
+        } catch let error as NativeInteropTestsError {
+          if !Task.isCancelled {
+            callbacks.sendError(
+              code: error.code ?? "", message: error.message,
+              details: NativeInteropTestsPigeonInteropCodec.encodeOrNil(error.details))
+          }
+          cancelHandle.markFinished()
+        } catch {
+          if !Task.isCancelled {
+            callbacks.sendError(
+              code: "\(error)", message: "\(Swift.type(of: error))",
+              details: NativeInteropTestsPigeonInteropCodec.encodeOrNil(
+                "Stacktrace: \(Thread.callStackSymbols)"))
+          }
+          cancelHandle.markFinished()
+        }
+      }
+      taskHandle.attach(task)
+      return cancelHandle
+    } catch let error as NativeInteropTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(Swift.type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
+  @objc func streamError(
+    customError customErrorArg: Bool, pigeonOnData: @escaping (NSData?) -> Void,
+    pigeonOnError: @escaping (String, String?, NSData?) -> Void, pigeonOnDone: @escaping () -> Void,
+    wrappedError: NativeInteropTestsError
+  ) -> NativeInteropTestsPigeonStreamCancelHandle? {
+    do {
+      let activeApi = try resolveApi()
+      let streamBox = NativeInteropTestsPigeonStreamBox(
+        activeApi.streamError(customError: customErrorArg))
+      let callbacks = NativeInteropTestsPigeonFfiStreamCallbacks(
+        onData: pigeonOnData, onError: pigeonOnError, onDone: pigeonOnDone)
+      let taskHandle = NativeInteropTestsPigeonStreamTaskHandle()
+      var handleRef: NativeInteropTestsPigeonStreamCancelHandle?
+      let cancelHandle = NativeInteropTestsPigeonStreamCancelHandle(
+        onCancel: {
+          callbacks.clear()
+          taskHandle.cancel()
+        },
+        onFinish: { [weak self] in
+          if let handle = handleRef {
+            self?.untrackStream(handle)
+          }
+        }
+      )
+      handleRef = cancelHandle
+      trackStream(cancelHandle)
+      let task = Task {
+        do {
+          for try await event in streamBox.stream {
+            if Task.isCancelled { break }
+            callbacks.sendData(NativeInteropTestsPigeonInteropCodec.encodeOrNil(event))
+          }
+          if !Task.isCancelled {
+            callbacks.sendDone()
+          }
+          cancelHandle.markFinished()
+        } catch let error as NativeInteropTestsError {
+          if !Task.isCancelled {
+            callbacks.sendError(
+              code: error.code ?? "", message: error.message,
+              details: NativeInteropTestsPigeonInteropCodec.encodeOrNil(error.details))
+          }
+          cancelHandle.markFinished()
+        } catch {
+          if !Task.isCancelled {
+            callbacks.sendError(
+              code: "\(error)", message: "\(Swift.type(of: error))",
+              details: NativeInteropTestsPigeonInteropCodec.encodeOrNil(
+                "Stacktrace: \(Thread.callStackSymbols)"))
+          }
+          cancelHandle.markFinished()
+        }
+      }
+      taskHandle.attach(task)
+      return cancelHandle
+    } catch let error as NativeInteropTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(Swift.type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
+  @objc func streamViaCallback(
+    prefix prefixArg: NSString, count countArg: Int64, pigeonOnData: @escaping (NSData?) -> Void,
+    pigeonOnError: @escaping (String, String?, NSData?) -> Void, pigeonOnDone: @escaping () -> Void,
+    wrappedError: NativeInteropTestsError
+  ) -> NativeInteropTestsPigeonStreamCancelHandle? {
+    do {
+      let activeApi = try resolveApi()
+      let sink = NativeInteropTestsPigeonEventSink<String>(
+        onData: pigeonOnData,
+        onError: pigeonOnError,
+        onDone: pigeonOnDone,
+        encode: { event in NativeInteropTestsPigeonInteropCodec.encodeOrNil(event) }
+      )
+      var handleRef: NativeInteropTestsPigeonStreamCancelHandle?
+      let cancelHandle = NativeInteropTestsPigeonStreamCancelHandle(
+        onCancel: { sink.close() },
+        onFinish: { [weak self] in
+          if let handle = handleRef {
+            self?.untrackStream(handle)
+          }
+        }
+      )
+      handleRef = cancelHandle
+      trackStream(cancelHandle)
+      sink.attachOnClosed { cancelHandle.markFinished() }
+      let cancelCallback = activeApi.streamViaCallback(
+        prefix: prefixArg as String, count: countArg, sink: sink)
+      sink.attachCancel(cancelCallback)
+      return cancelHandle
+    } catch let error as NativeInteropTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(Swift.type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
+  @objc func getCancelledStreamCount(wrappedError: NativeInteropTestsError) -> NSNumber? {
+    do {
+      let activeApi = try resolveApi()
+      let res: Int64 = try activeApi.getCancelledStreamCount()
+      return NSNumber(value: res)
+    } catch let error as NativeInteropTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(Swift.type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
+  @objc func resetCancelledStreamCount(wrappedError: NativeInteropTestsError) {
+    do {
+      let activeApi = try resolveApi()
+      try activeApi.resetCancelledStreamCount()
+      return
+    } catch let error as NativeInteropTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(Swift.type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return
   }
 }

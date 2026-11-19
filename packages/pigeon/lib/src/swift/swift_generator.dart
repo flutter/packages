@@ -1295,7 +1295,7 @@ private enum $codec {
   }) {
     if (generatorOptions.useFfi && !root.containsProxyApi) {
       _writeFfiCodec(indent, root);
-      if (generatorOptions.useFfiHybrid) {
+      if (generatorOptions.useFfiHybrid || root.containsHostStream) {
         _writeFfiInteropCodec(generatorOptions, root, indent);
       }
       return;
@@ -2518,7 +2518,11 @@ if (wrapped == nil) {
       '}',
       () {
         _writeDisplacedLifetimeComment(indent);
+        final bool apiHasStream = api.methods.any((Method m) => m.isStream);
         indent.writeln('var displaced: [Any] = []');
+        if (apiHasStream) {
+          indent.writeln('var removedSetups: [$setupName] = []');
+        }
         indent.writeScoped('do {', '}', () {
           indent.writeln('$tracker.lock.lock()');
           indent.writeln('defer { $tracker.lock.unlock() }');
@@ -2551,6 +2555,9 @@ if (wrapped == nil) {
             indent.writeScoped('if existing === api && entry.engineKey == removeKey {', '}', () {
               indent.writeln('displaced.append(existing)');
               indent.writeln('displaced.append(entry)');
+              if (apiHasStream) {
+                indent.writeln('removedSetups.append(entry)');
+              }
               indent.writeln('entry.api = nil');
               indent.writeln('return true');
             });
@@ -2563,6 +2570,11 @@ if (wrapped == nil) {
             indent.writeln('$instances[name] = list');
           });
         });
+        if (apiHasStream) {
+          indent.writeScoped('for setup in removedSetups {', '}', () {
+            indent.writeln('setup.cancelAllStreams()');
+          });
+        }
         indent.writeln('withExtendedLifetime(displaced) {}');
       },
     );
@@ -2677,9 +2689,16 @@ if (wrapped == nil) {
     indent.writeln(
       '$_docCommentPrefix Generated setup class from Pigeon to register implemented ${api.name} classes.',
     );
+    final bool apiHasStream = api.methods.any((Method m) => m.isStream);
+    final String prefix = _classNamePrefix;
     indent.writeScoped('@objc class ${api.name}Setup: NSObject {', '}', () {
       if (generatorOptions.useFfi) {
         indent.writeln('private var api: ${api.name}?');
+        if (apiHasStream) {
+          indent.writeln(
+            'private var activeStreams: [ObjectIdentifier: ${prefix}PigeonStreamCancelHandle] = [:]',
+          );
+        }
         indent.writeln('override init() {}');
         indent.writeScoped('private func resolveApi() throws -> ${api.name} {', '}', () {
           indent.writeln('${api.name}InstanceTracker.lock.lock()');
@@ -2694,9 +2713,51 @@ if (wrapped == nil) {
           });
           indent.writeln('return currentApi');
         });
+        if (apiHasStream) {
+          indent.writeScoped(
+            'private func trackStream(_ handle: ${prefix}PigeonStreamCancelHandle) {',
+            '}',
+            () {
+              indent.writeln('${api.name}InstanceTracker.lock.lock()');
+              indent.writeln('activeStreams[ObjectIdentifier(handle)] = handle');
+              indent.writeln('${api.name}InstanceTracker.lock.unlock()');
+            },
+          );
+          indent.writeScoped(
+            'private func untrackStream(_ handle: ${prefix}PigeonStreamCancelHandle) {',
+            '}',
+            () {
+              indent.writeln('let displaced: ${prefix}PigeonStreamCancelHandle?');
+              indent.writeScoped('do {', '}', () {
+                indent.writeln('${api.name}InstanceTracker.lock.lock()');
+                indent.writeln('defer { ${api.name}InstanceTracker.lock.unlock() }');
+                indent.writeln(
+                  'displaced = activeStreams.removeValue(forKey: ObjectIdentifier(handle))',
+                );
+              });
+              indent.writeln('withExtendedLifetime(displaced) {}');
+            },
+          );
+          indent.writeScoped('fileprivate func cancelAllStreams() {', '}', () {
+            indent.writeln('let handles: [${prefix}PigeonStreamCancelHandle]');
+            indent.writeScoped('do {', '}', () {
+              indent.writeln('${api.name}InstanceTracker.lock.lock()');
+              indent.writeln('defer { ${api.name}InstanceTracker.lock.unlock() }');
+              indent.writeln('handles = Array(activeStreams.values)');
+              indent.writeln('activeStreams.removeAll()');
+            });
+            indent.writeScoped('for handle in handles {', '}', () {
+              indent.writeln('handle.cancel()');
+            });
+          });
+        }
         _writeFfiHostApiRegistration(indent, api);
       }
       for (final Method method in api.methods) {
+        if (method.isStream) {
+          _writeFfiHostStreamEntryPoint(generatorOptions, indent, method);
+          continue;
+        }
         if (generatorOptions.useFfiHybrid) {
           _writeFfiHybridHostEntryPoint(generatorOptions, indent, method);
           continue;
@@ -2787,6 +2848,199 @@ if (wrapped == nil) {
         });
       }
     });
+  }
+
+  /// Writes the FFI transport entry point for a streaming host API [method].
+  void _writeFfiHostStreamEntryPoint(
+    InternalSwiftOptions generatorOptions,
+    Indent indent,
+    Method method,
+  ) {
+    final bool hybrid = generatorOptions.useFfiHybrid;
+    final String prefix = _classNamePrefix;
+    final codec = '${prefix}PigeonInteropCodec';
+    final String errorClassName = _getErrorClassName(generatorOptions);
+    final components = _SwiftFunctionComponents(
+      name: method.name,
+      parameters: method.parameters,
+      returnType: method.returnType,
+      swiftFunction: method.swiftFunction,
+    );
+    final List<Parameter> encodedParameters = hybrid
+        ? nativeInteropEncodedParameters(method.parameters)
+        : const <Parameter>[];
+    final paramParts = <String>[];
+    if (hybrid) {
+      for (final Parameter parameter in method.parameters) {
+        if (isNativeInteropDirectType(parameter.type)) {
+          paramParts.add(
+            '${parameter.name} ${_hybridSwiftParameterName(parameter)}: ${_hybridSwiftDirectParameterType(parameter.type)}',
+          );
+        }
+      }
+      if (encodedParameters.isNotEmpty) {
+        paramParts.add('$nativeInteropArgsParameterName: NSData');
+      }
+    } else {
+      for (final (int index, Parameter parameter) in method.parameters.indexed) {
+        final String safeName = _getSafeArgumentName(index, parameter);
+        paramParts.add(
+          '${parameter.name} $safeName: ${_nullSafeFfiTypeForDartType(parameter.type)}',
+        );
+      }
+    }
+    paramParts.addAll(<String>[
+      'pigeonOnData: @escaping (NSData?) -> Void',
+      'pigeonOnError: @escaping (String, String?, NSData?) -> Void',
+      'pigeonOnDone: @escaping () -> Void',
+      'wrappedError: $errorClassName',
+    ]);
+    addDocumentationComments(indent, method.documentationComments, _docCommentSpec);
+    if (encodedParameters.isNotEmpty) {
+      indent.writeln('// swift-format-ignore: AlwaysUseLowerCamelCase');
+    }
+    indent.writeScoped(
+      '@objc func ${method.name}(${paramParts.join(', ')}) -> ${prefix}PigeonStreamCancelHandle? {',
+      '}',
+      () {
+        indent.writeScoped('do {', '}', () {
+          indent.writeln('let activeApi = try resolveApi()');
+          final argumentValues = <String>[];
+          if (hybrid) {
+            if (encodedParameters.isNotEmpty) {
+              indent.writeln(
+                'var reader = ${prefix}PigeonInteropReader($nativeInteropArgsParameterName)',
+              );
+              indent.writeln('reader.readListHeader()');
+            }
+            for (final (int index, Parameter parameter) in method.parameters.indexed) {
+              if (isNativeInteropDirectType(parameter.type)) {
+                argumentValues.add(
+                  _hybridSwiftParameterToSwift(
+                    _hybridSwiftParameterName(parameter),
+                    parameter.type,
+                    codec,
+                  ),
+                );
+              } else {
+                final String argName = _getSafeArgumentName(index, parameter);
+                indent.writeln(
+                  'let $argName = ${_swiftInteropRead(parameter.type, reader: 'reader')}',
+                );
+                argumentValues.add(argName);
+              }
+            }
+          } else {
+            for (final (int index, Parameter parameter) in method.parameters.indexed) {
+              argumentValues.add(
+                _varToSwift(_getSafeArgumentName(index, parameter), parameter.type),
+              );
+            }
+          }
+          final String arguments = indexMap(components.arguments, (
+            int index,
+            _SwiftFunctionArgument argument,
+          ) {
+            final label = argument.label == '_' ? '' : '${argument.label ?? argument.name}: ';
+            return '$label${argumentValues[index]}';
+          }).join(', ');
+          final String elementType = _nullSafeSwiftTypeForDartType(
+            method.returnType,
+            ffiTypedData: true,
+          );
+          final String encodeEvent = _swiftInteropEncode('event', method.returnType, codec);
+
+          if (method.isAsynchronousCallback) {
+            indent.writeScoped('let sink = ${prefix}PigeonEventSink<$elementType>(', ')', () {
+              indent.writeln('onData: pigeonOnData,');
+              indent.writeln('onError: pigeonOnError,');
+              indent.writeln('onDone: pigeonOnDone,');
+              indent.writeln('encode: { event in $encodeEvent }');
+            });
+            indent.writeln('var handleRef: ${prefix}PigeonStreamCancelHandle?');
+            indent.writeScoped('let cancelHandle = ${prefix}PigeonStreamCancelHandle(', ')', () {
+              indent.writeln('onCancel: { sink.close() },');
+              indent.writeScoped('onFinish: { [weak self] in', '}', () {
+                indent.writeScoped('if let handle = handleRef {', '}', () {
+                  indent.writeln('self?.untrackStream(handle)');
+                });
+              });
+            });
+            indent.writeln('handleRef = cancelHandle');
+            indent.writeln('trackStream(cancelHandle)');
+            indent.writeln('sink.attachOnClosed { cancelHandle.markFinished() }');
+            final callArgs = arguments.isEmpty ? 'sink: sink' : '$arguments, sink: sink';
+            indent.writeln('let cancelCallback = activeApi.${components.name}($callArgs)');
+            indent.writeln('sink.attachCancel(cancelCallback)');
+            indent.writeln('return cancelHandle');
+          } else {
+            indent.writeln(
+              'let streamBox = ${prefix}PigeonStreamBox(activeApi.${components.name}($arguments))',
+            );
+            indent.writeln(
+              'let callbacks = ${prefix}PigeonFfiStreamCallbacks(onData: pigeonOnData, onError: pigeonOnError, onDone: pigeonOnDone)',
+            );
+            indent.writeln('let taskHandle = ${prefix}PigeonStreamTaskHandle()');
+            indent.writeln('var handleRef: ${prefix}PigeonStreamCancelHandle?');
+            indent.writeScoped('let cancelHandle = ${prefix}PigeonStreamCancelHandle(', ')', () {
+              indent.writeScoped('onCancel: {', '},', () {
+                indent.writeln('callbacks.clear()');
+                indent.writeln('taskHandle.cancel()');
+              });
+              indent.writeScoped('onFinish: { [weak self] in', '}', () {
+                indent.writeScoped('if let handle = handleRef {', '}', () {
+                  indent.writeln('self?.untrackStream(handle)');
+                });
+              });
+            });
+            indent.writeln('handleRef = cancelHandle');
+            indent.writeln('trackStream(cancelHandle)');
+            indent.writeScoped('let task = Task {', '}', () {
+              indent.writeScoped('do {', '}', () {
+                indent.writeScoped('for try await event in streamBox.stream {', '}', () {
+                  indent.writeln('if Task.isCancelled { break }');
+                  indent.writeln('callbacks.sendData($encodeEvent)');
+                });
+                indent.writeScoped('if !Task.isCancelled {', '}', () {
+                  indent.writeln('callbacks.sendDone()');
+                });
+                indent.writeln('cancelHandle.markFinished()');
+              }, addTrailingNewline: false);
+              indent.addScoped(' catch let error as $errorClassName {', '}', () {
+                indent.writeScoped('if !Task.isCancelled {', '}', () {
+                  indent.writeln(
+                    'callbacks.sendError(code: error.code ?? "", message: error.message, details: $codec.encodeOrNil(error.details))',
+                  );
+                });
+                indent.writeln('cancelHandle.markFinished()');
+              }, addTrailingNewline: false);
+              indent.addScoped(' catch {', '}', () {
+                indent.writeScoped('if !Task.isCancelled {', '}', () {
+                  indent.writeln(
+                    r'callbacks.sendError(code: "\(error)", message: "\(Swift.type(of: error))", details: '
+                    '$codec.encodeOrNil("Stacktrace: \\(Thread.callStackSymbols)"))',
+                  );
+                });
+                indent.writeln('cancelHandle.markFinished()');
+              });
+            });
+            indent.writeln('taskHandle.attach(task)');
+            indent.writeln('return cancelHandle');
+          }
+        }, addTrailingNewline: false);
+        indent.addScoped(' catch let error as $errorClassName {', '}', () {
+          indent.writeln('wrappedError.code = error.code');
+          indent.writeln('wrappedError.message = error.message');
+          indent.writeln('wrappedError.details = error.details');
+        }, addTrailingNewline: false);
+        indent.addScoped(' catch let error {', '}', () {
+          indent.writeln(r'wrappedError.code = "\(error)"');
+          indent.writeln(r'wrappedError.message = "\(Swift.type(of: error))"');
+          indent.writeln(r'wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"');
+        });
+        indent.writeln('return nil');
+      },
+    );
   }
 
   /// Writes the hybrid transport entry point for the host API [method].
@@ -3884,6 +4138,9 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
     if (!generatorOptions.useFfi && root.containsHostStream) {
       _writeChannelStreamUtilities(root, indent);
     }
+    if (generatorOptions.useFfi && root.containsHostStream) {
+      _writeFfiStreamUtilities(root, indent);
+    }
     if (_needsEngineKeys(generatorOptions, root)) {
       _writePigeonEngineKeys(indent);
     }
@@ -4103,6 +4360,333 @@ fileprivate enum PigeonEngineKeys {
         },
       );
     }
+  }
+
+  void _writeFfiStreamUtilities(Root root, Indent indent) {
+    final String prefix = _classNamePrefix;
+    final codec = '${prefix}PigeonInteropCodec';
+    final bool hasAsyncStream = root.apis.whereType<AstHostApi>().any(
+      (AstHostApi api) =>
+          api.methods.any((Method method) => method.isStream && !method.isAsynchronousCallback),
+    );
+    final bool hasCallbackStream = root.apis.whereType<AstHostApi>().any(
+      (AstHostApi api) =>
+          api.methods.any((Method method) => method.isStream && method.isAsynchronousCallback),
+    );
+    indent.newln();
+    indent.format('''
+@objc public class ${prefix}PigeonStreamCancelHandle: NSObject, @unchecked Sendable {
+  private let lock = NSLock()
+  private var finished = false
+  private var onCancel: (() -> Void)?
+  private var onFinish: (() -> Void)?
+
+  internal init(onCancel: @escaping () -> Void, onFinish: @escaping () -> Void) {
+    self.onCancel = onCancel
+    self.onFinish = onFinish
+  }
+
+  @objc public func cancel() {
+    let cancelAction: (() -> Void)?
+    let finishAction: (() -> Void)?
+    do {
+      lock.lock()
+      defer { lock.unlock() }
+      guard !finished else { return }
+      finished = true
+      cancelAction = onCancel
+      finishAction = onFinish
+      onCancel = nil
+      onFinish = nil
+    }
+    finishAction?()
+    cancelAction?()
+  }
+
+  fileprivate func markFinished() {
+    let finishAction: (() -> Void)?
+    let displacedCancel: (() -> Void)?
+    do {
+      lock.lock()
+      defer { lock.unlock() }
+      guard !finished else { return }
+      finished = true
+      finishAction = onFinish
+      displacedCancel = onCancel
+      onCancel = nil
+      onFinish = nil
+    }
+    finishAction?()
+    // Keep displacedCancel alive past lock.unlock() so deallocation cannot re-enter lock.
+    withExtendedLifetime(displacedCancel) {}
+  }
+}
+''');
+    if (hasAsyncStream) {
+      indent.newln();
+      indent.format('''
+private final class ${prefix}PigeonStreamBox<Element>: @unchecked Sendable {
+  let stream: AsyncThrowingStream<Element, Error>
+  init(_ stream: AsyncThrowingStream<Element, Error>) {
+    self.stream = stream
+  }
+}
+
+private final class ${prefix}PigeonStreamTaskHandle: @unchecked Sendable {
+  private let lock = NSLock()
+  private var task: Task<Void, Never>?
+  private var cancelled = false
+
+  func attach(_ task: Task<Void, Never>) {
+    let shouldCancel: Bool
+    do {
+      lock.lock()
+      defer { lock.unlock() }
+      if cancelled {
+        shouldCancel = true
+      } else {
+        self.task = task
+        shouldCancel = false
+      }
+    }
+    if shouldCancel {
+      task.cancel()
+    }
+  }
+
+  func cancel() {
+    let currentTask: Task<Void, Never>?
+    do {
+      lock.lock()
+      defer { lock.unlock() }
+      cancelled = true
+      currentTask = task
+      task = nil
+    }
+    currentTask?.cancel()
+  }
+}
+
+private final class ${prefix}PigeonFfiStreamCallbacks: @unchecked Sendable {
+  private let lock = NSLock()
+  private var terminated = false
+  private var onData: ((NSData?) -> Void)?
+  private var onError: ((String, String?, NSData?) -> Void)?
+  private var onDone: (() -> Void)?
+
+  init(
+    onData: @escaping (NSData?) -> Void,
+    onError: @escaping (String, String?, NSData?) -> Void,
+    onDone: @escaping () -> Void
+  ) {
+    self.onData = onData
+    self.onError = onError
+    self.onDone = onDone
+  }
+
+  func sendData(_ data: NSData?) {
+    let callback: ((NSData?) -> Void)?
+    do {
+      lock.lock()
+      defer { lock.unlock() }
+      guard !terminated else { return }
+      callback = onData
+    }
+    callback?(data)
+  }
+
+  func sendError(code: String, message: String?, details: NSData?) {
+    let callback: ((String, String?, NSData?) -> Void)?
+    let displacedData: ((NSData?) -> Void)?
+    let displacedDone: (() -> Void)?
+    do {
+      lock.lock()
+      defer { lock.unlock() }
+      guard !terminated else { return }
+      terminated = true
+      callback = onError
+      displacedData = onData
+      displacedDone = onDone
+      onData = nil
+      onError = nil
+      onDone = nil
+    }
+    callback?(code, message, details)
+    withExtendedLifetime((displacedData, displacedDone)) {}
+  }
+
+  func sendDone() {
+    let callback: (() -> Void)?
+    let displacedData: ((NSData?) -> Void)?
+    let displacedError: ((String, String?, NSData?) -> Void)?
+    do {
+      lock.lock()
+      defer { lock.unlock() }
+      guard !terminated else { return }
+      terminated = true
+      callback = onDone
+      displacedData = onData
+      displacedError = onError
+      onData = nil
+      onError = nil
+      onDone = nil
+    }
+    callback?()
+    withExtendedLifetime((displacedData, displacedError)) {}
+  }
+
+  func clear() {
+    let displaced: (((NSData?) -> Void)?, ((String, String?, NSData?) -> Void)?, (() -> Void)?)
+    do {
+      lock.lock()
+      defer { lock.unlock() }
+      terminated = true
+      displaced = (onData, onError, onDone)
+      onData = nil
+      onError = nil
+      onDone = nil
+    }
+    withExtendedLifetime(displaced) {}
+  }
+}
+''');
+    }
+    if (!hasCallbackStream) {
+      return;
+    }
+    indent.newln();
+    indent.format('''
+/// Sink used by `@asyncCallback` streaming `@HostApi` methods to push values,
+/// errors, or completion back to Dart over FFI.
+class ${prefix}PigeonEventSink<ReturnType>: @unchecked Sendable {
+  private let lock = NSLock()
+  private let encode: (ReturnType) -> NSData?
+  private var onData: ((NSData?) -> Void)?
+  private var onError: ((String, String?, NSData?) -> Void)?
+  private var onDone: (() -> Void)?
+  private var onClosed: (() -> Void)?
+  private var cancelCallback: (() -> Void)?
+  private var terminated = false
+  private var cancelled = false
+
+  fileprivate init(
+    onData: @escaping (NSData?) -> Void,
+    onError: @escaping (String, String?, NSData?) -> Void,
+    onDone: @escaping () -> Void,
+    encode: @escaping (ReturnType) -> NSData?
+  ) {
+    self.onData = onData
+    self.onError = onError
+    self.onDone = onDone
+    self.encode = encode
+  }
+
+  fileprivate func attachOnClosed(_ onClosed: @escaping () -> Void) {
+    lock.lock()
+    defer { lock.unlock() }
+    if !cancelled && !terminated {
+      self.onClosed = onClosed
+    }
+  }
+
+  fileprivate func attachCancel(_ cancel: (() -> Void)?) {
+    guard let cancel = cancel else { return }
+    let shouldCancel: Bool
+    do {
+      lock.lock()
+      defer { lock.unlock() }
+      if cancelled {
+        shouldCancel = true
+      } else {
+        if !terminated {
+          cancelCallback = cancel
+        }
+        shouldCancel = false
+      }
+    }
+    if shouldCancel {
+      cancel()
+    }
+  }
+
+  func success(_ value: ReturnType) {
+    let callback: ((NSData?) -> Void)?
+    do {
+      lock.lock()
+      defer { lock.unlock() }
+      guard !terminated else { return }
+      callback = onData
+    }
+    callback?(encode(value))
+  }
+
+  func error(code: String, message: String?, details: Any?) {
+    let callback: ((String, String?, NSData?) -> Void)?
+    let closedAction: (() -> Void)?
+    let displaced: (((NSData?) -> Void)?, (() -> Void)?, (() -> Void)?)
+    do {
+      lock.lock()
+      defer { lock.unlock() }
+      guard !terminated else { return }
+      terminated = true
+      callback = onError
+      closedAction = onClosed
+      displaced = (onData, onDone, cancelCallback)
+      onData = nil
+      onError = nil
+      onDone = nil
+      onClosed = nil
+      cancelCallback = nil
+    }
+    closedAction?()
+    callback?(code, message, $codec.encodeOrNil(details))
+    withExtendedLifetime(displaced) {}
+  }
+
+  func endOfStream() {
+    let callback: (() -> Void)?
+    let closedAction: (() -> Void)?
+    let displaced: (((NSData?) -> Void)?, ((String, String?, NSData?) -> Void)?, (() -> Void)?)
+    do {
+      lock.lock()
+      defer { lock.unlock() }
+      guard !terminated else { return }
+      terminated = true
+      callback = onDone
+      closedAction = onClosed
+      displaced = (onData, onError, cancelCallback)
+      onData = nil
+      onError = nil
+      onDone = nil
+      onClosed = nil
+      cancelCallback = nil
+    }
+    closedAction?()
+    callback?()
+    withExtendedLifetime(displaced) {}
+  }
+
+  fileprivate func close() {
+    let cancel: (() -> Void)?
+    let displaced: (((NSData?) -> Void)?, ((String, String?, NSData?) -> Void)?, (() -> Void)?, (() -> Void)?)
+    do {
+      lock.lock()
+      defer { lock.unlock() }
+      terminated = true
+      cancelled = true
+      cancel = cancelCallback
+      displaced = (onData, onError, onDone, onClosed)
+      onData = nil
+      onError = nil
+      onDone = nil
+      onClosed = nil
+      cancelCallback = nil
+    }
+    cancel?()
+    withExtendedLifetime(displaced) {}
+  }
+}
+''');
   }
 
   void _writeChannelStreamUtilities(Root root, Indent indent) {

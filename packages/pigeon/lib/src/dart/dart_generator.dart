@@ -742,6 +742,7 @@ class InternalDartOptions extends InternalOptions {
     this.dartOut,
     this.testOut,
     this.fileSpecificClassNameComponent,
+    this.jniFileSpecificClassNameComponent,
     this.useJni = false,
     this.useFfi = false,
     this.ffiErrorClassName,
@@ -761,6 +762,7 @@ class InternalDartOptions extends InternalOptions {
     this.ffiErrorClassName,
     this.jniErrorClassName,
     this.fileSpecificClassNameComponent,
+    this.jniFileSpecificClassNameComponent,
     this.nativeInteropTransport = NativeInteropTransport.hybrid,
   }) : copyrightHeader = copyrightHeader ?? options.copyrightHeader,
        dartOut = (dartOut ?? options.sourceOutPath)!,
@@ -772,6 +774,9 @@ class InternalDartOptions extends InternalOptions {
 
   /// A String to augment class names to avoid cross file collisions.
   final String? fileSpecificClassNameComponent;
+
+  /// A String to augment JNI class names when Kotlin and Swift output names differ.
+  final String? jniFileSpecificClassNameComponent;
 
   /// Path to output generated Dart file.
   final String? dartOut;
@@ -2317,6 +2322,10 @@ $dartApiName? ${classMemberNamePrefix}getInstance_${api.name}({
 
       for (final Method method in api.methods) {
         final _JniMember jniMember = jniApiMembers[method]!;
+        if (method.isStream) {
+          _writeNativeInteropHostStreamMethod(generatorOptions, indent, method, jniMember);
+          continue;
+        }
         indent.writeln('@override');
         indent.writeScoped(
           '${method.isAsynchronous ? 'Future<' : ''}${addGenericTypes(method.returnType)}${method.isAsynchronous ? '>' : ''} ${method.name}(${_getMethodParameterSignature(method.parameters)}) ${method.isAsynchronous ? 'async ' : ''}{',
@@ -2443,6 +2452,161 @@ return ${generatorOptions.useJni ? 'await ' : ''}$completerVar.future;
         indent.newln();
       }
     });
+  }
+
+  /// Writes the native interop implementation of a streaming host API [method].
+  void _writeNativeInteropHostStreamMethod(
+    InternalDartOptions generatorOptions,
+    Indent indent,
+    Method method,
+    _JniMember jniMember,
+  ) {
+    final String returnTypeString = addGenericTypes(method.returnType);
+    final String eventCast = _castValue('event', method.returnType);
+    final String jniPrefix = generatorOptions.jniFileSpecificClassNameComponent ?? _classNamePrefix;
+    indent.writeln('@override');
+    indent.writeScoped(
+      'Stream<$returnTypeString> ${method.name}(${_getMethodParameterSignature(method.parameters)}) {',
+      '}',
+      () {
+        var isFirstBranch = true;
+        if (generatorOptions.useJni) {
+          indent.writeScoped('if (_jniApi != null) {', '}', () {
+            indent.writeScoped('return _pigeonJniStream<$returnTypeString>(', ');', () {
+              indent.writeScoped(
+                'start: ($_jniBridgePrefix.${jniPrefix}PigeonStreamCallback ${varNamePrefix}callback) {',
+                '},',
+                () {
+                  if (generatorOptions.useJniHybrid) {
+                    const String argsVar = nativeInteropArgsParameterName;
+                    final temporaries = <(String, bool)>[];
+                    final callArguments = <String>[];
+                    final List<Parameter> encodedParameters = nativeInteropEncodedParameters(
+                      method.parameters,
+                    );
+                    if (encodedParameters.isNotEmpty) {
+                      indent.writeln(
+                        'final JByteArray $argsVar = _PigeonJniBuffers.encode(<Object?>[${encodedParameters.map((Parameter p) => p.name).join(', ')}]);',
+                      );
+                      temporaries.add((argsVar, false));
+                    }
+                    for (final Parameter parameter in method.parameters) {
+                      final TypeDeclaration type = parameter.type;
+                      if (!isNativeInteropDirectType(type)) {
+                        continue;
+                      }
+                      if (type.isEnum) {
+                        callArguments.add(
+                          type.isNullable
+                              ? '${parameter.name}?.index ?? $nativeInteropNullEnumIndex'
+                              : '${parameter.name}.index',
+                        );
+                      } else if (isPrimitiveType(type) && !type.isNullable) {
+                        callArguments.add(parameter.name);
+                      } else {
+                        final _JniType jniType = _JniType.fromTypeDeclaration(type);
+                        final local = '${varNamePrefix}arg_${parameter.name}';
+                        indent.writeln(
+                          'final ${jniType.getJniCallReturnType(true)} $local = ${_dartToJniDirect(parameter.name, type)};',
+                        );
+                        temporaries.add((local, type.isNullable));
+                        callArguments.add(local);
+                      }
+                    }
+                    if (encodedParameters.isNotEmpty) {
+                      callArguments.add(argsVar);
+                    }
+                    callArguments.add('${varNamePrefix}callback');
+                    final String call = jniMember.access('_jniApi', callArguments.join(', '));
+                    if (temporaries.isEmpty) {
+                      indent.writeln('return $call;');
+                    } else {
+                      indent.writeScoped('try {', '}', () {
+                        indent.writeln('return $call;');
+                      }, addTrailingNewline: false);
+                      indent.addScoped(' finally {', '}', () {
+                        for (final (String local, bool isNullable) in temporaries) {
+                          indent.writeln('$local${isNullable ? '?' : ''}.release();');
+                        }
+                      });
+                    }
+                  } else {
+                    final String baseArgs = _getJniMethodCallArguments(method.parameters);
+                    final allArgs = baseArgs.isEmpty
+                        ? '${varNamePrefix}callback'
+                        : '$baseArgs, ${varNamePrefix}callback';
+                    indent.writeln('return ${jniMember.access('_jniApi', allArgs)};');
+                  }
+                },
+              );
+              indent.writeln('decodeEvent: (Object? event) => $eventCast,');
+            });
+          }, addTrailingNewline: false);
+          isFirstBranch = false;
+        }
+        if (generatorOptions.useFfi) {
+          final elseStr = isFirstBranch ? '' : ' else';
+          indent.addScoped('$elseStr if (_ffiApi != null) {', '}', () {
+            const errorVar = '${varNamePrefix}error';
+            const String argsVar = nativeInteropArgsParameterName;
+            indent.writeScoped('return _pigeonFfiStream<$returnTypeString>(', ');', () {
+              indent.writeScoped('start: (onData, onError, onDone, $errorVar) {', '},', () {
+                final arguments = <(String, String)>[];
+                if (generatorOptions.useFfiHybrid) {
+                  final List<Parameter> encodedParameters = nativeInteropEncodedParameters(
+                    method.parameters,
+                  );
+                  if (encodedParameters.isNotEmpty) {
+                    indent.writeln(
+                      'final NSData $argsVar = _PigeonFfiBuffers.encode(<Object?>[${encodedParameters.map((Parameter p) => p.name).join(', ')}]);',
+                    );
+                  }
+                  for (final Parameter parameter in method.parameters) {
+                    if (isNativeInteropDirectType(parameter.type)) {
+                      arguments.add((
+                        parameter.name,
+                        _dartToFfiDirect(parameter.name, parameter.type),
+                      ));
+                    }
+                  }
+                  if (encodedParameters.isNotEmpty) {
+                    arguments.add((argsVar, argsVar));
+                  }
+                } else {
+                  for (final Parameter parameter in method.parameters) {
+                    final _FfiType ffiType = _FfiType.fromTypeDeclaration(parameter.type);
+                    arguments.add((
+                      parameter.name,
+                      ffiType.getToFfiCall(parameter.type, parameter.name, ffiType),
+                    ));
+                  }
+                }
+                arguments.addAll(const <(String, String)>[
+                  ('pigeonOnData', 'onData'),
+                  ('pigeonOnError', 'onError'),
+                  ('pigeonOnDone', 'onDone'),
+                  ('wrappedError', errorVar),
+                ]);
+                final String methodCallName = _swiftObjcSelectorFirstPiece(
+                  method.name,
+                  arguments.first.$1,
+                );
+                final values = <String>[
+                  for (final (int index, (String label, String value)) in arguments.indexed)
+                    if (index == 0) value else '$label: $value',
+                ];
+                indent.writeln('return _ffiApi.$methodCallName(${values.join(', ')});');
+              });
+              indent.writeln('decodeEvent: (Object? event) => $eventCast,');
+            });
+          }, addTrailingNewline: false);
+          isFirstBranch = false;
+        }
+        indent.addScoped('${isFirstBranch ? '' : ' else '}{', '}', () {
+          indent.writeln("throw UnsupportedError('Platform not supported for Native Interop.');");
+        });
+      },
+    );
   }
 
   /// Writes the body of the JNI branch of a host API [method] for the hybrid
@@ -2959,7 +3123,9 @@ $dartApiName? ${classMemberNamePrefix}getInstance_${api.name}({
       );
       for (final Method method in api.methods) {
         indent.newln();
-        final String returnType = method.isAsynchronous
+        final String returnType = method.isStream
+            ? 'Stream<${addGenericTypes(method.returnType)}>'
+            : method.isAsynchronous
             ? 'Future<${addGenericTypes(method.returnType)}>'
             : addGenericTypes(method.returnType);
         indent.writeln(
@@ -3070,6 +3236,7 @@ ${api.name}({
             returnType: func.returnType,
             documentationComments: func.documentationComments,
             channelName: makeChannelName(api, func, dartPackageName),
+            useNativeInterop: usesNativeInterop(generatorOptions),
           );
         } else {
           _writeHostMethod(
@@ -3548,16 +3715,19 @@ ${api.name}({
   ) {
     if (generatorOptions.useJni) {
       _writeJniCodec(indent, root);
-      if (generatorOptions.useJniHybrid) {
+      if (generatorOptions.useJniHybrid || root.containsHostStream) {
         _writeJniBufferHelpers(indent);
       }
     }
     if (generatorOptions.useFfi) {
       _writeFfiCodec(indent, root);
-      if (generatorOptions.useFfiHybrid) {
+      if (generatorOptions.useFfiHybrid || root.containsHostStream) {
         _writeFfiBufferHelpers(indent);
       }
       _writeConvertNumberWrapper(indent, root);
+    }
+    if (root.containsHostStream) {
+      _writeNativeInteropStreamHelpers(generatorOptions, indent);
     }
 
     indent.writeln('bool _isType<T>(Type t) => T == t;');
@@ -3953,6 +4123,229 @@ class _PigeonFfiBuffers {
   }
 }
 ''');
+  }
+
+  /// Writes the native interop stream helpers used by JNI and/or FFI host
+  /// `Stream<T>` methods.
+  void _writeNativeInteropStreamHelpers(InternalDartOptions generatorOptions, Indent indent) {
+    if (generatorOptions.useJni) {
+      final String jniPrefix =
+          generatorOptions.jniFileSpecificClassNameComponent ?? _classNamePrefix;
+      indent.newln();
+      indent.format('''
+final class _PigeonJniStreamCallback with $_jniBridgePrefix.\$${jniPrefix}PigeonStreamCallback {
+  _PigeonJniStreamCallback({
+    required this.onDataCallback,
+    required this.onErrorCallback,
+    required this.onDoneCallback,
+  });
+
+  final void Function(JByteArray encodedValue) onDataCallback;
+  final void Function(JString code, JString? message, JByteArray? encodedDetails) onErrorCallback;
+  final void Function() onDoneCallback;
+
+  @override
+  bool get onData\$async => true;
+
+  @override
+  bool get onError\$async => true;
+
+  @override
+  bool get onDone\$async => true;
+
+  @override
+  void onData(JByteArray encodedValue) => onDataCallback(encodedValue);
+
+  @override
+  void onError(JString code, JString? message, JByteArray? encodedDetails) =>
+      onErrorCallback(code, message, encodedDetails);
+
+  @override
+  void onDone() => onDoneCallback();
+}
+
+Stream<T> _pigeonJniStream<T>({
+  required $_jniBridgePrefix.${jniPrefix}PigeonStreamCancelHandle Function(
+    $_jniBridgePrefix.${jniPrefix}PigeonStreamCallback callback,
+  ) start,
+  required T Function(Object? event) decodeEvent,
+}) {
+  late final StreamController<T> controller;
+  $_jniBridgePrefix.${jniPrefix}PigeonStreamCallback? callbackImpl;
+  $_jniBridgePrefix.${jniPrefix}PigeonStreamCancelHandle? cancelHandle;
+  var terminatedFromHost = false;
+
+  void releaseHandles() {
+    final $_jniBridgePrefix.${jniPrefix}PigeonStreamCancelHandle? handle = cancelHandle;
+    cancelHandle = null;
+    handle?.release();
+    final $_jniBridgePrefix.${jniPrefix}PigeonStreamCallback? impl = callbackImpl;
+    callbackImpl = null;
+    (impl as JObject?)?.release();
+  }
+
+  controller = StreamController<T>(
+    onListen: () {
+      final $_jniBridgePrefix.${jniPrefix}PigeonStreamCallback impl =
+          $_jniBridgePrefix.${jniPrefix}PigeonStreamCallback.implement(
+        _PigeonJniStreamCallback(
+          onDataCallback: (JByteArray encodedValue) {
+            final Object? decoded = _PigeonJniBuffers.decode(encodedValue);
+            if (controller.isClosed) {
+              return;
+            }
+            try {
+              controller.add(decodeEvent(decoded));
+            } catch (e, st) {
+              controller.addError(e, st);
+            }
+          },
+          onErrorCallback: (JString code, JString? message, JByteArray? encodedDetails) {
+            final String codeStr = code.toDartString(releaseOriginal: true);
+            final String? messageStr = message?.toDartString(releaseOriginal: true);
+            final Object? details = _PigeonJniBuffers.decode(encodedDetails);
+            terminatedFromHost = true;
+            releaseHandles();
+            if (!controller.isClosed) {
+              controller.addError(
+                PlatformException(code: codeStr, message: messageStr, details: details),
+              );
+              unawaited(controller.close());
+            }
+          },
+          onDoneCallback: () {
+            terminatedFromHost = true;
+            releaseHandles();
+            if (!controller.isClosed) {
+              unawaited(controller.close());
+            }
+          },
+        ),
+      );
+      callbackImpl = impl;
+      try {
+        cancelHandle = start(impl);
+      } on JThrowable catch (e) {
+        terminatedFromHost = true;
+        releaseHandles();
+        if (!controller.isClosed) {
+          controller.addError(_wrapJniException(e));
+          unawaited(controller.close());
+        }
+      } catch (e, st) {
+        terminatedFromHost = true;
+        releaseHandles();
+        if (!controller.isClosed) {
+          controller.addError(e, st);
+          unawaited(controller.close());
+        }
+      }
+    },
+    onCancel: () {
+      if (!terminatedFromHost) {
+        try {
+          cancelHandle?.cancel();
+        } on JThrowable catch (e) {
+          releaseHandles();
+          throw _wrapJniException(e);
+        }
+      }
+      releaseHandles();
+    },
+  );
+  return controller.stream;
+}
+''');
+    }
+    if (generatorOptions.useFfi) {
+      indent.newln();
+      indent.format('''
+Stream<T> _pigeonFfiStream<T>({
+  required $_ffiBridgePrefix.${_classNamePrefix}PigeonStreamCancelHandle? Function(
+    ObjCBlock<Void Function(NSData?)> onData,
+    ObjCBlock<Void Function(NSString, NSString?, NSData?)> onError,
+    ObjCBlock<Void Function()> onDone,
+    $_ffiBridgePrefix.${generatorOptions.ffiErrorClassName} error,
+  ) start,
+  required T Function(Object? event) decodeEvent,
+}) {
+  late final StreamController<T> controller;
+  $_ffiBridgePrefix.${_classNamePrefix}PigeonStreamCancelHandle? cancelHandle;
+  var terminatedFromHost = false;
+
+  controller = StreamController<T>(
+    onListen: () {
+      final error = $_ffiBridgePrefix.${generatorOptions.ffiErrorClassName}();
+      final ObjCBlock<Void Function(NSData?)> onData =
+          $_ffiBridgePrefix.ObjCBlock_ffiVoid_NSData.listener((NSData? data) {
+        final Object? decoded = _PigeonFfiBuffers.decode(data);
+        if (controller.isClosed) {
+          return;
+        }
+        try {
+          controller.add(decodeEvent(decoded));
+        } catch (e, st) {
+          controller.addError(e, st);
+        }
+      });
+      final ObjCBlock<Void Function(NSString, NSString?, NSData?)> onError =
+          $_ffiBridgePrefix.ObjCBlock_ffiVoid_NSString_NSString_NSData.listener((
+        NSString code,
+        NSString? message,
+        NSData? encodedDetails,
+      ) {
+        final String codeStr = code.toDartString();
+        final String? messageStr = message?.toDartString();
+        final Object? details = _PigeonFfiBuffers.decode(encodedDetails);
+        terminatedFromHost = true;
+        cancelHandle = null;
+        if (!controller.isClosed) {
+          controller.addError(
+            PlatformException(code: codeStr, message: messageStr, details: details),
+          );
+          unawaited(controller.close());
+        }
+      });
+      final ObjCBlock<Void Function()> onDone =
+          $_ffiBridgePrefix.ObjCBlock_ffiVoid.listener(() {
+        terminatedFromHost = true;
+        cancelHandle = null;
+        if (!controller.isClosed) {
+          unawaited(controller.close());
+        }
+      });
+      try {
+        cancelHandle = start(onData, onError, onDone, error);
+      } catch (e, st) {
+        terminatedFromHost = true;
+        cancelHandle = null;
+        if (!controller.isClosed) {
+          controller.addError(e, st);
+          unawaited(controller.close());
+        }
+        return;
+      }
+      if (error.code != null) {
+        terminatedFromHost = true;
+        cancelHandle = null;
+        if (!controller.isClosed) {
+          controller.addError(_wrapFfiError(error));
+          unawaited(controller.close());
+        }
+      }
+    },
+    onCancel: () {
+      final $_ffiBridgePrefix.${_classNamePrefix}PigeonStreamCancelHandle? handle = cancelHandle;
+      cancelHandle = null;
+      if (!terminatedFromHost) {
+        handle?.cancel();
+      }
+    },
+  );
+  return controller.stream;
+}
+''');
+    }
   }
 
   void _writeConvertNumberWrapper(Indent indent, Root root) {
@@ -4420,6 +4813,7 @@ if (wrapped == null) {
     required TypeDeclaration returnType,
     required List<String> documentationComments,
     required String channelName,
+    bool useNativeInterop = false,
   }) {
     addDocumentationComments(indent, documentationComments, docCommentSpec);
     final String argSignature = _getMethodParameterSignature(parameters);
@@ -4428,6 +4822,13 @@ if (wrapped == null) {
     final listArgs = arguments == null ? 'const <Object?>[]' : '<Object?>[$arguments]';
     final String eventCast = _castValue('event', returnType);
     indent.writeScoped('Stream<$returnTypeString> $name($argSignature) {', '}', () {
+      if (useNativeInterop) {
+        indent.writeScoped('if (_nativeInteropApi != null) {', '}', () {
+          indent.writeln(
+            'return _nativeInteropApi.$name(${parameters.map((Parameter e) => '${e.isNamed ? '${e.name}: ' : ''}${e.name}').join(', ')});',
+          );
+        });
+      }
       indent.writeln("final ${varNamePrefix}channelName = '$channelName\$$_suffixVarName';");
       indent.writeScoped('return _pigeonChannelStream<$returnTypeString>(', ');', () {
         indent.writeln('controlChannelName: ${varNamePrefix}channelName,');
@@ -5046,6 +5447,15 @@ class _JniBindingNamer {
 
   /// Names a method of a Pigeon API.
   _JniMember nextApiMethod(Method method, {bool hybrid = false}) {
+    if (method.isStream) {
+      final int parameterCount =
+          (hybrid
+              ? method.parameters.where((Parameter p) => isNativeInteropDirectType(p.type)).length +
+                    (nativeInteropEncodedParameters(method.parameters).isNotEmpty ? 1 : 0)
+              : method.parameters.length) +
+          1;
+      return next(method.name, parameterCount: parameterCount);
+    }
     final int parameterCount = hybrid
         ? method.parameters.where((Parameter p) => isNativeInteropDirectType(p.type)).length +
               (nativeInteropEncodedParameters(method.parameters).isNotEmpty ? 1 : 0)

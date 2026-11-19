@@ -3863,6 +3863,90 @@ name: foobar
     expect(code, isNot(contains('_PigeonChannelStreamRouter')));
     expect(code, isNot(contains('_pigeonChannelStream')));
   });
+
+  test('generates native interop HostApi Stream<T> bindings with platform isolation', () {
+    final root = Root(
+      apis: <Api>[
+        AstHostApi(
+          name: 'StreamApi',
+          methods: <Method>[
+            Method(
+              name: 'numbers',
+              location: ApiLocation.host,
+              parameters: <Parameter>[
+                Parameter(
+                  name: 'count',
+                  type: const TypeDeclaration(baseName: 'int', isNullable: false),
+                ),
+              ],
+              returnType: const TypeDeclaration(baseName: 'int', isNullable: false),
+              isStream: true,
+            ),
+          ],
+        ),
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+
+    final mainSink = StringBuffer();
+    const DartGenerator().generate(
+      const InternalDartOptions(
+        ignoreLints: false,
+        dartOut: 'lib/streams.g.dart',
+        useJni: true,
+        useFfi: true,
+        ffiErrorClassName: 'PigeonError',
+        jniErrorClassName: 'FlutterError',
+        fileSpecificClassNameComponent: 'Streams',
+        jniFileSpecificClassNameComponent: 'JniStreams',
+      ),
+      root,
+      mainSink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final mainCode = mainSink.toString();
+    expect(mainCode, contains('Stream<int> numbers(int count);'));
+    expect(mainCode, contains('return _nativeInteropApi.numbers(count);'));
+
+    final jniOnlySink = StringBuffer();
+    const DartGenerator().generateNativeInterop(
+      const InternalDartOptions(
+        ignoreLints: false,
+        dartOut: 'lib/streams.g.dart',
+        useJni: true,
+        jniErrorClassName: 'FlutterError',
+        fileSpecificClassNameComponent: 'Streams',
+        jniFileSpecificClassNameComponent: 'JniStreams',
+      ),
+      root,
+      jniOnlySink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final jniOnlyCode = jniOnlySink.toString();
+    expect(jniOnlyCode, contains('_pigeonJniStream<int>('));
+    expect(jniOnlyCode, contains('JniStreamsPigeonStreamCallback'));
+    expect(jniOnlyCode, contains('JniStreamsPigeonStreamCancelHandle'));
+    expect(jniOnlyCode, isNot(contains('_pigeonFfiStream')));
+
+    final ffiOnlySink = StringBuffer();
+    const DartGenerator().generateNativeInterop(
+      const InternalDartOptions(
+        ignoreLints: false,
+        dartOut: 'lib/streams.g.dart',
+        useFfi: true,
+        ffiErrorClassName: 'PigeonError',
+        fileSpecificClassNameComponent: 'Streams',
+      ),
+      root,
+      ffiOnlySink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final ffiOnlyCode = ffiOnlySink.toString();
+    expect(ffiOnlyCode, contains('_pigeonFfiStream<int>('));
+    expect(ffiOnlyCode, contains('StreamsPigeonStreamCancelHandle'));
+    expect(ffiOnlyCode, isNot(contains('_pigeonJniStream')));
+  });
 }
 
 /// Builds a root with a sealed class `Shape`, its subclasses `Circle` (one

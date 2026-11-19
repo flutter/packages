@@ -39,6 +39,7 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi, HostCa
   var niHostApiImpl: NativeInteropTestsClass?
   var niReservedImpl: NativeInteropReservedNamesHostApiImpl?
   var niSealedImpl: NativeInteropSealedClassHostApiImpl?
+  var niStreamImpl: NativeInteropStreamHostApiImpl?
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     // Workaround for https://github.com/flutter/flutter/issues/118103.
@@ -82,6 +83,9 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi, HostCa
     let sealedImpl = NativeInteropSealedClassHostApiImpl(registrar: registrar)
     niSealedImpl = sealedImpl
     NativeInteropSealedClassHostApiSetup.register(api: sealedImpl, registrar: registrar)
+    let streamImpl = NativeInteropStreamHostApiImpl()
+    niStreamImpl = streamImpl
+    NativeInteropStreamHostApiSetup.register(api: streamImpl, registrar: registrar)
   }
 
   public func detachFromEngine(for registrar: FlutterPluginRegistrar) {
@@ -104,6 +108,10 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi, HostCa
     if let niSealedImpl {
       NativeInteropSealedClassHostApiSetup.unregister(api: niSealedImpl, registrar: registrar)
       self.niSealedImpl = nil
+    }
+    if let niStreamImpl {
+      NativeInteropStreamHostApiSetup.unregister(api: niStreamImpl, registrar: registrar)
+      self.niStreamImpl = nil
     }
     proxyApiRegistrar?.tearDown()
     proxyApiRegistrar = nil
@@ -3375,6 +3383,99 @@ class StreamHostTestApiImpl: StreamHostTestApi, @unchecked Sendable {
 
   func streamViaCallback(
     prefix: String, count: Int64, sink: EventChannelTestsPigeonEventSink<String>
+  ) -> (() -> Void)? {
+    let task = Task.detached {
+      for i in 0..<count {
+        if Task.isCancelled { return }
+        sink.success("\(prefix):\(i)")
+        try? await Task.sleep(nanoseconds: 5_000_000)
+      }
+      if !Task.isCancelled {
+        sink.endOfStream()
+      }
+    }
+    return { [weak self] in
+      self?.incrementCancelledStreamCount()
+      task.cancel()
+    }
+  }
+}
+
+final class NativeInteropStreamHostApiImpl: NativeInteropStreamHostApi, @unchecked Sendable {
+  private let cancelLock = NSLock()
+  private var cancelledStreamCount: Int64 = 0
+
+  private func incrementCancelledStreamCount() {
+    cancelLock.lock()
+    cancelledStreamCount += 1
+    cancelLock.unlock()
+  }
+
+  func getCancelledStreamCount() throws -> Int64 {
+    cancelLock.lock()
+    defer { cancelLock.unlock() }
+    return cancelledStreamCount
+  }
+
+  func resetCancelledStreamCount() throws {
+    cancelLock.lock()
+    cancelledStreamCount = 0
+    cancelLock.unlock()
+  }
+
+  func streamNumbers(count: Int64, start: Int64) -> AsyncThrowingStream<Int64, Error> {
+    AsyncThrowingStream { continuation in
+      let task = Task.detached {
+        for i in 0..<count {
+          if Task.isCancelled { return }
+          continuation.yield(start + i)
+          if count > 10 {
+            try? await Task.sleep(nanoseconds: 10_000_000)
+          }
+        }
+        continuation.finish()
+      }
+      continuation.onTermination = { [weak self] termination in
+        if case .cancelled = termination {
+          self?.incrementCancelledStreamCount()
+        }
+        task.cancel()
+      }
+    }
+  }
+
+  func streamNullableInts() -> AsyncThrowingStream<Int64?, Error> {
+    AsyncThrowingStream { continuation in
+      continuation.yield(1)
+      continuation.yield(nil)
+      continuation.yield(2)
+      continuation.finish()
+    }
+  }
+
+  func streamShapes() -> AsyncThrowingStream<NativeInteropShape, Error> {
+    AsyncThrowingStream { continuation in
+      continuation.yield(NativeInteropCircle(radius: 3.5))
+      continuation.yield(NativeInteropSquare(side: 4.0, label: "square"))
+      continuation.finish()
+    }
+  }
+
+  func streamError(customError: Bool) -> AsyncThrowingStream<Int64, Error> {
+    AsyncThrowingStream { continuation in
+      continuation.yield(1)
+      if customError {
+        continuation.finish(
+          throwing: NativeInteropTestsError(
+            code: "error_code", message: "error_message", details: "error_details"))
+      } else {
+        continuation.finish(throwing: NSError(domain: "test", code: 42))
+      }
+    }
+  }
+
+  func streamViaCallback(
+    prefix: String, count: Int64, sink: NativeInteropTestsPigeonEventSink<String>
   ) -> (() -> Void)? {
     let task = Task.detached {
       for i in 0..<count {

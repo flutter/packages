@@ -51,6 +51,7 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi, HostCallbackCoreApi {
   internal var niMessageApiImpl: NativeInteropIntegrationTests? = null
   private var niReservedNamesImpl: NativeInteropReservedNamesHostApiImpl? = null
   private var niSealedClassImpl: NativeInteropSealedClassHostApiImpl? = null
+  private var niStreamImpl: NativeInteropStreamHostApiImpl? = null
 
   override fun onAttachedToEngine(binding: FlutterPluginBinding) {
     HostIntegrationCoreApi.setUp(binding.binaryMessenger, this)
@@ -68,6 +69,9 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi, HostCallbackCoreApi {
     val sealedImpl = NativeInteropSealedClassHostApiImpl(binding)
     niSealedClassImpl = sealedImpl
     NativeInteropSealedClassHostApiRegistrar().register(sealedImpl, binding)
+    val streamImpl = NativeInteropStreamHostApiImpl()
+    niStreamImpl = streamImpl
+    NativeInteropStreamHostApiRegistrar().register(streamImpl, binding)
     flutterApi = FlutterIntegrationCoreApi(binding.binaryMessenger)
     flutterCallbackApi = FlutterCallbackCoreApi(binding.binaryMessenger)
     flutterSmallApiOne = FlutterSmallApi(binding.binaryMessenger, "suffixOne")
@@ -95,6 +99,8 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi, HostCallbackCoreApi {
     niReservedNamesImpl = null
     niSealedClassImpl?.let { NativeInteropSealedClassHostApiRegistrar().unregister(it, binding) }
     niSealedClassImpl = null
+    niStreamImpl?.let { NativeInteropStreamHostApiRegistrar().unregister(it, binding) }
+    niStreamImpl = null
     proxyApiRegistrar?.tearDown()
   }
 
@@ -2606,6 +2612,89 @@ class StreamHostTestApiImpl(private val offset: Long = 0) : StreamHostTestApi {
     val handler = Handler(handlerThread.looper)
     var index = 0L
     val cancelled = java.util.concurrent.atomic.AtomicBoolean(false)
+    val runnable =
+        object : Runnable {
+          override fun run() {
+            if (cancelled.get()) {
+              handlerThread.quitSafely()
+              return
+            }
+            if (index >= count) {
+              sink.endOfStream()
+              handlerThread.quitSafely()
+            } else {
+              sink.success("$prefix:$index")
+              index++
+              handler.postDelayed(this, 5)
+            }
+          }
+        }
+    handler.postDelayed(runnable, 5)
+    return AutoCloseable {
+      cancelled.set(true)
+      cancelledStreamCount.incrementAndGet()
+      handler.removeCallbacks(runnable)
+      handlerThread.quitSafely()
+    }
+  }
+
+  override fun getCancelledStreamCount(): Long = cancelledStreamCount.get()
+
+  override fun resetCancelledStreamCount() {
+    cancelledStreamCount.set(0)
+  }
+}
+
+class NativeInteropStreamHostApiImpl : NativeInteropStreamHostApi {
+  private val cancelledStreamCount = java.util.concurrent.atomic.AtomicLong(0)
+
+  override fun streamNumbers(count: Long, start: Long): Flow<Long> = flow {
+    var emitted = 0L
+    try {
+      for (i in 0L until count) {
+        emit(start + i)
+        emitted++
+        if (count > 10L) {
+          delay(10)
+        }
+      }
+    } finally {
+      if (emitted < count) {
+        cancelledStreamCount.incrementAndGet()
+      }
+    }
+  }
+
+  override fun streamNullableInts(): Flow<Long?> = flow {
+    emit(1L)
+    emit(null)
+    emit(2L)
+  }
+
+  override fun streamShapes(): Flow<NativeInteropShape> = flow {
+    emit(NativeInteropCircle(radius = 3.5))
+    emit(NativeInteropSquare(side = 4.0, label = "square"))
+  }
+
+  override fun streamError(customError: Boolean): Flow<Long> = flow {
+    emit(1L)
+    if (customError) {
+      throw NativeInteropTestsError("error_code", "error_message", "error_details")
+    } else {
+      throw IllegalStateException("non_custom_error")
+    }
+  }
+
+  override fun streamViaCallback(
+      prefix: String,
+      count: Long,
+      sink: NativeInteropTestsPigeonEventSink<String>,
+  ): AutoCloseable {
+    val handlerThread = android.os.HandlerThread("NativeInteropStreamHostApiImpl-callback")
+    handlerThread.start()
+    val handler = android.os.Handler(handlerThread.looper)
+    val cancelled = java.util.concurrent.atomic.AtomicBoolean(false)
+    var index = 0L
     val runnable =
         object : Runnable {
           override fun run() {

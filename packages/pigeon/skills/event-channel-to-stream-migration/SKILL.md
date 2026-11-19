@@ -55,7 +55,7 @@ abstract class MyStreamHostApi {
 - **No `@async` or `@TaskQueue`** on `Stream<T>` methods (both cause a generation error).
 - **No nullable `Stream<T>?` or `Stream<void>`** (nullable *element* types like `Stream<int?>` are supported).
 - **No parameter named `sink`** on `@asyncCallback` stream methods (reserved for the generated sink parameter).
-- **Platform-channel Kotlin/Swift/Dart only**: `Stream<T>` is rejected on `@FlutterApi`, `@ProxyApi`, Java, Objective-C, C++, GObject, and Native Interop (`useFfi` / `useJni`). If a file uses `useFfi`/`useJni`, move `Stream<T>` methods into a separate Pigeon file without `useFfi`/`useJni`.
+- **Kotlin/Swift/Dart only**: `Stream<T>` is supported on both platform channels and Native Interop (`useJni` / `useFfi`), and is rejected on `@FlutterApi`, `@ProxyApi`, Java, Objective-C, C++, and GObject.
 
 ---
 

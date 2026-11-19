@@ -2827,5 +2827,58 @@ void main() {
       expect(code, contains('class CallbackOnlyPigeonEventSink<T>'));
       expect(code, isNot(contains('kotlinx.coroutines')));
     });
+
+    test('generates JNI Flow and @asyncCallback stream entry points', () {
+      final root = Root(
+        apis: <Api>[
+          AstHostApi(
+            name: 'StreamApi',
+            methods: <Method>[
+              Method(
+                name: 'numbers',
+                location: ApiLocation.host,
+                parameters: <Parameter>[
+                  Parameter(
+                    name: 'count',
+                    type: const TypeDeclaration(baseName: 'int', isNullable: false),
+                  ),
+                ],
+                returnType: const TypeDeclaration(baseName: 'int', isNullable: false),
+                isStream: true,
+              ),
+              Method(
+                name: 'events',
+                location: ApiLocation.host,
+                parameters: <Parameter>[],
+                returnType: const TypeDeclaration(baseName: 'String', isNullable: false),
+                isStream: true,
+                isAsynchronousCallback: true,
+              ),
+            ],
+          ),
+        ],
+        classes: <Class>[],
+        enums: <Enum>[],
+      );
+      final sink = StringBuffer();
+      const KotlinGenerator().generate(
+        const InternalKotlinOptions(
+          kotlinOut: 'JniStreams.g.kt',
+          fileSpecificClassNameComponent: 'JniStreams',
+          useJni: true,
+        ),
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+      final code = sink.toString();
+      expect(code, contains('interface JniStreamsPigeonStreamCallback'));
+      expect(code, contains('class JniStreamsPigeonStreamCancelHandle'));
+      expect(code, contains('class JniStreamsPigeonEventSink<T>'));
+      expect(code, contains('fun numbers(count: Long): Flow<Long>'));
+      expect(code, contains('fun events(sink: JniStreamsPigeonEventSink<String>): AutoCloseable?'));
+      expect(code, contains('entry.pigeonCancelAllStreams()'));
+      expect(code, isNot(contains('BasicMessageChannel')));
+    });
   });
 }
