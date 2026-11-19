@@ -2441,7 +2441,7 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
               ),
             );
           }
-          if (hasAsync && !isUseCallback) {
+          if (hasAsync && !isAsynchronousCallback) {
             _errors.add(
               Error(
                 message:
