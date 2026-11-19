@@ -40,14 +40,16 @@ class SubtreeExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return
     // #docregion SubtreeUsage
-    return CupertinoPageScaffold(
+    CupertinoPageScaffold(
       navigationBar: const CupertinoNavigationBar(
         middle: Text('Modern Screen'),
       ),
       child: CupertinoUiCompatibilityBridge(child: const LegacyPackageWidget()),
-    );
+    )
     // #enddocregion SubtreeUsage
+    ;
   }
 }
 
