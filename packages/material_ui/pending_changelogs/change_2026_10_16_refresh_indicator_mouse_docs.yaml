@@ -1,3 +1,0 @@
-changelog: |
-  - Documents why `RefreshIndicator` does not respond to a mouse on desktop and web, and how to support mouse input.
-version: patch

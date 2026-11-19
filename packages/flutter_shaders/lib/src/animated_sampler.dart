@@ -96,12 +96,10 @@ class _ShaderSamplerBuilder extends SingleChildRenderObjectWidget {
 class _RenderShaderSamplerBuilderWidget extends RenderProxyBox {
   // Create a new [_RenderSnapshotWidget].
   _RenderShaderSamplerBuilderWidget({
-    required double devicePixelRatio,
-    required AnimatedSamplerBuilder builder,
-    required bool enabled,
-  }) : _devicePixelRatio = devicePixelRatio,
-       _builder = builder,
-       _enabled = enabled;
+    required this._devicePixelRatio,
+    required this._builder,
+    required this._enabled,
+  });
 
   @override
   OffsetLayer updateCompositedLayer({required covariant _ShaderSamplerBuilderLayer? oldLayer}) {

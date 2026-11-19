@@ -867,6 +867,14 @@ class DataTable extends StatelessWidget {
 
   static const Duration _sortArrowAnimationDuration = Duration(milliseconds: 150);
 
+  // The duration of the hover and focus highlight animations of a data row.
+  //
+  // Every cell of a row has its own TableRowInkWell, and each of them
+  // highlights the entire row. Animating those highlights would cross-fade two
+  // overlapping highlights whenever the pointer or the focus moves between
+  // cells of the same row, which momentarily dims the row and makes it flicker.
+  static const Duration _rowHighlightDuration = Duration.zero;
+
   Widget _buildCheckbox({
     required BuildContext context,
     required bool? checked,
@@ -904,6 +912,7 @@ class DataTable extends StatelessWidget {
         onTap: onRowTap,
         overlayColor: overlayColor,
         mouseCursor: rowMouseCursor,
+        hoverDuration: _rowHighlightDuration,
         child: contents,
       );
     }
@@ -1065,6 +1074,7 @@ class DataTable extends StatelessWidget {
         onHover: onRowHover,
         overlayColor: overlayColor,
         mouseCursor: mouseCursor,
+        hoverDuration: _rowHighlightDuration,
         child: label,
       );
     }
@@ -1314,7 +1324,8 @@ class DataTable extends StatelessWidget {
 ///
 ///  * [DataTable], which makes use of [TableRowInkWell] when
 ///    [DataRow.onSelectChanged] is defined and [DataCell.onTap]
-///    is not.
+///    is not, using a [hoverDuration] of [Duration.zero] so that moving hover
+///    or focus between cells of the same row does not flicker.
 class TableRowInkWell extends InkResponse {
   /// Creates an ink well for a table row.
   const TableRowInkWell({
@@ -1329,6 +1340,7 @@ class TableRowInkWell extends InkResponse {
     super.onSecondaryTapDown,
     super.overlayColor,
     super.mouseCursor,
+    super.hoverDuration,
   }) : super(containedInkWell: true, highlightShape: BoxShape.rectangle);
 
   @override

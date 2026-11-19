@@ -29,7 +29,7 @@ const String _kDefaultErrorMessage =
 class CameraPlugin extends CameraPlatform {
   /// Creates a new instance of [CameraPlugin]
   /// with the given [cameraService].
-  CameraPlugin({required CameraService cameraService}) : _cameraService = cameraService;
+  CameraPlugin({required this._cameraService});
 
   /// Registers this class as the default instance of [CameraPlatform].
   static void registerWith(Registrar registrar) {
