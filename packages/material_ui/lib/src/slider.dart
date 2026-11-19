@@ -306,23 +306,7 @@ class Slider extends StatefulWidget {
   ///
   /// <callout-box>
   ///
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
-  ///
-  /// ```dart
-  /// Slider(
-  ///   value: _duelCommandment.toDouble(),
-  ///   min: 1.0,
-  ///   max: 10.0,
-  ///   divisions: 10,
-  ///   label: '$_duelCommandment',
-  ///   onChanged: (double newValue) {
-  ///     setState(() {
-  ///       _duelCommandment = newValue.round();
-  ///     });
-  ///   },
-  /// )
-  /// ```
+  /// {@example /example/lib/slider/slider.snippet.0.dart#body indent=strip}
   ///
   /// </callout-box>
   ///
@@ -345,26 +329,7 @@ class Slider extends StatefulWidget {
   ///
   /// <callout-box>
   ///
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
-  ///
-  /// ```dart
-  /// Slider(
-  ///   value: _duelCommandment.toDouble(),
-  ///   min: 1.0,
-  ///   max: 10.0,
-  ///   divisions: 10,
-  ///   label: '$_duelCommandment',
-  ///   onChanged: (double newValue) {
-  ///     setState(() {
-  ///       _duelCommandment = newValue.round();
-  ///     });
-  ///   },
-  ///   onChangeStart: (double startValue) {
-  ///     print('Started change at $startValue');
-  ///   },
-  /// )
-  /// ```
+  /// {@example /example/lib/slider/slider.snippet.1.dart#body indent=strip}
   ///
   /// </callout-box>
   ///
@@ -382,26 +347,7 @@ class Slider extends StatefulWidget {
   ///
   /// <callout-box>
   ///
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
-  ///
-  /// ```dart
-  /// Slider(
-  ///   value: _duelCommandment.toDouble(),
-  ///   min: 1.0,
-  ///   max: 10.0,
-  ///   divisions: 10,
-  ///   label: '$_duelCommandment',
-  ///   onChanged: (double newValue) {
-  ///     setState(() {
-  ///       _duelCommandment = newValue.round();
-  ///     });
-  ///   },
-  ///   onChangeEnd: (double newValue) {
-  ///     print('Ended change on $newValue');
-  ///   },
-  /// )
-  /// ```
+  /// {@example /example/lib/slider/slider.snippet.2.dart#body indent=strip}
   ///
   /// </callout-box>
   ///
@@ -554,28 +500,10 @@ class Slider extends StatefulWidget {
   ///
   /// <callout-box>
   ///
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
-  ///
   /// In the example below, a slider for currency values is configured to
   /// announce a value with a currency label.
   ///
-  /// ```dart
-  /// Slider(
-  ///   value: _dollars.toDouble(),
-  ///   min: 20.0,
-  ///   max: 330.0,
-  ///   label: '$_dollars dollars',
-  ///   onChanged: (double newValue) {
-  ///     setState(() {
-  ///       _dollars = newValue.round();
-  ///     });
-  ///   },
-  ///   semanticFormatterCallback: (double newValue) {
-  ///     return '${newValue.round()} dollars';
-  ///   }
-  ///  )
-  /// ```
+  /// {@example /example/lib/slider/slider.snippet.3.dart#body indent=strip}
   ///
   /// </callout-box>
   ///
