@@ -354,6 +354,126 @@ struct AsyncHandlersTest {
     #expect(messenger.sentFrames.isEmpty)
   }
 
+  @Test
+  func ffiHostStreamUnregisterCancelsActiveAsyncAndCallbackStreams() async throws {
+    let api = MockNativeInteropStreamHostApi()
+    let registrar = MockFfiStreamPluginRegistrar()
+    let instanceName = "test-ffi-unregister-cancels"
+    NativeInteropStreamHostApiSetup.register(api: api, registrar: registrar, name: instanceName)
+    let setup = try #require(
+      NativeInteropStreamHostApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min, name: instanceName))
+
+    let asyncCancelled = StreamCancelSignal()
+    let callbackCancelled = StreamCancelSignal()
+    let firstValueReceived = StreamCancelSignal()
+    api.onNumbersCancelled = { asyncCancelled.signal() }
+    api.onCallbackCancelled = { callbackCancelled.signal() }
+
+    let asyncError = NativeInteropTestsError(code: "", message: nil, details: nil)
+    let asyncHandle = setup.streamNumbers(
+      count: 99,
+      start: 1,
+      pigeonOnData: { _ in firstValueReceived.signal() },
+      pigeonOnError: { _, _, _ in },
+      pigeonOnDone: {},
+      wrappedError: asyncError)
+    #expect(asyncHandle != nil)
+    await firstValueReceived.wait()
+
+    let cbError = NativeInteropTestsError(code: "", message: nil, details: nil)
+    let cbHandle = setup.streamViaCallback(
+      prefix: "cb",
+      count: 1,
+      pigeonOnData: { _ in },
+      pigeonOnError: { _, _, _ in },
+      pigeonOnDone: {},
+      wrappedError: cbError)
+    #expect(cbHandle != nil)
+
+    NativeInteropStreamHostApiSetup.unregister(api: api, registrar: registrar, name: instanceName)
+    await asyncCancelled.wait()
+    await callbackCancelled.wait()
+    #expect(asyncCancelled.isSignaled)
+    #expect(callbackCancelled.isSignaled)
+  }
+
+  @Test
+  func ffiHostStreamOnUnregisteredSetupPopulatesUnregisteredInstanceError() async throws {
+    let api = MockNativeInteropStreamHostApi()
+    let registrar = MockFfiStreamPluginRegistrar()
+    let instanceName = "test-ffi-unregistered-error"
+    NativeInteropStreamHostApiSetup.register(api: api, registrar: registrar, name: instanceName)
+    let setup = try #require(
+      NativeInteropStreamHostApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min, name: instanceName))
+    NativeInteropStreamHostApiSetup.unregister(api: api, registrar: registrar, name: instanceName)
+
+    let error = NativeInteropTestsError(code: "", message: nil, details: nil)
+    let handle = setup.streamNumbers(
+      count: 1,
+      start: 0,
+      pigeonOnData: { _ in },
+      pigeonOnError: { _, _, _ in },
+      pigeonOnDone: {},
+      wrappedError: error)
+    #expect(handle == nil)
+    #expect(error.code == "unregistered-instance")
+  }
+
+  @Test
+  func ffiCallbackSinkErrorAndEndOfStreamAreIdempotent() async throws {
+    let api = MockNativeInteropStreamHostApi()
+    let registrar = MockFfiStreamPluginRegistrar()
+    let instanceName = "test-ffi-sink-idempotency"
+    NativeInteropStreamHostApiSetup.register(api: api, registrar: registrar, name: instanceName)
+    defer {
+      NativeInteropStreamHostApiSetup.unregister(api: api, registrar: registrar, name: instanceName)
+    }
+    let setup = try #require(
+      NativeInteropStreamHostApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min, name: instanceName))
+
+    var errorCodes: [String] = []
+    var dataCount = 0
+    var doneCount = 0
+    let error = NativeInteropTestsError(code: "", message: nil, details: nil)
+    let handle = setup.streamViaCallback(
+      prefix: "cb",
+      count: 1,
+      pigeonOnData: { _ in dataCount += 1 },
+      pigeonOnError: { code, _, _ in errorCodes.append(code) },
+      pigeonOnDone: { doneCount += 1 },
+      wrappedError: error)
+    #expect(handle != nil)
+    let sink = try #require(api.capturedSink)
+    sink.success("first")
+    sink.error(code: "err_code", message: "err_msg", details: "err_details")
+    sink.success("ignored")
+    sink.endOfStream()
+    #expect(dataCount == 1)
+    #expect(errorCodes == ["err_code"])
+    #expect(doneCount == 0)
+
+    // Idempotent cancel handle.
+    final class CounterBox: @unchecked Sendable {
+      var count = 0
+    }
+    let cancelCounter = CounterBox()
+    api.onCallbackCancelled = { cancelCounter.count += 1 }
+    let doneHandle = try #require(
+      setup.streamViaCallback(
+        prefix: "cb2",
+        count: 1,
+        pigeonOnData: { _ in },
+        pigeonOnError: { _, _, _ in },
+        pigeonOnDone: { doneCount += 1 },
+        wrappedError: error))
+    doneHandle.cancel()
+    doneHandle.cancel()
+    #expect(cancelCounter.count == 1)
+  }
+
   private static let streamNumbersChannel =
     "dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.streamNumbers"
   private static let streamErrorChannel =
@@ -541,6 +661,74 @@ private final class MockStreamHostTestApi: StreamHostTestApi, @unchecked Sendabl
     if prefix == "sync-done" {
       sink.endOfStream()
     }
+    let cancelHook = onCallbackCancelled
+    return { cancelHook?() }
+  }
+
+  func getCancelledStreamCount() throws -> Int64 { 0 }
+  func resetCancelledStreamCount() throws {}
+}
+
+private final class MockFfiStreamPluginRegistrar: NSObject, FlutterPluginRegistrar {
+  private let dummyMessenger = EchoBinaryMessenger(
+    codec: FlutterStandardMessageCodec.sharedInstance())
+  func messenger() -> FlutterBinaryMessenger { dummyMessenger }
+  func textures() -> FlutterTextureRegistry { fatalError("unused") }
+  func register(_ factory: FlutterPlatformViewFactory, withId factoryId: String) {}
+  func register(
+    _ factory: FlutterPlatformViewFactory, withId factoryId: String,
+    gestureRecognizersBlockingPolicy: FlutterPlatformViewGestureRecognizersBlockingPolicy
+  ) {}
+  func publish(_ value: NSObject) {}
+  func addMethodCallDelegate(_ delegate: FlutterPlugin, channel: FlutterMethodChannel) {}
+  func addApplicationDelegate(_ delegate: FlutterPlugin) {}
+  func addSceneDelegate(_ delegate: FlutterSceneLifeCycleDelegate) {}
+  func lookupKey(forAsset asset: String) -> String { "" }
+  func lookupKey(forAsset asset: String, fromPackage package: String) -> String { "" }
+  var viewController: UIViewController? { nil }
+  func valuePublished(byPlugin pluginKey: String) -> NSObject? { nil }
+}
+
+private final class MockNativeInteropStreamHostApi: NativeInteropStreamHostApi, @unchecked Sendable
+{
+  var onNumbersCancelled: (@Sendable () -> Void)?
+  var capturedSink: NativeInteropTestsPigeonEventSink<String>?
+  var onCallbackCancelled: (@Sendable () -> Void)?
+
+  func streamNumbers(count: Int64, start: Int64) -> AsyncThrowingStream<Int64, Error> {
+    let cancelHook = onNumbersCancelled
+    return AsyncThrowingStream { continuation in
+      continuation.yield(start)
+      continuation.onTermination = { termination in
+        if case .cancelled = termination {
+          cancelHook?()
+        }
+      }
+    }
+  }
+
+  func streamNullableInts() -> AsyncThrowingStream<Int64?, Error> {
+    AsyncThrowingStream { $0.finish() }
+  }
+
+  func streamShapes() -> AsyncThrowingStream<NativeInteropShape, Error> {
+    AsyncThrowingStream { $0.finish() }
+  }
+
+  func streamShapesWithFilter(filter: NativeInteropShape) -> AsyncThrowingStream<
+    NativeInteropShape, Error
+  > {
+    AsyncThrowingStream { $0.finish() }
+  }
+
+  func streamError(customError: Bool) -> AsyncThrowingStream<Int64, Error> {
+    AsyncThrowingStream { $0.finish() }
+  }
+
+  func streamViaCallback(
+    prefix: String, count: Int64, sink: NativeInteropTestsPigeonEventSink<String>
+  ) -> (() -> Void)? {
+    capturedSink = sink
     let cancelHook = onCallbackCancelled
     return { cancelHook?() }
   }

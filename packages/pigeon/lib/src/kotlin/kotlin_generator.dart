@@ -1380,6 +1380,11 @@ This is called by the generated Dart code and is not intended for direct use.'''
         indent.newln();
 
         if (apiHasStream) {
+          final String errorClassName = _getErrorClassName(generatorOptions);
+          final String codec = _interopCodecName(generatorOptions);
+          final bool apiHasFlowStream = api.methods.any(
+            (Method m) => m.isStream && !m.isAsynchronousCallback,
+          );
           indent.writeScoped(
             'private fun pigeonTrackStream(cancelAction: () -> Unit): ${prefix}PigeonStreamCancelHandle {',
             '}',
@@ -1389,21 +1394,13 @@ This is called by the generated Dart code and is not intended for direct use.'''
                 indent.writeln('pigeonUntrackStream(handle)');
                 indent.writeln('cancelAction()');
               });
-              indent.writeScoped(
-                'val shouldCancel = kotlin.synchronized(pigeonActiveStreams) {',
-                '}',
-                () {
-                  indent.writeScoped('if (pigeonStreamsClosed) {', '}', () {
-                    indent.writeln('true');
-                  }, addTrailingNewline: false);
-                  indent.addScoped(' else {', '}', () {
-                    indent.writeln('pigeonActiveStreams.add(handle)');
-                    indent.writeln('false');
-                  });
-                },
-              );
-              indent.writeScoped('if (shouldCancel) {', '}', () {
-                indent.writeln('handle.cancel()');
+              indent.writeScoped('kotlin.synchronized(pigeonActiveStreams) {', '}', () {
+                indent.writeScoped('if (pigeonStreamsClosed) {', '}', () {
+                  indent.writeln(
+                    'throw $errorClassName("unregistered-instance", "${api.name} has not been registered.")',
+                  );
+                });
+                indent.writeln('pigeonActiveStreams.add(handle)');
               });
               indent.writeln('return handle');
             },
@@ -1441,6 +1438,68 @@ This is called by the generated Dart code and is not intended for direct use.'''
             });
           });
           indent.newln();
+          if (apiHasFlowStream) {
+            indent.writeScoped(
+              'private fun <T> pigeonCollectFlow(flow: Flow<T>, callback: ${prefix}PigeonStreamCallback): ${prefix}PigeonStreamCancelHandle {',
+              '}',
+              () {
+                indent.writeln('val active = AtomicBoolean(true)');
+                indent.writeln('lateinit var handle: ${prefix}PigeonStreamCancelHandle');
+                indent.writeScoped('fun reportThrowable(e: Throwable) {', '}', () {
+                  indent.writeScoped('if (active.compareAndSet(true, false)) {', '}', () {
+                    indent.writeln('pigeonUntrackStream(handle)');
+                    indent.writeScoped('callback.onError(', ')', () {
+                      indent.writeln('e.javaClass.simpleName,');
+                      indent.writeln('e.toString(),');
+                      indent.writeln(
+                        '$codec.encodeOrNull("Cause: \${e.cause}, Stacktrace: \${Log.getStackTraceString(e)}"),',
+                      );
+                    });
+                  });
+                });
+                // LAZY ensures `handle` is initialized and tracked before `flow.collect` runs.
+                indent.writeScoped(
+                  'val job = CoroutineScope(Dispatchers.Default).launch(start = CoroutineStart.LAZY) {',
+                  '}',
+                  () {
+                    indent.writeScoped('try {', '}', () {
+                      indent.writeScoped('flow.collect { value ->', '}', () {
+                        indent.writeScoped('if (active.get()) {', '}', () {
+                          indent.writeln('callback.onData($codec.encode(value))');
+                        });
+                      });
+                      indent.writeScoped('if (active.compareAndSet(true, false)) {', '}', () {
+                        indent.writeln('pigeonUntrackStream(handle)');
+                        indent.writeln('callback.onDone()');
+                      });
+                    }, addTrailingNewline: false);
+                    indent.addScoped(' catch (e: CancellationException) {', '}', () {
+                      indent.writeln('reportThrowable(e)');
+                      indent.writeln('throw e');
+                    }, addTrailingNewline: false);
+                    indent.addScoped(' catch (e: $errorClassName) {', '}', () {
+                      indent.writeScoped('if (active.compareAndSet(true, false)) {', '}', () {
+                        indent.writeln('pigeonUntrackStream(handle)');
+                        indent.writeln(
+                          'callback.onError(e.code, e.message, $codec.encodeOrNull(e.details))',
+                        );
+                      });
+                    }, addTrailingNewline: false);
+                    indent.addScoped(' catch (e: Throwable) {', '}', () {
+                      indent.writeln('reportThrowable(e)');
+                    });
+                  },
+                );
+                indent.writeScoped('handle = pigeonTrackStream {', '}', () {
+                  indent.writeln('active.set(false)');
+                  indent.writeln('job.cancel()');
+                });
+                indent.writeln('job.start()');
+                indent.writeln('return handle');
+              },
+            );
+            indent.newln();
+          }
         }
 
         for (final Method method in api.methods) {
@@ -1543,83 +1602,33 @@ This is called by the generated Dart code and is not intended for direct use.'''
 
         if (method.isAsynchronousCallback) {
           final String elementType = _nullSafeKotlinTypeForDartType(method.returnType);
-          indent.writeln('val sink = ${prefix}PigeonEventSink<$elementType>(pigeonCallback)');
-          indent.writeln('val handle = pigeonTrackStream { sink.close() }');
-          indent.writeln('sink.attachOnClosed { pigeonUntrackStream(handle) }');
+          indent.writeln(
+            'val ${varNamePrefix}sink = ${prefix}PigeonEventSink<$elementType>(pigeonCallback)',
+          );
+          indent.writeln(
+            'val ${varNamePrefix}handle = pigeonTrackStream { ${varNamePrefix}sink.close() }',
+          );
+          indent.writeln(
+            '${varNamePrefix}sink.attachOnClosed { pigeonUntrackStream(${varNamePrefix}handle) }',
+          );
           indent.writeScoped('try {', '}', () {
-            final callArgs = <String>[...arguments, 'sink'];
+            final callArgs = <String>[...arguments, '${varNamePrefix}sink'];
             indent.writeln(
-              'val closeable = ${varNamePrefix}api.${method.name}(${callArgs.join(', ')})',
+              'val ${varNamePrefix}closeable = ${varNamePrefix}api.${method.name}(${callArgs.join(', ')})',
             );
-            indent.writeln('sink.attachCloseable(closeable)');
-            indent.writeln('return handle');
+            indent.writeln('${varNamePrefix}sink.attachCloseable(${varNamePrefix}closeable)');
+            indent.writeln('return ${varNamePrefix}handle');
           }, addTrailingNewline: false);
           indent.addScoped(' catch (e: Throwable) {', '}', () {
-            indent.writeln('sink.close()');
-            indent.writeln('pigeonUntrackStream(handle)');
+            indent.writeln('${varNamePrefix}sink.close()');
+            indent.writeln('pigeonUntrackStream(${varNamePrefix}handle)');
             indent.writeln('throw e');
           });
         } else {
-          indent.writeln('val flow = ${varNamePrefix}api.${method.name}(${arguments.join(', ')})');
-          indent.writeln('val active = AtomicBoolean(true)');
-          indent.writeln('lateinit var handle: $handleType');
-          // LAZY ensures `handle` is initialized and tracked before `flow.collect` runs.
-          indent.writeScoped(
-            'val job = CoroutineScope(Dispatchers.Default).launch(start = CoroutineStart.LAZY) {',
-            '}',
-            () {
-              indent.writeScoped('try {', '}', () {
-                indent.writeScoped('flow.collect { value ->', '}', () {
-                  indent.writeScoped('if (active.get()) {', '}', () {
-                    indent.writeln('pigeonCallback.onData($codec.encode(value))');
-                  });
-                });
-                indent.writeScoped('if (active.compareAndSet(true, false)) {', '}', () {
-                  indent.writeln('pigeonUntrackStream(handle)');
-                  indent.writeln('pigeonCallback.onDone()');
-                });
-              }, addTrailingNewline: false);
-              indent.addScoped(' catch (e: CancellationException) {', '}', () {
-                indent.writeScoped('if (active.compareAndSet(true, false)) {', '}', () {
-                  indent.writeln('pigeonUntrackStream(handle)');
-                  indent.writeScoped('pigeonCallback.onError(', ')', () {
-                    indent.writeln('e.javaClass.simpleName,');
-                    indent.writeln('e.toString(),');
-                    indent.writeln(
-                      '$codec.encodeOrNull("Cause: \${e.cause}, Stacktrace: \${Log.getStackTraceString(e)}"),',
-                    );
-                  });
-                });
-                indent.writeln('throw e');
-              }, addTrailingNewline: false);
-              indent.addScoped(' catch (e: $errorClassName) {', '}', () {
-                indent.writeScoped('if (active.compareAndSet(true, false)) {', '}', () {
-                  indent.writeln('pigeonUntrackStream(handle)');
-                  indent.writeln(
-                    'pigeonCallback.onError(e.code, e.message, $codec.encodeOrNull(e.details))',
-                  );
-                });
-              }, addTrailingNewline: false);
-              indent.addScoped(' catch (e: Throwable) {', '}', () {
-                indent.writeScoped('if (active.compareAndSet(true, false)) {', '}', () {
-                  indent.writeln('pigeonUntrackStream(handle)');
-                  indent.writeScoped('pigeonCallback.onError(', ')', () {
-                    indent.writeln('e.javaClass.simpleName,');
-                    indent.writeln('e.toString(),');
-                    indent.writeln(
-                      '$codec.encodeOrNull("Cause: \${e.cause}, Stacktrace: \${Log.getStackTraceString(e)}"),',
-                    );
-                  });
-                });
-              });
-            },
+          indent.writeln(
+            'val ${varNamePrefix}flow = ${varNamePrefix}api.${method.name}(${arguments.join(', ')})',
           );
-          indent.writeScoped('handle = pigeonTrackStream {', '}', () {
-            indent.writeln('active.set(false)');
-            indent.writeln('job.cancel()');
-          });
-          indent.writeln('job.start()');
-          indent.writeln('return handle');
+          indent.writeln('return pigeonCollectFlow(${varNamePrefix}flow, pigeonCallback)');
         }
       }, addTrailingNewline: false);
       indent.addScoped(' catch (e: $errorClassName) {', '}', () {
@@ -2499,8 +2508,24 @@ private fun keyOfMessenger(messenger: Any): Long {
   void _writeJniStreamUtilities(InternalKotlinOptions generatorOptions, Root root, Indent indent) {
     final String prefix = generatorOptions.fileSpecificClassNameComponent ?? '';
     final String codec = _interopCodecName(generatorOptions);
+    final String errorClassName = _getErrorClassName(generatorOptions);
+    final bool hybrid = generatorOptions.useJniHybrid;
     indent.newln();
+    final cancelBody = hybrid
+        ? '''
+      try {
+        onCancel()
+      } catch (e: $errorClassName) {
+        throw $errorClassName(e.code, e.message, $codec.encodeOrNull(e.details)).apply {
+          stackTrace = e.stackTrace
+        }
+      }'''
+        : '      onCancel()';
     indent.format('''
+/**
+ * JNI bridge callback used by generated Dart code to receive stream events.
+ * Not intended for direct use.
+ */
 @Keep
 interface ${prefix}PigeonStreamCallback {
   fun onData(encodedValue: ByteArray)
@@ -2508,6 +2533,10 @@ interface ${prefix}PigeonStreamCallback {
   fun onDone()
 }
 
+/**
+ * JNI handle returned to generated Dart code to cancel an active stream.
+ * Not intended for direct use.
+ */
 @Keep
 class ${prefix}PigeonStreamCancelHandle internal constructor(
     private val onCancel: () -> Unit,
@@ -2517,7 +2546,7 @@ class ${prefix}PigeonStreamCancelHandle internal constructor(
   @Keep
   fun cancel() {
     if (cancelled.compareAndSet(false, true)) {
-      onCancel()
+$cancelBody
     }
   }
 }
@@ -2586,12 +2615,17 @@ class ${prefix}PigeonEventSink<T> internal constructor(
   }
 
   private inline fun terminate(send: (${prefix}PigeonStreamCallback) -> Unit) {
-    if (terminated) return
-    terminated = true
-    onClosedRef.getAndSet(null)?.invoke() ?: return
-    kotlin.synchronized(cancelLock) { closeable = null }
-    val callback = callbackRef.getAndSet(null) ?: return
-    send(callback)
+    var callback: ${prefix}PigeonStreamCallback? = null
+    var onClosed: (() -> Unit)? = null
+    kotlin.synchronized(cancelLock) {
+      if (terminated) return
+      terminated = true
+      callback = callbackRef.getAndSet(null)
+      onClosed = onClosedRef.getAndSet(null)
+      closeable = null
+    }
+    onClosed?.invoke()
+    callback?.let(send)
   }
 
   internal fun close() {
@@ -2599,12 +2633,12 @@ class ${prefix}PigeonEventSink<T> internal constructor(
         kotlin.synchronized(cancelLock) {
           terminated = true
           closed = true
+          callbackRef.set(null)
           onClosedRef.set(null)
           val current = closeable
           closeable = null
           current
         }
-    callbackRef.set(null)
     toClose?.close()
   }
 }

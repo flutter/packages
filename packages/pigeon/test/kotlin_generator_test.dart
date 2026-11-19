@@ -2878,7 +2878,166 @@ void main() {
       expect(code, contains('fun numbers(count: Long): Flow<Long>'));
       expect(code, contains('fun events(sink: JniStreamsPigeonEventSink<String>): AutoCloseable?'));
       expect(code, contains('entry.pigeonCancelAllStreams()'));
+      expect(code, contains('private fun <T> pigeonCollectFlow('));
+      expect(code, contains('"unregistered-instance"'));
       expect(code, isNot(contains('BasicMessageChannel')));
     });
+
+    test('JNI Flow-only HostApi omits PigeonEventSink and AtomicReference', () {
+      final root = Root(
+        apis: <Api>[
+          AstHostApi(
+            name: 'FlowOnlyJniApi',
+            methods: <Method>[
+              Method(
+                name: 'ticks',
+                location: ApiLocation.host,
+                isStream: true,
+                parameters: <Parameter>[],
+                returnType: const TypeDeclaration(baseName: 'int', isNullable: false),
+              ),
+            ],
+          ),
+        ],
+        classes: <Class>[],
+        enums: <Enum>[],
+      );
+      final sink = StringBuffer();
+      const KotlinGenerator().generate(
+        const InternalKotlinOptions(
+          kotlinOut: 'FlowOnlyJni.g.kt',
+          fileSpecificClassNameComponent: 'FlowOnlyJni',
+          useJni: true,
+        ),
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+      final code = sink.toString();
+      expect(code, contains('import kotlinx.coroutines.flow.Flow'));
+      expect(code, contains('interface FlowOnlyJniPigeonStreamCallback'));
+      expect(code, contains('class FlowOnlyJniPigeonStreamCancelHandle'));
+      expect(code, isNot(contains('PigeonEventSink')));
+      expect(code, isNot(contains('AtomicReference')));
+    });
+
+    test('JNI @asyncCallback-only HostApi omits kotlinx.coroutines imports', () {
+      final root = Root(
+        apis: <Api>[
+          AstHostApi(
+            name: 'CallbackOnlyJniApi',
+            methods: <Method>[
+              Method(
+                name: 'events',
+                location: ApiLocation.host,
+                isStream: true,
+                isAsynchronousCallback: true,
+                parameters: <Parameter>[],
+                returnType: const TypeDeclaration(baseName: 'String', isNullable: false),
+              ),
+            ],
+          ),
+        ],
+        classes: <Class>[],
+        enums: <Enum>[],
+      );
+      final sink = StringBuffer();
+      const KotlinGenerator().generate(
+        const InternalKotlinOptions(
+          kotlinOut: 'CallbackOnlyJni.g.kt',
+          fileSpecificClassNameComponent: 'CallbackOnlyJni',
+          useJni: true,
+        ),
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+      final code = sink.toString();
+      expect(code, contains('class CallbackOnlyJniPigeonEventSink<T>'));
+      expect(code, isNot(contains('kotlinx.coroutines')));
+      expect(code, isNot(contains('pigeonCollectFlow')));
+    });
+
+    test(
+      'JNI HostApi Stream<T> handles encoded parameters in hybrid mode and objects transport',
+      () {
+        final filterClass = Class(
+          name: 'StreamFilter',
+          fields: <NamedType>[
+            NamedType(
+              name: 'tag',
+              type: const TypeDeclaration(baseName: 'String', isNullable: false),
+            ),
+          ],
+        );
+        final filterType = TypeDeclaration(
+          baseName: 'StreamFilter',
+          isNullable: false,
+          associatedClass: filterClass,
+        );
+        final root = Root(
+          apis: <Api>[
+            AstHostApi(
+              name: 'MixedStreamApi',
+              methods: <Method>[
+                Method(
+                  name: 'ping',
+                  location: ApiLocation.host,
+                  parameters: <Parameter>[],
+                  returnType: const TypeDeclaration(baseName: 'int', isNullable: false),
+                ),
+                Method(
+                  name: 'watch',
+                  location: ApiLocation.host,
+                  isStream: true,
+                  parameters: <Parameter>[Parameter(name: 'filter', type: filterType)],
+                  returnType: filterType,
+                ),
+              ],
+            ),
+          ],
+          classes: <Class>[filterClass],
+          enums: <Enum>[],
+        );
+
+        final hybridSink = StringBuffer();
+        const KotlinGenerator().generate(
+          const InternalKotlinOptions(
+            kotlinOut: 'MixedJni.g.kt',
+            fileSpecificClassNameComponent: 'MixedJni',
+            useJni: true,
+          ),
+          root,
+          hybridSink,
+          dartPackageName: DEFAULT_PACKAGE_NAME,
+        );
+        final hybridCode = hybridSink.toString();
+        expect(hybridCode, contains('MixedJniPigeonInteropCodec.decodeArguments(pigeonVar_args)'));
+        expect(hybridCode, contains('MixedJniPigeonInteropCodec.encodeOrNull(e.details)'));
+
+        final objectsSink = StringBuffer();
+        const KotlinGenerator().generate(
+          const InternalKotlinOptions(
+            kotlinOut: 'MixedJniObj.g.kt',
+            fileSpecificClassNameComponent: 'MixedJniObj',
+            useJni: true,
+            nativeInteropTransport: NativeInteropTransport.objects,
+          ),
+          root,
+          objectsSink,
+          dartPackageName: DEFAULT_PACKAGE_NAME,
+        );
+        final objectsCode = objectsSink.toString();
+        expect(objectsCode, contains('object MixedJniObjPigeonInteropCodec'));
+        expect(
+          objectsCode,
+          contains(
+            'class MixedStreamApiRegistrar private constructor(private val engineKey: Long) {',
+          ),
+        );
+        expect(objectsCode, isNot(contains(') : MixedStreamApi {')));
+        expect(objectsCode, contains('fun watch(filter: StreamFilter, pigeonCallback:'));
+      },
+    );
   });
 }

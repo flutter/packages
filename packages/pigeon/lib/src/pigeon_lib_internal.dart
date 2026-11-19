@@ -465,11 +465,7 @@ void _errorOnSwiftFfiUnsupportedFeatures(
           );
         }
         if (method.isStream) {
-          for (final reserved in const <String>[
-            'pigeonOnData',
-            'pigeonOnError',
-            'pigeonOnDone',
-          ]) {
+          for (final reserved in const <String>['pigeonOnData', 'pigeonOnError', 'pigeonOnDone']) {
             if (method.parameters.any((Parameter parameter) => parameter.name == reserved)) {
               errors.add(
                 Error(

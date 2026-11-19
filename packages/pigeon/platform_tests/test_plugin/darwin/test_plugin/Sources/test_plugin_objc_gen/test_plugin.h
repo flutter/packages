@@ -3388,6 +3388,19 @@ SWIFT_CLASS("_TtC11test_plugin31NativeInteropStreamHostApiSetup")
                     wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT;
 - (NativeInteropTestsPigeonStreamCancelHandle* _Nullable)
+    streamShapesWithFilterWithPigeonVar_args:(NSData* _Nonnull)pigeonVar_args
+                                pigeonOnData:(void (^_Nonnull)(
+                                                 NSData* _Nullable))pigeonOnData
+                               pigeonOnError:
+                                   (void (^_Nonnull)(
+                                       NSString* _Nonnull, NSString* _Nullable,
+                                       NSData* _Nullable))pigeonOnError
+                                pigeonOnDone:
+                                    (void (^_Nonnull)(void))pigeonOnDone
+                                wrappedError:(NativeInteropTestsError* _Nonnull)
+                                                 wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+- (NativeInteropTestsPigeonStreamCancelHandle* _Nullable)
     streamErrorWithCustomError:(BOOL)customErrorArg
                   pigeonOnData:(void (^_Nonnull)(NSData* _Nullable))pigeonOnData
                  pigeonOnError:
@@ -3446,8 +3459,11 @@ SWIFT_CLASS("_TtC11test_plugin36NativeInteropTestsPigeonInternalNull")
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
 @end
 
+/// FFI handle returned to generated Dart code to cancel an active stream.
+/// Not intended for direct use.
 SWIFT_CLASS("_TtC11test_plugin42NativeInteropTestsPigeonStreamCancelHandle")
 @interface NativeInteropTestsPigeonStreamCancelHandle : NSObject
+/// Cancels the stream associated with this handle. Safe to call more than once.
 - (void)cancel;
 - (nonnull instancetype)init SWIFT_UNAVAILABLE;
 + (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");

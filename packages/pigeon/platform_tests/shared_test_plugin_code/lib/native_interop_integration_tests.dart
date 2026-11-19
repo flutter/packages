@@ -3435,6 +3435,8 @@ void runPigeonNativeInteropIntegrationTests(TargetGenerator targetGenerator) {
         NativeInteropCircle(radius: 3.5),
         NativeInteropSquare(side: 4.0, label: 'square'),
       ]);
+      final filter = NativeInteropSquare(side: 7.0, label: 'filtered');
+      expect(await api.streamShapesWithFilter(filter).toList(), <NativeInteropShape>[filter]);
     });
 
     testWidgets('propagates custom PlatformException from native interop stream', (
@@ -3495,6 +3497,26 @@ void runPigeonNativeInteropIntegrationTests(TargetGenerator targetGenerator) {
       api.resetCancelledStreamCount();
       expect(await api.streamViaCallback('cut', 200).take(2).toList(), <String>['cut:0', 'cut:1']);
       expect(await waitForCancelledCount(api), greaterThanOrEqualTo(1));
+    });
+
+    testWidgets('propagates error from @asyncCallback native interop stream', (
+      WidgetTester _,
+    ) async {
+      final NativeInteropStreamHostApiForNativeInterop api =
+          NativeInteropStreamHostApiForNativeInterop.getInstance()!;
+      Object? caughtError;
+      final done = Completer<void>();
+      api
+          .streamViaCallback('error', 1)
+          .listen((_) {}, onError: (Object e) => caughtError = e, onDone: done.complete);
+      await done.future;
+      expect(
+        caughtError,
+        isA<PlatformException>()
+            .having((PlatformException e) => e.code, 'code', 'callback_error')
+            .having((PlatformException e) => e.message, 'message', 'callback_message')
+            .having((PlatformException e) => e.details, 'details', 'callback_details'),
+      );
     });
   });
 

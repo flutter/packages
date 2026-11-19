@@ -21161,6 +21161,48 @@ extension NativeInteropStreamHostApiRegistrar$$Methods on NativeInteropStreamHos
     ).object<NativeInteropTestsPigeonStreamCancelHandle>();
   }
 
+  static final _id_streamShapesWithFilter = NativeInteropStreamHostApiRegistrar._class.instanceMethodId(
+    r'streamShapesWithFilter',
+    r'([BLcom/example/test_plugin/NativeInteropTestsPigeonStreamCallback;)Lcom/example/test_plugin/NativeInteropTestsPigeonStreamCancelHandle;',
+  );
+
+  static final _streamShapesWithFilter =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun streamShapesWithFilter(pigeonVar_args: kotlin.ByteArray, pigeonCallback: com.example.test_plugin.NativeInteropTestsPigeonStreamCallback): com.example.test_plugin.NativeInteropTestsPigeonStreamCancelHandle`
+  /// The returned object must be released after use, by calling the [release] method.
+  NativeInteropTestsPigeonStreamCancelHandle streamShapesWithFilter(
+    jni$_.JByteArray bs,
+    NativeInteropTestsPigeonStreamCallback nativeInteropTestsPigeonStreamCallback,
+  ) {
+    final _$$selfRef = reference;
+    final _$bs = bs.reference;
+    final _$nativeInteropTestsPigeonStreamCallback =
+        nativeInteropTestsPigeonStreamCallback.reference;
+    return _streamShapesWithFilter(
+      _$$selfRef.pointer,
+      _id_streamShapesWithFilter.pointer,
+      _$bs.pointer,
+      _$nativeInteropTestsPigeonStreamCallback.pointer,
+    ).object<NativeInteropTestsPigeonStreamCancelHandle>();
+  }
+
   static final _id_streamError = NativeInteropStreamHostApiRegistrar._class.instanceMethodId(
     r'streamError',
     r'(ZLcom/example/test_plugin/NativeInteropTestsPigeonStreamCallback;)Lcom/example/test_plugin/NativeInteropTestsPigeonStreamCancelHandle;',

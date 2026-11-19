@@ -566,4 +566,226 @@ internal class AsyncHandlersTest {
     StreamHostTestApi.setUp(messenger, null)
     assertTrue(callbackClosed)
   }
+
+  private fun mockInteropStreamEngine(id: Long): io.flutter.embedding.engine.FlutterEngine {
+    val executor = mockk<io.flutter.embedding.engine.dart.DartExecutor>()
+    val engine = mockk<io.flutter.embedding.engine.FlutterEngine>()
+    every { engine.engineId } returns id
+    every { engine.dartExecutor } returns executor
+    return engine
+  }
+
+  @Test
+  fun testJniHostStreamUnregisterCancelsActiveFlowAndCallbackStreams() {
+    val api = mockk<NativeInteropStreamHostApi>()
+    val flowDataLatch = java.util.concurrent.CountDownLatch(1)
+    val flowCancelledLatch = java.util.concurrent.CountDownLatch(1)
+    var callbackClosed = false
+    every { api.streamNumbers(99L, 0L) } returns
+        flow {
+          try {
+            emit(1L)
+            awaitCancellation()
+          } finally {
+            flowCancelledLatch.countDown()
+          }
+        }
+    every { api.streamViaCallback("cb", 1L, any()) } answers
+        {
+          val sink = arg<NativeInteropTestsPigeonEventSink<String>>(2)
+          sink.success("cb:0")
+          AutoCloseable { callbackClosed = true }
+        }
+
+    val engine = mockInteropStreamEngine(9001L)
+    val name = "test-jni-unregister-cancels"
+    val registrar = NativeInteropStreamHostApiRegistrar()
+    registrar.register(api, engine, name)
+    val resolved =
+        NativeInteropStreamHostApiRegistrar.pigeonResolveInstance(9001L, Long.MIN_VALUE, name)
+    assertNotNull(resolved)
+
+    val dataCount = java.util.concurrent.atomic.AtomicInteger(0)
+    val flowCallback =
+        object : NativeInteropTestsPigeonStreamCallback {
+          override fun onData(encodedValue: ByteArray) {
+            dataCount.incrementAndGet()
+            flowDataLatch.countDown()
+          }
+
+          override fun onError(code: String, message: String?, encodedDetails: ByteArray?) {}
+
+          override fun onDone() {}
+        }
+    val cbCallback =
+        object : NativeInteropTestsPigeonStreamCallback {
+          override fun onData(encodedValue: ByteArray) {
+            dataCount.incrementAndGet()
+          }
+
+          override fun onError(code: String, message: String?, encodedDetails: ByteArray?) {}
+
+          override fun onDone() {}
+        }
+
+    resolved!!.streamNumbers(99L, 0L, flowCallback)
+    resolved.streamViaCallback("cb", 1L, cbCallback)
+    assertTrue(flowDataLatch.await(5, java.util.concurrent.TimeUnit.SECONDS))
+    assertEquals(2, dataCount.get())
+    assertEquals(1L, flowCancelledLatch.count)
+    assertFalse(callbackClosed)
+
+    registrar.unregister(api, engine, name)
+    assertTrue(flowCancelledLatch.await(5, java.util.concurrent.TimeUnit.SECONDS))
+    assertTrue(callbackClosed)
+  }
+
+  @Test
+  fun testJniHostStreamOnUnregisteredRegistrarThrowsUnregisteredInstance() {
+    val api = mockk<NativeInteropStreamHostApi>()
+    val engine = mockInteropStreamEngine(9002L)
+    val name = "test-jni-unregistered-throws"
+    val registrar = NativeInteropStreamHostApiRegistrar()
+    registrar.register(api, engine, name)
+    val resolved =
+        NativeInteropStreamHostApiRegistrar.pigeonResolveInstance(9002L, Long.MIN_VALUE, name)
+    assertNotNull(resolved)
+    registrar.unregister(api, engine, name)
+
+    val callback =
+        object : NativeInteropTestsPigeonStreamCallback {
+          override fun onData(encodedValue: ByteArray) {}
+
+          override fun onError(code: String, message: String?, encodedDetails: ByteArray?) {}
+
+          override fun onDone() {}
+        }
+
+    var thrown: NativeInteropTestsError? = null
+    try {
+      resolved!!.streamNumbers(1L, 0L, callback)
+    } catch (e: NativeInteropTestsError) {
+      thrown = e
+    }
+    assertNotNull(thrown)
+    assertEquals("unregistered-instance", thrown!!.code)
+  }
+
+  @Test
+  fun testJniEventSinkErrorAndEndOfStreamAreIdempotentWithoutAttachOnClosed() {
+    val dataCount = java.util.concurrent.atomic.AtomicInteger(0)
+    val errorCodes = mutableListOf<String>()
+    val doneCount = java.util.concurrent.atomic.AtomicInteger(0)
+    val callback =
+        object : NativeInteropTestsPigeonStreamCallback {
+          override fun onData(encodedValue: ByteArray) {
+            dataCount.incrementAndGet()
+          }
+
+          override fun onError(code: String, message: String?, encodedDetails: ByteArray?) {
+            errorCodes.add(code)
+            assertNotNull(encodedDetails)
+          }
+
+          override fun onDone() {
+            doneCount.incrementAndGet()
+          }
+        }
+
+    // Direct sink without attachOnClosed() must still deliver onError and ignore subsequent calls.
+    val errorSink = NativeInteropTestsPigeonEventSink<String>(callback)
+    errorSink.success("first")
+    errorSink.error("err_code", "err_msg", "err_details")
+    errorSink.success("ignored")
+    errorSink.error("ignored_err", null, null)
+    errorSink.endOfStream()
+    assertEquals(1, dataCount.get())
+    assertEquals(listOf("err_code"), errorCodes)
+    assertEquals(0, doneCount.get())
+
+    // Direct sink without attachOnClosed() must still deliver onDone and ignore subsequent calls.
+    val doneSink = NativeInteropTestsPigeonEventSink<String>(callback)
+    doneSink.endOfStream()
+    doneSink.success("ignored")
+    doneSink.endOfStream()
+    assertEquals(1, dataCount.get())
+    assertEquals(1, doneCount.get())
+  }
+
+  @Test
+  fun testJniEventSinkCancelBeforeAttachClosesImmediately() {
+    val callback =
+        object : NativeInteropTestsPigeonStreamCallback {
+          override fun onData(encodedValue: ByteArray) {}
+
+          override fun onError(code: String, message: String?, encodedDetails: ByteArray?) {}
+
+          override fun onDone() {}
+        }
+    val sink = NativeInteropTestsPigeonEventSink<String>(callback)
+    sink.close()
+    var closed = false
+    sink.attachCloseable(AutoCloseable { closed = true })
+    assertTrue(closed)
+  }
+
+  @Test
+  fun testJniCancelHandleIsIdempotentAndReencodesFlutterErrorDetails() {
+    var cancelCalls = 0
+    val handle = NativeInteropTestsPigeonStreamCancelHandle { cancelCalls++ }
+    handle.cancel()
+    handle.cancel()
+    assertEquals(1, cancelCalls)
+
+    val throwingHandle = NativeInteropTestsPigeonStreamCancelHandle {
+      throw NativeInteropTestsError("close_err", "close msg", "raw_details")
+    }
+    var thrown: NativeInteropTestsError? = null
+    try {
+      throwingHandle.cancel()
+    } catch (e: NativeInteropTestsError) {
+      thrown = e
+    }
+    assertNotNull(thrown)
+    assertEquals("close_err", thrown!!.code)
+    assertEquals("close msg", thrown.message)
+    assertTrue(thrown.details is ByteArray)
+    // Subsequent cancel() is a no-op even after a throw.
+    throwingHandle.cancel()
+  }
+
+  @Test
+  fun testJniCallbackSyncThrowCleansUpAndReencodesDetails() {
+    val api = mockk<NativeInteropStreamHostApi>()
+    every { api.streamViaCallback("throw", 1L, any()) } throws
+        NativeInteropTestsError("sync_cb_err", "sync msg", "sync_details")
+
+    val engine = mockInteropStreamEngine(9003L)
+    val name = "test-jni-sync-throw"
+    val registrar = NativeInteropStreamHostApiRegistrar()
+    registrar.register(api, engine, name)
+    val resolved =
+        NativeInteropStreamHostApiRegistrar.pigeonResolveInstance(9003L, Long.MIN_VALUE, name)
+    assertNotNull(resolved)
+
+    val callback =
+        object : NativeInteropTestsPigeonStreamCallback {
+          override fun onData(encodedValue: ByteArray) {}
+
+          override fun onError(code: String, message: String?, encodedDetails: ByteArray?) {}
+
+          override fun onDone() {}
+        }
+
+    var thrown: NativeInteropTestsError? = null
+    try {
+      resolved!!.streamViaCallback("throw", 1L, callback)
+    } catch (e: NativeInteropTestsError) {
+      thrown = e
+    }
+    assertNotNull(thrown)
+    assertEquals("sync_cb_err", thrown!!.code)
+    assertTrue(thrown.details is ByteArray)
+    registrar.unregister(api, engine, name)
+  }
 }

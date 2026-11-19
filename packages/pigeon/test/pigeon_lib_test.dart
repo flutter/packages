@@ -3989,5 +3989,142 @@ abstract class Api {
         }
       },
     );
+
+    test(
+      'InternalPigeonOptions resolves jniFileSpecificClassNameComponent from Kotlin options',
+      () {
+        final InternalPigeonOptions explicit = InternalPigeonOptions.fromPigeonOptions(
+          const PigeonOptions(
+            dartOut: 'lib/messages.g.dart',
+            kotlinOut: 'android/KotlinFile.g.kt',
+            swiftOut: 'ios/SwiftFile.g.swift',
+            kotlinOptions: KotlinOptions(
+              useJni: true,
+              fileSpecificClassNameComponent: 'CustomKotlinPrefix',
+            ),
+            swiftOptions: SwiftOptions(
+              useFfi: true,
+              fileSpecificClassNameComponent: 'CustomSwiftPrefix',
+            ),
+          ),
+        );
+        expect(explicit.dartOptions?.jniFileSpecificClassNameComponent, 'CustomKotlinPrefix');
+        expect(explicit.dartOptions?.fileSpecificClassNameComponent, 'CustomSwiftPrefix');
+
+        final InternalPigeonOptions derived = InternalPigeonOptions.fromPigeonOptions(
+          const PigeonOptions(
+            dartOut: 'lib/messages.g.dart',
+            kotlinOut: 'android/AndroidMessages.g.kt',
+            swiftOut: 'ios/DarwinMessages.g.swift',
+            kotlinOptions: KotlinOptions(useJni: true),
+            swiftOptions: SwiftOptions(useFfi: true),
+          ),
+        );
+        expect(derived.dartOptions?.jniFileSpecificClassNameComponent, 'AndroidMessages');
+        expect(derived.dartOptions?.fileSpecificClassNameComponent, 'DarwinMessages');
+
+        final InternalPigeonOptions disabled = InternalPigeonOptions.fromPigeonOptions(
+          const PigeonOptions(
+            dartOut: 'lib/messages.g.dart',
+            kotlinOut: 'android/AndroidMessages.g.kt',
+            kotlinOptions: KotlinOptions(),
+          ),
+        );
+        expect(disabled.dartOptions?.jniFileSpecificClassNameComponent, isNull);
+      },
+    );
+
+    test(
+      'JnigenConfigGenerator and FfigenConfigGenerator include stream classes iff root has host streams',
+      () {
+        final streamRoot = Root(
+          apis: <Api>[
+            AstHostApi(
+              name: 'StreamApi',
+              methods: <Method>[
+                Method(
+                  name: 'numbers',
+                  location: ApiLocation.host,
+                  parameters: <Parameter>[],
+                  returnType: const TypeDeclaration(baseName: 'int', isNullable: false),
+                  isStream: true,
+                ),
+              ],
+            ),
+          ],
+          classes: <Class>[],
+          enums: <Enum>[],
+        );
+        final plainRoot = Root(
+          apis: <Api>[
+            AstHostApi(
+              name: 'PlainApi',
+              methods: <Method>[
+                Method(
+                  name: 'ping',
+                  location: ApiLocation.host,
+                  parameters: <Parameter>[],
+                  returnType: const TypeDeclaration(baseName: 'int', isNullable: false),
+                ),
+              ],
+            ),
+          ],
+          classes: <Class>[],
+          enums: <Enum>[],
+        );
+
+        final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+          const PigeonOptions(
+            dartOut: 'lib/streams.g.dart',
+            kotlinOut: 'android/Streams.g.kt',
+            swiftOut: 'ios/Streams.g.swift',
+            kotlinOptions: KotlinOptions(package: 'com.example', useJni: true),
+            swiftOptions: SwiftOptions(useFfi: true),
+          ),
+        );
+
+        final jniStreamSink = StringBuffer();
+        const JnigenConfigGeneratorAdapter().generate(
+          jniStreamSink,
+          options,
+          streamRoot,
+          FileType.na,
+        );
+        final jniStreamConfig = jniStreamSink.toString();
+        expect(jniStreamConfig, contains('com.example.StreamsPigeonStreamCallback'));
+        expect(jniStreamConfig, contains('com.example.StreamsPigeonStreamCancelHandle'));
+
+        final jniPlainSink = StringBuffer();
+        const JnigenConfigGeneratorAdapter().generate(
+          jniPlainSink,
+          options,
+          plainRoot,
+          FileType.na,
+        );
+        final jniPlainConfig = jniPlainSink.toString();
+        expect(jniPlainConfig, isNot(contains('PigeonStreamCallback')));
+        expect(jniPlainConfig, isNot(contains('PigeonStreamCancelHandle')));
+
+        final ffiStreamSink = StringBuffer();
+        const FfigenConfigGeneratorAdapter().generate(
+          ffiStreamSink,
+          options,
+          streamRoot,
+          FileType.na,
+        );
+        final ffiStreamConfig = ffiStreamSink.toString();
+        expect(ffiStreamConfig, contains('StreamsPigeonStreamCancelHandle'));
+
+        final ffiPlainSink = StringBuffer();
+        const FfigenConfigGeneratorAdapter().generate(
+          ffiPlainSink,
+          options,
+          plainRoot,
+          FileType.na,
+        );
+        final ffiPlainConfig = ffiPlainSink.toString();
+        expect(ffiPlainConfig, isNot(contains('PigeonStreamCancelHandle')));
+      },
+    );
   });
 }

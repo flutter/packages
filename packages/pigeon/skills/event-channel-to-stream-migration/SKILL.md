@@ -1,7 +1,7 @@
 # Skill: Migrating from `@EventChannelApi` to `@HostApi` `Stream<T>` (Pigeon 31.0.0)
 
 ## Overview
-Pigeon 31.0.0 removes `@EventChannelApi`, `KotlinEventChannelOptions`, and `SwiftEventChannelOptions` in favor of `Stream<T>` return types directly on `@HostApi` methods (supported on Dart, Kotlin, and Swift platform channels).
+Pigeon 31.0.0 removes `@EventChannelApi`, `KotlinEventChannelOptions`, and `SwiftEventChannelOptions` in favor of `Stream<T>` return types directly on `@HostApi` methods (supported on Dart, Kotlin, and Swift — both platform channels and Native Interop).
 
 This skill guides AI agents and developers through migrating an existing Flutter plugin or app from legacy `@EventChannelApi` definitions to `@HostApi` `Stream<T>` methods.
 
@@ -128,8 +128,8 @@ override fun streamEvents(
 ```
 - **File-prefixed sink name**: The sink type is `<FilePrefix>PigeonEventSink<T>` (using `fileSpecificClassNameComponent`, which defaults to the PascalCase output filename, e.g. `MessagesPigeonEventSink<T>`).
 - **Renamed `error` parameters**: Kotlin's `sink.error(code, message, details)` replaces the old `(errorCode, errorMessage, errorDetails)` parameter names—update any named arguments.
-- **Thread safety**: `success`, `error`, and `endOfStream` marshal to the main `Looper` automatically and ignore calls after termination/cancellation.
-- **Cancellation handle**: The returned `AutoCloseable?` is invoked on Dart cancel or `setUp(..., null)` teardown—not on normal `endOfStream()` / `error(...)`.
+- **Thread safety**: On platform channels, `success`, `error`, and `endOfStream` marshal to the main `Looper` automatically and ignore calls after termination/cancellation. Under Native Interop (`useJni: true`), `<FilePrefix>PigeonEventSink` invokes async JNI callbacks directly from any thread without main-`Looper` marshalling.
+- **Cancellation handle**: The returned `AutoCloseable?` is invoked on Dart cancel or teardown (`setUp(..., null)` on platform channels, or `unregister(...)` under `useJni: true`)—not on normal `endOfStream()` / `error(...)`.
 
 ---
 
@@ -175,8 +175,8 @@ func streamEvents(
 }
 ```
 - **File-prefixed sink name**: `<FilePrefix>PigeonEventSink<T>` (defaulting to the PascalCase output filename).
-- **Thread safety**: `success`, `error`, and `endOfStream` dispatch to `DispatchQueue.main` when called off-main and ignore calls after termination/cancellation.
-- **Cancellation closure**: Runs on Dart cancel or `setUp(..., api: nil)` teardown—not on normal `endOfStream()` / `error(...)`.
+- **Thread safety**: On platform channels, `success`, `error`, and `endOfStream` dispatch to `DispatchQueue.main` when called off-main and ignore calls after termination/cancellation. Under Native Interop (`useFfi: true`), `<FilePrefix>PigeonEventSink` invokes async FFI callbacks directly from any thread without `DispatchQueue.main` marshalling.
+- **Cancellation closure**: Runs on Dart cancel or teardown (`setUp(..., api: nil)` on platform channels, or `unregister(...)` under `useFfi: true`)—not on normal `endOfStream()` / `error(...)`.
 
 ---
 

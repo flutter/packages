@@ -12040,6 +12040,8 @@ abstract class NativeInteropStreamHostApiForNativeInterop {
 
   Stream<NativeInteropShape> streamShapes();
 
+  Stream<NativeInteropShape> streamShapesWithFilter(NativeInteropShape filter);
+
   Stream<int> streamError(bool customError);
 
   Stream<String> streamViaCallback(String prefix, int count);
@@ -12142,6 +12144,21 @@ class NativeInteropStreamHostApi {
       codec: pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
       arguments: const <Object?>[],
+      decodeEvent: (Object? event) => event! as NativeInteropShape,
+    );
+  }
+
+  Stream<NativeInteropShape> streamShapesWithFilter(NativeInteropShape filter) {
+    if (_nativeInteropApi != null) {
+      return _nativeInteropApi.streamShapesWithFilter(filter);
+    }
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropStreamHostApi.streamShapesWithFilter$pigeonVar_messageChannelSuffix';
+    return _pigeonChannelStream<NativeInteropShape>(
+      controlChannelName: pigeonVar_channelName,
+      codec: pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+      arguments: <Object?>[filter],
       decodeEvent: (Object? event) => event! as NativeInteropShape,
     );
   }

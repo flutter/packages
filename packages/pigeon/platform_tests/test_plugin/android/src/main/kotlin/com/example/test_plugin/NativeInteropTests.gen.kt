@@ -205,6 +205,10 @@ class NativeInteropTestsError(
     val details: Any? = null
 ) : RuntimeException()
 
+/**
+ * JNI bridge callback used by generated Dart code to receive stream events. Not intended for direct
+ * use.
+ */
 @Keep
 interface NativeInteropTestsPigeonStreamCallback {
   fun onData(encodedValue: ByteArray)
@@ -214,6 +218,10 @@ interface NativeInteropTestsPigeonStreamCallback {
   fun onDone()
 }
 
+/**
+ * JNI handle returned to generated Dart code to cancel an active stream. Not intended for direct
+ * use.
+ */
 @Keep
 class NativeInteropTestsPigeonStreamCancelHandle
 internal constructor(
@@ -224,7 +232,13 @@ internal constructor(
   @Keep
   fun cancel() {
     if (cancelled.compareAndSet(false, true)) {
-      onCancel()
+      try {
+        onCancel()
+      } catch (e: NativeInteropTestsError) {
+        throw NativeInteropTestsError(
+                e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+            .apply { stackTrace = e.stackTrace }
+      }
     }
   }
 }
@@ -287,12 +301,17 @@ internal constructor(
   }
 
   private inline fun terminate(send: (NativeInteropTestsPigeonStreamCallback) -> Unit) {
-    if (terminated) return
-    terminated = true
-    onClosedRef.getAndSet(null)?.invoke() ?: return
-    kotlin.synchronized(cancelLock) { closeable = null }
-    val callback = callbackRef.getAndSet(null) ?: return
-    send(callback)
+    var callback: NativeInteropTestsPigeonStreamCallback? = null
+    var onClosed: (() -> Unit)? = null
+    kotlin.synchronized(cancelLock) {
+      if (terminated) return
+      terminated = true
+      callback = callbackRef.getAndSet(null)
+      onClosed = onClosedRef.getAndSet(null)
+      closeable = null
+    }
+    onClosed?.invoke()
+    callback?.let(send)
   }
 
   internal fun close() {
@@ -300,12 +319,12 @@ internal constructor(
         kotlin.synchronized(cancelLock) {
           terminated = true
           closed = true
+          callbackRef.set(null)
           onClosedRef.set(null)
           val current = closeable
           closeable = null
           current
         }
-    callbackRef.set(null)
     toClose?.close()
   }
 }
@@ -9575,6 +9594,8 @@ interface NativeInteropStreamHostApi {
 
   fun streamShapes(): Flow<NativeInteropShape>
 
+  fun streamShapesWithFilter(filter: NativeInteropShape): Flow<NativeInteropShape>
+
   fun streamError(customError: Boolean): Flow<Long>
 
   fun streamViaCallback(
@@ -9758,17 +9779,12 @@ class NativeInteropStreamHostApiRegistrar private constructor(private val engine
       pigeonUntrackStream(handle)
       cancelAction()
     }
-    val shouldCancel =
-        kotlin.synchronized(pigeonActiveStreams) {
-          if (pigeonStreamsClosed) {
-            true
-          } else {
-            pigeonActiveStreams.add(handle)
-            false
-          }
-        }
-    if (shouldCancel) {
-      handle.cancel()
+    kotlin.synchronized(pigeonActiveStreams) {
+      if (pigeonStreamsClosed) {
+        throw NativeInteropTestsError(
+            "unregistered-instance", "NativeInteropStreamHostApi has not been registered.")
+      }
+      pigeonActiveStreams.add(handle)
     }
     return handle
   }
@@ -9798,6 +9814,56 @@ class NativeInteropStreamHostApiRegistrar private constructor(private val engine
     }
   }
 
+  private fun <T> pigeonCollectFlow(
+      flow: Flow<T>,
+      callback: NativeInteropTestsPigeonStreamCallback
+  ): NativeInteropTestsPigeonStreamCancelHandle {
+    val active = AtomicBoolean(true)
+    lateinit var handle: NativeInteropTestsPigeonStreamCancelHandle
+    fun reportThrowable(e: Throwable) {
+      if (active.compareAndSet(true, false)) {
+        pigeonUntrackStream(handle)
+        callback.onError(
+            e.javaClass.simpleName,
+            e.toString(),
+            NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+                "Cause: ${e.cause}, Stacktrace: ${Log.getStackTraceString(e)}"),
+        )
+      }
+    }
+    val job =
+        CoroutineScope(Dispatchers.Default).launch(start = CoroutineStart.LAZY) {
+          try {
+            flow.collect { value ->
+              if (active.get()) {
+                callback.onData(NativeInteropTestsPigeonInteropCodec.encode(value))
+              }
+            }
+            if (active.compareAndSet(true, false)) {
+              pigeonUntrackStream(handle)
+              callback.onDone()
+            }
+          } catch (e: CancellationException) {
+            reportThrowable(e)
+            throw e
+          } catch (e: NativeInteropTestsError) {
+            if (active.compareAndSet(true, false)) {
+              pigeonUntrackStream(handle)
+              callback.onError(
+                  e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+            }
+          } catch (e: Throwable) {
+            reportThrowable(e)
+          }
+        }
+    handle = pigeonTrackStream {
+      active.set(false)
+      job.cancel()
+    }
+    job.start()
+    return handle
+  }
+
   @Keep
   fun streamNumbers(
       count: Long,
@@ -9809,56 +9875,8 @@ class NativeInteropStreamHostApiRegistrar private constructor(private val engine
             ?: throw NativeInteropTestsError(
                 "unregistered-instance", "NativeInteropStreamHostApi has not been registered.")
     try {
-      val flow = pigeonVar_api.streamNumbers(count, start)
-      val active = AtomicBoolean(true)
-      lateinit var handle: NativeInteropTestsPigeonStreamCancelHandle
-      val job =
-          CoroutineScope(Dispatchers.Default).launch(start = CoroutineStart.LAZY) {
-            try {
-              flow.collect { value ->
-                if (active.get()) {
-                  pigeonCallback.onData(NativeInteropTestsPigeonInteropCodec.encode(value))
-                }
-              }
-              if (active.compareAndSet(true, false)) {
-                pigeonUntrackStream(handle)
-                pigeonCallback.onDone()
-              }
-            } catch (e: CancellationException) {
-              if (active.compareAndSet(true, false)) {
-                pigeonUntrackStream(handle)
-                pigeonCallback.onError(
-                    e.javaClass.simpleName,
-                    e.toString(),
-                    NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-                        "Cause: ${e.cause}, Stacktrace: ${Log.getStackTraceString(e)}"),
-                )
-              }
-              throw e
-            } catch (e: NativeInteropTestsError) {
-              if (active.compareAndSet(true, false)) {
-                pigeonUntrackStream(handle)
-                pigeonCallback.onError(
-                    e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
-              }
-            } catch (e: Throwable) {
-              if (active.compareAndSet(true, false)) {
-                pigeonUntrackStream(handle)
-                pigeonCallback.onError(
-                    e.javaClass.simpleName,
-                    e.toString(),
-                    NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-                        "Cause: ${e.cause}, Stacktrace: ${Log.getStackTraceString(e)}"),
-                )
-              }
-            }
-          }
-      handle = pigeonTrackStream {
-        active.set(false)
-        job.cancel()
-      }
-      job.start()
-      return handle
+      val pigeonVar_flow = pigeonVar_api.streamNumbers(count, start)
+      return pigeonCollectFlow(pigeonVar_flow, pigeonCallback)
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -9875,56 +9893,8 @@ class NativeInteropStreamHostApiRegistrar private constructor(private val engine
             ?: throw NativeInteropTestsError(
                 "unregistered-instance", "NativeInteropStreamHostApi has not been registered.")
     try {
-      val flow = pigeonVar_api.streamNullableInts()
-      val active = AtomicBoolean(true)
-      lateinit var handle: NativeInteropTestsPigeonStreamCancelHandle
-      val job =
-          CoroutineScope(Dispatchers.Default).launch(start = CoroutineStart.LAZY) {
-            try {
-              flow.collect { value ->
-                if (active.get()) {
-                  pigeonCallback.onData(NativeInteropTestsPigeonInteropCodec.encode(value))
-                }
-              }
-              if (active.compareAndSet(true, false)) {
-                pigeonUntrackStream(handle)
-                pigeonCallback.onDone()
-              }
-            } catch (e: CancellationException) {
-              if (active.compareAndSet(true, false)) {
-                pigeonUntrackStream(handle)
-                pigeonCallback.onError(
-                    e.javaClass.simpleName,
-                    e.toString(),
-                    NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-                        "Cause: ${e.cause}, Stacktrace: ${Log.getStackTraceString(e)}"),
-                )
-              }
-              throw e
-            } catch (e: NativeInteropTestsError) {
-              if (active.compareAndSet(true, false)) {
-                pigeonUntrackStream(handle)
-                pigeonCallback.onError(
-                    e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
-              }
-            } catch (e: Throwable) {
-              if (active.compareAndSet(true, false)) {
-                pigeonUntrackStream(handle)
-                pigeonCallback.onError(
-                    e.javaClass.simpleName,
-                    e.toString(),
-                    NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-                        "Cause: ${e.cause}, Stacktrace: ${Log.getStackTraceString(e)}"),
-                )
-              }
-            }
-          }
-      handle = pigeonTrackStream {
-        active.set(false)
-        job.cancel()
-      }
-      job.start()
-      return handle
+      val pigeonVar_flow = pigeonVar_api.streamNullableInts()
+      return pigeonCollectFlow(pigeonVar_flow, pigeonCallback)
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -9941,56 +9911,30 @@ class NativeInteropStreamHostApiRegistrar private constructor(private val engine
             ?: throw NativeInteropTestsError(
                 "unregistered-instance", "NativeInteropStreamHostApi has not been registered.")
     try {
-      val flow = pigeonVar_api.streamShapes()
-      val active = AtomicBoolean(true)
-      lateinit var handle: NativeInteropTestsPigeonStreamCancelHandle
-      val job =
-          CoroutineScope(Dispatchers.Default).launch(start = CoroutineStart.LAZY) {
-            try {
-              flow.collect { value ->
-                if (active.get()) {
-                  pigeonCallback.onData(NativeInteropTestsPigeonInteropCodec.encode(value))
-                }
-              }
-              if (active.compareAndSet(true, false)) {
-                pigeonUntrackStream(handle)
-                pigeonCallback.onDone()
-              }
-            } catch (e: CancellationException) {
-              if (active.compareAndSet(true, false)) {
-                pigeonUntrackStream(handle)
-                pigeonCallback.onError(
-                    e.javaClass.simpleName,
-                    e.toString(),
-                    NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-                        "Cause: ${e.cause}, Stacktrace: ${Log.getStackTraceString(e)}"),
-                )
-              }
-              throw e
-            } catch (e: NativeInteropTestsError) {
-              if (active.compareAndSet(true, false)) {
-                pigeonUntrackStream(handle)
-                pigeonCallback.onError(
-                    e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
-              }
-            } catch (e: Throwable) {
-              if (active.compareAndSet(true, false)) {
-                pigeonUntrackStream(handle)
-                pigeonCallback.onError(
-                    e.javaClass.simpleName,
-                    e.toString(),
-                    NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-                        "Cause: ${e.cause}, Stacktrace: ${Log.getStackTraceString(e)}"),
-                )
-              }
-            }
-          }
-      handle = pigeonTrackStream {
-        active.set(false)
-        job.cancel()
-      }
-      job.start()
-      return handle
+      val pigeonVar_flow = pigeonVar_api.streamShapes()
+      return pigeonCollectFlow(pigeonVar_flow, pigeonCallback)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  @Keep
+  fun streamShapesWithFilter(
+      pigeonVar_args: ByteArray,
+      pigeonCallback: NativeInteropTestsPigeonStreamCallback
+  ): NativeInteropTestsPigeonStreamCancelHandle {
+    val pigeonVar_api =
+        this.api
+            ?: throw NativeInteropTestsError(
+                "unregistered-instance", "NativeInteropStreamHostApi has not been registered.")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val pigeonVar_arg_filter = pigeonVar_decodedArgs[0] as NativeInteropShape
+      val pigeonVar_flow = pigeonVar_api.streamShapesWithFilter(pigeonVar_arg_filter)
+      return pigeonCollectFlow(pigeonVar_flow, pigeonCallback)
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -10008,56 +9952,8 @@ class NativeInteropStreamHostApiRegistrar private constructor(private val engine
             ?: throw NativeInteropTestsError(
                 "unregistered-instance", "NativeInteropStreamHostApi has not been registered.")
     try {
-      val flow = pigeonVar_api.streamError(customError)
-      val active = AtomicBoolean(true)
-      lateinit var handle: NativeInteropTestsPigeonStreamCancelHandle
-      val job =
-          CoroutineScope(Dispatchers.Default).launch(start = CoroutineStart.LAZY) {
-            try {
-              flow.collect { value ->
-                if (active.get()) {
-                  pigeonCallback.onData(NativeInteropTestsPigeonInteropCodec.encode(value))
-                }
-              }
-              if (active.compareAndSet(true, false)) {
-                pigeonUntrackStream(handle)
-                pigeonCallback.onDone()
-              }
-            } catch (e: CancellationException) {
-              if (active.compareAndSet(true, false)) {
-                pigeonUntrackStream(handle)
-                pigeonCallback.onError(
-                    e.javaClass.simpleName,
-                    e.toString(),
-                    NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-                        "Cause: ${e.cause}, Stacktrace: ${Log.getStackTraceString(e)}"),
-                )
-              }
-              throw e
-            } catch (e: NativeInteropTestsError) {
-              if (active.compareAndSet(true, false)) {
-                pigeonUntrackStream(handle)
-                pigeonCallback.onError(
-                    e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
-              }
-            } catch (e: Throwable) {
-              if (active.compareAndSet(true, false)) {
-                pigeonUntrackStream(handle)
-                pigeonCallback.onError(
-                    e.javaClass.simpleName,
-                    e.toString(),
-                    NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-                        "Cause: ${e.cause}, Stacktrace: ${Log.getStackTraceString(e)}"),
-                )
-              }
-            }
-          }
-      handle = pigeonTrackStream {
-        active.set(false)
-        job.cancel()
-      }
-      job.start()
-      return handle
+      val pigeonVar_flow = pigeonVar_api.streamError(customError)
+      return pigeonCollectFlow(pigeonVar_flow, pigeonCallback)
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -10076,16 +9972,16 @@ class NativeInteropStreamHostApiRegistrar private constructor(private val engine
             ?: throw NativeInteropTestsError(
                 "unregistered-instance", "NativeInteropStreamHostApi has not been registered.")
     try {
-      val sink = NativeInteropTestsPigeonEventSink<String>(pigeonCallback)
-      val handle = pigeonTrackStream { sink.close() }
-      sink.attachOnClosed { pigeonUntrackStream(handle) }
+      val pigeonVar_sink = NativeInteropTestsPigeonEventSink<String>(pigeonCallback)
+      val pigeonVar_handle = pigeonTrackStream { pigeonVar_sink.close() }
+      pigeonVar_sink.attachOnClosed { pigeonUntrackStream(pigeonVar_handle) }
       try {
-        val closeable = pigeonVar_api.streamViaCallback(prefix, count, sink)
-        sink.attachCloseable(closeable)
-        return handle
+        val pigeonVar_closeable = pigeonVar_api.streamViaCallback(prefix, count, pigeonVar_sink)
+        pigeonVar_sink.attachCloseable(pigeonVar_closeable)
+        return pigeonVar_handle
       } catch (e: Throwable) {
-        sink.close()
-        pigeonUntrackStream(handle)
+        pigeonVar_sink.close()
+        pigeonUntrackStream(pigeonVar_handle)
         throw e
       }
     } catch (e: NativeInteropTestsError) {

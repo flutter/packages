@@ -2572,7 +2572,7 @@ if (wrapped == nil) {
         });
         if (apiHasStream) {
           indent.writeScoped('for setup in removedSetups {', '}', () {
-            indent.writeln('setup.cancelAllStreams()');
+            indent.writeln('setup.pigeonCancelAllStreams()');
           });
         }
         indent.writeln('withExtendedLifetime(displaced) {}');
@@ -2690,15 +2690,20 @@ if (wrapped == nil) {
       '$_docCommentPrefix Generated setup class from Pigeon to register implemented ${api.name} classes.',
     );
     final bool apiHasStream = api.methods.any((Method m) => m.isStream);
+    final bool apiHasAsyncStream = api.methods.any(
+      (Method m) => m.isStream && !m.isAsynchronousCallback,
+    );
     final String prefix = _classNamePrefix;
+    final String errorClassName = _getErrorClassName(generatorOptions);
+    final codec = '${prefix}PigeonInteropCodec';
     indent.writeScoped('@objc class ${api.name}Setup: NSObject {', '}', () {
       if (generatorOptions.useFfi) {
         indent.writeln('private var api: ${api.name}?');
         if (apiHasStream) {
           indent.writeln(
-            'private var activeStreams: [ObjectIdentifier: ${prefix}PigeonStreamCancelHandle] = [:]',
+            'private var pigeonActiveStreams: [ObjectIdentifier: ${prefix}PigeonStreamCancelHandle] = [:]',
           );
-          indent.writeln('private var streamsClosed = false');
+          indent.writeln('private var pigeonStreamsClosed = false');
         }
         indent.writeln('override init() {}');
         indent.writeScoped('private func resolveApi() throws -> ${api.name} {', '}', () {
@@ -2706,7 +2711,7 @@ if (wrapped == nil) {
           indent.writeln('let registeredApi = api');
           indent.writeln('${api.name}InstanceTracker.lock.unlock()');
           indent.writeScoped('guard let currentApi = registeredApi else {', '}', () {
-            indent.writeScoped('throw ${_getErrorClassName(generatorOptions)}(', ')', () {
+            indent.writeScoped('throw $errorClassName(', ')', () {
               indent.writeln('code: "unregistered-instance",');
               indent.writeln('message: "${api.name} has not been registered.",');
               indent.writeln('details: nil');
@@ -2716,28 +2721,23 @@ if (wrapped == nil) {
         });
         if (apiHasStream) {
           indent.writeScoped(
-            'private func trackStream(_ handle: ${prefix}PigeonStreamCancelHandle) {',
+            'private func pigeonTrackStream(_ handle: ${prefix}PigeonStreamCancelHandle) throws {',
             '}',
             () {
-              indent.writeln('let shouldCancel: Bool');
-              indent.writeScoped('do {', '}', () {
-                indent.writeln('${api.name}InstanceTracker.lock.lock()');
-                indent.writeln('defer { ${api.name}InstanceTracker.lock.unlock() }');
-                indent.writeScoped('if streamsClosed {', '}', () {
-                  indent.writeln('shouldCancel = true');
-                }, addTrailingNewline: false);
-                indent.addScoped(' else {', '}', () {
-                  indent.writeln('activeStreams[ObjectIdentifier(handle)] = handle');
-                  indent.writeln('shouldCancel = false');
+              indent.writeln('${api.name}InstanceTracker.lock.lock()');
+              indent.writeln('defer { ${api.name}InstanceTracker.lock.unlock() }');
+              indent.writeScoped('if pigeonStreamsClosed {', '}', () {
+                indent.writeScoped('throw $errorClassName(', ')', () {
+                  indent.writeln('code: "unregistered-instance",');
+                  indent.writeln('message: "${api.name} has not been registered.",');
+                  indent.writeln('details: nil');
                 });
               });
-              indent.writeScoped('if shouldCancel {', '}', () {
-                indent.writeln('handle.cancel()');
-              });
+              indent.writeln('pigeonActiveStreams[ObjectIdentifier(handle)] = handle');
             },
           );
           indent.writeScoped(
-            'private func untrackStream(_ handle: ${prefix}PigeonStreamCancelHandle) {',
+            'private func pigeonUntrackStream(_ handle: ${prefix}PigeonStreamCancelHandle) {',
             '}',
             () {
               indent.writeln('let displaced: ${prefix}PigeonStreamCancelHandle?');
@@ -2745,25 +2745,84 @@ if (wrapped == nil) {
                 indent.writeln('${api.name}InstanceTracker.lock.lock()');
                 indent.writeln('defer { ${api.name}InstanceTracker.lock.unlock() }');
                 indent.writeln(
-                  'displaced = activeStreams.removeValue(forKey: ObjectIdentifier(handle))',
+                  'displaced = pigeonActiveStreams.removeValue(forKey: ObjectIdentifier(handle))',
                 );
               });
+              _writeDisplacedLifetimeComment(indent);
               indent.writeln('withExtendedLifetime(displaced) {}');
             },
           );
-          indent.writeScoped('fileprivate func cancelAllStreams() {', '}', () {
+          indent.writeScoped('fileprivate func pigeonCancelAllStreams() {', '}', () {
             indent.writeln('let handles: [${prefix}PigeonStreamCancelHandle]');
             indent.writeScoped('do {', '}', () {
               indent.writeln('${api.name}InstanceTracker.lock.lock()');
               indent.writeln('defer { ${api.name}InstanceTracker.lock.unlock() }');
-              indent.writeln('streamsClosed = true');
-              indent.writeln('handles = Array(activeStreams.values)');
-              indent.writeln('activeStreams.removeAll()');
+              indent.writeln('pigeonStreamsClosed = true');
+              indent.writeln('handles = Array(pigeonActiveStreams.values)');
+              indent.writeln('pigeonActiveStreams.removeAll()');
             });
             indent.writeScoped('for handle in handles {', '}', () {
               indent.writeln('handle.cancel()');
             });
           });
+          if (apiHasAsyncStream) {
+            indent.writeScoped(
+              'private func pigeonStartAsyncStream<Element>(_ stream: AsyncThrowingStream<Element, Error>, onData: @escaping (NSData?) -> Void, onError: @escaping (String, String?, NSData?) -> Void, onDone: @escaping () -> Void, encode: @escaping @Sendable (Element) -> NSData?) throws -> ${prefix}PigeonStreamCancelHandle {',
+              '}',
+              () {
+                indent.writeln('let streamBox = ${prefix}PigeonStreamBox(stream)');
+                indent.writeln(
+                  'let callbacks = ${prefix}PigeonFfiStreamCallbacks(onData: onData, onError: onError, onDone: onDone)',
+                );
+                indent.writeln('let taskHandle = ${prefix}PigeonStreamTaskHandle()');
+                indent.writeScoped(
+                  'let cancelHandle = ${prefix}PigeonStreamCancelHandle(',
+                  ')',
+                  () {
+                    indent.writeScoped('onCancel: {', '},', () {
+                      indent.writeln('callbacks.clear()');
+                      indent.writeln('taskHandle.cancel()');
+                    });
+                    indent.writeScoped('onFinish: { [weak self] handle in', '}', () {
+                      indent.writeln('self?.pigeonUntrackStream(handle)');
+                    });
+                  },
+                );
+                indent.writeln('try pigeonTrackStream(cancelHandle)');
+                indent.writeScoped('let task = Task {', '}', () {
+                  indent.writeScoped('do {', '}', () {
+                    indent.writeScoped('for try await event in streamBox.stream {', '}', () {
+                      indent.writeln('if Task.isCancelled { break }');
+                      indent.writeln('callbacks.sendData(encode(event))');
+                    });
+                    indent.writeScoped('if !Task.isCancelled {', '}', () {
+                      indent.writeln('callbacks.sendDone()');
+                    });
+                    indent.writeln('cancelHandle.markFinished()');
+                  }, addTrailingNewline: false);
+                  indent.addScoped(' catch let error as $errorClassName {', '}', () {
+                    indent.writeScoped('if !Task.isCancelled {', '}', () {
+                      indent.writeln(
+                        'callbacks.sendError(code: error.code ?? "", message: error.message, details: $codec.encodeOrNil(error.details))',
+                      );
+                    });
+                    indent.writeln('cancelHandle.markFinished()');
+                  }, addTrailingNewline: false);
+                  indent.addScoped(' catch {', '}', () {
+                    indent.writeScoped('if !Task.isCancelled {', '}', () {
+                      indent.writeln(
+                        r'callbacks.sendError(code: "\(error)", message: "\(Swift.type(of: error))", details: '
+                        '$codec.encodeOrNil("Stacktrace: \\(Thread.callStackSymbols)"))',
+                      );
+                    });
+                    indent.writeln('cancelHandle.markFinished()');
+                  });
+                });
+                indent.writeln('taskHandle.attach(task)');
+                indent.writeln('return cancelHandle');
+              },
+            );
+          }
         }
         _writeFfiHostApiRegistration(indent, api);
       }
@@ -2971,75 +3030,26 @@ if (wrapped == nil) {
               indent.writeln('onDone: pigeonOnDone,');
               indent.writeln('encode: { event in $encodeEvent }');
             });
-            indent.writeln('var handleRef: ${prefix}PigeonStreamCancelHandle?');
             indent.writeScoped('let cancelHandle = ${prefix}PigeonStreamCancelHandle(', ')', () {
               indent.writeln('onCancel: { sink.close() },');
-              indent.writeScoped('onFinish: { [weak self] in', '}', () {
-                indent.writeScoped('if let handle = handleRef {', '}', () {
-                  indent.writeln('self?.untrackStream(handle)');
-                });
+              indent.writeScoped('onFinish: { [weak self] handle in', '}', () {
+                indent.writeln('self?.pigeonUntrackStream(handle)');
               });
             });
-            indent.writeln('handleRef = cancelHandle');
-            indent.writeln('trackStream(cancelHandle)');
+            indent.writeln('try pigeonTrackStream(cancelHandle)');
             indent.writeln('sink.attachOnClosed { cancelHandle.markFinished() }');
             final callArgs = arguments.isEmpty ? 'sink: sink' : '$arguments, sink: sink';
             indent.writeln('let cancelCallback = activeApi.${components.name}($callArgs)');
             indent.writeln('sink.attachCancel(cancelCallback)');
             indent.writeln('return cancelHandle');
           } else {
-            indent.writeln(
-              'let streamBox = ${prefix}PigeonStreamBox(activeApi.${components.name}($arguments))',
-            );
-            indent.writeln(
-              'let callbacks = ${prefix}PigeonFfiStreamCallbacks(onData: pigeonOnData, onError: pigeonOnError, onDone: pigeonOnDone)',
-            );
-            indent.writeln('let taskHandle = ${prefix}PigeonStreamTaskHandle()');
-            indent.writeln('var handleRef: ${prefix}PigeonStreamCancelHandle?');
-            indent.writeScoped('let cancelHandle = ${prefix}PigeonStreamCancelHandle(', ')', () {
-              indent.writeScoped('onCancel: {', '},', () {
-                indent.writeln('callbacks.clear()');
-                indent.writeln('taskHandle.cancel()');
-              });
-              indent.writeScoped('onFinish: { [weak self] in', '}', () {
-                indent.writeScoped('if let handle = handleRef {', '}', () {
-                  indent.writeln('self?.untrackStream(handle)');
-                });
-              });
+            indent.writeScoped('return try pigeonStartAsyncStream(', ')', () {
+              indent.writeln('activeApi.${components.name}($arguments),');
+              indent.writeln('onData: pigeonOnData,');
+              indent.writeln('onError: pigeonOnError,');
+              indent.writeln('onDone: pigeonOnDone,');
+              indent.writeln('encode: { event in $encodeEvent }');
             });
-            indent.writeln('handleRef = cancelHandle');
-            indent.writeln('trackStream(cancelHandle)');
-            indent.writeScoped('let task = Task {', '}', () {
-              indent.writeScoped('do {', '}', () {
-                indent.writeScoped('for try await event in streamBox.stream {', '}', () {
-                  indent.writeln('if Task.isCancelled { break }');
-                  indent.writeln('callbacks.sendData($encodeEvent)');
-                });
-                indent.writeScoped('if !Task.isCancelled {', '}', () {
-                  indent.writeln('callbacks.sendDone()');
-                });
-                indent.writeln('cancelHandle.markFinished()');
-              }, addTrailingNewline: false);
-              indent.addScoped(' catch let error as $errorClassName {', '}', () {
-                indent.writeScoped('if !Task.isCancelled {', '}', () {
-                  indent.writeln(
-                    'callbacks.sendError(code: error.code ?? "", message: error.message, details: $codec.encodeOrNil(error.details))',
-                  );
-                });
-                indent.writeln('cancelHandle.markFinished()');
-              }, addTrailingNewline: false);
-              indent.addScoped(' catch {', '}', () {
-                indent.writeScoped('if !Task.isCancelled {', '}', () {
-                  indent.writeln(
-                    r'callbacks.sendError(code: "\(error)", message: "\(Swift.type(of: error))", details: '
-                    '$codec.encodeOrNil("Stacktrace: \\(Thread.callStackSymbols)"))',
-                  );
-                });
-                indent.writeln('cancelHandle.markFinished()');
-              });
-            });
-            indent.writeln('taskHandle.attach(task)');
-            indent.writeln('return cancelHandle');
           }
         }, addTrailingNewline: false);
         indent.addScoped(' catch let error as $errorClassName {', '}', () {
@@ -4376,69 +4386,10 @@ fileprivate enum PigeonEngineKeys {
     }
   }
 
-  void _writeFfiStreamUtilities(Root root, Indent indent) {
+  void _writeAsyncStreamHelpers(Indent indent) {
     final String prefix = _classNamePrefix;
-    final codec = '${prefix}PigeonInteropCodec';
-    final bool hasAsyncStream = root.apis.whereType<AstHostApi>().any(
-      (AstHostApi api) =>
-          api.methods.any((Method method) => method.isStream && !method.isAsynchronousCallback),
-    );
-    final bool hasCallbackStream = root.apis.whereType<AstHostApi>().any(
-      (AstHostApi api) =>
-          api.methods.any((Method method) => method.isStream && method.isAsynchronousCallback),
-    );
     indent.newln();
     indent.format('''
-@objc public class ${prefix}PigeonStreamCancelHandle: NSObject, @unchecked Sendable {
-  private let lock = NSLock()
-  private var finished = false
-  private var onCancel: (() -> Void)?
-  private var onFinish: (() -> Void)?
-
-  internal init(onCancel: @escaping () -> Void, onFinish: @escaping () -> Void) {
-    self.onCancel = onCancel
-    self.onFinish = onFinish
-  }
-
-  @objc public func cancel() {
-    let cancelAction: (() -> Void)?
-    let finishAction: (() -> Void)?
-    do {
-      lock.lock()
-      defer { lock.unlock() }
-      guard !finished else { return }
-      finished = true
-      cancelAction = onCancel
-      finishAction = onFinish
-      onCancel = nil
-      onFinish = nil
-    }
-    finishAction?()
-    cancelAction?()
-  }
-
-  fileprivate func markFinished() {
-    let finishAction: (() -> Void)?
-    let displacedCancel: (() -> Void)?
-    do {
-      lock.lock()
-      defer { lock.unlock() }
-      guard !finished else { return }
-      finished = true
-      finishAction = onFinish
-      displacedCancel = onCancel
-      onCancel = nil
-      onFinish = nil
-    }
-    finishAction?()
-    // Keep displacedCancel alive past lock.unlock() so deallocation cannot re-enter lock.
-    withExtendedLifetime(displacedCancel) {}
-  }
-}
-''');
-    if (hasAsyncStream) {
-      indent.newln();
-      indent.format('''
 private final class ${prefix}PigeonStreamBox<Element>: @unchecked Sendable {
   let stream: AsyncThrowingStream<Element, Error>
   init(_ stream: AsyncThrowingStream<Element, Error>) {
@@ -4469,7 +4420,7 @@ private final class ${prefix}PigeonStreamTaskHandle: @unchecked Sendable {
   }
 
   func cancel() {
-    let currentTask: Task<Void, Never>?
+    var currentTask: Task<Void, Never>?
     do {
       lock.lock()
       defer { lock.unlock() }
@@ -4478,9 +4429,82 @@ private final class ${prefix}PigeonStreamTaskHandle: @unchecked Sendable {
       task = nil
     }
     currentTask?.cancel()
+    // Keep currentTask alive past lock.unlock() so deallocation never runs while holding lock.
+    withExtendedLifetime(currentTask) {}
+  }
+}''');
+  }
+
+  void _writeFfiStreamUtilities(Root root, Indent indent) {
+    final String prefix = _classNamePrefix;
+    final codec = '${prefix}PigeonInteropCodec';
+    final bool hasAsyncStream = root.apis.whereType<AstHostApi>().any(
+      (AstHostApi api) =>
+          api.methods.any((Method method) => method.isStream && !method.isAsynchronousCallback),
+    );
+    final bool hasCallbackStream = root.apis.whereType<AstHostApi>().any(
+      (AstHostApi api) =>
+          api.methods.any((Method method) => method.isStream && method.isAsynchronousCallback),
+    );
+    indent.newln();
+    indent.format('''
+/// FFI handle returned to generated Dart code to cancel an active stream.
+/// Not intended for direct use.
+@objc public class ${prefix}PigeonStreamCancelHandle: NSObject, @unchecked Sendable {
+  private let lock = NSLock()
+  private var finished = false
+  private var onCancel: (() -> Void)?
+  private var onFinish: ((${prefix}PigeonStreamCancelHandle) -> Void)?
+
+  internal init(
+    onCancel: @escaping () -> Void,
+    onFinish: @escaping (${prefix}PigeonStreamCancelHandle) -> Void
+  ) {
+    self.onCancel = onCancel
+    self.onFinish = onFinish
+  }
+
+  /// Cancels the stream associated with this handle. Safe to call more than once.
+  @objc public func cancel() {
+    let cancelAction: (() -> Void)?
+    let finishAction: ((${prefix}PigeonStreamCancelHandle) -> Void)?
+    do {
+      lock.lock()
+      defer { lock.unlock() }
+      guard !finished else { return }
+      finished = true
+      cancelAction = onCancel
+      finishAction = onFinish
+      onCancel = nil
+      onFinish = nil
+    }
+    finishAction?(self)
+    cancelAction?()
+  }
+
+  fileprivate func markFinished() {
+    let finishAction: ((${prefix}PigeonStreamCancelHandle) -> Void)?
+    let displacedCancel: (() -> Void)?
+    do {
+      lock.lock()
+      defer { lock.unlock() }
+      guard !finished else { return }
+      finished = true
+      finishAction = onFinish
+      displacedCancel = onCancel
+      onCancel = nil
+      onFinish = nil
+    }
+    finishAction?(self)
+    // Keep displacedCancel alive past lock.unlock() so deallocation cannot re-enter lock.
+    withExtendedLifetime(displacedCancel) {}
   }
 }
-
+''');
+    if (hasAsyncStream) {
+      _writeAsyncStreamHelpers(indent);
+      indent.newln();
+      indent.format('''
 private final class ${prefix}PigeonFfiStreamCallbacks: @unchecked Sendable {
   private let lock = NSLock()
   private var terminated = false
@@ -4510,57 +4534,42 @@ private final class ${prefix}PigeonFfiStreamCallbacks: @unchecked Sendable {
   }
 
   func sendError(code: String, message: String?, details: NSData?) {
-    let callback: ((String, String?, NSData?) -> Void)?
-    let displacedData: ((NSData?) -> Void)?
-    let displacedDone: (() -> Void)?
-    do {
-      lock.lock()
-      defer { lock.unlock() }
-      guard !terminated else { return }
-      terminated = true
-      callback = onError
-      displacedData = onData
-      displacedDone = onDone
-      onData = nil
-      onError = nil
-      onDone = nil
-    }
-    callback?(code, message, details)
-    withExtendedLifetime((displacedData, displacedDone)) {}
+    terminate { _, onError, _ in onError?(code, message, details) }
   }
 
   func sendDone() {
-    let callback: (() -> Void)?
-    let displacedData: ((NSData?) -> Void)?
-    let displacedError: ((String, String?, NSData?) -> Void)?
+    terminate { _, _, onDone in onDone?() }
+  }
+
+  func clear() {
+    terminate { _, _, _ in }
+  }
+
+  private func terminate(
+    _ deliver: (
+      ((NSData?) -> Void)?,
+      ((String, String?, NSData?) -> Void)?,
+      (() -> Void)?
+    ) -> Void
+  ) {
+    let capturedData: ((NSData?) -> Void)?
+    let capturedError: ((String, String?, NSData?) -> Void)?
+    let capturedDone: (() -> Void)?
     do {
       lock.lock()
       defer { lock.unlock() }
       guard !terminated else { return }
       terminated = true
-      callback = onDone
-      displacedData = onData
-      displacedError = onError
+      capturedData = onData
+      capturedError = onError
+      capturedDone = onDone
       onData = nil
       onError = nil
       onDone = nil
     }
-    callback?()
-    withExtendedLifetime((displacedData, displacedError)) {}
-  }
-
-  func clear() {
-    let displaced: (((NSData?) -> Void)?, ((String, String?, NSData?) -> Void)?, (() -> Void)?)
-    do {
-      lock.lock()
-      defer { lock.unlock() }
-      terminated = true
-      displaced = (onData, onError, onDone)
-      onData = nil
-      onError = nil
-      onDone = nil
-    }
-    withExtendedLifetime(displaced) {}
+    deliver(capturedData, capturedError, capturedDone)
+    // Keep cleared closures alive past lock.unlock() so deallocation cannot re-enter lock.
+    withExtendedLifetime((capturedData, capturedError, capturedDone)) {}
   }
 }
 ''');
@@ -4635,40 +4644,29 @@ class ${prefix}PigeonEventSink<ReturnType>: @unchecked Sendable {
   }
 
   func error(code: String, message: String?, details: Any?) {
-    let callback: ((String, String?, NSData?) -> Void)?
-    let closedAction: (() -> Void)?
-    let displaced: (((NSData?) -> Void)?, (() -> Void)?, (() -> Void)?)
-    do {
-      lock.lock()
-      defer { lock.unlock() }
-      guard !terminated else { return }
-      terminated = true
-      callback = onError
-      closedAction = onClosed
-      displaced = (onData, onDone, cancelCallback)
-      onData = nil
-      onError = nil
-      onDone = nil
-      onClosed = nil
-      cancelCallback = nil
-    }
-    closedAction?()
-    callback?(code, message, $codec.encodeOrNil(details))
-    withExtendedLifetime(displaced) {}
+    terminate { onError, _ in onError?(code, message, $codec.encodeOrNil(details)) }
   }
 
   func endOfStream() {
-    let callback: (() -> Void)?
+    terminate { _, onDone in onDone?() }
+  }
+
+  private func terminate(
+    _ deliver: (((String, String?, NSData?) -> Void)?, (() -> Void)?) -> Void
+  ) {
+    let capturedError: ((String, String?, NSData?) -> Void)?
+    let capturedDone: (() -> Void)?
     let closedAction: (() -> Void)?
-    let displaced: (((NSData?) -> Void)?, ((String, String?, NSData?) -> Void)?, (() -> Void)?)
+    let displaced: (((NSData?) -> Void)?, (() -> Void)?)
     do {
       lock.lock()
       defer { lock.unlock() }
       guard !terminated else { return }
       terminated = true
-      callback = onDone
+      capturedError = onError
+      capturedDone = onDone
       closedAction = onClosed
-      displaced = (onData, onError, cancelCallback)
+      displaced = (onData, cancelCallback)
       onData = nil
       onError = nil
       onDone = nil
@@ -4676,7 +4674,8 @@ class ${prefix}PigeonEventSink<ReturnType>: @unchecked Sendable {
       cancelCallback = nil
     }
     closedAction?()
-    callback?()
+    deliver(capturedError, capturedDone)
+    // Keep cleared closures alive past lock.unlock() so deallocation cannot re-enter lock.
     withExtendedLifetime(displaced) {}
   }
 
@@ -4697,6 +4696,7 @@ class ${prefix}PigeonEventSink<ReturnType>: @unchecked Sendable {
       cancelCallback = nil
     }
     cancel?()
+    // Keep cleared closures alive past lock.unlock() so deallocation cannot re-enter lock.
     withExtendedLifetime(displaced) {}
   }
 }
@@ -4724,51 +4724,7 @@ private final class ${prefix}PigeonMessageBox: @unchecked Sendable {
 }''');
     }
     if (hasAsyncThrowingStreams) {
-      indent.newln();
-      indent.format('''
-private final class ${prefix}PigeonStreamBox<Element>: @unchecked Sendable {
-  let stream: AsyncThrowingStream<Element, Error>
-  init(_ stream: AsyncThrowingStream<Element, Error>) {
-    self.stream = stream
-  }
-}
-
-private final class ${prefix}PigeonStreamTaskHandle: @unchecked Sendable {
-  private let lock = NSLock()
-  private var task: Task<Void, Never>?
-  private var cancelled = false
-
-  func attach(_ task: Task<Void, Never>) {
-    let shouldCancel: Bool
-    do {
-      lock.lock()
-      defer { lock.unlock() }
-      if cancelled {
-        shouldCancel = true
-      } else {
-        self.task = task
-        shouldCancel = false
-      }
-    }
-    if shouldCancel {
-      task.cancel()
-    }
-  }
-
-  func cancel() {
-    var currentTask: Task<Void, Never>?
-    do {
-      lock.lock()
-      defer { lock.unlock() }
-      cancelled = true
-      currentTask = task
-      task = nil
-    }
-    currentTask?.cancel()
-    // Keep currentTask alive past lock.unlock() so deallocation never runs while holding lock.
-    withExtendedLifetime(currentTask) {}
-  }
-}''');
+      _writeAsyncStreamHelpers(indent);
     }
     indent.newln();
     indent.writeScoped(

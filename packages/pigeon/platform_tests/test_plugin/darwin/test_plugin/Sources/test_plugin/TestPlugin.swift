@@ -3385,6 +3385,10 @@ class StreamHostTestApiImpl: StreamHostTestApi, @unchecked Sendable {
     prefix: String, count: Int64, sink: EventChannelTestsPigeonEventSink<String>
   ) -> (() -> Void)? {
     let task = Task.detached {
+      if prefix == "error" {
+        sink.error(code: "callback_error", message: "callback_message", details: "callback_details")
+        return
+      }
       for i in 0..<count {
         if Task.isCancelled { return }
         sink.success("\(prefix):\(i)")
@@ -3461,6 +3465,15 @@ final class NativeInteropStreamHostApiImpl: NativeInteropStreamHostApi, @uncheck
     }
   }
 
+  func streamShapesWithFilter(filter: NativeInteropShape) -> AsyncThrowingStream<
+    NativeInteropShape, Error
+  > {
+    AsyncThrowingStream { continuation in
+      continuation.yield(filter)
+      continuation.finish()
+    }
+  }
+
   func streamError(customError: Bool) -> AsyncThrowingStream<Int64, Error> {
     AsyncThrowingStream { continuation in
       continuation.yield(1)
@@ -3478,6 +3491,10 @@ final class NativeInteropStreamHostApiImpl: NativeInteropStreamHostApi, @uncheck
     prefix: String, count: Int64, sink: NativeInteropTestsPigeonEventSink<String>
   ) -> (() -> Void)? {
     let task = Task.detached {
+      if prefix == "error" {
+        sink.error(code: "callback_error", message: "callback_message", details: "callback_details")
+        return
+      }
       for i in 0..<count {
         if Task.isCancelled { return }
         sink.success("\(prefix):\(i)")

@@ -21377,6 +21377,35 @@ extension NativeInteropStreamHostApiSetup$Methods on NativeInteropStreamHostApiS
         : NativeInteropTestsPigeonStreamCancelHandle.fromPointer($ret, retain: true, release: true);
   }
 
+  /// streamShapesWithFilterWithPigeonVar_args:pigeonOnData:pigeonOnError:pigeonOnDone:wrappedError:
+  NativeInteropTestsPigeonStreamCancelHandle? streamShapesWithFilterWithPigeonVar_args(
+    objc.NSData pigeonVar_args, {
+    required objc.ObjCBlock<ffi.Void Function(objc.NSData?)> pigeonOnData,
+    required objc.ObjCBlock<ffi.Void Function(objc.NSString, objc.NSString?, objc.NSData?)>
+    pigeonOnError,
+    required objc.ObjCBlock<ffi.Void Function()> pigeonOnDone,
+    required NativeInteropTestsError wrappedError,
+  }) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = pigeonVar_args.ref;
+    final _$$ref$2 = pigeonOnData.ref;
+    final _$$ref$3 = pigeonOnError.ref;
+    final _$$ref$4 = pigeonOnDone.ref;
+    final _$$ref$5 = wrappedError.ref;
+    final $ret = _objc_msgSend_zd8wi(
+      _$$ref.pointer,
+      _sel_streamShapesWithFilterWithPigeonVar_args_pigeonOnData_pigeonOnError_pigeonOnDone_wrappedError_,
+      _$$ref$1.pointer,
+      _$$ref$2.pointer,
+      _$$ref$3.pointer,
+      _$$ref$4.pointer,
+      _$$ref$5.pointer,
+    );
+    return $ret.address == 0
+        ? null
+        : NativeInteropTestsPigeonStreamCancelHandle.fromPointer($ret, retain: true, release: true);
+  }
+
   /// streamShapesWithPigeonOnData:pigeonOnError:pigeonOnDone:wrappedError:
   NativeInteropTestsPigeonStreamCancelHandle? streamShapesWithPigeonOnData(
     objc.ObjCBlock<ffi.Void Function(objc.NSData?)> pigeonOnData, {
@@ -21725,7 +21754,8 @@ extension NativeInteropTestsPigeonInternalNull$Methods on NativeInteropTestsPige
   }
 }
 
-/// NativeInteropTestsPigeonStreamCancelHandle
+/// FFI handle returned to generated Dart code to cancel an active stream.
+/// Not intended for direct use.
 extension type NativeInteropTestsPigeonStreamCancelHandle._(objc.ObjCObject object$)
     implements objc.ObjCObject, objc.NSObject {
   /// Constructs a [NativeInteropTestsPigeonStreamCancelHandle] that points to the same underlying object as [other].
@@ -21781,7 +21811,7 @@ extension type NativeInteropTestsPigeonStreamCancelHandle._(objc.ObjCObject obje
 
 extension NativeInteropTestsPigeonStreamCancelHandle$Methods
     on NativeInteropTestsPigeonStreamCancelHandle {
-  /// cancel
+  /// Cancels the stream associated with this handle. Safe to call more than once.
   void cancel() {
     final _$$ref = object$.ref;
     _objc_msgSend_1pl9qdv(_$$ref.pointer, _sel_cancel);
@@ -30309,6 +30339,31 @@ final _objc_msgSend_xw7tjf = objc.msgSendPointer
       >
     >()
     .asFunction<int Function(ffi.Pointer<objc.ObjCObjectImpl>, ffi.Pointer<objc.ObjCSelector>)>();
+final _objc_msgSend_zd8wi = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Pointer<objc.ObjCObjectImpl> Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCBlockImpl>,
+          ffi.Pointer<objc.ObjCBlockImpl>,
+          ffi.Pointer<objc.ObjCBlockImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+        )
+      >
+    >()
+    .asFunction<
+      ffi.Pointer<objc.ObjCObjectImpl> Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCBlockImpl>,
+        ffi.Pointer<objc.ObjCBlockImpl>,
+        ffi.Pointer<objc.ObjCBlockImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+      )
+    >();
 @ffi.Native<ffi.Pointer<objc.ObjCProtocolImpl> Function()>(
   symbol: '_julz8q_NativeInteropFlutterIntegrationCoreApiBridge',
 )
@@ -31571,6 +31626,10 @@ late final _sel_streamNullableIntsWithPigeonOnData_pigeonOnError_pigeonOnDone_wr
 late final _sel_streamNumbersWithCount_start_pigeonOnData_pigeonOnError_pigeonOnDone_wrappedError_ =
     objc.registerName(
       "streamNumbersWithCount:start:pigeonOnData:pigeonOnError:pigeonOnDone:wrappedError:",
+    );
+late final _sel_streamShapesWithFilterWithPigeonVar_args_pigeonOnData_pigeonOnError_pigeonOnDone_wrappedError_ =
+    objc.registerName(
+      "streamShapesWithFilterWithPigeonVar_args:pigeonOnData:pigeonOnError:pigeonOnDone:wrappedError:",
     );
 late final _sel_streamShapesWithPigeonOnData_pigeonOnError_pigeonOnDone_wrappedError_ = objc
     .registerName("streamShapesWithPigeonOnData:pigeonOnError:pigeonOnDone:wrappedError:");

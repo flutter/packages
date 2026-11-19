@@ -1215,6 +1215,7 @@ Stream<T> _pigeonJniStream<T>({
   jni_bridge.NativeInteropTestsPigeonStreamCallback? callbackImpl;
   jni_bridge.NativeInteropTestsPigeonStreamCancelHandle? cancelHandle;
   var terminatedFromHost = false;
+  var cancelled = false;
 
   void releaseHandles() {
     final jni_bridge.NativeInteropTestsPigeonStreamCancelHandle? handle = cancelHandle;
@@ -1231,33 +1232,53 @@ Stream<T> _pigeonJniStream<T>({
           jni_bridge.NativeInteropTestsPigeonStreamCallback.implement(
             _PigeonJniStreamCallback(
               onDataCallback: (JByteArray encodedValue) {
-                final Object? decoded = _PigeonJniBuffers.decode(encodedValue);
-                if (controller.isClosed) {
+                if (cancelled || controller.isClosed) {
+                  encodedValue.release();
                   return;
                 }
                 try {
-                  controller.add(decodeEvent(decoded));
+                  final Object? decoded = _PigeonJniBuffers.decode(encodedValue);
+                  if (!cancelled && !controller.isClosed) {
+                    controller.add(decodeEvent(decoded));
+                  }
                 } catch (e, st) {
-                  controller.addError(e, st);
+                  if (!cancelled && !controller.isClosed) {
+                    controller.addError(e, st);
+                  }
                 }
               },
               onErrorCallback: (JString code, JString? message, JByteArray? encodedDetails) {
-                final String codeStr = code.toDartString(releaseOriginal: true);
-                final String? messageStr = message?.toDartString(releaseOriginal: true);
-                final Object? details = _PigeonJniBuffers.decode(encodedDetails);
-                terminatedFromHost = true;
-                releaseHandles();
-                if (!controller.isClosed) {
-                  controller.addError(
-                    PlatformException(code: codeStr, message: messageStr, details: details),
-                  );
-                  unawaited(controller.close());
+                if (cancelled || controller.isClosed) {
+                  code.release();
+                  message?.release();
+                  encodedDetails?.release();
+                  return;
+                }
+                try {
+                  final String codeStr = code.toDartString(releaseOriginal: true);
+                  final String? messageStr = message?.toDartString(releaseOriginal: true);
+                  final Object? details = _PigeonJniBuffers.decode(encodedDetails);
+                  if (!cancelled && !controller.isClosed) {
+                    controller.addError(
+                      PlatformException(code: codeStr, message: messageStr, details: details),
+                    );
+                  }
+                } catch (e, st) {
+                  if (!cancelled && !controller.isClosed) {
+                    controller.addError(e, st);
+                  }
+                } finally {
+                  terminatedFromHost = true;
+                  releaseHandles();
+                  if (!controller.isClosed) {
+                    unawaited(controller.close());
+                  }
                 }
               },
               onDoneCallback: () {
                 terminatedFromHost = true;
                 releaseHandles();
-                if (!controller.isClosed) {
+                if (!cancelled && !controller.isClosed) {
                   unawaited(controller.close());
                 }
               },
@@ -1269,20 +1290,21 @@ Stream<T> _pigeonJniStream<T>({
       } on JThrowable catch (e) {
         terminatedFromHost = true;
         releaseHandles();
-        if (!controller.isClosed) {
+        if (!cancelled && !controller.isClosed) {
           controller.addError(_wrapJniException(e));
           unawaited(controller.close());
         }
       } catch (e, st) {
         terminatedFromHost = true;
         releaseHandles();
-        if (!controller.isClosed) {
+        if (!cancelled && !controller.isClosed) {
           controller.addError(e, st);
           unawaited(controller.close());
         }
       }
     },
     onCancel: () {
+      cancelled = true;
       try {
         if (!terminatedFromHost) {
           cancelHandle?.cancel();
@@ -1310,20 +1332,31 @@ Stream<T> _pigeonFfiStream<T>({
   late final StreamController<T> controller;
   ffi_bridge.NativeInteropTestsPigeonStreamCancelHandle? cancelHandle;
   var terminatedFromHost = false;
+  var cancelled = false;
+
+  void releaseHandle() {
+    final ffi_bridge.NativeInteropTestsPigeonStreamCancelHandle? handle = cancelHandle;
+    cancelHandle = null;
+    handle?.ref.release();
+  }
 
   controller = StreamController<T>(
     onListen: () {
       final error = ffi_bridge.NativeInteropTestsError();
       final ObjCBlock<Void Function(NSData?)> onData = ffi_bridge.ObjCBlock_ffiVoid_NSData.listener(
         (NSData? data) {
-          final Object? decoded = _PigeonFfiBuffers.decode(data);
-          if (controller.isClosed) {
+          if (cancelled || controller.isClosed) {
             return;
           }
           try {
-            controller.add(decodeEvent(decoded));
+            final Object? decoded = _PigeonFfiBuffers.decode(data);
+            if (!cancelled && !controller.isClosed) {
+              controller.add(decodeEvent(decoded));
+            }
           } catch (e, st) {
-            controller.addError(e, st);
+            if (!cancelled && !controller.isClosed) {
+              controller.addError(e, st);
+            }
           }
         },
       );
@@ -1333,50 +1366,72 @@ Stream<T> _pigeonFfiStream<T>({
             NSString? message,
             NSData? encodedDetails,
           ) {
-            final String codeStr = code.toDartString();
-            final String? messageStr = message?.toDartString();
-            final Object? details = _PigeonFfiBuffers.decode(encodedDetails);
-            terminatedFromHost = true;
-            cancelHandle = null;
-            if (!controller.isClosed) {
-              controller.addError(
-                PlatformException(code: codeStr, message: messageStr, details: details),
-              );
-              unawaited(controller.close());
+            if (cancelled || controller.isClosed) {
+              return;
+            }
+            try {
+              final String codeStr = code.toDartString();
+              final String? messageStr = message?.toDartString();
+              final Object? details = _PigeonFfiBuffers.decode(encodedDetails);
+              if (!cancelled && !controller.isClosed) {
+                controller.addError(
+                  PlatformException(code: codeStr, message: messageStr, details: details),
+                );
+              }
+            } catch (e, st) {
+              if (!cancelled && !controller.isClosed) {
+                controller.addError(e, st);
+              }
+            } finally {
+              terminatedFromHost = true;
+              releaseHandle();
+              if (!controller.isClosed) {
+                unawaited(controller.close());
+              }
             }
           });
       final ObjCBlock<Void Function()> onDone = ffi_bridge.ObjCBlock_ffiVoid.listener(() {
         terminatedFromHost = true;
-        cancelHandle = null;
-        if (!controller.isClosed) {
+        releaseHandle();
+        if (!cancelled && !controller.isClosed) {
           unawaited(controller.close());
         }
       });
       try {
-        cancelHandle = start(onData, onError, onDone, error);
+        try {
+          cancelHandle = start(onData, onError, onDone, error);
+        } finally {
+          onData.ref.release();
+          onError.ref.release();
+          onDone.ref.release();
+        }
+        if (error.code != null) {
+          terminatedFromHost = true;
+          releaseHandle();
+          if (!cancelled && !controller.isClosed) {
+            controller.addError(_wrapFfiError(error));
+            unawaited(controller.close());
+          }
+        }
       } catch (e, st) {
         terminatedFromHost = true;
-        cancelHandle = null;
-        if (!controller.isClosed) {
+        releaseHandle();
+        if (!cancelled && !controller.isClosed) {
           controller.addError(e, st);
           unawaited(controller.close());
         }
-        return;
-      }
-      if (error.code != null) {
-        terminatedFromHost = true;
-        cancelHandle = null;
-        if (!controller.isClosed) {
-          controller.addError(_wrapFfiError(error));
-          unawaited(controller.close());
-        }
+      } finally {
+        error.ref.release();
       }
     },
     onCancel: () {
-      final ffi_bridge.NativeInteropTestsPigeonStreamCancelHandle? handle = cancelHandle;
-      cancelHandle = null;
-      if (!terminatedFromHost) {
-        handle?.cancel();
+      cancelled = true;
+      try {
+        if (!terminatedFromHost) {
+          cancelHandle?.cancel();
+        }
+      } finally {
+        releaseHandle();
       }
     },
   );
@@ -15524,13 +15579,13 @@ class _NativeInteropStreamHostApiForNativeInterop
       );
     } else if (_ffiApi != null) {
       return _pigeonFfiStream<int>(
-        start: (onData, onError, onDone, pigeonVar_error) {
+        start: (pigeonVar_onData, pigeonVar_onError, pigeonVar_onDone, pigeonVar_error) {
           return _ffiApi.streamNumbersWithCount(
             count,
             start: start,
-            pigeonOnData: onData,
-            pigeonOnError: onError,
-            pigeonOnDone: onDone,
+            pigeonOnData: pigeonVar_onData,
+            pigeonOnError: pigeonVar_onError,
+            pigeonOnDone: pigeonVar_onDone,
             wrappedError: pigeonVar_error,
           );
         },
@@ -15552,11 +15607,11 @@ class _NativeInteropStreamHostApiForNativeInterop
       );
     } else if (_ffiApi != null) {
       return _pigeonFfiStream<int?>(
-        start: (onData, onError, onDone, pigeonVar_error) {
+        start: (pigeonVar_onData, pigeonVar_onError, pigeonVar_onDone, pigeonVar_error) {
           return _ffiApi.streamNullableIntsWithPigeonOnData(
-            onData,
-            pigeonOnError: onError,
-            pigeonOnDone: onDone,
+            pigeonVar_onData,
+            pigeonOnError: pigeonVar_onError,
+            pigeonOnDone: pigeonVar_onDone,
             wrappedError: pigeonVar_error,
           );
         },
@@ -15578,11 +15633,44 @@ class _NativeInteropStreamHostApiForNativeInterop
       );
     } else if (_ffiApi != null) {
       return _pigeonFfiStream<NativeInteropShape>(
-        start: (onData, onError, onDone, pigeonVar_error) {
+        start: (pigeonVar_onData, pigeonVar_onError, pigeonVar_onDone, pigeonVar_error) {
           return _ffiApi.streamShapesWithPigeonOnData(
-            onData,
-            pigeonOnError: onError,
-            pigeonOnDone: onDone,
+            pigeonVar_onData,
+            pigeonOnError: pigeonVar_onError,
+            pigeonOnDone: pigeonVar_onDone,
+            wrappedError: pigeonVar_error,
+          );
+        },
+        decodeEvent: (Object? event) => event! as NativeInteropShape,
+      );
+    } else {
+      throw UnsupportedError('Platform not supported for Native Interop.');
+    }
+  }
+
+  @override
+  Stream<NativeInteropShape> streamShapesWithFilter(NativeInteropShape filter) {
+    if (_jniApi != null) {
+      return _pigeonJniStream<NativeInteropShape>(
+        start: (jni_bridge.NativeInteropTestsPigeonStreamCallback pigeonVar_callback) {
+          final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[filter]);
+          try {
+            return _jniApi.streamShapesWithFilter(pigeonVar_args, pigeonVar_callback);
+          } finally {
+            pigeonVar_args.release();
+          }
+        },
+        decodeEvent: (Object? event) => event! as NativeInteropShape,
+      );
+    } else if (_ffiApi != null) {
+      return _pigeonFfiStream<NativeInteropShape>(
+        start: (pigeonVar_onData, pigeonVar_onError, pigeonVar_onDone, pigeonVar_error) {
+          final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[filter]);
+          return _ffiApi.streamShapesWithFilterWithPigeonVar_args(
+            pigeonVar_args,
+            pigeonOnData: pigeonVar_onData,
+            pigeonOnError: pigeonVar_onError,
+            pigeonOnDone: pigeonVar_onDone,
             wrappedError: pigeonVar_error,
           );
         },
@@ -15604,12 +15692,12 @@ class _NativeInteropStreamHostApiForNativeInterop
       );
     } else if (_ffiApi != null) {
       return _pigeonFfiStream<int>(
-        start: (onData, onError, onDone, pigeonVar_error) {
+        start: (pigeonVar_onData, pigeonVar_onError, pigeonVar_onDone, pigeonVar_error) {
           return _ffiApi.streamErrorWithCustomError(
             customError,
-            pigeonOnData: onData,
-            pigeonOnError: onError,
-            pigeonOnDone: onDone,
+            pigeonOnData: pigeonVar_onData,
+            pigeonOnError: pigeonVar_onError,
+            pigeonOnDone: pigeonVar_onDone,
             wrappedError: pigeonVar_error,
           );
         },
@@ -15636,13 +15724,13 @@ class _NativeInteropStreamHostApiForNativeInterop
       );
     } else if (_ffiApi != null) {
       return _pigeonFfiStream<String>(
-        start: (onData, onError, onDone, pigeonVar_error) {
+        start: (pigeonVar_onData, pigeonVar_onError, pigeonVar_onDone, pigeonVar_error) {
           return _ffiApi.streamViaCallbackWithPrefix(
             NSString(prefix),
             count: count,
-            pigeonOnData: onData,
-            pigeonOnError: onError,
-            pigeonOnDone: onDone,
+            pigeonOnData: pigeonVar_onData,
+            pigeonOnError: pigeonVar_onError,
+            pigeonOnDone: pigeonVar_onDone,
             wrappedError: pigeonVar_error,
           );
         },

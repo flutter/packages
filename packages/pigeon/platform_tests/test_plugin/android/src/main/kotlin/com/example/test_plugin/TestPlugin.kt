@@ -2619,6 +2619,11 @@ class StreamHostTestApiImpl(private val offset: Long = 0) : StreamHostTestApi {
               handlerThread.quitSafely()
               return
             }
+            if (prefix == "error") {
+              sink.error("callback_error", "callback_message", "callback_details")
+              handlerThread.quitSafely()
+              return
+            }
             if (index >= count) {
               sink.endOfStream()
               handlerThread.quitSafely()
@@ -2676,6 +2681,10 @@ class NativeInteropStreamHostApiImpl : NativeInteropStreamHostApi {
     emit(NativeInteropSquare(side = 4.0, label = "square"))
   }
 
+  override fun streamShapesWithFilter(filter: NativeInteropShape): Flow<NativeInteropShape> = flow {
+    emit(filter)
+  }
+
   override fun streamError(customError: Boolean): Flow<Long> = flow {
     emit(1L)
     if (customError) {
@@ -2699,6 +2708,11 @@ class NativeInteropStreamHostApiImpl : NativeInteropStreamHostApi {
         object : Runnable {
           override fun run() {
             if (cancelled.get()) {
+              handlerThread.quitSafely()
+              return
+            }
+            if (prefix == "error") {
+              sink.error("callback_error", "callback_message", "callback_details")
               handlerThread.quitSafely()
               return
             }

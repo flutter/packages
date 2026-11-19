@@ -2218,6 +2218,8 @@ abstract class NativeInteropStreamHostApi {
 
   Stream<NativeInteropShape> streamShapes();
 
+  Stream<NativeInteropShape> streamShapesWithFilter(NativeInteropShape filter);
+
   Stream<int> streamError(bool customError);
 
   @asyncCallback

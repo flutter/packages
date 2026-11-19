@@ -3943,10 +3943,111 @@ name: foobar
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final ffiOnlyCode = ffiOnlySink.toString();
+    expect(ffiOnlyCode, contains('if (_ffiApi != null) {'));
+    expect(ffiOnlyCode, isNot(contains('} else if (_ffiApi != null) {')));
     expect(ffiOnlyCode, contains('_pigeonFfiStream<int>('));
     expect(ffiOnlyCode, contains('StreamsPigeonStreamCancelHandle'));
+    expect(ffiOnlyCode, contains('pigeonVar_onData'));
+    expect(ffiOnlyCode, contains('pigeonVar_onError'));
+    expect(ffiOnlyCode, contains('pigeonVar_onDone'));
     expect(ffiOnlyCode, isNot(contains('_pigeonJniStream')));
   });
+
+  test(
+    'generates native interop HostApi Stream<T> with encoded and enum parameters in hybrid and objects modes',
+    () {
+      final modeEnum = Enum(
+        name: 'StreamMode',
+        members: <EnumMember>[
+          EnumMember(name: 'fast'),
+          EnumMember(name: 'slow'),
+        ],
+      );
+      final filterClass = Class(
+        name: 'StreamFilter',
+        fields: <NamedType>[
+          NamedType(
+            name: 'tag',
+            type: const TypeDeclaration(baseName: 'String', isNullable: false),
+          ),
+        ],
+      );
+      final modeType = TypeDeclaration(
+        baseName: 'StreamMode',
+        isNullable: false,
+        associatedEnum: modeEnum,
+      );
+      final filterType = TypeDeclaration(
+        baseName: 'StreamFilter',
+        isNullable: false,
+        associatedClass: filterClass,
+      );
+      final root = Root(
+        apis: <Api>[
+          AstHostApi(
+            name: 'FilteredStreamApi',
+            methods: <Method>[
+              Method(
+                name: 'watch',
+                location: ApiLocation.host,
+                parameters: <Parameter>[
+                  Parameter(name: 'mode', type: modeType),
+                  Parameter(name: 'filter', type: filterType),
+                ],
+                returnType: filterType,
+                isStream: true,
+              ),
+            ],
+          ),
+        ],
+        classes: <Class>[filterClass],
+        enums: <Enum>[modeEnum],
+      );
+
+      final hybridSink = StringBuffer();
+      const DartGenerator().generateNativeInterop(
+        const InternalDartOptions(
+          ignoreLints: false,
+          dartOut: 'lib/filtered.g.dart',
+          useJni: true,
+          useFfi: true,
+          ffiErrorClassName: 'PigeonError',
+          jniErrorClassName: 'FlutterError',
+          fileSpecificClassNameComponent: 'Filtered',
+          jniFileSpecificClassNameComponent: 'Filtered',
+        ),
+        root,
+        hybridSink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+      final hybridCode = hybridSink.toString();
+      expect(hybridCode, contains('_PigeonJniBuffers.encode(<Object?>[filter])'));
+      expect(hybridCode, contains('_PigeonFfiBuffers.encode(<Object?>[filter])'));
+      expect(hybridCode, contains('mode.index'));
+
+      final objectsSink = StringBuffer();
+      const DartGenerator().generateNativeInterop(
+        const InternalDartOptions(
+          ignoreLints: false,
+          dartOut: 'lib/filtered.g.dart',
+          useJni: true,
+          useFfi: true,
+          nativeInteropTransport: NativeInteropTransport.objects,
+          ffiErrorClassName: 'PigeonError',
+          jniErrorClassName: 'FlutterError',
+          fileSpecificClassNameComponent: 'Filtered',
+          jniFileSpecificClassNameComponent: 'Filtered',
+        ),
+        root,
+        objectsSink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+      final objectsCode = objectsSink.toString();
+      expect(objectsCode, contains('ffi_bridge.StreamMode.values[mode.index]'));
+      expect(objectsCode, contains('filter.toFfi()'));
+      expect(objectsCode, contains('filter.toJni()'));
+    },
+  );
 }
 
 /// Builds a root with a sealed class `Shape`, its subclasses `Circle` (one
