@@ -4,6 +4,10 @@
   `dart` executable resolution so `pigeon` can run as a standalone AOT-compiled
   executable (such as via `dart install` or `dart run pigeon@`).
 
+## 30.0.4
+
+* Stops silently skipping `jnigen` when `ANDROID_HOME` / `ANDROID_SDK_ROOT` or `JAVA_HOME` are unset, and surfaces `jnigen` errors and troubleshooting hints on `stderr` without aborting remaining generation steps.
+
 ## 30.0.3
 
 * Removes remaining unused `dart:mirrors` usage.

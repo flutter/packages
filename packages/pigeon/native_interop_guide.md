@@ -21,9 +21,9 @@ Native Interop calls are direct in-process function calls across the C ABI (FFI)
   * **Platform UI Affinity**: Native APIs that manipulate UI (such as UIKit views or Android `Activity`/views) must run on the platform's main thread. If invoked from a background isolate, native code must explicitly dispatch to the main thread (`DispatchQueue.main.async` in Swift, `Handler(Looper.getMainLooper()).post` in Kotlin) before interacting with UI APIs.
 * **Flutter APIs (Native → Dart)**:
   * Synchronous callbacks into Dart are isolate-local and must be invoked from the isolate that registered them.
-* **`@TaskQueue` Not Supported**:
-  * Platform channels queue work onto engine background threads; Native Interop executes directly on the caller thread. Specifying `@TaskQueue` results in a code generation error.
-  * To run host operations on background threads, annotate the method with `@async` in the Pigeon file and implement it using Swift `async` or Kotlin `suspend` functions (with `DispatchQueue.global` or `Dispatchers.IO`).
+* **Unsupported Pigeon Features (`@TaskQueue`, `@EventChannelApi`, `@ProxyApi`)**:
+  * Platform channels queue work onto engine background threads; Native Interop executes directly on the caller thread. Specifying `@TaskQueue` results in a code generation error. To run host operations on background threads, annotate the method with `@async` in the Pigeon file and implement it using Swift `async` or Kotlin `suspend` functions (with `DispatchQueue.global` or `Dispatchers.IO`).
+  * `@EventChannelApi` and `@ProxyApi` are not supported with Native Interop (`useFfi` / `useJni`); move them to a separate Pigeon file without `useFfi` / `useJni`. Swift FFI also requires `SwiftOptions.includeErrorClass: true` (use a distinct `errorClassName` per file when using multiple Swift FFI files in the same module).
 
 ---
 
@@ -45,9 +45,11 @@ Using Native Interop in pigeon follows the standard pigeon workflow, with a few 
 
 To use Native Interop, your development environment and the corresponding external tools must be configured:
 
+- **Flutter 3.50.0 or higher (strongly recommended)**: Flutter 3.50.0+ exposes engine identifiers on plugin bindings and registrars for exact multi-engine routing. If you encounter multi-engine routing issues on an earlier Flutter version, upgrade to Flutter 3.50.0 or higher.
+
 ### Android (JNI / JNIgen)
-- **Android SDK**: Must be installed with `ANDROID_HOME` (or `ANDROID_SDK_ROOT`) set in your environment; otherwise Pigeon skips `jnigen`. JNIgen uses the JDK bundled with Flutter by default, so a separate JDK installation is not required.
-- **`jnigen` 1.0.0 or later**: Earlier versions of JNIgen cannot parse metadata from newer Kotlin compilers and fail with `IllegalArgumentException: Provided Metadata instance has version ... while maximum supported version is ...`. `jnigen` 1.0.0 supports Kotlin metadata up to 2.4.
+- **Android SDK & JDK 17–21**: An Android SDK must be installed and configured (via Flutter, `android/local.properties`, or `ANDROID_HOME`). JNIgen uses the JDK configured for Flutter (`flutter config --machine` → `jdk-dir`, which defaults to Android Studio's bundled JBR or `JAVA_HOME`), so no separate JDK setup is needed if Android Studio is installed; otherwise install a JDK (17–21) and configure it via `flutter config --jdk-dir` or `JAVA_HOME`.
+- **`jnigen` 1.0.0+ and `jni` 1.1.1+**: Pigeon's generated `*_jnigen_config.dart` uses the `JniGenerator` Dart config API introduced in `jnigen` 1.0.0 (which also supports Kotlin metadata up to 2.4), and requires `jni: ^1.1.1` so Android release builds include the required R8 keep rules.
 
 ### iOS/macOS (FFI / FFIgen)
 - **LLVM (version 9+) / Xcode Command Line Tools**: Required by FFIgen to parse C/Objective-C headers (`xcode-select --install`).
@@ -71,10 +73,10 @@ flutter pub add ffi objective_c meta
 # Code generators and packages imported by tool/pigeon/*_ffigen_config.dart:
 flutter pub add dev:ffigen dev:swift2objc dev:swiftgen dev:path dev:pub_semver
 
-# For Android Kotlin JNI:
-flutter pub add jni
-# Code generator and packages imported by tool/pigeon/*_jnigen_config.dart:
-flutter pub add dev:jnigen dev:logging dev:path
+# For Android Kotlin JNI (jni 1.1.1+ required for Android R8 keep rules):
+flutter pub add 'jni:^1.1.1' meta
+# Code generator imported by tool/pigeon/*_jnigen_config.dart:
+flutter pub add 'dev:jnigen:^1.0.0'
 ```
 
 ### Step 2: Configure Pigeon Options
@@ -304,9 +306,9 @@ Native Interop looks up instances directly in process memory rather than through
 
 **Routing is exact** on an engine's root isolate when the engine identifier is available to native code:
 - Kotlin `register(api, flutterEngine)`, always.
-- Kotlin `register(api, binding)` and Swift `register(api:registrar:)`, on Flutter versions whose plugin binding / registrar exposes `engineId` / `engineIdentifier`. This is detected at runtime; Pigeon does not use deprecated APIs to obtain it.
+- Kotlin `register(api, binding)` and Swift `register(api:registrar:)`, on **Flutter 3.50.0 or higher** (where plugin bindings and registrars expose `engineId` / `engineIdentifier`). This is detected at runtime; Pigeon does not use deprecated APIs to obtain it.
 
-**Otherwise routing is best-effort.** It is correct when each engine's Dart code resolves its first handle from each Pigeon file early in startup, before any other engine registers. Resolve it, for example, at the start of `main()` or during app initialization. On Android, don't resolve handles in your plugin's `registerWith`, because JNI isn't initialized yet (see [5.5](#55-startup-crash-on-android-vmservicedisappearedexception--jni-is-not-initialized)). Later lazy lookups from the same file in the same isolate reuse that first engine. It may pick another engine's registration when:
+**Otherwise routing is best-effort (Flutter < 3.50.0).** If you run into multi-engine issues on an older Flutter version, upgrading to **Flutter 3.50.0 or higher** is strongly recommended. On earlier versions, best-effort routing is correct when each engine's Dart code resolves its first handle from each Pigeon file early in startup, before any other engine registers. Resolve it, for example, at the start of `main()` or during app initialization. On Android, don't resolve handles in your plugin's `registerWith`, because JNI isn't initialized yet (see [5.5](#55-startup-crash-on-android-vmservicedisappearedexception--jni-is-not-initialized)). Later lazy lookups from the same file in the same isolate reuse that first engine. It may pick another engine's registration when:
 - Engines are created back-to-back before their Dart code starts.
 - A file's first lookup happens lazily while another engine's registration is the most recent one, for example while a secondary engine is attached. APIs created from that file are then bound to the other engine's instance and throw `unregistered-instance` after that engine detaches.
 - Lookups come from background isolates (`Isolate.spawn` / `Isolate.run`), which do not have a `PlatformDispatcher.engineId`.
@@ -347,7 +349,7 @@ For standalone Flutter Applications, JNIgen defaults to searching `build/app/tmp
 
 Pigeon writes the interop configuration scripts to `tool/pigeon/<input_name>_jnigen_config.dart` and `tool/pigeon/<input_name>_ffigen_config.dart`.
 
-- **Solution**: Run the generated config scripts directly to view verbose stderr logs and diagnose toolchain errors:
+- **Solution**: Run the generated config scripts directly to reproduce and iterate on toolchain errors in isolation:
   ```bash
   # Debug JNIgen (Android):
   dart run tool/pigeon/<input_name>_jnigen_config.dart
