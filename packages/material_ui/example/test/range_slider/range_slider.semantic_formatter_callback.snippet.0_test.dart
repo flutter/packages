@@ -4,33 +4,34 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:material_ui_examples/range_slider/range_slider.snippet.1.dart'
+import 'package:material_ui_examples/range_slider/range_slider.semantic_formatter_callback.snippet.0.dart'
     as example;
 
 void main() {
   testWidgets(
-    'RangeSlider onChangeStart prints initial RangeValues before change',
+    'RangeSlider semanticFormatterCallback formats thumb semantics with currency',
     (WidgetTester tester) async {
+      final SemanticsHandle handle = tester.ensureSemantics();
+
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(body: Center(child: example.RangeSliderExample())),
         ),
       );
 
+      expect(find.semantics.byValue('100 dollars'), findsOne);
+      expect(find.semantics.byValue('250 dollars'), findsOne);
+
       final Offset trackStart = tester
           .getRect(find.byType(RangeSlider))
           .centerLeft
           .translate(24, 0);
-      await expectLater(
-        () => tester.tapAt(trackStart),
-        prints('Started change at RangeValues(4.0, 8.0)\n'),
-      );
+      await tester.tapAt(trackStart);
       await tester.pumpAndSettle();
 
-      expect(
-        tester.widget<RangeSlider>(find.byType(RangeSlider)).values,
-        const RangeValues(1.0, 8.0),
-      );
+      expect(find.semantics.byValue('20 dollars'), findsOne);
+      expect(find.semantics.byValue('250 dollars'), findsOne);
+      handle.dispose();
     },
   );
 }

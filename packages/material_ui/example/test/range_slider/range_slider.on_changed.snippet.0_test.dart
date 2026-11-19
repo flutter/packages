@@ -4,11 +4,11 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:material_ui_examples/range_slider/range_slider.snippet.2.dart'
+import 'package:material_ui_examples/range_slider/range_slider.on_changed.snippet.0.dart'
     as example;
 
 void main() {
-  testWidgets('RangeSlider onChangeEnd prints final RangeValues after change', (
+  testWidgets('RangeSlider onChanged updates selected RangeValues', (
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(
@@ -17,14 +17,16 @@ void main() {
       ),
     );
 
+    expect(
+      tester.widget<RangeSlider>(find.byType(RangeSlider)).values,
+      const RangeValues(4.0, 8.0),
+    );
+
     final Offset trackStart = tester
         .getRect(find.byType(RangeSlider))
         .centerLeft
         .translate(24, 0);
-    await expectLater(
-      () => tester.tapAt(trackStart),
-      prints('Ended change at RangeValues(1.0, 8.0)\n'),
-    );
+    await tester.tapAt(trackStart);
     await tester.pumpAndSettle();
 
     expect(
