@@ -18,7 +18,6 @@
 // normalised over the widget's own device-pixel rectangle passed from Dart.
 
 #include <flutter/runtime_effect.glsl>
-#include "gles_compat.glsl"
 
 uniform vec2 uSize;          // 0,1  bound-texture size, device px (engine)
 uniform float uMaxSigma;     // 2    sigma at the strong edge, device px
@@ -52,13 +51,8 @@ void main() {
   else                       g = 1.0 - rn.x;  // strong RIGHT
   float sigma = uMaxSigma * pow(1.0 - g, uFalloff);
 
-  // Screen-normalised sampling UV. Pre-3.46 GLES captured the backdrop
-  // y-flipped; 3.46+ stores it top-down like every other backend. See
-  // gles_compat.glsl.
+  // Screen-normalised sampling UV.
   vec2 uv = FlutterFragCoord().xy / uSize;
-#ifdef LGR_GLES_FLIP_SAMPLE_Y
-  uv.y = 1.0 - uv.y;
-#endif
 
   if (sigma < 0.5) {
     fragColor = texture(uTexture, uv);

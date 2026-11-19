@@ -1,0 +1,3 @@
+changelog: |
+  - Adds internal `ProgressiveBlur` support for some upcoming Liquid Glass effects (not yet public).
+version: skip

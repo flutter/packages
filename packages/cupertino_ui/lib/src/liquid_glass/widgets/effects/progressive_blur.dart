@@ -35,11 +35,11 @@ enum ProgressiveBlurDirection {
 /// sharp at the opposite edge. Stack it behind a translucent app bar so content
 /// dissolves beneath it instead of ending on a hard cut-off.
 ///
-/// This is the graduated-blur primitive the rest of the library does not
-/// provide (glass surfaces apply a *uniform* blur). It is self-contained — it
-/// needs no [LiquidGlassLayer] or glass ancestor — so it can back any bar.
+/// Unlike [BackdropFilter] with [ui.ImageFilter.blur], which applies the same
+/// blur everywhere, the blur here fades out across the widget. It needs no
+/// special ancestor, so it can back any bar.
 ///
-/// ## How it works — a single GPU pass that samples the backdrop
+/// ## How it works: a separable two-pass blur that samples the backdrop
 ///
 /// The naive "blur then fade with a ShaderMask" recipe does NOT work: a
 /// [BackdropFilter]'s captured backdrop is not included in an ancestor
@@ -47,11 +47,11 @@ enum ProgressiveBlurDirection {
 /// no blur at all. Instead this uses [ui.ImageFilter.shader]: a fragment shader
 /// runs as the [ui.ImageFilter] of a [BackdropFilter], so the engine binds the
 /// captured backdrop to the shader's sampler — sampling it reliably on every
-/// backend. `shaders/progressive_blur.frag` reads that backdrop with an
-/// importance-sampled gaussian whose sigma follows the gradient (normalised over
-/// the widget's own device-pixel rectangle, since the bound texture is the whole
-/// screen), giving a smooth, band-free dissolve in one backdrop capture + one
-/// draw.
+/// backend that supports shader image filters. The `progressive_blur.frag`
+/// shader blurs that backdrop with a gaussian whose sigma follows the gradient,
+/// normalized over the widget's own device-pixel rectangle because the bound
+/// texture is the whole backdrop. It runs twice, horizontally then vertically,
+/// composed into one image filter.
 ///
 /// Drive [maxSigma] from a scroll offset to fade the blur in/out (0 → sharp).
 ///
@@ -65,8 +65,16 @@ enum ProgressiveBlurDirection {
 /// )
 /// ```
 ///
-/// Call [preload] once from `main()` (after the binding is initialised) to
+/// Call [preload] once from `main()` (after the binding is initialized) to
 /// pre-compile the shader so the first bar paint already has it.
+///
+/// On backends that can't run shader image filters (Skia, the web), and until
+/// the shader has loaded, the widget falls back to a uniform backdrop blur.
+///
+/// Known limitation: the blur region is measured when this widget paints. If an
+/// ancestor moves it without repainting it (for example a route transition
+/// that translates a repaint boundary), the gradient stays aligned to the old
+/// position until the widget next repaints.
 class ProgressiveBlur extends StatefulWidget {
   /// Creates a new [ProgressiveBlur].
   const ProgressiveBlur({
@@ -74,18 +82,30 @@ class ProgressiveBlur extends StatefulWidget {
     this.maxSigma = 18,
     this.direction = ProgressiveBlurDirection.topToBottom,
     this.falloff = 1.2,
-  });
+  }) : // Also false for NaN (`isFinite` isn't allowed in a const constructor).
+       assert(maxSigma < double.infinity, 'maxSigma must not be NaN or positive infinity.'),
+       assert(
+         falloff > 0 && falloff < double.infinity,
+         'falloff must be a positive, finite number.',
+       );
 
-  /// Blur sigma (logical px) at the strong edge. 0 ⇒ no blur (passthrough).
-  /// Optional — defaults to a moderate 18.
+  /// Blur sigma (logical px) at the strong edge. 0 or less (including negative
+  /// infinity) ⇒ no blur (passthrough). Must not be NaN or positive infinity.
+  /// Defaults to a moderate 18.
   final double maxSigma;
 
   /// Which edge the blur is strongest at (it eases to sharp at the opposite
   /// edge). Defaults to [ProgressiveBlurDirection.topToBottom].
   final ProgressiveBlurDirection direction;
 
-  /// Gradient gamma. >1 keeps the blur strong across the strong edge then eases
-  /// to sharp near the opposite edge.
+  /// Shape of the blur gradient.
+  ///
+  /// At a fraction `t` of the way from the strong edge to the opposite edge,
+  /// the blur sigma is `maxSigma * pow(1 - t, falloff)`. A value of 1 fades
+  /// linearly, values above 1 fade faster near the strong edge, and values
+  /// below 1 keep the blur strong further in.
+  ///
+  /// Must be positive and finite. Defaults to 1.2.
   final double falloff;
 
   // ── Shader program: compiled once, process-wide ───────────────────────────
@@ -97,20 +117,23 @@ class ProgressiveBlur extends StatefulWidget {
   /// initialized. Never throws — on failure the widget falls back to a uniform
   /// blur.
   static Future<void> preload() async {
-    if (_program != null) {
+    if (_program != null || !ui.ImageFilter.isShaderFilterSupported) {
       return;
     }
-    // Package-qualified asset path (this shader ships with the package); the
-    // bare path is the fallback for unit tests where the package prefix may not
-    // resolve.
-    const path = 'packages/liquid_glass_widgets/shaders/progressive_blur.frag';
-    const testPath = 'shaders/progressive_blur.frag';
+    // Package-qualified asset key (the shader is declared in cupertino_ui's
+    // pubspec). The bare key is how the package's own tests see the asset.
+    const path = 'packages/cupertino_ui/lib/src/third_party/progressive_blur/progressive_blur.frag';
+    const testPath = 'lib/src/third_party/progressive_blur/progressive_blur.frag';
+    final Future<ui.FragmentProgram> loading = _loading ??= _loadProgram(path, testPath);
     try {
-      _program = await (_loading ??= _loadProgram(path, testPath));
+      _program = await loading;
     } catch (e) {
-      // Graceful degradation: the widget falls back to a uniform blur. (Also the
-      // path taken in unit tests, where compiled shaders aren't bundled.)
-      _loading = null;
+      // Graceful degradation: the widget falls back to a uniform blur. Clear
+      // the failed load so a later call can retry, unless a retry has already
+      // started.
+      if (identical(_loading, loading)) {
+        _loading = null;
+      }
       debugPrint('progressive_blur.frag load failed, using uniform-blur fallback: $e');
     }
   }
@@ -136,7 +159,7 @@ class _ProgressiveBlurState extends State<ProgressiveBlur> {
   void initState() {
     super.initState();
     _makeShaders();
-    if (_hShader == null) {
+    if (_hShader == null && ui.ImageFilter.isShaderFilterSupported) {
       // Not pre-compiled yet — load, then rebuild with the shaders.
       ProgressiveBlur.preload().then((_) {
         if (mounted) {
@@ -193,8 +216,8 @@ class _ProgressiveBlurState extends State<ProgressiveBlur> {
     // unclipped band frosted the whole backdrop width. Under a Cupertino pop
     // that is the route being revealed, which is translated, not clipped.
     // coverage:ignore-start
-    // Requires a compiled FragmentProgram; the headless test VM never provides
-    // one. The fallback path above is tested.
+    // Runs only where shader image filters are supported; the default
+    // `flutter test` backend has none, so tests reach it with `--enable-impeller`.
     return ClipRect(
       child: _ProgressiveBlurLayer(
         hShader: h,
@@ -214,9 +237,8 @@ class _ProgressiveBlurState extends State<ProgressiveBlur> {
 /// declares them (float indices 2-9).
 ///
 /// Pure, and public to tests, because the defect this replaced was a hard-coded
-/// zero in the middle of a widget build — which no test could see: the shader
-/// path needs a compiled [ui.FragmentProgram], and a headless VM never provides
-/// one. The arithmetic can at least be pinned.
+/// zero in the middle of a widget build. The shader path only runs where shader
+/// image filters are supported, so this pins the arithmetic on every backend.
 @visibleForTesting
 List<double> progressiveBlurUniforms({
   required Offset origin,
@@ -237,10 +259,10 @@ List<double> progressiveBlurUniforms({
   size.height * devicePixelRatio,
 ];
 
-// Everything below is reachable only with a compiled FragmentProgram, which a
-// headless VM never provides — so it cannot be exercised by `flutter test`, and
-// the region maths is factored into [progressiveBlurUniforms] above so that the
-// part which CAN be tested, is.
+// Everything below runs only on the shader path, which `flutter test` reaches
+// only with `--enable-impeller` (the default test backend has no shader image
+// filters). The region maths is factored into [progressiveBlurUniforms] above so
+// that it can be tested on any backend.
 // coverage:ignore-start
 
 /// Applies the two-pass shader as a backdrop filter.
@@ -250,11 +272,12 @@ List<double> progressiveBlurUniforms({
 /// paint time. Two consequences fall out of that:
 ///
 ///  * The widget's offset within the backdrop layer changes whenever an
-///    ancestor MOVES it: a sheet being dragged, a scroll, an animated inset.
-///    Those move it by repainting, not by rebuilding, so an offset read during
-///    build (or in a post-frame callback) is stale for as long as the motion
-///    lasts, and the gradient is normalised over the wrong rectangle the whole
-///    time.
+///    ancestor moves it: a sheet being dragged, a scroll, an animated inset.
+///    When the move repaints this widget, an offset read at paint time is
+///    current, while one read during build would be stale. When an ancestor
+///    moves it by re-compositing a repaint boundary instead (route transitions
+///    do this), paint doesn't run and the region stays at its old position;
+///    see the known limitation on [ProgressiveBlur].
 ///  * Dropping the [LayoutBuilder] also lets a [ProgressiveBlur] sit under a
 ///    parent that asks for intrinsic dimensions, which LayoutBuilder refuses to
 ///    answer.
