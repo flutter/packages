@@ -43,7 +43,7 @@ void main() {
       PlatformScopedStorageXDirectoryCreationParams(uri: testDirectory.uri.toString()),
     );
 
-    expect(directory.toFilePath(), testDirectory.uri.path);
+    expect(directory.toFilePath(), testDirectory.uri.toFilePath());
   });
 
   test('toFilePath path does not contain a scheme', () async {
@@ -55,10 +55,16 @@ void main() {
   });
 
   test('toFilePath adds trailing slash', () async {
-    final directory = PlatformScopedStorageXDirectory(
+    final directoryWithoutScheme = PlatformScopedStorageXDirectory(
       const PlatformScopedStorageXDirectoryCreationParams(uri: 'my/dir'),
     );
 
-    expect(directory.toFilePath(), anyOf(endsWith('/'), endsWith(r'\')));
+    expect(directoryWithoutScheme.toFilePath(), anyOf(endsWith('/'), endsWith(r'\')));
+
+    final directoryWithScheme = PlatformScopedStorageXDirectory(
+      const PlatformScopedStorageXDirectoryCreationParams(uri: 'file:///my/dir'),
+    );
+
+    expect(directoryWithScheme.toFilePath(), anyOf(endsWith('/'), endsWith(r'\')));
   });
 }
