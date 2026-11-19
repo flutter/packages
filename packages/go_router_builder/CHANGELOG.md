@@ -1,3 +1,7 @@
+## 4.5.4
+
+* Fixes `location` for a child route whose path starts with `/`; it is now nested under its parent, as go_router does at runtime.
+
 ## 4.5.3
 
 * Widens `package:build` dependency constraint to `>=3.0.0 <6.0.0`.
