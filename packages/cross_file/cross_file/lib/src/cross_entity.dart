@@ -30,10 +30,10 @@ base class XEntity {
   /// Whether the resource represented by this reference exists.
   Future<bool> exists() => platform.exists();
 
-  /// The filesystem path of this entity, if available.
+  /// Returns the filesystem path of this entity, if available.
   ///
   /// Returns null if the entity doesn't support being accessed as a filesystem
-  /// path gor the platform doesn't support creating a filesystem path for it.
+  /// path or the platform doesn't support creating a filesystem path for it.
   String? toFilePath() => platform.toFilePath();
 
   @override

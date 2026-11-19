@@ -95,6 +95,14 @@ void main() {
 
       debugDefaultTargetPlatformOverride = null;
     });
+
+    test('toFilePath returns null', () async {
+      final file = DarwinScopedStorageXFile(
+        DarwinScopedStorageXFileCreationParams.photoKit(localIdentifier: 'id'),
+      );
+
+      expect(file.toFilePath(), isNull);
+    });
   });
 }
 

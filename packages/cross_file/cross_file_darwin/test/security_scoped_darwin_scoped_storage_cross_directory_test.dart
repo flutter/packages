@@ -9,7 +9,8 @@ import 'package:cross_file_platform_interface/cross_file_platform_interface.dart
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as path;
 
-final Directory testDirectory = Directory(path.join(Directory.current.path, 'test'));
+final String testPath = path.join(Directory.current.path, 'test');
+final Directory testDirectory = Directory(testPath);
 
 void main() {
   setUp(() {
@@ -42,25 +43,16 @@ void main() {
       PlatformScopedStorageXDirectoryCreationParams(uri: testDirectory.uri.toString()),
     );
 
-    expect(directory.toFilePath(), Uri.parse(directory.params.uri).toFilePath());
+    expect(directory.toFilePath(), testDirectory.uri.path);
   });
 
-  test(
-    'toFilePath path does not contain a scheme',
-    () async {
-      final file = PlatformScopedStorageXDirectory(
-        PlatformScopedStorageXDirectoryCreationParams(uri: testDirectory.uri.toString()),
-      );
+  test('toFilePath path does not contain a scheme', () async {
+    final directory = PlatformScopedStorageXDirectory(
+      PlatformScopedStorageXDirectoryCreationParams(uri: testDirectory.uri.toString()),
+    );
 
-      expect(Uri.parse(file.params.uri).hasScheme, isTrue);
-      expect(Uri.parse(file.toFilePath()!).hasScheme, isFalse);
-    },
-    onPlatform: <String, dynamic>{
-      'windows': const Skip(
-        'This plugin does not run on windows and has different file semantics.',
-      ),
-    },
-  );
+    expect(directory.toFilePath(), isNot(startsWith('file:')));
+  });
 
   test('toFilePath adds trailing slash', () async {
     final directory = PlatformScopedStorageXDirectory(
