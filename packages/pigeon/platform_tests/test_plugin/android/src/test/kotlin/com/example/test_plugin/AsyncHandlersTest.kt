@@ -228,8 +228,7 @@ internal class AsyncHandlersTest {
   private fun mockStreamMessenger(
       channels: List<String>,
       frames: MutableList<List<Any?>>,
-  ): Pair<
-      BinaryMessenger, Map<String, io.mockk.CapturingSlot<BinaryMessenger.BinaryMessageHandler>>> {
+  ): Pair<BinaryMessenger, Map<String, io.mockk.CapturingSlot<BinaryMessenger.BinaryMessageHandler>>> {
     val messenger = mockk<BinaryMessenger>(relaxed = true)
     val codec = StreamHostTestApi.codec
     val slots = channels.associateWith { slot<BinaryMessenger.BinaryMessageHandler>() }
@@ -468,8 +467,7 @@ internal class AsyncHandlersTest {
     val syncThrowReply = sendStreamControl(handler, listOf("listen", 13L, "throw-listen", 1L))
     assertEquals(listOf("cb_sync_err", "listen failed", null), syncThrowReply)
 
-    // Teardown via setUp(null) isolates a throwing AutoCloseable (invokeCancelSafely) and still
-    // cancels others.
+    // Teardown via setUp(null) isolates a throwing AutoCloseable (invokeCancelSafely) and still cancels others.
     callbackClosed = false
     assertEquals(listOf(null), sendStreamControl(handler, listOf("listen", 14L, "throw-close", 1L)))
     assertEquals(listOf(null), sendStreamControl(handler, listOf("listen", 15L, "cb", 1L)))
