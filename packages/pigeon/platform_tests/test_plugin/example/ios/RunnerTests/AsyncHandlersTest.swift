@@ -72,15 +72,14 @@ struct AsyncHandlersTest {
   }
 
   @Test
-  func hostStreamFiniteAsyncThrowingStreamAndUnknownAction() async throws {
+  func hostStreamFiniteAsyncThrowingStream() async throws {
     let codec = EventChannelTestsPigeonCodec.shared
     let messenger = StreamRecordingBinaryMessenger(codec: codec)
     let api = MockStreamHostTestApi()
     StreamHostTestApiSetup.setUp(binaryMessenger: messenger, api: api)
     defer { StreamHostTestApiSetup.setUp(binaryMessenger: messenger, api: nil) }
 
-    // 1. Finite AsyncThrowingStream emits data + done frames.
-    let finiteReply = await sendStreamControl(
+    let finiteReply = try await sendStreamControl(
       messenger,
       codec: codec,
       channel: Self.streamNumbersChannel,
@@ -94,9 +93,17 @@ struct AsyncHandlersTest {
     #expect(finiteFrames[0][2] as? Int64 == 10)
     #expect(finiteFrames[1][2] as? Int64 == 11)
     #expect(finiteFrames[2][1] as? Int64 == 2)
+  }
 
-    // 2. Unknown control action replies with an invalid-action error instead of spawning a stream.
-    let unknownReply = await sendStreamControl(
+  @Test
+  func hostStreamUnknownControlActionReturnsInvalidActionError() async throws {
+    let codec = EventChannelTestsPigeonCodec.shared
+    let messenger = StreamRecordingBinaryMessenger(codec: codec)
+    let api = MockStreamHostTestApi()
+    StreamHostTestApiSetup.setUp(binaryMessenger: messenger, api: api)
+    defer { StreamHostTestApiSetup.setUp(binaryMessenger: messenger, api: nil) }
+
+    let unknownReply = try await sendStreamControl(
       messenger,
       codec: codec,
       channel: Self.streamNumbersChannel,
@@ -125,12 +132,12 @@ struct AsyncHandlersTest {
     apiA.onNumbersCancelled = { cancelledA.signal() }
     apiB.onNumbersCancelled = { cancelledB.signal() }
 
-    await sendStreamControl(
+    try await sendStreamControl(
       messengerA,
       codec: codec,
       channel: Self.streamNumbersChannel,
       args: ["listen", Int64(0), Int64(99), Int64(1)])
-    await sendStreamControl(
+    try await sendStreamControl(
       messengerB,
       codec: codec,
       channel: Self.streamNumbersChannel,
@@ -149,7 +156,7 @@ struct AsyncHandlersTest {
     // Superseding subscriptionId = 0 cancels old stream without removing replacement registration.
     let replacedCancelledA = StreamCancelSignal()
     apiA.onNumbersCancelled = { replacedCancelledA.signal() }
-    await sendStreamControl(
+    try await sendStreamControl(
       messengerA,
       codec: codec,
       channel: Self.streamNumbersChannel,
@@ -159,7 +166,7 @@ struct AsyncHandlersTest {
     #expect(!replacedCancelledA.isSignaled)
 
     // Explicit "cancel" control message cancels the replacement stream.
-    await sendStreamControl(
+    try await sendStreamControl(
       messengerA,
       codec: codec,
       channel: Self.streamNumbersChannel,
@@ -177,7 +184,7 @@ struct AsyncHandlersTest {
     defer { StreamHostTestApiSetup.setUp(binaryMessenger: messenger, api: nil) }
 
     // 1. Custom EventChannelTestsError from AsyncThrowingStream wraps code/message/details.
-    await sendStreamControl(
+    try await sendStreamControl(
       messenger,
       codec: codec,
       channel: Self.streamErrorChannel,
@@ -194,7 +201,7 @@ struct AsyncHandlersTest {
     // 2. Host-thrown CancellationError propagates an error frame instead of hanging Dart.
     messenger.clearFrames()
     api.throwCancellationError = true
-    await sendStreamControl(
+    try await sendStreamControl(
       messenger,
       codec: codec,
       channel: Self.streamNumbersChannel,
@@ -207,15 +214,14 @@ struct AsyncHandlersTest {
   }
 
   @Test
-  func hostStreamCallbackSinkTerminalExplicitCancelAndTeardown() async throws {
+  func hostStreamCallbackSinkErrorTerminatesAndIgnoresSubsequentCalls() async throws {
     let codec = EventChannelTestsPigeonCodec.shared
     let messenger = StreamRecordingBinaryMessenger(codec: codec)
     let api = MockStreamHostTestApi()
     StreamHostTestApiSetup.setUp(binaryMessenger: messenger, api: api)
     defer { StreamHostTestApiSetup.setUp(binaryMessenger: messenger, api: nil) }
 
-    // 1. success + error terminates sink and ignores subsequent calls.
-    await sendStreamControl(
+    try await sendStreamControl(
       messenger,
       codec: codec,
       channel: Self.streamCallbackChannel,
@@ -230,10 +236,17 @@ struct AsyncHandlersTest {
     #expect(cbErrFrames[0][2] as? String == "first")
     #expect(cbErrFrames[1][1] as? Int64 == 1)
     #expect(cbErrFrames[1][2] as? String == "err_code")
+  }
 
-    // 2. endOfStream terminates sink and ignores subsequent calls.
-    messenger.clearFrames()
-    await sendStreamControl(
+  @Test
+  func hostStreamCallbackSinkEndOfStreamTerminatesAndIgnoresSubsequentCalls() async throws {
+    let codec = EventChannelTestsPigeonCodec.shared
+    let messenger = StreamRecordingBinaryMessenger(codec: codec)
+    let api = MockStreamHostTestApi()
+    StreamHostTestApiSetup.setUp(binaryMessenger: messenger, api: api)
+    defer { StreamHostTestApiSetup.setUp(binaryMessenger: messenger, api: nil) }
+
+    try await sendStreamControl(
       messenger,
       codec: codec,
       channel: Self.streamCallbackChannel,
@@ -245,12 +258,18 @@ struct AsyncHandlersTest {
     try #require(cbDoneFrames.count == 1)
     #expect(cbDoneFrames[0][0] as? Int64 == 8)
     #expect(cbDoneFrames[0][1] as? Int64 == 2)
+  }
 
-    // 3. Synchronous endOfStream() inside streamViaCallback does NOT fire cancel closure.
-    messenger.clearFrames()
+  @Test
+  func hostStreamCallbackSyncEndOfStreamDoesNotInvokeCancel() async throws {
+    let codec = EventChannelTestsPigeonCodec.shared
+    let messenger = StreamRecordingBinaryMessenger(codec: codec)
+    let api = MockStreamHostTestApi()
+    StreamHostTestApiSetup.setUp(binaryMessenger: messenger, api: api)
+
     let syncDoneCancelled = StreamCancelSignal()
     api.onCallbackCancelled = { syncDoneCancelled.signal() }
-    await sendStreamControl(
+    try await sendStreamControl(
       messenger,
       codec: codec,
       channel: Self.streamCallbackChannel,
@@ -261,17 +280,50 @@ struct AsyncHandlersTest {
     #expect(syncDoneFrames[0][1] as? Int64 == 2)
     #expect(!syncDoneCancelled.isSignaled)
 
-    // 4. Explicit "cancel" control message on callbackChannel invokes cancel closure.
-    messenger.clearFrames()
+    // Teardown must also not fire cancel, verifying synchronous endOfStream() cleared registration.
+    StreamHostTestApiSetup.setUp(binaryMessenger: messenger, api: nil)
+    #expect(!syncDoneCancelled.isSignaled)
+  }
+
+  @Test
+  func hostStreamCallbackCancelBeforeAttachInvokesCancelImmediately() async throws {
+    let codec = EventChannelTestsPigeonCodec.shared
+    let messenger = StreamRecordingBinaryMessenger(codec: codec)
+    let api = MockStreamHostTestApi()
+    StreamHostTestApiSetup.setUp(binaryMessenger: messenger, api: api)
+    defer { StreamHostTestApiSetup.setUp(binaryMessenger: messenger, api: nil) }
+
+    let cancelled = StreamCancelSignal()
+    api.onCallbackCancelled = { cancelled.signal() }
+    api.onCallbackListen = {
+      let cancelEncoded = codec.encode(["cancel", Int64(11)])
+      messenger.handlers[Self.streamCallbackChannel]?(cancelEncoded) { _ in }
+    }
+    try await sendStreamControl(
+      messenger,
+      codec: codec,
+      channel: Self.streamCallbackChannel,
+      args: ["listen", Int64(11), "cb", Int64(1)])
+    #expect(cancelled.isSignaled)
+  }
+
+  @Test
+  func hostStreamCallbackExplicitCancelInvokesCancelAndIgnoresSubsequentCalls() async throws {
+    let codec = EventChannelTestsPigeonCodec.shared
+    let messenger = StreamRecordingBinaryMessenger(codec: codec)
+    let api = MockStreamHostTestApi()
+    StreamHostTestApiSetup.setUp(binaryMessenger: messenger, api: api)
+    defer { StreamHostTestApiSetup.setUp(binaryMessenger: messenger, api: nil) }
+
     let explicitCancelled = StreamCancelSignal()
     api.onCallbackCancelled = { explicitCancelled.signal() }
-    await sendStreamControl(
+    try await sendStreamControl(
       messenger,
       codec: codec,
       channel: Self.streamCallbackChannel,
       args: ["listen", Int64(10), "cb", Int64(1)])
     let explicitCancelSink = try #require(api.capturedSink)
-    await sendStreamControl(
+    try await sendStreamControl(
       messenger,
       codec: codec,
       channel: Self.streamCallbackChannel,
@@ -279,12 +331,18 @@ struct AsyncHandlersTest {
     #expect(explicitCancelled.isSignaled)
     explicitCancelSink.success("ignored-after-cancel")
     #expect(messenger.sentFrames.isEmpty)
+  }
 
-    // 5. Teardown via setUp(..., api: nil) invokes cancel closure and closes sink.
-    messenger.clearFrames()
+  @Test
+  func hostStreamCallbackTeardownInvokesCancelAndClosesSink() async throws {
+    let codec = EventChannelTestsPigeonCodec.shared
+    let messenger = StreamRecordingBinaryMessenger(codec: codec)
+    let api = MockStreamHostTestApi()
+    StreamHostTestApiSetup.setUp(binaryMessenger: messenger, api: api)
+
     let teardownCancelled = StreamCancelSignal()
     api.onCallbackCancelled = { teardownCancelled.signal() }
-    await sendStreamControl(
+    try await sendStreamControl(
       messenger,
       codec: codec,
       channel: Self.streamCallbackChannel,
@@ -432,6 +490,7 @@ private final class MockStreamHostTestApi: StreamHostTestApi, @unchecked Sendabl
   var throwCancellationError = false
   var capturedSink: EventChannelTestsPigeonEventSink<String>?
   var onCallbackCancelled: (@Sendable () -> Void)?
+  var onCallbackListen: (() -> Void)?
 
   func streamNumbers(count: Int64, start: Int64) -> AsyncThrowingStream<Int64, Error> {
     if throwCancellationError {
@@ -478,6 +537,7 @@ private final class MockStreamHostTestApi: StreamHostTestApi, @unchecked Sendabl
     sink: EventChannelTestsPigeonEventSink<String>
   ) -> (() -> Void)? {
     capturedSink = sink
+    onCallbackListen?()
     if prefix == "sync-done" {
       sink.endOfStream()
     }
@@ -496,11 +556,12 @@ private func sendStreamControl(
   codec: FlutterMessageCodec,
   channel: String,
   args: [Any?]
-) async -> [Any?]? {
+) async throws -> [Any?]? {
+  let handler = try #require(messenger.handlers[channel])
   let encoded = codec.encode(args)
   let replyData: Data? = await withCheckedContinuation {
     (continuation: CheckedContinuation<Data?, Never>) in
-    messenger.handlers[channel]?(encoded) { data in
+    handler(encoded) { data in
       continuation.resume(returning: data)
     }
   }

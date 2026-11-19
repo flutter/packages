@@ -321,13 +321,11 @@ internal constructor(
   private val mainHandler: Handler? by
       lazy(LazyThreadSafetyMode.PUBLICATION) { mainLooper?.let { Handler(it) } }
 
-  internal val isOpen: Boolean
-    get() = !terminated && channelRef.get() != null
-
   internal fun attachOnClosed(onClosed: () -> Unit) {
-    val shouldAttach = kotlin.synchronized(cancelLock) { !closed && !terminated }
-    if (shouldAttach) {
-      onClosedRef.set(onClosed)
+    kotlin.synchronized(cancelLock) {
+      if (!closed && !terminated) {
+        onClosedRef.set(onClosed)
+      }
     }
   }
 
@@ -361,26 +359,21 @@ internal constructor(
   }
 
   fun error(code: String, message: String?, details: Any?) {
-    if (terminated) return
-    terminated = true
-    onClosedRef.getAndSet(null)?.invoke() ?: return
-    kotlin.synchronized(cancelLock) { closeable = null }
-    val ch = channelRef.get() ?: return
-    dispatchToMain {
-      if (channelRef.getAndSet(null) != null) {
-        ch.send(
-            listOf(
-                subscriptionId,
-                EventChannelTestsPigeonStreamRegistry.ERROR_FRAME_KIND,
-                code,
-                message,
-                details,
-            ))
-      }
-    }
+    terminate(
+        listOf(
+            subscriptionId,
+            EventChannelTestsPigeonStreamRegistry.ERROR_FRAME_KIND,
+            code,
+            message,
+            details,
+        ))
   }
 
   fun endOfStream() {
+    terminate(listOf(subscriptionId, EventChannelTestsPigeonStreamRegistry.DONE_FRAME_KIND))
+  }
+
+  private fun terminate(frame: List<Any?>) {
     if (terminated) return
     terminated = true
     onClosedRef.getAndSet(null)?.invoke() ?: return
@@ -388,7 +381,7 @@ internal constructor(
     val ch = channelRef.get() ?: return
     dispatchToMain {
       if (channelRef.getAndSet(null) != null) {
-        ch.send(listOf(subscriptionId, EventChannelTestsPigeonStreamRegistry.DONE_FRAME_KIND))
+        ch.send(frame)
       }
     }
   }
@@ -398,11 +391,11 @@ internal constructor(
         kotlin.synchronized(cancelLock) {
           terminated = true
           closed = true
+          onClosedRef.set(null)
           val current = closeable
           closeable = null
           current
         }
-    onClosedRef.set(null)
     channelRef.set(null)
     toClose?.close()
   }
@@ -1492,10 +1485,6 @@ interface StreamHostTestApi {
             try {
               val closeable = api.streamViaCallback(prefixArg, countArg, sink)
               sink.attachCloseable(closeable)
-              if (!sink.isOpen) {
-                streamRegistry.remove(
-                    binaryMessenger, eventsChannelName, subscriptionId, registrationToken)
-              }
               reply.reply(listOf(null))
             } catch (exception: Throwable) {
               sink.close()

@@ -139,29 +139,14 @@ internal class AsyncHandlersTest {
 
   @Test
   fun testHostStreamFlowAndTeardownCancellation() {
-    val binaryMessenger = mockk<BinaryMessenger>(relaxed = true)
-    val api = mockk<StreamHostTestApi>()
-    val numbersHandler = slot<BinaryMessenger.BinaryMessageHandler>()
-    val callbackHandler = slot<BinaryMessenger.BinaryMessageHandler>()
-    val sentFrames = mutableListOf<List<Any?>>()
-    val codec = StreamHostTestApi.codec
-
     val numbersChannel =
         "dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.streamNumbers"
     val callbackChannel =
         "dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.streamViaCallback"
-
-    every { binaryMessenger.setMessageHandler(numbersChannel, capture(numbersHandler)) } returns
-        Unit
-    every { binaryMessenger.setMessageHandler(callbackChannel, capture(callbackHandler)) } returns
-        Unit
-    every { binaryMessenger.send(any(), any(), any()) } answers
-        {
-          val buffer = arg<ByteBuffer>(1)
-          buffer.rewind()
-          @Suppress("UNCHECKED_CAST") val decoded = codec.decodeMessage(buffer) as List<Any?>
-          sentFrames.add(decoded)
-        }
+    val sentFrames = mutableListOf<List<Any?>>()
+    val (binaryMessenger, slots) =
+        mockStreamMessenger(listOf(numbersChannel, callbackChannel), sentFrames)
+    val api = mockk<StreamHostTestApi>()
 
     var flowCancelled = false
     every { api.streamNumbers(2L, 10L) } returns flowOf(10L, 11L)
@@ -183,23 +168,18 @@ internal class AsyncHandlersTest {
         }
 
     StreamHostTestApi.setUp(binaryMessenger, api)
+    val numbersHandler = slots[numbersChannel]!!.captured
+    val callbackHandler = slots[callbackChannel]!!.captured
 
-    val listenFinite = codec.encodeMessage(listOf("listen", 1L, 2L, 10L))
-    listenFinite?.rewind()
-    numbersHandler.captured.onMessage(listenFinite) {}
+    assertEquals(listOf(null), sendStreamControl(numbersHandler, listOf("listen", 1L, 2L, 10L)))
     assertEquals(
         listOf(listOf(1L, 0L, 10L), listOf(1L, 0L, 11L), listOf(1L, 2L)),
         sentFrames,
     )
 
     sentFrames.clear()
-    val listenInfinite = codec.encodeMessage(listOf("listen", 2L, 99L, 0L))
-    listenInfinite?.rewind()
-    numbersHandler.captured.onMessage(listenInfinite) {}
-
-    val listenCallback = codec.encodeMessage(listOf("listen", 3L, "p", 1L))
-    listenCallback?.rewind()
-    callbackHandler.captured.onMessage(listenCallback) {}
+    assertEquals(listOf(null), sendStreamControl(numbersHandler, listOf("listen", 2L, 99L, 0L)))
+    assertEquals(listOf(null), sendStreamControl(callbackHandler, listOf("listen", 3L, "p", 1L)))
     assertEquals(listOf(listOf(2L, 0L, 0L), listOf(3L, 0L, "p:0")), sentFrames)
 
     // Tearing down via setUp(binaryMessenger, null) cancels both active subscriptions.
@@ -373,7 +353,7 @@ internal class AsyncHandlersTest {
   }
 
   @Test
-  fun testHostStreamCallbackSinkTerminalAndSyncDone() {
+  fun testHostStreamCallbackSinkErrorTerminatesAndIgnoresSubsequentCalls() {
     val callbackChannel =
         "dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.streamViaCallback"
     val frames = mutableListOf<List<Any?>>()
@@ -386,18 +366,10 @@ internal class AsyncHandlersTest {
           capturedSink = arg(2)
           AutoCloseable {}
         }
-    var syncClosed = false
-    every { api.streamViaCallback("sync-done", 1L, any()) } answers
-        {
-          val sink = arg<EventChannelTestsPigeonEventSink<String>>(2)
-          sink.endOfStream()
-          AutoCloseable { syncClosed = true }
-        }
 
     StreamHostTestApi.setUp(messenger, api)
     val handler = slots[callbackChannel]!!.captured
 
-    // error() terminates the sink and ignores subsequent calls.
     assertEquals(listOf(null), sendStreamControl(handler, listOf("listen", 6L, "cb", 1L)))
     val errorSink = capturedSink!!
     errorSink.success("first")
@@ -409,25 +381,95 @@ internal class AsyncHandlersTest {
         frames,
     )
 
-    // endOfStream() terminates the sink and ignores subsequent calls.
-    frames.clear()
+    StreamHostTestApi.setUp(messenger, null)
+  }
+
+  @Test
+  fun testHostStreamCallbackSinkEndOfStreamTerminatesAndIgnoresSubsequentCalls() {
+    val callbackChannel =
+        "dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.streamViaCallback"
+    val frames = mutableListOf<List<Any?>>()
+    val (messenger, slots) = mockStreamMessenger(listOf(callbackChannel), frames)
+    val api = mockk<StreamHostTestApi>()
+
+    var capturedSink: EventChannelTestsPigeonEventSink<String>? = null
+    every { api.streamViaCallback("cb", 1L, any()) } answers
+        {
+          capturedSink = arg(2)
+          AutoCloseable {}
+        }
+
+    StreamHostTestApi.setUp(messenger, api)
+    val handler = slots[callbackChannel]!!.captured
+
     assertEquals(listOf(null), sendStreamControl(handler, listOf("listen", 7L, "cb", 1L)))
     val doneSink = capturedSink!!
     doneSink.endOfStream()
     doneSink.success("ignored-after-done")
     assertEquals(listOf(listOf(7L, 2L)), frames)
 
-    // Normal synchronous endOfStream() must NOT spuriously invoke the cancellation AutoCloseable.
-    frames.clear()
+    StreamHostTestApi.setUp(messenger, null)
+  }
+
+  @Test
+  fun testHostStreamCallbackSyncEndOfStreamDoesNotInvokeCloseable() {
+    val callbackChannel =
+        "dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.streamViaCallback"
+    val frames = mutableListOf<List<Any?>>()
+    val (messenger, slots) = mockStreamMessenger(listOf(callbackChannel), frames)
+    val api = mockk<StreamHostTestApi>()
+
+    var syncClosed = false
+    every { api.streamViaCallback("sync-done", 1L, any()) } answers
+        {
+          val sink = arg<EventChannelTestsPigeonEventSink<String>>(2)
+          sink.endOfStream()
+          AutoCloseable { syncClosed = true }
+        }
+
+    StreamHostTestApi.setUp(messenger, api)
+    val handler = slots[callbackChannel]!!.captured
+
     assertEquals(listOf(null), sendStreamControl(handler, listOf("listen", 11L, "sync-done", 1L)))
     assertEquals(listOf(listOf(11L, 2L)), frames)
     assertFalse(syncClosed)
+
+    // Teardown must also not invoke the closeable, verifying synchronous endOfStream() cleared the
+    // registration.
+    StreamHostTestApi.setUp(messenger, null)
+    assertFalse(syncClosed)
+  }
+
+  @Test
+  fun testHostStreamCallbackCancelBeforeAttachClosesHandleImmediately() {
+    val callbackChannel =
+        "dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.streamViaCallback"
+    val frames = mutableListOf<List<Any?>>()
+    val (messenger, slots) = mockStreamMessenger(listOf(callbackChannel), frames)
+    val api = mockk<StreamHostTestApi>()
+
+    lateinit var handler: BinaryMessenger.BinaryMessageHandler
+    var closed = false
+    every { api.streamViaCallback("cancel-before-return", 1L, any()) } answers
+        {
+          assertEquals(listOf(null), sendStreamControl(handler, listOf("cancel", 16L)))
+          AutoCloseable { closed = true }
+        }
+
+    StreamHostTestApi.setUp(messenger, api)
+    handler = slots[callbackChannel]!!.captured
+
+    assertEquals(
+        listOf(null),
+        sendStreamControl(handler, listOf("listen", 16L, "cancel-before-return", 1L)),
+    )
+    assertTrue(closed)
 
     StreamHostTestApi.setUp(messenger, null)
   }
 
   @Test
-  fun testHostStreamCallbackExplicitCancelThrowingCloseableAndSyncThrow() {
+  fun testHostStreamCallbackExplicitCancelInvokesCloseable() {
     val callbackChannel =
         "dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.streamViaCallback"
     val frames = mutableListOf<List<Any?>>()
@@ -441,17 +483,10 @@ internal class AsyncHandlersTest {
           capturedSink = arg(2)
           AutoCloseable { callbackClosed = true }
         }
-    every { api.streamViaCallback("throw-close", 1L, any()) } answers
-        {
-          AutoCloseable { throw EventChannelTestsError("close_err", "close failed", null) }
-        }
-    every { api.streamViaCallback("throw-listen", 1L, any()) } throws
-        EventChannelTestsError("cb_sync_err", "listen failed", null)
 
     StreamHostTestApi.setUp(messenger, api)
     val handler = slots[callbackChannel]!!.captured
 
-    // Explicit "cancel" invokes AutoCloseable and ignores post-cancel events.
     assertEquals(listOf(null), sendStreamControl(handler, listOf("listen", 8L, "cb", 1L)))
     val cancelSink = capturedSink!!
     assertEquals(listOf(null), sendStreamControl(handler, listOf("cancel", 8L)))
@@ -459,18 +494,73 @@ internal class AsyncHandlersTest {
     cancelSink.success("ignored-after-cancel")
     assertTrue(frames.isEmpty())
 
-    // Explicit "cancel" propagates throwing AutoCloseable.close() as a wrapped error reply.
+    StreamHostTestApi.setUp(messenger, null)
+  }
+
+  @Test
+  fun testHostStreamCallbackExplicitCancelPropagatesThrowingCloseable() {
+    val callbackChannel =
+        "dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.streamViaCallback"
+    val frames = mutableListOf<List<Any?>>()
+    val (messenger, slots) = mockStreamMessenger(listOf(callbackChannel), frames)
+    val api = mockk<StreamHostTestApi>()
+
+    every { api.streamViaCallback("throw-close", 1L, any()) } answers
+        {
+          AutoCloseable { throw EventChannelTestsError("close_err", "close failed", null) }
+        }
+
+    StreamHostTestApi.setUp(messenger, api)
+    val handler = slots[callbackChannel]!!.captured
+
     assertEquals(listOf(null), sendStreamControl(handler, listOf("listen", 12L, "throw-close", 1L)))
     val cancelErrReply = sendStreamControl(handler, listOf("cancel", 12L))
     assertEquals(listOf("close_err", "close failed", null), cancelErrReply)
 
-    // Synchronous throw in api.streamViaCallback returns a wrapped error reply.
+    StreamHostTestApi.setUp(messenger, null)
+  }
+
+  @Test
+  fun testHostStreamCallbackSyncThrowReturnsWrappedErrorReply() {
+    val callbackChannel =
+        "dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.streamViaCallback"
+    val frames = mutableListOf<List<Any?>>()
+    val (messenger, slots) = mockStreamMessenger(listOf(callbackChannel), frames)
+    val api = mockk<StreamHostTestApi>()
+
+    every { api.streamViaCallback("throw-listen", 1L, any()) } throws
+        EventChannelTestsError("cb_sync_err", "listen failed", null)
+
+    StreamHostTestApi.setUp(messenger, api)
+    val handler = slots[callbackChannel]!!.captured
+
     val syncThrowReply = sendStreamControl(handler, listOf("listen", 13L, "throw-listen", 1L))
     assertEquals(listOf("cb_sync_err", "listen failed", null), syncThrowReply)
 
-    // Teardown via setUp(null) isolates a throwing AutoCloseable (invokeCancelSafely) and still
-    // cancels others.
-    callbackClosed = false
+    StreamHostTestApi.setUp(messenger, null)
+  }
+
+  @Test
+  fun testHostStreamCallbackTeardownIsolatesThrowingCloseable() {
+    val callbackChannel =
+        "dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.streamViaCallback"
+    val frames = mutableListOf<List<Any?>>()
+    val (messenger, slots) = mockStreamMessenger(listOf(callbackChannel), frames)
+    val api = mockk<StreamHostTestApi>()
+
+    var callbackClosed = false
+    every { api.streamViaCallback("cb", 1L, any()) } answers
+        {
+          AutoCloseable { callbackClosed = true }
+        }
+    every { api.streamViaCallback("throw-close", 1L, any()) } answers
+        {
+          AutoCloseable { throw EventChannelTestsError("close_err", "close failed", null) }
+        }
+
+    StreamHostTestApi.setUp(messenger, api)
+    val handler = slots[callbackChannel]!!.captured
+
     assertEquals(listOf(null), sendStreamControl(handler, listOf("listen", 14L, "throw-close", 1L)))
     assertEquals(listOf(null), sendStreamControl(handler, listOf("listen", 15L, "cb", 1L)))
     StreamHostTestApi.setUp(messenger, null)

@@ -2357,11 +2357,19 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(nullableInts, <int?>[1, null, 2]);
     }, skip: !streamSupported.contains(targetGenerator));
 
-    testWidgets('handles terminal errors, mid-stream cancel, suffixes, and @asyncCallback', (
-      WidgetTester _,
-    ) async {
-      final api = StreamHostTestApi();
+    Future<int> waitForCancelledCount(StreamHostTestApi api) async {
+      for (var attempt = 0; attempt < 100; attempt++) {
+        final int count = await api.getCancelledStreamCount();
+        if (count >= 1) {
+          return count;
+        }
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+      }
+      return api.getCancelledStreamCount();
+    }
 
+    testWidgets('propagates custom PlatformException from stream', (WidgetTester _) async {
+      final api = StreamHostTestApi();
       final receivedBeforeError = <int>[];
       Object? caughtError;
       final doneCompleter = Completer<void>();
@@ -2383,48 +2391,44 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
             .having((PlatformException e) => e.message, 'message', 'error_message')
             .having((PlatformException e) => e.details, 'details', 'error_details'),
       );
+    }, skip: !streamSupported.contains(targetGenerator));
 
-      // Non-custom platform exception from a stream must also propagate as PlatformException.
-      final receivedBeforeNonCustomError = <int>[];
-      Object? caughtNonCustomError;
-      final nonCustomDoneCompleter = Completer<void>();
+    testWidgets('propagates non-custom platform exception from stream', (WidgetTester _) async {
+      final api = StreamHostTestApi();
+      final receivedBeforeError = <int>[];
+      Object? caughtError;
+      final doneCompleter = Completer<void>();
       api
           .streamError(false)
           .listen(
-            receivedBeforeNonCustomError.add,
+            receivedBeforeError.add,
             onError: (Object e) {
-              caughtNonCustomError = e;
+              caughtError = e;
             },
-            onDone: nonCustomDoneCompleter.complete,
+            onDone: doneCompleter.complete,
           );
-      await nonCustomDoneCompleter.future;
-      expect(receivedBeforeNonCustomError, <int>[1]);
-      expect(caughtNonCustomError, isA<PlatformException>());
+      await doneCompleter.future;
+      expect(receivedBeforeError, <int>[1]);
+      expect(caughtError, isA<PlatformException>());
+    }, skip: !streamSupported.contains(targetGenerator));
 
-      Future<int> waitForCancelledCount() async {
-        for (var attempt = 0; attempt < 100; attempt++) {
-          final int count = await api.getCancelledStreamCount();
-          if (count >= 1) {
-            return count;
-          }
-          await Future<void>.delayed(const Duration(milliseconds: 50));
-        }
-        return api.getCancelledStreamCount();
-      }
-
-      // Mid-stream cancellation via .take(2) must cancel the native task cleanly.
+    testWidgets('cancels native stream cleanly on mid-stream take', (WidgetTester _) async {
+      final api = StreamHostTestApi();
       await api.resetCancelledStreamCount();
       final List<int> partial = await api.streamNumbers(count: 500, start: 1).take(2).toList();
       expect(partial, <int>[1, 2]);
-      expect(await waitForCancelledCount(), greaterThanOrEqualTo(1));
+      expect(await waitForCancelledCount(api), greaterThanOrEqualTo(1));
+    }, skip: !streamSupported.contains(targetGenerator));
 
-      // Suffixed instances isolate stream routing.
+    testWidgets('isolates stream routing by messageChannelSuffix', (WidgetTester _) async {
       final apiOne = StreamHostTestApi(messageChannelSuffix: '1');
       final apiTwo = StreamHostTestApi(messageChannelSuffix: '2');
       expect(await apiOne.streamNumbers(count: 2, start: 5).toList(), <int>[105, 106]);
       expect(await apiTwo.streamNumbers(count: 2, start: 5).toList(), <int>[205, 206]);
+    }, skip: !streamSupported.contains(targetGenerator));
 
-      // @asyncCallback stream emits from background task and supports cancellation.
+    testWidgets('streams and cancels @asyncCallback host stream', (WidgetTester _) async {
+      final api = StreamHostTestApi();
       expect(await api.streamViaCallback('item', 3).toList(), <String>[
         'item:0',
         'item:1',
@@ -2432,7 +2436,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       ]);
       await api.resetCancelledStreamCount();
       expect(await api.streamViaCallback('cut', 200).take(2).toList(), <String>['cut:0', 'cut:1']);
-      expect(await waitForCancelledCount(), greaterThanOrEqualTo(1));
+      expect(await waitForCancelledCount(api), greaterThanOrEqualTo(1));
     }, skip: !streamSupported.contains(targetGenerator));
   });
 

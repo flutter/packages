@@ -424,12 +424,6 @@ class EventChannelTestsPigeonEventSink<ReturnType>: @unchecked Sendable {
     self.channelBox = channelBox
   }
 
-  fileprivate var isOpen: Bool {
-    lock.lock()
-    defer { lock.unlock() }
-    return !terminated && channelBox != nil
-  }
-
   fileprivate func attachOnClosed(_ onClosed: @escaping () -> Void) {
     lock.lock()
     defer { lock.unlock() }
@@ -470,34 +464,16 @@ class EventChannelTestsPigeonEventSink<ReturnType>: @unchecked Sendable {
   }
 
   func error(code: String, message: String?, details: Any?) {
-    let currentBox: EventChannelTestsPigeonChannelBox?
-    let closedAction: (() -> Void)?
-    let displacedCancel: (() -> Void)?
-    do {
-      lock.lock()
-      defer { lock.unlock() }
-      guard !terminated else { return }
-      terminated = true
-      currentBox = channelBox
-      closedAction = onClosed
-      displacedCancel = cancelCallback
-      channelBox = nil
-      onClosed = nil
-      cancelCallback = nil
-    }
-    closedAction?()
-    currentBox?.send(
-      [
-        subscriptionId, EventChannelTestsPigeonStreamRegistry.errorFrameKind, code, message,
-        details,
-      ],
-      closeAfterSend: true
-    )
-    // Keep displacedCancel alive past lock.unlock() so deallocation cannot re-enter lock.
-    withExtendedLifetime(displacedCancel) {}
+    terminate(frame: [
+      subscriptionId, EventChannelTestsPigeonStreamRegistry.errorFrameKind, code, message, details,
+    ])
   }
 
   func endOfStream() {
+    terminate(frame: [subscriptionId, EventChannelTestsPigeonStreamRegistry.doneFrameKind])
+  }
+
+  private func terminate(frame: [Any?]) {
     let currentBox: EventChannelTestsPigeonChannelBox?
     let closedAction: (() -> Void)?
     let displacedCancel: (() -> Void)?
@@ -514,10 +490,7 @@ class EventChannelTestsPigeonEventSink<ReturnType>: @unchecked Sendable {
       cancelCallback = nil
     }
     closedAction?()
-    currentBox?.send(
-      [subscriptionId, EventChannelTestsPigeonStreamRegistry.doneFrameKind],
-      closeAfterSend: true
-    )
+    currentBox?.send(frame, closeAfterSend: true)
     // Keep displacedCancel alive past lock.unlock() so deallocation cannot re-enter lock.
     withExtendedLifetime(displacedCancel) {}
   }
@@ -1598,11 +1571,6 @@ class StreamHostTestApiSetup {
         }
         let cancelCallback = api.streamViaCallback(prefix: prefixArg, count: countArg, sink: sink)
         sink.attachCancel(cancelCallback)
-        if !sink.isOpen {
-          _ = streamRegistry.remove(
-            messengerKey: messengerKey, channelName: streamViaCallbackEventsChannelName,
-            subscriptionId: subscriptionId, token: registrationToken)
-        }
         reply(wrapResult(nil))
       }
     } else {

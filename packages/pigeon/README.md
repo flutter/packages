@@ -114,7 +114,7 @@ When targeting a Flutter version that supports the
 the threading model for handling HostApi methods can be selected with the
 `TaskQueue` annotation.
 
-> **Note**: `TaskQueue` is only supported with platform channels. Native Interop (FFI/JNI) calls execute directly on the caller's thread; specifying `@TaskQueue` with Native Interop will result in a code generation error.
+> **Note**: `TaskQueue` is only supported with non-stream platform channel methods. It is not supported on `Stream<T>` methods or with Native Interop (FFI/JNI), where calls execute directly on the caller's thread; specifying `@TaskQueue` in either case will result in a code generation error.
 
 ### Multi-Instance Support
 
