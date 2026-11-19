@@ -9593,6 +9593,7 @@ class NativeInteropStreamHostApiRegistrar private constructor(private val engine
   @Volatile private var api: NativeInteropStreamHostApi? = null
   private val pigeonActiveStreams: MutableSet<NativeInteropTestsPigeonStreamCancelHandle> =
       mutableSetOf()
+  private var pigeonStreamsClosed: Boolean = false
 
   constructor() : this(NativeInteropTestsPigeonEngineKeys.NO_KEY)
 
@@ -9757,7 +9758,18 @@ class NativeInteropStreamHostApiRegistrar private constructor(private val engine
       pigeonUntrackStream(handle)
       cancelAction()
     }
-    kotlin.synchronized(pigeonActiveStreams) { pigeonActiveStreams.add(handle) }
+    val shouldCancel =
+        kotlin.synchronized(pigeonActiveStreams) {
+          if (pigeonStreamsClosed) {
+            true
+          } else {
+            pigeonActiveStreams.add(handle)
+            false
+          }
+        }
+    if (shouldCancel) {
+      handle.cancel()
+    }
     return handle
   }
 
@@ -9768,6 +9780,7 @@ class NativeInteropStreamHostApiRegistrar private constructor(private val engine
   private fun pigeonCancelAllStreams() {
     val handles =
         kotlin.synchronized(pigeonActiveStreams) {
+          pigeonStreamsClosed = true
           val copy = pigeonActiveStreams.toList()
           pigeonActiveStreams.clear()
           copy

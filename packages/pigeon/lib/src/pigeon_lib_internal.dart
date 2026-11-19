@@ -464,6 +464,22 @@ void _errorOnSwiftFfiUnsupportedFeatures(
             ),
           );
         }
+        if (method.isStream) {
+          for (final reserved in const <String>[
+            'pigeonOnData',
+            'pigeonOnError',
+            'pigeonOnDone',
+          ]) {
+            if (method.parameters.any((Parameter parameter) => parameter.name == reserved)) {
+              errors.add(
+                Error(
+                  message:
+                      'Parameter "$reserved" in streaming method "${method.name}" in API "${api.name}" conflicts with a callback parameter that Swift FFI adds to streaming host API methods. Rename the parameter.',
+                ),
+              );
+            }
+          }
+        }
       }
     }
   }
@@ -502,6 +518,18 @@ void _errorOnKotlinJniUnsupportedFeatures(List<Error> errors, Root root) {
               'Kotlin JNI does not support ProxyApis yet (in API "${api.name}"). $_moveToNonJniFileSuggestion',
         ),
       );
+    } else if (api is AstHostApi) {
+      for (final Method method in api.methods) {
+        if (method.isStream &&
+            method.parameters.any((Parameter parameter) => parameter.name == 'pigeonCallback')) {
+          errors.add(
+            Error(
+              message:
+                  'Parameter "pigeonCallback" in streaming method "${method.name}" in API "${api.name}" conflicts with the callback parameter that Kotlin JNI adds to streaming host API methods. Rename the parameter.',
+            ),
+          );
+        }
+      }
     }
   }
 }

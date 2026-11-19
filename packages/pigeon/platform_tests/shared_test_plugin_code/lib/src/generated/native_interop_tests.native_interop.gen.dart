@@ -1283,15 +1283,15 @@ Stream<T> _pigeonJniStream<T>({
       }
     },
     onCancel: () {
-      if (!terminatedFromHost) {
-        try {
+      try {
+        if (!terminatedFromHost) {
           cancelHandle?.cancel();
-        } on JThrowable catch (e) {
-          releaseHandles();
-          throw _wrapJniException(e);
         }
+      } on JThrowable catch (e) {
+        throw _wrapJniException(e);
+      } finally {
+        releaseHandles();
       }
-      releaseHandles();
     },
   );
   return controller.stream;

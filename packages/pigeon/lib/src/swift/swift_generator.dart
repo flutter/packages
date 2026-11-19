@@ -2698,6 +2698,7 @@ if (wrapped == nil) {
           indent.writeln(
             'private var activeStreams: [ObjectIdentifier: ${prefix}PigeonStreamCancelHandle] = [:]',
           );
+          indent.writeln('private var streamsClosed = false');
         }
         indent.writeln('override init() {}');
         indent.writeScoped('private func resolveApi() throws -> ${api.name} {', '}', () {
@@ -2718,9 +2719,21 @@ if (wrapped == nil) {
             'private func trackStream(_ handle: ${prefix}PigeonStreamCancelHandle) {',
             '}',
             () {
-              indent.writeln('${api.name}InstanceTracker.lock.lock()');
-              indent.writeln('activeStreams[ObjectIdentifier(handle)] = handle');
-              indent.writeln('${api.name}InstanceTracker.lock.unlock()');
+              indent.writeln('let shouldCancel: Bool');
+              indent.writeScoped('do {', '}', () {
+                indent.writeln('${api.name}InstanceTracker.lock.lock()');
+                indent.writeln('defer { ${api.name}InstanceTracker.lock.unlock() }');
+                indent.writeScoped('if streamsClosed {', '}', () {
+                  indent.writeln('shouldCancel = true');
+                }, addTrailingNewline: false);
+                indent.addScoped(' else {', '}', () {
+                  indent.writeln('activeStreams[ObjectIdentifier(handle)] = handle');
+                  indent.writeln('shouldCancel = false');
+                });
+              });
+              indent.writeScoped('if shouldCancel {', '}', () {
+                indent.writeln('handle.cancel()');
+              });
             },
           );
           indent.writeScoped(
@@ -2743,6 +2756,7 @@ if (wrapped == nil) {
             indent.writeScoped('do {', '}', () {
               indent.writeln('${api.name}InstanceTracker.lock.lock()');
               indent.writeln('defer { ${api.name}InstanceTracker.lock.unlock() }');
+              indent.writeln('streamsClosed = true');
               indent.writeln('handles = Array(activeStreams.values)');
               indent.writeln('activeStreams.removeAll()');
             });

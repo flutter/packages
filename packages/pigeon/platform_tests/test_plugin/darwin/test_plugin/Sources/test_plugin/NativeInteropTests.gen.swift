@@ -13277,6 +13277,7 @@ protocol NativeInteropStreamHostApi: AnyObject {
 @objc class NativeInteropStreamHostApiSetup: NSObject {
   private var api: NativeInteropStreamHostApi?
   private var activeStreams: [ObjectIdentifier: NativeInteropTestsPigeonStreamCancelHandle] = [:]
+  private var streamsClosed = false
   override init() {}
   private func resolveApi() throws -> NativeInteropStreamHostApi {
     NativeInteropStreamHostApiInstanceTracker.lock.lock()
@@ -13292,9 +13293,20 @@ protocol NativeInteropStreamHostApi: AnyObject {
     return currentApi
   }
   private func trackStream(_ handle: NativeInteropTestsPigeonStreamCancelHandle) {
-    NativeInteropStreamHostApiInstanceTracker.lock.lock()
-    activeStreams[ObjectIdentifier(handle)] = handle
-    NativeInteropStreamHostApiInstanceTracker.lock.unlock()
+    let shouldCancel: Bool
+    do {
+      NativeInteropStreamHostApiInstanceTracker.lock.lock()
+      defer { NativeInteropStreamHostApiInstanceTracker.lock.unlock() }
+      if streamsClosed {
+        shouldCancel = true
+      } else {
+        activeStreams[ObjectIdentifier(handle)] = handle
+        shouldCancel = false
+      }
+    }
+    if shouldCancel {
+      handle.cancel()
+    }
   }
   private func untrackStream(_ handle: NativeInteropTestsPigeonStreamCancelHandle) {
     let displaced: NativeInteropTestsPigeonStreamCancelHandle?
@@ -13310,6 +13322,7 @@ protocol NativeInteropStreamHostApi: AnyObject {
     do {
       NativeInteropStreamHostApiInstanceTracker.lock.lock()
       defer { NativeInteropStreamHostApiInstanceTracker.lock.unlock() }
+      streamsClosed = true
       handles = Array(activeStreams.values)
       activeStreams.removeAll()
     }

@@ -3054,6 +3054,23 @@ abstract class Events {
       expect(errors, isEmpty);
     });
 
+    test(
+      'Swift FFI rejects streaming parameters named pigeonOnData/pigeonOnError/pigeonOnDone',
+      () {
+        final List<Error> errors = validate(const SwiftGeneratorAdapter(), '''
+@HostApi()
+abstract class Api {
+  Stream<int> watch(String pigeonOnData, String pigeonOnError, String pigeonOnDone);
+}
+''');
+        expect(errors.map((Error e) => e.message), <Matcher>[
+          contains('Parameter "pigeonOnData" in streaming method "watch"'),
+          contains('Parameter "pigeonOnError" in streaming method "watch"'),
+          contains('Parameter "pigeonOnDone" in streaming method "watch"'),
+        ]);
+      },
+    );
+
     test('Swift without FFI allows Stream return types', () {
       final List<Error> errors = validate(
         const SwiftGeneratorAdapter(),
@@ -3125,6 +3142,17 @@ abstract class Api {
         unsupportedFeaturesSource,
       );
       expect(errors, isEmpty);
+    });
+
+    test('Kotlin JNI rejects streaming parameters named pigeonCallback', () {
+      final List<Error> errors = validate(const KotlinGeneratorAdapter(), '''
+@HostApi()
+abstract class Api {
+  Stream<int> watch(String pigeonCallback);
+}
+''');
+      expect(errors, hasLength(1));
+      expect(errors[0].message, contains('Parameter "pigeonCallback" in streaming method "watch"'));
     });
 
     test('Kotlin without JNI allows Stream return types', () {

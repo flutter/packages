@@ -1231,6 +1231,7 @@ kotlin.synchronized($registered) {
           indent.writeln(
             'private val pigeonActiveStreams: MutableSet<${prefix}PigeonStreamCancelHandle> = mutableSetOf()',
           );
+          indent.writeln('private var pigeonStreamsClosed: Boolean = false');
         }
         indent.newln();
         indent.writeln('constructor() : this($engineKeys.NO_KEY)');
@@ -1388,8 +1389,21 @@ This is called by the generated Dart code and is not intended for direct use.'''
                 indent.writeln('pigeonUntrackStream(handle)');
                 indent.writeln('cancelAction()');
               });
-              indent.writeScoped('kotlin.synchronized(pigeonActiveStreams) {', '}', () {
-                indent.writeln('pigeonActiveStreams.add(handle)');
+              indent.writeScoped(
+                'val shouldCancel = kotlin.synchronized(pigeonActiveStreams) {',
+                '}',
+                () {
+                  indent.writeScoped('if (pigeonStreamsClosed) {', '}', () {
+                    indent.writeln('true');
+                  }, addTrailingNewline: false);
+                  indent.addScoped(' else {', '}', () {
+                    indent.writeln('pigeonActiveStreams.add(handle)');
+                    indent.writeln('false');
+                  });
+                },
+              );
+              indent.writeScoped('if (shouldCancel) {', '}', () {
+                indent.writeln('handle.cancel()');
               });
               indent.writeln('return handle');
             },
@@ -1407,6 +1421,7 @@ This is called by the generated Dart code and is not intended for direct use.'''
           indent.newln();
           indent.writeScoped('private fun pigeonCancelAllStreams() {', '}', () {
             indent.writeScoped('val handles = kotlin.synchronized(pigeonActiveStreams) {', '}', () {
+              indent.writeln('pigeonStreamsClosed = true');
               indent.writeln('val copy = pigeonActiveStreams.toList()');
               indent.writeln('pigeonActiveStreams.clear()');
               indent.writeln('copy');
@@ -1608,13 +1623,17 @@ This is called by the generated Dart code and is not intended for direct use.'''
         }
       }, addTrailingNewline: false);
       indent.addScoped(' catch (e: $errorClassName) {', '}', () {
-        indent.writeScoped(
-          'throw $errorClassName(e.code, e.message, $codec.encodeOrNull(e.details)).apply {',
-          '}',
-          () {
-            indent.writeln('stackTrace = e.stackTrace');
-          },
-        );
+        if (hybrid) {
+          indent.writeScoped(
+            'throw $errorClassName(e.code, e.message, $codec.encodeOrNull(e.details)).apply {',
+            '}',
+            () {
+              indent.writeln('stackTrace = e.stackTrace');
+            },
+          );
+        } else {
+          indent.writeln('throw e');
+        }
       });
     });
   }
