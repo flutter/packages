@@ -422,8 +422,8 @@ class FilledButton extends ButtonStyleButton {
   /// * `splashFactory` - Theme.splashFactory
   ///
   /// For the [FilledButton.icon] and [FilledButton.tonalIcon] factories, the
-  /// start (generally the left) value of
-  /// [ButtonStyle.padding] is reduced from 24 to 16.
+  /// start (generally the left) value of [ButtonStyle.padding] is reduced from
+  /// 24 to 16.
   @override
   ButtonStyle defaultStyleOf(BuildContext context) {
     final ButtonStyle buttonStyle = switch (_variant) {
