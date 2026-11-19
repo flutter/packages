@@ -13285,7 +13285,7 @@ protocol NativeInteropStreamHostApi: AnyObject {
   private func pigeonTrackStream(_ handle: NativeInteropTestsPigeonStreamCancelHandle) throws {
     NativeInteropStreamHostApiInstanceTracker.lock.lock()
     defer { NativeInteropStreamHostApiInstanceTracker.lock.unlock() }
-    if pigeonStreamsClosed {
+    if pigeonStreamsClosed || api == nil {
       throw NativeInteropTestsError(
         code: "unregistered-instance",
         message: "NativeInteropStreamHostApi has not been registered.",
@@ -13319,11 +13319,10 @@ protocol NativeInteropStreamHostApi: AnyObject {
     }
   }
   private func pigeonStartAsyncStream<Element>(
-    _ stream: AsyncThrowingStream<Element, Error>, onData: @escaping (NSData?) -> Void,
+    _ makeStream: () -> AsyncThrowingStream<Element, Error>, onData: @escaping (NSData?) -> Void,
     onError: @escaping (String, String?, NSData?) -> Void, onDone: @escaping () -> Void,
     encode: @escaping @Sendable (Element) -> NSData?
   ) throws -> NativeInteropTestsPigeonStreamCancelHandle {
-    let streamBox = NativeInteropTestsPigeonStreamBox(stream)
     let callbacks = NativeInteropTestsPigeonFfiStreamCallbacks(
       onData: onData, onError: onError, onDone: onDone)
     let taskHandle = NativeInteropTestsPigeonStreamTaskHandle()
@@ -13337,6 +13336,7 @@ protocol NativeInteropStreamHostApi: AnyObject {
       }
     )
     try pigeonTrackStream(cancelHandle)
+    let streamBox = NativeInteropTestsPigeonStreamBox(makeStream())
     let task = Task {
       do {
         for try await event in streamBox.stream {
@@ -13452,6 +13452,7 @@ protocol NativeInteropStreamHostApi: AnyObject {
         if existing === api && entry.engineKey == removeKey {
           displaced.append(existing)
           displaced.append(entry)
+          entry.pigeonStreamsClosed = true
           removedSetups.append(entry)
           entry.api = nil
           return true
@@ -13509,7 +13510,7 @@ protocol NativeInteropStreamHostApi: AnyObject {
     do {
       let activeApi = try resolveApi()
       return try pigeonStartAsyncStream(
-        activeApi.streamNumbers(count: countArg, start: startArg),
+        { activeApi.streamNumbers(count: countArg, start: startArg) },
         onData: pigeonOnData,
         onError: pigeonOnError,
         onDone: pigeonOnDone,
@@ -13534,7 +13535,7 @@ protocol NativeInteropStreamHostApi: AnyObject {
     do {
       let activeApi = try resolveApi()
       return try pigeonStartAsyncStream(
-        activeApi.streamNullableInts(),
+        { activeApi.streamNullableInts() },
         onData: pigeonOnData,
         onError: pigeonOnError,
         onDone: pigeonOnDone,
@@ -13559,7 +13560,7 @@ protocol NativeInteropStreamHostApi: AnyObject {
     do {
       let activeApi = try resolveApi()
       return try pigeonStartAsyncStream(
-        activeApi.streamShapes(),
+        { activeApi.streamShapes() },
         onData: pigeonOnData,
         onError: pigeonOnError,
         onDone: pigeonOnDone,
@@ -13588,7 +13589,7 @@ protocol NativeInteropStreamHostApi: AnyObject {
       reader.readListHeader()
       let filterArg = reader.read(NativeInteropShape.self)
       return try pigeonStartAsyncStream(
-        activeApi.streamShapesWithFilter(filter: filterArg),
+        { activeApi.streamShapesWithFilter(filter: filterArg) },
         onData: pigeonOnData,
         onError: pigeonOnError,
         onDone: pigeonOnDone,
@@ -13613,7 +13614,7 @@ protocol NativeInteropStreamHostApi: AnyObject {
     do {
       let activeApi = try resolveApi()
       return try pigeonStartAsyncStream(
-        activeApi.streamError(customError: customErrorArg),
+        { activeApi.streamError(customError: customErrorArg) },
         onData: pigeonOnData,
         onError: pigeonOnError,
         onDone: pigeonOnDone,

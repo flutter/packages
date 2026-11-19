@@ -2556,6 +2556,7 @@ if (wrapped == nil) {
               indent.writeln('displaced.append(existing)');
               indent.writeln('displaced.append(entry)');
               if (apiHasStream) {
+                indent.writeln('entry.pigeonStreamsClosed = true');
                 indent.writeln('removedSetups.append(entry)');
               }
               indent.writeln('entry.api = nil');
@@ -2726,7 +2727,7 @@ if (wrapped == nil) {
             () {
               indent.writeln('${api.name}InstanceTracker.lock.lock()');
               indent.writeln('defer { ${api.name}InstanceTracker.lock.unlock() }');
-              indent.writeScoped('if pigeonStreamsClosed {', '}', () {
+              indent.writeScoped('if pigeonStreamsClosed || api == nil {', '}', () {
                 indent.writeScoped('throw $errorClassName(', ')', () {
                   indent.writeln('code: "unregistered-instance",');
                   indent.writeln('message: "${api.name} has not been registered.",');
@@ -2767,10 +2768,9 @@ if (wrapped == nil) {
           });
           if (apiHasAsyncStream) {
             indent.writeScoped(
-              'private func pigeonStartAsyncStream<Element>(_ stream: AsyncThrowingStream<Element, Error>, onData: @escaping (NSData?) -> Void, onError: @escaping (String, String?, NSData?) -> Void, onDone: @escaping () -> Void, encode: @escaping @Sendable (Element) -> NSData?) throws -> ${prefix}PigeonStreamCancelHandle {',
+              'private func pigeonStartAsyncStream<Element>(_ makeStream: () -> AsyncThrowingStream<Element, Error>, onData: @escaping (NSData?) -> Void, onError: @escaping (String, String?, NSData?) -> Void, onDone: @escaping () -> Void, encode: @escaping @Sendable (Element) -> NSData?) throws -> ${prefix}PigeonStreamCancelHandle {',
               '}',
               () {
-                indent.writeln('let streamBox = ${prefix}PigeonStreamBox(stream)');
                 indent.writeln(
                   'let callbacks = ${prefix}PigeonFfiStreamCallbacks(onData: onData, onError: onError, onDone: onDone)',
                 );
@@ -2789,6 +2789,7 @@ if (wrapped == nil) {
                   },
                 );
                 indent.writeln('try pigeonTrackStream(cancelHandle)');
+                indent.writeln('let streamBox = ${prefix}PigeonStreamBox(makeStream())');
                 indent.writeScoped('let task = Task {', '}', () {
                   indent.writeScoped('do {', '}', () {
                     indent.writeScoped('for try await event in streamBox.stream {', '}', () {
@@ -3044,7 +3045,7 @@ if (wrapped == nil) {
             indent.writeln('return cancelHandle');
           } else {
             indent.writeScoped('return try pigeonStartAsyncStream(', ')', () {
-              indent.writeln('activeApi.${components.name}($arguments),');
+              indent.writeln('{ activeApi.${components.name}($arguments) },');
               indent.writeln('onData: pigeonOnData,');
               indent.writeln('onError: pigeonOnError,');
               indent.writeln('onDone: pigeonOnDone,');

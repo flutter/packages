@@ -5522,19 +5522,13 @@ class _JniBindingNamer {
 
   /// Names a method of a Pigeon API.
   _JniMember nextApiMethod(Method method, {bool hybrid = false}) {
-    if (method.isStream) {
-      final int parameterCount =
-          (hybrid
-              ? method.parameters.where((Parameter p) => isNativeInteropDirectType(p.type)).length +
-                    (nativeInteropEncodedParameters(method.parameters).isNotEmpty ? 1 : 0)
-              : method.parameters.length) +
-          1;
-      return next(method.name, parameterCount: parameterCount);
-    }
     final int parameterCount = hybrid
         ? method.parameters.where((Parameter p) => isNativeInteropDirectType(p.type)).length +
               (nativeInteropEncodedParameters(method.parameters).isNotEmpty ? 1 : 0)
         : method.parameters.length;
+    if (method.isStream) {
+      return next(method.name, parameterCount: parameterCount + 1);
+    }
     final String propertyType;
     if (hybrid) {
       if (method.returnType.isVoid) {

@@ -422,10 +422,10 @@ struct AsyncHandlersTest {
   }
 
   @Test
-  func ffiCallbackSinkErrorAndEndOfStreamAreIdempotent() async throws {
+  func ffiCallbackSinkErrorIsIdempotent() async throws {
     let api = MockNativeInteropStreamHostApi()
     let registrar = MockFfiStreamPluginRegistrar()
-    let instanceName = "test-ffi-sink-idempotency"
+    let instanceName = "test-ffi-sink-error-idempotency"
     NativeInteropStreamHostApiSetup.register(api: api, registrar: registrar, name: instanceName)
     defer {
       NativeInteropStreamHostApiSetup.unregister(api: api, registrar: registrar, name: instanceName)
@@ -450,28 +450,106 @@ struct AsyncHandlersTest {
     sink.success("first")
     sink.error(code: "err_code", message: "err_msg", details: "err_details")
     sink.success("ignored")
+    sink.error(code: "ignored_err", message: nil, details: nil)
     sink.endOfStream()
     #expect(dataCount == 1)
     #expect(errorCodes == ["err_code"])
     #expect(doneCount == 0)
+  }
 
-    // Idempotent cancel handle.
+  @Test
+  func ffiCallbackSinkEndOfStreamIsIdempotent() async throws {
+    let api = MockNativeInteropStreamHostApi()
+    let registrar = MockFfiStreamPluginRegistrar()
+    let instanceName = "test-ffi-sink-done-idempotency"
+    NativeInteropStreamHostApiSetup.register(api: api, registrar: registrar, name: instanceName)
+    defer {
+      NativeInteropStreamHostApiSetup.unregister(api: api, registrar: registrar, name: instanceName)
+    }
+    let setup = try #require(
+      NativeInteropStreamHostApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min, name: instanceName))
+
+    var dataCount = 0
+    var errorCount = 0
+    var doneCount = 0
+    let error = NativeInteropTestsError(code: "", message: nil, details: nil)
+    let handle = setup.streamViaCallback(
+      prefix: "cb",
+      count: 1,
+      pigeonOnData: { _ in dataCount += 1 },
+      pigeonOnError: { _, _, _ in errorCount += 1 },
+      pigeonOnDone: { doneCount += 1 },
+      wrappedError: error)
+    #expect(handle != nil)
+    let sink = try #require(api.capturedSink)
+    sink.endOfStream()
+    sink.success("ignored-after-done")
+    sink.error(code: "ignored", message: nil, details: nil)
+    sink.endOfStream()
+    #expect(dataCount == 0)
+    #expect(errorCount == 0)
+    #expect(doneCount == 1)
+  }
+
+  @Test
+  func ffiCancelHandleIsIdempotent() async throws {
+    let api = MockNativeInteropStreamHostApi()
+    let registrar = MockFfiStreamPluginRegistrar()
+    let instanceName = "test-ffi-cancel-handle-idempotency"
+    NativeInteropStreamHostApiSetup.register(api: api, registrar: registrar, name: instanceName)
+    defer {
+      NativeInteropStreamHostApiSetup.unregister(api: api, registrar: registrar, name: instanceName)
+    }
+    let setup = try #require(
+      NativeInteropStreamHostApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min, name: instanceName))
+
     final class CounterBox: @unchecked Sendable {
       var count = 0
     }
     let cancelCounter = CounterBox()
     api.onCallbackCancelled = { cancelCounter.count += 1 }
-    let doneHandle = try #require(
+    let error = NativeInteropTestsError(code: "", message: nil, details: nil)
+    let cancelHandle = try #require(
       setup.streamViaCallback(
-        prefix: "cb2",
+        prefix: "cb",
         count: 1,
         pigeonOnData: { _ in },
         pigeonOnError: { _, _, _ in },
-        pigeonOnDone: { doneCount += 1 },
+        pigeonOnDone: {},
         wrappedError: error))
-    doneHandle.cancel()
-    doneHandle.cancel()
+    cancelHandle.cancel()
+    cancelHandle.cancel()
     #expect(cancelCounter.count == 1)
+  }
+
+  @Test
+  func ffiCallbackSinkCancelBeforeAttachInvokesCancelImmediately() async throws {
+    let api = MockNativeInteropStreamHostApi()
+    let registrar = MockFfiStreamPluginRegistrar()
+    let instanceName = "test-ffi-cancel-before-attach"
+    NativeInteropStreamHostApiSetup.register(api: api, registrar: registrar, name: instanceName)
+    let setup = try #require(
+      NativeInteropStreamHostApiSetup.pigeonResolveInstance(
+        engineId: Int64.min, affinityKey: Int64.min, name: instanceName))
+
+    let cancelled = StreamCancelSignal()
+    api.onCallbackCancelled = { cancelled.signal() }
+    api.onCallbackListen = {
+      NativeInteropStreamHostApiSetup.unregister(
+        api: api, registrar: registrar, name: instanceName)
+    }
+    let error = NativeInteropTestsError(code: "", message: nil, details: nil)
+    let handle = setup.streamViaCallback(
+      prefix: "cb",
+      count: 1,
+      pigeonOnData: { _ in },
+      pigeonOnError: { _, _, _ in },
+      pigeonOnDone: {},
+      wrappedError: error)
+    #expect(handle != nil)
+    #expect(cancelled.isSignaled)
   }
 
   private static let streamNumbersChannel =
@@ -694,6 +772,7 @@ private final class MockNativeInteropStreamHostApi: NativeInteropStreamHostApi, 
   var onNumbersCancelled: (@Sendable () -> Void)?
   var capturedSink: NativeInteropTestsPigeonEventSink<String>?
   var onCallbackCancelled: (@Sendable () -> Void)?
+  var onCallbackListen: (() -> Void)?
 
   func streamNumbers(count: Int64, start: Int64) -> AsyncThrowingStream<Int64, Error> {
     let cancelHook = onNumbersCancelled
@@ -729,6 +808,7 @@ private final class MockNativeInteropStreamHostApi: NativeInteropStreamHostApi, 
     prefix: String, count: Int64, sink: NativeInteropTestsPigeonEventSink<String>
   ) -> (() -> Void)? {
     capturedSink = sink
+    onCallbackListen?()
     let cancelHook = onCallbackCancelled
     return { cancelHook?() }
   }

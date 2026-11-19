@@ -575,6 +575,20 @@ internal class AsyncHandlersTest {
     return engine
   }
 
+  private fun jniStreamCallback(
+      onData: (ByteArray) -> Unit = {},
+      onError: (String, String?, ByteArray?) -> Unit = { _, _, _ -> },
+      onDone: () -> Unit = {},
+  ): NativeInteropTestsPigeonStreamCallback =
+      object : NativeInteropTestsPigeonStreamCallback {
+        override fun onData(encodedValue: ByteArray) = onData(encodedValue)
+
+        override fun onError(code: String, message: String?, encodedDetails: ByteArray?) =
+            onError(code, message, encodedDetails)
+
+        override fun onDone() = onDone()
+      }
+
   @Test
   fun testJniHostStreamUnregisterCancelsActiveFlowAndCallbackStreams() {
     val api = mockk<NativeInteropStreamHostApi>()
@@ -607,26 +621,13 @@ internal class AsyncHandlersTest {
 
     val dataCount = java.util.concurrent.atomic.AtomicInteger(0)
     val flowCallback =
-        object : NativeInteropTestsPigeonStreamCallback {
-          override fun onData(encodedValue: ByteArray) {
-            dataCount.incrementAndGet()
-            flowDataLatch.countDown()
-          }
-
-          override fun onError(code: String, message: String?, encodedDetails: ByteArray?) {}
-
-          override fun onDone() {}
-        }
-    val cbCallback =
-        object : NativeInteropTestsPigeonStreamCallback {
-          override fun onData(encodedValue: ByteArray) {
-            dataCount.incrementAndGet()
-          }
-
-          override fun onError(code: String, message: String?, encodedDetails: ByteArray?) {}
-
-          override fun onDone() {}
-        }
+        jniStreamCallback(
+            onData = {
+              dataCount.incrementAndGet()
+              flowDataLatch.countDown()
+            },
+        )
+    val cbCallback = jniStreamCallback(onData = { dataCount.incrementAndGet() })
 
     resolved!!.streamNumbers(99L, 0L, flowCallback)
     resolved.streamViaCallback("cb", 1L, cbCallback)
@@ -641,6 +642,35 @@ internal class AsyncHandlersTest {
   }
 
   @Test
+  fun testJniHostStreamUnregisterIsolatesThrowingCloseable() {
+    val api = mockk<NativeInteropStreamHostApi>()
+    var secondClosed = false
+    every { api.streamViaCallback("throw-close", 1L, any()) } answers
+        {
+          AutoCloseable { throw NativeInteropTestsError("close_err", "close failed", null) }
+        }
+    every { api.streamViaCallback("cb", 1L, any()) } answers
+        {
+          AutoCloseable { secondClosed = true }
+        }
+
+    val engine = mockInteropStreamEngine(9004L)
+    val name = "test-jni-unregister-isolates-throw"
+    val registrar = NativeInteropStreamHostApiRegistrar()
+    registrar.register(api, engine, name)
+    val resolved =
+        NativeInteropStreamHostApiRegistrar.pigeonResolveInstance(9004L, Long.MIN_VALUE, name)
+    assertNotNull(resolved)
+
+    val callback = jniStreamCallback()
+    resolved!!.streamViaCallback("throw-close", 1L, callback)
+    resolved.streamViaCallback("cb", 1L, callback)
+
+    registrar.unregister(api, engine, name)
+    assertTrue(secondClosed)
+  }
+
+  @Test
   fun testJniHostStreamOnUnregisteredRegistrarThrowsUnregisteredInstance() {
     val api = mockk<NativeInteropStreamHostApi>()
     val engine = mockInteropStreamEngine(9002L)
@@ -652,18 +682,9 @@ internal class AsyncHandlersTest {
     assertNotNull(resolved)
     registrar.unregister(api, engine, name)
 
-    val callback =
-        object : NativeInteropTestsPigeonStreamCallback {
-          override fun onData(encodedValue: ByteArray) {}
-
-          override fun onError(code: String, message: String?, encodedDetails: ByteArray?) {}
-
-          override fun onDone() {}
-        }
-
     var thrown: NativeInteropTestsError? = null
     try {
-      resolved!!.streamNumbers(1L, 0L, callback)
+      resolved!!.streamNumbers(1L, 0L, jniStreamCallback())
     } catch (e: NativeInteropTestsError) {
       thrown = e
     }
@@ -677,20 +698,14 @@ internal class AsyncHandlersTest {
     val errorCodes = mutableListOf<String>()
     val doneCount = java.util.concurrent.atomic.AtomicInteger(0)
     val callback =
-        object : NativeInteropTestsPigeonStreamCallback {
-          override fun onData(encodedValue: ByteArray) {
-            dataCount.incrementAndGet()
-          }
-
-          override fun onError(code: String, message: String?, encodedDetails: ByteArray?) {
-            errorCodes.add(code)
-            assertNotNull(encodedDetails)
-          }
-
-          override fun onDone() {
-            doneCount.incrementAndGet()
-          }
-        }
+        jniStreamCallback(
+            onData = { dataCount.incrementAndGet() },
+            onError = { code, _, encodedDetails ->
+              errorCodes.add(code)
+              assertNotNull(encodedDetails)
+            },
+            onDone = { doneCount.incrementAndGet() },
+        )
 
     // Direct sink without attachOnClosed() must still deliver onError and ignore subsequent calls.
     val errorSink = NativeInteropTestsPigeonEventSink<String>(callback)
@@ -714,15 +729,7 @@ internal class AsyncHandlersTest {
 
   @Test
   fun testJniEventSinkCancelBeforeAttachClosesImmediately() {
-    val callback =
-        object : NativeInteropTestsPigeonStreamCallback {
-          override fun onData(encodedValue: ByteArray) {}
-
-          override fun onError(code: String, message: String?, encodedDetails: ByteArray?) {}
-
-          override fun onDone() {}
-        }
-    val sink = NativeInteropTestsPigeonEventSink<String>(callback)
+    val sink = NativeInteropTestsPigeonEventSink<String>(jniStreamCallback())
     sink.close()
     var closed = false
     sink.attachCloseable(AutoCloseable { closed = true })
@@ -757,8 +764,12 @@ internal class AsyncHandlersTest {
   @Test
   fun testJniCallbackSyncThrowCleansUpAndReencodesDetails() {
     val api = mockk<NativeInteropStreamHostApi>()
-    every { api.streamViaCallback("throw", 1L, any()) } throws
-        NativeInteropTestsError("sync_cb_err", "sync msg", "sync_details")
+    var capturedSink: NativeInteropTestsPigeonEventSink<String>? = null
+    every { api.streamViaCallback("throw", 1L, any()) } answers
+        {
+          capturedSink = arg(2)
+          throw NativeInteropTestsError("sync_cb_err", "sync msg", "sync_details")
+        }
 
     val engine = mockInteropStreamEngine(9003L)
     val name = "test-jni-sync-throw"
@@ -768,14 +779,8 @@ internal class AsyncHandlersTest {
         NativeInteropStreamHostApiRegistrar.pigeonResolveInstance(9003L, Long.MIN_VALUE, name)
     assertNotNull(resolved)
 
-    val callback =
-        object : NativeInteropTestsPigeonStreamCallback {
-          override fun onData(encodedValue: ByteArray) {}
-
-          override fun onError(code: String, message: String?, encodedDetails: ByteArray?) {}
-
-          override fun onDone() {}
-        }
+    val dataCount = java.util.concurrent.atomic.AtomicInteger(0)
+    val callback = jniStreamCallback(onData = { dataCount.incrementAndGet() })
 
     var thrown: NativeInteropTestsError? = null
     try {
@@ -786,6 +791,16 @@ internal class AsyncHandlersTest {
     assertNotNull(thrown)
     assertEquals("sync_cb_err", thrown!!.code)
     assertTrue(thrown.details is ByteArray)
+
+    // Verify the sink was closed on throw: further events are ignored and late closeables close
+    // immediately.
+    assertNotNull(capturedSink)
+    capturedSink!!.success("ignored")
+    assertEquals(0, dataCount.get())
+    var lateClosed = false
+    capturedSink!!.attachCloseable(AutoCloseable { lateClosed = true })
+    assertTrue(lateClosed)
+
     registrar.unregister(api, engine, name)
   }
 }

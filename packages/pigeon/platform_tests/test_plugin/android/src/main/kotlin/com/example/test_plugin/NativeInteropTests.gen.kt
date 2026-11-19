@@ -21,6 +21,7 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
@@ -224,9 +225,7 @@ interface NativeInteropTestsPigeonStreamCallback {
  */
 @Keep
 class NativeInteropTestsPigeonStreamCancelHandle
-internal constructor(
-    private val onCancel: () -> Unit,
-) {
+internal constructor(private val onCancel: () -> Unit) {
   private val cancelled = AtomicBoolean(false)
 
   @Keep
@@ -252,16 +251,16 @@ internal constructor(
     callback: NativeInteropTestsPigeonStreamCallback,
 ) {
   private val callbackRef = AtomicReference<NativeInteropTestsPigeonStreamCallback?>(callback)
-  private val onClosedRef = AtomicReference<(() -> Unit)?>(null)
   private val cancelLock = Any()
   @Volatile private var terminated = false
   private var closed = false
+  private var onClosed: (() -> Unit)? = null
   private var closeable: AutoCloseable? = null
 
   internal fun attachOnClosed(onClosed: () -> Unit) {
     kotlin.synchronized(cancelLock) {
       if (!closed && !terminated) {
-        onClosedRef.set(onClosed)
+        this.onClosed = onClosed
       }
     }
   }
@@ -302,15 +301,16 @@ internal constructor(
 
   private inline fun terminate(send: (NativeInteropTestsPigeonStreamCallback) -> Unit) {
     var callback: NativeInteropTestsPigeonStreamCallback? = null
-    var onClosed: (() -> Unit)? = null
+    var closedHook: (() -> Unit)? = null
     kotlin.synchronized(cancelLock) {
       if (terminated) return
       terminated = true
       callback = callbackRef.getAndSet(null)
-      onClosed = onClosedRef.getAndSet(null)
+      closedHook = onClosed
+      onClosed = null
       closeable = null
     }
-    onClosed?.invoke()
+    closedHook?.invoke()
     callback?.let(send)
   }
 
@@ -320,7 +320,7 @@ internal constructor(
           terminated = true
           closed = true
           callbackRef.set(null)
-          onClosedRef.set(null)
+          onClosed = null
           val current = closeable
           closeable = null
           current
@@ -9780,7 +9780,7 @@ class NativeInteropStreamHostApiRegistrar private constructor(private val engine
       cancelAction()
     }
     kotlin.synchronized(pigeonActiveStreams) {
-      if (pigeonStreamsClosed) {
+      if (pigeonStreamsClosed || this.api == null) {
         throw NativeInteropTestsError(
             "unregistered-instance", "NativeInteropStreamHostApi has not been registered.")
       }
@@ -9815,11 +9815,24 @@ class NativeInteropStreamHostApiRegistrar private constructor(private val engine
   }
 
   private fun <T> pigeonCollectFlow(
-      flow: Flow<T>,
-      callback: NativeInteropTestsPigeonStreamCallback
+      callback: NativeInteropTestsPigeonStreamCallback,
+      makeFlow: () -> Flow<T>
   ): NativeInteropTestsPigeonStreamCancelHandle {
     val active = AtomicBoolean(true)
-    lateinit var handle: NativeInteropTestsPigeonStreamCancelHandle
+    val jobLock = Any()
+    var job: Job? = null
+    var cancelled = false
+    val handle = pigeonTrackStream {
+      active.set(false)
+      val toCancel =
+          kotlin.synchronized(jobLock) {
+            cancelled = true
+            val current = job
+            job = null
+            current
+          }
+      toCancel?.cancel()
+    }
     fun reportThrowable(e: Throwable) {
       if (active.compareAndSet(true, false)) {
         pigeonUntrackStream(handle)
@@ -9827,11 +9840,19 @@ class NativeInteropStreamHostApiRegistrar private constructor(private val engine
             e.javaClass.simpleName,
             e.toString(),
             NativeInteropTestsPigeonInteropCodec.encodeOrNull(
-                "Cause: ${e.cause}, Stacktrace: ${Log.getStackTraceString(e)}"),
+                "Cause: ${e.cause}, Stacktrace: ${e.stackTraceToString()}"),
         )
       }
     }
-    val job =
+    val flow =
+        try {
+          makeFlow()
+        } catch (e: Throwable) {
+          active.set(false)
+          pigeonUntrackStream(handle)
+          throw e
+        }
+    val createdJob =
         CoroutineScope(Dispatchers.Default).launch(start = CoroutineStart.LAZY) {
           try {
             flow.collect { value ->
@@ -9856,11 +9877,20 @@ class NativeInteropStreamHostApiRegistrar private constructor(private val engine
             reportThrowable(e)
           }
         }
-    handle = pigeonTrackStream {
-      active.set(false)
-      job.cancel()
+    val shouldStart =
+        kotlin.synchronized(jobLock) {
+          if (cancelled) {
+            false
+          } else {
+            job = createdJob
+            true
+          }
+        }
+    if (shouldStart) {
+      createdJob.start()
+    } else {
+      createdJob.cancel()
     }
-    job.start()
     return handle
   }
 
@@ -9875,8 +9905,7 @@ class NativeInteropStreamHostApiRegistrar private constructor(private val engine
             ?: throw NativeInteropTestsError(
                 "unregistered-instance", "NativeInteropStreamHostApi has not been registered.")
     try {
-      val pigeonVar_flow = pigeonVar_api.streamNumbers(count, start)
-      return pigeonCollectFlow(pigeonVar_flow, pigeonCallback)
+      return pigeonCollectFlow(pigeonCallback) { pigeonVar_api.streamNumbers(count, start) }
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -9893,8 +9922,7 @@ class NativeInteropStreamHostApiRegistrar private constructor(private val engine
             ?: throw NativeInteropTestsError(
                 "unregistered-instance", "NativeInteropStreamHostApi has not been registered.")
     try {
-      val pigeonVar_flow = pigeonVar_api.streamNullableInts()
-      return pigeonCollectFlow(pigeonVar_flow, pigeonCallback)
+      return pigeonCollectFlow(pigeonCallback) { pigeonVar_api.streamNullableInts() }
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -9911,8 +9939,7 @@ class NativeInteropStreamHostApiRegistrar private constructor(private val engine
             ?: throw NativeInteropTestsError(
                 "unregistered-instance", "NativeInteropStreamHostApi has not been registered.")
     try {
-      val pigeonVar_flow = pigeonVar_api.streamShapes()
-      return pigeonCollectFlow(pigeonVar_flow, pigeonCallback)
+      return pigeonCollectFlow(pigeonCallback) { pigeonVar_api.streamShapes() }
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -9933,8 +9960,9 @@ class NativeInteropStreamHostApiRegistrar private constructor(private val engine
       val pigeonVar_decodedArgs =
           NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
       val pigeonVar_arg_filter = pigeonVar_decodedArgs[0] as NativeInteropShape
-      val pigeonVar_flow = pigeonVar_api.streamShapesWithFilter(pigeonVar_arg_filter)
-      return pigeonCollectFlow(pigeonVar_flow, pigeonCallback)
+      return pigeonCollectFlow(pigeonCallback) {
+        pigeonVar_api.streamShapesWithFilter(pigeonVar_arg_filter)
+      }
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -9952,8 +9980,7 @@ class NativeInteropStreamHostApiRegistrar private constructor(private val engine
             ?: throw NativeInteropTestsError(
                 "unregistered-instance", "NativeInteropStreamHostApi has not been registered.")
     try {
-      val pigeonVar_flow = pigeonVar_api.streamError(customError)
-      return pigeonCollectFlow(pigeonVar_flow, pigeonCallback)
+      return pigeonCollectFlow(pigeonCallback) { pigeonVar_api.streamError(customError) }
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))

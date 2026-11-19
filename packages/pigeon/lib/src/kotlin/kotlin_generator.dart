@@ -332,6 +332,9 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
         indent.writeln('import kotlinx.coroutines.CoroutineStart');
       }
       indent.writeln('import kotlinx.coroutines.Dispatchers');
+      if (generatorOptions.useJni && hasFlowHostApiMethods) {
+        indent.writeln('import kotlinx.coroutines.Job');
+      }
       if (hasFlowHostApiMethods) {
         indent.writeln('import kotlinx.coroutines.flow.Flow');
       }
@@ -1395,7 +1398,7 @@ This is called by the generated Dart code and is not intended for direct use.'''
                 indent.writeln('cancelAction()');
               });
               indent.writeScoped('kotlin.synchronized(pigeonActiveStreams) {', '}', () {
-                indent.writeScoped('if (pigeonStreamsClosed) {', '}', () {
+                indent.writeScoped('if (pigeonStreamsClosed || this.api == null) {', '}', () {
                   indent.writeln(
                     'throw $errorClassName("unregistered-instance", "${api.name} has not been registered.")',
                   );
@@ -1440,11 +1443,23 @@ This is called by the generated Dart code and is not intended for direct use.'''
           indent.newln();
           if (apiHasFlowStream) {
             indent.writeScoped(
-              'private fun <T> pigeonCollectFlow(flow: Flow<T>, callback: ${prefix}PigeonStreamCallback): ${prefix}PigeonStreamCancelHandle {',
+              'private fun <T> pigeonCollectFlow(callback: ${prefix}PigeonStreamCallback, makeFlow: () -> Flow<T>): ${prefix}PigeonStreamCancelHandle {',
               '}',
               () {
                 indent.writeln('val active = AtomicBoolean(true)');
-                indent.writeln('lateinit var handle: ${prefix}PigeonStreamCancelHandle');
+                indent.writeln('val jobLock = Any()');
+                indent.writeln('var job: Job? = null');
+                indent.writeln('var cancelled = false');
+                indent.writeScoped('val handle = pigeonTrackStream {', '}', () {
+                  indent.writeln('active.set(false)');
+                  indent.writeScoped('val toCancel = kotlin.synchronized(jobLock) {', '}', () {
+                    indent.writeln('cancelled = true');
+                    indent.writeln('val current = job');
+                    indent.writeln('job = null');
+                    indent.writeln('current');
+                  });
+                  indent.writeln('toCancel?.cancel()');
+                });
                 indent.writeScoped('fun reportThrowable(e: Throwable) {', '}', () {
                   indent.writeScoped('if (active.compareAndSet(true, false)) {', '}', () {
                     indent.writeln('pigeonUntrackStream(handle)');
@@ -1452,14 +1467,22 @@ This is called by the generated Dart code and is not intended for direct use.'''
                       indent.writeln('e.javaClass.simpleName,');
                       indent.writeln('e.toString(),');
                       indent.writeln(
-                        '$codec.encodeOrNull("Cause: \${e.cause}, Stacktrace: \${Log.getStackTraceString(e)}"),',
+                        '$codec.encodeOrNull("Cause: \${e.cause}, Stacktrace: \${e.stackTraceToString()}"),',
                       );
                     });
                   });
                 });
-                // LAZY ensures `handle` is initialized and tracked before `flow.collect` runs.
+                indent.writeScoped('val flow = try {', '}', () {
+                  indent.writeln('makeFlow()');
+                }, addTrailingNewline: false);
+                indent.addScoped(' catch (e: Throwable) {', '}', () {
+                  indent.writeln('active.set(false)');
+                  indent.writeln('pigeonUntrackStream(handle)');
+                  indent.writeln('throw e');
+                });
+                // LAZY ensures `job` is attached (or cancelled if unregister raced) before collecting.
                 indent.writeScoped(
-                  'val job = CoroutineScope(Dispatchers.Default).launch(start = CoroutineStart.LAZY) {',
+                  'val createdJob = CoroutineScope(Dispatchers.Default).launch(start = CoroutineStart.LAZY) {',
                   '}',
                   () {
                     indent.writeScoped('try {', '}', () {
@@ -1490,11 +1513,21 @@ This is called by the generated Dart code and is not intended for direct use.'''
                     });
                   },
                 );
-                indent.writeScoped('handle = pigeonTrackStream {', '}', () {
-                  indent.writeln('active.set(false)');
-                  indent.writeln('job.cancel()');
+                indent.writeScoped('val shouldStart = kotlin.synchronized(jobLock) {', '}', () {
+                  indent.writeScoped('if (cancelled) {', '}', () {
+                    indent.writeln('false');
+                  }, addTrailingNewline: false);
+                  indent.addScoped(' else {', '}', () {
+                    indent.writeln('job = createdJob');
+                    indent.writeln('true');
+                  });
                 });
-                indent.writeln('job.start()');
+                indent.writeScoped('if (shouldStart) {', '}', () {
+                  indent.writeln('createdJob.start()');
+                }, addTrailingNewline: false);
+                indent.addScoped(' else {', '}', () {
+                  indent.writeln('createdJob.cancel()');
+                });
                 indent.writeln('return handle');
               },
             );
@@ -1626,9 +1659,8 @@ This is called by the generated Dart code and is not intended for direct use.'''
           });
         } else {
           indent.writeln(
-            'val ${varNamePrefix}flow = ${varNamePrefix}api.${method.name}(${arguments.join(', ')})',
+            'return pigeonCollectFlow(pigeonCallback) { ${varNamePrefix}api.${method.name}(${arguments.join(', ')}) }',
           );
-          indent.writeln('return pigeonCollectFlow(${varNamePrefix}flow, pigeonCallback)');
         }
       }, addTrailingNewline: false);
       indent.addScoped(' catch (e: $errorClassName) {', '}', () {
@@ -2511,16 +2543,6 @@ private fun keyOfMessenger(messenger: Any): Long {
     final String errorClassName = _getErrorClassName(generatorOptions);
     final bool hybrid = generatorOptions.useJniHybrid;
     indent.newln();
-    final cancelBody = hybrid
-        ? '''
-      try {
-        onCancel()
-      } catch (e: $errorClassName) {
-        throw $errorClassName(e.code, e.message, $codec.encodeOrNull(e.details)).apply {
-          stackTrace = e.stackTrace
-        }
-      }'''
-        : '      onCancel()';
     indent.format('''
 /**
  * JNI bridge callback used by generated Dart code to receive stream events.
@@ -2537,20 +2559,32 @@ interface ${prefix}PigeonStreamCallback {
  * JNI handle returned to generated Dart code to cancel an active stream.
  * Not intended for direct use.
  */
-@Keep
-class ${prefix}PigeonStreamCancelHandle internal constructor(
-    private val onCancel: () -> Unit,
-) {
-  private val cancelled = AtomicBoolean(false)
-
-  @Keep
-  fun cancel() {
-    if (cancelled.compareAndSet(false, true)) {
-$cancelBody
-    }
+@Keep''');
+    indent.writeScoped(
+      'class ${prefix}PigeonStreamCancelHandle internal constructor(private val onCancel: () -> Unit) {',
+      '}',
+      () {
+        indent.writeln('private val cancelled = AtomicBoolean(false)');
+        indent.newln();
+        indent.writeln('@Keep');
+        indent.writeScoped('fun cancel() {', '}', () {
+          indent.writeScoped('if (cancelled.compareAndSet(false, true)) {', '}', () {
+            if (hybrid) {
+              indent.format('''
+try {
+  onCancel()
+} catch (e: $errorClassName) {
+  throw $errorClassName(e.code, e.message, $codec.encodeOrNull(e.details)).apply {
+    stackTrace = e.stackTrace
   }
-}
-''');
+}''');
+            } else {
+              indent.writeln('onCancel()');
+            }
+          });
+        });
+      },
+    );
     final bool hasCallbackStream = root.apis.whereType<AstHostApi>().any(
       (AstHostApi api) =>
           api.methods.any((Method method) => method.isStream && method.isAsynchronousCallback),
@@ -2568,16 +2602,16 @@ class ${prefix}PigeonEventSink<T> internal constructor(
     callback: ${prefix}PigeonStreamCallback,
 ) {
   private val callbackRef = AtomicReference<${prefix}PigeonStreamCallback?>(callback)
-  private val onClosedRef = AtomicReference<(() -> Unit)?>(null)
   private val cancelLock = Any()
   @Volatile private var terminated = false
   private var closed = false
+  private var onClosed: (() -> Unit)? = null
   private var closeable: AutoCloseable? = null
 
   internal fun attachOnClosed(onClosed: () -> Unit) {
     kotlin.synchronized(cancelLock) {
       if (!closed && !terminated) {
-        onClosedRef.set(onClosed)
+        this.onClosed = onClosed
       }
     }
   }
@@ -2616,15 +2650,16 @@ class ${prefix}PigeonEventSink<T> internal constructor(
 
   private inline fun terminate(send: (${prefix}PigeonStreamCallback) -> Unit) {
     var callback: ${prefix}PigeonStreamCallback? = null
-    var onClosed: (() -> Unit)? = null
+    var closedHook: (() -> Unit)? = null
     kotlin.synchronized(cancelLock) {
       if (terminated) return
       terminated = true
       callback = callbackRef.getAndSet(null)
-      onClosed = onClosedRef.getAndSet(null)
+      closedHook = onClosed
+      onClosed = null
       closeable = null
     }
-    onClosed?.invoke()
+    closedHook?.invoke()
     callback?.let(send)
   }
 
@@ -2634,7 +2669,7 @@ class ${prefix}PigeonEventSink<T> internal constructor(
           terminated = true
           closed = true
           callbackRef.set(null)
-          onClosedRef.set(null)
+          onClosed = null
           val current = closeable
           closeable = null
           current
