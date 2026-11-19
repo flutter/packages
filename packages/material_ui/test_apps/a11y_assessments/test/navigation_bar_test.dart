@@ -4,6 +4,7 @@
 
 import 'package:a11y_assessments/use_cases/navigation_bar.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
 import 'test_utils.dart';
 
@@ -19,6 +20,13 @@ void main() {
     await tester.tap(find.text('School'));
     await tester.pumpAndSettle();
     expect(find.text('Page 3'), findsOneWidget);
+  });
+
+  testWidgets('navigation bar uses the theme indicator color', (WidgetTester tester) async {
+    await pumpsUseCase(tester, NavigationBarUseCase());
+    // A custom amber pill sits under the selected destination, where the
+    // focus ring's secondary color measured 2.82:1 against it.
+    expect(tester.widget<NavigationBar>(find.byType(NavigationBar)).indicatorColor, isNull);
   });
 
   testWidgets('navigation bar has one h1 tag', (WidgetTester tester) async {

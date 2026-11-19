@@ -39,6 +39,7 @@ import 'expansion_tile_theme.dart';
 import 'filled_button.dart';
 import 'filled_button_theme.dart';
 import 'floating_action_button_theme.dart';
+import 'focus_ring_theme.dart';
 import 'icon_button_theme.dart';
 import 'ink_ripple.dart';
 import 'ink_sparkle.dart';
@@ -419,6 +420,7 @@ class ThemeData with Diagnosticable {
     ExpansionTileThemeData? expansionTileTheme,
     FilledButtonThemeData? filledButtonTheme,
     FloatingActionButtonThemeData? floatingActionButtonTheme,
+    FocusRingThemeData? focusRingTheme,
     IconButtonThemeData? iconButtonTheme,
     ListTileThemeData? listTileTheme,
     MenuBarThemeData? menuBarTheme,
@@ -652,6 +654,7 @@ class ThemeData with Diagnosticable {
     expansionTileTheme ??= const ExpansionTileThemeData();
     filledButtonTheme ??= const FilledButtonThemeData();
     floatingActionButtonTheme ??= const FloatingActionButtonThemeData();
+    focusRingTheme ??= const FocusRingThemeData();
     iconButtonTheme ??= const IconButtonThemeData();
     listTileTheme ??= const ListTileThemeData();
     menuBarTheme ??= const MenuBarThemeData();
@@ -748,6 +751,7 @@ class ThemeData with Diagnosticable {
       expansionTileTheme: expansionTileTheme,
       filledButtonTheme: filledButtonTheme,
       floatingActionButtonTheme: floatingActionButtonTheme,
+      focusRingTheme: focusRingTheme,
       iconButtonTheme: iconButtonTheme,
       listTileTheme: listTileTheme,
       menuBarTheme: menuBarTheme,
@@ -860,6 +864,7 @@ class ThemeData with Diagnosticable {
     required this.expansionTileTheme,
     required this.filledButtonTheme,
     required this.floatingActionButtonTheme,
+    required this.focusRingTheme,
     required this.iconButtonTheme,
     required this.listTileTheme,
     required this.menuBarTheme,
@@ -1478,6 +1483,10 @@ class ThemeData with Diagnosticable {
   /// [FloatingActionButton].
   final FloatingActionButtonThemeData floatingActionButtonTheme;
 
+  /// A theme for the keyboard focus ring drawn by [InkResponse] and the
+  /// Material widgets built on it.
+  final FocusRingThemeData focusRingTheme;
+
   /// A theme for customizing the appearance and internal layout of
   /// [IconButton]s.
   final IconButtonThemeData iconButtonTheme;
@@ -1656,6 +1665,7 @@ class ThemeData with Diagnosticable {
     ExpansionTileThemeData? expansionTileTheme,
     FilledButtonThemeData? filledButtonTheme,
     FloatingActionButtonThemeData? floatingActionButtonTheme,
+    FocusRingThemeData? focusRingTheme,
     IconButtonThemeData? iconButtonTheme,
     ListTileThemeData? listTileTheme,
     MenuBarThemeData? menuBarTheme,
@@ -1797,6 +1807,7 @@ class ThemeData with Diagnosticable {
       expansionTileTheme: expansionTileTheme ?? this.expansionTileTheme,
       filledButtonTheme: filledButtonTheme ?? this.filledButtonTheme,
       floatingActionButtonTheme: floatingActionButtonTheme ?? this.floatingActionButtonTheme,
+      focusRingTheme: focusRingTheme ?? this.focusRingTheme,
       iconButtonTheme: iconButtonTheme ?? this.iconButtonTheme,
       listTileTheme: listTileTheme ?? this.listTileTheme,
       menuBarTheme: menuBarTheme ?? this.menuBarTheme,
@@ -2128,6 +2139,7 @@ class ThemeData with Diagnosticable {
         b.floatingActionButtonTheme,
         t,
       )!,
+      focusRingTheme: FocusRingThemeData.lerp(a.focusRingTheme, b.focusRingTheme, t),
       iconButtonTheme: IconButtonThemeData.lerp(a.iconButtonTheme, b.iconButtonTheme, t)!,
       listTileTheme: ListTileThemeData.lerp(a.listTileTheme, b.listTileTheme, t)!,
       menuBarTheme: MenuBarThemeData.lerp(a.menuBarTheme, b.menuBarTheme, t)!,
@@ -2260,6 +2272,7 @@ class ThemeData with Diagnosticable {
         other.expansionTileTheme == expansionTileTheme &&
         other.filledButtonTheme == filledButtonTheme &&
         other.floatingActionButtonTheme == floatingActionButtonTheme &&
+        other.focusRingTheme == focusRingTheme &&
         other.iconButtonTheme == iconButtonTheme &&
         other.listTileTheme == listTileTheme &&
         other.menuBarTheme == menuBarTheme &&
@@ -2360,6 +2373,7 @@ class ThemeData with Diagnosticable {
       expansionTileTheme,
       filledButtonTheme,
       floatingActionButtonTheme,
+      focusRingTheme,
       iconButtonTheme,
       listTileTheme,
       menuBarTheme,
@@ -2821,6 +2835,14 @@ class ThemeData with Diagnosticable {
         'floatingActionButtonTheme',
         floatingActionButtonTheme,
         defaultValue: defaultData.floatingActionButtonTheme,
+        level: DiagnosticLevel.debug,
+      ),
+    );
+    properties.add(
+      DiagnosticsProperty<FocusRingThemeData>(
+        'focusRingTheme',
+        focusRingTheme,
+        defaultValue: defaultData.focusRingTheme,
         level: DiagnosticLevel.debug,
       ),
     );
