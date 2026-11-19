@@ -13,14 +13,20 @@ class PopupMenuItemExample extends StatelessWidget {
 
   final ValueChanged<Menu>? onSelected;
 
+  PopupMenuItem<Menu> _buildItem() {
+    return
+    // #region body
+    const PopupMenuItem<Menu>(value: Menu.itemOne, child: Text('Item 1'))
+    // #endregion body
+    ;
+  }
+
   @override
   Widget build(BuildContext context) {
     return PopupMenuButton<Menu>(
       onSelected: onSelected,
       itemBuilder: (BuildContext context) => <PopupMenuEntry<Menu>>[
-        // #region body
-        const PopupMenuItem<Menu>(value: Menu.itemOne, child: Text('Item 1')),
-        // #endregion body
+        _buildItem(),
       ],
     );
   }

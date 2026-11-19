@@ -39,6 +39,7 @@ void main() {
             .checked,
         isFalse,
       );
+      expect(find.byIcon(Icons.done), findsNothing);
       expect(find.byType(PopupMenuDivider), findsOneWidget);
       expect(
         tester.getTopLeft(find.text('Hero and scholar')).dx,
@@ -60,6 +61,8 @@ void main() {
             .checked,
         isTrue,
       );
+
+      expect(find.byIcon(Icons.done), findsOneWidget);
 
       // Tap 'Bring hurricane' and verify route resolves to hurricaneCame.
       final Future<dynamic> popped = observer.lastPopped!;
