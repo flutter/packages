@@ -3186,16 +3186,9 @@ class _TimePickerState extends State<_TimePicker> with RestorationMixin {
 ///
 /// <callout-box>
 ///
-// TODO(framework): Add unit tests to this code snippet.
-// https://github.com/flutter/flutter/issues/188530
 /// Show a dialog with [initialTime] equal to the current time.
 ///
-/// ```dart
-/// Future<TimeOfDay?> selectedTime = showTimePicker(
-///   initialTime: TimeOfDay.now(),
-///   context: context,
-/// );
-/// ```
+/// {@example /example/lib/time_picker/show_time_picker.snippet.0.dart#body indent=strip}
 ///
 /// </callout-box>
 ///
@@ -3245,45 +3238,19 @@ class _TimePickerState extends State<_TimePicker> with RestorationMixin {
 ///
 /// <callout-box>
 ///
-// TODO(framework): Add unit tests to this code snippet.
-// https://github.com/flutter/flutter/issues/188530
 /// Show a dialog with the text direction overridden to be
 /// [TextDirection.rtl].
 ///
-/// ```dart
-/// Future<TimeOfDay?> selectedTimeRTL = showTimePicker(
-///   context: context,
-///   initialTime: TimeOfDay.now(),
-///   builder: (BuildContext context, Widget? child) {
-///     return Directionality(
-///       textDirection: TextDirection.rtl,
-///       child: child!,
-///     );
-///   },
-/// );
-/// ```
+/// {@example /example/lib/time_picker/show_time_picker.snippet.1.dart#body indent=strip}
 ///
 /// </callout-box>
 ///
 /// <callout-box>
 ///
-// TODO(framework): Add unit tests to this code snippet.
-// https://github.com/flutter/flutter/issues/188530
 /// Show a dialog with time unconditionally displayed in 24 hour
 /// format.
 ///
-/// ```dart
-/// Future<TimeOfDay?> selectedTime24Hour = showTimePicker(
-///   context: context,
-///   initialTime: const TimeOfDay(hour: 10, minute: 47),
-///   builder: (BuildContext context, Widget? child) {
-///     return MediaQuery(
-///       data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
-///       child: child!,
-///     );
-///   },
-/// );
-/// ```
+/// {@example /example/lib/time_picker/show_time_picker.snippet.2.dart#body indent=strip}
 ///
 /// </callout-box>
 ///
