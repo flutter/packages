@@ -93,6 +93,9 @@ class InternalPigeonOptions {
               fileSpecificClassNameComponent:
                   options.swiftOptions?.fileSpecificClassNameComponent ??
                   options.fileSpecificClassNameComponent,
+              nativeInteropTransport:
+                  // ignore: invalid_use_of_visible_for_testing_member
+                  options.nativeInteropTransport ?? NativeInteropTransport.hybrid,
             ),
       kotlinOptions = options.kotlinOut == null
           ? null
@@ -103,6 +106,9 @@ class InternalPigeonOptions {
               fileSpecificClassNameComponent:
                   options.kotlinOptions?.fileSpecificClassNameComponent ??
                   options.fileSpecificClassNameComponent,
+              nativeInteropTransport:
+                  // ignore: invalid_use_of_visible_for_testing_member
+                  options.nativeInteropTransport ?? NativeInteropTransport.hybrid,
             ),
       cppOptions = (options.cppHeaderOut == null || options.cppSourceOut == null)
           ? null
@@ -132,6 +138,9 @@ class InternalPigeonOptions {
               ffiErrorClassName: options.swiftOptions?.errorClassName ?? 'PigeonError',
               jniErrorClassName: options.kotlinOptions?.errorClassName ?? 'FlutterError',
               fileSpecificClassNameComponent: _dartNativeInteropClassNameComponent(options),
+              nativeInteropTransport:
+                  // ignore: invalid_use_of_visible_for_testing_member
+                  options.nativeInteropTransport ?? NativeInteropTransport.hybrid,
             ),
       copyrightHeader = options.copyrightHeader != null
           ? _lineReader(path.posix.join(options.basePath ?? '', options.copyrightHeader))
@@ -432,6 +441,15 @@ void _errorOnSwiftFfiUnsupportedFeatures(
             ),
           );
         }
+        if (method.isAsynchronous &&
+            method.parameters.any((Parameter parameter) => parameter.name == 'completionHandler')) {
+          errors.add(
+            Error(
+              message:
+                  'Parameter "completionHandler" in asynchronous method "${method.name}" in API "${api.name}" conflicts with the completion handler parameter that Swift FFI adds to asynchronous host API methods. Rename the parameter.',
+            ),
+          );
+        }
       }
     }
   }
@@ -559,24 +577,25 @@ class DartGeneratorAdapter implements GeneratorAdapter {
         ),
       );
     }
-    errors.addAll(_errorOnNativeInteropReservedMethodNames(root, useJni: dartOptions.useJni));
+    errors.addAll(_errorOnNativeInteropReservedMethodNames(root));
     return errors;
   }
 }
 
 /// Returns errors for API methods whose names conflict with members of the
 /// Dart classes that native interop generates for the API.
-List<Error> _errorOnNativeInteropReservedMethodNames(Root root, {required bool useJni}) {
+List<Error> _errorOnNativeInteropReservedMethodNames(Root root) {
   final errors = <Error>[];
   for (final Api api in root.apis) {
     final Set<String> reservedNames = switch (api) {
-      AstHostApi() => const <String>{'createWithNativeInteropApi', 'getInstance'},
-      // The JNI registrar implements the JNIgen interface for the API, so it
-      // shares a namespace with the API's methods.
-      AstFlutterApi() => <String>{
-        'implement',
-        if (useJni) ...<String>{'dartApi', 'register'},
+      AstHostApi() => const <String>{
+        'createWithNativeInteropApi',
+        'getInstance',
+        'pigeonResolveInstance',
+        'pigeonEngineKey',
+        'pigeonEngineKeyOf',
       },
+      AstFlutterApi() => const <String>{'implement'},
       _ => const <String>{},
     };
     for (final Method method in api.methods) {
@@ -779,6 +798,24 @@ class SwiftGeneratorAdapter implements GeneratorAdapter {
   }
 }
 
+/// Returns true when [out] is a non-empty file path (not `'stdout'`).
+bool hasFileOutput(String? out) => out != null && out.isNotEmpty && out != 'stdout';
+
+/// Resolves the output directory for generated FFIgen and JNIgen config scripts.
+String resolveInteropConfigDir(String? languageConfigDir, InternalPigeonOptions options) {
+  final String? targetDir = (languageConfigDir != null && languageConfigDir.isNotEmpty)
+      ? languageConfigDir
+      : options.configDirectory;
+  final String basePath = options.basePath ?? '';
+  if (basePath.isNotEmpty &&
+      targetDir != null &&
+      targetDir.isNotEmpty &&
+      !isWithinOrEquals(basePath, targetDir)) {
+    return path.join(basePath, targetDir);
+  }
+  return (targetDir != null && targetDir.isNotEmpty) ? targetDir : basePath;
+}
+
 /// A [GeneratorAdapter] that generates FFIgen config source code.
 class FfigenConfigGeneratorAdapter implements GeneratorAdapter {
   /// Constructor for [FfigenConfigGeneratorAdapter].
@@ -791,7 +828,7 @@ class FfigenConfigGeneratorAdapter implements GeneratorAdapter {
   void generate(StringSink sink, InternalPigeonOptions options, Root root, FileType fileType) {
     final InternalSwiftOptions? swiftOptions = options.swiftOptions;
     final InternalDartOptions? dartOptions = options.dartOptions;
-    if (swiftOptions == null || dartOptions == null) {
+    if (swiftOptions == null || dartOptions == null || !hasFileOutput(dartOptions.dartOut)) {
       return;
     }
     final generator = FfigenConfigGenerator();
@@ -810,12 +847,15 @@ class FfigenConfigGeneratorAdapter implements GeneratorAdapter {
 
   @override
   IOSink? shouldGenerate(InternalPigeonOptions options, FileType _) {
-    if (!(options.swiftOptions?.useFfi ?? false)) {
+    if (!(options.swiftOptions?.useFfi ?? false) ||
+        !hasFileOutput(options.swiftOptions?.allSwiftOuts.firstOrNull) ||
+        !hasFileOutput(options.dartOptions?.dartOut)) {
       return null;
     }
-    final String targetDir =
-        options.swiftOptions?.configDirectory ?? options.configDirectory ?? options.basePath ?? '';
-    return _openSink(getFfigenConfigPath('', options.input), basePath: targetDir);
+    return _openSink(
+      getFfigenConfigPath('', options.input),
+      basePath: resolveInteropConfigDir(options.swiftOptions?.configDirectory, options),
+    );
   }
 
   @override
@@ -984,7 +1024,7 @@ class JnigenConfigGeneratorAdapter implements GeneratorAdapter {
 
   @override
   void generate(StringSink sink, InternalPigeonOptions options, Root root, FileType fileType) {
-    if (options.kotlinOptions == null || options.dartOptions == null) {
+    if (options.kotlinOptions == null || !hasFileOutput(options.dartOptions?.dartOut)) {
       return;
     }
     final generator = JnigenConfigGenerator();
@@ -1001,12 +1041,15 @@ class JnigenConfigGeneratorAdapter implements GeneratorAdapter {
 
   @override
   IOSink? shouldGenerate(InternalPigeonOptions options, FileType _) {
-    if (options.kotlinOptions?.kotlinOut == null || !(options.kotlinOptions?.useJni ?? false)) {
+    if (!hasFileOutput(options.kotlinOptions?.kotlinOut) ||
+        !(options.kotlinOptions?.useJni ?? false) ||
+        !hasFileOutput(options.dartOptions?.dartOut)) {
       return null;
     }
-    final String targetDir =
-        options.kotlinOptions?.configDirectory ?? options.configDirectory ?? options.basePath ?? '';
-    return _openSink(getJnigenConfigPath('', options.input), basePath: targetDir);
+    return _openSink(
+      getJnigenConfigPath('', options.input),
+      basePath: resolveInteropConfigDir(options.kotlinOptions?.configDirectory, options),
+    );
   }
 
   @override
@@ -1834,6 +1877,11 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       return expression.value;
     } else if (expression is dart_ast.SimpleIdentifier) {
       return expression.name;
+    } else if (expression is dart_ast.PrefixedIdentifier &&
+        expression.prefix.name == 'NativeInteropTransport') {
+      // `NativeInteropTransport` values are stored by name. Any other prefixed
+      // identifier is reported as unrecognized below.
+      return expression.identifier.name;
     } else if (expression is dart_ast.ListLiteral) {
       final list = <dynamic>[];
       for (final dart_ast.CollectionElement element in expression.elements) {
@@ -2702,15 +2750,14 @@ String? _findTargetPubspecPath({
 }) {
   String? pubspecPath;
   if (dartOutPath != null && dartOutPath.isNotEmpty) {
-    final String fullDartOut =
-        (basePath != null && basePath.isNotEmpty && !dartOutPath.startsWith(basePath))
+    final String fullDartOut = (basePath != null && basePath.isNotEmpty)
         ? path.join(basePath, dartOutPath)
         : dartOutPath;
     pubspecPath = findPubspecPath(File(fullDartOut).parent);
   }
   if (pubspecPath == null && appDirectory != null && appDirectory.isNotEmpty) {
     final String fullAppDir =
-        (basePath != null && basePath.isNotEmpty && !appDirectory.startsWith(basePath))
+        (basePath != null && basePath.isNotEmpty && !isWithinOrEquals(basePath, appDirectory))
         ? path.join(basePath, appDirectory)
         : appDirectory;
     pubspecPath = findPubspecPath(Directory(fullAppDir));
@@ -2776,9 +2823,7 @@ String? _checkGeneratedBindingsPubspecVersion({
     return null;
   }
   final String basePath = options.basePath ?? '';
-  final String fullDartOut = (basePath.isNotEmpty && !dartOutPath.startsWith(basePath))
-      ? path.join(basePath, dartOutPath)
-      : dartOutPath;
+  final String fullDartOut = basePath.isNotEmpty ? path.join(basePath, dartOutPath) : dartOutPath;
   final bindingsDartFile = File('${path.withoutExtension(fullDartOut)}$generatedFileSuffix');
   if (!bindingsDartFile.existsSync()) {
     return null;
@@ -2809,7 +2854,7 @@ String? _checkGeneratedBindingsPubspecVersion({
 
   final String? pubspecPath = _findTargetPubspecPath(
     appDirectory: appDirectory,
-    dartOutPath: fullDartOut,
+    dartOutPath: dartOutPath,
     basePath: options.basePath,
   );
   if (pubspecPath == null) {

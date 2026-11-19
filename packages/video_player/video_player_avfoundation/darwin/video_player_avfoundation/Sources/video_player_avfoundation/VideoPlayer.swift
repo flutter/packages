@@ -127,7 +127,7 @@ class VideoPlayer: NSObject {
   /// Indicates whether the video player is currently playing.
   private(set) var isPlaying = false
   /// The event listener to report video events to.
-  private(set) var eventListener: FVPVideoEventListener?
+  private(set) var eventListener: VideoEventListener?
   /// A block that will be called when dispose is called.
   var onDisposed: (() -> Void)?
 
@@ -231,12 +231,12 @@ class VideoPlayer: NSObject {
   }
 
   deinit {
-    if let playToEndObserver = playToEndObserver {
+    if let playToEndObserver {
       NotificationCenter.default.removeObserver(playToEndObserver)
     }
   }
 
-  func setEventListener(_ eventListener: FVPVideoEventListener) async {
+  func setEventListener(_ eventListener: VideoEventListener) async {
     self.eventListener = eventListener
     // The first time an event listener is set, set up video event listeners to relay status changes
     // changes to the event listener.
@@ -259,10 +259,10 @@ class VideoPlayer: NSObject {
             guard let self = self else { return }
             let values = object.loadedTimeRanges.map { rangeValue in
               let range = rangeValue.timeRangeValue
-              return [
-                NSNumber(value: self.convertCMTimeToMillis(range.start)),
-                NSNumber(value: self.convertCMTimeToMillis(range.duration)),
-              ]
+              return PlatformDurationRange(
+                startMilliseconds: self.convertCMTimeToMillis(range.start),
+                durationMilliseconds: self.convertCMTimeToMillis(range.duration),
+              )
             }
             self.eventListener?.videoPlayerDidUpdateBufferRegions(values)
           }
@@ -369,7 +369,7 @@ class VideoPlayer: NSObject {
     disposed = true
 
     // Remove all observers.
-    if let playToEndObserver = playToEndObserver {
+    if let playToEndObserver {
       NotificationCenter.default.removeObserver(playToEndObserver)
       self.playToEndObserver = nil
     }
@@ -642,7 +642,7 @@ class VideoPlayer: NSObject {
     }
     let details = NSMutableOrderedSet(object: "Failed to load video")
     let addToDetails: (String?) -> Void = { detail in
-      if let detail = detail {
+      if let detail {
         details.add(detail)
       }
     }

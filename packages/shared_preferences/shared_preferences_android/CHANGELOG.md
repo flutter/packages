@@ -1,3 +1,8 @@
+## 2.5.5
+
+* Updates Pigeon to 30.0.1 to support multi-engine registration and deregistration.
+* Updates `jni` to `^1.1.1` and removes manual web conditional FFI export and R8 consumer rules workarounds.
+
 ## 2.5.4
 
 * Fixes eager SharedPreferences fetch in `LegacySharedPreferencesPlugin` executing synchronous disk I/O on Android main thread during startup by deferring the fetch until first use.
