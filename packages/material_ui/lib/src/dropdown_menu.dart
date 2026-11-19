@@ -637,30 +637,10 @@ class DropdownMenu<T> extends StatefulWidget {
   ///
   /// <callout-box>
   ///
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
-  ///
   /// In this example the `filterCallback` returns the items that contains the
   /// trimmed query.
   ///
-  /// ```dart
-  /// DropdownMenu<Text>(
-  ///   enableFilter: true,
-  ///   filterCallback: (List<DropdownMenuEntry<Text>> entries, String filter) {
-  ///     final String trimmedFilter = filter.trim().toLowerCase();
-  ///       if (trimmedFilter.isEmpty) {
-  ///         return entries;
-  ///       }
-  ///
-  ///       return entries
-  ///         .where((DropdownMenuEntry<Text> entry) =>
-  ///           entry.label.toLowerCase().contains(trimmedFilter),
-  ///         )
-  ///         .toList();
-  ///   },
-  ///   dropdownMenuEntries: const <DropdownMenuEntry<Text>>[],
-  /// )
-  /// ```
+  /// {@example /example/lib/dropdown_menu/dropdown_menu.snippet.0.dart#body indent=strip}
   ///
   /// </callout-box>
   ///
@@ -676,25 +656,10 @@ class DropdownMenu<T> extends StatefulWidget {
   ///
   /// <callout-box>
   ///
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
-  ///
   /// In this example the `searchCallback` returns the index of the search result
   /// that exactly matches the query.
   ///
-  /// ```dart
-  /// DropdownMenu<Text>(
-  ///   searchCallback: (List<DropdownMenuEntry<Text>> entries, String query) {
-  ///     if (query.isEmpty) {
-  ///       return null;
-  ///     }
-  ///     final int index = entries.indexWhere((DropdownMenuEntry<Text> entry) => entry.label == query);
-  ///
-  ///     return index != -1 ? index : null;
-  ///   },
-  ///   dropdownMenuEntries: const <DropdownMenuEntry<Text>>[],
-  /// )
-  /// ```
+  /// {@example /example/lib/dropdown_menu/dropdown_menu.snippet.1.dart#body indent=strip}
   ///
   /// </callout-box>
   ///

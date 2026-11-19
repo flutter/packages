@@ -152,14 +152,7 @@ class PopupMenuDivider extends PopupMenuEntry<Never> {
   ///
   /// <callout-box>
   ///
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
-  ///
-  /// ```dart
-  /// const PopupMenuDivider(
-  ///   color: Colors.deepOrange,
-  /// )
-  /// ```
+  /// {@example /example/lib/popup_menu/popup_menu_divider.snippet.0.dart#body indent=strip}
   ///
   /// </callout-box>
   final Color? color;
@@ -249,18 +242,10 @@ class _RenderMenuItem extends RenderShiftedBox {
 ///
 /// <callout-box>
 ///
-// TODO(framework): Add unit tests to this code snippet.
-// https://github.com/flutter/flutter/issues/188530
-///
 /// Here, a [Text] widget is used with a popup menu item. The `Menu` type
 /// is an enum, not shown here.
 ///
-/// ```dart
-/// const PopupMenuItem<Menu>(
-///   value: Menu.itemOne,
-///   child: Text('Item 1'),
-/// )
-/// ```
+/// {@example /example/lib/popup_menu/popup_menu_item.snippet.0.dart#body indent=strip}
 ///
 /// </callout-box>
 ///
@@ -506,9 +491,6 @@ class PopupMenuItemState<T, W extends PopupMenuItem<T>> extends State<W> {
 ///
 /// <callout-box>
 ///
-// TODO(framework): Add unit tests to this code snippet.
-// https://github.com/flutter/flutter/issues/188530
-///
 /// Suppose a `Commands` enum exists that lists the possible commands from a
 /// particular popup menu, including `Commands.heroAndScholar` and
 /// `Commands.hurricaneCame`, and further suppose that there is a
@@ -517,33 +499,7 @@ class PopupMenuItemState<T, W extends PopupMenuItem<T>> extends State<W> {
 /// one menu item without a checkmark for selecting the second option. (It also
 /// shows a divider placed between the two menu items.)
 ///
-/// ```dart
-/// PopupMenuButton<Commands>(
-///   onSelected: (Commands result) {
-///     switch (result) {
-///       case Commands.heroAndScholar:
-///         setState(() { _heroAndScholar = !_heroAndScholar; });
-///       case Commands.hurricaneCame:
-///         // ...handle hurricane option
-///         break;
-///       // ...other items handled here
-///     }
-///   },
-///   itemBuilder: (BuildContext context) => <PopupMenuEntry<Commands>>[
-///     CheckedPopupMenuItem<Commands>(
-///       checked: _heroAndScholar,
-///       value: Commands.heroAndScholar,
-///       child: const Text('Hero and scholar'),
-///     ),
-///     const PopupMenuDivider(),
-///     const PopupMenuItem<Commands>(
-///       value: Commands.hurricaneCame,
-///       child: ListTile(leading: Icon(null), title: Text('Bring hurricane')),
-///     ),
-///     // ...other items listed here
-///   ],
-/// )
-/// ```
+/// {@example /example/lib/popup_menu/checked_popup_menu_item.snippet.0.dart#body indent=strip}
 ///
 /// </callout-box>
 ///
