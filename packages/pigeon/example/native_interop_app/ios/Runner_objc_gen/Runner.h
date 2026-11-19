@@ -335,8 +335,19 @@ typedef unsigned int swift_uint4 __attribute__((__ext_vector_type__(4)));
 SWIFT_CLASS("_TtC6Runner28NativeInteropExampleApiSetup")
 @interface NativeInteropExampleApiSetup : NSObject
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
-+ (NativeInteropExampleApiSetup* _Nullable)getInstanceWithName:
-    (NSString* _Nonnull)name SWIFT_WARN_UNUSED_RESULT;
+/// Returns the instance generated Dart code should use for <code>name</code>
+/// (or the default instance). Prefers the most recent registration whose engine
+/// key is <code>engineId</code>, then <code>affinityKey</code>, then the most
+/// recent registration. <code>Int64.min</code> means unknown.
++ (NativeInteropExampleApiSetup* _Nullable)
+    pigeonResolveInstanceWithEngineId:(int64_t)engineId
+                          affinityKey:(int64_t)affinityKey
+                                 name:(NSString* _Nonnull)name
+    SWIFT_WARN_UNUSED_RESULT;
+/// Returns the engine key <code>instance</code> was registered with, or
+/// <code>Int64.min</code> if unknown.
++ (int64_t)pigeonEngineKeyOf:(NativeInteropExampleApiSetup* _Nonnull)instance
+    SWIFT_WARN_UNUSED_RESULT;
 - (void)doSomethingWithWrappedError:(PigeonError* _Nonnull)wrappedError;
 @end
 

@@ -1,3 +1,7 @@
+## 18.1.4
+
+- Fixes the system back button being ignored after switching away from a `StatefulShellRoute` branch that still has an active sub-route.
+
 ## 18.1.3
 
 - Fixes path parameter regex parsing to support nested parentheses, grouping constructs, and lookahead assertions in GoRoute paths.

@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes `CupertinoSheetRoute` throwing when a drag ends while a relayout of the sheet is pending.
+version: patch

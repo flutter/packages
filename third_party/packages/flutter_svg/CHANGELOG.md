@@ -1,6 +1,26 @@
-## 2.3.3
+## 2.4.2
 
 * Uses the configured default placeholder builder when no widget-specific placeholder is supplied.
+
+## 2.4.1
+
+* Fixes network cache keys to compare header values and snapshot mutable
+  headers.
+
+## 2.4.0
+
+* Adds a configurable compiled SVG cache byte budget, defaulting to 32 MiB,
+  with byte accounting and least-recently-used eviction alongside the entry limit.
+* Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
+
+## 2.3.4
+
+* Prevents pending loads invalidated by clear or evict from repopulating the cache.
+
+## 2.3.3
+
+* Fixes `Cache.putIfAbsent` leaving rejected futures in `_pending` and leaking
+  uncaught `Zone` errors when an asynchronous SVG load fails.
 
 ## 2.3.2
 
