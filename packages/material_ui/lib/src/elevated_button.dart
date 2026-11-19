@@ -36,10 +36,9 @@ part 'generated/elevated_button_defaults_m3e.g.dart';
 /// such as dialogs or cards.
 ///
 /// An elevated button is a label [child] displayed on a [Material]
-/// widget whose [Material.elevation] gives it a shadow. The label's
-/// [Text] and [Icon] widgets are displayed in
-/// [style]'s [ButtonStyle.foregroundColor] and the button's filled
-/// background is the [ButtonStyle.backgroundColor].
+/// widget whose [Material.elevation] gives it a shadow. The label's [Text] and
+/// [Icon] widgets are displayed in [style]'s [ButtonStyle.foregroundColor] and
+/// the button's filled background is the [ButtonStyle.backgroundColor].
 ///
 /// The elevated button's default style is defined by
 /// [defaultStyleOf]. The style of this elevated button can be
