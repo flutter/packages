@@ -2976,7 +2976,7 @@ if (wrapped == nil) {
         );
         String? serialBackgroundQueue;
         if (api.methods.any(
-          (Method m) => m.taskQueueType == TaskQueueType.serialBackgroundThread,
+          (Method m) => !m.isStream && m.taskQueueType == TaskQueueType.serialBackgroundThread,
         )) {
           serialBackgroundQueue = 'taskQueue';
           // TODO(stuartmorgan): Remove the ? once macOS supports task queues
@@ -3002,9 +3002,6 @@ if (wrapped == nil) {
               isAsynchronousCallback: method.isAsynchronousCallback,
               swiftFunction: method.swiftFunction,
               documentationComments: method.documentationComments,
-              serialBackgroundQueue: method.taskQueueType == TaskQueueType.serialBackgroundThread
-                  ? serialBackgroundQueue
-                  : null,
             );
           } else {
             _writeHostMethodMessageHandler(
@@ -4510,7 +4507,6 @@ class ${prefix}PigeonEventSink<ReturnType>: @unchecked Sendable {
     required TypeDeclaration returnType,
     required bool isAsynchronousCallback,
     required String? swiftFunction,
-    String? serialBackgroundQueue,
     List<String> documentationComments = const <String>[],
   }) {
     final components = _SwiftFunctionComponents(
@@ -4526,19 +4522,9 @@ class ${prefix}PigeonEventSink<ReturnType>: @unchecked Sendable {
     final varEventsChannelName = '${name}EventsChannelName';
     addDocumentationComments(indent, documentationComments, _docCommentSpec);
     indent.writeln('let $varEventsChannelName = "$channelName.events"');
-    final baseArgs = 'name: "$channelName", binaryMessenger: binaryMessenger, codec: codec';
-    final channelCreationWithoutTaskQueue = 'FlutterBasicMessageChannel($baseArgs)';
-    if (serialBackgroundQueue == null) {
-      indent.writeln('let $varChannelName = $channelCreationWithoutTaskQueue');
-    } else {
-      final channelCreationWithTaskQueue =
-          'FlutterBasicMessageChannel($baseArgs, taskQueue: $serialBackgroundQueue)';
-      indent.write('let $varChannelName = $serialBackgroundQueue == nil');
-      indent.addScoped('', '', () {
-        indent.writeln('? $channelCreationWithoutTaskQueue');
-        indent.writeln(': $channelCreationWithTaskQueue');
-      });
-    }
+    indent.writeln(
+      'let $varChannelName = FlutterBasicMessageChannel(name: "$channelName", binaryMessenger: binaryMessenger, codec: codec)',
+    );
     indent.writeln(
       'streamRegistry.cancelAll(messenger: binaryMessenger, channelName: $varEventsChannelName)',
     );

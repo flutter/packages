@@ -14,9 +14,9 @@ import 'package:flutter/services.dart';
 import 'package:meta/meta.dart' show immutable, protected, visibleForTesting;
 
 Object? _extractReplyValueOrThrow(
-    List<Object?>? replyList,
-    String channelName, {
-    required bool isNullValid,
+  List<Object?>? replyList,
+  String channelName, {
+  required bool isNullValid,
 }) {
   if (replyList == null) {
     throw PlatformException(
@@ -37,7 +37,6 @@ Object? _extractReplyValueOrThrow(
   }
   return replyList.firstOrNull;
 }
-
 
 class _PigeonStreamSubscriptionHandler {
   _PigeonStreamSubscriptionHandler({
@@ -77,11 +76,7 @@ class _PigeonChannelStreamRouter {
     final (BinaryMessenger, String) key = (resolvedMessenger, eventsChannelName);
     final _PigeonChannelStreamRouter router = _routers.putIfAbsent(key, () {
       final _PigeonChannelStreamRouter created = _PigeonChannelStreamRouter(
-        BasicMessageChannel<Object?>(
-          eventsChannelName,
-          codec,
-          binaryMessenger: binaryMessenger,
-        ),
+        BasicMessageChannel<Object?>(eventsChannelName, codec, binaryMessenger: binaryMessenger),
       );
       created._attach(key);
       return created;
@@ -126,11 +121,7 @@ class _PigeonChannelStreamRouter {
             _routers.remove(key);
             channel.setMessageHandler(null);
           }
-          handler?.onError(
-            frame[2]! as String,
-            frame[3] as String?,
-            frame[4],
-          );
+          handler?.onError(frame[2]! as String, frame[3] as String?, frame[4]);
         case _doneFrameKind:
           final _PigeonStreamSubscriptionHandler? handler = _subscriptions.remove(subscriptionId);
           if (_subscriptions.isEmpty) {
@@ -199,11 +190,7 @@ Stream<T> _pigeonChannelStream<T>({
         try {
           final List<Object?>? replyList =
               await controlChannel.send(<Object?>['listen', id, ...arguments]) as List<Object?>?;
-          _extractReplyValueOrThrow(
-            replyList,
-            controlChannelName,
-            isNullValid: true,
-          );
+          _extractReplyValueOrThrow(replyList, controlChannelName, isNullValid: true);
         } catch (e, st) {
           final bool wasActive = _PigeonChannelStreamRouter.unregister(
             eventsChannelName: eventsChannelName,
@@ -255,8 +242,7 @@ bool _deepEquals(Object? a, Object? b) {
   }
   if (a is List && b is List) {
     return a.length == b.length &&
-        a.indexed
-            .every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
+        a.indexed.every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
   }
   if (a is Map && b is Map) {
     if (a.length != b.length) {
@@ -305,18 +291,9 @@ int _deepHash(Object? value) {
   return value.hashCode;
 }
 
+enum EventEnum { one, two, three, fortyTwo, fourHundredTwentyTwo }
 
-enum EventEnum {
-  one,
-  two,
-  three,
-  fortyTwo,
-  fourHundredTwentyTwo;
-}
-
-enum AnotherEventEnum {
-  justInCase;
-}
+enum AnotherEventEnum { justInCase }
 
 /// A class containing all supported nullable types.
 class EventAllNullableTypes {
@@ -453,7 +430,8 @@ class EventAllNullableTypes {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static EventAllNullableTypes decode(Object result) {
     result as List<Object?>;
@@ -488,7 +466,8 @@ class EventAllNullableTypes {
       objectMap: result[27] as Map<Object?, Object?>?,
       listMap: (result[28] as Map<Object?, Object?>?)?.cast<int?, List<Object?>?>(),
       mapMap: (result[29] as Map<Object?, Object?>?)?.cast<int?, Map<Object?, Object?>?>(),
-      recursiveClassMap: (result[30] as Map<Object?, Object?>?)?.cast<int?, EventAllNullableTypes?>(),
+      recursiveClassMap: (result[30] as Map<Object?, Object?>?)
+          ?.cast<int?, EventAllNullableTypes?>(),
     );
   }
 
@@ -501,7 +480,37 @@ class EventAllNullableTypes {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(aNullableBool, other.aNullableBool) && _deepEquals(aNullableInt, other.aNullableInt) && _deepEquals(aNullableInt64, other.aNullableInt64) && _deepEquals(aNullableDouble, other.aNullableDouble) && _deepEquals(aNullableByteArray, other.aNullableByteArray) && _deepEquals(aNullable4ByteArray, other.aNullable4ByteArray) && _deepEquals(aNullable8ByteArray, other.aNullable8ByteArray) && _deepEquals(aNullableFloatArray, other.aNullableFloatArray) && _deepEquals(aNullableEnum, other.aNullableEnum) && _deepEquals(anotherNullableEnum, other.anotherNullableEnum) && _deepEquals(aNullableString, other.aNullableString) && _deepEquals(aNullableObject, other.aNullableObject) && _deepEquals(allNullableTypes, other.allNullableTypes) && _deepEquals(list, other.list) && _deepEquals(stringList, other.stringList) && _deepEquals(intList, other.intList) && _deepEquals(doubleList, other.doubleList) && _deepEquals(boolList, other.boolList) && _deepEquals(enumList, other.enumList) && _deepEquals(objectList, other.objectList) && _deepEquals(listList, other.listList) && _deepEquals(mapList, other.mapList) && _deepEquals(recursiveClassList, other.recursiveClassList) && _deepEquals(map, other.map) && _deepEquals(stringMap, other.stringMap) && _deepEquals(intMap, other.intMap) && _deepEquals(enumMap, other.enumMap) && _deepEquals(objectMap, other.objectMap) && _deepEquals(listMap, other.listMap) && _deepEquals(mapMap, other.mapMap) && _deepEquals(recursiveClassMap, other.recursiveClassMap);
+    return _deepEquals(aNullableBool, other.aNullableBool) &&
+        _deepEquals(aNullableInt, other.aNullableInt) &&
+        _deepEquals(aNullableInt64, other.aNullableInt64) &&
+        _deepEquals(aNullableDouble, other.aNullableDouble) &&
+        _deepEquals(aNullableByteArray, other.aNullableByteArray) &&
+        _deepEquals(aNullable4ByteArray, other.aNullable4ByteArray) &&
+        _deepEquals(aNullable8ByteArray, other.aNullable8ByteArray) &&
+        _deepEquals(aNullableFloatArray, other.aNullableFloatArray) &&
+        _deepEquals(aNullableEnum, other.aNullableEnum) &&
+        _deepEquals(anotherNullableEnum, other.anotherNullableEnum) &&
+        _deepEquals(aNullableString, other.aNullableString) &&
+        _deepEquals(aNullableObject, other.aNullableObject) &&
+        _deepEquals(allNullableTypes, other.allNullableTypes) &&
+        _deepEquals(list, other.list) &&
+        _deepEquals(stringList, other.stringList) &&
+        _deepEquals(intList, other.intList) &&
+        _deepEquals(doubleList, other.doubleList) &&
+        _deepEquals(boolList, other.boolList) &&
+        _deepEquals(enumList, other.enumList) &&
+        _deepEquals(objectList, other.objectList) &&
+        _deepEquals(listList, other.listList) &&
+        _deepEquals(mapList, other.mapList) &&
+        _deepEquals(recursiveClassList, other.recursiveClassList) &&
+        _deepEquals(map, other.map) &&
+        _deepEquals(stringMap, other.stringMap) &&
+        _deepEquals(intMap, other.intMap) &&
+        _deepEquals(enumMap, other.enumMap) &&
+        _deepEquals(objectMap, other.objectMap) &&
+        _deepEquals(listMap, other.listMap) &&
+        _deepEquals(mapMap, other.mapMap) &&
+        _deepEquals(recursiveClassMap, other.recursiveClassMap);
   }
 
   @override
@@ -514,30 +523,24 @@ class EventAllNullableTypes {
   }
 }
 
-sealed class PlatformEvent {
-}
+sealed class PlatformEvent {}
 
 class IntEvent extends PlatformEvent {
-  IntEvent({
-    required this.value,
-  });
+  IntEvent({required this.value});
 
   int value;
 
   List<Object?> _toList() {
-    return <Object?>[
-      value,
-    ];
+    return <Object?>[value];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static IntEvent decode(Object result) {
     result as List<Object?>;
-    return IntEvent(
-      value: result[0]! as int,
-    );
+    return IntEvent(value: result[0]! as int);
   }
 
   @override
@@ -563,26 +566,21 @@ class IntEvent extends PlatformEvent {
 }
 
 class StringEvent extends PlatformEvent {
-  StringEvent({
-    required this.value,
-  });
+  StringEvent({required this.value});
 
   String value;
 
   List<Object?> _toList() {
-    return <Object?>[
-      value,
-    ];
+    return <Object?>[value];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static StringEvent decode(Object result) {
     result as List<Object?>;
-    return StringEvent(
-      value: result[0]! as String,
-    );
+    return StringEvent(value: result[0]! as String);
   }
 
   @override
@@ -608,26 +606,21 @@ class StringEvent extends PlatformEvent {
 }
 
 class BoolEvent extends PlatformEvent {
-  BoolEvent({
-    required this.value,
-  });
+  BoolEvent({required this.value});
 
   bool value;
 
   List<Object?> _toList() {
-    return <Object?>[
-      value,
-    ];
+    return <Object?>[value];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static BoolEvent decode(Object result) {
     result as List<Object?>;
-    return BoolEvent(
-      value: result[0]! as bool,
-    );
+    return BoolEvent(value: result[0]! as bool);
   }
 
   @override
@@ -653,26 +646,21 @@ class BoolEvent extends PlatformEvent {
 }
 
 class DoubleEvent extends PlatformEvent {
-  DoubleEvent({
-    required this.value,
-  });
+  DoubleEvent({required this.value});
 
   double value;
 
   List<Object?> _toList() {
-    return <Object?>[
-      value,
-    ];
+    return <Object?>[value];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static DoubleEvent decode(Object result) {
     result as List<Object?>;
-    return DoubleEvent(
-      value: result[0]! as double,
-    );
+    return DoubleEvent(value: result[0]! as double);
   }
 
   @override
@@ -698,26 +686,21 @@ class DoubleEvent extends PlatformEvent {
 }
 
 class ObjectsEvent extends PlatformEvent {
-  ObjectsEvent({
-    required this.value,
-  });
+  ObjectsEvent({required this.value});
 
   Object value;
 
   List<Object?> _toList() {
-    return <Object?>[
-      value,
-    ];
+    return <Object?>[value];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static ObjectsEvent decode(Object result) {
     result as List<Object?>;
-    return ObjectsEvent(
-      value: result[0]!,
-    );
+    return ObjectsEvent(value: result[0]!);
   }
 
   @override
@@ -743,26 +726,21 @@ class ObjectsEvent extends PlatformEvent {
 }
 
 class EnumEvent extends PlatformEvent {
-  EnumEvent({
-    required this.value,
-  });
+  EnumEvent({required this.value});
 
   EventEnum value;
 
   List<Object?> _toList() {
-    return <Object?>[
-      value,
-    ];
+    return <Object?>[value];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static EnumEvent decode(Object result) {
     result as List<Object?>;
-    return EnumEvent(
-      value: result[0]! as EventEnum,
-    );
+    return EnumEvent(value: result[0]! as EventEnum);
   }
 
   @override
@@ -788,26 +766,21 @@ class EnumEvent extends PlatformEvent {
 }
 
 class ClassEvent extends PlatformEvent {
-  ClassEvent({
-    required this.value,
-  });
+  ClassEvent({required this.value});
 
   EventAllNullableTypes value;
 
   List<Object?> _toList() {
-    return <Object?>[
-      value,
-    ];
+    return <Object?>[value];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static ClassEvent decode(Object result) {
     result as List<Object?>;
-    return ClassEvent(
-      value: result[0]! as EventAllNullableTypes,
-    );
+    return ClassEvent(value: result[0]! as EventAllNullableTypes);
   }
 
   @override
@@ -836,17 +809,16 @@ class EmptyEvent extends PlatformEvent {
   EmptyEvent();
 
   List<Object?> _toList() {
-    return <Object?>[
-    ];
+    return <Object?>[];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static EmptyEvent decode(Object result) {
     result as List<Object?>;
-    return EmptyEvent(
-    );
+    return EmptyEvent();
   }
 
   @override
@@ -868,7 +840,6 @@ class EmptyEvent extends PlatformEvent {
   }
 }
 
-
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
@@ -876,37 +847,37 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
-    }    else if (value is EventEnum) {
+    } else if (value is EventEnum) {
       buffer.putUint8(129);
       writeValue(buffer, value.index);
-    }    else if (value is AnotherEventEnum) {
+    } else if (value is AnotherEventEnum) {
       buffer.putUint8(130);
       writeValue(buffer, value.index);
-    }    else if (value is EventAllNullableTypes) {
+    } else if (value is EventAllNullableTypes) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
-    }    else if (value is IntEvent) {
+    } else if (value is IntEvent) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
-    }    else if (value is StringEvent) {
+    } else if (value is StringEvent) {
       buffer.putUint8(133);
       writeValue(buffer, value.encode());
-    }    else if (value is BoolEvent) {
+    } else if (value is BoolEvent) {
       buffer.putUint8(134);
       writeValue(buffer, value.encode());
-    }    else if (value is DoubleEvent) {
+    } else if (value is DoubleEvent) {
       buffer.putUint8(135);
       writeValue(buffer, value.encode());
-    }    else if (value is ObjectsEvent) {
+    } else if (value is ObjectsEvent) {
       buffer.putUint8(136);
       writeValue(buffer, value.encode());
-    }    else if (value is EnumEvent) {
+    } else if (value is EnumEvent) {
       buffer.putUint8(137);
       writeValue(buffer, value.encode());
-    }    else if (value is ClassEvent) {
+    } else if (value is ClassEvent) {
       buffer.putUint8(138);
       writeValue(buffer, value.encode());
-    }    else if (value is EmptyEvent) {
+    } else if (value is EmptyEvent) {
       buffer.putUint8(139);
       writeValue(buffer, value.encode());
     } else {
@@ -951,21 +922,20 @@ class StreamHostTestApi {
   /// Constructor for [StreamHostTestApi]. The [binaryMessenger] named argument is
   /// available for dependency injection. If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  StreamHostTestApi({
-      BinaryMessenger? binaryMessenger, 
-      String messageChannelSuffix = '', 
-      })
-      : pigeonVar_binaryMessenger = binaryMessenger,
-        pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+  StreamHostTestApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
+    : pigeonVar_binaryMessenger = binaryMessenger,
+      pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+          ? '.$messageChannelSuffix'
+          : '';
 
   final BinaryMessenger? pigeonVar_binaryMessenger;
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
 
   final String pigeonVar_messageChannelSuffix;
 
-
   Stream<int> streamNumbers({int count = 5, int start = 0}) {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.streamNumbers$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.streamNumbers$pigeonVar_messageChannelSuffix';
     return _pigeonChannelStream<int>(
       controlChannelName: pigeonVar_channelName,
       codec: pigeonChannelCodec,
@@ -976,7 +946,8 @@ class StreamHostTestApi {
   }
 
   Stream<PlatformEvent> streamPlatformEvents() {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.streamPlatformEvents$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.streamPlatformEvents$pigeonVar_messageChannelSuffix';
     return _pigeonChannelStream<PlatformEvent>(
       controlChannelName: pigeonVar_channelName,
       codec: pigeonChannelCodec,
@@ -987,7 +958,8 @@ class StreamHostTestApi {
   }
 
   Stream<int?> streamNullableInts() {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.streamNullableInts$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.streamNullableInts$pigeonVar_messageChannelSuffix';
     return _pigeonChannelStream<int?>(
       controlChannelName: pigeonVar_channelName,
       codec: pigeonChannelCodec,
@@ -998,7 +970,8 @@ class StreamHostTestApi {
   }
 
   Stream<int> streamError(bool customError) {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.streamError$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.streamError$pigeonVar_messageChannelSuffix';
     return _pigeonChannelStream<int>(
       controlChannelName: pigeonVar_channelName,
       codec: pigeonChannelCodec,
@@ -1009,7 +982,8 @@ class StreamHostTestApi {
   }
 
   Stream<String> streamViaCallback(String prefix, int count) {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.streamViaCallback$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.streamViaCallback$pigeonVar_messageChannelSuffix';
     return _pigeonChannelStream<String>(
       controlChannelName: pigeonVar_channelName,
       codec: pigeonChannelCodec,
@@ -1020,7 +994,8 @@ class StreamHostTestApi {
   }
 
   Future<int> getCancelledStreamCount() async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.getCancelledStreamCount$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.getCancelledStreamCount$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -1029,16 +1004,16 @@ class StreamHostTestApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: false,
-    )
-    ;
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
     return pigeonVar_replyValue! as int;
   }
 
   Future<void> resetCancelledStreamCount() async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.resetCancelledStreamCount$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.resetCancelledStreamCount$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -1046,11 +1021,6 @@ class StreamHostTestApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: true,
-    )
-    ;
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 }

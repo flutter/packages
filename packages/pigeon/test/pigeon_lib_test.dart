@@ -3668,6 +3668,10 @@ abstract class SensorApi {
           'Stream methods are already asynchronous; remove @async',
         ),
         (
+          '@HostApi()\nabstract class Api {\n  @TaskQueue(type: TaskQueueType.serialBackgroundThread)\n  Stream<int> watch();\n}',
+          '@TaskQueue is not supported on Stream methods',
+        ),
+        (
           '@HostApi()\nabstract class Api {\n  @asyncCallback\n  Stream<int> watch(String sink);\n}',
           'Parameter "sink" in @asyncCallback stream method "watch"',
         ),

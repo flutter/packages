@@ -14,9 +14,9 @@ import 'package:flutter/services.dart';
 import 'package:meta/meta.dart' show immutable, protected, visibleForTesting;
 
 Object? _extractReplyValueOrThrow(
-    List<Object?>? replyList,
-    String channelName, {
-    required bool isNullValid,
+  List<Object?>? replyList,
+  String channelName, {
+  required bool isNullValid,
 }) {
   if (replyList == null) {
     throw PlatformException(
@@ -37,7 +37,6 @@ Object? _extractReplyValueOrThrow(
   }
   return replyList.firstOrNull;
 }
-
 
 class _PigeonStreamSubscriptionHandler {
   _PigeonStreamSubscriptionHandler({
@@ -77,11 +76,7 @@ class _PigeonChannelStreamRouter {
     final (BinaryMessenger, String) key = (resolvedMessenger, eventsChannelName);
     final _PigeonChannelStreamRouter router = _routers.putIfAbsent(key, () {
       final _PigeonChannelStreamRouter created = _PigeonChannelStreamRouter(
-        BasicMessageChannel<Object?>(
-          eventsChannelName,
-          codec,
-          binaryMessenger: binaryMessenger,
-        ),
+        BasicMessageChannel<Object?>(eventsChannelName, codec, binaryMessenger: binaryMessenger),
       );
       created._attach(key);
       return created;
@@ -126,11 +121,7 @@ class _PigeonChannelStreamRouter {
             _routers.remove(key);
             channel.setMessageHandler(null);
           }
-          handler?.onError(
-            frame[2]! as String,
-            frame[3] as String?,
-            frame[4],
-          );
+          handler?.onError(frame[2]! as String, frame[3] as String?, frame[4]);
         case _doneFrameKind:
           final _PigeonStreamSubscriptionHandler? handler = _subscriptions.remove(subscriptionId);
           if (_subscriptions.isEmpty) {
@@ -199,11 +190,7 @@ Stream<T> _pigeonChannelStream<T>({
         try {
           final List<Object?>? replyList =
               await controlChannel.send(<Object?>['listen', id, ...arguments]) as List<Object?>?;
-          _extractReplyValueOrThrow(
-            replyList,
-            controlChannelName,
-            isNullValid: true,
-          );
+          _extractReplyValueOrThrow(replyList, controlChannelName, isNullValid: true);
         } catch (e, st) {
           final bool wasActive = _PigeonChannelStreamRouter.unregister(
             eventsChannelName: eventsChannelName,
@@ -243,8 +230,6 @@ Stream<T> _pigeonChannelStream<T>({
   return controller.stream;
 }
 
-
-
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
@@ -270,21 +255,20 @@ class SecondFileStreamHostTestApi {
   /// Constructor for [SecondFileStreamHostTestApi]. The [binaryMessenger] named argument is
   /// available for dependency injection. If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  SecondFileStreamHostTestApi({
-      BinaryMessenger? binaryMessenger, 
-      String messageChannelSuffix = '', 
-      })
-      : pigeonVar_binaryMessenger = binaryMessenger,
-        pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+  SecondFileStreamHostTestApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
+    : pigeonVar_binaryMessenger = binaryMessenger,
+      pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+          ? '.$messageChannelSuffix'
+          : '';
 
   final BinaryMessenger? pigeonVar_binaryMessenger;
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
 
   final String pigeonVar_messageChannelSuffix;
 
-
   Stream<int> streamIntsAgain() {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.pigeon_integration_tests.SecondFileStreamHostTestApi.streamIntsAgain$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.SecondFileStreamHostTestApi.streamIntsAgain$pigeonVar_messageChannelSuffix';
     return _pigeonChannelStream<int>(
       controlChannelName: pigeonVar_channelName,
       codec: pigeonChannelCodec,
@@ -295,7 +279,8 @@ class SecondFileStreamHostTestApi {
   }
 
   Stream<int> streamIntsViaCallbackAgain() {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.pigeon_integration_tests.SecondFileStreamHostTestApi.streamIntsViaCallbackAgain$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.SecondFileStreamHostTestApi.streamIntsViaCallbackAgain$pigeonVar_messageChannelSuffix';
     return _pigeonChannelStream<int>(
       controlChannelName: pigeonVar_channelName,
       codec: pigeonChannelCodec,

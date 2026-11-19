@@ -1535,7 +1535,7 @@ This is called by the generated Dart code and is not intended for direct use.'''
           );
           String? serialBackgroundQueue;
           if (api.methods.any(
-            (Method m) => m.taskQueueType == TaskQueueType.serialBackgroundThread,
+            (Method m) => !m.isStream && m.taskQueueType == TaskQueueType.serialBackgroundThread,
           )) {
             serialBackgroundQueue = 'taskQueue';
             indent.writeln(
@@ -1554,9 +1554,6 @@ This is called by the generated Dart code and is not intended for direct use.'''
                 parameters: method.parameters,
                 returnType: method.returnType,
                 isAsynchronousCallback: method.isAsynchronousCallback,
-                serialBackgroundQueue: method.taskQueueType == TaskQueueType.serialBackgroundThread
-                    ? serialBackgroundQueue
-                    : null,
               );
             } else {
               _writeHostMethodMessageHandler(
@@ -2558,7 +2555,6 @@ internal constructor(
     required List<Parameter> parameters,
     required TypeDeclaration returnType,
     required bool isAsynchronousCallback,
-    String? serialBackgroundQueue,
   }) {
     final String prefix = generatorOptions.fileSpecificClassNameComponent ?? '';
     final String utilsClass = _getUtilsClassName(generatorOptions);
@@ -2566,14 +2562,9 @@ internal constructor(
     indent.writeScoped('run {', '}', () {
       indent.writeln('val controlChannelName = "$channelName"');
       indent.writeln(r'val eventsChannelName = "$controlChannelName.events"');
-      indent.write(
-        'val controlChannel = BasicMessageChannel<Any?>(binaryMessenger, controlChannelName, codec',
+      indent.writeln(
+        'val controlChannel = BasicMessageChannel<Any?>(binaryMessenger, controlChannelName, codec)',
       );
-      if (serialBackgroundQueue != null) {
-        indent.addln(', $serialBackgroundQueue)');
-      } else {
-        indent.addln(')');
-      }
       indent.writeln('streamRegistry.cancelAll(binaryMessenger, eventsChannelName)');
       indent.writeScoped('if (api != null) {', '}', () {
         indent.writeln(

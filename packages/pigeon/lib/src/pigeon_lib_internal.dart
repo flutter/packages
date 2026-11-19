@@ -2450,6 +2450,15 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
               ),
             );
           }
+          if (taskQueueArguments != null) {
+            _errors.add(
+              Error(
+                message:
+                    '@TaskQueue is not supported on Stream methods, in method "${node.name.lexeme}" in API: "${_currentApi!.name}".',
+                lineNumber: lineNumber,
+              ),
+            );
+          }
           if (returnTypeArgs.length != 1) {
             _errors.add(
               Error(

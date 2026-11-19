@@ -24,6 +24,7 @@ import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+
 private object EventChannelTestsPigeonUtils {
 
   fun wrapResult(result: Any?): List<Any?> {
@@ -32,19 +33,15 @@ private object EventChannelTestsPigeonUtils {
 
   fun wrapError(exception: Throwable): List<Any?> {
     return if (exception is EventChannelTestsError) {
-      listOf(
-        exception.code,
-        exception.message,
-        exception.details
-      )
+      listOf(exception.code, exception.message, exception.details)
     } else {
       listOf(
-        exception.javaClass.simpleName,
-        exception.toString(),
-        "Cause: " + exception.cause + ", Stacktrace: " + Log.getStackTraceString(exception)
-      )
+          exception.javaClass.simpleName,
+          exception.toString(),
+          "Cause: " + exception.cause + ", Stacktrace: " + Log.getStackTraceString(exception))
     }
   }
+
   fun doubleEquals(a: Double, b: Double): Boolean {
     // Normalize -0.0 to 0.0 and handle NaN equality.
     return (if (a == 0.0) 0.0 else a) == (if (b == 0.0) 0.0 else b) || (a.isNaN() && b.isNaN())
@@ -188,19 +185,19 @@ private object EventChannelTestsPigeonUtils {
       else -> value.hashCode()
     }
   }
-
 }
 
 /**
  * Error class for passing custom error details to Flutter via a thrown PlatformException.
+ *
  * @property code The error code.
  * @property message The error message.
  * @property details The error details. Must be a datatype supported by the api codec.
  */
-class EventChannelTestsError (
-  val code: String,
-  override val message: String? = null,
-  val details: Any? = null
+class EventChannelTestsError(
+    val code: String,
+    override val message: String? = null,
+    val details: Any? = null
 ) : RuntimeException()
 
 private class EventChannelTestsPigeonStreamRegistry {
@@ -222,7 +219,10 @@ private class EventChannelTestsPigeonStreamRegistry {
     } catch (exception: Throwable) {
       // Guard Log.e against non-Robolectric JVM unit tests where android.util.Log is unmocked.
       try {
-        Log.e("EventChannelTestsPigeonStreamRegistry", "Failed to cancel stream subscription", exception)
+        Log.e(
+            "EventChannelTestsPigeonStreamRegistry",
+            "Failed to cancel stream subscription",
+            exception)
       } catch (_: RuntimeException) {}
     }
   }
@@ -352,7 +352,8 @@ internal constructor(
     val ch = channelRef.get() ?: return
     dispatchToMain {
       if (channelRef.get() != null) {
-        ch.send(listOf(subscriptionId, EventChannelTestsPigeonStreamRegistry.DATA_FRAME_KIND, value))
+        ch.send(
+            listOf(subscriptionId, EventChannelTestsPigeonStreamRegistry.DATA_FRAME_KIND, value))
       }
     }
   }
@@ -446,40 +447,39 @@ enum class AnotherEventEnum(val raw: Int) {
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class EventAllNullableTypes (
-  val aNullableBool: Boolean? = null,
-  val aNullableInt: Long? = null,
-  val aNullableInt64: Long? = null,
-  val aNullableDouble: Double? = null,
-  val aNullableByteArray: ByteArray? = null,
-  val aNullable4ByteArray: IntArray? = null,
-  val aNullable8ByteArray: LongArray? = null,
-  val aNullableFloatArray: DoubleArray? = null,
-  val aNullableEnum: EventEnum? = null,
-  val anotherNullableEnum: AnotherEventEnum? = null,
-  val aNullableString: String? = null,
-  val aNullableObject: Any? = null,
-  val allNullableTypes: EventAllNullableTypes? = null,
-  val list: List<Any?>? = null,
-  val stringList: List<String?>? = null,
-  val intList: List<Long?>? = null,
-  val doubleList: List<Double?>? = null,
-  val boolList: List<Boolean?>? = null,
-  val enumList: List<EventEnum?>? = null,
-  val objectList: List<Any?>? = null,
-  val listList: List<List<Any?>?>? = null,
-  val mapList: List<Map<Any?, Any?>?>? = null,
-  val recursiveClassList: List<EventAllNullableTypes?>? = null,
-  val map: Map<Any, Any?>? = null,
-  val stringMap: Map<String?, String?>? = null,
-  val intMap: Map<Long?, Long?>? = null,
-  val enumMap: Map<EventEnum?, EventEnum?>? = null,
-  val objectMap: Map<Any?, Any?>? = null,
-  val listMap: Map<Long?, List<Any?>?>? = null,
-  val mapMap: Map<Long?, Map<Any?, Any?>?>? = null,
-  val recursiveClassMap: Map<Long?, EventAllNullableTypes?>? = null
-)
- {
+data class EventAllNullableTypes(
+    val aNullableBool: Boolean? = null,
+    val aNullableInt: Long? = null,
+    val aNullableInt64: Long? = null,
+    val aNullableDouble: Double? = null,
+    val aNullableByteArray: ByteArray? = null,
+    val aNullable4ByteArray: IntArray? = null,
+    val aNullable8ByteArray: LongArray? = null,
+    val aNullableFloatArray: DoubleArray? = null,
+    val aNullableEnum: EventEnum? = null,
+    val anotherNullableEnum: AnotherEventEnum? = null,
+    val aNullableString: String? = null,
+    val aNullableObject: Any? = null,
+    val allNullableTypes: EventAllNullableTypes? = null,
+    val list: List<Any?>? = null,
+    val stringList: List<String?>? = null,
+    val intList: List<Long?>? = null,
+    val doubleList: List<Double?>? = null,
+    val boolList: List<Boolean?>? = null,
+    val enumList: List<EventEnum?>? = null,
+    val objectList: List<Any?>? = null,
+    val listList: List<List<Any?>?>? = null,
+    val mapList: List<Map<Any?, Any?>?>? = null,
+    val recursiveClassList: List<EventAllNullableTypes?>? = null,
+    val map: Map<Any, Any?>? = null,
+    val stringMap: Map<String?, String?>? = null,
+    val intMap: Map<Long?, Long?>? = null,
+    val enumMap: Map<EventEnum?, EventEnum?>? = null,
+    val objectMap: Map<Any?, Any?>? = null,
+    val listMap: Map<Long?, List<Any?>?>? = null,
+    val mapMap: Map<Long?, Map<Any?, Any?>?>? = null,
+    val recursiveClassMap: Map<Long?, EventAllNullableTypes?>? = null
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): EventAllNullableTypes {
       val aNullableBool = pigeonVar_list[0] as Boolean?
@@ -513,44 +513,77 @@ data class EventAllNullableTypes (
       val listMap = pigeonVar_list[28] as Map<Long?, List<Any?>?>?
       val mapMap = pigeonVar_list[29] as Map<Long?, Map<Any?, Any?>?>?
       val recursiveClassMap = pigeonVar_list[30] as Map<Long?, EventAllNullableTypes?>?
-      return EventAllNullableTypes(aNullableBool, aNullableInt, aNullableInt64, aNullableDouble, aNullableByteArray, aNullable4ByteArray, aNullable8ByteArray, aNullableFloatArray, aNullableEnum, anotherNullableEnum, aNullableString, aNullableObject, allNullableTypes, list, stringList, intList, doubleList, boolList, enumList, objectList, listList, mapList, recursiveClassList, map, stringMap, intMap, enumMap, objectMap, listMap, mapMap, recursiveClassMap)
+      return EventAllNullableTypes(
+          aNullableBool,
+          aNullableInt,
+          aNullableInt64,
+          aNullableDouble,
+          aNullableByteArray,
+          aNullable4ByteArray,
+          aNullable8ByteArray,
+          aNullableFloatArray,
+          aNullableEnum,
+          anotherNullableEnum,
+          aNullableString,
+          aNullableObject,
+          allNullableTypes,
+          list,
+          stringList,
+          intList,
+          doubleList,
+          boolList,
+          enumList,
+          objectList,
+          listList,
+          mapList,
+          recursiveClassList,
+          map,
+          stringMap,
+          intMap,
+          enumMap,
+          objectMap,
+          listMap,
+          mapMap,
+          recursiveClassMap)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      aNullableBool,
-      aNullableInt,
-      aNullableInt64,
-      aNullableDouble,
-      aNullableByteArray,
-      aNullable4ByteArray,
-      aNullable8ByteArray,
-      aNullableFloatArray,
-      aNullableEnum,
-      anotherNullableEnum,
-      aNullableString,
-      aNullableObject,
-      allNullableTypes,
-      list,
-      stringList,
-      intList,
-      doubleList,
-      boolList,
-      enumList,
-      objectList,
-      listList,
-      mapList,
-      recursiveClassList,
-      map,
-      stringMap,
-      intMap,
-      enumMap,
-      objectMap,
-      listMap,
-      mapMap,
-      recursiveClassMap,
+        aNullableBool,
+        aNullableInt,
+        aNullableInt64,
+        aNullableDouble,
+        aNullableByteArray,
+        aNullable4ByteArray,
+        aNullable8ByteArray,
+        aNullableFloatArray,
+        aNullableEnum,
+        anotherNullableEnum,
+        aNullableString,
+        aNullableObject,
+        allNullableTypes,
+        list,
+        stringList,
+        intList,
+        doubleList,
+        boolList,
+        enumList,
+        objectList,
+        listList,
+        mapList,
+        recursiveClassList,
+        map,
+        stringMap,
+        intMap,
+        enumMap,
+        objectMap,
+        listMap,
+        mapMap,
+        recursiveClassMap,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -559,7 +592,43 @@ data class EventAllNullableTypes (
       return true
     }
     val other = other as EventAllNullableTypes
-    return EventChannelTestsPigeonUtils.deepEquals(this.aNullableBool, other.aNullableBool) && EventChannelTestsPigeonUtils.deepEquals(this.aNullableInt, other.aNullableInt) && EventChannelTestsPigeonUtils.deepEquals(this.aNullableInt64, other.aNullableInt64) && EventChannelTestsPigeonUtils.deepEquals(this.aNullableDouble, other.aNullableDouble) && EventChannelTestsPigeonUtils.deepEquals(this.aNullableByteArray, other.aNullableByteArray) && EventChannelTestsPigeonUtils.deepEquals(this.aNullable4ByteArray, other.aNullable4ByteArray) && EventChannelTestsPigeonUtils.deepEquals(this.aNullable8ByteArray, other.aNullable8ByteArray) && EventChannelTestsPigeonUtils.deepEquals(this.aNullableFloatArray, other.aNullableFloatArray) && EventChannelTestsPigeonUtils.deepEquals(this.aNullableEnum, other.aNullableEnum) && EventChannelTestsPigeonUtils.deepEquals(this.anotherNullableEnum, other.anotherNullableEnum) && EventChannelTestsPigeonUtils.deepEquals(this.aNullableString, other.aNullableString) && EventChannelTestsPigeonUtils.deepEquals(this.aNullableObject, other.aNullableObject) && EventChannelTestsPigeonUtils.deepEquals(this.allNullableTypes, other.allNullableTypes) && EventChannelTestsPigeonUtils.deepEquals(this.list, other.list) && EventChannelTestsPigeonUtils.deepEquals(this.stringList, other.stringList) && EventChannelTestsPigeonUtils.deepEquals(this.intList, other.intList) && EventChannelTestsPigeonUtils.deepEquals(this.doubleList, other.doubleList) && EventChannelTestsPigeonUtils.deepEquals(this.boolList, other.boolList) && EventChannelTestsPigeonUtils.deepEquals(this.enumList, other.enumList) && EventChannelTestsPigeonUtils.deepEquals(this.objectList, other.objectList) && EventChannelTestsPigeonUtils.deepEquals(this.listList, other.listList) && EventChannelTestsPigeonUtils.deepEquals(this.mapList, other.mapList) && EventChannelTestsPigeonUtils.deepEquals(this.recursiveClassList, other.recursiveClassList) && EventChannelTestsPigeonUtils.deepEquals(this.map, other.map) && EventChannelTestsPigeonUtils.deepEquals(this.stringMap, other.stringMap) && EventChannelTestsPigeonUtils.deepEquals(this.intMap, other.intMap) && EventChannelTestsPigeonUtils.deepEquals(this.enumMap, other.enumMap) && EventChannelTestsPigeonUtils.deepEquals(this.objectMap, other.objectMap) && EventChannelTestsPigeonUtils.deepEquals(this.listMap, other.listMap) && EventChannelTestsPigeonUtils.deepEquals(this.mapMap, other.mapMap) && EventChannelTestsPigeonUtils.deepEquals(this.recursiveClassMap, other.recursiveClassMap)
+    return EventChannelTestsPigeonUtils.deepEquals(this.aNullableBool, other.aNullableBool) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.aNullableInt, other.aNullableInt) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.aNullableInt64, other.aNullableInt64) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.aNullableDouble, other.aNullableDouble) &&
+        EventChannelTestsPigeonUtils.deepEquals(
+            this.aNullableByteArray, other.aNullableByteArray) &&
+        EventChannelTestsPigeonUtils.deepEquals(
+            this.aNullable4ByteArray, other.aNullable4ByteArray) &&
+        EventChannelTestsPigeonUtils.deepEquals(
+            this.aNullable8ByteArray, other.aNullable8ByteArray) &&
+        EventChannelTestsPigeonUtils.deepEquals(
+            this.aNullableFloatArray, other.aNullableFloatArray) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.aNullableEnum, other.aNullableEnum) &&
+        EventChannelTestsPigeonUtils.deepEquals(
+            this.anotherNullableEnum, other.anotherNullableEnum) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.aNullableString, other.aNullableString) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.aNullableObject, other.aNullableObject) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.allNullableTypes, other.allNullableTypes) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.list, other.list) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.stringList, other.stringList) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.intList, other.intList) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.doubleList, other.doubleList) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.boolList, other.boolList) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.enumList, other.enumList) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.objectList, other.objectList) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.listList, other.listList) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.mapList, other.mapList) &&
+        EventChannelTestsPigeonUtils.deepEquals(
+            this.recursiveClassList, other.recursiveClassList) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.map, other.map) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.stringMap, other.stringMap) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.intMap, other.intMap) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.enumMap, other.enumMap) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.objectMap, other.objectMap) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.listMap, other.listMap) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.mapMap, other.mapMap) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.recursiveClassMap, other.recursiveClassMap)
   }
 
   override fun hashCode(): Int {
@@ -597,32 +666,32 @@ data class EventAllNullableTypes (
     result = 31 * result + EventChannelTestsPigeonUtils.deepHash(this.recursiveClassMap)
     return result
   }
+
   override fun toString(): String {
     return "EventAllNullableTypes(aNullableBool=$aNullableBool, aNullableInt=$aNullableInt, aNullableInt64=$aNullableInt64, aNullableDouble=$aNullableDouble, aNullableByteArray=${aNullableByteArray?.contentToString()}, aNullable4ByteArray=${aNullable4ByteArray?.contentToString()}, aNullable8ByteArray=${aNullable8ByteArray?.contentToString()}, aNullableFloatArray=${aNullableFloatArray?.contentToString()}, aNullableEnum=$aNullableEnum, anotherNullableEnum=$anotherNullableEnum, aNullableString=$aNullableString, aNullableObject=$aNullableObject, allNullableTypes=$allNullableTypes, list=$list, stringList=$stringList, intList=$intList, doubleList=$doubleList, boolList=$boolList, enumList=$enumList, objectList=$objectList, listList=$listList, mapList=$mapList, recursiveClassList=$recursiveClassList, map=$map, stringMap=$stringMap, intMap=$intMap, enumMap=$enumMap, objectMap=$objectMap, listMap=$listMap, mapMap=$mapMap, recursiveClassMap=$recursiveClassMap)"
   }
 }
 
 /**
- * Generated class from Pigeon that represents data sent in messages.
- * This class should not be extended by any user class outside of the generated file.
+ * Generated class from Pigeon that represents data sent in messages. This class should not be
+ * extended by any user class outside of the generated file.
  */
-sealed class PlatformEvent 
+sealed class PlatformEvent
 /** Generated class from Pigeon that represents data sent in messages. */
-data class IntEvent (
-  val value: Long
-) : PlatformEvent()
- {
+data class IntEvent(val value: Long) : PlatformEvent() {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): IntEvent {
       val value = pigeonVar_list[0] as Long
       return IntEvent(value)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      value,
+        value,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -639,27 +708,27 @@ data class IntEvent (
     result = 31 * result + EventChannelTestsPigeonUtils.deepHash(this.value)
     return result
   }
+
   override fun toString(): String {
     return "IntEvent(value=$value)"
   }
 }
 
 /** Generated class from Pigeon that represents data sent in messages. */
-data class StringEvent (
-  val value: String
-) : PlatformEvent()
- {
+data class StringEvent(val value: String) : PlatformEvent() {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): StringEvent {
       val value = pigeonVar_list[0] as String
       return StringEvent(value)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      value,
+        value,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -676,27 +745,27 @@ data class StringEvent (
     result = 31 * result + EventChannelTestsPigeonUtils.deepHash(this.value)
     return result
   }
+
   override fun toString(): String {
     return "StringEvent(value=$value)"
   }
 }
 
 /** Generated class from Pigeon that represents data sent in messages. */
-data class BoolEvent (
-  val value: Boolean
-) : PlatformEvent()
- {
+data class BoolEvent(val value: Boolean) : PlatformEvent() {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): BoolEvent {
       val value = pigeonVar_list[0] as Boolean
       return BoolEvent(value)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      value,
+        value,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -713,27 +782,27 @@ data class BoolEvent (
     result = 31 * result + EventChannelTestsPigeonUtils.deepHash(this.value)
     return result
   }
+
   override fun toString(): String {
     return "BoolEvent(value=$value)"
   }
 }
 
 /** Generated class from Pigeon that represents data sent in messages. */
-data class DoubleEvent (
-  val value: Double
-) : PlatformEvent()
- {
+data class DoubleEvent(val value: Double) : PlatformEvent() {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): DoubleEvent {
       val value = pigeonVar_list[0] as Double
       return DoubleEvent(value)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      value,
+        value,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -750,27 +819,27 @@ data class DoubleEvent (
     result = 31 * result + EventChannelTestsPigeonUtils.deepHash(this.value)
     return result
   }
+
   override fun toString(): String {
     return "DoubleEvent(value=$value)"
   }
 }
 
 /** Generated class from Pigeon that represents data sent in messages. */
-data class ObjectsEvent (
-  val value: Any
-) : PlatformEvent()
- {
+data class ObjectsEvent(val value: Any) : PlatformEvent() {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): ObjectsEvent {
       val value = pigeonVar_list[0] as Any
       return ObjectsEvent(value)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      value,
+        value,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -787,27 +856,27 @@ data class ObjectsEvent (
     result = 31 * result + EventChannelTestsPigeonUtils.deepHash(this.value)
     return result
   }
+
   override fun toString(): String {
     return "ObjectsEvent(value=$value)"
   }
 }
 
 /** Generated class from Pigeon that represents data sent in messages. */
-data class EnumEvent (
-  val value: EventEnum
-) : PlatformEvent()
- {
+data class EnumEvent(val value: EventEnum) : PlatformEvent() {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): EnumEvent {
       val value = pigeonVar_list[0] as EventEnum
       return EnumEvent(value)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      value,
+        value,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -824,27 +893,27 @@ data class EnumEvent (
     result = 31 * result + EventChannelTestsPigeonUtils.deepHash(this.value)
     return result
   }
+
   override fun toString(): String {
     return "EnumEvent(value=$value)"
   }
 }
 
 /** Generated class from Pigeon that represents data sent in messages. */
-data class ClassEvent (
-  val value: EventAllNullableTypes
-) : PlatformEvent()
- {
+data class ClassEvent(val value: EventAllNullableTypes) : PlatformEvent() {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): ClassEvent {
       val value = pigeonVar_list[0] as EventAllNullableTypes
       return ClassEvent(value)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      value,
+        value,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -861,22 +930,24 @@ data class ClassEvent (
     result = 31 * result + EventChannelTestsPigeonUtils.deepHash(this.value)
     return result
   }
+
   override fun toString(): String {
     return "ClassEvent(value=$value)"
   }
 }
 
 /** Generated class from Pigeon that represents data sent in messages. */
-class EmptyEvent  : PlatformEvent() {
+class EmptyEvent : PlatformEvent() {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): EmptyEvent {
       return EmptyEvent()
     }
   }
+
   fun toList(): List<Any?> {
-    return listOf(
-    )
+    return listOf()
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -891,72 +962,53 @@ class EmptyEvent  : PlatformEvent() {
     var result = javaClass.hashCode()
     return result
   }
+
   override fun toString(): String {
     return "EmptyEvent()"
   }
 }
+
 private open class EventChannelTestsPigeonCodec : StandardMessageCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
     return when (type) {
       129.toByte() -> {
-        (readValue(buffer) as Long?)?.let {
-          EventEnum.ofRaw(it.toInt())
-        }
+        (readValue(buffer) as Long?)?.let { EventEnum.ofRaw(it.toInt()) }
       }
       130.toByte() -> {
-        (readValue(buffer) as Long?)?.let {
-          AnotherEventEnum.ofRaw(it.toInt())
-        }
+        (readValue(buffer) as Long?)?.let { AnotherEventEnum.ofRaw(it.toInt()) }
       }
       131.toByte() -> {
-        (readValue(buffer) as? List<Any?>)?.let {
-          EventAllNullableTypes.fromList(it)
-        }
+        (readValue(buffer) as? List<Any?>)?.let { EventAllNullableTypes.fromList(it) }
       }
       132.toByte() -> {
-        (readValue(buffer) as? List<Any?>)?.let {
-          IntEvent.fromList(it)
-        }
+        (readValue(buffer) as? List<Any?>)?.let { IntEvent.fromList(it) }
       }
       133.toByte() -> {
-        (readValue(buffer) as? List<Any?>)?.let {
-          StringEvent.fromList(it)
-        }
+        (readValue(buffer) as? List<Any?>)?.let { StringEvent.fromList(it) }
       }
       134.toByte() -> {
-        (readValue(buffer) as? List<Any?>)?.let {
-          BoolEvent.fromList(it)
-        }
+        (readValue(buffer) as? List<Any?>)?.let { BoolEvent.fromList(it) }
       }
       135.toByte() -> {
-        (readValue(buffer) as? List<Any?>)?.let {
-          DoubleEvent.fromList(it)
-        }
+        (readValue(buffer) as? List<Any?>)?.let { DoubleEvent.fromList(it) }
       }
       136.toByte() -> {
-        (readValue(buffer) as? List<Any?>)?.let {
-          ObjectsEvent.fromList(it)
-        }
+        (readValue(buffer) as? List<Any?>)?.let { ObjectsEvent.fromList(it) }
       }
       137.toByte() -> {
-        (readValue(buffer) as? List<Any?>)?.let {
-          EnumEvent.fromList(it)
-        }
+        (readValue(buffer) as? List<Any?>)?.let { EnumEvent.fromList(it) }
       }
       138.toByte() -> {
-        (readValue(buffer) as? List<Any?>)?.let {
-          ClassEvent.fromList(it)
-        }
+        (readValue(buffer) as? List<Any?>)?.let { ClassEvent.fromList(it) }
       }
       139.toByte() -> {
-        (readValue(buffer) as? List<Any?>)?.let {
-          EmptyEvent.fromList(it)
-        }
+        (readValue(buffer) as? List<Any?>)?.let { EmptyEvent.fromList(it) }
       }
       else -> super.readValueOfType(type, buffer)
     }
   }
-  override fun writeValue(stream: ByteArrayOutputStream, value: Any?)   {
+
+  override fun writeValue(stream: ByteArrayOutputStream, value: Any?) {
     when (value) {
       is EventEnum -> {
         stream.write(129)
@@ -1010,26 +1062,42 @@ private open class EventChannelTestsPigeonCodec : StandardMessageCodec() {
 /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
 interface StreamHostTestApi {
   fun streamNumbers(count: Long, start: Long): Flow<Long>
+
   fun streamPlatformEvents(): Flow<PlatformEvent>
+
   fun streamNullableInts(): Flow<Long?>
+
   fun streamError(customError: Boolean): Flow<Long>
-  fun streamViaCallback(prefix: String, count: Long, sink: EventChannelTestsPigeonEventSink<String>): AutoCloseable?
+
+  fun streamViaCallback(
+      prefix: String,
+      count: Long,
+      sink: EventChannelTestsPigeonEventSink<String>
+  ): AutoCloseable?
+
   fun getCancelledStreamCount(): Long
+
   fun resetCancelledStreamCount()
 
   companion object {
     private val streamRegistry = EventChannelTestsPigeonStreamRegistry()
 
     /** The codec used by StreamHostTestApi. */
-    val codec: MessageCodec<Any?> by lazy {
-      EventChannelTestsPigeonCodec()
-    }
-    /** Sets up an instance of `StreamHostTestApi` to handle messages through the `binaryMessenger`. */
+    val codec: MessageCodec<Any?> by lazy { EventChannelTestsPigeonCodec() }
+    /**
+     * Sets up an instance of `StreamHostTestApi` to handle messages through the `binaryMessenger`.
+     */
     @JvmOverloads
-    fun setUp(binaryMessenger: BinaryMessenger, api: StreamHostTestApi?, messageChannelSuffix: String = "") {
-      val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    fun setUp(
+        binaryMessenger: BinaryMessenger,
+        api: StreamHostTestApi?,
+        messageChannelSuffix: String = ""
+    ) {
+      val separatedMessageChannelSuffix =
+          if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
       run {
-        val controlChannelName = "dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.streamNumbers$separatedMessageChannelSuffix"
+        val controlChannelName =
+            "dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.streamNumbers$separatedMessageChannelSuffix"
         val eventsChannelName = "$controlChannelName.events"
         val controlChannel = BasicMessageChannel<Any?>(binaryMessenger, controlChannelName, codec)
         streamRegistry.cancelAll(binaryMessenger, eventsChannelName)
@@ -1040,50 +1108,74 @@ interface StreamHostTestApi {
             val action = request[0] as String
             val subscriptionId = (request[1] as Number).toLong()
             if (action == "cancel") {
-              val wrapped: List<Any?> = try {
-                streamRegistry.cancel(binaryMessenger, eventsChannelName, subscriptionId)
-                listOf(null)
-              } catch (exception: Throwable) {
-                EventChannelTestsPigeonUtils.wrapError(exception)
-              }
+              val wrapped: List<Any?> =
+                  try {
+                    streamRegistry.cancel(binaryMessenger, eventsChannelName, subscriptionId)
+                    listOf(null)
+                  } catch (exception: Throwable) {
+                    EventChannelTestsPigeonUtils.wrapError(exception)
+                  }
               reply.reply(wrapped)
               return@setMessageHandler
             }
             if (action != "listen") {
-              reply.reply(EventChannelTestsPigeonUtils.wrapError(IllegalArgumentException("Unknown stream control action: $action")))
+              reply.reply(
+                  EventChannelTestsPigeonUtils.wrapError(
+                      IllegalArgumentException("Unknown stream control action: $action")))
               return@setMessageHandler
             }
             val countArg = request[2] as Long
             val startArg = request[3] as Long
-            val flow = try {
-              api.streamNumbers(countArg, startArg)
-            } catch (exception: Throwable) {
-              reply.reply(EventChannelTestsPigeonUtils.wrapError(exception))
-              return@setMessageHandler
-            }
+            val flow =
+                try {
+                  api.streamNumbers(countArg, startArg)
+                } catch (exception: Throwable) {
+                  reply.reply(EventChannelTestsPigeonUtils.wrapError(exception))
+                  return@setMessageHandler
+                }
             lateinit var registrationToken: Any
-            val job = CoroutineScope(Dispatchers.Main).launch(start = CoroutineStart.LAZY) {
-              try {
-                flow.collect { event ->
-                  eventsChannel.send(listOf(subscriptionId, EventChannelTestsPigeonStreamRegistry.DATA_FRAME_KIND, event))
+            val job =
+                CoroutineScope(Dispatchers.Main).launch(start = CoroutineStart.LAZY) {
+                  try {
+                    flow.collect { event ->
+                      eventsChannel.send(
+                          listOf(
+                              subscriptionId,
+                              EventChannelTestsPigeonStreamRegistry.DATA_FRAME_KIND,
+                              event))
+                    }
+                    if (streamRegistry.remove(
+                        binaryMessenger, eventsChannelName, subscriptionId, registrationToken)) {
+                      eventsChannel.send(
+                          listOf(
+                              subscriptionId,
+                              EventChannelTestsPigeonStreamRegistry.DONE_FRAME_KIND))
+                    }
+                  } catch (e: CancellationException) {
+                    if (streamRegistry.remove(
+                        binaryMessenger, eventsChannelName, subscriptionId, registrationToken)) {
+                      eventsChannel.send(
+                          listOf(
+                              subscriptionId,
+                              EventChannelTestsPigeonStreamRegistry.ERROR_FRAME_KIND) +
+                              EventChannelTestsPigeonUtils.wrapError(e))
+                    }
+                    throw e
+                  } catch (exception: Throwable) {
+                    if (streamRegistry.remove(
+                        binaryMessenger, eventsChannelName, subscriptionId, registrationToken)) {
+                      eventsChannel.send(
+                          listOf(
+                              subscriptionId,
+                              EventChannelTestsPigeonStreamRegistry.ERROR_FRAME_KIND) +
+                              EventChannelTestsPigeonUtils.wrapError(exception))
+                    }
+                  }
                 }
-                if (streamRegistry.remove(binaryMessenger, eventsChannelName, subscriptionId, registrationToken)) {
-                  eventsChannel.send(listOf(subscriptionId, EventChannelTestsPigeonStreamRegistry.DONE_FRAME_KIND))
+            registrationToken =
+                streamRegistry.register(binaryMessenger, eventsChannelName, subscriptionId) {
+                  job.cancel()
                 }
-              } catch (e: CancellationException) {
-                if (streamRegistry.remove(binaryMessenger, eventsChannelName, subscriptionId, registrationToken)) {
-                  eventsChannel.send(listOf(subscriptionId, EventChannelTestsPigeonStreamRegistry.ERROR_FRAME_KIND) + EventChannelTestsPigeonUtils.wrapError(e))
-                }
-                throw e
-              } catch (exception: Throwable) {
-                if (streamRegistry.remove(binaryMessenger, eventsChannelName, subscriptionId, registrationToken)) {
-                  eventsChannel.send(listOf(subscriptionId, EventChannelTestsPigeonStreamRegistry.ERROR_FRAME_KIND) + EventChannelTestsPigeonUtils.wrapError(exception))
-                }
-              }
-            }
-            registrationToken = streamRegistry.register(binaryMessenger, eventsChannelName, subscriptionId) {
-              job.cancel()
-            }
             job.start()
             reply.reply(listOf(null))
           }
@@ -1092,7 +1184,8 @@ interface StreamHostTestApi {
         }
       }
       run {
-        val controlChannelName = "dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.streamPlatformEvents$separatedMessageChannelSuffix"
+        val controlChannelName =
+            "dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.streamPlatformEvents$separatedMessageChannelSuffix"
         val eventsChannelName = "$controlChannelName.events"
         val controlChannel = BasicMessageChannel<Any?>(binaryMessenger, controlChannelName, codec)
         streamRegistry.cancelAll(binaryMessenger, eventsChannelName)
@@ -1103,48 +1196,72 @@ interface StreamHostTestApi {
             val action = request[0] as String
             val subscriptionId = (request[1] as Number).toLong()
             if (action == "cancel") {
-              val wrapped: List<Any?> = try {
-                streamRegistry.cancel(binaryMessenger, eventsChannelName, subscriptionId)
-                listOf(null)
-              } catch (exception: Throwable) {
-                EventChannelTestsPigeonUtils.wrapError(exception)
-              }
+              val wrapped: List<Any?> =
+                  try {
+                    streamRegistry.cancel(binaryMessenger, eventsChannelName, subscriptionId)
+                    listOf(null)
+                  } catch (exception: Throwable) {
+                    EventChannelTestsPigeonUtils.wrapError(exception)
+                  }
               reply.reply(wrapped)
               return@setMessageHandler
             }
             if (action != "listen") {
-              reply.reply(EventChannelTestsPigeonUtils.wrapError(IllegalArgumentException("Unknown stream control action: $action")))
+              reply.reply(
+                  EventChannelTestsPigeonUtils.wrapError(
+                      IllegalArgumentException("Unknown stream control action: $action")))
               return@setMessageHandler
             }
-            val flow = try {
-              api.streamPlatformEvents()
-            } catch (exception: Throwable) {
-              reply.reply(EventChannelTestsPigeonUtils.wrapError(exception))
-              return@setMessageHandler
-            }
+            val flow =
+                try {
+                  api.streamPlatformEvents()
+                } catch (exception: Throwable) {
+                  reply.reply(EventChannelTestsPigeonUtils.wrapError(exception))
+                  return@setMessageHandler
+                }
             lateinit var registrationToken: Any
-            val job = CoroutineScope(Dispatchers.Main).launch(start = CoroutineStart.LAZY) {
-              try {
-                flow.collect { event ->
-                  eventsChannel.send(listOf(subscriptionId, EventChannelTestsPigeonStreamRegistry.DATA_FRAME_KIND, event))
+            val job =
+                CoroutineScope(Dispatchers.Main).launch(start = CoroutineStart.LAZY) {
+                  try {
+                    flow.collect { event ->
+                      eventsChannel.send(
+                          listOf(
+                              subscriptionId,
+                              EventChannelTestsPigeonStreamRegistry.DATA_FRAME_KIND,
+                              event))
+                    }
+                    if (streamRegistry.remove(
+                        binaryMessenger, eventsChannelName, subscriptionId, registrationToken)) {
+                      eventsChannel.send(
+                          listOf(
+                              subscriptionId,
+                              EventChannelTestsPigeonStreamRegistry.DONE_FRAME_KIND))
+                    }
+                  } catch (e: CancellationException) {
+                    if (streamRegistry.remove(
+                        binaryMessenger, eventsChannelName, subscriptionId, registrationToken)) {
+                      eventsChannel.send(
+                          listOf(
+                              subscriptionId,
+                              EventChannelTestsPigeonStreamRegistry.ERROR_FRAME_KIND) +
+                              EventChannelTestsPigeonUtils.wrapError(e))
+                    }
+                    throw e
+                  } catch (exception: Throwable) {
+                    if (streamRegistry.remove(
+                        binaryMessenger, eventsChannelName, subscriptionId, registrationToken)) {
+                      eventsChannel.send(
+                          listOf(
+                              subscriptionId,
+                              EventChannelTestsPigeonStreamRegistry.ERROR_FRAME_KIND) +
+                              EventChannelTestsPigeonUtils.wrapError(exception))
+                    }
+                  }
                 }
-                if (streamRegistry.remove(binaryMessenger, eventsChannelName, subscriptionId, registrationToken)) {
-                  eventsChannel.send(listOf(subscriptionId, EventChannelTestsPigeonStreamRegistry.DONE_FRAME_KIND))
+            registrationToken =
+                streamRegistry.register(binaryMessenger, eventsChannelName, subscriptionId) {
+                  job.cancel()
                 }
-              } catch (e: CancellationException) {
-                if (streamRegistry.remove(binaryMessenger, eventsChannelName, subscriptionId, registrationToken)) {
-                  eventsChannel.send(listOf(subscriptionId, EventChannelTestsPigeonStreamRegistry.ERROR_FRAME_KIND) + EventChannelTestsPigeonUtils.wrapError(e))
-                }
-                throw e
-              } catch (exception: Throwable) {
-                if (streamRegistry.remove(binaryMessenger, eventsChannelName, subscriptionId, registrationToken)) {
-                  eventsChannel.send(listOf(subscriptionId, EventChannelTestsPigeonStreamRegistry.ERROR_FRAME_KIND) + EventChannelTestsPigeonUtils.wrapError(exception))
-                }
-              }
-            }
-            registrationToken = streamRegistry.register(binaryMessenger, eventsChannelName, subscriptionId) {
-              job.cancel()
-            }
             job.start()
             reply.reply(listOf(null))
           }
@@ -1153,7 +1270,8 @@ interface StreamHostTestApi {
         }
       }
       run {
-        val controlChannelName = "dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.streamNullableInts$separatedMessageChannelSuffix"
+        val controlChannelName =
+            "dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.streamNullableInts$separatedMessageChannelSuffix"
         val eventsChannelName = "$controlChannelName.events"
         val controlChannel = BasicMessageChannel<Any?>(binaryMessenger, controlChannelName, codec)
         streamRegistry.cancelAll(binaryMessenger, eventsChannelName)
@@ -1164,48 +1282,72 @@ interface StreamHostTestApi {
             val action = request[0] as String
             val subscriptionId = (request[1] as Number).toLong()
             if (action == "cancel") {
-              val wrapped: List<Any?> = try {
-                streamRegistry.cancel(binaryMessenger, eventsChannelName, subscriptionId)
-                listOf(null)
-              } catch (exception: Throwable) {
-                EventChannelTestsPigeonUtils.wrapError(exception)
-              }
+              val wrapped: List<Any?> =
+                  try {
+                    streamRegistry.cancel(binaryMessenger, eventsChannelName, subscriptionId)
+                    listOf(null)
+                  } catch (exception: Throwable) {
+                    EventChannelTestsPigeonUtils.wrapError(exception)
+                  }
               reply.reply(wrapped)
               return@setMessageHandler
             }
             if (action != "listen") {
-              reply.reply(EventChannelTestsPigeonUtils.wrapError(IllegalArgumentException("Unknown stream control action: $action")))
+              reply.reply(
+                  EventChannelTestsPigeonUtils.wrapError(
+                      IllegalArgumentException("Unknown stream control action: $action")))
               return@setMessageHandler
             }
-            val flow = try {
-              api.streamNullableInts()
-            } catch (exception: Throwable) {
-              reply.reply(EventChannelTestsPigeonUtils.wrapError(exception))
-              return@setMessageHandler
-            }
+            val flow =
+                try {
+                  api.streamNullableInts()
+                } catch (exception: Throwable) {
+                  reply.reply(EventChannelTestsPigeonUtils.wrapError(exception))
+                  return@setMessageHandler
+                }
             lateinit var registrationToken: Any
-            val job = CoroutineScope(Dispatchers.Main).launch(start = CoroutineStart.LAZY) {
-              try {
-                flow.collect { event ->
-                  eventsChannel.send(listOf(subscriptionId, EventChannelTestsPigeonStreamRegistry.DATA_FRAME_KIND, event))
+            val job =
+                CoroutineScope(Dispatchers.Main).launch(start = CoroutineStart.LAZY) {
+                  try {
+                    flow.collect { event ->
+                      eventsChannel.send(
+                          listOf(
+                              subscriptionId,
+                              EventChannelTestsPigeonStreamRegistry.DATA_FRAME_KIND,
+                              event))
+                    }
+                    if (streamRegistry.remove(
+                        binaryMessenger, eventsChannelName, subscriptionId, registrationToken)) {
+                      eventsChannel.send(
+                          listOf(
+                              subscriptionId,
+                              EventChannelTestsPigeonStreamRegistry.DONE_FRAME_KIND))
+                    }
+                  } catch (e: CancellationException) {
+                    if (streamRegistry.remove(
+                        binaryMessenger, eventsChannelName, subscriptionId, registrationToken)) {
+                      eventsChannel.send(
+                          listOf(
+                              subscriptionId,
+                              EventChannelTestsPigeonStreamRegistry.ERROR_FRAME_KIND) +
+                              EventChannelTestsPigeonUtils.wrapError(e))
+                    }
+                    throw e
+                  } catch (exception: Throwable) {
+                    if (streamRegistry.remove(
+                        binaryMessenger, eventsChannelName, subscriptionId, registrationToken)) {
+                      eventsChannel.send(
+                          listOf(
+                              subscriptionId,
+                              EventChannelTestsPigeonStreamRegistry.ERROR_FRAME_KIND) +
+                              EventChannelTestsPigeonUtils.wrapError(exception))
+                    }
+                  }
                 }
-                if (streamRegistry.remove(binaryMessenger, eventsChannelName, subscriptionId, registrationToken)) {
-                  eventsChannel.send(listOf(subscriptionId, EventChannelTestsPigeonStreamRegistry.DONE_FRAME_KIND))
+            registrationToken =
+                streamRegistry.register(binaryMessenger, eventsChannelName, subscriptionId) {
+                  job.cancel()
                 }
-              } catch (e: CancellationException) {
-                if (streamRegistry.remove(binaryMessenger, eventsChannelName, subscriptionId, registrationToken)) {
-                  eventsChannel.send(listOf(subscriptionId, EventChannelTestsPigeonStreamRegistry.ERROR_FRAME_KIND) + EventChannelTestsPigeonUtils.wrapError(e))
-                }
-                throw e
-              } catch (exception: Throwable) {
-                if (streamRegistry.remove(binaryMessenger, eventsChannelName, subscriptionId, registrationToken)) {
-                  eventsChannel.send(listOf(subscriptionId, EventChannelTestsPigeonStreamRegistry.ERROR_FRAME_KIND) + EventChannelTestsPigeonUtils.wrapError(exception))
-                }
-              }
-            }
-            registrationToken = streamRegistry.register(binaryMessenger, eventsChannelName, subscriptionId) {
-              job.cancel()
-            }
             job.start()
             reply.reply(listOf(null))
           }
@@ -1214,7 +1356,8 @@ interface StreamHostTestApi {
         }
       }
       run {
-        val controlChannelName = "dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.streamError$separatedMessageChannelSuffix"
+        val controlChannelName =
+            "dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.streamError$separatedMessageChannelSuffix"
         val eventsChannelName = "$controlChannelName.events"
         val controlChannel = BasicMessageChannel<Any?>(binaryMessenger, controlChannelName, codec)
         streamRegistry.cancelAll(binaryMessenger, eventsChannelName)
@@ -1225,49 +1368,73 @@ interface StreamHostTestApi {
             val action = request[0] as String
             val subscriptionId = (request[1] as Number).toLong()
             if (action == "cancel") {
-              val wrapped: List<Any?> = try {
-                streamRegistry.cancel(binaryMessenger, eventsChannelName, subscriptionId)
-                listOf(null)
-              } catch (exception: Throwable) {
-                EventChannelTestsPigeonUtils.wrapError(exception)
-              }
+              val wrapped: List<Any?> =
+                  try {
+                    streamRegistry.cancel(binaryMessenger, eventsChannelName, subscriptionId)
+                    listOf(null)
+                  } catch (exception: Throwable) {
+                    EventChannelTestsPigeonUtils.wrapError(exception)
+                  }
               reply.reply(wrapped)
               return@setMessageHandler
             }
             if (action != "listen") {
-              reply.reply(EventChannelTestsPigeonUtils.wrapError(IllegalArgumentException("Unknown stream control action: $action")))
+              reply.reply(
+                  EventChannelTestsPigeonUtils.wrapError(
+                      IllegalArgumentException("Unknown stream control action: $action")))
               return@setMessageHandler
             }
             val customErrorArg = request[2] as Boolean
-            val flow = try {
-              api.streamError(customErrorArg)
-            } catch (exception: Throwable) {
-              reply.reply(EventChannelTestsPigeonUtils.wrapError(exception))
-              return@setMessageHandler
-            }
+            val flow =
+                try {
+                  api.streamError(customErrorArg)
+                } catch (exception: Throwable) {
+                  reply.reply(EventChannelTestsPigeonUtils.wrapError(exception))
+                  return@setMessageHandler
+                }
             lateinit var registrationToken: Any
-            val job = CoroutineScope(Dispatchers.Main).launch(start = CoroutineStart.LAZY) {
-              try {
-                flow.collect { event ->
-                  eventsChannel.send(listOf(subscriptionId, EventChannelTestsPigeonStreamRegistry.DATA_FRAME_KIND, event))
+            val job =
+                CoroutineScope(Dispatchers.Main).launch(start = CoroutineStart.LAZY) {
+                  try {
+                    flow.collect { event ->
+                      eventsChannel.send(
+                          listOf(
+                              subscriptionId,
+                              EventChannelTestsPigeonStreamRegistry.DATA_FRAME_KIND,
+                              event))
+                    }
+                    if (streamRegistry.remove(
+                        binaryMessenger, eventsChannelName, subscriptionId, registrationToken)) {
+                      eventsChannel.send(
+                          listOf(
+                              subscriptionId,
+                              EventChannelTestsPigeonStreamRegistry.DONE_FRAME_KIND))
+                    }
+                  } catch (e: CancellationException) {
+                    if (streamRegistry.remove(
+                        binaryMessenger, eventsChannelName, subscriptionId, registrationToken)) {
+                      eventsChannel.send(
+                          listOf(
+                              subscriptionId,
+                              EventChannelTestsPigeonStreamRegistry.ERROR_FRAME_KIND) +
+                              EventChannelTestsPigeonUtils.wrapError(e))
+                    }
+                    throw e
+                  } catch (exception: Throwable) {
+                    if (streamRegistry.remove(
+                        binaryMessenger, eventsChannelName, subscriptionId, registrationToken)) {
+                      eventsChannel.send(
+                          listOf(
+                              subscriptionId,
+                              EventChannelTestsPigeonStreamRegistry.ERROR_FRAME_KIND) +
+                              EventChannelTestsPigeonUtils.wrapError(exception))
+                    }
+                  }
                 }
-                if (streamRegistry.remove(binaryMessenger, eventsChannelName, subscriptionId, registrationToken)) {
-                  eventsChannel.send(listOf(subscriptionId, EventChannelTestsPigeonStreamRegistry.DONE_FRAME_KIND))
+            registrationToken =
+                streamRegistry.register(binaryMessenger, eventsChannelName, subscriptionId) {
+                  job.cancel()
                 }
-              } catch (e: CancellationException) {
-                if (streamRegistry.remove(binaryMessenger, eventsChannelName, subscriptionId, registrationToken)) {
-                  eventsChannel.send(listOf(subscriptionId, EventChannelTestsPigeonStreamRegistry.ERROR_FRAME_KIND) + EventChannelTestsPigeonUtils.wrapError(e))
-                }
-                throw e
-              } catch (exception: Throwable) {
-                if (streamRegistry.remove(binaryMessenger, eventsChannelName, subscriptionId, registrationToken)) {
-                  eventsChannel.send(listOf(subscriptionId, EventChannelTestsPigeonStreamRegistry.ERROR_FRAME_KIND) + EventChannelTestsPigeonUtils.wrapError(exception))
-                }
-              }
-            }
-            registrationToken = streamRegistry.register(binaryMessenger, eventsChannelName, subscriptionId) {
-              job.cancel()
-            }
             job.start()
             reply.reply(listOf(null))
           }
@@ -1276,7 +1443,8 @@ interface StreamHostTestApi {
         }
       }
       run {
-        val controlChannelName = "dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.streamViaCallback$separatedMessageChannelSuffix"
+        val controlChannelName =
+            "dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.streamViaCallback$separatedMessageChannelSuffix"
         val eventsChannelName = "$controlChannelName.events"
         val controlChannel = BasicMessageChannel<Any?>(binaryMessenger, controlChannelName, codec)
         streamRegistry.cancelAll(binaryMessenger, eventsChannelName)
@@ -1287,38 +1455,45 @@ interface StreamHostTestApi {
             val action = request[0] as String
             val subscriptionId = (request[1] as Number).toLong()
             if (action == "cancel") {
-              val wrapped: List<Any?> = try {
-                streamRegistry.cancel(binaryMessenger, eventsChannelName, subscriptionId)
-                listOf(null)
-              } catch (exception: Throwable) {
-                EventChannelTestsPigeonUtils.wrapError(exception)
-              }
+              val wrapped: List<Any?> =
+                  try {
+                    streamRegistry.cancel(binaryMessenger, eventsChannelName, subscriptionId)
+                    listOf(null)
+                  } catch (exception: Throwable) {
+                    EventChannelTestsPigeonUtils.wrapError(exception)
+                  }
               reply.reply(wrapped)
               return@setMessageHandler
             }
             if (action != "listen") {
-              reply.reply(EventChannelTestsPigeonUtils.wrapError(IllegalArgumentException("Unknown stream control action: $action")))
+              reply.reply(
+                  EventChannelTestsPigeonUtils.wrapError(
+                      IllegalArgumentException("Unknown stream control action: $action")))
               return@setMessageHandler
             }
             val prefixArg = request[2] as String
             val countArg = request[3] as Long
             val sink = EventChannelTestsPigeonEventSink<String>(subscriptionId, eventsChannel)
-            val registrationToken = streamRegistry.register(binaryMessenger, eventsChannelName, subscriptionId) {
-              sink.close()
-            }
+            val registrationToken =
+                streamRegistry.register(binaryMessenger, eventsChannelName, subscriptionId) {
+                  sink.close()
+                }
             sink.attachOnClosed {
-              streamRegistry.remove(binaryMessenger, eventsChannelName, subscriptionId, registrationToken)
+              streamRegistry.remove(
+                  binaryMessenger, eventsChannelName, subscriptionId, registrationToken)
             }
             try {
               val closeable = api.streamViaCallback(prefixArg, countArg, sink)
               sink.attachCloseable(closeable)
               if (!sink.isOpen) {
-                streamRegistry.remove(binaryMessenger, eventsChannelName, subscriptionId, registrationToken)
+                streamRegistry.remove(
+                    binaryMessenger, eventsChannelName, subscriptionId, registrationToken)
               }
               reply.reply(listOf(null))
             } catch (exception: Throwable) {
               sink.close()
-              streamRegistry.remove(binaryMessenger, eventsChannelName, subscriptionId, registrationToken)
+              streamRegistry.remove(
+                  binaryMessenger, eventsChannelName, subscriptionId, registrationToken)
               reply.reply(EventChannelTestsPigeonUtils.wrapError(exception))
             }
           }
@@ -1327,14 +1502,19 @@ interface StreamHostTestApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.getCancelledStreamCount$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.getCancelledStreamCount$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            val wrapped: List<Any?> = try {
-              listOf(api.getCancelledStreamCount())
-            } catch (exception: Throwable) {
-              EventChannelTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.getCancelledStreamCount())
+                } catch (exception: Throwable) {
+                  EventChannelTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1342,15 +1522,20 @@ interface StreamHostTestApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.resetCancelledStreamCount$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.resetCancelledStreamCount$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            val wrapped: List<Any?> = try {
-              api.resetCancelledStreamCount()
-              listOf(null)
-            } catch (exception: Throwable) {
-              EventChannelTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  api.resetCancelledStreamCount()
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  EventChannelTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
