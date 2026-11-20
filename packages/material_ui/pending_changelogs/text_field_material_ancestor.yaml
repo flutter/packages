@@ -1,0 +1,3 @@
+changelog: |
+  - Allows `TextField` with a null `decoration` to be used without a `Material` ancestor.
+version: patch
