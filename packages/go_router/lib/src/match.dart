@@ -506,7 +506,10 @@ class ImperativeRouteMatch extends RouteMatch {
   /// Called when the corresponding [Route] associated with this route match is
   /// completed.
   void complete([dynamic value]) {
-    completer.complete(value);
+    // A route with onExit can be popped again before the first pop completes it.
+    if (!completer.isCompleted) {
+      completer.complete(value);
+    }
   }
 
   @override

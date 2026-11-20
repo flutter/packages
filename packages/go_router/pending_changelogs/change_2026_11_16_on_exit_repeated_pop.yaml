@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes `Bad state: Future already completed` when a route with `onExit` is popped again before its `onExit` resolves.
+version: patch
