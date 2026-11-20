@@ -3480,7 +3480,33 @@ class _MenuLayout extends SingleChildLayoutDelegate {
   BoxConstraints getConstraintsForChild(BoxConstraints constraints) {
     // The menu can be at most the size of the overlay minus the view padding
     // in each direction.
-    return BoxConstraints.loose(constraints.biggest).deflate(reservedPadding);
+    final BoxConstraints loose = BoxConstraints.loose(constraints.biggest).deflate(reservedPadding);
+    // Submenus open beside their item, and a menu opened at an explicit position
+    // isn't placed relative to the anchor, so neither is limited below.
+    if (menuPosition != null || parentOrientation == Axis.vertical) {
+      return loose;
+    }
+    // Otherwise, the menu goes either below or above the anchor, so it can only
+    // ever use the space on one of those two sides. Capping its height to the
+    // larger of the two keeps a tall menu from growing over the anchor; the menu
+    // scrolls instead.
+    //
+    // These must match where _positionChild places the menu on each side.
+    final Rect allowedRect = _allowedRect(_overlayRect(constraints.biggest));
+    final double desiredY =
+        alignment.resolve(textDirection).withinRect(anchorRect).dy + alignmentOffset.dy;
+    final double spaceBelow =
+        allowedRect.bottom - (desiredY < allowedRect.top ? anchorRect.bottom : desiredY);
+    // A menu moved above the anchor is shifted by -alignmentOffset.dy, but only
+    // has to fit without that shift, so a negative offset doesn't add any space.
+    final double spaceAbove = anchorRect.top - math.max(alignmentOffset.dy, 0.0) - allowedRect.top;
+    final double availableHeight = math.max(spaceAbove, spaceBelow);
+    if (availableHeight <= 0.0) {
+      // The anchor leaves no room on either side, so there is nothing to cap
+      // the menu to. Leave it to the positioning logic to fit what it can.
+      return loose;
+    }
+    return loose.copyWith(maxHeight: math.min(availableHeight, loose.maxHeight));
   }
 
   @override
@@ -3488,9 +3514,7 @@ class _MenuLayout extends SingleChildLayoutDelegate {
     // size: The size of the overlay.
     // childSize: The size of the menu, when fully open, as determined by
     // getConstraintsForChild.
-    final Rect overlayRect = mediaQueryData.padding.deflateRect(
-      mediaQueryData.viewInsets.deflateRect(Offset.zero & size),
-    );
+    final Rect overlayRect = _overlayRect(size);
     final double unconstrainedHeight = heightFactor > 0.01 ? childSize.height / heightFactor : 0;
     final double childHeightEstimate = math.min(unconstrainedHeight, size.height);
     final childSizeEstimate = Size(childSize.width, childHeightEstimate);
@@ -3541,11 +3565,7 @@ class _MenuLayout extends SingleChildLayoutDelegate {
       y = adjustedPosition.dy;
     }
 
-    final Iterable<Rect> subScreens = DisplayFeatureSubScreen.subScreensInBounds(
-      overlayRect,
-      avoidBounds,
-    );
-    final Rect allowedRect = _closestScreen(subScreens, anchorRect.center);
+    final Rect allowedRect = _allowedRect(overlayRect);
     bool offLeftSide(double x) => x < allowedRect.left;
     bool offRightSide(double x) => x + childSize.width > allowedRect.right;
     bool offTop(double y) => y < allowedRect.top;
@@ -3626,6 +3646,22 @@ class _MenuLayout extends SingleChildLayoutDelegate {
         reservedPadding != oldDelegate.reservedPadding ||
         heightFactor != oldDelegate.heightFactor ||
         !setEquals(avoidBounds, oldDelegate.avoidBounds);
+  }
+
+  // The part of the overlay outside of the safe area and view insets.
+  Rect _overlayRect(Size size) {
+    return mediaQueryData.padding.deflateRect(
+      mediaQueryData.viewInsets.deflateRect(Offset.zero & size),
+    );
+  }
+
+  // The part of the overlay that the menu is allowed to be placed in.
+  Rect _allowedRect(Rect overlayRect) {
+    final Iterable<Rect> subScreens = DisplayFeatureSubScreen.subScreensInBounds(
+      overlayRect,
+      avoidBounds,
+    );
+    return _closestScreen(subScreens, anchorRect.center);
   }
 
   Rect _closestScreen(Iterable<Rect> screens, Offset point) {
