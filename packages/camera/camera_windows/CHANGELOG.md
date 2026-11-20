@@ -1,3 +1,11 @@
+## 0.4.0
+
+* **BREAKING CHANGE**: Changes the default storage location for captured
+  pictures and videos from the user's Pictures and Videos folders to
+  `camera\pictures` and `camera\videos` in the user's temp directory, matching
+  the other platform implementations. Apps that need to keep a capture should
+  move or copy it, for example with `XFile.saveTo`.
+
 ## 0.3.1
 
 * Falls back to the system temp directory for captured pictures and videos when
