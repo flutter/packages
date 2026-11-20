@@ -21,6 +21,7 @@ import 'package:flutter/widgets.dart';
 
 import 'debug.dart';
 import 'ink_highlight.dart';
+import 'ink_response_press_registry.dart';
 import 'material.dart';
 import 'material_state.dart';
 import 'theme.dart';
@@ -886,6 +887,22 @@ class _InkResponseState extends State<_InkResponseStateWidget>
   Set<InteractiveInkFeature>? _splashes;
   InteractiveInkFeature? _currentSplash;
   bool _hovering = false;
+
+  // The primary pointer currently down on this ink response, tracked so that a
+  // press whose tap was claimed by a competing gesture that does not move the
+  // pointer (for example the long press of an enclosing Tooltip or TextField)
+  // keeps its splash and pressed highlight until the pointer is lifted, as
+  // native platform buttons do.
+  int? _trackedPointer;
+  Offset? _trackedPointerDownPosition;
+  Offset? _trackedPointerPosition;
+  double _trackedPointerSlop = kTouchSlop;
+  InkResponsePressRegistry? _pressRegistry;
+  DeviceGestureSettings? _gestureSettings;
+
+  // Whether the splash and pressed highlight are being held after the tap was
+  // canceled, until the tracked pointer is lifted or moves beyond the slop.
+  bool _holdingPress = false;
   final Map<_HighlightType, InkHighlight?> _highlights = <_HighlightType, InkHighlight?>{};
   late final Map<Type, Action<Intent>> _actionMap = <Type, Action<Intent>>{
     ActivateIntent: CallbackAction<ActivateIntent>(onInvoke: activateOnIntent),
@@ -971,6 +988,12 @@ class _InkResponseState extends State<_InkResponseStateWidget>
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _gestureSettings = MediaQuery.maybeGestureSettingsOf(context);
+  }
+
+  @override
   void didUpdateWidget(_InkResponseStateWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.statesController != oldWidget.statesController) {
@@ -1001,6 +1024,7 @@ class _InkResponseState extends State<_InkResponseStateWidget>
     if (enabled != isWidgetEnabled(oldWidget)) {
       statesController.update(WidgetState.disabled, !enabled);
       if (!enabled) {
+        _releaseHeldPress(canceled: true);
         statesController.update(WidgetState.pressed, false);
         // Remove the existing hover highlight immediately when enabled is false.
         // Do not rely on updateHighlight or InkHighlight.deactivate to not break
@@ -1260,6 +1284,7 @@ class _InkResponseState extends State<_InkResponseStateWidget>
     } else {
       globalPosition = details!.globalPosition;
     }
+    _holdingPress = false;
     statesController.update(WidgetState.pressed, true); // ... before creating the splash
     final InteractiveInkFeature splash = _createSplash(globalPosition);
     _splashes ??= HashSet<InteractiveInkFeature>();
@@ -1283,10 +1308,93 @@ class _InkResponseState extends State<_InkResponseStateWidget>
   }
 
   void handleTapCancel() {
+    if (_isTrackedPointerWithinSlop) {
+      // The tap lost the gesture arena to a gesture that did not move the
+      // pointer, such as a long press. Keep the press visible until release.
+      _holdingPress = true;
+      widget.onTapCancel?.call();
+      return;
+    }
+    _stopTrackingPointer();
     _currentSplash?.cancel();
     _currentSplash = null;
     widget.onTapCancel?.call();
     updateHighlight(_HighlightType.pressed, value: false);
+  }
+
+  bool get _isTrackedPointerWithinSlop {
+    if (_trackedPointer == null) {
+      return false;
+    }
+    return (_trackedPointerPosition! - _trackedPointerDownPosition!).distance <=
+        _trackedPointerSlop;
+  }
+
+  void _releaseHeldPress({required bool canceled}) {
+    if (!_holdingPress) {
+      return;
+    }
+    _holdingPress = false;
+    if (canceled) {
+      _currentSplash?.cancel();
+    } else {
+      _currentSplash?.confirm();
+    }
+    _currentSplash = null;
+    updateHighlight(_HighlightType.pressed, value: false);
+  }
+
+  void _handlePointerDown(PointerDownEvent event) {
+    if (_trackedPointer != null || event.buttons != kPrimaryButton) {
+      return;
+    }
+    _trackedPointer = event.pointer;
+    _trackedPointerDownPosition = event.position;
+    _trackedPointerPosition = event.position;
+    _trackedPointerSlop = computeHitSlop(event.kind, _gestureSettings);
+    // The route sees the end of the pointer even when it is not delivered
+    // through hit testing, such as a PointerRemovedEvent.
+    GestureBinding.instance.pointerRouter.addRoute(event.pointer, _handleTrackedPointerEvent);
+    _pressRegistry = InkResponsePressScope.maybeOf(context)?..add(event.pointer, event.position);
+  }
+
+  // Called through hit testing, before gesture recognizers see the event, so
+  // the position is current when the tap recognizer is rejected.
+  void _handlePointerMove(PointerMoveEvent event) {
+    if (event.pointer != _trackedPointer) {
+      return;
+    }
+    _trackedPointerPosition = event.position;
+    if (event.buttons != kPrimaryButton) {
+      _stopTrackingPointer();
+      _releaseHeldPress(canceled: true);
+    } else if (_holdingPress && !_isTrackedPointerWithinSlop) {
+      _stopTrackingPointer();
+      _releaseHeldPress(canceled: true);
+    }
+  }
+
+  void _handleTrackedPointerEvent(PointerEvent event) {
+    if (event is PointerUpEvent) {
+      _stopTrackingPointer();
+      _releaseHeldPress(canceled: false);
+    } else if (event is PointerCancelEvent || event is PointerRemovedEvent) {
+      _stopTrackingPointer();
+      _releaseHeldPress(canceled: true);
+    }
+  }
+
+  void _stopTrackingPointer() {
+    final int? pointer = _trackedPointer;
+    if (pointer == null) {
+      return;
+    }
+    GestureBinding.instance.pointerRouter.removeRoute(pointer, _handleTrackedPointerEvent);
+    _pressRegistry?.remove(pointer);
+    _pressRegistry = null;
+    _trackedPointer = null;
+    _trackedPointerDownPosition = null;
+    _trackedPointerPosition = null;
   }
 
   void handleDoubleTap() {
@@ -1297,8 +1405,11 @@ class _InkResponseState extends State<_InkResponseStateWidget>
   }
 
   void handleLongPress() {
-    _currentSplash?.confirm();
-    _currentSplash = null;
+    // A held press is confirmed when the pointer is lifted.
+    if (!_holdingPress) {
+      _currentSplash?.confirm();
+      _currentSplash = null;
+    }
     if (widget.onLongPress != null) {
       if (widget.enableFeedback) {
         Feedback.forLongPress(context);
@@ -1329,6 +1440,8 @@ class _InkResponseState extends State<_InkResponseStateWidget>
 
   @override
   void deactivate() {
+    _stopTrackingPointer();
+    _holdingPress = false;
     if (_splashes != null) {
       final Set<InteractiveInkFeature> splashes = _splashes!;
       _splashes = null;
@@ -1467,24 +1580,28 @@ class _InkResponseState extends State<_InkResponseStateWidget>
                 onLongPress: widget.excludeFromSemantics || widget.onLongPress == null
                     ? null
                     : simulateLongPress,
-                child: GestureDetector(
-                  onTapDown: _primaryEnabled ? handleTapDown : null,
-                  onTapUp: _primaryEnabled ? handleTapUp : null,
-                  onTap: _primaryEnabled ? handleTap : null,
-                  onTapCancel: _primaryEnabled ? handleTapCancel : null,
-                  onDoubleTap: widget.onDoubleTap != null ? handleDoubleTap : null,
-                  onLongPress: widget.onLongPress != null ? handleLongPress : null,
-                  onLongPressUp: widget.onLongPressUp != null ? handleLongPressUp : null,
-                  onSecondaryTapDown: _secondaryEnabled ? handleSecondaryTapDown : null,
-                  onSecondaryTapUp: _secondaryEnabled ? handleSecondaryTapUp : null,
-                  onSecondaryTap: _secondaryEnabled ? handleSecondaryTap : null,
-                  onSecondaryTapCancel: _secondaryEnabled ? handleSecondaryTapCancel : null,
-                  onTertiaryTapDown: _tertiaryEnabled ? handleTertiaryTapDown : null,
-                  onTertiaryTapUp: _tertiaryEnabled ? handleTertiaryTapUp : null,
-                  onTertiaryTapCancel: _tertiaryEnabled ? handleTertiaryTapCancel : null,
-                  behavior: HitTestBehavior.opaque,
-                  excludeFromSemantics: true,
-                  child: widget.child,
+                child: Listener(
+                  onPointerDown: _primaryEnabled ? _handlePointerDown : null,
+                  onPointerMove: _handlePointerMove,
+                  child: GestureDetector(
+                    onTapDown: _primaryEnabled ? handleTapDown : null,
+                    onTapUp: _primaryEnabled ? handleTapUp : null,
+                    onTap: _primaryEnabled ? handleTap : null,
+                    onTapCancel: _primaryEnabled ? handleTapCancel : null,
+                    onDoubleTap: widget.onDoubleTap != null ? handleDoubleTap : null,
+                    onLongPress: widget.onLongPress != null ? handleLongPress : null,
+                    onLongPressUp: widget.onLongPressUp != null ? handleLongPressUp : null,
+                    onSecondaryTapDown: _secondaryEnabled ? handleSecondaryTapDown : null,
+                    onSecondaryTapUp: _secondaryEnabled ? handleSecondaryTapUp : null,
+                    onSecondaryTap: _secondaryEnabled ? handleSecondaryTap : null,
+                    onSecondaryTapCancel: _secondaryEnabled ? handleSecondaryTapCancel : null,
+                    onTertiaryTapDown: _tertiaryEnabled ? handleTertiaryTapDown : null,
+                    onTertiaryTapUp: _tertiaryEnabled ? handleTertiaryTapUp : null,
+                    onTertiaryTapCancel: _tertiaryEnabled ? handleTertiaryTapCancel : null,
+                    behavior: HitTestBehavior.opaque,
+                    excludeFromSemantics: true,
+                    child: widget.child,
+                  ),
                 ),
               ),
             ),
