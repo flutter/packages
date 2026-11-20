@@ -95,7 +95,7 @@ enum _FloatingActionButtonType { regular, small, large, extended }
 /// See also:
 ///
 ///  * [Scaffold], in which floating action buttons typically live.
-///  * [ElevatedButton], a filled button whose material elevates when pressed.
+///  * [ElevatedButton], a filled button with a shadow.
 ///  * <https://material.io/design/components/buttons-floating-action-button.html>
 ///  * <https://m3.material.io/components/floating-action-button>
 class FloatingActionButton extends StatelessWidget {

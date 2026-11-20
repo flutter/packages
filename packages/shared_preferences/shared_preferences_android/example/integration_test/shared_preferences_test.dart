@@ -5,8 +5,8 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
+import 'package:shared_preferences_android/shared_preferences_android.dart';
 import 'package:shared_preferences_android/src/messages_async.g.dart';
-import 'package:shared_preferences_android/src/shared_preferences_android_real.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
 import 'package:shared_preferences_platform_interface/types.dart';
@@ -902,5 +902,42 @@ void main() {
     final SharedPreferencesAsyncPlatform preferences = getPreferences();
 
     expect(await preferences.getInt('thisIntIsWrittenInTheExampleAppJavaCode', options), 5);
+  });
+
+  testWidgets('detaching a secondary FlutterEngine preserves primary engine APIs', (
+    WidgetTester _,
+  ) async {
+    const channel = MethodChannel('dev.flutter.plugins.shared_preferences_example/multi_engine');
+    final existingLegacy = SharedPreferencesAndroid();
+    final existingAsync = SharedPreferencesAsyncAndroid();
+    final SharedPreferencesAsyncAndroidOptions dataStoreOptions = getOptions(useDataStore: true);
+    final SharedPreferencesAsyncAndroidOptions prefsOptions = getOptions(
+      useDataStore: false,
+      fileName: 'multiEngineTest',
+    );
+
+    // Pre-populate / resolve handles before the secondary engine attaches.
+    expect(await existingLegacy.setValue('String', 'flutter.beforeDetach', 'keptLegacy'), isTrue);
+    await existingAsync.setString('beforeDetachDataStore', 'keptDataStore', dataStoreOptions);
+    await existingAsync.setString('beforeDetachPrefs', 'keptPrefs', prefsOptions);
+
+    await channel.invokeMethod<void>('attachAndDetachSecondaryEngine');
+
+    // Fresh instances (like `SharedPreferences.getInstance()` after a background
+    // engine detaches in flutter/flutter#194920) as well as existing handles still work.
+    final freshLegacy = SharedPreferencesAndroid();
+    final Map<String, Object> legacyAll = await freshLegacy.getAllWithParameters(
+      GetAllParameters(filter: PreferencesFilter(prefix: 'flutter.')),
+    );
+    expect(legacyAll['flutter.beforeDetach'], 'keptLegacy');
+    expect(await existingLegacy.setValue('String', 'flutter.afterDetach', 'works'), isTrue);
+
+    final freshAsync = SharedPreferencesAsyncAndroid();
+    expect(await freshAsync.getString('beforeDetachDataStore', dataStoreOptions), 'keptDataStore');
+    expect(await freshAsync.getString('beforeDetachPrefs', prefsOptions), 'keptPrefs');
+    await existingAsync.setString('afterDetachDataStore', 'worksDataStore', dataStoreOptions);
+    await existingAsync.setString('afterDetachPrefs', 'worksPrefs', prefsOptions);
+    expect(await freshAsync.getString('afterDetachDataStore', dataStoreOptions), 'worksDataStore');
+    expect(await freshAsync.getString('afterDetachPrefs', prefsOptions), 'worksPrefs');
   });
 }

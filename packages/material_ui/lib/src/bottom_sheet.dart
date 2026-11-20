@@ -327,7 +327,8 @@ class _BottomSheetState extends State<BottomSheet> {
   }
 
   bool extentChanged(DraggableScrollableNotification notification) {
-    if (notification.extent == notification.minExtent && notification.shouldCloseOnMinExtent) {
+    if ((notification.extent - notification.minExtent).abs() < precisionErrorTolerance &&
+        notification.shouldCloseOnMinExtent) {
       widget.onClosing();
     }
     return false;
@@ -684,6 +685,9 @@ class _ModalBottomSheet<T> extends StatefulWidget {
 class _ModalBottomSheetState<T> extends State<_ModalBottomSheet<T>> {
   late final ProxyAnimation _sheetAnimation;
   late final CurvedAnimation _curvedSheetAnimation;
+  // The CurvedAnimation created for the most recent drag end, tracked so it can
+  // be disposed when it is replaced or the state is disposed.
+  CurvedAnimation? _dragEndCurvedAnimation;
 
   @override
   void initState() {
@@ -715,6 +719,7 @@ class _ModalBottomSheetState<T> extends State<_ModalBottomSheet<T>> {
     // Detach to avoid leaking listeners on the route animation.
     _sheetAnimation.parent = kAlwaysDismissedAnimation;
     _curvedSheetAnimation.dispose();
+    _dragEndCurvedAnimation?.dispose();
     super.dispose();
   }
 
@@ -733,6 +738,11 @@ class _ModalBottomSheetState<T> extends State<_ModalBottomSheet<T>> {
   void handleDragStart(DragStartDetails details) {
     // Allow the bottom sheet to track the user's finger accurately.
     _sheetAnimation.parent = widget.route.animation;
+    // The CurvedAnimation from the previous drag end is no longer the parent of
+    // [_sheetAnimation], so dispose it to avoid leaking its listeners on the
+    // route animation.
+    _dragEndCurvedAnimation?.dispose();
+    _dragEndCurvedAnimation = null;
   }
 
   void handleDragEnd(DragEndDetails details, {bool? isClosing}) {
@@ -741,7 +751,8 @@ class _ModalBottomSheetState<T> extends State<_ModalBottomSheet<T>> {
     // Rebind the animation using CurvedAnimation and Split so the
     // remaining transition continues smoothly from the exact point
     // where the drag gesture ended.
-    _sheetAnimation.parent = CurvedAnimation(
+    final CurvedAnimation? oldDragEndCurvedAnimation = _dragEndCurvedAnimation;
+    _dragEndCurvedAnimation = CurvedAnimation(
       parent: widget.route.animation!,
       curve: Split(
         currentProgress,
@@ -752,6 +763,10 @@ class _ModalBottomSheetState<T> extends State<_ModalBottomSheet<T>> {
         endCurve: widget.animationStyle?.reverseCurve ?? _kModalBottomSheetCurve,
       ),
     );
+    _sheetAnimation.parent = _dragEndCurvedAnimation;
+    // Dispose the previous drag-end CurvedAnimation only after detaching it
+    // from [_sheetAnimation], so it is never disposed while still in use.
+    oldDragEndCurvedAnimation?.dispose();
   }
 
   @override
@@ -1138,7 +1153,7 @@ class ModalBottomSheetRoute<T> extends PopupRoute<T> {
           final BottomSheetThemeData defaults = Theme.of(context).useMaterial3
               ? _BottomSheetDefaultsM3(context)
               : const BottomSheetThemeData();
-          return _ModalBottomSheet<T>(
+          final Widget sheet = _ModalBottomSheet<T>(
             route: this,
             animationStyle: sheetAnimationStyle,
             backgroundColor:
@@ -1159,16 +1174,23 @@ class ModalBottomSheetRoute<T> extends PopupRoute<T> {
             enableDrag: enableDrag,
             showDragHandle: showDragHandle ?? (enableDrag && (sheetTheme.showDragHandle ?? false)),
           );
+
+          // Wrap the sheet in SafeArea (or strip top padding) inside
+          // DisplayFeatureSubScreen's Builder so it receives the sub-screen's
+          // adjusted MediaQueryData rather than the root window padding.
+          // This ensures that safe areas from the opposite half of a foldable
+          // or multi-screen device are not incorrectly subtracted from this sheet.
+          return useSafeArea
+              ? SafeArea(bottom: false, child: sheet)
+              : MediaQuery.removePadding(context: context, removeTop: true, child: sheet);
         },
       ),
     );
 
-    Widget bottomSheet = useSafeArea
-        ? SafeArea(bottom: false, child: content)
-        : MediaQuery.removePadding(context: context, removeTop: true, child: content);
-
-    // Prevent clicks inside the bottom sheet from passing through to the barrier
-    bottomSheet = Semantics(hitTestBehavior: SemanticsHitTestBehavior.opaque, child: bottomSheet);
+    final Widget bottomSheet = Semantics(
+      hitTestBehavior: SemanticsHitTestBehavior.opaque,
+      child: content,
+    );
 
     return capturedThemes?.wrap(bottomSheet) ?? bottomSheet;
   }
@@ -1346,7 +1368,12 @@ Future<T?> showModalBottomSheet<T>({
       clipBehavior: clipBehavior,
       constraints: constraints,
       isDismissible: isDismissible,
-      modalBarrierColor: barrierColor ?? Theme.of(context).bottomSheetTheme.modalBarrierColor,
+      modalBarrierColor:
+          barrierColor ??
+          Theme.of(context).bottomSheetTheme.modalBarrierColor ??
+          (Theme.of(context).useMaterial3
+              ? _BottomSheetDefaultsM3(context).modalBarrierColor!
+              : Colors.black54),
       enableDrag: enableDrag,
       showDragHandle: showDragHandle,
       settings: routeSettings,
