@@ -1,5 +1,6 @@
-## NEXT
+## 1.3.7
 
+* Fixes an empty, self-closing `<defs/>` element being reported as unhandled, which threw when `warningsAsErrors` is set.
 * Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
 
 ## 1.3.6
