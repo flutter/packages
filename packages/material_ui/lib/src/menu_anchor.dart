@@ -298,12 +298,15 @@ class MenuAnchor extends StatefulWidget {
   /// The [childFocusNode] attribute is the optional [FocusNode] also associated
   /// to the [child] or [builder] widget that opens the menu.
   ///
-  /// The focus node should be attached to the widget that should receive focus
-  /// if keyboard focus traversal moves the focus off of the submenu with the
-  /// arrow keys.
+  /// The focus node should be attached to the widget that opens the menu. When
+  /// a top-level menu opens, this node receives focus. When the menu is closed
+  /// by pressing the escape key or selecting a menu item, focus returns to this
+  /// node.
   ///
-  /// If not supplied, then keyboard traversal from the menu back to the
-  /// controlling button when the menu is open is disabled.
+  /// The arrow keys do not move focus from a top-level menu back to this node.
+  ///
+  /// If null, focus is not moved to the widget that opens the menu when the
+  /// menu opens.
   final FocusNode? childFocusNode;
 
   /// The [MenuStyle] that defines the visual attributes of the menu bar.
