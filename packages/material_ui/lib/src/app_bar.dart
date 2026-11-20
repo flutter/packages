@@ -849,7 +849,9 @@ class _AppBarState extends State<AppBar> {
   }
 
   void _handleScrollNotification(ScrollNotification notification) {
-    if (notification is ScrollUpdateNotification && widget.notificationPredicate(notification)) {
+    if (notification is ScrollUpdateNotification &&
+        widget.notificationPredicate(notification) &&
+        _isPaintedWithinObserver(notification)) {
       final bool oldScrolledUnder = _scrolledUnder;
       final ScrollMetrics metrics = notification.metrics;
       switch (metrics.axisDirection) {
@@ -872,6 +874,28 @@ class _AppBarState extends State<AppBar> {
         });
       }
     }
+  }
+
+  // Content built with an OverlayPortal (for example, Autocomplete options or
+  // MenuAnchor panels) is a descendant of the ScrollNotificationObserver in
+  // the element tree, so its scroll notifications reach this app bar. However,
+  // it is painted in an Overlay, outside of the observer's render subtree, so
+  // it is not content that scrolls under the app bar.
+  bool _isPaintedWithinObserver(ScrollNotification notification) {
+    final RenderObject? observerRenderObject = _scrollNotificationObserver?.context
+        .findRenderObject();
+    final RenderObject? scrollableRenderObject = notification.context?.findRenderObject();
+    if (observerRenderObject == null || scrollableRenderObject == null) {
+      return true;
+    }
+    RenderObject? node = scrollableRenderObject;
+    while (node != null) {
+      if (identical(node, observerRenderObject)) {
+        return true;
+      }
+      node = node.parent;
+    }
+    return false;
   }
 
   Color _resolveColor(
