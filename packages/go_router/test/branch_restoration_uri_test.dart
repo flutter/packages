@@ -11,6 +11,8 @@ import 'package:material_ui/material_ui.dart';
 // Regression tests for https://github.com/flutter/flutter/issues/194209
 void main() {
   Future<void> mount(WidgetTester tester, _TestRouter fixture) async {
+    // Tear-downs run in reverse order, so the router is disposed first.
+    addTearDown(fixture.routingConfig.dispose);
     addTearDown(() async {
       await tester.pumpWidget(const SizedBox.shrink());
       fixture.router.dispose();
@@ -270,6 +272,27 @@ void main() {
     expectBranchPageState(tester, '/b/17');
   });
 
+  testWidgets('popping a root route after a RoutingConfig update updates branch topRoute', (
+    WidgetTester tester,
+  ) async {
+    final fixture = _TestRouter();
+    await mount(tester, fixture);
+    fixture.shell.goBranch(1);
+    await tester.pumpAndSettle();
+    unawaited(fixture.router.push<void>('/b/17/popup/99'));
+    await tester.pumpAndSettle();
+    expect(find.text('Popup'), findsOneWidget);
+
+    fixture.reloadRoutes();
+    await tester.pumpAndSettle();
+    expect(find.text('Popup'), findsOneWidget);
+
+    fixture.router.pop();
+    await tester.pumpAndSettle();
+
+    expectBranchPageState(tester, '/b/17');
+  });
+
   testWidgets('pushing and popping a root route does not rebuild branch pages', (
     WidgetTester tester,
   ) async {
@@ -330,24 +353,35 @@ class _TestRouter {
   late StatefulNavigationShell shell;
   int branchBuildCount = 0;
 
-  late final GoRouter router = GoRouter(
+  late final ValueNotifier<RoutingConfig> routingConfig = ValueNotifier<RoutingConfig>(
+    RoutingConfig(routes: _routes()),
+  );
+
+  late final GoRouter router = GoRouter.routingConfig(
+    routingConfig: routingConfig,
     navigatorKey: rootKey,
     initialLocation: '/a',
     restorationScopeId: 'router',
-    routes: <RouteBase>[
-      if (withOuterShell)
-        ShellRoute(
-          navigatorKey: outerKey,
-          restorationScopeId: 'outer',
-          builder: (BuildContext context, GoRouterState state, Widget child) => child,
-          routes: <RouteBase>[_shellRoute],
-        )
-      else
-        _shellRoute,
-    ],
   );
 
-  late final StatefulShellRoute _shellRoute = StatefulShellRoute.indexedStack(
+  /// Replaces the routing table with new instances of the same routes.
+  void reloadRoutes() {
+    routingConfig.value = RoutingConfig(routes: _routes());
+  }
+
+  List<RouteBase> _routes() => <RouteBase>[
+    if (withOuterShell)
+      ShellRoute(
+        navigatorKey: outerKey,
+        restorationScopeId: 'outer',
+        builder: (BuildContext context, GoRouterState state, Widget child) => child,
+        routes: <RouteBase>[_shellRoute()],
+      )
+    else
+      _shellRoute(),
+  ];
+
+  StatefulShellRoute _shellRoute() => StatefulShellRoute.indexedStack(
     restorationScopeId: 'shell',
     builder: (BuildContext context, GoRouterState state, StatefulNavigationShell shell) {
       this.shell = shell;
