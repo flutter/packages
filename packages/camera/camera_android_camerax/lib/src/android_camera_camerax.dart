@@ -474,9 +474,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     _handlesCropAndRotation = await preview!.surfaceProducerHandlesCropAndRotation();
 
     // Pin the Preview target rotation so that buffers CameraX copies for stream
-    // sharing look the same as buffers from the camera directly. Whether the
-    // surface handles crop and rotation is only known once the Preview is
-    // created, so this cannot be passed to the Preview constructor.
+    // sharing look the same as buffers from the camera directly.
     _previewTargetRotation = computePreviewTargetRotation(
       handlesCropAndRotation: _handlesCropAndRotation,
       cameraIsFrontFacing: cameraIsFrontFacing,

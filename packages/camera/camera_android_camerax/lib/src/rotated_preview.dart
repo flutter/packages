@@ -23,7 +23,7 @@ import 'rotated_preview_utils.dart';
 ///    needs to be corrected.
 ///  * An `ImageReader` ([handlesCropAndRotation] is false) never applies it, and
 ///    neither surface has it when CameraX copies the camera stream with OpenGL
-///    (e.g. for stream sharing), so the preview needs to be fully corrected
+///    (like for stream sharing), so the preview needs to be fully corrected
 ///    (see [buildUntransformedPreview]).
 @internal
 final class RotatedPreview extends StatefulWidget {
@@ -167,8 +167,6 @@ final class _RotatedPreviewState extends State<RotatedPreview> {
   }
 
   Widget _buildRotatedPreview(int defaultDisplayRotation) {
-    // Until a TransformationInfo is received, assume the surface is connected
-    // to the camera directly.
     final TransformationInfo? info = _transformationInfo;
     if (widget.handlesCropAndRotation && (info == null || info.hasCameraTransform)) {
       // The SurfaceTexture applies the camera transform (the sensor rotation and,
