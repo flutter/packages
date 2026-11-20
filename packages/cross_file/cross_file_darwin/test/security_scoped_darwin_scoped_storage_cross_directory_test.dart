@@ -9,7 +9,8 @@ import 'package:cross_file_platform_interface/cross_file_platform_interface.dart
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as path;
 
-final Directory testDirectory = Directory(path.join(Directory.current.path, 'test'));
+final String testPath = path.join(Directory.current.path, 'test');
+final Directory testDirectory = Directory(testPath);
 
 void main() {
   setUp(() {
@@ -35,5 +36,35 @@ void main() {
       ),
       (await testDirectory.list().toList()).map((FileSystemEntity entity) => entity.uri.toString()),
     );
+  });
+
+  test('toFilePath', () async {
+    final directory = PlatformScopedStorageXDirectory(
+      PlatformScopedStorageXDirectoryCreationParams(uri: testDirectory.uri.toString()),
+    );
+
+    expect(directory.toFilePath(), testDirectory.uri.toFilePath());
+  });
+
+  test('toFilePath path does not contain a scheme', () async {
+    final directory = PlatformScopedStorageXDirectory(
+      PlatformScopedStorageXDirectoryCreationParams(uri: testDirectory.uri.toString()),
+    );
+
+    expect(directory.toFilePath(), isNot(startsWith('file:')));
+  });
+
+  test('toFilePath adds trailing slash', () async {
+    final directoryWithoutScheme = PlatformScopedStorageXDirectory(
+      const PlatformScopedStorageXDirectoryCreationParams(uri: 'my/dir'),
+    );
+
+    expect(directoryWithoutScheme.toFilePath(), anyOf(endsWith('/'), endsWith(r'\')));
+
+    final directoryWithScheme = PlatformScopedStorageXDirectory(
+      const PlatformScopedStorageXDirectoryCreationParams(uri: 'file:///my/dir'),
+    );
+
+    expect(directoryWithScheme.toFilePath(), anyOf(endsWith('/'), endsWith(r'\')));
   });
 }

@@ -74,6 +74,9 @@ base class SecurityScopedDarwinScopedStorageXDirectory extends DarwinScopedStora
   SecurityScopedDarwinScopedStorageXDirectoryExtension? get extension => this;
 
   @override
+  String toFilePath() => _directory.uri.toFilePath();
+
+  @override
   Future<bool> exists() async => _directory.existsSync();
 
   @override
@@ -96,9 +99,7 @@ base class SecurityScopedDarwinScopedStorageXDirectory extends DarwinScopedStora
 
   @override
   Future<bool> canRead() async {
-    return NSFileManager.getDefaultManager().isReadableFileAtPath(
-      NSString(Uri.parse(params.uri).toFilePath()),
-    );
+    return NSFileManager.getDefaultManager().isReadableFileAtPath(toFilePath().toNSString());
   }
 
   @override

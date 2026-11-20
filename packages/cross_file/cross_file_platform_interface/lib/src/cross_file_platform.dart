@@ -85,6 +85,9 @@ final class _DefaultFileSystemXFile extends PlatformFileSystemXFile {
   Future<PlatformFileSystemXFile> writeAsBytes(PlatformWriteAsBytesParams params) {
     throw UnsupportedError('This instance does not represent any resource.');
   }
+
+  @override
+  String? toFilePath() => null;
 }
 
 /// Implementation of [PlatformFileSystemXDirectory] that represents a directory
@@ -99,6 +102,9 @@ final class _DefaultFileSystemXDirectory extends PlatformFileSystemXDirectory {
   Stream<PlatformXEntity> list(PlatformListParams params) async* {
     throw UnsupportedError('This instance does not represent any directory.');
   }
+
+  @override
+  String? toFilePath() => null;
 }
 
 /// Implementation of [PlatformScopedStorageXFile] that represents a resource

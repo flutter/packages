@@ -102,4 +102,7 @@ abstract base class PlatformFileSystemXDirectory extends PlatformXDirectory {
   /// Extension for providing platform-specific features.
   @override
   PlatformFileSystemXDirectoryExtension? get extension => null;
+
+  @override
+  String? toFilePath() => Uri.parse(params.uri).toFilePath();
 }

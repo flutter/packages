@@ -71,4 +71,20 @@ void main() {
 
     expect(await file.name(), 'test_file.txt');
   });
+
+  test('toFilePath', () async {
+    final file = PlatformScopedStorageXFile(
+      PlatformScopedStorageXFileCreationParams(uri: testFile.uri.toString()),
+    );
+
+    expect(file.toFilePath(), testFile.uri.toFilePath());
+  });
+
+  test('toFilePath path does not contain a scheme', () async {
+    final file = PlatformScopedStorageXFile(
+      PlatformScopedStorageXFileCreationParams(uri: testFile.uri.toString()),
+    );
+
+    expect(file.toFilePath(), isNot(startsWith('file:')));
+  });
 }
