@@ -90,7 +90,7 @@ base class BlobWebScopedStorageXFileCreationParams extends WebScopedStorageXFile
     @visibleForTesting super.testOverrides,
   }) : super(uri: URL.createObjectURL(blob)) {
     if (autoRevokeObjectUrl) {
-      _finalizer.attach(this, uri);
+      _finalizer.attach(this, uri, detach: this);
     }
   }
 
@@ -122,6 +122,8 @@ base class WebScopedStorageXFile extends PlatformScopedStorageXFile
       super.params is WebScopedStorageXFileCreationParams
       ? super.params as WebScopedStorageXFileCreationParams
       : UrlWebScopedStorageXFileCreationParams(objectUrl: super.params.uri);
+
+  bool _isDisposed = false;
 
   @override
   Future<Blob> getBlob() async {
@@ -203,9 +205,13 @@ base class WebScopedStorageXFile extends PlatformScopedStorageXFile
 
   @override
   Future<void> dispose() async {
-    // Only revoke the object URL if the XFile was the one that created it.
-    if (params is BlobWebScopedStorageXFileCreationParams) {
-      URL.revokeObjectURL(params.uri);
+    if (!_isDisposed) {
+      _isDisposed = true;
+      // Only revoke the object URL if the XFile was the one that created it.
+      if (params is BlobWebScopedStorageXFileCreationParams) {
+        BlobWebScopedStorageXFileCreationParams._finalizer.detach(params);
+        URL.revokeObjectURL(params.uri);
+      }
     }
   }
 }

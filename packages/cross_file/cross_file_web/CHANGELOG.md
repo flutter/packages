@@ -1,5 +1,9 @@
-## NEXT
+## 1.1.1
 
+* Adds removal of `Finalizer` callback when the blob-backed creation params from
+  `WebScopedStorageXFileCreationParams.fromBlob` is disposed manually.
+  This prevents a disposed web `PlatformXFile` from calling `URL.revokeObjectURL` again after
+  garbage collection.
 * Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
 
 ## 1.1.0

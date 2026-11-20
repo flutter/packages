@@ -5,8 +5,10 @@
 import 'dart:io';
 
 import 'package:cross_file_darwin/cross_file_darwin.dart';
+import 'package:cross_file_darwin/src/darwin_scoped_storage_cross_directory.dart';
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:leak_tracker/leak_tracker.dart';
 import 'package:path/path.dart' as path;
 
 final Directory testDirectory = Directory(path.join(Directory.current.path, 'test'));
@@ -36,4 +38,94 @@ void main() {
       (await testDirectory.list().toList()).map((FileSystemEntity entity) => entity.uri.toString()),
     );
   });
+
+  test('finalizer callback is made when directory is garbage collected', () async {
+    SecurityScopedDarwinScopedStorageXDirectory.finalizer = Finalizer<String>(
+      expectAsync1((String uri) {
+        expect(uri, testDirectory.uri.toString());
+      }),
+    );
+    addTearDown(
+      () => SecurityScopedDarwinScopedStorageXDirectory.finalizer =
+          SecurityScopedDarwinScopedStorageXDirectory.defaultFinalizer,
+    );
+
+    final WeakReference<SecurityScopedDarwinScopedStorageXDirectory> dir =
+        await _createAndDropDirectory();
+
+    await forceGC(fullGcCycles: defaultNumberOfGcCycles);
+    await pumpEventQueue();
+    expect(dir.target, isNull);
+  });
+
+  test(
+    'finalizer callback is not made when directory is garbage collected after being disposed',
+    () async {
+      SecurityScopedDarwinScopedStorageXDirectory.finalizer = Finalizer<String>(
+        expectAsync1((_) {}, count: 0),
+      );
+      addTearDown(
+        () => SecurityScopedDarwinScopedStorageXDirectory.finalizer =
+            SecurityScopedDarwinScopedStorageXDirectory.defaultFinalizer,
+      );
+
+      final WeakReference<SecurityScopedDarwinScopedStorageXDirectory> dir =
+          await _createAndDropDirectory(dispose: true);
+
+      await forceGC(fullGcCycles: defaultNumberOfGcCycles);
+      await pumpEventQueue();
+      expect(dir.target, isNull);
+    },
+    skip: !Platform.isMacOS
+        ? 'The ObjectiveC method called in `dispose` only works on macOS.'
+        : false,
+  );
+
+  test(
+    'finalizer is not detached after disposed is called once',
+    () async {
+      // Creates directory and detach from finalizer in dispose.
+      final WeakReference<SecurityScopedDarwinScopedStorageXDirectory> file =
+          await _createAndDropDirectory(dispose: true);
+
+      SecurityScopedDarwinScopedStorageXDirectory.finalizer = Finalizer<String>(
+        expectAsync1((_) {}),
+      );
+      addTearDown(
+        () => SecurityScopedDarwinScopedStorageXDirectory.finalizer =
+            SecurityScopedDarwinScopedStorageXDirectory.defaultFinalizer,
+      );
+      // Attach finalizer to directory again. This finalizer callback should trigger
+      // because it isn't removed after the second dispose.
+      SecurityScopedDarwinScopedStorageXDirectory.finalizer.attach(
+        file.target!,
+        '',
+        detach: file.target,
+      );
+      await file.target!.dispose();
+
+      await forceGC(fullGcCycles: defaultNumberOfGcCycles);
+      await pumpEventQueue();
+      expect(file.target, isNull);
+    },
+    skip: !Platform.isMacOS
+        ? 'The ObjectiveC method called in `dispose` only works on macOS.'
+        : false,
+  );
+}
+
+// Allocate and register the instance inside a non-inlined helper so the
+// async test frame does not retain a hidden stack/register reference to
+// the object across `await forceGC()`.
+@pragma('vm:never-inline')
+Future<WeakReference<SecurityScopedDarwinScopedStorageXDirectory>> _createAndDropDirectory({
+  bool dispose = false,
+}) async {
+  final dir = SecurityScopedDarwinScopedStorageXDirectory(
+    PlatformScopedStorageXDirectoryCreationParams(uri: testDirectory.uri.toString()),
+  );
+  if (dispose) {
+    await dir.dispose();
+  }
+  return WeakReference(dir);
 }

@@ -51,16 +51,29 @@ base class SecurityScopedDarwinScopedStorageXDirectory extends DarwinScopedStora
     with SecurityScopedDarwinScopedStorageXDirectoryExtension {
   /// Constructs a [SecurityScopedDarwinScopedStorageXDirectory].
   SecurityScopedDarwinScopedStorageXDirectory(super.params) : super._() {
-    _finalizer.attach(this, params.uri);
+    finalizer.attach(this, params.uri, detach: this);
   }
 
-  static final Finalizer<String> _finalizer = Finalizer((String uri) {
+  /// Handles revoking access to the resource pointed to by a security-scoped
+  /// URL.
+  ///
+  /// Only visible for testing purposes.
+  @visibleForTesting
+  static Finalizer<String> finalizer = defaultFinalizer;
+
+  /// Default [Finalizer] instance for [finalizer].
+  ///
+  /// Only visible for testing purposes.
+  @visibleForTesting
+  static Finalizer<String> defaultFinalizer = Finalizer((String uri) {
     // Check that this is not called during a unit test.
     if (Platform.environment['FLUTTER_TEST'] != 'true') {
-      final NSURL? url = NSURL.URLWithString(NSString(uri));
+      final NSURL? url = NSURL.URLWithString(uri.toNSString());
       url?.stopAccessingSecurityScopedResource();
     }
   });
+
+  bool _isDisposed = false;
 
   late final _directory = Directory.fromUri(Uri.parse(params.uri));
 
@@ -117,7 +130,13 @@ base class SecurityScopedDarwinScopedStorageXDirectory extends DarwinScopedStora
   }
 
   @override
-  Future<void> dispose() => stopAccessingSecurityScopedResource();
+  Future<void> dispose() async {
+    if (!_isDisposed) {
+      _isDisposed = true;
+      finalizer.detach(this);
+      await stopAccessingSecurityScopedResource();
+    }
+  }
 }
 
 /// Provides platform-specific features for
