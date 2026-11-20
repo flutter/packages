@@ -1,5 +1,6 @@
-## NEXT
+## 0.6.0
 
+* Adds interactive `WidgetState` (`hovered`, `pressed`), state transition animations (`animationStyle`), and tap ripple animations (`splashColor`, `splashAnimationStyle`) support to `SpanDecoration` (`TableSpanDecoration` and `TreeRowDecoration`).
 * Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
 
 ## 0.5.6
