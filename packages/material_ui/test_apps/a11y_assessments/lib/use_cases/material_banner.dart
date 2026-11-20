@@ -30,6 +30,10 @@ class MainWidget extends StatefulWidget {
 }
 
 class MainWidgetState extends State<MainWidget> {
+  // The banner uses this State's focus nodes, so it is shown through a
+  // page-scoped ScaffoldMessenger to keep it from outliving this page.
+  final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
+      GlobalKey<ScaffoldMessengerState>();
   final FocusNode dismissButtonFocusNode = FocusNode();
   final FocusNode showButtonFocusNode = FocusNode();
 
@@ -43,12 +47,12 @@ class MainWidgetState extends State<MainWidget> {
   }
 
   void hideBanner() {
-    ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
+    _scaffoldMessengerKey.currentState!.hideCurrentMaterialBanner();
     showButtonFocusNode.requestFocus();
   }
 
   void showBanner() {
-    ScaffoldMessenger.of(context).showMaterialBanner(
+    _scaffoldMessengerKey.currentState!.showMaterialBanner(
       MaterialBanner(
         padding: const EdgeInsets.all(20),
         content: const Text('Hello, I am a Material Banner'),
@@ -67,13 +71,16 @@ class MainWidgetState extends State<MainWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Semantics(headingLevel: 1, child: Text('$pageTitle Demo'))),
-      body: Center(
-        child: ElevatedButton(
-          focusNode: showButtonFocusNode,
-          onPressed: showBanner,
-          child: const Text('Show a MaterialBanner'),
+    return ScaffoldMessenger(
+      key: _scaffoldMessengerKey,
+      child: Scaffold(
+        appBar: AppBar(title: Semantics(headingLevel: 1, child: Text('$pageTitle Demo'))),
+        body: Center(
+          child: ElevatedButton(
+            focusNode: showButtonFocusNode,
+            onPressed: showBanner,
+            child: const Text('Show a MaterialBanner'),
+          ),
         ),
       ),
     );
