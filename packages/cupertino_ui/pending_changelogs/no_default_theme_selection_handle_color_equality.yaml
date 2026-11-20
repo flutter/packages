@@ -1,3 +1,0 @@
-changelog: |
-  - Fixes `NoDefaultCupertinoThemeData` equality and `hashCode` ignoring `selectionHandleColor`.
-version: patch

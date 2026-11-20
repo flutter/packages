@@ -1,3 +1,0 @@
-changelog: |
-  - Fixes `CupertinoActionSheet` semantics label not being localized.
-version: patch
