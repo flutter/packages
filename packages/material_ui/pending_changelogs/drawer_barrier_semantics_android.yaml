@@ -1,0 +1,3 @@
+changelog: |
+  - Exposes modal barrier dismiss semantics for `Drawer` on Android to support Switch Access.
+version: patch
