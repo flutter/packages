@@ -1,18 +1,9 @@
 ## 2.4.2
 
 * Fixes `SharedPreferencesWindows` and `SharedPreferencesAsyncWindows` silently
-  deleting each other's preferences. Both stores share
-  `shared_preferences.json` and each write replaced the whole file with that
-  store's cache, which is read once, so whichever store wrote last dropped
-  every key the other had written since. A write now reads the file, applies
-  its change and writes back with no suspension in between, so it starts from
-  what is on disk and cannot interleave with another write.
-* Recovers from a damaged `shared_preferences.json` instead of throwing. When
-  the file is a complete write followed by leftover text, as two processes
-  writing at once can leave it, the complete write is kept. A file that is
-  empty or cut off, as another process's write leaves it for a moment, is read
-  again a few times before it is treated as empty. Either way the next write
-  replaces it.
+  deleting each other's preferences when an app uses both in one isolate.
+* Recovers from a damaged `shared_preferences.json` instead of throwing, keeping
+  the preferences that can still be read.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 2.4.1

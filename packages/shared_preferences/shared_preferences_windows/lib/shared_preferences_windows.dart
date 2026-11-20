@@ -4,7 +4,6 @@
 
 import 'dart:async';
 import 'dart:convert' show json, utf8;
-import 'dart:io' show sleep;
 
 import 'package:file/file.dart';
 import 'package:file/local.dart';
@@ -49,12 +48,32 @@ class SharedPreferencesWindows extends SharedPreferencesStorePlatform {
   /// Checks for cached preferences and returns them or loads preferences from
   /// file and returns and caches them.
   Future<Map<String, Object>> _readPreferences() async {
-    _cachedPreferences ??= await _readFromFile(
+    if (_cachedPreferences case final Map<String, Object> cached) {
+      return cached;
+    }
+    final Map<String, Object> read = await _readFromFile(
       _defaultFileName,
       fs: fs,
       pathProvider: pathProvider,
     );
-    return _cachedPreferences!;
+    // A write that finished during the read has already cached newer data.
+    return _cachedPreferences ??= read;
+  }
+
+  /// Applies [update] to the stored preferences and caches the result,
+  /// returning whether it was written.
+  Future<bool> _update(void Function(Map<String, Object> preferences) update) async {
+    final Map<String, Object>? preferences = await _updatePreferences(
+      _defaultFileName,
+      update,
+      fs: fs,
+      pathProvider: pathProvider,
+    );
+    if (preferences == null) {
+      return false;
+    }
+    _cachedPreferences = preferences;
+    return true;
   }
 
   @override
@@ -71,21 +90,13 @@ class SharedPreferencesWindows extends SharedPreferencesStorePlatform {
   Future<bool> clearWithParameters(ClearParameters parameters) async {
     final PreferencesFilter filter = parameters.filter;
 
-    final Map<String, Object>? preferences = await _updatePreferences(
-      _defaultFileName,
+    return _update(
       (Map<String, Object> preferences) => preferences.removeWhere(
         (String key, _) =>
             key.startsWith(filter.prefix) &&
             (filter.allowList == null || filter.allowList!.contains(key)),
       ),
-      fs: fs,
-      pathProvider: pathProvider,
     );
-    if (preferences == null) {
-      return false;
-    }
-    _cachedPreferences = preferences;
-    return true;
   }
 
   @override
@@ -112,33 +123,13 @@ class SharedPreferencesWindows extends SharedPreferencesStorePlatform {
   }
 
   @override
-  Future<bool> remove(String key) async {
-    final Map<String, Object>? preferences = await _updatePreferences(
-      _defaultFileName,
-      (Map<String, Object> preferences) => preferences.remove(key),
-      fs: fs,
-      pathProvider: pathProvider,
-    );
-    if (preferences == null) {
-      return false;
-    }
-    _cachedPreferences = preferences;
-    return true;
+  Future<bool> remove(String key) {
+    return _update((Map<String, Object> preferences) => preferences.remove(key));
   }
 
   @override
-  Future<bool> setValue(String valueType, String key, Object value) async {
-    final Map<String, Object>? preferences = await _updatePreferences(
-      _defaultFileName,
-      (Map<String, Object> preferences) => preferences[key] = value,
-      fs: fs,
-      pathProvider: pathProvider,
-    );
-    if (preferences == null) {
-      return false;
-    }
-    _cachedPreferences = preferences;
-    return true;
+  Future<bool> setValue(String valueType, String key, Object value) {
+    return _update((Map<String, Object> preferences) => preferences[key] = value);
   }
 }
 
@@ -230,20 +221,13 @@ base class SharedPreferencesAsyncWindows extends SharedPreferencesAsyncPlatform 
     ClearPreferencesParameters parameters,
     SharedPreferencesOptions options,
   ) async {
-    final SharedPreferencesWindowsOptions windowsOptions =
-        SharedPreferencesWindowsOptions.fromSharedPreferencesOptions(options);
     final PreferencesFilters filter = parameters.filter;
-    final Map<String, Object>? preferences = await _updatePreferences(
-      windowsOptions.fileName,
+    await _update(
+      options,
       (Map<String, Object> preferences) => preferences.removeWhere(
         (String key, _) => filter.allowList == null || filter.allowList!.contains(key),
       ),
-      fs: fs,
-      pathProvider: pathProvider,
     );
-    if (preferences != null) {
-      _cachedPreferences = preferences;
-    }
   }
 
   @override
@@ -271,12 +255,21 @@ base class SharedPreferencesAsyncWindows extends SharedPreferencesAsyncPlatform 
     return prefs;
   }
 
-  Future<void> _setValue(String key, Object value, SharedPreferencesOptions options) async {
+  Future<void> _setValue(String key, Object value, SharedPreferencesOptions options) {
+    return _update(options, (Map<String, Object> preferences) => preferences[key] = value);
+  }
+
+  /// Applies [update] to the stored preferences and, if that was written,
+  /// caches the result.
+  Future<void> _update(
+    SharedPreferencesOptions options,
+    void Function(Map<String, Object> preferences) update,
+  ) async {
     final SharedPreferencesWindowsOptions windowsOptions =
         SharedPreferencesWindowsOptions.fromSharedPreferencesOptions(options);
     final Map<String, Object>? preferences = await _updatePreferences(
       windowsOptions.fileName,
-      (Map<String, Object> preferences) => preferences[key] = value,
+      update,
       fs: fs,
       pathProvider: pathProvider,
     );
@@ -288,8 +281,16 @@ base class SharedPreferencesAsyncWindows extends SharedPreferencesAsyncPlatform 
   /// Checks for cached preferences and returns them or loads preferences from
   /// file and returns and caches them.
   Future<Map<String, Object>> _readPreferences(String fileName) async {
-    _cachedPreferences ??= await _readFromFile(fileName, fs: fs, pathProvider: pathProvider);
-    return _cachedPreferences!;
+    if (_cachedPreferences case final Map<String, Object> cached) {
+      return cached;
+    }
+    final Map<String, Object> read = await _readFromFile(
+      fileName,
+      fs: fs,
+      pathProvider: pathProvider,
+    );
+    // A write that finished during the read has already cached newer data.
+    return _cachedPreferences ??= read;
   }
 }
 
@@ -315,35 +316,47 @@ Future<Map<String, Object>> _readFromFile(
   PathProviderWindows? pathProvider,
 }) async {
   final File? localDataFile = await _getLocalDataFile(fileName, fs: fs, pathProvider: pathProvider);
-  return localDataFile == null ? <String, Object>{} : _readFileSync(localDataFile);
+  return localDataFile == null ? <String, Object>{} : _readFile(localDataFile);
 }
 
 /// Gets the preferences from an already-resolved file.
-Map<String, Object> _readFileSync(File localDataFile) {
-  if (!localDataFile.existsSync()) {
-    return <String, Object>{};
-  }
+///
+/// Throws a [FileSystemException] if the file exists and still cannot be
+/// opened after the retries. That is not read as empty, because a write that
+/// started from empty would replace every stored key with just its own.
+Future<Map<String, Object>> _readFile(File localDataFile) async {
   // A write empties the file and then fills it, so another process reading it
-  // in between sees it empty or cut off. Treating that as the stored data would
-  // make the next write here replace every key with just its own, so read again
-  // after a moment; the other write is long finished by then. Only a file that
-  // stays unreadable, such as one a crash left half-written, reads as empty.
+  // in between sees it empty or cut off, or is refused the file altogether.
+  // Treating that as the stored data would make the next write here replace
+  // every key with just its own, so read again after a moment; the other write
+  // is long finished by then. Only a file whose contents stay unreadable, such
+  // as one a crash left half-written, reads as empty.
   for (var attempt = 0; ; attempt++) {
-    // Leniently: a damaged file can end part-way through a multi-byte character.
-    final String contents = utf8.decode(localDataFile.readAsBytesSync(), allowMalformed: true);
-    final Map<String, Object>? preferences = _decodePreferences(contents);
-    if (preferences != null) {
-      return preferences;
+    final lastAttempt = attempt == _unreadableFileRetries;
+    try {
+      if (!localDataFile.existsSync()) {
+        return <String, Object>{};
+      }
+      // Leniently: a damaged file can end part-way through a multi-byte character.
+      final String contents = utf8.decode(localDataFile.readAsBytesSync(), allowMalformed: true);
+      final Map<String, Object>? preferences = _decodePreferences(contents);
+      if (preferences != null) {
+        return preferences;
+      }
+      if (lastAttempt) {
+        debugPrint('Preferences file is unreadable; starting from empty.');
+        return <String, Object>{};
+      }
+    } on FileSystemException {
+      if (lastAttempt) {
+        rethrow;
+      }
     }
-    if (attempt == _unreadableFileRetries) {
-      debugPrint('Preferences file is unreadable; starting from empty.');
-      return <String, Object>{};
-    }
-    sleep(_unreadableFileRetryDelay);
+    await Future<void>.delayed(_unreadableFileRetryDelay);
   }
 }
 
-/// How many times [_readFileSync] reads an empty or unreadable file again.
+/// How many times [_readFile] reads an empty or unreadable file again.
 const int _unreadableFileRetries = 5;
 
 /// The pause before each of those reads.
@@ -386,32 +399,60 @@ Map<String, Object>? _decodePreferences(String contents) {
 /// to start from what is on disk now rather than from a map the calling store
 /// read earlier -- otherwise it silently drops every key written since.
 ///
-/// The read, the update and the write run with no `await` between them, so no
-/// other write can land in the middle of one: concurrent writes, from either
-/// store, each see the previous one's result.
+/// Updates of the same file are queued and run one at a time, so within one
+/// isolate concurrent writes, from either store, each see the previous one's
+/// result. Nothing here coordinates with other isolates or other processes
+/// writing the same file: their updates can still be lost to one made here at
+/// the same moment, and the reverse.
 Future<Map<String, Object>?> _updatePreferences(
   String fileName,
   void Function(Map<String, Object> preferences) update, {
   FileSystem fs = const LocalFileSystem(),
   PathProviderWindows? pathProvider,
 }) async {
-  final File? localDataFile = await _getLocalDataFile(fileName, fs: fs, pathProvider: pathProvider);
-  if (localDataFile == null) {
-    debugPrint('Unable to determine where to write preferences.');
-    return null;
-  }
   try {
-    final Map<String, Object> preferences = _readFileSync(localDataFile);
-    update(preferences);
-    if (!localDataFile.existsSync()) {
-      localDataFile.createSync(recursive: true);
+    final File? localDataFile = await _getLocalDataFile(
+      fileName,
+      fs: fs,
+      pathProvider: pathProvider,
+    );
+    if (localDataFile == null) {
+      debugPrint('Unable to determine where to write preferences.');
+      return null;
     }
-    localDataFile.writeAsStringSync(json.encode(preferences));
-    return preferences;
+    return await _queueUpdate(localDataFile.path, () async {
+      final Map<String, Object> preferences = await _readFile(localDataFile);
+      update(preferences);
+      if (!localDataFile.existsSync()) {
+        localDataFile.createSync(recursive: true);
+      }
+      localDataFile.writeAsStringSync(json.encode(preferences));
+      return preferences;
+    });
   } catch (e) {
     debugPrint('Error saving preferences to disk: $e');
     return null;
   }
+}
+
+/// The last queued update of each file, by path, while any are pending.
+final Map<String, Future<void>> _pendingUpdates = <String, Future<void>>{};
+
+/// Runs [update] once every update of [filePath] queued before it has
+/// finished, whether or not those succeeded.
+Future<T> _queueUpdate<T>(String filePath, Future<T> Function() update) {
+  final Future<void> previous = _pendingUpdates[filePath] ?? Future<void>.value();
+  final Future<T> result = previous.then((_) => update());
+  // The queue only needs to know when this update is over, not how it went;
+  // the caller gets the error from [result].
+  final Future<void> done = result.then<void>((_) {}, onError: (Object _) {});
+  _pendingUpdates[filePath] = done;
+  done.whenComplete(() {
+    if (identical(_pendingUpdates[filePath], done)) {
+      _pendingUpdates.remove(filePath);
+    }
+  });
+  return result;
 }
 
 /// Windows specific SharedPreferences Options.
