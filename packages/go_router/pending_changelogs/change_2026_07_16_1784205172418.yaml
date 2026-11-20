@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes `onException` recovery navigation when `onEnter` is configured and preserves an existing error configuration when a later navigation is blocked.
+version: patch
