@@ -45,19 +45,10 @@ import 'material.dart';
 ///
 /// <callout-box>
 ///
-// TODO(framework): Add unit tests to this code snippet.
-// https://github.com/flutter/flutter/issues/188530
-///
 /// For typical use, pass the [InkSparkle.splashFactory] to the `splashFactory`
 /// parameter of a button style or [ThemeData].
 ///
-/// ```dart
-/// ElevatedButton(
-///   style: ElevatedButton.styleFrom(splashFactory: InkSparkle.splashFactory),
-///   child: const Text('Sparkle!'),
-///   onPressed: () { },
-/// )
-/// ```
+/// {@example /example/lib/ink_sparkle/ink_sparkle.snippet.0.dart#body indent=strip}
 ///
 /// </callout-box>
 class InkSparkle extends InteractiveInkFeature {
