@@ -153,14 +153,14 @@ abstract base class PlatformXFile extends PlatformXEntity {
 /// Base class for parameters passed to [PlatformXFile.openWrite].
 @immutable
 base class PlatformOpenWriteParams {
-  /// Constructs a [PlatformOpenWriteParams];
+  /// Constructs a [PlatformOpenWriteParams].
   const PlatformOpenWriteParams();
 }
 
 /// Base class for parameters passed to [PlatformXFile.writeAsString].
 @immutable
 base class PlatformWriteAsStringParams {
-  /// Constructs a [PlatformWriteAsStringParams];
+  /// Constructs a [PlatformWriteAsStringParams].
   const PlatformWriteAsStringParams(this.contents, {this.encoding = utf8});
 
   /// The contents to write to the resource.
@@ -173,6 +173,6 @@ base class PlatformWriteAsStringParams {
 /// Base class for parameters passed to [PlatformXFile.delete].
 @immutable
 base class PlatformFileDeleteParams {
-  /// Constructs a [PlatformFileDeleteParams];
+  /// Constructs a [PlatformFileDeleteParams].
   const PlatformFileDeleteParams();
 }
