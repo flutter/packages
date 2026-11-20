@@ -193,9 +193,11 @@ class DropdownMenu<T> extends StatefulWidget {
   /// Creates a const [DropdownMenu].
   ///
   /// The leading and trailing icons in the text field can be customized by using
-  /// [leadingIcon], [trailingIcon] and [selectedTrailingIcon] properties. They are
-  /// passed down to the [InputDecoration] properties, and will override values
-  /// in the [InputDecoration.prefixIcon] and [InputDecoration.suffixIcon].
+  /// [leadingIcon], [trailingIcon] and [selectedTrailingIcon] properties. When
+  /// [decorationBuilder] is provided, they are only used as fallbacks: if the
+  /// resulting [InputDecoration.prefixIcon] is null, [leadingIcon] is used; if the
+  /// resulting [InputDecoration.suffixIcon] is null, a default [IconButton] using
+  /// [trailingIcon] and [selectedTrailingIcon] is used.
   ///
   /// Except leading and trailing icons, the text field can be configured by the
   /// [inputDecorationTheme] property. The menu can be configured by the [menuStyle].
