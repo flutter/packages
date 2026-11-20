@@ -4,9 +4,14 @@
 
 export 'package:cross_file_platform_interface/cross_file_platform_interface.dart'
     show
+        PlatformCreateParams,
+        PlatformDirectoryDeleteParams,
+        PlatformFileDeleteParams,
         PlatformListParams,
+        PlatformOpenWriteParams,
         PlatformScopedStorageXDirectoryCreationParams,
         PlatformScopedStorageXFileCreationParams,
+        PlatformWriteAsStringParams,
         PlatformXDirectoryCreationParams,
         PlatformXFileCreationParams;
 

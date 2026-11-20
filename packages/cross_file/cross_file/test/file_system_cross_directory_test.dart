@@ -47,5 +47,64 @@ void main() {
       expect(directoryEntities[2], isA<XEntity>());
       expect(directoryEntities[2].uri, entities[2].params.uri);
     });
+
+    test('createFile', () async {
+      const fileName = 'new_file.txt';
+      CrossFilePlatform.instance = TestCrossFilePlatform(
+        onCreatePlatformFileSystemXDirectory: (PlatformFileSystemXDirectoryCreationParams params) =>
+            TestFileSystemXDirectory(
+              params,
+              onCreateFile: expectAsync1((PlatformCreateParams createParams) async {
+                expect(createParams.name, fileName);
+                return TestFileSystemXFile(PlatformFileSystemXFileCreationParams(fileName));
+              }),
+            ),
+      );
+
+      final directory = XDirectory.fileSystem(path: 'my/dir/');
+      final XFile file = await directory.createFile(fileName);
+
+      expect(file, isA<FileSystemXFile>());
+      expect((file as FileSystemXFile).path, fileName);
+    });
+
+    test('createDirectory', () async {
+      const dirName = 'sub_dir';
+      CrossFilePlatform.instance = TestCrossFilePlatform(
+        onCreatePlatformFileSystemXDirectory: (PlatformFileSystemXDirectoryCreationParams params) =>
+            TestFileSystemXDirectory(
+              params,
+              onCreateDirectory: expectAsync1((PlatformCreateParams createParams) async {
+                expect(createParams.name, dirName);
+                return TestFileSystemXDirectory(
+                  PlatformFileSystemXDirectoryCreationParams(dirName),
+                );
+              }),
+            ),
+      );
+
+      final directory = XDirectory.fileSystem(path: 'my/dir/');
+      final XDirectory subDir = await directory.createDirectory(dirName);
+
+      expect(subDir, isA<FileSystemXDirectory>());
+      expect((subDir as FileSystemXDirectory).path, dirName);
+    });
+
+    test('delete', () async {
+      CrossFilePlatform.instance = TestCrossFilePlatform(
+        onCreatePlatformFileSystemXDirectory: (PlatformFileSystemXDirectoryCreationParams params) =>
+            TestFileSystemXDirectory(
+              params,
+              onDelete: expectAsync1((PlatformDirectoryDeleteParams deleteParams) async {
+                return true;
+              }),
+            ),
+      );
+
+      final directory = XDirectory.fileSystem(path: 'my/dir/');
+      final bool result = await directory.delete();
+
+      expect(result, isTrue);
+    });
   });
 }

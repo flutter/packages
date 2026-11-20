@@ -6,6 +6,7 @@ import 'package:cross_file_platform_interface/cross_file_platform_interface.dart
 import 'package:flutter/foundation.dart' show immutable, internal, protected;
 
 import 'cross_entity.dart';
+import 'cross_file.dart';
 import 'file_system/file_system_cross_directory.dart';
 import 'file_system/file_system_cross_file.dart';
 import 'scoped_storage/scoped_storage_cross_directory.dart';
@@ -14,6 +15,13 @@ import 'scoped_storage/scoped_storage_cross_file.dart';
 /// A reference to a container of data resources.
 ///
 /// Note: Not all platforms support accessing directories.
+///
+/// See also:
+///
+/// * [FileSystemXDirectory], the `XDirectory` implementation for a local data
+///   resource on the file system.
+/// * [ScopedStorageXDirectory], the `XDirectory` implementation for a directory
+///   (or folder) within a device's scoped storage.
 @immutable
 abstract base class XDirectory extends XEntity {
   /// Constructs a [XDirectory] from a specific platform implementation.
@@ -38,7 +46,7 @@ abstract base class XDirectory extends XEntity {
   @override
   PlatformXDirectory get platform => super.platform as PlatformXDirectory;
 
-  /// Lists the sub-directories and files of this directory.
+  /// Lists the sub-directories and resources of this directory.
   Stream<XEntity> list() {
     // Converts PlatformXEntities to XEntities.
     return platform.list(const PlatformListParams()).map<XEntity>((PlatformXEntity entity) {
@@ -56,4 +64,48 @@ abstract base class XDirectory extends XEntity {
       return XEntity(entity);
     });
   }
+
+  /// Creates a resource in this container.
+  ///
+  /// `name`: Path excluded name of the resource being created.
+  ///
+  /// Platforms may throw an exception if there is an error creating the
+  /// resource.
+  Future<XFile> createFile(String name) async {
+    final PlatformXFile file = await platform.createFile(PlatformCreateParams(name));
+
+    switch (file) {
+      case PlatformScopedStorageXFile():
+        return ScopedStorageXFile.fromPlatform(file);
+      case PlatformFileSystemXFile():
+        return FileSystemXFile.fromPlatform(file);
+      default:
+        throw Exception('Unsupported XFile type was returned: ${file.runtimeType}');
+    }
+  }
+
+  /// Creates a container in this container.
+  ///
+  /// `name`: Path excluded name of the container being created.
+  ///
+  /// Platforms may throw an exception if there is an error creating the
+  /// container.
+  Future<XDirectory> createDirectory(String name) async {
+    final PlatformXDirectory directory = await platform.createDirectory(PlatformCreateParams(name));
+
+    switch (directory) {
+      case PlatformScopedStorageXDirectory():
+        return ScopedStorageXDirectory.fromPlatform(directory);
+      case PlatformFileSystemXDirectory():
+        return FileSystemXDirectory.fromPlatform(directory);
+      default:
+        throw Exception('Unsupported XDirectory type was returned: ${directory.runtimeType}');
+    }
+  }
+
+  /// Deletes the container.
+  ///
+  /// Platforms may throw an exception if there is an error deleting the
+  /// container.
+  Future<bool> delete() => platform.delete(const PlatformDirectoryDeleteParams());
 }
