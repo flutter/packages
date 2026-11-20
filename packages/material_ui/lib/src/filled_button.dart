@@ -98,7 +98,7 @@ enum _FilledButtonVariant { filled, tonal }
 ///
 /// See also:
 ///
-///  * [ElevatedButton], a filled button whose material elevates when pressed.
+///  * [ElevatedButton], a filled button with a shadow.
 ///  * [OutlinedButton], a button with an outlined border and no fill color.
 ///  * [TextButton], a button with no outline or fill color.
 ///  * <https://material.io/design/components/buttons.html>
@@ -236,6 +236,9 @@ class FilledButton extends ButtonStyleButton {
   /// Otherwise a [WidgetStateProperty] with the same opacities as the
   /// default is created.
   ///
+  /// The [backgroundColor] and [disabledBackgroundColor] colors are
+  /// used to create a [WidgetStateProperty] [ButtonStyle.backgroundColor].
+  ///
   /// Similarly, the [enabledMouseCursor] and [disabledMouseCursor]
   /// parameters are used to construct [ButtonStyle.mouseCursor].
   ///
@@ -245,11 +248,6 @@ class FilledButton extends ButtonStyleButton {
   ///
   /// If [iconColor] is null, the button icon will use [foregroundColor]. If [foregroundColor] is also
   /// null, the button icon will use the default icon color.
-  ///
-  /// The button's elevations are defined relative to the [elevation]
-  /// parameter. The disabled elevation is the same as the parameter
-  /// value, [elevation] + 2 is used when the button is hovered
-  /// or focused, and elevation + 6 is used when the button is pressed.
   ///
   /// All of the other parameters are either used directly or used to
   /// create a [WidgetStateProperty] with a single value for all
@@ -392,48 +390,25 @@ class FilledButton extends ButtonStyleButton {
   /// The color of the [ButtonStyle.textStyle] is not used, the
   /// [ButtonStyle.foregroundColor] color is used instead.
   ///
-  /// * `textStyle` - Theme.textTheme.labelLarge
-  /// * `backgroundColor`
-  ///   * disabled - Theme.colorScheme.onSurface(0.12)
-  ///   * others - Theme.colorScheme.secondaryContainer
-  /// * `foregroundColor`
-  ///   * disabled - Theme.colorScheme.onSurface(0.38)
-  ///   * others - Theme.colorScheme.onSecondaryContainer
-  /// * `overlayColor`
-  ///   * hovered - Theme.colorScheme.onSecondaryContainer(0.08)
-  ///   * focused or pressed - Theme.colorScheme.onSecondaryContainer(0.12)
-  /// * `shadowColor` - Theme.colorScheme.shadow
-  /// * `surfaceTintColor` - null
-  /// * `elevation`
-  ///   * disabled - 0
-  ///   * default - 0
-  ///   * hovered - 1
-  ///   * focused or pressed - 0
+  /// ## Material 2 defaults
+  ///
+  /// If [ThemeData.useMaterial3] is false, the Material 3 defaults below are
+  /// used, except for `padding`:
+  ///
   /// * `padding`
   ///   * `default font size <= 14` - horizontal(16)
   ///   * `14 < default font size <= 28` - lerp(horizontal(16), horizontal(8))
-  ///   * `28 < default font size <= 36` - lerp(horizontal(8), horizontal(4))
-  ///   * `36 < default font size` - horizontal(4)
-  /// * `minimumSize` - Size(64, 40)
-  /// * `fixedSize` - null
-  /// * `maximumSize` - Size.infinite
-  /// * `side` - null
-  /// * `shape` - StadiumBorder()
-  /// * `mouseCursor` - WidgetStateMouseCursor.adaptiveClickable
-  /// * `visualDensity` - Theme.visualDensity
-  /// * `tapTargetSize` - Theme.materialTapTargetSize
-  /// * `animationDuration` - kThemeChangeDuration
-  /// * `enableFeedback` - true
-  /// * `alignment` - Alignment.center
-  /// * `splashFactory` - Theme.splashFactory
+  ///   * `28 < default font size <= 42` - lerp(horizontal(8), horizontal(4))
+  ///   * `42 < default font size` - horizontal(4)
   ///
-  /// The default padding values for the [FilledButton.icon] factory are slightly different:
+  /// The default padding values for the [FilledButton.icon] and
+  /// [FilledButton.tonalIcon] factories are slightly different:
   ///
   /// * `padding`
   ///   * `default font size <= 14` - start(12) end(16)
   ///   * `14 < default font size <= 28` - lerp(start(12) end(16), horizontal(8))
-  ///   * `28 < default font size <= 36` - lerp(horizontal(8), horizontal(4))
-  ///   * `36 < default font size` - horizontal(4)
+  ///   * `28 < default font size <= 42` - lerp(horizontal(8), start(8) end(4))
+  ///   * `42 < default font size` - start(8) end(4)
   ///
   /// The default value for `side`, which defines the appearance of the button's
   /// outline, is null. That means that the outline is defined by the button
@@ -468,17 +443,19 @@ class FilledButton extends ButtonStyleButton {
   /// * `surfaceTintColor` - Colors.transparent
   /// * `elevation`
   ///   * disabled - 0
-  ///   * default - 1
-  ///   * hovered - 3
-  ///   * focused or pressed - 1
+  ///   * default - 0
+  ///   * hovered - 1
+  ///   * focused or pressed - 0
   /// * `padding`
   ///   * `default font size <= 14` - horizontal(24)
   ///   * `14 < default font size <= 28` - lerp(horizontal(24), horizontal(12))
-  ///   * `28 < default font size <= 36` - lerp(horizontal(12), horizontal(6))
-  ///   * `36 < default font size` - horizontal(6)
+  ///   * `28 < default font size <= 42` - lerp(horizontal(12), horizontal(6))
+  ///   * `42 < default font size` - horizontal(6)
   /// * `minimumSize` - Size(64, 40)
   /// * `fixedSize` - null
   /// * `maximumSize` - Size.infinite
+  /// * `iconSize` - 18
+  /// * `iconColor` - same as `foregroundColor`
   /// * `side` - null
   /// * `shape` - StadiumBorder()
   /// * `mouseCursor` - WidgetStateMouseCursor.adaptiveClickable
@@ -489,8 +466,9 @@ class FilledButton extends ButtonStyleButton {
   /// * `alignment` - Alignment.center
   /// * `splashFactory` - Theme.splashFactory
   ///
-  /// For the [FilledButton.icon] factory, the start (generally the left) value of
-  /// [ButtonStyle.padding] is reduced from 24 to 16.
+  /// For the [FilledButton.icon] and [FilledButton.tonalIcon] factories, the
+  /// start (generally the left) value of [ButtonStyle.padding] is reduced from
+  /// 24 to 16.
   ///
   /// ## Material 3 Expressive defaults
   ///
