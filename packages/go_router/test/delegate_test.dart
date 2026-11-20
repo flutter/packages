@@ -146,6 +146,38 @@ void main() {
       addTearDown(goRouter.dispose);
     });
 
+    testWidgets('Navigator.pop keeps the route information in sync', (WidgetTester tester) async {
+      final valueNotifier = ValueNotifier<int>(0);
+      addTearDown(valueNotifier.dispose);
+      final GoRouter goRouter = await createGoRouter(tester, refreshListenable: valueNotifier);
+
+      goRouter.push('/a');
+      await tester.pumpAndSettle();
+
+      // Pops the page without GoRouter.pop, as an AppBar back button does.
+      goRouter.routerDelegate.navigatorKey.currentState!.pop();
+      // A refresh before the next frame re-parses the route information.
+      valueNotifier.notifyListeners();
+      await tester.pumpAndSettle();
+
+      expect(goRouter.routerDelegate.currentConfiguration.matches.last.matchedLocation, '/');
+    });
+
+    testWidgets('system back keeps the route information in sync', (WidgetTester tester) async {
+      final valueNotifier = ValueNotifier<int>(0);
+      addTearDown(valueNotifier.dispose);
+      final GoRouter goRouter = await createGoRouter(tester, refreshListenable: valueNotifier);
+
+      goRouter.push('/a');
+      await tester.pumpAndSettle();
+
+      await tester.binding.handlePopRoute();
+      valueNotifier.notifyListeners();
+      await tester.pumpAndSettle();
+
+      expect(goRouter.routerDelegate.currentConfiguration.matches.last.matchedLocation, '/');
+    });
+
     testWidgets('removes the last element', (WidgetTester tester) async {
       final GoRouter goRouter = await createGoRouter(tester)
         ..push('/error');
