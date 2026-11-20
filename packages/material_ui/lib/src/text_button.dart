@@ -486,10 +486,9 @@ class TextButton extends ButtonStyleButton {
           style?.sizeVariant ?? textButtonTheme.style?.sizeVariant;
       final ButtonShapeVariant? effectiveShape =
           style?.shapeVariant ?? textButtonTheme.style?.shapeVariant;
-      // Text buttons can't be toggle buttons, so the defaults are never
-      // toggleable. The Material 3 Expressive defaults use the same padding
-      // with or without an icon.
-      return _TextButtonDefaultsM3E(context, false, effectiveSize, effectiveShape);
+      // The Material 3 Expressive defaults use the same padding with or
+      // without an icon.
+      return _TextButtonDefaultsM3E(context, effectiveSize, effectiveShape);
     }
 
     final ButtonStyle buttonStyle = theme.useMaterial3

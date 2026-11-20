@@ -10,7 +10,6 @@ part of '../text_button.dart';
 class _TextButtonDefaultsM3E extends ButtonStyle {
   _TextButtonDefaultsM3E(
     this.context,
-    this.toggleable,
     ButtonSizeVariant? sizeVariant,
     ButtonShapeVariant? shapeVariant,
   ) : _sizeVariant = sizeVariant,
@@ -22,7 +21,6 @@ class _TextButtonDefaultsM3E extends ButtonStyle {
       );
 
   final BuildContext context;
-  final bool toggleable;
   final ButtonSizeVariant? _sizeVariant;
   final ButtonShapeVariant? _shapeVariant;
   late final ColorScheme _colors = Theme.of(context).colorScheme;
