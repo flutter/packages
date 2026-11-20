@@ -158,7 +158,7 @@ jobs:
           fi
 
       # Source available at https://github.com/actions/labeler/blob/main/README.md
-      - uses: actions/labeler@b8dd2d9be0f68b860e7dae5dae7d772984eacd6d # v6.2.0
+      - uses: actions/labeler@bf12e9b00b37c5c0ca2b87b79b2daf7891dbda13 # v7.0.0
         if: steps.validate.outputs.pr_number != '' && steps.cla.outputs.cla_passed == 'true'
         with:
           pr-number: ${{ steps.validate.outputs.pr_number }}
