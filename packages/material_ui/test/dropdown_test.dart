@@ -2618,7 +2618,7 @@ void main() {
       find.byType(Material),
       paints..rect(
         rect: const Rect.fromLTRB(348.0, 276.0, 452.0, 324.0),
-        color: const Color(0x1f00ff00),
+        color: const Color(0xff00ff00),
       ),
     );
   });

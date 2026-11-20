@@ -364,6 +364,92 @@ void main() {
     focusNode.dispose();
   });
 
+  // Regression tests for https://github.com/flutter/flutter/issues/154619.
+  group('ink well highlight uses the overlayColor of its own state when hovered and focused', () {
+    const hoverColor = Color(0x4000ff00);
+    const focusColor = Color(0x800000ff);
+
+    Widget buildInkWell(FocusNode focusNode, WidgetPropertyResolver<Color?> overlayColor) {
+      return Material(
+        child: Directionality(
+          textDirection: TextDirection.ltr,
+          child: Center(
+            child: SizedBox.square(
+              dimension: 100,
+              child: InkWell(
+                focusNode: focusNode,
+                overlayColor: WidgetStateProperty.resolveWith<Color?>(overlayColor),
+                onTap: () {},
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    testWidgets('focus highlight created while hovered', (WidgetTester tester) async {
+      FocusManager.instance.highlightStrategy = FocusHighlightStrategy.alwaysTraditional;
+      final focusNode = FocusNode(debugLabel: 'Ink Focus');
+      addTearDown(focusNode.dispose);
+      // Resolves to the hover color when both hovered and focused.
+      await tester.pumpWidget(
+        buildInkWell(focusNode, (Set<WidgetState> states) {
+          if (states.contains(WidgetState.hovered)) {
+            return hoverColor;
+          }
+          if (states.contains(WidgetState.focused)) {
+            return focusColor;
+          }
+          return null;
+        }),
+      );
+      final TestGesture gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
+      await gesture.addPointer();
+      await gesture.moveTo(tester.getCenter(find.byType(InkWell)));
+      await tester.pumpAndSettle();
+      focusNode.requestFocus();
+      await tester.pumpAndSettle();
+      await gesture.moveTo(Offset.zero);
+      await tester.pumpAndSettle();
+
+      expect(
+        getInkFeatures(tester),
+        paints..rect(rect: const Rect.fromLTRB(350.0, 250.0, 450.0, 350.0), color: focusColor),
+      );
+    });
+
+    testWidgets('hover highlight created while focused', (WidgetTester tester) async {
+      FocusManager.instance.highlightStrategy = FocusHighlightStrategy.alwaysTraditional;
+      final focusNode = FocusNode(debugLabel: 'Ink Focus');
+      addTearDown(focusNode.dispose);
+      // Resolves to the focus color when both hovered and focused.
+      await tester.pumpWidget(
+        buildInkWell(focusNode, (Set<WidgetState> states) {
+          if (states.contains(WidgetState.focused)) {
+            return focusColor;
+          }
+          if (states.contains(WidgetState.hovered)) {
+            return hoverColor;
+          }
+          return null;
+        }),
+      );
+      focusNode.requestFocus();
+      await tester.pumpAndSettle();
+      final TestGesture gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
+      await gesture.addPointer();
+      await gesture.moveTo(tester.getCenter(find.byType(InkWell)));
+      await tester.pumpAndSettle();
+      focusNode.unfocus();
+      await tester.pumpAndSettle();
+
+      expect(
+        getInkFeatures(tester),
+        paints..rect(rect: const Rect.fromLTRB(350.0, 250.0, 450.0, 350.0), color: hoverColor),
+      );
+    });
+  });
+
   testWidgets('ink well changes color on pressed with overlayColor', (WidgetTester tester) async {
     const pressedColor = Color(0xffdd00ff);
 
