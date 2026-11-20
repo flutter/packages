@@ -60,6 +60,7 @@ class PopupMenuThemeData with Diagnosticable {
     this.position,
     this.iconColor,
     this.iconSize,
+    this.dismissOnScrollOutside,
   });
 
   /// The background color of the popup menu.
@@ -111,6 +112,13 @@ class PopupMenuThemeData with Diagnosticable {
   /// The size of the icon in the popup menu button.
   final double? iconSize;
 
+  /// Whether a drag, mouse wheel scroll, or trackpad pan that starts outside
+  /// the popup menu closes it.
+  ///
+  /// If [PopupMenuButton.dismissOnScrollOutside] or the `dismissOnScrollOutside`
+  /// argument of [showMenu] is provided, [dismissOnScrollOutside] is ignored.
+  final bool? dismissOnScrollOutside;
+
   /// Creates a copy of this object with the given fields replaced with the
   /// new values.
   PopupMenuThemeData copyWith({
@@ -127,6 +135,7 @@ class PopupMenuThemeData with Diagnosticable {
     PopupMenuPosition? position,
     Color? iconColor,
     double? iconSize,
+    bool? dismissOnScrollOutside,
   }) {
     return PopupMenuThemeData(
       color: color ?? this.color,
@@ -142,6 +151,7 @@ class PopupMenuThemeData with Diagnosticable {
       position: position ?? this.position,
       iconColor: iconColor ?? this.iconColor,
       iconSize: iconSize ?? this.iconSize,
+      dismissOnScrollOutside: dismissOnScrollOutside ?? this.dismissOnScrollOutside,
     );
   }
 
@@ -173,6 +183,7 @@ class PopupMenuThemeData with Diagnosticable {
       position: t < 0.5 ? a?.position : b?.position,
       iconColor: Color.lerp(a?.iconColor, b?.iconColor, t),
       iconSize: lerpDouble(a?.iconSize, b?.iconSize, t),
+      dismissOnScrollOutside: t < 0.5 ? a?.dismissOnScrollOutside : b?.dismissOnScrollOutside,
     );
   }
 
@@ -191,6 +202,7 @@ class PopupMenuThemeData with Diagnosticable {
     position,
     iconColor,
     iconSize,
+    dismissOnScrollOutside,
   );
 
   @override
@@ -214,7 +226,8 @@ class PopupMenuThemeData with Diagnosticable {
         other.mouseCursor == mouseCursor &&
         other.position == position &&
         other.iconColor == iconColor &&
-        other.iconSize == iconSize;
+        other.iconSize == iconSize &&
+        other.dismissOnScrollOutside == dismissOnScrollOutside;
   }
 
   @override
@@ -247,6 +260,13 @@ class PopupMenuThemeData with Diagnosticable {
     properties.add(EnumProperty<PopupMenuPosition?>('position', position, defaultValue: null));
     properties.add(ColorProperty('iconColor', iconColor, defaultValue: null));
     properties.add(DoubleProperty('iconSize', iconSize, defaultValue: null));
+    properties.add(
+      DiagnosticsProperty<bool>(
+        'dismissOnScrollOutside',
+        dismissOnScrollOutside,
+        defaultValue: null,
+      ),
+    );
   }
 }
 

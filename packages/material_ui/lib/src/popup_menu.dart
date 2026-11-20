@@ -6,9 +6,11 @@
 /// @docImport 'text_button.dart';
 library;
 
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
@@ -961,6 +963,7 @@ class _PopupMenuRoute<T> extends PopupRoute<T> {
     super.settings,
     super.requestFocus,
     this.popUpAnimationStyle,
+    required this.dismissOnScrollOutside,
   }) : assert(
          (position != null) != (positionBuilder != null),
          'Either position or positionBuilder must be provided.',
@@ -987,6 +990,7 @@ class _PopupMenuRoute<T> extends PopupRoute<T> {
   final BoxConstraints? constraints;
   final Clip clipBehavior;
   final AnimationStyle? popUpAnimationStyle;
+  final bool dismissOnScrollOutside;
 
   CurvedAnimation? _animation;
 
@@ -1041,13 +1045,16 @@ class _PopupMenuRoute<T> extends PopupRoute<T> {
       scrollTo(selectedItemIndex);
     }
 
-    final Widget menu = _PopupMenu<T>(
+    Widget menu = _PopupMenu<T>(
       route: this,
       itemKeys: itemKeys,
       semanticLabel: semanticLabel,
       constraints: constraints,
       clipBehavior: clipBehavior,
     );
+    if (dismissOnScrollOutside) {
+      menu = _DismissOnScrollOutsideMenu(route: this, child: menu);
+    }
     final MediaQueryData mediaQuery = MediaQuery.of(context);
     return MediaQuery.removePadding(
       context: context,
@@ -1082,6 +1089,101 @@ class _PopupMenuRoute<T> extends PopupRoute<T> {
     _animation?.dispose();
     super.dispose();
   }
+}
+
+class _DismissOnScrollOutsideMenu extends StatefulWidget {
+  const _DismissOnScrollOutsideMenu({required this.route, required this.child});
+
+  final ModalRoute<Object?> route;
+  final Widget child;
+
+  @override
+  State<_DismissOnScrollOutsideMenu> createState() => _DismissOnScrollOutsideMenuState();
+}
+
+class _DismissOnScrollOutsideMenuState extends State<_DismissOnScrollOutsideMenu> {
+  final Map<int, Offset> _outsideStartPositions = <int, Offset>{};
+  final Set<int> _draggedPointers = <int>{};
+  DeviceGestureSettings? _gestureSettings;
+  late int _viewId;
+
+  @override
+  void initState() {
+    super.initState();
+    GestureBinding.instance.pointerRouter.addGlobalRoute(_handlePointerEvent);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _gestureSettings = MediaQuery.maybeGestureSettingsOf(context);
+    _viewId = View.of(context).viewId;
+  }
+
+  @override
+  void dispose() {
+    GestureBinding.instance.pointerRouter.removeGlobalRoute(_handlePointerEvent);
+    super.dispose();
+  }
+
+  void _handlePointerEvent(PointerEvent event) {
+    if (event.viewId != _viewId) {
+      return;
+    }
+    switch (event) {
+      case PointerDownEvent():
+      case PointerPanZoomStartEvent():
+        if (_isOutsideMenu(event.position)) {
+          _outsideStartPositions[event.pointer] = event.position;
+        }
+      case PointerMoveEvent():
+        final Offset? start = _outsideStartPositions[event.pointer];
+        if (start != null) {
+          _trackDrag(event, event.position - start);
+        }
+      case PointerPanZoomUpdateEvent():
+        if (_outsideStartPositions.containsKey(event.pointer)) {
+          _trackDrag(event, event.pan);
+        }
+      case PointerUpEvent():
+      case PointerPanZoomEndEvent():
+        _outsideStartPositions.remove(event.pointer);
+        if (_draggedPointers.remove(event.pointer)) {
+          _dismiss();
+        }
+      case PointerCancelEvent():
+        _outsideStartPositions.remove(event.pointer);
+        _draggedPointers.remove(event.pointer);
+      case PointerScrollEvent():
+        if (_isOutsideMenu(event.position)) {
+          _dismiss();
+        }
+    }
+  }
+
+  void _trackDrag(PointerEvent event, Offset delta) {
+    if (delta.distance > computeHitSlop(event.kind, _gestureSettings)) {
+      _draggedPointers.add(event.pointer);
+    }
+  }
+
+  bool _isOutsideMenu(Offset globalPosition) {
+    final RenderObject? menuBox = context.findRenderObject();
+    if (menuBox is! RenderBox || !menuBox.hasSize) {
+      return false;
+    }
+    return !menuBox.size.contains(menuBox.globalToLocal(globalPosition));
+  }
+
+  void _dismiss() {
+    final NavigatorState? navigator = widget.route.navigator;
+    if (navigator != null && widget.route.isCurrent) {
+      unawaited(navigator.maybePop());
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.child;
 }
 
 /// A builder that creates a [RelativeRect] to position a popup menu.
@@ -1167,6 +1269,12 @@ typedef PopupMenuPositionBuilder = RelativeRect Function(
 /// The `requestFocus` argument specifies whether the menu should request focus
 /// when it appears. If it is null, [Navigator.requestFocus] is used instead.
 ///
+/// The `dismissOnScrollOutside` argument specifies whether a drag, mouse wheel
+/// scroll, or trackpad pan that starts outside the menu closes it, the same way
+/// a tap outside does. The content behind the menu does not scroll during that
+/// gesture. If it is null, [PopupMenuThemeData.dismissOnScrollOutside] is used.
+/// If that is also null, it defaults to false.
+///
 /// See also:
 ///
 ///  * [PopupMenuItem], a popup menu entry for a single value.
@@ -1196,6 +1304,7 @@ Future<T?> showMenu<T>({
   RouteSettings? routeSettings,
   AnimationStyle? popUpAnimationStyle,
   bool? requestFocus,
+  bool? dismissOnScrollOutside,
 }) {
   assert(items.isNotEmpty);
   assert(debugCheckHasMaterialLocalizations(context));
@@ -1238,6 +1347,8 @@ Future<T?> showMenu<T>({
       settings: routeSettings,
       popUpAnimationStyle: popUpAnimationStyle,
       requestFocus: requestFocus,
+      dismissOnScrollOutside:
+          dismissOnScrollOutside ?? PopupMenuTheme.of(context).dismissOnScrollOutside ?? false,
     ),
   );
 }
@@ -1397,6 +1508,7 @@ class PopupMenuButton<T> extends StatefulWidget {
     this.routeSettings,
     this.style,
     this.requestFocus,
+    this.dismissOnScrollOutside,
   }) : assert(!(child != null && icon != null), 'You can only pass [child] or [icon], not both.');
 
   /// Called when the button is pressed to create the items to show in the menu.
@@ -1620,6 +1732,15 @@ class PopupMenuButton<T> extends StatefulWidget {
   /// If null, [Navigator.requestFocus] will be used instead.
   final bool? requestFocus;
 
+  /// Whether a drag, mouse wheel scroll, or trackpad pan that starts outside
+  /// the menu closes it, the same way a tap outside does.
+  ///
+  /// The content behind the menu does not scroll during that gesture.
+  ///
+  /// If null, [PopupMenuThemeData.dismissOnScrollOutside] is used. If that is
+  /// also null, defaults to false.
+  final bool? dismissOnScrollOutside;
+
   @override
   PopupMenuButtonState<T> createState() => PopupMenuButtonState<T>();
 }
@@ -1751,6 +1872,7 @@ class PopupMenuButtonState<T> extends State<PopupMenuButton<T>> {
         popUpAnimationStyle: widget.popUpAnimationStyle,
         routeSettings: widget.routeSettings,
         requestFocus: widget.requestFocus,
+        dismissOnScrollOutside: widget.dismissOnScrollOutside,
       ).then<void>((T? newValue) {
         if (!mounted) {
           return null;
