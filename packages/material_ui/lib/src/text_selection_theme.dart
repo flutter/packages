@@ -126,21 +126,10 @@ class TextSelectionThemeData with Diagnosticable {
 ///
 /// <callout-box>
 ///
-// TODO(framework): Add unit tests to this code snippet.
-// https://github.com/flutter/flutter/issues/188530
-///
 /// Here is an example of a text selection theme that applies a blue cursor
 /// color with light blue selection handles to the child text field.
 ///
-/// ```dart
-/// const TextSelectionTheme(
-///   data: TextSelectionThemeData(
-///     cursorColor: Colors.blue,
-///     selectionHandleColor: Colors.lightBlue,
-///   ),
-///   child: TextField(),
-/// )
-/// ```
+/// {@example /example/lib/text_selection_theme/text_selection_theme.snippet.0.dart#body indent=strip}
 ///
 /// </callout-box>
 ///
