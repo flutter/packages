@@ -443,22 +443,10 @@ class ColorScheme with Diagnosticable {
   ///
   /// <callout-box>
   ///
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
-  ///
   /// This example demonstrates how to create a color scheme similar to [ColorScheme.light]
   /// using the [ColorScheme.fromSeed] constructor:
   ///
-  /// ```dart
-  /// colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xff6200ee)).copyWith(
-  ///   primaryContainer: const Color(0xff6200ee),
-  ///   onPrimaryContainer: Colors.white,
-  ///   secondaryContainer: const Color(0xff03dac6),
-  ///   onSecondaryContainer: Colors.black,
-  ///   error: const Color(0xffb00020),
-  ///   onError: Colors.white,
-  /// ),
-  /// ```
+  /// {@example /example/lib/color_scheme/color_scheme.light.snippet.0.dart#body indent=strip}
   ///
   /// </callout-box>
   const ColorScheme.light({
@@ -538,25 +526,10 @@ class ColorScheme with Diagnosticable {
   ///
   /// <callout-box>
   ///
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
-  ///
   /// This example demonstrates how to create a color scheme similar to [ColorScheme.dark]
   /// using the [ColorScheme.fromSeed] constructor:
   ///
-  /// ```dart
-  /// colorScheme: ColorScheme.fromSeed(
-  ///   seedColor: const Color(0xffbb86fc),
-  ///   brightness: Brightness.dark,
-  /// ).copyWith(
-  ///   primaryContainer: const Color(0xffbb86fc),
-  ///   onPrimaryContainer: Colors.black,
-  ///   secondaryContainer: const Color(0xff03dac6),
-  ///   onSecondaryContainer: Colors.black,
-  ///   error: const Color(0xffcf6679),
-  ///   onError: Colors.black,
-  /// ),
-  /// ```
+  /// {@example /example/lib/color_scheme/color_scheme.dark.snippet.0.dart#body indent=strip}
   ///
   /// </callout-box>
   const ColorScheme.dark({
@@ -635,22 +608,10 @@ class ColorScheme with Diagnosticable {
   ///
   /// <callout-box>
   ///
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
-  ///
   /// This example demonstrates how to create a color scheme similar to [ColorScheme.highContrastLight]
   /// using the [ColorScheme.fromSeed] constructor:
   ///
-  /// ```dart
-  /// colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xff0000ba)).copyWith(
-  ///   primaryContainer: const Color(0xff0000ba),
-  ///   onPrimaryContainer: Colors.white,
-  ///   secondaryContainer: const Color(0xff66fff9),
-  ///   onSecondaryContainer: Colors.black,
-  ///   error: const Color(0xff790000),
-  ///   onError: Colors.white,
-  /// ),
-  /// ```
+  /// {@example /example/lib/color_scheme/color_scheme.high_contrast_light.snippet.0.dart#body indent=strip}
   ///
   /// </callout-box>
   const ColorScheme.highContrastLight({
@@ -731,25 +692,10 @@ class ColorScheme with Diagnosticable {
   ///
   /// <callout-box>
   ///
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
-  ///
   /// This example demonstrates how to create a color scheme similar to [ColorScheme.highContrastDark]
   /// using the [ColorScheme.fromSeed] constructor:
   ///
-  /// ```dart
-  /// colorScheme: ColorScheme.fromSeed(
-  ///   seedColor: const Color(0xffefb7ff),
-  ///   brightness: Brightness.dark,
-  /// ).copyWith(
-  ///   primaryContainer: const Color(0xffefb7ff),
-  ///   onPrimaryContainer: Colors.black,
-  ///   secondaryContainer: const Color(0xff66fff9),
-  ///   onSecondaryContainer: Colors.black,
-  ///   error: const Color(0xff9b374d),
-  ///   onError: Colors.white,
-  /// ),
-  /// ```
+  /// {@example /example/lib/color_scheme/color_scheme.high_contrast_dark.snippet.0.dart#body indent=strip}
   ///
   /// </callout-box>
   const ColorScheme.highContrastDark({
