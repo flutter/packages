@@ -2076,8 +2076,7 @@ struct NativeInteropSealedClassWithFields: NativeInteropSealedClass, Hashable,
       aNullableInt: NativeInteropTestsPigeonInternal.isNullish(pigeonVar_Class!.aNullableInt)
         ? nil : NSNumber(value: pigeonVar_Class!.aNullableInt!),
       anEnum: pigeonVar_Class!.anEnum,
-      aClass: NativeInteropAllNullableTypesWithoutRecursionBridge.fromSwift(
-        pigeonVar_Class!.aClass),
+      aClass: NativeInteropAllNullableTypesWithoutRecursionBridge.fromSwift(pigeonVar_Class!.aClass),
     )
   }
   func toSwift() -> NativeInteropSealedClassWithFields {

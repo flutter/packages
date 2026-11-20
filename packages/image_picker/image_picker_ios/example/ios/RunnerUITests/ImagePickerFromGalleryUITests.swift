@@ -26,6 +26,7 @@ class ImagePickerFromGalleryUITests: XCTestCase {
         return false
       }
       let allPhotoPermission = interruptingElement.buttons[self.allowAccessPermissionText]
+        .firstMatch
       if !allPhotoPermission.waitForExistence(timeout: self.elementWaitingTime) {
         os_log(.error, "%{public}@", self.app.debugDescription)
         XCTFail(
@@ -70,7 +71,7 @@ class ImagePickerFromGalleryUITests: XCTestCase {
       }
 
       let springboardApp = XCUIApplication(bundleIdentifier: "com.apple.springboard")
-      let allowButton = springboardApp.buttons[allowAccessPermissionText]
+      let allowButton = springboardApp.buttons[allowAccessPermissionText].firstMatch
       if !allowButton.waitForExistence(timeout: elementWaitingTime) {
         os_log(.error, "%{public}@", app.debugDescription)
         XCTFail(
