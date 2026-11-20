@@ -442,8 +442,8 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
   /// See https://pub.dev/packages/google_maps_flutter_android#display-mode
   /// for more information.
   ///
-  /// Currently defaults to false, but the default is subject to change.
-  bool useAndroidViewSurface = false;
+  /// Currently defaults to true, but the default is subject to change.
+  bool useAndroidViewSurface = true;
 
   /// Requests Google Map Renderer with [AndroidMapRenderer] type.
   ///
