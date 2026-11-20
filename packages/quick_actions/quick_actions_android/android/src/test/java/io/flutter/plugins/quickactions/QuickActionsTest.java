@@ -73,6 +73,8 @@ public class QuickActionsTest {
     final TestBinaryMessenger testBinaryMessenger = new TestBinaryMessenger();
     final FlutterPluginBinding mockPluginBinding = mock(FlutterPluginBinding.class);
     when(mockPluginBinding.getBinaryMessenger()).thenReturn(testBinaryMessenger);
+    final Context mockContext = mock(Context.class);
+    when(mockPluginBinding.getApplicationContext()).thenReturn(mockContext);
 
     final QuickActionsPlugin plugin = new QuickActionsPlugin();
     plugin.onAttachedToEngine(mockPluginBinding);
@@ -85,13 +87,13 @@ public class QuickActionsTest {
     final TestBinaryMessenger testBinaryMessenger = new TestBinaryMessenger();
     final QuickActionsPlugin plugin =
         new QuickActionsPlugin((version) -> SUPPORTED_BUILD >= version);
-    setUpMessengerAndFlutterPluginBinding(testBinaryMessenger, plugin);
+    final Context mockContext = mock(Context.class);
+    setUpMessengerAndFlutterPluginBinding(testBinaryMessenger, mockContext, plugin);
     final Intent mockIntent = createMockIntentWithQuickActionExtra();
     final Activity mockMainActivity = mock(Activity.class);
     when(mockMainActivity.getIntent()).thenReturn(mockIntent);
     final ActivityPluginBinding mockActivityPluginBinding = mock(ActivityPluginBinding.class);
     when(mockActivityPluginBinding.getActivity()).thenReturn(mockMainActivity);
-    final Context mockContext = mock(Context.class);
     when(mockMainActivity.getApplicationContext()).thenReturn(mockContext);
     plugin.onAttachedToActivity(mockActivityPluginBinding);
 
@@ -108,7 +110,8 @@ public class QuickActionsTest {
     final TestBinaryMessenger testBinaryMessenger = new TestBinaryMessenger();
     final QuickActionsPlugin plugin =
         new QuickActionsPlugin((version) -> UNSUPPORTED_BUILD >= version);
-    setUpMessengerAndFlutterPluginBinding(testBinaryMessenger, plugin);
+    final Context mockContext = mock(Context.class);
+    setUpMessengerAndFlutterPluginBinding(testBinaryMessenger, mockContext, plugin);
     final Intent mockIntent = createMockIntentWithQuickActionExtra();
 
     // Act
@@ -125,13 +128,13 @@ public class QuickActionsTest {
     final TestBinaryMessenger testBinaryMessenger = new TestBinaryMessenger();
     final QuickActionsPlugin plugin =
         new QuickActionsPlugin((version) -> SUPPORTED_BUILD >= version);
-    setUpMessengerAndFlutterPluginBinding(testBinaryMessenger, plugin);
+    final Context mockContext = mock(Context.class);
+    setUpMessengerAndFlutterPluginBinding(testBinaryMessenger, mockContext, plugin);
     final Intent mockIntent = createMockIntentWithQuickActionExtra();
     final Activity mockMainActivity = mock(Activity.class);
     when(mockMainActivity.getIntent()).thenReturn(mockIntent);
     final ActivityPluginBinding mockActivityPluginBinding = mock(ActivityPluginBinding.class);
     when(mockActivityPluginBinding.getActivity()).thenReturn(mockMainActivity);
-    final Context mockContext = mock(Context.class);
     when(mockMainActivity.getApplicationContext()).thenReturn(mockContext);
     plugin.onAttachedToActivity(mockActivityPluginBinding);
 
@@ -144,9 +147,10 @@ public class QuickActionsTest {
   }
 
   private void setUpMessengerAndFlutterPluginBinding(
-      TestBinaryMessenger testBinaryMessenger, QuickActionsPlugin plugin) {
+      TestBinaryMessenger testBinaryMessenger, Context mockContext, QuickActionsPlugin plugin) {
     final FlutterPluginBinding mockPluginBinding = mock(FlutterPluginBinding.class);
     when(mockPluginBinding.getBinaryMessenger()).thenReturn(testBinaryMessenger);
+    when(mockPluginBinding.getApplicationContext()).thenReturn(mockContext);
     plugin.onAttachedToEngine(mockPluginBinding);
   }
 
