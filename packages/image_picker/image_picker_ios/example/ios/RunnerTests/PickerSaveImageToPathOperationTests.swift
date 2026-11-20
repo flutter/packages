@@ -4,23 +4,17 @@
 
 import Flutter
 import ImageIO
+import PhotosUI
 import Testing
-import UIKit
+import UniformTypeIdentifiers
 
 @testable import image_picker_ios
 
-#if canImport(image_picker_ios_objc)
-  @testable import image_picker_ios_objc
-#endif
-
 @Suite
 struct PickerSaveImageToPathOperationTests {
-  private var testBundle: Bundle {
-    ImagePickerTestImages.bundle
-  }
-
   private func pickerItem(forResource name: String, ext: String) throws -> FakePickerItem {
-    let imageURL = try #require(testBundle.url(forResource: name, withExtension: ext))
+    let imageURL = try #require(
+      ImagePickerTestImages.bundle.url(forResource: name, withExtension: ext))
     let itemProvider = NSItemProvider(contentsOf: imageURL)!
     return FakePickerItem(
       itemProvider: itemProvider,
@@ -34,14 +28,14 @@ struct PickerSaveImageToPathOperationTests {
   /// are not stored across that boundary.
   private func runSaveOperation(
     result: PickerItem,
-    maxHeight: NSNumber = 100,
-    maxWidth: NSNumber = 100,
-    desiredImageQuality: NSNumber = 100,
+    maxHeight: Double = 100,
+    maxWidth: Double = 100,
+    desiredImageQuality: Double = 100,
     fullMetadata: Bool
-  ) async throws -> (savedPath: String?, error: FlutterError?) {
+  ) async throws -> (savedPath: String?, error: PigeonError?) {
     let outcome = await withCheckedContinuation {
       (
-        continuation: CheckedContinuation<(savedPath: String?, error: FlutterError?)?, Never>
+        continuation: CheckedContinuation<(savedPath: String?, error: PigeonError?)?, Never>
       ) in
       guard
         let operation = PHPickerSaveImageToPathOperation(
@@ -96,7 +90,8 @@ struct PickerSaveImageToPathOperationTests {
   }
 
   @Test func saveGIFImage() async throws {
-    let imageURL = try #require(testBundle.url(forResource: "gifImage", withExtension: "gif"))
+    let imageURL = try #require(
+      ImagePickerTestImages.bundle.url(forResource: "gifImage", withExtension: "gif"))
     let itemProvider = NSItemProvider(contentsOf: imageURL)!
     let result = FakePickerItem(
       itemProvider: itemProvider,
@@ -135,7 +130,7 @@ struct PickerSaveImageToPathOperationTests {
   @Test func nonexistentImage() async throws {
     let itemProvider =
       NSItemProvider(
-        contentsOf: testBundle.url(forResource: "bogus", withExtension: "png"))
+        contentsOf: ImagePickerTestImages.bundle.url(forResource: "bogus", withExtension: "png"))
       ?? NSItemProvider()
     let result = FakePickerItem(itemProvider: itemProvider, assetIdentifier: nil)
     let (_, savedError) = try await runSaveOperation(result: result, fullMetadata: true)
@@ -159,6 +154,19 @@ struct PickerSaveImageToPathOperationTests {
     #expect(savedPath == nil)
     #expect(savedError?.code == "invalid_image")
     #expect(savedError?.message == "Could not decode image data.")
+  }
+
+  @Test func saveImageFailsWhenScaledImageIsEmpty() async throws {
+    // A maxWidth of 0 is accepted by the Dart API but scales the image to nothing, so no image
+    // data can be encoded.
+    let result = try pickerItem(forResource: "jpgImage", ext: "jpg")
+    let (savedPath, savedError) = try await runSaveOperation(
+      result: result, maxWidth: 0, fullMetadata: true)
+    let savedData = savedPath.flatMap { FileManager.default.contents(atPath: $0) }
+    #expect(savedPath == nil, "Returned a path to a \(savedData?.count ?? 0)-byte file.")
+    #expect(savedError?.code == "invalid_image")
+    #expect(savedError?.message == "Could not save the image.")
+    if let savedPath { try? FileManager.default.removeItem(atPath: savedPath) }
   }
 
   @Test func initWithNilResultReturnsNil() {

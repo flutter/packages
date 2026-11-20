@@ -1,3 +1,11 @@
+## 2.13.0
+
+* Converts native implementation code to Kotlin.
+
+## 2.12.4
+
+* Fixes a minor native object leak when disposing a player instance.
+
 ## 2.12.3
 
 * Updates Robolectric to 4.17 and adds the JVM arguments it requires for unit tests.

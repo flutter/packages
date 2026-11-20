@@ -30,8 +30,8 @@ import org.robolectric.RobolectricTestRunner;
  * Unit tests for {@link VideoAsset}.
  *
  * <p>This test suite <em>narrowly verifies</em> that the {@link VideoAsset} factory methods, {@link
- * VideoAsset#fromRemoteUrl(String, VideoAsset.StreamingFormat, Map)} and {@link
- * VideoAsset#fromAssetUrl(String)} follow the contract they have documented.
+ * VideoAsset.Companion#fromRemoteUrl(String, VideoAsset.StreamingFormat, Map, String)} and {@link
+ * VideoAsset.Companion#fromAssetUrl(String)} follow the contract they have documented.
  *
  * <p>In other tests of the player, a fake asset is likely to be used.
  */
@@ -41,12 +41,12 @@ public final class VideoAssetTest {
   public void localVideoRequiresAssetUrl() {
     assertThrows(
         IllegalArgumentException.class,
-        () -> VideoAsset.fromAssetUrl("https://not.local/video.mp4"));
+        () -> VideoAsset.Companion.fromAssetUrl("https://not.local/video.mp4"));
   }
 
   @Test
   public void localVideoCreatesMediaItem() {
-    VideoAsset asset = VideoAsset.fromAssetUrl("asset:///asset-key");
+    VideoAsset asset = VideoAsset.Companion.fromAssetUrl("asset:///asset-key");
     MediaItem mediaItem = asset.getMediaItem();
 
     assert mediaItem.localConfiguration != null;
@@ -65,7 +65,7 @@ public final class VideoAssetTest {
   public void remoteVideoSetsUserAgentAndCrossProtocolRedirects() {
     final String userAgent = "A User Agent";
     VideoAsset asset =
-        VideoAsset.fromRemoteUrl(
+        VideoAsset.Companion.fromRemoteUrl(
             "https://flutter.dev/video.mp4",
             VideoAsset.StreamingFormat.UNKNOWN,
             new HashMap<>(),
@@ -88,7 +88,7 @@ public final class VideoAssetTest {
   @Test
   public void remoteVideoGetMediaSourceFactoryInProductionReturnsRealMediaSource() {
     VideoAsset asset =
-        VideoAsset.fromRemoteUrl(
+        VideoAsset.Companion.fromRemoteUrl(
             "https://flutter.dev/video.mp4",
             VideoAsset.StreamingFormat.UNKNOWN,
             new HashMap<>(),
@@ -109,7 +109,7 @@ public final class VideoAssetTest {
     headers.put("X-Cache-Forever", "true");
 
     VideoAsset asset =
-        VideoAsset.fromRemoteUrl(
+        VideoAsset.Companion.fromRemoteUrl(
             "https://flutter.dev/video.mp4", VideoAsset.StreamingFormat.UNKNOWN, headers, null);
 
     DefaultHttpDataSource.Factory mockFactory = mockHttpFactory();
@@ -125,12 +125,13 @@ public final class VideoAssetTest {
   @Test
   public void rtspVideoRequiresRtspUrl() {
     assertThrows(
-        IllegalArgumentException.class, () -> VideoAsset.fromRtspUrl("https://not.rtsp/video.mp4"));
+        IllegalArgumentException.class,
+        () -> VideoAsset.Companion.fromRtspUrl("https://not.rtsp/video.mp4"));
   }
 
   @Test
   public void rtspVideoCreatesMediaItem() {
-    VideoAsset asset = VideoAsset.fromRtspUrl("rtsp://test:pass@flutter.dev/stream");
+    VideoAsset asset = VideoAsset.Companion.fromRtspUrl("rtsp://test:pass@flutter.dev/stream");
     MediaItem mediaItem = asset.getMediaItem();
 
     assert mediaItem.localConfiguration != null;

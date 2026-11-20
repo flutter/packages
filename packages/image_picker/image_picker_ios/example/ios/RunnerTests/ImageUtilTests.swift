@@ -48,8 +48,8 @@ struct ImageUtilTests {
   @Test func scaledImageEqualSizeReturnsSameImage() {
     let image = UIImage(data: ImagePickerTestImages.jpgTestData)!
     let scaledImage = ImagePickerImageUtil.scaledImage(
-      image, maxWidth: NSNumber(value: image.size.width),
-      maxHeight: NSNumber(value: image.size.height), isMetadataAvailable: true)
+      image, maxWidth: Double(image.size.width),
+      maxHeight: Double(image.size.height), isMetadataAvailable: true)
     #expect(image === scaledImage)
   }
 
@@ -65,7 +65,7 @@ struct ImageUtilTests {
     let scaledWidth: CGFloat = 3
     let scaledHeight: CGFloat = 2
     let scaledImage = ImagePickerImageUtil.scaledImage(
-      image, maxWidth: NSNumber(value: scaledWidth), maxHeight: NSNumber(value: scaledHeight),
+      image, maxWidth: Double(scaledWidth), maxHeight: Double(scaledHeight),
       isMetadataAvailable: true)!
     #expect(scaledImage.size.width == scaledWidth)
     #expect(scaledImage.size.height == scaledHeight)
@@ -89,7 +89,7 @@ struct ImageUtilTests {
     let scaledWidth: CGFloat = 3
     let scaledHeight: CGFloat = 2
     let scaledImage = ImagePickerImageUtil.scaledImage(
-      image, maxWidth: NSNumber(value: scaledWidth), maxHeight: NSNumber(value: scaledHeight),
+      image, maxWidth: Double(scaledWidth), maxHeight: Double(scaledHeight),
       isMetadataAvailable: false)!
     #expect(scaledImage.size.width == scaledWidth)
     #expect(scaledImage.size.height == scaledHeight)

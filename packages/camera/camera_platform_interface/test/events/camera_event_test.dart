@@ -452,4 +452,66 @@ void main() {
       expect(event.hashCode, expectedHashCode);
     });
   });
+
+  group('VideoRecordedEvent tests', () {
+    test('Equal when camera, file path and duration match', () {
+      final first = VideoRecordedEvent(1, XFile('/tmp/video.mp4'), const Duration(seconds: 5));
+      final second = VideoRecordedEvent(1, XFile('/tmp/video.mp4'), const Duration(seconds: 5));
+
+      expect(first, second);
+      expect(first.hashCode, second.hashCode);
+    });
+
+    test('Not equal when the file path differs', () {
+      final first = VideoRecordedEvent(1, XFile('/tmp/first.mp4'), null);
+      final second = VideoRecordedEvent(1, XFile('/tmp/second.mp4'), null);
+
+      expect(first, isNot(second));
+    });
+
+    test('Not equal when the camera ID differs', () {
+      final first = VideoRecordedEvent(1, XFile('/tmp/video.mp4'), const Duration(seconds: 5));
+      final second = VideoRecordedEvent(2, XFile('/tmp/video.mp4'), const Duration(seconds: 5));
+
+      expect(first, isNot(second));
+    });
+
+    test('Not equal when the max video duration differs', () {
+      final first = VideoRecordedEvent(1, XFile('/tmp/video.mp4'), const Duration(seconds: 5));
+      final second = VideoRecordedEvent(1, XFile('/tmp/video.mp4'), const Duration(seconds: 10));
+
+      expect(first, isNot(second));
+    });
+
+    test('Not equal when only one max video duration is null', () {
+      final withDuration = VideoRecordedEvent(
+        1,
+        XFile('/tmp/video.mp4'),
+        const Duration(seconds: 5),
+      );
+      final withoutDuration = VideoRecordedEvent(1, XFile('/tmp/video.mp4'), null);
+
+      expect(withDuration, isNot(withoutDuration));
+      expect(withoutDuration, isNot(withDuration));
+    });
+
+    test('hashCode should match hashCode of all properties', () {
+      final event = VideoRecordedEvent(1, XFile('/tmp/video.mp4'), const Duration(seconds: 5));
+      final int expectedHashCode = Object.hash(
+        event.cameraId.hashCode,
+        event.file.path,
+        event.maxVideoDuration,
+      );
+
+      expect(event.hashCode, expectedHashCode);
+    });
+
+    test('Round-trips through JSON as an equal event', () {
+      final event = VideoRecordedEvent(1, XFile('/tmp/video.mp4'), const Duration(seconds: 5));
+      final decoded = VideoRecordedEvent.fromJson(event.toJson());
+
+      expect(decoded, event);
+      expect(decoded.hashCode, event.hashCode);
+    });
+  });
 }

@@ -40,10 +40,9 @@ const String _kDefaultErrorMessage =
 class VideoPlayer {
   /// Create a [VideoPlayer] from a [web.HTMLVideoElement] instance.
   VideoPlayer({
-    required web.HTMLVideoElement videoElement,
+    required this._videoElement,
     @visibleForTesting StreamController<VideoEvent>? eventController,
-  }) : _videoElement = videoElement,
-       _eventController = eventController ?? StreamController<VideoEvent>();
+  }) : _eventController = eventController ?? StreamController<VideoEvent>();
 
   final StreamController<VideoEvent> _eventController;
   final web.HTMLVideoElement _videoElement;
