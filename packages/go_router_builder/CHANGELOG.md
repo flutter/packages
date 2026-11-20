@@ -1,3 +1,7 @@
+## 4.5.4
+
+* Forwards `notifyRootObserver` from `TypedShellRoute` and `TypedStatefulShellRoute` into generated `$route` calls.
+
 ## 4.5.3
 
 * Widens `package:build` dependency constraint to `>=3.0.0 <6.0.0`.

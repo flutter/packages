@@ -1,0 +1,10 @@
+RouteBase get $shellRouteNotifyRootObserver => ShellRouteData.$route(
+      notifyRootObserver: false,
+      factory: $ShellRouteNotifyRootObserverExtension._fromState,
+    );
+
+extension $ShellRouteNotifyRootObserverExtension
+    on ShellRouteNotifyRootObserver {
+  static ShellRouteNotifyRootObserver _fromState(GoRouterState state) =>
+      const ShellRouteNotifyRootObserver();
+}
