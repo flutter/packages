@@ -68,32 +68,7 @@ class SliderTheme extends InheritedTheme {
   ///
   /// <callout-box>
   ///
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
-  ///
-  /// ```dart
-  /// class Launch extends StatefulWidget {
-  ///   const Launch({super.key});
-  ///
-  ///   @override
-  ///   State createState() => LaunchState();
-  /// }
-  ///
-  /// class LaunchState extends State<Launch> {
-  ///   double _rocketThrust = 0;
-  ///
-  ///   @override
-  ///   Widget build(BuildContext context) {
-  ///     return SliderTheme(
-  ///       data: SliderTheme.of(context).copyWith(activeTrackColor: const Color(0xff804040)),
-  ///       child: Slider(
-  ///         onChanged: (double value) { setState(() { _rocketThrust = value; }); },
-  ///         value: _rocketThrust,
-  ///       ),
-  ///     );
-  ///   }
-  /// }
-  /// ```
+  /// {@example /example/lib/slider_theme/slider_theme.of.snippet.0.dart#body indent=strip}
   ///
   /// </callout-box>
   ///
@@ -256,32 +231,7 @@ class SliderThemeData with Diagnosticable {
   ///
   /// <callout-box>
   ///
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
-  ///
-  /// ```dart
-  /// class Blissful extends StatefulWidget {
-  ///   const Blissful({super.key});
-  ///
-  ///   @override
-  ///   State createState() => BlissfulState();
-  /// }
-  ///
-  /// class BlissfulState extends State<Blissful> {
-  ///   double _bliss = 0;
-  ///
-  ///   @override
-  ///   Widget build(BuildContext context) {
-  ///     return SliderTheme(
-  ///       data: SliderTheme.of(context).copyWith(activeTrackColor: const Color(0xff404080)),
-  ///       child: Slider(
-  ///         onChanged: (double value) { setState(() { _bliss = value; }); },
-  ///         value: _bliss,
-  ///       ),
-  ///     );
-  ///   }
-  /// }
-  /// ```
+  /// {@example /example/lib/slider_theme/slider_theme_data.snippet.0.dart#body indent=strip}
   ///
   /// </callout-box>
   const SliderThemeData({
