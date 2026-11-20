@@ -480,7 +480,7 @@ class _DropdownRoute<T> extends PopupRoute<_DropdownRouteResult<T>> {
   _DropdownRoute({
     required this.items,
     required this.padding,
-    required this.buttonRect,
+    required this.getButtonRect,
     required this.selectedIndex,
     this.elevation = 8,
     required this.capturedThemes,
@@ -498,7 +498,11 @@ class _DropdownRoute<T> extends PopupRoute<_DropdownRouteResult<T>> {
 
   final List<_MenuItem<T>> items;
   final EdgeInsetsGeometry padding;
-  final Rect buttonRect;
+  // Returns the current rect of the dropdown button, in the coordinate space of
+  // the navigator. It is called every time the route is laid out, so that the
+  // menu follows the button when the layout changes, for example when the
+  // window is resized.
+  final ValueGetter<Rect> getButtonRect;
   final int selectedIndex;
   final int elevation;
   final CapturedThemes capturedThemes;
@@ -538,7 +542,7 @@ class _DropdownRoute<T> extends PopupRoute<_DropdownRouteResult<T>> {
           constraints: constraints,
           items: items,
           padding: padding,
-          buttonRect: buttonRect,
+          buttonRect: getButtonRect(),
           selectedIndex: selectedIndex,
           elevation: elevation,
           capturedThemes: capturedThemes,
@@ -1390,7 +1394,7 @@ class DropdownButton<T> extends StatefulWidget {
   State<DropdownButton<T>> createState() => _DropdownButtonState<T>();
 }
 
-class _DropdownButtonState<T> extends State<DropdownButton<T>> with WidgetsBindingObserver {
+class _DropdownButtonState<T> extends State<DropdownButton<T>> {
   int? _selectedIndex;
   _DropdownRoute<T>? _dropdownRoute;
   Orientation? _lastOrientation;
@@ -1426,7 +1430,6 @@ class _DropdownButtonState<T> extends State<DropdownButton<T>> with WidgetsBindi
 
   @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
     _removeDropdownRoute();
     focusNode.removeListener(_handleFocusChanged);
     _internalNode?.dispose();
@@ -1521,12 +1524,28 @@ class _DropdownButtonState<T> extends State<DropdownButton<T>> with WidgetsBindi
     final NavigatorState navigator = Navigator.of(context);
     assert(_dropdownRoute == null);
     final itemBox = context.findRenderObject()! as RenderBox;
-    final Rect itemRect =
-        itemBox.localToGlobal(Offset.zero, ancestor: navigator.context.findRenderObject()) &
-        itemBox.size;
+    final RenderObject? navigatorBox = navigator.context.findRenderObject();
+    final EdgeInsets resolvedMenuMargin = menuMargin.resolve(textDirection);
+    Rect computeButtonRect() {
+      final Rect itemRect =
+          itemBox.localToGlobal(Offset.zero, ancestor: navigatorBox) & itemBox.size;
+      return resolvedMenuMargin.inflateRect(itemRect);
+    }
+
+    Rect buttonRect = computeButtonRect();
+    Rect getButtonRect() {
+      // The button can be removed from the tree while the menu is still
+      // showing, for example when the window is resized and the button is not
+      // part of the new layout. In that case, the last known rect is used.
+      if (itemBox.attached && (navigatorBox?.attached ?? true)) {
+        buttonRect = computeButtonRect();
+      }
+      return buttonRect;
+    }
+
     _dropdownRoute = _DropdownRoute<T>(
       items: menuItems,
-      buttonRect: menuMargin.resolve(textDirection).inflateRect(itemRect),
+      getButtonRect: getButtonRect,
       padding: _kMenuItemPadding.resolve(textDirection),
       selectedIndex: _selectedIndex ?? 0,
       elevation: widget.elevation,
