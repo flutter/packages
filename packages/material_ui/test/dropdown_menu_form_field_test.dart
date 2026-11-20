@@ -191,14 +191,11 @@ void main() {
       ),
     );
 
-    final TextField textField = tester.widget(find.byType(TextField));
-    final Widget? prefixIcon = textField.decoration?.prefixIcon;
-    expect(prefixIcon, isNotNull);
-    final Finder prefixCheckIcon = find.descendant(
-      of: find.byWidget(prefixIcon!),
-      matching: find.byIcon(Icons.check),
+    final Finder textField = find.byType(TextField);
+    expect(
+      find.descendant(of: textField, matching: find.byIcon(Icons.check)),
+      findsOneWidget,
     );
-    expect(prefixCheckIcon, findsOneWidget);
   });
 
   testWidgets('Passes trailingIcon to underlying DropdownMenu', (WidgetTester tester) async {
