@@ -10,3 +10,4 @@ https://github.com/flutter/flutter/blob/master/.agents/skills/README.md
 ## Packages specific guidance
 
 - [Material 3 Expressive migration](material-3-expressive-migration/SKILL.md): guidance for migrating `packages/material_ui` components to Material 3 Expressive.
+- [Shepherd PRs](shepherd-prs/SKILL.md): runbook for shepherding, updating branches, and landing approved PRs in `flutter/packages`.
