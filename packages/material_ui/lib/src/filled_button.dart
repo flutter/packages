@@ -91,6 +91,11 @@ enum _FilledButtonVariant { filled, tonal }
 /// See [VisualDensity] for more details on how it affects component layout and
 /// the platform-specific defaults.
 ///
+/// With the Material 3 Expressive style, the button ignores the [VisualDensity]
+/// from the enclosing [Theme], so that each [ButtonStyle.sizeVariant] keeps
+/// its height on every platform. A [VisualDensity] from its [style] or from
+/// [FilledButtonThemeData.style] still applies.
+///
 /// See also:
 ///
 ///  * [ElevatedButton], a filled button whose material elevates when pressed.
