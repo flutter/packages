@@ -546,6 +546,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
     XCTAssertEqual(decodedError[0] as? String, error.code)
     XCTAssertEqual(decodedError[1] as? String, error.message)
     XCTAssertEqual(decodedError[2] as? [String: [String: String]], details)
+    try await session.setSimulatedError(nil, forAPI: .verification)
   }
 
   func testRestoreMultipleProductsEmitsSingleBatchedUpdate() async throws {
