@@ -1,3 +1,7 @@
+## 2.0.1
+
+* Migrates off deprecated `cacheExtent` framework APIs.
+
 ## 2.0.0
 
 * Migrates to material_ui.
