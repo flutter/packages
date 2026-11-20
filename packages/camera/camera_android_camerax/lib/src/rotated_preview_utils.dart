@@ -39,12 +39,6 @@ int getPreAppliedQuarterTurnsRotationFromDeviceOrientation(DeviceOrientation ori
 /// stream sharing) has the same orientation as a buffer the surface receives
 /// from the camera directly.
 ///
-/// CameraX switches between the two kinds of buffers when stream sharing
-/// starts or stops, and the first frames of the new kind can be drawn before
-/// the [TransformationInfo] that describes them reaches Dart. Because the two
-/// kinds look the same with this target rotation, those frames are still
-/// displayed correctly.
-///
 /// A surface that [handlesCropAndRotation] (a `SurfaceTexture`) applies the
 /// camera transform to direct buffers, making them upright in the natural
 /// orientation of the device, so the target rotation is
@@ -76,19 +70,11 @@ int computePreviewTargetRotation({
 
 /// Returns the clockwise rotation in degrees needed to display a camera
 /// preview buffer upright when the camera transform has not been applied to
-/// it.
-///
-/// This is the case for previews backed by an `ImageReader`, which ignores the
-/// camera transform, and for previews whose surface is not connected to the
-/// camera directly (e.g. when CameraX copies the camera stream with OpenGL for
-/// stream sharing), indicated by [TransformationInfo.hasCameraTransform] being
-/// false. Only in the latter case may the buffer not be in the orientation of
-/// the camera sensor, so only then is [transformationInfo] used.
+/// it, indicated by [TransformationInfo.hasCameraTransform].
 ///
 /// [displayRotation] and [previewTargetRotation] are [Surface] rotation
-/// constants, which are clockwise quarter turns.
-///
-/// [previewMirroringDisabled] is whether the Preview was created with CameraX
+/// constants, which are clockwise quarter turns. [previewMirroringDisabled]
+/// is whether the Preview was created with CameraX
 /// mirroring turned off (see [untransformedBufferNeedsMirroring]).
 int computeUntransformedPreviewRotation({
   required TransformationInfo? transformationInfo,
@@ -155,9 +141,6 @@ bool untransformedBufferNeedsMirroring({
 /// not have the camera transform applied, so that it is upright according to
 /// the current user interface orientation.
 ///
-/// See [computeUntransformedPreviewRotation] for the cases where the camera
-/// transform is not applied.
-///
 /// [displayRotation] and [previewTargetRotation] are [Surface] rotation
 /// constants.
 Widget buildUntransformedPreview({
@@ -201,19 +184,5 @@ Widget buildUntransformedPreview({
         : Transform.scale(scaleX: -1, child: cameraPreview);
   }
 
-  // DEBUG (do not commit).
-  final debugLine =
-      '[ROTATION_DEBUG] build: info=${transformationInfo == null ? 'null' : '${transformationInfo.rotationDegrees}/${transformationInfo.hasCameraTransform}/${transformationInfo.isMirroring}'} '
-      'front=$cameraIsFrontFacing sensor=$sensorOrientationDegrees display=${displayRotation * 90} '
-      'target=${previewTargetRotation * 90} mirroringDisabled=$previewMirroringDisabled '
-      'orientation=${deviceOrientation.name} buffer=$bufferRotationDegrees '
-      'quarterTurns=${(rotationDegrees ~/ 90) % 4} mirror=$shouldMirror';
-  if (debugLine != _lastDebugLine) {
-    _lastDebugLine = debugLine;
-    debugPrint(debugLine);
-  }
-
   return RotatedBox(quarterTurns: rotationDegrees ~/ 90, child: cameraPreview);
 }
-
-String? _lastDebugLine;

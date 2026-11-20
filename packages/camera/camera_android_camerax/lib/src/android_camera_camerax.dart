@@ -9,11 +9,11 @@ import 'package:async/async.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/foundation.dart' show Uint8List;
 import 'package:flutter/services.dart' show DeviceOrientation, PlatformException;
-import 'package:flutter/widgets.dart' show Texture, ValueKey, Widget, debugPrint, visibleForTesting;
+import 'package:flutter/widgets.dart' show Texture, ValueKey, Widget, visibleForTesting;
 import 'package:stream_transform/stream_transform.dart';
 
 import 'camerax_library.dart';
-import 'rotated_preview_delegate.dart';
+import 'rotated_preview.dart';
 import 'rotated_preview_utils.dart' show computePreviewTargetRotation;
 
 /// The Android implementation of [CameraPlatform] that uses the CameraX library.
@@ -97,7 +97,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   TransformationInfoListener? _transformationInfoListener;
 
   /// Stream that emits the [TransformationInfo] of [preview] whenever it becomes
-  /// available or changes (e.g. when CameraX starts or stops stream sharing).
+  /// available or changes like when CameraX starts or stops stream sharing.
   final StreamController<TransformationInfo> _transformationInfoStreamController =
       StreamController<TransformationInfo>.broadcast();
 
@@ -442,10 +442,8 @@ class AndroidCameraCameraX extends CameraPlatform {
     // (see RotatedPreview).
     _latestTransformationInfo = null;
     final int defaultDisplayRotation = await deviceOrientationManager.getDefaultDisplayRotation();
-    _previewTargetRotation = defaultDisplayRotation;
     preview = Preview(
       resolutionSelector: _presetResolutionSelector,
-      targetRotation: _previewTargetRotation,
       targetFpsRange: _targetFpsRange,
     );
     _transformationInfoListener = _createTransformationInfoListener();
@@ -477,21 +475,14 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     // Pin the Preview target rotation so that buffers CameraX copies for stream
     // sharing look the same as buffers from the camera directly. Whether the
-    // surface handles crop and rotation is only known once the surface provider
-    // is set, so this cannot be passed to the Preview constructor.
+    // surface handles crop and rotation is only known once the Preview is
+    // created, so this cannot be passed to the Preview constructor.
     _previewTargetRotation = computePreviewTargetRotation(
       handlesCropAndRotation: _handlesCropAndRotation,
       cameraIsFrontFacing: cameraIsFrontFacing,
       sensorOrientationDegrees: sensorOrientationDegrees.toInt(),
     );
     await preview!.setTargetRotation(_previewTargetRotation);
-    // DEBUG (do not commit).
-    debugPrint(
-      '[ROTATION_DEBUG] createCamera: previewTargetRotation=${_previewTargetRotation * 90} '
-      'displayRotation=${defaultDisplayRotation * 90} handlesCropAndRotation=$_handlesCropAndRotation '
-      'sensor=${sensorOrientationDegrees.toInt()} front=$cameraIsFrontFacing',
-    );
-
     _initialDeviceOrientation = _deserializeDeviceOrientation(
       await deviceOrientationManager.getUiOrientation(),
     );
@@ -644,12 +635,7 @@ class AndroidCameraCameraX extends CameraPlatform {
             if (self == null || !identical(listener, self._transformationInfoListener)) {
               return;
             }
-            // DEBUG (do not commit).
-            debugPrint(
-              '[ROTATION_DEBUG] TransformationInfo: rotationDegrees=${transformationInfo.rotationDegrees} '
-              'hasCameraTransform=${transformationInfo.hasCameraTransform} '
-              'isMirroring=${transformationInfo.isMirroring}',
-            );
+
             self._latestTransformationInfo = transformationInfo;
             self._transformationInfoStreamController.add(transformationInfo);
           },
@@ -1097,8 +1083,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     );
     final Widget preview = Texture(textureId: cameraId);
 
-    return RotatedPreviewDelegate(
-      // Do not keep the state of a preview of a previous camera.
+    return RotatedPreview(
       key: ValueKey<int>(cameraId),
       handlesCropAndRotation: _handlesCropAndRotation,
       initialDeviceOrientation: _initialDeviceOrientation,

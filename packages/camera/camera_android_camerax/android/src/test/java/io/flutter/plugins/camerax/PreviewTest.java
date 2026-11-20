@@ -5,6 +5,8 @@
 package io.flutter.plugins.camerax;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.any;
@@ -144,6 +146,17 @@ public class PreviewTest {
         });
   }
 
+  /** Creates a Preview with {@code api} the way the plugin does, with a mocked Preview.Builder. */
+  @NonNull
+  private static Preview createPreview(@NonNull PigeonApiPreview api) {
+    final MockedConstruction<Preview.Builder> mockBuilders = mockPreviewBuilderConstruction();
+    try {
+      return api.pigeon_defaultConstructor(null, null, null);
+    } finally {
+      mockBuilders.close();
+    }
+  }
+
   private static void createPreviewWithSurfaceProducer(
       @NonNull TextureRegistry.SurfaceProducer surfaceProducer) {
     final TextureRegistry mockTextureRegistry = mock(TextureRegistry.class);
@@ -188,7 +201,7 @@ public class PreviewTest {
           }
         }.getPigeonApiPreview();
 
-    final Preview instance = mock(Preview.class);
+    final Preview instance = createPreview(api);
     final SystemServicesManager systemServicesManager = mock(SystemServicesManager.class);
 
     assertEquals(textureId, api.setSurfaceProvider(instance, systemServicesManager, null));
@@ -212,7 +225,7 @@ public class PreviewTest {
           }
         }.getPigeonApiPreview();
 
-    final Preview instance = mock(Preview.class);
+    final Preview instance = createPreview(api);
     final SurfaceRequest.TransformationInfoListener mockListener =
         mock(SurfaceRequest.TransformationInfoListener.class);
     final ArgumentCaptor<Preview.SurfaceProvider> surfaceProviderCaptor =
@@ -428,12 +441,44 @@ public class PreviewTest {
           }
         }.getPigeonApiPreview();
 
-    final Preview instance = mock(Preview.class);
+    final Preview instance = createPreview(api);
     final SystemServicesManager systemServicesManager = mock(SystemServicesManager.class);
     api.setSurfaceProvider(instance, systemServicesManager, null);
     api.releaseSurfaceProvider(instance);
 
     verify(mockSurfaceProducer).release();
+  }
+
+  @Test
+  public void setSurfaceProvider_throwsForPreviewNotCreatedByProxyApi() {
+    final PigeonApiPreview api = new TestProxyApiRegistrar().getPigeonApiPreview();
+
+    assertThrows(
+        IllegalStateException.class,
+        () -> api.setSurfaceProvider(mock(Preview.class), mock(SystemServicesManager.class), null));
+  }
+
+  @Test
+  public void setSurfaceProvider_throwsAfterSurfaceProviderIsReleased() {
+    final TextureRegistry mockTextureRegistry = mock(TextureRegistry.class);
+    when(mockTextureRegistry.createSurfaceProducer())
+        .thenReturn(mock(TextureRegistry.SurfaceProducer.class));
+    final PigeonApiPreview api =
+        new TestProxyApiRegistrar() {
+          @NonNull
+          @Override
+          TextureRegistry getTextureRegistry() {
+            return mockTextureRegistry;
+          }
+        }.getPigeonApiPreview();
+    final Preview instance = createPreview(api);
+    final SystemServicesManager systemServicesManager = mock(SystemServicesManager.class);
+    api.setSurfaceProvider(instance, systemServicesManager, null);
+    api.releaseSurfaceProvider(instance);
+
+    assertThrows(
+        IllegalStateException.class,
+        () -> api.setSurfaceProvider(instance, systemServicesManager, null));
   }
 
   @Test
@@ -475,12 +520,12 @@ public class PreviewTest {
           }
         }.getPigeonApiPreview();
 
-    final Preview instance = mock(Preview.class);
+    when(mockSurfaceProducer.handlesCropAndRotation()).thenReturn(true);
+    final Preview instance = createPreview(api);
     final SystemServicesManager systemServicesManager = mock(SystemServicesManager.class);
     api.setSurfaceProvider(instance, systemServicesManager, null);
-    api.surfaceProducerHandlesCropAndRotation(instance);
 
-    verify(mockSurfaceProducer).handlesCropAndRotation();
+    assertTrue(api.surfaceProducerHandlesCropAndRotation(instance));
   }
 
   // TODO(bparrishMines): Replace with inline calls to onSurfaceCleanup once available on stable;

@@ -2132,9 +2132,9 @@ void main() {
         final List<CameraDescription> availableCameras = await camera.availableCameras();
         await camera.createCameraWithSettings(availableCameras.first, const MediaSettings());
 
-        // The Preview is created with the current default display rotation, then
-        // pinned once it is known whether the surface handles crop and rotation.
-        expect(constructorTargetRotation, Surface.rotation270);
+        // The Preview is created without a target rotation, which is pinned once
+        // it is known whether the surface handles crop and rotation.
+        expect(constructorTargetRotation, isNull);
         verifyInOrder(<Object?>[
           mockPreview.setSurfaceProvider(any, transformationInfoListener),
           mockPreview.surfaceProducerHandlesCropAndRotation(),

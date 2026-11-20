@@ -51,7 +51,8 @@ class PreviewProxyApi extends PigeonApiPreview {
       @Nullable Long targetRotation,
       @Nullable Range<?> targetFpsRange) {
     final Preview.Builder builder = new Preview.Builder();
-    // The SurfaceProducer is created here, rather than in setSurfaceProvider, because the
+
+    // Create the SurfaceProducer here rather than in setSurfaceProvider because the
     // mirror mode of the Preview can only be set before it is built and depends on it.
     final TextureRegistry.SurfaceProducer surfaceProducer =
         getPigeonRegistrar().getTextureRegistry().createSurfaceProducer();
@@ -75,10 +76,6 @@ class PreviewProxyApi extends PigeonApiPreview {
           CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, (Range<Integer>) targetFpsRange);
     }
 
-    // DEBUG (do not commit).
-    android.util.Log.i(
-        "ROTATION_DEBUG",
-        "Preview created, mirroringOff=" + !surfaceProducer.handlesCropAndRotation());
     final Preview preview = builder.build();
     surfaceProducers.put(preview, surfaceProducer);
     return preview;
@@ -89,15 +86,18 @@ class PreviewProxyApi extends PigeonApiPreview {
       @NonNull Preview pigeonInstance,
       @NonNull SystemServicesManager systemServicesManager,
       @Nullable SurfaceRequest.TransformationInfoListener transformationInfoListener) {
-    TextureRegistry.SurfaceProducer surfaceProducer = surfaceProducers.get(pigeonInstance);
+    final TextureRegistry.SurfaceProducer surfaceProducer = surfaceProducers.get(pigeonInstance);
     if (surfaceProducer == null) {
-      surfaceProducer = getPigeonRegistrar().getTextureRegistry().createSurfaceProducer();
+      // The SurfaceProducer of a Preview is created with it because the mirror mode of the
+      // Preview depends on it, so using a different one could display the preview incorrectly.
+      throw new IllegalStateException(
+          "setSurfaceProvider() cannot be called for a Preview that was not created by this"
+              + " ProxyApi or whose surface provider was already released.");
     }
     final Preview.SurfaceProvider surfaceProvider =
         createSurfaceProvider(surfaceProducer, systemServicesManager, transformationInfoListener);
 
     pigeonInstance.setSurfaceProvider(surfaceProvider);
-    surfaceProducers.put(pigeonInstance, surfaceProducer);
 
     return surfaceProducer.id();
   }
@@ -143,10 +143,9 @@ class PreviewProxyApi extends PigeonApiPreview {
       @Nullable SurfaceRequest.TransformationInfoListener transformationInfoListener) {
     return request -> {
       if (transformationInfoListener != null) {
-        // Each SurfaceRequest carries its own TransformationInfo (e.g. CameraX makes a new
-        // request when it starts or stops stream sharing), so the listener is set on every
-        // request. The listener posts to the main thread itself, so it can run directly on
-        // the thread CameraX calls it from.
+        // Each SurfaceRequest carries its own TransformationInfo, so the listener is set on
+        // every request. The listener posts to the main thread itself, so it can run directly
+        // on the thread CameraX calls it from.
         request.setTransformationInfoListener(Runnable::run, transformationInfoListener);
       }
 
