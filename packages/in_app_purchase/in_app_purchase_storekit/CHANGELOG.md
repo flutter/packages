@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
+
 ## 0.4.17+1
 
 * Fixes a crash when restoring StoreKit 2 purchases with an unverified entitlement.
