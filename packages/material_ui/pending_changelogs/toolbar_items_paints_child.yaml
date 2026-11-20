@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes `TextSelectionToolbar` reporting overflowed children as painted via `paintsChild`.
+version: patch
