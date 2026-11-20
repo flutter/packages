@@ -120,13 +120,18 @@ abstract base class PlatformXFile extends PlatformXEntity {
 
   /// Creates a new independent [StreamSink] for the resource.
   ///
+  /// This overwrites the contents of the file.
+  ///
   /// If an error occurs while opening or writing to the resource, the
-  /// [StreamSink.done] and [StreamSink.close] methods will throw an exception.
+  /// [StreamSink.done] and [StreamSink.close] methods will complete with an
+  /// error.
   StreamSink<Uint8List> openWrite(PlatformOpenWriteParams params) {
     throw UnimplementedError('`openWrite` is not implemented on the current platform.');
   }
 
   /// Writes a string to a resource.
+  ///
+  /// This overwrites the contents of the file.
   ///
   /// Platforms may throw an exception if there is an error opening or writing
   /// to the resource.
