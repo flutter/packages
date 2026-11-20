@@ -135,6 +135,27 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList> with ChangeNotifie
     return states.reversed;
   }
 
+  /// Whether a route on an enclosing Navigator covers [navigator].
+  ///
+  /// [Route.isCurrent] only reflects the route's own Navigator. A pageless
+  /// route pushed onto an enclosing Navigator, such as a root dialog over a
+  /// [ShellRoute], covers the shell page without changing the routes of the
+  /// shell's Navigator.
+  bool _isCoveredByEnclosingRoute(NavigatorState navigator) {
+    NavigatorState? current = navigator;
+    while (current != null && current != navigatorKey.currentState) {
+      final ModalRoute<dynamic>? enclosingRoute = ModalRoute.of(current.context);
+      if (enclosingRoute == null) {
+        return false;
+      }
+      if (!enclosingRoute.isCurrent) {
+        return true;
+      }
+      current = enclosingRoute.navigator;
+    }
+    return false;
+  }
+
   final Set<Route<Object?>> _pendingExits = <Route<Object?>>{};
   final Set<Route<Object?>> _approvedExits = <Route<Object?>>{};
 
@@ -192,6 +213,23 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList> with ChangeNotifie
     }
     final RouteMatchList configuration = currentConfiguration;
     final BuildContext context = navigatorKey.currentContext!;
+    // Only coverage that appears while onExit is pending makes the approval
+    // stale. A pop that starts under an open dialog, for example a programmatic
+    // pop on a shell Navigator, still goes through once approved.
+    final NavigatorState? startNavigator = route.navigator;
+    final bool coveredAtStart =
+        startNavigator != null && _isCoveredByEnclosingRoute(startNavigator);
+    // Popping a shell page also removes the Navigators the shell builds. If one
+    // that cannot pop now can pop when onExit approves, something was pushed
+    // over the exiting page meanwhile, such as a dialog. canPop() also counts
+    // local history entries, such as an open Drawer.
+    final shellNavigators = <NavigatorState>[];
+    for (var walker = match; walker is ShellRouteMatch; walker = walker.matches.last) {
+      final NavigatorState? shellNavigator = walker.navigatorKey.currentState;
+      if (shellNavigator != null && !shellNavigator.canPop()) {
+        shellNavigators.add(shellNavigator);
+      }
+    }
     final GoRouterState state = leafMatch.buildState(
       _configuration,
       configuration,
@@ -214,7 +252,9 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList> with ChangeNotifie
             !identical(currentConfiguration, configuration) ||
             navigator == null ||
             !navigator.mounted ||
-            !route.isCurrent) {
+            !route.isCurrent ||
+            (!coveredAtStart && _isCoveredByEnclosingRoute(navigator)) ||
+            shellNavigators.any((NavigatorState shellNavigator) => shellNavigator.canPop())) {
           return;
         }
 
