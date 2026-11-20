@@ -806,6 +806,43 @@ void main() {
     expect(getBackgroundColor(tester, 1), CupertinoColors.activeBlue);
   });
 
+  testWidgets('Disabled segment is semantically disabled and has no tap action', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      boilerplate(
+        child: CupertinoSegmentedControl<int>(
+          groupValue: 0,
+          onValueChanged: (int value) {},
+          disabledChildren: const <int>{1},
+          children: const <int, Widget>{0: Text('Photo'), 1: Text('Video')},
+        ),
+      ),
+    );
+
+    expect(
+      find.semantics.byLabel('Photo'),
+      isSemantics(
+        label: 'Photo',
+        isButton: true,
+        hasEnabledState: true,
+        isEnabled: true,
+        hasTapAction: true,
+      ),
+    );
+
+    expect(
+      find.semantics.byLabel('Video'),
+      isSemantics(
+        label: 'Video',
+        isButton: true,
+        hasEnabledState: true,
+        isEnabled: false,
+        hasTapAction: false,
+      ),
+    );
+  });
+
   testWidgets('Segmented control semantics', (WidgetTester tester) async {
     final children = <int, Widget>{};
     children[0] = const Text('Child 1');
