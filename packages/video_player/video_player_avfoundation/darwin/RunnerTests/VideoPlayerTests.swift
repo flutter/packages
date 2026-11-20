@@ -4,8 +4,9 @@
 
 import AVFoundation
 import Testing
-@preconcurrency @testable import video_player_avfoundation
 import video_player_avfoundation_objc
+
+@preconcurrency @testable import video_player_avfoundation
 
 #if os(iOS)
   import Flutter
