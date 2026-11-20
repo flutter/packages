@@ -84,9 +84,9 @@ void main() {
           child: MediaQuery(
             data: const MediaQueryData(),
             child: CustomScrollView(
-              // Pin the cache extent so the expected semantics do not depend on the
-              // framework's default cache extent.
-              scrollCacheExtent: const ScrollCacheExtent.pixels(250.0),
+              // TODO(LouiseHsu): Remove once the minimum Flutter SDK includes the new
+              // default scroll cache extent (https://github.com/flutter/flutter/pull/195722).
+              scrollCacheExtent: const ScrollCacheExtent.viewport(0.8),
               slivers: <Widget>[
                 const SliverAppBar(
                   title: Text('Hello'),
@@ -156,6 +156,16 @@ void main() {
                       textDirection: TextDirection.ltr,
                       flags: <SemanticsFlag>[SemanticsFlag.isHidden],
                     ),
+                    TestSemantics(
+                      label: 'Tile 7',
+                      textDirection: TextDirection.ltr,
+                      flags: <SemanticsFlag>[SemanticsFlag.isHidden],
+                    ),
+                    TestSemantics(
+                      label: 'Tile 8',
+                      textDirection: TextDirection.ltr,
+                      flags: <SemanticsFlag>[SemanticsFlag.isHidden],
+                    ),
                   ],
                 ),
               ],
@@ -198,6 +208,16 @@ void main() {
                   scrollIndex: 11,
                   children: <TestSemantics>[
                     TestSemantics(
+                      label: 'Tile 5',
+                      textDirection: TextDirection.ltr,
+                      flags: <SemanticsFlag>[SemanticsFlag.isHidden],
+                    ),
+                    TestSemantics(
+                      label: 'Tile 6',
+                      textDirection: TextDirection.ltr,
+                      flags: <SemanticsFlag>[SemanticsFlag.isHidden],
+                    ),
+                    TestSemantics(
                       label: 'Tile 7',
                       textDirection: TextDirection.ltr,
                       flags: <SemanticsFlag>[SemanticsFlag.isHidden],
@@ -230,6 +250,21 @@ void main() {
                     ),
                     TestSemantics(
                       label: 'Tile 18',
+                      textDirection: TextDirection.ltr,
+                      flags: <SemanticsFlag>[SemanticsFlag.isHidden],
+                    ),
+                    TestSemantics(
+                      label: 'Tile 19',
+                      textDirection: TextDirection.ltr,
+                      flags: <SemanticsFlag>[SemanticsFlag.isHidden],
+                    ),
+                    TestSemantics(
+                      label: 'Tile 20',
+                      textDirection: TextDirection.ltr,
+                      flags: <SemanticsFlag>[SemanticsFlag.isHidden],
+                    ),
+                    TestSemantics(
+                      label: 'Tile 21',
                       textDirection: TextDirection.ltr,
                       flags: <SemanticsFlag>[SemanticsFlag.isHidden],
                     ),
