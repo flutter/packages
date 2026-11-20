@@ -108,7 +108,9 @@ ErrorOr<bool> UrlLauncherPlugin::LaunchUrl(const std::string& url) {
                               &unescaped_len, URL_UNESCAPE_INPLACE))) {
       return FlutterError("open_error", "Failed to unescape file URL");
     }
-    url_to_open = unescaped_url;
+    // UrlUnescapeA with URL_UNESCAPE_INPLACE null-terminates the buffer in
+    // place without updating unescaped_len or std::string's length.
+    url_to_open = unescaped_url.c_str();
   } else {
     url_to_open = url;
   }

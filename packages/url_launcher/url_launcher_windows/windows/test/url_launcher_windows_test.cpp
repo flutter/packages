@@ -24,7 +24,6 @@ using flutter::EncodableMap;
 using flutter::EncodableValue;
 using ::testing::_;
 using ::testing::DoAll;
-using ::testing::HasSubstr;
 using ::testing::Pointee;
 using ::testing::Return;
 using ::testing::SetArgPointee;
@@ -181,7 +180,45 @@ TEST(UrlLauncherPlugin, LaunchUTF8LogsUnescapedOnFail) {
       "%E3%82%B9%E3%82%AD%E3%83%A3%E3%83%8A");
 
   ASSERT_TRUE(result.has_error());
-  EXPECT_THAT(result.error().message(), HasSubstr("家の管理/スキャナ"));
+  EXPECT_EQ(
+      result.error().message(),
+      "Failed to open file:///G:/家の管理/スキャナ: ShellExecute error code 0");
+}
+
+TEST(UrlLauncherPlugin, LaunchFileURLWithSpacesLogsCleanPathOnFail) {
+  std::unique_ptr<MockSystemApis> system = std::make_unique<MockSystemApis>();
+
+  EXPECT_CALL(
+      *system,
+      ShellExecuteW(
+          _, StrEq(L"open"),
+          StrEq(L"file:///C:/Users/Test/Downloads/Quick Share/IMG-0007.jpg"), _,
+          _, _))
+      .WillOnce(Return(reinterpret_cast<HINSTANCE>(SE_ERR_ACCESSDENIED)));
+
+  UrlLauncherPlugin plugin(std::move(system));
+  ErrorOr<bool> result = plugin.LaunchUrl(
+      "file:///C:/Users/Test/Downloads/Quick%20Share/IMG-0007.jpg");
+
+  ASSERT_TRUE(result.has_error());
+  EXPECT_EQ(result.error().message(),
+            "Failed to open file:///C:/Users/Test/Downloads/Quick "
+            "Share/IMG-0007.jpg: ShellExecute error code 5");
+}
+
+TEST(UrlLauncherPlugin, LaunchFileURLWithPercentEncodingAndRawUTF8Success) {
+  std::unique_ptr<MockSystemApis> system = std::make_unique<MockSystemApis>();
+
+  EXPECT_CALL(*system,
+              ShellExecuteW(_, StrEq(L"open"),
+                            StrEq(L"file:///C:/Quick Share/\x00e9"), _, _, _))
+      .WillOnce(Return(reinterpret_cast<HINSTANCE>(33)));
+
+  UrlLauncherPlugin plugin(std::move(system));
+  ErrorOr<bool> result = plugin.LaunchUrl("file:///C:/Quick%20Share/\xc3\xa9");
+
+  ASSERT_FALSE(result.has_error());
+  EXPECT_TRUE(result.value());
 }
 
 }  // namespace test
