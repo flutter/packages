@@ -91,12 +91,12 @@ You can also wrap individual subtrees that contain legacy package widgets:
 
 <?code-excerpt "readme_excerpts.dart (SubtreeUsage)"?>
 ```dart
-return CupertinoPageScaffold(
+CupertinoPageScaffold(
   navigationBar: const CupertinoNavigationBar(
     middle: Text('Modern Screen'),
   ),
   child: CupertinoUiCompatibilityBridge(child: const LegacyPackageWidget()),
-);
+)
 ```
 
 ---
