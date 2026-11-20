@@ -42,7 +42,7 @@ part 'generated/text_button_defaults_m3.g.dart';
 /// [Material] widget. The label's [Text] and [Icon] widgets are
 /// displayed in the [style]'s [ButtonStyle.foregroundColor]. The
 /// button reacts to touches by filling with the [style]'s
-/// [ButtonStyle.backgroundColor].
+/// [ButtonStyle.overlayColor].
 ///
 /// The text button's default style is defined by [defaultStyleOf].
 /// The style of this text button can be overridden with its [style]
@@ -55,7 +55,7 @@ part 'generated/text_button_defaults_m3.g.dart';
 /// text button [ButtonStyle] from simple values.
 ///
 /// If the [onPressed] and [onLongPress] callbacks are null, then this
-/// button will be disabled, it will not react to touch.
+/// button is disabled and doesn't react to touch.
 ///
 /// <callout-box>
 ///
@@ -112,8 +112,9 @@ class TextButton extends ButtonStyleButton {
   /// Create a text button from a pair of widgets that serve as the button's
   /// [icon] and [label].
   ///
-  /// The icon and label are arranged in a row and padded by 8 logical pixels
-  /// at the ends, with an 8 pixel gap in between.
+  /// The icon and label are arranged in a row and padded by 12 logical pixels
+  /// at the start, and 16 at the end, with an 8 pixel gap in between. If
+  /// [ThemeData.useMaterial3] is false, the padding is 8 at both ends.
   ///
   /// If [icon] is null, this constructor will create a [TextButton]
   /// that doesn't display an icon.
@@ -311,21 +312,21 @@ class TextButton extends ButtonStyleButton {
   ///
   /// ## Material 2 defaults
   ///
-  /// * `textStyle` - Theme.textTheme.button
+  /// * `textStyle` - Theme.textTheme.labelLarge
   /// * `backgroundColor` - transparent
   /// * `foregroundColor`
   ///   * disabled - Theme.colorScheme.onSurface(0.38)
   ///   * others - Theme.colorScheme.primary
   /// * `overlayColor`
   ///   * hovered - Theme.colorScheme.primary(0.08)
-  ///   * focused or pressed - Theme.colorScheme.primary(0.12)
+  ///   * focused or pressed - Theme.colorScheme.primary(0.1)
   /// * `shadowColor` - Theme.shadowColor
   /// * `elevation` - 0
   /// * `padding`
-  ///   * `default font size <= 14` - (horizontal(12), vertical(8))
+  ///   * `default font size <= 14` - all(8)
   ///   * `14 < default font size <= 28` - lerp(all(8), horizontal(8))
-  ///   * `28 < default font size <= 36` - lerp(horizontal(8), horizontal(4))
-  ///   * `36 < default font size` - horizontal(4)
+  ///   * `28 < default font size <= 42` - lerp(horizontal(8), horizontal(4))
+  ///   * `42 < default font size` - horizontal(4)
   /// * `minimumSize` - Size(64, 36)
   /// * `fixedSize` - null
   /// * `maximumSize` - Size.infinite
@@ -343,7 +344,7 @@ class TextButton extends ButtonStyleButton {
   ///
   /// * `padding`
   ///   * `default font size <= 14` - all(8)
-  ///   * `14 < default font size <= 28 `- lerp(all(8), horizontal(4))
+  ///   * `14 < default font size <= 28` - lerp(all(8), horizontal(4))
   ///   * `28 < default font size` - horizontal(4)
   ///
   /// The default value for `side`, which defines the appearance of the button's
@@ -366,17 +367,19 @@ class TextButton extends ButtonStyleButton {
   ///   * hovered - Theme.colorScheme.primary(0.08)
   ///   * focused or pressed - Theme.colorScheme.primary(0.1)
   ///   * others - null
-  /// * `shadowColor` - Colors.transparent,
-  /// * `surfaceTintColor` - null
+  /// * `shadowColor` - Colors.transparent
+  /// * `surfaceTintColor` - Colors.transparent
   /// * `elevation` - 0
   /// * `padding`
-  ///   * `default font size <= 14` - lerp(horizontal(12), horizontal(4))
-  ///   * `14 < default font size <= 28` - lerp(all(8), horizontal(8))
-  ///   * `28 < default font size <= 36` - lerp(horizontal(8), horizontal(4))
-  ///   * `36 < default font size` - horizontal(4)
+  ///   * `default font size <= 14` - (horizontal(12), vertical(8))
+  ///   * `14 < default font size <= 28` - lerp((horizontal(12), vertical(8)), horizontal(8))
+  ///   * `28 < default font size <= 42` - lerp(horizontal(8), horizontal(4))
+  ///   * `42 < default font size` - horizontal(4)
   /// * `minimumSize` - Size(64, 40)
   /// * `fixedSize` - null
   /// * `maximumSize` - Size.infinite
+  /// * `iconSize` - 18
+  /// * `iconColor` - same as `foregroundColor`
   /// * `side` - null
   /// * `shape` - StadiumBorder()
   /// * `mouseCursor` - WidgetStateMouseCursor.adaptiveClickable
@@ -387,8 +390,13 @@ class TextButton extends ButtonStyleButton {
   /// * `alignment` - Alignment.center
   /// * `splashFactory` - Theme.splashFactory
   ///
-  /// For the [TextButton.icon] factory, the end (generally the right) value of
-  /// `padding` is increased from 12 to 16.
+  /// The default padding values for the [TextButton.icon] factory are slightly
+  /// different:
+  ///
+  /// * `padding`
+  ///   * `default font size <= 14` - start(12) end(16) vertical(8)
+  ///   * `14 < default font size <= 28` - lerp(start(12) end(16) vertical(8), horizontal(4))
+  ///   * `28 < default font size` - horizontal(4)
   /// {@endtemplate}
   @override
   ButtonStyle defaultStyleOf(BuildContext context) {

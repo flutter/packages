@@ -41,13 +41,13 @@ part 'generated/outlined_button_defaults_m3.g.dart';
 /// by filling with the [style]'s [ButtonStyle.overlayColor].
 ///
 /// The outlined button's default style is defined by [defaultStyleOf].
-/// The style of this outline button can be overridden with its [style]
-/// parameter. The style of all text buttons in a subtree can be
+/// The style of this outlined button can be overridden with its [style]
+/// parameter. The style of all outlined buttons in a subtree can be
 /// overridden with the [OutlinedButtonTheme] and the style of all of the
 /// outlined buttons in an app can be overridden with the [Theme]'s
 /// [ThemeData.outlinedButtonTheme] property.
 ///
-/// Unlike [TextButton] or [ElevatedButton], outline buttons have a
+/// Unlike [TextButton] or [ElevatedButton], outlined buttons have a
 /// default [ButtonStyle.side] which defines the appearance of the
 /// outline. Because the default `side` is non-null, it
 /// unconditionally overrides the shape's [OutlinedBorder.side]. In
@@ -67,7 +67,7 @@ part 'generated/outlined_button_defaults_m3.g.dart';
 ///
 /// </callout-box>
 ///
-/// The static [styleFrom] method is a convenient way to create a
+/// The static [styleFrom] method is a convenient way to create an
 /// outlined button [ButtonStyle] from simple values.
 ///
 /// See also:
@@ -97,8 +97,9 @@ class OutlinedButton extends ButtonStyleButton {
   /// Create an outlined button from a pair of widgets that serve as the button's
   /// [icon] and [label].
   ///
-  /// The icon and label are arranged in a row and padded by 12 logical pixels
-  /// at the start, and 16 at the end, with an 8 pixel gap in between.
+  /// The icon and label are arranged in a row and padded by 16 logical pixels
+  /// at the start, and 24 at the end, with an 8 pixel gap in between. If
+  /// [ThemeData.useMaterial3] is false, the padding is 16 at both ends.
   ///
   /// If [icon] is null, this constructor will create an outlined button
   /// that doesn't display an icon.
@@ -287,21 +288,21 @@ class OutlinedButton extends ButtonStyleButton {
   ///
   /// ## Material 2 defaults
   ///
-  /// * `textStyle` - Theme.textTheme.button
+  /// * `textStyle` - Theme.textTheme.labelLarge
   /// * `backgroundColor` - transparent
   /// * `foregroundColor`
   ///   * disabled - Theme.colorScheme.onSurface(0.38)
   ///   * others - Theme.colorScheme.primary
   /// * `overlayColor`
   ///   * hovered - Theme.colorScheme.primary(0.08)
-  ///   * focused or pressed - Theme.colorScheme.primary(0.12)
+  ///   * focused or pressed - Theme.colorScheme.primary(0.1)
   /// * `shadowColor` - Theme.shadowColor
   /// * `elevation` - 0
   /// * `padding`
   ///   * `default font size <= 14` - horizontal(16)
   ///   * `14 < default font size <= 28` - lerp(horizontal(16), horizontal(8))
-  ///   * `28 < default font size <= 36` - lerp(horizontal(8), horizontal(4))
-  ///   * `36 < default font size` - horizontal(4)
+  ///   * `28 < default font size <= 42` - lerp(horizontal(8), horizontal(4))
+  ///   * `42 < default font size` - horizontal(4)
   /// * `minimumSize` - Size(64, 36)
   /// * `fixedSize` - null
   /// * `maximumSize` - Size.infinite
@@ -329,19 +330,22 @@ class OutlinedButton extends ButtonStyleButton {
   ///   * hovered - Theme.colorScheme.primary(0.08)
   ///   * focused or pressed - Theme.colorScheme.primary(0.1)
   ///   * others - null
-  /// * `shadowColor` - Colors.transparent,
-  /// * `surfaceTintColor` - null
+  /// * `shadowColor` - Colors.transparent
+  /// * `surfaceTintColor` - Colors.transparent
   /// * `elevation` - 0
   /// * `padding`
   ///   * `default font size <= 14` - horizontal(24)
   ///   * `14 < default font size <= 28` - lerp(horizontal(24), horizontal(12))
-  ///   * `28 < default font size <= 36` - lerp(horizontal(12), horizontal(6))
-  ///   * `36 < default font size` - horizontal(6)
+  ///   * `28 < default font size <= 42` - lerp(horizontal(12), horizontal(6))
+  ///   * `42 < default font size` - horizontal(6)
   /// * `minimumSize` - Size(64, 40)
   /// * `fixedSize` - null
   /// * `maximumSize` - Size.infinite
+  /// * `iconSize` - 18
+  /// * `iconColor` - same as `foregroundColor`
   /// * `side`
   ///   * disabled - BorderSide(color: Theme.colorScheme.onSurface(0.12))
+  ///   * focused - BorderSide(color: Theme.colorScheme.primary)
   ///   * others - BorderSide(color: Theme.colorScheme.outline)
   /// * `shape` - StadiumBorder()
   /// * `mouseCursor` - WidgetStateMouseCursor.adaptiveClickable
