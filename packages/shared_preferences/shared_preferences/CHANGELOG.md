@@ -1,5 +1,10 @@
 ## NEXT
 
+* Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
+
+## 2.5.6
+
+* Documents the meaning of the return values of the set and remove methods.
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 
 ## 2.5.5

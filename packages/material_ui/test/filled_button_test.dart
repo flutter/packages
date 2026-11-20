@@ -436,45 +436,41 @@ void main() {
     await tester.pumpAndSettle();
   });
 
-  testWidgets(
-    'Default FilledButton meets a11y contrast guidelines',
-    (WidgetTester tester) async {
-      final focusNode = FocusNode();
-      addTearDown(focusNode.dispose);
+  testWidgets('Default FilledButton meets a11y contrast guidelines', (WidgetTester tester) async {
+    final focusNode = FocusNode();
+    addTearDown(focusNode.dispose);
 
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: ThemeData.from(colorScheme: const ColorScheme.light()),
-          home: Scaffold(
-            body: Center(
-              child: FilledButton(
-                onPressed: () {},
-                focusNode: focusNode,
-                child: const Text('FilledButton'),
-              ),
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData.from(colorScheme: const ColorScheme.light()),
+        home: Scaffold(
+          body: Center(
+            child: FilledButton(
+              onPressed: () {},
+              focusNode: focusNode,
+              child: const Text('FilledButton'),
             ),
           ),
         ),
-      );
+      ),
+    );
 
-      // Default, not disabled.
-      await expectLater(tester, meetsGuideline(textContrastGuideline));
+    // Default, not disabled.
+    await expectLater(tester, meetsGuideline(textContrastGuideline));
 
-      // Focused.
-      focusNode.requestFocus();
-      await tester.pumpAndSettle();
-      await expectLater(tester, meetsGuideline(textContrastGuideline));
+    // Focused.
+    focusNode.requestFocus();
+    await tester.pumpAndSettle();
+    await expectLater(tester, meetsGuideline(textContrastGuideline));
 
-      // Hovered.
-      final Offset center = tester.getCenter(find.byType(FilledButton));
-      final TestGesture gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
-      await gesture.addPointer();
-      await gesture.moveTo(center);
-      await tester.pumpAndSettle();
-      await expectLater(tester, meetsGuideline(textContrastGuideline));
-    },
-    skip: isBrowser, // https://github.com/flutter/flutter/issues/44115
-  );
+    // Hovered.
+    final Offset center = tester.getCenter(find.byType(FilledButton));
+    final TestGesture gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
+    await gesture.addPointer();
+    await gesture.moveTo(center);
+    await tester.pumpAndSettle();
+    await expectLater(tester, meetsGuideline(textContrastGuideline));
+  });
 
   testWidgets('FilledButton default overlayColor and elevation resolve pressed state', (
     WidgetTester tester,

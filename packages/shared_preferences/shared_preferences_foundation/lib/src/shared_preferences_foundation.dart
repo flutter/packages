@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:flutter/services.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
 import 'package:shared_preferences_platform_interface/types.dart';
+
 import './messages.g.dart';
 import 'shared_preferences_async_foundation.dart';
 
@@ -14,10 +15,11 @@ typedef _Setter = Future<void> Function(String key, Object value);
 /// iOS and macOS implementation of shared_preferences.
 class SharedPreferencesFoundation extends SharedPreferencesStorePlatform {
   /// Creates an instance of [SharedPreferencesFoundation].
-  SharedPreferencesFoundation({@visibleForTesting LegacyUserDefaultsApi? api})
-    : _api = api ?? LegacyUserDefaultsApi();
+  SharedPreferencesFoundation({@visibleForTesting LegacyUserDefaultsApi? api}) : _apiOverride = api;
 
-  final LegacyUserDefaultsApi _api;
+  final LegacyUserDefaultsApi? _apiOverride;
+  late final LegacyUserDefaultsApi _api =
+      _apiOverride ?? LegacyUserDefaultsApi.createWithNativeInteropApi();
 
   static const String _defaultPrefix = 'flutter.';
 

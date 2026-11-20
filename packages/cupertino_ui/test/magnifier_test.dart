@@ -408,4 +408,39 @@ void main() {
     );
     expect(tester.getSize(find.byType(RawMagnifier)), Size.zero);
   });
+
+  testWidgets('CupertinoMagnifier keeps magnifying the same point during inOutAnimation', (
+    WidgetTester tester,
+  ) async {
+    final controller = AnimationController(vsync: const TestVSync());
+    addTearDown(controller.dispose);
+    await tester.pumpWidget(
+      CupertinoApp(
+        home: Center(
+          // CupertinoMagnifier does not listen to the animation itself; its
+          // owner (e.g. CupertinoTextMagnifier) rebuilds it on every tick.
+          child: AnimatedBuilder(
+            animation: controller,
+            builder: (BuildContext context, Widget? child) =>
+                CupertinoMagnifier(inOutAnimation: controller),
+          ),
+        ),
+      ),
+    );
+    // The global position the lens is magnifying: lens center (which includes
+    // the in/out translation) plus the focal point offset.
+    Offset magnifiedPoint() {
+      final Finder finder = find.byType(RawMagnifier);
+      return tester.getCenter(finder) + tester.widget<RawMagnifier>(finder).focalPointOffset;
+    }
+
+    controller.value = 1.0;
+    await tester.pump();
+    final Offset atRest = magnifiedPoint();
+    for (final value in <double>[0.0, 0.25, 0.5, 0.75]) {
+      controller.value = value;
+      await tester.pump();
+      expect(magnifiedPoint(), offsetMoreOrLessEquals(atRest), reason: 'value=$value');
+    }
+  });
 }

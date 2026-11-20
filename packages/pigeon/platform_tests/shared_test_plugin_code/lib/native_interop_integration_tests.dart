@@ -10,9 +10,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'comparison_benchmarks.dart';
 import 'native_interop_test_types.dart';
 import 'src/generated/native_interop_tests.gen.dart';
+import 'src/generated/native_interop_tests.native_interop.gen.dart';
 
 /// Possible host languages that test can target.
 enum TargetGenerator {
@@ -64,6 +64,19 @@ void runPigeonNativeInteropIntegrationTests(TargetGenerator targetGenerator) {
 
       final NativeInteropAllTypes echoObject = api!.echoAllTypes(genericNativeInteropAllTypes);
       expect(echoObject, genericNativeInteropAllTypes);
+    });
+
+    testWidgets('lists and typed data keep their types', (WidgetTester _) async {
+      final NativeInteropHostIntegrationCoreApiForNativeInterop? api =
+          NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance();
+
+      final NativeInteropAllTypes echoObject = api!.echoAllTypes(genericNativeInteropAllTypes);
+      // Swift represents both `List<int>` and `Int64List` as `[Int64]`, so this
+      // checks that each still crosses as the type that it was declared as.
+      expect(echoObject.intList, isNot(isA<Int64List>()));
+      expect(echoObject.doubleList, isNot(isA<Float64List>()));
+      expect(echoObject.a8ByteArray, isA<Int64List>());
+      expect(echoObject.aFloatArray, isA<Float64List>());
     });
 
     testWidgets('all nullable datatypes serialize and deserialize correctly', (
@@ -254,6 +267,49 @@ void runPigeonNativeInteropIntegrationTests(TargetGenerator targetGenerator) {
         classWrapper,
       );
       expect(classWrapper, receivedClassWrapper);
+    });
+
+    testWidgets('sealed classes serialize and deserialize correctly', (WidgetTester _) async {
+      final NativeInteropHostIntegrationCoreApiForNativeInterop? api =
+          NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance();
+
+      for (final NativeInteropSealedClass sealedClass in sealedClasses) {
+        expect(api!.echoSealedClass(sealedClass), sealedClass);
+      }
+    });
+
+    testWidgets('nullable sealed classes serialize and deserialize correctly', (
+      WidgetTester _,
+    ) async {
+      final NativeInteropHostIntegrationCoreApiForNativeInterop? api =
+          NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance();
+
+      for (final NativeInteropSealedClass sealedClass in sealedClasses) {
+        expect(api!.echoNullableSealedClass(sealedClass), sealedClass);
+      }
+      expect(api!.echoNullableSealedClass(null), isNull);
+    });
+
+    testWidgets('sealed classes in lists serialize and deserialize correctly', (
+      WidgetTester _,
+    ) async {
+      final NativeInteropHostIntegrationCoreApiForNativeInterop? api =
+          NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance();
+
+      expect(api!.echoSealedClassList(sealedClasses), sealedClasses);
+    });
+
+    testWidgets('sealed classes in class fields serialize and deserialize correctly', (
+      WidgetTester _,
+    ) async {
+      final NativeInteropHostIntegrationCoreApiForNativeInterop? api =
+          NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance();
+      final NativeInteropSealedClassWrapper wrapper = sealedClassWrapperMaker();
+
+      expect(api!.echoSealedClassWrapper(wrapper), wrapper);
+
+      wrapper.nullableSealedClass = null;
+      expect(api.echoSealedClassWrapper(wrapper), wrapper);
     });
 
     testWidgets('Arguments of multiple types serialize and deserialize correctly', (
@@ -881,6 +937,46 @@ void runPigeonNativeInteropIntegrationTests(TargetGenerator targetGenerator) {
       expect(receivedNullObject, null);
     });
 
+    testWidgets(
+      'generic nullable Foundation and collection Objects serialize and deserialize correctly',
+      (WidgetTester _) async {
+        final NativeInteropHostIntegrationCoreApiForNativeInterop? api =
+            NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance();
+
+        final Object sentBytes = Uint8List.fromList(<int>[1, 2, 3, 255]);
+        final Object? receivedBytes = api!.echoNullableObject(sentBytes);
+        expect(receivedBytes, sentBytes);
+
+        final Object sentList = <Object?>[
+          'string',
+          regularInt,
+          true,
+          false,
+          2.0694,
+          null,
+          Uint8List.fromList(<int>[4, 5, 6]),
+          <Object?>['nested', null, regularInt],
+          <Object?, Object?>{'nestedKey': 'value', 7: null},
+        ];
+        final Object? receivedList = api.echoNullableObject(sentList);
+        expect(receivedList, sentList);
+
+        final Object sentMap = <Object?, Object?>{
+          'string': 'value',
+          'int': regularInt,
+          'bool': true,
+          'double': 2.0694,
+          'null': null,
+          'bytes': Uint8List.fromList(<int>[7, 8]),
+          'list': <Object?>['a', null, 1],
+          'map': <Object?, Object?>{'inner': null, 2: false},
+          42: 'intKey',
+        };
+        final Object? receivedMap = api.echoNullableObject(sentMap);
+        expect(receivedMap, sentMap);
+      },
+    );
+
     testWidgets('nullable lists serialize and deserialize correctly', (WidgetTester _) async {
       final NativeInteropHostIntegrationCoreApiForNativeInterop? api =
           NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance();
@@ -1168,6 +1264,15 @@ void runPigeonNativeInteropIntegrationTests(TargetGenerator targetGenerator) {
           NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance();
 
       expect(api!.noopAsync(), completes);
+    });
+
+    testWidgets('sealed classes serialize and deserialize correctly', (WidgetTester _) async {
+      final NativeInteropHostIntegrationCoreApiForNativeInterop? api =
+          NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance();
+
+      for (final NativeInteropSealedClass sealedClass in sealedClasses) {
+        expect(await api!.echoAsyncSealedClass(sealedClass), sealedClass);
+      }
     });
 
     testWidgets('async errors are returned from non void methods correctly', (
@@ -1765,6 +1870,18 @@ void runPigeonNativeInteropIntegrationTests(TargetGenerator targetGenerator) {
         () => NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance(
           channelName: 'suffixWithNoHost',
         ),
+        throwsA(isA<ArgumentError>()),
+      );
+      expect(
+        () => NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance(
+          channelName: 'suffixWithoutHost',
+        ),
+        throwsA(isA<ArgumentError>()),
+      );
+      expect(
+        () => NativeInteropHostIntegrationCoreApi.createWithNativeInteropApi(
+          messageChannelSuffix: 'suffixWithNoHost',
+        ),
         throwsA(
           isA<ArgumentError>().having(
             (ArgumentError e) => e.message,
@@ -1773,10 +1890,9 @@ void runPigeonNativeInteropIntegrationTests(TargetGenerator targetGenerator) {
           ),
         ),
       );
-
       expect(
-        () => NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance(
-          channelName: 'suffixWithoutHost',
+        () => NativeInteropHostIntegrationCoreApi.createWithNativeInteropApi(
+          messageChannelSuffix: 'suffixWithoutHost',
         ),
         throwsA(
           isA<ArgumentError>().having(
@@ -1826,6 +1942,12 @@ void runPigeonNativeInteropIntegrationTests(TargetGenerator targetGenerator) {
       );
 
       expect(echoObject, genericNativeInteropAllTypes);
+    });
+
+    testWidgets('sealed classes serialize and deserialize correctly', (WidgetTester _) async {
+      for (final NativeInteropSealedClass sealedClass in sealedClasses) {
+        expect(api.callFlutterEchoSealedClass(sealedClass), sealedClass);
+      }
     });
 
     testWidgets('all nullable datatypes serialize and deserialize correctly', (
@@ -2780,11 +2902,30 @@ void runPigeonNativeInteropIntegrationTests(TargetGenerator targetGenerator) {
   });
 
   group('Deregistration tests', () {
+    testWidgets('registrations use the exact engine id when the platform exposes it', (
+      WidgetTester _,
+    ) async {
+      final NativeInteropHostIntegrationCoreApiForNativeInterop api =
+          NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance()!;
+      final int registeredKey = api.registeredEngineKey();
+      if (api.pluginEngineIdentifierIsAvailable()) {
+        // Also covers minified release builds, where the generated code's lookup of the
+        // engine identifier must survive R8 renaming.
+        expect(registeredKey, PlatformDispatcher.instance.engineId);
+      } else {
+        // Synthetic keys are negative so they can never collide with real engine ids.
+        expect(registeredKey, isNegative);
+      }
+    });
     testWidgets('host API deregistration works natively', (WidgetTester _) async {
       final NativeInteropHostIntegrationCoreApiForNativeInterop? api =
           NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance();
       final bool success = api!.testDeregisterHostApi();
       expect(success, true);
+      // Verify the primary engine's registration is still intact after secondary engine
+      // registrations are created and deregistered on the host.
+      final primaryEngineApi = NativeInteropHostIntegrationCoreApi.createWithNativeInteropApi();
+      await primaryEngineApi.noop();
     });
 
     testWidgets('flutter API deregistration works natively', (WidgetTester _) async {
@@ -2806,7 +2947,54 @@ void runPigeonNativeInteropIntegrationTests(TargetGenerator targetGenerator) {
         ),
         throwsA(isA<ArgumentError>()),
       );
+      expect(
+        () => NativeInteropHostIntegrationCoreApi.createWithNativeInteropApi(
+          messageChannelSuffix: instanceName,
+        ),
+        throwsA(isA<ArgumentError>()),
+      );
     });
+
+    testWidgets(
+      'calling a cached Host API handle after deregistration throws unregistered-instance PlatformException',
+      (WidgetTester _) async {
+        final NativeInteropHostIntegrationCoreApiForNativeInterop primaryApi =
+            NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance()!;
+        const instanceName = 'detachedCachedHostHandleTest';
+
+        primaryApi.registerNamedHostApi(instanceName);
+        addTearDown(() {
+          primaryApi.deregisterNamedHostApi(instanceName);
+        });
+
+        final NativeInteropHostIntegrationCoreApiForNativeInterop cachedDirectApi =
+            NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance(
+              channelName: instanceName,
+            )!;
+        final cachedWrappedApi = NativeInteropHostIntegrationCoreApi.createWithNativeInteropApi(
+          messageChannelSuffix: instanceName,
+        );
+
+        // Calls succeed while the host instance is registered.
+        cachedDirectApi.noop();
+        await cachedWrappedApi.noop();
+        await cachedWrappedApi.noopAsync();
+
+        // Deregister the host instance while holding the cached Dart handles.
+        primaryApi.deregisterNamedHostApi(instanceName);
+
+        Matcher isUnregisteredInstanceException() => isA<PlatformException>().having(
+          (PlatformException e) => e.code,
+          'code',
+          'unregistered-instance',
+        );
+
+        expect(() => cachedDirectApi.noop(), throwsA(isUnregisteredInstanceException()));
+        await expectLater(cachedDirectApi.noopAsync(), throwsA(isUnregisteredInstanceException()));
+        await expectLater(cachedWrappedApi.noop(), throwsA(isUnregisteredInstanceException()));
+        await expectLater(cachedWrappedApi.noopAsync(), throwsA(isUnregisteredInstanceException()));
+      },
+    );
 
     testWidgets('calling a deregistered Flutter API fails on native lookup', (
       WidgetTester _,
@@ -2814,9 +3002,240 @@ void runPigeonNativeInteropIntegrationTests(TargetGenerator targetGenerator) {
       final NativeInteropHostIntegrationCoreApiForNativeInterop? api =
           NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance();
       const instanceName = 'deregisteredFlutterInstanceTest';
+      final impl = NativeInteropFlutterIntegrationCoreApiImpl();
+      NativeInteropFlutterIntegrationCoreApiRegistrar().register(impl, name: instanceName);
+      NativeInteropFlutterIntegrationCoreApiRegistrar().unregister(impl, name: instanceName);
       final bool success = api!.testCallDeregisteredFlutterApi(instanceName);
       expect(success, true);
     });
+
+    testWidgets('createWithNativeInteropApi resolves registered instance', (WidgetTester _) async {
+      final api = NativeInteropHostIntegrationCoreApi.createWithNativeInteropApi();
+      await api.noop();
+    });
+
+    testWidgets('createWithNativeInteropApi throws for unregistered suffix', (
+      WidgetTester _,
+    ) async {
+      expect(
+        () => NativeInteropHostIntegrationCoreApi.createWithNativeInteropApi(
+          messageChannelSuffix: 'unregisteredSuffix',
+        ),
+        throwsA(isA<ArgumentError>()),
+      );
+    });
+
+    testWidgets(
+      'secondary engine execution and teardown preserves primary engine Native Interop APIs',
+      (WidgetTester _) async {
+        final baseImpl = _NativeInteropReservedNamesFlutterApiImpl();
+        NativeInteropReservedNamesFlutterApiRegistrar().register(baseImpl);
+        addTearDown(() => NativeInteropReservedNamesFlutterApiRegistrar().unregister(baseImpl));
+        final primaryApi = NativeInteropHostIntegrationCoreApi.createWithNativeInteropApi();
+        final primaryReservedApi = NativeInteropReservedNamesHostApi.createWithNativeInteropApi();
+        final String primaryLabel =
+            NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance()!.engineLabel();
+
+        // Bind a background isolate to the primary engine before secondary engines attach. While
+        // a secondary engine is registered, it resolves a fresh handle, which has to come back to
+        // the primary engine's instance (by affinity) rather than the most recent registration.
+        // On macOS under `flutter test`, `testSecondaryEngineDartExecution` exercises secondary
+        // engine attach/detach synchronously on `@MainActor` without a live secondary isolate,
+        // so the readiness handshake is skipped there.
+        final readyPort = ReceivePort();
+        final resultPort = ReceivePort();
+        final expectSecondaryWindow = defaultTargetPlatform != TargetPlatform.macOS;
+        await Isolate.spawn<(SendPort, SendPort, bool)>((args) async {
+          final (SendPort ready, SendPort result, bool waitForSecondary) = args;
+          final isolateApi = NativeInteropHostIntegrationCoreApi.createWithNativeInteropApi();
+          final goPort = ReceivePort();
+          ready.send(goPort.sendPort);
+          await goPort.first;
+          goPort.close();
+          var sawSecondary = false;
+          if (waitForSecondary) {
+            for (var i = 0; i < 1200 && !sawSecondary; i++) {
+              sawSecondary = await isolateApi.isSecondaryEngineRegistrationReady();
+              if (!sawSecondary) {
+                await Future<void>.delayed(const Duration(milliseconds: 10));
+              }
+            }
+          }
+          final String label = NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance()!
+              .engineLabel();
+          if (waitForSecondary && sawSecondary) {
+            await isolateApi.notifyConcurrentIsolateResolved();
+          }
+          result.send((
+            await isolateApi.echoString('from_concurrent_isolate'),
+            sawSecondary,
+            label,
+          ));
+        }, (readyPort.sendPort, resultPort.sendPort, expectSecondaryWindow));
+        final goSendPort = await readyPort.first as SendPort;
+        readyPort.close();
+
+        goSendPort.send(null);
+        final bool secondarySucceeded = await primaryApi.testSecondaryEngineDartExecution();
+        expect(secondarySucceeded, true);
+        final (String echo, bool sawSecondary, String isolateLabel) =
+            await resultPort.first as (String, bool, String);
+        resultPort.close();
+        expect(echo, 'from_concurrent_isolate');
+        if (expectSecondaryWindow) {
+          expect(sawSecondary, true);
+        }
+        expect(isolateLabel, primaryLabel);
+
+        // Verify existing clients, freshly created clients, and a newly spawned isolate in the
+        // primary engine all continue working after secondary engines are torn down.
+        expect(await primaryApi.echoString('from_primary_engine'), 'from_primary_engine');
+        expect(await primaryReservedApi.type(), 'type');
+        expect(await primaryReservedApi.callFlutterRelease('primary'), 'primary');
+        expect(await primaryApi.callFlutterEchoAsyncString('primary_async'), 'primary_async');
+        final freshPrimaryApi = NativeInteropHostIntegrationCoreApi.createWithNativeInteropApi();
+        expect(await freshPrimaryApi.echoString('fresh_primary_engine'), 'fresh_primary_engine');
+        final String postTeardownIsolateEcho = await Isolate.run(() async {
+          final postApi = NativeInteropHostIntegrationCoreApi.createWithNativeInteropApi();
+          return postApi.echoString('post_teardown_isolate');
+        });
+        expect(postTeardownIsolateEcho, 'post_teardown_isolate');
+      },
+    );
+
+    testWidgets(
+      'FlutterApiRegistrar keeps default name distinct from empty string and preserves stack',
+      (WidgetTester _) async {
+        final baseImpl = _NativeInteropReservedNamesFlutterApiImpl();
+        NativeInteropReservedNamesFlutterApiRegistrar().register(baseImpl);
+        addTearDown(() => NativeInteropReservedNamesFlutterApiRegistrar().unregister(baseImpl));
+        final NativeInteropReservedNamesHostApiForNativeInterop hostApi =
+            NativeInteropReservedNamesHostApiForNativeInterop.getInstance()!;
+        expect(hostApi.callFlutterRelease('ping'), 'ping');
+
+        final impl1 = _PrefixedReservedNamesFlutterApiImpl('impl1');
+        final impl2 = _PrefixedReservedNamesFlutterApiImpl('impl2');
+        final emptyNameImpl = _PrefixedReservedNamesFlutterApiImpl('emptyName');
+        final neverRegistered = _PrefixedReservedNamesFlutterApiImpl('never');
+
+        // Registering under an explicit empty string (`name: ''`) must not overwrite the default
+        // registration, and unregistering it must leave the default intact.
+        NativeInteropReservedNamesFlutterApiRegistrar().register(emptyNameImpl, name: '');
+        expect(hostApi.callFlutterRelease('ping'), 'ping');
+        NativeInteropReservedNamesFlutterApiRegistrar().unregister(emptyNameImpl, name: '');
+        expect(hostApi.callFlutterRelease('ping'), 'ping');
+
+        NativeInteropReservedNamesFlutterApiRegistrar().register(impl1);
+        expect(hostApi.callFlutterRelease('ping'), 'impl1:ping');
+        NativeInteropReservedNamesFlutterApiRegistrar().register(impl2);
+        expect(hostApi.callFlutterRelease('ping'), 'impl2:ping');
+
+        // Re-registering impl1 deduplicates and moves it to the top of the stack; a single
+        // unregister(impl1) then removes it completely and restores impl2.
+        NativeInteropReservedNamesFlutterApiRegistrar().register(impl1);
+        expect(hostApi.callFlutterRelease('ping'), 'impl1:ping');
+        NativeInteropReservedNamesFlutterApiRegistrar().unregister(impl1);
+        expect(hostApi.callFlutterRelease('ping'), 'impl2:ping');
+
+        // Duplicate unregister(impl1) and unregister of a never-registered instance are no-ops.
+        NativeInteropReservedNamesFlutterApiRegistrar().unregister(impl1);
+        NativeInteropReservedNamesFlutterApiRegistrar().unregister(neverRegistered);
+        expect(hostApi.callFlutterRelease('ping'), 'impl2:ping');
+
+        // Re-register impl2 over impl1 and unregister impl1 out-of-order while impl2 stays active.
+        NativeInteropReservedNamesFlutterApiRegistrar().register(impl1);
+        NativeInteropReservedNamesFlutterApiRegistrar().register(impl2);
+        NativeInteropReservedNamesFlutterApiRegistrar().unregister(impl1);
+        expect(hostApi.callFlutterRelease('ping'), 'impl2:ping');
+
+        // Unregistering impl2 restores baseImpl underneath.
+        NativeInteropReservedNamesFlutterApiRegistrar().unregister(impl2);
+        expect(hostApi.callFlutterRelease('ping'), 'ping');
+      },
+    );
+
+    testWidgets(
+      'FlutterApi.setUp replaces per-isolate instance and setUp(null) deregisters without popping underlying stack',
+      (WidgetTester _) async {
+        final baseImpl = _NativeInteropReservedNamesFlutterApiImpl();
+        NativeInteropReservedNamesFlutterApiRegistrar().register(baseImpl);
+        addTearDown(() => NativeInteropReservedNamesFlutterApiRegistrar().unregister(baseImpl));
+        final NativeInteropReservedNamesHostApiForNativeInterop hostApi =
+            NativeInteropReservedNamesHostApiForNativeInterop.getInstance()!;
+        expect(hostApi.callFlutterRelease('ping'), 'ping');
+
+        final setup1 = _PrefixedReservedNamesFlutterApiImpl('setup1');
+        NativeInteropReservedNamesFlutterApi.setUp(setup1);
+        expect(hostApi.callFlutterRelease('ping'), 'setup1:ping');
+
+        // Calling setUp with the exact same instance twice in a row must not corrupt its handle.
+        NativeInteropReservedNamesFlutterApi.setUp(setup1);
+        expect(hostApi.callFlutterRelease('ping'), 'setup1:ping');
+
+        // Calling setUp again in the same isolate replaces setup1 rather than leaking it on the stack.
+        NativeInteropReservedNamesFlutterApi.setUp(_PrefixedReservedNamesFlutterApiImpl('setup2'));
+        expect(hostApi.callFlutterRelease('ping'), 'setup2:ping');
+
+        // setUp(null) deregisters setup2 on native and restores the underlying Registrar instance.
+        NativeInteropReservedNamesFlutterApi.setUp(null);
+        expect(hostApi.callFlutterRelease('ping'), 'ping');
+
+        // A redundant setUp(null) is a no-op and must not pop the underlying Registrar instance.
+        NativeInteropReservedNamesFlutterApi.setUp(null);
+        expect(hostApi.callFlutterRelease('ping'), 'ping');
+      },
+    );
+
+    testWidgets(
+      'FlutterApi.setUp(null) still deregisters an instance re-registered through the Registrar',
+      (WidgetTester _) async {
+        final baseImpl = _NativeInteropReservedNamesFlutterApiImpl();
+        NativeInteropReservedNamesFlutterApiRegistrar().register(baseImpl);
+        addTearDown(() => NativeInteropReservedNamesFlutterApiRegistrar().unregister(baseImpl));
+        final NativeInteropReservedNamesHostApiForNativeInterop hostApi =
+            NativeInteropReservedNamesHostApiForNativeInterop.getInstance()!;
+
+        final setup = _PrefixedReservedNamesFlutterApiImpl('setup');
+        addTearDown(() => NativeInteropReservedNamesFlutterApiRegistrar().unregister(setup));
+        NativeInteropReservedNamesFlutterApi.setUp(setup);
+        expect(hostApi.callFlutterRelease('ping'), 'setup:ping');
+
+        // Re-registering the setUp instance through the Registrar moves it to the top, but it
+        // must stay tracked as the setUp instance.
+        NativeInteropReservedNamesFlutterApiRegistrar().register(setup);
+        expect(hostApi.callFlutterRelease('ping'), 'setup:ping');
+
+        NativeInteropReservedNamesFlutterApi.setUp(null);
+        expect(hostApi.callFlutterRelease('ping'), 'ping');
+      },
+    );
+
+    testWidgets(
+      'FlutterApi.setUp(null) deregisters the setUp instance when it is not top of the stack',
+      (WidgetTester _) async {
+        final baseImpl = _NativeInteropReservedNamesFlutterApiImpl();
+        NativeInteropReservedNamesFlutterApiRegistrar().register(baseImpl);
+        addTearDown(() => NativeInteropReservedNamesFlutterApiRegistrar().unregister(baseImpl));
+        final NativeInteropReservedNamesHostApiForNativeInterop hostApi =
+            NativeInteropReservedNamesHostApiForNativeInterop.getInstance()!;
+
+        final setup = _PrefixedReservedNamesFlutterApiImpl('setup');
+        final registered = _PrefixedReservedNamesFlutterApiImpl('registered');
+        addTearDown(() => NativeInteropReservedNamesFlutterApiRegistrar().unregister(setup));
+        addTearDown(() => NativeInteropReservedNamesFlutterApiRegistrar().unregister(registered));
+        NativeInteropReservedNamesFlutterApi.setUp(setup);
+        NativeInteropReservedNamesFlutterApiRegistrar().register(registered);
+        expect(hostApi.callFlutterRelease('ping'), 'registered:ping');
+
+        // setUp(null) removes the buried setUp instance and leaves the Registrar one on top.
+        NativeInteropReservedNamesFlutterApi.setUp(null);
+        expect(hostApi.callFlutterRelease('ping'), 'registered:ping');
+
+        // With setup gone, unregistering the top instance falls back to baseImpl.
+        NativeInteropReservedNamesFlutterApiRegistrar().unregister(registered);
+        expect(hostApi.callFlutterRelease('ping'), 'ping');
+      },
+    );
   });
 
   group('JavaBean property getter and setter tests', () {
@@ -2828,6 +3247,67 @@ void runPigeonNativeInteropIntegrationTests(TargetGenerator targetGenerator) {
       expect(api.getGetter(), 42);
       api.setSetter(100);
       expect(api.getGetter(), 100);
+    });
+  });
+
+  group('Reserved name tests', () {
+    NativeInteropReservedNamesFlutterApiRegistrar().register(
+      _NativeInteropReservedNamesFlutterApiImpl(),
+    );
+    final NativeInteropReservedNamesHostApiForNativeInterop? api =
+        NativeInteropReservedNamesHostApiForNativeInterop.getInstance();
+    api!;
+
+    testWidgets('host methods with reserved names are called correctly', (WidgetTester _) async {
+      expect(api.release('release'), 'release');
+      expect(api.use(42), 42);
+      expect(api.type(), 'type');
+      // `JObject.isNull` is false, so this also checks that it isn't called
+      // instead.
+      expect(api.isNull(), true);
+      expect(api.isNullable(), true);
+      expect(api.isOpen(), true);
+      api.setReference('reference');
+      expect(api.getReference(), 'reference');
+      expect(api.getDefault(), 'default');
+      expect(await api.getValueAsync(), 'value');
+      expect(api.register('register'), 'register');
+      expect(api.unregister('unregister'), 'unregister');
+      expect(api.getGetInstance(), 'getInstance');
+    });
+
+    testWidgets('fields with reserved names serialize and deserialize correctly', (
+      WidgetTester _,
+    ) async {
+      final names = NativeInteropReservedNames(
+        type: 'type',
+        use: 'use',
+        reference: 'reference',
+        releasedBy: 'releasedBy',
+        fromReference: 'fromReference',
+        jClass: 'jClass',
+        isInstanceOf: 'isInstanceOf',
+        isNull: 'isNull',
+        // `JObject.isReleased` is false, so this also checks that it isn't
+        // read instead.
+        isReleased: true,
+        equals: 'equals',
+        isEnabled: true,
+        isMaybe: true,
+        isCount: 42,
+        getValue: 'getValue',
+      );
+      expect(api.echoReservedNames(names), names);
+    });
+
+    testWidgets('flutter methods with reserved names are called correctly', (WidgetTester _) async {
+      expect(api.callFlutterRelease('release'), 'release');
+      expect(api.callFlutterType(), 'type');
+      expect(api.callFlutterImplementIn('implementIn'), 'implementIn');
+      expect(api.callFlutterIsNull(), true);
+      expect(api.callFlutterGetReference(), 'reference');
+      expect(api.callFlutterRegister('register'), 'register');
+      expect(api.callFlutterDartApi(), 'dartApi');
     });
   });
 
@@ -2886,7 +3366,91 @@ void runPigeonNativeInteropIntegrationTests(TargetGenerator targetGenerator) {
     });
   });
 
-  runComparisonBenchmarks(targetGenerator);
+  group('Sealed classes', () {
+    NativeInteropSealedClassFlutterApi.setUp(_NativeInteropSealedClassFlutterApiImpl());
+    final NativeInteropSealedClassHostApiForNativeInterop api =
+        NativeInteropSealedClassHostApiForNativeInterop.getInstance()!;
+    final circle = NativeInteropCircle(radius: 2.5);
+    final square = NativeInteropSquare(side: 4, label: 'square');
+
+    testWidgets('host api echoes each subclass', (WidgetTester _) async {
+      expect(api.echoShape(circle), circle);
+      expect(api.echoShape(square), square);
+      expect(api.echoNullableShape(square), square);
+      expect(api.echoNullableShape(null), isNull);
+    });
+
+    testWidgets('host api echoes collections of subclasses', (WidgetTester _) async {
+      expect(api.echoShapeList(<NativeInteropShape>[circle, square]), <NativeInteropShape>[
+        circle,
+        square,
+      ]);
+      expect(
+        api.echoShapeMap(<String, NativeInteropShape>{'circle': circle, 'square': square}),
+        <String, NativeInteropShape>{'circle': circle, 'square': square},
+      );
+    });
+
+    testWidgets('async host api echoes a subclass', (WidgetTester _) async {
+      expect(await api.echoAsyncShape(square), square);
+    });
+
+    testWidgets('flutter api echoes a subclass', (WidgetTester _) async {
+      expect(api.callFlutterEchoShape(circle), circle);
+      expect(api.callFlutterEchoShape(square), square);
+    });
+  });
+
+  group('Object-graph conversions', () {
+    testWidgets('enums and data classes round-trip through native object bindings', (
+      WidgetTester _,
+    ) async {
+      if (targetGenerator == TargetGenerator.kotlin) {
+        expect(
+          PigeonInternalNativeInteropAnEnumNativeInterop.fromJni(
+            NativeInteropAnEnum.fortyTwo.toJni(),
+          ),
+          NativeInteropAnEnum.fortyTwo,
+        );
+        expect(
+          PigeonInternalNativeInteropAllTypesNativeInterop.fromJni(
+            genericNativeInteropAllTypes.toJni(),
+          ),
+          genericNativeInteropAllTypes,
+        );
+        expect(
+          PigeonInternalNativeInteropAllNullableTypesNativeInterop.fromJni(
+            recursiveNativeInteropAllNullableTypes.toJni(),
+          ),
+          recursiveNativeInteropAllNullableTypes,
+        );
+      } else if (targetGenerator == TargetGenerator.swift) {
+        expect(
+          PigeonInternalNativeInteropAnEnumNativeInterop.fromNSNumber(
+            NativeInteropAnEnum.fortyTwo.toNSNumber(),
+          ),
+          NativeInteropAnEnum.fortyTwo,
+        );
+        expect(
+          PigeonInternalNativeInteropAllTypesNativeInterop.fromFfi(
+            genericNativeInteropAllTypes.toFfi(),
+          ),
+          genericNativeInteropAllTypes,
+        );
+        expect(
+          PigeonInternalNativeInteropAllNullableTypesNativeInterop.fromFfi(
+            recursiveNativeInteropAllNullableTypes.toFfi(),
+          ),
+          recursiveNativeInteropAllNullableTypes,
+        );
+      }
+    });
+  });
+}
+
+class _NativeInteropSealedClassFlutterApiImpl extends NativeInteropSealedClassFlutterApi {
+  @override
+  NativeInteropShape echoShape(NativeInteropShape shape) => shape;
 }
 
 /// Implementation of the Flutter API for Native Interop.
@@ -3245,6 +3809,11 @@ class NativeInteropFlutterIntegrationCoreApiImpl extends NativeInteropFlutterInt
   }
 
   @override
+  NativeInteropSealedClass echoNativeInteropSealedClass(NativeInteropSealedClass sealedClass) {
+    return sealedClass;
+  }
+
+  @override
   NativeInteropAllNullableTypesWithoutRecursion? echoNativeInteropAllNullableTypesWithoutRecursion(
     NativeInteropAllNullableTypesWithoutRecursion? everything,
   ) {
@@ -3489,4 +4058,54 @@ class NativeInteropFlutterIntegrationCoreApiImpl extends NativeInteropFlutterInt
   void throwErrorFromVoid() {
     throw PlatformException(code: 'code', message: 'message', details: 'details');
   }
+}
+
+class _NativeInteropReservedNamesFlutterApiImpl extends NativeInteropReservedNamesFlutterApi {
+  @override
+  String release(String value) => value;
+
+  @override
+  String type() => 'type';
+
+  @override
+  String implementIn(String value) => value;
+
+  @override
+  bool isNull() => true;
+
+  @override
+  String getReference() => 'reference';
+
+  @override
+  String register(String value) => value;
+
+  @override
+  String dartApi() => 'dartApi';
+}
+
+class _PrefixedReservedNamesFlutterApiImpl extends NativeInteropReservedNamesFlutterApi {
+  _PrefixedReservedNamesFlutterApiImpl(this.prefix);
+
+  final String prefix;
+
+  @override
+  String release(String value) => '$prefix:$value';
+
+  @override
+  String type() => '$prefix:type';
+
+  @override
+  String implementIn(String value) => '$prefix:$value';
+
+  @override
+  bool isNull() => true;
+
+  @override
+  String getReference() => '$prefix:reference';
+
+  @override
+  String register(String value) => '$prefix:$value';
+
+  @override
+  String dartApi() => '$prefix:dartApi';
 }

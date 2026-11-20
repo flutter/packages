@@ -30,6 +30,7 @@ class _SearchBarAppState extends State<SearchBarApp> {
         body: Padding(
           padding: const .all(8.0),
           child: SearchAnchor(
+            enableTapHandling: false,
             builder: (BuildContext context, SearchController controller) {
               return SearchBar(
                 controller: controller,

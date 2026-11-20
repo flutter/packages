@@ -18,6 +18,12 @@ void main() {
     expect(find.text(snackBarText), findsOneWidget);
   });
 
+  testWidgets('snack bar stays until closed', (WidgetTester tester) async {
+    await pumpsUseCase(tester, SnackBarUseCase());
+    await tester.tap(find.text('Show Snackbar'));
+    await expectSnackBarStaysUntilClosed(tester, 'Awesome Snackbar!');
+  });
+
   testWidgets('snack bar demo page has one h1 tag', (WidgetTester tester) async {
     await pumpsUseCase(tester, SnackBarUseCase());
     final Finder findHeadingLevelOnes = find.bySemanticsLabel('SnackBar Demo');

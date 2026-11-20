@@ -1,3 +1,0 @@
-changelog: |
-  - Fixes `showCupertinoSheet` ignoring `showDragHandle` by forwarding it to `CupertinoSheetRoute`.
-version: patch

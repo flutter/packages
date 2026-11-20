@@ -98,3 +98,15 @@ extension WebTweakMethodVersions on MediaStreamTrack {
 extension type WebTweakMediaTrackConstraints._(JSObject _) implements JSObject {
   external factory WebTweakMediaTrackConstraints({JSAny zoom, ConstrainBoolean torch});
 }
+
+extension type WebTweakImageDataSettings._(JSObject _) implements ImageDataSettings {
+  external factory WebTweakImageDataSettings({
+    PredefinedColorSpace colorSpace,
+    WebTweakPredefinedFormat? format,
+  });
+
+  external WebTweakPredefinedFormat? get format;
+  external set format(WebTweakPredefinedFormat? value);
+}
+
+typedef WebTweakPredefinedFormat = String;

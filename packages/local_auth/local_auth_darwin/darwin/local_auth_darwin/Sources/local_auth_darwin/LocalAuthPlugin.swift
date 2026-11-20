@@ -270,12 +270,10 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi, @unch
   // Both are kept for backward compatibility: sceneDidBecomeActive for apps using UIScene lifecycle,
   // and applicationDidBecomeActive for apps that haven't migrated yet.
   #if os(iOS)
-    @MainActor
     public func sceneDidBecomeActive(_ scene: UIScene) {
       retryStickyAuth()
     }
 
-    @MainActor
     public func applicationDidBecomeActive(_ application: UIApplication) {
       retryStickyAuth()
     }

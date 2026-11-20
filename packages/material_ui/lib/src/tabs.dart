@@ -27,9 +27,12 @@ import 'tab_indicator.dart';
 import 'text_theme.dart';
 import 'theme.dart';
 
+part 'generated/tabs_defaults_m3.g.dart';
+
 const double _kTabHeight = 46.0;
 const double _kTextAndIconTabHeight = 72.0;
 const double _kStartOffset = 52.0;
+const double _kMinPrimaryTabIndicatorWidth = 24.0;
 
 /// Defines how the bounds of the selected tab indicator are computed.
 ///
@@ -490,6 +493,7 @@ class _IndicatorPainter extends CustomPainter {
     required TabController controller,
     required Decoration indicator,
     required TabBarIndicatorSize indicatorSize,
+    required double? minimumIndicatorWidth,
     required List<GlobalKey> tabKeys,
     required _IndicatorPainter? old,
     required EdgeInsetsGeometry indicatorPadding,
@@ -511,6 +515,7 @@ class _IndicatorPainter extends CustomPainter {
       controller: controller,
       indicator: indicator,
       indicatorSize: indicatorSize,
+      minimumIndicatorWidth: minimumIndicatorWidth,
       tabKeys: tabKeys,
       old: old,
       indicatorPadding: indicatorPadding,
@@ -529,6 +534,7 @@ class _IndicatorPainter extends CustomPainter {
     required this.controller,
     required this.indicator,
     required this.indicatorSize,
+    required this.minimumIndicatorWidth,
     required this.tabKeys,
     required _IndicatorPainter? old,
     required this.indicatorPadding,
@@ -551,6 +557,7 @@ class _IndicatorPainter extends CustomPainter {
   final TabController controller;
   final Decoration indicator;
   final TabBarIndicatorSize indicatorSize;
+  final double? minimumIndicatorWidth;
   final EdgeInsetsGeometry indicatorPadding;
   final List<GlobalKey> tabKeys;
   final List<EdgeInsetsGeometry> labelPaddings;
@@ -618,6 +625,14 @@ class _IndicatorPainter extends CustomPainter {
       final double delta = ((tabRight - tabLeft) - (tabWidth + insets.horizontal)) / 2.0;
       tabLeft += delta + insets.left;
       tabRight = tabLeft + tabWidth;
+    }
+
+    final double indicatorWidth = tabRight - tabLeft;
+    final double? minimumWidth = minimumIndicatorWidth;
+    if (minimumWidth != null && indicatorWidth < minimumWidth) {
+      final double tabCenter = (tabLeft + tabRight) / 2.0;
+      tabLeft = tabCenter - minimumWidth / 2.0;
+      tabRight = tabCenter + minimumWidth / 2.0;
     }
 
     final EdgeInsets insets = indicatorPadding.resolve(_currentTextDirection);
@@ -770,6 +785,7 @@ class _IndicatorPainter extends CustomPainter {
     return _needsPaint ||
         controller != old.controller ||
         indicator != old.indicator ||
+        minimumIndicatorWidth != old.minimumIndicatorWidth ||
         tabKeys.length != old.tabKeys.length ||
         (!listEquals(_currentTabOffsets, old._currentTabOffsets)) ||
         _currentTextDirection != old._currentTextDirection;
@@ -1069,8 +1085,7 @@ class TabBar extends StatefulWidget implements PreferredSizeWidget {
     this.tabAlignment,
     this.textScaler,
     this.indicatorAnimation,
-  }) : _isPrimary = true,
-       assert(indicator != null || (indicatorWeight > 0.0));
+  }) : _isPrimary = true;
 
   /// Creates a Material Design secondary tab bar.
   ///
@@ -1131,8 +1146,7 @@ class TabBar extends StatefulWidget implements PreferredSizeWidget {
     this.tabAlignment,
     this.textScaler,
     this.indicatorAnimation,
-  }) : _isPrimary = false,
-       assert(indicator != null || (indicatorWeight > 0.0));
+  }) : _isPrimary = false;
 
   /// Typically a list of two or more [Tab] widgets.
   ///
@@ -1188,7 +1202,8 @@ class TabBar extends StatefulWidget implements PreferredSizeWidget {
   /// If [ThemeData.useMaterial3] is false, the default value is 2.0.
   ///
   /// If [indicator] is specified or provided from [TabBarThemeData],
-  /// this property is ignored.
+  /// this property is ignored. Otherwise, when drawing the default underline
+  /// indicator, the value of this parameter must be greater than zero.
   final double indicatorWeight;
 
   /// The padding for the indicator.
@@ -1647,6 +1662,24 @@ class _TabBarState extends State<TabBar> {
     if (tabBarTheme.indicator != null) {
       return tabBarTheme.indicator!;
     }
+    assert(() {
+      if (widget.indicatorWeight <= 0.0) {
+        throw FlutterError.fromParts(<DiagnosticsNode>[
+          ErrorSummary('Invalid indicatorWeight for TabBar.'),
+          ErrorDescription(
+            'The indicatorWeight must be greater than zero when the TabBar '
+            'draws its default underline indicator, that is when no indicator '
+            'is provided by the TabBar or the TabBarTheme.',
+          ),
+          ErrorHint(
+            'To fix this, set indicatorWeight to a value greater than zero, '
+            'or provide an indicator with the TabBar.indicator or '
+            'TabBarThemeData.indicator property.',
+          ),
+        ]);
+      }
+      return true;
+    }());
 
     Color color = widget.indicatorColor ?? tabBarTheme.indicatorColor ?? _defaults.indicatorColor!;
     // ThemeData tries to avoid this by having indicatorColor avoid being the
@@ -1752,6 +1785,12 @@ class _TabBarState extends State<TabBar> {
     final TabBarThemeData tabBarTheme = TabBarTheme.of(context);
     final TabBarIndicatorSize indicatorSize =
         widget.indicatorSize ?? tabBarTheme.indicatorSize ?? _defaults.indicatorSize!;
+    final bool usesDefaultPrimaryLabelIndicator =
+        theme.useMaterial3 &&
+        widget._isPrimary &&
+        indicatorSize == TabBarIndicatorSize.label &&
+        widget.indicator == null &&
+        tabBarTheme.indicator == null;
 
     final _IndicatorPainter? oldPainter = _indicatorPainter;
 
@@ -1766,6 +1805,9 @@ class _TabBarState extends State<TabBar> {
             controller: _controller!,
             indicator: _getIndicator(indicatorSize),
             indicatorSize: indicatorSize,
+            minimumIndicatorWidth: usesDefaultPrimaryLabelIndicator
+                ? _kMinPrimaryTabIndicatorWidth
+                : null,
             indicatorPadding: widget.indicatorPadding,
             tabKeys: _tabKeys,
             // Passing old painter so that the constructor can copy some values from it.
@@ -2836,162 +2878,3 @@ class _TabsDefaultsM2 extends TabBarThemeData {
 
   static const EdgeInsetsGeometry iconMargin = EdgeInsets.only(bottom: 10);
 }
-
-// BEGIN GENERATED TOKEN PROPERTIES - Tabs
-
-// Do not edit by hand. The code between the "BEGIN GENERATED" and
-// "END GENERATED" comments are generated from data in the Material
-// Design token database by the script:
-//   dev/tools/gen_defaults/bin/gen_defaults.dart.
-
-// dart format off
-class _TabsPrimaryDefaultsM3 extends TabBarThemeData {
-  _TabsPrimaryDefaultsM3(this.context, this.isScrollable)
-    : super(indicatorSize: TabBarIndicatorSize.label);
-
-  final BuildContext context;
-  late final ColorScheme _colors = Theme.of(context).colorScheme;
-  late final TextTheme _textTheme = Theme.of(context).textTheme;
-  final bool isScrollable;
-
-  // This value comes from Divider widget defaults. Token db deprecated 'primary-navigation-tab.divider.color' token.
-  @override
-  Color? get dividerColor => _colors.outlineVariant;
-
-  // This value comes from Divider widget defaults. Token db deprecated 'primary-navigation-tab.divider.height' token.
-  @override
-  double? get dividerHeight => 1.0;
-
-  @override
-  Color? get indicatorColor => _colors.primary;
-
-  @override
-  Color? get labelColor => _colors.primary;
-
-  @override
-  TextStyle? get labelStyle => _textTheme.titleSmall;
-
-  @override
-  Color? get unselectedLabelColor => _colors.onSurfaceVariant;
-
-  @override
-  TextStyle? get unselectedLabelStyle => _textTheme.titleSmall;
-
-  @override
-  WidgetStateProperty<Color?> get overlayColor {
-    return WidgetStateProperty.resolveWith((Set<WidgetState> states) {
-      if (states.contains(WidgetState.selected)) {
-        if (states.contains(WidgetState.pressed)) {
-          return _colors.primary.withOpacity(0.1);
-        }
-        if (states.contains(WidgetState.hovered)) {
-          return _colors.primary.withOpacity(0.08);
-        }
-        if (states.contains(WidgetState.focused)) {
-          return _colors.primary.withOpacity(0.1);
-        }
-        return null;
-      }
-      if (states.contains(WidgetState.pressed)) {
-        return _colors.primary.withOpacity(0.1);
-      }
-      if (states.contains(WidgetState.hovered)) {
-        return _colors.onSurface.withOpacity(0.08);
-      }
-      if (states.contains(WidgetState.focused)) {
-        return _colors.onSurface.withOpacity(0.1);
-      }
-      return null;
-    });
-  }
-
-  @override
-  InteractiveInkFeatureFactory? get splashFactory => Theme.of(context).splashFactory;
-
-  @override
-  TabAlignment? get tabAlignment => isScrollable ? TabAlignment.startOffset : TabAlignment.fill;
-
-  static double indicatorWeight(TabBarIndicatorSize indicatorSize) {
-    return switch (indicatorSize) {
-      TabBarIndicatorSize.label => 3.0,
-      TabBarIndicatorSize.tab   => 2.0,
-    };
-  }
-
-  // TODO(davidmartos96): This value doesn't currently exist in
-  // https://m3.material.io/components/tabs/specs
-  // Update this when the token is available.
-  static const EdgeInsetsGeometry iconMargin = EdgeInsets.only(bottom: 2);
-}
-
-class _TabsSecondaryDefaultsM3 extends TabBarThemeData {
-  _TabsSecondaryDefaultsM3(this.context, this.isScrollable)
-    : super(indicatorSize: TabBarIndicatorSize.tab);
-
-  final BuildContext context;
-  late final ColorScheme _colors = Theme.of(context).colorScheme;
-  late final TextTheme _textTheme = Theme.of(context).textTheme;
-  final bool isScrollable;
-
-  // This value comes from Divider widget defaults. Token db deprecated 'secondary-navigation-tab.divider.color' token.
-  @override
-  Color? get dividerColor => _colors.outlineVariant;
-
-  // This value comes from Divider widget defaults. Token db deprecated 'secondary-navigation-tab.divider.height' token.
-  @override
-  double? get dividerHeight => 1.0;
-
-  @override
-  Color? get indicatorColor => _colors.primary;
-
-  @override
-  Color? get labelColor => _colors.onSurface;
-
-  @override
-  TextStyle? get labelStyle => _textTheme.titleSmall;
-
-  @override
-  Color? get unselectedLabelColor => _colors.onSurfaceVariant;
-
-  @override
-  TextStyle? get unselectedLabelStyle => _textTheme.titleSmall;
-
-  @override
-  WidgetStateProperty<Color?> get overlayColor {
-    return WidgetStateProperty.resolveWith((Set<WidgetState> states) {
-      if (states.contains(WidgetState.selected)) {
-        if (states.contains(WidgetState.pressed)) {
-          return _colors.onSurface.withOpacity(0.1);
-        }
-        if (states.contains(WidgetState.hovered)) {
-          return _colors.onSurface.withOpacity(0.08);
-        }
-        if (states.contains(WidgetState.focused)) {
-          return _colors.onSurface.withOpacity(0.1);
-        }
-        return null;
-      }
-      if (states.contains(WidgetState.pressed)) {
-        return _colors.onSurface.withOpacity(0.1);
-      }
-      if (states.contains(WidgetState.hovered)) {
-        return _colors.onSurface.withOpacity(0.08);
-      }
-      if (states.contains(WidgetState.focused)) {
-        return _colors.onSurface.withOpacity(0.1);
-      }
-      return null;
-    });
-  }
-
-  @override
-  InteractiveInkFeatureFactory? get splashFactory => Theme.of(context).splashFactory;
-
-  @override
-  TabAlignment? get tabAlignment => isScrollable ? TabAlignment.startOffset : TabAlignment.fill;
-
-  static double indicatorWeight = 2.0;
-}
-// dart format on
-
-// END GENERATED TOKEN PROPERTIES - Tabs

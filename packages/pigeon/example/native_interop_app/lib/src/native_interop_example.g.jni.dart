@@ -221,134 +221,148 @@ final class $FlutterError$Type$ extends jni$_.JType<FlutterError> {
   String get signature => r'Ldev/flutter/pigeonnativeinteropapp/FlutterError;';
 }
 
-/// from: `dev.flutter.pigeonnativeinteropapp.NativeInteropExampleApi`
-extension type NativeInteropExampleApi._(jni$_.JObject _$this) implements jni$_.JObject {
+/// from: `dev.flutter.pigeonnativeinteropapp.NativeInteropExampleApiRegistrar$Companion`
+extension type NativeInteropExampleApiRegistrar$Companion._(jni$_.JObject _$this)
+    implements jni$_.JObject {
   static final _class = jni$_.JClass.forName(
-    r'dev/flutter/pigeonnativeinteropapp/NativeInteropExampleApi',
+    r'dev/flutter/pigeonnativeinteropapp/NativeInteropExampleApiRegistrar$Companion',
   );
 
   /// The type which includes information such as the signature of this class.
-  static const jni$_.JType<NativeInteropExampleApi> type = $NativeInteropExampleApi$Type$();
-
-  /// Maps a specific port to the implemented interface.
-  static final core$_.Map<core$_.int, $NativeInteropExampleApi> _$impls = {};
-  static jni$_.JObjectPtr _$invoke(
-    core$_.int port,
-    jni$_.JObjectPtr descriptor,
-    jni$_.JObjectPtr args,
-  ) {
-    return _$invokeMethod(
-      port,
-      jni$_.MethodInvocation.fromAddresses(0, descriptor.address, args.address),
-    );
-  }
-
-  static final jni$_.Pointer<
-    jni$_.NativeFunction<jni$_.JObjectPtr Function(jni$_.Int64, jni$_.JObjectPtr, jni$_.JObjectPtr)>
-  >
-  _$invokePointer = jni$_.Pointer.fromFunction(_$invoke);
-
-  static jni$_.Pointer<jni$_.Void> _$invokeMethod(core$_.int $p, jni$_.MethodInvocation $i) {
-    try {
-      final $d = $i.methodDescriptor.toDartString(releaseOriginal: true);
-      final $a = $i.args;
-      if ($d == r'doSomething()V') {
-        _$impls[$p]!.doSomething();
-        return jni$_.nullptr;
-      }
-    } catch (e) {
-      return jni$_.ProtectedJniExtensions.newDartException(e);
-    }
-    return jni$_.nullptr;
-  }
-
-  static void implementIn(jni$_.JImplementer implementer, $NativeInteropExampleApi $impl) {
-    late final jni$_.RawReceivePort $p;
-    $p = jni$_.RawReceivePort(($m) {
-      if ($m == null) {
-        _$impls.remove($p.sendPort.nativePort);
-        $p.close();
-        return;
-      }
-      final $i = jni$_.MethodInvocation.fromMessage($m);
-      final $r = _$invokeMethod($p.sendPort.nativePort, $i);
-      $i.args?.release();
-      jni$_.ProtectedJniExtensions.returnResult($i.result, $r);
-    });
-    implementer.add(
-      r'dev.flutter.pigeonnativeinteropapp.NativeInteropExampleApi',
-      $p,
-      _$invokePointer,
-      [if ($impl.doSomething$async) r'doSomething()V'],
-    );
-    final $a = $p.sendPort.nativePort;
-    _$impls[$a] = $impl;
-  }
-
-  factory NativeInteropExampleApi.implement($NativeInteropExampleApi $impl) {
-    final $i = jni$_.JImplementer();
-    implementIn($i, $impl);
-    return $i.implement<NativeInteropExampleApi>();
-  }
-}
-
-extension NativeInteropExampleApi$$Methods on NativeInteropExampleApi {
-  static final _id_doSomething = NativeInteropExampleApi._class.instanceMethodId(
-    r'doSomething',
-    r'()V',
+  static const jni$_.JType<NativeInteropExampleApiRegistrar$Companion> type =
+      $NativeInteropExampleApiRegistrar$Companion$Type$();
+  static final _id_new$ = _class.constructorId(
+    r'(Lkotlin/jvm/internal/DefaultConstructorMarker;)V',
   );
 
-  static final _doSomething =
+  static final _new$ =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
-              jni$_.JThrowablePtr Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
             >
-          >('globalEnv_CallVoidMethod')
+          >('globalEnv_NewObject')
           .asFunction<
-            jni$_.JThrowablePtr Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
           >();
 
-  /// from: `public fun doSomething(): kotlin.Unit`
-  void doSomething() {
+  /// from: `synthetic public void <init>(kotlin.jvm.internal.DefaultConstructorMarker defaultConstructorMarker)`
+  /// The returned object must be released after use, by calling the [release] method.
+  factory NativeInteropExampleApiRegistrar$Companion(
+    DefaultConstructorMarker? defaultConstructorMarker,
+  ) {
+    final _$$classRef = _class.reference;
+    final _$defaultConstructorMarker = defaultConstructorMarker?.reference ?? jni$_.jNullReference;
+    return _new$(
+      _$$classRef.pointer,
+      _id_new$.pointer,
+      _$defaultConstructorMarker.pointer,
+    ).object<NativeInteropExampleApiRegistrar$Companion>();
+  }
+}
+
+extension NativeInteropExampleApiRegistrar$Companion$$Methods
+    on NativeInteropExampleApiRegistrar$Companion {
+  static final _id_pigeonResolveInstance = NativeInteropExampleApiRegistrar$Companion._class
+      .instanceMethodId(
+        r'pigeonResolveInstance',
+        r'(JJLjava/lang/String;)Ldev/flutter/pigeonnativeinteropapp/NativeInteropExampleApiRegistrar;',
+      );
+
+  static final _pigeonResolveInstance =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Int64, jni$_.Int64, jni$_.Pointer<jni$_.Void>)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              core$_.int,
+              core$_.int,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun pigeonResolveInstance(engineId: kotlin.Long, affinityKey: kotlin.Long, name: kotlin.String): dev.flutter.pigeonnativeinteropapp.NativeInteropExampleApiRegistrar?`
+  /// The returned object must be released after use, by calling the [release] method.
+  NativeInteropExampleApiRegistrar? pigeonResolveInstance(
+    core$_.int j,
+    core$_.int j1,
+    jni$_.JString string,
+  ) {
     final _$$selfRef = reference;
-    _doSomething(_$$selfRef.pointer, _id_doSomething.pointer).check();
+    final _$string = string.reference;
+    return _pigeonResolveInstance(
+      _$$selfRef.pointer,
+      _id_pigeonResolveInstance.pointer,
+      j,
+      j1,
+      _$string.pointer,
+    ).object<NativeInteropExampleApiRegistrar?>();
+  }
+
+  static final _id_pigeonEngineKeyOf = NativeInteropExampleApiRegistrar$Companion._class
+      .instanceMethodId(
+        r'pigeonEngineKeyOf',
+        r'(Ldev/flutter/pigeonnativeinteropapp/NativeInteropExampleApiRegistrar;)J',
+      );
+
+  static final _pigeonEngineKeyOf =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallLongMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun pigeonEngineKeyOf(instance: dev.flutter.pigeonnativeinteropapp.NativeInteropExampleApiRegistrar): kotlin.Long`
+  core$_.int pigeonEngineKeyOf(NativeInteropExampleApiRegistrar nativeInteropExampleApiRegistrar) {
+    final _$$selfRef = reference;
+    final _$nativeInteropExampleApiRegistrar = nativeInteropExampleApiRegistrar.reference;
+    return _pigeonEngineKeyOf(
+      _$$selfRef.pointer,
+      _id_pigeonEngineKeyOf.pointer,
+      _$nativeInteropExampleApiRegistrar.pointer,
+    ).long;
   }
 }
 
-abstract base mixin class $NativeInteropExampleApi {
-  factory $NativeInteropExampleApi({
-    required void Function() doSomething,
-    core$_.bool doSomething$async,
-  }) = _$NativeInteropExampleApi;
-
-  void doSomething();
-  core$_.bool get doSomething$async => false;
-}
-
-final class _$NativeInteropExampleApi with $NativeInteropExampleApi {
-  _$NativeInteropExampleApi({required void Function() doSomething, this.doSomething$async = false})
-    : _doSomething = doSomething;
-
-  final void Function() _doSomething;
-  final core$_.bool doSomething$async;
-
-  void doSomething() {
-    return _doSomething();
-  }
-}
-
-final class $NativeInteropExampleApi$Type$ extends jni$_.JType<NativeInteropExampleApi> {
+final class $NativeInteropExampleApiRegistrar$Companion$Type$
+    extends jni$_.JType<NativeInteropExampleApiRegistrar$Companion> {
   @jni$_.internal
-  const $NativeInteropExampleApi$Type$();
+  const $NativeInteropExampleApiRegistrar$Companion$Type$();
 
   @jni$_.internal
   @core$_.override
-  String get signature => r'Ldev/flutter/pigeonnativeinteropapp/NativeInteropExampleApi;';
+  String get signature =>
+      r'Ldev/flutter/pigeonnativeinteropapp/NativeInteropExampleApiRegistrar$Companion;';
 }
 
 /// from: `dev.flutter.pigeonnativeinteropapp.NativeInteropExampleApiRegistrar`
-extension type NativeInteropExampleApiRegistrar._(jni$_.JObject _$this)
-    implements jni$_.JObject, NativeInteropExampleApi {
+extension type NativeInteropExampleApiRegistrar._(jni$_.JObject _$this) implements jni$_.JObject {
   static final _class = jni$_.JClass.forName(
     r'dev/flutter/pigeonnativeinteropapp/NativeInteropExampleApiRegistrar',
   );
@@ -356,6 +370,17 @@ extension type NativeInteropExampleApiRegistrar._(jni$_.JObject _$this)
   /// The type which includes information such as the signature of this class.
   static const jni$_.JType<NativeInteropExampleApiRegistrar> type =
       $NativeInteropExampleApiRegistrar$Type$();
+  static final _id_Companion = _class.staticFieldId(
+    r'Companion',
+    r'Ldev/flutter/pigeonnativeinteropapp/NativeInteropExampleApiRegistrar$Companion;',
+  );
+
+  /// from: `static public final dev.flutter.pigeonnativeinteropapp.NativeInteropExampleApiRegistrar$Companion Companion`
+  /// The returned object must be released after use, by calling the [release] method.
+  static NativeInteropExampleApiRegistrar$Companion get Companion =>
+      _id_Companion.get(_class, NativeInteropExampleApiRegistrar$Companion.type)
+          as NativeInteropExampleApiRegistrar$Companion;
+
   static final _id_new$ = _class.constructorId(r'()V');
 
   static final _new$ =
@@ -372,56 +397,56 @@ extension type NativeInteropExampleApiRegistrar._(jni$_.JObject _$this)
     final _$$classRef = _class.reference;
     return _new$(_$$classRef.pointer, _id_new$.pointer).object<NativeInteropExampleApiRegistrar>();
   }
-}
 
-extension NativeInteropExampleApiRegistrar$$Methods on NativeInteropExampleApiRegistrar {
-  static final _id_register = NativeInteropExampleApiRegistrar._class.instanceMethodId(
-    r'register',
-    r'(Ldev/flutter/pigeonnativeinteropapp/NativeInteropExampleApi;Ljava/lang/String;)Ldev/flutter/pigeonnativeinteropapp/NativeInteropExampleApiRegistrar;',
+  static final _id_pigeonResolveInstance = _class.staticMethodId(
+    r'pigeonResolveInstance',
+    r'(JJLjava/lang/String;)Ldev/flutter/pigeonnativeinteropapp/NativeInteropExampleApiRegistrar;',
   );
 
-  static final _register =
+  static final _pigeonResolveInstance =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+                jni$_.VarArgs<(jni$_.Int64, jni$_.Int64, jni$_.Pointer<jni$_.Void>)>,
               )
             >
-          >('globalEnv_CallObjectMethod')
+          >('globalEnv_CallStaticObjectMethod')
           .asFunction<
             jni$_.JniResult Function(
               jni$_.Pointer<jni$_.Void>,
               jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
+              core$_.int,
+              core$_.int,
               jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `public fun register(api: dev.flutter.pigeonnativeinteropapp.NativeInteropExampleApi?, name: kotlin.String): dev.flutter.pigeonnativeinteropapp.NativeInteropExampleApiRegistrar`
+  /// from: `static public final dev.flutter.pigeonnativeinteropapp.NativeInteropExampleApiRegistrar pigeonResolveInstance(long j, long j1, java.lang.String string)`
   /// The returned object must be released after use, by calling the [release] method.
-  NativeInteropExampleApiRegistrar register(
-    NativeInteropExampleApi? nativeInteropExampleApi,
+  static NativeInteropExampleApiRegistrar? pigeonResolveInstance(
+    core$_.int j,
+    core$_.int j1,
     jni$_.JString string,
   ) {
-    final _$$selfRef = reference;
-    final _$nativeInteropExampleApi = nativeInteropExampleApi?.reference ?? jni$_.jNullReference;
+    final _$$classRef = _class.reference;
     final _$string = string.reference;
-    return _register(
-      _$$selfRef.pointer,
-      _id_register.pointer,
-      _$nativeInteropExampleApi.pointer,
+    return _pigeonResolveInstance(
+      _$$classRef.pointer,
+      _id_pigeonResolveInstance.pointer,
+      j,
+      j1,
       _$string.pointer,
-    ).object<NativeInteropExampleApiRegistrar>();
+    ).object<NativeInteropExampleApiRegistrar?>();
   }
 
-  static final _id_getInstance = NativeInteropExampleApiRegistrar._class.instanceMethodId(
-    r'getInstance',
-    r'(Ljava/lang/String;)Ldev/flutter/pigeonnativeinteropapp/NativeInteropExampleApiRegistrar;',
+  static final _id_pigeonEngineKeyOf = _class.staticMethodId(
+    r'pigeonEngineKeyOf',
+    r'(Ldev/flutter/pigeonnativeinteropapp/NativeInteropExampleApiRegistrar;)J',
   );
 
-  static final _getInstance =
+  static final _pigeonEngineKeyOf =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -430,7 +455,7 @@ extension NativeInteropExampleApiRegistrar$$Methods on NativeInteropExampleApiRe
                 jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
               )
             >
-          >('globalEnv_CallObjectMethod')
+          >('globalEnv_CallStaticLongMethod')
           .asFunction<
             jni$_.JniResult Function(
               jni$_.Pointer<jni$_.Void>,
@@ -439,16 +464,203 @@ extension NativeInteropExampleApiRegistrar$$Methods on NativeInteropExampleApiRe
             )
           >();
 
-  /// from: `public fun getInstance(name: kotlin.String): dev.flutter.pigeonnativeinteropapp.NativeInteropExampleApiRegistrar?`
-  /// The returned object must be released after use, by calling the [release] method.
-  NativeInteropExampleApiRegistrar? getInstance(jni$_.JString string) {
+  /// from: `static public final long pigeonEngineKeyOf(dev.flutter.pigeonnativeinteropapp.NativeInteropExampleApiRegistrar nativeInteropExampleApiRegistrar)`
+  static core$_.int pigeonEngineKeyOf(
+    NativeInteropExampleApiRegistrar nativeInteropExampleApiRegistrar,
+  ) {
+    final _$$classRef = _class.reference;
+    final _$nativeInteropExampleApiRegistrar = nativeInteropExampleApiRegistrar.reference;
+    return _pigeonEngineKeyOf(
+      _$$classRef.pointer,
+      _id_pigeonEngineKeyOf.pointer,
+      _$nativeInteropExampleApiRegistrar.pointer,
+    ).long;
+  }
+}
+
+extension NativeInteropExampleApiRegistrar$$Methods on NativeInteropExampleApiRegistrar {
+  static final _id_register = NativeInteropExampleApiRegistrar._class.instanceMethodId(
+    r'register',
+    r'(Ldev/flutter/pigeonnativeinteropapp/NativeInteropExampleApi;Lio/flutter/embedding/engine/plugins/FlutterPlugin$FlutterPluginBinding;Ljava/lang/String;)V',
+  );
+
+  static final _register =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JThrowablePtr Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<
+                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                >,
+              )
+            >
+          >('globalEnv_CallVoidMethod')
+          .asFunction<
+            jni$_.JThrowablePtr Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun register(api: dev.flutter.pigeonnativeinteropapp.NativeInteropExampleApi, binding: io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding, name: kotlin.String): kotlin.Unit`
+  void register(
+    NativeInteropExampleApi nativeInteropExampleApi,
+    FlutterPlugin$$FlutterPluginBinding flutterPluginBinding,
+    jni$_.JString string,
+  ) {
     final _$$selfRef = reference;
+    final _$nativeInteropExampleApi = nativeInteropExampleApi.reference;
+    final _$flutterPluginBinding = flutterPluginBinding.reference;
     final _$string = string.reference;
-    return _getInstance(
+    _register(
       _$$selfRef.pointer,
-      _id_getInstance.pointer,
+      _id_register.pointer,
+      _$nativeInteropExampleApi.pointer,
+      _$flutterPluginBinding.pointer,
       _$string.pointer,
-    ).object<NativeInteropExampleApiRegistrar?>();
+    ).check();
+  }
+
+  static final _id_register$1 = NativeInteropExampleApiRegistrar._class.instanceMethodId(
+    r'register',
+    r'(Ldev/flutter/pigeonnativeinteropapp/NativeInteropExampleApi;Lio/flutter/embedding/engine/FlutterEngine;Ljava/lang/String;)V',
+  );
+
+  static final _register$1 =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JThrowablePtr Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<
+                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                >,
+              )
+            >
+          >('globalEnv_CallVoidMethod')
+          .asFunction<
+            jni$_.JThrowablePtr Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun register(api: dev.flutter.pigeonnativeinteropapp.NativeInteropExampleApi, engine: io.flutter.embedding.engine.FlutterEngine, name: kotlin.String): kotlin.Unit`
+  void register$1(
+    NativeInteropExampleApi nativeInteropExampleApi,
+    FlutterEngine flutterEngine,
+    jni$_.JString string,
+  ) {
+    final _$$selfRef = reference;
+    final _$nativeInteropExampleApi = nativeInteropExampleApi.reference;
+    final _$flutterEngine = flutterEngine.reference;
+    final _$string = string.reference;
+    _register$1(
+      _$$selfRef.pointer,
+      _id_register$1.pointer,
+      _$nativeInteropExampleApi.pointer,
+      _$flutterEngine.pointer,
+      _$string.pointer,
+    ).check();
+  }
+
+  static final _id_unregister = NativeInteropExampleApiRegistrar._class.instanceMethodId(
+    r'unregister',
+    r'(Ldev/flutter/pigeonnativeinteropapp/NativeInteropExampleApi;Lio/flutter/embedding/engine/plugins/FlutterPlugin$FlutterPluginBinding;Ljava/lang/String;)V',
+  );
+
+  static final _unregister =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JThrowablePtr Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<
+                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                >,
+              )
+            >
+          >('globalEnv_CallVoidMethod')
+          .asFunction<
+            jni$_.JThrowablePtr Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun unregister(api: dev.flutter.pigeonnativeinteropapp.NativeInteropExampleApi, binding: io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding, name: kotlin.String): kotlin.Unit`
+  void unregister(
+    NativeInteropExampleApi nativeInteropExampleApi,
+    FlutterPlugin$$FlutterPluginBinding flutterPluginBinding,
+    jni$_.JString string,
+  ) {
+    final _$$selfRef = reference;
+    final _$nativeInteropExampleApi = nativeInteropExampleApi.reference;
+    final _$flutterPluginBinding = flutterPluginBinding.reference;
+    final _$string = string.reference;
+    _unregister(
+      _$$selfRef.pointer,
+      _id_unregister.pointer,
+      _$nativeInteropExampleApi.pointer,
+      _$flutterPluginBinding.pointer,
+      _$string.pointer,
+    ).check();
+  }
+
+  static final _id_unregister$1 = NativeInteropExampleApiRegistrar._class.instanceMethodId(
+    r'unregister',
+    r'(Ldev/flutter/pigeonnativeinteropapp/NativeInteropExampleApi;Lio/flutter/embedding/engine/FlutterEngine;Ljava/lang/String;)V',
+  );
+
+  static final _unregister$1 =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JThrowablePtr Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<
+                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                >,
+              )
+            >
+          >('globalEnv_CallVoidMethod')
+          .asFunction<
+            jni$_.JThrowablePtr Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun unregister(api: dev.flutter.pigeonnativeinteropapp.NativeInteropExampleApi, engine: io.flutter.embedding.engine.FlutterEngine, name: kotlin.String): kotlin.Unit`
+  void unregister$1(
+    NativeInteropExampleApi nativeInteropExampleApi,
+    FlutterEngine flutterEngine,
+    jni$_.JString string,
+  ) {
+    final _$$selfRef = reference;
+    final _$nativeInteropExampleApi = nativeInteropExampleApi.reference;
+    final _$flutterEngine = flutterEngine.reference;
+    final _$string = string.reference;
+    _unregister$1(
+      _$$selfRef.pointer,
+      _id_unregister$1.pointer,
+      _$nativeInteropExampleApi.pointer,
+      _$flutterEngine.pointer,
+      _$string.pointer,
+    ).check();
   }
 
   static final _id_doSomething = NativeInteropExampleApiRegistrar._class.instanceMethodId(
@@ -517,4 +729,62 @@ final class $DefaultConstructorMarker$Type$ extends jni$_.JType<DefaultConstruct
   @jni$_.internal
   @core$_.override
   String get signature => r'Lkotlin/jvm/internal/DefaultConstructorMarker;';
+}
+
+/// from: `dev.flutter.pigeonnativeinteropapp.NativeInteropExampleApi`
+///
+/// WARNING: NativeInteropExampleApi is a stub. To generate bindings for this class, include
+/// dev.flutter.pigeonnativeinteropapp.NativeInteropExampleApi in your config's classes list.
+///
+extension type NativeInteropExampleApi._(jni$_.JObject _$this) implements jni$_.JObject {
+  static const jni$_.JType<NativeInteropExampleApi> type = $NativeInteropExampleApi$Type$();
+}
+
+final class $NativeInteropExampleApi$Type$ extends jni$_.JType<NativeInteropExampleApi> {
+  @jni$_.internal
+  const $NativeInteropExampleApi$Type$();
+
+  @jni$_.internal
+  @core$_.override
+  String get signature => r'Ldev/flutter/pigeonnativeinteropapp/NativeInteropExampleApi;';
+}
+
+/// from: `io.flutter.embedding.engine.plugins.FlutterPlugin$FlutterPluginBinding`
+///
+/// WARNING: FlutterPlugin$$FlutterPluginBinding is a stub. To generate bindings for this class, include
+/// io.flutter.embedding.engine.plugins.FlutterPlugin$FlutterPluginBinding in your config's classes list.
+///
+extension type FlutterPlugin$$FlutterPluginBinding._(jni$_.JObject _$this)
+    implements jni$_.JObject {
+  static const jni$_.JType<FlutterPlugin$$FlutterPluginBinding> type =
+      $FlutterPlugin$$FlutterPluginBinding$Type$();
+}
+
+final class $FlutterPlugin$$FlutterPluginBinding$Type$
+    extends jni$_.JType<FlutterPlugin$$FlutterPluginBinding> {
+  @jni$_.internal
+  const $FlutterPlugin$$FlutterPluginBinding$Type$();
+
+  @jni$_.internal
+  @core$_.override
+  String get signature =>
+      r'Lio/flutter/embedding/engine/plugins/FlutterPlugin$FlutterPluginBinding;';
+}
+
+/// from: `io.flutter.embedding.engine.FlutterEngine`
+///
+/// WARNING: FlutterEngine is a stub. To generate bindings for this class, include
+/// io.flutter.embedding.engine.FlutterEngine in your config's classes list.
+///
+extension type FlutterEngine._(jni$_.JObject _$this) implements jni$_.JObject {
+  static const jni$_.JType<FlutterEngine> type = $FlutterEngine$Type$();
+}
+
+final class $FlutterEngine$Type$ extends jni$_.JType<FlutterEngine> {
+  @jni$_.internal
+  const $FlutterEngine$Type$();
+
+  @jni$_.internal
+  @core$_.override
+  String get signature => r'Lio/flutter/embedding/engine/FlutterEngine;';
 }

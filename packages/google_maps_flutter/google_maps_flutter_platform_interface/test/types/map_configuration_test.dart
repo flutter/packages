@@ -40,6 +40,7 @@ void main() {
       fullscreenControlEnabled: false,
       streetViewControlEnabled: false,
       style: 'diff base style',
+      backgroundColor: Colors.black,
     );
 
     test('only include changed fields', () async {
@@ -478,6 +479,22 @@ void main() {
       expect(empty.hashCode, isNot(diff.hashCode));
     });
 
+    test('handle backgroundColor', () async {
+      const diff = MapConfiguration(backgroundColor: Colors.white);
+
+      const empty = MapConfiguration();
+      final MapConfiguration updated = diffBase.applyDiff(diff);
+
+      // A diff applied to empty options should be the diff itself.
+      expect(empty.applyDiff(diff), diff);
+      // The diff from empty options should be the diff itself.
+      expect(diff.diffFrom(empty), diff);
+      // A diff applied to non-empty options should update that field.
+      expect(updated.backgroundColor, Colors.white);
+      // The hash code should change.
+      expect(empty.hashCode, isNot(diff.hashCode));
+    });
+
     test('handle colorScheme', () async {
       const diff = MapConfiguration(colorScheme: MapColorScheme.followSystem);
 
@@ -679,6 +696,12 @@ void main() {
 
     test('is false with style', () async {
       const diff = MapConfiguration(style: 'a style');
+
+      expect(diff.isEmpty, false);
+    });
+
+    test('is false with backgroundColor', () async {
+      const diff = MapConfiguration(backgroundColor: Colors.white);
 
       expect(diff.isEmpty, false);
     });

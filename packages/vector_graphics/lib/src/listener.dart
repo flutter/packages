@@ -393,6 +393,16 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
     _paints.add(paint);
   }
 
+  /// Sets an image blur filter on the paint with [paintId].
+  @override
+  void onPaintBlur(int paintId, double sigmaX, double sigmaY) {
+    final clampedX = sigmaX > 0.0 ? sigmaX : 0.0;
+    final clampedY = sigmaY > 0.0 ? sigmaY : 0.0;
+    if (clampedX > 0.0 || clampedY > 0.0) {
+      _paints[paintId].imageFilter = ImageFilter.blur(sigmaX: clampedX, sigmaY: clampedY);
+    }
+  }
+
   @override
   void onPathClose() {
     _currentPath!.close();
@@ -599,10 +609,12 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
       decorations.add(TextDecoration.lineThrough);
     }
 
+    final List<String> fontFamilies = parseFontFamilies(fontFamily);
     _textConfig.add(
       _TextConfig(
         text,
-        fontFamily,
+        fontFamilies.firstOrNull,
+        fontFamilies.length > 1 ? fontFamilies.sublist(1) : null,
         xAnchorMultiplier,
         FontWeight.values[fontWeight],
         fontSize,
@@ -688,7 +700,12 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
       if (patternId != null) {
         paint.shader = _patterns[patternId]!.shader;
       }
-      final builder = ParagraphBuilder(ParagraphStyle(textDirection: _textDirection));
+      final builder = ParagraphBuilder(
+        // Positioning (x, text-anchor) is done by the listener, and the paragraph
+        // is laid out at infinite width: start alignment under RTL would place
+        // the line at +infinity.
+        ParagraphStyle(textDirection: _textDirection, textAlign: TextAlign.left),
+      );
       builder.pushStyle(
         TextStyle(
           locale: _locale,
@@ -696,6 +713,7 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
           fontWeight: textConfig.fontWeight,
           fontSize: textConfig.fontSize,
           fontFamily: textConfig.fontFamily,
+          fontFamilyFallback: textConfig.fontFamilyFallback,
           decoration: textConfig.decoration,
           decorationStyle: textConfig.decorationStyle,
           decorationColor: textConfig.decorationColor,
@@ -857,10 +875,38 @@ class _TextPosition {
   final Float64List? transform;
 }
 
+/// Splits an SVG `font-family` value into its family names, in order of
+/// preference, with surrounding quotes and whitespace removed.
+///
+/// Flutter takes the first name as the family and the rest as fallbacks.
+///
+/// This is not a full CSS parser. Rare cases like commas inside quotes or
+/// escaped characters are not handled.
+@visibleForTesting
+List<String> parseFontFamilies(String? fontFamily) {
+  if (fontFamily == null) {
+    return const <String>[];
+  }
+  final families = <String>[];
+  for (final String part in fontFamily.split(',')) {
+    String family = part.trim();
+    if (family.length >= 2 &&
+        (family.startsWith('"') || family.startsWith("'")) &&
+        family.endsWith(family[0])) {
+      family = family.substring(1, family.length - 1).trim();
+    }
+    if (family.isNotEmpty) {
+      families.add(family);
+    }
+  }
+  return families;
+}
+
 class _TextConfig {
   const _TextConfig(
     this.text,
     this.fontFamily,
+    this.fontFamilyFallback,
     this.xAnchorMultiplier,
     this.fontWeight,
     this.fontSize,
@@ -871,6 +917,7 @@ class _TextConfig {
 
   final String text;
   final String? fontFamily;
+  final List<String>? fontFamilyFallback;
   final double fontSize;
   final double xAnchorMultiplier;
   final FontWeight fontWeight;

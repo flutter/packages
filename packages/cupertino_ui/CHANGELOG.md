@@ -1,3 +1,25 @@
+## 1.1.6
+
+- Documents that the default background of `CupertinoSlidingSegmentedControl` is translucent.
+
+## 1.1.5
+
+- Fixes the installation command in README.md
+
+## 1.1.4
+
+- Fix CupertinoMagnifier focalPointOffset during in/out animation.
+
+## 1.1.3
+
+- Fixes `CupertinoPicker` throwing when it is disposed during the tap-to-select animation.
+
+## 1.1.2
+
+- Fixes `CupertinoMagnifier` focal point not being vertically centered when a custom `size` is used.
+- Fixes unresolved doc comment references.
+- Fixes `showCupertinoSheet` ignoring `showDragHandle` by forwarding it to `CupertinoSheetRoute`.
+
 ## 1.1.1
 
 - Updates minimum supported SDK version to Flutter 3.47/Dart 3.13.

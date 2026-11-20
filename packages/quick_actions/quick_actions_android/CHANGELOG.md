@@ -1,6 +1,7 @@
-## NEXT
+## 1.0.34
 
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+* Fixes `getLaunchAction` throwing when there is no attached activity.
 
 ## 1.0.33
 

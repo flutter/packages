@@ -34,6 +34,23 @@ final class CameraPropertiesTests: XCTestCase {
       getPixelFormat(for: .yuv420))
   }
 
+  // MARK: - Video Stabilization Mode Tests
+
+  func testGetAVCaptureVideoStabilizationModeForPigeonVideoStabilizationMode() {
+    XCTAssertEqual(
+      AVCaptureVideoStabilizationMode.off,
+      getAvCaptureVideoStabilizationMode(.off))
+    XCTAssertEqual(
+      AVCaptureVideoStabilizationMode.standard,
+      getAvCaptureVideoStabilizationMode(.standard))
+    XCTAssertEqual(
+      AVCaptureVideoStabilizationMode.cinematic,
+      getAvCaptureVideoStabilizationMode(.cinematic))
+    XCTAssertEqual(
+      AVCaptureVideoStabilizationMode.cinematicExtended,
+      getAvCaptureVideoStabilizationMode(.cinematicExtended))
+  }
+
   // MARK: - Device Orientation Tests
 
   func testGetUIDeviceOrientationForPigeonDeviceOrientation() {
