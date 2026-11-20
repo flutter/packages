@@ -34,63 +34,9 @@ import 'constants.dart';
 ///
 /// <callout-box>
 ///
-// TODO(framework): Add unit tests to this code snippet.
-// https://github.com/flutter/flutter/issues/188530
-///
 /// This widget introduces a [Scaffold] with an [AppBar] and a [TabBar].
 ///
-/// ```dart
-/// class MyTabbedPage extends StatefulWidget {
-///   const MyTabbedPage({ super.key });
-///   @override
-///   State<MyTabbedPage> createState() => _MyTabbedPageState();
-/// }
-///
-/// class _MyTabbedPageState extends State<MyTabbedPage> with SingleTickerProviderStateMixin {
-///   static const List<Tab> myTabs = <Tab>[
-///     Tab(text: 'LEFT'),
-///     Tab(text: 'RIGHT'),
-///   ];
-///
-///   late TabController _tabController;
-///
-///   @override
-///   void initState() {
-///     super.initState();
-///     _tabController = TabController(vsync: this, length: myTabs.length);
-///   }
-///
-///  @override
-///  void dispose() {
-///    _tabController.dispose();
-///    super.dispose();
-///  }
-///
-///   @override
-///   Widget build(BuildContext context) {
-///     return Scaffold(
-///       appBar: AppBar(
-///         bottom: TabBar(
-///           controller: _tabController,
-///           tabs: myTabs,
-///         ),
-///       ),
-///       body: TabBarView(
-///         controller: _tabController,
-///         children: myTabs.map((Tab tab) {
-///           final String label = tab.text!.toLowerCase();
-///           return Center(
-///             child: Text(
-///               'This is the $label tab',
-///               style: const TextStyle(fontSize: 36),
-///             ),
-///           );
-///         }).toList(),
-///       ),
-///     );
-///   }
-/// }
-/// ```
+/// {@example /example/lib/tab_controller/tab_controller.snippet.0.dart#body indent=strip}
 ///
 /// </callout-box>
 ///
@@ -405,13 +351,9 @@ class DefaultTabController extends StatefulWidget {
   ///
   /// <callout-box>
   ///
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
   /// Typical usage is as follows:
   ///
-  /// ```dart
-  /// TabController? controller = DefaultTabController.maybeOf(context);
-  /// ```
+  /// {@example /example/lib/tab_controller/default_tab_controller.maybe_of.snippet.0.dart#body indent=strip}
   ///
   /// </callout-box>
   ///
@@ -437,13 +379,9 @@ class DefaultTabController extends StatefulWidget {
   ///
   /// <callout-box>
   ///
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
   /// Typical usage is as follows:
   ///
-  /// ```dart
-  /// TabController controller = DefaultTabController.of(context);
-  /// ```
+  /// {@example /example/lib/tab_controller/default_tab_controller.of.snippet.0.dart#body indent=strip}
   ///
   /// </callout-box>
   ///

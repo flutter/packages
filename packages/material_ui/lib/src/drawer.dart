@@ -445,13 +445,9 @@ class DrawerController extends StatefulWidget {
   ///
   /// <callout-box>
   ///
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
   /// Typical usage is as follows:
   ///
-  /// ```dart
-  /// DrawerController? controller = DrawerController.maybeOf(context);
-  /// ```
+  /// {@example /example/lib/drawer/drawer_controller.maybe_of.snippet.0.dart#body indent=strip}
   ///
   /// </callout-box>
   ///
@@ -477,13 +473,9 @@ class DrawerController extends StatefulWidget {
   ///
   /// <callout-box>
   ///
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
   /// Typical usage is as follows:
   ///
-  /// ```dart
-  /// DrawerController controller = DrawerController.of(context);
-  /// ```
+  /// {@example /example/lib/drawer/drawer_controller.of.snippet.0.dart#body indent=strip}
   ///
   /// </callout-box>
   static DrawerController of(BuildContext context) {
