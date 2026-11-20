@@ -686,7 +686,7 @@ class InkResponse extends StatelessWidget {
   /// {@endtemplate}
   final MaterialStatesController? statesController;
 
-  /// The duration of the animation that animates the hover effect.
+  /// The duration of the animation that animates the hover and focus effects.
   ///
   /// The default is 50ms.
   final Duration? hoverDuration;

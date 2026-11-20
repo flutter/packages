@@ -117,6 +117,8 @@ void main() {
       expect(template.color(TokenColorRole.onSurface), '_colors.onSurface');
       expect(template.color(TokenColorRole.inverseOnSurface), '_colors.onInverseSurface');
       expect(template.color(TokenColorRole.onSurface, '_customColors'), '_customColors.onSurface');
+      // A null role means that the component has no token for this color.
+      expect(template.color(null), 'Colors.transparent');
     });
 
     test('textStyle generates text name', () {
@@ -148,6 +150,7 @@ void main() {
         template.colorWithOpacity(TokenColorRole.onSurface, 0.12, '_customColors'),
         '_customColors.onSurface.withOpacity(0.12)',
       );
+      expect(template.colorWithOpacity(null, 0.12), 'Colors.transparent');
     });
 
     test('M3E colorWithOpacity uses withValues', () {
@@ -164,6 +167,7 @@ void main() {
         template.colorWithOpacity(TokenColorRole.inverseOnSurface, 1.0),
         '_colors.onInverseSurface',
       );
+      expect(template.colorWithOpacity(null, 0.12), 'Colors.transparent');
     });
 
     test('border generates border expression', () {
@@ -369,6 +373,105 @@ void main() {
       expect(contents, contains('const MaterialStatePropertyAll<Size>(Size(64.0, 40.0))'));
       expect(contents, contains('const MaterialStatePropertyAll<double>(18.0)'));
       expect(contents, contains('const MaterialStatePropertyAll<OutlinedBorder>(StadiumBorder())'));
+    });
+
+    test('ButtonTemplateM3E emits M3E ElevatedButton defaults from tokens', () {
+      const template = ButtonTemplateM3E('Elevated Button');
+      expect(template.name, 'Elevated Button');
+      expect(template.parentFilePath, 'elevated_button.dart');
+
+      final String contents = _generateContents(template);
+      expect(contents, contains('class _ElevatedButtonDefaultsM3E extends ButtonStyle'));
+      expect(contents, contains('final bool toggleable;'));
+      expect(contents, contains('ButtonSizeVariant get sizeVariant'));
+      expect(contents, contains('ButtonShapeVariant get shapeVariant'));
+      expect(contents, contains('ButtonSizeVariant.xSmall => const Size(64.0, 32.0)'));
+      expect(contents, contains('ButtonSizeVariant.xLarge => 40.0'));
+      expect(contents, contains('static double iconLabelSpace(ButtonSizeVariant sizeVariant)'));
+      expect(
+        contents,
+        contains('ButtonSizeVariant.medium => const EdgeInsets.symmetric(horizontal: 24.0)'),
+      );
+      expect(contents, contains('return _colors.primary;'));
+      expect(contents, contains('return _colors.onPrimary;'));
+      expect(contents, contains('states.contains(WidgetState.selected)'));
+      expect(contents, contains('states.contains(WidgetState.pressed)'));
+    });
+
+    test('ButtonTemplateM3E emits M3E FilledButton defaults from tokens', () {
+      const template = ButtonTemplateM3E('Filled Button');
+      expect(template.parentFilePath, 'filled_button.dart');
+
+      final String contents = _generateContents(template);
+      expect(contents, contains('class _FilledButtonDefaultsM3E extends ButtonStyle'));
+      expect(contents, contains('return _colors.primary;'));
+      expect(contents, contains('return _colors.onPrimary;'));
+      // Unselected toggle buttons.
+      expect(contents, contains('return _colors.surfaceContainer;'));
+      expect(contents, contains('return _colors.onSurfaceVariant;'));
+      expect(contents, contains('return _colors.onSurfaceVariant.withValues(alpha: 0.08);'));
+      // Buttons that are not toggleable.
+      expect(contents, contains('return _colors.onPrimary.withValues(alpha: 0.08);'));
+      expect(contents, contains('return 0.0;'));
+    });
+
+    test('ButtonTemplateM3E emits M3E filled tonal button defaults from tokens', () {
+      const template = ButtonTemplateM3E('Filled Tonal Button');
+      expect(template.parentFilePath, 'filled_button.dart');
+
+      final String contents = _generateContents(template);
+      expect(contents, contains('class _FilledTonalButtonDefaultsM3E extends ButtonStyle'));
+      expect(contents, contains('return _colors.secondaryContainer;'));
+      expect(contents, contains('return _colors.onSecondaryContainer;'));
+      // Selected toggle buttons.
+      expect(contents, contains('return _colors.secondary;'));
+      expect(contents, contains('return _colors.onSecondary;'));
+      expect(contents, contains('return _colors.onSecondary.withValues(alpha: 0.08);'));
+    });
+
+    test('ButtonTemplateM3E emits M3E OutlinedButton defaults from tokens', () {
+      const template = ButtonTemplateM3E('Outlined Button');
+      expect(template.parentFilePath, 'outlined_button.dart');
+
+      final String contents = _generateContents(template);
+      expect(contents, contains('class _OutlinedButtonDefaultsM3E extends ButtonStyle'));
+      // The container is transparent, except for selected toggle buttons.
+      expect(contents, contains('return Colors.transparent;'));
+      expect(contents, contains('return _colors.inverseSurface;'));
+      expect(contents, contains('return _colors.onSurface.withValues(alpha: 0.1);'));
+      expect(contents, contains('return _colors.onSurfaceVariant;'));
+      expect(contents, contains('return _colors.onInverseSurface;'));
+      // The outline width depends on the size, and selected toggle buttons have
+      // no outline.
+      expect(contents, contains('WidgetStateProperty<BorderSide?>? get side'));
+      expect(contents, contains('return BorderSide.none;'));
+      expect(contents, contains('return BorderSide(color: _colors.outlineVariant, width: width);'));
+      expect(contents, contains('ButtonSizeVariant.medium => 1.0'));
+      expect(contents, contains('ButtonSizeVariant.large => 2.0'));
+      expect(contents, contains('ButtonSizeVariant.xLarge => 3.0'));
+      expect(contents, contains('return 0.0;'));
+    });
+
+    test('ButtonTemplateM3E emits M3E TextButton defaults from tokens', () {
+      const template = ButtonTemplateM3E('Text Button');
+      expect(template.parentFilePath, 'text_button.dart');
+
+      final String contents = _generateContents(template);
+      expect(contents, contains('class _TextButtonDefaultsM3E extends ButtonStyle'));
+      expect(contents, contains('return _colors.onSurface.withValues(alpha: 0.1);'));
+      expect(contents, contains('return Colors.transparent;'));
+      expect(contents, contains('return _colors.primary;'));
+      expect(contents, contains('return _colors.primary.withValues(alpha: 0.08);'));
+      // Text buttons have no selected or unselected tokens, and no outline.
+      expect(contents, isNot(contains('WidgetState.selected')));
+      expect(contents, isNot(contains('get side')));
+    });
+
+    test('ButtonTemplateM3E throws for unknown button names', () {
+      expect(
+        () => const ButtonTemplateM3E('Unknown Button').parentFilePath,
+        throwsUnsupportedError,
+      );
     });
 
     test('ButtonTemplateM3 emits M3 FilledButton defaults from tokens', () {
@@ -770,6 +873,27 @@ void main() {
       expect(contents, contains('extralong4 = Duration(milliseconds: 1000)'));
       expect(contents, contains('emphasizedAccelerate = Cubic(0.3, 0.0, 0.8, 0.15)'));
       expect(contents, contains('legacy = Cubic(0.4, 0.0, 0.2, 1.0)'));
+    });
+
+    test('MotionTemplateM3E emits M3E motion springs from tokens', () {
+      const template = MotionTemplateM3E();
+      final String contents = _generateContents(template);
+      expect(template.className, isEmpty);
+      expect(template.outputFileName, 'motion_defaults_m3e.g.dart');
+      expect(template.parentFilePath, 'motion.dart');
+      expect(contents, contains('abstract final class Springs'));
+      expect(
+        contents,
+        contains(
+          'standardDefaultSpatial = SpringDescription(mass: 1.0, stiffness: 700.0, damping: 47.62352359916263)',
+        ),
+      );
+      expect(
+        contents,
+        contains(
+          'expressiveFastSpatial = SpringDescription(mass: 1.0, stiffness: 800.0, damping: 33.94112549695428)',
+        ),
+      );
     });
 
     test('NavigationBarTemplateM3 emits M3 NavigationBar defaults from tokens', () {
