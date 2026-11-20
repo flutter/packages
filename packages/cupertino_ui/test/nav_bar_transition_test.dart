@@ -142,6 +142,17 @@ void setWindowToPortrait(WidgetTester tester, {Size size = const Size(2400.0, 30
   addTearDown(tester.view.reset);
 }
 
+int lineCount(WidgetTester tester, Finder finder) {
+  final RenderParagraph paragraph = tester.renderObject(finder);
+  return paragraph
+      .getBoxesForSelection(
+        TextSelection(baseOffset: 0, extentOffset: paragraph.text.toPlainText().length),
+      )
+      .map((TextBox box) => box.top)
+      .toSet()
+      .length;
+}
+
 void main() {
   testWidgets('Bottom middle moves between middle and back label', (WidgetTester tester) async {
     await startTransitionBetween(tester, fromTitle: 'Page 1');
@@ -198,6 +209,50 @@ void main() {
       expect(tester.getSize(flying(tester, find.text('Page 1')).first), size);
       expect(tester.getSize(flying(tester, find.text('Page 1')).last), size);
     }
+  });
+
+  testWidgets('Long middles stay on one line during the animation', (WidgetTester tester) async {
+    const fromTitle = 'A first page title too long to fit on one line of the navigation bar';
+    const toTitle = 'A second page title too long to fit on one line of the navigation bar';
+    await startTransitionBetween(tester, fromTitle: fromTitle, toTitle: toTitle);
+
+    // Be mid-transition.
+    await tester.pump(const Duration(milliseconds: 50));
+
+    expect(lineCount(tester, flying(tester, find.text(fromTitle))), 1);
+    expect(lineCount(tester, flying(tester, find.text(toTitle))), 1);
+  });
+
+  testWidgets('Long bottom middle stays on one line as it fades out for a top leading', (
+    WidgetTester tester,
+  ) async {
+    const fromTitle = 'A first page title too long to fit on one line of the navigation bar';
+    await startTransitionBetween(
+      tester,
+      fromTitle: fromTitle,
+      to: const CupertinoNavigationBar(leading: Text('Close')),
+    );
+
+    // Be mid-transition.
+    await tester.pump(const Duration(milliseconds: 50));
+
+    expect(lineCount(tester, flying(tester, find.text(fromTitle))), 1);
+  });
+
+  testWidgets('Long bottom large title stays on one line as it fades out for a top leading', (
+    WidgetTester tester,
+  ) async {
+    const largeTitle = 'A large title too long to fit on one line';
+    await startTransitionBetween(
+      tester,
+      from: const CupertinoNavigationBar.large(largeTitle: Text(largeTitle)),
+      to: const CupertinoNavigationBar(leading: Text('Close')),
+    );
+
+    // Be mid-transition.
+    await tester.pump(const Duration(milliseconds: 50));
+
+    expect(lineCount(tester, flying(tester, find.text(largeTitle))), 1);
   });
 
   testWidgets('Bottom middle and top back label transitions their font', (
