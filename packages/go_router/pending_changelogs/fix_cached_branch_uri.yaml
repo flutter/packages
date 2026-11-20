@@ -1,4 +1,6 @@
 changelog: |
-  - Fixes restoration of root-navigator child redirects by keeping cached `StatefulShellRoute` branch URIs and path parameters consistent with their route matches.
-  - Fixes an assertion failure when removing a route on an ancestor navigator that is nested under a redirect-only route inside a shell route.
+  - Fixes `StatefulShellRoute` branches skipping a redirect to a route on an ancestor navigator when returning with `goBranch()`.
+  - Fixes `GoRouterState` in branch pages not updating after returning to the branch with `goBranch()` or popping a restored route on an ancestor navigator.
+  - Fixes `pop()`, `pushReplacement()`, `replace()` and `goBranch()` leaving a redirect-only route at the end of the location when a shell route is between it and the removed route.
+  - Fixes `pop()` dropping encoded path delimiters such as `%2F` from the location.
 version: patch

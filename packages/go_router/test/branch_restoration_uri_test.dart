@@ -1,4 +1,4 @@
-// Copyright 2026 The Flutter Authors
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -8,6 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
+// Regression tests for https://github.com/flutter/flutter/issues/194209
 void main() {
   Future<void> mount(WidgetTester tester, _TestRouter fixture) async {
     addTearDown(() async {
@@ -212,6 +213,61 @@ void main() {
     await tester.pumpAndSettle();
 
     expectBranchPageState(tester, '/b/17?source=branch#section');
+  });
+
+  testWidgets('popping a root route preserves encoded path delimiters', (
+    WidgetTester tester,
+  ) async {
+    final fixture = _TestRouter();
+    await mount(tester, fixture);
+    fixture.router.go('/b/a%2Fb/popup/99?source=branch#section');
+    await tester.pumpAndSettle();
+    expect(find.text('Popup'), findsOneWidget);
+
+    fixture.router.pop();
+    await tester.pumpAndSettle();
+
+    expect(
+      fixture.router.routerDelegate.currentConfiguration.uri.toString(),
+      '/b/a%2Fb?source=branch#section',
+    );
+    expect(
+      GoRouterState.of(tester.element(find.text('Branch B'))).uri.toString(),
+      '/b/a%2Fb?source=branch#section',
+    );
+
+    fixture.router.go('/a');
+    await tester.pumpAndSettle();
+    await tester.restartAndRestore();
+    await tester.pumpAndSettle();
+    fixture.shell.goBranch(1);
+    await tester.pumpAndSettle();
+
+    expect(
+      fixture.router.routerDelegate.currentConfiguration.uri.toString(),
+      '/b/a%2Fb?source=branch#section',
+    );
+  });
+
+  testWidgets('popping a restored imperative root route updates branch topRoute', (
+    WidgetTester tester,
+  ) async {
+    final fixture = _TestRouter();
+    await mount(tester, fixture);
+    fixture.shell.goBranch(1);
+    await tester.pumpAndSettle();
+    unawaited(fixture.router.push<void>('/b/17/popup/99'));
+    await tester.pumpAndSettle();
+    expect(find.text('Popup'), findsOneWidget);
+
+    await tester.restartAndRestore();
+    await tester.pumpAndSettle();
+    expect(find.text('Popup'), findsOneWidget);
+
+    fixture.router.pop();
+    await tester.pumpAndSettle();
+
+    expectBranchPageState(tester, '/b/17');
   });
 
   testWidgets('pushing and popping a root route does not rebuild branch pages', (

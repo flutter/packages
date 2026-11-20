@@ -772,7 +772,15 @@ class RouteMatchList with Diagnosticable {
         (MapEntry<String, String> value) => validParameters.contains(value.key),
       ),
     );
-    final Uri newUri = uri.replace(path: patternToPath(fullPath, newPathParameters));
+    // matchedLocation retains encoded delimiters, unlike decoded pathParameters.
+    String newPath = uri.path;
+    _visitRouteMatches(newMatches, (RouteMatchBase match) {
+      if (match is RouteMatch && match is! ImperativeRouteMatch) {
+        newPath = match.matchedLocation;
+      }
+      return true;
+    });
+    final Uri newUri = uri.replace(path: newPath);
     return copyWith(matches: newMatches, uri: newUri, pathParameters: newPathParameters);
   }
 
@@ -805,9 +813,12 @@ class RouteMatchList with Diagnosticable {
           continue;
         }
         // Removes `match` if its sub match list become empty after the remove.
+        if (newSubMatches.isEmpty) {
+          return _removeTrailingRedirectOnlyMatches(matches.sublist(0, index));
+        }
         return <RouteMatchBase>[
           ...matches.sublist(0, index),
-          if (newSubMatches.isNotEmpty) match.copyWith(matches: newSubMatches),
+          match.copyWith(matches: newSubMatches),
         ];
       }
     }

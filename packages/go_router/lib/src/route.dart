@@ -1441,20 +1441,11 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> with R
     if (nextMatch == null) {
       return matchList;
     }
-
-    final RouteMatchList scopedMatchList = matchList.remove(nextMatch);
-    String scopedLocation = scopedMatchList.uri.path;
-    scopedMatchList.visitRouteMatches((RouteMatchBase match) {
-      if (match is RouteMatch && match is! ImperativeRouteMatch) {
-        scopedLocation = match.matchedLocation;
-      }
-      return true;
-    });
-
-    // matchedLocation retains encoded delimiters, unlike decoded pathParameters.
-    return scopedMatchList.copyWith(uri: matchList.uri.replace(path: scopedLocation));
+    return matchList.remove(nextMatch);
   }
 
+  /// Finds the match right after this shell route in tree order, continuing
+  /// into enclosing shell routes, and whether this shell route was found.
   ({bool foundShell, RouteMatchBase? nextMatch}) _findMatchAfterShell(
     List<RouteMatchBase> matches,
   ) {
@@ -1490,11 +1481,12 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> with R
     final RouteMatchList previousBranchLocation = branchState.location.value;
     branchState.location.value = currentBranchLocation;
     final hasExistingNavigator = branchState.navigator != null;
+    final RouteMatchList navigatorMatchList = shellRouteContext.routeMatchList;
 
     /// Only update the Navigator of the route match list has changed
-    final Uri navigatorUri = shellRouteContext.routeMatchList.uri;
     final bool locationChanged =
-        previousBranchLocation != currentBranchLocation || branchState.navigatorUri != navigatorUri;
+        previousBranchLocation != currentBranchLocation ||
+        branchState.isNavigatorOutdated(navigatorMatchList);
     if (locationChanged || !hasExistingNavigator) {
       branchState.navigator = shellRouteContext._buildNavigatorForCurrentRoute(
         context,
@@ -1502,7 +1494,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> with R
         route.notifyRootObserver,
         branch.restorationScopeId,
       );
-      branchState.navigatorUri = navigatorUri;
+      branchState.navigatorMatchList = navigatorMatchList;
     }
 
     _cleanUpObsoleteBranches();
@@ -1540,7 +1532,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> with R
         final _StatefulShellBranchState branchState = _branchStateFor(branch, false);
         branchState.location.value = matchList;
         branchState.navigator = navigator;
-        branchState.navigatorUri = matchList.uri;
+        branchState.navigatorMatchList = matchList;
       }
     }
   }
@@ -1605,7 +1597,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> with R
         ),
         branch.restorationScopeId,
       );
-      branchState.navigatorUri = matchList.uri;
+      branchState.navigatorMatchList = matchList;
     }
   }
 
@@ -1685,13 +1677,38 @@ class _StatefulShellBranchState {
 
   Widget? navigator;
 
-  /// The URI of the match list that [navigator] was built from.
+  /// The match list that [navigator] was built from.
   ///
-  /// Pages in [navigator] read this URI through [GoRouterState]. It can include
+  /// Pages in [navigator] read it through [GoRouterState]. It can include
   /// routes on ancestor navigators, so it can change while [location] does not.
-  Uri? navigatorUri;
+  RouteMatchList? navigatorMatchList;
 
   final _RestorableRouteMatchList location;
+
+  /// Whether [navigator] has to be rebuilt to show [matchList].
+  ///
+  /// Pushing a route onto an ancestor navigator keeps the branch pages. They
+  /// are rebuilt when the URI changes or when the top match [navigator] was
+  /// built from is gone, such as a restored imperative route that was popped.
+  bool isNavigatorOutdated(RouteMatchList matchList) {
+    final RouteMatchList? builtMatchList = navigatorMatchList;
+    if (builtMatchList == null || builtMatchList.uri != matchList.uri) {
+      return true;
+    }
+    final RouteMatch? builtTopMatch = builtMatchList.lastOrNull;
+    if (builtTopMatch == null) {
+      return false;
+    }
+    RouteMatchBase? foundTopMatch;
+    matchList.visitRouteMatches((RouteMatchBase match) {
+      if (match == builtTopMatch) {
+        foundTopMatch = match;
+        return false;
+      }
+      return true;
+    });
+    return foundTopMatch == null;
+  }
 
   void dispose() {
     location.dispose();
