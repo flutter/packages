@@ -5017,4 +5017,149 @@ void main() {
       );
     },
   );
+
+  group('DropdownButton.builder', () {
+    testWidgets('renders items correctly lazily', (WidgetTester tester) async {
+      var buildCount = 0;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Center(
+              child: DropdownButton<int>.builder(
+                selectedItemIndex: 0,
+                itemCount: 1000,
+                itemBuilder: (BuildContext context, int index) {
+                  buildCount++;
+                  return DropdownMenuItem<int>(value: index, child: Text('Item $index'));
+                },
+                customSelectedItemBuilder: (BuildContext context, int? value) {
+                  return Text('Selected: $value');
+                },
+                onChanged: (int? newValue) {},
+              ),
+            ),
+          ),
+        ),
+      );
+
+      // Initial state: menu is closed.
+      expect(find.text('Selected: 0'), findsOneWidget);
+      // We expect 1 widget build here because when DropdownButton renders its closed state,
+      // it calls itemBuilder for the selectedItemIndex (0) in order to get the item's value 
+      // (which is then passed to customSelectedItemBuilder).
+      expect(buildCount, 1);
+
+      // Tap to open menu
+      await tester.tap(find.text('Selected: 0'));
+      await tester.pumpAndSettle();
+
+      // Menu is open, we should see 'Item 0'.
+      expect(find.text('Item 0'), findsOneWidget);
+
+      // With 1000 items, ListView.builder should only build a subset of them.
+      expect(buildCount > 0, isTrue);
+      expect(buildCount < 100, isTrue);
+
+      // Tap to select item 1
+      await tester.tap(find.text('Item 1'));
+      await tester.pumpAndSettle();
+    });
+
+    testWidgets('triggers onChanged correctly when an item is selected', (
+      WidgetTester tester,
+    ) async {
+      int? selectedValue = 0;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return Scaffold(
+                body: Center(
+                  child: DropdownButton<int>.builder(
+                    selectedItemIndex: selectedValue,
+                    itemCount: 10,
+                    itemBuilder: (BuildContext context, int index) {
+                      return DropdownMenuItem<int>(value: index, child: Text('Item $index'));
+                    },
+                    customSelectedItemBuilder: (BuildContext context, int? value) {
+                      return Text('Selected: $value');
+                    },
+                    onChanged: (int? newValue) {
+                      setState(() {
+                        selectedValue = newValue;
+                      });
+                    },
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      );
+
+      // Open menu
+      await tester.tap(find.text('Selected: 0'));
+      await tester.pumpAndSettle();
+
+      // Select item 5
+      await tester.tap(find.text('Item 5'));
+      await tester.pumpAndSettle();
+
+      // The state should be updated to 5
+      expect(selectedValue, 5);
+      expect(find.text('Selected: 5'), findsOneWidget);
+    });
+
+    testWidgets('shows hint when itemCount is 0', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Center(
+              child: DropdownButton<int>.builder(
+                selectedItemIndex: 0,
+                itemCount: 0,
+                hint: const Text('Empty Hint'),
+                itemBuilder: (BuildContext context, int index) {
+                  return DropdownMenuItem<int>(value: index, child: Text('Item $index'));
+                },
+                onChanged: (int? newValue) {},
+              ),
+            ),
+          ),
+        ),
+      );
+
+      // Should show the hint since itemCount is 0
+      expect(find.text('Empty Hint'), findsOneWidget);
+    });
+
+    testWidgets('falls back to item child when customSelectedItemBuilder is null', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Center(
+              child: DropdownButton<String>.builder(
+                selectedItemIndex: 0,
+                itemCount: 10,
+                itemBuilder: (BuildContext context, int index) {
+                  return DropdownMenuItem<String>(
+                    value: 'Value $index',
+                    child: Text('Item $index'),
+                  );
+                },
+                onChanged: (String? newValue) {},
+              ),
+            ),
+          ),
+        ),
+      );
+
+      // Should automatically use the item's child if no customSelectedItemBuilder is provided
+      expect(find.text('Item 0'), findsOneWidget);
+    });
+  });
 }
