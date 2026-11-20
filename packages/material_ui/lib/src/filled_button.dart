@@ -501,8 +501,8 @@ class FilledButton extends ButtonStyleButton {
   /// Values listed per size are for [ButtonSizeVariant.xSmall],
   /// [ButtonSizeVariant.small], [ButtonSizeVariant.medium],
   /// [ButtonSizeVariant.large], and [ButtonSizeVariant.xLarge] respectively.
-  /// The selected and unselected values only apply when [isSelected] is
-  /// non-null.
+  /// The button becomes a toggle button when [isSelected] is non-null. The
+  /// selected and unselected values only apply to toggle buttons.
   ///
   /// * `textStyle` - based on [ButtonStyle.sizeVariant]
   ///   * xSmall or small - Theme.textTheme.labelLarge
