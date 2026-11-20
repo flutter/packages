@@ -3478,9 +3478,7 @@ class _MenuLayout extends SingleChildLayoutDelegate {
 
   @override
   BoxConstraints getConstraintsForChild(BoxConstraints constraints) {
-    // The menu can be at most the size of the overlay minus the view padding
-    // in each direction.
-    return BoxConstraints.loose(constraints.biggest).deflate(reservedPadding);
+    return BoxConstraints.loose(_availableRect(constraints.biggest).size);
   }
 
   @override
@@ -3488,9 +3486,7 @@ class _MenuLayout extends SingleChildLayoutDelegate {
     // size: The size of the overlay.
     // childSize: The size of the menu, when fully open, as determined by
     // getConstraintsForChild.
-    final Rect overlayRect = mediaQueryData.padding.deflateRect(
-      mediaQueryData.viewInsets.deflateRect(Offset.zero & size),
-    );
+    final Rect overlayRect = _availableRect(size);
     final double unconstrainedHeight = heightFactor > 0.01 ? childSize.height / heightFactor : 0;
     final double childHeightEstimate = math.min(unconstrainedHeight, size.height);
     final childSizeEstimate = Size(childSize.width, childHeightEstimate);
@@ -3510,6 +3506,20 @@ class _MenuLayout extends SingleChildLayoutDelegate {
 
     final initialPosition = Offset(finalPosition.dx, anchorRect.bottom);
     return Offset.lerp(initialPosition, finalPosition, heightFactor)!;
+  }
+
+  Rect _availableRect(Size size) {
+    // Use one set of bounds for both menu sizing and edge positioning.
+    final Rect safeAreaRect = mediaQueryData.padding.deflateRect(
+      mediaQueryData.viewInsets.deflateRect(Offset.zero & size),
+    );
+    final Rect reservedRect = reservedPadding.resolve(textDirection).deflateRect(safeAreaRect);
+    return Rect.fromLTRB(
+      reservedRect.left,
+      reservedRect.top,
+      math.max(reservedRect.left, reservedRect.right),
+      math.max(reservedRect.top, reservedRect.bottom),
+    );
   }
 
   ui.Offset _positionChild(ui.Size childSize, ui.Rect overlayRect) {
@@ -3625,6 +3635,8 @@ class _MenuLayout extends SingleChildLayoutDelegate {
         parentOrientation != oldDelegate.parentOrientation ||
         reservedPadding != oldDelegate.reservedPadding ||
         heightFactor != oldDelegate.heightFactor ||
+        mediaQueryData.padding != oldDelegate.mediaQueryData.padding ||
+        mediaQueryData.viewInsets != oldDelegate.mediaQueryData.viewInsets ||
         !setEquals(avoidBounds, oldDelegate.avoidBounds);
   }
 
