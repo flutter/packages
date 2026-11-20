@@ -10,7 +10,6 @@ import 'package:analyzer/dart/analysis/results.dart' show ParseStringResult;
 import 'package:analyzer/dart/analysis/utilities.dart' show parseString;
 import 'package:analyzer/diagnostic/diagnostic.dart' show Diagnostic;
 import 'package:args/args.dart';
-import 'package:cli_util/cli_util.dart' as cli_util;
 import 'package:meta/meta.dart' show visibleForTesting;
 import 'package:path/path.dart' as path;
 
@@ -796,47 +795,6 @@ ${_argParser.usage}''';
     return opts;
   }
 
-  /// Resolves the `dart` executable to use for running FFIgen/JNIgen scripts.
-  ///
-  /// Prefers an explicit [sdkPath], then validates the SDK path discovered by
-  /// `package:cli_util` (checking that `bin/dart` exists so `<0.6.0` versions
-  /// of `cli_util` do not return an invalid parent directory in AOT mode), then
-  /// falls back to [Platform.resolvedExecutable] when running under `dart`,
-  /// and finally `'dart'` on `PATH`.
-  @visibleForTesting
-  static String resolveDartExecutable({
-    String? sdkPath,
-    String? Function()? discoverSdkPath,
-    String? resolvedExecutable,
-    bool? isWindows,
-  }) {
-    final bool windows = isWindows ?? Platform.isWindows;
-    final dartName = windows ? 'dart.exe' : 'dart';
-
-    if (sdkPath != null && sdkPath.isNotEmpty) {
-      return path.join(path.normalize(path.absolute(sdkPath)), 'bin', dartName);
-    }
-
-    final String? discoveredSdk = (discoverSdkPath ?? () => cli_util.sdkPath)();
-    if (discoveredSdk != null && discoveredSdk.isNotEmpty) {
-      final String candidate = path.join(
-        path.normalize(path.absolute(discoveredSdk)),
-        'bin',
-        dartName,
-      );
-      if (File(candidate).existsSync()) {
-        return candidate;
-      }
-    }
-
-    final String executable = resolvedExecutable ?? Platform.resolvedExecutable;
-    if (path.basename(executable).toLowerCase() == dartName) {
-      return executable;
-    }
-
-    return 'dart';
-  }
-
   /// The 'main' entrypoint used by the command-line tool. [args] are the
   /// command-line arguments. The optional parameter [adapters] allows you to
   /// customize the generators that pigeon will use. The optional parameter
@@ -1102,10 +1060,12 @@ ${_argParser.usage}''';
     print('JNI Multi-step: Running JNIgen for $configFile...');
     final ProcessResult jnigenResult;
     try {
-      jnigenResult = await Process.run(dartExecutable, <String>[
-        'run',
-        configFile,
-      ], environment: _getJniEnvironment(dartExecutable));
+      jnigenResult = await Process.run(
+        dartExecutable,
+        <String>['run', configFile],
+        environment: _getJniEnvironment(dartExecutable),
+        runInShell: Platform.isWindows && !dartExecutable.toLowerCase().endsWith('.exe'),
+      );
     } on ProcessException catch (e) {
       errorSink.writeln('Error: Failed to start JNIgen ($configFile): $e');
       return false;

@@ -11,6 +11,7 @@ import 'package:analyzer/dart/ast/ast.dart' as dart_ast;
 import 'package:analyzer/dart/ast/syntactic_entity.dart' as dart_ast_syntactic_entity;
 import 'package:analyzer/dart/ast/token.dart';
 import 'package:analyzer/dart/ast/visitor.dart' as dart_ast_visitor;
+import 'package:cli_util/cli_util.dart' as cli_util;
 import 'package:collection/collection.dart' as collection;
 import 'package:path/path.dart' as path;
 import 'package:pub_semver/pub_semver.dart';
@@ -3015,4 +3016,102 @@ List<Error> _validateDependencies({
   }
 
   return errors;
+}
+
+/// Resolves the `dart` executable to use for running FFIgen/JNIgen scripts.
+///
+/// Resolution order:
+/// 1. Explicit [sdkPath] (`<sdkPath>/bin/dart[.exe]`).
+/// 2. [Platform.resolvedExecutable] when already running under `dart`/`dart.exe`
+///    (preserving Flutter's cached Dart SDK even if `DART_SDK` is set).
+/// 3. Validated `package:cli_util` SDK path (checking that `bin/dart[.exe]`
+///    exists so `<0.6.0` versions of `cli_util` do not return an invalid
+///    parent directory in AOT mode).
+/// 4. Scanning `PATH` for `dart`/`dart.exe`, resolving Flutter's `<dir>/dart.bat`
+///    (or POSIX `<dir>/dart`) wrapper to `<dir>/cache/dart-sdk/bin/dart[.exe]`
+///    when present so Windows avoids `.bat` shims and `_getJniEnvironment` can
+///    detect the Flutter SDK.
+/// 5. Fallback to `'dart'`.
+String resolveDartExecutable({
+  String? sdkPath,
+  String? Function()? discoverSdkPath,
+  String? resolvedExecutable,
+  String? pathEnv,
+  bool? isWindows,
+  bool Function(String filePath)? fileExists,
+}) {
+  final bool windows = isWindows ?? Platform.isWindows;
+  final path.Context pathContext = windows == Platform.isWindows
+      ? path.context
+      : (windows ? path.windows : path.posix);
+  final dartName = windows ? 'dart.exe' : 'dart';
+  final bool Function(String) exists =
+      fileExists ?? (String filePath) => File(filePath).existsSync();
+
+  if (sdkPath != null && sdkPath.isNotEmpty) {
+    return pathContext.join(pathContext.normalize(pathContext.absolute(sdkPath)), 'bin', dartName);
+  }
+
+  final String executable = resolvedExecutable ?? Platform.resolvedExecutable;
+  if (pathContext.basename(executable).toLowerCase() == dartName) {
+    return executable;
+  }
+
+  final String? discoveredSdk = (discoverSdkPath ?? () => cli_util.sdkPath)();
+  if (discoveredSdk != null && discoveredSdk.isNotEmpty) {
+    final String candidate = pathContext.join(
+      pathContext.normalize(pathContext.absolute(discoveredSdk)),
+      'bin',
+      dartName,
+    );
+    if (exists(candidate)) {
+      return candidate;
+    }
+  }
+
+  final String effectivePathEnv = pathEnv ?? Platform.environment['PATH'] ?? '';
+  final pathSeparator = windows ? ';' : ':';
+  for (final String rawEntry in effectivePathEnv.split(pathSeparator)) {
+    String dir = rawEntry.trim();
+    if (windows && dir.length >= 2 && dir.startsWith('"') && dir.endsWith('"')) {
+      dir = dir.substring(1, dir.length - 1).trim();
+    }
+    if (dir.isEmpty) {
+      continue;
+    }
+    final String directCandidate = pathContext.join(dir, dartName);
+    if (exists(directCandidate)) {
+      if (!windows) {
+        final String flutterCachedDart = pathContext.join(
+          dir,
+          'cache',
+          'dart-sdk',
+          'bin',
+          dartName,
+        );
+        if (exists(flutterCachedDart)) {
+          return flutterCachedDart;
+        }
+      }
+      return directCandidate;
+    }
+    if (windows) {
+      final String batCandidate = pathContext.join(dir, 'dart.bat');
+      if (exists(batCandidate)) {
+        final String flutterCachedDart = pathContext.join(
+          dir,
+          'cache',
+          'dart-sdk',
+          'bin',
+          dartName,
+        );
+        if (exists(flutterCachedDart)) {
+          return flutterCachedDart;
+        }
+        return batCandidate;
+      }
+    }
+  }
+
+  return 'dart';
 }

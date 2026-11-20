@@ -6,7 +6,7 @@
 
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io' show Directory, File, Process, ProcessSignal;
+import 'dart:io' show Directory, File, Platform, Process, ProcessSignal;
 
 import 'package:meta/meta.dart';
 import 'package:path/path.dart' as p;
@@ -563,52 +563,96 @@ Future<int> _runWindowsIntegrationTests({bool ciMode = false}) async {
 
 Future<int> _runCommandLineTests({bool ciMode = false}) async {
   final Directory tempDir = Directory.systemTemp.createTempSync('pigeon');
-  final String tempOutput = p.join(tempDir.path, 'pigeon_output');
-  const pigeonScript = 'bin/pigeon.dart';
-  final String snapshot = p.join(tempDir.path, 'pigeon.dart.dill');
+  try {
+    final String tempOutput = p.join(tempDir.path, 'pigeon_output');
+    const pigeonScript = 'bin/pigeon.dart';
+    final String snapshot = p.join(tempDir.path, 'pigeon.dart.dill');
 
-  // Precompile to make the repeated calls faster.
-  if (await runProcess('dart', <String>[
-        '--snapshot-kind=kernel',
-        '--snapshot=$snapshot',
-        pigeonScript,
-      ]) !=
-      0) {
-    print('Unable to generate $snapshot from $pigeonScript');
-    return 1;
-  }
+    // Precompile to make the repeated calls faster.
+    if (await runProcess('dart', <String>[
+          '--snapshot-kind=kernel',
+          '--snapshot=$snapshot',
+          pigeonScript,
+        ]) !=
+        0) {
+      print('Unable to generate $snapshot from $pigeonScript');
+      return 1;
+    }
 
-  final testArguments = <List<String>>[
-    // Test with no arguments.
-    <String>[],
-    // Test dartOut in ConfigurePigeon overrides output.
-    <String>['--input', 'pigeons/configure_pigeon_dart_out.dart'],
-    // Make sure AST generation exits correctly.
-    <String>['--input', 'pigeons/message.dart', '--ast_out', tempOutput],
-    // Test writing a file in a directory that doesn't exist.
-    <String>[
-      '--input',
-      'pigeons/message.dart',
-      '--dart_out',
-      '$tempDir/subdirectory/does/not/exist/message.g.dart',
-      '--package_name=message',
-    ],
-  ];
+    final testArguments = <List<String>>[
+      // Test with no arguments.
+      <String>[],
+      // Test dartOut in ConfigurePigeon overrides output.
+      <String>['--input', 'pigeons/configure_pigeon_dart_out.dart'],
+      // Make sure AST generation exits correctly.
+      <String>['--input', 'pigeons/message.dart', '--ast_out', tempOutput],
+      // Test writing a file in a directory that doesn't exist.
+      <String>[
+        '--input',
+        'pigeons/message.dart',
+        '--dart_out',
+        p.join(tempDir.path, 'subdirectory', 'does', 'not', 'exist', 'message.g.dart'),
+        '--package_name=message',
+      ],
+    ];
 
-  var exitCode = 0;
-  for (final arguments in testArguments) {
-    print('Testing dart $pigeonScript ${arguments.join(', ')}');
+    var exitCode = 0;
+    for (final arguments in testArguments) {
+      print('Testing dart $pigeonScript ${arguments.join(', ')}');
+      exitCode = await runProcess(
+        'dart',
+        <String>[snapshot, ...arguments],
+        streamOutput: false,
+        logFailure: true,
+      );
+      if (exitCode != 0) {
+        return exitCode;
+      }
+    }
+
+    // Verify bin/pigeon.dart compiles to a standalone AOT executable and
+    // generates Dart code directly without relying on a host Dart SDK.
+    final String aotExe = p.join(tempDir.path, Platform.isWindows ? 'pigeon.exe' : 'pigeon');
+    print('Testing dart compile exe $pigeonScript');
     exitCode = await runProcess(
       'dart',
-      <String>[snapshot, ...arguments],
+      <String>['compile', 'exe', pigeonScript, '-o', aotExe],
+      runInShell: Platform.isWindows,
       streamOutput: false,
       logFailure: true,
     );
     if (exitCode != 0) {
-      break;
+      return exitCode;
     }
-  }
 
-  tempDir.deleteSync(recursive: true);
-  return exitCode;
+    final String aotDartOut = p.join(tempDir.path, 'aot_out', 'message.g.dart');
+    print('Testing standalone AOT executable $aotExe');
+    exitCode = await runProcess(
+      aotExe,
+      <String>[
+        '--input',
+        'pigeons/message.dart',
+        '--dart_out',
+        aotDartOut,
+        '--package_name=message',
+      ],
+      environment: const <String, String>{'DART_SDK': '', 'FLUTTER_ROOT': ''},
+      streamOutput: false,
+      logFailure: true,
+    );
+    if (exitCode != 0) {
+      return exitCode;
+    }
+
+    final outputFile = File(aotDartOut);
+    if (!outputFile.existsSync() ||
+        !outputFile.readAsStringSync().contains('class MessageSearchRequest')) {
+      print('Standalone AOT executable did not generate expected output at $aotDartOut');
+      return 1;
+    }
+
+    return 0;
+  } finally {
+    tempDir.deleteSync(recursive: true);
+  }
 }
