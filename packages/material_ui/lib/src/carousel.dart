@@ -55,38 +55,15 @@ import 'theme.dart';
 ///
 /// <callout-box>
 ///
-// TODO(framework): Add unit tests to this code snippet.
-// https://github.com/flutter/flutter/issues/188530
-///
 /// This code snippet shows how to get a vertical full-screen carousel by using
 /// [itemExtent] in [CarouselView].
 ///
-/// ```dart
-/// Scaffold(
-///   body: CarouselView(
-///     scrollDirection: Axis.vertical,
-///     itemExtent: double.infinity,
-///     children: List<Widget>.generate(10, (int index) {
-///       return Center(child: Text('Item $index'));
-///     }),
-///   ),
-/// ),
-/// ```
+/// {@example /example/lib/carousel/carousel_view.snippet.0.dart#body indent=strip}
 ///
 /// This code snippet below shows how to achieve the same vertical full-screen
 /// carousel by using [flexWeights] in [CarouselView.weighted].
 ///
-/// ```dart
-/// Scaffold(
-///   body: CarouselView.weighted(
-///     scrollDirection: Axis.vertical,
-///     flexWeights: const <int>[1], // Or any positive integers as long as the length of the array is 1.
-///     children: List<Widget>.generate(10, (int index) {
-///       return Center(child: Text('Item $index'));
-///     }),
-///   ),
-/// ),
-/// ```
+/// {@example /example/lib/carousel/carousel_view.snippet.1.dart#body indent=strip}
 ///
 /// </callout-box>
 ///
@@ -294,25 +271,9 @@ class CarouselView extends StatefulWidget {
   ///
   /// <callout-box>
   ///
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
-  ///
   /// This example shows how to create a weighted carousel with lazy loading:
   ///
-  /// ```dart
-  /// CarouselView.weightedBuilder(
-  ///   flexWeights: const <int>[1, 7, 1],
-  ///   itemCount: 100,
-  ///   itemBuilder: (BuildContext context, int index) {
-  ///     return ColoredBox(
-  ///       color: Colors.primaries[index % Colors.primaries.length],
-  ///       child: Center(
-  ///         child: Text('Item $index'),
-  ///       ),
-  ///     );
-  ///   },
-  /// )
-  /// ```
+  /// {@example /example/lib/carousel/carousel_view.weighted_builder.snippet.0.dart#body indent=strip}
   ///
   /// </callout-box>
   ///

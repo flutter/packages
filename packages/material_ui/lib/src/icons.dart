@@ -127,38 +127,13 @@ final class PlatformAdaptiveIcons implements Icons {
 ///
 /// <callout-box>
 ///
-// TODO(framework): Add unit tests to this code snippet.
-// https://github.com/flutter/flutter/issues/188530
-///
 /// This example shows how to create a [Row] of [Icon]s in different colors and
 /// sizes. The first [Icon] uses a [Icon.semanticLabel] to announce in accessibility
 /// modes like TalkBack and VoiceOver.
 ///
 /// ![The following code snippet would generate a row of icons consisting of a pink heart, a green musical note, and a blue umbrella, each progressively bigger than the last.](https://flutter.github.io/assets-for-api-docs/assets/widgets/icon.png)
 ///
-/// ```dart
-/// const Row(
-///   mainAxisAlignment: MainAxisAlignment.spaceAround,
-///   children: <Widget>[
-///     Icon(
-///       Icons.favorite,
-///       color: Colors.pink,
-///       size: 24.0,
-///       semanticLabel: 'Text to announce in accessibility modes',
-///     ),
-///     Icon(
-///       Icons.audiotrack,
-///       color: Colors.green,
-///       size: 30.0,
-///     ),
-///     Icon(
-///       Icons.beach_access,
-///       color: Colors.blue,
-///       size: 36.0,
-///     ),
-///   ],
-/// )
-/// ```
+/// {@example /example/lib/icons/icons.snippet.0.dart#body indent=strip}
 ///
 /// </callout-box>
 ///
@@ -179,18 +154,11 @@ abstract final class Icons {
   ///
   /// <callout-box>
   ///
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
-  ///
   /// This example shows how to create a share icon that uses the material icon
   /// named "share" on non-Apple platforms, and the icon named "ios share" on
   /// Apple platforms.
   ///
-  /// ```dart
-  /// Icon(
-  ///   Icons.adaptive.share,
-  /// )
-  /// ```
+  /// {@example /example/lib/icons/icons.adaptive.snippet.0.dart#body indent=strip}
   ///
   /// </callout-box>
   ///
