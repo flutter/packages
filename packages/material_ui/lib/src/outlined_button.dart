@@ -72,8 +72,8 @@ part 'generated/outlined_button_defaults_m3.g.dart';
 ///
 /// See also:
 ///
-///  * [ElevatedButton], a filled button whose material elevates when pressed.
-///  * [FilledButton], a filled button that doesn't elevate when pressed.
+///  * [ElevatedButton], a filled button with a shadow.
+///  * [FilledButton], a filled button that uses a primary fill color.
 ///  * [FilledButton.tonal], a filled button variant that uses a secondary fill color.
 ///  * [TextButton], a button with no outline or fill color.
 ///  * <https://material.io/design/components/buttons.html>
