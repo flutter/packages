@@ -16,6 +16,9 @@ skills_lint:
     - path: ".agents/skills/check-readiness"
       rules:
         prevent-skills-sh-publishing: error
+    - path: ".agents/skills/run-on-emulator"
+      rules:
+        prevent-skills-sh-publishing: error
     - path: ".agents/skills/pre-push-skill"
       rules:
         prevent-skills-sh-publishing: error
