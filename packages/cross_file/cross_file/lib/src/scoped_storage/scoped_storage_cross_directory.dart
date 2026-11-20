@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
-import 'package:flutter/foundation.dart' show immutable, internal;
+import 'package:flutter/foundation.dart' show internal;
 
 import '../cross_directory.dart';
 
@@ -31,7 +31,6 @@ import '../cross_directory.dart';
 ///   print(androidExtension.name());
 /// }
 /// ```
-@immutable
 base class ScopedStorageXDirectory extends XDirectory {
   /// Constructs a [ScopedStorageXDirectory].
   ///
@@ -77,7 +76,7 @@ base class ScopedStorageXDirectory extends XDirectory {
   /// Constructs a [ScopedStorageXDirectory] from a specific platform
   /// implementation.
   @internal
-  const ScopedStorageXDirectory.fromPlatform(PlatformScopedStorageXDirectory super.platform);
+  ScopedStorageXDirectory.fromPlatform(PlatformScopedStorageXDirectory super.platform);
 
   @internal
   @override
@@ -85,8 +84,8 @@ base class ScopedStorageXDirectory extends XDirectory {
 
   /// Whether the files in this directory represented by this reference can be
   /// viewed.
-  Future<bool> canRead() => platform.canRead();
-
-  /// Release the reference this represents.
-  Future<void> dispose() => platform.dispose();
+  Future<bool> canRead() {
+    assert(assertNotDisposed());
+    return platform.canRead();
+  }
 }

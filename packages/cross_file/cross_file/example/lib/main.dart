@@ -46,8 +46,9 @@ class FileOpenScreen extends StatelessWidget {
           debugPrint('Filename: $filename');
           debugPrint('File Length: ${await file.length()}');
           debugPrint('File Last Modified: ${await file.lastModified()}');
-          return;
       }
+
+      await file.dispose();
     } else {
       debugPrint('No file selected.');
     }
@@ -70,6 +71,8 @@ class FileOpenScreen extends StatelessWidget {
             debugPrint('\tDirectory: ${directory.uri}');
         }
       }
+
+      await directory.dispose();
     } else {
       debugPrint('No directory selected.');
     }

@@ -153,7 +153,22 @@ void main() {
         },
       );
     });
+
+    group('PlatformXEntity', () {
+      test('dispose does nothing by default', () async {
+        final entity = TestXEntity(const PlatformXFileCreationParams(uri: 'uri'));
+
+        await expectLater(entity.dispose(), completes);
+      });
+    });
   });
 }
 
 final class TestCrossFilePlatform extends CrossFilePlatform {}
+
+final class TestXEntity extends PlatformXEntity {
+  TestXEntity(super.params);
+
+  @override
+  Future<bool> exists() => throw UnimplementedError();
+}

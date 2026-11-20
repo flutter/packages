@@ -5,7 +5,7 @@
 import 'dart:typed_data';
 
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
-import 'package:flutter/foundation.dart' show immutable, internal;
+import 'package:flutter/foundation.dart' show internal;
 
 import '../cross_file.dart';
 
@@ -30,7 +30,6 @@ import '../cross_file.dart';
 ///   print(ioExtension.file.lastAccessedSync());
 /// }
 /// ```
-@immutable
 base class FileSystemXFile extends XFile {
   /// Constructs a [FileSystemXFile].
   ///
@@ -72,7 +71,7 @@ base class FileSystemXFile extends XFile {
 
   /// Constructs a [FileSystemXFile] from a specific platform implementation.
   @internal
-  const FileSystemXFile.fromPlatform(PlatformFileSystemXFile super.platform);
+  FileSystemXFile.fromPlatform(PlatformFileSystemXFile super.platform);
 
   @internal
   @override
@@ -86,6 +85,7 @@ base class FileSystemXFile extends XFile {
   /// Platforms may throw an exception if there is an error opening or writing
   /// to the file.
   Future<XFile> writeAsBytes(Uint8List bytes) async {
+    assert(assertNotDisposed());
     final PlatformFileSystemXFile platformFile = await platform.writeAsBytes(
       PlatformWriteAsBytesParams(bytes),
     );
