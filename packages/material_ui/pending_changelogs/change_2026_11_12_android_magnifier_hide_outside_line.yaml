@@ -1,3 +1,4 @@
 changelog: |
   - Hides the Android `TextMagnifier` when a drag moves too far past either end of the current line, matching native Android.
-version: patch
+  - Adds an optional `controller` to `TextMagnifier`, so that `MagnifierController.shown` is false while the magnifier is hidden.
+version: minor

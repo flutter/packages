@@ -35,7 +35,7 @@ class TextMagnifier extends StatefulWidget {
   ///
   /// The [magnifierInfo] must be provided, and must be updated with new values
   /// as the user's touch changes.
-  const TextMagnifier({super.key, required this.magnifierInfo});
+  const TextMagnifier({super.key, required this.magnifierInfo, this.controller});
 
   /// A [TextMagnifierConfiguration] that returns a [CupertinoTextMagnifier] on
   /// iOS, [TextMagnifier] on Android, and null on all other platforms, and
@@ -52,7 +52,7 @@ class TextMagnifier extends StatefulWidget {
             case TargetPlatform.iOS:
               return CupertinoTextMagnifier(controller: controller, magnifierInfo: magnifierInfo);
             case TargetPlatform.android:
-              return TextMagnifier(magnifierInfo: magnifierInfo);
+              return TextMagnifier(controller: controller, magnifierInfo: magnifierInfo);
             case TargetPlatform.fuchsia:
             case TargetPlatform.linux:
             case TargetPlatform.macOS:
@@ -73,11 +73,19 @@ class TextMagnifier extends StatefulWidget {
   /// [TextMagnifier] class description.
   final ValueNotifier<MagnifierInfo> magnifierInfo;
 
+  /// This magnifier's controller, if any.
+  ///
+  /// When provided, the [TextMagnifier] hides and shows itself through this
+  /// controller without removing itself from the overlay, so that
+  /// [MagnifierController.shown] is false while the loupe is hidden because the
+  /// gesture is too far from the currently editing line.
+  final MagnifierController? controller;
+
   @override
   State<TextMagnifier> createState() => _TextMagnifierState();
 }
 
-class _TextMagnifierState extends State<TextMagnifier> {
+class _TextMagnifierState extends State<TextMagnifier> with SingleTickerProviderStateMixin {
   // Should _only_ be null on construction. This is because of the animation logic.
   //
   // Animations are added when `last_build_y != current_build_y`. This condition
@@ -95,21 +103,35 @@ class _TextMagnifierState extends State<TextMagnifier> {
 
   Offset _extraFocalPointOffset = Offset.zero;
 
-  // Whether the magnifier is hidden because the gesture is too far from the
-  // current line.
-  bool _isHidden = false;
+  // Drives whether the magnifier is shown, so that a [MagnifierController] can
+  // tell when the magnifier is hidden while still in the overlay. Like the
+  // native Android magnifier, it shows and hides without animating.
+  late final AnimationController _visibilityController;
+
+  bool get _isHidden => !_visibilityController.isForwardOrCompleted;
 
   @override
   void initState() {
     super.initState();
+    _visibilityController = AnimationController(vsync: this, duration: Duration.zero);
+    widget.controller?.animationController = _visibilityController;
     widget.magnifierInfo.addListener(_determineMagnifierPositionAndFocalPoint);
   }
 
   @override
   void dispose() {
+    _detachFromController(widget.controller);
+    _visibilityController.dispose();
     widget.magnifierInfo.removeListener(_determineMagnifierPositionAndFocalPoint);
     _positionShouldBeAnimatedTimer?.cancel();
     super.dispose();
+  }
+
+  void _detachFromController(MagnifierController? controller) {
+    // Only detach if no other magnifier has attached to the controller since.
+    if (controller?.animationController == _visibilityController) {
+      controller!.animationController = null;
+    }
   }
 
   @override
@@ -124,11 +146,46 @@ class _TextMagnifierState extends State<TextMagnifier> {
       oldWidget.magnifierInfo.removeListener(_determineMagnifierPositionAndFocalPoint);
       widget.magnifierInfo.addListener(_determineMagnifierPositionAndFocalPoint);
     }
+    if (oldWidget.controller != widget.controller) {
+      _detachFromController(oldWidget.controller);
+      widget.controller?.animationController = _visibilityController;
+    }
     super.didUpdateWidget(oldWidget);
   }
 
   void _determineMagnifierPositionAndFocalPoint() {
     final MagnifierInfo selectionInfo = widget.magnifierInfo.value;
+
+    // The insets, from either edge, that the focal point should not point
+    // past lest the magnifier displays something out of bounds.
+    final double horizontalMaxFocalPointEdgeInsets =
+        (Magnifier.kDefaultMagnifierSize.width / 2) / Magnifier._magnification;
+
+    // Like the native Android magnifier, hide the magnifier while the gesture
+    // is too far from the current line, that is, further from either end of
+    // the line than half of the magnified content's width.
+    final double gestureX = selectionInfo.globalGesturePosition.dx;
+    if (gestureX < selectionInfo.currentLineBoundaries.left - horizontalMaxFocalPointEdgeInsets ||
+        gestureX > selectionInfo.currentLineBoundaries.right + horizontalMaxFocalPointEdgeInsets) {
+      // Only signal a hide if we are currently showing.
+      if (!_isHidden) {
+        // A hidden magnifier has no jump between lines to animate.
+        _positionShouldBeAnimatedTimer?.cancel();
+        setState(() {
+          _positionShouldBeAnimatedTimer = null;
+          _visibilityController.reverse();
+        });
+      }
+      return;
+    }
+
+    // If we are hidden, but got to this point, we shouldn't be: show. The
+    // magnifier is rebuilt with its new position below.
+    final bool wasHidden = _isHidden;
+    if (wasHidden) {
+      _visibilityController.forward();
+    }
+
     final Rect screenRect = Offset.zero & MediaQuery.sizeOf(context);
 
     // Since by default we draw at the top left corner, this offset
@@ -164,19 +221,6 @@ class _TextMagnifierState extends State<TextMagnifier> {
 
     // Done with the magnifier position!
     final Offset finalMagnifierPosition = screenBoundsAdjustedMagnifierRect.topLeft;
-
-    // The insets, from either edge, that the focal point should not point
-    // past lest the magnifier displays something out of bounds.
-    final double horizontalMaxFocalPointEdgeInsets =
-        (Magnifier.kDefaultMagnifierSize.width / 2) / Magnifier._magnification;
-
-    // Like the native Android magnifier, hide the magnifier when the gesture
-    // is too far from the current line, that is, further from either end of
-    // the line than half of the magnified content's width.
-    final double gestureX = selectionInfo.globalGesturePosition.dx;
-    final bool isGestureTooFarFromLine =
-        gestureX < selectionInfo.currentLineBoundaries.left - horizontalMaxFocalPointEdgeInsets ||
-        gestureX > selectionInfo.currentLineBoundaries.right + horizontalMaxFocalPointEdgeInsets;
 
     // Adjust the focal point horizontally such that none of the magnifier
     // ever points to anything out of bounds.
@@ -216,7 +260,7 @@ class _TextMagnifierState extends State<TextMagnifier> {
     // Don't animate the jump between lines if the magnifier was hidden, since
     // it should reappear directly at its new position.
     if (_magnifierPosition != null &&
-        !_isHidden &&
+        !wasHidden &&
         finalMagnifierPosition.dy != _magnifierPosition!.dy) {
       if (_positionShouldBeAnimatedTimer != null && _positionShouldBeAnimatedTimer!.isActive) {
         _positionShouldBeAnimatedTimer!.cancel();
@@ -236,12 +280,15 @@ class _TextMagnifierState extends State<TextMagnifier> {
       _magnifierPosition = finalMagnifierPosition;
       _positionShouldBeAnimatedTimer = positionShouldBeAnimated;
       _extraFocalPointOffset = focalPointAdjustmentForScreenBoundsAdjustment;
-      _isHidden = isGestureTooFarFromLine;
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_isHidden) {
+      return const SizedBox.shrink();
+    }
+
     assert(
       _magnifierPosition != null,
       'Magnifier position should only be null before the first build.',
@@ -255,10 +302,7 @@ class _TextMagnifierState extends State<TextMagnifier> {
       duration: _positionShouldBeAnimated
           ? TextMagnifier.jumpBetweenLinesAnimationDuration
           : Duration.zero,
-      child: Visibility(
-        visible: !_isHidden,
-        child: Magnifier(additionalFocalPointOffset: _extraFocalPointOffset),
-      ),
+      child: Magnifier(additionalFocalPointOffset: _extraFocalPointOffset),
     );
   }
 }

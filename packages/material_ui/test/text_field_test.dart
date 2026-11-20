@@ -17630,6 +17630,8 @@ void main() {
         expect(controller.selection.isCollapsed, true);
         expect(controller.selection.baseOffset, 5);
         expect(find.byType(Magnifier), findsOneWidget);
+        final EditableTextState state = tester.state(find.byType(EditableText));
+        expect(state.selectionOverlay!.magnifierIsVisible, isTrue);
 
         // Drag inside the field, but far past the end of the text. The magnifier
         // should hide.
@@ -17642,6 +17644,8 @@ void main() {
         expect(controller.selection.baseOffset, testValue.length);
         expect(find.byType(TextMagnifier), findsOneWidget);
         expect(find.byType(Magnifier), findsNothing);
+        expect(state.selectionOverlay!.magnifierIsVisible, isFalse);
+        expect(state.selectionOverlay!.magnifierExists, isTrue);
 
         // Drag back onto the text. The magnifier should reappear.
         await gesture.moveTo(textOffsetToPosition(tester, 5));
@@ -17649,6 +17653,7 @@ void main() {
         expect(controller.selection.isCollapsed, true);
         expect(controller.selection.baseOffset, 5);
         expect(find.byType(Magnifier), findsOneWidget);
+        expect(state.selectionOverlay!.magnifierIsVisible, isTrue);
 
         await gesture.up();
         await tester.pump();
