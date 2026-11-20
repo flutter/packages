@@ -53,8 +53,8 @@ class FilledButtonThemeData with Diagnosticable {
 
   /// The style variant of Material Design used by [FilledButton].
   ///
-  /// Set this to [StyleVariant.material3Expressive] to opt filled buttons,
-  /// including filled tonal buttons, into the Material 3 Expressive style.
+  /// Set this to [StyleVariant.material3Expressive] to opt filled buttons into
+  /// the Material 3 Expressive style, including filled tonal buttons.
   ///
   /// If null, the variant is inherited from the closest enclosing
   /// [FilledButtonTheme] that specifies one, and then from
