@@ -463,10 +463,9 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     required super.childManager,
     super.cacheExtent,
     super.clipBehavior,
-    AlignmentGeometry alignment = Alignment.topLeft,
-    TextDirection? textDirection,
-  }) : _alignment = alignment,
-       _textDirection = textDirection;
+    this._alignment = Alignment.topLeft,
+    this._textDirection,
+  });
 
   @override
   TableCellDelegateMixin get delegate => super.delegate as TableCellDelegateMixin;

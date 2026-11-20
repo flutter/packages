@@ -28,17 +28,25 @@ class MaterialBannerExample extends StatelessWidget {
       body: Center(
         child: ElevatedButton(
           child: const Text('Show MaterialBanner'),
-          onPressed: () => ScaffoldMessenger.of(context).showMaterialBanner(
-            const MaterialBanner(
-              padding: .all(20),
-              content: Text('Hello, I am a Material Banner'),
-              leading: Icon(Icons.agriculture_outlined),
-              backgroundColor: Colors.green,
-              actions: <Widget>[
-                TextButton(onPressed: null, child: Text('DISMISS')),
-              ],
-            ),
-          ),
+          onPressed: () {
+            final ScaffoldMessengerState messenger = ScaffoldMessenger.of(
+              context,
+            );
+            messenger.showMaterialBanner(
+              MaterialBanner(
+                padding: const .all(20),
+                content: const Text('Hello, I am a Material Banner'),
+                leading: const Icon(Icons.agriculture_outlined),
+                backgroundColor: Colors.green,
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: messenger.hideCurrentMaterialBanner,
+                    child: const Text('DISMISS'),
+                  ),
+                ],
+              ),
+            );
+          },
         ),
       ),
     );

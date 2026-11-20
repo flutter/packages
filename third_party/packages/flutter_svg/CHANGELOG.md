@@ -1,3 +1,22 @@
+## 2.5.0
+
+* Adds `SvgLoader.provideSvgInIsolate`, which controls whether `provideSvg` runs
+  in the compute isolate.
+* Fixes SVG loading failing in profile and release builds when an asset bundle
+  or HTTP client retains a `Future`, by calling `provideSvg` for `SvgAssetLoader`
+  and `SvgNetworkLoader` on the calling isolate.
+
+## 2.4.1
+
+* Fixes network cache keys to compare header values and snapshot mutable
+  headers.
+
+## 2.4.0
+
+* Adds a configurable compiled SVG cache byte budget, defaulting to 32 MiB,
+  with byte accounting and least-recently-used eviction alongside the entry limit.
+* Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
+
 ## 2.3.4
 
 * Prevents pending loads invalidated by clear or evict from repopulating the cache.

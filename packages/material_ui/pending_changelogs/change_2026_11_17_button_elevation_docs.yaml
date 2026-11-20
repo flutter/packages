@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes several errors in the `ElevatedButton` and `FilledButton` documentation.
+version: patch

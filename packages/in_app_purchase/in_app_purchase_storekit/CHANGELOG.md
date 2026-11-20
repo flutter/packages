@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
+
 ## 0.4.17+1
 
 * Fixes StoreKit 2 promotional offers being ignored before iOS 17.4 and macOS 14.4.

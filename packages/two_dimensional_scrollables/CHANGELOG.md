@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
+
 ## 0.5.6
 
 * Fixes an issue where trailing pinned cells in `TableView` were losing hit tests to underlying non-pinned cells.

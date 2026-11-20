@@ -20,14 +20,12 @@ class GisSdkClient {
   /// Create a GisSdkClient object.
   GisSdkClient({
     required String clientId,
-    required StreamController<AuthenticationEvent?> authenticationController,
-    bool loggingEnabled = false,
+    required this._authenticationController,
+    this._loggingEnabled = false,
     String? nonce,
     String? hostedDomain,
   }) : _clientId = clientId,
-       _hostedDomain = hostedDomain,
-       _loggingEnabled = loggingEnabled,
-       _authenticationController = authenticationController {
+       _hostedDomain = hostedDomain {
     if (_loggingEnabled) {
       id.setLogLevel('debug');
     }
