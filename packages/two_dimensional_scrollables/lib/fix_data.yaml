@@ -1,0 +1,402 @@
+# Copyright 2013 The Flutter Authors
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# For details regarding the *Flutter Fix* feature, see
+# https://flutter.dev/to/flutter-fix
+
+# Please add new fixes to the top of the file, separated by one blank line
+# from other fixes. In a comment, include a link to the PR where the change
+# requiring the fix was made.
+
+# Every fix must be tested. See the packages/two_dimensional_scrollables/test_fixes/README.md
+# file for instructions on testing these data driven fixes.
+
+# For documentation about this file format, see
+# https://dart.dev/go/data-driven-fixes
+
+version: 1
+transforms:
+  # Change made in https://github.com/flutter/packages/pull/13603
+  - title: "Migrate to 'scrollCacheExtent'"
+    date: 2026-11-17
+    element:
+      uris: [ 'two_dimensional_scrollables.dart', 'package:two_dimensional_scrollables/two_dimensional_scrollables.dart' ]
+      constructor: ''
+      inClass: 'TableView'
+    oneOf:
+      - if: "cacheExtent != '' && scrollCacheExtent != '' && scrollCacheExtent != 'null'"
+        changes:
+          - kind: 'removeParameter'
+            name: 'cacheExtent'
+      - if: "cacheExtent == 'null'"
+        changes:
+          - kind: 'removeParameter'
+            name: 'cacheExtent'
+      - if: "cacheExtent != '' && scrollCacheExtent == 'null'"
+        changes:
+          - kind: 'removeParameter'
+            name: 'scrollCacheExtent'
+          - kind: 'addParameter'
+            index: 0
+            name: 'scrollCacheExtent'
+            style: optional_named
+            argumentValue:
+              expression: 'ScrollCacheExtent.pixels({% cacheExtent %})'
+              requiredIf: "cacheExtent != ''"
+          - kind: 'removeParameter'
+            name: 'cacheExtent'
+      - if: "cacheExtent != '' && scrollCacheExtent == ''"
+        changes:
+          - kind: 'addParameter'
+            index: 0
+            name: 'scrollCacheExtent'
+            style: optional_named
+            argumentValue:
+              expression: 'ScrollCacheExtent.pixels({% cacheExtent %})'
+              requiredIf: "cacheExtent != ''"
+          - kind: 'removeParameter'
+            name: 'cacheExtent'
+    variables:
+      cacheExtent:
+        kind: 'fragment'
+        value: 'arguments[cacheExtent]'
+      scrollCacheExtent:
+        kind: 'fragment'
+        value: 'arguments[scrollCacheExtent]'
+
+  # Change made in https://github.com/flutter/packages/pull/13603
+  - title: "Migrate to 'scrollCacheExtent'"
+    date: 2026-11-17
+    element:
+      uris: [ 'two_dimensional_scrollables.dart', 'package:two_dimensional_scrollables/two_dimensional_scrollables.dart' ]
+      constructor: 'builder'
+      inClass: 'TableView'
+    oneOf:
+      - if: "cacheExtent != '' && scrollCacheExtent != '' && scrollCacheExtent != 'null'"
+        changes:
+          - kind: 'removeParameter'
+            name: 'cacheExtent'
+      - if: "cacheExtent == 'null'"
+        changes:
+          - kind: 'removeParameter'
+            name: 'cacheExtent'
+      - if: "cacheExtent != '' && scrollCacheExtent == 'null'"
+        changes:
+          - kind: 'removeParameter'
+            name: 'scrollCacheExtent'
+          - kind: 'addParameter'
+            index: 0
+            name: 'scrollCacheExtent'
+            style: optional_named
+            argumentValue:
+              expression: 'ScrollCacheExtent.pixels({% cacheExtent %})'
+              requiredIf: "cacheExtent != ''"
+          - kind: 'removeParameter'
+            name: 'cacheExtent'
+      - if: "cacheExtent != '' && scrollCacheExtent == ''"
+        changes:
+          - kind: 'addParameter'
+            index: 0
+            name: 'scrollCacheExtent'
+            style: optional_named
+            argumentValue:
+              expression: 'ScrollCacheExtent.pixels({% cacheExtent %})'
+              requiredIf: "cacheExtent != ''"
+          - kind: 'removeParameter'
+            name: 'cacheExtent'
+    variables:
+      cacheExtent:
+        kind: 'fragment'
+        value: 'arguments[cacheExtent]'
+      scrollCacheExtent:
+        kind: 'fragment'
+        value: 'arguments[scrollCacheExtent]'
+
+  # Change made in https://github.com/flutter/packages/pull/13603
+  - title: "Migrate to 'scrollCacheExtent'"
+    date: 2026-11-17
+    element:
+      uris: [ 'two_dimensional_scrollables.dart', 'package:two_dimensional_scrollables/two_dimensional_scrollables.dart' ]
+      constructor: 'list'
+      inClass: 'TableView'
+    oneOf:
+      - if: "cacheExtent != '' && scrollCacheExtent != '' && scrollCacheExtent != 'null'"
+        changes:
+          - kind: 'removeParameter'
+            name: 'cacheExtent'
+      - if: "cacheExtent == 'null'"
+        changes:
+          - kind: 'removeParameter'
+            name: 'cacheExtent'
+      - if: "cacheExtent != '' && scrollCacheExtent == 'null'"
+        changes:
+          - kind: 'removeParameter'
+            name: 'scrollCacheExtent'
+          - kind: 'addParameter'
+            index: 0
+            name: 'scrollCacheExtent'
+            style: optional_named
+            argumentValue:
+              expression: 'ScrollCacheExtent.pixels({% cacheExtent %})'
+              requiredIf: "cacheExtent != ''"
+          - kind: 'removeParameter'
+            name: 'cacheExtent'
+      - if: "cacheExtent != '' && scrollCacheExtent == ''"
+        changes:
+          - kind: 'addParameter'
+            index: 0
+            name: 'scrollCacheExtent'
+            style: optional_named
+            argumentValue:
+              expression: 'ScrollCacheExtent.pixels({% cacheExtent %})'
+              requiredIf: "cacheExtent != ''"
+          - kind: 'removeParameter'
+            name: 'cacheExtent'
+    variables:
+      cacheExtent:
+        kind: 'fragment'
+        value: 'arguments[cacheExtent]'
+      scrollCacheExtent:
+        kind: 'fragment'
+        value: 'arguments[scrollCacheExtent]'
+
+  # Change made in https://github.com/flutter/packages/pull/13603
+  - title: "Migrate to 'scrollCacheExtent'"
+    date: 2026-11-17
+    element:
+      uris: [ 'two_dimensional_scrollables.dart', 'package:two_dimensional_scrollables/two_dimensional_scrollables.dart' ]
+      constructor: ''
+      inClass: 'TableViewport'
+    oneOf:
+      - if: "cacheExtent != '' && scrollCacheExtent != '' && scrollCacheExtent != 'null'"
+        changes:
+          - kind: 'removeParameter'
+            name: 'cacheExtent'
+      - if: "cacheExtent == 'null'"
+        changes:
+          - kind: 'removeParameter'
+            name: 'cacheExtent'
+      - if: "cacheExtent != '' && scrollCacheExtent == 'null'"
+        changes:
+          - kind: 'removeParameter'
+            name: 'scrollCacheExtent'
+          - kind: 'addParameter'
+            index: 0
+            name: 'scrollCacheExtent'
+            style: optional_named
+            argumentValue:
+              expression: 'ScrollCacheExtent.pixels({% cacheExtent %})'
+              requiredIf: "cacheExtent != ''"
+          - kind: 'removeParameter'
+            name: 'cacheExtent'
+      - if: "cacheExtent != '' && scrollCacheExtent == ''"
+        changes:
+          - kind: 'addParameter'
+            index: 0
+            name: 'scrollCacheExtent'
+            style: optional_named
+            argumentValue:
+              expression: 'ScrollCacheExtent.pixels({% cacheExtent %})'
+              requiredIf: "cacheExtent != ''"
+          - kind: 'removeParameter'
+            name: 'cacheExtent'
+    variables:
+      cacheExtent:
+        kind: 'fragment'
+        value: 'arguments[cacheExtent]'
+      scrollCacheExtent:
+        kind: 'fragment'
+        value: 'arguments[scrollCacheExtent]'
+
+  # Change made in https://github.com/flutter/packages/pull/13603
+  - title: "Migrate to 'scrollCacheExtent'"
+    date: 2026-11-17
+    element:
+      uris: [ 'two_dimensional_scrollables.dart', 'package:two_dimensional_scrollables/two_dimensional_scrollables.dart' ]
+      constructor: ''
+      inClass: 'RenderTableViewport'
+    oneOf:
+      - if: "cacheExtent != '' && scrollCacheExtent != '' && scrollCacheExtent != 'null'"
+        changes:
+          - kind: 'removeParameter'
+            name: 'cacheExtent'
+      - if: "cacheExtent == 'null'"
+        changes:
+          - kind: 'removeParameter'
+            name: 'cacheExtent'
+      - if: "cacheExtent != '' && scrollCacheExtent == 'null'"
+        changes:
+          - kind: 'removeParameter'
+            name: 'scrollCacheExtent'
+          - kind: 'addParameter'
+            index: 0
+            name: 'scrollCacheExtent'
+            style: optional_named
+            argumentValue:
+              expression: 'ScrollCacheExtent.pixels({% cacheExtent %})'
+              requiredIf: "cacheExtent != ''"
+          - kind: 'removeParameter'
+            name: 'cacheExtent'
+      - if: "cacheExtent != '' && scrollCacheExtent == ''"
+        changes:
+          - kind: 'addParameter'
+            index: 0
+            name: 'scrollCacheExtent'
+            style: optional_named
+            argumentValue:
+              expression: 'ScrollCacheExtent.pixels({% cacheExtent %})'
+              requiredIf: "cacheExtent != ''"
+          - kind: 'removeParameter'
+            name: 'cacheExtent'
+    variables:
+      cacheExtent:
+        kind: 'fragment'
+        value: 'arguments[cacheExtent]'
+      scrollCacheExtent:
+        kind: 'fragment'
+        value: 'arguments[scrollCacheExtent]'
+
+  # Change made in https://github.com/flutter/packages/pull/13603
+  - title: "Migrate to 'scrollCacheExtent'"
+    date: 2026-11-17
+    element:
+      uris: [ 'two_dimensional_scrollables.dart', 'package:two_dimensional_scrollables/two_dimensional_scrollables.dart' ]
+      constructor: ''
+      inClass: 'TreeView'
+    oneOf:
+      - if: "cacheExtent != '' && scrollCacheExtent != '' && scrollCacheExtent != 'null'"
+        changes:
+          - kind: 'removeParameter'
+            name: 'cacheExtent'
+      - if: "cacheExtent == 'null'"
+        changes:
+          - kind: 'removeParameter'
+            name: 'cacheExtent'
+      - if: "cacheExtent != '' && scrollCacheExtent == 'null'"
+        changes:
+          - kind: 'removeParameter'
+            name: 'scrollCacheExtent'
+          - kind: 'addParameter'
+            index: 0
+            name: 'scrollCacheExtent'
+            style: optional_named
+            argumentValue:
+              expression: 'ScrollCacheExtent.pixels({% cacheExtent %})'
+              requiredIf: "cacheExtent != ''"
+          - kind: 'removeParameter'
+            name: 'cacheExtent'
+      - if: "cacheExtent != '' && scrollCacheExtent == ''"
+        changes:
+          - kind: 'addParameter'
+            index: 0
+            name: 'scrollCacheExtent'
+            style: optional_named
+            argumentValue:
+              expression: 'ScrollCacheExtent.pixels({% cacheExtent %})'
+              requiredIf: "cacheExtent != ''"
+          - kind: 'removeParameter'
+            name: 'cacheExtent'
+    variables:
+      cacheExtent:
+        kind: 'fragment'
+        value: 'arguments[cacheExtent]'
+      scrollCacheExtent:
+        kind: 'fragment'
+        value: 'arguments[scrollCacheExtent]'
+
+  # Change made in https://github.com/flutter/packages/pull/13603
+  - title: "Migrate to 'scrollCacheExtent'"
+    date: 2026-11-17
+    element:
+      uris: [ 'two_dimensional_scrollables.dart', 'package:two_dimensional_scrollables/two_dimensional_scrollables.dart' ]
+      constructor: ''
+      inClass: 'TreeViewport'
+    oneOf:
+      - if: "cacheExtent != '' && scrollCacheExtent != '' && scrollCacheExtent != 'null'"
+        changes:
+          - kind: 'removeParameter'
+            name: 'cacheExtent'
+      - if: "cacheExtent == 'null'"
+        changes:
+          - kind: 'removeParameter'
+            name: 'cacheExtent'
+      - if: "cacheExtent != '' && scrollCacheExtent == 'null'"
+        changes:
+          - kind: 'removeParameter'
+            name: 'scrollCacheExtent'
+          - kind: 'addParameter'
+            index: 0
+            name: 'scrollCacheExtent'
+            style: optional_named
+            argumentValue:
+              expression: 'ScrollCacheExtent.pixels({% cacheExtent %})'
+              requiredIf: "cacheExtent != ''"
+          - kind: 'removeParameter'
+            name: 'cacheExtent'
+      - if: "cacheExtent != '' && scrollCacheExtent == ''"
+        changes:
+          - kind: 'addParameter'
+            index: 0
+            name: 'scrollCacheExtent'
+            style: optional_named
+            argumentValue:
+              expression: 'ScrollCacheExtent.pixels({% cacheExtent %})'
+              requiredIf: "cacheExtent != ''"
+          - kind: 'removeParameter'
+            name: 'cacheExtent'
+    variables:
+      cacheExtent:
+        kind: 'fragment'
+        value: 'arguments[cacheExtent]'
+      scrollCacheExtent:
+        kind: 'fragment'
+        value: 'arguments[scrollCacheExtent]'
+
+  # Change made in https://github.com/flutter/packages/pull/13603
+  - title: "Migrate to 'scrollCacheExtent'"
+    date: 2026-11-17
+    element:
+      uris: [ 'two_dimensional_scrollables.dart', 'package:two_dimensional_scrollables/two_dimensional_scrollables.dart' ]
+      constructor: ''
+      inClass: 'RenderTreeViewport'
+    oneOf:
+      - if: "cacheExtent != '' && scrollCacheExtent != '' && scrollCacheExtent != 'null'"
+        changes:
+          - kind: 'removeParameter'
+            name: 'cacheExtent'
+      - if: "cacheExtent == 'null'"
+        changes:
+          - kind: 'removeParameter'
+            name: 'cacheExtent'
+      - if: "cacheExtent != '' && scrollCacheExtent == 'null'"
+        changes:
+          - kind: 'removeParameter'
+            name: 'scrollCacheExtent'
+          - kind: 'addParameter'
+            index: 0
+            name: 'scrollCacheExtent'
+            style: optional_named
+            argumentValue:
+              expression: 'ScrollCacheExtent.pixels({% cacheExtent %})'
+              requiredIf: "cacheExtent != ''"
+          - kind: 'removeParameter'
+            name: 'cacheExtent'
+      - if: "cacheExtent != '' && scrollCacheExtent == ''"
+        changes:
+          - kind: 'addParameter'
+            index: 0
+            name: 'scrollCacheExtent'
+            style: optional_named
+            argumentValue:
+              expression: 'ScrollCacheExtent.pixels({% cacheExtent %})'
+              requiredIf: "cacheExtent != ''"
+          - kind: 'removeParameter'
+            name: 'cacheExtent'
+    variables:
+      cacheExtent:
+        kind: 'fragment'
+        value: 'arguments[cacheExtent]'
+      scrollCacheExtent:
+        kind: 'fragment'
+        value: 'arguments[scrollCacheExtent]'

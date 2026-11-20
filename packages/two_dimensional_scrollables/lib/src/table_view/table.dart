@@ -27,8 +27,8 @@ import 'table_span.dart';
 /// column as represented by its [TableVicinity], or it can span multiple rows
 /// and columns through merging. The table supports lazy rendering and will only
 /// instantiate those cells that are currently visible in the table's viewport
-/// and those that extend into the [cacheExtent]. Therefore, when merging cells
-/// in a [TableView], the same child with the same merge information must be
+/// and those that extend into the [scrollCacheExtent]. Therefore, when merging
+/// cells in a [TableView], the same child with the same merge information must be
 /// returned from every vicinity the merged cell contains. The `build` method
 /// will only be called once for a merged cell, but since the table's children
 /// are lazily laid out, returning the same child and merge information ensures
@@ -39,8 +39,9 @@ import 'table_span.dart';
 /// [columnMergeStart] as 1, and [columnMergeSpan] as 3 for all three
 /// [TableVicinity]s (column 1, 2, and 3). If the merge information is only
 /// provided for the first vicinity (column 1), and that vicinity is scrolled
-/// out of the viewport and [cacheExtent], the table will not know the following
-/// vicinities (column 2 and 3) are part of a merge and will "unmerge" them.
+/// out of the viewport and [scrollCacheExtent], the table will not know the
+/// following vicinities (column 2 and 3) are part of a merge and will "unmerge"
+/// them.
 ///
 /// The layout of the table (e.g. how many rows/columns there are and their
 /// extents) as well as the content of the individual cells is defined by
@@ -121,9 +122,10 @@ class TableView extends StatefulWidget {
     this.horizontalDetails = const ScrollableDetails.horizontal(),
     @Deprecated(
       'Use scrollCacheExtent instead. '
-      'This feature was deprecated after v3.41.0-0.0.pre.',
+      'This feature was deprecated after v0.5.6.',
     )
     this.cacheExtent,
+    this.scrollCacheExtent,
     required this.delegate,
     this.diagonalDragBehavior = DiagonalDragBehavior.none,
     this.dragStartBehavior = DragStartBehavior.start,
@@ -160,9 +162,10 @@ class TableView extends StatefulWidget {
     this.horizontalDetails = const ScrollableDetails.horizontal(),
     @Deprecated(
       'Use scrollCacheExtent instead. '
-      'This feature was deprecated after v3.41.0-0.0.pre.',
+      'This feature was deprecated after v0.5.6.',
     )
     this.cacheExtent,
+    this.scrollCacheExtent,
     this.diagonalDragBehavior = DiagonalDragBehavior.none,
     this.dragStartBehavior = DragStartBehavior.start,
     this.keyboardDismissBehavior,
@@ -216,9 +219,10 @@ class TableView extends StatefulWidget {
     this.horizontalDetails = const ScrollableDetails.horizontal(),
     @Deprecated(
       'Use scrollCacheExtent instead. '
-      'This feature was deprecated after v3.41.0-0.0.pre.',
+      'This feature was deprecated after v0.5.6.',
     )
     this.cacheExtent,
+    this.scrollCacheExtent,
     this.diagonalDragBehavior = DiagonalDragBehavior.none,
     this.dragStartBehavior = DragStartBehavior.start,
     this.keyboardDismissBehavior,
@@ -270,12 +274,43 @@ class TableView extends StatefulWidget {
   /// [ScrollController], [ScrollPhysics] and more for the vertical axis.
   final ScrollableDetails verticalDetails;
 
-  /// {@macro flutter.rendering.RenderViewportBase.cacheExtent}
+  /// The number of logical pixels before the leading edge and after the
+  /// trailing edge of the viewport to cache children.
+  ///
+  /// See also:
+  ///
+  ///   * [scrollCacheExtent], the replacement for this property.
   @Deprecated(
     'Use scrollCacheExtent instead. '
-    'This feature was deprecated after v3.41.0-0.0.pre.',
+    'This feature was deprecated after v0.5.6.',
   )
   final double? cacheExtent;
+
+  /// The additional cache distance for [TableViewport] before or after the
+  /// trailing edges of the visible area.
+  ///
+  /// Cells that fall in this cache area are laid out even though they are not
+  /// (yet) visible on screen. The [scrollCacheExtent] describes how far the
+  /// cache area extends beyond the viewport bounds, either in logical pixels
+  /// (via [ScrollCacheExtent.pixels]) or as a multiple of the viewport extent
+  /// (via [ScrollCacheExtent.viewport]).
+  ///
+  /// When using [CacheExtentStyle.viewport], the multiplier is applied to the
+  /// viewport width horizontally and the viewport height vertically,
+  /// independent of [mainAxis].
+  ///
+  /// The cache area is also used to implement implicit accessibility scrolling
+  /// on iOS: when the accessibility focus moves from a cell in the visible
+  /// viewport to an invisible cell in the cache area, the framework brings
+  /// that cell into view with an implicit scroll action.
+  ///
+  /// If null, defaults to 250 pixels.
+  ///
+  /// See also:
+  ///
+  ///   * [TwoDimensionalScrollView.scrollCacheExtent], the area beyond the
+  ///     viewport bounds where soon-to-be-visible children are rendered.
+  final ScrollCacheExtent? scrollCacheExtent;
 
   /// A delegate that provides the children for the [TwoDimensionalScrollView].
   final TableCellDelegateMixin delegate;
@@ -333,12 +368,17 @@ class _TableViewState extends State<TableView> {
 
   @override
   Widget build(BuildContext context) {
+    // ignore: deprecated_member_use_from_same_package
+    final double? cacheExtent = widget.cacheExtent;
+    final ScrollCacheExtent? effectiveScrollCacheExtent =
+        widget.scrollCacheExtent ??
+        (cacheExtent != null ? ScrollCacheExtent.pixels(cacheExtent) : null);
     return _TableView(
       primary: widget.primary,
       mainAxis: widget.mainAxis,
       horizontalDetails: widget.horizontalDetails,
       verticalDetails: widget.verticalDetails,
-      cacheExtent: widget.cacheExtent,
+      scrollCacheExtent: effectiveScrollCacheExtent,
       diagonalDragBehavior: widget.diagonalDragBehavior,
       dragStartBehavior: widget.dragStartBehavior,
       keyboardDismissBehavior: widget.keyboardDismissBehavior,
@@ -355,7 +395,7 @@ class _TableView extends TwoDimensionalScrollView {
     super.mainAxis,
     super.horizontalDetails,
     super.verticalDetails,
-    super.cacheExtent,
+    super.scrollCacheExtent,
     required TableCellDelegateMixin super.delegate,
     super.diagonalDragBehavior = DiagonalDragBehavior.none,
     super.dragStartBehavior,
@@ -382,7 +422,7 @@ class _TableView extends TwoDimensionalScrollView {
       horizontalAxisDirection: horizontalDetails.direction,
       delegate: delegate as TableCellDelegateMixin,
       mainAxis: mainAxis,
-      cacheExtent: cacheExtent,
+      scrollCacheExtent: scrollCacheExtent,
       clipBehavior: clipBehavior,
       alignment: alignment,
     );
@@ -402,13 +442,45 @@ class TableViewport extends TwoDimensionalViewport {
     required super.horizontalAxisDirection,
     required TableCellDelegateMixin super.delegate,
     required super.mainAxis,
-    super.cacheExtent,
+    @Deprecated(
+      'Use scrollCacheExtent instead. '
+      'This feature was deprecated after v0.5.6.',
+    )
+    this._cacheExtent,
+    super.scrollCacheExtent,
     super.clipBehavior,
     this.alignment = Alignment.topLeft,
   });
 
+  /// The number of logical pixels before the leading edge and after the
+  /// trailing edge of the viewport to cache children.
+  ///
+  /// See also:
+  ///
+  ///   * [scrollCacheExtent], the replacement for this property.
+  @Deprecated(
+    'Use scrollCacheExtent instead. '
+    'This feature was deprecated after v0.5.6.',
+  )
+  // Intentionally omits @override so this continues to compile after
+  // TwoDimensionalViewport.cacheExtent is removed from Flutter.
+  // ignore: annotate_overrides, deprecated_member_use_from_same_package
+  double? get cacheExtent => _cacheExtent;
+  @Deprecated(
+    'Use scrollCacheExtent instead. '
+    'This feature was deprecated after v0.5.6.',
+  )
+  final double? _cacheExtent;
+
   /// The alignment of the table within the viewport when there is extra space.
   final AlignmentGeometry alignment;
+
+  ScrollCacheExtent? get _effectiveScrollCacheExtent {
+    // ignore: deprecated_member_use_from_same_package
+    final double? cacheExtent = _cacheExtent;
+    return scrollCacheExtent ??
+        (cacheExtent != null ? ScrollCacheExtent.pixels(cacheExtent) : null);
+  }
 
   @override
   RenderTwoDimensionalViewport createRenderObject(BuildContext context) {
@@ -418,7 +490,7 @@ class TableViewport extends TwoDimensionalViewport {
       verticalOffset: verticalOffset,
       verticalAxisDirection: verticalAxisDirection,
       mainAxis: mainAxis,
-      cacheExtent: cacheExtent,
+      scrollCacheExtent: _effectiveScrollCacheExtent,
       clipBehavior: clipBehavior,
       delegate: delegate as TableCellDelegateMixin,
       childManager: context as TwoDimensionalChildManager,
@@ -435,7 +507,7 @@ class TableViewport extends TwoDimensionalViewport {
       ..verticalOffset = verticalOffset
       ..verticalAxisDirection = verticalAxisDirection
       ..mainAxis = mainAxis
-      ..cacheExtent = cacheExtent
+      ..scrollCacheExtent = _effectiveScrollCacheExtent
       ..clipBehavior = clipBehavior
       ..delegate = delegate as TableCellDelegateMixin
       ..alignment = alignment
@@ -461,11 +533,20 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     required TableCellDelegateMixin super.delegate,
     required super.mainAxis,
     required super.childManager,
-    super.cacheExtent,
+    @Deprecated(
+      'Use scrollCacheExtent instead. '
+      'This feature was deprecated after v0.5.6.',
+    )
+    double? cacheExtent,
+    ScrollCacheExtent? scrollCacheExtent,
     super.clipBehavior,
     this._alignment = Alignment.topLeft,
     this._textDirection,
-  });
+  }) : super(
+         scrollCacheExtent:
+             scrollCacheExtent ??
+             (cacheExtent != null ? ScrollCacheExtent.pixels(cacheExtent) : null),
+       );
 
   @override
   TableCellDelegateMixin get delegate => super.delegate as TableCellDelegateMixin;
@@ -519,12 +600,26 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
   int? _lastNonPinnedRow;
   int? _lastNonPinnedColumn;
 
+  // The cache extent in pixels for each axis, clamped to be non-negative (and
+  // treating NaN, such as infinity * 0 on a zero-sized viewport, as 0) so
+  // invalid values cannot shrink the visible layout range.
+  double _resolveCacheExtent(double viewportExtent) {
+    final double raw = switch (scrollCacheExtent.style) {
+      CacheExtentStyle.pixel => scrollCacheExtent.value,
+      CacheExtentStyle.viewport => scrollCacheExtent.value * viewportExtent,
+    };
+    return raw > 0.0 ? raw : 0.0;
+  }
+
+  double get _horizontalCacheExtent => _resolveCacheExtent(viewportDimension.width);
+  double get _verticalCacheExtent => _resolveCacheExtent(viewportDimension.height);
+
   int? _columnNullTerminatedIndex;
   bool get _columnsAreInfinite => delegate.columnCount == null;
   // Where column layout begins, potentially outside of the visible area.
   double get _targetLeadingColumnPixel {
     return clampDouble(
-      horizontalOffset.pixels - math.max(_leadingPinnedColumnsExtent, cacheExtent),
+      horizontalOffset.pixels - math.max(_leadingPinnedColumnsExtent, _horizontalCacheExtent),
       0,
       double.infinity,
     );
@@ -532,7 +627,10 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
 
   // How far columns should be laid out in a given frame.
   double get _targetTrailingColumnPixel {
-    return cacheExtent + horizontalOffset.pixels + viewportDimension.width - _pinnedColumnsExtent;
+    return _horizontalCacheExtent +
+        horizontalOffset.pixels +
+        viewportDimension.width -
+        _pinnedColumnsExtent;
   }
 
   int? _rowNullTerminatedIndex;
@@ -540,7 +638,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
   // Where row layout begins, potentially outside of the visible area.
   double get _targetLeadingRowPixel {
     return clampDouble(
-      verticalOffset.pixels - math.max(_leadingPinnedRowsExtent, cacheExtent),
+      verticalOffset.pixels - math.max(_leadingPinnedRowsExtent, _verticalCacheExtent),
       0,
       double.infinity,
     );
@@ -548,7 +646,10 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
 
   // How far rows should be laid out in a given frame.
   double get _targetTrailingRowPixel {
-    return cacheExtent + verticalOffset.pixels + viewportDimension.height - _pinnedRowsExtent;
+    return _verticalCacheExtent +
+        verticalOffset.pixels +
+        viewportDimension.height -
+        _pinnedRowsExtent;
   }
 
   TableVicinity? get _firstNonPinnedCell {
