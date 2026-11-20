@@ -32,14 +32,7 @@ enum DayPeriod {
 ///
 /// <callout-box>
 ///
-// TODO(framework): Add unit tests to this code snippet.
-// https://github.com/flutter/flutter/issues/188530
-///
-/// ```dart
-/// TimeOfDay now = TimeOfDay.now();
-/// const TimeOfDay releaseTime = TimeOfDay(hour: 15, minute: 0); // 3:00pm
-/// TimeOfDay roomBooked = TimeOfDay.fromDateTime(DateTime.parse('2018-10-20 16:30:04Z')); // 4:30pm
-/// ```
+/// {@example /example/lib/time/time_of_day.snippet.0.dart#body indent=strip}
 ///
 /// </callout-box>
 ///
