@@ -239,34 +239,7 @@ class TextTheme with Diagnosticable {
   ///
   /// <callout-box>
   ///
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
-  ///
-  /// ```dart
-  /// /// A Widget that sets the ambient theme's title text color for its
-  /// /// descendants, while leaving other ambient theme attributes alone.
-  /// class TitleColorThemeCopy extends StatelessWidget {
-  ///   const TitleColorThemeCopy({super.key, required this.titleColor, required this.child});
-  ///
-  ///   final Color titleColor;
-  ///   final Widget child;
-  ///
-  ///   @override
-  ///   Widget build(BuildContext context) {
-  ///     final ThemeData theme = Theme.of(context);
-  ///     return Theme(
-  ///       data: theme.copyWith(
-  ///         textTheme: theme.textTheme.copyWith(
-  ///           titleLarge: theme.textTheme.titleLarge!.copyWith(
-  ///             color: titleColor,
-  ///           ),
-  ///         ),
-  ///       ),
-  ///       child: child,
-  ///     );
-  ///   }
-  /// }
-  /// ```
+  /// {@example /example/lib/text_theme/text_theme.copy_with.snippet.0.dart#body indent=strip}
   ///
   /// </callout-box>
   ///
@@ -331,32 +304,7 @@ class TextTheme with Diagnosticable {
   ///
   /// <callout-box>
   ///
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
-  ///
-  /// ```dart
-  /// /// A Widget that sets the ambient theme's title text color for its
-  /// /// descendants, while leaving other ambient theme attributes alone.
-  /// class TitleColorTheme extends StatelessWidget {
-  ///   const TitleColorTheme({super.key, required this.child, required this.titleColor});
-  ///
-  ///   final Color titleColor;
-  ///   final Widget child;
-  ///
-  ///   @override
-  ///   Widget build(BuildContext context) {
-  ///     ThemeData theme = Theme.of(context);
-  ///     // This partialTheme is incomplete: it only has the title style
-  ///     // defined. Just replacing theme.textTheme with partialTheme would
-  ///     // set the title, but everything else would be null. This isn't very
-  ///     // useful, so merge it with the existing theme to keep all of the
-  ///     // preexisting definitions for the other styles.
-  ///     final TextTheme partialTheme = TextTheme(titleLarge: TextStyle(color: titleColor));
-  ///     theme = theme.copyWith(textTheme: theme.textTheme.merge(partialTheme));
-  ///     return Theme(data: theme, child: child);
-  ///   }
-  /// }
-  /// ```
+  /// {@example /example/lib/text_theme/text_theme.merge.snippet.0.dart#body indent=strip}
   ///
   /// </callout-box>
   ///

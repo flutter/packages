@@ -321,30 +321,10 @@ class TooltipThemeData with Diagnosticable {
 ///
 /// <callout-box>
 ///
-// TODO(framework): Add unit tests to this code snippet.
-// https://github.com/flutter/flutter/issues/188530
-///
 /// Here is an example of a tooltip theme that applies a blue foreground
 /// with non-rounded corners.
 ///
-/// ```dart
-/// TooltipTheme(
-///   data: TooltipThemeData(
-///     decoration: BoxDecoration(
-///       color: Colors.blue.withValues(alpha: 0.9),
-///       borderRadius: BorderRadius.zero,
-///     ),
-///   ),
-///   child: Tooltip(
-///     message: 'Example tooltip',
-///     child: IconButton(
-///       iconSize: 36.0,
-///       icon: const Icon(Icons.touch_app),
-///       onPressed: () {},
-///     ),
-///   ),
-/// )
-/// ```
+/// {@example /example/lib/tooltip_theme/tooltip_theme.snippet.0.dart#body indent=strip}
 ///
 /// </callout-box>
 ///
