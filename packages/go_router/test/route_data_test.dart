@@ -243,6 +243,31 @@ String _coder(String? value) => '';
 bool _compare(String a, String b) => true;
 
 void main() {
+  testWidgets('typed helpers preserve and merge metadata', (WidgetTester tester) async {
+    final GoRoute child = RelativeGoRouteData.$route(
+      path: 'child',
+      metadata: const <String, Object?>{'requiresAuth': false, 'title': 'Preview'},
+      factory: (_) => const _RelativeGoRouteDataBuild(),
+    );
+    final GoRoute parent = GoRouteData.$route(
+      path: '/parent',
+      metadata: const <String, Object?>{'section': 'library', 'requiresAuth': true},
+      factory: (_) => const _GoRouteDataBuild(),
+      routes: <RouteBase>[child],
+    );
+    final router = GoRouter(routes: <RouteBase>[parent], initialLocation: '/parent/child');
+    addTearDown(router.dispose);
+    await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+    await tester.pumpAndSettle();
+    expect(parent.metadata, <String, Object?>{'section': 'library', 'requiresAuth': true});
+    expect(child.metadata, <String, Object?>{'requiresAuth': false, 'title': 'Preview'});
+    expect(router.state.metadata, <String, Object?>{
+      'section': 'library',
+      'requiresAuth': false,
+      'title': 'Preview',
+    });
+  });
+
   group('GoRouteData', () {
     testWidgets('It should build the page from the overridden build method', (
       WidgetTester tester,
