@@ -211,7 +211,7 @@ TEST(UrlLauncherPlugin, LaunchFileURLWithPercentEncodingAndRawUTF8Success) {
 
   EXPECT_CALL(*system,
               ShellExecuteW(_, StrEq(L"open"),
-                            StrEq(L"file:///C:/Quick Share/\x00e9"), _, _, _))
+                            StrEq(L"file:///C:/Quick Share/\u00e9"), _, _, _))
       .WillOnce(Return(reinterpret_cast<HINSTANCE>(33)));
 
   UrlLauncherPlugin plugin(std::move(system));

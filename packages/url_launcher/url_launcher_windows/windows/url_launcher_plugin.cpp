@@ -9,10 +9,12 @@
 #include <shlwapi.h>
 #include <windows.h>
 
+#include <cstring>
 #include <memory>
 #include <optional>
 #include <sstream>
 #include <string>
+#include <utility>
 
 #include "messages.g.h"
 
@@ -110,7 +112,8 @@ ErrorOr<bool> UrlLauncherPlugin::LaunchUrl(const std::string& url) {
     }
     // UrlUnescapeA with URL_UNESCAPE_INPLACE null-terminates the buffer in
     // place without updating unescaped_len or std::string's length.
-    url_to_open = unescaped_url.c_str();
+    unescaped_url.resize(std::strlen(unescaped_url.c_str()));
+    url_to_open = std::move(unescaped_url);
   } else {
     url_to_open = url;
   }
