@@ -318,20 +318,10 @@ class ProgressIndicatorThemeData with Diagnosticable {
 ///
 /// <callout-box>
 ///
-// TODO(framework): Add unit tests to this code snippet.
-// https://github.com/flutter/flutter/issues/188530
-///
 /// Here is an example of a progress indicator theme that applies a red indicator
 /// color.
 ///
-/// ```dart
-/// const ProgressIndicatorTheme(
-///   data: ProgressIndicatorThemeData(
-///     color: Colors.red,
-///   ),
-///   child: LinearProgressIndicator()
-/// )
-/// ```
+/// {@example /example/lib/progress_indicator_theme/progress_indicator_theme.snippet.0.dart#body indent=strip}
 ///
 /// </callout-box>
 class ProgressIndicatorTheme extends InheritedTheme {

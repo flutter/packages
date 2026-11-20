@@ -919,18 +919,10 @@ class ThemeData with Diagnosticable {
   ///
   /// <callout-box>
   ///
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
-  ///
   /// This example will set up an application to use the baseline Material
   /// Design light and dark themes.
   ///
-  /// ```dart
-  /// MaterialApp(
-  ///   theme: ThemeData.from(colorScheme: const ColorScheme.light()),
-  ///   darkTheme: ThemeData.from(colorScheme: const ColorScheme.dark()),
-  /// )
-  /// ```
+  /// {@example /example/lib/theme_data/theme_data.from.snippet.0.dart#body indent=strip}
   ///
   /// </callout-box>
   ///
