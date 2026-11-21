@@ -3605,6 +3605,275 @@ abstract class MyFlutterApi {
     },
   );
 
+  group('standalone AOT support', () {
+    test('parseFile succeeds without a host Dart SDK', () {
+      withTempFile('source.dart', (File file) {
+        file.writeAsStringSync('class Message { String? text; }');
+        final ParseResults parseResult = Pigeon.setup().parseFile(
+          file.path,
+          sdkPath: '/nonexistent/dart-sdk/',
+        );
+        expect(parseResult.errors, isEmpty);
+        expect(parseResult.root.classes.single.name, 'Message');
+      });
+    });
+
+    test('parseFile reports syntax errors with normalized filename and line number', () {
+      withTempFile('bad.dart', (File file) {
+        file.writeAsStringSync('class Message {\n  String? text\n}');
+        final String unnormalizedPath = path.join(file.parent.path, '.', 'bad.dart');
+        final ParseResults parseResult = Pigeon.setup().parseFile(unnormalizedPath);
+        expect(parseResult.errors, isNotEmpty);
+        expect(parseResult.errors.first.filename, path.normalize(path.absolute(file.path)));
+        expect(parseResult.errors.first.lineNumber, 2);
+      });
+    });
+
+    test('resolveDartExecutable honors explicit sdkPath and normalizes paths', () {
+      expect(
+        resolveDartExecutable(
+          sdkPath: '/custom/dart-sdk/',
+          discoverSdkPath: () => '/should/not/be/used',
+          resolvedExecutable: '/should/not/be/used/dart',
+          isWindows: false,
+        ),
+        '/custom/dart-sdk/bin/dart',
+      );
+      expect(
+        resolveDartExecutable(
+          sdkPath: r'C:\custom\dart-sdk\',
+          discoverSdkPath: () => r'C:\should\not\be\used',
+          resolvedExecutable: r'C:\should\not\be\used\dart.exe',
+          isWindows: true,
+        ),
+        r'C:\custom\dart-sdk\bin\dart.exe',
+      );
+      expect(
+        resolveDartExecutable(
+          sdkPath: 'rel_sdk',
+          discoverSdkPath: () => '/should/not/be/used',
+          resolvedExecutable: '/should/not/be/used/dart',
+        ),
+        path.join(path.current, 'rel_sdk', 'bin', Platform.isWindows ? 'dart.exe' : 'dart'),
+      );
+    });
+
+    test(
+      'resolveDartExecutable prefers Platform.resolvedExecutable over cli_util sdkPath when running dart',
+      () {
+        expect(
+          resolveDartExecutable(
+            discoverSdkPath: () => '/standalone/dart-sdk',
+            resolvedExecutable: '/flutter/bin/cache/dart-sdk/bin/dart',
+            pathEnv: '',
+            isWindows: false,
+            fileExists: (String filePath) => filePath == '/standalone/dart-sdk/bin/dart',
+          ),
+          '/flutter/bin/cache/dart-sdk/bin/dart',
+        );
+        expect(
+          resolveDartExecutable(
+            discoverSdkPath: () => r'C:\standalone\dart-sdk',
+            resolvedExecutable: r'C:\flutter\bin\cache\dart-sdk\bin\dart.exe',
+            pathEnv: '',
+            isWindows: true,
+            fileExists: (String filePath) => filePath == r'C:\standalone\dart-sdk\bin\dart.exe',
+          ),
+          r'C:\flutter\bin\cache\dart-sdk\bin\dart.exe',
+        );
+      },
+    );
+
+    test('resolveDartExecutable uses validated cli_util sdkPath for AOT binary', () {
+      final Directory tempDir = Directory.systemTemp.createTempSync('pigeon_sdk_test_');
+      try {
+        final dartName = Platform.isWindows ? 'dart.exe' : 'dart';
+        final dartBin = File(path.join(tempDir.path, 'bin', dartName))..createSync(recursive: true);
+        final String resolved = resolveDartExecutable(
+          discoverSdkPath: () => '${tempDir.path}${Platform.pathSeparator}',
+          resolvedExecutable: '/opt/dart_install/bin/pigeon',
+          pathEnv: '',
+        );
+        expect(resolved, path.normalize(path.absolute(dartBin.path)));
+      } finally {
+        tempDir.deleteSync(recursive: true);
+      }
+    });
+
+    test('resolveDartExecutable rejects unvalidated sdkPath without bin/dart', () {
+      final Directory tempDir = Directory.systemTemp.createTempSync('pigeon_sdk_test_');
+      try {
+        final String resolved = resolveDartExecutable(
+          discoverSdkPath: () => tempDir.path,
+          resolvedExecutable: '/opt/dart_install/bin/pigeon',
+          pathEnv: '',
+        );
+        expect(resolved, 'dart');
+      } finally {
+        tempDir.deleteSync(recursive: true);
+      }
+    });
+
+    test('resolveDartExecutable scans PATH and prefers Flutter cached dart-sdk', () {
+      expect(
+        resolveDartExecutable(
+          discoverSdkPath: () => null,
+          resolvedExecutable: r'C:\Users\dev\.dart_install\bin\pigeon.exe',
+          pathEnv: r'C:\Windows\System32;"C:\Program Files\flutter\bin";C:\tools\dart-sdk\bin',
+          isWindows: true,
+          fileExists: (String filePath) =>
+              filePath == r'C:\Program Files\flutter\bin\dart.bat' ||
+              filePath == r'C:\Program Files\flutter\bin\cache\dart-sdk\bin\dart.exe' ||
+              filePath == r'C:\tools\dart-sdk\bin\dart.exe',
+        ),
+        r'C:\Program Files\flutter\bin\cache\dart-sdk\bin\dart.exe',
+      );
+      expect(
+        resolveDartExecutable(
+          discoverSdkPath: () => null,
+          resolvedExecutable: r'C:\Users\dev\.dart_install\bin\pigeon.exe',
+          pathEnv: r'C:\shims;C:\tools\dart-sdk\bin',
+          isWindows: true,
+          fileExists: (String filePath) => filePath == r'C:\shims\dart.bat',
+        ),
+        r'C:\shims\dart.bat',
+      );
+      expect(
+        resolveDartExecutable(
+          discoverSdkPath: () => null,
+          resolvedExecutable: '/opt/dart_install/bin/pigeon',
+          pathEnv: '/usr/local/bin:/opt/flutter/bin',
+          isWindows: false,
+          fileExists: (String filePath) =>
+              filePath == '/opt/flutter/bin/dart' ||
+              filePath == '/opt/flutter/bin/cache/dart-sdk/bin/dart',
+        ),
+        '/opt/flutter/bin/cache/dart-sdk/bin/dart',
+      );
+      expect(
+        resolveDartExecutable(
+          discoverSdkPath: () => null,
+          resolvedExecutable: '/opt/dart_install/bin/pigeon',
+          pathEnv: '/usr/local/bin:/opt/dart-sdk/bin',
+          isWindows: false,
+          fileExists: (String filePath) => filePath == '/opt/dart-sdk/bin/dart',
+        ),
+        '/opt/dart-sdk/bin/dart',
+      );
+    });
+
+    test('resolveDartExecutable falls back to dart on PATH for AOT binary when no SDK found', () {
+      expect(
+        resolveDartExecutable(
+          discoverSdkPath: () => null,
+          resolvedExecutable: '/opt/dart_install/bin/pigeon',
+          pathEnv: '',
+          isWindows: false,
+        ),
+        'dart',
+      );
+      expect(
+        resolveDartExecutable(
+          discoverSdkPath: () => null,
+          resolvedExecutable: '/path/to/bin/dartvm',
+          pathEnv: '',
+          isWindows: false,
+        ),
+        'dart',
+      );
+      expect(
+        resolveDartExecutable(
+          discoverSdkPath: () => null,
+          resolvedExecutable: '/path/to/flutter_tester',
+          pathEnv: '',
+          isWindows: false,
+        ),
+        'dart',
+      );
+    });
+
+    test('resolveDartExecutable uses Platform.resolvedExecutable when running dart', () {
+      expect(
+        resolveDartExecutable(
+          discoverSdkPath: () => null,
+          resolvedExecutable: '/custom/bin/dart',
+          pathEnv: '',
+          isWindows: false,
+        ),
+        '/custom/bin/dart',
+      );
+      expect(
+        resolveDartExecutable(
+          discoverSdkPath: () => null,
+          resolvedExecutable: r'C:\custom\bin\dart.exe',
+          pathEnv: '',
+          isWindows: true,
+        ),
+        r'C:\custom\bin\dart.exe',
+      );
+    });
+
+    test('resolveDartExecutable returns a usable dart executable by default', () {
+      final String dartExecutable = resolveDartExecutable();
+      expect(
+        dartExecutable == 'dart' || File(dartExecutable).existsSync(),
+        isTrue,
+        reason: 'Expected "dart" or an existing binary, got: $dartExecutable',
+      );
+      expect(path.basenameWithoutExtension(dartExecutable).toLowerCase(), 'dart');
+    });
+
+    test('runWithOptions forwards sdkPath to resolveDartExecutable', () async {
+      final Directory tempDir = Directory.systemTemp.createTempSync('pigeon_sdk_forward_test_');
+      try {
+        final inputFile = File(path.join(tempDir.path, 'messages.dart'))
+          ..writeAsStringSync('''
+import 'package:pigeon/pigeon.dart';
+
+@HostApi()
+abstract class Api {
+  int ping();
+}
+''');
+        final configFile = File(
+          path.join(tempDir.path, 'custom_cfg', 'tool', 'pigeon', 'messages_jnigen_config.dart'),
+        )..createSync(recursive: true);
+        configFile.writeAsStringSync('void main() {}\n');
+
+        final String customSdkPath = path.join(tempDir.path, 'nonexistent_sdk');
+        final String expectedDart = path.join(
+          path.normalize(path.absolute(customSdkPath)),
+          'bin',
+          Platform.isWindows ? 'dart.exe' : 'dart',
+        );
+        final errorBuffer = StringBuffer();
+        final int exitCode = await Pigeon.runWithOptions(
+          PigeonOptions(
+            input: inputFile.path,
+            basePath: tempDir.path,
+            dartOut: 'lib/messages.g.dart',
+            kotlinOut: 'android/Messages.g.kt',
+            kotlinOptions: const KotlinOptions(
+              useJni: true,
+              appDirectory: '',
+              configDirectory: 'custom_cfg',
+            ),
+            dartPackageName: 'my_package',
+          ),
+          adapters: const <GeneratorAdapter>[DartGeneratorAdapter(), KotlinGeneratorAdapter()],
+          sdkPath: customSdkPath,
+          errorSink: errorBuffer,
+        );
+
+        expect(exitCode, equals(1));
+        expect(errorBuffer.toString(), contains('Error: Failed to start JNIgen'));
+        expect(errorBuffer.toString(), contains(expectedDart));
+      } finally {
+        tempDir.deleteSync(recursive: true);
+      }
+    });
+  });
+
   group('JNIgen execution and error reporting', () {
     test('JnigenConfigGenerator does not emit a Java pre-skip guard or logging imports', () {
       final root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);

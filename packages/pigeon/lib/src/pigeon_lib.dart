@@ -6,12 +6,8 @@
 
 import 'dart:io';
 
-import 'package:analyzer/dart/analysis/analysis_context.dart' show AnalysisContext;
-import 'package:analyzer/dart/analysis/analysis_context_collection.dart'
-    show AnalysisContextCollection;
-import 'package:analyzer/dart/analysis/results.dart' show ParsedUnitResult;
-import 'package:analyzer/dart/analysis/session.dart' show AnalysisSession;
-import 'package:analyzer/dart/ast/ast.dart' as dart_ast;
+import 'package:analyzer/dart/analysis/results.dart' show ParseStringResult;
+import 'package:analyzer/dart/analysis/utilities.dart' show parseString;
 import 'package:analyzer/diagnostic/diagnostic.dart' show Diagnostic;
 import 'package:args/args.dart';
 import 'package:meta/meta.dart' show visibleForTesting;
@@ -498,34 +494,33 @@ class Pigeon {
     return Pigeon();
   }
 
-  /// Reads the file located at [path] and generates [ParseResults] by parsing
-  /// it. [types] optionally filters out what datatypes are actually parsed.
-  /// [sdkPath] for specifying the Dart SDK path for
-  /// [AnalysisContextCollection].
+  /// Reads the file located at [inputPath] and generates [ParseResults] by
+  /// parsing it.
+  ///
+  /// [sdkPath] is retained for backwards compatibility and is no longer needed
+  /// for syntactic parsing.
   ParseResults parseFile(String inputPath, {String? sdkPath}) {
-    final includedPaths = <String>[path.absolute(path.normalize(inputPath))];
-    final collection = AnalysisContextCollection(includedPaths: includedPaths, sdkPath: sdkPath);
+    final String source = File(inputPath).readAsStringSync();
+    final String normalizedPath = path.normalize(path.absolute(inputPath));
+    final ParseStringResult result = parseString(
+      content: source,
+      path: normalizedPath,
+      throwIfDiagnostics: false,
+    );
 
     final compilationErrors = <Error>[];
-    final rootBuilder = RootBuilder(File(inputPath).readAsStringSync());
-    for (final AnalysisContext context in collection.contexts) {
-      for (final String path in context.contextRoot.analyzedFiles()) {
-        final AnalysisSession session = context.currentSession;
-        final result = session.getParsedUnit(path) as ParsedUnitResult;
-        if (result.diagnostics.isEmpty) {
-          final dart_ast.CompilationUnit unit = result.unit;
-          unit.accept(rootBuilder);
-        } else {
-          for (final Diagnostic diagnostic in result.diagnostics) {
-            compilationErrors.add(
-              Error(
-                message: diagnostic.message,
-                filename: diagnostic.source.fullName,
-                lineNumber: calculateLineNumber(diagnostic.source.contents.data, diagnostic.offset),
-              ),
-            );
-          }
-        }
+    final rootBuilder = RootBuilder(source);
+    if (result.errors.isEmpty) {
+      result.unit.accept(rootBuilder);
+    } else {
+      for (final Diagnostic diagnostic in result.errors) {
+        compilationErrors.add(
+          Error(
+            message: diagnostic.message,
+            filename: diagnostic.source.fullName,
+            lineNumber: calculateLineNumber(source, diagnostic.offset),
+          ),
+        );
       }
     }
 
@@ -904,7 +899,7 @@ ${_argParser.usage}''';
         hasFileOutput(internalOptions.kotlinOptions?.kotlinOut) &&
         (internalOptions.kotlinOptions?.useJni ?? false);
 
-    final String dartExecutable = Platform.resolvedExecutable;
+    late final String dartExecutable = resolveDartExecutable(sdkPath: sdkPath);
     for (final adapter in safeGeneratorAdapters) {
       for (final FileType fileType in adapter.fileTypeList) {
         final IOSink? sink = adapter.shouldGenerate(internalOptions, fileType);
@@ -1065,10 +1060,12 @@ ${_argParser.usage}''';
     print('JNI Multi-step: Running JNIgen for $configFile...');
     final ProcessResult jnigenResult;
     try {
-      jnigenResult = await Process.run(dartExecutable, <String>[
-        'run',
-        configFile,
-      ], environment: _getJniEnvironment(dartExecutable));
+      jnigenResult = await Process.run(
+        dartExecutable,
+        <String>['run', configFile],
+        environment: _getJniEnvironment(dartExecutable),
+        runInShell: Platform.isWindows && !dartExecutable.toLowerCase().endsWith('.exe'),
+      );
     } on ProcessException catch (e) {
       errorSink.writeln('Error: Failed to start JNIgen ($configFile): $e');
       return false;
