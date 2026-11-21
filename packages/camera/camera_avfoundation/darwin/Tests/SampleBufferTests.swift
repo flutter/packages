@@ -595,4 +595,38 @@ final class CameraSampleBufferTests: XCTestCase {
     XCTAssertEqual(mockPhotoOutput.maxPhotoDimensions.width, 4032)
     XCTAssertEqual(mockPhotoOutput.maxPhotoDimensions.height, 3024)
   }
+
+  func testSetDescriptionWhileRecording_reappliesZeroShutterLagAndResponsiveCapture() {
+    let configuration = CameraTestUtils.createTestCameraConfiguration()
+    configuration.mediaSettingsWrapper = FakeMediaSettingsAVWrapper(
+      inputMock: MockAssetWriterInput())
+    let videoSessionMock = MockCaptureSession()
+    videoSessionMock.canSetSessionPresetStub = { _ in true }
+    configuration.videoCaptureSession = videoSessionMock
+
+    let camera = CameraTestUtils.createTestCamera(configuration)
+    let mockPhotoOutput = MockCapturePhotoOutput()
+    mockPhotoOutput.avOutput = camera.capturePhotoOutput.avOutput
+    mockPhotoOutput.flutterZeroShutterLagSupported = true
+    mockPhotoOutput.responsiveCaptureSupportedWhenZslEnabled = true
+    camera.capturePhotoOutput = mockPhotoOutput
+
+    camera.setZeroShutterLagEnabled(true)
+    camera.setResponsiveCaptureEnabled(true)
+    camera.startVideoRecording(completion: { _ in }, messengerForStreaming: nil)
+
+    // Simulates the session reconfiguration silently resetting both properties.
+    mockPhotoOutput.flutterZeroShutterLagEnabled = false
+
+    let expectation = self.expectation(description: "setDescriptionWhileRecording completed")
+    camera.setDescriptionWhileRecording("new_camera") { result in
+      let _ = self.assertSuccess(result)
+      expectation.fulfill()
+    }
+    waitForExpectations(timeout: 1.0, handler: nil)
+
+    XCTAssertTrue(mockPhotoOutput.flutterZeroShutterLagEnabled)
+    XCTAssertTrue(mockPhotoOutput.flutterResponsiveCaptureEnabled)
+    XCTAssertFalse(mockPhotoOutput.setResponsiveWhileUnsupported)
+  }
 }
