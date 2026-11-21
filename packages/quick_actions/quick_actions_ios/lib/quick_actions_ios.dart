@@ -45,6 +45,7 @@ class QuickActionsIos extends QuickActionsPlatform {
       localizedTitle: item.localizedTitle,
       localizedSubtitle: item.localizedSubtitle,
       icon: item.icon,
+      iosSystemIcon: item.iosSystemIcon,
     );
   }
 }
