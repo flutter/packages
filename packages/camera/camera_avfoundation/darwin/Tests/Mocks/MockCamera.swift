@@ -30,6 +30,8 @@ final class MockCamera: NSObject, Camera {
   var setJpegImageQualityStub: ((Int64) -> Void)?
   var isZeroShutterLagSupportedStub: (() -> Bool)?
   var setZeroShutterLagEnabledStub: ((Bool) -> Void)?
+  var isResponsiveCaptureSupportedStub: (() -> Bool)?
+  var setResponsiveCaptureEnabledStub: ((Bool) -> Void)?
   var setExposureModeStub: ((PlatformExposureMode) -> Void)?
   var setExposureOffsetStub: ((Double) -> Void)?
   var setExposurePointStub: ((PlatformPoint?, @escaping (Result<Void, any Error>) -> Void) -> Void)?
@@ -158,6 +160,14 @@ final class MockCamera: NSObject, Camera {
 
   func setZeroShutterLagEnabled(_ enabled: Bool) {
     setZeroShutterLagEnabledStub?(enabled)
+  }
+
+  func isResponsiveCaptureSupported() -> Bool {
+    return isResponsiveCaptureSupportedStub?() ?? false
+  }
+
+  func setResponsiveCaptureEnabled(_ enabled: Bool) {
+    setResponsiveCaptureEnabledStub?(enabled)
   }
 
   func setExposureMode(_ mode: PlatformExposureMode) {

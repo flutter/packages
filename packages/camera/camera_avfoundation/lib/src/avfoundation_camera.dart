@@ -431,6 +431,37 @@ class AVFoundationCamera extends CameraPlatform {
     await _hostApi.setZeroShutterLagEnabled(enabled);
   }
 
+  /// Returns whether the camera with ID [cameraId] currently supports
+  /// responsive capture.
+  ///
+  /// Responsive capture is available on iOS 17 and later, and is only
+  /// supported while zero-shutter-lag is enabled, so this returns `false`
+  /// while zero-shutter-lag is disabled.
+  ///
+  /// This is an iOS-specific API. To use it, check that
+  /// `CameraPlatform.instance` is an [AVFoundationCamera].
+  Future<bool> isResponsiveCaptureSupported(int cameraId) {
+    return _hostApi.isResponsiveCaptureSupported();
+  }
+
+  /// Enables or disables responsive capture for the camera with ID [cameraId].
+  ///
+  /// Responsive capture lets a new capture start before the previous photo
+  /// has finished processing, at the cost of additional memory. Photos are
+  /// still delivered in capture order. It only helps when
+  /// `CameraPlatform.takePicture` is called again before the previous call
+  /// returns, which `CameraController.takePicture` does not allow.
+  ///
+  /// This is best-effort: it takes effect only while zero-shutter-lag is
+  /// enabled and responsive capture is supported, and the requested state is
+  /// applied once zero-shutter-lag is enabled. Disabled by default.
+  ///
+  /// This is an iOS-specific API. To use it, check that
+  /// `CameraPlatform.instance` is an [AVFoundationCamera].
+  Future<void> setResponsiveCaptureEnabled(int cameraId, bool enabled) async {
+    await _hostApi.setResponsiveCaptureEnabled(enabled);
+  }
+
   @override
   Widget buildPreview(int cameraId) {
     return Texture(textureId: cameraId);

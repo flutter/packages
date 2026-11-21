@@ -68,6 +68,9 @@ protocol Camera: FlutterTexture, AVCaptureVideoDataOutputSampleBufferDelegate,
   func isZeroShutterLagSupported() -> Bool
   func setZeroShutterLagEnabled(_ enabled: Bool)
 
+  func isResponsiveCaptureSupported() -> Bool
+  func setResponsiveCaptureEnabled(_ enabled: Bool)
+
   func setExposureMode(_ mode: PlatformExposureMode)
   func setExposureOffset(_ offset: Double)
 

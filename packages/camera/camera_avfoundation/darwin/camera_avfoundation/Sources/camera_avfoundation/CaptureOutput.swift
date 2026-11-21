@@ -72,6 +72,15 @@ protocol CapturePhotoOutput: CaptureOutput {
   /// writes on older versions.
   var flutterZeroShutterLagEnabled: Bool { get set }
 
+  /// Corresponds to the `isResponsiveCaptureSupported` property of
+  /// `AVCapturePhotoOutput` on iOS 17+/macOS 14+; `false` on older versions.
+  var flutterResponsiveCaptureSupported: Bool { get }
+
+  /// Corresponds to the `isResponsiveCaptureEnabled` property of
+  /// `AVCapturePhotoOutput` on iOS 17+/macOS 14+; reads `false` and ignores
+  /// writes on older versions.
+  var flutterResponsiveCaptureEnabled: Bool { get set }
+
   /// Corresponds to the `capturePhotoWithSettings` method of `AVCapturePhotoOutput`
   func capturePhoto(with settings: AVCapturePhotoSettings, delegate: AVCapturePhotoCaptureDelegate)
 }
@@ -99,6 +108,27 @@ extension AVCapturePhotoOutput: CapturePhotoOutput {
     set {
       if #available(iOS 17.0, macOS 14.0, *) {
         isZeroShutterLagEnabled = newValue
+      }
+    }
+  }
+
+  var flutterResponsiveCaptureSupported: Bool {
+    if #available(iOS 17.0, macOS 14.0, *) {
+      return isResponsiveCaptureSupported
+    }
+    return false
+  }
+
+  var flutterResponsiveCaptureEnabled: Bool {
+    get {
+      if #available(iOS 17.0, macOS 14.0, *) {
+        return isResponsiveCaptureEnabled
+      }
+      return false
+    }
+    set {
+      if #available(iOS 17.0, macOS 14.0, *) {
+        isResponsiveCaptureEnabled = newValue
       }
     }
   }

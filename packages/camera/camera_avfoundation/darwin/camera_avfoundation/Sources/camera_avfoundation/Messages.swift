@@ -901,6 +901,12 @@ protocol CameraApi {
   func isZeroShutterLagSupported(completion: @escaping (Result<Bool, Error>) -> Void)
   /// Enables or disables zero-shutter-lag capture.
   func setZeroShutterLagEnabled(enabled: Bool, completion: @escaping (Result<Void, Error>) -> Void)
+  /// Returns whether the current session configuration supports responsive
+  /// capture.
+  func isResponsiveCaptureSupported(completion: @escaping (Result<Bool, Error>) -> Void)
+  /// Enables or disables responsive capture.
+  func setResponsiveCaptureEnabled(
+    enabled: Bool, completion: @escaping (Result<Void, Error>) -> Void)
 }
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
@@ -1603,6 +1609,47 @@ class CameraApiSetup {
       }
     } else {
       setZeroShutterLagEnabledChannel.setMessageHandler(nil)
+    }
+    /// Returns whether the current session configuration supports responsive
+    /// capture.
+    let isResponsiveCaptureSupportedChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.camera_avfoundation.CameraApi.isResponsiveCaptureSupported\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      isResponsiveCaptureSupportedChannel.setMessageHandler { _, reply in
+        api.isResponsiveCaptureSupported { result in
+          switch result {
+          case .success(let res):
+            reply(wrapResult(res))
+          case .failure(let error):
+            reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      isResponsiveCaptureSupportedChannel.setMessageHandler(nil)
+    }
+    /// Enables or disables responsive capture.
+    let setResponsiveCaptureEnabledChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.camera_avfoundation.CameraApi.setResponsiveCaptureEnabled\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      setResponsiveCaptureEnabledChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let enabledArg = args[0] as! Bool
+        api.setResponsiveCaptureEnabled(enabled: enabledArg) { result in
+          switch result {
+          case .success:
+            reply(wrapResult(nil))
+          case .failure(let error):
+            reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      setResponsiveCaptureEnabledChannel.setMessageHandler(nil)
     }
   }
 }

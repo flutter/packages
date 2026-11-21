@@ -1,3 +1,5 @@
+<?code-excerpt path-base="example/lib"?>
+
 # camera\_avfoundation
 
 The iOS implementation of [`camera`][1].
@@ -25,6 +27,30 @@ By default, files saved within the application sandbox are private. If you want 
 <true/>
 <key>UISupportsDocumentBrowser</key>
 <true/>
+```
+
+## Responsive Capture
+
+On iOS 17 and later, responsive capture lets a new photo capture start before
+the previous photo has finished processing, at the cost of additional memory.
+It is disabled by default, requires zero-shutter-lag to be enabled, and only
+helps apps that call `CameraPlatform.instance.takePicture` again before the
+previous call returns (`CameraController.takePicture` does not allow this).
+
+It is an iOS-specific API, so check that the platform implementation is
+`AVFoundationCamera` before calling it:
+
+<?code-excerpt "readme_excerpts.dart (ResponsiveCapture)"?>
+```dart
+import 'package:camera_avfoundation/camera_avfoundation.dart';
+import 'package:camera_platform_interface/camera_platform_interface.dart';
+
+Future<void> enableResponsiveCapture(int cameraId) async {
+  final CameraPlatform platform = CameraPlatform.instance;
+  if (platform is AVFoundationCamera && await platform.isResponsiveCaptureSupported(cameraId)) {
+    await platform.setResponsiveCaptureEnabled(cameraId, true);
+  }
+}
 ```
 
 [1]: https://pub.dev/packages/camera

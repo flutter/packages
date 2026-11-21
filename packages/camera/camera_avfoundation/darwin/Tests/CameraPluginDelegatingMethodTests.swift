@@ -318,6 +318,51 @@ final class CameraPluginDelegatingMethodTests: XCTestCase {
     XCTAssertTrue(setZeroShutterLagEnabledCalled)
   }
 
+  func testIsResponsiveCaptureSupported_returnsValueFromCameraIsResponsiveCaptureSupported() {
+    let (cameraPlugin, mockCamera) = createCameraPlugin()
+    let expectation = expectation(description: "Call completed")
+
+    var isResponsiveCaptureSupportedCalled = false
+    mockCamera.isResponsiveCaptureSupportedStub = {
+      isResponsiveCaptureSupportedCalled = true
+      return true
+    }
+
+    cameraPlugin.isResponsiveCaptureSupported { result in
+      switch result {
+      case .success(let supported):
+        XCTAssertTrue(supported)
+      case .failure:
+        XCTFail("Unexpected error")
+      }
+      expectation.fulfill()
+    }
+
+    waitForExpectations(timeout: 30, handler: nil)
+
+    XCTAssertTrue(isResponsiveCaptureSupportedCalled)
+  }
+
+  func testSetResponsiveCaptureEnabled_callsCameraSetResponsiveCaptureEnabled() {
+    let (cameraPlugin, mockCamera) = createCameraPlugin()
+    let expectation = expectation(description: "Call completed")
+
+    var setResponsiveCaptureEnabledCalled = false
+    mockCamera.setResponsiveCaptureEnabledStub = { enabled in
+      XCTAssertTrue(enabled)
+      setResponsiveCaptureEnabledCalled = true
+    }
+
+    cameraPlugin.setResponsiveCaptureEnabled(enabled: true) { result in
+      let _ = self.assertSuccess(result)
+      expectation.fulfill()
+    }
+
+    waitForExpectations(timeout: 30, handler: nil)
+
+    XCTAssertTrue(setResponsiveCaptureEnabledCalled)
+  }
+
   func testStartImageStream_callsCameraStartImageStream() {
     let (cameraPlugin, mockCamera) = createCameraPlugin()
     let expectation = expectation(description: "Call completed")
