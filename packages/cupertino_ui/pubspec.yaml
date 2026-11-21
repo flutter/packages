@@ -27,6 +27,10 @@ dev_dependencies:
   material_ui: ^1.0.0
   path: ^1.9.1
 
+flutter:
+  shaders:
+    - lib/src/third_party/progressive_blur/progressive_blur.frag
+
 topics:
   - ui
   - widgets
