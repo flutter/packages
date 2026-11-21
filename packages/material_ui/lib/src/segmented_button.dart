@@ -880,7 +880,7 @@ class _RenderSegmentedButton<T> extends RenderBox
       minWidth = math.max(minWidth, childWidth);
       child = childParentData.nextSibling;
     }
-    return minWidth * childCount;
+    return direction == Axis.vertical ? minWidth : minWidth * childCount;
   }
 
   @override
@@ -893,7 +893,7 @@ class _RenderSegmentedButton<T> extends RenderBox
       maxWidth = math.max(maxWidth, childWidth);
       child = childParentData.nextSibling;
     }
-    return maxWidth * childCount;
+    return direction == Axis.vertical ? maxWidth : maxWidth * childCount;
   }
 
   @override
@@ -906,7 +906,7 @@ class _RenderSegmentedButton<T> extends RenderBox
       minHeight = math.max(minHeight, childHeight);
       child = childParentData.nextSibling;
     }
-    return minHeight;
+    return direction == Axis.vertical ? minHeight * childCount : minHeight;
   }
 
   @override
@@ -919,7 +919,7 @@ class _RenderSegmentedButton<T> extends RenderBox
       maxHeight = math.max(maxHeight, childHeight);
       child = childParentData.nextSibling;
     }
-    return maxHeight;
+    return direction == Axis.vertical ? maxHeight * childCount : maxHeight;
   }
 
   @override
