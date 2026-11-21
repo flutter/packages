@@ -274,7 +274,7 @@ void main() {
   });
 
   test('Material 2 supports an explicit 2014 typography override', () {
-    final Typography typography = Typography.material2014();
+    final typography = Typography.material2014();
     expect(ThemeData(useMaterial3: false, typography: typography).typography, same(typography));
   });
 
