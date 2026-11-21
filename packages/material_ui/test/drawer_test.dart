@@ -339,11 +339,193 @@ void main() {
 
     // Default drawerScrimColor
     await tester.pumpWidget(buildFrame());
-    await checkScrim(Colors.black54);
+    await checkScrim(
+      Theme.of(tester.element(find.byType(Scaffold))).colorScheme.scrim.withValues(alpha: 0.32),
+    );
 
     // Specific drawerScrimColor
     await tester.pumpWidget(buildFrame(drawerScrimColor: const Color(0xFF323232)));
     await checkScrim(const Color(0xFF323232));
+  });
+
+  testWidgets('Drawer scrim uses ColorScheme.scrim', (WidgetTester tester) async {
+    const Color scrim = Colors.red;
+    final scaffoldKey = GlobalKey<ScaffoldState>();
+
+    Widget getScrim() {
+      return tester
+          .widget<Semantics>(
+            find.descendant(
+              of: find.byType(DrawerController),
+              matching: find.byWidgetPredicate((Widget widget) {
+                return widget is Semantics && widget.properties.label == 'Dismiss';
+              }),
+            ),
+          )
+          .child!;
+    }
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple, scrim: scrim),
+        ),
+        home: Scaffold(
+          key: scaffoldKey,
+          drawer: const Drawer(child: SizedBox.expand()),
+        ),
+      ),
+    );
+
+    scaffoldKey.currentState!.openDrawer();
+    await tester.pumpAndSettle();
+    expect((getScrim() as ColoredBox).color, isSameColorAs(scrim.withValues(alpha: 0.32)));
+  });
+
+  testWidgets('DrawerTheme.scrimColor takes precedence over ColorScheme.scrim', (
+    WidgetTester tester,
+  ) async {
+    const Color scrim = Colors.red;
+    const Color themeScrimColor = Colors.blue;
+    final scaffoldKey = GlobalKey<ScaffoldState>();
+
+    Widget getScrim() {
+      return tester
+          .widget<Semantics>(
+            find.descendant(
+              of: find.byType(DrawerController),
+              matching: find.byWidgetPredicate((Widget widget) {
+                return widget is Semantics && widget.properties.label == 'Dismiss';
+              }),
+            ),
+          )
+          .child!;
+    }
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple, scrim: scrim),
+          drawerTheme: const DrawerThemeData(scrimColor: themeScrimColor),
+        ),
+        home: Scaffold(
+          key: scaffoldKey,
+          drawer: const Drawer(child: SizedBox.expand()),
+        ),
+      ),
+    );
+
+    scaffoldKey.currentState!.openDrawer();
+    await tester.pumpAndSettle();
+    expect((getScrim() as ColoredBox).color, isSameColorAs(themeScrimColor));
+  });
+
+  testWidgets('Scaffold.drawerScrimColor takes precedence over ColorScheme.scrim', (
+    WidgetTester tester,
+  ) async {
+    const Color scrim = Colors.red;
+    const Color drawerScrimColor = Colors.green;
+    final scaffoldKey = GlobalKey<ScaffoldState>();
+
+    Widget getScrim() {
+      return tester
+          .widget<Semantics>(
+            find.descendant(
+              of: find.byType(DrawerController),
+              matching: find.byWidgetPredicate((Widget widget) {
+                return widget is Semantics && widget.properties.label == 'Dismiss';
+              }),
+            ),
+          )
+          .child!;
+    }
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple, scrim: scrim),
+          drawerTheme: const DrawerThemeData(scrimColor: Colors.blue),
+        ),
+        home: Scaffold(
+          key: scaffoldKey,
+          drawerScrimColor: drawerScrimColor,
+          drawer: const Drawer(child: SizedBox.expand()),
+        ),
+      ),
+    );
+
+    scaffoldKey.currentState!.openDrawer();
+    await tester.pumpAndSettle();
+    expect((getScrim() as ColoredBox).color, isSameColorAs(drawerScrimColor));
+  });
+
+  testWidgets('Drawer Material 3 ColorScheme.scrim uses 32% opacity', (WidgetTester tester) async {
+    final Color scrim = Colors.red.withValues(alpha: 0.2);
+    final scaffoldKey = GlobalKey<ScaffoldState>();
+
+    Widget getScrim() {
+      return tester
+          .widget<Semantics>(
+            find.descendant(
+              of: find.byType(DrawerController),
+              matching: find.byWidgetPredicate((Widget widget) {
+                return widget is Semantics && widget.properties.label == 'Dismiss';
+              }),
+            ),
+          )
+          .child!;
+    }
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple, scrim: scrim),
+        ),
+        home: Scaffold(
+          key: scaffoldKey,
+          drawer: const Drawer(child: SizedBox.expand()),
+        ),
+      ),
+    );
+
+    scaffoldKey.currentState!.openDrawer();
+    await tester.pumpAndSettle();
+    expect((getScrim() as ColoredBox).color, isSameColorAs(scrim.withValues(alpha: 0.32)));
+  });
+
+  testWidgets('Material 2 drawer scrim uses Colors.black54', (WidgetTester tester) async {
+    const Color scrim = Colors.red;
+    final scaffoldKey = GlobalKey<ScaffoldState>();
+
+    Widget getScrim() {
+      return tester
+          .widget<Semantics>(
+            find.descendant(
+              of: find.byType(DrawerController),
+              matching: find.byWidgetPredicate((Widget widget) {
+                return widget is Semantics && widget.properties.label == 'Dismiss';
+              }),
+            ),
+          )
+          .child!;
+    }
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(
+          useMaterial3: false,
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple, scrim: scrim),
+        ),
+        home: Scaffold(
+          key: scaffoldKey,
+          drawer: const Drawer(child: SizedBox.expand()),
+        ),
+      ),
+    );
+
+    scaffoldKey.currentState!.openDrawer();
+    await tester.pumpAndSettle();
+    expect((getScrim() as ColoredBox).color, isSameColorAs(Colors.black54));
   });
 
   testWidgets('Open/close drawers by flinging', (WidgetTester tester) async {
@@ -1339,11 +1521,14 @@ void main() {
 
       // Test label semantics.
       final Finder drawerLabelFinder = find.bySemanticsLabel(localizations.drawerLabel);
-      if (defaultTargetPlatform == TargetPlatform.iOS ||
-          defaultTargetPlatform == TargetPlatform.macOS) {
-        expect(drawerLabelFinder, findsNothing); // Apple platforms don't show drawer label.
+      if (!kIsWeb &&
+          (defaultTargetPlatform == TargetPlatform.iOS ||
+              defaultTargetPlatform == TargetPlatform.macOS)) {
+        expect(drawerLabelFinder, findsNothing); // Native Apple platforms don't show drawer label.
       } else {
-        expect(drawerLabelFinder, findsOneWidget); // Non-Apple platforms show drawer label.
+        // Non-Apple platforms and the web show drawer label, which the web
+        // uses as the drawer's accessible name.
+        expect(drawerLabelFinder, findsOneWidget);
       }
 
       // Test barrier semantics.
@@ -1408,6 +1593,104 @@ void main() {
     );
 
     semantics.dispose();
+  });
+
+  testWidgets('Drawer opened by Scaffold has the dialog semantics role', (
+    WidgetTester tester,
+  ) async {
+    final SemanticsHandle handle = tester.ensureSemantics();
+    final scaffoldKey = GlobalKey<ScaffoldState>();
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          key: scaffoldKey,
+          drawer: const Drawer(),
+          endDrawer: const Drawer(),
+          body: Container(),
+        ),
+      ),
+    );
+
+    scaffoldKey.currentState!.openDrawer();
+    await tester.pumpAndSettle();
+    expect(tester.getSemantics(find.byType(Drawer)).role, SemanticsRole.dialog);
+
+    scaffoldKey.currentState!.closeDrawer();
+    await tester.pumpAndSettle();
+    scaffoldKey.currentState!.openEndDrawer();
+    await tester.pumpAndSettle();
+    expect(tester.getSemantics(find.byType(Drawer)).role, SemanticsRole.dialog);
+
+    handle.dispose();
+  });
+
+  testWidgets('NavigationDrawer opened by Scaffold has the dialog semantics role', (
+    WidgetTester tester,
+  ) async {
+    final SemanticsHandle handle = tester.ensureSemantics();
+    final scaffoldKey = GlobalKey<ScaffoldState>();
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          key: scaffoldKey,
+          drawer: const NavigationDrawer(
+            children: <Widget>[
+              NavigationDrawerDestination(icon: Icon(Icons.message), label: Text('Messages')),
+              NavigationDrawerDestination(icon: Icon(Icons.person), label: Text('Profile')),
+            ],
+          ),
+          body: Container(),
+        ),
+      ),
+    );
+
+    scaffoldKey.currentState!.openDrawer();
+    await tester.pumpAndSettle();
+    expect(tester.getSemantics(find.byType(Drawer)).role, SemanticsRole.dialog);
+
+    handle.dispose();
+  });
+
+  testWidgets(
+    'Modal drawer on Apple platforms is named on the web only',
+    (WidgetTester tester) async {
+      final SemanticsHandle handle = tester.ensureSemantics();
+      final scaffoldKey = GlobalKey<ScaffoldState>();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(key: scaffoldKey, drawer: const Drawer(), body: Container()),
+        ),
+      );
+
+      scaffoldKey.currentState!.openDrawer();
+      await tester.pumpAndSettle();
+
+      // A dialog needs an accessible name on the web. Native Apple platforms
+      // keep their convention of not announcing a drawer label.
+      final SemanticsNode node = tester.getSemantics(find.byType(Drawer));
+      expect(node.role, SemanticsRole.dialog);
+      expect(node.label, kIsWeb ? 'Navigation menu' : '');
+
+      handle.dispose();
+    },
+    variant: const TargetPlatformVariant(<TargetPlatform>{
+      TargetPlatform.iOS,
+      TargetPlatform.macOS,
+    }),
+    tags: 'reduced-web-test-set',
+  );
+
+  testWidgets('Drawer outside a DrawerController has no semantics role', (
+    WidgetTester tester,
+  ) async {
+    final SemanticsHandle handle = tester.ensureSemantics();
+    await tester.pumpWidget(const MaterialApp(home: Scaffold(body: Drawer())));
+
+    final SemanticsNode node = tester.getSemantics(find.byType(Drawer));
+    expect(node.role, SemanticsRole.none);
+    expect(node.label, 'Navigation menu');
+
+    handle.dispose();
   });
 
   group('Material 2', () {

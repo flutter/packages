@@ -21,7 +21,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.MockedStatic;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 
@@ -36,16 +35,16 @@ public class VideoPlayerPluginTest {
   public void setUp() {
     MockitoAnnotations.openMocks(this);
     when(mockTextureRegistry.createSurfaceProducer()).thenReturn(mockSurfaceProducer);
+  }
 
+  private FlutterPlugin.FlutterPluginBinding createMockBinding() {
     FlutterPlugin.FlutterPluginBinding binding = mock(FlutterPlugin.FlutterPluginBinding.class);
     when(binding.getApplicationContext()).thenReturn(mock(Context.class));
     when(binding.getTextureRegistry()).thenReturn(mockTextureRegistry);
     when(binding.getBinaryMessenger())
         .thenReturn(mock(io.flutter.plugin.common.BinaryMessenger.class));
     when(binding.getPlatformViewRegistry()).thenReturn(mockPlatformViewRegistry);
-
-    plugin = new VideoPlayerPlugin();
-    plugin.onAttachedToEngine(binding);
+    return binding;
   }
 
   @SuppressWarnings("unchecked")
@@ -63,6 +62,8 @@ public class VideoPlayerPluginTest {
 
   @Test
   public void registersPlatformVideoViewFactory() {
+    plugin = new VideoPlayerPlugin();
+    plugin.onAttachedToEngine(createMockBinding());
     verify(mockPlatformViewRegistry)
         .registerViewFactory(
             eq("plugins.flutter.dev/video_player_android"), any(PlatformVideoViewFactory.class));
@@ -70,47 +71,43 @@ public class VideoPlayerPluginTest {
 
   @Test
   public void createsPlatformViewVideoPlayer() throws Exception {
-    try (MockedStatic<PlatformViewVideoPlayer> mockedPlatformViewVideoPlayerStatic =
-        mockStatic(PlatformViewVideoPlayer.class)) {
-      mockedPlatformViewVideoPlayerStatic
-          .when(() -> PlatformViewVideoPlayer.create(any(), any(), any(), any()))
-          .thenReturn(mock(PlatformViewVideoPlayer.class));
+    plugin =
+        new VideoPlayerPlugin(
+            (context, callbacks, asset, options) -> mock(PlatformViewVideoPlayer.class), null);
+    plugin.onAttachedToEngine(createMockBinding());
 
-      final CreationOptions options =
-          new CreationOptions(
-              "https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4",
-              null,
-              new HashMap<>(),
-              null,
-              null);
+    final CreationOptions options =
+        new CreationOptions(
+            "https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4",
+            null,
+            new HashMap<>(),
+            null,
+            null);
 
-      final long playerId = plugin.createForPlatformView(options);
+    final long playerId = plugin.createForPlatformView(options);
 
-      final LongSparseArray<VideoPlayer> videoPlayers = getVideoPlayers();
-      assertTrue(videoPlayers.get(playerId) instanceof PlatformViewVideoPlayer);
-    }
+    final LongSparseArray<VideoPlayer> videoPlayers = getVideoPlayers();
+    assertTrue(videoPlayers.get(playerId) instanceof PlatformViewVideoPlayer);
   }
 
   @Test
   public void createsTextureVideoPlayer() throws Exception {
-    try (MockedStatic<TextureVideoPlayer> mockedTextureVideoPlayerStatic =
-        mockStatic(TextureVideoPlayer.class)) {
-      mockedTextureVideoPlayerStatic
-          .when(() -> TextureVideoPlayer.create(any(), any(), any(), any(), any()))
-          .thenReturn(mock(TextureVideoPlayer.class));
+    plugin =
+        new VideoPlayerPlugin(
+            null, (context, callbacks, producer, asset, options) -> mock(TextureVideoPlayer.class));
+    plugin.onAttachedToEngine(createMockBinding());
 
-      final CreationOptions options =
-          new CreationOptions(
-              "https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4",
-              null,
-              new HashMap<>(),
-              null,
-              null);
+    final CreationOptions options =
+        new CreationOptions(
+            "https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4",
+            null,
+            new HashMap<>(),
+            null,
+            null);
 
-      final TexturePlayerIds ids = plugin.createForTextureView(options);
+    final TexturePlayerIds ids = plugin.createForTextureView(options);
 
-      final LongSparseArray<VideoPlayer> videoPlayers = getVideoPlayers();
-      assertTrue(videoPlayers.get(ids.getPlayerId()) instanceof TextureVideoPlayer);
-    }
+    final LongSparseArray<VideoPlayer> videoPlayers = getVideoPlayers();
+    assertTrue(videoPlayers.get(ids.getPlayerId()) instanceof TextureVideoPlayer);
   }
 }

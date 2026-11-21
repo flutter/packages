@@ -36,10 +36,9 @@ part 'generated/elevated_button_defaults_m3e.g.dart';
 /// such as dialogs or cards.
 ///
 /// An elevated button is a label [child] displayed on a [Material]
-/// widget whose [Material.elevation] increases when the button is
-/// pressed. The label's [Text] and [Icon] widgets are displayed in
-/// [style]'s [ButtonStyle.foregroundColor] and the button's filled
-/// background is the [ButtonStyle.backgroundColor].
+/// widget whose [Material.elevation] gives it a shadow. The label's [Text] and
+/// [Icon] widgets are displayed in [style]'s [ButtonStyle.foregroundColor] and
+/// the button's filled background is the [ButtonStyle.backgroundColor].
 ///
 /// The elevated button's default style is defined by
 /// [defaultStyleOf]. The style of this elevated button can be
@@ -49,7 +48,7 @@ part 'generated/elevated_button_defaults_m3e.g.dart';
 /// buttons in an app can be overridden with the [Theme]'s
 /// [ThemeData.elevatedButtonTheme] property.
 ///
-/// The static [styleFrom] method is a convenient way to create a
+/// The static [styleFrom] method is a convenient way to create an
 /// elevated button [ButtonStyle] from simple values.
 ///
 /// If [onPressed] and [onLongPress] callbacks are null, then the
@@ -80,7 +79,7 @@ part 'generated/elevated_button_defaults_m3e.g.dart';
 ///
 /// See also:
 ///
-///  * [FilledButton], a filled button that doesn't elevate when pressed.
+///  * [FilledButton], a filled button that uses a primary fill color.
 ///  * [FilledButton.tonal], a filled button variant that uses a secondary fill color.
 ///  * [OutlinedButton], a button with an outlined border and no fill color.
 ///  * [TextButton], a button with no outline or fill color.
@@ -106,8 +105,10 @@ class ElevatedButton extends ButtonStyleButton {
   /// Create an elevated button from a pair of widgets that serve as the button's
   /// [icon] and [label].
   ///
-  /// The icon and label are arranged in a row and padded by 12 logical pixels
-  /// at the start, and 16 at the end, with an 8 pixel gap in between.
+  /// The icon and label are arranged in a row and padded by 16 logical pixels
+  /// at the start, and 24 at the end, with an 8 pixel gap in between. If
+  /// [ThemeData.useMaterial3] is false, the padding is 12 at the start and 16
+  /// at the end.
   ///
   /// With the Material 3 Expressive style, the padding and the gap between the
   /// icon and the label depend on [ButtonStyle.sizeVariant]. See
@@ -173,9 +174,9 @@ class ElevatedButton extends ButtonStyleButton {
   /// null, the button icon will use the default icon color.
   ///
   /// The button's elevations are defined relative to the [elevation]
-  /// parameter. The disabled elevation is the same as the parameter
-  /// value, [elevation] + 2 is used when the button is hovered
-  /// or focused, and elevation + 6 is used when the button is pressed.
+  /// parameter. The disabled elevation is 0, [elevation] + 2 is used when
+  /// the button is hovered or focused, and [elevation] + 6 is used when the
+  /// button is pressed.
   ///
   /// All of the other parameters are either used directly or used to
   /// create a [WidgetStateProperty] with a single value for all
@@ -340,7 +341,7 @@ class ElevatedButton extends ButtonStyleButton {
   ///
   /// ## Material 2 defaults
   ///
-  /// * `textStyle` - Theme.textTheme.button
+  /// * `textStyle` - Theme.textTheme.labelLarge
   /// * `backgroundColor`
   ///   * disabled - Theme.colorScheme.onSurface(0.12)
   ///   * others - Theme.colorScheme.primary
@@ -349,7 +350,7 @@ class ElevatedButton extends ButtonStyleButton {
   ///   * others - Theme.colorScheme.onPrimary
   /// * `overlayColor`
   ///   * hovered - Theme.colorScheme.onPrimary(0.08)
-  ///   * focused or pressed - Theme.colorScheme.onPrimary(0.12)
+  ///   * focused or pressed - Theme.colorScheme.onPrimary(0.1)
   /// * `shadowColor` - Theme.shadowColor
   /// * `elevation`
   ///   * disabled - 0
@@ -359,8 +360,8 @@ class ElevatedButton extends ButtonStyleButton {
   /// * `padding`
   ///   * `default font size <= 14` - horizontal(16)
   ///   * `14 < default font size <= 28` - lerp(horizontal(16), horizontal(8))
-  ///   * `28 < default font size <= 36` - lerp(horizontal(8), horizontal(4))
-  ///   * `36 < default font size` - horizontal(4)
+  ///   * `28 < default font size <= 42` - lerp(horizontal(8), horizontal(4))
+  ///   * `42 < default font size` - horizontal(4)
   /// * `minimumSize` - Size(64, 36)
   /// * `fixedSize` - null
   /// * `maximumSize` - Size.infinite
@@ -379,8 +380,8 @@ class ElevatedButton extends ButtonStyleButton {
   /// * `padding`
   ///   * `default font size <= 14` - start(12) end(16)
   ///   * `14 < default font size <= 28` - lerp(start(12) end(16), horizontal(8))
-  ///   * `28 < default font size <= 36` - lerp(horizontal(8), horizontal(4))
-  ///   * `36 < default font size` - horizontal(4)
+  ///   * `28 < default font size <= 42` - lerp(horizontal(8), start(8) end(4))
+  ///   * `42 < default font size` - start(8) end(4)
   ///
   /// The default value for `side`, which defines the appearance of the button's
   /// outline, is null. That means that the outline is defined by the button
@@ -389,8 +390,9 @@ class ElevatedButton extends ButtonStyleButton {
   ///
   /// ## Material 3 defaults
   ///
-  /// If [ThemeData.useMaterial3] is set to true the following defaults will
-  /// be used:
+  /// With the Material 3 style, that is, when [ThemeData.useMaterial3] is true
+  /// and [ElevatedButtonThemeData.variant] isn't
+  /// [StyleVariant.material3Expressive], the following defaults will be used:
   ///
   /// * `textStyle` - Theme.textTheme.labelLarge
   /// * `backgroundColor`
@@ -412,11 +414,13 @@ class ElevatedButton extends ButtonStyleButton {
   /// * `padding`
   ///   * `default font size <= 14` - horizontal(24)
   ///   * `14 < default font size <= 28` - lerp(horizontal(24), horizontal(12))
-  ///   * `28 < default font size <= 36` - lerp(horizontal(12), horizontal(6))
-  ///   * `36 < default font size` - horizontal(6)
+  ///   * `28 < default font size <= 42` - lerp(horizontal(12), horizontal(6))
+  ///   * `42 < default font size` - horizontal(6)
   /// * `minimumSize` - Size(64, 40)
   /// * `fixedSize` - null
   /// * `maximumSize` - Size.infinite
+  /// * `iconSize` - 18
+  /// * `iconColor` - same as `foregroundColor`
   /// * `side` - null
   /// * `shape` - StadiumBorder()
   /// * `mouseCursor` - WidgetStateMouseCursor.adaptiveClickable
@@ -433,9 +437,10 @@ class ElevatedButton extends ButtonStyleButton {
   /// ## Material 3 Expressive defaults
   ///
   // TODO(QuncCccccc): Clean up [ThemeData.useMaterial3] once useMaterial3 is removed.
-  /// If [ThemeData.useMaterial3] is true and [ElevatedButtonThemeData.variant]
-  /// is [StyleVariant.material3Expressive], the following defaults will be
-  /// used. Values listed per size are for [ButtonSizeVariant.xSmall],
+  /// With the Material 3 Expressive style, that is, when
+  /// [ThemeData.useMaterial3] is true and [ElevatedButtonThemeData.variant] is
+  /// [StyleVariant.material3Expressive], the following defaults will be used.
+  /// Values listed per size are for [ButtonSizeVariant.xSmall],
   /// [ButtonSizeVariant.small], [ButtonSizeVariant.medium],
   /// [ButtonSizeVariant.large], and [ButtonSizeVariant.xLarge] respectively.
   /// The selected values only apply when [isSelected] is non-null.

@@ -132,4 +132,26 @@ void main() {
     expect(transformed.focalPoint, const Point(0.6, 0.6));
     expect(transformed.transform, AffineMatrix.identity);
   });
+
+  test('Paint applyBounds and toString preserve filterBlurX and filterBlurY', () {
+    const gradient = LinearGradient(
+      id: 'test',
+      from: Point.zero,
+      to: Point(1, 1),
+      colors: <Color>[Color.opaqueBlack, Color(0xFFABCDEF)],
+      tileMode: TileMode.mirror,
+      offsets: <double>[0.0, 1.0],
+      transform: AffineMatrix.identity,
+    );
+    const paint = Paint(fill: Fill(shader: gradient), filterBlurX: 4.0, filterBlurY: 8.0);
+
+    final Paint bounded = paint.applyBounds(
+      const Rect.fromLTWH(5, 5, 100, 100),
+      AffineMatrix.identity,
+    );
+    expect(bounded.filterBlurX, 4.0);
+    expect(bounded.filterBlurY, 8.0);
+    expect(bounded.toString(), contains('filterBlurX: 4.0'));
+    expect(bounded.toString(), contains('filterBlurY: 8.0'));
+  });
 }

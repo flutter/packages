@@ -15,6 +15,7 @@ import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.platform.PlatformViewRegistry;
 import io.flutter.plugins.videoplayer.VideoPlayerPlugin;
+import io.flutter.view.TextureRegistry;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,6 +45,7 @@ public class FlutterActivityTest {
   public void disposeAllPlayers() {
     when(flutterPluginBinding.getApplicationContext()).thenReturn(mock(Context.class));
     when(flutterPluginBinding.getBinaryMessenger()).thenReturn(mock(BinaryMessenger.class));
+    when(flutterPluginBinding.getTextureRegistry()).thenReturn(mock(TextureRegistry.class));
     when(flutterPluginBinding.getPlatformViewRegistry())
         .thenReturn(mock(PlatformViewRegistry.class));
 

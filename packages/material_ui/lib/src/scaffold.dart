@@ -8,6 +8,7 @@
 /// @docImport 'bottom_app_bar.dart';
 /// @docImport 'bottom_navigation_bar.dart';
 /// @docImport 'bottom_sheet_theme.dart';
+/// @docImport 'color_scheme.dart';
 /// @docImport 'drawer_theme.dart';
 /// @docImport 'icon_button.dart';
 /// @docImport 'tab_controller.dart';
@@ -529,6 +530,15 @@ class ScaffoldMessengerState extends State<ScaffoldMessenger> with TickerProvide
   /// or call [ScaffoldFeatureController.close] on the returned
   /// [ScaffoldFeatureController]. To remove a [MaterialBanner] suddenly (without an
   /// animation), use [removeCurrentMaterialBanner].
+  ///
+  /// When this [ScaffoldMessenger] is above the [Navigator], such as the one
+  /// created by [MaterialApp], a [MaterialBanner] stays visible after the route
+  /// that showed it is popped, and that route's [BuildContext] is deactivated.
+  /// Because of this, callbacks in [MaterialBanner.actions] should not call
+  /// [ScaffoldMessenger.of] with a [BuildContext] from the route that showed the
+  /// banner. Instead, wrap the action widget in a [Builder] to obtain an active
+  /// [BuildContext], or save the [ScaffoldMessengerState] reference before calling
+  /// [showMaterialBanner].
   ///
   /// See [ScaffoldMessenger.of] for information about how to obtain the
   /// [ScaffoldMessengerState].
@@ -2001,7 +2011,8 @@ class Scaffold extends StatefulWidget {
   /// The color to use for the scrim that obscures primary content while a drawer is open.
   ///
   /// If this is null, then [DrawerThemeData.scrimColor] is used. If that
-  /// is also null, then it defaults to [Colors.black54].
+  /// is also null, then [ColorScheme.scrim] at 32% opacity is used in
+  /// Material 3, and [Colors.black54] in Material 2.
   final Color? drawerScrimColor;
 
   /// A builder for the widget that obscures primary content while a bottom sheet is open.
