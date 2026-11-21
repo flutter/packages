@@ -2186,8 +2186,24 @@ class _RenderRangeSlider extends RenderBox with RelayoutWhenSystemFontsChangeMix
       height: kMinInteractiveDimension,
     );
 
-    _startSemanticsNode ??= SemanticsNode();
-    _endSemanticsNode ??= SemanticsNode();
+    if (_startSemanticsNode == null) {
+      late final SemanticsNode startNode;
+      startNode = SemanticsNode(
+        showOnScreen: () {
+          showOnScreen(descendant: this, rect: startNode.rect);
+        },
+      );
+      _startSemanticsNode = startNode;
+    }
+    if (_endSemanticsNode == null) {
+      late final SemanticsNode endNode;
+      endNode = SemanticsNode(
+        showOnScreen: () {
+          showOnScreen(descendant: this, rect: endNode.rect);
+        },
+      );
+      _endSemanticsNode = endNode;
+    }
 
     switch (textDirection) {
       case TextDirection.ltr:
@@ -2196,6 +2212,15 @@ class _RenderRangeSlider extends RenderBox with RelayoutWhenSystemFontsChangeMix
       case TextDirection.rtl:
         _startSemanticsNode!.rect = rightRect;
         _endSemanticsNode!.rect = leftRect;
+    }
+
+    if (node.parentPaintClipRect != null) {
+      final Rect startPaintRect = node.parentPaintClipRect!.intersect(_startSemanticsNode!.rect);
+      startSemanticsConfiguration.isHidden =
+          startPaintRect.isEmpty && !_startSemanticsNode!.rect.isEmpty;
+
+      final Rect endPaintRect = node.parentPaintClipRect!.intersect(_endSemanticsNode!.rect);
+      endSemanticsConfiguration.isHidden = endPaintRect.isEmpty && !_endSemanticsNode!.rect.isEmpty;
     }
 
     _startSemanticsNode!.updateWith(config: startSemanticsConfiguration);
