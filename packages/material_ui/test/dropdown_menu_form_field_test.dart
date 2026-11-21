@@ -175,6 +175,29 @@ void main() {
     expect(dropdownMenu.leadingIcon, leadingIcon);
   });
 
+  testWidgets('leadingIcon is shown in the text field prefix decoration', (
+    WidgetTester tester,
+  ) async {
+    const Widget leadingIcon = Icon(Icons.check);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: DropdownMenuFormField<MenuItem>(
+            leadingIcon: leadingIcon,
+            dropdownMenuEntries: menuEntries,
+          ),
+        ),
+      ),
+    );
+
+    final Finder textField = find.byType(TextField);
+    expect(
+      find.descendant(of: textField, matching: find.byIcon(Icons.check)),
+      findsOneWidget,
+    );
+  });
+
   testWidgets('Passes trailingIcon to underlying DropdownMenu', (WidgetTester tester) async {
     await tester.pumpWidget(
       MaterialApp(
