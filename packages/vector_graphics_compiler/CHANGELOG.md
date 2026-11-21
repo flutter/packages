@@ -1,5 +1,6 @@
-## NEXT
+## 1.3.7
 
+* Fixes shapes not rendering when a `style` attribute replaces a color with an unsupported `color()` function, such as `color(display-p3 ...)`.
 * Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
 
 ## 1.3.6
