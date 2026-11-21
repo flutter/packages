@@ -292,6 +292,13 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// The preset resolution selector for the camera.
   ResolutionSelector? _presetResolutionSelector;
 
+  /// The resolution preset requested for the camera.
+  ResolutionPreset? _resolutionPreset;
+
+  /// Whether the camera chosen in [createCameraWithSettings] supports
+  /// zero-shutter-lag capture.
+  bool _zeroShutterLagSupported = false;
+
   /// The configured target FPS range for the camera.
   CameraIntegerRange? _targetFpsRange;
 
@@ -402,7 +409,10 @@ class AndroidCameraCameraX extends CameraPlatform {
     unawaited(deviceOrientationManager.startListeningForDeviceOrientationChange());
     // Determine ResolutionSelector and QualitySelector based on
     // resolutionPreset for camera UseCases.
-    _presetResolutionSelector = _getResolutionSelectorFromPreset(mediaSettings?.resolutionPreset);
+    _resolutionPreset = mediaSettings?.resolutionPreset;
+    // Defaults to false if availableCameras was not called first.
+    _zeroShutterLagSupported = await chosenCameraInfo?.isZslSupported() ?? false;
+    _presetResolutionSelector = _getResolutionSelectorFromPreset(_resolutionPreset);
 
     final int? targetFps = mediaSettings?.fps;
     if (targetFps != null) {
@@ -427,7 +437,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     // Configure ImageCapture instance.
     _appliedFlashMode = null;
     imageCapture = ImageCapture(
-      resolutionSelector: _presetResolutionSelector,
+      resolutionSelector: _getImageCaptureResolutionSelector(),
       /* use CameraX default target rotation */ targetRotation: await deviceOrientationManager
           .getDefaultDisplayRotation(),
       jpegQuality: _jpegQuality,
@@ -1102,12 +1112,12 @@ class AndroidCameraCameraX extends CameraPlatform {
   ///
   /// CameraX only supports setting JPEG quality via `ImageCapture.Builder`
   /// at construction time, so this recreates the `ImageCapture` use case
-  /// with the requested quality. The next call to [takePicture] will bind
-  /// the new instance automatically.
+  /// with the requested quality and binds it if the previous instance was
+  /// bound.
   @override
   Future<void> setJpegImageQuality(int cameraId, int quality) async {
     _jpegQuality = quality;
-    await _recreateImageCapture();
+    await _recreateImageCapture(cameraId);
   }
 
   /// Returns whether the selected camera supports zero-shutter-lag capture.
@@ -1122,18 +1132,32 @@ class AndroidCameraCameraX extends CameraPlatform {
   ///
   /// CameraX only supports setting the capture mode via `ImageCapture.Builder`
   /// at construction time, so this recreates the `ImageCapture` use case with
-  /// the requested mode. The next call to [takePicture] will bind the new
-  /// instance automatically.
+  /// the requested mode and binds it if the previous instance was bound.
+  ///
+  /// CameraX disables zero-shutter-lag when a use case prefers higher
+  /// resolution over capture rate (see `UseCase.mergeConfigs` in CameraX), so
+  /// with [ResolutionPreset.max] enabling zero-shutter-lag limits still capture
+  /// to the largest regular output size that CameraX can select under its
+  /// constraints. On devices whose largest still size
+  /// is only available as a high-resolution output size, pictures will be
+  /// smaller than without zero-shutter-lag.
+  ///
+  /// Zero-shutter-lag also has no effect while the flash mode is on or auto.
+  /// See https://developer.android.com/media/camera/camerax/take-photo/zsl.
   ///
   /// If the selected camera does not support zero-shutter-lag, this only
   /// records the requested mode and skips recreating the use case.
   @override
   Future<void> setZeroShutterLagEnabled(int cameraId, bool enabled) async {
-    _zeroShutterLagEnabled = enabled;
-    if (!await isZeroShutterLagSupported(cameraId)) {
+    if (_zeroShutterLagEnabled == enabled) {
       return;
     }
-    await _recreateImageCapture();
+    _zeroShutterLagEnabled = enabled;
+    _zeroShutterLagSupported = await isZeroShutterLagSupported(cameraId);
+    if (!_zeroShutterLagSupported) {
+      return;
+    }
+    await _recreateImageCapture(cameraId);
   }
 
   /// Recreates [imageCapture] from the currently requested settings
@@ -1141,17 +1165,18 @@ class AndroidCameraCameraX extends CameraPlatform {
   ///
   /// CameraX only supports several `ImageCapture` settings via
   /// `ImageCapture.Builder` at construction time, so any change to one of
-  /// them requires unbinding and recreating the whole use case. The next
-  /// call to [takePicture] will bind the new instance automatically.
+  /// them requires unbinding and recreating the whole use case. The new
+  /// instance is bound right away if the previous one was bound, so the next
+  /// [takePicture] does not wait for the camera to reconfigure.
   ///
   /// If no camera has been created yet, this only updates the requested
   /// settings; [createCamera] applies them when the camera is created.
-  Future<void> _recreateImageCapture() async {
+  Future<void> _recreateImageCapture(int cameraId) async {
     if (imageCapture == null) {
       return;
     }
 
-    // Unbind the current ImageCapture if it exists and is bound.
+    final bool imageCaptureWasBound = await processCameraProvider!.isBound(imageCapture!);
     await _unbindUseCaseFromLifecycle(imageCapture!);
 
     // Recreate ImageCapture with the requested settings.
@@ -1160,11 +1185,15 @@ class AndroidCameraCameraX extends CameraPlatform {
         _lockedCaptureOrientation ?? await deviceOrientationManager.getDefaultDisplayRotation();
     _appliedFlashMode = null;
     imageCapture = ImageCapture(
-      resolutionSelector: _presetResolutionSelector,
+      resolutionSelector: _getImageCaptureResolutionSelector(),
       targetRotation: targetRotation,
       jpegQuality: _jpegQuality,
       zeroShutterLagEnabled: _zeroShutterLagEnabled,
     );
+
+    if (imageCaptureWasBound) {
+      await _bindUseCaseToLifecycle(imageCapture!, cameraId);
+    }
   }
 
   /// Prepare the capture session for video recording.
@@ -1631,6 +1660,30 @@ class AndroidCameraCameraX extends CameraPlatform {
     }
   }
 
+  /// Returns the [ResolutionSelector] for [imageCapture].
+  ///
+  /// For [ResolutionPreset.max], [imageCapture] prefers higher resolution over
+  /// capture rate, since some devices only offer their largest still size as a
+  /// high-resolution output size. This is skipped while zero-shutter-lag is
+  /// enabled on a camera that supports it, since CameraX does not support
+  /// zero-shutter-lag together with high-resolution output sizes.
+  ///
+  /// [preview] and [imageAnalysis] do not prefer higher resolution, since they
+  /// are currently bound together with [imageCapture] and are not expected to
+  /// get high-resolution output sizes anyway. Revisit this if the use cases
+  /// stop being bound together.
+  ResolutionSelector? _getImageCaptureResolutionSelector() {
+    if (_resolutionPreset != ResolutionPreset.max ||
+        (_zeroShutterLagEnabled && _zeroShutterLagSupported)) {
+      return _presetResolutionSelector;
+    }
+    return ResolutionSelector(
+      resolutionStrategy: ResolutionStrategy.highestAvailableStrategy,
+      allowedResolutionMode:
+          ResolutionSelectorAllowedResolutionMode.preferHigherResolutionOverCaptureRate,
+    );
+  }
+
   /// Returns the [ResolutionSelector] that maps to the specified resolution
   /// preset for camera [UseCase]s.
   ///
@@ -1661,11 +1714,7 @@ class AndroidCameraCameraX extends CameraPlatform {
       case ResolutionPreset.max:
         // Automatically set strategy to choose highest available.
         resolutionStrategy = ResolutionStrategy.highestAvailableStrategy;
-        return ResolutionSelector(
-          resolutionStrategy: resolutionStrategy,
-          allowedResolutionMode:
-              ResolutionSelectorAllowedResolutionMode.preferHigherResolutionOverCaptureRate,
-        );
+        return ResolutionSelector(resolutionStrategy: resolutionStrategy);
       case null:
         // If no preset is specified, default to CameraX's default behavior
         // for each UseCase.

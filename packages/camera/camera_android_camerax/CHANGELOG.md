@@ -1,3 +1,9 @@
+## 0.7.6+3
+
+* Fixes zero-shutter-lag having no effect with `ResolutionPreset.max`.
+  `ResolutionPreset.max` now prefers higher resolution over capture rate only
+  for still image capture, and not while zero-shutter-lag is enabled.
+
 ## 0.7.6+2
 
 * Reduces `takePicture` latency by not setting the `ImageCapture` flash mode
