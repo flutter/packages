@@ -1,3 +1,8 @@
+## 6.5.0
+
+* Uses the `nonce` from `AuthenticateParameters`, when provided, instead of
+  the nonce passed to `init`.
+
 ## 6.4.0
 
 * Adds support for `GoogleSignIn` 10.x.
