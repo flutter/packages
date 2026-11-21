@@ -22,15 +22,24 @@ void main() {
     expect(findHeadingLevelOnes, findsOne);
   });
 
-  testWidgets('badge label meets the 4.5:1 text contrast ratio', (WidgetTester tester) async {
-    await pumpsUseCase(tester, BadgeUseCase());
+  for (final Brightness brightness in Brightness.values) {
+    testWidgets('badge label meets the 4.5:1 text contrast ratio in $brightness', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(brightness: brightness),
+          home: Builder(builder: BadgeUseCase().buildWithTitle),
+        ),
+      );
 
-    final Container background = tester.widget<Container>(
-      find.descendant(of: find.byType(Badge), matching: find.byType(Container)),
-    );
-    final Color backgroundColor = (background.decoration! as ShapeDecoration).color!;
-    final Color textColor = paintedTextColor(tester, find.text('5'));
+      final Container background = tester.widget<Container>(
+        find.descendant(of: find.byType(Badge), matching: find.byType(Container)),
+      );
+      final Color backgroundColor = (background.decoration! as ShapeDecoration).color!;
+      final Color textColor = paintedTextColor(tester, find.text('5'));
 
-    expect(contrastRatio(textColor, backgroundColor), greaterThanOrEqualTo(4.5));
-  });
+      expect(contrastRatio(textColor, backgroundColor), greaterThanOrEqualTo(4.5));
+    });
+  }
 }
