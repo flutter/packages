@@ -83,6 +83,7 @@ public class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
       _ webView: WKWebView, decidePolicyFor navigationAction: WebKit.WKNavigationAction,
       decisionHandler: @escaping @MainActor (WebKit.WKNavigationActionPolicy) -> Void
     ) {
+      let decisionHandler = CompletionHandlerGuard(defaultValue: .cancel, handler: decisionHandler)
       registrar.dispatchOnMainThread { onFailure in
         self.api.decidePolicyForNavigationAction(
           pigeonInstance: self, webView: webView, navigationAction: navigationAction
@@ -120,6 +121,7 @@ public class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
       _ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction,
       decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
     ) {
+      let decisionHandler = CompletionHandlerGuard(defaultValue: .cancel, handler: decisionHandler)
       registrar.dispatchOnMainThread { onFailure in
         self.api.decidePolicyForNavigationAction(
           pigeonInstance: self, webView: webView, navigationAction: navigationAction
@@ -159,6 +161,7 @@ public class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
       _ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse,
       decisionHandler: @escaping @MainActor (WKNavigationResponsePolicy) -> Void
     ) {
+      let decisionHandler = CompletionHandlerGuard(defaultValue: .cancel, handler: decisionHandler)
       registrar.dispatchOnMainThread { onFailure in
         self.api.decidePolicyForNavigationResponse(
           pigeonInstance: self, webView: webView, navigationResponse: navigationResponse
@@ -196,6 +199,7 @@ public class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
       _ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse,
       decisionHandler: @escaping (WKNavigationResponsePolicy) -> Void
     ) {
+      let decisionHandler = CompletionHandlerGuard(defaultValue: .cancel, handler: decisionHandler)
       registrar.dispatchOnMainThread { onFailure in
         self.api.decidePolicyForNavigationResponse(
           pigeonInstance: self, webView: webView, navigationResponse: navigationResponse
@@ -238,6 +242,8 @@ public class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
         ->
         Void
     ) {
+      let completionHandler = CompletionHandlerGuard(
+        defaultValue: (.cancelAuthenticationChallenge, nil), handler: completionHandler)
       registrar.dispatchOnMainThread { onFailure in
         self.api.didReceiveAuthenticationChallenge(
           pigeonInstance: self, webView: webView, challenge: challenge
@@ -261,6 +267,8 @@ public class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
         @escaping (URLSession.AuthChallengeDisposition, URLCredential?) ->
         Void
     ) {
+      let completionHandler = CompletionHandlerGuard(
+        defaultValue: (.cancelAuthenticationChallenge, nil), handler: completionHandler)
       registrar.dispatchOnMainThread { onFailure in
         self.api.didReceiveAuthenticationChallenge(
           pigeonInstance: self, webView: webView, challenge: challenge

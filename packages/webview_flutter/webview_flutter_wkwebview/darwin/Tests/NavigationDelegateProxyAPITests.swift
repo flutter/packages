@@ -72,6 +72,40 @@ import WebKit
     #expect(result == .cancel)
   }
 
+  @MainActor @Test func decidePolicyForNavigationActionCancelsWhenReplyIsDropped() async throws {
+    let api = TestNavigationDelegateApi()
+    api.dropsReplies = true
+    let registrar = TestProxyApiRegistrar()
+    let instance = NavigationDelegateImpl(api: api, registrar: registrar)
+    let webView = WKWebView(frame: .zero)
+    let navigationAction = TestNavigationAction()
+
+    let result = await withCheckedContinuation { continuation in
+      instance.webView(webView, decidePolicyFor: navigationAction) { policy in
+        continuation.resume(returning: policy)
+      }
+    }
+
+    #expect(result == .cancel)
+  }
+
+  @MainActor @Test func decidePolicyForNavigationResponseCancelsWhenReplyIsDropped() async throws {
+    let api = TestNavigationDelegateApi()
+    api.dropsReplies = true
+    let registrar = TestProxyApiRegistrar()
+    let instance = NavigationDelegateImpl(api: api, registrar: registrar)
+    let webView = WKWebView(frame: .zero)
+    let navigationResponse = TestNavigationResponse.instance
+
+    let result = await withCheckedContinuation { continuation in
+      instance.webView(webView, decidePolicyFor: navigationResponse) { policy in
+        continuation.resume(returning: policy)
+      }
+    }
+
+    #expect(result == .cancel)
+  }
+
   @MainActor @Test func didFailNavigation() throws {
     let api = TestNavigationDelegateApi()
     let registrar = TestProxyApiRegistrar()
@@ -125,6 +159,26 @@ import WebKit
     #expect(credentialResult?.password == "password1")
     #expect(credentialResult?.persistence == URLCredential.Persistence.none)
   }
+
+  @MainActor @Test func didReceiveAuthenticationChallengeCancelsWhenReplyIsDropped() async throws {
+    let api = TestNavigationDelegateApi()
+    api.dropsReplies = true
+    let registrar = TestProxyApiRegistrar()
+    let instance = NavigationDelegateImpl(api: api, registrar: registrar)
+    let webView = WKWebView(frame: .zero)
+    let challenge = URLAuthenticationChallenge(
+      protectionSpace: URLProtectionSpace(), proposedCredential: nil, previousFailureCount: 3,
+      failureResponse: nil, error: nil, sender: TestURLAuthenticationChallengeSender())
+
+    let (dispositionResult, credentialResult) = await withCheckedContinuation { continuation in
+      instance.webView(webView, didReceive: challenge) { disposition, credential in
+        continuation.resume(returning: (disposition, credential))
+      }
+    }
+
+    #expect(dispositionResult == .cancelAuthenticationChallenge)
+    #expect(credentialResult == nil)
+  }
 }
 
 class TestNavigationDelegateApi: PigeonApiProtocolWKNavigationDelegate {
@@ -136,6 +190,9 @@ class TestNavigationDelegateApi: PigeonApiProtocolWKNavigationDelegate {
   var didFailProvisionalNavigationArgs: [AnyHashable?]? = nil
   var webViewWebContentProcessDidTerminateArgs: [AnyHashable?]? = nil
   var didReceiveAuthenticationChallengeArgs: [AnyHashable?]? = nil
+  /// Whether methods that expect a reply release `completion` without calling it, like when the
+  /// Flutter engine is destroyed while a call is pending.
+  var dropsReplies = false
 
   func registrar() -> ProxyAPIDelegate {
     return ProxyAPIDelegate()
@@ -168,6 +225,9 @@ class TestNavigationDelegateApi: PigeonApiProtocolWKNavigationDelegate {
       ) -> Void
   ) {
     decidePolicyForNavigationActionArgs = [webViewArg, navigationActionArg]
+    if dropsReplies {
+      return
+    }
     completion(.success(.allow))
   }
 
@@ -182,6 +242,9 @@ class TestNavigationDelegateApi: PigeonApiProtocolWKNavigationDelegate {
       ) -> Void
   ) {
     decidePolicyForNavigationResponseArgs = [webViewArg, navigationResponseArg]
+    if dropsReplies {
+      return
+    }
     completion(.success(.cancel))
   }
 
@@ -220,6 +283,9 @@ class TestNavigationDelegateApi: PigeonApiProtocolWKNavigationDelegate {
       ) -> Void
   ) {
     didReceiveAuthenticationChallengeArgs = [webViewArg, challengeArg]
+    if dropsReplies {
+      return
+    }
     completion(
       .success(
         AuthenticationChallengeResponse(
