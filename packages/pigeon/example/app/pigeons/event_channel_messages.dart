@@ -34,9 +34,9 @@ class StringEvent extends PlatformEvent {
 // #enddocregion sealed-definitions
 
 // #docregion event-definitions
-@EventChannelApi()
-abstract class EventChannelMethods {
-  PlatformEvent streamEvents();
+@HostApi()
+abstract class EventStreamHostApi {
+  Stream<PlatformEvent> streamEvents();
 }
 
 // #enddocregion event-definitions

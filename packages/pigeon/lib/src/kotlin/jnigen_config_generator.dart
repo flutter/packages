@@ -115,6 +115,12 @@ class JnigenConfigGenerator extends Generator<InternalJnigenConfigOptions> {
             indent.writeln(
               "'$packagePrefix${generatorOptions.kotlinOptions.errorClassName ?? 'FlutterError'}',",
             );
+            if (root.containsHostStream) {
+              final String prefix =
+                  generatorOptions.kotlinOptions.fileSpecificClassNameComponent ?? '';
+              indent.writeln("'$packagePrefix${prefix}PigeonStreamCallback',");
+              indent.writeln("'$packagePrefix${prefix}PigeonStreamCancelHandle',");
+            }
             final bool hybrid = generatorOptions.kotlinOptions.useJniHybrid;
             for (final Api api in root.apis) {
               if (hybrid && api is AstFlutterApi) {

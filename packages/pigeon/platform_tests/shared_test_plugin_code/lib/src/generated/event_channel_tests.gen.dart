@@ -13,6 +13,223 @@ import 'dart:typed_data' show Float64List, Int32List, Int64List;
 import 'package:flutter/services.dart';
 import 'package:meta/meta.dart' show immutable, protected, visibleForTesting;
 
+Object? _extractReplyValueOrThrow(
+  List<Object?>? replyList,
+  String channelName, {
+  required bool isNullValid,
+}) {
+  if (replyList == null) {
+    throw PlatformException(
+      code: 'channel-error',
+      message: 'Unable to establish connection on channel: "$channelName".',
+    );
+  } else if (replyList.length > 1) {
+    throw PlatformException(
+      code: replyList[0]! as String,
+      message: replyList[1] as String?,
+      details: replyList[2],
+    );
+  } else if (!isNullValid && (replyList.isNotEmpty && replyList[0] == null)) {
+    throw PlatformException(
+      code: 'null-error',
+      message: 'Host platform returned null value for non-null return value.',
+    );
+  }
+  return replyList.firstOrNull;
+}
+
+class _PigeonStreamSubscriptionHandler {
+  _PigeonStreamSubscriptionHandler({
+    required this.onData,
+    required this.onError,
+    required this.onDone,
+  });
+
+  final void Function(Object? event) onData;
+  final void Function(String code, String? message, Object? details) onError;
+  final void Function() onDone;
+}
+
+class _PigeonChannelStreamRouter {
+  _PigeonChannelStreamRouter(this.channel);
+
+  static const int _dataFrameKind = 0;
+  static const int _errorFrameKind = 1;
+  static const int _doneFrameKind = 2;
+
+  static int _nextSubscriptionId = 0;
+  static final Map<(BinaryMessenger, String), _PigeonChannelStreamRouter> _routers =
+      <(BinaryMessenger, String), _PigeonChannelStreamRouter>{};
+
+  final BasicMessageChannel<Object?> channel;
+  final Map<int, _PigeonStreamSubscriptionHandler> _subscriptions =
+      <int, _PigeonStreamSubscriptionHandler>{};
+
+  static int register({
+    required String eventsChannelName,
+    required MessageCodec<Object?> codec,
+    required BinaryMessenger? binaryMessenger,
+    required _PigeonStreamSubscriptionHandler handler,
+  }) {
+    final BinaryMessenger resolvedMessenger =
+        binaryMessenger ?? ServicesBinding.instance.defaultBinaryMessenger;
+    final (BinaryMessenger, String) key = (resolvedMessenger, eventsChannelName);
+    final _PigeonChannelStreamRouter router = _routers.putIfAbsent(key, () {
+      final _PigeonChannelStreamRouter created = _PigeonChannelStreamRouter(
+        BasicMessageChannel<Object?>(eventsChannelName, codec, binaryMessenger: binaryMessenger),
+      );
+      created._attach(key);
+      return created;
+    });
+    final int subscriptionId = _nextSubscriptionId++;
+    router._subscriptions[subscriptionId] = handler;
+    return subscriptionId;
+  }
+
+  static bool unregister({
+    required String eventsChannelName,
+    required BinaryMessenger? binaryMessenger,
+    required int subscriptionId,
+  }) {
+    final BinaryMessenger resolvedMessenger =
+        binaryMessenger ?? ServicesBinding.instance.defaultBinaryMessenger;
+    final (BinaryMessenger, String) key = (resolvedMessenger, eventsChannelName);
+    final _PigeonChannelStreamRouter? router = _routers[key];
+    if (router == null) {
+      return false;
+    }
+    final bool removed = router._subscriptions.remove(subscriptionId) != null;
+    if (router._subscriptions.isEmpty) {
+      _routers.remove(key);
+      router.channel.setMessageHandler(null);
+    }
+    return removed;
+  }
+
+  void _attach((BinaryMessenger, String) key) {
+    channel.setMessageHandler((Object? message) async {
+      final List<Object?> frame = message! as List<Object?>;
+      final int subscriptionId = frame[0]! as int;
+      final int kind = frame[1]! as int;
+      switch (kind) {
+        case _dataFrameKind:
+          final _PigeonStreamSubscriptionHandler? handler = _subscriptions[subscriptionId];
+          handler?.onData(frame[2]);
+        case _errorFrameKind:
+          final _PigeonStreamSubscriptionHandler? handler = _subscriptions.remove(subscriptionId);
+          if (_subscriptions.isEmpty) {
+            _routers.remove(key);
+            channel.setMessageHandler(null);
+          }
+          handler?.onError(frame[2]! as String, frame[3] as String?, frame[4]);
+        case _doneFrameKind:
+          final _PigeonStreamSubscriptionHandler? handler = _subscriptions.remove(subscriptionId);
+          if (_subscriptions.isEmpty) {
+            _routers.remove(key);
+            channel.setMessageHandler(null);
+          }
+          handler?.onDone();
+      }
+      return null;
+    });
+  }
+}
+
+Stream<T> _pigeonChannelStream<T>({
+  required String controlChannelName,
+  required MessageCodec<Object?> codec,
+  required BinaryMessenger? binaryMessenger,
+  required List<Object?> arguments,
+  required T Function(Object? event) decodeEvent,
+}) {
+  final String eventsChannelName = '$controlChannelName.events';
+  final BasicMessageChannel<Object?> controlChannel = BasicMessageChannel<Object?>(
+    controlChannelName,
+    codec,
+    binaryMessenger: binaryMessenger,
+  );
+  late final StreamController<T> controller;
+  int? subscriptionId;
+  bool terminatedFromHost = false;
+  controller = StreamController<T>(
+    onListen: () {
+      final int id = _PigeonChannelStreamRouter.register(
+        eventsChannelName: eventsChannelName,
+        codec: codec,
+        binaryMessenger: binaryMessenger,
+        handler: _PigeonStreamSubscriptionHandler(
+          onData: (Object? event) {
+            if (controller.isClosed) {
+              return;
+            }
+            try {
+              controller.add(decodeEvent(event));
+            } catch (e, st) {
+              controller.addError(e, st);
+            }
+          },
+          onError: (String code, String? message, Object? details) {
+            terminatedFromHost = true;
+            if (!controller.isClosed) {
+              controller.addError(
+                PlatformException(code: code, message: message, details: details),
+              );
+              unawaited(controller.close());
+            }
+          },
+          onDone: () {
+            terminatedFromHost = true;
+            if (!controller.isClosed) {
+              unawaited(controller.close());
+            }
+          },
+        ),
+      );
+      subscriptionId = id;
+      () async {
+        try {
+          final List<Object?>? replyList =
+              await controlChannel.send(<Object?>['listen', id, ...arguments]) as List<Object?>?;
+          _extractReplyValueOrThrow(replyList, controlChannelName, isNullValid: true);
+        } catch (e, st) {
+          final bool wasActive = _PigeonChannelStreamRouter.unregister(
+            eventsChannelName: eventsChannelName,
+            binaryMessenger: binaryMessenger,
+            subscriptionId: id,
+          );
+          if (wasActive && !controller.isClosed) {
+            terminatedFromHost = true;
+            controller.addError(e, st);
+            unawaited(controller.close());
+          }
+        }
+      }();
+    },
+    onCancel: () async {
+      final int? id = subscriptionId;
+      subscriptionId = null;
+      if (id == null || terminatedFromHost) {
+        return;
+      }
+      _PigeonChannelStreamRouter.unregister(
+        eventsChannelName: eventsChannelName,
+        binaryMessenger: binaryMessenger,
+        subscriptionId: id,
+      );
+      final List<Object?>? replyList =
+          await controlChannel.send(<Object?>['cancel', id]) as List<Object?>?;
+      if (replyList != null && replyList.length > 1) {
+        throw PlatformException(
+          code: replyList[0]! as String,
+          message: replyList[1] as String?,
+          details: replyList[2],
+        );
+      }
+    },
+  );
+  return controller.stream;
+}
+
 bool _deepEquals(Object? a, Object? b) {
   if (identical(a, b)) {
     return true;
@@ -701,61 +918,109 @@ class _PigeonCodec extends StandardMessageCodec {
   }
 }
 
-const StandardMethodCodec pigeonMethodCodec = StandardMethodCodec(_PigeonCodec());
+class StreamHostTestApi {
+  /// Constructor for [StreamHostTestApi]. The [binaryMessenger] named argument is
+  /// available for dependency injection. If it is left null, the default
+  /// BinaryMessenger will be used which routes to the host platform.
+  StreamHostTestApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
+    : pigeonVar_binaryMessenger = binaryMessenger,
+      pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+          ? '.$messageChannelSuffix'
+          : '';
 
-/// Returns a broadcast [Stream] of events from the `streamInts` event channel.
-///
-/// Each call to this method creates a new [EventChannel], so it should
-/// not be called multiple times for the same `instanceName`. To deliver
-/// events to multiple listeners, call this method once and listen to the
-/// returned broadcast stream multiple times instead.
-Stream<int> streamInts({String instanceName = ''}) {
-  if (instanceName.isNotEmpty) {
-    instanceName = '.$instanceName';
-  }
-  final EventChannel streamIntsChannel = EventChannel(
-    'dev.flutter.pigeon.pigeon_integration_tests.EventChannelMethods.streamInts$instanceName',
-    pigeonMethodCodec,
-  );
-  return streamIntsChannel.receiveBroadcastStream().map((dynamic event) {
-    return event as int;
-  });
-}
+  final BinaryMessenger? pigeonVar_binaryMessenger;
+  static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
 
-/// Returns a broadcast [Stream] of events from the `streamEvents` event channel.
-///
-/// Each call to this method creates a new [EventChannel], so it should
-/// not be called multiple times for the same `instanceName`. To deliver
-/// events to multiple listeners, call this method once and listen to the
-/// returned broadcast stream multiple times instead.
-Stream<PlatformEvent> streamEvents({String instanceName = ''}) {
-  if (instanceName.isNotEmpty) {
-    instanceName = '.$instanceName';
-  }
-  final EventChannel streamEventsChannel = EventChannel(
-    'dev.flutter.pigeon.pigeon_integration_tests.EventChannelMethods.streamEvents$instanceName',
-    pigeonMethodCodec,
-  );
-  return streamEventsChannel.receiveBroadcastStream().map((dynamic event) {
-    return event as PlatformEvent;
-  });
-}
+  final String pigeonVar_messageChannelSuffix;
 
-/// Returns a broadcast [Stream] of events from the `streamConsistentNumbers` event channel.
-///
-/// Each call to this method creates a new [EventChannel], so it should
-/// not be called multiple times for the same `instanceName`. To deliver
-/// events to multiple listeners, call this method once and listen to the
-/// returned broadcast stream multiple times instead.
-Stream<int> streamConsistentNumbers({String instanceName = ''}) {
-  if (instanceName.isNotEmpty) {
-    instanceName = '.$instanceName';
+  Stream<int> streamNumbers({int count = 5, int start = 0}) {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.streamNumbers$pigeonVar_messageChannelSuffix';
+    return _pigeonChannelStream<int>(
+      controlChannelName: pigeonVar_channelName,
+      codec: pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+      arguments: <Object?>[count, start],
+      decodeEvent: (Object? event) => event! as int,
+    );
   }
-  final EventChannel streamConsistentNumbersChannel = EventChannel(
-    'dev.flutter.pigeon.pigeon_integration_tests.EventChannelMethods.streamConsistentNumbers$instanceName',
-    pigeonMethodCodec,
-  );
-  return streamConsistentNumbersChannel.receiveBroadcastStream().map((dynamic event) {
-    return event as int;
-  });
+
+  Stream<PlatformEvent> streamPlatformEvents() {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.streamPlatformEvents$pigeonVar_messageChannelSuffix';
+    return _pigeonChannelStream<PlatformEvent>(
+      controlChannelName: pigeonVar_channelName,
+      codec: pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+      arguments: const <Object?>[],
+      decodeEvent: (Object? event) => event! as PlatformEvent,
+    );
+  }
+
+  Stream<int?> streamNullableInts() {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.streamNullableInts$pigeonVar_messageChannelSuffix';
+    return _pigeonChannelStream<int?>(
+      controlChannelName: pigeonVar_channelName,
+      codec: pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+      arguments: const <Object?>[],
+      decodeEvent: (Object? event) => event as int?,
+    );
+  }
+
+  Stream<int> streamError(bool customError) {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.streamError$pigeonVar_messageChannelSuffix';
+    return _pigeonChannelStream<int>(
+      controlChannelName: pigeonVar_channelName,
+      codec: pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+      arguments: <Object?>[customError],
+      decodeEvent: (Object? event) => event! as int,
+    );
+  }
+
+  Stream<String> streamViaCallback(String prefix, int count) {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.streamViaCallback$pigeonVar_messageChannelSuffix';
+    return _pigeonChannelStream<String>(
+      controlChannelName: pigeonVar_channelName,
+      codec: pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+      arguments: <Object?>[prefix, count],
+      decodeEvent: (Object? event) => event! as String,
+    );
+  }
+
+  Future<int> getCancelledStreamCount() async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.getCancelledStreamCount$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return pigeonVar_replyValue! as int;
+  }
+
+  Future<void> resetCancelledStreamCount() async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.StreamHostTestApi.resetCancelledStreamCount$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+  }
 }

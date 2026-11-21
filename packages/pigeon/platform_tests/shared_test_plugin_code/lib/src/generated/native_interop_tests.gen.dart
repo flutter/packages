@@ -42,6 +42,198 @@ Object? _extractReplyValueOrThrow(
   return replyList.firstOrNull;
 }
 
+class _PigeonStreamSubscriptionHandler {
+  _PigeonStreamSubscriptionHandler({
+    required this.onData,
+    required this.onError,
+    required this.onDone,
+  });
+
+  final void Function(Object? event) onData;
+  final void Function(String code, String? message, Object? details) onError;
+  final void Function() onDone;
+}
+
+class _PigeonChannelStreamRouter {
+  _PigeonChannelStreamRouter(this.channel);
+
+  static const int _dataFrameKind = 0;
+  static const int _errorFrameKind = 1;
+  static const int _doneFrameKind = 2;
+
+  static int _nextSubscriptionId = 0;
+  static final Map<(BinaryMessenger, String), _PigeonChannelStreamRouter> _routers =
+      <(BinaryMessenger, String), _PigeonChannelStreamRouter>{};
+
+  final BasicMessageChannel<Object?> channel;
+  final Map<int, _PigeonStreamSubscriptionHandler> _subscriptions =
+      <int, _PigeonStreamSubscriptionHandler>{};
+
+  static int register({
+    required String eventsChannelName,
+    required MessageCodec<Object?> codec,
+    required BinaryMessenger? binaryMessenger,
+    required _PigeonStreamSubscriptionHandler handler,
+  }) {
+    final BinaryMessenger resolvedMessenger =
+        binaryMessenger ?? ServicesBinding.instance.defaultBinaryMessenger;
+    final (BinaryMessenger, String) key = (resolvedMessenger, eventsChannelName);
+    final _PigeonChannelStreamRouter router = _routers.putIfAbsent(key, () {
+      final _PigeonChannelStreamRouter created = _PigeonChannelStreamRouter(
+        BasicMessageChannel<Object?>(eventsChannelName, codec, binaryMessenger: binaryMessenger),
+      );
+      created._attach(key);
+      return created;
+    });
+    final int subscriptionId = _nextSubscriptionId++;
+    router._subscriptions[subscriptionId] = handler;
+    return subscriptionId;
+  }
+
+  static bool unregister({
+    required String eventsChannelName,
+    required BinaryMessenger? binaryMessenger,
+    required int subscriptionId,
+  }) {
+    final BinaryMessenger resolvedMessenger =
+        binaryMessenger ?? ServicesBinding.instance.defaultBinaryMessenger;
+    final (BinaryMessenger, String) key = (resolvedMessenger, eventsChannelName);
+    final _PigeonChannelStreamRouter? router = _routers[key];
+    if (router == null) {
+      return false;
+    }
+    final bool removed = router._subscriptions.remove(subscriptionId) != null;
+    if (router._subscriptions.isEmpty) {
+      _routers.remove(key);
+      router.channel.setMessageHandler(null);
+    }
+    return removed;
+  }
+
+  void _attach((BinaryMessenger, String) key) {
+    channel.setMessageHandler((Object? message) async {
+      final List<Object?> frame = message! as List<Object?>;
+      final int subscriptionId = frame[0]! as int;
+      final int kind = frame[1]! as int;
+      switch (kind) {
+        case _dataFrameKind:
+          final _PigeonStreamSubscriptionHandler? handler = _subscriptions[subscriptionId];
+          handler?.onData(frame[2]);
+        case _errorFrameKind:
+          final _PigeonStreamSubscriptionHandler? handler = _subscriptions.remove(subscriptionId);
+          if (_subscriptions.isEmpty) {
+            _routers.remove(key);
+            channel.setMessageHandler(null);
+          }
+          handler?.onError(frame[2]! as String, frame[3] as String?, frame[4]);
+        case _doneFrameKind:
+          final _PigeonStreamSubscriptionHandler? handler = _subscriptions.remove(subscriptionId);
+          if (_subscriptions.isEmpty) {
+            _routers.remove(key);
+            channel.setMessageHandler(null);
+          }
+          handler?.onDone();
+      }
+      return null;
+    });
+  }
+}
+
+Stream<T> _pigeonChannelStream<T>({
+  required String controlChannelName,
+  required MessageCodec<Object?> codec,
+  required BinaryMessenger? binaryMessenger,
+  required List<Object?> arguments,
+  required T Function(Object? event) decodeEvent,
+}) {
+  final String eventsChannelName = '$controlChannelName.events';
+  final BasicMessageChannel<Object?> controlChannel = BasicMessageChannel<Object?>(
+    controlChannelName,
+    codec,
+    binaryMessenger: binaryMessenger,
+  );
+  late final StreamController<T> controller;
+  int? subscriptionId;
+  bool terminatedFromHost = false;
+  controller = StreamController<T>(
+    onListen: () {
+      final int id = _PigeonChannelStreamRouter.register(
+        eventsChannelName: eventsChannelName,
+        codec: codec,
+        binaryMessenger: binaryMessenger,
+        handler: _PigeonStreamSubscriptionHandler(
+          onData: (Object? event) {
+            if (controller.isClosed) {
+              return;
+            }
+            try {
+              controller.add(decodeEvent(event));
+            } catch (e, st) {
+              controller.addError(e, st);
+            }
+          },
+          onError: (String code, String? message, Object? details) {
+            terminatedFromHost = true;
+            if (!controller.isClosed) {
+              controller.addError(
+                PlatformException(code: code, message: message, details: details),
+              );
+              unawaited(controller.close());
+            }
+          },
+          onDone: () {
+            terminatedFromHost = true;
+            if (!controller.isClosed) {
+              unawaited(controller.close());
+            }
+          },
+        ),
+      );
+      subscriptionId = id;
+      () async {
+        try {
+          final List<Object?>? replyList =
+              await controlChannel.send(<Object?>['listen', id, ...arguments]) as List<Object?>?;
+          _extractReplyValueOrThrow(replyList, controlChannelName, isNullValid: true);
+        } catch (e, st) {
+          final bool wasActive = _PigeonChannelStreamRouter.unregister(
+            eventsChannelName: eventsChannelName,
+            binaryMessenger: binaryMessenger,
+            subscriptionId: id,
+          );
+          if (wasActive && !controller.isClosed) {
+            terminatedFromHost = true;
+            controller.addError(e, st);
+            unawaited(controller.close());
+          }
+        }
+      }();
+    },
+    onCancel: () async {
+      final int? id = subscriptionId;
+      subscriptionId = null;
+      if (id == null || terminatedFromHost) {
+        return;
+      }
+      _PigeonChannelStreamRouter.unregister(
+        eventsChannelName: eventsChannelName,
+        binaryMessenger: binaryMessenger,
+        subscriptionId: id,
+      );
+      final List<Object?>? replyList =
+          await controlChannel.send(<Object?>['cancel', id]) as List<Object?>?;
+      if (replyList != null && replyList.length > 1) {
+        throw PlatformException(
+          code: replyList[0]! as String,
+          message: replyList[1] as String?,
+          details: replyList[2],
+        );
+      }
+    },
+  );
+  return controller.stream;
+}
+
 List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty = false}) {
   if (empty) {
     return <Object?>[];
@@ -11824,5 +12016,217 @@ abstract class NativeInteropSealedClassFlutterApi {
       api,
       name: name.isEmpty ? defaultInstanceName : name,
     );
+  }
+}
+
+@internal
+NativeInteropStreamHostApiForNativeInterop? pigeon_getInstance_NativeInteropStreamHostApi({
+  String channelName = defaultInstanceName,
+}) {
+  throw UnsupportedError(
+    'Native Interop is not supported on this platform. Use NativeInteropStreamHostApi instead.',
+  );
+}
+
+abstract class NativeInteropStreamHostApiForNativeInterop {
+  /// Returns instance of NativeInteropStreamHostApiForNativeInterop with specified [channelName] if one has been registered.
+  static NativeInteropStreamHostApiForNativeInterop? getInstance({
+    String channelName = defaultInstanceName,
+  }) => pigeon_native.pigeon_getInstance_NativeInteropStreamHostApi(channelName: channelName);
+
+  Stream<int> streamNumbers({int count = 5, int start = 0});
+
+  Stream<int?> streamNullableInts();
+
+  Stream<NativeInteropShape> streamShapes();
+
+  Stream<NativeInteropShape> streamShapesWithFilter(NativeInteropShape filter);
+
+  Stream<int> streamError(bool customError);
+
+  Stream<String> streamViaCallback(String prefix, int count);
+
+  int getCancelledStreamCount();
+
+  void resetCancelledStreamCount();
+}
+
+/// Host API with streaming methods for native interop integration tests.
+class NativeInteropStreamHostApi {
+  /// Constructor for [NativeInteropStreamHostApi]. The [binaryMessenger] named argument is
+  /// available for dependency injection. If it is left null, the default
+  /// BinaryMessenger will be used which routes to the host platform.
+  NativeInteropStreamHostApi({
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+    NativeInteropStreamHostApiForNativeInterop? nativeInteropApi,
+  }) : pigeonVar_binaryMessenger = binaryMessenger,
+       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+           ? '.$messageChannelSuffix'
+           : '',
+       _nativeInteropApi = nativeInteropApi;
+
+  /// Creates an instance of [NativeInteropStreamHostApi] that requests an instance of
+  /// [NativeInteropStreamHostApiForNativeInterop] from the host platform with a matching instance name
+  /// to [messageChannelSuffix] or the default instance.
+  ///
+  /// Throws [ArgumentError] if no matching instance can be found.
+  factory NativeInteropStreamHostApi.createWithNativeInteropApi({
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) {
+    if (kIsWeb) {
+      throw UnsupportedError(
+        'Native Interop is not supported on this platform. Use the default constructor of NativeInteropStreamHostApi instead.',
+      );
+    }
+    final NativeInteropStreamHostApiForNativeInterop? nativeInteropApi =
+        NativeInteropStreamHostApiForNativeInterop.getInstance(
+          channelName: messageChannelSuffix.isEmpty ? defaultInstanceName : messageChannelSuffix,
+        );
+    if (nativeInteropApi == null) {
+      throw ArgumentError(
+        'No NativeInteropStreamHostApi instance with ${messageChannelSuffix.isEmpty ? 'no ' : ''}instance name ${messageChannelSuffix.isNotEmpty ? '"$messageChannelSuffix" ' : ''}found.',
+      );
+    }
+    return NativeInteropStreamHostApi(
+      binaryMessenger: binaryMessenger,
+      messageChannelSuffix: messageChannelSuffix,
+      nativeInteropApi: nativeInteropApi,
+    );
+  }
+
+  final BinaryMessenger? pigeonVar_binaryMessenger;
+  static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
+
+  final String pigeonVar_messageChannelSuffix;
+
+  final NativeInteropStreamHostApiForNativeInterop? _nativeInteropApi;
+
+  Stream<int> streamNumbers({int count = 5, int start = 0}) {
+    if (_nativeInteropApi != null) {
+      return _nativeInteropApi.streamNumbers(count: count, start: start);
+    }
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropStreamHostApi.streamNumbers$pigeonVar_messageChannelSuffix';
+    return _pigeonChannelStream<int>(
+      controlChannelName: pigeonVar_channelName,
+      codec: pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+      arguments: <Object?>[count, start],
+      decodeEvent: (Object? event) => event! as int,
+    );
+  }
+
+  Stream<int?> streamNullableInts() {
+    if (_nativeInteropApi != null) {
+      return _nativeInteropApi.streamNullableInts();
+    }
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropStreamHostApi.streamNullableInts$pigeonVar_messageChannelSuffix';
+    return _pigeonChannelStream<int?>(
+      controlChannelName: pigeonVar_channelName,
+      codec: pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+      arguments: const <Object?>[],
+      decodeEvent: (Object? event) => event as int?,
+    );
+  }
+
+  Stream<NativeInteropShape> streamShapes() {
+    if (_nativeInteropApi != null) {
+      return _nativeInteropApi.streamShapes();
+    }
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropStreamHostApi.streamShapes$pigeonVar_messageChannelSuffix';
+    return _pigeonChannelStream<NativeInteropShape>(
+      controlChannelName: pigeonVar_channelName,
+      codec: pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+      arguments: const <Object?>[],
+      decodeEvent: (Object? event) => event! as NativeInteropShape,
+    );
+  }
+
+  Stream<NativeInteropShape> streamShapesWithFilter(NativeInteropShape filter) {
+    if (_nativeInteropApi != null) {
+      return _nativeInteropApi.streamShapesWithFilter(filter);
+    }
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropStreamHostApi.streamShapesWithFilter$pigeonVar_messageChannelSuffix';
+    return _pigeonChannelStream<NativeInteropShape>(
+      controlChannelName: pigeonVar_channelName,
+      codec: pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+      arguments: <Object?>[filter],
+      decodeEvent: (Object? event) => event! as NativeInteropShape,
+    );
+  }
+
+  Stream<int> streamError(bool customError) {
+    if (_nativeInteropApi != null) {
+      return _nativeInteropApi.streamError(customError);
+    }
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropStreamHostApi.streamError$pigeonVar_messageChannelSuffix';
+    return _pigeonChannelStream<int>(
+      controlChannelName: pigeonVar_channelName,
+      codec: pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+      arguments: <Object?>[customError],
+      decodeEvent: (Object? event) => event! as int,
+    );
+  }
+
+  Stream<String> streamViaCallback(String prefix, int count) {
+    if (_nativeInteropApi != null) {
+      return _nativeInteropApi.streamViaCallback(prefix, count);
+    }
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropStreamHostApi.streamViaCallback$pigeonVar_messageChannelSuffix';
+    return _pigeonChannelStream<String>(
+      controlChannelName: pigeonVar_channelName,
+      codec: pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+      arguments: <Object?>[prefix, count],
+      decodeEvent: (Object? event) => event! as String,
+    );
+  }
+
+  Future<int> getCancelledStreamCount() async {
+    if (_nativeInteropApi != null) {
+      return _nativeInteropApi.getCancelledStreamCount();
+    }
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropStreamHostApi.getCancelledStreamCount$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return pigeonVar_replyValue! as int;
+  }
+
+  Future<void> resetCancelledStreamCount() async {
+    if (_nativeInteropApi != null) {
+      return _nativeInteropApi.resetCancelledStreamCount();
+    }
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropStreamHostApi.resetCancelledStreamCount$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 }

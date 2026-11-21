@@ -5,14 +5,37 @@
 // See also: https://pub.dev/packages/pigeon
 @file:Suppress("UNCHECKED_CAST", "ArrayInDataClass")
 
+import android.util.Log
+import io.flutter.plugin.common.BasicMessageChannel
 import io.flutter.plugin.common.BinaryMessenger
-import io.flutter.plugin.common.EventChannel
+import io.flutter.plugin.common.MessageCodec
 import io.flutter.plugin.common.StandardMessageCodec
-import io.flutter.plugin.common.StandardMethodCodec
 import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 
 private object EventChannelMessagesPigeonUtils {
+
+  fun wrapResult(result: Any?): List<Any?> {
+    return listOf(result)
+  }
+
+  fun wrapError(exception: Throwable): List<Any?> {
+    return if (exception is FlutterError) {
+      listOf(exception.code, exception.message, exception.details)
+    } else {
+      listOf(
+          exception.javaClass.simpleName,
+          exception.toString(),
+          "Cause: " + exception.cause + ", Stacktrace: " + Log.getStackTraceString(exception))
+    }
+  }
+
   fun doubleEquals(a: Double, b: Double): Boolean {
     // Normalize -0.0 to 0.0 and handle NaN equality.
     return (if (a == 0.0) 0.0 else a) == (if (b == 0.0) 0.0 else b) || (a.isNaN() && b.isNaN())
@@ -158,6 +181,106 @@ private object EventChannelMessagesPigeonUtils {
   }
 }
 
+private class EventChannelMessagesPigeonStreamRegistry {
+  companion object {
+    const val DATA_FRAME_KIND = 0L
+    const val ERROR_FRAME_KIND = 1L
+    const val DONE_FRAME_KIND = 2L
+  }
+
+  private class Entry(val onCancel: () -> Unit)
+
+  private val subscriptions =
+      java.util.IdentityHashMap<BinaryMessenger, MutableMap<String, MutableMap<Long, Entry>>>()
+
+  private fun invokeCancelSafely(action: (() -> Unit)?) {
+    if (action == null) return
+    try {
+      action.invoke()
+    } catch (exception: Throwable) {
+      // Guard Log.e against non-Robolectric JVM unit tests where android.util.Log is unmocked.
+      try {
+        Log.e(
+            "EventChannelMessagesPigeonStreamRegistry",
+            "Failed to cancel stream subscription",
+            exception)
+      } catch (_: RuntimeException) {}
+    }
+  }
+
+  fun register(
+      messenger: BinaryMessenger,
+      channelName: String,
+      subscriptionId: Long,
+      onCancel: () -> Unit,
+  ): Any {
+    val entry = Entry(onCancel)
+    val previous =
+        kotlin.synchronized(subscriptions) {
+          val messengerMap = subscriptions.getOrPut(messenger) { mutableMapOf() }
+          val channelMap = messengerMap.getOrPut(channelName) { mutableMapOf() }
+          channelMap.put(subscriptionId, entry)
+        }
+    invokeCancelSafely(previous?.onCancel)
+    return entry
+  }
+
+  fun remove(
+      messenger: BinaryMessenger,
+      channelName: String,
+      subscriptionId: Long,
+      token: Any,
+  ): Boolean {
+    return kotlin.synchronized(subscriptions) {
+      val messengerMap = subscriptions[messenger] ?: return@synchronized false
+      val channelMap = messengerMap[channelName] ?: return@synchronized false
+      if (channelMap[subscriptionId] !== token) {
+        return@synchronized false
+      }
+      channelMap.remove(subscriptionId)
+      if (channelMap.isEmpty()) {
+        messengerMap.remove(channelName)
+        if (messengerMap.isEmpty()) {
+          subscriptions.remove(messenger)
+        }
+      }
+      true
+    }
+  }
+
+  fun cancel(messenger: BinaryMessenger, channelName: String, subscriptionId: Long) {
+    val previous =
+        kotlin.synchronized(subscriptions) {
+          val messengerMap = subscriptions[messenger] ?: return@synchronized null
+          val channelMap = messengerMap[channelName] ?: return@synchronized null
+          val entry = channelMap.remove(subscriptionId)
+          if (channelMap.isEmpty()) {
+            messengerMap.remove(channelName)
+            if (messengerMap.isEmpty()) {
+              subscriptions.remove(messenger)
+            }
+          }
+          entry
+        }
+    previous?.onCancel?.invoke()
+  }
+
+  fun cancelAll(messenger: BinaryMessenger, channelName: String) {
+    val entries =
+        kotlin.synchronized(subscriptions) {
+          val messengerMap = subscriptions[messenger] ?: return@synchronized emptyList()
+          val removed = messengerMap.remove(channelName)?.values?.toList().orEmpty()
+          if (messengerMap.isEmpty()) {
+            subscriptions.remove(messenger)
+          }
+          removed
+        }
+    for (entry in entries) {
+      invokeCancelSafely(entry.onCancel)
+    }
+  }
+}
+
 /**
  * Generated class from Pigeon that represents data sent in messages. This class should not be
  * extended by any user class outside of the generated file.
@@ -265,93 +388,113 @@ private open class EventChannelMessagesPigeonCodec : StandardMessageCodec() {
   }
 }
 
-val EventChannelMessagesPigeonMethodCodec = StandardMethodCodec(EventChannelMessagesPigeonCodec())
+/** Generated interface from Pigeon that represents a handler of messages from Flutter. */
+interface EventStreamHostApi {
+  fun streamEvents(): Flow<PlatformEvent>
 
-private class EventChannelMessagesPigeonStreamHandler<T>(
-    val wrapper: EventChannelMessagesPigeonEventChannelWrapper<T>
-) : EventChannel.StreamHandler {
-  var pigeonSink: PigeonEventSink<T>? = null
-
-  override fun onListen(p0: Any?, sink: EventChannel.EventSink) {
-    pigeonSink = PigeonEventSink<T>(sink)
-    wrapper.onListen(p0, pigeonSink!!)
-  }
-
-  override fun onCancel(p0: Any?) {
-    pigeonSink = null
-    wrapper.onCancel(p0)
-  }
-}
-
-interface EventChannelMessagesPigeonEventChannelWrapper<T> {
-  fun onListen(p0: Any?, sink: PigeonEventSink<T>) {}
-
-  fun onCancel(p0: Any?) {}
-}
-
-class PigeonEventSink<T>(private val sink: EventChannel.EventSink) {
-  fun success(value: T) {
-    sink.success(value)
-  }
-
-  fun error(errorCode: String, errorMessage: String?, errorDetails: Any?) {
-    sink.error(errorCode, errorMessage, errorDetails)
-  }
-
-  fun endOfStream() {
-    sink.endOfStream()
-  }
-}
-
-/**
- * A typed channel for communicating with the Flutter application using asynchronous event streams.
- */
-class StreamEventsEventChannel(messenger: BinaryMessenger, instanceName: String = "") {
-  private val channel: EventChannel
-
-  init {
-    var channelName = "dev.flutter.pigeon.pigeon_example_package.EventChannelMethods.streamEvents"
-    if (instanceName.isNotEmpty()) {
-      channelName += ".$instanceName"
-    }
-    channel = EventChannel(messenger, channelName, EventChannelMessagesPigeonMethodCodec)
-  }
-
-  /**
-   * Sets the stream handler for this channel, replacing any previous handler.
-   *
-   * Pass `null` to remove the event channel registration.
-   */
-  fun setStreamHandler(streamHandler: StreamEventsStreamHandler?) {
-    val internalHandler =
-        streamHandler?.let { EventChannelMessagesPigeonStreamHandler<PlatformEvent>(it) }
-    channel.setStreamHandler(internalHandler)
-  }
-}
-
-abstract class StreamEventsStreamHandler :
-    EventChannelMessagesPigeonEventChannelWrapper<PlatformEvent> {
   companion object {
+    private val streamRegistry = EventChannelMessagesPigeonStreamRegistry()
+
+    /** The codec used by EventStreamHostApi. */
+    val codec: MessageCodec<Any?> by lazy { EventChannelMessagesPigeonCodec() }
     /**
-     * Creates and returns a new event channel that calls the provided stream handler.
-     *
-     * The returned channel can be stored to allow changing or removing the stream handler. If the
-     * handler will not be changed for the lifetime of the engine associated with the messenger, the
-     * return value can be ignored.
+     * Sets up an instance of `EventStreamHostApi` to handle messages through the `binaryMessenger`.
      */
-    fun register(
-        messenger: BinaryMessenger,
-        streamHandler: StreamEventsStreamHandler,
-        instanceName: String = ""
-    ): StreamEventsEventChannel {
-      val channel = StreamEventsEventChannel(messenger, instanceName)
-      channel.setStreamHandler(streamHandler)
-      return channel
+    @JvmOverloads
+    fun setUp(
+        binaryMessenger: BinaryMessenger,
+        api: EventStreamHostApi?,
+        messageChannelSuffix: String = ""
+    ) {
+      val separatedMessageChannelSuffix =
+          if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+      run {
+        val controlChannelName =
+            "dev.flutter.pigeon.pigeon_example_package.EventStreamHostApi.streamEvents$separatedMessageChannelSuffix"
+        val eventsChannelName = "$controlChannelName.events"
+        val controlChannel = BasicMessageChannel<Any?>(binaryMessenger, controlChannelName, codec)
+        streamRegistry.cancelAll(binaryMessenger, eventsChannelName)
+        if (api != null) {
+          val eventsChannel = BasicMessageChannel<Any?>(binaryMessenger, eventsChannelName, codec)
+          controlChannel.setMessageHandler { message, reply ->
+            val request = message as List<Any?>
+            val action = request[0] as String
+            val subscriptionId = (request[1] as Number).toLong()
+            if (action == "cancel") {
+              val wrapped: List<Any?> =
+                  try {
+                    streamRegistry.cancel(binaryMessenger, eventsChannelName, subscriptionId)
+                    listOf(null)
+                  } catch (exception: Throwable) {
+                    EventChannelMessagesPigeonUtils.wrapError(exception)
+                  }
+              reply.reply(wrapped)
+              return@setMessageHandler
+            }
+            if (action != "listen") {
+              reply.reply(
+                  EventChannelMessagesPigeonUtils.wrapError(
+                      FlutterError(
+                          "invalid-action", "Unknown stream control action: $action", null)))
+              return@setMessageHandler
+            }
+            val flow =
+                try {
+                  api.streamEvents()
+                } catch (exception: Throwable) {
+                  reply.reply(EventChannelMessagesPigeonUtils.wrapError(exception))
+                  return@setMessageHandler
+                }
+            lateinit var registrationToken: Any
+            val job =
+                CoroutineScope(Dispatchers.Main).launch(start = CoroutineStart.LAZY) {
+                  try {
+                    flow.collect { event ->
+                      eventsChannel.send(
+                          listOf(
+                              subscriptionId,
+                              EventChannelMessagesPigeonStreamRegistry.DATA_FRAME_KIND,
+                              event))
+                    }
+                    if (streamRegistry.remove(
+                        binaryMessenger, eventsChannelName, subscriptionId, registrationToken)) {
+                      eventsChannel.send(
+                          listOf(
+                              subscriptionId,
+                              EventChannelMessagesPigeonStreamRegistry.DONE_FRAME_KIND))
+                    }
+                  } catch (e: CancellationException) {
+                    if (streamRegistry.remove(
+                        binaryMessenger, eventsChannelName, subscriptionId, registrationToken)) {
+                      eventsChannel.send(
+                          listOf(
+                              subscriptionId,
+                              EventChannelMessagesPigeonStreamRegistry.ERROR_FRAME_KIND) +
+                              EventChannelMessagesPigeonUtils.wrapError(e))
+                    }
+                    throw e
+                  } catch (exception: Throwable) {
+                    if (streamRegistry.remove(
+                        binaryMessenger, eventsChannelName, subscriptionId, registrationToken)) {
+                      eventsChannel.send(
+                          listOf(
+                              subscriptionId,
+                              EventChannelMessagesPigeonStreamRegistry.ERROR_FRAME_KIND) +
+                              EventChannelMessagesPigeonUtils.wrapError(exception))
+                    }
+                  }
+                }
+            registrationToken =
+                streamRegistry.register(binaryMessenger, eventsChannelName, subscriptionId) {
+                  job.cancel()
+                }
+            job.start()
+            reply.reply(listOf(null))
+          }
+        } else {
+          controlChannel.setMessageHandler(null)
+        }
+      }
     }
   }
-
-  // Implement methods from EventChannelMessagesPigeonEventChannelWrapper
-  override fun onListen(p0: Any?, sink: PigeonEventSink<PlatformEvent>) {}
-
-  override fun onCancel(p0: Any?) {}
 }

@@ -21,9 +21,9 @@ Native Interop calls are direct in-process function calls across the C ABI (FFI)
   * **Platform UI Affinity**: Native APIs that manipulate UI (such as UIKit views or Android `Activity`/views) must run on the platform's main thread. If invoked from a background isolate, native code must explicitly dispatch to the main thread (`DispatchQueue.main.async` in Swift, `Handler(Looper.getMainLooper()).post` in Kotlin) before interacting with UI APIs.
 * **Flutter APIs (Native → Dart)**:
   * Synchronous callbacks into Dart are isolate-local and must be invoked from the isolate that registered them.
-* **Unsupported Pigeon Features (`@TaskQueue`, `@EventChannelApi`, `@ProxyApi`)**:
+* **Unsupported Pigeon Features (`@TaskQueue`, `@ProxyApi`)**:
   * Platform channels queue work onto engine background threads; Native Interop executes directly on the caller thread. Specifying `@TaskQueue` results in a code generation error. To run host operations on background threads, annotate the method with `@async` in the Pigeon file and implement it using Swift `async` or Kotlin `suspend` functions (with `DispatchQueue.global` or `Dispatchers.IO`).
-  * `@EventChannelApi` and `@ProxyApi` are not supported with Native Interop (`useFfi` / `useJni`); move them to a separate Pigeon file without `useFfi` / `useJni`. Swift FFI also requires `SwiftOptions.includeErrorClass: true` (use a distinct `errorClassName` per file when using multiple Swift FFI files in the same module).
+  * `@ProxyApi` is not supported with Native Interop (`useFfi` / `useJni`); move `@ProxyApi` declarations to a separate Pigeon file without `useFfi` / `useJni`. (`@HostApi` `Stream<T>` methods are supported with Native Interop.) Swift FFI also requires `SwiftOptions.includeErrorClass: true` (use a distinct `errorClassName` per file when using multiple Swift FFI files in the same module).
 
 ---
 
@@ -144,7 +144,7 @@ When Native Interop options (`useJni` or `useFfi`) are enabled, Pigeon automatic
 
 Because Dart FFI cannot directly call Swift symbols, the FFI toolchain generates intermediate Objective-C bridging files in a subdirectory named `<swift_output_dir>_objc_gen`:
 - **`.h` (Headers)**: Always generated to declare module interfaces and types.
-- **`.m` (Bridging Implementation)**: Generated when the schema contains callbacks, closures, Flutter APIs, or Objective-C blocks requiring trampoline implementations.
+- **`.m` (Bridging Implementation)**: Generated when the schema contains async methods, `Stream<T>` methods, callbacks, closures, Flutter APIs, or Objective-C blocks requiring trampoline implementations.
 - **`.o` (Temporary Object Files)**: Intermediate binary files generated during `ffigen`/`swiftgen` AST extraction. These are **not** needed after code generation and must **not** be committed to version control.
 
 To compile the generated Objective-C files alongside your Swift code, you must configure your iOS/macOS build systems:
@@ -163,7 +163,7 @@ In addition, **only if a `.m` file is generated** in `<swift_output_dir>_objc_ge
 1. An Objective-C target for the generated bridge files (e.g., `my_plugin_objc_gen`).
 2. The main Swift target that depends on the Objective-C target.
 
-> **Important:** If your Pigeon schema only uses synchronous `@HostApi()` methods (and does not generate a `.m` file in `<swift_output_dir>_objc_gen`), keep the `FlutterFramework` dependency on your package and main Swift target, but **do not** add the `<plugin_name>_objc_gen` target to `Package.swift`. SwiftPM requires every `.target` to contain at least one compilable source file (`.m`, `.c`, or `.swift`). Declaring a `<plugin_name>_objc_gen` target when the directory only contains a `.h` header (or temporary `.o` file) will cause Xcode builds to fail with:
+> **Important:** If your Pigeon schema only uses non-streaming synchronous `@HostApi()` methods (and does not generate a `.m` file in `<swift_output_dir>_objc_gen`), keep the `FlutterFramework` dependency on your package and main Swift target, but **do not** add the `<plugin_name>_objc_gen` target to `Package.swift`. SwiftPM requires every `.target` to contain at least one compilable source file (`.m`, `.c`, or `.swift`). Declaring a `<plugin_name>_objc_gen` target when the directory only contains a `.h` header (or temporary `.o` file) will cause Xcode builds to fail with:
 > `Build input file cannot be found: '.../<plugin_name>_objc_gen.o'`
 
 Example configuration (when `<plugin_name>_objc_gen` contains a generated `.m` file):
@@ -376,7 +376,7 @@ F DartJNI : JNI is not initialized. Are you trying to invoke a Java API from Dar
 ### 5.6 Xcode Error: `Build input file cannot be found: '.../<plugin_name>_objc_gen.o'`
 
 If an iOS or macOS SwiftPM build fails because `<plugin_name>_objc_gen.o` cannot be found:
-- **Cause**: `Package.swift` defines a `<plugin_name>_objc_gen` target, but `ffigen` did not generate a `.m` implementation file in `Sources/<plugin_name>_objc_gen/` (because the Pigeon schema has no async callbacks, closures, or `@FlutterApi` methods requiring Objective-C trampolines). Without a `.m` source file, SwiftPM does not produce an object file for the target. (Note: any `.o` file produced inside `Sources/<plugin_name>_objc_gen/` during `ffigen` execution is a temporary `swiftc` artifact and must not be committed or used.)
+- **Cause**: `Package.swift` defines a `<plugin_name>_objc_gen` target, but `ffigen` did not generate a `.m` implementation file in `Sources/<plugin_name>_objc_gen/` (because the Pigeon schema has no async callbacks, `Stream<T>` methods, closures, or `@FlutterApi` methods requiring Objective-C trampolines). Without a `.m` source file, SwiftPM does not produce an object file for the target. (Note: any `.o` file produced inside `Sources/<plugin_name>_objc_gen/` during `ffigen` execution is a temporary `swiftc` artifact and must not be committed or used.)
 - **Solution**: Remove the `<plugin_name>_objc_gen` target and its dependency entry from `Package.swift`.
 
 ### 5.7 `ClassNotFoundException` or `NoSuchMethodError` in Android Release Builds (JNI)

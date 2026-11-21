@@ -2208,3 +2208,24 @@ abstract class NativeInteropSealedClassHostApi {
 abstract class NativeInteropSealedClassFlutterApi {
   NativeInteropShape echoShape(NativeInteropShape shape);
 }
+
+/// Host API with streaming methods for native interop integration tests.
+@HostApi()
+abstract class NativeInteropStreamHostApi {
+  Stream<int> streamNumbers({int count = 5, int start = 0});
+
+  Stream<int?> streamNullableInts();
+
+  Stream<NativeInteropShape> streamShapes();
+
+  Stream<NativeInteropShape> streamShapesWithFilter(NativeInteropShape filter);
+
+  Stream<int> streamError(bool customError);
+
+  @asyncCallback
+  Stream<String> streamViaCallback(String prefix, int count);
+
+  int getCancelledStreamCount();
+
+  void resetCancelledStreamCount();
+}

@@ -138,6 +138,7 @@ class InternalPigeonOptions {
               ffiErrorClassName: options.swiftOptions?.errorClassName ?? 'PigeonError',
               jniErrorClassName: options.kotlinOptions?.errorClassName ?? 'FlutterError',
               fileSpecificClassNameComponent: _dartNativeInteropClassNameComponent(options),
+              jniFileSpecificClassNameComponent: _dartJniClassNameComponent(options),
               nativeInteropTransport:
                   // ignore: invalid_use_of_visible_for_testing_member
                   options.nativeInteropTransport ?? NativeInteropTransport.hybrid,
@@ -238,6 +239,17 @@ String? _dartNativeInteropClassNameComponent(PigeonOptions options) {
   return component == null ? null : toUpperCamelCase(component);
 }
 
+String? _dartJniClassNameComponent(PigeonOptions options) {
+  if (!(options.kotlinOptions?.useJni ?? false)) {
+    return null;
+  }
+  final String component =
+      options.kotlinOptions?.fileSpecificClassNameComponent ??
+      options.fileSpecificClassNameComponent ??
+      deduceClassNameComponent(options.kotlinOut);
+  return toUpperCamelCase(component);
+}
+
 File _getFile(String output, {String basePath = ''}) {
   final file = File(path.posix.join(basePath, output));
   file.createSync(recursive: true);
@@ -283,9 +295,18 @@ abstract class GeneratorAdapter {
   List<Error> validate(InternalPigeonOptions options, Root root);
 }
 
-void _errorOnEventChannelApi(List<Error> errors, String generator, Root root) {
-  if (root.containsEventChannel) {
-    errors.add(Error(message: '$generator does not support event channels'));
+void _errorOnStreamMethod(List<Error> errors, String generator, Root root) {
+  for (final Api api in root.apis) {
+    for (final Method method in api.methods) {
+      if (method.isStream) {
+        errors.add(
+          Error(
+            message:
+                '$generator does not support Stream return types (in method "${method.name}" in API "${api.name}")',
+          ),
+        );
+      }
+    }
   }
 }
 
@@ -417,14 +438,7 @@ void _errorOnSwiftFfiUnsupportedFeatures(
   Root root,
 ) {
   for (final Api api in root.apis) {
-    if (api is AstEventChannelApi) {
-      errors.add(
-        Error(
-          message:
-              'Swift FFI does not support event channels yet (in API "${api.name}"). $_moveToNonFfiFileSuggestion',
-        ),
-      );
-    } else if (api is AstProxyApi) {
+    if (api is AstProxyApi) {
       errors.add(
         Error(
           message:
@@ -449,6 +463,18 @@ void _errorOnSwiftFfiUnsupportedFeatures(
                   'Parameter "completionHandler" in asynchronous method "${method.name}" in API "${api.name}" conflicts with the completion handler parameter that Swift FFI adds to asynchronous host API methods. Rename the parameter.',
             ),
           );
+        }
+        if (method.isStream) {
+          for (final reserved in const <String>['pigeonOnData', 'pigeonOnError', 'pigeonOnDone']) {
+            if (method.parameters.any((Parameter parameter) => parameter.name == reserved)) {
+              errors.add(
+                Error(
+                  message:
+                      'Parameter "$reserved" in streaming method "${method.name}" in API "${api.name}" conflicts with a callback parameter that Swift FFI adds to streaming host API methods. Rename the parameter.',
+                ),
+              );
+            }
+          }
         }
       }
     }
@@ -481,20 +507,25 @@ const String _moveToNonJniFileSuggestion =
 
 void _errorOnKotlinJniUnsupportedFeatures(List<Error> errors, Root root) {
   for (final Api api in root.apis) {
-    if (api is AstEventChannelApi) {
-      errors.add(
-        Error(
-          message:
-              'Kotlin JNI does not support event channels yet (in API "${api.name}"). $_moveToNonJniFileSuggestion',
-        ),
-      );
-    } else if (api is AstProxyApi) {
+    if (api is AstProxyApi) {
       errors.add(
         Error(
           message:
               'Kotlin JNI does not support ProxyApis yet (in API "${api.name}"). $_moveToNonJniFileSuggestion',
         ),
       );
+    } else if (api is AstHostApi) {
+      for (final Method method in api.methods) {
+        if (method.isStream &&
+            method.parameters.any((Parameter parameter) => parameter.name == 'pigeonCallback')) {
+          errors.add(
+            Error(
+              message:
+                  'Parameter "pigeonCallback" in streaming method "${method.name}" in API "${api.name}" conflicts with the callback parameter that Kotlin JNI adds to streaming host API methods. Rename the parameter.',
+            ),
+          );
+        }
+      }
     }
   }
 }
@@ -687,7 +718,7 @@ class ObjcGeneratorAdapter implements GeneratorAdapter {
   @override
   List<Error> validate(InternalPigeonOptions options, Root root) {
     final errors = <Error>[];
-    _errorOnEventChannelApi(errors, languageString, root);
+    _errorOnStreamMethod(errors, languageString, root);
     _errorOnSealedClass(errors, languageString, root);
     _errorOnInheritedClass(errors, languageString, root);
     return errors;
@@ -721,7 +752,7 @@ class JavaGeneratorAdapter implements GeneratorAdapter {
   @override
   List<Error> validate(InternalPigeonOptions options, Root root) {
     final errors = <Error>[];
-    _errorOnEventChannelApi(errors, languageString, root);
+    _errorOnStreamMethod(errors, languageString, root);
     _errorOnSealedClass(errors, languageString, root);
     _errorOnInheritedClass(errors, languageString, root);
     return errors;
@@ -915,7 +946,7 @@ class CppGeneratorAdapter implements GeneratorAdapter {
   @override
   List<Error> validate(InternalPigeonOptions options, Root root) {
     final errors = <Error>[];
-    _errorOnEventChannelApi(errors, languageString, root);
+    _errorOnStreamMethod(errors, languageString, root);
     _errorOnSealedClass(errors, languageString, root);
     _errorOnInheritedClass(errors, languageString, root);
     return errors;
@@ -968,7 +999,7 @@ class GObjectGeneratorAdapter implements GeneratorAdapter {
         ),
       );
     }
-    _errorOnEventChannelApi(errors, languageString, root);
+    _errorOnStreamMethod(errors, languageString, root);
     _errorOnSealedClass(errors, languageString, root);
     _errorOnInheritedClass(errors, languageString, root);
 
@@ -1183,8 +1214,6 @@ List<Error> _validateAst(Root root, String source) {
     }
   }
 
-  var containsEventChannelApi = false;
-
   for (final Api api in root.apis) {
     final String? matchingPrefix = _findMatchingPrefixOrNull(
       api.name,
@@ -1194,14 +1223,6 @@ List<Error> _validateAst(Root root, String source) {
       result.add(
         Error(message: 'API name must not begin with "$matchingPrefix" in API "${api.name}"'),
       );
-    }
-    if (api is AstEventChannelApi) {
-      if (containsEventChannelApi) {
-        result.add(
-          Error(message: 'Event Channel methods must all be included in a single EventChannelApi'),
-        );
-      }
-      containsEventChannelApi = true;
     }
     if (api is AstProxyApi) {
       result.addAll(
@@ -1227,14 +1248,34 @@ List<Error> _validateAst(Root root, String source) {
           ),
         );
       }
-      if (api is AstEventChannelApi && method.parameters.isNotEmpty) {
-        result.add(
-          Error(
-            message:
-                'event channel methods must not be contain parameters, in method "${method.name}" in API: "${api.name}"',
-            lineNumber: _calculateLineNumberNullable(source, method.offset),
-          ),
-        );
+      if (method.isStream) {
+        if (api is AstFlutterApi) {
+          result.add(
+            Error(
+              message:
+                  'Stream return types are not supported in @FlutterApi yet, in method "${method.name}" in API: "${api.name}"',
+              lineNumber: _calculateLineNumberNullable(source, method.offset),
+            ),
+          );
+        } else if (api is AstProxyApi) {
+          result.add(
+            Error(
+              message:
+                  'Stream return types are not supported in @ProxyApi, in method "${method.name}" in API: "${api.name}"',
+              lineNumber: _calculateLineNumberNullable(source, method.offset),
+            ),
+          );
+        }
+        if (method.isAsynchronousCallback &&
+            method.parameters.any((Parameter p) => p.name == 'sink')) {
+          result.add(
+            Error(
+              message:
+                  'Parameter "sink" in @asyncCallback stream method "${method.name}" in API: "${api.name}" conflicts with the generated event sink parameter. Rename the parameter.',
+              lineNumber: _calculateLineNumberNullable(source, method.offset),
+            ),
+          );
+        }
       }
       for (final Parameter param in method.parameters) {
         if (param.type.baseName.isEmpty) {
@@ -1658,7 +1699,6 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     var containsHostApi = false;
     var containsFlutterApi = false;
     var containsProxyApi = false;
-    var containsEventChannel = false;
 
     for (final Api api in _apis) {
       switch (api) {
@@ -1668,10 +1708,8 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           containsFlutterApi = true;
         case AstProxyApi():
           containsProxyApi = true;
-        case AstEventChannelApi():
-          containsEventChannel = true;
       }
-      if (containsEventChannel && containsFlutterApi && containsProxyApi && containsHostApi) {
+      if (containsFlutterApi && containsProxyApi && containsHostApi) {
         break;
       }
     }
@@ -1693,9 +1731,18 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         final int? lineNumber = element.value.isEmpty
             ? null
             : calculateLineNumber(source, element.value.first);
-        totalErrors.add(
-          Error(message: 'Unknown type: ${element.key.baseName}', lineNumber: lineNumber),
-        );
+        if (element.key.baseName == 'Stream') {
+          totalErrors.add(
+            Error(
+              message: 'Stream is only supported as a HostApi method return type.',
+              lineNumber: lineNumber,
+            ),
+          );
+        } else {
+          totalErrors.add(
+            Error(message: 'Unknown type: ${element.key.baseName}', lineNumber: lineNumber),
+          );
+        }
       }
     }
     for (final Class classDefinition in _classes) {
@@ -1750,7 +1797,6 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       containsHostApi: containsHostApi,
       containsFlutterApi: containsFlutterApi,
       containsProxyApi: containsProxyApi,
-      containsEventChannel: containsEventChannel,
     );
 
     final List<Error> validateErrors = _validateAst(completeRoot, source);
@@ -2228,40 +2274,12 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           documentationComments: _documentationCommentsParser(node.documentationComment?.tokens),
         );
       } else if (_hasMetadata(node.metadata, 'EventChannelApi')) {
-        final dart_ast.Annotation annotation = node.metadata.firstWhere(
-          (dart_ast.Annotation element) => element.name.name == 'EventChannelApi',
-        );
-
-        final annotationMap = <String, Object?>{};
-        final dart_ast.ArgumentList? arguments = annotation.arguments;
-        if (arguments != null) {
-          for (final dart_ast.Argument argument in arguments.arguments) {
-            if (argument is dart_ast.NamedArgument) {
-              annotationMap[argument.name.lexeme] = _expressionToMap(argument.argumentExpression);
-            }
-          }
-        }
-
-        SwiftEventChannelOptions? swiftOptions;
-        KotlinEventChannelOptions? kotlinOptions;
-        final swiftOptionsMap = annotationMap['swiftOptions'] as Map<String, Object?>?;
-        if (swiftOptionsMap != null) {
-          swiftOptions = SwiftEventChannelOptions(
-            includeSharedClasses: swiftOptionsMap['includeSharedClasses'] as bool? ?? true,
-          );
-        }
-        final kotlinOptionsMap = annotationMap['kotlinOptions'] as Map<String, Object?>?;
-        if (kotlinOptionsMap != null) {
-          kotlinOptions = KotlinEventChannelOptions(
-            includeSharedClasses: kotlinOptionsMap['includeSharedClasses'] as bool? ?? true,
-          );
-        }
-        _currentApi = AstEventChannelApi(
-          name: node.namePart.typeName.lexeme,
-          methods: <Method>[],
-          swiftOptions: swiftOptions,
-          kotlinOptions: kotlinOptions,
-          documentationComments: _documentationCommentsParser(node.documentationComment?.tokens),
+        _errors.add(
+          Error(
+            message:
+                '@EventChannelApi has been removed (in API "${node.namePart.typeName.lexeme}"). Declare Stream<T> return types on @HostApi() methods instead.',
+            lineNumber: calculateLineNumber(source, node.offset),
+          ),
         );
       }
     } else {
@@ -2422,24 +2440,83 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           ),
         );
       } else {
+        final String returnTypeName = _getNamedTypeQualifiedName(returnType);
+        final List<TypeDeclaration> returnTypeArgs = _typeAnnotationsToTypeArguments(
+          returnType.typeArguments,
+        );
+        final isStream = returnTypeName == 'Stream';
+        late final TypeDeclaration resolvedReturnType;
+        if (isStream) {
+          final int lineNumber = calculateLineNumber(source, node.offset);
+          if (returnType.question != null) {
+            _errors.add(
+              Error(
+                message:
+                    'Stream return types must not be nullable, in method "${node.name.lexeme}" in API: "${_currentApi!.name}". Use Stream<T?> for nullable events.',
+                lineNumber: lineNumber,
+              ),
+            );
+          }
+          if (hasAsync && !isAsynchronousCallback) {
+            _errors.add(
+              Error(
+                message:
+                    'Stream methods are already asynchronous; remove @async (or use @asyncCallback for callback-based stream sinks), in method "${node.name.lexeme}" in API: "${_currentApi!.name}".',
+                lineNumber: lineNumber,
+              ),
+            );
+          }
+          if (taskQueueArguments != null) {
+            _errors.add(
+              Error(
+                message:
+                    '@TaskQueue is not supported on Stream methods, in method "${node.name.lexeme}" in API: "${_currentApi!.name}".',
+                lineNumber: lineNumber,
+              ),
+            );
+          }
+          if (returnTypeArgs.length != 1) {
+            _errors.add(
+              Error(
+                message:
+                    'Stream return types must specify a single type argument (e.g. Stream<int>), in method "${node.name.lexeme}" in API: "${_currentApi!.name}".',
+                lineNumber: lineNumber,
+              ),
+            );
+            resolvedReturnType = const TypeDeclaration.voidDeclaration();
+          } else if (returnTypeArgs.single.isVoid) {
+            _errors.add(
+              Error(
+                message:
+                    'Stream<void> is not supported, in method "${node.name.lexeme}" in API: "${_currentApi!.name}".',
+                lineNumber: lineNumber,
+              ),
+            );
+            resolvedReturnType = const TypeDeclaration.voidDeclaration();
+          } else {
+            resolvedReturnType = returnTypeArgs.single;
+          }
+        } else {
+          resolvedReturnType = TypeDeclaration(
+            baseName: returnTypeName,
+            typeArguments: returnTypeArgs,
+            isNullable: returnType.question != null,
+          );
+        }
         _currentApi!.methods.add(
           Method(
             name: node.name.lexeme,
-            returnType: TypeDeclaration(
-              baseName: _getNamedTypeQualifiedName(returnType),
-              typeArguments: _typeAnnotationsToTypeArguments(returnType.typeArguments),
-              isNullable: returnType.question != null,
-            ),
+            returnType: resolvedReturnType,
             parameters: arguments,
             isStatic: isStatic,
             location: switch (_currentApi!) {
               AstHostApi() => ApiLocation.host,
               AstProxyApi() => ApiLocation.host,
               AstFlutterApi() => ApiLocation.flutter,
-              AstEventChannelApi() => ApiLocation.host,
             },
-            isAsynchronous: isAsynchronous,
+            isAsynchronous: !isStream && isAsynchronous,
             isAsynchronousCallback: isAsynchronousCallback,
+            isStream: isStream,
             objcSelector: objcSelector,
             swiftFunction: swiftFunction,
             offset: node.offset,

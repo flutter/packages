@@ -207,6 +207,62 @@ _julz8q_wrapBlockingBlock_xtuoz7(int64_t port, DOBJC_Context *ctx,
 }
 
 __attribute__((visibility("default")))
+@interface _julz8q_BlockArgs_r8gdi7 : NSObject
+@property(copy) id block;
+@property(strong) id arg0;
+@property(strong) id arg1;
+@property(strong) id arg2;
+@end
+@implementation _julz8q_BlockArgs_r8gdi7
+@end
+
+typedef void (^_ListenerTrampoline_2)(id arg0, id arg1, id arg2);
+__attribute__((visibility("default"))) __attribute__((used)) _ListenerTrampoline_2
+_julz8q_wrapListenerBlock_r8gdi7(int64_t port, DOBJC_Context *ctx) NS_RETURNS_RETAINED {
+  __block __weak _ListenerTrampoline_2 weakSelfBlock = nil;
+  _ListenerTrampoline_2 strongSelfBlock = [^void(id arg0, id arg1, id arg2) {
+    @autoreleasepool {
+      _julz8q_BlockArgs_r8gdi7 *args = [[_julz8q_BlockArgs_r8gdi7 alloc] init];
+      args.block = weakSelfBlock;
+      args.arg0 = arg0;
+      args.arg1 = arg1;
+      args.arg2 = arg2;
+      ctx->invokeListenerPortBlock(port, (__bridge_retained void *)args);
+    }
+  } copy];
+  weakSelfBlock = strongSelfBlock;
+  return strongSelfBlock;
+}
+
+typedef void (^_BlockingTrampoline_2)(void *waiter, id arg0, id arg1, id arg2);
+__attribute__((visibility("default"))) __attribute__((used)) _ListenerTrampoline_2
+_julz8q_wrapBlockingBlock_r8gdi7(int64_t port, DOBJC_Context *ctx,
+                                 void (*directInvoke)(void *)) NS_RETURNS_RETAINED {
+  BLOCKING_BLOCK_IMPL(
+      ctx, _ListenerTrampoline_2, ^void(id arg0, id arg1, id arg2),
+      {
+        @autoreleasepool {
+          _julz8q_BlockArgs_r8gdi7 *args = [[_julz8q_BlockArgs_r8gdi7 alloc] init];
+          args.block = weakSelfBlock;
+          args.arg0 = arg0;
+          args.arg1 = arg1;
+          args.arg2 = arg2;
+          directInvoke((__bridge_retained void *)args);
+        }
+      },
+      {
+        @autoreleasepool {
+          _julz8q_BlockArgs_r8gdi7 *args = [[_julz8q_BlockArgs_r8gdi7 alloc] init];
+          args.block = weakSelfBlock;
+          args.arg0 = arg0;
+          args.arg1 = arg1;
+          args.arg2 = arg2;
+          ctx->invokeBlockingPortBlock(port, (__bridge_retained void *)args, waiter);
+        }
+      });
+}
+
+__attribute__((visibility("default")))
 @interface _julz8q_BlockArgs_1aroy1q : NSObject
 @property(copy) id block;
 @property void *arg0;
@@ -217,11 +273,11 @@ __attribute__((visibility("default")))
 @implementation _julz8q_BlockArgs_1aroy1q
 @end
 
-typedef void (^_ListenerTrampoline_2)(void *arg0, int64_t arg1, id arg2, id arg3);
-__attribute__((visibility("default"))) __attribute__((used)) _ListenerTrampoline_2
+typedef void (^_ListenerTrampoline_3)(void *arg0, int64_t arg1, id arg2, id arg3);
+__attribute__((visibility("default"))) __attribute__((used)) _ListenerTrampoline_3
 _julz8q_wrapListenerBlock_1aroy1q(int64_t port, DOBJC_Context *ctx) NS_RETURNS_RETAINED {
-  __block __weak _ListenerTrampoline_2 weakSelfBlock = nil;
-  _ListenerTrampoline_2 strongSelfBlock = [^void(void *arg0, int64_t arg1, id arg2, id arg3) {
+  __block __weak _ListenerTrampoline_3 weakSelfBlock = nil;
+  _ListenerTrampoline_3 strongSelfBlock = [^void(void *arg0, int64_t arg1, id arg2, id arg3) {
     @autoreleasepool {
       _julz8q_BlockArgs_1aroy1q *args = [[_julz8q_BlockArgs_1aroy1q alloc] init];
       args.block = weakSelfBlock;
@@ -236,12 +292,12 @@ _julz8q_wrapListenerBlock_1aroy1q(int64_t port, DOBJC_Context *ctx) NS_RETURNS_R
   return strongSelfBlock;
 }
 
-typedef void (^_BlockingTrampoline_2)(void *waiter, void *arg0, int64_t arg1, id arg2, id arg3);
-__attribute__((visibility("default"))) __attribute__((used)) _ListenerTrampoline_2
+typedef void (^_BlockingTrampoline_3)(void *waiter, void *arg0, int64_t arg1, id arg2, id arg3);
+__attribute__((visibility("default"))) __attribute__((used)) _ListenerTrampoline_3
 _julz8q_wrapBlockingBlock_1aroy1q(int64_t port, DOBJC_Context *ctx,
                                   void (*directInvoke)(void *)) NS_RETURNS_RETAINED {
   BLOCKING_BLOCK_IMPL(
-      ctx, _ListenerTrampoline_2, ^void(void *arg0, int64_t arg1, id arg2, id arg3),
+      ctx, _ListenerTrampoline_3, ^void(void *arg0, int64_t arg1, id arg2, id arg3),
       {
         @autoreleasepool {
           _julz8q_BlockArgs_1aroy1q *args = [[_julz8q_BlockArgs_1aroy1q alloc] init];
@@ -284,11 +340,11 @@ __attribute__((visibility("default")))
 @implementation _julz8q_BlockArgs_bklti2
 @end
 
-typedef void (^_ListenerTrampoline_3)(void *arg0, id arg1, id arg2, id arg3);
-__attribute__((visibility("default"))) __attribute__((used)) _ListenerTrampoline_3
+typedef void (^_ListenerTrampoline_4)(void *arg0, id arg1, id arg2, id arg3);
+__attribute__((visibility("default"))) __attribute__((used)) _ListenerTrampoline_4
 _julz8q_wrapListenerBlock_bklti2(int64_t port, DOBJC_Context *ctx) NS_RETURNS_RETAINED {
-  __block __weak _ListenerTrampoline_3 weakSelfBlock = nil;
-  _ListenerTrampoline_3 strongSelfBlock = [^void(void *arg0, id arg1, id arg2, id arg3) {
+  __block __weak _ListenerTrampoline_4 weakSelfBlock = nil;
+  _ListenerTrampoline_4 strongSelfBlock = [^void(void *arg0, id arg1, id arg2, id arg3) {
     @autoreleasepool {
       _julz8q_BlockArgs_bklti2 *args = [[_julz8q_BlockArgs_bklti2 alloc] init];
       args.block = weakSelfBlock;
@@ -303,12 +359,12 @@ _julz8q_wrapListenerBlock_bklti2(int64_t port, DOBJC_Context *ctx) NS_RETURNS_RE
   return strongSelfBlock;
 }
 
-typedef void (^_BlockingTrampoline_3)(void *waiter, void *arg0, id arg1, id arg2, id arg3);
-__attribute__((visibility("default"))) __attribute__((used)) _ListenerTrampoline_3
+typedef void (^_BlockingTrampoline_4)(void *waiter, void *arg0, id arg1, id arg2, id arg3);
+__attribute__((visibility("default"))) __attribute__((used)) _ListenerTrampoline_4
 _julz8q_wrapBlockingBlock_bklti2(int64_t port, DOBJC_Context *ctx,
                                  void (*directInvoke)(void *)) NS_RETURNS_RETAINED {
   BLOCKING_BLOCK_IMPL(
-      ctx, _ListenerTrampoline_3, ^void(void *arg0, id arg1, id arg2, id arg3),
+      ctx, _ListenerTrampoline_4, ^void(void *arg0, id arg1, id arg2, id arg3),
       {
         @autoreleasepool {
           _julz8q_BlockArgs_bklti2 *args = [[_julz8q_BlockArgs_bklti2 alloc] init];
@@ -349,11 +405,11 @@ __attribute__((visibility("default")))
 @implementation _julz8q_BlockArgs_18v1jvf
 @end
 
-typedef void (^_ListenerTrampoline_4)(void *arg0, id arg1);
-__attribute__((visibility("default"))) __attribute__((used)) _ListenerTrampoline_4
+typedef void (^_ListenerTrampoline_5)(void *arg0, id arg1);
+__attribute__((visibility("default"))) __attribute__((used)) _ListenerTrampoline_5
 _julz8q_wrapListenerBlock_18v1jvf(int64_t port, DOBJC_Context *ctx) NS_RETURNS_RETAINED {
-  __block __weak _ListenerTrampoline_4 weakSelfBlock = nil;
-  _ListenerTrampoline_4 strongSelfBlock = [^void(void *arg0, id arg1) {
+  __block __weak _ListenerTrampoline_5 weakSelfBlock = nil;
+  _ListenerTrampoline_5 strongSelfBlock = [^void(void *arg0, id arg1) {
     @autoreleasepool {
       _julz8q_BlockArgs_18v1jvf *args = [[_julz8q_BlockArgs_18v1jvf alloc] init];
       args.block = weakSelfBlock;
@@ -366,12 +422,12 @@ _julz8q_wrapListenerBlock_18v1jvf(int64_t port, DOBJC_Context *ctx) NS_RETURNS_R
   return strongSelfBlock;
 }
 
-typedef void (^_BlockingTrampoline_4)(void *waiter, void *arg0, id arg1);
-__attribute__((visibility("default"))) __attribute__((used)) _ListenerTrampoline_4
+typedef void (^_BlockingTrampoline_5)(void *waiter, void *arg0, id arg1);
+__attribute__((visibility("default"))) __attribute__((used)) _ListenerTrampoline_5
 _julz8q_wrapBlockingBlock_18v1jvf(int64_t port, DOBJC_Context *ctx,
                                   void (*directInvoke)(void *)) NS_RETURNS_RETAINED {
   BLOCKING_BLOCK_IMPL(
-      ctx, _ListenerTrampoline_4, ^void(void *arg0, id arg1),
+      ctx, _ListenerTrampoline_5, ^void(void *arg0, id arg1),
       {
         @autoreleasepool {
           _julz8q_BlockArgs_18v1jvf *args = [[_julz8q_BlockArgs_18v1jvf alloc] init];
@@ -409,11 +465,11 @@ __attribute__((visibility("default")))
 @implementation _julz8q_BlockArgs_jk1ljc
 @end
 
-typedef void (^_ListenerTrampoline_5)(void *arg0, id arg1, id arg2);
-__attribute__((visibility("default"))) __attribute__((used)) _ListenerTrampoline_5
+typedef void (^_ListenerTrampoline_6)(void *arg0, id arg1, id arg2);
+__attribute__((visibility("default"))) __attribute__((used)) _ListenerTrampoline_6
 _julz8q_wrapListenerBlock_jk1ljc(int64_t port, DOBJC_Context *ctx) NS_RETURNS_RETAINED {
-  __block __weak _ListenerTrampoline_5 weakSelfBlock = nil;
-  _ListenerTrampoline_5 strongSelfBlock = [^void(void *arg0, id arg1, id arg2) {
+  __block __weak _ListenerTrampoline_6 weakSelfBlock = nil;
+  _ListenerTrampoline_6 strongSelfBlock = [^void(void *arg0, id arg1, id arg2) {
     @autoreleasepool {
       _julz8q_BlockArgs_jk1ljc *args = [[_julz8q_BlockArgs_jk1ljc alloc] init];
       args.block = weakSelfBlock;
@@ -427,12 +483,12 @@ _julz8q_wrapListenerBlock_jk1ljc(int64_t port, DOBJC_Context *ctx) NS_RETURNS_RE
   return strongSelfBlock;
 }
 
-typedef void (^_BlockingTrampoline_5)(void *waiter, void *arg0, id arg1, id arg2);
-__attribute__((visibility("default"))) __attribute__((used)) _ListenerTrampoline_5
+typedef void (^_BlockingTrampoline_6)(void *waiter, void *arg0, id arg1, id arg2);
+__attribute__((visibility("default"))) __attribute__((used)) _ListenerTrampoline_6
 _julz8q_wrapBlockingBlock_jk1ljc(int64_t port, DOBJC_Context *ctx,
                                  void (*directInvoke)(void *)) NS_RETURNS_RETAINED {
   BLOCKING_BLOCK_IMPL(
-      ctx, _ListenerTrampoline_5, ^void(void *arg0, id arg1, id arg2),
+      ctx, _ListenerTrampoline_6, ^void(void *arg0, id arg1, id arg2),
       {
         @autoreleasepool {
           _julz8q_BlockArgs_jk1ljc *args = [[_julz8q_BlockArgs_jk1ljc alloc] init];
@@ -473,11 +529,11 @@ __attribute__((visibility("default")))
 @implementation _julz8q_BlockArgs_ymbgmo
 @end
 
-typedef void (^_ListenerTrampoline_6)(void *arg0, BOOL arg1, id arg2, id arg3);
-__attribute__((visibility("default"))) __attribute__((used)) _ListenerTrampoline_6
+typedef void (^_ListenerTrampoline_7)(void *arg0, BOOL arg1, id arg2, id arg3);
+__attribute__((visibility("default"))) __attribute__((used)) _ListenerTrampoline_7
 _julz8q_wrapListenerBlock_ymbgmo(int64_t port, DOBJC_Context *ctx) NS_RETURNS_RETAINED {
-  __block __weak _ListenerTrampoline_6 weakSelfBlock = nil;
-  _ListenerTrampoline_6 strongSelfBlock = [^void(void *arg0, BOOL arg1, id arg2, id arg3) {
+  __block __weak _ListenerTrampoline_7 weakSelfBlock = nil;
+  _ListenerTrampoline_7 strongSelfBlock = [^void(void *arg0, BOOL arg1, id arg2, id arg3) {
     @autoreleasepool {
       _julz8q_BlockArgs_ymbgmo *args = [[_julz8q_BlockArgs_ymbgmo alloc] init];
       args.block = weakSelfBlock;
@@ -492,12 +548,12 @@ _julz8q_wrapListenerBlock_ymbgmo(int64_t port, DOBJC_Context *ctx) NS_RETURNS_RE
   return strongSelfBlock;
 }
 
-typedef void (^_BlockingTrampoline_6)(void *waiter, void *arg0, BOOL arg1, id arg2, id arg3);
-__attribute__((visibility("default"))) __attribute__((used)) _ListenerTrampoline_6
+typedef void (^_BlockingTrampoline_7)(void *waiter, void *arg0, BOOL arg1, id arg2, id arg3);
+__attribute__((visibility("default"))) __attribute__((used)) _ListenerTrampoline_7
 _julz8q_wrapBlockingBlock_ymbgmo(int64_t port, DOBJC_Context *ctx,
                                  void (*directInvoke)(void *)) NS_RETURNS_RETAINED {
   BLOCKING_BLOCK_IMPL(
-      ctx, _ListenerTrampoline_6, ^void(void *arg0, BOOL arg1, id arg2, id arg3),
+      ctx, _ListenerTrampoline_7, ^void(void *arg0, BOOL arg1, id arg2, id arg3),
       {
         @autoreleasepool {
           _julz8q_BlockArgs_ymbgmo *args = [[_julz8q_BlockArgs_ymbgmo alloc] init];
@@ -540,11 +596,11 @@ __attribute__((visibility("default")))
 @implementation _julz8q_BlockArgs_omyb6r
 @end
 
-typedef void (^_ListenerTrampoline_7)(void *arg0, double arg1, id arg2, id arg3);
-__attribute__((visibility("default"))) __attribute__((used)) _ListenerTrampoline_7
+typedef void (^_ListenerTrampoline_8)(void *arg0, double arg1, id arg2, id arg3);
+__attribute__((visibility("default"))) __attribute__((used)) _ListenerTrampoline_8
 _julz8q_wrapListenerBlock_omyb6r(int64_t port, DOBJC_Context *ctx) NS_RETURNS_RETAINED {
-  __block __weak _ListenerTrampoline_7 weakSelfBlock = nil;
-  _ListenerTrampoline_7 strongSelfBlock = [^void(void *arg0, double arg1, id arg2, id arg3) {
+  __block __weak _ListenerTrampoline_8 weakSelfBlock = nil;
+  _ListenerTrampoline_8 strongSelfBlock = [^void(void *arg0, double arg1, id arg2, id arg3) {
     @autoreleasepool {
       _julz8q_BlockArgs_omyb6r *args = [[_julz8q_BlockArgs_omyb6r alloc] init];
       args.block = weakSelfBlock;
@@ -559,12 +615,12 @@ _julz8q_wrapListenerBlock_omyb6r(int64_t port, DOBJC_Context *ctx) NS_RETURNS_RE
   return strongSelfBlock;
 }
 
-typedef void (^_BlockingTrampoline_7)(void *waiter, void *arg0, double arg1, id arg2, id arg3);
-__attribute__((visibility("default"))) __attribute__((used)) _ListenerTrampoline_7
+typedef void (^_BlockingTrampoline_8)(void *waiter, void *arg0, double arg1, id arg2, id arg3);
+__attribute__((visibility("default"))) __attribute__((used)) _ListenerTrampoline_8
 _julz8q_wrapBlockingBlock_omyb6r(int64_t port, DOBJC_Context *ctx,
                                  void (*directInvoke)(void *)) NS_RETURNS_RETAINED {
   BLOCKING_BLOCK_IMPL(
-      ctx, _ListenerTrampoline_7, ^void(void *arg0, double arg1, id arg2, id arg3),
+      ctx, _ListenerTrampoline_8, ^void(void *arg0, double arg1, id arg2, id arg3),
       {
         @autoreleasepool {
           _julz8q_BlockArgs_omyb6r *args = [[_julz8q_BlockArgs_omyb6r alloc] init];

@@ -4,6 +4,7 @@
 
 // ignore_for_file: unused_local_variable
 
+import 'dart:async';
 import 'dart:isolate';
 
 import 'package:flutter/foundation.dart';
@@ -3398,6 +3399,124 @@ void runPigeonNativeInteropIntegrationTests(TargetGenerator targetGenerator) {
     testWidgets('flutter api echoes a subclass', (WidgetTester _) async {
       expect(api.callFlutterEchoShape(circle), circle);
       expect(api.callFlutterEchoShape(square), square);
+    });
+  });
+
+  group('Host Stream<T> API tests', () {
+    Future<int> waitForCancelledCount(NativeInteropStreamHostApiForNativeInterop api) async {
+      for (var attempt = 0; attempt < 100; attempt++) {
+        final int count = api.getCancelledStreamCount();
+        if (count >= 1) {
+          return count;
+        }
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+      }
+      return api.getCancelledStreamCount();
+    }
+
+    testWidgets('streams typed values concurrently via native interop', (WidgetTester _) async {
+      final NativeInteropStreamHostApiForNativeInterop api =
+          NativeInteropStreamHostApiForNativeInterop.getInstance()!;
+      final List<List<int>> results = await Future.wait<List<int>>(<Future<List<int>>>[
+        api.streamNumbers(count: 3, start: 10).toList(),
+        api.streamNumbers(count: 4, start: 100).toList(),
+      ]);
+      expect(results[0], <int>[10, 11, 12]);
+      expect(results[1], <int>[100, 101, 102, 103]);
+    });
+
+    testWidgets('streams nullable ints and sealed classes via native interop', (
+      WidgetTester _,
+    ) async {
+      final NativeInteropStreamHostApiForNativeInterop api =
+          NativeInteropStreamHostApiForNativeInterop.getInstance()!;
+      expect(await api.streamNullableInts().toList(), <int?>[1, null, 2]);
+      expect(await api.streamShapes().toList(), <NativeInteropShape>[
+        NativeInteropCircle(radius: 3.5),
+        NativeInteropSquare(side: 4.0, label: 'square'),
+      ]);
+      final filter = NativeInteropSquare(side: 7.0, label: 'filtered');
+      expect(await api.streamShapesWithFilter(filter).toList(), <NativeInteropShape>[filter]);
+    });
+
+    testWidgets('propagates custom PlatformException from native interop stream', (
+      WidgetTester _,
+    ) async {
+      final NativeInteropStreamHostApiForNativeInterop api =
+          NativeInteropStreamHostApiForNativeInterop.getInstance()!;
+      final received = <int>[];
+      Object? caughtError;
+      final done = Completer<void>();
+      api
+          .streamError(true)
+          .listen(received.add, onError: (Object e) => caughtError = e, onDone: done.complete);
+      await done.future;
+      expect(received, <int>[1]);
+      expect(
+        caughtError,
+        isA<PlatformException>()
+            .having((PlatformException e) => e.code, 'code', 'error_code')
+            .having((PlatformException e) => e.message, 'message', 'error_message')
+            .having((PlatformException e) => e.details, 'details', 'error_details'),
+      );
+    });
+
+    testWidgets('propagates non-custom exception from native interop stream', (
+      WidgetTester _,
+    ) async {
+      final NativeInteropStreamHostApiForNativeInterop api =
+          NativeInteropStreamHostApiForNativeInterop.getInstance()!;
+      final received = <int>[];
+      Object? caughtError;
+      final done = Completer<void>();
+      api
+          .streamError(false)
+          .listen(received.add, onError: (Object e) => caughtError = e, onDone: done.complete);
+      await done.future;
+      expect(received, <int>[1]);
+      expect(caughtError, isA<PlatformException>());
+    });
+
+    testWidgets('cancels native interop stream on mid-stream take', (WidgetTester _) async {
+      final NativeInteropStreamHostApiForNativeInterop api =
+          NativeInteropStreamHostApiForNativeInterop.getInstance()!;
+      api.resetCancelledStreamCount();
+      final List<int> partial = await api.streamNumbers(count: 500, start: 1).take(2).toList();
+      expect(partial, <int>[1, 2]);
+      expect(await waitForCancelledCount(api), greaterThanOrEqualTo(1));
+    });
+
+    testWidgets('streams and cancels @asyncCallback native interop stream', (WidgetTester _) async {
+      final NativeInteropStreamHostApiForNativeInterop api =
+          NativeInteropStreamHostApiForNativeInterop.getInstance()!;
+      expect(await api.streamViaCallback('item', 3).toList(), <String>[
+        'item:0',
+        'item:1',
+        'item:2',
+      ]);
+      api.resetCancelledStreamCount();
+      expect(await api.streamViaCallback('cut', 200).take(2).toList(), <String>['cut:0', 'cut:1']);
+      expect(await waitForCancelledCount(api), greaterThanOrEqualTo(1));
+    });
+
+    testWidgets('propagates error from @asyncCallback native interop stream', (
+      WidgetTester _,
+    ) async {
+      final NativeInteropStreamHostApiForNativeInterop api =
+          NativeInteropStreamHostApiForNativeInterop.getInstance()!;
+      Object? caughtError;
+      final done = Completer<void>();
+      api
+          .streamViaCallback('error', 1)
+          .listen((_) {}, onError: (Object e) => caughtError = e, onDone: done.complete);
+      await done.future;
+      expect(
+        caughtError,
+        isA<PlatformException>()
+            .having((PlatformException e) => e.code, 'code', 'callback_error')
+            .having((PlatformException e) => e.message, 'message', 'callback_message')
+            .having((PlatformException e) => e.details, 'details', 'callback_details'),
+      );
     });
   });
 
