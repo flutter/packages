@@ -26,6 +26,7 @@ import 'theme.dart';
 import 'theme_data.dart';
 
 part 'generated/text_button_defaults_m3.g.dart';
+part 'generated/text_button_defaults_m3e.g.dart';
 
 /// A Material Design "Text Button".
 ///
@@ -56,6 +57,13 @@ part 'generated/text_button_defaults_m3.g.dart';
 ///
 /// If the [onPressed] and [onLongPress] callbacks are null, then this
 /// button will be disabled, it will not react to touch.
+///
+/// To use the Material 3 Expressive style, set
+/// [TextButtonThemeData.variant] to [StyleVariant.material3Expressive]. The
+/// Expressive size and shape variants can then be selected with
+/// [ButtonStyle.sizeVariant] and [ButtonStyle.shapeVariant]. Material 3
+/// Expressive doesn't define selected colors for text buttons, so unlike the
+/// other common buttons, [TextButton] doesn't support toggle buttons.
 ///
 /// <callout-box>
 ///
@@ -114,6 +122,10 @@ class TextButton extends ButtonStyleButton {
   ///
   /// The icon and label are arranged in a row and padded by 8 logical pixels
   /// at the ends, with an 8 pixel gap in between.
+  ///
+  /// With the Material 3 Expressive style, the padding and the gap between the
+  /// icon and the label depend on [ButtonStyle.sizeVariant]. See
+  /// [defaultStyleOf].
   ///
   /// If [icon] is null, this constructor will create a [TextButton]
   /// that doesn't display an icon.
@@ -177,6 +189,16 @@ class TextButton extends ButtonStyleButton {
   /// create a [WidgetStateProperty] with a single value for all
   /// states.
   ///
+  /// The [sizeVariant] and [shapeVariant] parameters are Material 3 Expressive
+  /// options. They provide extra-small through extra-large sizes and round or
+  /// square shapes through [ButtonStyle.sizeVariant] and
+  /// [ButtonStyle.shapeVariant].
+  ///
+  /// When [TextButtonThemeData.variant] is
+  /// [StyleVariant.material3Expressive] and these properties are null,
+  /// Material 3 Expressive [TextButton] defaults use
+  /// [ButtonSizeVariant.small] and [ButtonShapeVariant.round].
+  ///
   /// All parameters default to null. By default this method returns
   /// a [ButtonStyle] that doesn't override anything.
   ///
@@ -224,6 +246,8 @@ class TextButton extends ButtonStyleButton {
     InteractiveInkFeatureFactory? splashFactory,
     ButtonLayerBuilder? backgroundBuilder,
     ButtonLayerBuilder? foregroundBuilder,
+    ButtonSizeVariant? sizeVariant,
+    ButtonShapeVariant? shapeVariant,
   }) {
     final WidgetStateProperty<Color?>? backgroundColorProp = switch ((
       backgroundColor,
@@ -277,6 +301,8 @@ class TextButton extends ButtonStyleButton {
       splashFactory: splashFactory,
       backgroundBuilder: backgroundBuilder,
       foregroundBuilder: foregroundBuilder,
+      sizeVariant: sizeVariant,
+      shapeVariant: shapeVariant,
     );
   }
 
@@ -353,8 +379,9 @@ class TextButton extends ButtonStyleButton {
   ///
   /// ## Material 3 defaults
   ///
-  /// If [ThemeData.useMaterial3] is set to true the following defaults will
-  /// be used:
+  /// With the Material 3 style, that is, when [ThemeData.useMaterial3] is true
+  /// and [TextButtonThemeData.variant] isn't
+  /// [StyleVariant.material3Expressive], the following defaults will be used:
   ///
   /// {@template material_ui.text_button.material3_defaults}
   /// * `textStyle` - Theme.textTheme.labelLarge
@@ -390,10 +417,80 @@ class TextButton extends ButtonStyleButton {
   /// For the [TextButton.icon] factory, the end (generally the right) value of
   /// `padding` is increased from 12 to 16.
   /// {@endtemplate}
+  ///
+  /// ## Material 3 Expressive defaults
+  ///
+  // TODO(QuncCccccc): Clean up [ThemeData.useMaterial3] once useMaterial3 is removed.
+  /// With the Material 3 Expressive style, that is, when
+  /// [ThemeData.useMaterial3] is true and [TextButtonThemeData.variant] is
+  /// [StyleVariant.material3Expressive], the following defaults will be used.
+  /// Values listed per size are for [ButtonSizeVariant.xSmall],
+  /// [ButtonSizeVariant.small], [ButtonSizeVariant.medium],
+  /// [ButtonSizeVariant.large], and [ButtonSizeVariant.xLarge] respectively.
+  ///
+  /// * `textStyle` - based on [ButtonStyle.sizeVariant]
+  ///   * xSmall or small - Theme.textTheme.labelLarge
+  ///   * medium - Theme.textTheme.titleMedium
+  ///   * large - Theme.textTheme.headlineSmall
+  ///   * xLarge - Theme.textTheme.headlineLarge
+  /// * `backgroundColor`
+  ///   * disabled - Theme.colorScheme.onSurface(0.1)
+  ///   * others - transparent
+  /// * `foregroundColor`
+  ///   * disabled - Theme.colorScheme.onSurface(0.38)
+  ///   * others - Theme.colorScheme.primary
+  /// * `overlayColor`
+  ///   * hovered - Theme.colorScheme.primary(0.08)
+  ///   * focused or pressed - Theme.colorScheme.primary(0.1)
+  /// * `shadowColor` - Theme.colorScheme.shadow
+  /// * `surfaceTintColor` - Colors.transparent
+  /// * `elevation` - 0
+  /// * `padding` - based on [ButtonStyle.sizeVariant]; horizontal(12),
+  ///   horizontal(16), horizontal(24), horizontal(48), horizontal(64)
+  /// * `minimumSize` - based on [ButtonStyle.sizeVariant]; Size(64, 32),
+  ///   Size(64, 40), Size(64, 56), Size(64, 96), Size(64, 136)
+  /// * `fixedSize` - null
+  /// * `maximumSize` - Size.infinite
+  /// * `iconSize` - based on [ButtonStyle.sizeVariant]; 20, 20, 24, 32, 40
+  /// * `iconColor` - same as `foregroundColor`
+  /// * `side` - null
+  /// * `shape` - based on [ButtonStyle.sizeVariant], [ButtonStyle.shapeVariant],
+  ///   and state
+  ///   * pressed - RoundedRectangleBorder with radius 8, 8, 12, 16, 16
+  ///   * others
+  ///     * round - StadiumBorder()
+  ///     * square - RoundedRectangleBorder with radius 12, 12, 16, 28, 28
+  /// * `mouseCursor` - WidgetStateMouseCursor.adaptiveClickable
+  /// * `visualDensity` - VisualDensity.standard
+  /// * `tapTargetSize` - MaterialTapTargetSize.padded
+  /// * `animationDuration` - kThemeChangeDuration
+  /// * `enableFeedback` - true
+  /// * `alignment` - Alignment.center
+  /// * `splashFactory` - Theme.splashFactory
+  /// * `sizeVariant` - ButtonSizeVariant.small
+  /// * `shapeVariant` - ButtonShapeVariant.round
+  ///
+  /// For the [TextButton.icon] factory, the padding is the same, and the gap
+  /// between the icon and the label is 4, 8, 8, 12, or 16 based on
+  /// [ButtonStyle.sizeVariant].
   @override
   ButtonStyle defaultStyleOf(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     final ColorScheme colorScheme = theme.colorScheme;
+    final bool useExpressive =
+        theme.useMaterial3 &&
+        TextButtonTheme.variantOf(context) == StyleVariant.material3Expressive;
+    if (useExpressive) {
+      final TextButtonThemeData textButtonTheme = TextButtonTheme.of(context);
+      final ButtonSizeVariant? effectiveSize =
+          style?.sizeVariant ?? textButtonTheme.style?.sizeVariant;
+      final ButtonShapeVariant? effectiveShape =
+          style?.shapeVariant ?? textButtonTheme.style?.shapeVariant;
+      // The Material 3 Expressive defaults use the same padding with or
+      // without an icon.
+      return _TextButtonDefaultsM3E(context, effectiveSize, effectiveShape);
+    }
+
     final ButtonStyle buttonStyle = theme.useMaterial3
         ? _TextButtonDefaultsM3(context)
         : styleFrom(
@@ -477,11 +574,23 @@ class _TextButtonWithIconChild extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double defaultFontSize =
-        buttonStyle?.textStyle?.resolve(const <WidgetState>{})?.fontSize ?? 14.0;
-    final double scale =
-        clampDouble(MediaQuery.textScalerOf(context).scale(defaultFontSize) / 14.0, 1.0, 2.0) - 1.0;
     final TextButtonThemeData textButtonTheme = TextButtonTheme.of(context);
+    final bool useExpressive =
+        Theme.of(context).useMaterial3 &&
+        TextButtonTheme.variantOf(context) == StyleVariant.material3Expressive;
+    final double spacing;
+    if (useExpressive) {
+      final ButtonSizeVariant effectiveSize =
+          buttonStyle?.sizeVariant ?? textButtonTheme.style?.sizeVariant ?? ButtonSizeVariant.small;
+      spacing = _TextButtonDefaultsM3E.iconLabelSpace(effectiveSize);
+    } else {
+      final double defaultFontSize =
+          buttonStyle?.textStyle?.resolve(const <WidgetState>{})?.fontSize ?? 14.0;
+      final double scale =
+          clampDouble(MediaQuery.textScalerOf(context).scale(defaultFontSize) / 14.0, 1.0, 2.0) -
+          1.0;
+      spacing = lerpDouble(8, 4, scale)!;
+    }
     final IconAlignment effectiveIconAlignment =
         iconAlignment ??
         textButtonTheme.style?.iconAlignment ??
@@ -489,7 +598,7 @@ class _TextButtonWithIconChild extends StatelessWidget {
         IconAlignment.start;
     return Row(
       mainAxisSize: MainAxisSize.min,
-      spacing: lerpDouble(8, 4, scale)!,
+      spacing: spacing,
       children: effectiveIconAlignment == IconAlignment.start
           ? <Widget>[icon, Flexible(child: label)]
           : <Widget>[Flexible(child: label), icon],

@@ -1635,6 +1635,54 @@ void main() {
       expect(segmentBox.size.width, screenWidth);
     }
   });
+
+  testWidgets(
+    'Segments keep the Material 3 TextButton defaults when text buttons use Material 3 Expressive',
+    (WidgetTester tester) async {
+      Future<List<EdgeInsetsGeometry>> segmentPaddings({required bool expressive}) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: ThemeData(
+              textButtonTheme: TextButtonThemeData(
+                variant: expressive ? StyleVariant.material3Expressive : null,
+              ),
+            ),
+            home: Scaffold(
+              body: Center(
+                child: SegmentedButton<int>(
+                  segments: const <ButtonSegment<int>>[
+                    ButtonSegment<int>(value: 0, label: Text('A')),
+                    ButtonSegment<int>(value: 1, label: Text('B')),
+                  ],
+                  selected: const <int>{0},
+                  onSelectionChanged: (Set<int> selected) {},
+                ),
+              ),
+            ),
+          ),
+        );
+        // Let the theme change animation finish.
+        await tester.pumpAndSettle();
+        return <EdgeInsetsGeometry>[
+          for (final Element button in find.byType(TextButton).evaluate())
+            tester
+                .widget<Padding>(
+                  find
+                      .descendant(
+                        of: find.byElementPredicate((Element element) => element == button),
+                        matching: find.byType(Padding),
+                      )
+                      .first,
+                )
+                .padding,
+        ];
+      }
+
+      final List<EdgeInsetsGeometry> material3 = await segmentPaddings(expressive: false);
+      expect(material3, hasLength(2));
+      expect(await segmentPaddings(expressive: true), material3);
+    },
+  );
 }
 
 Set<WidgetState> enabled = const <WidgetState>{};

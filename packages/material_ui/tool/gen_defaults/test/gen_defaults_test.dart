@@ -462,8 +462,10 @@ void main() {
       expect(contents, contains('return Colors.transparent;'));
       expect(contents, contains('return _colors.primary;'));
       expect(contents, contains('return _colors.primary.withValues(alpha: 0.08);'));
-      // Text buttons have no selected or unselected tokens, and no outline.
+      // Text buttons have no selected or unselected tokens, so they can't be
+      // toggle buttons. They also have no outline.
       expect(contents, isNot(contains('WidgetState.selected')));
+      expect(contents, isNot(contains('toggleable')));
       expect(contents, isNot(contains('get side')));
     });
 

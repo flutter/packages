@@ -1,0 +1,4 @@
+changelog: |
+  - Adds Material 3 Expressive support for TextButton.
+  - Adds `TextButtonTheme.variantOf`, which returns the closest non-null `TextButtonThemeData.variant`, or `StyleVariant.material3` if none is set.
+version: minor
