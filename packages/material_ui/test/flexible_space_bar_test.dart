@@ -527,7 +527,7 @@ void main() {
                               rect: const Rect.fromLTRB(0.0, 0.0, 800.0, 200.0),
                               children: <TestSemantics>[
                                 TestSemantics(
-                                  rect: const Rect.fromLTRB(0.0, 0.0, 100.0, 20.0),
+                                  rect: const Rect.fromLTRB(0.0, 0.0, 100.75, 20.0),
                                   flags: <SemanticsFlag>[
                                     SemanticsFlag.isHeader,
                                     SemanticsFlag.namesRoute,
@@ -627,7 +627,7 @@ void main() {
                               rect: const Rect.fromLTRB(0.0, 0.0, 800.0, 56.0),
                               children: <TestSemantics>[
                                 TestSemantics(
-                                  rect: const Rect.fromLTRB(0.0, 0.0, 100.0, 20.0),
+                                  rect: const Rect.fromLTRB(0.0, 0.0, 100.75, 20.0),
                                   flags: <SemanticsFlag>[
                                     SemanticsFlag.isHeader,
                                     SemanticsFlag.namesRoute,
@@ -1266,13 +1266,13 @@ void main() {
     expect(getTitleBottomLeft(), const Offset(72.0, 16.0));
 
     await tester.pumpWidget(buildFrame(TargetPlatform.android, true));
-    expect(getTitleBottomLeft(), const Offset(390.0, 16.0));
+    expect(getTitleBottomLeft(), within(distance: 0.001, from: const Offset(389.925, 16.0)));
 
     // Clear the widget tree to avoid animating between Android and iOS.
     await tester.pumpWidget(Container(key: UniqueKey()));
 
     await tester.pumpWidget(buildFrame(TargetPlatform.iOS, null));
-    expect(getTitleBottomLeft(), const Offset(390.0, 16.0));
+    expect(getTitleBottomLeft(), within(distance: 0.001, from: const Offset(389.925, 16.0)));
 
     await tester.pumpWidget(buildFrame(TargetPlatform.iOS, false));
     expect(getTitleBottomLeft(), const Offset(72.0, 16.0));
@@ -1281,7 +1281,7 @@ void main() {
     await tester.pumpWidget(Container(key: UniqueKey()));
 
     await tester.pumpWidget(buildFrame(TargetPlatform.macOS, null));
-    expect(getTitleBottomLeft(), const Offset(390.0, 16.0));
+    expect(getTitleBottomLeft(), within(distance: 0.001, from: const Offset(389.925, 16.0)));
 
     await tester.pumpWidget(buildFrame(TargetPlatform.macOS, false));
     expect(getTitleBottomLeft(), const Offset(72.0, 16.0));
@@ -1384,13 +1384,13 @@ void main() {
     expect(getTitleBottomLeft(), Offset.zero);
 
     await tester.pumpWidget(buildFrame(TargetPlatform.android, true));
-    expect(getTitleBottomLeft(), const Offset(390.0, 0.0));
+    expect(getTitleBottomLeft(), within(distance: 0.001, from: const Offset(389.925, 0.0)));
 
     // Clear the widget tree to avoid animating between platforms.
     await tester.pumpWidget(Container(key: UniqueKey()));
 
     await tester.pumpWidget(buildFrame(TargetPlatform.iOS, null));
-    expect(getTitleBottomLeft(), const Offset(390.0, 0.0));
+    expect(getTitleBottomLeft(), within(distance: 0.001, from: const Offset(389.925, 0.0)));
 
     await tester.pumpWidget(buildFrame(TargetPlatform.iOS, false));
     expect(getTitleBottomLeft(), Offset.zero);
@@ -1399,7 +1399,7 @@ void main() {
     await tester.pumpWidget(Container(key: UniqueKey()));
 
     await tester.pumpWidget(buildFrame(TargetPlatform.macOS, null));
-    expect(getTitleBottomLeft(), const Offset(390.0, 0.0));
+    expect(getTitleBottomLeft(), within(distance: 0.001, from: const Offset(389.925, 0.0)));
 
     await tester.pumpWidget(buildFrame(TargetPlatform.macOS, false));
     expect(getTitleBottomLeft(), Offset.zero);
@@ -1411,7 +1411,7 @@ void main() {
     expect(getTitleBottomLeft(), Offset.zero);
 
     await tester.pumpWidget(buildFrame(TargetPlatform.windows, true));
-    expect(getTitleBottomLeft(), const Offset(390.0, 0.0));
+    expect(getTitleBottomLeft(), within(distance: 0.001, from: const Offset(389.925, 0.0)));
 
     // Clear the widget tree to avoid animating between platforms.
     await tester.pumpWidget(Container(key: UniqueKey()));
@@ -1420,7 +1420,7 @@ void main() {
     expect(getTitleBottomLeft(), Offset.zero);
 
     await tester.pumpWidget(buildFrame(TargetPlatform.linux, true));
-    expect(getTitleBottomLeft(), const Offset(390.0, 0.0));
+    expect(getTitleBottomLeft(), within(distance: 0.001, from: const Offset(389.925, 0.0)));
   });
 
   testWidgets('FlexibleSpaceBar rebuilds when scrolling.', (WidgetTester tester) async {

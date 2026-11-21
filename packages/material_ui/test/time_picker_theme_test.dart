@@ -171,40 +171,40 @@ void main() {
     final RenderParagraph hourText = _textRenderParagraph(tester, '7');
     expect(
       hourText.text.style,
-      Typography.material2014().englishLike.displayMedium!
-          .merge(Typography.material2014().black.displayMedium)
+      Typography.material2018().englishLike.displayMedium!
+          .merge(Typography.material2018().black.displayMedium)
           .copyWith(color: defaultTheme.colorScheme.primary),
     );
 
     final RenderParagraph minuteText = _textRenderParagraph(tester, '15');
     expect(
       minuteText.text.style,
-      Typography.material2014().englishLike.displayMedium!
-          .merge(Typography.material2014().black.displayMedium)
+      Typography.material2018().englishLike.displayMedium!
+          .merge(Typography.material2018().black.displayMedium)
           .copyWith(color: defaultTheme.colorScheme.onSurface),
     );
 
     final RenderParagraph amText = _textRenderParagraph(tester, 'AM');
     expect(
       amText.text.style,
-      Typography.material2014().englishLike.titleMedium!
-          .merge(Typography.material2014().black.titleMedium)
+      Typography.material2018().englishLike.titleMedium!
+          .merge(Typography.material2018().black.titleMedium)
           .copyWith(color: defaultTheme.colorScheme.primary),
     );
 
     final RenderParagraph pmText = _textRenderParagraph(tester, 'PM');
     expect(
       pmText.text.style,
-      Typography.material2014().englishLike.titleMedium!
-          .merge(Typography.material2014().black.titleMedium)
+      Typography.material2018().englishLike.titleMedium!
+          .merge(Typography.material2018().black.titleMedium)
           .copyWith(color: defaultTheme.colorScheme.onSurface.withOpacity(0.6)),
     );
 
     final RenderParagraph helperText = _textRenderParagraph(tester, 'SELECT TIME');
     expect(
       helperText.text.style,
-      Typography.material2014().englishLike.labelSmall!.merge(
-        Typography.material2014().black.labelSmall,
+      Typography.material2018().englishLike.labelSmall!.merge(
+        Typography.material2018().black.labelSmall,
       ),
     );
 
@@ -215,8 +215,8 @@ void main() {
     expect(
       // ignore: avoid_dynamic_calls
       primaryLabels.first.painter.text.style,
-      Typography.material2014().englishLike.bodyLarge!
-          .merge(Typography.material2014().black.bodyLarge)
+      Typography.material2018().englishLike.bodyLarge!
+          .merge(Typography.material2018().black.bodyLarge)
           .copyWith(color: defaultTheme.colorScheme.onSurface),
     );
     // ignore: avoid_dynamic_calls
@@ -224,8 +224,8 @@ void main() {
     expect(
       // ignore: avoid_dynamic_calls
       selectedLabels.first.painter.text.style,
-      Typography.material2014().englishLike.bodyLarge!
-          .merge(Typography.material2014().white.bodyLarge)
+      Typography.material2018().englishLike.bodyLarge!
+          .merge(Typography.material2018().white.bodyLarge)
           .copyWith(color: defaultTheme.colorScheme.onPrimary),
     );
 
@@ -499,7 +499,7 @@ void main() {
     );
     expect(
       hourDecoration.hintStyle,
-      Typography.material2014().englishLike.displayMedium!.merge(
+      Typography.material2018().englishLike.displayMedium!.merge(
         defaultTheme.textTheme.displayMedium!.copyWith(
           color: defaultTheme.colorScheme.onSurface.withOpacity(0.36),
         ),
@@ -624,8 +624,8 @@ void main() {
     final RenderParagraph hourText = _textRenderParagraph(tester, '7');
     expect(
       hourText.text.style,
-      Typography.material2014().englishLike.bodyMedium!
-          .merge(Typography.material2014().black.bodyMedium)
+      Typography.material2018().englishLike.bodyMedium!
+          .merge(Typography.material2018().black.bodyMedium)
           .merge(timePickerTheme.hourMinuteTextStyle)
           .copyWith(color: _selectedColor),
     );
@@ -633,8 +633,8 @@ void main() {
     final RenderParagraph minuteText = _textRenderParagraph(tester, '15');
     expect(
       minuteText.text.style,
-      Typography.material2014().englishLike.bodyMedium!
-          .merge(Typography.material2014().black.bodyMedium)
+      Typography.material2018().englishLike.bodyMedium!
+          .merge(Typography.material2018().black.bodyMedium)
           .merge(timePickerTheme.hourMinuteTextStyle)
           .copyWith(color: _unselectedColor),
     );
@@ -642,8 +642,8 @@ void main() {
     final RenderParagraph amText = _textRenderParagraph(tester, 'AM');
     expect(
       amText.text.style,
-      Typography.material2014().englishLike.titleMedium!
-          .merge(Typography.material2014().black.titleMedium)
+      Typography.material2018().englishLike.bodyMedium!
+          .merge(Typography.material2018().black.bodyMedium)
           .merge(timePickerTheme.dayPeriodTextStyle)
           .copyWith(color: _selectedColor),
     );
@@ -651,8 +651,8 @@ void main() {
     final RenderParagraph pmText = _textRenderParagraph(tester, 'PM');
     expect(
       pmText.text.style,
-      Typography.material2014().englishLike.titleMedium!
-          .merge(Typography.material2014().black.titleMedium)
+      Typography.material2018().englishLike.bodyMedium!
+          .merge(Typography.material2018().black.bodyMedium)
           .merge(timePickerTheme.dayPeriodTextStyle)
           .copyWith(color: _unselectedColor),
     );
@@ -660,8 +660,8 @@ void main() {
     final RenderParagraph helperText = _textRenderParagraph(tester, 'SELECT TIME');
     expect(
       helperText.text.style,
-      Typography.material2014().englishLike.bodyMedium!
-          .merge(Typography.material2014().black.bodyMedium)
+      Typography.material2018().englishLike.bodyMedium!
+          .merge(Typography.material2018().black.bodyMedium)
           .merge(timePickerTheme.helpTextStyle),
     );
 
@@ -672,8 +672,8 @@ void main() {
     expect(
       // ignore: avoid_dynamic_calls
       primaryLabels.first.painter.text.style,
-      Typography.material2014().englishLike.bodyLarge!
-          .merge(Typography.material2014().black.bodyLarge)
+      Typography.material2018().englishLike.bodyLarge!
+          .merge(Typography.material2018().black.bodyLarge)
           .copyWith(color: _unselectedColor),
     );
     // ignore: avoid_dynamic_calls
@@ -681,8 +681,8 @@ void main() {
     expect(
       // ignore: avoid_dynamic_calls
       selectedLabels.first.painter.text.style,
-      Typography.material2014().englishLike.bodyLarge!
-          .merge(Typography.material2014().white.bodyLarge)
+      Typography.material2018().englishLike.bodyLarge!
+          .merge(Typography.material2018().white.bodyLarge)
           .copyWith(color: _selectedColor),
     );
 

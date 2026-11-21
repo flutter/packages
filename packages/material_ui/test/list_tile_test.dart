@@ -4088,7 +4088,7 @@ void main() {
       leading = _getTextRenderObject(tester, 'leading');
       expect(leading.text.style!.fontSize, 14.0);
       title = _getTextRenderObject(tester, 'title');
-      expect(title.text.style!.fontSize, 14.0);
+      expect(title.text.style!.fontSize, 16.0);
       subtitle = _getTextRenderObject(tester, 'subtitle');
       expect(subtitle.text.style!.fontSize, 14.0);
       trailing = _getTextRenderObject(tester, 'trailing');

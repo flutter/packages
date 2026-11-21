@@ -714,7 +714,7 @@ void main() {
     final RenderBox secondItem = tester
         .renderObjectList<RenderBox>(find.text('Second Item', skipOffstage: false))
         .toList()[1];
-    expect(secondItem.localToGlobal(Offset.zero).dx, equals(150.0));
+    expect(secondItem.localToGlobal(Offset.zero).dx, moreOrLessEquals(149.175, epsilon: 0.001));
     expect(secondItem.localToGlobal(Offset.zero).dy, equals(176.0));
   });
 
@@ -2598,10 +2598,7 @@ void main() {
     expect(focusNode.hasPrimaryFocus, isTrue);
     expect(
       find.byType(Material),
-      paints..rect(
-        rect: const Rect.fromLTRB(348.0, 276.0, 452.0, 324.0),
-        color: const Color(0x1f000000),
-      ),
+      paints..rect(rect: tester.getRect(find.byKey(buttonKey)), color: const Color(0x1f000000)),
     );
 
     await tester.pumpWidget(
@@ -2616,10 +2613,7 @@ void main() {
     await tester.pumpAndSettle(); // Pump a frame for autofocus to take effect.
     expect(
       find.byType(Material),
-      paints..rect(
-        rect: const Rect.fromLTRB(348.0, 276.0, 452.0, 324.0),
-        color: const Color(0x1f00ff00),
-      ),
+      paints..rect(rect: tester.getRect(find.byKey(buttonKey)), color: const Color(0x1f00ff00)),
     );
   });
 
@@ -3242,7 +3236,7 @@ void main() {
     expect(find.byKey(const ValueKey<int>(1)), findsNWidgets(2));
     expect(
       tester.getRect(find.byKey(const ValueKey<int>(1)).last),
-      equals(const Rect.fromLTRB(372.0, 104.0, 436.0, 152.0)),
+      within(distance: 0.001, from: const Rect.fromLTRB(371.85, 104.0, 436.15, 152.0)),
     );
 
     // Scrolling to the top again has removed the one the focus was on from the
@@ -3717,10 +3711,10 @@ void main() {
     final List<RenderBox> itemBoxes = tester
         .renderObjectList<RenderBox>(find.byKey(itemKey))
         .toList();
-    expect(itemBoxes[0].localToGlobal(Offset.zero).dx, 364.0);
+    expect(itemBoxes[0].localToGlobal(Offset.zero).dx, moreOrLessEquals(363.775, epsilon: 0.001));
     expect(itemBoxes[0].localToGlobal(Offset.zero).dy, 47.5);
 
-    expect(itemBoxes[1].localToGlobal(Offset.zero).dx, 364.0);
+    expect(itemBoxes[1].localToGlobal(Offset.zero).dx, moreOrLessEquals(363.775, epsilon: 0.001));
     expect(itemBoxes[1].localToGlobal(Offset.zero).dy, 47.5);
 
     expect(
@@ -3732,7 +3726,14 @@ void main() {
         ..rrect()
         // The height of menu is 47.0.
         ..rrect(
-          rrect: const RRect.fromLTRBXY(0.0, 0.0, 112.0, 47.0, 2.0, 2.0),
+          rrect: RRect.fromLTRBXY(
+            0.0,
+            0.0,
+            tester.getSize(find.byType(ListView)).width,
+            47.0,
+            2.0,
+            2.0,
+          ),
           color: Colors.grey[50],
           hasMaskFilter: false,
         ),
@@ -4222,7 +4223,7 @@ void main() {
         ..rrect()
         ..rrect()
         ..rrect()
-        ..rrect(rrect: const RRect.fromLTRBXY(0.0, 0.0, 144.0, 208.0, radius, radius)),
+        ..rrect(rrect: const RRect.fromLTRBXY(0.0, 0.0, 144.75, 208.0, radius, radius)),
     );
   });
 
@@ -4338,19 +4339,19 @@ void main() {
     await tester.pumpWidget(
       buildDropdownWithHint(alignment: AlignmentDirectional.centerStart, isExpanded: false),
     );
-    expect(tester.getTopLeft(find.text(hintText, skipOffstage: false)).dx, 348.0);
+    expect(tester.getTopLeft(find.text(hintText, skipOffstage: false)).dx, 347.625);
     expect(tester.getTopLeft(find.text(hintText, skipOffstage: false)).dy, 292.0);
     // AlignmentDirectional.topStart
     await tester.pumpWidget(
       buildDropdownWithHint(alignment: AlignmentDirectional.topStart, isExpanded: false),
     );
-    expect(tester.getTopLeft(find.text(hintText, skipOffstage: false)).dx, 348.0);
+    expect(tester.getTopLeft(find.text(hintText, skipOffstage: false)).dx, 347.625);
     expect(tester.getTopLeft(find.text(hintText, skipOffstage: false)).dy, 250.0);
     // AlignmentDirectional.bottomStart
     await tester.pumpWidget(
       buildDropdownWithHint(alignment: AlignmentDirectional.bottomStart, isExpanded: false),
     );
-    expect(tester.getBottomLeft(find.text(hintText, skipOffstage: false)).dx, 348.0);
+    expect(tester.getBottomLeft(find.text(hintText, skipOffstage: false)).dx, 347.625);
     expect(tester.getBottomLeft(find.text(hintText, skipOffstage: false)).dy, 350.0);
     // AlignmentDirectional.center
     await tester.pumpWidget(
@@ -4362,19 +4363,19 @@ void main() {
     await tester.pumpWidget(
       buildDropdownWithHint(alignment: AlignmentDirectional.topEnd, isExpanded: false),
     );
-    expect(tester.getTopRight(find.text(hintText, skipOffstage: false)).dx, 428.0);
+    expect(tester.getTopRight(find.text(hintText, skipOffstage: false)).dx, 428.375);
     expect(tester.getTopRight(find.text(hintText, skipOffstage: false)).dy, 250.0);
     // AlignmentDirectional.centerEnd
     await tester.pumpWidget(
       buildDropdownWithHint(alignment: AlignmentDirectional.centerEnd, isExpanded: false),
     );
-    expect(tester.getTopRight(find.text(hintText, skipOffstage: false)).dx, 428.0);
+    expect(tester.getTopRight(find.text(hintText, skipOffstage: false)).dx, 428.375);
     expect(tester.getTopRight(find.text(hintText, skipOffstage: false)).dy, 292.0);
     // AlignmentDirectional.bottomEnd
     await tester.pumpWidget(
       buildDropdownWithHint(alignment: AlignmentDirectional.bottomEnd, isExpanded: false),
     );
-    expect(tester.getTopRight(find.text(hintText, skipOffstage: false)).dx, 428.0);
+    expect(tester.getTopRight(find.text(hintText, skipOffstage: false)).dx, 428.375);
     expect(tester.getTopRight(find.text(hintText, skipOffstage: false)).dy, 334.0);
 
     // DropdownButton with `isExpanded: true`
@@ -4435,7 +4436,7 @@ void main() {
         enableSelectedItemBuilder: true,
       ),
     );
-    expect(tester.getTopLeft(find.text(hintText, skipOffstage: false)).dx, 348.0);
+    expect(tester.getTopLeft(find.text(hintText, skipOffstage: false)).dx, 347.625);
     expect(tester.getTopLeft(find.text(hintText, skipOffstage: false)).dy, 292.0);
     // AlignmentDirectional.topStart
     await tester.pumpWidget(
@@ -4445,7 +4446,7 @@ void main() {
         enableSelectedItemBuilder: true,
       ),
     );
-    expect(tester.getTopLeft(find.text(hintText, skipOffstage: false)).dx, 348.0);
+    expect(tester.getTopLeft(find.text(hintText, skipOffstage: false)).dx, 347.625);
     expect(tester.getTopLeft(find.text(hintText, skipOffstage: false)).dy, 250.0);
     // AlignmentDirectional.bottomStart
     await tester.pumpWidget(
@@ -4455,7 +4456,7 @@ void main() {
         enableSelectedItemBuilder: true,
       ),
     );
-    expect(tester.getBottomLeft(find.text(hintText, skipOffstage: false)).dx, 348.0);
+    expect(tester.getBottomLeft(find.text(hintText, skipOffstage: false)).dx, 347.625);
     expect(tester.getBottomLeft(find.text(hintText, skipOffstage: false)).dy, 350.0);
     // AlignmentDirectional.center
     await tester.pumpWidget(
@@ -4475,7 +4476,7 @@ void main() {
         enableSelectedItemBuilder: true,
       ),
     );
-    expect(tester.getTopRight(find.text(hintText, skipOffstage: false)).dx, 428.0);
+    expect(tester.getTopRight(find.text(hintText, skipOffstage: false)).dx, 428.375);
     expect(tester.getTopRight(find.text(hintText, skipOffstage: false)).dy, 250.0);
     // AlignmentDirectional.centerEnd
     await tester.pumpWidget(
@@ -4485,7 +4486,7 @@ void main() {
         enableSelectedItemBuilder: true,
       ),
     );
-    expect(tester.getTopRight(find.text(hintText, skipOffstage: false)).dx, 428.0);
+    expect(tester.getTopRight(find.text(hintText, skipOffstage: false)).dx, 428.375);
     expect(tester.getTopRight(find.text(hintText, skipOffstage: false)).dy, 292.0);
     // AlignmentDirectional.bottomEnd
     await tester.pumpWidget(
@@ -4495,7 +4496,7 @@ void main() {
         enableSelectedItemBuilder: true,
       ),
     );
-    expect(tester.getTopRight(find.text(hintText, skipOffstage: false)).dx, 428.0);
+    expect(tester.getTopRight(find.text(hintText, skipOffstage: false)).dx, 428.375);
     expect(tester.getTopRight(find.text(hintText, skipOffstage: false)).dy, 334.0);
 
     // DropdownButton with `isExpanded: true`

@@ -719,8 +719,8 @@ void main() {
 
     const continueStr = 'CONTINUE';
     const cancelStr = 'CANCEL';
-    const continueButtonRect = Rect.fromLTRB(24.0, 212.0, 168.0, 260.0);
-    const cancelButtonRect = Rect.fromLTRB(176.0, 212.0, 292.0, 260.0);
+    const continueButtonRect = Rect.fromLTRB(24.0, 212.0, 178.0, 260.0);
+    const cancelButtonRect = Rect.fromLTRB(186.0, 212.0, 309.5, 260.0);
     expect(buttonMaterial(continueStr).color!.value, 0xff2196f3);
     expect(buttonMaterial(continueStr).textStyle!.color!.value, 0xffffffff);
     expect(buttonMaterial(continueStr).shape, buttonShape);

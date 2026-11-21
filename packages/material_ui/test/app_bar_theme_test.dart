@@ -88,8 +88,8 @@ void main() {
     expect(actionIconText.text.style!.color, Colors.white);
     expect(
       text.style,
-      Typography.material2014().englishLike.bodyMedium!.merge(
-        Typography.material2014().white.bodyMedium,
+      Typography.material2018().englishLike.bodyMedium!.merge(
+        Typography.material2018().white.bodyMedium,
       ),
     );
     expect(tester.getSize(find.byType(AppBar)).height, kToolbarHeight);
@@ -335,8 +335,8 @@ void main() {
     expect(actionIconText.text.style!.color, lightTheme.colorScheme.onPrimary);
     expect(
       text.style,
-      Typography.material2014().englishLike.bodyMedium!
-          .merge(Typography.material2014().black.bodyMedium)
+      Typography.material2018().englishLike.bodyMedium!
+          .merge(Typography.material2018().black.bodyMedium)
           .copyWith(color: lightTheme.colorScheme.onPrimary),
     );
 
@@ -370,8 +370,8 @@ void main() {
     expect(actionIconText.text.style!.color, darkTheme.colorScheme.onSurface);
     expect(
       text.style,
-      Typography.material2014().englishLike.bodyMedium!
-          .merge(Typography.material2014().black.bodyMedium)
+      Typography.material2018().englishLike.bodyMedium!
+          .merge(Typography.material2018().black.bodyMedium)
           .copyWith(color: darkTheme.colorScheme.onSurface),
     );
   });

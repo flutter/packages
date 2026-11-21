@@ -2408,8 +2408,8 @@ void main() {
     await tester.pumpAndSettle(); // Theme changes are animated.
     expect(tester.getSize(find.widgetWithText(menuItemType, 'Item 0')).height, 48);
     expect(tester.getSize(find.widgetWithText(menuItemType, 'Item 1')).height, 48);
-    expect(tester.getTopLeft(find.text('Item 0')).dx, 72);
-    expect(tester.getTopLeft(find.text('Item 1')).dx, 72);
+    expect(tester.getTopLeft(find.text('Item 0')).dx, moreOrLessEquals(71.1, epsilon: 0.001));
+    expect(tester.getTopLeft(find.text('Item 1')).dx, moreOrLessEquals(71.1, epsilon: 0.001));
   });
 
   test("PopupMenuButton's child and icon properties cannot be simultaneously defined", () {

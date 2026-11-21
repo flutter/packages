@@ -9,7 +9,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
 void main() {
-  const TextTheme defaultGeometryTheme = Typography.englishLike2014;
+  const TextTheme defaultGeometryTheme = Typography.englishLike2018;
   const TextTheme defaultGeometryThemeM3 = Typography.englishLike2021;
 
   test('ThemeDataTween control test', () {
@@ -270,7 +270,12 @@ void main() {
     WidgetTester tester,
   ) async {
     final m2Theme = ThemeData(useMaterial3: false);
-    expect(m2Theme.typography, Typography.material2014());
+    expect(m2Theme.typography, Typography.material2018());
+  });
+
+  test('Material 2 supports an explicit 2014 typography override', () {
+    final Typography typography = Typography.material2014();
+    expect(ThemeData(useMaterial3: false, typography: typography).typography, same(typography));
   });
 
   testWidgets('Material3 - ThemeData with null typography uses proper defaults', (
@@ -591,7 +596,7 @@ void main() {
         expect(style.fontSize, isNotNull);
         expect(style.fontWeight, isNotNull);
         expect(style.fontStyle, null);
-        expect(style.letterSpacing, null);
+        expect(style.letterSpacing, isNotNull);
         expect(style.wordSpacing, null);
         expect(style.textBaseline, isNotNull);
         expect(style.height, null);
@@ -606,7 +611,7 @@ void main() {
 
     expect(
       theme.textTheme.displayLarge!.debugLabel,
-      '(englishLike displayLarge 2014).merge(blackMountainView displayLarge)',
+      '(englishLike displayLarge 2018).merge(blackMountainView displayLarge)',
     );
   });
 

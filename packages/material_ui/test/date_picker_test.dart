@@ -713,8 +713,8 @@ void main() {
       await tester.pumpWidget(buildFrame(TextDirection.ltr));
       await tester.tap(find.text('X'));
       await tester.pumpAndSettle();
-      expect(tester.getBottomRight(find.text('OK')).dx, 622);
-      expect(tester.getBottomLeft(find.text('OK')).dx, 594);
+      expect(tester.getBottomRight(find.text('OK')).dx, 623.25);
+      expect(tester.getBottomLeft(find.text('OK')).dx, 592.75);
       expect(tester.getBottomRight(find.text('CANCEL')).dx, 560);
       await tester.tap(find.text('OK'));
       await tester.pumpAndSettle();
@@ -722,9 +722,9 @@ void main() {
       await tester.pumpWidget(buildFrame(TextDirection.rtl));
       await tester.tap(find.text('X'));
       await tester.pumpAndSettle();
-      expect(tester.getBottomRight(find.text('OK')).dx, 206);
-      expect(tester.getBottomLeft(find.text('OK')).dx, 178);
-      expect(tester.getBottomRight(find.text('CANCEL')).dx, 324);
+      expect(tester.getBottomRight(find.text('OK')).dx, 207.25);
+      expect(tester.getBottomLeft(find.text('OK')).dx, 176.75);
+      expect(tester.getBottomRight(find.text('CANCEL')).dx, 331.5);
       await tester.tap(find.text('OK'));
       await tester.pumpAndSettle();
 
@@ -736,8 +736,8 @@ void main() {
       await tester.pumpWidget(buildFrame(TextDirection.ltr));
       await tester.tap(find.text('X'));
       await tester.pumpAndSettle();
-      expect(tester.getBottomRight(find.text('OK')).dx, 258);
-      expect(tester.getBottomLeft(find.text('OK')).dx, 230);
+      expect(tester.getBottomRight(find.text('OK')).dx, 259.25);
+      expect(tester.getBottomLeft(find.text('OK')).dx, 228.75);
       expect(tester.getBottomRight(find.text('CANCEL')).dx, 196);
       await tester.tap(find.text('OK'));
       await tester.pumpAndSettle();
@@ -745,9 +745,9 @@ void main() {
       await tester.pumpWidget(buildFrame(TextDirection.rtl));
       await tester.tap(find.text('X'));
       await tester.pumpAndSettle();
-      expect(tester.getBottomRight(find.text('OK')).dx, 70);
-      expect(tester.getBottomLeft(find.text('OK')).dx, 42);
-      expect(tester.getBottomRight(find.text('CANCEL')).dx, 188);
+      expect(tester.getBottomRight(find.text('OK')).dx, 71.25);
+      expect(tester.getBottomLeft(find.text('OK')).dx, 40.75);
+      expect(tester.getBottomRight(find.text('CANCEL')).dx, 195.5);
       await tester.tap(find.text('OK'));
       await tester.pumpAndSettle();
     });

@@ -5551,7 +5551,7 @@ void main() {
     );
     final Text helperText = tester.widget(find.text('helper text'));
     expect(helperText.style!.color, themeData.hintColor);
-    expect(helperText.style!.fontSize, Typography.englishLike2014.bodySmall!.fontSize);
+    expect(helperText.style!.fontSize, Typography.englishLike2018.bodySmall!.fontSize);
   });
 
   testWidgets('TextField with specified helperStyle', (WidgetTester tester) async {
@@ -6348,7 +6348,7 @@ void main() {
 
     scrollableState = tester.firstState(find.byType(Scrollable));
     // For a horizontal input, scrolls to the exact position of the caret.
-    expect(scrollableState.position.pixels, equals(222.0));
+    expect(scrollableState.position.pixels, 225.0);
   });
 
   testWidgets('Multiline text field scrolls the caret into view', (WidgetTester tester) async {
@@ -9310,7 +9310,7 @@ void main() {
       editable.getLocalRectForCaret(const TextPosition(offset: 10)).topLeft,
     );
 
-    expect(topLeft.dx, equals(701));
+    expect(topLeft.dx, moreOrLessEquals(700.333, epsilon: 0.001));
 
     await tester.pumpWidget(
       MaterialApp(
@@ -9327,7 +9327,7 @@ void main() {
       editable.getLocalRectForCaret(const TextPosition(offset: 10)).topLeft,
     );
 
-    expect(topLeft.dx, equals(160.0));
+    expect(topLeft.dx, moreOrLessEquals(161.667, epsilon: 0.001));
   });
 
   testWidgets('TextField semantics', (WidgetTester tester) async {
@@ -9940,7 +9940,7 @@ void main() {
     // A null stepWidth causes the TextField to perfectly wrap the text plus
     // the cursor regardless of alignment.
     stepWidth = null;
-    const WIDTH_OF_CHAR = 16.0;
+    const WIDTH_OF_CHAR = 16.15;
     const CARET_GAP = 1.0;
     await tester.pumpWidget(
       buildFrame(stepWidth: stepWidth, cursorWidth: 18.0, textAlign: TextAlign.left),
@@ -9949,7 +9949,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(
       tester.getSize(find.byType(TextField)).width,
-      WIDTH_OF_CHAR * text.length + 18.0 + CARET_GAP,
+      moreOrLessEquals(WIDTH_OF_CHAR * text.length + 18.0 + CARET_GAP, epsilon: 0.001),
     );
     await tester.pumpWidget(
       buildFrame(stepWidth: stepWidth, cursorWidth: 18.0, textAlign: TextAlign.right),
@@ -9958,7 +9958,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(
       tester.getSize(find.byType(TextField)).width,
-      WIDTH_OF_CHAR * text.length + 18.0 + CARET_GAP,
+      moreOrLessEquals(WIDTH_OF_CHAR * text.length + 18.0 + CARET_GAP, epsilon: 0.001),
     );
   });
 
@@ -12894,7 +12894,7 @@ void main() {
       expect(lastCharEndpoint.length, 1);
       // Just testing the text and making sure that the last character is off
       // the right side of the screen.
-      expect(lastCharEndpoint[0].point.dx, 1056);
+      expect(lastCharEndpoint[0].point.dx, moreOrLessEquals(1065.9, epsilon: 0.001));
 
       final Offset textfieldStart = tester.getTopLeft(find.byType(TextField));
 
@@ -12910,7 +12910,7 @@ void main() {
       await gesture.moveBy(const Offset(900, 5));
       // To the edge of the screen basically.
       await tester.pump();
-      expect(controller.selection, const TextSelection(baseOffset: 0, extentOffset: 59));
+      expect(controller.selection, const TextSelection(baseOffset: 0, extentOffset: 56));
       // Keep moving out.
       await gesture.moveBy(const Offset(1, 0));
       await tester.pump();
@@ -12947,7 +12947,7 @@ void main() {
       );
       expect(firstCharEndpoint.length, 1);
       // The first character is now offscreen to the left.
-      expect(firstCharEndpoint[0].point.dx, moreOrLessEquals(-257.0, epsilon: 1));
+      expect(firstCharEndpoint[0].point.dx, moreOrLessEquals(-267.925, epsilon: 1));
     },
     variant: const TargetPlatformVariant(<TargetPlatform>{
       TargetPlatform.android,
@@ -12981,7 +12981,7 @@ void main() {
       expect(lastCharEndpoint.length, 1);
       // Just testing the test and making sure that the last character is off
       // the right side of the screen.
-      expect(lastCharEndpoint[0].point.dx, 1056);
+      expect(lastCharEndpoint[0].point.dx, moreOrLessEquals(1065.9, epsilon: 0.001));
 
       final Offset textfieldStart = tester.getTopLeft(find.byType(TextField));
 
@@ -12997,7 +12997,7 @@ void main() {
       await gesture.moveBy(const Offset(900, 5));
       // To the edge of the screen basically.
       await tester.pump();
-      expect(controller.selection, const TextSelection(baseOffset: 0, extentOffset: 59));
+      expect(controller.selection, const TextSelection(baseOffset: 0, extentOffset: 56));
       // Keep moving out.
       await gesture.moveBy(const Offset(1, 0));
       await tester.pump();
@@ -13034,7 +13034,7 @@ void main() {
       );
       expect(firstCharEndpoint.length, 1);
       // The first character is now offscreen to the left.
-      expect(firstCharEndpoint[0].point.dx, moreOrLessEquals(-257.0, epsilon: 1));
+      expect(firstCharEndpoint[0].point.dx, moreOrLessEquals(-267.258, epsilon: 1));
     },
     variant: const TargetPlatformVariant(<TargetPlatform>{
       TargetPlatform.iOS,
@@ -13069,7 +13069,7 @@ void main() {
       expect(lastCharEndpoint.length, 1);
       // Just testing the test and making sure that the last character is off
       // the right side of the screen.
-      expect(lastCharEndpoint[0].point.dx, 1056);
+      expect(lastCharEndpoint[0].point.dx, moreOrLessEquals(1065.9, epsilon: 0.001));
 
       final Offset textfieldStart = tester.getTopLeft(find.byType(TextField));
 
@@ -13085,7 +13085,10 @@ void main() {
       await gesture.moveBy(const Offset(600, 0));
       // To the edge of the screen basically.
       await tester.pump();
-      expect(controller.selection, const TextSelection.collapsed(offset: 56));
+      expect(
+        controller.selection,
+        const TextSelection.collapsed(offset: 56, affinity: TextAffinity.upstream),
+      );
       // Keep moving out.
       await gesture.moveBy(const Offset(1, 0));
       await tester.pump();
@@ -13122,7 +13125,7 @@ void main() {
       );
       expect(firstCharEndpoint.length, 1);
       // The first character is now offscreen to the left.
-      expect(firstCharEndpoint[0].point.dx, moreOrLessEquals(-257.0, epsilon: 1));
+      expect(firstCharEndpoint[0].point.dx, moreOrLessEquals(-267.258, epsilon: 1));
     },
     variant: const TargetPlatformVariant(<TargetPlatform>{
       TargetPlatform.iOS,
@@ -13202,7 +13205,7 @@ void main() {
 
       // Just testing the test and making sure that the last character is off
       // the right side of the screen.
-      expect(textOffsetToPosition(tester, 66).dx, 1056);
+      expect(textOffsetToPosition(tester, 66).dx, moreOrLessEquals(1065.9, epsilon: 0.001));
 
       await tester.tapAt(textOffsetToPosition(tester, 13));
       await tester.pumpAndSettle();
@@ -13237,13 +13240,10 @@ void main() {
       await tester.pumpAndSettle();
 
       // The last character is now on screen near the right edge.
-      expect(
-        textOffsetToPosition(tester, 66).dx,
-        moreOrLessEquals(TestSemantics.fullScreen.width, epsilon: 2.0),
-      );
+      expect(textOffsetToPosition(tester, 66).dx, moreOrLessEquals(797.9, epsilon: 2.0));
 
       // The first character is now offscreen to the left.
-      expect(textOffsetToPosition(tester, 0).dx, moreOrLessEquals(-257.0, epsilon: 1));
+      expect(textOffsetToPosition(tester, 0).dx, moreOrLessEquals(-267.6, epsilon: 1));
     },
     variant: TargetPlatformVariant.all(),
     skip: isBrowser, // [intended] Browser handles arrow keys differently.
@@ -14384,7 +14384,7 @@ void main() {
     topLeft = editable.localToGlobal(
       editable.getLocalRectForCaret(const TextPosition(offset: 1)).topLeft,
     );
-    expect(topLeft.dx, equals(383));
+    expect(topLeft.dx, 382);
   });
 
   testWidgets('Caret indexes into trailing whitespace center align', (WidgetTester tester) async {
@@ -14433,7 +14433,7 @@ void main() {
     topLeft = editable.localToGlobal(
       editable.getLocalRectForCaret(const TextPosition(offset: 1)).topLeft,
     );
-    expect(topLeft.dx, equals(383)); // Should be same as equivalent in 'Caret center position'
+    expect(topLeft.dx, 382); // Should be same as equivalent in 'Caret center position'
   });
 
   testWidgets('selection handles are rendered and not faded away', (WidgetTester tester) async {
@@ -14919,7 +14919,7 @@ void main() {
       await tester.pump();
       await tester.pumpAndSettle(); // Text scroll animation.
 
-      expect(textFieldScrollController.offset, 1602.0);
+      expect(textFieldScrollController.offset, moreOrLessEquals(1624.667, epsilon: 0.001));
     },
   );
 

@@ -86,7 +86,10 @@ void main() {
     );
 
     // Test default chip size.
-    expect(tester.getSize(find.byType(ChoiceChip)), const Size(178.0, 48.0));
+    expect(
+      tester.getSize(find.byType(ChoiceChip)),
+      within(distance: 0.001, from: const Size(204.357, 48.0)),
+    );
     // Test default label style.
     expect(
       getLabelStyle(tester, label).style.color,

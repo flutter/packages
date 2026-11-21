@@ -627,7 +627,7 @@ void main() {
 
       final Finder textField = find.byType(TextField);
       final Size anchorSize = tester.getSize(textField);
-      expect(anchorSize, const Size(180.0, 56.0));
+      expect(anchorSize, const Size(187.5, 56.0));
 
       await tester.tap(find.byType(DropdownMenu<TestMenu>));
       await tester.pumpAndSettle();
@@ -636,7 +636,7 @@ void main() {
           .ancestor(of: find.byType(SingleChildScrollView), matching: find.byType(Material))
           .first;
       final Size menuSize = tester.getSize(menuMaterial);
-      expect(menuSize, const Size(180.0, 304.0));
+      expect(menuSize, const Size(187.5, 304.0));
 
       // The text field should have same width as the menu
       // when the width property is not null.
@@ -1037,7 +1037,7 @@ void main() {
           .ancestor(of: find.byType(SingleChildScrollView), matching: find.byType(Padding))
           .first;
       final Size menuViewSize = tester.getSize(menuView);
-      expect(menuViewSize, const Size(180.0, 304.0)); // 304 = 288 + vertical padding(2 * 8)
+      expect(menuViewSize, const Size(187.5, 304.0)); // 304 = 288 + vertical padding(2 * 8)
 
       // Constrains the menu height.
       await tester.pumpWidget(Container());
@@ -1052,7 +1052,7 @@ void main() {
           .first;
 
       final Size updatedMenuSize = tester.getSize(updatedMenu);
-      expect(updatedMenuSize, const Size(180.0, 100.0));
+      expect(updatedMenuSize, const Size(187.5, 100.0));
     },
   );
 

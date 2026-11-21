@@ -2700,7 +2700,10 @@ void main() {
         ),
       );
       expect(find.text('BottomSheet'), findsOneWidget);
-      expect(tester.getRect(find.text('BottomSheet')), const Rect.fromLTRB(0, 586, 154, 600));
+      expect(
+        tester.getRect(find.text('BottomSheet')),
+        const Rect.fromLTRB(0.0, 586.0, 156.75, 600.0),
+      );
     });
 
     testWidgets('No constraints by default for showBottomSheet', (WidgetTester tester) async {
@@ -2729,7 +2732,10 @@ void main() {
       await tester.tap(find.text('Press me'));
       await tester.pumpAndSettle();
       expect(find.text('BottomSheet'), findsOneWidget);
-      expect(tester.getRect(find.text('BottomSheet')), const Rect.fromLTRB(0, 586, 154, 600));
+      expect(
+        tester.getRect(find.text('BottomSheet')),
+        const Rect.fromLTRB(0.0, 586.0, 156.75, 600.0),
+      );
     });
 
     testWidgets('No constraints by default for showModalBottomSheet', (WidgetTester tester) async {

@@ -579,19 +579,19 @@ void main() {
     await tester.pumpAndSettle();
     childRect = tester.getRect(find.byKey(childKey));
     expect(box.size, equals(const Size(88, 48)));
-    expect(childRect, equals(const Rect.fromLTRB(372.0, 293.0, 428.0, 307.0)));
+    expect(childRect, const Rect.fromLTRB(371.5, 293.0, 428.5, 307.0));
 
     await buildTest(const VisualDensity(horizontal: 3.0, vertical: 3.0), useText: true);
     await tester.pumpAndSettle();
     childRect = tester.getRect(find.byKey(childKey));
     expect(box.size, equals(const Size(100, 60)));
-    expect(childRect, equals(const Rect.fromLTRB(372.0, 293.0, 428.0, 307.0)));
+    expect(childRect, const Rect.fromLTRB(371.5, 293.0, 428.5, 307.0));
 
     await buildTest(const VisualDensity(horizontal: -3.0, vertical: -3.0), useText: true);
     await tester.pumpAndSettle();
     childRect = tester.getRect(find.byKey(childKey));
     expect(box.size, equals(const Size(76, 36)));
-    expect(childRect, equals(const Rect.fromLTRB(372.0, 293.0, 428.0, 307.0)));
+    expect(childRect, const Rect.fromLTRB(371.5, 293.0, 428.5, 307.0));
   });
 
   testWidgets('RawMaterialButton changes mouse cursor as expected when hovered', (

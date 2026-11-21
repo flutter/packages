@@ -799,7 +799,7 @@ void main() {
         tester.renderObject(find.text(tooltipText)).parent!.parent!.parent!.parent! as RenderBox;
 
     expect(tip.size.height, equals(32.0));
-    expect(tip.size.width, equals(74.0));
+    expect(tip.size.width, 74.75);
     expect(tip, paints..rrect(color: const Color(0x80800000)));
   });
 
@@ -880,7 +880,7 @@ void main() {
         tester.renderObject(find.text(tooltipText)).parent!.parent!.parent!.parent! as RenderBox;
 
     expect(tip.size.height, equals(32.0));
-    expect(tip.size.width, equals(74.0));
+    expect(tip.size.width, 74.75);
     expect(tip, paints..rrect(color: const Color(0x80800000)));
   });
 
