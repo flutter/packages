@@ -135,11 +135,63 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList> with ChangeNotifie
     return states.reversed;
   }
 
+  /// Whether a route on an enclosing Navigator covers [navigator].
+  ///
+  /// [Route.isCurrent] only reflects the route's own Navigator. A pageless
+  /// route pushed onto an enclosing Navigator, such as a root dialog over a
+  /// [ShellRoute], covers the shell page without changing the routes of the
+  /// shell's Navigator.
+  bool _isCoveredByEnclosingRoute(NavigatorState navigator) {
+    NavigatorState? current = navigator;
+    while (current != null && current != navigatorKey.currentState) {
+      final ModalRoute<dynamic>? enclosingRoute = ModalRoute.of(current.context);
+      if (enclosingRoute == null) {
+        return false;
+      }
+      if (!enclosingRoute.isCurrent) {
+        return true;
+      }
+      current = enclosingRoute.navigator;
+    }
+    return false;
+  }
+
+  final Set<Route<Object?>> _pendingExits = <Route<Object?>>{};
+  final Set<Route<Object?>> _approvedExits = <Route<Object?>>{};
+
+  @override
+  void dispose() {
+    _pendingExits.clear();
+    _approvedExits.clear();
+    super.dispose();
+  }
+
   bool _handlePopPageWithRouteMatch(Route<Object?> route, Object? result, RouteMatchBase match) {
     if (route.willHandlePopInternally) {
       final bool popped = route.didPop(result);
       assert(!popped);
       return popped;
+    }
+
+    if (match is ShellRouteMatch) {
+      final ShellRouteMatch shellMatch = match;
+      // A preceding pop may have updated the shell's children before its
+      // Navigator rebuilt. Use the active shell rather than its stale match.
+      RouteMatchBase? currentMatch = currentConfiguration.matches.isEmpty
+          ? null
+          : currentConfiguration.matches.last;
+      while (currentMatch is ShellRouteMatch) {
+        if (currentMatch.route == shellMatch.route &&
+            currentMatch.navigatorKey == shellMatch.navigatorKey &&
+            currentMatch.pageKey == shellMatch.pageKey) {
+          match = currentMatch;
+          break;
+        }
+        currentMatch = currentMatch.matches.last;
+      }
+      if (currentMatch is! ShellRouteMatch) {
+        return false;
+      }
     }
 
     var leafMatch = match;
@@ -148,26 +200,72 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList> with ChangeNotifie
     }
 
     final RouteBase routeBase = leafMatch.route;
-    if (routeBase is! GoRoute || routeBase.onExit == null) {
+    if (_approvedExits.remove(route) || routeBase is! GoRoute || routeBase.onExit == null) {
       route.didPop(result);
       _completeRouteMatch(result, match);
       return true;
     }
 
-    // The _handlePopPageWithRouteMatch is called during draw frame, schedule
-    // a microtask in case the onExit callback want to launch dialog or other
-    // navigator operations.
+    // Repeated dispatches while onExit is pending must not bypass a veto or
+    // request approval for the same route more than once.
+    if (!_pendingExits.add(route)) {
+      return false;
+    }
+    final RouteMatchList configuration = currentConfiguration;
+    final BuildContext context = navigatorKey.currentContext!;
+    // Only coverage that appears while onExit is pending makes the approval
+    // stale. A pop that starts under an open dialog, for example a programmatic
+    // pop on a shell Navigator, still goes through once approved.
+    final NavigatorState? startNavigator = route.navigator;
+    final bool coveredAtStart =
+        startNavigator != null && _isCoveredByEnclosingRoute(startNavigator);
+    // Popping a shell page also removes the Navigators the shell builds. If one
+    // that cannot pop now can pop when onExit approves, something was pushed
+    // over the exiting page meanwhile, such as a dialog. canPop() also counts
+    // local history entries, such as an open Drawer.
+    final shellNavigators = <NavigatorState>[];
+    for (var walker = match; walker is ShellRouteMatch; walker = walker.matches.last) {
+      final NavigatorState? shellNavigator = walker.navigatorKey.currentState;
+      if (shellNavigator != null && !shellNavigator.canPop()) {
+        shellNavigators.add(shellNavigator);
+      }
+    }
+    final GoRouterState state = leafMatch.buildState(
+      _configuration,
+      configuration,
+      metadata: configuration.metadataFor(leafMatch),
+    );
+
+    // onPopPage can run during a frame. Defer onExit so it can safely open a
+    // dialog or perform other Navigator operations.
     scheduleMicrotask(() async {
-      final bool onExitResult = await routeBase.onExit!(
-        navigatorKey.currentContext!,
-        leafMatch.buildState(
-          _configuration,
-          currentConfiguration,
-          metadata: currentConfiguration.metadataFor(leafMatch),
-        ),
-      );
-      if (onExitResult) {
-        _completeRouteMatch(result, match);
+      try {
+        if (!_pendingExits.contains(route) ||
+            !identical(currentConfiguration, configuration) ||
+            !context.mounted) {
+          return;
+        }
+        final bool onExitResult = await routeBase.onExit!(context, state);
+        final NavigatorState? navigator = route.navigator;
+        if (!onExitResult ||
+            !_pendingExits.contains(route) ||
+            !identical(currentConfiguration, configuration) ||
+            navigator == null ||
+            !navigator.mounted ||
+            !route.isCurrent ||
+            (!coveredAtStart && _isCoveredByEnclosingRoute(navigator)) ||
+            shellNavigators.any((NavigatorState shellNavigator) => shellNavigator.canPop())) {
+          return;
+        }
+
+        // Re-enter onPopPage with approval instead of completing the match
+        // directly. Navigator must commit the pop before a push continuation
+        // can immediately pop the page underneath it.
+        _approvedExits.add(route);
+        navigator.pop(result);
+      } finally {
+        _approvedExits.remove(route);
+        _pendingExits.remove(route);
       }
     });
     return false;
