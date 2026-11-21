@@ -1283,20 +1283,20 @@ void main() {
     await buildTest(VisualDensity.standard, useText: true);
     await tester.pumpAndSettle();
     childRect = tester.getRect(find.byKey(childKey));
-    expect(box.size, equals(const Size(88, 48)));
-    expect(childRect, equals(const Rect.fromLTRB(372.0, 293.0, 428.0, 307.0)));
+    expect(box.size, const Size(93.0, 48.0));
+    expect(childRect, const Rect.fromLTRB(369.5, 293.0, 430.5, 307.0));
 
     await buildTest(const VisualDensity(horizontal: 3.0, vertical: 3.0), useText: true);
     await tester.pumpAndSettle();
     childRect = tester.getRect(find.byKey(childKey));
-    expect(box.size, equals(const Size(112, 60)));
-    expect(childRect, equals(const Rect.fromLTRB(372.0, 293.0, 428.0, 307.0)));
+    expect(box.size, const Size(117.0, 60.0));
+    expect(childRect, const Rect.fromLTRB(369.5, 293.0, 430.5, 307.0));
 
     await buildTest(const VisualDensity(horizontal: -3.0, vertical: -3.0), useText: true);
     await tester.pumpAndSettle();
     childRect = tester.getRect(find.byKey(childKey));
-    expect(box.size, equals(const Size(88, 36)));
-    expect(childRect, equals(const Rect.fromLTRB(372.0, 293.0, 428.0, 307.0)));
+    expect(box.size, const Size(93.0, 36.0));
+    expect(childRect, const Rect.fromLTRB(369.5, 293.0, 430.5, 307.0));
   });
 
   testWidgets('FilledButton.icon responds to applied padding', (WidgetTester tester) async {
@@ -1679,8 +1679,8 @@ void main() {
       find.byType(FilledButton),
       paints..drrect(
         // Outer and inner rect that give the outline a width of 10.
-        outer: RRect.fromLTRBR(0.0, 0.0, 116.0, 36.0, const Radius.circular(16)),
-        inner: RRect.fromLTRBR(10.0, 10.0, 106.0, 26.0, const Radius.circular(16 - 10)),
+        outer: RRect.fromLTRBR(0.0, 0.0, 123.5, 36.0, const Radius.circular(16)),
+        inner: RRect.fromLTRBR(10.0, 10.0, 113.5, 26.0, const Radius.circular(16 - 10)),
         color: borderColor,
       ),
     );

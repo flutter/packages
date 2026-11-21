@@ -815,7 +815,7 @@ void main() {
     expect(textStyle.decoration, TextDecoration.none);
     expect(
       textStyle.debugLabel,
-      '((englishLike bodyMedium 2014).merge(blackMountainView bodyMedium)).copyWith',
+      '((englishLike bodyMedium 2018).merge(blackMountainView bodyMedium)).copyWith',
     );
   });
 
@@ -864,7 +864,7 @@ void main() {
     expect(textStyle.decoration, TextDecoration.none);
     expect(
       textStyle.debugLabel,
-      '((englishLike bodyMedium 2014).merge(whiteMountainView bodyMedium)).copyWith',
+      '((englishLike bodyMedium 2018).merge(whiteMountainView bodyMedium)).copyWith',
     );
   });
 
@@ -1011,7 +1011,7 @@ void main() {
 
     final RenderBox tip = tester.renderObject(_findTooltipContainer(tooltipText));
     expect(tip.size.height, equals(32.0));
-    expect(tip.size.width, equals(74.0));
+    expect(tip.size.width, 74.75);
     expect(
       tip,
       paints..rrect(
@@ -1192,7 +1192,7 @@ void main() {
 
     final RenderBox tip = tester.renderObject(_findTooltipContainer(tooltipText));
     expect(tip.size.height, equals(32.0));
-    expect(tip.size.width, equals(74.0));
+    expect(tip.size.width, 74.75);
     expect(tip, paints..rrect(color: const Color(0x80800000)));
   });
 
@@ -1266,14 +1266,14 @@ void main() {
     await tester.pumpWidget(buildApp(tooltipText, textScaler: TextScaler.noScaling));
     await tester.longPress(find.byType(Tooltip));
     expect(find.text(tooltipText), findsOneWidget);
-    expect(tester.getSize(find.text(tooltipText)), equals(const Size(42.0, 14.0)));
+    expect(tester.getSize(find.text(tooltipText)), const Size(42.75, 14.0));
     RenderBox tip = tester.renderObject(_findTooltipContainer(tooltipText));
     expect(tip.size.height, equals(32.0));
 
     await tester.pumpWidget(buildApp(tooltipText, textScaler: const TextScaler.linear(4.0)));
     await tester.longPress(find.byType(Tooltip));
     expect(find.text(tooltipText), findsOneWidget);
-    expect(tester.getSize(find.text(tooltipText)), equals(const Size(168.0, 56.0)));
+    expect(tester.getSize(find.text(tooltipText)), const Size(168.75, 56.0));
     tip = tester.renderObject(_findTooltipContainer(tooltipText));
     expect(tip.size.height, equals(64.0));
   });

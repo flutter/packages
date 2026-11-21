@@ -1,0 +1,3 @@
+changelog: |
+  - **Breaking change:** Material 2 themes (`ThemeData.useMaterial3` is false) now default to `Typography.material2018()` instead of `Typography.material2014()`. Set `typography: Typography.material2014()` explicitly on `ThemeData` to retain the previous typography.
+version: major

@@ -1048,7 +1048,10 @@ void main() {
     expect(controller.index, 0);
 
     // Fling-scroll the TabBar to the left
-    expect(tester.getCenter(find.text('HHHH')).dx, lessThan(700.0));
+    expect(
+      tester.getCenter(find.text('HHHH')).dx,
+      lessThan(tester.getRect(find.byKey(tabBarKey)).right),
+    );
     await tester.fling(find.byKey(tabBarKey), const Offset(-200.0, 0.0), 10000.0);
     await tester.pump();
     await tester.pump(const Duration(seconds: 1)); // finish the scroll animation
@@ -4423,7 +4426,7 @@ void main() {
                   children: <TestSemantics>[
                     TestSemantics(
                       id: 4,
-                      rect: const Rect.fromLTRB(0.0, 0.0, 232.0, 600.0),
+                      rect: const Rect.fromLTRB(0.0, 0.0, 262.0, 600.0),
                       role: SemanticsRole.tabBar,
                       children: <TestSemantics>[
                         TestSemantics(
@@ -4435,7 +4438,7 @@ void main() {
                             SemanticsFlag.isFocusable,
                           ],
                           label: 'TAB #0${kIsWeb ? '' : '\nTab 1 of 2'}',
-                          rect: const Rect.fromLTRB(0.0, 0.0, 116.0, kTextTabBarHeight),
+                          rect: const Rect.fromLTRB(0.0, 0.0, 131.0, kTextTabBarHeight),
                           role: SemanticsRole.tab,
                           transform: Matrix4.translationValues(0.0, 276.0, 0.0),
                         ),
@@ -4447,9 +4450,9 @@ void main() {
                           ],
                           actions: <SemanticsAction>[SemanticsAction.tap, SemanticsAction.focus],
                           label: 'TAB #1${kIsWeb ? '' : '\nTab 2 of 2'}',
-                          rect: const Rect.fromLTRB(0.0, 0.0, 116.0, kTextTabBarHeight),
+                          rect: const Rect.fromLTRB(0.0, 0.0, 131.0, kTextTabBarHeight),
                           role: SemanticsRole.tab,
-                          transform: Matrix4.translationValues(116.0, 276.0, 0.0),
+                          transform: Matrix4.translationValues(131.0, 276.0, 0.0),
                         ),
                       ],
                     ),
@@ -4708,7 +4711,7 @@ void main() {
                   children: <TestSemantics>[
                     TestSemantics(
                       id: 4,
-                      rect: const Rect.fromLTRB(0.0, 0.0, 232.0, 600.0),
+                      rect: const Rect.fromLTRB(0.0, 0.0, 262.0, 600.0),
                       role: SemanticsRole.tabBar,
                       children: <TestSemantics>[
                         TestSemantics(
@@ -4720,7 +4723,7 @@ void main() {
                           ],
                           actions: <SemanticsAction>[SemanticsAction.tap, SemanticsAction.focus],
                           label: 'Semantics override 0${kIsWeb ? '' : '\nTab 1 of 2'}',
-                          rect: const Rect.fromLTRB(0.0, 0.0, 116.0, kTextTabBarHeight),
+                          rect: const Rect.fromLTRB(0.0, 0.0, 131.0, kTextTabBarHeight),
                           role: SemanticsRole.tab,
                           transform: Matrix4.translationValues(0.0, 276.0, 0.0),
                         ),
@@ -4732,9 +4735,9 @@ void main() {
                           ],
                           actions: <SemanticsAction>[SemanticsAction.tap, SemanticsAction.focus],
                           label: 'Semantics override 1${kIsWeb ? '' : '\nTab 2 of 2'}',
-                          rect: const Rect.fromLTRB(0.0, 0.0, 116.0, kTextTabBarHeight),
+                          rect: const Rect.fromLTRB(0.0, 0.0, 131.0, kTextTabBarHeight),
                           role: SemanticsRole.tab,
-                          transform: Matrix4.translationValues(116.0, 276.0, 0.0),
+                          transform: Matrix4.translationValues(131.0, 276.0, 0.0),
                         ),
                       ],
                     ),
@@ -7680,7 +7683,7 @@ void main() {
       );
       expect(
         tester.renderObject<RenderParagraph>(find.text(selectedValue)).text.style!.fontSize,
-        14.0,
+        16.0,
       );
       expect(
         tester.renderObject<RenderParagraph>(find.text(selectedValue)).text.style!.color,
@@ -7694,7 +7697,7 @@ void main() {
       );
       expect(
         tester.renderObject<RenderParagraph>(find.text(unSelectedValue)).text.style!.fontSize,
-        14.0,
+        16.0,
       );
       expect(
         tester.renderObject<RenderParagraph>(find.text(unSelectedValue)).text.style!.color,

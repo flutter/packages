@@ -598,7 +598,7 @@ class ThemeData with Diagnosticable {
     // TYPOGRAPHY & ICONOGRAPHY
     typography ??= useMaterial3
         ? Typography.material2021(platform: platform, colorScheme: colorScheme)
-        : Typography.material2014(platform: platform);
+        : Typography.material2018(platform: platform);
     TextTheme defaultTextTheme = isDark ? typography.white : typography.black;
     TextTheme defaultPrimaryTextTheme = primaryIsDark ? typography.white : typography.black;
     if (fontFamily != null) {
@@ -1188,7 +1188,7 @@ class ThemeData with Diagnosticable {
   /// | Property        | Material 3 default             | Material 2 default             |
   /// | :-------------- | :----------------------------- | :----------------------------- |
   /// | [colorScheme]   | M3 baseline light color scheme | M2 baseline light color scheme |
-  /// | [typography]    | [Typography.material2021]      | [Typography.material2014]      |
+  /// | [typography]    | [Typography.material2021]      | [Typography.material2018]      |
   /// | [splashFactory] | [InkSparkle]* or [InkRipple]   | [InkSplash]                    |
   ///
   /// \* if the target platform is Android and the app is not

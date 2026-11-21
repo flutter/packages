@@ -394,7 +394,7 @@ void main() {
     expect(selectedLabel.text.style!.fontFamily, equals(labelStyle.fontFamily));
     final RenderParagraph unselectedLabel = _getText(tester, _tab2Text);
     expect(unselectedLabel.text.style!.fontFamily, equals('Roboto'));
-    expect(unselectedLabel.text.style!.fontSize, equals(14.0));
+    expect(unselectedLabel.text.style!.fontSize, 16.0);
     expect(unselectedLabel.text.style!.color, equals(Colors.white.withAlpha(0xB2)));
   });
 
@@ -1188,11 +1188,11 @@ void main() {
       final theme = ThemeData(useMaterial3: false);
       final RenderParagraph selectedLabel = _getText(tester, _tab1Text);
       expect(selectedLabel.text.style!.fontFamily, equals('Roboto'));
-      expect(selectedLabel.text.style!.fontSize, equals(14.0));
+      expect(selectedLabel.text.style!.fontSize, 16.0);
       expect(selectedLabel.text.style!.color, equals(Colors.white));
       final RenderParagraph unselectedLabel = _getText(tester, _tab2Text);
       expect(unselectedLabel.text.style!.fontFamily, equals('Roboto'));
-      expect(unselectedLabel.text.style!.fontSize, equals(14.0));
+      expect(unselectedLabel.text.style!.fontSize, 16.0);
       expect(unselectedLabel.text.style!.color, equals(Colors.white.withAlpha(0xB2)));
 
       // Test default labelPadding.
@@ -1231,11 +1231,11 @@ void main() {
       final theme = ThemeData(useMaterial3: false);
       final RenderParagraph selectedLabel = _getText(tester, _tab1Text);
       expect(selectedLabel.text.style!.fontFamily, equals('Roboto'));
-      expect(selectedLabel.text.style!.fontSize, equals(14.0));
+      expect(selectedLabel.text.style!.fontSize, 16.0);
       expect(selectedLabel.text.style!.color, equals(Colors.white));
       final RenderParagraph unselectedLabel = _getText(tester, _tab2Text);
       expect(unselectedLabel.text.style!.fontFamily, equals('Roboto'));
-      expect(unselectedLabel.text.style!.fontSize, equals(14.0));
+      expect(unselectedLabel.text.style!.fontSize, 16.0);
       expect(unselectedLabel.text.style!.color, equals(Colors.white.withAlpha(0xB2)));
 
       // Test default labelPadding.
@@ -1355,6 +1355,9 @@ void main() {
       const indicatorWeight = 2.0;
       const double indicatorY = 48 - (indicatorWeight / 2.0);
 
+      final Rect label = tester
+          .getRect(find.text('Tab 0'))
+          .shift(-tester.getTopLeft(find.byType(TabBar)));
       expect(
         tabBarBox,
         paints
@@ -1362,8 +1365,8 @@ void main() {
           ..line(
             color: theme.indicatorColor,
             strokeWidth: indicatorWeight,
-            p1: const Offset(66.0, indicatorY),
-            p2: const Offset(134.0, indicatorY),
+            p1: Offset(label.left + indicatorWeight / 2, indicatorY),
+            p2: Offset(label.right - indicatorWeight / 2, indicatorY),
           ),
       );
     });

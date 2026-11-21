@@ -631,7 +631,7 @@ void main() {
   testWidgets(
     'Disabled MaterialButton has same semantic size as enabled and exposes disabled semantics',
     (WidgetTester tester) async {
-      const expectedButtonSize = Size(116.0, 48.0);
+      const expectedButtonSize = Size(123.5, 48.0);
       // Button is in center of the 800x600 test screen.
       final expectedButtonTransform = Matrix4.diagonal3Values(
         tester.view.devicePixelRatio,
@@ -890,20 +890,20 @@ void main() {
     await buildTest(VisualDensity.standard, useText: true);
     await tester.pumpAndSettle();
     childRect = tester.getRect(find.byKey(childKey));
-    expect(box.size, equals(const Size(88, 48)));
-    expect(childRect, equals(const Rect.fromLTRB(372.0, 293.0, 428.0, 307.0)));
+    expect(box.size, const Size(93.0, 48.0));
+    expect(childRect, const Rect.fromLTRB(369.5, 293.0, 430.5, 307.0));
 
     await buildTest(const VisualDensity(horizontal: 3.0, vertical: 3.0), useText: true);
     await tester.pumpAndSettle();
     childRect = tester.getRect(find.byKey(childKey));
-    expect(box.size, equals(const Size(112, 60)));
-    expect(childRect, equals(const Rect.fromLTRB(372.0, 293.0, 428.0, 307.0)));
+    expect(box.size, const Size(117.0, 60.0));
+    expect(childRect, const Rect.fromLTRB(369.5, 293.0, 430.5, 307.0));
 
     await buildTest(const VisualDensity(horizontal: -3.0, vertical: -3.0), useText: true);
     await tester.pumpAndSettle();
     childRect = tester.getRect(find.byKey(childKey));
     expect(box.size, equals(const Size(76, 36)));
-    expect(childRect, equals(const Rect.fromLTRB(372.0, 293.0, 428.0, 307.0)));
+    expect(childRect, const Rect.fromLTRB(369.5, 293.0, 430.5, 307.0));
   });
 
   testWidgets('disabledElevation is passed to RawMaterialButton', (WidgetTester tester) async {

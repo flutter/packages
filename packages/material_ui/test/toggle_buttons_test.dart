@@ -1420,11 +1420,11 @@ void main() {
 
     final Key key1 = UniqueKey();
     await tester.pumpWidget(buildFrame(MaterialTapTargetSize.padded, key1));
-    expect(tester.getSize(find.byKey(key1)), const Size(228.0, 48.0));
+    expect(tester.getSize(find.byKey(key1)), const Size(232.0, 48.0));
 
     final Key key2 = UniqueKey();
     await tester.pumpWidget(buildFrame(MaterialTapTargetSize.shrinkWrap, key2));
-    expect(tester.getSize(find.byKey(key2)), const Size(228.0, 48.0));
+    expect(tester.getSize(find.byKey(key2)), const Size(232.0, 48.0));
   });
 
   testWidgets('Material3 - Tap target size is configurable by ThemeData.materialTapTargetSize', (
@@ -1469,11 +1469,11 @@ void main() {
 
     final Key key1 = UniqueKey();
     await tester.pumpWidget(buildFrame(MaterialTapTargetSize.padded, key1));
-    expect(tester.getSize(find.byKey(key1)), const Size(228.0, 48.0));
+    expect(tester.getSize(find.byKey(key1)), const Size(232.0, 48.0));
 
     final Key key2 = UniqueKey();
     await tester.pumpWidget(buildFrame(MaterialTapTargetSize.shrinkWrap, key2));
-    expect(tester.getSize(find.byKey(key2)), const Size(228.0, 34.0));
+    expect(tester.getSize(find.byKey(key2)), const Size(232.0, 34.0));
   });
 
   testWidgets('Material3 - Tap target size is configurable', (WidgetTester tester) async {

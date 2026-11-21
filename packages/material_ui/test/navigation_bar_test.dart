@@ -302,7 +302,7 @@ void main() {
     expect(find.text(label), findsNWidgets(2));
 
     // The default size of a tooltip with the text A.
-    const defaultTooltipSize = Size(14.0, 14.0);
+    const defaultTooltipSize = Size(14.25, 14.0);
     expect(tester.getSize(find.text(label).last), defaultTooltipSize);
     // The duration is needed to ensure the tooltip disappears.
     await tester.pumpAndSettle(const Duration(seconds: 2));
@@ -310,10 +310,7 @@ void main() {
     await tester.pumpWidget(buildApp(textScaler: const TextScaler.linear(4.0)));
     expect(find.text(label), findsOneWidget);
     await tester.longPress(find.text(label));
-    expect(
-      tester.getSize(find.text(label).last),
-      Size(defaultTooltipSize.width * 4, defaultTooltipSize.height * 4),
-    );
+    expect(tester.getSize(find.text(label).last), const Size(56.25, 56.0));
   });
 
   testWidgets('Material3 - NavigationBar shows tooltips with text scaling', (

@@ -1033,6 +1033,8 @@ void main() {
       final SliderThemeData sliderTheme = theme.sliderTheme.copyWith(
         thumbColor: Colors.red.shade500,
         showValueIndicator: ShowValueIndicator.always,
+        // The path coordinates below assume a 14-point label with zero letter spacing.
+        valueIndicatorTextStyle: const TextStyle(fontSize: 14, letterSpacing: 0),
         valueIndicatorShape: const PaddleSliderValueIndicatorShape(),
       );
       Widget buildApp(
@@ -1218,6 +1220,8 @@ void main() {
       final SliderThemeData sliderTheme = theme.sliderTheme.copyWith(
         thumbColor: Colors.red.shade500,
         showValueIndicator: ShowValueIndicator.always,
+        // The path coordinates below assume a 14-point label with zero letter spacing.
+        valueIndicatorTextStyle: const TextStyle(fontSize: 14, letterSpacing: 0),
         valueIndicatorShape: const PaddleSliderValueIndicatorShape(),
       );
       Widget buildApp(
