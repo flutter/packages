@@ -1250,7 +1250,7 @@ class ModalBottomSheetRoute<T> extends PopupRoute<T> {
 /// [Navigator.pop] when the modal bottom sheet was closed.
 ///
 /// The 'barrierLabel' parameter can be used to set a custom barrier label.
-/// Will default to [MaterialLocalizations.modalBarrierDismissLabel] of context
+/// Will default to [MaterialLocalizations.scrimLabel] of context
 /// if not set.
 ///
 /// <callout-box>
