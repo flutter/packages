@@ -1,0 +1,4 @@
+changelog: |
+  - Fixes the future of `push` never completing after `refresh` or a `refreshListenable` notification.
+  - Fixes a page coming back when it closes right after `refresh` or during the redirect of a refresh.
+version: patch
