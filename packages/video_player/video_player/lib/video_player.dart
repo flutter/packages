@@ -607,13 +607,17 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       videoPlayerOptions: videoPlayerOptions,
     );
 
-    if (videoPlayerOptions?.mixWithOthers != null) {
-      await _videoPlayerPlatform.setMixWithOthers(videoPlayerOptions!.mixWithOthers);
-    }
+    try {
+      if (videoPlayerOptions?.mixWithOthers != null) {
+        await _videoPlayerPlatform.setMixWithOthers(videoPlayerOptions!.mixWithOthers);
+      }
 
-    _playerId =
-        (await _videoPlayerPlatform.createWithOptions(creationOptions)) ?? kUninitializedPlayerId;
-    _creatingCompleter!.complete();
+      _playerId =
+          (await _videoPlayerPlatform.createWithOptions(creationOptions)) ?? kUninitializedPlayerId;
+    } finally {
+      // dispose() waits for this, so it must complete even if creation fails.
+      _creatingCompleter!.complete();
+    }
     final initializingCompleter = Completer<void>();
 
     await _videoPlayerPlatform.setPreventsDisplaySleepDuringVideoPlayback(
@@ -710,7 +714,10 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         _isDisposed = true;
         _timer?.cancel();
         await _eventSubscription?.cancel();
-        await _videoPlayerPlatform.dispose(_playerId);
+        // There is no native player to dispose if creating it failed.
+        if (_playerId != kUninitializedPlayerId) {
+          await _videoPlayerPlatform.dispose(_playerId);
+        }
       }
       _lifeCycleObserver?.dispose();
     }

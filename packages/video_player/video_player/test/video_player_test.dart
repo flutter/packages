@@ -592,6 +592,17 @@ void main() {
       expect(await controller.position, isNull);
     });
 
+    test('dispose completes after creating the player failed', () async {
+      final controller = VideoPlayerController.networkUrl(_localhostUri);
+      final error = PlatformException(code: 'VideoError', message: 'create failed');
+      fakeVideoPlayerPlatform.forceCreateError = error;
+
+      await expectLater(controller.initialize(), throwsA(same(error)));
+      await controller.dispose();
+
+      expect(fakeVideoPlayerPlatform.calls, isNot(contains('dispose')));
+    });
+
     test('calling dispose() on disposed controller does not throw', () async {
       final controller = VideoPlayerController.networkUrl(_localhostUri);
       addTearDown(controller.dispose);
@@ -2068,6 +2079,7 @@ class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
   final Map<int, StreamController<VideoEvent>> streams = <int, StreamController<VideoEvent>>{};
   List<VideoPlayerOptions?> videoPlayerOptions = <VideoPlayerOptions?>[];
   bool forceInitError = false;
+  PlatformException? forceCreateError;
   int nextPlayerId = 0;
   final Map<int, Duration> _positions = <int, Duration>{};
   final Map<int, VideoPlayerWebOptions> webOptions = <int, VideoPlayerWebOptions>{};
@@ -2095,6 +2107,10 @@ class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
   @override
   Future<int?> createWithOptions(VideoCreationOptions options) async {
     calls.add('createWithOptions');
+    final PlatformException? createError = forceCreateError;
+    if (createError != null) {
+      throw createError;
+    }
     final stream = StreamController<VideoEvent>();
     streams[nextPlayerId] = stream;
     if (forceInitError) {

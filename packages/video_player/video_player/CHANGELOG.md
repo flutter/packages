@@ -1,5 +1,6 @@
-## NEXT
+## 2.14.2
 
+* Fixes `dispose` never completing when `initialize` failed to create the native player.
 * Updates README to reflect currently supported OS versions for the latest
   versions of the endorsed iOS and macOS platform implementations.
   * Applications built with older versions of Flutter will continue to
