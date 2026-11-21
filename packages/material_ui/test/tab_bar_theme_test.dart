@@ -1355,6 +1355,9 @@ void main() {
       const indicatorWeight = 2.0;
       const double indicatorY = 48 - (indicatorWeight / 2.0);
 
+      final Rect label = tester
+          .getRect(find.text('Tab 0'))
+          .shift(-tester.getTopLeft(find.byType(TabBar)));
       expect(
         tabBarBox,
         paints
@@ -1362,8 +1365,8 @@ void main() {
           ..line(
             color: theme.indicatorColor,
             strokeWidth: indicatorWeight,
-            p1: const Offset(59.75, indicatorY),
-            p2: const Offset(140.25, indicatorY),
+            p1: Offset(label.left + indicatorWeight / 2, indicatorY),
+            p2: Offset(label.right - indicatorWeight / 2, indicatorY),
           ),
       );
     });

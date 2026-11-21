@@ -12880,7 +12880,13 @@ void main() {
         MaterialApp(
           theme: ThemeData(useMaterial3: false),
           home: Material(
-            child: Center(child: TextField(controller: controller)),
+            // The drag distances and selection offsets below assume 16-pixel glyphs.
+            child: Center(
+              child: TextField(
+                style: const TextStyle(fontSize: 16, letterSpacing: 0),
+                controller: controller,
+              ),
+            ),
           ),
         ),
       );
@@ -12894,7 +12900,7 @@ void main() {
       expect(lastCharEndpoint.length, 1);
       // Just testing the text and making sure that the last character is off
       // the right side of the screen.
-      expect(lastCharEndpoint[0].point.dx, moreOrLessEquals(1065.9, epsilon: 0.001));
+      expect(lastCharEndpoint[0].point.dx, 1056);
 
       final Offset textfieldStart = tester.getTopLeft(find.byType(TextField));
 
@@ -12910,7 +12916,7 @@ void main() {
       await gesture.moveBy(const Offset(900, 5));
       // To the edge of the screen basically.
       await tester.pump();
-      expect(controller.selection, const TextSelection(baseOffset: 0, extentOffset: 56));
+      expect(controller.selection, const TextSelection(baseOffset: 0, extentOffset: 59));
       // Keep moving out.
       await gesture.moveBy(const Offset(1, 0));
       await tester.pump();
@@ -12947,7 +12953,7 @@ void main() {
       );
       expect(firstCharEndpoint.length, 1);
       // The first character is now offscreen to the left.
-      expect(firstCharEndpoint[0].point.dx, moreOrLessEquals(-267.925, epsilon: 1));
+      expect(firstCharEndpoint[0].point.dx, moreOrLessEquals(-257.0, epsilon: 1));
     },
     variant: const TargetPlatformVariant(<TargetPlatform>{
       TargetPlatform.android,
@@ -12967,7 +12973,13 @@ void main() {
         MaterialApp(
           theme: ThemeData(useMaterial3: false),
           home: Material(
-            child: Center(child: TextField(controller: controller)),
+            // The drag distances and selection offsets below assume 16-pixel glyphs.
+            child: Center(
+              child: TextField(
+                style: const TextStyle(fontSize: 16, letterSpacing: 0),
+                controller: controller,
+              ),
+            ),
           ),
         ),
       );
@@ -12981,7 +12993,7 @@ void main() {
       expect(lastCharEndpoint.length, 1);
       // Just testing the test and making sure that the last character is off
       // the right side of the screen.
-      expect(lastCharEndpoint[0].point.dx, moreOrLessEquals(1065.9, epsilon: 0.001));
+      expect(lastCharEndpoint[0].point.dx, 1056);
 
       final Offset textfieldStart = tester.getTopLeft(find.byType(TextField));
 
@@ -12997,7 +13009,7 @@ void main() {
       await gesture.moveBy(const Offset(900, 5));
       // To the edge of the screen basically.
       await tester.pump();
-      expect(controller.selection, const TextSelection(baseOffset: 0, extentOffset: 56));
+      expect(controller.selection, const TextSelection(baseOffset: 0, extentOffset: 59));
       // Keep moving out.
       await gesture.moveBy(const Offset(1, 0));
       await tester.pump();
@@ -13034,7 +13046,7 @@ void main() {
       );
       expect(firstCharEndpoint.length, 1);
       // The first character is now offscreen to the left.
-      expect(firstCharEndpoint[0].point.dx, moreOrLessEquals(-267.258, epsilon: 1));
+      expect(firstCharEndpoint[0].point.dx, moreOrLessEquals(-257.0, epsilon: 1));
     },
     variant: const TargetPlatformVariant(<TargetPlatform>{
       TargetPlatform.iOS,
@@ -13052,7 +13064,14 @@ void main() {
         MaterialApp(
           theme: ThemeData(useMaterial3: false),
           home: Material(
-            child: Center(child: TextField(autofocus: true, controller: controller)),
+            // The drag distances and selection offsets below assume 16-pixel glyphs.
+            child: Center(
+              child: TextField(
+                style: const TextStyle(fontSize: 16, letterSpacing: 0),
+                autofocus: true,
+                controller: controller,
+              ),
+            ),
           ),
         ),
       );
@@ -13069,7 +13088,7 @@ void main() {
       expect(lastCharEndpoint.length, 1);
       // Just testing the test and making sure that the last character is off
       // the right side of the screen.
-      expect(lastCharEndpoint[0].point.dx, moreOrLessEquals(1065.9, epsilon: 0.001));
+      expect(lastCharEndpoint[0].point.dx, 1056);
 
       final Offset textfieldStart = tester.getTopLeft(find.byType(TextField));
 
@@ -13085,10 +13104,7 @@ void main() {
       await gesture.moveBy(const Offset(600, 0));
       // To the edge of the screen basically.
       await tester.pump();
-      expect(
-        controller.selection,
-        const TextSelection.collapsed(offset: 56, affinity: TextAffinity.upstream),
-      );
+      expect(controller.selection, const TextSelection.collapsed(offset: 56));
       // Keep moving out.
       await gesture.moveBy(const Offset(1, 0));
       await tester.pump();
@@ -13125,7 +13141,7 @@ void main() {
       );
       expect(firstCharEndpoint.length, 1);
       // The first character is now offscreen to the left.
-      expect(firstCharEndpoint[0].point.dx, moreOrLessEquals(-267.258, epsilon: 1));
+      expect(firstCharEndpoint[0].point.dx, moreOrLessEquals(-257.0, epsilon: 1));
     },
     variant: const TargetPlatformVariant(<TargetPlatform>{
       TargetPlatform.iOS,
@@ -13198,14 +13214,20 @@ void main() {
         MaterialApp(
           theme: ThemeData(useMaterial3: false),
           home: Material(
-            child: Center(child: TextField(controller: controller)),
+            // The drag distances and selection offsets below assume 16-pixel glyphs.
+            child: Center(
+              child: TextField(
+                style: const TextStyle(fontSize: 16, letterSpacing: 0),
+                controller: controller,
+              ),
+            ),
           ),
         ),
       );
 
       // Just testing the test and making sure that the last character is off
       // the right side of the screen.
-      expect(textOffsetToPosition(tester, 66).dx, moreOrLessEquals(1065.9, epsilon: 0.001));
+      expect(textOffsetToPosition(tester, 66).dx, 1056);
 
       await tester.tapAt(textOffsetToPosition(tester, 13));
       await tester.pumpAndSettle();
@@ -13240,10 +13262,13 @@ void main() {
       await tester.pumpAndSettle();
 
       // The last character is now on screen near the right edge.
-      expect(textOffsetToPosition(tester, 66).dx, moreOrLessEquals(797.9, epsilon: 2.0));
+      expect(
+        textOffsetToPosition(tester, 66).dx,
+        moreOrLessEquals(TestSemantics.fullScreen.width, epsilon: 2.0),
+      );
 
       // The first character is now offscreen to the left.
-      expect(textOffsetToPosition(tester, 0).dx, moreOrLessEquals(-267.6, epsilon: 1));
+      expect(textOffsetToPosition(tester, 0).dx, moreOrLessEquals(-257.0, epsilon: 1));
     },
     variant: TargetPlatformVariant.all(),
     skip: isBrowser, // [intended] Browser handles arrow keys differently.
