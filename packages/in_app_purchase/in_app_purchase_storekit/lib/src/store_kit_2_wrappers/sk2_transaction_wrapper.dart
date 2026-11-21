@@ -157,6 +157,11 @@ extension on SK2TransactionMessage {
       SK2PurchaseStatusMessage.restored => PurchaseStatus.restored,
     };
 
+    // Only purchased and restored transactions carry a native transaction. StoreKit 2
+    // can report id 0 for them, so presence is decided by status, not by id.
+    final bool hasTransaction =
+        purchaseStatus == PurchaseStatus.purchased || purchaseStatus == PurchaseStatus.restored;
+
     return SK2PurchaseDetails(
       productID: productId,
       // in SK2, as per Apple
@@ -171,10 +176,10 @@ extension on SK2TransactionMessage {
       ),
       transactionDate: _secondsToMillisecondsSinceEpochString(purchaseDate),
       status: purchaseStatus,
-      purchaseID: id > 0 ? id.toString() : null,
+      purchaseID: hasTransaction ? id.toString() : null,
       appAccountToken: appAccountToken,
       expirationDate: _secondsToMillisecondsSinceEpochString(expirationDate),
-      sk2Transaction: id > 0 ? convertFromPigeon() : null,
+      sk2Transaction: hasTransaction ? convertFromPigeon() : null,
     );
   }
 

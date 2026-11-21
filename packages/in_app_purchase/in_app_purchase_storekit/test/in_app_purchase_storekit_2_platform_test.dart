@@ -443,6 +443,36 @@ void main() {
       expect(result.first.status, PurchaseStatus.purchased);
       expect(result.first.pendingCompletePurchase, true);
     });
+
+    test('purchased transaction with id 0 can be completed', () async {
+      final completer = Completer<List<PurchaseDetails>>();
+      final Stream<List<PurchaseDetails>> stream = iapStoreKitPlatform.purchaseStream;
+
+      late StreamSubscription<List<PurchaseDetails>> subscription;
+      subscription = stream.listen((List<PurchaseDetails> purchaseDetailsList) {
+        completer.complete(purchaseDetailsList);
+        subscription.cancel();
+      });
+
+      // StoreKit 2 can report transaction id 0 for a purchased transaction.
+      InAppPurchaseStoreKitPlatform.sk2TransactionObserver
+          .onTransactionsUpdated(<SK2TransactionMessage>[
+            SK2TransactionMessage(
+              id: 0,
+              originalId: 0,
+              productId: dummyProductWrapper.id,
+              status: SK2PurchaseStatusMessage.purchased,
+            ),
+          ]);
+
+      final List<PurchaseDetails> result = await completer.future;
+      expect(result.length, 1);
+      expect(result.first.status, PurchaseStatus.purchased);
+      expect(result.first.purchaseID, '0');
+      expect((result.first as SK2PurchaseDetails).sk2Transaction?.id, '0');
+      expect(result.first.pendingCompletePurchase, true);
+      await expectLater(iapStoreKitPlatform.completePurchase(result.first), completes);
+    });
   });
 
   group('restore purchases', () {
