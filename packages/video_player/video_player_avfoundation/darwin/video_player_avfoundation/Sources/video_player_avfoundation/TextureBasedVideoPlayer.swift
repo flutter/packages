@@ -2,16 +2,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import AVFoundation
+
 #if os(iOS)
   import Flutter
 #elseif os(macOS)
   import FlutterMacOS
 #else
   #error("Unsupported platform.")
-#endif
-
-#if canImport(video_player_avfoundation_objc)
-  import video_player_avfoundation_objc
 #endif
 
 /// A subclass of VideoPlayer that adds functionality related to texture-based view as a way of
@@ -21,9 +19,9 @@
 class TextureBasedVideoPlayer: VideoPlayer, FlutterTexture {
 
   // The updater that drives callbacks to the engine to indicate that a new frame is ready.
-  private let frameUpdater: FVPFrameUpdater
+  private let frameUpdater: FrameUpdater
   // The display link that drives frameUpdater.
-  private var displayLink: FVPDisplayLink?
+  private var displayLink: DisplayLink?
   // The latest buffer obtained from video output. This is stored so that it can be returned from
   // copyPixelBuffer again if nothing new is available, since the engine has undefined behavior when
   // returning NULL.
@@ -55,10 +53,10 @@ class TextureBasedVideoPlayer: VideoPlayer, FlutterTexture {
   /// frame updater, display link, AV factory, and view provider.
   init(
     playerItem: WrappedAVPlayerItem,
-    frameUpdater: FVPFrameUpdater,
-    displayLink: FVPDisplayLink,
+    frameUpdater: FrameUpdater,
+    displayLink: DisplayLink,
     avFactory: WrappedAVObjectFactory,
-    viewProvider: FVPViewProvider
+    viewProvider: ViewProvider
   ) {
     self.frameUpdater = frameUpdater
     self.displayLink = displayLink
