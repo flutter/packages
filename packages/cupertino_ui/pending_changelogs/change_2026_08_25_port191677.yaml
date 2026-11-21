@@ -1,0 +1,3 @@
+changelog: |
+  - Add regression coverage for `CupertinoPicker` inside a `SelectableRegion` pushing duplicate selection handle leader layers, fixed in the framework's `RenderParagraph`.
+version: patch
