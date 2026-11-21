@@ -36,7 +36,7 @@ void main() {
   ) async {
     final Future<void> magnifierShown = magnifierController.show(
       context: context,
-      builder: (_) => TextMagnifier(magnifierInfo: magnifierInfo),
+      builder: (_) => TextMagnifier(controller: magnifierController, magnifierInfo: magnifierInfo),
     );
 
     WidgetsBinding.instance.scheduleFrame();
@@ -168,7 +168,8 @@ void main() {
       testWidgets('should never move outside the right bounds of the editing line', (
         WidgetTester tester,
       ) async {
-        const double gestureOutsideLine = 100;
+        // Close enough to the line that the magnifier is still shown.
+        const double gestureOutsideLine = 20;
 
         await tester.pumpWidget(const MaterialApp(home: Placeholder()));
 
@@ -187,20 +188,26 @@ void main() {
               // current line boundaries, not anything else.
               fieldBounds: reasonableTextField.inflate(gestureOutsideLine),
               caretRect: reasonableTextField.inflate(gestureOutsideLine),
-              // The tap position is far out of the right side of the app.
+              // The tap position is past the right end of the line.
               globalGesturePosition: Offset(reasonableTextField.right + gestureOutsideLine, 0),
             ),
           ),
         );
 
-        // Should be less than the right edge, since we have padding.
-        expect(getMagnifierPosition(tester).dx, lessThanOrEqualTo(reasonableTextField.right));
+        expect(find.byType(Magnifier), findsOneWidget);
+        // The gesture is past the end of the line, but the magnifier is clamped
+        // so that its center stays at the end of the line.
+        expect(
+          getMagnifierPosition(tester).dx + basicOffset.dx,
+          moreOrLessEquals(reasonableTextField.right),
+        );
       });
 
       testWidgets('should never move outside the left bounds of the editing line', (
         WidgetTester tester,
       ) async {
-        const double gestureOutsideLine = 100;
+        // Close enough to the line that the magnifier is still shown.
+        const double gestureOutsideLine = 20;
 
         await tester.pumpWidget(const MaterialApp(home: Placeholder()));
 
@@ -219,15 +226,18 @@ void main() {
               // current line boundaries, not anything else.
               fieldBounds: reasonableTextField.inflate(gestureOutsideLine),
               caretRect: reasonableTextField.inflate(gestureOutsideLine),
-              // The tap position is far out of the left side of the app.
+              // The tap position is past the left end of the line.
               globalGesturePosition: Offset(reasonableTextField.left - gestureOutsideLine, 0),
             ),
           ),
         );
 
+        expect(find.byType(Magnifier), findsOneWidget);
+        // The gesture is past the start of the line, but the magnifier is
+        // clamped so that its center stays at the start of the line.
         expect(
           getMagnifierPosition(tester).dx + basicOffset.dx,
-          greaterThanOrEqualTo(reasonableTextField.left),
+          moreOrLessEquals(reasonableTextField.left),
         );
       });
 
@@ -283,6 +293,201 @@ void main() {
         );
 
         expect(getMagnifierPosition(tester).dy, greaterThanOrEqualTo(0));
+      });
+    });
+
+    // Regression tests for https://github.com/flutter/flutter/issues/159230.
+    group('visibility', () {
+      // Within half of the magnified content's width from the line, which is
+      // (77.37 / 2) / 1.25 ≈ 30.9.
+      const double closeToLine = 20;
+      // Further than half of the magnified content's width from the line.
+      const double farFromLine = 100;
+
+      MagnifierInfo magnifierInfoWithGestureAt(double dx) {
+        return MagnifierInfo(
+          currentLineBoundaries: reasonableTextField,
+          fieldBounds: reasonableTextField.inflate(farFromLine * 2),
+          caretRect: reasonableTextField,
+          globalGesturePosition: Offset(dx, reasonableTextField.center.dy),
+        );
+      }
+
+      testWidgets('should be shown when the gesture is close to either end of the line', (
+        WidgetTester tester,
+      ) async {
+        await tester.pumpWidget(const MaterialApp(home: Placeholder()));
+        final BuildContext context = tester.firstElement(find.byType(Placeholder));
+
+        final magnifierInfo = ValueNotifier<MagnifierInfo>(
+          magnifierInfoWithGestureAt(reasonableTextField.right + closeToLine),
+        );
+        addTearDown(magnifierInfo.dispose);
+
+        await showMagnifier(context, tester, magnifierInfo);
+
+        expect(find.byType(Magnifier), findsOneWidget);
+
+        magnifierInfo.value = magnifierInfoWithGestureAt(reasonableTextField.left - closeToLine);
+        await tester.pump();
+
+        expect(find.byType(Magnifier), findsOneWidget);
+      });
+
+      testWidgets('should be hidden when the gesture is far past the right end of the line', (
+        WidgetTester tester,
+      ) async {
+        await tester.pumpWidget(const MaterialApp(home: Placeholder()));
+        final BuildContext context = tester.firstElement(find.byType(Placeholder));
+
+        final magnifierInfo = ValueNotifier<MagnifierInfo>(
+          magnifierInfoWithGestureAt(reasonableTextField.right + farFromLine),
+        );
+        addTearDown(magnifierInfo.dispose);
+
+        await showMagnifier(context, tester, magnifierInfo);
+
+        expect(find.byType(TextMagnifier), findsOneWidget);
+        expect(find.byType(Magnifier), findsNothing);
+      });
+
+      testWidgets('should be hidden when the gesture is far past the left end of the line', (
+        WidgetTester tester,
+      ) async {
+        await tester.pumpWidget(const MaterialApp(home: Placeholder()));
+        final BuildContext context = tester.firstElement(find.byType(Placeholder));
+
+        final magnifierInfo = ValueNotifier<MagnifierInfo>(
+          magnifierInfoWithGestureAt(reasonableTextField.left - farFromLine),
+        );
+        addTearDown(magnifierInfo.dispose);
+
+        await showMagnifier(context, tester, magnifierInfo);
+
+        expect(find.byType(TextMagnifier), findsOneWidget);
+        expect(find.byType(Magnifier), findsNothing);
+      });
+
+      testWidgets(
+        'should hide at half of the magnified content width past either end of the line',
+        (WidgetTester tester) async {
+          // Half of the magnified content's width, (77.37 / 2) / 1.25.
+          final double hideDistance = Magnifier.kDefaultMagnifierSize.width / 2 / 1.25;
+          const margin = 0.5;
+
+          await tester.pumpWidget(const MaterialApp(home: Placeholder()));
+          final BuildContext context = tester.firstElement(find.byType(Placeholder));
+
+          final magnifierInfo = ValueNotifier<MagnifierInfo>(
+            magnifierInfoWithGestureAt(reasonableTextField.right + hideDistance - margin),
+          );
+          addTearDown(magnifierInfo.dispose);
+
+          await showMagnifier(context, tester, magnifierInfo);
+          expect(find.byType(Magnifier), findsOneWidget);
+
+          magnifierInfo.value = magnifierInfoWithGestureAt(
+            reasonableTextField.right + hideDistance + margin,
+          );
+          await tester.pump();
+          expect(find.byType(Magnifier), findsNothing);
+
+          magnifierInfo.value = magnifierInfoWithGestureAt(
+            reasonableTextField.left - hideDistance + margin,
+          );
+          await tester.pump();
+          expect(find.byType(Magnifier), findsOneWidget);
+
+          magnifierInfo.value = magnifierInfoWithGestureAt(
+            reasonableTextField.left - hideDistance - margin,
+          );
+          await tester.pump();
+          expect(find.byType(Magnifier), findsNothing);
+        },
+      );
+
+      testWidgets('should update the controller when hiding and reappearing', (
+        WidgetTester tester,
+      ) async {
+        await tester.pumpWidget(const MaterialApp(home: Placeholder()));
+        final BuildContext context = tester.firstElement(find.byType(Placeholder));
+
+        final magnifierInfo = ValueNotifier<MagnifierInfo>(
+          magnifierInfoWithGestureAt(reasonableTextField.center.dx),
+        );
+        addTearDown(magnifierInfo.dispose);
+
+        await showMagnifier(context, tester, magnifierInfo);
+        expect(magnifierController.shown, isTrue);
+
+        magnifierInfo.value = magnifierInfoWithGestureAt(reasonableTextField.right + farFromLine);
+        await tester.pump();
+        // Hidden, but still in the overlay so that it can reappear.
+        expect(magnifierController.shown, isFalse);
+        expect(magnifierController.overlayEntry, isNotNull);
+
+        magnifierInfo.value = magnifierInfoWithGestureAt(reasonableTextField.right);
+        await tester.pump();
+        expect(magnifierController.shown, isTrue);
+      });
+
+      testWidgets('should hide and reappear as the gesture leaves and returns to the line', (
+        WidgetTester tester,
+      ) async {
+        await tester.pumpWidget(const MaterialApp(home: Placeholder()));
+        final BuildContext context = tester.firstElement(find.byType(Placeholder));
+
+        final magnifierInfo = ValueNotifier<MagnifierInfo>(
+          magnifierInfoWithGestureAt(reasonableTextField.center.dx),
+        );
+        addTearDown(magnifierInfo.dispose);
+
+        await showMagnifier(context, tester, magnifierInfo);
+        expect(find.byType(Magnifier), findsOneWidget);
+
+        magnifierInfo.value = magnifierInfoWithGestureAt(reasonableTextField.right + farFromLine);
+        await tester.pump();
+        expect(find.byType(Magnifier), findsNothing);
+
+        magnifierInfo.value = magnifierInfoWithGestureAt(reasonableTextField.right);
+        await tester.pump();
+        expect(find.byType(Magnifier), findsOneWidget);
+        // The magnifier tracks the gesture again.
+        expect(
+          getMagnifierPosition(tester, true).dx + basicOffset.dx,
+          moreOrLessEquals(reasonableTextField.right),
+        );
+      });
+
+      testWidgets('should not animate when reappearing on a different line', (
+        WidgetTester tester,
+      ) async {
+        await tester.pumpWidget(const MaterialApp(home: Placeholder()));
+        final BuildContext context = tester.firstElement(find.byType(Placeholder));
+
+        final magnifierInfo = ValueNotifier<MagnifierInfo>(
+          magnifierInfoWithGestureAt(reasonableTextField.right + farFromLine),
+        );
+        addTearDown(magnifierInfo.dispose);
+
+        await showMagnifier(context, tester, magnifierInfo);
+        expect(find.byType(Magnifier), findsNothing);
+
+        // Come back to a line further down.
+        const lineShift = Offset(0, 50);
+        magnifierInfo.value = MagnifierInfo(
+          currentLineBoundaries: reasonableTextField.shift(lineShift),
+          fieldBounds: reasonableTextField.inflate(farFromLine * 2),
+          caretRect: reasonableTextField.shift(lineShift),
+          globalGesturePosition: reasonableTextField.center + lineShift,
+        );
+        await tester.pump();
+
+        expect(find.byType(Magnifier), findsOneWidget);
+        final AnimatedPositioned animatedPositioned = tester.firstWidget(
+          find.byType(AnimatedPositioned),
+        );
+        expect(animatedPositioned.duration, Duration.zero);
       });
     });
 
@@ -397,15 +602,17 @@ void main() {
 
         await showMagnifier(context, tester, magnifierPositioner);
 
-        // New position has a horizontal shift.
+        // New position has a horizontal shift, staying on the line so that the
+        // magnifier is still shown.
         magnifierPositioner.value = MagnifierInfo(
           currentLineBoundaries: reasonableTextField,
           fieldBounds: reasonableTextField,
           caretRect: reasonableTextField,
-          globalGesturePosition: reasonableTextField.center + const Offset(200, 0),
+          globalGesturePosition: reasonableTextField.centerRight,
         );
         await tester.pumpAndSettle();
 
+        expect(find.byType(Magnifier), findsOneWidget);
         expect(getIsAnimated(tester), false);
       });
 
