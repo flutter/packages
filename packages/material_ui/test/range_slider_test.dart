@@ -2277,6 +2277,7 @@ void main() {
   testWidgets(
     'RangeSlider thumbs support showOnScreen and report isHidden when clipped in viewport',
     (WidgetTester tester) async {
+      final SemanticsHandle handle = tester.ensureSemantics();
       final scrollController = ScrollController();
       addTearDown(scrollController.dispose);
 
@@ -2355,6 +2356,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(scrollController.offset, greaterThan(0.0));
+      handle.dispose();
     },
   );
 
