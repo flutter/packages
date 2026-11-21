@@ -1140,6 +1140,9 @@ PlatformMapConfiguration _platformMapConfigurationFromMapConfiguration(MapConfig
     markerType: _platformMarkerTypeFromMarkerType(config.markerType ?? MarkerType.marker),
     mapId: config.mapId,
     style: config.style,
+    backgroundColor: config.backgroundColor == null
+        ? null
+        : _platformColorFromColor(config.backgroundColor!),
   );
 }
 
@@ -1197,6 +1200,9 @@ PlatformMapConfiguration _platformMapConfigurationFromOptionsJson(Map<String, Ob
     markerType: PlatformMarkerType.marker,
     mapId: options['mapId'] as String?,
     style: options['style'] as String?,
+    backgroundColor: options['backgroundColor'] == null
+        ? null
+        : _platformColorFromColor(Color(options['backgroundColor']! as int)),
   );
 }
 
