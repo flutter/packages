@@ -118,6 +118,7 @@ class OpenContainer<T extends Object?> extends StatefulWidget {
     this.closedColor = Colors.white,
     this.openColor = Colors.white,
     this.middleColor,
+    this.scrimColor = Colors.black54,
     this.closedElevation = 1.0,
     this.openElevation = 4.0,
     this.closedShape = const RoundedRectangleBorder(
@@ -174,6 +175,17 @@ class OpenContainer<T extends Object?> extends StatefulWidget {
   ///
   ///  * [Material.color], which is used to implement this property.
   final Color? middleColor;
+
+  /// The color of the scrim drawn over the route below the container while
+  /// the container is opening or closing.
+  ///
+  /// When the container is opened, the scrim animates from transparent to this
+  /// color. When the container is closed, it animates back from this color to
+  /// transparent.
+  ///
+  /// Defaults to [Colors.black54]. Use [Colors.transparent] to disable the
+  /// scrim.
+  final Color scrimColor;
 
   /// Elevation of the container while it is closed.
   ///
@@ -340,6 +352,7 @@ class OpenContainerState<T> extends State<OpenContainer<T?>> {
         closedColor: widget.closedColor,
         openColor: widget.openColor,
         middleColor: middleColor,
+        scrimColor: widget.scrimColor,
         closedElevation: widget.closedElevation,
         openElevation: widget.openElevation,
         closedShape: widget.closedShape,
@@ -467,6 +480,7 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
     required this.closedColor,
     required this.openColor,
     required this.middleColor,
+    required Color scrimColor,
     required double closedElevation,
     required this.openElevation,
     required ShapeBorder closedShape,
@@ -495,6 +509,14 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
        ),
        _closedOpacityTween = _getClosedOpacityTween(transitionType),
        _openOpacityTween = _getOpenOpacityTween(transitionType),
+       _scrimFadeInTween = TweenSequence<Color?>(<TweenSequenceItem<Color?>>[
+         TweenSequenceItem<Color?>(
+           tween: ColorTween(begin: scrimColor.withValues(alpha: 0.0), end: scrimColor),
+           weight: 1 / 5,
+         ),
+         TweenSequenceItem<Color>(tween: ConstantTween<Color>(scrimColor), weight: 4 / 5),
+       ]),
+       _scrimFadeOutTween = ColorTween(begin: scrimColor.withValues(alpha: 0.0), end: scrimColor),
        super(settings: routeSettings);
 
   static _FlippableTweenSequence<Color?> _getColorTween({
@@ -590,18 +612,8 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
   final _FlippableTweenSequence<double> _openOpacityTween;
   final _FlippableTweenSequence<Color?> _colorTween;
 
-  static final TweenSequence<Color?> _scrimFadeInTween =
-      TweenSequence<Color?>(<TweenSequenceItem<Color?>>[
-        TweenSequenceItem<Color?>(
-          tween: ColorTween(begin: Colors.transparent, end: Colors.black54),
-          weight: 1 / 5,
-        ),
-        TweenSequenceItem<Color>(tween: ConstantTween<Color>(Colors.black54), weight: 4 / 5),
-      ]);
-  static final Tween<Color?> _scrimFadeOutTween = ColorTween(
-    begin: Colors.transparent,
-    end: Colors.black54,
-  );
+  final TweenSequence<Color?> _scrimFadeInTween;
+  final Tween<Color?> _scrimFadeOutTween;
 
   // Key used for the widget returned by [OpenContainer.openBuilder] to keep
   // its state when the shape of the widget tree is changed at the end of the
