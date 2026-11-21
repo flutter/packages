@@ -14,6 +14,8 @@
 /// @docImport 'scaffold.dart';
 library;
 
+import 'dart:ui' show SemanticsRole;
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart' show DragStartBehavior;
 import 'package:flutter/widgets.dart';
@@ -244,7 +246,9 @@ class Drawer extends StatelessWidget {
   /// announce screen transitions when the drawer is opened and closed.
   ///
   /// If this label is not provided, it will default to
-  /// [MaterialLocalizations.drawerLabel].
+  /// [MaterialLocalizations.drawerLabel], except on native iOS and macOS,
+  /// which do not announce a drawer label. On the web the label is always
+  /// applied, because it is also the drawer's accessible name.
   ///
   /// See also:
   ///
@@ -264,13 +268,18 @@ class Drawer extends StatelessWidget {
   Widget build(BuildContext context) {
     assert(debugCheckHasMaterialLocalizations(context));
     final DrawerThemeData drawerTheme = DrawerTheme.of(context);
-    final String? label = switch (defaultTargetPlatform) {
-      TargetPlatform.iOS || TargetPlatform.macOS => semanticLabel,
-      TargetPlatform.android ||
-      TargetPlatform.fuchsia ||
-      TargetPlatform.linux ||
-      TargetPlatform.windows => semanticLabel ?? MaterialLocalizations.of(context).drawerLabel,
-    };
+    // On the web the label is also the drawer's accessible name, which a
+    // modal drawer exposed as a dialog needs, so apply it whatever the OS.
+    final String? label = kIsWeb
+        ? semanticLabel ?? MaterialLocalizations.of(context).drawerLabel
+        : switch (defaultTargetPlatform) {
+            TargetPlatform.iOS || TargetPlatform.macOS => semanticLabel,
+            TargetPlatform.android ||
+            TargetPlatform.fuchsia ||
+            TargetPlatform.linux ||
+            TargetPlatform.windows =>
+              semanticLabel ?? MaterialLocalizations.of(context).drawerLabel,
+          };
     final bool useMaterial3 = Theme.of(context).useMaterial3;
     final isDrawerStart = DrawerController.maybeOf(context)?.alignment != DrawerAlignment.end;
     final DrawerThemeData defaults = useMaterial3
@@ -285,6 +294,9 @@ class Drawer extends StatelessWidget {
       scopesRoute: true,
       namesRoute: true,
       explicitChildNodes: true,
+      // A drawer shown by a DrawerController is modal, so expose it as a
+      // dialog rather than a plain named route.
+      role: DrawerController.maybeOf(context) != null ? SemanticsRole.dialog : null,
       label: label,
       child: ConstrainedBox(
         constraints: BoxConstraints.expand(width: width ?? drawerTheme.width ?? _kWidth),
@@ -400,7 +412,8 @@ class DrawerController extends StatefulWidget {
   /// a drawer is open.
   ///
   /// If this is null, then [DrawerThemeData.scrimColor] is used. If that
-  /// is also null, then it defaults to [Colors.black54].
+  /// is also null, then [ColorScheme.scrim] at 32% opacity is used in
+  /// Material 3, and [Colors.black54] in Material 2.
   final Color? scrimColor;
 
   /// Determines if the [Drawer] can be opened with a drag gesture.
@@ -736,7 +749,11 @@ class DrawerControllerState extends State<DrawerController> with SingleTickerPro
       };
 
       final Color scrimColor =
-          widget.scrimColor ?? DrawerTheme.of(context).scrimColor ?? Colors.black54;
+          widget.scrimColor ??
+          DrawerTheme.of(context).scrimColor ??
+          (Theme.of(context).useMaterial3
+              ? _DrawerDefaultsM3(context).scrimColor!
+              : Colors.black54);
       final Color effectiveScrimColor = scrimColor.withValues(
         alpha: scrimColor.a * _controller.value,
       );
