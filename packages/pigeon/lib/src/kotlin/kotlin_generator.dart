@@ -29,9 +29,6 @@ const DocumentCommentSpecification _docCommentSpec = DocumentCommentSpecificatio
 
 const String _codecName = 'PigeonCodec';
 
-/// Name of field used for host API codec.
-const String _pigeonMethodCodec = 'PigeonMethodCodec';
-
 const String _overflowClassName = '${classNamePrefix}CodecOverflow';
 
 /// Kotlin file-level annotation for generated code.
@@ -241,18 +238,6 @@ class KotlinProxyApiOptions {
   final int? minAndroidApi;
 }
 
-/// Options for Kotlin implementation of Event Channels.
-class KotlinEventChannelOptions {
-  /// Construct a [KotlinEventChannelOptions].
-  const KotlinEventChannelOptions({this.includeSharedClasses = true});
-
-  /// Whether to include the shared Event Channel classes in generation.
-  ///
-  /// This should only ever be set to false if you have another generated
-  /// Kotlin file with Event Channels in the same directory.
-  final bool includeSharedClasses;
-}
-
 /// Class that manages all Kotlin code generation.
 class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
   /// Instantiates a Kotlin Generator.
@@ -288,6 +273,20 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
       indent.writeln('package ${generatorOptions.package}');
     }
     indent.newln();
+    final bool hasCallbackStreamHostApiMethods =
+        !generatorOptions.useJni &&
+        root.apis.whereType<AstHostApi>().any(
+          (AstHostApi api) =>
+              api.methods.any((Method method) => method.isStream && method.isAsynchronousCallback),
+        );
+    final bool hasFlowHostApiMethods = root.apis.whereType<AstHostApi>().any(
+      (AstHostApi api) =>
+          api.methods.any((Method method) => method.isStream && !method.isAsynchronousCallback),
+    );
+    if (hasCallbackStreamHostApiMethods) {
+      indent.writeln('import android.os.Handler');
+      indent.writeln('import android.os.Looper');
+    }
     indent.writeln('import android.util.Log');
     if (generatorOptions.useJni) {
       indent.writeln('import androidx.annotation.Keep');
@@ -296,12 +295,10 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
       indent.writeln('import io.flutter.embedding.engine.FlutterEngine');
       indent.writeln('import io.flutter.embedding.engine.plugins.FlutterPlugin');
     }
-    if (!generatorOptions.useJni || root.containsEventChannel || root.containsProxyApi) {
+    if (!generatorOptions.useJni || root.containsProxyApi) {
       indent.writeln('import io.flutter.plugin.common.BasicMessageChannel');
       indent.writeln('import io.flutter.plugin.common.BinaryMessenger');
-      indent.writeln('import io.flutter.plugin.common.EventChannel');
       indent.writeln('import io.flutter.plugin.common.MessageCodec');
-      indent.writeln('import io.flutter.plugin.common.StandardMethodCodec');
       indent.writeln('import io.flutter.plugin.common.StandardMessageCodec');
       indent.writeln('import java.io.ByteArrayOutputStream');
       indent.writeln('import java.nio.ByteBuffer');
@@ -313,6 +310,9 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
     if (generatorOptions.useGeneratedAnnotation) {
       indent.writeln('import javax.annotation.Generated');
     }
+    if (hasCallbackStreamHostApiMethods) {
+      indent.writeln('import java.util.concurrent.atomic.AtomicReference');
+    }
     final bool hasSuspendHostApiMethods = root.apis.whereType<AstHostApi>().any(
       (AstHostApi api) => api.methods.any(
         (Method method) => method.isAsynchronous && !method.isAsynchronousCallback,
@@ -321,13 +321,25 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
     final bool hasSuspendFlutterApiMethods = root.apis.whereType<AstFlutterApi>().any(
       (AstFlutterApi api) => api.methods.any((Method method) => !method.isAsynchronousCallback),
     );
-    if (hasSuspendHostApiMethods || hasSuspendFlutterApiMethods) {
+    final bool hasSuspendMethods = hasSuspendHostApiMethods || hasSuspendFlutterApiMethods;
+    if (hasSuspendMethods || hasFlowHostApiMethods) {
+      if (hasFlowHostApiMethods) {
+        indent.writeln('import kotlinx.coroutines.CancellationException');
+      }
       indent.writeln('import kotlinx.coroutines.CoroutineScope');
+      if (hasFlowHostApiMethods && !generatorOptions.useJni) {
+        indent.writeln('import kotlinx.coroutines.CoroutineStart');
+      }
       indent.writeln('import kotlinx.coroutines.Dispatchers');
+      if (hasFlowHostApiMethods) {
+        indent.writeln('import kotlinx.coroutines.flow.Flow');
+      }
       indent.writeln('import kotlinx.coroutines.launch');
-      indent.writeln('import kotlinx.coroutines.suspendCancellableCoroutine');
-      indent.writeln('import kotlin.coroutines.resume');
-      indent.writeln('import kotlin.coroutines.resumeWithException');
+      if (hasSuspendMethods) {
+        indent.writeln('import kotlinx.coroutines.suspendCancellableCoroutine');
+        indent.writeln('import kotlin.coroutines.resume');
+        indent.writeln('import kotlin.coroutines.resumeWithException');
+      }
     }
   }
 
@@ -645,10 +657,7 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
     Indent indent, {
     required String dartPackageName,
   }) {
-    if (generatorOptions.useJni &&
-        !generatorOptions.useJniHybrid &&
-        !root.containsEventChannel &&
-        !root.containsProxyApi) {
+    if (generatorOptions.useJni && !generatorOptions.useJniHybrid && !root.containsProxyApi) {
       return;
     }
     final List<EnumeratedType> enumeratedTypes = getEnumeratedTypes(
@@ -749,12 +758,6 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
     indent.newln();
     if (generatorOptions.useJniHybrid) {
       _writeInteropCodec(generatorOptions, indent);
-    }
-    if (root.containsEventChannel) {
-      indent.writeln(
-        'val ${generatorOptions.fileSpecificClassNameComponent}$_pigeonMethodCodec = StandardMethodCodec(${generatorOptions.fileSpecificClassNameComponent}$_codecName())',
-      );
-      indent.newln();
     }
   }
 
@@ -1499,12 +1502,21 @@ This is called by the generated Dart code and is not intended for direct use.'''
           parameters: method.parameters,
           isAsynchronous: method.isAsynchronous,
           isAsynchronousCallback: method.isAsynchronousCallback,
+          isStream: method.isStream,
+          classNamePrefix: generatorOptions.fileSpecificClassNameComponent ?? '',
         );
       }
 
       indent.newln();
       indent.write('companion object ');
       indent.addScoped('{', '}', () {
+        final bool hasStreamMethods = api.methods.any((Method m) => m.isStream);
+        if (hasStreamMethods) {
+          indent.writeln(
+            'private val streamRegistry = ${generatorOptions.fileSpecificClassNameComponent ?? ''}PigeonStreamRegistry()',
+          );
+          indent.newln();
+        }
         indent.writeln('/** The codec used by $apiName. */');
         indent.write('val codec: MessageCodec<Any?> by lazy ');
         indent.addScoped('{', '}', () {
@@ -1523,7 +1535,7 @@ This is called by the generated Dart code and is not intended for direct use.'''
           );
           String? serialBackgroundQueue;
           if (api.methods.any(
-            (Method m) => m.taskQueueType == TaskQueueType.serialBackgroundThread,
+            (Method m) => !m.isStream && m.taskQueueType == TaskQueueType.serialBackgroundThread,
           )) {
             serialBackgroundQueue = 'taskQueue';
             indent.writeln(
@@ -1531,21 +1543,34 @@ This is called by the generated Dart code and is not intended for direct use.'''
             );
           }
           for (final Method method in api.methods) {
-            _writeHostMethodMessageHandler(
-              indent,
-              generatorOptions: generatorOptions,
-              name: method.name,
-              channelName:
-                  '${makeChannelName(api, method, dartPackageName)}\$separatedMessageChannelSuffix',
-              taskQueueType: method.taskQueueType,
-              parameters: method.parameters,
-              returnType: method.returnType,
-              isAsynchronous: method.isAsynchronous,
-              isAsynchronousCallback: method.isAsynchronousCallback,
-              serialBackgroundQueue: method.taskQueueType == TaskQueueType.serialBackgroundThread
-                  ? serialBackgroundQueue
-                  : null,
-            );
+            final channelName =
+                '${makeChannelName(api, method, dartPackageName)}\$separatedMessageChannelSuffix';
+            if (method.isStream) {
+              _writeHostStreamMessageHandler(
+                indent,
+                generatorOptions: generatorOptions,
+                name: method.name,
+                channelName: channelName,
+                parameters: method.parameters,
+                returnType: method.returnType,
+                isAsynchronousCallback: method.isAsynchronousCallback,
+              );
+            } else {
+              _writeHostMethodMessageHandler(
+                indent,
+                generatorOptions: generatorOptions,
+                name: method.name,
+                channelName: channelName,
+                taskQueueType: method.taskQueueType,
+                parameters: method.parameters,
+                returnType: method.returnType,
+                isAsynchronous: method.isAsynchronous,
+                isAsynchronousCallback: method.isAsynchronousCallback,
+                serialBackgroundQueue: method.taskQueueType == TaskQueueType.serialBackgroundThread
+                    ? serialBackgroundQueue
+                    : null,
+              );
+            }
           }
         });
       });
@@ -1868,110 +1893,6 @@ This is called by the generated Dart code and is not intended for direct use.'''
     );
   }
 
-  @override
-  void writeEventChannelApi(
-    InternalKotlinOptions generatorOptions,
-    Root root,
-    Indent indent,
-    AstEventChannelApi api, {
-    required String dartPackageName,
-  }) {
-    indent.newln();
-    indent.format('''
-        private class ${generatorOptions.fileSpecificClassNameComponent}PigeonStreamHandler<T>(
-            val wrapper: ${generatorOptions.fileSpecificClassNameComponent}PigeonEventChannelWrapper<T>
-        ) : EventChannel.StreamHandler {
-          var pigeonSink: PigeonEventSink<T>? = null
-
-          override fun onListen(p0: Any?, sink: EventChannel.EventSink) {
-            pigeonSink = PigeonEventSink<T>(sink)
-            wrapper.onListen(p0, pigeonSink!!)
-          }
-
-          override fun onCancel(p0: Any?) {
-            pigeonSink = null
-            wrapper.onCancel(p0)
-          }
-        }
-
-        interface ${generatorOptions.fileSpecificClassNameComponent}PigeonEventChannelWrapper<T> {
-          fun onListen(p0: Any?, sink: PigeonEventSink<T>) {}
-
-          fun onCancel(p0: Any?) {}
-        }
-        ''');
-
-    if (api.kotlinOptions?.includeSharedClasses ?? true) {
-      // TODO(tarrinneal): Prefix this class to avoid name collisions.
-      indent.format('''
-        class PigeonEventSink<T>(private val sink: EventChannel.EventSink) {
-          fun success(value: T) {
-            sink.success(value)
-          }
-
-          fun error(errorCode: String, errorMessage: String?, errorDetails: Any?) {
-            sink.error(errorCode, errorMessage, errorDetails)
-          }
-
-          fun endOfStream() {
-            sink.endOfStream()
-          }
-        }
-      ''');
-    }
-    addDocumentationComments(indent, api.documentationComments, _docCommentSpec);
-    for (final Method func in api.methods) {
-      final channelClassName = '${toUpperCamelCase(func.name)}EventChannel';
-      final streamHandlerClassName = '${toUpperCamelCase(func.name)}StreamHandler';
-      indent.format('''
-        /** A typed channel for communicating with the Flutter application using asynchronous event streams. */
-        class $channelClassName(messenger: BinaryMessenger, instanceName: String = "") {
-          private val channel: EventChannel
-
-          init {
-            var channelName = "${makeChannelName(api, func, dartPackageName)}"
-            if (instanceName.isNotEmpty()) {
-              channelName += ".\$instanceName"
-            }
-            channel = EventChannel(messenger, channelName, ${generatorOptions.fileSpecificClassNameComponent}$_pigeonMethodCodec)
-          }
-
-          /**
-           * Sets the stream handler for this channel, replacing any previous handler.
-           *
-           * Pass `null` to remove the event channel registration.
-           */
-          fun setStreamHandler(streamHandler: $streamHandlerClassName?) {
-            val internalHandler = streamHandler?.let { ${generatorOptions.fileSpecificClassNameComponent}PigeonStreamHandler<${_kotlinTypeForDartType(func.returnType)}>(it) }
-            channel.setStreamHandler(internalHandler)
-          }
-        }
-
-        abstract class $streamHandlerClassName : ${generatorOptions.fileSpecificClassNameComponent}PigeonEventChannelWrapper<${_kotlinTypeForDartType(func.returnType)}> {
-          companion object {
-            /**
-             * Creates and returns a new event channel that calls the provided stream handler.
-             *
-             * The returned channel can be stored to allow changing or removing the stream handler.
-             * If the handler will not be changed for the lifetime of the engine associated with the messenger,
-             * the return value can be ignored.
-             */
-            fun register(messenger: BinaryMessenger, streamHandler: $streamHandlerClassName, instanceName: String = ""): $channelClassName {
-              val channel = $channelClassName(messenger, instanceName)
-              channel.setStreamHandler(streamHandler)
-              return channel
-            }
-          }
-
-          // Implement methods from ${generatorOptions.fileSpecificClassNameComponent}PigeonEventChannelWrapper
-          override fun onListen(p0: Any?, sink: PigeonEventSink<${_kotlinTypeForDartType(func.returnType)}>) {}
-
-          override fun onCancel(p0: Any?) {}
-        }
-      ''');
-    }
-  }
-
   void _writeWrapResult(Indent indent) {
     indent.newln();
     indent.write('fun wrapResult(result: Any?): List<Any?> ');
@@ -2218,6 +2139,9 @@ fun floatHash(f: Float): Int {
     if (generatorOptions.includeErrorClass) {
       _writeErrorClass(generatorOptions, indent);
     }
+    if (!generatorOptions.useJni && root.containsHostStream) {
+      _writeChannelStreamUtilities(generatorOptions, root, indent);
+    }
     if (generatorOptions.useJni) {
       indent.writeln('private const val defaultInstanceName = "$defaultNativeInteropInstanceName"');
       if (_needsEngineKeys(generatorOptions, root)) {
@@ -2319,6 +2243,228 @@ private fun keyOfMessenger(messenger: Any): Long {
     });
   }
 
+  void _writeChannelStreamUtilities(
+    InternalKotlinOptions generatorOptions,
+    Root root,
+    Indent indent,
+  ) {
+    final String prefix = generatorOptions.fileSpecificClassNameComponent ?? '';
+    indent.newln();
+    indent.format('''
+private class ${prefix}PigeonStreamRegistry {
+  companion object {
+    const val DATA_FRAME_KIND = ${streamDataFrameKind}L
+    const val ERROR_FRAME_KIND = ${streamErrorFrameKind}L
+    const val DONE_FRAME_KIND = ${streamDoneFrameKind}L
+  }
+
+  private class Entry(val onCancel: () -> Unit)
+
+  private val subscriptions =
+      java.util.IdentityHashMap<BinaryMessenger, MutableMap<String, MutableMap<Long, Entry>>>()
+
+  private fun invokeCancelSafely(action: (() -> Unit)?) {
+    if (action == null) return
+    try {
+      action.invoke()
+    } catch (exception: Throwable) {
+      // Guard Log.e against non-Robolectric JVM unit tests where android.util.Log is unmocked.
+      try {
+        Log.e("${prefix}PigeonStreamRegistry", "Failed to cancel stream subscription", exception)
+      } catch (_: RuntimeException) {}
+    }
+  }
+
+  fun register(
+      messenger: BinaryMessenger,
+      channelName: String,
+      subscriptionId: Long,
+      onCancel: () -> Unit,
+  ): Any {
+    val entry = Entry(onCancel)
+    val previous =
+        kotlin.synchronized(subscriptions) {
+          val messengerMap = subscriptions.getOrPut(messenger) { mutableMapOf() }
+          val channelMap = messengerMap.getOrPut(channelName) { mutableMapOf() }
+          channelMap.put(subscriptionId, entry)
+        }
+    invokeCancelSafely(previous?.onCancel)
+    return entry
+  }
+
+  fun remove(
+      messenger: BinaryMessenger,
+      channelName: String,
+      subscriptionId: Long,
+      token: Any,
+  ): Boolean {
+    return kotlin.synchronized(subscriptions) {
+      val messengerMap = subscriptions[messenger] ?: return@synchronized false
+      val channelMap = messengerMap[channelName] ?: return@synchronized false
+      if (channelMap[subscriptionId] !== token) {
+        return@synchronized false
+      }
+      channelMap.remove(subscriptionId)
+      if (channelMap.isEmpty()) {
+        messengerMap.remove(channelName)
+        if (messengerMap.isEmpty()) {
+          subscriptions.remove(messenger)
+        }
+      }
+      true
+    }
+  }
+
+  fun cancel(messenger: BinaryMessenger, channelName: String, subscriptionId: Long) {
+    val previous =
+        kotlin.synchronized(subscriptions) {
+          val messengerMap = subscriptions[messenger] ?: return@synchronized null
+          val channelMap = messengerMap[channelName] ?: return@synchronized null
+          val entry = channelMap.remove(subscriptionId)
+          if (channelMap.isEmpty()) {
+            messengerMap.remove(channelName)
+            if (messengerMap.isEmpty()) {
+              subscriptions.remove(messenger)
+            }
+          }
+          entry
+        }
+    previous?.onCancel?.invoke()
+  }
+
+  fun cancelAll(messenger: BinaryMessenger, channelName: String) {
+    val entries =
+        kotlin.synchronized(subscriptions) {
+          val messengerMap = subscriptions[messenger] ?: return@synchronized emptyList()
+          val removed = messengerMap.remove(channelName)?.values?.toList().orEmpty()
+          if (messengerMap.isEmpty()) {
+            subscriptions.remove(messenger)
+          }
+          removed
+        }
+    for (entry in entries) {
+      invokeCancelSafely(entry.onCancel)
+    }
+  }
+}''');
+    final bool hasCallbackStreams = root.apis.whereType<AstHostApi>().any(
+      (AstHostApi api) =>
+          api.methods.any((Method method) => method.isStream && method.isAsynchronousCallback),
+    );
+    if (hasCallbackStreams) {
+      indent.newln();
+      // Catch RuntimeException around Looper.getMainLooper() so non-Robolectric JVM unit tests work.
+      indent.format('''
+/** Sink passed to `@asyncCallback` stream methods to emit typed events, errors, or completion. */
+class ${prefix}PigeonEventSink<T>
+internal constructor(
+    private val subscriptionId: Long,
+    channel: BasicMessageChannel<Any?>,
+) {
+  private val channelRef = AtomicReference<BasicMessageChannel<Any?>?>(channel)
+  private val onClosedRef = AtomicReference<(() -> Unit)?>(null)
+  private val cancelLock = Any()
+  private var closeable: AutoCloseable? = null
+  private var closed = false
+  @Volatile private var terminated = false
+  private val mainLooper: Looper? =
+      try {
+        Looper.getMainLooper()
+      } catch (_: RuntimeException) {
+        null
+      }
+  private val mainHandler: Handler? by
+      lazy(LazyThreadSafetyMode.PUBLICATION) { mainLooper?.let { Handler(it) } }
+
+  internal fun attachOnClosed(onClosed: () -> Unit) {
+    kotlin.synchronized(cancelLock) {
+      if (!closed && !terminated) {
+        onClosedRef.set(onClosed)
+      }
+    }
+  }
+
+  internal fun attachCloseable(handle: AutoCloseable?) {
+    if (handle == null) return
+    val shouldClose =
+        kotlin.synchronized(cancelLock) {
+          if (closed) {
+            true
+          } else {
+            if (!terminated) {
+              closeable = handle
+            }
+            false
+          }
+        }
+    if (shouldClose) {
+      handle.close()
+    }
+  }
+
+  fun success(value: T) {
+    if (terminated) return
+    val ch = channelRef.get() ?: return
+    dispatchToMain {
+      if (channelRef.get() != null) {
+        ch.send(listOf(subscriptionId, ${prefix}PigeonStreamRegistry.DATA_FRAME_KIND, value))
+      }
+    }
+  }
+
+  fun error(code: String, message: String?, details: Any?) {
+    terminate(
+        listOf(
+            subscriptionId,
+            ${prefix}PigeonStreamRegistry.ERROR_FRAME_KIND,
+            code,
+            message,
+            details,
+        ))
+  }
+
+  fun endOfStream() {
+    terminate(listOf(subscriptionId, ${prefix}PigeonStreamRegistry.DONE_FRAME_KIND))
+  }
+
+  private fun terminate(frame: List<Any?>) {
+    if (terminated) return
+    terminated = true
+    onClosedRef.getAndSet(null)?.invoke() ?: return
+    kotlin.synchronized(cancelLock) { closeable = null }
+    val ch = channelRef.get() ?: return
+    dispatchToMain {
+      if (channelRef.getAndSet(null) != null) {
+        ch.send(frame)
+      }
+    }
+  }
+
+  internal fun close() {
+    val toClose =
+        kotlin.synchronized(cancelLock) {
+          terminated = true
+          closed = true
+          onClosedRef.set(null)
+          val current = closeable
+          closeable = null
+          current
+        }
+    channelRef.set(null)
+    toClose?.close()
+  }
+
+  private inline fun dispatchToMain(crossinline action: () -> Unit) {
+    if (mainLooper == null || Looper.myLooper() == mainLooper) {
+      action()
+    } else {
+      mainHandler?.post { action() }
+    }
+  }
+}''');
+    }
+  }
+
   static void _writeMethodDeclaration(
     Indent indent, {
     required String name,
@@ -2328,6 +2474,8 @@ private fun keyOfMessenger(messenger: Any): Long {
     int? minApiRequirement,
     bool isAsynchronous = false,
     bool isAsynchronousCallback = false,
+    bool isStream = false,
+    String classNamePrefix = '',
     bool isOpen = false,
     bool isAbstract = false,
     bool isOverride = false,
@@ -2366,7 +2514,18 @@ private fun keyOfMessenger(messenger: Any): Long {
         ? 'override '
         : '';
 
-    if (isAsynchronous && !useSuspend) {
+    if (isStream) {
+      if (isAsynchronousCallback) {
+        argSignature.add('sink: ${classNamePrefix}PigeonEventSink<$returnTypeString>');
+        indent.writeln(
+          '$openKeyword${abstractKeyword}fun $name(${argSignature.join(', ')}): AutoCloseable?',
+        );
+      } else {
+        indent.writeln(
+          '$openKeyword${abstractKeyword}fun $name(${argSignature.join(', ')}): Flow<$returnTypeString>',
+        );
+      }
+    } else if (isAsynchronous && !useSuspend) {
       argSignature.add('callback: (Result<$resultType>) -> Unit');
       indent.writeln('$openKeyword${abstractKeyword}fun $name(${argSignature.join(', ')})');
     } else {
@@ -2381,6 +2540,162 @@ private fun keyOfMessenger(messenger: Any): Long {
         );
       }
     }
+  }
+
+  void _writeHostStreamMessageHandler(
+    Indent indent, {
+    required InternalKotlinOptions generatorOptions,
+    required String name,
+    required String channelName,
+    required List<Parameter> parameters,
+    required TypeDeclaration returnType,
+    required bool isAsynchronousCallback,
+  }) {
+    final String prefix = generatorOptions.fileSpecificClassNameComponent ?? '';
+    final String utilsClass = _getUtilsClassName(generatorOptions);
+    final String returnTypeString = _nullSafeKotlinTypeForDartType(returnType);
+    indent.writeScoped('run {', '}', () {
+      indent.writeln('val controlChannelName = "$channelName"');
+      indent.writeln(r'val eventsChannelName = "$controlChannelName.events"');
+      indent.writeln(
+        'val controlChannel = BasicMessageChannel<Any?>(binaryMessenger, controlChannelName, codec)',
+      );
+      indent.writeln('streamRegistry.cancelAll(binaryMessenger, eventsChannelName)');
+      indent.writeScoped('if (api != null) {', '}', () {
+        indent.writeln(
+          'val eventsChannel = BasicMessageChannel<Any?>(binaryMessenger, eventsChannelName, codec)',
+        );
+        indent.writeScoped('controlChannel.setMessageHandler { message, reply ->', '}', () {
+          indent.writeln('val request = message as List<Any?>');
+          indent.writeln('val action = request[0] as String');
+          indent.writeln('val subscriptionId = (request[1] as Number).toLong()');
+          indent.writeScoped('if (action == "cancel") {', '}', () {
+            indent.writeScoped('val wrapped: List<Any?> = try {', '}', () {
+              indent.writeln(
+                'streamRegistry.cancel(binaryMessenger, eventsChannelName, subscriptionId)',
+              );
+              indent.writeln('listOf(null)');
+            }, addTrailingNewline: false);
+            indent.addScoped(' catch (exception: Throwable) {', '}', () {
+              indent.writeln('$utilsClass.wrapError(exception)');
+            });
+            indent.writeln('reply.reply(wrapped)');
+            indent.writeln('return@setMessageHandler');
+          });
+          indent.writeScoped('if (action != "listen") {', '}', () {
+            indent.writeln(
+              'reply.reply($utilsClass.wrapError(${_getErrorClassName(generatorOptions)}("invalid-action", "Unknown stream control action: \$action", null)))',
+            );
+            indent.writeln('return@setMessageHandler');
+          });
+          final methodArguments = <String>[];
+          enumerate(parameters, (int index, NamedType arg) {
+            final String argName = _getSafeArgumentName(index, arg);
+            final argIndex = 'request[${index + 2}]';
+            indent.writeln('val $argName = ${_castForceUnwrap(argIndex, arg.type, indent)}');
+            methodArguments.add(argName);
+          });
+          if (isAsynchronousCallback) {
+            final callArgs = <String>[...methodArguments, 'sink'];
+            indent.writeln(
+              'val sink = ${prefix}PigeonEventSink<$returnTypeString>(subscriptionId, eventsChannel)',
+            );
+            indent.writeScoped(
+              'val registrationToken = streamRegistry.register(binaryMessenger, eventsChannelName, subscriptionId) {',
+              '}',
+              () {
+                indent.writeln('sink.close()');
+              },
+            );
+            indent.writeScoped('sink.attachOnClosed {', '}', () {
+              indent.writeln(
+                'streamRegistry.remove(binaryMessenger, eventsChannelName, subscriptionId, registrationToken)',
+              );
+            });
+            indent.writeScoped('try {', '}', () {
+              indent.writeln('val closeable = api.$name(${callArgs.join(', ')})');
+              indent.writeln('sink.attachCloseable(closeable)');
+              indent.writeln('reply.reply(listOf(null))');
+            }, addTrailingNewline: false);
+            indent.addScoped(' catch (exception: Throwable) {', '}', () {
+              indent.writeln('sink.close()');
+              indent.writeln(
+                'streamRegistry.remove(binaryMessenger, eventsChannelName, subscriptionId, registrationToken)',
+              );
+              indent.writeln('reply.reply($utilsClass.wrapError(exception))');
+            });
+          } else {
+            indent.writeScoped('val flow = try {', '}', () {
+              indent.writeln('api.$name(${methodArguments.join(', ')})');
+            }, addTrailingNewline: false);
+            indent.addScoped(' catch (exception: Throwable) {', '}', () {
+              indent.writeln('reply.reply($utilsClass.wrapError(exception))');
+              indent.writeln('return@setMessageHandler');
+            });
+            indent.writeln('lateinit var registrationToken: Any');
+            // CoroutineStart.LAZY ensures streamRegistry.register completes before immediate/unconfined
+            // Flow completion or cancellation calls streamRegistry.remove.
+            indent.writeScoped(
+              'val job = CoroutineScope(Dispatchers.Main).launch(start = CoroutineStart.LAZY) {',
+              '}',
+              () {
+                indent.writeScoped('try {', '}', () {
+                  indent.writeScoped('flow.collect { event ->', '}', () {
+                    indent.writeln(
+                      'eventsChannel.send(listOf(subscriptionId, ${prefix}PigeonStreamRegistry.DATA_FRAME_KIND, event))',
+                    );
+                  });
+                  indent.writeScoped(
+                    'if (streamRegistry.remove(binaryMessenger, eventsChannelName, subscriptionId, registrationToken)) {',
+                    '}',
+                    () {
+                      indent.writeln(
+                        'eventsChannel.send(listOf(subscriptionId, ${prefix}PigeonStreamRegistry.DONE_FRAME_KIND))',
+                      );
+                    },
+                  );
+                }, addTrailingNewline: false);
+                indent.addScoped(' catch (e: CancellationException) {', '}', () {
+                  indent.writeScoped(
+                    'if (streamRegistry.remove(binaryMessenger, eventsChannelName, subscriptionId, registrationToken)) {',
+                    '}',
+                    () {
+                      indent.writeln(
+                        'eventsChannel.send(listOf(subscriptionId, ${prefix}PigeonStreamRegistry.ERROR_FRAME_KIND) + $utilsClass.wrapError(e))',
+                      );
+                    },
+                  );
+                  indent.writeln('throw e');
+                }, addTrailingNewline: false);
+                indent.addScoped(' catch (exception: Throwable) {', '}', () {
+                  indent.writeScoped(
+                    'if (streamRegistry.remove(binaryMessenger, eventsChannelName, subscriptionId, registrationToken)) {',
+                    '}',
+                    () {
+                      indent.writeln(
+                        'eventsChannel.send(listOf(subscriptionId, ${prefix}PigeonStreamRegistry.ERROR_FRAME_KIND) + $utilsClass.wrapError(exception))',
+                      );
+                    },
+                  );
+                });
+              },
+            );
+            indent.writeScoped(
+              'registrationToken = streamRegistry.register(binaryMessenger, eventsChannelName, subscriptionId) {',
+              '}',
+              () {
+                indent.writeln('job.cancel()');
+              },
+            );
+            indent.writeln('job.start()');
+            indent.writeln('reply.reply(listOf(null))');
+          }
+        });
+      }, addTrailingNewline: false);
+      indent.addScoped(' else {', '}', () {
+        indent.writeln('controlChannel.setMessageHandler(null)');
+      });
+    });
   }
 
   void _writeHostMethodMessageHandler(

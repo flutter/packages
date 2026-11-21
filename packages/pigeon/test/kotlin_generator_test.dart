@@ -2682,4 +2682,150 @@ void main() {
       expect(code, isNot(contains('firstOrNull { it.raw == raw }')));
     });
   });
+
+  group('HostApi Stream<T>', () {
+    test('generates Flow<T> and @asyncCallback sink signatures and handlers', () {
+      final root = Root(
+        apis: <Api>[
+          AstHostApi(
+            name: 'SensorApi',
+            methods: <Method>[
+              Method(
+                name: 'readings',
+                location: ApiLocation.host,
+                isStream: true,
+                parameters: <Parameter>[
+                  Parameter(
+                    name: 'intervalMs',
+                    type: const TypeDeclaration(baseName: 'int', isNullable: false),
+                  ),
+                ],
+                returnType: const TypeDeclaration(baseName: 'double', isNullable: false),
+              ),
+              Method(
+                name: 'rawEvents',
+                location: ApiLocation.host,
+                isStream: true,
+                isAsynchronousCallback: true,
+                parameters: <Parameter>[],
+                returnType: const TypeDeclaration(baseName: 'String', isNullable: true),
+              ),
+            ],
+          ),
+        ],
+        classes: <Class>[],
+        enums: <Enum>[],
+        containsHostApi: true,
+      );
+      final sink = StringBuffer();
+      const KotlinGenerator().generate(
+        const InternalKotlinOptions(
+          kotlinOut: 'Sensor.g.kt',
+          fileSpecificClassNameComponent: 'Sensor',
+        ),
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+      final code = sink.toString();
+      expect(code, contains('import kotlinx.coroutines.flow.Flow'));
+      expect(code, contains('import kotlinx.coroutines.CoroutineStart'));
+      expect(code, contains('import android.os.Handler'));
+      expect(code, contains('import android.os.Looper'));
+      expect(code, isNot(contains('import kotlinx.coroutines.suspendCancellableCoroutine')));
+      expect(code, contains('fun readings(intervalMs: Long): Flow<Double>'));
+      expect(code, contains('fun rawEvents(sink: SensorPigeonEventSink<String?>): AutoCloseable?'));
+      expect(code, contains('private class SensorPigeonStreamRegistry {'));
+      expect(code, contains('java.util.IdentityHashMap<BinaryMessenger,'));
+      expect(code, contains('const val DATA_FRAME_KIND = 0L'));
+      expect(code, contains('const val ERROR_FRAME_KIND = 1L'));
+      expect(code, contains('const val DONE_FRAME_KIND = 2L'));
+      expect(code, contains('class SensorPigeonEventSink<T>'));
+      expect(code, contains('internal fun attachCloseable(handle: AutoCloseable?)'));
+      expect(code, contains('private inline fun dispatchToMain(crossinline action: () -> Unit)'));
+      expect(code, contains('lazy(LazyThreadSafetyMode.PUBLICATION)'));
+      expect(code, contains('private fun invokeCancelSafely(action: (() -> Unit)?)'));
+      expect(code, contains('token: Any,'));
+      expect(code, contains('if (action != "listen") {'));
+      expect(code, contains('streamRegistry.cancelAll(binaryMessenger, eventsChannelName)'));
+      expect(
+        code,
+        contains('CoroutineScope(Dispatchers.Main).launch(start = CoroutineStart.LAZY)'),
+      );
+    });
+
+    test('Flow-only HostApi omits PigeonEventSink and Android Handler imports', () {
+      final root = Root(
+        apis: <Api>[
+          AstHostApi(
+            name: 'FlowOnlyApi',
+            methods: <Method>[
+              Method(
+                name: 'ticks',
+                location: ApiLocation.host,
+                isStream: true,
+                parameters: <Parameter>[],
+                returnType: const TypeDeclaration(baseName: 'int', isNullable: false),
+              ),
+            ],
+          ),
+        ],
+        classes: <Class>[],
+        enums: <Enum>[],
+        containsHostApi: true,
+      );
+      final sink = StringBuffer();
+      const KotlinGenerator().generate(
+        const InternalKotlinOptions(
+          kotlinOut: 'FlowOnly.g.kt',
+          fileSpecificClassNameComponent: 'FlowOnly',
+        ),
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+      final code = sink.toString();
+      expect(code, contains('import kotlinx.coroutines.flow.Flow'));
+      expect(code, isNot(contains('PigeonEventSink')));
+      expect(code, isNot(contains('import android.os.Handler')));
+      expect(code, isNot(contains('import android.os.Looper')));
+      expect(code, isNot(contains('AtomicReference')));
+    });
+
+    test('@asyncCallback-only HostApi omits kotlinx.coroutines imports', () {
+      final root = Root(
+        apis: <Api>[
+          AstHostApi(
+            name: 'CallbackOnlyApi',
+            methods: <Method>[
+              Method(
+                name: 'events',
+                location: ApiLocation.host,
+                isStream: true,
+                isAsynchronousCallback: true,
+                parameters: <Parameter>[],
+                returnType: const TypeDeclaration(baseName: 'String', isNullable: false),
+              ),
+            ],
+          ),
+        ],
+        classes: <Class>[],
+        enums: <Enum>[],
+        containsHostApi: true,
+      );
+      final sink = StringBuffer();
+      const KotlinGenerator().generate(
+        const InternalKotlinOptions(
+          kotlinOut: 'CallbackOnly.g.kt',
+          fileSpecificClassNameComponent: 'CallbackOnly',
+        ),
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+      final code = sink.toString();
+      expect(code, contains('class CallbackOnlyPigeonEventSink<T>'));
+      expect(code, isNot(contains('kotlinx.coroutines')));
+    });
+  });
 }

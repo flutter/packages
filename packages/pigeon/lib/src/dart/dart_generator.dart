@@ -33,9 +33,6 @@ const DocumentCommentSpecification docCommentSpec = DocumentCommentSpecification
 /// The custom codec used for all pigeon APIs.
 const String _pigeonMessageCodec = '_PigeonCodec';
 
-/// Name of field used for host API codec.
-const String _pigeonMethodCodec = 'pigeonMethodCodec';
-
 const String _overflowClassName = '_PigeonCodecOverflow';
 
 /// The default library import prefix for generated Dart FFI bridge code.
@@ -1500,12 +1497,6 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
         });
       });
     });
-    if (root.containsEventChannel) {
-      indent.newln();
-      indent.writeln(
-        'const StandardMethodCodec $_pigeonMethodCodec = StandardMethodCodec($_pigeonMessageCodec());',
-      );
-    }
     if (usesNativeInterop(generatorOptions)) {
       indent.newln();
       indent.writeln('@internal');
@@ -2968,8 +2959,11 @@ $dartApiName? ${classMemberNamePrefix}getInstance_${api.name}({
       );
       for (final Method method in api.methods) {
         indent.newln();
+        final String returnType = method.isAsynchronous
+            ? 'Future<${addGenericTypes(method.returnType)}>'
+            : addGenericTypes(method.returnType);
         indent.writeln(
-          '${method.isAsynchronous ? 'Future<' : ''}${addGenericTypes(method.returnType)}${method.isAsynchronous ? '>' : ''} ${method.name}(${_getMethodParameterSignature(method.parameters)});',
+          '$returnType ${method.name}(${_getMethodParameterSignature(method.parameters)});',
         );
       }
     });
@@ -3068,58 +3062,30 @@ ${api.name}({
       for (final Method func in api.methods) {
         indent.newln();
 
-        _writeHostMethod(
-          indent,
-          name: func.name,
-          parameters: func.parameters,
-          returnType: func.returnType,
-          documentationComments: func.documentationComments,
-          channelName: makeChannelName(api, func, dartPackageName),
-          addSuffixVariable: true,
-          useJni: generatorOptions.useJni,
-          useFfi: generatorOptions.useFfi,
-        );
+        if (func.isStream) {
+          _writeHostStreamMethod(
+            indent,
+            name: func.name,
+            parameters: func.parameters,
+            returnType: func.returnType,
+            documentationComments: func.documentationComments,
+            channelName: makeChannelName(api, func, dartPackageName),
+          );
+        } else {
+          _writeHostMethod(
+            indent,
+            name: func.name,
+            parameters: func.parameters,
+            returnType: func.returnType,
+            documentationComments: func.documentationComments,
+            channelName: makeChannelName(api, func, dartPackageName),
+            addSuffixVariable: true,
+            useJni: generatorOptions.useJni,
+            useFfi: generatorOptions.useFfi,
+          );
+        }
       }
     });
-  }
-
-  @override
-  void writeEventChannelApi(
-    InternalDartOptions generatorOptions,
-    Root root,
-    Indent indent,
-    AstEventChannelApi api, {
-    required String dartPackageName,
-  }) {
-    indent.newln();
-    addDocumentationComments(indent, api.documentationComments, docCommentSpec);
-    for (final Method func in api.methods) {
-      addDocumentationComments(
-        indent,
-        func.documentationComments,
-        docCommentSpec,
-        generatorComments: <String>[
-          'Returns a broadcast [Stream] of events from the `${func.name}` event channel.',
-          '',
-          'Each call to this method creates a new [EventChannel], so it should',
-          'not be called multiple times for the same `instanceName`. To deliver',
-          'events to multiple listeners, call this method once and listen to the',
-          'returned broadcast stream multiple times instead.',
-        ],
-      );
-      indent.format('''
-      Stream<${func.returnType.baseName}> ${func.name}(${_getMethodParameterSignature(func.parameters, addTrailingComma: true)} {String instanceName = ''}) {
-        if (instanceName.isNotEmpty) {
-          instanceName = '.\$instanceName';
-        }
-        final EventChannel ${func.name}Channel =
-            EventChannel('${makeChannelName(api, func, dartPackageName)}\$instanceName', $_pigeonMethodCodec);
-        return ${func.name}Channel.receiveBroadcastStream().map((dynamic event) {
-          return event as ${func.returnType.baseName};
-        });
-      }
-    ''');
-    }
   }
 
   @override
@@ -3506,7 +3472,7 @@ ${api.name}({
       if (api.dartHostTestHandler != null) {
         final mockApi = AstFlutterApi(
           name: api.dartHostTestHandler!,
-          methods: api.methods,
+          methods: api.methods.where((Method m) => !m.isStream).toList(),
           documentationComments: api.documentationComments,
         );
         writeFlutterApi(
@@ -3553,8 +3519,11 @@ ${api.name}({
     Indent indent, {
     required String dartPackageName,
   }) {
-    if (root.containsHostApi || root.containsProxyApi) {
+    if (root.containsHostApi || root.containsProxyApi || root.containsHostStream) {
       _writeExtractReplyValueOrThrow(indent);
+    }
+    if (root.containsHostStream) {
+      _writeChannelStreamHelpers(indent);
     }
     if (root.containsFlutterApi || root.containsProxyApi || generatorOptions.testOut != null) {
       _writeWrapResponse(generatorOptions, root, indent);
@@ -4442,6 +4411,241 @@ if (wrapped == null) {
         indent.writeln('return null;');
       });
     });
+  }
+
+  void _writeHostStreamMethod(
+    Indent indent, {
+    required String name,
+    required Iterable<Parameter> parameters,
+    required TypeDeclaration returnType,
+    required List<String> documentationComments,
+    required String channelName,
+  }) {
+    addDocumentationComments(indent, documentationComments, docCommentSpec);
+    final String argSignature = _getMethodParameterSignature(parameters);
+    final String returnTypeString = addGenericTypes(returnType);
+    final String? arguments = _getArgumentsForMethodCall(parameters);
+    final listArgs = arguments == null ? 'const <Object?>[]' : '<Object?>[$arguments]';
+    final String eventCast = _castValue('event', returnType);
+    indent.writeScoped('Stream<$returnTypeString> $name($argSignature) {', '}', () {
+      indent.writeln("final ${varNamePrefix}channelName = '$channelName\$$_suffixVarName';");
+      indent.writeScoped('return _pigeonChannelStream<$returnTypeString>(', ');', () {
+        indent.writeln('controlChannelName: ${varNamePrefix}channelName,');
+        indent.writeln('codec: $pigeonChannelCodec,');
+        indent.writeln('binaryMessenger: ${varNamePrefix}binaryMessenger,');
+        indent.writeln('arguments: $listArgs,');
+        indent.writeln('decodeEvent: (Object? event) => $eventCast,');
+      });
+    });
+  }
+
+  static void _writeChannelStreamHelpers(Indent indent) {
+    indent.newln();
+    indent.format('''
+class _PigeonStreamSubscriptionHandler {
+  _PigeonStreamSubscriptionHandler({
+    required this.onData,
+    required this.onError,
+    required this.onDone,
+  });
+
+  final void Function(Object? event) onData;
+  final void Function(String code, String? message, Object? details) onError;
+  final void Function() onDone;
+}
+
+class _PigeonChannelStreamRouter {
+  _PigeonChannelStreamRouter(this.channel);
+
+  static const int _dataFrameKind = $streamDataFrameKind;
+  static const int _errorFrameKind = $streamErrorFrameKind;
+  static const int _doneFrameKind = $streamDoneFrameKind;
+
+  static int _nextSubscriptionId = 0;
+  static final Map<(BinaryMessenger, String), _PigeonChannelStreamRouter> _routers =
+      <(BinaryMessenger, String), _PigeonChannelStreamRouter>{};
+
+  final BasicMessageChannel<Object?> channel;
+  final Map<int, _PigeonStreamSubscriptionHandler> _subscriptions =
+      <int, _PigeonStreamSubscriptionHandler>{};
+
+  static int register({
+    required String eventsChannelName,
+    required MessageCodec<Object?> codec,
+    required BinaryMessenger? binaryMessenger,
+    required _PigeonStreamSubscriptionHandler handler,
+  }) {
+    final BinaryMessenger resolvedMessenger =
+        binaryMessenger ?? ServicesBinding.instance.defaultBinaryMessenger;
+    final (BinaryMessenger, String) key = (resolvedMessenger, eventsChannelName);
+    final _PigeonChannelStreamRouter router = _routers.putIfAbsent(key, () {
+      final _PigeonChannelStreamRouter created = _PigeonChannelStreamRouter(
+        BasicMessageChannel<Object?>(
+          eventsChannelName,
+          codec,
+          binaryMessenger: binaryMessenger,
+        ),
+      );
+      created._attach(key);
+      return created;
+    });
+    final int subscriptionId = _nextSubscriptionId++;
+    router._subscriptions[subscriptionId] = handler;
+    return subscriptionId;
+  }
+
+  static bool unregister({
+    required String eventsChannelName,
+    required BinaryMessenger? binaryMessenger,
+    required int subscriptionId,
+  }) {
+    final BinaryMessenger resolvedMessenger =
+        binaryMessenger ?? ServicesBinding.instance.defaultBinaryMessenger;
+    final (BinaryMessenger, String) key = (resolvedMessenger, eventsChannelName);
+    final _PigeonChannelStreamRouter? router = _routers[key];
+    if (router == null) {
+      return false;
+    }
+    final bool removed = router._subscriptions.remove(subscriptionId) != null;
+    if (router._subscriptions.isEmpty) {
+      _routers.remove(key);
+      router.channel.setMessageHandler(null);
+    }
+    return removed;
+  }
+
+  void _attach((BinaryMessenger, String) key) {
+    channel.setMessageHandler((Object? message) async {
+      final List<Object?> frame = message! as List<Object?>;
+      final int subscriptionId = frame[0]! as int;
+      final int kind = frame[1]! as int;
+      switch (kind) {
+        case _dataFrameKind:
+          final _PigeonStreamSubscriptionHandler? handler = _subscriptions[subscriptionId];
+          handler?.onData(frame[2]);
+        case _errorFrameKind:
+          final _PigeonStreamSubscriptionHandler? handler = _subscriptions.remove(subscriptionId);
+          if (_subscriptions.isEmpty) {
+            _routers.remove(key);
+            channel.setMessageHandler(null);
+          }
+          handler?.onError(
+            frame[2]! as String,
+            frame[3] as String?,
+            frame[4],
+          );
+        case _doneFrameKind:
+          final _PigeonStreamSubscriptionHandler? handler = _subscriptions.remove(subscriptionId);
+          if (_subscriptions.isEmpty) {
+            _routers.remove(key);
+            channel.setMessageHandler(null);
+          }
+          handler?.onDone();
+      }
+      return null;
+    });
+  }
+}
+
+Stream<T> _pigeonChannelStream<T>({
+  required String controlChannelName,
+  required MessageCodec<Object?> codec,
+  required BinaryMessenger? binaryMessenger,
+  required List<Object?> arguments,
+  required T Function(Object? event) decodeEvent,
+}) {
+  final String eventsChannelName = '\$controlChannelName.events';
+  final BasicMessageChannel<Object?> controlChannel = BasicMessageChannel<Object?>(
+    controlChannelName,
+    codec,
+    binaryMessenger: binaryMessenger,
+  );
+  late final StreamController<T> controller;
+  int? subscriptionId;
+  bool terminatedFromHost = false;
+  controller = StreamController<T>(
+    onListen: () {
+      final int id = _PigeonChannelStreamRouter.register(
+        eventsChannelName: eventsChannelName,
+        codec: codec,
+        binaryMessenger: binaryMessenger,
+        handler: _PigeonStreamSubscriptionHandler(
+          onData: (Object? event) {
+            if (controller.isClosed) {
+              return;
+            }
+            try {
+              controller.add(decodeEvent(event));
+            } catch (e, st) {
+              controller.addError(e, st);
+            }
+          },
+          onError: (String code, String? message, Object? details) {
+            terminatedFromHost = true;
+            if (!controller.isClosed) {
+              controller.addError(
+                PlatformException(code: code, message: message, details: details),
+              );
+              unawaited(controller.close());
+            }
+          },
+          onDone: () {
+            terminatedFromHost = true;
+            if (!controller.isClosed) {
+              unawaited(controller.close());
+            }
+          },
+        ),
+      );
+      subscriptionId = id;
+      () async {
+        try {
+          final List<Object?>? replyList =
+              await controlChannel.send(<Object?>['listen', id, ...arguments]) as List<Object?>?;
+          _extractReplyValueOrThrow(
+            replyList,
+            controlChannelName,
+            isNullValid: true,
+          );
+        } catch (e, st) {
+          final bool wasActive = _PigeonChannelStreamRouter.unregister(
+            eventsChannelName: eventsChannelName,
+            binaryMessenger: binaryMessenger,
+            subscriptionId: id,
+          );
+          if (wasActive && !controller.isClosed) {
+            terminatedFromHost = true;
+            controller.addError(e, st);
+            unawaited(controller.close());
+          }
+        }
+      }();
+    },
+    onCancel: () async {
+      final int? id = subscriptionId;
+      subscriptionId = null;
+      if (id == null || terminatedFromHost) {
+        return;
+      }
+      _PigeonChannelStreamRouter.unregister(
+        eventsChannelName: eventsChannelName,
+        binaryMessenger: binaryMessenger,
+        subscriptionId: id,
+      );
+      final List<Object?>? replyList =
+          await controlChannel.send(<Object?>['cancel', id]) as List<Object?>?;
+      if (replyList != null && replyList.length > 1) {
+        throw PlatformException(
+          code: replyList[0]! as String,
+          message: replyList[1] as String?,
+          details: replyList[2],
+        );
+      }
+    },
+  );
+  return controller.stream;
+}
+''');
   }
 
   void _writeHostMethod(

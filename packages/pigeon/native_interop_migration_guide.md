@@ -142,9 +142,9 @@ final String result = await Isolate.run(() => api.doSomething(value));
 ```
 *Note: Callers must ensure the isolate stays alive while there are pending asynchronous calls, as attempting to execute a callback after the isolate has terminated will cause a crash.*
 
-### 3.4 Splitting Unsupported Pigeon Features (`@EventChannelApi`, `@ProxyApi`)
+### 3.4 Splitting Unsupported Pigeon Features (`Stream<T>`, `@ProxyApi`)
 
-`@EventChannelApi` and `@ProxyApi` are not supported with Native Interop (`useFfi` / `useJni`). If your existing Pigeon file declares event channels or proxy APIs alongside `@HostApi` / `@FlutterApi`, move the `@EventChannelApi` / `@ProxyApi` declarations into a separate Pigeon file that does not enable `useFfi` or `useJni`. In addition, Swift FFI requires `SwiftOptions.includeErrorClass: true` (if you have multiple Swift FFI files in the same module, give each file a distinct `errorClassName` instead of setting `includeErrorClass: false`).
+`@HostApi` `Stream<T>` methods and `@ProxyApi` are not supported with Native Interop (`useFfi` / `useJni`). If your existing Pigeon file declares event streams or proxy APIs alongside non-streaming `@HostApi` / `@FlutterApi` methods, move the streaming methods / `@ProxyApi` declarations into a separate Pigeon file that does not enable `useFfi` or `useJni` (migrating any legacy `@EventChannelApi` definitions to `@HostApi` methods returning `Stream<T>`). In addition, Swift FFI requires `SwiftOptions.includeErrorClass: true` (if you have multiple Swift FFI files in the same module, give each file a distinct `errorClassName` instead of setting `includeErrorClass: false`).
 
 ---
 

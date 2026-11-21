@@ -91,8 +91,10 @@ class _MyHomePageState extends State<MyHomePage> {
   // #enddocregion main-dart
 
   // #docregion main-dart-event
+  final EventStreamHostApi _eventStreamApi = EventStreamHostApi();
+
   Stream<String> getEventStream() async* {
-    final Stream<PlatformEvent> events = streamEvents();
+    final Stream<PlatformEvent> events = _eventStreamApi.streamEvents();
     await for (final PlatformEvent event in events) {
       switch (event) {
         case IntEvent():

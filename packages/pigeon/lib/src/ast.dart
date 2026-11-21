@@ -6,9 +6,9 @@ import 'package:collection/collection.dart' show ListEquality;
 import 'package:meta/meta.dart';
 
 import 'generator_tools.dart';
-import 'kotlin/kotlin_generator.dart' show KotlinEventChannelOptions, KotlinProxyApiOptions;
+import 'kotlin/kotlin_generator.dart' show KotlinProxyApiOptions;
 import 'pigeon_lib.dart';
-import 'swift/swift_generator.dart' show SwiftEventChannelOptions, SwiftProxyApiOptions;
+import 'swift/swift_generator.dart' show SwiftProxyApiOptions;
 
 typedef _ListEquals = bool Function(List<Object?>, List<Object?>);
 
@@ -37,6 +37,7 @@ class Method extends Node {
     this.isRequired = true,
     this.isAsynchronous = false,
     this.isAsynchronousCallback = false,
+    this.isStream = false,
     this.isStatic = false,
     this.offset,
     this.objcSelector = '',
@@ -59,6 +60,9 @@ class Method extends Node {
 
   /// Whether this asynchronous method uses callback-based completions instead of native async/await or suspend functions.
   bool isAsynchronousCallback;
+
+  /// Whether this method returns a `Stream<T>` of events rather than a single value.
+  bool isStream;
 
   /// The offset in the source file where the field appears.
   int? offset;
@@ -93,9 +97,10 @@ class Method extends Node {
 
   @override
   String toString() {
+    final isStreamStr = isStream ? ' isStream:true' : '';
     final objcSelectorStr = objcSelector.isEmpty ? '' : ' objcSelector:$objcSelector';
     final swiftFunctionStr = swiftFunction.isEmpty ? '' : ' swiftFunction:$swiftFunction';
-    return '(Method name:$name returnType:$returnType parameters:$parameters isAsynchronous:$isAsynchronous$objcSelectorStr$swiftFunctionStr documentationComments:$documentationComments)';
+    return '(Method name:$name returnType:$returnType parameters:$parameters isAsynchronous:$isAsynchronous$isStreamStr$objcSelectorStr$swiftFunctionStr documentationComments:$documentationComments)';
   }
 }
 
@@ -335,29 +340,6 @@ class AstProxyApi extends Api {
     return '(ProxyApi name:$name methods:$methods field:$fields '
         'documentationComments:$documentationComments '
         'superClassName:$superClass interfacesNames:$interfaces)';
-  }
-}
-
-/// Represents a collection of [Method]s that are wrappers for Event
-class AstEventChannelApi extends Api {
-  /// Parametric constructor for [AstEventChannelApi].
-  AstEventChannelApi({
-    required super.name,
-    required super.methods,
-    this.kotlinOptions,
-    this.swiftOptions,
-    super.documentationComments = const <String>[],
-  });
-
-  /// Options for Kotlin generated code for Event Channels.
-  final KotlinEventChannelOptions? kotlinOptions;
-
-  /// Options for Swift generated code for Event Channels.
-  final SwiftEventChannelOptions? swiftOptions;
-
-  @override
-  String toString() {
-    return '(EventChannelApi name:$name methods:$methods documentationComments:$documentationComments)';
   }
 }
 
@@ -853,7 +835,6 @@ class Root extends Node {
     this.containsHostApi = false,
     this.containsFlutterApi = false,
     this.containsProxyApi = false,
-    this.containsEventChannel = false,
   });
 
   /// Factory function for generating an empty root, usually used when early errors are encountered.
@@ -897,8 +878,10 @@ class Root extends Node {
   /// Whether the root has any Proxy API definitions.
   bool containsProxyApi;
 
-  /// Whether the root has any event channel definitions.
-  bool containsEventChannel;
+  /// Whether any `@HostApi` in the root declares a `Stream<T>` method.
+  bool get containsHostStream => apis.whereType<AstHostApi>().any(
+    (AstHostApi api) => api.methods.any((Method m) => m.isStream),
+  );
 
   /// Returns true if the number of custom types would exceed the available enumerations
   /// on the standard codec.

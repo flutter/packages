@@ -214,14 +214,6 @@ abstract class StructuredGenerator<T extends InternalOptions> extends Generator<
           writeFlutterApi(generatorOptions, root, indent, api, dartPackageName: dartPackageName);
         case AstProxyApi():
           writeProxyApi(generatorOptions, root, indent, api, dartPackageName: dartPackageName);
-        case AstEventChannelApi():
-          writeEventChannelApi(
-            generatorOptions,
-            root,
-            indent,
-            api,
-            dartPackageName: dartPackageName,
-          );
       }
     }
   }
@@ -276,15 +268,6 @@ abstract class StructuredGenerator<T extends InternalOptions> extends Generator<
     Root root,
     Indent indent,
     AstProxyApi api, {
-    required String dartPackageName,
-  }) {}
-
-  /// Writes a single event channel Api to [indent].
-  void writeEventChannelApi(
-    T generatorOptions,
-    Root root,
-    Indent indent,
-    AstEventChannelApi api, {
     required String dartPackageName,
   }) {}
 }

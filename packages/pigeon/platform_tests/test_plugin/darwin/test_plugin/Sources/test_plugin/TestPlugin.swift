@@ -63,20 +63,13 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi, HostCa
     flutterSmallApiTwo = FlutterSmallApi(
       binaryMessenger: binaryMessenger, messageChannelSuffix: "suffixTwo")
 
-    StreamIntsStreamHandler.register(with: binaryMessenger, streamHandler: SendInts())
-    StreamEventsStreamHandler.register(with: binaryMessenger, streamHandler: SendEvents())
-    // Store one handler to exercise the handler removal codepath, and discard
-    // the other to test that the return value can be safely ignored.
-    let streamHandlerOne = SendConsistentNumbers(numberToSend: 1)
-    let channelOne = StreamConsistentNumbersStreamHandler.register(
-      with: binaryMessenger,
-      instanceName: "1",
-      streamHandler: streamHandlerOne)
-    streamHandlerOne.onCancelled = { channelOne.setStreamHandler(nil) }
-    StreamConsistentNumbersStreamHandler.register(
-      with: binaryMessenger,
-      instanceName: "2",
-      streamHandler: SendConsistentNumbers(numberToSend: 2))
+    StreamHostTestApiSetup.setUp(binaryMessenger: binaryMessenger, api: StreamHostTestApiImpl())
+    StreamHostTestApiSetup.setUp(
+      binaryMessenger: binaryMessenger, api: StreamHostTestApiImpl(offset: 100),
+      messageChannelSuffix: "1")
+    StreamHostTestApiSetup.setUp(
+      binaryMessenger: binaryMessenger, api: StreamHostTestApiImpl(offset: 200),
+      messageChannelSuffix: "2")
     proxyApiRegistrar = ProxyApiTestsPigeonProxyApiRegistrar(
       binaryMessenger: binaryMessenger, apiDelegate: ProxyApiDelegate())
     proxyApiRegistrar!.setUp()
@@ -96,6 +89,9 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi, HostCa
       let messenger = registrar.messenger
       HostIntegrationCoreApiSetup.setUp(binaryMessenger: messenger, api: nil)
       HostCallbackCoreApiSetup.setUp(binaryMessenger: messenger, api: nil)
+      StreamHostTestApiSetup.setUp(binaryMessenger: messenger, api: nil)
+      StreamHostTestApiSetup.setUp(binaryMessenger: messenger, api: nil, messageChannelSuffix: "1")
+      StreamHostTestApiSetup.setUp(binaryMessenger: messenger, api: nil, messageChannelSuffix: "2")
     #endif
     if let niHostApiImpl {
       NativeInteropHostIntegrationCoreApiSetup.unregister(api: niHostApiImpl, registrar: registrar)
@@ -3126,98 +3122,6 @@ public class TestPluginWithSuffix: HostSmallApi {
 
 }
 
-class SendInts: StreamIntsStreamHandler {
-  var timerActive = false
-  var timer: Timer?
-
-  override func onListen(withArguments arguments: Any?, sink: PigeonEventSink<Int64>) {
-    var count: Int64 = 0
-    if !timerActive {
-      timerActive = true
-      timer = Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true) { _ in
-        DispatchQueue.main.async {
-          sink.success(count)
-          count += 1
-          if count >= 5 {
-            sink.endOfStream()
-            self.timer?.invalidate()
-          }
-        }
-      }
-    }
-  }
-}
-
-class SendEvents: StreamEventsStreamHandler {
-  var timerActive = false
-  var timer: Timer?
-  var eventList: [PlatformEvent] =
-    [
-      IntEvent(value: 1),
-      StringEvent(value: "string"),
-      BoolEvent(value: false),
-      DoubleEvent(value: 3.14),
-      ObjectsEvent(value: true),
-      EnumEvent(value: EventEnum.fortyTwo),
-      ClassEvent(value: EventAllNullableTypes(aNullableInt: 0)),
-      EmptyEvent(),
-    ]
-
-  override func onListen(withArguments arguments: Any?, sink: PigeonEventSink<PlatformEvent>) {
-    var count = 0
-    if !timerActive {
-      timerActive = true
-      timer = Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true) { _ in
-        DispatchQueue.main.async {
-          if count >= self.eventList.count {
-            sink.endOfStream()
-            self.timer?.invalidate()
-          } else {
-            sink.success(self.eventList[count])
-            count += 1
-          }
-        }
-      }
-    }
-  }
-}
-
-class SendConsistentNumbers: StreamConsistentNumbersStreamHandler {
-  let numberToSend: Int64
-  var onCancelled: (() -> Void)?
-  init(numberToSend: Int64) {
-    self.numberToSend = numberToSend
-  }
-  var timerActive = false
-  var timer: Timer?
-
-  override func onListen(withArguments arguments: Any?, sink: PigeonEventSink<Int64>) {
-    let numberThatWillBeSent: Int64 = numberToSend
-    var count: Int64 = 0
-    if !timerActive {
-      timerActive = true
-      timer = Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true) { _ in
-        DispatchQueue.main.async {
-          sink.success(numberThatWillBeSent)
-          count += 1
-          if count >= 10 {
-            sink.endOfStream()
-            self.timer?.invalidate()
-          }
-        }
-      }
-    }
-  }
-
-  // Closing the stream causes the Dart side to send a "cancel" call, so any
-  // handler removal must wait until that call has been received. Removing the
-  // handler immediately after endOfStream races with the "cancel" call, which
-  // then fails with a MissingPluginException.
-  override func onCancel(withArguments arguments: Any?) {
-    onCancelled?()
-  }
-}
-
 final class StubBinaryMessenger: NSObject, FlutterBinaryMessenger {
   func send(onChannel channel: String, message: Data?) {}
 
@@ -3373,5 +3277,118 @@ class NativeInteropSealedClassHostApiImpl: NativeInteropSealedClassHostApi {
         details: nil)
     }
     return try flutterApi.echoShape(shape: shape)
+  }
+}
+
+class StreamHostTestApiImpl: StreamHostTestApi, @unchecked Sendable {
+  private let offset: Int64
+  private let cancelLock = NSLock()
+  private var cancelledStreamCount: Int64 = 0
+
+  init(offset: Int64 = 0) {
+    self.offset = offset
+  }
+
+  private func incrementCancelledStreamCount() {
+    cancelLock.lock()
+    cancelledStreamCount += 1
+    cancelLock.unlock()
+  }
+
+  func getCancelledStreamCount() throws -> Int64 {
+    cancelLock.lock()
+    defer { cancelLock.unlock() }
+    return cancelledStreamCount
+  }
+
+  func resetCancelledStreamCount() throws {
+    cancelLock.lock()
+    cancelledStreamCount = 0
+    cancelLock.unlock()
+  }
+
+  func streamNumbers(count: Int64, start: Int64) -> AsyncThrowingStream<Int64, Error> {
+    let baseOffset = offset
+    return AsyncThrowingStream { continuation in
+      let task = Task {
+        for i in 0..<count {
+          if Task.isCancelled { break }
+          continuation.yield(baseOffset + start + i)
+          try? await Task.sleep(nanoseconds: 5_000_000)
+        }
+        continuation.finish()
+      }
+      continuation.onTermination = { [weak self] termination in
+        if case .cancelled = termination {
+          self?.incrementCancelledStreamCount()
+        }
+        task.cancel()
+      }
+    }
+  }
+
+  func streamPlatformEvents() -> AsyncThrowingStream<PlatformEvent, Error> {
+    let events: [PlatformEvent] = [
+      IntEvent(value: 1),
+      StringEvent(value: "string"),
+      BoolEvent(value: false),
+      DoubleEvent(value: 3.14),
+      ObjectsEvent(value: true),
+      EnumEvent(value: EventEnum.fortyTwo),
+      ClassEvent(value: EventAllNullableTypes(aNullableInt: 0)),
+      EmptyEvent(),
+    ]
+    return AsyncThrowingStream { continuation in
+      let task = Task {
+        for event in events {
+          if Task.isCancelled { break }
+          continuation.yield(event)
+          try? await Task.sleep(nanoseconds: 5_000_000)
+        }
+        continuation.finish()
+      }
+      continuation.onTermination = { _ in task.cancel() }
+    }
+  }
+
+  func streamNullableInts() -> AsyncThrowingStream<Int64?, Error> {
+    AsyncThrowingStream { continuation in
+      continuation.yield(1)
+      continuation.yield(nil)
+      continuation.yield(2)
+      continuation.finish()
+    }
+  }
+
+  func streamError(customError: Bool) -> AsyncThrowingStream<Int64, Error> {
+    AsyncThrowingStream { continuation in
+      continuation.yield(1)
+      if customError {
+        continuation.finish(
+          throwing: EventChannelTestsError(
+            code: "error_code", message: "error_message", details: "error_details"))
+      } else {
+        continuation.finish(throwing: NSError(domain: "test", code: 42))
+      }
+    }
+  }
+
+  func streamViaCallback(
+    prefix: String, count: Int64, sink: EventChannelTestsPigeonEventSink<String>
+  ) -> (() -> Void)? {
+    let task = Task.detached {
+      for i in 0..<count {
+        if Task.isCancelled { return }
+        sink.success("\(prefix):\(i)")
+        try? await Task.sleep(nanoseconds: 5_000_000)
+      }
+      if !Task.isCancelled {
+        sink.endOfStream()
+      }
+    }
+    return { [weak self] in
+      self?.incrementCancelledStreamCount()
+      task.cancel()
+    }
   }
 }
