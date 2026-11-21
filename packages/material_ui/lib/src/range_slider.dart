@@ -2187,22 +2187,22 @@ class _RenderRangeSlider extends RenderBox with RelayoutWhenSystemFontsChangeMix
     );
 
     if (_startSemanticsNode == null) {
-      late final SemanticsNode node;
-      node = SemanticsNode(
+      late final SemanticsNode startNode;
+      startNode = SemanticsNode(
         showOnScreen: () {
-          showOnScreen(descendant: this, rect: node.rect);
+          showOnScreen(descendant: this, rect: startNode.rect);
         },
       );
-      _startSemanticsNode = node;
+      _startSemanticsNode = startNode;
     }
     if (_endSemanticsNode == null) {
-      late final SemanticsNode node;
-      node = SemanticsNode(
+      late final SemanticsNode endNode;
+      endNode = SemanticsNode(
         showOnScreen: () {
-          showOnScreen(descendant: this, rect: node.rect);
+          showOnScreen(descendant: this, rect: endNode.rect);
         },
       );
-      _endSemanticsNode = node;
+      _endSemanticsNode = endNode;
     }
 
     switch (textDirection) {
