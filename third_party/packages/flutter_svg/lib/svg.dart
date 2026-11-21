@@ -579,7 +579,7 @@ class SvgPicture extends StatelessWidget {
           defaultValue: false,
         ),
       )
-      ..add(EnumProperty<Clip>('clipBehavior', clipBehavior, defaultValue: BoxFit.contain))
+      ..add(EnumProperty<Clip>('clipBehavior', clipBehavior, defaultValue: Clip.hardEdge))
       ..add(StringProperty('colorFilter', colorFilter.toString(), defaultValue: null))
       ..add(EnumProperty<BoxFit>('fit', fit, defaultValue: BoxFit.contain))
       ..add(
