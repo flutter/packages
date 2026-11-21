@@ -597,7 +597,7 @@ class ThemeData with Diagnosticable {
 
     // TYPOGRAPHY & ICONOGRAPHY
     typography ??= useMaterial3
-        ? Typography.material2021(platform: platform, colorScheme: colorScheme)
+        ? Typography.material2025(platform: platform, colorScheme: colorScheme)
         : Typography.material2014(platform: platform);
     TextTheme defaultTextTheme = isDark ? typography.white : typography.black;
     TextTheme defaultPrimaryTextTheme = primaryIsDark ? typography.white : typography.black;
@@ -1188,7 +1188,7 @@ class ThemeData with Diagnosticable {
   /// | Property        | Material 3 default             | Material 2 default             |
   /// | :-------------- | :----------------------------- | :----------------------------- |
   /// | [colorScheme]   | M3 baseline light color scheme | M2 baseline light color scheme |
-  /// | [typography]    | [Typography.material2021]      | [Typography.material2014]      |
+  /// | [typography]    | [Typography.material2025]      | [Typography.material2014]      |
   /// | [splashFactory] | [InkSparkle]* or [InkRipple]   | [InkSplash]                    |
   ///
   /// \* if the target platform is Android and the app is not
@@ -1389,6 +1389,15 @@ class ThemeData with Diagnosticable {
   final TextTheme primaryTextTheme;
 
   /// Text with a color that contrasts with the card and canvas colors.
+  ///
+  /// When a [TextTheme] is passed to the [ThemeData] constructor, it is merged
+  /// field by field with the default text theme from [typography]. Overriding a
+  /// baseline style (such as [TextTheme.bodyMedium]) does not change its
+  /// emphasized variant (such as [TextTheme.bodyMediumEmphasized]), which keeps
+  /// the default typeface. To use a custom font for every style, including the
+  /// emphasized styles, use the `fontFamily` and `fontFamilyFallback`
+  /// constructor parameters, or provide the emphasized styles in the custom
+  /// [TextTheme].
   final TextTheme textTheme;
 
   /// The color and geometry [TextTheme] values used to configure [textTheme].

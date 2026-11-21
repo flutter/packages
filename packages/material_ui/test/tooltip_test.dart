@@ -839,7 +839,7 @@ void main() {
     expect(textStyle.decoration, TextDecoration.none);
     expect(
       textStyle.debugLabel,
-      '((englishLike bodyMedium 2021).merge((blackMountainView bodyMedium).apply)).copyWith',
+      '((englishLike bodyMedium 2025).merge((mountainView bodyMedium).apply)).copyWith',
     );
   });
 
@@ -889,7 +889,7 @@ void main() {
     expect(textStyle.decoration, TextDecoration.none);
     expect(
       textStyle.debugLabel,
-      '((englishLike bodyMedium 2021).merge((whiteMountainView bodyMedium).apply)).copyWith',
+      '((englishLike bodyMedium 2025).merge((mountainView bodyMedium).apply)).copyWith',
     );
   });
 
@@ -1802,7 +1802,7 @@ void main() {
     expect(textStyle.style.decoration, TextDecoration.none);
     expect(
       textStyle.style.debugLabel,
-      '((englishLike bodyMedium 2021).merge((blackMountainView bodyMedium).apply)).copyWith',
+      '((englishLike bodyMedium 2025).merge((mountainView bodyMedium).apply)).copyWith',
     );
   });
 

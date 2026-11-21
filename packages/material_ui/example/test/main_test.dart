@@ -64,6 +64,8 @@ import 'package:material_ui_examples/tabs/tab_bar.0.dart' as tab_bar_0;
 import 'package:material_ui_examples/text_field/text_field.2.dart'
     as text_field_2;
 import 'package:material_ui_examples/tooltip/tooltip.0.dart' as tooltip_0;
+import 'package:material_ui_examples/typography/typography.0.dart'
+    as typography_0;
 
 const Map<String, Type> _examples = <String, Type>{
   'App bars': app_bar_1.AppBarApp,
@@ -104,6 +106,7 @@ const Map<String, Type> _examples = <String, Type>{
   'Tabs': tab_bar_0.TabBarApp,
   'Text fields': text_field_2.TextFieldExamplesApp,
   'Tooltip': tooltip_0.TooltipExampleApp,
+  'Typography': typography_0.TypographyExampleApp,
 };
 
 void main() {
