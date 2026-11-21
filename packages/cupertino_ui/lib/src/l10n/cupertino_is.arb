@@ -35,5 +35,10 @@
   "expansionTileExpandedTapHint": "Minnka",
   "expansionTileCollapsedTapHint": "Stækka til að sjá frekari upplýsingar",
   "expandedHint": "Minnkað",
-  "collapsedHint": "Stækkað"
+  "collapsedHint": "Stækkað",
+  "splitViewSidebarLabel": "Sidebar",
+  "splitViewDetailLabel": "Detail",
+  "splitViewShowSidebarButtonLabel": "Show sidebar",
+  "splitViewHideSidebarButtonLabel": "Hide sidebar",
+  "splitViewDismissSidebarButtonLabel": "Dismiss sidebar"
 }

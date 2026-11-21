@@ -35,5 +35,10 @@
   "expansionTileExpandedTapHint": "Komprimera",
   "expansionTileCollapsedTapHint": "Utöka för mer information",
   "expandedHint": "Komprimerades",
-  "collapsedHint": "Utökades"
+  "collapsedHint": "Utökades",
+  "splitViewSidebarLabel": "Sidebar",
+  "splitViewDetailLabel": "Detail",
+  "splitViewShowSidebarButtonLabel": "Show sidebar",
+  "splitViewHideSidebarButtonLabel": "Hide sidebar",
+  "splitViewDismissSidebarButtonLabel": "Dismiss sidebar"
 }

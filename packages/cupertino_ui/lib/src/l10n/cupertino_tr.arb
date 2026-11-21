@@ -35,5 +35,10 @@
   "expansionTileExpandedTapHint": "Daralt",
   "expansionTileCollapsedTapHint": "Daha fazla ayrıntı için genişletin",
   "expandedHint": "Daraltıldı",
-  "collapsedHint": "Genişletildi"
+  "collapsedHint": "Genişletildi",
+  "splitViewSidebarLabel": "Sidebar",
+  "splitViewDetailLabel": "Detail",
+  "splitViewShowSidebarButtonLabel": "Show sidebar",
+  "splitViewHideSidebarButtonLabel": "Hide sidebar",
+  "splitViewDismissSidebarButtonLabel": "Dismiss sidebar"
 }

@@ -7,6 +7,7 @@
 // material_localizations.dart.
 
 /// @docImport 'bottom_tab_bar.dart';
+/// @docImport 'cupertino_split_view.dart';
 /// @docImport 'date_picker.dart';
 /// @docImport 'expansion_tile.dart';
 /// @docImport 'nav_bar.dart';
@@ -314,6 +315,24 @@ abstract class CupertinoLocalizations {
   /// The label for the back button, used in [CupertinoNavigationBar] and [CupertinoSliverNavigationBar].
   String get backButtonLabel;
 
+  /// The semantic label for the sidebar region of a [CupertinoSplitView].
+  String get splitViewSidebarLabel;
+
+  /// The semantic label for the detail region of a [CupertinoSplitView].
+  String get splitViewDetailLabel;
+
+  /// The semantic label for the button that reveals the sidebar in a
+  /// [CupertinoSplitView].
+  String get splitViewShowSidebarButtonLabel;
+
+  /// The semantic label for the button that hides the sidebar in a
+  /// [CupertinoSplitView].
+  String get splitViewHideSidebarButtonLabel;
+
+  /// The semantic label for the scrim that dismisses an overlay sidebar in a
+  /// [CupertinoSplitView].
+  String get splitViewDismissSidebarButtonLabel;
+
   /// The semantics hint to describe the tap action on an expanded
   /// [CupertinoExpansionTile] on iOS and macOS. This is appended to the [collapsedHint]
   /// hint to provide a more detailed description of the action, e.g. "Expanded
@@ -561,6 +580,21 @@ class DefaultCupertinoLocalizations implements CupertinoLocalizations {
 
   @override
   String get backButtonLabel => 'Back';
+
+  @override
+  String get splitViewSidebarLabel => 'Sidebar';
+
+  @override
+  String get splitViewDetailLabel => 'Detail';
+
+  @override
+  String get splitViewShowSidebarButtonLabel => 'Show sidebar';
+
+  @override
+  String get splitViewHideSidebarButtonLabel => 'Hide sidebar';
+
+  @override
+  String get splitViewDismissSidebarButtonLabel => 'Dismiss sidebar';
 
   @override
   String get expansionTileExpandedHint => 'double tap to collapse';

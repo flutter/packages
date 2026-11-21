@@ -35,5 +35,10 @@
   "expansionTileExpandedTapHint": "Összecsukás",
   "expansionTileCollapsedTapHint": "Bontsa ki a további részletek megtekintéséhez",
   "expandedHint": "Összecsukva",
-  "collapsedHint": "Kibontva"
+  "collapsedHint": "Kibontva",
+  "splitViewSidebarLabel": "Sidebar",
+  "splitViewDetailLabel": "Detail",
+  "splitViewShowSidebarButtonLabel": "Show sidebar",
+  "splitViewHideSidebarButtonLabel": "Hide sidebar",
+  "splitViewDismissSidebarButtonLabel": "Dismiss sidebar"
 }

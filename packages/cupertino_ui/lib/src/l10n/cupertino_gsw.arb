@@ -35,5 +35,10 @@
   "expansionTileExpandedTapHint": "Minimieren",
   "expansionTileCollapsedTapHint": "Für weitere Details maximieren",
   "expandedHint": "Minimiert",
-  "collapsedHint": "Maximiert"
+  "collapsedHint": "Maximiert",
+  "splitViewSidebarLabel": "Sidebar",
+  "splitViewDetailLabel": "Detail",
+  "splitViewShowSidebarButtonLabel": "Show sidebar",
+  "splitViewHideSidebarButtonLabel": "Hide sidebar",
+  "splitViewDismissSidebarButtonLabel": "Dismiss sidebar"
 }

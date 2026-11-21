@@ -35,5 +35,10 @@
   "expansionTileExpandedTapHint": "Skjul",
   "expansionTileCollapsedTapHint": "Vis for å se mer informasjon",
   "expandedHint": "Skjules",
-  "collapsedHint": "Vises"
+  "collapsedHint": "Vises",
+  "splitViewSidebarLabel": "Sidebar",
+  "splitViewDetailLabel": "Detail",
+  "splitViewShowSidebarButtonLabel": "Show sidebar",
+  "splitViewHideSidebarButtonLabel": "Hide sidebar",
+  "splitViewDismissSidebarButtonLabel": "Dismiss sidebar"
 }

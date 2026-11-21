@@ -35,5 +35,10 @@
   "expansionTileExpandedTapHint": "جمع کردن",
   "expansionTileCollapsedTapHint": "ازهم بازکردن برای جزئیات بیشتر",
   "expandedHint": "جمع‌شده",
-  "collapsedHint": "ازهم بازشده"
+  "collapsedHint": "ازهم بازشده",
+  "splitViewSidebarLabel": "Sidebar",
+  "splitViewDetailLabel": "Detail",
+  "splitViewShowSidebarButtonLabel": "Show sidebar",
+  "splitViewHideSidebarButtonLabel": "Hide sidebar",
+  "splitViewDismissSidebarButtonLabel": "Dismiss sidebar"
 }

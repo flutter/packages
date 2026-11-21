@@ -40,5 +40,10 @@
   "expansionTileExpandedTapHint": "Скупите",
   "expansionTileCollapsedTapHint": "Проширите за још детаља",
   "expandedHint": "Скупљено је",
-  "collapsedHint": "Проширено је"
+  "collapsedHint": "Проширено је",
+  "splitViewSidebarLabel": "Sidebar",
+  "splitViewDetailLabel": "Detail",
+  "splitViewShowSidebarButtonLabel": "Show sidebar",
+  "splitViewHideSidebarButtonLabel": "Hide sidebar",
+  "splitViewDismissSidebarButtonLabel": "Dismiss sidebar"
 }
