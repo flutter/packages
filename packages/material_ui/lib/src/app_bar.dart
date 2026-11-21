@@ -690,7 +690,8 @@ class AppBar extends StatefulWidget implements PreferredSizeWidget {
   /// {@template material_ui.appbar.toolbarHeight}
   /// Defines the height of the toolbar component of an [AppBar].
   ///
-  /// By default, the value of [toolbarHeight] is [kToolbarHeight].
+  /// If this is not specified, [AppBarThemeData.toolbarHeight] is used. If that
+  /// is also null, [kToolbarHeight] is used.
   /// {@endtemplate}
   final double? toolbarHeight;
 
@@ -1598,7 +1599,7 @@ class SliverAppBar extends StatefulWidget {
     this.stretchTriggerOffset = 100.0,
     this.onStretchTrigger,
     this.shape,
-    this.toolbarHeight,
+    double? toolbarHeight,
     this.leadingWidth,
     this.toolbarTextStyle,
     this.titleTextStyle,
@@ -1613,6 +1614,8 @@ class SliverAppBar extends StatefulWidget {
          collapsedHeight == null || toolbarHeight == null || collapsedHeight >= toolbarHeight,
          'The "collapsedHeight" argument has to be larger than or equal to [toolbarHeight].',
        ),
+       toolbarHeight = toolbarHeight ?? kToolbarHeight,
+       _hasExplicitToolbarHeight = toolbarHeight != null,
        _variant = _SliverAppVariant.small;
 
   /// Creates a Material Design medium top app bar that can be placed
@@ -1675,7 +1678,7 @@ class SliverAppBar extends StatefulWidget {
     this.stretchTriggerOffset = 100.0,
     this.onStretchTrigger,
     this.shape,
-    double this.toolbarHeight = _MediumScrollUnderFlexibleConfig.collapsedHeight,
+    double? toolbarHeight,
     this.leadingWidth,
     this.toolbarTextStyle,
     this.titleTextStyle,
@@ -1687,9 +1690,11 @@ class SliverAppBar extends StatefulWidget {
   }) : assert(floating || !snap, 'The "snap" argument only makes sense for floating app bars.'),
        assert(stretchTriggerOffset > 0.0),
        assert(
-         collapsedHeight == null || collapsedHeight >= toolbarHeight,
+         collapsedHeight == null || toolbarHeight == null || collapsedHeight >= toolbarHeight,
          'The "collapsedHeight" argument has to be larger than or equal to [toolbarHeight].',
        ),
+       toolbarHeight = toolbarHeight ?? _MediumScrollUnderFlexibleConfig.collapsedHeight,
+       _hasExplicitToolbarHeight = toolbarHeight != null,
        _variant = _SliverAppVariant.medium;
 
   /// Creates a Material Design large top app bar that can be placed
@@ -1752,7 +1757,7 @@ class SliverAppBar extends StatefulWidget {
     this.stretchTriggerOffset = 100.0,
     this.onStretchTrigger,
     this.shape,
-    double this.toolbarHeight = _LargeScrollUnderFlexibleConfig.collapsedHeight,
+    double? toolbarHeight,
     this.leadingWidth,
     this.toolbarTextStyle,
     this.titleTextStyle,
@@ -1764,9 +1769,11 @@ class SliverAppBar extends StatefulWidget {
   }) : assert(floating || !snap, 'The "snap" argument only makes sense for floating app bars.'),
        assert(stretchTriggerOffset > 0.0),
        assert(
-         collapsedHeight == null || collapsedHeight >= toolbarHeight,
+         collapsedHeight == null || toolbarHeight == null || collapsedHeight >= toolbarHeight,
          'The "collapsedHeight" argument has to be larger than or equal to [toolbarHeight].',
        ),
+       toolbarHeight = toolbarHeight ?? _LargeScrollUnderFlexibleConfig.collapsedHeight,
+       _hasExplicitToolbarHeight = toolbarHeight != null,
        _variant = _SliverAppVariant.large;
 
   /// {@macro material_ui.appbar.leading}
@@ -1998,12 +2005,15 @@ class SliverAppBar extends StatefulWidget {
 
   /// {@macro material_ui.appbar.toolbarHeight}
   ///
-  /// If this is null, [AppBarThemeData.toolbarHeight] is used. If that is also
-  /// null, [kToolbarHeight] is used. The [SliverAppBar.medium] and
-  /// [SliverAppBar.large] constructors always provide a non-null default.
+  /// The [SliverAppBar.medium] and [SliverAppBar.large] constructors fall back
+  /// to 64.0 instead of [kToolbarHeight].
+  ///
+  /// When `toolbarHeight` is not passed to the constructor, this property holds
+  /// the constructor's default. The [AppBarThemeData.toolbarHeight] fallback is
+  /// resolved when the app bar is built and is not reflected here.
   ///
   /// This property is used to configure an [AppBar].
-  final double? toolbarHeight;
+  final double toolbarHeight;
 
   /// {@macro material_ui.appbar.leadingWidth}
   ///
@@ -2044,6 +2054,11 @@ class SliverAppBar extends StatefulWidget {
   final EdgeInsetsGeometry? actionsPadding;
 
   final _SliverAppVariant _variant;
+
+  // Whether `toolbarHeight` was passed to the constructor rather than being the
+  // constructor's default. Only an explicit value takes priority over
+  // [AppBarThemeData.toolbarHeight].
+  final bool _hasExplicitToolbarHeight;
 
   @override
   State<SliverAppBar> createState() => _SliverAppBarState();
@@ -2105,8 +2120,11 @@ class _SliverAppBarState extends State<SliverAppBar> with TickerProviderStateMix
     assert(!widget.primary || debugCheckHasMediaQuery(context));
     final double bottomHeight = widget.bottom?.preferredSize.height ?? 0.0;
     final double topPadding = widget.primary ? MediaQuery.paddingOf(context).top : 0.0;
-    final double toolbarHeight =
-        widget.toolbarHeight ?? AppBarTheme.of(context).toolbarHeight ?? kToolbarHeight;
+    // An explicit toolbarHeight wins over the theme, which in turn wins over
+    // the constructor's default held by widget.toolbarHeight.
+    final double toolbarHeight = widget._hasExplicitToolbarHeight
+        ? widget.toolbarHeight
+        : AppBarTheme.of(context).toolbarHeight ?? widget.toolbarHeight;
     assert(
       widget.collapsedHeight == null || widget.collapsedHeight! >= toolbarHeight,
       'The "collapsedHeight" argument (${widget.collapsedHeight}) has to be larger than or '
@@ -2127,8 +2145,7 @@ class _SliverAppBarState extends State<SliverAppBar> with TickerProviderStateMix
         effectiveExpandedHeight =
             widget.expandedHeight ?? _MediumScrollUnderFlexibleConfig.expandedHeight + bottomHeight;
         effectiveCollapsedHeight =
-            widget.collapsedHeight ??
-            topPadding + _MediumScrollUnderFlexibleConfig.collapsedHeight + bottomHeight;
+            widget.collapsedHeight ?? topPadding + toolbarHeight + bottomHeight;
         effectiveFlexibleSpace =
             widget.flexibleSpace ??
             _ScrollUnderFlexibleSpace(
@@ -2142,8 +2159,7 @@ class _SliverAppBarState extends State<SliverAppBar> with TickerProviderStateMix
         effectiveExpandedHeight =
             widget.expandedHeight ?? _LargeScrollUnderFlexibleConfig.expandedHeight + bottomHeight;
         effectiveCollapsedHeight =
-            widget.collapsedHeight ??
-            topPadding + _LargeScrollUnderFlexibleConfig.collapsedHeight + bottomHeight;
+            widget.collapsedHeight ?? topPadding + toolbarHeight + bottomHeight;
         effectiveFlexibleSpace =
             widget.flexibleSpace ??
             _ScrollUnderFlexibleSpace(
