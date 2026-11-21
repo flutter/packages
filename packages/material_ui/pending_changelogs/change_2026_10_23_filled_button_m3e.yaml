@@ -1,0 +1,4 @@
+changelog: |
+  - Adds Material 3 Expressive support and selectable states for FilledButton and FilledButton.tonal.
+  - Adds `FilledButtonTheme.variantOf`, which returns the closest non-null `FilledButtonThemeData.variant`, or `StyleVariant.material3` if none is set.
+version: minor
