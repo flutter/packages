@@ -7,9 +7,18 @@ import 'dart:async';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 
 export 'package:file_selector_platform_interface/file_selector_platform_interface.dart'
-    show FileSaveLocation, XFile, XTypeGroup;
+    show
+        FileSaveLocation,
+        FileSystemXDirectory,
+        FileSystemXFile,
+        ScopedStorageXDirectory,
+        ScopedStorageXFile,
+        XDirectory,
+        XEntity,
+        XFile,
+        XTypeGroup;
 
-/// Opens a file selection dialog and returns the path chosen by the user.
+/// Opens a file selection dialog and returns the file chosen by the user.
 ///
 /// [acceptedTypeGroups] is a list of file type groups that can be selected in
 /// the dialog. How this is displayed depends on the platform, for example:
@@ -22,11 +31,10 @@ export 'package:file_selector_platform_interface/file_selector_platform_interfac
 ///
 /// [initialDirectory] is the full path to the directory that will be displayed
 /// when the dialog is opened. When not provided, the platform will pick an
-/// initial location. This is ignored on the Web platform.
+/// initial location.
 ///
 /// [confirmButtonText] is the text in the confirmation button of the dialog.
 /// When not provided, the default OS label is used (for example, "Open").
-/// This is ignored on the Web platform.
 ///
 /// Returns `null` if the user cancels the operation.
 Future<XFile?> openFile({
@@ -34,14 +42,16 @@ Future<XFile?> openFile({
   String? initialDirectory,
   String? confirmButtonText,
 }) {
-  return FileSelectorPlatform.instance.openFile(
-    acceptedTypeGroups: acceptedTypeGroups,
-    initialDirectory: initialDirectory,
-    confirmButtonText: confirmButtonText,
+  return _assertInstanceIsNotNull().openFile(
+    options: OpenFileDialogOptions(
+      acceptedTypeGroups: acceptedTypeGroups,
+      initialDirectory: initialDirectory,
+      confirmButtonText: confirmButtonText,
+    ),
   );
 }
 
-/// Opens a file selection dialog and returns the list of paths chosen by the
+/// Opens a file selection dialog and returns the list of files chosen by the
 /// user.
 ///
 /// [acceptedTypeGroups] is a list of file type groups that can be selected in
@@ -66,14 +76,16 @@ Future<List<XFile>> openFiles({
   String? initialDirectory,
   String? confirmButtonText,
 }) {
-  return FileSelectorPlatform.instance.openFiles(
-    acceptedTypeGroups: acceptedTypeGroups,
-    initialDirectory: initialDirectory,
-    confirmButtonText: confirmButtonText,
+  return _assertInstanceIsNotNull().openFiles(
+    options: OpenFilesDialogOptions(
+      acceptedTypeGroups: acceptedTypeGroups,
+      initialDirectory: initialDirectory,
+      confirmButtonText: confirmButtonText,
+    ),
   );
 }
 
-/// Opens a save dialog and returns the target path chosen by the user.
+/// Opens a save dialog and returns the target location chosen by the user.
 ///
 /// [acceptedTypeGroups] is a list of file type groups that can be selected in
 /// the dialog. How this is displayed depends on the platform, for example:
@@ -105,9 +117,9 @@ Future<FileSaveLocation?> getSaveLocation({
   String? confirmButtonText,
   bool? canCreateDirectories,
 }) async {
-  return FileSelectorPlatform.instance.getSaveLocation(
-    acceptedTypeGroups: acceptedTypeGroups,
-    options: SaveDialogOptions(
+  return _assertInstanceIsNotNull().getSaveLocation(
+    options: SaveLocationOptions(
+      acceptedTypeGroups: acceptedTypeGroups,
       initialDirectory: initialDirectory,
       suggestedName: suggestedName,
       confirmButtonText: confirmButtonText,
@@ -116,9 +128,8 @@ Future<FileSaveLocation?> getSaveLocation({
   );
 }
 
-/// Opens a directory selection dialog and returns the path chosen by the user.
-///
-/// This always returns `null` on the web.
+/// Opens a directory selection dialog and returns the directory chosen by the
+/// user.
 ///
 /// [initialDirectory] is the full path to the directory that will be displayed
 /// when the dialog is opened. When not provided, the platform will pick an
@@ -132,13 +143,13 @@ Future<FileSaveLocation?> getSaveLocation({
 /// May not be supported on all platforms.
 ///
 /// Returns `null` if the user cancels the operation.
-Future<String?> getDirectoryPath({
+Future<XDirectory?> getDirectory({
   String? initialDirectory,
   String? confirmButtonText,
   bool? canCreateDirectories,
 }) async {
-  return FileSelectorPlatform.instance.getDirectoryPathWithOptions(
-    FileDialogOptions(
+  return _assertInstanceIsNotNull().getDirectory(
+    options: GetDirectoryDialogOptions(
       initialDirectory: initialDirectory,
       confirmButtonText: confirmButtonText,
       canCreateDirectories: canCreateDirectories,
@@ -146,10 +157,8 @@ Future<String?> getDirectoryPath({
   );
 }
 
-/// Opens a directory selection dialog and returns a list of the paths chosen
-/// by the user.
-///
-/// This always returns an empty array on the web.
+/// Opens a directory selection dialog and returns a list of the directories
+/// chosen by the user.
 ///
 /// [initialDirectory] is the full path to the directory that will be displayed
 /// when the dialog is opened. When not provided, the platform will pick an
@@ -163,16 +172,27 @@ Future<String?> getDirectoryPath({
 /// May not be supported on all platforms.
 ///
 /// Returns an empty array if the user cancels the operation.
-Future<List<String?>> getDirectoryPaths({
+Future<List<XDirectory>> getDirectories({
   String? initialDirectory,
   String? confirmButtonText,
   bool? canCreateDirectories,
 }) async {
-  return FileSelectorPlatform.instance.getDirectoryPathsWithOptions(
-    FileDialogOptions(
+  return _assertInstanceIsNotNull().getDirectories(
+    options: GetDirectoriesDialogOptions(
       initialDirectory: initialDirectory,
       confirmButtonText: confirmButtonText,
       canCreateDirectories: canCreateDirectories,
     ),
   );
+}
+
+FileSelectorPlatform _assertInstanceIsNotNull() {
+  assert(
+    FileSelectorPlatform.instance != null,
+    'A platform implementation for `file_selector` has not been set. Please '
+    'ensure that an implementation of `FileSelectorPlatform` has been set to '
+    '`FileSelectorPlatform.instance` before use. For unit testing, '
+    '`FileSelectorPlatform.instance` can be set with your own test implementation.',
+  );
+  return FileSelectorPlatform.instance!;
 }

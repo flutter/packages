@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:cross_file_web/cross_file_web_safe.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -37,10 +38,18 @@ class SaveTextPage extends StatelessWidget {
 
     final String text = _contentController.text;
     final fileData = Uint8List.fromList(text.codeUnits);
-    const fileMimeType = 'text/plain';
-    final textFile = XFile.fromData(fileData, mimeType: fileMimeType, name: fileName);
-
-    await textFile.saveTo(result.path);
+    if (kIsWeb) {
+      final file = ScopedStorageXFile.fromCreationParams(
+        WebScopedStorageXFileCreationParams.fromBytes(fileData),
+      );
+      await file.getExtension<WebScopedStorageXFileExtension>()!.download(fileName);
+    } else if (result.file case final FileSystemXFile file) {
+      await file.writeAsBytes(fileData);
+    } else {
+      // TODO(bparrishMines): Use cross platform XFile write methods once
+      // https://github.com/flutter/packages/pull/13133 lands.
+      throw UnsupportedError('Unable to write to file.');
+    }
   }
 
   @override

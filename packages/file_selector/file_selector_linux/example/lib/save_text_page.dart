@@ -6,7 +6,7 @@ import 'dart:typed_data';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/material.dart';
 
-/// Screen that allows the user to select a save location using `getSavePath`,
+/// Screen that allows the user to select a save location using `getSaveLocation`,
 /// then writes text to a file at that location.
 class SaveTextPage extends StatelessWidget {
   /// Default Constructor
@@ -17,8 +17,8 @@ class SaveTextPage extends StatelessWidget {
 
   Future<void> _saveFile() async {
     final String fileName = _nameController.text;
-    final FileSaveLocation? result = await FileSelectorPlatform.instance.getSaveLocation(
-      options: SaveDialogOptions(suggestedName: fileName),
+    final FileSaveLocation? result = await FileSelectorPlatform.instance!.getSaveLocation(
+      options: SaveLocationOptions(suggestedName: fileName),
     );
     // Operation was canceled by the user.
     if (result == null) {
@@ -26,9 +26,7 @@ class SaveTextPage extends StatelessWidget {
     }
     final String text = _contentController.text;
     final fileData = Uint8List.fromList(text.codeUnits);
-    const fileMimeType = 'text/plain';
-    final textFile = XFile.fromData(fileData, mimeType: fileMimeType, name: fileName);
-    await textFile.saveTo(result.path);
+    await (result.file as FileSystemXFile).writeAsBytes(fileData);
   }
 
   @override

@@ -5,11 +5,16 @@
 // This file exists solely to host compiled excerpts for README.md, and is not
 // intended for use as an actual example application.
 
-// ignore_for_file: public_member_api_docs
+// ignore_for_file: unreachable_from_main, public_member_api_docs
 
 import 'dart:typed_data';
 
+// #docregion Save
+// Cross platform safe import that can be compiled with non-web platforms.
+import 'package:cross_file_web/cross_file_web_safe.dart';
 import 'package:file_selector/file_selector.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+// #enddocregion Save
 import 'package:flutter/material.dart';
 
 void main() {
@@ -34,29 +39,76 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
+  // TODO(bparrishMines): Change to use the cross platform safe methods to
+  // write to a file once https://github.com/flutter/packages/pull/13133
+  // lands.
+  // #docregion Save
   Future<void> saveFile() async {
-    // #docregion Save
+    final fileData = Uint8List.fromList('Hello World!'.codeUnits);
     const fileName = 'suggested_name.txt';
+
+    // A save location can't be retrieved on web because the platform doesn't
+    // provide access to the filesystem. This instead downloads the file using
+    // the web specific `download` method.
+    if (kIsWeb) {
+      final file = ScopedStorageXFile.fromCreationParams(
+        WebScopedStorageXFileCreationParams.fromBytes(fileData),
+      );
+      await file.getExtension<WebScopedStorageXFileExtension>()!.download(fileName);
+    }
+
     final FileSaveLocation? result = await getSaveLocation(suggestedName: fileName);
     if (result == null) {
       // Operation was canceled by the user.
       return;
     }
 
-    final fileData = Uint8List.fromList('Hello World!'.codeUnits);
-    const mimeType = 'text/plain';
-    final textFile = XFile.fromData(fileData, mimeType: mimeType, name: fileName);
-    await textFile.saveTo(result.path);
-    // #enddocregion Save
+    if (result.file case final FileSystemXFile file) {
+      final fileData = Uint8List.fromList('Hello World!'.codeUnits);
+      await file.writeAsBytes(fileData);
+    }
   }
+  // #enddocregion Save
 
-  Future<void> directoryPath() async {
+  Future<void> directory() async {
     // #docregion GetDirectory
-    final String? directoryPath = await getDirectoryPath();
-    if (directoryPath == null) {
+    final XDirectory? directory = await getDirectory();
+    if (directory == null) {
       // Operation was canceled by the user.
       return;
     }
     // #enddocregion GetDirectory
   }
 }
+
+/// Example of an API wrapper that is mockable for tests.
+// #docregion TestWrapper
+class FileSelectorWrapper {
+  const FileSelectorWrapper();
+
+  Future<XFile?> callOpenFile({
+    List<XTypeGroup> acceptedTypeGroups = const <XTypeGroup>[],
+    String? initialDirectory,
+    String? confirmButtonText,
+  }) {
+    // From `file_selector`:
+    return openFile(
+      acceptedTypeGroups: acceptedTypeGroups,
+      initialDirectory: initialDirectory,
+      confirmButtonText: confirmButtonText,
+    );
+  }
+}
+
+// Example of injecting the wrapper in an app.
+class MyWidget extends StatelessWidget {
+  const MyWidget({super.key, this.fileSelector = const FileSelectorWrapper()});
+
+  final FileSelectorWrapper fileSelector;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container();
+  }
+}
+// #enddocregion TestWrapper
