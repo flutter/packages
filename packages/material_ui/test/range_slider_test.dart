@@ -2274,6 +2274,90 @@ void main() {
     ]);
   });
 
+  testWidgets(
+    'RangeSlider thumbs support showOnScreen and report isHidden when clipped in viewport',
+    (WidgetTester tester) async {
+      final scrollController = ScrollController();
+      addTearDown(scrollController.dispose);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SizedBox(
+              height: 200,
+              child: SingleChildScrollView(
+                controller: scrollController,
+                child: Column(
+                  children: <Widget>[
+                    const SizedBox(height: 300),
+                    RangeSlider(
+                      values: const RangeValues(0.2, 0.8),
+                      divisions: 10,
+                      onChanged: (RangeValues values) {},
+                    ),
+                    const SizedBox(height: 300),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      final SemanticsNode root = tester.binding.pipelineOwner.semanticsOwner!.rootSemanticsNode!;
+      SemanticsNode? startThumb;
+      SemanticsNode? endThumb;
+      void findThumbs(SemanticsNode node) {
+        if (node.value == '20%') {
+          startThumb = node;
+        } else if (node.value == '80%') {
+          endThumb = node;
+        }
+        node.visitChildren((SemanticsNode child) {
+          findThumbs(child);
+          return true;
+        });
+      }
+
+      findThumbs(root);
+
+      expect(startThumb, isNotNull);
+      expect(endThumb, isNotNull);
+
+      // Both thumbs are clipped outside the viewport, so they should be hidden.
+      expect(startThumb!.hasFlag(SemanticsFlag.isHidden), isTrue);
+      expect(endThumb!.hasFlag(SemanticsFlag.isHidden), isTrue);
+
+      // Initial scroll offset is 0.
+      expect(scrollController.offset, 0.0);
+
+      // Performing showOnScreen on the start thumb should scroll it into view.
+      tester.binding.pipelineOwner.semanticsOwner!.performAction(
+        startThumb!.id,
+        SemanticsAction.showOnScreen,
+      );
+      await tester.pumpAndSettle();
+
+      expect(scrollController.offset, greaterThan(0.0));
+
+      // Reset scroll offset.
+      scrollController.jumpTo(0.0);
+      await tester.pumpAndSettle();
+      expect(scrollController.offset, 0.0);
+
+      // Performing showOnScreen on the end thumb should also scroll it into view.
+      tester.binding.pipelineOwner.semanticsOwner!.performAction(
+        endThumb!.id,
+        SemanticsAction.showOnScreen,
+      );
+      await tester.pumpAndSettle();
+
+      expect(scrollController.offset, greaterThan(0.0));
+    },
+  );
+
   testWidgets('Range Slider implements debugFillProperties', (WidgetTester tester) async {
     final builder = DiagnosticPropertiesBuilder();
 
