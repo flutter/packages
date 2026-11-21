@@ -2644,6 +2644,42 @@ ${[for (var i = 2; i <= 30; i++) '    <pattern id="lvl$i" width="10" height="10"
     ]);
   });
 
+  test('Pattern without width, height, or viewBox is not painted', () {
+    final VectorInstructions instructions = parseWithoutOptimizers('''
+<svg viewBox="0 0 100 100">
+  <defs>
+    <pattern id="pattern1">
+      <rect width="5" height="5" fill="#ff0000" />
+    </pattern>
+  </defs>
+  <rect width="100" height="100" fill="url(#pattern1)" />
+  <rect width="20" height="20" fill="#0000ff" />
+</svg>''');
+
+    expect(instructions.commands, const <DrawCommand>[
+      DrawCommand(DrawCommandType.path, objectId: 0, paintId: 0),
+    ]);
+    expect(instructions.paints.single.fill, const Fill(color: Color(0xFF0000FF)));
+  });
+
+  test('Pattern with only a width and no viewBox is not painted', () {
+    final VectorInstructions instructions = parseWithoutOptimizers('''
+<svg viewBox="0 0 100 100">
+  <defs>
+    <pattern id="pattern1" width="10">
+      <rect width="5" height="5" fill="#ff0000" />
+    </pattern>
+  </defs>
+  <rect width="100" height="100" fill="url(#pattern1)" />
+  <rect width="20" height="20" fill="#0000ff" />
+</svg>''');
+
+    expect(instructions.commands, const <DrawCommand>[
+      DrawCommand(DrawCommandType.path, objectId: 0, paintId: 0),
+    ]);
+    expect(instructions.paints.single.fill, const Fill(color: Color(0xFF0000FF)));
+  });
+
   test('Defaults image height/width when not specified', () {
     // 1x1 PNG image from png-pixel.com.
     const svgStr = '''
