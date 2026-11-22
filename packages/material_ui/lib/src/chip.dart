@@ -1985,20 +1985,29 @@ class _RenderChip extends RenderBox with SlottedContainerRenderObjectMixin<_Chip
     final BoxConstraints contentConstraints = constraints.loosen();
     // Find out the height of the label within the constraints.
     final Size rawLabelSize = label.getDryLayout(contentConstraints);
-    final double contentSize = math.max(
+    final double initialContentSize = math.max(
       _kChipHeight - theme.padding.vertical + theme.labelPadding.vertical,
       rawLabelSize.height + theme.labelPadding.vertical,
     );
-    assert(contentSize >= rawLabelSize.height);
-    final Size avatarSize = _layoutAvatar(contentSize, layoutChild);
-    final Size deleteIconSize = _layoutDeleteIcon(contentSize, layoutChild);
+    final Size avatarSize = _layoutAvatar(initialContentSize, layoutChild);
+    final Size deleteIconSize = _layoutDeleteIcon(initialContentSize, layoutChild);
 
-    final BoxConstraints labelConstraints = _labelConstraintsFrom(
+    BoxConstraints labelConstraints = _labelConstraintsFrom(
       contentConstraints,
       avatarSize.width + deleteIconSize.width,
-      contentSize,
+      initialContentSize,
       rawLabelSize,
     );
+    var contentSize = initialContentSize;
+    // The final width can wrap the label without changing the icon dimensions.
+    if (contentConstraints.hasBoundedWidth &&
+        labelConstraints.maxWidth < contentConstraints.maxWidth) {
+      final double wrappedHeight = label
+          .getDryLayout(labelConstraints.copyWith(maxHeight: contentConstraints.maxHeight))
+          .height;
+      contentSize = math.max(initialContentSize, wrappedHeight + theme.labelPadding.vertical);
+      labelConstraints = labelConstraints.copyWith(maxHeight: contentSize);
+    }
 
     final Size labelSize = theme.labelPadding.inflateSize(layoutChild(label, labelConstraints));
     final densityAdjustment = Offset(0.0, theme.visualDensity.baseSizeAdjustment.dy / 2.0);
