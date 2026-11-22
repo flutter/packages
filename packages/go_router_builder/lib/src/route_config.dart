@@ -193,9 +193,9 @@ mixin _GoRouteMixin on RouteBaseConfig {
       name,
       routeDataClass.library,
     );
+    // Defaults live in go_router's route_data.dart; any other library is a user override.
     return method != null &&
-        !(method.enclosingElement?.name == '_GoRouteDataBase' &&
-            method.library.uri.toString() == 'package:go_router/src/route_data.dart');
+        method.library.uri.toString() != 'package:go_router/src/route_data.dart';
   }
 
   bool get _redirectOnly {
