@@ -26,7 +26,6 @@ dev_dependencies:
   integration_test:
     sdk: flutter
   jnigen: 1.0.1
-  logging: ^1.3.0
   pigeon:
     path: ../../
   pub_semver: ^2.1.4

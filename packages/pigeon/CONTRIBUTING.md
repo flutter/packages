@@ -20,8 +20,8 @@ people who would like to contribute to the project.
 * [generator_tools.dart](./lib/src/generator_tools.dart) - Shared code between generators.
 * [pigeon_cl.dart](./lib/src/pigeon_cl.dart) - The top-level function executed by
   the command line tool in [bin/][./bin].
-* [pigeon_lib.dart](./lib/src/pigeon_lib.dart) - The top-level function for the
-  PigeonIsolate and the AST generation code.
+* [pigeon_lib.dart](./lib/src/pigeon_lib.dart) - The top-level entrypoints and
+  the AST generation code.
 * [pigeon.dart](./lib/pigeon.dart) - A file of exported modules, the intended
   import for users of Pigeon.
 
@@ -46,20 +46,3 @@ For local testing, always use `test.dart` rather than `run_tests.dart`, as
 `run_tests.dart` is specifically a CI entrypoint. When iterating on a specific
 generator, you will likely want to use the `-t` flag to specific only the
 relevant tests. Pass `-l` to get a list of available tests for the `-t` flag.
-
-## Generated Source Code Example
-
-This is what the temporary generated code that the _PigeonIsolate_ executes
-looks like (see [State Diagram](#state-diagram)):
-
-```dart
-import 'path/to/supplied/pigeon/file.dart';
-import 'dart:io';
-import 'dart:isolate';
-import 'package:pigeon/pigeon_lib.dart';
-void main(List<String> args, SendPort sendPort) async {
-  sendPort.send(await Pigeon.run(args));
-}
-```
-
-This is how `dart:mirrors` gets access to the supplied Pigeon file.
