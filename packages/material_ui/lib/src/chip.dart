@@ -2000,8 +2000,10 @@ class _RenderChip extends RenderBox with SlottedContainerRenderObjectMixin<_Chip
     );
     var contentSize = initialContentSize;
     // The final width can wrap the label without changing the icon dimensions.
-    if (contentConstraints.hasBoundedWidth &&
-        labelConstraints.maxWidth < contentConstraints.maxWidth) {
+    // Only re-measure when the label is actually too wide for the space that
+    // is left for it: otherwise the second layout returns `rawLabelSize.height`
+    // and `contentSize` is unchanged.
+    if (contentConstraints.hasBoundedWidth && rawLabelSize.width > labelConstraints.maxWidth) {
       final double wrappedHeight = label
           .getDryLayout(labelConstraints.copyWith(maxHeight: contentConstraints.maxHeight))
           .height;
