@@ -18,7 +18,18 @@ Future<R> _testCompute<Q, R>(
   return foundation.SynchronousFuture<R>(result);
 }
 
-/// A compute implementation that does not spawn isolates in tests.
-const foundation.ComputeImpl compute = (foundation.kDebugMode || foundation.kIsWeb)
-    ? _testCompute
-    : foundation.compute;
+/// Whether [compute] runs the callback inline in debug builds.
+///
+/// Tests may set this to false to run the callback in an isolate, to match
+/// non-web profile and release builds. Has no effect outside debug builds.
+/// Has no effect in web builds, where the callback always runs inline.
+@foundation.visibleForTesting
+bool debugRunComputeInline = true;
+
+/// A compute implementation that does not spawn isolates in web builds or in
+/// debug builds (including tests) unless [debugRunComputeInline] is set to false.
+foundation.ComputeImpl get compute {
+  return ((foundation.kDebugMode && debugRunComputeInline) || foundation.kIsWeb)
+      ? _testCompute
+      : foundation.compute;
+}

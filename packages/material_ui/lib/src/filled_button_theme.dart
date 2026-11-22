@@ -27,7 +27,7 @@ import 'theme.dart';
 ///
 ///  * [FilledButtonTheme], the theme which is configured with this class.
 ///  * [FilledButton.defaultStyleOf], which returns the default [ButtonStyle]
-///    for text buttons.
+///    for filled buttons.
 ///  * [FilledButton.styleFrom], which converts simple values into a
 ///    [ButtonStyle] that's consistent with [FilledButton]'s defaults.
 ///  * [WidgetStateProperty.resolve], "resolve" a material state property
@@ -36,7 +36,7 @@ import 'theme.dart';
 ///    [ButtonStyle] for [FilledButton]s below the overall [Theme].
 @immutable
 class FilledButtonThemeData with Diagnosticable {
-  /// Creates an [FilledButtonThemeData].
+  /// Creates a [FilledButtonThemeData].
   ///
   /// The [style] may be null.
   const FilledButtonThemeData({this.style});
