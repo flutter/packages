@@ -52,6 +52,7 @@ When authoring examples, first place a block in the Dartdoc documentation for
 the symbol you would like to attach it to. Here's what it might look like if you
 wanted to add a new example to the `AboutListTile` class:
 
+<?code-excerpt "lib/readme_excerpts.dart (DartdocComment)"?>
 ```dart
 /// {@example /example/lib/about/about_list_tile.0.dart}
 /// Write a description of the example here. This description will appear in the
