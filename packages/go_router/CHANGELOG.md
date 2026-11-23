@@ -1,3 +1,7 @@
+## 18.1.5
+
+- Documents when `GoRouterState.name` and `GoRouterState.path` are null.
+
 ## 18.1.4
 
 - Fixes the system back button being ignored after switching away from a `StatefulShellRoute` branch that still has an active sub-route.

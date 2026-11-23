@@ -1,3 +1,0 @@
-changelog: |
-  - Documents when `GoRouterState.name` and `GoRouterState.path` are null.
-version: patch
