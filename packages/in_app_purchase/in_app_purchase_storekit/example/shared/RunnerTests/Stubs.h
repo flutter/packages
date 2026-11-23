@@ -17,6 +17,10 @@
 @import in_app_purchase_storekit_objc;
 #endif
 
+// These stubs subclass StoreKit 1 types that are deprecated but still wrapped by the plugin.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+
 NS_ASSUME_NONNULL_BEGIN
 @interface SKProductSubscriptionPeriodStub : SKProductSubscriptionPeriod
 - (instancetype)initWithMap:(NSDictionary *)map;
@@ -189,3 +193,5 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 NS_ASSUME_NONNULL_END
+
+#pragma clang diagnostic pop
