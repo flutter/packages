@@ -1001,12 +1001,12 @@ void main() {
     expect(find.byKey(labelKey), findsNothing);
   });
 
-  testWidgets('FloatingActionButton.small configures correct size', (WidgetTester tester) async {
+  testWidgets('FloatingActionButton.mini configures correct size', (WidgetTester tester) async {
     final Key key = UniqueKey();
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
-          floatingActionButton: FloatingActionButton.small(
+          floatingActionButton: FloatingActionButton.mini(
             key: key,
             materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
             onPressed: null,
@@ -1016,6 +1016,88 @@ void main() {
     );
 
     expect(tester.getSize(find.byKey(key)), const Size(40.0, 40.0));
+  });
+
+  testWidgets('Material2 - FloatingActionButton.mini configures correct size', (
+    WidgetTester tester,
+  ) async {
+    final Key key = UniqueKey();
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: material2Theme,
+        home: Scaffold(
+          floatingActionButton: FloatingActionButton.mini(
+            key: key,
+            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            onPressed: null,
+          ),
+        ),
+      ),
+    );
+
+    expect(tester.getSize(find.byKey(key)), const Size(40.0, 40.0));
+    expect(
+      tester.widget<RawMaterialButton>(find.byType(RawMaterialButton)).shape,
+      const CircleBorder(),
+    );
+  });
+
+  testWidgets('FloatingActionButton.mini matches FloatingActionButton with mini set to true', (
+    WidgetTester tester,
+  ) async {
+    Future<RawMaterialButton> pumpAndGetButton(Widget fab) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: material3Theme,
+          home: Scaffold(floatingActionButton: fab),
+        ),
+      );
+      return tester.widget<RawMaterialButton>(find.byType(RawMaterialButton));
+    }
+
+    final RawMaterialButton miniConstructorButton = await pumpAndGetButton(
+      FloatingActionButton.mini(onPressed: () {}, child: const Icon(Icons.add)),
+    );
+    final RawMaterialButton miniPropertyButton = await pumpAndGetButton(
+      FloatingActionButton(mini: true, onPressed: () {}, child: const Icon(Icons.add)),
+    );
+
+    const constraints = BoxConstraints.tightFor(width: 40.0, height: 40.0);
+    final shape = RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0));
+    expect(miniConstructorButton.constraints, constraints);
+    expect(miniConstructorButton.shape, shape);
+    expect(miniPropertyButton.constraints, constraints);
+    expect(miniPropertyButton.shape, shape);
+    expect(tester.getSize(find.byIcon(Icons.add)), const Size(24.0, 24.0));
+  });
+
+  testWidgets('Deprecated FloatingActionButton.small matches FloatingActionButton.mini', (
+    WidgetTester tester,
+  ) async {
+    final Key key = UniqueKey();
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: material3Theme,
+        home: Scaffold(
+          // ignore: deprecated_member_use_from_same_package
+          floatingActionButton: FloatingActionButton.small(
+            key: key,
+            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            onPressed: () {},
+            child: const Icon(Icons.add),
+          ),
+        ),
+      ),
+    );
+
+    final FloatingActionButton fab = tester.widget<FloatingActionButton>(find.byKey(key));
+    expect(fab.mini, isTrue);
+    expect(tester.getSize(find.byKey(key)), const Size(40.0, 40.0));
+    expect(
+      tester.widget<RawMaterialButton>(find.byType(RawMaterialButton)).shape,
+      RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
+    );
+    expect(tester.getSize(find.byIcon(Icons.add)), const Size(24.0, 24.0));
   });
 
   testWidgets('FloatingActionButton.large configures correct size', (WidgetTester tester) async {

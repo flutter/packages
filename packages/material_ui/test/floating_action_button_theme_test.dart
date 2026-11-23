@@ -300,7 +300,7 @@ void main() {
     expect(_getRawMaterialButton(tester).shape, customShape);
   });
 
-  testWidgets('FloatingActionButton.small uses custom constraints when specified in the theme', (
+  testWidgets('FloatingActionButton.mini uses custom constraints when specified in the theme', (
     WidgetTester tester,
   ) async {
     const constraints = BoxConstraints.tightFor(width: 100.0, height: 100.0);
@@ -314,7 +314,7 @@ void main() {
           ),
         ),
         home: Scaffold(
-          floatingActionButton: FloatingActionButton.small(
+          floatingActionButton: FloatingActionButton.mini(
             onPressed: () {},
             child: const Icon(Icons.add),
           ),

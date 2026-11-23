@@ -66,16 +66,16 @@ class $className extends FloatingActionButtonThemeData {
 
   @override
   ShapeBorder? get shape => switch (type) {
-    _FloatingActionButtonType.regular  => ${shape(TokenFab.containerShape)},
-    _FloatingActionButtonType.small    => ${shape(TokenFabSmall.containerShape)},
+    _FloatingActionButtonType.mini     => ${shape(TokenFabSmall.containerShape)},
+    _FloatingActionButtonType.small    => ${shape(TokenFab.containerShape)},
     _FloatingActionButtonType.large    => ${shape(TokenFabLarge.containerShape)},
     _FloatingActionButtonType.extended => ${shape(TokenExtendedFab.containerShape)},
   };
 
   @override
   double? get iconSize => switch (type) {
-    _FloatingActionButtonType.regular  => ${number(TokenFab.iconSize)},
-    _FloatingActionButtonType.small    => ${number(TokenFabSmall.iconSize)},
+    _FloatingActionButtonType.mini     => ${number(TokenFabSmall.iconSize)},
+    _FloatingActionButtonType.small    => ${number(TokenFab.iconSize)},
     _FloatingActionButtonType.large    => ${number(TokenFabLarge.iconSize)},
     _FloatingActionButtonType.extended => ${number(TokenExtendedFab.iconSize)},
   };

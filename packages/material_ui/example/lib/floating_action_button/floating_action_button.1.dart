@@ -32,13 +32,13 @@ class FloatingActionButtonExample extends StatelessWidget {
             Row(
               mainAxisAlignment: .center,
               children: <Widget>[
-                const Text('Small'),
+                const Text('Mini'),
                 const SizedBox(width: 16),
-                // An example of the small floating action button.
+                // An example of the mini floating action button.
                 //
                 // https://m3.material.io/components/floating-action-button/specs#669a1be8-7271-48cb-a74d-dd502d73bda4
-                FloatingActionButton.small(
-                  heroTag: 'small',
+                FloatingActionButton.mini(
+                  heroTag: 'mini',
                   onPressed: () {
                     // Add your onPressed code here!
                   },

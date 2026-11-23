@@ -20,17 +20,17 @@ void main() {
     expect(find.byType(FloatingActionButton), findsNWidgets(4));
     expect(find.byIcon(Icons.add), findsNWidgets(4));
 
-    final Finder smallFabMaterialButton = find.byType(RawMaterialButton).at(0);
-    final RenderBox smallFabRenderBox = tester.renderObject(
-      smallFabMaterialButton,
+    final Finder miniFabMaterialButton = find.byType(RawMaterialButton).at(0);
+    final RenderBox miniFabRenderBox = tester.renderObject(
+      miniFabMaterialButton,
     );
-    expect(smallFabRenderBox.size, const Size(48.0, 48.0));
+    expect(miniFabRenderBox.size, const Size(48.0, 48.0));
     expect(
-      getRawMaterialButtonWidget(smallFabMaterialButton).fillColor,
+      getRawMaterialButtonWidget(miniFabMaterialButton).fillColor,
       theme.colorScheme.primaryContainer,
     );
     expect(
-      getRawMaterialButtonWidget(smallFabMaterialButton).shape,
+      getRawMaterialButtonWidget(miniFabMaterialButton).shape,
       RoundedRectangleBorder(borderRadius: .circular(12.0)),
     );
 

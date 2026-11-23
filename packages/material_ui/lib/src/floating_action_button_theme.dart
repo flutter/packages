@@ -123,7 +123,8 @@ class FloatingActionButtonThemeData with Diagnosticable {
   /// Overrides the default size constraints for the [FloatingActionButton].
   final BoxConstraints? sizeConstraints;
 
-  /// Overrides the default size constraints for [FloatingActionButton.small].
+  /// Overrides the default size constraints for [FloatingActionButton.mini],
+  /// and for a [FloatingActionButton] whose `mini` property is true.
   final BoxConstraints? smallSizeConstraints;
 
   /// Overrides the default size constraints for [FloatingActionButton.large].

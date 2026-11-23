@@ -1,0 +1,3 @@
+changelog: |
+  - `FloatingActionButton.small` is deprecated and replaced with `FloatingActionButton.mini`.
+version: minor
