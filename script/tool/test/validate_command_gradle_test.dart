@@ -150,7 +150,6 @@ dependencies {
     RepositoryPackage package, {
     required String pluginName,
     bool warningsConfigured = true,
-    bool includeArtifactHub = true,
   }) {
     final File buildGradle = package
         .platformDirectory(FlutterPlatform.android)
@@ -171,7 +170,6 @@ gradle.projectsEvaluated {
     buildGradle.writeAsStringSync('''
 allprojects {
     repositories {
-        ${includeArtifactHub ? GradleValidator.exampleRootGradleArtifactHubString : ''}
         google()
         mavenCentral()
     }
@@ -201,12 +199,7 @@ ${warningsConfigured ? warningConfig : ''}
 
   /// Writes a fake android/settings.gradle.kts file for an example [package]
   /// with the given options.
-  void writeFakeExampleSettingsGradle(
-    RepositoryPackage package, {
-    required String kotlinVersion,
-    bool includeArtifactHub = true,
-    bool includeArtifactDocumentation = true,
-  }) {
+  void writeFakeExampleSettingsGradle(RepositoryPackage package, {required String kotlinVersion}) {
     final File settingsGradle = package
         .platformDirectory(FlutterPlatform.android)
         .childFile('settings.gradle.kts');
@@ -232,12 +225,10 @@ pluginManagement {
     }
 }
 
-${includeArtifactDocumentation ? '// See ${GradleValidator.artifactHubDocumentationString} for more info.' : ''}
 plugins {
     id("dev.flutter.flutter-plugin-loader") version "1.0.0"
     id("com.android.application") version "8.11.1" apply false
     id("org.jetbrains.kotlin.android") version "$kotlinVersion" apply false
-    ${includeArtifactHub ? 'id("com.google.cloud.artifactregistry.gradle-plugin") version "2.2.1"' : ''}
 }
 
 include ":app"
@@ -326,9 +317,6 @@ flutter {
     bool includeNamespace = true,
     bool commentNamespace = false,
     bool warningsConfigured = true,
-    bool includeBuildArtifactHub = true,
-    bool includeSettingsArtifactHub = true,
-    bool includeSettingsDocumentationArtifactHub = true,
     bool includeKotlinCompilerOptions = true,
     bool commentKotlinCompilerOptions = false,
     bool useDeprecatedJvmTargetStyle = false,
@@ -343,7 +331,6 @@ flutter {
       package,
       pluginName: pluginName,
       warningsConfigured: warningsConfigured,
-      includeArtifactHub: includeBuildArtifactHub,
     );
     writeFakeExampleAppBuildGradle(
       package,
@@ -359,12 +346,7 @@ flutter {
       includeDeprecatedKotlinOptionsInsideAndroid: includeDeprecatedKotlinOptionsInsideAndroid,
       includeDeprecatedKotlinOptionsInsideKotlin: includeDeprecatedKotlinOptionsInsideKotlin,
     );
-    writeFakeExampleSettingsGradle(
-      package,
-      kotlinVersion: kotlinVersion ?? '2.2.20',
-      includeArtifactHub: includeSettingsArtifactHub,
-      includeArtifactDocumentation: includeSettingsDocumentationArtifactHub,
-    );
+    writeFakeExampleSettingsGradle(package, kotlinVersion: kotlinVersion ?? '2.2.20');
   }
 
   void writeFakeManifest(
@@ -839,156 +821,6 @@ flutter {
     expect(output, containsAllInOrder(<Matcher>[contains('Validating android/build.gradle.kts')]));
   });
 
-  group('Artifact Hub check', () {
-    test('passes build.gradle.kts artifact hub check when set', () async {
-      const packageName = 'a_package';
-      final RepositoryPackage package = createFakePackage('a_package', packagesDir);
-      final RepositoryPackage example = package.getExamples().first;
-      writeFakeExampleBuildGradles(
-        example,
-        pluginName: packageName,
-        // ignore: avoid_redundant_argument_values
-        includeBuildArtifactHub: true,
-        // ignore: avoid_redundant_argument_values
-        includeSettingsArtifactHub: true,
-        // ignore: avoid_redundant_argument_values
-        includeSettingsDocumentationArtifactHub: true,
-      );
-      writeFakeManifest(example, isApp: true);
-
-      final List<String> output = await runCapturingPrint(runner, <String>['validate']);
-
-      expect(
-        output,
-        containsAllInOrder(<Matcher>[
-          contains('Validating android/build.gradle.kts'),
-          contains('Validating android/settings.gradle.kts'),
-        ]),
-      );
-    });
-
-    test('fails artifact hub check when build and settings sections missing', () async {
-      const packageName = 'a_package';
-      final RepositoryPackage package = createFakePackage('a_package', packagesDir);
-      final RepositoryPackage example = package.getExamples().first;
-      writeFakeExampleBuildGradles(
-        example,
-        pluginName: packageName,
-        includeBuildArtifactHub: false,
-        includeSettingsArtifactHub: false,
-      );
-      writeFakeManifest(example, isApp: true);
-
-      Error? commandError;
-      final List<String> output = await runCapturingPrint(
-        runner,
-        <String>['validate'],
-        errorHandler: (Error e) {
-          commandError = e;
-        },
-      );
-
-      expect(commandError, isA<ToolExit>());
-      expect(
-        output,
-        containsAllInOrder(<Matcher>[
-          contains(GradleValidator.exampleRootGradleArtifactHubString),
-          contains(GradleValidator.exampleSettingsArtifactHubString),
-        ]),
-      );
-    });
-
-    test('fails build.gradle.kts artifact hub check when missing', () async {
-      const packageName = 'a_package';
-      final RepositoryPackage package = createFakePackage('a_package', packagesDir);
-      final RepositoryPackage example = package.getExamples().first;
-      writeFakeExampleBuildGradles(
-        example,
-        pluginName: packageName,
-        includeBuildArtifactHub: false,
-        // ignore: avoid_redundant_argument_values
-        includeSettingsArtifactHub: true,
-      );
-      writeFakeManifest(example, isApp: true);
-
-      Error? commandError;
-      final List<String> output = await runCapturingPrint(
-        runner,
-        <String>['validate'],
-        errorHandler: (Error e) {
-          commandError = e;
-        },
-      );
-
-      expect(commandError, isA<ToolExit>());
-      expect(
-        output,
-        containsAllInOrder(<Matcher>[contains(GradleValidator.exampleRootGradleArtifactHubString)]),
-      );
-    });
-
-    test('fails settings.gradle.kts artifact hub check when missing', () async {
-      const packageName = 'a_package';
-      final RepositoryPackage package = createFakePackage('a_package', packagesDir);
-      final RepositoryPackage example = package.getExamples().first;
-      writeFakeExampleBuildGradles(
-        example,
-        pluginName: packageName,
-        // ignore: avoid_redundant_argument_values
-        includeBuildArtifactHub: true,
-        includeSettingsArtifactHub: false,
-      );
-      writeFakeManifest(example, isApp: true);
-
-      Error? commandError;
-      final List<String> output = await runCapturingPrint(
-        runner,
-        <String>['validate'],
-        errorHandler: (Error e) {
-          commandError = e;
-        },
-      );
-
-      expect(commandError, isA<ToolExit>());
-      expect(
-        output,
-        containsAllInOrder(<Matcher>[contains(GradleValidator.exampleSettingsArtifactHubString)]),
-      );
-      expect(output, isNot(contains(GradleValidator.exampleRootGradleArtifactHubString)));
-    });
-
-    test('error message is printed when documentation link is missing', () async {
-      const packageName = 'a_package';
-      final RepositoryPackage package = createFakePackage('a_package', packagesDir);
-      final RepositoryPackage example = package.getExamples().first;
-      writeFakeExampleBuildGradles(
-        example,
-        pluginName: packageName,
-        // ignore: avoid_redundant_argument_values
-        includeBuildArtifactHub: true,
-        // ignore: avoid_redundant_argument_values
-        includeSettingsArtifactHub: true,
-        includeSettingsDocumentationArtifactHub: false,
-      );
-      writeFakeManifest(example, isApp: true);
-
-      Error? commandError;
-      final List<String> output = await runCapturingPrint(
-        runner,
-        <String>['validate'],
-        errorHandler: (Error e) {
-          commandError = e;
-        },
-      );
-
-      expect(commandError, isA<ToolExit>());
-      expect(
-        output,
-        containsAllInOrder(<Matcher>[contains(GradleValidator.artifactHubDocumentationString)]),
-      );
-    });
-  });
-
   group('Kotlin version check', () {
     test('passes if not set', () async {
       const packageName = 'a_package';
@@ -1001,7 +833,10 @@ flutter {
 
       expect(
         output,
-        containsAllInOrder(<Matcher>[contains('Validating android/build.gradle.kts')]),
+        containsAllInOrder(<Matcher>[
+          contains('Validating android/build.gradle.kts'),
+          contains('Validating android/settings.gradle.kts'),
+        ]),
       );
     });
 
@@ -1020,7 +855,10 @@ flutter {
 
       expect(
         output,
-        containsAllInOrder(<Matcher>[contains('Validating android/build.gradle.kts')]),
+        containsAllInOrder(<Matcher>[
+          contains('Validating android/build.gradle.kts'),
+          contains('Validating android/settings.gradle.kts'),
+        ]),
       );
     });
 
@@ -1035,7 +873,10 @@ flutter {
 
       expect(
         output,
-        containsAllInOrder(<Matcher>[contains('Validating android/build.gradle.kts')]),
+        containsAllInOrder(<Matcher>[
+          contains('Validating android/build.gradle.kts'),
+          contains('Validating android/settings.gradle.kts'),
+        ]),
       );
     });
 
