@@ -235,6 +235,83 @@ void main() {
     expect(findOverflowBackButton(), findsNothing);
   }, skip: kIsWeb); // [intended] We do not use Flutter-rendered context menu on the Web.
 
+  testWidgets('rapidly paginating while reverse animation is in progress does not throw', (
+    WidgetTester tester,
+  ) async {
+    final children = List<Widget>.generate(15, (int i) => const TestBox());
+    await tester.pumpWidget(
+      CupertinoApp(
+        home: Center(
+          child: CupertinoTextSelectionToolbar(
+            anchorAbove: const Offset(50.0, 100.0),
+            anchorBelow: const Offset(50.0, 200.0),
+            children: children,
+          ),
+        ),
+      ),
+    );
+
+    expect(findOverflowNextButton(), findsOneWidget);
+
+    // Trigger next page twice while the 125ms reverse transition animation is in progress.
+    await tester.tapAt(tester.getCenter(findOverflowNextButton()));
+    await tester.pump(const Duration(milliseconds: 20));
+    await tester.tapAt(tester.getCenter(findOverflowNextButton()));
+    await tester.pumpAndSettle();
+
+    expect(tester.takeException(), isNull);
+    expect(findOverflowBackButton(), findsOneWidget);
+    expect(findOverflowNextButton(), findsOneWidget);
+
+    // Trigger previous page twice while the reverse transition animation is in progress.
+    await tester.tapAt(tester.getCenter(findOverflowBackButton()));
+    await tester.pump(const Duration(milliseconds: 20));
+    await tester.tapAt(tester.getCenter(findOverflowBackButton()));
+    await tester.pumpAndSettle();
+
+    expect(tester.takeException(), isNull);
+    expect(findOverflowBackButton(), findsNothing);
+    expect(findOverflowNextButton(), findsOneWidget);
+  }, skip: kIsWeb); // [intended] We do not use Flutter-rendered context menu on the Web.
+
+  testWidgets('paginating right as reverse transition completes does not leave toolbar invisible', (
+    WidgetTester tester,
+  ) async {
+    final children = List<Widget>.generate(15, (int i) => const TestBox());
+    await tester.pumpWidget(
+      CupertinoApp(
+        home: Center(
+          child: CupertinoTextSelectionToolbar(
+            anchorAbove: const Offset(50.0, 100.0),
+            anchorBelow: const Offset(50.0, 200.0),
+            children: children,
+          ),
+        ),
+      ),
+    );
+
+    await tester.tapAt(tester.getCenter(findOverflowNextButton()));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 50));
+
+    final TestGesture gesture = await tester.startGesture(
+      tester.getCenter(findOverflowNextButton()),
+    );
+    await tester.pump(const Duration(milliseconds: 25));
+    await gesture.moveBy(const Offset(-50.0, 0.0), timeStamp: const Duration(milliseconds: 25));
+    await tester.pump(const Duration(milliseconds: 51));
+    await gesture.moveBy(const Offset(-50.0, 0.0), timeStamp: const Duration(milliseconds: 60));
+    await gesture.up(timeStamp: const Duration(milliseconds: 76));
+    await tester.pumpAndSettle();
+
+    final FadeTransition fade = tester.widget<FadeTransition>(
+      find.ancestor(of: find.byType(AnimatedSize), matching: find.byType(FadeTransition)),
+    );
+    expect(fade.opacity.value, 1.0);
+    expect(findOverflowNextButton(), findsNothing);
+    expect(findOverflowBackButton(), findsOneWidget);
+  }, skip: kIsWeb); // [intended] We do not use Flutter-rendered context menu on the Web.
+
   testWidgets('does not paginate if children fit with zero margin', (WidgetTester tester) async {
     final children = List<Widget>.generate(7, (int i) => const TestBox());
     final double spacerWidth = 1.0 / tester.view.devicePixelRatio;
