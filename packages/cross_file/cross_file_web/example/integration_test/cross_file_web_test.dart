@@ -85,16 +85,20 @@ void main() {
 
       group('dispose', () {
         testWidgets('dispose does not revoke url', (_) async {
-          final file = PlatformScopedStorageXFile(
+          final fileFromBlob = PlatformScopedStorageXFile(
             WebScopedStorageXFileCreationParams.fromBlob(testFile),
           );
+          addTearDown(() => fileFromBlob.dispose());
 
-          final file2 = PlatformScopedStorageXFile(
-            WebScopedStorageXFileCreationParams.fromObjectUrl(objectUrl: file.params.uri),
+          final fileFromUri = PlatformScopedStorageXFile(
+            WebScopedStorageXFileCreationParams.fromObjectUrl(objectUrl: fileFromBlob.params.uri),
           );
-          await file2.dispose();
+          await fileFromUri.dispose();
 
-          expect(await file.readAsBytes(), testFileBytes);
+          final fileFromUri2 = PlatformScopedStorageXFile(
+            WebScopedStorageXFileCreationParams.fromObjectUrl(objectUrl: fileFromBlob.params.uri),
+          );
+          expect(await fileFromUri2.readAsBytes(), testFileBytes);
         });
       });
     });
