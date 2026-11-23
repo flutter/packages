@@ -423,7 +423,7 @@ class RouteConfiguration {
       if (routeRedirectLocation != null && routeRedirectLocation != prevLocation) {
         final RouteMatchList newMatch = _getNewMatches(
           routeRedirectLocation,
-          matchList.uri,
+          matchList,
           redirectHistory,
         );
 
@@ -491,11 +491,7 @@ class RouteConfiguration {
     final prevLocation = prevMatchList.uri.toString();
     FutureOr<RouteMatchList> done(String? topLocation) {
       if (topLocation != null && topLocation != prevLocation) {
-        final RouteMatchList newMatch = _getNewMatches(
-          topLocation,
-          prevMatchList.uri,
-          redirectHistory,
-        );
+        final RouteMatchList newMatch = _getNewMatches(topLocation, prevMatchList, redirectHistory);
         if (newMatch.isError) {
           return newMatch;
         }
@@ -570,14 +566,14 @@ class RouteConfiguration {
 
   RouteMatchList _getNewMatches(
     String newLocation,
-    Uri previousLocation,
+    RouteMatchList previousMatch,
     List<RouteMatchList> redirectHistory,
   ) {
     try {
       // Normalize the URI to avoid trailing slash inconsistencies
       final Uri uri = normalizeUri(Uri.parse(newLocation));
 
-      final RouteMatchList newMatch = findMatch(uri);
+      final RouteMatchList newMatch = findMatch(uri, extra: previousMatch.extra);
       // Only add successful matches to redirect history
       if (!newMatch.isError) {
         _addRedirect(redirectHistory, newMatch);
@@ -588,7 +584,7 @@ class RouteConfiguration {
           ? exception
           : GoException('Exception during redirect: $exception');
       log('Redirection exception: ${goException.message}');
-      return _errorRouteMatchList(previousLocation, goException);
+      return _errorRouteMatchList(previousMatch.uri, goException, extra: previousMatch.extra);
     }
   }
 

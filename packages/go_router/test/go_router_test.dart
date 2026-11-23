@@ -2649,6 +2649,45 @@ void main() {
       expect(isCallRouteRedirect, true);
     });
 
+    for (final topLevel in <bool>[false, true]) {
+      testWidgets('preserves extra after a ${topLevel ? 'top' : 'route'}-level redirect', (
+        WidgetTester tester,
+      ) async {
+        final payload = Object();
+        Object? destinationExtra;
+        final routes = <GoRoute>[
+          GoRoute(path: '/', builder: (_, _) => const HomeScreen()),
+          GoRoute(
+            path: '/old',
+            builder: (_, _) => const DummyScreen(),
+            redirect: topLevel ? null : (_, _) => '/new',
+          ),
+          GoRoute(
+            path: '/new',
+            builder: (_, GoRouterState state) {
+              destinationExtra = state.extra;
+              return const LoginScreen();
+            },
+          ),
+        ];
+        final GoRouter router = await createRouter(
+          routes,
+          tester,
+          redirect: topLevel
+              ? (_, GoRouterState state) => state.uri.path == '/old' ? '/new' : null
+              : null,
+        );
+
+        router.go('/old', extra: payload);
+        await tester.pumpAndSettle();
+
+        expect(find.byType(LoginScreen), findsOneWidget);
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pumpAndSettle();
+        expect(destinationExtra, same(payload));
+      });
+    }
+
     testWidgets('parent route level redirect take priority over child', (
       WidgetTester tester,
     ) async {

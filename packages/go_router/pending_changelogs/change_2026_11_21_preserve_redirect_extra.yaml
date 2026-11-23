@@ -1,0 +1,3 @@
+changelog: |
+  - Preserves `GoRouterState.extra` across top-level and route-level redirects.
+version: patch
