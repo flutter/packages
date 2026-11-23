@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.OptIn;
 import androidx.camera.camera2.interop.Camera2Interop;
 import androidx.camera.camera2.interop.ExperimentalCamera2Interop;
+import androidx.camera.core.ExperimentalMirrorMode;
 import androidx.camera.core.MirrorMode;
 import androidx.camera.core.Preview;
 import androidx.camera.core.ResolutionInfo;
@@ -43,7 +44,7 @@ class PreviewProxyApi extends PigeonApiPreview {
 
   // Range<?> is defined as Range<Integer> in pigeon.
   @SuppressWarnings("unchecked")
-  @OptIn(markerClass = ExperimentalCamera2Interop.class)
+  @OptIn(markerClass = {ExperimentalCamera2Interop.class, ExperimentalMirrorMode.class})
   @NonNull
   @Override
   public Preview pigeon_defaultConstructor(
