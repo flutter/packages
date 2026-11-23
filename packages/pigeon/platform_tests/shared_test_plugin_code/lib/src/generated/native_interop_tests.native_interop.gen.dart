@@ -1173,6 +1173,271 @@ ffi_bridge.NativeInteropTestsNumberWrapper _convertToFfiNumberWrapper(Object val
   }
 }
 
+final class _PigeonJniStreamCallback with jni_bridge.$NativeInteropTestsPigeonStreamCallback {
+  _PigeonJniStreamCallback({
+    required this.onDataCallback,
+    required this.onErrorCallback,
+    required this.onDoneCallback,
+  });
+
+  final void Function(JByteArray encodedValue) onDataCallback;
+  final void Function(JString code, JString? message, JByteArray? encodedDetails) onErrorCallback;
+  final void Function() onDoneCallback;
+
+  @override
+  bool get onData$async => true;
+
+  @override
+  bool get onError$async => true;
+
+  @override
+  bool get onDone$async => true;
+
+  @override
+  void onData(JByteArray encodedValue) => onDataCallback(encodedValue);
+
+  @override
+  void onError(JString code, JString? message, JByteArray? encodedDetails) =>
+      onErrorCallback(code, message, encodedDetails);
+
+  @override
+  void onDone() => onDoneCallback();
+}
+
+Stream<T> _pigeonJniStream<T>({
+  required jni_bridge.NativeInteropTestsPigeonStreamCancelHandle Function(
+    jni_bridge.NativeInteropTestsPigeonStreamCallback callback,
+  )
+  start,
+  required T Function(Object? event) decodeEvent,
+}) {
+  late final StreamController<T> controller;
+  jni_bridge.NativeInteropTestsPigeonStreamCallback? callbackImpl;
+  jni_bridge.NativeInteropTestsPigeonStreamCancelHandle? cancelHandle;
+  var terminatedFromHost = false;
+  var cancelled = false;
+
+  void releaseHandles() {
+    final jni_bridge.NativeInteropTestsPigeonStreamCancelHandle? handle = cancelHandle;
+    cancelHandle = null;
+    handle?.release();
+    final jni_bridge.NativeInteropTestsPigeonStreamCallback? impl = callbackImpl;
+    callbackImpl = null;
+    (impl as JObject?)?.release();
+  }
+
+  controller = StreamController<T>(
+    onListen: () {
+      final jni_bridge.NativeInteropTestsPigeonStreamCallback impl =
+          jni_bridge.NativeInteropTestsPigeonStreamCallback.implement(
+            _PigeonJniStreamCallback(
+              onDataCallback: (JByteArray encodedValue) {
+                if (cancelled || controller.isClosed) {
+                  encodedValue.release();
+                  return;
+                }
+                try {
+                  final Object? decoded = _PigeonJniBuffers.decode(encodedValue);
+                  if (!cancelled && !controller.isClosed) {
+                    controller.add(decodeEvent(decoded));
+                  }
+                } catch (e, st) {
+                  if (!cancelled && !controller.isClosed) {
+                    controller.addError(e, st);
+                  }
+                }
+              },
+              onErrorCallback: (JString code, JString? message, JByteArray? encodedDetails) {
+                if (cancelled || controller.isClosed) {
+                  code.release();
+                  message?.release();
+                  encodedDetails?.release();
+                  return;
+                }
+                try {
+                  final String codeStr = code.toDartString(releaseOriginal: true);
+                  final String? messageStr = message?.toDartString(releaseOriginal: true);
+                  final Object? details = _PigeonJniBuffers.decode(encodedDetails);
+                  if (!cancelled && !controller.isClosed) {
+                    controller.addError(
+                      PlatformException(code: codeStr, message: messageStr, details: details),
+                    );
+                  }
+                } catch (e, st) {
+                  if (!cancelled && !controller.isClosed) {
+                    controller.addError(e, st);
+                  }
+                } finally {
+                  terminatedFromHost = true;
+                  releaseHandles();
+                  if (!controller.isClosed) {
+                    unawaited(controller.close());
+                  }
+                }
+              },
+              onDoneCallback: () {
+                terminatedFromHost = true;
+                releaseHandles();
+                if (!cancelled && !controller.isClosed) {
+                  unawaited(controller.close());
+                }
+              },
+            ),
+          );
+      callbackImpl = impl;
+      try {
+        cancelHandle = start(impl);
+      } on JThrowable catch (e) {
+        terminatedFromHost = true;
+        releaseHandles();
+        if (!cancelled && !controller.isClosed) {
+          controller.addError(_wrapJniException(e));
+          unawaited(controller.close());
+        }
+      } catch (e, st) {
+        terminatedFromHost = true;
+        releaseHandles();
+        if (!cancelled && !controller.isClosed) {
+          controller.addError(e, st);
+          unawaited(controller.close());
+        }
+      }
+    },
+    onCancel: () {
+      cancelled = true;
+      try {
+        if (!terminatedFromHost) {
+          cancelHandle?.cancel();
+        }
+      } on JThrowable catch (e) {
+        throw _wrapJniException(e);
+      } finally {
+        releaseHandles();
+      }
+    },
+  );
+  return controller.stream;
+}
+
+Stream<T> _pigeonFfiStream<T>({
+  required ffi_bridge.NativeInteropTestsPigeonStreamCancelHandle? Function(
+    ObjCBlock<Void Function(NSData?)> onData,
+    ObjCBlock<Void Function(NSString, NSString?, NSData?)> onError,
+    ObjCBlock<Void Function()> onDone,
+    ffi_bridge.NativeInteropTestsError error,
+  )
+  start,
+  required T Function(Object? event) decodeEvent,
+}) {
+  late final StreamController<T> controller;
+  ffi_bridge.NativeInteropTestsPigeonStreamCancelHandle? cancelHandle;
+  var terminatedFromHost = false;
+  var cancelled = false;
+
+  void releaseHandle() {
+    final ffi_bridge.NativeInteropTestsPigeonStreamCancelHandle? handle = cancelHandle;
+    cancelHandle = null;
+    handle?.ref.release();
+  }
+
+  controller = StreamController<T>(
+    onListen: () {
+      final error = ffi_bridge.NativeInteropTestsError();
+      final ObjCBlock<Void Function(NSData?)> onData = ffi_bridge.ObjCBlock_ffiVoid_NSData.listener(
+        (NSData? data) {
+          if (cancelled || controller.isClosed) {
+            return;
+          }
+          try {
+            final Object? decoded = _PigeonFfiBuffers.decode(data);
+            if (!cancelled && !controller.isClosed) {
+              controller.add(decodeEvent(decoded));
+            }
+          } catch (e, st) {
+            if (!cancelled && !controller.isClosed) {
+              controller.addError(e, st);
+            }
+          }
+        },
+      );
+      final ObjCBlock<Void Function(NSString, NSString?, NSData?)> onError =
+          ffi_bridge.ObjCBlock_ffiVoid_NSString_NSString_NSData.listener((
+            NSString code,
+            NSString? message,
+            NSData? encodedDetails,
+          ) {
+            if (cancelled || controller.isClosed) {
+              return;
+            }
+            try {
+              final String codeStr = code.toDartString();
+              final String? messageStr = message?.toDartString();
+              final Object? details = _PigeonFfiBuffers.decode(encodedDetails);
+              if (!cancelled && !controller.isClosed) {
+                controller.addError(
+                  PlatformException(code: codeStr, message: messageStr, details: details),
+                );
+              }
+            } catch (e, st) {
+              if (!cancelled && !controller.isClosed) {
+                controller.addError(e, st);
+              }
+            } finally {
+              terminatedFromHost = true;
+              releaseHandle();
+              if (!controller.isClosed) {
+                unawaited(controller.close());
+              }
+            }
+          });
+      final ObjCBlock<Void Function()> onDone = ffi_bridge.ObjCBlock_ffiVoid.listener(() {
+        terminatedFromHost = true;
+        releaseHandle();
+        if (!cancelled && !controller.isClosed) {
+          unawaited(controller.close());
+        }
+      });
+      try {
+        try {
+          cancelHandle = start(onData, onError, onDone, error);
+        } finally {
+          onData.ref.release();
+          onError.ref.release();
+          onDone.ref.release();
+        }
+        if (error.code != null) {
+          terminatedFromHost = true;
+          releaseHandle();
+          if (!cancelled && !controller.isClosed) {
+            controller.addError(_wrapFfiError(error));
+            unawaited(controller.close());
+          }
+        }
+      } catch (e, st) {
+        terminatedFromHost = true;
+        releaseHandle();
+        if (!cancelled && !controller.isClosed) {
+          controller.addError(e, st);
+          unawaited(controller.close());
+        }
+      } finally {
+        error.ref.release();
+      }
+    },
+    onCancel: () {
+      cancelled = true;
+      try {
+        if (!terminatedFromHost) {
+          cancelHandle?.cancel();
+        }
+      } finally {
+        releaseHandle();
+      }
+    },
+  );
+  return controller.stream;
+}
+
 bool _isType<T>(Type t) => T == t;
 bool _isTypeOrNullableType<T>(Type t) => _isType<T>(t) || _isType<T?>(t);
 
@@ -15226,3 +15491,292 @@ void pigeon_set_up_NativeInteropSealedClassFlutterApi(
   NativeInteropSealedClassFlutterApi? api, {
   String name = defaultInstanceName,
 }) => _NativeInteropSealedClassFlutterApiRegistrar.pigeonVar_setUp(api, name: name);
+
+NativeInteropStreamHostApiForNativeInterop? pigeon_getInstance_NativeInteropStreamHostApi({
+  String channelName = defaultInstanceName,
+}) => _NativeInteropStreamHostApiForNativeInterop.getInstance(channelName: channelName);
+
+class _NativeInteropStreamHostApiForNativeInterop
+    implements NativeInteropStreamHostApiForNativeInterop {
+  _NativeInteropStreamHostApiForNativeInterop._withRegistrar({
+    jni_bridge.NativeInteropStreamHostApiRegistrar? jniApi,
+    ffi_bridge.NativeInteropStreamHostApiSetup? ffiApi,
+  }) : _jniApi = jniApi,
+       _ffiApi = ffiApi;
+
+  /// Returns instance of NativeInteropStreamHostApiForNativeInterop with specified [channelName] if one has been registered.
+  ///
+  /// Returns the instance registered by this isolate's engine when it is known,
+  /// and otherwise the most recent registration.
+  static NativeInteropStreamHostApiForNativeInterop? getInstance({
+    String channelName = defaultInstanceName,
+  }) {
+    if (Platform.isAndroid) {
+      final int? engineId = PlatformDispatcher.instance.engineId;
+      final JString jName = channelName.toJString();
+      final jni_bridge.NativeInteropStreamHostApiRegistrar? link;
+      try {
+        link = jni_bridge.NativeInteropStreamHostApiRegistrar.pigeonResolveInstance(
+          engineId ?? _pigeonNoEngineKey,
+          _pigeonEngineAffinity ?? _pigeonNoEngineKey,
+          jName,
+        );
+      } finally {
+        jName.release();
+      }
+      if (link == null) {
+        _throwNoInstanceError(channelName);
+      }
+      if (link != null && _pigeonEngineAffinity == null) {
+        final int linkEngineKey = jni_bridge.NativeInteropStreamHostApiRegistrar.pigeonEngineKeyOf(
+          link,
+        );
+        if (linkEngineKey != _pigeonNoEngineKey && (engineId == null || linkEngineKey < 0)) {
+          _pigeonEngineAffinity = linkEngineKey;
+          _pigeonUpdateFlutterApiEngineAffinity();
+        }
+      }
+      return _NativeInteropStreamHostApiForNativeInterop._withRegistrar(jniApi: link);
+    } else if (Platform.isIOS || Platform.isMacOS) {
+      final int? engineId = PlatformDispatcher.instance.engineId;
+      final ffi_bridge.NativeInteropStreamHostApiSetup? link =
+          ffi_bridge.NativeInteropStreamHostApiSetup.pigeonResolveInstanceWithEngineId(
+            engineId ?? _pigeonNoEngineKey,
+            affinityKey: _pigeonEngineAffinity ?? _pigeonNoEngineKey,
+            name: NSString(channelName),
+          );
+      if (link == null) {
+        _throwNoInstanceError(channelName);
+      }
+      if (link != null && _pigeonEngineAffinity == null) {
+        final int linkEngineKey = ffi_bridge.NativeInteropStreamHostApiSetup.pigeonEngineKeyOf(
+          link,
+        );
+        if (linkEngineKey != _pigeonNoEngineKey && (engineId == null || linkEngineKey < 0)) {
+          _pigeonEngineAffinity = linkEngineKey;
+          _pigeonUpdateFlutterApiEngineAffinity();
+        }
+      }
+      return _NativeInteropStreamHostApiForNativeInterop._withRegistrar(ffiApi: link);
+    } else {
+      throw UnsupportedError(
+        'Native Interop is not supported on this platform. Use NativeInteropStreamHostApi instead.',
+      );
+    }
+  }
+
+  late final jni_bridge.NativeInteropStreamHostApiRegistrar? _jniApi;
+  late final ffi_bridge.NativeInteropStreamHostApiSetup? _ffiApi;
+
+  @override
+  Stream<int> streamNumbers({int count = 5, int start = 0}) {
+    if (_jniApi != null) {
+      return _pigeonJniStream<int>(
+        start: (jni_bridge.NativeInteropTestsPigeonStreamCallback pigeonVar_callback) {
+          return _jniApi.streamNumbers(count, start, pigeonVar_callback);
+        },
+        decodeEvent: (Object? event) => event! as int,
+      );
+    } else if (_ffiApi != null) {
+      return _pigeonFfiStream<int>(
+        start: (pigeonVar_onData, pigeonVar_onError, pigeonVar_onDone, pigeonVar_error) {
+          return _ffiApi.streamNumbersWithCount(
+            count,
+            start: start,
+            pigeonOnData: pigeonVar_onData,
+            pigeonOnError: pigeonVar_onError,
+            pigeonOnDone: pigeonVar_onDone,
+            wrappedError: pigeonVar_error,
+          );
+        },
+        decodeEvent: (Object? event) => event! as int,
+      );
+    } else {
+      throw UnsupportedError('Platform not supported for Native Interop.');
+    }
+  }
+
+  @override
+  Stream<int?> streamNullableInts() {
+    if (_jniApi != null) {
+      return _pigeonJniStream<int?>(
+        start: (jni_bridge.NativeInteropTestsPigeonStreamCallback pigeonVar_callback) {
+          return _jniApi.streamNullableInts(pigeonVar_callback);
+        },
+        decodeEvent: (Object? event) => event as int?,
+      );
+    } else if (_ffiApi != null) {
+      return _pigeonFfiStream<int?>(
+        start: (pigeonVar_onData, pigeonVar_onError, pigeonVar_onDone, pigeonVar_error) {
+          return _ffiApi.streamNullableIntsWithPigeonOnData(
+            pigeonVar_onData,
+            pigeonOnError: pigeonVar_onError,
+            pigeonOnDone: pigeonVar_onDone,
+            wrappedError: pigeonVar_error,
+          );
+        },
+        decodeEvent: (Object? event) => event as int?,
+      );
+    } else {
+      throw UnsupportedError('Platform not supported for Native Interop.');
+    }
+  }
+
+  @override
+  Stream<NativeInteropShape> streamShapes() {
+    if (_jniApi != null) {
+      return _pigeonJniStream<NativeInteropShape>(
+        start: (jni_bridge.NativeInteropTestsPigeonStreamCallback pigeonVar_callback) {
+          return _jniApi.streamShapes(pigeonVar_callback);
+        },
+        decodeEvent: (Object? event) => event! as NativeInteropShape,
+      );
+    } else if (_ffiApi != null) {
+      return _pigeonFfiStream<NativeInteropShape>(
+        start: (pigeonVar_onData, pigeonVar_onError, pigeonVar_onDone, pigeonVar_error) {
+          return _ffiApi.streamShapesWithPigeonOnData(
+            pigeonVar_onData,
+            pigeonOnError: pigeonVar_onError,
+            pigeonOnDone: pigeonVar_onDone,
+            wrappedError: pigeonVar_error,
+          );
+        },
+        decodeEvent: (Object? event) => event! as NativeInteropShape,
+      );
+    } else {
+      throw UnsupportedError('Platform not supported for Native Interop.');
+    }
+  }
+
+  @override
+  Stream<NativeInteropShape> streamShapesWithFilter(NativeInteropShape filter) {
+    if (_jniApi != null) {
+      return _pigeonJniStream<NativeInteropShape>(
+        start: (jni_bridge.NativeInteropTestsPigeonStreamCallback pigeonVar_callback) {
+          final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[filter]);
+          try {
+            return _jniApi.streamShapesWithFilter(pigeonVar_args, pigeonVar_callback);
+          } finally {
+            pigeonVar_args.release();
+          }
+        },
+        decodeEvent: (Object? event) => event! as NativeInteropShape,
+      );
+    } else if (_ffiApi != null) {
+      return _pigeonFfiStream<NativeInteropShape>(
+        start: (pigeonVar_onData, pigeonVar_onError, pigeonVar_onDone, pigeonVar_error) {
+          final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[filter]);
+          return _ffiApi.streamShapesWithFilterWithPigeonVar_args(
+            pigeonVar_args,
+            pigeonOnData: pigeonVar_onData,
+            pigeonOnError: pigeonVar_onError,
+            pigeonOnDone: pigeonVar_onDone,
+            wrappedError: pigeonVar_error,
+          );
+        },
+        decodeEvent: (Object? event) => event! as NativeInteropShape,
+      );
+    } else {
+      throw UnsupportedError('Platform not supported for Native Interop.');
+    }
+  }
+
+  @override
+  Stream<int> streamError(bool customError) {
+    if (_jniApi != null) {
+      return _pigeonJniStream<int>(
+        start: (jni_bridge.NativeInteropTestsPigeonStreamCallback pigeonVar_callback) {
+          return _jniApi.streamError(customError, pigeonVar_callback);
+        },
+        decodeEvent: (Object? event) => event! as int,
+      );
+    } else if (_ffiApi != null) {
+      return _pigeonFfiStream<int>(
+        start: (pigeonVar_onData, pigeonVar_onError, pigeonVar_onDone, pigeonVar_error) {
+          return _ffiApi.streamErrorWithCustomError(
+            customError,
+            pigeonOnData: pigeonVar_onData,
+            pigeonOnError: pigeonVar_onError,
+            pigeonOnDone: pigeonVar_onDone,
+            wrappedError: pigeonVar_error,
+          );
+        },
+        decodeEvent: (Object? event) => event! as int,
+      );
+    } else {
+      throw UnsupportedError('Platform not supported for Native Interop.');
+    }
+  }
+
+  @override
+  Stream<String> streamViaCallback(String prefix, int count) {
+    if (_jniApi != null) {
+      return _pigeonJniStream<String>(
+        start: (jni_bridge.NativeInteropTestsPigeonStreamCallback pigeonVar_callback) {
+          final JString pigeonVar_arg_prefix = prefix.toJString();
+          try {
+            return _jniApi.streamViaCallback(pigeonVar_arg_prefix, count, pigeonVar_callback);
+          } finally {
+            pigeonVar_arg_prefix.release();
+          }
+        },
+        decodeEvent: (Object? event) => event! as String,
+      );
+    } else if (_ffiApi != null) {
+      return _pigeonFfiStream<String>(
+        start: (pigeonVar_onData, pigeonVar_onError, pigeonVar_onDone, pigeonVar_error) {
+          return _ffiApi.streamViaCallbackWithPrefix(
+            NSString(prefix),
+            count: count,
+            pigeonOnData: pigeonVar_onData,
+            pigeonOnError: pigeonVar_onError,
+            pigeonOnDone: pigeonVar_onDone,
+            wrappedError: pigeonVar_error,
+          );
+        },
+        decodeEvent: (Object? event) => event! as String,
+      );
+    } else {
+      throw UnsupportedError('Platform not supported for Native Interop.');
+    }
+  }
+
+  @override
+  int getCancelledStreamCount() {
+    try {
+      if (_jniApi != null) {
+        return _jniApi.cancelledStreamCount;
+      } else if (_ffiApi != null) {
+        final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSNumber? pigeonVar_res = _ffiApi.getCancelledStreamCountWithWrappedError(
+          pigeonVar_error,
+        );
+        _throwIfFfiError(pigeonVar_error);
+        return pigeonVar_res!.longValue;
+      } else {
+        throw Exception('No JNI or FFI api available');
+      }
+    } on JThrowable catch (e) {
+      throw _wrapJniException(e);
+    }
+  }
+
+  @override
+  void resetCancelledStreamCount() {
+    try {
+      if (_jniApi != null) {
+        _jniApi.resetCancelledStreamCount();
+        return;
+      } else if (_ffiApi != null) {
+        final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        _ffiApi.resetCancelledStreamCountWithWrappedError(pigeonVar_error);
+        _throwIfFfiError(pigeonVar_error);
+        return;
+      } else {
+        throw Exception('No JNI or FFI api available');
+      }
+    } on JThrowable catch (e) {
+      throw _wrapJniException(e);
+    }
+  }
+}

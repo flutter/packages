@@ -2492,4 +2492,391 @@ void main() {
       );
     });
   });
+
+  group('HostApi Stream<T>', () {
+    test('generates non-throwing AsyncThrowingStream<T, Error> and @asyncCallback sink handlers', () {
+      final root = Root(
+        apis: <Api>[
+          AstHostApi(
+            name: 'SensorApi',
+            methods: <Method>[
+              Method(
+                name: 'readings',
+                location: ApiLocation.host,
+                isStream: true,
+                swiftFunction: 'readings(every:)',
+                parameters: <Parameter>[
+                  Parameter(
+                    name: 'intervalMs',
+                    type: const TypeDeclaration(baseName: 'int', isNullable: false),
+                  ),
+                ],
+                returnType: const TypeDeclaration(baseName: 'double', isNullable: false),
+              ),
+              Method(
+                name: 'rawEvents',
+                location: ApiLocation.host,
+                isStream: true,
+                isAsynchronousCallback: true,
+                parameters: <Parameter>[],
+                returnType: const TypeDeclaration(baseName: 'String', isNullable: true),
+              ),
+            ],
+          ),
+        ],
+        classes: <Class>[],
+        enums: <Enum>[],
+        containsHostApi: true,
+      );
+      final sink = StringBuffer();
+      const SwiftGenerator().generate(
+        const InternalSwiftOptions(
+          swiftOut: 'Sensor.g.swift',
+          fileSpecificClassNameComponent: 'Sensor',
+        ),
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+      final code = sink.toString();
+      expect(
+        code,
+        contains('func readings(every intervalMs: Int64) -> AsyncThrowingStream<Double, Error>'),
+      );
+      expect(
+        code,
+        contains('func rawEvents(sink: SensorPigeonEventSink<String?>) -> (() -> Void)?'),
+      );
+      expect(code, contains('private final class SensorPigeonStreamRegistry: @unchecked Sendable'));
+      expect(
+        code,
+        contains('private final class SensorPigeonStreamBox<Element>: @unchecked Sendable'),
+      );
+      expect(
+        code,
+        contains('private final class SensorPigeonStreamTaskHandle: @unchecked Sendable'),
+      );
+      expect(code, contains('NSMapTable<AnyObject, NSNumber>'));
+      expect(code, contains('static let dataFrameKind: Int64 = 0'));
+      expect(code, contains('static let errorFrameKind: Int64 = 1'));
+      expect(code, contains('static let doneFrameKind: Int64 = 2'));
+      expect(code, contains('class SensorPigeonEventSink<ReturnType>: @unchecked Sendable'));
+      expect(
+        code,
+        contains(
+          'streamRegistry.cancelAll(messenger: binaryMessenger, channelName: readingsEventsChannelName)',
+        ),
+      );
+      expect(code, contains('let task = Task { @MainActor in'));
+      expect(code, contains('taskHandle.attach(task)'));
+      expect(code, contains('func sendOnMain(_ message: [Any?]) -> Bool'));
+      expect(code, contains('guard !Task.isCancelled, channelBox.sendOnMain('));
+      expect(code, contains('closeAfterSend: true'));
+      expect(code, contains('token: UInt64'));
+      expect(code, contains('guard action == "listen" else {'));
+      expect(code, isNot(contains('isActive(')));
+    });
+
+    test('AsyncThrowingStream-only HostApi omits PigeonEventSink and PigeonMessageBox', () {
+      final root = Root(
+        apis: <Api>[
+          AstHostApi(
+            name: 'StreamOnlyApi',
+            methods: <Method>[
+              Method(
+                name: 'ticks',
+                location: ApiLocation.host,
+                isStream: true,
+                parameters: <Parameter>[],
+                returnType: const TypeDeclaration(baseName: 'int', isNullable: false),
+              ),
+            ],
+          ),
+        ],
+        classes: <Class>[],
+        enums: <Enum>[],
+        containsHostApi: true,
+      );
+      final sink = StringBuffer();
+      const SwiftGenerator().generate(
+        const InternalSwiftOptions(
+          swiftOut: 'StreamOnly.g.swift',
+          fileSpecificClassNameComponent: 'StreamOnly',
+        ),
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+      final code = sink.toString();
+      expect(code, contains('StreamOnlyPigeonStreamBox'));
+      expect(code, contains('StreamOnlyPigeonStreamTaskHandle'));
+      expect(code, isNot(contains('PigeonEventSink')));
+      expect(code, isNot(contains('PigeonMessageBox')));
+      expect(code, isNot(contains('func send(_ message: [Any?]')));
+    });
+
+    test(
+      '@asyncCallback-only HostApi omits PigeonStreamBox and supports @SwiftFunction and events name',
+      () {
+        final root = Root(
+          apis: <Api>[
+            AstHostApi(
+              name: 'CallbackOnlyApi',
+              methods: <Method>[
+                Method(
+                  name: 'events',
+                  location: ApiLocation.host,
+                  isStream: true,
+                  isAsynchronousCallback: true,
+                  swiftFunction: 'listenEvents(for:)',
+                  parameters: <Parameter>[
+                    Parameter(
+                      name: 'topic',
+                      type: const TypeDeclaration(baseName: 'String', isNullable: false),
+                    ),
+                  ],
+                  returnType: const TypeDeclaration(baseName: 'String', isNullable: false),
+                ),
+              ],
+            ),
+          ],
+          classes: <Class>[],
+          enums: <Enum>[],
+          containsHostApi: true,
+        );
+        final sink = StringBuffer();
+        const SwiftGenerator().generate(
+          const InternalSwiftOptions(
+            swiftOut: 'CallbackOnly.g.swift',
+            fileSpecificClassNameComponent: 'CallbackOnly',
+          ),
+          root,
+          sink,
+          dartPackageName: DEFAULT_PACKAGE_NAME,
+        );
+        final code = sink.toString();
+        expect(code, contains('CallbackOnlyPigeonEventSink'));
+        expect(code, contains('CallbackOnlyPigeonMessageBox'));
+        expect(
+          code,
+          contains(
+            'func listenEvents(for topic: String, sink: CallbackOnlyPigeonEventSink<String>) -> (() -> Void)?',
+          ),
+        );
+        expect(code, contains('let cancelCallback = api.listenEvents(for: topicArg, sink: sink)'));
+        expect(code, contains('let eventsEventsChannel = FlutterBasicMessageChannel('));
+        expect(code, contains('eventsChannel.setMessageHandler { message, reply in'));
+        expect(code, isNot(contains('PigeonStreamBox')));
+        expect(code, isNot(contains('PigeonStreamTaskHandle')));
+        expect(code, isNot(contains('func sendOnMain(')));
+      },
+    );
+
+    test('generates FFI AsyncThrowingStream and @asyncCallback stream entry points', () {
+      final root = Root(
+        apis: <Api>[
+          AstHostApi(
+            name: 'StreamApi',
+            methods: <Method>[
+              Method(
+                name: 'numbers',
+                location: ApiLocation.host,
+                parameters: <Parameter>[
+                  Parameter(
+                    name: 'count',
+                    type: const TypeDeclaration(baseName: 'int', isNullable: false),
+                  ),
+                ],
+                returnType: const TypeDeclaration(baseName: 'int', isNullable: false),
+                isStream: true,
+              ),
+              Method(
+                name: 'events',
+                location: ApiLocation.host,
+                parameters: <Parameter>[],
+                returnType: const TypeDeclaration(baseName: 'String', isNullable: false),
+                isStream: true,
+                isAsynchronousCallback: true,
+              ),
+            ],
+          ),
+        ],
+        classes: <Class>[],
+        enums: <Enum>[],
+      );
+      final sink = StringBuffer();
+      const SwiftGenerator().generate(
+        const InternalSwiftOptions(
+          swiftOut: 'FfiStreams.g.swift',
+          fileSpecificClassNameComponent: 'FfiStreams',
+          useFfi: true,
+        ),
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+      final code = sink.toString();
+      expect(code, contains('@objc public class FfiStreamsPigeonStreamCancelHandle'));
+      expect(code, contains('class FfiStreamsPigeonEventSink<ReturnType>'));
+      expect(code, contains('func numbers(count: Int64) -> AsyncThrowingStream<Int64, Error>'));
+      expect(
+        code,
+        contains('func events(sink: FfiStreamsPigeonEventSink<String>) -> (() -> Void)?'),
+      );
+      expect(code, contains('setup.pigeonCancelAllStreams()'));
+      expect(code, contains('private func pigeonStartAsyncStream<Element>('));
+      expect(code, contains('"unregistered-instance"'));
+      expect(code, isNot(contains('handleRef')));
+      expect(code, isNot(contains('FlutterBasicMessageChannel')));
+    });
+
+    test('FFI AsyncThrowingStream-only HostApi omits PigeonEventSink', () {
+      final root = Root(
+        apis: <Api>[
+          AstHostApi(
+            name: 'StreamOnlyFfiApi',
+            methods: <Method>[
+              Method(
+                name: 'ticks',
+                location: ApiLocation.host,
+                isStream: true,
+                parameters: <Parameter>[],
+                returnType: const TypeDeclaration(baseName: 'int', isNullable: false),
+              ),
+            ],
+          ),
+        ],
+        classes: <Class>[],
+        enums: <Enum>[],
+      );
+      final sink = StringBuffer();
+      const SwiftGenerator().generate(
+        const InternalSwiftOptions(
+          swiftOut: 'StreamOnlyFfi.g.swift',
+          fileSpecificClassNameComponent: 'StreamOnlyFfi',
+          useFfi: true,
+        ),
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+      final code = sink.toString();
+      expect(code, contains('@objc public class StreamOnlyFfiPigeonStreamCancelHandle'));
+      expect(code, contains('StreamOnlyFfiPigeonStreamBox'));
+      expect(code, contains('StreamOnlyFfiPigeonStreamTaskHandle'));
+      expect(code, contains('StreamOnlyFfiPigeonFfiStreamCallbacks'));
+      expect(code, isNot(contains('PigeonEventSink')));
+    });
+
+    test(
+      'FFI @asyncCallback-only HostApi omits PigeonStreamBox, TaskHandle, and FfiStreamCallbacks',
+      () {
+        final root = Root(
+          apis: <Api>[
+            AstHostApi(
+              name: 'CallbackOnlyFfiApi',
+              methods: <Method>[
+                Method(
+                  name: 'events',
+                  location: ApiLocation.host,
+                  isStream: true,
+                  isAsynchronousCallback: true,
+                  parameters: <Parameter>[],
+                  returnType: const TypeDeclaration(baseName: 'String', isNullable: false),
+                ),
+              ],
+            ),
+          ],
+          classes: <Class>[],
+          enums: <Enum>[],
+        );
+        final sink = StringBuffer();
+        const SwiftGenerator().generate(
+          const InternalSwiftOptions(
+            swiftOut: 'CallbackOnlyFfi.g.swift',
+            fileSpecificClassNameComponent: 'CallbackOnlyFfi',
+            useFfi: true,
+          ),
+          root,
+          sink,
+          dartPackageName: DEFAULT_PACKAGE_NAME,
+        );
+        final code = sink.toString();
+        expect(code, contains('class CallbackOnlyFfiPigeonEventSink<ReturnType>'));
+        expect(code, isNot(contains('PigeonStreamBox')));
+        expect(code, isNot(contains('PigeonStreamTaskHandle')));
+        expect(code, isNot(contains('PigeonFfiStreamCallbacks')));
+        expect(code, isNot(contains('pigeonStartAsyncStream')));
+      },
+    );
+
+    test(
+      'FFI HostApi Stream<T> handles encoded parameters in hybrid mode and objects transport',
+      () {
+        final filterClass = Class(
+          name: 'StreamFilter',
+          fields: <NamedType>[
+            NamedType(
+              name: 'tag',
+              type: const TypeDeclaration(baseName: 'String', isNullable: false),
+            ),
+          ],
+        );
+        final filterType = TypeDeclaration(
+          baseName: 'StreamFilter',
+          isNullable: false,
+          associatedClass: filterClass,
+        );
+        final root = Root(
+          apis: <Api>[
+            AstHostApi(
+              name: 'MixedStreamFfiApi',
+              methods: <Method>[
+                Method(
+                  name: 'watch',
+                  location: ApiLocation.host,
+                  isStream: true,
+                  parameters: <Parameter>[Parameter(name: 'filter', type: filterType)],
+                  returnType: filterType,
+                ),
+              ],
+            ),
+          ],
+          classes: <Class>[filterClass],
+          enums: <Enum>[],
+        );
+
+        final hybridSink = StringBuffer();
+        const SwiftGenerator().generate(
+          const InternalSwiftOptions(
+            swiftOut: 'MixedFfi.g.swift',
+            fileSpecificClassNameComponent: 'MixedFfi',
+            useFfi: true,
+          ),
+          root,
+          hybridSink,
+          dartPackageName: DEFAULT_PACKAGE_NAME,
+        );
+        final hybridCode = hybridSink.toString();
+        expect(hybridCode, contains('MixedFfiPigeonInteropReader(pigeonVar_args)'));
+        expect(hybridCode, contains('reader.read(StreamFilter.self)'));
+
+        final objectsSink = StringBuffer();
+        const SwiftGenerator().generate(
+          const InternalSwiftOptions(
+            swiftOut: 'MixedFfiObj.g.swift',
+            fileSpecificClassNameComponent: 'MixedFfiObj',
+            useFfi: true,
+            nativeInteropTransport: NativeInteropTransport.objects,
+          ),
+          root,
+          objectsSink,
+          dartPackageName: DEFAULT_PACKAGE_NAME,
+        );
+        final objectsCode = objectsSink.toString();
+        expect(objectsCode, contains('enum MixedFfiObjPigeonInteropCodec'));
+        expect(objectsCode, contains('filter: StreamFilter'));
+      },
+    );
+  });
 }

@@ -2071,12 +2071,12 @@ abstract class MyClass {
     });
   });
 
-  group('event channel validation', () {
-    test('methods cannot contain parameters', () {
+  group('removed EventChannelApi validation', () {
+    test('reports actionable error when @EventChannelApi is used', () {
       const code = '''
 @EventChannelApi()
 abstract class EventChannelApi {
-  int streamInts(int event);
+  int streamInts();
 }
 ''';
       final ParseResults parseResult = parseSource(code);
@@ -2084,7 +2084,7 @@ abstract class EventChannelApi {
       expect(
         parseResult.errors.single.message,
         contains(
-          'event channel methods must not be contain parameters, in method "streamInts" in API: "EventChannelApi"',
+          '@EventChannelApi has been removed (in API "EventChannelApi"). Declare Stream<T> return types on @HostApi() methods instead.',
         ),
       );
     });
@@ -2099,7 +2099,7 @@ class ChildClass extends DataClass {
   int input;
 }
 
-@EventChannelApi()
+@HostApi()
 abstract class events {
   void aMethod(ChildClass param);
 }
@@ -2123,7 +2123,7 @@ class ChildClass extends DataClass {
   int input;
 }
 
-@EventChannelApi()
+@HostApi()
 abstract class events {
   void aMethod(ChildClass param);
 }
@@ -3043,23 +3043,35 @@ dev_dependencies:
     }
 
     const unsupportedFeaturesSource = '''
-@EventChannelApi()
+@HostApi()
 abstract class Events {
-  int numbers();
+  Stream<int> numbers();
 }
 ''';
 
-    test('Swift FFI rejects event channels', () {
+    test('Swift FFI allows Stream return types', () {
       final List<Error> errors = validate(const SwiftGeneratorAdapter(), unsupportedFeaturesSource);
-      expect(
-        errors.map((Error e) => e.message),
-        containsAll(<Matcher>[
-          contains('Swift FFI does not support event channels yet (in API "Events")'),
-        ]),
-      );
+      expect(errors, isEmpty);
     });
 
-    test('Swift without FFI allows event channels', () {
+    test(
+      'Swift FFI rejects streaming parameters named pigeonOnData/pigeonOnError/pigeonOnDone',
+      () {
+        final List<Error> errors = validate(const SwiftGeneratorAdapter(), '''
+@HostApi()
+abstract class Api {
+  Stream<int> watch(String pigeonOnData, String pigeonOnError, String pigeonOnDone);
+}
+''');
+        expect(errors.map((Error e) => e.message), <Matcher>[
+          contains('Parameter "pigeonOnData" in streaming method "watch"'),
+          contains('Parameter "pigeonOnError" in streaming method "watch"'),
+          contains('Parameter "pigeonOnDone" in streaming method "watch"'),
+        ]);
+      },
+    );
+
+    test('Swift without FFI allows Stream return types', () {
       final List<Error> errors = validate(
         const SwiftGeneratorAdapter(),
         unsupportedFeaturesSource,
@@ -3124,20 +3136,26 @@ abstract class Api {
       expect(errors[0].message, contains('Swift FFI requires `includeErrorClass: true`'));
     });
 
-    test('Kotlin JNI rejects event channels', () {
+    test('Kotlin JNI allows Stream return types', () {
       final List<Error> errors = validate(
         const KotlinGeneratorAdapter(),
         unsupportedFeaturesSource,
       );
-      expect(
-        errors.map((Error e) => e.message),
-        containsAll(<Matcher>[
-          contains('Kotlin JNI does not support event channels yet (in API "Events")'),
-        ]),
-      );
+      expect(errors, isEmpty);
     });
 
-    test('Kotlin without JNI allows event channels', () {
+    test('Kotlin JNI rejects streaming parameters named pigeonCallback', () {
+      final List<Error> errors = validate(const KotlinGeneratorAdapter(), '''
+@HostApi()
+abstract class Api {
+  Stream<int> watch(String pigeonCallback);
+}
+''');
+      expect(errors, hasLength(1));
+      expect(errors[0].message, contains('Parameter "pigeonCallback" in streaming method "watch"'));
+    });
+
+    test('Kotlin without JNI allows Stream return types', () {
       final List<Error> errors = validate(
         const KotlinGeneratorAdapter(),
         unsupportedFeaturesSource,
@@ -3605,6 +3623,144 @@ abstract class MyFlutterApi {
     },
   );
 
+  group('HostApi Stream<T> parsing and validation', () {
+    test('parses valid Stream<T> and @asyncCallback Stream<T> methods on @HostApi', () {
+      const code = '''
+class SensorReading {
+  SensorReading(this.value);
+  double value;
+}
+
+@HostApi()
+abstract class SensorApi {
+  Stream<SensorReading> readings({int intervalMs = 16});
+
+  @asyncCallback
+  Stream<List<int?>> rawBatches(String sensorId);
+}
+''';
+      final ParseResults parseResult = parseSource(code);
+      expect(parseResult.errors, isEmpty);
+      final api = parseResult.root.apis.single as AstHostApi;
+      expect(api.methods, hasLength(2));
+
+      final Method readings = api.methods[0];
+      expect(readings.name, 'readings');
+      expect(readings.isStream, isTrue);
+      expect(readings.isAsynchronous, isFalse);
+      expect(readings.isAsynchronousCallback, isFalse);
+      expect(readings.returnType.baseName, 'SensorReading');
+      expect(readings.returnType.isClass, isTrue);
+      expect(readings.parameters.single.name, 'intervalMs');
+
+      final Method rawBatches = api.methods[1];
+      expect(rawBatches.name, 'rawBatches');
+      expect(rawBatches.isStream, isTrue);
+      expect(rawBatches.isAsynchronous, isFalse);
+      expect(rawBatches.isAsynchronousCallback, isTrue);
+      expect(rawBatches.returnType.baseName, 'List');
+      expect(parseResult.root.containsHostStream, isTrue);
+      expect(parseResult.root.lists, contains('List<int?>'));
+    });
+
+    test('rejects invalid Stream declarations and placements', () {
+      for (final (String source, String expectedMessage) in <(String, String)>[
+        (
+          '@HostApi()\nabstract class Api {\n  Stream watch();\n}',
+          'Stream return types must specify a single type argument',
+        ),
+        (
+          '@HostApi()\nabstract class Api {\n  Stream<void> watch();\n}',
+          'Stream<void> is not supported',
+        ),
+        (
+          '@HostApi()\nabstract class Api {\n  Stream<int>? watch();\n}',
+          'Stream return types must not be nullable',
+        ),
+        (
+          '@HostApi()\nabstract class Api {\n  @async\n  Stream<int> watch();\n}',
+          'Stream methods are already asynchronous; remove @async',
+        ),
+        (
+          '@HostApi()\nabstract class Api {\n  @TaskQueue(type: TaskQueueType.serialBackgroundThread)\n  Stream<int> watch();\n}',
+          '@TaskQueue is not supported on Stream methods',
+        ),
+        (
+          '@HostApi()\nabstract class Api {\n  @asyncCallback\n  Stream<int> watch(String sink);\n}',
+          'Parameter "sink" in @asyncCallback stream method "watch"',
+        ),
+        (
+          '@HostApi()\nabstract class Api {\n  void push(Stream<int> values);\n}',
+          'Stream is only supported as a HostApi method return type.',
+        ),
+        ('class Box {\n  Stream<int>? values;\n}', 'Unsupported datatype:"Stream" in class "Box".'),
+        (
+          '@FlutterApi()\nabstract class Api {\n  Stream<int> watch();\n}',
+          'Stream return types are not supported in @FlutterApi yet',
+        ),
+        (
+          '@ProxyApi()\nabstract class Api {\n  Stream<int> watch();\n}',
+          'Stream return types are not supported in @ProxyApi',
+        ),
+      ]) {
+        final ParseResults parseResult = parseSource(source);
+        expect(
+          parseResult.errors.map((Error e) => e.message),
+          anyElement(contains(expectedMessage)),
+          reason: 'Expected error "$expectedMessage" for:\n$source',
+        );
+      }
+    });
+
+    test('unsupported language generators reject Stream<T> methods', () {
+      final ParseResults parseResult = parseSource('''
+@HostApi()
+abstract class Api {
+  Stream<int> watch();
+}
+''');
+      expect(parseResult.errors, isEmpty);
+      final Root root = parseResult.root;
+
+      const options = PigeonOptions(
+        javaOut: 'Foo.java',
+        objcHeaderOut: 'Foo.h',
+        cppHeaderOut: 'Foo.h',
+        gobjectHeaderOut: 'Foo.h',
+      );
+      final InternalPigeonOptions internalOptions = InternalPigeonOptions.fromPigeonOptions(
+        options,
+      );
+
+      expect(
+        const JavaGeneratorAdapter().validate(internalOptions, root).single.message,
+        contains('Java does not support Stream return types'),
+      );
+      expect(
+        const ObjcGeneratorAdapter().validate(internalOptions, root).single.message,
+        contains('Objective-C does not support Stream return types'),
+      );
+      expect(
+        const CppGeneratorAdapter().validate(internalOptions, root).single.message,
+        contains('C++ does not support Stream return types'),
+      );
+      expect(
+        const GObjectGeneratorAdapter().validate(internalOptions, root).single.message,
+        contains('GObject does not support Stream return types'),
+      );
+
+      final InternalPigeonOptions dartJniOptions = InternalPigeonOptions.fromPigeonOptions(
+        const PigeonOptions(dartOut: 'lib/foo.g.dart', kotlinOptions: KotlinOptions(useJni: true)),
+      );
+      expect(const DartGeneratorAdapter().validate(dartJniOptions, root), isEmpty);
+
+      final InternalPigeonOptions dartFfiOptions = InternalPigeonOptions.fromPigeonOptions(
+        const PigeonOptions(dartOut: 'lib/foo.g.dart', swiftOptions: SwiftOptions(useFfi: true)),
+      );
+      expect(const DartGeneratorAdapter().validate(dartFfiOptions, root), isEmpty);
+    });
+  });
+
   group('JNIgen execution and error reporting', () {
     test('JnigenConfigGenerator does not emit a Java pre-skip guard or logging imports', () {
       final root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
@@ -3831,6 +3987,143 @@ abstract class Api {
         } finally {
           tempDir.deleteSync(recursive: true);
         }
+      },
+    );
+
+    test(
+      'InternalPigeonOptions resolves jniFileSpecificClassNameComponent from Kotlin options',
+      () {
+        final InternalPigeonOptions explicit = InternalPigeonOptions.fromPigeonOptions(
+          const PigeonOptions(
+            dartOut: 'lib/messages.g.dart',
+            kotlinOut: 'android/KotlinFile.g.kt',
+            swiftOut: 'ios/SwiftFile.g.swift',
+            kotlinOptions: KotlinOptions(
+              useJni: true,
+              fileSpecificClassNameComponent: 'CustomKotlinPrefix',
+            ),
+            swiftOptions: SwiftOptions(
+              useFfi: true,
+              fileSpecificClassNameComponent: 'CustomSwiftPrefix',
+            ),
+          ),
+        );
+        expect(explicit.dartOptions?.jniFileSpecificClassNameComponent, 'CustomKotlinPrefix');
+        expect(explicit.dartOptions?.fileSpecificClassNameComponent, 'CustomSwiftPrefix');
+
+        final InternalPigeonOptions derived = InternalPigeonOptions.fromPigeonOptions(
+          const PigeonOptions(
+            dartOut: 'lib/messages.g.dart',
+            kotlinOut: 'android/AndroidMessages.g.kt',
+            swiftOut: 'ios/DarwinMessages.g.swift',
+            kotlinOptions: KotlinOptions(useJni: true),
+            swiftOptions: SwiftOptions(useFfi: true),
+          ),
+        );
+        expect(derived.dartOptions?.jniFileSpecificClassNameComponent, 'AndroidMessages');
+        expect(derived.dartOptions?.fileSpecificClassNameComponent, 'DarwinMessages');
+
+        final InternalPigeonOptions disabled = InternalPigeonOptions.fromPigeonOptions(
+          const PigeonOptions(
+            dartOut: 'lib/messages.g.dart',
+            kotlinOut: 'android/AndroidMessages.g.kt',
+            kotlinOptions: KotlinOptions(),
+          ),
+        );
+        expect(disabled.dartOptions?.jniFileSpecificClassNameComponent, isNull);
+      },
+    );
+
+    test(
+      'JnigenConfigGenerator and FfigenConfigGenerator include stream classes iff root has host streams',
+      () {
+        final streamRoot = Root(
+          apis: <Api>[
+            AstHostApi(
+              name: 'StreamApi',
+              methods: <Method>[
+                Method(
+                  name: 'numbers',
+                  location: ApiLocation.host,
+                  parameters: <Parameter>[],
+                  returnType: const TypeDeclaration(baseName: 'int', isNullable: false),
+                  isStream: true,
+                ),
+              ],
+            ),
+          ],
+          classes: <Class>[],
+          enums: <Enum>[],
+        );
+        final plainRoot = Root(
+          apis: <Api>[
+            AstHostApi(
+              name: 'PlainApi',
+              methods: <Method>[
+                Method(
+                  name: 'ping',
+                  location: ApiLocation.host,
+                  parameters: <Parameter>[],
+                  returnType: const TypeDeclaration(baseName: 'int', isNullable: false),
+                ),
+              ],
+            ),
+          ],
+          classes: <Class>[],
+          enums: <Enum>[],
+        );
+
+        final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+          const PigeonOptions(
+            dartOut: 'lib/streams.g.dart',
+            kotlinOut: 'android/Streams.g.kt',
+            swiftOut: 'ios/Streams.g.swift',
+            kotlinOptions: KotlinOptions(package: 'com.example', useJni: true),
+            swiftOptions: SwiftOptions(useFfi: true),
+          ),
+        );
+
+        final jniStreamSink = StringBuffer();
+        const JnigenConfigGeneratorAdapter().generate(
+          jniStreamSink,
+          options,
+          streamRoot,
+          FileType.na,
+        );
+        final jniStreamConfig = jniStreamSink.toString();
+        expect(jniStreamConfig, contains('com.example.StreamsPigeonStreamCallback'));
+        expect(jniStreamConfig, contains('com.example.StreamsPigeonStreamCancelHandle'));
+
+        final jniPlainSink = StringBuffer();
+        const JnigenConfigGeneratorAdapter().generate(
+          jniPlainSink,
+          options,
+          plainRoot,
+          FileType.na,
+        );
+        final jniPlainConfig = jniPlainSink.toString();
+        expect(jniPlainConfig, isNot(contains('PigeonStreamCallback')));
+        expect(jniPlainConfig, isNot(contains('PigeonStreamCancelHandle')));
+
+        final ffiStreamSink = StringBuffer();
+        const FfigenConfigGeneratorAdapter().generate(
+          ffiStreamSink,
+          options,
+          streamRoot,
+          FileType.na,
+        );
+        final ffiStreamConfig = ffiStreamSink.toString();
+        expect(ffiStreamConfig, contains('StreamsPigeonStreamCancelHandle'));
+
+        final ffiPlainSink = StringBuffer();
+        const FfigenConfigGeneratorAdapter().generate(
+          ffiPlainSink,
+          options,
+          plainRoot,
+          FileType.na,
+        );
+        final ffiPlainConfig = ffiPlainSink.toString();
+        expect(ffiPlainConfig, isNot(contains('PigeonStreamCancelHandle')));
       },
     );
   });

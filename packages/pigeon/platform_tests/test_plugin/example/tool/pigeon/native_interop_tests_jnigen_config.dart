@@ -15,6 +15,8 @@ void main() async {
     input: Input(
       classes: [
         'com.example.test_plugin.NativeInteropTestsError',
+        'com.example.test_plugin.NativeInteropTestsPigeonStreamCallback',
+        'com.example.test_plugin.NativeInteropTestsPigeonStreamCancelHandle',
         'com.example.test_plugin.NativeInteropHostIntegrationCoreApiRegistrar',
         'com.example.test_plugin.NativeInteropFlutterIntegrationCoreApiBridge',
         'com.example.test_plugin.NativeInteropFlutterIntegrationCoreApiRegistrar',
@@ -24,6 +26,7 @@ void main() async {
         'com.example.test_plugin.NativeInteropSealedClassHostApiRegistrar',
         'com.example.test_plugin.NativeInteropSealedClassFlutterApiBridge',
         'com.example.test_plugin.NativeInteropSealedClassFlutterApiRegistrar',
+        'com.example.test_plugin.NativeInteropStreamHostApiRegistrar',
         'com.example.test_plugin.NativeInteropUnusedClass',
         'com.example.test_plugin.NativeInteropAllTypes',
         'com.example.test_plugin.NativeInteropAllNullableTypes',

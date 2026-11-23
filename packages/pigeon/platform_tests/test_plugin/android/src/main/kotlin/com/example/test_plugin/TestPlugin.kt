@@ -18,6 +18,9 @@ import kotlin.coroutines.resumeWithException
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
@@ -48,7 +51,7 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi, HostCallbackCoreApi {
   internal var niMessageApiImpl: NativeInteropIntegrationTests? = null
   private var niReservedNamesImpl: NativeInteropReservedNamesHostApiImpl? = null
   private var niSealedClassImpl: NativeInteropSealedClassHostApiImpl? = null
-  private var eventChannelOne: StreamConsistentNumbersEventChannel? = null
+  private var niStreamImpl: NativeInteropStreamHostApiImpl? = null
 
   override fun onAttachedToEngine(binding: FlutterPluginBinding) {
     HostIntegrationCoreApi.setUp(binding.binaryMessenger, this)
@@ -66,6 +69,9 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi, HostCallbackCoreApi {
     val sealedImpl = NativeInteropSealedClassHostApiImpl(binding)
     niSealedClassImpl = sealedImpl
     NativeInteropSealedClassHostApiRegistrar().register(sealedImpl, binding)
+    val streamImpl = NativeInteropStreamHostApiImpl()
+    niStreamImpl = streamImpl
+    NativeInteropStreamHostApiRegistrar().register(streamImpl, binding)
     flutterApi = FlutterIntegrationCoreApi(binding.binaryMessenger)
     flutterCallbackApi = FlutterCallbackCoreApi(binding.binaryMessenger)
     flutterSmallApiOne = FlutterSmallApi(binding.binaryMessenger, "suffixOne")
@@ -74,22 +80,17 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi, HostCallbackCoreApi {
     proxyApiRegistrar = ProxyApiRegistrar(binding.binaryMessenger)
     proxyApiRegistrar!!.setUp()
 
-    StreamEventsStreamHandler.register(binding.binaryMessenger, SendClass)
-    StreamIntsStreamHandler.register(binding.binaryMessenger, SendInts)
-    // Store one handler to exercise the handler removal codepath, and discard
-    // the other to test that the return value can be safely ignored.
-    val streamHandlerOne = SendConsistentNumbers(1)
-    eventChannelOne =
-        StreamConsistentNumbersStreamHandler.register(
-            binding.binaryMessenger, streamHandlerOne, "1")
-    streamHandlerOne.onCancelled = { eventChannelOne?.setStreamHandler(null) }
-    StreamConsistentNumbersStreamHandler.register(
-        binding.binaryMessenger, SendConsistentNumbers(2), "2")
+    StreamHostTestApi.setUp(binding.binaryMessenger, StreamHostTestApiImpl())
+    StreamHostTestApi.setUp(binding.binaryMessenger, StreamHostTestApiImpl(100), "1")
+    StreamHostTestApi.setUp(binding.binaryMessenger, StreamHostTestApiImpl(200), "2")
   }
 
   override fun onDetachedFromEngine(binding: FlutterPluginBinding) {
     HostIntegrationCoreApi.setUp(binding.binaryMessenger, null)
     HostCallbackCoreApi.setUp(binding.binaryMessenger, null)
+    StreamHostTestApi.setUp(binding.binaryMessenger, null)
+    StreamHostTestApi.setUp(binding.binaryMessenger, null, "1")
+    StreamHostTestApi.setUp(binding.binaryMessenger, null, "2")
     niMessageApiImpl?.let { NativeInteropHostIntegrationCoreApiRegistrar().unregister(it, binding) }
     niMessageApiImpl = null
     niReservedNamesImpl?.let {
@@ -98,6 +99,8 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi, HostCallbackCoreApi {
     niReservedNamesImpl = null
     niSealedClassImpl?.let { NativeInteropSealedClassHostApiRegistrar().unregister(it, binding) }
     niSealedClassImpl = null
+    niStreamImpl?.let { NativeInteropStreamHostApiRegistrar().unregister(it, binding) }
+    niStreamImpl = null
     proxyApiRegistrar?.tearDown()
   }
 
@@ -2522,95 +2525,6 @@ class NativeInteropReservedNamesHostApiImpl(private val binding: FlutterPluginBi
   }
 }
 
-object SendInts : StreamIntsStreamHandler() {
-  val handler = Handler(Looper.getMainLooper())
-
-  override fun onListen(p0: Any?, sink: PigeonEventSink<Long>) {
-    var count: Long = 0
-    val r: Runnable =
-        object : Runnable {
-          override fun run() {
-            handler.post {
-              if (count >= 5) {
-                sink.endOfStream()
-              } else {
-                sink.success(count)
-                count++
-                handler.postDelayed(this, 10)
-              }
-            }
-          }
-        }
-    handler.postDelayed(r, 10)
-  }
-}
-
-object SendClass : StreamEventsStreamHandler() {
-  val handler = Handler(Looper.getMainLooper())
-  val eventList =
-      listOf(
-          IntEvent(1),
-          StringEvent("string"),
-          BoolEvent(false),
-          DoubleEvent(3.14),
-          ObjectsEvent(true),
-          EnumEvent(EventEnum.FORTY_TWO),
-          ClassEvent(EventAllNullableTypes(aNullableInt = 0)),
-          EmptyEvent())
-
-  override fun onListen(p0: Any?, sink: PigeonEventSink<PlatformEvent>) {
-    var count = 0
-    val r: Runnable =
-        object : Runnable {
-          override fun run() {
-            if (count >= eventList.size) {
-              sink.endOfStream()
-            } else {
-              handler.post {
-                sink.success(eventList[count])
-                count++
-              }
-              handler.postDelayed(this, 10)
-            }
-          }
-        }
-    handler.postDelayed(r, 10)
-  }
-}
-
-class SendConsistentNumbers(private val numberToSend: Long) :
-    StreamConsistentNumbersStreamHandler() {
-  private val handler = Handler(Looper.getMainLooper())
-  var onCancelled: (() -> Unit)? = null
-
-  override fun onListen(p0: Any?, sink: PigeonEventSink<Long>) {
-    var count = 0
-    val r: Runnable =
-        object : Runnable {
-          override fun run() {
-            if (count >= 10) {
-              sink.endOfStream()
-            } else {
-              handler.post {
-                sink.success(numberToSend)
-                count++
-              }
-              handler.postDelayed(this, 10)
-            }
-          }
-        }
-    handler.postDelayed(r, 10)
-  }
-
-  // Closing the stream causes the Dart side to send a "cancel" call, so any
-  // handler removal must wait until that call has been received. Removing the
-  // handler immediately after endOfStream races with the "cancel" call, which
-  // then fails with a MissingPluginException.
-  override fun onCancel(p0: Any?) {
-    onCancelled?.invoke()
-  }
-}
-
 class NativeInteropSealedClassHostApiImpl(private val binding: FlutterPluginBinding? = null) :
     NativeInteropSealedClassHostApi {
   override fun echoShape(shape: NativeInteropShape): NativeInteropShape {
@@ -2639,5 +2553,191 @@ class NativeInteropSealedClassHostApiImpl(private val binding: FlutterPluginBind
     return NativeInteropSealedClassFlutterApiRegistrar()
         .getInstance(checkNotNull(binding))!!
         .echoShape(shape)
+  }
+}
+
+class StreamHostTestApiImpl(private val offset: Long = 0) : StreamHostTestApi {
+  private val cancelledStreamCount = java.util.concurrent.atomic.AtomicLong(0)
+
+  override fun streamNumbers(count: Long, start: Long): Flow<Long> = flow {
+    try {
+      for (i in 0 until count) {
+        emit(offset + start + i)
+        delay(5)
+      }
+    } catch (e: kotlinx.coroutines.CancellationException) {
+      cancelledStreamCount.incrementAndGet()
+      throw e
+    }
+  }
+
+  override fun streamPlatformEvents(): Flow<PlatformEvent> = flow {
+    val events =
+        listOf(
+            IntEvent(1),
+            StringEvent("string"),
+            BoolEvent(false),
+            DoubleEvent(3.14),
+            ObjectsEvent(true),
+            EnumEvent(EventEnum.FORTY_TWO),
+            ClassEvent(EventAllNullableTypes(aNullableInt = 0)),
+            EmptyEvent())
+    for (event in events) {
+      emit(event)
+      delay(5)
+    }
+  }
+
+  override fun streamNullableInts(): Flow<Long?> = flow {
+    emit(1L)
+    emit(null)
+    emit(2L)
+  }
+
+  override fun streamError(customError: Boolean): Flow<Long> = flow {
+    emit(1L)
+    if (customError) {
+      throw EventChannelTestsError("error_code", "error_message", "error_details")
+    } else {
+      throw IllegalStateException("boom")
+    }
+  }
+
+  override fun streamViaCallback(
+      prefix: String,
+      count: Long,
+      sink: EventChannelTestsPigeonEventSink<String>
+  ): AutoCloseable? {
+    val handlerThread = android.os.HandlerThread("pigeon-callback-stream").apply { start() }
+    val handler = Handler(handlerThread.looper)
+    var index = 0L
+    val cancelled = java.util.concurrent.atomic.AtomicBoolean(false)
+    val runnable =
+        object : Runnable {
+          override fun run() {
+            if (cancelled.get()) {
+              handlerThread.quitSafely()
+              return
+            }
+            if (prefix == "error") {
+              sink.error("callback_error", "callback_message", "callback_details")
+              handlerThread.quitSafely()
+              return
+            }
+            if (index >= count) {
+              sink.endOfStream()
+              handlerThread.quitSafely()
+            } else {
+              sink.success("$prefix:$index")
+              index++
+              handler.postDelayed(this, 5)
+            }
+          }
+        }
+    handler.postDelayed(runnable, 5)
+    return AutoCloseable {
+      cancelled.set(true)
+      cancelledStreamCount.incrementAndGet()
+      handler.removeCallbacks(runnable)
+      handlerThread.quitSafely()
+    }
+  }
+
+  override fun getCancelledStreamCount(): Long = cancelledStreamCount.get()
+
+  override fun resetCancelledStreamCount() {
+    cancelledStreamCount.set(0)
+  }
+}
+
+class NativeInteropStreamHostApiImpl : NativeInteropStreamHostApi {
+  private val cancelledStreamCount = java.util.concurrent.atomic.AtomicLong(0)
+
+  override fun streamNumbers(count: Long, start: Long): Flow<Long> = flow {
+    var emitted = 0L
+    try {
+      for (i in 0L until count) {
+        emit(start + i)
+        emitted++
+        if (count > 10L) {
+          delay(10)
+        }
+      }
+    } finally {
+      if (emitted < count) {
+        cancelledStreamCount.incrementAndGet()
+      }
+    }
+  }
+
+  override fun streamNullableInts(): Flow<Long?> = flow {
+    emit(1L)
+    emit(null)
+    emit(2L)
+  }
+
+  override fun streamShapes(): Flow<NativeInteropShape> = flow {
+    emit(NativeInteropCircle(radius = 3.5))
+    emit(NativeInteropSquare(side = 4.0, label = "square"))
+  }
+
+  override fun streamShapesWithFilter(filter: NativeInteropShape): Flow<NativeInteropShape> = flow {
+    emit(filter)
+  }
+
+  override fun streamError(customError: Boolean): Flow<Long> = flow {
+    emit(1L)
+    if (customError) {
+      throw NativeInteropTestsError("error_code", "error_message", "error_details")
+    } else {
+      throw IllegalStateException("non_custom_error")
+    }
+  }
+
+  override fun streamViaCallback(
+      prefix: String,
+      count: Long,
+      sink: NativeInteropTestsPigeonEventSink<String>,
+  ): AutoCloseable {
+    val handlerThread = android.os.HandlerThread("NativeInteropStreamHostApiImpl-callback")
+    handlerThread.start()
+    val handler = android.os.Handler(handlerThread.looper)
+    val cancelled = java.util.concurrent.atomic.AtomicBoolean(false)
+    var index = 0L
+    val runnable =
+        object : Runnable {
+          override fun run() {
+            if (cancelled.get()) {
+              handlerThread.quitSafely()
+              return
+            }
+            if (prefix == "error") {
+              sink.error("callback_error", "callback_message", "callback_details")
+              handlerThread.quitSafely()
+              return
+            }
+            if (index >= count) {
+              sink.endOfStream()
+              handlerThread.quitSafely()
+            } else {
+              sink.success("$prefix:$index")
+              index++
+              handler.postDelayed(this, 5)
+            }
+          }
+        }
+    handler.postDelayed(runnable, 5)
+    return AutoCloseable {
+      cancelled.set(true)
+      cancelledStreamCount.incrementAndGet()
+      handler.removeCallbacks(runnable)
+      handlerThread.quitSafely()
+    }
+  }
+
+  override fun getCancelledStreamCount(): Long = cancelledStreamCount.get()
+
+  override fun resetCancelledStreamCount() {
+    cancelledStreamCount.set(0)
   }
 }

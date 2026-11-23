@@ -280,18 +280,6 @@ class SwiftProxyApiOptions {
   final bool supportsMacos;
 }
 
-/// Options for Swift implementation of Event Channels.
-class SwiftEventChannelOptions {
-  /// Constructs a [SwiftEventChannelOptions].
-  const SwiftEventChannelOptions({this.includeSharedClasses = true});
-
-  /// Whether to include the error class in generation.
-  ///
-  /// This should only ever be set to false if you have another generated
-  /// Swift file with Event Channels in the same directory.
-  final bool includeSharedClasses;
-}
-
 // Prefix used mapping prefixed class names for language outputs.
 String _classNamePrefix = '';
 
@@ -1305,9 +1293,9 @@ private enum $codec {
     Indent indent, {
     required String dartPackageName,
   }) {
-    if (generatorOptions.useFfi && !root.containsEventChannel && !root.containsProxyApi) {
+    if (generatorOptions.useFfi && !root.containsProxyApi) {
       _writeFfiCodec(indent, root);
-      if (generatorOptions.useFfiHybrid) {
+      if (generatorOptions.useFfiHybrid || root.containsHostStream) {
         _writeFfiInteropCodec(generatorOptions, root, indent);
       }
       return;
@@ -1438,12 +1426,6 @@ private enum $codec {
       indent.writeln('static let shared = $codecName(readerWriter: $readerWriterName())');
     });
     indent.newln();
-    if (root.containsEventChannel) {
-      indent.writeln(
-        'var ${_getMethodCodecVarName(generatorOptions)} = FlutterStandardMethodCodec(readerWriter: $readerWriterName());',
-      );
-      indent.newln();
-    }
   }
 
   void _writeDataClassSignature(
@@ -2536,7 +2518,11 @@ if (wrapped == nil) {
       '}',
       () {
         _writeDisplacedLifetimeComment(indent);
+        final bool apiHasStream = api.methods.any((Method m) => m.isStream);
         indent.writeln('var displaced: [Any] = []');
+        if (apiHasStream) {
+          indent.writeln('var removedSetups: [$setupName] = []');
+        }
         indent.writeScoped('do {', '}', () {
           indent.writeln('$tracker.lock.lock()');
           indent.writeln('defer { $tracker.lock.unlock() }');
@@ -2569,6 +2555,10 @@ if (wrapped == nil) {
             indent.writeScoped('if existing === api && entry.engineKey == removeKey {', '}', () {
               indent.writeln('displaced.append(existing)');
               indent.writeln('displaced.append(entry)');
+              if (apiHasStream) {
+                indent.writeln('entry.pigeonStreamsClosed = true');
+                indent.writeln('removedSetups.append(entry)');
+              }
               indent.writeln('entry.api = nil');
               indent.writeln('return true');
             });
@@ -2581,6 +2571,11 @@ if (wrapped == nil) {
             indent.writeln('$instances[name] = list');
           });
         });
+        if (apiHasStream) {
+          indent.writeScoped('for setup in removedSetups {', '}', () {
+            indent.writeln('setup.pigeonCancelAllStreams()');
+          });
+        }
         indent.writeln('withExtendedLifetime(displaced) {}');
       },
     );
@@ -2695,16 +2690,29 @@ if (wrapped == nil) {
     indent.writeln(
       '$_docCommentPrefix Generated setup class from Pigeon to register implemented ${api.name} classes.',
     );
+    final bool apiHasStream = api.methods.any((Method m) => m.isStream);
+    final bool apiHasAsyncStream = api.methods.any(
+      (Method m) => m.isStream && !m.isAsynchronousCallback,
+    );
+    final String prefix = _classNamePrefix;
+    final String errorClassName = _getErrorClassName(generatorOptions);
+    final codec = '${prefix}PigeonInteropCodec';
     indent.writeScoped('@objc class ${api.name}Setup: NSObject {', '}', () {
       if (generatorOptions.useFfi) {
         indent.writeln('private var api: ${api.name}?');
+        if (apiHasStream) {
+          indent.writeln(
+            'private var pigeonActiveStreams: [ObjectIdentifier: ${prefix}PigeonStreamCancelHandle] = [:]',
+          );
+          indent.writeln('private var pigeonStreamsClosed = false');
+        }
         indent.writeln('override init() {}');
         indent.writeScoped('private func resolveApi() throws -> ${api.name} {', '}', () {
           indent.writeln('${api.name}InstanceTracker.lock.lock()');
           indent.writeln('let registeredApi = api');
           indent.writeln('${api.name}InstanceTracker.lock.unlock()');
           indent.writeScoped('guard let currentApi = registeredApi else {', '}', () {
-            indent.writeScoped('throw ${_getErrorClassName(generatorOptions)}(', ')', () {
+            indent.writeScoped('throw $errorClassName(', ')', () {
               indent.writeln('code: "unregistered-instance",');
               indent.writeln('message: "${api.name} has not been registered.",');
               indent.writeln('details: nil');
@@ -2712,9 +2720,118 @@ if (wrapped == nil) {
           });
           indent.writeln('return currentApi');
         });
+        if (apiHasStream) {
+          indent.writeScoped(
+            'private func pigeonTrackStream(_ handle: ${prefix}PigeonStreamCancelHandle) throws {',
+            '}',
+            () {
+              indent.writeln('${api.name}InstanceTracker.lock.lock()');
+              indent.writeln('defer { ${api.name}InstanceTracker.lock.unlock() }');
+              indent.writeScoped('if pigeonStreamsClosed || api == nil {', '}', () {
+                indent.writeScoped('throw $errorClassName(', ')', () {
+                  indent.writeln('code: "unregistered-instance",');
+                  indent.writeln('message: "${api.name} has not been registered.",');
+                  indent.writeln('details: nil');
+                });
+              });
+              indent.writeln('pigeonActiveStreams[ObjectIdentifier(handle)] = handle');
+            },
+          );
+          indent.writeScoped(
+            'private func pigeonUntrackStream(_ handle: ${prefix}PigeonStreamCancelHandle) {',
+            '}',
+            () {
+              indent.writeln('let displaced: ${prefix}PigeonStreamCancelHandle?');
+              indent.writeScoped('do {', '}', () {
+                indent.writeln('${api.name}InstanceTracker.lock.lock()');
+                indent.writeln('defer { ${api.name}InstanceTracker.lock.unlock() }');
+                indent.writeln(
+                  'displaced = pigeonActiveStreams.removeValue(forKey: ObjectIdentifier(handle))',
+                );
+              });
+              _writeDisplacedLifetimeComment(indent);
+              indent.writeln('withExtendedLifetime(displaced) {}');
+            },
+          );
+          indent.writeScoped('fileprivate func pigeonCancelAllStreams() {', '}', () {
+            indent.writeln('let handles: [${prefix}PigeonStreamCancelHandle]');
+            indent.writeScoped('do {', '}', () {
+              indent.writeln('${api.name}InstanceTracker.lock.lock()');
+              indent.writeln('defer { ${api.name}InstanceTracker.lock.unlock() }');
+              indent.writeln('pigeonStreamsClosed = true');
+              indent.writeln('handles = Array(pigeonActiveStreams.values)');
+              indent.writeln('pigeonActiveStreams.removeAll()');
+            });
+            indent.writeScoped('for handle in handles {', '}', () {
+              indent.writeln('handle.cancel()');
+            });
+          });
+          if (apiHasAsyncStream) {
+            indent.writeScoped(
+              'private func pigeonStartAsyncStream<Element>(_ makeStream: () -> AsyncThrowingStream<Element, Error>, onData: @escaping (NSData?) -> Void, onError: @escaping (String, String?, NSData?) -> Void, onDone: @escaping () -> Void, encode: @escaping @Sendable (Element) -> NSData?) throws -> ${prefix}PigeonStreamCancelHandle {',
+              '}',
+              () {
+                indent.writeln(
+                  'let callbacks = ${prefix}PigeonFfiStreamCallbacks(onData: onData, onError: onError, onDone: onDone)',
+                );
+                indent.writeln('let taskHandle = ${prefix}PigeonStreamTaskHandle()');
+                indent.writeScoped(
+                  'let cancelHandle = ${prefix}PigeonStreamCancelHandle(',
+                  ')',
+                  () {
+                    indent.writeScoped('onCancel: {', '},', () {
+                      indent.writeln('callbacks.clear()');
+                      indent.writeln('taskHandle.cancel()');
+                    });
+                    indent.writeScoped('onFinish: { [weak self] handle in', '}', () {
+                      indent.writeln('self?.pigeonUntrackStream(handle)');
+                    });
+                  },
+                );
+                indent.writeln('try pigeonTrackStream(cancelHandle)');
+                indent.writeln('let streamBox = ${prefix}PigeonStreamBox(makeStream())');
+                indent.writeScoped('let task = Task {', '}', () {
+                  indent.writeScoped('do {', '}', () {
+                    indent.writeScoped('for try await event in streamBox.stream {', '}', () {
+                      indent.writeln('if Task.isCancelled { break }');
+                      indent.writeln('callbacks.sendData(encode(event))');
+                    });
+                    indent.writeScoped('if !Task.isCancelled {', '}', () {
+                      indent.writeln('callbacks.sendDone()');
+                    });
+                    indent.writeln('cancelHandle.markFinished()');
+                  }, addTrailingNewline: false);
+                  indent.addScoped(' catch let error as $errorClassName {', '}', () {
+                    indent.writeScoped('if !Task.isCancelled {', '}', () {
+                      indent.writeln(
+                        'callbacks.sendError(code: error.code ?? "", message: error.message, details: $codec.encodeOrNil(error.details))',
+                      );
+                    });
+                    indent.writeln('cancelHandle.markFinished()');
+                  }, addTrailingNewline: false);
+                  indent.addScoped(' catch {', '}', () {
+                    indent.writeScoped('if !Task.isCancelled {', '}', () {
+                      indent.writeln(
+                        r'callbacks.sendError(code: "\(error)", message: "\(Swift.type(of: error))", details: '
+                        '$codec.encodeOrNil("Stacktrace: \\(Thread.callStackSymbols)"))',
+                      );
+                    });
+                    indent.writeln('cancelHandle.markFinished()');
+                  });
+                });
+                indent.writeln('taskHandle.attach(task)');
+                indent.writeln('return cancelHandle');
+              },
+            );
+          }
+        }
         _writeFfiHostApiRegistration(indent, api);
       }
       for (final Method method in api.methods) {
+        if (method.isStream) {
+          _writeFfiHostStreamEntryPoint(generatorOptions, indent, method);
+          continue;
+        }
         if (generatorOptions.useFfiHybrid) {
           _writeFfiHybridHostEntryPoint(generatorOptions, indent, method);
           continue;
@@ -2805,6 +2922,150 @@ if (wrapped == nil) {
         });
       }
     });
+  }
+
+  /// Writes the FFI transport entry point for a streaming host API [method].
+  void _writeFfiHostStreamEntryPoint(
+    InternalSwiftOptions generatorOptions,
+    Indent indent,
+    Method method,
+  ) {
+    final bool hybrid = generatorOptions.useFfiHybrid;
+    final String prefix = _classNamePrefix;
+    final codec = '${prefix}PigeonInteropCodec';
+    final String errorClassName = _getErrorClassName(generatorOptions);
+    final components = _SwiftFunctionComponents(
+      name: method.name,
+      parameters: method.parameters,
+      returnType: method.returnType,
+      swiftFunction: method.swiftFunction,
+    );
+    final List<Parameter> encodedParameters = hybrid
+        ? nativeInteropEncodedParameters(method.parameters)
+        : const <Parameter>[];
+    final paramParts = <String>[];
+    if (hybrid) {
+      for (final Parameter parameter in method.parameters) {
+        if (isNativeInteropDirectType(parameter.type)) {
+          paramParts.add(
+            '${parameter.name} ${_hybridSwiftParameterName(parameter)}: ${_hybridSwiftDirectParameterType(parameter.type)}',
+          );
+        }
+      }
+      if (encodedParameters.isNotEmpty) {
+        paramParts.add('$nativeInteropArgsParameterName: NSData');
+      }
+    } else {
+      for (final (int index, Parameter parameter) in method.parameters.indexed) {
+        final String safeName = _getSafeArgumentName(index, parameter);
+        paramParts.add(
+          '${parameter.name} $safeName: ${_nullSafeFfiTypeForDartType(parameter.type)}',
+        );
+      }
+    }
+    paramParts.addAll(<String>[
+      'pigeonOnData: @escaping (NSData?) -> Void',
+      'pigeonOnError: @escaping (String, String?, NSData?) -> Void',
+      'pigeonOnDone: @escaping () -> Void',
+      'wrappedError: $errorClassName',
+    ]);
+    addDocumentationComments(indent, method.documentationComments, _docCommentSpec);
+    if (encodedParameters.isNotEmpty) {
+      indent.writeln('// swift-format-ignore: AlwaysUseLowerCamelCase');
+    }
+    indent.writeScoped(
+      '@objc func ${method.name}(${paramParts.join(', ')}) -> ${prefix}PigeonStreamCancelHandle? {',
+      '}',
+      () {
+        indent.writeScoped('do {', '}', () {
+          indent.writeln('let activeApi = try resolveApi()');
+          final argumentValues = <String>[];
+          if (hybrid) {
+            if (encodedParameters.isNotEmpty) {
+              indent.writeln(
+                'var reader = ${prefix}PigeonInteropReader($nativeInteropArgsParameterName)',
+              );
+              indent.writeln('reader.readListHeader()');
+            }
+            for (final (int index, Parameter parameter) in method.parameters.indexed) {
+              if (isNativeInteropDirectType(parameter.type)) {
+                argumentValues.add(
+                  _hybridSwiftParameterToSwift(
+                    _hybridSwiftParameterName(parameter),
+                    parameter.type,
+                    codec,
+                  ),
+                );
+              } else {
+                final String argName = _getSafeArgumentName(index, parameter);
+                indent.writeln(
+                  'let $argName = ${_swiftInteropRead(parameter.type, reader: 'reader')}',
+                );
+                argumentValues.add(argName);
+              }
+            }
+          } else {
+            for (final (int index, Parameter parameter) in method.parameters.indexed) {
+              argumentValues.add(
+                _varToSwift(_getSafeArgumentName(index, parameter), parameter.type),
+              );
+            }
+          }
+          final String arguments = indexMap(components.arguments, (
+            int index,
+            _SwiftFunctionArgument argument,
+          ) {
+            final label = argument.label == '_' ? '' : '${argument.label ?? argument.name}: ';
+            return '$label${argumentValues[index]}';
+          }).join(', ');
+          final String elementType = _nullSafeSwiftTypeForDartType(
+            method.returnType,
+            ffiTypedData: true,
+          );
+          final String encodeEvent = _swiftInteropEncode('event', method.returnType, codec);
+
+          if (method.isAsynchronousCallback) {
+            indent.writeScoped('let sink = ${prefix}PigeonEventSink<$elementType>(', ')', () {
+              indent.writeln('onData: pigeonOnData,');
+              indent.writeln('onError: pigeonOnError,');
+              indent.writeln('onDone: pigeonOnDone,');
+              indent.writeln('encode: { event in $encodeEvent }');
+            });
+            indent.writeScoped('let cancelHandle = ${prefix}PigeonStreamCancelHandle(', ')', () {
+              indent.writeln('onCancel: { sink.close() },');
+              indent.writeScoped('onFinish: { [weak self] handle in', '}', () {
+                indent.writeln('self?.pigeonUntrackStream(handle)');
+              });
+            });
+            indent.writeln('try pigeonTrackStream(cancelHandle)');
+            indent.writeln('sink.attachOnClosed { cancelHandle.markFinished() }');
+            final callArgs = arguments.isEmpty ? 'sink: sink' : '$arguments, sink: sink';
+            indent.writeln('let cancelCallback = activeApi.${components.name}($callArgs)');
+            indent.writeln('sink.attachCancel(cancelCallback)');
+            indent.writeln('return cancelHandle');
+          } else {
+            indent.writeScoped('return try pigeonStartAsyncStream(', ')', () {
+              indent.writeln('{ activeApi.${components.name}($arguments) },');
+              indent.writeln('onData: pigeonOnData,');
+              indent.writeln('onError: pigeonOnError,');
+              indent.writeln('onDone: pigeonOnDone,');
+              indent.writeln('encode: { event in $encodeEvent }');
+            });
+          }
+        }, addTrailingNewline: false);
+        indent.addScoped(' catch let error as $errorClassName {', '}', () {
+          indent.writeln('wrappedError.code = error.code');
+          indent.writeln('wrappedError.message = error.message');
+          indent.writeln('wrappedError.details = error.details');
+        }, addTrailingNewline: false);
+        indent.addScoped(' catch let error {', '}', () {
+          indent.writeln(r'wrappedError.code = "\(error)"');
+          indent.writeln(r'wrappedError.message = "\(Swift.type(of: error))"');
+          indent.writeln(r'wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"');
+        });
+        indent.writeln('return nil');
+      },
+    );
   }
 
   /// Writes the hybrid transport entry point for the host API [method].
@@ -2957,6 +3218,8 @@ if (wrapped == nil) {
             errorTypeName: 'Error',
             isAsynchronous: method.isAsynchronous,
             isAsynchronousCallback: method.isAsynchronousCallback,
+            isStream: method.isStream,
+            classNamePrefix: _classNamePrefix,
             swiftFunction: method.swiftFunction,
             ffiUserApi: generatorOptions.useFfi,
           ),
@@ -2972,6 +3235,11 @@ if (wrapped == nil) {
       '$_docCommentPrefix Generated setup class from Pigeon to handle messages through the `binaryMessenger`.',
     );
     indent.writeScoped('class ${apiName}Setup {', '}', () {
+      if (api.methods.any((Method m) => m.isStream)) {
+        indent.writeln(
+          'private static let streamRegistry = ${_classNamePrefix}PigeonStreamRegistry()',
+        );
+      }
       indent.writeln(
         'static var codec: FlutterStandardMessageCodec { ${_getMessageCodecName(generatorOptions)}.shared }',
       );
@@ -2987,7 +3255,7 @@ if (wrapped == nil) {
         );
         String? serialBackgroundQueue;
         if (api.methods.any(
-          (Method m) => m.taskQueueType == TaskQueueType.serialBackgroundThread,
+          (Method m) => !m.isStream && m.taskQueueType == TaskQueueType.serialBackgroundThread,
         )) {
           serialBackgroundQueue = 'taskQueue';
           // TODO(stuartmorgan): Remove the ? once macOS supports task queues
@@ -3002,20 +3270,34 @@ if (wrapped == nil) {
 #endif''');
         }
         for (final Method method in api.methods) {
-          _writeHostMethodMessageHandler(
-            indent,
-            name: method.name,
-            channelName: '${makeChannelName(api, method, dartPackageName)}\\(channelSuffix)',
-            parameters: method.parameters,
-            returnType: method.returnType,
-            isAsynchronous: method.isAsynchronous,
-            isAsynchronousCallback: method.isAsynchronousCallback,
-            swiftFunction: method.swiftFunction,
-            documentationComments: method.documentationComments,
-            serialBackgroundQueue: method.taskQueueType == TaskQueueType.serialBackgroundThread
-                ? serialBackgroundQueue
-                : null,
-          );
+          final channelName = '${makeChannelName(api, method, dartPackageName)}\\(channelSuffix)';
+          if (method.isStream) {
+            _writeHostStreamMessageHandler(
+              indent,
+              name: method.name,
+              channelName: channelName,
+              parameters: method.parameters,
+              returnType: method.returnType,
+              isAsynchronousCallback: method.isAsynchronousCallback,
+              swiftFunction: method.swiftFunction,
+              documentationComments: method.documentationComments,
+            );
+          } else {
+            _writeHostMethodMessageHandler(
+              indent,
+              name: method.name,
+              channelName: channelName,
+              parameters: method.parameters,
+              returnType: method.returnType,
+              isAsynchronous: method.isAsynchronous,
+              isAsynchronousCallback: method.isAsynchronousCallback,
+              swiftFunction: method.swiftFunction,
+              documentationComments: method.documentationComments,
+              serialBackgroundQueue: method.taskQueueType == TaskQueueType.serialBackgroundThread
+                  ? serialBackgroundQueue
+                  : null,
+            );
+          }
         }
       });
     });
@@ -3878,6 +4160,12 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
 
     _writePigeonInternal(generatorOptions, root, indent);
     _writeNilOrValue(indent);
+    if (!generatorOptions.useFfi && root.containsHostStream) {
+      _writeChannelStreamUtilities(root, indent);
+    }
+    if (generatorOptions.useFfi && root.containsHostStream) {
+      _writeFfiStreamUtilities(root, indent);
+    }
     if (_needsEngineKeys(generatorOptions, root)) {
       _writePigeonEngineKeys(indent);
     }
@@ -3962,116 +4250,6 @@ fileprivate enum PigeonEngineKeys {
     }
   #endif
 }''');
-  }
-
-  @override
-  void writeEventChannelApi(
-    InternalSwiftOptions generatorOptions,
-    Root root,
-    Indent indent,
-    AstEventChannelApi api, {
-    required String dartPackageName,
-  }) {
-    indent.newln();
-    // TODO(tarrinneal): Prefix this class to avoid name collisions.
-    indent.format('''
-      private class PigeonStreamHandler<ReturnType>: NSObject, FlutterStreamHandler {
-        private let wrapper: PigeonEventChannelWrapper<ReturnType>
-        private var pigeonSink: PigeonEventSink<ReturnType>? = nil
-
-        init(wrapper: PigeonEventChannelWrapper<ReturnType>) {
-          self.wrapper = wrapper
-        }
-
-        func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink)
-          -> FlutterError?
-        {
-          pigeonSink = PigeonEventSink<ReturnType>(events)
-          wrapper.onListen(withArguments: arguments, sink: pigeonSink!)
-          return nil
-        }
-
-        func onCancel(withArguments arguments: Any?) -> FlutterError? {
-          pigeonSink = nil
-          wrapper.onCancel(withArguments: arguments)
-          return nil
-        }
-      }''');
-    if (api.swiftOptions?.includeSharedClasses ?? true) {
-      // TODO(tarrinneal): Prefix these classes to avoid name collisions.
-      indent.format('''
-
-      class PigeonEventChannelWrapper<ReturnType> {
-        func onListen(withArguments arguments: Any?, sink: PigeonEventSink<ReturnType>) {}
-        func onCancel(withArguments arguments: Any?) {}
-      }
-
-      class PigeonEventSink<ReturnType> {
-        private let sink: FlutterEventSink
-
-        init(_ sink: @escaping FlutterEventSink) {
-          self.sink = sink
-        }
-
-        func success(_ value: ReturnType) {
-          sink(value)
-        }
-
-        func error(code: String, message: String?, details: Any?) {
-          sink(FlutterError(code: code, message: message, details: details))
-        }
-
-        func endOfStream() {
-          sink(FlutterEndOfEventStream)
-        }
-
-      }
-      ''');
-    }
-    addDocumentationComments(indent, api.documentationComments, _docCommentSpec);
-    for (final Method func in api.methods) {
-      final channelClassName = '${toUpperCamelCase(func.name)}EventChannel';
-      final streamHandlerClassName = '${toUpperCamelCase(func.name)}StreamHandler';
-      indent.format('''
-        /// A typed channel for communicating with the Flutter application using asynchronous event streams.
-        class $channelClassName {
-          private let channel: FlutterEventChannel
-
-          init(messenger: FlutterBinaryMessenger, instanceName: String = "") {
-            var channelName = "${makeChannelName(api, func, dartPackageName)}"
-            if !instanceName.isEmpty {
-              channelName += ".\\(instanceName)"
-            }
-            channel = FlutterEventChannel(name: channelName, binaryMessenger: messenger, codec: ${_getMethodCodecVarName(generatorOptions)})
-          }
-
-          /// Sets the stream handler for this channel, replacing any previous handler.
-          /// 
-          /// Pass `nil` to remove the event channel registration.
-          func setStreamHandler(_ streamHandler: $streamHandlerClassName?) {
-            let internalHandler = streamHandler.map({ PigeonStreamHandler<${_swiftTypeForDartType(func.returnType)}>(wrapper: \$0) })
-            channel.setStreamHandler(internalHandler)
-          }
-        }
-
-        class $streamHandlerClassName: PigeonEventChannelWrapper<${_swiftTypeForDartType(func.returnType)}> {
-          /// Creates and returns a new event channel that calls the provided stream handler.
-          /// 
-          /// The returned channel can be stored to allow changing or removing the stream handler.
-          /// If the handler will not be changed for the lifetime of the engine associated with the messenger,
-          /// the return value can be ignored.
-          @discardableResult static func register(
-            with messenger: FlutterBinaryMessenger,
-            instanceName: String = "",
-            streamHandler: $streamHandlerClassName
-          ) -> $channelClassName {
-            let channel = $channelClassName(messenger: messenger, instanceName: instanceName)
-            channel.setStreamHandler(streamHandler)
-            return channel
-          }
-        }
-      ''');
-    }
   }
 
   void _writeFlutterMethod(
@@ -4207,6 +4385,794 @@ fileprivate enum PigeonEngineKeys {
         },
       );
     }
+  }
+
+  void _writeAsyncStreamHelpers(Indent indent) {
+    final String prefix = _classNamePrefix;
+    indent.newln();
+    indent.format('''
+private final class ${prefix}PigeonStreamBox<Element>: @unchecked Sendable {
+  let stream: AsyncThrowingStream<Element, Error>
+  init(_ stream: AsyncThrowingStream<Element, Error>) {
+    self.stream = stream
+  }
+}
+
+private final class ${prefix}PigeonStreamTaskHandle: @unchecked Sendable {
+  private let lock = NSLock()
+  private var task: Task<Void, Never>?
+  private var cancelled = false
+
+  func attach(_ task: Task<Void, Never>) {
+    let shouldCancel: Bool
+    do {
+      lock.lock()
+      defer { lock.unlock() }
+      if cancelled {
+        shouldCancel = true
+      } else {
+        self.task = task
+        shouldCancel = false
+      }
+    }
+    if shouldCancel {
+      task.cancel()
+    }
+  }
+
+  func cancel() {
+    var currentTask: Task<Void, Never>?
+    do {
+      lock.lock()
+      defer { lock.unlock() }
+      cancelled = true
+      currentTask = task
+      task = nil
+    }
+    currentTask?.cancel()
+    // Keep currentTask alive past lock.unlock() so deallocation never runs while holding lock.
+    withExtendedLifetime(currentTask) {}
+  }
+}''');
+  }
+
+  void _writeFfiStreamUtilities(Root root, Indent indent) {
+    final String prefix = _classNamePrefix;
+    final codec = '${prefix}PigeonInteropCodec';
+    final bool hasAsyncStream = root.apis.whereType<AstHostApi>().any(
+      (AstHostApi api) =>
+          api.methods.any((Method method) => method.isStream && !method.isAsynchronousCallback),
+    );
+    final bool hasCallbackStream = root.apis.whereType<AstHostApi>().any(
+      (AstHostApi api) =>
+          api.methods.any((Method method) => method.isStream && method.isAsynchronousCallback),
+    );
+    indent.newln();
+    indent.format('''
+/// FFI handle returned to generated Dart code to cancel an active stream.
+/// Not intended for direct use.
+@objc public class ${prefix}PigeonStreamCancelHandle: NSObject, @unchecked Sendable {
+  private let lock = NSLock()
+  private var finished = false
+  private var onCancel: (() -> Void)?
+  private var onFinish: ((${prefix}PigeonStreamCancelHandle) -> Void)?
+
+  internal init(
+    onCancel: @escaping () -> Void,
+    onFinish: @escaping (${prefix}PigeonStreamCancelHandle) -> Void
+  ) {
+    self.onCancel = onCancel
+    self.onFinish = onFinish
+  }
+
+  /// Cancels the stream associated with this handle. Safe to call more than once.
+  @objc public func cancel() {
+    let cancelAction: (() -> Void)?
+    let finishAction: ((${prefix}PigeonStreamCancelHandle) -> Void)?
+    do {
+      lock.lock()
+      defer { lock.unlock() }
+      guard !finished else { return }
+      finished = true
+      cancelAction = onCancel
+      finishAction = onFinish
+      onCancel = nil
+      onFinish = nil
+    }
+    finishAction?(self)
+    cancelAction?()
+  }
+
+  fileprivate func markFinished() {
+    let finishAction: ((${prefix}PigeonStreamCancelHandle) -> Void)?
+    let displacedCancel: (() -> Void)?
+    do {
+      lock.lock()
+      defer { lock.unlock() }
+      guard !finished else { return }
+      finished = true
+      finishAction = onFinish
+      displacedCancel = onCancel
+      onCancel = nil
+      onFinish = nil
+    }
+    finishAction?(self)
+    // Keep displacedCancel alive past lock.unlock() so deallocation cannot re-enter lock.
+    withExtendedLifetime(displacedCancel) {}
+  }
+}
+''');
+    if (hasAsyncStream) {
+      _writeAsyncStreamHelpers(indent);
+      indent.newln();
+      indent.format('''
+private final class ${prefix}PigeonFfiStreamCallbacks: @unchecked Sendable {
+  private let lock = NSLock()
+  private var terminated = false
+  private var onData: ((NSData?) -> Void)?
+  private var onError: ((String, String?, NSData?) -> Void)?
+  private var onDone: (() -> Void)?
+
+  init(
+    onData: @escaping (NSData?) -> Void,
+    onError: @escaping (String, String?, NSData?) -> Void,
+    onDone: @escaping () -> Void
+  ) {
+    self.onData = onData
+    self.onError = onError
+    self.onDone = onDone
+  }
+
+  func sendData(_ data: NSData?) {
+    let callback: ((NSData?) -> Void)?
+    do {
+      lock.lock()
+      defer { lock.unlock() }
+      guard !terminated else { return }
+      callback = onData
+    }
+    callback?(data)
+  }
+
+  func sendError(code: String, message: String?, details: NSData?) {
+    terminate { _, onError, _ in onError?(code, message, details) }
+  }
+
+  func sendDone() {
+    terminate { _, _, onDone in onDone?() }
+  }
+
+  func clear() {
+    terminate { _, _, _ in }
+  }
+
+  private func terminate(
+    _ deliver: (
+      ((NSData?) -> Void)?,
+      ((String, String?, NSData?) -> Void)?,
+      (() -> Void)?
+    ) -> Void
+  ) {
+    let capturedData: ((NSData?) -> Void)?
+    let capturedError: ((String, String?, NSData?) -> Void)?
+    let capturedDone: (() -> Void)?
+    do {
+      lock.lock()
+      defer { lock.unlock() }
+      guard !terminated else { return }
+      terminated = true
+      capturedData = onData
+      capturedError = onError
+      capturedDone = onDone
+      onData = nil
+      onError = nil
+      onDone = nil
+    }
+    deliver(capturedData, capturedError, capturedDone)
+    // Keep cleared closures alive past lock.unlock() so deallocation cannot re-enter lock.
+    withExtendedLifetime((capturedData, capturedError, capturedDone)) {}
+  }
+}
+''');
+    }
+    if (!hasCallbackStream) {
+      return;
+    }
+    indent.newln();
+    indent.format('''
+/// Sink used by `@asyncCallback` streaming `@HostApi` methods to push values,
+/// errors, or completion back to Dart over FFI.
+class ${prefix}PigeonEventSink<ReturnType>: @unchecked Sendable {
+  private let lock = NSLock()
+  private let encode: (ReturnType) -> NSData?
+  private var onData: ((NSData?) -> Void)?
+  private var onError: ((String, String?, NSData?) -> Void)?
+  private var onDone: (() -> Void)?
+  private var onClosed: (() -> Void)?
+  private var cancelCallback: (() -> Void)?
+  private var terminated = false
+  private var cancelled = false
+
+  fileprivate init(
+    onData: @escaping (NSData?) -> Void,
+    onError: @escaping (String, String?, NSData?) -> Void,
+    onDone: @escaping () -> Void,
+    encode: @escaping (ReturnType) -> NSData?
+  ) {
+    self.onData = onData
+    self.onError = onError
+    self.onDone = onDone
+    self.encode = encode
+  }
+
+  fileprivate func attachOnClosed(_ onClosed: @escaping () -> Void) {
+    lock.lock()
+    defer { lock.unlock() }
+    if !cancelled && !terminated {
+      self.onClosed = onClosed
+    }
+  }
+
+  fileprivate func attachCancel(_ cancel: (() -> Void)?) {
+    guard let cancel = cancel else { return }
+    let shouldCancel: Bool
+    do {
+      lock.lock()
+      defer { lock.unlock() }
+      if cancelled {
+        shouldCancel = true
+      } else {
+        if !terminated {
+          cancelCallback = cancel
+        }
+        shouldCancel = false
+      }
+    }
+    if shouldCancel {
+      cancel()
+    }
+  }
+
+  func success(_ value: ReturnType) {
+    let callback: ((NSData?) -> Void)?
+    do {
+      lock.lock()
+      defer { lock.unlock() }
+      guard !terminated else { return }
+      callback = onData
+    }
+    callback?(encode(value))
+  }
+
+  func error(code: String, message: String?, details: Any?) {
+    terminate { onError, _ in onError?(code, message, $codec.encodeOrNil(details)) }
+  }
+
+  func endOfStream() {
+    terminate { _, onDone in onDone?() }
+  }
+
+  private func terminate(
+    _ deliver: (((String, String?, NSData?) -> Void)?, (() -> Void)?) -> Void
+  ) {
+    let capturedError: ((String, String?, NSData?) -> Void)?
+    let capturedDone: (() -> Void)?
+    let closedAction: (() -> Void)?
+    let displaced: (((NSData?) -> Void)?, (() -> Void)?)
+    do {
+      lock.lock()
+      defer { lock.unlock() }
+      guard !terminated else { return }
+      terminated = true
+      capturedError = onError
+      capturedDone = onDone
+      closedAction = onClosed
+      displaced = (onData, cancelCallback)
+      onData = nil
+      onError = nil
+      onDone = nil
+      onClosed = nil
+      cancelCallback = nil
+    }
+    closedAction?()
+    deliver(capturedError, capturedDone)
+    // Keep cleared closures alive past lock.unlock() so deallocation cannot re-enter lock.
+    withExtendedLifetime(displaced) {}
+  }
+
+  fileprivate func close() {
+    let cancel: (() -> Void)?
+    let displaced: (((NSData?) -> Void)?, ((String, String?, NSData?) -> Void)?, (() -> Void)?, (() -> Void)?)
+    do {
+      lock.lock()
+      defer { lock.unlock() }
+      terminated = true
+      cancelled = true
+      cancel = cancelCallback
+      displaced = (onData, onError, onDone, onClosed)
+      onData = nil
+      onError = nil
+      onDone = nil
+      onClosed = nil
+      cancelCallback = nil
+    }
+    cancel?()
+    // Keep cleared closures alive past lock.unlock() so deallocation cannot re-enter lock.
+    withExtendedLifetime(displaced) {}
+  }
+}
+''');
+  }
+
+  void _writeChannelStreamUtilities(Root root, Indent indent) {
+    final String prefix = _classNamePrefix;
+    final bool hasCallbackStreams = root.apis.whereType<AstHostApi>().any(
+      (AstHostApi api) =>
+          api.methods.any((Method method) => method.isStream && method.isAsynchronousCallback),
+    );
+    final bool hasAsyncThrowingStreams = root.apis.whereType<AstHostApi>().any(
+      (AstHostApi api) =>
+          api.methods.any((Method method) => method.isStream && !method.isAsynchronousCallback),
+    );
+    if (hasCallbackStreams) {
+      indent.newln();
+      indent.format('''
+private final class ${prefix}PigeonMessageBox: @unchecked Sendable {
+  let value: [Any?]
+  init(_ value: [Any?]) {
+    self.value = value
+  }
+}''');
+    }
+    if (hasAsyncThrowingStreams) {
+      _writeAsyncStreamHelpers(indent);
+    }
+    indent.newln();
+    indent.writeScoped(
+      'private final class ${prefix}PigeonChannelBox: @unchecked Sendable {',
+      '}',
+      () {
+        indent.format('''
+private let channel: FlutterBasicMessageChannel
+private let lock = NSLock()
+private var closed = false
+
+init(_ channel: FlutterBasicMessageChannel) {
+  self.channel = channel
+}
+
+func close() {
+  lock.lock()
+  closed = true
+  lock.unlock()
+}
+
+private var isClosed: Bool {
+  lock.lock()
+  defer { lock.unlock() }
+  return closed
+}''');
+        if (hasAsyncThrowingStreams) {
+          indent.newln();
+          indent.format('''
+@MainActor
+@discardableResult
+func sendOnMain(_ message: [Any?]) -> Bool {
+  guard !isClosed else { return false }
+  channel.sendMessage(message)
+  return true
+}''');
+        }
+        if (hasCallbackStreams) {
+          indent.newln();
+          indent.format('''
+func send(_ message: [Any?], closeAfterSend: Bool = false) {
+  guard !isClosed else { return }
+  if Thread.isMainThread {
+    channel.sendMessage(message)
+    if closeAfterSend {
+      close()
+    }
+  } else {
+    let boxed = ${prefix}PigeonMessageBox(message)
+    DispatchQueue.main.async {
+      guard !self.isClosed else { return }
+      self.channel.sendMessage(boxed.value)
+      if closeAfterSend {
+        self.close()
+      }
+    }
+  }
+}''');
+        }
+      },
+    );
+    indent.newln();
+    indent.format('''
+private final class ${prefix}PigeonStreamRegistry: @unchecked Sendable {
+  static let dataFrameKind: Int64 = $streamDataFrameKind
+  static let errorFrameKind: Int64 = $streamErrorFrameKind
+  static let doneFrameKind: Int64 = $streamDoneFrameKind
+
+  private struct StreamKey: Hashable {
+    let messengerKey: Int64
+    let channelName: String
+  }
+
+  private struct Entry {
+    let token: UInt64
+    let onCancel: () -> Void
+  }
+
+  private let lock = NSLock()
+  private let messengerKeys = NSMapTable<AnyObject, NSNumber>(
+    keyOptions: [.weakMemory, .objectPointerPersonality],
+    valueOptions: [.strongMemory]
+  )
+  private var nextMessengerKey: Int64 = 1
+  private var nextToken: UInt64 = 1
+  private var subscriptions: [StreamKey: [Int64: Entry]] = [:]
+
+  func messengerKey(for messenger: FlutterBinaryMessenger) -> Int64 {
+    let obj = messenger as AnyObject
+    lock.lock()
+    defer { lock.unlock() }
+    if let existing = messengerKeys.object(forKey: obj) {
+      return existing.int64Value
+    }
+    let key = nextMessengerKey
+    nextMessengerKey += 1
+    messengerKeys.setObject(NSNumber(value: key), forKey: obj)
+    return key
+  }
+
+  @discardableResult
+  func register(
+    messengerKey: Int64,
+    channelName: String,
+    subscriptionId: Int64,
+    onCancel: @escaping () -> Void
+  ) -> UInt64 {
+    let key = StreamKey(messengerKey: messengerKey, channelName: channelName)
+    let token: UInt64
+    var previous: Entry?
+    do {
+      lock.lock()
+      defer { lock.unlock() }
+      token = nextToken
+      nextToken &+= 1
+      previous = subscriptions[key, default: [:]].updateValue(
+        Entry(token: token, onCancel: onCancel), forKey: subscriptionId)
+    }
+    previous?.onCancel()
+    return token
+  }
+
+  @discardableResult
+  func remove(
+    messengerKey: Int64,
+    channelName: String,
+    subscriptionId: Int64,
+    token: UInt64
+  ) -> Bool {
+    let key = StreamKey(messengerKey: messengerKey, channelName: channelName)
+    var removed: Entry?
+    do {
+      lock.lock()
+      defer { lock.unlock() }
+      guard subscriptions[key]?[subscriptionId]?.token == token else {
+        return false
+      }
+      removed = subscriptions[key]?.removeValue(forKey: subscriptionId)
+      if subscriptions[key]?.isEmpty == true {
+        subscriptions.removeValue(forKey: key)
+      }
+    }
+    let didRemove = removed != nil
+    // Keep removed alive past lock.unlock() so closure deallocation cannot re-enter lock.
+    withExtendedLifetime(removed) {}
+    return didRemove
+  }
+
+  func cancel(messengerKey: Int64, channelName: String, subscriptionId: Int64) {
+    let key = StreamKey(messengerKey: messengerKey, channelName: channelName)
+    var action: (() -> Void)?
+    do {
+      lock.lock()
+      defer { lock.unlock() }
+      action = subscriptions[key]?.removeValue(forKey: subscriptionId)?.onCancel
+      if subscriptions[key]?.isEmpty == true {
+        subscriptions.removeValue(forKey: key)
+      }
+    }
+    action?()
+  }
+
+  func cancelAll(messenger: FlutterBinaryMessenger, channelName: String) {
+    let obj = messenger as AnyObject
+    var actions: [() -> Void] = []
+    do {
+      lock.lock()
+      defer { lock.unlock() }
+      guard let messengerKey = messengerKeys.object(forKey: obj)?.int64Value else {
+        return
+      }
+      let key = StreamKey(messengerKey: messengerKey, channelName: channelName)
+      if let channelMap = subscriptions.removeValue(forKey: key) {
+        actions = channelMap.values.map(\\.onCancel)
+      }
+    }
+    for action in actions {
+      action()
+    }
+  }
+}''');
+    if (hasCallbackStreams) {
+      indent.newln();
+      indent.format('''
+/// Sink passed to `@asyncCallback` stream methods to emit typed events, errors, or completion.
+class ${prefix}PigeonEventSink<ReturnType>: @unchecked Sendable {
+  private let subscriptionId: Int64
+  private let lock = NSLock()
+  private var channelBox: ${prefix}PigeonChannelBox?
+  private var onClosed: (() -> Void)?
+  private var cancelCallback: (() -> Void)?
+  private var cancelled = false
+  private var terminated = false
+
+  fileprivate init(
+    subscriptionId: Int64,
+    channelBox: ${prefix}PigeonChannelBox
+  ) {
+    self.subscriptionId = subscriptionId
+    self.channelBox = channelBox
+  }
+
+  fileprivate func attachOnClosed(_ onClosed: @escaping () -> Void) {
+    lock.lock()
+    defer { lock.unlock() }
+    if !cancelled && !terminated {
+      self.onClosed = onClosed
+    }
+  }
+
+  fileprivate func attachCancel(_ cancel: (() -> Void)?) {
+    guard let cancel = cancel else { return }
+    let shouldCancel: Bool
+    do {
+      lock.lock()
+      defer { lock.unlock() }
+      if cancelled {
+        shouldCancel = true
+      } else {
+        if !terminated {
+          cancelCallback = cancel
+        }
+        shouldCancel = false
+      }
+    }
+    if shouldCancel {
+      cancel()
+    }
+  }
+
+  func success(_ value: ReturnType) {
+    let currentBox: ${prefix}PigeonChannelBox?
+    do {
+      lock.lock()
+      defer { lock.unlock() }
+      guard !terminated else { return }
+      currentBox = channelBox
+    }
+    currentBox?.send([subscriptionId, ${prefix}PigeonStreamRegistry.dataFrameKind, value])
+  }
+
+  func error(code: String, message: String?, details: Any?) {
+    terminate(frame: [
+      subscriptionId, ${prefix}PigeonStreamRegistry.errorFrameKind, code, message, details,
+    ])
+  }
+
+  func endOfStream() {
+    terminate(frame: [subscriptionId, ${prefix}PigeonStreamRegistry.doneFrameKind])
+  }
+
+  private func terminate(frame: [Any?]) {
+    let currentBox: ${prefix}PigeonChannelBox?
+    let closedAction: (() -> Void)?
+    let displacedCancel: (() -> Void)?
+    do {
+      lock.lock()
+      defer { lock.unlock() }
+      guard !terminated else { return }
+      terminated = true
+      currentBox = channelBox
+      closedAction = onClosed
+      displacedCancel = cancelCallback
+      channelBox = nil
+      onClosed = nil
+      cancelCallback = nil
+    }
+    closedAction?()
+    currentBox?.send(frame, closeAfterSend: true)
+    // Keep displacedCancel alive past lock.unlock() so deallocation cannot re-enter lock.
+    withExtendedLifetime(displacedCancel) {}
+  }
+
+  fileprivate func close() {
+    var displaced: (${prefix}PigeonChannelBox?, (() -> Void)?) = (nil, nil)
+    var cancel: (() -> Void)?
+    do {
+      lock.lock()
+      defer { lock.unlock() }
+      terminated = true
+      cancelled = true
+      displaced = (channelBox, onClosed)
+      cancel = cancelCallback
+      channelBox = nil
+      onClosed = nil
+      cancelCallback = nil
+    }
+    displaced.0?.close()
+    cancel?()
+    // Keep displaced objects alive past lock.unlock() so deallocation cannot re-enter lock.
+    withExtendedLifetime(displaced) {}
+  }
+}''');
+    }
+  }
+
+  void _writeHostStreamMessageHandler(
+    Indent indent, {
+    required String name,
+    required String channelName,
+    required Iterable<Parameter> parameters,
+    required TypeDeclaration returnType,
+    required bool isAsynchronousCallback,
+    required String? swiftFunction,
+    List<String> documentationComments = const <String>[],
+  }) {
+    final components = _SwiftFunctionComponents(
+      name: name,
+      parameters: parameters,
+      returnType: returnType,
+      swiftFunction: swiftFunction,
+    );
+    final String prefix = _classNamePrefix;
+    final String returnTypeString = _nullSafeSwiftTypeForDartType(returnType);
+    final varChannelName = '${name}Channel';
+    final varEventsChannel = '${name}EventsChannel';
+    final varEventsChannelName = '${name}EventsChannelName';
+    addDocumentationComments(indent, documentationComments, _docCommentSpec);
+    indent.writeln('let $varEventsChannelName = "$channelName.events"');
+    indent.writeln(
+      'let $varChannelName = FlutterBasicMessageChannel(name: "$channelName", binaryMessenger: binaryMessenger, codec: codec)',
+    );
+    indent.writeln(
+      'streamRegistry.cancelAll(messenger: binaryMessenger, channelName: $varEventsChannelName)',
+    );
+    indent.writeScoped('if let api = api {', '}', () {
+      indent.writeln('let messengerKey = streamRegistry.messengerKey(for: binaryMessenger)');
+      indent.writeln(
+        'let $varEventsChannel = FlutterBasicMessageChannel(name: $varEventsChannelName, binaryMessenger: binaryMessenger, codec: codec)',
+      );
+      indent.writeScoped('$varChannelName.setMessageHandler { message, reply in', '}', () {
+        indent.writeln('let request = message as! [Any?]');
+        indent.writeln('let action = request[0] as! String');
+        indent.writeln(
+          'let subscriptionId = request[1] as? Int64 ?? (request[1] as! NSNumber).int64Value',
+        );
+        indent.writeScoped('if action == "cancel" {', '}', () {
+          indent.writeln(
+            'streamRegistry.cancel(messengerKey: messengerKey, channelName: $varEventsChannelName, subscriptionId: subscriptionId)',
+          );
+          indent.writeln('reply(wrapResult(nil))');
+          indent.writeln('return');
+        });
+        indent.writeScoped('guard action == "listen" else {', '}', () {
+          indent.writeln(
+            r'reply(wrapError(FlutterError(code: "invalid-action", message: "Unknown stream control action: \(action)", details: nil)))',
+          );
+          indent.writeln('return');
+        });
+        final methodArgument = <String>[];
+        enumerate(components.arguments, (int index, _SwiftFunctionArgument arg) {
+          final String argName = _getSafeArgumentName(index, arg.namedType);
+          final argIndex = 'request[${index + 2}]';
+          final String fieldType = _swiftTypeForDartType(arg.type);
+          final enumMapForceUnwrap =
+              arg.type.baseName == 'Map' &&
+                  arg.type.typeArguments.any((TypeDeclaration type) => type.isEnum)
+              ? '!'
+              : '';
+          _writeGenericCasting(
+            indent: indent,
+            value: argIndex,
+            variableName: argName,
+            fieldType: fieldType,
+            type: arg.type,
+          );
+          if (arg.label == '_') {
+            methodArgument.add('$argName$enumMapForceUnwrap');
+          } else {
+            methodArgument.add('${arg.label ?? arg.name}: $argName$enumMapForceUnwrap');
+          }
+        });
+        if (isAsynchronousCallback) {
+          indent.writeln('let channelBox = ${prefix}PigeonChannelBox($varEventsChannel)');
+          indent.writeln(
+            'let sink = ${prefix}PigeonEventSink<$returnTypeString>(subscriptionId: subscriptionId, channelBox: channelBox)',
+          );
+          final callArgs = <String>[...methodArgument, 'sink: sink'];
+          indent.writeScoped(
+            'let registrationToken = streamRegistry.register(messengerKey: messengerKey, channelName: $varEventsChannelName, subscriptionId: subscriptionId) {',
+            '}',
+            () {
+              indent.writeln('sink.close()');
+            },
+          );
+          indent.writeScoped('sink.attachOnClosed {', '}', () {
+            indent.writeln(
+              '_ = streamRegistry.remove(messengerKey: messengerKey, channelName: $varEventsChannelName, subscriptionId: subscriptionId, token: registrationToken)',
+            );
+          });
+          indent.writeln('let cancelCallback = api.${components.name}(${callArgs.join(', ')})');
+          indent.writeln('sink.attachCancel(cancelCallback)');
+          indent.writeln('reply(wrapResult(nil))');
+        } else {
+          indent.writeln('let channelBox = ${prefix}PigeonChannelBox($varEventsChannel)');
+          indent.writeln(
+            'let streamBox = ${prefix}PigeonStreamBox(api.${components.name}(${methodArgument.join(', ')}))',
+          );
+          indent.writeln('let taskHandle = ${prefix}PigeonStreamTaskHandle()');
+          indent.writeScoped(
+            'let registrationToken = streamRegistry.register(messengerKey: messengerKey, channelName: $varEventsChannelName, subscriptionId: subscriptionId) {',
+            '}',
+            () {
+              indent.writeln('channelBox.close()');
+              indent.writeln('taskHandle.cancel()');
+            },
+          );
+          indent.writeScoped('let task = Task { @MainActor in', '}', () {
+            indent.writeScoped('do {', '}', () {
+              indent.writeScoped('for try await event in streamBox.stream {', '}', () {
+                indent.writeScoped(
+                  'guard !Task.isCancelled, channelBox.sendOnMain([subscriptionId, ${prefix}PigeonStreamRegistry.dataFrameKind, event]) else {',
+                  '}',
+                  () {
+                    indent.writeln('return');
+                  },
+                );
+              });
+              indent.writeScoped(
+                'if !Task.isCancelled, streamRegistry.remove(messengerKey: messengerKey, channelName: $varEventsChannelName, subscriptionId: subscriptionId, token: registrationToken) {',
+                '}',
+                () {
+                  indent.writeln(
+                    'channelBox.sendOnMain([subscriptionId, ${prefix}PigeonStreamRegistry.doneFrameKind])',
+                  );
+                },
+              );
+            }, addTrailingNewline: false);
+            indent.addScoped(' catch {', '}', () {
+              indent.writeln(
+                'let wasActive = streamRegistry.remove(messengerKey: messengerKey, channelName: $varEventsChannelName, subscriptionId: subscriptionId, token: registrationToken)',
+              );
+              indent.writeScoped('if !Task.isCancelled, wasActive {', '}', () {
+                indent.writeln(
+                  'channelBox.sendOnMain([subscriptionId, ${prefix}PigeonStreamRegistry.errorFrameKind] + wrapError(error))',
+                );
+              });
+            });
+          });
+          indent.writeln('taskHandle.attach(task)');
+          indent.writeln('reply(wrapResult(nil))');
+        }
+      });
+    }, addTrailingNewline: false);
+    indent.addScoped(' else {', '}', () {
+      indent.writeln('$varChannelName.setMessageHandler(nil)');
+    });
   }
 
   void _writeHostMethodMessageHandler(
@@ -5236,11 +6202,6 @@ String _getMessageCodecName(InternalSwiftOptions options) {
   return toUpperCamelCase('${options.fileSpecificClassNameComponent}PigeonCodec');
 }
 
-/// Calculates the name of the codec that will be generated for [api].
-String _getMethodCodecVarName(InternalSwiftOptions options) {
-  return '${toLowerCamelCase(options.fileSpecificClassNameComponent ?? '')}PigeonMethodCodec';
-}
-
 String _getErrorClassName(InternalSwiftOptions generatorOptions) {
   return generatorOptions.errorClassName ?? 'PigeonError';
 }
@@ -5447,6 +6408,8 @@ String _getMethodSignature({
   bool isAsynchronous = false,
   bool ffiUserApi = false,
   bool isAsynchronousCallback = false,
+  bool isStream = false,
+  String classNamePrefix = '',
   bool isMainActor = false,
   String? swiftFunction,
   bool ffiBridgeApi = false,
@@ -5508,6 +6471,15 @@ String _getMethodSignature({
       final returnTypeSuffix = returnType.isVoid ? '' : ' -> $returnTypeString';
       return '${objc}func $methodName($parameterSignature$errorParam)$throwString$returnTypeSuffix';
     }
+  }
+
+  if (isStream) {
+    if (isAsynchronousCallback) {
+      final sinkParam = 'sink: ${classNamePrefix}PigeonEventSink<$returnTypeString>';
+      final params = parameters.isEmpty ? sinkParam : '$parameterSignature, $sinkParam';
+      return 'func $methodName($params) -> (() -> Void)?';
+    }
+    return 'func ${components.name}($parameterSignature) -> AsyncThrowingStream<$returnTypeString, Error>';
   }
 
   if (isAsynchronous && !isAsynchronousCallback) {

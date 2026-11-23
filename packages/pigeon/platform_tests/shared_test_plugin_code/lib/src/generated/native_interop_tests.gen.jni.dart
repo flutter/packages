@@ -226,6 +226,335 @@ final class $NativeInteropTestsError$Type$ extends jni$_.JType<NativeInteropTest
   String get signature => r'Lcom/example/test_plugin/NativeInteropTestsError;';
 }
 
+/// from: `com.example.test_plugin.NativeInteropTestsPigeonStreamCallback`
+extension type NativeInteropTestsPigeonStreamCallback._(jni$_.JObject _$this)
+    implements jni$_.JObject {
+  static final _class = jni$_.JClass.forName(
+    r'com/example/test_plugin/NativeInteropTestsPigeonStreamCallback',
+  );
+
+  /// The type which includes information such as the signature of this class.
+  static const jni$_.JType<NativeInteropTestsPigeonStreamCallback> type =
+      $NativeInteropTestsPigeonStreamCallback$Type$();
+
+  /// Maps a specific port to the implemented interface.
+  static final core$_.Map<core$_.int, $NativeInteropTestsPigeonStreamCallback> _$impls = {};
+  static jni$_.JObjectPtr _$invoke(
+    core$_.int port,
+    jni$_.JObjectPtr descriptor,
+    jni$_.JObjectPtr args,
+  ) {
+    return _$invokeMethod(
+      port,
+      jni$_.MethodInvocation.fromAddresses(0, descriptor.address, args.address),
+    );
+  }
+
+  static final jni$_.Pointer<
+    jni$_.NativeFunction<jni$_.JObjectPtr Function(jni$_.Int64, jni$_.JObjectPtr, jni$_.JObjectPtr)>
+  >
+  _$invokePointer = jni$_.Pointer.fromFunction(_$invoke);
+
+  static jni$_.Pointer<jni$_.Void> _$invokeMethod(core$_.int $p, jni$_.MethodInvocation $i) {
+    try {
+      final $d = $i.methodDescriptor.toDartString(releaseOriginal: true);
+      final $a = $i.args;
+      if ($d == r'onData([B)V') {
+        _$impls[$p]!.onData(($a![0] as jni$_.JByteArray));
+        return jni$_.nullptr;
+      }
+      if ($d == r'onError(Ljava/lang/String;Ljava/lang/String;[B)V') {
+        _$impls[$p]!.onError(
+          ($a![0] as jni$_.JString),
+          ($a![1] as jni$_.JString?),
+          ($a![2] as jni$_.JByteArray?),
+        );
+        return jni$_.nullptr;
+      }
+      if ($d == r'onDone()V') {
+        _$impls[$p]!.onDone();
+        return jni$_.nullptr;
+      }
+    } catch (e) {
+      return jni$_.ProtectedJniExtensions.newDartException(e);
+    }
+    return jni$_.nullptr;
+  }
+
+  static void implementIn(
+    jni$_.JImplementer implementer,
+    $NativeInteropTestsPigeonStreamCallback $impl,
+  ) {
+    late final jni$_.RawReceivePort $p;
+    $p = jni$_.RawReceivePort(($m) {
+      if ($m == null) {
+        _$impls.remove($p.sendPort.nativePort);
+        $p.close();
+        return;
+      }
+      final $i = jni$_.MethodInvocation.fromMessage($m);
+      final $r = _$invokeMethod($p.sendPort.nativePort, $i);
+      $i.args?.release();
+      jni$_.ProtectedJniExtensions.returnResult($i.result, $r);
+    });
+    implementer.add(
+      r'com.example.test_plugin.NativeInteropTestsPigeonStreamCallback',
+      $p,
+      _$invokePointer,
+      [
+        if ($impl.onData$async) r'onData([B)V',
+        if ($impl.onError$async) r'onError(Ljava/lang/String;Ljava/lang/String;[B)V',
+        if ($impl.onDone$async) r'onDone()V',
+      ],
+    );
+    final $a = $p.sendPort.nativePort;
+    _$impls[$a] = $impl;
+  }
+
+  factory NativeInteropTestsPigeonStreamCallback.implement(
+    $NativeInteropTestsPigeonStreamCallback $impl,
+  ) {
+    final $i = jni$_.JImplementer();
+    implementIn($i, $impl);
+    return $i.implement<NativeInteropTestsPigeonStreamCallback>();
+  }
+}
+
+extension NativeInteropTestsPigeonStreamCallback$$Methods
+    on NativeInteropTestsPigeonStreamCallback {
+  static final _id_onData = NativeInteropTestsPigeonStreamCallback._class.instanceMethodId(
+    r'onData',
+    r'([B)V',
+  );
+
+  static final _onData =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JThrowablePtr Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallVoidMethod')
+          .asFunction<
+            jni$_.JThrowablePtr Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun onData(encodedValue: kotlin.ByteArray): kotlin.Unit`
+  void onData(jni$_.JByteArray bs) {
+    final _$$selfRef = reference;
+    final _$bs = bs.reference;
+    _onData(_$$selfRef.pointer, _id_onData.pointer, _$bs.pointer).check();
+  }
+
+  static final _id_onError = NativeInteropTestsPigeonStreamCallback._class.instanceMethodId(
+    r'onError',
+    r'(Ljava/lang/String;Ljava/lang/String;[B)V',
+  );
+
+  static final _onError =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JThrowablePtr Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<
+                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                >,
+              )
+            >
+          >('globalEnv_CallVoidMethod')
+          .asFunction<
+            jni$_.JThrowablePtr Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun onError(code: kotlin.String, message: kotlin.String?, encodedDetails: kotlin.ByteArray?): kotlin.Unit`
+  void onError(jni$_.JString string, jni$_.JString? string1, jni$_.JByteArray? bs) {
+    final _$$selfRef = reference;
+    final _$string = string.reference;
+    final _$string1 = string1?.reference ?? jni$_.jNullReference;
+    final _$bs = bs?.reference ?? jni$_.jNullReference;
+    _onError(
+      _$$selfRef.pointer,
+      _id_onError.pointer,
+      _$string.pointer,
+      _$string1.pointer,
+      _$bs.pointer,
+    ).check();
+  }
+
+  static final _id_onDone = NativeInteropTestsPigeonStreamCallback._class.instanceMethodId(
+    r'onDone',
+    r'()V',
+  );
+
+  static final _onDone =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JThrowablePtr Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_CallVoidMethod')
+          .asFunction<
+            jni$_.JThrowablePtr Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+          >();
+
+  /// from: `public fun onDone(): kotlin.Unit`
+  void onDone() {
+    final _$$selfRef = reference;
+    _onDone(_$$selfRef.pointer, _id_onDone.pointer).check();
+  }
+}
+
+abstract base mixin class $NativeInteropTestsPigeonStreamCallback {
+  factory $NativeInteropTestsPigeonStreamCallback({
+    required void Function(jni$_.JByteArray bs) onData,
+    core$_.bool onData$async,
+    required void Function(jni$_.JString string, jni$_.JString? string1, jni$_.JByteArray? bs)
+    onError,
+    core$_.bool onError$async,
+    required void Function() onDone,
+    core$_.bool onDone$async,
+  }) = _$NativeInteropTestsPigeonStreamCallback;
+
+  void onData(jni$_.JByteArray bs);
+  core$_.bool get onData$async => false;
+  void onError(jni$_.JString string, jni$_.JString? string1, jni$_.JByteArray? bs);
+  core$_.bool get onError$async => false;
+  void onDone();
+  core$_.bool get onDone$async => false;
+}
+
+final class _$NativeInteropTestsPigeonStreamCallback with $NativeInteropTestsPigeonStreamCallback {
+  _$NativeInteropTestsPigeonStreamCallback({
+    required void Function(jni$_.JByteArray bs) onData,
+    this.onData$async = false,
+    required void Function(jni$_.JString string, jni$_.JString? string1, jni$_.JByteArray? bs)
+    onError,
+    this.onError$async = false,
+    required void Function() onDone,
+    this.onDone$async = false,
+  }) : _onData = onData,
+       _onError = onError,
+       _onDone = onDone;
+
+  final void Function(jni$_.JByteArray bs) _onData;
+  final core$_.bool onData$async;
+  final void Function(jni$_.JString string, jni$_.JString? string1, jni$_.JByteArray? bs) _onError;
+  final core$_.bool onError$async;
+  final void Function() _onDone;
+  final core$_.bool onDone$async;
+
+  void onData(jni$_.JByteArray bs) {
+    return _onData(bs);
+  }
+
+  void onError(jni$_.JString string, jni$_.JString? string1, jni$_.JByteArray? bs) {
+    return _onError(string, string1, bs);
+  }
+
+  void onDone() {
+    return _onDone();
+  }
+}
+
+final class $NativeInteropTestsPigeonStreamCallback$Type$
+    extends jni$_.JType<NativeInteropTestsPigeonStreamCallback> {
+  @jni$_.internal
+  const $NativeInteropTestsPigeonStreamCallback$Type$();
+
+  @jni$_.internal
+  @core$_.override
+  String get signature => r'Lcom/example/test_plugin/NativeInteropTestsPigeonStreamCallback;';
+}
+
+/// from: `com.example.test_plugin.NativeInteropTestsPigeonStreamCancelHandle`
+extension type NativeInteropTestsPigeonStreamCancelHandle._(jni$_.JObject _$this)
+    implements jni$_.JObject {
+  static final _class = jni$_.JClass.forName(
+    r'com/example/test_plugin/NativeInteropTestsPigeonStreamCancelHandle',
+  );
+
+  /// The type which includes information such as the signature of this class.
+  static const jni$_.JType<NativeInteropTestsPigeonStreamCancelHandle> type =
+      $NativeInteropTestsPigeonStreamCancelHandle$Type$();
+  static final _id_new$ = _class.constructorId(r'(Lkotlin/jvm/functions/Function0;)V');
+
+  static final _new$ =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_NewObject')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public void <init>(kotlin.jvm.functions.Function0<kotlin.Unit> function0)`
+  /// The returned object must be released after use, by calling the [release] method.
+  factory NativeInteropTestsPigeonStreamCancelHandle(Function0 function0) {
+    final _$$classRef = _class.reference;
+    final _$function0 = function0.reference;
+    return _new$(
+      _$$classRef.pointer,
+      _id_new$.pointer,
+      _$function0.pointer,
+    ).object<NativeInteropTestsPigeonStreamCancelHandle>();
+  }
+}
+
+extension NativeInteropTestsPigeonStreamCancelHandle$$Methods
+    on NativeInteropTestsPigeonStreamCancelHandle {
+  static final _id_cancel = NativeInteropTestsPigeonStreamCancelHandle._class.instanceMethodId(
+    r'cancel',
+    r'()V',
+  );
+
+  static final _cancel =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JThrowablePtr Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_CallVoidMethod')
+          .asFunction<
+            jni$_.JThrowablePtr Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+          >();
+
+  /// from: `public fun cancel(): kotlin.Unit`
+  void cancel() {
+    final _$$selfRef = reference;
+    _cancel(_$$selfRef.pointer, _id_cancel.pointer).check();
+  }
+}
+
+final class $NativeInteropTestsPigeonStreamCancelHandle$Type$
+    extends jni$_.JType<NativeInteropTestsPigeonStreamCancelHandle> {
+  @jni$_.internal
+  const $NativeInteropTestsPigeonStreamCancelHandle$Type$();
+
+  @jni$_.internal
+  @core$_.override
+  String get signature => r'Lcom/example/test_plugin/NativeInteropTestsPigeonStreamCancelHandle;';
+}
+
 /// from: `com.example.test_plugin.NativeInteropHostIntegrationCoreApiRegistrar$Companion`
 extension type NativeInteropHostIntegrationCoreApiRegistrar$Companion._(jni$_.JObject _$this)
     implements jni$_.JObject {
@@ -20264,6 +20593,749 @@ final class $NativeInteropSealedClassFlutterApiRegistrar$Type$
   String get signature => r'Lcom/example/test_plugin/NativeInteropSealedClassFlutterApiRegistrar;';
 }
 
+/// from: `com.example.test_plugin.NativeInteropStreamHostApiRegistrar$Companion`
+extension type NativeInteropStreamHostApiRegistrar$Companion._(jni$_.JObject _$this)
+    implements jni$_.JObject {
+  static final _class = jni$_.JClass.forName(
+    r'com/example/test_plugin/NativeInteropStreamHostApiRegistrar$Companion',
+  );
+
+  /// The type which includes information such as the signature of this class.
+  static const jni$_.JType<NativeInteropStreamHostApiRegistrar$Companion> type =
+      $NativeInteropStreamHostApiRegistrar$Companion$Type$();
+  static final _id_new$ = _class.constructorId(
+    r'(Lkotlin/jvm/internal/DefaultConstructorMarker;)V',
+  );
+
+  static final _new$ =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_NewObject')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `synthetic public void <init>(kotlin.jvm.internal.DefaultConstructorMarker defaultConstructorMarker)`
+  /// The returned object must be released after use, by calling the [release] method.
+  factory NativeInteropStreamHostApiRegistrar$Companion(
+    DefaultConstructorMarker? defaultConstructorMarker,
+  ) {
+    final _$$classRef = _class.reference;
+    final _$defaultConstructorMarker = defaultConstructorMarker?.reference ?? jni$_.jNullReference;
+    return _new$(
+      _$$classRef.pointer,
+      _id_new$.pointer,
+      _$defaultConstructorMarker.pointer,
+    ).object<NativeInteropStreamHostApiRegistrar$Companion>();
+  }
+}
+
+extension NativeInteropStreamHostApiRegistrar$Companion$$Methods
+    on NativeInteropStreamHostApiRegistrar$Companion {
+  static final _id_pigeonResolveInstance = NativeInteropStreamHostApiRegistrar$Companion._class
+      .instanceMethodId(
+        r'pigeonResolveInstance',
+        r'(JJLjava/lang/String;)Lcom/example/test_plugin/NativeInteropStreamHostApiRegistrar;',
+      );
+
+  static final _pigeonResolveInstance =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Int64, jni$_.Int64, jni$_.Pointer<jni$_.Void>)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              core$_.int,
+              core$_.int,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun pigeonResolveInstance(engineId: kotlin.Long, affinityKey: kotlin.Long, name: kotlin.String): com.example.test_plugin.NativeInteropStreamHostApiRegistrar?`
+  /// The returned object must be released after use, by calling the [release] method.
+  NativeInteropStreamHostApiRegistrar? pigeonResolveInstance(
+    core$_.int j,
+    core$_.int j1,
+    jni$_.JString string,
+  ) {
+    final _$$selfRef = reference;
+    final _$string = string.reference;
+    return _pigeonResolveInstance(
+      _$$selfRef.pointer,
+      _id_pigeonResolveInstance.pointer,
+      j,
+      j1,
+      _$string.pointer,
+    ).object<NativeInteropStreamHostApiRegistrar?>();
+  }
+
+  static final _id_pigeonEngineKeyOf = NativeInteropStreamHostApiRegistrar$Companion._class
+      .instanceMethodId(
+        r'pigeonEngineKeyOf',
+        r'(Lcom/example/test_plugin/NativeInteropStreamHostApiRegistrar;)J',
+      );
+
+  static final _pigeonEngineKeyOf =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallLongMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun pigeonEngineKeyOf(instance: com.example.test_plugin.NativeInteropStreamHostApiRegistrar): kotlin.Long`
+  core$_.int pigeonEngineKeyOf(
+    NativeInteropStreamHostApiRegistrar nativeInteropStreamHostApiRegistrar,
+  ) {
+    final _$$selfRef = reference;
+    final _$nativeInteropStreamHostApiRegistrar = nativeInteropStreamHostApiRegistrar.reference;
+    return _pigeonEngineKeyOf(
+      _$$selfRef.pointer,
+      _id_pigeonEngineKeyOf.pointer,
+      _$nativeInteropStreamHostApiRegistrar.pointer,
+    ).long;
+  }
+}
+
+final class $NativeInteropStreamHostApiRegistrar$Companion$Type$
+    extends jni$_.JType<NativeInteropStreamHostApiRegistrar$Companion> {
+  @jni$_.internal
+  const $NativeInteropStreamHostApiRegistrar$Companion$Type$();
+
+  @jni$_.internal
+  @core$_.override
+  String get signature =>
+      r'Lcom/example/test_plugin/NativeInteropStreamHostApiRegistrar$Companion;';
+}
+
+/// from: `com.example.test_plugin.NativeInteropStreamHostApiRegistrar`
+extension type NativeInteropStreamHostApiRegistrar._(jni$_.JObject _$this)
+    implements jni$_.JObject {
+  static final _class = jni$_.JClass.forName(
+    r'com/example/test_plugin/NativeInteropStreamHostApiRegistrar',
+  );
+
+  /// The type which includes information such as the signature of this class.
+  static const jni$_.JType<NativeInteropStreamHostApiRegistrar> type =
+      $NativeInteropStreamHostApiRegistrar$Type$();
+  static final _id_Companion = _class.staticFieldId(
+    r'Companion',
+    r'Lcom/example/test_plugin/NativeInteropStreamHostApiRegistrar$Companion;',
+  );
+
+  /// from: `static public final com.example.test_plugin.NativeInteropStreamHostApiRegistrar$Companion Companion`
+  /// The returned object must be released after use, by calling the [release] method.
+  static NativeInteropStreamHostApiRegistrar$Companion get Companion =>
+      _id_Companion.get(_class, NativeInteropStreamHostApiRegistrar$Companion.type)
+          as NativeInteropStreamHostApiRegistrar$Companion;
+
+  static final _id_new$ = _class.constructorId(r'()V');
+
+  static final _new$ =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_NewObject')
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
+
+  /// from: `public void <init>()`
+  /// The returned object must be released after use, by calling the [release] method.
+  factory NativeInteropStreamHostApiRegistrar() {
+    final _$$classRef = _class.reference;
+    return _new$(
+      _$$classRef.pointer,
+      _id_new$.pointer,
+    ).object<NativeInteropStreamHostApiRegistrar>();
+  }
+
+  static final _id_pigeonResolveInstance = _class.staticMethodId(
+    r'pigeonResolveInstance',
+    r'(JJLjava/lang/String;)Lcom/example/test_plugin/NativeInteropStreamHostApiRegistrar;',
+  );
+
+  static final _pigeonResolveInstance =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Int64, jni$_.Int64, jni$_.Pointer<jni$_.Void>)>,
+              )
+            >
+          >('globalEnv_CallStaticObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              core$_.int,
+              core$_.int,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `static public final com.example.test_plugin.NativeInteropStreamHostApiRegistrar pigeonResolveInstance(long j, long j1, java.lang.String string)`
+  /// The returned object must be released after use, by calling the [release] method.
+  static NativeInteropStreamHostApiRegistrar? pigeonResolveInstance(
+    core$_.int j,
+    core$_.int j1,
+    jni$_.JString string,
+  ) {
+    final _$$classRef = _class.reference;
+    final _$string = string.reference;
+    return _pigeonResolveInstance(
+      _$$classRef.pointer,
+      _id_pigeonResolveInstance.pointer,
+      j,
+      j1,
+      _$string.pointer,
+    ).object<NativeInteropStreamHostApiRegistrar?>();
+  }
+
+  static final _id_pigeonEngineKeyOf = _class.staticMethodId(
+    r'pigeonEngineKeyOf',
+    r'(Lcom/example/test_plugin/NativeInteropStreamHostApiRegistrar;)J',
+  );
+
+  static final _pigeonEngineKeyOf =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallStaticLongMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `static public final long pigeonEngineKeyOf(com.example.test_plugin.NativeInteropStreamHostApiRegistrar nativeInteropStreamHostApiRegistrar)`
+  static core$_.int pigeonEngineKeyOf(
+    NativeInteropStreamHostApiRegistrar nativeInteropStreamHostApiRegistrar,
+  ) {
+    final _$$classRef = _class.reference;
+    final _$nativeInteropStreamHostApiRegistrar = nativeInteropStreamHostApiRegistrar.reference;
+    return _pigeonEngineKeyOf(
+      _$$classRef.pointer,
+      _id_pigeonEngineKeyOf.pointer,
+      _$nativeInteropStreamHostApiRegistrar.pointer,
+    ).long;
+  }
+}
+
+extension NativeInteropStreamHostApiRegistrar$$Methods on NativeInteropStreamHostApiRegistrar {
+  static final _id_register = NativeInteropStreamHostApiRegistrar._class.instanceMethodId(
+    r'register',
+    r'(Lcom/example/test_plugin/NativeInteropStreamHostApi;Lio/flutter/embedding/engine/plugins/FlutterPlugin$FlutterPluginBinding;Ljava/lang/String;)V',
+  );
+
+  static final _register =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JThrowablePtr Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<
+                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                >,
+              )
+            >
+          >('globalEnv_CallVoidMethod')
+          .asFunction<
+            jni$_.JThrowablePtr Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun register(api: com.example.test_plugin.NativeInteropStreamHostApi, binding: io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding, name: kotlin.String): kotlin.Unit`
+  void register(
+    NativeInteropStreamHostApi nativeInteropStreamHostApi,
+    FlutterPlugin$$FlutterPluginBinding flutterPluginBinding,
+    jni$_.JString string,
+  ) {
+    final _$$selfRef = reference;
+    final _$nativeInteropStreamHostApi = nativeInteropStreamHostApi.reference;
+    final _$flutterPluginBinding = flutterPluginBinding.reference;
+    final _$string = string.reference;
+    _register(
+      _$$selfRef.pointer,
+      _id_register.pointer,
+      _$nativeInteropStreamHostApi.pointer,
+      _$flutterPluginBinding.pointer,
+      _$string.pointer,
+    ).check();
+  }
+
+  static final _id_register$1 = NativeInteropStreamHostApiRegistrar._class.instanceMethodId(
+    r'register',
+    r'(Lcom/example/test_plugin/NativeInteropStreamHostApi;Lio/flutter/embedding/engine/FlutterEngine;Ljava/lang/String;)V',
+  );
+
+  static final _register$1 =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JThrowablePtr Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<
+                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                >,
+              )
+            >
+          >('globalEnv_CallVoidMethod')
+          .asFunction<
+            jni$_.JThrowablePtr Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun register(api: com.example.test_plugin.NativeInteropStreamHostApi, engine: io.flutter.embedding.engine.FlutterEngine, name: kotlin.String): kotlin.Unit`
+  void register$1(
+    NativeInteropStreamHostApi nativeInteropStreamHostApi,
+    FlutterEngine flutterEngine,
+    jni$_.JString string,
+  ) {
+    final _$$selfRef = reference;
+    final _$nativeInteropStreamHostApi = nativeInteropStreamHostApi.reference;
+    final _$flutterEngine = flutterEngine.reference;
+    final _$string = string.reference;
+    _register$1(
+      _$$selfRef.pointer,
+      _id_register$1.pointer,
+      _$nativeInteropStreamHostApi.pointer,
+      _$flutterEngine.pointer,
+      _$string.pointer,
+    ).check();
+  }
+
+  static final _id_unregister = NativeInteropStreamHostApiRegistrar._class.instanceMethodId(
+    r'unregister',
+    r'(Lcom/example/test_plugin/NativeInteropStreamHostApi;Lio/flutter/embedding/engine/plugins/FlutterPlugin$FlutterPluginBinding;Ljava/lang/String;)V',
+  );
+
+  static final _unregister =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JThrowablePtr Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<
+                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                >,
+              )
+            >
+          >('globalEnv_CallVoidMethod')
+          .asFunction<
+            jni$_.JThrowablePtr Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun unregister(api: com.example.test_plugin.NativeInteropStreamHostApi, binding: io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding, name: kotlin.String): kotlin.Unit`
+  void unregister(
+    NativeInteropStreamHostApi nativeInteropStreamHostApi,
+    FlutterPlugin$$FlutterPluginBinding flutterPluginBinding,
+    jni$_.JString string,
+  ) {
+    final _$$selfRef = reference;
+    final _$nativeInteropStreamHostApi = nativeInteropStreamHostApi.reference;
+    final _$flutterPluginBinding = flutterPluginBinding.reference;
+    final _$string = string.reference;
+    _unregister(
+      _$$selfRef.pointer,
+      _id_unregister.pointer,
+      _$nativeInteropStreamHostApi.pointer,
+      _$flutterPluginBinding.pointer,
+      _$string.pointer,
+    ).check();
+  }
+
+  static final _id_unregister$1 = NativeInteropStreamHostApiRegistrar._class.instanceMethodId(
+    r'unregister',
+    r'(Lcom/example/test_plugin/NativeInteropStreamHostApi;Lio/flutter/embedding/engine/FlutterEngine;Ljava/lang/String;)V',
+  );
+
+  static final _unregister$1 =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JThrowablePtr Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<
+                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                >,
+              )
+            >
+          >('globalEnv_CallVoidMethod')
+          .asFunction<
+            jni$_.JThrowablePtr Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun unregister(api: com.example.test_plugin.NativeInteropStreamHostApi, engine: io.flutter.embedding.engine.FlutterEngine, name: kotlin.String): kotlin.Unit`
+  void unregister$1(
+    NativeInteropStreamHostApi nativeInteropStreamHostApi,
+    FlutterEngine flutterEngine,
+    jni$_.JString string,
+  ) {
+    final _$$selfRef = reference;
+    final _$nativeInteropStreamHostApi = nativeInteropStreamHostApi.reference;
+    final _$flutterEngine = flutterEngine.reference;
+    final _$string = string.reference;
+    _unregister$1(
+      _$$selfRef.pointer,
+      _id_unregister$1.pointer,
+      _$nativeInteropStreamHostApi.pointer,
+      _$flutterEngine.pointer,
+      _$string.pointer,
+    ).check();
+  }
+
+  static final _id_streamNumbers = NativeInteropStreamHostApiRegistrar._class.instanceMethodId(
+    r'streamNumbers',
+    r'(JJLcom/example/test_plugin/NativeInteropTestsPigeonStreamCallback;)Lcom/example/test_plugin/NativeInteropTestsPigeonStreamCancelHandle;',
+  );
+
+  static final _streamNumbers =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Int64, jni$_.Int64, jni$_.Pointer<jni$_.Void>)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              core$_.int,
+              core$_.int,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun streamNumbers(count: kotlin.Long, start: kotlin.Long, pigeonCallback: com.example.test_plugin.NativeInteropTestsPigeonStreamCallback): com.example.test_plugin.NativeInteropTestsPigeonStreamCancelHandle`
+  /// The returned object must be released after use, by calling the [release] method.
+  NativeInteropTestsPigeonStreamCancelHandle streamNumbers(
+    core$_.int j,
+    core$_.int j1,
+    NativeInteropTestsPigeonStreamCallback nativeInteropTestsPigeonStreamCallback,
+  ) {
+    final _$$selfRef = reference;
+    final _$nativeInteropTestsPigeonStreamCallback =
+        nativeInteropTestsPigeonStreamCallback.reference;
+    return _streamNumbers(
+      _$$selfRef.pointer,
+      _id_streamNumbers.pointer,
+      j,
+      j1,
+      _$nativeInteropTestsPigeonStreamCallback.pointer,
+    ).object<NativeInteropTestsPigeonStreamCancelHandle>();
+  }
+
+  static final _id_streamNullableInts = NativeInteropStreamHostApiRegistrar._class.instanceMethodId(
+    r'streamNullableInts',
+    r'(Lcom/example/test_plugin/NativeInteropTestsPigeonStreamCallback;)Lcom/example/test_plugin/NativeInteropTestsPigeonStreamCancelHandle;',
+  );
+
+  static final _streamNullableInts =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun streamNullableInts(pigeonCallback: com.example.test_plugin.NativeInteropTestsPigeonStreamCallback): com.example.test_plugin.NativeInteropTestsPigeonStreamCancelHandle`
+  /// The returned object must be released after use, by calling the [release] method.
+  NativeInteropTestsPigeonStreamCancelHandle streamNullableInts(
+    NativeInteropTestsPigeonStreamCallback nativeInteropTestsPigeonStreamCallback,
+  ) {
+    final _$$selfRef = reference;
+    final _$nativeInteropTestsPigeonStreamCallback =
+        nativeInteropTestsPigeonStreamCallback.reference;
+    return _streamNullableInts(
+      _$$selfRef.pointer,
+      _id_streamNullableInts.pointer,
+      _$nativeInteropTestsPigeonStreamCallback.pointer,
+    ).object<NativeInteropTestsPigeonStreamCancelHandle>();
+  }
+
+  static final _id_streamShapes = NativeInteropStreamHostApiRegistrar._class.instanceMethodId(
+    r'streamShapes',
+    r'(Lcom/example/test_plugin/NativeInteropTestsPigeonStreamCallback;)Lcom/example/test_plugin/NativeInteropTestsPigeonStreamCancelHandle;',
+  );
+
+  static final _streamShapes =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun streamShapes(pigeonCallback: com.example.test_plugin.NativeInteropTestsPigeonStreamCallback): com.example.test_plugin.NativeInteropTestsPigeonStreamCancelHandle`
+  /// The returned object must be released after use, by calling the [release] method.
+  NativeInteropTestsPigeonStreamCancelHandle streamShapes(
+    NativeInteropTestsPigeonStreamCallback nativeInteropTestsPigeonStreamCallback,
+  ) {
+    final _$$selfRef = reference;
+    final _$nativeInteropTestsPigeonStreamCallback =
+        nativeInteropTestsPigeonStreamCallback.reference;
+    return _streamShapes(
+      _$$selfRef.pointer,
+      _id_streamShapes.pointer,
+      _$nativeInteropTestsPigeonStreamCallback.pointer,
+    ).object<NativeInteropTestsPigeonStreamCancelHandle>();
+  }
+
+  static final _id_streamShapesWithFilter = NativeInteropStreamHostApiRegistrar._class.instanceMethodId(
+    r'streamShapesWithFilter',
+    r'([BLcom/example/test_plugin/NativeInteropTestsPigeonStreamCallback;)Lcom/example/test_plugin/NativeInteropTestsPigeonStreamCancelHandle;',
+  );
+
+  static final _streamShapesWithFilter =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun streamShapesWithFilter(pigeonVar_args: kotlin.ByteArray, pigeonCallback: com.example.test_plugin.NativeInteropTestsPigeonStreamCallback): com.example.test_plugin.NativeInteropTestsPigeonStreamCancelHandle`
+  /// The returned object must be released after use, by calling the [release] method.
+  NativeInteropTestsPigeonStreamCancelHandle streamShapesWithFilter(
+    jni$_.JByteArray bs,
+    NativeInteropTestsPigeonStreamCallback nativeInteropTestsPigeonStreamCallback,
+  ) {
+    final _$$selfRef = reference;
+    final _$bs = bs.reference;
+    final _$nativeInteropTestsPigeonStreamCallback =
+        nativeInteropTestsPigeonStreamCallback.reference;
+    return _streamShapesWithFilter(
+      _$$selfRef.pointer,
+      _id_streamShapesWithFilter.pointer,
+      _$bs.pointer,
+      _$nativeInteropTestsPigeonStreamCallback.pointer,
+    ).object<NativeInteropTestsPigeonStreamCancelHandle>();
+  }
+
+  static final _id_streamError = NativeInteropStreamHostApiRegistrar._class.instanceMethodId(
+    r'streamError',
+    r'(ZLcom/example/test_plugin/NativeInteropTestsPigeonStreamCallback;)Lcom/example/test_plugin/NativeInteropTestsPigeonStreamCancelHandle;',
+  );
+
+  static final _streamError =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Int32, jni$_.Pointer<jni$_.Void>)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              core$_.int,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun streamError(customError: kotlin.Boolean, pigeonCallback: com.example.test_plugin.NativeInteropTestsPigeonStreamCallback): com.example.test_plugin.NativeInteropTestsPigeonStreamCancelHandle`
+  /// The returned object must be released after use, by calling the [release] method.
+  NativeInteropTestsPigeonStreamCancelHandle streamError(
+    core$_.bool z,
+    NativeInteropTestsPigeonStreamCallback nativeInteropTestsPigeonStreamCallback,
+  ) {
+    final _$$selfRef = reference;
+    final _$nativeInteropTestsPigeonStreamCallback =
+        nativeInteropTestsPigeonStreamCallback.reference;
+    return _streamError(
+      _$$selfRef.pointer,
+      _id_streamError.pointer,
+      z ? 1 : 0,
+      _$nativeInteropTestsPigeonStreamCallback.pointer,
+    ).object<NativeInteropTestsPigeonStreamCancelHandle>();
+  }
+
+  static final _id_streamViaCallback = NativeInteropStreamHostApiRegistrar._class.instanceMethodId(
+    r'streamViaCallback',
+    r'(Ljava/lang/String;JLcom/example/test_plugin/NativeInteropTestsPigeonStreamCallback;)Lcom/example/test_plugin/NativeInteropTestsPigeonStreamCancelHandle;',
+  );
+
+  static final _streamViaCallback =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Int64, jni$_.Pointer<jni$_.Void>)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              core$_.int,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun streamViaCallback(prefix: kotlin.String, count: kotlin.Long, pigeonCallback: com.example.test_plugin.NativeInteropTestsPigeonStreamCallback): com.example.test_plugin.NativeInteropTestsPigeonStreamCancelHandle`
+  /// The returned object must be released after use, by calling the [release] method.
+  NativeInteropTestsPigeonStreamCancelHandle streamViaCallback(
+    jni$_.JString string,
+    core$_.int j,
+    NativeInteropTestsPigeonStreamCallback nativeInteropTestsPigeonStreamCallback,
+  ) {
+    final _$$selfRef = reference;
+    final _$string = string.reference;
+    final _$nativeInteropTestsPigeonStreamCallback =
+        nativeInteropTestsPigeonStreamCallback.reference;
+    return _streamViaCallback(
+      _$$selfRef.pointer,
+      _id_streamViaCallback.pointer,
+      _$string.pointer,
+      j,
+      _$nativeInteropTestsPigeonStreamCallback.pointer,
+    ).object<NativeInteropTestsPigeonStreamCancelHandle>();
+  }
+
+  static final _id_get$cancelledStreamCount = NativeInteropStreamHostApiRegistrar._class
+      .instanceMethodId(r'getCancelledStreamCount', r'()J');
+
+  static final _get$cancelledStreamCount =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_CallLongMethod')
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
+
+  /// from: `public fun getCancelledStreamCount(): kotlin.Long`
+  core$_.int get cancelledStreamCount {
+    final _$$selfRef = reference;
+    return _get$cancelledStreamCount(_$$selfRef.pointer, _id_get$cancelledStreamCount.pointer).long;
+  }
+
+  static final _id_resetCancelledStreamCount = NativeInteropStreamHostApiRegistrar._class
+      .instanceMethodId(r'resetCancelledStreamCount', r'()V');
+
+  static final _resetCancelledStreamCount =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JThrowablePtr Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_CallVoidMethod')
+          .asFunction<
+            jni$_.JThrowablePtr Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+          >();
+
+  /// from: `public fun resetCancelledStreamCount(): kotlin.Unit`
+  void resetCancelledStreamCount() {
+    final _$$selfRef = reference;
+    _resetCancelledStreamCount(_$$selfRef.pointer, _id_resetCancelledStreamCount.pointer).check();
+  }
+}
+
+final class $NativeInteropStreamHostApiRegistrar$Type$
+    extends jni$_.JType<NativeInteropStreamHostApiRegistrar> {
+  @jni$_.internal
+  const $NativeInteropStreamHostApiRegistrar$Type$();
+
+  @jni$_.internal
+  @core$_.override
+  String get signature => r'Lcom/example/test_plugin/NativeInteropStreamHostApiRegistrar;';
+}
+
 /// from: `com.example.test_plugin.NativeInteropUnusedClass$Companion`
 extension type NativeInteropUnusedClass$Companion._(jni$_.JObject _$this) implements jni$_.JObject {
   static final _class = jni$_.JClass.forName(
@@ -30983,6 +32055,42 @@ final class $DefaultConstructorMarker$Type$ extends jni$_.JType<DefaultConstruct
   String get signature => r'Lkotlin/jvm/internal/DefaultConstructorMarker;';
 }
 
+/// from: `kotlin.jvm.functions.Function0`
+///
+/// WARNING: Function0 is a stub. To generate bindings for this class, include
+/// kotlin.jvm.functions.Function0 in your config's classes list.
+///
+extension type Function0._(jni$_.JObject _$this) implements jni$_.JObject {
+  static const jni$_.JType<Function0> type = $Function0$Type$();
+}
+
+final class $Function0$Type$ extends jni$_.JType<Function0> {
+  @jni$_.internal
+  const $Function0$Type$();
+
+  @jni$_.internal
+  @core$_.override
+  String get signature => r'Lkotlin/jvm/functions/Function0;';
+}
+
+/// from: `kotlin.Unit`
+///
+/// WARNING: Unit is a stub. To generate bindings for this class, include
+/// kotlin.Unit in your config's classes list.
+///
+extension type Unit._(jni$_.JObject _$this) implements jni$_.JObject {
+  static const jni$_.JType<Unit> type = $Unit$Type$();
+}
+
+final class $Unit$Type$ extends jni$_.JType<Unit> {
+  @jni$_.internal
+  const $Unit$Type$();
+
+  @jni$_.internal
+  @core$_.override
+  String get signature => r'Lkotlin/Unit;';
+}
+
 /// from: `com.example.test_plugin.NativeInteropHostIntegrationCoreApi`
 ///
 /// WARNING: NativeInteropHostIntegrationCoreApi is a stub. To generate bindings for this class, include
@@ -31060,24 +32168,6 @@ final class $Continuation$Type$ extends jni$_.JType<Continuation> {
   @jni$_.internal
   @core$_.override
   String get signature => r'Lkotlin/coroutines/Continuation;';
-}
-
-/// from: `kotlin.Unit`
-///
-/// WARNING: Unit is a stub. To generate bindings for this class, include
-/// kotlin.Unit in your config's classes list.
-///
-extension type Unit._(jni$_.JObject _$this) implements jni$_.JObject {
-  static const jni$_.JType<Unit> type = $Unit$Type$();
-}
-
-final class $Unit$Type$ extends jni$_.JType<Unit> {
-  @jni$_.internal
-  const $Unit$Type$();
-
-  @jni$_.internal
-  @core$_.override
-  String get signature => r'Lkotlin/Unit;';
 }
 
 /// from: `com.example.test_plugin.NativeInteropFlutterIntegrationCoreApi`
@@ -31180,6 +32270,24 @@ final class $NativeInteropSealedClassFlutterApi$Type$
   @jni$_.internal
   @core$_.override
   String get signature => r'Lcom/example/test_plugin/NativeInteropSealedClassFlutterApi;';
+}
+
+/// from: `com.example.test_plugin.NativeInteropStreamHostApi`
+///
+/// WARNING: NativeInteropStreamHostApi is a stub. To generate bindings for this class, include
+/// com.example.test_plugin.NativeInteropStreamHostApi in your config's classes list.
+///
+extension type NativeInteropStreamHostApi._(jni$_.JObject _$this) implements jni$_.JObject {
+  static const jni$_.JType<NativeInteropStreamHostApi> type = $NativeInteropStreamHostApi$Type$();
+}
+
+final class $NativeInteropStreamHostApi$Type$ extends jni$_.JType<NativeInteropStreamHostApi> {
+  @jni$_.internal
+  const $NativeInteropStreamHostApi$Type$();
+
+  @jni$_.internal
+  @core$_.override
+  String get signature => r'Lcom/example/test_plugin/NativeInteropStreamHostApi;';
 }
 
 /// from: `java.lang.Enum`

@@ -142,9 +142,9 @@ final String result = await Isolate.run(() => api.doSomething(value));
 ```
 *Note: Callers must ensure the isolate stays alive while there are pending asynchronous calls, as attempting to execute a callback after the isolate has terminated will cause a crash.*
 
-### 3.4 Splitting Unsupported Pigeon Features (`@EventChannelApi`, `@ProxyApi`)
+### 3.4 Splitting Unsupported Pigeon Features (`@ProxyApi`)
 
-`@EventChannelApi` and `@ProxyApi` are not supported with Native Interop (`useFfi` / `useJni`). If your existing Pigeon file declares event channels or proxy APIs alongside `@HostApi` / `@FlutterApi`, move the `@EventChannelApi` / `@ProxyApi` declarations into a separate Pigeon file that does not enable `useFfi` or `useJni`. In addition, Swift FFI requires `SwiftOptions.includeErrorClass: true` (if you have multiple Swift FFI files in the same module, give each file a distinct `errorClassName` instead of setting `includeErrorClass: false`).
+`@ProxyApi` is not supported with Native Interop (`useFfi` / `useJni`). If your existing Pigeon file declares `@ProxyApi` alongside `@HostApi` / `@FlutterApi` methods, move the `@ProxyApi` declarations into a separate Pigeon file that does not enable `useFfi` or `useJni`. (`@HostApi` `Stream<T>` methods are supported with Native Interop—migrate any legacy `@EventChannelApi` definitions to `@HostApi` `Stream<T>` methods.) In addition, Swift FFI requires `SwiftOptions.includeErrorClass: true` (if you have multiple Swift FFI files in the same module, give each file a distinct `errorClassName` instead of setting `includeErrorClass: false`).
 
 ---
 
@@ -179,7 +179,7 @@ From the Dart side, instantiate your generated Host API using `<MyApi>.createWit
 
 For Swift FFI, the toolchain generates an Objective-C bridging directory under `<swift_output_dir>_objc_gen`:
 - **`.h` (Headers)**: Always generated to declare module interfaces and types for `ffigen`.
-- **`.m` (Bridging Implementation)**: Only generated when the schema contains async callbacks, closures, `@FlutterApi`, or Objective-C blocks requiring trampoline implementations.
+- **`.m` (Bridging Implementation)**: Only generated when the schema contains async callbacks, `Stream<T>` methods, closures, `@FlutterApi`, or Objective-C blocks requiring trampoline implementations.
 - **`.o` (Temporary Object Files)**: Intermediate binary files generated during `ffigen`/`swiftgen` AST parsing. These are **not** needed after code generation and must **not** be committed to version control.
 
 Ensure your build system is configured appropriately:
@@ -188,7 +188,7 @@ Ensure your build system is configured appropriately:
 - **SwiftPM (`Package.swift`)**:
   - Depend on `FlutterFramework` (`dependencies: [.package(name: "FlutterFramework", path: "../FlutterFramework")]` and `.product(name: "FlutterFramework", package: "FlutterFramework")` on your Swift target) for all `useFfi: true` SwiftPM plugins so the generated `#if canImport(Flutter)` / `#if canImport(FlutterMacOS)` registration APIs compile.
   - **Only if a `.m` file is generated** in `<swift_output_dir>_objc_gen`: Add a separate Objective-C target for `<plugin_name>_objc_gen` in `Package.swift` and depend on it from your main Swift target.
-  - **If no `.m` file is generated** (e.g., your schema only has synchronous `@HostApi()` methods and `<swift_output_dir>_objc_gen` only contains a `.h` header): Keep the `FlutterFramework` dependency, but **do not** add the `<plugin_name>_objc_gen` target to `Package.swift`. SwiftPM requires at least one compilable source file (`.m`, `.c`, or `.swift`) per target; an empty/header-only target causes Xcode builds to fail with `Build input file cannot be found: '.../<plugin_name>_objc_gen.o'`.
+  - **If no `.m` file is generated** (e.g., your schema only has non-streaming synchronous `@HostApi()` methods and `<swift_output_dir>_objc_gen` only contains a `.h` header): Keep the `FlutterFramework` dependency, but **do not** add the `<plugin_name>_objc_gen` target to `Package.swift`. SwiftPM requires at least one compilable source file (`.m`, `.c`, or `.swift`) per target; an empty/header-only target causes Xcode builds to fail with `Build input file cannot be found: '.../<plugin_name>_objc_gen.o'`.
 - **Application & Example App Targets**:
   - **Swift Module Name**: Set `ffiModuleName` in `SwiftOptions` to match your application's Swift module name (defaults to `'Runner'`). If iOS and macOS share the same generated Dart FFI file, both platforms must compile under that same module name. Since Flutter's default macOS template sets the module name to the app name rather than `Runner`, you can unify them by setting `PRODUCT_MODULE_NAME = Runner` in `macos/Runner/Configs/AppInfo.xcconfig` (or by matching whatever module name you configure). If iOS and macOS use separate Pigeon generation outputs or you only target one platform, unifying module names across platforms is not required.
   - **Native Registration (iOS/macOS)**: Register the native API implementation in native code (e.g., `MainFlutterWindow.swift` in `awakeFromNib()` on macOS, or `AppDelegate.swift` on iOS via `MyApiSetup.register(api: api, registrar: registrar)`, passing the registrar from `registrar(forPlugin:)`). This also ensures the setup class is referenced so the Xcode linker does not strip it (`-dead_strip`).
