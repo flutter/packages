@@ -445,7 +445,6 @@ class AndroidCameraCameraX extends CameraPlatform {
     // changed, so the preview rotation can be derived from its TransformationInfo
     // (see RotatedPreview).
     _latestTransformationInfo = null;
-    final int defaultDisplayRotation = await deviceOrientationManager.getDefaultDisplayRotation();
     preview = Preview(
       resolutionSelector: _presetResolutionSelector,
       targetFpsRange: _targetFpsRange,
@@ -458,10 +457,10 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     // Configure ImageCapture instance.
     _appliedFlashMode = null;
+    final int defaultDisplayRotation = await deviceOrientationManager.getDefaultDisplayRotation();
     imageCapture = ImageCapture(
       resolutionSelector: _presetResolutionSelector,
-      /* use CameraX default target rotation */ targetRotation: await deviceOrientationManager
-          .getDefaultDisplayRotation(),
+      /* use CameraX default target rotation */ targetRotation: defaultDisplayRotation,
       jpegQuality: _jpegQuality,
       zeroShutterLagEnabled: _zeroShutterLagEnabled,
     );

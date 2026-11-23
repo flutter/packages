@@ -2,6 +2,8 @@
 
 * Fixes camera preview rotating 90 degrees when recording video while streaming
   images.
+* Fixes front camera preview being mirrored incorrectly when recording video
+  while streaming images.
 * Fixes camera preview freezing when starting a video recording with image
   streaming after a recording without it.
 

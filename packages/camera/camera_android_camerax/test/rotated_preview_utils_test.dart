@@ -92,6 +92,10 @@ void main() {
       // rotation (sensor - target for back cameras, sensor + target for front
       // cameras). Without the camera transform, a direct buffer is in sensor
       // orientation, so the copied buffer matches it if that rotation is 0.
+      //
+      // This checks the pin against how CameraX is understood to compute that
+      // rotation, not against CameraX itself, so it must be updated if CameraX
+      // changes how it does.
       for (final cameraIsFrontFacing in <bool>[true, false]) {
         for (final sensorOrientationDegrees in <int>[0, 90, 180, 270]) {
           final int targetRotationDegrees =
@@ -135,7 +139,7 @@ void main() {
           sensorOrientationDegrees: 90,
           displayRotation: Surface.rotation90,
           previewTargetRotation: Surface.rotation0,
-          previewMirroringDisabled: false,
+          bufferNeedsMirroring: false,
         ),
         0,
       );
@@ -146,7 +150,7 @@ void main() {
           sensorOrientationDegrees: 90,
           displayRotation: Surface.rotation270,
           previewTargetRotation: Surface.rotation0,
-          previewMirroringDisabled: false,
+          bufferNeedsMirroring: false,
         ),
         180,
       );
@@ -159,7 +163,7 @@ void main() {
           sensorOrientationDegrees: 270,
           displayRotation: Surface.rotation90,
           previewTargetRotation: Surface.rotation0,
-          previewMirroringDisabled: false,
+          bufferNeedsMirroring: true,
         ),
         0,
       );
@@ -170,7 +174,7 @@ void main() {
           sensorOrientationDegrees: 270,
           displayRotation: Surface.rotation180,
           previewTargetRotation: Surface.rotation0,
-          previewMirroringDisabled: false,
+          bufferNeedsMirroring: true,
         ),
         90,
       );
@@ -187,7 +191,7 @@ void main() {
           sensorOrientationDegrees: 90,
           displayRotation: Surface.rotation0,
           previewTargetRotation: Surface.rotation0,
-          previewMirroringDisabled: false,
+          bufferNeedsMirroring: false,
         ),
         0,
       );
@@ -202,7 +206,7 @@ void main() {
             sensorOrientationDegrees: 90,
             displayRotation: displayRotation,
             previewTargetRotation: Surface.rotation0,
-            previewMirroringDisabled: false,
+            bufferNeedsMirroring: cameraIsFrontFacing,
           );
 
           // rotationDegrees and isMirroring are deliberately inconsistent with
@@ -219,7 +223,7 @@ void main() {
                 sensorOrientationDegrees: 90,
                 displayRotation: displayRotation,
                 previewTargetRotation: Surface.rotation0,
-                previewMirroringDisabled: false,
+                bufferNeedsMirroring: cameraIsFrontFacing,
               ),
               sensorBasedRotation,
               reason:
@@ -240,7 +244,7 @@ void main() {
           sensorOrientationDegrees: 90,
           displayRotation: Surface.rotation90,
           previewTargetRotation: Surface.rotation0,
-          previewMirroringDisabled: false,
+          bufferNeedsMirroring: false,
         ),
         270,
       );
@@ -253,7 +257,7 @@ void main() {
           sensorOrientationDegrees: 270,
           displayRotation: Surface.rotation90,
           previewTargetRotation: Surface.rotation0,
-          previewMirroringDisabled: false,
+          bufferNeedsMirroring: true,
         ),
         90,
       );
@@ -270,7 +274,7 @@ void main() {
           sensorOrientationDegrees: 270,
           displayRotation: Surface.rotation90,
           previewTargetRotation: Surface.rotation0,
-          previewMirroringDisabled: false,
+          bufferNeedsMirroring: false,
         ),
         0,
       );
@@ -299,7 +303,7 @@ void main() {
                   sensorOrientationDegrees: sensorOrientationDegrees,
                   displayRotation: displayRotation,
                   previewTargetRotation: previewTargetRotation,
-                  previewMirroringDisabled: false,
+                  bufferNeedsMirroring: cameraIsFrontFacing,
                 );
 
                 expect(
@@ -312,7 +316,7 @@ void main() {
                     sensorOrientationDegrees: sensorOrientationDegrees,
                     displayRotation: displayRotation,
                     previewTargetRotation: previewTargetRotation,
-                    previewMirroringDisabled: false,
+                    bufferNeedsMirroring: cameraIsFrontFacing,
                   ),
                   expectedRotation,
                   reason:
@@ -344,7 +348,7 @@ void main() {
               sensorOrientationDegrees: sensorOrientationDegrees,
               displayRotation: displayRotation,
               previewTargetRotation: previewTargetRotation,
-              previewMirroringDisabled: false,
+              bufferNeedsMirroring: true,
             );
 
             expect(
@@ -356,7 +360,7 @@ void main() {
                 sensorOrientationDegrees: sensorOrientationDegrees,
                 displayRotation: displayRotation,
                 previewTargetRotation: previewTargetRotation,
-                previewMirroringDisabled: false,
+                bufferNeedsMirroring: false,
               ),
               -rawBufferRotation % 360,
               reason:
@@ -379,7 +383,7 @@ void main() {
                 sensorOrientationDegrees: 90,
                 displayRotation: displayRotation,
                 previewTargetRotation: previewTargetRotation,
-                previewMirroringDisabled: false,
+                bufferNeedsMirroring: false,
               );
               expect(rotation, inInclusiveRange(0, 270));
               expect(rotation % 90, 0);

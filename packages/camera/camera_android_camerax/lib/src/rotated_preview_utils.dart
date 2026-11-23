@@ -73,16 +73,16 @@ int computePreviewTargetRotation({
 /// it, indicated by [TransformationInfo.hasCameraTransform].
 ///
 /// [displayRotation] and [previewTargetRotation] are [Surface] rotation
-/// constants, which are clockwise quarter turns. [previewMirroringDisabled]
-/// is whether the Preview was created with CameraX
-/// mirroring turned off (see [untransformedBufferNeedsMirroring]).
+/// constants, which are clockwise quarter turns. [bufferNeedsMirroring] is
+/// whether the buffer still needs to be mirrored to be displayed (see
+/// [untransformedBufferNeedsMirroring]).
 int computeUntransformedPreviewRotation({
   required TransformationInfo? transformationInfo,
   required bool cameraIsFrontFacing,
   required int sensorOrientationDegrees,
   required int displayRotation,
   required int previewTargetRotation,
-  required bool previewMirroringDisabled,
+  required bool bufferNeedsMirroring,
 }) {
   final int displayRotationDegrees = displayRotation * 90;
 
@@ -90,15 +90,10 @@ int computeUntransformedPreviewRotation({
   if (transformationInfo != null && !transformationInfo.hasCameraTransform) {
     // TransformationInfo.rotationDegrees is relative to the preview target
     // rotation, which never changes, so shift it by how much the display has
-    // rotated since. A raw front camera buffer, which still needs mirroring,
-    // turns the opposite way of one that is not.
+    // rotated since. A buffer that still needs mirroring turns the opposite
+    // way of one that does not.
     final int displayRotationDelta = displayRotationDegrees - previewTargetRotation * 90;
-    rotationDegrees =
-        untransformedBufferNeedsMirroring(
-          transformationInfo: transformationInfo,
-          cameraIsFrontFacing: cameraIsFrontFacing,
-          previewMirroringDisabled: previewMirroringDisabled,
-        )
+    rotationDegrees = bufferNeedsMirroring
         ? transformationInfo.rotationDegrees + displayRotationDelta
         : transformationInfo.rotationDegrees - displayRotationDelta;
   } else {
@@ -152,13 +147,18 @@ Widget buildUntransformedPreview({
   required bool previewMirroringDisabled,
   required DeviceOrientation deviceOrientation,
 }) {
+  final bool shouldMirror = untransformedBufferNeedsMirroring(
+    transformationInfo: transformationInfo,
+    cameraIsFrontFacing: cameraIsFrontFacing,
+    previewMirroringDisabled: previewMirroringDisabled,
+  );
   final int bufferRotationDegrees = computeUntransformedPreviewRotation(
     transformationInfo: transformationInfo,
     cameraIsFrontFacing: cameraIsFrontFacing,
     sensorOrientationDegrees: sensorOrientationDegrees,
     displayRotation: displayRotation,
     previewTargetRotation: previewTargetRotation,
-    previewMirroringDisabled: previewMirroringDisabled,
+    bufferNeedsMirroring: shouldMirror,
   );
 
   // Subtract the rotation already applied in the CameraPreview widget
@@ -168,11 +168,6 @@ Widget buildUntransformedPreview({
       bufferRotationDegrees -
       getPreAppliedQuarterTurnsRotationFromDeviceOrientation(deviceOrientation) * 90;
 
-  final bool shouldMirror = untransformedBufferNeedsMirroring(
-    transformationInfo: transformationInfo,
-    cameraIsFrontFacing: cameraIsFrontFacing,
-    previewMirroringDisabled: previewMirroringDisabled,
-  );
   var cameraPreview = child;
   if (shouldMirror) {
     // The preview must be mirrored across the vertical axis after it is
