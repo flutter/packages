@@ -1050,6 +1050,23 @@ class AndroidCameraCameraX extends CameraPlatform {
       useCases.add(imageAnalysis!);
     }
     await processCameraProvider?.unbindAll();
+
+    // The Preview target rotation is pinned per camera (see
+    // computePreviewTargetRotation), so re-pin it if the new camera needs a
+    // different one; otherwise buffers CameraX copies for stream sharing no
+    // longer look like buffers from the new camera directly.
+    final int newPreviewTargetRotation = computePreviewTargetRotation(
+      handlesCropAndRotation: _handlesCropAndRotation,
+      cameraIsFrontFacing: cameraIsFrontFacing,
+      sensorOrientationDegrees: description.sensorOrientation,
+    );
+    if (newPreviewTargetRotation != _previewTargetRotation) {
+      _previewTargetRotation = newPreviewTargetRotation;
+      await preview!.setTargetRotation(_previewTargetRotation);
+      // TransformationInfo is relative to the target rotation it was reported for.
+      _latestTransformationInfo = null;
+    }
+
     camera = await processCameraProvider?.bindToLifecycle(cameraSelector!, useCases);
 
     // Retrieve info required for correcting the rotation of the camera preview
