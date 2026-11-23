@@ -93,10 +93,11 @@ base class IOFileSystemXFile extends PlatformFileSystemXFile with IOFileSystemXF
   }
 
   @override
-  Future<void> writeAsString(PlatformWriteAsStringParams params) => file.writeAsString(params.contents, encoding: params.encoding);
+  Future<void> writeAsString(PlatformWriteAsStringParams params) =>
+      file.writeAsString(params.contents, encoding: params.encoding);
 
   @override
-  Future<void> delete(PlatformFileDeleteParams params)  => file.delete();
+  Future<void> delete(PlatformFileDeleteParams params) => file.delete();
 }
 
 /// Provides platform-specific features for [IOFileSystemXFile].
