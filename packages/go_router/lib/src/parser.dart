@@ -397,10 +397,20 @@ class _OnEnterHandler {
     }
 
     // Find route matches for the normalized URI.
-    final RouteMatchList incomingMatches = _configuration.findMatch(
+    RouteMatchList incomingMatches = _configuration.findMatch(
       routeInformation.uri,
       extra: infoState.extra,
     );
+
+    // A restore to the same URI keeps the current match list, including routes
+    // pushed on top of it (see _updateRouteMatchList), so the guard should see
+    // that list as the next state too.
+    final RouteMatchList? restoreBase = infoState.baseRouteMatchList;
+    if (infoState.type == NavigatingType.restore &&
+        restoreBase != null &&
+        restoreBase.uri.toString() == incomingMatches.uri.toString()) {
+      incomingMatches = restoreBase;
+    }
 
     // Build the next navigation state.
     final GoRouterState nextState = _buildTopLevelGoRouterState(incomingMatches);
