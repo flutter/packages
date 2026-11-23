@@ -62,6 +62,93 @@ void main() {
       expect(signature, <String>['DriverError: Error while reading FlutterDriver result']);
     });
 
+    group('Gradle', () {
+      const pomUrl =
+          'https://us-maven.pkg.dev/artifact-foundry-prod/maven-3p/io/flutter/x86_64_debug/1.0.0-69353cb5/x86_64_debug-1.0.0-69353cb5.pom';
+      const executionFailed =
+          "Execution failed for task ':app:processDebugNavigationResources' (registered by plugin 'com.android.internal.application').";
+      const couldNotResolve = '   > Could not resolve io.flutter:x86_64_debug:1.0.0-69353cb5.';
+      const couldNotGet =
+          "            > Could not GET '$pomUrl'. Received status code 429 from server: Too Many Requests";
+      const shortCouldNotGet =
+          "> Could not GET 'https://us-maven.pkg.dev/.../x86_64_debug-1.0.0-69353cb5.pom'. Received status code 429 from server: Too Many Requests";
+
+      // Excerpt from build 8664319592855895393 (android_device_tests_shard_6).
+      const rateLimited = <String>[
+        '> Task :app:processDebugNavigationResources FAILED',
+        '',
+        'FAILURE: Build failed with an exception.',
+        '',
+        '* What went wrong:',
+        executionFailed,
+        "> Could not resolve all files for configuration ':app:debugRuntimeClasspath'.",
+        couldNotResolve,
+        '     Required by:',
+        "         project ':app'",
+        "         > Could not get resource '$pomUrl'.",
+        couldNotGet,
+        '> There is 1 more failure with an identical cause.',
+      ];
+
+      test('shows the HTTP error behind a failed dependency download', () {
+        final List<String> signature = extractSignature(rateLimited, 12);
+
+        expect(signature, <String>[
+          '> Task :app:processDebugNavigationResources FAILED',
+          'FAILURE: Build failed with an exception.',
+          executionFailed,
+          couldNotResolve.trim(),
+          shortCouldNotGet,
+        ]);
+      });
+
+      test('keeps the HTTP error when trimming to maxLines', () {
+        final List<String> signature = extractSignature(rateLimited, 2);
+
+        expect(signature, <String>[executionFailed, shortCouldNotGet]);
+      });
+
+      test('shows the same cause once when packages repeat it', () {
+        final List<String> signature = extractSignature(<String>[
+          '|| Running for packages/foo',
+          ...rateLimited,
+          '|| Running for packages/bar',
+          ...rateLimited,
+        ], 12);
+
+        expect(signature.where((String l) => l.contains('status code 429')), hasLength(1));
+      });
+
+      test('shows a JDK mismatch', () {
+        const compileGroovyFailed = "Execution failed for task ':gradle:compileGroovy'.";
+        const jdkMismatch =
+            "> BUG! exception in phase 'semantic analysis' ...  Unsupported class file major version";
+
+        final List<String> signature = extractSignature(<String>[
+          '* What went wrong:',
+          compileGroovyFailed,
+          jdkMismatch,
+        ], 12);
+
+        expect(signature, <String>[compileGroovyFailed, jdkMismatch]);
+      });
+
+      test('still keeps compile errors', () {
+        const javacError =
+            '/b/s/w/ir/x/w/packages/packages/foo/android/src/main/java/Foo.java:12: error: cannot find symbol';
+        const javacFailed = "Execution failed for task ':foo:compileDebugJavaWithJavac'.";
+
+        final List<String> signature = extractSignature(<String>[
+          javacError,
+          'FAILURE: Build failed with an exception.',
+          '* What went wrong:',
+          javacFailed,
+        ], 2);
+
+        expect(signature, <String>[javacError, javacFailed]);
+      });
+    });
+
     test('dedups lines that differ only in digits', () {
       final List<String> signature = extractSignature(<String>[
         'Error: timed out after 100ms',

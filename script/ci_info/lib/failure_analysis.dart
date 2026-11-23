@@ -48,6 +48,15 @@ class _SignalPattern {
 final List<_SignalPattern> _signalPatterns = <_SignalPattern>[
   // JUnit / AndroidX test runner: "pkg.SomeTest > someMethod[device] FAILED".
   _SignalPattern(0, 'junit', RegExp(r'^\S+ > \w+.*\bFAILED\b'), 5),
+  // Gradle dependency downloads that failed with an HTTP error, e.g. a Maven
+  // mirror returning 429 Too Many Requests. One of these usually explains
+  // every failed task in the build, so they rank first.
+  _SignalPattern(
+    1,
+    'http',
+    RegExp(r"Could not (?:GET|HEAD) '[^']+'\. Received status code \d+"),
+    2,
+  ),
   _SignalPattern(1, 'junit', RegExp(r'^Execute \S+: FAILED'), 3),
   // Dart / flutter test: "00:05 +12 -1: some test [E]".
   _SignalPattern(1, 'dart', _dartFailed, 5),
@@ -91,6 +100,18 @@ final List<_SignalPattern> _signalPatterns = <_SignalPattern>[
   // Only stack frames pointing at a test source file are worth keeping; the
   // rest of the trace is framework/infra noise.
   _SignalPattern(4, 'frame', RegExp(r'^at .*\(\w*Test\.(?:java|kt):\d+\)'), 3),
+  // Gradle's "* What went wrong:" block: the failed task, then a chain of
+  // "> ..." causes. The generic "FAILURE: Build failed" line below says
+  // nothing on its own.
+  _SignalPattern(2, 'gradle', RegExp(r"^Execution failed for task '"), 2),
+  _SignalPattern(
+    3,
+    'gradle',
+    RegExp(r'^(?:> )?Could not (?:resolve|find) (?!all )[\w.-]+:[\w.-]+'),
+    2,
+  ),
+  // A JDK newer than the Gradle/Groovy version in use supports.
+  _SignalPattern(3, 'gradle', RegExp('Unsupported class file major version'), 1),
   _SignalPattern(5, 'gradle', RegExp(r'^FAILURE: Build failed with an exception\.'), 1),
 ];
 
@@ -118,6 +139,14 @@ final RegExp _packageContext = RegExp(
 );
 
 final RegExp _errorsHeader = RegExp('^The following packages had errors:');
+
+/// A URL path long enough to push the useful part of a line (e.g. the HTTP
+/// status after a Maven artifact URL) past the display limit.
+final RegExp _longUrlPath = RegExp(r"(https?://[^/'\s]+)/[^'\s]*/([^/'\s]+)");
+
+/// Shortens URLs in [line] to their host and last path segment.
+String _shortenUrls(String line) =>
+    line.replaceAllMapped(_longUrlPath, (Match m) => '${m.group(1)}/.../${m.group(2)}');
 
 String _withReasons(String package, List<String> reasons) =>
     reasons.isEmpty ? package : '$package (${reasons.join('; ')})';
@@ -202,7 +231,7 @@ List<String> extractSignature(List<String> lines, int maxLines) {
       }
       counts[index] = (counts[index] ?? 0) + 1;
 
-      final String text = ci_lib.truncate(stripped, 220);
+      final String text = ci_lib.truncate(_shortenUrls(stripped), 220);
       hits.add(_Hit(order, signal.priority, text, currentPackage));
       break;
     }
