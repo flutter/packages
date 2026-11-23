@@ -1082,6 +1082,25 @@ ${[for (var i = 2; i <= 30; i++) '    <pattern id="lvl$i" width="10" height="10"
     expect(instructions.paints.single.fill, const Fill(color: Color(0xFFFFFFFF)));
   });
 
+  test('Unsupported color function in style falls back to earlier declaration', () {
+    final VectorInstructions instructions = parseWithoutOptimizers('''
+<svg xmlns="http://www.w3.org/2000/svg" width="13" height="12" viewBox="0 0 13 12" fill="none">
+    <path d="M9 4.5L6.5 7.5L4 4.5H9Z" style="fill:#888888;fill:color(display-p3 0.4784 0.4941 0.5294);fill-opacity:1;stroke:#333333;stroke:color(display-p3 0.2000 0.2000 0.2000);stroke-opacity:1;" />
+</svg>''');
+
+    expect(instructions.paints.single.fill, const Fill(color: Color(0xFF888888)));
+    expect(instructions.paints.single.stroke?.color, const Color(0xFF333333));
+  });
+
+  test('Unsupported color function in style falls back to presentation attribute', () {
+    final VectorInstructions instructions = parseWithoutOptimizers('''
+<svg xmlns="http://www.w3.org/2000/svg" width="13" height="12" viewBox="0 0 13 12" fill="none">
+    <path d="M9 4.5L6.5 7.5L4 4.5H9Z" fill="#888888" style="fill:color(display-p3 0.4784 0.4941 0.5294);" />
+</svg>''');
+
+    expect(instructions.paints.single.fill, const Fill(color: Color(0xFF888888)));
+  });
+
   test('text anchor', () {
     final VectorInstructions instructions = parseWithoutOptimizers(textAnchors);
 

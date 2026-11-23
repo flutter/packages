@@ -1632,6 +1632,10 @@ class SvgParser {
           if (attributeValue == 'inherit') {
             continue;
           }
+          // The color() function is not supported, so it must not replace an earlier fallback.
+          if (attributeValue.toLowerCase().startsWith('color(')) {
+            continue;
+          }
           attributeMap[styleParts[0].trim()] = attributeValue;
         }
       } else if (value != 'inherit') {
