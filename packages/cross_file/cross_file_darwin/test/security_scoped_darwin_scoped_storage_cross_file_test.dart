@@ -119,24 +119,14 @@ void main() {
   test(
     'finalizer is not detached after disposed is called once',
     () async {
-      // Creates file and detach from finalizer in dispose.
-      final WeakReference<SecurityScopedDarwinScopedStorageXFile> file = await _createAndDropFile(
-        dispose: true,
-      );
-
-      SecurityScopedDarwinScopedStorageXFile.finalizer = Finalizer<String>(expectAsync1((_) {}));
+      final finalizer = Finalizer<String>(expectAsync1((_) {}));
       addTearDown(
         () => SecurityScopedDarwinScopedStorageXFile.finalizer =
             SecurityScopedDarwinScopedStorageXFile.defaultFinalizer,
       );
-      // Attach finalizer to file again. This finalizer callback should trigger
-      // because it isn't removed after the second dispose.
-      SecurityScopedDarwinScopedStorageXFile.finalizer.attach(
-        file.target!,
-        '',
-        detach: file.target,
-      );
-      await file.target!.dispose();
+
+      final WeakReference<SecurityScopedDarwinScopedStorageXFile> file =
+          await _createAndDisposeFileTwice(finalizer);
 
       await forceGC(fullGcCycles: defaultNumberOfGcCycles);
       await pumpEventQueue();
@@ -161,5 +151,31 @@ Future<WeakReference<SecurityScopedDarwinScopedStorageXFile>> _createAndDropFile
   if (dispose) {
     await file.dispose();
   }
+  return WeakReference(file);
+}
+
+// Allocate and register the instance inside a non-inlined helper so the
+// async test frame does not retain a hidden stack/register reference to
+// the object across `await forceGC()`.
+@pragma('vm:never-inline')
+Future<WeakReference<SecurityScopedDarwinScopedStorageXFile>> _createAndDisposeFileTwice(
+  Finalizer<String> finalizer,
+) async {
+  final file = SecurityScopedDarwinScopedStorageXFile(
+    PlatformScopedStorageXFileCreationParams(uri: testFile.uri.toString()),
+  );
+  await file.dispose();
+
+  SecurityScopedDarwinScopedStorageXFile.finalizer = finalizer;
+  addTearDown(
+    () => SecurityScopedDarwinScopedStorageXFile.finalizer =
+        SecurityScopedDarwinScopedStorageXFile.defaultFinalizer,
+  );
+
+  // Attach finalizer to file again. This finalizer callback should trigger
+  // because it isn't removed after the second dispose.
+  SecurityScopedDarwinScopedStorageXFile.finalizer.attach(file, '', detach: file);
+  await file.dispose();
+
   return WeakReference(file);
 }
