@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:io';
+
 import 'package:cross_file_android/src/android_library.g.dart' as android;
 import 'package:cross_file_android/src/android_scoped_storage_cross_directory.dart';
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
@@ -181,6 +183,6 @@ void main() {
       const PlatformScopedStorageXDirectoryCreationParams(uri: uri),
     );
 
-    expect(await dir.delete(const PlatformDirectoryDeleteParams()), true);
+    await expectLater(dir.delete(const PlatformDirectoryDeleteParams()), completes);
   });
 }

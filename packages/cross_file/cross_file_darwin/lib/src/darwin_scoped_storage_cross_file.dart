@@ -144,20 +144,11 @@ base class SecurityScopedDarwinScopedStorageXFile extends DarwinScopedStorageXFi
   }
 
   @override
-  Future<PlatformXFile> writeAsString(PlatformWriteAsStringParams params) async {
-    await _file.writeAsString(params.contents, encoding: params.encoding);
-    return this;
-  }
+  Future<void> writeAsString(PlatformWriteAsStringParams params) =>
+      _file.writeAsString(params.contents, encoding: params.encoding);
 
   @override
-  Future<bool> delete(PlatformFileDeleteParams params) async {
-    try {
-      await _file.delete();
-      return true;
-    } on FileSystemException {
-      return false;
-    }
-  }
+  Future<void> delete(PlatformFileDeleteParams params) => _file.delete();
 
   @override
   Future<bool> exists() async => _file.existsSync();

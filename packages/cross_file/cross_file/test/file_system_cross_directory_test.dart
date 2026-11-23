@@ -102,9 +102,8 @@ void main() {
       );
 
       final directory = XDirectory.fileSystem(path: 'my/dir/');
-      final bool result = await directory.delete();
 
-      expect(result, isTrue);
+      await expectLater(directory.delete(), completes);
     });
   });
 }

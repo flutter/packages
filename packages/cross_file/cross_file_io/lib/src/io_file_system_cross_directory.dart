@@ -83,14 +83,7 @@ base class IOFileSystemXDirectory extends PlatformFileSystemXDirectory
   }
 
   @override
-  Future<bool> delete(PlatformDirectoryDeleteParams params) async {
-    try {
-      await directory.delete();
-      return true;
-    } on FileSystemException {
-      return false;
-    }
-  }
+  Future<void> delete(PlatformDirectoryDeleteParams params) => directory.delete();
 }
 
 /// Provides platform-specific features for [IOFileSystemXDirectory].

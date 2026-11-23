@@ -132,7 +132,7 @@ base class AndroidScopedStorageXFile extends PlatformScopedStorageXFile {
   }
 
   @override
-  Future<PlatformXFile> writeAsString(PlatformWriteAsStringParams params) async {
+  Future<void> writeAsString(PlatformWriteAsStringParams params) async {
     final android.OutputStream? outputStream = await _contentResolver.openOutputStream(
       this.params.uri,
       'w',
@@ -149,12 +149,15 @@ base class AndroidScopedStorageXFile extends PlatformScopedStorageXFile {
     } finally {
       await outputStream.close();
     }
-
-    return this;
   }
 
   @override
-  Future<bool> delete(PlatformFileDeleteParams params) => _documentFile.delete();
+  Future<void> delete(PlatformFileDeleteParams params) async {
+    final bool fileDeleted = await _documentFile.delete();
+    if (!fileDeleted) {
+      throw Exception('Failed to delete file with uri: ${this.params.uri}');
+    }
+  }
 
   @override
   Future<void> dispose() async {

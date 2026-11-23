@@ -81,8 +81,7 @@ void main() {
     );
 
     expect(testDir.existsSync(), isTrue);
-    final bool success = await dir.delete(const PlatformDirectoryDeleteParams());
-    expect(success, isTrue);
+    await dir.delete(const PlatformDirectoryDeleteParams());
     expect(testDir.existsSync(), isFalse);
   });
 }

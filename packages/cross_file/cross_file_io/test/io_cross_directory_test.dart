@@ -84,8 +84,7 @@ void main() {
       );
       expect(await directory.exists(), true);
 
-      final bool result = await directory.delete(const PlatformDirectoryDeleteParams());
-      expect(result, true);
+      await directory.delete(const PlatformDirectoryDeleteParams());
       expect(await directory.exists(), false);
     });
 

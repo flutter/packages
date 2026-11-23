@@ -320,7 +320,7 @@ void main() {
       const PlatformScopedStorageXFileCreationParams(uri: uri),
     );
 
-    expect(await file.delete(const PlatformFileDeleteParams()), true);
+    await expectLater(file.delete(const PlatformFileDeleteParams()), completes);
   });
 
   group('writeAsString', () {
@@ -347,11 +347,8 @@ void main() {
         const PlatformScopedStorageXFileCreationParams(uri: uri),
       );
 
-      final PlatformXFile result = await file.writeAsString(
-        const PlatformWriteAsStringParams(testString),
-      );
+      await file.writeAsString(const PlatformWriteAsStringParams(testString));
 
-      expect(result, file);
       verify(mockOutputStream.write(argThat(equals(testBytes)))).called(1);
       verify(mockOutputStream.flush()).called(1);
       verify(mockOutputStream.close()).called(1);

@@ -100,13 +100,9 @@ void main() {
       PlatformScopedStorageXFileCreationParams(uri: tempFile.uri.toString()),
     );
 
-    final PlatformXFile writtenFile = await file.writeAsString(
-      const PlatformWriteAsStringParams('hello writeAsString'),
-    );
+    await file.writeAsString(const PlatformWriteAsStringParams('hello writeAsString'));
 
-    expect(writtenFile.params.uri, tempFile.uri.toString());
     expect(await tempFile.readAsString(), 'hello writeAsString');
-    expect(writtenFile, file);
   });
 
   test('delete', () async {
@@ -120,8 +116,7 @@ void main() {
     );
 
     expect(tempFile.existsSync(), isTrue);
-    final bool success = await file.delete(const PlatformFileDeleteParams());
-    expect(success, isTrue);
+    await file.delete(const PlatformFileDeleteParams());
     expect(tempFile.existsSync(), isFalse);
   });
 }

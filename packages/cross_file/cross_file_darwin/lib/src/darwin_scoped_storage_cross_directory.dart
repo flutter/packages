@@ -145,14 +145,7 @@ base class SecurityScopedDarwinScopedStorageXDirectory extends DarwinScopedStora
   }
 
   @override
-  Future<bool> delete(PlatformDirectoryDeleteParams params) async {
-    try {
-      await _directory.delete();
-      return true;
-    } on FileSystemException {
-      return false;
-    }
-  }
+  Future<void> delete(PlatformDirectoryDeleteParams params) => _directory.delete();
 
   @override
   Future<void> dispose() => stopAccessingSecurityScopedResource();

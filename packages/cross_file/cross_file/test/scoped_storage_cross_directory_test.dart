@@ -137,16 +137,13 @@ void main() {
         onCreatePlatformScopedStorageXDirectory:
             (PlatformScopedStorageXDirectoryCreationParams params) => TestScopedStorageXDirectory(
               params,
-              onDelete: expectAsync1((PlatformDirectoryDeleteParams deleteParams) async {
-                return true;
-              }),
+              onDelete: expectAsync1((PlatformDirectoryDeleteParams deleteParams) async {}),
             ),
       );
 
       final directory = ScopedStorageXDirectory(uri: 'uri');
-      final bool result = await directory.delete();
 
-      expect(result, isTrue);
+      await expectLater(directory.delete(), completes);
     });
   });
 }

@@ -84,7 +84,7 @@ final class TestFileSystemXFile extends PlatformFileSystemXFile {
   Future<TestFileSystemXFile> Function(Uint8List bytes)? onWriteAsBytes;
   Future<PlatformFileSystemXFile> Function(PlatformWriteAsStringParams params)? onWriteAsString;
   StreamSink<Uint8List> Function(PlatformOpenWriteParams params)? onOpenWrite;
-  Future<bool> Function(PlatformFileDeleteParams params)? onDelete;
+  Future<void> Function(PlatformFileDeleteParams params)? onDelete;
 
   @override
   Future<bool> exists() async {
@@ -149,8 +149,8 @@ final class TestFileSystemXFile extends PlatformFileSystemXFile {
   }
 
   @override
-  Future<bool> delete(PlatformFileDeleteParams params) async {
-    return await onDelete?.call(params) ?? false;
+  Future<void> delete(PlatformFileDeleteParams params) async {
+    await onDelete?.call(params);
   }
 }
 
@@ -232,9 +232,9 @@ final class TestScopedStorageXFile extends PlatformScopedStorageXFile {
   Future<Uint8List> Function()? onReadAsBytes;
   Future<String> Function({required Encoding encoding})? onReadAsString;
   Future<void> Function()? onDispose;
-  Future<PlatformScopedStorageXFile> Function(PlatformWriteAsStringParams params)? onWriteAsString;
+  Future<void> Function(PlatformWriteAsStringParams params)? onWriteAsString;
   StreamSink<Uint8List> Function(PlatformOpenWriteParams params)? onOpenWrite;
-  Future<bool> Function(PlatformFileDeleteParams params)? onDelete;
+  Future<void> Function(PlatformFileDeleteParams params)? onDelete;
 
   @override
   Future<bool> canRead() async {
@@ -289,7 +289,7 @@ final class TestScopedStorageXFile extends PlatformScopedStorageXFile {
   }
 
   @override
-  Future<PlatformScopedStorageXFile> writeAsString(PlatformWriteAsStringParams params) async {
+  Future<void> writeAsString(PlatformWriteAsStringParams params) async {
     if (onWriteAsString != null) {
       return onWriteAsString!(params);
     }
@@ -305,8 +305,8 @@ final class TestScopedStorageXFile extends PlatformScopedStorageXFile {
   }
 
   @override
-  Future<bool> delete(PlatformFileDeleteParams params) async {
-    return await onDelete?.call(params) ?? false;
+  Future<void> delete(PlatformFileDeleteParams params) async {
+    await onDelete?.call(params);
   }
 }
 
@@ -330,7 +330,7 @@ final class TestScopedStorageXDirectory extends PlatformScopedStorageXDirectory 
   Future<void> Function()? onDispose;
   Future<PlatformXFile> Function(PlatformCreateParams params)? onCreateFile;
   Future<PlatformScopedStorageXDirectory> Function(PlatformCreateParams params)? onCreateDirectory;
-  Future<bool> Function(PlatformDirectoryDeleteParams params)? onDelete;
+  Future<void> Function(PlatformDirectoryDeleteParams params)? onDelete;
 
   @override
   Future<bool> exists() async {
@@ -376,8 +376,8 @@ final class TestScopedStorageXDirectory extends PlatformScopedStorageXDirectory 
   }
 
   @override
-  Future<bool> delete(PlatformDirectoryDeleteParams params) async {
-    return await onDelete?.call(params) ?? false;
+  Future<void> delete(PlatformDirectoryDeleteParams params) async {
+    await onDelete?.call(params);
   }
 }
 

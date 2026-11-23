@@ -148,14 +148,13 @@ void main() {
               onWriteAsString: expectAsync1((PlatformWriteAsStringParams writeParams) async {
                 expect(writeParams.contents, testString);
                 expect(writeParams.encoding, utf8);
-                return TestScopedStorageXFile(params);
               }),
             ),
       );
 
       final file = ScopedStorageXFile(uri: 'uri');
 
-      await file.writeAsString(testString);
+      await expectLater(file.writeAsString(testString), completes);
     });
 
     test('openWrite', () async {
@@ -181,15 +180,13 @@ void main() {
         onCreatePlatformScopedStorageXFile: (PlatformScopedStorageXFileCreationParams params) =>
             TestScopedStorageXFile(
               params,
-              onDelete: expectAsync1((PlatformFileDeleteParams params) async {
-                return true;
-              }),
+              onDelete: expectAsync1((PlatformFileDeleteParams params) async {}),
             ),
       );
 
       final file = ScopedStorageXFile(uri: 'uri');
 
-      expect(await file.delete(), true);
+      await expectLater(file.delete(), completes);
     });
   });
 }

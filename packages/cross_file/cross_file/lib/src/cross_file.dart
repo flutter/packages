@@ -112,24 +112,12 @@ abstract base class XFile extends XEntity {
   ///
   /// Platforms may throw an exception if there is an error opening or writing
   /// to the resource.
-  Future<XFile> writeAsString(String contents, {Encoding encoding = utf8}) async {
-    final PlatformXFile file = await platform.writeAsString(
-      PlatformWriteAsStringParams(contents, encoding: encoding),
-    );
-
-    switch (file) {
-      case PlatformScopedStorageXFile():
-        return ScopedStorageXFile.fromPlatform(file);
-      case PlatformFileSystemXFile():
-        return FileSystemXFile.fromPlatform(file);
-      default:
-        throw Exception('Unsupported XFile type was returned: ${file.runtimeType}');
-    }
-  }
+  Future<void> writeAsString(String contents, {Encoding encoding = utf8}) =>
+      platform.writeAsString(PlatformWriteAsStringParams(contents, encoding: encoding));
 
   /// Deletes the resource.
   ///
   /// Platforms may throw an exception if there is an error deleting the
   /// resource.
-  Future<bool> delete() => platform.delete(const PlatformFileDeleteParams());
+  Future<void> delete() => platform.delete(const PlatformFileDeleteParams());
 }

@@ -118,7 +118,7 @@ void main() {
 
       final file = FileSystemXFile('to/myFile.txt');
 
-      await file.writeAsBytes(testBytes);
+      await expectLater(file.writeAsBytes(testBytes), completes);
     });
 
     test('writeAsString', () async {
@@ -163,15 +163,13 @@ void main() {
         onCreatePlatformFileSystemXFile: (PlatformFileSystemXFileCreationParams params) =>
             TestFileSystemXFile(
               params,
-              onDelete: expectAsync1((PlatformFileDeleteParams params) async {
-                return true;
-              }),
+              onDelete: expectAsync1((PlatformFileDeleteParams params) async {}),
             ),
       );
 
       final file = FileSystemXFile('to/myFile.txt');
 
-      expect(await file.delete(), true);
+      await expectLater(file.delete(), completes);
     });
   });
 }

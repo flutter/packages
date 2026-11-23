@@ -107,5 +107,5 @@ abstract base class XDirectory extends XEntity {
   ///
   /// Platforms may throw an exception if there is an error deleting the
   /// container.
-  Future<bool> delete() => platform.delete(const PlatformDirectoryDeleteParams());
+  Future<void> delete() => platform.delete(const PlatformDirectoryDeleteParams());
 }

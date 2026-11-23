@@ -108,7 +108,7 @@ abstract base class PlatformXDirectory extends PlatformXEntity {
   ///
   /// Platforms may throw an exception if there is an error deleting the
   /// container.
-  Future<bool> delete(PlatformDirectoryDeleteParams params) {
+  Future<void> delete(PlatformDirectoryDeleteParams params) {
     throw UnimplementedError('`delete` is not implemented on the current platform.');
   }
 }

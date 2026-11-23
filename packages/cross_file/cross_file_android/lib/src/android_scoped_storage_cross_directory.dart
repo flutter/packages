@@ -64,7 +64,12 @@ base class AndroidScopedStorageXDirectory extends PlatformScopedStorageXDirector
   }
 
   @override
-  Future<bool> delete(PlatformDirectoryDeleteParams params) => _documentFile.delete();
+  Future<void> delete(PlatformDirectoryDeleteParams params) async {
+    final bool directoryDeleted = await _documentFile.delete();
+    if (!directoryDeleted) {
+      throw Exception('Failed to delete directory with uri: ${this.params.uri}');
+    }
+  }
 
   @override
   Future<void> dispose() async {
