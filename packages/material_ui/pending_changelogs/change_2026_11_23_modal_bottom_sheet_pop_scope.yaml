@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes `ModalBottomSheetRoute` and `showModalBottomSheet` bypassing `PopScope` on drag/fling dismissal so vetoed pops invoke `onPopInvokedWithResult` with `didPop: false` and animate the sheet back open.
+version: patch

@@ -3811,6 +3811,641 @@ void main() {
     // animation continues from the current visual offset.
     expect(yAfterUp, closeTo(yBeforeUp, 0.1));
   });
+
+  // Regression tests for https://github.com/flutter/flutter/issues/152120.
+  testWidgets(
+    'ModalBottomSheet drag down respects PopScope(canPop: false) and rebounds without reverse status',
+    (WidgetTester tester) async {
+      final Key sheetKey = UniqueKey();
+      final popInvocations = <bool>[];
+      final statuses = <AnimationStatus>[];
+      final controller = AnimationController(
+        vsync: const TestVSync(),
+        duration: const Duration(milliseconds: 250),
+        reverseDuration: const Duration(milliseconds: 200),
+      );
+      addTearDown(controller.dispose);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Builder(
+              builder: (BuildContext context) => ElevatedButton(
+                onPressed: () => showModalBottomSheet<void>(
+                  context: context,
+                  transitionAnimationController: controller,
+                  builder: (BuildContext context) => PopScope(
+                    canPop: false,
+                    onPopInvokedWithResult: (bool didPop, Object? result) {
+                      popInvocations.add(didPop);
+                    },
+                    child: SizedBox(
+                      key: sheetKey,
+                      height: 300,
+                      child: const Center(child: Text('BottomSheet')),
+                    ),
+                  ),
+                ),
+                child: const Text('Open'),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('Open'));
+      await tester.pumpAndSettle();
+
+      final double openTopY = tester.getTopLeft(find.byKey(sheetKey)).dy;
+      controller.addStatusListener(statuses.add);
+
+      // Drag past the 50% close threshold, without dragging fully offscreen.
+      // Use multiple move steps because VerticalDragGestureRecognizer uses
+      // onlyAcceptDragOnThreshold.
+      final TestGesture gesture = await tester.startGesture(tester.getCenter(find.byKey(sheetKey)));
+      await gesture.moveBy(const Offset(0, 50));
+      await tester.pump();
+      await gesture.moveBy(const Offset(0, 180));
+      await tester.pump();
+
+      final double yBeforeUp = tester.getTopLeft(find.byKey(sheetKey)).dy;
+      expect(yBeforeUp, greaterThan(openTopY + 150.0));
+
+      await gesture.up();
+      await tester.pump();
+
+      // Should not jump on release.
+      expect(tester.getTopLeft(find.byKey(sheetKey)).dy, closeTo(yBeforeUp, 0.1));
+
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(sheetKey), findsOneWidget);
+      expect(tester.getTopLeft(find.byKey(sheetKey)).dy, closeTo(openTopY, 0.1));
+      expect(popInvocations, <bool>[false]);
+      expect(statuses, isNot(contains(AnimationStatus.reverse)));
+    },
+  );
+
+  testWidgets('ModalBottomSheet dragged completely past bottom rebounds when PopScope blocks pop', (
+    WidgetTester tester,
+  ) async {
+    final Key sheetKey = UniqueKey();
+    final popInvocations = <bool>[];
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Builder(
+            builder: (BuildContext context) => ElevatedButton(
+              onPressed: () => showModalBottomSheet<void>(
+                context: context,
+                builder: (BuildContext context) => PopScope(
+                  canPop: false,
+                  onPopInvokedWithResult: (bool didPop, Object? result) {
+                    popInvocations.add(didPop);
+                  },
+                  child: SizedBox(
+                    key: sheetKey,
+                    height: 300,
+                    child: const Center(child: Text('BottomSheet')),
+                  ),
+                ),
+              ),
+              child: const Text('Open'),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('Open'));
+    await tester.pumpAndSettle();
+    final double openTopY = tester.getTopLeft(find.byKey(sheetKey)).dy;
+
+    // Drag further than the sheet height so animationController.value hits 0.0.
+    await tester.drag(find.byKey(sheetKey), const Offset(0, 400));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(sheetKey), findsOneWidget);
+    expect(tester.getTopLeft(find.byKey(sheetKey)).dy, closeTo(openTopY, 0.1));
+    expect(popInvocations, <bool>[false]);
+  });
+
+  testWidgets('ModalBottomSheet downward fling respects PopScope(canPop: false) and rebounds', (
+    WidgetTester tester,
+  ) async {
+    final Key sheetKey = UniqueKey();
+    final popInvocations = <bool>[];
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Builder(
+            builder: (BuildContext context) => ElevatedButton(
+              onPressed: () => showModalBottomSheet<void>(
+                context: context,
+                builder: (BuildContext context) => PopScope(
+                  canPop: false,
+                  onPopInvokedWithResult: (bool didPop, Object? result) {
+                    popInvocations.add(didPop);
+                  },
+                  child: SizedBox(
+                    key: sheetKey,
+                    height: 300,
+                    child: const Center(child: Text('BottomSheet')),
+                  ),
+                ),
+              ),
+              child: const Text('Open'),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('Open'));
+    await tester.pumpAndSettle();
+    final double openTopY = tester.getTopLeft(find.byKey(sheetKey)).dy;
+
+    await tester.fling(find.byKey(sheetKey), const Offset(0, 50), 2000.0);
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(sheetKey), findsOneWidget);
+    expect(tester.getTopLeft(find.byKey(sheetKey)).dy, closeTo(openTopY, 0.1));
+    expect(popInvocations, <bool>[false]);
+  });
+
+  testWidgets(
+    'ModalBottomSheet with PopScope confirmation dialog rebounds behind dialog and closes when confirmed',
+    (WidgetTester tester) async {
+      final Key sheetKey = UniqueKey();
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Builder(
+              builder: (BuildContext context) => ElevatedButton(
+                onPressed: () => showModalBottomSheet<void>(
+                  context: context,
+                  builder: (BuildContext sheetContext) => PopScope(
+                    canPop: false,
+                    onPopInvokedWithResult: (bool didPop, Object? result) async {
+                      if (didPop) {
+                        return;
+                      }
+                      final bool? shouldDiscard = await showDialog<bool>(
+                        context: sheetContext,
+                        builder: (BuildContext dialogContext) => AlertDialog(
+                          title: const Text('Discard changes?'),
+                          actions: <Widget>[
+                            TextButton(
+                              onPressed: () => Navigator.pop(dialogContext, false),
+                              child: const Text('Cancel'),
+                            ),
+                            TextButton(
+                              onPressed: () => Navigator.pop(dialogContext, true),
+                              child: const Text('Discard'),
+                            ),
+                          ],
+                        ),
+                      );
+                      if ((shouldDiscard ?? false) && sheetContext.mounted) {
+                        Navigator.pop(sheetContext);
+                      }
+                    },
+                    child: SizedBox(
+                      key: sheetKey,
+                      height: 300,
+                      child: const Center(child: Text('BottomSheet')),
+                    ),
+                  ),
+                ),
+                child: const Text('Open'),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('Open'));
+      await tester.pumpAndSettle();
+      final double openTopY = tester.getTopLeft(find.byKey(sheetKey)).dy;
+
+      // Drag down to trigger confirmation dialog, then cancel.
+      await tester.drag(find.byKey(sheetKey), const Offset(0, 250));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Discard changes?'), findsOneWidget);
+      // Sheet should have rebounded back to open behind the dialog.
+      expect(tester.getTopLeft(find.byKey(sheetKey)).dy, closeTo(openTopY, 0.1));
+
+      await tester.tap(find.text('Cancel'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Discard changes?'), findsNothing);
+      expect(find.byKey(sheetKey), findsOneWidget);
+      expect(tester.getTopLeft(find.byKey(sheetKey)).dy, closeTo(openTopY, 0.1));
+
+      // Drag down again, then confirm discard.
+      await tester.drag(find.byKey(sheetKey), const Offset(0, 250));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Discard changes?'), findsOneWidget);
+      await tester.tap(find.text('Discard'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Discard changes?'), findsNothing);
+      expect(find.byKey(sheetKey), findsNothing);
+    },
+  );
+
+  testWidgets(
+    'ModalBottomSheet closes when PopScope synchronously pops in onPopInvokedWithResult',
+    (WidgetTester tester) async {
+      final popInvocations = <bool>[];
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Builder(
+              builder: (BuildContext context) => ElevatedButton(
+                onPressed: () => showModalBottomSheet<void>(
+                  context: context,
+                  builder: (BuildContext sheetContext) => PopScope(
+                    canPop: false,
+                    onPopInvokedWithResult: (bool didPop, Object? result) {
+                      popInvocations.add(didPop);
+                      if (!didPop) {
+                        Navigator.pop(sheetContext);
+                      }
+                    },
+                    child: const SizedBox(height: 300, child: Center(child: Text('BottomSheet'))),
+                  ),
+                ),
+                child: const Text('Open'),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('Open'));
+      await tester.pumpAndSettle();
+
+      await tester.drag(find.text('BottomSheet'), const Offset(0, 250));
+      await tester.pumpAndSettle();
+
+      expect(find.text('BottomSheet'), findsNothing);
+      expect(popInvocations, <bool>[false, true]);
+    },
+  );
+
+  testWidgets('ModalBottomSheet drag down succeeds after PopScope.canPop toggles to true', (
+    WidgetTester tester,
+  ) async {
+    final popInvocations = <bool>[];
+    var canPop = false;
+    late StateSetter setSheetState;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Builder(
+            builder: (BuildContext context) => ElevatedButton(
+              onPressed: () => showModalBottomSheet<void>(
+                context: context,
+                builder: (BuildContext context) => StatefulBuilder(
+                  builder: (BuildContext context, StateSetter setState) {
+                    setSheetState = setState;
+                    return PopScope(
+                      canPop: canPop,
+                      onPopInvokedWithResult: (bool didPop, Object? result) {
+                        popInvocations.add(didPop);
+                      },
+                      child: const SizedBox(height: 300, child: Center(child: Text('BottomSheet'))),
+                    );
+                  },
+                ),
+              ),
+              child: const Text('Open'),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('Open'));
+    await tester.pumpAndSettle();
+
+    await tester.drag(find.text('BottomSheet'), const Offset(0, 250));
+    await tester.pumpAndSettle();
+    expect(find.text('BottomSheet'), findsOneWidget);
+    expect(popInvocations, <bool>[false]);
+
+    setSheetState(() {
+      canPop = true;
+    });
+    await tester.pump();
+
+    await tester.drag(find.text('BottomSheet'), const Offset(0, 250));
+    await tester.pumpAndSettle();
+    expect(find.text('BottomSheet'), findsNothing);
+    expect(popInvocations, <bool>[false, true]);
+  });
+
+  testWidgets(
+    'ModalBottomSheet drag handle drag and semantics tap respect PopScope(canPop: false)',
+    (WidgetTester tester) async {
+      final Key sheetKey = UniqueKey();
+      final popInvocations = <bool>[];
+      final semantics = SemanticsTester(tester);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Builder(
+              builder: (BuildContext context) => ElevatedButton(
+                onPressed: () => showModalBottomSheet<void>(
+                  context: context,
+                  enableDrag: false,
+                  showDragHandle: true,
+                  builder: (BuildContext context) => PopScope(
+                    canPop: false,
+                    onPopInvokedWithResult: (bool didPop, Object? result) {
+                      popInvocations.add(didPop);
+                    },
+                    child: SizedBox(
+                      key: sheetKey,
+                      height: 300,
+                      child: const Center(child: Text('BottomSheet')),
+                    ),
+                  ),
+                ),
+                child: const Text('Open'),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('Open'));
+      await tester.pumpAndSettle();
+      final double openTopY = tester.getTopLeft(find.byKey(sheetKey)).dy;
+
+      // Drag via drag handle.
+      final Finder dragHandle = find.bySemanticsLabel('Dismiss');
+      await tester.drag(dragHandle, const Offset(0, 250));
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(sheetKey), findsOneWidget);
+      expect(tester.getTopLeft(find.byKey(sheetKey)).dy, closeTo(openTopY, 0.1));
+      expect(popInvocations, <bool>[false]);
+
+      // Trigger semantics tap on the drag handle.
+      final SemanticsNode dragHandleNode = tester.getSemantics(dragHandle);
+      tester.binding.pipelineOwner.semanticsOwner!.performAction(
+        dragHandleNode.id,
+        SemanticsAction.tap,
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(sheetKey), findsOneWidget);
+      expect(popInvocations, <bool>[false, false]);
+      semantics.dispose();
+    },
+  );
+
+  testWidgets('ModalBottomSheet DraggableScrollableNotification respects PopScope(canPop: false)', (
+    WidgetTester tester,
+  ) async {
+    final popInvocations = <bool>[];
+    late BuildContext notificationContext;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Builder(
+            builder: (BuildContext context) => ElevatedButton(
+              onPressed: () => showModalBottomSheet<void>(
+                context: context,
+                builder: (BuildContext context) => PopScope(
+                  canPop: false,
+                  onPopInvokedWithResult: (bool didPop, Object? result) {
+                    popInvocations.add(didPop);
+                  },
+                  child: Builder(
+                    builder: (BuildContext innerContext) {
+                      notificationContext = innerContext;
+                      return const SizedBox(height: 300, child: Text('BottomSheet'));
+                    },
+                  ),
+                ),
+              ),
+              child: const Text('Open'),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('Open'));
+    await tester.pumpAndSettle();
+
+    DraggableScrollableNotification(
+      extent: 0.2,
+      minExtent: 0.2,
+      maxExtent: 1.0,
+      initialExtent: 0.5,
+      context: notificationContext,
+    ).dispatch(notificationContext);
+    await tester.pumpAndSettle();
+
+    expect(find.text('BottomSheet'), findsOneWidget);
+    expect(popInvocations, <bool>[false]);
+  });
+
+  testWidgets(
+    'ModalBottomSheet with AnimationStyle.noAnimation snaps back on PopScope veto and closes when allowed',
+    (WidgetTester tester) async {
+      final Key sheetKey = UniqueKey();
+      final popInvocations = <bool>[];
+      var canPop = false;
+      late StateSetter setSheetState;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Builder(
+              builder: (BuildContext context) => ElevatedButton(
+                onPressed: () => showModalBottomSheet<void>(
+                  context: context,
+                  sheetAnimationStyle: AnimationStyle.noAnimation,
+                  builder: (BuildContext context) => StatefulBuilder(
+                    builder: (BuildContext context, StateSetter setState) {
+                      setSheetState = setState;
+                      return PopScope(
+                        canPop: canPop,
+                        onPopInvokedWithResult: (bool didPop, Object? result) {
+                          popInvocations.add(didPop);
+                        },
+                        child: SizedBox(
+                          key: sheetKey,
+                          height: 300,
+                          child: const Center(child: Text('BottomSheet')),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                child: const Text('Open'),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('Open'));
+      await tester.pump();
+      final double openTopY = tester.getTopLeft(find.byKey(sheetKey)).dy;
+
+      await tester.drag(find.byKey(sheetKey), const Offset(0, 250));
+      await tester.pump();
+
+      expect(find.byKey(sheetKey), findsOneWidget);
+      expect(tester.getTopLeft(find.byKey(sheetKey)).dy, closeTo(openTopY, 0.1));
+      expect(popInvocations, <bool>[false]);
+
+      setSheetState(() {
+        canPop = true;
+      });
+      await tester.pump();
+
+      await tester.drag(find.byKey(sheetKey), const Offset(0, 250));
+      await tester.pump();
+
+      expect(find.byKey(sheetKey), findsNothing);
+      expect(popInvocations, <bool>[false, true]);
+    },
+  );
+
+  testWidgets('ModalBottomSheet repeated blocked drags dispose drag-end CurvedAnimations', (
+    WidgetTester tester,
+  ) async {
+    final created = <CurvedAnimation>[];
+    final disposed = <CurvedAnimation>{};
+    void listener(ObjectEvent event) {
+      final Object object = event.object;
+      if (object is CurvedAnimation) {
+        if (event is ObjectCreated) {
+          created.add(object);
+        } else if (event is ObjectDisposed) {
+          disposed.add(object);
+        }
+      }
+    }
+
+    FlutterMemoryAllocations.instance.addListener(listener);
+    addTearDown(() => FlutterMemoryAllocations.instance.removeListener(listener));
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Builder(
+            builder: (BuildContext context) => ElevatedButton(
+              onPressed: () => showModalBottomSheet<void>(
+                context: context,
+                builder: (BuildContext context) => const PopScope(
+                  canPop: false,
+                  child: SizedBox(
+                    height: 300,
+                    child: Align(alignment: Alignment.topCenter, child: Text('BottomSheet')),
+                  ),
+                ),
+              ),
+              child: const Text('Open'),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('Open'));
+    await tester.pumpAndSettle();
+
+    // Repeatedly drag past threshold (vetoed by PopScope) and catch mid-rebound.
+    for (var i = 0; i < 3; i++) {
+      await tester.drag(find.text('BottomSheet'), const Offset(0, 200));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+    await tester.pumpAndSettle();
+
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pumpAndSettle();
+
+    expect(created, isNotEmpty);
+    expect(created.where((CurvedAnimation animation) => !disposed.contains(animation)), isEmpty);
+  });
+
+  testWidgets(
+    'ModalBottomSheet rebound after PopScope veto uses AnimationStyle curve, not reverseCurve',
+    (WidgetTester tester) async {
+      final Key sheetKey = UniqueKey();
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Builder(
+              builder: (BuildContext context) => ElevatedButton(
+                onPressed: () => showModalBottomSheet<void>(
+                  context: context,
+                  sheetAnimationStyle: const AnimationStyle(
+                    duration: Duration(milliseconds: 200),
+                    reverseDuration: Duration(milliseconds: 200),
+                    curve: Curves.linear,
+                    reverseCurve: Curves.easeInExpo,
+                  ),
+                  builder: (BuildContext context) => PopScope(
+                    canPop: false,
+                    child: SizedBox(
+                      key: sheetKey,
+                      height: 300,
+                      child: const Center(child: Text('BottomSheet')),
+                    ),
+                  ),
+                ),
+                child: const Text('Open'),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('Open'));
+      await tester.pumpAndSettle();
+
+      final TestGesture gesture = await tester.startGesture(tester.getCenter(find.byKey(sheetKey)));
+      await gesture.moveBy(const Offset(0, 50));
+      await tester.pump();
+      await gesture.moveBy(const Offset(0, 180));
+      await tester.pump();
+      await gesture.up();
+      await tester.pump();
+
+      final double y0 = tester.getTopLeft(find.byKey(sheetKey)).dy;
+      await tester.pump(const Duration(milliseconds: 40));
+      final double y1 = tester.getTopLeft(find.byKey(sheetKey)).dy;
+      await tester.pump(const Duration(milliseconds: 40));
+      final double y2 = tester.getTopLeft(find.byKey(sheetKey)).dy;
+
+      // With curve: Curves.linear, equal time intervals during rebound cover
+      // equal vertical distances (whereas easeInExpo would be strongly non-linear).
+      expect(y0 - y1, greaterThan(10.0));
+      expect(y0 - y1, closeTo(y1 - y2, 0.5));
+
+      await tester.pumpAndSettle();
+    },
+  );
 }
 
 class _TestPage extends StatelessWidget {

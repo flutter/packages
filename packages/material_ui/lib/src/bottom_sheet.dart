@@ -99,7 +99,32 @@ class BottomSheet extends StatefulWidget {
     this.constraints,
     required this.onClosing,
     required this.builder,
-  }) : assert(elevation == null || elevation >= 0.0);
+  }) : assert(elevation == null || elevation >= 0.0),
+       _deferClosingAnimation = false;
+
+  const BottomSheet._({
+    this.animationController,
+    this.enableDrag = true,
+    this.showDragHandle,
+    this.onDragStart,
+    this.onDragEnd,
+    this.backgroundColor,
+    this.elevation,
+    this.shape,
+    this.clipBehavior,
+    this.constraints,
+    required this.onClosing,
+    required this.builder,
+  }) : assert(elevation == null || elevation >= 0.0),
+       dragHandleColor = null,
+       dragHandleSize = null,
+       shadowColor = null,
+       _deferClosingAnimation = true;
+
+  // When true, drag-end does not start a closing fling on [animationController]
+  // before invoking [onClosing], allowing the owner (such as
+  // [_ModalBottomSheet]) to check pop vetoes (e.g. [PopScope]) first.
+  final bool _deferClosingAnimation;
 
   /// The animation controller that controls the bottom sheet's entrance and
   /// exit animations.
@@ -304,14 +329,14 @@ class _BottomSheetState extends State<BottomSheet> {
     var isClosing = false;
     if (details.velocity.pixelsPerSecond.dy > _kMinFlingVelocity) {
       final double flingVelocity = -details.velocity.pixelsPerSecond.dy / _childHeight;
-      if (widget.animationController!.value > 0.0) {
+      if (!widget._deferClosingAnimation && widget.animationController!.value > 0.0) {
         widget.animationController!.fling(velocity: flingVelocity);
       }
       if (flingVelocity < 0.0) {
         isClosing = true;
       }
     } else if (widget.animationController!.value < _kCloseProgressThreshold) {
-      if (widget.animationController!.value > 0.0) {
+      if (!widget._deferClosingAnimation && widget.animationController!.value > 0.0) {
         widget.animationController!.fling(velocity: -1.0);
       }
       isClosing = true;
@@ -688,6 +713,7 @@ class _ModalBottomSheetState<T> extends State<_ModalBottomSheet<T>> {
   // The CurvedAnimation created for the most recent drag end, tracked so it can
   // be disposed when it is replaced or the state is disposed.
   CurvedAnimation? _dragEndCurvedAnimation;
+  int _dragSession = 0;
 
   @override
   void initState() {
@@ -736,6 +762,7 @@ class _ModalBottomSheetState<T> extends State<_ModalBottomSheet<T>> {
   }
 
   void handleDragStart(DragStartDetails details) {
+    _dragSession++;
     // Allow the bottom sheet to track the user's finger accurately.
     _sheetAnimation.parent = widget.route.animation;
     // The CurvedAnimation from the previous drag end is no longer the parent of
@@ -745,7 +772,7 @@ class _ModalBottomSheetState<T> extends State<_ModalBottomSheet<T>> {
     _dragEndCurvedAnimation = null;
   }
 
-  void handleDragEnd(DragEndDetails details, {bool? isClosing}) {
+  void _rebindSheetAnimation() {
     final double currentProgress = widget.route.animation!.value;
 
     // Rebind the animation using CurvedAnimation and Split so the
@@ -769,6 +796,32 @@ class _ModalBottomSheetState<T> extends State<_ModalBottomSheet<T>> {
     oldDragEndCurvedAnimation?.dispose();
   }
 
+  void handleDragEnd(DragEndDetails details, {bool? isClosing}) {
+    // When closing, defer rebinding until the pop attempt resolves so the
+    // CurvedAnimation locks onto the final animation direction (reverse if
+    // popped, forward if vetoed).
+    if (isClosing ?? false) {
+      return;
+    }
+    _rebindSheetAnimation();
+  }
+
+  Future<void> _handleClosing() async {
+    final int dragSession = _dragSession;
+    if (widget.route.isCurrent) {
+      await Navigator.maybePop(context);
+    }
+    if (!mounted || _dragSession != dragSession) {
+      return;
+    }
+    if (widget.route.isActive && !(widget.route._animationController?.isCompleted ?? true)) {
+      widget.route._animationController?.forward();
+    }
+    if (_sheetAnimation.parent == widget.route.animation) {
+      _rebindSheetAnimation();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     assert(debugCheckHasMediaQuery(context));
@@ -778,13 +831,9 @@ class _ModalBottomSheetState<T> extends State<_ModalBottomSheet<T>> {
 
     return AnimatedBuilder(
       animation: _sheetAnimation,
-      child: BottomSheet(
+      child: BottomSheet._(
         animationController: widget.route._animationController,
-        onClosing: () {
-          if (widget.route.isCurrent) {
-            Navigator.pop(context);
-          }
-        },
+        onClosing: _handleClosing,
         builder: widget.route.builder,
         backgroundColor: widget.backgroundColor,
         elevation: widget.elevation,
