@@ -2321,14 +2321,11 @@ class CupertinoNavigationBarBackButton extends StatelessWidget {
       );
     }
 
-    final CupertinoLocalizations localizations = CupertinoLocalizations.of(context);
-    return CupertinoButton(
-      padding: EdgeInsets.zero,
-      child: Semantics(
-        container: true,
-        excludeSemantics: true,
-        label: localizations.backButtonLabel,
-        button: true,
+    return Semantics(
+      container: true,
+      button: true,
+      child: CupertinoButton(
+        padding: EdgeInsets.zero,
         child: DefaultTextStyle(
           style: actionTextStyle,
           child: ConstrainedBox(
@@ -2348,14 +2345,14 @@ class CupertinoNavigationBarBackButton extends StatelessWidget {
             ),
           ),
         ),
+        onPressed: () {
+          if (onPressed != null) {
+            onPressed!();
+          } else {
+            Navigator.maybePop(context);
+          }
+        },
       ),
-      onPressed: () {
-        if (onPressed != null) {
-          onPressed!();
-        } else {
-          Navigator.maybePop(context);
-        }
-      },
     );
   }
 }
@@ -2397,7 +2394,7 @@ class _BackChevron extends StatelessWidget {
         break;
     }
 
-    return KeyedSubtree(key: StandardComponentType.backButton.key, child: iconWidget);
+    return KeyedSubtree(key: StandardComponentType.backButton.key, child: ExcludeSemantics(child: iconWidget));
   }
 }
 
@@ -2412,17 +2409,29 @@ class _BackLabel extends StatelessWidget {
   // `child` is never passed in into ValueListenableBuilder so it's always
   // null here and unused.
   Widget _buildPreviousTitleWidget(BuildContext context, String? previousTitle, Widget? child) {
+    final String backLabel = CupertinoLocalizations.of(context).backButtonLabel;
+
     if (previousTitle == null) {
-      return const SizedBox.shrink();
+      return Semantics(label: backLabel, child: const SizedBox.shrink());
     }
+
+    final bool useOnlyBackLabel = previousTitle.length > 12;
 
     var textWidget = Text(previousTitle, maxLines: 1, overflow: TextOverflow.ellipsis);
 
-    if (previousTitle.length > 12) {
-      textWidget = Text(CupertinoLocalizations.of(context).backButtonLabel);
+    if (useOnlyBackLabel) {
+      textWidget = Text(backLabel);
     }
 
-    return Align(alignment: AlignmentDirectional.centerStart, widthFactor: 1.0, child: textWidget);
+    return Semantics(
+      label: useOnlyBackLabel ? backLabel : '$previousTitle $backLabel',
+      excludeSemantics: true,
+      child: Align(
+        alignment: AlignmentDirectional.centerStart,
+        widthFactor: 1.0,
+        child: textWidget,
+      ),
+    );
   }
 
   @override
@@ -2439,7 +2448,7 @@ class _BackLabel extends StatelessWidget {
         builder: _buildPreviousTitleWidget,
       );
     } else {
-      return const SizedBox.shrink();
+      return _buildPreviousTitleWidget(context, null, null);
     }
   }
 }
