@@ -69,6 +69,43 @@ void main() {
       expect(await controller.position, greaterThan(Duration.zero));
     });
 
+    testWidgets('reports playing changes when playback starts after initialization', (
+      WidgetTester tester,
+    ) async {
+      final VideoPlayerPlatform platform = VideoPlayerPlatform.instance;
+      final int playerId = (await platform.createWithOptions(
+        VideoCreationOptions(
+          dataSource: DataSource(sourceType: DataSourceType.asset, asset: _videoAssetKey),
+          viewType: VideoViewType.textureView,
+        ),
+      ))!;
+      addTearDown(() => platform.dispose(playerId));
+
+      final events = StreamIterator<VideoEvent>(
+        platform
+            .videoEventsFor(playerId)
+            .where(
+              (VideoEvent event) =>
+                  event.eventType == VideoEventType.initialized ||
+                  event.eventType == VideoEventType.isPlayingStateUpdate,
+            ),
+      );
+      addTearDown(events.cancel);
+
+      expect(await events.moveNext(), isTrue);
+      expect(events.current.eventType, VideoEventType.initialized);
+
+      // Controllers can send a pause while handling initialization before the app plays.
+      await platform.pause(playerId);
+      await platform.play(playerId);
+      expect(await events.moveNext(), isTrue);
+      expect(events.current.isPlaying, isTrue);
+
+      await platform.pause(playerId);
+      expect(await events.moveNext(), isTrue);
+      expect(events.current.isPlaying, isFalse);
+    });
+
     testWidgets('can seek', (WidgetTester tester) async {
       await controller.initialize();
 
