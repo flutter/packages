@@ -374,6 +374,12 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// targeting the next highest resolution will be attempted. See
   /// https://developer.android.com/media/camera/camerax/configuration#specify-resolution.
   ///
+  /// Because CameraX applies each preset's aspect ratio strategy independently
+  /// per [UseCase] (16:9 for `high` and above, and CameraX's 4:3 default for
+  /// `low`, `medium`, and `max`), setting `photoResolutionPreset` and
+  /// `videoResolutionPreset` to presets with different aspect ratios may cause
+  /// captured photos to have a different aspect ratio than the preview.
+  ///
   /// To return the camera ID, which is equivalent to the ID of the surface texture
   /// that a camera preview can be drawn to, a [Preview] instance is configured
   /// and bound to the [ProcessCameraProvider] instance.

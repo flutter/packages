@@ -1302,6 +1302,7 @@ void main() {
 
     // Test null case.
     await camera.createCamera(testCameraDescription, null);
+    expect(await camera.recorder!.getQualitySelector(), isNot(equals(mockQualitySelector)));
   });
 
   test(
@@ -1350,10 +1351,157 @@ void main() {
       // Verify video quality is HD (corresponding to ResolutionPreset.high, not low or max).
       expect(qualitySelectorVideoQuality, equals(VideoQuality.HD));
 
-      // Verify ImageCapture and Preview have separate resolution selectors.
-      expect(camera.imageCapture!.resolutionSelector, isNotNull);
-      expect(camera.preview!.resolutionSelector, isNotNull);
-      expect(camera.imageAnalysis!.resolutionSelector, equals(camera.preview!.resolutionSelector));
+      // Verify ImageCapture uses the photo preset (ResolutionPreset.max).
+      expect(
+        camera.imageCapture!.resolutionSelector!.resolutionStrategy,
+        equals(ResolutionStrategy.highestAvailableStrategy),
+      );
+      expect(
+        camera.imageCapture!.resolutionSelector!.allowedResolutionMode,
+        equals(ResolutionSelectorAllowedResolutionMode.preferHigherResolutionOverCaptureRate),
+      );
+
+      // Verify Preview and ImageAnalysis use the video preset (ResolutionPreset.high: 1280x720).
+      final CameraSize? previewSize = await camera.preview!.resolutionSelector!.resolutionStrategy!
+          .getBoundSize();
+      expect(previewSize?.width, equals(1280));
+      expect(previewSize?.height, equals(720));
+      expect(camera.preview!.resolutionSelector!.allowedResolutionMode, isNull);
+      expect(camera.imageAnalysis!.resolutionSelector, same(camera.preview!.resolutionSelector));
+      expect(
+        camera.imageCapture!.resolutionSelector,
+        isNot(same(camera.preview!.resolutionSelector)),
+      );
+    },
+  );
+
+  test(
+    'createCameraWithSettings falls back to resolutionPreset when only photoResolutionPreset or videoResolutionPreset is set',
+    () async {
+      final camera = AndroidCameraCameraX();
+      const testCameraDescription = CameraDescription(
+        name: 'cameraName',
+        lensDirection: CameraLensDirection.back,
+        sensorOrientation: 90,
+      );
+      final mockCamera = MockCamera();
+      final mockProcessCameraProvider = MockProcessCameraProvider();
+      final mockCameraInfo = MockCameraInfo();
+      final mockQualitySelector = MockQualitySelector();
+      final mockFallbackStrategy = MockFallbackStrategy();
+      VideoQuality? qualitySelectorVideoQuality;
+
+      setUpOverridesForTestingUseCaseConfiguration(
+        mockProcessCameraProvider,
+        lowerQualityOrHigherThanFallbackStrategy: ({required VideoQuality quality}) {
+          return mockFallbackStrategy;
+        },
+        fromQualitySelector: ({required VideoQuality quality, FallbackStrategy? fallbackStrategy}) {
+          qualitySelectorVideoQuality = quality;
+          return mockQualitySelector;
+        },
+      );
+
+      when(mockProcessCameraProvider.bindToLifecycle(any, any)).thenAnswer((_) async => mockCamera);
+      when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
+      when(mockCameraInfo.getCameraState()).thenAnswer((_) async => MockLiveCameraState());
+
+      // Only photoResolutionPreset set: video/preview/analysis fall back to resolutionPreset.
+      final int photoOnlyCameraId = await camera.createCameraWithSettings(
+        testCameraDescription,
+        const MediaSettings(
+          resolutionPreset: ResolutionPreset.medium,
+          photoResolutionPreset: ResolutionPreset.veryHigh,
+        ),
+      );
+      await camera.initializeCamera(photoOnlyCameraId);
+
+      expect(qualitySelectorVideoQuality, equals(VideoQuality.SD));
+      final CameraSize? photoOnlyImageCaptureSize = await camera
+          .imageCapture!
+          .resolutionSelector!
+          .resolutionStrategy!
+          .getBoundSize();
+      expect(photoOnlyImageCaptureSize?.width, equals(1920));
+      expect(photoOnlyImageCaptureSize?.height, equals(1080));
+      final CameraSize? photoOnlyPreviewSize = await camera
+          .preview!
+          .resolutionSelector!
+          .resolutionStrategy!
+          .getBoundSize();
+      expect(photoOnlyPreviewSize?.width, equals(720));
+      expect(photoOnlyPreviewSize?.height, equals(480));
+      expect(camera.imageAnalysis!.resolutionSelector, same(camera.preview!.resolutionSelector));
+
+      // Only videoResolutionPreset set: photo falls back to resolutionPreset.
+      final int videoOnlyCameraId = await camera.createCameraWithSettings(
+        testCameraDescription,
+        const MediaSettings(
+          resolutionPreset: ResolutionPreset.medium,
+          videoResolutionPreset: ResolutionPreset.veryHigh,
+        ),
+      );
+      await camera.initializeCamera(videoOnlyCameraId);
+
+      expect(qualitySelectorVideoQuality, equals(VideoQuality.FHD));
+      final CameraSize? videoOnlyImageCaptureSize = await camera
+          .imageCapture!
+          .resolutionSelector!
+          .resolutionStrategy!
+          .getBoundSize();
+      expect(videoOnlyImageCaptureSize?.width, equals(720));
+      expect(videoOnlyImageCaptureSize?.height, equals(480));
+      final CameraSize? videoOnlyPreviewSize = await camera
+          .preview!
+          .resolutionSelector!
+          .resolutionStrategy!
+          .getBoundSize();
+      expect(videoOnlyPreviewSize?.width, equals(1920));
+      expect(videoOnlyPreviewSize?.height, equals(1080));
+      expect(camera.imageAnalysis!.resolutionSelector, same(camera.preview!.resolutionSelector));
+    },
+  );
+
+  test(
+    'setJpegImageQuality preserves photoResolutionSelector when recreating ImageCapture',
+    () async {
+      final camera = AndroidCameraCameraX();
+      const testCameraDescription = CameraDescription(
+        name: 'cameraName',
+        lensDirection: CameraLensDirection.back,
+        sensorOrientation: 90,
+      );
+      final mockCamera = MockCamera();
+      final mockProcessCameraProvider = MockProcessCameraProvider();
+      final mockCameraInfo = MockCameraInfo();
+
+      setUpOverridesForTestingUseCaseConfiguration(mockProcessCameraProvider);
+
+      when(mockProcessCameraProvider.bindToLifecycle(any, any)).thenAnswer((_) async => mockCamera);
+      when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
+      when(mockCameraInfo.getCameraState()).thenAnswer((_) async => MockLiveCameraState());
+
+      final int cameraId = await camera.createCameraWithSettings(
+        testCameraDescription,
+        const MediaSettings(
+          photoResolutionPreset: ResolutionPreset.max,
+          videoResolutionPreset: ResolutionPreset.high,
+        ),
+      );
+      await camera.initializeCamera(cameraId);
+
+      final ImageCapture initialImageCapture = camera.imageCapture!;
+      final ResolutionSelector? initialPhotoSelector = initialImageCapture.resolutionSelector;
+      when(mockProcessCameraProvider.isBound(initialImageCapture)).thenAnswer((_) async => true);
+
+      await camera.setJpegImageQuality(cameraId, 80);
+
+      expect(camera.imageCapture, isNot(same(initialImageCapture)));
+      expect(camera.imageCapture!.resolutionSelector, same(initialPhotoSelector));
+      expect(
+        camera.imageCapture!.resolutionSelector,
+        isNot(same(camera.preview!.resolutionSelector)),
+      );
     },
   );
 

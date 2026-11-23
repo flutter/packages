@@ -152,15 +152,12 @@ class CaptureControllerImpl : public CaptureController,
   }
 
   // Returns max preview height calculated from resolution preset.
-  // For testing purposes.
   uint32_t GetMaxPreviewHeight() const;
 
   // Returns max photo height calculated from resolution preset.
-  // For testing purposes.
   uint32_t GetMaxPhotoHeight() const;
 
   // Returns max video height calculated from resolution preset.
-  // For testing purposes.
   uint32_t GetMaxVideoHeight() const;
 
  private:
