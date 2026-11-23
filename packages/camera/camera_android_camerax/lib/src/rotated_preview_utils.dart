@@ -43,13 +43,13 @@ int computePreviewTargetRotation({
   required int sensorOrientationDegrees,
 }) {
   if (handlesCropAndRotation) {
-    // A surface that [handlesCropAndRotation] (a `SurfaceTexture`) applies the
+    // A surface that handlesCropAndRotation (a SurfaceTexture) applies the
     // camera transform to direct buffers, making them upright in the natural
     // orientation of the device.
     return Surface.rotation0;
   }
 
-  // Direct buffers (an `ImageReader`) are in the orientation of the
+  // Direct buffers (an ImageReader) are in the orientation of the
   // camera sensor, so the target rotation is the one for which CameraX reports
   // a relative rotation of 0 degrees.
   final int targetRotationDegrees = cameraIsFrontFacing
@@ -122,8 +122,7 @@ bool untransformedBufferNeedsMirroring({
     // copies either, and front camera buffers need to be mirrored manually.
     return cameraIsFrontFacing;
   }
-  // A buffer copied by CameraX needs to be mirrored if
-  // TransformationInfo.isMirroring says so.
+
   return transformationInfo.isMirroring;
 }
 

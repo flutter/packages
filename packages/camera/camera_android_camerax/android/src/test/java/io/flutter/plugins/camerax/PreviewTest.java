@@ -537,7 +537,6 @@ public class PreviewTest {
         });
   }
 
-  /** Creates a Preview with {@code api} the way the plugin does, with a mocked Preview.Builder. */
   @NonNull
   private static Preview createPreview(@NonNull PigeonApiPreview api) {
     final MockedConstruction<Preview.Builder> mockBuilders = mockPreviewBuilderConstruction();
