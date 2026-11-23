@@ -1,3 +1,16 @@
+## 1.12.0
+
+- Exposes a `Drawer` shown by a `DrawerController`, such as `Scaffold.drawer`, with the dialog semantics role, and always applies the default drawer label on the web so the drawer has an accessible name.
+- Fixes `ButtonThemeData` equality, `hashCode` and diagnostics ignoring `layoutBehavior`.
+- Adds the `hoverDuration` parameter to `TableRowInkWell`.
+- Fixes `DataTable` row hover and focus highlights flickering when moving between cells of the same row.
+- Uses `ColorScheme.scrim` as the default fallback for dialog, modal bottom sheet, and drawer barrier/scrim colors. Material 3 uses `ColorScheme.scrim` at 32% opacity (changing the default opacity from 54%), and Material 2 continues to use `Colors.black54`.
+- Fixes the Sinhala (`si`) time format to use `HH.mm` (for example, `09.32`), matching CLDR.
+- Fixes `showModalBottomSheet(useSafeArea: true)` incorrectly applying opposite sub-screen safe area padding on display-feature sub-screens.
+- Moves the localization instructions to script/l10n/README.md and fixes outdated details in them.
+- Fixes several errors in the `ElevatedButton` and `FilledButton` documentation.
+- Adds `Tooltip.showOnFocus` and `TooltipThemeData.showOnFocus` to show tooltips on keyboard focus.
+
 ## 1.11.1
 
 - Fixes `SnackBarThemeData.lerp` dropping `showCloseIcon`.

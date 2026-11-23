@@ -1,3 +1,0 @@
-changelog: |
-  - Fixes `showModalBottomSheet(useSafeArea: true)` incorrectly applying opposite sub-screen safe area padding on display-feature sub-screens.
-version: patch
