@@ -110,13 +110,20 @@ public class PreviewTest {
   }
 
   @Test
-  public void setSurfaceProvider_usesSurfaceProducerCreatedWithPreview() {
+  public void setSurfaceProvider_usesSurfaceProducerCreatedWithEachPreview() {
     final TextureRegistry mockTextureRegistry = mock(TextureRegistry.class);
-    final TextureRegistry.SurfaceProducer mockSurfaceProducer =
+    final TextureRegistry.SurfaceProducer imageReaderSurfaceProducer =
         mock(TextureRegistry.SurfaceProducer.class);
-    final long textureId = 7;
-    when(mockSurfaceProducer.id()).thenReturn(textureId);
-    when(mockTextureRegistry.createSurfaceProducer()).thenReturn(mockSurfaceProducer);
+    when(imageReaderSurfaceProducer.id()).thenReturn(1L);
+    when(imageReaderSurfaceProducer.handlesCropAndRotation()).thenReturn(false);
+    when(imageReaderSurfaceProducer.getForcedNewSurface()).thenReturn(mock(Surface.class));
+    final TextureRegistry.SurfaceProducer surfaceTextureSurfaceProducer =
+        mock(TextureRegistry.SurfaceProducer.class);
+    when(surfaceTextureSurfaceProducer.id()).thenReturn(2L);
+    when(surfaceTextureSurfaceProducer.handlesCropAndRotation()).thenReturn(true);
+    when(surfaceTextureSurfaceProducer.getForcedNewSurface()).thenReturn(mock(Surface.class));
+    when(mockTextureRegistry.createSurfaceProducer())
+        .thenReturn(imageReaderSurfaceProducer, surfaceTextureSurfaceProducer);
     final PigeonApiPreview api =
         new TestProxyApiRegistrar() {
           @NonNull
@@ -127,49 +134,34 @@ public class PreviewTest {
         }.getPigeonApiPreview();
 
     try (MockedConstruction<Preview.Builder> mockBuilders = mockPreviewBuilderConstruction()) {
-      final Preview preview = api.pigeon_defaultConstructor(null, null, null);
-      assertEquals(1, mockBuilders.constructed().size());
+      final Preview imageReaderPreview = api.pigeon_defaultConstructor(null, null, null);
+      final Preview surfaceTexturePreview = api.pigeon_defaultConstructor(null, null, null);
 
+      // Each Preview's mirror mode is set from the SurfaceProducer created with it.
+      verify(mockBuilders.constructed().get(0)).setMirrorMode(MirrorMode.MIRROR_MODE_OFF);
+      verify(mockBuilders.constructed().get(1), never()).setMirrorMode(anyInt());
+
+      // Set the surface providers in the opposite order the Previews were created in, so that this
+      // fails if setSurfaceProvider uses the most recently created SurfaceProducer instead of the
+      // one created with the Preview.
       assertEquals(
-          textureId, api.setSurfaceProvider(preview, mock(SystemServicesManager.class), null));
-      verify(mockTextureRegistry, times(1)).createSurfaceProducer();
-      verify(preview).setSurfaceProvider(any(Preview.SurfaceProvider.class));
+          2L,
+          api.setSurfaceProvider(surfaceTexturePreview, mock(SystemServicesManager.class), null));
+      assertEquals(
+          1L, api.setSurfaceProvider(imageReaderPreview, mock(SystemServicesManager.class), null));
+      verify(mockTextureRegistry, times(2)).createSurfaceProducer();
+
+      // The SurfaceProvider set on each Preview provides surfaces from its own SurfaceProducer.
+      final ArgumentCaptor<Preview.SurfaceProvider> surfaceProviderCaptor =
+          ArgumentCaptor.forClass(Preview.SurfaceProvider.class);
+      verify(surfaceTexturePreview).setSurfaceProvider(surfaceProviderCaptor.capture());
+      final SurfaceRequest mockSurfaceRequest = mock(SurfaceRequest.class);
+      when(mockSurfaceRequest.getResolution()).thenReturn(new Size(5, 6));
+      surfaceProviderCaptor.getValue().onSurfaceRequested(mockSurfaceRequest);
+
+      verify(surfaceTextureSurfaceProducer).getForcedNewSurface();
+      verify(imageReaderSurfaceProducer, never()).getForcedNewSurface();
     }
-  }
-
-  private static MockedConstruction<Preview.Builder> mockPreviewBuilderConstruction() {
-    return Mockito.mockConstruction(
-        Preview.Builder.class,
-        (mock, context) -> {
-          when(mock.setMirrorMode(anyInt())).thenReturn(mock);
-          when(mock.build()).thenReturn(mock(Preview.class));
-        });
-  }
-
-  /** Creates a Preview with {@code api} the way the plugin does, with a mocked Preview.Builder. */
-  @NonNull
-  private static Preview createPreview(@NonNull PigeonApiPreview api) {
-    final MockedConstruction<Preview.Builder> mockBuilders = mockPreviewBuilderConstruction();
-    try {
-      return api.pigeon_defaultConstructor(null, null, null);
-    } finally {
-      mockBuilders.close();
-    }
-  }
-
-  private static void createPreviewWithSurfaceProducer(
-      @NonNull TextureRegistry.SurfaceProducer surfaceProducer) {
-    final TextureRegistry mockTextureRegistry = mock(TextureRegistry.class);
-    when(mockTextureRegistry.createSurfaceProducer()).thenReturn(surfaceProducer);
-    final PigeonApiPreview api =
-        new TestProxyApiRegistrar() {
-          @NonNull
-          @Override
-          TextureRegistry getTextureRegistry() {
-            return mockTextureRegistry;
-          }
-        }.getPigeonApiPreview();
-    api.pigeon_defaultConstructor(null, null, null);
   }
 
   @Test
@@ -254,7 +246,7 @@ public class PreviewTest {
         api.createSurfaceProvider(
             mockSurfaceProducer, mock(SystemServicesManager.class), mockListener);
 
-    // CameraX makes a new SurfaceRequest when, e.g., stream sharing starts, so each request must
+    // CameraX makes a new SurfaceRequest when stream sharing starts, so each request must
     // receive the listener.
     final SurfaceRequest firstSurfaceRequest = mock(SurfaceRequest.class);
     when(firstSurfaceRequest.getResolution()).thenReturn(new Size(5, 6));
@@ -534,5 +526,40 @@ public class PreviewTest {
   @SuppressWarnings({"deprecation", "removal"})
   void simulateSurfaceCleanup(TextureRegistry.SurfaceProducer.Callback producerLifecycle) {
     producerLifecycle.onSurfaceCleanup();
+  }
+
+  private static MockedConstruction<Preview.Builder> mockPreviewBuilderConstruction() {
+    return Mockito.mockConstruction(
+        Preview.Builder.class,
+        (mock, context) -> {
+          when(mock.setMirrorMode(anyInt())).thenReturn(mock);
+          when(mock.build()).thenReturn(mock(Preview.class));
+        });
+  }
+
+  /** Creates a Preview with {@code api} the way the plugin does, with a mocked Preview.Builder. */
+  @NonNull
+  private static Preview createPreview(@NonNull PigeonApiPreview api) {
+    final MockedConstruction<Preview.Builder> mockBuilders = mockPreviewBuilderConstruction();
+    try {
+      return api.pigeon_defaultConstructor(null, null, null);
+    } finally {
+      mockBuilders.close();
+    }
+  }
+
+  private static void createPreviewWithSurfaceProducer(
+      @NonNull TextureRegistry.SurfaceProducer surfaceProducer) {
+    final TextureRegistry mockTextureRegistry = mock(TextureRegistry.class);
+    when(mockTextureRegistry.createSurfaceProducer()).thenReturn(surfaceProducer);
+    final PigeonApiPreview api =
+        new TestProxyApiRegistrar() {
+          @NonNull
+          @Override
+          TextureRegistry getTextureRegistry() {
+            return mockTextureRegistry;
+          }
+        }.getPigeonApiPreview();
+    api.pigeon_defaultConstructor(null, null, null);
   }
 }

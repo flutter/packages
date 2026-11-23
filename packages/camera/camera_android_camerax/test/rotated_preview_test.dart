@@ -13,6 +13,9 @@ import 'package:mockito/mockito.dart';
 
 import 'android_camera_camerax_test.mocks.dart';
 
+// How RotatedPreview rotates and mirrors the preview, including when the
+// device orientation or TransformationInfo changes, is tested end to end in
+// preview_rotation_test.dart. These tests only cover what those do not.
 void main() {
   late StreamController<DeviceOrientation> deviceOrientationStreamController;
   late StreamController<TransformationInfo> transformationInfoStreamController;
@@ -30,14 +33,12 @@ void main() {
   });
 
   /// Creates a [RotatedPreview] of a back camera with a sensor orientation of
-  /// 90 degrees and a target rotation of 0 degrees, created in portrait with a
-  /// display rotation of 0 degrees.
-  Widget createRotatedPreview({
-    required bool handlesCropAndRotation,
-    TransformationInfo? initialTransformationInfo,
-  }) {
+  /// 90 degrees whose surface is backed by an `ImageReader`, with a target
+  /// rotation of 0 degrees, created in portrait with a display rotation of 0
+  /// degrees.
+  Widget createRotatedPreview({TransformationInfo? initialTransformationInfo}) {
     return RotatedPreview(
-      handlesCropAndRotation: handlesCropAndRotation,
+      handlesCropAndRotation: false,
       initialDeviceOrientation: DeviceOrientation.portraitUp,
       initialDefaultDisplayRotation: Surface.rotation0,
       deviceOrientationStream: deviceOrientationStreamController.stream,
@@ -60,7 +61,6 @@ void main() {
     // degrees (instead of the sensor-based 90 degrees).
     await tester.pumpWidget(
       createRotatedPreview(
-        handlesCropAndRotation: false,
         initialTransformationInfo: TransformationInfo.pigeon_detached(
           rotationDegrees: 180,
           hasCameraTransform: false,
@@ -74,55 +74,8 @@ void main() {
     verifyNever(mockDeviceOrientationManager.getDefaultDisplayRotation());
   });
 
-  testWidgets(
-    'updates the device orientation and default display rotation on device orientation changes',
-    (WidgetTester tester) async {
-      when(
-        mockDeviceOrientationManager.getDefaultDisplayRotation(),
-      ).thenAnswer((_) async => Surface.rotation90);
-
-      await tester.pumpWidget(createRotatedPreview(handlesCropAndRotation: true));
-      await tester.pump();
-      expect(quarterTurns(tester), 0);
-
-      // The device orientation and display rotation are deliberately
-      // inconsistent to show both are used: the display rotation (90 degrees,
-      // 3 counter-clockwise quarter turns) minus the rotation pre-applied by
-      // CameraPreview for landscapeRight (1 quarter turn) = 2 quarter turns.
-      deviceOrientationStreamController.add(DeviceOrientation.landscapeRight);
-      await tester.pumpAndSettle();
-
-      expect(quarterTurns(tester), 2);
-      verify(mockDeviceOrientationManager.getDefaultDisplayRotation()).called(1);
-    },
-  );
-
-  testWidgets('updates the TransformationInfo when a new one is received', (
-    WidgetTester tester,
-  ) async {
-    await tester.pumpWidget(createRotatedPreview(handlesCropAndRotation: false));
-    await tester.pump();
-    // Without a TransformationInfo, the preview is rotated by the sensor
-    // orientation: 90 - 0 = 90 degrees.
-    expect(quarterTurns(tester), 1);
-
-    transformationInfoStreamController.add(
-      TransformationInfo.pigeon_detached(
-        rotationDegrees: 180,
-        hasCameraTransform: false,
-        isMirroring: false,
-      ),
-    );
-    await tester.pumpAndSettle();
-
-    // 180 - (0 - 0) = 180 degrees; the device orientation and default display
-    // rotation are unchanged.
-    expect(quarterTurns(tester), 2);
-    verifyNever(mockDeviceOrientationManager.getDefaultDisplayRotation());
-  });
-
   testWidgets('cancels its subscriptions when disposed', (WidgetTester tester) async {
-    await tester.pumpWidget(createRotatedPreview(handlesCropAndRotation: false));
+    await tester.pumpWidget(createRotatedPreview());
     await tester.pump();
     expect(deviceOrientationStreamController.hasListener, isTrue);
     expect(transformationInfoStreamController.hasListener, isTrue);

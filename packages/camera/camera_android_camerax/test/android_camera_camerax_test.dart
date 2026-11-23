@@ -70,9 +70,6 @@ void main() {
   setUp(() {
     PigeonOverrides.pigeon_reset();
     GenericsPigeonOverrides.reset();
-
-    // Avoid calls to native Android when the camera creates its listener for
-    // preview TransformationInfo updates.
     PigeonOverrides.transformationInfoListener_new = TransformationInfoListener.pigeon_detached;
   });
 
@@ -2753,126 +2750,28 @@ void main() {
       },
     );
 
-    test('startVideoCapturing called with stream options starts image streaming', () async {
-      // Set up mocks and constants.
-      final camera = AndroidCameraCameraX();
-      final mockProcessCameraProvider = MockProcessCameraProvider();
-      final Recorder mockRecorder = MockRecorder();
-      final mockPendingRecording = MockPendingRecording();
-      final initialCameraInfo = MockCameraInfo();
-      final mockCamera2CameraInfo = MockCamera2CameraInfo();
-
-      // Set directly for test versus calling createCamera.
-
-      camera.processCameraProvider = mockProcessCameraProvider;
-      camera.cameraSelector = MockCameraSelector();
-      camera.videoCapture = MockVideoCapture();
-      camera.imageAnalysis = MockImageAnalysis();
-      camera.camera = MockCamera();
-      camera.recorder = mockRecorder;
-      camera.cameraInfo = initialCameraInfo;
-      camera.imageCapture = MockImageCapture();
-      camera.enableRecordingAudio = true;
-
-      // Ignore setting target rotation for this test; tested seprately.
-      camera.captureOrientationLocked = true;
-
-      // Tell plugin to create detached Analyzer for testing.
-      const outputPath = '/temp/REC123.mp4';
-      GenericsPigeonOverrides.observerNew =
-          <T>({required void Function(Observer<T>, T) onChanged}) {
-            return Observer<T>.detached(onChanged: onChanged);
-          };
-      PigeonOverrides.camera2CameraInfo_from = ({required dynamic cameraInfo}) =>
-          mockCamera2CameraInfo;
-      PigeonOverrides.systemServicesManager_new =
-          ({required void Function(SystemServicesManager, String) onCameraError}) {
-            final mockSystemServicesManager = MockSystemServicesManager();
-            when(
-              mockSystemServicesManager.getTempFilePath(camera.videoPrefix, '.mp4'),
-            ).thenAnswer((_) async => outputPath);
-            return mockSystemServicesManager;
-          };
-      PigeonOverrides.videoRecordEventListener_new =
-          ({required void Function(VideoRecordEventListener, VideoRecordEvent) onEvent}) {
-            return VideoRecordEventListener.pigeon_detached(onEvent: onEvent);
-          };
-      PigeonOverrides.cameraCharacteristics_infoSupportedHardwareLevel =
-          MockCameraCharacteristicsKey();
-      PigeonOverrides.analyzer_new = ({required void Function(Analyzer, ImageProxy) analyze}) {
-        return MockAnalyzer();
-      };
-
-      const cameraId = 17;
-      final imageDataCompleter = Completer<CameraImageData>();
-      final videoCaptureOptions = VideoCaptureOptions(
-        cameraId,
-        streamCallback: (CameraImageData imageData) => imageDataCompleter.complete(imageData),
-      );
-
-      // Mock method calls.
-      when(
-        camera.processCameraProvider!.isBound(camera.videoCapture!),
-      ).thenAnswer((_) async => true);
-      when(
-        camera.processCameraProvider!.isBound(camera.imageAnalysis!),
-      ).thenAnswer((_) async => true);
-      when(
-        camera.recorder!.prepareRecording(outputPath),
-      ).thenAnswer((_) async => mockPendingRecording);
-      when(
-        mockPendingRecording.withAudioEnabled(!camera.enableRecordingAudio),
-      ).thenAnswer((_) async => mockPendingRecording);
-      when(
-        mockPendingRecording.asPersistentRecording(),
-      ).thenAnswer((_) async => mockPendingRecording);
-      when(
-        mockProcessCameraProvider.bindToLifecycle(any, any),
-      ).thenAnswer((_) => Future<Camera>.value(camera.camera));
-      when(
-        camera.camera!.getCameraInfo(),
-      ).thenAnswer((_) => Future<CameraInfo>.value(MockCameraInfo()));
-      when(
-        mockCamera2CameraInfo.getCameraCharacteristic(any),
-      ).thenAnswer((_) async => InfoSupportedHardwareLevel.level3);
-
-      // Simulate video recording being started so startVideoRecording completes.
-      emitRecordingStarted();
-
-      await camera.startVideoCapturing(videoCaptureOptions);
-
-      final CameraImageData mockCameraImageData = MockCameraImageData();
-      camera.cameraImageDataStreamController!.add(mockCameraImageData);
-
-      expect(imageDataCompleter.future, isNotNull);
-      await camera.cameraImageDataStreamController!.close();
-    });
-
     group('startVideoCapturing called with stream options', () {
-      /// Starts a recording with image streaming while ImageAnalysis is bound
-      /// or not according to [imageAnalysisIsBound]. VideoCapture is never
-      /// bound, as before any recording.
-      ///
-      /// Returns the camera and the mocks to verify use case binding with.
-      Future<
-        (
-          AndroidCameraCameraX,
-          MockProcessCameraProvider,
-          MockCameraSelector,
-          MockImageAnalysis,
-          MockVideoCapture,
-          MockPendingRecording,
-        )
-      >
-      startVideoCapturingWithStream({required bool imageAnalysisIsBound}) async {
+      late MockProcessCameraProvider mockProcessCameraProvider;
+      late MockCameraSelector mockCameraSelector;
+      late MockVideoCapture mockVideoCapture;
+      late MockImageAnalysis mockImageAnalysis;
+      late MockPendingRecording mockPendingRecording;
+
+      /// Starts a recording that streams images to [streamCallback] while
+      /// ImageAnalysis is bound or not according to [imageAnalysisIsBound].
+      /// VideoCapture is never bound, as before any recording.
+      Future<AndroidCameraCameraX> startVideoCapturingWithStream({
+        required bool imageAnalysisIsBound,
+        void Function(CameraImageData)? streamCallback,
+      }) async {
         // Set up mocks and constants.
         final camera = AndroidCameraCameraX();
-        final mockProcessCameraProvider = MockProcessCameraProvider();
-        final mockCameraSelector = MockCameraSelector();
-        final mockVideoCapture = MockVideoCapture();
-        final mockImageAnalysis = MockImageAnalysis();
+        mockProcessCameraProvider = MockProcessCameraProvider();
+        mockCameraSelector = MockCameraSelector();
+        mockVideoCapture = MockVideoCapture();
+        mockImageAnalysis = MockImageAnalysis();
         final Recorder mockRecorder = MockRecorder();
-        final mockPendingRecording = MockPendingRecording();
+        mockPendingRecording = MockPendingRecording();
         final mockCamera2CameraInfo = MockCamera2CameraInfo();
 
         // Set directly for test versus calling createCamera.
@@ -2917,7 +2816,7 @@ void main() {
         const cameraId = 17;
         final videoCaptureOptions = VideoCaptureOptions(
           cameraId,
-          streamCallback: (CameraImageData imageData) {},
+          streamCallback: streamCallback ?? (CameraImageData imageData) {},
         );
 
         when(mockProcessCameraProvider.isBound(any)).thenAnswer((_) async => false);
@@ -2950,51 +2849,53 @@ void main() {
 
         await camera.startVideoCapturing(videoCaptureOptions);
 
-        return (
-          camera,
-          mockProcessCameraProvider,
-          mockCameraSelector,
-          mockImageAnalysis,
-          mockVideoCapture,
-          mockPendingRecording,
-        );
+        return camera;
       }
+
+      test('starts image streaming', () async {
+        final streamedImages = <CameraImageData>[];
+        final AndroidCameraCameraX camera = await startVideoCapturingWithStream(
+          imageAnalysisIsBound: true,
+          streamCallback: streamedImages.add,
+        );
+
+        final CameraImageData mockCameraImageData = MockCameraImageData();
+        camera.cameraImageDataStreamController!.add(mockCameraImageData);
+        await Future<void>.delayed(Duration.zero);
+
+        expect(streamedImages, <CameraImageData>[mockCameraImageData]);
+        await camera.cameraImageDataStreamController!.close();
+      });
 
       test('binds ImageAnalysis before VideoCapture and before starting the recording', () async {
         // Neither use case is bound, as after a recording without streaming.
-        final (
-          AndroidCameraCameraX camera,
-          MockProcessCameraProvider provider,
-          MockCameraSelector cameraSelector,
-          MockImageAnalysis imageAnalysis,
-          MockVideoCapture videoCapture,
-          MockPendingRecording pendingRecording,
-        ) = await startVideoCapturingWithStream(
+        final AndroidCameraCameraX camera = await startVideoCapturingWithStream(
           imageAnalysisIsBound: false,
         );
 
         verifyInOrder(<Object?>[
-          provider.bindToLifecycle(cameraSelector, <UseCase>[imageAnalysis]),
-          provider.bindToLifecycle(cameraSelector, <UseCase>[videoCapture]),
-          pendingRecording.start(any),
+          mockProcessCameraProvider.bindToLifecycle(mockCameraSelector, <UseCase>[
+            mockImageAnalysis,
+          ]),
+          mockProcessCameraProvider.bindToLifecycle(mockCameraSelector, <UseCase>[
+            mockVideoCapture,
+          ]),
+          mockPendingRecording.start(any),
         ]);
         await camera.cameraImageDataStreamController!.close();
       });
 
       test('does not bind ImageAnalysis again if it is already bound', () async {
-        final (
-          AndroidCameraCameraX camera,
-          MockProcessCameraProvider provider,
-          MockCameraSelector cameraSelector,
-          MockImageAnalysis imageAnalysis,
-          MockVideoCapture videoCapture,
-          _,
-        ) = await startVideoCapturingWithStream(
+        final AndroidCameraCameraX camera = await startVideoCapturingWithStream(
           imageAnalysisIsBound: true,
         );
 
-        verify(provider.bindToLifecycle(cameraSelector, <UseCase>[videoCapture])).called(1);
-        verifyNever(provider.bindToLifecycle(any, <UseCase>[imageAnalysis]));
+        verify(
+          mockProcessCameraProvider.bindToLifecycle(mockCameraSelector, <UseCase>[
+            mockVideoCapture,
+          ]),
+        ).called(1);
+        verifyNever(mockProcessCameraProvider.bindToLifecycle(any, <UseCase>[mockImageAnalysis]));
         await camera.cameraImageDataStreamController!.close();
       });
     });
@@ -3502,19 +3403,23 @@ void main() {
     });
 
     group('setDescriptionWhileRecording', () {
+      late int cameraId;
+      late MockProcessCameraProvider mockProcessCameraProvider;
+      late MockPreview mockPreview;
+      late MockCameraSelector mockFrontCameraSelector;
+
       /// Creates a back camera with [backSensorOrientation] whose preview is
-      /// backed by an `ImageReader`, starts recording, and switches to a front
-      /// camera with [frontSensorOrientation].
+      /// backed by an `ImageReader` and starts recording, so that tests can
+      /// switch to the front camera (see [frontCamera]) with
+      /// [AndroidCameraCameraX.setDescriptionWhileRecording].
       ///
-      /// Returns the mocks to verify the Preview target rotation with.
-      Future<(AndroidCameraCameraX, MockPreview, MockProcessCameraProvider, MockCameraSelector)>
-      switchCamerasWhileRecording({
+      /// Interactions with the mocks before the switch are cleared.
+      Future<AndroidCameraCameraX> createCameraAndStartRecording({
         required int backSensorOrientation,
-        required int frontSensorOrientation,
       }) async {
         final camera = AndroidCameraCameraX();
-        final mockProcessCameraProvider = MockProcessCameraProvider();
-        final mockPreview = MockPreview();
+        mockProcessCameraProvider = MockProcessCameraProvider();
+        mockPreview = MockPreview();
         final mockCamera = MockCamera();
         final mockCameraInfo = MockCameraInfo();
         final mockRecorder = MockRecorder();
@@ -3523,7 +3428,7 @@ void main() {
         final mockImageAnalysis = MockImageAnalysis();
         final mockVideoCapture = MockVideoCapture();
         final mockBackCameraSelector = MockCameraSelector();
-        final mockFrontCameraSelector = MockCameraSelector();
+        mockFrontCameraSelector = MockCameraSelector();
         final mockBackCameraInfo = MockCameraInfo();
         final mockFrontCameraInfo = MockCameraInfo();
         const outputPath = 'file/output.mp4';
@@ -3637,7 +3542,7 @@ void main() {
         camera.enableRecordingAudio = false;
 
         await camera.availableCameras();
-        final int flutterSurfaceTextureId = await camera.createCameraWithSettings(
+        cameraId = await camera.createCameraWithSettings(
           CameraDescription(
             name: '0',
             lensDirection: CameraLensDirection.back,
@@ -3645,40 +3550,35 @@ void main() {
           ),
           const MediaSettings(),
         );
-        await camera.initializeCamera(flutterSurfaceTextureId);
+        await camera.initializeCamera(cameraId);
         emitRecordingStarted();
-        await camera.startVideoCapturing(VideoCaptureOptions(flutterSurfaceTextureId));
+        await camera.startVideoCapturing(VideoCaptureOptions(cameraId));
         clearInteractions(mockPreview);
         clearInteractions(mockProcessCameraProvider);
 
-        await camera.setDescriptionWhileRecording(
-          CameraDescription(
-            name: '1',
-            lensDirection: CameraLensDirection.front,
-            sensorOrientation: frontSensorOrientation,
-          ),
-        );
-
-        return (camera, mockPreview, mockProcessCameraProvider, mockFrontCameraSelector);
+        return camera;
       }
+
+      /// The front camera that tests switch to.
+      CameraDescription frontCamera({required int sensorOrientation}) => CameraDescription(
+        name: '1',
+        lensDirection: CameraLensDirection.front,
+        sensorOrientation: sensorOrientation,
+      );
 
       test('re-pins the Preview target rotation before rebinding if the new camera needs a '
           'different one', () async {
         // ImageReader pins: back 270 -> 270 degrees, front 270 -> 90 degrees.
-        final (
-          _,
-          MockPreview mockPreview,
-          MockProcessCameraProvider provider,
-          _,
-        ) = await switchCamerasWhileRecording(
+        final AndroidCameraCameraX camera = await createCameraAndStartRecording(
           backSensorOrientation: 270,
-          frontSensorOrientation: 270,
         );
 
+        await camera.setDescriptionWhileRecording(frontCamera(sensorOrientation: 270));
+
         verifyInOrder(<Object?>[
-          provider.unbindAll(),
+          mockProcessCameraProvider.unbindAll(),
           mockPreview.setTargetRotation(Surface.rotation90),
-          provider.bindToLifecycle(any, any),
+          mockProcessCameraProvider.bindToLifecycle(any, any),
         ]);
       });
 
@@ -3686,201 +3586,34 @@ void main() {
         'does not change the Preview target rotation if the new camera needs the same one',
         () async {
           // ImageReader pins: back 90 -> 90 degrees, front 270 -> 90 degrees.
-          final (
-            _,
-            MockPreview mockPreview,
-            MockProcessCameraProvider provider,
-            _,
-          ) = await switchCamerasWhileRecording(
+          final AndroidCameraCameraX camera = await createCameraAndStartRecording(
             backSensorOrientation: 90,
-            frontSensorOrientation: 270,
           );
 
-          verify(provider.bindToLifecycle(any, any));
+          await camera.setDescriptionWhileRecording(frontCamera(sensorOrientation: 270));
+
+          verify(mockProcessCameraProvider.bindToLifecycle(any, any));
           verifyNever(mockPreview.setTargetRotation(any));
         },
       );
-    });
 
-    test('setDescriptionWhileRecording does not resume paused preview', () async {
-      final camera = AndroidCameraCameraX();
-      final mockRecording = MockRecording();
-      final mockPendingRecording = MockPendingRecording();
-      final mockRecorder = MockRecorder();
+      test('does not resume paused preview', () async {
+        final AndroidCameraCameraX camera = await createCameraAndStartRecording(
+          backSensorOrientation: 90,
+        );
+        await camera.pausePreview(cameraId);
 
-      const testSensorOrientation = 90;
-      const testBackCameraDescription = CameraDescription(
-        name: '0',
-        lensDirection: CameraLensDirection.back,
-        sensorOrientation: testSensorOrientation,
-      );
-      const testFrontCameraDescription = CameraDescription(
-        name: '1',
-        lensDirection: CameraLensDirection.front,
-        sensorOrientation: testSensorOrientation,
-      );
+        await camera.setDescriptionWhileRecording(frontCamera(sensorOrientation: 90));
 
-      // Mock/Detached objects for (typically attached) objects created by
-      // createCamera.
-      final mockProcessCameraProvider = MockProcessCameraProvider();
-      final mockPreview = MockPreview();
-      final mockCamera = MockCamera();
-      final mockCameraInfo = MockCameraInfo();
-      final mockCameraControl = MockCameraControl();
-      final mockImageCapture = MockImageCapture();
-      final mockImageAnalysis = MockImageAnalysis();
-      final mockVideoCapture = MockVideoCapture();
-      final mockBackCameraSelector = MockCameraSelector();
-      final mockFrontCameraSelector = MockCameraSelector();
-      final mockFrontCameraInfo = MockCameraInfo();
-      final mockBackCameraInfo = MockCameraInfo();
-      final mockCameraCharacteristicsKey = MockCameraCharacteristicsKey();
-
-      const outputPath = 'file/output.mp4';
-
-      PigeonOverrides.preview_new =
-          ({
-            ResolutionSelector? resolutionSelector,
-            int? targetRotation,
-            CameraIntegerRange? targetFpsRange,
-          }) {
-            when(mockPreview.setSurfaceProvider(any, any)).thenAnswer((_) async => 19);
-            final testResolutionInfo = ResolutionInfo.pigeon_detached(resolution: MockCameraSize());
-            when(
-              mockPreview.surfaceProducerHandlesCropAndRotation(),
-            ).thenAnswer((_) async => false);
-            when(mockPreview.resolutionSelector).thenReturn(resolutionSelector);
-            when(mockPreview.getResolutionInfo()).thenAnswer((_) async => testResolutionInfo);
-            return mockPreview;
-          };
-      PigeonOverrides.imageCapture_new =
-          ({
-            CameraXFlashMode? flashMode,
-            ResolutionSelector? resolutionSelector,
-            int? targetRotation,
-            int? jpegQuality,
-            bool? zeroShutterLagEnabled,
-          }) {
-            return mockImageCapture;
-          };
-      PigeonOverrides.recorder_new =
-          ({int? aspectRatio, QualitySelector? qualitySelector, int? targetVideoEncodingBitRate}) {
-            when(
-              mockRecorder.prepareRecording(outputPath),
-            ).thenAnswer((_) async => mockPendingRecording);
-            return mockRecorder;
-          };
-      PigeonOverrides.videoCapture_withOutput =
-          ({required VideoOutput videoOutput, CameraIntegerRange? targetFpsRange}) {
-            return mockVideoCapture;
-          };
-      PigeonOverrides.imageAnalysis_new =
-          ({
-            int? outputImageFormat,
-            ResolutionSelector? resolutionSelector,
-            int? targetRotation,
-            CameraIntegerRange? targetFpsRange,
-          }) {
-            return mockImageAnalysis;
-          };
-      PigeonOverrides.cameraSelector_new =
-          ({LensFacing? requireLensFacing, dynamic cameraInfoForFilter}) {
-            if (cameraInfoForFilter == mockFrontCameraInfo) {
-              return mockFrontCameraSelector;
-            }
-            return mockBackCameraSelector;
-          };
-      PigeonOverrides.deviceOrientationManager_new =
-          ({required void Function(DeviceOrientationManager, String) onDeviceOrientationChanged}) {
-            final manager = MockDeviceOrientationManager();
-            when(manager.getUiOrientation()).thenAnswer((_) async {
-              return 'PORTRAIT_UP';
-            });
-            return manager;
-          };
-      PigeonOverrides.camera2CameraInfo_from = ({required dynamic cameraInfo}) {
-        final camera2cameraInfo = MockCamera2CameraInfo();
-        var cameraId = '';
-        if (cameraInfo == mockBackCameraInfo) {
-          cameraId = '0';
-        } else if (cameraInfo == mockFrontCameraInfo) {
-          cameraId = '1';
-        }
-        when(camera2cameraInfo.getCameraId()).thenAnswer((_) async => cameraId);
-        when(
-          camera2cameraInfo.getCameraCharacteristic(any),
-        ).thenAnswer((_) async => InfoSupportedHardwareLevel.limited);
-        return camera2cameraInfo;
-      };
-      PigeonOverrides.cameraCharacteristics_sensorOrientation = mockCameraCharacteristicsKey;
-      GenericsPigeonOverrides.observerNew =
-          <T>({required void Function(Observer<T>, T) onChanged}) {
-            return Observer<T>.detached(onChanged: onChanged);
-          };
-      PigeonOverrides.systemServicesManager_new =
-          ({required void Function(SystemServicesManager, String) onCameraError}) {
-            final mockSystemServicesManager = MockSystemServicesManager();
-            when(
-              mockSystemServicesManager.getTempFilePath(camera.videoPrefix, '.mp4'),
-            ).thenAnswer((_) async => outputPath);
-            return mockSystemServicesManager;
-          };
-      PigeonOverrides.videoRecordEventListener_new =
-          ({required void Function(VideoRecordEventListener, VideoRecordEvent) onEvent}) {
-            return VideoRecordEventListener.pigeon_detached(onEvent: onEvent);
-          };
-      PigeonOverrides.cameraCharacteristics_infoSupportedHardwareLevel =
-          MockCameraCharacteristicsKey();
-
-      // mock functions
-      when(
-        mockProcessCameraProvider.getAvailableCameraInfos(),
-      ).thenAnswer((_) async => <MockCameraInfo>[mockBackCameraInfo, mockFrontCameraInfo]);
-      when(mockProcessCameraProvider.bindToLifecycle(any, any)).thenAnswer((_) async => mockCamera);
-
-      camera.processCameraProvider = mockProcessCameraProvider;
-      camera.enableRecordingAudio = false;
-      when(
-        mockPendingRecording.withAudioEnabled(any),
-      ).thenAnswer((_) async => mockPendingRecording);
-      when(
-        mockPendingRecording.asPersistentRecording(),
-      ).thenAnswer((_) async => mockPendingRecording);
-      when(mockPendingRecording.start(any)).thenAnswer((_) async => mockRecording);
-      when(camera.processCameraProvider!.isBound(mockImageCapture)).thenAnswer((_) async => true);
-      when(camera.processCameraProvider!.isBound(mockImageAnalysis)).thenAnswer((_) async => true);
-      when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
-      when(mockCameraInfo.getCameraState()).thenAnswer((_) async => MockLiveCameraState());
-      when(mockCameraInfo.getCameraState()).thenAnswer((_) async => MockLiveCameraState());
-      when(mockCamera.cameraControl).thenAnswer((_) => mockCameraControl);
-
-      await camera.availableCameras();
-
-      final int flutterSurfaceTextureId = await camera.createCameraWithSettings(
-        testBackCameraDescription,
-        const MediaSettings(enableAudio: true),
-      );
-      await camera.initializeCamera(flutterSurfaceTextureId);
-
-      // Simulate video recording being started so startVideoRecording completes.
-      emitRecordingStarted();
-
-      await camera.startVideoCapturing(VideoCaptureOptions(flutterSurfaceTextureId));
-
-      // pause the preview
-      await camera.pausePreview(flutterSurfaceTextureId);
-
-      await camera.setDescriptionWhileRecording(testFrontCameraDescription);
-
-      // verify preview not bound to lifecycle
-      verify(camera.processCameraProvider?.unbindAll()).called(2);
-      verify(
-        camera.processCameraProvider?.bindToLifecycle(mockFrontCameraSelector, <UseCase>[
-          mockVideoCapture,
-          mockImageCapture,
-          mockImageAnalysis,
-        ]),
-      ).called(1);
+        verify(mockProcessCameraProvider.unbindAll()).called(1);
+        verify(
+          mockProcessCameraProvider.bindToLifecycle(mockFrontCameraSelector, <UseCase>[
+            camera.videoCapture!,
+            camera.imageCapture!,
+            camera.imageAnalysis!,
+          ]),
+        ).called(1);
+      });
     });
   });
 

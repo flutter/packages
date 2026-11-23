@@ -11,11 +11,11 @@ import 'package:meta/meta.dart';
 import 'camerax_library.dart' show DeviceOrientationManager, TransformationInfo;
 import 'rotated_preview_utils.dart';
 
-/// Widget that rotates, and mirrors if needed, the camera preview to be
+/// Widget that rotates (and mirrors if needed) the camera preview to be
 /// upright according to the current user interface orientation.
 ///
 /// The correction depends on whether the camera transform (the sensor
-/// rotation and, for front cameras, mirroring) has been applied to the
+/// rotation and for front cameras, mirroring) has been applied to the
 /// preview buffer:
 ///
 ///  * A `SurfaceTexture` ([handlesCropAndRotation] is true) applies it when its

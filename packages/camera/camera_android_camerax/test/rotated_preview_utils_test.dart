@@ -332,10 +332,13 @@ void main() {
 
     test('rotates front camera buffers that CameraX already mirrored to match the raw buffer '
         'displayed mirrored', () {
-      // A raw front camera buffer B is displayed as mirror(rotate(r, B)). If
-      // CameraX mirrors the buffer itself (M = mirror(B)), the same image is
-      // rotate(-r, M), so CameraX reports rotationDegrees -(sensor + T0) with
-      // isMirroring false, and the preview must be rotated by -(sensor + D).
+      // When CameraX mirrors a front camera buffer itself while copying it,
+      // the copy is the mirror image of the raw buffer. Rotating a mirror
+      // image clockwise looks like rotating the original counterclockwise, so
+      // the copy must be rotated by the opposite of the raw buffer's rotation
+      // to end up looking the same as the raw buffer once the plugin rotates
+      // and mirrors it. CameraX reports this by giving the copy the opposite
+      // of the rotation it reports for the raw buffer.
       for (final sensorOrientationDegrees in <int>[0, 90, 180, 270]) {
         for (final previewTargetRotation in surfaceRotations) {
           final int alreadyMirroredRotationDegrees =
@@ -514,6 +517,11 @@ void main() {
       );
 
       final transform = rotatedBox.child! as Transform;
+      // storage holds the matrix in column-major order, so storage[0] is the x
+      // scale and storage[5] is the y scale. The buffer is rotated a quarter
+      // turn, so it is flipped vertically (y scale -1) to end up mirrored
+      // horizontally.
+      expect(transform.transform.storage[0], 1);
       expect(transform.transform.storage[5], -1);
       expect(transform.child, child);
     });
@@ -531,7 +539,13 @@ void main() {
     test('mirrors front camera previews when TransformationInfo is null', () {
       final RotatedBox rotatedBox = buildPreview(cameraIsFrontFacing: true);
 
-      expect(rotatedBox.child, isA<Transform>());
+      // The buffer is rotated a quarter turn (sensor 90 + display 0 degrees),
+      // so it is flipped vertically (storage[5] is the y scale) to end up
+      // mirrored horizontally.
+      final transform = rotatedBox.child! as Transform;
+      expect(transform.transform.storage[0], 1);
+      expect(transform.transform.storage[5], -1);
+      expect(transform.child, child);
     });
 
     test('does not mirror back camera previews when TransformationInfo is null', () {
@@ -580,6 +594,8 @@ void main() {
                   as Transform;
           final rotatedQuarterTurn = rotationDegrees % 180 == 90;
           final reason = 'rotationDegrees: $rotationDegrees, $orientation';
+          // storage[0] is the x scale and storage[5] is the y scale, so -1 in
+          // one of them flips the buffer horizontally or vertically.
           expect(transform.transform.storage[0], rotatedQuarterTurn ? 1 : -1, reason: reason);
           expect(transform.transform.storage[5], rotatedQuarterTurn ? -1 : 1, reason: reason);
         }
@@ -606,6 +622,10 @@ void main() {
         final bool portrait =
             orientation == DeviceOrientation.portraitUp ||
             orientation == DeviceOrientation.portraitDown;
+        // A 270 degree sensor needs a quarter or three quarter turn in portrait,
+        // so the buffer is flipped vertically (y scale, storage[5], is -1), and
+        // a half or no turn in landscape, so it is flipped horizontally (x
+        // scale, storage[0], is -1).
         expect(transform.transform.storage[0], portrait ? 1 : -1, reason: '$orientation');
         expect(transform.transform.storage[5], portrait ? -1 : 1, reason: '$orientation');
       });

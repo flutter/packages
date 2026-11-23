@@ -40,9 +40,6 @@ void main() {
   setUp(() {
     PigeonOverrides.pigeon_reset();
     GenericsPigeonOverrides.reset();
-
-    // Avoid calls to native Android when the camera creates its listener for
-    // preview TransformationInfo updates.
     PigeonOverrides.transformationInfoListener_new = TransformationInfoListener.pigeon_detached;
   });
 

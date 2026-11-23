@@ -35,25 +35,23 @@ int getPreAppliedQuarterTurnsRotationFromDeviceOrientation(DeviceOrientation ori
 }
 
 /// Returns the [Surface] rotation constant to use as the target rotation of
-/// the camera preview so that a preview buffer copied by CameraX (e.g. for
-/// stream sharing) has the same orientation as a buffer the surface receives
-/// from the camera directly.
-///
-/// A surface that [handlesCropAndRotation] (a `SurfaceTexture`) applies the
-/// camera transform to direct buffers, making them upright in the natural
-/// orientation of the device, so the target rotation is
-/// [Surface.rotation0]. Otherwise (an `ImageReader`), direct buffers are in
-/// the orientation of the camera sensor, so the target rotation is the one for
-/// which CameraX reports a relative rotation of 0 degrees.
+/// the camera preview so that a preview buffer copied by CameraX has the same
+/// orientation as a buffer the surface receives from the camera directly.
 int computePreviewTargetRotation({
   required bool handlesCropAndRotation,
   required bool cameraIsFrontFacing,
   required int sensorOrientationDegrees,
 }) {
   if (handlesCropAndRotation) {
+    // A surface that [handlesCropAndRotation] (a `SurfaceTexture`) applies the
+    // camera transform to direct buffers, making them upright in the natural
+    // orientation of the device.
     return Surface.rotation0;
   }
 
+  // Direct buffers (an `ImageReader`) are in the orientation of the
+  // camera sensor, so the target rotation is the one for which CameraX reports
+  // a relative rotation of 0 degrees.
   final int targetRotationDegrees = cameraIsFrontFacing
       ? (360 - sensorOrientationDegrees) % 360
       : sensorOrientationDegrees % 360;
@@ -109,15 +107,6 @@ int computeUntransformedPreviewRotation({
 /// Returns whether a camera preview buffer that does not have the camera
 /// transform applied needs to be mirrored to be displayed like a mirror for
 /// front cameras.
-///
-/// A buffer from the camera directly ([transformationInfo] is null or has the
-/// camera transform) is never mirrored, so it needs to be mirrored for front
-/// cameras. A buffer copied by CameraX (e.g. for stream sharing) needs to be
-/// mirrored if [TransformationInfo.isMirroring] says so, unless
-/// [previewMirroringDisabled] is true. In that case, the Preview was created
-/// with CameraX mirroring turned off, so CameraX never mirrors the buffers
-/// it copies and reports that they do not need mirroring, and front camera
-/// buffers need to be mirrored like buffers from the camera directly.
 bool untransformedBufferNeedsMirroring({
   required TransformationInfo? transformationInfo,
   required bool cameraIsFrontFacing,
@@ -126,8 +115,15 @@ bool untransformedBufferNeedsMirroring({
   if (transformationInfo == null ||
       transformationInfo.hasCameraTransform ||
       previewMirroringDisabled) {
+    // A buffer from the camera directly (transformationInfo is null or has the
+    // camera transform) is never mirrored, so it needs to be mirrored for front
+    // cameras. If previewMirroringDisabled is true, the Preview was created
+    // with CameraX mirroring turned off, so CameraX never mirrors the buffers it
+    // copies either, and front camera buffers need to be mirrored manually.
     return cameraIsFrontFacing;
   }
+  // A buffer copied by CameraX needs to be mirrored if
+  // TransformationInfo.isMirroring says so.
   return transformationInfo.isMirroring;
 }
 
