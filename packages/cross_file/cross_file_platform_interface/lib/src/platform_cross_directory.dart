@@ -108,7 +108,7 @@ abstract base class PlatformXDirectory extends PlatformXEntity {
   ///
   /// Platforms may throw an exception if there is an error deleting the
   /// container.
-  Future<bool> delete(PlatformDirectoryDeleteParams params) {
+  Future<void> delete(PlatformDirectoryDeleteParams params) {
     throw UnimplementedError('`delete` is not implemented on the current platform.');
   }
 }
@@ -116,7 +116,7 @@ abstract base class PlatformXDirectory extends PlatformXEntity {
 /// Base class for parameters passed to [PlatformXDirectory.list].
 @immutable
 base class PlatformListParams {
-  /// Constructs a [PlatformListParams];
+  /// Constructs a [PlatformListParams].
   const PlatformListParams();
 }
 
@@ -124,7 +124,7 @@ base class PlatformListParams {
 /// [PlatformXDirectory.createDirectory].
 @immutable
 base class PlatformCreateParams {
-  /// Constructs a [PlatformCreateParams];
+  /// Constructs a [PlatformCreateParams].
   const PlatformCreateParams(this.name);
 
   /// The path excluded name of the resource or container being created.
@@ -134,6 +134,6 @@ base class PlatformCreateParams {
 /// Base class for parameters passed to [PlatformXDirectory.delete].
 @immutable
 base class PlatformDirectoryDeleteParams {
-  /// Constructs a [PlatformDirectoryDeleteParams];
+  /// Constructs a [PlatformDirectoryDeleteParams].
   const PlatformDirectoryDeleteParams();
 }

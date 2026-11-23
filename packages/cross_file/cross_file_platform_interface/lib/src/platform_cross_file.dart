@@ -86,12 +86,12 @@ abstract base class PlatformXFile extends PlatformXEntity {
   /// Date and time when the resource was last modified, if the information is
   /// available.
   ///
-  /// Returns null if the resource doesn't exist or information is not available.
+  /// Returns null if resource doesn't exist or information is not available.
   Future<DateTime?> lastModified();
 
   /// The length of the data represented by this uri, in bytes.
   ///
-  /// Returns null if the resource doesn't exist or information is not available.
+  /// Returns null if resource doesn't exist or information is not available.
   Future<int?> length();
 
   /// Creates a new independent Stream for the contents of this resource.
@@ -120,17 +120,22 @@ abstract base class PlatformXFile extends PlatformXEntity {
 
   /// Creates a new independent [StreamSink] for the resource.
   ///
+  /// This overwrites the contents of the file.
+  ///
   /// If an error occurs while opening or writing to the resource, the
-  /// [StreamSink.done] and [StreamSink.close] methods will throw an exception.
+  /// [StreamSink.done] and [StreamSink.close] methods will complete with an
+  /// error.
   StreamSink<Uint8List> openWrite(PlatformOpenWriteParams params) {
     throw UnimplementedError('`openWrite` is not implemented on the current platform.');
   }
 
   /// Writes a string to a resource.
   ///
+  /// This overwrites the contents of the file.
+  ///
   /// Platforms may throw an exception if there is an error opening or writing
   /// to the resource.
-  Future<PlatformXFile> writeAsString(PlatformWriteAsStringParams params) {
+  Future<void> writeAsString(PlatformWriteAsStringParams params) {
     throw UnimplementedError('`writeAsString` is not implemented on the current platform.');
   }
 
@@ -138,7 +143,7 @@ abstract base class PlatformXFile extends PlatformXEntity {
   ///
   /// Platforms may throw an exception if there is an error deleting the
   /// resource.
-  Future<bool> delete(PlatformFileDeleteParams params) {
+  Future<void> delete(PlatformFileDeleteParams params) {
     throw UnimplementedError('`delete` is not implemented on the current platform.');
   }
 
@@ -153,14 +158,14 @@ abstract base class PlatformXFile extends PlatformXEntity {
 /// Base class for parameters passed to [PlatformXFile.openWrite].
 @immutable
 base class PlatformOpenWriteParams {
-  /// Constructs a [PlatformOpenWriteParams];
+  /// Constructs a [PlatformOpenWriteParams].
   const PlatformOpenWriteParams();
 }
 
 /// Base class for parameters passed to [PlatformXFile.writeAsString].
 @immutable
 base class PlatformWriteAsStringParams {
-  /// Constructs a [PlatformWriteAsStringParams];
+  /// Constructs a [PlatformWriteAsStringParams].
   const PlatformWriteAsStringParams(this.contents, {this.encoding = utf8});
 
   /// The contents to write to the resource.
@@ -173,6 +178,6 @@ base class PlatformWriteAsStringParams {
 /// Base class for parameters passed to [PlatformXFile.delete].
 @immutable
 base class PlatformFileDeleteParams {
-  /// Constructs a [PlatformFileDeleteParams];
+  /// Constructs a [PlatformFileDeleteParams].
   const PlatformFileDeleteParams();
 }
