@@ -8,13 +8,18 @@ import 'dart:io';
 import 'package:args/args.dart';
 import 'package:ci_info/ci_lib.dart' as ci_lib;
 import 'package:ci_info/failure_analysis.dart';
+import 'package:http/http.dart' as http;
 
 const String _maxLinesOption = 'max-lines';
 const String _jsonFlag = 'json';
 const String _helpFlag = 'help';
 
-Future<Map<String, dynamic>> _summarize(String buildId, int maxLines) async {
-  final Map<String, dynamic> build = await ci_lib.getBuild(buildId, buildFields);
+Future<Map<String, dynamic>> _summarize(
+  String buildId,
+  int maxLines, {
+  required http.Client client,
+}) async {
+  final Map<String, dynamic> build = await ci_lib.getBuild(buildId, buildFields, client: client);
   final Map<String, dynamic> builder =
       build['builder'] as Map<String, dynamic>? ?? <String, dynamic>{};
 
@@ -35,7 +40,7 @@ Future<Map<String, dynamic>> _summarize(String buildId, int maxLines) async {
         .replaceAll(RegExp(r'[\r\n]+'), ' ')
         .trim(),
     'minutes': buildMinutes(build)?.round(),
-    'steps': await analyzeSteps(buildId, build, maxLines),
+    'steps': await analyzeSteps(buildId, build, maxLines, client: client),
   };
 }
 
@@ -140,16 +145,22 @@ Future<void> main(List<String> args) async {
     exit(1);
   }
 
+  // One client for every request, so connections are reused.
+  final client = http.Client();
   final results = <Map<String, dynamic>>[];
-  for (final String buildId in parsedArgs.rest) {
-    try {
-      results.add(await _summarize(buildId, maxLines));
-    } on Exception catch (e) {
-      stderr.writeln('BUILD $buildId: failed to summarize: $e');
-      // Keep going so the other builds are still summarized, but report the
-      // failure to callers.
-      exitCode = 1;
+  try {
+    for (final String buildId in parsedArgs.rest) {
+      try {
+        results.add(await _summarize(buildId, maxLines, client: client));
+      } on Exception catch (e) {
+        stderr.writeln('BUILD $buildId: failed to summarize: $e');
+        // Keep going so the other builds are still summarized, but report the
+        // failure to callers.
+        exitCode = 1;
+      }
     }
+  } finally {
+    client.close();
   }
 
   if (parsedArgs[_jsonFlag] as bool) {

@@ -236,12 +236,21 @@ Future<List<Map<String, dynamic>>> searchBuilds(
 }
 
 /// Fetches a single build by Buildbucket ID.
+///
+/// [client] is used for the request if given, otherwise a default client is
+/// used.
 Future<Map<String, dynamic>> getBuild(
   String buildId,
   String fields, {
   Duration? cacheAge = const Duration(hours: 1),
+  http.Client? client,
 }) async {
-  return prpc('GetBuild', <String, dynamic>{'id': buildId, 'fields': fields}, cacheAge: cacheAge);
+  return prpc(
+    'GetBuild',
+    <String, dynamic>{'id': buildId, 'fields': fields},
+    cacheAge: cacheAge,
+    client: client,
+  );
 }
 
 /// Constructs the raw LogDog URL for [stepName]'s [logName] log.
