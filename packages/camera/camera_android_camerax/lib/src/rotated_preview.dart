@@ -169,11 +169,11 @@ final class _RotatedPreviewState extends State<RotatedPreview> {
   Widget _buildRotatedPreview(int defaultDisplayRotation) {
     final TransformationInfo? info = _transformationInfo;
     if (widget.handlesCropAndRotation && (info == null || info.hasCameraTransform)) {
-      // The SurfaceTexture applies the camera transform (the sensor rotation and,
-      // with CameraX's default mirror mode, front camera mirroring), so only the
-      // display rotation remains to be corrected, minus the rotation applied by
-      // the CameraPreview widget (see camera/camera/lib/src/camera_preview.dart)
-      // that is not correct for this plugin.
+      // The SurfaceTexture applies the camera transform (the sensor rotation and
+      // front camera mirroring), so only the display rotation remains to be
+      // corrected, minus the rotation applied by the CameraPreview widget
+      // (see camera/camera/lib/src/camera_preview.dart) that is not correct for
+      // this plugin.
       final int rotationCorrection =
           getQuarterTurnsFromSurfaceRotationConstant(defaultDisplayRotation) -
           getPreAppliedQuarterTurnsRotationFromDeviceOrientation(_deviceOrientation);

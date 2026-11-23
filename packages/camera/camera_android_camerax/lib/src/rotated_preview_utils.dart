@@ -90,9 +90,8 @@ int computeUntransformedPreviewRotation({
   if (transformationInfo != null && !transformationInfo.hasCameraTransform) {
     // TransformationInfo.rotationDegrees is relative to the preview target
     // rotation, which never changes, so shift it by how much the display has
-    // rotated since. A buffer that is still a mirror image of the scene (a raw
-    // front camera buffer, which still needs mirroring) turns the opposite way
-    // of one that is not.
+    // rotated since. A raw front camera buffer, which still needs mirroring,
+    // turns the opposite way of one that is not.
     final int displayRotationDelta = displayRotationDegrees - previewTargetRotation * 90;
     rotationDegrees =
         untransformedBufferNeedsMirroring(

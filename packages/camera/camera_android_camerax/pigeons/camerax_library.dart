@@ -443,8 +443,9 @@ abstract class Preview extends UseCase {
     TransformationInfoListener? transformationInfoListener,
   );
 
-  /// Releases the `SurfaceProducer` created in `setSurfaceProvider` if one was
-  /// created.
+  /// Releases the `SurfaceProducer` created with this `Preview`.
+  ///
+  /// Throws if it has already been released.
   void releaseSurfaceProvider();
 
   /// Gets selected resolution information of the `Preview`.
