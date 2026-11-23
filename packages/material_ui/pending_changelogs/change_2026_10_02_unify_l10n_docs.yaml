@@ -1,3 +1,0 @@
-changelog: |
-  - Moves the localization instructions to script/l10n/README.md and fixes outdated details in them.
-version: patch

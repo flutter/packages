@@ -1,3 +1,0 @@
-changelog: |
-  - Adds `Tooltip.showOnFocus` and `TooltipThemeData.showOnFocus` to show tooltips on keyboard focus.
-version: minor
