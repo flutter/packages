@@ -49,31 +49,13 @@ export 'package:flutter/services.dart' show SmartDashesType, SmartQuotesType;
 ///
 /// <callout-box>
 ///
-// TODO(framework): Add unit tests to this code snippet.
-// https://github.com/flutter/flutter/issues/188530
-///
 /// Creates a [TextFormField] with an [InputDecoration] and validator function.
 ///
 /// ![If the user enters valid text, the TextField appears normally without any warnings to the user](https://flutter.github.io/assets-for-api-docs/assets/material/text_form_field.png)
 ///
 /// ![If the user enters invalid text, the error message returned from the validator function is displayed in dark red underneath the input](https://flutter.github.io/assets-for-api-docs/assets/material/text_form_field_error.png)
 ///
-/// ```dart
-/// TextFormField(
-///   decoration: const InputDecoration(
-///     icon: Icon(Icons.person),
-///     hintText: 'What do people call you?',
-///     labelText: 'Name *',
-///   ),
-///   onSaved: (String? value) {
-///     // This optional block of code can be used to run
-///     // code when the user saves the form.
-///   },
-///   validator: (String? value) {
-///     return (value != null && value.contains('@')) ? 'Do not use the @ char.' : null;
-///   },
-/// )
-/// ```
+/// {@example /example/lib/text_form_field/text_form_field.snippet.0.dart#body indent=strip}
 ///
 /// </callout-box>
 ///
