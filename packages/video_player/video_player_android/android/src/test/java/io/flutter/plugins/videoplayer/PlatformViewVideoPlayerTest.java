@@ -59,7 +59,8 @@ public final class PlatformViewVideoPlayerTest {
             })) {
 
       PlatformViewVideoPlayer player =
-          PlatformViewVideoPlayer.create(mockContext, mockEvents, fakeVideoAsset, options);
+          PlatformViewVideoPlayer.Companion.create(
+              mockContext, mockEvents, fakeVideoAsset, options);
 
       assertEquals(1, mockedBuilder.constructed().size());
       ExoPlayer.Builder builderMock = mockedBuilder.constructed().get(0);
