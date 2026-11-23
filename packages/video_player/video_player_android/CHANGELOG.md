@@ -1,3 +1,9 @@
+## 2.14.0
+
+* Adds `VideoPlayerAndroidExternalApi`, a native API that lets apps and packages supply the Media3
+  `MediaItem` and `MediaSource.Factory` used for a player.
+* Releases a player's native resources when creating it fails.
+
 ## 2.13.0
 
 * Converts native implementation code to Kotlin.

@@ -20,6 +20,7 @@ import io.flutter.plugins.videoplayer.platformview.PlatformViewVideoPlayer
 import io.flutter.plugins.videoplayer.texture.TextureVideoPlayer
 import io.flutter.view.TextureRegistry
 import io.flutter.view.TextureRegistry.SurfaceProducer
+import java.util.Collections
 
 internal typealias PlatformViewPlayerConstructor =
     (
@@ -111,19 +112,22 @@ class VideoPlayerPlugin
     val flutterState =
         this.flutterState
             ?: throw IllegalStateException("Cannot create a player when no engine is attached")
-    val videoAsset = videoAssetWithOptions(options)
+    val videoAsset = videoAssetWithOptions(options, flutterState)
 
     val id = nextPlayerIdentifier++
     val streamInstance = id.toString()
     val playerOptions = VideoPlayerOptions(sharedOptions)
     playerOptions.backBufferDurationMs = options.backBufferDurationMs
 
+    val events = VideoPlayerEventCallbacks.bindTo(flutterState.binaryMessenger, streamInstance)
     val videoPlayer: VideoPlayer =
-        createPlatformViewPlayer(
-            flutterState.applicationContext,
-            VideoPlayerEventCallbacks.bindTo(flutterState.binaryMessenger, streamInstance),
-            videoAsset,
-            playerOptions)
+        try {
+          createPlatformViewPlayer(
+              flutterState.applicationContext, events, videoAsset, playerOptions)
+        } catch (e: Throwable) {
+          events.onDisposed()
+          throw e
+        }
 
     registerPlayerInstance(videoPlayer, id, flutterState.binaryMessenger)
     return id
@@ -133,7 +137,7 @@ class VideoPlayerPlugin
     val flutterState =
         this.flutterState
             ?: throw IllegalStateException("Cannot create a player when no engine is attached")
-    val videoAsset = videoAssetWithOptions(options)
+    val videoAsset = videoAssetWithOptions(options, flutterState)
 
     val id = nextPlayerIdentifier++
     val streamInstance = id.toString()
@@ -141,32 +145,53 @@ class VideoPlayerPlugin
     val playerOptions = VideoPlayerOptions(sharedOptions)
     playerOptions.backBufferDurationMs = options.backBufferDurationMs
 
+    val events = VideoPlayerEventCallbacks.bindTo(flutterState.binaryMessenger, streamInstance)
     val videoPlayer: VideoPlayer =
-        createTexturePlayer(
-            flutterState.applicationContext,
-            VideoPlayerEventCallbacks.bindTo(flutterState.binaryMessenger, streamInstance),
-            handle,
-            videoAsset,
-            playerOptions)
+        try {
+          createTexturePlayer(
+              flutterState.applicationContext, events, handle, videoAsset, playerOptions)
+        } catch (e: Throwable) {
+          // A media configuration supplied through VideoPlayerAndroidExternalApi can fail while the
+          // player is being built, after the surface and event channel already exist.
+          events.onDisposed()
+          handle.release()
+          throw e
+        }
 
     registerPlayerInstance(videoPlayer, id, flutterState.binaryMessenger)
     return TexturePlayerIds(id, handle.id())
   }
 
-  private fun videoAssetWithOptions(options: CreationOptions): VideoAsset {
+  private fun videoAssetWithOptions(
+      options: CreationOptions,
+      flutterState: FlutterState
+  ): VideoAsset {
     val uri = options.uri
-    if (uri.startsWith("asset:")) {
+    val streamingFormat =
+        when (options.formatHint) {
+          PlatformVideoFormat.SS -> VideoAsset.StreamingFormat.SMOOTH
+          PlatformVideoFormat.DASH -> VideoAsset.StreamingFormat.DYNAMIC_ADAPTIVE
+          PlatformVideoFormat.HLS -> VideoAsset.StreamingFormat.HTTP_LIVE
+          null -> VideoAsset.StreamingFormat.UNKNOWN
+        }
+    val provider =
+        VideoPlayerAndroidExternalApi.getMediaConfigProvider(flutterState.binaryMessenger)
+    val config =
+        provider?.getMediaConfig(
+            VideoPlayerAndroidExternalApi.MediaConfigRequest.create(
+                flutterState.applicationContext,
+                uri,
+                streamingFormat.mimeType,
+                // Read-only, so that a provider cannot change the headers of the fallback below.
+                Collections.unmodifiableMap(options.httpHeaders),
+                options.userAgent))
+    if (config != null) {
+      return ExternalVideoAsset(uri, config)
+    } else if (uri.startsWith("asset:")) {
       return VideoAsset.fromAssetUrl(uri)
     } else if (uri.startsWith("rtsp:")) {
       return VideoAsset.fromRtspUrl(uri)
     } else {
-      val streamingFormat =
-          when (options.formatHint) {
-            PlatformVideoFormat.SS -> VideoAsset.StreamingFormat.SMOOTH
-            PlatformVideoFormat.DASH -> VideoAsset.StreamingFormat.DYNAMIC_ADAPTIVE
-            PlatformVideoFormat.HLS -> VideoAsset.StreamingFormat.HTTP_LIVE
-            null -> VideoAsset.StreamingFormat.UNKNOWN
-          }
       return VideoAsset.fromRemoteUrl(uri, streamingFormat, options.httpHeaders, options.userAgent)
     }
   }

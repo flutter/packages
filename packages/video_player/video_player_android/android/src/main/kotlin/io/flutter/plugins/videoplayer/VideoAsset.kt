@@ -5,6 +5,7 @@ package io.flutter.plugins.videoplayer
 
 import android.content.Context
 import androidx.media3.common.MediaItem
+import androidx.media3.common.MimeTypes
 import androidx.media3.exoplayer.source.MediaSource
 
 /** A video to be played by [VideoPlayer]. */
@@ -26,18 +27,18 @@ protected constructor(@JvmField protected val assetUrl: String?) {
   abstract fun getMediaSourceFactory(context: Context): MediaSource.Factory
 
   /** Streaming formats that can be provided to the video player as a hint. */
-  internal enum class StreamingFormat {
+  internal enum class StreamingFormat(val mimeType: String?) {
     /** Default, if the format is either not known or not another valid format. */
-    UNKNOWN,
+    UNKNOWN(null),
 
     /** Smooth Streaming. */
-    SMOOTH,
+    SMOOTH(MimeTypes.APPLICATION_SS),
 
     /** MPEG-DASH (Dynamic Adaptive over HTTP). */
-    DYNAMIC_ADAPTIVE,
+    DYNAMIC_ADAPTIVE(MimeTypes.APPLICATION_MPD),
 
     /** HTTP Live Streaming (HLS). */
-    HTTP_LIVE
+    HTTP_LIVE(MimeTypes.APPLICATION_M3U8)
   }
 
   companion object {
