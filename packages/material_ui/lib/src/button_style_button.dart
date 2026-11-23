@@ -71,8 +71,8 @@ enum IconAlignment {
 /// Concrete subclasses must override [defaultStyleOf] and [themeStyleOf].
 ///
 /// See also:
-///  * [ElevatedButton], a filled button whose material elevates when pressed.
-///  * [FilledButton], a filled button that doesn't elevate when pressed.
+///  * [ElevatedButton], a filled button with a shadow.
+///  * [FilledButton], a filled button that uses a primary fill color.
 ///  * [FilledButton.tonal], a filled button variant that uses a secondary fill color.
 ///  * [OutlinedButton], a button with an outlined border and no fill color.
 ///  * [TextButton], a button with no outline or fill color.
@@ -333,8 +333,8 @@ abstract class ButtonStyleButton extends StatefulWidget {
 /// See also:
 ///
 ///  * [ButtonStyleButton], the [StatefulWidget] subclass for which this class is the [State].
-///  * [ElevatedButton], a filled button whose material elevates when pressed.
-///  * [FilledButton], a filled ButtonStyleButton that doesn't elevate when pressed.
+///  * [ElevatedButton], a filled button with a shadow.
+///  * [FilledButton], a filled ButtonStyleButton that uses a primary fill color.
 ///  * [OutlinedButton], similar to [TextButton], but with an outline.
 ///  * [TextButton], a simple button without a shadow.
 class _ButtonStyleState extends State<ButtonStyleButton> with TickerProviderStateMixin {
