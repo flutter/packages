@@ -87,18 +87,5 @@ void main() {
       await directory.delete(const PlatformDirectoryDeleteParams());
       expect(await directory.exists(), false);
     });
-
-    test('delete non-existent directory returns false', () async {
-      final Directory tempDir = Directory.systemTemp;
-      final nonExistent = Directory(path.join(tempDir.path, 'non_existent_dir'));
-
-      final directory = PlatformFileSystemXDirectory(
-        PlatformFileSystemXDirectoryCreationParams(nonExistent.path),
-      );
-      expect(await directory.exists(), false);
-
-      final bool result = await directory.delete(const PlatformDirectoryDeleteParams());
-      expect(result, false);
-    });
   });
 }

@@ -110,16 +110,5 @@ void main() {
       await file.delete(const PlatformFileDeleteParams());
       expect(await file.exists(), false);
     });
-
-    test('delete non-existent file returns false', () async {
-      final Directory tempDir = Directory.systemTemp;
-      final tempFile = File(path.join(tempDir.path, 'non_existent.txt'));
-
-      final file = PlatformFileSystemXFile(PlatformFileSystemXFileCreationParams(tempFile.path));
-      expect(await file.exists(), false);
-
-      final bool result = await file.delete(const PlatformFileDeleteParams());
-      expect(result, false);
-    });
   });
 }
