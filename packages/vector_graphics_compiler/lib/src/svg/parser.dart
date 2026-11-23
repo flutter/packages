@@ -360,6 +360,11 @@ class _Elements {
     );
 
     if (patternWidth == null || patternHeight == null) {
+      final String rawViewBox = parserState.attribute('viewBox') ?? '';
+      if (rawViewBox.isEmpty) {
+        parserState._discardSubtree();
+        return;
+      }
       final _Viewport viewBox = parserState._parseViewBox();
       patternWidth = viewBox.width;
       patternHeight = viewBox.height;
