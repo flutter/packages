@@ -103,6 +103,11 @@ class Dialog extends StatelessWidget {
   /// Creates a fullscreen dialog.
   ///
   /// Typically used in conjunction with [showDialog].
+  ///
+  /// The dialog's [Material] covers the whole screen, including the area
+  /// behind the software keyboard, while [child] is kept above the keyboard,
+  /// so that a translucent keyboard shows the dialog's [backgroundColor]
+  /// rather than what is behind the dialog.
   const Dialog.fullscreen({
     super.key,
     this.backgroundColor,
@@ -277,47 +282,65 @@ class Dialog extends StatelessWidget {
     final BoxConstraints boxConstraints =
         constraints ?? dialogTheme.constraints ?? const BoxConstraints(minWidth: 280.0);
 
-    Widget dialogChild;
+    final Widget dialogChild;
 
     if (_fullscreen) {
+      // The Material keeps covering the whole screen, including the area
+      // behind the keyboard, so that a translucent keyboard shows the dialog's
+      // surface rather than the modal barrier behind it. Only the content is
+      // kept above the keyboard.
       dialogChild = Material(
         color: backgroundColor ?? dialogTheme.backgroundColor ?? defaults.backgroundColor,
-        child: child,
+        child: child == null
+            ? null
+            : _avoidViewInsets(context, padding: effectivePadding, child: child!),
       );
     } else {
-      dialogChild = Align(
-        alignment: alignment ?? dialogTheme.alignment ?? defaults.alignment!,
-        child: ConstrainedBox(
-          constraints: boxConstraints,
-          child: Material(
-            color: backgroundColor ?? dialogTheme.backgroundColor ?? defaults.backgroundColor,
-            elevation: elevation ?? dialogTheme.elevation ?? defaults.elevation!,
-            shadowColor: shadowColor ?? dialogTheme.shadowColor ?? defaults.shadowColor,
-            surfaceTintColor:
-                surfaceTintColor ?? dialogTheme.surfaceTintColor ?? defaults.surfaceTintColor,
-            shape: shape ?? dialogTheme.shape ?? defaults.shape!,
-            type: MaterialType.card,
-            clipBehavior: clipBehavior ?? dialogTheme.clipBehavior ?? defaults.clipBehavior!,
-            child: child,
+      dialogChild = _avoidViewInsets(
+        context,
+        padding: effectivePadding,
+        child: Align(
+          alignment: alignment ?? dialogTheme.alignment ?? defaults.alignment!,
+          child: ConstrainedBox(
+            constraints: boxConstraints,
+            child: Material(
+              color: backgroundColor ?? dialogTheme.backgroundColor ?? defaults.backgroundColor,
+              elevation: elevation ?? dialogTheme.elevation ?? defaults.elevation!,
+              shadowColor: shadowColor ?? dialogTheme.shadowColor ?? defaults.shadowColor,
+              surfaceTintColor:
+                  surfaceTintColor ?? dialogTheme.surfaceTintColor ?? defaults.surfaceTintColor,
+              shape: shape ?? dialogTheme.shape ?? defaults.shape!,
+              type: MaterialType.card,
+              clipBehavior: clipBehavior ?? dialogTheme.clipBehavior ?? defaults.clipBehavior!,
+              child: child,
+            ),
           ),
         ),
       );
     }
 
-    return Semantics(
-      role: semanticsRole,
-      child: AnimatedPadding(
-        padding: effectivePadding,
-        duration: insetAnimationDuration,
-        curve: insetAnimationCurve,
-        child: MediaQuery.removeViewInsets(
-          removeLeft: true,
-          removeTop: true,
-          removeRight: true,
-          removeBottom: true,
-          context: context,
-          child: dialogChild,
-        ),
+    return Semantics(role: semanticsRole, child: dialogChild);
+  }
+
+  // Keeps [child] out of the view insets, such as the software keyboard, which
+  // the child then no longer needs to account for. [padding] is the view
+  // insets plus the dialog's inset padding.
+  Widget _avoidViewInsets(
+    BuildContext context, {
+    required EdgeInsets padding,
+    required Widget child,
+  }) {
+    return AnimatedPadding(
+      padding: padding,
+      duration: insetAnimationDuration,
+      curve: insetAnimationCurve,
+      child: MediaQuery.removeViewInsets(
+        removeLeft: true,
+        removeTop: true,
+        removeRight: true,
+        removeBottom: true,
+        context: context,
+        child: child,
       ),
     );
   }
@@ -1571,10 +1594,12 @@ class _DialogContentPage extends Page<void> {
 ///
 /// The `barrierColor` argument is used to specify the color of the modal
 /// barrier that darkens everything below the dialog. If `null` the `barrierColor`
-/// field from `DialogThemeData` is used. If that is `null` the default color
-/// `Colors.black54` is used. If windowing is enabled via `flutter config
-/// --enable-windowing`, then this  argument is ignored as dialogs are displayed
-/// in their own windows which do not have a modal barrier.
+/// field from `DialogThemeData` is used. If that is also `null`,
+/// [ColorScheme.scrim] at 32% opacity is used in Material 3, and
+/// [Colors.black54] in Material 2.
+/// If windowing is enabled via `flutter config --enable-windowing`, then this
+/// argument is ignored as dialogs are displayed in their own windows which do
+/// not have a modal barrier.
 ///
 /// The `useSafeArea` argument is used to indicate if the dialog should only
 /// display in 'safe' areas of the screen not used by the operating system
@@ -1709,7 +1734,9 @@ Future<T?> showDialog<T>({
             barrierColor ??
             DialogTheme.of(context).barrierColor ??
             Theme.of(context).dialogTheme.barrierColor ??
-            Colors.black54,
+            (Theme.of(context).useMaterial3
+                ? _DialogDefaultsM3(context).barrierColor!
+                : Colors.black54),
         barrierDismissible: barrierDismissible,
         barrierLabel: barrierLabel,
         useSafeArea: useSafeArea,

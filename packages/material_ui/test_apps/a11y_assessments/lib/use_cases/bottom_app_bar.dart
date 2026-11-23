@@ -39,7 +39,9 @@ class MainWidgetState extends State<MainWidget> {
       _selectedAction = action;
     });
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Tapped: $action')));
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text('Tapped: $action'), persist: true, showCloseIcon: true));
   }
 
   @override

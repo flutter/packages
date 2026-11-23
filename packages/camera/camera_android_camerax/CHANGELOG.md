@@ -1,9 +1,14 @@
-## 0.7.6+2
+## 0.7.6+3
 
 * Fixes camera preview rotating 90 degrees when recording video while streaming
   images.
 * Fixes camera preview freezing when starting a video recording with image
   streaming after a recording without it.
+
+## 0.7.6+2
+
+* Reduces `takePicture` latency by not setting the `ImageCapture` flash mode
+  again when it has not changed.
 
 ## 0.7.6+1
 

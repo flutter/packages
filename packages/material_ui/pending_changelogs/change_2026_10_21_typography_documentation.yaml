@@ -1,3 +1,0 @@
-changelog: |
-  - Updates the `Typography` documentation to describe the 2021 (Material 3) geometry themes and the current `ThemeData.typography` defaults.
-version: patch
