@@ -73,6 +73,9 @@ void main() {
         'packages/a_plugin/tool/a_development_tool.dart',
         // Example build files.
         'packages/a_plugin/example/android/build.gradle',
+        'packages/a_plugin/example/android/build.gradle.kts',
+        'packages/a_plugin/example/android/settings.gradle',
+        'packages/a_plugin/example/android/settings.gradle.kts',
         'packages/a_plugin/example/android/gradle/wrapper/gradle-wrapper.properties',
         'packages/a_plugin/example/ios/Runner.xcodeproj/project.pbxproj',
         'packages/a_plugin/example/ios/Runner.xcodeproj/xcshareddata/xcschemes/Runner.xcscheme',
@@ -377,6 +380,57 @@ void main() {
       expect(state.hasChanges, true);
       expect(state.needsVersionChange, false);
       expect(state.needsChangelogChange, false);
+    });
+
+    test('does not require changelog or version change for build.gradle.kts '
+        'test-dependency-only changes', () async {
+      final RepositoryPackage package = createFakePlugin('a_plugin', packagesDir);
+
+      const changedFiles = <String>['packages/a_plugin/android/build.gradle.kts'];
+
+      final GitVersionFinder git = FakeGitVersionFinder(<String, List<String>>{
+        'packages/a_plugin/android/build.gradle.kts': <String>[
+          '-  androidTestImplementation("androidx.test.espresso:espresso-core:3.2.0")',
+          '-  testImplementation("junit:junit:4.10.0")',
+          '+  androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")',
+          '+  testImplementation("junit:junit:4.13.2")',
+        ],
+      });
+
+      final PackageChangeState state = await checkPackageChangeState(
+        package,
+        changedPaths: changedFiles,
+        relativePackagePath: 'packages/a_plugin/',
+        git: git,
+      );
+
+      expect(state.hasChanges, true);
+      expect(state.needsVersionChange, false);
+      expect(state.needsChangelogChange, false);
+    });
+
+    test('requires changelog or version change for other build.gradle.kts changes', () async {
+      final RepositoryPackage package = createFakePlugin('a_plugin', packagesDir);
+
+      const changedFiles = <String>['packages/a_plugin/android/build.gradle.kts'];
+
+      final GitVersionFinder git = FakeGitVersionFinder(<String, List<String>>{
+        'packages/a_plugin/android/build.gradle.kts': <String>[
+          '-  implementation("androidx.annotation:annotation:1.7.0")',
+          '+  implementation("androidx.annotation:annotation:1.8.0")',
+        ],
+      });
+
+      final PackageChangeState state = await checkPackageChangeState(
+        package,
+        changedPaths: changedFiles,
+        relativePackagePath: 'packages/a_plugin/',
+        git: git,
+      );
+
+      expect(state.hasChanges, true);
+      expect(state.needsVersionChange, true);
+      expect(state.needsChangelogChange, true);
     });
 
     test(
