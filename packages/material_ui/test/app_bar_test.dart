@@ -2925,6 +2925,166 @@ void main() {
       // The AppBar should be back to the default color.
       expect(getAppBarBackgroundColor(tester), defaultColor);
     });
+
+    group('content painted in an Overlay', () {
+      // Regression tests for https://github.com/flutter/flutter/issues/160192.
+      Widget buildAppBarWithBody(Widget body) {
+        return MaterialApp(
+          home: Scaffold(
+            appBar: AppBar(
+              elevation: 0,
+              backgroundColor: WidgetStateColor.resolveWith((Set<WidgetState> states) {
+                return states.contains(WidgetState.scrolledUnder) ? scrolledColor : defaultColor;
+              }),
+              title: const Text('AppBar'),
+            ),
+            body: body,
+          ),
+        );
+      }
+
+      testWidgets('scrolling OverlayPortal content does not change backgroundColor', (
+        WidgetTester tester,
+      ) async {
+        final controller = OverlayPortalController();
+        await tester.pumpWidget(
+          buildAppBarWithBody(
+            OverlayPortal(
+              controller: controller,
+              overlayChildBuilder: (BuildContext context) {
+                return Positioned(
+                  top: 200,
+                  left: 0,
+                  width: 200,
+                  height: 200,
+                  child: ListView.builder(
+                    itemCount: 50,
+                    itemBuilder: (BuildContext context, int index) => Text('Item $index'),
+                  ),
+                );
+              },
+              child: const SizedBox.expand(),
+            ),
+          ),
+        );
+        controller.show();
+        await tester.pumpAndSettle();
+        expect(getAppBarBackgroundColor(tester), defaultColor);
+
+        await tester.drag(find.text('Item 2'), const Offset(0, -100));
+        await tester.pumpAndSettle();
+        expect(getAppBarBackgroundColor(tester), defaultColor);
+      });
+
+      testWidgets('initially scrolled OverlayPortal content does not change backgroundColor', (
+        WidgetTester tester,
+      ) async {
+        final scrollController = ScrollController(initialScrollOffset: 100);
+        addTearDown(scrollController.dispose);
+        final controller = OverlayPortalController();
+        await tester.pumpWidget(
+          buildAppBarWithBody(
+            OverlayPortal(
+              controller: controller,
+              overlayChildBuilder: (BuildContext context) {
+                return Positioned(
+                  top: 200,
+                  left: 0,
+                  width: 200,
+                  height: 200,
+                  child: ListView.builder(
+                    controller: scrollController,
+                    itemCount: 50,
+                    itemBuilder: (BuildContext context, int index) => Text('Item $index'),
+                  ),
+                );
+              },
+              child: const SizedBox.expand(),
+            ),
+          ),
+        );
+        // Showing the overlay dispatches a ScrollMetricsNotification with a
+        // non-zero extentBefore.
+        controller.show();
+        await tester.pumpAndSettle();
+        expect(getAppBarBackgroundColor(tester), defaultColor);
+      });
+
+      testWidgets('scrolling the child of an OverlayPortal still changes backgroundColor', (
+        WidgetTester tester,
+      ) async {
+        final controller = OverlayPortalController();
+        await tester.pumpWidget(
+          buildAppBarWithBody(
+            OverlayPortal(
+              controller: controller,
+              overlayChildBuilder: (BuildContext context) => const SizedBox.shrink(),
+              child: ListView(children: <Widget>[Container(height: 1200, color: Colors.teal)]),
+            ),
+          ),
+        );
+        controller.show();
+        await tester.pumpAndSettle();
+        expect(getAppBarBackgroundColor(tester), defaultColor);
+
+        await tester.drag(find.byType(ListView), const Offset(0, -300));
+        await tester.pumpAndSettle();
+        expect(getAppBarBackgroundColor(tester), scrolledColor);
+      });
+
+      testWidgets('scrolling Autocomplete options does not change backgroundColor', (
+        WidgetTester tester,
+      ) async {
+        await tester.pumpWidget(
+          buildAppBarWithBody(
+            Center(
+              child: Autocomplete<String>(
+                optionsViewOpenDirection: OptionsViewOpenDirection.up,
+                optionsBuilder: (TextEditingValue value) {
+                  return List<String>.generate(20, (int index) => 'Option $index');
+                },
+              ),
+            ),
+          ),
+        );
+        await tester.tap(find.byType(TextField));
+        await tester.pumpAndSettle();
+        expect(find.text('Option 0'), findsOneWidget);
+        expect(getAppBarBackgroundColor(tester), defaultColor);
+
+        await tester.drag(find.text('Option 1'), const Offset(0, -100));
+        await tester.pumpAndSettle();
+        expect(getAppBarBackgroundColor(tester), defaultColor);
+      });
+
+      testWidgets('scrolling a MenuAnchor menu does not change backgroundColor', (
+        WidgetTester tester,
+      ) async {
+        await tester.pumpWidget(
+          buildAppBarWithBody(
+            Center(
+              child: MenuAnchor(
+                menuChildren: <Widget>[
+                  for (int index = 0; index < 40; index++)
+                    MenuItemButton(onPressed: () {}, child: Text('Menu $index')),
+                ],
+                builder: (BuildContext context, MenuController controller, Widget? child) {
+                  return TextButton(onPressed: controller.open, child: const Text('Open'));
+                },
+              ),
+            ),
+          ),
+        );
+        await tester.tap(find.text('Open'));
+        await tester.pumpAndSettle();
+        expect(find.text('Menu 0'), findsOneWidget);
+        expect(getAppBarBackgroundColor(tester), defaultColor);
+
+        await tester.drag(find.text('Menu 2'), const Offset(0, -150));
+        await tester.pumpAndSettle();
+        expect(getAppBarBackgroundColor(tester), defaultColor);
+      });
+    });
   });
 
   // Regression test for https://github.com/flutter/flutter/issues/80256
