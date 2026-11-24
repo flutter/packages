@@ -729,6 +729,101 @@ void main() {
     goRouter.dispose();
     expect(refreshListenable.unsubscribed, true);
   });
+
+  group('go', () {
+    Future<GoRouter> createGoRouter(WidgetTester tester, {Listenable? refreshListenable}) async {
+      final router = GoRouter(
+        initialLocation: '/',
+        refreshListenable: refreshListenable,
+        routes: <GoRoute>[
+          GoRoute(path: '/', builder: (_, _) => const Text('home')),
+          GoRoute(path: '/a', builder: (_, _) => const Text('a')),
+        ],
+      );
+      addTearDown(router.dispose);
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      return router;
+    }
+
+    void pushPageless(GoRouter router) {
+      router.routerDelegate.navigatorKey.currentState!.push(
+        MaterialPageRoute<void>(builder: (_) => const Text('pageless')),
+      );
+    }
+
+    testWidgets('removes a pageless route when going to the same location', (
+      WidgetTester tester,
+    ) async {
+      final GoRouter goRouter = await createGoRouter(tester);
+      pushPageless(goRouter);
+      await tester.pumpAndSettle();
+      expect(find.text('pageless'), findsOneWidget);
+
+      goRouter.go('/');
+      await tester.pumpAndSettle();
+
+      expect(find.text('pageless'), findsNothing);
+      expect(find.text('home'), findsOneWidget);
+    });
+
+    testWidgets('removes a pageless route under a page that is removed by go', (
+      WidgetTester tester,
+    ) async {
+      final GoRouter goRouter = await createGoRouter(tester);
+      pushPageless(goRouter);
+      await tester.pumpAndSettle();
+      goRouter.push('/a');
+      await tester.pumpAndSettle();
+      expect(find.text('a'), findsOneWidget);
+
+      goRouter.go('/');
+      await tester.pumpAndSettle();
+
+      expect(find.text('pageless'), findsNothing);
+      expect(find.text('a'), findsNothing);
+      expect(find.text('home'), findsOneWidget);
+    });
+
+    testWidgets('removes a pageless route in a shell navigator', (WidgetTester tester) async {
+      final shellNavigatorKey = GlobalKey<NavigatorState>();
+      final goRouter = GoRouter(
+        initialLocation: '/',
+        routes: <RouteBase>[
+          ShellRoute(
+            navigatorKey: shellNavigatorKey,
+            builder: (_, _, Widget child) => child,
+            routes: <GoRoute>[GoRoute(path: '/', builder: (_, _) => const Text('home'))],
+          ),
+        ],
+      );
+      addTearDown(goRouter.dispose);
+      await tester.pumpWidget(MaterialApp.router(routerConfig: goRouter));
+      shellNavigatorKey.currentState!.push(
+        MaterialPageRoute<void>(builder: (_) => const Text('pageless')),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('pageless'), findsOneWidget);
+
+      goRouter.go('/');
+      await tester.pumpAndSettle();
+
+      expect(find.text('pageless'), findsNothing);
+      expect(find.text('home'), findsOneWidget);
+    });
+
+    testWidgets('keeps a pageless route when the router refreshes', (WidgetTester tester) async {
+      final refreshListenable = FakeRefreshListenable();
+      addTearDown(refreshListenable.dispose);
+      final GoRouter goRouter = await createGoRouter(tester, refreshListenable: refreshListenable);
+      pushPageless(goRouter);
+      await tester.pumpAndSettle();
+
+      refreshListenable.notifyListeners();
+      await tester.pumpAndSettle();
+
+      expect(find.text('pageless'), findsOneWidget);
+    });
+  });
 }
 
 class FakeRefreshListenable extends ChangeNotifier {
