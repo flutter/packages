@@ -6,10 +6,10 @@
 
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:local_auth_platform_interface/local_auth_platform_interface.dart';
 import 'package:local_auth_windows/local_auth_windows.dart';
+import 'package:material_ui/material_ui.dart';
 
 void main() {
   runApp(const MyApp());
