@@ -43,6 +43,7 @@ class ShellRouteConfig extends RouteBaseConfig {
     required this.observers,
     required super.parent,
     required this.restorationScopeId,
+    required this.notifyRootObserver,
   }) : super._();
 
   /// The command for calling the navigator key getter from the ShellRouteData.
@@ -56,6 +57,9 @@ class ShellRouteConfig extends RouteBaseConfig {
 
   /// The restoration scope id.
   final String? restorationScopeId;
+
+  /// Whether navigation changes within this shell notify GoRouter's observers.
+  final bool notifyRootObserver;
 
   @override
   Iterable<String> classDeclarations() {
@@ -82,7 +86,8 @@ class ShellRouteConfig extends RouteBaseConfig {
       '${navigatorKey == null ? '' : 'navigatorKey: $navigatorKey,'}'
       '${parentNavigatorKey == null ? '' : 'parentNavigatorKey: $parentNavigatorKey,'}'
       '${observers == null ? '' : 'observers: $observers,'}'
-      '${restorationScopeId == null ? '' : 'restorationScopeId: $restorationScopeId,'}';
+      '${restorationScopeId == null ? '' : 'restorationScopeId: $restorationScopeId,'}'
+      '${notifyRootObserver ? '' : 'notifyRootObserver: $notifyRootObserver,'}';
 
   @override
   String get factorConstructorParameters => 'factory: $_extensionName._fromState,';
@@ -102,6 +107,7 @@ class StatefulShellRouteConfig extends RouteBaseConfig {
     required super.parent,
     required this.navigatorContainerBuilder,
     required this.restorationScopeId,
+    required this.notifyRootObserver,
   }) : super._();
 
   /// The parent navigator key.
@@ -112,6 +118,9 @@ class StatefulShellRouteConfig extends RouteBaseConfig {
 
   /// The restoration scope id.
   final String? restorationScopeId;
+
+  /// Whether navigation changes within this shell notify GoRouter's observers.
+  final bool notifyRootObserver;
 
   @override
   Iterable<String> classDeclarations() => <String>[
@@ -126,7 +135,8 @@ extension $_extensionName on $_className {
   String get routeConstructorParameters =>
       '${parentNavigatorKey == null ? '' : 'parentNavigatorKey: $parentNavigatorKey,'}'
       '${restorationScopeId == null ? '' : 'restorationScopeId: $restorationScopeId,'}'
-      '${navigatorContainerBuilder == null ? '' : 'navigatorContainerBuilder: $navigatorContainerBuilder,'}';
+      '${navigatorContainerBuilder == null ? '' : 'navigatorContainerBuilder: $navigatorContainerBuilder,'}'
+      '${notifyRootObserver ? '' : 'notifyRootObserver: $notifyRootObserver,'}';
 
   @override
   String get factorConstructorParameters => 'factory: $_extensionName._fromState,';
@@ -660,6 +670,7 @@ abstract class RouteBaseConfig {
             classElement,
             parameterName: r'$restorationScopeId',
           ),
+          notifyRootObserver: reader.peek('notifyRootObserver')?.boolValue ?? true,
         );
       case 'TypedStatefulShellRoute':
         value = StatefulShellRouteConfig._(
@@ -677,6 +688,7 @@ abstract class RouteBaseConfig {
             classElement,
             parameterName: r'$navigatorContainerBuilder',
           ),
+          notifyRootObserver: reader.peek('notifyRootObserver')?.boolValue ?? true,
         );
       case 'TypedStatefulShellBranch':
         value = StatefulShellBranchConfig._(
