@@ -218,7 +218,16 @@ mixin _GoRouteMixin on RouteBaseConfig {
       config = config.parent;
     }
 
-    return p.url.joinAll(pathSegments.reversed);
+    // At runtime go_router nests a child path under its parent even when the
+    // child starts with `/` (see `concatenatePaths`), but `p.url.joinAll`
+    // would drop everything before an absolute segment. Strip the leading `/`
+    // from child segments so they are joined onto their parent.
+    final List<String> segments = pathSegments.reversed.toList();
+    final leadingSlashes = RegExp('^/+');
+    for (var i = 1; i < segments.length; i++) {
+      segments[i] = segments[i].replaceFirst(leadingSlashes, '');
+    }
+    return p.url.joinAll(segments);
   }
 
   late final Set<String> _pathParams = pathParametersFromPattern(_basePathForLocation);
