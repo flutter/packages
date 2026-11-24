@@ -43,6 +43,10 @@ the user, and do not claim it was verified. You may still run the example app
 to check that the change does not crash. If you are not sure whether the
 emulator can reproduce a bug, try it on the emulator before deciding.
 
+Otherwise, do the verification yourself, including plan steps labeled
+"manual" or addressed to the user, and plan verification that way when you
+write implementation plans.
+
 ## 2. Start an emulator
 
 Do these steps in order. If a step says to stop, stop and tell the user what is
@@ -60,7 +64,9 @@ user learns about the broken setup.
    the version is older, stop and ask the user to run `android update`.
 2. **Reuse a running emulator:** run `adb devices` (if `adb` is not on the
    PATH, use `"$(android info sdk)/platform-tools/adb"`). If it lists
-   `emulator-<port>    device`, note that serial and skip to 3a or 3b.
+   `emulator-<port>    device`, note that serial, get its AVD name with
+   `adb -s <serial> emu avd name`, run step 4 for that AVD, and then skip to 3a
+   or 3b.
 3. **Pick an AVD:** run `android emulator list --long`. If it lists none, stop
    and suggest `android emulator create medium_phone`. Otherwise use the AVD
    the user named, or the one with the highest API level. To test the
@@ -86,8 +92,8 @@ user learns about the broken setup.
    `--headless` if the user wants to watch) and note the serial it prints. If
    it fails, stop and suggest `android emulator start --cold <avd>`.
 
-Leave the emulator running for later runs. If you started it, stop it with
-`android emulator stop <serial>` when you are done.
+Keep the emulator running while you work. When your task is finished, stop it
+with `android emulator stop <serial>` if you started it.
 
 ## 3. Run the integration tests or the example app
 
@@ -116,15 +122,17 @@ Continue with the subsection that matches your task:
    installer before falling back to a standard install. That is harmless if
    the command succeeds.
 
-2. **Run the tests.** This package has no `test_driver/`, so use these
-   commands rather than the `flutter drive` command in the
-   flutter-add-integration-test skill.
+2. **Run the tests.** The repo's tooling runs these tests with `flutter test`,
+   not `flutter drive`, so use these commands rather than the `flutter drive`
+   command in the flutter-add-integration-test skill.
    - While iterating, run only the relevant tests:
      `(cd example && flutter test integration_test/integration_test.dart -d <serial> --plain-name "<test name>")`
    - For the full suite (e.g., before pushing), use the same tool as CI. It
      runs on the first Android device, so make sure the emulator is the only
      device in `adb devices`:
-     `dart pub global run flutter_plugin_tools drive-examples --android --packages camera_android_camerax`
+     `dart pub global run flutter_plugin_tools drive-examples --android --packages camera_android_camerax`.
+     If another device is attached, run
+     `(cd example && flutter test integration_test -d <serial>)` instead.
 
    The full suite takes several minutes, so run it in the background. If it
    stops making progress, take a screenshot (3b) to see what is
@@ -136,8 +144,10 @@ Continue with the subsection that matches your task:
    start the emulator again (section 2, step 5), grant permissions, and rerun.
 3. **Report** each failing test and its error. Re-run each failure once with
    `--plain-name` to tell flakes (common right after a cold boot) from real
-   failures, and report both results. Failures in the resolution preset tests
-   are expected on an emulator (see section 1).
+   failures, and report both results. Failures in the two resolution preset
+   tests ("Preview takes expected resolution from preset" and "Images from
+   streaming have expected resolution from preset") are expected on an
+   emulator (see section 1).
 
 When a test checks that video recording kept going, note that a recorded
 file's duration includes its audio track, so it does not prove video frames
@@ -165,22 +175,38 @@ for CameraX errors: run `adb -s <serial> logcat -c` before the test and search
    (`android layout`, `android input`). Flutter widgets appear in
    `android layout` through their accessibility semantics, so a widget only has
    text or a description if it sets one (e.g., a tooltip). The example app's
-   camera controls set neither, so tap them by class, e.g.
-   `android input --device=<serial> tap clz=RadioButton --match=first` selects
-   the first camera. If the check needs more than a few taps, or you will
-   need to repeat it, write an integration test instead so it is repeatable. Do not add Flutter Driver to the example app.
+   controls set neither, so find them in
+   `android layout --device=<serial> --flat` and tap the reported `center`
+   with `adb -s <serial> shell input tap <x> <y>`. For the camera selectors,
+   `android input --device=<serial> tap clz=RadioButton --match=first` also
+   works. The controls, in layout order:
+   - **Top row (5 buttons):** take picture, record video, pause/resume
+     *recording*, stop recording, and pause/resume *preview* (the rightmost;
+     disabled until a camera is selected, red while the preview is paused).
+   - **Second row (5 buttons):** flash mode, exposure mode, focus mode, audio
+     on/off, and orientation lock.
+   - **Bottom row:** one radio button per camera, in `availableCameras()`
+     order. On the `Pixel_9` AVD, the first is the front camera.
+
+   If the check needs more than a few taps, or you will need to repeat it,
+   write an integration test instead so it is repeatable. Do not add Flutter
+   Driver to the example app.
 3. **For visual changes, include a screenshot as evidence** in your report:
    `android screen capture --device=<serial> -o <file>.png`, saved to a
    scratch directory outside the repository.
    A screenshot can show that the preview is visible (not black), that it is
    rotated by 90° or 180°, or that a control or error appeared. To tell whether
-   the preview is live or frozen, compare two screenshots of the front camera
-   taken a few seconds apart: its test pattern changes over time. A screenshot
+   the preview is live or frozen, take two screenshots of the front camera a
+   few seconds apart (its test pattern changes over time) and compare only the
+   preview area, by viewing both or by diffing that region. Do not compare
+   whole files or hashes: the status bar clock changes between screenshots. A
+   screenshot
    cannot show aspect ratio, mirroring, cropping, exposure, color, or frame
    rate: assert those in a test, or report them as not verified. To check
    short-lived effects (e.g., a flash when pausing), record the screen with
    `adb -s <serial> shell screenrecord --time-limit <sec> /sdcard/<name>.mp4`,
-   pull it with `adb -s <serial> pull`, and inspect its frames.
+   pull it with `adb -s <serial> pull`, and inspect its frames (e.g., with
+   `ffmpeg`, if it is installed).
 4. **For lifecycle bugs**, background and resume the app with
    `adb -s <serial> shell input keyevent KEYCODE_HOME`, then
    `adb -s <serial> shell am start -n io.flutter.plugins.cameraxexample/.MainActivity`.
@@ -189,10 +215,12 @@ for CameraX errors: run `adb -s <serial> logcat -c` before the test and search
    can lock it, and always restore it afterwards:
 
    ```bash
+   adb -s <serial> shell settings get system accelerometer_rotation  # Note the original value.
    adb -s <serial> shell settings put system accelerometer_rotation 0
    adb -s <serial> shell settings put system user_rotation 1  # 0=0°, 1=90°, 2=180°, 3=270°
    # Launch the app or run the tests, then restore:
    adb -s <serial> shell settings put system user_rotation 0
+   adb -s <serial> shell settings put system accelerometer_rotation <original value>
    ```
 6. **To test the `SurfaceTexture` preview backend** (used below API 29) on a
    newer emulator, temporarily force it in the example app's `MainActivity`
@@ -209,6 +237,9 @@ for CameraX errors: run `adb -s <serial> logcat -c` before the test and search
    }
    ```
 
-   This covers the backend, not other API-level differences. If those matter,
+   To confirm the switch took effect, open a camera and check that
+   `adb -s <serial> logcat -d | grep 'Surface(name=android.graphics.SurfaceTexture'`
+   prints a match. This covers the backend, not other API-level differences.
+   If those matter,
    ask the user to approve an AVD with the API level you need (section 2,
    step 3).

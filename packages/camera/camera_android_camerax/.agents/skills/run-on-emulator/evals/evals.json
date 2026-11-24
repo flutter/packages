@@ -5,7 +5,7 @@
       "id": 1,
       "prompt": "Run the camera_android_camerax integration tests on an emulator.",
       "expected_chat_output": [
-        "The agent's report shows it actually ran the full integration test suite on an emulator (e.g., it names the emulator or quotes test results), not a subset and not just a plan to run them.",
+        "The agent's report shows it actually ran the full integration test suite on an emulator, including the final test summary line (e.g., '+7 -2: Some tests failed.' or 'All tests passed!'), not a subset and not just a plan to run them.",
         "The agent's report shows it granted runtime permissions (e.g., with 'android install --install-options=-g') before running the tests, rather than letting a permission dialog block them.",
         "The agent reported whether the tests passed, naming any failing tests.",
         "If the resolution preset tests failed, the agent identified them as expected emulator failures rather than regressions."
@@ -19,7 +19,7 @@
       "id": 2,
       "prompt": "Use an emulator to verify that the flash fires when taking a picture with FlashMode.always.",
       "expected_chat_output": [
-        "The agent explained that the emulator has no flash hardware, so this requires a physical device.",
+        "The agent explained that the emulator cannot verify that the flash fires (it has no real flash output), so this requires a physical device.",
         "The agent did not claim that the flash behavior was verified.",
         "If the agent ran the example app or tests, it presented them only as checking that nothing crashes, not as verifying the flash."
       ],
@@ -30,7 +30,7 @@
     },
     {
       "id": 3,
-      "prompt": "Write an implementation plan (do not implement it) for making the example app show a SnackBar with the saved file path after a picture is taken. Include how you will verify that the SnackBar appears with the correct path.",
+      "prompt": "Write an implementation plan (do not implement it) for making the example app show the recorded video's duration in the SnackBar it shows after a recording stops. Include how you will verify that the SnackBar shows the correct duration.",
       "expected_chat_output": [
         "The plan verifies the SnackBar's text with an automated test (e.g., an integration test run on an emulator with the run-on-emulator skill), using screenshots at most as supporting evidence.",
         "The plan states that the agent will run that verification itself; it does not ask the user to launch an emulator, run the example app, or run tests by hand.",
@@ -43,13 +43,13 @@
     },
     {
       "id": 4,
-      "prompt": "An implementation plan for a camera preview change ends with the section below. Carry it out on the current code and report the results.\n\n## Manual Verification (user)\n1. Launch the example app on an emulator.\n2. Select the front camera.\n3. Pause the preview and confirm that it freezes.\n4. Resume the preview and confirm that it updates again.",
+      "prompt": "An implementation plan for a camera preview change ends with the section below, and the change is already in the code. Handle this section and report back.\n\n## Manual Verification (user)\n1. Launch the example app on an emulator.\n2. Select the front camera.\n3. Pause the preview and confirm that it freezes.\n4. Resume the preview and confirm that it updates again.",
       "expected_chat_output": [
         "The agent carried out the steps itself instead of handing them back to the user, despite the section being labeled for the user.",
         "The agent rebuilt the example app and launched it on an emulator (e.g., with 'android run').",
-        "The agent selected the front camera and paused and resumed the preview through the app's UI (e.g., with 'android input' or 'adb shell input').",
-        "The agent judged freezing by comparing screenshots taken a few seconds apart (matching while paused, different after resuming), not from a single screenshot.",
-        "The agent reported whether the preview froze while paused and updated after resuming."
+        "The report names the control used to pause the preview: the pause/resume preview button (the rightmost button in the top row), not the button that pauses video recording.",
+        "The agent judged freezing by comparing the preview area of screenshots taken a few seconds apart (matching while paused, different after resuming), not by comparing whole files or hashes and not from a single screenshot.",
+        "The agent reported whether the preview froze while paused and updated after resuming, with the screenshots it used."
       ],
       "expected_repo_state": [
         "No tracked files were modified in the repository."

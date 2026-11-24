@@ -114,6 +114,8 @@ by following the [run-on-emulator](../run-on-emulator/SKILL.md) skill.
   As with unit tests, the failures might predate these changes,
   so prompt the user to review the failing tests
   and fix any newly introduced failures before pushing.
+  The resolution preset tests are expected to fail on an emulator
+  (see the run-on-emulator skill): list them, but don't count them as failures.
 
 ## 6. Publish Check (Version and CHANGELOG updates)
 
