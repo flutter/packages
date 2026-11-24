@@ -109,30 +109,9 @@ typedef MaterialPropertyResolver<T> = WidgetPropertyResolver<T>;
 ///
 /// <callout-box>
 ///
-// TODO(framework): Add unit tests to this code snippet.
-// https://github.com/flutter/flutter/issues/188530
-///
 /// This example defines a [MaterialStateColor] with a const constructor.
 ///
-/// ```dart
-/// // ignore: deprecated_member_use
-/// class MyColor extends MaterialStateColor {
-///   const MyColor() : super(_defaultColor);
-///
-///   static const int _defaultColor = 0xcafefeed;
-///   static const int _pressedColor = 0xdeadbeef;
-///
-///   @override
-///   // ignore: deprecated_member_use
-///   Color resolve(Set<MaterialState> states) {
-///     // ignore: deprecated_member_use
-///     if (states.contains(MaterialState.pressed)) {
-///       return const Color(_pressedColor);
-///     }
-///     return const Color(_defaultColor);
-///   }
-/// }
-/// ```
+/// {@example /example/lib/material_state/material_state_color.snippet.0.dart#body indent=strip}
 ///
 /// </callout-box>
 ///

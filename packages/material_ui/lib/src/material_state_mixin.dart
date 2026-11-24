@@ -21,36 +21,10 @@ import 'package:flutter/widgets.dart';
 ///
 /// <callout-box>
 ///
-// TODO(framework): Add unit tests to this code snippet.
-// https://github.com/flutter/flutter/issues/188530
-///
 /// This example shows how to write a [StatefulWidget] that uses the
 /// [MaterialStateMixin] class to watch [WidgetState] values.
 ///
-/// ```dart
-/// class MyWidget extends StatefulWidget {
-///   const MyWidget({super.key, required this.color, required this.child});
-///
-///   final WidgetStateColor color;
-///   final Widget child;
-///
-///   @override
-///   State<MyWidget> createState() => MyWidgetState();
-/// }
-///
-/// class MyWidgetState extends State<MyWidget> with MaterialStateMixin<MyWidget> {
-///   @override
-///   Widget build(BuildContext context) {
-///     return InkWell(
-///       onFocusChange: updateMaterialState(WidgetState.focused),
-///       child: ColoredBox(
-///         color: widget.color.resolve(materialStates),
-///         child: widget.child,
-///       ),
-///     );
-///   }
-/// }
-/// ```
+/// {@example /example/lib/material_state/material_state_mixin.snippet.0.dart#body indent=strip}
 ///
 /// </callout-box>
 @optionalTypeArgs
@@ -78,42 +52,10 @@ mixin MaterialStateMixin<T extends StatefulWidget> on State<T> {
   ///
   /// <callout-box>
   ///
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
-  ///
   /// This example shows how to use the [updateMaterialState] callback factory
   /// in other widgets, including the optional [onChanged] callback.
   ///
-  /// ```dart
-  /// class MyWidget extends StatefulWidget {
-  ///   const MyWidget({super.key, this.onPressed});
-  ///
-  ///   /// Something important this widget must do when pressed.
-  ///   final VoidCallback? onPressed;
-  ///
-  ///   @override
-  ///   State<MyWidget> createState() => MyWidgetState();
-  /// }
-  ///
-  /// class MyWidgetState extends State<MyWidget> with MaterialStateMixin<MyWidget> {
-  ///   @override
-  ///   Widget build(BuildContext context) {
-  ///     return ColoredBox(
-  ///       color: isPressed ? Colors.black : Colors.white,
-  ///       child: InkWell(
-  ///         onHighlightChanged: updateMaterialState(
-  ///           WidgetState.pressed,
-  ///           onChanged: (bool val) {
-  ///             if (val) {
-  ///               widget.onPressed?.call();
-  ///             }
-  ///           },
-  ///         ),
-  ///       ),
-  ///     );
-  ///   }
-  /// }
-  /// ```
+  /// {@example /example/lib/material_state/material_state_mixin.update_material_state.snippet.0.dart#body indent=strip}
   ///
   /// </callout-box>
   @protected
