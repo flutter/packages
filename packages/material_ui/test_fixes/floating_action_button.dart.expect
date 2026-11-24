@@ -13,4 +13,9 @@ void main() {
     child: const Icon(Icons.add),
   );
   fab = const FloatingActionButton.mini(onPressed: null);
+
+  // Changes made in https://github.com/flutter/packages/pull/13771
+  var themeData = FloatingActionButtonThemeData(miniSizeConstraints: BoxConstraints());
+  themeData = themeData.copyWith(miniSizeConstraints: BoxConstraints());
+  themeData.miniSizeConstraints;
 }

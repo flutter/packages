@@ -16,7 +16,7 @@ class _FABDefaultsM3 extends FloatingActionButtonThemeData {
         highlightElevation: 6.0,
         enableFeedback: true,
         sizeConstraints: const BoxConstraints.tightFor(width: 56.0, height: 56.0),
-        smallSizeConstraints: const BoxConstraints.tightFor(width: 40.0, height: 40.0),
+        miniSizeConstraints: const BoxConstraints.tightFor(width: 40.0, height: 40.0),
         largeSizeConstraints: const BoxConstraints.tightFor(width: 96.0, height: 96.0),
         extendedSizeConstraints: const BoxConstraints.tightFor(height: 56.0),
         extendedIconLabelSpacing: 8.0,

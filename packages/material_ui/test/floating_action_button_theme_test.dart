@@ -22,6 +22,70 @@ void main() {
     expect(identical(FloatingActionButtonThemeData.lerp(data, data, 0.5), data), true);
   });
 
+  test('FloatingActionButtonThemeData.miniSizeConstraints copyWith, ==, hashCode, and lerp', () {
+    const constraints = BoxConstraints.tightFor(width: 100.0, height: 100.0);
+    const data = FloatingActionButtonThemeData(miniSizeConstraints: constraints);
+    expect(const FloatingActionButtonThemeData().copyWith(miniSizeConstraints: constraints), data);
+    expect(
+      const FloatingActionButtonThemeData().copyWith(miniSizeConstraints: constraints).hashCode,
+      data.hashCode,
+    );
+    expect(
+      data,
+      isNot(data.copyWith(miniSizeConstraints: const BoxConstraints.tightFor(width: 1.0))),
+    );
+    expect(
+      FloatingActionButtonThemeData.lerp(
+        data,
+        const FloatingActionButtonThemeData(
+          miniSizeConstraints: BoxConstraints.tightFor(width: 200.0, height: 200.0),
+        ),
+        0.25,
+      )!.miniSizeConstraints,
+      const BoxConstraints.tightFor(width: 125.0, height: 125.0),
+    );
+  });
+
+  test(
+    'Deprecated FloatingActionButtonThemeData.smallSizeConstraints maps to miniSizeConstraints',
+    () {
+      const constraints = BoxConstraints.tightFor(width: 100.0, height: 100.0);
+      // ignore: deprecated_member_use_from_same_package
+      const data = FloatingActionButtonThemeData(smallSizeConstraints: constraints);
+      expect(data.miniSizeConstraints, constraints);
+      // ignore: deprecated_member_use_from_same_package
+      expect(data.smallSizeConstraints, constraints);
+      expect(data, const FloatingActionButtonThemeData(miniSizeConstraints: constraints));
+
+      const otherConstraints = BoxConstraints.tightFor(width: 1.0, height: 1.0);
+      // ignore: deprecated_member_use_from_same_package
+      expect(
+        data.copyWith(smallSizeConstraints: otherConstraints).miniSizeConstraints,
+        otherConstraints,
+      );
+    },
+  );
+
+  test('FloatingActionButtonThemeData asserts when both miniSizeConstraints and smallSizeConstraints are specified', () {
+    const constraints = BoxConstraints.tightFor(width: 100.0, height: 100.0);
+    expect(
+      () => FloatingActionButtonThemeData(
+        miniSizeConstraints: constraints,
+        // ignore: deprecated_member_use_from_same_package
+        smallSizeConstraints: constraints,
+      ),
+      throwsAssertionError,
+    );
+    expect(
+      () => const FloatingActionButtonThemeData().copyWith(
+        miniSizeConstraints: constraints,
+        // ignore: deprecated_member_use_from_same_package
+        smallSizeConstraints: constraints,
+      ),
+      throwsAssertionError,
+    );
+  });
+
   testWidgets(
     'Material3: Default values are used when no FloatingActionButton or FloatingActionButtonThemeData properties are specified',
     (WidgetTester tester) async {
@@ -310,7 +374,7 @@ void main() {
       MaterialApp(
         theme: ThemeData(
           floatingActionButtonTheme: const FloatingActionButtonThemeData(
-            smallSizeConstraints: constraints,
+            miniSizeConstraints: constraints,
           ),
         ),
         home: Scaffold(
@@ -325,6 +389,31 @@ void main() {
     expect(_getRawMaterialButton(tester).constraints, constraints);
     expect(_getIconSize(tester).width, iconSize);
     expect(_getIconSize(tester).height, iconSize);
+  });
+
+  testWidgets('FloatingActionButton.mini uses deprecated smallSizeConstraints from the theme', (
+    WidgetTester tester,
+  ) async {
+    const constraints = BoxConstraints.tightFor(width: 100.0, height: 100.0);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(
+          floatingActionButtonTheme: const FloatingActionButtonThemeData(
+            // ignore: deprecated_member_use_from_same_package
+            smallSizeConstraints: constraints,
+          ),
+        ),
+        home: Scaffold(
+          floatingActionButton: FloatingActionButton.mini(
+            onPressed: () {},
+            child: const Icon(Icons.add),
+          ),
+        ),
+      ),
+    );
+
+    expect(_getRawMaterialButton(tester).constraints, constraints);
   });
 
   testWidgets('FloatingActionButton.large uses custom constraints when specified in the theme', (
@@ -599,7 +688,7 @@ void main() {
       enableFeedback: true,
       iconSize: 42,
       sizeConstraints: BoxConstraints.tightFor(width: 100.0, height: 100.0),
-      smallSizeConstraints: BoxConstraints.tightFor(width: 101.0, height: 101.0),
+      miniSizeConstraints: BoxConstraints.tightFor(width: 101.0, height: 101.0),
       largeSizeConstraints: BoxConstraints.tightFor(width: 102.0, height: 102.0),
       extendedSizeConstraints: BoxConstraints(minHeight: 103.0, maxHeight: 103.0),
       extendedIconLabelSpacing: 12,
@@ -628,7 +717,7 @@ void main() {
       'enableFeedback: true',
       'iconSize: 42.0',
       'sizeConstraints: BoxConstraints(w=100.0, h=100.0)',
-      'smallSizeConstraints: BoxConstraints(w=101.0, h=101.0)',
+      'miniSizeConstraints: BoxConstraints(w=101.0, h=101.0)',
       'largeSizeConstraints: BoxConstraints(w=102.0, h=102.0)',
       'extendedSizeConstraints: BoxConstraints(0.0<=w<=Infinity, h=103.0)',
       'extendedIconLabelSpacing: 12.0',

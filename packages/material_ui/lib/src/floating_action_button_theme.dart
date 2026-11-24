@@ -57,14 +57,24 @@ class FloatingActionButtonThemeData with Diagnosticable {
     this.enableFeedback,
     this.iconSize,
     this.sizeConstraints,
-    this.smallSizeConstraints,
+    BoxConstraints? miniSizeConstraints,
+    @Deprecated(
+      'Use miniSizeConstraints instead. '
+      'This feature was deprecated after material_ui v1.11.1.',
+    )
+    BoxConstraints? smallSizeConstraints,
     this.largeSizeConstraints,
     this.extendedSizeConstraints,
     this.extendedIconLabelSpacing,
     this.extendedPadding,
     this.extendedTextStyle,
     this.mouseCursor,
-  });
+  }) : assert(
+         miniSizeConstraints == null || smallSizeConstraints == null,
+         'The miniSizeConstraints and smallSizeConstraints parameters mean the same thing. '
+         'Only specify one.',
+       ),
+       miniSizeConstraints = miniSizeConstraints ?? smallSizeConstraints;
 
   /// Color to be used for the unselected, enabled [FloatingActionButton]'s
   /// foreground.
@@ -123,9 +133,21 @@ class FloatingActionButtonThemeData with Diagnosticable {
   /// Overrides the default size constraints for the [FloatingActionButton].
   final BoxConstraints? sizeConstraints;
 
-  /// Overrides the default size constraints for [FloatingActionButton.mini],
-  /// and for a [FloatingActionButton] whose `mini` property is true.
-  final BoxConstraints? smallSizeConstraints;
+  /// Overrides the default size constraints for
+  /// [FloatingActionButton.mini()], and for a [FloatingActionButton] whose
+  /// `mini` property is true.
+  final BoxConstraints? miniSizeConstraints;
+
+  /// Overrides the default size constraints for
+  /// [FloatingActionButton.mini()], and for a [FloatingActionButton] whose
+  /// `mini` property is true.
+  ///
+  /// This is deprecated. Use [miniSizeConstraints] instead.
+  @Deprecated(
+    'Use miniSizeConstraints instead. '
+    'This feature was deprecated after material_ui v1.11.1.',
+  )
+  BoxConstraints? get smallSizeConstraints => miniSizeConstraints;
 
   /// Overrides the default size constraints for [FloatingActionButton.large].
   final BoxConstraints? largeSizeConstraints;
@@ -165,6 +187,11 @@ class FloatingActionButtonThemeData with Diagnosticable {
     bool? enableFeedback,
     double? iconSize,
     BoxConstraints? sizeConstraints,
+    BoxConstraints? miniSizeConstraints,
+    @Deprecated(
+      'Use miniSizeConstraints instead. '
+      'This feature was deprecated after material_ui v1.11.1.',
+    )
     BoxConstraints? smallSizeConstraints,
     BoxConstraints? largeSizeConstraints,
     BoxConstraints? extendedSizeConstraints,
@@ -173,6 +200,11 @@ class FloatingActionButtonThemeData with Diagnosticable {
     TextStyle? extendedTextStyle,
     WidgetStateProperty<MouseCursor?>? mouseCursor,
   }) {
+    assert(
+      miniSizeConstraints == null || smallSizeConstraints == null,
+      'The miniSizeConstraints and smallSizeConstraints parameters mean the same thing. '
+      'Only specify one.',
+    );
     return FloatingActionButtonThemeData(
       foregroundColor: foregroundColor ?? this.foregroundColor,
       backgroundColor: backgroundColor ?? this.backgroundColor,
@@ -188,7 +220,7 @@ class FloatingActionButtonThemeData with Diagnosticable {
       enableFeedback: enableFeedback ?? this.enableFeedback,
       iconSize: iconSize ?? this.iconSize,
       sizeConstraints: sizeConstraints ?? this.sizeConstraints,
-      smallSizeConstraints: smallSizeConstraints ?? this.smallSizeConstraints,
+      miniSizeConstraints: miniSizeConstraints ?? smallSizeConstraints ?? this.miniSizeConstraints,
       largeSizeConstraints: largeSizeConstraints ?? this.largeSizeConstraints,
       extendedSizeConstraints: extendedSizeConstraints ?? this.extendedSizeConstraints,
       extendedIconLabelSpacing: extendedIconLabelSpacing ?? this.extendedIconLabelSpacing,
@@ -226,11 +258,7 @@ class FloatingActionButtonThemeData with Diagnosticable {
       enableFeedback: t < 0.5 ? a?.enableFeedback : b?.enableFeedback,
       iconSize: lerpDouble(a?.iconSize, b?.iconSize, t),
       sizeConstraints: BoxConstraints.lerp(a?.sizeConstraints, b?.sizeConstraints, t),
-      smallSizeConstraints: BoxConstraints.lerp(
-        a?.smallSizeConstraints,
-        b?.smallSizeConstraints,
-        t,
-      ),
+      miniSizeConstraints: BoxConstraints.lerp(a?.miniSizeConstraints, b?.miniSizeConstraints, t),
       largeSizeConstraints: BoxConstraints.lerp(
         a?.largeSizeConstraints,
         b?.largeSizeConstraints,
@@ -268,7 +296,7 @@ class FloatingActionButtonThemeData with Diagnosticable {
     enableFeedback,
     iconSize,
     sizeConstraints,
-    smallSizeConstraints,
+    miniSizeConstraints,
     largeSizeConstraints,
     extendedSizeConstraints,
     extendedIconLabelSpacing,
@@ -299,7 +327,7 @@ class FloatingActionButtonThemeData with Diagnosticable {
         other.enableFeedback == enableFeedback &&
         other.iconSize == iconSize &&
         other.sizeConstraints == sizeConstraints &&
-        other.smallSizeConstraints == smallSizeConstraints &&
+        other.miniSizeConstraints == miniSizeConstraints &&
         other.largeSizeConstraints == largeSizeConstraints &&
         other.extendedSizeConstraints == extendedSizeConstraints &&
         other.extendedIconLabelSpacing == extendedIconLabelSpacing &&
@@ -330,8 +358,8 @@ class FloatingActionButtonThemeData with Diagnosticable {
     );
     properties.add(
       DiagnosticsProperty<BoxConstraints>(
-        'smallSizeConstraints',
-        smallSizeConstraints,
+        'miniSizeConstraints',
+        miniSizeConstraints,
         defaultValue: null,
       ),
     );

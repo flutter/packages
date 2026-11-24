@@ -1,3 +1,4 @@
 changelog: |
-  - `FloatingActionButton.small` is deprecated and replaced with `FloatingActionButton.mini`.
+  - Deprecates `FloatingActionButton.small` (replacement is `FloatingActionButton.mini`).
+  - Deprecates `FloatingActionButtonThemeData.smallSizeConstraints` (replacement is `FloatingActionButtonThemeData.miniSizeConstraints`).
 version: minor

@@ -726,6 +726,22 @@ void main() {
       final String contents = _generateContents(template);
       expect(contents, contains('Color? get backgroundColor => _colors.primaryContainer'));
       expect(contents, contains(RegExp(r'_FloatingActionButtonType\.large\s+=> 36\.0')));
+      expect(
+        contents,
+        contains(
+          RegExp(
+            r'_FloatingActionButtonType\.mini\s+=> const RoundedRectangleBorder\(borderRadius: BorderRadius\.all\(Radius\.circular\(12\.0\)\)\)',
+          ),
+        ),
+      );
+      expect(
+        contents,
+        contains(
+          RegExp(
+            r'_FloatingActionButtonType\.small\s+=> const RoundedRectangleBorder\(borderRadius: BorderRadius\.all\(Radius\.circular\(16\.0\)\)\)',
+          ),
+        ),
+      );
       expect(contents, contains('TextStyle? get extendedTextStyle => _textTheme.labelLarge'));
     });
 

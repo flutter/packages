@@ -1045,30 +1045,26 @@ void main() {
   testWidgets('FloatingActionButton.mini matches FloatingActionButton with mini set to true', (
     WidgetTester tester,
   ) async {
-    Future<RawMaterialButton> pumpAndGetButton(Widget fab) async {
+    Future<void> expectMiniFab(Widget fab) async {
       await tester.pumpWidget(
         MaterialApp(
           theme: material3Theme,
           home: Scaffold(floatingActionButton: fab),
         ),
       );
-      return tester.widget<RawMaterialButton>(find.byType(RawMaterialButton));
+      final RawMaterialButton button = tester.widget<RawMaterialButton>(
+        find.byType(RawMaterialButton),
+      );
+      expect(tester.widget<FloatingActionButton>(find.byType(FloatingActionButton)).mini, isTrue);
+      expect(button.constraints, const BoxConstraints.tightFor(width: 40.0, height: 40.0));
+      expect(button.shape, RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)));
+      expect(tester.getSize(find.byIcon(Icons.add)), const Size(24.0, 24.0));
     }
 
-    final RawMaterialButton miniConstructorButton = await pumpAndGetButton(
-      FloatingActionButton.mini(onPressed: () {}, child: const Icon(Icons.add)),
-    );
-    final RawMaterialButton miniPropertyButton = await pumpAndGetButton(
+    await expectMiniFab(FloatingActionButton.mini(onPressed: () {}, child: const Icon(Icons.add)));
+    await expectMiniFab(
       FloatingActionButton(mini: true, onPressed: () {}, child: const Icon(Icons.add)),
     );
-
-    const constraints = BoxConstraints.tightFor(width: 40.0, height: 40.0);
-    final shape = RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0));
-    expect(miniConstructorButton.constraints, constraints);
-    expect(miniConstructorButton.shape, shape);
-    expect(miniPropertyButton.constraints, constraints);
-    expect(miniPropertyButton.shape, shape);
-    expect(tester.getSize(find.byIcon(Icons.add)), const Size(24.0, 24.0));
   });
 
   testWidgets('Deprecated FloatingActionButton.small matches FloatingActionButton.mini', (

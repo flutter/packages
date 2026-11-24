@@ -18,6 +18,41 @@
 version: 1
 transforms:
   # Changes made in https://github.com/flutter/packages/pull/13771
+  - title: "Rename to 'miniSizeConstraints'"
+    date: 2026-11-24
+    element:
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
+      constructor: ''
+      inClass: 'FloatingActionButtonThemeData'
+    changes:
+      - kind: 'renameParameter'
+        oldName: 'smallSizeConstraints'
+        newName: 'miniSizeConstraints'
+
+  # Changes made in https://github.com/flutter/packages/pull/13771
+  - title: "Rename to 'miniSizeConstraints'"
+    date: 2026-11-24
+    element:
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
+      method: 'copyWith'
+      inClass: 'FloatingActionButtonThemeData'
+    changes:
+      - kind: 'renameParameter'
+        oldName: 'smallSizeConstraints'
+        newName: 'miniSizeConstraints'
+
+  # Changes made in https://github.com/flutter/packages/pull/13771
+  - title: "Rename to 'miniSizeConstraints'"
+    date: 2026-11-24
+    element:
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
+      getter: 'smallSizeConstraints'
+      inClass: 'FloatingActionButtonThemeData'
+    changes:
+      - kind: 'rename'
+        newName: 'miniSizeConstraints'
+
+  # Changes made in https://github.com/flutter/packages/pull/13771
   - title: "Migrate to 'FloatingActionButton.mini'"
     date: 2026-11-23
     element:
@@ -27,3 +62,5 @@ transforms:
     changes:
       - kind: 'rename'
         newName: 'mini'
+
+# Before adding a new fix: read instructions at the top of this file.

@@ -189,9 +189,10 @@ class FloatingActionButton extends StatelessWidget {
 
   /// Creates a small circular floating action button.
   ///
-  /// This constructor is deprecated. Use [FloatingActionButton.mini], which
-  /// creates the same 40.0 by 40.0 logical pixel floating action button, or
-  /// set `mini` to true in the [FloatingActionButton.new] constructor.
+  /// This constructor is deprecated. Use [FloatingActionButton.mini()],
+  /// which creates the same 40.0 by 40.0 logical pixel floating action
+  /// button, or set `mini` to true in the [FloatingActionButton.new]
+  /// constructor.
   ///
   /// The [elevation], [focusElevation], [hoverElevation], [highlightElevation],
   /// and [disabledElevation] parameters, if specified, must be non-negative.
@@ -478,7 +479,7 @@ class FloatingActionButton extends StatelessWidget {
   /// result of the floating action button having [MaterialTapTargetSize.padded]
   /// set on the underlying [RawMaterialButton.materialTapTargetSize].)
   ///
-  /// The [FloatingActionButton.mini] constructor sets this to true.
+  /// The [FloatingActionButton.mini()] constructor sets this to true.
   final bool mini;
 
   /// The shape of the button's [Material].
@@ -619,7 +620,7 @@ class FloatingActionButton extends StatelessWidget {
     switch (_floatingActionButtonType) {
       case _FloatingActionButtonType.mini:
         sizeConstraints =
-            floatingActionButtonTheme.smallSizeConstraints ?? defaults.smallSizeConstraints!;
+            floatingActionButtonTheme.miniSizeConstraints ?? defaults.miniSizeConstraints!;
       case _FloatingActionButtonType.small:
         sizeConstraints = floatingActionButtonTheme.sizeConstraints ?? defaults.sizeConstraints!;
       case _FloatingActionButtonType.large:
@@ -801,7 +802,7 @@ class _FABDefaultsM2 extends FloatingActionButtonThemeData {
         highlightElevation: 12,
         enableFeedback: true,
         sizeConstraints: const BoxConstraints.tightFor(width: 56.0, height: 56.0),
-        smallSizeConstraints: const BoxConstraints.tightFor(width: 40.0, height: 40.0),
+        miniSizeConstraints: const BoxConstraints.tightFor(width: 40.0, height: 40.0),
         largeSizeConstraints: const BoxConstraints.tightFor(width: 96.0, height: 96.0),
         extendedSizeConstraints: const BoxConstraints.tightFor(height: 48.0),
         extendedIconLabelSpacing: 8.0,

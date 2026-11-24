@@ -36,7 +36,7 @@ class $className extends FloatingActionButtonThemeData {
           width: ${number(TokenFab.containerWidth)},
           height: ${number(TokenFab.containerHeight)},
         ),
-        smallSizeConstraints: const BoxConstraints.tightFor(
+        miniSizeConstraints: const BoxConstraints.tightFor(
           width: ${number(TokenFabSmall.containerWidth)},
           height: ${number(TokenFabSmall.containerHeight)},
         ),
