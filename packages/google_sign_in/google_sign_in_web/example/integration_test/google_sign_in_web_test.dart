@@ -101,7 +101,7 @@ void main() {
 
       var initialized = false;
       final Future<void> init = plugin.init(options).then((_) => initialized = true);
-      await Future<void>.delayed(Duration.zero);
+      await pumpEventQueue();
 
       expect(sdkLoads, 1);
       expect(initialized, isFalse);
