@@ -35,6 +35,7 @@ class ImagePickerFromLimitedGalleryUITests: XCTestCase {
       self.interceptedPermissionInterruption = true
       return true
     }
+    seedPhotoLibraryIfNeeded(timeout: elementWaitingTime)
   }
 
   override func tearDown() {

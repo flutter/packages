@@ -662,6 +662,21 @@ final class InAppPurchase2PluginTests: XCTestCase {
 
     try session.expireSubscription(productIdentifier: "subscription_silver")
 
+    // storekitd answers subscription status queries from a cache that it fills in the
+    // background after a purchase, and `expireSubscription` does not refresh that cache.
+    // Without a sync, the expiry is only visible if it happens to land before that fetch.
+    let syncExpectation = self.expectation(description: "Sync should succeed")
+    plugin.sync { result in
+      switch result {
+      case .success:
+        syncExpectation.fulfill()
+      case .failure(let error):
+        XCTFail("Sync should NOT fail. Failed with \(error)")
+        syncExpectation.fulfill()
+      }
+    }
+    await fulfillment(of: [syncExpectation], timeout: purchaseTimeout)
+
     let expectation = self.expectation(description: "Eligibility check should return true")
 
     plugin.isWinBackOfferEligible(
@@ -811,5 +826,4 @@ final class InAppPurchase2PluginTests: XCTestCase {
 
     waitForExpectations(timeout: 1.0)
   }
-
 }
