@@ -57,7 +57,7 @@ base class XEntity {
   ///
   /// The result of calling this is platform implementation dependent. This can
   /// do nothing on some platforms while on other platforms it can remove access
-  /// to a resource referenced by [uri] even if it is used with a new instance.
+  /// to a resource referenced by [uri], even if it is used with a new instance.
   ///
   /// Once called, this instance can no longer be used.
   Future<void> dispose() async {
