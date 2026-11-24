@@ -1,3 +1,8 @@
+## 0.7.7
+
+* Bumps cameraxVersion from 1.6.2 to 1.7.0.
+* Raises the minimum supported Android SDK version to 24, as required by CameraX 1.7.0.
+
 ## 0.7.6+2
 
 * Reduces `takePicture` latency by not setting the `ImageCapture` flash mode

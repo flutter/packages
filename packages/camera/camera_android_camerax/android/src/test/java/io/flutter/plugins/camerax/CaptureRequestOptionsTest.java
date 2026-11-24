@@ -15,6 +15,8 @@ import androidx.camera.camera2.interop.CaptureRequestOptions;
 import java.util.Map;
 import org.junit.Test;
 
+// Camera2Interop V1 is deprecated in CameraX 1.7.0.
+@SuppressWarnings("deprecation")
 public class CaptureRequestOptionsTest {
   @SuppressWarnings("unchecked")
   @Test

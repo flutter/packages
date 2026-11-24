@@ -24,7 +24,8 @@ class ImageAnalysisProxyApi extends PigeonApiImageAnalysis {
   static final long CLEAR_FINALIZED_WEAK_REFERENCES_INTERVAL_FOR_IMAGE_ANALYSIS = 1000;
 
   // Range<?> is defined as Range<Integer> in pigeon.
-  @SuppressWarnings("unchecked")
+  // Camera2Interop V1 is deprecated in CameraX 1.7.0.
+  @SuppressWarnings({"unchecked", "deprecation"})
   @OptIn(markerClass = ExperimentalCamera2Interop.class)
   @NonNull
   @Override

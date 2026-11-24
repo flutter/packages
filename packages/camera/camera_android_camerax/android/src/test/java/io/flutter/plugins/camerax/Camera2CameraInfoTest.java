@@ -23,6 +23,8 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 @RunWith(RobolectricTestRunner.class)
+// Camera2Interop V1 is deprecated in CameraX 1.7.0.
+@SuppressWarnings("deprecation")
 public class Camera2CameraInfoTest {
   @Test
   public void from_createsInstanceFromCameraInfoInstance() {
@@ -69,7 +71,7 @@ public class Camera2CameraInfoTest {
     assertEquals(value, api.getCameraCharacteristic(instance, key));
   }
 
-  @Config(minSdk = 23)
+  @Config(minSdk = 24)
   @SuppressWarnings("unchecked")
   @Test
   public void getCameraCharacteristic_returnsExpectedCameraHardwareLevelWhenRequested() {

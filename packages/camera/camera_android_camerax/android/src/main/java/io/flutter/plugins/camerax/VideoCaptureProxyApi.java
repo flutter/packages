@@ -25,7 +25,8 @@ class VideoCaptureProxyApi extends PigeonApiVideoCapture {
   }
 
   // Range<?> is defined as Range<Integer> in pigeon.
-  @SuppressWarnings("unchecked")
+  // Camera2Interop V1 is deprecated in CameraX 1.7.0.
+  @SuppressWarnings({"unchecked", "deprecation"})
   @OptIn(markerClass = ExperimentalCamera2Interop.class)
   @NonNull
   @Override

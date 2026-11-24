@@ -19,6 +19,8 @@ import androidx.camera.core.CameraInfo;
  * native class or an instance of that class.
  */
 @OptIn(markerClass = ExperimentalCamera2Interop.class)
+// Camera2Interop V1 is deprecated in CameraX 1.7.0.
+@SuppressWarnings("deprecation")
 class Camera2CameraInfoProxyApi extends PigeonApiCamera2CameraInfo {
   Camera2CameraInfoProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
     super(pigeonRegistrar);

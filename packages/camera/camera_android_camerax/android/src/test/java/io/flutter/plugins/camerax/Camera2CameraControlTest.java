@@ -24,6 +24,8 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 
+// Camera2Interop V1 is deprecated in CameraX 1.7.0.
+@SuppressWarnings("deprecation")
 public class Camera2CameraControlTest {
   @Test
   public void from_createsInstanceFromCameraControlInstance() {
