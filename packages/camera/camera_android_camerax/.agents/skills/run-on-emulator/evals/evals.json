@@ -5,7 +5,7 @@
       "id": 1,
       "prompt": "Run the camera_android_camerax integration tests on an emulator.",
       "expected_chat_output": [
-        "The agent's report shows it actually ran the full integration test suite on an emulator, including the final test summary line (e.g., '+7 -2: Some tests failed.' or 'All tests passed!'), not a subset and not just a plan to run them.",
+        "The agent's report shows results from an actual run of the full integration test suite on an emulator (e.g., per-test results with failure messages, or the final test summary line), not a subset and not just a plan to run them.",
         "The agent's report shows it granted runtime permissions (e.g., with 'android install --install-options=-g') before running the tests, rather than letting a permission dialog block them.",
         "The agent reported whether the tests passed, naming any failing tests.",
         "If the resolution preset tests failed, the agent identified them as expected emulator failures rather than regressions."
