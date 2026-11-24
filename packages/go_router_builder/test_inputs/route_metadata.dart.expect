@@ -1,0 +1,125 @@
+RouteBase get $metadataRoute => GoRouteData.$route(
+  path: '/metadata/:id',
+  hasOverriddenOnExit: false,
+  metadata: const <String, Object?>{
+    'requiresAuth': true,
+    'section': 'library',
+    'values': <Object?>[null, false, 42, -1.5, r'dollar$quote"'],
+    'nested': <String, String>{'key': 'value'},
+    'set': <String>{'a', 'b'},
+    'emptyList': <int>[],
+    'emptySet': <String>{},
+    'emptyMap': <String, bool>{},
+    'nullableLists': <List<int>?>[
+      null,
+      <int>[1],
+    ],
+    'numericKeys': <int, String>{1: 'one'},
+    'specialNumbers': <double>[double.nan, double.infinity, double.negativeInfinity, -0.0],
+  },
+  factory: $MetadataRoute._fromState,
+  routes: [
+    RelativeGoRouteData.$route(
+      path: 'child',
+      hasOverriddenOnExit: false,
+      metadata: const <String, Object?>{'requiresAuth': false, 'title': 'Preview'},
+      factory: $MetadataChild._fromState,
+    ),
+  ],
+);
+
+mixin $MetadataRoute on GoRouteData {
+  static MetadataRoute _fromState(GoRouterState state) =>
+      MetadataRoute(state.pathParameters['id']!);
+
+  MetadataRoute get _self => this as MetadataRoute;
+
+  @override
+  String get location => GoRouteData.$location('/metadata/${Uri.encodeComponent(_self.id)}');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) => context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+mixin $MetadataChild on RelativeGoRouteData {
+  static MetadataChild _fromState(GoRouterState state) => const MetadataChild();
+
+  @override
+  String get subLocation => RelativeGoRouteData.$location('child');
+
+  @override
+  String get relativeLocation => './$subLocation';
+
+  @override
+  void goRelative(BuildContext context) => context.go(relativeLocation);
+
+  @override
+  Future<T?> pushRelative<T>(BuildContext context) => context.push<T>(relativeLocation);
+
+  @override
+  void pushReplacementRelative(BuildContext context) => context.pushReplacement(relativeLocation);
+
+  @override
+  void replaceRelative(BuildContext context) => context.replace(relativeLocation);
+}
+
+RouteBase get $importedMetadataRoute => GoRouteData.$route(
+  path: '/imported',
+  hasOverriddenOnExit: false,
+  metadata: const <String, Object?>{'imported': true},
+  factory: $ImportedMetadataRoute._fromState,
+);
+
+mixin $ImportedMetadataRoute on GoRouteData {
+  static ImportedMetadataRoute _fromState(GoRouterState state) => const ImportedMetadataRoute();
+
+  @override
+  String get location => GoRouteData.$location('/imported');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) => context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $emptyMetadataRoute => GoRouteData.$route(
+  path: '/empty',
+  hasOverriddenOnExit: false,
+  metadata: const <String, Object?>{},
+  factory: $EmptyMetadataRoute._fromState,
+);
+
+mixin $EmptyMetadataRoute on GoRouteData {
+  static EmptyMetadataRoute _fromState(GoRouterState state) => const EmptyMetadataRoute();
+
+  @override
+  String get location => GoRouteData.$location('/empty');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) => context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}

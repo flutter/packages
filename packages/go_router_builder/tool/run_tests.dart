@@ -65,7 +65,15 @@ Future<void> main() async {
       final String path = file.path.replaceAll(r'\', '/');
       final targetLibraryAssetId = '__test__|$path';
       final LibraryElement element = await resolveSources<LibraryElement>(
-        <String, String>{targetLibraryAssetId: file.readAsStringSync()},
+        <String, String>{
+          targetLibraryAssetId: file.readAsStringSync(),
+          // Resolve imported fixtures in the same synthetic package as the input.
+          if (Directory('${file.path}.sources').existsSync())
+            for (final File source in Directory(
+              '${file.path}.sources',
+            ).listSync(recursive: true).whereType<File>())
+              '__test__|${source.path.replaceAll(r'\', '/')}': source.readAsStringSync(),
+        },
         (Resolver resolver) async {
           final assetId = AssetId.parse(targetLibraryAssetId);
           return resolver.libraryFor(assetId);
@@ -111,7 +119,7 @@ void _expectWithNormalizedNewlines(String actual, String expected) {
 
 Future<Version> _packageVersion() async {
   final PackageConfig packageConfig = await loadPackageConfigUri(Isolate.packageConfigSync!);
-  final Uri pkgUri = Platform.script.resolve('../pubspec.yaml');
+  final Uri pkgUri = Directory.current.uri.resolve('pubspec.yaml');
   final Package? package = packageConfig.packageOf(pkgUri);
   if (package == null) {
     throw StateError('No package at "$pkgUri"');

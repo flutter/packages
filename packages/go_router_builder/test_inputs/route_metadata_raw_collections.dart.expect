@@ -1,0 +1,30 @@
+RouteBase get $metadataRoute => GoRouteData.$route(
+  path: '/metadata',
+  hasOverriddenOnExit: false,
+  metadata: const <String, Object?>{
+    'lists': <List<dynamic>>[],
+    'sets': <Set<dynamic>>{},
+    'maps': <String, Map<dynamic, dynamic>>{},
+    'objects': <Object>[],
+  },
+  factory: $MetadataRoute._fromState,
+);
+
+mixin $MetadataRoute on GoRouteData {
+  static MetadataRoute _fromState(GoRouterState state) => const MetadataRoute();
+
+  @override
+  String get location => GoRouteData.$location('/metadata');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) => context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
