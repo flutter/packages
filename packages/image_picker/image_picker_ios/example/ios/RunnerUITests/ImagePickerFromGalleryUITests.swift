@@ -212,13 +212,13 @@ extension XCTestCase {
       // A photo has already been added, don't add another.
       return
     }
-
+    let expectation = XCTestExpectation()
     PHPhotoLibrary.requestAuthorization(for: .addOnly) { _ in
       do {
         try PHPhotoLibrary.shared().performChangesAndWait {
           PHAssetChangeRequest.creationRequestForAssetFromImage(atFileURL: jpgImageTall)
+          expectation.fulfill()
         }
-        UserDefaults.standard.set(true, forKey: photoAddedKey)
       } catch {
         os_log(.error, "%{public}@", error.localizedDescription)
       }
@@ -232,5 +232,11 @@ extension XCTestCase {
     if allowButton.waitForExistence(timeout: timeout) {
       allowButton.tap()
     }
+
+    // Wait until photo is done being added to update UserDefaults.
+    let result = XCTWaiter.wait(for: [expectation], timeout: timeout)
+    XCTAssertEqual(
+      result, .completed, "Photo added expectation not completed within \(timeout) seconds.")
+    UserDefaults.standard.set(true, forKey: photoAddedKey)
   }
 }
