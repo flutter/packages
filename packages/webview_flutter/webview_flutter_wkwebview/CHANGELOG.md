@@ -1,3 +1,7 @@
+## 3.27.3
+
+* Forwards HTTP Digest authentication challenges to `onHttpAuthRequest` on iOS and macOS.
+
 ## 3.27.2
 
 * Restores the minimum iOS version to 13 and minimum macOS version to 10.15.
