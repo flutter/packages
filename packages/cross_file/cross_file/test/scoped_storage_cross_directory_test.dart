@@ -86,13 +86,13 @@ void main() {
       test('list throws StateError', () async {
         final directory = ScopedStorageXDirectory(uri: 'my/dir/');
         await directory.dispose();
-        expect(() => directory.list(), throwsStateError);
+        expect(() => directory.list(), throwsAssertionError);
       });
 
       test('canRead throws StateError', () async {
         final directory = ScopedStorageXDirectory(uri: 'my/dir/');
         await directory.dispose();
-        await expectLater(() => directory.canRead(), throwsStateError);
+        await expectLater(() => directory.canRead(), throwsAssertionError);
       });
     });
   });

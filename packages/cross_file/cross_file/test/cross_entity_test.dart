@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:math';
+
 import 'package:cross_file/cross_file.dart';
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -30,7 +32,7 @@ void main() {
           ),
         );
         await entity.dispose();
-        await expectLater(() => entity.exists(), throwsStateError);
+        await expectLater(() => entity.exists(), throwsAssertionError);
       });
 
       test('getExtension throws StateError', () async {
@@ -41,7 +43,18 @@ void main() {
           ),
         );
         await entity.dispose();
-        await expectLater(() => entity.getExtension(), throwsStateError);
+        await expectLater(() => entity.getExtension(), throwsAssertionError);
+      });
+
+      test('dispose only calls `platform.dispose` once', () async {
+        final entity = XEntity(
+          TestXEntity(
+            const PlatformXFileCreationParams(uri: 'uri'),
+            onDispose: expectAsync0(() async {}),
+          ),
+        );
+        await entity.dispose();
+        await expectLater(entity.dispose(), completes);
       });
     });
   });

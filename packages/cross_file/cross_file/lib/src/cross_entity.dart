@@ -5,18 +5,33 @@
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
 import 'package:flutter/foundation.dart' show internal, protected;
 
-import 'cross_disposable.dart';
-
 /// The common superclass for [XFile] and [XDirectory].
-base class XEntity with XDisposable {
+base class XEntity {
   /// Constructs a [XEntity].
   @internal
   @protected
   XEntity(this.platform);
 
+  bool _isDisposed = false;
+
   /// Implementation of [XEntity] for the current platform.
   @internal
   final PlatformXEntity platform;
+
+  /// Asserts [dispose] has not been called for this entity.
+  @internal
+  bool assertNotDisposed() {
+    assert(() {
+      if (_isDisposed) {
+        throw AssertionError(
+          'A $runtimeType was used after being disposed.\n'
+          'Once you have called dispose() on a $runtimeType, it can no longer be used.',
+        );
+      }
+      return true;
+    }());
+    return true;
+  }
 
   /// Attempt to provide the platform class extension.
   ///
@@ -45,9 +60,11 @@ base class XEntity with XDisposable {
   /// to a resource referenced by [uri] even if it is used with a new instance.
   ///
   /// Once called, this instance can no longer be used.
-  Future<void> dispose() {
-    markDisposed();
-    return platform.dispose();
+  Future<void> dispose() async {
+    if (!_isDisposed) {
+      _isDisposed = true;
+      await platform.dispose();
+    }
   }
 
   @override

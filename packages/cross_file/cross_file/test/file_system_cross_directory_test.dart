@@ -60,7 +60,7 @@ void main() {
       test('list throws StateError', () async {
         final directory = FileSystemXDirectory('my/dir/');
         await directory.dispose();
-        expect(() => directory.list(), throwsStateError);
+        expect(() => directory.list(), throwsAssertionError);
       });
     });
   });

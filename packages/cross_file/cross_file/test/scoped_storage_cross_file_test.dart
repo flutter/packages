@@ -136,43 +136,43 @@ void main() {
       test('lastModified throws StateError', () async {
         final file = ScopedStorageXFile(uri: 'to/myFile.txt');
         await file.dispose();
-        await expectLater(() => file.lastModified(), throwsStateError);
+        await expectLater(() => file.lastModified(), throwsAssertionError);
       });
 
       test('length throws StateError', () async {
         final file = ScopedStorageXFile(uri: 'to/myFile.txt');
         await file.dispose();
-        await expectLater(() => file.length(), throwsStateError);
+        await expectLater(() => file.length(), throwsAssertionError);
       });
 
       test('openRead throws StateError', () async {
         final file = ScopedStorageXFile(uri: 'to/myFile.txt');
         await file.dispose();
-        await expectLater(() => file.openRead(), throwsStateError);
+        await expectLater(() => file.openRead(), throwsAssertionError);
       });
 
       test('readAsBytes throws StateError', () async {
         final file = ScopedStorageXFile(uri: 'to/myFile.txt');
         await file.dispose();
-        await expectLater(() => file.readAsBytes(), throwsStateError);
+        await expectLater(() => file.readAsBytes(), throwsAssertionError);
       });
 
       test('readAsString throws StateError', () async {
         final file = ScopedStorageXFile(uri: 'to/myFile.txt');
         await file.dispose();
-        await expectLater(() => file.readAsString(), throwsStateError);
+        await expectLater(() => file.readAsString(), throwsAssertionError);
       });
 
       test('name throws StateError', () async {
         final file = ScopedStorageXFile(uri: 'to/myFile.txt');
         await file.dispose();
-        await expectLater(() => file.name(), throwsStateError);
+        await expectLater(() => file.name(), throwsAssertionError);
       });
 
       test('canRead throws StateError', () async {
         final file = ScopedStorageXFile(uri: 'uri');
         await file.dispose();
-        await expectLater(() => file.canRead(), throwsStateError);
+        await expectLater(() => file.canRead(), throwsAssertionError);
       });
     });
   });
