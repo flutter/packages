@@ -8,29 +8,35 @@ import 'package:material_ui_examples/slider_theme/slider_theme.of.snippet.0.dart
     as example;
 
 void main() {
-  testWidgets('Launch applies custom activeTrackColor via SliderTheme.of', (
-    WidgetTester tester,
-  ) async {
-    await tester.pumpWidget(
-      const MaterialApp(
-        home: Scaffold(body: Center(child: example.Launch())),
-      ),
-    );
+  testWidgets(
+    'Launch copies ambient SliderThemeData with custom activeTrackColor',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(
+            sliderTheme: const SliderThemeData(
+              inactiveTrackColor: Color(0xff206040),
+            ),
+          ),
+          home: const Scaffold(body: Center(child: example.Launch())),
+        ),
+      );
 
-    expect(tester.widget<Slider>(find.byType(Slider)).value, 0.0);
+      expect(tester.widget<Slider>(find.byType(Slider)).value, 0.0);
 
-    await tester.tap(find.byType(Slider));
-    await tester.pumpAndSettle();
+      await tester.tap(find.byType(Slider));
+      await tester.pumpAndSettle();
 
-    expect(tester.widget<Slider>(find.byType(Slider)).value, 0.5);
-    final MaterialInkController material = Material.of(
-      tester.element(find.byType(Slider)),
-    );
-    expect(
-      material,
-      paints
-        ..rrect()
-        ..rrect(color: const Color(0xff804040)),
-    );
-  });
+      expect(tester.widget<Slider>(find.byType(Slider)).value, 0.5);
+      final MaterialInkController material = Material.of(
+        tester.element(find.byType(Slider)),
+      );
+      expect(
+        material,
+        paints
+          ..rrect(color: const Color(0xff206040))
+          ..rrect(color: const Color(0xff804040)),
+      );
+    },
+  );
 }

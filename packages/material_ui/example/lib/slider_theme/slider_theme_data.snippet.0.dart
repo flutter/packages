@@ -11,10 +11,10 @@ class Blissful extends StatefulWidget {
   const Blissful({super.key});
 
   @override
-  State<Blissful> createState() => BlissfulState();
+  State<Blissful> createState() => _BlissfulState();
 }
 
-class BlissfulState extends State<Blissful> {
+class _BlissfulState extends State<Blissful> {
   double _bliss = 0;
 
   @override

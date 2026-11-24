@@ -11,10 +11,10 @@ class Launch extends StatefulWidget {
   const Launch({super.key});
 
   @override
-  State<Launch> createState() => LaunchState();
+  State<Launch> createState() => _LaunchState();
 }
 
-class LaunchState extends State<Launch> {
+class _LaunchState extends State<Launch> {
   double _rocketThrust = 0;
 
   @override
