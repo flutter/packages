@@ -1,5 +1,6 @@
-## NEXT
+## 2.0.3
 
+* Uses standard C++20 coroutines to support newer Visual Studio toolchains.
 * Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
 
 ## 2.0.2

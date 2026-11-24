@@ -7,8 +7,6 @@
 #include <flutter/method_channel.h>
 #include <flutter/plugin_registrar_windows.h>
 #include <flutter/standard_method_codec.h>
-#include <pplawait.h>
-#include <ppltasks.h>
 
 // Include prior to C++/WinRT Headers
 #include <wil/cppwinrt.h>
