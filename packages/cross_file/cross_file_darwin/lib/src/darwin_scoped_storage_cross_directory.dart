@@ -65,7 +65,7 @@ base class SecurityScopedDarwinScopedStorageXDirectory extends DarwinScopedStora
   ///
   /// Only visible for testing purposes.
   @visibleForTesting
-  static Finalizer<String> defaultFinalizer = Finalizer((String uri) {
+  static final Finalizer<String> defaultFinalizer = Finalizer((String uri) {
     // Check that this is not called during a unit test.
     if (Platform.environment['FLUTTER_TEST'] != 'true') {
       final NSURL? url = NSURL.URLWithString(uri.toNSString());
