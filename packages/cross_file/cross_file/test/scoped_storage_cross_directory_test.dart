@@ -66,11 +66,11 @@ void main() {
 
     test('dispose', () async {
       CrossFilePlatform.instance = TestCrossFilePlatform(
-        onCreatePlatformScopedStorageXFile: (PlatformScopedStorageXFileCreationParams params) =>
-            TestScopedStorageXFile(params, onDispose: expectAsync0(() async {})),
+        onCreatePlatformScopedStorageXDirectory: (PlatformScopedStorageXDirectoryCreationParams params) =>
+            TestScopedStorageXDirectory(params, onDispose: expectAsync0(() async {})),
       );
 
-      final directory = ScopedStorageXFile(uri: 'uri');
+      final directory = ScopedStorageXDirectory(uri: 'uri');
       await expectLater(directory.dispose(), completes);
     });
 

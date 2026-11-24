@@ -20,16 +20,14 @@ Future<void> instantiateXFile() async {
   debugPrint('- URI: ${file.uri}');
   debugPrint('- Name: ${await file.name()}');
 
-  if (await file.exists()) {
-    try {
+  try {
+    if (await file.exists()) {
       final String fileContent = await file.readAsString();
       debugPrint('Content of the file: $fileContent');
-    } catch (exception) {
-      debugPrint(exception.toString());
     }
+  } finally {
+    await file.dispose();
   }
-
-  await file.dispose();
   // #enddocregion Instantiate
 }
 
@@ -50,16 +48,14 @@ Future<void> accessPlatformFeatures() async {
       file = XFile.fileSystem(path: '/my/file.txt');
   }
 
-  await file
-      .getExtension<SecurityScopedDarwinScopedStorageXFileExtension>()
-      ?.startAccessingSecurityScopedResource();
-
   try {
-    debugPrint(await file.readAsString());
-  } catch (exception) {
-    debugPrint(exception.toString());
-  }
+    await file
+        .getExtension<SecurityScopedDarwinScopedStorageXFileExtension>()
+        ?.startAccessingSecurityScopedResource();
 
-  await file.dispose();
+    debugPrint(await file.readAsString());
+  } finally {
+    await file.dispose();
+  }
   // #enddocregion platform_features
 }
