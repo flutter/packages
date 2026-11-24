@@ -491,4 +491,52 @@ void main() {
     expect(flexibleWidgets[2].flex, equals(1));
     expect(flexibleWidgets[2].fit, equals(FlexFit.loose));
   });
+
+  testWidgets('ListView and GridView cacheExtent', (WidgetTester tester) async {
+    final runtime = Runtime()
+      ..update(const LibraryName(<String>['core']), createCoreWidgets());
+    addTearDown(runtime.dispose);
+    final data = DynamicContent();
+    Widget build() {
+      return Directionality(
+        textDirection: TextDirection.ltr,
+        child: RemoteWidget(
+          runtime: runtime,
+          data: data,
+          widget: const FullyQualifiedWidgetName(LibraryName(<String>['test']), 'root'),
+        ),
+      );
+    }
+
+    // The `cacheExtent` argument is a number of logical pixels.
+    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+      import core;
+      widget root = ListView(cacheExtent: 123.0, children: [SizedBox(height: 10.0)]);
+    '''));
+    await tester.pumpWidget(build());
+    expect(tester.widget<ListView>(find.byType(ListView)).scrollCacheExtent, const ScrollCacheExtent.pixels(123.0));
+    expect(tester.widget<Viewport>(find.byType(Viewport)).scrollCacheExtent, const ScrollCacheExtent.pixels(123.0));
+
+    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+      import core;
+      widget root = ListView(children: [SizedBox(height: 10.0)]);
+    '''));
+    await tester.pump();
+    expect(tester.widget<ListView>(find.byType(ListView)).scrollCacheExtent, isNull);
+
+    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+      import core;
+      widget root = GridView(cacheExtent: 45.0, children: [SizedBox(height: 10.0)]);
+    '''));
+    await tester.pump();
+    expect(tester.widget<GridView>(find.byType(GridView)).scrollCacheExtent, const ScrollCacheExtent.pixels(45.0));
+    expect(tester.widget<Viewport>(find.byType(Viewport)).scrollCacheExtent, const ScrollCacheExtent.pixels(45.0));
+
+    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+      import core;
+      widget root = GridView(children: [SizedBox(height: 10.0)]);
+    '''));
+    await tester.pump();
+    expect(tester.widget<GridView>(find.byType(GridView)).scrollCacheExtent, isNull);
+  });
 }
