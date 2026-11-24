@@ -445,6 +445,49 @@ packages/a_package/example/integration_test/another_test.dart
       );
     });
 
+    test('skips for "minimal" when there are only test dependency changes '
+        'in build.gradle', () async {
+      final RepositoryPackage package = createFakePlugin('a_plugin', packagesDir, version: '1.0.1');
+      gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+        // File list.
+        FakeProcessInfo(
+          MockProcess(
+            stdout: '''
+packages/a_plugin/android/build.gradle
+''',
+          ),
+        ),
+        // build.gradle diff.
+        FakeProcessInfo(
+          MockProcess(
+            stdout: '''
+-    testImplementation("org.mockito:mockito-core:5.23.0")
++    testImplementation("org.mockito:mockito-core:5.24.0")
+''',
+          ),
+        ),
+      ];
+      final String originalChangelog = package.changelogFile.readAsStringSync();
+
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'update-release-info',
+        '--version=minimal',
+        '--changelog',
+        'A change.',
+      ]);
+
+      final String version = package.parsePubspec().version?.toString() ?? '';
+      expect(version, '1.0.1');
+      expect(package.changelogFile.readAsStringSync(), originalChangelog);
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('No non-exempt changes to package'),
+          contains('Skipped 1 package'),
+        ]),
+      );
+    });
+
     test('fails if CHANGELOG.md is missing', () async {
       createFakePackage('a_package', packagesDir, includeCommonFiles: false);
 
