@@ -3381,8 +3381,9 @@ class Preview extends UseCase {
     return pigeonVar_replyValue! as int;
   }
 
-  /// Releases the `SurfaceProducer` created in `setSurfaceProvider` if one was
-  /// created.
+  /// Releases the `SurfaceProducer` created with this `Preview`.
+  ///
+  /// Throws if it has already been released.
   Future<void> releaseSurfaceProvider() async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecPreview;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;

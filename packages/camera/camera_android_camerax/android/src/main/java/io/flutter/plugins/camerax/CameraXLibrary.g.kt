@@ -3482,7 +3482,11 @@ abstract class PigeonApiPreview(open val pigeonRegistrar: CameraXLibraryPigeonPr
       transformationInfoListener: androidx.camera.core.SurfaceRequest.TransformationInfoListener?
   ): Long
 
-  /** Releases the `SurfaceProducer` created in `setSurfaceProvider` if one was created. */
+  /**
+   * Releases the `SurfaceProducer` created with this `Preview`.
+   *
+   * Throws if it has already been released.
+   */
   abstract fun releaseSurfaceProvider(pigeon_instance: androidx.camera.core.Preview)
 
   /** Gets selected resolution information of the `Preview`. */
