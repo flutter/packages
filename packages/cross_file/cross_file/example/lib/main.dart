@@ -27,28 +27,29 @@ class FileOpenScreen extends StatelessWidget {
 
   Future<void> _openTextFile(BuildContext context) async {
     final XFile? file = await _getTextFile();
-
     if (file != null) {
-      final String filename = await file.name() ?? file.uri;
+      try {
+        final String filename = await file.name() ?? file.uri;
 
-      switch (mime.lookupMimeType(filename)) {
-        case final String mimeType when mimeType.startsWith('text'):
-          final String fileContents = await file.readAsString();
-          if (context.mounted) {
-            await showDialog<void>(
-              context: context,
-              builder: (BuildContext context) =>
-                  TextDisplay(filename: filename, fileContents: fileContents),
-            );
-          }
-        case _:
-          debugPrint('File Uri: ${file.uri}');
-          debugPrint('Filename: $filename');
-          debugPrint('File Length: ${await file.length()}');
-          debugPrint('File Last Modified: ${await file.lastModified()}');
+        switch (mime.lookupMimeType(filename)) {
+          case final String mimeType when mimeType.startsWith('text'):
+            final String fileContents = await file.readAsString();
+            if (context.mounted) {
+              await showDialog<void>(
+                context: context,
+                builder: (BuildContext context) =>
+                    TextDisplay(filename: filename, fileContents: fileContents),
+              );
+            }
+          case _:
+            debugPrint('File Uri: ${file.uri}');
+            debugPrint('Filename: $filename');
+            debugPrint('File Length: ${await file.length()}');
+            debugPrint('File Last Modified: ${await file.lastModified()}');
+        }
+      } finally {
+        await file.dispose();
       }
-
-      await file.dispose();
     } else {
       debugPrint('No file selected.');
     }
@@ -58,21 +59,23 @@ class FileOpenScreen extends StatelessWidget {
     final XDirectory? directory = await _getDirectory();
 
     if (directory != null) {
-      debugPrint('Directory Uri: ${directory.uri}');
-      debugPrint('Directory exists: ${await directory.exists()}');
+      try {
+        debugPrint('Directory Uri: ${directory.uri}');
+        debugPrint('Directory exists: ${await directory.exists()}');
 
-      debugPrint('List of Entities:');
-      await for (final XEntity entity in directory.list()) {
-        switch (entity) {
-          case final XFile file:
-            final String filename = await file.name() ?? file.uri;
-            debugPrint('\tFile: $filename');
-          case final XDirectory directory:
-            debugPrint('\tDirectory: ${directory.uri}');
+        debugPrint('List of Entities:');
+        await for (final XEntity entity in directory.list()) {
+          switch (entity) {
+            case final XFile file:
+              final String filename = await file.name() ?? file.uri;
+              debugPrint('\tFile: $filename');
+            case final XDirectory directory:
+              debugPrint('\tDirectory: ${directory.uri}');
+          }
         }
+      } finally {
+        await directory.dispose();
       }
-
-      await directory.dispose();
     } else {
       debugPrint('No directory selected.');
     }
