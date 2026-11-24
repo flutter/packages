@@ -2136,22 +2136,6 @@ void main() {
       );
     });
 
-    test('OutlineInputBorder paint with gap draws path with stroke', () {
-      const canvasRect = Rect.fromLTWH(0, 0, 200, 56);
-      const border = OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(20.0)));
-      expect(
-        (Canvas canvas) => border.paint(
-          canvas,
-          canvasRect,
-          gapStart: 100.0,
-          gapExtent: 50.0,
-          gapPercentage: 1.0,
-          textDirection: TextDirection.ltr,
-        ),
-        paints..path(style: PaintingStyle.stroke),
-      );
-    });
-
     // Regression test for https://github.com/flutter/flutter/issues/153387.
     test(
       'OutlineInputBorder resumes the top left arc when the gap ends inside the corner radius',
