@@ -150,7 +150,7 @@ void main() {
         final file = FileSystemXFile('to/myFile.txt');
         final Stream<Uint8List> stream = file.openRead();
         await file.dispose();
-        await expectLater(stream.drain<Uint8List>(), throwsAssertionError);
+        await expectLater(stream.drain<void>(), throwsAssertionError);
       });
 
       test('readAsBytes throws AssertionError', () async {
