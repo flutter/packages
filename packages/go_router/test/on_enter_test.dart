@@ -56,6 +56,47 @@ void main() {
       expect(capturedCurrentState?.uri.path, capturedNextState?.uri.path);
     });
 
+    testWidgets('Should keep a pushed route in the next state when refreshListenable fires', (
+      WidgetTester tester,
+    ) async {
+      // https://github.com/flutter/flutter/issues/179216
+      final refresh = ValueNotifier<bool>(false);
+      addTearDown(refresh.dispose);
+      final currentPaths = <String>[];
+      final nextPaths = <String>[];
+
+      router = GoRouter(
+        initialLocation: '/home',
+        refreshListenable: refresh,
+        onEnter:
+            (BuildContext context, GoRouterState current, GoRouterState next, GoRouter goRouter) {
+              currentPaths.add(current.uri.path);
+              nextPaths.add(next.uri.path);
+              return const Allow();
+            },
+        routes: <RouteBase>[
+          GoRoute(path: '/home', builder: (_, _) => const Text('home')),
+          GoRoute(path: '/login', builder: (_, _) => const Text('login')),
+        ],
+      );
+
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.pumpAndSettle();
+
+      router.push('/login');
+      await tester.pumpAndSettle();
+      expect(find.text('login'), findsOneWidget);
+
+      currentPaths.clear();
+      nextPaths.clear();
+      refresh.value = true;
+      await tester.pumpAndSettle();
+
+      expect(currentPaths, <String>['/login']);
+      expect(nextPaths, <String>['/login']);
+      expect(find.text('login'), findsOneWidget);
+    });
+
     testWidgets('Should block navigation when onEnter returns false', (WidgetTester tester) async {
       final navigationAttempts = <String>[];
       var currentPath = '/';

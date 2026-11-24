@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes the top-level `onEnter` callback receiving the wrong `nextState` when `refreshListenable` fires after a `push`.
+version: patch
