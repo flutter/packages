@@ -1,7 +1,9 @@
 ## 0.7.7
 
-* Bumps cameraxVersion from 1.6.2 to 1.7.0.
-* Raises the minimum supported Android SDK version to 24, as required by CameraX 1.7.0.
+* Bumps `cameraxVersion` from 1.6.2 to 1.7.0.
+* Raises the minimum supported Android SDK version to 24, as required by CameraX 1.7.0. Apps with
+  a lower `minSdkVersion` will fail to merge the manifest; Flutter's own minimum is already 24.
+* CameraX 1.7.0 requires Kotlin 2.1.0 or newer in the app.
 
 ## 0.7.6+2
 
