@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes `MenuAnchor` menus opened at a position with `MenuController.open` being moved relative to the whole anchor instead of the position when they don't fit. For example, a context menu opened near the bottom of the screen now opens just above the pointer.
+version: patch

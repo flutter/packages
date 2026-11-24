@@ -3497,6 +3497,17 @@ class _MenuLayout extends SingleChildLayoutDelegate {
     final ui.Offset finalPosition = _positionChild(childSizeEstimate, overlayRect);
 
     if (menuPosition != null) {
+      // A positioned menu grows out of its position. If the menu sits above the
+      // position when fully open, grow upward by keeping its bottom edge at the
+      // position during the animation.
+      final double positionY = anchorRect.top + menuPosition!.dy;
+      final bool growsUp =
+          childHeightEstimate > 0 &&
+          finalPosition.dy + childHeightEstimate <= positionY + precisionErrorTolerance;
+      if (growsUp) {
+        final double dy = childHeightEstimate - childSize.height;
+        return Offset(finalPosition.dx, finalPosition.dy + dy);
+      }
       return finalPosition;
     }
 
@@ -3515,6 +3526,10 @@ class _MenuLayout extends SingleChildLayoutDelegate {
   ui.Offset _positionChild(ui.Size childSize, ui.Rect overlayRect) {
     double x;
     double y;
+    // The rectangle that the menu is attached to, and the offset from it. If
+    // the menu doesn't fit, it is moved to the other side of this rectangle.
+    final Rect attachmentRect;
+    final Offset attachmentOffset;
     if (menuPosition == null) {
       Offset desiredPosition = alignment.resolve(textDirection).withinRect(anchorRect);
       final Offset directionalOffset;
@@ -3535,17 +3550,25 @@ class _MenuLayout extends SingleChildLayoutDelegate {
         case TextDirection.ltr:
           break;
       }
+      attachmentRect = anchorRect;
+      attachmentOffset = alignmentOffset;
     } else {
       final Offset adjustedPosition = menuPosition! + anchorRect.topLeft;
       x = adjustedPosition.dx;
       y = adjustedPosition.dy;
+      // A menu opened at a position is attached to that position rather than
+      // to the bounds of the anchor, and the alignmentOffset doesn't apply to
+      // it. For example, a context menu that doesn't fit below the pointer
+      // opens above the pointer, rather than above the whole anchor.
+      attachmentRect = adjustedPosition & Size.zero;
+      attachmentOffset = Offset.zero;
     }
 
     final Iterable<Rect> subScreens = DisplayFeatureSubScreen.subScreensInBounds(
       overlayRect,
       avoidBounds,
     );
-    final Rect allowedRect = _closestScreen(subScreens, anchorRect.center);
+    final Rect allowedRect = _closestScreen(subScreens, attachmentRect.center);
     bool offLeftSide(double x) => x < allowedRect.left;
     bool offRightSide(double x) => x + childSize.width > allowedRect.right;
     bool offTop(double y) => y < allowedRect.top;
@@ -3565,7 +3588,7 @@ class _MenuLayout extends SingleChildLayoutDelegate {
         if (parentOrientation != orientation) {
           x = allowedRect.left;
         } else {
-          final double newX = anchorRect.right + alignmentOffset.dx;
+          final double newX = attachmentRect.right + attachmentOffset.dx;
           if (!offRightSide(newX)) {
             x = newX;
           } else {
@@ -3576,7 +3599,7 @@ class _MenuLayout extends SingleChildLayoutDelegate {
         if (parentOrientation != orientation) {
           x = allowedRect.right - childSize.width;
         } else {
-          final double newX = anchorRect.left - childSize.width - alignmentOffset.dx;
+          final double newX = attachmentRect.left - childSize.width - attachmentOffset.dx;
           if (!offLeftSide(newX)) {
             x = newX;
           } else {
@@ -3590,18 +3613,18 @@ class _MenuLayout extends SingleChildLayoutDelegate {
       y = allowedRect.top;
     } else {
       if (offTop(y)) {
-        final double newY = anchorRect.bottom;
+        final double newY = attachmentRect.bottom;
         if (!offBottom(newY)) {
           y = newY;
         } else {
           y = allowedRect.top;
         }
       } else if (offBottom(y)) {
-        final double newY = anchorRect.top - childSize.height;
+        final double newY = attachmentRect.top - childSize.height;
         if (!offTop(newY)) {
           // Only move the menu up if its parent is horizontal (MenuAnchor/MenuBar).
           if (parentOrientation == Axis.horizontal) {
-            y = newY - alignmentOffset.dy;
+            y = newY - attachmentOffset.dy;
           } else {
             y = newY;
           }
