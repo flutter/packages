@@ -3618,7 +3618,7 @@ void main() {
   testWidgets('OutlinedButton isSelected updates a provided statesController', (
     WidgetTester tester,
   ) async {
-    final controller = MaterialStatesController();
+    final controller = WidgetStatesController();
     addTearDown(controller.dispose);
 
     Widget buildButton(bool? isSelected) {
