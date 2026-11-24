@@ -43,7 +43,7 @@ public final class VideoPlayerEventCallbacksTest {
 
   @Before
   public void setUp() {
-    eventCallbacks = VideoPlayerEventCallbacks.withSink(mockEventSink);
+    eventCallbacks = VideoPlayerEventCallbacks.Companion.withSink(mockEventSink);
   }
 
   @Test
@@ -120,7 +120,7 @@ public final class VideoPlayerEventCallbacksTest {
     BinaryMessenger mockMessenger = mock(BinaryMessenger.class);
     VideoEventsEventChannel mockEventChannel = mock(VideoEventsEventChannel.class);
     VideoPlayerEventCallbacks callbacks =
-        VideoPlayerEventCallbacks.bindTo(
+        VideoPlayerEventCallbacks.Companion.bindTo(
             mockMessenger, "1", (messenger, handler, identifier) -> mockEventChannel);
 
     callbacks.onDisposed();

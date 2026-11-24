@@ -1,0 +1,3 @@
+changelog: |
+  - Updates the README examples to use generated code excerpts.
+version: patch
