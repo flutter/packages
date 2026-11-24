@@ -57,23 +57,42 @@ extension type NativeInteropExampleApiSetup._(objc.ObjCObject object$)
     return NativeInteropExampleApiSetup.fromPointer($ret, retain: false, release: true);
   }
 
-  /// getInstanceWithName:
-  static NativeInteropExampleApiSetup? getInstanceWithName(objc.NSString name) {
-    final _$$ref = name.ref;
-    final $ret = _objc_msgSend_1sotr3r(
+  /// new
+  static NativeInteropExampleApiSetup new$() {
+    final $ret = _objc_msgSend_151sglz(_class_NativeInteropExampleApiSetup, _sel_new);
+    return NativeInteropExampleApiSetup.fromPointer($ret, retain: false, release: true);
+  }
+
+  /// Returns the engine key <code>instance</code> was registered with, or <code>Int64.min</code> if unknown.
+  static int pigeonEngineKeyOf(NativeInteropExampleApiSetup instance) {
+    final _$$ref = instance.ref;
+    return _objc_msgSend_1oj5o8z(
       _class_NativeInteropExampleApiSetup,
-      _sel_getInstanceWithName_,
+      _sel_pigeonEngineKeyOf_,
+      _$$ref.pointer,
+    );
+  }
+
+  /// Returns the instance generated Dart code should use for <code>name</code> (or the default
+  /// instance).
+  /// Prefers the most recent registration whose engine key is <code>engineId</code>, then
+  /// <code>affinityKey</code>, then the most recent registration. <code>Int64.min</code> means unknown.
+  static NativeInteropExampleApiSetup? pigeonResolveInstanceWithEngineId(
+    int engineId, {
+    required int affinityKey,
+    required objc.NSString name,
+  }) {
+    final _$$ref = name.ref;
+    final $ret = _objc_msgSend_6vqy4b(
+      _class_NativeInteropExampleApiSetup,
+      _sel_pigeonResolveInstanceWithEngineId_affinityKey_name_,
+      engineId,
+      affinityKey,
       _$$ref.pointer,
     );
     return $ret.address == 0
         ? null
         : NativeInteropExampleApiSetup.fromPointer($ret, retain: true, release: true);
-  }
-
-  /// new
-  static NativeInteropExampleApiSetup new$() {
-    final $ret = _objc_msgSend_151sglz(_class_NativeInteropExampleApiSetup, _sel_new);
-    return NativeInteropExampleApiSetup.fromPointer($ret, retain: false, release: true);
   }
 
   /// Returns a new instance of NativeInteropExampleApiSetup constructed with the default `new` method.
@@ -580,10 +599,10 @@ final _objc_msgSend_1hz7y9r = objc.msgSendPointer
       >
     >()
     .asFunction<int Function(ffi.Pointer<objc.ObjCObjectImpl>, ffi.Pointer<objc.ObjCSelector>)>();
-final _objc_msgSend_1sotr3r = objc.msgSendPointer
+final _objc_msgSend_1oj5o8z = objc.msgSendPointer
     .cast<
       ffi.NativeFunction<
-        ffi.Pointer<objc.ObjCObjectImpl> Function(
+        ffi.Int64 Function(
           ffi.Pointer<objc.ObjCObjectImpl>,
           ffi.Pointer<objc.ObjCSelector>,
           ffi.Pointer<objc.ObjCObjectImpl>,
@@ -591,7 +610,7 @@ final _objc_msgSend_1sotr3r = objc.msgSendPointer
       >
     >()
     .asFunction<
-      ffi.Pointer<objc.ObjCObjectImpl> Function(
+      int Function(
         ffi.Pointer<objc.ObjCObjectImpl>,
         ffi.Pointer<objc.ObjCSelector>,
         ffi.Pointer<objc.ObjCObjectImpl>,
@@ -609,6 +628,27 @@ final _objc_msgSend_4sp4xj = objc.msgSendPointer
     >()
     .asFunction<
       void Function(ffi.Pointer<objc.ObjCObjectImpl>, ffi.Pointer<objc.ObjCSelector>, int)
+    >();
+final _objc_msgSend_6vqy4b = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Pointer<objc.ObjCObjectImpl> Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Int64,
+          ffi.Int64,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+        )
+      >
+    >()
+    .asFunction<
+      ffi.Pointer<objc.ObjCObjectImpl> Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+        int,
+        int,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+      )
     >();
 final _objc_msgSend_9slupp = objc.msgSendPointer
     .cast<
@@ -660,7 +700,6 @@ late final _sel_copyWithZone_ = objc.registerName("copyWithZone:");
 late final _sel_data = objc.registerName("data");
 late final _sel_details = objc.registerName("details");
 late final _sel_doSomethingWithWrappedError_ = objc.registerName("doSomethingWithWrappedError:");
-late final _sel_getInstanceWithName_ = objc.registerName("getInstanceWithName:");
 late final _sel_hash = objc.registerName("hash");
 late final _sel_init = objc.registerName("init");
 late final _sel_initWithCode_message_details_ = objc.registerName("initWithCode:message:details:");
@@ -671,6 +710,10 @@ late final _sel_isKindOfClass_ = objc.registerName("isKindOfClass:");
 late final _sel_message = objc.registerName("message");
 late final _sel_new = objc.registerName("new");
 late final _sel_number = objc.registerName("number");
+late final _sel_pigeonEngineKeyOf_ = objc.registerName("pigeonEngineKeyOf:");
+late final _sel_pigeonResolveInstanceWithEngineId_affinityKey_name_ = objc.registerName(
+  "pigeonResolveInstanceWithEngineId:affinityKey:name:",
+);
 late final _sel_setCode_ = objc.registerName("setCode:");
 late final _sel_setDetails_ = objc.registerName("setDetails:");
 late final _sel_setMessage_ = objc.registerName("setMessage:");

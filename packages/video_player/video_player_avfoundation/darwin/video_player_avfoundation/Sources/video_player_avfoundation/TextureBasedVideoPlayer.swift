@@ -155,7 +155,7 @@ class TextureBasedVideoPlayer: VideoPlayer, FlutterTexture {
       buffer = pixelBufferSource.copyPixelBuffer(
         forItemTime: outputItemTime,
         itemTimeForDisplay: nil)
-      if let buffer = buffer {
+      if let buffer {
         latestPixelBuffer = buffer
       }
     }
