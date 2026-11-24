@@ -130,37 +130,34 @@ void main() {
     expect(find.text('Archive'), findsNothing);
   });
 
-  testWidgets(
-    'Drawer dismiss barrier has label',
-    (WidgetTester tester) async {
-      final semantics = SemanticsTester(tester);
-      await tester.pumpWidget(const MaterialApp(home: Scaffold(drawer: Drawer())));
-
-      final ScaffoldState state = tester.firstState(find.byType(Scaffold));
-      state.openDrawer();
-
-      await tester.pump();
-      await tester.pump(const Duration(seconds: 1));
-
-      expect(
-        semantics,
-        includesNodeWith(
-          label: const DefaultMaterialLocalizations().modalBarrierDismissLabel,
-          actions: <SemanticsAction>[SemanticsAction.tap],
-        ),
-      );
-
-      semantics.dispose();
-    },
-    variant: const TargetPlatformVariant(<TargetPlatform>{
-      TargetPlatform.iOS,
-      TargetPlatform.macOS,
-    }),
-  );
-
-  testWidgets('Drawer dismiss barrier has no label', (WidgetTester tester) async {
+  testWidgets('Drawer dismiss barrier has label', (WidgetTester tester) async {
     final semantics = SemanticsTester(tester);
     await tester.pumpWidget(const MaterialApp(home: Scaffold(drawer: Drawer())));
+
+    final ScaffoldState state = tester.firstState(find.byType(Scaffold));
+    state.openDrawer();
+
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+
+    expect(
+      semantics,
+      includesNodeWith(
+        label: const DefaultMaterialLocalizations().modalBarrierDismissLabel,
+        actions: <SemanticsAction>[SemanticsAction.tap],
+      ),
+    );
+
+    semantics.dispose();
+  }, variant: TargetPlatformVariant.all());
+
+  testWidgets('Drawer dismiss barrier has no label when drawerBarrierDismissible is false', (
+    WidgetTester tester,
+  ) async {
+    final semantics = SemanticsTester(tester);
+    await tester.pumpWidget(
+      const MaterialApp(home: Scaffold(drawerBarrierDismissible: false, drawer: Drawer())),
+    );
 
     final ScaffoldState state = tester.firstState(find.byType(Scaffold));
     state.openDrawer();
@@ -179,7 +176,7 @@ void main() {
     );
 
     semantics.dispose();
-  }, variant: TargetPlatformVariant.only(TargetPlatform.android));
+  }, variant: TargetPlatformVariant.all());
 
   testWidgets('Drawer tap test', (WidgetTester tester) async {
     final scaffoldKey = GlobalKey<ScaffoldState>();
@@ -1308,69 +1305,70 @@ void main() {
     expect(find.byType(Drawer), findsExactly(0));
   });
 
-  testWidgets(
-    'Dismissible Drawer includes button in semantic tree',
-    (WidgetTester tester) async {
-      final semantics = SemanticsTester(tester);
-      final scaffoldKey = GlobalKey<ScaffoldState>();
+  testWidgets('Dismissible Drawer includes button in semantic tree', (WidgetTester tester) async {
+    final semantics = SemanticsTester(tester);
+    final scaffoldKey = GlobalKey<ScaffoldState>();
 
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Builder(
-            builder: (BuildContext context) {
-              return Scaffold(key: scaffoldKey, drawer: const Drawer());
-            },
-          ),
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Builder(
+          builder: (BuildContext context) {
+            return Scaffold(key: scaffoldKey, drawer: const Drawer());
+          },
         ),
-      );
+      ),
+    );
 
-      // Open the drawer.
-      scaffoldKey.currentState!.openDrawer();
-      await tester.pump(const Duration(milliseconds: 100));
+    // Open the drawer.
+    scaffoldKey.currentState!.openDrawer();
+    await tester.pump(const Duration(milliseconds: 100));
 
-      expect(semantics, includesNodeWith(actions: <SemanticsAction>[SemanticsAction.tap]));
-      expect(semantics, includesNodeWith(label: 'Dismiss'));
+    expect(semantics, includesNodeWith(actions: <SemanticsAction>[SemanticsAction.tap]));
+    expect(
+      semantics,
+      includesNodeWith(label: const DefaultMaterialLocalizations().modalBarrierDismissLabel),
+    );
 
-      semantics.dispose();
-    },
-    variant: const TargetPlatformVariant(<TargetPlatform>{
-      TargetPlatform.iOS,
-      TargetPlatform.macOS,
-    }),
-  );
+    semantics.dispose();
+  }, variant: TargetPlatformVariant.all());
 
-  testWidgets(
-    'Dismissible Drawer barrier is hidden from semantics on Android (back button is used to dismiss)',
-    (WidgetTester tester) async {
-      final semantics = SemanticsTester(tester);
-      final scaffoldKey = GlobalKey<ScaffoldState>();
+  testWidgets('Non-dismissible Drawer barrier is hidden from semantics', (
+    WidgetTester tester,
+  ) async {
+    final semantics = SemanticsTester(tester);
+    final scaffoldKey = GlobalKey<ScaffoldState>();
 
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Builder(
-            builder: (BuildContext context) {
-              return Scaffold(key: scaffoldKey, drawer: const Drawer(), body: Container());
-            },
-          ),
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Builder(
+          builder: (BuildContext context) {
+            return Scaffold(
+              key: scaffoldKey,
+              drawerBarrierDismissible: false,
+              drawer: const Drawer(),
+            );
+          },
         ),
-      );
+      ),
+    );
 
-      // Open the drawer.
-      scaffoldKey.currentState!.openDrawer();
-      await tester.pump(const Duration(milliseconds: 100));
+    // Open the drawer.
+    scaffoldKey.currentState!.openDrawer();
+    await tester.pump(const Duration(milliseconds: 100));
 
-      expect(
-        semantics,
-        isNot(
-          includesNodeWith(actions: <SemanticsAction>[SemanticsAction.tap, SemanticsAction.focus]),
-        ),
-      );
-      expect(semantics, isNot(includesNodeWith(label: 'Dismiss')));
+    expect(
+      semantics,
+      isNot(
+        includesNodeWith(actions: <SemanticsAction>[SemanticsAction.tap, SemanticsAction.focus]),
+      ),
+    );
+    expect(
+      semantics,
+      isNot(includesNodeWith(label: const DefaultMaterialLocalizations().modalBarrierDismissLabel)),
+    );
 
-      semantics.dispose();
-    },
-    variant: TargetPlatformVariant.only(TargetPlatform.android),
-  );
+    semantics.dispose();
+  }, variant: TargetPlatformVariant.all());
 
   testWidgets('Drawer can be configured as not dismissible', (WidgetTester tester) async {
     await tester.pumpWidget(
@@ -1533,28 +1531,13 @@ void main() {
 
       // Test barrier semantics.
       final semantics = SemanticsTester(tester);
-      final expectBarrierExcluded = defaultTargetPlatform == TargetPlatform.android;
-
-      if (expectBarrierExcluded) {
-        expect(
-          semantics,
-          isNot(
-            includesNodeWith(
-              label: localizations.modalBarrierDismissLabel,
-              actions: <SemanticsAction>[SemanticsAction.tap, SemanticsAction.focus],
-            ),
-          ),
-        );
-      } else {
-        expect(
-          semantics,
-          includesNodeWith(
-            label: localizations.modalBarrierDismissLabel,
-            actions: <SemanticsAction>[SemanticsAction.tap],
-          ),
-        );
-      }
-
+      expect(
+        semantics,
+        includesNodeWith(
+          label: localizations.modalBarrierDismissLabel,
+          actions: <SemanticsAction>[SemanticsAction.tap],
+        ),
+      );
       semantics.dispose();
     }
 
