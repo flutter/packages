@@ -20,6 +20,9 @@ class ImagePickerFromGalleryUITests: XCTestCase {
     // Reset the authorization status for Photos to test permission popups.
     app.resetAuthorizationStatus(for: .photos)
     app.launch()
+
+    seedPhotoLibraryIfNeeded(timeout: elementWaitingTime)
+
     interceptedPermissionInterruption = false
     addUIInterruptionMonitor(withDescription: "Permission popups") {
       [weak self] interruptingElement in
@@ -38,7 +41,6 @@ class ImagePickerFromGalleryUITests: XCTestCase {
       self.interceptedPermissionInterruption = true
       return true
     }
-    seedPhotoLibraryIfNeeded(timeout: elementWaitingTime)
   }
 
   override func tearDown() {
@@ -73,7 +75,7 @@ class ImagePickerFromGalleryUITests: XCTestCase {
       }
 
       let springboardApp = XCUIApplication(bundleIdentifier: "com.apple.springboard")
-      let allowButton = springboardApp.buttons[allowAccessPermissionText].firstMatch
+      let allowButton = springboardApp.alerts.buttons[allowAccessPermissionText].firstMatch
       if !allowButton.waitForExistence(timeout: elementWaitingTime) {
         os_log(.error, "%{public}@", app.debugDescription)
         XCTFail(
@@ -214,11 +216,12 @@ extension XCTestCase {
     }
     let expectation = XCTestExpectation()
     PHPhotoLibrary.requestAuthorization(for: .addOnly) { _ in
+      defer { expectation.fulfill() }
       do {
         try PHPhotoLibrary.shared().performChangesAndWait {
           PHAssetChangeRequest.creationRequestForAssetFromImage(atFileURL: jpgImageTall)
-          expectation.fulfill()
         }
+        UserDefaults.standard.set(true, forKey: photoAddedKey)
       } catch {
         os_log(.error, "%{public}@", error.localizedDescription)
       }
@@ -233,10 +236,7 @@ extension XCTestCase {
       allowButton.tap()
     }
 
-    // Wait until photo is done being added to update UserDefaults.
-    let result = XCTWaiter.wait(for: [expectation], timeout: timeout)
-    XCTAssertEqual(
-      result, .completed, "Photo added expectation not completed within \(timeout) seconds.")
-    UserDefaults.standard.set(true, forKey: photoAddedKey)
+    // Wait until photo is done being added so UserDefaults is ensured to be updated.
+    wait(for: [expectation], timeout: timeout)
   }
 }

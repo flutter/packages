@@ -19,6 +19,9 @@ class ImagePickerFromLimitedGalleryUITests: XCTestCase {
     // Reset the authorization status for Photos to test permission popups.
     app.resetAuthorizationStatus(for: .photos)
     app.launch()
+
+    seedPhotoLibraryIfNeeded(timeout: elementWaitingTime)
+
     addUIInterruptionMonitor(withDescription: "Permission popups") {
       [weak self] interruptingElement in
       guard let self else {
@@ -35,7 +38,6 @@ class ImagePickerFromLimitedGalleryUITests: XCTestCase {
       self.interceptedPermissionInterruption = true
       return true
     }
-    seedPhotoLibraryIfNeeded(timeout: elementWaitingTime)
   }
 
   override func tearDown() {
