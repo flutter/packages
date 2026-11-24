@@ -35,11 +35,43 @@ class ImagePickerFromLimitedGalleryUITests: XCTestCase {
       self.interceptedPermissionInterruption = true
       return true
     }
+    seedPhotoLibraryIfNeeded()
   }
 
   override func tearDown() {
     app.terminate()
     super.tearDown()
+  }
+
+  func seedPhotoLibraryIfNeeded() {
+    // Seed the photo library with at least one image for tests to operate on.
+    let bundle = Bundle(for: Self.self)
+    guard let jpgImageTall = bundle.url(forResource: "jpgImageTall", withExtension: "jpg") else {
+      return
+    }
+    let photoAddedKey = "PhotoAdded"
+    let photoAdded = UserDefaults.standard.bool(forKey: photoAddedKey)
+    if photoAdded {
+      // A photo has already been added, don't add another.
+      return
+    }
+
+    PHPhotoLibrary.requestAuthorization(for: .addOnly) { _ in
+      do {
+        try PHPhotoLibrary.shared().performChangesAndWait {
+          PHAssetChangeRequest.creationRequestForAssetFromImage(atFileURL: jpgImageTall)
+        }
+        UserDefaults.standard.set(true, forKey: photoAddedKey)
+      } catch {
+        os_log(.error, "%{public}@", error.localizedDescription)
+      }
+    }
+
+    let springboardApp = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+    let allowButton = springboardApp.buttons["Allow"].firstMatch
+    if allowButton.waitForExistence(timeout: elementWaitingTime) {
+      allowButton.tap()
+    }
   }
 
   func handlePermissionInterruption() {

@@ -662,6 +662,21 @@ final class InAppPurchase2PluginTests: XCTestCase {
 
     try session.expireSubscription(productIdentifier: "subscription_silver")
 
+    // storekitd answers subscription status queries from a cache that it fills in the
+    // background after a purchase, and `expireSubscription` does not refresh that cache.
+    // Without a sync, the expiry is only visible if it happens to land before that fetch.
+    let syncExpectation = self.expectation(description: "Sync should succeed")
+    plugin.sync { result in
+      switch result {
+      case .success:
+        syncExpectation.fulfill()
+      case .failure(let error):
+        XCTFail("Sync should NOT fail. Failed with \(error)")
+        syncExpectation.fulfill()
+      }
+    }
+    await fulfillment(of: [syncExpectation], timeout: purchaseTimeout)
+
     let expectation = self.expectation(description: "Eligibility check should return true")
 
     plugin.isWinBackOfferEligible(
@@ -810,6 +825,49 @@ final class InAppPurchase2PluginTests: XCTestCase {
     }
 
     waitForExpectations(timeout: 1.0)
+  }
+
+  // TEMPORARY DIAGNOSTIC - REMOVE BEFORE COMMIT.
+  @available(iOS 18.0, macOS 15.0, *)
+  func testZZZTemporaryForcedLosingOrder() async throws {
+    let purchaseExpectation = self.expectation(description: "Purchase should succeed")
+    plugin.purchase(id: "subscription_silver", options: nil) { _ in
+      purchaseExpectation.fulfill()
+    }
+    await fulfillment(of: [purchaseExpectation], timeout: purchaseTimeout)
+
+    // Let storekitd's post-purchase sync cache the active status before the expiry.
+    try await Task.sleep(nanoseconds: 300_000_000)
+    try session.expireSubscription(productIdentifier: "subscription_silver")
+
+    func isEligible() async -> Bool? {
+      await withCheckedContinuation { continuation in
+        plugin.isWinBackOfferEligible(
+          productId: "subscription_silver",
+          offerId: "subscription_silver_winback_offer"
+        ) { result in
+          continuation.resume(returning: try? result.get())
+        }
+      }
+    }
+
+    let beforeSync = await isEligible()
+
+    let syncExpectation = self.expectation(description: "Sync should succeed")
+    plugin.sync { result in
+      if case .failure(let error) = result {
+        XCTFail("Sync should NOT fail. Failed with \(error)")
+      }
+      syncExpectation.fulfill()
+    }
+    await fulfillment(of: [syncExpectation], timeout: purchaseTimeout)
+
+    let afterSync = await isEligible()
+    print(
+      "DIAG forced-order beforeSync=\(String(describing: beforeSync)) afterSync=\(String(describing: afterSync))"
+    )
+    XCTAssertEqual(beforeSync, false, "Without a sync the cached pre-expiry status is served")
+    XCTAssertEqual(afterSync, true, "After a sync the expiry is visible")
   }
 
 }
