@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/painting.dart';
+import 'package:flutter/widgets.dart';
 
 import '../common/span.dart';
 
@@ -102,15 +102,47 @@ class TreeRowBorder extends SpanBorder {
   final BorderSide right;
 
   @override
+  bool get isInteractive =>
+      super.isInteractive ||
+      left is WidgetStateProperty ||
+      left.color is WidgetStateProperty ||
+      right is WidgetStateProperty ||
+      right.color is WidgetStateProperty;
+
+  @override
   void paint(SpanDecorationPaintDetails details, BorderRadius? borderRadius) {
     final AxisDirection? crossAxisDirection = details.crossAxisDirection;
     final bool isLeadingTop =
         crossAxisDirection == null || crossAxisDirection == AxisDirection.down;
+    final BorderSide resolvedTop = resolveBorderSide(
+      top,
+      details.states,
+      previousStates: details.previousStates,
+      stateAnimationProgress: details.stateAnimationProgress,
+    );
+    final BorderSide resolvedBottom = resolveBorderSide(
+      bottom,
+      details.states,
+      previousStates: details.previousStates,
+      stateAnimationProgress: details.stateAnimationProgress,
+    );
+    final BorderSide resolvedLeft = resolveBorderSide(
+      left,
+      details.states,
+      previousStates: details.previousStates,
+      stateAnimationProgress: details.stateAnimationProgress,
+    );
+    final BorderSide resolvedRight = resolveBorderSide(
+      right,
+      details.states,
+      previousStates: details.previousStates,
+      stateAnimationProgress: details.stateAnimationProgress,
+    );
     final border = Border(
-      top: isLeadingTop ? top : bottom,
-      bottom: isLeadingTop ? bottom : top,
-      left: left,
-      right: right,
+      top: isLeadingTop ? resolvedTop : resolvedBottom,
+      bottom: isLeadingTop ? resolvedBottom : resolvedTop,
+      left: resolvedLeft,
+      right: resolvedRight,
     );
     border.paint(details.canvas, details.rect, borderRadius: borderRadius);
   }

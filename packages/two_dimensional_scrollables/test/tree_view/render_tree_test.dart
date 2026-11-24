@@ -928,6 +928,78 @@ void main() {
         expect(scrollController.offset, 0.0);
       });
     });
+
+    testWidgets('TreeRowDecoration updates on hover, press, and tap ripple', (
+      WidgetTester tester,
+    ) async {
+      final rowColor = WidgetStateColor.resolveWith((Set<WidgetState> states) {
+        if (states.contains(WidgetState.pressed)) {
+          return const Color(0xFF00FF00);
+        }
+        if (states.contains(WidgetState.hovered)) {
+          return const Color(0xFF0000FF);
+        }
+        return const Color(0xFFFF0000);
+      });
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: TreeView<String>(
+              tree: <TreeViewNode<String>>[TreeViewNode<String>('Root')],
+              treeRowBuilder: (_) => TreeRow(
+                extent: const FixedTreeRowExtent(80.0),
+                backgroundDecoration: TreeRowDecoration(
+                  color: rowColor,
+                  splashColor: const Color(0x80FFFFFF),
+                  splashAnimationStyle: const AnimationStyle(
+                    duration: Duration(milliseconds: 200),
+                    curve: Curves.linear,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(
+        find.byType(Padding).first,
+        paints..rect(
+          rect: const Rect.fromLTRB(16.0, 16.0, 784.0, 96.0),
+          color: const Color(0xFFFF0000),
+        ),
+      );
+
+      final TestGesture mouseGesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
+      await mouseGesture.addPointer(location: const Offset(116.0, 56.0));
+      await tester.pump();
+
+      expect(
+        find.byType(Padding).first,
+        paints..rect(
+          rect: const Rect.fromLTRB(16.0, 16.0, 784.0, 96.0),
+          color: const Color(0xFF0000FF),
+        ),
+      );
+
+      await mouseGesture.down(const Offset(116.0, 56.0));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      expect(
+        find.byType(Padding).first,
+        paints
+          ..rect(rect: const Rect.fromLTRB(16.0, 16.0, 784.0, 96.0), color: const Color(0xFF00FF00))
+          ..circle(x: 116.0, y: 56.0),
+      );
+
+      await mouseGesture.up();
+      await tester.pumpAndSettle();
+      await mouseGesture.removePointer();
+    });
   });
 }
 

@@ -4,6 +4,7 @@
 
 import 'package:flutter/material.dart';
 
+import 'interactive_showcase.dart';
 import 'table_view/table_explorer.dart';
 import 'tree_view/tree_explorer.dart';
 
@@ -28,6 +29,7 @@ class ExampleApp extends StatelessWidget {
       routes: <String, WidgetBuilder>{
         '/table': (BuildContext context) => const TableExplorer(),
         '/tree': (BuildContext context) => const TreeExplorer(),
+        '/showcase': (BuildContext context) => const InteractiveShowcasePage(),
       },
     );
   }
@@ -61,6 +63,13 @@ class ExampleHome extends StatelessWidget {
                 Navigator.of(context).pushNamed('/tree');
               },
               child: const Text('TreeView Explorer'),
+            ),
+            const Spacer(),
+            FilledButton(
+              onPressed: () {
+                Navigator.of(context).pushNamed('/showcase');
+              },
+              child: const Text('Interactive Showcase'),
             ),
             const Spacer(flex: 3),
           ],
