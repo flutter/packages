@@ -139,14 +139,7 @@ class Divider extends StatelessWidget {
   ///
   /// <callout-box>
   ///
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
-  ///
-  /// ```dart
-  /// const Divider(
-  ///   color: Colors.deepOrange,
-  /// )
-  /// ```
+  /// {@example /example/lib/divider/divider.color.snippet.0.dart#body indent=strip}
   ///
   /// </callout-box>
   final Color? color;
@@ -166,24 +159,11 @@ class Divider extends StatelessWidget {
   ///
   /// <callout-box>
   ///
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
-  ///
   /// This example uses this method to create a box that has a divider above and
   /// below it. This is sometimes useful with lists, for instance, to separate a
   /// scrollable section from the rest of the interface.
   ///
-  /// ```dart
-  /// DecoratedBox(
-  ///   decoration: BoxDecoration(
-  ///     border: Border(
-  ///       top: Divider.createBorderSide(context),
-  ///       bottom: Divider.createBorderSide(context),
-  ///     ),
-  ///   ),
-  ///   // child: ...
-  /// )
-  /// ```
+  /// {@example /example/lib/divider/divider.create_border_side.snippet.0.dart#body indent=strip}
   ///
   /// </callout-box>
   static BorderSide createBorderSide(BuildContext? context, {Color? color, double? width}) {
@@ -328,14 +308,7 @@ class VerticalDivider extends StatelessWidget {
   ///
   /// <callout-box>
   ///
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
-  ///
-  /// ```dart
-  /// const Divider(
-  ///   color: Colors.deepOrange,
-  /// )
-  /// ```
+  /// {@example /example/lib/divider/vertical_divider.color.snippet.0.dart#body indent=strip}
   ///
   /// </callout-box>
   final Color? color;
