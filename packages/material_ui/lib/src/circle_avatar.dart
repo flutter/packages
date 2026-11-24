@@ -31,17 +31,10 @@ import 'theme.dart';
 ///
 /// <callout-box>
 ///
-// TODO(framework): Add unit tests to this code snippet.
-// https://github.com/flutter/flutter/issues/188530
-///
 /// If the avatar is to have an image, the image should be specified in the
 /// [backgroundImage] property:
 ///
-/// ```dart
-/// CircleAvatar(
-///   backgroundImage: NetworkImage(userAvatarUrl),
-/// )
-/// ```
+/// {@example /example/lib/circle_avatar/circle_avatar.snippet.0.dart#body indent=strip}
 ///
 /// </callout-box>
 ///
@@ -49,18 +42,10 @@ import 'theme.dart';
 ///
 /// <callout-box>
 ///
-// TODO(framework): Add unit tests to this code snippet.
-// https://github.com/flutter/flutter/issues/188530
-///
 /// If the avatar is to just have the user's initials, they are typically
 /// provided using a [Text] widget as the [child] and a [backgroundColor]:
 ///
-/// ```dart
-/// CircleAvatar(
-///   backgroundColor: Colors.brown.shade800,
-///   child: const Text('AH'),
-/// )
-/// ```
+/// {@example /example/lib/circle_avatar/circle_avatar.snippet.1.dart#body indent=strip}
 ///
 /// </callout-box>
 ///

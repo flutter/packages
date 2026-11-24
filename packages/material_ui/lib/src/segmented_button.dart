@@ -262,9 +262,6 @@ class SegmentedButton<T> extends StatefulWidget {
   ///
   /// <callout-box>
   ///
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
-  ///
   /// For example, to override the default text and icon colors for a
   /// [SegmentedButton], as well as its overlay color, with all of the
   /// standard opacity adjustments for the pressed, focused, and
@@ -272,30 +269,7 @@ class SegmentedButton<T> extends StatefulWidget {
   ///
   /// {@example /example/lib/segmented_button/segmented_button.1.dart#body}
   ///
-  /// ```dart
-  /// SegmentedButton<int>(
-  ///   style: SegmentedButton.styleFrom(
-  ///     foregroundColor: Colors.black,
-  ///     selectedForegroundColor: Colors.white,
-  ///     backgroundColor: Colors.amber,
-  ///     selectedBackgroundColor: Colors.red,
-  ///   ),
-  ///   segments: const <ButtonSegment<int>>[
-  ///     ButtonSegment<int>(
-  ///       value: 0,
-  ///       label: Text('0'),
-  ///       icon: Icon(Icons.calendar_view_day),
-  ///     ),
-  ///     ButtonSegment<int>(
-  ///       value: 1,
-  ///       label: Text('1'),
-  ///       icon: Icon(Icons.calendar_view_week),
-  ///     ),
-  ///   ],
-  ///   selected: const <int>{0},
-  ///   onSelectionChanged: (Set<int> selection) {},
-  /// ),
-  /// ```
+  /// {@example /example/lib/segmented_button/segmented_button.style_from.snippet.0.dart#body indent=strip}
   ///
   /// </callout-box>
   static ButtonStyle styleFrom({
