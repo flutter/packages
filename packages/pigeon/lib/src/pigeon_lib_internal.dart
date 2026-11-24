@@ -798,6 +798,24 @@ class SwiftGeneratorAdapter implements GeneratorAdapter {
   }
 }
 
+/// Returns true when [out] is a non-empty file path (not `'stdout'`).
+bool hasFileOutput(String? out) => out != null && out.isNotEmpty && out != 'stdout';
+
+/// Resolves the output directory for generated FFIgen and JNIgen config scripts.
+String resolveInteropConfigDir(String? languageConfigDir, InternalPigeonOptions options) {
+  final String? targetDir = (languageConfigDir != null && languageConfigDir.isNotEmpty)
+      ? languageConfigDir
+      : options.configDirectory;
+  final String basePath = options.basePath ?? '';
+  if (basePath.isNotEmpty &&
+      targetDir != null &&
+      targetDir.isNotEmpty &&
+      !isWithinOrEquals(basePath, targetDir)) {
+    return path.join(basePath, targetDir);
+  }
+  return (targetDir != null && targetDir.isNotEmpty) ? targetDir : basePath;
+}
+
 /// A [GeneratorAdapter] that generates FFIgen config source code.
 class FfigenConfigGeneratorAdapter implements GeneratorAdapter {
   /// Constructor for [FfigenConfigGeneratorAdapter].
@@ -810,7 +828,7 @@ class FfigenConfigGeneratorAdapter implements GeneratorAdapter {
   void generate(StringSink sink, InternalPigeonOptions options, Root root, FileType fileType) {
     final InternalSwiftOptions? swiftOptions = options.swiftOptions;
     final InternalDartOptions? dartOptions = options.dartOptions;
-    if (swiftOptions == null || dartOptions == null) {
+    if (swiftOptions == null || dartOptions == null || !hasFileOutput(dartOptions.dartOut)) {
       return;
     }
     final generator = FfigenConfigGenerator();
@@ -829,12 +847,15 @@ class FfigenConfigGeneratorAdapter implements GeneratorAdapter {
 
   @override
   IOSink? shouldGenerate(InternalPigeonOptions options, FileType _) {
-    if (!(options.swiftOptions?.useFfi ?? false)) {
+    if (!(options.swiftOptions?.useFfi ?? false) ||
+        !hasFileOutput(options.swiftOptions?.allSwiftOuts.firstOrNull) ||
+        !hasFileOutput(options.dartOptions?.dartOut)) {
       return null;
     }
-    final String targetDir =
-        options.swiftOptions?.configDirectory ?? options.configDirectory ?? options.basePath ?? '';
-    return _openSink(getFfigenConfigPath('', options.input), basePath: targetDir);
+    return _openSink(
+      getFfigenConfigPath('', options.input),
+      basePath: resolveInteropConfigDir(options.swiftOptions?.configDirectory, options),
+    );
   }
 
   @override
@@ -1003,7 +1024,7 @@ class JnigenConfigGeneratorAdapter implements GeneratorAdapter {
 
   @override
   void generate(StringSink sink, InternalPigeonOptions options, Root root, FileType fileType) {
-    if (options.kotlinOptions == null || options.dartOptions == null) {
+    if (options.kotlinOptions == null || !hasFileOutput(options.dartOptions?.dartOut)) {
       return;
     }
     final generator = JnigenConfigGenerator();
@@ -1020,12 +1041,15 @@ class JnigenConfigGeneratorAdapter implements GeneratorAdapter {
 
   @override
   IOSink? shouldGenerate(InternalPigeonOptions options, FileType _) {
-    if (options.kotlinOptions?.kotlinOut == null || !(options.kotlinOptions?.useJni ?? false)) {
+    if (!hasFileOutput(options.kotlinOptions?.kotlinOut) ||
+        !(options.kotlinOptions?.useJni ?? false) ||
+        !hasFileOutput(options.dartOptions?.dartOut)) {
       return null;
     }
-    final String targetDir =
-        options.kotlinOptions?.configDirectory ?? options.configDirectory ?? options.basePath ?? '';
-    return _openSink(getJnigenConfigPath('', options.input), basePath: targetDir);
+    return _openSink(
+      getJnigenConfigPath('', options.input),
+      basePath: resolveInteropConfigDir(options.kotlinOptions?.configDirectory, options),
+    );
   }
 
   @override
