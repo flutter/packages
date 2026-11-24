@@ -41,7 +41,8 @@ class PreviewProxyApi extends PigeonApiPreview {
   }
 
   // Range<?> is defined as Range<Integer> in pigeon.
-  // Camera2Interop V1 is deprecated in CameraX 1.7.0.
+  // TODO(shalevmoyal-fs): Migrate to Camera2Interop V2; V1 is deprecated in CameraX 1.7.0.
+  // https://github.com/flutter/flutter/issues/197317
   @SuppressWarnings({"unchecked", "deprecation"})
   @OptIn(markerClass = ExperimentalCamera2Interop.class)
   @NonNull

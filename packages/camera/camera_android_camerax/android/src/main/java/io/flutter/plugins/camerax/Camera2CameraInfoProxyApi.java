@@ -19,7 +19,8 @@ import androidx.camera.core.CameraInfo;
  * native class or an instance of that class.
  */
 @OptIn(markerClass = ExperimentalCamera2Interop.class)
-// Camera2Interop V1 is deprecated in CameraX 1.7.0.
+// TODO(shalevmoyal-fs): Migrate to Camera2Interop V2; V1 is deprecated in CameraX 1.7.0.
+// https://github.com/flutter/flutter/issues/197317
 @SuppressWarnings("deprecation")
 class Camera2CameraInfoProxyApi extends PigeonApiCamera2CameraInfo {
   Camera2CameraInfoProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {

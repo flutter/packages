@@ -23,7 +23,8 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 @RunWith(RobolectricTestRunner.class)
-// Camera2Interop V1 is deprecated in CameraX 1.7.0.
+// TODO(shalevmoyal-fs): Migrate to Camera2Interop V2; V1 is deprecated in CameraX 1.7.0.
+// https://github.com/flutter/flutter/issues/197317
 @SuppressWarnings("deprecation")
 public class Camera2CameraInfoTest {
   @Test

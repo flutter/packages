@@ -15,7 +15,8 @@ import androidx.camera.camera2.interop.CaptureRequestOptions;
 import java.util.Map;
 import org.junit.Test;
 
-// Camera2Interop V1 is deprecated in CameraX 1.7.0.
+// TODO(shalevmoyal-fs): Migrate to Camera2Interop V2; V1 is deprecated in CameraX 1.7.0.
+// https://github.com/flutter/flutter/issues/197317
 @SuppressWarnings("deprecation")
 public class CaptureRequestOptionsTest {
   @SuppressWarnings("unchecked")

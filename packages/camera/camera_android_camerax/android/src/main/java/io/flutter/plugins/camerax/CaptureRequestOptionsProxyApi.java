@@ -16,7 +16,8 @@ import java.util.Map;
  * native object instances that are attached to a Dart instance or handle method calls on the
  * associated native class or an instance of that class.
  */
-// Camera2Interop V1 is deprecated in CameraX 1.7.0.
+// TODO(shalevmoyal-fs): Migrate to Camera2Interop V2; V1 is deprecated in CameraX 1.7.0.
+// https://github.com/flutter/flutter/issues/197317
 @SuppressWarnings("deprecation")
 class CaptureRequestOptionsProxyApi extends PigeonApiCaptureRequestOptions {
   CaptureRequestOptionsProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
