@@ -37,10 +37,22 @@ const String clientIdMetaSelector = 'meta[name=$clientIdMetaName]';
 /// The attribute name that stores the Client ID in the meta-tag that defines a Client ID in HTML.
 const String clientIdAttributeName = 'content';
 
+/// The `name` of the meta-tag that defers loading the GIS SDK until
+/// [GoogleSignInPlugin.init] is called.
+///
+/// Only the presence of the tag is checked; its content is ignored.
+const String deferSdkMetaName = 'google-signin-defer-sdk';
+
+/// The selector used to find the meta-tag that defers loading the GIS SDK.
+const String deferSdkMetaSelector = 'meta[name=$deferSdkMetaName]';
+
 /// Implementation of the google_sign_in plugin for Web.
 class GoogleSignInPlugin extends GoogleSignInPlatform {
   /// Constructs the plugin immediately and begins initializing it in the
   /// background.
+  ///
+  /// If the page has a [deferSdkMetaName] meta-tag, the GIS SDK is not loaded
+  /// until [init] is called.
   ///
   /// For tests, the plugin can skip its loading process with [debugOverrideLoader],
   /// and the implementation of the underlying GIS SDK client through [debugOverrideGisSdkClient].
@@ -58,13 +70,14 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
 
     if (debugOverrideLoader) {
       _jsSdkLoadedFuture = Future<bool>.value(true);
-    } else {
+    } else if (web.document.querySelector(deferSdkMetaSelector) == null) {
       _jsSdkLoadedFuture = loader.loadWebSdk();
     }
   }
 
-  // A future that completes when the JS loader is done.
-  late Future<void> _jsSdkLoadedFuture;
+  // A future that completes when the JS loader is done, or null if loading was
+  // deferred and [init] hasn't been called yet.
+  Future<void>? _jsSdkLoadedFuture;
 
   /// A completer used to track whether [init] has finished.
   final Completer<void> _initCalled = Completer<void>();
@@ -120,7 +133,7 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
 
     assert(params.serverClientId == null, 'serverClientId is not supported on Web.');
 
-    await _jsSdkLoadedFuture;
+    await (_jsSdkLoadedFuture ??= loader.loadWebSdk());
 
     _gisSdkClient =
         _debugOverrideGisSdkClient ??

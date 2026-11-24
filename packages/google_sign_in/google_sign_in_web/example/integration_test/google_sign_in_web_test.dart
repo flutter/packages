@@ -3,6 +3,8 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:js_interop';
+import 'dart:js_interop_unsafe';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_sign_in_platform_interface/google_sign_in_platform_interface.dart';
@@ -46,6 +48,68 @@ void main() {
 
       // cleanup
       meta.remove();
+    });
+  });
+
+  group('SDK loading', () {
+    const options = InitParameters(clientId: 'some-non-null-client-id');
+    late int sdkLoads;
+
+    // Captures the SDK script instead of adding it to the page, so that these
+    // tests don't depend on the network.
+    setUp(() {
+      sdkLoads = 0;
+      final web.HTMLHeadElement head = web.document.head!;
+      head['appendChild'] = (web.Node node) {
+        if (node.isA<web.HTMLScriptElement>() &&
+            (node as web.HTMLScriptElement).src.contains('accounts.google.com/gsi/client')) {
+          sdkLoads++;
+          return node;
+        }
+        return head.insertBefore(node, null);
+      }.toJS;
+    });
+
+    tearDown(() {
+      web.document.head!.delete('appendChild'.toJS);
+    });
+
+    void finishSdkLoad() => web.window.callMethod('onGoogleLibraryLoad'.toJS);
+
+    testWidgets('starts in the constructor by default', (_) async {
+      final plugin = GoogleSignInPlugin(debugOverrideGisSdkClient: MockGisSdkClient());
+
+      expect(sdkLoads, 1);
+
+      final Future<void> init = plugin.init(options);
+      finishSdkLoad();
+      await init;
+
+      expect(sdkLoads, 1);
+    });
+
+    // Regression test for https://github.com/flutter/flutter/issues/191115.
+    testWidgets('waits for init when the defer meta tag is set', (_) async {
+      final meta = web.document.createElement('meta') as web.HTMLMetaElement
+        ..name = deferSdkMetaName;
+      web.document.head!.append(meta);
+      addTearDown(() => meta.remove());
+
+      final plugin = GoogleSignInPlugin(debugOverrideGisSdkClient: MockGisSdkClient());
+
+      expect(sdkLoads, 0);
+
+      var initialized = false;
+      final Future<void> init = plugin.init(options).then((_) => initialized = true);
+      await Future<void>.delayed(Duration.zero);
+
+      expect(sdkLoads, 1);
+      expect(initialized, isFalse);
+
+      finishSdkLoad();
+      await init;
+
+      expect(sdkLoads, 1);
     });
   });
 
