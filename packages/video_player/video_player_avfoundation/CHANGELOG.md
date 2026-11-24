@@ -1,3 +1,7 @@
+## 2.12.5
+
+* Fixes a spurious paused event when playback starts immediately after initialization.
+
 ## 2.12.4
 
 * Converts internal event channel implementation to Swift.

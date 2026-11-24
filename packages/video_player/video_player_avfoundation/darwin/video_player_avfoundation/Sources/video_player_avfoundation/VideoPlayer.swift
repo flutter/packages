@@ -297,10 +297,16 @@ class VideoPlayer: NSObject {
       keyValueObservations.append(
         player.observe(
           \.rate,
-          options: [.new]
-        ) { [weak self] object, _ in
+          options: [.old, .new]
+        ) { [weak self] _, change in
+          guard let rate = change.newValue else { return }
+          let playing = rate > 0
+          // A pause while already paused can still notify rate observers.
+          if let previousRate = change.oldValue, (previousRate > 0) == playing {
+            return
+          }
           Task { @MainActor in
-            self?.eventListener?.videoPlayerDidSetPlaying(object.rate > 0)
+            self?.eventListener?.videoPlayerDidSetPlaying(playing)
           }
         }
       )
