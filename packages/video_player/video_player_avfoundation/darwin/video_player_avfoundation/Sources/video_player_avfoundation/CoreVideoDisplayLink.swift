@@ -12,11 +12,11 @@
   @available(macOS, deprecated: 14.0, message: "Use CoreAnimationDisplayLink instead")
   class CoreVideoDisplayLink: DisplayLink {
     // The underlying display link implementation.
-    private var displayLink: CVDisplayLink?
+    private let displayLink: CVDisplayLink?
     // A dispatch source to move display link callbacks to the main thread.
-    private var displayLinkSource: DispatchSourceUserDataAdd
+    private let displayLinkSource: DispatchSourceUserDataAdd
     // The view provider, to get screen information.
-    private var viewProvider: ViewProvider
+    private let viewProvider: ViewProvider
 
     /// Initializes a display link that calls the given callback when fired.
     ///
@@ -34,8 +34,10 @@
       displayLinkSource = source
       displayLinkSource.resume()
       let sourcePointer = UnsafeMutableRawPointer(Unmanaged.passUnretained(source).toOpaque())
-      if CVDisplayLinkCreateWithActiveCGDisplays(&displayLink) == kCVReturnSuccess,
-        let link = displayLink
+      // `let` variables can't be used as out parameters, so pass through a local.
+      var outDisplayLink: CVDisplayLink?
+      if CVDisplayLinkCreateWithActiveCGDisplays(&outDisplayLink) == kCVReturnSuccess,
+        let link = outDisplayLink
       {
         CVDisplayLinkSetOutputCallback(
           link,
@@ -49,6 +51,7 @@
           },
           sourcePointer)
       }
+      displayLink = outDisplayLink
     }
 
     deinit {

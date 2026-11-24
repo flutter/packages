@@ -15,14 +15,13 @@ import QuartzCore
 @available(iOS 4.0, macOS 14.0, *)
 class CoreAnimationDisplayLink: DisplayLink {
   private let displayLink: CADisplayLink?
-  private let target: CoreAnimationDisplayLinkTarget
 
   /// Initializes a display link that calls the given callback when fired.
   ///
   /// The display link starts paused, so must be started, by setting 'running' to true, before the
   /// callback will fire.
   init(viewProvider: ViewProvider, callback: @escaping (() -> Void)) {
-    target = CoreAnimationDisplayLinkTarget(callback: callback)
+    let target = CoreAnimationDisplayLinkTarget(callback: callback)
     let selector = #selector(CoreAnimationDisplayLinkTarget.onDisplayLink(sender:))
     #if os(iOS)
       displayLink = CADisplayLink(target: target, selector: selector)

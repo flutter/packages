@@ -36,14 +36,10 @@ class FrameUpdater {
   /// engine's raster thread, so it is internally locked.
   private(set) var frameDuration: CFTimeInterval {
     get {
-      frameDurationLock.lock()
-      defer { frameDurationLock.unlock() }
-      return frameDurationInternal
+      return frameDurationLock.withLock { frameDurationInternal }
     }
     set {
-      frameDurationLock.lock()
-      defer { frameDurationLock.unlock() }
-      frameDurationInternal = newValue
+      frameDurationLock.withLock { frameDurationInternal = newValue }
     }
   }
 
