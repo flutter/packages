@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes `TabBarView` going out of sync with `TabBar` when tabs are added dynamically in-place.
+version: patch
