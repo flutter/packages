@@ -1,7 +1,7 @@
 ## 0.4.1
 
 * Adds support to call `dispose` from base `XEntity` class.
-* Updates example excerpts to use try/catch and `dispose`.
+* Updates example excerpts to use try/finally and `dispose`.
 * Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
 
 ## 0.4.0
