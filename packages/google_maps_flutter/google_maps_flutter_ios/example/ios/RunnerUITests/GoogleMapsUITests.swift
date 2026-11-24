@@ -19,19 +19,11 @@ class GoogleMapsUITests: XCTestCase {
     app.launch()
 
     addUIInterruptionMonitor(withDescription: "Permission popups") { interruptingElement in
-      if #available(iOS 14, *) {
-        let locationPermission = interruptingElement.buttons["Allow While Using App"]
-        if !locationPermission.waitForExistence(timeout: kWaitTime) {
-          XCTFail("Failed due to not able to find locationPermission button")
-        }
-        locationPermission.tap()
-      } else {
-        let allow = interruptingElement.buttons["Allow"]
-        if !allow.waitForExistence(timeout: kWaitTime) {
-          XCTFail("Failed due to not able to find Allow button")
-        }
-        allow.tap()
+      let locationPermission = interruptingElement.buttons["Allow While Using App"]
+      if !locationPermission.waitForExistence(timeout: kWaitTime) {
+        XCTFail("Failed due to not able to find locationPermission button")
       }
+      locationPermission.tap()
       return true
     }
   }

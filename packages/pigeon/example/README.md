@@ -27,6 +27,8 @@ needed for your project.
     kotlinOptions: KotlinOptions(),
     javaOut: 'android/app/src/main/java/io/flutter/plugins/Messages.java',
     javaOptions: JavaOptions(),
+    // Note that swiftOut can also be a list to output to separate iOS and macOS
+    // locations if required.
     swiftOut: 'ios/Runner/Messages.g.swift',
     swiftOptions: SwiftOptions(),
     objcHeaderOut: 'macos/Runner/messages.g.h',

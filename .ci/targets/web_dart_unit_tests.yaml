@@ -7,5 +7,6 @@ tasks:
     args: [
       "dart-test",
       "--platform=chrome",
+      "--package-tags=script/configs/web_dart_unit_test_tags.yaml",
       "--exclude=script/configs/dart_unit_tests_exceptions.yaml"
     ]

@@ -5,6 +5,11 @@
 #import "./include/in_app_purchase_storekit_objc/FIAPRequestHandler.h"
 #import <StoreKit/StoreKit.h>
 
+// StoreKit 1 is intentionally used as the fallback on iOS < 15 and macOS < 12,
+// where StoreKit 2 is unavailable. Suppress its deprecation warnings.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+
 #pragma mark - Main Handler
 
 @interface FIAPRequestHandler () <SKProductsRequestDelegate>
@@ -53,3 +58,5 @@
 }
 
 @end
+
+#pragma clang diagnostic pop

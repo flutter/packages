@@ -7,19 +7,20 @@ import 'package:file/file.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
 import 'package:flutter_plugin_tools/src/federation_safety_check_command.dart';
 import 'package:git/git.dart';
+import 'package:platform/platform.dart';
 import 'package:test/test.dart';
 
 import 'mocks.dart';
 import 'util.dart';
 
 void main() {
-  late MockPlatform mockPlatform;
+  late NativePlatform mockPlatform;
   late Directory packagesDir;
   late CommandRunner<void> runner;
   late RecordingProcessRunner gitProcessRunner;
 
   setUp(() {
-    mockPlatform = MockPlatform();
+    mockPlatform = createMockPlatform();
     final GitDir gitDir;
     final RecordingProcessRunner processRunner;
     (:packagesDir, :processRunner, :gitProcessRunner, :gitDir) = configureBaseCommandMocks(

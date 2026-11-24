@@ -46,7 +46,7 @@ final class StoreKit2TranslatorTests: XCTestCase {
     productMessage = SK2ProductMessage(
       id: "subscription_silver",
       displayName: "Subscription Silver",
-      description: "A lower level subscription.",
+      localizedDescription: "A lower level subscription.",
       price: 4.99,
       displayPrice: "$4.99",
       type: SK2ProductTypeMessage.autoRenewable,
@@ -61,6 +61,7 @@ final class StoreKit2TranslatorTests: XCTestCase {
       priceLocale: SK2PriceLocaleMessage(currencyCode: "USD", currencySymbol: "$"))
 
     self.session = try! SKTestSession(configurationFileNamed: "Configuration")
+    self.session.resetToDefaultState()
     self.session.clearTransactions()
     let receiptManagerStub = FIAPReceiptManagerStub()
     plugin = InAppPurchasePluginStub(receiptManager: receiptManagerStub) { request in

@@ -1,3 +1,37 @@
+## 2.5.5
+
+* Updates Pigeon to 30.0.1 to support multi-engine registration and deregistration.
+* Updates `jni` to `^1.1.1` and removes manual web conditional FFI export and R8 consumer rules workarounds.
+
+## 2.5.4
+
+* Fixes eager SharedPreferences fetch in `LegacySharedPreferencesPlugin` executing synchronous disk I/O on Android main thread during startup by deferring the fetch until first use.
+
+## 2.5.3
+
+* Fixes web compilation of apps that import `package:shared_preferences_android`, for example to use `SharedPreferencesAsyncAndroidOptions`.
+
+## 2.5.2
+
+* Fixes a `NoSuchMethodError` at startup in Android release builds by adding consumer R8 rules that keep the Kotlin classes looked up through JNI.
+
+## 2.5.1
+
+* Updates `androidx.datastore:datastore` to 1.2.1.
+
+## 2.5.0
+
+* Updates internal implementation to use Pigeon JNI.
+
+## 2.4.29
+
+* Updates Robolectric to 4.17 and adds the JVM arguments it requires for unit tests.
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+
+## 2.4.28
+
+* Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.
+
 ## 2.4.27
 
 * Converts legacy backend to Kotlin.

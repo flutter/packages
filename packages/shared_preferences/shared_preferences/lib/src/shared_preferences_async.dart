@@ -18,8 +18,7 @@ import 'shared_preferences_devtools_extension_data.dart';
 @immutable
 class SharedPreferencesAsync {
   /// Creates a new instance with the given [options].
-  SharedPreferencesAsync({SharedPreferencesOptions options = const SharedPreferencesOptions()})
-    : _options = options {
+  SharedPreferencesAsync({this._options = const SharedPreferencesOptions()}) {
     if (SharedPreferencesAsyncPlatform.instance == null) {
       throw StateError('The SharedPreferencesAsyncPlatform instance must be set.');
     } else {
@@ -170,10 +169,9 @@ class SharedPreferencesWithCache {
   /// Creates a new instance with the given options.
   SharedPreferencesWithCache._create({
     required SharedPreferencesOptions sharedPreferencesOptions,
-    required SharedPreferencesWithCacheOptions cacheOptions,
+    required this._cacheOptions,
     Map<String, Object?>? cache,
-  }) : _cacheOptions = cacheOptions,
-       _platformMethods = SharedPreferencesAsync(options: sharedPreferencesOptions),
+  }) : _platformMethods = SharedPreferencesAsync(options: sharedPreferencesOptions),
        _cache = cache ?? <String, Object?>{};
 
   /// Creates a new instance with the given options and reloads the cache from

@@ -508,6 +508,7 @@ class DataTable extends StatelessWidget {
     this.checkboxHorizontalMargin,
     this.border,
     this.clipBehavior = Clip.none,
+    this.sortIconBuilder,
   }) : assert(columns.isNotEmpty),
        assert(
          sortColumnIndex == null || (sortColumnIndex >= 0 && sortColumnIndex < columns.length),
@@ -561,6 +562,27 @@ class DataTable extends StatelessWidget {
   ///
   /// Ascending order is represented by an upwards-facing arrow.
   final bool sortAscending;
+
+  /// {@template flutter.material.dataTable.sortIconBuilder}
+  /// A builder function that returns a widget to use as the sorting indicator
+  /// icon for the table's header cells.
+  ///
+  /// When providing a custom sort icon via this builder, the default sort arrow's
+  /// automatic rotation and opacity transitions are omitted. To achieve animated
+  /// transitions for custom icons, wrap the returned widget in explicit
+  /// transition widgets such as [AnimatedRotation] or [AnimatedOpacity].
+  ///
+  /// Custom icons should target a size of approximately 18.0 logical pixels or
+  /// be wrapped in a fixed-size container to maintain visually balanced header
+  /// labels. For columns where [DataColumn.numeric] is true, [DataTable] adds
+  /// a leading 20.0 logical pixel spacer to mirror the space occupied by the
+  /// sort icon and its padding, ensuring centered column labels remain properly
+  /// aligned.
+  ///
+  /// If null, [DataTableThemeData.sortIconBuilder] is used. If that is also null,
+  /// the default Material design sort arrow animation is used.
+  /// {@endtemplate}
+  final DataTableSortIconBuilder? sortIconBuilder;
 
   /// Invoked when the user selects or unselects every row, using the
   /// checkbox in the heading row.
@@ -845,6 +867,14 @@ class DataTable extends StatelessWidget {
 
   static const Duration _sortArrowAnimationDuration = Duration(milliseconds: 150);
 
+  // The duration of the hover and focus highlight animations of a data row.
+  //
+  // Every cell of a row has its own TableRowInkWell, and each of them
+  // highlights the entire row. Animating those highlights would cross-fade two
+  // overlapping highlights whenever the pointer or the focus moves between
+  // cells of the same row, which momentarily dims the row and makes it flicker.
+  static const Duration _rowHighlightDuration = Duration.zero;
+
   Widget _buildCheckbox({
     required BuildContext context,
     required bool? checked,
@@ -882,6 +912,7 @@ class DataTable extends StatelessWidget {
         onTap: onRowTap,
         overlayColor: overlayColor,
         mouseCursor: rowMouseCursor,
+        hoverDuration: _rowHighlightDuration,
         child: contents,
       );
     }
@@ -903,6 +934,9 @@ class DataTable extends StatelessWidget {
   }) {
     final ThemeData themeData = Theme.of(context);
     final DataTableThemeData dataTableTheme = DataTableTheme.of(context);
+    final DataTableSortIconBuilder? effectiveSortIconBuilder =
+        sortIconBuilder ?? dataTableTheme.sortIconBuilder;
+
     label = Semantics(
       role: SemanticsRole.columnHeader,
       child: Row(
@@ -913,11 +947,14 @@ class DataTable extends StatelessWidget {
             const SizedBox(width: _SortArrowState._arrowIconSize + _sortArrowPadding),
           label,
           if (onSort != null) ...<Widget>[
-            _SortArrow(
-              visible: sorted,
-              up: sorted ? ascending : null,
-              duration: _sortArrowAnimationDuration,
-            ),
+            if (effectiveSortIconBuilder != null)
+              effectiveSortIconBuilder(context, sorted, ascending)
+            else
+              _SortArrow(
+                visible: sorted,
+                up: sorted ? ascending : null,
+                duration: _sortArrowAnimationDuration,
+              ),
             const SizedBox(width: _sortArrowPadding),
           ],
         ],
@@ -1037,6 +1074,7 @@ class DataTable extends StatelessWidget {
         onHover: onRowHover,
         overlayColor: overlayColor,
         mouseCursor: mouseCursor,
+        hoverDuration: _rowHighlightDuration,
         child: label,
       );
     }
@@ -1286,7 +1324,8 @@ class DataTable extends StatelessWidget {
 ///
 ///  * [DataTable], which makes use of [TableRowInkWell] when
 ///    [DataRow.onSelectChanged] is defined and [DataCell.onTap]
-///    is not.
+///    is not, using a [hoverDuration] of [Duration.zero] so that moving hover
+///    or focus between cells of the same row does not flicker.
 class TableRowInkWell extends InkResponse {
   /// Creates an ink well for a table row.
   const TableRowInkWell({
@@ -1301,6 +1340,7 @@ class TableRowInkWell extends InkResponse {
     super.onSecondaryTapDown,
     super.overlayColor,
     super.mouseCursor,
+    super.hoverDuration,
   }) : super(containedInkWell: true, highlightShape: BoxShape.rectangle);
 
   @override

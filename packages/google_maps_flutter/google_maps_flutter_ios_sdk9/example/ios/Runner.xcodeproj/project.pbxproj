@@ -77,7 +77,6 @@
 		350A657853294B478D70CD62 /* PolylineControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PolylineControllerTests.swift; sourceTree = "<group>"; };
 		0F65543ABD25496A92F8F91F /* TileOverlayControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TileOverlayControllerTests.swift; sourceTree = "<group>"; };
 		54CD823EECFC4BDD8755DD92 /* TileProviderControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TileProviderControllerTests.swift; sourceTree = "<group>"; };
-		65E43D60708A4C5DA931E12E /* RunnerTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RunnerTests-Bridging-Header.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
 		3351C2253008164500700458 /* GoogleMapsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleMapsUITests.swift; sourceTree = "<group>"; };
 		3390B4582F33AFA60094DEB9 /* PartiallyMockedMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PartiallyMockedMapView.swift; sourceTree = "<group>"; };
@@ -208,7 +207,6 @@
 				350A657853294B478D70CD62 /* PolylineControllerTests.swift */,
 				0F65543ABD25496A92F8F91F /* TileOverlayControllerTests.swift */,
 				54CD823EECFC4BDD8755DD92 /* TileProviderControllerTests.swift */,
-				65E43D60708A4C5DA931E12E /* RunnerTests-Bridging-Header.h */,
 			);
 			path = RunnerTests;
 			sourceTree = "<group>";
@@ -649,7 +647,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = dev.flutter.plugins.RunnerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Runner.app/Runner";
-				SWIFT_OBJC_BRIDGING_HEADER = "RunnerTests/RunnerTests-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
@@ -670,7 +667,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = dev.flutter.plugins.RunnerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Runner.app/Runner";
-				SWIFT_OBJC_BRIDGING_HEADER = "RunnerTests/RunnerTests-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;

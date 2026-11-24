@@ -6,6 +6,7 @@ import 'package:in_app_purchase_platform_interface/in_app_purchase_platform_inte
 
 import '../../in_app_purchase_storekit.dart';
 import '../../store_kit_wrappers.dart';
+import '../store_kit_2_wrappers/sk2_transaction_wrapper.dart';
 import '../store_kit_wrappers/enum_converters.dart';
 
 /// The class represents the information of a purchase made with the Apple
@@ -92,11 +93,25 @@ class SK2PurchaseDetails extends PurchaseDetails {
     required super.transactionDate,
     required super.status,
     this.appAccountToken,
+    this.expirationDate,
+    this.sk2Transaction,
   });
 
   /// A UUID that associates the transaction with a user on your own service.
   /// This is the value set when making the purchase via appAccountToken option.
   final String? appAccountToken;
+
+  /// The date the subscription expires or renews, in milliseconds since epoch.
+  ///
+  /// Null if the purchased product is not a subscription.
+  final String? expirationDate;
+
+  /// Points back to the [SK2Transaction] which was used to generate this
+  /// [SK2PurchaseDetails] object.
+  ///
+  /// Null if the purchase has not produced a transaction (for example, when
+  /// [status] is [PurchaseStatus.pending] or [PurchaseStatus.canceled]).
+  final SK2Transaction? sk2Transaction;
 
   @override
   bool get pendingCompletePurchase => status == PurchaseStatus.purchased;

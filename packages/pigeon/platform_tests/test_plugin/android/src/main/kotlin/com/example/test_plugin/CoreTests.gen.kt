@@ -216,8 +216,10 @@ enum class AnEnum(val raw: Int) {
   FOUR_HUNDRED_TWENTY_TWO(4);
 
   companion object {
+    private val pigeonValues = values()
+
     fun ofRaw(raw: Int): AnEnum? {
-      return values().firstOrNull { it.raw == raw }
+      return pigeonValues.getOrNull(raw)
     }
   }
 }
@@ -226,8 +228,10 @@ enum class AnotherEnum(val raw: Int) {
   JUST_IN_CASE(0);
 
   companion object {
+    private val pigeonValues = values()
+
     fun ofRaw(raw: Int): AnotherEnum? {
-      return values().firstOrNull { it.raw == raw }
+      return pigeonValues.getOrNull(raw)
     }
   }
 }
@@ -1078,33 +1082,31 @@ private open class CoreTestsPigeonCodec : StandardMessageCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
     return when (type) {
       129.toByte() -> {
-        return (readValue(buffer) as Long?)?.let { AnEnum.ofRaw(it.toInt()) }
+        (readValue(buffer) as Long?)?.let { AnEnum.ofRaw(it.toInt()) }
       }
       130.toByte() -> {
-        return (readValue(buffer) as Long?)?.let { AnotherEnum.ofRaw(it.toInt()) }
+        (readValue(buffer) as Long?)?.let { AnotherEnum.ofRaw(it.toInt()) }
       }
       131.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { UnusedClass.fromList(it) }
+        (readValue(buffer) as? List<Any?>)?.let { UnusedClass.fromList(it) }
       }
       132.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { AllTypes.fromList(it) }
+        (readValue(buffer) as? List<Any?>)?.let { AllTypes.fromList(it) }
       }
       133.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { AllNullableTypes.fromList(it) }
+        (readValue(buffer) as? List<Any?>)?.let { AllNullableTypes.fromList(it) }
       }
       134.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          AllNullableTypesWithoutRecursion.fromList(it)
-        }
+        (readValue(buffer) as? List<Any?>)?.let { AllNullableTypesWithoutRecursion.fromList(it) }
       }
       135.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { AnEmptyClass.fromList(it) }
+        (readValue(buffer) as? List<Any?>)?.let { AnEmptyClass.fromList(it) }
       }
       136.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { AllClassesWrapper.fromList(it) }
+        (readValue(buffer) as? List<Any?>)?.let { AllClassesWrapper.fromList(it) }
       }
       137.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { TestMessage.fromList(it) }
+        (readValue(buffer) as? List<Any?>)?.let { TestMessage.fromList(it) }
       }
       else -> super.readValueOfType(type, buffer)
     }
@@ -1558,6 +1560,8 @@ interface HostIntegrationCoreApi {
   suspend fun callFlutterCallbackThrowError(): Any?
 
   suspend fun callFlutterCallbackThrowErrorFromVoid()
+
+  suspend fun callFlutterIsAsyncFlutterApiOnRoot(): Boolean
 
   companion object {
     /** The codec used by HostIntegrationCoreApi. */
@@ -5388,6 +5392,28 @@ interface HostIntegrationCoreApi {
           channel.setMessageHandler(null)
         }
       }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterIsAsyncFlutterApiOnRoot$separatedMessageChannelSuffix",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { _, reply ->
+            CoroutineScope(Dispatchers.Main).launch {
+              val wrapped: List<Any?> =
+                  try {
+                    listOf(api.callFlutterIsAsyncFlutterApiOnRoot())
+                  } catch (exception: Throwable) {
+                    CoreTestsPigeonUtils.wrapError(exception)
+                  }
+              reply.reply(wrapped)
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
     }
   }
 }
@@ -6824,6 +6850,33 @@ class FlutterIntegrationCoreApi(
                     "null-error", "Flutter api returned null value for non-null return value.", ""))
           } else {
             val output = it[0] as String
+            continuation.resume(output)
+          }
+        } else {
+          continuation.resumeWithException(CoreTestsPigeonUtils.createConnectionError(channelName))
+        }
+      }
+    }
+  }
+  /** Returns true if the async FlutterApi method is run on the root isolate. */
+  suspend fun isAsyncFlutterApiOnRoot(): Boolean {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    return suspendCancellableCoroutine { continuation ->
+      val channelName =
+          "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.isAsyncFlutterApiOnRoot$separatedMessageChannelSuffix"
+      val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+      channel.send(null) {
+        if (it is List<*>) {
+          if (it.size > 1) {
+            continuation.resumeWithException(
+                FlutterError(it[0] as String, it[1] as String, it[2] as String?))
+          } else if (it[0] == null) {
+            continuation.resumeWithException(
+                FlutterError(
+                    "null-error", "Flutter api returned null value for non-null return value.", ""))
+          } else {
+            val output = it[0] as Boolean
             continuation.resume(output)
           }
         } else {

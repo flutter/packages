@@ -6,6 +6,7 @@ import 'dart:math' as math;
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vector_graphics_compiler/src/svg/parsers.dart';
+import 'package:vector_graphics_compiler/src/util.dart';
 import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 import 'package:vector_math/vector_math_64.dart';
 
@@ -26,6 +27,30 @@ void main() {
     expect(AffineMatrix.identity.scaled(2.0, 1.0).scaleStrokeWidth(2), 3);
     expect(AffineMatrix.identity.scaled(2.0, 1.0).rotated(1.2).scaleStrokeWidth(1), 1.5);
     expect(AffineMatrix.identity.scaled(2.0, 1.0).rotated(1.2).scaleStrokeWidth(2), 3);
+
+    expect(AffineMatrix.identity.scaled(2.0).scaleStrokeWidth(null), 2);
+    expect(AffineMatrix.identity.scaled(0.25).scaleStrokeWidth(null), 0.25);
+    expect(AffineMatrix.identity.scaled(2.0, 1.0).scaleStrokeWidth(null), 1.5);
+    expect(AffineMatrix.identity.rotated(1.2).scaleStrokeWidth(null), null);
+    expect(AffineMatrix.identity.rotated(radians(10)).scaleStrokeWidth(2), 2);
+
+    final double skewScale = (1 + math.sqrt(1 + math.pow(math.tan(radians(30)), 2))) / 2;
+    expect(
+      AffineMatrix.identity.xSkewed(radians(30)).scaleStrokeWidth(null),
+      closeTo(skewScale, precisionErrorTolerance),
+    );
+    expect(
+      AffineMatrix.identity.xSkewed(radians(30)).scaleStrokeWidth(2),
+      closeTo(2 * skewScale, precisionErrorTolerance),
+    );
+    expect(
+      AffineMatrix.identity.ySkewed(radians(30)).scaleStrokeWidth(null),
+      closeTo(skewScale, precisionErrorTolerance),
+    );
+    expect(
+      AffineMatrix.identity.ySkewed(radians(30)).scaleStrokeWidth(2),
+      closeTo(2 * skewScale, precisionErrorTolerance),
+    );
   });
 
   test('Parse rotate and scale', () {
@@ -54,9 +79,9 @@ void main() {
     const matrix1 = AffineMatrix(2, 2, 3, 4, 5, 6);
 
     final matrix4_1 = Matrix4.fromFloat64List(matrix1.toMatrix4());
-    expect(matrix1.scaled(2, 3).toMatrix4(), matrix4_1.scaled(2.0, 3.0).storage);
+    expect(matrix1.scaled(2, 3).toMatrix4(), matrix4_1.scaledByDouble(2, 3, 2, 1).storage);
 
-    expect(matrix1.scaled(2).toMatrix4(), matrix4_1.scaled(2.0, 2.0).storage);
+    expect(matrix1.scaled(2).toMatrix4(), matrix4_1.scaledByDouble(2, 2, 2, 1).storage);
   });
 
   test('Scale and multiply', () {
@@ -67,7 +92,7 @@ void main() {
     final matrix4_2 = Matrix4.fromFloat64List(matrix2.toMatrix4());
     expect(
       matrix1.scaled(2, 3).multiplied(matrix2).toMatrix4(),
-      matrix4_1.scaled(2.0, 3.0).multiplied(matrix4_2).storage,
+      matrix4_1.scaledByDouble(2, 3, 2, 1).multiplied(matrix4_2).storage,
     );
   });
 
@@ -82,7 +107,7 @@ void main() {
     const matrix1 = AffineMatrix(2, 2, 3, 4, 5, 6);
 
     final matrix4_1 = Matrix4.fromFloat64List(matrix1.toMatrix4());
-    matrix4_1.translate(2.0, 3.0);
+    matrix4_1.translateByDouble(2, 3, 0, 1);
     expect(matrix1.translated(2, 3).toMatrix4(), matrix4_1.storage);
   });
 
@@ -94,7 +119,7 @@ void main() {
   });
 
   test('transformRect', () {
-    const epsillon = .0000001;
+    const epsilon = .0000001;
     const rectangle20x20 = Rect.fromLTRB(10, 20, 30, 40);
 
     // Identity
@@ -110,10 +135,10 @@ void main() {
     final Rect rotatedRect = AffineMatrix.identity
         .rotated(math.pi / 2.0)
         .transformRect(rectangle20x20);
-    expect(rotatedRect.left + 40, lessThan(epsillon));
-    expect(rotatedRect.top - 10, lessThan(epsillon));
-    expect(rotatedRect.right + 20, lessThan(epsillon));
-    expect(rotatedRect.bottom - 30, lessThan(epsillon));
+    expect(rotatedRect.left + 40, lessThan(epsilon));
+    expect(rotatedRect.top - 10, lessThan(epsilon));
+    expect(rotatedRect.right + 20, lessThan(epsilon));
+    expect(rotatedRect.bottom - 30, lessThan(epsilon));
 
     // Translation
     final Rect shiftedRect = AffineMatrix.identity.translated(10, 20).transformRect(rectangle20x20);

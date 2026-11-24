@@ -4,6 +4,8 @@
 
 import 'localizations_utils.dart';
 
+/// Returns the header of the generated Material localizations file: the
+/// license, the regeneration instructions, and the imports.
 String generateMaterialHeader(String regenerateInstructions) {
   return '''
 // Copyright 2013 The Flutter Authors
@@ -13,9 +15,6 @@ String generateMaterialHeader(String regenerateInstructions) {
 // This file has been automatically generated. Please do not edit it manually.
 // To regenerate the file, use:
 // $regenerateInstructions
-
-/// @docImport 'package:intl/intl.dart';
-library;
 
 import 'dart:collection';
 
@@ -59,8 +58,11 @@ String generateMaterialConstructor(LocaleInfo locale) {
   });''';
 }
 
+/// The name of the generated function that returns the translations for a
+/// given locale.
 const String materialFactoryName = 'getMaterialTranslation';
 
+/// The declaration of the generated [materialFactoryName] function.
 const String materialFactoryDeclaration = '''
 GlobalMaterialLocalizations? getMaterialTranslation(
   Locale locale,
@@ -75,9 +77,13 @@ GlobalMaterialLocalizations? getMaterialTranslation(
   intl.NumberFormat twoDigitZeroPaddedFormat,
 ) {''';
 
+/// The arguments that the generated [materialFactoryName] function passes to
+/// the constructor of each generated localization class.
 const String materialFactoryArguments =
     'fullYearFormat: fullYearFormat, compactDateFormat: compactDateFormat, shortDateFormat: shortDateFormat, mediumDateFormat: mediumDateFormat, longDateFormat: longDateFormat, yearMonthFormat: yearMonthFormat, shortMonthDayFormat: shortMonthDayFormat, decimalFormat: decimalFormat, twoDigitZeroPaddedFormat: twoDigitZeroPaddedFormat';
 
+/// The name of the generated constant that lists the supported language codes.
 const String materialSupportedLanguagesConstant = 'kMaterialSupportedLanguages';
 
+/// The name of the dartdoc template that documents the supported languages.
 const String materialSupportedLanguagesDocMacro = 'material_ui.localizations.languages';

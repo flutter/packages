@@ -31,7 +31,10 @@ class CupertinoTextMagnifierExampleApp extends StatefulWidget {
 
 class _CupertinoTextMagnifierExampleAppState
     extends State<CupertinoTextMagnifierExampleApp> {
-  final MagnifierController _controller = MagnifierController();
+  final MagnifierController _magnifierController = MagnifierController();
+  final TextEditingController _textEditingController = TextEditingController(
+    text: 'Hello world!',
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -47,16 +50,22 @@ class _CupertinoTextMagnifierExampleAppState
               magnifierBuilder:
                   (_, _, ValueNotifier<MagnifierInfo> magnifierInfo) {
                     return CupertinoTextMagnifier(
-                      controller: _controller,
+                      controller: _magnifierController,
                       magnifierInfo: magnifierInfo,
                     );
                   },
             ),
-            controller: TextEditingController(text: 'Hello world!'),
+            controller: _textEditingController,
           ),
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _textEditingController.dispose();
+    super.dispose();
   }
 }
 // #endregion body

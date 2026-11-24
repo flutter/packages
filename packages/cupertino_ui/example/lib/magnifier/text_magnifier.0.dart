@@ -8,7 +8,7 @@ import 'package:flutter/foundation.dart';
 
 void main() => runApp(const TextMagnifierExampleApp(text: 'Hello world!'));
 
-class TextMagnifierExampleApp extends StatelessWidget {
+class TextMagnifierExampleApp extends StatefulWidget {
   const TextMagnifierExampleApp({
     super.key,
     this.textDirection = TextDirection.ltr,
@@ -19,6 +19,14 @@ class TextMagnifierExampleApp extends StatelessWidget {
   final String text;
 
   @override
+  State<TextMagnifierExampleApp> createState() =>
+      _TextMagnifierExampleAppState();
+}
+
+class _TextMagnifierExampleAppState extends State<TextMagnifierExampleApp> {
+  late final controller = TextEditingController(text: widget.text);
+
+  @override
   Widget build(BuildContext context) {
     return CupertinoApp(
       home: CupertinoPageScaffold(
@@ -26,20 +34,26 @@ class TextMagnifierExampleApp extends StatelessWidget {
           padding: const .symmetric(horizontal: 48.0),
           child: Center(
             child: CupertinoTextField(
-              textDirection: textDirection,
+              textDirection: widget.textDirection,
               // Create a custom magnifier configuration that
-              // this `TextField` will use to build a magnifier with.
+              // this `CupertinoTextField` will use to build a magnifier with.
               magnifierConfiguration: TextMagnifierConfiguration(
                 magnifierBuilder:
                     (_, _, ValueNotifier<MagnifierInfo> magnifierInfo) =>
                         CustomMagnifier(magnifierInfo: magnifierInfo),
               ),
-              controller: TextEditingController(text: text),
+              controller: controller,
             ),
           ),
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
   }
 }
 

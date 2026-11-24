@@ -723,66 +723,63 @@ void main() {
     },
   );
 
-  testWidgets(
-    'With thumbVisibility: false, fling a scroll. While it is still scrolling, set thumbVisibility: true. '
-    'The thumb should not fade even after the scrolling stops',
-    (WidgetTester tester) async {
-      final controller = ScrollController();
-      addTearDown(controller.dispose);
-      var thumbVisibility = false;
-      Widget viewWithScroll() {
-        return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
-            return Directionality(
-              textDirection: TextDirection.ltr,
-              child: MediaQuery(
-                data: const MediaQueryData(),
-                child: Stack(
-                  children: <Widget>[
-                    CupertinoScrollbar(
-                      thumbVisibility: thumbVisibility,
+  testWidgets('With thumbVisibility: false, fling a scroll. While it is still scrolling, set thumbVisibility: true. '
+      'The thumb should not fade even after the scrolling stops', (WidgetTester tester) async {
+    final controller = ScrollController();
+    addTearDown(controller.dispose);
+    var thumbVisibility = false;
+    Widget viewWithScroll() {
+      return StatefulBuilder(
+        builder: (BuildContext context, StateSetter setState) {
+          return Directionality(
+            textDirection: TextDirection.ltr,
+            child: MediaQuery(
+              data: const MediaQueryData(),
+              child: Stack(
+                children: <Widget>[
+                  CupertinoScrollbar(
+                    thumbVisibility: thumbVisibility,
+                    controller: controller,
+                    child: SingleChildScrollView(
                       controller: controller,
-                      child: SingleChildScrollView(
-                        controller: controller,
-                        child: const SizedBox(width: 4000.0, height: 4000.0),
-                      ),
+                      child: const SizedBox(width: 4000.0, height: 4000.0),
                     ),
-                    Positioned(
-                      bottom: 10,
-                      child: CupertinoButton(
-                        onPressed: () {
-                          setState(() {
-                            thumbVisibility = !thumbVisibility;
-                          });
-                        },
-                        child: const Text('change thumbVisibility'),
-                      ),
+                  ),
+                  Positioned(
+                    bottom: 10,
+                    child: CupertinoButton(
+                      onPressed: () {
+                        setState(() {
+                          thumbVisibility = !thumbVisibility;
+                        });
+                      },
+                      child: const Text('change thumbVisibility'),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            );
-          },
-        );
-      }
+            ),
+          );
+        },
+      );
+    }
 
-      await tester.pumpWidget(viewWithScroll());
-      await tester.pumpAndSettle();
-      expect(find.byType(CupertinoScrollbar), isNot(paints..rrect()));
-      await tester.fling(find.byType(SingleChildScrollView), const Offset(0.0, -10.0), 10);
-      expect(find.byType(CupertinoScrollbar), paints..rrect());
+    await tester.pumpWidget(viewWithScroll());
+    await tester.pumpAndSettle();
+    expect(find.byType(CupertinoScrollbar), isNot(paints..rrect()));
+    await tester.fling(find.byType(SingleChildScrollView), const Offset(0.0, -10.0), 10);
+    expect(find.byType(CupertinoScrollbar), paints..rrect());
 
-      await tester.tap(find.byType(CupertinoButton));
-      await tester.pump();
-      expect(find.byType(CupertinoScrollbar), paints..rrect());
+    await tester.tap(find.byType(CupertinoButton));
+    await tester.pump();
+    expect(find.byType(CupertinoScrollbar), paints..rrect());
 
-      // Wait for the timer delay to expire.
-      await tester.pump(const Duration(milliseconds: 600)); // kScrollbarTimeToFade
-      await tester.pumpAndSettle();
-      // Scrollbar thumb is showing after scroll finishes and timer ends.
-      expect(find.byType(CupertinoScrollbar), paints..rrect());
-    },
-  );
+    // Wait for the timer delay to expire.
+    await tester.pump(const Duration(milliseconds: 600)); // kScrollbarTimeToFade
+    await tester.pumpAndSettle();
+    // Scrollbar thumb is showing after scroll finishes and timer ends.
+    expect(find.byType(CupertinoScrollbar), paints..rrect());
+  });
 
   testWidgets('Toggling thumbVisibility while not scrolling fades the thumb in/out. '
       'This works even when you have never scrolled at all yet', (WidgetTester tester) async {

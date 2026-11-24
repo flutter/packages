@@ -14,6 +14,8 @@
 /// @docImport 'scaffold.dart';
 library;
 
+import 'dart:ui' show SemanticsRole;
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart' show DragStartBehavior;
 import 'package:flutter/widgets.dart';
@@ -26,6 +28,8 @@ import 'list_tile_theme.dart';
 import 'material.dart';
 import 'material_localizations.dart';
 import 'theme.dart';
+
+part 'generated/drawer_defaults_m3.g.dart';
 
 // Examples can assume:
 // late BuildContext context;
@@ -242,7 +246,9 @@ class Drawer extends StatelessWidget {
   /// announce screen transitions when the drawer is opened and closed.
   ///
   /// If this label is not provided, it will default to
-  /// [MaterialLocalizations.drawerLabel].
+  /// [MaterialLocalizations.drawerLabel], except on native iOS and macOS,
+  /// which do not announce a drawer label. On the web the label is always
+  /// applied, because it is also the drawer's accessible name.
   ///
   /// See also:
   ///
@@ -262,13 +268,18 @@ class Drawer extends StatelessWidget {
   Widget build(BuildContext context) {
     assert(debugCheckHasMaterialLocalizations(context));
     final DrawerThemeData drawerTheme = DrawerTheme.of(context);
-    final String? label = switch (defaultTargetPlatform) {
-      TargetPlatform.iOS || TargetPlatform.macOS => semanticLabel,
-      TargetPlatform.android ||
-      TargetPlatform.fuchsia ||
-      TargetPlatform.linux ||
-      TargetPlatform.windows => semanticLabel ?? MaterialLocalizations.of(context).drawerLabel,
-    };
+    // On the web the label is also the drawer's accessible name, which a
+    // modal drawer exposed as a dialog needs, so apply it whatever the OS.
+    final String? label = kIsWeb
+        ? semanticLabel ?? MaterialLocalizations.of(context).drawerLabel
+        : switch (defaultTargetPlatform) {
+            TargetPlatform.iOS || TargetPlatform.macOS => semanticLabel,
+            TargetPlatform.android ||
+            TargetPlatform.fuchsia ||
+            TargetPlatform.linux ||
+            TargetPlatform.windows =>
+              semanticLabel ?? MaterialLocalizations.of(context).drawerLabel,
+          };
     final bool useMaterial3 = Theme.of(context).useMaterial3;
     final isDrawerStart = DrawerController.maybeOf(context)?.alignment != DrawerAlignment.end;
     final DrawerThemeData defaults = useMaterial3
@@ -283,6 +294,9 @@ class Drawer extends StatelessWidget {
       scopesRoute: true,
       namesRoute: true,
       explicitChildNodes: true,
+      // A drawer shown by a DrawerController is modal, so expose it as a
+      // dialog rather than a plain named route.
+      role: DrawerController.maybeOf(context) != null ? SemanticsRole.dialog : null,
       label: label,
       child: ConstrainedBox(
         constraints: BoxConstraints.expand(width: width ?? drawerTheme.width ?? _kWidth),
@@ -339,7 +353,7 @@ class DrawerController extends StatefulWidget {
   ///
   /// The [child] argument is typically a [Drawer].
   const DrawerController({
-    GlobalKey? key,
+    GlobalKey? super.key,
     required this.child,
     required this.alignment,
     this.isDrawerOpen = false,
@@ -349,7 +363,7 @@ class DrawerController extends StatefulWidget {
     this.edgeDragWidth,
     this.enableOpenDragGesture = true,
     this.drawerBarrierDismissible = true,
-  }) : super(key: key);
+  });
 
   /// The widget below this widget in the tree.
   ///
@@ -398,7 +412,8 @@ class DrawerController extends StatefulWidget {
   /// a drawer is open.
   ///
   /// If this is null, then [DrawerThemeData.scrimColor] is used. If that
-  /// is also null, then it defaults to [Colors.black54].
+  /// is also null, then [ColorScheme.scrim] at 32% opacity is used in
+  /// Material 3, and [Colors.black54] in Material 2.
   final Color? scrimColor;
 
   /// Determines if the [Drawer] can be opened with a drag gesture.
@@ -513,10 +528,13 @@ class DrawerControllerState extends State<DrawerController> with SingleTickerPro
       ..addStatusListener(_animationStatusChanged);
   }
 
+  bool _disposed = false;
+
   @protected
   @override
   void dispose() {
-    _historyEntry?.remove();
+    _disposed = true;
+    _removeHistoryEntry();
     _controller.dispose();
     _focusScopeNode.dispose();
     super.dispose();
@@ -558,14 +576,18 @@ class DrawerControllerState extends State<DrawerController> with SingleTickerPro
     }
   }
 
+  void _removeHistoryEntry() {
+    _historyEntry?.remove();
+    _historyEntry = null;
+  }
+
   void _animationStatusChanged(AnimationStatus status) {
     switch (status) {
       case AnimationStatus.forward:
         _ensureHistoryEntry();
       case AnimationStatus.reverse:
-        _historyEntry?.remove();
-        _historyEntry = null;
       case AnimationStatus.dismissed:
+        _removeHistoryEntry();
       case AnimationStatus.completed:
         break;
     }
@@ -573,7 +595,12 @@ class DrawerControllerState extends State<DrawerController> with SingleTickerPro
 
   void _handleHistoryEntryRemoved() {
     _historyEntry = null;
-    close();
+    if (_disposed || !mounted) {
+      return;
+    }
+    if (!_controller.isDismissed && _controller.status != AnimationStatus.reverse) {
+      close();
+    }
   }
 
   late AnimationController _controller;
@@ -632,6 +659,13 @@ class DrawerControllerState extends State<DrawerController> with SingleTickerPro
       final double visualVelocity = xVelocity / _width * _directionFactor;
 
       _controller.fling(velocity: visualVelocity);
+      if (visualVelocity < 0.0) {
+        // We explicitly remove the history entry here because the drawer may already be
+        // animating closed (status == AnimationStatus.reverse) when the drag begins.
+        // In that case, flinging it closed again does not change the animation status,
+        // so the status listener will not fire.
+        _removeHistoryEntry();
+      }
       widget.drawerCallback?.call(visualVelocity > 0.0);
     } else if (_controller.value < 0.5) {
       close();
@@ -651,6 +685,8 @@ class DrawerControllerState extends State<DrawerController> with SingleTickerPro
   /// Starts an animation to close the drawer.
   void close() {
     _controller.fling(velocity: -1.0);
+    // Explicitly removed here for the same reason as in _settle.
+    _removeHistoryEntry();
     widget.drawerCallback?.call(false);
   }
 
@@ -713,7 +749,11 @@ class DrawerControllerState extends State<DrawerController> with SingleTickerPro
       };
 
       final Color scrimColor =
-          widget.scrimColor ?? DrawerTheme.of(context).scrimColor ?? Colors.black54;
+          widget.scrimColor ??
+          DrawerTheme.of(context).scrimColor ??
+          (Theme.of(context).useMaterial3
+              ? _DrawerDefaultsM3(context).scrimColor!
+              : Colors.black54);
       final Color effectiveScrimColor = scrimColor.withValues(
         alpha: scrimColor.a * _controller.value,
       );
@@ -788,52 +828,3 @@ class _DrawerDefaultsM2 extends DrawerThemeData {
   @override
   Color? get shadowColor => Theme.of(context).shadowColor;
 }
-
-// BEGIN GENERATED TOKEN PROPERTIES - Drawer
-
-// Do not edit by hand. The code between the "BEGIN GENERATED" and
-// "END GENERATED" comments are generated from data in the Material
-// Design token database by the script:
-//   dev/tools/gen_defaults/bin/gen_defaults.dart.
-
-// dart format off
-class _DrawerDefaultsM3 extends DrawerThemeData {
-  _DrawerDefaultsM3(this.context)
-      : super(
-          elevation: 1.0,
-          clipBehavior: Clip.hardEdge,
-        );
-
-  final BuildContext context;
-  late final TextDirection direction = Directionality.of(context);
-
-  @override
-  Color? get backgroundColor => Theme.of(context).colorScheme.surfaceContainerLow;
-
-  @override
-  Color? get surfaceTintColor => Colors.transparent;
-
-  @override
-  Color? get shadowColor => Colors.transparent;
-
-  // There isn't currently a token for this value, but it is shown in the spec,
-  // so hard coding here for now.
-  @override
-  ShapeBorder? get shape => RoundedRectangleBorder(
-    borderRadius: const BorderRadiusDirectional.horizontal(
-      end: Radius.circular(16.0),
-    ).resolve(direction),
-  );
-
-  // There isn't currently a token for this value, but it is shown in the spec,
-  // so hard coding here for now.
-  @override
-  ShapeBorder? get endShape => RoundedRectangleBorder(
-    borderRadius: const BorderRadiusDirectional.horizontal(
-      start: Radius.circular(16.0),
-    ).resolve(direction),
-  );
-}
-// dart format on
-
-// END GENERATED TOKEN PROPERTIES - Drawer

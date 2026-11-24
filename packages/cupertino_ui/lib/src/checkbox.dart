@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// TODO(QuncCccccc): Remove ignore once https://github.com/flutter/flutter/issues/196406 is fixed.
+// ignore: uri_does_not_exist_in_doc_import
 /// @docImport 'package:material_ui/material_ui.dart';
 ///
 /// @docImport 'slider.dart';
@@ -210,25 +212,11 @@ class CupertinoCheckbox extends StatefulWidget {
   ///
   /// <callout-box>
   ///
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
-  ///
   /// This example resolves the [fillColor] based on the current [WidgetState]
   /// of the [CupertinoCheckbox], providing a different [Color] when it is
   /// [WidgetState.disabled].
   ///
-  /// ```dart
-  /// CupertinoCheckbox(
-  ///   value: true,
-  ///   onChanged: (_){},
-  ///   fillColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
-  ///     if (states.contains(WidgetState.disabled)) {
-  ///       return Colors.orange.withValues(alpha: .32);
-  ///     }
-  ///     return Colors.orange;
-  ///   })
-  /// )
-  /// ```
+  /// {@example /example/lib/checkbox/cupertino_checkbox.snippet.0.dart#body indent=strip}
   ///
   /// </callout-box>
   /// {@endtemplate}

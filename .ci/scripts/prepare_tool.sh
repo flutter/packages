@@ -13,3 +13,6 @@ dart pub get
 
 cd ../flutter_goldens
 flutter pub get
+
+cd ../ci_info
+dart pub get

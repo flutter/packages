@@ -15,11 +15,13 @@ should add it to your `pubspec.yaml` as usual.
 
 ## Photo Picker
 
-On Android 13 and above this packages uses the Android Photo Picker.
+On Android 16 and above, gallery image, video, and mixed-media picks always
+use the Android Photo Picker. `ImagePickerAndroid.useAndroidPhotoPicker` has
+no effect on those versions.
 
-On Android 12 and below this package has optional Android Photo Picker functionality.
-
-To use this feature, add the following code to your app before calling any `image_picker` APIs:
+On Android 15 and below, this package has optional Android Photo Picker
+functionality. To enable it, add the following code to your app before calling
+any `image_picker` APIs:
 
 <?code-excerpt "main.dart (photo-picker-example)"?>
 ```dart

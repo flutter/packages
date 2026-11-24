@@ -2,10 +2,46 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
 void main() {
+  test('FilledButtonThemeData supports Material style variants', () {
+    const material3 = FilledButtonThemeData(variant: StyleVariant.material3);
+    const expressive = FilledButtonThemeData(variant: StyleVariant.material3Expressive);
+
+    expect(material3.variant, StyleVariant.material3);
+    expect(expressive.variant, StyleVariant.material3Expressive);
+    expect(FilledButtonThemeData.lerp(material3, expressive, 0.49), material3);
+    expect(FilledButtonThemeData.lerp(material3, expressive, 0.5), expressive);
+    expect(material3, isNot(expressive));
+  });
+
+  test('FilledButtonThemeData hashCode, diagnostics, and lerp include variant', () {
+    const expressive = FilledButtonThemeData(variant: StyleVariant.material3Expressive);
+
+    expect(
+      expressive.hashCode,
+      const FilledButtonThemeData(variant: StyleVariant.material3Expressive).hashCode,
+    );
+    expect(expressive.hashCode, isNot(const FilledButtonThemeData().hashCode));
+
+    final builder = DiagnosticPropertiesBuilder();
+    expressive.debugFillProperties(builder);
+    final List<String> description = builder.properties
+        .where((DiagnosticsNode node) => !node.isFiltered(DiagnosticLevel.info))
+        .map((DiagnosticsNode node) => node.toString())
+        .toList();
+    expect(description, <String>['variant: material3Expressive']);
+
+    expect(FilledButtonThemeData.lerp(null, expressive, 0.4)?.variant, isNull);
+    expect(
+      FilledButtonThemeData.lerp(null, expressive, 0.6)?.variant,
+      StyleVariant.material3Expressive,
+    );
+  });
+
   TextStyle iconStyle(WidgetTester tester, IconData icon) {
     final RichText iconRichText = tester.widget<RichText>(
       find.descendant(of: find.byIcon(icon), matching: find.byType(RichText)),
@@ -108,9 +144,8 @@ void main() {
         },
       );
       return MaterialApp(
-        theme: ThemeData.from(
-          colorScheme: const ColorScheme.light(),
-        ).copyWith(filledButtonTheme: FilledButtonThemeData(style: overallStyle)),
+        theme: ThemeData.from(colorScheme: const ColorScheme.light())
+            .copyWith(filledButtonTheme: FilledButtonThemeData(style: overallStyle)),
         home: Scaffold(
           body: Center(
             // If the FilledButtonTheme widget is present, it's used
@@ -407,4 +442,234 @@ void main() {
       expect(iconStyle(tester, Icons.mail).color, foregroundColor);
     },
   );
+
+  group('FilledButtonTheme.variantOf', () {
+    // A square filled button uses a RoundedRectangleBorder in Material 3
+    // Expressive. Material 3 ignores shapeVariant and uses a StadiumBorder.
+    const buttonKey = Key('button');
+    const squareButton = FilledButton(
+      key: buttonKey,
+      onPressed: _onPressed,
+      style: ButtonStyle(shapeVariant: ButtonShapeVariant.square),
+      child: Text('Button'),
+    );
+    const customStyle = ButtonStyle(
+      foregroundColor: WidgetStatePropertyAll<Color>(Color(0xffff0000)),
+    );
+
+    ShapeBorder? buttonShape(WidgetTester tester) {
+      return tester
+          .widget<Material>(
+            find.descendant(of: find.byKey(buttonKey), matching: find.byType(Material)),
+          )
+          .shape;
+    }
+
+    // Builds the square button and reports the variant that applies to it.
+    Widget buttonWithVariant(ValueSetter<StyleVariant> onVariant) {
+      return Builder(
+        builder: (BuildContext context) {
+          onVariant(FilledButtonTheme.variantOf(context));
+          return squareButton;
+        },
+      );
+    }
+
+    testWidgets('returns material3 when no theme specifies a variant', (WidgetTester tester) async {
+      StyleVariant? variant;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Center(
+            child: FilledButtonTheme(
+              data: const FilledButtonThemeData(style: customStyle),
+              child: buttonWithVariant((StyleVariant value) => variant = value),
+            ),
+          ),
+        ),
+      );
+
+      expect(variant, StyleVariant.material3);
+      expect(buttonShape(tester), isA<StadiumBorder>());
+    });
+
+    testWidgets('returns the variant of ThemeData.filledButtonTheme', (WidgetTester tester) async {
+      StyleVariant? variant;
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(
+            filledButtonTheme: const FilledButtonThemeData(
+              variant: StyleVariant.material3Expressive,
+            ),
+          ),
+          home: Center(child: buttonWithVariant((StyleVariant value) => variant = value)),
+        ),
+      );
+
+      expect(variant, StyleVariant.material3Expressive);
+      expect(buttonShape(tester), isA<RoundedRectangleBorder>());
+    });
+
+    testWidgets(
+      'a nested FilledButtonTheme without a variant inherits it from a FilledButtonTheme',
+      (WidgetTester tester) async {
+        StyleVariant? variant;
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Center(
+              child: FilledButtonTheme(
+                data: const FilledButtonThemeData(variant: StyleVariant.material3Expressive),
+                child: FilledButtonTheme(
+                  data: const FilledButtonThemeData(style: customStyle),
+                  child: buttonWithVariant((StyleVariant value) => variant = value),
+                ),
+              ),
+            ),
+          ),
+        );
+
+        expect(variant, StyleVariant.material3Expressive);
+        expect(buttonShape(tester), isA<RoundedRectangleBorder>());
+      },
+    );
+
+    testWidgets(
+      'a FilledButtonTheme without a variant inherits it from ThemeData.filledButtonTheme',
+      (WidgetTester tester) async {
+        StyleVariant? variant;
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: ThemeData(
+              filledButtonTheme: const FilledButtonThemeData(
+                variant: StyleVariant.material3Expressive,
+              ),
+            ),
+            home: Center(
+              child: FilledButtonTheme(
+                data: const FilledButtonThemeData(style: customStyle),
+                child: buttonWithVariant((StyleVariant value) => variant = value),
+              ),
+            ),
+          ),
+        );
+
+        expect(variant, StyleVariant.material3Expressive);
+        expect(buttonShape(tester), isA<RoundedRectangleBorder>());
+      },
+    );
+
+    testWidgets('an explicit variant overrides the variant of the ancestors', (
+      WidgetTester tester,
+    ) async {
+      StyleVariant? variant;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Center(
+            child: FilledButtonTheme(
+              data: const FilledButtonThemeData(variant: StyleVariant.material3Expressive),
+              child: FilledButtonTheme(
+                data: const FilledButtonThemeData(
+                  style: customStyle,
+                  variant: StyleVariant.material3,
+                ),
+                child: buttonWithVariant((StyleVariant value) => variant = value),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      expect(variant, StyleVariant.material3);
+      expect(buttonShape(tester), isA<StadiumBorder>());
+    });
+
+    testWidgets('an enclosing FilledButtonTheme takes precedence over a closer Theme', (
+      WidgetTester tester,
+    ) async {
+      StyleVariant? variant;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Center(
+            child: FilledButtonTheme(
+              data: const FilledButtonThemeData(variant: StyleVariant.material3Expressive),
+              child: Theme(
+                data: ThemeData(
+                  filledButtonTheme: const FilledButtonThemeData(variant: StyleVariant.material3),
+                ),
+                child: buttonWithVariant((StyleVariant value) => variant = value),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      expect(variant, StyleVariant.material3Expressive);
+      expect(buttonShape(tester), isA<RoundedRectangleBorder>());
+    });
+
+    testWidgets('FilledButton is rebuilt when a FilledButtonTheme above the closest one changes', (
+      WidgetTester tester,
+    ) async {
+      final variant = ValueNotifier<StyleVariant?>(StyleVariant.material3Expressive);
+      addTearDown(variant.dispose);
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Center(
+            child: ValueListenableBuilder<StyleVariant?>(
+              valueListenable: variant,
+              // The subtree is const, so it is only rebuilt through its
+              // dependency on the outer FilledButtonTheme.
+              child: const FilledButtonTheme(
+                data: FilledButtonThemeData(style: customStyle),
+                child: squareButton,
+              ),
+              builder: (BuildContext context, StyleVariant? value, Widget? child) {
+                return FilledButtonTheme(
+                  data: FilledButtonThemeData(variant: value),
+                  child: child!,
+                );
+              },
+            ),
+          ),
+        ),
+      );
+      expect(buttonShape(tester), isA<RoundedRectangleBorder>());
+
+      variant.value = StyleVariant.material3;
+      await tester.pumpAndSettle();
+      expect(buttonShape(tester), isA<StadiumBorder>());
+    });
+
+    testWidgets('FilledButton.tonalIcon uses the inherited variant for the icon-label gap', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Center(
+            child: FilledButtonTheme(
+              data: const FilledButtonThemeData(variant: StyleVariant.material3Expressive),
+              child: FilledButtonTheme(
+                data: const FilledButtonThemeData(style: customStyle),
+                child: FilledButton.tonalIcon(
+                  key: buttonKey,
+                  onPressed: _onPressed,
+                  style: const ButtonStyle(sizeVariant: ButtonSizeVariant.large),
+                  icon: const Icon(Icons.add),
+                  label: const Text('Button'),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      // Large Material 3 Expressive buttons have a 12 pixel gap between the
+      // icon and the label. Material 3 uses 8 pixels.
+      final Row row = tester.widget<Row>(
+        find.descendant(of: find.byKey(buttonKey), matching: find.byType(Row)),
+      );
+      expect(row.spacing, 12);
+    });
+  });
 }
+
+void _onPressed() {}

@@ -1,0 +1,1 @@
+Duplicate route path detected: "/ideas" from IdeasRoute and "/ideas" from FavoritesRoute both match the same URL pattern.

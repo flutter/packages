@@ -60,14 +60,14 @@ public class DeviceOrientationManager {
     orientationEventListener.enable();
   }
 
-  @VisibleForTesting
-  @NonNull
   /**
    * Creates an {@link OrientationEventListener} that will call the callback method of the {@link
    * DeviceOrientationManagerProxyApi} whenever it is notified of a new device orientation and this
    * {@code DeviceOrientationManager} instance determines that the orientation of the device {@link
    * Configuration} has changed.
    */
+  @VisibleForTesting
+  @NonNull
   protected OrientationEventListener createOrientationEventListener() {
     return new OrientationEventListener(getContext()) {
       @Override

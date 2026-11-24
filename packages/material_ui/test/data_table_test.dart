@@ -2,9 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-@TestOn('!chrome')
-library;
-
 import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -432,6 +429,107 @@ void main() {
     expect(transformOfArrow.transform.getRotation(), equals(Matrix3.rotationZ(math.pi)));
   });
 
+  testWidgets('DataTable custom sortIconBuilder test', (WidgetTester tester) async {
+    Widget buildTable({
+      DataTableSortIconBuilder? sortIconBuilder,
+      DataTableThemeData? themeData,
+      int? sortColumnIndex = 0,
+      bool sortAscending = true,
+    }) {
+      final Widget table = DataTable(
+        sortColumnIndex: sortColumnIndex,
+        sortAscending: sortAscending,
+        sortIconBuilder: sortIconBuilder,
+        columns: <DataColumn>[
+          DataColumn(label: const Text('Name'), onSort: (int columnIndex, bool ascending) {}),
+          DataColumn(label: const Text('Calories'), onSort: (int columnIndex, bool ascending) {}),
+        ],
+        rows: kDesserts.map<DataRow>((Dessert dessert) {
+          return DataRow(
+            cells: <DataCell>[DataCell(Text(dessert.name)), DataCell(Text('${dessert.calories}'))],
+          );
+        }).toList(),
+      );
+
+      return MaterialApp(
+        home: Material(
+          child: themeData != null ? DataTableTheme(data: themeData, child: table) : table,
+        ),
+      );
+    }
+
+    // Default (null sortIconBuilder): uses standard Icon(Icons.arrow_upward).
+    await tester.pumpWidget(buildTable());
+    final Finder defaultIconFinder = find.descendant(
+      of: find.byType(DataTable),
+      matching: find.byIcon(Icons.arrow_upward),
+    );
+    expect(defaultIconFinder, findsNWidgets(2));
+
+    // Custom sortIconBuilder on DataTable.
+    await tester.pumpWidget(
+      buildTable(
+        sortIconBuilder: (BuildContext context, bool visible, bool ascending) {
+          return Text(visible ? (ascending ? 'ASC' : 'DESC') : 'INACTIVE');
+        },
+      ),
+    );
+    expect(find.text('ASC'), findsOneWidget);
+    expect(find.text('INACTIVE'), findsOneWidget);
+
+    // Verify sortAscending = false passes ascending = false.
+    await tester.pumpWidget(
+      buildTable(
+        sortAscending: false,
+        sortIconBuilder: (BuildContext context, bool visible, bool ascending) {
+          return Text(visible ? (ascending ? 'ASC' : 'DESC') : 'INACTIVE');
+        },
+      ),
+    );
+    expect(find.text('DESC'), findsOneWidget);
+    expect(find.text('INACTIVE'), findsOneWidget);
+
+    // Verify sorted column index change passes updated visible flags.
+    await tester.pumpWidget(
+      buildTable(
+        sortColumnIndex: 1,
+        sortIconBuilder: (BuildContext context, bool visible, bool ascending) {
+          return Text(visible ? 'SORTED_COL1' : 'UNSORTED_COL0');
+        },
+      ),
+    );
+    expect(find.text('SORTED_COL1'), findsOneWidget);
+    expect(find.text('UNSORTED_COL0'), findsOneWidget);
+
+    // Verify DataTableThemeData.sortIconBuilder theme resolution.
+    await tester.pumpWidget(
+      buildTable(
+        themeData: DataTableThemeData(
+          sortIconBuilder: (BuildContext context, bool visible, bool ascending) {
+            return const Text('THEME_BUILDER');
+          },
+        ),
+      ),
+    );
+    expect(find.text('THEME_BUILDER'), findsNWidgets(2));
+
+    // Verify DataTable.sortIconBuilder overrides DataTableThemeData.sortIconBuilder.
+    await tester.pumpWidget(
+      buildTable(
+        sortIconBuilder: (BuildContext context, bool visible, bool ascending) {
+          return const Text('WIDGET_BUILDER');
+        },
+        themeData: DataTableThemeData(
+          sortIconBuilder: (BuildContext context, bool visible, bool ascending) {
+            return const Text('THEME_BUILDER');
+          },
+        ),
+      ),
+    );
+    expect(find.text('WIDGET_BUILDER'), findsNWidgets(2));
+    expect(find.text('THEME_BUILDER'), findsNothing);
+  });
+
   testWidgets('DataTable sort indicator orientation does not change on state update', (
     WidgetTester tester,
   ) async {
@@ -814,8 +912,8 @@ void main() {
     );
 
     // default last column padding
-    padding = find.widgetWithText(Padding, '6.0');
-    cellContent = find.widgetWithText(Align, '6.0');
+    padding = find.widgetWithText(Padding, '${6.0}');
+    cellContent = find.widgetWithText(Align, '${6.0}');
     expect(
       tester.getRect(cellContent).left - tester.getRect(padding).left,
       defaultColumnSpacing / 2,
@@ -915,8 +1013,8 @@ void main() {
     );
 
     // custom last column padding
-    padding = find.widgetWithText(Padding, '6.0');
-    cellContent = find.widgetWithText(Align, '6.0');
+    padding = find.widgetWithText(Padding, '${6.0}');
+    cellContent = find.widgetWithText(Align, '${6.0}');
     expect(
       tester.getRect(cellContent).left - tester.getRect(padding).left,
       customColumnSpacing / 2,
@@ -998,8 +1096,8 @@ void main() {
     );
 
     // default last column padding
-    padding = find.widgetWithText(Padding, '6.0');
-    cellContent = find.widgetWithText(Align, '6.0');
+    padding = find.widgetWithText(Padding, '${6.0}');
+    cellContent = find.widgetWithText(Align, '${6.0}');
     expect(
       tester.getRect(cellContent).left - tester.getRect(padding).left,
       defaultColumnSpacing / 2,
@@ -1085,8 +1183,8 @@ void main() {
     );
 
     // custom last column padding
-    padding = find.widgetWithText(Padding, '6.0');
-    cellContent = find.widgetWithText(Align, '6.0');
+    padding = find.widgetWithText(Padding, '${6.0}');
+    cellContent = find.widgetWithText(Align, '${6.0}');
     expect(
       tester.getRect(cellContent).left - tester.getRect(padding).left,
       customColumnSpacing / 2,
@@ -1502,7 +1600,7 @@ void main() {
         ),
     );
     await gesture.up();
-  });
+  }, skip: kIsWeb); // [intended] InkSparkle is not used on the web.
 
   testWidgets('DataTable can render inside an AlertDialog', (WidgetTester tester) async {
     await tester.pumpWidget(
@@ -1935,6 +2033,216 @@ void main() {
         ),
       );
     });
+
+    testWidgets('does not flicker when hovering between cells of the same row', (
+      WidgetTester tester,
+    ) async {
+      // Regression test for https://github.com/flutter/flutter/issues/166135.
+      const hoverColor = Color(0xE6FF0000);
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(hoverColor: hoverColor),
+          home: Material(
+            child: DataTable(
+              columns: const <DataColumn>[
+                DataColumn(label: Text('Name')),
+                DataColumn(label: Text('Role')),
+              ],
+              rows: <DataRow>[
+                DataRow(
+                  onSelectChanged: (bool? selected) {},
+                  cells: const <DataCell>[DataCell(Text('Sarah')), DataCell(Text('Student'))],
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+
+      // The first TableRowInkWell is the one of the row's checkbox cell.
+      final Finder checkboxCell = find.byType(TableRowInkWell).first;
+      final inkFeatures = Material.of(tester.element(find.text('Sarah'))) as RenderBox;
+      final rowRect = Rect.fromLTRB(
+        0.0,
+        tester.getTopLeft(checkboxCell).dy,
+        tester.getSize(find.byType(DataTable)).width,
+        tester.getBottomLeft(checkboxCell).dy,
+      );
+
+      void expectSingleRowHighlightAtFullStrength() {
+        expect(inkFeatures, paints..rect(rect: rowRect, color: hoverColor));
+        expect(inkFeatures, paintsExactlyCountTimes(#drawRect, 1));
+      }
+
+      final TestGesture gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
+      await gesture.addPointer(location: Offset.zero);
+      addTearDown(gesture.removePointer);
+      await tester.pump();
+
+      // Hover the padding of the checkbox cell, away from the checkbox itself.
+      await gesture.moveTo(tester.getTopLeft(checkboxCell) + Offset(4.0, rowRect.height / 2));
+      await tester.pumpAndSettle();
+      expectSingleRowHighlightAtFullStrength();
+
+      // Moving to other cells of the same row must keep a single hover
+      // highlight at full strength on every frame, instead of cross-fading two
+      // overlapping highlights.
+      for (final cellText in <String>['Sarah', 'Student']) {
+        await gesture.moveTo(tester.getCenter(find.text(cellText)));
+        await tester.pump();
+        expectSingleRowHighlightAtFullStrength();
+
+        await tester.pump(const Duration(milliseconds: 25));
+        expectSingleRowHighlightAtFullStrength();
+      }
+    });
+
+    testWidgets('does not flicker when moving focus between cells of the same row', (
+      WidgetTester tester,
+    ) async {
+      // Regression test for https://github.com/flutter/flutter/issues/166135.
+      FocusManager.instance.highlightStrategy = FocusHighlightStrategy.alwaysTraditional;
+      const focusColor = Color(0xE60000FF);
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(focusColor: focusColor),
+          home: Material(
+            child: DataTable(
+              columns: const <DataColumn>[
+                DataColumn(label: Text('Name')),
+                DataColumn(label: Text('Role')),
+              ],
+              rows: <DataRow>[
+                DataRow(
+                  onSelectChanged: (bool? selected) {},
+                  cells: const <DataCell>[DataCell(Text('Sarah')), DataCell(Text('Student'))],
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+
+      final Finder checkboxCell = find.byType(TableRowInkWell).first;
+      final inkFeatures = Material.of(tester.element(find.text('Sarah'))) as RenderBox;
+      final rowRect = Rect.fromLTRB(
+        0.0,
+        tester.getTopLeft(checkboxCell).dy,
+        tester.getSize(find.byType(DataTable)).width,
+        tester.getBottomLeft(checkboxCell).dy,
+      );
+
+      void expectSingleRowFocusHighlightAtFullStrength() {
+        expect(inkFeatures, paints..rect(rect: rowRect, color: focusColor));
+        expect(inkFeatures, paintsExactlyCountTimes(#drawRect, 1));
+      }
+
+      // Focus the first cell's TableRowInkWell.
+      Focus.of(
+        tester.element(find.descendant(of: checkboxCell, matching: find.byType(Padding)).first),
+      ).requestFocus();
+      await tester.pumpAndSettle();
+      expectSingleRowFocusHighlightAtFullStrength();
+
+      // Moving focus to the remaining cells of the same row must keep a single
+      // focus highlight at full strength on every frame.
+      for (final cellText in <String>['Sarah', 'Student']) {
+        Focus.of(tester.element(find.text(cellText))).requestFocus();
+        await tester.pump();
+        expectSingleRowFocusHighlightAtFullStrength();
+
+        await tester.pump(const Duration(milliseconds: 25));
+        expectSingleRowFocusHighlightAtFullStrength();
+      }
+    });
+
+    testWidgets('animates the hover highlight by default', (WidgetTester tester) async {
+      const hoverColor = Color(0xE6FF0000);
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(hoverColor: hoverColor),
+          home: Material(
+            child: Table(
+              children: <TableRow>[
+                TableRow(
+                  children: <Widget>[
+                    TableRowInkWell(
+                      onTap: () {},
+                      child: const SizedBox(width: 100.0, height: 100.0),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+
+      final TestGesture gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
+      await gesture.addPointer(location: Offset.zero);
+      addTearDown(gesture.removePointer);
+      await tester.pump();
+
+      await gesture.moveTo(tester.getCenter(find.byType(TableRowInkWell)));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 25));
+      final inkFeatures = Material.of(tester.element(find.byType(SizedBox))) as RenderBox;
+      expect(inkFeatures, paintsExactlyCountTimes(#drawRect, 1));
+      expect(inkFeatures, isNot(paints..rect(color: hoverColor)));
+
+      await tester.pumpAndSettle();
+      expect(inkFeatures, paints..rect(color: hoverColor));
+    });
+
+    testWidgets('respects hoverDuration', (WidgetTester tester) async {
+      const hoverColor = Color(0xE6FF0000);
+      Widget buildTable(Duration hoverDuration) {
+        return MaterialApp(
+          theme: ThemeData(hoverColor: hoverColor),
+          home: Material(
+            child: Table(
+              children: <TableRow>[
+                TableRow(
+                  children: <Widget>[
+                    TableRowInkWell(
+                      onTap: () {},
+                      hoverDuration: hoverDuration,
+                      child: const SizedBox(width: 100.0, height: 100.0),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      }
+
+      await tester.pumpWidget(buildTable(Duration.zero));
+
+      final TestGesture gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
+      await gesture.addPointer(location: Offset.zero);
+      addTearDown(gesture.removePointer);
+      await tester.pump();
+
+      await gesture.moveTo(tester.getCenter(find.byType(TableRowInkWell)));
+      await tester.pump();
+      final inkFeatures = Material.of(tester.element(find.byType(SizedBox))) as RenderBox;
+      expect(inkFeatures, paints..rect(color: hoverColor));
+
+      // Reset hover and verify a custom duration longer than the 50ms default.
+      await gesture.moveTo(const Offset(0.0, 200.0));
+      await tester.pumpAndSettle();
+      await tester.pumpWidget(buildTable(const Duration(milliseconds: 200)));
+
+      await gesture.moveTo(tester.getCenter(find.byType(TableRowInkWell)));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(inkFeatures, paintsExactlyCountTimes(#drawRect, 1));
+      expect(inkFeatures, isNot(paints..rect(color: hoverColor)));
+
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(inkFeatures, paints..rect(color: hoverColor));
+    });
   });
 
   testWidgets('Heading cell cursor resolves WidgetStateMouseCursor correctly', (
@@ -2105,7 +2413,7 @@ void main() {
       RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
       SystemMouseCursors.copy,
     );
-  });
+  }, tags: 'reduced-web-test-set');
 
   // This is a regression test for https://github.com/flutter/flutter/issues/114470.
   testWidgets('DataTable text styles are merged with default text style', (

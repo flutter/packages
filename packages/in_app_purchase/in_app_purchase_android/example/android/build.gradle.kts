@@ -40,6 +40,12 @@ gradle.projectsEvaluated {
     project(":in_app_purchase_android") {
         tasks.withType<JavaCompile> {
             options.compilerArgs.addAll(listOf("-Xlint:all", "-Werror"))
+            // javac 23+ adds the dangling-doc-comments lint, which flags the header
+            // comment of the AGP-generated BuildConfig.java. See b/567587949 for more
+            // details.
+            if (JavaVersion.current() >= JavaVersion.VERSION_23) {
+                options.compilerArgs.add("-Xlint:-dangling-doc-comments")
+            }
         }
     }
 }

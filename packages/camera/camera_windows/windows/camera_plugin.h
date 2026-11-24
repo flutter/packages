@@ -9,8 +9,11 @@
 #include <flutter/method_channel.h>
 #include <flutter/plugin_registrar_windows.h>
 #include <flutter/standard_method_codec.h>
+#include <shlobj.h>
 
 #include <functional>
+#include <optional>
+#include <string>
 
 #include "camera.h"
 #include "capture_controller.h"
@@ -63,7 +66,7 @@ class CameraPlugin : public flutter::Plugin,
       int64_t camera_id,
       std::function<void(std::optional<FlutterError> reply)> result) override;
   void StartVideoRecording(
-      int64_t camera_id,
+      int64_t camera_id, const std::string* video_output_path,
       std::function<void(std::optional<FlutterError> reply)> result) override;
   void StopVideoRecording(
       int64_t camera_id,
@@ -88,6 +91,16 @@ class CameraPlugin : public flutter::Plugin,
   // Enumerates video capture devices.
   bool EnumerateVideoCaptureDeviceSources(IMFActivate*** devices,
                                           UINT32* count) override;
+
+  // Returns the path of the given known folder, or std::nullopt if it can't
+  // be written to.
+  virtual std::optional<std::wstring> GetKnownFolderPath(
+      REFKNOWNFOLDERID folder_id);
+
+  // Returns the directory to write captures into, with a trailing backslash.
+  // Falls back to the temp directory if the known folder can't be used, e.g.
+  // it's blocked by Controlled Folder Access.
+  std::optional<std::string> GetCaptureDirectory(REFKNOWNFOLDERID folder_id);
 
   std::unique_ptr<CameraFactory> camera_factory_;
   flutter::TextureRegistrar* texture_registrar_;

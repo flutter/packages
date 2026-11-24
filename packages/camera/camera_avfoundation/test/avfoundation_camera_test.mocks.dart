@@ -151,9 +151,9 @@ class MockCameraApi extends _i1.Mock implements _i2.CameraApi {
           as _i4.Future<void>);
 
   @override
-  _i4.Future<void> startVideoRecording(bool? enableStream) =>
+  _i4.Future<void> startVideoRecording(bool? enableStream, String? videoOutputPath) =>
       (super.noSuchMethod(
-            Invocation.method(#startVideoRecording, [enableStream]),
+            Invocation.method(#startVideoRecording, [enableStream, videoOutputPath]),
             returnValue: _i4.Future<void>.value(),
             returnValueForMissingStub: _i4.Future<void>.value(),
           )
@@ -347,6 +347,24 @@ class MockCameraApi extends _i1.Mock implements _i2.CameraApi {
   _i4.Future<void> setJpegImageQuality(int? quality) =>
       (super.noSuchMethod(
             Invocation.method(#setJpegImageQuality, [quality]),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
+
+  @override
+  _i4.Future<bool> isZeroShutterLagSupported() =>
+      (super.noSuchMethod(
+            Invocation.method(#isZeroShutterLagSupported, []),
+            returnValue: _i4.Future<bool>.value(false),
+            returnValueForMissingStub: _i4.Future<bool>.value(false),
+          )
+          as _i4.Future<bool>);
+
+  @override
+  _i4.Future<void> setZeroShutterLagEnabled(bool? enabled) =>
+      (super.noSuchMethod(
+            Invocation.method(#setZeroShutterLagEnabled, [enabled]),
             returnValue: _i4.Future<void>.value(),
             returnValueForMissingStub: _i4.Future<void>.value(),
           )

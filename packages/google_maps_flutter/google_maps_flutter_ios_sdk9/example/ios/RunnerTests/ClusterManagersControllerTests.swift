@@ -20,12 +20,12 @@ import Testing
     let mapView = PartiallyMockedMapView(options: mapViewOptions)
     let eventHandler = TestMapEventHandler()
 
-    let clusterManagersController = FGMClusterManagersController(
+    let clusterManagersController = ClusterManagersController(
       mapView: mapView,
       eventDelegate: eventHandler
     )
 
-    let markersController = FGMMarkersController(
+    let markersController = MarkersController(
       mapView: mapView,
       eventDelegate: eventHandler,
       clusterManagersController: clusterManagersController,
@@ -35,7 +35,7 @@ import Testing
 
     // Add cluster managers.
     let clusterManagerId = "cm"
-    let clusterManagerToAdd = FGMPlatformClusterManager.make(withIdentifier: clusterManagerId)
+    let clusterManagerToAdd = PlatformClusterManager(identifier: clusterManagerId)
     clusterManagersController.add([clusterManagerToAdd])
 
     // Verify that cluster managers are available
@@ -46,18 +46,16 @@ import Testing
     let markerId1 = "m1"
     let markerId2 = "m2"
 
-    let zeroPoint = FGMPlatformPoint.makeWith(x: 0, y: 0)
-    let zeroLatLng = FGMPlatformLatLng.make(withLatitude: 0, longitude: 0)
-    let bitmap = FGMPlatformBitmap.make(
-      withBitmap: FGMPlatformBitmapDefaultMarker.make(withHue: 0)
-    )
-    let infoWindow = FGMPlatformInfoWindow.make(
-      withTitle: "Info",
+    let zeroPoint = PlatformPoint(x: 0, y: 0)
+    let zeroLatLng = PlatformLatLng(latitude: 0, longitude: 0)
+    let bitmap = PlatformBitmapDefaultMarker(hue: 0)
+    let infoWindow = PlatformInfoWindow(
+      title: "Info",
       snippet: nil,
       anchor: zeroPoint
     )
-    let marker1 = FGMPlatformMarker.make(
-      withAlpha: 1,
+    let marker1 = PlatformMarker(
+      alpha: 1,
       anchor: zeroPoint,
       consumeTapEvents: false,
       draggable: false,
@@ -72,8 +70,8 @@ import Testing
       clusterManagerId: clusterManagerId,
       collisionBehavior: nil
     )
-    let marker2 = FGMPlatformMarker.make(
-      withAlpha: 1,
+    let marker2 = PlatformMarker(
+      alpha: 1,
       anchor: zeroPoint,
       consumeTapEvents: false,
       draggable: false,
@@ -95,11 +93,7 @@ import Testing
     clusterManagersController.invokeClusteringForEachClusterManager()
 
     // Verify that the markers were added to the cluster manager
-    var error: FlutterError? = nil
-    let clusters1 = try #require(
-      clusterManagersController.clusters(withIdentifier: clusterManagerId, error: &error)
-    )
-    #expect(error == nil)
+    let clusters1 = try clusterManagersController.clusters(withIdentifier: clusterManagerId)
     let targetCluster = try #require(
       clusters1.first(where: { $0.clusterManagerId == clusterManagerId })
     )
@@ -110,11 +104,7 @@ import Testing
     markersController.removeMarkers(withIdentifiers: [markerId2])
 
     // Verify that the marker2 is removed from the clusterManager
-    error = nil
-    let clusters2 = try #require(
-      clusterManagersController.clusters(withIdentifier: clusterManagerId, error: &error)
-    )
-    #expect(error == nil)
+    let clusters2 = try clusterManagersController.clusters(withIdentifier: clusterManagerId)
     let targetCluster2 = try #require(
       clusters2.first(where: { $0.clusterManagerId == clusterManagerId })
     )
@@ -124,11 +114,7 @@ import Testing
     markersController.removeMarkers(withIdentifiers: [markerId1])
 
     // Verify that all markers are removed from clusterManager
-    error = nil
-    let clusters3 = try #require(
-      clusterManagersController.clusters(withIdentifier: clusterManagerId, error: &error)
-    )
-    #expect(error == nil)
+    let clusters3 = try clusterManagersController.clusters(withIdentifier: clusterManagerId)
     #expect(clusters3.count == 0)
 
     // Remove cluster manager

@@ -25,6 +25,9 @@ import 'material_state.dart';
 import 'theme.dart';
 import 'theme_data.dart';
 
+part 'generated/elevated_button_defaults_m3.g.dart';
+part 'generated/elevated_button_defaults_m3e.g.dart';
+
 /// A Material Design "elevated button".
 ///
 /// Use elevated buttons to add dimension to otherwise mostly flat
@@ -33,10 +36,9 @@ import 'theme_data.dart';
 /// such as dialogs or cards.
 ///
 /// An elevated button is a label [child] displayed on a [Material]
-/// widget whose [Material.elevation] increases when the button is
-/// pressed. The label's [Text] and [Icon] widgets are displayed in
-/// [style]'s [ButtonStyle.foregroundColor] and the button's filled
-/// background is the [ButtonStyle.backgroundColor].
+/// widget whose [Material.elevation] gives it a shadow. The label's [Text] and
+/// [Icon] widgets are displayed in [style]'s [ButtonStyle.foregroundColor] and
+/// the button's filled background is the [ButtonStyle.backgroundColor].
 ///
 /// The elevated button's default style is defined by
 /// [defaultStyleOf]. The style of this elevated button can be
@@ -46,11 +48,22 @@ import 'theme_data.dart';
 /// buttons in an app can be overridden with the [Theme]'s
 /// [ThemeData.elevatedButtonTheme] property.
 ///
-/// The static [styleFrom] method is a convenient way to create a
+/// The static [styleFrom] method is a convenient way to create an
 /// elevated button [ButtonStyle] from simple values.
 ///
 /// If [onPressed] and [onLongPress] callbacks are null, then the
 /// button will be disabled.
+///
+/// To use the Material 3 Expressive style, set
+/// [ElevatedButtonThemeData.variant] to [StyleVariant.material3Expressive].
+/// The Expressive size and shape variants can then be selected with
+/// [ButtonStyle.sizeVariant] and [ButtonStyle.shapeVariant], and the button
+/// becomes a toggle button when [isSelected] is non-null.
+///
+/// With the Material 3 style, [isSelected] updates [WidgetState.selected] and
+/// the button's semantics, but the default style doesn't change the button's
+/// appearance when it's selected. To show the selected state, use a [style]
+/// that resolves [WidgetState.selected].
 ///
 /// <callout-box>
 ///
@@ -66,7 +79,7 @@ import 'theme_data.dart';
 ///
 /// See also:
 ///
-///  * [FilledButton], a filled button that doesn't elevate when pressed.
+///  * [FilledButton], a filled button that uses a primary fill color.
 ///  * [FilledButton.tonal], a filled button variant that uses a secondary fill color.
 ///  * [OutlinedButton], a button with an outlined border and no fill color.
 ///  * [TextButton], a button with no outline or fill color.
@@ -85,14 +98,21 @@ class ElevatedButton extends ButtonStyleButton {
     super.autofocus = false,
     super.clipBehavior,
     super.statesController,
+    super.isSelected,
     required super.child,
   }) : _addPadding = false;
 
   /// Create an elevated button from a pair of widgets that serve as the button's
   /// [icon] and [label].
   ///
-  /// The icon and label are arranged in a row and padded by 12 logical pixels
-  /// at the start, and 16 at the end, with an 8 pixel gap in between.
+  /// The icon and label are arranged in a row and padded by 16 logical pixels
+  /// at the start, and 24 at the end, with an 8 pixel gap in between. If
+  /// [ThemeData.useMaterial3] is false, the padding is 12 at the start and 16
+  /// at the end.
+  ///
+  /// With the Material 3 Expressive style, the padding and the gap between the
+  /// icon and the label depend on [ButtonStyle.sizeVariant]. See
+  /// [defaultStyleOf].
   ///
   /// If [icon] is null, this constructor will create an [ElevatedButton]
   /// that doesn't display an icon.
@@ -110,6 +130,7 @@ class ElevatedButton extends ButtonStyleButton {
     super.autofocus = false,
     super.clipBehavior = Clip.none,
     super.statesController,
+    super.isSelected,
     Widget? icon,
     required Widget label,
     IconAlignment? iconAlignment,
@@ -153,13 +174,23 @@ class ElevatedButton extends ButtonStyleButton {
   /// null, the button icon will use the default icon color.
   ///
   /// The button's elevations are defined relative to the [elevation]
-  /// parameter. The disabled elevation is the same as the parameter
-  /// value, [elevation] + 2 is used when the button is hovered
-  /// or focused, and elevation + 6 is used when the button is pressed.
+  /// parameter. The disabled elevation is 0, [elevation] + 2 is used when
+  /// the button is hovered or focused, and [elevation] + 6 is used when the
+  /// button is pressed.
   ///
   /// All of the other parameters are either used directly or used to
   /// create a [WidgetStateProperty] with a single value for all
   /// states.
+  ///
+  /// The [sizeVariant] and [shapeVariant] parameters are Material 3 Expressive
+  /// options. They provide extra-small through extra-large sizes and round or
+  /// square shapes through [ButtonStyle.sizeVariant] and
+  /// [ButtonStyle.shapeVariant].
+  ///
+  /// When [ElevatedButtonThemeData.variant] is
+  /// [StyleVariant.material3Expressive] and these properties are null,
+  /// Material 3 Expressive [ElevatedButton] defaults use
+  /// [ButtonSizeVariant.small] and [ButtonShapeVariant.round].
   ///
   /// All parameters default to null, by default this method returns
   /// a [ButtonStyle] that doesn't override anything.
@@ -221,16 +252,19 @@ class ElevatedButton extends ButtonStyleButton {
     InteractiveInkFeatureFactory? splashFactory,
     ButtonLayerBuilder? backgroundBuilder,
     ButtonLayerBuilder? foregroundBuilder,
+    ButtonSizeVariant? sizeVariant,
+    ButtonShapeVariant? shapeVariant,
   }) {
     final WidgetStateProperty<Color?>? overlayColorProp = switch ((foregroundColor, overlayColor)) {
       (null, null) => null,
       (_, Color(a: 0.0)) => WidgetStatePropertyAll<Color?>(overlayColor),
-      (_, final Color color) ||
-      (final Color color, _) => WidgetStateProperty<Color?>.fromMap(<WidgetState, Color?>{
-        WidgetState.pressed: color.withOpacity(0.1),
-        WidgetState.hovered: color.withOpacity(0.08),
-        WidgetState.focused: color.withOpacity(0.1),
-      }),
+      (_, final Color color) || (final Color color, _) => WidgetStateProperty<Color?>.fromMap(
+        <WidgetState, Color?>{
+          WidgetState.pressed: color.withOpacity(0.1),
+          WidgetState.hovered: color.withOpacity(0.08),
+          WidgetState.focused: color.withOpacity(0.1),
+        },
+      ),
     };
 
     WidgetStateProperty<double>? elevationValue;
@@ -273,6 +307,8 @@ class ElevatedButton extends ButtonStyleButton {
       splashFactory: splashFactory,
       backgroundBuilder: backgroundBuilder,
       foregroundBuilder: foregroundBuilder,
+      sizeVariant: sizeVariant,
+      shapeVariant: shapeVariant,
     );
   }
 
@@ -305,7 +341,7 @@ class ElevatedButton extends ButtonStyleButton {
   ///
   /// ## Material 2 defaults
   ///
-  /// * `textStyle` - Theme.textTheme.button
+  /// * `textStyle` - Theme.textTheme.labelLarge
   /// * `backgroundColor`
   ///   * disabled - Theme.colorScheme.onSurface(0.12)
   ///   * others - Theme.colorScheme.primary
@@ -314,7 +350,7 @@ class ElevatedButton extends ButtonStyleButton {
   ///   * others - Theme.colorScheme.onPrimary
   /// * `overlayColor`
   ///   * hovered - Theme.colorScheme.onPrimary(0.08)
-  ///   * focused or pressed - Theme.colorScheme.onPrimary(0.12)
+  ///   * focused or pressed - Theme.colorScheme.onPrimary(0.1)
   /// * `shadowColor` - Theme.shadowColor
   /// * `elevation`
   ///   * disabled - 0
@@ -324,8 +360,8 @@ class ElevatedButton extends ButtonStyleButton {
   /// * `padding`
   ///   * `default font size <= 14` - horizontal(16)
   ///   * `14 < default font size <= 28` - lerp(horizontal(16), horizontal(8))
-  ///   * `28 < default font size <= 36` - lerp(horizontal(8), horizontal(4))
-  ///   * `36 < default font size` - horizontal(4)
+  ///   * `28 < default font size <= 42` - lerp(horizontal(8), horizontal(4))
+  ///   * `42 < default font size` - horizontal(4)
   /// * `minimumSize` - Size(64, 36)
   /// * `fixedSize` - null
   /// * `maximumSize` - Size.infinite
@@ -344,8 +380,8 @@ class ElevatedButton extends ButtonStyleButton {
   /// * `padding`
   ///   * `default font size <= 14` - start(12) end(16)
   ///   * `14 < default font size <= 28` - lerp(start(12) end(16), horizontal(8))
-  ///   * `28 < default font size <= 36` - lerp(horizontal(8), horizontal(4))
-  ///   * `36 < default font size` - horizontal(4)
+  ///   * `28 < default font size <= 42` - lerp(horizontal(8), start(8) end(4))
+  ///   * `42 < default font size` - start(8) end(4)
   ///
   /// The default value for `side`, which defines the appearance of the button's
   /// outline, is null. That means that the outline is defined by the button
@@ -354,8 +390,9 @@ class ElevatedButton extends ButtonStyleButton {
   ///
   /// ## Material 3 defaults
   ///
-  /// If [ThemeData.useMaterial3] is set to true the following defaults will
-  /// be used:
+  /// With the Material 3 style, that is, when [ThemeData.useMaterial3] is true
+  /// and [ElevatedButtonThemeData.variant] isn't
+  /// [StyleVariant.material3Expressive], the following defaults will be used:
   ///
   /// * `textStyle` - Theme.textTheme.labelLarge
   /// * `backgroundColor`
@@ -377,11 +414,13 @@ class ElevatedButton extends ButtonStyleButton {
   /// * `padding`
   ///   * `default font size <= 14` - horizontal(24)
   ///   * `14 < default font size <= 28` - lerp(horizontal(24), horizontal(12))
-  ///   * `28 < default font size <= 36` - lerp(horizontal(12), horizontal(6))
-  ///   * `36 < default font size` - horizontal(6)
+  ///   * `28 < default font size <= 42` - lerp(horizontal(12), horizontal(6))
+  ///   * `42 < default font size` - horizontal(6)
   /// * `minimumSize` - Size(64, 40)
   /// * `fixedSize` - null
   /// * `maximumSize` - Size.infinite
+  /// * `iconSize` - 18
+  /// * `iconColor` - same as `foregroundColor`
   /// * `side` - null
   /// * `shape` - StadiumBorder()
   /// * `mouseCursor` - WidgetStateMouseCursor.adaptiveClickable
@@ -394,13 +433,96 @@ class ElevatedButton extends ButtonStyleButton {
   ///
   /// For the [ElevatedButton.icon] factory, the start (generally the left) value of
   /// [ButtonStyle.padding] is reduced from 24 to 16.
+  ///
+  /// ## Material 3 Expressive defaults
+  ///
+  // TODO(QuncCccccc): Clean up [ThemeData.useMaterial3] once useMaterial3 is removed.
+  /// With the Material 3 Expressive style, that is, when
+  /// [ThemeData.useMaterial3] is true and [ElevatedButtonThemeData.variant] is
+  /// [StyleVariant.material3Expressive], the following defaults will be used.
+  /// Values listed per size are for [ButtonSizeVariant.xSmall],
+  /// [ButtonSizeVariant.small], [ButtonSizeVariant.medium],
+  /// [ButtonSizeVariant.large], and [ButtonSizeVariant.xLarge] respectively.
+  /// The selected values only apply when [isSelected] is non-null.
+  ///
+  /// * `textStyle` - based on [ButtonStyle.sizeVariant]
+  ///   * xSmall or small - Theme.textTheme.labelLarge
+  ///   * medium - Theme.textTheme.titleMedium
+  ///   * large - Theme.textTheme.headlineSmall
+  ///   * xLarge - Theme.textTheme.headlineLarge
+  /// * `backgroundColor`
+  ///   * disabled - Theme.colorScheme.onSurface(0.1)
+  ///   * selected - Theme.colorScheme.primary
+  ///   * others - Theme.colorScheme.surfaceContainerLow
+  /// * `foregroundColor`
+  ///   * disabled - Theme.colorScheme.onSurface(0.38)
+  ///   * selected - Theme.colorScheme.onPrimary
+  ///   * others - Theme.colorScheme.primary
+  /// * `overlayColor`
+  ///   * selected
+  ///     * hovered - Theme.colorScheme.onPrimary(0.08)
+  ///     * focused or pressed - Theme.colorScheme.onPrimary(0.1)
+  ///   * hovered - Theme.colorScheme.primary(0.08)
+  ///   * focused or pressed - Theme.colorScheme.primary(0.1)
+  /// * `shadowColor` - Theme.colorScheme.shadow
+  /// * `surfaceTintColor` - Colors.transparent
+  /// * `elevation`
+  ///   * disabled - 0
+  ///   * others - 1
+  /// * `padding` - based on [ButtonStyle.sizeVariant]; horizontal(12),
+  ///   horizontal(16), horizontal(24), horizontal(48), horizontal(64)
+  /// * `minimumSize` - based on [ButtonStyle.sizeVariant]; Size(64, 32),
+  ///   Size(64, 40), Size(64, 56), Size(64, 96), Size(64, 136)
+  /// * `fixedSize` - null
+  /// * `maximumSize` - Size.infinite
+  /// * `iconSize` - based on [ButtonStyle.sizeVariant]; 20, 20, 24, 32, 40
+  /// * `iconColor` - same as `foregroundColor`
+  /// * `side` - null
+  /// * `shape` - based on [ButtonStyle.sizeVariant], [ButtonStyle.shapeVariant],
+  ///   and state
+  ///   * pressed - RoundedRectangleBorder with radius 8, 8, 12, 16, 16
+  ///   * selected
+  ///     * round - RoundedRectangleBorder with radius 12, 12, 16, 28, 28
+  ///     * square - StadiumBorder()
+  ///   * others
+  ///     * round - StadiumBorder()
+  ///     * square - RoundedRectangleBorder with radius 12, 12, 16, 28, 28
+  /// * `mouseCursor` - WidgetStateMouseCursor.adaptiveClickable
+  /// * `visualDensity` - VisualDensity.standard
+  /// * `tapTargetSize` - MaterialTapTargetSize.padded
+  /// * `animationDuration` - kThemeChangeDuration
+  /// * `enableFeedback` - true
+  /// * `alignment` - Alignment.center
+  /// * `splashFactory` - Theme.splashFactory
+  /// * `sizeVariant` - ButtonSizeVariant.small
+  /// * `shapeVariant` - ButtonShapeVariant.round
+  ///
+  /// For the [ElevatedButton.icon] factory, the padding is the same, and the
+  /// gap between the icon and the label is 4, 8, 8, 12, or 16 based on
+  /// [ButtonStyle.sizeVariant].
 
   @override
   ButtonStyle defaultStyleOf(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     final ColorScheme colorScheme = theme.colorScheme;
+    final ElevatedButtonThemeData elevatedButtonTheme = ElevatedButtonTheme.of(context);
+    final StyleVariant effectiveVariant = ElevatedButtonTheme.variantOf(context);
+    final ButtonSizeVariant? effectiveSize =
+        style?.sizeVariant ?? elevatedButtonTheme.style?.sizeVariant;
+    final ButtonShapeVariant? effectiveShape =
+        style?.shapeVariant ?? elevatedButtonTheme.style?.shapeVariant;
+    final bool useExpressive =
+        theme.useMaterial3 && effectiveVariant == StyleVariant.material3Expressive;
     final ButtonStyle buttonStyle = theme.useMaterial3
-        ? _ElevatedButtonDefaultsM3(context)
+        ? switch (effectiveVariant) {
+            StyleVariant.material3 => _ElevatedButtonDefaultsM3(context),
+            StyleVariant.material3Expressive => _ElevatedButtonDefaultsM3E(
+              context,
+              isSelected != null,
+              effectiveSize,
+              effectiveShape,
+            ),
+          }
         : styleFrom(
             backgroundColor: colorScheme.primary,
             foregroundColor: colorScheme.onPrimary,
@@ -422,6 +544,12 @@ class ElevatedButton extends ButtonStyleButton {
             alignment: Alignment.center,
             splashFactory: InkRipple.splashFactory,
           );
+
+    // The Material 3 Expressive defaults use the same padding with or without
+    // an icon.
+    if (useExpressive) {
+      return buttonStyle;
+    }
 
     // Only apply padding when the ElevatedButton has an Icon.
     if (_addPadding) {
@@ -488,11 +616,25 @@ class _ElevatedButtonWithIconChild extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double defaultFontSize =
-        buttonStyle?.textStyle?.resolve(const <WidgetState>{})?.fontSize ?? 14.0;
-    final double scale =
-        clampDouble(MediaQuery.textScalerOf(context).scale(defaultFontSize) / 14.0, 1.0, 2.0) - 1.0;
     final ElevatedButtonThemeData elevatedButtonTheme = ElevatedButtonTheme.of(context);
+    final bool useExpressive =
+        Theme.of(context).useMaterial3 &&
+        ElevatedButtonTheme.variantOf(context) == StyleVariant.material3Expressive;
+    final double spacing;
+    if (useExpressive) {
+      final ButtonSizeVariant effectiveSize =
+          buttonStyle?.sizeVariant ??
+          elevatedButtonTheme.style?.sizeVariant ??
+          ButtonSizeVariant.small;
+      spacing = _ElevatedButtonDefaultsM3E.iconLabelSpace(effectiveSize);
+    } else {
+      final double defaultFontSize =
+          buttonStyle?.textStyle?.resolve(const <WidgetState>{})?.fontSize ?? 14.0;
+      final double scale =
+          clampDouble(MediaQuery.textScalerOf(context).scale(defaultFontSize) / 14.0, 1.0, 2.0) -
+          1.0;
+      spacing = lerpDouble(8, 4, scale)!;
+    }
     final IconAlignment effectiveIconAlignment =
         iconAlignment ??
         elevatedButtonTheme.style?.iconAlignment ??
@@ -500,151 +642,10 @@ class _ElevatedButtonWithIconChild extends StatelessWidget {
         IconAlignment.start;
     return Row(
       mainAxisSize: MainAxisSize.min,
-      spacing: lerpDouble(8, 4, scale)!,
+      spacing: spacing,
       children: effectiveIconAlignment == IconAlignment.start
           ? <Widget>[icon, Flexible(child: label)]
           : <Widget>[Flexible(child: label), icon],
     );
   }
 }
-
-// BEGIN GENERATED TOKEN PROPERTIES - ElevatedButton
-
-// Do not edit by hand. The code between the "BEGIN GENERATED" and
-// "END GENERATED" comments are generated from data in the Material
-// Design token database by the script:
-//   dev/tools/gen_defaults/bin/gen_defaults.dart.
-
-// dart format off
-class _ElevatedButtonDefaultsM3 extends ButtonStyle {
-  _ElevatedButtonDefaultsM3(this.context)
-   : super(
-       animationDuration: kThemeChangeDuration,
-       enableFeedback: true,
-       alignment: Alignment.center,
-     );
-
-  final BuildContext context;
-  late final ColorScheme _colors = Theme.of(context).colorScheme;
-
-  @override
-  WidgetStateProperty<TextStyle?> get textStyle =>
-    MaterialStatePropertyAll<TextStyle?>(Theme.of(context).textTheme.labelLarge);
-
-  @override
-  WidgetStateProperty<Color?>? get backgroundColor =>
-    WidgetStateProperty.resolveWith((Set<WidgetState> states) {
-      if (states.contains(WidgetState.disabled)) {
-        return _colors.onSurface.withOpacity(0.12);
-      }
-      return _colors.surfaceContainerLow;
-    });
-
-  @override
-  WidgetStateProperty<Color?>? get foregroundColor =>
-    WidgetStateProperty.resolveWith((Set<WidgetState> states) {
-      if (states.contains(WidgetState.disabled)) {
-        return _colors.onSurface.withOpacity(0.38);
-      }
-      return _colors.primary;
-    });
-
-  @override
-  WidgetStateProperty<Color?>? get overlayColor =>
-    WidgetStateProperty.resolveWith((Set<WidgetState> states) {
-      if (states.contains(WidgetState.pressed)) {
-        return _colors.primary.withOpacity(0.1);
-      }
-      if (states.contains(WidgetState.hovered)) {
-        return _colors.primary.withOpacity(0.08);
-      }
-      if (states.contains(WidgetState.focused)) {
-        return _colors.primary.withOpacity(0.1);
-      }
-      return null;
-    });
-
-  @override
-  WidgetStateProperty<Color>? get shadowColor =>
-    MaterialStatePropertyAll<Color>(_colors.shadow);
-
-  @override
-  WidgetStateProperty<Color>? get surfaceTintColor =>
-    const MaterialStatePropertyAll<Color>(Colors.transparent);
-
-  @override
-  WidgetStateProperty<double>? get elevation =>
-    WidgetStateProperty.resolveWith((Set<WidgetState> states) {
-      if (states.contains(WidgetState.disabled)) {
-        return 0.0;
-      }
-      if (states.contains(WidgetState.pressed)) {
-        return 1.0;
-      }
-      if (states.contains(WidgetState.hovered)) {
-        return 3.0;
-      }
-      if (states.contains(WidgetState.focused)) {
-        return 1.0;
-      }
-      return 1.0;
-    });
-
-  @override
-  WidgetStateProperty<EdgeInsetsGeometry>? get padding =>
-    MaterialStatePropertyAll<EdgeInsetsGeometry>(_scaledPadding(context));
-
-  @override
-  WidgetStateProperty<Size>? get minimumSize =>
-    const MaterialStatePropertyAll<Size>(Size(64.0, 40.0));
-
-  // No default fixedSize
-
-  @override
-  WidgetStateProperty<double>? get iconSize =>
-    const MaterialStatePropertyAll<double>(18.0);
-
-  @override
-  WidgetStateProperty<Color>? get iconColor {
-    return WidgetStateProperty.resolveWith((Set<WidgetState> states) {
-      if (states.contains(WidgetState.disabled)) {
-        return _colors.onSurface.withOpacity(0.38);
-      }
-      if (states.contains(WidgetState.pressed)) {
-        return _colors.primary;
-      }
-      if (states.contains(WidgetState.hovered)) {
-        return _colors.primary;
-      }
-      if (states.contains(WidgetState.focused)) {
-        return _colors.primary;
-      }
-      return _colors.primary;
-    });
-  }
-
-  @override
-  WidgetStateProperty<Size>? get maximumSize =>
-    const MaterialStatePropertyAll<Size>(Size.infinite);
-
-  // No default side
-
-  @override
-  WidgetStateProperty<OutlinedBorder>? get shape =>
-    const MaterialStatePropertyAll<OutlinedBorder>(StadiumBorder());
-
-  @override
-  WidgetStateProperty<MouseCursor?>? get mouseCursor => WidgetStateMouseCursor.adaptiveClickable;
-
-  @override
-  VisualDensity? get visualDensity => Theme.of(context).visualDensity;
-
-  @override
-  MaterialTapTargetSize? get tapTargetSize => Theme.of(context).materialTapTargetSize;
-
-  @override
-  InteractiveInkFeatureFactory? get splashFactory => Theme.of(context).splashFactory;
-}
-// dart format on
-
-// END GENERATED TOKEN PROPERTIES - ElevatedButton

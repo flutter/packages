@@ -18,13 +18,13 @@ import 'util.dart';
 void main() {
   group('LicenseCheckCommand', () {
     late CommandRunner<void> runner;
-    late Platform platform;
+    late NativePlatform platform;
     late RecordingProcessRunner gitProcessRunner;
     late Directory packagesDir;
     late Directory root;
 
     setUp(() {
-      platform = MockPlatformWithSeparator();
+      platform = createMockPlatform();
       final GitDir gitDir;
       (:packagesDir, processRunner: _, :gitProcessRunner, :gitDir) = configureBaseCommandMocks(
         platform: platform,
@@ -131,10 +131,13 @@ void main() {
         'foo.mocks.dart',
         // Ignored files.
         'resource.h',
+        // Swift-generated Objective-C compatibility files.
+        'foo_objc_gen/Runner.h',
+        'foo_objc_gen/Foo.gen.m',
       ];
 
       for (final name in ignoredFiles) {
-        root.childFile(name).createSync();
+        root.childFile(name).createSync(recursive: true);
       }
       mockGitFilesListWithAllFiles(root);
 
@@ -673,11 +676,6 @@ furnished to do so, subject to the following conditions:''',
       );
     });
   });
-}
-
-class MockPlatformWithSeparator extends MockPlatform {
-  @override
-  String get pathSeparator => isWindows ? r'\' : '/';
 }
 
 const String _correctLicenseFileText = '''
