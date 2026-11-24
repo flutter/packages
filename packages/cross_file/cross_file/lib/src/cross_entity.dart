@@ -68,14 +68,14 @@ base class XEntity {
   }
 
   @override
-  // This is required because `XDisposable` contains an _isDisposed variable.
+  // This is required because this contains the `_isDisposed` variable.
   // Since this class delegates to a platform implementation, an instance is
   // always equal if the platform implementations are the same reference.
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) => other is XEntity && other.platform == platform;
 
   @override
-  // This is required because `XDisposable` contains an _isDisposed variable.
+  // This is required because this contains the `_isDisposed` variable.
   // Since this class delegates to a platform implementation, an instance is
   // always equal if the platform implementations are the same reference.
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
