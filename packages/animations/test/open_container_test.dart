@@ -3,6 +3,11 @@
 // found in the LICENSE file.
 
 import 'package:animations/src/open_container.dart';
+// TODO(chunhtai): Remove once Flutter 3.50 reaches stable, as widgets.dart
+// (via material_ui.dart) re-exports ScrollCacheExtent
+// (https://github.com/flutter/flutter/pull/189483).
+// ignore: unnecessary_import
+import 'package:flutter/rendering.dart' show ScrollCacheExtent;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -1449,7 +1454,7 @@ void main() {
           width: 200,
           child: _boilerplate(
             child: ListView.builder(
-              cacheExtent: 0,
+              scrollCacheExtent: const ScrollCacheExtent.pixels(0),
               controller: controller,
               itemBuilder: (BuildContext context, int index) {
                 return OpenContainer(
@@ -1515,7 +1520,7 @@ void main() {
           child: _boilerplate(
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              cacheExtent: 0,
+              scrollCacheExtent: const ScrollCacheExtent.pixels(0),
               controller: controller,
               itemBuilder: (BuildContext context, int index) {
                 return OpenContainer(
