@@ -128,43 +128,50 @@ void main() {
         );
       });
 
-      test('lastModified throws StateError', () async {
+      test('lastModified throws AssertionError', () async {
         final file = FileSystemXFile('to/myFile.txt');
         await file.dispose();
         await expectLater(() => file.lastModified(), throwsAssertionError);
       });
 
-      test('length throws StateError', () async {
+      test('length throws AssertionError', () async {
         final file = FileSystemXFile('to/myFile.txt');
         await file.dispose();
         await expectLater(() => file.length(), throwsAssertionError);
       });
 
-      test('openRead throws StateError', () async {
+      test('openRead throws AssertionError', () async {
         final file = FileSystemXFile('to/myFile.txt');
         await file.dispose();
         await expectLater(() => file.openRead(), throwsAssertionError);
       });
 
-      test('readAsBytes throws StateError', () async {
+      test('listening to openRead stream after dispose throws AssertionError', () async {
+        final file = FileSystemXFile('to/myFile.txt');
+        final Stream<Uint8List> stream = file.openRead();
+        await file.dispose();
+        await expectLater(stream.drain<Uint8List>(), throwsAssertionError);
+      });
+
+      test('readAsBytes throws AssertionError', () async {
         final file = FileSystemXFile('to/myFile.txt');
         await file.dispose();
         await expectLater(() => file.readAsBytes(), throwsAssertionError);
       });
 
-      test('readAsString throws StateError', () async {
+      test('readAsString throws AssertionError', () async {
         final file = FileSystemXFile('to/myFile.txt');
         await file.dispose();
         await expectLater(() => file.readAsString(), throwsAssertionError);
       });
 
-      test('name throws StateError', () async {
+      test('name throws AssertionError', () async {
         final file = FileSystemXFile('to/myFile.txt');
         await file.dispose();
         await expectLater(() => file.name(), throwsAssertionError);
       });
 
-      test('writeAsBytes throws StateError', () async {
+      test('writeAsBytes throws AssertionError', () async {
         final file = FileSystemXFile('to/myFile.txt');
         await file.dispose();
         await expectLater(() => file.writeAsBytes(Uint8List(0)), throwsAssertionError);

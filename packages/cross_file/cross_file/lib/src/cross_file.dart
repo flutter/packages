@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
@@ -73,7 +74,22 @@ abstract base class XFile extends XEntity {
       );
     }
 
-    return platform.openRead(start, end);
+    // Ensure `dispose` is not called before the listen event of the stream.
+    late final StreamController<Uint8List> controller;
+    controller = StreamController<Uint8List>(
+      onListen: () {
+        try {
+          assert(assertNotDisposed());
+          controller
+              .addStream(platform.openRead(start, end))
+              .then((_) => controller.close(), onError: controller.addError);
+        } catch (exception, stacktrace) {
+          controller.addError(exception, stacktrace);
+          controller.close();
+        }
+      },
+    );
+    return controller.stream;
   }
 
   /// Reads the entire resource contents as a list of bytes.

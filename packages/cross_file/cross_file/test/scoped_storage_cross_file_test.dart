@@ -133,43 +133,50 @@ void main() {
         );
       });
 
-      test('lastModified throws StateError', () async {
+      test('lastModified throws AssertionError', () async {
         final file = ScopedStorageXFile(uri: 'to/myFile.txt');
         await file.dispose();
         await expectLater(() => file.lastModified(), throwsAssertionError);
       });
 
-      test('length throws StateError', () async {
+      test('length throws AssertionError', () async {
         final file = ScopedStorageXFile(uri: 'to/myFile.txt');
         await file.dispose();
         await expectLater(() => file.length(), throwsAssertionError);
       });
 
-      test('openRead throws StateError', () async {
+      test('openRead throws AssertionError', () async {
         final file = ScopedStorageXFile(uri: 'to/myFile.txt');
         await file.dispose();
         await expectLater(() => file.openRead(), throwsAssertionError);
       });
 
-      test('readAsBytes throws StateError', () async {
+      test('listening to openRead stream after dispose throws AssertionError', () async {
+        final file = ScopedStorageXFile(uri: 'to/myFile.txt');
+        final Stream<Uint8List> stream = file.openRead();
+        await file.dispose();
+        await expectLater(stream.drain<Uint8List>(), throwsAssertionError);
+      });
+
+      test('readAsBytes throws AssertionError', () async {
         final file = ScopedStorageXFile(uri: 'to/myFile.txt');
         await file.dispose();
         await expectLater(() => file.readAsBytes(), throwsAssertionError);
       });
 
-      test('readAsString throws StateError', () async {
+      test('readAsString throws AssertionError', () async {
         final file = ScopedStorageXFile(uri: 'to/myFile.txt');
         await file.dispose();
         await expectLater(() => file.readAsString(), throwsAssertionError);
       });
 
-      test('name throws StateError', () async {
+      test('name throws AssertionError', () async {
         final file = ScopedStorageXFile(uri: 'to/myFile.txt');
         await file.dispose();
         await expectLater(() => file.name(), throwsAssertionError);
       });
 
-      test('canRead throws StateError', () async {
+      test('canRead throws AssertionError', () async {
         final file = ScopedStorageXFile(uri: 'uri');
         await file.dispose();
         await expectLater(() => file.canRead(), throwsAssertionError);
