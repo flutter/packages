@@ -100,7 +100,8 @@ void main() {
                     !settings.enableAudio &&
                     settings.fps == 15 &&
                     settings.videoBitrate == 200000 &&
-                    settings.audioBitrate == 32000,
+                    settings.audioBitrate == 32000 &&
+                    settings.videoCodec == PlatformVideoCodec.hevc,
               ),
             ),
           ),
@@ -118,6 +119,7 @@ void main() {
             fps: 15,
             videoBitrate: 200000,
             audioBitrate: 32000,
+            videoCodec: VideoCodec.hevc,
           ),
         );
 

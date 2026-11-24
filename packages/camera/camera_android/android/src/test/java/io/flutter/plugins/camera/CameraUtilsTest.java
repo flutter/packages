@@ -5,6 +5,7 @@
 package io.flutter.plugins.camera;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.mock;
@@ -17,6 +18,7 @@ import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CameraMetadata;
+import android.media.MediaRecorder;
 import io.flutter.embedding.engine.systemchannels.PlatformChannel;
 import io.flutter.plugins.camera.features.autofocus.FocusMode;
 import io.flutter.plugins.camera.features.exposurelock.ExposureMode;
@@ -100,6 +102,17 @@ public class CameraUtilsTest {
     assertEquals(CameraUtils.focusModeToPigeon(FocusMode.auto), Messages.PlatformFocusMode.AUTO);
     assertEquals(
         CameraUtils.focusModeToPigeon(FocusMode.locked), Messages.PlatformFocusMode.LOCKED);
+  }
+
+  @Test
+  public void videoEncoderFromPigeonTest() {
+    assertEquals(
+        CameraUtils.videoEncoderFromPigeon(Messages.PlatformVideoCodec.H264),
+        Integer.valueOf(MediaRecorder.VideoEncoder.H264));
+    assertEquals(
+        CameraUtils.videoEncoderFromPigeon(Messages.PlatformVideoCodec.HEVC),
+        Integer.valueOf(MediaRecorder.VideoEncoder.HEVC));
+    assertNull(CameraUtils.videoEncoderFromPigeon(null));
   }
 
   @Test

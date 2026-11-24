@@ -34,6 +34,13 @@ final class CameraPropertiesTests: XCTestCase {
       getPixelFormat(for: .yuv420))
   }
 
+  // MARK: - Video Codec Tests
+
+  func testGetAVVideoCodecTypeForPigeonVideoCodec() {
+    XCTAssertEqual(AVVideoCodecType.h264, getAVVideoCodecType(for: .h264))
+    XCTAssertEqual(AVVideoCodecType.hevc, getAVVideoCodecType(for: .hevc))
+  }
+
   // MARK: - Video Stabilization Mode Tests
 
   func testGetAVCaptureVideoStabilizationModeForPigeonVideoStabilizationMode() {

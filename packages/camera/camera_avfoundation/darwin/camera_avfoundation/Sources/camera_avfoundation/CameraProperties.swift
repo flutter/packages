@@ -90,3 +90,13 @@ func getAvCaptureVideoStabilizationMode(
   @unknown default: .off
   }
 }
+
+/// Gets video codec type from its Pigeon representation.
+/// videoCodec - the Pigeon video codec.
+func getAVVideoCodecType(for videoCodec: PlatformVideoCodec) -> AVVideoCodecType {
+  switch videoCodec {
+  case .h264: .h264
+  case .hevc: .hevc
+  @unknown default: .h264
+  }
+}

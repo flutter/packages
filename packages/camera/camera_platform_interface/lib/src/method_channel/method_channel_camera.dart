@@ -106,6 +106,9 @@ class MethodChannelCamera extends CameraPlatform {
             'videoBitrate': mediaSettings.videoBitrate,
             'audioBitrate': mediaSettings.audioBitrate,
             'enableAudio': mediaSettings.enableAudio,
+            'videoCodec': mediaSettings.videoCodec != null
+                ? _serializeVideoCodec(mediaSettings.videoCodec!)
+                : null,
           });
 
       return reply!['cameraId']! as int;
@@ -516,6 +519,16 @@ class MethodChannelCamera extends CameraPlatform {
         return 'medium';
       case ResolutionPreset.low:
         return 'low';
+    }
+  }
+
+  /// Returns the video codec as a String.
+  String _serializeVideoCodec(VideoCodec videoCodec) {
+    switch (videoCodec) {
+      case VideoCodec.h264:
+        return 'h264';
+      case VideoCodec.hevc:
+        return 'hevc';
     }
   }
 

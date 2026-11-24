@@ -655,11 +655,28 @@ final class DefaultCamera: NSObject, Camera {
       return false
     }
 
-    var videoSettings = mediaSettingsAVWrapper.recommendedVideoSettingsForAssetWriter(
-      withFileType:
-        AVFileType.mp4,
-      for: captureVideoOutput
-    )
+    var videoSettings: [String: Any]?
+    // Falls back to the recommended settings when the requested codec is not available, like
+    // `captureToFile` does for HEIF.
+    if let videoCodec = mediaSettings.videoCodec.map({ getAVVideoCodecType(for: $0) }),
+      mediaSettingsAVWrapper.availableVideoCodecTypesForAssetWriter(
+        withFileType: .mp4, for: captureVideoOutput
+      ).contains(videoCodec)
+    {
+      videoSettings = mediaSettingsAVWrapper.recommendedVideoSettings(
+        forVideoCodecType: videoCodec,
+        fileType: .mp4,
+        for: captureVideoOutput
+      )
+    }
+    // Also falls back when there are no recommended settings for the requested codec.
+    if videoSettings == nil {
+      videoSettings = mediaSettingsAVWrapper.recommendedVideoSettingsForAssetWriter(
+        withFileType:
+          AVFileType.mp4,
+        for: captureVideoOutput
+      )
+    }
 
     if mediaSettings.videoBitrate != nil || framesPerSecond != nil {
       var compressionProperties: [String: Any] = [:]

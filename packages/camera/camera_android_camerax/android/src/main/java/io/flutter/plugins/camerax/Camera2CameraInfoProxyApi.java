@@ -18,6 +18,8 @@ import androidx.camera.core.CameraInfo;
  * object instances that are attached to a Dart instance or handle method calls on the associated
  * native class or an instance of that class.
  */
+// Camera2CameraInfo is deprecated in CameraX 1.7.0 in favor of Camera2Interop V2.
+@SuppressWarnings("deprecation")
 @OptIn(markerClass = ExperimentalCamera2Interop.class)
 class Camera2CameraInfoProxyApi extends PigeonApiCamera2CameraInfo {
   Camera2CameraInfoProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {

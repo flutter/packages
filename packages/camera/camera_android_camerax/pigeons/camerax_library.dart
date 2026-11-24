@@ -481,7 +481,18 @@ abstract class VideoOutput {}
 /// See https://developer.android.com/reference/kotlin/androidx/camera/video/Recorder.
 @ProxyApi(kotlinOptions: KotlinProxyApiOptions(fullClassName: 'androidx.camera.video.Recorder'))
 abstract class Recorder implements VideoOutput {
-  Recorder(int? aspectRatio, int? targetVideoEncodingBitRate, QualitySelector? qualitySelector);
+  Recorder(
+    int? aspectRatio,
+    int? targetVideoEncodingBitRate,
+    QualitySelector? qualitySelector,
+    String? videoMimeType,
+  );
+
+  /// Returns the `VideoCapabilities` of Recorder with respect to input camera
+  /// information and video MIME type, or null if no capabilities are found
+  /// for the given MIME type.
+  @static
+  VideoCapabilities? getVideoCapabilities(CameraInfo cameraInfo, String mimeType);
 
   /// Gets the aspect ratio of this Recorder.
   int getAspectRatio();
@@ -494,6 +505,28 @@ abstract class Recorder implements VideoOutput {
 
   /// Prepares a recording that will be saved to a File.
   PendingRecording prepareRecording(String path);
+}
+
+/// The video capabilities of a camera and video encoder, such as the
+/// supported qualities for a dynamic range.
+///
+/// See https://developer.android.com/reference/androidx/camera/video/VideoCapabilities.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(fullClassName: 'androidx.camera.video.VideoCapabilities'),
+)
+abstract class VideoCapabilities {
+  /// Gets all supported qualities for the input dynamic range.
+  List<VideoQuality> getSupportedQualities(DynamicRange dynamicRange);
+}
+
+/// The dynamic range of an image, such as standard dynamic range (SDR).
+///
+/// See https://developer.android.com/reference/androidx/camera/core/DynamicRange.
+@ProxyApi(kotlinOptions: KotlinProxyApiOptions(fullClassName: 'androidx.camera.core.DynamicRange'))
+abstract class DynamicRange {
+  /// A dynamic range representing 8-bit standard dynamic range (SDR).
+  @static
+  late DynamicRange sdr;
 }
 
 /// Listens for `VideoRecordEvent`s from a `PendingRecording`.

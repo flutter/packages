@@ -123,6 +123,9 @@ enum PlatformFocusMode { auto, locked }
 /// Pigeon equivalent of [ResolutionPreset].
 enum PlatformResolutionPreset { low, medium, high, veryHigh, ultraHigh, max }
 
+/// Pigeon equivalent of [VideoCodec].
+enum PlatformVideoCodec { h264, hevc }
+
 /// Pigeon equivalent of [ImageFormatGroup].
 enum PlatformImageFormatGroup {
   /// The default for Android.
@@ -354,6 +357,7 @@ class PlatformMediaSettings {
     this.videoBitrate,
     this.audioBitrate,
     required this.enableAudio,
+    this.videoCodec,
   });
 
   PlatformResolutionPreset resolutionPreset;
@@ -366,8 +370,10 @@ class PlatformMediaSettings {
 
   bool enableAudio;
 
+  PlatformVideoCodec? videoCodec;
+
   List<Object?> _toList() {
-    return <Object?>[resolutionPreset, fps, videoBitrate, audioBitrate, enableAudio];
+    return <Object?>[resolutionPreset, fps, videoBitrate, audioBitrate, enableAudio, videoCodec];
   }
 
   Object encode() {
@@ -382,6 +388,7 @@ class PlatformMediaSettings {
       videoBitrate: result[2] as int?,
       audioBitrate: result[3] as int?,
       enableAudio: result[4]! as bool,
+      videoCodec: result[5] as PlatformVideoCodec?,
     );
   }
 
@@ -398,7 +405,8 @@ class PlatformMediaSettings {
         _deepEquals(fps, other.fps) &&
         _deepEquals(videoBitrate, other.videoBitrate) &&
         _deepEquals(audioBitrate, other.audioBitrate) &&
-        _deepEquals(enableAudio, other.enableAudio);
+        _deepEquals(enableAudio, other.enableAudio) &&
+        _deepEquals(videoCodec, other.videoCodec);
   }
 
   @override
@@ -407,7 +415,7 @@ class PlatformMediaSettings {
 
   @override
   String toString() {
-    return 'PlatformMediaSettings(resolutionPreset: $resolutionPreset, fps: $fps, videoBitrate: $videoBitrate, audioBitrate: $audioBitrate, enableAudio: $enableAudio)';
+    return 'PlatformMediaSettings(resolutionPreset: $resolutionPreset, fps: $fps, videoBitrate: $videoBitrate, audioBitrate: $audioBitrate, enableAudio: $enableAudio, videoCodec: $videoCodec)';
   }
 }
 
@@ -433,26 +441,29 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is PlatformResolutionPreset) {
       buffer.putUint8(133);
       writeValue(buffer, value.index);
-    } else if (value is PlatformImageFormatGroup) {
+    } else if (value is PlatformVideoCodec) {
       buffer.putUint8(134);
       writeValue(buffer, value.index);
-    } else if (value is PlatformFlashMode) {
+    } else if (value is PlatformImageFormatGroup) {
       buffer.putUint8(135);
       writeValue(buffer, value.index);
-    } else if (value is PlatformCameraDescription) {
+    } else if (value is PlatformFlashMode) {
       buffer.putUint8(136);
-      writeValue(buffer, value.encode());
-    } else if (value is PlatformCameraState) {
+      writeValue(buffer, value.index);
+    } else if (value is PlatformCameraDescription) {
       buffer.putUint8(137);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformSize) {
+    } else if (value is PlatformCameraState) {
       buffer.putUint8(138);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformPoint) {
+    } else if (value is PlatformSize) {
       buffer.putUint8(139);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformMediaSettings) {
+    } else if (value is PlatformPoint) {
       buffer.putUint8(140);
+      writeValue(buffer, value.encode());
+    } else if (value is PlatformMediaSettings) {
+      buffer.putUint8(141);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -479,19 +490,22 @@ class _PigeonCodec extends StandardMessageCodec {
         return value == null ? null : PlatformResolutionPreset.values[value];
       case 134:
         final value = readValue(buffer) as int?;
-        return value == null ? null : PlatformImageFormatGroup.values[value];
+        return value == null ? null : PlatformVideoCodec.values[value];
       case 135:
         final value = readValue(buffer) as int?;
-        return value == null ? null : PlatformFlashMode.values[value];
+        return value == null ? null : PlatformImageFormatGroup.values[value];
       case 136:
-        return PlatformCameraDescription.decode(readValue(buffer)!);
+        final value = readValue(buffer) as int?;
+        return value == null ? null : PlatformFlashMode.values[value];
       case 137:
-        return PlatformCameraState.decode(readValue(buffer)!);
+        return PlatformCameraDescription.decode(readValue(buffer)!);
       case 138:
-        return PlatformSize.decode(readValue(buffer)!);
+        return PlatformCameraState.decode(readValue(buffer)!);
       case 139:
-        return PlatformPoint.decode(readValue(buffer)!);
+        return PlatformSize.decode(readValue(buffer)!);
       case 140:
+        return PlatformPoint.decode(readValue(buffer)!);
+      case 141:
         return PlatformMediaSettings.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);

@@ -51,6 +51,7 @@ import 'android_camera_camerax_test.mocks.dart';
   MockSpec<Recording>(),
   MockSpec<RecordingStats>(),
   MockSpec<SystemServicesManager>(),
+  MockSpec<VideoCapabilities>(),
   MockSpec<VideoCapture>(),
   MockSpec<VideoRecordEventFinalize>(),
   MockSpec<VideoRecordEventStart>(),
@@ -209,7 +210,12 @@ void main() {
           return mockImageCapture;
         };
     PigeonOverrides.recorder_new =
-        ({int? aspectRatio, int? targetVideoEncodingBitRate, QualitySelector? qualitySelector}) {
+        ({
+          int? aspectRatio,
+          int? targetVideoEncodingBitRate,
+          QualitySelector? qualitySelector,
+          String? videoMimeType,
+        }) {
           final mockRecorder = MockRecorder();
           when(
             mockRecorder.getQualitySelector(),
@@ -570,7 +576,12 @@ void main() {
           };
       int? recorderTargetVideoEncodingBitRate;
       PigeonOverrides.recorder_new =
-          ({int? aspectRatio, int? targetVideoEncodingBitRate, QualitySelector? qualitySelector}) {
+          ({
+            int? aspectRatio,
+            int? targetVideoEncodingBitRate,
+            QualitySelector? qualitySelector,
+            String? videoMimeType,
+          }) {
             recorderTargetVideoEncodingBitRate = targetVideoEncodingBitRate;
             return mockRecorder;
           };
@@ -1108,7 +1119,12 @@ void main() {
             return mockImageCapture;
           };
       PigeonOverrides.recorder_new =
-          ({int? aspectRatio, int? targetVideoEncodingBitRate, QualitySelector? qualitySelector}) {
+          ({
+            int? aspectRatio,
+            int? targetVideoEncodingBitRate,
+            QualitySelector? qualitySelector,
+            String? videoMimeType,
+          }) {
             return mockRecorder;
           };
       PigeonOverrides.videoCapture_withOutput =
@@ -1431,6 +1447,147 @@ void main() {
     expect(targetImageAnalysisFpsRange?.upper, fastTargetFps);
   });
 
+  group('createCameraWithSettings video codec', () {
+    /// Creates a camera with [videoCodec], and returns the video MIME type set
+    /// on the Recorder and the MIME types whose capabilities were queried.
+    ///
+    /// [supportedQualities] maps each MIME type that has video capabilities to
+    /// its supported SDR qualities. If [saveCameraInfo] is false, the camera
+    /// is created without calling `availableCameras` first, so the plugin has
+    /// no `CameraInfo` for it.
+    Future<_VideoCodecResult> createCameraWithVideoCodec(
+      VideoCodec? videoCodec, {
+      Map<String, List<VideoQuality>> supportedQualities = const <String, List<VideoQuality>>{},
+      bool saveCameraInfo = true,
+    }) async {
+      const cameraName = 'cameraName';
+      final mockProcessCameraProvider = MockProcessCameraProvider();
+      final mockCameraInfo = MockCameraInfo();
+      final sdr = DynamicRange.pigeon_detached();
+      final queriedVideoMimeTypes = <String>[];
+      String? recorderVideoMimeType;
+
+      when(mockCameraInfo.lensFacing).thenReturn(LensFacing.back);
+      when(mockCameraInfo.sensorRotationDegrees).thenReturn(90);
+      when(
+        mockProcessCameraProvider.getAvailableCameraInfos(),
+      ).thenAnswer((_) async => <CameraInfo>[mockCameraInfo]);
+      setUpOverridesForTestingUseCaseConfiguration(mockProcessCameraProvider);
+      PigeonOverrides.camera2CameraInfo_from = ({required dynamic cameraInfo}) {
+        final mockCamera2CameraInfo = MockCamera2CameraInfo();
+        when(mockCamera2CameraInfo.getCameraId()).thenAnswer((_) async => cameraName);
+        return mockCamera2CameraInfo;
+      };
+      PigeonOverrides.dynamicRange_sdr = sdr;
+      PigeonOverrides.recorder_getVideoCapabilities = (dynamic cameraInfo, String mimeType) async {
+        expect(cameraInfo, mockCameraInfo);
+        queriedVideoMimeTypes.add(mimeType);
+        final List<VideoQuality>? qualities = supportedQualities[mimeType];
+        if (qualities == null) {
+          return null;
+        }
+        final VideoCapabilities mockVideoCapabilities = MockVideoCapabilities();
+        when(mockVideoCapabilities.getSupportedQualities(sdr)).thenAnswer((_) async => qualities);
+        return mockVideoCapabilities;
+      };
+      PigeonOverrides.recorder_new =
+          ({
+            int? aspectRatio,
+            int? targetVideoEncodingBitRate,
+            QualitySelector? qualitySelector,
+            String? videoMimeType,
+          }) {
+            recorderVideoMimeType = videoMimeType;
+            return MockRecorder();
+          };
+
+      final camera = AndroidCameraCameraX();
+      if (saveCameraInfo) {
+        await camera.availableCameras();
+      }
+      await camera.createCameraWithSettings(
+        const CameraDescription(
+          name: cameraName,
+          lensDirection: CameraLensDirection.back,
+          sensorOrientation: 90,
+        ),
+        MediaSettings(videoCodec: videoCodec),
+      );
+
+      return (
+        recorderVideoMimeType: recorderVideoMimeType,
+        queriedVideoMimeTypes: queriedVideoMimeTypes,
+      );
+    }
+
+    test('sets the H.264 MIME type on the Recorder when supported', () async {
+      final _VideoCodecResult result = await createCameraWithVideoCodec(
+        VideoCodec.h264,
+        supportedQualities: <String, List<VideoQuality>>{
+          AndroidCameraCameraX.videoMimeTypeH264: <VideoQuality>[VideoQuality.FHD],
+        },
+      );
+
+      expect(result.recorderVideoMimeType, AndroidCameraCameraX.videoMimeTypeH264);
+    });
+
+    test('sets the HEVC MIME type on the Recorder when supported', () async {
+      final _VideoCodecResult result = await createCameraWithVideoCodec(
+        VideoCodec.hevc,
+        supportedQualities: <String, List<VideoQuality>>{
+          AndroidCameraCameraX.videoMimeTypeHevc: <VideoQuality>[VideoQuality.FHD],
+        },
+      );
+
+      expect(result.queriedVideoMimeTypes, <String>[AndroidCameraCameraX.videoMimeTypeHevc]);
+      expect(result.recorderVideoMimeType, AndroidCameraCameraX.videoMimeTypeHevc);
+    });
+
+    test('leaves the Recorder MIME type unset when the codec has no capabilities', () async {
+      final _VideoCodecResult result = await createCameraWithVideoCodec(
+        VideoCodec.hevc,
+        supportedQualities: <String, List<VideoQuality>>{
+          AndroidCameraCameraX.videoMimeTypeH264: <VideoQuality>[VideoQuality.FHD],
+        },
+      );
+
+      expect(result.queriedVideoMimeTypes, <String>[AndroidCameraCameraX.videoMimeTypeHevc]);
+      expect(result.recorderVideoMimeType, isNull);
+    });
+
+    test('leaves the Recorder MIME type unset when the codec has no SDR qualities', () async {
+      final _VideoCodecResult result = await createCameraWithVideoCodec(
+        VideoCodec.hevc,
+        supportedQualities: <String, List<VideoQuality>>{
+          AndroidCameraCameraX.videoMimeTypeHevc: <VideoQuality>[],
+        },
+      );
+
+      expect(result.queriedVideoMimeTypes, <String>[AndroidCameraCameraX.videoMimeTypeHevc]);
+      expect(result.recorderVideoMimeType, isNull);
+    });
+
+    test('leaves the Recorder MIME type unset when no codec is requested', () async {
+      final _VideoCodecResult result = await createCameraWithVideoCodec(null);
+
+      expect(result.queriedVideoMimeTypes, isEmpty);
+      expect(result.recorderVideoMimeType, isNull);
+    });
+
+    test('leaves the Recorder MIME type unset when the camera has no CameraInfo', () async {
+      final _VideoCodecResult result = await createCameraWithVideoCodec(
+        VideoCodec.hevc,
+        supportedQualities: <String, List<VideoQuality>>{
+          AndroidCameraCameraX.videoMimeTypeHevc: <VideoQuality>[VideoQuality.FHD],
+        },
+        saveCameraInfo: false,
+      );
+
+      expect(result.queriedVideoMimeTypes, isEmpty);
+      expect(result.recorderVideoMimeType, isNull);
+    });
+  });
+
   test('createCamera properly selects specific back camera by specifying a CameraInfo', () async {
     // Arrange
     final camera = AndroidCameraCameraX();
@@ -1516,11 +1673,21 @@ void main() {
           return mockImageCapture;
         };
     PigeonOverrides.recorder_new =
-        ({int? aspectRatio, int? targetVideoEncodingBitRate, QualitySelector? qualitySelector}) {
+        ({
+          int? aspectRatio,
+          int? targetVideoEncodingBitRate,
+          QualitySelector? qualitySelector,
+          String? videoMimeType,
+        }) {
           return mockRecorder;
         };
     PigeonOverrides.recorder_new =
-        ({int? aspectRatio, int? targetVideoEncodingBitRate, QualitySelector? qualitySelector}) {
+        ({
+          int? aspectRatio,
+          int? targetVideoEncodingBitRate,
+          QualitySelector? qualitySelector,
+          String? videoMimeType,
+        }) {
           return mockRecorder;
         };
     PigeonOverrides.videoCapture_withOutput =
@@ -1868,8 +2035,12 @@ void main() {
           bool? zeroShutterLagEnabled,
         }) => mockImageCapture;
     PigeonOverrides.recorder_new =
-        ({int? aspectRatio, int? targetVideoEncodingBitRate, QualitySelector? qualitySelector}) =>
-            MockRecorder();
+        ({
+          int? aspectRatio,
+          int? targetVideoEncodingBitRate,
+          QualitySelector? qualitySelector,
+          String? videoMimeType,
+        }) => MockRecorder();
     PigeonOverrides.videoCapture_withOutput =
         ({required VideoOutput videoOutput, CameraIntegerRange? targetFpsRange}) =>
             MockVideoCapture();
@@ -3189,7 +3360,12 @@ void main() {
             return mockImageCapture;
           };
       PigeonOverrides.recorder_new =
-          ({int? aspectRatio, QualitySelector? qualitySelector, int? targetVideoEncodingBitRate}) {
+          ({
+            int? aspectRatio,
+            QualitySelector? qualitySelector,
+            int? targetVideoEncodingBitRate,
+            String? videoMimeType,
+          }) {
             when(
               mockRecorder.prepareRecording(outputPath),
             ).thenAnswer((_) async => mockPendingRecording);
@@ -3402,7 +3578,12 @@ void main() {
             return mockImageCapture;
           };
       PigeonOverrides.recorder_new =
-          ({int? aspectRatio, QualitySelector? qualitySelector, int? targetVideoEncodingBitRate}) {
+          ({
+            int? aspectRatio,
+            QualitySelector? qualitySelector,
+            int? targetVideoEncodingBitRate,
+            String? videoMimeType,
+          }) {
             when(
               mockRecorder.prepareRecording(outputPath),
             ).thenAnswer((_) async => mockPendingRecording);
@@ -6493,3 +6674,7 @@ class TestMeteringPoint extends MeteringPoint {
   final double y;
   final double? size;
 }
+
+/// The video MIME type set on the Recorder and the MIME types whose video
+/// capabilities were queried while creating a camera.
+typedef _VideoCodecResult = ({String? recorderVideoMimeType, List<String> queriedVideoMimeTypes});

@@ -94,6 +94,7 @@ class AVFoundationCamera extends CameraPlatform {
           videoBitrate: mediaSettings?.videoBitrate,
           audioBitrate: mediaSettings?.audioBitrate,
           enableAudio: mediaSettings?.enableAudio ?? true,
+          videoCodec: _pigeonVideoCodec(mediaSettings?.videoCodec),
         ),
       );
     } on PlatformException catch (e) {
@@ -489,6 +490,25 @@ class AVFoundationCamera extends CameraPlatform {
     // switch as needing an update.
     // ignore: dead_code
     return PlatformFlashMode.off;
+  }
+
+  /// Returns a [VideoCodec]'s Pigeon representation.
+  PlatformVideoCodec? _pigeonVideoCodec(VideoCodec? videoCodec) {
+    if (videoCodec == null) {
+      return null;
+    }
+    switch (videoCodec) {
+      case VideoCodec.h264:
+        return PlatformVideoCodec.h264;
+      case VideoCodec.hevc:
+        return PlatformVideoCodec.hevc;
+    }
+    // The enum comes from a different package, which could get a new value at
+    // any time, so fall back to the platform default codec. This is
+    // deliberately outside the switch rather than a `default` so that the
+    // linter will flag the switch as needing an update.
+    // ignore: dead_code
+    return null;
   }
 
   /// Returns a [ResolutionPreset]'s Pigeon representation.

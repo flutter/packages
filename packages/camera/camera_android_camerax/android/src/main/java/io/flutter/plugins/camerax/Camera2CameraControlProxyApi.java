@@ -23,6 +23,8 @@ import kotlin.jvm.functions.Function1;
  * native object instances that are attached to a Dart instance or handle method calls on the
  * associated native class or an instance of that class.
  */
+// Camera2CameraControl is deprecated in CameraX 1.7.0 in favor of Camera2Interop V2.
+@SuppressWarnings("deprecation")
 @OptIn(markerClass = ExperimentalCamera2Interop.class)
 class Camera2CameraControlProxyApi extends PigeonApiCamera2CameraControl {
   Camera2CameraControlProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {

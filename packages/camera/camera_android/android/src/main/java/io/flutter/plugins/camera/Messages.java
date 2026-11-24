@@ -298,6 +298,18 @@ public class Messages {
     }
   }
 
+  /** Pigeon equivalent of [VideoCodec]. */
+  public enum PlatformVideoCodec {
+    H264(0),
+    HEVC(1);
+
+    final int index;
+
+    PlatformVideoCodec(final int index) {
+      this.index = index;
+    }
+  }
+
   /** Pigeon equivalent of [ImageFormatGroup]. */
   public enum PlatformImageFormatGroup {
     /** The default for Android. */
@@ -934,6 +946,16 @@ public class Messages {
       this.enableAudio = setterArg;
     }
 
+    private @Nullable PlatformVideoCodec videoCodec;
+
+    public @Nullable PlatformVideoCodec getVideoCodec() {
+      return videoCodec;
+    }
+
+    public void setVideoCodec(@Nullable PlatformVideoCodec setterArg) {
+      this.videoCodec = setterArg;
+    }
+
     /** Constructor is non-public to enforce null safety; use Builder. */
     PlatformMediaSettings() {}
 
@@ -950,13 +972,16 @@ public class Messages {
           && pigeonDeepEquals(fps, that.fps)
           && pigeonDeepEquals(videoBitrate, that.videoBitrate)
           && pigeonDeepEquals(audioBitrate, that.audioBitrate)
-          && pigeonDeepEquals(enableAudio, that.enableAudio);
+          && pigeonDeepEquals(enableAudio, that.enableAudio)
+          && pigeonDeepEquals(videoCodec, that.videoCodec);
     }
 
     @Override
     public int hashCode() {
       Object[] fields =
-          new Object[] {getClass(), resolutionPreset, fps, videoBitrate, audioBitrate, enableAudio};
+          new Object[] {
+            getClass(), resolutionPreset, fps, videoBitrate, audioBitrate, enableAudio, videoCodec
+          };
       return pigeonDeepHashCode(fields);
     }
 
@@ -977,6 +1002,9 @@ public class Messages {
           + ", "
           + "enableAudio="
           + enableAudio
+          + ", "
+          + "videoCodec="
+          + videoCodec
           + "}";
     }
 
@@ -1022,6 +1050,14 @@ public class Messages {
         return this;
       }
 
+      private @Nullable PlatformVideoCodec videoCodec;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setVideoCodec(@Nullable PlatformVideoCodec setterArg) {
+        this.videoCodec = setterArg;
+        return this;
+      }
+
       public @NonNull PlatformMediaSettings build() {
         PlatformMediaSettings pigeonReturn = new PlatformMediaSettings();
         pigeonReturn.setResolutionPreset(resolutionPreset);
@@ -1029,18 +1065,20 @@ public class Messages {
         pigeonReturn.setVideoBitrate(videoBitrate);
         pigeonReturn.setAudioBitrate(audioBitrate);
         pigeonReturn.setEnableAudio(enableAudio);
+        pigeonReturn.setVideoCodec(videoCodec);
         return pigeonReturn;
       }
     }
 
     @NonNull
     ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<>(5);
+      ArrayList<Object> toListResult = new ArrayList<>(6);
       toListResult.add(resolutionPreset);
       toListResult.add(fps);
       toListResult.add(videoBitrate);
       toListResult.add(audioBitrate);
       toListResult.add(enableAudio);
+      toListResult.add(videoCodec);
       return toListResult;
     }
 
@@ -1056,6 +1094,8 @@ public class Messages {
       pigeonResult.setAudioBitrate((Long) audioBitrate);
       Object enableAudio = pigeonVar_list.get(4);
       pigeonResult.setEnableAudio((Boolean) enableAudio);
+      Object videoCodec = pigeonVar_list.get(5);
+      pigeonResult.setVideoCodec((PlatformVideoCodec) videoCodec);
       return pigeonResult;
     }
   }
@@ -1102,24 +1142,29 @@ public class Messages {
         case (byte) 134:
           {
             Object value = readValue(buffer);
-            return value == null
-                ? null
-                : PlatformImageFormatGroup.values()[((Long) value).intValue()];
+            return value == null ? null : PlatformVideoCodec.values()[((Long) value).intValue()];
           }
         case (byte) 135:
           {
             Object value = readValue(buffer);
-            return value == null ? null : PlatformFlashMode.values()[((Long) value).intValue()];
+            return value == null
+                ? null
+                : PlatformImageFormatGroup.values()[((Long) value).intValue()];
           }
         case (byte) 136:
-          return PlatformCameraDescription.fromList((ArrayList<Object>) readValue(buffer));
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : PlatformFlashMode.values()[((Long) value).intValue()];
+          }
         case (byte) 137:
-          return PlatformCameraState.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformCameraDescription.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 138:
-          return PlatformSize.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformCameraState.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 139:
-          return PlatformPoint.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformSize.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 140:
+          return PlatformPoint.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 141:
           return PlatformMediaSettings.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
@@ -1143,26 +1188,29 @@ public class Messages {
       } else if (value instanceof PlatformResolutionPreset) {
         stream.write(133);
         writeValue(stream, value == null ? null : ((PlatformResolutionPreset) value).index);
-      } else if (value instanceof PlatformImageFormatGroup) {
+      } else if (value instanceof PlatformVideoCodec) {
         stream.write(134);
+        writeValue(stream, value == null ? null : ((PlatformVideoCodec) value).index);
+      } else if (value instanceof PlatformImageFormatGroup) {
+        stream.write(135);
         writeValue(stream, value == null ? null : ((PlatformImageFormatGroup) value).index);
       } else if (value instanceof PlatformFlashMode) {
-        stream.write(135);
+        stream.write(136);
         writeValue(stream, value == null ? null : ((PlatformFlashMode) value).index);
       } else if (value instanceof PlatformCameraDescription) {
-        stream.write(136);
+        stream.write(137);
         writeValue(stream, ((PlatformCameraDescription) value).toList());
       } else if (value instanceof PlatformCameraState) {
-        stream.write(137);
+        stream.write(138);
         writeValue(stream, ((PlatformCameraState) value).toList());
       } else if (value instanceof PlatformSize) {
-        stream.write(138);
+        stream.write(139);
         writeValue(stream, ((PlatformSize) value).toList());
       } else if (value instanceof PlatformPoint) {
-        stream.write(139);
+        stream.write(140);
         writeValue(stream, ((PlatformPoint) value).toList());
       } else if (value instanceof PlatformMediaSettings) {
-        stream.write(140);
+        stream.write(141);
         writeValue(stream, ((PlatformMediaSettings) value).toList());
       } else {
         super.writeValue(stream, value);

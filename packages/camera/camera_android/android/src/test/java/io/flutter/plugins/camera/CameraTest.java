@@ -20,6 +20,7 @@ import android.graphics.SurfaceTexture;
 import android.hardware.camera2.*;
 import android.hardware.camera2.params.SessionConfiguration;
 import android.media.CamcorderProfile;
+import android.media.EncoderProfiles;
 import android.media.ImageReader;
 import android.media.MediaRecorder;
 import android.os.Build;
@@ -1500,6 +1501,61 @@ public class CameraTest {
       verify(recorder).setVideoEncodingBitRate(videoBitrate);
       // endregion
     }
+  }
+
+  @Test
+  public void prepareRecording_passesVideoEncoderToMediaRecorderBuilderLegacy() {
+    SdkCapabilityChecker.SDK_VERSION = Build.VERSION_CODES.R;
+
+    assertEquals(
+        Integer.valueOf(MediaRecorder.VideoEncoder.HEVC),
+        prepareRecordingAndGetVideoEncoder(MediaRecorder.VideoEncoder.HEVC));
+  }
+
+  @Test
+  public void prepareRecording_passesVideoEncoderToMediaRecorderBuilder() {
+    SdkCapabilityChecker.SDK_VERSION = Build.VERSION_CODES.S;
+    when(mockCameraFeatureFactory.mockResolutionFeature.getRecordingProfile())
+        .thenReturn(mock(EncoderProfiles.class));
+
+    assertEquals(
+        Integer.valueOf(MediaRecorder.VideoEncoder.HEVC),
+        prepareRecordingAndGetVideoEncoder(MediaRecorder.VideoEncoder.HEVC));
+  }
+
+  /**
+   * Prepares a recording on a camera created with {@code videoEncoder}, and returns the video
+   * encoder that the camera passed to {@link MediaRecorderBuilder}.
+   */
+  @SuppressWarnings("try")
+  private Integer prepareRecordingAndGetVideoEncoder(int videoEncoder) {
+    final Camera cameraWithVideoEncoder =
+        new Camera(
+            mockActivity,
+            mock(TextureRegistry.SurfaceTextureEntry.class),
+            mockCameraFeatureFactory,
+            mockDartMessenger,
+            mockCameraProperties,
+            new Camera.VideoCaptureSettings(
+                ResolutionPreset.high, false, null, null, null, videoEncoder));
+    final List<Integer> videoEncoders = new ArrayList<>();
+
+    try (MockedConstruction<MediaRecorderBuilder> mockedBuilder =
+        Mockito.mockConstruction(
+            MediaRecorderBuilder.class,
+            (mock, context) -> {
+              MediaRecorderBuilder.RecordingParameters params =
+                  (MediaRecorderBuilder.RecordingParameters) context.arguments().get(1);
+              videoEncoders.add(params.videoEncoder);
+              when(mock.setEnableAudio(anyBoolean())).thenReturn(mock);
+              when(mock.setMediaOrientation(anyInt())).thenReturn(mock);
+              when(mock.build()).thenReturn(mock(MediaRecorder.class));
+            })) {
+      cameraWithVideoEncoder.prepareRecording(null);
+    }
+
+    assertEquals(1, videoEncoders.size());
+    return videoEncoders.get(0);
   }
 
   @Test

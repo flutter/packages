@@ -96,4 +96,34 @@ class FLTCamMediaSettingsAVWrapper {
   ) -> [String: Any]? {
     return output.avOutput.recommendedVideoSettingsForAssetWriter(writingTo: fileType)
   }
+
+  /// Specifies the video codecs `CaptureVideoDataOutput` can use when writing the given file type.
+  /// - Parameters:
+  ///   - fileType: Specifies the UTI of the file type to be written (see AVMediaFormat.h for a list
+  ///     of file format UTIs).
+  ///   - output: The `CaptureVideoDataOutput` instance.
+  /// - Returns: The available video codec types, in order of preference.
+  func availableVideoCodecTypesForAssetWriter(
+    withFileType fileType: AVFileType,
+    for output: CaptureVideoDataOutput
+  ) -> [AVVideoCodecType] {
+    return output.avOutput.availableVideoCodecTypesForAssetWriter(writingTo: fileType)
+  }
+
+  /// Specifies the recommended video settings for `CaptureVideoDataOutput` when encoding with the
+  /// given codec.
+  /// - Parameters:
+  ///   - videoCodecType: The codec used to encode the video.
+  ///   - fileType: Specifies the UTI of the file type to be written (see AVMediaFormat.h for a list
+  ///     of file format UTIs).
+  ///   - output: The `CaptureVideoDataOutput` instance.
+  /// - Returns: A fully populated dictionary of keys and values that are compatible with AVAssetWriter.
+  func recommendedVideoSettings(
+    forVideoCodecType videoCodecType: AVVideoCodecType,
+    fileType: AVFileType,
+    for output: CaptureVideoDataOutput
+  ) -> [String: Any]? {
+    return output.avOutput.recommendedVideoSettings(
+      forVideoCodecType: videoCodecType, assetWriterOutputFileType: fileType)
+  }
 }

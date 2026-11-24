@@ -95,6 +95,26 @@ PlatformResolutionPreset resolutionPresetToPlatform(ResolutionPreset? preset) =>
   _ => PlatformResolutionPreset.high,
 };
 
+/// Converts a [VideoCodec] to [PlatformVideoCodec].
+///
+/// Returns null, which keeps the platform default codec, for a null or
+/// unknown [codec].
+PlatformVideoCodec? videoCodecToPlatform(VideoCodec? codec) {
+  if (codec == null) {
+    return null;
+  }
+  switch (codec) {
+    case VideoCodec.h264:
+      return PlatformVideoCodec.h264;
+    case VideoCodec.hevc:
+      return PlatformVideoCodec.hevc;
+  }
+  // This enum is defined outside of this package. This fall-through case
+  // ensures that the code does not break if a new value is ever added.
+  // ignore: dead_code
+  return null;
+}
+
 /// Converts a [MediaSettings] to [PlatformMediaSettings].
 PlatformMediaSettings mediaSettingsToPlatform(MediaSettings? settings) => PlatformMediaSettings(
   resolutionPreset: resolutionPresetToPlatform(settings?.resolutionPreset),
@@ -102,6 +122,7 @@ PlatformMediaSettings mediaSettingsToPlatform(MediaSettings? settings) => Platfo
   videoBitrate: settings?.videoBitrate,
   audioBitrate: settings?.audioBitrate,
   fps: settings?.fps,
+  videoCodec: videoCodecToPlatform(settings?.videoCodec),
 );
 
 /// Converts an [ImageFormatGroup] to [PlatformImageFormatGroup].

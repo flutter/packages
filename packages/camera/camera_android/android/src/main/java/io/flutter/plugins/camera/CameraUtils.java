@@ -11,7 +11,9 @@ import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CameraMetadata;
+import android.media.MediaRecorder;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import io.flutter.embedding.engine.systemchannels.PlatformChannel;
 import io.flutter.plugins.camera.features.autofocus.FocusMode;
 import io.flutter.plugins.camera.features.exposurelock.ExposureMode;
@@ -233,6 +235,26 @@ public final class CameraUtils {
         return ResolutionPreset.ultraHigh;
       case MAX:
         return ResolutionPreset.max;
+    }
+    throw new IllegalStateException("Unreachable code");
+  }
+
+  /**
+   * Converts a PlatformVideoCodec from Pigeon to a {@link MediaRecorder.VideoEncoder}.
+   *
+   * @param codec A PlatformVideoCodec, or null.
+   * @return The corresponding video encoder, or null if {@code codec} is null.
+   */
+  @Nullable
+  public static Integer videoEncoderFromPigeon(@Nullable Messages.PlatformVideoCodec codec) {
+    if (codec == null) {
+      return null;
+    }
+    switch (codec) {
+      case H264:
+        return MediaRecorder.VideoEncoder.H264;
+      case HEVC:
+        return MediaRecorder.VideoEncoder.HEVC;
     }
     throw new IllegalStateException("Unreachable code");
   }

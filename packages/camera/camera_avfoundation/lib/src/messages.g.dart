@@ -148,6 +148,8 @@ enum PlatformImageFormatGroup { bgra8888, yuv420 }
 
 enum PlatformResolutionPreset { low, medium, high, veryHigh, ultraHigh, max }
 
+enum PlatformVideoCodec { h264, hevc }
+
 enum PlatformVideoStabilizationMode { off, standard, cinematic, cinematicExtended }
 
 class PlatformCameraDescription {
@@ -431,6 +433,7 @@ class PlatformMediaSettings {
     this.videoBitrate,
     this.audioBitrate,
     required this.enableAudio,
+    this.videoCodec,
   });
 
   PlatformResolutionPreset resolutionPreset;
@@ -443,8 +446,17 @@ class PlatformMediaSettings {
 
   bool enableAudio;
 
+  PlatformVideoCodec? videoCodec;
+
   List<Object?> _toList() {
-    return <Object?>[resolutionPreset, framesPerSecond, videoBitrate, audioBitrate, enableAudio];
+    return <Object?>[
+      resolutionPreset,
+      framesPerSecond,
+      videoBitrate,
+      audioBitrate,
+      enableAudio,
+      videoCodec,
+    ];
   }
 
   Object encode() {
@@ -459,6 +471,7 @@ class PlatformMediaSettings {
       videoBitrate: result[2] as int?,
       audioBitrate: result[3] as int?,
       enableAudio: result[4]! as bool,
+      videoCodec: result[5] as PlatformVideoCodec?,
     );
   }
 
@@ -475,7 +488,8 @@ class PlatformMediaSettings {
         _deepEquals(framesPerSecond, other.framesPerSecond) &&
         _deepEquals(videoBitrate, other.videoBitrate) &&
         _deepEquals(audioBitrate, other.audioBitrate) &&
-        _deepEquals(enableAudio, other.enableAudio);
+        _deepEquals(enableAudio, other.enableAudio) &&
+        _deepEquals(videoCodec, other.videoCodec);
   }
 
   @override
@@ -484,7 +498,7 @@ class PlatformMediaSettings {
 
   @override
   String toString() {
-    return 'PlatformMediaSettings(resolutionPreset: $resolutionPreset, framesPerSecond: $framesPerSecond, videoBitrate: $videoBitrate, audioBitrate: $audioBitrate, enableAudio: $enableAudio)';
+    return 'PlatformMediaSettings(resolutionPreset: $resolutionPreset, framesPerSecond: $framesPerSecond, videoBitrate: $videoBitrate, audioBitrate: $audioBitrate, enableAudio: $enableAudio, videoCodec: $videoCodec)';
   }
 }
 
@@ -606,29 +620,32 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is PlatformResolutionPreset) {
       buffer.putUint8(137);
       writeValue(buffer, value.index);
-    } else if (value is PlatformVideoStabilizationMode) {
+    } else if (value is PlatformVideoCodec) {
       buffer.putUint8(138);
       writeValue(buffer, value.index);
-    } else if (value is PlatformCameraDescription) {
+    } else if (value is PlatformVideoStabilizationMode) {
       buffer.putUint8(139);
-      writeValue(buffer, value.encode());
-    } else if (value is PlatformCameraState) {
+      writeValue(buffer, value.index);
+    } else if (value is PlatformCameraDescription) {
       buffer.putUint8(140);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformCameraImageData) {
+    } else if (value is PlatformCameraState) {
       buffer.putUint8(141);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformCameraImagePlane) {
+    } else if (value is PlatformCameraImageData) {
       buffer.putUint8(142);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformMediaSettings) {
+    } else if (value is PlatformCameraImagePlane) {
       buffer.putUint8(143);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformPoint) {
+    } else if (value is PlatformMediaSettings) {
       buffer.putUint8(144);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformSize) {
+    } else if (value is PlatformPoint) {
       buffer.putUint8(145);
+      writeValue(buffer, value.encode());
+    } else if (value is PlatformSize) {
+      buffer.putUint8(146);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -667,20 +684,23 @@ class _PigeonCodec extends StandardMessageCodec {
         return value == null ? null : PlatformResolutionPreset.values[value];
       case 138:
         final value = readValue(buffer) as int?;
-        return value == null ? null : PlatformVideoStabilizationMode.values[value];
+        return value == null ? null : PlatformVideoCodec.values[value];
       case 139:
-        return PlatformCameraDescription.decode(readValue(buffer)!);
+        final value = readValue(buffer) as int?;
+        return value == null ? null : PlatformVideoStabilizationMode.values[value];
       case 140:
-        return PlatformCameraState.decode(readValue(buffer)!);
+        return PlatformCameraDescription.decode(readValue(buffer)!);
       case 141:
-        return PlatformCameraImageData.decode(readValue(buffer)!);
+        return PlatformCameraState.decode(readValue(buffer)!);
       case 142:
-        return PlatformCameraImagePlane.decode(readValue(buffer)!);
+        return PlatformCameraImageData.decode(readValue(buffer)!);
       case 143:
-        return PlatformMediaSettings.decode(readValue(buffer)!);
+        return PlatformCameraImagePlane.decode(readValue(buffer)!);
       case 144:
-        return PlatformPoint.decode(readValue(buffer)!);
+        return PlatformMediaSettings.decode(readValue(buffer)!);
       case 145:
+        return PlatformPoint.decode(readValue(buffer)!);
+      case 146:
         return PlatformSize.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);

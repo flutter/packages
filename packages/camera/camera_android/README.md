@@ -16,6 +16,14 @@ $ flutter pub add camera_android
 when recording a video with sound enabled and trying to play it back, the duration won't be correct and
 you will only see the first frame.
 
+## Video Codec
+
+By default, recorded video uses the codec from the device's recording profile.
+To choose the codec, set `videoCodec` in the `MediaSettings` (or on
+`CameraController` when using `camera`). If the device has no encoder for the
+requested codec that supports the recording size, the recording profile's
+codec is used.
+
 ## Custom Video Recording Path
 
 Although it is possible to use an absolute path like `/storage/emulated/0/Download/video.mp4`, this is a fragile practice and may fail on many devices or Android versions due to **Scoped Storage** restrictions.

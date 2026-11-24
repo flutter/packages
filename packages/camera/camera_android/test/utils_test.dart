@@ -56,5 +56,11 @@ void main() {
       expect(focusModeFromPlatform(PlatformFocusMode.auto), FocusMode.auto);
       expect(focusModeFromPlatform(PlatformFocusMode.locked), FocusMode.locked);
     });
+
+    test('videoCodecToPlatform() should convert correctly', () {
+      expect(videoCodecToPlatform(VideoCodec.h264), PlatformVideoCodec.h264);
+      expect(videoCodecToPlatform(VideoCodec.hevc), PlatformVideoCodec.hevc);
+      expect(videoCodecToPlatform(null), isNull);
+    });
   });
 }

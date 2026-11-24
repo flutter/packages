@@ -6,6 +6,8 @@ package io.flutter.plugins.camera.media;
 
 import android.media.CamcorderProfile;
 import android.media.EncoderProfiles;
+import android.media.MediaCodecList;
+import android.media.MediaFormat;
 import android.media.MediaRecorder;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,6 +28,12 @@ public class MediaRecorderBuilder {
     @Nullable public final Integer videoBitrate;
     @Nullable public final Integer audioBitrate;
 
+    /**
+     * The requested {@link MediaRecorder.VideoEncoder}, or null to use the encoder from the
+     * recording profile.
+     */
+    @Nullable public final Integer videoEncoder;
+
     public RecordingParameters(@NonNull String outputFilePath) {
       this(outputFilePath, null, null, null);
     }
@@ -35,10 +43,20 @@ public class MediaRecorderBuilder {
         @Nullable Integer fps,
         @Nullable Integer videoBitrate,
         @Nullable Integer audioBitrate) {
+      this(outputFilePath, fps, videoBitrate, audioBitrate, null);
+    }
+
+    public RecordingParameters(
+        @NonNull String outputFilePath,
+        @Nullable Integer fps,
+        @Nullable Integer videoBitrate,
+        @Nullable Integer audioBitrate,
+        @Nullable Integer videoEncoder) {
       this.outputFilePath = outputFilePath;
       this.fps = fps;
       this.videoBitrate = videoBitrate;
       this.audioBitrate = audioBitrate;
+      this.videoEncoder = videoEncoder;
     }
   }
 
@@ -118,7 +136,9 @@ public class MediaRecorderBuilder {
         mediaRecorder.setAudioSamplingRate(audioProfile.getSampleRate());
       }
 
-      mediaRecorder.setVideoEncoder(videoProfile.getCodec());
+      mediaRecorder.setVideoEncoder(
+          getVideoEncoder(
+              videoProfile.getCodec(), videoProfile.getWidth(), videoProfile.getHeight()));
 
       int videoBitrate =
           (parameters.videoBitrate != null && parameters.videoBitrate.intValue() > 0)
@@ -145,7 +165,11 @@ public class MediaRecorderBuilder {
                 : camcorderProfile.audioBitRate);
         mediaRecorder.setAudioSamplingRate(camcorderProfile.audioSampleRate);
       }
-      mediaRecorder.setVideoEncoder(camcorderProfile.videoCodec);
+      mediaRecorder.setVideoEncoder(
+          getVideoEncoder(
+              camcorderProfile.videoCodec,
+              camcorderProfile.videoFrameWidth,
+              camcorderProfile.videoFrameHeight));
       mediaRecorder.setVideoEncodingBitRate(
           (parameters.videoBitrate != null && parameters.videoBitrate.intValue() > 0)
               ? parameters.videoBitrate
@@ -164,5 +188,40 @@ public class MediaRecorderBuilder {
     mediaRecorder.prepare();
 
     return mediaRecorder;
+  }
+
+  /**
+   * Returns the requested video encoder if the device has an encoder for it that supports a {@code
+   * width} x {@code height} video, otherwise {@code profileVideoEncoder}.
+   */
+  private int getVideoEncoder(int profileVideoEncoder, int width, int height) {
+    final Integer requestedVideoEncoder = parameters.videoEncoder;
+    if (requestedVideoEncoder == null) {
+      return profileVideoEncoder;
+    }
+    final String mimeType = getVideoMimeType(requestedVideoEncoder);
+    return mimeType != null && hasEncoderForFormat(mimeType, width, height)
+        ? requestedVideoEncoder
+        : profileVideoEncoder;
+  }
+
+  @Nullable
+  private static String getVideoMimeType(int videoEncoder) {
+    switch (videoEncoder) {
+      case MediaRecorder.VideoEncoder.H264:
+        return MediaFormat.MIMETYPE_VIDEO_AVC;
+      case MediaRecorder.VideoEncoder.HEVC:
+        return MediaFormat.MIMETYPE_VIDEO_HEVC;
+      default:
+        return null;
+    }
+  }
+
+  private static boolean hasEncoderForFormat(@NonNull String mimeType, int width, int height) {
+    // Checks the size too, as some encoders (such as the AOSP software HEVC encoder) only support
+    // small videos.
+    return new MediaCodecList(MediaCodecList.REGULAR_CODECS)
+            .findEncoderForFormat(MediaFormat.createVideoFormat(mimeType, width, height))
+        != null;
   }
 }

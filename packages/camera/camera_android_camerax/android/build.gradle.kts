@@ -89,7 +89,7 @@ android {
 
 dependencies {
     // CameraX core library using the camera2 implementation must use same version number.
-    val cameraxVersion = "1.6.2"
+    val cameraxVersion = "1.7.0"
     implementation("androidx.camera:camera-core:${cameraxVersion}")
     implementation("androidx.camera:camera-camera2:${cameraxVersion}")
     implementation("androidx.camera:camera-lifecycle:${cameraxVersion}")

@@ -107,6 +107,7 @@ void main() {
         videoBitrate: 200000,
         audioBitrate: 32000,
         enableAudio: false,
+        videoCodec: VideoCodec.h264,
       );
       await cameraController.initialize();
 
@@ -118,6 +119,7 @@ void main() {
       expect(cameraController.mediaSettings.fps, 15);
       expect(cameraController.mediaSettings.videoBitrate, 200000);
       expect(cameraController.mediaSettings.audioBitrate, 32000);
+      expect(cameraController.mediaSettings.videoCodec, VideoCodec.h264);
     });
 
     test('default constructor initializes media settings', () async {
@@ -136,6 +138,7 @@ void main() {
       expect(cameraController.mediaSettings.fps, isNull);
       expect(cameraController.mediaSettings.videoBitrate, isNull);
       expect(cameraController.mediaSettings.audioBitrate, isNull);
+      expect(cameraController.mediaSettings.videoCodec, isNull);
     });
 
     test('can be disposed', () async {

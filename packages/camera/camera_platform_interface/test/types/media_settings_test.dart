@@ -40,6 +40,12 @@ void main() {
       isFalse,
       reason: 'MediaSettings constructor should have false default enableAudio',
     );
+
+    expect(
+      settingsWithNoParameters.videoCodec,
+      isNull,
+      reason: 'MediaSettings constructor should have null default videoCodec',
+    );
   });
 
   test('MediaSettings fps should hold parameters', () {
@@ -49,6 +55,7 @@ void main() {
       videoBitrate: 128000,
       audioBitrate: 32000,
       enableAudio: true,
+      videoCodec: VideoCodec.h264,
     );
 
     expect(
@@ -76,6 +83,12 @@ void main() {
       true,
       reason: 'MediaSettings constructor should hold enableAudio parameter',
     );
+
+    expect(
+      settings.videoCodec,
+      VideoCodec.h264,
+      reason: 'MediaSettings constructor should hold videoCodec parameter',
+    );
   });
 
   test('MediaSettings hash should be Object.hash of passed parameters', () {
@@ -85,11 +98,12 @@ void main() {
       videoBitrate: 128000,
       audioBitrate: 32000,
       enableAudio: true,
+      videoCodec: VideoCodec.hevc,
     );
 
     expect(
       settings.hashCode,
-      Object.hash(ResolutionPreset.low, 20, 128000, 32000, true),
+      Object.hash(ResolutionPreset.low, 20, 128000, 32000, true, VideoCodec.hevc),
       reason: 'MediaSettings hash() should be equal to Object.hash of parameters',
     );
   });
@@ -171,6 +185,19 @@ void main() {
         audioBitrate: audioBitrate1,
         // ignore: avoid_redundant_argument_values
         enableAudio: enableAudio2,
+      );
+
+      expect(settings1 == settings2, isFalse);
+    });
+
+    test('should compare videoCodec', () {
+      const settings2 = MediaSettings(
+        resolutionPreset: preset1,
+        fps: fps1,
+        videoBitrate: videoBitrate1,
+        audioBitrate: audioBitrate1,
+        enableAudio: enableAudio1,
+        videoCodec: VideoCodec.h264,
       );
 
       expect(settings1 == settings2, isFalse);

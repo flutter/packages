@@ -81,7 +81,12 @@ final class CameraApiImpl implements Messages.CameraApi {
             dartMessenger,
             cameraProperties,
             new Camera.VideoCaptureSettings(
-                resolutionPreset, settings.getEnableAudio(), fps, videoBitrate, audioBitrate));
+                resolutionPreset,
+                settings.getEnableAudio(),
+                fps,
+                videoBitrate,
+                audioBitrate,
+                CameraUtils.videoEncoderFromPigeon(settings.getVideoCodec())));
 
     return flutterSurfaceTexture.id();
   }

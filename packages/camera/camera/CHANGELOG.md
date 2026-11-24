@@ -1,3 +1,8 @@
+## 0.12.3
+
+* Adds `videoCodec` to `CameraController` to choose the codec used to encode
+  recorded video on platforms that support it.
+
 ## 0.12.2
 
 * Adds `CameraController.isZeroShutterLagSupported` and
