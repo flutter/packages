@@ -13,26 +13,6 @@ import os
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
-    // Seed the photo library with at least one image for tests to operate on.
-    let bundle = Bundle(for: Self.self)
-    guard let jpgImageTall = bundle.url(forResource: "jpgImageTall", withExtension: "jpg") else {
-      os_log(.error, "Missing jpgImageTall.jpg test resource; photo library will not be seeded.")
-      return super.application(application, didFinishLaunchingWithOptions: launchOptions)
-    }
-    let photoAddedKey = "PhotoAdded"
-    let photoAdded = UserDefaults.standard.bool(forKey: photoAddedKey)
-    if !photoAdded {
-      PHPhotoLibrary.requestAuthorization(for: .addOnly) { _ in
-        do {
-          try PHPhotoLibrary.shared().performChangesAndWait {
-            PHAssetChangeRequest.creationRequestForAssetFromImage(atFileURL: jpgImageTall)
-          }
-          UserDefaults.standard.set(true, forKey: photoAddedKey)
-        } catch {
-          os_log(.error, "%{public}@", error.localizedDescription)
-        }
-      }
-    }
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 

@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import Photos
 import XCTest
 import os
 
@@ -26,6 +27,7 @@ class ImagePickerFromGalleryUITests: XCTestCase {
         return false
       }
       let allPhotoPermission = interruptingElement.buttons[self.allowAccessPermissionText]
+        .firstMatch
       if !allPhotoPermission.waitForExistence(timeout: self.elementWaitingTime) {
         os_log(.error, "%{public}@", self.app.debugDescription)
         XCTFail(
@@ -36,6 +38,7 @@ class ImagePickerFromGalleryUITests: XCTestCase {
       self.interceptedPermissionInterruption = true
       return true
     }
+    seedPhotoLibraryIfNeeded(timeout: elementWaitingTime)
   }
 
   override func tearDown() {
@@ -70,7 +73,7 @@ class ImagePickerFromGalleryUITests: XCTestCase {
       }
 
       let springboardApp = XCUIApplication(bundleIdentifier: "com.apple.springboard")
-      let allowButton = springboardApp.buttons[allowAccessPermissionText]
+      let allowButton = springboardApp.buttons[allowAccessPermissionText].firstMatch
       if !allowButton.waitForExistence(timeout: elementWaitingTime) {
         os_log(.error, "%{public}@", app.debugDescription)
         XCTFail(
@@ -190,6 +193,44 @@ class ImagePickerFromGalleryUITests: XCTestCase {
     if !pickedImage.waitForExistence(timeout: elementWaitingTime) {
       os_log(.error, "%{public}@", app.debugDescription)
       XCTFail("Failed due to not able to find pickedImage with \(elementWaitingTime) seconds")
+    }
+  }
+}
+
+// Defined on XCTestCase rather than ImagePickerFromGalleryUITests so that
+// ImagePickerFromLimitedGalleryUITests can use it as well.
+extension XCTestCase {
+  func seedPhotoLibraryIfNeeded(timeout: TimeInterval) {
+    // Seed the photo library with at least one image for tests to operate on.
+    let bundle = Bundle(for: Self.self)
+    guard let jpgImageTall = bundle.url(forResource: "jpgImageTall", withExtension: "jpg") else {
+      return
+    }
+    let photoAddedKey = "PhotoAdded"
+    let photoAdded = UserDefaults.standard.bool(forKey: photoAddedKey)
+    if photoAdded {
+      // A photo has already been added, don't add another.
+      return
+    }
+
+    PHPhotoLibrary.requestAuthorization(for: .addOnly) { _ in
+      do {
+        try PHPhotoLibrary.shared().performChangesAndWait {
+          PHAssetChangeRequest.creationRequestForAssetFromImage(atFileURL: jpgImageTall)
+        }
+        UserDefaults.standard.set(true, forKey: photoAddedKey)
+      } catch {
+        os_log(.error, "%{public}@", error.localizedDescription)
+      }
+    }
+
+    // Requesting authorization will trigger a dialog that needs to be allowed. This dialog only
+    // shows on the first request, which should be gated by the UserDefaults check above.
+    // Just in case, make this check non-fatal.
+    let springboardApp = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+    let allowButton = springboardApp.buttons["Allow"].firstMatch
+    if allowButton.waitForExistence(timeout: timeout) {
+      allowButton.tap()
     }
   }
 }
