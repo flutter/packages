@@ -1,0 +1,28 @@
+RouteBase get $hasInheritedOnExitRoute => GoRouteData.$route(
+      path: '/has-inherited-on-exit-route',
+      hasOverriddenOnExit: true,
+      factory: $HasInheritedOnExitRoute._fromState,
+    );
+
+mixin $HasInheritedOnExitRoute on GoRouteData {
+  static HasInheritedOnExitRoute _fromState(GoRouterState state) =>
+      HasInheritedOnExitRoute();
+
+  @override
+  String get location => GoRouteData.$location(
+        '/has-inherited-on-exit-route',
+      );
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
