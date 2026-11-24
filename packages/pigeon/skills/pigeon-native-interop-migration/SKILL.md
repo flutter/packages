@@ -1,3 +1,8 @@
+---
+name: pigeon-native-interop-migration
+description: Migrates a Flutter plugin from channel-based Pigeon code to direct Native Interop (useFfi for Swift, useJni for Kotlin)
+---
+
 # Skill: Migrating Flutter Plugins to Pigeon Native Interop (FFI & JNI)
 
 ## Overview
@@ -35,7 +40,7 @@ flutter pub add 'dev:jnigen:^1.0.0'
 
 ## 2. Configure `@ConfigurePigeon` Options
 
-In your Pigeon Dart definition file (`pigeons/<messages_file>.dart`), update `@ConfigurePigeon` to enable native interop for Swift and Kotlin. 
+In your Pigeon Dart definition file (`pigeons/<messages_file>.dart`), update `@ConfigurePigeon` to enable native interop for Swift and Kotlin.
 
 > [!NOTE]
 > Keep your package's existing file paths and options (`input`, `dartOut`, `swiftOut`, `kotlinOut`, `package`, `fileSpecificClassNameComponent`, `copyrightHeader`) unchanged. You only need to enable `useFfi: true`, `useJni: true`, and configure `appDirectory`.
@@ -375,5 +380,5 @@ If creating and destroying a secondary `FlutterEngine` causes subsequent Dart ca
   - Register and unregister with the engine: `MyApiRegistrar().register(this, binding)` / `MyApiRegistrar().unregister(this, binding)` in Kotlin (or `register(api, flutterEngine)` / `unregister(api, flutterEngine)` in an app), and `MyApiSetup.register(api: instance, registrar: registrar)` / `MyApiSetup.unregister(api: self, registrar: registrar)` in Swift. On iOS, call `registrar.publish(instance)` so `detachFromEngine(for:)` runs.
   - Resolve the first Dart handle early in startup (for example at the start of `main()`; on Android not in `registerWith`, where JNI isn't initialized yet) so each engine's isolate binds to its own engine when exact engine identifiers aren't available.
   - In native code, look up `@FlutterApi` instances with `MyFlutterApiRegistrar().getInstance(binding)` / `getInstance(flutterEngine)` (Kotlin) or `getInstance(registrar:)` (Swift).
-  - **Per-Engine State Caveat**: Routing to the calling engine is exact on an engine's root isolate when native code knows the engine identifier (always for Kotlin `register(api, flutterEngine)`, and for plugin bindings/registrars on **Flutter 3.50.0 or higher**). Otherwise (on Flutter < 3.50.0, and in background isolates via `Isolate.spawn` / `Isolate.run`, which have no `PlatformDispatcher.engineId`), routing is best-effort and can misroute engines created back-to-back before their Dart starts, a Pigeon file whose first lookup happens lazily while another engine is attached, or calls from background isolates. macOS plugins get no detach callback, so macOS registrations outlive their engine. Plugins holding engine-specific state (such as `ActivityAware` activities, `TextureRegistry`, or view controllers) in these cases should register under a unique `messageChannelSuffix` per engine or keep engine-scoped operations on platform channels / `@ProxyApi` (and on macOS, stay on platform channels for now). See [Step 5 of the Native Interop Guide](../../native_interop_guide.md#step-5-plugin-registration-deregistration-and-multi-engine-support).
+  - **Per-Engine State Caveat**: Routing to the calling engine is exact on an engine's root isolate when native code knows the engine identifier (always for Kotlin `register(api, flutterEngine)`, and for plugin bindings/registrars on **Flutter 3.50.0 or higher**). Otherwise (on Flutter < 3.50.0, and in background isolates via `Isolate.spawn` / `Isolate.run`, which have no `PlatformDispatcher.engineId`), routing is best-effort and can misroute engines created back-to-back before their Dart starts, a Pigeon file whose first lookup happens lazily while another engine is attached, or calls from background isolates. macOS plugins get no detach callback, so macOS registrations outlive their engine. Plugins holding engine-specific state (such as `ActivityAware` activities, `TextureRegistry`, or view controllers) in these cases should register under a unique `messageChannelSuffix` per engine or keep engine-scoped operations on platform channels / `@ProxyApi` (and on macOS, stay on platform channels for now). See [Step 5 of the Native Interop Guide](https://github.com/flutter/packages/blob/main/packages/pigeon/native_interop_guide.md#step-5-plugin-registration-deregistration-and-multi-engine-support).
 

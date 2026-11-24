@@ -1,3 +1,8 @@
+## 30.0.5
+
+* Renames the `native-interop-migration` agent skill to
+  `pigeon-native-interop-migration` and adds the required YAML frontmatter.
+
 ## 30.0.4
 
 * Stops silently skipping `jnigen` when `ANDROID_HOME` / `ANDROID_SDK_ROOT` or `JAVA_HOME` are unset, and surfaces `jnigen` errors and troubleshooting hints on `stderr` without aborting remaining generation steps.
