@@ -168,6 +168,11 @@ was being used previously, as well as the options for the desired new API option
 
 This can be run on every launch without data loss as long as the `migrationCompletedKey` is not altered or deleted.
 
+The newer APIs store keys as provided. The migration utility copies values using
+the keys exposed by `SharedPreferences` and leaves the original entries in
+storage. For example, with the default options on iOS, migrating `counter`
+copies the value from `flutter.counter` to `counter` and keeps both entries.
+
 <?code-excerpt "main.dart (migrate)"?>
 ```dart
 import 'package:shared_preferences/util/legacy_to_async_migration_util.dart';
