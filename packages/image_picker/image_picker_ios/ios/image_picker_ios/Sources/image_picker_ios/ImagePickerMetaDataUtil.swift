@@ -81,7 +81,9 @@ enum ImagePickerMetaDataUtil {
     }
     CGImageDestinationAddImageFromSource(
       destination, source, 0, metadata as CFDictionary?)
-    CGImageDestinationFinalize(destination)
+    guard CGImageDestinationFinalize(destination) else {
+      return nil
+    }
     return targetData as Data
   }
 
