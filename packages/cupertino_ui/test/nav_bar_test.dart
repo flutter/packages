@@ -8,6 +8,7 @@
 library;
 
 import 'dart:async';
+
 import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -1603,6 +1604,103 @@ void main() {
       expect(backPressed, true);
     },
   );
+
+  testWidgets('CupertinoNavigationBarBackButton in leading does not assert during the '
+      'navigation bar transition', (WidgetTester tester) async {
+    await tester.pumpWidget(const CupertinoApp(home: Placeholder()));
+
+    unawaited(
+      tester
+          .state<NavigatorState>(find.byType(Navigator))
+          .push(
+            CupertinoPageRoute<void>(
+              builder: (BuildContext context) {
+                return const CupertinoPageScaffold(
+                  navigationBar: CupertinoNavigationBar(middle: Text('A')),
+                  child: Placeholder(),
+                );
+              },
+            ),
+          ),
+    );
+    await tester.pumpAndSettle();
+
+    unawaited(
+      tester
+          .state<NavigatorState>(find.byType(Navigator))
+          .push(
+            CupertinoPageRoute<void>(
+              builder: (BuildContext context) {
+                return const CupertinoPageScaffold(
+                  navigationBar: CupertinoNavigationBar(
+                    leading: CupertinoNavigationBarBackButton(),
+                    middle: Text('B'),
+                  ),
+                  child: Placeholder(),
+                );
+              },
+            ),
+          ),
+    );
+    // Pump into the middle of the transition, when the leading widget is
+    // also built inside the navigation bar transition.
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+
+    expect(tester.takeException(), isNull);
+
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('CupertinoNavigationBarBackButton in leading does not assert when popping '
+      'during the navigation bar transition', (WidgetTester tester) async {
+    await tester.pumpWidget(const CupertinoApp(home: Placeholder()));
+    final NavigatorState navigator = tester.state<NavigatorState>(find.byType(Navigator));
+
+    unawaited(
+      navigator.push(
+        CupertinoPageRoute<void>(
+          builder: (BuildContext context) {
+            return const CupertinoPageScaffold(
+              navigationBar: CupertinoNavigationBar(middle: Text('A')),
+              child: Placeholder(),
+            );
+          },
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    unawaited(
+      navigator.push(
+        CupertinoPageRoute<void>(
+          builder: (BuildContext context) {
+            return const CupertinoPageScaffold(
+              navigationBar: CupertinoNavigationBar(
+                leading: CupertinoNavigationBarBackButton(),
+                middle: Text('B'),
+              ),
+              child: Placeholder(),
+            );
+          },
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+
+    navigator.pop();
+    // Pump into the middle of the pop transition, when the leading widget is
+    // built again inside the navigation bar transition.
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+
+    expect(tester.takeException(), isNull);
+
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+  });
 
   testWidgets('Manually inserted CupertinoNavigationBarBackButton still automatically '
       'show previous page title when possible', (WidgetTester tester) async {

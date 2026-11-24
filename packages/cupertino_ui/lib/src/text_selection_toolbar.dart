@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// TODO(QuncCccccc): Remove ignore once https://github.com/flutter/flutter/issues/196406 is fixed.
+// ignore: uri_does_not_exist_in_doc_import
 /// @docImport 'package:material_ui/material_ui.dart';
 library;
 
@@ -67,8 +69,12 @@ const Duration _kToolbarTransitionDuration = Duration(milliseconds: 125);
 ///   * [CupertinoTextSelectionToolbar.toolbarBuilder], which is of this type.
 ///   * [TextSelectionToolbar.toolbarBuilder], which is similar, but for an
 ///     Material-style toolbar.
-typedef CupertinoToolbarBuilder =
-    Widget Function(BuildContext context, Offset anchorAbove, Offset anchorBelow, Widget child);
+typedef CupertinoToolbarBuilder = Widget Function(
+  BuildContext context,
+  Offset anchorAbove,
+  Offset anchorBelow,
+  Widget child,
+);
 
 /// An iOS-style text selection toolbar.
 ///
@@ -292,9 +298,8 @@ class _RenderCupertinoTextSelectionToolbarShape extends RenderShiftedBox {
   bool _isAbove(double childHeight) => anchorAbove.dy >= childHeight - _kToolbarArrowSize.height;
 
   BoxConstraints _constraintsForChild(BoxConstraints constraints) {
-    return BoxConstraints(
-      minWidth: _kToolbarArrowSize.width + _kToolbarBorderRadius.x * 2,
-    ).enforce(constraints.loosen());
+    return BoxConstraints(minWidth: _kToolbarArrowSize.width + _kToolbarBorderRadius.x * 2)
+        .enforce(constraints.loosen());
   }
 
   Offset _computeChildOffset(Size childSize) {
@@ -581,9 +586,10 @@ class _CupertinoTextSelectionToolbarContentState
     final renderToolbar = _toolbarItemsKey.currentContext?.findRenderObject() as RenderBox?;
 
     if (renderToolbar is _RenderCupertinoTextSelectionToolbarItems && renderToolbar.hasNextPage) {
-      _controller.reverse();
-      _controller.addStatusListener(_statusListener);
       _nextPage = _page + 1;
+      _controller.removeStatusListener(_statusListener);
+      _controller.addStatusListener(_statusListener);
+      _controller.reverse();
     }
   }
 
@@ -592,9 +598,10 @@ class _CupertinoTextSelectionToolbarContentState
 
     if (renderToolbar is _RenderCupertinoTextSelectionToolbarItems &&
         renderToolbar.hasPreviousPage) {
-      _controller.reverse();
-      _controller.addStatusListener(_statusListener);
       _nextPage = _page - 1;
+      _controller.removeStatusListener(_statusListener);
+      _controller.addStatusListener(_statusListener);
+      _controller.reverse();
     }
   }
 
@@ -603,12 +610,15 @@ class _CupertinoTextSelectionToolbarContentState
       return;
     }
 
-    setState(() {
-      _page = _nextPage!;
-      _nextPage = null;
-    });
-    _controller.forward();
     _controller.removeStatusListener(_statusListener);
+    final int? nextPage = _nextPage;
+    if (nextPage != null) {
+      setState(() {
+        _page = nextPage;
+        _nextPage = null;
+      });
+    }
+    _controller.forward();
   }
 
   @override

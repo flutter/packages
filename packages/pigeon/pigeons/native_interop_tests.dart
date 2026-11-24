@@ -284,6 +284,83 @@ class NativeInteropAllClassesWrapper {
   Map<int?, NativeInteropAllNullableTypesWithoutRecursion?>? nullableClassMap;
 }
 
+/// A sealed class, to test sealed class handling.
+sealed class NativeInteropSealedClass {}
+
+/// A subclass of `NativeInteropSealedClass` with fields.
+class NativeInteropSealedClassWithFields extends NativeInteropSealedClass {
+  NativeInteropSealedClassWithFields(this.aString, this.aNullableInt, this.anEnum, this.aClass);
+
+  String aString;
+  int? aNullableInt;
+  NativeInteropAnEnum anEnum;
+  NativeInteropAllNullableTypesWithoutRecursion? aClass;
+}
+
+/// A subclass of `NativeInteropSealedClass` without fields.
+class NativeInteropEmptySealedClass extends NativeInteropSealedClass {}
+
+/// A class with sealed class fields, to test sealed classes nested in classes
+/// and lists.
+class NativeInteropSealedClassWrapper {
+  NativeInteropSealedClassWrapper(this.sealedClass, this.nullableSealedClass, this.sealedClassList);
+
+  NativeInteropSealedClass sealedClass;
+  NativeInteropSealedClass? nullableSealedClass;
+  List<NativeInteropSealedClass> sealedClassList;
+}
+
+/// A class whose field names collide with members of the bindings that JNIgen
+/// generates, so JNIgen renames their accessors.
+///
+/// The Dart generator has to predict those names, since it is generated before
+/// JNIgen runs.
+class NativeInteropReservedNames {
+  NativeInteropReservedNames({
+    this.type,
+    this.use,
+    this.reference,
+    this.releasedBy,
+    this.fromReference,
+    this.jClass,
+    this.isInstanceOf,
+    this.isNull,
+    this.isReleased = false,
+    this.equals,
+    this.isEnabled = false,
+    this.isMaybe,
+    this.isCount,
+    this.getValue,
+  });
+
+  // Collide with `JObject` members, or with members JNIgen adds to every
+  // class.
+  String? type;
+  String? use;
+  String? reference;
+  String? releasedBy;
+  String? fromReference;
+  String? jClass;
+
+  // Kotlin keeps the `is` prefix for these getters, and JNIgen only turns `is`
+  // methods that return a primitive boolean into Dart getters. These also
+  // collide with `JObject` members.
+  String? isInstanceOf;
+  String? isNull;
+  bool isReleased;
+
+  // Collides with the data class's `equals` method, which JNIgen visits after
+  // the property getters, so the method is the one that gets renamed.
+  String? equals;
+
+  bool isEnabled;
+  bool? isMaybe;
+  int? isCount;
+
+  // JNIgen only removes the `get` prefix that Kotlin adds to the getter.
+  String? getValue;
+}
+
 /// The core interface that each host language plugin must implement in
 /// platform_test integration tests.
 @HostApi()
@@ -459,6 +536,28 @@ abstract class NativeInteropHostIntegrationCoreApi {
   @ObjCSelector('echoClassWrapper:')
   @SwiftFunction('echo(_:)')
   NativeInteropAllClassesWrapper echoClassWrapper(NativeInteropAllClassesWrapper wrapper);
+
+  /// Returns the passed sealed class, to test sealed class handling.
+  @ObjCSelector('echoSealedClass:')
+  @SwiftFunction('echo(sealedClass:)')
+  NativeInteropSealedClass echoSealedClass(NativeInteropSealedClass sealedClass);
+
+  /// Returns the passed sealed class, to test nullable sealed class handling.
+  @ObjCSelector('echoNullableSealedClass:')
+  @SwiftFunction('echoNullable(sealedClass:)')
+  NativeInteropSealedClass? echoNullableSealedClass(NativeInteropSealedClass? sealedClass);
+
+  /// Returns the passed list, to test sealed classes in lists.
+  @ObjCSelector('echoSealedClassList:')
+  @SwiftFunction('echo(sealedClassList:)')
+  List<NativeInteropSealedClass> echoSealedClassList(
+    List<NativeInteropSealedClass> sealedClassList,
+  );
+
+  /// Returns the passed wrapper, to test sealed classes in class fields.
+  @ObjCSelector('echoSealedClassWrapper:')
+  @SwiftFunction('echo(sealedClassWrapper:)')
+  NativeInteropSealedClassWrapper echoSealedClassWrapper(NativeInteropSealedClassWrapper wrapper);
 
   /// Returns the passed enum to test serialization and deserialization.
   @ObjCSelector('echoEnum:')
@@ -819,6 +918,12 @@ abstract class NativeInteropHostIntegrationCoreApi {
   @SwiftFunction('echoAsync(_:)')
   NativeInteropAllTypes echoAsyncNativeInteropAllTypes(NativeInteropAllTypes everything);
 
+  /// Returns the passed sealed class asynchronously.
+  @async
+  @ObjCSelector('echoAsyncSealedClass:')
+  @SwiftFunction('echoAsync(sealedClass:)')
+  NativeInteropSealedClass echoAsyncSealedClass(NativeInteropSealedClass sealedClass);
+
   /// Returns the passed object, to test serialization and deserialization.
   @async
   @ObjCSelector('echoAsyncNullableNativeInteropAllNullableTypes:')
@@ -971,6 +1076,10 @@ abstract class NativeInteropHostIntegrationCoreApi {
   NativeInteropAllNullableTypes? callFlutterEchoNativeInteropAllNullableTypes(
     NativeInteropAllNullableTypes? everything,
   );
+
+  @ObjCSelector('callFlutterEchoSealedClass:')
+  @SwiftFunction('callFlutterEcho(sealedClass:)')
+  NativeInteropSealedClass callFlutterEchoSealedClass(NativeInteropSealedClass sealedClass);
 
   @ObjCSelector('callFlutterSendMultipleNullableTypesABool:anInt:aString:')
   @SwiftFunction('callFlutterSendMultipleNullableTypes(aBool:anInt:aString:)')
@@ -1424,8 +1533,44 @@ abstract class NativeInteropHostIntegrationCoreApi {
   /// Registers and immediately deregisters a Host API under [name].
   void registerAndImmediatelyDeregisterHostApi(String name);
 
+  /// Registers a separate Host API instance under [name] for detached-handle testing.
+  void registerNamedHostApi(String name);
+
+  /// Deregisters the Host API instance previously registered by [registerNamedHostApi] under [name].
+  void deregisterNamedHostApi(String name);
+
   /// Tests that calling a deregistered Flutter API under [name] fails / returns null.
   bool testCallDeregisteredFlutterApi(String name);
+
+  /// Spawns secondary engines, destroys one out-of-order, executes a live Dart
+  /// entrypoint on another (where supported by the embedder), and tears it down
+  /// while keeping the primary engine registration intact.
+  @async
+  bool testSecondaryEngineDartExecution();
+
+  /// Returns whether the secondary engine's Host API registration is ready for
+  /// the secondary Dart isolate to invoke.
+  bool isSecondaryEngineRegistrationReady();
+
+  /// Reports whether Native Interop Host API calls from a secondary engine's
+  /// Dart isolate succeeded.
+  void reportSecondaryEngineCheck(bool success);
+
+  /// Signals that the concurrent background isolate resolved a fresh handle
+  /// while the secondary engine was registered.
+  void notifyConcurrentIsolateResolved();
+
+  /// Returns the engine key that native code stored for this plugin's
+  /// default Host API registration.
+  int registeredEngineKey();
+
+  /// Returns a label unique to the Host API instance that handled the call, so
+  /// tests can check which engine's registration a handle resolved to.
+  String engineLabel();
+
+  /// Returns whether this platform's plugin binding / registrar exposes an
+  /// engine identifier, so registrations should use exact engine keys.
+  bool pluginEngineIdentifierIsAvailable();
 }
 
 /// The core interface that the Dart platform_test code implements for host
@@ -1456,6 +1601,11 @@ abstract class NativeInteropFlutterIntegrationCoreApi {
   NativeInteropAllNullableTypes? echoNativeInteropAllNullableTypes(
     NativeInteropAllNullableTypes? everything,
   );
+
+  /// Returns the passed sealed class, to test sealed class handling.
+  @ObjCSelector('echoNativeInteropSealedClass:')
+  @SwiftFunction('echo(sealedClass:)')
+  NativeInteropSealedClass echoNativeInteropSealedClass(NativeInteropSealedClass sealedClass);
 
   /// Returns passed in arguments of multiple types.
   ///
@@ -1919,4 +2069,142 @@ abstract class NativeInteropFlutterIntegrationCoreApi {
 
   @async
   NativeInteropAnotherEnum? echoAnotherAsyncNullableEnum(NativeInteropAnotherEnum? anotherEnum);
+}
+
+/// Methods whose names collide with members of the bindings that JNIgen
+/// generates, or that JNIgen turns into Dart properties.
+@HostApi()
+abstract class NativeInteropReservedNamesHostApi {
+  /// Collides with `JObject.release`.
+  String release(String value);
+
+  /// Collides with `JObject.use`.
+  int use(int value);
+
+  /// Collides with the static `type` field that JNIgen adds to every class.
+  String type();
+
+  /// JNIgen makes this a getter, which collides with `JObject.isNull`.
+  bool isNull();
+
+  /// JNIgen keeps this a method, since nullable booleans are boxed on the JVM.
+  bool? isNullable();
+
+  /// JNIgen makes this a getter.
+  bool isOpen();
+
+  /// JNIgen combines this and [setReference] into a property, which collides
+  /// with `JObject.reference`.
+  String getReference();
+
+  /// See [getReference].
+  void setReference(String value);
+
+  /// JNIgen makes this a getter named after a Dart keyword, `default`.
+  String getDefault();
+
+  /// JNIgen keeps suspend functions as methods.
+  @async
+  String getValueAsync();
+
+  /// Collides with `<Api>Registrar.register` in Kotlin bytecode.
+  String register(String value);
+
+  /// Collides with `<Api>Registrar.unregister` in Kotlin bytecode.
+  String unregister(String value);
+
+  /// JNIgen turns this into an instance getter `getInstance`, colliding with
+  /// `<Api>Registrar.getInstance`.
+  String getGetInstance();
+
+  /// Returns the passed object, to test serialization and deserialization.
+  NativeInteropReservedNames echoReservedNames(NativeInteropReservedNames names);
+
+  /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.release].
+  String callFlutterRelease(String value);
+
+  /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.type].
+  String callFlutterType();
+
+  /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.implementIn].
+  String callFlutterImplementIn(String value);
+
+  /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.isNull].
+  bool callFlutterIsNull();
+
+  /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.getReference].
+  String callFlutterGetReference();
+
+  /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.register].
+  String callFlutterRegister(String value);
+
+  /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.dartApi].
+  String callFlutterDartApi();
+}
+
+/// The Flutter API counterpart of [NativeInteropReservedNamesHostApi].
+///
+/// JNIgen generates interfaces for Flutter APIs, which it renames differently
+/// than classes.
+@FlutterApi()
+abstract class NativeInteropReservedNamesFlutterApi {
+  /// Collides with `JObject.release`.
+  String release(String value);
+
+  /// Collides with the static `type` field that JNIgen adds to every class.
+  String type();
+
+  /// Collides with the `implementIn` method that JNIgen adds to interfaces.
+  String implementIn(String value);
+
+  /// Collides with `JObject.isNull`.
+  bool isNull();
+
+  /// JNIgen doesn't turn interface methods into properties.
+  String getReference();
+
+  /// Previously collided with internal Dart JNI registrar `register` member.
+  String register(String value);
+
+  /// Previously collided with internal Dart JNI registrar `dartApi` field.
+  String dartApi();
+}
+
+/// A sealed class passed in the call's buffer with the hybrid transport.
+sealed class NativeInteropShape {}
+
+class NativeInteropCircle extends NativeInteropShape {
+  NativeInteropCircle({required this.radius});
+
+  double radius;
+}
+
+class NativeInteropSquare extends NativeInteropShape {
+  NativeInteropSquare({required this.side, this.label});
+
+  double side;
+  String? label;
+}
+
+/// Echoes [NativeInteropShape] sealed class hierarchies.
+@HostApi()
+abstract class NativeInteropSealedClassHostApi {
+  NativeInteropShape echoShape(NativeInteropShape shape);
+
+  NativeInteropShape? echoNullableShape(NativeInteropShape? shape);
+
+  List<NativeInteropShape> echoShapeList(List<NativeInteropShape> shapes);
+
+  Map<String, NativeInteropShape> echoShapeMap(Map<String, NativeInteropShape> shapes);
+
+  @async
+  NativeInteropShape echoAsyncShape(NativeInteropShape shape);
+
+  NativeInteropShape callFlutterEchoShape(NativeInteropShape shape);
+}
+
+/// The Flutter API counterpart of [NativeInteropSealedClassHostApi].
+@FlutterApi()
+abstract class NativeInteropSealedClassFlutterApi {
+  NativeInteropShape echoShape(NativeInteropShape shape);
 }

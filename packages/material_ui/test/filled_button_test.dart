@@ -436,45 +436,41 @@ void main() {
     await tester.pumpAndSettle();
   });
 
-  testWidgets(
-    'Default FilledButton meets a11y contrast guidelines',
-    (WidgetTester tester) async {
-      final focusNode = FocusNode();
-      addTearDown(focusNode.dispose);
+  testWidgets('Default FilledButton meets a11y contrast guidelines', (WidgetTester tester) async {
+    final focusNode = FocusNode();
+    addTearDown(focusNode.dispose);
 
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: ThemeData.from(colorScheme: const ColorScheme.light()),
-          home: Scaffold(
-            body: Center(
-              child: FilledButton(
-                onPressed: () {},
-                focusNode: focusNode,
-                child: const Text('FilledButton'),
-              ),
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData.from(colorScheme: const ColorScheme.light()),
+        home: Scaffold(
+          body: Center(
+            child: FilledButton(
+              onPressed: () {},
+              focusNode: focusNode,
+              child: const Text('FilledButton'),
             ),
           ),
         ),
-      );
+      ),
+    );
 
-      // Default, not disabled.
-      await expectLater(tester, meetsGuideline(textContrastGuideline));
+    // Default, not disabled.
+    await expectLater(tester, meetsGuideline(textContrastGuideline));
 
-      // Focused.
-      focusNode.requestFocus();
-      await tester.pumpAndSettle();
-      await expectLater(tester, meetsGuideline(textContrastGuideline));
+    // Focused.
+    focusNode.requestFocus();
+    await tester.pumpAndSettle();
+    await expectLater(tester, meetsGuideline(textContrastGuideline));
 
-      // Hovered.
-      final Offset center = tester.getCenter(find.byType(FilledButton));
-      final TestGesture gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
-      await gesture.addPointer();
-      await gesture.moveTo(center);
-      await tester.pumpAndSettle();
-      await expectLater(tester, meetsGuideline(textContrastGuideline));
-    },
-    skip: isBrowser, // https://github.com/flutter/flutter/issues/44115
-  );
+    // Hovered.
+    final Offset center = tester.getCenter(find.byType(FilledButton));
+    final TestGesture gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
+    await gesture.addPointer();
+    await gesture.moveTo(center);
+    await tester.pumpAndSettle();
+    await expectLater(tester, meetsGuideline(textContrastGuideline));
+  });
 
   testWidgets('FilledButton default overlayColor and elevation resolve pressed state', (
     WidgetTester tester,
@@ -1342,7 +1338,7 @@ void main() {
     final tallerWidget = iconRect.height > labelRect.height ? iconRect : labelRect;
     expect(paddingRect.top, closeOnWeb(tallerWidget.top - 6.5));
     expect(paddingRect.bottom, closeOnWeb(tallerWidget.bottom + 13.5));
-  });
+  }, tags: 'reduced-web-test-set');
 
   group('Default FilledButton padding for textScaleFactor, textDirection', () {
     const buttonKey = ValueKey<String>('button');
@@ -1763,30 +1759,33 @@ void main() {
     }
   });
 
-  testWidgets('FilledButton uses InkSparkle only for Android non-web when useMaterial3 is true', (
-    WidgetTester tester,
-  ) async {
-    final theme = ThemeData();
+  testWidgets(
+    'FilledButton uses InkSparkle only for Android non-web when useMaterial3 is true',
+    (WidgetTester tester) async {
+      final theme = ThemeData();
 
-    await tester.pumpWidget(
-      MaterialApp(
-        theme: theme,
-        home: Center(
-          child: FilledButton(onPressed: () {}, child: const Text('button')),
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: theme,
+          home: Center(
+            child: FilledButton(onPressed: () {}, child: const Text('button')),
+          ),
         ),
-      ),
-    );
+      );
 
-    final InkWell buttonInkWell = tester.widget<InkWell>(
-      find.descendant(of: find.byType(FilledButton), matching: find.byType(InkWell)),
-    );
+      final InkWell buttonInkWell = tester.widget<InkWell>(
+        find.descendant(of: find.byType(FilledButton), matching: find.byType(InkWell)),
+      );
 
-    if (debugDefaultTargetPlatformOverride! == TargetPlatform.android && !kIsWeb) {
-      expect(buttonInkWell.splashFactory, equals(InkSparkle.splashFactory));
-    } else {
-      expect(buttonInkWell.splashFactory, equals(InkRipple.splashFactory));
-    }
-  }, variant: TargetPlatformVariant.all());
+      if (debugDefaultTargetPlatformOverride! == TargetPlatform.android && !kIsWeb) {
+        expect(buttonInkWell.splashFactory, equals(InkSparkle.splashFactory));
+      } else {
+        expect(buttonInkWell.splashFactory, equals(InkRipple.splashFactory));
+      }
+    },
+    variant: TargetPlatformVariant.all(),
+    tags: 'reduced-web-test-set',
+  );
 
   testWidgets('FilledButton.icon does not overflow', (WidgetTester tester) async {
     // Regression test for https://github.com/flutter/flutter/issues/77815
@@ -2006,7 +2005,7 @@ void main() {
       RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
       SystemMouseCursors.basic,
     );
-  });
+  }, tags: 'reduced-web-test-set');
 
   testWidgets('FilledButton in SelectionArea changes mouse cursor when hovered', (
     WidgetTester tester,
@@ -3026,5 +3025,722 @@ void main() {
 
     // The button should still be focused.
     expect(getButtonFocusNode().hasFocus, true);
+  });
+
+  testWidgets('M3E FilledButton resolves selected and unselected colors', (
+    WidgetTester tester,
+  ) async {
+    final theme = ThemeData(
+      filledButtonTheme: const FilledButtonThemeData(variant: StyleVariant.material3Expressive),
+    );
+    Future<Color?> backgroundColor({required bool tonal, required bool isSelected}) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: theme,
+          home: Center(
+            child: tonal
+                ? FilledButton.tonal(
+                    isSelected: isSelected,
+                    onPressed: () {},
+                    child: const Text('Button'),
+                  )
+                : FilledButton(
+                    isSelected: isSelected,
+                    onPressed: () {},
+                    child: const Text('Button'),
+                  ),
+          ),
+        ),
+      );
+      return tester
+          .widget<Material>(
+            find.descendant(of: find.byType(FilledButton), matching: find.byType(Material)),
+          )
+          .color;
+    }
+
+    final ColorScheme colors = theme.colorScheme;
+    expect(await backgroundColor(tonal: false, isSelected: false), colors.surfaceContainer);
+    expect(await backgroundColor(tonal: false, isSelected: true), colors.primary);
+    expect(await backgroundColor(tonal: true, isSelected: false), colors.secondaryContainer);
+    expect(await backgroundColor(tonal: true, isSelected: true), colors.secondary);
+  });
+
+  testWidgets('M3E FilledButton keeps size-specific padding when text scales', (
+    WidgetTester tester,
+  ) async {
+    const style = ButtonStyle(sizeVariant: ButtonSizeVariant.medium);
+    final buttons = <Widget>[
+      FilledButton(style: style, onPressed: () {}, child: const Text('Button')),
+      FilledButton.icon(
+        style: style,
+        onPressed: () {},
+        icon: const Icon(Icons.add),
+        label: const Text('Button'),
+      ),
+      FilledButton.tonal(style: style, onPressed: () {}, child: const Text('Button')),
+      FilledButton.tonalIcon(
+        style: style,
+        onPressed: () {},
+        icon: const Icon(Icons.add),
+        label: const Text('Button'),
+      ),
+    ];
+
+    for (final textScaleFactor in const <double>[1.0, 2.0, 3.0]) {
+      for (final button in buttons) {
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: ThemeData(
+              filledButtonTheme: const FilledButtonThemeData(
+                variant: StyleVariant.material3Expressive,
+              ),
+            ),
+            home: MediaQuery.withClampedTextScaling(
+              minScaleFactor: textScaleFactor,
+              maxScaleFactor: textScaleFactor,
+              child: Center(child: button),
+            ),
+          ),
+        );
+
+        final Padding paddingWidget = tester.widget<Padding>(
+          find.descendant(of: find.byType(FilledButton), matching: find.byType(Padding)),
+        );
+        expect(
+          paddingWidget.padding,
+          const EdgeInsets.symmetric(horizontal: 24.0),
+          reason: '$button at $textScaleFactor',
+        );
+      }
+    }
+  });
+
+  testWidgets('FilledButton isSelected exposes selected semantics', (WidgetTester tester) async {
+    final SemanticsHandle handle = tester.ensureSemantics();
+    for (final tonal in <bool>[false, true]) {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Center(
+            child: tonal
+                ? FilledButton.tonal(
+                    isSelected: true,
+                    onPressed: () {},
+                    child: const Text('Button'),
+                  )
+                : FilledButton(isSelected: true, onPressed: () {}, child: const Text('Button')),
+          ),
+        ),
+      );
+
+      expect(
+        tester.getSemantics(find.byType(FilledButton)),
+        matchesSemantics(
+          hasTapAction: true,
+          hasFocusAction: true,
+          hasEnabledState: true,
+          isButton: true,
+          isEnabled: true,
+          isFocusable: true,
+          hasSelectedState: true,
+          isSelected: true,
+          label: 'Button',
+        ),
+      );
+    }
+    handle.dispose();
+  });
+
+  testWidgets(
+    'M3E FilledButton.icon and FilledButton.tonalIcon use size-specific icon-label spacing',
+    (WidgetTester tester) async {
+      const style = ButtonStyle(sizeVariant: ButtonSizeVariant.large);
+      for (final tonal in <bool>[false, true]) {
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: ThemeData(
+              filledButtonTheme: const FilledButtonThemeData(
+                variant: StyleVariant.material3Expressive,
+              ),
+            ),
+            home: Center(
+              child: tonal
+                  ? FilledButton.tonalIcon(
+                      style: style,
+                      onPressed: () {},
+                      icon: const Icon(Icons.add),
+                      label: const Text('Button'),
+                    )
+                  : FilledButton.icon(
+                      style: style,
+                      onPressed: () {},
+                      icon: const Icon(Icons.add),
+                      label: const Text('Button'),
+                    ),
+            ),
+          ),
+        );
+
+        final Row row = tester.widget<Row>(
+          find.descendant(of: find.byType(FilledButton), matching: find.byType(Row)),
+        );
+        expect(row.spacing, 12.0, reason: tonal ? 'tonalIcon' : 'icon');
+      }
+    },
+  );
+
+  testWidgets('FilledButton.styleFrom supports M3E size and shape variants', (
+    WidgetTester tester,
+  ) async {
+    final ButtonStyle style = FilledButton.styleFrom(
+      sizeVariant: ButtonSizeVariant.large,
+      shapeVariant: ButtonShapeVariant.square,
+    );
+    expect(style.sizeVariant, ButtonSizeVariant.large);
+    expect(style.shapeVariant, ButtonShapeVariant.square);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(
+          filledButtonTheme: const FilledButtonThemeData(variant: StyleVariant.material3Expressive),
+        ),
+        home: Center(
+          child: FilledButton(style: style, onPressed: () {}, child: const Text('Button')),
+        ),
+      ),
+    );
+
+    expect(tester.getSize(find.byType(FilledButton)).height, 96.0);
+    final Material material = tester.widget<Material>(
+      find.descendant(of: find.byType(FilledButton), matching: find.byType(Material)),
+    );
+    expect(
+      material.shape,
+      const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(28.0))),
+    );
+  });
+
+  group('M3E FilledButton', () {
+    ThemeData m3eTheme({ButtonStyle? style}) {
+      return ThemeData(
+        filledButtonTheme: FilledButtonThemeData(
+          variant: StyleVariant.material3Expressive,
+          style: style,
+        ),
+      );
+    }
+
+    final ThemeData theme = m3eTheme();
+
+    Finder buttonMaterial() {
+      return find.descendant(of: find.byType(FilledButton), matching: find.byType(Material));
+    }
+
+    Future<ButtonStyle> defaultStyle(WidgetTester tester, FilledButton button) async {
+      late BuildContext context;
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: theme,
+          home: Builder(
+            builder: (BuildContext innerContext) {
+              context = innerContext;
+              return const SizedBox();
+            },
+          ),
+        ),
+      );
+      return button.defaultStyleOf(context);
+    }
+
+    RoundedRectangleBorder rounded(double radius) {
+      return RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(radius)));
+    }
+
+    const disabled = <WidgetState>{WidgetState.disabled};
+    const hovered = <WidgetState>{WidgetState.hovered};
+    const focused = <WidgetState>{WidgetState.focused};
+    const pressed = <WidgetState>{WidgetState.pressed};
+    const selected = <WidgetState>{WidgetState.selected};
+
+    testWidgets('uses size-specific height, icon size, and label font size', (
+      WidgetTester tester,
+    ) async {
+      // Font sizes of labelLarge, titleMedium, headlineSmall, and headlineLarge.
+      const expectations = <ButtonSizeVariant, (double, double, double)>{
+        ButtonSizeVariant.xSmall: (32.0, 20.0, 14.0),
+        ButtonSizeVariant.small: (40.0, 20.0, 14.0),
+        ButtonSizeVariant.medium: (56.0, 24.0, 16.0),
+        ButtonSizeVariant.large: (96.0, 32.0, 24.0),
+        ButtonSizeVariant.xLarge: (136.0, 40.0, 32.0),
+      };
+
+      for (final tonal in <bool>[false, true]) {
+        for (final MapEntry<ButtonSizeVariant, (double, double, double)> entry
+            in expectations.entries) {
+          final (double height, double iconSize, double fontSize) = entry.value;
+          final style = ButtonStyle(sizeVariant: entry.key);
+          await tester.pumpWidget(
+            MaterialApp(
+              theme: theme,
+              home: Center(
+                child: tonal
+                    ? FilledButton.tonalIcon(
+                        style: style,
+                        onPressed: () {},
+                        icon: const Icon(Icons.add),
+                        label: const Text('Button'),
+                      )
+                    : FilledButton.icon(
+                        style: style,
+                        onPressed: () {},
+                        icon: const Icon(Icons.add),
+                        label: const Text('Button'),
+                      ),
+              ),
+            ),
+          );
+          // The icon size and text style animate between size variants.
+          await tester.pumpAndSettle();
+
+          final reason = '${tonal ? 'tonal' : 'filled'} ${entry.key}';
+          expect(tester.getSize(buttonMaterial()).height, height, reason: reason);
+          expect(iconStyle(tester, Icons.add).fontSize, iconSize, reason: reason);
+          final RichText label = tester.widget<RichText>(
+            find.descendant(of: find.text('Button'), matching: find.byType(RichText)),
+          );
+          expect(label.text.style?.fontSize, fontSize, reason: reason);
+        }
+      }
+    });
+
+    testWidgets('xSmall keeps a 48dp tap target when the theme shrink-wraps', (
+      WidgetTester tester,
+    ) async {
+      for (final tonal in <bool>[false, true]) {
+        var pressCount = 0;
+        Widget buildApp({MaterialTapTargetSize? tapTargetSize}) {
+          final style = ButtonStyle(
+            sizeVariant: ButtonSizeVariant.xSmall,
+            tapTargetSize: tapTargetSize,
+          );
+          void onPressed() {
+            pressCount += 1;
+          }
+
+          return MaterialApp(
+            theme: theme.copyWith(materialTapTargetSize: MaterialTapTargetSize.shrinkWrap),
+            home: Center(
+              child: tonal
+                  ? FilledButton.tonal(
+                      style: style,
+                      onPressed: onPressed,
+                      child: const Text('Button'),
+                    )
+                  : FilledButton(style: style, onPressed: onPressed, child: const Text('Button')),
+            ),
+          );
+        }
+
+        final reason = tonal ? 'tonal' : 'filled';
+        await tester.pumpWidget(buildApp());
+        expect(tester.getSize(buttonMaterial()).height, 32.0, reason: reason);
+        expect(tester.getSize(find.byType(FilledButton)).height, 48.0, reason: reason);
+
+        // Taps just above and below the 32dp button still reach it.
+        final Offset center = tester.getCenter(find.byType(FilledButton));
+        for (final offset in const <Offset>[Offset(0.0, 23.0), Offset(0.0, -23.0)]) {
+          await tester.tapAt(center + offset);
+          await tester.pump();
+        }
+        expect(pressCount, 2, reason: reason);
+
+        // An explicit tap target size in the style overrides the default.
+        await tester.pumpWidget(buildApp(tapTargetSize: MaterialTapTargetSize.shrinkWrap));
+        expect(tester.getSize(find.byType(FilledButton)).height, 32.0, reason: reason);
+      }
+    });
+
+    testWidgets('ignores the theme visual density', (WidgetTester tester) async {
+      for (final tonal in <bool>[false, true]) {
+        Widget buildApp({VisualDensity? visualDensity}) {
+          final style = ButtonStyle(visualDensity: visualDensity);
+          return MaterialApp(
+            // Compact is the default density on desktop platforms.
+            theme: theme.copyWith(visualDensity: VisualDensity.compact),
+            home: Center(
+              child: tonal
+                  ? FilledButton.tonal(style: style, onPressed: () {}, child: const Text('Button'))
+                  : FilledButton(style: style, onPressed: () {}, child: const Text('Button')),
+            ),
+          );
+        }
+
+        final reason = tonal ? 'tonal' : 'filled';
+        await tester.pumpWidget(buildApp());
+        expect(tester.getSize(buttonMaterial()).height, 40.0, reason: reason);
+        expect(tester.getSize(find.byType(FilledButton)).height, 48.0, reason: reason);
+
+        // An explicit visual density in the style overrides the default.
+        await tester.pumpWidget(buildApp(visualDensity: VisualDensity.compact));
+        expect(tester.getSize(buttonMaterial()).height, 32.0, reason: reason);
+        expect(tester.getSize(find.byType(FilledButton)).height, 40.0, reason: reason);
+      }
+    });
+
+    testWidgets('resolves shapes for shape variants and states', (WidgetTester tester) async {
+      for (final tonal in <bool>[false, true]) {
+        FilledButton button({ButtonShapeVariant? shapeVariant, bool? isSelected}) {
+          final style = ButtonStyle(
+            sizeVariant: ButtonSizeVariant.medium,
+            shapeVariant: shapeVariant,
+          );
+          return tonal
+              ? FilledButton.tonal(
+                  isSelected: isSelected,
+                  style: style,
+                  onPressed: () {},
+                  child: const Text('Button'),
+                )
+              : FilledButton(
+                  isSelected: isSelected,
+                  style: style,
+                  onPressed: () {},
+                  child: const Text('Button'),
+                );
+        }
+
+        ButtonStyle style = await defaultStyle(tester, button(isSelected: false));
+        expect(style.shape?.resolve(<WidgetState>{}), const StadiumBorder());
+        expect(style.shape?.resolve(selected), rounded(16.0));
+        expect(style.shape?.resolve(pressed), rounded(12.0));
+
+        style = await defaultStyle(
+          tester,
+          button(shapeVariant: ButtonShapeVariant.square, isSelected: false),
+        );
+        expect(style.shape?.resolve(<WidgetState>{}), rounded(16.0));
+        expect(style.shape?.resolve(selected), const StadiumBorder());
+        expect(style.shape?.resolve(pressed), rounded(12.0));
+
+        // A button that is not toggleable ignores the selected state.
+        style = await defaultStyle(tester, button());
+        expect(style.shape?.resolve(selected), const StadiumBorder());
+      }
+    });
+
+    testWidgets('FilledButton resolves colors and elevation for each state', (
+      WidgetTester tester,
+    ) async {
+      final ButtonStyle style = await defaultStyle(
+        tester,
+        FilledButton(onPressed: () {}, child: const Text('Button')),
+      );
+      final ColorScheme colors = theme.colorScheme;
+
+      expect(style.backgroundColor?.resolve(<WidgetState>{}), colors.primary);
+      expect(style.backgroundColor?.resolve(disabled), colors.onSurface.withValues(alpha: 0.1));
+      expect(style.foregroundColor?.resolve(<WidgetState>{}), colors.onPrimary);
+      expect(style.foregroundColor?.resolve(disabled), colors.onSurface.withValues(alpha: 0.38));
+      expect(style.iconColor?.resolve(<WidgetState>{}), colors.onPrimary);
+      expect(style.iconColor?.resolve(disabled), colors.onSurface.withValues(alpha: 0.38));
+
+      expect(style.overlayColor?.resolve(<WidgetState>{}), isNull);
+      expect(style.overlayColor?.resolve(hovered), colors.onPrimary.withValues(alpha: 0.08));
+      expect(style.overlayColor?.resolve(focused), colors.onPrimary.withValues(alpha: 0.1));
+      expect(style.overlayColor?.resolve(pressed), colors.onPrimary.withValues(alpha: 0.1));
+
+      // A button that is not toggleable ignores the selected state.
+      expect(style.backgroundColor?.resolve(selected), colors.primary);
+      expect(
+        style.overlayColor?.resolve(<WidgetState>{WidgetState.selected, WidgetState.hovered}),
+        colors.onPrimary.withValues(alpha: 0.08),
+      );
+
+      expect(style.shadowColor?.resolve(<WidgetState>{}), colors.shadow);
+      for (final states in <Set<WidgetState>>[
+        <WidgetState>{},
+        hovered,
+        focused,
+        pressed,
+        disabled,
+      ]) {
+        expect(style.elevation?.resolve(states), 0.0, reason: '$states');
+      }
+    });
+
+    testWidgets('FilledButton.tonal resolves colors and elevation for each state', (
+      WidgetTester tester,
+    ) async {
+      final ButtonStyle style = await defaultStyle(
+        tester,
+        FilledButton.tonal(onPressed: () {}, child: const Text('Button')),
+      );
+      final ColorScheme colors = theme.colorScheme;
+
+      expect(style.backgroundColor?.resolve(<WidgetState>{}), colors.secondaryContainer);
+      expect(style.backgroundColor?.resolve(disabled), colors.onSurface.withValues(alpha: 0.1));
+      expect(style.foregroundColor?.resolve(<WidgetState>{}), colors.onSecondaryContainer);
+      expect(style.foregroundColor?.resolve(disabled), colors.onSurface.withValues(alpha: 0.38));
+      expect(style.iconColor?.resolve(<WidgetState>{}), colors.onSecondaryContainer);
+      expect(style.iconColor?.resolve(disabled), colors.onSurface.withValues(alpha: 0.38));
+
+      expect(style.overlayColor?.resolve(<WidgetState>{}), isNull);
+      expect(
+        style.overlayColor?.resolve(hovered),
+        colors.onSecondaryContainer.withValues(alpha: 0.08),
+      );
+      expect(
+        style.overlayColor?.resolve(focused),
+        colors.onSecondaryContainer.withValues(alpha: 0.1),
+      );
+      expect(
+        style.overlayColor?.resolve(pressed),
+        colors.onSecondaryContainer.withValues(alpha: 0.1),
+      );
+
+      expect(style.shadowColor?.resolve(<WidgetState>{}), colors.shadow);
+      for (final states in <Set<WidgetState>>[
+        <WidgetState>{},
+        hovered,
+        focused,
+        pressed,
+        disabled,
+      ]) {
+        expect(style.elevation?.resolve(states), 0.0, reason: '$states');
+      }
+    });
+
+    testWidgets('FilledButton resolves selected and unselected colors when toggleable', (
+      WidgetTester tester,
+    ) async {
+      final ButtonStyle style = await defaultStyle(
+        tester,
+        FilledButton(isSelected: true, onPressed: () {}, child: const Text('Button')),
+      );
+      final ColorScheme colors = theme.colorScheme;
+
+      expect(style.backgroundColor?.resolve(selected), colors.primary);
+      expect(style.foregroundColor?.resolve(selected), colors.onPrimary);
+      expect(style.iconColor?.resolve(selected), colors.onPrimary);
+      expect(
+        style.overlayColor?.resolve(<WidgetState>{WidgetState.selected, WidgetState.hovered}),
+        colors.onPrimary.withValues(alpha: 0.08),
+      );
+      expect(
+        style.overlayColor?.resolve(<WidgetState>{WidgetState.selected, WidgetState.pressed}),
+        colors.onPrimary.withValues(alpha: 0.1),
+      );
+
+      // Unselected toggle buttons use different colors than buttons that are
+      // not toggleable.
+      expect(style.backgroundColor?.resolve(<WidgetState>{}), colors.surfaceContainer);
+      expect(style.foregroundColor?.resolve(<WidgetState>{}), colors.onSurfaceVariant);
+      expect(style.iconColor?.resolve(<WidgetState>{}), colors.onSurfaceVariant);
+      expect(style.overlayColor?.resolve(hovered), colors.onSurfaceVariant.withValues(alpha: 0.08));
+      expect(style.overlayColor?.resolve(focused), colors.onSurfaceVariant.withValues(alpha: 0.1));
+      expect(style.overlayColor?.resolve(pressed), colors.onSurfaceVariant.withValues(alpha: 0.1));
+
+      expect(
+        style.backgroundColor?.resolve(<WidgetState>{WidgetState.selected, WidgetState.disabled}),
+        colors.onSurface.withValues(alpha: 0.1),
+      );
+    });
+
+    testWidgets('FilledButton.tonal resolves selected and unselected colors when toggleable', (
+      WidgetTester tester,
+    ) async {
+      final ButtonStyle style = await defaultStyle(
+        tester,
+        FilledButton.tonal(isSelected: true, onPressed: () {}, child: const Text('Button')),
+      );
+      final ColorScheme colors = theme.colorScheme;
+
+      expect(style.backgroundColor?.resolve(selected), colors.secondary);
+      expect(style.foregroundColor?.resolve(selected), colors.onSecondary);
+      expect(style.iconColor?.resolve(selected), colors.onSecondary);
+      expect(
+        style.overlayColor?.resolve(<WidgetState>{WidgetState.selected, WidgetState.hovered}),
+        colors.onSecondary.withValues(alpha: 0.08),
+      );
+
+      expect(style.backgroundColor?.resolve(<WidgetState>{}), colors.secondaryContainer);
+      expect(style.foregroundColor?.resolve(<WidgetState>{}), colors.onSecondaryContainer);
+      expect(style.iconColor?.resolve(<WidgetState>{}), colors.onSecondaryContainer);
+      expect(
+        style.overlayColor?.resolve(hovered),
+        colors.onSecondaryContainer.withValues(alpha: 0.08),
+      );
+
+      expect(
+        style.backgroundColor?.resolve(<WidgetState>{WidgetState.selected, WidgetState.disabled}),
+        colors.onSurface.withValues(alpha: 0.1),
+      );
+    });
+
+    testWidgets('uses theme-level size and shape variants', (WidgetTester tester) async {
+      for (final tonal in <bool>[false, true]) {
+        Widget buildApp({ButtonStyle? style}) {
+          return MaterialApp(
+            theme: m3eTheme(
+              style: const ButtonStyle(
+                sizeVariant: ButtonSizeVariant.large,
+                shapeVariant: ButtonShapeVariant.square,
+              ),
+            ),
+            home: Center(
+              child: tonal
+                  ? FilledButton.tonal(style: style, onPressed: () {}, child: const Text('Button'))
+                  : FilledButton(style: style, onPressed: () {}, child: const Text('Button')),
+            ),
+          );
+        }
+
+        final reason = tonal ? 'tonal' : 'filled';
+        await tester.pumpWidget(buildApp());
+        await tester.pumpAndSettle();
+        expect(tester.getSize(buttonMaterial()).height, 96.0, reason: reason);
+        expect(tester.widget<Material>(buttonMaterial()).shape, rounded(28.0), reason: reason);
+
+        // The widget style overrides the theme style.
+        await tester.pumpWidget(
+          buildApp(style: const ButtonStyle(sizeVariant: ButtonSizeVariant.xSmall)),
+        );
+        await tester.pumpAndSettle();
+        expect(tester.getSize(buttonMaterial()).height, 32.0, reason: reason);
+        expect(tester.widget<Material>(buttonMaterial()).shape, rounded(12.0), reason: reason);
+      }
+    });
+
+    testWidgets('FilledButton.icon uses theme-level size for icon-label spacing', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: m3eTheme(style: const ButtonStyle(sizeVariant: ButtonSizeVariant.xLarge)),
+          home: Center(
+            child: FilledButton.icon(
+              onPressed: () {},
+              icon: const Icon(Icons.add),
+              label: const Text('Button'),
+            ),
+          ),
+        ),
+      );
+
+      final Row row = tester.widget<Row>(
+        find.descendant(of: find.byType(FilledButton), matching: find.byType(Row)),
+      );
+      expect(row.spacing, 16.0);
+    });
+
+    testWidgets('variant is ignored when useMaterial3 is false', (WidgetTester tester) async {
+      for (final tonal in <bool>[false, true]) {
+        const style = ButtonStyle(sizeVariant: ButtonSizeVariant.large);
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: ThemeData(
+              useMaterial3: false,
+              filledButtonTheme: const FilledButtonThemeData(
+                variant: StyleVariant.material3Expressive,
+              ),
+            ),
+            home: Center(
+              child: tonal
+                  ? FilledButton.tonal(style: style, onPressed: () {}, child: const Text('Button'))
+                  : FilledButton(style: style, onPressed: () {}, child: const Text('Button')),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        // FilledButton uses its Material 3 defaults when useMaterial3 is false.
+        final reason = tonal ? 'tonal' : 'filled';
+        expect(tester.getSize(buttonMaterial()).height, 40.0, reason: reason);
+        expect(
+          tester.widget<Material>(buttonMaterial()).shape,
+          const StadiumBorder(),
+          reason: reason,
+        );
+      }
+    });
+
+    testWidgets('does not crash at zero area', (WidgetTester tester) async {
+      for (final ButtonSizeVariant size in ButtonSizeVariant.values) {
+        for (final tonal in <bool>[false, true]) {
+          await tester.pumpWidget(
+            MaterialApp(
+              theme: m3eTheme(style: ButtonStyle(sizeVariant: size)),
+              home: Center(
+                child: SizedBox.shrink(
+                  child: tonal
+                      ? FilledButton.tonalIcon(
+                          onPressed: () {},
+                          isSelected: true,
+                          icon: const Icon(Icons.add),
+                          label: const Text('X'),
+                        )
+                      : FilledButton.icon(
+                          onPressed: () {},
+                          isSelected: true,
+                          icon: const Icon(Icons.add),
+                          label: const Text('X'),
+                        ),
+                ),
+              ),
+            ),
+          );
+          // Let the theme change animation finish.
+          await tester.pumpAndSettle();
+          expect(tester.getSize(find.byType(FilledButton)), Size.zero);
+        }
+      }
+    });
+  });
+
+  testWidgets('FilledButton isSelected updates a provided statesController', (
+    WidgetTester tester,
+  ) async {
+    final controller = MaterialStatesController();
+    addTearDown(controller.dispose);
+
+    Widget buildButton(bool? isSelected) {
+      return MaterialApp(
+        home: Center(
+          child: FilledButton(
+            statesController: controller,
+            isSelected: isSelected,
+            onPressed: () {},
+            child: const Text('Button'),
+          ),
+        ),
+      );
+    }
+
+    await tester.pumpWidget(buildButton(true));
+    expect(controller.value, contains(WidgetState.selected));
+
+    await tester.pumpWidget(buildButton(false));
+    expect(controller.value, isNot(contains(WidgetState.selected)));
+
+    await tester.pumpWidget(buildButton(true));
+    expect(controller.value, contains(WidgetState.selected));
+
+    await tester.pumpWidget(buildButton(null));
+    expect(controller.value, isNot(contains(WidgetState.selected)));
+  });
+
+  test('FilledButton debugFillProperties includes selected', () {
+    final builder = DiagnosticPropertiesBuilder();
+    FilledButton(
+      isSelected: true,
+      onPressed: () {},
+      child: const Text('Button'),
+    ).debugFillProperties(builder);
+
+    final List<String> description = builder.properties
+        .where((DiagnosticsNode node) => !node.isFiltered(DiagnosticLevel.info))
+        .map((DiagnosticsNode node) => node.toString())
+        .toList();
+    expect(description, contains('selected'));
   });
 }

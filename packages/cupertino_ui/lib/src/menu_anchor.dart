@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// TODO(QuncCccccc): Remove ignore once https://github.com/flutter/flutter/issues/196406 is fixed.
+// ignore: uri_does_not_exist_in_doc_import
 /// @docImport 'package:material_ui/material_ui.dart';
 library;
 
@@ -911,9 +913,9 @@ class _MenuOverlayState extends State<_MenuOverlay>
     // Behavior of reduce motion is based on iOS 18.5 simulator. Because the
     // disableAnimations accessibility feature is not present on iOS, all
     // animations are disabled when disableAnimations is enabled.
-    final ui.AccessibilityFeatures accessibilityFeatures = View.of(
-      context,
-    ).platformDispatcher.accessibilityFeatures;
+    final ui.AccessibilityFeatures accessibilityFeatures = View.of(context)
+        .platformDispatcher
+        .accessibilityFeatures;
 
     switch (accessibilityFeatures) {
       case ui.AccessibilityFeatures(disableAnimations: true):
@@ -1527,7 +1529,7 @@ class _FocusLastAction extends ContextAction<_FocusLastIntent> {
 ///
 /// The default thickness of the divider is 1 physical pixel.
 class _CupertinoMenuImplicitDivider extends StatelessWidget {
-  /// Draws a [_CupertinoMenuImplicitDivider] below a [child].
+  /// Draws a [_CupertinoMenuImplicitDivider] below a menu item.
   const _CupertinoMenuImplicitDivider();
 
   /// The default color applied to the [_CupertinoMenuImplicitDivider] with
@@ -1963,7 +1965,8 @@ class CupertinoMenuItem extends StatelessWidget implements CupertinoMenuEntry {
   );
 
   /// Resolves the title [TextStyle] in response to
-  /// [CupertinoThemeData.brightness], [isDestructiveAction], and [enabled].
+  /// [CupertinoThemeData.brightness], [isDestructiveAction], and whether
+  /// [onPressed] is null.
   //
   // Approximated from the iOS and iPadOS 18.5 simulators.
   TextStyle _resolveDefaultTextStyle(BuildContext context, TextScaler textScaler) {

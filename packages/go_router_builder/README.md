@@ -250,9 +250,8 @@ a return value. The generated routes also follow this functionality.
 
 <?code-excerpt "example/lib/readme_excerpts.dart (awaitPush)"?>
 ```dart
-final bool? result = await const FamilyRoute(
-  fid: 'John',
-).push<bool>(context);
+final bool? result = await const FamilyRoute(fid: 'John')
+    .push<bool>(context);
 ```
 
 ## Query parameters

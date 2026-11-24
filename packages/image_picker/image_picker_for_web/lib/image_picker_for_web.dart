@@ -24,9 +24,9 @@ const String _kAcceptVideoMimeType = 'video/3gpp,video/x-m4v,video/mp4,video/*';
 class ImagePickerPlugin extends ImagePickerPlatform {
   /// A constructor that allows tests to override the function that creates file inputs.
   ImagePickerPlugin({
-    @visibleForTesting ImagePickerPluginTestOverrides? overrides,
+    @visibleForTesting this._overrides,
     @visibleForTesting ImageResizer? imageResizer,
-  }) : _overrides = overrides {
+  }) {
     _imageResizer = imageResizer ?? ImageResizer();
     _target = _ensureInitialized(_kImagePickerInputsDomId);
   }

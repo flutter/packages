@@ -765,6 +765,43 @@ void main() {
     expect(find.text('BottomSheet'), findsNothing);
   });
 
+  testWidgets('Standard BottomSheet closes when its extent is nearly its minimum', (
+    WidgetTester tester,
+  ) async {
+    final scaffoldKey = GlobalKey<ScaffoldState>();
+    late BuildContext notificationContext;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          key: scaffoldKey,
+          body: const Center(child: Text('body')),
+        ),
+      ),
+    );
+
+    scaffoldKey.currentState!.showBottomSheet((BuildContext context) {
+      return Builder(
+        builder: (BuildContext context) {
+          notificationContext = context;
+          return const Text('BottomSheet');
+        },
+      );
+    });
+    await tester.pumpAndSettle();
+
+    DraggableScrollableNotification(
+      extent: 0.20000000001,
+      minExtent: 0.2,
+      maxExtent: 1.0,
+      initialExtent: 0.5,
+      context: notificationContext,
+    ).dispatch(notificationContext);
+    await tester.pumpAndSettle();
+
+    expect(find.text('BottomSheet'), findsNothing);
+  });
+
   testWidgets('modal BottomSheet has no top MediaQuery', (WidgetTester tester) async {
     late BuildContext outerContext;
     late BuildContext innerContext;
@@ -899,6 +936,194 @@ void main() {
     expect(MediaQuery.of(innerContext).padding, const EdgeInsets.fromLTRB(0, 0, 0, 50.0));
   });
 
+  testWidgets(
+    'showModalBottomSheet(useSafeArea: true) does not apply safe area from opposite sub-screen',
+    (WidgetTester tester) async {
+      // Regression test for https://github.com/flutter/flutter/issues/195218
+      late BuildContext outerContext;
+
+      // Simulate a foldable device: size 800x600, with a vertical hinge from x=390 to 410.
+      // The device has a safe area on the left edge (padding.left = 40.0), but none on the right edge.
+      const hinge = Rect.fromLTWH(390.0, 0.0, 20.0, 600.0);
+      const displayFeature = DisplayFeature(
+        bounds: hinge,
+        type: DisplayFeatureType.hinge,
+        state: DisplayFeatureState.postureFlat,
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: MediaQuery(
+            data: const MediaQueryData(
+              size: Size(800.0, 600.0),
+              padding: EdgeInsets.only(left: 40.0, top: 20.0),
+              displayFeatures: <DisplayFeature>[displayFeature],
+            ),
+            child: Navigator(
+              onGenerateRoute: (_) {
+                return PageRouteBuilder<void>(
+                  pageBuilder: (BuildContext context, _, _) {
+                    outerContext = context;
+                    return const SizedBox();
+                  },
+                );
+              },
+            ),
+          ),
+        ),
+      );
+
+      // Display on the RIGHT sub-screen (anchorPoint on right half: x > 410).
+      unawaited(
+        showModalBottomSheet<void>(
+          context: outerContext,
+          useSafeArea: true,
+          anchorPoint: const Offset(600.0, 300.0),
+          builder: (BuildContext context) {
+            return const SizedBox(height: 200.0);
+          },
+        ),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
+
+      // The modal bottom sheet on the right sub-screen should span from x=410 to 800.
+      // Its left position must be at x=410, NOT shifted by the left sub-screen's 40px safe area.
+      final Finder sheetFinder = find.byType(BottomSheet);
+      expect(sheetFinder, findsOneWidget);
+      final Rect sheetRect = tester.getRect(sheetFinder);
+      expect(sheetRect.left, 410.0);
+      expect(sheetRect.right, 800.0);
+      expect(sheetRect.width, 390.0);
+    },
+  );
+
+  testWidgets(
+    'showModalBottomSheet(useSafeArea: true, isScrollControlled: true) in tabletop posture does not apply top safe area to lower sub-screen',
+    (WidgetTester tester) async {
+      // Regression test for https://github.com/flutter/flutter/issues/195218
+      late BuildContext outerContext;
+
+      // Simulate a device in tabletop posture: size 800x600, with a horizontal hinge from y=290 to 310.
+      // The device has a safe area on the top edge (padding.top = 40.0), but none on the bottom edge.
+      const hinge = Rect.fromLTWH(0.0, 290.0, 800.0, 20.0);
+      const displayFeature = DisplayFeature(
+        bounds: hinge,
+        type: DisplayFeatureType.hinge,
+        state: DisplayFeatureState.postureHalfOpened,
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: MediaQuery(
+            data: const MediaQueryData(
+              size: Size(800.0, 600.0),
+              padding: EdgeInsets.only(top: 40.0),
+              displayFeatures: <DisplayFeature>[displayFeature],
+            ),
+            child: Navigator(
+              onGenerateRoute: (_) {
+                return PageRouteBuilder<void>(
+                  pageBuilder: (BuildContext context, _, _) {
+                    outerContext = context;
+                    return const SizedBox();
+                  },
+                );
+              },
+            ),
+          ),
+        ),
+      );
+
+      // Display on the LOWER sub-screen (anchorPoint on bottom half: y > 310).
+      unawaited(
+        showModalBottomSheet<void>(
+          context: outerContext,
+          useSafeArea: true,
+          isScrollControlled: true,
+          anchorPoint: const Offset(400.0, 450.0),
+          builder: (BuildContext context) {
+            // A tall widget that fills all available height up to the hinge.
+            return const SizedBox(height: 500.0);
+          },
+        ),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
+
+      // The modal bottom sheet on the lower sub-screen should span from y=310 to 600.
+      // Its top position must be at y=310 (the bottom edge of the hinge), NOT pushed
+      // down by the upper sub-screen's 40px top safe area (which would be y=350).
+      final Finder sheetFinder = find.byType(BottomSheet);
+      expect(sheetFinder, findsOneWidget);
+      final Rect sheetRect = tester.getRect(sheetFinder);
+      expect(sheetRect.top, 310.0);
+      expect(sheetRect.bottom, 600.0);
+      expect(sheetRect.height, 290.0);
+    },
+  );
+
+  testWidgets(
+    'showModalBottomSheet(useSafeArea: true) still applies safe area on sub-screen that touches the inset',
+    (WidgetTester tester) async {
+      late BuildContext outerContext;
+
+      // Simulate a foldable device: size 800x600, with a vertical hinge from x=390 to 410.
+      // The device has a safe area on the left edge (padding.left = 40.0).
+      const hinge = Rect.fromLTWH(390.0, 0.0, 20.0, 600.0);
+      const displayFeature = DisplayFeature(
+        bounds: hinge,
+        type: DisplayFeatureType.hinge,
+        state: DisplayFeatureState.postureFlat,
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: MediaQuery(
+            data: const MediaQueryData(
+              size: Size(800.0, 600.0),
+              padding: EdgeInsets.only(left: 40.0, top: 20.0),
+              displayFeatures: <DisplayFeature>[displayFeature],
+            ),
+            child: Navigator(
+              onGenerateRoute: (_) {
+                return PageRouteBuilder<void>(
+                  pageBuilder: (BuildContext context, _, _) {
+                    outerContext = context;
+                    return const SizedBox();
+                  },
+                );
+              },
+            ),
+          ),
+        ),
+      );
+
+      // Display on the LEFT sub-screen (anchorPoint on left half: x < 390).
+      unawaited(
+        showModalBottomSheet<void>(
+          context: outerContext,
+          useSafeArea: true,
+          anchorPoint: const Offset(100.0, 300.0),
+          builder: (BuildContext context) {
+            return const SizedBox(height: 200.0);
+          },
+        ),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
+
+      // The modal bottom sheet on the left sub-screen should span from x=40 to 390,
+      // correctly applying the 40px safe area where it belongs.
+      final Finder sheetFinder = find.byType(BottomSheet);
+      expect(sheetFinder, findsOneWidget);
+      final Rect sheetRect = tester.getRect(sheetFinder);
+      expect(sheetRect.left, 40.0);
+      expect(sheetRect.right, 390.0);
+      expect(sheetRect.width, 350.0);
+    },
+  );
+
   testWidgets('modal BottomSheet has semantics', (WidgetTester tester) async {
     final semantics = SemanticsTester(tester);
     final scaffoldKey = GlobalKey<ScaffoldState>();
@@ -1018,6 +1243,147 @@ void main() {
     expect(modalBarrier.color, barrierColor);
   });
 
+  testWidgets('Modal bottom sheet barrier color uses ColorScheme.scrim', (
+    WidgetTester tester,
+  ) async {
+    const Color scrim = Colors.red;
+    late BuildContext savedContext;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple, scrim: scrim),
+        ),
+        home: Builder(
+          builder: (BuildContext context) {
+            savedContext = context;
+            return const SizedBox.expand();
+          },
+        ),
+      ),
+    );
+
+    unawaited(
+      showModalBottomSheet<void>(
+        context: savedContext,
+        builder: (BuildContext context) {
+          return const SizedBox(height: 200, child: Text('BottomSheet'));
+        },
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final ModalBarrier modalBarrier = tester.widget(find.byType(ModalBarrier).last);
+    expect(modalBarrier.color, scrim.withAlpha(0x52));
+  });
+
+  testWidgets('BottomSheetTheme.modalBarrierColor takes precedence over ColorScheme.scrim', (
+    WidgetTester tester,
+  ) async {
+    const Color scrim = Colors.red;
+    const Color themeBarrierColor = Colors.blue;
+    late BuildContext savedContext;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple, scrim: scrim),
+          bottomSheetTheme: const BottomSheetThemeData(modalBarrierColor: themeBarrierColor),
+        ),
+        home: Builder(
+          builder: (BuildContext context) {
+            savedContext = context;
+            return const SizedBox.expand();
+          },
+        ),
+      ),
+    );
+
+    unawaited(
+      showModalBottomSheet<void>(
+        context: savedContext,
+        builder: (BuildContext context) {
+          return const SizedBox(height: 200, child: Text('BottomSheet'));
+        },
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final ModalBarrier modalBarrier = tester.widget(find.byType(ModalBarrier).last);
+    expect(modalBarrier.color, themeBarrierColor);
+  });
+
+  testWidgets('Explicit barrierColor takes precedence over ColorScheme.scrim for bottom sheets', (
+    WidgetTester tester,
+  ) async {
+    const Color scrim = Colors.red;
+    const Color explicitBarrierColor = Colors.green;
+    late BuildContext savedContext;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple, scrim: scrim),
+          bottomSheetTheme: const BottomSheetThemeData(modalBarrierColor: Colors.blue),
+        ),
+        home: Builder(
+          builder: (BuildContext context) {
+            savedContext = context;
+            return const SizedBox.expand();
+          },
+        ),
+      ),
+    );
+
+    unawaited(
+      showModalBottomSheet<void>(
+        context: savedContext,
+        barrierColor: explicitBarrierColor,
+        builder: (BuildContext context) {
+          return const SizedBox(height: 200, child: Text('BottomSheet'));
+        },
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final ModalBarrier modalBarrier = tester.widget(find.byType(ModalBarrier).last);
+    expect(modalBarrier.color, explicitBarrierColor);
+  });
+
+  testWidgets('Bottom sheet Material 3 ColorScheme.scrim uses 32% opacity', (
+    WidgetTester tester,
+  ) async {
+    final Color scrim = Colors.red.withValues(alpha: 0.2);
+    late BuildContext savedContext;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple, scrim: scrim),
+        ),
+        home: Builder(
+          builder: (BuildContext context) {
+            savedContext = context;
+            return const SizedBox.expand();
+          },
+        ),
+      ),
+    );
+
+    unawaited(
+      showModalBottomSheet<void>(
+        context: savedContext,
+        builder: (BuildContext context) {
+          return const SizedBox(height: 200, child: Text('BottomSheet'));
+        },
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final ModalBarrier modalBarrier = tester.widget(find.byType(ModalBarrier).last);
+    expect(modalBarrier.color, scrim.withAlpha(0x52));
+  });
+
   testWidgets('Material3 - BottomSheet uses fallback values', (WidgetTester tester) async {
     const Color surfaceColor = Colors.pink;
     const Color surfaceTintColor = Colors.blue;
@@ -1076,6 +1442,46 @@ void main() {
       find.descendant(of: find.byType(BottomSheet), matching: find.byType(Material)),
     );
     expect(material.shadowColor, Colors.transparent);
+  });
+
+  testWidgets('Modal BottomSheet closes when its extent is nearly its minimum', (
+    WidgetTester tester,
+  ) async {
+    final scaffoldKey = GlobalKey<ScaffoldState>();
+    late BuildContext notificationContext;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          key: scaffoldKey,
+          body: const Center(child: Text('body')),
+        ),
+      ),
+    );
+
+    showModalBottomSheet<void>(
+      context: scaffoldKey.currentContext!,
+      builder: (BuildContext context) {
+        return Builder(
+          builder: (BuildContext context) {
+            notificationContext = context;
+            return const Text('BottomSheet');
+          },
+        );
+      },
+    );
+    await tester.pumpAndSettle();
+
+    DraggableScrollableNotification(
+      extent: 0.20000000001,
+      minExtent: 0.2,
+      maxExtent: 1.0,
+      initialExtent: 0.5,
+      context: notificationContext,
+    ).dispatch(notificationContext);
+    await tester.pumpAndSettle();
+
+    expect(find.text('BottomSheet'), findsNothing);
   });
 
   testWidgets('Material2 - Modal BottomSheet with ScrollController has semantics', (
@@ -1846,6 +2252,68 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  // Regression test for https://github.com/flutter/flutter/issues/193944
+  testWidgets('Modal bottom sheet disposes the CurvedAnimations it creates while dragging', (
+    WidgetTester tester,
+  ) async {
+    final created = <CurvedAnimation>[];
+    final disposed = <CurvedAnimation>{};
+    void listener(ObjectEvent event) {
+      final Object object = event.object;
+      if (object is CurvedAnimation) {
+        if (event is ObjectCreated) {
+          created.add(object);
+        } else if (event is ObjectDisposed) {
+          disposed.add(object);
+        }
+      }
+    }
+
+    FlutterMemoryAllocations.instance.addListener(listener);
+    addTearDown(() => FlutterMemoryAllocations.instance.removeListener(listener));
+
+    late BuildContext savedContext;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Builder(
+          builder: (BuildContext context) {
+            savedContext = context;
+            return const Center(child: Text('body'));
+          },
+        ),
+      ),
+    );
+
+    unawaited(
+      showModalBottomSheet<void>(
+        context: savedContext,
+        builder: (BuildContext context) => const SizedBox(height: 300, child: Text('BottomSheet')),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    // Each non-closing drag rebinds the sheet animation to a new CurvedAnimation
+    // in handleDragEnd; these must not accumulate without being disposed.
+    for (var i = 0; i < 3; i++) {
+      await tester.drag(find.text('BottomSheet'), const Offset(0.0, 40.0));
+      await tester.pumpAndSettle();
+    }
+
+    // Dismiss the sheet and tear down the tree so all state is disposed.
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pumpAndSettle();
+
+    // Every CurvedAnimation created by the sheet must have been disposed; before
+    // the fix the drag-end animations leaked their listeners on the route
+    // animation.
+    expect(created, isNotEmpty);
+    expect(
+      created.where((CurvedAnimation animation) => !disposed.contains(animation)),
+      isEmpty,
+      reason: 'A CurvedAnimation created by the modal bottom sheet was not disposed.',
+    );
+  });
+
   // Regression test for https://github.com/flutter/flutter/issues/99627
   testWidgets('The old route entry should be removed when a new sheet popup', (
     WidgetTester tester,
@@ -2247,9 +2715,8 @@ void main() {
                   child: ElevatedButton(
                     child: const Text('Press me'),
                     onPressed: () {
-                      Scaffold.of(
-                        context,
-                      ).showBottomSheet((BuildContext context) => const Text('BottomSheet'));
+                      Scaffold.of(context)
+                          .showBottomSheet((BuildContext context) => const Text('BottomSheet'));
                     },
                   ),
                 );
@@ -2373,9 +2840,8 @@ void main() {
                   child: ElevatedButton(
                     child: const Text('Press me'),
                     onPressed: () {
-                      Scaffold.of(
-                        context,
-                      ).showBottomSheet((BuildContext context) => const Text('BottomSheet'));
+                      Scaffold.of(context)
+                          .showBottomSheet((BuildContext context) => const Text('BottomSheet'));
                     },
                   ),
                 );

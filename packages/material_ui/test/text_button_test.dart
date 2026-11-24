@@ -325,126 +325,120 @@ void main() {
     expect(find.text('label'), findsOneWidget);
   });
 
-  testWidgets(
-    'Default TextButton meets a11y contrast guidelines',
-    (WidgetTester tester) async {
-      final focusNode = FocusNode();
+  testWidgets('Default TextButton meets a11y contrast guidelines', (WidgetTester tester) async {
+    final focusNode = FocusNode();
 
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: ThemeData.from(colorScheme: const ColorScheme.light()),
-          home: Scaffold(
-            body: Center(
-              child: TextButton(
-                onPressed: () {},
-                focusNode: focusNode,
-                child: const Text('TextButton'),
-              ),
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData.from(colorScheme: const ColorScheme.light()),
+        home: Scaffold(
+          body: Center(
+            child: TextButton(
+              onPressed: () {},
+              focusNode: focusNode,
+              child: const Text('TextButton'),
             ),
           ),
         ),
-      );
+      ),
+    );
 
-      // Default, not disabled.
-      await expectLater(tester, meetsGuideline(textContrastGuideline));
+    // Default, not disabled.
+    await expectLater(tester, meetsGuideline(textContrastGuideline));
 
-      // Hovered.
-      final Offset center = tester.getCenter(find.byType(TextButton));
-      final TestGesture gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
-      await gesture.addPointer();
-      await gesture.moveTo(center);
-      await tester.pumpAndSettle();
-      await expectLater(tester, meetsGuideline(textContrastGuideline));
+    // Hovered.
+    final Offset center = tester.getCenter(find.byType(TextButton));
+    final TestGesture gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
+    await gesture.addPointer();
+    await gesture.moveTo(center);
+    await tester.pumpAndSettle();
+    await expectLater(tester, meetsGuideline(textContrastGuideline));
 
-      // Highlighted (pressed).
-      await gesture.down(center);
-      await tester.pump(); // Start the splash and highlight animations.
-      await tester.pump(
-        const Duration(milliseconds: 800),
-      ); // Wait for splash and highlight to be well under way.
-      await expectLater(tester, meetsGuideline(textContrastGuideline));
-      await gesture.removePointer();
+    // Highlighted (pressed).
+    await gesture.down(center);
+    await tester.pump(); // Start the splash and highlight animations.
+    await tester.pump(
+      const Duration(milliseconds: 800),
+    ); // Wait for splash and highlight to be well under way.
+    await expectLater(tester, meetsGuideline(textContrastGuideline));
+    await gesture.removePointer();
 
-      // Focused.
-      focusNode.requestFocus();
-      await tester.pumpAndSettle();
-      await expectLater(tester, meetsGuideline(textContrastGuideline));
+    // Focused.
+    focusNode.requestFocus();
+    await tester.pumpAndSettle();
+    await expectLater(tester, meetsGuideline(textContrastGuideline));
 
-      focusNode.dispose();
-    },
-    skip: isBrowser, // https://github.com/flutter/flutter/issues/44115
-  );
+    focusNode.dispose();
+  });
 
-  testWidgets(
-    'TextButton with colored theme meets a11y contrast guidelines',
-    (WidgetTester tester) async {
-      final focusNode = FocusNode();
+  testWidgets('TextButton with colored theme meets a11y contrast guidelines', (
+    WidgetTester tester,
+  ) async {
+    final focusNode = FocusNode();
 
-      Color getTextColor(Set<WidgetState> states) {
-        final interactiveStates = <WidgetState>{
-          WidgetState.pressed,
-          WidgetState.hovered,
-          WidgetState.focused,
-        };
-        if (states.any(interactiveStates.contains)) {
-          return Colors.blue[900]!;
-        }
-        return Colors.blue[800]!;
+    Color getTextColor(Set<WidgetState> states) {
+      final interactiveStates = <WidgetState>{
+        WidgetState.pressed,
+        WidgetState.hovered,
+        WidgetState.focused,
+      };
+      if (states.any(interactiveStates.contains)) {
+        return Colors.blue[900]!;
       }
+      return Colors.blue[800]!;
+    }
 
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: Center(
-              child: TextButtonTheme(
-                data: TextButtonThemeData(
-                  style: ButtonStyle(
-                    foregroundColor: WidgetStateProperty.resolveWith<Color>(getTextColor),
-                  ),
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Center(
+            child: TextButtonTheme(
+              data: TextButtonThemeData(
+                style: ButtonStyle(
+                  foregroundColor: WidgetStateProperty.resolveWith<Color>(getTextColor),
                 ),
-                child: Builder(
-                  builder: (BuildContext context) {
-                    return TextButton(
-                      onPressed: () {},
-                      focusNode: focusNode,
-                      child: const Text('TextButton'),
-                    );
-                  },
-                ),
+              ),
+              child: Builder(
+                builder: (BuildContext context) {
+                  return TextButton(
+                    onPressed: () {},
+                    focusNode: focusNode,
+                    child: const Text('TextButton'),
+                  );
+                },
               ),
             ),
           ),
         ),
-      );
+      ),
+    );
 
-      // Default, not disabled.
-      await expectLater(tester, meetsGuideline(textContrastGuideline));
+    // Default, not disabled.
+    await expectLater(tester, meetsGuideline(textContrastGuideline));
 
-      // Focused.
-      focusNode.requestFocus();
-      await tester.pumpAndSettle();
-      await expectLater(tester, meetsGuideline(textContrastGuideline));
+    // Focused.
+    focusNode.requestFocus();
+    await tester.pumpAndSettle();
+    await expectLater(tester, meetsGuideline(textContrastGuideline));
 
-      // Hovered.
-      final Offset center = tester.getCenter(find.byType(TextButton));
-      final TestGesture gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
-      await gesture.addPointer();
-      await gesture.moveTo(center);
-      await tester.pumpAndSettle();
-      await expectLater(tester, meetsGuideline(textContrastGuideline));
+    // Hovered.
+    final Offset center = tester.getCenter(find.byType(TextButton));
+    final TestGesture gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
+    await gesture.addPointer();
+    await gesture.moveTo(center);
+    await tester.pumpAndSettle();
+    await expectLater(tester, meetsGuideline(textContrastGuideline));
 
-      // Highlighted (pressed).
-      await gesture.down(center);
-      await tester.pump(); // Start the splash and highlight animations.
-      await tester.pump(
-        const Duration(milliseconds: 800),
-      ); // Wait for splash and highlight to be well under way.
-      await expectLater(tester, meetsGuideline(textContrastGuideline));
+    // Highlighted (pressed).
+    await gesture.down(center);
+    await tester.pump(); // Start the splash and highlight animations.
+    await tester.pump(
+      const Duration(milliseconds: 800),
+    ); // Wait for splash and highlight to be well under way.
+    await expectLater(tester, meetsGuideline(textContrastGuideline));
 
-      focusNode.dispose();
-    },
-    skip: isBrowser, // https://github.com/flutter/flutter/issues/44115
-  );
+    focusNode.dispose();
+  });
 
   testWidgets('TextButton default overlayColor resolves pressed state', (
     WidgetTester tester,
@@ -1572,30 +1566,33 @@ void main() {
     }
   });
 
-  testWidgets('TextButton uses InkSparkle only for Android non-web when useMaterial3 is true', (
-    WidgetTester tester,
-  ) async {
-    final theme = ThemeData();
+  testWidgets(
+    'TextButton uses InkSparkle only for Android non-web when useMaterial3 is true',
+    (WidgetTester tester) async {
+      final theme = ThemeData();
 
-    await tester.pumpWidget(
-      MaterialApp(
-        theme: theme,
-        home: Center(
-          child: TextButton(onPressed: () {}, child: const Text('button')),
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: theme,
+          home: Center(
+            child: TextButton(onPressed: () {}, child: const Text('button')),
+          ),
         ),
-      ),
-    );
+      );
 
-    final InkWell buttonInkWell = tester.widget<InkWell>(
-      find.descendant(of: find.byType(TextButton), matching: find.byType(InkWell)),
-    );
+      final InkWell buttonInkWell = tester.widget<InkWell>(
+        find.descendant(of: find.byType(TextButton), matching: find.byType(InkWell)),
+      );
 
-    if (debugDefaultTargetPlatformOverride! == TargetPlatform.android && !kIsWeb) {
-      expect(buttonInkWell.splashFactory, equals(InkSparkle.splashFactory));
-    } else {
-      expect(buttonInkWell.splashFactory, equals(InkRipple.splashFactory));
-    }
-  }, variant: TargetPlatformVariant.all());
+      if (debugDefaultTargetPlatformOverride! == TargetPlatform.android && !kIsWeb) {
+        expect(buttonInkWell.splashFactory, equals(InkSparkle.splashFactory));
+      } else {
+        expect(buttonInkWell.splashFactory, equals(InkRipple.splashFactory));
+      }
+    },
+    variant: TargetPlatformVariant.all(),
+    tags: 'reduced-web-test-set',
+  );
 
   testWidgets('TextButton uses InkRipple when useMaterial3 is false', (WidgetTester tester) async {
     final theme = ThemeData(useMaterial3: false);
@@ -1833,7 +1830,7 @@ void main() {
       RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
       SystemMouseCursors.basic,
     );
-  });
+  }, tags: 'reduced-web-test-set');
 
   testWidgets('TextButton in SelectionArea changes mouse cursor when hovered', (
     WidgetTester tester,

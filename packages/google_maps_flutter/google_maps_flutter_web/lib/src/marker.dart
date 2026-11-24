@@ -18,17 +18,14 @@ abstract class MarkerController<T, O> {
   /// associated [gmaps.InfoWindow].
   MarkerController({
     required T marker,
-    gmaps.InfoWindow? infoWindow,
-    bool consumeTapEvents = false,
+    this._infoWindow,
+    this._consumeTapEvents = false,
     LatLngCallback? onDragStart,
     LatLngCallback? onDrag,
     LatLngCallback? onDragEnd,
     VoidCallback? onTap,
-    ClusterManagerId? clusterManagerId,
-  }) : _marker = marker,
-       _infoWindow = infoWindow,
-       _consumeTapEvents = consumeTapEvents,
-       _clusterManagerId = clusterManagerId {
+    this._clusterManagerId,
+  }) : _marker = marker {
     addMarkerListener(
       marker: marker,
       onDragStart: onDragStart,
@@ -322,6 +319,7 @@ class AdvancedMarkerController
     marker.position = options.position;
     marker.title = options.title ?? '';
     marker.zIndex = options.zIndex;
+    _copyAdvancedMarkerOptionsAnchor(marker, options);
 
     if (_infoWindow != null && newInfoWindowContent != null) {
       _infoWindow.content = newInfoWindowContent;

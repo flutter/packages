@@ -22,9 +22,8 @@ abstract class MarkersController<T extends Object, O> extends GeometryController
   /// Initialize the cache. The [StreamController] comes from the [GoogleMapController], and is shared with other controllers.
   MarkersController({
     required StreamController<MapEvent<Object?>> stream,
-    required ClusterManagersController<T> clusterManagersController,
+    required this._clusterManagersController,
   }) : _streamController = stream,
-       _clusterManagersController = clusterManagersController,
        _markerIdToController = <MarkerId, MarkerController<T, O>>{};
 
   // A cache of [MarkerController]s indexed by their [MarkerId].
@@ -343,6 +342,7 @@ class AdvancedMarkersController
     assert(marker is AdvancedMarker, 'Marker must be an AdvancedMarker.');
 
     final gmMarker = gmaps.AdvancedMarkerElement(markerOptions);
+    _copyAdvancedMarkerOptionsAnchor(gmMarker, markerOptions);
     gmMarker.setAttribute('id', marker.markerId.value);
 
     return AdvancedMarkerController(

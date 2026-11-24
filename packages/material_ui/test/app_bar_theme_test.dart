@@ -190,9 +190,8 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData.from(
-          colorScheme: const ColorScheme.light(),
-        ).copyWith(appBarTheme: _appBarTheme()),
+        theme: ThemeData.from(colorScheme: const ColorScheme.light())
+            .copyWith(appBarTheme: _appBarTheme()),
         home: Scaffold(
           appBar: AppBar(
             backgroundColor: color,
@@ -260,9 +259,8 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData.from(
-          colorScheme: const ColorScheme.light(),
-        ).copyWith(appBarTheme: _appBarTheme()),
+        theme: ThemeData.from(colorScheme: const ColorScheme.light())
+            .copyWith(appBarTheme: _appBarTheme()),
         home: Scaffold(
           appBar: AppBar(
             actions: <Widget>[IconButton(icon: const Icon(Icons.share), onPressed: () {})],
@@ -1206,13 +1204,7 @@ void main() {
         'actionsPadding: EdgeInsets(8.0, 0.0, 8.0, 0.0)',
       ]),
     );
-
-    // On the web, Dart doubles and ints are backed by the same kind of object because
-    // JavaScript does not support integers. So, the Dart double "4.0" is identical
-    // to "4", which results in the web evaluating to the value "4" regardless of which
-    // one is used. This results in a difference for doubles in debugFillProperties between
-    // the web and the rest of Flutter's target platforms.
-  }, skip: kIsWeb); // https://github.com/flutter/flutter/issues/87364
+  });
 
   testWidgets('Local AppBarTheme overrides defaults', (WidgetTester tester) async {
     const Color backgroundColor = Colors.blueAccent;

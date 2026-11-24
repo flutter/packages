@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// TODO(QuncCccccc): Remove ignore once https://github.com/flutter/flutter/issues/196406 is fixed.
+// ignore: uri_does_not_exist_in_doc_import
 /// @docImport 'package:material_ui/material_ui.dart';
 ///
 /// @docImport 'app.dart';
@@ -211,14 +213,13 @@ enum RefreshIndicatorMode {
 ///
 /// The `pulledExtent` parameter is the currently available space either from
 /// overscrolling or as held by the sliver during refresh.
-typedef RefreshControlIndicatorBuilder =
-    Widget Function(
-      BuildContext context,
-      RefreshIndicatorMode refreshState,
-      double pulledExtent,
-      double refreshTriggerPullDistance,
-      double refreshIndicatorExtent,
-    );
+typedef RefreshControlIndicatorBuilder = Widget Function(
+  BuildContext context,
+  RefreshIndicatorMode refreshState,
+  double pulledExtent,
+  double refreshTriggerPullDistance,
+  double refreshIndicatorExtent,
+);
 
 /// A callback function that's invoked when the [CupertinoSliverRefreshControl] is
 /// pulled a `refreshTriggerPullDistance`. Must return a [Future]. Upon

@@ -186,14 +186,21 @@ class AndroidCamera extends CameraPlatform {
   Future<void> prepareForVideoRecording() async {}
 
   @override
-  Future<void> startVideoRecording(int cameraId, {Duration? maxVideoDuration}) async {
+  Future<void> startVideoRecording(
+    int cameraId, {
+    Duration? maxVideoDuration,
+    String? videoOutputPath,
+  }) async {
     // Ignore maxVideoDuration, as it is unimplemented and deprecated.
-    return startVideoCapturing(VideoCaptureOptions(cameraId));
+    return startVideoCapturing(VideoCaptureOptions(cameraId, videoOutputPath: videoOutputPath));
   }
 
   @override
   Future<void> startVideoCapturing(VideoCaptureOptions options) async {
-    await _hostApi.startVideoRecording(options.streamCallback != null);
+    await _hostApi.startVideoRecording(
+      options.streamCallback != null,
+      videoOutputPath: options.videoOutputPath,
+    );
 
     if (options.streamCallback != null) {
       _installStreamController().stream.listen(options.streamCallback);

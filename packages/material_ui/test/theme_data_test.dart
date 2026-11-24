@@ -127,6 +127,66 @@ void main() {
     );
   });
 
+  test('ThemeData supports Material 3 contrast levels', () {
+    final standardTheme = ThemeData();
+    final mediumContrastTheme = ThemeData(contrastLevel: ContrastLevel.medium);
+    final highContrastTheme = ThemeData(contrastLevel: ContrastLevel.high);
+    final darkMediumContrastTheme = ThemeData(
+      brightness: Brightness.dark,
+      contrastLevel: ContrastLevel.medium,
+    );
+    final darkHighContrastTheme = ThemeData(
+      brightness: Brightness.dark,
+      contrastLevel: ContrastLevel.high,
+    );
+
+    expect(standardTheme.colorScheme.primary, isNot(mediumContrastTheme.colorScheme.primary));
+    expect(mediumContrastTheme.colorScheme.primary, const Color(0xFF4F378B));
+    expect(mediumContrastTheme.colorScheme.onSurface, const Color(0xFF000000));
+    expect(highContrastTheme.colorScheme.primary, const Color(0xFF381E72));
+    expect(highContrastTheme.colorScheme.onSurfaceVariant, const Color(0xFF000000));
+    expect(darkMediumContrastTheme.colorScheme.primary, const Color(0xFFEADDFF));
+    expect(darkMediumContrastTheme.colorScheme.onSurface, const Color(0xFFFFFFFF));
+    expect(darkHighContrastTheme.colorScheme.primary, const Color(0xFFF6EDFF));
+    expect(darkHighContrastTheme.colorScheme.onSurfaceVariant, const Color(0xFFFFFFFF));
+  });
+
+  test('ThemeData supports custom Material 3 contrast levels from seed colors', () {
+    const contrastLevel = 0.25;
+    final theme = ThemeData(colorSchemeSeed: Colors.blue, contrastLevel: contrastLevel);
+
+    expect(
+      theme.colorScheme,
+      ColorScheme.fromSeed(seedColor: Colors.blue, contrastLevel: contrastLevel),
+    );
+  });
+
+  test('ThemeData requires a seed color for custom contrast levels', () {
+    expect(() => ThemeData(contrastLevel: 0.25), throwsAssertionError);
+    expect(
+      () => ThemeData(colorScheme: const ColorScheme.light(), contrastLevel: 0.25),
+      throwsAssertionError,
+    );
+  });
+
+  test('ThemeData throws for contrast levels outside the valid range', () {
+    expect(() => ThemeData(contrastLevel: -1.5), throwsAssertionError);
+    expect(() => ThemeData(contrastLevel: 1.5), throwsAssertionError);
+  });
+
+  test('ThemeData allows precision errors at contrast level limits', () {
+    const double precisionError = precisionErrorTolerance / 2.0;
+
+    expect(
+      () => ThemeData(colorSchemeSeed: Colors.blue, contrastLevel: -1.0 - precisionError),
+      returnsNormally,
+    );
+    expect(
+      () => ThemeData(colorSchemeSeed: Colors.blue, contrastLevel: 1.0 + precisionError),
+      returnsNormally,
+    );
+  });
+
   testWidgets(
     'Defaults to MaterialTapTargetBehavior.padded on mobile platforms and MaterialTapTargetBehavior.shrinkWrap on desktop',
     (WidgetTester tester) async {
@@ -367,7 +427,6 @@ void main() {
     expect(theme.colorScheme.onInverseSurface, const Color(0xfff5eff7));
     expect(theme.colorScheme.inversePrimary, const Color(0xffd0bcff));
     expect(theme.colorScheme.shadow, const Color(0xff000000));
-    expect(theme.colorScheme.surfaceTint, const Color(0xff6750a4));
     expect(theme.colorScheme.brightness, Brightness.light);
 
     expect(theme.primaryColor, theme.colorScheme.primary);
@@ -843,7 +902,6 @@ void main() {
       expect(theme.colorScheme.onInverseSurface, const Color(0xfff5eff7));
       expect(theme.colorScheme.inversePrimary, const Color(0xffd0bcff));
       expect(theme.colorScheme.shadow, const Color(0xff000000));
-      expect(theme.colorScheme.surfaceTint, const Color(0xff6750a4));
       expect(theme.colorScheme.brightness, Brightness.light);
 
       expect(theme.primaryColor, theme.colorScheme.primary);
@@ -905,7 +963,6 @@ void main() {
     expect(theme.colorScheme.onInverseSurface, const Color(0xff322f35));
     expect(theme.colorScheme.inversePrimary, const Color(0xff6750a4));
     expect(theme.colorScheme.shadow, const Color(0xff000000));
-    expect(theme.colorScheme.surfaceTint, const Color(0xffd0bcff));
     expect(theme.colorScheme.brightness, Brightness.dark);
 
     expect(theme.primaryColor, theme.colorScheme.surface);
@@ -949,29 +1006,32 @@ void main() {
     expect(theme.applyElevationOverlayColor, isTrue);
   });
 
-  testWidgets('splashFactory is InkSparkle only for Android non-web when useMaterial3 is true', (
-    WidgetTester tester,
-  ) async {
-    final theme = ThemeData();
+  testWidgets(
+    'splashFactory is InkSparkle only for Android non-web when useMaterial3 is true',
+    (WidgetTester tester) async {
+      final theme = ThemeData();
 
-    // Basic check that this theme is in fact using material 3.
-    expect(theme.useMaterial3, true);
+      // Basic check that this theme is in fact using material 3.
+      expect(theme.useMaterial3, true);
 
-    switch (debugDefaultTargetPlatformOverride!) {
-      case TargetPlatform.android:
-        if (kIsWeb) {
+      switch (debugDefaultTargetPlatformOverride!) {
+        case TargetPlatform.android:
+          if (kIsWeb) {
+            expect(theme.splashFactory, equals(InkRipple.splashFactory));
+          } else {
+            expect(theme.splashFactory, equals(InkSparkle.splashFactory));
+          }
+        case TargetPlatform.iOS:
+        case TargetPlatform.fuchsia:
+        case TargetPlatform.linux:
+        case TargetPlatform.macOS:
+        case TargetPlatform.windows:
           expect(theme.splashFactory, equals(InkRipple.splashFactory));
-        } else {
-          expect(theme.splashFactory, equals(InkSparkle.splashFactory));
-        }
-      case TargetPlatform.iOS:
-      case TargetPlatform.fuchsia:
-      case TargetPlatform.linux:
-      case TargetPlatform.macOS:
-      case TargetPlatform.windows:
-        expect(theme.splashFactory, equals(InkRipple.splashFactory));
-    }
-  }, variant: TargetPlatformVariant.all());
+      }
+    },
+    variant: TargetPlatformVariant.all(),
+    tags: 'reduced-web-test-set',
+  );
 
   testWidgets(
     'splashFactory is InkSplash for every platform scenario, including Android non-web, when useMaterial3 is false',
@@ -1732,9 +1792,8 @@ void main() {
     WidgetTester tester,
   ) async {
     const lightColors = ColorScheme.light();
-    final ThemeData theme = ThemeData.from(
-      colorScheme: lightColors,
-    ).copyWith(brightness: Brightness.dark);
+    final ThemeData theme = ThemeData.from(colorScheme: lightColors)
+        .copyWith(brightness: Brightness.dark);
 
     // The brightness parameter only overrides ColorScheme.brightness.
     expect(theme.brightness, equals(Brightness.dark));

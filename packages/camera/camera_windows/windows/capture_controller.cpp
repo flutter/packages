@@ -284,6 +284,12 @@ void CaptureControllerImpl::ResetCaptureController() {
   video_source_ = nullptr;
   base_preview_media_type_ = nullptr;
   base_capture_media_type_ = nullptr;
+  preview_source_stream_index_ = static_cast<DWORD>(
+      MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_VIDEO_PREVIEW);
+  record_source_stream_index_ = static_cast<DWORD>(
+      MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_VIDEO_RECORD);
+  photo_source_stream_index_ =
+      static_cast<DWORD>(MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_PHOTO);
 
   if (dxgi_device_manager_) {
     dxgi_device_manager_->ResetDevice(dx11_device_.Get(),
@@ -371,7 +377,8 @@ void CaptureControllerImpl::TakePicture(const std::string& file_path) {
   // Check MF_CAPTURE_ENGINE_PHOTO_TAKEN event handling
   // for response process.
   hr = photo_handler_->TakePhoto(file_path, capture_engine_.Get(),
-                                 base_capture_media_type_.Get());
+                                 base_capture_media_type_.Get(),
+                                 photo_source_stream_index_);
   if (FAILED(hr)) {
     // Destroy photo handler on error cases to make sure state is resetted.
     photo_handler_ = nullptr;
@@ -470,22 +477,65 @@ HRESULT CaptureControllerImpl::FindBaseMediaTypes() {
   return FindBaseMediaTypesForSource(source.Get());
 }
 
+void CaptureControllerImpl::ResolveSourceStreamIndices(
+    IMFCaptureSource* source) {
+  // Devices that don't support the preferred-stream selectors fail this probe,
+  // typically with MF_E_INVALIDSTREAMNUMBER.
+  ComPtr<IMFMediaType> probe;
+  HRESULT hr = source->GetAvailableDeviceMediaType(preview_source_stream_index_,
+                                                   0, probe.GetAddressOf());
+  if (SUCCEEDED(hr)) {
+    return;
+  }
+
+  DWORD stream_count = 0;
+  if (FAILED(source->GetDeviceStreamCount(&stream_count))) {
+    return;
+  }
+
+  // Prefer a video-preview stream, then video-capture.
+  DWORD video_stream_index = MAXDWORD;
+  for (DWORD i = 0; i < stream_count; i++) {
+    MF_CAPTURE_ENGINE_STREAM_CATEGORY category;
+    if (FAILED(source->GetDeviceStreamCategory(i, &category))) {
+      continue;
+    }
+    if (category == MF_CAPTURE_ENGINE_STREAM_CATEGORY_VIDEO_PREVIEW) {
+      video_stream_index = i;
+      break;
+    }
+    if (category == MF_CAPTURE_ENGINE_STREAM_CATEGORY_VIDEO_CAPTURE &&
+        video_stream_index == MAXDWORD) {
+      video_stream_index = i;
+    }
+  }
+  if (video_stream_index == MAXDWORD) {
+    // No matching stream found.
+    return;
+  }
+
+  // One stream for every role keeps the media types consistent with the sinks.
+  preview_source_stream_index_ = video_stream_index;
+  record_source_stream_index_ = video_stream_index;
+  photo_source_stream_index_ = video_stream_index;
+}
+
 HRESULT CaptureControllerImpl::FindBaseMediaTypesForSource(
     IMFCaptureSource* source) {
+  ResolveSourceStreamIndices(source);
+
   // Find base media type for previewing.
-  if (!FindBestMediaType(
-          (DWORD)MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_VIDEO_PREVIEW,
-          source, base_preview_media_type_.GetAddressOf(),
-          GetMaxPreviewHeight(), &preview_frame_width_,
-          &preview_frame_height_)) {
+  if (!FindBestMediaType(preview_source_stream_index_, source,
+                         base_preview_media_type_.GetAddressOf(),
+                         GetMaxPreviewHeight(), &preview_frame_width_,
+                         &preview_frame_height_)) {
     return E_FAIL;
   }
 
   // Find base media type for record and photo capture.
-  if (!FindBestMediaType(
-          (DWORD)MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_VIDEO_RECORD,
-          source, base_capture_media_type_.GetAddressOf(), 0xffffffff, nullptr,
-          nullptr)) {
+  if (!FindBestMediaType(record_source_stream_index_, source,
+                         base_capture_media_type_.GetAddressOf(), 0xffffffff,
+                         nullptr, nullptr)) {
     return E_FAIL;
   }
 
@@ -499,6 +549,43 @@ void CaptureControllerImpl::StartRecord(const std::string& file_path) {
     return OnRecordStarted(CameraResult::kError,
                            "Camera not initialized. Camera should be "
                            "disposed and reinitialized.");
+  }
+
+  if (!file_path.empty()) {
+    std::wstring wpath = Utf16FromUtf8(file_path);
+    DWORD dwAttrib = GetFileAttributesW(wpath.c_str());
+    if (dwAttrib != INVALID_FILE_ATTRIBUTES &&
+        (dwAttrib & FILE_ATTRIBUTE_DIRECTORY)) {
+      return OnRecordStarted(CameraResult::kError,
+                             "The output path is a directory.");
+    }
+
+    size_t last_slash = file_path.find_last_of("\\/");
+    if (last_slash != std::string::npos) {
+      std::string parent_path = file_path.substr(0, last_slash);
+      if (!parent_path.empty()) {
+        DWORD dwParentAttrib =
+            GetFileAttributesW(Utf16FromUtf8(parent_path).c_str());
+        if (dwParentAttrib == INVALID_FILE_ATTRIBUTES ||
+            !(dwParentAttrib & FILE_ATTRIBUTE_DIRECTORY)) {
+          return OnRecordStarted(CameraResult::kError,
+                                 "The parent directory does not exist.");
+        }
+      }
+    }
+
+    size_t last_dot = file_path.find_last_of(".");
+    if (last_dot == std::string::npos ||
+        (last_slash != std::string::npos && last_dot < last_slash)) {
+      return OnRecordStarted(CameraResult::kError,
+                             "The output path has no extension.");
+    }
+    std::string ext = file_path.substr(last_dot);
+    for (auto& c : ext) c = (char)tolower(c);
+    if (ext != ".mp4") {
+      return OnRecordStarted(CameraResult::kError,
+                             "Invalid video extension. Supported: .mp4");
+    }
   }
 
   HRESULT hr = S_OK;
@@ -524,7 +611,8 @@ void CaptureControllerImpl::StartRecord(const std::string& file_path) {
   // Check MF_CAPTURE_ENGINE_RECORD_STARTED event handling for response
   // process.
   hr = record_handler_->StartRecord(file_path, capture_engine_.Get(),
-                                    base_capture_media_type_.Get());
+                                    base_capture_media_type_.Get(),
+                                    record_source_stream_index_);
   if (FAILED(hr)) {
     // Destroy record handler on error cases to make sure state is resetted.
     record_handler_ = nullptr;
@@ -587,9 +675,8 @@ void CaptureControllerImpl::StartPreview() {
     }
   }
 
-  hr = source->SetCurrentDeviceMediaType(
-      (DWORD)MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_VIDEO_PREVIEW,
-      base_preview_media_type_.Get());
+  hr = source->SetCurrentDeviceMediaType(preview_source_stream_index_,
+                                         base_preview_media_type_.Get());
   if (FAILED(hr)) {
     return OnPreviewStarted(GetCameraResult(hr),
                             "Failed to set video preview output format");
@@ -610,9 +697,9 @@ void CaptureControllerImpl::StartPreview() {
 
   // Check MF_CAPTURE_ENGINE_PREVIEW_STARTED event handling for response
   // process.
-  hr = preview_handler_->StartPreview(capture_engine_.Get(),
-                                      base_preview_media_type_.Get(),
-                                      capture_engine_callback_handler_.Get());
+  hr = preview_handler_->StartPreview(
+      capture_engine_.Get(), base_preview_media_type_.Get(),
+      capture_engine_callback_handler_.Get(), preview_source_stream_index_);
 
   if (FAILED(hr)) {
     // Destroy preview handler on error cases to make sure state is resetted.

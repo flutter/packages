@@ -126,7 +126,7 @@ void main() {
       await gesture.up();
       await tester.pumpAndSettle();
     }
-  });
+  }, tags: 'reduced-web-test-set');
 
   // Regression test for https://github.com/flutter/flutter/issues/136441.
   testWidgets('PageView item can dispose when widget with NoSplash.splashFactory is tapped', (

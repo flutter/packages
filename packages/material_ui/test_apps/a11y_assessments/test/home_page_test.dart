@@ -23,6 +23,8 @@ import 'package:a11y_assessments/use_cases/switch_list_tile.dart';
 import 'package:a11y_assessments/use_cases/text_button.dart';
 import 'package:a11y_assessments/use_cases/text_field.dart';
 import 'package:a11y_assessments/use_cases/text_field_password.dart';
+import 'package:a11y_assessments/use_cases/use_cases.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_color_utilities/material_color_utilities.dart';
@@ -36,6 +38,59 @@ void main() {
     final app = find.byType(MaterialApp).evaluate().first.widget as MaterialApp;
     expect(app.theme!.brightness, equals(Brightness.light));
     expect(app.darkTheme!.brightness, equals(Brightness.dark));
+  });
+
+  testWidgets('All themes show tooltips on keyboard focus', (WidgetTester tester) async {
+    await tester.pumpWidget(const App());
+    final app = find.byType(MaterialApp).evaluate().first.widget as MaterialApp;
+    expect(app.theme!.tooltipTheme.showOnFocus, isTrue);
+    expect(app.darkTheme!.tooltipTheme.showOnFocus, isTrue);
+    expect(app.highContrastTheme!.tooltipTheme.showOnFocus, isTrue);
+    expect(app.highContrastDarkTheme!.tooltipTheme.showOnFocus, isTrue);
+  });
+
+  testWidgets('All themes keep tooltips open while hovered', (WidgetTester tester) async {
+    await tester.pumpWidget(const App());
+    final app = find.byType(MaterialApp).evaluate().first.widget as MaterialApp;
+    expect(app.theme!.tooltipTheme.ignorePointer, isFalse);
+    expect(app.darkTheme!.tooltipTheme.ignorePointer, isFalse);
+    expect(app.highContrastTheme!.tooltipTheme.ignorePointer, isFalse);
+    expect(app.highContrastDarkTheme!.tooltipTheme.ignorePointer, isFalse);
+  });
+
+  testWidgets('Tooltip stays open when the mouse moves onto it', (WidgetTester tester) async {
+    await tester.pumpWidget(const App());
+    final app = find.byType(MaterialApp).evaluate().first.widget as MaterialApp;
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: app.theme,
+        home: Scaffold(
+          appBar: AppBar(
+            actions: <Widget>[
+              IconButton(
+                tooltip: 'Go to the next page',
+                icon: const Icon(Icons.navigate_next),
+                onPressed: () {},
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    final TestGesture gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
+    await gesture.addPointer(location: Offset.zero);
+    addTearDown(gesture.removePointer);
+    await gesture.moveTo(tester.getCenter(find.byIcon(Icons.navigate_next)));
+    await tester.pumpAndSettle();
+    expect(find.text('Go to the next page'), findsOneWidget);
+
+    // Leaving the button for the tooltip starts its exit timer, which must
+    // not dismiss a tooltip that is itself hovered.
+    await gesture.moveTo(tester.getCenter(find.text('Go to the next page')));
+    await tester.pump(const Duration(seconds: 1));
+    await tester.pumpAndSettle();
+    expect(find.text('Go to the next page'), findsOneWidget);
   });
 
   testWidgets('App can generate high-contrast color scheme', (WidgetTester tester) async {
@@ -425,5 +480,117 @@ void main() {
     final Finder findHeadingLevelOnes = find.bySemanticsLabel('Accessibility Assessments');
     await tester.pumpAndSettle();
     expect(findHeadingLevelOnes, findsOne);
+  });
+
+  testWidgets('Filter by tags button has correct expanded/collapsed semantics state', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const App());
+    await tester.pumpAndSettle();
+
+    final Finder filterButton = find.byTooltip('Filter by tags');
+    expect(
+      tester.getSemantics(filterButton),
+      matchesSemantics(
+        isButton: true,
+        hasEnabledState: true,
+        isEnabled: true,
+        hasExpandedState: true,
+        isFocusable: true,
+        hasTapAction: true,
+        hasFocusAction: true,
+        tooltip: 'Filter by tags',
+      ),
+    );
+
+    // Open the filter menu.
+    await tester.tap(filterButton);
+    await tester.pumpAndSettle();
+
+    expect(
+      tester.getSemantics(filterButton),
+      matchesSemantics(
+        isButton: true,
+        hasEnabledState: true,
+        isEnabled: true,
+        hasExpandedState: true,
+        isExpanded: true,
+        isFocusable: true,
+        hasTapAction: true,
+        hasFocusAction: true,
+        tooltip: 'Filter by tags',
+      ),
+    );
+
+    // Toggling a tag keeps the menu open and the button expanded.
+    await tester.tap(find.text(Tag.batch1.name));
+    await tester.pumpAndSettle();
+
+    expect(
+      tester.getSemantics(filterButton),
+      matchesSemantics(
+        isButton: true,
+        hasEnabledState: true,
+        isEnabled: true,
+        hasExpandedState: true,
+        isExpanded: true,
+        isFocusable: true,
+        hasTapAction: true,
+        hasFocusAction: true,
+        tooltip: 'Filter by tags',
+      ),
+    );
+
+    // Close the filter menu by tapping the button again.
+    await tester.tap(filterButton);
+    await tester.pumpAndSettle();
+
+    expect(
+      tester.getSemantics(filterButton),
+      matchesSemantics(
+        isButton: true,
+        hasEnabledState: true,
+        isEnabled: true,
+        hasExpandedState: true,
+        isFocusable: true,
+        hasTapAction: true,
+        hasFocusAction: true,
+        tooltip: 'Filter by tags',
+      ),
+    );
+
+    // Reopen and close by tapping outside the menu.
+    await tester.tap(filterButton);
+    await tester.pumpAndSettle();
+    expect(
+      tester.getSemantics(filterButton),
+      matchesSemantics(
+        isButton: true,
+        hasEnabledState: true,
+        isEnabled: true,
+        hasExpandedState: true,
+        isExpanded: true,
+        isFocusable: true,
+        hasTapAction: true,
+        hasFocusAction: true,
+        tooltip: 'Filter by tags',
+      ),
+    );
+
+    await tester.tapAt(Offset.zero);
+    await tester.pumpAndSettle();
+    expect(
+      tester.getSemantics(filterButton),
+      matchesSemantics(
+        isButton: true,
+        hasEnabledState: true,
+        isEnabled: true,
+        hasExpandedState: true,
+        isFocusable: true,
+        hasTapAction: true,
+        hasFocusAction: true,
+        tooltip: 'Filter by tags',
+      ),
+    );
   });
 }

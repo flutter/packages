@@ -102,6 +102,31 @@ class _DelegateVgColorMapper extends vg.ColorMapper {
   }
 }
 
+class _SvgCompileRequest {
+  const _SvgCompileRequest(this.svg, this.theme, this.colorMapper);
+
+  final String svg;
+  final vg.SvgTheme theme;
+  final ColorMapper? colorMapper;
+}
+
+ByteData _compileSvg(_SvgCompileRequest request) {
+  return vg
+      .encodeSvg(
+        xml: request.svg,
+        theme: request.theme,
+        colorMapper: request.colorMapper == null
+            ? null
+            : _DelegateVgColorMapper(request.colorMapper!),
+        debugName: 'Svg loader',
+        enableClippingOptimizer: false,
+        enableMaskingOptimizer: false,
+        enableOverdrawOptimizer: false,
+      )
+      .buffer
+      .asByteData();
+}
+
 /// A [BytesLoader] that parses a SVG data in an isolate and creates a
 /// vector_graphics binary representation.
 @immutable
@@ -115,9 +140,18 @@ abstract class SvgLoader<T> extends BytesLoader {
   /// The [ColorMapper] used to transform colors from the SVG, if any.
   final ColorMapper? colorMapper;
 
-  /// Will be called in [compute] with the result of [prepareMessage].
+  /// Will be called with the result of [prepareMessage], in [compute] if
+  /// [provideSvgInIsolate] is true and on the calling isolate otherwise.
   @protected
   String provideSvg(T? message);
+
+  /// Whether [provideSvg] is called in the [compute] isolate.
+  ///
+  /// If true, this loader is sent to that isolate, so it must be sendable (see
+  /// `SendPort.send`). Loaders holding an [AssetBundle] or [http.Client]
+  /// return false, since those may retain unsendable objects such as futures.
+  @protected
+  bool get provideSvgInIsolate => true;
 
   /// Will be called
   @protected
@@ -140,23 +174,19 @@ abstract class SvgLoader<T> extends BytesLoader {
   }
 
   Future<ByteData> _load(BuildContext? context) {
-    final SvgTheme theme = getTheme(context);
+    final vg.SvgTheme theme = getTheme(context).toVgTheme();
     return prepareMessage(context).then((T? message) {
+      if (!provideSvgInIsolate) {
+        return compute(
+          _compileSvg,
+          _SvgCompileRequest(provideSvg(message), theme, colorMapper),
+          debugLabel: 'Load Bytes',
+        );
+      }
+      // Sends the whole loader to the isolate. See
+      // https://github.com/flutter/flutter/issues/158835.
       return compute(
-        (T? message) {
-          return vg
-              .encodeSvg(
-                xml: provideSvg(message),
-                theme: theme.toVgTheme(),
-                colorMapper: colorMapper == null ? null : _DelegateVgColorMapper(colorMapper!),
-                debugName: 'Svg loader',
-                enableClippingOptimizer: false,
-                enableMaskingOptimizer: false,
-                enableOverdrawOptimizer: false,
-              )
-              .buffer
-              .asByteData();
-        },
+        (T? message) => _compileSvg(_SvgCompileRequest(provideSvg(message), theme, colorMapper)),
         message,
         debugLabel: 'Load Bytes',
       );
@@ -353,6 +383,9 @@ class SvgAssetLoader extends SvgLoader<ByteData> {
   }
 
   @override
+  bool get provideSvgInIsolate => false;
+
+  @override
   String provideSvg(ByteData? message) =>
       utf8.decode(Uint8List.sublistView(message!), allowMalformed: true);
 
@@ -383,8 +416,41 @@ class SvgAssetLoader extends SvgLoader<ByteData> {
   String toString() => 'SvgAssetLoader($assetName)';
 }
 
+// Hash header names and values without depending on their insertion order.
+int _headersHashCode(Map<String, String>? headers) {
+  if (headers == null) {
+    return 0;
+  }
+  return Object.hashAllUnordered(
+    headers.entries.map((MapEntry<String, String> entry) => Object.hash(entry.key, entry.value)),
+  );
+}
+
+/// A stable snapshot for network cache lookups. Callers may reuse or modify
+/// their header Map between requests without corrupting the cache's hash table.
+@immutable
+class _NetworkLoaderCacheKey {
+  _NetworkLoaderCacheKey(this.url, Map<String, String>? headers)
+    : headers = headers == null ? null : Map<String, String>.unmodifiable(headers);
+
+  final String url;
+  final Map<String, String>? headers;
+  late final int _hashCode = Object.hash(url, _headersHashCode(headers));
+
+  @override
+  int get hashCode => _hashCode;
+
+  @override
+  bool operator ==(Object other) {
+    return other is _NetworkLoaderCacheKey && other.url == url && mapEquals(other.headers, headers);
+  }
+}
+
 /// A [BytesLoader] that decodes and parses a UTF-8 encoded SVG string the
 /// network in an isolate and creates a vector_graphics binary representation.
+///
+/// Loading throws an [http.ClientException] if the server responds with a
+/// status code outside the 2xx range.
 class SvgNetworkLoader extends SvgLoader<Uint8List> {
   /// See class doc.
   const SvgNetworkLoader(
@@ -392,8 +458,8 @@ class SvgNetworkLoader extends SvgLoader<Uint8List> {
     this.headers,
     super.theme,
     super.colorMapper,
-    http.Client? httpClient,
-  }) : _httpClient = httpClient;
+    this._httpClient,
+  });
 
   /// The [Uri] encoded resource address.
   final String url;
@@ -405,25 +471,45 @@ class SvgNetworkLoader extends SvgLoader<Uint8List> {
 
   @override
   Future<Uint8List?> prepareMessage(BuildContext? context) async {
+    // Parse first: a malformed URL then throws before a client exists to leak.
+    final Uri uri = Uri.parse(url);
     final http.Client client = _httpClient ?? http.Client();
-    final http.Response response = await client.get(Uri.parse(url), headers: headers);
-    if (_httpClient == null) {
-      client.close();
+    try {
+      final http.Response response = await client.get(uri, headers: headers);
+      if (response.statusCode < 200 || response.statusCode > 299) {
+        throw http.ClientException('HTTP request failed, statusCode: ${response.statusCode}', uri);
+      }
+      return response.bodyBytes;
+    } finally {
+      if (_httpClient == null) {
+        client.close();
+      }
     }
-    return response.bodyBytes;
   }
+
+  @override
+  bool get provideSvgInIsolate => false;
 
   @override
   String provideSvg(Uint8List? message) => utf8.decode(message!, allowMalformed: true);
 
   @override
-  int get hashCode => Object.hash(url, headers, theme, colorMapper);
+  SvgCacheKey cacheKey(BuildContext? context) {
+    return SvgCacheKey(
+      keyData: _NetworkLoaderCacheKey(url, headers),
+      theme: getTheme(context),
+      colorMapper: colorMapper,
+    );
+  }
+
+  @override
+  int get hashCode => Object.hash(url, _headersHashCode(headers), theme, colorMapper);
 
   @override
   bool operator ==(Object other) {
     return other is SvgNetworkLoader &&
         other.url == url &&
-        other.headers == headers &&
+        mapEquals(other.headers, headers) &&
         other.theme == theme &&
         other.colorMapper == colorMapper;
   }

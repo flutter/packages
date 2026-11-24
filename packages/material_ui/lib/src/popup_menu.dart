@@ -31,6 +31,8 @@ import 'text_theme.dart';
 import 'theme.dart';
 import 'tooltip.dart';
 
+part 'generated/popup_menu_defaults_m3.g.dart';
+
 // Examples can assume:
 // enum Commands { heroAndScholar, hurricaneCame }
 // late bool _heroAndScholar;
@@ -857,9 +859,8 @@ class _PopupMenuRouteLayout extends SingleChildLayoutDelegate {
   BoxConstraints getConstraintsForChild(BoxConstraints constraints) {
     // The menu can be at most the size of the overlay minus 8.0 pixels in each
     // direction.
-    return BoxConstraints.loose(
-      constraints.biggest,
-    ).deflate(const EdgeInsets.all(_kMenuScreenPadding) + padding);
+    return BoxConstraints.loose(constraints.biggest)
+        .deflate(const EdgeInsets.all(_kMenuScreenPadding) + padding);
   }
 
   @override
@@ -1103,8 +1104,10 @@ class _PopupMenuRoute<T> extends PopupRoute<T> {
 ///  * [RelativeRect.fromRect], which creates a [RelativeRect] from two [Rect]s,
 ///    one representing the size of the popup menu and one representing the size
 ///    of the overlay.
-typedef PopupMenuPositionBuilder =
-    RelativeRect Function(BuildContext context, BoxConstraints constraints);
+typedef PopupMenuPositionBuilder = RelativeRect Function(
+  BuildContext context,
+  BoxConstraints constraints,
+);
 
 /// Shows a popup menu that contains the `items` at `position`.
 ///
@@ -1797,16 +1800,25 @@ class PopupMenuButtonState<T> extends State<PopupMenuButton<T>> {
       );
       final MaterialTapTargetSize tapTargetSize =
           widget.style?.tapTargetSize ?? MaterialTapTargetSize.shrinkWrap;
-      if (tapTargetSize == MaterialTapTargetSize.padded) {
-        return ConstrainedBox(
-          constraints: const BoxConstraints(
-            minWidth: kMinInteractiveDimension,
-            minHeight: kMinInteractiveDimension,
-          ),
-          child: child,
-        );
-      }
-      return Semantics(expanded: _isMenuExpanded, child: child);
+      final Widget result = tapTargetSize == MaterialTapTargetSize.padded
+          ? ConstrainedBox(
+              constraints: const BoxConstraints(
+                minWidth: kMinInteractiveDimension,
+                minHeight: kMinInteractiveDimension,
+              ),
+              child: child,
+            )
+          : child;
+      // The button semantics are added here rather than by the [InkWell] so
+      // that assistive technologies describe the popup menu button the same way
+      // regardless of whether it is built from [child] or from [icon], in which
+      // case the semantics come from the [IconButton].
+      return Semantics(
+        button: true,
+        enabled: widget.enabled,
+        expanded: _isMenuExpanded,
+        child: result,
+      );
     }
 
     return Semantics(
@@ -1861,55 +1873,3 @@ class _PopupMenuDefaultsM2 extends PopupMenuThemeData {
 
   static EdgeInsets menuItemPadding = const EdgeInsets.symmetric(horizontal: 16.0);
 }
-
-// BEGIN GENERATED TOKEN PROPERTIES - PopupMenu
-
-// Do not edit by hand. The code between the "BEGIN GENERATED" and
-// "END GENERATED" comments are generated from data in the Material
-// Design token database by the script:
-//   dev/tools/gen_defaults/bin/gen_defaults.dart.
-
-// dart format off
-class _PopupMenuDefaultsM3 extends PopupMenuThemeData {
-  _PopupMenuDefaultsM3(this.context)
-    : super(elevation: 3.0);
-
-  final BuildContext context;
-  late final ThemeData _theme = Theme.of(context);
-  late final ColorScheme _colors = _theme.colorScheme;
-  late final TextTheme _textTheme = _theme.textTheme;
-
-  @override WidgetStateProperty<TextStyle?>? get labelTextStyle {
-    return WidgetStateProperty.resolveWith((Set<WidgetState> states) {
-    // TODO(quncheng): Update this hard-coded value to use the latest tokens.
-    final TextStyle style = _textTheme.labelLarge!;
-      if (states.contains(WidgetState.disabled)) {
-        return style.apply(color: _colors.onSurface.withOpacity(0.38));
-      }
-      return style.apply(color: _colors.onSurface);
-    });
-  }
-
-  @override
-  Color? get color => _colors.surfaceContainer;
-
-  @override
-  Color? get shadowColor => _colors.shadow;
-
-  @override
-  Color? get surfaceTintColor => Colors.transparent;
-
-  @override
-  ShapeBorder? get shape => const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(4.0)));
-
-  // TODO(bleroux): This is taken from https://m3.material.io/components/menus/specs
-  // Update this when the token is available.
-  @override
-  EdgeInsets? get menuPadding => const EdgeInsets.symmetric(vertical: 8.0);
-
-  // TODO(tahatesser): This is taken from https://m3.material.io/components/menus/specs
-  // Update this when the token is available.
-  static EdgeInsets menuItemPadding  = const EdgeInsets.symmetric(horizontal: 12.0);
-}// dart format on
-
-// END GENERATED TOKEN PROPERTIES - PopupMenu

@@ -20,8 +20,8 @@ Downloaded by pub (not CocoaPods).
   s.public_header_files = 'video_player_avfoundation/Sources/video_player_avfoundation_objc/include/**/*.h'
   s.ios.dependency 'Flutter'
   s.osx.dependency 'FlutterMacOS'
-  s.ios.deployment_target = '13.0'
-  s.osx.deployment_target = '10.15'
+  s.ios.deployment_target = '15.0'
+  s.osx.deployment_target = '12.0'
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
   s.swift_version = '5.0'
   s.xcconfig = {

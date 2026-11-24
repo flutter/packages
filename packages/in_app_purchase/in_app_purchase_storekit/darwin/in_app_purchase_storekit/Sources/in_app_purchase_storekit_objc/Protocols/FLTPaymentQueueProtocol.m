@@ -4,6 +4,11 @@
 
 #import "../include/in_app_purchase_storekit_objc/FLTPaymentQueueProtocol.h"
 
+// StoreKit 1 is intentionally used as the fallback on iOS < 15 and macOS < 12,
+// where StoreKit 2 is unavailable. Suppress its deprecation warnings.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+
 @interface DefaultPaymentQueue ()
 /// The wrapped SKPaymentQueue
 @property(nonatomic, strong) SKPaymentQueue *queue;
@@ -43,16 +48,15 @@
   [self.queue restoreCompletedTransactionsWithApplicationUsername:username];
 }
 
-- (id<SKPaymentQueueDelegate>)delegate API_AVAILABLE(ios(13.0), macos(10.15), watchos(6.2)) {
+- (id<SKPaymentQueueDelegate>)delegate {
   return self.queue.delegate;
 }
 
-- (NSArray<SKPaymentTransaction *> *)transactions API_AVAILABLE(ios(3.0), macos(10.7),
-                                                                watchos(6.2)) {
+- (NSArray<SKPaymentTransaction *> *)transactions {
   return self.queue.transactions;
 }
 
-- (SKStorefront *)storefront API_AVAILABLE(ios(13.0)) {
+- (SKStorefront *)storefront {
   return self.queue.storefront;
 }
 
@@ -69,3 +73,5 @@
 #endif
 
 @end
+
+#pragma clang diagnostic pop

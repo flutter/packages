@@ -1,3 +1,15 @@
+## 2.15.1
+
+* Fixes `VideoRecordedEvent` equality and `hashCode` to compare the recorded file's path,
+  so equal events always have equal hash codes.
+* Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
+
+## 2.15.0
+
+* Adds `isZeroShutterLagSupported` and `setZeroShutterLagEnabled` for
+  zero-shutter-lag still image capture on platforms that support it.
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+
 ## 2.14.0
 
 * Adds `videoOutputPath` support to `VideoCaptureOptions`.

@@ -2,58 +2,129 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// ignore_for_file: avoid_print
-
-import 'dart:typed_data';
-
 import 'package:cross_file/cross_file.dart';
+import 'package:flutter/material.dart';
+import 'package:mime/mime.dart' as mime;
 
-// `dart:io` (used by the path-based XFile implementation) is not available on
-// web, so the disk-based excerpt is only executed on non-web platforms.
-const bool _kIsWeb = bool.fromEnvironment('dart.library.js_interop');
-
-/// Demonstrate instantiating an XFile for the README.
-Future<XFile> instantiateXFile() async {
-  // #docregion Instantiate
-  final file = XFile('assets/hello.txt');
-
-  print('XFile from disk:');
-  print('- Path: ${file.path}');
-  print('- Name: ${file.name}');
-  print('- Length: ${await file.length()} bytes');
-  print('- Content: ${await file.readAsString()}');
-  // #enddocregion Instantiate
-
-  return file;
+void main() {
+  runApp(const MaterialApp(home: FileOpenScreen()));
 }
 
-/// Demonstrate constructing an XFile directly from in-memory bytes, which is
-/// useful when the file contents are generated at runtime or received from a
-/// network source rather than read from disk.
-Future<XFile> instantiateXFileFromData() async {
-  // #docregion InstantiateFromData
-  final bytes = Uint8List.fromList([
-    72, 101, 108, 108, 111, 33, // 'Hello!'
-  ]);
-  final file = XFile.fromData(bytes, mimeType: 'text/plain');
+/// Example screen to open a file selector and display it.
+class FileOpenScreen extends StatelessWidget {
+  /// Constructs a [FileOpenScreen].
+  const FileOpenScreen({super.key});
 
-  print('XFile from in-memory bytes:');
-  print('- MIME type: ${file.mimeType}');
-  print('- Length: ${await file.length()} bytes');
-  print('- Content: ${await file.readAsString()}');
-  // #enddocregion InstantiateFromData
-
-  return file;
-}
-
-/// Runs the example excerpts, demonstrating the [XFile] API.
-Future<void> main() async {
-  if (!_kIsWeb) {
-    print('=== Creating an XFile from disk ===');
-    await instantiateXFile();
-    print('');
+  Future<XFile?> _getTextFile() async {
+    // Implement this method to retrieve a text file.
+    return null;
   }
 
-  print('=== Creating an XFile from in-memory bytes ===');
-  await instantiateXFileFromData();
+  Future<XDirectory?> _getDirectory() async {
+    // Implement this method to retrieve a directory.
+    return null;
+  }
+
+  Future<void> _openTextFile(BuildContext context) async {
+    final XFile? file = await _getTextFile();
+
+    if (file != null) {
+      final String filename = await file.name() ?? file.uri;
+
+      switch (mime.lookupMimeType(filename)) {
+        case final String mimeType when mimeType.startsWith('text'):
+          final String fileContents = await file.readAsString();
+          if (context.mounted) {
+            await showDialog<void>(
+              context: context,
+              builder: (BuildContext context) =>
+                  TextDisplay(filename: filename, fileContents: fileContents),
+            );
+          }
+        case _:
+          debugPrint('File Uri: ${file.uri}');
+          debugPrint('Filename: $filename');
+          debugPrint('File Length: ${await file.length()}');
+          debugPrint('File Last Modified: ${await file.lastModified()}');
+          return;
+      }
+    } else {
+      debugPrint('No file selected.');
+    }
+  }
+
+  Future<void> _openDirectory() async {
+    final XDirectory? directory = await _getDirectory();
+
+    if (directory != null) {
+      debugPrint('Directory Uri: ${directory.uri}');
+      debugPrint('Directory exists: ${await directory.exists()}');
+
+      debugPrint('List of Entities:');
+      await for (final XEntity entity in directory.list()) {
+        switch (entity) {
+          case final XFile file:
+            final String filename = await file.name() ?? file.uri;
+            debugPrint('\tFile: $filename');
+          case final XDirectory directory:
+            debugPrint('\tDirectory: ${directory.uri}');
+        }
+      }
+    } else {
+      debugPrint('No directory selected.');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Open a Text File'), backgroundColor: Colors.blue),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.blue,
+                backgroundColor: Colors.white,
+              ),
+              child: const Text('Open Text File'),
+              onPressed: () => _openTextFile(context),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.blue,
+                backgroundColor: Colors.white,
+              ),
+              child: const Text('Open Directory'),
+              onPressed: () => _openDirectory(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Widget that displays a text file in a dialog.
+class TextDisplay extends StatelessWidget {
+  /// Default Constructor.
+  const TextDisplay({super.key, required this.filename, required this.fileContents});
+
+  /// The name of the file.
+  final String filename;
+
+  /// The contents of the file.
+  final String fileContents;
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text(filename),
+      content: Scrollbar(child: SingleChildScrollView(child: Text(fileContents))),
+      actions: <Widget>[
+        TextButton(child: const Text('Close'), onPressed: () => Navigator.pop(context)),
+      ],
+    );
+  }
 }

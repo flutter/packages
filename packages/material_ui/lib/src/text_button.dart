@@ -86,8 +86,8 @@ part 'generated/text_button_defaults_m3.g.dart';
 ///
 /// See also:
 ///
-///  * [ElevatedButton], a filled button whose material elevates when pressed.
-///  * [FilledButton], a filled button that doesn't elevate when pressed.
+///  * [ElevatedButton], a filled button with a shadow.
+///  * [FilledButton], a filled button that uses a primary fill color.
 ///  * [FilledButton.tonal], a filled button variant that uses a secondary fill color.
 ///  * [OutlinedButton], a button with an outlined border and no fill color.
 ///  * <https://material.io/design/components/buttons.html>
@@ -239,12 +239,13 @@ class TextButton extends ButtonStyleButton {
     final WidgetStateProperty<Color?>? overlayColorProp = switch ((foregroundColor, overlayColor)) {
       (null, null) => null,
       (_, Color(a: 0.0)) => WidgetStatePropertyAll<Color?>(overlayColor),
-      (_, final Color color) ||
-      (final Color color, _) => WidgetStateProperty<Color?>.fromMap(<WidgetState, Color?>{
-        WidgetState.pressed: color.withOpacity(0.1),
-        WidgetState.hovered: color.withOpacity(0.08),
-        WidgetState.focused: color.withOpacity(0.1),
-      }),
+      (_, final Color color) || (final Color color, _) => WidgetStateProperty<Color?>.fromMap(
+        <WidgetState, Color?>{
+          WidgetState.pressed: color.withOpacity(0.1),
+          WidgetState.hovered: color.withOpacity(0.08),
+          WidgetState.focused: color.withOpacity(0.1),
+        },
+      ),
     };
 
     return ButtonStyle(

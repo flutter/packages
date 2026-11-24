@@ -5,7 +5,9 @@
 import 'package:go_router/go_router.dart';
 
 mixin $HomeRoute {}
+
 mixin $ProductRoute {}
+
 mixin $VariantRoute {}
 
 @TypedGoRoute<HomeRoute>(

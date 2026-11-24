@@ -22,8 +22,11 @@ import 'theme.dart';
 /// (i.e. whether the column is the active sort column).
 ///
 /// The [ascending] parameter indicates whether the sort order is ascending.
-typedef DataTableSortIconBuilder =
-    Widget Function(BuildContext context, bool visible, bool ascending);
+typedef DataTableSortIconBuilder = Widget Function(
+  BuildContext context,
+  bool visible,
+  bool ascending,
+);
 
 /// Defines default property values for descendant [DataTable]
 /// widgets.
