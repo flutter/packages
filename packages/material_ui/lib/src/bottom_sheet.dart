@@ -891,7 +891,12 @@ class _ModalBottomSheetState<T> extends State<_ModalBottomSheet<T>> {
 /// dismissed when user taps on the scrim.
 ///
 /// The [enableDrag] parameter specifies whether the bottom sheet can be
-/// dragged up and down and dismissed by swiping downwards.
+/// dragged up and down and dismissed by swiping downwards. If the route can't
+/// be popped, for example because a [PopScope] in the bottom sheet has
+/// [PopScope.canPop] set to false, a drag or fling that would dismiss the
+/// bottom sheet instead animates it back to its open position and calls
+/// [PopScope.onPopInvokedWithResult] with `didPop` set to false. See
+/// [ModalBottomSheetRoute.enableDrag] for more details.
 ///
 /// The [useSafeArea] parameter specifies whether the sheet will avoid system
 /// intrusions on the top, left, and right. If false, no [SafeArea] is added;
@@ -1053,6 +1058,13 @@ class ModalBottomSheetRoute<T> extends PopupRoute<T> {
   ///
   /// If true, the bottom sheet can be dragged up and down and dismissed by
   /// swiping downwards.
+  ///
+  /// If the route can't be popped, for example because a [PopScope] in the
+  /// bottom sheet has [PopScope.canPop] set to false, a drag or fling that
+  /// would dismiss the bottom sheet instead animates it back to its open
+  /// position, and [PopScope.onPopInvokedWithResult] is called with `didPop`
+  /// set to false. Use this to show a confirmation dialog before the bottom
+  /// sheet is dismissed.
   ///
   /// This applies to the content below the drag handle, if showDragHandle is true.
   ///
