@@ -60,6 +60,20 @@ void main() {
     expect(identical(PopupMenuThemeData.lerp(data, data, 0.5), data), true);
   });
 
+  test('PopupMenuThemeData lerp switches dismissOnScrollOutside at the midpoint', () {
+    const a = PopupMenuThemeData(dismissOnScrollOutside: false);
+    const b = PopupMenuThemeData(dismissOnScrollOutside: true);
+    expect(PopupMenuThemeData.lerp(a, b, 0.4)!.dismissOnScrollOutside, false);
+    expect(PopupMenuThemeData.lerp(a, b, 0.6)!.dismissOnScrollOutside, true);
+  });
+
+  test('PopupMenuThemeData copyWith replaces dismissOnScrollOutside', () {
+    const data = PopupMenuThemeData(dismissOnScrollOutside: false);
+    expect(data.copyWith(dismissOnScrollOutside: true).dismissOnScrollOutside, true);
+    expect(data.copyWith().dismissOnScrollOutside, false);
+    expect(data, isNot(data.copyWith(dismissOnScrollOutside: true)));
+  });
+
   test('PopupMenuThemeData null fields by default', () {
     const popupMenuTheme = PopupMenuThemeData();
     expect(popupMenuTheme.color, null);
@@ -72,6 +86,7 @@ void main() {
     expect(popupMenuTheme.labelTextStyle, null);
     expect(popupMenuTheme.enableFeedback, null);
     expect(popupMenuTheme.mouseCursor, null);
+    expect(popupMenuTheme.dismissOnScrollOutside, null);
   });
 
   testWidgets('Default PopupMenuThemeData debugFillProperties', (WidgetTester tester) async {
@@ -107,6 +122,7 @@ void main() {
       position: PopupMenuPosition.over,
       iconColor: const Color(0xfffffff8),
       iconSize: 31.0,
+      dismissOnScrollOutside: true,
     ).debugFillProperties(builder);
 
     final List<String> description = builder.properties
@@ -128,6 +144,7 @@ void main() {
       'position: over',
       'iconColor: ${const Color(0xfffffff8)}',
       'iconSize: 31.0',
+      'dismissOnScrollOutside: true',
     ]);
   });
 
