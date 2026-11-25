@@ -16,7 +16,7 @@ import 'generator.dart';
 /// The current version of pigeon.
 ///
 /// This must match the version in pubspec.yaml.
-const String pigeonVersion = '30.0.4';
+const String pigeonVersion = '31.0.0';
 
 /// Default plugin package name.
 const String defaultPluginPackageName = 'dev.flutter.pigeon';
@@ -24,6 +24,15 @@ const String defaultPluginPackageName = 'dev.flutter.pigeon';
 /// The default instance name string for native interop generated APIs.
 const String defaultNativeInteropInstanceName =
     'PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u';
+
+/// Wire-format frame kind tag for a data event on a multiplexed `@HostApi` stream.
+const int streamDataFrameKind = 0;
+
+/// Wire-format frame kind tag for a terminal error on a multiplexed `@HostApi` stream.
+const int streamErrorFrameKind = 1;
+
+/// Wire-format frame kind tag for end-of-stream on a multiplexed `@HostApi` stream.
+const int streamDoneFrameKind = 2;
 
 /// How native interop (`KotlinOptions.useJni` and `SwiftOptions.useFfi`) moves
 /// values between Dart and the host platform.

@@ -4,12 +4,12 @@
 
 import 'package:pigeon/pigeon.dart';
 
-// This file exists to test compilation for multi-file event channel usage.
+// This file exists to test compilation for multi-file stream HostApi usage.
 
-@EventChannelApi(
-  swiftOptions: SwiftEventChannelOptions(includeSharedClasses: false),
-  kotlinOptions: KotlinEventChannelOptions(includeSharedClasses: false),
-)
-abstract class EventChannelMethods {
-  int streamIntsAgain();
+@HostApi()
+abstract class SecondFileStreamHostTestApi {
+  Stream<int> streamIntsAgain();
+
+  @asyncCallback
+  Stream<int> streamIntsViaCallbackAgain();
 }

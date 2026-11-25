@@ -69,7 +69,7 @@ In your Pigeon Dart definition file (`pigeons/<messages_file>.dart`), update `@C
 
 > [!WARNING]
 > **Unsupported Features & Threading**: Native Interop calls execute directly on the calling isolate's OS thread (the main UI thread when called from the root isolate, unless the application developer has opted out of thread merging, which [is still possible on macOS](https://github.com/flutter/flutter/issues/181874)).
-> - **`@EventChannelApi` and `@ProxyApi` are unsupported**: Move any `@EventChannelApi` or `@ProxyApi` definitions into a separate Pigeon file without `useFfi` / `useJni`. Swift FFI also requires `SwiftOptions.includeErrorClass: true` (use a distinct `errorClassName` per file if multiple Swift FFI files share a module).
+> - **`Stream<T>` methods and `@ProxyApi` are unsupported**: Move any `@HostApi` `Stream<T>` methods (migrating any legacy `@EventChannelApi` definitions to `@HostApi` `Stream<T>` methods) or `@ProxyApi` definitions into a separate Pigeon file without `useFfi` / `useJni`. Swift FFI also requires `SwiftOptions.includeErrorClass: true` (use a distinct `errorClassName` per file if multiple Swift FFI files share a module).
 > - **`@TaskQueue` is unsupported**: Because calls do not use Flutter Engine message queues, `@TaskQueue` annotations must be removed from the Pigeon file.
 > - **Migrating background work**:
 >   - *Option A (Native Concurrency)*: Replace `@TaskQueue` with `@async` in the Pigeon definition file, and implement the generated Swift `async` or Kotlin `suspend` function on a background queue or coroutine dispatcher.

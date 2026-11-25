@@ -79,8 +79,8 @@ void main() {
     expect(code, contains('  two;'));
   });
 
-  test('gen event channel api with usage docs on the generated method', () {
-    final api = AstEventChannelApi(
+  test('gen host api stream method preserves documentation comments', () {
+    final api = AstHostApi(
       name: 'EventApi',
       methods: <Method>[
         Method(
@@ -88,11 +88,12 @@ void main() {
           location: ApiLocation.host,
           returnType: const TypeDeclaration(baseName: 'int', isNullable: false),
           parameters: <Parameter>[],
+          isStream: true,
           documentationComments: <String>[' An example event stream.'],
         ),
       ],
     );
-    final root = Root(apis: <Api>[api], classes: <Class>[], enums: <Enum>[]);
+    final root = Root(apis: <Api>[api], classes: <Class>[], enums: <Enum>[], containsHostApi: true);
     final sink = StringBuffer();
     const generator = DartGenerator();
     generator.generate(
@@ -102,20 +103,11 @@ void main() {
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final code = sink.toString();
-    expect(code, contains('Stream<int> streamEvents('));
-    // The user's own documentation comments are emitted.
+    expect(code, contains('Stream<int> streamEvents()'));
     expect(code, contains('/// An example event stream.'));
-    // The generated usage documentation explains the channel-owning and
-    // broadcast semantics.
     expect(
-      code,
-      contains('/// Returns a broadcast [Stream] of events from the `streamEvents` event channel.'),
-    );
-    expect(code, contains('not be called multiple times for the same `instanceName`'));
-    // The usage documentation is attached directly above the generated method.
-    expect(
-      code.indexOf('not be called multiple times'),
-      lessThan(code.indexOf('Stream<int> streamEvents(')),
+      code.indexOf('/// An example event stream.'),
+      lessThan(code.indexOf('Stream<int> streamEvents()')),
     );
   });
 
@@ -3759,6 +3751,117 @@ name: foobar
     expect(code, contains('@override\n  void register()'));
     expect(code, contains('@override\n  void unregister()'));
     expect(code, contains('@override\n  void dartApi()'));
+  });
+
+  test('generates HostApi Stream<T> methods with parameters and router helpers', () {
+    final root = Root(
+      apis: <Api>[
+        AstHostApi(
+          name: 'SensorApi',
+          dartHostTestHandler: 'TestSensorApi',
+          methods: <Method>[
+            Method(
+              name: 'calibrate',
+              location: ApiLocation.host,
+              parameters: <Parameter>[],
+              returnType: const TypeDeclaration.voidDeclaration(),
+            ),
+            Method(
+              name: 'readings',
+              location: ApiLocation.host,
+              isStream: true,
+              parameters: <Parameter>[
+                Parameter(
+                  name: 'intervalMs',
+                  type: const TypeDeclaration(baseName: 'int', isNullable: false),
+                  isNamed: true,
+                  isPositional: false,
+                  isOptional: true,
+                  isRequired: false,
+                  defaultValue: '16',
+                ),
+              ],
+              returnType: const TypeDeclaration(
+                baseName: 'List',
+                isNullable: false,
+                typeArguments: <TypeDeclaration>[
+                  TypeDeclaration(baseName: 'double', isNullable: false),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final sink = StringBuffer();
+    const generator = DartGenerator();
+    generator.generate(
+      const InternalDartOptions(ignoreLints: false, dartOut: 'lib/sensor.g.dart'),
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final code = sink.toString();
+    expect(code, contains('Stream<List<double>> readings({int intervalMs = 16}) {'));
+    expect(code, contains('return _pigeonChannelStream<List<double>>('));
+    expect(code, contains('arguments: <Object?>[intervalMs],'));
+    expect(
+      code,
+      contains('decodeEvent: (Object? event) => (event! as List<Object?>).cast<double>(),'),
+    );
+    expect(code, contains('class _PigeonChannelStreamRouter {'));
+    expect(code, contains('static const int _dataFrameKind = 0;'));
+    expect(code, contains('static const int _errorFrameKind = 1;'));
+    expect(code, contains('static const int _doneFrameKind = 2;'));
+    expect(code, contains('Object? _extractReplyValueOrThrow('));
+
+    final testSink = StringBuffer();
+    generator.generateTest(
+      const InternalDartOptions(
+        ignoreLints: false,
+        dartOut: 'lib/sensor.g.dart',
+        testOut: 'test/sensor_test.g.dart',
+      ),
+      root,
+      testSink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+      dartOutputPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final testCode = testSink.toString();
+    expect(testCode, contains('void calibrate();'));
+    expect(testCode, isNot(contains('readings')));
+  });
+
+  test('omits stream router helpers when HostApi has no Stream<T> methods', () {
+    final root = Root(
+      apis: <Api>[
+        AstHostApi(
+          name: 'PlainApi',
+          methods: <Method>[
+            Method(
+              name: 'ping',
+              location: ApiLocation.host,
+              parameters: <Parameter>[],
+              returnType: const TypeDeclaration.voidDeclaration(),
+            ),
+          ],
+        ),
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final sink = StringBuffer();
+    const DartGenerator().generate(
+      const InternalDartOptions(ignoreLints: false, dartOut: 'lib/plain.g.dart'),
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final code = sink.toString();
+    expect(code, isNot(contains('_PigeonChannelStreamRouter')));
+    expect(code, isNot(contains('_pigeonChannelStream')));
   });
 }
 

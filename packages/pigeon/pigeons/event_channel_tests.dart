@@ -131,9 +131,16 @@ class ClassEvent extends PlatformEvent {
 
 class EmptyEvent extends PlatformEvent {}
 
-@EventChannelApi()
-abstract class EventChannelMethods {
-  int streamInts();
-  PlatformEvent streamEvents();
-  int streamConsistentNumbers();
+@HostApi()
+abstract class StreamHostTestApi {
+  Stream<int> streamNumbers({int count = 5, int start = 0});
+  Stream<PlatformEvent> streamPlatformEvents();
+  Stream<int?> streamNullableInts();
+  Stream<int> streamError(bool customError);
+
+  @asyncCallback
+  Stream<String> streamViaCallback(String prefix, int count);
+
+  int getCancelledStreamCount();
+  void resetCancelledStreamCount();
 }

@@ -48,7 +48,8 @@ class _Static {
 /// Metadata to annotate an Api method as asynchronous using native coroutines/async-await.
 const Object async = _Asynchronous();
 
-/// Metadata to annotate an Api method as asynchronous using callback-based completions.
+/// Metadata to annotate an Api method as asynchronous using callback-based completions,
+/// or (on `Stream<T>` `@HostApi` methods) using a callback-based event sink and cancellation handle.
 const Object asyncCallback = _Asynchronous(useCallback: true);
 
 /// Metadata to annotate the field of a ProxyApi as an Attached Field.
@@ -96,6 +97,12 @@ class ConfigurePigeon {
 /// interop methods. These methods are invoked by Dart and are received by a
 /// host-platform (such as in Android or iOS) by a class implementing the
 /// generated host-platform interface.
+///
+/// Methods on a [HostApi] can return synchronous/asynchronous values (exposed
+/// as `Future`s in Dart) or `Stream<T>` (supported in the Dart, Kotlin, and
+/// Swift generators, generating `Flow<T>` in Kotlin and
+/// `AsyncThrowingStream<T, Error>` in Swift, or an event sink when annotated
+/// with [asyncCallback]).
 class HostApi {
   /// Parametric constructor for [HostApi].
   const HostApi({
@@ -113,6 +120,8 @@ class HostApi {
   /// Prefer to use a mock of the real [HostApi] with a mocking library for unit
   /// tests. Generating this Dart handler is sometimes useful in integration
   /// testing.
+  ///
+  /// `Stream<T>` methods are omitted from the generated test handler.
   ///
   /// Defaults to `null` in which case no handler will be generated.
   @Deprecated('Mock/fake the generated Dart API instead.')
@@ -174,24 +183,6 @@ class ProxyApi {
   final KotlinProxyApiOptions? kotlinOptions;
 }
 
-/// Metadata to annotate a pigeon API that contains event channels.
-///
-/// This class is a tool to designate a set of event channel methods,
-/// the class itself will not be generated.
-///
-/// All methods contained within the class will return a `Stream` of the
-/// defined return type of the method definition.
-class EventChannelApi {
-  /// Constructor.
-  const EventChannelApi({this.kotlinOptions, this.swiftOptions});
-
-  /// Options for Kotlin generated code for Event Channels.
-  final KotlinEventChannelOptions? kotlinOptions;
-
-  /// Options for Swift generated code for Event Channels.
-  final SwiftEventChannelOptions? swiftOptions;
-}
-
 /// Metadata to annotation methods to control the selector used for objc output.
 /// The number of components in the provided selector must match the number of
 /// arguments in the annotated method.
@@ -226,6 +217,8 @@ class SwiftClass {
 }
 
 /// Metadata annotation to control how handlers are dispatched for HostApi's.
+///
+/// Not supported on `Stream<T>` methods or with Native Interop (FFI/JNI).
 /// Note that the TaskQueue API might not be available on the target version of
 /// Flutter, see also:
 /// https://docs.flutter.dev/development/platform-integration/platform-channels.

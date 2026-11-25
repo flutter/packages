@@ -2317,89 +2317,128 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     expect(await api.asyncTaskQueueIsBackgroundThread(), taskQueuesSupported);
   });
 
-  /// Event channels
+  /// HostApi streams
 
-  const eventChannelSupported = <TargetGenerator>[TargetGenerator.kotlin, TargetGenerator.swift];
+  const streamSupported = <TargetGenerator>[TargetGenerator.kotlin, TargetGenerator.swift];
 
-  testWidgets('event channel sends continuous ints', (_) async {
-    final Stream<int> events = streamInts();
-    final List<int> listEvents = await events.toList();
-    for (final value in listEvents) {
-      expect(listEvents[value], value);
-    }
-  }, skip: !eventChannelSupported.contains(targetGenerator));
+  group('HostApi Stream<T>', () {
+    testWidgets('streams typed parameters and concurrent subscriptions without clobbering', (
+      WidgetTester _,
+    ) async {
+      final api = StreamHostTestApi();
+      final List<List<int>> results = await Future.wait<List<int>>(<Future<List<int>>>[
+        api.streamNumbers(count: 4, start: 10).toList(),
+        api.streamNumbers(count: 3, start: 50).toList(),
+      ]);
+      expect(results[0], <int>[10, 11, 12, 13]);
+      expect(results[1], <int>[50, 51, 52]);
+    }, skip: !streamSupported.contains(targetGenerator));
 
-  testWidgets('event channel handles extended sealed classes', (_) async {
-    final completer = Completer<void>();
-    var count = 0;
-    final Stream<PlatformEvent> events = streamEvents();
-    events.listen((PlatformEvent event) {
-      switch (event) {
-        case IntEvent():
-          expect(event.value, 1);
-          expect(count, 0);
-          count++;
-        case StringEvent():
-          expect(event.value, 'string');
-          expect(count, 1);
-          count++;
-        case BoolEvent():
-          expect(event.value, false);
-          expect(count, 2);
-          count++;
-        case DoubleEvent():
-          expect(event.value, 3.14);
-          expect(count, 3);
-          count++;
-        case ObjectsEvent():
-          expect(event.value, true);
-          expect(count, 4);
-          count++;
-        case EnumEvent():
-          expect(event.value, EventEnum.fortyTwo);
-          expect(count, 5);
-          count++;
-        case ClassEvent():
-          expect(event.value.aNullableInt, 0);
-          expect(count, 6);
-          count++;
-        case EmptyEvent():
-          expect(count, 7);
-          count++;
-          completer.complete();
+    testWidgets('streams sealed classes and nullable values', (WidgetTester _) async {
+      final api = StreamHostTestApi();
+      final List<PlatformEvent> events = await api.streamPlatformEvents().toList();
+      expect(events, hasLength(8));
+      expect(events[0], isA<IntEvent>().having((IntEvent e) => e.value, 'value', 1));
+      expect(events[1], isA<StringEvent>().having((StringEvent e) => e.value, 'value', 'string'));
+      expect(events[2], isA<BoolEvent>().having((BoolEvent e) => e.value, 'value', false));
+      expect(events[3], isA<DoubleEvent>().having((DoubleEvent e) => e.value, 'value', 3.14));
+      expect(events[4], isA<ObjectsEvent>().having((ObjectsEvent e) => e.value, 'value', true));
+      expect(
+        events[5],
+        isA<EnumEvent>().having((EnumEvent e) => e.value, 'value', EventEnum.fortyTwo),
+      );
+      expect(
+        events[6],
+        isA<ClassEvent>().having((ClassEvent e) => e.value.aNullableInt, 'aNullableInt', 0),
+      );
+      expect(events[7], isA<EmptyEvent>());
+
+      final List<int?> nullableInts = await api.streamNullableInts().toList();
+      expect(nullableInts, <int?>[1, null, 2]);
+    }, skip: !streamSupported.contains(targetGenerator));
+
+    Future<int> waitForCancelledCount(StreamHostTestApi api) async {
+      for (var attempt = 0; attempt < 100; attempt++) {
+        final int count = await api.getCancelledStreamCount();
+        if (count >= 1) {
+          return count;
+        }
+        await Future<void>.delayed(const Duration(milliseconds: 50));
       }
-    });
-    await completer.future;
-  }, skip: !eventChannelSupported.contains(targetGenerator));
+      return api.getCancelledStreamCount();
+    }
 
-  testWidgets(
-    'event channels handle multiple instances',
-    (_) async {
-      final completer1 = Completer<void>();
-      final completer2 = Completer<void>();
-      final Stream<int> events1 = streamConsistentNumbers(instanceName: '1');
-      final Stream<int> events2 = streamConsistentNumbers(instanceName: '2');
+    testWidgets('propagates custom PlatformException from stream', (WidgetTester _) async {
+      final api = StreamHostTestApi();
+      final receivedBeforeError = <int>[];
+      Object? caughtError;
+      final doneCompleter = Completer<void>();
+      api
+          .streamError(true)
+          .listen(
+            receivedBeforeError.add,
+            onError: (Object e) {
+              caughtError = e;
+            },
+            onDone: doneCompleter.complete,
+          );
+      await doneCompleter.future;
+      expect(receivedBeforeError, <int>[1]);
+      expect(
+        caughtError,
+        isA<PlatformException>()
+            .having((PlatformException e) => e.code, 'code', 'error_code')
+            .having((PlatformException e) => e.message, 'message', 'error_message')
+            .having((PlatformException e) => e.details, 'details', 'error_details'),
+      );
+    }, skip: !streamSupported.contains(targetGenerator));
 
-      events1
-          .listen((int event) {
-            expect(event, 1);
-          })
-          .onDone(() => completer1.complete());
+    testWidgets('propagates non-custom platform exception from stream', (WidgetTester _) async {
+      final api = StreamHostTestApi();
+      final receivedBeforeError = <int>[];
+      Object? caughtError;
+      final doneCompleter = Completer<void>();
+      api
+          .streamError(false)
+          .listen(
+            receivedBeforeError.add,
+            onError: (Object e) {
+              caughtError = e;
+            },
+            onDone: doneCompleter.complete,
+          );
+      await doneCompleter.future;
+      expect(receivedBeforeError, <int>[1]);
+      expect(caughtError, isA<PlatformException>());
+    }, skip: !streamSupported.contains(targetGenerator));
 
-      events2
-          .listen((int event) {
-            expect(event, 2);
-          })
-          .onDone(() => completer2.complete());
+    testWidgets('cancels native stream cleanly on mid-stream take', (WidgetTester _) async {
+      final api = StreamHostTestApi();
+      await api.resetCancelledStreamCount();
+      final List<int> partial = await api.streamNumbers(count: 500, start: 1).take(2).toList();
+      expect(partial, <int>[1, 2]);
+      expect(await waitForCancelledCount(api), greaterThanOrEqualTo(1));
+    }, skip: !streamSupported.contains(targetGenerator));
 
-      await completer1.future;
-      await completer2.future;
-    },
-    skip:
-        !eventChannelSupported.contains(targetGenerator) ||
-        // Flaky on macOS Swift, see https://github.com/flutter/flutter/issues/179154
-        (targetGenerator == TargetGenerator.swift && defaultTargetPlatform == TargetPlatform.macOS),
-  );
+    testWidgets('isolates stream routing by messageChannelSuffix', (WidgetTester _) async {
+      final apiOne = StreamHostTestApi(messageChannelSuffix: '1');
+      final apiTwo = StreamHostTestApi(messageChannelSuffix: '2');
+      expect(await apiOne.streamNumbers(count: 2, start: 5).toList(), <int>[105, 106]);
+      expect(await apiTwo.streamNumbers(count: 2, start: 5).toList(), <int>[205, 206]);
+    }, skip: !streamSupported.contains(targetGenerator));
+
+    testWidgets('streams and cancels @asyncCallback host stream', (WidgetTester _) async {
+      final api = StreamHostTestApi();
+      expect(await api.streamViaCallback('item', 3).toList(), <String>[
+        'item:0',
+        'item:1',
+        'item:2',
+      ]);
+      await api.resetCancelledStreamCount();
+      expect(await api.streamViaCallback('cut', 200).take(2).toList(), <String>['cut:0', 'cut:1']);
+      expect(await waitForCancelledCount(api), greaterThanOrEqualTo(1));
+    }, skip: !streamSupported.contains(targetGenerator));
+  });
 
   testWidgets('constants are generated correctly', (WidgetTester _) async {
     expect(aStringConstant, 'stringConstantValue');
