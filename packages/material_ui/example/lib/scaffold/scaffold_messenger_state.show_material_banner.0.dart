@@ -30,11 +30,15 @@ class ShowMaterialBannerExample extends StatelessWidget {
   Widget build(BuildContext context) {
     return OutlinedButton(
       onPressed: () {
-        ScaffoldMessenger.of(context).showMaterialBanner(
-          const MaterialBanner(
-            content: Text('This is a MaterialBanner'),
+        final ScaffoldMessengerState messenger = ScaffoldMessenger.of(context);
+        messenger.showMaterialBanner(
+          MaterialBanner(
+            content: const Text('This is a MaterialBanner'),
             actions: <Widget>[
-              TextButton(onPressed: null, child: Text('DISMISS')),
+              TextButton(
+                onPressed: messenger.hideCurrentMaterialBanner,
+                child: const Text('DISMISS'),
+              ),
             ],
           ),
         );

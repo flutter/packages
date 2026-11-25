@@ -208,21 +208,7 @@ class RangeSlider extends StatefulWidget {
   ///
   /// <callout-box>
   ///
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
-  ///
-  /// ```dart
-  /// RangeSlider(
-  ///   values: _rangeValues,
-  ///   min: 1.0,
-  ///   max: 10.0,
-  ///   onChanged: (RangeValues newValues) {
-  ///     setState(() {
-  ///       _rangeValues = newValues;
-  ///     });
-  ///   },
-  /// )
-  /// ```
+  /// {@example /example/lib/range_slider/range_slider.on_changed.snippet.0.dart#body indent=strip}
   ///
   /// </callout-box>
   ///
@@ -244,24 +230,7 @@ class RangeSlider extends StatefulWidget {
   ///
   /// <callout-box>
   ///
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
-  ///
-  /// ```dart
-  /// RangeSlider(
-  ///   values: _rangeValues,
-  ///   min: 1.0,
-  ///   max: 10.0,
-  ///   onChanged: (RangeValues newValues) {
-  ///     setState(() {
-  ///       _rangeValues = newValues;
-  ///     });
-  ///   },
-  ///   onChangeStart: (RangeValues startValues) {
-  ///     print('Started change at $startValues');
-  ///   },
-  /// )
-  /// ```
+  /// {@example /example/lib/range_slider/range_slider.on_change_start.snippet.0.dart#body indent=strip}
   ///
   /// </callout-box>
   ///
@@ -283,24 +252,7 @@ class RangeSlider extends StatefulWidget {
   ///
   /// <callout-box>
   ///
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
-  ///
-  /// ```dart
-  /// RangeSlider(
-  ///   values: _rangeValues,
-  ///   min: 1.0,
-  ///   max: 10.0,
-  ///   onChanged: (RangeValues newValues) {
-  ///     setState(() {
-  ///       _rangeValues = newValues;
-  ///     });
-  ///   },
-  ///   onChangeEnd: (RangeValues endValues) {
-  ///     print('Ended change at $endValues');
-  ///   },
-  /// )
-  /// ```
+  /// {@example /example/lib/range_slider/range_slider.on_change_end.snippet.0.dart#body indent=strip}
   ///
   /// </callout-box>
   ///
@@ -400,27 +352,10 @@ class RangeSlider extends StatefulWidget {
   ///
   /// <callout-box>
   ///
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
-  ///
   /// In the example below, a slider for currency values is configured to
   /// announce a value with a currency label.
   ///
-  /// ```dart
-  /// RangeSlider(
-  ///   values: _dollarsRange,
-  ///   min: 20.0,
-  ///   max: 330.0,
-  ///   onChanged: (RangeValues newValues) {
-  ///     setState(() {
-  ///       _dollarsRange = newValues;
-  ///     });
-  ///   },
-  ///   semanticFormatterCallback: (double newValue) {
-  ///     return '${newValue.round()} dollars';
-  ///   }
-  ///  )
-  /// ```
+  /// {@example /example/lib/range_slider/range_slider.semantic_formatter_callback.snippet.0.dart#body indent=strip}
   ///
   /// </callout-box>
   final SemanticFormatterCallback? semanticFormatterCallback;
@@ -1553,8 +1488,21 @@ class _RenderRangeSlider extends RenderBox with RelayoutWhenSystemFontsChangeMix
   }
 
   double _getValueFromGlobalPosition(Offset globalPosition) {
-    final double visualPosition =
-        (globalToLocal(globalPosition).dx - _trackRect.left) / _trackRect.width;
+    final double localDx = globalToLocal(globalPosition).dx;
+    final double visualPosition;
+    // Mirror the padded coordinate system used when painting tick marks and
+    // thumbs on discrete rounded tracks (see _RenderSlider._getValueFromGlobalPosition).
+    if (isDiscrete && _sliderTheme.rangeTrackShape!.isRounded) {
+      final double padding = _trackRect.height;
+      final double adjustedWidth = _trackRect.width - padding;
+      if (adjustedWidth <= 0.0) {
+        visualPosition = 0.5;
+      } else {
+        visualPosition = (localDx - _trackRect.left - padding / 2) / adjustedWidth;
+      }
+    } else {
+      visualPosition = (localDx - _trackRect.left) / _trackRect.width;
+    }
     return _getValueFromVisualPosition(visualPosition);
   }
 

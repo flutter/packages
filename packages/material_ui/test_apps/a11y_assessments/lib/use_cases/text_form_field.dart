@@ -39,6 +39,8 @@ class _MainWidgetState extends State<_MainWidget> {
       body: Form(
         key: _formKey,
         child: ListView(
+          semanticChildCount: 0,
+          addSemanticIndexes: false,
           children: <Widget>[
             Semantics(
               label: 'Enabled text form field',

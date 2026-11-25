@@ -33,8 +33,8 @@ struct MetaDataUtilTests {
     let metaData = ImagePickerMetaDataUtil.getMetaData(
       fromImageData: ImagePickerTestImages.jpgTestData)
     let exif = metaData?[kCGImagePropertyExifDictionary as String] as? [String: Any]
-    let dimension = exif?[kCGImagePropertyExifPixelXDimension as String] as? NSNumber
-    #expect(dimension?.intValue == 12)
+    let dimension = exif?[kCGImagePropertyExifPixelXDimension as String] as? Int
+    #expect(dimension == 12)
   }
 
   @Test func writeMetaData() throws {
@@ -55,6 +55,18 @@ struct MetaDataUtilTests {
     let metaData = ImagePickerMetaDataUtil.getMetaData(fromImageData: imageData)
     let newData = ImagePickerMetaDataUtil.image(fromImage: imageData, withMetaData: metaData)
     #expect(newData == nil)
+  }
+
+  @Test func updateMetaDataReturnsNilWhenWritingFails() throws {
+    let dataJPG = ImagePickerTestImages.jpgTestData
+    // Truncated data is still recognized as JPEG, but has no decodable image, so writing it fails.
+    let truncatedJPG = Data(dataJPG.prefix(dataJPG.count / 2))
+    #expect(UIImage(data: truncatedJPG) == nil)
+    let source = try #require(CGImageSourceCreateWithData(truncatedJPG as CFData, nil))
+    #expect(CGImageSourceGetType(source) as String? == "public.jpeg")
+    let metaData = ImagePickerMetaDataUtil.getMetaData(fromImageData: dataJPG)
+    let newData = ImagePickerMetaDataUtil.image(fromImage: truncatedJPG, withMetaData: metaData)
+    #expect(newData == nil, "Returned \(newData?.count ?? 0) bytes of data.")
   }
 
   @Test func convertImageToData() {

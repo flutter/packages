@@ -2306,7 +2306,10 @@ class CupertinoNavigationBarBackButton extends StatelessWidget {
     final ModalRoute<dynamic>? currentRoute = ModalRoute.of(context);
     if (onPressed == null) {
       assert(
-        currentRoute?.canPop ?? false,
+        // During a navigation bar transition, the leading widget is built a
+        // second time in the Navigator's overlay, outside of any route.
+        (currentRoute?.canPop ?? false) ||
+            context.findAncestorWidgetOfExactType<_NavigationBarTransition>() != null,
         'CupertinoNavigationBarBackButton should only be used in routes that can be popped',
       );
     }

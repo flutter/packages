@@ -64,25 +64,7 @@ class ChipTheme extends InheritedTheme {
   ///
   /// <callout-box>
   ///
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
-  ///
-  /// ```dart
-  /// class Spaceship extends StatelessWidget {
-  ///   const Spaceship({super.key});
-  ///
-  ///   @override
-  ///   Widget build(BuildContext context) {
-  ///     return ChipTheme(
-  ///       data: ChipTheme.of(context).copyWith(backgroundColor: Colors.red),
-  ///       child: ActionChip(
-  ///         label: const Text('Launch'),
-  ///         onPressed: () { print('We have liftoff!'); },
-  ///       ),
-  ///     );
-  ///   }
-  /// }
-  /// ```
+  /// {@example /example/lib/chip_theme/chip_theme.of.snippet.0.dart#body indent=strip}
   ///
   /// </callout-box>
   ///
@@ -128,37 +110,7 @@ class ChipTheme extends InheritedTheme {
 ///
 /// <callout-box>
 ///
-// TODO(framework): Add unit tests to this code snippet.
-// https://github.com/flutter/flutter/issues/188530
-///
-/// ```dart
-/// class CarColor extends StatefulWidget {
-///   const CarColor({super.key});
-///
-///   @override
-///   State createState() => _CarColorState();
-/// }
-///
-/// class _CarColorState extends State<CarColor> {
-///   Color _color = Colors.red;
-///
-///   @override
-///   Widget build(BuildContext context) {
-///     return ChipTheme(
-///       data: ChipTheme.of(context).copyWith(backgroundColor: Colors.lightBlue),
-///       child: ChoiceChip(
-///         label: const Text('Light Blue'),
-///         onSelected: (bool value) {
-///           setState(() {
-///             _color = value ? Colors.lightBlue : Colors.red;
-///           });
-///         },
-///         selected: _color == Colors.lightBlue,
-///       ),
-///     );
-///   }
-/// }
-/// ```
+/// {@example /example/lib/chip_theme/chip_theme_data.snippet.0.dart#body indent=strip}
 ///
 /// </callout-box>
 ///

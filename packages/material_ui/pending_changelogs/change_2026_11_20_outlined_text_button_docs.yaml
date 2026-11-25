@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes several errors in the `OutlinedButton` and `TextButton` documentation.
+version: patch

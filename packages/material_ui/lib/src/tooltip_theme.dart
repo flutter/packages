@@ -56,6 +56,7 @@ class TooltipThemeData with Diagnosticable {
     this.triggerMode,
     this.enableFeedback,
     this.ignorePointer,
+    this.showOnFocus,
   }) : assert(
          height == null || constraints == null,
          'Only one of `height` and `constraints` may be specified.',
@@ -147,6 +148,15 @@ class TooltipThemeData with Diagnosticable {
   /// This value is used if [Tooltip.ignorePointer] is null.
   final bool? ignorePointer;
 
+  /// Whether the tooltip is shown when its widget receives keyboard focus.
+  ///
+  /// If `true`, keyboard users can read the tooltip without a mouse
+  /// (satisfying WCAG 2.1.1 Keyboard).
+  ///
+  /// This value is used if [Tooltip.showOnFocus] is null.
+  /// If this value is null, the default is false.
+  final bool? showOnFocus;
+
   /// Creates a copy of this object but with the given fields replaced with the
   /// new values.
   TooltipThemeData copyWith({
@@ -170,6 +180,7 @@ class TooltipThemeData with Diagnosticable {
     TooltipTriggerMode? triggerMode,
     bool? enableFeedback,
     bool? ignorePointer,
+    bool? showOnFocus,
   }) {
     return TooltipThemeData(
       height: height ?? this.height,
@@ -188,6 +199,7 @@ class TooltipThemeData with Diagnosticable {
       triggerMode: triggerMode ?? this.triggerMode,
       enableFeedback: enableFeedback ?? this.enableFeedback,
       ignorePointer: ignorePointer ?? this.ignorePointer,
+      showOnFocus: showOnFocus ?? this.showOnFocus,
     );
   }
 
@@ -217,6 +229,7 @@ class TooltipThemeData with Diagnosticable {
       triggerMode: t < 0.5 ? a?.triggerMode : b?.triggerMode,
       enableFeedback: t < 0.5 ? a?.enableFeedback : b?.enableFeedback,
       ignorePointer: t < 0.5 ? a?.ignorePointer : b?.ignorePointer,
+      showOnFocus: t < 0.5 ? a?.showOnFocus : b?.showOnFocus,
     );
   }
 
@@ -238,6 +251,7 @@ class TooltipThemeData with Diagnosticable {
     triggerMode,
     enableFeedback,
     ignorePointer,
+    showOnFocus,
   );
 
   @override
@@ -264,7 +278,8 @@ class TooltipThemeData with Diagnosticable {
         other.exitDuration == exitDuration &&
         other.triggerMode == triggerMode &&
         other.enableFeedback == enableFeedback &&
-        other.ignorePointer == ignorePointer;
+        other.ignorePointer == ignorePointer &&
+        other.showOnFocus == showOnFocus;
   }
 
   @override
@@ -308,6 +323,7 @@ class TooltipThemeData with Diagnosticable {
       FlagProperty('enableFeedback', value: enableFeedback, ifTrue: 'true', showName: true),
     );
     properties.add(DiagnosticsProperty<bool>('ignorePointer', ignorePointer, defaultValue: null));
+    properties.add(DiagnosticsProperty<bool>('showOnFocus', showOnFocus, defaultValue: null));
   }
 }
 

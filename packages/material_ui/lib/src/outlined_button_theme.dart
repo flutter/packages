@@ -36,7 +36,7 @@ import 'theme.dart';
 ///    [ButtonStyle] for [OutlinedButton]s below the overall [Theme].
 @immutable
 class OutlinedButtonThemeData with Diagnosticable {
-  /// Creates a [OutlinedButtonThemeData].
+  /// Creates an [OutlinedButtonThemeData].
   ///
   /// The [style] may be null.
   const OutlinedButtonThemeData({this.style});
@@ -95,7 +95,7 @@ class OutlinedButtonThemeData with Diagnosticable {
 ///  * [ThemeData.outlinedButtonTheme], which can be used to override the default
 ///    [ButtonStyle] for [OutlinedButton]s below the overall [Theme].
 class OutlinedButtonTheme extends InheritedTheme {
-  /// Create a [OutlinedButtonTheme].
+  /// Create an [OutlinedButtonTheme].
   const OutlinedButtonTheme({super.key, required this.data, required super.child});
 
   /// The configuration of this theme.
