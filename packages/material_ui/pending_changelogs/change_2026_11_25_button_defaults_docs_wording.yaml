@@ -1,3 +1,0 @@
-changelog: |
-  - Simplifies the wording of the `ElevatedButton`, `FilledButton`, and `OutlinedButton` default style docs.
-version: patch
